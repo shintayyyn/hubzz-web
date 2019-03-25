@@ -11,7 +11,7 @@
       </div>
 
       <div class="flex w-full justify-center xl:justify-start">
-        <div class="flex flex-col p-8 m-1 rounded-lg shadow-lg" style="flex: 0 1 600px;">
+        <div class="flex flex-col p-4 m-1 rounded-lg shadow-lg" style="flex: 0 1 600px;">
 
           <div class="flex flex-col p-6 rounded-lg" style="background-color: #E6E6E6;">
             <div class="flex flex-col">

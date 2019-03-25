@@ -1,7 +1,7 @@
 <template>
   <div class="__layout_index w-screen h-screen flex flex-col xl:flex-row">
 
-    <div class="__bg_logo flex justify-center items-center pt-5 pb-16">
+    <div class="__bg_logo flex justify-center items-center pt-5 pb-8">
       <button @click="toggle" class="absolute pin-t pin-l p-1 m-1 bg-white">Toggle</button>
       <nuxt-link to="/" class="__logo">
         <img src="~/assets/images/hubzz-logo.png">
@@ -70,8 +70,6 @@
   }
 
   .__layout_index .__bg_logo {
-    min-height: 188px;
-
     background-image: url('/images/hubzz-bg.png');
     background-repeat: no-repeat;
     background-size: 150%;
@@ -81,6 +79,10 @@
 
   .__layout_index .__main {
     flex: 1;
+  }
+
+  .__logo {
+    zoom: .75;
   }
 
   @media (min-width: 1200px) {

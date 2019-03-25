@@ -260,6 +260,23 @@ export const mutations = {
   },
 
 
+  setGmcNumber (state, gmcNumber) {
+    state.gmcNumber = gmcNumber
+  },
+
+  setMplNumber (state, mplNumber) {
+    state.mplNumber = mplNumber
+  },
+
+  setSmartCardIdNumber (state, smartCardIdNumber) {
+    state.smartCardIdNumber = smartCardIdNumber
+  },
+
+  setProfession (state, profession) {
+    state.profession = profession
+  },
+
+
   setEmail (state, email) {
     state.email = email
   },
