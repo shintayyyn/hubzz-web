@@ -1,25 +1,26 @@
 <template>
-  <div class="__login">
+  <div class="h-full w-full flex flex-col overflow-auto xl:justify-center">
 
     <IndexTabControl/>
 
-    <div class="__login_form_container">
-      <div class="__login_form">
+    <div class="flex justify-center items-start" style="height: 600px;">
+
+      <div class="flex flex-col px-10 py-6 m-4 rounded-lg shadow-lg" style="width: 600px;">
         <div class="relative">
-          <label>Email address</label>
-          <span v-show="emailErrorMessage" class="__error_message">{{ emailErrorMessage }}</span>
+          <label class="text-xs">Email address</label>
+          <span v-show="emailErrorMessage && !showEmailFocus" class="text-white bg-red absolute pin-r p-1 text-xs">{{ emailErrorMessage }}</span>
         </div>
-        <input v-model="email" @keyup.enter="login" @blur="checkEmail" :class="emailErrorMessage ? '__error' : ''">
+        <input class="py-2 mt-2 mb-8 outline-none border-b" v-model="email" @keyup.enter="login" :class="showEmailFocus ? 'border-yellow-dark' : emailErrorMessage ? 'border-red' : 'border-grey-dark'" @focus="showEmailFocus = true" @blur="showEmailFocus = false, checkEmail()">
 
         <div class="relative">
-          <label>Password</label>
-          <span v-show="passwordErrorMessage" class="__error_message">{{ passwordErrorMessage }}</span>
+          <label class="text-xs">Password</label>
+          <span v-show="passwordErrorMessage && !showPasswordFocus" class="text-white bg-red absolute pin-r p-1 text-xs">{{ passwordErrorMessage }}</span>
         </div>
-        <input v-model="password" @keyup.enter="login" @blur="checkPassword" :class="passwordErrorMessage ? '__error' : ''">
+        <input class="py-2 mt-2 mb-8 outline-none border-b" v-model="password" @keyup.enter="login" :class="showPasswordFocus ? 'border-yellow-dark' : passwordErrorMessage ? 'border-red' : 'border-grey-dark'" @focus="showPasswordFocus = true" @blur="showPasswordFocus = false, checkPassword()">
 
-        <nuxt-link to="/forgot-password" class="__forgot_password_link">Forgot Password?</nuxt-link>
+        <nuxt-link to="/forgot-password" class="self-end no-underline text-black text-xs pr-2 pb-4 hover:underline">Forgot Password?</nuxt-link>
 
-        <button @click="login" class="__login_button">Sign In</button>
+        <button @click="login" class="self-center rounded-lg p-5 font-bold" style="background-color: #FFDA3A;">Sign In</button>
       </div>
     </div>
 
@@ -45,7 +46,9 @@
         email: '',
         password: '',
         emailErrorMessage: false,
-        passwordErrorMessage: false
+        passwordErrorMessage: false,
+        showEmailFocus: false,
+        showPasswordFocus: false
       }
     },
 
@@ -82,89 +85,3 @@
     }
   }
 </script>
-
-<style>
-  .__login {
-    height: 100%;
-    width: 100%;
-
-    display: flex;
-    flex-direction: column;
-
-    overflow: auto;
-  }
-
-  .__login_form_container {
-    height: 600px;
-    display: flex;
-    justify-content: center;
-  }
-
-  .__login_form {
-    max-width: 600px;
-    width: 600px;
-
-    display: flex;
-    flex-direction: column;
-
-    padding: 2.5rem 1.5rem;
-    margin: 1rem;
-    border-radius: 1rem;
-    box-shadow: 3px 3px 30px 3px rgba(0, 0, 0, 0.11), 0 5px 15px 0 rgba(0, 0, 0, 0.08);
-  }
-
-  .__login_form label {
-    font-size: .8rem;
-  }
-
-  .__login_form input {
-    display: block;
-    border-bottom: 1.5px solid #55565a;
-    outline: none;
-
-    padding: .5rem 0;
-    margin: .5rem 0 2rem 0;
-  }
-
-  .__login_form > input.__error {
-    border-bottom: 1.5px solid #DB8D8D;
-  }
-
-  .__error_message {
-    background-color: #F00;
-    color: #FFF;
-    position: absolute;
-    right: 0;
-
-    padding: .25rem;
-    font-size: .8rem;
-  }
-
-  .__forgot_password_link {
-    padding: 0 .5rem 1rem 0;
-    align-self: flex-end;
-    text-decoration: none;
-    color: inherit;
-    font-size: .75rem;
-  }
-
-  .__forgot_password_link:hover {
-    text-decoration: underline;
-  }
-
-  .__login_button {
-    align-self: center;
-
-    border-radius: .75rem;
-
-    padding: 1.25rem;
-    background-color: #FFDA3A;
-  }
-
-
-  @media (min-width: 1280px) {
-    .__login {
-      justify-content: center;
-    }
-  }
-</style>

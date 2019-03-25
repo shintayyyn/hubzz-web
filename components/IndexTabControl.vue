@@ -1,35 +1,13 @@
 <template>
-  <div class="__tab_control">
-    <nuxt-link to="/sign-in">Sign In</nuxt-link>
-    <nuxt-link to="/sign-up">Sign Up</nuxt-link>
+  <div class="flex justify-center items-center px-8 py-4 my-4 __tab_control">
+    <nuxt-link class="py-4 px-10 outline-none rounded-full no-underline whitespace-no-wrap text-grey-darkest font-bold text-xs sm:text-base" to="/sign-in">Sign In</nuxt-link>
+    <nuxt-link class="py-4 px-10 outline-none rounded-full no-underline whitespace-no-wrap text-grey-darkest font-bold text-xs sm:text-base" to="/sign-up">Sign Up</nuxt-link>
   </div>
 </template>
 
 <style>
-  .__tab_control {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    padding: 2rem 1rem;
-    margin: 0 1rem;
-  }
-
-  .__tab_control > a {
-    padding: 1rem 2.5rem;
-
-    outline: none;
-    border-radius: 1.5rem;
-
-    text-decoration: none;
-    white-space: nowrap;
-    color: #9E9E9E;
-  }
-
   .__tab_control > a.nuxt-link-active {
-    outline: none;
     background-color: #FFDA3A;
-    cursor: inherit;
     color: #000;
   }
 </style>

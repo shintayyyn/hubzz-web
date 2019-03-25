@@ -1,27 +1,27 @@
 <template>
-  <div class="__layout_index">
+  <div class="__layout_index w-screen h-screen flex flex-col xl:flex-row">
 
-    <div class="__bg_logo">
+    <div class="__bg_logo flex justify-center items-center pt-5 pb-16">
       <button @click="toggle" class="absolute pin-t pin-l p-1 m-1 bg-white">Toggle</button>
       <nuxt-link to="/" class="__logo">
         <img src="~/assets/images/hubzz-logo.png">
       </nuxt-link>
     </div>
 
-    <div class="__main">
+    <div class="__main overflow-auto">
       <nuxt/>
     </div>
 
-    <div class="__privacy_notice" :class="showPrivacyNotice ? '' : 'hide'">
-      <div class="__message">
+    <div class="__privacy_notice absolute pin-b pin-l pin-r flex text-sm px-3 py-4" style="background-color: #FFDA3A" :style="`z-index: ${showPrivacyNotice ? 100 : -100}; opacity: ${showPrivacyNotice ? 1 : 0};`">
+      <div style="flex: 0 0 80%;">
         <h2>Your Privacy</h2>
         <div>
           <span>We use cookies to improve your experience on our site. To find out more, read our </span>
           <nuxt-link to="/">privacy policy.</nuxt-link>
         </div>
       </div>
-      <div class="__button">
-        <button @click="acceptCookies">OK</button>
+      <div style="flex: 0 0 20%;" class="flex justify-end items-center">
+        <button class="p-2 rounded-full shadow-lg hover:text-white" @click="acceptCookies">OK</button>
       </div>
     </div>
 
@@ -65,80 +65,25 @@
 </script>
 
 <style>
-  .__layout_index {
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
+  .__privacy_notice {
+    transition: .8s;
   }
 
   .__layout_index .__bg_logo {
     min-height: 188px;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
 
     background-image: url('/images/hubzz-bg.png');
     background-repeat: no-repeat;
     background-size: 150%;
     background-position: right;
     background-color: #55565a;
-
-    padding: 1.25rem 0 3.5rem 0;
   }
 
   .__layout_index .__main {
     flex: 1;
   }
 
-  .__privacy_notice {
-    transition: .8s;
-
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-
-    display: flex;
-
-    font-size: .90rem;
-
-    background-color: #FFDA3A;
-
-    padding: .75rem 1rem;
-  }
-
-  .__privacy_notice.hide {
-    opacity: 0;
-  }
-
-  .__privacy_notice .__message {
-    flex: 0 0 80%;
-  }
-
-  .__privacy_notice .__button {
-    flex: 0 0 20%;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-  }
-
-  .__privacy_notice .__button button {
-    padding: .5rem;
-    border-radius: 1rem;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.12), 0 2px 4px 0 rgba(0, 0, 0, 0.08);
-  }
-
-  .__privacy_notice .__button button:hover {
-    color: white;
-  }
-
-  @media (min-width: 1280px) {
-    .__layout_index {
-      flex-direction: row;
-    }
-
+  @media (min-width: 1200px) {
     .__layout_index .__bg_logo {
       flex: 0 0 40%;
       background-size: 175%;
