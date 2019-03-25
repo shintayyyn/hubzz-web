@@ -18,6 +18,7 @@
   .__tab_control > a {
     padding: 1rem 2.5rem;
 
+    outline: none;
     border-radius: 1.5rem;
 
     text-decoration: none;
@@ -26,6 +27,7 @@
   }
 
   .__tab_control > a.nuxt-link-active {
+    outline: none;
     background-color: #FFDA3A;
     cursor: inherit;
     color: #000;

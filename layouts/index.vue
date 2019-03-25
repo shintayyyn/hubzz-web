@@ -3,7 +3,7 @@
 
     <div class="__bg_logo">
       <button @click="toggle" class="absolute pin-t pin-l p-1 m-1 bg-white">Toggle</button>
-      <nuxt-link to="/">
+      <nuxt-link to="/" class="__logo">
         <img src="~/assets/images/hubzz-logo.png">
       </nuxt-link>
     </div>
@@ -85,7 +85,7 @@
     background-position: right;
     background-color: #55565a;
 
-    padding: 1.25rem 0 3rem 0;
+    padding: 1.25rem 0 3.5rem 0;
   }
 
   .__layout_index .__main {
@@ -147,6 +147,10 @@
 
     .__layout_index .__main {
       flex: 0 0 60%;
+    }
+
+    .__logo {
+      zoom: 1.25;
     }
   }
 </style>

@@ -88,10 +88,14 @@
     height: 100%;
     width: 100%;
 
+    display: flex;
+    flex-direction: column;
+
     overflow: auto;
   }
 
   .__login_form_container {
+    height: 600px;
     display: flex;
     justify-content: center;
   }
@@ -106,7 +110,7 @@
     padding: 2.5rem 1.5rem;
     margin: 1rem;
     border-radius: 1rem;
-    box-shadow: 3px 3px 30px 3px rgba(0,0,0,0.11), 0 5px 15px 0 rgba(0,0,0,0.08);
+    box-shadow: 3px 3px 30px 3px rgba(0, 0, 0, 0.11), 0 5px 15px 0 rgba(0, 0, 0, 0.08);
   }
 
   .__login_form label {
@@ -160,7 +164,7 @@
 
   @media (min-width: 1280px) {
     .__login {
-      padding-top: 6rem;
+      justify-content: center;
     }
   }
 </style>
