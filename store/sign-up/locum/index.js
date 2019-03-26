@@ -22,14 +22,24 @@ export const state = () => ({
   showAddressLine3Required: false,
 
   gmcNumber: '',
+  gmcNumberErrorMessage: '',
+
   mplNumber: '',
+  mplNumberErrorMessage: '',
+
   smartCardIdNumber: '',
+
   profession: '',
-  qualifications: [],
-  clinicalSystems: [],
-  languages: [],
+  professionErrorMessage: '',
+
+  selectedQualifications: [],
+  selectedSystems: [],
+  selectedLanguages: [],
+
   ratePerHour: '',
   ratePerSession: '',
+
+  scopeIR35: true,
 
   email: '',
   password: '',
@@ -131,8 +141,16 @@ export const getters = {
     return state.gmcNumber
   },
 
+  getGmcNumberErrorMessage (state) {
+    return state.gmcNumberErrorMessage
+  },
+
   getMplNumber (state) {
     return state.mplNumber
+  },
+
+  getMplNumberErrorMessage (state) {
+    return state.mplNumberErrorMessage
   },
 
   getSmartCardIdNumber (state) {
@@ -143,16 +161,20 @@ export const getters = {
     return state.profession
   },
 
-  getQualifications (state) {
-    return state.qualifications
+  getProfessionErrorMessage (state) {
+    return state.professionErrorMessage
   },
 
-  getClinicalSystems (state) {
-    return state.clinicalSystems
+  getSelectedQualifications (state) {
+    return state.selectedQualifications
   },
 
-  getLanguages (state) {
-    return state.languages
+  getSelectedSystems (state) {
+    return state.selectedSystems
+  },
+
+  getSelectedLanguages (state) {
+    return state.selectedLanguages
   },
 
   getRatePerHour (state) {
@@ -163,12 +185,15 @@ export const getters = {
     return state.ratePerSession
   },
 
+  getScopeIR35 (state) {
+    return state.scopeIR35
+  },
+
   isProffesionalDetailsValid (state) {
     return state.gmcNumber.trim() !== ''
       && state.mplNumber.trim() !== ''
       && state.smartCardIdNumber.trim() !== ''
   },
-
 
   getEmail (state) {
     return state.email
@@ -264,8 +289,16 @@ export const mutations = {
     state.gmcNumber = gmcNumber
   },
 
+  setGmcNumberErrorMessage (state, gmcNumberErrorMessage) {
+    state.gmcNumberErrorMessage = gmcNumberErrorMessage
+  },
+
   setMplNumber (state, mplNumber) {
     state.mplNumber = mplNumber
+  },
+
+  setMplNumberErrorMessage (state, mplNumberErrorMessage) {
+    state.mplNumberErrorMessage = mplNumberErrorMessage
   },
 
   setSmartCardIdNumber (state, smartCardIdNumber) {
@@ -274,6 +307,67 @@ export const mutations = {
 
   setProfession (state, profession) {
     state.profession = profession
+  },
+
+  setProfessionErrorMessage (state, professionErrorMessage) {
+    state.professionErrorMessage = professionErrorMessage
+  },
+
+
+  addSelectedQualification (state, qualification) {
+    state.selectedQualifications.push(qualification)
+  },
+
+  removeSelectedQualification (state, qualification) {
+    const index = state.selectedQualifications.findIndex((selectedQualification) => {
+      return selectedQualification._id === qualification._id
+    })
+
+    if (index > -1) {
+      state.selectedQualifications.splice(index, 1)
+    }
+  },
+
+
+  addSelectedSystem (state, system) {
+    state.selectedSystems.push(system)
+  },
+
+  removeSelectedSystem (state, system) {
+    const index = state.selectedSystems.findIndex((selectedSystem) => {
+      return selectedSystem._id === system._id
+    })
+
+    if (index > -1) {
+      state.selectedSystems.splice(index, 1)
+    }
+  },
+
+
+  addSelectedLanguage (state, system) {
+    state.selectedLanguages.push(system)
+  },
+
+  removeSelectedLanguage (state, system) {
+    const index = state.selectedLanguages.findIndex((selectedLanguage) => {
+      return selectedLanguage._id === system._id
+    })
+
+    if (index > -1) {
+      state.selectedLanguages.splice(index, 1)
+    }
+  },
+
+  setRatePerHour (state, ratePerHour) {
+    state.ratePerHour = ratePerHour
+  },
+
+  setRatePerSession (state, ratePerSession) {
+    state.ratePerSession = ratePerSession
+  },
+
+  setScopeIR35 (state, scopeIR35) {
+    state.scopeIR35 = scopeIR35
   },
 
 
@@ -339,5 +433,28 @@ export const actions = {
     } else {
       commit('setShowAddressLine3Required', false)
     }
+  },
+
+  async professionalDetailsNext({ getters, commit, dispatch }) {
+    console.log('professionalDetailsNext')
+
+    if (getters['getGmcNumber'].trim() === '') {
+      commit('setGmcNumberErrorMessage', 'Required')
+    } else {
+      commit('setGmcNumberErrorMessage', '')
+    }
+
+    if (getters['getMplNumber'].trim() === '') {
+      commit('setMplNumberErrorMessage', 'Required')
+    } else {
+      commit('setMplNumberErrorMessage', '')
+    }
+
+    if (getters['getProfession'].trim() === '') {
+      commit('setProfessionErrorMessage', 'Required')
+    } else {
+      commit('setProfessionErrorMessage', '')
+    }
+
   }
 }

@@ -13,16 +13,19 @@
       <div class="flex w-full justify-center xl:justify-start">
         <div class="flex flex-col p-4 m-1 rounded-lg shadow-lg" style="flex: 0 1 600px;">
 
-          <div class="flex flex-col p-6 rounded-lg" style="background-color: #E6E6E6;">
+          <div class="flex flex-col p-6 rounded-lg bg-grey-lighter">
             <div class="flex flex-col">
               <div class="relative">
                 <label class="text-xs">Post code *</label>
                 <span class="text-xs absolute pin-r pin-b bg-red p-1 text-white" v-if="showPostCodeRequired && !showPostCodeFocus">Required</span>
               </div>
               <div class="relative" v-on-clickaway="hidePredictions">
-                <input class="w-full bg-transparent outline-none py-1 mt-1 mb-8 border-b" :class="showPostCodeFocus ? 'border-yellow-dark' : showPostCodeRequired ? 'border-red' : 'border-grey-dark'" v-model="postCode" @focus="showPostCodeFocus = true" @click="showPredictions = !showPredictions" @blur="showPostCodeFocus = false, checkPostCode()" placeholder="Enter a post code and select from list">
-                <div class="bg-white absolute pin-l pin-r z-10 border rounded-lg" style="top: 32px;" v-if="showPredictions">
-                  <div v-for="(prediction, index) in predictions" class="p-2 hover:bg-grey-light cursor-pointer" :class="index !== predictions.length ? 'border-b' : ''" @click="selectPrediction(prediction)">
+                <input class="w-full bg-transparent outline-none py-1 mt-1 mb-8 border-b" :class="showPostCodeFocus ? 'border-yellow-dark' : showPostCodeRequired ? 'border-red' : 'border-grey-dark'" v-model="postCode" @focus="showPostCodeFocus = true" @click="showPredictions = true, getPredictionsIfNoPredictions()" @blur="showPostCodeFocus = false, checkPostCode()" @keydown="inputKeydownHandler" placeholder="Enter a post code and select from list">
+                <div class="bg-white absolute pin-l pin-r z-10 border shadow-lg rounded-lg" style="top: 32px;" v-if="showPredictions">
+                  <div class="p-2 border-b" v-if="gettingPredictions">
+                    <strong>Loading...</strong>
+                  </div>
+                  <div v-for="(prediction, index) in predictions" class="p-2 cursor-pointer" :class="`${index !== predictions.length ? 'border-b' : ''} ${index === predictionIndex ? 'bg-grey-light' : ''}`" @click="selectPrediction(prediction)" @mouseover="predictionIndex = index">
                     <strong class="">{{ prediction.structured_formatting.main_text }}</strong>
                     <span class="text-xs">{{ prediction.structured_formatting.secondary_text }}</span>
                   </div>
@@ -88,6 +91,8 @@
         settingPostCode: false,
         predictions: [],
         showPredictions: false,
+        gettingPredictions: false,
+        predictionIndex: -1,
 
         showPostCodeFocus: false,
         showAddressLine1Focus: false,
@@ -182,20 +187,58 @@
         this.showPredictions = false
       },
 
+      getPredictionsIfNoPredictions() {
+        if (this.predictions.length === 0) {
+          this.getPredictions(this.postCode)
+        }
+      },
+
       getPredictions: debounce(function (input) {
+        if (!input) {
+          this.predictions = []
+          return
+        }
+
         const params = {
           input: input
         }
 
+        this.gettingPredictions = true
         this.predictions = []
 
         this.$axios.get('/api/v1/predictions', { params }).then((response) => {
           console.log('response', response)
           this.predictions = response.data.predictions
+          this.showPredictions = true
         }).catch((err) => {
           console.log('err', err)
+        }).finally(() => {
+          this.gettingPredictions = false
         })
       }, 250),
+
+      inputKeydownHandler(event) {
+        if (event.key === 'ArrowUp') {
+          if (this.predictionIndex > 0) {
+            this.predictionIndex--
+          }
+          return
+        }
+
+        if (event.key === 'ArrowDown') {
+          if (this.predictionIndex < this.predictions.length - 1) {
+            this.predictionIndex++
+          }
+          return
+        }
+
+        if (event.key === 'Enter') {
+          if (this.predictionIndex > -1 && this.predictionIndex < this.predictions.length) {
+            this.selectPrediction(this.predictions[this.predictionIndex])
+          }
+          return
+        }
+      },
 
       selectPrediction(prediction) {
         console.log('selectPrediction', prediction)

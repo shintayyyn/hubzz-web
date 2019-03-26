@@ -41,7 +41,7 @@
             <label class="text-xs">Gender *</label>
             <span class="text-xs absolute pin-r pin-t bg-red p-1 text-white" v-if="showGenderRequired && !showGenderFocus">Required</span>
           </div>
-          <select class="outline-none py-2 mt-1 mb-8 border-b" :class="showGenderFocus ? 'border-yellow-dark' : showGenderRequired ? 'border-red' : 'border-grey-dark'" v-model="gender" @focus="showGenderFocus = true" @blur="showGenderFocus = false, checkGender()">
+          <select class="outline-none py-2 mt-1 mb-8 border-b bg-grey-lighter" :class="showGenderFocus ? 'border-yellow-dark' : showGenderRequired ? 'border-red' : 'border-grey-dark'" v-model="gender" @focus="showGenderFocus = true" @blur="showGenderFocus = false, checkGender()">
             <option value="">Select</option>
             <option value="Male">Male</option>
             <option value="Female">Female</option>
@@ -49,7 +49,7 @@
 
           <div class="relative">
             <label class="text-xs">Mobile number *</label>
-            <span class="text-xs absolute pin-r pin-b p-1" style="background-color: #EFEFEF;" v-if="!showMobileNumberRequired || showMobileNumberFocus">In case of emergency</span>
+            <span class="text-xs absolute pin-r pin-b p-1 bg-grey-lighter" v-if="!showMobileNumberRequired || showMobileNumberFocus">In case of emergency</span>
             <span class="text-xs absolute pin-r pin-b bg-red p-1 text-white" v-if="showMobileNumberRequired && !showMobileNumberFocus">Required</span>
           </div>
           <input class="outline-none py-1 mt-1 mb-8 border-b" :class="showMobileNumberFocus ? 'border-yellow-dark' : showMobileNumberRequired ? 'border-red' : 'border-grey-dark'" v-model="mobileNumber" @focus="showMobileNumberFocus = true" @blur="showMobileNumberFocus = false, checkMobileNumber()">
