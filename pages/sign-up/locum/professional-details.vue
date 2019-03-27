@@ -12,42 +12,51 @@
 
       <div class="flex w-full justify-center xl:justify-start">
         <div class="flex flex-col p-8 m-1 rounded-lg shadow-lg" style="flex: 0 1 600px;">
-          <div class="flex flex-wrap justify-between">
-            <label class="text-xs my-1 py-1">Your GMC / NMC Number *</label>
-            <div class="m-1 flex-auto flex justify-end">
-              <span class="text-xs p-1 bg-grey-lighter" v-if="!gmcNumberErrorMessage || showGMCNumberFocus">For compliance; to be verified by the hubzz team</span>
-              <span class="text-xs bg-red p-1 text-white" v-if="gmcNumberErrorMessage && !showGMCNumberFocus">{{ gmcNumberErrorMessage }}</span>
-            </div>
-          </div>
-          <input class="outline-none py-1 mt-1 mb-8 border-b" :class="showGMCNumberFocus ? 'border-yellow-dark' : gmcNumberErrorMessage ? 'border-red' : 'border-grey-dark'" v-model="gmcNumber" @focus="showGMCNumberFocus = true" @blur="showGMCNumberFocus = false, checkGMCNumber()" placeholder="GMC / NMC Number">
 
-          <div class="flex flex-wrap justify-between">
-            <label class="text-xs my-1 py-1">Your MPL / NPL Number *</label>
-            <div class="m-1 flex-auto flex justify-end">
-              <span class="text-xs p-1 bg-grey-lighter" v-if="!mplNumberErrorMessage || showMPLNumberFocus">For compliance; to be verified by the hubzz team</span>
-              <span class="text-xs bg-red p-1 text-white" v-if="mplNumberErrorMessage && !showMPLNumberFocus">{{ mplNumberErrorMessage }}</span>
+          <div class="flex flex-col mb-8" ref="inputGmcNumber">
+            <div class="flex flex-wrap justify-between">
+              <label class="text-xs my-1 py-1">Your GMC / NMC Number *</label>
+              <div class="m-1 flex-auto flex justify-end">
+                <span class="text-xs p-1 bg-grey-lighter" v-if="!gmcNumberErrorMessage || showGMCNumberFocus">For compliance; to be verified by the hubzz team</span>
+                <span class="text-xs bg-red p-1 text-white" v-if="gmcNumberErrorMessage && !showGMCNumberFocus">{{ gmcNumberErrorMessage }}</span>
+              </div>
             </div>
+            <input class="outline-none py-1 mt-1 border-b" :class="showGMCNumberFocus ? 'border-yellow-dark' : gmcNumberErrorMessage ? 'border-red' : 'border-grey-dark'" v-model="gmcNumber" @focus="showGMCNumberFocus = true" @blur="showGMCNumberFocus = false, checkGMCNumber()" placeholder="GMC / NMC Number">
           </div>
-          <input class="outline-none py-1 mt-1 mb-8 border-b" :class="showMPLNumberFocus ? 'border-yellow-dark' : mplNumberErrorMessage ? 'border-red' : 'border-grey-dark'" v-model="mplNumber" @focus="showMPLNumberFocus = true" @blur="showMPLNumberFocus = false, checkMPLNumber()" placeholder="Your last name">
 
-          <div class="flex flex-wrap justify-between">
-            <label class="text-xs my-1 py-1">Your NHS Smart Card ID number *</label>
-            <div class="m-1 flex-auto flex justify-end">
-              <span class="text-xs bg-red p-1 text-white" v-if="smartCardIdNumberErrorMessage && !showSmartCardIdNumberFocus">{{ smartCardIdNumberErrorMessage }}</span>
+          <div class="flex flex-col mb-8" ref="inputMplNumber">
+            <div class="flex flex-wrap justify-between">
+              <label class="text-xs my-1 py-1">Your MPL / NPL Number *</label>
+              <div class="m-1 flex-auto flex justify-end">
+                <span class="text-xs p-1 bg-grey-lighter" v-if="!mplNumberErrorMessage || showMPLNumberFocus">For compliance; to be verified by the hubzz team</span>
+                <span class="text-xs bg-red p-1 text-white" v-if="mplNumberErrorMessage && !showMPLNumberFocus">{{ mplNumberErrorMessage }}</span>
+              </div>
             </div>
+            <input class="outline-none py-1 mt-1 border-b" :class="showMPLNumberFocus ? 'border-yellow-dark' : mplNumberErrorMessage ? 'border-red' : 'border-grey-dark'" v-model="mplNumber" @focus="showMPLNumberFocus = true" @blur="showMPLNumberFocus = false, checkMPLNumber()" placeholder="Your last name">
           </div>
-          <input class="outline-none py-1 mt-1 mb-8 border-b" :class="showSmartCardIdNumberFocus ? 'border-yellow-dark' : smartCardIdNumberErrorMessage ? 'border-red' : 'border-grey-dark'" v-model="smartCardIdNumber" @focus="showSmartCardIdNumberFocus = true" @blur="showSmartCardIdNumberFocus = false, checkSmartCardIdNumber()">
 
-          <div class="flex flex-wrap justify-between">
-            <label class="text-xs my-1 py-1">Profession *</label>
-            <div class="m-1 flex-auto flex justify-end">
-              <span class="text-xs bg-red p-1 text-white" v-if="professionErrorMessage && !showPrefossionFocus">{{ professionErrorMessage }}</span>
+          <div class="flex flex-col mb-8">
+            <div class="flex flex-wrap justify-between">
+              <label class="text-xs my-1 py-1">Your NHS Smart Card ID number *</label>
+              <div class="m-1 flex-auto flex justify-end">
+                <span class="text-xs bg-red p-1 text-white" v-if="smartCardIdNumberErrorMessage && !showSmartCardIdNumberFocus">{{ smartCardIdNumberErrorMessage }}</span>
+              </div>
             </div>
+            <input class="outline-none py-1 mt-1 border-b" :class="showSmartCardIdNumberFocus ? 'border-yellow-dark' : smartCardIdNumberErrorMessage ? 'border-red' : 'border-grey-dark'" v-model="smartCardIdNumber" @focus="showSmartCardIdNumberFocus = true" @blur="showSmartCardIdNumberFocus = false, checkSmartCardIdNumber()">
           </div>
-          <select class="outline-none py-2 mt-1 mb-8 border-b w-full bg-grey-lighter" :class="showPrefossionFocus ? 'border-yellow-dark' : professionErrorMessage ? 'border-red' : 'border-grey-dark'" v-model="profession" @focus="showPrefossionFocus = true" @blur="showPrefossionFocus = false, checkProfession()">
-            <option value="">Select</option>
-            <option v-for="profession in professions" :value="profession.name">{{ profession.name }}</option>
-          </select>
+
+          <div class="flex flex-col mb-8" ref="inputProfession">
+            <div class="flex flex-wrap justify-between">
+              <label class="text-xs my-1 py-1">Profession *</label>
+              <div class="m-1 flex-auto flex justify-end">
+                <span class="text-xs bg-red p-1 text-white" v-if="professionErrorMessage && !showPrefossionFocus">{{ professionErrorMessage }}</span>
+              </div>
+            </div>
+            <select class="outline-none py-2 mt-1 border-b w-full bg-grey-lighter" :class="showPrefossionFocus ? 'border-yellow-dark' : professionErrorMessage ? 'border-red' : 'border-grey-dark'" v-model="profession" @focus="showPrefossionFocus = true" @blur="showPrefossionFocus = false, checkProfession()">
+              <option value="">Select</option>
+              <option v-for="profession in professions" :value="profession._id">{{ profession.name }}</option>
+            </select>
+          </div>
 
           <!-- QUALIFICATIONS -->
           <div class="flex flex-col mb-8">
@@ -105,7 +114,7 @@
           </div>
           <!-- SYSTEMS -->
 
-          <!-- SYSTEMS -->
+          <!-- LANGUAGES -->
           <div class="flex flex-col mb-8">
             <div class="flex flex-wrap justify-between">
               <label class="text-xs my-1 py-1">Spoken languages *</label>
@@ -134,7 +143,7 @@
               </div>
             </div>
           </div>
-          <!-- SYSTEMS -->
+          <!-- LANGUAGES -->
 
           <div class="flex flex-col mb-8">
             <div class="flex flex-wrap justify-between">
@@ -181,7 +190,7 @@
       <div class="flex w-full justify-center xl:justify-start">
         <div class="flex justify-center" style="flex: 0 1 600px;">
           <nuxt-link class="inline-flex border rounded-lg text-black no-underline p-4 my-2" style="background-color: #FFDA3A;" to="/sign-up/locum/address-details">< <</nuxt-link>
-          <nuxt-link class="inline-flex border rounded-lg text-black no-underline p-4 my-2" style="background-color: #FFDA3A;" to="/sign-up/locum/credential-details" @click.native="$store.dispatch('sign-up/locum/professionalDetailsNext')">Next</nuxt-link>
+          <nuxt-link class="inline-flex border rounded-lg text-black no-underline p-4 my-2" style="background-color: #FFDA3A;" to="/sign-up/locum/credential-details" :event="''" @click.native.prevent="next">Next</nuxt-link>
         </div>
       </div>
 
@@ -189,6 +198,7 @@
 
   </div>
 </template>
+
 <script>
   import debounce from 'lodash.debounce'
   import { mixin as clickaway } from 'vue-clickaway'
@@ -197,6 +207,8 @@
     layout: 'index',
 
     mixins: [ clickaway ],
+
+    scrollToTop: true,
 
     async asyncData({ app, store, redirect }) {
       try {
@@ -263,9 +275,7 @@
         showSmartCardIdNumberFocus: false,
         showPrefossionFocus: false,
 
-        mplNumberErrorMessage: '',
         smartCardIdNumberErrorMessage: '',
-        professionErrorMessage: '',
 
         // QUALIFICATIONS
         selectedQualificationsErrorMessage: '',
@@ -323,6 +333,14 @@
           this.$store.commit('sign-up/locum/setMplNumber', mplNumber)
         }
       },
+      mplNumberErrorMessage: {
+        get() {
+          return this.$store.getters['sign-up/locum/getMplNumberErrorMessage']
+        },
+        set(mplNumberErrorMessage) {
+          this.$store.commit('sign-up/locum/setMplNumberErrorMessage', mplNumberErrorMessage)
+        }
+      },
       smartCardIdNumber: {
         get() {
           return this.$store.getters['sign-up/locum/getSmartCardIdNumber']
@@ -340,6 +358,14 @@
           this.$store.commit('sign-up/locum/setProfession', profession)
         }
       },
+      professionErrorMessage: {
+        get() {
+          return this.$store.getters['sign-up/locum/getProfessionErrorMessage']
+        },
+        set(professionErrorMessage) {
+          this.$store.commit('sign-up/locum/setProfessionErrorMessage', professionErrorMessage)
+        }
+      },
 
       accountDetailsValid() {
         return this.$store.getters['sign-up/locum/isAccountDetailsValid']
@@ -347,6 +373,10 @@
 
       addressDetailsValid() {
         return this.$store.getters['sign-up/locum/isAddressDetailsValid']
+      },
+
+      professionalDetailsValid() {
+        return this.$store.getters['sign-up/locum/isProfessionalDetailsValid']
       },
 
 
@@ -789,7 +819,7 @@
       // LANGUAGES
 
       checkRatePerHour() {
-        if (this.ratePerHour && isNaN(this.checkRatePerHour)) {
+        if (this.ratePerHour && isNaN(this.ratePerHour)) {
           this.ratePerHourErrorMessage = 'Please enter a valid number.'
         } else {
           this.ratePerHourErrorMessage = ''
@@ -797,14 +827,52 @@
       },
 
       checkRatePerSession() {
-        if (this.ratePerSession && isNaN(this.checkRatePerSession)) {
+        if (this.ratePerSession && isNaN(this.ratePerSession)) {
           this.ratePerSessionErrorMessage = 'Please enter a valid number.'
         } else {
           this.ratePerSessionErrorMessage = ''
         }
+      },
+
+      next(event) {
+        this.$store.dispatch('sign-up/locum/professionalDetailsNext').then(() => {
+
+          if (this.gmcNumberErrorMessage) {
+            this.$refs.inputGmcNumber.scrollIntoView({
+              behavior: 'smooth',
+              block: 'end'
+            })
+
+            return
+          }
+
+          if (this.mplNumberErrorMessage) {
+            this.$refs.inputMplNumber.scrollIntoView({
+              behavior: 'smooth',
+              block: 'end'
+            })
+
+            return
+          }
+
+          if (this.professionErrorMessage) {
+            this.$refs.inputProfession.scrollIntoView({
+              behavior: 'smooth',
+              block: 'end'
+            })
+
+            return
+          }
+
+          this.$router.push('/sign-up/locum/credential-details')
+        })
       }
+    },
+
+    mounted() {
+      this.gmcNumberErrorMessage = ''
+      this.mplNumberErrorMessage = ''
+      this.professionErrorMessage = ''
     }
-
-
   }
 </script>

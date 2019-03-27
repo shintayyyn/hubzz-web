@@ -42,8 +42,11 @@ export const state = () => ({
   scopeIR35: true,
 
   email: '',
+  emailErrorMessage: '',
   password: '',
-  passwordConfirmation: ''
+  passwordErrorMessage: '',
+  passwordConfirmation: '',
+  passwordConfirmationErrorMessage: '',
 
 })
 
@@ -118,6 +121,7 @@ export const getters = {
     return state.addressLine3
   },
 
+
   isShowPostCodeRequired (state) {
     return state.showPostCodeRequired
   },
@@ -130,11 +134,13 @@ export const getters = {
     return state.showAddressLine3Required
   },
 
+
   isAddressDetailsValid (state) {
     return state.postCode.trim() !== ''
       && state.addressLine1.trim() !== ''
       && state.addressLine3.trim() !== ''
   },
+
 
 
   getGmcNumber (state) {
@@ -189,23 +195,44 @@ export const getters = {
     return state.scopeIR35
   },
 
-  isProffesionalDetailsValid (state) {
-    return state.gmcNumber.trim() !== ''
-      && state.mplNumber.trim() !== ''
-      && state.smartCardIdNumber.trim() !== ''
+  isProfessionalDetailsValid (state) {
+    return state.gmcNumber !== ''
+      && state.mplNumber !== ''
+      && state.profession !== ''
+      && state.gmcNumberErrorMessage === ''
+      && state.mplNumberErrorMessage === ''
+      && state.professionErrorMessage === ''
   },
 
   getEmail (state) {
     return state.email
   },
+  getEmailErrorMessage (state) {
+    return state.emailErrorMessage
+  },
 
   getPassword (state) {
     return state.password
   },
+  getPasswordErrorMessage (state) {
+    return state.passwordErrorMessage
+  },
 
   getPasswordConfirmation (state) {
     return state.passwordConfirmation
-  }
+  },
+  getPasswordConfirmationErrorMessage (state) {
+    return state.passwordConfirmationErrorMessage
+  },
+
+  isCredentialDetailsValid (state) {
+    return state.email !== ''
+      && state.password !== ''
+      && state.passwordConfirmation !== ''
+      && state.emailErrorMessage === ''
+      && state.passwordErrorMessage === ''
+      && state.passwordConfirmationErrorMessage === ''
+  },
 }
 
 export const mutations = {
@@ -374,14 +401,23 @@ export const mutations = {
   setEmail (state, email) {
     state.email = email
   },
+  setEmailErrorMessage (state, emailErrorMessage) {
+    state.emailErrorMessage = emailErrorMessage
+  },
 
   setPassword (state, password) {
     state.password = password
   },
+  setPasswordErrorMessage (state, passwordErrorMessage) {
+    state.passwordErrorMessage = passwordErrorMessage
+  },
 
   setPasswordConfirmation (state, passwordConfirmation) {
     state.passwordConfirmation = passwordConfirmation
-  }
+  },
+  setPasswordConfirmationErrorMessage (state, passwordConfirmationErrorMessage) {
+    state.passwordConfirmationErrorMessage = passwordConfirmationErrorMessage
+  },
 }
 
 export const actions = {
@@ -455,6 +491,43 @@ export const actions = {
     } else {
       commit('setProfessionErrorMessage', '')
     }
+  },
 
+  async register({ getters, commit, dispatch }) {
+    const data = {
+      title: getters['getTitle'],
+      firstName: getters['getFirstName'],
+      lastName: getters['getLastName'],
+      suffix: getters['getSuffix'],
+      gender: getters['getGender'],
+      mobileNumber: getters['getMobileNumber'],
+      homeNumber: getters['getHomeNumber'],
+
+      postCode: getters['getPostCode'],
+      addressLine1: getters['getAddressLine1'],
+      addressLine2: getters['getAddressLine2'],
+      addressLine3: getters['getAddressLine3'],
+
+      gmcNumber: getters['getGmcNumber'],
+      mplNumber: getters['getMplNumber'],
+      smartCardIdNumber: getters['getSmartCardIdNumber'],
+      professionId: getters['getProfession'],
+      qualificationId: getters['getSelectedQualifications'],
+      systemId: getters['getSelectedSystems'],
+      languageId: getters['getSelectedLanguages'],
+
+      ratePerHour: getters['getRatePerHour'],
+      ratePerSession: getters['getRatePerSession'],
+
+      scopeIR35: getters['getScopeIR35'],
+
+      email: getters['getEmail'],
+      password: getters['getPassword'],
+      passwordConfirmation: getters['getPasswordConfirmation']
+    }
+
+    const response = await this.$axios.post(`/api/v1/register/locum`, data)
+
+    return response
   }
 }
