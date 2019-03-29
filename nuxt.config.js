@@ -39,7 +39,11 @@ export default {
   */
   plugins: [
     {
-      src: '@/plugins/vue-svgicon',
+      src: '@/plugins/vue-svgicon.js',
+      ssr: true
+    },
+    {
+      src: '@/plugins/moment.js',
       ssr: true
     }
   ],

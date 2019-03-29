@@ -18,6 +18,7 @@
     "cross-env": "^5.2.0",
     "dotenv": "^7.0.0",
     "lodash.debounce": "^4.0.8",
+    "moment": "^2.24.0",
     "nuxt": "^2.4.0",
     "validator": "^10.11.0",
     "vue-clickaway": "^2.2.2",
