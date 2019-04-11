@@ -16,7 +16,7 @@
           <label class="text-xs">Password</label>
           <span v-show="passwordErrorMessage && !showPasswordFocus" class="text-white bg-red absolute pin-r p-1 text-xs">{{ passwordErrorMessage }}</span>
         </div>
-        <input class="py-2 mt-2 mb-8 outline-none border-b" v-model="password" @keyup.enter="login" :class="showPasswordFocus ? 'border-yellow-dark' : passwordErrorMessage ? 'border-red' : 'border-grey-dark'" @focus="showPasswordFocus = true" @blur="showPasswordFocus = false, checkPassword()">
+        <input type="password" class="py-2 mt-2 mb-8 outline-none border-b" v-model="password" @keyup.enter="login" :class="showPasswordFocus ? 'border-yellow-dark' : passwordErrorMessage ? 'border-red' : 'border-grey-dark'" @focus="showPasswordFocus = true" @blur="showPasswordFocus = false, checkPassword()">
 
         <nuxt-link to="/forgot-password" class="self-end no-underline text-black text-xs pr-2 pb-4 hover:underline">Forgot Password?</nuxt-link>
 
@@ -64,7 +64,9 @@
 
     methods: {
       login() {
-        console.log('login')
+        this.$axios.$post('/api/v1/login').then(res => {
+          console.log(res)
+        })
       },
 
       checkEmail() {
