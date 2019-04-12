@@ -19,6 +19,10 @@
         <AvailabilityRangeModal v-if="$store.state.availability_range_modal"/>
         <AddInvoiceModal v-if="$store.state.invoice_modal"/>
       </transition>
+      <div v-if="$store.state.sign_out_modal" class="absolute pin-t"
+        :class="$store.state.mobile ? 'w-full pin-x':'flex justify-center w-full pin-x'">
+        <SignOut />
+      </div>
     </div>
   </div>
 </template>
@@ -28,13 +32,15 @@ import AppToggleSideBar from '@/components/AppToggleSideBar'
 import AvailabilityModal from '@/components/Availability/AvailabilityModal'
 import AvailabilityRangeModal from '@/components/Availability/AvailabilityRangeModal'
 import AddInvoiceModal from '@/components/Billing/AddInvoice/AddInvoiceModal'
+import SignOut from '@/components/SignOut'
 export default {
   components: {
     AppSideBar,
     AppToggleSideBar,
     AvailabilityModal,
     AvailabilityRangeModal,
-    AddInvoiceModal
+    AddInvoiceModal,
+    SignOut
   },
   beforeCreate() {
     this.$store.commit("CHECK_WINDOW_WIDTH");
@@ -55,7 +61,7 @@ export default {
 </script>
 <style>
 .bgClass {
-  transition: all 0.1s ease-out;
+  transition: all 0.3s ease-in-out;
 }
 .blurClass {
   /* filter: grayscale(100%); */

@@ -62,9 +62,9 @@
     </div>
     <div class="mx-1 text-sm relative">
       <span class="absolute pin-l border-solid bg-yellow w-1 h-full" v-if="$route.path == '/sign-out'"></span>
-      <nuxt-link to="/sign-out" class="block no-underline p-4" :class="$route.path == '/sign-out' ? 'text-yellow-dark' : 'text-black hover:text-grey-light'">
+      <button @click.prevent="$store.commit('TOGGLE_SIGN_OUT_MODAL', true)" class="block no-underline p-4" :class="$route.path == '/sign-out' ? 'text-yellow-dark' : 'text-black hover:text-grey-light'">
         <span class="font-sans">Sign Out</span>
-      </nuxt-link>
+      </button>
     </div>
   </div>
 
