@@ -21,7 +21,7 @@
         Tax reports
     </div>
     <div v-if="$store.state.billing.activeTab === 'invoices'" class="mr-5 p-3 text-sm cursor-pointer absolute pin-r"
-        @click="$store.commit('billing/toggleInvoiceModal', true)">
+        @click="$store.commit('TOGGLE_INVOICE_MODAL', true)">
         Add invoice
         <span class="rounded-full h-10 w-10 bg-yellow-dark font-semibold text-xl px-3 py-1">+</span>
     </div>

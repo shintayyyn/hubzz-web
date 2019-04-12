@@ -1,10 +1,11 @@
 <template>
   <div>
     <div class="sidebar" >
-      <AppSideBar />
+      <AppSideBar :class="[$store.state.blur_bg ? 'blurClass' : '', 'bgClass']"/>
     </div>
-    <AppToggleSideBar v-if="$store.state.drawer"/>
+    <AppToggleSideBar v-if="$store.state.drawer" />
     <div class="content">
+      <div :class="[$store.state.blur_bg ? 'blurClass' : '', 'bgClass']">
         <div v-if="$store.state.mobile" class="float-left text-xs font-thin font-sans m-5 text-right cursor-pointer" @click="$store.commit('TOGGLE_DRAWER', true)">
           Hamburger
         </div>
@@ -12,11 +13,12 @@
           kpabad.halcyondigital@gmail.com
         </div>
         <nuxt/>
-        <transition name="slide">
-          <AvailabilityModal v-if="$store.state.availability.modal"/>
-          <AvailabilityRangeModal v-if="$store.state.availability.rangeModal"/>
-          <AddInvoiceModal v-if="$store.state.billing.invoiceModal"/>
-        </transition>
+      </div>
+      <transition name="slide">
+        <AvailabilityModal v-if="$store.state.availability_modal"/>
+        <AvailabilityRangeModal v-if="$store.state.availability_range_modal"/>
+        <AddInvoiceModal v-if="$store.state.invoice_modal"/>
+      </transition>
     </div>
   </div>
 </template>
@@ -52,6 +54,14 @@ export default {
 }
 </script>
 <style>
+.bgClass {
+  transition: all 0.1s ease-out;
+}
+.blurClass {
+  /* filter: grayscale(100%); */
+  filter: blur(2px);
+  opacity: 0.4;
+}
  body {
   margin: 0;
 }

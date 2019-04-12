@@ -1,6 +1,5 @@
 export const state = () => ({
-    activeTab: 'invoices',
-    financeReportsActiveTab: 'invoices_by_month',
+    activeTab: 'invite_locums',
   })
   
   export const getters = {}
@@ -8,9 +7,6 @@ export const state = () => ({
   export const mutations = {
     setActiveTab(state, payload) {
       state.activeTab = payload
-    },
-    setFinanceReportsActiveTab(state, payload) {
-      state.financeReportsActiveTab = payload
     },
   }
   export const actions = {}

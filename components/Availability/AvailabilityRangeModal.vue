@@ -1,6 +1,6 @@
 <template>
     <div class="absolute pin-r pin-t z-10 p-10 bg-grey-lighter" style="height:130%" :style="$store.state.mobile ? 'width:100%' : 'width:70%'">
-      <div @click="$store.commit('availability/toggle_range_modal', false)" class="cursor-pointer" v-text="'<'"></div>
+      <div @click="$store.commit('TOGGLE_AVAILABILITY_RANGE_MODAL', false)" class="cursor-pointer" v-text="'<'"></div>
       <div class="font-bold text-lg my-5" style="font-family: Nunito">Availability</div>
       <div class="border-solid rounded-lg shadow-md mb-8 px-5 py-8" style="width:70%">
         <div class="text-sm font-bold">I won't be available... </div>

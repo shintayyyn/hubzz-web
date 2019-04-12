@@ -1,7 +1,7 @@
 <template>
     <div class="absolute pin-r pin-t z-10 p-10 bg-grey-darkest" style="height:130%" :style="$store.state.mobile ? 'width:100%' : 'width:70%'">
         <div class="flex flex-row flex-no-wrap justify-start">
-            <div @click="$store.commit('billing/toggleInvoiceModal', false)" class="flex text-xl cursor-pointer text-yellow items-center">
+            <div @click="$store.commit('TOGGLE_INVOICE_MODAL', false)" class="flex text-xl cursor-pointer text-yellow items-center">
                 <span v-text="'<'"></span>
             </div>
             <button class="border border-solid border-yellow-dark bg-yellow-dark text-black font-bold p-2 rounded-lg mx-2 hover:text-yellow hover:bg-grey-darkest" 

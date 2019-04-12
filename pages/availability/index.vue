@@ -248,7 +248,7 @@
 
         <div class="flex flex-no-wrap m-5 justify-end">
           <div class="rounded-full h-16 w-16 flex items-center justify-center bg-yellow-dark font-semibold text-xl cursor-pointer shadow-md hover:text-white"
-            @click="$store.commit('availability/toggle_range_modal', true)">+</div>
+            @click="$store.commit('TOGGLE_AVAILABILITY_RANGE_MODAL', true)">+</div>
         </div>
 
       </div>
@@ -358,8 +358,7 @@ export default {
     },
     openModal (date) {
       this.$store.commit('availability/setSelectedDate', date.fullDate)
-      this.$store.commit('availability/toggle_modal', true)
-
+      this.$store.commit('TOGGLE_AVAILABILITY_MODAL', true)
     }
   }
 }
