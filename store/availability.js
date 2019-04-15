@@ -33,7 +33,7 @@ export const mutations = {
       })
     } else {
       // else add
-      state.notAvailableDates.push({date: state.selectedDate, shifts: payload})
+      state.notAvailableDates.push({date: this.$moment(state.selectedDate).format('LL'), shifts: payload})
     }
     console.log(state.notAvailableDates)
   },

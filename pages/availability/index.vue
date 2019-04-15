@@ -44,7 +44,7 @@
           <div class="mr-10" style="width:20%">
             {{months[selectedMonth]}} {{selectedYear}}
           </div>
-          <div class="ml-10" style="width:50%">
+          <div class="ml-10" style="width:50%;height:50px;box-sizing:border-box;">
             <span class="cursor-pointer" @click="adjustMonth('previous')" v-text="'<'"></span>
             <span class="mx-5"></span>
             <span class="cursor-pointer" @click="adjustMonth('next')" v-text="'>'"></span>
@@ -64,24 +64,27 @@
         <div class="flex flex-no-wrap m-5">
           <div class="flex flex-col" style="width:100%">
             <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 7">
-              <div class="m-1 px-8 py-5" style="width:50%">&nbsp;</div>
+            <div class="m-1" style="width:50%;height:50px;box-sizing:border-box">&nbsp;</div>
             </div>
             <div v-for="(item, index) in daysInMonth" :key="index">
               <div @click="openModal(item)" 
-                class="relative border border-solid rounded-lg m-1 px-8 py-5 hover:bg-grey-light cursor-pointer text-center" 
-                style="width:50%" v-if="item.day === 0">
-                {{item.date}}
+                class="relative border border-solid rounded-lg m-1 cursor-pointer text-center"
+                :class="$moment($store.state.dashboard.dateToday).format('LL') === $moment(item.fullDate).format('LL') ? 'border-yellow-dark text-lg font-bold':'hover:bg-grey-light'"
+                style="width:50%;height:50px;box-sizing:border-box;" v-if="item.day === 0">
+                <div class="absolute pin-x" style="top:15px">
+                  {{item.date}}
+                </div>
                 <div class="flex flex-row flex-no-wrap absolute pin-t pin-r justify-start" style="width:100%">
-                    <span v-if="notAvailableDates.find(date => date.date === item.fullDate && date.shifts.includes('am'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('am'))"
                       class="bg-pink-light p-2 rounded-tl-lg" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
-                    <span v-if="notAvailableDates.find(date => date.date === item.fullDate && date.shifts.includes('pm'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('pm'))"
                       class="bg-pink-light p-2" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
-                    <span v-if="notAvailableDates.find(date => date.date === item.fullDate && date.shifts.includes('whole_day'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('whole_day'))"
                       class="bg-pink-light p-2" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
-                    <span v-if="notAvailableDates.find(date => date.date === item.fullDate && date.shifts.includes('ooh'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('ooh'))"
                       class="bg-pink-light p-2 rounded-tr-lg" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
                   </div>
@@ -90,24 +93,27 @@
           </div>
           <div class="flex flex-col" style="width:100%">
             <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 6">
-              <div class="m-1 px-8 py-5" style="width:50%">&nbsp;</div>
+            <div class="m-1" style="width:50%;height:50px;box-sizing:border-box">&nbsp;</div>
             </div>
             <div v-for="(item, index) in daysInMonth" :key="index">
               <div @click="openModal(item)" 
-                class="relative border border-solid rounded-lg m-1 px-8 py-5 hover:bg-grey-light cursor-pointer text-center"
-                style="width:50%" v-if="item.day === 1">
-                {{item.date}}
+                class="relative border border-solid rounded-lg m-1 cursor-pointer text-center"
+                :class="$moment($store.state.dashboard.dateToday).format('LL') === $moment(item.fullDate).format('LL') ? 'border-yellow-dark text-lg font-bold':'hover:bg-grey-light'"
+                style="width:50%;height:50px;box-sizing:border-box;" v-if="item.day === 1">
+                <div class="absolute pin-x" style="top:15px">
+                  {{item.date}}
+                </div>
                 <div class="flex flex-row flex-no-wrap absolute pin-t pin-r justify-start" style="width:100%">
-                    <span v-if="notAvailableDates.find(date => date.date === item.fullDate && date.shifts.includes('am'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('am'))"
                       class="bg-pink-light p-2 rounded-tl-lg" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
-                    <span v-if="notAvailableDates.find(date => date.date === item.fullDate && date.shifts.includes('pm'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('pm'))"
                       class="bg-pink-light p-2" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
-                    <span v-if="notAvailableDates.find(date => date.date === item.fullDate && date.shifts.includes('whole_day'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('whole_day'))"
                       class="bg-pink-light p-2" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
-                    <span v-if="notAvailableDates.find(date => date.date === item.fullDate && date.shifts.includes('ooh'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('ooh'))"
                       class="bg-pink-light p-2 rounded-tr-lg" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
                   </div>
@@ -116,24 +122,27 @@
           </div>
           <div class="flex flex-col" style="width:100%">
             <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 5">
-              <div class="m-1 px-8 py-5" style="width:50%">&nbsp;</div>
+            <div class="m-1" style="width:50%;height:50px;box-sizing:border-box">&nbsp;</div>
             </div>
             <div v-for="(item, index) in daysInMonth" :key="index">
               <div @click="openModal(item)" 
-                class="relative border border-solid rounded-lg m-1 px-8 py-5 hover:bg-grey-light cursor-pointer text-center"
-                style="width:50%" v-if="item.day === 2">
-                {{item.date}}
+                class="relative border border-solid rounded-lg m-1 cursor-pointer text-center"
+                :class="$moment($store.state.dashboard.dateToday).format('LL') === $moment(item.fullDate).format('LL') ? 'border-yellow-dark text-lg font-bold':'hover:bg-grey-light'"
+                style="width:50%;height:50px;box-sizing:border-box;" v-if="item.day === 2">
+                 <div class="absolute pin-x" style="top:15px">
+                  {{item.date}}
+                </div>
                   <div class="flex flex-row flex-no-wrap absolute pin-t pin-r justify-start" style="width:100%">
-                    <span v-if="notAvailableDates.find(date => date.date === item.fullDate && date.shifts.includes('am'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('am'))"
                       class="bg-pink-light p-2 rounded-tl-lg" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
-                    <span v-if="notAvailableDates.find(date => date.date === item.fullDate && date.shifts.includes('pm'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('pm'))"
                       class="bg-pink-light p-2" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
-                    <span v-if="notAvailableDates.find(date => date.date === item.fullDate && date.shifts.includes('whole_day'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('whole_day'))"
                       class="bg-pink-light p-2" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
-                    <span v-if="notAvailableDates.find(date => date.date === item.fullDate && date.shifts.includes('ooh'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('ooh'))"
                       class="bg-pink-light p-2 rounded-tr-lg" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
                   </div>
@@ -142,24 +151,27 @@
           </div>
           <div class="flex flex-col" style="width:100%">
             <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 4">
-              <div class="m-1 px-8 py-5" style="width:50%">&nbsp;</div>
+            <div class="m-1" style="width:50%;height:50px;box-sizing:border-box">&nbsp;</div>
             </div>
             <div v-for="(item, index) in daysInMonth" :key="index">
               <div @click="openModal(item)" 
-                class="relative border border-solid rounded-lg m-1 px-8 py-5 hover:bg-grey-light cursor-pointer text-center"
-                style="width:50%" v-if="item.day === 3">
-                {{item.date}}
+                class="relative border border-solid rounded-lg m-1 cursor-pointer text-center"
+                :class="$moment($store.state.dashboard.dateToday).format('LL') === $moment(item.fullDate).format('LL') ? 'border-yellow-dark text-lg font-bold':'hover:bg-grey-light'"
+                style="width:50%;height:50px;box-sizing:border-box;" v-if="item.day === 3">
+                <div class="absolute pin-x" style="top:15px">
+                  {{item.date}}
+                </div>
                 <div class="flex flex-row flex-no-wrap absolute pin-t pin-r justify-start" style="width:100%">
-                    <span v-if="notAvailableDates.find(date => date.date === item.fullDate && date.shifts.includes('am'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('am'))"
                       class="bg-pink-light p-2 rounded-tl-lg" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
-                    <span v-if="notAvailableDates.find(date => date.date === item.fullDate && date.shifts.includes('pm'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('pm'))"
                       class="bg-pink-light p-2" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
-                    <span v-if="notAvailableDates.find(date => date.date === item.fullDate && date.shifts.includes('whole_day'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('whole_day'))"
                       class="bg-pink-light p-2" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
-                    <span v-if="notAvailableDates.find(date => date.date === item.fullDate && date.shifts.includes('ooh'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('ooh'))"
                       class="bg-pink-light p-2 rounded-tr-lg" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
                   </div>
@@ -168,24 +180,27 @@
           </div>
           <div class="flex flex-col" style="width:100%">
             <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 3">
-              <div class="m-1 px-8 py-5" style="width:50%">&nbsp;</div>
+            <div class="m-1" style="width:50%;height:50px;box-sizing:border-box">&nbsp;</div>
             </div>
             <div v-for="(item, index) in daysInMonth" :key="index">
               <div @click="openModal(item)" 
-                class="relative border border-solid rounded-lg m-1 px-8 py-5 hover:bg-grey-light cursor-pointer text-center"
-                style="width:50%" v-if="item.day === 4">
-                {{item.date}}
+                class="relative border border-solid rounded-lg m-1 cursor-pointer text-center"
+                :class="$moment($store.state.dashboard.dateToday).format('LL') === $moment(item.fullDate).format('LL') ? 'border-yellow-dark text-lg font-bold':'hover:bg-grey-light'"
+                style="width:50%;height:50px;box-sizing:border-box;" v-if="item.day === 4">
+                <div class="absolute pin-x" style="top:15px">
+                  {{item.date}}
+                </div>
                 <div class="flex flex-row flex-no-wrap absolute pin-t pin-r justify-start" style="width:100%">
-                    <span v-if="notAvailableDates.find(date => date.date === item.fullDate && date.shifts.includes('am'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('am'))"
                       class="bg-pink-light p-2 rounded-tl-lg" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
-                    <span v-if="notAvailableDates.find(date => date.date === item.fullDate && date.shifts.includes('pm'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('pm'))"
                       class="bg-pink-light p-2" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
-                    <span v-if="notAvailableDates.find(date => date.date === item.fullDate && date.shifts.includes('whole_day'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('whole_day'))"
                       class="bg-pink-light p-2" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
-                    <span v-if="notAvailableDates.find(date => date.date === item.fullDate && date.shifts.includes('ooh'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('ooh'))"
                       class="bg-pink-light p-2 rounded-tr-lg" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
                   </div>
@@ -194,24 +209,27 @@
           </div>
           <div class="flex flex-col" style="width:100%">
             <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 2">
-              <div class="m-1 px-8 py-5" style="width:50%">&nbsp;</div>
+            <div class="m-1" style="width:50%;height:50px;box-sizing:border-box">&nbsp;</div>
             </div>
             <div v-for="(item, index) in daysInMonth" :key="index">
               <div @click="openModal(item)" 
-                class="relative border border-solid rounded-lg m-1 px-8 py-5 hover:bg-grey-light cursor-pointer text-center"
-                style="width:50%" v-if="item.day === 5">
-                {{item.date}}
+                class="relative border border-solid rounded-lg m-1 cursor-pointer text-center"
+                :class="$moment($store.state.dashboard.dateToday).format('LL') === $moment(item.fullDate).format('LL') ? 'border-yellow-dark text-lg font-bold':'hover:bg-grey-light'"
+                style="width:50%;height:50px;box-sizing:border-box;" v-if="item.day === 5">
+                <div class="absolute pin-x" style="top:15px">
+                  {{item.date}}
+                </div>
                 <div class="flex flex-row flex-no-wrap absolute pin-t pin-r justify-start" style="width:100%">
-                    <span v-if="notAvailableDates.find(date => date.date === item.fullDate && date.shifts.includes('am'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('am'))"
                       class="bg-pink-light p-2 rounded-tl-lg" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
-                    <span v-if="notAvailableDates.find(date => date.date === item.fullDate && date.shifts.includes('pm'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('pm'))"
                       class="bg-pink-light p-2" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
-                    <span v-if="notAvailableDates.find(date => date.date === item.fullDate && date.shifts.includes('whole_day'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('whole_day'))"
                       class="bg-pink-light p-2" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
-                    <span v-if="notAvailableDates.find(date => date.date === item.fullDate && date.shifts.includes('ooh'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('ooh'))"
                       class="bg-pink-light p-2 rounded-tr-lg" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
                   </div>
@@ -220,24 +238,27 @@
           </div>
           <div class="flex flex-col" style="width:100%">
             <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 1">
-              <div class="m-1 px-8 py-5" style="width:50%">&nbsp;</div>
+            <div class="m-1" style="width:50%;height:50px;box-sizing:border-box">&nbsp;</div>
             </div>
             <div v-for="(item, index) in daysInMonth" :key="index">
               <div @click="openModal(item)" 
-                class="relative border border-solid rounded-lg m-1 px-8 py-5 hover:bg-grey-light cursor-pointer text-center"
-                style="width:50%" v-if="item.day === 6">
-                {{item.date}}
+                class="relative border border-solid rounded-lg m-1 cursor-pointer text-center"
+                :class="$moment($store.state.dashboard.dateToday).format('LL') === $moment(item.fullDate).format('LL') ? 'border-yellow-dark text-lg font-bold':'hover:bg-grey-light'"
+                style="width:50%;height:50px;box-sizing:border-box;" v-if="item.day === 6">
+                <div class="absolute pin-x" style="top:15px">
+                  {{item.date}}
+                </div>
                 <div class="flex flex-row flex-no-wrap absolute pin-t pin-r justify-start" style="width:100%">
-                    <span v-if="notAvailableDates.find(date => date.date === item.fullDate && date.shifts.includes('am'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('am'))"
                       class="bg-pink-light p-2 rounded-tl-lg" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
-                    <span v-if="notAvailableDates.find(date => date.date === item.fullDate && date.shifts.includes('pm'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('pm'))"
                       class="bg-pink-light p-2" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
-                    <span v-if="notAvailableDates.find(date => date.date === item.fullDate && date.shifts.includes('whole_day'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('whole_day'))"
                       class="bg-pink-light p-2" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
-                    <span v-if="notAvailableDates.find(date => date.date === item.fullDate && date.shifts.includes('ooh'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('ooh'))"
                       class="bg-pink-light p-2 rounded-tr-lg" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
                   </div>
@@ -357,7 +378,7 @@ export default {
       }
     },
     openModal (date) {
-      this.$store.commit('availability/setSelectedDate', date.fullDate)
+      this.$store.commit('availability/setSelectedDate', this.$moment(date.fullDate).format('LL'))
       this.$store.commit('TOGGLE_AVAILABILITY_MODAL', true)
     }
   }

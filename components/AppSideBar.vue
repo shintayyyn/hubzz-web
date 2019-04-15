@@ -1,7 +1,7 @@
 <template>
   <div class="sidebar-nav">
     <div class="mx-1 mt-20 text-sm relative">
-      <span class="absolute pin-l border-solid bg-yellow w-1 h-full" v-if="$route.path == '/'"></span>
+      <span class="absolute pin-l border-solid bg-yellow w-1 h-full" v-if="$route.path == '/dashboard'"></span>
       <nuxt-link to="/" class="block no-underline p-4" :class="$route.path == '/' ? 'text-yellow-dark' : 'text-black hover:text-grey-light'">
         <span class="font-sans">Dashboard</span>
       </nuxt-link>

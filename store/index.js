@@ -1,4 +1,5 @@
 export const state = () => ({
+  months: [],
   drawer: false,
   availability_modal: false,
   availability_range_modal: false,
@@ -15,6 +16,13 @@ export const mutations = {
       state.windowWidth = window.innerWidth
       state.mobile = window.innerWidth <= 700
     }
+  },
+  SET_MONTHS (state) {
+    state.months = [
+      'January', 'February', 'March', 'April',
+      'May', 'June', 'July', 'August',
+      'September', 'October', 'November', 'December'
+    ]
   },
   TOGGLE_DRAWER (state, payload) {
     payload ? state.blur_bg = true : state.blur_bg = false

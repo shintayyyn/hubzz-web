@@ -6,9 +6,9 @@
     <AppToggleSideBar v-if="$store.state.drawer" />
     <div class="content">
       <div :class="[$store.state.blur_bg ? 'blurClass' : '', 'bgClass']">
-        <div v-if="$store.state.mobile" class="float-left text-xs font-thin font-sans m-5 text-right cursor-pointer" @click="$store.commit('TOGGLE_DRAWER', true)">
+        <!-- <div v-if="$store.state.mobile" class="float-left text-xs font-thin font-sans m-5 text-right cursor-pointer" @click="$store.commit('TOGGLE_DRAWER', true)">
           Hamburger
-        </div>
+        </div> -->
         <div class="text-xs font-thin font-sans m-5 text-right">
           kpabad.halcyondigital@gmail.com
         </div>
@@ -44,6 +44,7 @@ export default {
   },
   beforeCreate() {
     this.$store.commit("CHECK_WINDOW_WIDTH");
+    this.$store.commit('SET_MONTHS')
   },
   created() {
     if(process.browser) {
@@ -51,6 +52,7 @@ export default {
         this.$store.commit("CHECK_WINDOW_WIDTH");
       });
     }
+    this.$store.commit('dashboard/SET_DATE_TODAY')
   },
   watch: {
     '$route'(value) {

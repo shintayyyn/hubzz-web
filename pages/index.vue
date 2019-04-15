@@ -1,6 +1,6 @@
 <template>
   <div class="px-10">
-    <div class="text-xs font-bold font-sans">Reminders</div>
+    <!-- <div class="text-xs font-bold font-sans">Reminders</div>
     <div class="flex flex-row flex-wrap justify-start">
       <div class="flex-none p-5" style="width:260px;">
         <div class="border border-solid rounded-lg shadow-md p-8 cursor-pointer" style="height:120px;">
@@ -74,7 +74,7 @@
           <div class="font-sans text-5xl text-grey-darkest">0</div>
         </div>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -86,10 +86,11 @@
     },
     async asyncData({ store, redirect }) {
       try {
-        if (!store.$auth.loggedIn) {
-          // redirect('/sign-in')
-          return
-        }
+        redirect('/dashboard')
+        // if (!store.$auth.loggedIn) {
+        //   redirect('/sign-in')
+        //   return
+        // }
       } catch (err) {
         console.log('index asyncData pages index err', err)
       }
