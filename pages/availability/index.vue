@@ -75,16 +75,16 @@
                   {{item.date}}
                 </div>
                 <div class="flex flex-row flex-no-wrap absolute pin-t pin-r justify-start" style="width:100%">
-                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('am'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('AM'))"
                       class="bg-pink-light p-2 rounded-tl-lg" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
-                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('pm'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('PM'))"
                       class="bg-pink-light p-2" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
-                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('whole_day'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('WHOLE DAY'))"
                       class="bg-pink-light p-2" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
-                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('ooh'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('OOH'))"
                       class="bg-pink-light p-2 rounded-tr-lg" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
                   </div>
@@ -104,16 +104,16 @@
                   {{item.date}}
                 </div>
                 <div class="flex flex-row flex-no-wrap absolute pin-t pin-r justify-start" style="width:100%">
-                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('am'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('AM'))"
                       class="bg-pink-light p-2 rounded-tl-lg" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
-                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('pm'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('PM'))"
                       class="bg-pink-light p-2" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
-                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('whole_day'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('WHOLE DAY'))"
                       class="bg-pink-light p-2" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
-                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('ooh'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('OOH'))"
                       class="bg-pink-light p-2 rounded-tr-lg" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
                   </div>
@@ -133,16 +133,16 @@
                   {{item.date}}
                 </div>
                   <div class="flex flex-row flex-no-wrap absolute pin-t pin-r justify-start" style="width:100%">
-                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('am'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('AM'))"
                       class="bg-pink-light p-2 rounded-tl-lg" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
-                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('pm'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('PM'))"
                       class="bg-pink-light p-2" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
-                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('whole_day'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('WHOLE DAY'))"
                       class="bg-pink-light p-2" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
-                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('ooh'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('OOH'))"
                       class="bg-pink-light p-2 rounded-tr-lg" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
                   </div>
@@ -162,16 +162,16 @@
                   {{item.date}}
                 </div>
                 <div class="flex flex-row flex-no-wrap absolute pin-t pin-r justify-start" style="width:100%">
-                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('am'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('AM'))"
                       class="bg-pink-light p-2 rounded-tl-lg" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
-                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('pm'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('PM'))"
                       class="bg-pink-light p-2" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
-                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('whole_day'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('WHOLE DAY'))"
                       class="bg-pink-light p-2" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
-                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('ooh'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('OOH'))"
                       class="bg-pink-light p-2 rounded-tr-lg" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
                   </div>
@@ -191,16 +191,16 @@
                   {{item.date}}
                 </div>
                 <div class="flex flex-row flex-no-wrap absolute pin-t pin-r justify-start" style="width:100%">
-                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('am'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('AM'))"
                       class="bg-pink-light p-2 rounded-tl-lg" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
-                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('pm'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('PM'))"
                       class="bg-pink-light p-2" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
-                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('whole_day'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('WHOLE DAY'))"
                       class="bg-pink-light p-2" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
-                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('ooh'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('OOH'))"
                       class="bg-pink-light p-2 rounded-tr-lg" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
                   </div>
@@ -220,16 +220,16 @@
                   {{item.date}}
                 </div>
                 <div class="flex flex-row flex-no-wrap absolute pin-t pin-r justify-start" style="width:100%">
-                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('am'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('AM'))"
                       class="bg-pink-light p-2 rounded-tl-lg" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
-                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('pm'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('PM'))"
                       class="bg-pink-light p-2" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
-                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('whole_day'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('WHOLE DAY'))"
                       class="bg-pink-light p-2" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
-                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('ooh'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('OOH'))"
                       class="bg-pink-light p-2 rounded-tr-lg" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
                   </div>
@@ -249,16 +249,16 @@
                   {{item.date}}
                 </div>
                 <div class="flex flex-row flex-no-wrap absolute pin-t pin-r justify-start" style="width:100%">
-                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('am'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('AM'))"
                       class="bg-pink-light p-2 rounded-tl-lg" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
-                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('pm'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('PM'))"
                       class="bg-pink-light p-2" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
-                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('whole_day'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('WHOLE DAY'))"
                       class="bg-pink-light p-2" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
-                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('ooh'))"
+                    <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('OOH'))"
                       class="bg-pink-light p-2 rounded-tr-lg" style="width:25%"></span>
                     <span v-else style="width:25%;"></span>
                   </div>
@@ -279,10 +279,10 @@
 </template>
 <script>
 const shifts = [
-  {value: 'am', label: 'AM'},
-  {value: 'pm', label: 'PM'},
-  {value: 'whole_day', label: 'Whole day'},
-  {value: 'ooh', label: 'OOH'},
+  {value: 'AM', label: 'AM'},
+  {value: 'PM', label: 'PM'},
+  {value: 'WHOLE DAY', label: 'Whole day'},
+  {value: 'OOH', label: 'OOH'},
 ]
 const availability = {
   post_code: '',

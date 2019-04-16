@@ -18,6 +18,7 @@
         <AvailabilityModal v-if="$store.state.availability_modal"/>
         <AvailabilityRangeModal v-if="$store.state.availability_range_modal"/>
         <AddInvoiceModal v-if="$store.state.invoice_modal"/>
+        <AppointmentModal v-if="$store.state.appointment_modal"/>
       </transition>
       <div v-if="$store.state.sign_out_modal" class="absolute pin-t"
         :class="$store.state.mobile ? 'w-full pin-x':'flex justify-center w-full pin-x'">
@@ -32,6 +33,7 @@ import AppToggleSideBar from '@/components/AppToggleSideBar'
 import AvailabilityModal from '@/components/Availability/AvailabilityModal'
 import AvailabilityRangeModal from '@/components/Availability/AvailabilityRangeModal'
 import AddInvoiceModal from '@/components/Billing/AddInvoice/AddInvoiceModal'
+import AppointmentModal from '@/components/Dashboard/AppointmentModal'
 import SignOut from '@/components/SignOut'
 export default {
   components: {
@@ -40,6 +42,7 @@ export default {
     AvailabilityModal,
     AvailabilityRangeModal,
     AddInvoiceModal,
+    AppointmentModal,
     SignOut
   },
   beforeCreate() {
@@ -110,7 +113,7 @@ div.content {
   }
 }
 .slide-enter-active, .slide-leave-active {
-  transition: all .9s ease;
+  transition: all .3s ease-in-out;
 }
 .slide-enter, .slide-leave-to {
   transform: translateX(50px);

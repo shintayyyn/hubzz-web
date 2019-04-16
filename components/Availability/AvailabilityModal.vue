@@ -22,10 +22,10 @@
 </template>
 <script>
 const shifts = [
-  {value: 'am', label: 'AM'},
-  {value: 'pm', label: 'PM'},
-  {value: 'whole_day', label: 'Whole day'},
-  {value: 'ooh', label: 'OOH'},
+  {value: 'AM', label: 'AM'},
+  {value: 'PM', label: 'PM'},
+  {value: 'WHOLE DAY', label: 'Whole day'},
+  {value: 'OOH', label: 'OOH'},
 ]
 export default {
   data () {

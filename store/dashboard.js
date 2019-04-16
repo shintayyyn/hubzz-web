@@ -13,7 +13,9 @@ export const state = () => ({
         'September', 'October', 'November', 'December'
     ],
     select_date: null,
-    notAvailableDates: [],
+    week_date: null,
+    week_date_type: '',
+    appointmentDates: [],
     statistics: [
         { jobs: 'Available jobs', total: 0 },
         { jobs: 'Current jobs', total: 0 },
@@ -21,7 +23,7 @@ export const state = () => ({
         { jobs: 'Completed jobs', total: 0 }
     ],
 })
-  
+
 export const mutations = {
     SET_DATE_TODAY (state) {
         state.dateToday = this.$moment(new Date())
@@ -32,6 +34,20 @@ export const mutations = {
     },
     SELECT_DATE (state, payload) {
         state.select_date = payload
+    },
+    SELECT_WEEK_DATE (state, payload) {
+        state.week_date = payload.date
+        state.week_date_type = payload.type
+    },
+    SET_APPOINTMENT_DATES (state, payload) {
+        let tempArray = []
+        payload.appointmentDates.forEach(item => {
+            tempArray.push({
+                date: item, shifts: payload.shifts
+            })
+        })
+        console.log(tempArray)
+        // state.appointmentDates = payload
     }
 }
   
