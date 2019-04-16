@@ -74,7 +74,7 @@ export default {
             this.$store.commit('availability/setSelectedDate', date)
             this.$store.commit('availability/setNotAvailableDate', this.selectedShifts)
         })
-        this.$store.commit('availability/toggle_range_modal', false)
+        this.$store.commit('TOGGLE_AVAILABILITY_RANGE_MODAL', false)
     //   this.$store.commit('availability/setNotAvailableDateRange', {dateRange: dateRange, shifts: this.selectedShifts})
     },
     // getDateArray (startDate, stopDate) {

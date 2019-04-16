@@ -85,7 +85,7 @@
 
         <div class="mt-2 flex flex-wrap">
           <div class="px-3"></div>
-          <button class="rounded-lg bg-yellow-dark shadow-md px-5 py-6 font-bold text-lg hover:text-white"
+          <button class="rounded-lg bg-yellow-dark shadow-md px-5 py-6 font-bold text-lg hover:text-white focus:outline-none"
             @click.prevent="save">Save</button>
         </div>
 
@@ -123,7 +123,6 @@ export default {
         practice: '',
         private_notes: ''
       },
-      appointmentDates: [],
       surgeries: [],
       setFocus: ''
     }
@@ -132,10 +131,17 @@ export default {
     save () {
       // validate dates 
       //! fix validation
-      this.validateDates(this.$moment(this.form.date_from).format('LL'), this.$moment(this.form.date_to).format('LL'), this.form.shift)
-
-      this.$store.commit('dashboard/SET_APPOINTMENT_DATES', {appointmentDates: this.appointmentDates, shifts: [this.form.shift]})
-      this.$store.commit('TOGGLE_APPOINTMENT_MODAL', false)
+      this.validateDates(this.form.date_from, this.form.date_to, this.form.shift)
+      // this.validateDates(this.$moment(this.form.date_from).format('LL'), this.$moment(this.form.date_to).format('LL'), this.form.shift)
+    },
+    getDateArray (start, end) {
+      let arr = new Array();
+      let dt = new Date(start);
+      while (dt <= new Date(end)) {
+          arr.push(this.$moment(new Date(dt)).format('LL'));
+          dt.setDate(dt.getDate() + 1);
+      }
+      return arr;
     },
     validateDates (startDate, endDate, shift) {
       let appointmentDates = []
@@ -146,14 +152,10 @@ export default {
       if (endDate < startDate) {
         return 
       }
-      // get all the dates between startDate and endDate
-      while(startDate <= endDate) {
-        appointmentDates.push(startDate)
-        startDate = this.$moment(this.$moment(startDate).add(1, 'days')._d).format('LL')
-      }
 
-      this.appointmentDates = appointmentDates
-      
+      // get all the dates between startDate and endDate
+      appointmentDates = this.getDateArray(startDate, endDate)
+
       // check all not available dates and their shifts
       for (let i=0;i<notAvailableDates.length;i++) {
         for (let j=0;j<appointmentDates.length;j++) {
@@ -169,6 +171,9 @@ export default {
         // message = "Dates on your appointment clash with dates that you're unavailable"
         message = `"Dates on your appointment clash with dates: ${conflictDates.map(item => item.date)} with ${shift} shift.`
         console.log(message)
+      } else {
+        this.$store.commit('dashboard/SET_APPOINTMENT_DATES', {appointmentDates: appointmentDates, shifts: [shift]})
+        this.$store.commit('TOGGLE_APPOINTMENT_MODAL', false)
       }
     }
   }

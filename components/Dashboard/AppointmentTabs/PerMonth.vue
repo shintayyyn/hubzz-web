@@ -60,6 +60,20 @@
                         class="bg-pink-light p-2 rounded-tr-lg" style="width:25%"></span>
                         <span v-else style="width:25%;"></span>
                     </div>
+                    <div class="flex flex-row flex-no-wrap absolute pin-b pin-r justify-start" style="width:100%">
+                        <span v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('AM'))"
+                        class="bg-yellow p-2 rounded-bl-lg" style="width:25%"></span>
+                        <span v-else style="width:25%;"></span>
+                        <span v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('PM'))"
+                        class="bg-blue-light p-2" style="width:25%"></span>
+                        <span v-else style="width:25%;"></span>
+                        <span v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('WHOLE DAY'))"
+                        class="bg-green-light p-2" style="width:25%"></span>
+                        <span v-else style="width:25%;"></span>
+                        <span v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('OOH'))"
+                        class="bg-orange p-2 rounded-br-lg" style="width:25%"></span>
+                        <span v-else style="width:25%;"></span>
+                    </div>
                 </div>
                 </div>
             </div>
@@ -87,6 +101,20 @@
                         <span v-else style="width:25%;"></span>
                         <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('OOH'))"
                         class="bg-pink-light p-2 rounded-tr-lg" style="width:25%"></span>
+                        <span v-else style="width:25%;"></span>
+                    </div>
+                    <div class="flex flex-row flex-no-wrap absolute pin-b pin-r justify-start" style="width:100%">
+                        <span v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('AM'))"
+                        class="bg-yellow p-2 rounded-bl-lg" style="width:25%"></span>
+                        <span v-else style="width:25%;"></span>
+                        <span v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('PM'))"
+                        class="bg-blue-light p-2" style="width:25%"></span>
+                        <span v-else style="width:25%;"></span>
+                        <span v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('WHOLE DAY'))"
+                        class="bg-green-light p-2" style="width:25%"></span>
+                        <span v-else style="width:25%;"></span>
+                        <span v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('OOH'))"
+                        class="bg-orange p-2 rounded-br-lg" style="width:25%"></span>
                         <span v-else style="width:25%;"></span>
                     </div>
                 </div>
@@ -118,6 +146,20 @@
                         class="bg-pink-light p-2 rounded-tr-lg" style="width:25%"></span>
                         <span v-else style="width:25%;"></span>
                     </div>
+                    <div class="flex flex-row flex-no-wrap absolute pin-b pin-r justify-start" style="width:100%">
+                        <span v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('AM'))"
+                        class="bg-yellow p-2 rounded-bl-lg" style="width:25%"></span>
+                        <span v-else style="width:25%;"></span>
+                        <span v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('PM'))"
+                        class="bg-blue-light p-2" style="width:25%"></span>
+                        <span v-else style="width:25%;"></span>
+                        <span v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('WHOLE DAY'))"
+                        class="bg-green-light p-2" style="width:25%"></span>
+                        <span v-else style="width:25%;"></span>
+                        <span v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('OOH'))"
+                        class="bg-orange p-2 rounded-br-lg" style="width:25%"></span>
+                        <span v-else style="width:25%;"></span>
+                    </div>
                 </div>
                 </div>
             </div>
@@ -145,6 +187,20 @@
                         <span v-else style="width:25%;"></span>
                         <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('OOH'))"
                         class="bg-pink-light p-2 rounded-tr-lg" style="width:25%"></span>
+                        <span v-else style="width:25%;"></span>
+                    </div>
+                    <div class="flex flex-row flex-no-wrap absolute pin-b pin-r justify-start" style="width:100%">
+                        <span v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('AM'))"
+                        class="bg-yellow p-2 rounded-bl-lg" style="width:25%"></span>
+                        <span v-else style="width:25%;"></span>
+                        <span v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('PM'))"
+                        class="bg-blue-light p-2" style="width:25%"></span>
+                        <span v-else style="width:25%;"></span>
+                        <span v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('WHOLE DAY'))"
+                        class="bg-green-light p-2" style="width:25%"></span>
+                        <span v-else style="width:25%;"></span>
+                        <span v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('OOH'))"
+                        class="bg-orange p-2 rounded-br-lg" style="width:25%"></span>
                         <span v-else style="width:25%;"></span>
                     </div>
                 </div>
@@ -176,6 +232,20 @@
                         class="bg-pink-light p-2 rounded-tr-lg" style="width:25%"></span>
                         <span v-else style="width:25%;"></span>
                     </div>
+                    <div class="flex flex-row flex-no-wrap absolute pin-b pin-r justify-start" style="width:100%">
+                        <span v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('AM'))"
+                        class="bg-yellow p-2 rounded-bl-lg" style="width:25%"></span>
+                        <span v-else style="width:25%;"></span>
+                        <span v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('PM'))"
+                        class="bg-blue-light p-2" style="width:25%"></span>
+                        <span v-else style="width:25%;"></span>
+                        <span v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('WHOLE DAY'))"
+                        class="bg-green-light p-2" style="width:25%"></span>
+                        <span v-else style="width:25%;"></span>
+                        <span v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('OOH'))"
+                        class="bg-orange p-2 rounded-br-lg" style="width:25%"></span>
+                        <span v-else style="width:25%;"></span>
+                    </div>
                 </div>
                 </div>
             </div>
@@ -203,6 +273,20 @@
                         <span v-else style="width:25%;"></span>
                         <span v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('OOH'))"
                         class="bg-pink-light p-2 rounded-tr-lg" style="width:25%"></span>
+                        <span v-else style="width:25%;"></span>
+                    </div>
+                    <div class="flex flex-row flex-no-wrap absolute pin-b pin-r justify-start" style="width:100%">
+                        <span v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('AM'))"
+                        class="bg-yellow p-2 rounded-bl-lg" style="width:25%"></span>
+                        <span v-else style="width:25%;"></span>
+                        <span v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('PM'))"
+                        class="bg-blue-light p-2" style="width:25%"></span>
+                        <span v-else style="width:25%;"></span>
+                        <span v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('WHOLE DAY'))"
+                        class="bg-green-light p-2" style="width:25%"></span>
+                        <span v-else style="width:25%;"></span>
+                        <span v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('OOH'))"
+                        class="bg-orange p-2 rounded-br-lg" style="width:25%"></span>
                         <span v-else style="width:25%;"></span>
                     </div>
                 </div>
@@ -234,17 +318,31 @@
                         class="bg-pink-light p-2 rounded-tr-lg" style="width:25%"></span>
                         <span v-else style="width:25%;"></span>
                     </div>
+                    <div class="flex flex-row flex-no-wrap absolute pin-b pin-r justify-start" style="width:100%">
+                        <span v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('AM'))"
+                        class="bg-yellow p-2 rounded-bl-lg" style="width:25%"></span>
+                        <span v-else style="width:25%;"></span>
+                        <span v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('PM'))"
+                        class="bg-blue-light p-2" style="width:25%"></span>
+                        <span v-else style="width:25%;"></span>
+                        <span v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('WHOLE DAY'))"
+                        class="bg-green-light p-2" style="width:25%"></span>
+                        <span v-else style="width:25%;"></span>
+                        <span v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('OOH'))"
+                        class="bg-orange p-2 rounded-br-lg" style="width:25%"></span>
+                        <span v-else style="width:25%;"></span>
+                    </div>
                 </div>
                 </div>
             </div>
         </div> 
 
-        <!-- <div class="flex flex-no-wrap m-5 justify-end">
-            <div class="rounded-full h-16 w-16 flex items-center justify-center bg-yellow-dark font-semibold text-xl cursor-pointer shadow-md hover:text-white"
-            @click="$store.commit('TOGGLE_AVAILABILITY_RANGE_MODAL', true)">
+        <div class="flex flex-no-wrap m-5 justify-end">
+            <div class="rounded-full h-16 w-16 flex items-center focus:outline-none justify-center bg-yellow-dark font-semibold text-xl cursor-pointer shadow-md hover:text-white"
+            @click="$store.commit('TOGGLE_APPOINTMENT_MODAL', true)">
                 +
             </div>
-        </div> -->
+        </div>
     </section>
 </template>
 <script>
@@ -262,6 +360,9 @@ export default {
         },
         notAvailableDates () {
             return this.$store.state.availability.notAvailableDates
+        },
+        appointmentDates () {
+            return this.$store.state.dashboard.appointmentDates
         }
   },
   watch: {

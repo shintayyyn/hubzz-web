@@ -40,14 +40,12 @@ export const mutations = {
         state.week_date_type = payload.type
     },
     SET_APPOINTMENT_DATES (state, payload) {
-        let tempArray = []
+        //! should be labeled with id for grouping
         payload.appointmentDates.forEach(item => {
-            tempArray.push({
+            state.appointmentDates.push({
                 date: item, shifts: payload.shifts
             })
         })
-        console.log(tempArray)
-        // state.appointmentDates = payload
     }
 }
   

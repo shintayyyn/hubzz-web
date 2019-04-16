@@ -49,6 +49,10 @@
                     <div class="border-r-2 border-t-2 bg-pink-light cursor-pointer hover:bg-grey-light" style="width:100%;height:50px;" :key="index"
                         v-if="notAvailableDates.find(item => item.date === $moment(date).format('LL') && item.shifts.includes('AM'))"
                         @click="$store.commit('dashboard/SELECT_WEEK_DATE', {date: date._d, type: 'AM'})"></div>
+                    <div class="border-r-2 border-t-2 cursor-pointer hover:bg-grey-light" style="width:100%;height:50px;" :key="index"
+                        :class="checkShift(appointmentDates.find(item => item.date === $moment(date).format('LL') && item.shifts.includes('AM')))"
+                        v-else-if="appointmentDates.find(item => item.date === $moment(date).format('LL'))"
+                        @click="$store.commit('dashboard/SELECT_WEEK_DATE', {date: date._d, type: 'Available'})"></div>
                     <div class="border-t-2 cursor-pointer bg-grey hover:bg-grey-light" style="width:100%;height:50px;" :key="index"
                         v-else-if="$moment(date).format('LL') === $moment(new Date()).format('LL')"
                         @click="$store.commit('dashboard/SELECT_WEEK_DATE', {date: date._d, type: 'AM'})"></div>
@@ -56,8 +60,6 @@
                          @click="$store.commit('dashboard/SELECT_WEEK_DATE', {date: date._d, type: 'AM'})"
                         v-else></div>
                 </template>
-                
-                
                 
             </div>
             <div class="flex flex-no-wrap mx-5">
@@ -67,6 +69,10 @@
                     <div class="border-r-2 border-t-2 bg-pink-light cursor-pointer hover:bg-grey-light" style="width:100%;height:50px;" :key="index"
                         v-if="notAvailableDates.find(item => item.date === $moment(date).format('LL') && item.shifts.includes('PM'))"
                         @click="$store.commit('dashboard/SELECT_WEEK_DATE', {date: date._d, type: 'PM'})"></div>
+                    <div class="border-r-2 border-t-2 cursor-pointer hover:bg-grey-light" style="width:100%;height:50px;" :key="index"
+                        :class="checkShift(appointmentDates.find(item => item.date === $moment(date).format('LL') && item.shifts.includes('PM')))"
+                        v-else-if="appointmentDates.find(item => item.date === $moment(date).format('LL'))"
+                        @click="$store.commit('dashboard/SELECT_WEEK_DATE', {date: date._d, type: 'Available'})"></div>
                     <div class="border-t-2 cursor-pointer bg-grey hover:bg-grey-light" style="width:100%;height:50px;" :key="index"
                         v-else-if="$moment(date).format('LL') === $moment(new Date()).format('LL')"
                         @click="$store.commit('dashboard/SELECT_WEEK_DATE', {date: date._d, type: 'PM'})"></div>
@@ -83,6 +89,10 @@
                     <div class="border-r-2 border-t-2 bg-pink-light cursor-pointer hover:bg-grey-light" style="width:100%;height:50px;" :key="index"
                         v-if="notAvailableDates.find(item => item.date === $moment(date).format('LL') && item.shifts.includes('WHOLE DAY'))"
                         @click="$store.commit('dashboard/SELECT_WEEK_DATE', {date: date._d, type: 'WHOLE DAY'})"></div>
+                    <div class="border-r-2 border-t-2 cursor-pointer hover:bg-grey-light" style="width:100%;height:50px;" :key="index"
+                        :class="checkShift(appointmentDates.find(item => item.date === $moment(date).format('LL') && item.shifts.includes('WHOLE DAY')))"
+                        v-else-if="appointmentDates.find(item => item.date === $moment(date).format('LL'))"
+                        @click="$store.commit('dashboard/SELECT_WEEK_DATE', {date: date._d, type: 'Available'})"></div>
                     <div class="border-t-2 cursor-pointer bg-grey hover:bg-grey-light" style="width:100%;height:50px;" :key="index"
                         v-else-if="$moment(date).format('LL') === $moment(new Date()).format('LL')"
                         @click="$store.commit('dashboard/SELECT_WEEK_DATE', {date: date._d, type: 'WHOLE DAY'})"></div>
@@ -99,6 +109,10 @@
                     <div class="border-r-2 border-t-2 bg-pink-light cursor-pointer hover:bg-grey-light" style="width:100%;height:50px;" :key="index"
                         v-if="notAvailableDates.find(item => item.date === $moment(date).format('LL') && item.shifts.includes('OOH'))"
                         @click="$store.commit('dashboard/SELECT_WEEK_DATE', {date: date._d, type: 'OOH'})"></div>
+                    <div class="border-r-2 border-t-2 cursor-pointer hover:bg-grey-light" style="width:100%;height:50px;" :key="index"
+                        :class="checkShift(appointmentDates.find(item => item.date === $moment(date).format('LL') && item.shifts.includes('OOH')))"
+                        v-else-if="appointmentDates.find(item => item.date === $moment(date).format('LL'))"
+                        @click="$store.commit('dashboard/SELECT_WEEK_DATE', {date: date._d, type: 'Available'})"></div>
                     <div class="border-t-2 cursor-pointer bg-grey hover:bg-grey-light" style="width:100%;height:50px;" :key="index"
                         v-else-if="$moment(date).format('LL') === $moment(new Date()).format('LL')"
                         @click="$store.commit('dashboard/SELECT_WEEK_DATE', {date: date._d, type: 'OOH'})"></div>
@@ -114,6 +128,10 @@
                  <template  v-for="(date, index) in daysInWeek">
                     <div class="border-r-2 border-t-2 bg-pink-light cursor-pointer hover:bg-grey-light" style="width:100%;height:50px;" :key="index"
                         v-if="notAvailableDates.find(item => item.date === $moment(date).format('LL') && item.shifts.includes('Available'))"
+                        @click="$store.commit('dashboard/SELECT_WEEK_DATE', {date: date._d, type: 'Available'})"></div>
+                    <div class="border-r-2 border-t-2 cursor-pointer hover:bg-grey-light" style="width:100%;height:50px;" :key="index"
+                        :class="checkShift(appointmentDates.find(item => item.date === $moment(date).format('LL') && item.shifts.includes('Available')))"
+                        v-else-if="appointmentDates.find(item => item.date === $moment(date).format('LL'))"
                         @click="$store.commit('dashboard/SELECT_WEEK_DATE', {date: date._d, type: 'Available'})"></div>
                     <div class="border-t-2 cursor-pointer bg-grey hover:bg-grey-light" style="width:100%;height:50px;" :key="index"
                         v-else-if="$moment(date).format('LL') === $moment(new Date()).format('LL')"
@@ -146,6 +164,9 @@ export default {
     computed: {
         notAvailableDates () {
             return this.$store.state.availability.notAvailableDates
+        },
+        appointmentDates () {
+            return this.$store.state.dashboard.appointmentDates
         }
     },
     created () {
@@ -186,6 +207,23 @@ export default {
         getFromTo () {
             this.from = this.$moment(this.daysInWeek[0]).format('MMM')
             this.to = this.$moment(this.daysInWeek[6]).format('MMM')
+        },
+        checkShift (item) {
+            if (item && item.shifts.length) {
+                let type = item.shifts[0]
+                if (type === 'AM') {
+                    return 'bg-yellow'
+                }
+                if (type === 'PM') {
+                    return 'bg-blue-light'
+                }
+                if (type === 'WHOLE DAY') {
+                    return 'bg-green-light'
+                }
+                if (type === 'OOH') {
+                    return 'bg-orange'
+                }
+            }
         }
     }
 }
