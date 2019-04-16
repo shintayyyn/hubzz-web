@@ -63,11 +63,26 @@
     },
 
     methods: {
-      login() {
-        this.$axios.$post('/api/v1/login').then(res => {
-          console.log(res)
-        })
+      async login () {
+        try {
+          await this.$auth.loginWith('local', {
+            data: {
+              email: this.email,
+              password: this.password
+            }
+          })
+        } catch (e) {
+          console.log(e)
+        }
       },
+      // login() {
+      //   this.$axios.$post('/api/v1/login', {email: this.email, password: this.password}).then(res => {
+      //     const token = res.data.token
+      //     this.$axios.setToken(token, 'Bearer')
+      //     this.$auth.$storage.setUniversal('_token.local', 'Bearer ' + token)
+      //     await this.$auth.fetchUser()
+      //   })
+      // },
 
       checkEmail() {
         if (this.email.trim() === '') {

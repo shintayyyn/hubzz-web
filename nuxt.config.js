@@ -76,10 +76,19 @@ export default {
     baseURL: process.env.API_URL
   },
 
+  router: {
+    // middleware: ['auth']
+  },
+
   auth: {
     strategies: {
       local: {
         endpoints: {
+          login: {
+            url: '/api/v1/login',
+            method: 'post',
+            propertyName: 'token'
+          },
           logout: null,
           user: {
             url: '/api/v1/me',

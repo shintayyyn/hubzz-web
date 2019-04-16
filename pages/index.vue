@@ -86,7 +86,7 @@
     },
     async asyncData({ store, redirect }) {
       try {
-        redirect('/dashboard')
+        // redirect('/dashboard')
         // if (!store.$auth.loggedIn) {
         //   redirect('/sign-in')
         //   return
