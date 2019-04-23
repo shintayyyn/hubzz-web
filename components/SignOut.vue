@@ -6,7 +6,7 @@
         <div class="flex justify-center my-1">
             <div class="mx-2">
                 <button class="border border-solid bg-yellow-dark hover:text-white focus:outline-none text-black font-bold py-5 rounded-lg"
-                @click.prevent="$store.commit('TOGGLE_SIGN_OUT_MODAL', false)"
+                @click.prevent="logout"
                 style="width:100px;">Yes</button>
             </div>
             <div class="mx-2">
@@ -19,7 +19,20 @@
 </template>
 <script>
 export default {
-    
+    methods: {
+        async logout () {
+            try {
+                this.$axios
+                    .post('/api/v1/logout')
+                    .then(async res => {
+                        this.$auth.$storage.setUniversal('_token.local', '')
+                        this.$router.push('/auth')
+                    })
+            } catch (e) {
+                console.log(e)
+            }
+        }
+    }
 }
 </script>
 <style scoped>

@@ -5,9 +5,16 @@ Vue.mixin({
       let items = Object.entries(form)
       for (const [key, value] of items) {
         if (!value) {
-          if (lists && !lists.includes(key)) {
-            this.formError.push(key)
+          if (!lists) {
+            this.formError.push(
+              { field: key, message: 'Required', validation: 'required' }
+            )
           }
+          if (lists && !lists.includes(key)) {
+            this.formError.push(
+              { field: key, message: 'Required', validation: 'required' }
+            )
+          } 
         }
       }
       if (this.formError.length > 0) {

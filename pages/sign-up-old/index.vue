@@ -1,7 +1,7 @@
 <template>
   <div class="h-full w-full flex flex-col overflow-auto xl:justify-center">
 
-    <IndexTabControl/>
+    <!-- <IndexTabControl/> -->
 
     <div class="flex justify-center items-start" style="height: 600px;">
       <div class="flex flex-col rounded-lg shadow-lg m-2 px-4 py-10" style="width: 600px;">
@@ -17,13 +17,13 @@
 </template>
 
 <script>
-  import IndexTabControl from '~/components/IndexTabControl.vue'
+  // import IndexTabControl from '~/components/IndexTabControl.vue'
 
   export default {
     layout: 'index',
 
     components: {
-      IndexTabControl
+      // IndexTabControl
     },
 
     async asyncData () {

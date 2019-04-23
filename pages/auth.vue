@@ -1,0 +1,39 @@
+<template>
+  <section class="auth-section">
+
+    <div class="h-full w-full flex flex-col overflow-auto" v-if="$store.state.activeTab === 'forgot_password'">
+      <ForgotPassword />
+    </div>
+
+    <div class="h-full w-full flex flex-col overflow-auto" v-if="$store.state.activeTab === 'sign_up_locum'">
+      <SignUpLocum />
+    </div>
+
+    <div class="h-full w-full flex flex-col overflow-auto xl:justify-center mt-20" v-else>
+      <AuthTab/>
+      <div class="flex justify-center" style="height: 600px;">
+        <SignIn v-if="$store.state.activeTab === 'sign_in'"/>
+        <SignUp v-if="$store.state.activeTab === 'sign_up'"/>
+      </div>
+    </div>
+
+  </section>
+</template>
+
+<script>
+  import AuthTab from '~/components/Auth/AuthTab.vue'
+  import SignIn from '~/components/Auth/SignIn.vue'
+  import SignUp from '~/components/Auth/SignUp.vue'
+  import ForgotPassword from '~/components/Auth/ForgotPassword.vue'
+  import SignUpLocum from '~/components/Auth/SignUp/SignUpLocum.vue'
+  export default {
+    layout: 'auth',
+    components: {
+      AuthTab,
+      SignIn,
+      SignUp,
+      ForgotPassword,
+      SignUpLocum
+    }
+  }
+</script>

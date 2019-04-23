@@ -20,9 +20,11 @@ export default {
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
       { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css?family=Nunito' }
-    ]
+    ],
+    script: [
+      { src: 'https://maps.googleapis.com/maps/api/js?key=AIzaSyCqkvPPMK1lBnOF1NpxUggGFzkfcoaHV24&libraries=places' }
+    ],
   },
-
   /*
   ** Customize the progress-bar color
   */
@@ -77,18 +79,13 @@ export default {
   },
 
   router: {
-    // middleware: ['auth']
+    // middleware: 'isAuthenticated'
   },
 
   auth: {
     strategies: {
       local: {
         endpoints: {
-          login: {
-            url: '/api/v1/login',
-            method: 'post',
-            propertyName: 'token'
-          },
           logout: null,
           user: {
             url: '/api/v1/me',

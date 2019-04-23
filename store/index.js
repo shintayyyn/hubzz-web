@@ -1,4 +1,5 @@
 export const state = () => ({
+  activeTab: 'sign_in',
   months: [],
   drawer: false,
   availability_modal: false,
@@ -14,6 +15,9 @@ export const state = () => ({
 })
 
 export const mutations = {
+  SET_ACTIVE_TAB(state, payload) {
+    state.activeTab = payload
+  },
   CHECK_WINDOW_WIDTH (state) {
     if (process.browser) {
       state.windowWidth = window.innerWidth
