@@ -1,8 +1,9 @@
 <template>
     <section class="forgot-password-section">
         <div class="p-10" >
-            <div class="font-bold text-xl cursor-pointer" v-text="'<'"
-                @click="$store.commit('SET_ACTIVE_TAB', 'sign_in')"></div>
+            <button @click.prevent="$store.commit('SET_ACTIVE_TAB', 'sign_in')" class="focus:outline-none">
+                <svgicon name="arrow-left-solid" height="32" width="32"/>
+            </button>
             <div class="flex flex-col mt-32">
                 <div class="flex justify-center">
                     <div class="font-bold text-3xl" style="width:70%">Reset</div>

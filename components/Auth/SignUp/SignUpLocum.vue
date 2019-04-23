@@ -16,6 +16,7 @@
         <AccountDetails v-if="$store.state.signUp.activeTab === 'account_details'" />
         <AddressDetails v-if="$store.state.signUp.activeTab === 'address_details'" />
         <ProfessionalDetails v-if="$store.state.signUp.activeTab === 'professional_details'" />
+        <CredentialDetails v-if="$store.state.signUp.activeTab === 'credential_details'" />
       </transition>
 
     </div>
@@ -27,6 +28,7 @@
   import AccountDetails from '~/components/Auth/SignUp/SignUpLocum/AccountDetails.vue'
   import AddressDetails from '~/components/Auth/SignUp/SignUpLocum/AddressDetails.vue'
   import ProfessionalDetails from '~/components/Auth/SignUp/SignUpLocum/ProfessionalDetails.vue'
+  import CredentialDetails from '~/components/Auth/SignUp/SignUpLocum/CredentialDetails.vue'
   export default {
     computed: {
       percentage () {
@@ -41,6 +43,9 @@
           case 'professional_details':
             return 75
             break;
+          case 'credential_details':
+            return 100
+            break;
           default:
             return 0
         }
@@ -50,7 +55,8 @@
       ProgressBar,
       AccountDetails,
       AddressDetails,
-      ProfessionalDetails
+      ProfessionalDetails,
+      CredentialDetails
     }
   }
 </script>

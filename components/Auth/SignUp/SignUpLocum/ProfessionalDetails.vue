@@ -170,7 +170,6 @@
                     :class="[setFocus === 'spoken_languages' ? 'border-yellow':'', formError.find(item => item.field === 'spoken_languages') ? 'border-red':'']">
 
                     <div class="flex flex-row flex-wrap">
-                      <div class="rounded-lg bg-yellow font-bold p-2 m-1">English</div>
                       <div class="rounded-lg bg-yellow font-bold p-2 m-1" v-for="(item, index) in selectedSpokenLanguages" :key="`${item}-${index}`">
                         {{item}} <span class="font-bold cursor-pointer text-lg" @click="removeSpokenLanguages(item, index)">X</span>
                       </div>
@@ -202,20 +201,23 @@
                   <div class="text-sm rounded-lg bg-grey-light px-2 py-1">To match available jobs with</div>
                 </div>
                 <div class="flex flex-row flex-wrap justify-between mt-4">
-                  <div class="flex flex-col border-b-2 border-grey-light" style="width:49%"
-                    :class="[setFocus === 'per_hour' ? 'border-yellow':'', formError.find(item => item.field === 'per_hour') ? 'border-red':'']">
-                    <label for="per_hour" class="text-sm">Per hour</label>
-                    <input type="text" name="per_hour" ref="per_hour" id="per_hour" class="focus:outline-none font-bold text-sm text-right"
-                        style="height:40px" @focus="setFocus = 'per_hour'" @blur="setFocus = ''"
-                        @click="setFocus = 'per_hour'">
+                  <div class="relative flex flex-col border-b-2 border-grey-light" style="width:49%"
+                    :class="[setFocus === 'rates_per_hour' ? 'border-yellow':'', formError.find(item => item.field === 'rates_per_hour') ? 'border-red':'']">
+                    <label for="rates_per_hour" class="text-sm">Per hour</label>
+                    <input type="text" name="rates_per_hour" ref="rates_per_hour" id="rates_per_hour" class="focus:outline-none font-bold text-sm text-right"
+                        style="height:40px" @focus="setFocus = 'rates_per_hour'" @blur="setFocus = ''"
+                        @click="setFocus = 'rates_per_hour'" v-model="form.rates_per_hour">
                   </div>
-                  <div class="flex flex-col border-b-2 border-grey-light" style="width:49%"
-                    :class="[setFocus === 'per_session' ? 'border-yellow':'', formError.find(item => item.field === 'per_session') ? 'border-red':'']">
-                    <label for="per_session" class="text-sm">Per session</label>
-                    <input type="text" name="per_session" ref="per_session" id="per_session" class="focus:outline-none font-bold text-sm text-right"
-                        style="height:40px" @focus="setFocus = 'per_session'" @blur="setFocus = ''"
-                        @click="setFocus = 'per_session'">
+                  <div class="relative flex flex-col border-b-2 border-grey-light" style="width:49%"
+                    :class="[setFocus === 'rates_per_session' ? 'border-yellow':'', formError.find(item => item.field === 'rates_per_session') ? 'border-red':'']">
+                    <label for="rates_per_session" class="text-sm">Per session</label>
+                    <input type="text" name="rates_per_session" ref="rates_per_session" id="rates_per_session" class="focus:outline-none font-bold text-sm text-right"
+                        style="height:40px" @focus="setFocus = 'rates_per_session'" @blur="setFocus = ''"
+                        @click="setFocus = 'rates_per_session'" v-model="form.rates_per_session">
                   </div>
+                </div>
+                <div class="absolute pin-t pin-r bg-red text-white p-1 " v-if="formError.find(item => item.field === 'rates_per_hour' || item.field === 'rates_per_session')">
+                  {{formError.find(item => item.field === 'rates_per_hour' || item.field === 'rates_per_session').message}}
                 </div>
               </div>
               
@@ -233,8 +235,8 @@
                     </select>
                   </div>
                 </div>
-                <div class="absolute pin-t pin-r bg-red text-white p-1 " v-if="formError.find(item => item.field === 'profession')">
-                  {{formError.find(item => item.field === 'profession').message}}
+                <div class="absolute pin-t pin-r bg-red text-white p-1 " v-if="formError.find(item => item.field === 'ir35_scoped')">
+                  {{formError.find(item => item.field === 'ir35_scoped').message}}
                 </div>
               </div>
 
@@ -265,7 +267,7 @@ const clinicalSystems = [
     'Adastra', 'Cerner', 'Cleo', 'DGL'
 ]
 const spokenLanguages = [
-  'Chinese', 'Arabic'
+  'English', 'Chinese', 'Arabic'
 ]
 export default {
     mixins: [ clickaway ],
@@ -297,10 +299,8 @@ export default {
             specialty: [],
             clinical_systems: [],
             spoken_languages: [],
-            rates: {
-                per_hour: '',
-                per_session: ''
-            },
+            rates_per_hour: '',
+            rates_per_session: '',
             ir35_scoped: false
         },
         formError: [],
@@ -346,15 +346,16 @@ export default {
       this.form.nhs_smart_card_number = this.professionalDetails.nhs_smart_card_number
       this.form.profession = this.professionalDetails.profession
       this.professionalDetails.specialty.forEach(item => {
-          this.form.specialty.push(item)
+          this.selectedSpecialties.push(item)
       })
       this.professionalDetails.clinical_systems.forEach(item => {
-        this.form.clinical_systems.push(item)
+        this.selectedClinicalSystems.push(item)
       })
       this.professionalDetails.spoken_languages.forEach(item => {
-        this.form.spoken_languages.push(item)
+        this.selectedSpokenLanguages.push(item)
       })
-      this.form.rates = this.professionalDetails.rates
+      this.form.rates_per_hour = this.professionalDetails.rates_per_hour
+      this.form.rates_per_session = this.professionalDetails.rates_per_session
       this.form.ir35_scoped = this.professionalDetails.ir35_scoped
     },
     methods: {
@@ -517,14 +518,22 @@ export default {
       next () {
         try {
           this.formError = []
-          // refactor this.validate
-          console.log(this.form)
-          return
+
+          this.selectedSpecialties.forEach(item => {
+            this.form.specialty.push(item)
+          })
+          this.selectedClinicalSystems.forEach(item => {
+            this.form.clinical_systems.push(item)
+          })
+          this.selectedSpokenLanguages.forEach(item => {
+            this.form.spoken_languages.push(item)
+          })
+
           this.Validate(this.form)
           if (!this.formError.length) {
             // alert('Waiting for API')
             this.$store.commit('signUp/SET_PROFESSIONAL_DETAILS', this.form)
-            // this.$store.commit('signUp/SET_ACTIVE_TAB', 'address_details')
+            this.$store.commit('signUp/SET_ACTIVE_TAB', 'credential_details')
           }
         } catch (e) {
           console.log(e)

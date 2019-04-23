@@ -1,15 +1,22 @@
 <template>
   <section class="auth-section">
 
-    <div class="h-full w-full flex flex-col overflow-auto" v-if="$store.state.activeTab === 'forgot_password'">
+    <div class="h-full w-full flex flex-col overflow-auto xl:justify-center" v-if="$store.state.activeTab === 'forgot_password'">
       <ForgotPassword />
+    </div>
+    
+    <div class="h-full w-full flex flex-col overflow-auto xl:justify-center" v-if="$store.state.activeTab === 'auth_success'">
+      <AuthSuccess />
     </div>
 
     <div class="h-full w-full flex flex-col overflow-auto" v-if="$store.state.activeTab === 'sign_up_locum'">
       <SignUpLocum />
     </div>
 
-    <div class="h-full w-full flex flex-col overflow-auto xl:justify-center mt-20" v-else>
+
+
+    <div class="h-full w-full flex flex-col overflow-auto xl:justify-center mt-20"
+      v-if="$store.state.activeTab !== 'forgot_password' && $store.state.activeTab !== 'sign_up_locum' && $store.state.activeTab !== 'auth_success'">
       <AuthTab/>
       <div class="flex justify-center" style="height: 600px;">
         <SignIn v-if="$store.state.activeTab === 'sign_in'"/>
@@ -26,6 +33,7 @@
   import SignUp from '~/components/Auth/SignUp.vue'
   import ForgotPassword from '~/components/Auth/ForgotPassword.vue'
   import SignUpLocum from '~/components/Auth/SignUp/SignUpLocum.vue'
+  import AuthSuccess from '~/components/Auth/SignUp/SignUpLocum/AuthSuccess.vue'
   export default {
     layout: 'auth',
     components: {
@@ -33,7 +41,8 @@
       SignIn,
       SignUp,
       ForgotPassword,
-      SignUpLocum
+      SignUpLocum,
+      AuthSuccess
     }
   }
 </script>

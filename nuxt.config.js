@@ -79,7 +79,7 @@ export default {
   },
 
   router: {
-    // middleware: 'isAuthenticated'
+    middleware: 'isAuthenticated'
   },
 
   auth: {
