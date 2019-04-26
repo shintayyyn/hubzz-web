@@ -1,12 +1,12 @@
 <template>
   <section>
     <div class="px-10">
-      <AccountTabs />
+      <AccountTabs/>
     </div>
-    <div class="px-10 mt-5" >
-      <AccountGeneralForm v-if="$store.state.account.activeTab === 'general'"/>
-      <AccountProfileForm v-if="$store.state.account.activeTab === 'profile'"/>
-      <AccountChangePasswordForm v-if="$store.state.account.activeTab === 'change-password'"/>
+    <div class="px-10 mt-5">
+      <AccountGeneralForm v-if="$store.state.account.accountTab === 'general'"/>
+      <AccountProfileForm v-if="$store.state.account.accountTab === 'profile'"/>
+      <AccountChangePasswordForm v-if="$store.state.account.accountTab === 'change-password'"/>
     </div>
   </section>
 </template>

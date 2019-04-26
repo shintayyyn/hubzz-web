@@ -1,57 +1,135 @@
 <template>
-  <div class="border-solid rounded-lg shadow-lg">
-    <div class="w-full">
-        <form class="px-8 pt-6 pb-8 mb-4">
-          <div class="mb-4 border-b border-b-2 border-grey py-2" :class="{'border-yellow-dark':setFocus === 'current_password', 'border-red': formError.includes('current_password')}">
-            <label for="current_password" class="block text-sm mb-2">Current Password</label>
-            <em v-if="formError.includes('current_password')" class="text-xs text-red-darker float-right">Required</em>
-            <input @focus="setFocus = 'current_password'" @blur="setFocus = ''" v-model="form.current_password" type="password" name="current_password" id="current_password" class="appearance-none bg-transparent border-none w-full text-grey-darker mr-3 py-1 px-2 leading-tight focus:outline-none">
+  <div class="border-solid rounded-lg shadow-lg p-8">
+    <form class="w-full">
+      <div class="relative flex flex-col mt-8">
+        <div class="flex flex-row justify-between">
+          <label for="current_password" class="text-sm" style="width:50%">Current Password</label>
+        </div>
+        <div class="flex flex-row justify-between mt-4">
+          <div
+            class="flex flex-col border-b-2 border-grey-light"
+            style="width:100%"
+            :class="[setFocus === 'current_password' ? 'border-yellow':'', formError.find(item => item.field === 'current_password') ? 'border-red':'']"
+          >
+            <input
+              type="password"
+              name="current_password"
+              id="current_password"
+              ref="current_password"
+              class="focus:outline-none font-bold text-sm"
+              style="height:40px;"
+              @focus="setFocus = 'current_password'"
+              @blur="setFocus = ''"
+              v-model="form.current_password"
+            >
           </div>
-          <div class="mb-4 border-b border-b-2 border-grey py-2" :class="{'border-yellow-dark':setFocus === 'new_password', 'border-red': formError.includes('new_password')}">
-            <label for="new_password" class="block text-sm mb-2">New Password</label>
-            <em v-if="formError.includes('new_password')" class="text-xs text-red-darker float-right">Required</em>
-            <input @focus="setFocus = 'new_password'" @blur="setFocus = ''" v-model="form.new_password" type="password" name="new_password" id="new_password" class="appearance-none bg-transparent border-none w-full text-grey-darker mr-3 py-1 px-2 leading-tight focus:outline-none">
-          </div>
-          <div class="mb-4 border-b border-b-2 border-grey py-2" :class="{'border-yellow-dark':setFocus === 'confirm_new_password', 'border-red': formError.includes('confirm_new_password')}">
-            <label for="confirm_new_password" class="block text-sm mb-2">Repeat new password to confirm</label>
-            <em v-if="formError.includes('confirm_new_password')" class="text-xs text-red-darker float-right">Required</em>
-            <input @focus="setFocus = 'confirm_new_password'" @blur="setFocus = ''" v-model="form.confirm_new_password" type="password" name="confirm_new_password" id="confirm_new_password" class="appearance-none bg-transparent border-none w-full text-grey-darker mr-3 py-1 px-2 leading-tight focus:outline-none">
-          </div>
-
-          <div class="text-left mt-5">
-            <button class="bg-yellow-dark hover:text-white focus:outline-none text-black font-bold text-xl p-6 rounded-lg" @click.prevent="update">Update</button>
-          </div>
-
-        </form>
+        </div>
+        <div
+          class="absolute pin-t pin-r bg-red text-white p-1"
+          v-if="formError.find(item => item.field === 'current_password')"
+        >{{formError.find(item => item.field === 'current_password').message}}</div>
       </div>
+
+      <div class="relative flex flex-col mt-8">
+        <div class="flex flex-row justify-between">
+          <label for="new_password" class="text-sm" style="width:50%">New Password</label>
+        </div>
+        <div class="flex flex-row justify-between mt-4">
+          <div
+            class="flex flex-col border-b-2 border-grey-light"
+            style="width:100%"
+            :class="[setFocus === 'new_password' ? 'border-yellow':'', formError.find(item => item.field === 'new_password') ? 'border-red':'']"
+          >
+            <input
+              type="password"
+              name="new_password"
+              id="new_password"
+              ref="new_password"
+              class="focus:outline-none font-bold text-sm"
+              style="height:40px;"
+              @focus="setFocus = 'new_password'"
+              @blur="setFocus = ''"
+              v-model="form.new_password"
+            >
+          </div>
+        </div>
+        <div
+          class="absolute pin-t pin-r bg-red text-white p-1"
+          v-if="formError.find(item => item.field === 'new_password')"
+        >{{formError.find(item => item.field === 'new_password').message}}</div>
+      </div>
+
+      <div class="relative flex flex-col mt-8">
+        <div class="flex flex-row justify-between">
+          <label
+            for="repeat_password"
+            class="text-sm"
+            style="width:50%"
+          >Repeat new password to confirm</label>
+        </div>
+        <div class="flex flex-row justify-between mt-4">
+          <div
+            class="flex flex-col border-b-2 border-grey-light"
+            style="width:100%"
+            :class="[setFocus === 'repeat_password' ? 'border-yellow':'', formError.find(item => item.field === 'repeat_password') ? 'border-red':'']"
+          >
+            <input
+              type="password"
+              name="repeat_password"
+              id="repeat_password"
+              ref="repeat_password"
+              class="focus:outline-none font-bold text-sm"
+              style="height:40px;"
+              @focus="setFocus = 'repeat_password'"
+              @blur="setFocus = ''"
+              v-model="form.repeat_password"
+            >
+          </div>
+        </div>
+        <div
+          class="absolute pin-t pin-r bg-red text-white p-1"
+          v-if="formError.find(item => item.field === 'repeat_password')"
+        >{{formError.find(item => item.field === 'repeat_password').message}}</div>
+      </div>
+
+      <div class="text-left mt-5">
+        <button
+          class="bg-yellow-dark hover:text-white focus:outline-none text-black font-bold text-xl p-6 rounded-lg"
+          @click.prevent="update"
+        >Update</button>
+      </div>
+    </form>
   </div>
 </template>
 <script>
 export default {
-  data () {
+  data() {
     return {
-      loading: false,
       setFocus: '',
       form: {
         current_password: '',
         new_password: '',
-        confirm_new_password: '',
+        repeat_password: '',
       },
       formError: []
     }
   },
   methods: {
-    update () {
-      this.loading = true
+    update() {
       this.formError = []
-      // ! validate locally on this component only
-      this.Validate()
+      this.Validate(this.form)
+      this.ValidatePassword(this.form.new_password, this.form.repeat_password)
       if (!this.formError.length) {
-      } else {
-        this.loading = false
+        // action dispatch to api, return promise
+        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Updated !' })
       }
     }
   }
 }
 </script>
+<style scoped>
+button:active {
+  transform: translate(2px, 2px);
+}
+</style>
 

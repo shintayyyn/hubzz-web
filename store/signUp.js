@@ -31,6 +31,24 @@ export const state = () => ({
         email: '',
         password: '',
         privacy_policy: false
+    },
+    practice_details: {
+        id: '',
+        title: '',
+        address: '',
+        ccg: '',
+        practice_code: ''
+    },
+    practice_account_details: {
+        title: '',
+        first_name: '',
+        last_name: '',
+        suffix: '',
+        role: '',
+        email: '',
+        password: '',
+        repeat_password: '',
+        privacy_policy: false
     }
 })
 
@@ -39,13 +57,13 @@ export const mutations = {
         state.activeTab = payload
     },
     SET_ACCOUNT_DETAILS(state, payload) {
-        state.address_details.title = payload.title
-        state.address_details.first_name = payload.first_name
-        state.address_details.last_name = payload.last_name
-        state.address_details.suffix = payload.suffix
-        state.address_details.gender = payload.gender
-        state.address_details.mobile = payload.mobile
-        state.address_details.landline = payload.landline
+        state.account_details.title = payload.title
+        state.account_details.first_name = payload.first_name
+        state.account_details.last_name = payload.last_name
+        state.account_details.suffix = payload.suffix
+        state.account_details.gender = payload.gender
+        state.account_details.mobile = payload.mobile
+        state.account_details.landline = payload.landline
     },
     SET_ADDRESS_DETAILS(state, payload) {
         state.address_details.post_code = payload.post_code
@@ -107,6 +125,40 @@ export const mutations = {
         state.credential_details.email = ''
         state.credential_details.password = ''
         state.credential_details.privacy_policy = false
+    },
+    SET_PRACTICE_DETAILS(state, payload) {
+        state.id = payload.id
+        state.title = payload.title
+        state.address = payload.address
+        state.ccg = payload.ccg
+        state.practice_code = payload.practice_code
+    },
+    SET_PRACTICE_ACCOUNT_DETAILS(state, payload) {
+        state.title = payload.title,
+        state.first_name = payload.first_name,
+        state.last_name = payload.last_name,
+        state.suffix = payload.suffix,
+        state.role = payload.role,
+        state.email = payload.email,
+        state.password = payload.password,
+        state.repeat_password = payload.repeat_password,
+        state.privacy_policy = payload.privacy_policy
+    },
+    CLEAR_FORM_PRACTICE_DETAILS(state) {
+        state.id = '',
+        state.title = '',
+        state.address = '',
+        state.ccg = '',
+        state.practice_code = '',
+        state.title = '',
+        state.first_name = '',
+        state.last_name = '',
+        state.suffix = '',
+        state.role = '',
+        state.email = '',
+        state.password = '',
+        state.repeat_password = '',
+        state.privacy_policy = ''
     }
 }
 
@@ -117,5 +169,12 @@ export const actions = {
         // API
         console.log(form)
         commit('CLEAR_FORM_DETAILS')
-    }
+    },
+    registeredPractice({state, commit}) {
+        let form = {}
+        form = {...state.practice_details, ...state.practice_account_details}
+        // API
+        console.log(form)
+        commit('CLEAR_FORM_PRACTICE_DETAILS')
+    },
 }

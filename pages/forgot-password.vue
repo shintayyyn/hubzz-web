@@ -1,15 +1,15 @@
 <template>
-  <div>
-    <h1>forgot-password</h1>
-  </div>
+  <section class="forgot-password-section">
+    <ForgotPassword/>
+  </section>
 </template>
-
 <script>
-  export default {
-    layout: 'index',
-
-    async asyncData () {
-      console.log('asyncData pages forgot-password')
-    }
+import ForgotPassword from '@/components/Auth/ForgotPassword'
+export default {
+  layout: 'auth',
+  components: {
+    ForgotPassword
   }
+}
 </script>
+
