@@ -36,11 +36,7 @@
         <div class="text-sm" style="width:10%">File</div>
         <div class="text-sm text-right" style="width:10%"></div>
       </div>
-      <UploadFile
-        v-for="(item, index) in approvedDocuments"
-        :key="`${item}-${index}`"
-        :title="item"
-      />
+      <UploadFile v-for="(item, index) in documents" :key="`${item}-${index}`" :item="item"/>
     </div>
 
     <div class="mt-10 px-5">
@@ -63,10 +59,6 @@
 <script>
 import UploadFile from '@/components/Compliance/UploadFile'
 import OtherUploadFile from '@/components/Compliance/OtherUploadFile'
-const approvedDocuments = [
-  'Passport', 'Medical Indemnity Insurance Certificate',
-  'Basic Life Support Certificate', 'DBS Certificate'
-]
 const otherDocuments = [
   'NMC Number confirmation', 'Enchanced DBS check dated within 3 years', 'Nurse Qualification',
   'Safeguarding Children & Adults - Minimum level 2', 'Safeguarding Children & Adults - Minimum level 3',
@@ -85,7 +77,7 @@ export default {
   },
   data() {
     return {
-      approvedDocuments,
+      // documents,
       otherDocuments,
       form: {
         gmc_nmc_number: {
@@ -98,22 +90,13 @@ export default {
       formError: []
     }
   },
-  methods: {
-    onFileInput(e, data) {
-      console.log(e.target.files[0])
-      let name = e.target.files[0].name
-      // if (e.target.files[0].type !== 'application/pdf') {
-      //   return
-      // }
-      // Send file to API
-      this.form[data].file = e.target.files[0]
-      // Get response
-      this.form[data].date = new Date
-      this.form[data].name = name
-      this.form[data].note = 'notes from HQ'
-      this.form[data].status = 'Pending'
-
+  computed: {
+    documents() {
+      return this.$store.state.compliance.documents
     }
+  },
+  mounted() {
+    console.log(this.documents)
   }
 }
 </script>
