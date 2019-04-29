@@ -33,7 +33,7 @@
                   class="focus:outline-none font-bold text-sm"
                   style="height:40px;"
                   @focus="setFocus = 'email'"
-                  @blur="setFocus = ''"
+                  @blur="validateEmail"
                   v-model="form.email"
                   placeholder="Your email address"
                 >
@@ -78,7 +78,7 @@
           <div class="relative flex flex-col mt-8">
             <div class="flex flex-row justify-between">
               <label
-                for="repeat_password"
+                for="password_confirmation"
                 class="text-sm"
                 style="width:50%"
               >Repeat password to verify</label>
@@ -87,26 +87,26 @@
               <div
                 class="flex flex-col border-b-2 border-grey-light"
                 style="width:100%"
-                :class="[setFocus === 'repeat_password' ? 'border-yellow':'', formError.find(item => item.field === 'repeat_password') ? 'border-red':'']"
+                :class="[setFocus === 'password_confirmation' ? 'border-yellow':'', formError.find(item => item.field === 'password_confirmation') ? 'border-red':'']"
               >
                 <input
                   type="password"
-                  name="repeat_password"
-                  id="repeat_password"
-                  ref="repeat_password"
+                  name="password_confirmation"
+                  id="password_confirmation"
+                  ref="password_confirmation"
                   class="focus:outline-none font-bold text-sm"
                   style="height:40px;"
-                  @focus="setFocus = 'repeat_password'"
+                  @focus="setFocus = 'password_confirmation'"
                   @blur="setFocus = ''"
-                  v-model="form.repeat_password"
+                  v-model="form.password_confirmation"
                   placeholder="Repeat password"
                 >
               </div>
             </div>
             <div
               class="absolute pin-t pin-r bg-red text-white p-1"
-              v-if="formError.find(item => item.field === 'repeat_password')"
-            >{{formError.find(item => item.field === 'repeat_password').message}}</div>
+              v-if="formError.find(item => item.field === 'password_confirmation')"
+            >{{formError.find(item => item.field === 'password_confirmation').message}}</div>
           </div>
 
           <div class="relative flex flex-col mt-8">
@@ -154,7 +154,7 @@ export default {
       form: {
         email: '',
         password: '',
-        repeat_password: '',
+        password_confirmation: '',
         privacy_policy: false,
       },
       formError: [],
@@ -169,21 +169,32 @@ export default {
   mounted() {
     this.form.email = this.credentialDetails.email
     this.form.password = this.credentialDetails.password
-    this.form.repeat_password = this.credentialDetails.repeat_password
+    this.form.password_confirmation = this.credentialDetails.password_confirmation
     this.form.privacy_policy = this.credentialDetails.privacy_policy
   },
   methods: {
+    validateEmail(e) {
+      this.setFocus = ''
+      this.formError = []
+      this.$axios
+        .$post(`/api/v1/valid-email`, { email: e.target.value })
+        .then(res => {
+          console.log(res.message)
+        }).catch(err => {
+          this.formError.push(err.response.data.error_messages[0])
+        })
+    },
     next() {
       try {
         this.formError = []
         this.Validate(this.form)
-        this.ValidatePassword(this.form.password, this.form.repeat_password)
+        this.ValidatePassword(this.form.password, this.form.password_confirmation)
         if (!this.formError.length) {
           // alert('Waiting for API')
           this.$store.commit('signUp/SET_CREDENTIAL_DETAILS', this.form)
           this.$store.dispatch('signUp/registeredLocum')
           // response here
-          this.$router.push('/sign-up/success')
+          // this.$router.push('/sign-up/success')
         }
       } catch (e) {
         console.log(e)

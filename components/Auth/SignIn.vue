@@ -95,7 +95,6 @@ export default {
       try {
         this.formError = []
         this.Validate(this.form)
-        console.log(this.formError)
         if (!this.formError.length) {
           this.$axios
             .$post('/api/v1/login', this.form)
@@ -109,7 +108,6 @@ export default {
             })
             .catch(err => {
               this.formError = err.response.data.errors
-              console.log(this.formError)
             })
         }
       } catch (e) {

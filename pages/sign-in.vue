@@ -56,6 +56,9 @@ export default {
     // SignUpLocum,
     // SignUpPractice,
     // AuthSuccess
+  },
+  mounted() {
+    this.$store.commit('signUp/CLEAR_FORM_DETAILS')
   }
 }
 </script>

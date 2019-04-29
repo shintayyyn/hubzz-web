@@ -22,9 +22,7 @@
             <label for="title" class="text-sm mb-4">Title</label>
             <input
               type="text"
-              name="title"
               ref="title"
-              id="title"
               class="focus:outline-none font-bold text-sm"
               style="height:40px"
               @focus="setFocus = 'title'"
@@ -44,9 +42,7 @@
             <label for="first_name" class="text-sm mb-4">First name</label>
             <input
               type="text"
-              name="first_name"
               ref="first_name"
-              id="first_name"
               class="focus:outline-none font-bold text-sm"
               style="height:40px"
               @focus="setFocus = 'first_name'"
@@ -66,9 +62,7 @@
             <label for="last_name" class="text-sm mb-4">Last name</label>
             <input
               type="text"
-              name="last_name"
               ref="last_name"
-              id="last_name"
               class="focus:outline-none font-bold text-sm"
               style="height:40px"
               @focus="setFocus = 'last_name'"
@@ -88,9 +82,7 @@
             <label for="suffix" class="text-sm mb-4">Suffix</label>
             <input
               type="text"
-              name="suffix"
               ref="suffix"
-              id="suffix"
               class="focus:outline-none font-bold text-sm"
               style="height:40px"
               @focus="setFocus = 'suffix'"
@@ -116,8 +108,8 @@
               v-model="form.gender"
             >
               <option value selected disabled>Select</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
             </select>
             <span
               class="absolute pin-r bg-red text-white p-1"
@@ -126,48 +118,44 @@
           </div>
           <div
             class="relative flex flex-col mt-8 border-b-2 border-grey-light"
-            :class="[setFocus === 'mobile' ? 'border-yellow':'', formError.find(item => item.field === 'mobile') ? 'border-red':'']"
+            :class="[setFocus === 'mobile_number' ? 'border-yellow':'', formError.find(item => item.field === 'mobile_number') ? 'border-red':'']"
           >
-            <label for="mobile" class="text-sm mb-4">Mobile</label>
+            <label for="mobile_number" class="text-sm mb-4">Mobile</label>
             <input
               type="text"
-              name="mobile"
-              ref="mobile"
-              id="mobile"
+              ref="mobile_number"
               class="focus:outline-none font-bold text-sm"
               style="height:40px"
-              @focus="setFocus = 'mobile'"
+              @focus="setFocus = 'mobile_number'"
               @blur="setFocus = ''"
-              v-model="form.mobile"
+              v-model="form.mobile_number"
             >
             <span
               class="z-10 absolute pin-r bg-red text-white p-1"
-              v-if="formError.find(item => item.field === 'mobile')"
-            >{{formError.find(item => item.field === 'mobile').message}}</span>
+              v-if="formError.find(item => item.field === 'mobile_number')"
+            >{{formError.find(item => item.field === 'mobile_number').message}}</span>
             <span
               class="absolute pin-r text-sm rounded-lg bg-grey-light px-2 py-1"
             >In case of emergency</span>
           </div>
           <div
             class="relative flex flex-col mt-8 border-b-2 border-grey-light"
-            :class="[setFocus === 'landline' ? 'border-yellow':'', formError.find(item => item.field === 'landline') ? 'border-red':'']"
+            :class="[setFocus === 'home_number' ? 'border-yellow':'', formError.find(item => item.field === 'home_number') ? 'border-red':'']"
           >
-            <label for="landline" class="text-sm mb-4">Home/Land line number</label>
+            <label for="home_number" class="text-sm mb-4">Home/Land line number</label>
             <input
               type="text"
-              name="landline"
-              ref="landline"
-              id="landline"
+              ref="home_number"
               class="focus:outline-none font-bold text-sm"
               style="height:40px"
-              @focus="setFocus = 'landline'"
+              @focus="setFocus = 'home_number'"
               @blur="setFocus = ''"
-              v-model="form.landline"
+              v-model="form.home_number"
             >
             <span
               class="absolute pin-r bg-red text-white p-1"
-              v-if="formError.find(item => item.field === 'landline')"
-            >{{formError.find(item => item.field === 'landline').message}}</span>
+              v-if="formError.find(item => item.field === 'home_number')"
+            >{{formError.find(item => item.field === 'home_number').message}}</span>
           </div>
         </form>
       </div>
@@ -193,8 +181,8 @@ export default {
         last_name: '',
         suffix: '',
         gender: '',
-        mobile: '',
-        landline: ''
+        mobile_number: '',
+        home_number: ''
       },
       formError: [],
       setFocus: ''
@@ -206,20 +194,20 @@ export default {
     }
   },
   mounted() {
-    console.log(this.accountDetails)
     this.form.title = this.accountDetails.title
     this.form.first_name = this.accountDetails.first_name
     this.form.last_name = this.accountDetails.last_name
     this.form.suffix = this.accountDetails.suffix
     this.form.gender = this.accountDetails.gender
-    this.form.mobile = this.accountDetails.mobile
-    this.form.landline = this.accountDetails.landline
+    this.form.mobile_number = this.accountDetails.mobile_number
+    this.form.home_number = this.accountDetails.home_number
   },
   methods: {
     next() {
       try {
         this.formError = []
-        this.Validate(this.form, ['title', 'suffix', 'landline'])
+        this.Validate(this.form, ['title', 'suffix', 'home_number'])
+        this.ValidateMobile(this.form.mobile_number)
         if (!this.formError.length) {
           // alert('Waiting for API')
           this.$store.commit('signUp/SET_ACCOUNT_DETAILS', this.form)

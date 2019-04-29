@@ -52,6 +52,11 @@ export default {
   },
   mounted() {
     this.$store.commit('signUp/SET_ACTIVE_TAB', 'account_details')
+    // dispatch professions
+    this.$store.dispatch('signUp/getProfessions')
+    this.$store.dispatch('signUp/getQualifications')
+    this.$store.dispatch('signUp/getClinicalSystems')
+    this.$store.dispatch('signUp/getSpokenLanguages')
   },
   components: {
     ProgressBar,

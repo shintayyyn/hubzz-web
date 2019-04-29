@@ -1,24 +1,27 @@
 <template>
   <div class="border-solid rounded-lg shadow-md p-5 mb-5">
-    <div class="flex flex-row flex-wrap justify-start">
+    <div class="flex flex-row overflow-x-auto">
       <div class="text-sm px-1" style="width:10%">{{item.title}}</div>
-      <div class="text-sm px-1" style="width:15%">{{item.dateUploaded | localDate }}</div>
-      <div class="text-sm px-1" style="width:15%"></div>
-      <div style="width:10%;">
+      <div
+        class="text-sm px-1 invisible lg:visible"
+        style="width:15%"
+      >{{item.dateUploaded | localDate }}</div>
+      <div class="text-sm px-1 invisible lg:visible" style="width:15%"></div>
+      <div style="width:10%">
         <div
           class="text-center text-sm font-boeld rounded-full px-1 py-2"
           :class="{ 'bg-orange text-white' : item.status === 'Pending', 'border border-black bg-white text-black' : item.status === 'Empty'}"
         >{{item.status}}</div>
       </div>
-      <div class="text-sm px-1" style="width:30%">{{item.note}}</div>
-      <div class="text-sm px-1" style="width:10%">
+      <div class="text-sm px-1 invisible lg:visible" style="width:30%">{{item.note}}</div>
+      <div class="text-sm px-1 invisible lg:visible" style="width:10%">
         <a
           class="no-underline text-black hover:underline"
           :href="item.imageUrl"
           :download="item.fileName"
         >{{item.fileName | StringMaxLength(10)}}</a>
       </div>
-      <div class="text-sm px-1 text-right" style="width:10%">
+      <div class="text-sm px-1 text-right sm:w-1/2" style="width:10%">
         <input
           type="file"
           :name="`${item.title}_file`"

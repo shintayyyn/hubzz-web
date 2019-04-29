@@ -29,12 +29,12 @@
       <div class="font-bold text-sm ml-4">Documents you need to be approved by hubzz HQ</div>
       <div class="flex flex-row p-5">
         <div class="text-sm" style="width:10%">Type</div>
-        <div class="text-sm" style="width:15%">Date uploaded</div>
-        <div class="text-sm" style="width:15%">Expiry date</div>
-        <div class="text-sm" style="width:10%">Status</div>
-        <div class="text-sm" style="width:30%">Note from hubzz HQ</div>
-        <div class="text-sm" style="width:10%">File</div>
-        <div class="text-sm text-right" style="width:10%"></div>
+        <div class="text-sm invisible lg:visible" style="width:15%">Date uploaded</div>
+        <div class="text-sm invisible lg:visible" style="width:15%">Expiry date</div>
+        <div class="text-sm invisible lg:visible" style="width:10%">Status</div>
+        <div class="text-sm invisible lg:visible" style="width:30%">Note from hubzz HQ</div>
+        <div class="text-sm invisible lg:visible" style="width:10%">File</div>
+        <div class="text-sm invisible lg:visible text-right" style="width:10%"></div>
       </div>
       <UploadFile v-for="(item, index) in documents" :key="`${item}-${index}`" :item="item"/>
     </div>

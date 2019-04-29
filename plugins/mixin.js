@@ -7,9 +7,16 @@ Vue.mixin({
         // check if value is array
         if (Array.isArray(value)) {
           if (value.length === 0) {
-            this.formError.push(
-              { field: key, message: 'Required', validation: 'required'}
-            )
+            if (!lists) {
+              this.formError.push(
+                { field: key, message: 'Required', validation: 'required' }
+              )
+            }
+            if (lists && !lists.includes(key)) {
+              this.formError.push(
+                { field: key, message: 'Required', validation: 'required' }
+              )
+            } 
           } 
         } else {
           if (!value) {
@@ -27,10 +34,10 @@ Vue.mixin({
         }
       }
     },
-    ValidatePassword(password, repeat_password) {
-      if (password !== repeat_password) {
+    ValidatePassword(password, password_confirmation) {
+      if (password !== password_confirmation) {
         this.formError.push(
-          { field: 'repeat_password', message: 'The Password must be the same', validation: 'required'}
+          { field: 'password_confirmation', message: 'The Password must be the same', validation: 'required'}
         )
       }
     },
@@ -48,7 +55,7 @@ Vue.mixin({
       let re = /^[0][1-9]\d{9}$|^[1-9]\d{9}$/g;
       if (!re.test(String(mobile).toLowerCase())) {
         this.formError.push(
-          { field: 'mobile', message: 'Mobile number should contain 10 or 11 numbers only', validation: 'invalid'}
+          { field: 'mobile_number', message: 'Your mobile number is invalid', validation: 'invalid'}
         )
       }
     }
