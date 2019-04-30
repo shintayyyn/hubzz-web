@@ -12,7 +12,7 @@
       </div>
     </div>
     <div class="font-bold" style="font-family:Nunito">Appointments</div>
-    <div class="flex flex-row flex-wrap justify-start">
+    <div class="flex flex-row flex-no-wrap justify-start">
       <Appointments/>
     </div>
     <div class="font-bold" style="font-family:Nunito">Quick Statistics</div>

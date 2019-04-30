@@ -1,0 +1,10 @@
+/* eslint-disable */
+var icon = require('vue-svgicon')
+icon.register({
+  'alert': {
+    width: 16,
+    height: 16,
+    viewBox: '0 0 469.333 469.333',
+    data: '<path pid="0" d="M234.667 32L0 437.333h469.333L234.667 32zM256 373.333h-42.667v-42.667H256v42.667zM213.333 288v-85.333H256V288h-42.667z"/>'
+  }
+})

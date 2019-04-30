@@ -254,11 +254,18 @@ export const actions = {
         this.$axios
             .$post(`/api/v1/register/practice`, form)
             .then(res => {
-                console.log(res)
                 commit('CLEAR_FORM_PRACTICE_DETAILS')
                 this.$router.push('/sign-up/success')
             }).catch(err => {
-                console.log(err)
+                // set formError to store
+                if (err.response && err.response.data && err.response.data.error_messages && err.response.data.error_messages.length > 0) {
+                    const accountDetaiError = err.response.data.error_messages.filter(errorMessage => {
+                        return errorMessage.field === 'first_name' || errorMessage.field === 'last_name'
+                    })
+                    if (accountDetaiError.length > 0) {
+                        commit('SET_ACTIVE_TAB', 'account_details')
+                    }
+                }
             })
     },
 }

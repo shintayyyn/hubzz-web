@@ -1,2 +1,4 @@
 /* eslint-disable */
-require('./arrow-left-solid')
+require('./alert')
+require('./arrow-left')
+require('./arrow-right')
