@@ -38,7 +38,7 @@
                     @focus="setFocus = 'email'"
                     @blur="setFocus = ''"
                     v-model="form.email"
-                    @keyup.enter="login"
+                    @keyup.enter="send"
                   >
                   <span
                     class="absolute pin-r bg-red text-white p-1"

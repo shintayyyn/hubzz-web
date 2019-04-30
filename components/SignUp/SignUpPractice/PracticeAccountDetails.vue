@@ -10,9 +10,7 @@
             <label for="title" class="text-sm mb-4">Title</label>
             <input
               type="text"
-              name="title"
               ref="title"
-              id="title"
               class="focus:outline-none font-bold text-sm"
               style="height:40px"
               @focus="setFocus = 'title'"
@@ -32,9 +30,7 @@
             <label for="first_name" class="text-sm mb-4">First name</label>
             <input
               type="text"
-              name="first_name"
               ref="first_name"
-              id="first_name"
               class="focus:outline-none font-bold text-sm"
               style="height:40px"
               @focus="setFocus = 'first_name'"
@@ -54,9 +50,7 @@
             <label for="last_name" class="text-sm mb-4">Last name</label>
             <input
               type="text"
-              name="last_name"
               ref="last_name"
-              id="last_name"
               class="focus:outline-none font-bold text-sm"
               style="height:40px"
               @focus="setFocus = 'last_name'"
@@ -76,9 +70,7 @@
             <label for="suffix" class="text-sm mb-4">Suffix</label>
             <input
               type="text"
-              name="suffix"
               ref="suffix"
-              id="suffix"
               class="focus:outline-none font-bold text-sm"
               style="height:40px"
               @focus="setFocus = 'suffix'"
@@ -93,23 +85,23 @@
           </div>
           <div
             class="relative flex flex-col mt-8 border-b-2 border-grey-light"
-            :class="[setFocus === 'role' ? 'border-yellow':'', formError.find(item => item.field === 'role') ? 'border-red':'']"
+            :class="[setFocus === 'practice_role' ? 'border-yellow':'', formError.find(item => item.field === 'practice_role') ? 'border-red':'']"
           >
-            <label for="role" class="text-sm mb-4">Role</label>
+            <label for="practice_role" class="text-sm mb-4">Role</label>
             <select
               class="focus:outline-none font-bold text-sm"
               style="height:40px;"
-              @focus="setFocus = 'role'"
+              @focus="setFocus = 'practice_role'"
               @blur="setFocus = ''"
-              v-model="form.role"
+              v-model="form.practice_role"
             >
               <option value selected disabled>Select..</option>
               <option v-for="(item, index) in roles" :key="index" :value="item.value">{{item.label}}</option>
             </select>
             <span
               class="absolute pin-r bg-red text-white p-1"
-              v-if="formError.find(item => item.field === 'role')"
-            >{{formError.find(item => item.field === 'role').message}}</span>
+              v-if="formError.find(item => item.field === 'practice_role')"
+            >{{formError.find(item => item.field === 'practice_role').message}}</span>
           </div>
 
           <div
@@ -119,9 +111,7 @@
             <label for="email" class="text-sm mb-4">Email address</label>
             <input
               type="email"
-              name="email"
               ref="email"
-              id="email"
               class="focus:outline-none font-bold text-sm"
               style="height:40px"
               @focus="setFocus = 'email'"
@@ -142,9 +132,7 @@
             <label for="password" class="text-sm mb-4">Password</label>
             <input
               type="password"
-              name="password"
               ref="password"
-              id="password"
               class="focus:outline-none font-bold text-sm"
               style="height:40px"
               @focus="setFocus = 'password'"
@@ -160,36 +148,28 @@
 
           <div
             class="relative flex flex-col mt-8 border-b-2 border-grey-light"
-            :class="[setFocus === 'repeat_password' ? 'border-yellow':'', formError.find(item => item.field === 'repeat_password') ? 'border-red':'']"
+            :class="[setFocus === 'password_confirmation' ? 'border-yellow':'', formError.find(item => item.field === 'password_confirmation') ? 'border-red':'']"
           >
-            <label for="repeat_password" class="text-sm mb-4">Repeat password to verify</label>
+            <label for="password_confirmation" class="text-sm mb-4">Repeat password to verify</label>
             <input
               type="password"
-              name="repeat_password"
-              ref="repeat_password"
-              id="repeat_password"
+              ref="password_confirmation"
               class="focus:outline-none font-bold text-sm"
               style="height:40px"
-              @focus="setFocus = 'repeat_password'"
+              @focus="setFocus = 'password_confirmation'"
               @blur="setFocus = ''"
-              v-model="form.repeat_password"
+              v-model="form.password_confirmation"
               placeholder="Repeat password"
             >
             <span
               class="absolute pin-r bg-red text-white p-1"
-              v-if="formError.find(item => item.field === 'repeat_password')"
-            >{{formError.find(item => item.field === 'repeat_password').message}}</span>
+              v-if="formError.find(item => item.field === 'password_confirmation')"
+            >{{formError.find(item => item.field === 'password_confirmation').message}}</span>
           </div>
 
           <div class="relative flex flex-col mt-8">
             <div class="flex flex-row justify-start">
-              <input
-                type="checkbox"
-                name="privacy_policy"
-                id="privacy_policy"
-                ref="privacy_policy"
-                v-model="form.privacy_policy"
-              >
+              <input type="checkbox" ref="privacy_policy" v-model="form.privacy_policy">
               <label
                 for="privacy_policy"
                 class="text-sm ml-1"
@@ -221,9 +201,9 @@
 </template>
 <script>
 const roles = [
-  { value: 'partner', label: 'Partner' },
-  { value: 'practice_manager', label: 'Practice Manager' },
-  { value: 'practice_staff', label: 'Practice Staff' }
+  { value: 'Partner', label: 'Partner' },
+  { value: 'Practice Manager', label: 'Practice Manager' },
+  { value: 'Practice Staff', label: 'Practice Staff' }
 ]
 export default {
   data() {
@@ -234,10 +214,10 @@ export default {
         first_name: '',
         last_name: '',
         suffix: '',
-        role: '',
+        practice_role: '',
         email: '',
         password: '',
-        repeat_password: '',
+        password_confirmation: '',
         privacy_policy: false
       },
       formError: [],
@@ -254,10 +234,10 @@ export default {
     this.form.first_name = this.practiceAccountDetails.first_name
     this.form.last_name = this.practiceAccountDetails.last_name
     this.form.suffix = this.practiceAccountDetails.suffix
-    this.form.role = this.practiceAccountDetails.role
+    this.form.practice_role = this.practiceAccountDetails.practice_role
     this.form.email = this.practiceAccountDetails.email
     this.form.password = this.practiceAccountDetails.password
-    this.form.repeat_password = this.practiceAccountDetails.repeat_password
+    this.form.password_confirmation = this.practiceAccountDetails.password_confirmation
     this.form.privacy_policy = this.practiceAccountDetails.privacy_policy
   },
   methods: {
@@ -265,12 +245,12 @@ export default {
       try {
         this.formError = []
         this.Validate(this.form, ['title', 'suffix'])
-        this.ValidatePassword(this.form.password, this.form.repeat_password)
+        this.ValidatePassword(this.form.password, this.form.password_confirmation)
         if (!this.formError.length) {
           this.$store.commit('signUp/SET_PRACTICE_ACCOUNT_DETAILS', this.form)
           this.$store.dispatch('signUp/registeredPractice')
           // response here
-          this.$router.push('/sign-up/success')
+          // this.$router.push('/sign-up/success')
         }
       } catch (e) {
         console.log(e)

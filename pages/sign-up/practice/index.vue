@@ -44,6 +44,7 @@ export default {
   },
   mounted() {
     this.$store.commit('signUp/SET_ACTIVE_TAB', 'practice_details')
+    this.$store.dispatch('signUp/getCCG')
   },
   components: {
     ProgressBar,

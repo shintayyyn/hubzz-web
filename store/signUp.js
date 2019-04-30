@@ -4,6 +4,7 @@ export const state = () => ({
     qualifications: [],
     clinicalSystems: [],
     spokenLanguages: [],
+    ccg: [],
     account_details: {
         title: '',
         first_name: '',
@@ -39,8 +40,8 @@ export const state = () => ({
         privacy_policy: false
     },
     practice_details: {
-        id: '',
-        title: '',
+        practice_id: '',
+        name: '',
         address: '',
         ccg: '',
         practice_code: ''
@@ -50,10 +51,10 @@ export const state = () => ({
         first_name: '',
         last_name: '',
         suffix: '',
-        role: '',
+        practice_role: '',
         email: '',
         password: '',
-        repeat_password: '',
+        password_confirmation: '',
         privacy_policy: false
     }
 })
@@ -77,6 +78,11 @@ export const mutations = {
     SET_SPOKEN_LANGUAGES(state, payload) {
         payload.forEach(item => {
             state.spokenLanguages.push(item)
+        })
+    },
+    SET_CCG(state, payload) {
+        payload.forEach(item => {
+            state.ccg.push(item)
         })
     },
     SET_ACTIVE_TAB(state, payload) {
@@ -152,22 +158,22 @@ export const mutations = {
         state.credential_details.privacy_policy = false
     },
     SET_PRACTICE_DETAILS(state, payload) {
-        state.id = payload.id
-        state.title = payload.title
-        state.address = payload.address
-        state.ccg = payload.ccg
-        state.practice_code = payload.practice_code
+        state.practice_details.practice_id = (payload.practice_id).toString()
+        state.practice_details.name = payload.name
+        state.practice_details.address = payload.address
+        state.practice_details.ccg = payload.ccg
+        state.practice_details.practice_code = payload.practice_code
     },
     SET_PRACTICE_ACCOUNT_DETAILS(state, payload) {
-        state.title = payload.title,
-        state.first_name = payload.first_name,
-        state.last_name = payload.last_name,
-        state.suffix = payload.suffix,
-        state.role = payload.role,
-        state.email = payload.email,
-        state.password = payload.password,
-        state.repeat_password = payload.repeat_password,
-        state.privacy_policy = payload.privacy_policy
+        state.practice_account_details.title = payload.title,
+        state.practice_account_details.first_name = payload.first_name,
+        state.practice_account_details.last_name = payload.last_name,
+        state.practice_account_details.suffix = payload.suffix,
+        state.practice_account_details.practice_role = payload.practice_role,
+        state.practice_account_details.email = payload.email,
+        state.practice_account_details.password = payload.password,
+        state.practice_account_details.password_confirmation = payload.password_confirmation,
+        state.practice_account_details.privacy_policy = payload.privacy_policy
     },
     CLEAR_FORM_PRACTICE_DETAILS(state) {
         state.id = '',
@@ -208,6 +214,11 @@ export const actions = {
             commit('SET_SPOKEN_LANGUAGES', res.data.spoken_languages)
         })
     },
+    getCCG({state, commit}) {
+        this.$axios.$get(`/api/v1/clinical-commissioning-groups`).then(res => {
+            commit('SET_CCG', res.data.clinical_commissioning_groups)
+        })
+    },
     registeredLocum({state, commit}) {
         let form = {}
         let professionForm = {
@@ -240,9 +251,15 @@ export const actions = {
     registeredPractice({state, commit}) {
         let form = {}
         form = {...state.practice_details, ...state.practice_account_details}
-        // API
-        console.log(form)
-        commit('CLEAR_FORM_PRACTICE_DETAILS')
+        this.$axios
+            .$post(`/api/v1/register/practice`, form)
+            .then(res => {
+                console.log(res)
+                commit('CLEAR_FORM_PRACTICE_DETAILS')
+                this.$router.push('/sign-up/success')
+            }).catch(err => {
+                console.log(err)
+            })
     },
 }
 
