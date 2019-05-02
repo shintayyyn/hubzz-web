@@ -191,6 +191,9 @@ export default {
   computed: {
     accountDetails() {
       return this.$store.state.signUp.account_details
+    },
+    accountFormError() {
+      return this.$store.state.signUp.account_detail_form_error
     }
   },
   mounted() {
@@ -201,6 +204,12 @@ export default {
     this.form.gender = this.accountDetails.gender
     this.form.mobile_number = this.accountDetails.mobile_number
     this.form.home_number = this.accountDetails.home_number
+
+    if (this.accountFormError.length > 0) {
+      this.accountFormError.forEach(item => {
+        this.formError.push(item)
+      })
+    }
   },
   methods: {
     next() {
@@ -209,7 +218,6 @@ export default {
         this.Validate(this.form, ['title', 'suffix', 'home_number'])
         this.ValidateMobile(this.form.mobile_number)
         if (!this.formError.length) {
-          // alert('Waiting for API')
           this.$store.commit('signUp/SET_ACCOUNT_DETAILS', this.form)
           this.$store.commit('signUp/SET_ACTIVE_TAB', 'address_details')
         }

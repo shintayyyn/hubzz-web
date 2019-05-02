@@ -164,6 +164,18 @@ export default {
   computed: {
     credentialDetails() {
       return this.$store.state.signUp.credential_details
+    },
+    credentialFormError() {
+      return this.$store.state.signUp.credential_detail_form_error
+    }
+  },
+  watch: {
+    credentialFormError(value) {
+      if (value.length > 0) {
+        value.forEach(item => {
+          this.formError.push(item)
+        })
+      }
     }
   },
   mounted() {
@@ -171,6 +183,12 @@ export default {
     this.form.password = this.credentialDetails.password
     this.form.password_confirmation = this.credentialDetails.password_confirmation
     this.form.privacy_policy = this.credentialDetails.privacy_policy
+
+    if (this.credentialFormError.length > 0) {
+      this.credentialFormError.forEach(item => {
+        this.formError.push(item)
+      })
+    }
   },
   methods: {
     validateEmail(e) {
@@ -190,11 +208,8 @@ export default {
         this.Validate(this.form)
         this.ValidatePassword(this.form.password, this.form.password_confirmation)
         if (!this.formError.length) {
-          // alert('Waiting for API')
           this.$store.commit('signUp/SET_CREDENTIAL_DETAILS', this.form)
           this.$store.dispatch('signUp/registeredLocum')
-          // response here
-          // this.$router.push('/sign-up/success')
         }
       } catch (e) {
         console.log(e)

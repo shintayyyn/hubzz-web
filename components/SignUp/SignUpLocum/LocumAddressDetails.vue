@@ -163,11 +163,9 @@ export default {
     },
     disabledInput() {
       return !this.form.post_code
-    }
-  },
-  watch: {
-    'form.post_code'(value) {
-      this.getPredictions(value)
+    },
+    addressFormError() {
+      return this.$store.state.signUp.address_detail_form_error
     }
   },
   mounted() {
@@ -175,6 +173,12 @@ export default {
     this.form.address_line_1 = this.addressDetails.address_line_1
     this.form.address_line_2 = this.addressDetails.address_line_2
     this.form.address_line_3 = this.addressDetails.address_line_3
+
+    if (this.addressFormError.length > 0) {
+      this.addressFormError.forEach(item => {
+        this.formError.push(item)
+      })
+    }
 
     // this.autocomplete = new google.maps.places.Autocomplete((this.$refs.post_code))
   },
@@ -235,7 +239,6 @@ export default {
         this.formError = []
         this.Validate(this.form, ['address_line_2'])
         if (!this.formError.length) {
-          // alert('Waiting for API')
           this.$store.commit('signUp/SET_ADDRESS_DETAILS', this.form)
           this.$store.commit('signUp/SET_ACTIVE_TAB', 'professional_details')
         }

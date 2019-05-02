@@ -5,7 +5,7 @@
       <div class="flex w-full justify-center xl:justify-start">
         <div class="mb-6 mt-1 mx-4" style="flex: 0 1 600px;">
           <nuxt-link to="/sign-in" class="text-black focus:outline-none">
-            <svgicon name="arrow-left-solid" height="32" width="32"/>
+            <svgicon name="left-arrow" height="32" width="32"/>
           </nuxt-link>
           <div class="mt-1 text-xl font-bold">Sign up for a Locum account</div>
         </div>
@@ -52,7 +52,6 @@ export default {
   },
   mounted() {
     this.$store.commit('signUp/SET_ACTIVE_TAB', 'account_details')
-    // dispatch professions
     this.$store.dispatch('signUp/getProfessions')
     this.$store.dispatch('signUp/getQualifications')
     this.$store.dispatch('signUp/getClinicalSystems')

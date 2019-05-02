@@ -345,18 +345,18 @@
               <div
                 class="relative flex flex-col border-b-2 border-grey-light"
                 style="width:30%"
-                :class="[setFocus === 'rates_per_hour' ? 'border-yellow':'', formError.find(item => item.field === 'rates_per_hour') ? 'border-red':'']"
+                :class="[setFocus === 'rate_per_hour' ? 'border-yellow':'', formError.find(item => item.field === 'rate_per_hour') ? 'border-red':'']"
               >
-                <label for="rates_per_hour" class="text-sm">Per hour</label>
+                <label for="rate_per_hour" class="text-sm">Per hour</label>
                 <input
                   type="text"
-                  ref="rates_per_hour"
+                  ref="rate_per_hour"
                   class="focus:outline-none font-bold text-sm text-right"
                   style="height:40px"
-                  @focus="setFocus = 'rates_per_hour'"
+                  @focus="setFocus = 'rate_per_hour'"
                   @blur="setFocus = ''"
-                  @click="setFocus = 'rates_per_hour'"
-                  v-model="form.rates_per_hour"
+                  @click="setFocus = 'rate_per_hour'"
+                  v-model="form.rate_per_hour"
                 >
               </div>
               <div
@@ -396,8 +396,8 @@
             </div>
             <div
               class="absolute pin-t pin-r bg-red text-white p-1"
-              v-if="formError.find(item => item.field === 'rates_per_hour' || item.field === 'rate_per_half_day_session' || item.field === 'rate_per_whole_day_session')"
-            >{{formError.find(item => item.field === 'rates_per_hour' || item.field === 'rate_per_half_day_session' || item.field === 'rate_per_whole_day_session').message}}</div>
+              v-if="formError.find(item => item.field === 'rate_per_hour' || item.field === 'rate_per_half_day_session' || item.field === 'rate_per_whole_day_session')"
+            >{{formError.find(item => item.field === 'rate_per_hour' || item.field === 'rate_per_half_day_session' || item.field === 'rate_per_whole_day_session').message}}</div>
           </div>
 
           <div class="relative flex flex-col mt-24">
@@ -479,7 +479,7 @@ export default {
         specialty: [],
         clinical_systems: [],
         spoken_languages: [],
-        rates_per_hour: '',
+        rate_per_hour: '',
         rate_per_half_day_session: '',
         rate_per_whole_day_session: '',
         ir35_scoped: false
@@ -531,6 +531,9 @@ export default {
         })
         return index === -1 && spokenLanguage.id && spokenLanguage.name.includes(this.searchSpokenLanguages)
       })
+    },
+    professionalFormError() {
+      return this.$store.state.signUp.professional_detail_form_error
     }
   },
   mounted() {
@@ -538,19 +541,28 @@ export default {
     this.form.mpl_or_npl_number = this.professionalDetails.mpl_or_npl_number
     this.form.nhs_smart_card_id_number = this.professionalDetails.nhs_smart_card_id_number
     this.form.profession = this.professionalDetails.profession
+    this.selectedSpecialties = []
     this.professionalDetails.specialty.forEach(item => {
       this.selectedSpecialties.push(item)
     })
+    this.selectClinicalSystems = []
     this.professionalDetails.clinical_systems.forEach(item => {
       this.selectedClinicalSystems.push(item)
     })
+    this.selectSpokenLanguages = []
     this.professionalDetails.spoken_languages.forEach(item => {
       this.selectedSpokenLanguages.push(item)
     })
-    this.form.rates_per_hour = this.professionalDetails.rates_per_hour
+    this.form.rate_per_hour = this.professionalDetails.rate_per_hour
     this.form.rate_per_half_day_session = this.professionalDetails.rate_per_half_day_session
     this.form.rate_per_whole_day_session = this.professionalDetails.rate_per_whole_day_session
     this.form.ir35_scoped = this.professionalDetails.ir35_scoped
+
+    if (this.professionalFormError.length > 0) {
+      this.professionalFormError.forEach(item => {
+        this.formError.push(item)
+      })
+    }
   },
   methods: {
     hideSpecialties() {
@@ -714,10 +726,8 @@ export default {
         this.selectedSpokenLanguages.forEach(item => {
           this.form.spoken_languages.push(item)
         })
-
         this.Validate(this.form, ['nhs_smart_card_id_number', 'spoken_languages'])
         if (!this.formError.length) {
-          // alert('Waiting for API')
           this.$store.commit('signUp/SET_PROFESSIONAL_DETAILS', this.form)
           this.$store.commit('signUp/SET_ACTIVE_TAB', 'credential_details')
         }
