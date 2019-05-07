@@ -1,8 +1,8 @@
 <template>
   <div class="flex-none p-5 w-full">
     <div class="border border-solid rounded-lg shadow-md">
-      <div class="flex flex-no-wrap w-full h-full" style="height:500px">
-        <div :class="$store.state.mobile ? 'w-full': 'w-3/4'" class="relative py-5 px-2">
+      <div class="flex flex-no-wrap w-full" style="height:500px">
+        <div class="relative py-5 px-2 w-full sm:w-1/2 lg:w-3/4">
           <PerMonth v-if="$store.state.dashboard.appointments_tab === 'per_month'"/>
           <PerWeek v-if="$store.state.dashboard.appointments_tab === 'per_week'"/>
           <div class="absolute pin-b pin-r m-5">
@@ -12,7 +12,7 @@
             >+</div>
           </div>
         </div>
-        <div :class="$store.state.mobile ? 'hidden': 'w-1/4'">
+        <div class="hidden sm:w-1/2 sm:block lg:w-1/2 lg:block xl:max-w-sm">
           <AppointmentsInfo/>
         </div>
       </div>
@@ -28,6 +28,11 @@ export default {
     PerMonth,
     PerWeek,
     AppointmentsInfo
+  },
+  mounted() {
+    // get all appointment dates
+    // get all not available dates
+    // set it to store
   }
 }
 </script>

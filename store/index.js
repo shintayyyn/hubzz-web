@@ -13,6 +13,7 @@ export const state = () => ({
   sign_out_modal: false,
   appointment_modal: false,
   surgery_modal: false,
+  add_surgery_modal: false,
   blur_bg: false,
   blur_bg_2: false,
   mobile: false,
@@ -71,11 +72,14 @@ export const mutations = {
     state.sign_out_modal = payload
   },
   TOGGLE_APPOINTMENT_MODAL(state, payload) {
-    payload ? (state.blur_bg = true) : (state.blur_bg = false)
+    // payload ? (state.blur_bg = true) : (state.blur_bg = false)
     state.appointment_modal = payload
   },
   TOGGLE_SURGERY_MODAL(state, payload) {
     payload ? (state.blur_bg_2 = true) : (state.blur_bg_2 = false)
     state.surgery_modal = payload
   },
+  TOGGLE_ADD_SURGERY_MODAL(state, payload) {
+    state.add_surgery_modal = payload
+  }
 }

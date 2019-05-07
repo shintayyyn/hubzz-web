@@ -43,6 +43,9 @@ export default {
     Reminders,
     Appointments,
     Statistics
+  },
+  mounted() {
+    this.$store.dispatch('signUp/getCCG')
   }
 }
 </script>

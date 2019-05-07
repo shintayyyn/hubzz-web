@@ -1,12 +1,12 @@
 <template>
   <section>
     <div class="flex flex-row flex-wrap mx-1">
-      <div class="w-1/2 lg:w-1/3 text-left">
+      <div class="w-1/2 xl:w-1/3 text-left">
         <div
           class="text-xs lg:text-base"
         >{{$store.state.dashboard.months[selectedMonth]}} {{selectedYear}}</div>
       </div>
-      <div class="w-1/2 text-right lg:w-1/3 lg:text-center">
+      <div class="w-1/2 text-right xl:w-1/3 xl:text-center">
         <span class="cursor-pointer" @click="adjustMonth('previous')">
           <svgicon name="arrow-left" height="15" width="15"/>
         </span>
@@ -15,7 +15,7 @@
           <svgicon name="arrow-right" height="15" width="15"/>
         </span>
       </div>
-      <div class="w-full lg:w-1/3 text-right">
+      <div class="w-full xl:w-1/3 text-right">
         <span
           class="cursor-pointer px-3 text-xs lg:text-base hover:underline"
           :class="$store.state.dashboard.appointments_tab === 'per_month' ? 'py-1 px-3 bg-yellow-dark':''"
@@ -52,50 +52,11 @@
             v-if="item.day === 0"
           >
             <div class="text-xs lg:text-base z-10">{{(item.date)}}</div>
-            <div class="flex flex-row flex-no-wrap absolute pin-t pin-r justify-start w-full">
-              <span
-                v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('AM'))"
-                class="bg-pink-light text-pink-light w-full rounded-tl-lg"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-              <span
-                v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('PM'))"
-                class="bg-pink-light text-pink-light w-full"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-              <span
-                v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('WHOLE DAY'))"
-                class="bg-pink-light text-pink-light w-full"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-              <span
-                v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('OOH'))"
-                class="bg-pink-light text-pink-light w-full rounded-tr-lg"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-            </div>
-            <div class="flex flex-row flex-no-wrap absolute pin-b pin-r justify-start w-full">
-              <span
-                v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('AM'))"
-                class="bg-yellow text-yellow w-full rounded-bl-lg"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-              <span
-                v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('PM'))"
-                class="bg-blue-light text-blue-light w-full"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-              <span
-                v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('WHOLE DAY'))"
-                class="bg-green-light text-green-light w-full"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-              <span
-                v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('OOH'))"
-                class="bg-orange text-orange w-full rounded-br-lg"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-            </div>
+            <PerMonthInfoDateCell
+              :notAvailableDates="notAvailableDates"
+              :appointmentDates="appointmentDates"
+              :item="item"
+            />
           </div>
         </div>
       </div>
@@ -111,50 +72,11 @@
             v-if="item.day === 1"
           >
             <div class="text-xs lg:text-base z-10">{{item.date}}</div>
-            <div class="flex flex-row flex-no-wrap absolute pin-t pin-r justify-start w-full">
-              <span
-                v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('AM'))"
-                class="bg-pink-light text-pink-light w-full rounded-tl-lg"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-              <span
-                v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('PM'))"
-                class="bg-pink-light text-pink-light w-full"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-              <span
-                v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('WHOLE DAY'))"
-                class="bg-pink-light text-pink-light w-full"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-              <span
-                v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('OOH'))"
-                class="bg-pink-light text-pink-light w-full rounded-tr-lg"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-            </div>
-            <div class="flex flex-row flex-no-wrap absolute pin-b pin-r justify-start w-full">
-              <span
-                v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('AM'))"
-                class="bg-yellow text-yellow w-full rounded-bl-lg"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-              <span
-                v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('PM'))"
-                class="bg-blue-light text-blue-light w-full"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-              <span
-                v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('WHOLE DAY'))"
-                class="bg-green-light text-green-light w-full"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-              <span
-                v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('OOH'))"
-                class="bg-orange text-orange w-full rounded-br-lg"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-            </div>
+            <PerMonthInfoDateCell
+              :notAvailableDates="notAvailableDates"
+              :appointmentDates="appointmentDates"
+              :item="item"
+            />
           </div>
         </div>
       </div>
@@ -170,50 +92,11 @@
             v-if="item.day === 2"
           >
             <div class="text-xs lg:text-base z-10">{{(item.date)}}</div>
-            <div class="flex flex-row flex-no-wrap absolute pin-t pin-r justify-start w-full">
-              <span
-                v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('AM'))"
-                class="bg-pink-light text-pink-light w-full rounded-tl-lg"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-              <span
-                v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('PM'))"
-                class="bg-pink-light text-pink-light w-full"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-              <span
-                v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('WHOLE DAY'))"
-                class="bg-pink-light text-pink-light w-full"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-              <span
-                v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('OOH'))"
-                class="bg-pink-light text-pink-light w-full rounded-tr-lg"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-            </div>
-            <div class="flex flex-row flex-no-wrap absolute pin-b pin-r justify-start w-full">
-              <span
-                v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('AM'))"
-                class="bg-yellow text-yellow w-full rounded-bl-lg"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-              <span
-                v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('PM'))"
-                class="bg-blue-light text-blue-light w-full"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-              <span
-                v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('WHOLE DAY'))"
-                class="bg-green-light text-green-light w-full"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-              <span
-                v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('OOH'))"
-                class="bg-orange text-orange w-full rounded-br-lg"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-            </div>
+            <PerMonthInfoDateCell
+              :notAvailableDates="notAvailableDates"
+              :appointmentDates="appointmentDates"
+              :item="item"
+            />
           </div>
         </div>
       </div>
@@ -229,50 +112,11 @@
             v-if="item.day === 3"
           >
             <div class="text-xs lg:text-base z-10">{{item.date}}</div>
-            <div class="flex flex-row flex-no-wrap absolute pin-t pin-r justify-start w-full">
-              <span
-                v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('AM'))"
-                class="bg-pink-light text-pink-light w-full rounded-tl-lg"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-              <span
-                v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('PM'))"
-                class="bg-pink-light text-pink-light w-full"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-              <span
-                v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('WHOLE DAY'))"
-                class="bg-pink-light text-pink-light w-full"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-              <span
-                v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('OOH'))"
-                class="bg-pink-light text-pink-light w-full rounded-tr-lg"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-            </div>
-            <div class="flex flex-row flex-no-wrap absolute pin-b pin-r justify-start w-full">
-              <span
-                v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('AM'))"
-                class="bg-yellow text-yellow w-full rounded-bl-lg"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-              <span
-                v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('PM'))"
-                class="bg-blue-light text-blue-light w-full"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-              <span
-                v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('WHOLE DAY'))"
-                class="bg-green-light text-green-light w-full"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-              <span
-                v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('OOH'))"
-                class="bg-orange text-orange w-full rounded-br-lg"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-            </div>
+            <PerMonthInfoDateCell
+              :notAvailableDates="notAvailableDates"
+              :appointmentDates="appointmentDates"
+              :item="item"
+            />
           </div>
         </div>
       </div>
@@ -288,50 +132,11 @@
             v-if="item.day === 4"
           >
             <div class="text-xs lg:text-base z-10">{{(item.date)}}</div>
-            <div class="flex flex-row flex-no-wrap absolute pin-t pin-r justify-start w-full">
-              <span
-                v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('AM'))"
-                class="bg-pink-light text-pink-light w-full rounded-tl-lg"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-              <span
-                v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('PM'))"
-                class="bg-pink-light text-pink-light w-full"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-              <span
-                v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('WHOLE DAY'))"
-                class="bg-pink-light text-pink-light w-full"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-              <span
-                v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('OOH'))"
-                class="bg-pink-light text-pink-light w-full rounded-tr-lg"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-            </div>
-            <div class="flex flex-row flex-no-wrap absolute pin-b pin-r justify-start w-full">
-              <span
-                v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('AM'))"
-                class="bg-yellow text-yellow w-full rounded-bl-lg"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-              <span
-                v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('PM'))"
-                class="bg-blue-light text-blue-light w-full"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-              <span
-                v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('WHOLE DAY'))"
-                class="bg-green-light text-green-light w-full"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-              <span
-                v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('OOH'))"
-                class="bg-orange text-orange w-full rounded-br-lg"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-            </div>
+            <PerMonthInfoDateCell
+              :notAvailableDates="notAvailableDates"
+              :appointmentDates="appointmentDates"
+              :item="item"
+            />
           </div>
         </div>
       </div>
@@ -347,50 +152,11 @@
             v-if="item.day === 5"
           >
             <div class="text-xs lg:text-base z-10">{{item.date}}</div>
-            <div class="flex flex-row flex-no-wrap absolute pin-t pin-r justify-start w-full">
-              <span
-                v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('AM'))"
-                class="bg-pink-light text-pink-light w-full rounded-tl-lg"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-              <span
-                v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('PM'))"
-                class="bg-pink-light text-pink-light w-full"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-              <span
-                v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('WHOLE DAY'))"
-                class="bg-pink-light text-pink-light w-full"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-              <span
-                v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('OOH'))"
-                class="bg-pink-light text-pink-light w-full rounded-tr-lg"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-            </div>
-            <div class="flex flex-row flex-no-wrap absolute pin-b pin-r justify-start w-full">
-              <span
-                v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('AM'))"
-                class="bg-yellow text-yellow w-full rounded-bl-lg"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-              <span
-                v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('PM'))"
-                class="bg-blue-light text-blue-light w-full"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-              <span
-                v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('WHOLE DAY'))"
-                class="bg-green-light text-green-light w-full"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-              <span
-                v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('OOH'))"
-                class="bg-orange text-orange w-full rounded-br-lg"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-            </div>
+            <PerMonthInfoDateCell
+              :notAvailableDates="notAvailableDates"
+              :appointmentDates="appointmentDates"
+              :item="item"
+            />
           </div>
         </div>
       </div>
@@ -406,50 +172,11 @@
             v-if="item.day === 6"
           >
             <div class="text-xs lg:text-base z-10">{{item.date}}</div>
-            <div class="flex flex-row flex-no-wrap absolute pin-t pin-r justify-start w-full">
-              <span
-                v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('AM'))"
-                class="bg-pink-light text-pink-light w-full rounded-tl-lg"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-              <span
-                v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('PM'))"
-                class="bg-pink-light text-pink-light w-full"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-              <span
-                v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('WHOLE DAY'))"
-                class="bg-pink-light text-pink-light w-full"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-              <span
-                v-if="notAvailableDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('OOH'))"
-                class="bg-pink-light text-pink-light w-full rounded-tr-lg"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-            </div>
-            <div class="flex flex-row flex-no-wrap absolute pin-b pin-r justify-start w-full">
-              <span
-                v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('AM'))"
-                class="bg-yellow text-yellow w-full rounded-bl-lg"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-              <span
-                v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('PM'))"
-                class="bg-blue-light text-blue-light w-full"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-              <span
-                v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('WHOLE DAY'))"
-                class="bg-green-light text-green-light w-full"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-              <span
-                v-if="appointmentDates.find(date => date.date === $moment(item.fullDate).format('LL') && date.shifts.includes('OOH'))"
-                class="bg-orange text-orange w-full rounded-br-lg"
-              >.</span>
-              <span v-else class="w-full text-white">.</span>
-            </div>
+            <PerMonthInfoDateCell
+              :notAvailableDates="notAvailableDates"
+              :appointmentDates="appointmentDates"
+              :item="item"
+            />
           </div>
         </div>
       </div>
@@ -457,7 +184,11 @@
   </section>
 </template>
 <script>
+import PerMonthInfoDateCell from '@/components/Dashboard/AppointmentTabs/PerMonthInfoDateCell'
 export default {
+  components: {
+    PerMonthInfoDateCell
+  },
   data() {
     return {
       selectedMonth: null,
@@ -481,7 +212,10 @@ export default {
       this.getDaysInMonth(value, this.selectedYear)
     }
   },
-  created() {
+  mounted() {
+    // dispatch the appointment dates from store/api
+    // set it to store
+
     // get current month and year
     let d = new Date()
     this.selectedMonth = d.getMonth()

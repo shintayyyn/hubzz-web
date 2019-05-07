@@ -4,7 +4,7 @@
       <AppSideBar :class="[$store.state.blur_bg ? 'blurClass' : '', 'bgClass']"/>
     </div>
     <AppToggleSideBar v-if="$store.state.drawer"/>
-    <div class="content">
+    <div class="relative content" style="height:auto">
       <div :class="[$store.state.blur_bg ? 'blurClass' : '', 'bgClass']">
         <!-- <div v-if="$store.state.mobile" class="float-left text-xs font-thin font-sans m-5 text-right cursor-pointer" @click="$store.commit('TOGGLE_DRAWER', true)">
           Hamburger
@@ -15,12 +15,10 @@
         <div class="text-xs font-thin font-sans m-5 text-right">kpabad.halcyondigital@gmail.com</div>
         <nuxt/>
       </div>
-      <transition name="slide">
-        <AvailabilityModal v-if="$store.state.availability_modal"/>
-        <AvailabilityRangeModal v-if="$store.state.availability_range_modal"/>
-        <AddInvoiceModal v-if="$store.state.invoice_modal"/>
-        <AppointmentModal v-if="$store.state.appointment_modal"/>
-      </transition>
+      <AvailabilityModal v-if="$store.state.availability_modal"/>
+      <AvailabilityRangeModal v-if="$store.state.availability_range_modal"/>
+      <AddInvoiceModal v-if="$store.state.invoice_modal"/>
+      <AppointmentModal v-if="$store.state.appointment_modal"/>
       <div
         v-if="$store.state.sign_out_modal"
         class="absolute pin-t"
@@ -49,7 +47,7 @@ export default {
     AvailabilityRangeModal,
     AddInvoiceModal,
     AppointmentModal,
-    SignOut
+    SignOut,
   },
   middleware: 'isAuthenticated',
   beforeCreate() {
@@ -99,7 +97,6 @@ body {
 
 div.content {
   margin-left: 200px;
-  margin-bottom: 50px;
   padding: 1px;
   height: 100%;
 }
@@ -121,15 +118,15 @@ div.content {
     float: none;
   }
 }
-.slide-enter-active,
+/* .slide-enter-active,
 .slide-leave-active {
-  transition: all 0.3s ease-in-out;
+  transition: width 0.3s ease-in-out;
 }
 .slide-enter,
 .slide-leave-to {
   transform: translateX(50px);
   opacity: 0;
-}
+} */
 .slide-up-enter-active,
 .slide-up-leave-active {
   transition: all 0.3s ease-in-out;

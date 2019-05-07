@@ -1,224 +1,202 @@
 <template>
   <section>
-    <div class="flex flex-row flex-wrap justify-between">
-      <div class="m-1">
-        <div>{{from}} {{selectedYear}} - {{to}} {{selectedYear}}</div>
+    <div class="flex flex-row flex-wrap mx-1">
+      <div class="w-1/2 lg:w-1/3 text-left">
+        <div class="text-xs lg:text-base">{{from}} {{selectedYear}} - {{to}} {{selectedYear}}</div>
       </div>
-      <div class="m-1">
-        <span class="cursor-pointer" @click="adjustWeek('previous')" v-text="'<'"></span>
+      <div class="w-1/2 text-right lg:w-1/3 lg:text-center">
+        <span class="cursor-pointer" @click="adjustWeek('previous')">
+          <svgicon name="arrow-left" height="15" width="15"/>
+        </span>
         <span class="mx-4"></span>
-        <span class="cursor-pointer" @click="adjustWeek('next')" v-text="'>'"></span>
+        <span class="cursor-pointer" @click="adjustWeek('next')">
+          <svgicon name="arrow-right" height="15" width="15"/>
+        </span>
       </div>
-      <div class="m-1">
+      <div class="w-full lg:w-1/3 text-right">
         <span
-          class="cursor-pointer px-3 text-sm hover:underline"
+          class="cursor-pointer px-3 text-xs lg:text-base hover:underline"
           :class="$store.state.dashboard.appointments_tab === 'per_month' ? 'py-1 px-3 bg-yellow-dark':''"
           @click="$store.commit('dashboard/TOGGLE_APPOINTMENTS_TAB', 'per_month')"
         >Month</span>
         <span
-          class="cursor-pointer px-3 text-sm hover:underline"
+          class="cursor-pointer px-3 text-xs lg:text-base hover:underline"
           :class="$store.state.dashboard.appointments_tab === 'per_week' ? 'py-1 px-3 bg-yellow-dark':''"
           @click="$store.commit('dashboard/TOGGLE_APPOINTMENTS_TAB', 'per_week')"
         >Week</span>
       </div>
     </div>
 
-    <div
-      class="flex flex-row flex-no-wrap mt-5 text-xs sm:text-sm md:text-md lg:text-lg xl:text-xl"
-    >
-      <div class="text-grey font-bold ml-1" style="min-width:100px;min-height:50px;"></div>
-      <div class="text-grey font-bold ml-1" style="width:100%">SUN</div>
-      <div class="text-grey font-bold ml-1" style="width:100%">MON</div>
-      <div class="text-grey font-bold ml-1" style="width:100%">TUE</div>
-      <div class="text-grey font-bold ml-1" style="width:100%">WED</div>
-      <div class="text-grey font-bold ml-1" style="width:100%">THU</div>
-      <div class="text-grey font-bold ml-1" style="width:100%">FRI</div>
-      <div class="text-grey font-bold ml-1" style="width:100%">SAT</div>
+    <div class="flex flex-no-wrap mx-1 mt-5 text-xs lg:text-base">
+      <div class="w-full text-center text-grey font-bold"></div>
+      <div class="w-full text-center text-grey font-bold">SUN</div>
+      <div class="w-full text-center text-grey font-bold">MON</div>
+      <div class="w-full text-center text-grey font-bold">TUE</div>
+      <div class="w-full text-center text-grey font-bold">WED</div>
+      <div class="w-full text-center text-grey font-bold">THU</div>
+      <div class="w-full text-center text-grey font-bold">FRI</div>
+      <div class="w-full text-center text-grey font-bold">SAT</div>
     </div>
 
-    <div
-      class="flex flex-row flex-no-wrap mt-2 text-xs sm:text-sm md:text-sm lg:text-sm xl:text-sm"
-    >
-      <div class="text-grey-darkest ml-1" style="min-width:100px;min-height:50px;"></div>
+    <div class="flex flex-no-wrap mx-1 mt-5 text-xs lg:text-base">
+      <div class="w-full text-center text-grey-darkest"></div>
       <div
-        class="text-grey-darkest ml-1"
-        style="width:100%"
+        class="w-full text-center text-grey-darkest"
         v-for="(date, index) in daysInWeek"
         :key="index"
       >{{$moment(date).format('DD')}}</div>
     </div>
 
-    <div
-      class="flex flex-row flex-no-wrap mt-5 text-xs sm:text-sm md:text-sm lg:text-sm xl:text-sm"
-    >
-      <div style="min-width:100px;min-height:50px;" v-if="true">AM</div>
+    <div class="flex flex-no-wrap mx-1 mt-5 text-xs lg:text-base">
+      <div class="w-full" style="min-height:50px;">AM</div>
 
       <template v-for="(date, index) in daysInWeek">
         <div
-          class="border-r-2 border-t-2 bg-pink-light cursor-pointer hover:bg-grey-light"
-          style="width:100%;"
+          class="w-full border-r-2 border-t-2 bg-pink-light cursor-pointer hover:bg-grey-light"
           :key="index"
           v-if="notAvailableDates.find(item => item.date === $moment(date).format('LL') && item.shifts.includes('AM'))"
           @click="$store.commit('dashboard/SELECT_WEEK_DATE', {date: date._d, type: 'AM'})"
         ></div>
         <div
-          class="border-r-2 border-t-2 cursor-pointer hover:bg-grey-light"
-          style="width:100%;"
+          class="w-full border-r-2 border-t-2 cursor-pointer hover:bg-grey-light"
           :key="index"
           :class="checkShift(appointmentDates.find(item => item.date === $moment(date).format('LL') && item.shifts.includes('AM')))"
           v-else-if="appointmentDates.find(item => item.date === $moment(date).format('LL'))"
-          @click="$store.commit('dashboard/SELECT_WEEK_DATE', {date: date._d, type: 'Available'})"
+          @click="$store.commit('dashboard/SELECT_WEEK_DATE', {date: date._d, type: 'AM'})"
         ></div>
         <div
-          class="border-t-2 cursor-pointer bg-grey hover:bg-grey-light"
-          style="width:100%;"
+          class="w-full border-t-2 cursor-pointer bg-grey hover:bg-grey-light"
           :key="index"
           v-else-if="$moment(date).format('LL') === $moment(new Date()).format('LL')"
           @click="$store.commit('dashboard/SELECT_WEEK_DATE', {date: date._d, type: 'AM'})"
         ></div>
         <div
-          class="border-t-2 cursor-pointer hover:bg-grey-light"
-          style="width:100%;"
+          class="w-full border-t-2 cursor-pointer hover:bg-grey-light"
           :key="index"
           @click="$store.commit('dashboard/SELECT_WEEK_DATE', {date: date._d, type: 'AM'})"
           v-else
         ></div>
       </template>
     </div>
-    <div class="flex flex-row flex-no-wrap text-xs sm:text-sm md:text-sm lg:text-sm xl:text-sm">
-      <div style="min-width:100px;min-height:50px;" v-if="true">PM</div>
+
+    <div class="flex flex-no-wrap mx-1 text-xs lg:text-base">
+      <div class="w-full" style="min-height:50px;" v-if="true">PM</div>
 
       <template v-for="(date, index) in daysInWeek">
         <div
-          class="border-r-2 border-t-2 bg-pink-light cursor-pointer hover:bg-grey-light"
-          style="width:100%;"
+          class="w-full border-r-2 border-t-2 bg-pink-light cursor-pointer hover:bg-grey-light"
           :key="index"
           v-if="notAvailableDates.find(item => item.date === $moment(date).format('LL') && item.shifts.includes('PM'))"
           @click="$store.commit('dashboard/SELECT_WEEK_DATE', {date: date._d, type: 'PM'})"
         ></div>
         <div
-          class="border-r-2 border-t-2 cursor-pointer hover:bg-grey-light"
-          style="width:100%;"
+          class="w-full border-r-2 border-t-2 cursor-pointer hover:bg-grey-light"
           :key="index"
           :class="checkShift(appointmentDates.find(item => item.date === $moment(date).format('LL') && item.shifts.includes('PM')))"
           v-else-if="appointmentDates.find(item => item.date === $moment(date).format('LL'))"
           @click="$store.commit('dashboard/SELECT_WEEK_DATE', {date: date._d, type: 'Available'})"
         ></div>
         <div
-          class="border-t-2 cursor-pointer bg-grey hover:bg-grey-light"
-          style="width:100%;"
+          class="w-full border-t-2 cursor-pointer bg-grey hover:bg-grey-light"
           :key="index"
           v-else-if="$moment(date).format('LL') === $moment(new Date()).format('LL')"
           @click="$store.commit('dashboard/SELECT_WEEK_DATE', {date: date._d, type: 'PM'})"
         ></div>
         <div
-          class="border-t-2 cursor-pointer hover:bg-grey-light"
-          style="width:100%;"
+          class="w-full border-t-2 cursor-pointer hover:bg-grey-light"
           :key="index"
           @click="$store.commit('dashboard/SELECT_WEEK_DATE', {date: date._d, type: 'PM'})"
           v-else
         ></div>
       </template>
     </div>
-    <div class="flex flex-row flex-no-wrap text-xs sm:text-sm md:text-sm lg:text-sm xl:text-sm">
-      <div style="min-width:100px;min-height:50px;" v-if="true">Whole-day</div>
+    <div class="flex flex-no-wrap mx-1 text-xs lg:text-base">
+      <div class="w-full" style="min-height:50px;" v-if="true">Whole-day</div>
 
       <template v-for="(date, index) in daysInWeek">
         <div
-          class="border-r-2 border-t-2 bg-pink-light cursor-pointer hover:bg-grey-light"
-          style="width:100%;"
+          class="w-full border-r-2 border-t-2 bg-pink-light cursor-pointer hover:bg-grey-light"
           :key="index"
           v-if="notAvailableDates.find(item => item.date === $moment(date).format('LL') && item.shifts.includes('WHOLE DAY'))"
           @click="$store.commit('dashboard/SELECT_WEEK_DATE', {date: date._d, type: 'WHOLE DAY'})"
         ></div>
         <div
-          class="border-r-2 border-t-2 cursor-pointer hover:bg-grey-light"
-          style="width:100%;"
+          class="w-full border-r-2 border-t-2 cursor-pointer hover:bg-grey-light"
           :key="index"
           :class="checkShift(appointmentDates.find(item => item.date === $moment(date).format('LL') && item.shifts.includes('WHOLE DAY')))"
           v-else-if="appointmentDates.find(item => item.date === $moment(date).format('LL'))"
           @click="$store.commit('dashboard/SELECT_WEEK_DATE', {date: date._d, type: 'Available'})"
         ></div>
         <div
-          class="border-t-2 cursor-pointer bg-grey hover:bg-grey-light"
-          style="width:100%;"
+          class="w-full border-t-2 cursor-pointer bg-grey hover:bg-grey-light"
           :key="index"
           v-else-if="$moment(date).format('LL') === $moment(new Date()).format('LL')"
           @click="$store.commit('dashboard/SELECT_WEEK_DATE', {date: date._d, type: 'WHOLE DAY'})"
         ></div>
         <div
-          class="border-t-2 cursor-pointer hover:bg-grey-light"
-          style="width:100%;"
+          class="w-full border-t-2 cursor-pointer hover:bg-grey-light"
           :key="index"
           @click="$store.commit('dashboard/SELECT_WEEK_DATE', {date: date._d, type: 'WHOLE DAY'})"
           v-else
         ></div>
       </template>
     </div>
-    <div class="flex flex-row flex-no-wrap text-xs sm:text-sm md:text-sm lg:text-sm xl:text-sm">
-      <div style="min-width:100px;min-height:50px;" v-if="true">OOH</div>
+    <div class="flex flex-no-wrap mx-1 text-xs lg:text-base">
+      <div class="w-full" style="min-height:50px;" v-if="true">OOH</div>
 
       <template v-for="(date, index) in daysInWeek">
         <div
-          class="border-r-2 border-t-2 bg-pink-light cursor-pointer hover:bg-grey-light"
-          style="width:100%;"
+          class="w-full border-r-2 border-t-2 bg-pink-light cursor-pointer hover:bg-grey-light"
           :key="index"
           v-if="notAvailableDates.find(item => item.date === $moment(date).format('LL') && item.shifts.includes('OOH'))"
           @click="$store.commit('dashboard/SELECT_WEEK_DATE', {date: date._d, type: 'OOH'})"
         ></div>
         <div
-          class="border-r-2 border-t-2 cursor-pointer hover:bg-grey-light"
-          style="width:100%;"
+          class="w-full border-r-2 border-t-2 cursor-pointer hover:bg-grey-light"
           :key="index"
           :class="checkShift(appointmentDates.find(item => item.date === $moment(date).format('LL') && item.shifts.includes('OOH')))"
           v-else-if="appointmentDates.find(item => item.date === $moment(date).format('LL'))"
           @click="$store.commit('dashboard/SELECT_WEEK_DATE', {date: date._d, type: 'Available'})"
         ></div>
         <div
-          class="border-t-2 cursor-pointer bg-grey hover:bg-grey-light"
-          style="width:100%;"
+          class="w-full border-t-2 cursor-pointer bg-grey hover:bg-grey-light"
           :key="index"
           v-else-if="$moment(date).format('LL') === $moment(new Date()).format('LL')"
           @click="$store.commit('dashboard/SELECT_WEEK_DATE', {date: date._d, type: 'OOH'})"
         ></div>
         <div
-          class="border-t-2 cursor-pointer hover:bg-grey-light"
-          style="width:100%;"
+          class="w-full border-t-2 cursor-pointer hover:bg-grey-light"
           :key="index"
           @click="$store.commit('dashboard/SELECT_WEEK_DATE', {date: date._d, type: 'OOH'})"
           v-else
         ></div>
       </template>
     </div>
-    <div class="flex flex-row flex-no-wrap text-xs sm:text-sm md:text-sm lg:text-sm xl:text-sm">
-      <div style="min-width:100px;min-height:50px;" v-if="true">Available</div>
+    <div class="flex flex-no-wrap mx-1 text-xs lg:text-base">
+      <div class="w-full" style="min-height:50px;" v-if="true">Available</div>
 
       <template v-for="(date, index) in daysInWeek">
         <div
-          class="border-r-2 border-t-2 bg-pink-light cursor-pointer hover:bg-grey-light"
-          style="width:100%;"
+          class="w-full border-r-2 border-t-2 bg-pink-light cursor-pointer hover:bg-grey-light"
           :key="index"
           v-if="notAvailableDates.find(item => item.date === $moment(date).format('LL') && item.shifts.includes('Available'))"
           @click="$store.commit('dashboard/SELECT_WEEK_DATE', {date: date._d, type: 'Available'})"
         ></div>
         <div
-          class="border-r-2 border-t-2 cursor-pointer hover:bg-grey-light"
-          style="width:100%;"
+          class="w-full border-r-2 border-t-2 cursor-pointer hover:bg-grey-light"
           :key="index"
           :class="checkShift(appointmentDates.find(item => item.date === $moment(date).format('LL') && item.shifts.includes('Available')))"
           v-else-if="appointmentDates.find(item => item.date === $moment(date).format('LL'))"
           @click="$store.commit('dashboard/SELECT_WEEK_DATE', {date: date._d, type: 'Available'})"
         ></div>
         <div
-          class="border-t-2 cursor-pointer bg-grey hover:bg-grey-light"
-          style="width:100%;"
+          class="w-full border-t-2 cursor-pointer bg-grey hover:bg-grey-light"
           :key="index"
           v-else-if="$moment(date).format('LL') === $moment(new Date()).format('LL')"
           @click="$store.commit('dashboard/SELECT_WEEK_DATE', {date: date._d, type: 'Available'})"
         ></div>
         <div
-          class="border-t-2 cursor-pointer hover:bg-grey-light"
-          style="width:100%;"
+          class="w-full border-t-2 cursor-pointer hover:bg-grey-light"
           :key="index"
           @click="$store.commit('dashboard/SELECT_WEEK_DATE', {date: date._d, type: 'Available'})"
           v-else

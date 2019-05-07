@@ -56,6 +56,16 @@ Vue.mixin({
           { field: 'mobile_number', message: 'Your mobile number is invalid', validation: 'invalid'}
         )
       }
+    },
+    ValidateDate(start, end) {
+      if (this.$moment(end).format('YYYY-MM-DD') < this.$moment(start).format('YYYY-MM-DD')) {
+        this.formError.push(
+          { field: 'to', message: 'End Date must be later than Start Date', validation: 'invalid'}
+        )
+      }
+    },
+    ValidateAppointment(appointment, unavailable) {
+      
     }
   }
 })
