@@ -21,6 +21,12 @@ export default {
     AccountGeneralForm,
     AccountProfileForm,
     AccountChangePasswordForm
+  },
+  created() {
+    this.$store.dispatch('signUp/getProfessions')
+    this.$store.dispatch('signUp/getQualifications')
+    this.$store.dispatch('signUp/getClinicalSystems')
+    this.$store.dispatch('signUp/getSpokenLanguages')
   }
 }
 </script>

@@ -10,23 +10,24 @@ export const state = () => ({
     mobile: '',
     home_number: '',
     post_code: '',
-    address_1: '',
-    address_2: '',
-    city: ''
+    line_1: '',
+    line_2: '',
+    line_3: ''
   },
   profileDetails: {
-    gmc_nmc_number: '',
-    mpl_npl_number: '',
-    nhs_number: '',
+    gmc_or_nmc_number: '',
+    mpl_or_npl_number: '',
+    nhs_smart_card_id_number: '',
     headline: '',
-    biography: '',
-    requirements: '',
-    profession: '',
-    specialty: [],
+    short_biography: '',
+    special_requirements: '',
+    profession: {},
+    qualifications: [],
     clinical_systems: [],
     spoken_languages: [],
-    rates_per_hour: '',
-    rates_per_session: '',
+    rate_per_hour: '',
+    rate_per_half_day_session: '',
+    rate_per_whole_day_session: '',
     contact_name_1: '',
     contact_telephone_number_1: '',
     contact_email_address_1: '',
@@ -51,23 +52,24 @@ export const mutations = {
     state.generalDetails.mobile = payload.mobile
     state.generalDetails.home_number = payload.home_number
     state.generalDetails.post_code = payload.post_code
-    state.generalDetails.address_1 = payload.address_1
-    state.generalDetails.address_2 = payload.address_2
-    state.generalDetails.city = payload.city
+    state.generalDetails.line_1 = payload.line_1
+    state.generalDetails.line_2 = payload.line_2
+    state.generalDetails.line_3 = payload.line_3
   },
   SET_PROFILE_DETAILS(state, payload) {
-    state.profileDetails.specialty = []
+    state.profileDetails.qualifications = []
     state.profileDetails.clinical_systems = []
     state.profileDetails.spoken_languages = []
-    state.profileDetails.gmc_nmc_number = payload.gmc_nmc_number
-    state.profileDetails.mpl_npl_number = payload.mpl_npl_number
-    state.profileDetails.nhs_number = payload.nhs_number
+    state.profileDetails.gmc_or_nmc_number = payload.gmc_or_nmc_number
+    state.profileDetails.mpl_or_npl_number = payload.mpl_or_npl_number
+    state.profileDetails.nhs_smart_card_id_number = payload.nhs_smart_card_id_number
     state.profileDetails.headline = payload.headline
-    state.profileDetails.biography = payload.biography
-    state.profileDetails.requirements = payload.requirements
+    state.profileDetails.short_biography = payload.short_biography
+    state.profileDetails.special_requirements = payload.special_requirements
     state.profileDetails.profession = payload.profession
-    payload.specialty.forEach(item => {
-        state.profileDetails.specialty.push(item)
+
+    payload.qualifications.forEach(item => {
+        state.profileDetails.qualifications.push(item)
     })
     payload.clinical_systems.forEach(item => {
         state.profileDetails.clinical_systems.push(item)
@@ -75,8 +77,10 @@ export const mutations = {
     payload.spoken_languages.forEach(item => {
         state.profileDetails.spoken_languages.push(item)
     })
-    state.profileDetails.rates_per_hour = payload.rates_per_hour
-    state.profileDetails.rates_per_session = payload.rates_per_session
+    state.profileDetails.rate_per_hour = payload.rate_per_hour
+    state.profileDetails.rate_per_half_day_session = payload.rate_per_half_day_session
+    state.profileDetails.rate_per_whole_day_session = payload.rate_per_whole_day_session
+
     state.profileDetails.contact_name_1 = payload.contact_name_1
     state.profileDetails.contact_telephone_number_1 = payload.contact_telephone_number_1
     state.profileDetails.contact_email_address_1 = payload.contact_email_address_1

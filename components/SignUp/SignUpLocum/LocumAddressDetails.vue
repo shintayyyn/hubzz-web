@@ -141,6 +141,7 @@
 import debounce from 'lodash.debounce'
 import { mixin as clickaway } from 'vue-clickaway'
 export default {
+  scrollToTop: true,
   mixins: [clickaway],
   data() {
     return {
@@ -176,7 +177,13 @@ export default {
 
     if (this.addressFormError.length > 0) {
       this.addressFormError.forEach(item => {
-        this.formError.push(item)
+        if (item.field === 'post_code' && item.validation === 'ENGINE_EXCEPTION') {
+          this.formError.push(
+            { field: 'post_code', message: 'Invalid Post code', validation: 'ENGINE_EXCEPTION' }
+          )
+        } else {
+          this.formError.push(item)
+        }
       })
     }
 

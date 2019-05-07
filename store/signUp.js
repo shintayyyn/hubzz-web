@@ -259,7 +259,6 @@ export const actions = {
             ir35: state.professional_details.ir35_scoped
         }
         form = {...state.account_details, ...state.address_details, ...state.credential_details, ...professionForm}
-        // ! post code only returns partial post code from google api
         this.$axios
             .$post(`/api/v1/register/locum`, form)
             .then(res => {

@@ -173,6 +173,7 @@
 </template>
 <script>
 export default {
+  scrollToTop: true,
   data() {
     return {
       form: {

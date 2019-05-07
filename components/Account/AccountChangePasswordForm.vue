@@ -120,7 +120,9 @@ export default {
       this.Validate(this.form)
       this.ValidatePassword(this.form.new_password, this.form.repeat_password)
       if (!this.formError.length) {
-        // action dispatch to api, return promise
+        // dispatch action from store
+        // set response to store
+        this.$store.commit('account/SET_PROFILE_DETAILS', this.form)
         this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Updated !' })
       }
     }

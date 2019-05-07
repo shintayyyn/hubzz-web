@@ -453,6 +453,7 @@
 <script>
 import { mixin as clickaway } from 'vue-clickaway'
 export default {
+  scrollToTop: true,
   mixins: [clickaway],
   data() {
     return {
@@ -545,11 +546,11 @@ export default {
     this.professionalDetails.specialty.forEach(item => {
       this.selectedSpecialties.push(item)
     })
-    this.selectClinicalSystems = []
+    this.selectedClinicalSystems = []
     this.professionalDetails.clinical_systems.forEach(item => {
       this.selectedClinicalSystems.push(item)
     })
-    this.selectSpokenLanguages = []
+    this.selectedSpokenLanguages = []
     this.professionalDetails.spoken_languages.forEach(item => {
       this.selectedSpokenLanguages.push(item)
     })

@@ -155,8 +155,8 @@
             >
               Role
               <option value selected>Select..</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
             </select>
           </div>
         </div>
@@ -240,7 +240,6 @@
                 @focus="setFocus = 'post_code'"
                 @blur="setFocus = ''"
                 v-model="form.post_code"
-                @change="onChange"
               >
             </div>
           </div>
@@ -252,83 +251,83 @@
 
         <div class="relative flex flex-col my-6">
           <div class="flex flex-row justify-start">
-            <label for="address_1" class="text-sm">Address line 1</label>
+            <label for="line_1" class="text-sm">Address line 1</label>
           </div>
           <div class="flex flex-row justify-start mt-4">
             <div
               class="flex flex-col border-b-2 border-white w-full"
-              :class="[setFocus === 'address_1' ? 'border-yellow':'', formError.find(item => item.field === 'address_1') ? 'border-red':'']"
+              :class="[setFocus === 'line_1' ? 'border-yellow':'', formError.find(item => item.field === 'line_1') ? 'border-red':'']"
             >
               <input
                 type="text"
-                name="address_1"
-                id="address_1"
-                ref="address_1"
+                name="line_1"
+                id="line_1"
+                ref="line_1"
                 class="font-bold text-sm p-2 leading-tight focus:outline-none bg-grey-light"
-                @focus="setFocus = 'address_1'"
+                @focus="setFocus = 'line_1'"
                 @blur="setFocus = ''"
-                v-model="form.address_1"
+                v-model="form.line_1"
               >
             </div>
           </div>
           <div
             class="absolute pin-t pin-r bg-red text-white p-1"
-            v-if="formError.find(item => item.field === 'address_1')"
-          >{{formError.find(item => item.field === 'address_1').message}}</div>
+            v-if="formError.find(item => item.field === 'line_1')"
+          >{{formError.find(item => item.field === 'line_1').message}}</div>
         </div>
 
         <div class="relative flex flex-col my-6">
           <div class="flex flex-row justify-start">
-            <label for="address_2" class="text-sm">Address line 2 (optional)</label>
+            <label for="line_2" class="text-sm">Address line 2 (optional)</label>
           </div>
           <div class="flex flex-row justify-start mt-4">
             <div
               class="flex flex-col border-b-2 border-white w-full"
-              :class="[setFocus === 'address_2' ? 'border-yellow':'', formError.find(item => item.field === 'address_2') ? 'border-red':'']"
+              :class="[setFocus === 'line_2' ? 'border-yellow':'', formError.find(item => item.field === 'line_2') ? 'border-red':'']"
             >
               <input
                 type="text"
-                name="address_2"
-                id="address_2"
-                ref="address_2"
+                name="line_2"
+                id="line_2"
+                ref="line_2"
                 class="font-bold text-sm p-2 leading-tight focus:outline-none bg-grey-light"
-                @focus="setFocus = 'address_2'"
+                @focus="setFocus = 'line_2'"
                 @blur="setFocus = ''"
-                v-model="form.address_2"
+                v-model="form.line_2"
               >
             </div>
           </div>
           <div
             class="absolute pin-t pin-r bg-red text-white p-1"
-            v-if="formError.find(item => item.field === 'address_2')"
-          >{{formError.find(item => item.field === 'address_2').message}}</div>
+            v-if="formError.find(item => item.field === 'line_2')"
+          >{{formError.find(item => item.field === 'line_2').message}}</div>
         </div>
 
         <div class="relative flex flex-col my-6">
           <div class="flex flex-row justify-start">
-            <label for="city" class="text-sm">City / Town / District</label>
+            <label for="line_3" class="text-sm">City / Town / District</label>
           </div>
           <div class="flex flex-row justify-start mt-4">
             <div
               class="flex flex-col border-b-2 border-white w-full"
-              :class="[setFocus === 'city' ? 'border-yellow':'', formError.find(item => item.field === 'city') ? 'border-red':'']"
+              :class="[setFocus === 'line_3' ? 'border-yellow':'', formError.find(item => item.field === 'line_3') ? 'border-red':'']"
             >
               <input
                 type="text"
-                name="city"
-                id="city"
-                ref="city"
+                name="line_3"
+                id="line_3"
+                ref="line_3"
                 class="font-bold text-sm p-2 leading-tight focus:outline-none bg-grey-light"
-                @focus="setFocus = 'city'"
+                @focus="setFocus = 'line_3'"
                 @blur="setFocus = ''"
-                v-model="form.city"
+                v-model="form.line_3"
               >
             </div>
           </div>
           <div
             class="absolute pin-t pin-r bg-red text-white p-1"
-            v-if="formError.find(item => item.field === 'city')"
-          >{{formError.find(item => item.field === 'city').message}}</div>
+            v-if="formError.find(item => item.field === 'line_3')"
+          >{{formError.find(item => item.field === 'line_3').message}}</div>
         </div>
       </div>
 
@@ -356,69 +355,46 @@ export default {
         mobile: '',
         home_number: '',
         post_code: '',
-        address_1: '',
-        address_2: '',
-        city: ''
+        line_1: '',
+        line_2: '',
+        line_3: ''
       },
       formError: []
     }
   },
-  mounted() {
-    this.form.email = this.generalDetails.email
-    this.form.title = this.generalDetails.title
-    this.form.first_name = this.generalDetails.first_name
-    this.form.last_name = this.generalDetails.last_name
-    this.form.suffix = this.generalDetails.suffix
-    this.form.gender = this.generalDetails.gender
-    this.form.mobile = this.generalDetails.mobile
-    this.form.home_number = this.generalDetails.home_number
-    this.form.post_code = this.generalDetails.post_code
-    this.form.address_1 = this.generalDetails.address_1
-    this.form.address_2 = this.generalDetails.address_2
-    this.form.city = this.generalDetails.city
-
-    // google map
-    this.autocomplete = new google.maps.places.Autocomplete((this.$refs.post_code))
-  },
-  computed: {
-    generalDetails() {
-      return this.$store.state.account.generalDetails
-    }
-  },
-  watch: {
-    form: {
-      handler: function (value) {
-        // this.formError = []
-        // this.Validate(this.form, ['title', 'suffix', 'home_number', 'address_2'])
-      },
-      deep: true
-    }
+  created() {
+    this.$axios.$get('/api/v1/me').then(res => {
+      this.form.email = res.data.user.email,
+        this.form.title = res.data.user.personal_detail.title,
+        this.form.first_name = res.data.user.personal_detail.first_name,
+        this.form.last_name = res.data.user.personal_detail.last_name,
+        this.form.suffix = res.data.user.personal_detail.suffix,
+        this.form.gender = res.data.user.personal_detail.gender,
+        this.form.mobile = res.data.user.contact_detail.mobile_number,
+        this.form.home_number = res.data.user.contact_detail.home_number,
+        this.form.post_code = res.data.user.address_detail.address.post_code,
+        this.form.line_1 = res.data.user.address_detail.address.line_1,
+        this.form.line_2 = res.data.user.address_detail.address.line_2,
+        this.form.line_3 = res.data.user.address_detail.address.line_3
+    })
   },
   methods: {
     save() {
       try {
         this.formError = []
-        this.Validate(this.form, ['title', 'suffix', 'home_number', 'address_2'])
+        this.Validate(this.form, ['title', 'suffix', 'home_number', 'line_2'])
         this.ValidateEmail({ email: this.form.email, field: 'email' })
         this.ValidateMobile(this.form.mobile)
         if (!this.formError.length) {
+          // dispatch action from store
+          // set response to store
           this.$store.commit('account/SET_GENERAL_DETAILS', this.form)
-          // action dispatch to api, return promise
           this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Saved !' })
         }
       } catch (e) {
         console.log(e)
       }
-    },
-    onChange(value) {
-      this.autocomplete.addListener('place_changed', () => {
-        let place = this.autocomplete.getPlace();
-        // ! ask arvi
-        this.form.post_code = place.name.split(',')[0]
-        this.form.address_line_1 = place.name.split(',')[1]
-        this.form.city = place.name.split(',')[2]
-      })
-    },
+    }
   }
 }
 </script>

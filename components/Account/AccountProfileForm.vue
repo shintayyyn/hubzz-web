@@ -4,7 +4,7 @@
       <form class="w-full">
         <div class="relative flex flex-col mt-8">
           <div class="flex flex-row justify-between">
-            <label for="gmc_nmc_number" class="text-sm" style="width:50%">GMC / NMC Number</label>
+            <label for="gmc_or_nmc_number" class="text-sm" style="width:50%">GMC / NMC Number</label>
             <div
               class="text-sm rounded-lg bg-grey-light px-2 py-1"
             >For compliance; to be verified by the hubzz team</div>
@@ -13,30 +13,30 @@
             <div
               class="flex flex-col border-b-2 border-grey-light"
               style="width:100%"
-              :class="[setFocus === 'gmc_nmc_number' ? 'border-yellow':'', formError.find(item => item.field === 'gmc_nmc_number') ? 'border-red':'']"
+              :class="[setFocus === 'gmc_or_nmc_number' ? 'border-yellow':'', formError.find(item => item.field === 'gmc_or_nmc_number') ? 'border-red':'']"
             >
               <input
                 type="text"
-                name="gmc_nmc_number"
-                id="gmc_nmc_number"
-                ref="gmc_nmc_number"
+                name="gmc_or_nmc_number"
+                id="gmc_or_nmc_number"
+                ref="gmc_or_nmc_number"
                 class="focus:outline-none font-bold text-sm"
                 style="height:40px;"
-                @focus="setFocus = 'gmc_nmc_number'"
+                @focus="setFocus = 'gmc_or_nmc_number'"
                 @blur="setFocus = ''"
-                v-model="form.gmc_nmc_number"
+                v-model="form.gmc_or_nmc_number"
               >
             </div>
           </div>
           <div
             class="absolute pin-t pin-r bg-red text-white p-1"
-            v-if="formError.find(item => item.field === 'gmc_nmc_number')"
-          >{{formError.find(item => item.field === 'gmc_nmc_number').message}}</div>
+            v-if="formError.find(item => item.field === 'gmc_or_nmc_number')"
+          >{{formError.find(item => item.field === 'gmc_or_nmc_number').message}}</div>
         </div>
 
         <div class="relative flex flex-col mt-8">
           <div class="flex flex-row justify-between">
-            <label for="mpl_npl_number" class="text-sm" style="width:50%">MPL / NPL Number</label>
+            <label for="mpl_or_npl_number" class="text-sm" style="width:50%">MPL / NPL Number</label>
             <div
               class="text-sm rounded-lg bg-grey-light px-2 py-1"
             >For compliance; to be verified by the hubzz team</div>
@@ -45,54 +45,58 @@
             <div
               class="flex flex-col border-b-2 border-grey-light"
               style="width:100%"
-              :class="[setFocus === 'mpl_npl_number' ? 'border-yellow':'', formError.find(item => item.field === 'mpl_npl_number') ? 'border-red':'']"
+              :class="[setFocus === 'mpl_or_npl_number' ? 'border-yellow':'', formError.find(item => item.field === 'mpl_or_npl_number') ? 'border-red':'']"
             >
               <input
                 type="text"
-                name="mpl_npl_number"
-                id="mpl_npl_number"
-                ref="mpl_npl_number"
+                name="mpl_or_npl_number"
+                id="mpl_or_npl_number"
+                ref="mpl_or_npl_number"
                 class="focus:outline-none font-bold text-sm"
                 style="height:40px;"
-                @focus="setFocus = 'mpl_npl_number'"
+                @focus="setFocus = 'mpl_or_npl_number'"
                 @blur="setFocus = ''"
-                v-model="form.mpl_npl_number"
+                v-model="form.mpl_or_npl_number"
               >
             </div>
           </div>
           <div
             class="absolute pin-t pin-r bg-red text-white p-1"
-            v-if="formError.find(item => item.field === 'mpl_npl_number')"
-          >{{formError.find(item => item.field === 'mpl_npl_number').message}}</div>
+            v-if="formError.find(item => item.field === 'mpl_or_npl_number')"
+          >{{formError.find(item => item.field === 'mpl_or_npl_number').message}}</div>
         </div>
 
         <div class="relative flex flex-col mt-8">
           <div class="flex flex-row justify-between">
-            <label for="nhs_number" class="text-sm" style="width:50%">NHS Smart Card ID number</label>
+            <label
+              for="nhs_smart_card_id_number"
+              class="text-sm"
+              style="width:50%"
+            >NHS Smart Card ID number</label>
           </div>
           <div class="flex flex-row justify-between mt-4">
             <div
               class="flex flex-col border-b-2 border-grey-light"
               style="width:100%"
-              :class="[setFocus === 'nhs_number' ? 'border-yellow':'', formError.find(item => item.field === 'nhs_number') ? 'border-red':'']"
+              :class="[setFocus === 'nhs_smart_card_id_number' ? 'border-yellow':'', formError.find(item => item.field === 'nhs_smart_card_id_number') ? 'border-red':'']"
             >
               <input
                 type="text"
-                name="nhs_number"
-                id="nhs_number"
-                ref="nhs_number"
+                name="nhs_smart_card_id_number"
+                id="nhs_smart_card_id_number"
+                ref="nhs_smart_card_id_number"
                 class="focus:outline-none font-bold text-sm"
                 style="height:40px;"
-                @focus="setFocus = 'nhs_number'"
+                @focus="setFocus = 'nhs_smart_card_id_number'"
                 @blur="setFocus = ''"
-                v-model="form.nhs_number"
+                v-model="form.nhs_smart_card_id_number"
               >
             </div>
           </div>
           <div
             class="absolute pin-t pin-r bg-red text-white p-1"
-            v-if="formError.find(item => item.field === 'nhs_number')"
-          >{{formError.find(item => item.field === 'nhs_number').message}}</div>
+            v-if="formError.find(item => item.field === 'nhs_smart_card_id_number')"
+          >{{formError.find(item => item.field === 'nhs_smart_card_id_number').message}}</div>
         </div>
 
         <div class="relative flex flex-col mt-8">
@@ -129,7 +133,7 @@
 
         <div class="relative flex flex-col mt-8">
           <div class="flex flex-row justify-between">
-            <label for="biography" class="text-sm" style="width:50%">Short Biography</label>
+            <label for="short_biography" class="text-sm" style="width:50%">Short Biography</label>
             <div
               class="text-sm rounded-lg bg-grey-light px-2 py-1"
             >A little bit about yourself to inform to the Practices</div>
@@ -138,28 +142,28 @@
             <div
               class="flex flex-col border-b-2 border-grey-light"
               style="width:100%"
-              :class="[setFocus === 'biography' ? 'border-yellow':'', formError.find(item => item.field === 'biography') ? 'border-red':'']"
+              :class="[setFocus === 'short_biography' ? 'border-yellow':'', formError.find(item => item.field === 'short_biography') ? 'border-red':'']"
             >
               <textarea
-                name="biography"
-                id="biography"
+                name="short_biography"
+                id="short_biography"
                 rows="5"
                 class="focus:outline-none font-bold text-sm"
-                @focus="setFocus = 'biography'"
+                @focus="setFocus = 'short_biography'"
                 @blur="setFocus = ''"
-                v-model="form.biography"
+                v-model="form.short_biography"
               ></textarea>
             </div>
           </div>
           <div
             class="absolute pin-t pin-r bg-red text-white p-1"
-            v-if="formError.find(item => item.field === 'biography')"
-          >{{formError.find(item => item.field === 'biography').message}}</div>
+            v-if="formError.find(item => item.field === 'short_biography')"
+          >{{formError.find(item => item.field === 'short_biography').message}}</div>
         </div>
 
         <div class="relative flex flex-col mt-8">
           <div class="flex flex-row justify-between">
-            <label for="requirements" class="text-sm" style="width:50%">Special requirements</label>
+            <label for="special_requirements" class="text-sm" style="width:50%">Special Requirements</label>
             <div
               class="text-sm rounded-lg bg-grey-light px-2 py-1"
             >Information for Practices for you own needs</div>
@@ -168,23 +172,23 @@
             <div
               class="flex flex-col border-b-2 border-grey-light"
               style="width:100%"
-              :class="[setFocus === 'requirements' ? 'border-yellow':'', formError.find(item => item.field === 'requirements') ? 'border-red':'']"
+              :class="[setFocus === 'special_requirements' ? 'border-yellow':'', formError.find(item => item.field === 'special_requirements') ? 'border-red':'']"
             >
               <textarea
-                name="requirements"
-                id="requirements"
+                name="special_requirements"
+                id="special_requirements"
                 rows="5"
                 class="focus:outline-none font-bold text-sm"
-                @focus="setFocus = 'requirements'"
+                @focus="setFocus = 'special_requirements'"
                 @blur="setFocus = ''"
-                v-model="form.requirements"
+                v-model="form.special_requirements"
               ></textarea>
             </div>
           </div>
           <div
             class="absolute pin-t pin-r bg-red text-white p-1"
-            v-if="formError.find(item => item.field === 'requirements')"
-          >{{formError.find(item => item.field === 'requirements').message}}</div>
+            v-if="formError.find(item => item.field === 'special_requirements')"
+          >{{formError.find(item => item.field === 'special_requirements').message}}</div>
         </div>
 
         <div class="relative flex flex-col mt-8">
@@ -207,10 +211,7 @@
                 style="height:40px;"
               >
                 Role
-                <option value>Select..</option>
-                <option value="gp">GP</option>
-                <option value="anp">ANP</option>
-                <option value="enp">ENP</option>
+                <option v-for="item in professions" :key="item.id" :value="item.id">{{item.name}}</option>
               </select>
             </div>
           </div>
@@ -222,7 +223,7 @@
 
         <div class="relative flex flex-col mt-8">
           <div class="flex flex-row justify-between">
-            <label for="specialty" class="text-sm" style="width:50%">Specialty</label>
+            <label for="qualifications" class="text-sm" style="width:50%">Specialty</label>
             <div
               class="text-sm rounded-lg bg-grey-light px-2 py-1"
             >Choose at least one qualification</div>
@@ -231,18 +232,18 @@
             <div
               class="flex flex-col border-b-2 border-grey-light"
               style="width:100%"
-              :class="[setFocus === 'specialty' ? 'border-yellow':'', formError.find(item => item.field === 'specialty') ? 'border-red':'']"
+              :class="[setFocus === 'qualifications' ? 'border-yellow':'', formError.find(item => item.field === 'qualifications') ? 'border-red':'']"
             >
               <div class="flex flex-row flex-wrap">
                 <div
                   class="rounded-lg bg-yellow font-bold p-2 m-1"
-                  v-for="(item, index) in selectedSpecialties"
-                  :key="`${item}-${index}`"
+                  v-for="(item, index) in selectedQualifications"
+                  :key="`${item.id}-${index}`"
                 >
-                  {{item}}
+                  {{item.name}}
                   <span
                     class="font-bold cursor-pointer text-lg"
-                    @click="removeSpecialty(item, index)"
+                    @click="removeQualification(item, index)"
                   >X</span>
                 </div>
               </div>
@@ -250,35 +251,35 @@
               <div class="relative">
                 <input
                   type="text"
-                  name="specialty"
-                  id="specialty"
-                  ref="specialty"
+                  name="qualifications"
+                  id="qualifications"
+                  ref="qualifications"
                   class="focus:outline-none font-bold text-sm"
                   style="height:40px;width:100%;"
-                  @focus="setFocus = 'specialty'"
-                  @blur="setFocus = '', searchSpecialties = ''"
-                  v-model="searchSpecialties"
+                  @focus="setFocus = 'qualifications'"
+                  @blur="setFocus = '', searchQualifications = ''"
+                  v-model="searchQualifications"
                   placeholder="Select.."
-                  @click.prevent="showSpecialties=true, setFocus = 'specialty'"
-                  @keydown="specialtyKeyDownHandler"
+                  @click.prevent="showQualifications=true, setFocus = 'qualifications'"
+                  @keydown="qualificationKeyDownHandler"
                 >
 
                 <transition name="fade">
                   <div
                     class="bg-white shadow-lg overflow-auto absolute pin-x z-10"
-                    v-if="showSpecialties"
+                    v-if="showQualifications"
                     style="height:100px"
-                    v-on-clickaway="hideSpecialties"
+                    v-on-clickaway="hideQualifications"
                   >
                     <div
-                      v-for="(item, index) in filteredSpecialties"
-                      :key="`${item}-${index}`"
+                      v-for="(item, index) in filteredQualifications"
+                      :key="`${item.id}-${index}`"
                       class="p-2 cursor-pointer"
-                      @mouseover="specialtiesIndex=index"
-                      :class="specialtiesIndex === index ? 'bg-grey':''"
-                      @click="selectSpecialty(item, index)"
+                      @mouseover="qualificationsIndex=index"
+                      :class="qualificationsIndex === index ? 'bg-grey':''"
+                      @click="selectQualification(item, index)"
                     >
-                      <strong>{{item}}</strong>
+                      <strong>{{item.name}}</strong>
                     </div>
                   </div>
                 </transition>
@@ -287,8 +288,8 @@
           </div>
           <div
             class="absolute pin-t pin-r bg-red text-white p-1"
-            v-if="formError.find(item => item.field === 'specialty')"
-          >{{formError.find(item => item.field === 'specialty').message}}</div>
+            v-if="formError.find(item => item.field === 'qualifications')"
+          >{{formError.find(item => item.field === 'qualifications').message}}</div>
         </div>
 
         <div class="relative flex flex-col mt-8">
@@ -306,9 +307,9 @@
                 <div
                   class="rounded-lg bg-yellow font-bold p-2 m-1"
                   v-for="(item, index) in selectedClinicalSystems"
-                  :key="`${item}-${index}`"
+                  :key="`${item.id}-${index}`"
                 >
-                  {{item}}
+                  {{item.name}}
                   <span
                     class="font-bold cursor-pointer text-lg"
                     @click="removeClinicalSystems(item, index)"
@@ -341,13 +342,13 @@
                   >
                     <div
                       v-for="(item, index) in filteredClinicalSystems"
-                      :key="`${item}-${index}`"
+                      :key="`${item.id}-${index}`"
                       class="p-2 cursor-pointer"
                       @mouseover="clinicalSystemsIndex=index"
                       :class="clinicalSystemsIndex === index ? 'bg-grey':''"
                       @click="selectClinicalSystems(item, index)"
                     >
-                      <strong>{{item}}</strong>
+                      <strong>{{item.name}}</strong>
                     </div>
                   </div>
                 </transition>
@@ -377,9 +378,9 @@
                 <div
                   class="rounded-lg bg-yellow font-bold p-2 m-1"
                   v-for="(item, index) in selectedSpokenLanguages"
-                  :key="`${item}-${index}`"
+                  :key="`${item.id}-${index}`"
                 >
-                  {{item}}
+                  {{item.name}}
                   <span
                     class="font-bold cursor-pointer text-lg"
                     @click="removeSpokenLanguages(item, index)"
@@ -411,13 +412,13 @@
                 >
                   <div
                     v-for="(item, index) in filteredSpokenLanguages"
-                    :key="`${item}-${index}`"
+                    :key="`${item.id}-${index}`"
                     class="p-2 cursor-pointer"
                     @mouseover="spokenLanguagesIndex=index"
                     :class="spokenLanguagesIndex === index ? 'bg-grey':''"
                     @click="selectSpokenLanguages(item, index)"
                   >
-                    <strong>{{item}}</strong>
+                    <strong>{{item.name}}</strong>
                   </div>
                 </div>
               </div>
@@ -437,47 +438,66 @@
           <div class="flex flex-row flex-wrap justify-between mt-4">
             <div
               class="relative flex flex-col border-b-2 border-grey-light"
-              style="width:49%"
-              :class="[setFocus === 'rates_per_hour' ? 'border-yellow':'', formError.find(item => item.field === 'rates_per_hour') ? 'border-red':'']"
+              style="width:32%"
+              :class="[setFocus === 'rate_per_hour' ? 'border-yellow':'', formError.find(item => item.field === 'rate_per_hour') ? 'border-red':'']"
             >
-              <label for="rates_per_hour" class="text-sm">Per hour</label>
+              <label for="rate_per_hour" class="text-sm">Per hour £</label>
               <input
                 type="text"
-                name="rates_per_hour"
-                ref="rates_per_hour"
-                id="rates_per_hour"
+                name="rate_per_hour"
+                ref="rate_per_hour"
+                id="rate_per_hour"
                 class="focus:outline-none font-bold text-sm text-right"
                 style="height:40px"
-                @focus="setFocus = 'rates_per_hour'"
+                @focus="setFocus = 'rate_per_hour'"
                 @blur="setFocus = ''"
-                @click="setFocus = 'rates_per_hour'"
-                v-model="form.rates_per_hour"
+                @click="setFocus = 'rate_per_hour'"
+                v-model="form.rate_per_hour"
               >
             </div>
             <div
               class="relative flex flex-col border-b-2 border-grey-light"
-              style="width:49%"
-              :class="[setFocus === 'rates_per_session' ? 'border-yellow':'', formError.find(item => item.field === 'rates_per_session') ? 'border-red':'']"
+              style="width:32%"
+              :class="[setFocus === 'rate_per_half_day_session' ? 'border-yellow':'', formError.find(item => item.field === 'rate_per_half_day_session') ? 'border-red':'']"
             >
-              <label for="rates_per_session" class="text-sm">Per session</label>
+              <label for="rate_per_half_day_session" class="text-sm">Per half day session £</label>
               <input
                 type="text"
-                name="rates_per_session"
-                ref="rates_per_session"
-                id="rates_per_session"
+                name="rate_per_half_day_session"
+                ref="rate_per_half_day_session"
+                id="rate_per_half_day_session"
                 class="focus:outline-none font-bold text-sm text-right"
                 style="height:40px"
-                @focus="setFocus = 'rates_per_session'"
+                @focus="setFocus = 'rate_per_half_day_session'"
                 @blur="setFocus = ''"
-                @click="setFocus = 'rates_per_session'"
-                v-model="form.rates_per_session"
+                @click="setFocus = 'rate_per_half_day_session'"
+                v-model="form.rate_per_half_day_session"
+              >
+            </div>
+            <div
+              class="relative flex flex-col border-b-2 border-grey-light"
+              style="width:32%"
+              :class="[setFocus === 'rate_per_whole_day_session' ? 'border-yellow':'', formError.find(item => item.field === 'rate_per_whole_day_session') ? 'border-red':'']"
+            >
+              <label for="rate_per_whole_day_session" class="text-sm">Per whole day session £</label>
+              <input
+                type="text"
+                name="rate_per_whole_day_session"
+                ref="rate_per_whole_day_session"
+                id="rate_per_whole_day_session"
+                class="focus:outline-none font-bold text-sm text-right"
+                style="height:40px"
+                @focus="setFocus = 'rate_per_whole_day_session'"
+                @blur="setFocus = ''"
+                @click="setFocus = 'rate_per_whole_day_session'"
+                v-model="form.rate_per_whole_day_session"
               >
             </div>
           </div>
           <div
             class="absolute pin-t pin-r bg-red text-white p-1"
-            v-if="formError.find(item => item.field === 'rates_per_hour' || item.field === 'rates_per_session')"
-          >{{formError.find(item => item.field === 'rates_per_hour' || item.field === 'rates_per_session').message}}</div>
+            v-if="formError.find(item => item.field === 'rate_per_hour' || item.field === 'rate_per_half_day_session' || item.field === 'rate_per_whole_day_session')"
+          >{{formError.find(item => item.field === 'rate_per_hour' || item.field === 'rate_per_half_day_session' || item.field === 'rate_per_whole_day_session').message}}</div>
         </div>
 
         <div class="block text-sm mb-4 mt-12">Referees</div>
@@ -665,27 +685,29 @@
             >{{formError.find(item => item.field === 'contact_email_address_2').message}}</div>
           </div>
         </div>
-
-        <div class="text-left mt-5">
-          <button
-            class="bg-yellow-dark hover:text-white focus:outline-none text-black font-bold text-xl p-6 rounded-lg"
-            @click.prevent="save"
-          >Save changes</button>
-        </div>
       </form>
+      <div class="text-left mt-5">
+        <button
+          class="bg-yellow-dark hover:text-white focus:outline-none text-black font-bold text-xl p-6 rounded-lg"
+          @click.prevent="save"
+        >Save changes</button>
+      </div>
     </div>
     <div
       class="cursor-pointer border border-solid rounded-lg shadow-md p-2"
       style="width:280px;height:200px;"
       @click="$refs.fileInput.click()"
     >
-      <div class="text-center mt-4">
+      <div class="relative text-center mt-4">
         <img
           v-if="imageUrl"
           :src="imageUrl"
           class="cursor-pointer hover:shadow-lg"
           style="border-radius:50%; height:150px;width:150px;"
         >
+        <span class="absolute" v-if="imageUrl">
+          <svgicon name="camera" height="32" width="32"/>
+        </span>
         <input
           type="file"
           ref="fileInput"
@@ -699,35 +721,22 @@
   </div>
 </template>
 <script>
-const specialties = [
-  'A&E', 'Allergy', 'Anaphylaxis', 'Asthma',
-  'Aviation Medicinde', 'Baby Clinics', 'COPD/Respiratory'
-]
-const clinicalSystems = [
-  'Adastra', 'Cerner', 'Cleo', 'DGL'
-]
-const spokenLanguages = [
-  'English', 'Chinese', 'Arabic'
-]
 import { mixin as clickaway } from 'vue-clickaway'
 export default {
   mixins: [clickaway],
   data() {
     return {
-      searchSpecialties: '',
-      specialties,
-      specialtiesIndex: 0,
-      showSpecialties: false,
-      selectedSpecialties: [],
+      searchQualifications: '',
+      qualificationsIndex: 0,
+      showQualifications: false,
+      selectedQualifications: [],
 
       searchClinicalSystems: '',
-      clinicalSystems,
       clinicalSystemsIndex: 0,
       showClinicalSystems: false,
       selectedClinicalSystems: [],
 
       searchSpokenLanguages: '',
-      spokenLanguages,
       spokenLanguagesIndex: 0,
       showSpokenLanguages: false,
       selectedSpokenLanguages: [],
@@ -735,18 +744,19 @@ export default {
       imageUrl: '',
       setFocus: '',
       form: {
-        gmc_nmc_number: '',
-        mpl_npl_number: '',
-        nhs_number: '',
+        gmc_or_nmc_number: '',
+        mpl_or_npl_number: '',
+        nhs_smart_card_id_number: '',
         headline: '',
-        biography: '',
-        requirements: '',
+        short_biography: '',
+        special_requirements: '',
         profession: '',
-        specialty: [],
+        qualifications: [],
         clinical_systems: [],
         spoken_languages: [],
-        rates_per_hour: '',
-        rates_per_session: '',
+        rate_per_hour: '',
+        rate_per_half_day_session: '',
+        rate_per_whole_day_session: '',
         contact_name_1: '',
         contact_telephone_number_1: '',
         contact_email_address_1: '',
@@ -758,103 +768,114 @@ export default {
     }
   },
   computed: {
-    profileDetails() {
-      return this.$store.state.account.profileDetails
-    },
-    filteredSpecialties() {
-      return this.specialties.filter((specialty) => {
-        const index = this.selectedSpecialties.findIndex((item) => {
-          return item === specialty
+    filteredQualifications() {
+      return this.qualifications.filter((qualification) => {
+        const index = this.selectedQualifications.findIndex((item) => {
+          return item.id === qualification.id
         })
-        return index === -1 && specialty && specialty.includes(this.searchSpecialties)
+        return index === -1 && qualification && qualification.name.includes(this.searchQualifications)
       })
     },
     filteredClinicalSystems() {
       return this.clinicalSystems.filter((clinicalSystem) => {
         const index = this.selectedClinicalSystems.findIndex((item) => {
-          return item === clinicalSystem
+          return item.id === clinicalSystem.id
         })
-        return index === -1 && clinicalSystem && clinicalSystem.includes(this.searchClinicalSystems)
+        return index === -1 && clinicalSystem && clinicalSystem.name.includes(this.searchClinicalSystems)
       })
     },
     filteredSpokenLanguages() {
       return this.spokenLanguages.filter((spokenLanguage) => {
         const index = this.selectedSpokenLanguages.findIndex((item) => {
-          return item === spokenLanguage
+          return item.id === spokenLanguage.id
         })
-        return index === -1 && spokenLanguage && spokenLanguage.includes(this.searchSpokenLanguages)
+        return index === -1 && spokenLanguage && spokenLanguage.name.includes(this.searchSpokenLanguages)
       })
+    },
+    professions() {
+      return this.$store.state.signUp.professions
+    },
+    qualifications() {
+      return this.$store.state.signUp.qualifications
+    },
+    clinicalSystems() {
+      return this.$store.state.signUp.clinicalSystems
+    },
+    spokenLanguages() {
+      return this.$store.state.signUp.spokenLanguages
     }
   },
-  mounted() {
-    this.form.gmc_nmc_number = this.profileDetails.gmc_nmc_number
-    this.form.mpl_npl_number = this.profileDetails.mpl_npl_number
-    this.form.nhs_number = this.profileDetails.nhs_number
-    this.form.headline = this.profileDetails.headline
-    this.form.biography = this.profileDetails.biography
-    this.form.requirements = this.profileDetails.requirements
-    this.form.profession = this.profileDetails.profession
-    this.profileDetails.specialty.forEach(item => {
-      this.selectedSpecialties.push(item)
+  created() {
+    this.$axios.$get('/api/v1/me').then(res => {
+      this.form.gmc_or_nmc_number = res.data.user.locum_detail.gmc_or_nmc_number,
+        this.form.mpl_or_npl_number = res.data.user.locum_detail.mpl_or_npl_number,
+        this.form.nhs_smart_card_id_number = res.data.user.locum_detail.nhs_smart_card_id_number,
+        this.form.headline = res.data.user.locum_detail.headline,
+        this.form.short_biography = res.data.user.locum_detail.short_biography,
+        this.form.special_requirements = res.data.user.locum_detail.special_requirements,
+        this.form.profession = res.data.user.locum_detail.profession.id,
+
+
+        res.data.user.locum_detail.qualifications.forEach(item => {
+          this.selectedQualifications.push(item)
+        })
+      res.data.user.locum_detail.clinical_systems.forEach(item => {
+        this.selectedClinicalSystems.push(item)
+      })
+      res.data.user.locum_detail.spoken_languages.forEach(item => {
+        this.selectedSpokenLanguages.push(item)
+      })
+
+      this.form.rate_per_hour = res.data.user.locum_detail.rate_per_hour,
+        this.form.rate_per_half_day_session = res.data.user.locum_detail.rate_per_half_day_session,
+        this.form.rate_per_whole_day_session = res.data.user.locum_detail.rate_per_whole_day_session
+
+      // referees
     })
-    this.profileDetails.clinical_systems.forEach(item => {
-      this.selectedClinicalSystems.push(item)
-    })
-    this.profileDetails.spoken_languages.forEach(item => {
-      this.selectedSpokenLanguages.push(item)
-    })
-    this.form.rates_per_hour = this.profileDetails.rates_per_hour
-    this.form.rates_per_session = this.profileDetails.rates_per_session
-    this.form.contact_name_1 = this.profileDetails.contact_name_1
-    this.form.contact_telephone_number_1 = this.profileDetails.contact_telephone_number_1
-    this.form.contact_email_address_1 = this.profileDetails.contact_email_address_1
-    this.form.contact_name_2 = this.profileDetails.contact_name_2
-    this.form.contact_telephone_number_2 = this.profileDetails.contact_telephone_number_2
-    this.form.contact_email_address_2 = this.profileDetails.contact_email_address_2
+
   },
   methods: {
-    hideSpecialties() {
-      this.showSpecialties = false
+    hideQualifications() {
+      this.showQualifications = false
     },
-    selectSpecialty(item, index) {
-      this.selectedSpecialties.push(item)
-      this.specialties.splice(index, 1)
-      this.setFocus = 'specialty'
+    selectQualification(item) {
+      this.selectedQualifications.push(item)
+      this.setFocus = 'qualifications'
     },
-    removeSpecialty(item, index) {
-      this.selectedSpecialties.splice(index, 1)
-      this.specialties.push(item)
+    removeQualification(item, index) {
+      this.selectedQualifications.splice(index, 1)
     },
-    specialtyKeyDownHandler(event) {
-      if (this.setFocus !== 'specialty') {
+    qualificationKeyDownHandler(event) {
+      if (this.setFocus !== 'qualifications') {
         return
       } else {
         if (event.key === 'ArrowUp') {
-          if (this.specialtiesIndex > 0) {
-            this.specialtiesIndex--
+          if (this.qualificationsIndex > 0) {
+            this.qualificationsIndex--
           } else {
-            this.specialtiesIndex = this.specialties.length - 1
+            this.qualificationsIndex = this.qualifications.length - 1
           }
         }
         if (event.key === 'ArrowDown') {
-          if (this.specialtiesIndex === this.specialties.length - 1) {
-            this.specialtiesIndex = 0
+          if (this.qualificationsIndex === this.qualifications.length - 1) {
+            this.qualificationsIndex = 0
           } else {
-            this.specialtiesIndex++
+            this.qualificationsIndex++
           }
         }
         if (event.key === 'Enter') {
-          if (this.specialties[this.specialtiesIndex]) {
-            this.selectSpecialty(this.specialties[this.specialtiesIndex], this.specialtiesIndex)
+          if (this.filteredQualifications[this.qualificationsIndex]) {
+            this.selectQualification(this.filteredQualifications[this.qualificationsIndex])
           }
         }
         if (event.key === 'Backspace') {
-          if (!this.searchSpecialties) {
-            this.removeSpecialty(this.selectedSpecialties[this.selectedSpecialties.length - 1], this.selectedSpecialties.length - 1)
+          if (!this.searchQualifications) {
+            this.removeQualification(this.selectedQualifications[this.selectedQualifications.length - 1], this.selectedQualifications.length - 1)
           }
         }
         if (event.key === 'Escape') {
           this.setFocus = ''
+          this.showQualifications = false
         }
       }
     },
@@ -862,14 +883,12 @@ export default {
     hideClinicalSystems() {
       this.showClinicalSystems = false
     },
-    selectClinicalSystems(item, index) {
+    selectClinicalSystems(item) {
       this.selectedClinicalSystems.push(item)
-      this.clinicalSystems.splice(index, 1)
       this.setFocus = 'clinical_systems'
     },
     removeClinicalSystems(item, index) {
       this.selectedClinicalSystems.splice(index, 1)
-      this.clinicalSystems.push(item)
     },
     clinicalSystemsKeyDownHandler(event) {
       if (this.setFocus !== 'clinical_systems') {
@@ -890,8 +909,8 @@ export default {
           }
         }
         if (event.key === 'Enter') {
-          if (this.clinicalSystems[this.clinicalSystemsIndex]) {
-            this.selectClinicalSystems(this.clinicalSystems[this.clinicalSystemsIndex], this.clinicalSystemsIndex)
+          if (this.filteredClinicalSystems[this.clinicalSystemsIndex]) {
+            this.selectClinicalSystems(this.filteredClinicalSystems[this.clinicalSystemsIndex])
           }
         }
         if (event.key === 'Backspace') {
@@ -901,6 +920,7 @@ export default {
         }
         if (event.key === 'Escape') {
           this.setFocus = ''
+          this.showClinicalSystems = false
         }
       }
     },
@@ -908,14 +928,12 @@ export default {
     hideSpokenLanguages() {
       this.showSpokenLanguages = false
     },
-    selectSpokenLanguages(item, index) {
+    selectSpokenLanguages(item) {
       this.selectedSpokenLanguages.push(item)
-      this.spokenLanguages.splice(index, 1)
       this.setFocus = 'spoken_languages'
     },
     removeSpokenLanguages(item, index) {
       this.selectedSpokenLanguages.splice(index, 1)
-      this.spokenLanguages.push(item)
     },
     spokenLanguagesKeyDownHandler(event) {
       if (this.setFocus !== 'spoken_languages') {
@@ -936,8 +954,8 @@ export default {
           }
         }
         if (event.key === 'Enter') {
-          if (this.spokenLanguages[this.spokenLanguagesIndex]) {
-            this.selectSpokenLanguages(this.spokenLanguages[this.spokenLanguagesIndex], this.spokenLanguagesIndex)
+          if (this.filteredSpokenLanguages[this.spokenLanguagesIndex]) {
+            this.selectSpokenLanguages(this.filteredSpokenLanguages[this.spokenLanguagesIndex])
           }
         }
         if (event.key === 'Backspace') {
@@ -947,6 +965,7 @@ export default {
         }
         if (event.key === 'Escape') {
           this.setFocus = ''
+          this.showSpokenLanguages = false
         }
       }
     },
@@ -970,8 +989,9 @@ export default {
       reader.readAsDataURL(img)
     },
     save() {
-      this.selectedSpecialties.forEach(item => {
-        this.form.specialty.push(item)
+      // ! might change the name of the form
+      this.selectedQualifications.forEach(item => {
+        this.form.qualifications.push(item)
       })
       this.selectedClinicalSystems.forEach(item => {
         this.form.clinical_systems.push(item)
@@ -979,8 +999,11 @@ export default {
       this.selectedSpokenLanguages.forEach(item => {
         this.form.spoken_languages.push(item)
       })
+
       this.formError = []
-      this.Validate(this.form, ['contact_name_1', 'contact_telephone_number_1', 'contact_email_address_1', 'contact_name_2', 'contact_telephone_number_2', 'contact_email_address_2'])
+      this.Validate(this.form, ['contact_name_1', 'contact_telephone_number_1', 'contact_email_address_1',
+        'nhs_smart_card_id_number', 'headline', 'short_biography', 'special_requirements',
+        'contact_name_2', 'contact_telephone_number_2', 'contact_email_address_2'])
       this.ValidateEmail({ email: this.form.contact_email_address_1, field: 'contact_email_address_1' })
       this.ValidateEmail({ email: this.form.contact_email_address_2, field: 'contact_email_address_2' })
       if (!this.formError.length) {
