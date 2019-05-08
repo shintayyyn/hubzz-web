@@ -14,7 +14,7 @@ export const state = () => ({
         'September', 'October', 'November', 'December'
     ],
     select_date: null,
-    week_date_type: '',
+    select_shift: '',
     statistics: [
         { jobs: 'Available jobs', total: 0 },
         { jobs: 'Current jobs', total: 0 },
@@ -39,7 +39,7 @@ export const mutations = {
     },
     SELECT_WEEK_DATE (state, payload) {
         state.select_date = payload.date
-        state.week_date_type = payload.type
+        state.select_shift = payload.type
     },
     SET_SURGERIES (state, payload) {
         state.surgeries = []
@@ -81,7 +81,7 @@ export const mutations = {
 }
 
 export const getters = {
-    getAppointments (state) {
+    getAppointmentsPerMonth (state) {
         let ids = []
         state.appointmentDates.forEach(item => {
             let arr = new Array();
@@ -95,6 +95,21 @@ export const getters = {
             }
         })
         return state.appointmentDates.filter(item => ids.includes(item.job_number))
+    },
+    getAppointmentsPerWeek (state) {
+        let id = ''
+        state.appointmentDates.find((item) => {
+            let arr = new Array();
+            let dt = new Date(item.from);
+            while (dt <= new Date(item.to)) {
+              arr.push(moment(new Date(dt)).format('YYYY-MM-DD'));
+              dt.setDate(dt.getDate() + 1);
+            }
+            if (arr.includes(state.select_date) && item.shifts === state.select_shift) {
+                id = item.job_number
+            }
+        })
+        return state.appointmentDates.find(item => item.job_number === id)
     }
 }
   

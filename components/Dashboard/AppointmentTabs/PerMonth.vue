@@ -28,7 +28,6 @@
         >Week</span>
       </div>
     </div>
-
     <div class="flex flex-no-wrap mx-1 mt-5 text-xs lg:text-base">
       <div class="w-full text-center text-grey font-bold">SUN</div>
       <div class="w-full text-center text-grey font-bold">MON</div>
