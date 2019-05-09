@@ -41,7 +41,7 @@
     <div class="flex flex-no-wrap mx-1 mt-5 text-xs xl:text-base">
       <div class="w-full text-center text-grey-darkest"></div>
       <div
-        class="w-1/2 lg:w-full text-center text-grey-darkest"
+        class="w-1/2 lg:w-full text-center text-grey-darkest font-bold"
         v-for="(date, index) in daysInWeek"
         :key="index"
       >{{$moment(date).format('DD')}}</div>

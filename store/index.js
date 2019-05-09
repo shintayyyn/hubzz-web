@@ -32,7 +32,7 @@ export const mutations = {
   CHECK_WINDOW_WIDTH(state) {
     if (process.browser) {
       state.windowWidth = window.innerWidth
-      state.mobile = window.innerWidth <= 700
+      state.mobile = window.innerWidth <= 800
     }
   },
   SET_MONTHS(state) {
@@ -56,7 +56,6 @@ export const mutations = {
     state.drawer = payload
   },
   TOGGLE_AVAILABILITY_MODAL(state, payload) {
-    payload ? (state.blur_bg = true) : (state.blur_bg = false)
     state.availability_modal = payload
   },
   TOGGLE_AVAILABILITY_RANGE_MODAL(state, payload) {

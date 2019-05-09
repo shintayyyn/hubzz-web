@@ -1,63 +1,121 @@
 <template>
-    <div class="absolute pin-r pin-t z-10 p-10 bg-grey-lighter" style="height:130%" :style="$store.state.mobile ? 'width:100%' : 'width:70%'">
-      <div @click="$store.commit('TOGGLE_AVAILABILITY_MODAL', false)" class="cursor-pointer" v-text="'<'"></div>
-      <div class="font-bold text-lg my-5" style="font-family: Nunito">Availability</div>
-      <div class="border-solid rounded-lg shadow-md mb-8 px-5 py-8" style="width:70%">
-        <div class="text-sm font-bold">I won't be available for...</div>
-        <div class="mt-3 text-sm">On this date</div>
-        <div class="font-bold text-xl mt-4">{{$moment($store.state.availability.selectedDate).format('ddd DD MMMM YYYY')}}</div>
-        <div class="mt-8">
-          <label for="shifts" class="block text-sm mb-2" >On these shifts <span class="ml-8 px-1 border-solid rounded-lg bg-grey-light">Select all that apply. Shifts that are already booked are greyed-out.</span></label>
-          <div class="flex flex-row flex-wrap justify-start mt-5">
-            <div v-for="(item, index) in shifts" :key="index" :class="selectedShifts.includes(item.value) ? 'bg-yellow': ''"
-              class="border border-solid rounded-lg px-8 py-5 mr-4 cursor-pointer"
-              @click="select(item.value)">{{item.label}}</div>
-          </div>
-        </div>
-        <div class="mt-4">
-          <button class="bg-yellow-dark hover:text-white focus:outline-none text-black font-bold text-xl p-6 rounded-lg" @click.prevent="save">Save</button>
-        </div>
+  <div
+    class="absolute pin-r pin-t z-10 p-10 bg-white shadow-lg"
+    style="height:1500px"
+    :style="$store.state.mobile ? 'width:100%' : 'width:90%'"
+  >
+    <div @click="$store.commit('TOGGLE_AVAILABILITY_MODAL', false)" class="cursor-pointer">
+      <svgicon name="left-arrow" height="32" width="32"/>
+    </div>
+
+    <div class="font-bold text-lg my-5" style="font-family: Nunito">Availability</div>
+    <div class="w-full lg:w-5/6 border-solid rounded-lg shadow-lg p-5">
+      <div class="text-sm font-bold">I won't be available for...</div>
+      <div class="mt-3 text-sm">On this date</div>
+      <div
+        class="font-bold text-xl mt-4"
+      >{{$moment($store.state.availability.select_date).format('ddd DD MMMM YYYY')}}</div>
+      <div class="flex flex-row flex-wrap justify-between mt-4">
+        <div class="text-sm xl:text-base">On these shifts</div>
+        <div
+          class="text-sm xl:text-base px-1 border-solid rounded-lg bg-grey-light"
+        >Select all that apply. Shifts that are already booked are greyed-out.</div>
+      </div>
+      <div class="flex flex-row flex-wrap justify-start mt-4">
+        <div
+          v-for="(item, index) in shifts"
+          :key="index"
+          :class="[selectedShifts.includes(item.value) ? 'bg-yellow': '', item.value === disabledShift ? 'bg-grey-light text-grey-dark':'cursor-pointer hover:bg-yellow']"
+          class="border border-solid rounded-lg px-8 py-5 m-2 text-sm xl:text-base"
+          @click.prevent="select(item.value)"
+        >{{item.label}}</div>
+      </div>
+
+      <div class="mt-4">
+        <button
+          class="bg-yellow-dark hover:text-white focus:outline-none text-black font-bold text-xl p-6 rounded-lg"
+          @click.prevent="save"
+        >Save</button>
       </div>
     </div>
+  </div>
 </template>
 <script>
 const shifts = [
-  {value: 'AM', label: 'AM'},
-  {value: 'PM', label: 'PM'},
-  {value: 'WHOLE DAY', label: 'Whole day'},
-  {value: 'OOH', label: 'OOH'},
+  { value: 'AM', label: 'AM' },
+  { value: 'PM', label: 'PM' },
+  { value: 'WHOLE DAY', label: 'Whole day' },
+  { value: 'OOH', label: 'OOH' },
 ]
 export default {
-  data () {
+  data() {
     return {
       shifts,
-      selectedShifts: []
+      selectedShifts: [],
+      disabledShift: ''
     }
   },
-  created () {
-    this.getSelectedShifts()
+  computed: {
+    appointmentDates() {
+      return this.$store.state.dashboard.appointmentDates
+    },
+    notAvailableDates() {
+      return this.$store.state.availability.notAvailableDates
+    },
+  },
+  created() {
+    // check if this selected date is already in not available date
+    let item = this.notAvailableDates.find(item => item.date === this.$moment(this.$store.state.availability.select_date).format('LL'))
+    if (item && item.date) {
+      // get the selected shifts on this item
+      item.shifts.forEach(shift => {
+        this.selectedShifts.push(shift)
+      })
+    }
+    // check if there is an appointment date based on the selected date
+    let appointment = this.appointmentDates.find(appointment => this.getDateArray(appointment.from, appointment.to).includes(this.$moment(this.$store.state.availability.select_date).format('YYYY-MM-DD')))
+    // disabled the shift based on the appointment date selected shifts
+    if (appointment && appointment.shifts) {
+      this.disabledShift = appointment.shifts
+    }
   },
   methods: {
-    getSelectedShifts () {
-      let item = this.$store.state.availability.notAvailableDates.find(item => item.date === this.$store.state.availability.selectedDate)
-      this.selectedShifts = []
-      if (item) {
-        item.shifts.forEach(shift => {
-          this.selectedShifts.push(shift)
-        })
+    select(shift) {
+      if (shift === this.disabledShift) {
+        return
       }
-    },
-    select(value) {
-      const index = this.selectedShifts.findIndex(item => item === value)
-      if (index < 0) {
-        this.selectedShifts.push(value)
-      } else {
+      if (this.selectedShifts.includes(shift)) {
+        let index = this.selectedShifts.findIndex(item => item === shift)
         this.selectedShifts.splice(index, 1)
+      } else {
+        this.selectedShifts.push(shift)
       }
     },
-    save () {
-      this.$store.commit('availability/setNotAvailableDate', this.selectedShifts)
+    save() {
+      // post request to API
+      // pass the selected date and shifts
+      if (this.selectedShifts.length > 0) {
+        this.$store.commit('availability/SET_NOT_AVAILABLE_DATE',
+          { selectedDate: this.$moment(this.$store.state.availability.select_date).format('LL'), selectedShifts: this.selectedShifts }
+        )
+      } else {
+        // pass the selected date on remove
+        this.$store.commit('availability/REMOVE_NOT_AVAILABLE_DATE', this.$moment(this.$store.state.availability.select_date).format('LL'))
+      }
       this.$store.commit('TOGGLE_AVAILABILITY_MODAL', false)
+    },
+    validateAvailabilityDates(dates, shifts) {
+
+    },
+    getDateArray(startDate, stopDate) {
+      var dateArray = [];
+      var currentDate = this.$moment(startDate);
+      var stopDate = this.$moment(stopDate);
+      while (currentDate <= stopDate) {
+        dateArray.push(this.$moment(currentDate).format('YYYY-MM-DD'))
+        currentDate = this.$moment(currentDate).add(1, 'days');
+      }
+      return dateArray;
     }
   }
 }

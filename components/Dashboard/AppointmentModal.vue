@@ -6,7 +6,7 @@
   >
     <!-- :class="[$store.state.blur_bg_2 ? 'blurClass2' : '', 'bgClass2']" -->
     <div
-      v-if="true"
+      v-if="errorMessage"
       class="absolute pin-t z-50"
       :class="$store.state.mobile ? 'w-full pin-x':'flex justify-center w-full pin-x'"
     >
@@ -25,7 +25,7 @@
       <svgicon name="left-arrow" height="32" width="32"/>
     </div>
     <div class="font-bold text-lg my-5" style="font-family: Nunito">Appointment</div>
-    <div class="w-5/6 border-solid rounded-lg shadow-lg p-5">
+    <div class="w-full lg:w-5/6 border-solid rounded-lg shadow-lg p-5">
       <form class="w-full">
         <div class="relative flex flex-col">
           <div class="flex flex-row justify-between">

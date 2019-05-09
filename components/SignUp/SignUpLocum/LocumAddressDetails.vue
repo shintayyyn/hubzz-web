@@ -191,10 +191,10 @@ export default {
   },
   methods: {
     getPredictions: debounce(function (input) {
-      // if (!input) {
-      //   this.showPredictions = false
-      //   return
-      // }
+      if (!input) {
+        this.showPredictions = false
+        return
+      }
       let results = []
       const params = {
         input: input
@@ -221,11 +221,11 @@ export default {
     }, 250),
     onFocus() {
       this.setFocus = 'post_code'
-      // this.predictions.length > 0 && this.form.post_code ? this.showPredictions = true : this.showPredictions = false
+      this.predictions.length > 0 && this.form.post_code ? this.showPredictions = true : this.showPredictions = false
     },
     onBlur() {
       this.setFocus = ''
-      // this.showPredictions = false
+      this.showPredictions = false
     },
     selectPrediction(item, index) {
       this.form.post_code = item.post_code

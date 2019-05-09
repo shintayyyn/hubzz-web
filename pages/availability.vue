@@ -1,0 +1,179 @@
+<template>
+  <section class="relative">
+    <div class="px-10">
+      <div class="text-sm font-bold">I'm available for...</div>
+    </div>
+    <div class="px-10 mt-5">
+      <div class="rounded-lg shadow-lg">
+        <form class="w-full p-5">
+          <div
+            class="relative flex flex-col mt-8 border-b-2 border-grey-light"
+            :class="[setFocus === 'post_code' ? 'border-yellow':'', formError.find(item => item.field === 'post_code') ? 'border-red':'']"
+          >
+            <label for="post_code" class="text-sm mb-2">The post code where I will be available at</label>
+            <input
+              type="text"
+              ref="post_code"
+              class="focus:outline-none font-bold text-sm"
+              style="height:40px"
+              @focus="setFocus = 'post_code'"
+              @blur="setFocus = ''"
+              v-model="form.post_code"
+              placeholder="Enter a post code"
+              @keyup="getPredictions"
+            >
+            <span
+              class="absolute pin-r bg-red text-white p-1"
+              v-if="formError.find(item => item.field === 'post_code')"
+            >{{formError.find(item => item.field === 'post_code').message}}</span>
+          </div>
+          <div
+            class="relative flex flex-col mt-8 border-b-2 border-grey-light"
+            :class="[setFocus === 'miles' ? 'border-yellow':'', formError.find(item => item.field === 'miles') ? 'border-red':'']"
+          >
+            <label for="miles" class="text-sm mb-2">No further than (in miles)</label>
+            <input
+              type="text"
+              ref="miles"
+              class="focus:outline-none font-bold text-sm text-right"
+              style="height:40px"
+              @focus="setFocus = 'miles'"
+              @blur="setFocus = ''"
+              v-model="form.miles"
+            >
+            <span
+              class="absolute pin-r bg-red text-white p-1"
+              v-if="formError.find(item => item.field === 'miles')"
+            >{{formError.find(item => item.field === 'miles').message}}</span>
+          </div>
+
+          <div class="relative flex flex-col mt-8">
+            <div class="flex flex-row flex-wrap justify-start">
+              <div class="text-sm leading-loose mr-2">The shifts I am available for</div>
+              <div
+                class="py-2 px-1 rounded-lg text-sm bg-grey-lighter leading-tight"
+              >Select all that apply</div>
+            </div>
+            <div class="flex flex-row flex-wrap justify-start mt-5">
+              <div
+                :class="item.isSelected ? 'bg-yellow':''"
+                class="relative border border-solid rounded-lg px-10 py-5 mr-5 mb-1 hover:bg-yellow cursor-pointer"
+                v-for="(item, index) in shifts"
+                :key="index"
+                @click="item.isSelected = !item.isSelected"
+              >{{item.label}}</div>
+            </div>
+          </div>
+
+          <button
+            class="bg-yellow-dark hover:text-white focus:outline-none text-black font-bold text-xl p-6 rounded-lg mt-10 mb-5"
+            @click.prevent="update"
+          >Update</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="px-10 mt-5">
+      <div class="text-sm font-bold">When I won't be available</div>
+      <div
+        class="text-sm"
+      >Add a date range from the + button below or click on a date to add or remove</div>
+    </div>
+    <div class="px-10 my-5">
+      <div class="relative border-solid rounded-lg shadow-md p-5" style="height:500px">
+        <AvailabilityCalendar/>
+        <div class="absolute pin-b pin-r m-5">
+          <div
+            class="rounded-full h-10 w-10 lg:h-16 lg:w-16 flex items-center focus:outline-none justify-center bg-yellow-dark font-semibold text-xl cursor-pointer shadow-md hover:text-white"
+            @click="$store.commit('TOGGLE_AVAILABILITY_RANGE_MODAL', true)"
+          >+</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</template>
+<script>
+const shifts = [
+  { value: 'AM', label: 'AM', isSelected: false },
+  { value: 'PM', label: 'PM', isSelected: false },
+  { value: 'WHOLE DAY', label: 'Whole day', isSelected: false },
+  { value: 'OOH', label: 'OOH', isSelected: false },
+]
+const availability = {
+  post_code: '',
+  miles: 0,
+  shifts: []
+}
+
+import debounce from 'lodash.debounce'
+import AvailabilityCalendar from '@/components/Availability/AvailabilityCalendar'
+export default {
+  components: {
+    AvailabilityCalendar
+  },
+  data() {
+    return {
+      form: {
+        post_code: '',
+        miles: '',
+        shifts: []
+      },
+      setFocus: '',
+      shifts,
+
+      availability,
+      modal: false,
+
+      // Optional, just need to pass into modal
+      formError: []
+    }
+  },
+
+  computed: {
+    notAvailableDates() {
+      return this.$store.state.availability.notAvailableDates
+    }
+  },
+
+  methods: {
+    //! refactor this get predictions
+    getPredictions: debounce(function (input) {
+
+      let results = []
+      const params = {
+        input: input
+      }
+      this.$axios
+        .$get(`/api/v1/predictions`, { params })
+        .then(res => {
+          console.log(res)
+          res.predictions.forEach(item => {
+            let postal_code = item.details.result.address_components.find(item => item.types.includes('postal_code'))
+              ? item.details.result.address_components.find(item => item.types.includes('postal_code')).long_name : ''
+            let route = item.details.result.address_components.find(item => item.types.includes('route'))
+              ? item.details.result.address_components.find(item => item.types.includes('route')).long_name : ''
+            let postal_town = item.details.result.address_components.find(item => item.types.includes('postal_town'))
+              ? item.details.result.address_components.find(item => item.types.includes('postal_town')).long_name : ''
+            results.push({
+              main_text: item.structured_formatting.main_text, secondary_text: item.structured_formatting.secondary_text,
+              post_code: postal_code, line_1: route, line_2: '', line_3: postal_town
+            })
+            this.predictions = results
+          })
+          results.length > 0 ? this.showPredictions = true : this.showPredictions = false
+        })
+    }, 250),
+    update() {
+      this.form.shifts = []
+      this.form.shifts = this.shifts.filter(item => item.isSelected)
+      // post request to api
+      this.$store.commit('availability/setAvailability', this.availability)
+    },
+    openModal(date) {
+      this.$store.commit('availability/setSelectedDate', this.$moment(date.fullDate).format('LL'))
+      this.$store.commit('TOGGLE_AVAILABILITY_MODAL', true)
+    }
+  }
+}
+</script>
+
