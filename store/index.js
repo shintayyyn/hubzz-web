@@ -59,7 +59,6 @@ export const mutations = {
     state.availability_modal = payload
   },
   TOGGLE_AVAILABILITY_RANGE_MODAL(state, payload) {
-    payload ? (state.blur_bg = true) : (state.blur_bg = false)
     state.availability_range_modal = payload
   },
   TOGGLE_INVOICE_MODAL(state, payload) {

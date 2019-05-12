@@ -1,17 +1,9 @@
 export const state = () => ({
-  availability: {
-    post_code: '',
-    miles: 0,
-    shifts: []
-  },
   notAvailableDates: [],
   select_date: null,
 })
 
 export const mutations = {
-  setAvailability (state, payload) {
-    state.availability = payload
-  },
   SELECT_DATE (state, payload) {
     state.select_date = payload
   },

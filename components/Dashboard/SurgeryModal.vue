@@ -81,7 +81,7 @@
           >{{item.address.line_1}}, {{item.address.line_2}}, {{item.address.line_3}}, {{item.address.post_code}}</div>
           <div class="flex flex-row flex-nowrap mt-1">
             <div class="rounded-lg bg-grey-light py-1 px-2 mr-1">CCG</div>
-            <div class="flex items-center">{{item.ccg}}</div>
+            <div class="flex items-center">{{item.clinical_commissioning_group.name}}</div>
           </div>
           <div class="flex flex-row flex-nowrap mt-1">
             <div class="rounded-lg bg-grey-light py-1 px-2 mr-1">Practice Code</div>
@@ -121,11 +121,6 @@ export default {
       setFocus: ''
     }
   },
-  computed: {
-    ccgs() {
-      return this.$store.state.signUp.ccg
-    }
-  },
   mounted() {
     // get all the added surgery/practice id
     let ids = []
@@ -149,20 +144,20 @@ export default {
         return
       }
       this.$axios
-        .$get(`/api/v1/practices?search=${this.form.search}&limit=10`)
+        .$get(`/api/v1/surgeries?search=${this.form.search}&limit=10`)
         .then(res => {
-          this.results = []
-          res.data.practices.forEach(item => {
-            this.results.push({
-              id: item.id,
-              name: item.name,
-              address: item.address,
-              ccg: this.ccgs.find(ccg => ccg.id === item.clinical_commissioning_group_id).name,
-              practice_code: item.code,
-              email: item.email,
-              phone_number: item.phone_number
-            })
-          })
+          this.results = res.data.surgeries
+          // res.data.surgeries.forEach(item => {
+          //   this.results.push({
+          //     id: item.id,
+          //     name: item.name,
+          //     address: item.address,
+          //     ccg: this.ccgs.find(ccg => ccg.id === item.clinical_commissioning_group_id).name,
+          //     practice_code: item.code,
+          //     email: item.email,
+          //     phone_number: item.phone_number
+          //   })
+          // })
           this.showResult = true
         })
     }

@@ -18,7 +18,7 @@
               style="height:40px"
               @focus="setFocus = 'post_code'"
               @blur="setFocus = ''"
-              v-model="form.post_code"
+              v-model="post_code"
               placeholder="Enter a post code"
               @keyup="getPredictions"
             >
@@ -39,7 +39,7 @@
               style="height:40px"
               @focus="setFocus = 'miles'"
               @blur="setFocus = ''"
-              v-model="form.miles"
+              v-model="miles"
             >
             <span
               class="absolute pin-r bg-red text-white p-1"
@@ -56,12 +56,12 @@
             </div>
             <div class="flex flex-row flex-wrap justify-start mt-5">
               <div
-                :class="item.isSelected ? 'bg-yellow':''"
-                class="relative border border-solid rounded-lg px-10 py-5 mr-5 mb-1 hover:bg-yellow cursor-pointer"
-                v-for="(item, index) in shifts"
-                :key="index"
-                @click="item.isSelected = !item.isSelected"
-              >{{item.label}}</div>
+                class="relative border border-solid rounded-lg px-10 py-5 mr-5 mb-1 cursor-pointer"
+                :class="selectedShifts.includes(item.id) ? 'bg-yellow': 'hover:bg-yellow'"
+                v-for="item in shifts"
+                :key="item.id"
+                @click="select(item.id)"
+              >{{item.name}}</div>
             </div>
           </div>
 
@@ -93,17 +93,6 @@
   </section>
 </template>
 <script>
-const shifts = [
-  { value: 'AM', label: 'AM', isSelected: false },
-  { value: 'PM', label: 'PM', isSelected: false },
-  { value: 'WHOLE DAY', label: 'Whole day', isSelected: false },
-  { value: 'OOH', label: 'OOH', isSelected: false },
-]
-const availability = {
-  post_code: '',
-  miles: 0,
-  shifts: []
-}
 
 import debounce from 'lodash.debounce'
 import AvailabilityCalendar from '@/components/Availability/AvailabilityCalendar'
@@ -113,15 +102,12 @@ export default {
   },
   data() {
     return {
-      form: {
-        post_code: '',
-        miles: '',
-        shifts: []
-      },
+      shifts: [],
+      selectedShifts: [],
+      post_code: '',
+      miles: '',
       setFocus: '',
-      shifts,
-
-      availability,
+      //
       modal: false,
 
       // Optional, just need to pass into modal
@@ -133,6 +119,26 @@ export default {
     notAvailableDates() {
       return this.$store.state.availability.notAvailableDates
     }
+  },
+
+  created() {
+    // get all shifts
+    this.$axios
+      .$get(`/api/v1/shifts`)
+      .then(res => {
+        res.data.shifts.forEach(item => {
+          this.shifts.push({ id: item.id, name: item.name })
+        })
+
+      })
+    // get authenticated user selected shift/s
+    this.$axios
+      .$get(`/api/v1/me`)
+      .then(res => {
+        res.data.user.locum_detail.shifts.forEach(shift => {
+          this.selectedShifts.push(shift.id)
+        })
+      })
   },
 
   methods: {
@@ -163,11 +169,21 @@ export default {
           results.length > 0 ? this.showPredictions = true : this.showPredictions = false
         })
     }, 250),
+    select(id) {
+      let shift = this.selectedShifts.find(item => item === id)
+      if (shift) {
+        this.selectedShifts = this.selectedShifts.filter(item => item !== shift)
+      } else {
+        this.selectedShifts.push(id)
+      }
+    },
     update() {
-      this.form.shifts = []
-      this.form.shifts = this.shifts.filter(item => item.isSelected)
       // post request to api
-      this.$store.commit('availability/setAvailability', this.availability)
+      this.$axios
+        .$put(`/api/v1/locum/me/shifts`, { shift_id: this.selectedShifts.join().toString() })
+        .then(res => {
+          res.data.user.locum_detail.shifts.forEach(shift => this.selectedShifts.push(shift.id))
+        })
     },
     openModal(date) {
       this.$store.commit('availability/setSelectedDate', this.$moment(date.fullDate).format('LL'))
