@@ -9,7 +9,7 @@
     <div class="flex w-full justify-center xl:justify-start mt-5">
       <div class="mx-4 flex flex-col p-8 m-1 rounded-lg shadow-lg" style="flex: 0 1 600px;">
         <form class="w-full rounded-lg bg-grey-light px-8 pb-8">
-          <div class="relative flex flex-col mt-8">
+          <!-- <div class="relative flex flex-col mt-8">
             <div class="flex flex-row justify-between">
               <label for="post_code" class="text-sm" style="width:50%">Post code</label>
             </div>
@@ -56,65 +56,72 @@
               class="absolute pin-t pin-r bg-red text-white p-1"
               v-if="formError.find(item => item.field === 'post_code')"
             >{{formError.find(item => item.field === 'post_code').message}}</div>
+          </div>-->
+          <div class="relative flex flex-col mt-8">
+            <label for="post_code" class="text-xs lg:text-base mb-4">Post code</label>
+            <input
+              type="text"
+              ref="post_code"
+              class="py-2 font-bold text-xs lg:text-base bg-grey-light border-b-2 border-white focus:outline-none focus:border-yellow"
+              :class="formError.find(item => item.field === 'post_code') ? 'border-red':''"
+              @focus="''"
+              @blur="ValidateText(form.post_code, 'post_code')"
+              v-model="form.post_code"
+              placeholder="Enter a post code and select from list"
+            >
+            <span
+              class="absolute pin-r bg-red text-white p-1 text-xs lg:text-base"
+              v-if="formError.find(item => item.field === 'post_code')"
+            >{{formError.find(item => item.field === 'post_code').message}}</span>
           </div>
-
-          <div
-            class="relative flex flex-col mt-8 border-b-2 border-white"
-            :class="[setFocus === 'address_line_1' ? 'border-yellow':'', formError.find(item => item.field === 'address_line_1') ? 'border-red':'']"
-          >
-            <label for="address_line_1" class="text-sm mb-4">Address line 1</label>
+          <div class="relative flex flex-col mt-8">
+            <label for="address_line_1" class="text-xs lg:text-base mb-4">Address line 1</label>
             <input
               type="text"
               ref="address_line_1"
-              class="focus:outline-none font-bold bg-grey-light text-sm"
-              style="height:40px"
-              @focus="setFocus = 'address_line_1'"
-              @blur="setFocus = ''"
+              class="py-2 font-bold text-xs lg:text-base bg-grey-light border-b-2 border-white focus:outline-none focus:border-yellow"
+              :class="formError.find(item => item.field === 'address_line_1') ? 'border-red':''"
+              @focus="''"
+              @blur="ValidateText(form.address_line_1, 'address_line_1')"
               v-model="form.address_line_1"
-              :disabled="disabledInput"
+              placeholder="Enter a post code and select from list"
             >
             <span
-              class="absolute pin-r bg-red text-white p-1"
+              class="absolute pin-r bg-red text-white p-1 text-xs lg:text-base"
               v-if="formError.find(item => item.field === 'address_line_1')"
             >{{formError.find(item => item.field === 'address_line_1').message}}</span>
           </div>
-          <div
-            class="relative flex flex-col mt-8 border-b-2 border-white"
-            :class="[setFocus === 'address_line_2' ? 'border-yellow':'', formError.find(item => item.field === 'address_line_2') ? 'border-red':'']"
-          >
-            <label for="address_line_2" class="text-sm mb-4">Address line 2 (optional)</label>
+          <div class="relative flex flex-col mt-8">
+            <label for="address_line_2" class="text-xs lg:text-base mb-4">Address line 2</label>
             <input
               type="text"
               ref="address_line_2"
-              class="focus:outline-none font-bold bg-grey-light text-sm"
-              style="height:40px"
-              @focus="setFocus = 'address_line_2'"
-              @blur="setFocus = ''"
+              class="py-2 font-bold text-xs lg:text-base bg-grey-light border-b-2 border-white focus:outline-none focus:border-yellow"
+              :class="formError.find(item => item.field === 'address_line_2') ? 'border-red':''"
+              @focus="''"
+              @blur="''"
               v-model="form.address_line_2"
-              :disabled="disabledInput"
+              placeholder="Enter a post code and select from list"
             >
             <span
-              class="absolute pin-r bg-red text-white p-1"
+              class="absolute pin-r bg-red text-white p-1 text-xs lg:text-base"
               v-if="formError.find(item => item.field === 'address_line_2')"
             >{{formError.find(item => item.field === 'address_line_2').message}}</span>
           </div>
-          <div
-            class="relative flex flex-col mt-8 border-b-2 border-white"
-            :class="[setFocus === 'address_line_3' ? 'border-yellow':'', formError.find(item => item.field === 'address_line_3') ? 'border-red':'']"
-          >
-            <label for="address_line_3" class="text-sm mb-4">City / Town / District</label>
+          <div class="relative flex flex-col mt-8">
+            <label for="address_line_3" class="text-xs lg:text-base mb-4">City / Town / District</label>
             <input
               type="text"
               ref="address_line_3"
-              class="focus:outline-none font-bold bg-grey-light text-sm"
-              style="height:40px"
-              @focus="setFocus = 'address_line_3'"
-              @blur="setFocus = ''"
+              class="py-2 font-bold text-xs lg:text-base bg-grey-light border-b-2 border-white focus:outline-none focus:border-yellow"
+              :class="formError.find(item => item.field === 'address_line_3') ? 'border-red':''"
+              @focus="''"
+              @blur="ValidateText(form.address_line_3, 'address_line_3')"
               v-model="form.address_line_3"
-              :disabled="disabledInput"
+              placeholder="Enter a post code and select from list"
             >
             <span
-              class="absolute pin-r bg-red text-white p-1"
+              class="absolute pin-r bg-red text-white p-1 text-xs lg:text-base"
               v-if="formError.find(item => item.field === 'address_line_3')"
             >{{formError.find(item => item.field === 'address_line_3').message}}</span>
           </div>
@@ -161,9 +168,6 @@ export default {
   computed: {
     addressDetails() {
       return this.$store.state.signUp.address_details
-    },
-    disabledInput() {
-      return !this.form.post_code
     },
     addressFormError() {
       return this.$store.state.signUp.address_detail_form_error
@@ -219,28 +223,6 @@ export default {
           results.length > 0 ? this.showPredictions = true : this.showPredictions = false
         })
     }, 250),
-    onFocus() {
-      this.setFocus = 'post_code'
-      this.predictions.length > 0 && this.form.post_code ? this.showPredictions = true : this.showPredictions = false
-    },
-    onBlur() {
-      this.setFocus = ''
-      this.showPredictions = false
-    },
-    selectPrediction(item, index) {
-      this.form.post_code = item.post_code
-      this.form.address_line_1 = item.line_1
-      this.form.address_line_2 = item.line_2
-      this.form.address_line_3 = item.line_3
-      this.setFocus = ''
-      this.showPredictions = false
-    },
-    hidePredictions() {
-      if (!this.form.post_code) {
-        this.setFocus = ''
-        this.showPredictions = false
-      }
-    },
     next() {
       try {
         this.formError = []

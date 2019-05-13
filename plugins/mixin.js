@@ -34,6 +34,47 @@ Vue.mixin({
         }
       }
     },
+    ValidateText(value, field) {
+      let index = this.formError.findIndex(item => item.field === field)
+      if (index >= 0) {
+        this.formError.splice(index, 1)
+      }
+      if (!value) {
+        this.formError.push(
+          { field: field, message: 'Required', validation: 'required'}
+        )
+      } 
+    },
+    ValidateMobile(value, field) {
+      let index = this.formError.findIndex(item => item.field === field)
+      if (index >= 0) {
+        this.formError.splice(index, 1)
+      }
+      if (!value) {
+        this.formError.push(
+          { field: field, message: 'Required', validation: 'required'}
+        )
+      } else {
+        let re = /^[0][1-9]\d{9}$|^[1-9]\d{9}$/g;
+        if (value && !re.test(String(value).toLowerCase())) {
+          this.formError.push(
+            { field: field, message: 'Your mobile number is invalid', validation: 'invalid format'}
+          )
+        }
+      }
+    },
+    ValidateArray(value, field) {
+      console.log(value,field)
+      let index = this.formError.findIndex(item => item.field === field)
+      if (index >= 0) {
+        this.formError.splice(index, 1)
+      }
+      if (value.length === 0) {
+        this.formError.push(
+          { field: field, message: 'Required', validation: 'required'}
+        )
+      }
+    },
     ValidatePassword(password, password_confirmation) {
       if (password && password_confirmation && password !== password_confirmation) {
         this.formError.push(
@@ -49,14 +90,7 @@ Vue.mixin({
         )
       }
     },
-    ValidateMobile(mobile) {
-      let re = /^[0][1-9]\d{9}$|^[1-9]\d{9}$/g;
-      if (mobile && !re.test(String(mobile).toLowerCase())) {
-        this.formError.push(
-          { field: 'mobile_number', message: 'Your mobile number is invalid', validation: 'invalid'}
-        )
-      }
-    },
+    
     ValidateDate(start, end) {
       if (this.$moment(end).format('YYYY-MM-DD') < this.$moment(start).format('YYYY-MM-DD')) {
         this.formError.push(

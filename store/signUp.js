@@ -1,5 +1,6 @@
 export const state = () => ({
     activeTab: 'account_details',
+    // rate_range_modal: false,
     professions: [],
     qualifications: [],
     clinicalSystems: [],
@@ -12,7 +13,8 @@ export const state = () => ({
         suffix: '',
         gender: '',
         mobile_number: '',
-        home_number: ''
+        home_number: '',
+        work_number: ''
     },
     address_details: {
         post_code: '',
@@ -24,10 +26,10 @@ export const state = () => ({
         gmc_or_nmc_number: '',
         mpl_or_npl_number: '',
         nhs_smart_card_id_number: '',
-        profession: null,
-        specialty: [],
-        clinical_systems: [],
-        spoken_languages: [],
+        profession_id: '',
+        qualification_id: [],
+        clinical_system_id: [],
+        spoken_language_id: [],
         rate_per_hour: '',
         rate_per_half_day_session: '',
         rate_per_whole_day_session: '',
@@ -64,6 +66,9 @@ export const state = () => ({
 })
 
 export const mutations = {
+    // TOGGLE_RATE_RANGE_MODAL(state, payload) {
+    //     state.rate_range_modal = payload
+    // },
     SET_PROFESSIONS(state, payload) {
         state.professions = []
         payload.forEach(item => {
@@ -105,6 +110,7 @@ export const mutations = {
         state.account_details.gender = payload.gender
         state.account_details.mobile_number = payload.mobile_number
         state.account_details.home_number = payload.home_number
+        state.account_details.work_number = payload.work_number
     },
     SET_ADDRESS_DETAILS(state, payload) {
         state.address_details.post_code = payload.post_code
@@ -117,17 +123,17 @@ export const mutations = {
         state.professional_details.mpl_or_npl_number = payload.mpl_or_npl_number
         state.professional_details.nhs_smart_card_id_number = payload.nhs_smart_card_id_number
         state.professional_details.profession = payload.profession
-        state.professional_details.specialty = []
-        payload.specialty.forEach(item => {
-            state.professional_details.specialty.push(item)
+        state.professional_details.qualification_id = []
+        payload.qualification_id.forEach(item => {
+            state.professional_details.qualification_id.push(item)
         })
-        state.professional_details.clinical_systems = []
-        payload.clinical_systems.forEach(item => {
-            state.professional_details.clinical_systems.push(item)
+        state.professional_details.clinical_system_id = []
+        payload.clinical_system_id.forEach(item => {
+            state.professional_details.clinical_system_id.push(item)
         })
-        state.professional_details.spoken_languages = []
-        payload.spoken_languages.forEach(item => {
-            state.professional_details.spoken_languages.push(item)
+        state.professional_details.spoken_language_id = []
+        payload.spoken_language_id.forEach(item => {
+            state.professional_details.spoken_language_id.push(item)
         })
         state.professional_details.rate_per_hour = payload.rate_per_hour
         state.professional_details.rate_per_half_day_session = payload.rate_per_half_day_session
@@ -148,6 +154,7 @@ export const mutations = {
         state.account_details.gender = ''
         state.account_details.mobile_number = ''
         state.account_details.home_number = ''
+        state.account_details.work_number = ''
         state.address_details.post_code = ''
         state.address_details.address_line_1 = ''
         state.address_details.address_line_2 = ''
@@ -155,10 +162,10 @@ export const mutations = {
         state.professional_details.gmc_or_nmc_number = ''
         state.professional_details.mpl_or_npl_number = ''
         state.professional_details.nhs_smart_card_id_number = ''
-        state.professional_details.profession = ''
-        state.professional_details.specialty = []
-        state.professional_details.clinical_systems = []
-        state.professional_details.spoken_languages = []
+        state.professional_details.profession_id = ''
+        state.professional_details.qualification_id = []
+        state.professional_details.clinical_system_id = []
+        state.professional_details.spoken_language_id = []
         state.professional_details.rate_per_hour = ''
         state.professional_details.rate_per_half_day_session = ''
         state.professional_details.rate_per_whole_day_session = ''

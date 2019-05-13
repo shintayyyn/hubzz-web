@@ -11,25 +11,25 @@
         <form class="w-full">
           <div class="relative flex flex-col mt-8">
             <div class="flex flex-row justify-between">
-              <label for="gmc_or_nmc_number" class="text-sm" style="width:50%">Your GMC / NMC Number</label>
+              <label
+                for="gmc_or_nmc_number"
+                class="text-xs lg:text-base mb-4 w-1/2"
+              >Your GMC / NMC Number</label>
+              <div
+                class="text-xs lg:text-base rounded-lg bg-grey-light px-2 py-1"
+              >For compliance; to be verified by the hubzz team</div>
             </div>
             <div class="flex flex-row justify-between mt-4">
-              <div
-                class="flex flex-col border-b-2 border-grey-light"
-                style="width:100%"
-                :class="[setFocus === 'gmc_or_nmc_number' ? 'border-yellow':'', formError.find(item => item.field === 'gmc_or_nmc_number') ? 'border-red':'']"
+              <input
+                type="text"
+                ref="gmc_or_nmc_number"
+                class="py-2 font-bold text-xs lg:text-base border-b-2 focus:outline-none focus:border-yellow w-full"
+                :class="formError.find(item => item.field === 'gmc_or_nmc_number') ? 'border-red':''"
+                @focus="''"
+                @blur="ValidateText(form.gmc_or_nmc_number, 'gmc_or_nmc_number')"
+                v-model="form.gmc_or_nmc_number"
+                placeholder="GMC / NMC Number"
               >
-                <input
-                  type="text"
-                  ref="gmc_or_nmc_number"
-                  class="focus:outline-none font-bold text-sm"
-                  style="height:40px;"
-                  @focus="setFocus = 'gmc_or_nmc_number'"
-                  @blur="setFocus = ''"
-                  v-model="form.gmc_or_nmc_number"
-                  placeholder="GMC / NMC Number"
-                >
-              </div>
             </div>
             <div
               class="absolute pin-t pin-r bg-red text-white p-1"
@@ -39,28 +39,25 @@
 
           <div class="relative flex flex-col mt-8">
             <div class="flex flex-row justify-between">
-              <label for="mpl_or_npl_number" class="text-sm" style="width:50%">Your MPL / NPL Number</label>
+              <label
+                for="mpl_or_npl_number"
+                class="text-xs lg:text-base mb-4 w-1/2"
+              >Your MPL / NPL Number</label>
               <div
-                class="text-sm rounded-lg bg-grey-light px-2 py-1"
+                class="text-xs lg:text-base rounded-lg bg-grey-light px-2 py-1"
               >For compliance; to be verified by the hubzz team</div>
             </div>
             <div class="flex flex-row justify-between mt-4">
-              <div
-                class="flex flex-col border-b-2 border-grey-light"
-                style="width:100%"
-                :class="[setFocus === 'mpl_or_npl_number' ? 'border-yellow':'', formError.find(item => item.field === 'mpl_or_npl_number') ? 'border-red':'']"
+              <input
+                type="text"
+                ref="mpl_or_npl_number"
+                class="py-2 font-bold text-xs lg:text-base border-b-2 focus:outline-none focus:border-yellow w-full"
+                :class="formError.find(item => item.field === 'mpl_or_npl_number') ? 'border-red':''"
+                @focus="''"
+                @blur="ValidateText(form.mpl_or_npl_number, 'mpl_or_npl_number')"
+                v-model="form.mpl_or_npl_number"
+                placeholder="MPL / NPL Number"
               >
-                <input
-                  type="text"
-                  ref="mpl_or_npl_number"
-                  class="focus:outline-none font-bold text-sm"
-                  style="height:40px;"
-                  @focus="setFocus = 'mpl_or_npl_number'"
-                  @blur="setFocus = ''"
-                  v-model="form.mpl_or_npl_number"
-                  placeholder="MPL / NPL Number"
-                >
-              </div>
             </div>
             <div
               class="absolute pin-t pin-r bg-red text-white p-1"
@@ -72,27 +69,20 @@
             <div class="flex flex-row justify-between">
               <label
                 for="nhs_smart_card_id_number"
-                class="text-sm"
-                style="width:50%"
+                class="text-xs lg:text-base mb-4 w-1/2"
               >Your NHS Smart Card ID number</label>
             </div>
             <div class="flex flex-row justify-between mt-4">
-              <div
-                class="flex flex-col border-b-2 border-grey-light"
-                style="width:100%"
-                :class="[setFocus === 'nhs_smart_card_id_number' ? 'border-yellow':'', formError.find(item => item.field === 'nhs_smart_card_id_number') ? 'border-red':'']"
+              <input
+                type="text"
+                ref="nhs_smart_card_id_number"
+                class="py-2 font-bold text-xs lg:text-base border-b-2 focus:outline-none focus:border-yellow w-full"
+                :class="formError.find(item => item.field === 'nhs_smart_card_id_number') ? 'border-red':''"
+                @focus="''"
+                @blur="ValidateText(form.nhs_smart_card_id_number, 'nhs_smart_card_id_number')"
+                v-model="form.nhs_smart_card_id_number"
+                placeholder="MPL / NPL Number"
               >
-                <input
-                  type="text"
-                  ref="nhs_smart_card_id_number"
-                  class="focus:outline-none font-bold text-sm"
-                  style="height:40px;"
-                  @focus="setFocus = 'nhs_smart_card_id_number'"
-                  @blur="setFocus = ''"
-                  v-model="form.nhs_smart_card_id_number"
-                  placeholder="NHS Smart Card ID number"
-                >
-              </div>
             </div>
             <div
               class="absolute pin-t pin-r bg-red text-white p-1"
@@ -102,29 +92,23 @@
 
           <div class="relative flex flex-col mt-8">
             <div class="flex flex-row justify-between">
-              <label for="profession" class="text-sm" style="width:50%">Profession</label>
+              <label for="profession" class="text-xs lg:text-base mb-4 w-1/2">Profession</label>
             </div>
             <div class="flex flex-row justify-between mt-4">
-              <div
-                class="flex flex-col border-b-2 border-grey-light"
-                style="width:100%"
-                :class="[setFocus === 'profession' ? 'border-yellow':'', formError.find(item => item.field === 'profession') ? 'border-red':'']"
+              <select
+                class="py-2 font-bold text-xs lg:text-base border-b-2 focus:outline-none focus:border-yellow w-full"
+                :class="formError.find(item => item.field === 'profession_id') ? 'border-red':''"
+                @focus="''"
+                @blur="ValidateText(form.profession_id, 'profession_id')"
+                v-model="form.profession_id"
               >
-                <select
-                  class="focus:outline-none font-bold text-sm"
-                  style="height:40px;"
-                  @focus="setFocus = 'profession'"
-                  @blur="setFocus = ''"
-                  v-model="form.profession"
-                >
-                  <option value selected disabled>Select...</option>
-                  <option
-                    v-for="(item, index) in professions"
-                    :key="index"
-                    :value="item.id"
-                  >{{item.name}}</option>
-                </select>
-              </div>
+                <option value selected disabled>Select...</option>
+                <option
+                  v-for="(item, index) in professions"
+                  :key="index"
+                  :value="item.id"
+                >{{item.name}}</option>
+              </select>
             </div>
             <div
               class="absolute pin-t pin-r bg-red text-white p-1"
@@ -134,59 +118,53 @@
 
           <div class="relative flex flex-col mt-8">
             <div class="flex flex-row justify-between">
-              <label for="specialty" class="text-sm" style="width:50%">Specialty</label>
+              <label for="profession" class="text-xs lg:text-base mb-4 w-1/2">Specialty</label>
               <div
-                class="text-sm rounded-lg bg-grey-light px-2 py-1"
+                class="text-xs lg:text-base rounded-lg bg-grey-light px-2 py-1"
               >Choose at least one qualification</div>
             </div>
             <div class="flex flex-row justify-between mt-4">
-              <div
-                class="flex flex-col border-b-2 border-grey-light"
-                style="width:100%"
-                :class="[setFocus === 'specialty' ? 'border-yellow':'', formError.find(item => item.field === 'specialty') ? 'border-red':'']"
-              >
-                <div class="flex flex-row flex-wrap">
+              <div class="w-full">
+                <div class="flex flex-row flex-wrap text-xs lg:text-base">
                   <div
                     class="rounded-lg bg-yellow font-bold p-2 m-1"
-                    v-for="(item, index) in selectedSpecialties"
+                    v-for="(item, index) in selectedQualifications"
                     :key="`${item}-${index}`"
                   >
                     {{item.name}}
                     <span
-                      class="font-bold cursor-pointer text-lg"
-                      @click="removeSpecialty(item, index)"
+                      class="font-bold cursor-pointer text-sm lg:text-lg"
+                      @click="removeQualification(item, index)"
                     >X</span>
                   </div>
                 </div>
-
                 <div class="relative">
                   <input
                     type="text"
-                    ref="specialty"
-                    class="focus:outline-none font-bold text-sm"
-                    style="height:40px;width:100%;"
-                    @focus="setFocus = 'specialty'"
-                    @blur="setFocus = ''"
-                    v-model="searchSpecialties"
+                    ref="qualification_id"
+                    class="py-2 font-bold text-xs lg:text-base border-b-2 focus:outline-none focus:border-yellow w-full"
+                    :class="formError.find(item => item.field === 'qualification_id') ? 'border-red':''"
+                    @focus="''"
+                    @blur="''"
+                    v-model="searchQualifications"
                     placeholder="Select.."
-                    @click.prevent="showSpecialties=true, setFocus = 'specialty'"
-                    @keydown="specialtyKeyDownHandler"
+                    @keydown="qualificationKeyDownHandler"
+                    @click.prevent="showQualifications=true"
                   >
-
                   <transition name="fade">
                     <div
                       class="bg-white shadow-lg overflow-auto absolute pin-x z-10"
-                      v-if="showSpecialties"
+                      v-if="showQualifications"
                       style="height:100px"
-                      v-on-clickaway="hideSpecialties"
+                      v-on-clickaway="hideQualifications"
                     >
                       <div
-                        v-for="(item, index) in filteredSpecialties"
+                        v-for="(item, index) in filteredQualifications"
                         :key="`${item}-${index}`"
                         class="p-2 cursor-pointer"
-                        @mouseover="specialtiesIndex=index"
-                        :class="specialtiesIndex === index ? 'bg-grey':''"
-                        @click="selectSpecialty(item, index)"
+                        @mouseover="qualificationsIndex=index"
+                        :class="qualificationsIndex === index ? 'bg-grey':''"
+                        @click="selectQualification(item, index)"
                       >
                         <strong>{{item.name}}</strong>
                       </div>
@@ -197,22 +175,20 @@
             </div>
             <div
               class="absolute pin-t pin-r bg-red text-white p-1"
-              v-if="formError.find(item => item.field === 'specialty')"
-            >{{formError.find(item => item.field === 'specialty').message}}</div>
+              v-if="formError.find(item => item.field === 'qualification_id')"
+            >{{formError.find(item => item.field === 'qualification_id').message}}</div>
           </div>
 
           <div class="relative flex flex-col mt-8">
             <div class="flex flex-row justify-between">
-              <label for="clinical_systems" class="text-sm" style="width:50%">Clinical Systems</label>
-              <div class="text-sm rounded-lg bg-grey-light px-2 py-1">Choose at least one IT system</div>
+              <label for="profession" class="text-xs lg:text-base mb-4 w-1/2">Clinical Systems</label>
+              <div
+                class="text-xs lg:text-base rounded-lg bg-grey-light px-2 py-1"
+              >Choose at least one IT system</div>
             </div>
             <div class="flex flex-row justify-between mt-4">
-              <div
-                class="flex flex-col border-b-2 border-grey-light"
-                style="width:100%"
-                :class="[setFocus === 'clinical_systems' ? 'border-yellow':'', formError.find(item => item.field === 'clinical_systems') ? 'border-red':'']"
-              >
-                <div class="flex flex-row flex-wrap">
+              <div class="w-full">
+                <div class="flex flex-row flex-wrap text-xs lg:text-base">
                   <div
                     class="rounded-lg bg-yellow font-bold p-2 m-1"
                     v-for="(item, index) in selectedClinicalSystems"
@@ -220,31 +196,29 @@
                   >
                     {{item.name}}
                     <span
-                      class="font-bold cursor-pointer text-lg"
+                      class="font-bold cursor-pointer text-sm lg:text-lg"
                       @click="removeClinicalSystems(item, index)"
                     >X</span>
                   </div>
                 </div>
-
                 <div class="relative">
                   <input
                     type="text"
-                    ref="clinical_systems"
-                    class="focus:outline-none font-bold text-sm"
-                    style="height:40px;width:100%;"
-                    @focus="setFocus = 'clinical_systems'"
-                    @blur="setFocus = ''"
+                    ref="clinical_system_id"
+                    class="py-2 font-bold text-xs lg:text-base border-b-2 focus:outline-none focus:border-yellow w-full"
+                    :class="formError.find(item => item.field === 'clinical_system_id') ? 'border-red':''"
+                    @focus="''"
+                    @blur="''"
                     v-model="searchClinicalSystems"
                     placeholder="Select.."
-                    @click.prevent="showClinicalSystems=true, setFocus = 'clinical_systems'"
                     @keydown="clinicalSystemsKeyDownHandler"
+                    @click.prevent="showClinicalSystems=true"
                   >
-
                   <transition name="fade">
                     <div
                       class="bg-white shadow-lg overflow-auto absolute pin-x z-10"
                       v-if="showClinicalSystems"
-                      style="height:100px;"
+                      style="height:100px"
                       v-on-clickaway="hideClinicalSystems"
                     >
                       <div
@@ -264,24 +238,20 @@
             </div>
             <div
               class="absolute pin-t pin-r bg-red text-white p-1"
-              v-if="formError.find(item => item.field === 'clinical_systems')"
-            >{{formError.find(item => item.field === 'clinical_systems').message}}</div>
+              v-if="formError.find(item => item.field === 'clinical_system_id')"
+            >{{formError.find(item => item.field === 'clinical_system_id').message}}</div>
           </div>
 
           <div class="relative flex flex-col mt-8">
             <div class="flex flex-row justify-between">
-              <label for="clinical_systems" class="text-sm" style="width:50%">Spoken Languages</label>
+              <label for="profession" class="text-xs lg:text-base mb-4 w-1/2">Spoken Languages</label>
               <div
-                class="text-sm rounded-lg bg-grey-light px-2 py-1"
+                class="text-xs lg:text-base rounded-lg bg-grey-light px-2 py-1"
               >Choose other languages you can speak</div>
             </div>
             <div class="flex flex-row justify-between mt-4">
-              <div
-                class="flex flex-col border-b-2 border-grey-light"
-                style="width:100%"
-                :class="[setFocus === 'spoken_languages' ? 'border-yellow':'', formError.find(item => item.field === 'spoken_languages') ? 'border-red':'']"
-              >
-                <div class="flex flex-row flex-wrap">
+              <div class="w-full">
+                <div class="flex flex-row flex-wrap text-xs lg:text-base">
                   <div class="rounded-lg bg-yellow font-bold p-2 m-1">English</div>
                   <div
                     class="rounded-lg bg-yellow font-bold p-2 m-1"
@@ -290,50 +260,50 @@
                   >
                     {{item.name}}
                     <span
-                      class="font-bold cursor-pointer text-lg"
+                      class="font-bold cursor-pointer text-sm lg:text-lg"
                       @click="removeSpokenLanguages(item, index)"
                     >X</span>
                   </div>
                 </div>
-
                 <div class="relative">
                   <input
                     type="text"
-                    ref="spoken_languages"
-                    class="focus:outline-none font-bold text-sm"
-                    style="height:40px;width:100%;"
-                    @focus="setFocus = 'spoken_languages'"
-                    @blur="setFocus = ''"
+                    ref="spoken_language_id"
+                    class="py-2 font-bold text-xs lg:text-base border-b-2 focus:outline-none focus:border-yellow w-full"
+                    :class="formError.find(item => item.field === 'spoken_language_id') ? 'border-red':''"
+                    @focus="''"
+                    @blur="''"
                     v-model="searchSpokenLanguages"
                     placeholder="Select.."
-                    @click.prevent="showSpokenLanguages=true, setFocus = 'spoken_languages'"
                     @keydown="spokenLanguagesKeyDownHandler"
+                    @click.prevent="showSpokenLanguages=true"
                   >
-
-                  <div
-                    class="bg-white shadow-lg overflow-auto absolute pin-x z-10"
-                    v-if="showSpokenLanguages"
-                    style="height:100px;"
-                    v-on-clickaway="hideSpokenLanguages"
-                  >
+                  <transition name="fade">
                     <div
-                      v-for="(item, index) in filteredSpokenLanguages"
-                      :key="`${item}-${index}`"
-                      class="p-2 cursor-pointer"
-                      @mouseover="spokenLanguagesIndex=index"
-                      :class="spokenLanguagesIndex === index ? 'bg-grey':''"
-                      @click="selectSpokenLanguages(item, index)"
+                      class="bg-white shadow-lg overflow-auto absolute pin-x z-10"
+                      v-if="showSpokenLanguages"
+                      style="height:100px"
+                      v-on-clickaway="hideSpokenLanguages"
                     >
-                      <strong>{{item.name}}</strong>
+                      <div
+                        v-for="(item, index) in filteredSpokenLanguages"
+                        :key="`${item}-${index}`"
+                        class="p-2 cursor-pointer"
+                        @mouseover="spokenLanguagesIndex=index"
+                        :class="spokenLanguagesIndex === index ? 'bg-grey':''"
+                        @click="selectSpokenLanguages(item, index)"
+                      >
+                        <strong>{{item.name}}</strong>
+                      </div>
                     </div>
-                  </div>
+                  </transition>
                 </div>
               </div>
             </div>
             <div
               class="absolute pin-t pin-r bg-red text-white p-1"
-              v-if="formError.find(item => item.field === 'spoken_languages')"
-            >{{formError.find(item => item.field === 'spoken_languages').message}}</div>
+              v-if="formError.find(item => item.field === 'spoken_language_id')"
+            >{{formError.find(item => item.field === 'spoken_language_id').message}}</div>
           </div>
 
           <div class="relative flex flex-col mt-8">
@@ -342,26 +312,32 @@
               <div class="text-sm rounded-lg bg-grey-light px-2 py-1">To match available jobs with</div>
             </div>
             <div class="flex flex-row flex-wrap justify-between mt-4">
-              <div
-                class="relative flex flex-col border-b-2 border-grey-light"
-                style="width:30%"
-                :class="[setFocus === 'rate_per_hour' ? 'border-yellow':'', formError.find(item => item.field === 'rate_per_hour') ? 'border-red':'']"
-              >
+              <div class="relative w-full lg:w-1/3 px-1 mt-4">
                 <label for="rate_per_hour" class="text-sm">Per hour</label>
-                <input
-                  type="text"
-                  ref="rate_per_hour"
-                  class="focus:outline-none font-bold text-sm text-right"
-                  style="height:40px"
-                  @focus="setFocus = 'rate_per_hour'"
-                  @blur="setFocus = ''"
-                  @click="setFocus = 'rate_per_hour'"
-                  v-model="form.rate_per_hour"
-                >
+                <div
+                  class="border-b-2 p-2 cursor-pointer text-xs lg:text-base font-bold"
+                  :class="rateRangeModal && modalType === 'rate_range_per_hour'?'border-yellow':''"
+                  @click="openDateRangeModal('rate_range_per_hour')"
+                >£ {{form.min_rate_per_hour}} - £ {{form.max_rate_per_hour}}</div>
               </div>
-              <div
-                class="relative flex flex-col border-b-2 border-grey-light"
-                style="width:30%"
+              <div class="relative w-full lg:w-1/3 px-1 mt-4">
+                <label for="rate_per_half_day" class="text-sm">Per half day session</label>
+                <div
+                  class="border-b-2 p-2 cursor-pointer text-xs lg:text-base font-bold"
+                  :class="rateRangeModal && modalType === 'rate_range_per_half_day_session'?'border-yellow':''"
+                  @click="openDateRangeModal('rate_range_per_half_day_session')"
+                >£ {{form.min_rate_per_half_day_session}} - £ {{form.max_rate_per_half_day_session}}</div>
+              </div>
+              <div class="relative w-full lg:w-1/3 px-1 mt-4">
+                <label for="rate_per_whole_day" class="text-sm">Per whole day session</label>
+                <div
+                  class="border-b-2 p-2 cursor-pointer text-xs lg:text-base font-bold"
+                  :class="rateRangeModal && modalType === 'rate_range_per_whole_day_session'?'border-yellow':''"
+                  @click="openDateRangeModal('rate_range_per_whole_day_session')"
+                >£ {{form.min_rate_per_whole_day_session}} - £ {{form.max_rate_per_whole_day_session}}</div>
+              </div>
+              <!-- <div
+                class="relative flex flex-col border-b-2 border-grey-light w-1/4"
                 :class="[setFocus === 'rate_per_half_day_session' ? 'border-yellow':'', formError.find(item => item.field === 'rate_per_half_day_session') ? 'border-red':'']"
               >
                 <label for="rate_per_half_day_session" class="text-sm">Per half day session</label>
@@ -375,10 +351,9 @@
                   @click="setFocus = 'rate_per_half_day_session'"
                   v-model="form.rate_per_half_day_session"
                 >
-              </div>
-              <div
-                class="relative flex flex-col border-b-2 border-grey-light"
-                style="width:30%"
+              </div>-->
+              <!-- <div
+                class="relative flex flex-col border-b-2 border-grey-light w-1/4"
                 :class="[setFocus === 'rate_per_whole_day_session' ? 'border-yellow':'', formError.find(item => item.field === 'rate_per_whole_day_session') ? 'border-red':'']"
               >
                 <label for="rate_per_whole_day_session" class="text-sm">Per whole day session</label>
@@ -392,7 +367,7 @@
                   @click="setFocus = 'rate_per_whole_day_session'"
                   v-model="form.rate_per_whole_day_session"
                 >
-              </div>
+              </div>-->
             </div>
             <div
               class="absolute pin-t pin-r bg-red text-white p-1"
@@ -435,6 +410,8 @@
       </div>
     </div>
 
+    <RateRangeModal v-if="rateRangeModal" @close="close" @save="save" :data="rate_range"/>
+
     <div class="flex w-full justify-center xl:justify-start mt-5">
       <div class="flex justify-center" style="width:600px">
         <button
@@ -451,16 +428,27 @@
   </div>
 </template>
 <script>
+import RateRangeModal from '@/components/SignUp/SignUpLocum/RateRangeModal'
 import { mixin as clickaway } from 'vue-clickaway'
 export default {
+  components: {
+    RateRangeModal
+  },
   scrollToTop: true,
   mixins: [clickaway],
   data() {
     return {
-      searchSpecialties: '',
-      specialtiesIndex: 0,
-      showSpecialties: false,
-      selectedSpecialties: [],
+      modalType: '',
+      rate_range: {
+        min: 0,
+        max: 0
+      },
+      rateRangeModal: false,
+
+      searchQualifications: '',
+      qualificationsIndex: 0,
+      showQualifications: false,
+      selectedQualifications: [],
 
       searchClinicalSystems: '',
       clinicalSystemsIndex: 0,
@@ -476,22 +464,43 @@ export default {
         gmc_or_nmc_number: '',
         mpl_or_npl_number: '',
         nhs_smart_card_id_number: '',
-        profession: '',
-        specialty: [],
-        clinical_systems: [],
-        spoken_languages: [],
-        rate_per_hour: '',
-        rate_per_half_day_session: '',
-        rate_per_whole_day_session: '',
+        profession_id: '',
+        qualification_id: [],
+        clinical_system_id: [],
+        spoken_language_id: [],
+        min_rate_per_hour: 0,
+        max_rate_per_hour: 0,
+        min_rate_per_half_day_session: 0,
+        max_rate_per_half_day_session: 0,
+        min_rate_per_whole_day_session: 0,
+        max_rate_per_whole_day_session: 0,
         ir35_scoped: false
       },
       formError: [],
       setFocus: ''
     }
   },
+  watch: {
+    showQualifications(value) {
+      if (!value) {
+        this.ValidateArray(this.selectedQualifications, 'qualification_id')
+      }
+    },
+    showClinicalSystems(value) {
+      if (!value) {
+        this.ValidateArray(this.selectedClinicalSystems, 'clinical_system_id')
+      }
+    },
+    showSpokenLanguages(value) {
+      if (!value) {
+        this.ValidateArray(this.selectedSpokenLanguages, 'spoken_language_id')
+      }
+    },
+  },
   computed: {
     professions() {
-      return this.$store.getters['signUp/getProfessions']
+      // return this.$store.getters['signUp/getProfessions']
+      return this.$store.state.signUp.professions
     },
     qualifications() {
       return this.$store.state.signUp.qualifications
@@ -506,12 +515,12 @@ export default {
       return this.$store.state.signUp.professional_details
     },
     //! Add RegExp on these filtered seach
-    filteredSpecialties() {
+    filteredQualifications() {
       return this.qualifications.filter((qualification) => {
-        const index = this.selectedSpecialties.findIndex((item) => {
+        const index = this.selectedQualifications.findIndex((item) => {
           return item.id === qualification.id
         })
-        return index === -1 && qualification.id && qualification.name.includes(this.searchSpecialties)
+        return index === -1 && qualification.id && qualification.name.includes(this.searchQualifications)
         // let regex = new RegExp('//')
         // console.log(specialty.match(regex))
         // return index === -1 && specialty && specialty.match(regex)
@@ -541,24 +550,24 @@ export default {
     this.form.gmc_or_nmc_number = this.professionalDetails.gmc_or_nmc_number
     this.form.mpl_or_npl_number = this.professionalDetails.mpl_or_npl_number
     this.form.nhs_smart_card_id_number = this.professionalDetails.nhs_smart_card_id_number
-    this.form.profession = this.professionalDetails.profession
-    this.selectedSpecialties = []
-    this.professionalDetails.specialty.forEach(item => {
-      this.selectedSpecialties.push(item)
+    this.form.profession_id = this.professionalDetails.profession_id
+    this.selectedQualifications = []
+    this.professionalDetails.qualification_id.forEach(item => {
+      this.selectedQualifications.push(item)
     })
     this.selectedClinicalSystems = []
-    this.professionalDetails.clinical_systems.forEach(item => {
+    this.professionalDetails.clinical_system_id.forEach(item => {
       this.selectedClinicalSystems.push(item)
     })
     this.selectedSpokenLanguages = []
-    this.professionalDetails.spoken_languages.forEach(item => {
+    this.professionalDetails.spoken_language_id.forEach(item => {
       this.selectedSpokenLanguages.push(item)
     })
     this.form.rate_per_hour = this.professionalDetails.rate_per_hour
     this.form.rate_per_half_day_session = this.professionalDetails.rate_per_half_day_session
     this.form.rate_per_whole_day_session = this.professionalDetails.rate_per_whole_day_session
     this.form.ir35_scoped = this.professionalDetails.ir35_scoped
-
+    console.log(this.professionalDetails)
     if (this.professionalFormError.length > 0) {
       this.professionalFormError.forEach(item => {
         this.formError.push(item)
@@ -566,52 +575,97 @@ export default {
     }
   },
   methods: {
-    hideSpecialties() {
-      this.showSpecialties = false
+    close() {
+      this.modalType = ''
+      this.rateRangeModal = false
     },
-    selectSpecialty(item, index) {
-      this.selectedSpecialties.push(item)
-      this.setFocus = 'specialty'
+    openDateRangeModal(type) {
+      this.modalType = type
+      this.rateRangeModal = true
+      switch (type) {
+        case 'rate_range_per_hour':
+          this.rate_range.min = this.form.min_rate_per_hour
+          this.rate_range.max = this.form.max_rate_per_hour
+          break;
+        case 'rate_range_per_half_day_session':
+          this.rate_range.min = this.form.min_rate_per_half_day_session
+          this.rate_range.max = this.form.max_rate_per_half_day_session
+          break;
+        case 'rate_range_per_whole_day_session':
+          this.rate_range.min = this.form.min_rate_per_whole_day_session
+          this.rate_range.max = this.form.max_rate_per_whole_day_session
+          break;
+        default:
+          return
+      }
     },
-    removeSpecialty(item, index) {
-      this.selectedSpecialties.splice(index, 1)
+    save(data) {
+      this.rateRangeModal = false
+      switch (this.modalType) {
+        case 'rate_range_per_hour':
+          this.form.min_rate_per_hour = data.min
+          this.form.max_rate_per_hour = data.max
+          break;
+        case 'rate_range_per_half_day_session':
+          this.form.min_rate_per_half_day_session = data.min
+          this.form.max_rate_per_half_day_session = data.max
+          break;
+        case 'rate_range_per_whole_day_session':
+          this.form.min_rate_per_whole_day_session = data.min
+          this.form.max_rate_per_whole_day_session = data.max
+          break;
+        default:
+          return
+      }
+      console.log(this.form)
     },
-    specialtyKeyDownHandler(event) {
-      if (this.setFocus !== 'specialty') {
-        return
-      } else {
-        if (event.key === 'ArrowUp') {
-          if (this.specialtiesIndex > 0) {
-            this.specialtiesIndex--
-          } else {
-            this.specialtiesIndex = this.qualifications.length - 1
-          }
-        }
 
-        if (event.key === 'ArrowDown') {
-          if (this.specialtiesIndex === this.qualifications.length - 1) {
-            this.specialtiesIndex = 0
-          } else {
-            this.specialtiesIndex++
-          }
-        }
-
-        if (event.key === 'Enter') {
-          if (this.filteredSpecialties.find((item, index) => index === this.specialtiesIndex)) {
-            this.selectSpecialty(this.filteredSpecialties.find((item, index) => index === this.specialtiesIndex), this.specialtiesIndex)
-          }
-        }
-
-        if (event.key === 'Backspace') {
-          if (!this.searchSpecialties) {
-            this.removeSpecialty(this.selectedSpecialties[this.selectedSpecialties.length - 1], this.selectedSpecialties.length - 1)
-          }
-        }
-
-        if (event.key === 'Escape') {
-          this.setFocus = ''
+    hideQualifications() {
+      this.showQualifications = false
+    },
+    selectQualification(item, index) {
+      this.selectedQualifications.push(item)
+    },
+    removeQualification(item, index) {
+      this.selectedQualifications.splice(index, 1)
+      this.ValidateArray(this.selectedQualifications, 'qualification_id')
+    },
+    qualificationKeyDownHandler(event) {
+      // if (this.setFocus !== 'specialty') {
+      //   return
+      // } else {
+      if (event.key === 'ArrowUp') {
+        if (this.qualificationsIndex > 0) {
+          this.qualificationsIndex--
+        } else {
+          this.qualificationsIndex = this.qualifications.length - 1
         }
       }
+
+      if (event.key === 'ArrowDown') {
+        if (this.qualificationsIndex === this.qualifications.length - 1) {
+          this.qualificationsIndex = 0
+        } else {
+          this.qualificationsIndex++
+        }
+      }
+
+      if (event.key === 'Enter') {
+        if (this.filteredQualifications.find((item, index) => index === this.qualificationsIndex)) {
+          this.selectQualification(this.filteredQualifications.find((item, index) => index === this.qualificationsIndex), this.qualificationsIndex)
+        }
+      }
+
+      if (event.key === 'Backspace') {
+        if (!this.searchQualifications) {
+          this.removeQualification(this.selectedQualifications[this.selectedQualifications.length - 1], this.selectedQualifications.length - 1)
+        }
+      }
+
+      if (event.key === 'Escape') {
+        this.setFocus = ''
+      }
+
 
     },
 
@@ -625,6 +679,7 @@ export default {
     },
     removeClinicalSystems(item, index) {
       this.selectedClinicalSystems.splice(index, 1)
+      this.ValidateArray(this.selectedClinicalSystems, 'clinical_system_id')
     },
     clinicalSystemsKeyDownHandler(event) {
       if (this.setFocus !== 'clinical_systems') {
@@ -675,6 +730,7 @@ export default {
     },
     removeSpokenLanguages(item, index) {
       this.selectedSpokenLanguages.splice(index, 1)
+      this.ValidateArray(this.selectedSpokenLanguages, 'spoken_language_id')
     },
     spokenLanguagesKeyDownHandler(event) {
       if (this.setFocus !== 'spoken_languages') {
@@ -718,16 +774,17 @@ export default {
     next() {
       try {
         this.formError = []
-        this.selectedSpecialties.forEach(item => {
-          this.form.specialty.push(item)
+        this.form.qualification_id = []
+        this.selectedQualifications.forEach(item => {
+          this.form.qualification_id.push(item.id)
         })
         this.selectedClinicalSystems.forEach(item => {
-          this.form.clinical_systems.push(item)
+          this.form.clinical_system_id.push(item)
         })
         this.selectedSpokenLanguages.forEach(item => {
-          this.form.spoken_languages.push(item)
+          this.form.spoken_language_id.push(item)
         })
-        this.Validate(this.form, ['nhs_smart_card_id_number', 'spoken_languages'])
+        this.Validate(this.form, ['nhs_smart_card_id_number', 'spoken_language_id'])
         if (!this.formError.length) {
           this.$store.commit('signUp/SET_PROFESSIONAL_DETAILS', this.form)
           this.$store.commit('signUp/SET_ACTIVE_TAB', 'credential_details')
