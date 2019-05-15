@@ -1,5 +1,5 @@
 <template>
-  <section class="dashboard-section px-10">
+  <section class="dashboard-section px-4">
     <div class="font-bold items-start" style="font-family:Nunito">Reminders</div>
     <div class="flex flex-row flex-wrap justify-start">
       <div v-for="(item, index) in $store.state.dashboard.reminders" :key="`${item.type}-${index}`">

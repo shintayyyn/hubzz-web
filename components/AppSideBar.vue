@@ -1,7 +1,13 @@
 <template>
   <div class="sidebar-nav">
-    <div class="mx-1 mt-20 text-sm relative">
-      <span class="absolute pin-l border-solid bg-yellow w-1 h-full" v-if="$route.path == '/'"></span>
+    <div
+      v-if="$store.state.mobile"
+      class="cursor-pointer text-2xl font-bold text-yellow-dark mt-5 px-4 mb-24"
+      @click="$store.commit('TOGGLE_DRAWER', false)"
+    >X</div>
+    <div class="mt-20"></div>
+    <div class="text-sm relative">
+      <span class="absolute pin-l border-solid bg-yellow-dark w-1 h-full" v-if="$route.path == '/'"></span>
       <nuxt-link
         to="/"
         class="block no-underline p-4"
@@ -10,9 +16,9 @@
         <span class="font-sans">Dashboard</span>
       </nuxt-link>
     </div>
-    <div class="mx-1 text-sm relative">
+    <div class="text-sm relative">
       <span
-        class="absolute pin-l border-solid bg-yellow w-1 h-full"
+        class="absolute pin-l border-solid bg-yellow-dark w-1 h-full"
         v-if="$route.path == '/account'"
       ></span>
       <nuxt-link
@@ -23,9 +29,9 @@
         <span class="font-sans">Account</span>
       </nuxt-link>
     </div>
-    <div class="mx-1 text-sm relative">
+    <div class="text-sm relative">
       <span
-        class="absolute pin-l border-solid bg-yellow w-1 h-full"
+        class="absolute pin-l border-solid bg-yellow-dark w-1 h-full"
         v-if="$route.path == '/compliance'"
       ></span>
       <nuxt-link
@@ -36,9 +42,9 @@
         <span class="font-sans">Compliance</span>
       </nuxt-link>
     </div>
-    <div class="mx-1 text-sm relative">
+    <div class="text-sm relative">
       <span
-        class="absolute pin-l border-solid bg-yellow w-1 h-full"
+        class="absolute pin-l border-solid bg-yellow-dark w-1 h-full"
         v-if="$route.path == '/availability'"
       ></span>
       <nuxt-link
@@ -49,8 +55,11 @@
         <span class="font-sans">Availability</span>
       </nuxt-link>
     </div>
-    <div class="mx-1 text-sm relative">
-      <span class="absolute pin-l border-solid bg-yellow w-1 h-full" v-if="$route.path == '/jobs'"></span>
+    <div class="text-sm relative">
+      <span
+        class="absolute pin-l border-solid bg-yellow-dark w-1 h-full"
+        v-if="$route.path == '/jobs'"
+      ></span>
       <nuxt-link
         to="/jobs"
         class="block no-underline p-4"
@@ -59,9 +68,9 @@
         <span class="font-sans">Jobs</span>
       </nuxt-link>
     </div>
-    <div class="mx-1 text-sm relative">
+    <div class="text-sm relative">
       <span
-        class="absolute pin-l border-solid bg-yellow w-1 h-full"
+        class="absolute pin-l border-solid bg-yellow-dark w-1 h-full"
         v-if="$route.path == '/billing'"
       ></span>
       <nuxt-link
@@ -72,8 +81,11 @@
         <span class="font-sans">Billing</span>
       </nuxt-link>
     </div>
-    <div class="mx-1 text-sm relative">
-      <span class="absolute pin-l border-solid bg-yellow w-1 h-full" v-if="$route.path == '/faq'"></span>
+    <div class="text-sm relative">
+      <span
+        class="absolute pin-l border-solid bg-yellow-dark w-1 h-full"
+        v-if="$route.path == '/faq'"
+      ></span>
       <nuxt-link
         to="/faq"
         class="block no-underline p-4"
@@ -82,9 +94,9 @@
         <span class="font-sans">FAQ</span>
       </nuxt-link>
     </div>
-    <div class="mx-1 text-sm relative">
+    <div class="text-sm relative">
       <span
-        class="absolute pin-l border-solid bg-yellow w-1 h-full"
+        class="absolute pin-l border-solid bg-yellow-dark w-1 h-full"
         v-if="$route.path == '/terms-and-conditions'"
       ></span>
       <nuxt-link
@@ -95,9 +107,9 @@
         <span class="font-sans">Terms and Conditions</span>
       </nuxt-link>
     </div>
-    <div class="mx-1 text-sm relative">
+    <div class="text-sm relative">
       <span
-        class="absolute pin-l border-solid bg-yellow w-1 h-full"
+        class="absolute pin-l border-solid bg-yellow-dark w-1 h-full"
         v-if="$route.path == '/invite'"
       ></span>
       <nuxt-link
@@ -108,9 +120,9 @@
         <span class="font-sans">Invite</span>
       </nuxt-link>
     </div>
-    <div class="mx-1 text-sm relative">
+    <div class="text-sm relative">
       <span
-        class="absolute pin-l border-solid bg-yellow w-1 h-full"
+        class="absolute pin-l border-solid bg-yellow-dark w-1 h-full"
         v-if="$route.path == '/contact-us'"
       ></span>
       <nuxt-link
@@ -121,14 +133,14 @@
         <span class="font-sans">Contact Us</span>
       </nuxt-link>
     </div>
-    <div class="mx-1 text-sm relative">
+    <div class="text-sm relative">
       <span
-        class="absolute pin-l border-solid bg-yellow w-1 h-full"
+        class="absolute pin-l border-solid bg-yellow-dark w-1 h-full"
         v-if="$route.path == '/sign-out'"
       ></span>
       <button
         @click.prevent="$store.commit('TOGGLE_SIGN_OUT_MODAL', true)"
-        class="block no-underline p-4"
+        class="block no-underline p-4 focus:outline-none"
         :class="$route.path == '/sign-out' ? 'text-yellow-dark' : 'text-black hover:text-grey-light'"
       >
         <span class="font-sans">Sign Out</span>
@@ -145,7 +157,7 @@ export default {
 </script>
 <style>
 .sidebar-nav {
-  position: absolute;
+  /* position: absolute;
   top: 0;
   width: 200px;
   margin: 0;
@@ -154,7 +166,7 @@ export default {
   padding-bottom: 50px;
   padding-top: 10px;
   border-right: 1px solid lightgrey;
-  height: 100%;
+  height: 100%; */
 }
 
 /* #sidebar-wrapper {

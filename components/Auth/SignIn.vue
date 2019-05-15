@@ -54,7 +54,7 @@
       </div>
       <div class="mt-5 flex justify-center">
         <button
-          class="rounded-lg bg-yellow-dark shadow-md p-8 font-bold text-xl focus:outline-none hover:text-white"
+          class="rounded-lg bg-yellow-dark shadow-md p-6 font-bold text-xl focus:outline-none hover:text-white"
           @click="login"
         >Sign In</button>
       </div>

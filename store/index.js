@@ -5,8 +5,10 @@ export const state = () => ({
     text: ''
   },
   activeTab: 'sign_in',
+  activeShield: '',
   months: [],
   drawer: false,
+  mobile: false,
   availability_modal: false,
   availability_range_modal: false,
   invoice_modal: false,
@@ -14,10 +16,6 @@ export const state = () => ({
   appointment_modal: false,
   surgery_modal: false,
   add_surgery_modal: false,
-  blur_bg: false,
-  blur_bg_2: false,
-  mobile: false,
-  windowWidth: null,
 })
 
 export const mutations = {
@@ -28,12 +26,6 @@ export const mutations = {
   },
   SET_ACTIVE_TAB(state, payload) {
     state.activeTab = payload
-  },
-  CHECK_WINDOW_WIDTH(state) {
-    if (process.browser) {
-      state.windowWidth = window.innerWidth
-      state.mobile = window.innerWidth <= 800
-    }
   },
   SET_MONTHS(state) {
     state.months = [
@@ -51,9 +43,21 @@ export const mutations = {
       'December',
     ]
   },
+  CHECK_WINDOW_WIDTH(state) {
+    if (process.browser) {
+      state.mobile = window.innerWidth <= 900
+      if (state.mobile) {
+        state.drawer = false
+      } else {
+        state.drawer = true
+      }
+    }
+  },
   TOGGLE_DRAWER(state, payload) {
-    payload ? (state.blur_bg = true) : (state.blur_bg = false)
     state.drawer = payload
+  },
+  SET_ACTIVE_SHIELD(state, payload) {
+    state.activeShield = payload
   },
   TOGGLE_AVAILABILITY_MODAL(state, payload) {
     state.availability_modal = payload
@@ -66,7 +70,6 @@ export const mutations = {
     state.invoice_modal = payload
   },
   TOGGLE_SIGN_OUT_MODAL(state, payload) {
-    payload ? (state.blur_bg = true) : (state.blur_bg = false)
     state.sign_out_modal = payload
   },
   TOGGLE_APPOINTMENT_MODAL(state, payload) {

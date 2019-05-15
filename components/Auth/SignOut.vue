@@ -1,5 +1,5 @@
 <template>
-  <div class="border-solid rounded-b-lg bg-yellow-dark p-2">
+  <div class="border-solid rounded-b-lg bg-yellow-dark p-2 z-50">
     <div class="flex justify-center">
       <div class>Proceed to sign-out?</div>
     </div>
