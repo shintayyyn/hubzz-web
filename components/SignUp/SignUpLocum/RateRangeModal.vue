@@ -19,6 +19,7 @@
               :class="formError.find(item => item.field === 'min') ? 'border-red' : ''"
               type="text"
               v-model="form.min"
+              @keypress="ValidateInput"
             >
             <em
               v-if="formError.find(item => item.field === 'min')"
@@ -35,6 +36,7 @@
               :class="formError.find(item => item.field === 'max') ? 'border-red' : ''"
               type="text"
               v-model="form.max"
+              @keypress="ValidateInput"
             >
             <em
               v-if="formError.find(item => item.field === 'max')"
@@ -76,6 +78,8 @@ export default {
   methods: {
     confirm() {
       this.formError = []
+      this.form.min = parseInt(this.form.min)
+      this.form.max = parseInt(this.form.max)
       this.Validate(this.form)
       if (parseInt(this.form.max) < parseInt(this.form.min)) {
         this.formError.push(

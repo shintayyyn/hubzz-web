@@ -1,53 +1,13 @@
 <template>
   <section class="relative">
+    <AppNotification/>
     <div class="px-10">
       <div class="text-sm font-bold">I'm available for...</div>
     </div>
     <div class="px-10 mt-5">
       <div class="rounded-lg shadow-lg">
         <form class="w-full p-5">
-          <div
-            class="relative flex flex-col mt-8 border-b-2 border-grey-light"
-            :class="[setFocus === 'post_code' ? 'border-yellow':'', formError.find(item => item.field === 'post_code') ? 'border-red':'']"
-          >
-            <label for="post_code" class="text-sm mb-2">The post code where I will be available at</label>
-            <input
-              type="text"
-              ref="post_code"
-              class="focus:outline-none font-bold text-sm"
-              style="height:40px"
-              @focus="setFocus = 'post_code'"
-              @blur="setFocus = ''"
-              v-model="post_code"
-              placeholder="Enter a post code"
-              @keyup="getPredictions"
-            >
-            <span
-              class="absolute pin-r bg-red text-white p-1"
-              v-if="formError.find(item => item.field === 'post_code')"
-            >{{formError.find(item => item.field === 'post_code').message}}</span>
-          </div>
-          <div
-            class="relative flex flex-col mt-8 border-b-2 border-grey-light"
-            :class="[setFocus === 'miles' ? 'border-yellow':'', formError.find(item => item.field === 'miles') ? 'border-red':'']"
-          >
-            <label for="miles" class="text-sm mb-2">No further than (in miles)</label>
-            <input
-              type="text"
-              ref="miles"
-              class="focus:outline-none font-bold text-sm text-right"
-              style="height:40px"
-              @focus="setFocus = 'miles'"
-              @blur="setFocus = ''"
-              v-model="miles"
-            >
-            <span
-              class="absolute pin-r bg-red text-white p-1"
-              v-if="formError.find(item => item.field === 'miles')"
-            >{{formError.find(item => item.field === 'miles').message}}</span>
-          </div>
-
-          <div class="relative flex flex-col mt-8">
+          <div class="relative flex flex-col">
             <div class="flex flex-row flex-wrap justify-start">
               <div class="text-sm leading-loose mr-2">The shifts I am available for</div>
               <div
@@ -96,16 +56,16 @@
 
 import debounce from 'lodash.debounce'
 import AvailabilityCalendar from '@/components/Availability/AvailabilityCalendar'
+import AppNotification from '@/components/AppNotification'
 export default {
   components: {
-    AvailabilityCalendar
+    AvailabilityCalendar,
+    AppNotification
   },
   data() {
     return {
       shifts: [],
       selectedShifts: [],
-      post_code: '',
-      miles: '',
       setFocus: '',
       //
       modal: false,
@@ -126,6 +86,7 @@ export default {
     this.$axios
       .$get(`/api/v1/shifts`)
       .then(res => {
+        this.shifts = []
         res.data.shifts.forEach(item => {
           this.shifts.push({ id: item.id, name: item.name })
         })
@@ -135,6 +96,7 @@ export default {
     this.$axios
       .$get(`/api/v1/me`)
       .then(res => {
+        this.selectedShifts = []
         res.data.user.locum_detail.shifts.forEach(shift => {
           this.selectedShifts.push(shift.id)
         })
@@ -179,9 +141,12 @@ export default {
     },
     update() {
       // post request to api
+      console.log(this.selectedShifts)
       this.$axios
-        .$put(`/api/v1/locum/me/shifts`, { shift_id: this.selectedShifts.join().toString() })
+        .$put(`/api/v1/locum/me/shifts`, { shift_id: this.selectedShifts })
         .then(res => {
+          this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Availability updated!' })
+          this.selectedShifts = []
           res.data.user.locum_detail.shifts.forEach(shift => this.selectedShifts.push(shift.id))
         })
     },

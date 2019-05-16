@@ -5,9 +5,10 @@ export const state = () => ({
     text: ''
   },
   activeTab: 'sign_in',
-  activeShield: '',
+  sidebar_shield: false,
+  signout_shield: false,
   months: [],
-  drawer: false,
+  // drawer: false,
   mobile: false,
   availability_modal: false,
   availability_range_modal: false,
@@ -53,11 +54,14 @@ export const mutations = {
       }
     }
   },
-  TOGGLE_DRAWER(state, payload) {
-    state.drawer = payload
+  // TOGGLE_DRAWER(state, payload) {
+  //   state.drawer = payload
+  // },
+  SET_SIDEBAR_SHIELD(state, payload) {
+    state.sidebar_shield = payload
   },
-  SET_ACTIVE_SHIELD(state, payload) {
-    state.activeShield = payload
+  SET_SIGNOUT_SHIELD(state, payload) {
+    state.signout_shield = payload
   },
   TOGGLE_AVAILABILITY_MODAL(state, payload) {
     state.availability_modal = payload

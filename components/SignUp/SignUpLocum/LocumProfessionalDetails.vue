@@ -336,65 +336,35 @@
                   @click="openDateRangeModal('rate_range_per_whole_day_session')"
                 >£ {{form.min_rate_per_whole_day_session}} - £ {{form.max_rate_per_whole_day_session}}</div>
               </div>
-              <!-- <div
-                class="relative flex flex-col border-b-2 border-grey-light w-1/4"
-                :class="[setFocus === 'rate_per_half_day_session' ? 'border-yellow':'', formError.find(item => item.field === 'rate_per_half_day_session') ? 'border-red':'']"
-              >
-                <label for="rate_per_half_day_session" class="text-sm">Per half day session</label>
-                <input
-                  type="text"
-                  ref="rate_per_half_day_session"
-                  class="focus:outline-none font-bold text-sm text-right"
-                  style="height:40px"
-                  @focus="setFocus = 'rate_per_half_day_session'"
-                  @blur="setFocus = ''"
-                  @click="setFocus = 'rate_per_half_day_session'"
-                  v-model="form.rate_per_half_day_session"
-                >
-              </div>-->
-              <!-- <div
-                class="relative flex flex-col border-b-2 border-grey-light w-1/4"
-                :class="[setFocus === 'rate_per_whole_day_session' ? 'border-yellow':'', formError.find(item => item.field === 'rate_per_whole_day_session') ? 'border-red':'']"
-              >
-                <label for="rate_per_whole_day_session" class="text-sm">Per whole day session</label>
-                <input
-                  type="text"
-                  ref="rate_per_whole_day_session"
-                  class="focus:outline-none font-bold text-sm text-right"
-                  style="height:40px"
-                  @focus="setFocus = 'rate_per_whole_day_session'"
-                  @blur="setFocus = ''"
-                  @click="setFocus = 'rate_per_whole_day_session'"
-                  v-model="form.rate_per_whole_day_session"
-                >
-              </div>-->
             </div>
             <div
               class="absolute pin-t pin-r bg-red text-white p-1"
-              v-if="formError.find(item => item.field === 'rate_per_hour' || item.field === 'rate_per_half_day_session' || item.field === 'rate_per_whole_day_session')"
-            >{{formError.find(item => item.field === 'rate_per_hour' || item.field === 'rate_per_half_day_session' || item.field === 'rate_per_whole_day_session').message}}</div>
+              v-if="formError.find(item => item.field === 'min_rate_per_hour' || item.field === 'max_rate_per_hour' || item.field === 'min_rate_per_half_day_session' || item.field === 'max_rate_per_half_day_session' || item.field === 'min_rate_per_whole_day_session' || item.field === 'max_rate_per_whole_day_session')"
+            >{{formError.find(item => item.field === 'min_rate_per_hour' || item.field === 'max_rate_per_hour' || item.field === 'min_rate_per_half_day_session' || item.field === 'max_rate_per_half_day_session' || item.field === 'min_rate_per_whole_day_session' || item.field === 'max_rate_per_whole_day_session').message}}</div>
           </div>
 
-          <div class="relative flex flex-col mt-24">
+          <div class="relative flex flex-col mt-12">
             <div class="flex flex-row justify-between">
               <label
-                for="ir35_scoped"
-                class="text-sm"
-                style="width:50%"
+                for="ir35"
+                class="text-xs lg:text-base mb-4 w-1/2"
               >Are you OK to work with Practices that are inside of scope for IR35?</label>
+              <div
+                class="text-xs lg:text-base rounded-lg bg-grey-light px-2 py-1"
+              >Only apply if you are self-employed</div>
             </div>
             <div class="flex flex-row justify-between mt-4">
               <div
                 class="flex flex-col border-b-2 border-grey-light"
                 style="width:100%"
-                :class="[setFocus === 'ir35_scoped' ? 'border-yellow':'', formError.find(item => item.field === 'ir35_scoped') ? 'border-red':'']"
+                :class="[setFocus === 'ir35' ? 'border-yellow':'', formError.find(item => item.field === 'ir35') ? 'border-red':'']"
               >
                 <select
                   class="focus:outline-none font-bold text-sm"
                   style="height:40px;"
-                  @focus="setFocus = 'ir35_scoped'"
+                  @focus="setFocus = 'ir35'"
                   @blur="setFocus = ''"
-                  v-model="form.ir35_scoped"
+                  v-model="form.ir35"
                 >
                   <option :value="false">No</option>
                   <option :value="true">Yes</option>
@@ -403,8 +373,71 @@
             </div>
             <div
               class="absolute pin-t pin-r bg-red text-white p-1"
-              v-if="formError.find(item => item.field === 'ir35_scoped')"
-            >{{formError.find(item => item.field === 'ir35_scoped').message}}</div>
+              v-if="formError.find(item => item.field === 'ir35')"
+            >{{formError.find(item => item.field === 'ir35').message}}</div>
+          </div>
+
+          <div class="relative flex flex-col mt-12">
+            <div class="flex flex-row justify-between">
+              <label
+                for="practice_type_id"
+                class="text-xs lg:text-base mb-4 w-1/2"
+              >What type of Practices(s) would you like to work for?</label>
+            </div>
+            <div class="flex flex-row justify-between mt-4">
+              <div class="w-full">
+                <div class="flex flex-row flex-wrap text-xs lg:text-base">
+                  <div
+                    class="rounded-lg bg-yellow font-bold p-2 m-1"
+                    v-for="(item, index) in selectedPracticeTypes"
+                    :key="`${item}-${index}`"
+                  >
+                    {{item.name}}
+                    <span
+                      class="font-bold cursor-pointer text-sm lg:text-lg"
+                      @click="removePracticeTypes(item, index)"
+                    >X</span>
+                  </div>
+                </div>
+                <div class="relative">
+                  <input
+                    type="text"
+                    ref="practice_type_id"
+                    class="py-2 font-bold text-xs lg:text-base border-b-2 focus:outline-none focus:border-yellow w-full"
+                    :class="formError.find(item => item.field === 'practice_type_id') ? 'border-red':''"
+                    @focus="''"
+                    @blur="''"
+                    v-model="searchPracticeTypes"
+                    placeholder="Select.."
+                    @keydown="practiceTypesKeyDownHandler"
+                    @click.prevent="showPracticeTypes=true"
+                  >
+                  <transition name="fade">
+                    <div
+                      class="bg-white shadow-lg overflow-auto absolute pin-x z-10"
+                      v-if="showPracticeTypes"
+                      style="height:100px"
+                      v-on-clickaway="hidePracticeTypes"
+                    >
+                      <div
+                        v-for="(item, index) in filteredPracticeTypes"
+                        :key="`${item}-${index}`"
+                        class="p-2 cursor-pointer"
+                        @mouseover="practiceTypesIndex=index"
+                        :class="practiceTypesIndex === index ? 'bg-grey':''"
+                        @click="selectPracticeTypes(item, index)"
+                      >
+                        <strong>{{item.name}}</strong>
+                      </div>
+                    </div>
+                  </transition>
+                </div>
+              </div>
+            </div>
+            <div
+              class="absolute pin-t pin-r bg-red text-white p-1"
+              v-if="formError.find(item => item.field === 'practice_type_id')"
+            >{{formError.find(item => item.field === 'practice_type_id').message}}</div>
           </div>
         </form>
       </div>
@@ -460,6 +493,11 @@ export default {
       showSpokenLanguages: false,
       selectedSpokenLanguages: [],
 
+      searchPracticeTypes: '',
+      practiceTypesIndex: 0,
+      showPracticeTypes: false,
+      selectedPracticeTypes: [],
+
       form: {
         gmc_or_nmc_number: '',
         mpl_or_npl_number: '',
@@ -474,7 +512,8 @@ export default {
         max_rate_per_half_day_session: 0,
         min_rate_per_whole_day_session: 0,
         max_rate_per_whole_day_session: 0,
-        ir35_scoped: false
+        ir35: false,
+        practice_type_id: []
       },
       formError: [],
       setFocus: ''
@@ -511,6 +550,9 @@ export default {
     spokenLanguages() {
       return this.$store.state.signUp.spokenLanguages
     },
+    practiceTypes() {
+      return this.$store.state.signUp.practiceTypes
+    },
     professionalDetails() {
       return this.$store.state.signUp.professional_details
     },
@@ -542,11 +584,19 @@ export default {
         return index === -1 && spokenLanguage.id && spokenLanguage.name.includes(this.searchSpokenLanguages)
       })
     },
+    filteredPracticeTypes() {
+      return this.practiceTypes.filter((practiceType) => {
+        const index = this.selectedPracticeTypes.findIndex((item) => {
+          return item.id === practiceType.id
+        })
+        return index === -1 && practiceType.id && practiceType.name.includes(this.searchPracticeTypes)
+      })
+    },
     professionalFormError() {
       return this.$store.state.signUp.professional_detail_form_error
     }
   },
-  mounted() {
+  created() {
     this.form.gmc_or_nmc_number = this.professionalDetails.gmc_or_nmc_number
     this.form.mpl_or_npl_number = this.professionalDetails.mpl_or_npl_number
     this.form.nhs_smart_card_id_number = this.professionalDetails.nhs_smart_card_id_number
@@ -563,11 +613,17 @@ export default {
     this.professionalDetails.spoken_language_id.forEach(item => {
       this.selectedSpokenLanguages.push(item)
     })
-    this.form.rate_per_hour = this.professionalDetails.rate_per_hour
-    this.form.rate_per_half_day_session = this.professionalDetails.rate_per_half_day_session
-    this.form.rate_per_whole_day_session = this.professionalDetails.rate_per_whole_day_session
-    this.form.ir35_scoped = this.professionalDetails.ir35_scoped
-    console.log(this.professionalDetails)
+    this.form.min_rate_per_hour = this.professionalDetails.min_rate_per_hour
+    this.form.max_rate_per_hour = this.professionalDetails.max_rate_per_hour
+    this.form.min_rate_per_half_day_session = this.professionalDetails.min_rate_per_half_day_session
+    this.form.max_rate_per_half_day_session = this.professionalDetails.max_rate_per_half_day_session
+    this.form.min_rate_per_whole_day_session = this.professionalDetails.min_rate_per_whole_day_session
+    this.form.max_rate_per_whole_day_session = this.professionalDetails.max_rate_per_whole_day_session
+    this.form.ir35 = this.professionalDetails.ir35
+    this.selectedPracticeTypes = []
+    this.professionalDetails.practice_type_id.forEach(item => {
+      this.selectedPracticeTypes.push(item)
+    })
     if (this.professionalFormError.length > 0) {
       this.professionalFormError.forEach(item => {
         this.formError.push(item)
@@ -675,14 +731,14 @@ export default {
     },
     selectClinicalSystems(item, index) {
       this.selectedClinicalSystems.push(item)
-      this.setFocus = 'clinical_systems'
+      this.setFocus = 'clinical_system_id'
     },
     removeClinicalSystems(item, index) {
       this.selectedClinicalSystems.splice(index, 1)
       this.ValidateArray(this.selectedClinicalSystems, 'clinical_system_id')
     },
     clinicalSystemsKeyDownHandler(event) {
-      if (this.setFocus !== 'clinical_systems') {
+      if (this.setFocus !== 'clinical_system_id') {
         return
       } else {
         if (event.key === 'ArrowUp') {
@@ -726,14 +782,14 @@ export default {
     },
     selectSpokenLanguages(item, index) {
       this.selectedSpokenLanguages.push(item)
-      this.setFocus = 'spoken_languages'
+      this.setFocus = 'spoken_language_id'
     },
     removeSpokenLanguages(item, index) {
       this.selectedSpokenLanguages.splice(index, 1)
       this.ValidateArray(this.selectedSpokenLanguages, 'spoken_language_id')
     },
     spokenLanguagesKeyDownHandler(event) {
-      if (this.setFocus !== 'spoken_languages') {
+      if (this.setFocus !== 'spoken_language_id') {
         return
       } else {
         if (event.key === 'ArrowUp') {
@@ -771,6 +827,53 @@ export default {
 
     },
 
+    hidePracticeTypes() {
+      // this.setFocus = ''
+      this.showPracticeTypes = false
+    },
+    selectPracticeTypes(item, index) {
+      this.selectedPracticeTypes.push(item)
+    },
+    removePracticeTypes(item, index) {
+      this.selectedPracticeTypes.splice(index, 1)
+      this.ValidateArray(this.selectedPracticeTypes, 'practice_type_id')
+    },
+    practiceTypesKeyDownHandler(event) {
+      if (event.key === 'ArrowUp') {
+        if (this.practiceTypesIndex > 0) {
+          this.practiceTypesIndex--
+        } else {
+          this.practiceTypesIndex = this.practiceTypes.length - 1
+        }
+      }
+
+      if (event.key === 'ArrowDown') {
+        if (this.practiceTypesIndex === this.practiceTypes.length - 1) {
+          this.practiceTypesIndex = 0
+        } else {
+          this.practiceTypesIndex++
+        }
+      }
+
+      if (event.key === 'Enter') {
+        if (this.filteredPracticeTypes.find((item, index) => index === this.practiceTypesIndex)) {
+          this.selectPracticeTypes(this.filteredPracticeTypes.find((item, index) => index === this.practiceTypesIndex), this.practiceTypesIndex)
+        }
+      }
+
+      if (event.key === 'Backspace') {
+        if (!this.searchPracticeTypes) {
+          this.removePracticeTypes(this.selectedPracticeTypes[this.selectedPracticeTypes.length - 1], this.selectedPracticeTypes.length - 1)
+        }
+      }
+
+      if (event.key === 'Escape') {
+        this.setFocus = ''
+      }
+
+
+    },
+
     next() {
       try {
         this.formError = []
@@ -784,7 +887,9 @@ export default {
         this.selectedSpokenLanguages.forEach(item => {
           this.form.spoken_language_id.push(item)
         })
-        this.Validate(this.form, ['nhs_smart_card_id_number', 'spoken_language_id'])
+        console.log(this.form)
+        this.Validate(this.form, ['nhs_smart_card_id_number', 'spoken_language_id', 'ir35'])
+        console.log(this.formError)
         if (!this.formError.length) {
           this.$store.commit('signUp/SET_PROFESSIONAL_DETAILS', this.form)
           this.$store.commit('signUp/SET_ACTIVE_TAB', 'credential_details')

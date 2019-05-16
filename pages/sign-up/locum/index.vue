@@ -56,6 +56,7 @@ export default {
     this.$store.dispatch('signUp/getQualifications')
     this.$store.dispatch('signUp/getClinicalSystems')
     this.$store.dispatch('signUp/getSpokenLanguages')
+    this.$store.dispatch('signUp/getPracticeTypes')
   },
   components: {
     ProgressBar,

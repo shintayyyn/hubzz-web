@@ -112,6 +112,7 @@
               @blur="ValidateMobile(form.mobile_number, 'mobile_number')"
               v-model="form.mobile_number"
               placeholder
+              @keypress="ValidateInput"
             >
             <span
               class="z-10 absolute pin-r bg-red text-white p-1 text-xs lg:text-base"

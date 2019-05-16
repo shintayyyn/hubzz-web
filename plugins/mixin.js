@@ -1,6 +1,18 @@
 import Vue from 'vue'
 Vue.mixin({
   methods: {
+    ValidateInput(e) {
+      if (e.key >= 0 && e.key <= 9) {
+        if (e.target.value.length === 1 && parseInt(e.key) === 0) {
+          e.preventDefault()
+        }
+        if (e.target.value.length > 11) {
+          e.preventDefault()
+        }
+      } else {
+        e.preventDefault()
+      }
+    },
     Validate(form, lists) {
       let items = Object.entries(form)
       for (const [key, value] of items) {
@@ -55,7 +67,8 @@ Vue.mixin({
           { field: field, message: 'Required', validation: 'required'}
         )
       } else {
-        let re = /^[0][1-9]\d{9}$|^[1-9]\d{9}$/g;
+        // uk format
+        let re = /((\+44(\s\(0\)\s|\s0\s|\s)?)|0)7\d{3}(\s)?\d{6}/g;
         if (value && !re.test(String(value).toLowerCase())) {
           this.formError.push(
             { field: field, message: 'Your mobile number is invalid', validation: 'invalid format'}

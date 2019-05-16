@@ -1,5 +1,5 @@
 <template>
-  <div class="border-solid rounded-b-lg bg-yellow-dark p-2 z-50">
+  <div class="border-solid rounded-b-lg bg-yellow-dark p-2 max-w-lg">
     <div class="flex justify-center">
       <div class>Proceed to sign-out?</div>
     </div>
@@ -14,7 +14,7 @@
       <div class="mx-2">
         <button
           class="border border-solid bg-yellow-dark hover:text-white focus:outline-none text-black font-bold py-5 rounded-lg"
-          @click.prevent="$store.commit('TOGGLE_SIGN_OUT_MODAL', false)"
+          @click.prevent="cancel"
           style="width:100px;"
         >Cancel</button>
       </div>
@@ -30,6 +30,10 @@ export default {
         this.$auth.$storage.setUniversal('_token.local', '')
         this.$router.push('/sign-in')
       })
+    },
+    cancel() {
+      this.$store.commit('TOGGLE_SIGN_OUT_MODAL', false)
+      this.$store.commit('SET_SIGNOUT_SHIELD', false)
     }
   }
 }

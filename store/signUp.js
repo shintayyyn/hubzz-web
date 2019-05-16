@@ -5,6 +5,7 @@ export const state = () => ({
     qualifications: [],
     clinicalSystems: [],
     spokenLanguages: [],
+    practiceTypes: [],
     ccg: [],
     account_details: {
         title: '',
@@ -30,10 +31,14 @@ export const state = () => ({
         qualification_id: [],
         clinical_system_id: [],
         spoken_language_id: [],
-        rate_per_hour: '',
-        rate_per_half_day_session: '',
-        rate_per_whole_day_session: '',
-        ir35_scoped: false
+        min_rate_per_hour: 0,
+        max_rate_per_hour: 0,
+        min_rate_per_half_day_session: 0,
+        max_rate_per_half_day_session: 0,
+        min_rate_per_whole_day_session: 0,
+        max_rate_per_whole_day_session: 0,
+        ir35: false,
+        practice_type_id: []
     },
     credential_details: {
         email: '',
@@ -93,6 +98,12 @@ export const mutations = {
             state.spokenLanguages.push(item)
         })
     },
+    SET_PRACTICE_TYPES(state, payload) {
+        state.practiceTypes = []
+        payload.forEach(item => {
+            state.practiceTypes.push(item)
+        })
+    },
     SET_CCG(state, payload) {
         state.ccg = []
         payload.forEach(item => {
@@ -122,7 +133,7 @@ export const mutations = {
         state.professional_details.gmc_or_nmc_number = payload.gmc_or_nmc_number
         state.professional_details.mpl_or_npl_number = payload.mpl_or_npl_number
         state.professional_details.nhs_smart_card_id_number = payload.nhs_smart_card_id_number
-        state.professional_details.profession = payload.profession
+        state.professional_details.profession_id = payload.profession_id
         state.professional_details.qualification_id = []
         payload.qualification_id.forEach(item => {
             state.professional_details.qualification_id.push(item)
@@ -135,10 +146,17 @@ export const mutations = {
         payload.spoken_language_id.forEach(item => {
             state.professional_details.spoken_language_id.push(item)
         })
-        state.professional_details.rate_per_hour = payload.rate_per_hour
-        state.professional_details.rate_per_half_day_session = payload.rate_per_half_day_session
-        state.professional_details.rate_per_whole_day_session = payload.rate_per_whole_day_session
-        state.professional_details.ir35_scoped = payload.ir35_scoped
+        state.professional_details.min_rate_per_hour = payload.min_rate_per_hour
+        state.professional_details.max_rate_per_hour = payload.max_rate_per_hour
+        state.professional_details.min_rate_per_half_day_session = payload.min_rate_per_half_day_session
+        state.professional_details.max_rate_per_half_day_session = payload.max_rate_per_half_day_session
+        state.professional_details.min_rate_per_whole_day_session = payload.min_rate_per_whole_day_session
+        state.professional_details.max_rate_per_whole_day_session = payload.max_rate_per_whole_day_session
+        state.professional_details.ir35 = payload.ir35
+        state.professional_details.practice_type_id = []
+        payload.practice_type_id.forEach(item => {
+            state.professional_details.practice_type_id.push(item)
+        })
     },
     SET_CREDENTIAL_DETAILS(state, payload) {
         state.credential_details.email = payload.email
@@ -166,10 +184,14 @@ export const mutations = {
         state.professional_details.qualification_id = []
         state.professional_details.clinical_system_id = []
         state.professional_details.spoken_language_id = []
-        state.professional_details.rate_per_hour = ''
-        state.professional_details.rate_per_half_day_session = ''
-        state.professional_details.rate_per_whole_day_session = ''
-        state.professional_details.ir35_scoped = false
+        state.professional_details.min_rate_per_hour = ''
+        state.professional_details.max_rate_per_hour = ''
+        state.professional_details.min_rate_per_half_day_session = ''
+        state.professional_details.max_rate_per_half_day_session = ''
+        state.professional_details.min_rate_per_whole_day_session = ''
+        state.professional_details.max_rate_per_whole_day_session = ''
+        state.professional_details.ir35 = false
+        state.professional_details.practice_type_id = []
         state.credential_details.email = ''
         state.credential_details.password = ''
         state.credential_details.password_confirmation = ''
@@ -244,6 +266,11 @@ export const actions = {
             commit('SET_SPOKEN_LANGUAGES', res.data.spoken_languages)
         })
     },
+    getPracticeTypes({state, commit}) {
+        this.$axios.$get(`/api/v1/practice-types`).then(res => {
+            commit('SET_PRACTICE_TYPES', res.data.practice_types)
+        })
+    },
     getCCG({state, commit}) {
         this.$axios.$get(`/api/v1/clinical-commissioning-groups`).then(res => {
             commit('SET_CCG', res.data.clinical_commissioning_groups)
@@ -263,7 +290,8 @@ export const actions = {
             rate_per_hour: state.professional_details.rate_per_hour,
             rate_per_half_day_session: state.professional_details.rate_per_half_day_session,
             rate_per_whole_day_session: state.professional_details.rate_per_whole_day_session,
-            ir35: state.professional_details.ir35_scoped
+            ir35: state.professional_details.ir35,
+            practice_type_id: state.professional_details.practice_type_id
         }
         form = {...state.account_details, ...state.address_details, ...state.credential_details, ...professionForm}
         this.$axios

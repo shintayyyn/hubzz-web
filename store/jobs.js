@@ -1,5 +1,5 @@
 export const state = () => ({
-    activeTab: 'current'
+    activeTab: 'allocated'
   })
   
   export const getters = {}

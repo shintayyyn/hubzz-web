@@ -1,12 +1,15 @@
 <template>
   <div>
-    <div class="sidebar" v-if="$store.state.drawer">
-      <AppSideBar/>
+    <div class="sidebar">
+      <AppSideBar @close="close"/>
     </div>
-    <SignOut v-if="$store.state.sign_out_modal"/>
+    <div class="sidebar-shield" v-if="$store.state.sidebar_shield"></div>
+    <div class="signout flex justify-center" v-if="$store.state.sign_out_modal">
+      <SignOut/>
+    </div>
+    <div class="signout-shield" v-if="$store.state.signout_shield"></div>
     <div class="content">
       <!-- shields -->
-      <div class="shield" :class="shield" v-if="$store.state.activeShield !== ''"></div>
       <!-- header -->
       <div class="header">
         <div class="flex flex-row flex-no-wrap justify-start">
@@ -25,7 +28,9 @@
         </div>
       </div>
       <!-- body -->
-      <nuxt/>
+      <div class="body">
+        <nuxt/>
+      </div>
     </div>
   </div>
 </template>
@@ -54,43 +59,34 @@ export default {
     this.$store.commit("CHECK_WINDOW_WIDTH");
     // this.$store.commit('SET_MONTHS')
   },
-  mounted() {
+  created() {
     if (process.browser) {
       addEventListener("resize", () => {
         this.$store.commit("CHECK_WINDOW_WIDTH");
       });
     }
-    // this.$store.commit('dashboard/SET_DATE_TODAY')
-  },
-  computed: {
-    shield() {
-      switch (this.$store.state.activeShield) {
-        case 'content_shield':
-          return 'block z-10'
-        case 'confirm_shield':
-          return 'block z-20'
-        default:
-          return 'hidden'
-      }
-    }
+    this.$store.commit('dashboard/SET_DATE_TODAY')
   },
   watch: {
-    '$store.state.drawer'(value) {
-      if (value) {
-        this.$store.commit('SET_ACTIVE_SHIELD', 'content_shield')
-        document.body.style.overflow = 'hidden'
-      } else {
-        this.$store.commit('SET_ACTIVE_SHIELD', '')
-        document.body.style.overflow = ''
-      }
-    },
     '$route'(value) {
-      this.$store.commit('TOGGLE_DRAWER', false)
+      let d = document.getElementsByClassName('sidebar')[0]
+      d.className = "sidebar";
+      document.body.style.overflow = 'auto'
+      this.$store.commit('SET_SIDEBAR_SHIELD', false)
     }
   },
   methods: {
     toggle() {
-      this.$store.commit('TOGGLE_DRAWER', true)
+      this.$store.commit('SET_SIDEBAR_SHIELD', true)
+      let d = document.getElementsByClassName('sidebar')[0]
+      d.className += " toggled";
+      document.body.style.overflow = 'hidden'
+    },
+    close() {
+      this.$store.commit('SET_SIDEBAR_SHIELD', false)
+      let d = document.getElementsByClassName('sidebar')[0]
+      d.className = "sidebar";
+      document.body.style.overflow = 'auto'
     }
   }
 }
@@ -99,7 +95,13 @@ export default {
 body {
   margin: 0;
 }
-.shield {
+.signout {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 600;
+}
+.sidebar-shield {
   position: fixed;
   top: 0;
   left: 0;
@@ -107,6 +109,17 @@ body {
   bottom: 0;
   background-color: #333;
   opacity: 0.5;
+  z-index: 499;
+}
+.signout-shield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #333;
+  opacity: 0.5;
+  z-index: 599;
 }
 .header {
   padding-top: 10px;
@@ -115,26 +128,30 @@ body {
 .content {
   height: auto;
   padding: 1px;
-  margin-left: 200px;
-  overflow-y: auto;
+  margin-left: 0;
 }
 .sidebar {
   position: fixed;
-  width: 200px;
-  top: 0;
-  bottom: 0;
-  height: 100vh;
+  margin-left: -200px;
+  width: auto;
+  height: 100%;
+  overflow: auto;
   border-right: solid 2px #edf2f7;
+  transition: all 0.3s ease-in-out;
+  background-color: white;
+  z-index: 500;
 }
 
-@media screen and (max-width: 900px) {
+.toggled {
+  margin-left: 0;
+}
+
+@media screen and (min-width: 900px) {
   .sidebar {
-    position: fixed;
-    z-index: 100;
-    background-color: white;
+    margin-left: 0;
   }
   .content {
-    margin-left: 0;
+    margin-left: 200px;
   }
 }
 .slide-enter-active,

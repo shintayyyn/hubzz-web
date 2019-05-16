@@ -3,8 +3,9 @@
     <div
       v-if="$store.state.mobile"
       class="cursor-pointer text-2xl font-bold text-yellow-dark mt-5 px-4 mb-24"
-      @click="$store.commit('TOGGLE_DRAWER', false)"
+      @click="$emit('close')"
     >X</div>
+    <!-- @click="$store.commit('TOGGLE_DRAWER', false)" -->
     <div class="mt-20"></div>
     <div class="text-sm relative">
       <span class="absolute pin-l border-solid bg-yellow-dark w-1 h-full" v-if="$route.path == '/'"></span>
@@ -139,7 +140,7 @@
         v-if="$route.path == '/sign-out'"
       ></span>
       <button
-        @click.prevent="$store.commit('TOGGLE_SIGN_OUT_MODAL', true)"
+        @click.prevent="signout"
         class="block no-underline p-4 focus:outline-none"
         :class="$route.path == '/sign-out' ? 'text-yellow-dark' : 'text-black hover:text-grey-light'"
       >
@@ -152,6 +153,12 @@
 export default {
   mounted() {
     console.log(this.$route.path)
+  },
+  methods: {
+    signout() {
+      this.$store.commit('TOGGLE_SIGN_OUT_MODAL', true)
+      this.$store.commit('SET_SIGNOUT_SHIELD', true)
+    }
   }
 }
 </script>
