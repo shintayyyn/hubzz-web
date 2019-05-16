@@ -19,7 +19,7 @@
 </template>
 <script>
 export default {
-  props: ['date', 'notAvailableDates', 'appointmentDates', 'shift'],
+  props: ['date', 'unavailableDates', 'appointmentDates', 'shift'],
   data() {
     shift: ''
   },

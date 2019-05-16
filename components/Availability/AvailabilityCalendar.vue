@@ -42,7 +42,7 @@
             <div class="text-xs lg:text-base z-10">{{(item.date)}}</div>
             <AvailabilityInfoDateCell
               :appointmentDates="appointmentDates"
-              :notAvailableDates="notAvailableDates"
+              :unavailableDates="unavailableDates"
               :item="item"
             />
           </div>
@@ -62,7 +62,7 @@
             <div class="text-xs lg:text-base z-10">{{(item.date)}}</div>
             <AvailabilityInfoDateCell
               :appointmentDates="appointmentDates"
-              :notAvailableDates="notAvailableDates"
+              :unavailableDates="unavailableDates"
               :item="item"
             />
           </div>
@@ -82,7 +82,7 @@
             <div class="text-xs lg:text-base z-10">{{(item.date)}}</div>
             <AvailabilityInfoDateCell
               :appointmentDates="appointmentDates"
-              :notAvailableDates="notAvailableDates"
+              :unavailableDates="unavailableDates"
               :item="item"
             />
           </div>
@@ -102,7 +102,7 @@
             <div class="text-xs lg:text-base z-10">{{(item.date)}}</div>
             <AvailabilityInfoDateCell
               :appointmentDates="appointmentDates"
-              :notAvailableDates="notAvailableDates"
+              :unavailableDates="unavailableDates"
               :item="item"
             />
           </div>
@@ -122,7 +122,7 @@
             <div class="text-xs lg:text-base z-10">{{(item.date)}}</div>
             <AvailabilityInfoDateCell
               :appointmentDates="appointmentDates"
-              :notAvailableDates="notAvailableDates"
+              :unavailableDates="unavailableDates"
               :item="item"
             />
           </div>
@@ -142,7 +142,7 @@
             <div class="text-xs lg:text-base z-10">{{(item.date)}}</div>
             <AvailabilityInfoDateCell
               :appointmentDates="appointmentDates"
-              :notAvailableDates="notAvailableDates"
+              :unavailableDates="unavailableDates"
               :item="item"
             />
           </div>
@@ -162,7 +162,7 @@
             <div class="text-xs lg:text-base z-10">{{(item.date)}}</div>
             <AvailabilityInfoDateCell
               :appointmentDates="appointmentDates"
-              :notAvailableDates="notAvailableDates"
+              :unavailableDates="unavailableDates"
               :item="item"
             />
           </div>
@@ -185,8 +185,8 @@ export default {
     }
   },
   computed: {
-    notAvailableDates() {
-      return this.$store.state.availability.notAvailableDates
+    unavailableDates() {
+      return this.$store.state.availability.unavailableDates
     },
     appointmentDates() {
       return this.$store.state.dashboard.appointmentDates
@@ -242,6 +242,7 @@ export default {
       }
     },
     selectDate(date) {
+      document.body.style.overflow = 'hidden'
       this.$store.commit('availability/SELECT_DATE', date)
       this.$store.commit('TOGGLE_AVAILABILITY_MODAL', true)
     }

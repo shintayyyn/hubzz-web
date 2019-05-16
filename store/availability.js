@@ -1,5 +1,5 @@
 export const state = () => ({
-  notAvailableDates: [],
+  unavailableDates: [],
   select_date: null,
 })
 
@@ -7,11 +7,17 @@ export const mutations = {
   SELECT_DATE (state, payload) {
     state.select_date = payload
   },
-  SET_NOT_AVAILABLE_DATE (state, payload) {
+  SET_UNAVAILABLE_DATES (state, payload) {
+    state.unavailableDates = []
+    payload.forEach(item => {
+      state.unavailableDates.push({ date: payload.date, shifts: payload.shift})
+    })
+  },
+  SET_UNAVAILABLE_DATE (state, payload) {
     let date = payload.selectedDate
     let shifts = payload.selectedShifts
     // check if theres already the same date
-    let item = state.notAvailableDates.find(item => item.date === date)
+    let item = state.unavailableDates.find(item => item.date === date)
 
     if (item && item.date) {
       // update
@@ -22,13 +28,13 @@ export const mutations = {
       })
     } else {
       // else add
-      state.notAvailableDates.push({date: this.$moment(date).format('LL'), shifts: shifts})
+      state.unavailableDates.push({date: this.$moment(date).format('LL'), shifts: shifts})
     }
   },
   REMOVE_NOT_AVAILABLE_DATE (state, payload) {
     let filteredDates = []
-    filteredDates = state.notAvailableDates.filter(item => item.date !== payload)
-    state.notAvailableDates = filteredDates
+    filteredDates = state.unavailableDates.filter(item => item.date !== payload)
+    state.unavailableDates = filteredDates
   }
 }
 

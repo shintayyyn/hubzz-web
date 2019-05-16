@@ -1,7 +1,7 @@
 <template>
   <section>
     <div class="flex flex-row flex-no-wrap absolute pin-t pin-r justify-start w-full">
-      <span
+      <!-- <span
         v-if="isNotAvailable(item.fullDate, 'AM')"
         class="bg-pink-light text-pink-light w-full rounded-tl-lg"
       >.</span>
@@ -20,7 +20,7 @@
         v-if="isNotAvailable(item.fullDate, 'OOH')"
         class="bg-pink-light text-pink-light w-full rounded-tr-lg"
       >.</span>
-      <span v-else class="w-full text-white"></span>
+      <span v-else class="w-full text-white"></span>-->
     </div>
     <div class="flex flex-row flex-no-wrap absolute pin-b pin-r justify-start w-full">
       <span
@@ -42,11 +42,11 @@
 </template>
 <script>
 export default {
-  props: ['appointmentDates', 'notAvailableDates', 'item'],
+  props: ['appointmentDates', 'unavailableDates', 'item'],
   methods: {
-    isNotAvailable(date, type) {
-      return this.notAvailableDates.find(item => item.date === this.$moment(date).format('LL') && item.shifts.includes(type))
-    },
+    // isNotAvailable(date, type) {
+    //   return this.unavailableDates.find(item => item.date === this.$moment(date).format('LL') && item.shifts.includes(type))
+    // },
     hasAppointment(date, shift) {
       return this.appointmentDates.find(appointment => this.getDateArray(appointment.from, appointment.to).includes(this.$moment(date).format('YYYY-MM-DD')) && appointment.shifts === shift)
     },

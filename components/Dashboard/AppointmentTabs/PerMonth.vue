@@ -52,7 +52,7 @@
           >
             <div class="text-xs lg:text-base z-10">{{(item.date)}}</div>
             <PerMonthInfoDateCell
-              :notAvailableDates="notAvailableDates"
+              :unavailableDates="unavailableDates"
               :appointmentDates="appointmentDates"
               :item="item"
             />
@@ -72,7 +72,7 @@
           >
             <div class="text-xs lg:text-base z-10">{{item.date}}</div>
             <PerMonthInfoDateCell
-              :notAvailableDates="notAvailableDates"
+              :unavailableDates="unavailableDates"
               :appointmentDates="appointmentDates"
               :item="item"
             />
@@ -92,7 +92,7 @@
           >
             <div class="text-xs lg:text-base z-10">{{(item.date)}}</div>
             <PerMonthInfoDateCell
-              :notAvailableDates="notAvailableDates"
+              :unavailableDates="unavailableDates"
               :appointmentDates="appointmentDates"
               :item="item"
             />
@@ -112,7 +112,7 @@
           >
             <div class="text-xs lg:text-base z-10">{{item.date}}</div>
             <PerMonthInfoDateCell
-              :notAvailableDates="notAvailableDates"
+              :unavailableDates="unavailableDates"
               :appointmentDates="appointmentDates"
               :item="item"
             />
@@ -132,7 +132,7 @@
           >
             <div class="text-xs lg:text-base z-10">{{(item.date)}}</div>
             <PerMonthInfoDateCell
-              :notAvailableDates="notAvailableDates"
+              :unavailableDates="unavailableDates"
               :appointmentDates="appointmentDates"
               :item="item"
             />
@@ -152,7 +152,7 @@
           >
             <div class="text-xs lg:text-base z-10">{{item.date}}</div>
             <PerMonthInfoDateCell
-              :notAvailableDates="notAvailableDates"
+              :unavailableDates="unavailableDates"
               :appointmentDates="appointmentDates"
               :item="item"
             />
@@ -172,7 +172,7 @@
           >
             <div class="text-xs lg:text-base z-10">{{item.date}}</div>
             <PerMonthInfoDateCell
-              :notAvailableDates="notAvailableDates"
+              :unavailableDates="unavailableDates"
               :appointmentDates="appointmentDates"
               :item="item"
             />
@@ -199,8 +199,8 @@ export default {
     dateToday() {
       return this.$store.state.dateToday
     },
-    notAvailableDates() {
-      return this.$store.state.availability.notAvailableDates
+    unavailableDates() {
+      return this.$store.state.availability.unavailableDates
     },
     appointmentDates() {
       return this.$store.state.dashboard.appointmentDates

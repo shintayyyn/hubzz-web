@@ -79,11 +79,11 @@ export default {
     getAppointmentsPerWeek() {
       return this.$store.getters['dashboard/getAppointmentsPerWeek']
     },
-    notAvailableDates() {
-      return this.$store.state.availability.notAvailableDates
+    unavailableDates() {
+      return this.$store.state.availability.unavailableDates
     },
     // unavailable() {
-    //   let unavailable = this.notAvailableDates.find(date => date.date === this.selectedDate)
+    //   let unavailable = this.unavailableDates.find(date => date.date === this.selectedDate)
     //   if (!unavailable) {
     //     return null
     //   }
@@ -96,7 +96,7 @@ export default {
     //   return this.$store.state.dashboard.appointmentDates.find(data => data.date === this.selectedWeekDate)
     // },
     // unavailableOnWeek() {
-    //   let unavailableOnWeek = this.notAvailableDates.find(data => data.date === this.selectedWeekDate && data.shifts.includes(this.selectedWeekDateType))
+    //   let unavailableOnWeek = this.unavailableDates.find(data => data.date === this.selectedWeekDate && data.shifts.includes(this.selectedWeekDateType))
     //   if (!unavailableOnWeek) {
     //     return null
     //   }

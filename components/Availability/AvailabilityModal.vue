@@ -1,10 +1,9 @@
 <template>
-  <div
-    class="absolute pin-r pin-t z-10 p-10 bg-white shadow-lg"
+  <!-- class="absolute pin-r pin-t p-10 bg-white shadow-lg"
     style="height:1500px"
-    :style="$store.state.mobile ? 'width:100%' : 'width:90%'"
-  >
-    <div @click="$store.commit('TOGGLE_AVAILABILITY_MODAL', false)" class="cursor-pointer">
+  :style="$store.state.mobile ? 'width:100%' : 'width:80%'"-->
+  <div>
+    <div @click="close" class="cursor-pointer">
       <svgicon name="left-arrow" height="32" width="32"/>
     </div>
 
@@ -59,13 +58,13 @@ export default {
     appointmentDates() {
       return this.$store.state.dashboard.appointmentDates
     },
-    notAvailableDates() {
-      return this.$store.state.availability.notAvailableDates
+    unavailableDates() {
+      return this.$store.state.availability.unavailableDates
     },
   },
   created() {
     // check if this selected date is already in not available date
-    let item = this.notAvailableDates.find(item => item.date === this.$moment(this.$store.state.availability.select_date).format('LL'))
+    let item = this.unavailableDates.find(item => item.date === this.$moment(this.$store.state.availability.select_date).format('LL'))
     if (item && item.date) {
       // get the selected shifts on this item
       item.shifts.forEach(shift => {
@@ -102,6 +101,7 @@ export default {
         // pass the selected date on remove
         this.$store.commit('availability/REMOVE_NOT_AVAILABLE_DATE', this.$moment(this.$store.state.availability.select_date).format('LL'))
       }
+      document.body.style.overflow = 'auto'
       this.$store.commit('TOGGLE_AVAILABILITY_MODAL', false)
     },
     validateAvailabilityDates(dates, shifts) {
@@ -116,6 +116,9 @@ export default {
         currentDate = this.$moment(currentDate).add(1, 'days');
       }
       return dateArray;
+    },
+    close() {
+      this.$store.commit('TOGGLE_AVAILABILITY_MODAL', false)
     }
   }
 }

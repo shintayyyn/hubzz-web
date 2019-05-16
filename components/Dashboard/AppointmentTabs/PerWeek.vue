@@ -54,7 +54,7 @@
         <!-- <div
           class="w-full border-r-2 border-t-2 bg-pink-light cursor-pointer hover:bg-grey-light"
           :key="index"
-          v-if="notAvailableDates.find(item => item.date === $moment(date).format('LL') && item.shifts.includes('AM'))"
+          v-if="unavailableDates.find(item => item.date === $moment(date).format('LL') && item.shifts.includes('AM'))"
           @click="$store.commit('dashboard/SELECT_WEEK_DATE', {date: $moment(date).format('YYYY-MM-DD'), type: 'AM'})"
         ></div>-->
         <div
@@ -84,7 +84,7 @@
         <!-- <div
           class="w-full border-r-2 border-t-2 bg-pink-light cursor-pointer hover:bg-grey-light"
           :key="index"
-          v-if="notAvailableDates.find(item => item.date === $moment(date).format('LL') && item.shifts.includes('PM'))"
+          v-if="unavailableDates.find(item => item.date === $moment(date).format('LL') && item.shifts.includes('PM'))"
           @click="$store.commit('dashboard/SELECT_WEEK_DATE', {date: $moment(date).format('YYYY-MM-DD'), type: 'PM'})"
         ></div>-->
         <div
@@ -114,7 +114,7 @@
         <!-- <div
           class="w-full border-r-2 border-t-2 bg-pink-light cursor-pointer hover:bg-grey-light"
           :key="index"
-          v-if="notAvailableDates.find(item => item.date === $moment(date).format('LL') && item.shifts.includes('WHOLE DAY'))"
+          v-if="unavailableDates.find(item => item.date === $moment(date).format('LL') && item.shifts.includes('WHOLE DAY'))"
           @click="$store.commit('dashboard/SELECT_WEEK_DATE', {date: $moment(date).format('YYYY-MM-DD'), type: 'WHOLE DAY'})"
         ></div>-->
         <div
@@ -144,7 +144,7 @@
         <!-- <div
           class="w-full border-r-2 border-t-2 bg-pink-light cursor-pointer hover:bg-grey-light"
           :key="index"
-          v-if="notAvailableDates.find(item => item.date === $moment(date).format('LL') && item.shifts.includes('OOH'))"
+          v-if="unavailableDates.find(item => item.date === $moment(date).format('LL') && item.shifts.includes('OOH'))"
           @click="$store.commit('dashboard/SELECT_WEEK_DATE', {date: $moment(date).format('YYYY-MM-DD'), type: 'OOH'})"
         ></div>-->
         <div
@@ -173,7 +173,7 @@
         <!-- <div
           class="w-full border-r-2 border-t-2 bg-pink-light cursor-pointer hover:bg-grey-light"
           :key="index"
-          v-if="notAvailableDates.find(item => item.date === $moment(date).format('LL') && item.shifts.includes('Available'))"
+          v-if="unavailableDates.find(item => item.date === $moment(date).format('LL') && item.shifts.includes('Available'))"
           @click="$store.commit('dashboard/SELECT_WEEK_DATE', {date: $moment(date).format('YYYY-MM-DD'), type: 'Available'})"
         ></div>-->
         <div
@@ -213,8 +213,8 @@ export default {
     }
   },
   computed: {
-    notAvailableDates() {
-      return this.$store.state.availability.notAvailableDates
+    unavailableDates() {
+      return this.$store.state.availability.unavailableDates
     },
     appointmentDates() {
       return this.$store.state.dashboard.appointmentDates

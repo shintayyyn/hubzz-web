@@ -2,22 +2,22 @@
   <section>
     <div class="flex flex-row flex-no-wrap absolute pin-t pin-r justify-start w-full">
       <span
-        v-if="notAvailableDates.find(date => date.from === $moment(item.fullDate).format('LL') && date.shifts.includes('AM'))"
+        v-if="unavailableDates.find(date => date.from === $moment(item.fullDate).format('LL') && date.shifts.includes('AM'))"
         class="bg-pink-light text-pink-light w-full rounded-tl-lg"
       >.</span>
       <span v-else class="w-full text-white"></span>
       <span
-        v-if="notAvailableDates.find(date => date.from === $moment(item.fullDate).format('LL') && date.shifts.includes('PM'))"
+        v-if="unavailableDates.find(date => date.from === $moment(item.fullDate).format('LL') && date.shifts.includes('PM'))"
         class="bg-pink-light text-pink-light w-full"
       >.</span>
       <span v-else class="w-full text-white"></span>
       <span
-        v-if="notAvailableDates.find(date => date.from === $moment(item.fullDate).format('LL') && date.shifts.includes('WHOLE DAY'))"
+        v-if="unavailableDates.find(date => date.from === $moment(item.fullDate).format('LL') && date.shifts.includes('WHOLE DAY'))"
         class="bg-pink-light text-pink-light w-full"
       >.</span>
       <span v-else class="w-full text-white"></span>
       <span
-        v-if="notAvailableDates.find(date => date.from === $moment(item.fullDate).format('LL') && date.shifts.includes('OOH'))"
+        v-if="unavailableDates.find(date => date.from === $moment(item.fullDate).format('LL') && date.shifts.includes('OOH'))"
         class="bg-pink-light text-pink-light w-full rounded-tr-lg"
       >.</span>
       <span v-else class="w-full text-white"></span>
@@ -48,7 +48,7 @@
 </template>
 <script>
 export default {
-  props: ['notAvailableDates', 'appointmentDates', 'item'],
+  props: ['unavailableDates', 'appointmentDates', 'item'],
   methods: {
     hasAppointment(date, type) {
       return this.appointmentDates.find(appointment => this.getDateArray(appointment.from, appointment.to).includes(date) && appointment.shifts === type)

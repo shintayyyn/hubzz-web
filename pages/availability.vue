@@ -76,8 +76,8 @@ export default {
   },
 
   computed: {
-    notAvailableDates() {
-      return this.$store.state.availability.notAvailableDates
+    unavailableDates() {
+      return this.$store.state.availability.unavailableDates
     }
   },
 
@@ -92,7 +92,7 @@ export default {
         })
 
       })
-    // get authenticated user selected shift/s
+    // get authenticated user's selected shift/s
     this.$axios
       .$get(`/api/v1/me`)
       .then(res => {
@@ -100,6 +100,14 @@ export default {
         res.data.user.locum_detail.shifts.forEach(shift => {
           this.selectedShifts.push(shift.id)
         })
+      })
+
+    // get authenticated user's unavailable dates
+    this.$axios
+      .$get(`/api/v1/locum-unavailabilities`)
+      .then(res => {
+        console.log(res.data.unavailabilities)
+        this.$store.commit('availability/SET_UNAVAILABLE_DATES', res.data.unavailabilities)
       })
   },
 

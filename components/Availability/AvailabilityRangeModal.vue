@@ -110,8 +110,8 @@ export default {
     }
   },
   computed: {
-    notAvailableDates() {
-      return this.$store.state.availability.notAvailableDates
+    unavailableDates() {
+      return this.$store.state.availability.unavailableDates
     },
     appointmentDates() {
       return this.$store.state.dashboard.appointmentDates
@@ -147,12 +147,12 @@ export default {
       } else {
         // get all the date from form.from to form.to
         let dates = this.getDateArray(this.form.from, this.form.to)
-        // loop - check if the date is already in the notAvailableDates array
-        let notAvailableDates = this.$store.state.availability.notAvailableDates
+        // loop - check if the date is already in the unavailableDates array
+        let unavailableDates = this.$store.state.availability.unavailableDates
         console.log(dates)
-        console.log(notAvailableDates)
-        if (notAvailableDates.length > 0) {
-          notAvailableDates.forEach(notAvailable => {
+        console.log(unavailableDates)
+        if (unavailableDates.length > 0) {
+          unavailableDates.forEach(notAvailable => {
             dates.forEach(date => {
               // if same date, update
               if (this.$moment(notAvailable.date).format('YYYY-MM-DD') === date) {
