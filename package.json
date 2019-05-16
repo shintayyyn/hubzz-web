@@ -10,7 +10,8 @@
     "start": "nuxt start",
     "generate": "nuxt generate",
     "analyze": "nuxt build --analyze",
-    "svg": "vsvg -s ./static/svg -t ./assets/svg"
+    "svg": "vsvg -s ./static/svg -t ./assets/svg",
+    "lint": "eslint . --ignore-pattern 'node_modules/'"
   },
   "dependencies": {
     "@nuxtjs/auth": "^4.5.3",
@@ -26,8 +27,60 @@
     "vue-svgicon": "^3.2.4"
   },
   "devDependencies": {
+    "eslint": "^5.14.1",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.16.0",
+    "husky": "^2.2.0",
+    "lint-staged": "^8.1.6",
     "nodemon": "^1.18.9",
     "autoprefixer": "^8.6.4",
     "tailwindcss": "^0.7.0"
+  },
+  "eslintConfig": {
+    "extends": "airbnb-base",
+    "env": {
+      "node": true,
+      "browser": false
+    },
+    "globals": {
+      "use": true,
+      "make": true
+    },
+    "rules": {
+      "object-curly-newline": "off",
+      "no-restricted-syntax": "off",
+      "no-underscore-dangle": "off",
+      "prefer-rest-params": "off",
+      "no-shadow": "off",
+      "no-multi-assign": "off",
+      "consistent-return": "off",
+      "no-param-reassign": "off",
+      "strict": "off",
+      "class-methods-use-this": "off",
+      "semi": [
+        "error",
+        "never"
+      ],
+      "space-before-function-paren": [
+        "error",
+        "always"
+      ]
+    }
+  },
+  "autoload": {
+    "App": "./app"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.js": [
+      "eslint --fix",
+      "git add",
+      "eslint"
+    ]
   }
 }
+
