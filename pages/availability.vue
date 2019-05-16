@@ -101,7 +101,7 @@ export default {
           this.selectedShifts.push(shift.id)
         })
       })
-
+    // asd
     // get authenticated user's unavailable dates
     this.$axios
       .$get(`/api/v1/locum-unavailabilities`)
