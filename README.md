@@ -17,6 +17,10 @@ $ npm start
 
 # generate static project
 $ npm run generate
+
+# execute linter
+$ node_modules/eslint/bin/eslint.js . --ignore-pattern 'node_modules/'  --fix
+
 ```
 
 For detailed explanation on how things work, checkout [Nuxt.js docs](https://nuxtjs.org).
