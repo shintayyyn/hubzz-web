@@ -21,59 +21,33 @@
     "dotenv": "^7.0.0",
     "lodash.debounce": "^4.0.8",
     "moment": "^2.24.0",
-    "nuxt": "^2.4.0",
+    "nuxt": "^2.7.1",
     "validator": "^10.11.0",
     "vue-clickaway": "^2.2.2",
     "vue-svgicon": "^3.2.4"
   },
   "devDependencies": {
+    "@commitlint/cli": "^7.6.1",
+    "@commitlint/config-conventional": "^7.6.0",
+    "commitizen": "^3.1.1",
+    "cz-conventional-changelog": "^2.1.0",
     "eslint": "^5.14.1",
-    "eslint-config-airbnb-base": "^13.1.0",
-    "eslint-plugin-import": "^2.16.0",
-    "husky": "^2.2.0",
+    "husky": "^2.3.0",
     "lint-staged": "^8.1.6",
     "nodemon": "^1.18.9",
     "autoprefixer": "^8.6.4",
     "tailwindcss": "^0.7.0"
   },
-  "eslintConfig": {
-    "extends": "airbnb-base",
-    "env": {
-      "node": true,
-      "browser": false
-    },
-    "globals": {
-      "use": true,
-      "make": true
-    },
-    "rules": {
-      "object-curly-newline": "off",
-      "no-restricted-syntax": "off",
-      "no-underscore-dangle": "off",
-      "prefer-rest-params": "off",
-      "no-shadow": "off",
-      "no-multi-assign": "off",
-      "consistent-return": "off",
-      "no-param-reassign": "off",
-      "strict": "off",
-      "class-methods-use-this": "off",
-      "semi": [
-        "error",
-        "never"
-      ],
-      "space-before-function-paren": [
-        "error",
-        "always"
-      ]
-    }
-  },
-  "autoload": {
-    "App": "./app"
-  },
   "husky": {
     "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
       "pre-commit": "lint-staged"
     }
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
   },
   "lint-staged": {
     "*.js": [
@@ -81,6 +55,10 @@
       "git add",
       "eslint"
     ]
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }
-
