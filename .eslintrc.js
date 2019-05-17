@@ -16,7 +16,7 @@ module.exports = {
     // required to lint *.vue files
     plugins: [
       'nuxt',
-      // 'vue'
+      'vue'
     ],
     // add your custom rules here
     rules: {
