@@ -1,5 +1,5 @@
 module.exports = {
-    extends: ['nuxt','vue'],
+    extends: ['vue'],
     rules:{
         'vue/max-attributes-per-line': 'off',
         'max-len': 'off'
