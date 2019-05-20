@@ -21,7 +21,7 @@ export default {
 }
 </script>
 <style scoped>
-button:active {
+a:active {
   transform: translate(5px, 5px);
 }
 </style>

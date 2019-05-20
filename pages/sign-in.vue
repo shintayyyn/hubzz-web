@@ -1,64 +1,123 @@
 <template>
-  <section class="auth-section">
-    <!-- <div
-      class="h-full w-full flex flex-col overflow-auto xl:justify-center"
-      v-if="$store.state.activeTab === 'forgot_password'"
-    >
-      <ForgotPassword/>
-    </div>
+  <section class="sign-in-card">
+    <div class="flex flex-col">
+      <div class="flex flex-row flex-nowrap justify-center mb-16">
+        <div class="rounded-full bg-yellow-dark px-12 py-5 font-bold text-sm cursor-pointer">Sign In</div>
+        <div
+          class="px-12 py-5 font-bold text-sm text-grey cursor-pointer"
+          @click="$router.push('sign-up')"
+        >Sign Up</div>
+      </div>
+      <div class="rounded-lg shadow-lg px-8 pb-8 pt-12">
+        <div class="w-full flex flex-col">
+          <AppInput
+            v-model="form.email"
+            :type="'email'"
+            :name="'email'"
+            :label="'Email address'"
+            :placeholder="''"
+            @error="error"
+            @submit="login"
+            isRequired
+          />
+          <AppInput
+            v-model="form.password"
+            :type="'password'"
+            :name="'password'"
+            :label="'Password'"
+            :placeholder="''"
+            @error="error"
+            @submit="login"
+            isRequired
+          />
+        </div>
 
-    <div
-      class="h-full w-full flex flex-col overflow-auto xl:justify-center"
-      v-if="$store.state.activeTab === 'auth_success'"
-    >
-      <AuthSuccess/>
-    </div>
-
-    <div
-      class="h-full w-full flex flex-col overflow-auto"
-      v-if="$store.state.activeTab === 'sign_up_locum'"
-    >
-      <SignUpLocum/>
-    </div>
-
-    <div
-      class="h-full w-full flex flex-col overflow-auto"
-      v-if="$store.state.activeTab === 'sign_up_practice'"
-    >
-      <SignUpPractice/>
-    </div>-->
-
-    <div class="h-full w-full flex flex-col overflow-auto xl:justify-center mt-20">
-      <AuthTab/>
-      <div class="flex justify-center" style="height: 600px;">
-        <SignIn v-if="$store.state.signIn.authTab === 'sign_in'"/>
-        <SignUp v-if="$store.state.signIn.authTab === 'sign_up'"/>
+        <div class="flex justify-end mb-8">
+          <span class="hover:underline cursor-pointer">Forgot password?</span>
+        </div>
+        <div class="flex justify-center">
+          <AppButton :label="'Sign In'" @click="login"/>
+        </div>
       </div>
     </div>
   </section>
 </template>
 
 <script>
-import AuthTab from '~/components/Auth/AuthTab.vue'
-import SignIn from '~/components/Auth/SignIn.vue'
-import SignUp from '~/components/Auth/SignUp.vue'
-// import ForgotPassword from '~/components/Auth/ForgotPassword.vue'
-// import SignUpLocum from '~/components/Auth/SignUp/SignUpLocum.vue'
-// import SignUpPractice from '~/components/Auth/SignUp/SignUpPractice.vue'
-// import AuthSuccess from '~/components/Auth/SignUp/SignUpLocum/AuthSuccess.vue'
+import AppInput from '@/components/Base/AppInput'
+import AppButton from '@/components/Base/AppButton'
 export default {
   layout: 'auth',
   components: {
-    AuthTab,
-    SignIn,
-    SignUp,
-    // ForgotPassword,
-    // SignUpLocum,
-    // SignUpPractice,
-    // AuthSuccess
+    AppInput,
+    AppButton
   },
-  mounted() {
-    this.$store.commit('signUp/CLEAR_FORM_DETAILS')
+  data() {
+    return {
+      form: {
+        email: '',
+        password: ''
+      },
+      formError: []
+    }
+  },
+  methods: {
+    error(error) {
+      if (!error.message) {
+        //remove
+        this.formError.splice(this.formError.findIndex(item => item.field === error.field), 1)
+      } else {
+        //add or update
+        let item = this.formError.find(item => item.field === error.field)
+        if (!item) {
+          this.formError.push(error)
+        } else {
+          item.message = error.message
+        }
+      }
+    },
+    async login() {
+      try {
+        if (!this.formError.length) {
+          this.$axios
+            .$post('/api/v1/login', this.form)
+            .then(async res => {
+              console.log(res)
+              const token = res.data.token.token
+              this.$axios.setToken(token, 'Bearer')
+              this.$auth.$storage.setUniversal('_token.local', 'Bearer ' + token)
+              await this.$auth.fetchUser()
+              this.$router.push('/')
+            })
+            .catch(err => {
+              this.formError = err.response.data.errors
+            })
+        }
+      } catch (e) {
+        console.log(e)
+      }
+    }
   }
 }
 </script>
+<style scoped>
+.sign-in-card {
+  position: absolute;
+  top: 0px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+  max-width: 600px;
+  height: 500px;
+  padding: 1px;
+}
+
+@media screen and (max-width: 1205px) {
+  .sign-in-card {
+    position: relative;
+    top: 30px;
+  }
+}
+</style>
+

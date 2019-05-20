@@ -3,183 +3,77 @@
     <div class="flex w-full justify-center xl:justify-start">
       <div class="mx-4 flex flex-col p-8 m-1 rounded-lg shadow-lg" style="flex: 0 1 600px;">
         <form class="w-full">
-          <div
-            class="relative flex flex-col mt-8 border-b-2 border-grey-light"
-            :class="[setFocus === 'title' ? 'border-yellow':'', formError.find(item => item.field === 'title') ? 'border-red':'']"
-          >
-            <label for="title" class="text-sm mb-4">Title</label>
-            <input
-              type="text"
-              ref="title"
-              class="focus:outline-none font-bold text-sm"
-              style="height:40px"
-              @focus="setFocus = 'title'"
-              @blur="setFocus = ''"
-              v-model="form.title"
-              placeholder="(ex. Mr., Ms., Mrs.)"
-            >
-            <span
-              class="absolute pin-r bg-red text-white p-1"
-              v-if="formError.find(item => item.field === 'title')"
-            >{{formError.find(item => item.field === 'title').message}}</span>
-          </div>
-          <div
-            class="relative flex flex-col mt-8 border-b-2 border-grey-light"
-            :class="[setFocus === 'first_name' ? 'border-yellow':'', formError.find(item => item.field === 'first_name') ? 'border-red':'']"
-          >
-            <label for="first_name" class="text-sm mb-4">First name</label>
-            <input
-              type="text"
-              ref="first_name"
-              class="focus:outline-none font-bold text-sm"
-              style="height:40px"
-              @focus="setFocus = 'first_name'"
-              @blur="setFocus = ''"
-              v-model="form.first_name"
-              placeholder="Your first name"
-            >
-            <span
-              class="absolute pin-r bg-red text-white p-1"
-              v-if="formError.find(item => item.field === 'first_name')"
-            >{{formError.find(item => item.field === 'first_name').message}}</span>
-          </div>
-          <div
-            class="relative flex flex-col mt-8 border-b-2 border-grey-light"
-            :class="[setFocus === 'last_name' ? 'border-yellow':'', formError.find(item => item.field === 'last_name') ? 'border-red':'']"
-          >
-            <label for="last_name" class="text-sm mb-4">Last name</label>
-            <input
-              type="text"
-              ref="last_name"
-              class="focus:outline-none font-bold text-sm"
-              style="height:40px"
-              @focus="setFocus = 'last_name'"
-              @blur="setFocus = ''"
-              v-model="form.last_name"
-              placeholder="Your last name"
-            >
-            <span
-              class="absolute pin-r bg-red text-white p-1"
-              v-if="formError.find(item => item.field === 'last_name')"
-            >{{formError.find(item => item.field === 'last_name').message}}</span>
-          </div>
-          <div
-            class="relative flex flex-col mt-8 border-b-2 border-grey-light"
-            :class="[setFocus === 'suffix' ? 'border-yellow':'', formError.find(item => item.field === 'suffix') ? 'border-red':'']"
-          >
-            <label for="suffix" class="text-sm mb-4">Suffix</label>
-            <input
-              type="text"
-              ref="suffix"
-              class="focus:outline-none font-bold text-sm"
-              style="height:40px"
-              @focus="setFocus = 'suffix'"
-              @blur="setFocus = ''"
-              v-model="form.suffix"
-              placeholder="(ex. Ph.D., M.D., etc.)"
-            >
-            <span
-              class="absolute pin-r bg-red text-white p-1"
-              v-if="formError.find(item => item.field === 'suffix')"
-            >{{formError.find(item => item.field === 'suffix').message}}</span>
-          </div>
-          <div
-            class="relative flex flex-col mt-8 border-b-2 border-grey-light"
-            :class="[setFocus === 'practice_role' ? 'border-yellow':'', formError.find(item => item.field === 'practice_role') ? 'border-red':'']"
-          >
-            <label for="practice_role" class="text-sm mb-4">Role</label>
-            <select
-              class="focus:outline-none font-bold text-sm"
-              style="height:40px;"
-              @focus="setFocus = 'practice_role'"
-              @blur="setFocus = ''"
-              v-model="form.practice_role"
-            >
-              <option value selected disabled>Select..</option>
-              <option v-for="(item, index) in roles" :key="index" :value="item.value">{{item.label}}</option>
-            </select>
-            <span
-              class="absolute pin-r bg-red text-white p-1"
-              v-if="formError.find(item => item.field === 'practice_role')"
-            >{{formError.find(item => item.field === 'practice_role').message}}</span>
-          </div>
-
-          <div
-            class="relative flex flex-col mt-8 border-b-2 border-grey-light"
-            :class="[setFocus === 'email' ? 'border-yellow':'', formError.find(item => item.field === 'email') ? 'border-red':'']"
-          >
-            <label for="email" class="text-sm mb-4">Email address</label>
-            <input
-              type="email"
-              ref="email"
-              class="focus:outline-none font-bold text-sm"
-              style="height:40px"
-              @focus="setFocus = 'email'"
-              @blur="setFocus = ''"
-              v-model="form.email"
-              placeholder="Your email address"
-            >
-            <span
-              class="absolute pin-r bg-red text-white p-1"
-              v-if="formError.find(item => item.field === 'email')"
-            >{{formError.find(item => item.field === 'email').message}}</span>
-          </div>
-
-          <div
-            class="relative flex flex-col mt-8 border-b-2 border-grey-light"
-            :class="[setFocus === 'password' ? 'border-yellow':'', formError.find(item => item.field === 'password') ? 'border-red':'']"
-          >
-            <label for="password" class="text-sm mb-4">Password</label>
-            <input
-              type="password"
-              ref="password"
-              class="focus:outline-none font-bold text-sm"
-              style="height:40px"
-              @focus="setFocus = 'password'"
-              @blur="setFocus = ''"
-              v-model="form.password"
-              placeholder="Password"
-            >
-            <span
-              class="absolute pin-r bg-red text-white p-1"
-              v-if="formError.find(item => item.field === 'password')"
-            >{{formError.find(item => item.field === 'password').message}}</span>
-          </div>
-
-          <div
-            class="relative flex flex-col mt-8 border-b-2 border-grey-light"
-            :class="[setFocus === 'password_confirmation' ? 'border-yellow':'', formError.find(item => item.field === 'password_confirmation') ? 'border-red':'']"
-          >
-            <label for="password_confirmation" class="text-sm mb-4">Repeat password to verify</label>
-            <input
-              type="password"
-              ref="password_confirmation"
-              class="focus:outline-none font-bold text-sm"
-              style="height:40px"
-              @focus="setFocus = 'password_confirmation'"
-              @blur="setFocus = ''"
-              v-model="form.password_confirmation"
-              placeholder="Repeat password"
-            >
-            <span
-              class="absolute pin-r bg-red text-white p-1"
-              v-if="formError.find(item => item.field === 'password_confirmation')"
-            >{{formError.find(item => item.field === 'password_confirmation').message}}</span>
-          </div>
-
-          <div class="relative flex flex-col mt-8">
-            <div class="flex flex-row justify-start">
-              <input type="checkbox" ref="privacy_policy" v-model="form.privacy_policy">
-              <label
-                for="privacy_policy"
-                class="text-sm ml-1"
-              >I agree with the Terms and Conditions and Privacy Policy of Hubzz</label>
-            </div>
-            <div
-              class="absolute pin-t pin-r bg-red text-white p-1"
-              v-if="formError.find(item => item.field === 'privacy_policy')"
-            >{{formError.find(item => item.field === 'privacy_policy').message}}</div>
-          </div>
+          <AppInput
+            v-model="form.title"
+            :type="'text'"
+            :name="'title'"
+            :label="'Title'"
+            :placeholder="'(ex. Mr., Ms., Mrs.)'"
+          />
+          <AppInput
+            v-model="form.first_name"
+            :type="'text'"
+            :name="'first_name'"
+            :label="'First name'"
+            :placeholder="'Your first name'"
+            :error="formError.find(item => item.field === 'first_name')"
+          />
+          <AppInput
+            v-model="form.last_name"
+            :type="'text'"
+            :name="'last_name'"
+            :label="'Last name'"
+            :placeholder="'Your last name'"
+            :error="formError.find(item => item.field === 'last_name')"
+          />
+          <AppInput
+            v-model="form.suffix"
+            :type="'text'"
+            :name="'suffix'"
+            :label="'Suffix'"
+            :placeholder="'(ex. Ph.D., M.D., etc.)'"
+          />
+          <AppSelect
+            v-model="form.practice_role"
+            :name="'practice_role'"
+            :label="'Role'"
+            :placeholder="'Select..'"
+            :error="formError.find(item => item.field === 'practice_role')"
+            :items="practice_roles"
+          />
+          <AppInput
+            v-model="form.email"
+            :type="'email'"
+            :name="'email'"
+            :label="'Email'"
+            :placeholder="'Your email address'"
+            :error="formError.find(item => item.field === 'email')"
+          />
+          <AppInput
+            v-model="form.password"
+            :type="'password'"
+            :name="'password'"
+            :label="'Password'"
+            :placeholder="'Your password'"
+            :error="formError.find(item => item.field === 'password')"
+          />
+          <AppInput
+            v-model="form.password_confirmation"
+            :type="'password'"
+            :name="'password_confirmation'"
+            :label="'Repeat password to verify'"
+            :placeholder="'Repeat password'"
+            :password="form.password"
+            :error="formError.find(item => item.field === 'password_confirmation')"
+          />
+          <AppInput
+            v-model="form.privacy_policy"
+            :type="'checkbox'"
+            :name="'privacy_policy'"
+            :label="'I agree with the Terms and Conditions and Privacy Policy of Hubzz'"
+            :placeholder="''"
+            :error="formError.find(item => item.field === 'privacy_policy')"
+          />
         </form>
       </div>
     </div>
@@ -200,15 +94,22 @@
   </div>
 </template>
 <script>
-const roles = [
-  { value: 'Partner', label: 'Partner' },
-  { value: 'Practice Manager', label: 'Practice Manager' },
-  { value: 'Practice Staff', label: 'Practice Staff' }
+import AppInput from '@/components/Base/AppInput'
+import AppSelect from '@/components/Base/AppSelect'
+// import AppCheck from '@/components/Base/AppCheck'
+import AppButton from '@/components/Base/AppButton'
+const practice_roles = [
+  'Partner', 'Practice Manager', 'Practice Staff'
 ]
 export default {
+  components: {
+    AppInput,
+    AppSelect,
+    AppButton
+  },
   data() {
     return {
-      roles,
+      practice_roles,
       form: {
         title: '',
         first_name: '',
@@ -227,6 +128,119 @@ export default {
   computed: {
     practiceAccountDetails() {
       return this.$store.state.signUp.practice_account_details
+    },
+    practiceAccountFormError() {
+      return this.$store.state.signUp.practice_account_detail_form_error
+    }
+  },
+  watch: {
+    'form.first_name'(value) {
+      // splice from formerror
+      let index = this.formError.findIndex(item => item.field === 'first_name')
+      if (index >= 0) {
+        this.formError.splice(index, 1)
+      }
+      // validate
+      if (!value) {
+        // required
+        this.formError.push({ field: 'first_name', message: 'Required' })
+      }
+    },
+    'form.last_name'(value) {
+      // splice from formerror
+      let index = this.formError.findIndex(item => item.field === 'last_name')
+      if (index >= 0) {
+        this.formError.splice(index, 1)
+      }
+      // validate
+      if (!value) {
+        // required
+        this.formError.push({ field: 'last_name', message: 'Required' })
+      }
+    },
+    'form.email'(value) {
+      // splice from formerror
+      let index = this.formError.findIndex(item => item.field === 'email')
+      if (index >= 0) {
+        this.formError.splice(index, 1)
+      }
+      // validate
+      if (!value) {
+        // required
+        this.formError.push({ field: 'email', message: 'Required' })
+      } else {
+        // validate option
+        const error = this.ValidateEmail(value)
+        if (error) {
+          this.formError.push(error)
+        }
+      }
+    },
+    'form.practice_role'(value) {
+      // splice from formerror
+      let index = this.formError.findIndex(item => item.field === 'practice_role')
+      if (index >= 0) {
+        this.formError.splice(index, 1)
+      }
+      // validate
+      if (!value) {
+        // required
+        this.formError.push({ field: 'practice_role', message: 'Required' })
+      }
+    },
+    'form.password'(value) {
+      // splice from formerror
+      let index = this.formError.findIndex(item => item.field === 'password')
+      if (index >= 0) {
+        this.formError.splice(index, 1)
+      }
+      // validate
+      if (!value) {
+        // required
+        this.formError.push({ field: 'password', message: 'Required' })
+      } else if (value && value.length < 6) {
+        this.formError.push({ field: 'password', message: 'Password Must Be Atleast 6 Characters' })
+      }
+    },
+    'form.password_confirmation'(value) {
+      // splice from formerror
+      let index = this.formError.findIndex(item => item.field === 'password_confirmation')
+      if (index >= 0) {
+        this.formError.splice(index, 1)
+      }
+      // validate
+      if (!value) {
+        // required
+        this.formError.push({ field: 'password_confirmation', message: 'Required' })
+      }
+      else if (value && value.length < 6) {
+        this.formError.push({ field: 'password_confirmation', message: 'Password Confirmation Must Be Atleast 6 Characters' })
+      } else {
+        // validate option
+        const error = this.ValidateSamePassword(value, this.form.password)
+        if (error) {
+          this.formError.push(error)
+        }
+      }
+    },
+    'form.privacy_policy'(value) {
+      // splice from formerror
+      let index = this.formError.findIndex(item => item.field === 'privacy_policy')
+      if (index >= 0) {
+        this.formError.splice(index, 1)
+      }
+      // validate
+      if (!value) {
+        // required
+        this.formError.push({ field: 'privacy_policy', message: 'Required' })
+      }
+    },
+    practiceAccountFormError(value) {
+      if (value.length > 0) {
+        value.forEach(item => {
+          this.formError.push(item)
+        })
+      }
     }
   },
   mounted() {
@@ -238,17 +252,24 @@ export default {
     this.form.email = this.practiceAccountDetails.email
     this.form.password = this.practiceAccountDetails.password
     this.form.password_confirmation = this.practiceAccountDetails.password_confirmation
-    this.form.privacy_policy = this.practiceAccountDetails.privacy_policy
+
+    if (this.practiceAccountFormError.length > 0) {
+      this.practiceAccountFormError.forEach(item => {
+        this.formError.push(item)
+      })
+    }
   },
   methods: {
     signUp() {
       try {
         this.formError = []
         this.Validate(this.form, ['title', 'suffix'])
-        this.ValidatePassword(this.form.password, this.form.password_confirmation)
+        this.ValidateSamePassword(this.form.password, this.form.password_confirmation)
         if (!this.formError.length) {
           this.$store.commit('signUp/SET_PRACTICE_ACCOUNT_DETAILS', this.form)
-          this.$store.dispatch('signUp/registeredPractice')
+          setTimeout(() => {
+            this.$store.dispatch('signUp/registeredPractice')
+          }, 1000)
           // response here
           // this.$router.push('/sign-up/success')
         }

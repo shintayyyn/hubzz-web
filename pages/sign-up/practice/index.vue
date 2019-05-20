@@ -4,8 +4,8 @@
     <div class="w-full p-6">
       <div class="flex w-full justify-center xl:justify-start">
         <div class="mb-6 mt-1 mx-4" style="flex: 0 1 600px;">
-          <nuxt-link to="/sign-in" class="focus:outline-none text-black">
-            <svgicon name="arrow-left-solid" height="32" width="32"/>
+          <nuxt-link to="/sign-up" class="focus:outline-none text-black">
+            <svgicon name="left-arrow" height="32" width="32"/>
           </nuxt-link>
           <div class="mt-1 text-xl font-bold">Sign up for a Practice</div>
         </div>
@@ -44,7 +44,6 @@ export default {
   },
   mounted() {
     this.$store.commit('signUp/SET_ACTIVE_TAB', 'practice_details')
-    this.$store.dispatch('signUp/getCCG')
   },
   components: {
     ProgressBar,

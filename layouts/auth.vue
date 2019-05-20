@@ -7,7 +7,7 @@
       </nuxt-link>
     </div>
 
-    <div class="__main overflow-auto">
+    <div class="__main overflow-auto relative">
       <nuxt/>
     </div>
 

@@ -21,12 +21,12 @@ Vue.mixin({
           if (value.length === 0) {
             if (!lists) {
               this.formError.push(
-                { field: key, message: 'Required', validation: 'required' }
+                { field: key, message: 'Required' }
               )
             }
             if (lists && !lists.includes(key)) {
               this.formError.push(
-                { field: key, message: 'Required', validation: 'required' }
+                { field: key, message: 'Required' }
               )
             } 
           } 
@@ -34,18 +34,30 @@ Vue.mixin({
           if (!value) {
             if (!lists) {
               this.formError.push(
-                { field: key, message: 'Required', validation: 'required' }
+                { field: key, message: 'Required' }
               )
             }
             if (lists && !lists.includes(key)) {
               this.formError.push(
-                { field: key, message: 'Required', validation: 'required' }
+                { field: key, message: 'Required' }
               )
             } 
           } 
         }
       }
     },
+    ValidateEmail(email) {
+      let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      if (email && !re.test(String(email).toLowerCase())) {
+        return { field: 'email', message: 'This is not a valid email'}
+      }
+    },
+    ValidateSamePassword(password, password_confirmation) {
+      if (password && password_confirmation && password !== password_confirmation) {
+        return  { field: 'password_confirmation', message: 'The Password must be the same' }
+      }
+    },
+    // 
     ValidateText(value, field) {
       let index = this.formError.findIndex(item => item.field === field)
       if (index >= 0) {
@@ -88,22 +100,6 @@ Vue.mixin({
         )
       }
     },
-    ValidatePassword(password, password_confirmation) {
-      if (password && password_confirmation && password !== password_confirmation) {
-        this.formError.push(
-          { field: 'password_confirmation', message: 'The Password must be the same', validation: 'required'}
-        )
-      }
-    },
-    ValidateEmail({email, field}) {
-      let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-      if (email && !re.test(String(email).toLowerCase())) {
-        this.formError.push(
-          { field: field, message: 'This is not a valid email', validation: 'invalid'}
-        )
-      }
-    },
-    
     ValidateDate(start, end) {
       if (this.$moment(end).format('YYYY-MM-DD') < this.$moment(start).format('YYYY-MM-DD')) {
         this.formError.push(

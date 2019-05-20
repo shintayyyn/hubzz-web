@@ -7,6 +7,23 @@ export const state = () => ({
     spokenLanguages: [],
     practiceTypes: [],
     ccg: [],
+    // register practice
+    search_results: [],
+    practice_details: {
+        surgery_id: '',
+    },
+    practice_account_details: {
+        title: '',
+        first_name: '',
+        last_name: '',
+        suffix: '',
+        practice_role: '',
+        email: '',
+        password: '',
+        password_confirmation: ''
+    },
+    practice_account_detail_form_error: [],
+    // 
     account_details: {
         title: '',
         first_name: '',
@@ -46,24 +63,6 @@ export const state = () => ({
         password_confirmation: '',
         privacy_policy: false
     },
-    practice_details: {
-        practice_id: '',
-        name: '',
-        address: '',
-        ccg: '',
-        practice_code: ''
-    },
-    practice_account_details: {
-        title: '',
-        first_name: '',
-        last_name: '',
-        suffix: '',
-        practice_role: '',
-        email: '',
-        password: '',
-        password_confirmation: '',
-        privacy_policy: false
-    },
     account_detail_form_error: [],
     address_detail_form_error: [],
     professional_detail_form_error: [],
@@ -74,6 +73,9 @@ export const mutations = {
     // TOGGLE_RATE_RANGE_MODAL(state, payload) {
     //     state.rate_range_modal = payload
     // },
+    SET_ACTIVE_TAB(state, payload) {
+        state.activeTab = payload
+    },
     SET_PROFESSIONS(state, payload) {
         state.professions = []
         payload.forEach(item => {
@@ -110,9 +112,37 @@ export const mutations = {
             state.ccg.push(item)
         })
     },
-    SET_ACTIVE_TAB(state, payload) {
-        state.activeTab = payload
+    // REGISTER PRACTICE
+    SET_PRACTICE_DETAILS(state, payload) {
+        state.practice_details.surgery_id = payload.surgery_id
+        state.search_results = payload.search_results
     },
+    SET_PRACTICE_ACCOUNT_DETAILS(state, payload) {
+        state.practice_account_details.title = payload.title,
+        state.practice_account_details.first_name = payload.first_name,
+        state.practice_account_details.last_name = payload.last_name,
+        state.practice_account_details.suffix = payload.suffix,
+        state.practice_account_details.practice_role = payload.practice_role,
+        state.practice_account_details.email = payload.email,
+        state.practice_account_details.password = payload.password,
+        state.practice_account_details.password_confirmation = payload.password_confirmation
+    },
+    CLEAR_FORM_PRACTICE_DETAILS(state) {
+        state.practice_details.surgery_id = ''
+        state.search_results = []
+        state.practice_account_details.title = ''
+        state.practice_account_details.first_name = ''
+        state.practice_account_details.last_name = ''
+        state.practice_account_details.suffix = ''
+        state.practice_account_details.practice_role = ''
+        state.practice_account_details.email = ''
+        state.practice_account_details.password = ''
+        state.practice_account_details.password_confirmation = ''
+    },
+    SET_PRACTICE_ACCOUNT_DETAIL_FORM_ERROR(state, payload) {
+        state.practice_account_detail_form_error = payload
+    },
+    //
     SET_ACCOUNT_DETAILS(state, payload) {
         state.account_details.title = payload.title
         state.account_details.first_name = payload.first_name
@@ -197,40 +227,6 @@ export const mutations = {
         state.credential_details.password_confirmation = ''
         state.credential_details.privacy_policy = false
     },
-    SET_PRACTICE_DETAILS(state, payload) {
-        state.practice_details.practice_id = (payload.practice_id).toString()
-        state.practice_details.name = payload.name
-        state.practice_details.address = payload.address
-        state.practice_details.ccg = payload.ccg
-        state.practice_details.practice_code = payload.practice_code
-    },
-    SET_PRACTICE_ACCOUNT_DETAILS(state, payload) {
-        state.practice_account_details.title = payload.title,
-        state.practice_account_details.first_name = payload.first_name,
-        state.practice_account_details.last_name = payload.last_name,
-        state.practice_account_details.suffix = payload.suffix,
-        state.practice_account_details.practice_role = payload.practice_role,
-        state.practice_account_details.email = payload.email,
-        state.practice_account_details.password = payload.password,
-        state.practice_account_details.password_confirmation = payload.password_confirmation,
-        state.practice_account_details.privacy_policy = payload.privacy_policy
-    },
-    CLEAR_FORM_PRACTICE_DETAILS(state) {
-        state.id = '',
-        state.title = '',
-        state.address = '',
-        state.ccg = '',
-        state.practice_code = '',
-        state.title = '',
-        state.first_name = '',
-        state.last_name = '',
-        state.suffix = '',
-        state.role = '',
-        state.email = '',
-        state.password = '',
-        state.repeat_password = '',
-        state.privacy_policy = ''
-    },
     SET_ACCOUNT_DETAIL_FORM_ERROR(state, payload) {
         state.account_detail_form_error = payload
     },
@@ -275,6 +271,29 @@ export const actions = {
         this.$axios.$get(`/api/v1/clinical-commissioning-groups`).then(res => {
             commit('SET_CCG', res.data.clinical_commissioning_groups)
         })
+    },
+    registeredPractice({state, commit}) {
+        let form = {}
+        form = {...state.practice_details, ...state.practice_account_details}
+        this.$axios
+            .$post(`/api/v1/register/practice`, form)
+            .then(res => {
+                console.log(res)
+                commit('CLEAR_FORM_PRACTICE_DETAILS')
+                this.$router.push('/sign-up/success')
+            }).catch(err => {
+                if (err.response && err.response.data && err.response.data.error_messages && err.response.data.error_messages.length > 0) {
+                    const practiceAccountDetailError = err.response.data.error_messages.filter(errorMessage => {
+                        return errorMessage.field === 'title' || errorMessage.field === 'first_name' || errorMessage.field === 'last_name'
+                        || errorMessage.field === 'suffix' || errorMessage.field === 'practice_role' || errorMessage.field === 'email'
+                        || errorMessage.field === 'password' || errorMessage.field === 'password_confirmation' || errorMessage.field === 'surgery_id'
+                    })
+                    commit('SET_PRACTICE_ACCOUNT_DETAIL_FORM_ERROR', practiceAccountDetailError)
+                    if (practiceAccountDetailError.length > 0) {
+                        commit('SET_ACTIVE_TAB', 'practice_account_details')
+                    }
+                }
+            })
     },
     registeredLocum({state, commit}) {
         commit('SET_CREDENTIAL_DETAIL_FORM_ERROR', [])
@@ -345,19 +364,7 @@ export const actions = {
                 }
             })
         //response
-    },
-    registeredPractice({state, commit}) {
-        let form = {}
-        form = {...state.practice_details, ...state.practice_account_details}
-        this.$axios
-            .$post(`/api/v1/register/practice`, form)
-            .then(res => {
-                commit('CLEAR_FORM_PRACTICE_DETAILS')
-                this.$router.push('/sign-up/success')
-            }).catch(err => {
-                console.log(err)
-            })
-    },
+    }
 }
 
 export const getters = {

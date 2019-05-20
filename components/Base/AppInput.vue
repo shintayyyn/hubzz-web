@@ -1,30 +1,54 @@
 <template>
-  <div class="relative flex flex-col">
-    <label for="title" class="text-xs xl:text-sm mb-4">{{label}}</label>
-    <input
-      :type="type"
-      :ref="field"
-      class="py-4 font-bold text-xs xl:text-sm border-b-2 focus:outline-none focus:border-yellow"
-      :class="formError.find(item => item.field === 'field') ? 'border-red':''"
-      @focus="''"
-      @blur="''"
-      v-model="form.title"
-      :placeholder="placeholder"
-    >
-    <span
-      class="absolute pin-r bg-red text-white p-1 text-xs xl:text-base"
-      v-if="formError.find(item => item.field === 'field')"
-    >{{formError.find(item => item.field === 'field').message}}</span>
-  </div>
+  <section>
+    <!-- input text / email / password / checkbox -->
+    <div v-if="type === 'checkbox'" class="flex flex-col py-2 mb-6">
+      <div class="flex flex-row flex-nowrap justify-between">
+        <div class="text-xs sm:text-sm py-1">
+          <input
+            :value="value"
+            :type="type"
+            :placeholder="placeholder"
+            @input="$emit('input', $event.target.checked)"
+            @keyup.enter="$emit('submit')"
+          >
+        </div>
+        <div class="bg-red p-1 text-xs sm:text-base text-white" v-if="error">{{error.message}}</div>
+      </div>
+      <div class="flex flex-row justify-start mt-1">
+        <label :for="name" class="text-xs sm:text-sm">{{label}}</label>
+      </div>
+    </div>
+    <div v-else class="flex flex-col py-2 mb-6">
+      <div class="flex flex-row flex-nowrap justify-between">
+        <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
+        <div class="bg-red p-1 text-xs sm:text-base text-white" v-if="error">{{error.message}}</div>
+      </div>
+      <div class="flex flex-row justify-start mt-1">
+        <input
+          :value="value"
+          :type="type"
+          :placeholder="placeholder"
+          class="border-b-2 focus:border-yellow focus:outline-none py-4 font-bold text-xs sm:text-sm w-full"
+          :class="error? 'border-red':''"
+          @input="$emit('input', $event.target.value)"
+          @keyup.enter="$emit('submit')"
+        >
+      </div>
+    </div>
+  </section>
 </template>
 <script>
 export default {
   props: {
-    label: String,
+    value: [String, Boolean],
     type: String,
-    field: String,
-    placeholder: String
+    name: String,
+    label: String,
+    placeholder: String,
+    error: Object
   }
-
 }
 </script>
+<style scoped>
+</style>
+

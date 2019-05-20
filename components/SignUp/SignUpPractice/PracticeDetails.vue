@@ -2,44 +2,19 @@
   <div class="flex flex-col items-center justify-center w-full">
     <div class="flex w-full justify-center xl:justify-start">
       <div class="mx-4 flex flex-col p-8 m-1 rounded-lg shadow-lg" style="flex: 0 1 600px;">
-        <div
-          class="relative flex flex-col border-b-2 border-grey-light"
-          :class="[setFocus === 'search' ? 'border-yellow':'']"
-        >
-          <label for="search" class="text-sm mb-4">Search for a Practice</label>
-          <input
-            type="text"
-            ref="search"
-            class="focus:outline-none font-bold text-sm"
-            style="height:40px"
-            @focus="setFocus = 'search'"
-            @blur="setFocus = ''"
+        <div class="w-full">
+          <AppInput
             v-model="form.search"
-            placeholder="Practice code, name of practice"
-          >
+            :type="'text'"
+            :name="'search'"
+            :label="'Search for a Practice'"
+            :placeholder="'Practice code, name of practice'"
+            @error="error"
+            @submit="search"
+            isRequired
+          />
         </div>
-        <div class="flex flex-row justify-start">
-          <input
-            type="checkbox"
-            ref="hasUsers"
-            class="focus:outline-none font-bold text-sm"
-            style="height:40px"
-            @focus="setFocus = 'has_users'"
-            @blur="setFocus = ''"
-            @keyup.enter="search"
-            v-model="form.has_users"
-            placeholder="Practice code, name of practice"
-          >
-          <label for="has_users" class="text-sm flex items-center ml-1">
-            <em class="text-grey-dark text-sm">has users</em>
-          </label>
-        </div>
-        <div class="relative flex flex-row mt-2">
-          <button
-            class="rounded-lg bg-yellow-dark px-1 py-2 text-sm font-bold hover:text-white focus:outline-none"
-            @click.prevent="search"
-          >Search</button>
-        </div>
+        <AppButton :label="'Search'" @click="search"/>
       </div>
     </div>
 
@@ -54,21 +29,23 @@
 
         <div
           class="border-t-2 p-4 cursor-pointer"
-          :class="selectedPractice === item.practice_id ? 'bg-yellow-dark':'hover:bg-grey'"
+          :class="surgery_id === item.id ? 'bg-yellow-dark':'hover:bg-grey'"
           v-for="(item) in results"
-          :key="item.practice_id"
-          @click="selectedPractice = item.practice_id"
+          :key="item.id"
+          @click="surgery_id = item.id"
         >
           <div class="flex flex-col justify-start">
             <div class="font-bold">{{item.name}}</div>
-            <div class="mt-4">{{item.address}}</div>
+            <div
+              class="mt-4"
+            >{{item.address.line_1}}, {{item.address.line_2}}, {{item.address.line_3}}, {{item.address.post_code}}</div>
             <div class="flex flex-row flex-nowrap mt-1">
               <div class="text-sm rounded-lg bg-grey-light py-1 px-2 mr-1">CCG</div>
-              <div class="text-sm flex items-center">{{item.ccg}}</div>
+              <div class="text-sm flex items-center">{{item.clinical_commissioning_group.name}}</div>
             </div>
             <div class="flex flex-row flex-nowrap mt-1">
               <div class="text-sm rounded-lg bg-grey-light py-1 px-2 mr-1">Practice Code</div>
-              <div class="text-sm flex items-center">{{item.practice_code}}</div>
+              <div class="text-sm flex items-center">{{item.code}}</div>
             </div>
           </div>
         </div>
@@ -82,59 +59,83 @@
       </div>
     </div>
 
-    <div v-if="showResult && results.length === 0">test</div>
+    <div v-if="showResult && results.length === 0">
+      <div
+        class="text-sm sm:text-md font-bold mt-2"
+      >No practice matched that name. Try again with whole words, practice code or CCG.</div>
+    </div>
 
-    <div class="flex w-full justify-center xl:justify-start mt-5" v-if="selectedPractice">
-      <div class="flex justify-center" style="width:600px">
-        <button
-          class="rounded-lg p-6 bg-yellow text-lg font-bold hover:text-white focus:outline-none"
-          @click.prevent="next"
-        >Next</button>
-      </div>
+    <div class="flex justify-center mt-4" v-if="surgery_id">
+      <AppButton :label="'Next'" @click="next"/>
     </div>
   </div>
 </template>
 <script>
+import AppInput from '@/components/Base/AppInput'
+import AppButton from '@/components/Base/AppButton'
 export default {
+  components: {
+    AppInput,
+    AppButton
+  },
   data() {
     return {
       form: {
-        search: '',
-        has_users: false
+        search: ''
       },
+      formError: [],
       showResult: false,
-      setFocus: '',
       results: [],
-      selectedPractice: null
+      surgery_id: null
     }
   },
   computed: {
-    ccgs() {
-      return this.$store.state.signUp.ccg
+    surgeryId() {
+      return this.$store.state.signUp.practice_details.surgery_id
+    },
+    search_results() {
+      return this.$store.state.signUp.search_results
+    }
+  },
+  mounted() {
+    if (this.search_results.length > 0 && this.surgeryId) {
+      this.results = this.search_results
+      this.surgery_id = this.surgeryId
+      this.showResult = true
     }
   },
   methods: {
-    search() {
-      if (!this.form.search) {
-        return
+    error(error) {
+      if (!error.message) {
+        //remove
+        this.formError.splice(this.formError.findIndex(item => item.field === error.field), 1)
+      } else {
+        //add or update
+        let item = this.formError.find(item => item.field === error.field)
+        if (!item) {
+          this.formError.push(error)
+        } else {
+          item.message = error.message
+        }
       }
-      this.$axios
-        .$get(`/api/v1/practices?search=${this.form.search}&has_users=${this.form.has_users}&limit=10`)
-        .then(res => {
-          this.results = []
-          res.data.practices.forEach(item => {
-            this.results.push({
-              practice_id: item.id, name: item.name, address: `${item.address.line_1}, ${item.address.line_2}, ${item.address.line_3}, ${item.address.post_code}`,
-              ccg: this.ccgs.find(ccg => ccg.id === item.clinical_commissioning_group_id).name, practice_code: item.code
+    },
+    search() {
+      if (!this.formError.length) {
+        this.$axios
+          .$get(`/api/v1/surgeries?search=${this.form.search}&limit=10`)
+          .then(res => {
+            this.results = []
+            res.data.surgeries.forEach(item => {
+              this.results.push(item)
             })
+            this.showResult = true
           })
-        })
-      this.showResult = true
+      }
     },
     next() {
       try {
-        let item = this.results.find(item => item.practice_id === this.selectedPractice)
-        this.$store.commit('signUp/SET_PRACTICE_DETAILS', item)
+        let item = this.results.find(item => item.id === this.surgery_id)
+        this.$store.commit('signUp/SET_PRACTICE_DETAILS', { surgery_id: item.id, search_results: this.results })
         this.$store.commit('signUp/SET_ACTIVE_TAB', 'practice_account_details')
       } catch (e) {
 

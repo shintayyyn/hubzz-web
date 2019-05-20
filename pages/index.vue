@@ -44,8 +44,9 @@ export default {
     Appointments,
     Statistics
   },
+  middleware: 'isAuthenticated',
   mounted() {
-    this.$store.dispatch('signUp/getCCG')
+    // this.$store.dispatch('signUp/getCCG')
   }
 }
 </script>
