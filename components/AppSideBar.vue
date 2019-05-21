@@ -42,7 +42,7 @@ export default {
       lists: []
     }
   },
-  mounted() {
+  created() {
     let domain = this.$auth.user.domain
     let isActivated = this.$auth.user.is_activated
     let addedLists = []

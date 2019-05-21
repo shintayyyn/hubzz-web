@@ -12,8 +12,12 @@
           :class="error? 'border-red':''"
           @input="$emit('input', $event.target.value)"
         >
-          <option value selected disabled>{{placeholder}}</option>
-          <option v-for="(item, index) in items" :key="index" :value="item">{{item}}</option>
+          <option
+            v-for="(item, index) in items"
+            :key="index"
+            :value="item"
+            :selected="item === value"
+          >{{item}}</option>
         </select>
       </div>
     </div>
@@ -28,6 +32,9 @@ export default {
     placeholder: String,
     error: Object,
     items: Array
+  },
+  created() {
+    console.log(this.value)
   }
 }
 </script>

@@ -40,9 +40,9 @@ Vue.mixin({
         return { field: 'email', message: 'This is not a valid email'}
       }
     },
-    ValidateSamePassword(password, password_confirmation) {
-      if (password && password_confirmation && password !== password_confirmation) {
-        return  { field: 'password_confirmation', message: 'The Password must be the same' }
+    ValidateSamePassword(password, new_password_confirmation, field) {
+      if (password && new_password_confirmation && password !== new_password_confirmation) {
+        return  { field: field, message: 'The Password must be the same' }
       }
     },
     ValidateMobile(value, field) {
