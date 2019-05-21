@@ -8,8 +8,11 @@ export const state = () => ({
   sidebar_shield: false,
   signout_shield: false,
   months: [],
-  // drawer: false,
   mobile: false,
+  // practice
+  create_job_modal: false,
+  create_job_shield: false,
+  //
   availability_modal: false,
   availability_range_modal: false,
   invoice_modal: false,
@@ -54,15 +57,20 @@ export const mutations = {
       }
     }
   },
-  // TOGGLE_DRAWER(state, payload) {
-  //   state.drawer = payload
-  // },
   SET_SIDEBAR_SHIELD(state, payload) {
     state.sidebar_shield = payload
   },
   SET_SIGNOUT_SHIELD(state, payload) {
     state.signout_shield = payload
   },
+  // practice
+  SET_CREATEJOB_SHIELD(state, payload) {
+    state.create_job_shield = payload
+  },
+  TOGGLE_CREATEJOB_MODAL(state, payload) {
+    state.create_job_modal = payload
+  },
+  //
   TOGGLE_AVAILABILITY_MODAL(state, payload) {
     state.availability_modal = payload
   },

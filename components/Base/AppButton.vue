@@ -3,13 +3,15 @@
     <button
       @click.prevent="$emit('click')"
       class="button rounded-lg p-6 font-bold text-lg focus:outline-none hover:text-white cursor-pointer"
+      :style="inStyle ? inStyle : ''"
     >{{label}}</button>
   </section>
 </template>
 <script>
 export default {
   props: {
-    label: String
+    label: String,
+    inStyle: String
   }
 }
 </script>

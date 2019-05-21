@@ -178,7 +178,7 @@ export default {
     }
   },
   created() {
-    // ! ask arvi what route to get the initial/updated data
+    // ! ask arvi what endpoint to get the initial/updated data
     // get practice types
     this.$axios.$get(`/api/v1/practice-types`)
       .then(res => {

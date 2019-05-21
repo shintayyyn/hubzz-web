@@ -10,13 +10,13 @@
       <SignOut/>
     </div>
     <div class="signout-shield" v-if="$store.state.signout_shield"></div>
-    <!-- availability modal 510 509-->
-    <div class="availability-modal shadow-lg">
-      <AvailabilityModal/>
+    <!-- create job modal 510 509 -->
+    <div class="create-job-modal shadow-lg">
+      <CreateJobModal v-if="$store.state.create_job_modal" @close="closeCreateJobModal"/>
     </div>
-    <div class="availability-modal-shield" v-if="$store.state.availability_modal"></div>
+    <div class="create-job-modal-shield" v-if="$store.state.create_job_shield"></div>
+
     <div class="content">
-      <!-- shields -->
       <!-- header -->
       <div class="header">
         <div class="flex flex-row flex-no-wrap justify-start">
@@ -30,7 +30,14 @@
             <img src="/images/hubzz-icon-transparent.png" style="width:25px;">
           </div>
           <div class="w-1/3 text-right leading-loose">
-            <div class="px-6 text-xs xl:text-sm">{{$auth.user.email}}</div>
+            <div class="px-6 text-xs xl:text-sm" v-if="$auth.user.domain === 'Practice'">
+              <AppButton
+                :label="'Create Job'"
+                @click="toggleCreateJobModal"
+                :inStyle="'font-size:small;padding:12px;'"
+              />
+            </div>
+            <div class="px-6 text-xs xl:text-sm" v-else>{{$auth.user.email}}</div>
           </div>
         </div>
       </div>
@@ -42,24 +49,22 @@
   </div>
 </template>
 <script>
+import AppButton from '@/components/Base/AppButton'
 import AppSideBar from '@/components/AppSideBar'
 import AppToggleSideBar from '@/components/AppToggleSideBar'
 import AppNotification from '@/components/AppNotification'
-import AvailabilityModal from '@/components/Availability/AvailabilityModal'
-import AvailabilityRangeModal from '@/components/Availability/AvailabilityRangeModal'
-import AddInvoiceModal from '@/components/Billing/AddInvoice/AddInvoiceModal'
-import AppointmentModal from '@/components/Dashboard/AppointmentModal'
 import SignOut from '@/components/Auth/SignOut'
+// practice
+import CreateJobModal from '@/components/CreateJobModal'
 export default {
   components: {
+    AppButton,
     AppSideBar,
     AppToggleSideBar,
     AppNotification,
-    AvailabilityModal,
-    AvailabilityRangeModal,
-    AddInvoiceModal,
-    AppointmentModal,
     SignOut,
+    // practice
+    CreateJobModal,
   },
   middleware: 'isAuthenticated',
   beforeCreate() {
@@ -75,9 +80,6 @@ export default {
     this.$store.commit('dashboard/SET_DATE_TODAY')
   },
   computed: {
-    availability_modal() {
-      return this.$store.state.availability_modal
-    }
   },
   watch: {
     '$route'(value) {
@@ -86,19 +88,8 @@ export default {
       document.body.style.overflow = 'auto'
       this.$store.commit('SET_SIDEBAR_SHIELD', false)
     },
-    availability_modal(value) {
-      let d = document.getElementsByClassName('availability-modal')[0]
-      d.classList.toggle('toggled-right')
-      if (value) {
-        document.body.style.overflow = 'hidden'
-      } else {
-        document.body.style.overflow = 'auto'
-      }
-      // else {
-      //   document.getElementsByClassName('availability-modal')[0].classList.toggle('toggle-right')
-      //   
-      // }
-    }
+    // practice modal
+
   },
   methods: {
     toggle() {
@@ -111,6 +102,21 @@ export default {
       this.$store.commit('SET_SIDEBAR_SHIELD', false)
       let d = document.getElementsByClassName('sidebar')[0]
       d.className = "sidebar";
+      document.body.style.overflow = 'auto'
+    },
+    toggleCreateJobModal() {
+      this.$store.commit('SET_CREATEJOB_SHIELD', true)
+      this.$store.commit('TOGGLE_CREATEJOB_MODAL', true)
+      let d = document.getElementsByClassName('create-job-modal')[0]
+      // d.className += " toggled-right";
+      d.classList.toggle('toggled-right')
+      document.body.style.overflow = 'hidden'
+    },
+    closeCreateJobModal() {
+      this.$store.commit('SET_CREATEJOB_SHIELD', false)
+      this.$store.commit('TOGGLE_CREATEJOB_MODAL', false)
+      let d = document.getElementsByClassName('create-job-modal')[0]
+      d.classList.toggle('toggled-right')
       document.body.style.overflow = 'auto'
     }
   }
@@ -157,6 +163,30 @@ body {
   opacity: 0.5;
   z-index: 599;
 }
+/* practice */
+.create-job-modal {
+  position: fixed;
+  right: 0;
+  margin-right: 0;
+  width: 100%;
+  height: 100vh;
+  overflow: auto;
+  border-left: solid 2px #edf2f7;
+  transition: all 0.3s ease-in-out;
+  background-color: white;
+  z-index: 510;
+}
+.create-job-modal-shield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #333;
+  opacity: 0.5;
+  z-index: 509;
+}
+/* locums */
 .availability-modal {
   position: fixed;
   right: 0;
@@ -179,6 +209,14 @@ body {
   opacity: 0.5;
   z-index: 509;
 }
+
+.toggled-left {
+  margin-left: 0;
+}
+.toggled-right {
+  margin-right: -30%;
+}
+
 .header {
   padding-top: 10px;
   padding-bottom: 10px;
@@ -189,19 +227,9 @@ body {
   margin-left: 0;
 }
 
-.toggled-left {
-  margin-left: 0;
-}
-.toggled-right {
-  margin-right: 0;
-}
-
 @media screen and (min-width: 900px) {
   .sidebar {
     margin-left: 0;
-  }
-  .availability-modal {
-    width: 70%;
   }
   .content {
     margin-left: 200px;

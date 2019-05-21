@@ -882,7 +882,6 @@ export default {
         this.form.profession_id = res.data.user.locum_detail.profession.id,
         this.form.post_code = res.data.user.locum_detail.post_code
       this.form.miles = res.data.user.locum_detail.miles
-      console.log(res.data.user)
       res.data.user.locum_detail.qualifications.forEach(item => {
         this.selectedQualifications.push(item)
       })

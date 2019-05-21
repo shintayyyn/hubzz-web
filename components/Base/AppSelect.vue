@@ -33,9 +33,6 @@ export default {
     error: Object,
     items: Array
   },
-  created() {
-    console.log(this.value)
-  }
 }
 </script>
 <style scoped>
