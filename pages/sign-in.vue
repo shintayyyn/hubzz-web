@@ -16,9 +16,8 @@
             :name="'email'"
             :label="'Email address'"
             :placeholder="''"
-            @error="error"
+            :error="formError.find(item => item.field === 'email')"
             @submit="login"
-            isRequired
           />
           <AppInput
             v-model="form.password"
@@ -26,9 +25,8 @@
             :name="'password'"
             :label="'Password'"
             :placeholder="''"
-            @error="error"
+            :error="formError.find(item => item.field === 'password')"
             @submit="login"
-            isRequired
           />
         </div>
 
@@ -61,28 +59,48 @@ export default {
       formError: []
     }
   },
-  methods: {
-    error(error) {
-      if (!error.message) {
-        //remove
-        this.formError.splice(this.formError.findIndex(item => item.field === error.field), 1)
+  watch: {
+    'form.email'(value) {
+      // splice from formerror
+      let index = this.formError.findIndex(item => item.field === 'email')
+      if (index >= 0) {
+        this.formError.splice(index, 1)
+      }
+      // validate
+      if (!value) {
+        // required
+        this.formError.push({ field: 'email', message: 'Required' })
       } else {
-        //add or update
-        let item = this.formError.find(item => item.field === error.field)
-        if (!item) {
+        const error = this.ValidateEmail(value)
+        if (error) {
           this.formError.push(error)
-        } else {
-          item.message = error.message
         }
       }
     },
+    'form.password'(value) {
+      // splice from formerror
+      let index = this.formError.findIndex(item => item.field === 'password')
+      if (index >= 0) {
+        this.formError.splice(index, 1)
+      }
+      // validate
+      if (!value) {
+        // required
+        this.formError.push({ field: 'password', message: 'Required' })
+      } else if (value && value.length < 6) {
+        this.formError.push({ field: 'password', message: 'Password Must Be Atleast 6 Characters' })
+      }
+    },
+  },
+  methods: {
     async login() {
       try {
+        this.formError = []
+        this.Validate(this.form)
         if (!this.formError.length) {
           this.$axios
             .$post('/api/v1/login', this.form)
             .then(async res => {
-              console.log(res)
               const token = res.data.token.token
               this.$axios.setToken(token, 'Bearer')
               this.$auth.$storage.setUniversal('_token.local', 'Bearer ' + token)
@@ -90,7 +108,9 @@ export default {
               this.$router.push('/')
             })
             .catch(err => {
-              this.formError = err.response.data.errors
+              err.response.data.error_messages.forEach(error => {
+                this.formError.push(error)
+              })
             })
         }
       } catch (e) {

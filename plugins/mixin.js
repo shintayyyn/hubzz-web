@@ -1,18 +1,6 @@
 import Vue from 'vue'
 Vue.mixin({
   methods: {
-    ValidateInput(e) {
-      if (e.key >= 0 && e.key <= 9) {
-        if (e.target.value.length === 1 && parseInt(e.key) === 0) {
-          e.preventDefault()
-        }
-        if (e.target.value.length > 11) {
-          e.preventDefault()
-        }
-      } else {
-        e.preventDefault()
-      }
-    },
     Validate(form, lists) {
       let items = Object.entries(form)
       for (const [key, value] of items) {
@@ -57,6 +45,25 @@ Vue.mixin({
         return  { field: 'password_confirmation', message: 'The Password must be the same' }
       }
     },
+    ValidateMobile(value, field) {
+      // uk format
+      let re = /((\+44(\s\(0\)\s|\s0\s|\s)?)|0)7\d{3}(\s)?\d{6}/g;
+      if (value && !re.test(String(value).toLowerCase())) {
+        return  { field: field, message: 'Your mobile number is invalid' }
+      }
+    },
+    ValidateInput(e) {
+      if (e.key >= 0 && e.key <= 9) {
+        if (e.target.value.length === 1 && parseInt(e.key) === 0) {
+          e.preventDefault()
+        }
+        if (e.target.value.length > 11) {
+          e.preventDefault()
+        }
+      } else {
+        e.preventDefault()
+      }
+    },
     // 
     ValidateText(value, field) {
       let index = this.formError.findIndex(item => item.field === field)
@@ -68,25 +75,6 @@ Vue.mixin({
           { field: field, message: 'Required', validation: 'required'}
         )
       } 
-    },
-    ValidateMobile(value, field) {
-      let index = this.formError.findIndex(item => item.field === field)
-      if (index >= 0) {
-        this.formError.splice(index, 1)
-      }
-      if (!value) {
-        this.formError.push(
-          { field: field, message: 'Required', validation: 'required'}
-        )
-      } else {
-        // uk format
-        let re = /((\+44(\s\(0\)\s|\s0\s|\s)?)|0)7\d{3}(\s)?\d{6}/g;
-        if (value && !re.test(String(value).toLowerCase())) {
-          this.formError.push(
-            { field: field, message: 'Your mobile number is invalid', validation: 'invalid format'}
-          )
-        }
-      }
     },
     ValidateArray(value, field) {
       console.log(value,field)

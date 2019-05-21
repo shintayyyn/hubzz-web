@@ -15,178 +15,85 @@
     <div class="flex w-full justify-center xl:justify-start">
       <div class="mx-4 flex flex-col p-8 m-1 rounded-lg shadow-lg" style="flex: 0 1 600px;">
         <form class="w-full">
-          <div class="relative flex flex-col">
-            <label for="title" class="text-xs lg:text-base mb-4">Title</label>
-            <input
-              type="text"
-              ref="title"
-              class="py-2 font-bold text-xs lg:text-base border-b-2 focus:outline-none focus:border-yellow"
-              :class="formError.find(item => item.field === 'title') ? 'border-red':''"
-              @focus="''"
-              @blur="''"
-              v-model="form.title"
-              placeholder="(ex. Mr., Ms., Mrs.)"
-            >
-            <span
-              class="absolute pin-r bg-red text-white p-1 text-xs lg:text-base"
-              v-if="formError.find(item => item.field === 'title')"
-            >{{formError.find(item => item.field === 'title').message}}</span>
-          </div>
-          <div class="relative flex flex-col mt-8">
-            <label for="first_name" class="text-xs lg:text-base mb-4">First name</label>
-            <input
-              type="text"
-              ref="first_name"
-              class="py-2 font-bold text-xs lg:text-base border-b-2 focus:outline-none focus:border-yellow"
-              :class="formError.find(item => item.field === 'first_name') ? 'border-red':''"
-              @focus="''"
-              @blur="ValidateText(form.first_name, 'first_name')"
-              v-model="form.first_name"
-              placeholder="Your first name"
-            >
-            <span
-              class="absolute pin-r bg-red text-white p-1 text-xs lg:text-base"
-              v-if="formError.find(item => item.field === 'first_name')"
-            >{{formError.find(item => item.field === 'first_name').message}}</span>
-          </div>
-          <div class="relative flex flex-col mt-8">
-            <label for="last_name" class="text-xs lg:text-base mb-4">Last name</label>
-            <input
-              type="text"
-              ref="last_name"
-              class="py-2 font-bold text-xs lg:text-base border-b-2 focus:outline-none focus:border-yellow"
-              :class="formError.find(item => item.field === 'last_name') ? 'border-red':''"
-              @focus="''"
-              @blur="ValidateText(form.last_name, 'last_name')"
-              v-model="form.last_name"
-              placeholder="Your last name"
-            >
-            <span
-              class="absolute pin-r bg-red text-white p-1 text-xs lg:text-base"
-              v-if="formError.find(item => item.field === 'last_name')"
-            >{{formError.find(item => item.field === 'last_name').message}}</span>
-          </div>
-          <div class="relative flex flex-col mt-8">
-            <label for="suffix" class="text-xs lg:text-base mb-4">Suffix</label>
-            <input
-              type="text"
-              ref="suffix"
-              class="py-2 font-bold text-xs lg:text-base border-b-2 focus:outline-none focus:border-yellow"
-              :class="formError.find(item => item.field === 'suffix') ? 'border-red':''"
-              @focus="''"
-              @blur="''"
-              v-model="form.suffix"
-              placeholder="(ex. Ph.D., M.D., etc.)"
-            >
-            <span
-              class="absolute pin-r bg-red text-white p-1 text-xs lg:text-base"
-              v-if="formError.find(item => item.field === 'suffix')"
-            >{{formError.find(item => item.field === 'suffix').message}}</span>
-          </div>
-          <div class="relative flex flex-col mt-8">
-            <label for="gender" class="text-xs lg:text-base mb-4">Gender</label>
-            <select
-              class="py-2 font-bold text-xs lg:text-base border-b-2 focus:outline-none focus:border-yellow"
-              :class="formError.find(item => item.field === 'gender') ? 'border-red':''"
-              @focus="''"
-              @blur="ValidateText(form.gender, 'gender')"
-              v-model="form.gender"
-            >
-              <option value selected disabled>Select</option>
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-            </select>
-            <span
-              class="absolute pin-r bg-red text-white p-1 text-xs lg:text-base"
-              v-if="formError.find(item => item.field === 'gender')"
-            >{{formError.find(item => item.field === 'gender').message}}</span>
-          </div>
-          <div class="relative flex flex-col mt-8">
-            <label for="mobile_number" class="text-xs lg:text-base mb-4">Mobile</label>
-            <input
-              type="text"
-              ref="mobile_number"
-              class="py-2 font-bold text-xs lg:text-base border-b-2 focus:outline-none focus:border-yellow"
-              :class="formError.find(item => item.field === 'mobile_number') ? 'border-red':''"
-              @focus="''"
-              @blur="ValidateMobile(form.mobile_number, 'mobile_number')"
-              v-model="form.mobile_number"
-              placeholder
-              @keypress="ValidateInput"
-            >
-            <span
-              class="z-10 absolute pin-r bg-red text-white p-1 text-xs lg:text-base"
-              v-if="formError.find(item => item.field === 'mobile_number')"
-            >{{formError.find(item => item.field === 'mobile_number').message}}</span>
-            <span
-              class="absolute pin-r text-xs lg:text-base rounded-lg bg-grey-light px-2 py-1"
-            >In case of emergency</span>
-          </div>
-          <div class="relative flex flex-col mt-8">
-            <label for="home_number" class="text-xs lg:text-base mb-4">Home/Land line number</label>
-            <input
-              type="text"
-              ref="home_number"
-              class="py-2 font-bold text-xs lg:text-base border-b-2 focus:outline-none focus:border-yellow"
-              :class="formError.find(item => item.field === 'home_number') ? 'border-red':''"
-              @focus="''"
-              @blur="''"
-              v-model="form.home_number"
-              placeholder
-            >
-            <span
-              class="z-10 absolute pin-r bg-red text-white p-1 text-xs lg:text-base"
-              v-if="formError.find(item => item.field === 'home_number')"
-            >{{formError.find(item => item.field === 'home_number').message}}</span>
-          </div>
-          <div class="relative flex flex-col mt-8">
-            <label for="work_number" class="text-xs lg:text-base mb-4">Work/Company line number</label>
-            <input
-              type="text"
-              ref="work_number"
-              class="py-2 font-bold text-xs lg:text-base border-b-2 focus:outline-none focus:border-yellow"
-              :class="formError.find(item => item.field === 'work_number') ? 'border-red':''"
-              @focus="''"
-              @blur="''"
-              v-model="form.work_number"
-              placeholder
-            >
-            <span
-              class="z-10 absolute pin-r bg-red text-white p-1 text-xs lg:text-base"
-              v-if="formError.find(item => item.field === 'work_number')"
-            >{{formError.find(item => item.field === 'work_number').message}}</span>
-          </div>
+          <AppInput
+            v-model="form.title"
+            :type="'text'"
+            :name="'title'"
+            :label="'Title'"
+            :placeholder="'(ex. Mr., Ms., Mrs.)'"
+          />
+          <AppInput
+            v-model="form.first_name"
+            :type="'text'"
+            :name="'first_name'"
+            :label="'First name'"
+            :placeholder="'Your first name'"
+            :error="formError.find(item => item.field === 'first_name')"
+          />
+          <AppInput
+            v-model="form.last_name"
+            :type="'text'"
+            :name="'last_name'"
+            :label="'Last name'"
+            :placeholder="'Your last name'"
+            :error="formError.find(item => item.field === 'last_name')"
+          />
+          <AppInput
+            v-model="form.suffix"
+            :type="'text'"
+            :name="'suffix'"
+            :label="'Suffix'"
+            :placeholder="'(ex. Ph.D., M.D., etc.)'"
+          />
+          <AppSelect
+            v-model="form.gender"
+            :name="'gender'"
+            :label="'Gender'"
+            :placeholder="'Select'"
+            :error="formError.find(item => item.field === 'gender')"
+            :items="genders"
+          />
+          <AppInput
+            v-model="form.mobile_number"
+            :type="'text'"
+            :name="'mobile_number'"
+            :label="'Mobile'"
+            :placeholder="''"
+            :error="formError.find(item => item.field === 'mobile_number')"
+            :info="'In case of emergency'"
+          />
         </form>
       </div>
     </div>
 
-    <div class="flex w-full justify-center xl:justify-start mt-5">
-      <div class="flex justify-center" style="width:600px">
-        <button
-          class="rounded-lg p-6 bg-yellow text-lg font-bold hover:text-white focus:outline-none"
-          @click.prevent="next"
-        >Next</button>
-      </div>
+    <div class="flex justify-center mt-4" style="width:600px">
+      <AppButton :label="'Next'" @click="next"/>
     </div>
   </div>
 </template>
 <script>
+import AppInput from '@/components/Base/AppInput'
+import AppSelect from '@/components/Base/AppSelect'
+import AppButton from '@/components/Base/AppButton'
+const genders = ['Male', 'Female']
 export default {
-  scrollToTop: true,
+  components: {
+    AppInput,
+    AppSelect,
+    AppButton
+  },
   data() {
     return {
+      genders,
       form: {
         title: '',
         first_name: '',
         last_name: '',
         suffix: '',
         gender: '',
-        mobile_number: '',
-        home_number: '',
-        work_number: ''
+        mobile_number: ''
       },
-      formError: [],
-      setFocus: ''
+      formError: []
     }
   },
   computed: {
@@ -197,6 +104,62 @@ export default {
       return this.$store.state.signUp.account_detail_form_error
     }
   },
+  watch: {
+    'form.first_name'(value) {
+      // splice from formerror
+      let index = this.formError.findIndex(item => item.field === 'first_name')
+      if (index >= 0) {
+        this.formError.splice(index, 1)
+      }
+      // validate
+      if (!value) {
+        // required
+        this.formError.push({ field: 'first_name', message: 'Required' })
+      }
+    },
+    'form.last_name'(value) {
+      // splice from formerror
+      let index = this.formError.findIndex(item => item.field === 'last_name')
+      if (index >= 0) {
+        this.formError.splice(index, 1)
+      }
+      // validate
+      if (!value) {
+        // required
+        this.formError.push({ field: 'last_name', message: 'Required' })
+      }
+    },
+    'form.gender'(value) {
+      // splice from formerror
+      let index = this.formError.findIndex(item => item.field === 'gender')
+      if (index >= 0) {
+        this.formError.splice(index, 1)
+      }
+      // validate
+      if (!value) {
+        // required
+        this.formError.push({ field: 'gender', message: 'Required' })
+      }
+    },
+    'form.mobile_number'(value) {
+      // splice from formerror
+      let index = this.formError.findIndex(item => item.field === 'mobile_number')
+      if (index >= 0) {
+        this.formError.splice(index, 1)
+      }
+      // validate
+      if (!value) {
+        // required
+        this.formError.push({ field: 'mobile_number', message: 'Required' })
+      } else {
+        // validate options
+        const error = this.ValidateMobile(value, 'mobile_number')
+        if (error) {
+          this.formError.push(error)
+        }
+      }
+    }
+  },
   mounted() {
     this.form.title = this.accountDetails.title
     this.form.first_name = this.accountDetails.first_name
@@ -204,8 +167,6 @@ export default {
     this.form.suffix = this.accountDetails.suffix
     this.form.gender = this.accountDetails.gender
     this.form.mobile_number = this.accountDetails.mobile_number
-    this.form.home_number = this.accountDetails.home_number
-    this.form.work_number = this.accountDetails.work_number
 
     if (this.accountFormError.length > 0) {
       this.accountFormError.forEach(item => {
@@ -217,8 +178,8 @@ export default {
     next() {
       try {
         this.formError = []
-        this.Validate(this.form, ['title', 'suffix', 'home_number', 'work_number'])
-        this.ValidateMobile(this.form.mobile_number, 'mobile_number')
+        this.Validate(this.form, ['title', 'suffix'])
+        // this.ValidateMobile(this.form.mobile_number, 'mobile_number')
         if (!this.formError.length) {
           this.$store.commit('signUp/SET_ACCOUNT_DETAILS', this.form)
           this.$store.commit('signUp/SET_ACTIVE_TAB', 'address_details')
@@ -226,15 +187,9 @@ export default {
       } catch (e) {
         console.log(e)
       }
-    },
-    // validateMobile(e) {
-    //   if ()
-    // }
+    }
   }
 }
 </script>
 <style scoped>
-button:active {
-  transform: translate(5px, 5px);
-}
 </style>

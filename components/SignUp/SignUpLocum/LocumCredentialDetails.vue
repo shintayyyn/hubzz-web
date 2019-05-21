@@ -207,7 +207,7 @@ export default {
       try {
         this.formError = []
         this.Validate(this.form)
-        this.ValidatePassword(this.form.password, this.form.password_confirmation)
+        // this.ValidatePassword(this.form.password, this.form.password_confirmation)
         if (!this.formError.length) {
           this.$store.commit('signUp/SET_CREDENTIAL_DETAILS', this.form)
           this.$store.dispatch('signUp/registeredLocum')

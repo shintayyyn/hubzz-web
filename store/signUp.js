@@ -1,12 +1,5 @@
 export const state = () => ({
     activeTab: 'account_details',
-    // rate_range_modal: false,
-    professions: [],
-    qualifications: [],
-    clinicalSystems: [],
-    spokenLanguages: [],
-    practiceTypes: [],
-    ccg: [],
     // register practice
     search_results: [],
     practice_details: {
@@ -23,16 +16,19 @@ export const state = () => ({
         password_confirmation: ''
     },
     practice_account_detail_form_error: [],
-    // 
+    //  register locum
+    professions: [],
+    qualifications: [],
+    clinicalSystems: [],
+    spokenLanguages: [],
+    practiceTypes: [],
     account_details: {
         title: '',
         first_name: '',
         last_name: '',
         suffix: '',
         gender: '',
-        mobile_number: '',
-        home_number: '',
-        work_number: ''
+        mobile_number: ''
     },
     address_details: {
         post_code: '',
@@ -76,42 +72,6 @@ export const mutations = {
     SET_ACTIVE_TAB(state, payload) {
         state.activeTab = payload
     },
-    SET_PROFESSIONS(state, payload) {
-        state.professions = []
-        payload.forEach(item => {
-            state.professions.push(item)
-        })
-    },
-    SET_QUALIFICATIONS(state, payload) {
-        state.qualifications = []
-        payload.forEach(item => {
-            state.qualifications.push(item)
-        })
-    },
-    SET_CLINICAL_SYSTEMS(state, payload) {
-        state.clinicalSystems = []
-        payload.forEach(item => {
-            state.clinicalSystems.push(item)
-        })
-    },
-    SET_SPOKEN_LANGUAGES(state, payload) {
-        state.spokenLanguages = []
-        payload.forEach(item => {
-            state.spokenLanguages.push(item)
-        })
-    },
-    SET_PRACTICE_TYPES(state, payload) {
-        state.practiceTypes = []
-        payload.forEach(item => {
-            state.practiceTypes.push(item)
-        })
-    },
-    SET_CCG(state, payload) {
-        state.ccg = []
-        payload.forEach(item => {
-            state.ccg.push(item)
-        })
-    },
     // REGISTER PRACTICE
     SET_PRACTICE_DETAILS(state, payload) {
         state.practice_details.surgery_id = payload.surgery_id
@@ -142,7 +102,37 @@ export const mutations = {
     SET_PRACTICE_ACCOUNT_DETAIL_FORM_ERROR(state, payload) {
         state.practice_account_detail_form_error = payload
     },
-    //
+    // REGISTER LOCUM
+    SET_PROFESSIONS(state, payload) {
+        state.professions = []
+        payload.forEach(item => {
+            state.professions.push(item)
+        })
+    },
+    SET_QUALIFICATIONS(state, payload) {
+        state.qualifications = []
+        payload.forEach(item => {
+            state.qualifications.push(item)
+        })
+    },
+    SET_CLINICAL_SYSTEMS(state, payload) {
+        state.clinicalSystems = []
+        payload.forEach(item => {
+            state.clinicalSystems.push(item)
+        })
+    },
+    SET_SPOKEN_LANGUAGES(state, payload) {
+        state.spokenLanguages = []
+        payload.forEach(item => {
+            state.spokenLanguages.push(item)
+        })
+    },
+    SET_PRACTICE_TYPES(state, payload) {
+        state.practiceTypes = []
+        payload.forEach(item => {
+            state.practiceTypes.push(item)
+        })
+    },
     SET_ACCOUNT_DETAILS(state, payload) {
         state.account_details.title = payload.title
         state.account_details.first_name = payload.first_name
@@ -150,8 +140,6 @@ export const mutations = {
         state.account_details.suffix = payload.suffix
         state.account_details.gender = payload.gender
         state.account_details.mobile_number = payload.mobile_number
-        state.account_details.home_number = payload.home_number
-        state.account_details.work_number = payload.work_number
     },
     SET_ADDRESS_DETAILS(state, payload) {
         state.address_details.post_code = payload.post_code
@@ -265,11 +253,6 @@ export const actions = {
     getPracticeTypes({state, commit}) {
         this.$axios.$get(`/api/v1/practice-types`).then(res => {
             commit('SET_PRACTICE_TYPES', res.data.practice_types)
-        })
-    },
-    getCCG({state, commit}) {
-        this.$axios.$get(`/api/v1/clinical-commissioning-groups`).then(res => {
-            commit('SET_CCG', res.data.clinical_commissioning_groups)
         })
     },
     registeredPractice({state, commit}) {

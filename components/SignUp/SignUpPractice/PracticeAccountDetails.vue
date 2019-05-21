@@ -96,7 +96,6 @@
 <script>
 import AppInput from '@/components/Base/AppInput'
 import AppSelect from '@/components/Base/AppSelect'
-// import AppCheck from '@/components/Base/AppCheck'
 import AppButton from '@/components/Base/AppButton'
 const practice_roles = [
   'Partner', 'Practice Manager', 'Practice Staff'
@@ -121,8 +120,7 @@ export default {
         password_confirmation: '',
         privacy_policy: false
       },
-      formError: [],
-      setFocus: ''
+      formError: []
     }
   },
   computed: {

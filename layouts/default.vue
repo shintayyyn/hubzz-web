@@ -89,7 +89,6 @@ export default {
     availability_modal(value) {
       let d = document.getElementsByClassName('availability-modal')[0]
       d.classList.toggle('toggled-right')
-      console.log(d)
       if (value) {
         document.body.style.overflow = 'hidden'
       } else {
