@@ -1,32 +1,44 @@
 <template>
-  <div class="flex flex-row flex-wrap justify-between">
-    <div class="w-1/2 pr-4">
-      <div class="rounded-lg shadow-lg p-8">
-        <div class="w-full">
-          <div class="flex flex-col mb-8">
-            <div class="text-xs sm:text-base py-1">Practice name</div>
-            <div class="text-xs sm:text-sm font-bold">practice name here</div>
+  <div class="flex flex-col">
+    <div class="flex flex-row flex-wrap justify0-between">
+      <div class="w-full md:w-3/5 p-2">
+        <div class="rounded-lg shadow-lg p-8">
+          <div class="flex flex-row flex-wrap">
+            <div class="flex flex-col w-full md:w-1/3 p-1">
+              <div class="text-xs sm:text-sm">Practice name</div>
+              <div class="text-xs font-bold py-2">{{practice_detail.name}}</div>
+              <div class="text-xs sm:text-sm mt-4">CCG</div>
+              <div class="text-xs font-bold py-2">{{practice_detail.ccg}}</div>
+            </div>
+            <div class="flex flex-col w-full md:w-1/3 p-1">
+              <div class="text-xs sm:text-sm" mt-4>Practice code</div>
+              <div class="text-xs font-bold py-2">{{practice_detail.code}}</div>
+              <div class="text-xs sm:text-sm mt-4">Phone number</div>
+              <div class="text-xs font-bold py-2">{{practice_detail.phone_number}}</div>
+            </div>
+            <div class="flex flex-col w-full md:w-1/3 p-1">
+              <div class="text-xs sm:text-sm">Address</div>
+              <div
+                class="text-xs font-bold py-2"
+              >{{practice_detail.address.line_1}} {{practice_detail.address.line_2}} {{practice_detail.address.line_3}} {{practice_detail.address.post_code}}</div>
+            </div>
           </div>
-          <div class="flex flex-col my-8">
-            <div class="text-xs sm:text-base py-1">Practice code</div>
-            <div class="text-xs sm:text-sm font-bold">practice code here</div>
-          </div>
-          <div class="flex flex-col my-8">
-            <div class="text-xs sm:text-base py-1">Address</div>
-            <div class="text-xs sm:text-sm font-bold">address here</div>
-          </div>
-          <div class="flex flex-col my-8">
-            <div class="text-xs sm:text-base py-1">Phone number</div>
-            <div class="text-xs sm:text-sm font-bold">phone number here</div>
-          </div>
-          <div class="flex flex-col mt-8">
-            <div class="text-xs sm:text-base py-1">CCG</div>
-            <div class="text-xs sm:text-sm font-bold">ccg here</div>
+        </div>
+      </div>
+      <div class="w-full md:w-2/5 p-2">
+        <div class="rounded-lg shadow-lg p-8">
+          <div class="flex flex-col">
+            <div class="text-xs sm:text-sm">Your Practice's standard terms</div>
+            <div class="flex justify-start mt-4 cursor-pointer hover:underline">
+              <svgicon name="cloud-upload" height="24" width="24"/>
+              <div class="ml-2 text-xs sm:text-sm leading-loose">Upload</div>
+            </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="w-1/2 pl-4">
+
+    <div class="w-full md:w-1/2 p-2">
       <div class="rounded-lg shadow-lg p-8">
         <form class="w-full">
           <AppInput
@@ -89,6 +101,13 @@ export default {
   data() {
     return {
       practice_types: [],
+      practice_detail: {
+        name: '',
+        code: '',
+        address: '',
+        phone_number: '',
+        ccg: '',
+      },
       form: {
         email: '',
         phone_number: '',
@@ -178,11 +197,18 @@ export default {
     }
   },
   created() {
-    // ! ask arvi what endpoint to get the initial/updated data
+    this.practice_detail.name = this.$auth.user.practice_detail.practice.surgery.name
+    this.practice_detail.code = this.$auth.user.practice_detail.practice.surgery.code
+    this.practice_detail.address = this.$auth.user.practice_detail.practice.surgery.address
+    this.practice_detail.phone_number = this.$auth.user.practice_detail.practice.surgery.phone_number
+    this.practice_detail.ccg = this.$auth.user.practice_detail.practice.surgery.clinical_commissioning_group.name
     // get practice types
     this.$axios.$get(`/api/v1/practice-types`)
       .then(res => {
-        this.practice_types = res.data.practice_types
+        this.practice_types = []
+        res.data.practice_types.forEach(item => {
+          this.practice_types.push({ value: item.id, label: item.name })
+        })
       })
   },
   methods: {

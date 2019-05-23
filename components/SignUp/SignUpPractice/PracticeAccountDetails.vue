@@ -68,7 +68,7 @@
           />
           <AppInput
             v-model="form.privacy_policy"
-            :type="'checkbox'"
+            :type="'single-checkbox'"
             :name="'privacy_policy'"
             :label="'I agree with the Terms and Conditions and Privacy Policy of Hubzz'"
             :placeholder="''"
@@ -77,7 +77,6 @@
         </form>
       </div>
     </div>
-
     <div class="flex w-full justify-center xl:justify-start mt-5">
       <div class="flex justify-center" style="width:600px">
         <button
@@ -98,7 +97,9 @@ import AppInput from '@/components/Base/AppInput'
 import AppSelect from '@/components/Base/AppSelect'
 import AppButton from '@/components/Base/AppButton'
 const practice_roles = [
-  'Partner', 'Practice Manager', 'Practice Staff'
+  { value: 'Partner', label: 'Partner' },
+  { value: 'Practice Manager', label: 'Practice Manager' },
+  { value: 'Practice Staff', label: 'Practice Staff' }
 ]
 export default {
   components: {

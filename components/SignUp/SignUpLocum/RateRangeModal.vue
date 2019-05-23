@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="z-20 bg-white w-1/2 lg:w-1/3 rounded-lg shadow-lg p-5 absolute"
-    style="left:35%;bottom:50%;"
-  >
+  <div class="z-20 bg-white rounded-lg shadow-lg p-5 absolute" style="bottom:50%;">
     <div class="flex flex-col">
       <div class="flex flex-row justify-end">
         <div class="font-bold text-lg cursor-pointer" @click="$emit('close')">X</div>

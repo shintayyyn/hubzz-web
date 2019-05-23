@@ -15,141 +15,63 @@
     <div class="flex w-full justify-center xl:justify-start">
       <div class="mx-4 flex flex-col p-8 m-1 rounded-lg shadow-lg" style="flex: 0 1 600px;">
         <form class="w-full">
-          <div class="relative flex flex-col mt-8">
-            <div class="flex flex-row justify-between">
-              <label for="email" class="text-sm" style="width:50%">Email</label>
-            </div>
-            <div class="flex flex-row justify-between mt-4">
-              <div
-                class="flex flex-col border-b-2 border-grey-light"
-                style="width:100%"
-                :class="[setFocus === 'email' ? 'border-yellow':'', formError.find(item => item.field === 'email') ? 'border-red':'']"
-              >
-                <input
-                  type="email"
-                  name="email"
-                  id="email"
-                  ref="email"
-                  class="focus:outline-none font-bold text-sm"
-                  style="height:40px;"
-                  @focus="setFocus = 'email'"
-                  @blur="validateEmail"
-                  v-model="form.email"
-                  placeholder="Your email address"
-                >
-              </div>
-            </div>
-            <div
-              class="absolute pin-t pin-r bg-red text-white p-1"
-              v-if="formError.find(item => item.field === 'email')"
-            >{{formError.find(item => item.field === 'email').message}}</div>
-          </div>
+          <AppInput
+            v-model="form.email"
+            :type="'email'"
+            :name="'email'"
+            :label="'Email'"
+            :placeholder="'Your email address'"
+            :error="formError.find(item => item.field === 'email')"
+          />
+          <AppInput
+            v-model="form.password"
+            :type="'password'"
+            :name="'password'"
+            :label="'Password'"
+            :placeholder="'Password'"
+            :error="formError.find(item => item.field === 'password')"
+          />
+          <AppInput
+            v-model="form.password_confirmation"
+            :type="'password'"
+            :name="'password_confirmation'"
+            :label="'Repeat password to verify'"
+            :placeholder="'Repeat password'"
+            :password="form.password"
+            :error="formError.find(item => item.field === 'password_confirmation')"
+          />
 
-          <div class="relative flex flex-col mt-8">
-            <div class="flex flex-row justify-between">
-              <label for="password" class="text-sm" style="width:50%">Password</label>
-            </div>
-            <div class="flex flex-row justify-between mt-4">
-              <div
-                class="flex flex-col border-b-2 border-grey-light"
-                style="width:100%"
-                :class="[setFocus === 'password' ? 'border-yellow':'', formError.find(item => item.field === 'password') ? 'border-red':'']"
-              >
-                <input
-                  type="password"
-                  name="password"
-                  id="password"
-                  ref="password"
-                  class="focus:outline-none font-bold text-sm"
-                  style="height:40px;"
-                  @focus="setFocus = 'password'"
-                  @blur="setFocus = ''"
-                  v-model="form.password"
-                  placeholder="Password"
-                >
-              </div>
-            </div>
-            <div
-              class="absolute pin-t pin-r bg-red text-white p-1"
-              v-if="formError.find(item => item.field === 'password')"
-            >{{formError.find(item => item.field === 'password').message}}</div>
-          </div>
-
-          <div class="relative flex flex-col mt-8">
-            <div class="flex flex-row justify-between">
-              <label
-                for="password_confirmation"
-                class="text-sm"
-                style="width:50%"
-              >Repeat password to verify</label>
-            </div>
-            <div class="flex flex-row justify-between mt-4">
-              <div
-                class="flex flex-col border-b-2 border-grey-light"
-                style="width:100%"
-                :class="[setFocus === 'password_confirmation' ? 'border-yellow':'', formError.find(item => item.field === 'password_confirmation') ? 'border-red':'']"
-              >
-                <input
-                  type="password"
-                  name="password_confirmation"
-                  id="password_confirmation"
-                  ref="password_confirmation"
-                  class="focus:outline-none font-bold text-sm"
-                  style="height:40px;"
-                  @focus="setFocus = 'password_confirmation'"
-                  @blur="setFocus = ''"
-                  v-model="form.password_confirmation"
-                  placeholder="Repeat password"
-                >
-              </div>
-            </div>
-            <div
-              class="absolute pin-t pin-r bg-red text-white p-1"
-              v-if="formError.find(item => item.field === 'password_confirmation')"
-            >{{formError.find(item => item.field === 'password_confirmation').message}}</div>
-          </div>
-
-          <div class="relative flex flex-col mt-8">
-            <div class="flex flex-row justify-start">
-              <input
-                type="checkbox"
-                name="privacy_policy"
-                id="privacy_policy"
-                ref="privacy_policy"
-                v-model="form.privacy_policy"
-              >
-              <label
-                for="privacy_policy"
-                class="text-sm ml-1"
-              >I agree with the Terms and Conditions and Privacy Policy of Hubzz</label>
-            </div>
-            <div
-              class="absolute pin-t pin-r bg-red text-white p-1"
-              v-if="formError.find(item => item.field === 'privacy_policy')"
-            >{{formError.find(item => item.field === 'privacy_policy').message}}</div>
-          </div>
+          <AppInput
+            v-model="form.privacy_policy"
+            :type="'single-checkbox'"
+            :name="'privacy_policy'"
+            :label="'I agree with the Terms and Conditions and Privacy Policy of Hubzz'"
+            :error="formError.find(item => item.field === 'privacy_policy')"
+          />
         </form>
       </div>
     </div>
 
     <div class="flex w-full justify-center xl:justify-start mt-5">
       <div class="flex justify-center" style="width:600px">
-        <button
-          class="rounded-lg p-6 bg-yellow text-lg font-bold hover:text-white focus:outline-none mx-1"
-          @click.prevent="$store.commit('signUp/SET_ACTIVE_TAB', 'professional_details')"
-          v-text="'<<'"
-        ></button>
-        <button
-          class="rounded-lg p-6 bg-yellow text-lg font-bold hover:text-white focus:outline-none"
-          @click.prevent="next"
-        >Next</button>
+        <AppButton
+          :label="'<<'"
+          @click="$store.commit('signUp/SET_ACTIVE_TAB', 'professional_details')"
+        />
+        <div class="mx-1"></div>
+        <AppButton :label="'Next'" @click="next"/>
       </div>
     </div>
   </div>
 </template>
 <script>
+import AppInput from '@/components/Base/AppInput'
+import AppButton from '@/components/Base/AppButton'
 export default {
-  scrollToTop: true,
+  components: {
+    AppInput,
+    AppButton
+  },
   data() {
     return {
       form: {
@@ -159,7 +81,6 @@ export default {
         privacy_policy: false,
       },
       formError: [],
-      setFocus: ''
     }
   },
   computed: {
@@ -177,14 +98,78 @@ export default {
           this.formError.push(item)
         })
       }
-    }
+    },
+    'form.email'(value) {
+      // splice from formerror
+      let index = this.formError.findIndex(item => item.field === 'email')
+      if (index >= 0) {
+        this.formError.splice(index, 1)
+      }
+      // validate
+      if (!value) {
+        // required
+        this.formError.push({ field: 'email', message: 'Required' })
+      } else {
+        // validate option
+        const error = this.ValidateEmail(value)
+        if (error) {
+          this.formError.push(error)
+        }
+      }
+    },
+    'form.password'(value) {
+      // splice from formerror
+      let index = this.formError.findIndex(item => item.field === 'password')
+      if (index >= 0) {
+        this.formError.splice(index, 1)
+      }
+      // validate
+      if (!value) {
+        // required
+        this.formError.push({ field: 'password', message: 'Required' })
+      } else if (value && value.length < 6) {
+        this.formError.push({ field: 'password', message: 'Password Must Be Atleast 6 Characters' })
+      }
+    },
+    'form.password_confirmation'(value) {
+      // splice from formerror
+      let index = this.formError.findIndex(item => item.field === 'password_confirmation')
+      if (index >= 0) {
+        this.formError.splice(index, 1)
+      }
+      // validate
+      if (!value) {
+        // required
+        this.formError.push({ field: 'password_confirmation', message: 'Required' })
+      }
+      else if (value && value.length < 6) {
+        this.formError.push({ field: 'password_confirmation', message: 'Password Confirmation Must Be Atleast 6 Characters' })
+      } else {
+        // validate option
+        const error = this.ValidateSamePassword(value, this.form.password)
+        if (error) {
+          this.formError.push(error)
+        }
+      }
+    },
+    'form.privacy_policy'(value) {
+      // splice from formerror
+      let index = this.formError.findIndex(item => item.field === 'privacy_policy')
+      if (index >= 0) {
+        this.formError.splice(index, 1)
+      }
+      // validate
+      if (!value) {
+        // required
+        this.formError.push({ field: 'privacy_policy', message: 'Required' })
+      }
+    },
   },
   mounted() {
     this.form.email = this.credentialDetails.email
     this.form.password = this.credentialDetails.password
     this.form.password_confirmation = this.credentialDetails.password_confirmation
-    this.form.privacy_policy = this.credentialDetails.privacy_policy
-
+    this.form.privacy_policy = false
     if (this.credentialFormError.length > 0) {
       this.credentialFormError.forEach(item => {
         this.formError.push(item)
@@ -192,25 +177,15 @@ export default {
     }
   },
   methods: {
-    validateEmail(e) {
-      this.setFocus = ''
-      this.formError = []
-      this.$axios
-        .$post(`/api/v1/valid-email`, { email: e.target.value })
-        .then(res => {
-          console.log(res.message)
-        }).catch(err => {
-          this.formError.push(err.response.data.error_messages[0])
-        })
-    },
     next() {
       try {
         this.formError = []
         this.Validate(this.form)
-        // this.ValidatePassword(this.form.password, this.form.password_confirmation)
         if (!this.formError.length) {
           this.$store.commit('signUp/SET_CREDENTIAL_DETAILS', this.form)
-          this.$store.dispatch('signUp/registeredLocum')
+          setTimeout(() => {
+            this.$store.dispatch('signUp/registeredLocum')
+          }, 1000)
         }
       } catch (e) {
         console.log(e)

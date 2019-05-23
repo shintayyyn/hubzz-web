@@ -7,8 +7,27 @@
         <div class="bg-red p-1 text-xs sm:text-base text-white" v-if="error">{{error.message}}</div>
       </div>
       <div class="flex flex-row justify-start mt-1" v-for="(item, index) in lists" :key="index">
-        <input :value="item.id" type="checkbox" @input="inputCheck" class="mt-1 mr-1">
-        <label :for="item.name" class="text-xs sm:text-sm py-1">{{item.name}}</label>
+        <input :value="item.value" type="checkbox" @input="inputCheck" class="mt-1 mr-1">
+        <!-- :checked="selected.includes(item.value)" -->
+        <label :for="item.name" class="text-xs sm:text-sm py-1">{{item.label}}</label>
+      </div>
+    </div>
+
+    <!-- single checkbox -->
+    <div v-if="type === 'single-checkbox'" class="flex flex-col py-2 mb-6">
+      <!-- <div class="relative flex flex-row flex-nowrap justify-end"> -->
+      <!-- </div> -->
+      <div class="flex flex-row flex-nowrap justify-between">
+        <div>
+          <input
+            :value="value"
+            type="checkbox"
+            @input="$emit('input', $event.target.checked)"
+            class="mt-1 mr-1"
+          >
+          <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
+        </div>
+        <div class="bg-red p-1 text-xs sm:text-base text-white" v-if="error">{{error.message}}</div>
       </div>
     </div>
 
@@ -41,10 +60,16 @@
     </div>
 
     <!-- text / email / password  -->
-    <div v-else class="flex flex-col py-2 mb-6">
+    <div
+      v-if="type === 'text' || type === 'email' || type === 'password'"
+      class="flex flex-col py-2 mb-6"
+    >
       <div class="relative flex flex-row flex-nowrap justify-between">
         <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
-        <div class="bg-red p-1 text-xs sm:text-base text-white" v-if="error">{{error.message}}</div>
+        <div
+          class="absolute pin-r bg-red p-1 text-xs sm:text-base text-white"
+          v-if="error"
+        >{{error.message}}</div>
         <div class="bg-grey-light rounded-lg p-1 text-xs sm:text-sm" v-if="info">{{info}}</div>
       </div>
       <div class="flex flex-row justify-start mt-1">
@@ -58,6 +83,8 @@
           v-on="name === 'mobile_number' || name === 'phone_number' ? { keypress: ValidateInput } : null"
           :style="inStyle"
           @keypress.enter="$emit('submit')"
+          @blur="$emit('blur')"
+          :checked="value"
         >
       </div>
     </div>
@@ -76,6 +103,7 @@ export default {
     inStyle: String,
     // for multiselect checkbox
     lists: Array,
+    selected: Array,
     // for multiemail
     // selectedEmails: Array
   },
@@ -85,6 +113,7 @@ export default {
       if (e.target.checked) {
         this.$emit('checked', e.target.value)
       } else {
+        console.log(e.target.value)
         this.$emit('unchecked', e.target.value)
       }
     }

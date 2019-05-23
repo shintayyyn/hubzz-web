@@ -9,112 +9,40 @@
     <div class="flex w-full justify-center xl:justify-start">
       <div class="mx-4 flex flex-col p-8 m-1 rounded-lg shadow-lg" style="flex: 0 1 600px;">
         <form class="w-full">
-          <div class="relative flex flex-col mt-8">
-            <div class="flex flex-row justify-between">
-              <label
-                for="gmc_or_nmc_number"
-                class="text-xs lg:text-base mb-4 w-1/2"
-              >Your GMC / NMC Number</label>
-              <div
-                class="text-xs lg:text-base rounded-lg bg-grey-light px-2 py-1"
-              >For compliance; to be verified by the hubzz team</div>
-            </div>
-            <div class="flex flex-row justify-between mt-4">
-              <input
-                type="text"
-                ref="gmc_or_nmc_number"
-                class="py-2 font-bold text-xs lg:text-base border-b-2 focus:outline-none focus:border-yellow w-full"
-                :class="formError.find(item => item.field === 'gmc_or_nmc_number') ? 'border-red':''"
-                @focus="''"
-                @blur="ValidateText(form.gmc_or_nmc_number, 'gmc_or_nmc_number')"
-                v-model="form.gmc_or_nmc_number"
-                placeholder="GMC / NMC Number"
-              >
-            </div>
-            <div
-              class="absolute pin-t pin-r bg-red text-white p-1"
-              v-if="formError.find(item => item.field === 'gmc_or_nmc_number')"
-            >{{formError.find(item => item.field === 'gmc_or_nmc_number').message}}</div>
-          </div>
+          <AppInput
+            v-model="form.gmc_or_nmc_number"
+            :type="'text'"
+            :name="'gmc_or_nmc_number'"
+            :label="'Your GMC / NMC Number'"
+            :placeholder="'GMC / NMC Number'"
+            :error="formError.find(item => item.field === 'gmc_or_nmc_number')"
+            :info="'For compliance; to be verified by the hubzz team'"
+          />
+          <AppInput
+            v-model="form.mpl_or_npl_number"
+            :type="'text'"
+            :name="'mpl_or_npl_number'"
+            :label="'Your MPL / NPL Number'"
+            :placeholder="'MPL / NPL Number'"
+            :error="formError.find(item => item.field === 'mpl_or_npl_number')"
+            :info="'For compliance; to be verified by the hubzz team'"
+          />
+          <AppInput
+            v-model="form.nhs_smart_card_id_number"
+            :type="'text'"
+            :name="'nhs_smart_card_id_number'"
+            :label="'Your NHS Smart Card ID number'"
+            :placeholder="'NHS Smart Card ID number'"
+          />
 
-          <div class="relative flex flex-col mt-8">
-            <div class="flex flex-row justify-between">
-              <label
-                for="mpl_or_npl_number"
-                class="text-xs lg:text-base mb-4 w-1/2"
-              >Your MPL / NPL Number</label>
-              <div
-                class="text-xs lg:text-base rounded-lg bg-grey-light px-2 py-1"
-              >For compliance; to be verified by the hubzz team</div>
-            </div>
-            <div class="flex flex-row justify-between mt-4">
-              <input
-                type="text"
-                ref="mpl_or_npl_number"
-                class="py-2 font-bold text-xs lg:text-base border-b-2 focus:outline-none focus:border-yellow w-full"
-                :class="formError.find(item => item.field === 'mpl_or_npl_number') ? 'border-red':''"
-                @focus="''"
-                @blur="ValidateText(form.mpl_or_npl_number, 'mpl_or_npl_number')"
-                v-model="form.mpl_or_npl_number"
-                placeholder="MPL / NPL Number"
-              >
-            </div>
-            <div
-              class="absolute pin-t pin-r bg-red text-white p-1"
-              v-if="formError.find(item => item.field === 'mpl_or_npl_number')"
-            >{{formError.find(item => item.field === 'mpl_or_npl_number').message}}</div>
-          </div>
-
-          <div class="relative flex flex-col mt-8">
-            <div class="flex flex-row justify-between">
-              <label
-                for="nhs_smart_card_id_number"
-                class="text-xs lg:text-base mb-4 w-1/2"
-              >Your NHS Smart Card ID number</label>
-            </div>
-            <div class="flex flex-row justify-between mt-4">
-              <input
-                type="text"
-                ref="nhs_smart_card_id_number"
-                class="py-2 font-bold text-xs lg:text-base border-b-2 focus:outline-none focus:border-yellow w-full"
-                :class="formError.find(item => item.field === 'nhs_smart_card_id_number') ? 'border-red':''"
-                @focus="''"
-                @blur="ValidateText(form.nhs_smart_card_id_number, 'nhs_smart_card_id_number')"
-                v-model="form.nhs_smart_card_id_number"
-                placeholder="MPL / NPL Number"
-              >
-            </div>
-            <div
-              class="absolute pin-t pin-r bg-red text-white p-1"
-              v-if="formError.find(item => item.field === 'nhs_smart_card_id_number')"
-            >{{formError.find(item => item.field === 'nhs_smart_card_id_number').message}}</div>
-          </div>
-
-          <div class="relative flex flex-col mt-8">
-            <div class="flex flex-row justify-between">
-              <label for="profession" class="text-xs lg:text-base mb-4 w-1/2">Profession</label>
-            </div>
-            <div class="flex flex-row justify-between mt-4">
-              <select
-                class="py-2 font-bold text-xs lg:text-base border-b-2 focus:outline-none focus:border-yellow w-full"
-                :class="formError.find(item => item.field === 'profession_id') ? 'border-red':''"
-                @focus="''"
-                @blur="ValidateText(form.profession_id, 'profession_id')"
-                v-model="form.profession_id"
-              >
-                <option value selected disabled>Select...</option>
-                <option
-                  v-for="(item, index) in professions"
-                  :key="index"
-                  :value="item.id"
-                >{{item.name}}</option>
-              </select>
-            </div>
-            <div
-              class="absolute pin-t pin-r bg-red text-white p-1"
-              v-if="formError.find(item => item.field === 'profession')"
-            >{{formError.find(item => item.field === 'profession').message}}</div>
-          </div>
+          <AppSelect
+            v-model="form.profession_id"
+            :name="'profession_id'"
+            :label="'Profession'"
+            :placeholder="'Select...'"
+            :error="formError.find(item => item.field === 'profession_id')"
+            :items="professions"
+          />
 
           <div class="relative flex flex-col mt-8">
             <div class="flex flex-row justify-between">
@@ -306,7 +234,7 @@
             >{{formError.find(item => item.field === 'spoken_language_id').message}}</div>
           </div>
 
-          <div class="relative flex flex-col mt-8">
+          <div class="relative flex flex-col my-8">
             <div class="flex flex-row justify-between">
               <label for="rates" class="text-sm">Your preferred rates £</label>
               <div class="text-sm rounded-lg bg-grey-light px-2 py-1">To match available jobs with</div>
@@ -341,109 +269,33 @@
               class="absolute pin-t pin-r bg-red text-white p-1"
               v-if="formError.find(item => item.field === 'min_rate_per_hour' || item.field === 'max_rate_per_hour' || item.field === 'min_rate_per_half_day_session' || item.field === 'max_rate_per_half_day_session' || item.field === 'min_rate_per_whole_day_session' || item.field === 'max_rate_per_whole_day_session')"
             >{{formError.find(item => item.field === 'min_rate_per_hour' || item.field === 'max_rate_per_hour' || item.field === 'min_rate_per_half_day_session' || item.field === 'max_rate_per_half_day_session' || item.field === 'min_rate_per_whole_day_session' || item.field === 'max_rate_per_whole_day_session').message}}</div>
+            <RateRangeModal v-if="rateRangeModal" @close="close" @save="save" :data="rate_range"/>
           </div>
 
-          <div class="relative flex flex-col mt-12">
-            <div class="flex flex-row justify-between">
-              <label
-                for="ir35"
-                class="text-xs lg:text-base mb-4 w-1/2"
-              >Are you OK to work with Practices that are inside of scope for IR35?</label>
-              <div
-                class="text-xs lg:text-base rounded-lg bg-grey-light px-2 py-1"
-              >Only apply if you are self-employed</div>
-            </div>
-            <div class="flex flex-row justify-between mt-4">
-              <div
-                class="flex flex-col border-b-2 border-grey-light"
-                style="width:100%"
-                :class="[setFocus === 'ir35' ? 'border-yellow':'', formError.find(item => item.field === 'ir35') ? 'border-red':'']"
-              >
-                <select
-                  class="focus:outline-none font-bold text-sm"
-                  style="height:40px;"
-                  @focus="setFocus = 'ir35'"
-                  @blur="setFocus = ''"
-                  v-model="form.ir35"
-                >
-                  <option :value="false">No</option>
-                  <option :value="true">Yes</option>
-                </select>
-              </div>
-            </div>
-            <div
-              class="absolute pin-t pin-r bg-red text-white p-1"
-              v-if="formError.find(item => item.field === 'ir35')"
-            >{{formError.find(item => item.field === 'ir35').message}}</div>
-          </div>
+          <AppSelect
+            v-model="form.ir35"
+            :name="'ir35'"
+            :label="'Are you OK to work with Practices that are inside of scope for IR35?'"
+            :placeholder="'Select'"
+            :error="formError.find(item => item.field === 'ir35')"
+            :items="[{value: false, label: 'No'},{value: true, label: 'Yes'}]"
+            :info="'Only apply if you are self-employed'"
+          />
 
-          <div class="relative flex flex-col mt-12">
-            <div class="flex flex-row justify-between">
-              <label
-                for="practice_type_id"
-                class="text-xs lg:text-base mb-4 w-1/2"
-              >What type of Practices(s) would you like to work for?</label>
-            </div>
-            <div class="flex flex-row justify-between mt-4">
-              <div class="w-full">
-                <div class="flex flex-row flex-wrap text-xs lg:text-base">
-                  <div
-                    class="rounded-lg bg-yellow font-bold p-2 m-1"
-                    v-for="(item, index) in selectedPracticeTypes"
-                    :key="`${item}-${index}`"
-                  >
-                    {{item.name}}
-                    <span
-                      class="font-bold cursor-pointer text-sm lg:text-lg"
-                      @click="removePracticeTypes(item, index)"
-                    >X</span>
-                  </div>
-                </div>
-                <div class="relative">
-                  <input
-                    type="text"
-                    ref="practice_type_id"
-                    class="py-2 font-bold text-xs lg:text-base border-b-2 focus:outline-none focus:border-yellow w-full"
-                    :class="formError.find(item => item.field === 'practice_type_id') ? 'border-red':''"
-                    @focus="''"
-                    @blur="''"
-                    v-model="searchPracticeTypes"
-                    placeholder="Select.."
-                    @keydown="practiceTypesKeyDownHandler"
-                    @click.prevent="showPracticeTypes=true"
-                  >
-                  <transition name="fade">
-                    <div
-                      class="bg-white shadow-lg overflow-auto absolute pin-x z-10"
-                      v-if="showPracticeTypes"
-                      style="height:100px"
-                      v-on-clickaway="hidePracticeTypes"
-                    >
-                      <div
-                        v-for="(item, index) in filteredPracticeTypes"
-                        :key="`${item}-${index}`"
-                        class="p-2 cursor-pointer"
-                        @mouseover="practiceTypesIndex=index"
-                        :class="practiceTypesIndex === index ? 'bg-grey':''"
-                        @click="selectPracticeTypes(item, index)"
-                      >
-                        <strong>{{item.name}}</strong>
-                      </div>
-                    </div>
-                  </transition>
-                </div>
-              </div>
-            </div>
-            <div
-              class="absolute pin-t pin-r bg-red text-white p-1"
-              v-if="formError.find(item => item.field === 'practice_type_id')"
-            >{{formError.find(item => item.field === 'practice_type_id').message}}</div>
-          </div>
+          <AppInput
+            :type="'multi-checkbox'"
+            @checked="form.practice_type_id.push(parseInt($event))"
+            @unchecked="form.practice_type_id.splice(form.practice_type_id.findIndex(item => item == $event), 1)"
+            :name="'practice_type_id'"
+            :label="'What type of Practice(s) are you?'"
+            :placeholder="''"
+            :error="this.formError.find(item => item.field === 'practice_type_id')"
+            :lists="practiceTypes"
+            :selected="form.practice_type_id"
+          />
         </form>
       </div>
     </div>
-
-    <RateRangeModal v-if="rateRangeModal" @close="close" @save="save" :data="rate_range"/>
 
     <div class="flex w-full justify-center xl:justify-start mt-5">
       <div class="flex justify-center" style="width:600px">
@@ -462,12 +314,15 @@
 </template>
 <script>
 import RateRangeModal from '@/components/SignUp/SignUpLocum/RateRangeModal'
+import AppInput from '@/components/Base/AppInput'
+import AppSelect from '@/components/Base/AppSelect'
 import { mixin as clickaway } from 'vue-clickaway'
 export default {
   components: {
+    AppInput,
+    AppSelect,
     RateRangeModal
   },
-  scrollToTop: true,
   mixins: [clickaway],
   data() {
     return {
@@ -513,13 +368,52 @@ export default {
         min_rate_per_whole_day_session: 0,
         max_rate_per_whole_day_session: 0,
         ir35: false,
-        practice_type_id: []
+        practice_type_id: [],
+        // ! ask arvi
+        mandatory_training_id: []
       },
       formError: [],
       setFocus: ''
     }
   },
   watch: {
+    // ! ask arvi how to validate this, with spaces
+    'form.gmc_or_nmc_number'(value) {
+      // splice from formerror
+      let index = this.formError.findIndex(item => item.field === 'gmc_or_nmc_number')
+      if (index >= 0) {
+        this.formError.splice(index, 1)
+      }
+      // validate
+      if (!value) {
+        // required
+        this.formError.push({ field: 'gmc_or_nmc_number', message: 'Required' })
+      }
+    },
+    'form.mpl_or_npl_number'(value) {
+      // splice from formerror
+      let index = this.formError.findIndex(item => item.field === 'mpl_or_npl_number')
+      if (index >= 0) {
+        this.formError.splice(index, 1)
+      }
+      // validate
+      if (!value) {
+        // required
+        this.formError.push({ field: 'mpl_or_npl_number', message: 'Required' })
+      }
+    },
+    'form.practice_type_id'(value) {
+      // splice from formerror
+      let index = this.formError.findIndex(item => item.field === 'practice_type_id')
+      if (index >= 0) {
+        this.formError.splice(index, 1)
+      }
+      // validate
+      if (value.length < 1) {
+        // required
+        this.formError.push({ field: 'practice_type_id', message: 'Required' })
+      }
+    },
     showQualifications(value) {
       if (!value) {
         this.ValidateArray(this.selectedQualifications, 'qualification_id')
@@ -538,8 +432,7 @@ export default {
   },
   computed: {
     professions() {
-      // return this.$store.getters['signUp/getProfessions']
-      return this.$store.state.signUp.professions
+      return this.$store.getters['signUp/getProfessions']
     },
     qualifications() {
       return this.$store.state.signUp.qualifications
@@ -551,10 +444,7 @@ export default {
       return this.$store.state.signUp.spokenLanguages
     },
     practiceTypes() {
-      return this.$store.state.signUp.practiceTypes
-    },
-    professionalDetails() {
-      return this.$store.state.signUp.professional_details
+      return this.$store.getters['signUp/getPracticeTypes']
     },
     //! Add RegExp on these filtered seach
     filteredQualifications() {
@@ -592,27 +482,38 @@ export default {
         return index === -1 && practiceType.id && practiceType.name.includes(this.searchPracticeTypes)
       })
     },
+    professionalDetails() {
+      return this.$store.state.signUp.professional_details
+    },
     professionalFormError() {
       return this.$store.state.signUp.professional_detail_form_error
     }
   },
-  created() {
+  mounted() {
     this.form.gmc_or_nmc_number = this.professionalDetails.gmc_or_nmc_number
     this.form.mpl_or_npl_number = this.professionalDetails.mpl_or_npl_number
     this.form.nhs_smart_card_id_number = this.professionalDetails.nhs_smart_card_id_number
     this.form.profession_id = this.professionalDetails.profession_id
     this.selectedQualifications = []
-    this.professionalDetails.qualification_id.forEach(item => {
-      this.selectedQualifications.push(item)
+    this.qualifications.forEach(item => {
+      if (this.professionalDetails.qualification_id.includes(item.id)) {
+        this.selectedQualifications.push(item)
+      }
     })
     this.selectedClinicalSystems = []
-    this.professionalDetails.clinical_system_id.forEach(item => {
-      this.selectedClinicalSystems.push(item)
+    this.clinicalSystems.forEach(item => {
+      if (this.professionalDetails.clinical_system_id.includes(item.id)) {
+        this.selectedClinicalSystems.push(item)
+      }
     })
+
     this.selectedSpokenLanguages = []
-    this.professionalDetails.spoken_language_id.forEach(item => {
-      this.selectedSpokenLanguages.push(item)
+    this.spokenLanguages.forEach(item => {
+      if (this.professionalDetails.spoken_language_id.includes(item.id)) {
+        this.selectedSpokenLanguages.push(item)
+      }
     })
+
     this.form.min_rate_per_hour = this.professionalDetails.min_rate_per_hour
     this.form.max_rate_per_hour = this.professionalDetails.max_rate_per_hour
     this.form.min_rate_per_half_day_session = this.professionalDetails.min_rate_per_half_day_session
@@ -620,10 +521,14 @@ export default {
     this.form.min_rate_per_whole_day_session = this.professionalDetails.min_rate_per_whole_day_session
     this.form.max_rate_per_whole_day_session = this.professionalDetails.max_rate_per_whole_day_session
     this.form.ir35 = this.professionalDetails.ir35
-    this.selectedPracticeTypes = []
-    this.professionalDetails.practice_type_id.forEach(item => {
-      this.selectedPracticeTypes.push(item)
+
+    this.form.practice_type_id = []
+    this.practiceTypes.forEach(item => {
+      if (this.professionalDetails.practice_type_id.includes(item.value)) {
+        this.form.practice_type_id.push(item.value)
+      }
     })
+
     if (this.professionalFormError.length > 0) {
       this.professionalFormError.forEach(item => {
         this.formError.push(item)
@@ -673,7 +578,6 @@ export default {
         default:
           return
       }
-      console.log(this.form)
     },
 
     hideQualifications() {
@@ -731,7 +635,6 @@ export default {
     },
     selectClinicalSystems(item, index) {
       this.selectedClinicalSystems.push(item)
-      this.setFocus = 'clinical_system_id'
     },
     removeClinicalSystems(item, index) {
       this.selectedClinicalSystems.splice(index, 1)
@@ -782,7 +685,6 @@ export default {
     },
     selectSpokenLanguages(item, index) {
       this.selectedSpokenLanguages.push(item)
-      this.setFocus = 'spoken_language_id'
     },
     removeSpokenLanguages(item, index) {
       this.selectedSpokenLanguages.splice(index, 1)
@@ -827,53 +729,6 @@ export default {
 
     },
 
-    hidePracticeTypes() {
-      // this.setFocus = ''
-      this.showPracticeTypes = false
-    },
-    selectPracticeTypes(item, index) {
-      this.selectedPracticeTypes.push(item)
-    },
-    removePracticeTypes(item, index) {
-      this.selectedPracticeTypes.splice(index, 1)
-      this.ValidateArray(this.selectedPracticeTypes, 'practice_type_id')
-    },
-    practiceTypesKeyDownHandler(event) {
-      if (event.key === 'ArrowUp') {
-        if (this.practiceTypesIndex > 0) {
-          this.practiceTypesIndex--
-        } else {
-          this.practiceTypesIndex = this.practiceTypes.length - 1
-        }
-      }
-
-      if (event.key === 'ArrowDown') {
-        if (this.practiceTypesIndex === this.practiceTypes.length - 1) {
-          this.practiceTypesIndex = 0
-        } else {
-          this.practiceTypesIndex++
-        }
-      }
-
-      if (event.key === 'Enter') {
-        if (this.filteredPracticeTypes.find((item, index) => index === this.practiceTypesIndex)) {
-          this.selectPracticeTypes(this.filteredPracticeTypes.find((item, index) => index === this.practiceTypesIndex), this.practiceTypesIndex)
-        }
-      }
-
-      if (event.key === 'Backspace') {
-        if (!this.searchPracticeTypes) {
-          this.removePracticeTypes(this.selectedPracticeTypes[this.selectedPracticeTypes.length - 1], this.selectedPracticeTypes.length - 1)
-        }
-      }
-
-      if (event.key === 'Escape') {
-        this.setFocus = ''
-      }
-
-
-    },
-
     next() {
       try {
         this.formError = []
@@ -882,14 +737,12 @@ export default {
           this.form.qualification_id.push(item.id)
         })
         this.selectedClinicalSystems.forEach(item => {
-          this.form.clinical_system_id.push(item)
+          this.form.clinical_system_id.push(item.id)
         })
         this.selectedSpokenLanguages.forEach(item => {
-          this.form.spoken_language_id.push(item)
+          this.form.spoken_language_id.push(item.id)
         })
-        console.log(this.form)
-        this.Validate(this.form, ['nhs_smart_card_id_number', 'spoken_language_id', 'ir35'])
-        console.log(this.formError)
+        this.Validate(this.form, ['nhs_smart_card_id_number', 'spoken_language_id', 'mandatory_training_id'])
         if (!this.formError.length) {
           this.$store.commit('signUp/SET_PROFESSIONAL_DETAILS', this.form)
           this.$store.commit('signUp/SET_ACTIVE_TAB', 'credential_details')

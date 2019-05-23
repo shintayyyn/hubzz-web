@@ -56,8 +56,7 @@ export const state = () => ({
     credential_details: {
         email: '',
         password: '',
-        password_confirmation: '',
-        privacy_policy: false
+        password_confirmation: ''
     },
     account_detail_form_error: [],
     address_detail_form_error: [],
@@ -66,9 +65,6 @@ export const state = () => ({
 })
 
 export const mutations = {
-    // TOGGLE_RATE_RANGE_MODAL(state, payload) {
-    //     state.rate_range_modal = payload
-    // },
     SET_ACTIVE_TAB(state, payload) {
         state.activeTab = payload
     },
@@ -153,16 +149,16 @@ export const mutations = {
         state.professional_details.nhs_smart_card_id_number = payload.nhs_smart_card_id_number
         state.professional_details.profession_id = payload.profession_id
         state.professional_details.qualification_id = []
-        payload.qualification_id.forEach(item => {
-            state.professional_details.qualification_id.push(item)
+        payload.qualification_id.forEach(id => {
+            state.professional_details.qualification_id.push(id)
         })
         state.professional_details.clinical_system_id = []
-        payload.clinical_system_id.forEach(item => {
-            state.professional_details.clinical_system_id.push(item)
+        payload.clinical_system_id.forEach(id => {
+            state.professional_details.clinical_system_id.push(id)
         })
         state.professional_details.spoken_language_id = []
-        payload.spoken_language_id.forEach(item => {
-            state.professional_details.spoken_language_id.push(item)
+        payload.spoken_language_id.forEach(id => {
+            state.professional_details.spoken_language_id.push(id)
         })
         state.professional_details.min_rate_per_hour = payload.min_rate_per_hour
         state.professional_details.max_rate_per_hour = payload.max_rate_per_hour
@@ -172,15 +168,14 @@ export const mutations = {
         state.professional_details.max_rate_per_whole_day_session = payload.max_rate_per_whole_day_session
         state.professional_details.ir35 = payload.ir35
         state.professional_details.practice_type_id = []
-        payload.practice_type_id.forEach(item => {
-            state.professional_details.practice_type_id.push(item)
+        payload.practice_type_id.forEach(id => {
+            state.professional_details.practice_type_id.push(id)
         })
     },
     SET_CREDENTIAL_DETAILS(state, payload) {
         state.credential_details.email = payload.email
         state.credential_details.password = payload.password
         state.credential_details.password_confirmation = payload.password_confirmation
-        state.credential_details.privacy_policy = payload.privacy_policy
     },
     CLEAR_FORM_DETAILS(state) {
         state.account_details.title = ''
@@ -281,21 +276,7 @@ export const actions = {
     registeredLocum({state, commit}) {
         commit('SET_CREDENTIAL_DETAIL_FORM_ERROR', [])
         let form = {}
-        let professionForm = {
-            gmc_or_nmc_number: state.professional_details.gmc_or_nmc_number,
-            mpl_or_npl_number: state.professional_details.mpl_or_npl_number,
-            nhs_smart_card_id_number: state.professional_details.nhs_smart_card_id_number,
-            profession_id: (state.professional_details.profession).toString(),
-            qualification_id: state.professional_details.specialty.map(item => item.id),
-            clinical_system_id: state.professional_details.clinical_systems.map(item => item.id),
-            spoken_language_id: state.professional_details.spoken_languages.map(item => item.id),
-            rate_per_hour: state.professional_details.rate_per_hour,
-            rate_per_half_day_session: state.professional_details.rate_per_half_day_session,
-            rate_per_whole_day_session: state.professional_details.rate_per_whole_day_session,
-            ir35: state.professional_details.ir35,
-            practice_type_id: state.professional_details.practice_type_id
-        }
-        form = {...state.account_details, ...state.address_details, ...state.credential_details, ...professionForm}
+        form = {...state.account_details, ...state.address_details, ...state.credential_details, ...state.professional_details}
         this.$axios
             .$post(`/api/v1/register/locum`, form)
             .then(res => {
@@ -353,7 +334,12 @@ export const actions = {
 export const getters = {
     getProfessions (state) {
         return state.professions.map((item) => {
-            return { id: item.id, name: item.name }
+            return { value: item.id, label: item.name }
         })
-    }
+    },
+    getPracticeTypes (state) {
+        return state.practiceTypes.map((item) => {
+            return { value: item.id, label: item.name }
+        })
+    },
 }

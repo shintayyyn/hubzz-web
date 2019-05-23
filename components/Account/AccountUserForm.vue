@@ -57,7 +57,11 @@
 import AppInput from '@/components/Base/AppInput'
 import AppSelect from '@/components/Base/AppSelect'
 import AppButton from '@/components/Base/AppButton'
-const roles = ['Practice Staff', 'Practice Manager', 'Partner']
+const roles = [
+  { value: 'Practice Staff', label: 'Practice Staff' },
+  { value: 'Practice Manager', label: 'Practice Manager' },
+  { value: 'Partner', label: 'Partner' }
+]
 export default {
   components: {
     AppInput,
@@ -152,7 +156,7 @@ export default {
         if (!this.formError.length) {
           this.$axios.$put(`/api/v1/practice/me/account`, this.form).then(res => {
             // ! ask arvi where to store response
-            console.log(res.message)
+            console.log(res)
           })
         }
       } catch (e) {

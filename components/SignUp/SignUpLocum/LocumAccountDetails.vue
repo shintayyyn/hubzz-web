@@ -75,7 +75,10 @@
 import AppInput from '@/components/Base/AppInput'
 import AppSelect from '@/components/Base/AppSelect'
 import AppButton from '@/components/Base/AppButton'
-const genders = ['Male', 'Female']
+const genders = [
+  { value: 'Male', label: 'Male' },
+  { value: 'Female', label: 'Female' }
+]
 export default {
   components: {
     AppInput,

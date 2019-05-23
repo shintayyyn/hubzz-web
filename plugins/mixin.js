@@ -52,11 +52,22 @@ Vue.mixin({
         return  { field: field, message: 'Your mobile number is invalid' }
       }
     },
+    ValidateArray(value, field) {
+      let index = this.formError.findIndex(item => item.field === field)
+      if (index >= 0) {
+        this.formError.splice(index, 1)
+      }
+      if (value.length === 0) {
+        this.formError.push(
+          { field: field, message: 'Required', validation: 'required'}
+        )
+      }
+    },
     ValidateInput(e) {
       if (e.key >= 0 && e.key <= 9) {
-        if (e.target.value.length === 1 && parseInt(e.key) === 0) {
-          e.preventDefault()
-        }
+        // if (e.target.value.length === 1 && parseInt(e.key) === 0) {
+        //   e.preventDefault()
+        // }
         if (e.target.value.length > 11) {
           e.preventDefault()
         }
@@ -76,18 +87,7 @@ Vue.mixin({
         )
       } 
     },
-    ValidateArray(value, field) {
-      console.log(value,field)
-      let index = this.formError.findIndex(item => item.field === field)
-      if (index >= 0) {
-        this.formError.splice(index, 1)
-      }
-      if (value.length === 0) {
-        this.formError.push(
-          { field: field, message: 'Required', validation: 'required'}
-        )
-      }
-    },
+    
     ValidateDate(start, end) {
       if (this.$moment(end).format('YYYY-MM-DD') < this.$moment(start).format('YYYY-MM-DD')) {
         this.formError.push(
