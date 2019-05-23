@@ -1,20 +1,20 @@
 <template>
   <div>
-    <!-- sidebar 500 499-->
+    <!-- sidebar 500 499 -->
     <div class="sidebar">
       <AppSideBar @close="close"/>
     </div>
     <div class="sidebar-shield" v-if="$store.state.sidebar_shield"></div>
-    <!-- signout 600 599-->
+    <!-- signout 600 599 -->
     <div class="signout flex justify-center" v-if="$store.state.sign_out_modal">
       <SignOut/>
     </div>
     <div class="signout-shield" v-if="$store.state.signout_shield"></div>
-    <!-- create job modal 510 509 -->
+    <!-- create job modal 510 509
     <div class="create-job-modal shadow-lg">
       <CreateJobModal v-if="$store.state.create_job_modal" @close="closeCreateJobModal"/>
     </div>
-    <div class="create-job-modal-shield" v-if="$store.state.create_job_shield"></div>
+    <div class="create-job-modal-shield" v-if="$store.state.create_job_shield"></div>-->
 
     <div class="content">
       <!-- header -->

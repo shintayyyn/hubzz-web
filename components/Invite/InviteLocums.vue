@@ -1,38 +1,23 @@
 <template>
   <div class="rounded-lg shadow-lg pt-10 px-8 pb-8">
-    <div
-      class="mb-4 border-b border-b-2 border-grey py-2"
-      :class="{'border-yellow-dark':setFocus === 'email_address', 'border-red': formError.includes('email_address')}"
-    >
-      <label for="email_address" class="block text-sm mb-2">
-        Email addresses to Locums
-        <span
-          class="ml-2 bg-grey-light rounded-lg px-4 py-1 text-xs"
-        >Seperate with commas</span>
-      </label>
-      <em
-        v-if="formError.includes('email_address')"
-        class="text-xs text-red-darker float-right"
-      >Required</em>
-      <input
-        @focus="setFocus = 'email_address'"
-        @blur="setFocus = ''"
-        v-model="form.email_address"
-        type="password"
-        name="email_address"
-        id="email_address"
-        class="appearance-none bg-transparent border-none w-full text-grey-darker mr-3 py-1 px-2 leading-tight focus:outline-none"
-      >
-    </div>
+    <AppInput
+      v-model="form.email"
+      :type="'multiemail'"
+      :name="'email'"
+      :label="'Email addresses to Locums'"
+      :placeholder="''"
+      :info="'Seperate with commas'"
+    />
+    <!-- :error="formError.find(item => item.field === 'email')" -->
     <div class="flex justify-start mt-8">
-      <div class="text-sm">The message to be sent to Locums</div>
+      <div class="text-xs sm:text-sm">The message to be sent to Locums</div>
     </div>
     <div class="flex justify-start mt-5">
-      <div class="text-sm font-bold">Have you heard the buzz about hubzz?</div>
+      <div class="text-xs sm:text-sm font-bold">Have you heard the buzz about hubzz?</div>
     </div>
     <div class="flex justify-start mt-5">
-      <span class="text-sm font-bold">Join hubzz at &nbsp;</span>
-      <span class="text-sm font-bold">
+      <span class="text-xs sm:text-sm font-bold">Join hubzz at &nbsp;</span>
+      <span class="text-xs sm:text-sm font-bold">
         <a
           href="http://hubzz.co.uk"
           target="_blank"
@@ -41,38 +26,37 @@
       </span>
     </div>
     <div class="flex justify-start mt-5">
-      <div class="text-left">
-        <button
-          class="bg-yellow-dark hover:text-white focus:outline-none text-black font-bold text-xl p-6 rounded-lg"
-          @click.prevent="send"
-        >Send</button>
-      </div>
+      <AppButton :label="'Send'" @click="send"/>
     </div>
   </div>
 </template>
 <script>
+import AppInput from '@/components/Base/AppInput'
+import AppButton from '@/components/Base/AppButton'
 export default {
+  components: {
+    AppInput,
+    AppButton
+  },
   data() {
     return {
       form: {
-        email_address: ''
+        email: ''
       },
       formError: [],
-      setFocus: false
     }
-  },
-  created() {
-    // get from API
-    this.form.terms_and_conditions = ''
   },
   methods: {
     send() {
-      console.log(this.form)
+      this.$axios.$post(`api/v1/invite`, { email: this.form.email, domain: 'Locums' }).then(res => {
+        this.form.email = ''
+        this.$store.commit('invite/SET_ACTIVE_TAB', 'invite_success')
+      })
     }
   }
 }
 </script>
-<style scoped>
+<style>
 textarea {
   resize: none;
 }

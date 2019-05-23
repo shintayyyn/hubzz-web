@@ -1,6 +1,6 @@
 <template>
   <section>
-    <!-- input text / email / password / multicheckbox -->
+    <!-- multicheckbox -->
     <div v-if="type === 'multi-checkbox'" class="flex flex-col py-2 mb-6">
       <div class="relative flex flex-row flex-nowrap justify-between">
         <label :for="name" class="text-xs sm:text-base py-1">{{label}}</label>
@@ -12,6 +12,35 @@
       </div>
     </div>
 
+    <!-- multiemail -->
+    <div v-if="type === 'multiemail'" class="flex flex-col py-2 mb-6">
+      <div class="relative flex flex-row flex-nowrap justify-between">
+        <div class="flex flex-wrap justify-start">
+          <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
+          <span class="ml-2 bg-grey-light rounded-lg px-4 py-1 text-xs">Seperate with commas</span>
+        </div>
+        <div class="bg-red p-1 text-xs sm:text-base text-white" v-if="error">{{error.message}}</div>
+      </div>
+      <!-- <div class="flex flex-row flex-wrap justify-start">
+        <div
+          class="rounded-lg bg-yellow-dark py-1 px-3 m-1"
+          v-for="(item, index) in selectedEmails"
+          :key="index"
+        >{{item}}</div>
+      </div>-->
+      <div class="flex flex-row justify-start mt-1">
+        <input
+          :value="value"
+          type="email"
+          :placeholder="placeholder"
+          class="border-b-2 focus:border-yellow focus:outline-none py-4 font-bold text-xs sm:text-sm w-full"
+          :class="error ? 'border-red':''"
+          @input="$emit('input', $event.target.value)"
+        >
+      </div>
+    </div>
+
+    <!-- text / email / password  -->
     <div v-else class="flex flex-col py-2 mb-6">
       <div class="relative flex flex-row flex-nowrap justify-between">
         <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
@@ -46,9 +75,12 @@ export default {
     info: String,
     inStyle: String,
     // for multiselect checkbox
-    lists: Array
+    lists: Array,
+    // for multiemail
+    // selectedEmails: Array
   },
   methods: {
+    // for multiselect checkbox
     inputCheck(e) {
       if (e.target.checked) {
         this.$emit('checked', e.target.value)
