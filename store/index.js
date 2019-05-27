@@ -10,7 +10,6 @@ export const state = () => ({
   months: [],
   mobile: false,
   // practice
-  create_job_modal: false,
   create_job_shield: false,
   //
   availability_modal: false,
@@ -66,9 +65,6 @@ export const mutations = {
   // practice
   SET_CREATEJOB_SHIELD(state, payload) {
     state.create_job_shield = payload
-  },
-  TOGGLE_CREATEJOB_MODAL(state, payload) {
-    state.create_job_modal = payload
   },
   //
   TOGGLE_AVAILABILITY_MODAL(state, payload) {

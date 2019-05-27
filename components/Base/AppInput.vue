@@ -59,9 +59,9 @@
       </div>
     </div>
 
-    <!-- text / email / password  -->
+    <!-- text / email / password / date / time -->
     <div
-      v-if="type === 'text' || type === 'email' || type === 'password'"
+      v-if="type === 'text' || type === 'time' || type === 'email' || type === 'password' || type === 'date'"
       class="flex flex-col py-2 mb-6"
     >
       <div class="relative flex flex-row flex-nowrap justify-between">
@@ -80,7 +80,7 @@
           class="border-b-2 focus:border-yellow focus:outline-none py-4 font-bold text-xs sm:text-sm w-full"
           :class="error? 'border-red':''"
           @input="$emit('input', $event.target.value)"
-          v-on="name === 'mobile_number' || name === 'phone_number' ? { keypress: ValidateInput } : null"
+          v-on="name === 'mobile_number' || name === 'unpaid_breaks_in_minutes' || name === 'phone_number' || name === 'number_of_patients' || name === 'duration_for_each_appointment' ? { keypress: ValidateInput } : null"
           :style="inStyle"
           @keypress.enter="$emit('submit')"
           @blur="$emit('blur')"
@@ -113,7 +113,6 @@ export default {
       if (e.target.checked) {
         this.$emit('checked', e.target.value)
       } else {
-        console.log(e.target.value)
         this.$emit('unchecked', e.target.value)
       }
     }

@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col">
-    <div class="flex flex-row flex-wrap justify0-between">
+    <div class="flex flex-row flex-wrap justify-between">
       <div class="w-full md:w-3/5 p-2">
         <div class="rounded-lg shadow-lg p-8">
           <div class="flex flex-row flex-wrap">
@@ -38,52 +38,83 @@
       </div>
     </div>
 
-    <div class="w-full md:w-1/2 p-2">
+    <div class="w-full p-2">
       <div class="rounded-lg shadow-lg p-8">
-        <form class="w-full">
-          <AppInput
-            v-model="form.email"
-            :type="'email'"
-            :name="'email'"
-            :label="'Email'"
-            :placeholder="''"
-            :error="this.formError.find(item => item.field === 'email')"
-          />
-          <AppInput
-            v-model="form.phone_number"
-            :type="'text'"
-            :name="'phone_number'"
-            :label="'Phone number'"
-            :placeholder="''"
-            :error="this.formError.find(item => item.field === 'phone_number')"
-          />
-          <AppInput
-            v-model="form.report_to"
-            :type="'text'"
-            :name="'report_to'"
-            :label="'Report to'"
-            :placeholder="''"
-            :error="this.formError.find(item => item.field === 'report_to')"
-          />
-          <AppInput
-            :type="'multi-checkbox'"
-            @checked="form.practice_type_id.push($event)"
-            @unchecked="form.practice_type_id.splice(form.practice_type_id.findIndex(item => item === $event), 1)"
-            :name="'practice_type_id'"
-            :label="'What type of Practice are you?'"
-            :placeholder="''"
-            :error="this.formError.find(item => item.field === 'practice_type_id')"
-            :lists="practice_types"
-          />
-          <AppTextarea
-            v-model="form.extra_information"
-            :name="'extra_information'"
-            :label="'Extra Information (Pracking restrictions, transport links, etc.)'"
-            :placeholder="''"
-            :error="this.formError.find(item => item.field === 'extra_information')"
-          />
-          <AppButton :label="'Save changes'" @click="save"/>
-        </form>
+        <div class="flex flex-row flex-wrap justify-between">
+          <div class="flex flex-col w-full md:w-1/3 pr-1">
+            <AppInput
+              v-model="form.phone_number"
+              :type="'text'"
+              :name="'phone_number'"
+              :label="'Phone number'"
+              :placeholder="''"
+              :error="this.formError.find(item => item.field === 'phone_number')"
+            />
+            <AppInput
+              v-model="form.report_to"
+              :type="'text'"
+              :name="'report_to'"
+              :label="'Report to'"
+              :placeholder="''"
+              :error="this.formError.find(item => item.field === 'report_to')"
+            />
+            <AppInput
+              v-model="form.email"
+              :type="'email'"
+              :name="'email'"
+              :label="'Email Address'"
+              :placeholder="''"
+              :error="this.formError.find(item => item.field === 'email')"
+            />
+            <AppInput
+              :type="'multi-checkbox'"
+              @checked="form.practice_type_id.push($event)"
+              @unchecked="form.practice_type_id.splice(form.practice_type_id.findIndex(item => item === $event), 1)"
+              :name="'practice_type_id'"
+              :label="'What type of Practice are you?'"
+              :placeholder="''"
+              :error="this.formError.find(item => item.field === 'practice_type_id')"
+              :lists="practice_types"
+            />
+            <AppTextarea
+              v-model="form.extra_information"
+              :name="'extra_information'"
+              :label="'Extra Information (Pracking restrictions, transport links, etc.)'"
+              :placeholder="''"
+              :error="this.formError.find(item => item.field === 'extra_information')"
+            />
+            <AppButton :label="'Save changes'" @click="save"/>
+          </div>
+          <div class="flex flex-col w-full md:w-2/3 pl-1">
+            <div class="text-xs sm:text-sm mt-3">Compliance Documents</div>
+            <div class="flex flex-row flex-wrap justify-between">
+              <div class="flex flex-col w-full md:w-1/2 pr-1">
+                <AppInput
+                  :type="'multi-checkbox'"
+                  @checked="form.gp_compliance_document_id.push($event)"
+                  @unchecked="form.gp_compliance_document_id.splice(form.gp_compliance_document_id.findIndex(item => item === $event), 1)"
+                  :name="'gp_compliance_document_id'"
+                  :label="'For GPs:'"
+                  :placeholder="''"
+                  :error="this.formError.find(item => item.field === 'gp_compliance_document_id')"
+                  :lists="gp_documents"
+                />
+              </div>
+              <div class="flex flex-col w-full md:w-1/2 pl-1">
+                <AppInput
+                  :type="'multi-checkbox'"
+                  @checked="form.others_compliance_document_id.push($event)"
+                  @unchecked="form.others_compliance_document_id.splice(form.others_compliance_document_id.findIndex(item => item === $event), 1)"
+                  :name="'others_compliance_document_id'"
+                  :label="'For Nurses, et al:'"
+                  :placeholder="''"
+                  :error="this.formError.find(item => item.field === 'others_compliance_document_id')"
+                  :lists="others_documents"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -101,6 +132,12 @@ export default {
   data() {
     return {
       practice_types: [],
+      gp_documents: [],
+      gp_mandatory_compliance_documents: [],
+      gp_optional_compliance_documents: [],
+      others_documents: [],
+      others_mandatory_compliance_documents: [],
+      others_optional_compliance_documents: [],
       practice_detail: {
         name: '',
         code: '',
@@ -114,7 +151,6 @@ export default {
         report_to: '',
         extra_information: '',
         practice_type_id: [],
-        // ! ask arvi on these
         mandatory_training_id: [],
         gp_compliance_document_id: [],
         others_compliance_document_id: []
@@ -194,7 +230,31 @@ export default {
         // required
         this.formError.push({ field: 'practice_type_id', message: 'Required' })
       }
-    }
+    },
+    'form.gp_compliance_document_id'(value) {
+      // splice from formerror
+      let index = this.formError.findIndex(item => item.field === 'gp_compliance_document_id')
+      if (index >= 0) {
+        this.formError.splice(index, 1)
+      }
+      // validate
+      if (!value.length) {
+        // required
+        this.formError.push({ field: 'gp_compliance_document_id', message: 'Required' })
+      }
+    },
+    'form.others_compliance_document_id'(value) {
+      // splice from formerror
+      let index = this.formError.findIndex(item => item.field === 'others_compliance_document_id')
+      if (index >= 0) {
+        this.formError.splice(index, 1)
+      }
+      // validate
+      if (!value.length) {
+        // required
+        this.formError.push({ field: 'others_compliance_document_id', message: 'Required' })
+      }
+    },
   },
   created() {
     this.practice_detail.name = this.$auth.user.practice_detail.practice.surgery.name
@@ -210,17 +270,39 @@ export default {
           this.practice_types.push({ value: item.id, label: item.name })
         })
       })
+    // get profession category
+    this.$axios.$get(`/api/v1/profession-categories`)
+      .then(res => {
+        const gp = res.data.profession_categories.find(item => item.id === 1)
+        const others = res.data.profession_categories.find(item => item.id === 2)
+        this.gp_mandatory_compliance_documents = []
+        gp.mandatory_compliance_documents.forEach(item => {
+          this.gp_mandatory_compliance_documents.push({ value: item.id, label: item.name })
+        })
+        this.gp_optional_compliance_documents = []
+        gp.optional_compliance_documents.forEach(item => {
+          this.gp_optional_compliance_documents.push({ value: item.id, label: item.name })
+        })
+        this.gp_documents = [...this.gp_mandatory_compliance_documents, ...this.gp_optional_compliance_documents]
+        this.others_mandatory_compliance_documents = []
+        others.mandatory_compliance_documents.forEach(item => {
+          this.others_mandatory_compliance_documents.push({ value: item.id, label: item.name })
+        })
+        this.others_optional_compliance_documents = []
+        others.optional_compliance_documents.forEach(item => {
+          this.others_optional_compliance_documents.push({ value: item.id, label: item.name })
+        })
+        this.others_documents = [...this.others_mandatory_compliance_documents, ...this.others_optional_compliance_documents]
+      })
   },
   methods: {
     save() {
       try {
         this.formError = []
-        this.Validate(this.form, ['mandatory_training_id', 'gp_compliance_document_id', 'others_compliance_document_id'])
+        this.Validate(this.form, ['mandatory_training_id', 'extra_information'])
         if (!this.formError.length) {
-          this.$axios.$put(`/api/v1/practice/me/profile`).then(res => {
-            //   ! ask arvi where to set the response
-            console.log(res.message)
-            console.log(res.data)
+          this.$axios.$put(`/api/v1/practice/me/profile`, this.form).then(res => {
+            console.log(res)
           })
         }
       } catch (e) {
@@ -230,6 +312,16 @@ export default {
   }
 }
 </script>
+Alvin 05/23/2019
+Tasks Completed:
+- Registration Locums and Practices
+- Practice Update Account Tab - User/Password
+- Practice Update Profile - Compliance Documents for GPs and Others
+Work in Progress:
+- Practice Dashboard Create Job
+
+Problems Encountered:
+- Google API auto complete
 
 
 

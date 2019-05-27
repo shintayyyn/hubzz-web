@@ -10,11 +10,11 @@
       <SignOut/>
     </div>
     <div class="signout-shield" v-if="$store.state.signout_shield"></div>
-    <!-- create job modal 510 509
+    <!-- create job modal 510 509 -->
     <div class="create-job-modal shadow-lg">
-      <CreateJobModal v-if="$store.state.create_job_modal" @close="closeCreateJobModal"/>
+      <CreateJobModal @close="closeCreateJobModal"/>
     </div>
-    <div class="create-job-modal-shield" v-if="$store.state.create_job_shield"></div>-->
+    <div class="create-job-modal-shield" v-if="$store.state.create_job_shield"></div>
 
     <div class="content">
       <!-- header -->
@@ -83,13 +83,13 @@ export default {
   },
   watch: {
     '$route'(value) {
+      document.body.style.overflow = 'auto'
+      // close sidebar
       let d = document.getElementsByClassName('sidebar')[0]
       d.className = "sidebar";
-      document.body.style.overflow = 'auto'
       this.$store.commit('SET_SIDEBAR_SHIELD', false)
+      // close practice create job modal
     },
-    // practice modal
-
   },
   methods: {
     toggle() {
@@ -106,7 +106,6 @@ export default {
     },
     toggleCreateJobModal() {
       this.$store.commit('SET_CREATEJOB_SHIELD', true)
-      this.$store.commit('TOGGLE_CREATEJOB_MODAL', true)
       let d = document.getElementsByClassName('create-job-modal')[0]
       // d.className += " toggled-right";
       d.classList.toggle('toggled-right')
@@ -114,8 +113,8 @@ export default {
     },
     closeCreateJobModal() {
       this.$store.commit('SET_CREATEJOB_SHIELD', false)
-      this.$store.commit('TOGGLE_CREATEJOB_MODAL', false)
       let d = document.getElementsByClassName('create-job-modal')[0]
+      // d.className += "create-job-modal shadow-lg"
       d.classList.toggle('toggled-right')
       document.body.style.overflow = 'auto'
     }
@@ -167,7 +166,7 @@ body {
 .create-job-modal {
   position: fixed;
   right: 0;
-  margin-right: 0;
+  margin-right: -100vw;
   width: 100%;
   height: 100vh;
   overflow: auto;
@@ -214,7 +213,7 @@ body {
   margin-left: 0;
 }
 .toggled-right {
-  margin-right: -30%;
+  margin-right: -0%;
 }
 
 .header {
@@ -230,6 +229,12 @@ body {
 @media screen and (min-width: 900px) {
   .sidebar {
     margin-left: 0;
+  }
+  ..create-job-modal {
+    width: 95%;
+  }
+  .toggled-right {
+    margin-right: -5%;
   }
   .content {
     margin-left: 200px;
