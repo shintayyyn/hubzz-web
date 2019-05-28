@@ -83,7 +83,16 @@
               :placeholder="''"
               :error="this.formError.find(item => item.field === 'extra_information')"
             />
-            <AppButton :label="'Save changes'" @click="save"/>
+            <AppInput
+              :type="'multi-checkbox'"
+              @checked="form.mandatory_training_id.push($event)"
+              @unchecked="form.mandatory_training_id.splice(form.mandatory_training_id.findIndex(item => item === $event), 1)"
+              :name="'mandatory_training_id'"
+              :label="'Mandatory training required from Locums:'"
+              :placeholder="''"
+              :error="this.formError.find(item => item.field === 'mandatory_training_id')"
+              :lists="mandatory_trainings"
+            />
           </div>
           <div class="flex flex-col w-full md:w-2/3 pl-1">
             <div class="text-xs sm:text-sm mt-3">Compliance Documents</div>
@@ -115,6 +124,9 @@
             </div>
           </div>
         </div>
+        <div class="mt-8">
+          <AppButton :label="'Save changes'" @click="save"/>
+        </div>
       </div>
     </div>
   </div>
@@ -132,6 +144,7 @@ export default {
   data() {
     return {
       practice_types: [],
+      mandatory_trainings: [],
       gp_documents: [],
       gp_mandatory_compliance_documents: [],
       gp_optional_compliance_documents: [],
@@ -155,6 +168,8 @@ export default {
         gp_compliance_document_id: [],
         others_compliance_document_id: []
       },
+      mandatory_training: [],
+      name: '',
       formError: []
     }
   },
@@ -262,6 +277,8 @@ export default {
     this.practice_detail.address = this.$auth.user.practice_detail.practice.surgery.address
     this.practice_detail.phone_number = this.$auth.user.practice_detail.practice.surgery.phone_number
     this.practice_detail.ccg = this.$auth.user.practice_detail.practice.surgery.clinical_commissioning_group.name
+    // get default data // ! ask arvi what endpoint
+
     // get practice types
     this.$axios.$get(`/api/v1/practice-types`)
       .then(res => {
@@ -270,7 +287,15 @@ export default {
           this.practice_types.push({ value: item.id, label: item.name })
         })
       })
-    // get profession category
+    // get mandatory training 
+    this.$axios.$get(`/api/v1/mandatory-trainings`).then(res => {
+      this.mandatory_trainings = []
+      res.data.mandatory_trainings.forEach(item => {
+        this.mandatory_trainings.push({ label: item.name, value: item.id })
+      })
+    })
+
+    // get compliance documents based on profession category (GP, Other)
     this.$axios.$get(`/api/v1/profession-categories`)
       .then(res => {
         const gp = res.data.profession_categories.find(item => item.id === 1)
@@ -299,6 +324,7 @@ export default {
     save() {
       try {
         this.formError = []
+        console.log(this.form)
         this.Validate(this.form, ['mandatory_training_id', 'extra_information'])
         if (!this.formError.length) {
           this.$axios.$put(`/api/v1/practice/me/profile`, this.form).then(res => {
@@ -312,16 +338,6 @@ export default {
   }
 }
 </script>
-Alvin 05/23/2019
-Tasks Completed:
-- Registration Locums and Practices
-- Practice Update Account Tab - User/Password
-- Practice Update Profile - Compliance Documents for GPs and Others
-Work in Progress:
-- Practice Dashboard Create Job
-
-Problems Encountered:
-- Google API auto complete
 
 
 

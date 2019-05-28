@@ -11,10 +11,15 @@
     </div>
     <div class="signout-shield" v-if="$store.state.signout_shield"></div>
     <!-- create job modal 510 509 -->
-    <div class="create-job-modal shadow-lg">
+    <div class="create-job-modal shadow-lg" v-if="$auth.user.domain === 'Practice'">
       <CreateJobModal @close="closeCreateJobModal"/>
     </div>
     <div class="create-job-modal-shield" v-if="$store.state.create_job_shield"></div>
+    <!-- job details 510 509 -->
+    <div class="job-detail-modal shadow-lg" v-if="$auth.user.domain === 'Practice'">
+      <JobDetailModal @close="closeJobDetailModal"/>
+    </div>
+    <div class="job-detail-modal-shield" v-if="$store.state.job_detail_shield"></div>
 
     <div class="content">
       <!-- header -->
@@ -56,6 +61,7 @@ import AppNotification from '@/components/AppNotification'
 import SignOut from '@/components/Auth/SignOut'
 // practice
 import CreateJobModal from '@/components/CreateJobModal'
+import JobDetailModal from '@/components/Session/JobDetailModal'
 export default {
   components: {
     AppButton,
@@ -65,6 +71,7 @@ export default {
     SignOut,
     // practice
     CreateJobModal,
+    JobDetailModal,
   },
   middleware: 'isAuthenticated',
   beforeCreate() {
@@ -104,17 +111,22 @@ export default {
       d.className = "sidebar";
       document.body.style.overflow = 'auto'
     },
+    // practice
     toggleCreateJobModal() {
       this.$store.commit('SET_CREATEJOB_SHIELD', true)
       let d = document.getElementsByClassName('create-job-modal')[0]
-      // d.className += " toggled-right";
       d.classList.toggle('toggled-right')
       document.body.style.overflow = 'hidden'
     },
     closeCreateJobModal() {
       this.$store.commit('SET_CREATEJOB_SHIELD', false)
       let d = document.getElementsByClassName('create-job-modal')[0]
-      // d.className += "create-job-modal shadow-lg"
+      d.classList.toggle('toggled-right')
+      document.body.style.overflow = 'auto'
+    },
+    closeJobDetailModal() {
+      this.$store.commit('SET_JOBDETAIL_SHIELD', false)
+      let d = document.getElementsByClassName('job-detail-modal')[0]
       d.classList.toggle('toggled-right')
       document.body.style.overflow = 'auto'
     }
@@ -185,6 +197,28 @@ body {
   opacity: 0.5;
   z-index: 509;
 }
+.job-detail-modal {
+  position: fixed;
+  right: 0;
+  margin-right: -100vw;
+  width: 100%;
+  height: 100vh;
+  overflow: auto;
+  border-left: solid 2px #edf2f7;
+  transition: all 0.3s ease-in-out;
+  background-color: white;
+  z-index: 510;
+}
+.job-detail-modal-shield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #333;
+  opacity: 0.5;
+  z-index: 509;
+}
 /* locums */
 .availability-modal {
   position: fixed;
@@ -230,7 +264,7 @@ body {
   .sidebar {
     margin-left: 0;
   }
-  ..create-job-modal {
+  .create-job-modal {
     width: 95%;
   }
   .toggled-right {

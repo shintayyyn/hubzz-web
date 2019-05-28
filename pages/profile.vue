@@ -5,19 +5,19 @@
     </div>
     <div class="px-10 mt-5">
       <PracticeForm v-if="$store.state.profile.profileTab === 'practice'"/>
-      <BranchesForm v-if="$store.state.profile.profileTab === 'branches'"/>
+      <SurgeriesForm v-if="$store.state.profile.profileTab === 'surgeries'"/>
     </div>
   </section>
 </template>
 <script>
 import ProfileTabs from '@/components/Profile/ProfileTabs'
 import PracticeForm from '@/components/Profile/PracticeForm'
-import BranchesForm from '@/components/Profile/BranchesForm'
+import SurgeriesForm from '@/components/Profile/SurgeriesForm'
 export default {
   components: {
     ProfileTabs,
     PracticeForm,
-    BranchesForm
+    SurgeriesForm
   }
 }
 </script>

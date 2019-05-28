@@ -576,6 +576,7 @@ export default {
       this.$router.push('/profile')
       document.getElementsByClassName('create-job-modal')[0].classList.toggle('toggled-right')
       this.$store.commit('SET_CREATEJOB_SHIELD', false)
+      document.body.style.overflow = 'auto'
     },
     setFocus(list) {
       if (list === 'spoken_language') {
