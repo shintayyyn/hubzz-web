@@ -67,9 +67,10 @@
               :error="this.formError.find(item => item.field === 'email')"
             />
             <AppInput
+              v-model="form.practice_type_id"
               :type="'multi-checkbox'"
               @checked="form.practice_type_id.push($event)"
-              @unchecked="form.practice_type_id.splice(form.practice_type_id.findIndex(item => item === $event), 1)"
+              @unchecked="uncheckPractice($event)"
               :name="'practice_type_id'"
               :label="'What type of Practice are you?'"
               :placeholder="''"
@@ -84,9 +85,10 @@
               :error="this.formError.find(item => item.field === 'extra_information')"
             />
             <AppInput
+              v-model="form.mandatory_training_id"
               :type="'multi-checkbox'"
               @checked="form.mandatory_training_id.push($event)"
-              @unchecked="form.mandatory_training_id.splice(form.mandatory_training_id.findIndex(item => item === $event), 1)"
+              @unchecked="uncheckMandatory($event)"
               :name="'mandatory_training_id'"
               :label="'Mandatory training required from Locums:'"
               :placeholder="''"
@@ -99,9 +101,10 @@
             <div class="flex flex-row flex-wrap justify-between">
               <div class="flex flex-col w-full md:w-1/2 pr-1">
                 <AppInput
+                  v-model="form.gp_compliance_document_id"
                   :type="'multi-checkbox'"
                   @checked="form.gp_compliance_document_id.push($event)"
-                  @unchecked="form.gp_compliance_document_id.splice(form.gp_compliance_document_id.findIndex(item => item === $event), 1)"
+                  @unchecked="uncheckGp($event)"
                   :name="'gp_compliance_document_id'"
                   :label="'For GPs:'"
                   :placeholder="''"
@@ -111,9 +114,10 @@
               </div>
               <div class="flex flex-col w-full md:w-1/2 pl-1">
                 <AppInput
+                  v-model="form.others_compliance_document_id"
                   :type="'multi-checkbox'"
                   @checked="form.others_compliance_document_id.push($event)"
-                  @unchecked="form.others_compliance_document_id.splice(form.others_compliance_document_id.findIndex(item => item === $event), 1)"
+                  @unchecked="uncheckOther($event)"
                   :name="'others_compliance_document_id'"
                   :label="'For Nurses, et al:'"
                   :placeholder="''"
@@ -272,13 +276,20 @@ export default {
     },
   },
   created() {
+    // get default data 
     this.practice_detail.name = this.$auth.user.practice_detail.practice.surgery.name
     this.practice_detail.code = this.$auth.user.practice_detail.practice.surgery.code
     this.practice_detail.address = this.$auth.user.practice_detail.practice.surgery.address
     this.practice_detail.phone_number = this.$auth.user.practice_detail.practice.surgery.phone_number
     this.practice_detail.ccg = this.$auth.user.practice_detail.practice.surgery.clinical_commissioning_group.name
-    // get default data // ! ask arvi what endpoint
-
+    this.form.phone_number = this.$auth.user.practice_detail.practice.phone_number
+    this.form.report_to = this.$auth.user.practice_detail.practice.report_to
+    this.form.email = this.$auth.user.practice_detail.practice.email
+    this.form.extra_information = this.$auth.user.practice_detail.practice.extra_information
+    this.form.practice_type_id = this.$auth.user.practice_detail.practice.practice_types.map(item => item.id)
+    this.form.mandatory_training_id = this.$auth.user.practice_detail.practice.mandatory_trainings.map(item => item.id)
+    this.form.gp_compliance_document_id = this.$auth.user.practice_detail.practice.gp_compliance_documents.map(item => item.id)
+    this.form.others_compliance_document_id = this.$auth.user.practice_detail.practice.others_compliance_documents.map(item => item.id)
     // get practice types
     this.$axios.$get(`/api/v1/practice-types`)
       .then(res => {
@@ -321,14 +332,28 @@ export default {
       })
   },
   methods: {
+    uncheckPractice(value) {
+      this.form.practice_type_id = this.form.practice_type_id.filter(id => id != value)
+    },
+    uncheckOther(value) {
+      this.form.others_compliance_document_id = this.form.others_compliance_document_id.filter(id => id != value)
+    },
+    uncheckGp(value) {
+      this.form.gp_compliance_document_id = this.form.gp_compliance_document_id.filter(id => id != value)
+    },
+    uncheckMandatory(value) {
+      this.form.mandatory_training_id = this.form.mandatory_training_id.filter(id => id != value)
+    },
     save() {
       try {
         this.formError = []
-        console.log(this.form)
         this.Validate(this.form, ['mandatory_training_id', 'extra_information'])
         if (!this.formError.length) {
           this.$axios.$put(`/api/v1/practice/me/profile`, this.form).then(res => {
             console.log(res)
+            // set mandatory training
+            this.$store.commit('profile/SET_MANDATORY_TRAINING', res.data.practice.mandatory_trainings)
+            this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: res.message })
           })
         }
       } catch (e) {

@@ -17,7 +17,7 @@
           :class="error? 'border-red':''"
           @input="$emit('input', $event.target.value)"
         >
-          <option value disabled selected>{{placeholder}}</option>
+          <option value disabled selected v-if="placeholder">{{placeholder}}</option>
           <option v-for="(item, index) in items" :key="index" :value="item.value">{{item.label}}</option>
         </select>
       </div>

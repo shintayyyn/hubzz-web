@@ -47,10 +47,10 @@ Vue.mixin({
     },
     ValidateMobile(value, field) {
       // uk format
-      let re = /((\+44(\s\(0\)\s|\s0\s|\s)?)|0)7\d{3}(\s)?\d{6}/g;
-      if (value && !re.test(String(value).toLowerCase())) {
-        return  { field: field, message: 'Your mobile number is invalid' }
-      }
+      // let re = /((\+44(\s\(0\)\s|\s0\s|\s)?)|0)7\d{3}(\s)?\d{6}/g;
+      // if (value && !re.test(String(value).toLowerCase())) {
+      //   return  { field: field, message: 'Your mobile number is invalid' }
+      // }
     },
     ValidateArray(value, field) {
       let index = this.formError.findIndex(item => item.field === field)
@@ -64,16 +64,13 @@ Vue.mixin({
       }
     },
     ValidateInput(e) {
-      if (e.key >= 0 && e.key <= 9) {
-        // if (e.target.value.length === 1 && parseInt(e.key) === 0) {
-        //   e.preventDefault()
-        // }
-        if (e.target.value.length > 11) {
-          e.preventDefault()
-        }
-      } else {
-        e.preventDefault()
-      }
+      // if (e.key >= 0 && e.key <= 9) {
+      //   if (e.target.value.length > 11) {
+      //     e.preventDefault()
+      //   }
+      // } else {
+      //   e.preventDefault()
+      // }
     },
     // 
     ValidateText(value, field) {

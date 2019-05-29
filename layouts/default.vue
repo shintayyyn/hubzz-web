@@ -10,18 +10,35 @@
       <SignOut/>
     </div>
     <div class="signout-shield" v-if="$store.state.signout_shield"></div>
-    <!-- create job modal 510 509 -->
+    <!-- pratice - create job modal 510 509 -->
     <div class="create-job-modal shadow-lg" v-if="$auth.user.domain === 'Practice'">
-      <CreateJobModal @close="closeCreateJobModal"/>
+      <CreateJobModal @close="closeCreateJobModal" v-if="$store.state.create_job_modal"/>
     </div>
     <div class="create-job-modal-shield" v-if="$store.state.create_job_shield"></div>
-    <!-- job details 510 509 -->
+    <!-- practice - job details 510 509 -->
     <div class="job-detail-modal shadow-lg" v-if="$auth.user.domain === 'Practice'">
-      <JobDetailModal @close="closeJobDetailModal"/>
+      <JobDetailModal @close="closeJobDetailModal" v-if="$store.state.job_detail_modal"/>
     </div>
     <div class="job-detail-modal-shield" v-if="$store.state.job_detail_shield"></div>
-
+    <!-- practice - add surgery modal 510 509 -->
+    <div class="add-surgery-modal shadow-lg" v-if="$auth.user.domain === 'Practice'">
+      <AddSurgeryModal @close="closeAddSurgeryModal" v-if="$store.state.add_surgery_modal"/>
+    </div>
+    <div class="add-surgery-modal-shield" v-if="$store.state.add_surgery_shield"></div>
+    <!-- practice - add selected surgery surgery 512 511 -->
+    <div
+      class="add-selected-surgery-modal"
+      v-if="$auth.user.domain === 'Practice' && $store.state.add_selected_surgery_modal"
+    >
+      <AddSelectedSurgeryModal/>
+    </div>
+    <div class="add-selected-surgery-shield" v-if="$store.state.add_selected_surgery_shield"></div>
+    <!--  -->
     <div class="content">
+      <!-- notification -->
+      <div class="app-notification">
+        <AppNotification/>
+      </div>
       <!-- header -->
       <div class="header">
         <div class="flex flex-row flex-no-wrap justify-start">
@@ -62,6 +79,8 @@ import SignOut from '@/components/Auth/SignOut'
 // practice
 import CreateJobModal from '@/components/CreateJobModal'
 import JobDetailModal from '@/components/Session/JobDetailModal'
+import AddSurgeryModal from '@/components/Profile/AddSurgeryModal'
+import AddSelectedSurgeryModal from '@/components/Profile/AddSelectedSurgeryModal'
 export default {
   components: {
     AppButton,
@@ -72,6 +91,8 @@ export default {
     // practice
     CreateJobModal,
     JobDetailModal,
+    AddSurgeryModal,
+    AddSelectedSurgeryModal,
   },
   middleware: 'isAuthenticated',
   beforeCreate() {
@@ -87,15 +108,26 @@ export default {
     this.$store.commit('dashboard/SET_DATE_TODAY')
   },
   computed: {
+    // get notification
+    notify() {
+      return this.$store.state.notification.enabled
+    }
   },
   watch: {
+    // disabled notify
+    notify(value) {
+      if (value) {
+        setTimeout(() => {
+          this.$store.commit('SET_NOTIFICATION', { enabled: false, status: '', text: '' })
+        }, 2000)
+      }
+    },
     '$route'(value) {
-      document.body.style.overflow = 'auto'
       // close sidebar
+      this.$store.commit('SET_SIDEBAR_SHIELD', false)
       let d = document.getElementsByClassName('sidebar')[0]
       d.className = "sidebar";
-      this.$store.commit('SET_SIDEBAR_SHIELD', false)
-      // close practice create job modal
+      document.body.style.overflow = 'auto'
     },
   },
   methods: {
@@ -117,19 +149,29 @@ export default {
       let d = document.getElementsByClassName('create-job-modal')[0]
       d.classList.toggle('toggled-right')
       document.body.style.overflow = 'hidden'
+      this.$store.commit('SET_CREATEJOB_MODAL', true)
     },
     closeCreateJobModal() {
       this.$store.commit('SET_CREATEJOB_SHIELD', false)
       let d = document.getElementsByClassName('create-job-modal')[0]
       d.classList.toggle('toggled-right')
       document.body.style.overflow = 'auto'
+      this.$store.commit('SET_CREATEJOB_MODAL', false)
     },
     closeJobDetailModal() {
       this.$store.commit('SET_JOBDETAIL_SHIELD', false)
       let d = document.getElementsByClassName('job-detail-modal')[0]
       d.classList.toggle('toggled-right')
       document.body.style.overflow = 'auto'
-    }
+      this.$store.commit('SET_JOBDETAIL_MODAL', false)
+    },
+    closeAddSurgeryModal() {
+      this.$store.commit('SET_ADDSURGERY_SHIELD', false)
+      let d = document.getElementsByClassName('add-surgery-modal')[0]
+      d.classList.toggle('toggled-right')
+      document.body.style.overflow = 'auto'
+      this.$store.commit('SET_ADDSURGERY_MODAL', false)
+    },
   }
 }
 </script>
@@ -137,6 +179,14 @@ export default {
 body {
   margin: 0;
 }
+/* notification */
+.app-notification {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  z-index: 999;
+}
+/* sidebar / signout */
 .sidebar {
   position: fixed;
   margin-left: -200px;
@@ -178,9 +228,9 @@ body {
 .create-job-modal {
   position: fixed;
   right: 0;
-  margin-right: -100vw;
+  margin-right: -100%;
   width: 100%;
-  height: 100vh;
+  height: 100%;
   overflow: auto;
   border-left: solid 2px #edf2f7;
   transition: all 0.3s ease-in-out;
@@ -200,9 +250,9 @@ body {
 .job-detail-modal {
   position: fixed;
   right: 0;
-  margin-right: -100vw;
+  margin-right: -100%;
   width: 100%;
-  height: 100vh;
+  height: 100%;
   overflow: auto;
   border-left: solid 2px #edf2f7;
   transition: all 0.3s ease-in-out;
@@ -218,6 +268,47 @@ body {
   background-color: #333;
   opacity: 0.5;
   z-index: 509;
+}
+.add-surgery-modal {
+  position: fixed;
+  right: 0;
+  margin-right: -100%;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  border-left: solid 2px #edf2f7;
+  transition: all 0.3s ease-in-out;
+  background-color: white;
+  z-index: 510;
+}
+.add-surgery-modal-shield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #333;
+  opacity: 0.5;
+  z-index: 509;
+}
+.add-selected-surgery-modal {
+  position: fixed;
+  top: 0;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  width: 100%;
+  z-index: 512;
+}
+.add-selected-surgery-shield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #333;
+  opacity: 0.5;
+  z-index: 511;
 }
 /* locums */
 .availability-modal {
@@ -264,14 +355,18 @@ body {
   .sidebar {
     margin-left: 0;
   }
-  .create-job-modal {
-    width: 95%;
-  }
   .toggled-right {
     margin-right: -5%;
   }
   .content {
     margin-left: 200px;
+  }
+  /* practice */
+  .create-job-modal {
+    width: 95%;
+  }
+  .add-surgery-modal {
+    width: 95%;
   }
 }
 .slide-enter-active,

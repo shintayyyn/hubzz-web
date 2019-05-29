@@ -155,8 +155,8 @@ export default {
         this.Validate(this.form, ['title', 'suffix'])
         if (!this.formError.length) {
           this.$axios.$put(`/api/v1/practice/me/account`, this.form).then(res => {
-            // ! ask arvi where to store response
             console.log(res)
+            this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Saved' })
           })
         }
       } catch (e) {

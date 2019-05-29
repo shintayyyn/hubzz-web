@@ -157,13 +157,16 @@
               :error="formError.find(item => item.field === 'ir35')"
               :items="[ {value: true, label: 'Inside of Scope'}, {value: false, label: 'Outside of Scope'} ]"
             />
-            <!-- // ! Mandatory Training -->
-            <AppSelect
+            <AppInput
               v-model="form.mandatory_training_id"
+              :type="'multi-checkbox'"
+              @checked="form.mandatory_training_id.push($event)"
+              @unchecked="uncheckMandatory($event)"
               :name="'mandatory_training_id'"
               :label="'Mandatory training required for this job'"
-              :error="formError.find(item => item.field === 'mandatory_training_id')"
-              :items="mandatory_training"
+              :placeholder="'Select..'"
+              :error="this.formError.find(item => item.field === 'mandatory_training_id')"
+              :lists="mandatory_training"
               :info="'Check all that apply'"
             />
             <div class="mb-6" v-if="mandatory_training.length === 0">
@@ -483,6 +486,9 @@ export default {
     }
   },
   computed: {
+    onClose() {
+      return !this.$store.state.create_job_shield
+    },
     filteredSpokenLanguages() {
       return this.spoken_languages.filter(language => {
         const index = this.form.spoken_language_id.findIndex((item) => {
@@ -506,9 +512,52 @@ export default {
         })
         return index === -1 && clinicalSystem && clinicalSystem.label.includes(this.searchClinicalSystem)
       })
+    },
+    // get mandatory training from profile - practice tab
+    mandatoryTraining() {
+      return this.$store.state.profile.mandatory_training
+    },
+    // get added surgery from profile - surgeries tab
+    practiceChildren() {
+      return this.$store.state.profile.added_surgery
     }
   },
   watch: {
+    // watch the modal if it closes
+    onClose(value) {
+      if (value) {
+        this.searchLanguage = '',
+          this.searchQualification = '',
+          this.searchClinicalSystem = '',
+          this.unpaid_breaks = '',
+          this.form.practice_id = '',
+          this.form.title = '',
+          this.form.description = '',
+          this.form.is_another_doctor = false,
+          this.form.is_nurse_available = false,
+          this.form.number_of_patients = '',
+          this.form.duration_for_each_appointment = '',
+          this.form.opportunity_for_catch_up_slots = false,
+          this.form.session_requirements = [],
+          this.form.session_structure_information = '',
+          this.form.extra_information = '',
+          this.form.rate = '',
+          this.form.locum_detail_rate_type_id = 1,
+          this.form.ir35 = false,
+          this.form.mandatory_training_id = [],
+          this.form.profession_id = '',
+          this.form.qualification_id = [],
+          this.form.clinical_system_id = [],
+          this.form.spoken_language_id = [],
+          this.form.date_start = null,
+          this.form.time_start = null,
+          this.form.date_end = null,
+          this.form.time_end = null,
+          this.form.unpaid_breaks_in_minutes = '',
+          this.form.shift_id = '',
+          this.form.selection_date = null
+      }
+    },
     // get qualification list base on selected role 
     'form.profession_id'(value) {
       if (value == 1) {
@@ -517,12 +566,38 @@ export default {
         this.qualification = this.other_qualifications
       }
     },
+    // watch store mandatory training for each update from profile - practice tab
+    mandatoryTraining(value) {
+      this.mandatory_training = []
+      value.forEach(item => {
+        this.mandatory_training.push({ label: item.name, value: item.id })
+      })
+    },
+    // watch store added surgery for each added from profile - surgeries tab
+    practiceChildren(item) {
+      if (item) {
+        // this.practices.push({ label: item.surgery.name, value: item.surgery.id })
+        this.practices.push({ label: item.surgery.name, value: item.id })
+      }
+    }
   },
   created() {
-    // get practice list included from the profile practice and surgeries
-    this.practices.push({ label: this.$auth.user.practice_detail.practice.surgery.name, value: this.$auth.user.practice_detail.practice.surgery.id })
-    // get mandatory training from the profile practice added mandatory trainings
-
+    // get practice/surgery list included from the profile practice and surgeries
+    this.$axios.$get(`/api/v1/practice/practice-children`).then(res => {
+      this.practices = []
+      this.practices.push({ label: this.$auth.user.practice_detail.practice.surgery.name, value: this.$auth.user.practice_detail.practice.id })
+      res.data.practice_children.forEach(item => {
+        // this.practices.push({ label: item.surgery.name, value: item.surgery.id })
+        this.practices.push({ label: item.surgery.name, value: item.id })
+      })
+    })
+    // get mandatory training from auth user 
+    if (this.$auth.user.practice_detail.practice.mandatory_trainings && this.$auth.user.practice_detail.practice.mandatory_trainings.length > 0) {
+      this.mandatory_training = []
+      this.$auth.user.practice_detail.practice.mandatory_trainings.forEach(item => {
+        this.mandatory_training.push({ label: item.name, value: item.id })
+      })
+    }
     // get public profession
     this.$axios.$get(`/api/v1/professions`).then(res => {
       this.professions = []
@@ -578,6 +653,9 @@ export default {
       this.$store.commit('SET_CREATEJOB_SHIELD', false)
       document.body.style.overflow = 'auto'
     },
+    uncheckMandatory(value) {
+      this.form.mandatory_training_id = this.form.mandatory_training_id.filter(id => id != value)
+    },
     setFocus(list) {
       if (list === 'spoken_language') {
         let d = document.getElementsByClassName('spoken-language-list')[0]
@@ -622,14 +700,19 @@ export default {
       d.focus()
     },
     publish() {
-      console.log(this.form)
       this.unpaid_breaks !== 'other' ? this.form.unpaid_breaks_in_minutes = this.unpaid_breaks : this.form.unpaid_breaks_in_minutes = this.form.unpaid_breaks_in_minutes
-      this.form.spoken_language_id = this.form.spoken_language_id.map(item => item.value)
-      this.form.qualification_id = this.form.qualification_id.map(item => item.value)
-      this.form.clinical_system_id = this.form.clinical_system_id.map(item => item.value)
-
-      this.$axios.$post(`/api/v1/practice/jobs`, this.form).then(res => {
+      const newForm = {        ...this.form,
+        spoken_language_id: this.form.spoken_language_id.map(item => item.value),
+        qualification_id: this.form.qualification_id.map(item => item.value),
+        clinical_system_id: this.form.clinical_system_id.map(item => item.value)
+      }
+      this.$axios.$post(`/api/v1/practice/jobs`, newForm).then(res => {
         console.log(res)
+        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Successfully created job' })
+        this.$store.commit('SET_CREATEJOB_SHIELD', false)
+        let d = document.getElementsByClassName('create-job-modal')[0]
+        d.classList.toggle('toggled-right')
+        document.body.style.overflow = 'auto'
       })
     }
   }

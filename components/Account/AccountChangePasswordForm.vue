@@ -89,7 +89,6 @@ export default {
         this.formError.push({ field: 'new_password_confirmation', message: 'Required' })
       } else {
         const error = this.ValidateSamePassword(this.form.new_password, value, 'new_password_confirmation')
-        console.log(error)
         if (error) {
           this.formError.push(error)
         }
@@ -105,7 +104,8 @@ export default {
           this.$axios
             .$put(`/api/v1/me/change-password`, this.form)
             .then(res => {
-              // ! ask arvi where to store response
+              console.log(res)
+              this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Password changed' })
             }).catch(err => {
               err.response.data.error_messages.forEach(error => {
                 this.formError.push(error)

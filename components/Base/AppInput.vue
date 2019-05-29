@@ -4,10 +4,17 @@
     <div v-if="type === 'multi-checkbox'" class="flex flex-col py-2 mb-6">
       <div class="relative flex flex-row flex-nowrap justify-between">
         <label :for="name" class="text-xs sm:text-base py-1">{{label}}</label>
+        <div class="bg-grey-light rounded-lg p-1 text-xs sm:text-sm" v-if="info">{{info}}</div>
         <div class="bg-red p-1 text-xs sm:text-base text-white" v-if="error">{{error.message}}</div>
       </div>
       <div class="flex flex-row justify-start mt-1" v-for="(item, index) in lists" :key="index">
-        <input :value="item.value" type="checkbox" @input="inputCheck" class="mt-1 mr-1">
+        <input
+          :value="item.value"
+          type="checkbox"
+          @input="inputCheck"
+          class="mt-1 mr-1"
+          :checked="checkstate.includes(item.value)"
+        >
         <!-- :checked="selected.includes(item.value)" -->
         <label :for="item.name" class="text-xs sm:text-sm py-1">{{item.label}}</label>
       </div>
@@ -80,18 +87,23 @@
           class="border-b-2 focus:border-yellow focus:outline-none py-4 font-bold text-xs sm:text-sm w-full"
           :class="error? 'border-red':''"
           @input="$emit('input', $event.target.value)"
-          v-on="name === 'mobile_number' || name === 'unpaid_breaks_in_minutes' || name === 'phone_number' || name === 'number_of_patients' || name === 'duration_for_each_appointment' ? { keypress: ValidateInput } : null"
           :style="inStyle"
           @keypress.enter="$emit('submit')"
           @blur="$emit('blur')"
           :checked="value"
         >
+        <!-- v-on="name === 'mobile_number' || name === 'unpaid_breaks_in_minutes' || name === 'phone_number' || name === 'number_of_patients' || name === 'duration_for_each_appointment' ? { keypress: ValidateInput } : null" -->
       </div>
     </div>
   </section>
 </template>
 <script>
 export default {
+  data() {
+    return {
+      checkstate: []
+    }
+  },
   props: {
     value: [String, Boolean, Array],
     type: String,
@@ -106,6 +118,11 @@ export default {
     selected: Array,
     // for multiemail
     // selectedEmails: Array
+  },
+  created() {
+    if (this.value instanceof Array) {
+      this.checkstate = this.value
+    }
   },
   methods: {
     // for multiselect checkbox

@@ -4,20 +4,20 @@
       <ProfileTabs/>
     </div>
     <div class="px-10 mt-5">
-      <PracticeForm v-if="$store.state.profile.profileTab === 'practice'"/>
-      <SurgeriesForm v-if="$store.state.profile.profileTab === 'surgeries'"/>
+      <Practice v-if="$store.state.profile.profileTab === 'practice'"/>
+      <Surgeries v-if="$store.state.profile.profileTab === 'surgeries'"/>
     </div>
   </section>
 </template>
 <script>
 import ProfileTabs from '@/components/Profile/ProfileTabs'
-import PracticeForm from '@/components/Profile/PracticeForm'
-import SurgeriesForm from '@/components/Profile/SurgeriesForm'
+import Practice from '@/components/Profile/Practice'
+import Surgeries from '@/components/Profile/Surgeries'
 export default {
   components: {
     ProfileTabs,
-    PracticeForm,
-    SurgeriesForm
+    Practice,
+    Surgeries
   }
 }
 </script>

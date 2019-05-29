@@ -1,6 +1,6 @@
 <template>
   <section class="relative">
-    <AppNotification/>
+    <!-- <AppNotification/> -->
     <div class="px-10">
       <div class="text-sm font-bold">I'm available for...</div>
     </div>

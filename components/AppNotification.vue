@@ -1,17 +1,18 @@
 <template>
-  <div class="fixed pin-t pin-none z-50" style="left:50%">
-    <div class="rounded-b-lg py-2 px-12" :class="notificationStatus">
-      <div class="font-bold text-sm">{{$store.state.notification.text}}</div>
+  <!-- //! add transition of sliding up -->
+  <div
+    class="rounded-b-lg py-2 px-12 flex flex-row flex-nowrap justify-start"
+    :class="notificationStatus"
+    v-if="$store.state.notification.enabled"
+  >
+    <div class="mr-2">
+      <svgicon name="success-checkmark" height="20" width="20"/>
     </div>
+    <div class="font-bold text-sm leading-normal">{{$store.state.notification.text}}</div>
   </div>
 </template>
 <script>
 export default {
-  mounted() {
-    setTimeout(() => {
-      this.$store.commit('SET_NOTIFICATION', { enabled: false, status: '', text: '' })
-    }, 3000)
-  },
   computed: {
     notificationStatus() {
       switch (this.$store.state.notification.status) {
