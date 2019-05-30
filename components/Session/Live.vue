@@ -4,8 +4,43 @@
     style="font-family: Nunito"
     v-if="jobs.length === 0"
   >You do not have any live jobs</div>
-  <div v-else>
-    <div class="flex flex-row flex-nowrap justify-between px-2 mb-6 text-xs sm:text-sm">
+  <div v-else class="overflow-x-auto overflow-y-hidden">
+    <table style="min-width:1000px">
+      <thead>
+        <tr class="text-xs sm:text-sm text-left">
+          <th style="min-width:100px">Job number</th>
+          <th style="min-width:300px">Practice</th>
+          <th style="min-width:100px">Title</th>
+          <th style="min-width:200px">From</th>
+          <th style="min-width:200px">To</th>
+          <th style="min-width:150px">Created</th>
+          <th style="min-width:120px">Locums applied</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          class="rounded-lg shadow-lg hover:bg-grey-light cursor-pointer"
+          v-for="item in jobs"
+          :key="item.id"
+          @click="show(item.id)"
+        >
+          <td class="p-4" style="min-width:100px">{{item.job_number}}</td>
+          <td class="p-4" style="min-width:300px">{{item.platform_job.practice.surgery.name}}</td>
+          <td class="p-4" style="min-width:100px">{{item.platform_job.title}}</td>
+          <td
+            class="p-4"
+            style="min-width:200px"
+          >{{item.platform_job.date_start}} {{item.platform_job.time_start}}</td>
+          <td
+            class="p-4"
+            style="min-width:200px"
+          >{{item.platform_job.date_end}} {{item.platform_job.time_end}}</td>
+          <td class="p-4" style="min-width:150px">{{item.platform_job.date_created}}</td>
+          <td class="p-4" style="min-width:120px">{{item.applicants_count}}</td>
+        </tr>
+      </tbody>
+    </table>
+    <!-- <div class="flex flex-row flex-nowrap justify-between px-2 mb-6 text-xs sm:text-sm">
       <div style="width:10%">Job number</div>
       <div style="width:20%">Practice</div>
       <div style="width:10%">Title</div>
@@ -16,7 +51,7 @@
     </div>
     <div class="flex flex-col">
       <div
-        class="rounded-full shadow-lg py-4 px-2 my-3 cursor-pointer hover:bg-grey-light"
+        class="rounded-lg shadow-lg py-4 px-2 my-3 cursor-pointer hover:bg-grey-light"
         @click="show(item.id)"
         v-for="item in jobs"
         :key="item.id"
@@ -33,7 +68,7 @@
           </template>
         </div>
       </div>
-    </div>
+    </div>-->
   </div>
 </template>
 <script>
@@ -61,3 +96,11 @@ export default {
   }
 }
 </script>
+<style>
+tbody:before {
+  content: "-";
+  display: block;
+  line-height: 1em;
+  color: transparent;
+}
+</style>
