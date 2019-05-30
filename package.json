@@ -26,7 +26,8 @@
     "nuxt": "^2.7.1",
     "validator": "^10.11.0",
     "vue-clickaway": "^2.2.2",
-    "vue-svgicon": "^3.2.4"
+    "vue-svgicon": "^3.2.4",
+    "vue2-google-maps": "^0.10.6"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",
@@ -36,7 +37,7 @@
     "commitizen": "^3.1.1",
     "cz-conventional-changelog": "^2.1.0",
     "eslint": "^5.14.1",
-    "eslint-plugin-nuxt":"^0.4.3",
+    "eslint-plugin-nuxt": "^0.4.3",
     "eslint-plugin-vue": "^5.2.2",
     "husky": "^2.3.0",
     "lint-staged": "^8.1.6",

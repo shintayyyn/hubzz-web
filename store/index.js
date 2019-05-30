@@ -12,12 +12,14 @@ export const state = () => ({
   // practice
   create_job_modal: false,
   create_job_shield: false,
-  job_detail_modal: false,
-  job_detail_shield: false,
+  remove_uploaded_document_modal: false,
+  remove_uploaded_document_shield: false,
   add_surgery_modal: false, 
   add_surgery_shield: false, 
   add_selected_surgery_modal: false,
   add_selected_surgery_shield: false,
+  job_detail_modal: false,
+  job_detail_shield: false,
   //
   availability_modal: false,
   availability_range_modal: false,
@@ -76,11 +78,11 @@ export const mutations = {
   SET_CREATEJOB_SHIELD(state, payload) {
     state.create_job_shield = payload
   },
-  SET_JOBDETAIL_MODAL(state, payload) {
-    state.job_detail_modal = payload
+  SET_REMOVEUPLOADED_MODAL(state, payload) {
+    state.remove_uploaded_document_modal = payload
   },
-  SET_JOBDETAIL_SHIELD(state, payload) {
-    state.job_detail_shield = payload
+  SET_REMOVEUPLOADED_SHIELD(state, payload) {
+    state.remove_uploaded_document_shield = payload
   },
   SET_ADDSURGERY_MODAL(state, payload) {
     state.add_surgery_modal = payload
@@ -93,6 +95,12 @@ export const mutations = {
   },
   SET_ADDSELECTEDSURGERY_SHIELD(state, payload) {
     state.add_selected_surgery_shield = payload
+  },
+  SET_JOBDETAIL_MODAL(state, payload) {
+    state.job_detail_modal = payload
+  },
+  SET_JOBDETAIL_SHIELD(state, payload) {
+    state.job_detail_shield = payload
   },
   //
   TOGGLE_AVAILABILITY_MODAL(state, payload) {

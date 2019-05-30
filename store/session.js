@@ -1,14 +1,14 @@
 export const state = () => ({
     activeTab: 'live',
-    job: null
+    job_id: null
   })
   
   export const mutations = {
     SET_ACTIVE_TAB(state, payload) {
       state.activeTab = payload
     },
-    SET_JOB_DETAIL(state, payload) {
-      state.job = payload
+    SET_JOB_DETAIL_ID(state, payload) {
+      state.job_id = payload
     }
   }
   

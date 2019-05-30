@@ -29,9 +29,22 @@
         <div class="rounded-lg shadow-lg p-8">
           <div class="flex flex-col">
             <div class="text-xs sm:text-sm">Your Practice's standard terms</div>
-            <div class="flex justify-start mt-4 cursor-pointer hover:underline">
-              <svgicon name="cloud-upload" height="24" width="24"/>
-              <div class="ml-2 text-xs sm:text-sm leading-loose">Upload</div>
+            <!-- sample uploaded file -->
+            <div class="mt-4 bg-grey-lighter rounded-lg p-4 cursor-pointer">
+              <div class="flex flex-nowrap justify-between">
+                <div class="text-xs sm:text-sm hover:underline">Sample Uploaded File</div>
+                <div class="font-bold text-md sm:text-lg hover:null" @click="remove">X</div>
+              </div>
+            </div>
+            <div></div>
+            <div class="flex justify-start mt-4">
+              <label for="file-upload">
+                <div class="flex flex-row flex-nowrap cursor-pointer hover:underline">
+                  <svgicon name="cloud-upload" height="24" width="24"/>
+                  <div class="ml-2 text-xs sm:text-sm leading-loose">Upload</div>
+                </div>
+              </label>
+              <input type="file" id="file-upload" style="display:none">
             </div>
           </div>
         </div>
@@ -343,6 +356,10 @@ export default {
     },
     uncheckMandatory(value) {
       this.form.mandatory_training_id = this.form.mandatory_training_id.filter(id => id != value)
+    },
+    remove() {
+      this.$store.commit('SET_REMOVEUPLOADED_MODAL', true)
+      this.$store.commit('SET_REMOVEUPLOADED_SHIELD', true)
     },
     save() {
       try {

@@ -33,6 +33,16 @@
       <AddSelectedSurgeryModal/>
     </div>
     <div class="add-selected-surgery-shield" v-if="$store.state.add_selected_surgery_shield"></div>
+    <!-- practice - remove uploaded document modal 510 509 -->
+    <div class="remove-uploaded-document-modal">
+      <RemoveUploadedDocumentModal
+        v-if="$auth.user.domain === 'Practice' && $store.state.remove_uploaded_document_modal"
+      />
+    </div>
+    <div
+      class="remove-uploaded-document-shield"
+      v-if="$store.state.remove_uploaded_document_shield"
+    ></div>
     <!--  -->
     <div class="content">
       <!-- notification -->
@@ -78,9 +88,10 @@ import AppNotification from '@/components/AppNotification'
 import SignOut from '@/components/Auth/SignOut'
 // practice
 import CreateJobModal from '@/components/CreateJobModal'
-import JobDetailModal from '@/components/Session/JobDetailModal'
+import RemoveUploadedDocumentModal from '@/components/Profile/RemoveUploadedDocumentModal'
 import AddSurgeryModal from '@/components/Profile/AddSurgeryModal'
 import AddSelectedSurgeryModal from '@/components/Profile/AddSelectedSurgeryModal'
+import JobDetailModal from '@/components/Session/JobDetailModal'
 export default {
   components: {
     AppButton,
@@ -90,9 +101,10 @@ export default {
     SignOut,
     // practice
     CreateJobModal,
-    JobDetailModal,
+    RemoveUploadedDocumentModal,
     AddSurgeryModal,
     AddSelectedSurgeryModal,
+    JobDetailModal,
   },
   middleware: 'isAuthenticated',
   beforeCreate() {
@@ -247,19 +259,16 @@ body {
   opacity: 0.5;
   z-index: 509;
 }
-.job-detail-modal {
+.remove-uploaded-document-modal {
   position: fixed;
-  right: 0;
-  margin-right: -100%;
+  top: 0;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
   width: 100%;
-  height: 100%;
-  overflow: auto;
-  border-left: solid 2px #edf2f7;
-  transition: all 0.3s ease-in-out;
-  background-color: white;
   z-index: 510;
 }
-.job-detail-modal-shield {
+.remove-uploaded-document-shield {
   position: fixed;
   top: 0;
   left: 0;
@@ -310,6 +319,29 @@ body {
   opacity: 0.5;
   z-index: 511;
 }
+.job-detail-modal {
+  position: fixed;
+  right: 0;
+  margin-right: -100%;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  border-left: solid 2px #edf2f7;
+  transition: all 0.3s ease-in-out;
+  background-color: white;
+  z-index: 510;
+}
+.job-detail-modal-shield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #333;
+  opacity: 0.5;
+  z-index: 509;
+}
+
 /* locums */
 .availability-modal {
   position: fixed;

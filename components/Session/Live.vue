@@ -51,17 +51,12 @@ export default {
   },
   methods: {
     show(id) {
-      // get job
-      this.$axios.$get(`/api/v1/practice/jobs/${id}`).then(res => {
-        console.log(res.data.job)
-        // set job detail to store
-        this.$store.commit('session/SET_JOB_DETAIL', res.data.job)
-        this.$store.commit('SET_JOBDETAIL_MODAL', true)
-        this.$store.commit('SET_JOBDETAIL_SHIELD', true)
-        let d = document.getElementsByClassName('job-detail-modal')[0]
-        d.classList.toggle('toggled-right')
-        document.body.style.overflow = 'hidden'
-      })
+      this.$store.commit('session/SET_JOB_DETAIL_ID', id)
+      this.$store.commit('SET_JOBDETAIL_MODAL', true)
+      this.$store.commit('SET_JOBDETAIL_SHIELD', true)
+      let d = document.getElementsByClassName('job-detail-modal')[0]
+      d.classList.toggle('toggled-right')
+      document.body.style.overflow = 'hidden'
     }
   }
 }

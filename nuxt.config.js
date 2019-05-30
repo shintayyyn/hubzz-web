@@ -57,7 +57,10 @@ export default {
     {
       src: '@/plugins/filters.js',
       ssr: true
-    }
+    },
+    {
+      src: '@/plugins/vue2-google-maps.js',
+    },
   ],
 
   /*
@@ -101,6 +104,7 @@ export default {
   ** Build configuration
   */
   build: {
+    transpile: [/^vue2-google-maps($|\/)/],
     /*
     ** You can extend webpack config here
     */

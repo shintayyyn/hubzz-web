@@ -27,6 +27,7 @@ export default {
     logout() {
       this.$auth.logout().then(() => {
         this.$store.commit('TOGGLE_SIGN_OUT_MODAL', false)
+        this.$store.commit('SET_SIGNOUT_SHIELD', false)
         this.$auth.$storage.setUniversal('_token.local', '')
         this.$router.push('/sign-in')
       })
