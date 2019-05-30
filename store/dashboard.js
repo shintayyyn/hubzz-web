@@ -15,12 +15,6 @@ export const state = () => ({
     ],
     select_date: null,
     select_shift: '',
-    statistics: [
-        { jobs: 'Available jobs', total: 0 },
-        { jobs: 'Current jobs', total: 0 },
-        { jobs: 'Applied jobs', total: 0 },
-        { jobs: 'Completed jobs', total: 0 }
-    ],
     surgeries: [],
     appointmentDates: [],
     editAppointmentDate: null

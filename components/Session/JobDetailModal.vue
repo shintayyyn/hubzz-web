@@ -8,7 +8,7 @@
       <div
         class="mx-2 bg-yellow-dark text-sm sm:text-sm p-2"
         v-if="cancelled_at && cancelled_reason"
-      >CANCELLED</div>
+      >UNFILLED</div>
       <div class="mx-2 bg-orange-dark text-white text-sm sm:text-sm p-2" v-else>AVAILABLE</div>
     </div>
     <div class="flex flex-row flex-wrap justify-between mt-4">
@@ -21,31 +21,43 @@
               <div class="text-xs sm:text-sm mb-4">{{form.job_number}}</div>
               <div class="font-bold text-sm sm:text-md">Rate</div>
               <div class="text-xs sm:text-sm mt-2 mb-4 flex flex-row flex-nowrap">
-                <input
-                  v-model="form.rate"
-                  type="text"
-                  class="border-b-2 focus:border-yellow focus:outline-none py-2 font-bold text-xs w-1/5 text-right"
-                >
-                <div class="leading-loose mx-2">per</div>
-                <select
-                  v-model="form.locum_detail_rate_type"
-                  class="border-b-2 focus:border-yellow focus:outline-none py-2 font-bold text-xs"
-                >
-                  <option
-                    v-for="item in rate_types"
-                    :key="item.id"
-                    :value="item.value"
-                  >{{item.label}}</option>
-                </select>
+                <template v-if="cancelled_at || appointed_at">
+                  <div
+                    class="text-xs sm:text-sm mb-4"
+                  >£ {{form.rate}} {{locum_detail_rate_type.name}}</div>
+                </template>
+                <template v-else>
+                  <input
+                    v-model="form.rate"
+                    type="text"
+                    class="border-b-2 focus:border-yellow focus:outline-none py-2 font-bold text-xs w-1/5 text-right"
+                  >
+                  <div class="leading-loose mx-2">per</div>
+                  <select
+                    v-model="form.locum_detail_rate_type.id"
+                    class="border-b-2 focus:border-yellow focus:outline-none py-2 font-bold text-xs"
+                  >
+                    <option
+                      v-for="item in rate_types"
+                      :key="item.id"
+                      :value="item.value"
+                    >{{item.label}}</option>
+                  </select>
+                </template>
               </div>
               <div class="font-bold text-sm sm:text-md">Total hours</div>
               <div class="text-xs sm:text-sm mt-2 mb-4 flex flex-row flex-nowrap">
-                <input
-                  v-model="form.total_hours"
-                  type="text"
-                  class="border-b-2 focus:border-yellow focus:outline-none py-2 font-bold text-xs w-1/5 text-right"
-                >
-                <div class="leading-loose mx-2">hours</div>
+                <template v-if="cancelled_at || appointed_at">
+                  <div class="text-xs sm:text-sm mb-4">{{form.total_hours}} hours</div>
+                </template>
+                <template v-else>
+                  <input
+                    v-model="form.total_hours"
+                    type="text"
+                    class="border-b-2 focus:border-yellow focus:outline-none py-2 font-bold text-xs w-1/5 text-right"
+                  >
+                  <div class="leading-loose mx-2">hours</div>
+                </template>
               </div>
               <div class="mb-8">
                 <AppButton :label="'Save changes'" :inStyle="'padding:8px'" @click="save"/>
@@ -200,6 +212,7 @@ export default {
         reason: ''
       },
       formError: [],
+      appointed_at: null,
       cancelled_at: null,
       cancelled_reason: null,
       created_at: null,
@@ -252,13 +265,14 @@ export default {
     this.$axios.$get(`/api/v1/practice/jobs/${this.$store.state.session.job_id}`).then(res => {
       console.log(res)
       this.practice.surgery.address.coordinates = res.data.job.platform_job.practice.surgery.address.coordinates
+      this.appointed_at = res.data.job.platform_job.appointed_at
       this.cancelled_at = res.data.job.platform_job.cancelled_at
       this.cancelled_reason = res.data.job.platform_job.cancelled_reason
       this.created_at = res.data.job.created_at
       this.form.title = res.data.job.platform_job.title
       this.form.job_number = res.data.job.job_number
       this.form.rate = res.data.job.platform_job.rate
-      this.form.locum_detail_rate_type = res.data.job.platform_job.locum_detail_rate_type.id
+      this.form.locum_detail_rate_type = res.data.job.platform_job.locum_detail_rate_type
       this.form.total_hours = res.data.job.platform_job.total_hours
       this.job_description = res.data.job.platform_job.job_description
       this.extra_information = res.data.job.platform_job.extra_information

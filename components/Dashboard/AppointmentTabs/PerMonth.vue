@@ -211,7 +211,7 @@ export default {
       this.getDaysInMonth(value, this.selectedYear)
     }
   },
-  mounted() {
+  created() {
     // dispatch the appointment dates from store/api
     // set it to store
 
