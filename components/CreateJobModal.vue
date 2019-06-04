@@ -187,96 +187,98 @@
               :items="professions"
               :placeholder="'Select..'"
             />
-            <div class="relative flex flex-col py-2 mb-6">
-              <div class="relative flex flex-row flex-nowrap justify-between">
-                <label for="spoken_language_id" class="text-xs sm:text-sm py-1">Specialty</label>
-                <div
-                  class="absolute pin-r bg-red p-1 text-xs sm:text-base text-white"
-                  v-if="formError.find(item => item.field === 'spoken_language_id')"
-                >{{formError.find(item => item.field === 'spoken_language_id').message}}</div>
-                <div
-                  class="rounded-lg bg-grey-light px-2 py-1 text-xs sm:text-sm"
-                >Choose at least one specialty</div>
-              </div>
-              <!-- selected -->
-              <div class="flex flex-row flex-wrap justify-start">
-                <div
-                  class="rounded-lg bg-yellow-dark py-2 px-3 m-1 text-xs sm:text-sm"
-                  v-for="(item, index) in form.qualification_id"
-                  :key="index"
-                >
-                  {{item.label}}
-                  <span
-                    class="font-bold cursor-pointer text-base"
-                    @click="form.qualification_id.splice(index, 1)"
-                  >X</span>
+            <template v-if="form.profession_id">
+              <div class="relative flex flex-col py-2 mb-6">
+                <div class="relative flex flex-row flex-nowrap justify-between">
+                  <label for="spoken_language_id" class="text-xs sm:text-sm py-1">Specialty</label>
+                  <div
+                    class="absolute pin-r bg-red p-1 text-xs sm:text-base text-white"
+                    v-if="formError.find(item => item.field === 'spoken_language_id')"
+                  >{{formError.find(item => item.field === 'spoken_language_id').message}}</div>
+                  <div
+                    class="rounded-lg bg-grey-light px-2 py-1 text-xs sm:text-sm"
+                  >Choose at least one specialty</div>
                 </div>
-                <div>
-                  <input
-                    v-model="searchQualification"
-                    type="text"
-                    placeholder="Select.."
-                    class="qualification border-b-2 focus:border-yellow focus:outline-none py-3 font-bold text-xs sm:text-sm"
-                    @focus="setFocus('qualification')"
-                    @blur="setBlur('qualification')"
+                <!-- selected -->
+                <div class="flex flex-row flex-wrap justify-start">
+                  <div
+                    class="rounded-lg bg-yellow-dark py-2 px-3 m-1 text-xs sm:text-sm"
+                    v-for="(item, index) in form.qualification_id"
+                    :key="index"
                   >
+                    {{item.label}}
+                    <span
+                      class="font-bold cursor-pointer text-base"
+                      @click="form.qualification_id.splice(index, 1)"
+                    >X</span>
+                  </div>
+                  <div>
+                    <input
+                      v-model="searchQualification"
+                      type="text"
+                      placeholder="Select.."
+                      class="qualification border-b-2 focus:border-yellow focus:outline-none py-3 font-bold text-xs sm:text-sm"
+                      @focus="setFocus('qualification')"
+                      @blur="setBlur('qualification')"
+                    >
+                  </div>
+                </div>
+                <!-- options-->
+                <div class="qualification-list flex flex-col bg-white shadow-md overflow-y-auto">
+                  <div
+                    class="py-2 px-3 hover:bg-grey-light cursor-pointer text-xs sm:text-sm"
+                    v-for="item in filteredQualification"
+                    :key="item.id"
+                    @click="addQualification(item)"
+                  >{{item.label}}</div>
                 </div>
               </div>
-              <!-- options-->
-              <div class="qualification-list flex flex-col bg-white shadow-md overflow-y-auto">
-                <div
-                  class="py-2 px-3 hover:bg-grey-light cursor-pointer text-xs sm:text-sm"
-                  v-for="item in filteredQualification"
-                  :key="item.id"
-                  @click="addQualification(item)"
-                >{{item.label}}</div>
-              </div>
-            </div>
-            <div class="relative flex flex-col py-2 mb-6">
-              <div class="relative flex flex-row flex-nowrap justify-between">
-                <label for="clinical_system_id" class="text-xs sm:text-sm py-1">Clinical systems</label>
-                <div
-                  class="absolute pin-r bg-red p-1 text-xs sm:text-base text-white"
-                  v-if="formError.find(item => item.field === 'clinical_system_id')"
-                >{{formError.find(item => item.field === 'clinical_system_id').message}}</div>
-                <div
-                  class="rounded-lg bg-grey-light px-2 py-1 text-xs sm:text-sm"
-                >Choose at least one IT system</div>
-              </div>
-              <!-- selected -->
-              <div class="flex flex-row flex-wrap justify-start">
-                <div
-                  class="rounded-lg bg-yellow-dark py-2 px-3 m-1 text-xs sm:text-sm"
-                  v-for="(item, index) in form.clinical_system_id"
-                  :key="index"
-                >
-                  {{item.label}}
-                  <span
-                    class="font-bold cursor-pointer text-base"
-                    @click="form.clinical_system_id.splice(index, 1)"
-                  >X</span>
+              <div class="relative flex flex-col py-2 mb-6">
+                <div class="relative flex flex-row flex-nowrap justify-between">
+                  <label for="clinical_system_id" class="text-xs sm:text-sm py-1">Clinical systems</label>
+                  <div
+                    class="absolute pin-r bg-red p-1 text-xs sm:text-base text-white"
+                    v-if="formError.find(item => item.field === 'clinical_system_id')"
+                  >{{formError.find(item => item.field === 'clinical_system_id').message}}</div>
+                  <div
+                    class="rounded-lg bg-grey-light px-2 py-1 text-xs sm:text-sm"
+                  >Choose at least one IT system</div>
                 </div>
-                <div>
-                  <input
-                    v-model="searchClinicalSystem"
-                    type="text"
-                    placeholder="Select.."
-                    class="clinical-system border-b-2 focus:border-yellow focus:outline-none py-3 font-bold text-xs sm:text-sm"
-                    @focus="setFocus('clinical_system')"
-                    @blur="setBlur('clinical_system')"
+                <!-- selected -->
+                <div class="flex flex-row flex-wrap justify-start">
+                  <div
+                    class="rounded-lg bg-yellow-dark py-2 px-3 m-1 text-xs sm:text-sm"
+                    v-for="(item, index) in form.clinical_system_id"
+                    :key="index"
                   >
+                    {{item.label}}
+                    <span
+                      class="font-bold cursor-pointer text-base"
+                      @click="form.clinical_system_id.splice(index, 1)"
+                    >X</span>
+                  </div>
+                  <div>
+                    <input
+                      v-model="searchClinicalSystem"
+                      type="text"
+                      placeholder="Select.."
+                      class="clinical-system border-b-2 focus:border-yellow focus:outline-none py-3 font-bold text-xs sm:text-sm"
+                      @focus="setFocus('clinical_system')"
+                      @blur="setBlur('clinical_system')"
+                    >
+                  </div>
+                </div>
+                <!-- options-->
+                <div class="clinical-system-list flex flex-col bg-white shadow-md overflow-y-auto">
+                  <div
+                    class="py-2 px-3 hover:bg-grey-light cursor-pointer text-xs sm:text-sm"
+                    v-for="item in filteredClinicalSystem"
+                    :key="item.id"
+                    @click="addClinicalSystem(item)"
+                  >{{item.label}}</div>
                 </div>
               </div>
-              <!-- options-->
-              <div class="clinical-system-list flex flex-col bg-white shadow-md overflow-y-auto">
-                <div
-                  class="py-2 px-3 hover:bg-grey-light cursor-pointer text-xs sm:text-sm"
-                  v-for="item in filteredClinicalSystem"
-                  :key="item.id"
-                  @click="addClinicalSystem(item)"
-                >{{item.label}}</div>
-              </div>
-            </div>
+            </template>
             <div class="relative flex flex-col py-2 mb-6">
               <div class="relative flex flex-row flex-nowrap justify-between">
                 <label for="spoken_language_id" class="text-xs sm:text-sm py-1">Spoken languages</label>
@@ -320,6 +322,22 @@
                 >{{item.label}}</div>
               </div>
             </div>
+            <div
+              class="relative flex flex-col pt-2"
+              v-if="selectedProfession.profession_category.id"
+            >
+              <div class="text-xs sm:text-sm py-1">Compliance documents</div>
+            </div>
+            <AppInput
+              v-model="form.compliance_document_id"
+              :type="'multi-checkbox'"
+              @checked="form.compliance_document_id.push($event)"
+              @unchecked="form.compliance_document_id.splice(form.compliance_document_id.findIndex(item => item === $event), 1)"
+              :name="'compliance_document_id'"
+              :label="`${selectedProfession.profession_category.id === 1 ? 'For GPs:' : selectedProfession.profession_category.id === 2 ? 'For Nurses, et al:' : ''}`"
+              :placeholder="''"
+              :lists="compliance_document"
+            />
           </div>
         </div>
         <div class="flex flex-col">
@@ -444,20 +462,29 @@ export default {
       rate_types: [],
       mandatory_training: [],
       professions: [],
-      spoken_languages: [],
-      searchLanguage: '',
+      professions_categories: [],
+      selectedProfession: {
+        profession_category: {}
+      },
       gp_qualifications: [],
       other_qualifications: [],
       qualification: [],
       searchQualification: '',
       clinical_system: [],
       searchClinicalSystem: '',
+      spoken_languages: [],
+      searchLanguage: '',
+      gp_compliance_documents: [],
+      others_compliance_documents: [],
+      compliance_document: [],
       unpaid_breaks: '',
       shifts: [],
       form: {
         practice_id: '',
         title: '',
         description: '',
+        email: '',
+        report_to: '',
         is_another_doctor: false,
         is_nurse_available: false,
         number_of_patients: '',
@@ -474,21 +501,20 @@ export default {
         qualification_id: [],
         clinical_system_id: [],
         spoken_language_id: [],
+        compliance_document_id: [],
         date_start: null,
         time_start: null,
         date_end: null,
         time_end: null,
         unpaid_breaks_in_minutes: '',
         shift_id: '',
+        auto_assign_at: null,
         selection_date: null
       },
       formError: []
     }
   },
   computed: {
-    onClose() {
-      return !this.$store.state.create_job_shield
-    },
     filteredSpokenLanguages() {
       return this.spoken_languages.filter(language => {
         const index = this.form.spoken_language_id.findIndex((item) => {
@@ -513,65 +539,27 @@ export default {
         return index === -1 && clinicalSystem && clinicalSystem.label.includes(this.searchClinicalSystem)
       })
     },
-    // get mandatory training from profile - practice tab
-    mandatoryTraining() {
-      return this.$store.state.profile.mandatory_training
-    },
     // get added surgery from profile - surgeries tab
     practiceChildren() {
       return this.$store.state.profile.added_surgery
-    }
+    },
   },
   watch: {
-    // watch the modal if it closes
-    onClose(value) {
-      if (value) {
-        this.searchLanguage = '',
-          this.searchQualification = '',
-          this.searchClinicalSystem = '',
-          this.unpaid_breaks = '',
-          this.form.practice_id = '',
-          this.form.title = '',
-          this.form.description = '',
-          this.form.is_another_doctor = false,
-          this.form.is_nurse_available = false,
-          this.form.number_of_patients = '',
-          this.form.duration_for_each_appointment = '',
-          this.form.opportunity_for_catch_up_slots = false,
-          this.form.session_requirements = [],
-          this.form.session_structure_information = '',
-          this.form.extra_information = '',
-          this.form.rate = '',
-          this.form.locum_detail_rate_type_id = 1,
-          this.form.ir35 = false,
-          this.form.mandatory_training_id = [],
-          this.form.profession_id = '',
-          this.form.qualification_id = [],
-          this.form.clinical_system_id = [],
-          this.form.spoken_language_id = [],
-          this.form.date_start = null,
-          this.form.time_start = null,
-          this.form.date_end = null,
-          this.form.time_end = null,
-          this.form.unpaid_breaks_in_minutes = '',
-          this.form.shift_id = '',
-          this.form.selection_date = null
-      }
-    },
-    // get qualification list base on selected role 
+    // get qualification/specialty list and compliance document list base on selected role 
     'form.profession_id'(value) {
-      if (value == 1) {
-        this.qualification = this.gp_qualifications
-      } else {
-        this.qualification = this.other_qualifications
+      if (value) {
+        this.selectedProfession = this.professions_categories.find(item => item.id == value)
+        if (this.selectedProfession.profession_category.id == 1) {
+          this.qualification = this.gp_qualifications
+          this.compliance_document = this.gp_compliance_documents
+          return
+        }
+        if (this.selectedProfession.profession_category.id == 2) {
+          this.qualification = this.other_qualifications
+          this.compliance_document = this.others_compliance_documents
+          return
+        }
       }
-    },
-    // watch store mandatory training for each update from profile - practice tab
-    mandatoryTraining(value) {
-      this.mandatory_training = []
-      value.forEach(item => {
-        this.mandatory_training.push({ label: item.name, value: item.id })
-      })
     },
     // watch store added surgery for each added from profile - surgeries tab
     practiceChildren(item) {
@@ -591,19 +579,28 @@ export default {
         this.practices.push({ label: item.surgery.name, value: item.id })
       })
     })
-    // get mandatory training from auth user 
-    if (this.$auth.user.practice_detail.practice.mandatory_trainings && this.$auth.user.practice_detail.practice.mandatory_trainings.length > 0) {
-      this.mandatory_training = []
-      this.$auth.user.practice_detail.practice.mandatory_trainings.forEach(item => {
+    // get selected mandatory training / gp and other compliance documents / email / report to from auth user 
+    this.$axios.$get(`/api/v1/me`).then(res => {
+      res.data.user.practice_detail.practice.mandatory_trainings.forEach(item => {
         this.mandatory_training.push({ label: item.name, value: item.id })
       })
-    }
+      res.data.user.practice_detail.practice.gp_compliance_documents.forEach(item => {
+        this.gp_compliance_documents.push({ label: item.name, value: item.id })
+      })
+      res.data.user.practice_detail.practice.others_compliance_documents.forEach(item => {
+        this.others_compliance_documents.push({ label: item.name, value: item.id })
+      })
+      this.form.email = res.data.user.practice_detail.practice.email
+      this.form.report_to = res.data.user.practice_detail.practice.report_to
+    })
     // get public profession
     this.$axios.$get(`/api/v1/professions`).then(res => {
       this.professions = []
       res.data.professions.forEach(item => {
         this.professions.push({ label: item.name, value: item.id })
+        this.professions_categories.push(item)
       })
+
     })
     // get qualification based on profession
     this.$axios.$get(`/api/v1/profession-categories`).then(res => {
@@ -651,6 +648,7 @@ export default {
       this.$router.push('/profile')
       document.getElementsByClassName('create-job-modal')[0].classList.toggle('toggled-right')
       this.$store.commit('SET_CREATEJOB_SHIELD', false)
+      this.$store.commit('SET_CREATEJOB_MODAL', false)
       document.body.style.overflow = 'auto'
     },
     uncheckMandatory(value) {
@@ -706,8 +704,8 @@ export default {
         qualification_id: this.form.qualification_id.map(item => item.value),
         clinical_system_id: this.form.clinical_system_id.map(item => item.value)
       }
+      console.log(this.form)
       this.$axios.$post(`/api/v1/practice/jobs`, newForm).then(res => {
-        console.log(res)
         this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Successfully created job' })
         this.$store.commit('SET_CREATEJOB_SHIELD', false)
         let d = document.getElementsByClassName('create-job-modal')[0]

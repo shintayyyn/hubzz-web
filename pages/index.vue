@@ -22,7 +22,8 @@
       v-if="$auth.user.domain === 'Locums'"
     >Appointments</div>
     <div class="flex flex-row flex-no-wrap justify-start">
-      <Appointments/>
+      <Calendar v-if="$auth.user.domain === 'Practice'"/>
+      <Appointments v-if="$auth.user.domain === 'Locums'"/>
     </div>
     <div class="font-bold" style="font-family:Nunito">Quick Statistics</div>
     <div class="flex flex-row flex-wrap justify-start">
@@ -37,11 +38,16 @@
 </template>
 
 <script>
+// practice
+import Calendar from '@/components/Calendar'
+// locums
 import Reminders from '@/components/Dashboard/Reminders'
 import Appointments from '@/components/Dashboard/Appointments'
+//
 import Statistics from '@/components/Dashboard/Statistics'
 export default {
   components: {
+    Calendar,
     Reminders,
     Appointments,
     Statistics

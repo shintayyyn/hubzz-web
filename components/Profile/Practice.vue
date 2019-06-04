@@ -129,7 +129,7 @@
                 <AppInput
                   v-model="form.others_compliance_document_id"
                   :type="'multi-checkbox'"
-                  @checked="form.others_compliance_document_id.push($event)"
+                  @checked="form.others_compliance_document_id.push(parseInt($event))"
                   @unchecked="uncheckOther($event)"
                   :name="'others_compliance_document_id'"
                   :label="'For Nurses, et al:'"
@@ -290,19 +290,31 @@ export default {
   },
   created() {
     // get default data 
-    this.practice_detail.name = this.$auth.user.practice_detail.practice.surgery.name
-    this.practice_detail.code = this.$auth.user.practice_detail.practice.surgery.code
-    this.practice_detail.address = this.$auth.user.practice_detail.practice.surgery.address
-    this.practice_detail.phone_number = this.$auth.user.practice_detail.practice.surgery.phone_number
-    this.practice_detail.ccg = this.$auth.user.practice_detail.practice.surgery.clinical_commissioning_group.name
-    this.form.phone_number = this.$auth.user.practice_detail.practice.phone_number
-    this.form.report_to = this.$auth.user.practice_detail.practice.report_to
-    this.form.email = this.$auth.user.practice_detail.practice.email
-    this.form.extra_information = this.$auth.user.practice_detail.practice.extra_information
-    this.form.practice_type_id = this.$auth.user.practice_detail.practice.practice_types.map(item => item.id)
-    this.form.mandatory_training_id = this.$auth.user.practice_detail.practice.mandatory_trainings.map(item => item.id)
-    this.form.gp_compliance_document_id = this.$auth.user.practice_detail.practice.gp_compliance_documents.map(item => item.id)
-    this.form.others_compliance_document_id = this.$auth.user.practice_detail.practice.others_compliance_documents.map(item => item.id)
+    this.$axios.$get(`/api/v1/me`).then(res => {
+      this.practice_detail.name = res.data.user.practice_detail.practice.surgery.name
+      this.practice_detail.code = res.data.user.practice_detail.practice.surgery.code
+      this.practice_detail.address = res.data.user.practice_detail.practice.surgery.address
+      this.practice_detail.phone_number = res.data.user.practice_detail.practice.surgery.phone_number
+      this.practice_detail.ccg = res.data.user.practice_detail.practice.surgery.clinical_commissioning_group.name
+      this.form.phone_number = res.data.user.practice_detail.practice.phone_number
+      this.form.report_to = res.data.user.practice_detail.practice.report_to
+      this.form.email = res.data.user.practice_detail.practice.email
+      this.form.extra_information = res.data.user.practice_detail.practice.extra_information
+
+      res.data.user.practice_detail.practice.practice_types.forEach(item => {
+        this.form.practice_type_id.push(item.id)
+      })
+      res.data.user.practice_detail.practice.mandatory_trainings.forEach(item => {
+        this.form.mandatory_training_id.push(item.id)
+      })
+      res.data.user.practice_detail.practice.gp_compliance_documents.forEach(item => {
+        this.form.gp_compliance_document_id.push(item.id)
+      })
+      res.data.user.practice_detail.practice.others_compliance_documents.forEach(item => {
+        this.form.others_compliance_document_id.push(item.id)
+      })
+    })
+    // console.log(this.form.practice_type_id)
     // get practice types
     this.$axios.$get(`/api/v1/practice-types`)
       .then(res => {
@@ -364,6 +376,7 @@ export default {
     save() {
       try {
         this.formError = []
+        console.log(this.form)
         this.Validate(this.form, ['mandatory_training_id', 'extra_information'])
         if (!this.formError.length) {
           this.$axios.$put(`/api/v1/practice/me/profile`, this.form).then(res => {

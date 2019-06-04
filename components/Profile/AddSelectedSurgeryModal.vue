@@ -28,7 +28,7 @@ export default {
     add() {
       // get selected surgery from profile store then post request
       this.$axios.$post(`/api/v1/practice/practice-children`, { surgery_id: this.$store.state.profile.selected_surgery_id }).then(res => {
-        // add selected surgery to profile store
+        // add selected surgery to profile store and to be pick up by surgeries components
         this.$store.commit('profile/ADD_SURGERY', res.data.practice_child)
         this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Successfully added practice child' })
         this.$store.commit('SET_ADDSURGERY_SHIELD', false)

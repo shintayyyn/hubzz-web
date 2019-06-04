@@ -71,11 +71,17 @@ export default {
       },
     }
   },
+  created() {
+    this.showResult = false
+    this.text = ''
+    this.results = []
+  },
   methods: {
     search() {
       if (!this.text) {
         return
       }
+      // ! ask arvi / pass some params (that are already added) to exclude in the results
       this.$axios
         .$get(`/api/v1/surgeries?search=${this.text}&limit=10`)
         .then(res => {

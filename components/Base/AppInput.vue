@@ -13,9 +13,16 @@
           type="checkbox"
           @input="inputCheck"
           class="mt-1 mr-1"
-          :checked="checkstate.includes(item.value)"
+          :checked="isChecked.includes(item.value)"
         >
-        <!-- :checked="selected.includes(item.value)" -->
+        <!-- :checked="selecte
+        watch: {
+          value(value) {
+            if (this.value instanceof Array) {
+              console.log(value)
+            }
+          }
+        },d.includes(item.value)"-->
         <label :for="item.name" class="text-xs sm:text-sm py-1">{{item.label}}</label>
       </div>
     </div>
@@ -101,9 +108,17 @@
 export default {
   data() {
     return {
-      checkstate: []
+      isChecked: []
     }
   },
+  // watch: {
+  //   value(value) {
+  //     if (this.value instanceof Array) {
+  //       console.log(value)
+  //       this.isChecked = value
+  //     }
+  //   }
+  // },
   props: {
     value: [String, Boolean, Array],
     type: String,
@@ -121,7 +136,7 @@ export default {
   },
   created() {
     if (this.value instanceof Array) {
-      this.checkstate = this.value
+      this.isChecked = this.value
     }
   },
   methods: {

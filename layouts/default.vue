@@ -117,7 +117,6 @@ export default {
         this.$store.commit("CHECK_WINDOW_WIDTH");
       });
     }
-    this.$store.commit('dashboard/SET_DATE_TODAY')
   },
   computed: {
     // get notification
