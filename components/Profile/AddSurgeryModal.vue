@@ -83,8 +83,9 @@ export default {
       }
       // ! ask arvi / pass some params (that are already added) to exclude in the results
       this.$axios
-        .$get(`/api/v1/surgeries?search=${this.text}&limit=10`)
+        .$get(`/api/v1/surgeries?search=${this.text}&has_parent=false&is_parent=false&limit=10`)
         .then(res => {
+          console.log(res)
           this.results = res.data.surgeries
           this.showResult = true
         })

@@ -698,6 +698,7 @@ export default {
       d.focus()
     },
     publish() {
+      this.form.session_requirements.length > 0 ? this.form.session_requirements = this.form.session_requirements.join() : this.form.session_requirements = ''
       this.unpaid_breaks !== 'other' ? this.form.unpaid_breaks_in_minutes = this.unpaid_breaks : this.form.unpaid_breaks_in_minutes = this.form.unpaid_breaks_in_minutes
       const newForm = {        ...this.form,
         spoken_language_id: this.form.spoken_language_id.map(item => item.value),

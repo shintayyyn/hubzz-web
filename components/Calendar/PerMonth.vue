@@ -244,7 +244,6 @@ export default {
     getJobs() {
       // live(color code per shift), applied(amber), current(green), unfilled(red)
       this.$axios.$get(`/api/v1/practice/calendars/monthly/${this.selectedYear}/${this.selectedMonth + 1}`).then(res => {
-        console.log(res)
         // get jobs (green)
         if (res.data.jobs && res.data.jobs.length > 0) {
           this.jobs = res.data.jobs

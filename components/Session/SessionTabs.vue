@@ -30,6 +30,18 @@
       class="mr-5 p-3 text-sm font-bold cursor-pointer"
       :class="$store.state.session.activeTab === 'unfilled' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
     >Unfilled</div>
+    <div
+      style="font-family:Nunito"
+      @click.prevent="$store.commit('session/SET_ACTIVE_TAB', 'cancelled')"
+      class="mr-5 p-3 text-sm font-bold cursor-pointer"
+      :class="$store.state.session.activeTab === 'cancelled' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
+    >Cancelled</div>
+    <div
+      style="font-family:Nunito"
+      @click.prevent="$store.commit('session/SET_ACTIVE_TAB', 'declined')"
+      class="mr-5 p-3 text-sm font-bold cursor-pointer"
+      :class="$store.state.session.activeTab === 'declined' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
+    >Declined</div>
   </div>
 </template>
 <script>

@@ -20,6 +20,70 @@
       <JobDetailModal @close="closeJobDetailModal" v-if="$store.state.job_detail_modal"/>
     </div>
     <div class="job-detail-modal-shield" v-if="$store.state.job_detail_shield"></div>
+    <!-- practice - applied details 510 509 -->
+    <div class="applied-detail-modal shadow-lg" v-if="$auth.user.domain === 'Practice'">
+      <AppliedDetailModal
+        @close="closeAppliedDetailModal"
+        v-if="$store.state.applied_detail_modal"
+      />
+    </div>
+    <div class="applied-detail-modal-shield" v-if="$store.state.applied_detail_shield"></div>
+    <!-- practice - applied locum details 512 511 -->
+    <div class="applied-locum-detail-modal shadow-lg" v-if="$auth.user.domain === 'Practice'">
+      <AppliedLocumDetailModal
+        @close="closeAppliedLocumDetailModal"
+        v-if="$store.state.applied_locum_detail_modal"
+      />
+    </div>
+    <div class="applied-locum-detail-modal-shield" v-if="$store.state.applied_locum_detail_shield"></div>
+    <!-- practice - allocated details 510 509 -->
+    <div class="allocated-detail-modal shadow-lg" v-if="$auth.user.domain === 'Practice'">
+      <AllocatedDetailModal
+        @close="closeAllocatedDetailModal"
+        v-if="$store.state.allocated_detail_modal"
+      />
+    </div>
+    <div class="allocated-detail-modal-shield" v-if="$store.state.allocated_detail_shield"></div>
+    <!-- practice - completed details 510 509 -->
+    <div class="completed-detail-modal shadow-lg" v-if="$auth.user.domain === 'Practice'">
+      <CompletedDetailModal
+        @close="closeCompletedDetailModal"
+        v-if="$store.state.completed_detail_modal"
+      />
+    </div>
+    <div class="completed-detail-modal-shield" v-if="$store.state.completed_detail_shield"></div>
+    <!-- practice - unfilled details 510 509 -->
+    <div class="unfilled-detail-modal shadow-lg" v-if="$auth.user.domain === 'Practice'">
+      <UnfilledDetailModal
+        @close="closeUnfilledDetailModal"
+        v-if="$store.state.unfilled_detail_modal"
+      />
+    </div>
+    <div class="unfilled-detail-modal-shield" v-if="$store.state.unfilled_detail_shield"></div>
+    <!-- practice - cancelled details 510 509 -->
+    <div class="cancelled-detail-modal shadow-lg" v-if="$auth.user.domain === 'Practice'">
+      <CancelledDetailModal
+        @close="closeCancelledDetailModal"
+        v-if="$store.state.cancelled_detail_modal"
+      />
+    </div>
+    <div class="cancelled-detail-modal-shield" v-if="$store.state.cancelled_detail_shield"></div>
+    <!-- practice - declined details 510 509 -->
+    <div class="declined-detail-modal shadow-lg" v-if="$auth.user.domain === 'Practice'">
+      <DeclinedDetailModal
+        @close="closeDeclinedDetailModal"
+        v-if="$store.state.declined_detail_modal"
+      />
+    </div>
+    <div class="declined-detail-modal-shield" v-if="$store.state.declined_detail_shield"></div>
+    <!-- practice - my locum details details 510 509 -->
+    <div class="my-locum-detail-modal shadow-lg" v-if="$auth.user.domain === 'Practice'">
+      <MyLocumDetailModal
+        @close="closeMyLocumDetailModal"
+        v-if="$store.state.my_locum_detail_modal"
+      />
+    </div>
+    <div class="my-locum-detail-modal-shield" v-if="$store.state.my_locum_detail_shield"></div>
     <!-- practice - add surgery modal 510 509 -->
     <div class="add-surgery-modal shadow-lg" v-if="$auth.user.domain === 'Practice'">
       <AddSurgeryModal @close="closeAddSurgeryModal" v-if="$store.state.add_surgery_modal"/>
@@ -92,6 +156,14 @@ import RemoveUploadedDocumentModal from '@/components/Profile/RemoveUploadedDocu
 import AddSurgeryModal from '@/components/Profile/AddSurgeryModal'
 import AddSelectedSurgeryModal from '@/components/Profile/AddSelectedSurgeryModal'
 import JobDetailModal from '@/components/Session/JobDetailModal'
+import AppliedDetailModal from '@/components/Session/AppliedDetailModal'
+import AppliedLocumDetailModal from '@/components/Session/AppliedLocumDetailModal'
+import AllocatedDetailModal from '@/components/Session/AllocatedDetailModal'
+import CompletedDetailModal from '@/components/Session/CompletedDetailModal'
+import UnfilledDetailModal from '@/components/Session/UnfilledDetailModal'
+import CancelledDetailModal from '@/components/Session/CancelledDetailModal'
+import DeclinedDetailModal from '@/components/Session/DeclinedDetailModal'
+import MyLocumDetailModal from '@/components/MyLocums/MyLocumDetailModal'
 export default {
   components: {
     AppButton,
@@ -105,6 +177,14 @@ export default {
     AddSurgeryModal,
     AddSelectedSurgeryModal,
     JobDetailModal,
+    AppliedDetailModal,
+    AppliedLocumDetailModal,
+    AllocatedDetailModal,
+    CompletedDetailModal,
+    UnfilledDetailModal,
+    CancelledDetailModal,
+    DeclinedDetailModal,
+    MyLocumDetailModal
   },
   middleware: 'isAuthenticated',
   beforeCreate() {
@@ -175,6 +255,62 @@ export default {
       d.classList.toggle('toggled-right')
       document.body.style.overflow = 'auto'
       this.$store.commit('SET_JOBDETAIL_MODAL', false)
+    },
+    closeAppliedDetailModal() {
+      this.$store.commit('SET_APPLIEDDETAIL_SHIELD', false)
+      let d = document.getElementsByClassName('applied-detail-modal')[0]
+      d.classList.toggle('toggled-right')
+      document.body.style.overflow = 'auto'
+      this.$store.commit('SET_APPLIEDDETAIL_MODAL', false)
+    },
+    closeAppliedLocumDetailModal() {
+      this.$store.commit('SET_APPLIEDLOCUMDETAIL_SHIELD', false)
+      let d = document.getElementsByClassName('applied-locum-detail-modal')[0]
+      d.classList.toggle('toggled-right')
+      document.body.style.overflow = 'auto'
+      this.$store.commit('SET_APPLIEDLOCUMDETAIL_MODAL', false)
+    },
+    closeAllocatedDetailModal() {
+      this.$store.commit('SET_ALLOCATEDDETAIL_SHIELD', false)
+      let d = document.getElementsByClassName('allocated-detail-modal')[0]
+      d.classList.toggle('toggled-right')
+      document.body.style.overflow = 'auto'
+      this.$store.commit('SET_ALLOCATEDDETAIL_MODAL', false)
+    },
+    closeCompletedDetailModal() {
+      this.$store.commit('SET_COMPLETEDDETAIL_SHIELD', false)
+      let d = document.getElementsByClassName('completed-detail-modal')[0]
+      d.classList.toggle('toggled-right')
+      document.body.style.overflow = 'auto'
+      this.$store.commit('SET_COMPLETEDDETAIL_MODAL', false)
+    },
+    closeUnfilledDetailModal() {
+      this.$store.commit('SET_UNFILLEDDETAIL_SHIELD', false)
+      let d = document.getElementsByClassName('unfilled-detail-modal')[0]
+      d.classList.toggle('toggled-right')
+      document.body.style.overflow = 'auto'
+      this.$store.commit('SET_UNFILLEDDETAIL_MODAL', false)
+    },
+    closeCancelledDetailModal() {
+      this.$store.commit('SET_CANCELLEDDETAIL_SHIELD', false)
+      let d = document.getElementsByClassName('cancelled-detail-modal')[0]
+      d.classList.toggle('toggled-right')
+      document.body.style.overflow = 'auto'
+      this.$store.commit('SET_CANCELLEDDETAIL_MODAL', false)
+    },
+    closeDeclinedDetailModal() {
+      this.$store.commit('SET_DECLINEDDETAIL_SHIELD', false)
+      let d = document.getElementsByClassName('declined-detail-modal')[0]
+      d.classList.toggle('toggled-right')
+      document.body.style.overflow = 'auto'
+      this.$store.commit('SET_DECLINEDDETAIL_MODAL', false)
+    },
+    closeMyLocumDetailModal() {
+      this.$store.commit('SET_MYLOCUMDETAIL_SHIELD', false)
+      let d = document.getElementsByClassName('my-locum-detail-modal')[0]
+      d.classList.toggle('toggled-right')
+      document.body.style.overflow = 'auto'
+      this.$store.commit('SET_MYLOCUMDETAIL_MODAL', false)
     },
     closeAddSurgeryModal() {
       this.$store.commit('SET_ADDSURGERY_SHIELD', false)
@@ -340,6 +476,182 @@ body {
   opacity: 0.5;
   z-index: 509;
 }
+.applied-detail-modal {
+  position: fixed;
+  right: 0;
+  margin-right: -100%;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  border-left: solid 2px #edf2f7;
+  transition: all 0.3s ease-in-out;
+  background-color: white;
+  z-index: 510;
+}
+.applied-detail-modal-shield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #333;
+  opacity: 0.5;
+  z-index: 509;
+}
+.applied-locum-detail-modal {
+  position: fixed;
+  right: 0;
+  margin-right: -100%;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  border-left: solid 2px #edf2f7;
+  transition: all 0.3s ease-in-out;
+  background-color: white;
+  z-index: 512;
+}
+.applied-locum-detail-modal-shield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #333;
+  opacity: 0.5;
+  z-index: 511;
+}
+.allocated-detail-modal {
+  position: fixed;
+  right: 0;
+  margin-right: -100%;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  border-left: solid 2px #edf2f7;
+  transition: all 0.3s ease-in-out;
+  background-color: white;
+  z-index: 510;
+}
+.allocated-detail-modal-shield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #333;
+  opacity: 0.5;
+  z-index: 509;
+}
+.completed-detail-modal {
+  position: fixed;
+  right: 0;
+  margin-right: -100%;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  border-left: solid 2px #edf2f7;
+  transition: all 0.3s ease-in-out;
+  background-color: white;
+  z-index: 510;
+}
+.completed-detail-modal-shield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #333;
+  opacity: 0.5;
+  z-index: 509;
+}
+.unfilled-detail-modal {
+  position: fixed;
+  right: 0;
+  margin-right: -100%;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  border-left: solid 2px #edf2f7;
+  transition: all 0.3s ease-in-out;
+  background-color: white;
+  z-index: 510;
+}
+.unfilled-detail-modal-shield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #333;
+  opacity: 0.5;
+  z-index: 509;
+}
+.cancelled-detail-modal {
+  position: fixed;
+  right: 0;
+  margin-right: -100%;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  border-left: solid 2px #edf2f7;
+  transition: all 0.3s ease-in-out;
+  background-color: white;
+  z-index: 510;
+}
+.cancelled-detail-modal-shield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #333;
+  opacity: 0.5;
+  z-index: 509;
+}
+.declined-detail-modal {
+  position: fixed;
+  right: 0;
+  margin-right: -100%;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  border-left: solid 2px #edf2f7;
+  transition: all 0.3s ease-in-out;
+  background-color: white;
+  z-index: 510;
+}
+.declined-detail-modal-shield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #333;
+  opacity: 0.5;
+  z-index: 509;
+}
+.my-locum-detail-modal {
+  position: fixed;
+  right: 0;
+  margin-right: -100%;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  border-left: solid 2px #edf2f7;
+  transition: all 0.3s ease-in-out;
+  background-color: white;
+  z-index: 510;
+}
+.my-locum-detail-modal-shield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #333;
+  opacity: 0.5;
+  z-index: 509;
+}
 
 /* locums */
 .availability-modal {
@@ -397,6 +709,9 @@ body {
     width: 95%;
   }
   .add-surgery-modal {
+    width: 95%;
+  }
+  .applied-locum-detail-modal {
     width: 95%;
   }
 }

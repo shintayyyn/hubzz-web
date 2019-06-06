@@ -4,17 +4,17 @@
       <span v-if="hasAppliedJobs(item.fullDate)" class="bg-grey w-1/4 h-1 sm:h-3 lg:h-4"></span>
     </div>
     <div
-      class="flex flex-row flex-nowrap absolute pin-b pin-r justify-start w-full"
+      class="flex flex-row flex-nowrap absolute pin-t pin-r justify-start w-full"
       v-if="jobs.length > 0"
     >
       <span
         v-if="hasJobs(item.fullDate, 'AM')"
-        class="bg-yellow text-yellow w-full h-2 sm:h-3 lg:h-4 rounded-bl-lg"
+        class="bg-green-light text-green-light w-full h-2 sm:h-3 lg:h-4 rounded-tl-lg"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
       <span
         v-if="hasJobs(item.fullDate, 'PM')"
-        class="bg-blue-light text-blue-light w-full h-2 sm:h-3 lg:h-4"
+        class="bg-green-light text-green-light w-full h-2 sm:h-3 lg:h-4"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
       <span
@@ -24,7 +24,57 @@
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
       <span
         v-if="hasJobs(item.fullDate, 'OOH')"
-        class="bg-orange text-orange w-full h-2 sm:h-3 lg:h-4 rounded-br-lg"
+        class="bg-green-light text-green-light w-full h-2 sm:h-3 lg:h-4 rounded-tr-lg"
+      >.</span>
+      <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
+    </div>
+    <div
+      class="flex flex-row flex-nowrap absolute pin-b pin-r justify-start w-full"
+      v-if="unfilled_jobs.length > 0"
+    >
+      <span
+        v-if="hasUnfilledJobs(item.fullDate, 'AM')"
+        class="bg-red-light text-red-light w-full h-2 sm:h-3 lg:h-4 rounded-bl-lg"
+      >.</span>
+      <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
+      <span
+        v-if="hasUnfilledJobs(item.fullDate, 'PM')"
+        class="bg-red-light text-red-light w-full h-2 sm:h-3 lg:h-4"
+      >.</span>
+      <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
+      <span
+        v-if="hasUnfilledJobs(item.fullDate, 'WHOLE DAY')"
+        class="bg-red-light text-red-light w-full h-2 sm:h-3 lg:h-4"
+      >.</span>
+      <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
+      <span
+        v-if="hasUnfilledJobs(item.fullDate, 'OOH')"
+        class="bg-red-light text-red-light w-full h-2 sm:h-3 lg:h-4 rounded-br-lg"
+      >.</span>
+      <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
+    </div>
+    <div
+      class="flex flex-row flex-nowrap absolute pin-b pin-r justify-start w-full"
+      v-if="declined_jobs.length > 0"
+    >
+      <span
+        v-if="hasDeclinedJobs(item.fullDate, 'AM')"
+        class="bg-red-light text-red-light w-full h-2 sm:h-3 lg:h-4 rounded-bl-lg"
+      >.</span>
+      <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
+      <span
+        v-if="hasDeclinedJobs(item.fullDate, 'PM')"
+        class="bg-red-light text-red-light w-full h-2 sm:h-3 lg:h-4"
+      >.</span>
+      <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
+      <span
+        v-if="hasDeclinedJobs(item.fullDate, 'WHOLE DAY')"
+        class="bg-red-light text-red-light w-full h-2 sm:h-3 lg:h-4"
+      >.</span>
+      <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
+      <span
+        v-if="hasDeclinedJobs(item.fullDate, 'OOH')"
+        class="bg-red-light text-red-light w-full h-2 sm:h-3 lg:h-4 rounded-br-lg"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
     </div>
@@ -39,7 +89,13 @@ export default {
       return this.jobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === type)
     },
     hasAppliedJobs(date) {
-      return this.applied_jobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(job.platform_job.selection_date))
+      return this.applied_jobs.find(job => job.platform_job.selection_date === date)
+    },
+    hasUnfilledJobs(date, type) {
+      return this.unfilled_jobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === type)
+    },
+    hasDeclinedJobs(date, type) {
+      return this.declined_jobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === type)
     },
     // it returns an array of dates
     getDateArray(start, end) {

@@ -32,6 +32,7 @@
         :key="index"
         :label="item.label"
         :count="item.count"
+        :route="item.route"
       />
     </div>
   </section>
@@ -61,15 +62,17 @@ export default {
   created() {
     // practice - get mylocums and jobs count
     if (this.$auth.user.domain === 'Practice') {
-      // ! ask arvi where to get mylocums
+      this.$axios.$get(`/api/v1/practice/locums/count`).then(res => {
+        this.statistics.push({ label: 'My Locums', count: res.data.count, route: '/my-locums' })
+      })
       this.$axios.$get(`/api/v1/practice/applied-jobs/count`).then(res => {
-        this.statistics.push({ label: 'Applied Jobs', count: res.data.count })
+        this.statistics.push({ label: 'Applied Jobs', count: res.data.count, route: '/sessions' })
       })
       this.$axios.$get(`/api/v1/practice/current-jobs/count`).then(res => {
-        this.statistics.push({ label: 'Assigned Jobs', count: res.data.count })
+        this.statistics.push({ label: 'Assigned Jobs', count: res.data.count, route: '/sessions' })
       })
       this.$axios.$get(`/api/v1/practice/available-jobs/count`).then(res => {
-        this.statistics.push({ label: 'Available Jobs', count: res.data.count })
+        this.statistics.push({ label: 'Available Jobs', count: res.data.count, route: '/sessions' })
       })
       // const promises = [
       //   this.$axios.$get(`/api/v1/practice/applied-jobs/count`),

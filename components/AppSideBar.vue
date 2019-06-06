@@ -60,7 +60,7 @@ export default {
     if (domain === 'Practice') {
       addedLists = [
         { name: 'Profile', route: '/profile' },
-        { name: 'My Banks', route: '/my-banks' },
+        { name: 'My Locums', route: '/my-locums' },
         { name: 'Sessions', route: '/sessions' }
       ]
     } else if (domain === 'Locum') {

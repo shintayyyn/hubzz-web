@@ -54,21 +54,33 @@
       <template v-for="(date, index) in daysInWeek">
         <div
           v-if="hasJobs(date, 'AM')"
-          class="w-1/2 lg:w-full cursor-pointer border-t-2 border-grey bg-yellow"
+          class="w-1/2 lg:w-full cursor-pointer border-t-2 border-grey bg-green-light"
           :key="`${date}-${index}`"
-          @click="selectDate(date, 'AM')"
+          @click="selectDateShift(date, 'AM')"
+        ></div>
+        <div
+          v-else-if="hasUnfilledJobs(date, 'AM')"
+          class="w-1/2 lg:w-full cursor-pointer border-t-2 border-grey bg-red-light"
+          :key="`${date}-${index}`"
+          @click="selectDateShift(date, 'AM')"
+        ></div>
+        <div
+          v-else-if="hasDeclinedJobs(date, 'AM')"
+          class="w-1/2 lg:w-full cursor-pointer border-t-2 border-grey bg-red-light"
+          :key="`${date}-${index}`"
+          @click="selectDateShift(date, 'AM')"
         ></div>
         <div
           v-else-if="currentDate(date)"
           class="w-1/2 lg:w-full cursor-pointer border-t-2 border-grey bg-grey-light"
           :key="index"
-          @click="selectDate(date, 'AM')"
+          @click="selectDateShift(date, 'AM')"
         ></div>
         <div
           v-else
           class="w-1/2 lg:w-full cursor-pointer border-t-2 border-grey hover:bg-grey-light"
           :key="index"
-          @click="selectDate(date, 'AM')"
+          @click="selectDateShift(date, 'AM')"
         ></div>
       </template>
     </div>
@@ -77,21 +89,33 @@
       <template v-for="(date, index) in daysInWeek">
         <div
           v-if="hasJobs(date, 'PM')"
-          class="w-1/2 lg:w-full cursor-pointer border-t-2 border-grey bg-yellow"
+          class="w-1/2 lg:w-full cursor-pointer border-t-2 border-grey green-light"
           :key="`${date}-${index}`"
-          @click="selectDate(date, 'PM')"
+          @click="selectDateShift(date, 'PM')"
+        ></div>
+        <div
+          v-else-if="hasUnfilledJobs(date, 'PM')"
+          class="w-1/2 lg:w-full cursor-pointer border-t-2 border-grey bg-red-light"
+          :key="`${date}-${index}`"
+          @click="selectDateShift(date, 'PM')"
+        ></div>
+        <div
+          v-else-if="hasDeclinedJobs(date, 'PM')"
+          class="w-1/2 lg:w-full cursor-pointer border-t-2 border-grey bg-red-light"
+          :key="`${date}-${index}`"
+          @click="selectDateShift(date, 'PM')"
         ></div>
         <div
           v-else-if="currentDate(date)"
           class="w-1/2 lg:w-full cursor-pointer border-t-2 border-grey bg-grey-light"
           :key="index"
-          @click="selectDate(date, 'PM')"
+          @click="selectDateShift(date, 'PM')"
         ></div>
         <div
           v-else
           class="w-1/2 lg:w-full cursor-pointer border-t-2 border-grey hover:bg-grey-light"
           :key="index"
-          @click="selectDate(date, 'PM')"
+          @click="selectDateShift(date, 'PM')"
         ></div>
       </template>
     </div>
@@ -100,21 +124,33 @@
       <template v-for="(date, index) in daysInWeek">
         <div
           v-if="hasJobs(date, 'OOH')"
-          class="w-1/2 lg:w-full cursor-pointer border-t-2 border-grey bg-yellow"
+          class="w-1/2 lg:w-full cursor-pointer border-t-2 border-grey bg-green-light"
           :key="`${date}-${index}`"
-          @click="selectDate(date, 'OOH')"
+          @click="selectDateShift(date, 'OOH')"
+        ></div>
+        <div
+          v-else-if="hasUnfilledJobs(date, 'OOH')"
+          class="w-1/2 lg:w-full cursor-pointer border-t-2 border-grey bg-red-light"
+          :key="`${date}-${index}`"
+          @click="selectDateShift(date, 'OOH')"
+        ></div>
+        <div
+          v-else-if="hasDeclinedJobs(date, 'OOH')"
+          class="w-1/2 lg:w-full cursor-pointer border-t-2 border-grey bg-red-light"
+          :key="`${date}-${index}`"
+          @click="selectDateShift(date, 'OOH')"
         ></div>
         <div
           v-else-if="currentDate(date)"
           class="w-1/2 lg:w-full cursor-pointer border-t-2 border-grey bg-grey-light"
           :key="index"
-          @click="selectDate(date, 'OOH')"
+          @click="selectDateShift(date, 'OOH')"
         ></div>
         <div
           v-else
           class="w-1/2 lg:w-full cursor-pointer border-t-2 border-grey hover:bg-grey-light"
           :key="index"
-          @click="selectDate(date, 'OOH')"
+          @click="selectDateShift(date, 'OOH')"
         ></div>
       </template>
     </div>
@@ -123,21 +159,33 @@
       <template v-for="(date, index) in daysInWeek">
         <div
           v-if="hasJobs(date, 'WHOLE DAY')"
-          class="w-1/2 lg:w-full cursor-pointer border-t-2 border-grey bg-yellow"
+          class="w-1/2 lg:w-full cursor-pointer border-t-2 border-grey bg-green-light"
           :key="`${date}-${index}`"
-          @click="selectDate(date, 'WHOLE DAY')"
+          @click="selectDateShift(date, 'WHOLE DAY')"
+        ></div>
+        <div
+          v-else-if="hasUnfilledJobs(date, 'WHOLE DAY')"
+          class="w-1/2 lg:w-full cursor-pointer border-t-2 border-grey bg-red-light"
+          :key="`${date}-${index}`"
+          @click="selectDateShift(date, 'WHOLE DAY')"
+        ></div>
+        <div
+          v-else-if="hasDeclinedJobs(date, 'WHOLE DAY')"
+          class="w-1/2 lg:w-full cursor-pointer border-t-2 border-grey bg-red-light"
+          :key="`${date}-${index}`"
+          @click="selectDateShift(date, 'WHOLE DAY')"
         ></div>
         <div
           v-else-if="currentDate(date)"
           class="w-1/2 lg:w-full cursor-pointer border-t-2 border-grey bg-grey-light"
           :key="index"
-          @click="selectDate(date, 'WHOLE DAY')"
+          @click="selectDateShift(date, 'WHOLE DAY')"
         ></div>
         <div
           v-else
           class="w-1/2 lg:w-full cursor-pointer border-t-2 border-grey hover:bg-grey-light"
           :key="index"
-          @click="selectDate(date, 'WHOLE DAY')"
+          @click="selectDateShift(date, 'WHOLE DAY')"
         ></div>
       </template>
     </div>
@@ -145,16 +193,22 @@
       <div class="w-full text-xs text-center pr-2">Reminder</div>
       <template v-for="(date, index) in daysInWeek">
         <div
-          v-if="currentDate(date)"
+          v-if="hasAppliedJobs(date)"
+          class="w-1/2 lg:w-full cursor-pointer border-t-2 border-grey bg-grey"
+          :key="index"
+          @click="selectDateShift(date, 'REMINDER')"
+        ></div>
+        <div
+          v-else-if="currentDate(date)"
           class="w-1/2 lg:w-full cursor-pointer border-t-2 border-grey bg-grey-light"
           :key="index"
-          @click="selectDate(date, 'REMINDER')"
+          @click="selectDateShift(date, 'REMINDER')"
         ></div>
         <div
           v-else
           class="w-1/2 lg:w-full cursor-pointer border-t-2 border-grey hover:bg-grey-light"
           :key="index"
-          @click="selectDate(date, 'REMINDER')"
+          @click="selectDateShift(date, 'REMINDER')"
         ></div>
       </template>
     </div>
@@ -199,7 +253,7 @@ export default {
     },
   },
   methods: {
-    selectDate(date, shift) {
+    selectDateShift(date, shift) {
       this.$store.commit('calendar/SELECT_DATE_SHIFT', { date: date, shift: shift })
     },
     adjustWeek(type) {
@@ -225,6 +279,21 @@ export default {
         return this.jobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === type)
       }
     },
+    hasAppliedJobs(date) {
+      if (this.applied_jobs_with_selection_date && this.applied_jobs_with_selection_date.length > 0) {
+        return this.applied_jobs_with_selection_date.find(job => job.platform_job.selection_date === date)
+      }
+    },
+    hasUnfilledJobs(date, type) {
+      if (this.unfilled_jobs && this.unfilled_jobs.length > 0) {
+        return this.unfilled_jobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === type)
+      }
+    },
+    hasDeclinedJobs(date, type) {
+      if (this.declined_jobs && this.declined_jobs.length > 0) {
+        return this.declined_jobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === type)
+      }
+    },
     // it returns an array of dates
     getDateArray(start, end) {
       let arr = new Array();
@@ -238,6 +307,7 @@ export default {
     getJobs() {
       // live(color code per shift), applied(amber), current(green), unfilled(red)
       this.$axios.$get(`/api/v1/practice/calendars/weekly/${this.$moment(this.daysInWeek[6]).format('YYYY')}/${this.weekOfTheYear}`).then(res => {
+        console.log(res)
         // get jobs (green)
         if (res.data.jobs && res.data.jobs.length > 0) {
           this.jobs = res.data.jobs

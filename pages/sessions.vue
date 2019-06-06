@@ -9,6 +9,8 @@
       <Allocated v-if="$store.state.session.activeTab === 'allocated'"/>
       <Completed v-if="$store.state.session.activeTab === 'completed'"/>
       <Unfilled v-if="$store.state.session.activeTab === 'unfilled'"/>
+      <Cancelled v-if="$store.state.session.activeTab === 'cancelled'"/>
+      <Declined v-if="$store.state.session.activeTab === 'declined'"/>
     </div>
   </section>
 </template>
@@ -19,6 +21,8 @@ import Applied from '@/components/Session/Applied'
 import Allocated from '@/components/Session/Allocated'
 import Completed from '@/components/Session/Completed'
 import Unfilled from '@/components/Session/Unfilled'
+import Cancelled from '@/components/Session/Cancelled'
+import Declined from '@/components/Session/Declined'
 export default {
   components: {
     SessionTabs,
@@ -26,7 +30,9 @@ export default {
     Applied,
     Allocated,
     Completed,
-    Unfilled
+    Unfilled,
+    Cancelled,
+    Declined,
   },
   created() {
     this.$store.commit('session/SET_ACTIVE_TAB', 'live')
