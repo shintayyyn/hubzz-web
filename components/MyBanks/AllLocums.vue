@@ -67,7 +67,7 @@ export default {
     },
     show(id) {
       // set id to store
-      this.$store.commit('myLocums/SET_MY_LOCUM_ID', id)
+      this.$store.commit('myBanks/SET_MY_LOCUM_ID', id)
       this.$store.commit('SET_MYLOCUMDETAIL_SHIELD', true)
       let d = document.getElementsByClassName('my-locum-detail-modal')[0]
       d.classList.toggle('toggled-right')

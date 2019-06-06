@@ -2,18 +2,9 @@
   <div class="flex flex-row flex-wrap justify-start">
     <div
       class="card rounded-lg shadow-lg m-2 p-5 hover:bg-grey"
-      v-for="(user, index) in locums"
+      v-for="user in locums"
       :key="user.id"
     >
-      <div class="flex justify-end">
-        <svgicon
-          name="on-star"
-          height="32"
-          width="32"
-          class="cursor-pointer"
-          @click="unfavorite(user.id, index)"
-        />
-      </div>
       <div class="flex flex-wrap text-center mt-4 cursor-pointer" @click="show(user.id)">
         <div class="w-full">
           <svgicon name="no-avatar" height="60" width="60"/>
@@ -32,22 +23,16 @@ export default {
     }
   },
   created() {
-    this.$axios.$get(`/api/v1/practice/locums?favorite_only=true`).then(res => {
+    this.locums = []
+    this.$axios.$get(`/api/v1/practice/rejected-locums`).then(res => {
       console.log(res)
       this.locums = res.data.users
     })
   },
   methods: {
-    unfavorite(id, index) {
-      this.$axios.$delete(`/api/v1/practice/locums/${id}/favorite`).then(res => {
-        console.log(res)
-        this.locums.splice(index, 1)
-        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Remove to favourites' })
-      })
-    },
     show(id) {
       // set id to store
-      this.$store.commit('myLocums/SET_MY_LOCUM_ID', id)
+      this.$store.commit('myBanks/SET_MY_LOCUM_ID', id)
       this.$store.commit('SET_MYLOCUMDETAIL_SHIELD', true)
       let d = document.getElementsByClassName('my-locum-detail-modal')[0]
       d.classList.toggle('toggled-right')

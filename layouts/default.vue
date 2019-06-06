@@ -163,7 +163,7 @@ import CompletedDetailModal from '@/components/Session/CompletedDetailModal'
 import UnfilledDetailModal from '@/components/Session/UnfilledDetailModal'
 import CancelledDetailModal from '@/components/Session/CancelledDetailModal'
 import DeclinedDetailModal from '@/components/Session/DeclinedDetailModal'
-import MyLocumDetailModal from '@/components/MyLocums/MyLocumDetailModal'
+import MyLocumDetailModal from '@/components/MyBanks/MyLocumDetailModal'
 export default {
   components: {
     AppButton,

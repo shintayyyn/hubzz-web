@@ -63,7 +63,7 @@ export default {
     // practice - get mylocums and jobs count
     if (this.$auth.user.domain === 'Practice') {
       this.$axios.$get(`/api/v1/practice/locums/count`).then(res => {
-        this.statistics.push({ label: 'My Locums', count: res.data.count, route: '/my-locums' })
+        this.statistics.push({ label: 'My Banks', count: res.data.count, route: '/my-banks' })
       })
       this.$axios.$get(`/api/v1/practice/applied-jobs/count`).then(res => {
         this.statistics.push({ label: 'Applied Jobs', count: res.data.count, route: '/sessions' })

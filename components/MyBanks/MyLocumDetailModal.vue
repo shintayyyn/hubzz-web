@@ -13,7 +13,7 @@ export default {
     }
   },
   created() {
-    this.$axios.$get(`/api/v1/practice/locums/${this.$store.state.myLocums.my_locum_id}`).then(res => {
+    this.$axios.$get(`/api/v1/practice/locums/${this.$store.state.myBanks.my_bank_id}`).then(res => {
       console.log(res)
     })
   }
