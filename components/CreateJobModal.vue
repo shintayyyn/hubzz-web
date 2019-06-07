@@ -34,6 +34,24 @@
               :placeholder="''"
               :error="this.formError.find(item => item.field === 'description')"
             />
+            <!-- report to -->
+            <AppInput
+              v-model="form.report_to"
+              :type="'text'"
+              :name="'report_to'"
+              :label="'Report to'"
+              :placeholder="''"
+              :error="formError.find(item => item.field === 'report_to')"
+            />
+            <!-- email -->
+            <AppInput
+              v-model="form.email"
+              :type="'text'"
+              :name="'email'"
+              :label="'Email'"
+              :placeholder="''"
+              :error="formError.find(item => item.field === 'email')"
+            />
             <AppSelect
               v-model="form.is_another_doctor"
               :name="'is_another_doctor'"
@@ -570,6 +588,9 @@ export default {
     }
   },
   created() {
+    // get report to and email from practice account
+    this.form.report_to = this.$auth.user.practice_detail.practice.report_to
+    this.form.email = this.$auth.user.practice_detail.practice.email
     // get practice/surgery list included from the profile practice and surgeries
     this.$axios.$get(`/api/v1/practice/practice-children`).then(res => {
       this.practices = []

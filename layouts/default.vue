@@ -375,7 +375,7 @@ body {
 .create-job-modal {
   position: fixed;
   right: 0;
-  margin-right: -100%;
+  margin-right: -110%;
   width: 100%;
   height: 100%;
   overflow: auto;
@@ -416,7 +416,7 @@ body {
 .add-surgery-modal {
   position: fixed;
   right: 0;
-  margin-right: -100%;
+  margin-right: -110%;
   width: 100%;
   height: 100%;
   overflow: auto;
@@ -457,7 +457,7 @@ body {
 .job-detail-modal {
   position: fixed;
   right: 0;
-  margin-right: -100%;
+  margin-right: -110%;
   width: 100%;
   height: 100%;
   overflow: auto;
@@ -479,7 +479,7 @@ body {
 .applied-detail-modal {
   position: fixed;
   right: 0;
-  margin-right: -100%;
+  margin-right: -110%;
   width: 100%;
   height: 100%;
   overflow: auto;
@@ -501,7 +501,7 @@ body {
 .applied-locum-detail-modal {
   position: fixed;
   right: 0;
-  margin-right: -100%;
+  margin-right: -110%;
   width: 100%;
   height: 100%;
   overflow: auto;
@@ -523,7 +523,7 @@ body {
 .allocated-detail-modal {
   position: fixed;
   right: 0;
-  margin-right: -100%;
+  margin-right: -110%;
   width: 100%;
   height: 100%;
   overflow: auto;
@@ -545,7 +545,7 @@ body {
 .completed-detail-modal {
   position: fixed;
   right: 0;
-  margin-right: -100%;
+  margin-right: -110%;
   width: 100%;
   height: 100%;
   overflow: auto;
@@ -567,7 +567,7 @@ body {
 .unfilled-detail-modal {
   position: fixed;
   right: 0;
-  margin-right: -100%;
+  margin-right: -110%;
   width: 100%;
   height: 100%;
   overflow: auto;
@@ -589,7 +589,7 @@ body {
 .cancelled-detail-modal {
   position: fixed;
   right: 0;
-  margin-right: -100%;
+  margin-right: -110%;
   width: 100%;
   height: 100%;
   overflow: auto;
@@ -611,7 +611,7 @@ body {
 .declined-detail-modal {
   position: fixed;
   right: 0;
-  margin-right: -100%;
+  margin-right: -110%;
   width: 100%;
   height: 100%;
   overflow: auto;
@@ -633,7 +633,7 @@ body {
 .my-locum-detail-modal {
   position: fixed;
   right: 0;
-  margin-right: -100%;
+  margin-right: -110%;
   width: 100%;
   height: 100%;
   overflow: auto;
@@ -657,7 +657,7 @@ body {
 .availability-modal {
   position: fixed;
   right: 0;
-  margin-right: -100%;
+  margin-right: -110%;
   width: 100%;
   height: 100vh;
   overflow: auto;

@@ -283,9 +283,10 @@
           />
 
           <AppInput
+            v-model="form.practice_type_id"
             :type="'multi-checkbox'"
             @checked="form.practice_type_id.push(parseInt($event))"
-            @unchecked="form.practice_type_id.splice(form.practice_type_id.findIndex(item => item == $event), 1)"
+            @unchecked="uncheckOther($event)"
             :name="'practice_type_id'"
             :label="'What type of Practice(s) are you?'"
             :placeholder="''"
@@ -536,6 +537,9 @@ export default {
     }
   },
   methods: {
+    uncheckOther(value) {
+      this.form.practice_type_id = this.form.practice_type_id.filter(id => id != value)
+    },
     close() {
       this.modalType = ''
       this.rateRangeModal = false
@@ -742,6 +746,7 @@ export default {
         this.selectedSpokenLanguages.forEach(item => {
           this.form.spoken_language_id.push(item.id)
         })
+        console.log(this.form)
         this.Validate(this.form, ['nhs_smart_card_id_number', 'spoken_language_id', 'mandatory_training_id'])
         if (!this.formError.length) {
           this.$store.commit('signUp/SET_PROFESSIONAL_DETAILS', this.form)
