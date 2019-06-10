@@ -20,10 +20,10 @@
     >Applied</div>
     <div
       style="font-family:Nunito"
-      @click.prevent="$store.commit('jobs/setActiveTab', 'unsuccessful')"
+      @click.prevent="$store.commit('jobs/setActiveTab', 'rejected')"
       class="mr-5 p-3 text-sm font-bold cursor-pointer"
-      :class="$store.state.jobs.activeTab === 'unsuccessful' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
-    >Unsuccessful</div>
+      :class="$store.state.jobs.activeTab === 'rejected' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
+    >Rejected</div>
     <div
       style="font-family:Nunito"
       @click.prevent="$store.commit('jobs/setActiveTab', 'declined')"

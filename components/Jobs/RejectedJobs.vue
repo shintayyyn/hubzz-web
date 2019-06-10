@@ -13,8 +13,7 @@
           <th style="min-width:100px">Title</th>
           <th style="min-width:50px">From</th>
           <th style="min-width:50px">To</th>
-          <th style="min-width:50xp">Created</th>
-          <th style="min-width:50px">Locums Applied</th>
+          <th style="min-width:50xp">Rejected</th>
         </tr>
       </thead>
       <tbody>
@@ -29,8 +28,7 @@
             <td style="min-width:100px">{{item.platform_job.title}}</td>
             <td style="min-width:50px">{{item.platform_job.date_start}}</td>
             <td style="min-width:50px">{{item.platform_job.date_end}}</td>
-            <td style="min-width:50px">{{item.platform_job.date_created}}</td>
-            <td style="min-width:50px">{{item.applicants_count}}</td>
+            <td style="min-width:50px">{{item.platform_job.rejected_at}}</td>
           </tr>
           <tr>
             <td></td>
@@ -49,7 +47,7 @@ export default {
   },
   created() {
     // get applied jobs
-    this.$axios.$get(`/api/v1/locum/jobs?locum_status=Applied`).then(res => {
+    this.$axios.$get(`/api/v1/locum/jobs?locum_status=Unsuccessful`).then(res => {
       console.log(res)
       this.jobs = res.data.jobs
     })

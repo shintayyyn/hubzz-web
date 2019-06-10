@@ -54,11 +54,10 @@ export default {
   methods: {
     show(id) {
       this.$store.commit('session/SET_JOB_DETAIL_ID', id)
+      document.body.style.overflow = 'hidden'
+      this.$store.commit('TOGGLED_RIGHT', 'unfilled-detail-modal')
       this.$store.commit('SET_UNFILLEDDETAIL_MODAL', true)
       this.$store.commit('SET_UNFILLEDDETAIL_SHIELD', true)
-      let d = document.getElementsByClassName('unfilled-detail-modal')[0]
-      d.classList.toggle('toggled-right')
-      document.body.style.overflow = 'hidden'
     }
   }
 }

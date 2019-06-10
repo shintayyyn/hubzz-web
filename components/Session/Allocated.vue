@@ -61,11 +61,10 @@ export default {
     show(id, userId) {
       this.$store.commit('session/SET_JOB_DETAIL_ID', id)
       this.$store.commit('session/SET_USER_ID', userId)
+      document.body.style.overflow = 'hidden'
+      this.$store.commit('TOGGLED_RIGHT', 'allocated-detail-modal')
       this.$store.commit('SET_ALLOCATEDDETAIL_MODAL', true)
       this.$store.commit('SET_ALLOCATEDDETAIL_SHIELD', true)
-      let d = document.getElementsByClassName('allocated-detail-modal')[0]
-      d.classList.toggle('toggled-right')
-      document.body.style.overflow = 'hidden'
     }
   }
 }

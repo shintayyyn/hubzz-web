@@ -16,12 +16,20 @@
     </div>
     <div class="create-job-modal-shield" v-if="$store.state.create_job_shield"></div>
     <!-- practice - job details 510 509 -->
-    <div class="job-detail-modal shadow-lg" v-if="$auth.user.domain === 'Practice'">
+    <div
+      class="job-detail-modal shadow-lg"
+      :class="{'toggled-right': $store.state.toggled_right === 'job-detail-modal'}"
+      v-if="$auth.user.domain === 'Practice'"
+    >
       <JobDetailModal @close="closeJobDetailModal" v-if="$store.state.job_detail_modal"/>
     </div>
     <div class="job-detail-modal-shield" v-if="$store.state.job_detail_shield"></div>
     <!-- practice - applied details 510 509 -->
-    <div class="applied-detail-modal shadow-lg" v-if="$auth.user.domain === 'Practice'">
+    <div
+      class="applied-detail-modal shadow-lg"
+      :class="{'toggled-right': $store.state.toggled_right === 'applied-detail-modal'}"
+      v-if="$auth.user.domain === 'Practice'"
+    >
       <AppliedDetailModal
         @close="closeAppliedDetailModal"
         v-if="$store.state.applied_detail_modal"
@@ -29,7 +37,11 @@
     </div>
     <div class="applied-detail-modal-shield" v-if="$store.state.applied_detail_shield"></div>
     <!-- practice - applied locum details 512 511 -->
-    <div class="applied-locum-detail-modal shadow-lg" v-if="$auth.user.domain === 'Practice'">
+    <div
+      class="applied-locum-detail-modal shadow-lg"
+      :class="{'toggled-right': $store.state.toggled_right === 'applied-locum-detail-modal'}"
+      v-if="$auth.user.domain === 'Practice'"
+    >
       <AppliedLocumDetailModal
         @close="closeAppliedLocumDetailModal"
         v-if="$store.state.applied_locum_detail_modal"
@@ -37,7 +49,11 @@
     </div>
     <div class="applied-locum-detail-modal-shield" v-if="$store.state.applied_locum_detail_shield"></div>
     <!-- practice - allocated details 510 509 -->
-    <div class="allocated-detail-modal shadow-lg" v-if="$auth.user.domain === 'Practice'">
+    <div
+      class="allocated-detail-modal shadow-lg"
+      :class="{'toggled-right': $store.state.toggled_right === 'allocated-detail-modal'}"
+      v-if="$auth.user.domain === 'Practice'"
+    >
       <AllocatedDetailModal
         @close="closeAllocatedDetailModal"
         v-if="$store.state.allocated_detail_modal"
@@ -45,7 +61,11 @@
     </div>
     <div class="allocated-detail-modal-shield" v-if="$store.state.allocated_detail_shield"></div>
     <!-- practice - completed details 510 509 -->
-    <div class="completed-detail-modal shadow-lg" v-if="$auth.user.domain === 'Practice'">
+    <div
+      class="completed-detail-modal shadow-lg"
+      :class="{'toggled-right': $store.state.toggled_right === 'completed-detail-modal'}"
+      v-if="$auth.user.domain === 'Practice'"
+    >
       <CompletedDetailModal
         @close="closeCompletedDetailModal"
         v-if="$store.state.completed_detail_modal"
@@ -53,7 +73,11 @@
     </div>
     <div class="completed-detail-modal-shield" v-if="$store.state.completed_detail_shield"></div>
     <!-- practice - unfilled details 510 509 -->
-    <div class="unfilled-detail-modal shadow-lg" v-if="$auth.user.domain === 'Practice'">
+    <div
+      class="unfilled-detail-modal shadow-lg"
+      :class="{'toggled-right': $store.state.toggled_right === 'unfilled-detail-modal'}"
+      v-if="$auth.user.domain === 'Practice'"
+    >
       <UnfilledDetailModal
         @close="closeUnfilledDetailModal"
         v-if="$store.state.unfilled_detail_modal"
@@ -61,7 +85,11 @@
     </div>
     <div class="unfilled-detail-modal-shield" v-if="$store.state.unfilled_detail_shield"></div>
     <!-- practice - cancelled details 510 509 -->
-    <div class="cancelled-detail-modal shadow-lg" v-if="$auth.user.domain === 'Practice'">
+    <div
+      class="cancelled-detail-modal shadow-lg"
+      :class="{'toggled-right': $store.state.toggled_right === 'cancelled-detail-modal'}"
+      v-if="$auth.user.domain === 'Practice'"
+    >
       <CancelledDetailModal
         @close="closeCancelledDetailModal"
         v-if="$store.state.cancelled_detail_modal"
@@ -69,7 +97,11 @@
     </div>
     <div class="cancelled-detail-modal-shield" v-if="$store.state.cancelled_detail_shield"></div>
     <!-- practice - declined details 510 509 -->
-    <div class="declined-detail-modal shadow-lg" v-if="$auth.user.domain === 'Practice'">
+    <div
+      class="declined-detail-modal shadow-lg"
+      :class="{'toggled-right': $store.state.toggled_right === 'declined-detail-modal'}"
+      v-if="$auth.user.domain === 'Practice'"
+    >
       <DeclinedDetailModal
         @close="closeDeclinedDetailModal"
         v-if="$store.state.declined_detail_modal"
@@ -77,7 +109,11 @@
     </div>
     <div class="declined-detail-modal-shield" v-if="$store.state.declined_detail_shield"></div>
     <!-- practice - my locum details details 510 509 -->
-    <div class="my-locum-detail-modal shadow-lg" v-if="$auth.user.domain === 'Practice'">
+    <div
+      class="my-locum-detail-modal shadow-lg"
+      :class="{'toggled-right': $store.state.toggled_right === 'my-locum-detail-modal'}"
+      v-if="$auth.user.domain === 'Practice'"
+    >
       <MyLocumDetailModal
         @close="closeMyLocumDetailModal"
         v-if="$store.state.my_locum_detail_modal"
@@ -85,7 +121,11 @@
     </div>
     <div class="my-locum-detail-modal-shield" v-if="$store.state.my_locum_detail_shield"></div>
     <!-- practice - add surgery modal 510 509 -->
-    <div class="add-surgery-modal shadow-lg" v-if="$auth.user.domain === 'Practice'">
+    <div
+      class="add-surgery-modal shadow-lg"
+      :class="{'toggled-right': $store.state.toggled_right === 'add-surgery-modal'}"
+      v-if="$auth.user.domain === 'Practice'"
+    >
       <AddSurgeryModal @close="closeAddSurgeryModal" v-if="$store.state.add_surgery_modal"/>
     </div>
     <div class="add-surgery-modal-shield" v-if="$store.state.add_surgery_shield"></div>
@@ -264,11 +304,10 @@ export default {
       this.$store.commit('SET_CREATEJOB_MODAL', false)
     },
     closeJobDetailModal() {
-      this.$store.commit('SET_JOBDETAIL_SHIELD', false)
-      let d = document.getElementsByClassName('job-detail-modal')[0]
-      d.classList.toggle('toggled-right')
       document.body.style.overflow = 'auto'
+      this.$store.commit('TOGGLED_RIGHT', '')
       this.$store.commit('SET_JOBDETAIL_MODAL', false)
+      this.$store.commit('SET_JOBDETAIL_SHIELD', false)
     },
     closeAppliedDetailModal() {
       this.$store.commit('SET_APPLIEDDETAIL_SHIELD', false)

@@ -30,16 +30,15 @@ export default {
     AccountChangePasswordForm
   },
   created() {
-    // ! ask arvi on getProfessions
     // this.$store.dispatch('signUp/getProfessions')
-    this.$store.dispatch('signUp/getQualifications')
-    this.$store.dispatch('signUp/getClinicalSystems')
-    this.$store.dispatch('signUp/getSpokenLanguages')
+    // this.$store.dispatch('signUp/getQualifications')
+    // this.$store.dispatch('signUp/getClinicalSystems')
+    // this.$store.dispatch('signUp/getSpokenLanguages')
 
     if (this.$auth.user.domain === 'Locum') {
-      this.$store.commit('account/SET_ACCOUNT_TAB', 'general')
+      this.$store.commit('account/setActiveTab', 'general')
     } else if (this.$auth.user.domain === 'Practice') {
-      this.$store.commit('account/SET_ACCOUNT_TAB', 'user')
+      this.$store.commit('account/setActiveTab', 'user')
     }
   }
 }
