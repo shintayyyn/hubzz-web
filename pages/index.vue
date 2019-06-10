@@ -65,13 +65,13 @@ export default {
       this.$axios.$get(`/api/v1/practice/locums/count`).then(res => {
         this.statistics.push({ label: 'My Banks', count: res.data.count, route: '/my-banks' })
       })
-      this.$axios.$get(`/api/v1/practice/applied-jobs/count`).then(res => {
+      this.$axios.$get(`/api/v1/practice/jobs/count?status=Applied`).then(res => {
         this.statistics.push({ label: 'Applied Jobs', count: res.data.count, route: '/sessions' })
       })
-      this.$axios.$get(`/api/v1/practice/current-jobs/count`).then(res => {
+      this.$axios.$get(`/api/v1/practice/jobs/count?status=Current`).then(res => {
         this.statistics.push({ label: 'Assigned Jobs', count: res.data.count, route: '/sessions' })
       })
-      this.$axios.$get(`/api/v1/practice/available-jobs/count`).then(res => {
+      this.$axios.$get(`/api/v1/practice/jobs/count?status=Available`).then(res => {
         this.statistics.push({ label: 'Available Jobs', count: res.data.count, route: '/sessions' })
       })
       // const promises = [

@@ -89,7 +89,7 @@
       <AddSurgeryModal @close="closeAddSurgeryModal" v-if="$store.state.add_surgery_modal"/>
     </div>
     <div class="add-surgery-modal-shield" v-if="$store.state.add_surgery_shield"></div>
-    <!-- practice - add selected surgery surgery 512 511 -->
+    <!-- practice - add selected surgery 512 511 -->
     <div
       class="add-selected-surgery-modal"
       v-if="$auth.user.domain === 'Practice' && $store.state.add_selected_surgery_modal"
@@ -98,15 +98,25 @@
     </div>
     <div class="add-selected-surgery-shield" v-if="$store.state.add_selected_surgery_shield"></div>
     <!-- practice - remove uploaded document modal 510 509 -->
-    <div class="remove-uploaded-document-modal">
-      <RemoveUploadedDocumentModal
-        v-if="$auth.user.domain === 'Practice' && $store.state.remove_uploaded_document_modal"
-      />
+    <div class="remove-uploaded-document-modal" v-if="$auth.user.domain === 'Practice'">
+      <RemoveUploadedDocumentModal v-if="$store.state.remove_uploaded_document_modal"/>
     </div>
     <div
       class="remove-uploaded-document-shield"
       v-if="$store.state.remove_uploaded_document_shield"
     ></div>
+    <!-- locum - add unavailable date modal 510 509 -->
+    <div
+      class="add-unavailable-date-modal shadow-lg"
+      :class="{'toggled-right': $store.state.toggled_right === 'add-unavailable-date-modal'}"
+      v-if="$auth.user.domain === 'Locum'"
+    >
+      <AddUnavailableDateModal
+        @close="closeAddUnavailableDateModal"
+        v-if="$store.state.add_unavailable_date_modal"
+      />
+    </div>
+    <div class="add-unavailable-date-modal-shield" v-if="$store.state.add_unavailable_date_shield"></div>
     <!--  -->
     <div class="content">
       <!-- notification -->
@@ -164,6 +174,8 @@ import UnfilledDetailModal from '@/components/Session/UnfilledDetailModal'
 import CancelledDetailModal from '@/components/Session/CancelledDetailModal'
 import DeclinedDetailModal from '@/components/Session/DeclinedDetailModal'
 import MyLocumDetailModal from '@/components/MyBanks/MyLocumDetailModal'
+// locums
+import AddUnavailableDateModal from '@/components/Availability/AddUnavailableDateModal'
 export default {
   components: {
     AppButton,
@@ -184,7 +196,9 @@ export default {
     UnfilledDetailModal,
     CancelledDetailModal,
     DeclinedDetailModal,
-    MyLocumDetailModal
+    MyLocumDetailModal,
+    // locums
+    AddUnavailableDateModal,
   },
   middleware: 'isAuthenticated',
   beforeCreate() {
@@ -318,6 +332,13 @@ export default {
       d.classList.toggle('toggled-right')
       document.body.style.overflow = 'auto'
       this.$store.commit('SET_ADDSURGERY_MODAL', false)
+    },
+    // locums
+    closeAddUnavailableDateModal() {
+      document.body.style.overflow = 'auto'
+      this.$store.commit('TOGGLED_RIGHT', '')
+      this.$store.commit('SET_ADDUNAVAILABLEDATE_MODAL', false)
+      this.$store.commit('SET_ADDUNAVAILABLEDATE_SHIELD', false)
     },
   }
 }
@@ -652,9 +673,30 @@ body {
   opacity: 0.5;
   z-index: 509;
 }
-
 /* locums */
-.availability-modal {
+.add-unavailable-date-modal {
+  position: fixed;
+  right: 0;
+  margin-right: -110%;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  border-left: solid 2px #edf2f7;
+  transition: all 0.3s ease-in-out;
+  background-color: white;
+  z-index: 510;
+}
+.add-unavailable-date-modal-shield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #333;
+  opacity: 0.5;
+  z-index: 509;
+}
+/* .availability-modal {
   position: fixed;
   right: 0;
   margin-right: -110%;
@@ -675,7 +717,7 @@ body {
   background-color: #333;
   opacity: 0.5;
   z-index: 509;
-}
+} */
 
 .toggled-left {
   margin-left: 0;

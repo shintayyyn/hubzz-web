@@ -36,6 +36,10 @@ export const state = () => ({
   declined_detail_shield: false,
   my_locum_detail_modal: false,
   my_locum_detail_shield: false,
+  // locums
+  add_unavailable_date_modal: false,
+  add_unavailable_date_shield: false,
+  toggled_right: '',
   //
   availability_modal: false,
   availability_range_modal: false,
@@ -166,6 +170,16 @@ export const mutations = {
   SET_MYLOCUMDETAIL_SHIELD(state, payload) {
     state.my_locum_detail_shield = payload
   },
+  // locums
+  SET_ADDUNAVAILABLEDATE_MODAL(state, payload) {
+    state.add_unavailable_date_modal = payload
+  },
+  SET_ADDUNAVAILABLEDATE_SHIELD(state, payload) {
+    state.add_unavailable_date_shield = payload
+  },
+  TOGGLED_RIGHT(state, payload) {
+    state.toggled_right = payload
+  },
   //
   TOGGLE_AVAILABILITY_MODAL(state, payload) {
     state.availability_modal = payload
@@ -173,6 +187,7 @@ export const mutations = {
   TOGGLE_AVAILABILITY_RANGE_MODAL(state, payload) {
     state.availability_range_modal = payload
   },
+  //
   TOGGLE_INVOICE_MODAL(state, payload) {
     payload ? (state.blur_bg = true) : (state.blur_bg = false)
     state.invoice_modal = payload
