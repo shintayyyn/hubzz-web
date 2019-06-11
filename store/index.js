@@ -9,6 +9,8 @@ export const state = () => ({
   signout_shield: false,
   months: [],
   mobile: false,
+  //
+  toggled_right: '',
   // practice
   create_job_modal: false,
   create_job_shield: false,
@@ -39,7 +41,18 @@ export const state = () => ({
   // locums
   add_unavailable_date_modal: false,
   add_unavailable_date_shield: false,
-  toggled_right: '',
+  locum_allocated_detail_modal: false,
+  locum_allocated_detail_shield: false,
+  locum_available_detail_modal: false,
+  locum_available_detail_shield: false,
+  locum_applied_detail_modal: false,
+  locum_applied_detail_shield: false,
+  locum_rejected_detail_modal: false,
+  locum_rejected_detail_shield: false,
+  locum_declined_detail_modal: false,
+  locum_declined_detail_shield: false,
+  locum_completed_detail_modal: false,
+  locum_completed_detail_shield: false,
   //
   availability_modal: false,
   availability_range_modal: false,
@@ -90,6 +103,10 @@ export const mutations = {
   },
   SET_SIGNOUT_SHIELD(state, payload) {
     state.signout_shield = payload
+  },
+  //
+  TOGGLED_RIGHT(state, payload) {
+    state.toggled_right = payload
   },
   // practice
   SET_CREATEJOB_MODAL(state, payload) {
@@ -177,8 +194,41 @@ export const mutations = {
   SET_ADDUNAVAILABLEDATE_SHIELD(state, payload) {
     state.add_unavailable_date_shield = payload
   },
-  TOGGLED_RIGHT(state, payload) {
-    state.toggled_right = payload
+  SET_LOCUM_ALLOCATED_DETAIL_MODAL(state, payload) {
+    state.locum_allocated_detail_modal = payload
+  },
+  SET_LOCUM_ALLOCATED_DETAIL_SHIELD(state, payload) {
+    state.locum_allocated_detail_shield = payload
+  },
+  SET_LOCUM_AVAILABLE_DETAIL_MODAL(state, payload) {
+    state.locum_available_detail_modal = payload
+  },
+  SET_LOCUM_AVAILABLE_DETAIL_SHIELD(state, payload) {
+    state.locum_available_detail_shield = payload
+  },
+  SET_LOCUM_APPLIED_DETAIL_MODAL(state, payload) {
+    state.locum_applied_detail_modal = payload
+  },
+  SET_LOCUM_APPLIED_DETAIL_SHIELD(state, payload) {
+    state.locum_applied_detail_shield = payload
+  },
+  SET_LOCUM_REJECTED_DETAIL_MODAL(state, payload) {
+    state.locum_rejected_detail_modal = payload
+  },
+  SET_LOCUM_REJECTED_DETAIL_SHIELD(state, payload) {
+    state.locum_rejected_detail_shield = payload
+  },
+  SET_LOCUM_DECLINED_DETAIL_MODAL(state, payload) {
+    state.locum_declined_detail_modal = payload
+  },
+  SET_LOCUM_DECLINED_DETAIL_SHIELD(state, payload) {
+    state.locum_declined_detail_shield = payload
+  },
+  SET_LOCUM_COMPLETED_DETAIL_MODAL(state, payload) {
+    state.locum_completed_detail_modal = payload
+  },
+  SET_LOCUM_COMPLETED_DETAIL_SHIELD(state, payload) {
+    state.locum_completed_detail_shield = payload
   },
   //
   TOGGLE_AVAILABILITY_MODAL(state, payload) {

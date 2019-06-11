@@ -82,46 +82,4 @@ export default {
 }
 </script>
 <style>
-.sidebar-nav {
-  /* position: absolute;
-  top: 0;
-  width: 200px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  padding-bottom: 50px;
-  padding-top: 10px;
-  border-right: 1px solid lightgrey;
-  height: 100%; */
-}
-
-/* #sidebar-wrapper {
-  z-index: 1000;
-  position: fixed;
-  left: 200px;
-  width: 0;
-  height: 100%;
-  margin-left: -200px;
-  overflow-y: auto;
-  background: #272727 !important;
-  -webkit-transition: all 0.5s ease;
-  -moz-transition: all 0.5s ease;
-  -o-transition: all 0.5s ease;
-  transition: all 0.5s ease;
-}
-
-#wrapper.toggled #sidebar-wrapper {
-  width: 200px;
-}
-.sidebar-nav {
-  position: absolute;
-  top: 0;
-  width: 200px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  padding-bottom: 50px;
-  padding-top: 10px;
-  margin-top: 60px;
-} */
 </style>

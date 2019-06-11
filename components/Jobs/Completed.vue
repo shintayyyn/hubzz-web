@@ -3,25 +3,24 @@
     class="mt-10 w-full text-center"
     style="font-family: Nunito"
     v-if="jobs.length === 0"
-  >There are no locums applying for the jobs you created at the moment</div>
+  >You do not have any live jobs</div>
   <div v-else class="overflow-x-auto overflow-y-hidden">
-    <table class="table">
+    <table style="table">
       <thead>
-        <tr class="text-xs sm:text-sm text-left">
+        <tr class="text-xs lg:text-sm text-left">
           <th style="min-width:120px">Job number</th>
           <th style="min-width:100px">Practice</th>
           <th style="min-width:100px">Title</th>
           <th style="min-width:50px">From</th>
           <th style="min-width:50px">To</th>
-          <th style="min-width:50xp">Created</th>
-          <th style="min-width:50px">Locums Applied</th>
+          <th style="min-width:50px">Marked completed by Practice</th>
         </tr>
       </thead>
       <tbody>
         <template v-for="(item, index) in jobs">
           <tr
             :key="`${item.id}-${index}`"
-            class="rounded-lg shadow-md hover:bg-grey-light cursor-pointer text-xs lg:text-sm"
+            class="job-card rounded-lg shadow-md cursor-pointer text-xs lg:text-sm"
             @click="show(item.id)"
           >
             <td style="min-width:120px">{{item.job_number}}</td>
@@ -29,8 +28,9 @@
             <td style="min-width:100px">{{item.platform_job.title}}</td>
             <td style="min-width:50px">{{item.platform_job.date_start}}</td>
             <td style="min-width:50px">{{item.platform_job.date_end}}</td>
-            <td style="min-width:50px">{{item.platform_job.date_created}}</td>
-            <td style="min-width:50px">{{item.applicants_count}}</td>
+            <td
+              style="min-width:50px"
+            >{{$moment(item.platform_job.completed_at).format('YYYY-MM-DD')}}</td>
           </tr>
           <tr>
             <td></td>
@@ -48,25 +48,32 @@ export default {
     }
   },
   created() {
-    // get applied jobs
-    this.$axios.$get(`/api/v1/locum/jobs?locum_status=Applied`).then(res => {
+    // get applied jobs //! ask arvi need marked completed by Practice
+    this.$axios.$get(`/api/v1/locum/jobs?locumstatus=Completed`).then(res => {
       console.log(res)
       this.jobs = res.data.jobs
     })
   },
   methods: {
     show(id) {
-      this.$store.commit('session/SET_JOB_DETAIL_ID', id)
-      this.$store.commit('SET_APPLIEDDETAIL_MODAL', true)
-      this.$store.commit('SET_APPLIEDDETAIL_SHIELD', true)
-      let d = document.getElementsByClassName('applied-detail-modal')[0]
-      d.classList.toggle('toggled-right')
+      this.$store.commit('jobs/SET_JOB_ID', id)
+      this.$store.commit('SET_LOCUM_COMPLETED_DETAIL_MODAL', true)
+      this.$store.commit('SET_LOCUM_COMPLETED_DETAIL_SHIELD', true)
+      this.$store.commit('TOGGLED_RIGHT', 'locum-completed-detail-modal')
       document.body.style.overflow = 'hidden'
     }
   }
 }
 </script>
 <style scoped>
+.job-card:hover {
+  background-color: #dee1e5;
+  transition: background-color 0.5s ease-in-out;
+}
+.job-card {
+  background-color: white;
+  transition: background-color 0.5s ease-in-out;
+}
 table {
   min-width: 850px;
 }

@@ -8,6 +8,7 @@
           <div class="max-w-xs">
             <div
               class="text-xs xl:text-base text-center bg-orange text-white font-bold rounded-full p-2"
+              :class="numberStatusBg(gmc_or_nmc_number.status)"
             >{{gmc_or_nmc_number.status}}</div>
           </div>
         </div>
@@ -19,6 +20,7 @@
           <div class="max-w-md">
             <div
               class="text-xs xl:text-base text-center bg-orange text-white font-bold rounded-full p-2"
+              :class="numberStatusBg(mpl_or_npl_number.status)"
             >{{mpl_or_npl_number.status}}</div>
           </div>
         </div>
@@ -69,7 +71,7 @@
               <td style="min-width:100px" class="max-w-xs">
                 <div
                   class="text-xs xl:text-base text-center text-white font-bold rounded-full p-2"
-                  :class="statusBg(item.id)"
+                  :class="documentStatusBg(item.id)"
                 >{{status(item.id)}}</div>
               </td>
               <td style="min-width:180px">{{note(item.id) | StringMaxLength}}</td>
@@ -222,14 +224,29 @@ export default {
         return this.compliance_documents.find(document => document.compliance_document.id === id).status
       }
     },
-    statusBg(id) {
+    numberStatusBg(status) {
+      switch (status) {
+        case 'Pending':
+          return 'bg-orange'
+          break;
+        case 'Verified':
+          return 'bg-green'
+          break;
+        case 'Rejected':
+          return 'bg-red-light'
+          break;
+        default:
+          return
+      }
+    },
+    documentStatusBg(id) {
       if (this.compliance_documents.find(document => document.compliance_document.id === id)) {
         let status = this.compliance_documents.find(document => document.compliance_document.id === id).status
         switch (status) {
           case 'Pending':
             return 'bg-orange'
             break;
-          case 'Approved':
+          case 'Verified':
             return 'bg-green'
             break;
           case 'Rejected':

@@ -11,7 +11,11 @@
     </div>
     <div class="signout-shield" v-if="$store.state.signout_shield"></div>
     <!-- pratice - create job modal 510 509 -->
-    <div class="create-job-modal shadow-lg" v-if="$auth.user.domain === 'Practice'">
+    <div
+      class="create-job-modal shadow-lg"
+      :class="{'toggled-right': $store.state.toggled_right === 'create-job-modal'}"
+      v-if="$auth.user.domain === 'Practice'"
+    >
       <CreateJobModal @close="closeCreateJobModal" v-if="$store.state.create_job_modal"/>
     </div>
     <div class="create-job-modal-shield" v-if="$store.state.create_job_shield"></div>
@@ -157,6 +161,93 @@
       />
     </div>
     <div class="add-unavailable-date-modal-shield" v-if="$store.state.add_unavailable_date_shield"></div>
+    <!-- locum - allocated detail modal 510 509 -->
+    <div
+      class="locum-allocated-detail-modal shadow-lg"
+      :class="{'toggled-right': $store.state.toggled_right === 'locum-allocated-detail-modal'}"
+      v-if="$auth.user.domain === 'Locum'"
+    >
+      <LocumAllocatedDetailModal
+        @close="closeLocumAllocatedDetailModal"
+        v-if="$store.state.locum_allocated_detail_modal"
+      />
+    </div>
+    <div
+      class="locum-allocated-detail-modal-shield"
+      v-if="$store.state.locum_allocated_detail_shield"
+    ></div>
+    <!-- locum - available detail modal 510 509 -->
+    <div
+      class="locum-available-detail-modal shadow-lg"
+      :class="{'toggled-right': $store.state.toggled_right === 'locum-available-detail-modal'}"
+      v-if="$auth.user.domain === 'Locum'"
+    >
+      <LocumAvailableDetailModal
+        @close="closeLocumAvailableDetailModal"
+        v-if="$store.state.locum_available_detail_modal"
+      />
+    </div>
+    <div
+      class="locum-available-detail-modal-shield"
+      v-if="$store.state.locum_available_detail_shield"
+    ></div>
+    <!-- locum - applied detail modal 510 509 -->
+    <div
+      class="locum-applied-detail-modal shadow-lg"
+      :class="{'toggled-right': $store.state.toggled_right === 'locum-applied-detail-modal'}"
+      v-if="$auth.user.domain === 'Locum'"
+    >
+      <LocumAppliedDetailModal
+        @close="closeLocumAppliedDetailModal"
+        v-if="$store.state.locum_applied_detail_modal"
+      />
+    </div>
+    <div class="locum-applied-detail-modal-shield" v-if="$store.state.locum_applied_detail_shield"></div>
+    <!-- locum - rejected detail modal 510 509 -->
+    <div
+      class="locum-rejected-detail-modal shadow-lg"
+      :class="{'toggled-right': $store.state.toggled_right === 'locum-rejected-detail-modal'}"
+      v-if="$auth.user.domain === 'Locum'"
+    >
+      <LocumRejectedDetailModal
+        @close="closeLocumRejectedDetailModal"
+        v-if="$store.state.locum_rejected_detail_modal"
+      />
+    </div>
+    <div
+      class="locum-rejected-detail-modal-shield"
+      v-if="$store.state.locum_rejected_detail_shield"
+    ></div>
+    <!-- locum - declined detail modal 510 509 -->
+    <div
+      class="locum-declined-detail-modal shadow-lg"
+      :class="{'toggled-right': $store.state.toggled_right === 'locum-declined-detail-modal'}"
+      v-if="$auth.user.domain === 'Locum'"
+    >
+      <LocumDeclinedDetailModal
+        @close="closeLocumDeclinedDetailModal"
+        v-if="$store.state.locum_declined_detail_modal"
+      />
+    </div>
+    <div
+      class="locum-declined-detail-modal-shield"
+      v-if="$store.state.locum_declined_detail_shield"
+    ></div>
+    <!-- locum - completed detail modal 510 509 -->
+    <div
+      class="locum-completed-detail-modal shadow-lg"
+      :class="{'toggled-right': $store.state.toggled_right === 'locum-completed-detail-modal'}"
+      v-if="$auth.user.domain === 'Locum'"
+    >
+      <LocumCompletedDetailModal
+        @close="closeLocumCompletedDetailModal"
+        v-if="$store.state.locum_completed_detail_modal"
+      />
+    </div>
+    <div
+      class="locum-completed-detail-modal-shield"
+      v-if="$store.state.locum_completed_detail_shield"
+    ></div>
     <!--  -->
     <div class="content">
       <!-- notification -->
@@ -216,6 +307,12 @@ import DeclinedDetailModal from '@/components/Session/DeclinedDetailModal'
 import MyLocumDetailModal from '@/components/MyBanks/MyLocumDetailModal'
 // locums
 import AddUnavailableDateModal from '@/components/Availability/AddUnavailableDateModal'
+import LocumAllocatedDetailModal from '@/components/Jobs/LocumAllocatedDetailModal'
+import LocumAvailableDetailModal from '@/components/Jobs/LocumAvailableDetailModal'
+import LocumAppliedDetailModal from '@/components/Jobs/LocumAppliedDetailModal'
+import LocumRejectedDetailModal from '@/components/Jobs/LocumRejectedDetailModal'
+import LocumDeclinedDetailModal from '@/components/Jobs/LocumDeclinedDetailModal'
+import LocumCompletedDetailModal from '@/components/Jobs/LocumCompletedDetailModal'
 export default {
   components: {
     AppButton,
@@ -239,6 +336,12 @@ export default {
     MyLocumDetailModal,
     // locums
     AddUnavailableDateModal,
+    LocumAllocatedDetailModal,
+    LocumAvailableDetailModal,
+    LocumAppliedDetailModal,
+    LocumRejectedDetailModal,
+    LocumDeclinedDetailModal,
+    LocumCompletedDetailModal,
   },
   middleware: 'isAuthenticated',
   beforeCreate() {
@@ -290,18 +393,16 @@ export default {
     },
     // practice
     toggleCreateJobModal() {
-      this.$store.commit('SET_CREATEJOB_SHIELD', true)
-      let d = document.getElementsByClassName('create-job-modal')[0]
-      d.classList.toggle('toggled-right')
       document.body.style.overflow = 'hidden'
+      this.$store.commit('TOGGLED_RIGHT', 'create-job-modal')
       this.$store.commit('SET_CREATEJOB_MODAL', true)
+      this.$store.commit('SET_CREATEJOB_SHIELD', true)
     },
     closeCreateJobModal() {
-      this.$store.commit('SET_CREATEJOB_SHIELD', false)
-      let d = document.getElementsByClassName('create-job-modal')[0]
-      d.classList.toggle('toggled-right')
-      document.body.style.overflow = 'auto'
+      document.body.style.overflow = 'hidden'
+      this.$store.commit('TOGGLED_RIGHT', '')
       this.$store.commit('SET_CREATEJOB_MODAL', false)
+      this.$store.commit('SET_CREATEJOB_SHIELD', false)
     },
     closeJobDetailModal() {
       document.body.style.overflow = 'auto'
@@ -310,67 +411,58 @@ export default {
       this.$store.commit('SET_JOBDETAIL_SHIELD', false)
     },
     closeAppliedDetailModal() {
-      this.$store.commit('SET_APPLIEDDETAIL_SHIELD', false)
-      let d = document.getElementsByClassName('applied-detail-modal')[0]
-      d.classList.toggle('toggled-right')
       document.body.style.overflow = 'auto'
+      this.$store.commit('TOGGLED_RIGHT', '')
       this.$store.commit('SET_APPLIEDDETAIL_MODAL', false)
+      this.$store.commit('SET_APPLIEDDETAIL_SHIELD', false)
     },
     closeAppliedLocumDetailModal() {
-      this.$store.commit('SET_APPLIEDLOCUMDETAIL_SHIELD', false)
-      let d = document.getElementsByClassName('applied-locum-detail-modal')[0]
-      d.classList.toggle('toggled-right')
       document.body.style.overflow = 'auto'
+      this.$store.commit('TOGGLED_RIGHT', '')
       this.$store.commit('SET_APPLIEDLOCUMDETAIL_MODAL', false)
+      this.$store.commit('SET_APPLIEDLOCUMDETAIL_SHIELD', false)
     },
     closeAllocatedDetailModal() {
-      this.$store.commit('SET_ALLOCATEDDETAIL_SHIELD', false)
-      let d = document.getElementsByClassName('allocated-detail-modal')[0]
-      d.classList.toggle('toggled-right')
       document.body.style.overflow = 'auto'
+      this.$store.commit('TOGGLED_RIGHT', '')
       this.$store.commit('SET_ALLOCATEDDETAIL_MODAL', false)
+      this.$store.commit('SET_ALLOCATEDDETAIL_SHIELD', false)
     },
     closeCompletedDetailModal() {
-      this.$store.commit('SET_COMPLETEDDETAIL_SHIELD', false)
-      let d = document.getElementsByClassName('completed-detail-modal')[0]
-      d.classList.toggle('toggled-right')
       document.body.style.overflow = 'auto'
+      this.$store.commit('TOGGLED_RIGHT', '')
       this.$store.commit('SET_COMPLETEDDETAIL_MODAL', false)
+      this.$store.commit('SET_COMPLETEDDETAIL_SHIELD', false)
     },
     closeUnfilledDetailModal() {
-      this.$store.commit('SET_UNFILLEDDETAIL_SHIELD', false)
-      let d = document.getElementsByClassName('unfilled-detail-modal')[0]
-      d.classList.toggle('toggled-right')
       document.body.style.overflow = 'auto'
+      this.$store.commit('TOGGLED_RIGHT', '')
       this.$store.commit('SET_UNFILLEDDETAIL_MODAL', false)
+      this.$store.commit('SET_UNFILLEDDETAIL_SHIELD', false)
     },
     closeCancelledDetailModal() {
-      this.$store.commit('SET_CANCELLEDDETAIL_SHIELD', false)
-      let d = document.getElementsByClassName('cancelled-detail-modal')[0]
-      d.classList.toggle('toggled-right')
       document.body.style.overflow = 'auto'
+      this.$store.commit('TOGGLED_RIGHT', '')
       this.$store.commit('SET_CANCELLEDDETAIL_MODAL', false)
+      this.$store.commit('SET_CANCELLEDDETAIL_SHIELD', false)
     },
     closeDeclinedDetailModal() {
-      this.$store.commit('SET_DECLINEDDETAIL_SHIELD', false)
-      let d = document.getElementsByClassName('declined-detail-modal')[0]
-      d.classList.toggle('toggled-right')
       document.body.style.overflow = 'auto'
+      this.$store.commit('TOGGLED_RIGHT', '')
       this.$store.commit('SET_DECLINEDDETAIL_MODAL', false)
+      this.$store.commit('SET_DECLINEDDETAIL_SHIELD', false)
     },
     closeMyLocumDetailModal() {
-      this.$store.commit('SET_MYLOCUMDETAIL_SHIELD', false)
-      let d = document.getElementsByClassName('my-locum-detail-modal')[0]
-      d.classList.toggle('toggled-right')
       document.body.style.overflow = 'auto'
+      this.$store.commit('TOGGLED_RIGHT', '')
       this.$store.commit('SET_MYLOCUMDETAIL_MODAL', false)
+      this.$store.commit('SET_MYLOCUMDETAIL_SHIELD', false)
     },
     closeAddSurgeryModal() {
-      this.$store.commit('SET_ADDSURGERY_SHIELD', false)
-      let d = document.getElementsByClassName('add-surgery-modal')[0]
-      d.classList.toggle('toggled-right')
       document.body.style.overflow = 'auto'
+      this.$store.commit('TOGGLED_RIGHT', '')
       this.$store.commit('SET_ADDSURGERY_MODAL', false)
+      this.$store.commit('SET_ADDSURGERY_SHIELD', false)
     },
     // locums
     closeAddUnavailableDateModal() {
@@ -378,6 +470,42 @@ export default {
       this.$store.commit('TOGGLED_RIGHT', '')
       this.$store.commit('SET_ADDUNAVAILABLEDATE_MODAL', false)
       this.$store.commit('SET_ADDUNAVAILABLEDATE_SHIELD', false)
+    },
+    closeLocumAllocatedDetailModal() {
+      document.body.style.overflow = 'auto'
+      this.$store.commit('TOGGLED_RIGHT', '')
+      this.$store.commit('SET_LOCUM_ALLOCATED_DETAIL_MODAL', false)
+      this.$store.commit('SET_LOCUM_ALLOCATED_DETAIL_SHIELD', false)
+    },
+    closeLocumAvailableDetailModal() {
+      document.body.style.overflow = 'auto'
+      this.$store.commit('TOGGLED_RIGHT', '')
+      this.$store.commit('SET_LOCUM_AVAILABLE_DETAIL_MODAL', false)
+      this.$store.commit('SET_LOCUM_AVAILABLE_DETAIL_SHIELD', false)
+    },
+    closeLocumAppliedDetailModal() {
+      document.body.style.overflow = 'auto'
+      this.$store.commit('TOGGLED_RIGHT', '')
+      this.$store.commit('SET_LOCUM_APPLIED_DETAIL_MODAL', false)
+      this.$store.commit('SET_LOCUM_APPLIED_DETAIL_SHIELD', false)
+    },
+    closeLocumRejectedDetailModal() {
+      document.body.style.overflow = 'auto'
+      this.$store.commit('TOGGLED_RIGHT', '')
+      this.$store.commit('SET_LOCUM_REJECTED_DETAIL_MODAL', false)
+      this.$store.commit('SET_LOCUM_REJECTED_DETAIL_SHIELD', false)
+    },
+    closeLocumDeclinedDetailModal() {
+      document.body.style.overflow = 'auto'
+      this.$store.commit('TOGGLED_RIGHT', '')
+      this.$store.commit('SET_LOCUM_DECLINED_DETAIL_MODAL', false)
+      this.$store.commit('SET_LOCUM_DECLINED_DETAIL_SHIELD', false)
+    },
+    closeLocumCompletedDetailModal() {
+      document.body.style.overflow = 'auto'
+      this.$store.commit('TOGGLED_RIGHT', '')
+      this.$store.commit('SET_LOCUM_COMPLETED_DETAIL_MODAL', false)
+      this.$store.commit('SET_LOCUM_COMPLETED_DETAIL_SHIELD', false)
     },
   }
 }
@@ -726,6 +854,138 @@ body {
   z-index: 510;
 }
 .add-unavailable-date-modal-shield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #333;
+  opacity: 0.5;
+  z-index: 509;
+}
+.locum-allocated-detail-modal {
+  position: fixed;
+  right: 0;
+  margin-right: -110%;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  border-left: solid 2px #edf2f7;
+  transition: all 0.3s ease-in-out;
+  background-color: white;
+  z-index: 510;
+}
+.locum-allocated-detail-modal-shield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #333;
+  opacity: 0.5;
+  z-index: 509;
+}
+.locum-available-detail-modal {
+  position: fixed;
+  right: 0;
+  margin-right: -110%;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  border-left: solid 2px #edf2f7;
+  transition: all 0.3s ease-in-out;
+  background-color: white;
+  z-index: 510;
+}
+.locum-available-detail-modal-shield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #333;
+  opacity: 0.5;
+  z-index: 509;
+}
+.locum-applied-detail-modal {
+  position: fixed;
+  right: 0;
+  margin-right: -110%;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  border-left: solid 2px #edf2f7;
+  transition: all 0.3s ease-in-out;
+  background-color: white;
+  z-index: 510;
+}
+.locum-applied-detail-modal-shield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #333;
+  opacity: 0.5;
+  z-index: 509;
+}
+.locum-rejected-detail-modal {
+  position: fixed;
+  right: 0;
+  margin-right: -110%;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  border-left: solid 2px #edf2f7;
+  transition: all 0.3s ease-in-out;
+  background-color: white;
+  z-index: 510;
+}
+.locum-rejected-detail-modal-shield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #333;
+  opacity: 0.5;
+  z-index: 509;
+}
+.locum-declined-detail-modal {
+  position: fixed;
+  right: 0;
+  margin-right: -110%;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  border-left: solid 2px #edf2f7;
+  transition: all 0.3s ease-in-out;
+  background-color: white;
+  z-index: 510;
+}
+.locum-declined-detail-modal-shield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #333;
+  opacity: 0.5;
+  z-index: 509;
+}
+.locum-completed-detail-modal {
+  position: fixed;
+  right: 0;
+  margin-right: -110%;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  border-left: solid 2px #edf2f7;
+  transition: all 0.3s ease-in-out;
+  background-color: white;
+  z-index: 510;
+}
+.locum-completed-detail-modal-shield {
   position: fixed;
   top: 0;
   left: 0;

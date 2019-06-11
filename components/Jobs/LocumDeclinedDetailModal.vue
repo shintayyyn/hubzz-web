@@ -1,61 +1,53 @@
 <template>
-  <div class="p-8 max-w-xl">
+  <div class="p-8 max-w-2xl">
     <div @click="$emit('close')" class="cursor-pointer">
       <svgicon name="left-arrow" height="32" width="32"/>
     </div>
     <div class="flex flex-row justify-start mt-8">
-      <div class="mx-2 leading-loose font-bold text-md sm:text-lg">{{form.title}}</div>
-      <div class="mx-2 bg-orange text-white text-sm sm:text-sm p-2">AVAILABLE</div>
+      <div class="mx-2 leading-loose font-bold text-md sm:text-lg">{{title}}</div>
+      <div class="mx-2 bg-red-dark text-white text-sm sm:text-sm p-2">DECLINED</div>
     </div>
-    <div class="flex flex-row flex-wrap justify-between mt-4">
-      <div class="w-full">
-        <div class="text-xs sm:text-sm">Posted {{$moment(created_at).format('DD/MM/YYYY')}}</div>
-        <div class="rounded-lg shadow-lg p-8 mt-4 w-full md:w-3/4">
-          <div class="flex flex-row flex-wrap">
+    <div class="text-xs sm:text-sm mt-4">Posted {{$moment(created_at).format('DD/MM/YYYY')}}</div>
+    <div class="flex flex-row flex-wrap justify-start mt-4">
+      <div class="p-0 md:pr-4 w-full md:w-1/2">
+        <div class="rounded-lg shadow-lg p-8">
+          <div class="flex flex-row flex-wrap justify-between">
             <div class="flex flex-col w-full md:w-1/2 p-0 md:pr-4">
               <div class="font-bold text-sm sm:text-md">Job number</div>
-              <div class="text-xs sm:text-sm mb-4">{{form.job_number}}</div>
+              <div class="text-xs sm:text-sm mb-6" v-text="job_number?job_number:`(none)`"></div>
               <div class="font-bold text-sm sm:text-md">Rate</div>
-              <div class="text-xs sm:text-sm mt-2 mb-4 flex flex-row flex-nowrap">
-                <input
-                  v-model="form.rate"
-                  type="text"
-                  class="border-b-2 focus:border-yellow focus:outline-none py-2 font-bold text-xs w-1/5 text-right"
-                >
-                <div class="leading-loose mx-2">per</div>
-                <select
-                  v-model="form.locum_detail_rate_type.id"
-                  class="border-b-2 focus:border-yellow focus:outline-none py-2 font-bold text-xs"
-                >
-                  <option
-                    v-for="item in rate_types"
-                    :key="item.id"
-                    :value="item.value"
-                  >{{item.label}}</option>
-                </select>
-              </div>
+              <div
+                class="text-xs sm:text-sm mb-6"
+                v-text="rate?`£ ${rate} ${locum_detail_rate_type.name}`:`(none)`"
+              ></div>
               <div class="font-bold text-sm sm:text-md">Total hours</div>
-              <div class="text-xs sm:text-sm mt-2 mb-4 flex flex-row flex-nowrap">
-                <input
-                  v-model="form.total_hours"
-                  type="text"
-                  class="border-b-2 focus:border-yellow focus:outline-none py-2 font-bold text-xs w-1/5 text-right"
-                >
-                <div class="leading-loose mx-2">hours</div>
-              </div>
-              <div class="mb-8">
-                <AppButton :label="'Save changes'" :inStyle="'padding:8px'" @click="save"/>
-              </div>
+              <div class="text-xs sm:text-sm mb-4" v-text="total_hours?total_hours:`(none)`"></div>
               <div class="font-bold text-sm sm:text-md">Job description</div>
-              <div class="text-xs sm:text-sm mb-8">{{job_description}}</div>
+              <div
+                class="text-xs sm:text-sm mb-6"
+                v-text="job_description?job_description:`(none)`"
+              ></div>
               <div class="font-bold text-sm sm:text-md">Extra information</div>
-              <div class="text-xs sm:text-sm mb-8">{{extra_information}}</div>
+              <div
+                class="text-xs sm:text-sm mb-6"
+                v-text="extra_information?extra_information:`(none)`"
+              ></div>
               <div class="font-bold text-sm sm:text-md">Report to</div>
-              <div class="text-xs sm:text-sm mb-8">{{report_to}}</div>
+              <div class="text-xs sm:text-sm mb-6" v-text="report_to?report_to:`(none)`"></div>
               <div class="font-bold text-sm sm:text-md">Telephone number</div>
-              <div class="text-xs sm:text-sm mb-8">{{phone_number}}</div>
+              <div class="text-xs sm:text-sm mb-6" v-text="phone_number?phone_number:`(none)`"></div>
               <div class="font-bold text-sm sm:text-md">Email address</div>
-              <div class="text-xs sm:text-sm mb-8">{{email}}</div>
+              <div class="text-xs sm:text-sm mb-6" v-text="email?email:`(none)`"></div>
+              <div class="font-bold text-sm sm:text-md">Declined At</div>
+              <div
+                class="text-xs sm:text-sm mb-6"
+                v-text="declined_at?$moment(declined_at).format('YYYY-MM-DD'):`(none)`"
+              ></div>
+              <div class="font-bold text-sm sm:text-md">Declined Reason</div>
+              <div
+                class="text-xs sm:text-sm mb-6"
+                v-text="declined_reason?declined_reason:`(none)`"
+              ></div>
             </div>
             <div class="flex flex-col w-full md:w-1/2 p-0 md:pl-4">
               <div class="font-bold text-sm sm:text-md">Duration</div>
@@ -126,7 +118,11 @@
               </div>
             </div>
           </div>
-          <div class="flex flex-col">
+        </div>
+      </div>
+      <div class="p-0 md:pl-4 mt-8 md:m-0 w-full md:w-1/2">
+        <div class="flex flex-col">
+          <div class="rounded-lg shadow-lg p-8">
             <div class="font-bold text-xs sm:text-sm">Practice</div>
             <div class="font-bold text-sm sm:text-md">{{practice.surgery.name}}</div>
             <div
@@ -145,48 +141,23 @@
             </div>
           </div>
         </div>
-        <div class="rounded-lg shadow-lg p-8 mt-4 w-full md:w-3/4">
-          <div class="font-bold text-md sm:text-lg">Cancel this job</div>
-          <AppSelect
-            v-model="form_cancel.cancelled_reason"
-            :name="'cancelled_reason'"
-            :label="'Please select your reason'"
-            :placeholder="'Select..'"
-            :error="formError.find(item => item.field === 'cancelled_reason')"
-            :items="reasons"
-          />
-          <AppButton :label="'Cancel job'" @click="cancel"/>
-        </div>
       </div>
     </div>
   </div>
 </template>
 <script>
 import { gmapApi } from 'vue2-google-maps'
-import AppSelect from '@/components/Base/AppSelect'
-import AppButton from '@/components/Base/AppButton'
 export default {
-  components: {
-    AppSelect,
-    AppButton
-  },
   data() {
     return {
-      rate_types: [],
-      form: {
-        title: '',
-        job_number: '',
-        rate: '',
-        locum_detail_rate_type: {
-          id: '',
-          name: ''
-        },
-        total_hours: '',
+      title: '',
+      job_number: '',
+      rate: '',
+      locum_detail_rate_type: {
+        id: '',
+        name: ''
       },
-      form_cancel: {
-        cancelled_reason: ''
-      },
-      formError: [],
+      total_hours: '',
       appointed_at: null,
       cancelled_at: null,
       cancelled_reason: null,
@@ -226,7 +197,7 @@ export default {
           id: '',
           name: ''
         }
-      }
+      },
     }
   },
   computed: {
@@ -234,23 +205,21 @@ export default {
     latLang() {
       return this.practice.surgery.address.coordinates
     },
-    reasons() {
-      return this.$store.state.session.reasons
-    }
   },
   created() {
-    // get specific job, get the id from store
-    this.$axios.$get(`/api/v1/practice/jobs/${this.$store.state.session.job_id}`).then(res => {
+    // ! ask arvi need job number on this request & declined at
+    this.$axios.$get(`/api/v1/locum/jobs/${this.$store.state.jobs.job_id}`).then(res => {
+      console.log(res)
       this.practice.surgery.address.coordinates = res.data.job.platform_job.practice.surgery.address.coordinates
       this.appointed_at = res.data.job.platform_job.appointed_at
       this.cancelled_at = res.data.job.platform_job.cancelled_at
       this.cancelled_reason = res.data.job.platform_job.cancelled_reason
       this.created_at = res.data.job.created_at
-      this.form.title = res.data.job.platform_job.title
-      this.form.job_number = res.data.job.job_number
-      this.form.rate = res.data.job.platform_job.rate
-      this.form.locum_detail_rate_type = res.data.job.platform_job.locum_detail_rate_type
-      this.form.total_hours = res.data.job.platform_job.total_hours
+      this.title = res.data.job.platform_job.title
+      this.job_number = res.data.job.job_number
+      this.rate = res.data.job.platform_job.rate
+      this.locum_detail_rate_type = res.data.job.platform_job.locum_detail_rate_type
+      this.total_hours = res.data.job.platform_job.total_hours
       this.job_description = res.data.job.platform_job.job_description
       this.extra_information = res.data.job.platform_job.extra_information
       this.report_to = res.data.job.platform_job.report_to
@@ -271,38 +240,6 @@ export default {
       this.mandatory_trainings = res.data.job.platform_job.mandatory_trainings
       this.practice = res.data.job.platform_job.practice
     })
-    // get locum detail rate type
-    this.$axios.$get(`/api/v1/locum-detail-rate-types`).then(res => {
-      this.rate_types = []
-      res.data.locum_detail_rate_types.forEach(item => {
-        this.rate_types.push({ label: item.name, value: item.id })
-      })
-    })
   },
-  methods: {
-    save() {
-
-    },
-    cancel() {
-      this.formError = []
-      this.Validate(this.form_cancel)
-      if (!this.formError.length) {
-        // delete request to api
-        this.$axios.$put(`/api/v1/practice/jobs/${this.$store.state.session.job_id}/cancel`, this.form_cancel)
-        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Job cancelled' })
-        // toggle off job detail modal and shield
-        this.$store.commit('SET_JOBDETAIL_MODAL', false)
-        this.$store.commit('SET_JOBDETAIL_SHIELD', false)
-        let d = document.getElementsByClassName('job-detail-modal')[0]
-        d.classList.toggle('toggled-right')
-        document.body.style.overflow = 'hidden'
-        // set session tab to cancelled
-        this.$store.commit('session/SET_ACTIVE_TAB', 'cancelled')
-      }
-    }
-  }
 }
 </script>
-<style scoped>
-</style>
-

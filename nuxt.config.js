@@ -82,7 +82,7 @@ export default {
   },
 
   router: {
-    // middleware: ''
+    middleware: 'isAuthorized'
   },
 
   auth: {

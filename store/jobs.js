@@ -1,13 +1,14 @@
 export const state = () => ({
-    activeTab: 'allocated'
+    activeTab: 'allocated',
+    job_id: null
   })
-  
-  export const getters = {}
   
   export const mutations = {
     setActiveTab(state, payload) {
       state.activeTab = payload
+    },
+    SET_JOB_ID(state, payload) {
+      state.job_id = payload
     }
   }
-  export const actions = {}
   
