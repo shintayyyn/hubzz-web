@@ -1,56 +1,23 @@
 <template>
-  <section class="dashboard-section px-4">
-    <template v-if="$auth.user.domain === 'Locums'">
-      <div class="font-bold items-start" style="font-family:Nunito">Reminders</div>
-      <div class="flex flex-row flex-wrap justify-start">
-        <div
-          v-for="(item, index) in $store.state.dashboard.reminders"
-          :key="`${item.type}-${index}`"
-        >
-          <Reminders v-if="!item.done">
-            <span>
-              <strong>{{item.type}}</strong>
-              details
-            </span>
-          </Reminders>
-        </div>
-      </div>
+  <section class="px-5">
+    <template v-if="$auth.user.domain === 'Locum'">
+      <Reminders/>
     </template>
-    <div
-      class="font-bold"
-      style="font-family:Nunito"
-      v-if="$auth.user.domain === 'Locums'"
-    >Appointments</div>
     <div class="flex flex-row flex-no-wrap justify-start">
-      <Calendar v-if="$auth.user.domain === 'Practice'"/>
-      <Appointments v-if="$auth.user.domain === 'Locums'"/>
+      <Calendar/>
     </div>
-    <div class="font-bold" style="font-family:Nunito">Quick Statistics</div>
-    <div class="flex flex-row flex-wrap justify-start">
-      <Statistics
-        v-for="(item,index) in statistics"
-        :key="index"
-        :label="item.label"
-        :count="item.count"
-        :route="item.route"
-      />
-    </div>
+    <Statistics/>
   </section>
 </template>
 
 <script>
-// practice
 import Calendar from '@/components/Calendar'
-// locums
 import Reminders from '@/components/Dashboard/Reminders'
-import Appointments from '@/components/Dashboard/Appointments'
-//
 import Statistics from '@/components/Dashboard/Statistics'
 export default {
   components: {
     Calendar,
     Reminders,
-    Appointments,
     Statistics
   },
   middleware: 'isAuthenticated',
@@ -60,6 +27,7 @@ export default {
     }
   },
   created() {
+    this.statistics = []
     // practice - get mylocums and jobs count
     if (this.$auth.user.domain === 'Practice') {
       this.$axios.$get(`/api/v1/practice/locums/count`).then(res => {
@@ -74,20 +42,21 @@ export default {
       this.$axios.$get(`/api/v1/practice/jobs/count?status=Available`).then(res => {
         this.statistics.push({ label: 'Available Jobs', count: res.data.count, route: '/sessions' })
       })
-      // const promises = [
-      //   this.$axios.$get(`/api/v1/practice/applied-jobs/count`),
-      //   this.$axios.$get(`/api/v1/practice/current-jobs/count`),
-      //   this.$axios.$get(`/api/v1/practice/available-jobs/count`)
-      // ]
-      // if (this.$auth.user.domain === 'Practice') {
-      //   Promise.all(promises).then(res => {
-      //     res.forEach(item => {
-      //       this.statistics.push({ label})
-      //     })
-      //   })
-      // }
     }
-
+    if (this.$auth.user.domain === 'Locum') {
+      this.$axios.$get(`/api/v1/locum/jobs/count?locum_status=Available`).then(res => {
+        this.statistics.push({ label: 'Available jobs', count: res.data.count, route: '/jobs' })
+      })
+      this.$axios.$get(`/api/v1/locum/jobs/count?locum_status=Current`).then(res => {
+        this.statistics.push({ label: 'Allocated jobs', count: res.data.count, route: '/jobs' })
+      })
+      this.$axios.$get(`/api/v1/locum/jobs/count?locum_status=Applied`).then(res => {
+        this.statistics.push({ label: 'Applied jobs', count: res.data.count, route: '/jobs' })
+      })
+      this.$axios.$get(`/api/v1/locum/jobs/count?locum_status=Completed`).then(res => {
+        this.statistics.push({ label: 'Completed jobs', count: res.data.count, route: '/jobs' })
+      })
+    }
   }
 }
 </script>

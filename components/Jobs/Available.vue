@@ -47,7 +47,7 @@ export default {
   },
   created() {
     // get available jobs
-    this.$axios.$get(`/api/v1/locum/jobs?locum_status=Available`).then(res => {
+    this.$axios.$get(`/api/v1/locum/jobs?locum_status=Matched`).then(res => {
       this.jobs = res.data.jobs
     })
   },
