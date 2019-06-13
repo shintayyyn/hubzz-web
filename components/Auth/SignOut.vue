@@ -25,7 +25,9 @@
 export default {
   methods: {
     logout() {
-      this.$auth.logout().then(() => {
+      this.$axios.post('/api/v1/logout').then(() => {
+        return this.$auth.logout()
+      }).then(() => {
         this.$store.commit('TOGGLE_SIGN_OUT_MODAL', false)
         this.$store.commit('SET_SIGNOUT_SHIELD', false)
         this.$auth.$storage.setUniversal('_token.local', '')

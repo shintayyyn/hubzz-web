@@ -7,6 +7,11 @@ import pkg from './package'
 export default {
   mode: 'universal',
 
+  env: {
+    API_URL: process.env.API_URL,
+    ONE_SIGNAL_APP_ID_ADMIN: process.env.ONE_SIGNAL_APP_ID_ADMIN,
+  },
+
   /*
   ** Headers of the page
   */
@@ -42,6 +47,10 @@ export default {
   ** Plugins to load before mounting the App
   */
   plugins: [
+    {
+      src: '@/plugins/socket-io',
+      ssr: false
+    },
     {
       src: '@/plugins/vue-svgicon.js',
       ssr: true
