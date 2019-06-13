@@ -9,7 +9,7 @@ export default {
 
   env: {
     API_URL: process.env.API_URL,
-    ONE_SIGNAL_APP_ID_ADMIN: process.env.ONE_SIGNAL_APP_ID_ADMIN,
+    ONE_SIGNAL_APP_ID: process.env.ONE_SIGNAL_APP_ID,
   },
 
   /*
@@ -48,7 +48,12 @@ export default {
   */
   plugins: [
     {
-      src: '@/plugins/socket-io',
+      src: '@/plugins/socket-io.js',
+      ssr: false
+    },
+
+    {
+      src: '@/plugins/one-signal.js',
       ssr: false
     },
     {
@@ -79,7 +84,9 @@ export default {
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
     'cookie-universal-nuxt',
-    '@nuxtjs/auth'
+    '@nuxtjs/auth',
+    '@nuxtjs/onesignal',
+    '@nuxtjs/pwa',
   ],
 
   /*
@@ -105,6 +112,16 @@ export default {
             propertyName: 'data.user'
           }
         }
+      }
+    }
+  },
+
+  oneSignal: {
+    init: {
+      appId: process.env.ONE_SIGNAL_APP_ID,
+      allowLocalhostAsSecureOrigin: true,
+      welcomeNotification: {
+          disable: true
       }
     }
   },

@@ -16,6 +16,8 @@
   "dependencies": {
     "@nuxtjs/auth": "^4.5.3",
     "@nuxtjs/axios": "^5.3.6",
+    "@nuxtjs/onesignal": "^3.0.0-beta.16",
+    "@nuxtjs/pwa": "^3.0.0-beta.16",
     "cookie-universal-nuxt": "^2.0.14",
     "cross-env": "^5.2.0",
     "dotenv": "^7.0.0",

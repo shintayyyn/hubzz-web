@@ -108,12 +108,14 @@ export default {
               this.$router.push('/')
 
               if (this.$socket.connected) {
-                this.$axios.post('/api/v1/socket/login', {
+                await this.$axios.post('/api/v1/socket/login', {
                   socket_id: this.$socket.id
-                }).then(() => {
-                  console.log('Socket Logged In')
                 })
+
+                console.log('Socket Logged In')
               }
+
+              await this.$store.dispatch('one-signal/setOneSignalUser')
             })
             .catch(err => {
               err.response.data.error_messages.forEach(error => {
