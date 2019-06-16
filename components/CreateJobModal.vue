@@ -1,454 +1,461 @@
 <template>
-  <div class="p-8 max-w-xl">
-    <div @click="$emit('close')" class="cursor-pointer">
-      <svgicon name="left-arrow" height="32" width="32"/>
-    </div>
-    <div class="flex justify-start font-bold text-sm sm:text-xl mt-8">Create a new job</div>
-    <div class="flex flex-row flex-wrap justify-start mt-8">
-      <div class="w-full md:w-1/2 pr-4 mb-4">
-        <div class="flex flex-col">
-          <h4 class="font-bold">Practice</h4>
-          <div class="rounded-lg shadow-lg px-8 pt-4 mt-4">
-            <AppSelect
-              v-model="form.practice_id"
-              :name="'practice_id'"
-              :error="formError.find(item => item.field === 'practice_id')"
-              :items="practices"
-              :placeholder="'Select..'"
-            />
-          </div>
-          <h4 class="font-bold mt-4">Overview</h4>
-          <div class="rounded-lg shadow-lg px-8 pt-4 mt-4">
-            <AppInput
-              v-model="form.title"
-              :type="'text'"
-              :name="'title'"
-              :label="'Title'"
-              :placeholder="''"
-              :error="formError.find(item => item.field === 'title')"
-            />
-            <AppTextarea
-              v-model="form.description"
-              :name="'description'"
-              :label="'Description'"
-              :placeholder="''"
-              :error="this.formError.find(item => item.field === 'description')"
-            />
-            <!-- report to -->
-            <AppInput
-              v-model="form.report_to"
-              :type="'text'"
-              :name="'report_to'"
-              :label="'Report to'"
-              :placeholder="''"
-              :error="formError.find(item => item.field === 'report_to')"
-            />
-            <!-- email -->
-            <AppInput
-              v-model="form.email"
-              :type="'text'"
-              :name="'email'"
-              :label="'Email'"
-              :placeholder="''"
-              :error="formError.find(item => item.field === 'email')"
-            />
-            <AppSelect
-              v-model="form.is_another_doctor"
-              :name="'is_another_doctor'"
-              :label="'Is there another Dr on site?'"
-              :error="formError.find(item => item.field === 'is_another_doctor')"
-              :items="[ {value: true, label: 'YES'}, {value: false, label: 'NO'} ]"
-            />
-            <AppSelect
-              v-model="form.is_nurse_available"
-              :name="'is_nurse_available'"
-              :label="'Is nurse support available?'"
-              :error="formError.find(item => item.field === 'is_nurse_available')"
-              :items="[ {value: true, label: 'YES'}, {value: false, label: 'NO'} ]"
-            />
-            <AppInput
-              v-model="form.number_of_patients"
-              :type="'text'"
-              :name="'number_of_patients'"
-              :label="'Number of patients to be seen during the session?'"
-              :placeholder="''"
-              :error="formError.find(item => item.field === 'number_of_patients')"
-              :inStyle="'text-align:right;'"
-            />
-            <AppInput
-              v-model="form.duration_for_each_appointment"
-              :type="'text'"
-              :name="'duration_for_each_appointment'"
-              :label="'Duration of each appointment?'"
-              :placeholder="''"
-              :error="formError.find(item => item.field === 'duration_for_each_appointment')"
-              :inStyle="'text-align:right;'"
-            />
-            <AppSelect
-              v-model="form.opportunity_for_catch_up_slots"
-              :name="'opportunity_for_catch_up_slots'"
-              :label="'Opportunity for catch up slots?'"
-              :error="formError.find(item => item.field === 'opportunity_for_catch_up_slots')"
-              :items="[ {value: true, label: 'YES'}, {value: false, label: 'NO'} ]"
-            />
-            <AppInput
-              :type="'multi-checkbox'"
-              @checked="form.session_requirements.push($event)"
-              @unchecked="form.session_requirements.splice(form.session_requirements.findIndex(item => item === $event), 1)"
-              :name="'session_requirements'"
-              :label="'Session requirements'"
-              :placeholder="''"
-              :error="this.formError.find(item => item.field === 'session_requirements')"
-              :lists="session_requirements"
-            />
-            <AppTextarea
-              v-model="form.session_structure_information"
-              :name="'session_structure_information'"
-              :label="'Session structure information'"
-              :placeholder="'For e.g. the first 2 hours of the session is for booked appointments, 3rd hour is walk-ins, and home visits to x number of patients to the end of the session'"
-              :error="this.formError.find(item => item.field === 'session_structure_information')"
-            />
-            <AppTextarea
-              v-model="form.extra_information"
-              :name="'extra_information'"
-              :label="'Extra information'"
-              :placeholder="'For example, number of expected patients, nearby car park, etc.'"
-              :error="this.formError.find(item => item.field === 'extra_information')"
-            />
-            <div class="flex flex-col py-2 mb-6">
-              <div class="relative flex flex-row flex-wrap justify-start">
-                <div class="mt-2">
-                  <label for="rate" class="text-xs sm:text-sm mt-2">Rate £</label>
+  <div
+    class="create-job-modal shadow-lg"
+    v-if="$auth.user.domain === 'Practice' && $store.state.toggled_create_job_modal"
+  >
+    <div class="p-8 max-w-xl">
+      <div @click="$emit('close')" class="cursor-pointer">
+        <svgicon name="left-arrow" height="32" width="32"/>
+      </div>
+      <div class="flex justify-start font-bold text-sm sm:text-xl mt-8">Create a new job</div>
+      <div class="flex flex-row flex-wrap justify-start mt-8">
+        <div class="w-full md:w-1/2 pr-4 mb-4">
+          <div class="flex flex-col">
+            <h4 class="font-bold">Practice</h4>
+            <div class="rounded-lg shadow-lg px-8 pt-4 mt-4">
+              <AppSelect
+                v-model="form.practice_id"
+                :name="'practice_id'"
+                :error="formError.find(item => item.field === 'practice_id')"
+                :items="practices"
+                :placeholder="'Select..'"
+              />
+            </div>
+            <h4 class="font-bold mt-4">Overview</h4>
+            <div class="rounded-lg shadow-lg px-8 pt-4 mt-4">
+              <AppInput
+                v-model="form.title"
+                :type="'text'"
+                :name="'title'"
+                :label="'Title'"
+                :placeholder="''"
+                :error="formError.find(item => item.field === 'title')"
+              />
+              <AppTextarea
+                v-model="form.description"
+                :name="'description'"
+                :label="'Description'"
+                :placeholder="''"
+                :error="this.formError.find(item => item.field === 'description')"
+              />
+              <!-- report to -->
+              <AppInput
+                v-model="form.report_to"
+                :type="'text'"
+                :name="'report_to'"
+                :label="'Report to'"
+                :placeholder="''"
+                :error="formError.find(item => item.field === 'report_to')"
+              />
+              <!-- email -->
+              <AppInput
+                v-model="form.email"
+                :type="'text'"
+                :name="'email'"
+                :label="'Email'"
+                :placeholder="''"
+                :error="formError.find(item => item.field === 'email')"
+              />
+              <AppSelect
+                v-model="form.is_another_doctor"
+                :name="'is_another_doctor'"
+                :label="'Is there another Dr on site?'"
+                :error="formError.find(item => item.field === 'is_another_doctor')"
+                :items="[ {value: true, label: 'YES'}, {value: false, label: 'NO'} ]"
+              />
+              <AppSelect
+                v-model="form.is_nurse_available"
+                :name="'is_nurse_available'"
+                :label="'Is nurse support available?'"
+                :error="formError.find(item => item.field === 'is_nurse_available')"
+                :items="[ {value: true, label: 'YES'}, {value: false, label: 'NO'} ]"
+              />
+              <AppInput
+                v-model="form.number_of_patients"
+                :type="'text'"
+                :name="'number_of_patients'"
+                :label="'Number of patients to be seen during the session?'"
+                :placeholder="''"
+                :error="formError.find(item => item.field === 'number_of_patients')"
+                :inStyle="'text-align:right;'"
+              />
+              <AppInput
+                v-model="form.duration_for_each_appointment"
+                :type="'text'"
+                :name="'duration_for_each_appointment'"
+                :label="'Duration of each appointment?'"
+                :placeholder="''"
+                :error="formError.find(item => item.field === 'duration_for_each_appointment')"
+                :inStyle="'text-align:right;'"
+              />
+              <AppSelect
+                v-model="form.opportunity_for_catch_up_slots"
+                :name="'opportunity_for_catch_up_slots'"
+                :label="'Opportunity for catch up slots?'"
+                :error="formError.find(item => item.field === 'opportunity_for_catch_up_slots')"
+                :items="[ {value: true, label: 'YES'}, {value: false, label: 'NO'} ]"
+              />
+              <AppInput
+                :type="'multi-checkbox'"
+                @checked="form.session_requirements.push($event)"
+                @unchecked="form.session_requirements.splice(form.session_requirements.findIndex(item => item === $event), 1)"
+                :name="'session_requirements'"
+                :label="'Session requirements'"
+                :placeholder="''"
+                :error="this.formError.find(item => item.field === 'session_requirements')"
+                :lists="session_requirements"
+              />
+              <AppTextarea
+                v-model="form.session_structure_information"
+                :name="'session_structure_information'"
+                :label="'Session structure information'"
+                :placeholder="'For e.g. the first 2 hours of the session is for booked appointments, 3rd hour is walk-ins, and home visits to x number of patients to the end of the session'"
+                :error="this.formError.find(item => item.field === 'session_structure_information')"
+              />
+              <AppTextarea
+                v-model="form.extra_information"
+                :name="'extra_information'"
+                :label="'Extra information'"
+                :placeholder="'For example, number of expected patients, nearby car park, etc.'"
+                :error="this.formError.find(item => item.field === 'extra_information')"
+              />
+              <div class="flex flex-col py-2 mb-6">
+                <div class="relative flex flex-row flex-wrap justify-start">
+                  <div class="mt-2">
+                    <label for="rate" class="text-xs sm:text-sm mt-2">Rate £</label>
+                    <input
+                      v-model="form.rate"
+                      type="text"
+                      class="border-b-2 focus:border-yellow focus:outline-none font-bold text-xs sm:text-sm mx-1 py-2"
+                      :class="formError.find(item => item.field === 'rate')? 'border-red':''"
+                      @keypress="ValidateInput"
+                      style="text-align:right;width:100px;"
+                    >
+                  </div>
+                  <div class="mt-2">
+                    <label for="locum_detail_rate_type_id" class="text-xs sm:text-sm mt-2">per</label>
+                    <select
+                      v-model="form.locum_detail_rate_type_id"
+                      class="border-b-2 focus:border-yellow focus:outline-none font-bold text-xs sm:text-sm mx-1 py-2"
+                      :class="formError.find(item => item.field === 'locum_detail_rate_type_id')? 'border-red':''"
+                    >
+                      <option
+                        v-for="(item, index) in rate_types"
+                        :key="index"
+                        :value="item.value"
+                      >{{item.label}}</option>
+                    </select>
+                  </div>
+                  <div
+                    class="absolute pin-r bg-red p-1 text-xs sm:text-base text-white"
+                    v-if="formError.find(item => item.field === 'rate')"
+                  >{{formError.find(item => item.field === 'rate').message}}</div>
+                </div>
+              </div>
+              <div class="flex flex-col py-2 mb-6">
+                <div class="relative flex flex-row flex-nowrap justify-between">
+                  <label for="total_hours" class="text-xs sm:text-sm py-1 mt-2">Total hours</label>
+                  <div
+                    class="absolute pin-r bg-red p-1 text-xs sm:text-base text-white"
+                    v-if="this.formError.find(item => item.field === 'total_hours')"
+                  >{{this.formError.find(item => item.field === 'total_hours').message}}</div>
+                </div>
+                <div class="flex flex-row flex-nowrap justify-start mt-1">
                   <input
-                    v-model="form.rate"
+                    v-model="form.total_hours"
                     type="text"
-                    class="border-b-2 focus:border-yellow focus:outline-none font-bold text-xs sm:text-sm mx-1 py-2"
-                    :class="formError.find(item => item.field === 'rate')? 'border-red':''"
+                    class="border-b-2 focus:border-yellow focus:outline-none font-bold py-2 text-xs sm:text-sm mx-1"
+                    :class="this.formError.find(item => item.field === 'total_hours')? 'border-red':''"
                     @keypress="ValidateInput"
-                    style="text-align:right;width:100px;"
+                    style="text-align:right;'"
                   >
+                  <label for="total_hours" class="text-xs sm:text-sm mt-2">hours</label>
                 </div>
-                <div class="mt-2">
-                  <label for="locum_detail_rate_type_id" class="text-xs sm:text-sm mt-2">per</label>
-                  <select
-                    v-model="form.locum_detail_rate_type_id"
-                    class="border-b-2 focus:border-yellow focus:outline-none font-bold text-xs sm:text-sm mx-1 py-2"
-                    :class="formError.find(item => item.field === 'locum_detail_rate_type_id')? 'border-red':''"
-                  >
-                    <option
-                      v-for="(item, index) in rate_types"
-                      :key="index"
-                      :value="item.value"
-                    >{{item.label}}</option>
-                  </select>
-                </div>
-                <div
-                  class="absolute pin-r bg-red p-1 text-xs sm:text-base text-white"
-                  v-if="formError.find(item => item.field === 'rate')"
-                >{{formError.find(item => item.field === 'rate').message}}</div>
               </div>
-            </div>
-            <div class="flex flex-col py-2 mb-6">
-              <div class="relative flex flex-row flex-nowrap justify-between">
-                <label for="total_hours" class="text-xs sm:text-sm py-1 mt-2">Total hours</label>
-                <div
-                  class="absolute pin-r bg-red p-1 text-xs sm:text-base text-white"
-                  v-if="this.formError.find(item => item.field === 'total_hours')"
-                >{{this.formError.find(item => item.field === 'total_hours').message}}</div>
+              <AppSelect
+                v-model="form.ir35"
+                :name="'ir35'"
+                :label="'IR35 - role inside or outside of scope'"
+                :error="formError.find(item => item.field === 'ir35')"
+                :items="[ {value: true, label: 'Inside of Scope'}, {value: false, label: 'Outside of Scope'} ]"
+              />
+              <AppInput
+                v-model="form.mandatory_training_id"
+                :type="'multi-checkbox'"
+                @checked="form.mandatory_training_id.push($event)"
+                @unchecked="uncheckMandatory($event)"
+                :name="'mandatory_training_id'"
+                :label="'Mandatory training required for this job'"
+                :placeholder="'Select..'"
+                :error="this.formError.find(item => item.field === 'mandatory_training_id')"
+                :lists="mandatory_training"
+                :info="'Check all that apply'"
+              />
+              <div class="mb-6" v-if="mandatory_training.length === 0">
+                <AppButton :label="'Go to Profile to add items here'" @click="addMandatory"/>
               </div>
-              <div class="flex flex-row flex-nowrap justify-start mt-1">
-                <input
-                  v-model="form.total_hours"
-                  type="text"
-                  class="border-b-2 focus:border-yellow focus:outline-none font-bold py-2 text-xs sm:text-sm mx-1"
-                  :class="this.formError.find(item => item.field === 'total_hours')? 'border-red':''"
-                  @keypress="ValidateInput"
-                  style="text-align:right;'"
-                >
-                <label for="total_hours" class="text-xs sm:text-sm mt-2">hours</label>
-              </div>
-            </div>
-            <AppSelect
-              v-model="form.ir35"
-              :name="'ir35'"
-              :label="'IR35 - role inside or outside of scope'"
-              :error="formError.find(item => item.field === 'ir35')"
-              :items="[ {value: true, label: 'Inside of Scope'}, {value: false, label: 'Outside of Scope'} ]"
-            />
-            <AppInput
-              v-model="form.mandatory_training_id"
-              :type="'multi-checkbox'"
-              @checked="form.mandatory_training_id.push($event)"
-              @unchecked="uncheckMandatory($event)"
-              :name="'mandatory_training_id'"
-              :label="'Mandatory training required for this job'"
-              :placeholder="'Select..'"
-              :error="this.formError.find(item => item.field === 'mandatory_training_id')"
-              :lists="mandatory_training"
-              :info="'Check all that apply'"
-            />
-            <div class="mb-6" v-if="mandatory_training.length === 0">
-              <AppButton :label="'Go to Profile to add items here'" @click="addMandatory"/>
             </div>
           </div>
         </div>
-      </div>
-      <div class="w-full md:w-1/2 pl-4 mb-4">
-        <div class="flex flex-col">
-          <h4 class="font-bold">Criteria</h4>
-          <div class="rounded-lg shadow-lg px-8 py-4 mt-4">
-            <AppSelect
-              v-model="form.profession_id"
-              :name="'profession_id'"
-              :label="'Role'"
-              :error="formError.find(item => item.field === 'profession_id')"
-              :items="professions"
-              :placeholder="'Select..'"
-            />
-            <template v-if="form.profession_id">
+        <div class="w-full md:w-1/2 pl-4 mb-4">
+          <div class="flex flex-col">
+            <h4 class="font-bold">Criteria</h4>
+            <div class="rounded-lg shadow-lg px-8 py-4 mt-4">
+              <AppSelect
+                v-model="form.profession_id"
+                :name="'profession_id'"
+                :label="'Role'"
+                :error="formError.find(item => item.field === 'profession_id')"
+                :items="professions"
+                :placeholder="'Select..'"
+              />
+              <template v-if="form.profession_id">
+                <div class="relative flex flex-col py-2 mb-6">
+                  <div class="relative flex flex-row flex-nowrap justify-between">
+                    <label for="spoken_language_id" class="text-xs sm:text-sm py-1">Specialty</label>
+                    <div
+                      class="absolute pin-r bg-red p-1 text-xs sm:text-base text-white"
+                      v-if="formError.find(item => item.field === 'spoken_language_id')"
+                    >{{formError.find(item => item.field === 'spoken_language_id').message}}</div>
+                    <div
+                      class="rounded-lg bg-grey-light px-2 py-1 text-xs sm:text-sm"
+                    >Choose at least one specialty</div>
+                  </div>
+                  <!-- selected -->
+                  <div class="flex flex-row flex-wrap justify-start">
+                    <div
+                      class="rounded-lg bg-yellow-dark py-2 px-3 m-1 text-xs sm:text-sm"
+                      v-for="(item, index) in form.qualification_id"
+                      :key="index"
+                    >
+                      {{item.label}}
+                      <span
+                        class="font-bold cursor-pointer text-base"
+                        @click="form.qualification_id.splice(index, 1)"
+                      >X</span>
+                    </div>
+                    <div>
+                      <input
+                        v-model="searchQualification"
+                        type="text"
+                        placeholder="Select.."
+                        class="qualification border-b-2 focus:border-yellow focus:outline-none py-3 font-bold text-xs sm:text-sm"
+                        @focus="setFocus('qualification')"
+                        @blur="setBlur('qualification')"
+                      >
+                    </div>
+                  </div>
+                  <!-- options-->
+                  <div class="qualification-list flex flex-col bg-white shadow-md overflow-y-auto">
+                    <div
+                      class="py-2 px-3 hover:bg-grey-light cursor-pointer text-xs sm:text-sm"
+                      v-for="item in filteredQualification"
+                      :key="item.id"
+                      @click="addQualification(item)"
+                    >{{item.label}}</div>
+                  </div>
+                </div>
+                <div class="relative flex flex-col py-2 mb-6">
+                  <div class="relative flex flex-row flex-nowrap justify-between">
+                    <label for="clinical_system_id" class="text-xs sm:text-sm py-1">Clinical systems</label>
+                    <div
+                      class="absolute pin-r bg-red p-1 text-xs sm:text-base text-white"
+                      v-if="formError.find(item => item.field === 'clinical_system_id')"
+                    >{{formError.find(item => item.field === 'clinical_system_id').message}}</div>
+                    <div
+                      class="rounded-lg bg-grey-light px-2 py-1 text-xs sm:text-sm"
+                    >Choose at least one IT system</div>
+                  </div>
+                  <!-- selected -->
+                  <div class="flex flex-row flex-wrap justify-start">
+                    <div
+                      class="rounded-lg bg-yellow-dark py-2 px-3 m-1 text-xs sm:text-sm"
+                      v-for="(item, index) in form.clinical_system_id"
+                      :key="index"
+                    >
+                      {{item.label}}
+                      <span
+                        class="font-bold cursor-pointer text-base"
+                        @click="form.clinical_system_id.splice(index, 1)"
+                      >X</span>
+                    </div>
+                    <div>
+                      <input
+                        v-model="searchClinicalSystem"
+                        type="text"
+                        placeholder="Select.."
+                        class="clinical-system border-b-2 focus:border-yellow focus:outline-none py-3 font-bold text-xs sm:text-sm"
+                        @focus="setFocus('clinical_system')"
+                        @blur="setBlur('clinical_system')"
+                      >
+                    </div>
+                  </div>
+                  <!-- options-->
+                  <div
+                    class="clinical-system-list flex flex-col bg-white shadow-md overflow-y-auto"
+                  >
+                    <div
+                      class="py-2 px-3 hover:bg-grey-light cursor-pointer text-xs sm:text-sm"
+                      v-for="item in filteredClinicalSystem"
+                      :key="item.id"
+                      @click="addClinicalSystem(item)"
+                    >{{item.label}}</div>
+                  </div>
+                </div>
+              </template>
               <div class="relative flex flex-col py-2 mb-6">
                 <div class="relative flex flex-row flex-nowrap justify-between">
-                  <label for="spoken_language_id" class="text-xs sm:text-sm py-1">Specialty</label>
+                  <label for="spoken_language_id" class="text-xs sm:text-sm py-1">Spoken languages</label>
                   <div
                     class="absolute pin-r bg-red p-1 text-xs sm:text-base text-white"
                     v-if="formError.find(item => item.field === 'spoken_language_id')"
                   >{{formError.find(item => item.field === 'spoken_language_id').message}}</div>
-                  <div
-                    class="rounded-lg bg-grey-light px-2 py-1 text-xs sm:text-sm"
-                  >Choose at least one specialty</div>
                 </div>
                 <!-- selected -->
                 <div class="flex flex-row flex-wrap justify-start">
+                  <div class="rounded-lg bg-yellow-dark py-2 px-3 m-1 text-xs sm:text-sm">English</div>
                   <div
                     class="rounded-lg bg-yellow-dark py-2 px-3 m-1 text-xs sm:text-sm"
-                    v-for="(item, index) in form.qualification_id"
+                    v-for="(item, index) in form.spoken_language_id"
                     :key="index"
                   >
                     {{item.label}}
                     <span
                       class="font-bold cursor-pointer text-base"
-                      @click="form.qualification_id.splice(index, 1)"
+                      @click="form.spoken_language_id.splice(index, 1)"
                     >X</span>
                   </div>
                   <div>
                     <input
-                      v-model="searchQualification"
+                      v-model="searchLanguage"
                       type="text"
                       placeholder="Select.."
-                      class="qualification border-b-2 focus:border-yellow focus:outline-none py-3 font-bold text-xs sm:text-sm"
-                      @focus="setFocus('qualification')"
-                      @blur="setBlur('qualification')"
+                      class="spoken-language border-b-2 focus:border-yellow focus:outline-none py-3 font-bold text-xs sm:text-sm"
+                      @focus="setFocus('spoken_language')"
+                      @blur="setBlur('spoken_language')"
                     >
                   </div>
                 </div>
                 <!-- options-->
-                <div class="qualification-list flex flex-col bg-white shadow-md overflow-y-auto">
+                <div class="spoken-language-list flex flex-col bg-white shadow-md overflow-y-auto">
                   <div
                     class="py-2 px-3 hover:bg-grey-light cursor-pointer text-xs sm:text-sm"
-                    v-for="item in filteredQualification"
+                    v-for="item in filteredSpokenLanguages"
                     :key="item.id"
-                    @click="addQualification(item)"
+                    @click="addLanguage(item)"
                   >{{item.label}}</div>
                 </div>
               </div>
-              <div class="relative flex flex-col py-2 mb-6">
-                <div class="relative flex flex-row flex-nowrap justify-between">
-                  <label for="clinical_system_id" class="text-xs sm:text-sm py-1">Clinical systems</label>
-                  <div
-                    class="absolute pin-r bg-red p-1 text-xs sm:text-base text-white"
-                    v-if="formError.find(item => item.field === 'clinical_system_id')"
-                  >{{formError.find(item => item.field === 'clinical_system_id').message}}</div>
-                  <div
-                    class="rounded-lg bg-grey-light px-2 py-1 text-xs sm:text-sm"
-                  >Choose at least one IT system</div>
-                </div>
-                <!-- selected -->
-                <div class="flex flex-row flex-wrap justify-start">
-                  <div
-                    class="rounded-lg bg-yellow-dark py-2 px-3 m-1 text-xs sm:text-sm"
-                    v-for="(item, index) in form.clinical_system_id"
-                    :key="index"
-                  >
-                    {{item.label}}
-                    <span
-                      class="font-bold cursor-pointer text-base"
-                      @click="form.clinical_system_id.splice(index, 1)"
-                    >X</span>
-                  </div>
-                  <div>
-                    <input
-                      v-model="searchClinicalSystem"
-                      type="text"
-                      placeholder="Select.."
-                      class="clinical-system border-b-2 focus:border-yellow focus:outline-none py-3 font-bold text-xs sm:text-sm"
-                      @focus="setFocus('clinical_system')"
-                      @blur="setBlur('clinical_system')"
-                    >
-                  </div>
-                </div>
-                <!-- options-->
-                <div class="clinical-system-list flex flex-col bg-white shadow-md overflow-y-auto">
-                  <div
-                    class="py-2 px-3 hover:bg-grey-light cursor-pointer text-xs sm:text-sm"
-                    v-for="item in filteredClinicalSystem"
-                    :key="item.id"
-                    @click="addClinicalSystem(item)"
-                  >{{item.label}}</div>
-                </div>
+              <div
+                class="relative flex flex-col pt-2"
+                v-if="selectedProfession.profession_category.id"
+              >
+                <div class="text-xs sm:text-sm py-1">Compliance documents</div>
               </div>
-            </template>
-            <div class="relative flex flex-col py-2 mb-6">
-              <div class="relative flex flex-row flex-nowrap justify-between">
-                <label for="spoken_language_id" class="text-xs sm:text-sm py-1">Spoken languages</label>
-                <div
-                  class="absolute pin-r bg-red p-1 text-xs sm:text-base text-white"
-                  v-if="formError.find(item => item.field === 'spoken_language_id')"
-                >{{formError.find(item => item.field === 'spoken_language_id').message}}</div>
-              </div>
-              <!-- selected -->
-              <div class="flex flex-row flex-wrap justify-start">
-                <div class="rounded-lg bg-yellow-dark py-2 px-3 m-1 text-xs sm:text-sm">English</div>
-                <div
-                  class="rounded-lg bg-yellow-dark py-2 px-3 m-1 text-xs sm:text-sm"
-                  v-for="(item, index) in form.spoken_language_id"
-                  :key="index"
-                >
-                  {{item.label}}
-                  <span
-                    class="font-bold cursor-pointer text-base"
-                    @click="form.spoken_language_id.splice(index, 1)"
-                  >X</span>
-                </div>
-                <div>
-                  <input
-                    v-model="searchLanguage"
-                    type="text"
-                    placeholder="Select.."
-                    class="spoken-language border-b-2 focus:border-yellow focus:outline-none py-3 font-bold text-xs sm:text-sm"
-                    @focus="setFocus('spoken_language')"
-                    @blur="setBlur('spoken_language')"
-                  >
-                </div>
-              </div>
-              <!-- options-->
-              <div class="spoken-language-list flex flex-col bg-white shadow-md overflow-y-auto">
-                <div
-                  class="py-2 px-3 hover:bg-grey-light cursor-pointer text-xs sm:text-sm"
-                  v-for="item in filteredSpokenLanguages"
-                  :key="item.id"
-                  @click="addLanguage(item)"
-                >{{item.label}}</div>
-              </div>
+              <AppInput
+                v-model="form.compliance_document_id"
+                :type="'multi-checkbox'"
+                @checked="form.compliance_document_id.push($event)"
+                @unchecked="form.compliance_document_id.splice(form.compliance_document_id.findIndex(item => item === $event), 1)"
+                :name="'compliance_document_id'"
+                :label="`${selectedProfession.profession_category.id === 1 ? 'For GPs:' : selectedProfession.profession_category.id === 2 ? 'For Nurses, et al:' : ''}`"
+                :placeholder="''"
+                :lists="compliance_document"
+              />
             </div>
-            <div
-              class="relative flex flex-col pt-2"
-              v-if="selectedProfession.profession_category.id"
-            >
-              <div class="text-xs sm:text-sm py-1">Compliance documents</div>
-            </div>
-            <AppInput
-              v-model="form.compliance_document_id"
-              :type="'multi-checkbox'"
-              @checked="form.compliance_document_id.push($event)"
-              @unchecked="form.compliance_document_id.splice(form.compliance_document_id.findIndex(item => item === $event), 1)"
-              :name="'compliance_document_id'"
-              :label="`${selectedProfession.profession_category.id === 1 ? 'For GPs:' : selectedProfession.profession_category.id === 2 ? 'For Nurses, et al:' : ''}`"
-              :placeholder="''"
-              :lists="compliance_document"
-            />
           </div>
-        </div>
-        <div class="flex flex-col">
-          <h4 class="font-bold mt-4">Duration</h4>
-          <div class="rounded-lg shadow-lg px-8 py-4 mt-4">
-            <div class="flex flex-row flex-wrap justify-between">
-              <div class="px-1 w-full md:w-1/2">
-                <AppInput
-                  v-model="form.date_start"
-                  :type="'date'"
-                  :name="'date_start'"
-                  :label="'Start Date'"
-                  :placeholder="''"
-                  :error="formError.find(item => item.field === 'date_start')"
-                />
+          <div class="flex flex-col">
+            <h4 class="font-bold mt-4">Duration</h4>
+            <div class="rounded-lg shadow-lg px-8 py-4 mt-4">
+              <div class="flex flex-row flex-wrap justify-between">
+                <div class="px-1 w-full md:w-1/2">
+                  <AppInput
+                    v-model="form.date_start"
+                    :type="'date'"
+                    :name="'date_start'"
+                    :label="'Start Date'"
+                    :placeholder="''"
+                    :error="formError.find(item => item.field === 'date_start')"
+                  />
+                </div>
+                <div class="px-1 w-full md:w-1/2">
+                  <AppInput
+                    v-model="form.time_start"
+                    :type="'time'"
+                    :name="'time_start'"
+                    :label="'Start Time'"
+                    :placeholder="''"
+                    :error="formError.find(item => item.field === 'time_start')"
+                  />
+                </div>
+                <div class="px-1 w-full md:w-1/2">
+                  <AppInput
+                    v-model="form.date_end"
+                    :type="'date'"
+                    :name="'date_end'"
+                    :label="'End Date'"
+                    :placeholder="''"
+                    :error="formError.find(item => item.field === 'date_end')"
+                  />
+                </div>
+                <div class="px-1 w-full md:w-1/2">
+                  <AppInput
+                    v-model="form.time_end"
+                    :type="'time'"
+                    :name="'time_end'"
+                    :label="'End Time'"
+                    :placeholder="''"
+                    :error="formError.find(item => item.field === 'time_end')"
+                  />
+                </div>
               </div>
-              <div class="px-1 w-full md:w-1/2">
-                <AppInput
-                  v-model="form.time_start"
-                  :type="'time'"
-                  :name="'time_start'"
-                  :label="'Start Time'"
-                  :placeholder="''"
-                  :error="formError.find(item => item.field === 'time_start')"
-                />
-              </div>
-              <div class="px-1 w-full md:w-1/2">
-                <AppInput
-                  v-model="form.date_end"
-                  :type="'date'"
-                  :name="'date_end'"
-                  :label="'End Date'"
-                  :placeholder="''"
-                  :error="formError.find(item => item.field === 'date_end')"
-                />
-              </div>
-              <div class="px-1 w-full md:w-1/2">
-                <AppInput
-                  v-model="form.time_end"
-                  :type="'time'"
-                  :name="'time_end'"
-                  :label="'End Time'"
-                  :placeholder="''"
-                  :error="formError.find(item => item.field === 'time_end')"
-                />
-              </div>
+              <AppSelect
+                v-model="unpaid_breaks"
+                :name="'unpaid_breaks '"
+                :label="'Unpaid break'"
+                :error="formError.find(item => item.field === 'unpaid_breaks_in_minutes')"
+                :items="[ {value: 15, label: '15'}, {value: 30, label: '30'}, {value: 60, label: '60'}, {value: 'other', label: 'Other'} ]"
+                :placeholder="'Select..'"
+              />
+              <AppInput
+                v-if="unpaid_breaks === 'other'"
+                v-model="form.unpaid_breaks_in_minutes"
+                :type="'text'"
+                :name="'unpaid_breaks_in_minutes'"
+                :label="'Other'"
+                :placeholder="''"
+                :error="formError.find(item => item.field === 'unpaid_breaks_in_minutes')"
+                :inStyle="'text-align:right;'"
+              />
+              <AppSelect
+                v-model="form.shift_id"
+                :name="'shift_id'"
+                :label="'Shifts'"
+                :error="formError.find(item => item.field === 'shift_id')"
+                :items="shifts"
+                :placeholder="'Select..'"
+              />
+              <AppInput
+                v-model="form.auto_assign_at"
+                :type="'date'"
+                :name="'auto_assign_at'"
+                :label="'Auto -assign job to the first matching Favourite applicant?'"
+                :placeholder="''"
+                :error="formError.find(item => item.field === 'auto_assign_at')"
+              />
+              <AppInput
+                v-model="form.selection_date"
+                :type="'date'"
+                :name="'selection_date'"
+                :label="'Selection will be made and you will receive a notification by this date'"
+                :placeholder="''"
+                :error="formError.find(item => item.field === 'selection_date')"
+              />
             </div>
-            <AppSelect
-              v-model="unpaid_breaks"
-              :name="'unpaid_breaks '"
-              :label="'Unpaid break'"
-              :error="formError.find(item => item.field === 'unpaid_breaks_in_minutes')"
-              :items="[ {value: 15, label: '15'}, {value: 30, label: '30'}, {value: 60, label: '60'}, {value: 'other', label: 'Other'} ]"
-              :placeholder="'Select..'"
-            />
-            <AppInput
-              v-if="unpaid_breaks === 'other'"
-              v-model="form.unpaid_breaks_in_minutes"
-              :type="'text'"
-              :name="'unpaid_breaks_in_minutes'"
-              :label="'Other'"
-              :placeholder="''"
-              :error="formError.find(item => item.field === 'unpaid_breaks_in_minutes')"
-              :inStyle="'text-align:right;'"
-            />
-            <AppSelect
-              v-model="form.shift_id"
-              :name="'shift_id'"
-              :label="'Shifts'"
-              :error="formError.find(item => item.field === 'shift_id')"
-              :items="shifts"
-              :placeholder="'Select..'"
-            />
-            <AppInput
-              v-model="form.auto_assign_at"
-              :type="'date'"
-              :name="'auto_assign_at'"
-              :label="'Auto -assign job to the first matching Favourite applicant?'"
-              :placeholder="''"
-              :error="formError.find(item => item.field === 'auto_assign_at')"
-            />
-            <AppInput
-              v-model="form.selection_date"
-              :type="'date'"
-              :name="'selection_date'"
-              :label="'Selection will be made and you will receive a notification by this date'"
-              :placeholder="''"
-              :error="formError.find(item => item.field === 'selection_date')"
-            />
           </div>
-        </div>
-        <div class="mt-4">
-          <AppButton :label="'Save and publish Job'" @click="publish"/>
+          <div class="mt-4">
+            <AppButton :label="'Save and publish Job'" @click="publish"/>
+          </div>
         </div>
       </div>
     </div>
@@ -588,6 +595,7 @@ export default {
     }
   },
   created() {
+    return
     // get report to and email from practice account
     this.form.report_to = this.$auth.user.practice_detail.practice.report_to
     this.form.email = this.$auth.user.practice_detail.practice.email
@@ -602,6 +610,7 @@ export default {
     })
     // get selected mandatory training / gp and other compliance documents / email / report to from auth user 
     this.$axios.$get(`/api/v1/me`).then(res => {
+      console.log(res)
       res.data.user.practice_detail.practice.mandatory_trainings.forEach(item => {
         this.mandatory_training.push({ label: item.name, value: item.id })
       })
@@ -765,6 +774,24 @@ export default {
 }
 .toggle-list {
   max-height: 150px;
+}
+.create-job-modal {
+  position: fixed;
+  top: 0;
+  right: 0;
+  margin-right: 0%;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  border-left: solid 2px #edf2f7;
+  transition: all 0.3s ease-in-out;
+  background-color: white;
+  z-index: 510;
+}
+@media screen and (max-width: 1000px) {
+  .create-job-modal {
+    width: 50%;
+  }
 }
 </style>
 

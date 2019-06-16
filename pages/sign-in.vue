@@ -105,7 +105,7 @@ export default {
               this.$axios.setToken(token, 'Bearer')
               this.$auth.$storage.setUniversal('_token.local', 'Bearer ' + token)
               await this.$auth.fetchUser()
-              this.$router.push('/')
+              this.$router.push('/dashboard')
             })
             .catch(err => {
               err.response.data.error_messages.forEach(error => {

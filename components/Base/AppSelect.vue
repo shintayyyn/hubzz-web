@@ -16,6 +16,7 @@
           class="border-b-2 focus:border-yellow focus:outline-none py-2 font-bold text-xs sm:text-sm w-full"
           :class="error? 'border-red':''"
           @input="$emit('input', $event.target.value)"
+          :style="inStyle"
         >
           <option value disabled selected v-if="placeholder">{{placeholder}}</option>
           <option v-for="(item, index) in items" :key="index" :value="item.value">{{item.label}}</option>
@@ -34,7 +35,8 @@ export default {
     placeholder: String,
     error: Object,
     items: Array,
-    info: String
+    info: String,
+    inStyle: String
   },
 }
 </script>

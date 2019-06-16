@@ -1,34 +1,34 @@
 <template>
-  <section>
-    <div class="flex flex-row flex-wrap mx-1 pt-5 px-5">
-      <div class="w-1/2 xl:w-1/3 text-left">
+  <section class="per-month-section">
+    <div class="flex flex-row flex-wrap justify-between mx-1">
+      <div class="w-2/3 sm:w-1/3">
         <div
-          class="text-xs lg:text-base"
+          class="text-xs sm:text-sm"
         >{{$store.state.calendar.months[selectedMonth]}} {{selectedYear}}</div>
       </div>
-      <div class="w-1/2 text-right xl:w-1/3 xl:text-center">
+      <div class="w-1/3 text-right sm:w-1/3 sm:text-center">
         <span class="cursor-pointer" @click="adjustMonth('previous')">
-          <svgicon name="arrow-left" height="15" width="15"/>
+          <svgicon name="arrow-left" height="12" width="12"/>
         </span>
         <span class="mx-4"></span>
         <span class="cursor-pointer" @click="adjustMonth('next')">
-          <svgicon name="arrow-right" height="15" width="15"/>
+          <svgicon name="arrow-right" height="12" width="12"/>
         </span>
       </div>
-      <div class="w-full mt-2 xl:mt-0 xl:w-1/3 text-right">
+      <div class="w-full text-right sm:w-1/3">
         <span
-          class="cursor-pointer px-3 text-xs lg:text-base hover:underline"
+          class="cursor-pointer px-3 text-xs sm:text-sm hover:underline"
           :class="$store.state.calendar.view_type === 'per_month' ? 'py-1 px-3 bg-yellow-dark':''"
           @click="$store.commit('calendar/TOGGLE_CALENDAR_VIEW_TYPE', 'per_month')"
         >Month</span>
         <span
-          class="cursor-pointer px-3 text-xs lg:text-base hover:underline"
+          class="cursor-pointer px-3 text-xs sm:text-sm hover:underline"
           :class="$store.state.calendar.view_type === 'per_week' ? 'py-1 px-3 bg-yellow-dark':''"
           @click="$store.commit('calendar/TOGGLE_CALENDAR_VIEW_TYPE', 'per_week')"
         >Week</span>
       </div>
     </div>
-    <div class="flex flex-nowrap justify-between text-xs lg:text-base mx-1 mt-5 px-5">
+    <div class="flex flex-nowrap justify-between text-xs sm:text-sm mx-1 mt-5">
       <div class="w-full text-center text-grey font-bold">SUN</div>
       <div class="w-full text-center text-grey font-bold">MON</div>
       <div class="w-full text-center text-grey font-bold">TUE</div>
@@ -37,8 +37,7 @@
       <div class="w-full text-center text-grey font-bold">FRI</div>
       <div class="w-full text-center text-grey font-bold">SAT</div>
     </div>
-
-    <div class="flex flex-nowrap justify-between mx-1 mt-5 px-5">
+    <div class="flex flex-nowrap justify-between mx-1 mt-5">
       <div class="flex flex-col w-full">
         <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 7">
           <div class="m-1 h-8 sm:h-12 md:h-16 lg:h-20 w-auto">&nbsp;</div>
@@ -50,7 +49,7 @@
             :class="$store.state.calendar.date_today === item.fullDate ? 'border-yellow-dark text-lg font-bold':'hover:bg-grey-light'"
             v-if="item.day === 0"
           >
-            <div class="text-xs lg:text-sm z-10">{{(item.date)}}</div>
+            <div class="text-xs md:text-sm z-10">{{(item.date)}}</div>
             <PerMonthInfoDateCell
               :jobs="jobs"
               :applied_jobs="applied_jobs_with_selection_date"
@@ -74,7 +73,7 @@
             :class="$store.state.calendar.date_today === item.fullDate ? 'border-yellow-dark text-lg font-bold':'hover:bg-grey-light'"
             v-if="item.day === 1"
           >
-            <div class="text-xs lg:text-sm z-10">{{item.date}}</div>
+            <div class="text-xs md:text-sm z-10">{{item.date}}</div>
             <PerMonthInfoDateCell
               :jobs="jobs"
               :applied_jobs="applied_jobs_with_selection_date"
@@ -98,7 +97,7 @@
             :class="$store.state.calendar.date_today === item.fullDate ? 'border-yellow-dark text-lg font-bold':'hover:bg-grey-light'"
             v-if="item.day === 2"
           >
-            <div class="text-xs lg:text-sm z-10">{{(item.date)}}</div>
+            <div class="text-xs md:text-sm z-10">{{(item.date)}}</div>
             <PerMonthInfoDateCell
               :jobs="jobs"
               :applied_jobs="applied_jobs_with_selection_date"
@@ -122,7 +121,7 @@
             :class="$store.state.calendar.date_today === item.fullDate ? 'border-yellow-dark text-lg font-bold':'hover:bg-grey-light'"
             v-if="item.day === 3"
           >
-            <div class="text-xs lg:text-sm z-10">{{item.date}}</div>
+            <div class="text-xs md:text-sm z-10">{{item.date}}</div>
             <PerMonthInfoDateCell
               :jobs="jobs"
               :applied_jobs="applied_jobs_with_selection_date"
@@ -146,7 +145,7 @@
             :class="$store.state.calendar.date_today === item.fullDate ? 'border-yellow-dark text-lg font-bold':'hover:bg-grey-light'"
             v-if="item.day === 4"
           >
-            <div class="text-xs lg:text-sm z-10">{{(item.date)}}</div>
+            <div class="text-xs md:text-sm z-10">{{(item.date)}}</div>
             <PerMonthInfoDateCell
               :jobs="jobs"
               :applied_jobs="applied_jobs_with_selection_date"
@@ -170,7 +169,7 @@
             :class="$store.state.calendar.date_today === item.fullDate ? 'border-yellow-dark text-lg font-bold':'hover:bg-grey-light'"
             v-if="item.day === 5"
           >
-            <div class="text-xs lg:text-sm z-10">{{item.date}}</div>
+            <div class="text-xs md:text-sm z-10">{{item.date}}</div>
             <PerMonthInfoDateCell
               :jobs="jobs"
               :applied_jobs="applied_jobs_with_selection_date"
@@ -194,7 +193,7 @@
             :class="$store.state.calendar.date_today === item.fullDate ? 'border-yellow-dark text-lg font-bold':'hover:bg-grey-light'"
             v-if="item.day === 6"
           >
-            <div class="text-xs lg:text-sm z-10">{{item.date}}</div>
+            <div class="text-xs md:text-sm z-10">{{item.date}}</div>
             <PerMonthInfoDateCell
               :jobs="jobs"
               :applied_jobs="applied_jobs_with_selection_date"
@@ -287,7 +286,6 @@ export default {
       }
       if (this.$auth.user.domain === 'Locum') {
         this.$axios.$get(`/api/v1/locum/calendars/monthly/${this.selectedYear}/${this.selectedMonth + 1}`).then(res => {
-          console.log(res)
           if (res.data.jobs && res.data.jobs.length > 0) {
             this.locum_jobs = res.data.jobs
           }
@@ -337,4 +335,8 @@ export default {
   }
 }
 </script>
+<style scoped>
+.per-month-section {
+}
+</style>
 

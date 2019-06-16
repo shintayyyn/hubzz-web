@@ -1,11 +1,10 @@
 <template>
   <section>
-    <div class="text-sm sm:text-base font-bold">Quick Statistics</div>
-    <div class="flex flex-row flex-wrap justify-start max-w-xl">
-      <div class="p-4 w-full sm:w-1/2 md:w-1/4" v-for="(item, index) in statistics" :key="index">
-        <div class="rounded-lg shadow-lg p-4 hover:bg-grey-light">
+    <div class="flex flex-row flex-wrap justify-start">
+      <div class="p-4 w-full sm:w-1/2 lg:w-1/4" v-for="(item, index) in statistics" :key="index">
+        <div class="statistics-card rounded-lg shadow-lg p-4 hover:bg-grey-light">
           <nuxt-link :to="item.route">
-            <div class="flex flex-col">
+            <div class="flex flex-col my-2">
               <div class="text-sm sm:text-md">{{item.label}}</div>
               <div class="font-bold text-5xl mt-2">{{item.value}}</div>
             </div>
@@ -47,10 +46,13 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 a {
   text-decoration: none;
   color: black;
+}
+.statistics-card {
+  min-height: 130px;
 }
 </style>
 

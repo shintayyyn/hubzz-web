@@ -1,14 +1,15 @@
 <template>
-  <!-- //! add transition of sliding up -->
-  <div
-    class="rounded-b-lg py-2 px-12 flex flex-row flex-nowrap justify-start"
-    :class="notificationStatus"
-    v-if="$store.state.notification.enabled"
-  >
-    <div class="mr-2">
-      <svgicon name="success-checkmark" height="20" width="20"/>
+  <div class="app-notification">
+    <div
+      class="rounded-b-lg py-2 px-12 flex flex-row flex-nowrap justify-center"
+      :class="notificationStatus"
+      v-if="$store.state.notification.enabled"
+    >
+      <div class="mr-2">
+        <svgicon name="success-checkmark" height="20" width="20"/>
+      </div>
+      <div class="font-bold text-sm leading-normal">{{$store.state.notification.text}}</div>
     </div>
-    <div class="font-bold text-sm leading-normal">{{$store.state.notification.text}}</div>
   </div>
 </template>
 <script>
@@ -34,3 +35,17 @@ export default {
   }
 }
 </script>
+<style>
+.app-notification {
+  position: fixed;
+  top: 0;
+  left: 40%;
+  z-index: 999;
+}
+@media screen and (max-width: 600px) {
+  .app-notification {
+    width: 100%;
+    left: 0;
+  }
+}
+</style>

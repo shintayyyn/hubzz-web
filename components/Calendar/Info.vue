@@ -1,7 +1,7 @@
 <template>
-  <div class="rounded-br-lg rounded-bl-lg md:rounded-bl-none md:rounded-r-lg info-section h-full">
+  <div class="info-section h-full rounded-b-lg lg:rounded-b-none lg:rounded-r-lg">
     <div
-      class="text-white text-xs xl:text-base py-4 px-8"
+      class="text-white text-xs sm:text-sm py-4 px-8"
     >{{$moment(date_info || selected_date).format('Do MMM, YYYY')}}</div>
     <div class="flex flex-col overflow-y-auto px-8 h-full info-card">
       <template v-for="(item, index) in foundLiveJobs">

@@ -50,17 +50,12 @@ export default {
   created() {
     // get applied jobs
     this.$axios.$get(`/api/v1/locum/jobs?locum_status=Declined`).then(res => {
-      console.log(res)
       this.jobs = res.data.jobs
     })
   },
   methods: {
     show(id) {
-      this.$store.commit('jobs/SET_JOB_ID', id)
-      this.$store.commit('SET_LOCUM_DECLINED_DETAIL_MODAL', true)
-      this.$store.commit('SET_LOCUM_DECLINED_DETAIL_SHIELD', true)
-      this.$store.commit('TOGGLED_RIGHT', 'locum-declined-detail-modal')
-      document.body.style.overflow = 'hidden'
+      this.$router.push(`/jobs/${id}?job_status=declined`)
     }
   }
 }
