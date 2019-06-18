@@ -74,6 +74,7 @@ export default {
 </script>
 <style>
 .content {
+  /* box-sizing: content-box; */
   max-width: 1000px;
   padding: 5px 40px;
 }
