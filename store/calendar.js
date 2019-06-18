@@ -11,11 +11,13 @@ export const state = () => ({
     // info
     selected_date: null,
     selected_date_shift: null,
-    // jobs
+    // practice
     jobs: [],
     applied_jobs_with_selection_date: [],
     unfilled_jobs: [],
     declined_jobs: [],
+    // locums
+    appointment_jobs: []
 })
 
 export const mutations = {
@@ -34,6 +36,7 @@ export const mutations = {
     SELECT_DATE_SHIFT(state, payload) {
         state.selected_date_shift = payload
     },
+    // practice
     SET_JOBS (state, payload) {
         state.jobs = payload
     },
@@ -46,6 +49,10 @@ export const mutations = {
     SET_DECLINED_JOBS (state, payload) {
         state.declined_jobs = payload
     },
+    // locums
+    SET_APPOINTMENT_JOBS(state, payload) {
+        state.appointment_jobs = payload
+    }
 }
 
 export const getters = {

@@ -136,7 +136,7 @@ export default {
       try {
         let item = this.results.find(item => item.id === this.surgery_id)
         this.$store.commit('signUp/SET_PRACTICE_DETAILS', { surgery_id: item.id, search_results: this.results })
-        this.$store.commit('signUp/SET_ACTIVE_TAB', 'practice_account_details')
+        this.$emit('nextTab', 'PracticeAccountDetails')
       } catch (e) {
 
       }
@@ -145,7 +145,4 @@ export default {
 }
 </script>
 <style scoped>
-button:active {
-  transform: translate(5px, 5px);
-}
 </style>

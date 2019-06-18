@@ -15,14 +15,6 @@
           class="mt-1 mr-1"
           :checked="isChecked.includes(item.value)"
         >
-        <!-- :checked="selecte
-        watch: {
-          value(value) {
-            if (this.value instanceof Array) {
-              console.log(value)
-            }
-          }
-        },d.includes(item.value)"-->
         <label :for="item.name" class="text-xs sm:text-sm py-1">{{item.label}}</label>
       </div>
     </div>
@@ -120,7 +112,7 @@ export default {
   //   }
   // },
   props: {
-    value: [String, Boolean, Array],
+    value: [String, Boolean, Array, Number],
     type: String,
     name: String,
     label: String,
@@ -133,6 +125,13 @@ export default {
     selected: Array,
     // for multiemail
     // selectedEmails: Array
+  },
+  watch: {
+    value(data) {
+      if (data instanceof Array) {
+        this.isChecked = data
+      }
+    }
   },
   created() {
     if (this.value instanceof Array) {

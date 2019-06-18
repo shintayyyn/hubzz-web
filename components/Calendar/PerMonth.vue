@@ -55,6 +55,7 @@
               :applied_jobs="applied_jobs_with_selection_date"
               :unfilled_jobs="unfilled_jobs"
               :declined_jobs="declined_jobs"
+              :appointment_jobs="appointment_jobs"
               :locum_jobs="locum_jobs"
               :unavailabilities="unavailabilities"
               :item="item"
@@ -79,6 +80,7 @@
               :applied_jobs="applied_jobs_with_selection_date"
               :unfilled_jobs="unfilled_jobs"
               :declined_jobs="declined_jobs"
+              :appointment_jobs="appointment_jobs"
               :locum_jobs="locum_jobs"
               :unavailabilities="unavailabilities"
               :item="item"
@@ -103,6 +105,7 @@
               :applied_jobs="applied_jobs_with_selection_date"
               :unfilled_jobs="unfilled_jobs"
               :declined_jobs="declined_jobs"
+              :appointment_jobs="appointment_jobs"
               :locum_jobs="locum_jobs"
               :unavailabilities="unavailabilities"
               :item="item"
@@ -127,6 +130,7 @@
               :applied_jobs="applied_jobs_with_selection_date"
               :unfilled_jobs="unfilled_jobs"
               :declined_jobs="declined_jobs"
+              :appointment_jobs="appointment_jobs"
               :locum_jobs="locum_jobs"
               :unavailabilities="unavailabilities"
               :item="item"
@@ -151,6 +155,7 @@
               :applied_jobs="applied_jobs_with_selection_date"
               :unfilled_jobs="unfilled_jobs"
               :declined_jobs="declined_jobs"
+              :appointment_jobs="appointment_jobs"
               :locum_jobs="locum_jobs"
               :unavailabilities="unavailabilities"
               :item="item"
@@ -175,6 +180,7 @@
               :applied_jobs="applied_jobs_with_selection_date"
               :unfilled_jobs="unfilled_jobs"
               :declined_jobs="declined_jobs"
+              :appointment_jobs="appointment_jobs"
               :locum_jobs="locum_jobs"
               :unavailabilities="unavailabilities"
               :item="item"
@@ -199,6 +205,7 @@
               :applied_jobs="applied_jobs_with_selection_date"
               :unfilled_jobs="unfilled_jobs"
               :declined_jobs="declined_jobs"
+              :appointment_jobs="appointment_jobs"
               :locum_jobs="locum_jobs"
               :unavailabilities="unavailabilities"
               :item="item"
@@ -226,6 +233,7 @@ export default {
       unfilled_jobs: [],
       declined_jobs: [],
       // locum
+      appointment_jobs: [],
       locum_jobs: [],
       unavailabilities: []
     }
@@ -287,7 +295,9 @@ export default {
       if (this.$auth.user.domain === 'Locum') {
         this.$axios.$get(`/api/v1/locum/calendars/monthly/${this.selectedYear}/${this.selectedMonth + 1}`).then(res => {
           if (res.data.jobs && res.data.jobs.length > 0) {
-            this.locum_jobs = res.data.jobs
+            this.appointment_jobs = res.data.jobs.filter(job => job.type === 'Private')
+            this.$store.commit('calendar/SET_APPOINTMENT_JOBS', this.appointment_jobs)
+            this.locum_jobs = res.data.jobs.filter(job => job.type === 'Platform')
           }
           if (res.data.unavailabilities && res.data.unavailabilities.length > 0) {
             this.unavailabilities = res.data.unavailabilities

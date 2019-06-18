@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-row flex-wrap justify-start px-5">
+  <div class="flex flex-row flex-wrap justify-start">
     <div
       style="font-family:Nunito"
       @click.prevent="goTo('allocated')"
@@ -53,9 +53,5 @@ export default {
 </script>
 
 <style scoped>
-a {
-  text-decoration: none;
-  color: black;
-}
 </style>
 

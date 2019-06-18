@@ -37,6 +37,7 @@ export default {
   methods: {
     create() {
       if (this.$auth.user.domain === 'Locum') {
+        this.$store.commit('jobs/SET_APPOINTMENT_JOB', null)
         this.$store.commit('TOGGLE_CREATE_APPOINTMENT_MODAL', true)
       } else {
         this.$store.commit('TOGGLE_CREATE_JOB_MODAL', true)

@@ -52,15 +52,10 @@
       </div>
     </div>
 
-    <div class="flex w-full justify-center xl:justify-start mt-5">
-      <div class="flex justify-center" style="width:600px">
-        <AppButton
-          :label="'<<'"
-          @click="$store.commit('signUp/SET_ACTIVE_TAB', 'professional_details')"
-        />
-        <div class="mx-1"></div>
-        <AppButton :label="'Next'" @click="next"/>
-      </div>
+    <div class="flex justify-center mt-4">
+      <AppButton :label="'<<'" @click="$emit('nextTab', 'LocumProfessionalDetails')"/>
+      <div class="mx-2"></div>
+      <AppButton :label="'Next'" @click="next"/>
     </div>
   </div>
 </template>
@@ -99,71 +94,6 @@ export default {
         })
       }
     },
-    'form.email'(value) {
-      // splice from formerror
-      let index = this.formError.findIndex(item => item.field === 'email')
-      if (index >= 0) {
-        this.formError.splice(index, 1)
-      }
-      // validate
-      if (!value) {
-        // required
-        this.formError.push({ field: 'email', message: 'Required' })
-      } else {
-        // validate option
-        const error = this.ValidateEmail(value)
-        if (error) {
-          this.formError.push(error)
-        }
-      }
-    },
-    'form.password'(value) {
-      // splice from formerror
-      let index = this.formError.findIndex(item => item.field === 'password')
-      if (index >= 0) {
-        this.formError.splice(index, 1)
-      }
-      // validate
-      if (!value) {
-        // required
-        this.formError.push({ field: 'password', message: 'Required' })
-      } else if (value && value.length < 6) {
-        this.formError.push({ field: 'password', message: 'Password Must Be Atleast 6 Characters' })
-      }
-    },
-    'form.password_confirmation'(value) {
-      // splice from formerror
-      let index = this.formError.findIndex(item => item.field === 'password_confirmation')
-      if (index >= 0) {
-        this.formError.splice(index, 1)
-      }
-      // validate
-      if (!value) {
-        // required
-        this.formError.push({ field: 'password_confirmation', message: 'Required' })
-      }
-      else if (value && value.length < 6) {
-        this.formError.push({ field: 'password_confirmation', message: 'Password Confirmation Must Be Atleast 6 Characters' })
-      } else {
-        // validate option
-        const error = this.ValidateSamePassword(value, this.form.password)
-        if (error) {
-          this.formError.push(error)
-        }
-      }
-    },
-    'form.privacy_policy'(value) {
-      // splice from formerror
-      let index = this.formError.findIndex(item => item.field === 'privacy_policy')
-      if (index >= 0) {
-        this.formError.splice(index, 1)
-      }
-      // validate
-      if (!value) {
-        // required
-        this.formError.push({ field: 'privacy_policy', message: 'Required' })
-      }
-    },
   },
   mounted() {
     this.form.email = this.credentialDetails.email
@@ -180,7 +110,7 @@ export default {
     next() {
       try {
         this.formError = []
-        this.Validate(this.form)
+        // this.Validate(this.form)
         if (!this.formError.length) {
           this.$store.commit('signUp/SET_CREDENTIAL_DETAILS', this.form)
           setTimeout(() => {

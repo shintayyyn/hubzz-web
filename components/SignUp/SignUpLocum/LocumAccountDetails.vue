@@ -66,7 +66,7 @@
       </div>
     </div>
 
-    <div class="flex justify-center mt-4" style="width:600px">
+    <div class="flex justify-center mt-4">
       <AppButton :label="'Next'" @click="next"/>
     </div>
   </div>
@@ -107,62 +107,6 @@ export default {
       return this.$store.state.signUp.account_detail_form_error
     }
   },
-  watch: {
-    'form.first_name'(value) {
-      // splice from formerror
-      let index = this.formError.findIndex(item => item.field === 'first_name')
-      if (index >= 0) {
-        this.formError.splice(index, 1)
-      }
-      // validate
-      if (!value) {
-        // required
-        this.formError.push({ field: 'first_name', message: 'Required' })
-      }
-    },
-    'form.last_name'(value) {
-      // splice from formerror
-      let index = this.formError.findIndex(item => item.field === 'last_name')
-      if (index >= 0) {
-        this.formError.splice(index, 1)
-      }
-      // validate
-      if (!value) {
-        // required
-        this.formError.push({ field: 'last_name', message: 'Required' })
-      }
-    },
-    'form.gender'(value) {
-      // splice from formerror
-      let index = this.formError.findIndex(item => item.field === 'gender')
-      if (index >= 0) {
-        this.formError.splice(index, 1)
-      }
-      // validate
-      if (!value) {
-        // required
-        this.formError.push({ field: 'gender', message: 'Required' })
-      }
-    },
-    'form.mobile_number'(value) {
-      // splice from formerror
-      let index = this.formError.findIndex(item => item.field === 'mobile_number')
-      if (index >= 0) {
-        this.formError.splice(index, 1)
-      }
-      // validate
-      if (!value) {
-        // required
-        this.formError.push({ field: 'mobile_number', message: 'Required' })
-      } else {
-        // validate options
-        const error = this.ValidateMobile(value, 'mobile_number')
-        if (error) {
-          this.formError.push(error)
-        }
-      }
-    }
-  },
   mounted() {
     this.form.title = this.accountDetails.title
     this.form.first_name = this.accountDetails.first_name
@@ -181,11 +125,11 @@ export default {
     next() {
       try {
         this.formError = []
-        this.Validate(this.form, ['title', 'suffix'])
+        // this.Validate(this.form, ['title', 'suffix'])
         // this.ValidateMobile(this.form.mobile_number, 'mobile_number')
         if (!this.formError.length) {
           this.$store.commit('signUp/SET_ACCOUNT_DETAILS', this.form)
-          this.$store.commit('signUp/SET_ACTIVE_TAB', 'address_details')
+          this.$emit('nextTab', 'LocumAddressDetails')
         }
       } catch (e) {
         console.log(e)
@@ -194,5 +138,3 @@ export default {
   }
 }
 </script>
-<style scoped>
-</style>

@@ -305,29 +305,31 @@ export default {
     },
     getJobs() {
       // live(color code per shift), applied(amber), current(green), unfilled(red)
-      this.$axios.$get(`/api/v1/practice/calendars/weekly/${this.$moment(this.daysInWeek[6]).format('YYYY')}/${this.weekOfTheYear}`).then(res => {
-        console.log(res)
-        // get jobs (green)
-        if (res.data.jobs && res.data.jobs.length > 0) {
-          this.jobs = res.data.jobs
-          this.$store.commit('calendar/SET_JOBS', res.data.jobs)
-        }
-        // applied jobs with selection date (grey / reminders)
-        if (res.data.applied_jobs_with_selection_date && res.data.applied_jobs_with_selection_date.length > 0) {
-          this.applied_jobs_with_selection_date = res.data.applied_jobs_with_selection_date
-          this.$store.commit('calendar/SET_APPLIED_JOBS', res.data.applied_jobs_with_selection_date)
-        }
-        // unfilled job (red)
-        if (res.data.unfilled_jobs && res.data.unfilled_jobs.length > 0) {
-          this.unfilled_jobs = res.data.unfilled_jobs
-          this.$store.commit('calendar/SET_UNFILLED_JOBS', res.data.unfilled_jobs)
-        }
-        // decline jobs (red)
-        if (res.data.declined_jobs && res.data.declined_jobs.length > 0) {
-          this.declined_jobs = res.data.declined_jobs
-          this.$store.commit('calendar/SET_DECLINED_JOBS', res.data.declined_jobs)
-        }
-      })
+      if (this.$auth.user.domain === 'Practice') {
+        this.$axios.$get(`/api/v1/practice/calendars/weekly/${this.$moment(this.daysInWeek[6]).format('YYYY')}/${this.weekOfTheYear}`).then(res => {
+          console.log(res)
+          // get jobs (green)
+          if (res.data.jobs && res.data.jobs.length > 0) {
+            this.jobs = res.data.jobs
+            this.$store.commit('calendar/SET_JOBS', res.data.jobs)
+          }
+          // applied jobs with selection date (grey / reminders)
+          if (res.data.applied_jobs_with_selection_date && res.data.applied_jobs_with_selection_date.length > 0) {
+            this.applied_jobs_with_selection_date = res.data.applied_jobs_with_selection_date
+            this.$store.commit('calendar/SET_APPLIED_JOBS', res.data.applied_jobs_with_selection_date)
+          }
+          // unfilled job (red)
+          if (res.data.unfilled_jobs && res.data.unfilled_jobs.length > 0) {
+            this.unfilled_jobs = res.data.unfilled_jobs
+            this.$store.commit('calendar/SET_UNFILLED_JOBS', res.data.unfilled_jobs)
+          }
+          // decline jobs (red)
+          if (res.data.declined_jobs && res.data.declined_jobs.length > 0) {
+            this.declined_jobs = res.data.declined_jobs
+            this.$store.commit('calendar/SET_DECLINED_JOBS', res.data.declined_jobs)
+          }
+        })
+      }
     },
   }
 }

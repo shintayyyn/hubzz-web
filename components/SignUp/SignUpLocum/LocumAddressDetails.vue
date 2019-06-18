@@ -79,14 +79,10 @@
       </div>
     </div>
 
-    <div class="flex w-full justify-center xl:justify-start">
-      <div class="flex justify-between" style="width:180px">
-        <AppButton
-          :label="'<<'"
-          @click="$store.commit('signUp/SET_ACTIVE_TAB', 'account_details')"
-        />
-        <AppButton :label="'Next'" @click="next"/>
-      </div>
+    <div class="flex justify-center mt-4">
+      <AppButton :label="'<<'" @click="$emit('nextTab', 'LocumAccountDetails')"/>
+      <div class="mx-2"></div>
+      <AppButton :label="'Next'" @click="next"/>
     </div>
   </div>
 </template>
@@ -147,38 +143,6 @@ export default {
     }
 
     // this.autocomplete = new google.maps.places.Autocomplete((this.$refs.post_code))
-  },
-  watch: {
-    'form.address_line_1'(value) {
-      // splice from formerror
-      let index = this.formError.findIndex(item => item.field === 'address_line_1')
-      if (index >= 0) {
-        this.formError.splice(index, 1)
-      }
-      // validate
-      if (!value) {
-        // required
-        this.formError.push({ field: 'address_line_1', message: 'Required' })
-      }
-    },
-    'form.address_line_3'(value) {
-      // splice from formerror
-      let index = this.formError.findIndex(item => item.field === 'address_line_3')
-      if (index >= 0) {
-        this.formError.splice(index, 1)
-      }
-      // validate
-      if (!value) {
-        // required
-        this.formError.push({ field: 'address_line_3', message: 'Required' })
-      }
-    },
-    // postCodeIndex(value) {
-    //   if (value >= 0 && value <= this.predictions.length - 1) {
-    //     console.log(this.predictions)
-    //     this.form.post_code = `${this.predictions[value].main_text}, ${this.predictions[value].secondary_text}`
-    //   }
-    // }
   },
   methods: {
     // when input, find predictions
@@ -254,10 +218,10 @@ export default {
     next() {
       try {
         this.formError = []
-        this.Validate(this.form, ['address_line_2'])
+        // this.Validate(this.form, ['address_line_2'])
         if (!this.formError.length) {
           this.$store.commit('signUp/SET_ADDRESS_DETAILS', this.form)
-          this.$store.commit('signUp/SET_ACTIVE_TAB', 'professional_details')
+          this.$emit('nextTab', 'LocumProfessionalDetails')
         }
       } catch (e) {
         console.log(e)

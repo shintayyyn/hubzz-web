@@ -77,18 +77,11 @@
         </form>
       </div>
     </div>
-    <div class="flex w-full justify-center xl:justify-start mt-5">
-      <div class="flex justify-center" style="width:600px">
-        <button
-          class="rounded-lg p-6 bg-yellow text-lg font-bold hover:text-white focus:outline-none mx-1"
-          @click.prevent="$store.commit('signUp/SET_ACTIVE_TAB', 'practice_details')"
-          v-text="'<<'"
-        ></button>
-        <button
-          class="rounded-lg p-6 bg-yellow text-lg font-bold hover:text-white focus:outline-none"
-          @click.prevent="signUp"
-        >Sign Up</button>
-      </div>
+
+    <div class="flex justify-center mt-4">
+      <AppButton :label="'<<'" @click="$emit('nextTab', 'PracticeDetails')"/>
+      <div class="mx-2"></div>
+      <AppButton :label="'Next'" @click="signUp"/>
     </div>
   </div>
 </template>

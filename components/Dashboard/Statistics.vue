@@ -1,7 +1,11 @@
 <template>
   <section>
     <div class="flex flex-row flex-wrap justify-start">
-      <div class="p-4 w-full sm:w-1/2 lg:w-1/4" v-for="(item, index) in statistics" :key="index">
+      <div
+        class="pr-4 my-4 w-full sm:w-1/2 lg:w-1/4"
+        v-for="(item, index) in statistics"
+        :key="index"
+      >
         <div class="statistics-card rounded-lg shadow-lg p-4 hover:bg-grey-light">
           <nuxt-link :to="item.route">
             <div class="flex flex-col my-2">

@@ -80,6 +80,31 @@
     </div>
     <div
       class="flex flex-row flex-nowrap absolute pin-b pin-l justify-start w-full"
+      v-if="appointment_jobs.length > 0"
+    >
+      <span
+        v-if="hasAppointmentJobs(item.fullDate, 'AM')"
+        class="bg-green-light text-green-light w-full h-2 sm:h-3 lg:h-4 rounded-bl-lg"
+      >.</span>
+      <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
+      <span
+        v-if="hasAppointmentJobs(item.fullDate, 'PM')"
+        class="bg-green-light text-green-light w-full h-2 sm:h-3 lg:h-4"
+      >.</span>
+      <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
+      <span
+        v-if="hasAppointmentJobs(item.fullDate, 'Whole day')"
+        class="bg-green-light text-green-light w-full h-2 sm:h-3 lg:h-4"
+      >.</span>
+      <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
+      <span
+        v-if="hasAppointmentJobs(item.fullDate, 'OOH')"
+        class="bg-green-light text-green-light w-full h-2 sm:h-3 lg:h-4 rounded-br-lg"
+      >.</span>
+      <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
+    </div>
+    <div
+      class="flex flex-row flex-nowrap absolute pin-b pin-l justify-start w-full"
       v-if="locum_jobs.length > 0"
     >
       <span
@@ -132,7 +157,7 @@
 </template>
 <script>
 export default {
-  props: ['jobs', 'applied_jobs', 'unfilled_jobs', 'declined_jobs', 'locum_jobs', 'unavailabilities', 'item'],
+  props: ['jobs', 'applied_jobs', 'unfilled_jobs', 'declined_jobs', 'appointment_jobs', 'locum_jobs', 'unavailabilities', 'item'],
   methods: {
     // practice
     hasJobs(date, type) {
@@ -148,6 +173,9 @@ export default {
       return this.declined_jobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === type)
     },
     // locum
+    hasAppointmentJobs(date, type) {
+      return this.appointment_jobs.find(job => this.getDateArray(job.private_job.date_start, job.private_job.date_end).includes(date) && job.private_job.shift.name === type)
+    },
     hasUnavailabilities(date, type) {
       return this.unavailabilities.find(job => job.date === date && job.shifts.find(shift => shift.name === type))
     },

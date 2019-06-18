@@ -2,15 +2,45 @@
   <section v-if="!isNumberVerified || !isAvailabilityVerified">
     <div class="text-sm sm:text-base font-bold">Reminders</div>
     <div class="flex flex-row flex-wrap justify-start">
-      <div class="p-4 w-full sm:w-1/2 md:w-1/4">
-        <div class="reminder-card rounded-lg shadow-lg p-4" v-if="!isNumberVerified">
-          <nuxt-link to="/account/profile">Complete your Profile Credentials</nuxt-link>
-        </div>
+      <div class="pr-8 my-4 w-full sm:w-1/2 md:w-1/4">
+        <nuxt-link to="/account/profile">
+          <div class="reminder-card rounded-lg shadow-lg p-4" v-if="!isNumberVerified">
+            <span class="leading-tight">
+              <svgicon name="alert" height="20" width="20"/>
+            </span>
+            Complete your Profile Credentials
+          </div>
+        </nuxt-link>
       </div>
-      <div class="p-4 w-full sm:w-1/2 md:w-1/4">
-        <div class="reminder-card rounded-lg shadow-lg p-4" v-if="!isAvailabilityVerified">
-          <nuxt-link to="/availability">Completer your Availability Credentials</nuxt-link>
-        </div>
+      <div class="pr-8 my-4 w-full sm:w-1/2 md:w-1/4">
+        <nuxt-link to="/availability">
+          <div class="reminder-card rounded-lg shadow-lg p-4" v-if="!isAvailabilityVerified">
+            <span class="leading-tight">
+              <svgicon name="alert" height="20" width="20"/>
+            </span>
+            Completer your Availability Credentials
+          </div>
+        </nuxt-link>
+      </div>
+      <div class="pr-8 my-4 w-full sm:w-1/2 md:w-1/4">
+        <nuxt-link to="/account/profile">
+          <div class="reminder-card rounded-lg shadow-lg p-4" v-if="!isNumberVerified">
+            <span class="leading-tight">
+              <svgicon name="alert" height="20" width="20"/>
+            </span>
+            Complete your Profile Credentials
+          </div>
+        </nuxt-link>
+      </div>
+      <div class="pr-8 my-4 w-full sm:w-1/2 md:w-1/4">
+        <nuxt-link to="/availability">
+          <div class="reminder-card rounded-lg shadow-lg p-4" v-if="!isAvailabilityVerified">
+            <span class="leading-tight">
+              <svgicon name="alert" height="20" width="20"/>
+            </span>
+            Completer your Availability Credentials
+          </div>
+        </nuxt-link>
       </div>
     </div>
   </section>
@@ -31,6 +61,10 @@ export default {
 }
 </script>
 <style scoped>
+a {
+  text-decoration: none;
+  color: black;
+}
 .reminder-card {
   min-height: 130px;
 }

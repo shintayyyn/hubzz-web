@@ -1,31 +1,51 @@
 <template>
   <section class="account-section">
-    <AppHeader/>
     <AccountTabs/>
-    <div class="px-5 mt-5">
-      <nuxt-child/>
+    <div class="mt-5">
+      <transition name="fade" mode="out-in">
+        <Component :is="activeComponent"/>
+      </transition>
     </div>
   </section>
 </template>
 <script>
-import AppHeader from '@/components/AppHeader'
 import AccountTabs from '@/components/Account/AccountTabs'
+import General from '@/components/Account/General'
+import Profile from '@/components/Account/Profile'
+import User from '@/components/Account/User'
+import ChangePassword from '@/components/Account/ChangePassword'
 export default {
   components: {
-    AppHeader,
     AccountTabs,
+    General,
+    Profile,
+    User,
+    ChangePassword,
   },
   created() {
-    if (this.$auth.user.domain === 'Locum') {
-      this.$router.push('/account/general')
-    } else if (this.$auth.user.domain === 'Practice') {
-      this.$router.push('/account/user')
+    const query = {
+      ...this.$route.query,
+      account_tab: this.$route.query.account_tab || 'general'
     }
-  }
+    this.$router.push({ query })
+  },
+  computed: {
+    activeComponent() {
+      if (this.$route.query.account_tab === 'general') {
+        return 'General'
+      }
+      if (this.$route.query.account_tab === 'profile') {
+        return 'Profile'
+      }
+      if (this.$route.query.account_tab === 'user') {
+        return 'User'
+      }
+      if (this.$route.query.account_tab === 'change-password') {
+        return 'ChangePassword'
+      }
+    }
+  },
 }
 </script>
 <style scoped>
-.account-section {
-  padding: 5px;
-}
 </style>

@@ -3,7 +3,7 @@
     <AppSideBar/>
     <SignOut/>
     <!-- modals here -->
-    <CreateAppointmentModal/>
+    <CreateAppointmentModal v-if="$store.state.toggled_create_appointment_modal"/>
     <AddSurgeryModal/>
     <!-- shields here -->
     <div class="sidebar-shield" v-if="$store.state.toggled_sidebar"></div>
@@ -29,7 +29,7 @@ import AddSurgeryModal from '@/components/AddSurgeryModal'
 // practice
 import CreateJobModal from '@/components/CreateJobModal'
 export default {
-  transitions: 'page',
+  transitions: 'fade',
   components: {
     AppSideBar,
     SignOut,
@@ -41,7 +41,7 @@ export default {
     // practice
     CreateJobModal
   },
-  middleware: 'isAuthenticated',
+  // middleware: 'isAuthenticated',
   computed: {
     notify() {
       return this.$store.state.notification.enabled
@@ -59,6 +59,13 @@ export default {
       this.$store.commit('TOGGLE_SIDEBAR', false)
       document.body.style.overflow = 'auto'
     },
+  },
+  mounted() {
+    this.$store.dispatch('signUp/getProfessions')
+    this.$store.dispatch('signUp/getQualifications')
+    this.$store.dispatch('signUp/getClinicalSystems')
+    this.$store.dispatch('signUp/getSpokenLanguages')
+    this.$store.dispatch('signUp/getPracticeTypes')
   },
   methods: {
 

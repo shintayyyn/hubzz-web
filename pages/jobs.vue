@@ -1,6 +1,5 @@
 <template>
   <section class="jobs-section">
-    <AppHeader/>
     <JobsTabs/>
     <div class="px-5 mt-5">
       <transition name="slide" mode="out-in">
@@ -12,7 +11,6 @@
   </section>
 </template>
 <script>
-import AppHeader from '@/components/AppHeader'
 import JobsTabs from '@/components/Jobs/JobsTabs'
 import Allocated from '@/components/Jobs/Allocated'
 import Available from '@/components/Jobs/Available'
@@ -22,7 +20,6 @@ import Declined from '@/components/Jobs/Declined'
 import Completed from '@/components/Jobs/Completed'
 export default {
   components: {
-    AppHeader,
     JobsTabs,
     Allocated,
     Available,

@@ -1,8 +1,8 @@
 <template>
   <section class="dashboard-section">
-    <!-- <div class="reminders-section" v-if="$auth.user.domain === 'Locum'">
+    <div class="reminders-section" v-if="$auth.user.domain === 'Locum'">
       <Reminders/>
-    </div>-->
+    </div>
     <div class="appointment-section">
       <div class="text-xs sm:text-sm font-bold">Appointments</div>
       <Calendar/>
@@ -24,7 +24,6 @@ export default {
     Reminders,
     Statistics,
   },
-  middleware: 'isAuthenticated',
   data() {
     return {
       statistics: []

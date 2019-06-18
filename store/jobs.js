@@ -1,7 +1,8 @@
 export const state = () => ({
     activeTab: 'allocated',
-    job: null,
-    shield: false
+    job_id: null,
+    shield: false,
+    appointment_job: null
   })
   
   export const mutations = {
@@ -11,8 +12,11 @@ export const state = () => ({
     TOGGLE_SHIELD(state, payload) {
       state.shield = payload
     },
-    SET_JOB(state, payload) {
-      state.job = payload
+    SET_JOB_ID(state, payload) {
+      state.job_id = payload
+    },
+    SET_APPOINTMENT_JOB(state, payload) {
+      state.appointment_job = payload
     }
   }
   

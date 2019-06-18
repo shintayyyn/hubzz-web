@@ -126,8 +126,7 @@ export default {
     add() {
       this.$axios.$post(`/api/v1/locum/private-practices`, { surgery_id: this.selectedSurgery.id }).then(res => {
         console.log(res)
-        // this.$store.commit('ADD_SELECTED_PRACTICE', res.data.private_practice)
-        this.$emit('addSelectedPractice', res.data.private_practice)
+        this.$store.commit('ADD_LOCUM_PRIVATE_PRACTICE', res.data.private_practice)
         this.modal = false
         this.$store.commit('TOGGLE_ADD_SURGERY_MODAL', '')
         this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: `${res.message}` })

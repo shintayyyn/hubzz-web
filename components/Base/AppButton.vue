@@ -17,8 +17,10 @@ export default {
 </script>
 <style>
 .button {
-  transform: translate(2px, 2px);
   background: linear-gradient(to top, #f2d024, #efde86);
+}
+.button:active {
+  transform: translate(2px, 2px);
 }
 </style>
 

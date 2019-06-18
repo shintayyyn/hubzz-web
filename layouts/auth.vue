@@ -32,8 +32,8 @@
 
 <script>
 export default {
-  middleware: 'notAuthenticated',
-  transitions: 'fade',
+  middleware: 'isAuthenticated',
+  // transitions: 'fade',
   async asyncData({ app }) {
     console.log('layout index asyncData')
   },
@@ -64,6 +64,11 @@ export default {
 
   mounted() {
     this.showPrivacyNotice = !this.$cookies.get('cookies-accepted')
+    this.$store.dispatch('signUp/getProfessions')
+    this.$store.dispatch('signUp/getQualifications')
+    this.$store.dispatch('signUp/getClinicalSystems')
+    this.$store.dispatch('signUp/getSpokenLanguages')
+    this.$store.dispatch('signUp/getPracticeTypes')
   }
 }
 </script>
@@ -104,12 +109,12 @@ export default {
     zoom: 1.25;
   }
 }
-.fade-enter-active,
+/* .fade-enter-active,
 .fade-leave-active {
   transition: all 0.3s;
 }
 .fade-enter,
 .fade-leave-to {
   opacity: 0;
-}
+} */
 </style>

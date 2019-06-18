@@ -1,44 +1,46 @@
 <template>
-  <div class="flex flex-nowrap justify-start px-5">
+  <div class="flex flex-row flex-wrap justify-start">
     <template v-if="$auth.user.domain === 'Locum'">
-      <nuxt-link to="/account/general">
-        <div
-          style="font-family:Nunito"
-          class="mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.path === '/account/general' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
-        >General</div>
-      </nuxt-link>
-      <nuxt-link to="/account/profile">
-        <div
-          style="font-family:Nunito"
-          class="mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.path === '/account/profile' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
-        >Profile</div>
-      </nuxt-link>
+      <div
+        @click.prevent="goTo('general')"
+        class="mr-5 p-3 text-sm font-bold cursor-pointer"
+        :class="$route.query.account_tab === 'general' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
+      >General</div>
+      <div
+        @click.prevent="goTo('profile')"
+        class="mr-5 p-3 text-sm font-bold cursor-pointer"
+        :class="$route.query.account_tab === 'profile' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
+      >Profile</div>
     </template>
     <template v-else-if="$auth.user.domain === 'Practice'">
-      <nuxt-link to="/account/user">
-        <div
-          style="font-family:Nunito"
-          class="mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.path === '/account/user' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
-        >User</div>
-      </nuxt-link>
-    </template>
-    <nuxt-link to="/account/change-password">
       <div
-        style="font-family:Nunito"
+        @click.prevent="goTo('user')"
         class="mr-5 p-3 text-sm font-bold cursor-pointer"
-        :class="$route.path === '/account/change-password' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
-      >Change Password</div>
-    </nuxt-link>
+        :class="$route.query.account_tab === 'user' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
+      >User</div>
+    </template>
+    <div
+      @click.prevent="goTo('change-password')"
+      class="mr-5 p-3 text-sm font-bold cursor-pointer"
+      :class="$route.query.account_tab === 'change-password' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
+    >Change Password</div>
   </div>
 </template>
-<style scoped>
-a {
-  text-decoration: none;
-  color: black;
+<script>
+export default {
+  methods: {
+    goTo(type) {
+      const query = {
+        ...this.$route.query,
+        account_tab: type
+      }
+      this.$router.push({ query })
+    }
+  }
 }
+</script>
+
+<style scoped>
 </style>
 
 

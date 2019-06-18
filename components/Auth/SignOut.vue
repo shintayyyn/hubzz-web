@@ -31,7 +31,7 @@ export default {
         this.$store.commit('TOGGLE_SIGNOUT', false)
         this.$store.commit('TOGGLE_SIDEBAR', false)
         this.$auth.$storage.setUniversal('_token.local', '')
-        this.$router.push('/sign-in')
+        this.$router.push('/')
       })
     },
     cancel() {
