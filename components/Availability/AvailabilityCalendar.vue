@@ -40,7 +40,11 @@
             v-if="item.day === 0"
           >
             <div class="text-xs lg:text-base z-10">{{(item.date)}}</div>
-            <AvailabilityInfoDateCell :unavailabilities="unavailabilities" :item="item"/>
+            <AvailabilityInfoDateCell
+              :unavailabilities="unavailabilities"
+              :appointment_jobs="appointment_jobs"
+              :item="item"
+            />
           </div>
         </div>
       </div>
@@ -56,7 +60,11 @@
             v-if="item.day === 1"
           >
             <div class="text-xs lg:text-base z-10">{{(item.date)}}</div>
-            <AvailabilityInfoDateCell :unavailabilities="unavailabilities" :item="item"/>
+            <AvailabilityInfoDateCell
+              :unavailabilities="unavailabilities"
+              :appointment_jobs="appointment_jobs"
+              :item="item"
+            />
           </div>
         </div>
       </div>
@@ -72,7 +80,11 @@
             v-if="item.day === 2"
           >
             <div class="text-xs lg:text-base z-10">{{(item.date)}}</div>
-            <AvailabilityInfoDateCell :unavailabilities="unavailabilities" :item="item"/>
+            <AvailabilityInfoDateCell
+              :unavailabilities="unavailabilities"
+              :appointment_jobs="appointment_jobs"
+              :item="item"
+            />
           </div>
         </div>
       </div>
@@ -88,7 +100,11 @@
             v-if="item.day === 3"
           >
             <div class="text-xs lg:text-base z-10">{{(item.date)}}</div>
-            <AvailabilityInfoDateCell :unavailabilities="unavailabilities" :item="item"/>
+            <AvailabilityInfoDateCell
+              :unavailabilities="unavailabilities"
+              :appointment_jobs="appointment_jobs"
+              :item="item"
+            />
           </div>
         </div>
       </div>
@@ -104,7 +120,11 @@
             v-if="item.day === 4"
           >
             <div class="text-xs lg:text-base z-10">{{(item.date)}}</div>
-            <AvailabilityInfoDateCell :unavailabilities="unavailabilities" :item="item"/>
+            <AvailabilityInfoDateCell
+              :unavailabilities="unavailabilities"
+              :appointment_jobs="appointment_jobs"
+              :item="item"
+            />
           </div>
         </div>
       </div>
@@ -120,7 +140,11 @@
             v-if="item.day === 5"
           >
             <div class="text-xs lg:text-base z-10">{{(item.date)}}</div>
-            <AvailabilityInfoDateCell :unavailabilities="unavailabilities" :item="item"/>
+            <AvailabilityInfoDateCell
+              :unavailabilities="unavailabilities"
+              :appointment_jobs="appointment_jobs"
+              :item="item"
+            />
           </div>
         </div>
       </div>
@@ -136,7 +160,11 @@
             v-if="item.day === 6"
           >
             <div class="text-xs lg:text-base z-10">{{(item.date)}}</div>
-            <AvailabilityInfoDateCell :unavailabilities="unavailabilities" :item="item"/>
+            <AvailabilityInfoDateCell
+              :unavailabilities="unavailabilities"
+              :appointment_jobs="appointment_jobs"
+              :item="item"
+            />
           </div>
         </div>
       </div>
@@ -159,6 +187,9 @@ export default {
   computed: {
     unavailabilities() {
       return this.$store.state.availability.unavailabilities
+    },
+    appointment_jobs() {
+      return this.$store.state.availability.appointment_jobs
     }
   },
   created() {
@@ -168,6 +199,8 @@ export default {
 
     // get days in current month
     this.getDaysInMonth(this.selectedMonth, this.selectedYear)
+
+    this.getAppointmentJobs()
   },
   watch: {
     selectedMonth(value) {
@@ -193,11 +226,18 @@ export default {
       this.daysInMonth = daysInMonth
 
       // get Unavailabilities
-      let date_start = this.daysInMonth[0].fullDate
-      let date_end = this.daysInMonth[this.daysInMonth.length - 1].fullDate
+      this.getUnavailabilities(this.daysInMonth[0].fullDate, this.daysInMonth[this.daysInMonth.length - 1].fullDate)
+    },
+    getUnavailabilities(date_start, date_end) {
       this.$axios.$get(`/api/v1/locum/unavailabilities`, { date_start: date_start, date_end: date_end }).then(res => {
-        // set to store
         this.$store.commit('availability/SET_UNAVAILABILITES', res.data.unavailabilities)
+      })
+    },
+    getAppointmentJobs() {
+      this.$axios.$get(`/api/v1/locum/calendars/monthly/${this.selectedYear}/${this.selectedMonth + 1}`).then(res => {
+        if (res.data.jobs && res.data.jobs.length > 0) {
+          this.$store.commit('availability/SET_APPOINTMENT_JOBS', res.data.jobs)
+        }
       })
     },
     adjustMonth(type) {
@@ -219,21 +259,34 @@ export default {
       }
     },
     selectDate(date) {
-      // check if theres already unavailabilities on selected date
       this.$store.commit('availability/SELECT_DATE', date)
-      let unavailabilities = this.$store.state.availability.unavailabilities.find(item => item.date === date)
-      console.log(unavailabilities)
-      if (unavailabilities) {
-        // get shift id and selected shifts
-        this.$store.commit('availability/UPDATE_SHIFT', { shiftId: unavailabilities.id, shifts: unavailabilities.shifts })
-      } else {
-        this.$store.commit('availability/UPDATE_SHIFT', null)
+      let appointmentObj = {}
+      let unavailabilityObj = {}
+      let hasAppointment = this.$store.state.availability.appointment_jobs.find(job => this.getDateArray(job.private_job.date_start, job.private_job.date_end).includes(date))
+      if (hasAppointment) {
+        appointmentObj = { disabledShift: hasAppointment.private_job.shift }
       }
-      document.body.style.overflow = 'hidden'
-      this.$store.commit('availability/ADD_TYPE', 'solo')
-      this.$store.commit('TOGGLED_RIGHT', 'add-unavailable-date-modal')
-      this.$store.commit('SET_ADDUNAVAILABLEDATE_MODAL', true)
-      this.$store.commit('SET_ADDUNAVAILABLEDATE_SHIELD', true)
+      let unavailabilities = this.$store.state.availability.unavailabilities.find(item => item.date === date)
+      if (unavailabilities) {
+        unavailabilityObj = { id: unavailabilities.id, shifts: unavailabilities.shifts }
+        const newObj = Object.assign(appointmentObj, unavailabilityObj)
+        // this.$emit('update', newObj)
+        this.$emit('open', newObj)
+      } else {
+        const newObj = Object.assign(appointmentObj, {})
+        // this.$emit('add', newObj)
+        this.$emit('open', newObj)
+      }
+
+    },
+    getDateArray(start, end) {
+      let arr = new Array();
+      let dt = new Date(start);
+      while (dt <= new Date(end)) {
+        arr.push(this.$moment(new Date(dt)).format('YYYY-MM-DD'));
+        dt.setDate(dt.getDate() + 1);
+      }
+      return arr;
     }
   }
 }

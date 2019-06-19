@@ -232,21 +232,20 @@ export default {
       applied_jobs_with_selection_date: [],
       unfilled_jobs: [],
       declined_jobs: [],
-      // locum
-      appointment_jobs: [],
-      locum_jobs: [],
-      unavailabilities: []
     }
   },
 
   computed: {
     // locum
-    // unavailableDates() {
-    //   return this.$store.state.availability.unavailableDates
-    // },
-    // appointmentDates() {
-    //   return this.$store.state.dashboard.appointmentDates
-    // }
+    unavailabilities() {
+      return this.$store.state.calendar.unavailabilities
+    },
+    locum_jobs() {
+      return this.$store.state.calendar.locum_jobs
+    },
+    appointment_jobs() {
+      return this.$store.state.calendar.appointment_jobs
+    },
   },
   watch: {
     selectedMonth(value) {
@@ -295,12 +294,11 @@ export default {
       if (this.$auth.user.domain === 'Locum') {
         this.$axios.$get(`/api/v1/locum/calendars/monthly/${this.selectedYear}/${this.selectedMonth + 1}`).then(res => {
           if (res.data.jobs && res.data.jobs.length > 0) {
-            this.appointment_jobs = res.data.jobs.filter(job => job.type === 'Private')
-            this.$store.commit('calendar/SET_APPOINTMENT_JOBS', this.appointment_jobs)
-            this.locum_jobs = res.data.jobs.filter(job => job.type === 'Platform')
+            this.$store.commit('calendar/SET_APPOINTMENT_JOBS', res.data.jobs.filter(job => job.type === 'Private'))
+            this.$store.commit('calendar/SET_LOCUM_JOBS', res.data.jobs.filter(job => job.type === 'Platform'))
           }
           if (res.data.unavailabilities && res.data.unavailabilities.length > 0) {
-            this.unavailabilities = res.data.unavailabilities
+            this.$store.commit('calendar/SET_UNAVAILABILITIES', res.data.unavailabilities)
           }
         })
       }

@@ -24,23 +24,15 @@
   transition: all .5s;
 }
 .slide-enter, .slide-leave-active {
-  transform: translateX(200px);
+  transform: translateX(100px);
   opacity: 0;
-}
-/* .page-enter-active, 
-.page-leave-active {
-  transition: opacity .3s
-}
-.page-enter, 
-.page-leave-active {
-  opacity: 0
 }
 
-.slide-enter-active, .slide-leave-active {
+.drop-enter-active, .drop-leave-active {
   transition: all .5s;
 }
-.slide-enter, .slide-leave-active {
-  transform: translateX(200px);
+.drop-enter, .drop-leave-active {
+  transform: translateY(-100px);
   opacity: 0;
-} */
+}
 

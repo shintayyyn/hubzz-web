@@ -48,19 +48,19 @@
           >Select all that apply.</div>
           <div class="flex flex-row flex-wrap justify-start mt-4">
             <div
-              class="relative border border-solid rounded-lg p-5 m-2 text-center cursor-pointer text-xs sm:text-sm"
-              :class="form.shift_id.includes(item.id) ? 'bg-yellow-dark': 'hover:bg-yellow-dark'"
+              class="relative border border-solid rounded-lg p-5 m-2 text-center text-xs sm:text-sm"
+              :class="{'bg-yellow-dark cursor-pointer': isSelected(item.id), 'bg-grey-light': isDisabled(item.id), 'hover:bg-yellow-dark cursor-pointer': !isDisabled(item.id)}"
               style="box-sizing:content-box;width:90px"
               v-for="item in shifts"
               :key="item.id"
-              @click="select(item.id)"
+              @click="disabledShift === item.id ? '' : select(item.id)"
             >{{item.name}}</div>
           </div>
         </div>
       </div>
     </div>
     <div class="mt-2">
-      <template v-if="updateShift">
+      <template v-if="form.id">
         <AppButton :label="'Remove'" @click="remove" v-if="isRemove"/>
         <AppButton :label="'Update'" @click="update" v-else/>
       </template>
@@ -72,6 +72,7 @@
 import AppInput from '@/components/Base/AppInput'
 import AppButton from '@/components/Base/AppButton'
 export default {
+  props: ['data_prop', 'type'],
   components: {
     AppInput,
     AppButton
@@ -79,10 +80,12 @@ export default {
   data() {
     return {
       form: {
+        id: null,
         date_start: null,
         date_end: null,
         shift_id: []
       },
+      disabledShift: null,
       formError: []
     }
   },
@@ -90,27 +93,26 @@ export default {
     shifts() {
       return this.$store.state.availability.shifts
     },
-    type() {
-      return this.$store.state.availability.add_type
-    },
-    updateShift() {
-      return this.$store.state.availability.update_shift
-    },
     isRemove() {
       return !Boolean(this.form.shift_id.length)
     }
   },
   created() {
+    this.data_prop.id ? this.form.id = this.data_prop.id : null
+    this.data_prop.shifts && this.data_prop.shifts.length ? this.form.shift_id = this.data_prop.shifts.map(item => item.id) : []
     if (this.type === 'solo') {
       this.form.date_start = this.$store.state.availability.selected_date
       this.form.date_end = this.$store.state.availability.selected_date
     }
-    // get selected shift
-    if (this.updateShift) {
-      this.form.shift_id = this.updateShift.shifts.map(item => item.id)
-    }
+    this.data_prop.disabledShift ? this.disabledShift = this.data_prop.disabledShift.id : null
   },
   methods: {
+    isSelected(id) {
+      return this.form.shift_id.includes(id)
+    },
+    isDisabled(id) {
+      return this.disabledShift === id
+    },
     select(id) {
       let shiftId = this.form.shift_id.find(item => item === id)
       if (!shiftId) {
@@ -121,36 +123,27 @@ export default {
       }
     },
     add() {
+      if (this.form.shift_id.length === 0) {
+        return
+      }
       this.$axios.$post(`/api/v1/locum/unavailabilities`, this.form).then(res => {
-        console.log(res)
         this.$store.commit('availability/ADD_UNAVAILABILITIES', res.data.unavailabilities)
         this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: `${res.message}` })
-        document.body.style.overflow = 'auto'
-        this.$store.commit('TOGGLED_RIGHT', '')
-        this.$store.commit('SET_ADDUNAVAILABLEDATE_MODAL', false)
-        this.$store.commit('SET_ADDUNAVAILABLEDATE_SHIELD', false)
+        this.$emit('close')
       })
     },
     update() {
-      this.$axios.$put(`/api/v1/locum/unavailabilities/${this.updateShift.shiftId}`, { shift_id: this.form.shift_id }).then(res => {
-        console.log(res)
+      this.$axios.$put(`/api/v1/locum/unavailabilities/${this.form.id}`, { shift_id: this.form.shift_id }).then(res => {
         this.$store.commit('availability/UPDATE_UNAVAILABILITIES', res.data.unavailability)
         this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Shift updated' })
-        document.body.style.overflow = 'auto'
-        this.$store.commit('TOGGLED_RIGHT', '')
-        this.$store.commit('SET_ADDUNAVAILABLEDATE_MODAL', false)
-        this.$store.commit('SET_ADDUNAVAILABLEDATE_SHIELD', false)
+        this.$emit('close')
       })
     },
     remove() {
-      this.$axios.$delete(`/api/v1/locum/unavailabilities/${this.updateShift.shiftId}`).then(res => {
-        console.log(res)
-        this.$store.commit('availability/REMOVE_UNAVAILABILITIES', this.updateShift.shiftId)
+      this.$axios.$delete(`/api/v1/locum/unavailabilities/${this.form.id}`).then(res => {
+        this.$store.commit('availability/REMOVE_UNAVAILABILITIES', this.form.id)
         this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: `${res.message}` })
-        document.body.style.overflow = 'auto'
-        this.$store.commit('TOGGLED_RIGHT', '')
-        this.$store.commit('SET_ADDUNAVAILABLEDATE_MODAL', false)
-        this.$store.commit('SET_ADDUNAVAILABLEDATE_SHIELD', false)
+        this.$emit('close')
       })
     }
   }

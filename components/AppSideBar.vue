@@ -75,7 +75,8 @@ export default {
   },
   methods: {
     signout() {
-      this.$store.commit('TOGGLE_SIGNOUT', true)
+      this.$emit('modal', true)
+      // this.$store.commit('TOGGLE_SIGNOUT', true)
     },
     close() {
       this.$store.commit('TOGGLE_SIDEBAR', false)

@@ -93,7 +93,7 @@
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
       <span
-        v-if="hasAppointmentJobs(item.fullDate, 'Whole day')"
+        v-if="hasAppointmentJobs(item.fullDate, 'Whole Day')"
         class="bg-green-light text-green-light w-full h-2 sm:h-3 lg:h-4"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
@@ -143,7 +143,7 @@
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
       <span
-        v-if="hasUnavailabilities(item.fullDate, 'Whole day')"
+        v-if="hasUnavailabilities(item.fullDate, 'Whole Day')"
         class="bg-pink text-pink w-full h-2 sm:h-3 lg:h-4"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>

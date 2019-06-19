@@ -5,12 +5,18 @@
     </div>
     <div class="appointment-section">
       <div class="text-xs sm:text-sm font-bold">Appointments</div>
-      <Calendar/>
+      <Calendar @create="create" @update="update"/>
     </div>
     <div class="statistics-section">
       <div class="text-sm sm:text-base font-bold">Quick Statistics</div>
       <Statistics/>
     </div>
+    <div class="create-appointment-shield" v-if="appointment_modal"></div>
+    <transition name="slide" mode="out-in">
+      <div class="create-appointment-modal shadow-lg" v-if="appointment_modal">
+        <CreateAppointmentModal @close="appointment_modal = $event" :job="job"/>
+      </div>
+    </transition>
   </section>
 </template>
 
@@ -18,15 +24,19 @@
 import Calendar from '@/components/Calendar'
 import Reminders from '@/components/Dashboard/Reminders'
 import Statistics from '@/components/Dashboard/Statistics'
+import CreateAppointmentModal from '@/components/CreateAppointmentModal'
 export default {
   components: {
     Calendar,
     Reminders,
     Statistics,
+    CreateAppointmentModal,
   },
   data() {
     return {
-      statistics: []
+      statistics: [],
+      appointment_modal: false,
+      job: null
     }
   },
   created() {
@@ -61,6 +71,16 @@ export default {
       })
     }
   },
+  methods: {
+    create() {
+      this.appointment_modal = true
+      this.job = null
+    },
+    update(job) {
+      this.appointment_modal = true
+      this.job = job
+    }
+  },
 }
 </script>
 <style scoped>
@@ -68,7 +88,7 @@ export default {
   height: auto;
   width: 100%;
 }
-.create-job-modal-shield {
+.create-appointment-shield {
   position: fixed;
   top: 0;
   left: 0;
@@ -77,6 +97,24 @@ export default {
   background-color: #333;
   opacity: 0.5;
   z-index: 509;
+}
+.create-appointment-modal {
+  position: fixed;
+  top: 0;
+  right: 0;
+  margin-right: 0%;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  border-left: solid 2px #edf2f7;
+  transition: all 0.3s ease-in-out;
+  background-color: white;
+  z-index: 510;
+}
+@media screen and (min-width: 1200px) {
+  .create-appointment-modal {
+    width: 80%;
+  }
 }
 </style>
 

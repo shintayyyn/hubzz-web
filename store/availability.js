@@ -10,8 +10,7 @@ export const state = () => ({
   selected_date: null,
   //
   unavailabilities: [],
-  add_type: '',
-  update_shift: null
+  appointment_jobs: []
 })
 
 export const mutations = {
@@ -24,12 +23,6 @@ export const mutations = {
   },
   SELECT_DATE (state, payload) {
     state.selected_date = payload
-  },
-  ADD_TYPE (state, payload) {
-    state.add_type = payload
-  },
-  UPDATE_SHIFT (state, payload) {
-    state.update_shift = payload
   },
   SET_UNAVAILABILITES (state, payload) {
     state.unavailabilities = payload
@@ -51,6 +44,9 @@ export const mutations = {
   REMOVE_UNAVAILABILITIES (state, payload) {
     state.unavailabilities = state.unavailabilities.filter(item => item.id !== payload)
   },
+  SET_APPOINTMENT_JOBS(state, payload) {
+    state.appointment_jobs = payload
+  }
 }
 
 export const actions = {

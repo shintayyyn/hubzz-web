@@ -13,7 +13,7 @@
           </div>
         </div>
         <div class="w-full lg:w-1/3">
-          <Info/>
+          <Info @update="$emit('update', $event)"/>
         </div>
       </div>
     </div>
@@ -37,13 +37,13 @@ export default {
   methods: {
     create() {
       if (this.$auth.user.domain === 'Locum') {
-        this.$store.commit('jobs/SET_APPOINTMENT_JOB', null)
-        this.$store.commit('TOGGLE_CREATE_APPOINTMENT_MODAL', true)
+        // this.$store.commit('jobs/SET_APPOINTMENT_JOB', null)
+        // document.body.style.overflow = 'hidden'
+        this.$emit('create')
       } else {
         this.$store.commit('TOGGLE_CREATE_JOB_MODAL', true)
       }
-      document.body.style.overflow = 'hidden'
-    }
+    },
   }
 }
 </script>

@@ -19,7 +19,14 @@
       </template>
       <!-- locums -->
       <template v-for="(item, index) in foundAppointmentJobs">
-        <AppointmentJobCard :job="item" :key="`${index}-${item.id}`"/>
+        <AppointmentJobCard
+          @update="$emit('update', $event)"
+          :job="item"
+          :key="`${index}-${item.id}`"
+        />
+      </template>
+      <template v-for="(item, index) in foundUnavailabilities">
+        <UnavailabilitiesCard :job="item" :key="`${index}-${item.id}`"/>
       </template>
     </div>
   </div>
@@ -32,13 +39,17 @@ import UnfilledJobCard from '@/components/Calendar/Cards/UnfilledJobCard'
 import DeclinedJobCard from '@/components/Calendar/Cards/DeclinedJobCard'
 // locums
 import AppointmentJobCard from '@/components/Calendar/Cards/AppointmentJobCard'
+import UnavailabilitiesCard from '@/components/Calendar/Cards/UnavailabilitiesCard'
 export default {
   components: {
+    // locums
     LiveJobCard,
     AppliedJobCard,
     UnfilledJobCard,
     DeclinedJobCard,
-    AppointmentJobCard
+    // practice
+    AppointmentJobCard,
+    UnavailabilitiesCard
   },
   data() {
     return {
@@ -49,6 +60,7 @@ export default {
       foundDeclinedJobs: [],
       // locums
       foundAppointmentJobs: [],
+      foundUnavailabilities: [],
       date_info: null
     }
   },
@@ -94,6 +106,9 @@ export default {
     // locums
     appointment_jobs() {
       return this.$store.state.calendar.appointment_jobs
+    },
+    unavailabilities() {
+      return this.$store.state.calendar.unavailabilities
     }
   },
   methods: {
@@ -133,6 +148,9 @@ export default {
     findPerMonthLocum(date) {
       if (this.appointment_jobs.length > 0) {
         this.foundAppointmentJobs = this.appointment_jobs.filter(job => this.getDateArray(job.private_job.date_start, job.private_job.date_end).includes(date))
+      }
+      if (this.unavailabilities.length > 0) {
+        this.foundUnavailabilities = this.unavailabilities.filter(job => job.date === date)
       }
     },
     getDateArray(start, end) {

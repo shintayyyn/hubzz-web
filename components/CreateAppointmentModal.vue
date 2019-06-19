@@ -1,5 +1,5 @@
 <template>
-  <div class="create-appointment-modal shadow-lg" v-if="$auth.user.domain === 'Locum' ">
+  <section>
     <div class="p-8 max-w-xl">
       <div @click="close" class="cursor-pointer">
         <svgicon name="left-arrow" height="32" width="32"/>
@@ -92,7 +92,7 @@
             :placeholder="''"
           />
         </div>
-        <template v-if="!appointmentJob">
+        <template v-if="!job">
           <AppButton :label="'Save'" @click="save"/>
         </template>
         <template v-else>
@@ -100,22 +100,32 @@
         </template>
       </div>
     </div>
-  </div>
+    <div class="add-surgery-shield" v-if="modal"></div>
+    <transition name="slide" mode="out-in">
+      <div class="add-surgery-modal shadow-lg" v-if="modal">
+        <AddSurgeryModal @close="modal = $event"/>
+      </div>
+    </transition>
+  </section>
 </template>
 <script>
 import AppInput from '@/components/Base/AppInput'
 import AppSelect from '@/components/Base/AppSelect'
 import AppTextarea from '@/components/Base/AppTextarea'
 import AppButton from '@/components/Base/AppButton'
+import AddSurgeryModal from '@/components/AddSurgeryModal'
 export default {
+  props: ['job'],
   components: {
     AppInput,
     AppSelect,
     AppTextarea,
-    AppButton
+    AppButton,
+    AddSurgeryModal
   },
   data() {
     return {
+      modal: false,
       shifts: [],
       rate_types: [],
       form: {
@@ -136,24 +146,21 @@ export default {
     this.getShifts()
     this.getRateType()
     //
-    if (this.appointmentJob) {
-      this.form.private_practice_id = this.appointmentJob.private_job.private_practice.id
-      this.form.date_start = this.appointmentJob.private_job.date_start
-      this.form.date_end = this.appointmentJob.private_job.date_end
-      this.form.shift_id = this.appointmentJob.private_job.shift.id
-      this.form.locum_detail_rate_type_id = this.appointmentJob.private_job.locum_detail_rate_type.id
-      this.form.rate = this.appointmentJob.private_job.rate
-      this.form.total_hours = this.appointmentJob.private_job.total_hours
-      this.form.private_notes = this.appointmentJob.private_job.private_notes
+    if (this.job) {
+      this.form.private_practice_id = this.job.private_job.private_practice.id
+      this.form.date_start = this.job.private_job.date_start
+      this.form.date_end = this.job.private_job.date_end
+      this.form.shift_id = this.job.private_job.shift.id
+      this.form.locum_detail_rate_type_id = this.job.private_job.locum_detail_rate_type.id
+      this.form.rate = this.job.private_job.rate
+      this.form.total_hours = this.job.private_job.total_hours
+      this.form.private_notes = this.job.private_job.private_notes
     }
   },
   computed: {
     practices() {
       return this.$store.getters['getLocumPrivatePractices']
     },
-    appointmentJob() {
-      return this.$store.state.jobs.appointment_job
-    }
   },
   methods: {
     getPractices() {
@@ -178,22 +185,25 @@ export default {
       })
     },
     add() {
-      this.$store.commit('TOGGLE_ADD_SURGERY_MODAL', true)
+      this.modal = true
+      document.body.style.overflow = 'hidden'
     },
     close() {
-      this.$store.commit('TOGGLE_CREATE_APPOINTMENT_MODAL', false)
-      document.body.style.overflow = 'auto'
+      this.$emit('close', false)
+      document.body.style.overflow = 'hidden'
     },
     save() {
+      // ! need validation on same date of unavaible date and appointment date
       this.$axios.$post(`/api/v1/locum/jobs`, this.form).then(res => {
-        this.$store.commit('TOGGLE_CREATE_APPOINTMENT_MODAL', '')
+        this.$store.commit('calendar/ADD_APPOINTMENT', res.data.job)
+        this.$emit('close', false)
         this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: `${res.message}` })
       })
     },
     edit() {
-      this.$axios.$put(`/api/v1/locum/jobs/${this.appointmentJob.private_job.id}`, this.form).then(res => {
-        console.log(res)
-        this.$store.commit('TOGGLE_CREATE_APPOINTMENT_MODAL', '')
+      this.$axios.$put(`/api/v1/locum/jobs/${this.job.id}`, this.form).then(res => {
+        this.$store.commit('calendar/UPDATE_APPOINTMENT', res.data.job)
+        this.$emit('close', false)
         this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: `${res.message}` })
       })
     }
@@ -201,7 +211,17 @@ export default {
 }
 </script>
 <style scoped>
-.create-appointment-modal {
+.add-surgery-shield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #333;
+  opacity: 0.5;
+  z-index: 511;
+}
+.add-surgery-modal {
   position: fixed;
   top: 0;
   right: 0;
@@ -212,11 +232,11 @@ export default {
   border-left: solid 2px #edf2f7;
   transition: all 0.3s ease-in-out;
   background-color: white;
-  z-index: 510;
+  z-index: 512;
 }
 @media screen and (min-width: 1200px) {
-  .create-appointment-modal {
-    width: 80%;
+  .add-surgery-modal {
+    width: 70%;
   }
 }
 </style>

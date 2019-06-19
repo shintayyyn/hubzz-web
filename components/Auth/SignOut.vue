@@ -1,5 +1,5 @@
 <template>
-  <div class="signout fixed pin-t w-full flex justify-center" v-if="$store.state.toggled_signout">
+  <div class="signout fixed pin-t w-full flex justify-center">
     <div class="signout-modal border-solid rounded-b-lg bg-yellow-dark p-2">
       <div class="flex justify-center">
         <div class>Proceed to sign-out?</div>
@@ -15,7 +15,7 @@
         <div class="mx-2">
           <button
             class="border border-solid bg-yellow-dark hover:text-white focus:outline-none text-black font-bold py-5 rounded-lg"
-            @click.prevent="cancel"
+            @click.prevent="$emit('modal', false)"
             style="width:100px;"
           >Cancel</button>
         </div>
@@ -28,15 +28,12 @@ export default {
   methods: {
     logout() {
       this.$auth.logout().then(() => {
-        this.$store.commit('TOGGLE_SIGNOUT', false)
+        this.$emit('modal', false)
         this.$store.commit('TOGGLE_SIDEBAR', false)
         this.$auth.$storage.setUniversal('_token.local', '')
         this.$router.push('/')
       })
     },
-    cancel() {
-      this.$store.commit('TOGGLE_SIGNOUT', false)
-    }
   }
 }
 </script>

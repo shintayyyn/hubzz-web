@@ -30,7 +30,6 @@
     <div class="mt-10">
       <div class="font-bold text-xs sm:text-base">Documents you need to be approved by hubzz HQ</div>
     </div>
-
     <div class="mt-4">
       <table>
         <thead>
@@ -116,7 +115,7 @@
       <div class="font-bold text-xs sm:text-base">Other documentation for reference to Practices</div>
     </div>
 
-    <!-- <div class="mt-4">
+    <div class="mt-4">
       <table>
         <thead>
           <tr class="text-xs sm:text-sm text-left">
@@ -136,25 +135,24 @@
               class="rounded-lg shadow-md hover:bg-grey-light cursor-pointer text-xs sm:text-sm text-left"
             >
               <td>{{item.name}}</td>
-              <td class="hover:underline" v-if="fileUrl(item.id)">
+              <td class="hover:underline" v-if="item.info">
                 <div class="flex flex-row flex-nowrap">
                   <svgicon name="cloud-download" height="24" width="24"/>
                   <div class="leading-loose mx-2">
                     <a
                       target="_blank"
-                      :href="fileUrl(item.id)"
-                    >{{filename(item.id) | StringMaxLength(15)}}</a>
+                      :href="item.info.file.url"
+                    >{{item.info.file.filename | StringMaxLength(15)}}</a>
                   </div>
                 </div>
               </td>
               <td v-else></td>
-
-              <td>{{uploadDate(item.id) | localDate}}</td>
+              <td v-if="item.info">{{item.info.file.created_at | localDate}}</td>
+              <td v-else></td>
               <td></td>
               <td></td>
-
               <td></td>
-              <td class="hover:underline" v-if="!filename(item.id)">
+              <td class="hover:underline" v-if="!item.info">
                 <div class="flex flex-row flex-nowrap">
                   <input
                     type="file"
@@ -174,7 +172,7 @@
                     :name="`${item.id}_file`"
                     :id="`${item.id}_file`"
                     class="inputfile hidden"
-                    @input="onFileUpdate($event, item.id, index)"
+                    @input="onFileUpdate($event, item.info.id, index)"
                   >
                   <svgicon name="cloud-upload" height="24" width="24"/>
                   <label :for="`${item.id}_file`" class="leading-loose mx-2 cursor-pointer">Update</label>
@@ -187,82 +185,7 @@
           </template>
         </tbody>
       </table>
-    </div>-->
-
-    <!-- <div class="px-5 overflow-x-auto overflow-y-hidden">
-      <table class="table">
-        <thead>
-          <tr class="text-xs lg:text-sm text-left">
-            <th style="min-width:120px">Type</th>
-            <th style="min-width:120px">File</th>
-            <th style="min-width:100px">Date uploaded</th>
-            <th style="min-width:120px"></th>
-            <th style="min-width:100px"></th>
-            <th style="min-width:180px"></th>
-            <th style="min-width:100px"></th>
-          </tr>
-        </thead>
-        <tbody>
-          <template v-for="item in optional">
-            <tr
-              :key="item.id"
-              class="shadow-md hover:bg-grey-light cursor-pointer text-xs lg:text-sm"
-            >
-              <td style="min-width:120px">{{item.name}}</td>
-              <td
-                style="min-width:120px"
-                class="hover:underline cursor-pointer"
-                v-if="fileUrl(item.id)"
-              >
-                <div class="flex flex-row flex-nowrap">
-                  <svgicon name="cloud-download" height="24" width="24"/>
-                  <div class="leading-loose mx-2">
-                    <a
-                      target="_blank"
-                      :href="fileUrl(item.id)"
-                    >{{filename(item.id) | StringMaxLength(15)}}</a>
-                  </div>
-                </div>
-              </td>
-              <td v-else style="min-width:120px"></td>
-              <td style="min-width:100px">{{uploadDate(item.id) | localDate}}</td>
-              <td style="min-width:120px"></td>
-              <td style="min-width:100px"></td>
-              <td style="min-width:180px"></td>
-              <td style="min-width:100px" class="hover:underline" v-if="!filename(item.id)">
-                <div class="flex flex-row flex-nowrap">
-                  <input
-                    type="file"
-                    :name="`${item.id}_file`"
-                    :id="`${item.id}_file`"
-                    class="inputfile hidden"
-                    @input="onFileInput($event, item.id)"
-                  >
-                  <svgicon name="cloud-upload" height="24" width="24"/>
-                  <label :for="`${item.id}_file`" class="leading-loose mx-2 cursor-pointer">Upload</label>
-                </div>
-              </td>
-              <td style="min-width:100px" v-else>
-                <div class="flex flex-row flex-nowrap">
-                  <input
-                    type="file"
-                    :name="`${item.id}_file`"
-                    :id="`${item.id}_file`"
-                    class="inputfile hidden"
-                    @input="onFileUpdate($event, item.id)"
-                  >
-                  <svgicon name="cloud-upload" height="24" width="24"/>
-                  <label :for="`${item.id}_file`" class="leading-loose mx-2 cursor-pointer">Update</label>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td></td>
-            </tr>
-          </template>
-        </tbody>
-      </table>
-    </div>-->
+    </div>
   </section>
 </template>
 <script>
@@ -271,64 +194,49 @@ export default {
     return {
       gmc_or_nmc_number: {},
       mpl_or_npl_number: {},
-      compliance_documents: [],
+      profession: {},
       // mandatory: [],
-      // optional: [],
-      //test
-      profession: {}
+      // optional: []
     }
+  },
+  computed: {
+    mandatory() {
+      return this.$store.state.compliance.mandatory
+    },
+    optional() {
+      return this.$store.state.compliance.optional
+    },
   },
   created() {
     // get gmc, mpl status
     this.gmc_or_nmc_number = this.$auth.user.locum_detail.gmc_or_nmc_number
     this.mpl_or_npl_number = this.$auth.user.locum_detail.mpl_or_npl_number
-    // get mandatory and optional compliance documents list based on profession category
+    // get all compliance documents list based on profession category
     this.$axios.$get(`/api/v1/profession-categories`).then(res => {
       this.profession = res.data.profession_categories.find(profession => profession.id === this.$auth.user.locum_detail.profession.profession_category.id)
-      // console.log('mandatory', this.mandatory)
-      // console.log('optional', this.optional)
-      console.log('auth', this.profession)
       this.setComplianceDocuments()
     })
-
-  },
-  computed: {
-    mandatory() {
-      return this.profession.mandatory_compliance_documents
-    }
   },
   methods: {
+    // set mandatory and optional
     setComplianceDocuments() {
       if (this.$auth.user.locum_detail.compliance_documents.length > 0) {
         this.$auth.user.locum_detail.compliance_documents.forEach(userComplianceDocument => {
           this.profession.mandatory_compliance_documents.forEach(mandatoryDocument => {
             if (userComplianceDocument.compliance_document.id === mandatoryDocument.id) {
-              let info = {
-                expired_at: userComplianceDocument.expired_at,
-                file: userComplianceDocument.file,
-                id: userComplianceDocument.id,
-                rejected: userComplianceDocument.rejected,
-                status: userComplianceDocument.status,
-                verified_at: userComplianceDocument.verified_at,
-              }
-              mandatoryDocument.info = info
+              mandatoryDocument.info = userComplianceDocument
             }
           })
           this.profession.optional_compliance_documents.forEach(optionalDocument => {
             if (userComplianceDocument.compliance_document.id === optionalDocument.id) {
-              let info2 = {
-                expired_at: userComplianceDocument.expired_at,
-                file: userComplianceDocument.file,
-                id: userComplianceDocument.id,
-                rejected: userComplianceDocument.rejected,
-                status: userComplianceDocument.status,
-                verified_at: userComplianceDocument.verified_at,
-              }
-              optionalDocument.info = info2
+              optionalDocument.info = userComplianceDocument
             }
           })
         })
       }
+      this.$store.commit('compliance/SET_MANDATORY', this.profession.mandatory_compliance_documents)
+      this.$store.commit('compliance/SET_OPTIONAL', this.profession.optional_compliance_documents)
+      // this.compliance_documents = [...this.profession.mandatory_compliance_documents, ...this.profession.optional_compliance_documents]
     },
     status(status) {
       switch (status) {
@@ -360,8 +268,10 @@ export default {
       formData.append('compliance_document_id', id)
       // post request to API / send file 
       this.$axios.$post(`/api/v1/locum/locum-detail-compliance-documents`, formData).then(res => {
-        console.log(res)
-        this.compliance_documents.push(res.data.locum_detail_compliance_document)
+        let uploadFile = this.compliance_documents.find(document => document.id === res.data.locum_detail_compliance_document.compliance_document.id)
+        uploadFile.info = res.data.locum_detail_compliance_document
+        console.log(uploadFile)
+        this.setComplianceDocuments()
         this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Document uploaded!' })
       })
     },
@@ -378,22 +288,10 @@ export default {
       const formData = new FormData()
       formData.append('file', file)
       this.$axios.$put(`/api/v1/locum/locum-detail-compliance-documents/${id}`, formData).then(res => {
-        let index = this.$auth.user.locum_detail.compliance_documents.findIndex(item => item.id === res.data.locum_detail_compliance_document.id)
-        this.$auth.fetchUser().then(res => {
-          console.log(res)
-        })
-        // this.$auth.user.locum_detail.compliance_documents.splice(index, 1)
-
-        // this.$auth.user.locum_detail.compliance_documents.push(res.data.locum_detail_compliance_document)
-        // this.$auth.user
-        // let inMandatory = this.profession.mandatory_compliance_documents.find(mandatory => mandatory.info.id === res.data.locum_detail_compliance_document.compliance_document.id)
-        // console.log(inMandatory)
-
-        // this.compliance_documents = this.compliance_documents.filter(item => item.id !== res.data.locum_detail_compliance_document.id)
-        // this.compliance_documents.push(res.data.locum_detail_compliance_document)
+        this.$store.commit('compliance/UPDATE_MANDATORY', res.data.locum_detail_compliance_document)
         this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Document updated!' })
       }).catch(err => {
-        console.log(err.response)
+        console.log(err)
       })
     },
   }

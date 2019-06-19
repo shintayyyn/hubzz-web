@@ -38,9 +38,6 @@ export default {
       activeTab: 'PracticeDetails'
     }
   },
-  mounted() {
-    this.$store.commit('signUp/SET_ACTIVE_TAB', 'practice_details')
-  },
   computed: {
     percentage() {
       switch (this.activeTab) {

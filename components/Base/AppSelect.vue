@@ -19,7 +19,12 @@
           :style="inStyle"
         >
           <option value disabled selected v-if="placeholder">{{placeholder}}</option>
-          <option v-for="(item, index) in items" :key="index" :value="item.value">{{item.label}}</option>
+          <option
+            v-for="(item, index) in items"
+            :key="index"
+            :value="item.value"
+            :selected="value === item.value"
+          >{{item.label}}</option>
         </select>
       </div>
       <!-- <div class="flex flex-row justify-start mt-1" v-else>(None specified)</div> -->

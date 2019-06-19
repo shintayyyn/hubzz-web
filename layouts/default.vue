@@ -1,14 +1,13 @@
 <template>
   <section>
-    <AppSideBar/>
-    <SignOut/>
+    <AppSideBar @modal="signout_modal = $event"/>
+    <transition name="drop" mode="out-in">
+      <SignOut v-if="signout_modal" @modal="signout_modal = $event"/>
+    </transition>
     <!-- modals here -->
-    <CreateAppointmentModal v-if="$store.state.toggled_create_appointment_modal"/>
-    <AddSurgeryModal/>
     <!-- shields here -->
     <div class="sidebar-shield" v-if="$store.state.toggled_sidebar"></div>
-    <div class="signout-shield" v-if="$store.state.toggled_signout"></div>
-    <div class="create-appointment-shield" v-if="$store.state.toggled_create_appointment_modal"></div>
+    <div class="signout-shield" v-if="signout_modal"></div>
     <div class="add-surgery-shield" v-if="$store.state.toggled_add_surgery_modal"></div>
     <!-- content -->
     <div class="content">
@@ -24,8 +23,6 @@ import SignOut from '@/components/Auth/SignOut'
 import AppNotification from '@/components/AppNotification'
 import AppHeader from '@/components/AppHeader'
 // locum
-import CreateAppointmentModal from '@/components/CreateAppointmentModal'
-import AddSurgeryModal from '@/components/AddSurgeryModal'
 // practice
 import CreateJobModal from '@/components/CreateJobModal'
 export default {
@@ -36,10 +33,13 @@ export default {
     AppNotification,
     AppHeader,
     // locum
-    CreateAppointmentModal,
-    AddSurgeryModal,
     // practice
     CreateJobModal
+  },
+  data() {
+    return {
+      signout_modal: false
+    }
   },
   // middleware: 'isAuthenticated',
   computed: {
@@ -97,27 +97,6 @@ export default {
   background-color: #333;
   opacity: 0.5;
   z-index: 599;
-}
-/* locum */
-.create-appointment-shield {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #333;
-  opacity: 0.5;
-  z-index: 509;
-}
-.add-surgery-shield {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #333;
-  opacity: 0.5;
-  z-index: 511;
 }
 @media screen and (min-width: 1200px) {
   .content {

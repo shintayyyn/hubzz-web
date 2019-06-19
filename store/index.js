@@ -5,13 +5,11 @@ export const state = () => ({
     text: ''
   },
   toggled_sidebar: false,
-  toggled_signout: false,
   // locum
-  toggled_create_appointment_modal: false,
-  toggled_add_surgery_modal: false,
-  locum_private_practices: [],
   // practice
   toggled_create_job_modal: false,
+  toggled_add_surgery_modal: false,
+  locum_private_practices: [],
 })
 
 export const mutations = {
@@ -23,13 +21,8 @@ export const mutations = {
   TOGGLE_SIDEBAR(state, payload) {
     state.toggled_sidebar = payload
   },
-  TOGGLE_SIGNOUT(state, payload) {
-    state.toggled_signout = payload
-  },
-  // locum
-  TOGGLE_CREATE_APPOINTMENT_MODAL(state, payload) {
-    state.toggled_create_appointment_modal = payload
-  },
+ 
+ 
   // practice
   TOGGLE_CREATE_JOB_MODAL(state, payload) {
     state.toggled_create_job_modal = payload

@@ -17,7 +17,9 @@ export const state = () => ({
     unfilled_jobs: [],
     declined_jobs: [],
     // locums
-    appointment_jobs: []
+    locum_jobs: [],
+    appointment_jobs: [],
+    unavailabilities: [],
 })
 
 export const mutations = {
@@ -50,8 +52,25 @@ export const mutations = {
         state.declined_jobs = payload
     },
     // locums
+    SET_LOCUM_JOBS(state, payload) {
+        state.locum_jobs = payload
+    },
+    ADD_APPOINTMENT(state, payload) {
+        state.appointment_jobs.push(payload)
+    },
+    UPDATE_APPOINTMENT(state, payload) {
+        // ! response on get and update should be the same
+        let updateJob = state.appointment_jobs.find(job => job.id === payload.id)
+        updateJob.private_job.private_practice = payload.private_job.private_practice
+        updateJob.private_job.date_start = payload.private_job.date_start
+        updateJob.private_job.date_end = payload.private_job.date_end
+        updateJob.private_job.shift = payload.private_job.shift
+    },
     SET_APPOINTMENT_JOBS(state, payload) {
         state.appointment_jobs = payload
+    },
+    SET_UNAVAILABILITIES(state, payload) {
+        state.unavailabilities = payload
     }
 }
 
