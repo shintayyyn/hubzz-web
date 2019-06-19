@@ -14,28 +14,40 @@
     </div>
     <div class="px-10 my-5">
       <div class="availability-calendar relative rounded-lg shadow-lg p-5">
-        <AvailabilityCalendar/>
+        <!-- @update="update" -->
+        <AvailabilityCalendar @open="open"/>
         <div class="absolute pin-b pin-r m-5">
           <div
             class="rounded-full h-10 w-10 sm:h-12 sm:w-12 md:h-16 md:w-16 text-2xl sm:text-3xl md:text-4xl flex items-center focus:outline-none justify-center bg-yellow-dark font-semibold cursor-pointer shadow-md hover:text-white"
-            @click="add"
+            @click="addRange"
           >+</div>
         </div>
       </div>
     </div>
+    <div class="add-unavailable-date-shield" v-if="modal"></div>
+    <transition name="slide" mode="out-in">
+      <div class="add-unavailable-date-modal shadow-lg" v-if="modal">
+        <AddUnavailableDateModal @close="close" :data_prop="data_prop" :type="type"/>
+      </div>
+    </transition>
   </section>
 </template>
 <script>
 import AvailabilityShift from '@/components/Availability/AvailabilityShift'
 import AvailabilityCalendar from '@/components/Availability/AvailabilityCalendar'
+import AddUnavailableDateModal from '@/components/Availability/AddUnavailableDateModal'
 export default {
   components: {
     AvailabilityShift,
-    AvailabilityCalendar
+    AvailabilityCalendar,
+    AddUnavailableDateModal
   },
   data() {
     return {
       shifts: [],
+      modal: false,
+      data_prop: null,
+      type: ''
     }
   },
   created() {
@@ -46,13 +58,22 @@ export default {
     this.$store.commit('availability/SET_DATE_TODAY')
   },
   methods: {
-    add() {
-      this.$store.commit('availability/UPDATE_SHIFT', null)
+    addRange() { },
+    open(data) {
       document.body.style.overflow = 'hidden'
-      this.$store.commit('availability/ADD_TYPE', 'range')
-      this.$store.commit('TOGGLED_RIGHT', 'add-unavailable-date-modal')
-      this.$store.commit('SET_ADDUNAVAILABLEDATE_MODAL', true)
-      this.$store.commit('SET_ADDUNAVAILABLEDATE_SHIELD', true)
+      this.type = 'solo'
+      this.modal = true
+      this.data_prop = data
+    },
+    // update(data) {
+    //   document.body.style.overflow = 'hidden'
+    //   this.type = 'solo'
+    //   this.modal = true
+    //   this.data_prop = data
+    // },
+    close() {
+      this.modal = false
+      document.body.style.overflow = 'auto'
     }
   }
 }
@@ -70,6 +91,34 @@ export default {
 @media screen and (min-width: 768px) {
   .availability-calendar {
     height: 600px;
+  }
+}
+.add-unavailable-date-shield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #333;
+  opacity: 0.5;
+  z-index: 509;
+}
+.add-unavailable-date-modal {
+  position: fixed;
+  top: 0;
+  right: 0;
+  margin-right: 0%;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  border-left: solid 2px #edf2f7;
+  transition: all 0.3s ease-in-out;
+  background-color: white;
+  z-index: 510;
+}
+@media screen and (min-width: 1200px) {
+  .add-unavailable-date-modal {
+    width: 80%;
   }
 }
 </style>

@@ -10,31 +10,38 @@
           v-if="error"
         >{{error.message}}</div>
       </div>
-      <div class="flex flex-row justify-start mt-1" v-if="items.length > 0">
+      <div class="flex flex-row justify-start mt-1">
         <select
           :value="value"
           class="border-b-2 focus:border-yellow focus:outline-none py-2 font-bold text-xs sm:text-sm w-full"
           :class="error? 'border-red':''"
           @input="$emit('input', $event.target.value)"
+          :style="inStyle"
         >
           <option value disabled selected v-if="placeholder">{{placeholder}}</option>
-          <option v-for="(item, index) in items" :key="index" :value="item.value">{{item.label}}</option>
+          <option
+            v-for="(item, index) in items"
+            :key="index"
+            :value="item.value"
+            :selected="value === item.value"
+          >{{item.label}}</option>
         </select>
       </div>
-      <div class="flex flex-row justify-start mt-1" v-else>(None specified)</div>
+      <!-- <div class="flex flex-row justify-start mt-1" v-else>(None specified)</div> -->
     </div>
   </section>
 </template>
 <script>
 export default {
   props: {
-    value: [String, Boolean, Array],
+    value: [String, Number, Boolean, Array],
     name: String,
     label: String,
     placeholder: String,
     error: Object,
     items: Array,
-    info: String
+    info: String,
+    inStyle: String
   },
 }
 </script>

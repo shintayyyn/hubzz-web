@@ -1,21 +1,18 @@
 <template>
   <div class="w-full">
     <ProgressBar :percentage="percentage"/>
-    <div class="w-full p-6">
+    <div class="w-full xl:max-w-md p-6">
       <div class="flex w-full justify-center xl:justify-start">
         <div class="mb-6 mt-1 mx-4" style="flex: 0 1 600px;">
-          <nuxt-link to="/sign-in" class="text-black focus:outline-none">
+          <nuxt-link to="/" class="text-black focus:outline-none">
             <svgicon name="left-arrow" height="32" width="32"/>
           </nuxt-link>
           <div class="mt-1 text-xl font-bold">Sign up for a Locum account</div>
         </div>
       </div>
 
-      <transition name="fade" mode="out-in">
-        <LocumAccountDetails v-if="$store.state.signUp.activeTab === 'account_details'"/>
-        <LocumAddressDetails v-if="$store.state.signUp.activeTab === 'address_details'"/>
-        <LocumProfessionalDetails v-if="$store.state.signUp.activeTab === 'professional_details'"/>
-        <LocumCredentialDetails v-if="$store.state.signUp.activeTab === 'credential_details'"/>
+      <transition name="slide" mode="out-in">
+        <component :is="activeTab" @nextTab="activeTab = $event"></component>
       </transition>
     </div>
   </div>
@@ -29,20 +26,66 @@ import LocumProfessionalDetails from '~/components/SignUp/SignUpLocum/LocumProfe
 import LocumCredentialDetails from '~/components/SignUp/SignUpLocum/LocumCredentialDetails.vue'
 export default {
   layout: 'auth',
+  components: {
+    ProgressBar,
+    LocumAccountDetails,
+    LocumAddressDetails,
+    LocumProfessionalDetails,
+    LocumCredentialDetails
+  },
+  data() {
+    return {
+      activeTab: 'LocumAccountDetails'
+    }
+  },
+  watch: {
+    credentialError(value) {
+      if (value.length > 0) {
+        this.activeTab = 'LocumCredentialDetails'
+      }
+    },
+    professionalError(value) {
+      if (value.length > 0) {
+        this.activeTab = 'LocumProfessionalDetails'
+      }
+    },
+    addressError(value) {
+      if (value.length > 0) {
+        this.activeTab = 'LocumAddressDetails'
+      }
+    },
+    accountError(value) {
+      if (value.length > 0) {
+        this.activeTab = 'LocumAccountDetails'
+      }
+    },
+
+  },
   computed: {
+    accountError() {
+      return this.$store.state.signUp.account_detail_form_error
+    },
+    addressError() {
+      return this.$store.state.signUp.address_detail_form_error
+    },
+    professionalError() {
+      return this.$store.state.signUp.professional_detail_form_error
+    },
+    credentialError() {
+      return this.$store.state.signUp.credential_detail_form_error
+    },
     percentage() {
-      let tab = this.$store.state.signUp.activeTab
-      switch (tab) {
-        case 'account_details':
+      switch (this.activeTab) {
+        case 'LocumAccountDetails':
           return 25
           break;
-        case 'address_details':
+        case 'LocumAddressDetails':
           return 50
           break;
-        case 'professional_details':
+        case 'LocumProfessionalDetails':
           return 75
           break;
-        case 'credential_details':
+        case 'LocumCredentialDetails':
           return 100
           break;
         default:
@@ -50,30 +93,7 @@ export default {
       }
     }
   },
-  mounted() {
-    this.$store.commit('signUp/SET_ACTIVE_TAB', 'account_details')
-    this.$store.dispatch('signUp/getProfessions')
-    this.$store.dispatch('signUp/getQualifications')
-    this.$store.dispatch('signUp/getClinicalSystems')
-    this.$store.dispatch('signUp/getSpokenLanguages')
-    this.$store.dispatch('signUp/getPracticeTypes')
-  },
-  components: {
-    ProgressBar,
-    LocumAccountDetails,
-    LocumAddressDetails,
-    LocumProfessionalDetails,
-    LocumCredentialDetails
-  }
 }
 </script>
 <style scoped>
-.fade-enter-active,
-.fade-leave-active {
-  transition: all 0.3s;
-}
-.fade-enter,
-.fade-leave-to {
-  opacity: 0;
-}
 </style>

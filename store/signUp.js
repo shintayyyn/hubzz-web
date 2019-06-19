@@ -1,5 +1,4 @@
 export const state = () => ({
-    activeTab: 'account_details',
     // register practice
     search_results: [],
     practice_details: {
@@ -18,10 +17,11 @@ export const state = () => ({
     practice_account_detail_form_error: [],
     //  register locum
     professions: [],
-    qualifications: [],
-    clinicalSystems: [],
-    spokenLanguages: [],
-    practiceTypes: [],
+    gp_qualifications: [],
+    others_qualifications: [],
+    clinical_systems: [],
+    spoken_languages: [],
+    practice_types: [],
     account_details: {
         title: '',
         first_name: '',
@@ -50,7 +50,7 @@ export const state = () => ({
         max_rate_per_half_day_session: 0,
         min_rate_per_whole_day_session: 0,
         max_rate_per_whole_day_session: 0,
-        ir35: false,
+        ir35: null,
         practice_type_id: []
     },
     credential_details: {
@@ -65,9 +65,6 @@ export const state = () => ({
 })
 
 export const mutations = {
-    SET_ACTIVE_TAB(state, payload) {
-        state.activeTab = payload
-    },
     // REGISTER PRACTICE
     SET_PRACTICE_DETAILS(state, payload) {
         state.practice_details.surgery_id = payload.surgery_id
@@ -105,28 +102,28 @@ export const mutations = {
             state.professions.push(item)
         })
     },
-    SET_QUALIFICATIONS(state, payload) {
-        state.qualifications = []
-        payload.forEach(item => {
-            state.qualifications.push(item)
-        })
+    SET_GP_QUALIFICATIONS(state, payload) {
+        state.gp_qualifications = payload
+    },
+    SET_OTHERS_QUALIFICATIONS(state, payload) {
+        state.others_qualifications = payload
     },
     SET_CLINICAL_SYSTEMS(state, payload) {
-        state.clinicalSystems = []
+        state.clinical_systems = []
         payload.forEach(item => {
-            state.clinicalSystems.push(item)
+            state.clinical_systems.push(item)
         })
     },
     SET_SPOKEN_LANGUAGES(state, payload) {
-        state.spokenLanguages = []
+        state.spoken_languages = []
         payload.forEach(item => {
-            state.spokenLanguages.push(item)
+            state.spoken_languages.push(item)
         })
     },
     SET_PRACTICE_TYPES(state, payload) {
-        state.practiceTypes = []
+        state.practice_types = []
         payload.forEach(item => {
-            state.practiceTypes.push(item)
+            state.practice_types.push(item)
         })
     },
     SET_ACCOUNT_DETAILS(state, payload) {
@@ -148,18 +145,10 @@ export const mutations = {
         state.professional_details.mpl_or_npl_number = payload.mpl_or_npl_number
         state.professional_details.nhs_smart_card_id_number = payload.nhs_smart_card_id_number
         state.professional_details.profession_id = payload.profession_id
-        state.professional_details.qualification_id = []
-        payload.qualification_id.forEach(id => {
-            state.professional_details.qualification_id.push(id)
-        })
-        state.professional_details.clinical_system_id = []
-        payload.clinical_system_id.forEach(id => {
-            state.professional_details.clinical_system_id.push(id)
-        })
-        state.professional_details.spoken_language_id = []
-        payload.spoken_language_id.forEach(id => {
-            state.professional_details.spoken_language_id.push(id)
-        })
+        state.professional_details.qualification_id = payload.qualification_id
+        state.professional_details.clinical_system_id = payload.clinical_system_id
+        state.professional_details.spoken_language_id = payload.spoken_language_id
+        state.professional_details.practice_type_id = payload.practice_type_id
         state.professional_details.min_rate_per_hour = payload.min_rate_per_hour
         state.professional_details.max_rate_per_hour = payload.max_rate_per_hour
         state.professional_details.min_rate_per_half_day_session = payload.min_rate_per_half_day_session
@@ -167,10 +156,6 @@ export const mutations = {
         state.professional_details.min_rate_per_whole_day_session = payload.min_rate_per_whole_day_session
         state.professional_details.max_rate_per_whole_day_session = payload.max_rate_per_whole_day_session
         state.professional_details.ir35 = payload.ir35
-        state.professional_details.practice_type_id = []
-        payload.practice_type_id.forEach(id => {
-            state.professional_details.practice_type_id.push(id)
-        })
     },
     SET_CREDENTIAL_DETAILS(state, payload) {
         state.credential_details.email = payload.email
@@ -225,27 +210,30 @@ export const mutations = {
 }
 
 export const actions = {
-    getProfessions({state, commit}) {
+    getProfessions({commit}) {
         this.$axios.$get(`/api/v1/professions`).then(res => {
             commit('SET_PROFESSIONS', res.data.professions)
         })
     },
-    getQualifications({state, commit}) {
-        this.$axios.$get(`/api/v1/qualifications`).then(res => {
-            commit('SET_QUALIFICATIONS', res.data.qualifications)
+    getQualifications({commit}) {
+        this.$axios.$get(`/api/v1/profession-categories`).then(res => {
+            let gp = res.data.profession_categories.find(category => category.id === 1)
+            let others = res.data.profession_categories.find(category => category.id === 2)
+            commit('SET_GP_QUALIFICATIONS', gp.qualifications)
+            commit('SET_OTHERS_QUALIFICATIONS', others.qualifications)
         })
     },
-    getClinicalSystems({state, commit}) {
+    getClinicalSystems({commit}) {
         this.$axios.$get(`/api/v1/clinical-systems`).then(res => {
             commit('SET_CLINICAL_SYSTEMS', res.data.clinical_systems)
         })
     },
-    getSpokenLanguages({state, commit}) {
+    getSpokenLanguages({commit}) {
         this.$axios.$get(`/api/v1/spoken-languages`).then(res => {
             commit('SET_SPOKEN_LANGUAGES', res.data.spoken_languages)
         })
     },
-    getPracticeTypes({state, commit}) {
+    getPracticeTypes({commit}) {
         this.$axios.$get(`/api/v1/practice-types`).then(res => {
             commit('SET_PRACTICE_TYPES', res.data.practice_types)
         })
@@ -253,6 +241,7 @@ export const actions = {
     registeredPractice({state, commit}) {
         let form = {}
         form = {...state.practice_details, ...state.practice_account_details}
+        console.log(state.practice_details)
         this.$axios
             .$post(`/api/v1/register/practice`, form)
             .then(res => {
@@ -311,20 +300,17 @@ export const actions = {
                         || errorMessage.field === 'privacy_policy'
                     })
                     commit('SET_CREDENTIAL_DETAIL_FORM_ERROR', credentialDetailError)
-                    console.log(state.account_detail_form_error)
-                    console.log(state.address_detail_form_error)
-                    console.log(state.professional_detail_form_error)
-                    console.log(state.credential_detail_form_error)
-                    if (accountDetailError.length > 0) {
-                        commit('SET_ACTIVE_TAB', 'account_details')
-                    } else if (addressDetailError.length > 0) {
-                        commit('SET_ACTIVE_TAB', 'address_details')
-                    } else if (professionalDetailError.length > 0) {
-                        commit('SET_ACTIVE_TAB', 'professional_details')
-                    } else if (credentialDetailError.length > 0) {
-                        this.$router.push('/sign-up/locum')
-                        commit('SET_ACTIVE_TAB', 'credential_details')
-                    } 
+                    this.$router.push('/sign-up/locum')
+                    // if (accountDetailError.length > 0) {
+                    //     commit('SET_ACTIVE_TAB', 'account_details')
+                    // } else if (addressDetailError.length > 0) {
+                    //     commit('SET_ACTIVE_TAB', 'address_details')
+                    // } else if (professionalDetailError.length > 0) {
+                    //     commit('SET_ACTIVE_TAB', 'professional_details')
+                    // } else if (credentialDetailError.length > 0) {
+                    //     this.$router.push('/sign-up/locum')
+                    //     commit('SET_ACTIVE_TAB', 'credential_details')
+                    // } 
                 }
             })
         //response
@@ -337,8 +323,28 @@ export const getters = {
             return { value: item.id, label: item.name }
         })
     },
+    getGpQualifications (state) {
+        return state.gp_qualifications.map((item) => {
+            return { value: item.id, label: item.name }
+        })
+    },
+    getOthersQualifications (state) {
+        return state.others_qualifications.map((item) => {
+            return { value: item.id, label: item.name }
+        })
+    },
+    getClinicalSystems (state) {
+        return state.clinical_systems.map((item) => {
+            return { value: item.id, label: item.name }
+        })
+    },
+    getSpokenLanguages (state) {
+        return state.spoken_languages.map((item) => {
+            return { value: item.id, label: item.name }
+        })
+    },
     getPracticeTypes (state) {
-        return state.practiceTypes.map((item) => {
+        return state.practice_types.map((item) => {
             return { value: item.id, label: item.name }
         })
     },

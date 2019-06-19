@@ -8,16 +8,17 @@
       <div class="flex flex-row justify-center font-bold">Please check your inbox for it to proceed.</div>
     </div>
     <div class="flex flex-row justify-center mt-5">
-      <nuxt-link
-        to="/sign-in"
-        class="rounded-lg p-5 bg-yellow font-bold text-lg hover:text-white no-underline text-black"
-      >Home</nuxt-link>
+      <AppButton :label="'Home'" @click="$router.push('/')"/>
     </div>
   </section>
 </template>
 <script>
+import AppButton from '@/components/Base/AppButton'
 export default {
   layout: 'auth',
+  components: {
+    AppButton
+  }
 }
 </script>
 <style scoped>

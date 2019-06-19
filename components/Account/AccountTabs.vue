@@ -1,33 +1,46 @@
 <template>
-  <div class="flex flex-no-wrap justify-start">
+  <div class="flex flex-row flex-wrap justify-start">
     <template v-if="$auth.user.domain === 'Locum'">
       <div
-        style="font-family:Nunito"
-        @click.prevent="$store.commit('account/setActiveTab', 'general')"
+        @click.prevent="goTo('general')"
         class="mr-5 p-3 text-sm font-bold cursor-pointer"
-        :class="$store.state.account.accountTab === 'general' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
+        :class="$route.query.account_tab === 'general' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
       >General</div>
       <div
-        style="font-family:Nunito"
-        @click.prevent="$store.commit('account/setActiveTab', 'profile')"
+        @click.prevent="goTo('profile')"
         class="mr-5 p-3 text-sm font-bold cursor-pointer"
-        :class="$store.state.account.accountTab === 'profile' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
+        :class="$route.query.account_tab === 'profile' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
       >Profile</div>
     </template>
     <template v-else-if="$auth.user.domain === 'Practice'">
       <div
-        style="font-family:Nunito"
-        @click.prevent="$store.commit('account/setActiveTab', 'user')"
+        @click.prevent="goTo('user')"
         class="mr-5 p-3 text-sm font-bold cursor-pointer"
-        :class="$store.state.account.accountTab === 'user' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
+        :class="$route.query.account_tab === 'user' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
       >User</div>
     </template>
     <div
-      style="font-family:Nunito"
-      @click.prevent="$store.commit('account/setActiveTab', 'change-password')"
+      @click.prevent="goTo('change-password')"
       class="mr-5 p-3 text-sm font-bold cursor-pointer"
-      :class="$store.state.account.accountTab === 'change-password' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
+      :class="$route.query.account_tab === 'change-password' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
     >Change Password</div>
   </div>
 </template>
+<script>
+export default {
+  methods: {
+    goTo(type) {
+      const query = {
+        ...this.$route.query,
+        account_tab: type
+      }
+      this.$router.push({ query })
+    }
+  }
+}
+</script>
+
+<style scoped>
+</style>
+
 

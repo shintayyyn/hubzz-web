@@ -1,3 +1,38 @@
 * {
   font-family: 'Nunito', sans-serif;
 }
+
+.shield-enter-active, 
+.shield-leave-active {
+  transition: all .5s;
+}
+.shield-enter, 
+.shield-leave-active {
+  display: none;
+}
+
+.fade-enter-active, 
+.fade-leave-active {
+  transition: opacity .3s
+}
+.fade-enter, 
+.fade-leave-active {
+  opacity: 0
+}
+
+.slide-enter-active, .slide-leave-active {
+  transition: all .5s;
+}
+.slide-enter, .slide-leave-active {
+  transform: translateX(100px);
+  opacity: 0;
+}
+
+.drop-enter-active, .drop-leave-active {
+  transition: all .5s;
+}
+.drop-enter, .drop-leave-active {
+  transform: translateY(-100px);
+  opacity: 0;
+}
+

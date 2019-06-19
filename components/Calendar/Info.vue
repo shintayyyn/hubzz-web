@@ -1,9 +1,10 @@
 <template>
-  <div class="rounded-br-lg rounded-bl-lg md:rounded-bl-none md:rounded-r-lg info-section h-full">
+  <div class="info-section h-full rounded-b-lg lg:rounded-b-none lg:rounded-r-lg">
     <div
-      class="text-white text-xs xl:text-base py-4 px-8"
+      class="text-white text-xs sm:text-sm py-4 px-8"
     >{{$moment(date_info || selected_date).format('Do MMM, YYYY')}}</div>
     <div class="flex flex-col overflow-y-auto px-8 h-full info-card">
+      <!-- practice -->
       <template v-for="(item, index) in foundLiveJobs">
         <LiveJobCard :job="item" :key="`${index}-${item.id}`"/>
       </template>
@@ -16,27 +17,50 @@
       <template v-for="item in foundDeclinedJobs">
         <DeclinedJobCard :job="item" :key="item.id"/>
       </template>
+      <!-- locums -->
+      <template v-for="(item, index) in foundAppointmentJobs">
+        <AppointmentJobCard
+          @update="$emit('update', $event)"
+          :job="item"
+          :key="`${index}-${item.id}`"
+        />
+      </template>
+      <template v-for="(item, index) in foundUnavailabilities">
+        <UnavailabilitiesCard :job="item" :key="`${index}-${item.id}`"/>
+      </template>
     </div>
   </div>
 </template>
 <script>
+// practice
 import LiveJobCard from '@/components/Calendar/Cards/LiveJobCard'
 import AppliedJobCard from '@/components/Calendar/Cards/AppliedJobCard'
 import UnfilledJobCard from '@/components/Calendar/Cards/UnfilledJobCard'
 import DeclinedJobCard from '@/components/Calendar/Cards/DeclinedJobCard'
+// locums
+import AppointmentJobCard from '@/components/Calendar/Cards/AppointmentJobCard'
+import UnavailabilitiesCard from '@/components/Calendar/Cards/UnavailabilitiesCard'
 export default {
   components: {
+    // locums
     LiveJobCard,
     AppliedJobCard,
     UnfilledJobCard,
-    DeclinedJobCard
+    DeclinedJobCard,
+    // practice
+    AppointmentJobCard,
+    UnavailabilitiesCard
   },
   data() {
     return {
+      // practice
       foundLiveJobs: [],
       foundAppliedJobs: [],
       foundUnfilledJobs: [],
       foundDeclinedJobs: [],
+      // locums
+      foundAppointmentJobs: [],
+      foundUnavailabilities: [],
       date_info: null
     }
   },
@@ -45,6 +69,11 @@ export default {
       this.date_info = value
       if (this.$auth.user.domain === 'Practice') {
         this.findPerMonth(value)
+        return
+      }
+      if (this.$auth.user.domain === 'Locum') {
+        this.findPerMonthLocum(value)
+        return
       }
     },
     selected_date_shift(value) {
@@ -73,9 +102,17 @@ export default {
     },
     declined_jobs() {
       return this.$store.state.calendar.declined_jobs
+    },
+    // locums
+    appointment_jobs() {
+      return this.$store.state.calendar.appointment_jobs
+    },
+    unavailabilities() {
+      return this.$store.state.calendar.unavailabilities
     }
   },
   methods: {
+    // practice
     findPerMonth(date) {
       if (this.jobs.length > 0) {
         this.foundLiveJobs = this.jobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date))
@@ -106,6 +143,15 @@ export default {
       // if (this.applied_jobs && this.applied_jobs.length > 0) {
       //   this.foundAppliedJobs = this.applied_jobs.filter(job => job.platform_job.selection_date === date && job.platform_job.shift.name === shift)
       // }
+    },
+    // locums
+    findPerMonthLocum(date) {
+      if (this.appointment_jobs.length > 0) {
+        this.foundAppointmentJobs = this.appointment_jobs.filter(job => this.getDateArray(job.private_job.date_start, job.private_job.date_end).includes(date))
+      }
+      if (this.unavailabilities.length > 0) {
+        this.foundUnavailabilities = this.unavailabilities.filter(job => job.date === date)
+      }
     },
     getDateArray(start, end) {
       let arr = new Array();

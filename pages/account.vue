@@ -1,45 +1,51 @@
 <template>
-  <section>
-    <div class="px-10">
-      <AccountTabs/>
-    </div>
-    <div class="px-10 mt-5">
-      <template v-if="$auth.user.domain === 'Locum'">
-        <AccountGeneralForm v-if="$store.state.account.accountTab === 'general'"/>
-        <AccountProfileForm v-if="$store.state.account.accountTab === 'profile'"/>
-      </template>
-      <template v-if="$auth.user.domain === 'Practice'">
-        <AccountUserForm v-if="$store.state.account.accountTab === 'user'"/>
-      </template>
-      <AccountChangePasswordForm v-if="$store.state.account.accountTab === 'change-password'"/>
+  <section class="account-section">
+    <AccountTabs/>
+    <div class="mt-5">
+      <transition name="fade" mode="out-in">
+        <Component :is="activeComponent"/>
+      </transition>
     </div>
   </section>
 </template>
 <script>
 import AccountTabs from '@/components/Account/AccountTabs'
-import AccountGeneralForm from '@/components/Account/AccountGeneralForm'
-import AccountProfileForm from '@/components/Account/AccountProfileForm'
-import AccountUserForm from '@/components/Account/AccountUserForm'
-import AccountChangePasswordForm from '@/components/Account/AccountChangePasswordForm'
+import General from '@/components/Account/General'
+import Profile from '@/components/Account/Profile'
+import User from '@/components/Account/User'
+import ChangePassword from '@/components/Account/ChangePassword'
 export default {
   components: {
     AccountTabs,
-    AccountGeneralForm,
-    AccountProfileForm,
-    AccountUserForm,
-    AccountChangePasswordForm
+    General,
+    Profile,
+    User,
+    ChangePassword,
   },
   created() {
-    // this.$store.dispatch('signUp/getProfessions')
-    // this.$store.dispatch('signUp/getQualifications')
-    // this.$store.dispatch('signUp/getClinicalSystems')
-    // this.$store.dispatch('signUp/getSpokenLanguages')
-
-    if (this.$auth.user.domain === 'Locum') {
-      this.$store.commit('account/setActiveTab', 'general')
-    } else if (this.$auth.user.domain === 'Practice') {
-      this.$store.commit('account/setActiveTab', 'user')
+    const query = {
+      ...this.$route.query,
+      account_tab: this.$route.query.account_tab || 'general'
     }
-  }
+    this.$router.push({ query })
+  },
+  computed: {
+    activeComponent() {
+      if (this.$route.query.account_tab === 'general') {
+        return 'General'
+      }
+      if (this.$route.query.account_tab === 'profile') {
+        return 'Profile'
+      }
+      if (this.$route.query.account_tab === 'user') {
+        return 'User'
+      }
+      if (this.$route.query.account_tab === 'change-password') {
+        return 'ChangePassword'
+      }
+    }
+  },
 }
 </script>
+<style scoped>
+</style>

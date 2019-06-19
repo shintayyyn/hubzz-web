@@ -1,16 +1,13 @@
 <template>
-  <section>
-    <div class="px-10">
-      <JobsTabs/>
+  <section class="jobs-section">
+    <JobsTabs/>
+    <div class="px-5 mt-5">
+      <transition name="slide" mode="out-in">
+        <Component :is="componentName"/>
+      </transition>
     </div>
-    <div class="px-10 mt-5">
-      <Allocated v-if="$store.state.jobs.activeTab === 'allocated'"/>
-      <Available v-if="$store.state.jobs.activeTab === 'available'"/>
-      <Applied v-if="$store.state.jobs.activeTab === 'applied'"/>
-      <Rejected v-if="$store.state.jobs.activeTab === 'rejected'"/>
-      <Declined v-if="$store.state.jobs.activeTab === 'declined'"/>
-      <Completed v-if="$store.state.jobs.activeTab === 'completed'"/>
-    </div>
+    <div class="job-detail-shield" v-if="$store.state.jobs.shield"></div>
+    <nuxt-child/>
   </section>
 </template>
 <script>
@@ -31,31 +28,50 @@ export default {
     Declined,
     Completed
   },
-  data() {
-    return {
-      // form: {
-      //   type: '',
-      //   locum_status: '',
-      //   date_start: null,
-      //   date_end: null,
-      //   shift_id: '',
-      //   locum_detail_rate_type_id: '',
-      //   rate: [],
-      //   post_code: '',
-      //   miles: ''
-      // }
+  computed: {
+    componentName() {
+      if (this.$route.query.job_status === 'allocated') {
+        return 'Allocated'
+      }
+      if (this.$route.query.job_status === 'available') {
+        return 'available'
+      }
+      if (this.$route.query.job_status === 'applied') {
+        return 'Applied'
+      }
+      if (this.$route.query.job_status === 'rejected') {
+        return 'Rejected'
+      }
+      if (this.$route.query.job_status === 'declined') {
+        return 'Declined'
+      }
+      if (this.$route.query.job_status === 'completed') {
+        return 'Completed'
+      }
     }
   },
   created() {
-    // this.form.type = 'Platform'
-    // this.form.date_start = this.$moment().startOf('month').format('YYYY-MM-DD')
-    // this.form.date_end = this.$moment().endOf('month').format('YYYY-MM-DD')
-    // this.form.shift_id = this.$auth.user.locum_detail.shifts.map(item => item.id).join()
-    // this.form.locum_detail_rate_type_id = this.$auth.user.locum_detail.rates[0].rate_type.id
-    // this.form.rate = [`${this.$auth.user.locum_detail.rates[0].min}:gte`, `${this.$auth.user.locum_detail.rates[0].max}:lte`]
-    // this.form.post_code = this.$auth.user.locum_detail.post_code
-    // this.form.miles = this.$auth.user.locum_detail.miles
-    // console.log(this.form)
+    const query = {
+      ...this.$route.query,
+      job_status: this.$route.query.job_status || 'allocated'
+    }
+    this.$router.push({ query })
   }
 }
 </script>
+<style scoped>
+.jobs-section {
+  padding: 5px;
+}
+.job-detail-shield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #333;
+  opacity: 0.5;
+  z-index: 509;
+}
+</style>
+

@@ -1,13 +1,12 @@
 <template>
   <section>
-    <div class="flex flex-row flex-wrap mx-1 pt-5 px-5">
-      <div class="w-1/2 xl:w-1/3 text-left">
-        <div class="text-xs lg:text-base"></div>
+    <div class="flex flex-row flex-wrap mx-1">
+      <div class="w-2/3 sm:w-1/3">
         <div
-          class="text-xs xl:text-base"
+          class="text-xs sm:text-sm"
         >{{$moment(daysInWeek[0]).format('MMM')}} {{$moment(daysInWeek[0]).format('YYYY')}} - {{$moment(daysInWeek[6]).format('MMM')}} {{$moment(daysInWeek[6]).format('YYYY')}}</div>
       </div>
-      <div class="w-1/2 text-right xl:w-1/3 xl:text-center">
+      <div class="w-1/3 text-right sm:w-1/3 sm:text-center">
         <span class="cursor-pointer" @click="adjustWeek('previous')">
           <svgicon name="arrow-left" height="15" width="15"/>
         </span>
@@ -16,21 +15,21 @@
           <svgicon name="arrow-right" height="15" width="15"/>
         </span>
       </div>
-      <div class="w-full mt-2 xl:mt-0 xl:w-1/3 text-right">
+      <div class="w-full text-right sm:w-1/3">
         <span
-          class="cursor-pointer px-3 text-xs lg:text-base hover:underline"
+          class="cursor-pointer px-3 text-xs sm:text-sm hover:underline"
           :class="$store.state.calendar.view_type === 'per_month' ? 'py-1 px-3 bg-yellow-dark':''"
           @click="$store.commit('calendar/TOGGLE_CALENDAR_VIEW_TYPE', 'per_month')"
         >Month</span>
         <span
-          class="cursor-pointer px-3 text-xs lg:text-base hover:underline"
+          class="cursor-pointer px-3 text-xs sm:text-sm hover:underline"
           :class="$store.state.calendar.view_type === 'per_week' ? 'py-1 px-3 bg-yellow-dark':''"
           @click="$store.commit('calendar/TOGGLE_CALENDAR_VIEW_TYPE', 'per_week')"
         >Week</span>
       </div>
     </div>
 
-    <div class="flex flex-no-wrap mx-1 mt-5 px-5 text-xs xl:text-base">
+    <div class="flex flex-nowrap mx-1 mt-5 text-xs sm:text-sm">
       <div class="w-full text-center text-grey font-bold"></div>
       <div class="w-1/2 lg:w-full text-center text-grey font-bold">SUN</div>
       <div class="w-1/2 lg:w-full text-center text-grey font-bold">MON</div>
@@ -41,7 +40,7 @@
       <div class="w-1/2 lg:w-full text-center text-grey font-bold">SAT</div>
     </div>
 
-    <div class="flex flex-no-wrap mx-1 mt-5 px-5 text-xs xl:text-base">
+    <div class="flex flex-nowrap mx-1 mt-5 text-xs sm:text-sm">
       <div class="w-full text-center text-grey-darkest"></div>
       <div
         class="w-1/2 lg:w-full text-center text-grey-darkest font-bold"
@@ -49,7 +48,7 @@
         :key="index"
       >{{$moment(date).format('DD')}}</div>
     </div>
-    <div class="flex flex-no-wrap mx-1 mt-5 px-5" style="height:50px;">
+    <div class="flex flex-nowrap mx-1 mt-5" style="height:50px;">
       <div class="w-full text-xs text-center pr-2">AM</div>
       <template v-for="(date, index) in daysInWeek">
         <div
@@ -84,7 +83,7 @@
         ></div>
       </template>
     </div>
-    <div class="flex flex-no-wrap mx-1 px-5" style="height:50px;">
+    <div class="flex flex-nowrap mx-1" style="height:50px;">
       <div class="w-full text-xs text-center pr-2">PM</div>
       <template v-for="(date, index) in daysInWeek">
         <div
@@ -119,7 +118,7 @@
         ></div>
       </template>
     </div>
-    <div class="flex flex-no-wrap mx-1 px-5" style="height:50px;">
+    <div class="flex flex-nowrap mx-1" style="height:50px;">
       <div class="w-full text-xs text-center pr-2">OOH</div>
       <template v-for="(date, index) in daysInWeek">
         <div
@@ -154,7 +153,7 @@
         ></div>
       </template>
     </div>
-    <div class="flex flex-no-wrap mx-1 px-5" style="height:50px;">
+    <div class="flex flex-nowrap mx-1" style="height:50px;">
       <div class="w-full text-xs text-center pr-2">Whole-day</div>
       <template v-for="(date, index) in daysInWeek">
         <div
@@ -189,7 +188,7 @@
         ></div>
       </template>
     </div>
-    <div class="flex flex-no-wrap mx-1 px-5" style="height:50px;">
+    <div class="flex flex-nowrap mx-1" style="height:50px;">
       <div class="w-full text-xs text-center pr-2">Reminder</div>
       <template v-for="(date, index) in daysInWeek">
         <div
@@ -306,29 +305,31 @@ export default {
     },
     getJobs() {
       // live(color code per shift), applied(amber), current(green), unfilled(red)
-      this.$axios.$get(`/api/v1/practice/calendars/weekly/${this.$moment(this.daysInWeek[6]).format('YYYY')}/${this.weekOfTheYear}`).then(res => {
-        console.log(res)
-        // get jobs (green)
-        if (res.data.jobs && res.data.jobs.length > 0) {
-          this.jobs = res.data.jobs
-          this.$store.commit('calendar/SET_JOBS', res.data.jobs)
-        }
-        // applied jobs with selection date (grey / reminders)
-        if (res.data.applied_jobs_with_selection_date && res.data.applied_jobs_with_selection_date.length > 0) {
-          this.applied_jobs_with_selection_date = res.data.applied_jobs_with_selection_date
-          this.$store.commit('calendar/SET_APPLIED_JOBS', res.data.applied_jobs_with_selection_date)
-        }
-        // unfilled job (red)
-        if (res.data.unfilled_jobs && res.data.unfilled_jobs.length > 0) {
-          this.unfilled_jobs = res.data.unfilled_jobs
-          this.$store.commit('calendar/SET_UNFILLED_JOBS', res.data.unfilled_jobs)
-        }
-        // decline jobs (red)
-        if (res.data.declined_jobs && res.data.declined_jobs.length > 0) {
-          this.declined_jobs = res.data.declined_jobs
-          this.$store.commit('calendar/SET_DECLINED_JOBS', res.data.declined_jobs)
-        }
-      })
+      if (this.$auth.user.domain === 'Practice') {
+        this.$axios.$get(`/api/v1/practice/calendars/weekly/${this.$moment(this.daysInWeek[6]).format('YYYY')}/${this.weekOfTheYear}`).then(res => {
+          console.log(res)
+          // get jobs (green)
+          if (res.data.jobs && res.data.jobs.length > 0) {
+            this.jobs = res.data.jobs
+            this.$store.commit('calendar/SET_JOBS', res.data.jobs)
+          }
+          // applied jobs with selection date (grey / reminders)
+          if (res.data.applied_jobs_with_selection_date && res.data.applied_jobs_with_selection_date.length > 0) {
+            this.applied_jobs_with_selection_date = res.data.applied_jobs_with_selection_date
+            this.$store.commit('calendar/SET_APPLIED_JOBS', res.data.applied_jobs_with_selection_date)
+          }
+          // unfilled job (red)
+          if (res.data.unfilled_jobs && res.data.unfilled_jobs.length > 0) {
+            this.unfilled_jobs = res.data.unfilled_jobs
+            this.$store.commit('calendar/SET_UNFILLED_JOBS', res.data.unfilled_jobs)
+          }
+          // decline jobs (red)
+          if (res.data.declined_jobs && res.data.declined_jobs.length > 0) {
+            this.declined_jobs = res.data.declined_jobs
+            this.$store.commit('calendar/SET_DECLINED_JOBS', res.data.declined_jobs)
+          }
+        })
+      }
     },
   }
 }

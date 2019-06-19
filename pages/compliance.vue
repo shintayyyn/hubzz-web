@@ -1,81 +1,82 @@
 <template>
-  <section>
-    <div class="mt-10 px-5 overflow-x-auto">
+  <section class="compliance-section overflow-x-auto">
+    <div class="mt-10 px-1">
       <div class="border-solid rounded-lg shadow-md p-5 mb-5">
-        <div class="flex flex-row flex-no-wrap justify-start text-xs xl:text-base">
-          <div class="w-1/4">Your GMC / NMC Number</div>
-          <div class="w-1/4 mx-10">{{gmc_or_nmc_number.number}}</div>
-          <div class="max-w-xs">
+        <div class="flex flex-row flex-wrap justify-start text-xs sm:text-sm">
+          <div class="w-full p-1 text-left sm:w-1/3">Your GMC / NMC Number</div>
+          <div class="w-full p-1 text-left sm:w-1/3 sm:text-center">{{gmc_or_nmc_number.number}}</div>
+          <div class="max-w-xs p-1 text-left sm:text-right">
             <div
-              class="text-xs xl:text-base text-center bg-orange text-white font-bold rounded-full p-2"
-              :class="numberStatusBg(gmc_or_nmc_number.status)"
+              class="text-xs sm:text-sm text-center bg-orange text-white font-bold rounded-full px-2 py-1"
+              :class="status(gmc_or_nmc_number.status)"
             >{{gmc_or_nmc_number.status}}</div>
           </div>
         </div>
       </div>
       <div class="border-solid rounded-lg shadow-md p-5 mb-5">
-        <div class="flex flex-row flex-no-wrap justify-start text-xs xl:text-base">
-          <div class="w-1/4">Your MPL / NPL Number</div>
-          <div class="w-1/4 mx-10">{{mpl_or_npl_number.number}}</div>
-          <div class="max-w-md">
+        <div class="flex flex-row flex-wrap justify-start text-xs sm:text-sm">
+          <div class="w-full p-1 text-left sm:w-1/3">Your MPL / NPL Number</div>
+          <div class="w-full p-1 text-left sm:w-1/3 sm:text-center">{{mpl_or_npl_number.number}}</div>
+          <div class="max-w-xs p-1 text-left sm:text-right">
             <div
-              class="text-xs xl:text-base text-center bg-orange text-white font-bold rounded-full p-2"
-              :class="numberStatusBg(mpl_or_npl_number.status)"
+              class="text-xs sm:text-sm text-center bg-orange text-white font-bold rounded-full px-2 py-1"
+              :class="status(mpl_or_npl_number.status)"
             >{{mpl_or_npl_number.status}}</div>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="mt-10 px-5">
-      <div class="font-bold text-xs xl:text-base ml-4">Documents you need to be approved by hubzz HQ</div>
+    <div class="mt-10">
+      <div class="font-bold text-xs sm:text-base">Documents you need to be approved by hubzz HQ</div>
     </div>
-    <div class="px-5 overflow-x-auto overflow-y-hidden">
-      <table class="table">
+    <div class="mt-4">
+      <table>
         <thead>
-          <tr class="text-xs lg:text-sm text-left">
-            <th style="min-width:120px">Type</th>
-            <th style="min-width:120px">File</th>
-            <th style="min-width:100px">Date uploaded</th>
-            <th style="min-width:120px">Expiry date</th>
-            <th style="min-width:100px">Status</th>
-            <th style="min-width:180px">Note from hubzz HQ</th>
-            <th style="min-width:100px"></th>
+          <tr class="text-xs sm:text-sm text-left">
+            <th>Type</th>
+            <th>File</th>
+            <th>Date uploaded</th>
+            <th>Expiry date</th>
+            <th>Status</th>
+            <th>Note from hubzz HQ</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
-          <template v-for="item in mandatory">
+          <template v-for="(item, index) in mandatory">
             <tr
               :key="item.id"
-              class="shadow-md hover:bg-grey-light cursor-pointer text-xs lg:text-sm"
+              class="rounded-lg shadow-md hover:bg-grey-light cursor-pointer text-xs sm:text-sm text-left"
             >
-              <td style="min-width:120px">{{item.name}}</td>
-              <td
-                style="min-width:120px"
-                class="hover:underline cursor-pointer"
-                v-if="fileUrl(item.id)"
-              >
+              <td>{{item.name}}</td>
+              <td class="hover:underline" v-if="item.info">
                 <div class="flex flex-row flex-nowrap">
                   <svgicon name="cloud-download" height="24" width="24"/>
                   <div class="leading-loose mx-2">
                     <a
                       target="_blank"
-                      :href="fileUrl(item.id)"
-                    >{{filename(item.id) | StringMaxLength(15)}}</a>
+                      :href="item.info.file.url"
+                    >{{item.info.file.filename | StringMaxLength(15)}}</a>
                   </div>
                 </div>
               </td>
-              <td v-else style="min-width:120px"></td>
-              <td style="min-width:100px">{{uploadDate(item.id) | localDate}}</td>
-              <td style="min-width:120px">{{expiryDate(item.id) | localDate}}</td>
-              <td style="min-width:100px" class="max-w-xs">
+              <td v-else></td>
+              <td v-if="item.info">{{item.info.file.created_at | localDate}}</td>
+              <td v-else></td>
+              <td v-if="item.info">{{item.info.expired_at | localDate}}</td>
+              <td v-else></td>
+              <td class="max-w-xs" v-if="item.info">
                 <div
                   class="text-xs xl:text-base text-center text-white font-bold rounded-full p-2"
-                  :class="documentStatusBg(item.id)"
-                >{{status(item.id)}}</div>
+                  :class="status(item.info.status)"
+                >{{item.info.status}}</div>
               </td>
-              <td style="min-width:180px">{{note(item.id) | StringMaxLength}}</td>
-              <td style="min-width:100px" class="hover:underline" v-if="!filename(item.id)">
+              <td v-else></td>
+
+              <td v-if="item.info">{{item.info.note | StringMaxLength}}</td>
+              <td v-else></td>
+              <td class="hover:underline" v-if="!item.info">
                 <div class="flex flex-row flex-nowrap">
                   <input
                     type="file"
@@ -88,21 +89,21 @@
                   <label :for="`${item.id}_file`" class="leading-loose mx-2 cursor-pointer">Upload</label>
                 </div>
               </td>
-              <td style="min-width:100px" v-else>
+              <td class="hover:underline" v-else>
                 <div class="flex flex-row flex-nowrap">
                   <input
                     type="file"
                     :name="`${item.id}_file`"
                     :id="`${item.id}_file`"
                     class="inputfile hidden"
-                    @input="onFileUpdate($event, item.id)"
+                    @input="onFileUpdate($event, item.info.id, index)"
                   >
                   <svgicon name="cloud-upload" height="24" width="24"/>
                   <label :for="`${item.id}_file`" class="leading-loose mx-2 cursor-pointer">Update</label>
                 </div>
               </td>
             </tr>
-            <tr>
+            <tr :key="`${item.id}-tr`">
               <td></td>
             </tr>
           </template>
@@ -110,52 +111,48 @@
       </table>
     </div>
 
-    <div class="mt-10 px-5">
-      <div
-        class="font-bold text-xs xl:text-base ml-4"
-      >Other documentation for reference to Practices</div>
+    <div class="mt-10">
+      <div class="font-bold text-xs sm:text-base">Other documentation for reference to Practices</div>
     </div>
-    <div class="px-5 overflow-x-auto overflow-y-hidden">
-      <table class="table">
+
+    <div class="mt-4">
+      <table>
         <thead>
-          <tr class="text-xs lg:text-sm text-left">
-            <th style="min-width:120px">Type</th>
-            <th style="min-width:120px">File</th>
-            <th style="min-width:100px">Date uploaded</th>
-            <th style="min-width:120px"></th>
-            <th style="min-width:100px"></th>
-            <th style="min-width:180px"></th>
-            <th style="min-width:100px"></th>
+          <tr class="text-xs sm:text-sm text-left">
+            <th>Type</th>
+            <th>File</th>
+            <th>Date uploaded</th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
-          <template v-for="item in optional">
+          <template v-for="(item, index) in optional">
             <tr
               :key="item.id"
-              class="shadow-md hover:bg-grey-light cursor-pointer text-xs lg:text-sm"
+              class="rounded-lg shadow-md hover:bg-grey-light cursor-pointer text-xs sm:text-sm text-left"
             >
-              <td style="min-width:120px">{{item.name}}</td>
-              <td
-                style="min-width:120px"
-                class="hover:underline cursor-pointer"
-                v-if="fileUrl(item.id)"
-              >
+              <td>{{item.name}}</td>
+              <td class="hover:underline" v-if="item.info">
                 <div class="flex flex-row flex-nowrap">
                   <svgicon name="cloud-download" height="24" width="24"/>
                   <div class="leading-loose mx-2">
                     <a
                       target="_blank"
-                      :href="fileUrl(item.id)"
-                    >{{filename(item.id) | StringMaxLength(15)}}</a>
+                      :href="item.info.file.url"
+                    >{{item.info.file.filename | StringMaxLength(15)}}</a>
                   </div>
                 </div>
               </td>
-              <td v-else style="min-width:120px"></td>
-              <td style="min-width:100px">{{uploadDate(item.id) | localDate}}</td>
-              <td style="min-width:120px"></td>
-              <td style="min-width:100px"></td>
-              <td style="min-width:180px"></td>
-              <td style="min-width:100px" class="hover:underline" v-if="!filename(item.id)">
+              <td v-else></td>
+              <td v-if="item.info">{{item.info.file.created_at | localDate}}</td>
+              <td v-else></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td class="hover:underline" v-if="!item.info">
                 <div class="flex flex-row flex-nowrap">
                   <input
                     type="file"
@@ -168,21 +165,21 @@
                   <label :for="`${item.id}_file`" class="leading-loose mx-2 cursor-pointer">Upload</label>
                 </div>
               </td>
-              <td style="min-width:100px" v-else>
+              <td class="hover:underline" v-else>
                 <div class="flex flex-row flex-nowrap">
                   <input
                     type="file"
                     :name="`${item.id}_file`"
                     :id="`${item.id}_file`"
                     class="inputfile hidden"
-                    @input="onFileUpdate($event, item.id)"
+                    @input="onFileUpdate($event, item.info.id, index)"
                   >
                   <svgicon name="cloud-upload" height="24" width="24"/>
                   <label :for="`${item.id}_file`" class="leading-loose mx-2 cursor-pointer">Update</label>
                 </div>
               </td>
             </tr>
-            <tr>
+            <tr :key="`${item.id}-tr`">
               <td></td>
             </tr>
           </template>
@@ -197,34 +194,51 @@ export default {
     return {
       gmc_or_nmc_number: {},
       mpl_or_npl_number: {},
-      compliance_documents: [],
-      mandatory: [],
-      optional: []
+      profession: {},
+      // mandatory: [],
+      // optional: []
     }
+  },
+  computed: {
+    mandatory() {
+      return this.$store.state.compliance.mandatory
+    },
+    optional() {
+      return this.$store.state.compliance.optional
+    },
   },
   created() {
     // get gmc, mpl status
     this.gmc_or_nmc_number = this.$auth.user.locum_detail.gmc_or_nmc_number
     this.mpl_or_npl_number = this.$auth.user.locum_detail.mpl_or_npl_number
-    // get mandatory and optional compliance documents list based on profession category
+    // get all compliance documents list based on profession category
     this.$axios.$get(`/api/v1/profession-categories`).then(res => {
-      let profession = res.data.profession_categories.find(profession => profession.id === this.$auth.user.locum_detail.profession.profession_category.id)
-      this.mandatory = profession.mandatory_compliance_documents
-      this.optional = profession.optional_compliance_documents
-    })
-    // get compliance documents status
-    this.$axios.$get(`/api/v1/locum/locum-detail-compliance-documents`).then(res => {
-      // console.log(res.data.locum_detail_compliance_documents)
-      this.compliance_documents = res.data.locum_detail_compliance_documents
+      this.profession = res.data.profession_categories.find(profession => profession.id === this.$auth.user.locum_detail.profession.profession_category.id)
+      this.setComplianceDocuments()
     })
   },
   methods: {
-    status(id) {
-      if (this.compliance_documents.find(document => document.compliance_document.id === id)) {
-        return this.compliance_documents.find(document => document.compliance_document.id === id).status
+    // set mandatory and optional
+    setComplianceDocuments() {
+      if (this.$auth.user.locum_detail.compliance_documents.length > 0) {
+        this.$auth.user.locum_detail.compliance_documents.forEach(userComplianceDocument => {
+          this.profession.mandatory_compliance_documents.forEach(mandatoryDocument => {
+            if (userComplianceDocument.compliance_document.id === mandatoryDocument.id) {
+              mandatoryDocument.info = userComplianceDocument
+            }
+          })
+          this.profession.optional_compliance_documents.forEach(optionalDocument => {
+            if (userComplianceDocument.compliance_document.id === optionalDocument.id) {
+              optionalDocument.info = userComplianceDocument
+            }
+          })
+        })
       }
+      this.$store.commit('compliance/SET_MANDATORY', this.profession.mandatory_compliance_documents)
+      this.$store.commit('compliance/SET_OPTIONAL', this.profession.optional_compliance_documents)
+      // this.compliance_documents = [...this.profession.mandatory_compliance_documents, ...this.profession.optional_compliance_documents]
     },
-    numberStatusBg(status) {
+    status(status) {
       switch (status) {
         case 'Pending':
           return 'bg-orange'
@@ -237,54 +251,6 @@ export default {
           break;
         default:
           return
-      }
-    },
-    documentStatusBg(id) {
-      if (this.compliance_documents.find(document => document.compliance_document.id === id)) {
-        let status = this.compliance_documents.find(document => document.compliance_document.id === id).status
-        switch (status) {
-          case 'Pending':
-            return 'bg-orange'
-            break;
-          case 'Verified':
-            return 'bg-green'
-            break;
-          case 'Rejected':
-            return 'bg-red-light'
-            break;
-          default:
-            return
-        }
-      }
-    },
-    uploadDate(id) {
-      if (this.compliance_documents.find(document => document.compliance_document.id === id)) {
-        return this.compliance_documents.find(document => document.compliance_document.id === id).file.created_at
-      }
-    },
-    expiryDate(id) {
-      if (this.compliance_documents.find(document => document.compliance_document.id === id)) {
-        return this.compliance_documents.find(document => document.compliance_document.id === id).expired_at
-      }
-    },
-    note(id) {
-      if (this.compliance_documents.find(document => document.compliance_document.id === id)) {
-        return this.compliance_documents.find(document => document.compliance_document.id === id).note
-      }
-    },
-    fileUrl(id) {
-      if (this.compliance_documents.find(document => document.compliance_document.id === id)) {
-        return this.compliance_documents.find(document => document.compliance_document.id === id).file.url
-      }
-    },
-    filename(id) {
-      if (this.compliance_documents.find(document => document.compliance_document.id === id)) {
-        return this.compliance_documents.find(document => document.compliance_document.id === id).file.filename
-      }
-    },
-    file(id) {
-      if (this.compliance_documents.find(document => document.compliance_document.id === id)) {
-        return this.compliance_documents.find(document => document.compliance_document.id === id).file
       }
     },
     onFileInput(e, id) {
@@ -302,11 +268,14 @@ export default {
       formData.append('compliance_document_id', id)
       // post request to API / send file 
       this.$axios.$post(`/api/v1/locum/locum-detail-compliance-documents`, formData).then(res => {
-        this.compliance_documents.push(res.data.locum_detail_compliance_document)
+        let uploadFile = this.compliance_documents.find(document => document.id === res.data.locum_detail_compliance_document.compliance_document.id)
+        uploadFile.info = res.data.locum_detail_compliance_document
+        console.log(uploadFile)
+        this.setComplianceDocuments()
         this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Document uploaded!' })
       })
     },
-    onFileUpdate(e, id) {
+    onFileUpdate(e, id, index) {
       if (!e.target.files.length) {
         return
       }
@@ -318,10 +287,11 @@ export default {
       }
       const formData = new FormData()
       formData.append('file', file)
-      // put request to API / send file 
       this.$axios.$put(`/api/v1/locum/locum-detail-compliance-documents/${id}`, formData).then(res => {
-        this.compliance_documents.push(res.data.locum_detail_compliance_document)
+        this.$store.commit('compliance/UPDATE_MANDATORY', res.data.locum_detail_compliance_document)
         this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Document updated!' })
+      }).catch(err => {
+        console.log(err)
       })
     },
   }
@@ -333,7 +303,7 @@ a {
   color: black;
 }
 table {
-  min-width: 1000px;
+  width: 920px;
 }
 table thead th {
   padding: 15px;
