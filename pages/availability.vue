@@ -19,7 +19,7 @@
         <div class="absolute pin-b pin-r m-5">
           <div
             class="rounded-full h-10 w-10 sm:h-12 sm:w-12 md:h-16 md:w-16 text-2xl sm:text-3xl md:text-4xl flex items-center focus:outline-none justify-center bg-yellow-dark font-semibold cursor-pointer shadow-md hover:text-white"
-            @click="addRange"
+            @click="add"
           >+</div>
         </div>
       </div>
@@ -27,7 +27,12 @@
     <div class="add-unavailable-date-shield" v-if="modal"></div>
     <transition name="slide" mode="out-in">
       <div class="add-unavailable-date-modal shadow-lg" v-if="modal">
-        <AddUnavailableDateModal @close="close" :data_prop="data_prop" :type="type"/>
+        <AddUnavailableDateModal
+          @close="close"
+          :unavailableDate="unavailableDate"
+          :appointmentDate="appointmentDate"
+          :type="type"
+        />
       </div>
     </transition>
   </section>
@@ -46,8 +51,10 @@ export default {
     return {
       shifts: [],
       modal: false,
-      data_prop: null,
-      type: ''
+      // passing prop to modal
+      type: '',
+      unavailableDate: null,
+      appointmentDate: null,
     }
   },
   created() {
@@ -58,19 +65,20 @@ export default {
     this.$store.commit('availability/SET_DATE_TODAY')
   },
   methods: {
-    addRange() { },
-    open(data) {
+    add() {
+      this.unavailableDate = null
+      this.appointmentDate = null
+      document.body.style.overflow = 'hidden'
+      this.type = 'range'
+      this.modal = true
+    },
+    open(unavailableDate, appointmentDate) {
+      this.unavailableDate = unavailableDate
+      this.appointmentDate = appointmentDate
       document.body.style.overflow = 'hidden'
       this.type = 'solo'
       this.modal = true
-      this.data_prop = data
     },
-    // update(data) {
-    //   document.body.style.overflow = 'hidden'
-    //   this.type = 'solo'
-    //   this.modal = true
-    //   this.data_prop = data
-    // },
     close() {
       this.modal = false
       document.body.style.overflow = 'auto'

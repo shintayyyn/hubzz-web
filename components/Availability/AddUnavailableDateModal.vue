@@ -46,15 +46,20 @@
             class="rounded-lg bg-grey-light px-2 py-1 text-sm sm:text-md flex items-center"
             v-else
           >Select all that apply.</div>
-          <div class="flex flex-row flex-wrap justify-start mt-4">
-            <div
-              class="relative border border-solid rounded-lg p-5 m-2 text-center text-xs sm:text-sm"
-              :class="{'bg-yellow-dark cursor-pointer': isSelected(item.id), 'bg-grey-light': isDisabled(item.id), 'hover:bg-yellow-dark cursor-pointer': !isDisabled(item.id)}"
+          <div class="flex flex-row flex-wrap justify-center sm:justify-start mt-4">
+            <button
+              class="relative border border-solid rounded-lg p-5 m-2 text-center text-xs sm:text-sm focus:outline-none"
+              :class="{
+                'bg-grey-light': appointmentDate && appointmentDate.shift && appointmentDate.shift.id === item.id,
+                'bg-yellow-dark cursor-pointer': form.shift_id.includes(item.id), 
+                'hover:bg-yellow-dark cursor-pointer': !form.shift_id.includes(item.id) && appointmentDate && appointmentDate.shift && appointmentDate.shift.id !== item.id,
+              }"
               style="box-sizing:content-box;width:90px"
               v-for="item in shifts"
               :key="item.id"
-              @click="disabledShift === item.id ? '' : select(item.id)"
-            >{{item.name}}</div>
+              :disabled="appointmentDate && appointmentDate.shift && appointmentDate.shift.id === item.id"
+              @click="select(item.id)"
+            >{{item.name}}</button>
           </div>
         </div>
       </div>
@@ -72,7 +77,7 @@
 import AppInput from '@/components/Base/AppInput'
 import AppButton from '@/components/Base/AppButton'
 export default {
-  props: ['data_prop', 'type'],
+  props: ['unavailableDate', 'appointmentDate', 'type'],
   components: {
     AppInput,
     AppButton
@@ -85,8 +90,7 @@ export default {
         date_end: null,
         shift_id: []
       },
-      disabledShift: null,
-      formError: []
+      formError: [],
     }
   },
   computed: {
@@ -98,21 +102,20 @@ export default {
     }
   },
   created() {
-    this.data_prop.id ? this.form.id = this.data_prop.id : null
-    this.data_prop.shifts && this.data_prop.shifts.length ? this.form.shift_id = this.data_prop.shifts.map(item => item.id) : []
     if (this.type === 'solo') {
+      if (this.unavailableDate && this.appointmentDate) {
+        this.unavailableDate.shifts = this.unavailableDate.shifts.filter(shift => shift.id !== this.appointmentDate.shift.id)
+      }
+      if (this.unavailableDate) {
+        this.form.id = this.unavailableDate.id
+        this.form.shift_id = this.unavailableDate.shifts.map(shift => shift.id)
+      }
       this.form.date_start = this.$store.state.availability.selected_date
       this.form.date_end = this.$store.state.availability.selected_date
     }
-    this.data_prop.disabledShift ? this.disabledShift = this.data_prop.disabledShift.id : null
+    console.log(this.form)
   },
   methods: {
-    isSelected(id) {
-      return this.form.shift_id.includes(id)
-    },
-    isDisabled(id) {
-      return this.disabledShift === id
-    },
     select(id) {
       let shiftId = this.form.shift_id.find(item => item === id)
       if (!shiftId) {

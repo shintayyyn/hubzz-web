@@ -260,24 +260,26 @@ export default {
     },
     selectDate(date) {
       this.$store.commit('availability/SELECT_DATE', date)
-      let appointmentObj = {}
-      let unavailabilityObj = {}
-      let hasAppointment = this.$store.state.availability.appointment_jobs.find(job => this.getDateArray(job.private_job.date_start, job.private_job.date_end).includes(date))
+      let unavaibleDate
+      let appointmentDate
+      // check if the selected date is already unavailable
+      let isUnavailable = this.unavailabilities.find(unavailable => unavailable.date === date)
+      if (isUnavailable) {
+        // get the unavailable date Id and its selected shift
+        unavaibleDate = {
+          id: isUnavailable.id,
+          shifts: isUnavailable.shifts
+        }
+      }
+      // check if the selected date has an appointment already
+      let hasAppointment = this.appointment_jobs.find(appointment => this.getDateArray(appointment.private_job.date_start, appointment.private_job.date_end).includes(date))
       if (hasAppointment) {
-        appointmentObj = { disabledShift: hasAppointment.private_job.shift }
+        // get the appointment selected shift
+        appointmentDate = {
+          shift: hasAppointment.private_job.shift
+        }
       }
-      let unavailabilities = this.$store.state.availability.unavailabilities.find(item => item.date === date)
-      if (unavailabilities) {
-        unavailabilityObj = { id: unavailabilities.id, shifts: unavailabilities.shifts }
-        const newObj = Object.assign(appointmentObj, unavailabilityObj)
-        // this.$emit('update', newObj)
-        this.$emit('open', newObj)
-      } else {
-        const newObj = Object.assign(appointmentObj, {})
-        // this.$emit('add', newObj)
-        this.$emit('open', newObj)
-      }
-
+      this.$emit('open', unavaibleDate, appointmentDate)
     },
     getDateArray(start, end) {
       let arr = new Array();
