@@ -1,7 +1,7 @@
 <template>
   <section class="jobs-section">
     <JobsTabs/>
-    <div class="px-5 mt-5">
+    <div class="mt-5">
       <transition name="slide" mode="out-in">
         <Component :is="componentName"/>
       </transition>
@@ -60,9 +60,6 @@ export default {
 }
 </script>
 <style scoped>
-.jobs-section {
-  padding: 5px;
-}
 .job-detail-shield {
   position: fixed;
   top: 0;

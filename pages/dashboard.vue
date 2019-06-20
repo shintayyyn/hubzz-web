@@ -11,10 +11,10 @@
       <div class="text-sm sm:text-base font-bold">Quick Statistics</div>
       <Statistics/>
     </div>
-    <div class="create-appointment-shield" v-if="appointment_modal"></div>
+    <div class="create-appointment-shield" v-if="modal"></div>
     <transition name="slide" mode="out-in">
-      <div class="create-appointment-modal shadow-lg" v-if="appointment_modal">
-        <CreateAppointmentModal @close="appointment_modal = $event" :job="job"/>
+      <div class="create-appointment-modal shadow-lg" v-if="modal">
+        <CreateAppointmentModal @close="modal = false" :job="job"/>
       </div>
     </transition>
   </section>
@@ -35,7 +35,7 @@ export default {
   data() {
     return {
       statistics: [],
-      appointment_modal: false,
+      modal: false,
       job: null
     }
   },
@@ -71,13 +71,22 @@ export default {
       })
     }
   },
+  watch: {
+    modal(value) {
+      if (value) {
+        document.body.style.overflow = 'hidden'
+      } else {
+        document.body.style.overflow = 'auto'
+      }
+    }
+  },
   methods: {
     create() {
-      this.appointment_modal = true
+      this.modal = true
       this.job = null
     },
     update(job) {
-      this.appointment_modal = true
+      this.modal = true
       this.job = job
     }
   },

@@ -259,11 +259,8 @@ export default {
       if (!this.formError.length) {
         this.$axios.$post(`/api/v1/locum/jobs/${this.$store.state.jobs.job_id}/decline`, this.form).then(res => {
           this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Declined' })
-          document.body.style.overflow = 'auto'
-          this.$store.commit('TOGGLED_RIGHT', '')
-          this.$store.commit('SET_LOCUM_ALLOCATED_DETAIL_MODAL', false)
-          this.$store.commit('SET_LOCUM_ALLOCATED_DETAIL_SHIELD', false)
-          this.$store.commit('jobs/setActiveTab', 'declined')
+          this.$emit('close')
+          this.$router.push('/jobs?job_status=declined')
         })
       }
     }

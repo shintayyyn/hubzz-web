@@ -1,6 +1,6 @@
 <template>
   <div class="p-8 max-w-2xl">
-    <div @click="close" class="cursor-pointer">
+    <div @click="$emit('close')" class="cursor-pointer">
       <svgicon name="left-arrow" height="32" width="32"/>
     </div>
     <div class="flex flex-row justify-start mt-8">
@@ -172,12 +172,5 @@ export default {
       return this.job.platform_job.practice.surgery.address.coordinates
     },
   },
-  methods: {
-    close() {
-      this.$store.commit('jobs/TOGGLE_SHIELD', false)
-      this.$store.commit('jobs/setActiveTab', 'declined')
-      this.$router.push('/jobs?job_status=declined')
-    }
-  }
 }
 </script>

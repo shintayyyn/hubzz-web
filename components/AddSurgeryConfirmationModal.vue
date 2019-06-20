@@ -9,31 +9,17 @@
         <button
           class="border border-solid bg-yellow-dark hover:text-white focus:outline-none text-black font-bold py-5 rounded-lg"
           style="width:100px;"
-          @click.prevent="add"
+          @click.prevent="$emit('add')"
         >Yes</button>
       </div>
       <div class="mx-2">
         <button
           class="border border-solid bg-yellow-dark hover:text-white focus:outline-none text-black font-bold py-5 rounded-lg"
-          @click.prevent="close"
+          @click.prevent="$emit('close')"
           style="width:100px;"
         >Cancel</button>
       </div>
     </div>
   </div>
 </template>
-<script>
-export default {
-  methods: {
-    add() {
-      this.$emit('add')
-      document.body.style.overflow = 'hidden'
-    },
-    close() {
-      this.$emit('close', false)
-      document.body.style.overflow = 'hidden'
-    }
-  }
-}
-</script>
 

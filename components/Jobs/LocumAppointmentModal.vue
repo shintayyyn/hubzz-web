@@ -186,14 +186,12 @@ export default {
     },
     save() {
       this.$axios.$post(`/api/v1/locum/jobs`, this.form).then(res => {
-        this.$store.commit('calendar/ADD_APPOINTMENT', res.data.job)
         this.$emit('close')
         this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: `${res.message}` })
       })
     },
     edit() {
       this.$axios.$put(`/api/v1/locum/jobs/${this.job.id}`, this.form).then(res => {
-        this.$store.commit('calendar/UPDATE_APPOINTMENT', res.data.job)
         this.$emit('close')
         this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: `${res.message}` })
       })

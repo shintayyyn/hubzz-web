@@ -152,6 +152,7 @@
 import { gmapApi } from 'vue2-google-maps'
 import AppButton from '@/components/Base/AppButton'
 export default {
+  props: ['job'],
   components: {
     AppButton
   },
@@ -242,57 +243,49 @@ export default {
     // get status number
     this.gmc_or_nmc_number_status = this.$auth.user.locum_detail.gmc_or_nmc_number.status
     this.mpl_or_npl_number_status = this.$auth.user.locum_detail.mpl_or_npl_number.status
-    this.$axios.$get(`/api/v1/locum/jobs/${this.$store.state.jobs.job_id}`).then(res => {
-      console.log(res)
-      // get job compliance documents
-      this.jobCompliance = res.data.job.platform_job.compliance_documents.map(item => item.id)
-      this.practice.surgery.address.coordinates = res.data.job.platform_job.practice.surgery.address.coordinates
-      this.appointed_at = res.data.job.platform_job.appointed_at
-      this.cancelled_at = res.data.job.platform_job.cancelled_at
-      this.cancelled_reason = res.data.job.platform_job.cancelled_reason
-      this.created_at = res.data.job.created_at
-      this.title = res.data.job.platform_job.title
-      this.job_number = res.data.job.job_number
-      this.rate = res.data.job.platform_job.rate
-      this.locum_detail_rate_type = res.data.job.platform_job.locum_detail_rate_type
-      this.total_hours = res.data.job.platform_job.total_hours
-      this.job_description = res.data.job.platform_job.job_description
-      this.extra_information = res.data.job.platform_job.extra_information
-      this.report_to = res.data.job.platform_job.report_to
-      this.phone_number = res.data.job.platform_job.practice.phone_number
-      this.email = res.data.job.platform_job.email
-      this.date_start = res.data.job.platform_job.date_start
-      this.date_end = res.data.job.platform_job.date_end
-      this.time_start = res.data.job.platform_job.time_start
-      this.time_end = res.data.job.platform_job.time_end
-      this.shift = res.data.job.platform_job.shift
-      this.auto_assign_at = res.data.job.platform_job.auto_assign_at
-      this.ir35 = res.data.job.platform_job.ir35
-      this.profession = res.data.job.platform_job.profession
-      this.qualifications = res.data.job.platform_job.qualifications
-      this.clinical_systems = res.data.job.platform_job.clinical_systems
-      this.spoken_languages = res.data.job.platform_job.spoken_languages
-      this.compliance_documents = res.data.job.platform_job.compliance_documents
-      this.mandatory_trainings = res.data.job.platform_job.mandatory_trainings
-      this.practice = res.data.job.platform_job.practice
-    })
+
+    this.jobCompliance = this.job.platform_job.compliance_documents.map(item => item.id)
+    this.practice.surgery.address.coordinates = this.job.platform_job.practice.surgery.address.coordinates
+    this.appointed_at = this.job.platform_job.appointed_at
+    this.cancelled_at = this.job.platform_job.cancelled_at
+    this.cancelled_reason = this.job.platform_job.cancelled_reason
+    this.created_at = this.job.created_at
+    this.title = this.job.platform_job.title
+    this.job_number = this.job.job_number
+    this.rate = this.job.platform_job.rate
+    this.locum_detail_rate_type = this.job.platform_job.locum_detail_rate_type
+    this.total_hours = this.job.platform_job.total_hours
+    this.job_description = this.job.platform_job.job_description
+    this.extra_information = this.job.platform_job.extra_information
+    this.report_to = this.job.platform_job.report_to
+    this.phone_number = this.job.platform_job.practice.phone_number
+    this.email = this.job.platform_job.email
+    this.date_start = this.job.platform_job.date_start
+    this.date_end = this.job.platform_job.date_end
+    this.time_start = this.job.platform_job.time_start
+    this.time_end = this.job.platform_job.time_end
+    this.shift = this.job.platform_job.shift
+    this.auto_assign_at = this.job.platform_job.auto_assign_at
+    this.ir35 = this.job.platform_job.ir35
+    this.profession = this.job.platform_job.profession
+    this.qualifications = this.job.platform_job.qualifications
+    this.clinical_systems = this.job.platform_job.clinical_systems
+    this.spoken_languages = this.job.platform_job.spoken_languages
+    this.compliance_documents = this.job.platform_job.compliance_documents
+    this.mandatory_trainings = this.job.platform_job.mandatory_trainings
+    this.practice = this.job.platform_job.practice
   },
   methods: {
     goTo() {
       document.body.style.overflow = 'auto'
-      this.$store.commit('TOGGLED_RIGHT', '')
-      this.$store.commit('SET_LOCUM_AVAILABLE_DETAIL_MODAL', false)
-      this.$store.commit('SET_LOCUM_AVAILABLE_DETAIL_SHIELD', false)
+      this.$emit('close')
       this.$router.push('/compliance')
     },
     apply() {
-      this.$axios.$post(`/api/v1/locum/jobs/${this.$store.state.jobs.job_id}/apply`).then(res => {
+      this.$axios.$post(`/api/v1/locum/jobs/${this.job.id}/apply`).then(res => {
         this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Saved' })
-        document.body.style.overflow = 'auto'
-        this.$store.commit('TOGGLED_RIGHT', '')
-        this.$store.commit('SET_LOCUM_AVAILABLE_DETAIL_MODAL', false)
-        this.$store.commit('SET_LOCUM_AVAILABLE_DETAIL_SHIELD', false)
-        this.$store.commit('jobs/setActiveTab', 'applied')
+        this.$emit('close')
+        this.$router.push('/jobs?job_status=applied')
       })
     }
   }

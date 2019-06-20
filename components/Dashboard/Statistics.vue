@@ -39,10 +39,10 @@ export default {
         this.$axios.$get(`/api/v1/locum/jobs/count?locum_status=Applied`),
         this.$axios.$get(`/api/v1/locum/jobs/count?locum_status=Completed`)
       ]).then(responses => {
-        this.statistics.push({ label: 'Available jobs', value: responses[0].data.count, route: '/jobs' }),
-          this.statistics.push({ label: 'Allocated jobs', value: responses[1].data.count, route: '/jobs' }),
-          this.statistics.push({ label: 'Applied jobs', value: responses[2].data.count, route: '/jobs' }),
-          this.statistics.push({ label: 'Completed jobs', value: responses[3].data.count, route: '/jobs' })
+        this.statistics.push({ label: 'Available jobs', value: responses[0].data.count, route: '/jobs?job_status=available' }),
+          this.statistics.push({ label: 'Allocated jobs', value: responses[1].data.count, route: '/jobs?job_status=allocated' }),
+          this.statistics.push({ label: 'Applied jobs', value: responses[2].data.count, route: '/jobs?job_status=applied' }),
+          this.statistics.push({ label: 'Completed jobs', value: responses[3].data.count, route: '/jobs?job_status=completed' })
       })
 
     }

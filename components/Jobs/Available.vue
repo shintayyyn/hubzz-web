@@ -1,48 +1,62 @@
 <template>
-  <div
-    class="mt-10 w-full text-center"
-    style="font-family: Nunito"
-    v-if="jobs.length === 0"
-  >There are no available jobs nearby and suited for you at this time</div>
-  <div v-else class="overflow-x-auto overflow-y-hidden">
-    <table class="table">
-      <thead>
-        <tr class="text-xs sm:text-sm text-left">
-          <th style="min-width:120px">Job number</th>
-          <th style="min-width:100px">Practice</th>
-          <th style="min-width:100px">Title</th>
-          <th style="min-width:50px">From</th>
-          <th style="min-width:50px">To</th>
-          <th style="min-width:50xp">Created</th>
-        </tr>
-      </thead>
-      <tbody>
-        <template v-for="(item, index) in jobs">
-          <tr
-            :key="`${item.id}-${index}`"
-            class="job-card rounded-lg shadow-md cursor-pointer text-xs lg:text-sm"
-            @click="show(item.id)"
-          >
-            <td style="min-width:120px">{{item.job_number}}</td>
-            <td style="min-width:100px">{{item.platform_job.practice.surgery.name}}</td>
-            <td style="min-width:100px">{{item.platform_job.title}}</td>
-            <td style="min-width:50px">{{item.platform_job.date_start}}</td>
-            <td style="min-width:50px">{{item.platform_job.date_end}}</td>
-            <td style="min-width:50px">{{item.platform_job.date_created}}</td>
+  <section class="available-section overflow-x-auto">
+    <div
+      class="mt-10 w-full text-center"
+      style="font-family: Nunito"
+      v-if="jobs.length === 0"
+    >There are no available jobs nearby and suited for you at this time</div>
+    <div v-else class="mt-4">
+      <table>
+        <thead>
+          <tr class="text-xs sm:text-sm text-left">
+            <th>Job number</th>
+            <th>Practice</th>
+            <th>Title</th>
+            <th>From</th>
+            <th>To</th>
+            <th>Created</th>
           </tr>
-          <tr>
-            <td></td>
-          </tr>
-        </template>
-      </tbody>
-    </table>
-  </div>
+        </thead>
+        <tbody>
+          <template v-for="(item, index) in jobs">
+            <tr
+              :key="item.id"
+              class="job-card shadow-md cursor-pointer text-xs sm:text-sm text-left"
+              @click="show(item.id)"
+            >
+              <td>{item.job_number}}</td>
+              <td>{item.platform_job.practice.surgery.name}}</td>
+              <td>{item.platform_job.title}}</td>
+              <td>{item.platform_job.date_start}}</td>
+              <td>{item.platform_job.date_end}}</td>
+              <td>{item.platform_job.date_created}}</td>
+            </tr>
+            <tr :key="`${item.id}-${index}`">
+              <td></td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+    </div>
+    <div class="available-shield" v-if="modal"></div>
+    <transition name="slide" mode="out-in">
+      <div class="available-modal shadow-lg" v-if="modal">
+        <LocumAvailableDetailModal @close="modal = false" :job="job"/>
+      </div>
+    </transition>
+  </section>
 </template>
 <script>
+import LocumAvailableDetailModal from '@/components/Jobs/LocumAvailableDetailModal'
 export default {
+  components: {
+    LocumAvailableDetailModal
+  },
   data() {
     return {
-      jobs: []
+      jobs: [],
+      job: null,
+      modal: false
     }
   },
   created() {
@@ -51,13 +65,21 @@ export default {
       this.jobs = res.data.jobs
     })
   },
+  watch: {
+    modal(value) {
+      if (value) {
+        document.body.style.overflow = 'hidden'
+      } else {
+        document.body.style.overflow = 'auto'
+      }
+    }
+  },
   methods: {
     show(id) {
-      this.$store.commit('jobs/SET_JOB_ID', id)
-      this.$store.commit('SET_LOCUM_AVAILABLE_DETAIL_MODAL', true)
-      this.$store.commit('SET_LOCUM_AVAILABLE_DETAIL_SHIELD', true)
-      this.$store.commit('TOGGLED_RIGHT', 'locum-available-detail-modal')
-      document.body.style.overflow = 'hidden'
+      this.$axios.$get(`/api/v1/locum/jobs/${id}`).then(res => {
+        this.job = res.data.job
+        this.modal = true
+      })
     }
   }
 }
@@ -71,13 +93,45 @@ export default {
   background-color: white;
   transition: background-color 0.5s ease-in-out;
 }
+.available-shield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #333;
+  opacity: 0.5;
+  z-index: 509;
+}
+.available-modal {
+  position: fixed;
+  top: 0;
+  right: 0;
+  margin-right: 0%;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  border-left: solid 2px #edf2f7;
+  transition: all 0.3s ease-in-out;
+  background-color: white;
+  z-index: 510;
+}
+@media screen and (min-width: 1200px) {
+  .edit-appointment-modal {
+    width: 80%;
+  }
+}
+a {
+  text-decoration: none;
+  color: black;
+}
 table {
-  min-width: 850px;
+  width: 920px;
 }
 table thead th {
   padding: 15px;
 }
 table tbody td {
-  padding: 10px;
+  padding: 15px;
 }
 </style>

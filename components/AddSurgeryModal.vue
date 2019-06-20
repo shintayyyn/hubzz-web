@@ -3,12 +3,12 @@
     <div class="add-surgery-confirmation-shield" v-if="modal"></div>
     <transition name="drop" mode="out-in">
       <div class="add-surgery-confirmation-modal flex justify-center" v-if="modal">
-        <AddSurgeryConfirmationModal @add="add" @close="modal = $event"/>
+        <AddSurgeryConfirmationModal @add="add" @close="modal = false"/>
       </div>
     </transition>
 
     <div class="p-8 max-w-xl">
-      <div @click="close" class="cursor-pointer">
+      <div @click="$emit('close')" class="cursor-pointer">
         <svgicon name="left-arrow" height="32" width="32"/>
       </div>
       <div class="flex justify-start font-bold text-sm sm:text-xl mt-8">Add Surgery</div>
@@ -86,10 +86,6 @@ export default {
     }
   },
   methods: {
-    close() {
-      this.$emit('close', false)
-      document.body.style.overflow = 'auto'
-    },
     search() {
       this.$axios.$get(`/api/v1/surgeries?search=${this.search_text}&has_parent=false&is_parent=false&limit=10`).then(res => {
         if (res.data.surgeries.length === 0) {
@@ -109,7 +105,7 @@ export default {
         this.$store.commit('ADD_LOCUM_PRIVATE_PRACTICE', res.data.private_practice)
         this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: `${res.message}` })
         this.modal = false
-        this.$emit('close', false)
+        this.$emit('close')
       })
     }
   }
