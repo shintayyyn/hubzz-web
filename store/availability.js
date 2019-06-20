@@ -10,7 +10,7 @@ export const state = () => ({
   selected_date: null,
   //
   unavailabilities: [],
-  appointment_jobs: []
+  appointment_jobs: [],
 })
 
 export const mutations = {
@@ -46,7 +46,7 @@ export const mutations = {
   },
   SET_APPOINTMENT_JOBS(state, payload) {
     state.appointment_jobs = payload
-  }
+  },
 }
 
 export const actions = {

@@ -24,12 +24,12 @@
               class="job-card shadow-md cursor-pointer text-xs sm:text-sm text-left"
               @click="show(item.id)"
             >
-              <td>{item.job_number}}</td>
-              <td>{item.platform_job.practice.surgery.name}}</td>
-              <td>{item.platform_job.title}}</td>
-              <td>{item.platform_job.date_start}}</td>
-              <td>{item.platform_job.date_end}}</td>
-              <td>{item.platform_job.date_created}}</td>
+              <td>{{item.job_number}}</td>
+              <td>{{item.platform_job.practice.surgery.name}}</td>
+              <td>{{item.platform_job.title}}</td>
+              <td>{{item.platform_job.date_start}}</td>
+              <td>{{item.platform_job.date_end}}</td>
+              <td>{{item.platform_job.date_created}}</td>
             </tr>
             <tr :key="`${item.id}-${index}`">
               <td></td>
@@ -61,7 +61,7 @@ export default {
   },
   created() {
     // get available jobs
-    this.$axios.$get(`/api/v1/locum/jobs?locum_status=Matched`).then(res => {
+    this.$axios.$get(`/api/v1/locum/jobs?locum_status=Available`).then(res => {
       this.jobs = res.data.jobs
     })
   },

@@ -25,6 +25,9 @@
           :key="`${index}-${item.id}`"
         />
       </template>
+      <template v-for="(item, index) in foundLocumJobs">
+        <LocumJobCard :job="item" :key="`${index}-${item.id}`"/>
+      </template>
       <template v-for="(item, index) in foundUnavailabilities">
         <UnavailabilitiesCard :job="item" :key="`${index}-${item.id}`"/>
       </template>
@@ -39,6 +42,7 @@ import UnfilledJobCard from '@/components/Calendar/Cards/UnfilledJobCard'
 import DeclinedJobCard from '@/components/Calendar/Cards/DeclinedJobCard'
 // locums
 import AppointmentJobCard from '@/components/Calendar/Cards/AppointmentJobCard'
+import LocumJobCard from '@/components/Calendar/Cards/LocumJobCard'
 import UnavailabilitiesCard from '@/components/Calendar/Cards/UnavailabilitiesCard'
 export default {
   components: {
@@ -49,7 +53,8 @@ export default {
     DeclinedJobCard,
     // practice
     AppointmentJobCard,
-    UnavailabilitiesCard
+    LocumJobCard,
+    UnavailabilitiesCard,
   },
   data() {
     return {
@@ -60,6 +65,7 @@ export default {
       foundDeclinedJobs: [],
       // locums
       foundAppointmentJobs: [],
+      foundLocumJobs: [],
       foundUnavailabilities: [],
       date_info: null
     }
@@ -107,6 +113,9 @@ export default {
     appointment_jobs() {
       return this.$store.state.calendar.appointment_jobs
     },
+    locum_jobs() {
+      return this.$store.state.calendar.locum_jobs
+    },
     unavailabilities() {
       return this.$store.state.calendar.unavailabilities
     }
@@ -148,6 +157,9 @@ export default {
     findPerMonthLocum(date) {
       if (this.appointment_jobs.length > 0) {
         this.foundAppointmentJobs = this.appointment_jobs.filter(job => this.getDateArray(job.private_job.date_start, job.private_job.date_end).includes(date))
+      }
+      if (this.locum_jobs.length > 0) {
+        this.foundLocumJobs = this.locum_jobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date))
       }
       if (this.unavailabilities.length > 0) {
         this.foundUnavailabilities = this.unavailabilities.filter(job => job.date === date)

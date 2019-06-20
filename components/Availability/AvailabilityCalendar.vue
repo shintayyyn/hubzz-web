@@ -236,7 +236,7 @@ export default {
     getAppointmentJobs() {
       this.$axios.$get(`/api/v1/locum/calendars/monthly/${this.selectedYear}/${this.selectedMonth + 1}`).then(res => {
         if (res.data.jobs && res.data.jobs.length > 0) {
-          this.$store.commit('availability/SET_APPOINTMENT_JOBS', res.data.jobs)
+          this.$store.commit('availability/SET_APPOINTMENT_JOBS', res.data.jobs.filter(job => job.status === 'Private'))
         }
       })
     },

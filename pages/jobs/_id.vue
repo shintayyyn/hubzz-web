@@ -2,19 +2,19 @@
   <div class="job-info shadow-lg">
     <LocumAppointmentModal
       :job="job"
-      v-if="(job.locum_status === 'Current' && job.type === 'Private') || (job.locum_status === 'Completed' && job.type === 'Private')"
+      v-if="(job.status === 'Current' && job.type === 'Private') || (job.status === 'Completed' && job.type === 'Private')"
     />
     <LocumAllocatedDetailModal
       :job="job"
-      v-if="job.locum_status === 'Current' && job.type === 'Platform'"
+      v-if="job.status === 'Current' && job.type === 'Platform'"
     />
-    <LocumAvailableDetailModal :job="job" v-if="job.locum_status === 'Available'"/>
-    <LocumAppliedDetailModal :job="job" v-if="job.locum_status === 'Applied'"/>
-    <LocumUnsuccessfullDetailModal :job="job" v-if="job.locum_status === 'Unsuccessful'"/>
-    <LocumDeclinedDetailModal :job="job" v-if="job.locum_status === 'Declined'"/>
+    <LocumAvailableDetailModal :job="job" v-if="job.status === 'Available'"/>
+    <LocumAppliedDetailModal :job="job" v-if="job.status === 'Applied'"/>
+    <LocumUnsuccessfullDetailModal :job="job" v-if="job.status === 'Unsuccessful'"/>
+    <LocumDeclinedDetailModal :job="job" v-if="job.status === 'Declined'"/>
     <LocumCompletedDetailModal
       :job="job"
-      v-if="job.locum_status === 'Completed' && job.type === 'Platform'"
+      v-if="job.status === 'Completed' && job.type === 'Platform'"
     />
     <!-- <div class="w-full h-full flex justify-center items-center" v-if="loading">loading..</div>
     <div v-else>
