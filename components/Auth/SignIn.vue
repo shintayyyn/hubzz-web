@@ -42,8 +42,8 @@ export default {
   data() {
     return {
       form: {
-        email: '',
-        password: ''
+        email: 'locum@nhs.net',
+        password: 'qweqwe'
       },
       formError: []
     }
@@ -96,6 +96,16 @@ export default {
               this.$auth.$storage.setUniversal('_token.local', 'Bearer ' + token)
               await this.$auth.fetchUser()
               this.$router.push('/dashboard')
+
+              if (this.$socket.connected) {
+                await this.$axios.post('/api/v1/socket/login', {
+                  socket_id: this.$socket.id
+                })
+
+                console.log('Socket Logged In')
+              }
+
+              await this.$store.dispatch('one-signal/setOneSignalUser')
             })
             .catch(err => {
               err.response.data.error_messages.forEach(error => {

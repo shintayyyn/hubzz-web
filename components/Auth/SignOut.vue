@@ -27,7 +27,11 @@
 export default {
   methods: {
     logout() {
-      this.$auth.logout().then(() => {
+      this.$axios.post('/api/v1/logout').then(() => {
+        console.log('Socket Logged Out')
+        console.log('One Signal Logged Out')
+        return this.$auth.logout()
+      }).then(() => {
         this.$emit('modal', false)
         this.$store.commit('TOGGLE_SIDEBAR', false)
         this.$auth.$storage.setUniversal('_token.local', '')
