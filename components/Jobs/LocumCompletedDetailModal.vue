@@ -1,6 +1,6 @@
 <template>
   <div class="p-8 max-w-2xl">
-    <div @click="$emit('close')" class="cursor-pointer">
+    <div @click="close" class="cursor-pointer">
       <svgicon name="left-arrow" height="32" width="32"/>
     </div>
     <div class="flex flex-row justify-start mt-8">
@@ -240,5 +240,10 @@ export default {
     // this.practice = this.job.platform_job.practice
 
   },
+  methods: {
+    close() {
+      this.$router.push('/jobs?job_status=completed')
+    }
+  }
 }
 </script>

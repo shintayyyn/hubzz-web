@@ -15,7 +15,7 @@ import JobsTabs from '@/components/Jobs/JobsTabs'
 import Allocated from '@/components/Jobs/Allocated'
 import Available from '@/components/Jobs/Available'
 import Applied from '@/components/Jobs/Applied'
-import Rejected from '@/components/Jobs/Rejected'
+import Unsuccessfull from '@/components/Jobs/Unsuccessfull'
 import Declined from '@/components/Jobs/Declined'
 import Completed from '@/components/Jobs/Completed'
 export default {
@@ -24,7 +24,7 @@ export default {
     Allocated,
     Available,
     Applied,
-    Rejected,
+    Unsuccessfull,
     Declined,
     Completed
   },
@@ -39,8 +39,8 @@ export default {
       if (this.$route.query.job_status === 'applied') {
         return 'Applied'
       }
-      if (this.$route.query.job_status === 'rejected') {
-        return 'Rejected'
+      if (this.$route.query.job_status === 'unsuccessfull') {
+        return 'Unsuccessfull'
       }
       if (this.$route.query.job_status === 'declined') {
         return 'Declined'
@@ -48,7 +48,7 @@ export default {
       if (this.$route.query.job_status === 'completed') {
         return 'Completed'
       }
-    }
+    },
   },
   created() {
     const query = {

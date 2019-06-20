@@ -4,8 +4,10 @@ import moment from 'moment'
 Vue.filter('localDate', function (date, time) {
   if (date && time) {
     return `${moment(date).format('L')} ${moment(date).format('HH:mm:ss')}`
-  } else {
+  } else if (date) {
     return `${moment(date).format('L')}`
+  } else {
+    return
   }
 })
 

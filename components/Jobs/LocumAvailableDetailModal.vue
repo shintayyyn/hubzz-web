@@ -1,6 +1,6 @@
 <template>
   <div class="p-8 max-w-2xl">
-    <div @click="$emit('close')" class="cursor-pointer">
+    <div @click="close" class="cursor-pointer">
       <svgicon name="left-arrow" height="32" width="32"/>
     </div>
     <div class="flex flex-row justify-start mt-8">
@@ -278,15 +278,17 @@ export default {
   methods: {
     goTo() {
       document.body.style.overflow = 'auto'
-      this.$emit('close')
       this.$router.push('/compliance')
     },
     apply() {
       this.$axios.$post(`/api/v1/locum/jobs/${this.job.id}/apply`).then(res => {
         this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Saved' })
-        this.$emit('close')
+        // or pass the id
         this.$router.push('/jobs?job_status=applied')
       })
+    },
+    close() {
+      this.$router.push('/jobs?job_status=available')
     }
   }
 }

@@ -1,7 +1,7 @@
 <template>
   <section>
     <div class="p-8 max-w-xl">
-      <div @click="$emit('close')" class="cursor-pointer">
+      <div @click="close" class="cursor-pointer">
         <svgicon name="left-arrow" height="32" width="32"/>
       </div>
       <div class="flex justify-start font-bold text-sm sm:text-xl mt-8">Appointment</div>
@@ -184,16 +184,20 @@ export default {
         })
       })
     },
+    close() {
+      this.$router.push('/jobs?job_status=allocated')
+      // this.$store.commit('jobs/TOGGLE_SHIELD', false)
+    },
     save() {
       this.$axios.$post(`/api/v1/locum/jobs`, this.form).then(res => {
-        this.$emit('close')
         this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: `${res.message}` })
+        this.close()
       })
     },
     edit() {
       this.$axios.$put(`/api/v1/locum/jobs/${this.job.id}`, this.form).then(res => {
-        this.$emit('close')
         this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: `${res.message}` })
+        this.close()
       })
     }
   }

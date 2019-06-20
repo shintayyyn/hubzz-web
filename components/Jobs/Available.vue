@@ -38,12 +38,12 @@
         </tbody>
       </table>
     </div>
-    <div class="available-shield" v-if="modal"></div>
+    <!-- <div class="available-shield" v-if="modal"></div>
     <transition name="slide" mode="out-in">
       <div class="available-modal shadow-lg" v-if="modal">
         <LocumAvailableDetailModal @close="modal = false" :job="job"/>
       </div>
-    </transition>
+    </transition>-->
   </section>
 </template>
 <script>
@@ -76,10 +76,11 @@ export default {
   },
   methods: {
     show(id) {
-      this.$axios.$get(`/api/v1/locum/jobs/${id}`).then(res => {
-        this.job = res.data.job
-        this.modal = true
-      })
+      this.$router.push(`/jobs/${id}?job_status=available`)
+      // this.$axios.$get(`/api/v1/locum/jobs/${id}`).then(res => {
+      //   this.job = res.data.job
+      //   this.modal = true
+      // })
     }
   }
 }

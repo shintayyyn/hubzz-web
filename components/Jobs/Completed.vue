@@ -39,13 +39,13 @@
         </tbody>
       </table>
     </div>
-    <div class="completed-shield" v-if="modal"></div>
+    <!-- <div class="completed-shield" v-if="modal"></div>
     <transition name="slide" mode="out-in">
       <div class="completed-modal shadow-lg" v-if="modal">
         <LocumAppointmentModal @close="modal = false" :job="job" v-if="type === 'Private'"/>
         <LocumCompletedDetailModal @close="modal = false" :job="job" v-else/>
       </div>
-    </transition>
+    </transition>-->
   </section>
 </template>
 <script>
@@ -81,11 +81,12 @@ export default {
   },
   methods: {
     show(id, type) {
-      this.type = type
-      this.$axios.$get(`/api/v1/locum/jobs/${id}`).then(res => {
-        this.job = res.data.job
-        this.modal = true
-      })
+      this.$router.push(`/jobs/${id}?job_status=completed`)
+      // this.type = type
+      // this.$axios.$get(`/api/v1/locum/jobs/${id}`).then(res => {
+      //   this.job = res.data.job
+      //   this.modal = true
+      // })
     }
   }
 }

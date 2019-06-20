@@ -40,13 +40,13 @@
         </tbody>
       </table>
     </div>
-    <div class="edit-appointment-shield" v-if="modal"></div>
+    <!-- <div class="edit-appointment-shield" v-if="modal"></div>
     <transition name="slide" mode="out-in">
       <div class="edit-appointment-modal shadow-lg" v-if="modal">
         <LocumAppointmentModal @close="modal = false" :job="job" v-if="type === 'Private'"/>
         <LocumAllocatedDetailModal @close="modal = false" :job="job" v-else/>
       </div>
-    </transition>
+    </transition>-->
   </section>
 </template>
 <script>
@@ -80,12 +80,13 @@ export default {
     }
   },
   methods: {
-    show(id, type) {
-      this.type = type
-      this.$axios.$get(`/api/v1/locum/jobs/${id}`).then(res => {
-        this.job = res.data.job
-        this.modal = true
-      })
+    show(id) {
+      this.$router.push(`/jobs/${id}?job_status=allocated`)
+      // this.type = type
+      // this.$axios.$get(`/api/v1/locum/jobs/${id}`).then(res => {
+      //   this.job = res.data.job
+      //   this.modal = true
+      // })
     }
   }
 }

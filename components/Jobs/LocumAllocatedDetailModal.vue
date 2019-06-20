@@ -1,6 +1,6 @@
 <template>
   <div class="p-8 max-w-2xl">
-    <div @click="$emit('close')" class="cursor-pointer">
+    <div @click="close" class="cursor-pointer">
       <svgicon name="left-arrow" height="32" width="32"/>
     </div>
     <div class="flex flex-row justify-start mt-8">
@@ -259,10 +259,13 @@ export default {
       if (!this.formError.length) {
         this.$axios.$post(`/api/v1/locum/jobs/${this.$store.state.jobs.job_id}/decline`, this.form).then(res => {
           this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Declined' })
-          this.$emit('close')
+          // this.close()
           this.$router.push('/jobs?job_status=declined')
         })
       }
+    },
+    close() {
+      this.$router.push('/jobs?job_status=allocated')
     }
   }
 }

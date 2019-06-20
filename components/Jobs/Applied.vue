@@ -39,12 +39,12 @@
         </tbody>
       </table>
     </div>
-    <div class="applied-shield" v-if="modal"></div>
+    <!-- <div class="applied-shield" v-if="modal"></div>
     <transition name="slide" mode="out-in">
       <div class="applied-modal shadow-lg" v-if="modal">
         <LocumAppliedDetailModal @close="modal = false" :job="job"/>
       </div>
-    </transition>
+    </transition>-->
   </section>
 </template>
 <script>
@@ -77,10 +77,11 @@ export default {
   },
   methods: {
     show(id) {
-      this.$axios.$get(`/api/v1/locum/jobs/${id}`).then(res => {
-        this.job = res.data.job
-        this.modal = true
-      })
+      this.$router.push(`/jobs/${id}?job_status=applied`)
+      // this.$axios.$get(`/api/v1/locum/jobs/${id}`).then(res => {
+      //   this.job = res.data.job
+      //   this.modal = true
+      // })
     }
   }
 }

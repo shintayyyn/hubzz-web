@@ -1,5 +1,5 @@
 <template>
-  <section class="rejected-section overflow-x-auto">
+  <section class="unsuccessful-section overflow-x-auto">
     <div
       class="mt-10 w-full text-center"
       style="font-family: Nunito"
@@ -38,19 +38,19 @@
         </tbody>
       </table>
     </div>
-    <div class="rejected-shield" v-if="modal"></div>
+    <!-- <div class="unsuccessful-shield" v-if="modal"></div>
     <transition name="slide" mode="out-in">
-      <div class="rejected-modal shadow-lg" v-if="modal">
-        <LocumRejectedDetailModal @close="modal = false" :job="job"/>
+      <div class="unsuccessful-modal shadow-lg" v-if="modal">
+        <LocumUnsuccessfullDetailModal @close="modal = false" :job="job"/>
       </div>
-    </transition>
+    </transition>-->
   </section>
 </template>
 <script>
-import LocumRejectedDetailModal from '@/components/Jobs/LocumRejectedDetailModal'
+import LocumUnsuccessfullDetailModal from '@/components/Jobs/LocumUnsuccessfullDetailModal'
 export default {
   components: {
-    LocumRejectedDetailModal
+    LocumUnsuccessfullDetailModal
   },
   data() {
     return {
@@ -76,10 +76,11 @@ export default {
   },
   methods: {
     show(id) {
-      this.$axios.$get(`/api/v1/locum/jobs/${id}`).then(res => {
-        this.job = res.data.job
-        this.modal = true
-      })
+      this.$router.push(`/jobs/${id}?job_status=unsuccessful`)
+      // this.$axios.$get(`/api/v1/locum/jobs/${id}`).then(res => {
+      //   this.job = res.data.job
+      //   this.modal = true
+      // })
     }
   }
 }
@@ -93,7 +94,7 @@ export default {
   background-color: white;
   transition: background-color 0.5s ease-in-out;
 }
-.rejected-shield {
+.unsuccessful-shield {
   position: fixed;
   top: 0;
   left: 0;
@@ -103,7 +104,7 @@ export default {
   opacity: 0.5;
   z-index: 509;
 }
-.rejected-modal {
+.unsuccessful-modal {
   position: fixed;
   top: 0;
   right: 0;
@@ -117,7 +118,7 @@ export default {
   z-index: 510;
 }
 @media screen and (min-width: 1200px) {
-  .rejected-modal {
+  .unsuccessful-modal {
     width: 80%;
   }
 }

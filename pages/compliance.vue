@@ -1,27 +1,29 @@
 <template>
-  <section class="compliance-section overflow-x-auto">
-    <div class="mt-10 px-1">
-      <div class="border-solid rounded-lg shadow-md p-5 mb-5">
-        <div class="flex flex-row flex-wrap justify-start text-xs sm:text-sm">
-          <div class="w-full p-1 text-left sm:w-1/3">Your GMC / NMC Number</div>
-          <div class="w-full p-1 text-left sm:w-1/3 sm:text-center">{{gmc_or_nmc_number.number}}</div>
-          <div class="max-w-xs p-1 text-left sm:text-right">
-            <div
-              class="text-xs sm:text-sm text-center bg-orange text-white font-bold rounded-full px-2 py-1"
-              :class="status(gmc_or_nmc_number.status)"
-            >{{gmc_or_nmc_number.status}}</div>
+  <section class="compliance-section">
+    <div class="overflow-x-auto">
+      <div class="number-status mt-10">
+        <div class="border-solid rounded-lg shadow-md p-5 mb-5">
+          <div class="flex flex-row flex-nowrap justify-start text-xs sm:text-sm">
+            <div class="w-1/3 p-1 text-left">Your GMC / NMC Number</div>
+            <div class="w-1/3 p-1 text-left">{{gmc_or_nmc_number.number}}</div>
+            <div class="max-w-xs p-1">
+              <div
+                class="text-xs sm:text-sm text-center bg-orange text-white font-bold rounded-full px-2 py-1"
+                :class="status(gmc_or_nmc_number.status)"
+              >{{gmc_or_nmc_number.status}}</div>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="border-solid rounded-lg shadow-md p-5 mb-5">
-        <div class="flex flex-row flex-wrap justify-start text-xs sm:text-sm">
-          <div class="w-full p-1 text-left sm:w-1/3">Your MPL / NPL Number</div>
-          <div class="w-full p-1 text-left sm:w-1/3 sm:text-center">{{mpl_or_npl_number.number}}</div>
-          <div class="max-w-xs p-1 text-left sm:text-right">
-            <div
-              class="text-xs sm:text-sm text-center bg-orange text-white font-bold rounded-full px-2 py-1"
-              :class="status(mpl_or_npl_number.status)"
-            >{{mpl_or_npl_number.status}}</div>
+        <div class="border-solid rounded-lg shadow-md p-5 mb-5">
+          <div class="flex flex-row flex-nowrap justify-start text-xs sm:text-sm">
+            <div class="w-1/3 p-1 text-left">Your MPL / NPL Number</div>
+            <div class="w-1/3 p-1 text-left">{{mpl_or_npl_number.number}}</div>
+            <div class="max-w-xs p-1">
+              <div
+                class="text-xs sm:text-sm text-center bg-orange text-white font-bold rounded-full px-2 py-1"
+                :class="status(mpl_or_npl_number.status)"
+              >{{mpl_or_npl_number.status}}</div>
+            </div>
           </div>
         </div>
       </div>
@@ -30,7 +32,8 @@
     <div class="mt-10">
       <div class="font-bold text-xs sm:text-base">Documents you need to be approved by hubzz HQ</div>
     </div>
-    <div class="mt-4">
+
+    <div class="mt-4 overflow-x-auto">
       <table>
         <thead>
           <tr class="text-xs sm:text-sm text-left">
@@ -55,8 +58,9 @@
                   <svgicon name="cloud-download" height="24" width="24"/>
                   <div class="leading-loose mx-2">
                     <a
-                      target="_blank"
                       :href="item.info.file.url"
+                      :download="item.info.file.filename"
+                      target="_blank"
                     >{{item.info.file.filename | StringMaxLength(15)}}</a>
                   </div>
                 </div>
@@ -68,7 +72,7 @@
               <td v-else></td>
               <td class="max-w-xs" v-if="item.info">
                 <div
-                  class="text-xs xl:text-base text-center text-white font-bold rounded-full p-2"
+                  class="text-xs sm:text-sm text-center text-white font-bold rounded-full px-2 py-1"
                   :class="status(item.info.status)"
                 >{{item.info.status}}</div>
               </td>
@@ -115,7 +119,7 @@
       <div class="font-bold text-xs sm:text-base">Other documentation for reference to Practices</div>
     </div>
 
-    <div class="mt-4">
+    <div class="mt-4 overflow-x-auto">
       <table>
         <thead>
           <tr class="text-xs sm:text-sm text-left">
@@ -195,8 +199,6 @@ export default {
       gmc_or_nmc_number: {},
       mpl_or_npl_number: {},
       profession: {},
-      // mandatory: [],
-      // optional: []
     }
   },
   computed: {
@@ -234,6 +236,7 @@ export default {
           })
         })
       }
+      console.log(this.profession.mandatory_compliance_documents)
       this.$store.commit('compliance/SET_MANDATORY', this.profession.mandatory_compliance_documents)
       this.$store.commit('compliance/SET_OPTIONAL', this.profession.optional_compliance_documents)
       // this.compliance_documents = [...this.profession.mandatory_compliance_documents, ...this.profession.optional_compliance_documents]
@@ -298,6 +301,9 @@ export default {
 }
 </script>
 <style scoped>
+.number-status {
+  width: 920px;
+}
 a {
   text-decoration: none;
   color: black;

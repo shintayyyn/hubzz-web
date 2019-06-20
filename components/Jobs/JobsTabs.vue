@@ -20,10 +20,10 @@
     >Applied</div>
     <div
       style="font-family:Nunito"
-      @click.prevent="goTo('rejected')"
+      @click.prevent="goTo('unsuccessfull')"
       class="mr-5 p-3 text-sm font-bold cursor-pointer"
-      :class="$route.query.job_status === 'rejected' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
-    >Rejected</div>
+      :class="$route.query.job_status === 'unsuccessfull' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
+    >Unsuccessfull</div>
     <div
       style="font-family:Nunito"
       @click.prevent="goTo('declined')"

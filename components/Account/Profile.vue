@@ -1,6 +1,6 @@
 <template>
-  <div class="flex flex-row flex-wrap justify-start max-w-lg">
-    <div class="w-full p-0 sm:w-2/3 sm:pr-4">
+  <div class="flex flex-row flex-wrap justify-start">
+    <div class="w-full p-0 lg:w-2/3 lg:pr-4">
       <div class="rounded-lg shadow-lg w-full p-8">
         <AppInput
           v-model="form.gmc_or_nmc_number.number"
@@ -198,12 +198,13 @@
         <AppButton :label="'Save changes'" @click="save"/>
       </div>
     </div>
-    <div class="w-full p-0 mt-4 sm:mt-0 sm:w-1/3 sm:pr-4">
-      <div class="rounded-lg shadow-lg">qwe</div>
+    <div class="w-auto p-0 mt-4 lg:mt-0 lg:w-1/3 lg:pr-4">
+      <Avatar :avatar="avatar"/>
     </div>
   </div>
 </template>
 <script>
+import Avatar from '@/components/Account/Avatar'
 import AppInput from '@/components/Base/AppInput'
 import AppTextarea from '@/components/Base/AppTextarea'
 import AppSelect from '@/components/Base/AppSelect'
@@ -212,6 +213,7 @@ import AppRate from '@/components/Base/AppRate'
 import AppButton from '@/components/Base/AppButton'
 export default {
   components: {
+    Avatar,
     AppInput,
     AppTextarea,
     AppSelect,
@@ -260,6 +262,7 @@ export default {
         referee_2_phone_number: '',
         referee_2_email: '',
       },
+      avatar: null,
       formError: []
     }
   },
@@ -285,7 +288,8 @@ export default {
   },
   created() {
     this.$axios.$get('/api/v1/me').then(res => {
-      console.log(res)
+      console.log(res.data.user.avatar)
+      this.avatar = res.data.user.avatar
       this.form.gmc_or_nmc_number = res.data.user.locum_detail.gmc_or_nmc_number,
         this.form.mpl_or_npl_number = res.data.user.locum_detail.mpl_or_npl_number,
         this.form.nhs_smart_card_id_number = res.data.user.locum_detail.nhs_smart_card_id_number,
@@ -329,24 +333,6 @@ export default {
   methods: {
     uncheckOther(value) {
       this.form.practice_type_id = this.form.practice_type_id.filter(id => id != value)
-    },
-    onFileInput(e) {
-      let file
-      if (e.target.files[0].type.split('/')[0] !== 'image') {
-        return
-      }
-      file = e.target.files[0]
-      // send file to API
-      this.$store.commit('account/SET_AVATAR_FILE', file)
-      // get base 64
-      this.getBase64(file, (imageUrl) => {
-        this.imageUrl = imageUrl
-      })
-    },
-    getBase64(img, callback) {
-      const reader = new FileReader()
-      reader.addEventListener('load', () => callback(reader.result))
-      reader.readAsDataURL(img)
     },
     save() {
       this.form.profession_id = this.form.profession_id.toString()
