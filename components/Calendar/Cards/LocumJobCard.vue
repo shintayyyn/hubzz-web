@@ -25,10 +25,7 @@ export default {
   methods: {
     select() {
       this.$axios.$get(`/api/v1/locum/jobs/${this.job.id}`).then(res => {
-        this.$emit('update', res.data.job)
-        // this.$store.commit('jobs/SET_APPOINTMENT_JOB', res.data.job)
-        // this.$store.commit('TOGGLE_CREATE_APPOINTMENT_MODAL', true)
-        // document.body.style.overflow = 'hidden'
+        // this.$emit('viewLocumJob', res.data.job)
       })
     }
   }

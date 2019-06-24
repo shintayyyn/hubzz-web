@@ -163,7 +163,7 @@
                     :name="`${item.id}_file`"
                     :id="`${item.id}_file`"
                     class="inputfile hidden"
-                    @input="onFileInput($event, item.id)"
+                    @input="onFileInput($event, item.id, index)"
                   >
                   <svgicon name="cloud-upload" height="24" width="24"/>
                   <label :for="`${item.id}_file`" class="leading-loose mx-2 cursor-pointer">Upload</label>
@@ -190,6 +190,88 @@
         </tbody>
       </table>
     </div>
+
+    <div class="mt-10">
+      <div class="font-bold text-xs sm:text-base">Mandatory Training</div>
+    </div>
+
+    <div class="mt-4 overflow-x-auto">
+      <table>
+        <thead>
+          <tr class="text-xs sm:text-sm text-left">
+            <th>Type</th>
+            <th>File</th>
+            <th>Date uploaded</th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <template v-for="(item, index) in mandatory_trainings">
+            <tr
+              :key="item.id"
+              class="rounded-lg shadow-md hover:bg-grey-light cursor-pointer text-xs sm:text-sm text-left"
+            >
+              <td>{{item.name}}</td>
+              <td class="hover:underline" v-if="item.info">
+                <div class="flex flex-row flex-nowrap">
+                  <svgicon name="cloud-download" height="24" width="24"/>
+                  <div class="leading-loose mx-2">
+                    <a
+                      target="_blank"
+                      :href="item.info.file.url"
+                    >{{item.info.file.filename | StringMaxLength(15)}}</a>
+                  </div>
+                </div>
+              </td>
+              <td v-else></td>
+              <td v-if="item.info">{{item.info.file.created_at | localDate}}</td>
+              <td v-else></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td class="hover:underline" v-if="!item.info">
+                <div class="flex flex-row flex-nowrap">
+                  <input
+                    type="file"
+                    :name="`${item.id}_mandatory_file`"
+                    :id="`${item.id}_mandatory_file`"
+                    class="inputfile hidden"
+                    @input="onMandatoryFileInput($event, item.id, index)"
+                  >
+                  <svgicon name="cloud-upload" height="24" width="24"/>
+                  <label
+                    :for="`${item.id}_mandatory_file`"
+                    class="leading-loose mx-2 cursor-pointer"
+                  >Upload</label>
+                </div>
+              </td>
+              <td class="hover:underline" v-else>
+                <div class="flex flex-row flex-nowrap">
+                  <input
+                    type="file"
+                    :name="`${item.id}_mandatory_file`"
+                    :id="`${item.id}_mandatory_file`"
+                    class="inputfile hidden"
+                    @input="onMandatoryFileUpdate($event, item.info.id, index)"
+                  >
+                  <svgicon name="cloud-upload" height="24" width="24"/>
+                  <label
+                    :for="`${item.id}_mandatory_file`"
+                    class="leading-loose mx-2 cursor-pointer"
+                  >Update</label>
+                </div>
+              </td>
+            </tr>
+            <tr :key="`${item.id}-tr`">
+              <td></td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+    </div>
   </section>
 </template>
 <script>
@@ -199,15 +281,10 @@ export default {
       gmc_or_nmc_number: {},
       mpl_or_npl_number: {},
       profession: {},
+      mandatory: [],
+      optional: [],
+      mandatory_trainings: []
     }
-  },
-  computed: {
-    mandatory() {
-      return this.$store.state.compliance.mandatory
-    },
-    optional() {
-      return this.$store.state.compliance.optional
-    },
   },
   created() {
     // get gmc, mpl status
@@ -218,8 +295,26 @@ export default {
       this.profession = res.data.profession_categories.find(profession => profession.id === this.$auth.user.locum_detail.profession.profession_category.id)
       this.setComplianceDocuments()
     })
+    // get all mandatory training list
+    this.$axios.$get(`/api/v1/mandatory-trainings`).then(res => {
+      this.mandatory_trainings = res.data.mandatory_trainings
+      this.setMandatoryTrainings()
+    })
   },
   methods: {
+    // set mandatory training
+    setMandatoryTrainings() {
+      if (this.$auth.user.locum_detail.mandatory_trainings.length > 0) {
+        this.$auth.user.locum_detail.mandatory_trainings.forEach(userMandatoryTraining => {
+          this.mandatory_trainings.forEach(mandatoryTraining => {
+            if (userMandatoryTraining.mandatory_training.id === mandatoryTraining.id) {
+              mandatoryTraining.info = userMandatoryTraining
+            }
+          })
+        })
+      }
+      this.mandatory_trainings = this.mandatory_trainings.sort((a, b) => a.id - b.id)
+    },
     // set mandatory and optional
     setComplianceDocuments() {
       if (this.$auth.user.locum_detail.compliance_documents.length > 0) {
@@ -236,10 +331,8 @@ export default {
           })
         })
       }
-      console.log(this.profession.mandatory_compliance_documents)
-      this.$store.commit('compliance/SET_MANDATORY', this.profession.mandatory_compliance_documents)
-      this.$store.commit('compliance/SET_OPTIONAL', this.profession.optional_compliance_documents)
-      // this.compliance_documents = [...this.profession.mandatory_compliance_documents, ...this.profession.optional_compliance_documents]
+      this.mandatory = this.profession.mandatory_compliance_documents.sort((a, b) => a.id - b.id)
+      this.optional = this.profession.optional_compliance_documents.sort((a, b) => a.id - b.id)
     },
     status(status) {
       switch (status) {
@@ -256,7 +349,7 @@ export default {
           return
       }
     },
-    onFileInput(e, id) {
+    onFileInput(e, id, index) {
       if (!e.target.files.length) {
         return
       }
@@ -271,11 +364,28 @@ export default {
       formData.append('compliance_document_id', id)
       // post request to API / send file 
       this.$axios.$post(`/api/v1/locum/locum-detail-compliance-documents`, formData).then(res => {
-        let uploadFile = this.compliance_documents.find(document => document.id === res.data.locum_detail_compliance_document.compliance_document.id)
-        uploadFile.info = res.data.locum_detail_compliance_document
-        console.log(uploadFile)
-        this.setComplianceDocuments()
-        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Document uploaded!' })
+        let inMandatory = this.mandatory.findIndex(document => document.id === res.data.locum_detail_compliance_document.compliance_document.id)
+        if (inMandatory > 0) {
+          this.mandatory.splice(index, 1)
+          this.mandatory.push({
+            id: res.data.locum_detail_compliance_document.compliance_document.id,
+            name: res.data.locum_detail_compliance_document.compliance_document.name,
+            info: res.data.locum_detail_compliance_document
+          })
+          this.mandatory = this.mandatory.sort((a, b) => a.id - b.id)
+          this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Document uploaded!' })
+        } else {
+          this.optional.splice(index, 1)
+          this.optional.push({
+            id: res.data.locum_detail_compliance_document.compliance_document.id,
+            name: res.data.locum_detail_compliance_document.compliance_document.name,
+            info: res.data.locum_detail_compliance_document
+          })
+          this.optional = this.optional.sort((a, b) => a.id - b.id)
+          this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Document uploaded!' })
+        }
+      }).catch(err => {
+        console.log(err)
       })
     },
     onFileUpdate(e, id, index) {
@@ -290,13 +400,86 @@ export default {
       }
       const formData = new FormData()
       formData.append('file', file)
+      // post request to API / send file 
       this.$axios.$put(`/api/v1/locum/locum-detail-compliance-documents/${id}`, formData).then(res => {
-        this.$store.commit('compliance/UPDATE_MANDATORY', res.data.locum_detail_compliance_document)
-        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Document updated!' })
+
+        let inMandatory = this.mandatory.findIndex(document => document.id === res.data.locum_detail_compliance_document.compliance_document.id)
+        if (inMandatory > 0) {
+          this.mandatory.splice(index, 1)
+          this.mandatory.push({
+            id: res.data.locum_detail_compliance_document.compliance_document.id,
+            name: res.data.locum_detail_compliance_document.compliance_document.name,
+            info: res.data.locum_detail_compliance_document
+          })
+          this.mandatory = this.mandatory.sort((a, b) => a.id - b.id)
+          this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Document uploaded!' })
+        } else {
+          this.optional.splice(index, 1)
+          this.optional.push({
+            id: res.data.locum_detail_compliance_document.compliance_document.id,
+            name: res.data.locum_detail_compliance_document.compliance_document.name,
+            info: res.data.locum_detail_compliance_document
+          })
+          this.optional = this.optional.sort((a, b) => a.id - b.id)
+          this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Document uploaded!' })
+        }
       }).catch(err => {
         console.log(err)
       })
     },
+    onMandatoryFileInput(e, id, index) {
+      if (!e.target.files.length) {
+        return
+      }
+      let types = ['pdf', 'jpeg', 'msword', 'tif']
+      let file = e.target.files[0]
+      let fileType = file.type.split('/')[1]
+      if (!types.includes(fileType)) {
+        return
+      }
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('mandatory_training_id', id)
+      // post request to API / send file 
+      this.$axios.$post(`/api/v1/locum/locum-detail-mandatory-trainings`, formData).then(res => {
+        this.mandatory_trainings.splice(index, 1)
+        this.mandatory_trainings.push({
+          id: res.data.locum_detail_mandatory_training.mandatory_training.id,
+          name: res.data.locum_detail_mandatory_training.mandatory_training.name,
+          info: res.data.locum_detail_mandatory_training
+        })
+        this.mandatory_trainings = this.mandatory_trainings.sort((a, b) => a.id - b.id)
+        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Document uploaded!' })
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    onMandatoryFileUpdate(e, id, index) {
+      if (!e.target.files.length) {
+        return
+      }
+      let types = ['pdf', 'jpeg', 'msword', 'tif']
+      let file = e.target.files[0]
+      let fileType = file.type.split('/')[1]
+      if (!types.includes(fileType)) {
+        return
+      }
+      const formData = new FormData()
+      formData.append('file', file)
+      // post request to API / send file 
+      this.$axios.$put(`/api/v1/locum/locum-detail-mandatory-trainings/${id}`, formData).then(res => {
+        this.mandatory_trainings.splice(index, 1)
+        this.mandatory_trainings.push({
+          id: res.data.locum_detail_mandatory_training.mandatory_training.id,
+          name: res.data.locum_detail_mandatory_training.mandatory_training.name,
+          info: res.data.locum_detail_mandatory_training
+        })
+        this.mandatory_trainings = this.mandatory_trainings.sort((a, b) => a.id - b.id)
+        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Document uploaded!' })
+      }).catch(err => {
+        console.log(err)
+      })
+    }
   }
 }
 </script>

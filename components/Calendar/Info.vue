@@ -20,7 +20,7 @@
       <!-- locums -->
       <template v-for="(item, index) in foundAppointmentJobs">
         <AppointmentJobCard
-          @update="$emit('update', $event)"
+          @viewAppointmentJob="$emit('viewAppointmentJob', $event)"
           :job="item"
           :key="`${index}-${item.id}`"
         />

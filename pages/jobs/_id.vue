@@ -2,7 +2,7 @@
   <div class="job-info shadow-lg">
     <LocumAppointmentModal
       :job="job"
-      v-if="(job.status === 'Current' && job.type === 'Private') || (job.status === 'Completed' && job.type === 'Private')"
+      v-if="(job.locum_status === 'Current' && job.type === 'Private') || (job.locum_status === 'Completed' && job.type === 'Private')"
     />
     <LocumAllocatedDetailModal
       :job="job"
@@ -16,10 +16,6 @@
       :job="job"
       v-if="job.status === 'Completed' && job.type === 'Platform'"
     />
-    <!-- <div class="w-full h-full flex justify-center items-center" v-if="loading">loading..</div>
-    <div v-else>
-      <LocumDeclinedDetailModal :job="job" v-if="job.status === 'Declined'"/>
-    </div>-->
   </div>
 </template>
 <script>
@@ -49,10 +45,8 @@ export default {
   },
   async asyncData({ app, route, store, error }) {
     try {
-      store.commit('jobs/TOGGLE_SHIELD', true)
       let response = await app.$axios.get(`/api/v1/locum/jobs/${route.params.id}`)
       const job = response.data.data.job
-      console.log(job)
       return {
         job
       }
@@ -65,6 +59,9 @@ export default {
   },
   beforeDestroy() {
     this.$store.commit('jobs/TOGGLE_SHIELD', false)
+  },
+  created() {
+    this.$store.commit('jobs/TOGGLE_SHIELD', true)
   }
 }
 </script>
