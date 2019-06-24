@@ -66,6 +66,7 @@ export default {
     } else if (domain === 'Locum') {
       addedLists = [
         { name: 'Compliance', route: '/compliance' },
+        { name: 'My Practice', route: '/my-practice' },
         { name: 'Availability', route: '/availability' },
         { name: 'Jobs', route: '/jobs' }
       ]

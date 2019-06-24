@@ -4,8 +4,14 @@
       <img :src="avatar.file.url" v-if="avatar && avatar.file && !imageUrl">
       <img :src="imageUrl" v-else>
       <div class="icon absolute pin-r pin-t">
-        <input type="file" :name="avatar" :id="avatar" class="hidden" @input="onFileInput($event)">
-        <label :for="avatar" class="cursor-pointer">
+        <input
+          type="file"
+          name="input_file"
+          id="input_file"
+          class="hidden"
+          @input="onFileInput($event)"
+        >
+        <label for="input_file" class="cursor-pointer">
           <svgicon name="camera" height="42" width="42"/>
         </label>
       </div>

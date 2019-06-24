@@ -12,22 +12,18 @@
         </div>
         <div class="flex flex-row flex-wrap justify-between" v-if="type === 'range'">
           <div class="w-full p-0 sm:w-1/2 pr-2">
-            <AppInput
+            <AppDate
               v-model="form.date_start"
-              :type="'date'"
               :name="'date_start'"
               :label="'From'"
-              :placeholder="''"
               :error="formError.find(item => item.field === 'date_start')"
             />
           </div>
           <div class="w-full p-0 sm:w-1/2 pl-2">
-            <AppInput
+            <AppDate
               v-model="form.date_end"
-              :type="'date'"
               :name="'date_end'"
               :label="'To'"
-              :placeholder="''"
               :error="formError.find(item => item.field === 'date_end')"
             />
           </div>
@@ -75,11 +71,13 @@
 </template>
 <script>
 import AppInput from '@/components/Base/AppInput'
+import AppDate from '@/components/Base/AppDate'
 import AppButton from '@/components/Base/AppButton'
 export default {
   props: ['unavailableDate', 'appointmentDate', 'type'],
   components: {
     AppInput,
+    AppDate,
     AppButton
   },
   data() {
@@ -113,7 +111,6 @@ export default {
       this.form.date_start = this.$store.state.availability.selected_date
       this.form.date_end = this.$store.state.availability.selected_date
     }
-    console.log(this.form)
   },
   methods: {
     select(id) {
@@ -129,6 +126,8 @@ export default {
       if (this.form.shift_id.length === 0) {
         return
       }
+      this.form.date_start = this.$moment(this.form.date_start).format('YYYY-MM-DD')
+      this.form.date_end = this.$moment(this.form.date_end).format('YYYY-MM-DD')
       this.$axios.$post(`/api/v1/locum/unavailabilities`, this.form).then(res => {
         this.$store.commit('availability/ADD_UNAVAILABILITIES', res.data.unavailabilities)
         this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: `${res.message}` })

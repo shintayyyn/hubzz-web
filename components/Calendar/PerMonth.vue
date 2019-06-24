@@ -37,6 +37,7 @@
       <div class="w-full text-center text-grey font-bold">FRI</div>
       <div class="w-full text-center text-grey font-bold">SAT</div>
     </div>
+
     <div class="flex flex-nowrap justify-between mx-1 mt-5">
       <div class="flex flex-col w-full">
         <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 7">
@@ -315,7 +316,7 @@ export default {
         daysInMonth.push({
           day: day.getDay(),
           date: day.getDate(),
-          fullDate: this.$moment(new Date(day.getFullYear(), day.getMonth(), day.getDate()).toDateString()).format('YYYY-MM-DD')
+          fullDate: this.$moment(new Date(day.getFullYear(), day.getMonth(), day.getDate()).toDateString(), 'YYYY, MM, DD').format('YYYY-MM-DD')
           // fullDate: this.$moment(new Date(day.getFullYear(), day.getMonth(), day.getDate()).toDateString())._d
         })
       })
