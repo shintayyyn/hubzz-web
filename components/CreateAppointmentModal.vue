@@ -17,23 +17,19 @@
         <AppButton :label="'Add'" @click="modal = true" :inStyle="'padding:5px;'"/>
         <div class="flex flex-row flex-wrap justify-start mt-8">
           <div class="px-1">
-            <AppInput
+            <AppDate
               v-model="form.date_start"
-              :type="'date'"
               :name="'date_start'"
               :label="'From'"
               :error="formError.find(item => item.field === 'date_start')"
-              :placeholder="'mm/dd/yyyy'"
             />
           </div>
           <div class="px-1">
-            <AppInput
+            <AppDate
               v-model="form.date_end"
-              :type="'date'"
               :name="'date_end'"
               :label="'To'"
               :error="formError.find(item => item.field === 'date_end')"
-              :placeholder="'mm/dd/yyyy'"
             />
           </div>
           <div class="px-1 leading-loose">
@@ -110,6 +106,7 @@
 </template>
 <script>
 import AppInput from '@/components/Base/AppInput'
+import AppDate from '@/components/Base/AppDate'
 import AppSelect from '@/components/Base/AppSelect'
 import AppTextarea from '@/components/Base/AppTextarea'
 import AppButton from '@/components/Base/AppButton'
@@ -118,6 +115,7 @@ export default {
   props: ['job'],
   components: {
     AppInput,
+    AppDate,
     AppSelect,
     AppTextarea,
     AppButton,

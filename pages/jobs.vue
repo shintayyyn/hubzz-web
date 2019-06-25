@@ -2,11 +2,11 @@
   <section class="jobs-section">
     <JobsTabs/>
     <div class="mt-5">
-      <transition name="slide" mode="out-in">
+      <transition name="fade" mode="out-in">
         <Component :is="componentName"/>
       </transition>
     </div>
-    <div class="job-detail-shield" v-if="$store.state.jobs.shield"></div>
+    <div class="modal-shield" v-if="$store.state.jobs.shield"></div>
     <nuxt-child/>
   </section>
 </template>
@@ -60,7 +60,7 @@ export default {
 }
 </script>
 <style scoped>
-.job-detail-shield {
+.modal-shield {
   position: fixed;
   top: 0;
   left: 0;

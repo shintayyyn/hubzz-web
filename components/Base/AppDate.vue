@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col py-2 mb-6" v-on-clickaway="toggledOff">
+  <div class="flex flex-col py-2 mb-6 leading-normal" v-on-clickaway="toggledOff">
     <div class="relative flex flex-row flex-nowrap justify-between">
       <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
       <div
@@ -342,8 +342,13 @@ export default {
 </script>
 <style scoped>
 .calendar {
-  width: 105%;
+  min-width: 230px;
   height: auto;
+}
+@media screen and (min-width: 468px) {
+  .calendar {
+    width: 330px;
+  }
 }
 </style>
 

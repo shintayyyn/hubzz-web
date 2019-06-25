@@ -109,22 +109,22 @@
     >
       <span
         v-if="hasLocumJobs(item.fullDate, 'AM')"
-        class="bg-green-light text-green-light w-full h-2 sm:h-3 lg:h-4 rounded-bl-lg"
+        class="bg-orange-light text-orange-light w-full h-2 sm:h-3 lg:h-4 rounded-bl-lg"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
       <span
         v-if="hasLocumJobs(item.fullDate, 'PM')"
-        class="bg-green-light text-green-light w-full h-2 sm:h-3 lg:h-4"
+        class="bg-orange-light text-orange-light w-full h-2 sm:h-3 lg:h-4"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
       <span
         v-if="hasLocumJobs(item.fullDate, 'Whole day')"
-        class="bg-green-light text-green-light w-full h-2 sm:h-3 lg:h-4"
+        class="bg-orange-light text-orange-light w-full h-2 sm:h-3 lg:h-4"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
       <span
         v-if="hasLocumJobs(item.fullDate, 'OOH')"
-        class="bg-green-light text-green-light w-full h-2 sm:h-3 lg:h-4 rounded-br-lg"
+        class="bg-orange-light text-orange-light w-full h-2 sm:h-3 lg:h-4 rounded-br-lg"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
     </div>

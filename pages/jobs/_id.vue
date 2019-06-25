@@ -1,5 +1,5 @@
 <template>
-  <div class="job-info shadow-lg">
+  <div class="modal-container shadow-lg">
     <LocumAppointmentModal
       :job="job"
       v-if="(job.locum_status === 'Current' && job.type === 'Private') || (job.locum_status === 'Completed' && job.type === 'Private')"
@@ -62,16 +62,21 @@ export default {
 </script>
 
 <style scoped>
-.job-info {
+.modal-container {
   position: fixed;
-  right: 0;
   top: 0;
-  width: 80%;
+  right: 0;
+  width: 100%;
   height: 100%;
   overflow: auto;
   border-left: solid 2px #edf2f7;
   transition: all 0.3s ease-in-out;
   background-color: white;
   z-index: 510;
+}
+@media screen and (min-width: 1200px) {
+  .modal-container {
+    width: 80%;
+  }
 }
 </style>

@@ -110,7 +110,6 @@ export default {
   position: fixed;
   top: 0;
   right: 0;
-  margin-right: 0%;
   width: 100%;
   height: 100%;
   overflow: auto;
