@@ -29,188 +29,186 @@
       </div>
     </div>
 
-    <div class="flex flex-nowrap mx-1 mt-5 text-xs sm:text-sm">
+    <div class="flex flex-nowrap justify-between text-xs sm:text-sm mx-1 mt-5">
       <div class="w-full text-center text-grey font-bold"></div>
-      <div class="w-1/2 lg:w-full text-center text-grey font-bold">SUN</div>
-      <div class="w-1/2 lg:w-full text-center text-grey font-bold">MON</div>
-      <div class="w-1/2 lg:w-full text-center text-grey font-bold">TUE</div>
-      <div class="w-1/2 lg:w-full text-center text-grey font-bold">WED</div>
-      <div class="w-1/2 lg:w-full text-center text-grey font-bold">THU</div>
-      <div class="w-1/2 lg:w-full text-center text-grey font-bold">FRI</div>
-      <div class="w-1/2 lg:w-full text-center text-grey font-bold">SAT</div>
+      <div class="w-full text-center text-grey font-bold">MON</div>
+      <div class="w-full text-center text-grey font-bold">TUE</div>
+      <div class="w-full text-center text-grey font-bold">WED</div>
+      <div class="w-full text-center text-grey font-bold">THU</div>
+      <div class="w-full text-center text-grey font-bold">FRI</div>
+      <div class="w-full text-center text-grey font-bold">SAT</div>
+      <div class="w-full text-center text-grey font-bold">SUN</div>
     </div>
 
-    <div class="flex flex-nowrap mx-1 mt-5 text-xs sm:text-sm">
+    <div class="flex flex-nowrap justify-between text-xs sm:text-sm mx-1 mt-5">
       <div class="w-full text-center text-grey-darkest"></div>
       <div
-        class="w-1/2 lg:w-full text-center text-grey-darkest font-bold"
+        class="w-full text-center text-grey-darkest font-bold"
         v-for="(date, index) in daysInWeek"
         :key="index"
       >{{$moment(date).format('DD')}}</div>
     </div>
-    <div class="flex flex-nowrap mx-1 mt-5" style="height:50px;">
-      <div class="w-full text-xs text-center pr-2">AM</div>
+
+    <div class="flex flex-nowrap justify-between text-xs mx-1 mt-5" style="height:50px;">
+      <div class="w-full text-left">AM</div>
       <template v-for="(date, index) in daysInWeek">
         <div
-          v-if="hasJobs(date, 'AM')"
-          class="w-1/2 lg:w-full cursor-pointer border-t-2 border-grey bg-green-light"
+          v-if="hasAppointmentJobs(date, 'AM')"
+          class="w-full cursor-pointer border-t-2 border-grey bg-green-light hover:bg-grey-light"
           :key="`${date}-${index}`"
           @click="selectDateShift(date, 'AM')"
         ></div>
         <div
-          v-else-if="hasUnfilledJobs(date, 'AM')"
-          class="w-1/2 lg:w-full cursor-pointer border-t-2 border-grey bg-red-light"
-          :key="`${date}-${index}`"
-          @click="selectDateShift(date, 'AM')"
-        ></div>
-        <div
-          v-else-if="hasDeclinedJobs(date, 'AM')"
-          class="w-1/2 lg:w-full cursor-pointer border-t-2 border-grey bg-red-light"
+          v-else-if="hasUnavailabilities(date, 'AM')"
+          class="w-full cursor-pointer border-t-2 border-grey bg-pink hover:bg-grey-light"
           :key="`${date}-${index}`"
           @click="selectDateShift(date, 'AM')"
         ></div>
         <div
           v-else-if="currentDate(date)"
-          class="w-1/2 lg:w-full cursor-pointer border-t-2 border-grey bg-grey-light"
+          class="w-full cursor-pointer border-t-2 border-grey bg-grey-light"
           :key="index"
           @click="selectDateShift(date, 'AM')"
         ></div>
         <div
           v-else
-          class="w-1/2 lg:w-full cursor-pointer border-t-2 border-grey hover:bg-grey-light"
+          class="w-full cursor-pointer border-t-2 border-grey hover:bg-grey-light"
           :key="index"
           @click="selectDateShift(date, 'AM')"
         ></div>
       </template>
     </div>
-    <div class="flex flex-nowrap mx-1" style="height:50px;">
-      <div class="w-full text-xs text-center pr-2">PM</div>
+    <div class="flex flex-nowrap justify-between text-xs mx-1" style="height:50px;">
+      <div class="w-full text-left">PM</div>
       <template v-for="(date, index) in daysInWeek">
         <div
-          v-if="hasJobs(date, 'PM')"
-          class="w-1/2 lg:w-full cursor-pointer border-t-2 border-grey green-light"
+          v-if="hasAppointmentJobs(date, 'PM')"
+          class="w-full cursor-pointer border-t-2 border-grey bg-green-light hover:bg-grey-light"
           :key="`${date}-${index}`"
           @click="selectDateShift(date, 'PM')"
         ></div>
         <div
-          v-else-if="hasUnfilledJobs(date, 'PM')"
-          class="w-1/2 lg:w-full cursor-pointer border-t-2 border-grey bg-red-light"
-          :key="`${date}-${index}`"
-          @click="selectDateShift(date, 'PM')"
-        ></div>
-        <div
-          v-else-if="hasDeclinedJobs(date, 'PM')"
-          class="w-1/2 lg:w-full cursor-pointer border-t-2 border-grey bg-red-light"
+          v-else-if="hasUnavailabilities(date, 'PM')"
+          class="w-full cursor-pointer border-t-2 border-grey bg-pink hover:bg-grey-light"
           :key="`${date}-${index}`"
           @click="selectDateShift(date, 'PM')"
         ></div>
         <div
           v-else-if="currentDate(date)"
-          class="w-1/2 lg:w-full cursor-pointer border-t-2 border-grey bg-grey-light"
+          class="w-full cursor-pointer border-t-2 border-grey bg-grey-light"
           :key="index"
           @click="selectDateShift(date, 'PM')"
         ></div>
         <div
           v-else
-          class="w-1/2 lg:w-full cursor-pointer border-t-2 border-grey hover:bg-grey-light"
+          class="w-full cursor-pointer border-t-2 border-grey hover:bg-grey-light"
           :key="index"
           @click="selectDateShift(date, 'PM')"
         ></div>
       </template>
     </div>
-    <div class="flex flex-nowrap mx-1" style="height:50px;">
-      <div class="w-full text-xs text-center pr-2">OOH</div>
+    <div class="flex flex-nowrap justify-between text-xs mx-1" style="height:50px;">
+      <div class="w-full text-left">OOH</div>
       <template v-for="(date, index) in daysInWeek">
         <div
-          v-if="hasJobs(date, 'OOH')"
-          class="w-1/2 lg:w-full cursor-pointer border-t-2 border-grey bg-green-light"
+          v-if="hasAppointmentJobs(date, 'OOH')"
+          class="w-full cursor-pointer border-t-2 border-grey bg-green-light hover:bg-grey-light"
           :key="`${date}-${index}`"
           @click="selectDateShift(date, 'OOH')"
         ></div>
         <div
-          v-else-if="hasUnfilledJobs(date, 'OOH')"
-          class="w-1/2 lg:w-full cursor-pointer border-t-2 border-grey bg-red-light"
-          :key="`${date}-${index}`"
-          @click="selectDateShift(date, 'OOH')"
-        ></div>
-        <div
-          v-else-if="hasDeclinedJobs(date, 'OOH')"
-          class="w-1/2 lg:w-full cursor-pointer border-t-2 border-grey bg-red-light"
+          v-else-if="hasUnavailabilities(date, 'OOH')"
+          class="w-full cursor-pointer border-t-2 border-grey bg-pink hover:bg-grey-light"
           :key="`${date}-${index}`"
           @click="selectDateShift(date, 'OOH')"
         ></div>
         <div
           v-else-if="currentDate(date)"
-          class="w-1/2 lg:w-full cursor-pointer border-t-2 border-grey bg-grey-light"
+          class="w-full cursor-pointer border-t-2 border-grey bg-grey-light"
           :key="index"
           @click="selectDateShift(date, 'OOH')"
         ></div>
         <div
           v-else
-          class="w-1/2 lg:w-full cursor-pointer border-t-2 border-grey hover:bg-grey-light"
+          class="w-full cursor-pointer border-t-2 border-grey hover:bg-grey-light"
           :key="index"
           @click="selectDateShift(date, 'OOH')"
         ></div>
       </template>
     </div>
-    <div class="flex flex-nowrap mx-1" style="height:50px;">
-      <div class="w-full text-xs text-center pr-2">Whole-day</div>
+    <div class="flex flex-nowrap justify-between text-xs mx-1" style="height:50px;">
+      <div class="w-full text-left">Whole-day</div>
       <template v-for="(date, index) in daysInWeek">
         <div
-          v-if="hasJobs(date, 'WHOLE DAY')"
-          class="w-1/2 lg:w-full cursor-pointer border-t-2 border-grey bg-green-light"
+          v-if="hasAppointmentJobs(date, 'Whole Day')"
+          class="w-full cursor-pointer border-t-2 border-grey bg-green-light hover:bg-grey-light"
           :key="`${date}-${index}`"
-          @click="selectDateShift(date, 'WHOLE DAY')"
+          @click="selectDateShift(date, 'Whole Day')"
         ></div>
         <div
-          v-else-if="hasUnfilledJobs(date, 'WHOLE DAY')"
-          class="w-1/2 lg:w-full cursor-pointer border-t-2 border-grey bg-red-light"
+          v-else-if="hasUnavailabilities(date, 'Whole Day')"
+          class="w-full cursor-pointer border-t-2 border-grey bg-pink hover:bg-grey-light"
           :key="`${date}-${index}`"
-          @click="selectDateShift(date, 'WHOLE DAY')"
-        ></div>
-        <div
-          v-else-if="hasDeclinedJobs(date, 'WHOLE DAY')"
-          class="w-1/2 lg:w-full cursor-pointer border-t-2 border-grey bg-red-light"
-          :key="`${date}-${index}`"
-          @click="selectDateShift(date, 'WHOLE DAY')"
+          @click="selectDateShift(date, 'Whole Day')"
         ></div>
         <div
           v-else-if="currentDate(date)"
-          class="w-1/2 lg:w-full cursor-pointer border-t-2 border-grey bg-grey-light"
+          class="w-full cursor-pointer border-t-2 border-grey bg-grey-light"
           :key="index"
-          @click="selectDateShift(date, 'WHOLE DAY')"
+          @click="selectDateShift(date, 'Whole Day')"
         ></div>
         <div
           v-else
-          class="w-1/2 lg:w-full cursor-pointer border-t-2 border-grey hover:bg-grey-light"
+          class="w-full cursor-pointer border-t-2 border-grey hover:bg-grey-light"
           :key="index"
-          @click="selectDateShift(date, 'WHOLE DAY')"
+          @click="selectDateShift(date, 'Whole Day')"
         ></div>
       </template>
     </div>
-    <div class="flex flex-nowrap mx-1" style="height:50px;">
-      <div class="w-full text-xs text-center pr-2">Reminder</div>
-      <template v-for="(date, index) in daysInWeek">
-        <div
-          v-if="hasAppliedJobs(date)"
-          class="w-1/2 lg:w-full cursor-pointer border-t-2 border-grey bg-grey"
-          :key="index"
-          @click="selectDateShift(date, 'REMINDER')"
-        ></div>
-        <div
-          v-else-if="currentDate(date)"
-          class="w-1/2 lg:w-full cursor-pointer border-t-2 border-grey bg-grey-light"
-          :key="index"
-          @click="selectDateShift(date, 'REMINDER')"
-        ></div>
-        <div
-          v-else
-          class="w-1/2 lg:w-full cursor-pointer border-t-2 border-grey hover:bg-grey-light"
-          :key="index"
-          @click="selectDateShift(date, 'REMINDER')"
-        ></div>
-      </template>
-    </div>
+    <template v-if="$auth.user.domain === 'Practice'">
+      <div class="flex flex-nowrap justify-between text-xs mx-1" style="height:50px;">
+        <div class="w-full text-left">Reminder</div>
+        <template v-for="(date, index) in daysInWeek">
+          <div
+            v-if="currentDate(date)"
+            class="w-full cursor-pointer border-t-2 border-grey bg-grey-light"
+            :key="index"
+            @click="selectDateShift(date, 'REMINDER')"
+          ></div>
+          <div
+            v-else
+            class="w-full cursor-pointer border-t-2 border-grey hover:bg-grey-light"
+            :key="index"
+            @click="selectDateShift(date, 'REMINDER')"
+          ></div>
+        </template>
+      </div>
+    </template>
+    <template v-if="$auth.user.domain === 'Locum'">
+      <div class="flex flex-nowrap justify-between text-xs mx-1" style="height:50px;">
+        <div class="w-full text-left">Available</div>
+        <template v-for="(date, index) in daysInWeek">
+          <div
+            v-if="hasLocumJobs(date, 'Available')"
+            class="w-full cursor-pointer border-t-2 border-grey bg-orange-light hover:bg-grey-light"
+            :key="`${date}-${index}`"
+            @click="selectDateShift(date, 'Available')"
+          ></div>
+          <div
+            v-else-if="currentDate(date)"
+            class="w-full cursor-pointer border-t-2 border-grey bg-grey-light"
+            :key="index"
+            @click="selectDateShift(date, 'Available')"
+          ></div>
+          <div
+            v-else
+            class="w-full cursor-pointer border-t-2 border-grey hover:bg-grey-light"
+            :key="index"
+            @click="selectDateShift(date, 'Available')"
+          ></div>
+        </template>
+      </div>
+    </template>
   </section>
 </template>
 <script>
@@ -219,24 +217,21 @@ export default {
     return {
       weekOfTheYear: null,
       firstDayOfTheWeek: null,
-      // locums
+      // practice
       jobs: [],
       applied_jobs_with_selection_date: [],
       unfilled_jobs: [],
       declined_jobs: [],
+      // locums
+      appointment_jobs: [],
+      locum_jobs: [],
+      unavailabilities: [],
+
     }
   },
   created() {
-    // get week day at current date
-    let weekDay = this.$moment().day()
-    // get the first day of the current week based on the week day
-    if (weekDay === 0) {
-      this.firstDayOfTheWeek = this.$moment().format('YYYY-MM-DD')
-    } else {
-      for (let i = weekDay; weekDay > 0; weekDay--) {
-        this.firstDayOfTheWeek = this.$moment().subtract(i, 'days').format('YYYY-MM-DD')
-      }
-    }
+    // get the first day of the current week
+    this.firstDayOfTheWeek = this.$moment().day('Monday')
     // get week of the year
     this.weekOfTheYear = this.$moment().week()
     // get jobs
@@ -250,64 +245,14 @@ export default {
       }
       return weekLists
     },
+    selectedYear() {
+      return this.$moment(this.firstDayOfTheWeek).format('YYYY')
+    }
   },
   methods: {
-    selectDateShift(date, shift) {
-      this.$store.commit('calendar/SELECT_DATE_SHIFT', { date: date, shift: shift })
-    },
-    adjustWeek(type) {
-      if (type === 'next') {
-        this.firstDayOfTheWeek = this.$moment(this.daysInWeek[6]).add(1, 'days')
-        this.weekOfTheYear = this.$moment(this.daysInWeek[6]).week()
-      }
-      if (type === 'previous') {
-        this.firstDayOfTheWeek = this.$moment(this.daysInWeek[0]).subtract(7, 'days')
-        this.weekOfTheYear = this.$moment(this.daysInWeek[0]).week()
-      }
-      this.getJobs()
-    },
-    currentDate(date) {
-      if (date === this.$moment(new Date()).format('YYYY-MM-DD')) {
-        return true
-      } else {
-        return false
-      }
-    },
-    hasJobs(date, type) {
-      if (this.jobs && this.jobs.length > 0) {
-        return this.jobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === type)
-      }
-    },
-    hasAppliedJobs(date) {
-      if (this.applied_jobs_with_selection_date && this.applied_jobs_with_selection_date.length > 0) {
-        return this.applied_jobs_with_selection_date.find(job => job.platform_job.selection_date === date)
-      }
-    },
-    hasUnfilledJobs(date, type) {
-      if (this.unfilled_jobs && this.unfilled_jobs.length > 0) {
-        return this.unfilled_jobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === type)
-      }
-    },
-    hasDeclinedJobs(date, type) {
-      if (this.declined_jobs && this.declined_jobs.length > 0) {
-        return this.declined_jobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === type)
-      }
-    },
-    // it returns an array of dates
-    getDateArray(start, end) {
-      let arr = new Array();
-      let dt = new Date(start);
-      while (dt <= new Date(end)) {
-        arr.push(this.$moment(new Date(dt)).format('YYYY-MM-DD'));
-        dt.setDate(dt.getDate() + 1);
-      }
-      return arr;
-    },
     getJobs() {
-      // live(color code per shift), applied(amber), current(green), unfilled(red)
       if (this.$auth.user.domain === 'Practice') {
         this.$axios.$get(`/api/v1/practice/calendars/weekly/${this.$moment(this.daysInWeek[6]).format('YYYY')}/${this.weekOfTheYear}`).then(res => {
-          console.log(res)
           // get jobs (green)
           if (res.data.jobs && res.data.jobs.length > 0) {
             this.jobs = res.data.jobs
@@ -330,7 +275,95 @@ export default {
           }
         })
       }
+      if (this.$auth.user.domain === 'Locum') {
+        // ! ask arvi the date_start and date_end response should be from mon to sun
+        this.$axios(`/api/v1/locum/calendars/weekly/${this.selectedYear}/${this.weekOfTheYear}`).then(res => {
+          console.log(res.data.data)
+          if (res.data.data.jobs && res.data.data.jobs.length > 0) {
+            this.appointment_jobs = res.data.data.jobs.filter(job => job.type === 'Private')
+            // ! ask arvi selection_date on platform job response not found
+            this.locum_jobs = res.data.data.jobs.filter(job => job.type === 'Platform')
+            this.locum_jobs.map(job => job.platform_job.selection_date = '2019-06-26')
+            this.$store.commit('calendar/SET_APPOINTMENT_JOBS', this.appointment_jobs)
+            this.$store.commit('calendar/SET_LOCUM_JOBS', this.locum_jobs)
+          }
+          if (res.data.data.unavailabilities && res.data.data.unavailabilities.length > 0) {
+            this.unavailabilities = res.data.data.unavailabilities
+            this.$store.commit('calendar/SET_UNAVAILABILITIES', this.unavailabilities)
+          }
+        })
+      }
     },
+    selectDateShift(date, shift) {
+      this.$store.commit('calendar/SELECT_DATE_SHIFT', { date: date, shift: shift })
+    },
+    adjustWeek(type) {
+      if (type === 'next') {
+        this.firstDayOfTheWeek = this.$moment(this.daysInWeek[6]).add(1, 'days')
+        this.weekOfTheYear = this.$moment(this.daysInWeek[6]).week()
+      }
+      if (type === 'previous') {
+        this.firstDayOfTheWeek = this.$moment(this.daysInWeek[0]).subtract(7, 'days')
+        this.weekOfTheYear = this.$moment(this.daysInWeek[0]).week()
+      }
+      this.getJobs()
+    },
+    currentDate(date) {
+      if (date === this.$moment(new Date()).format('YYYY-MM-DD')) {
+        return true
+      } else {
+        return false
+      }
+    },
+    // locums
+    hasAppointmentJobs(date, type) {
+      if (this.appointment_jobs && this.appointment_jobs.length > 0) {
+        return this.appointment_jobs.find(job => this.getDateArray(job.private_job.date_start, job.private_job.date_end).includes(date) && job.private_job.shift.name === type)
+      }
+    },
+    hasLocumJobs(date, type) {
+      if (this.locum_jobs && this.locum_jobs.length > 0) {
+        return this.locum_jobs.find(job => job.platform_job.selection_date === date && type === 'Available')
+      }
+    },
+    hasUnavailabilities(date, type) {
+      if (this.unavailabilities && this.unavailabilities.length > 0) {
+        return this.unavailabilities.find(job => job.date === date && job.shifts.find(shift => shift.name === type))
+      }
+    },
+    // hasJobs(date, type) {
+    //   if (this.jobs && this.jobs.length > 0) {
+    //     return this.jobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === type)
+    //   }
+    // },
+    // hasAppliedJobs(date) {
+    //   if (this.applied_jobs_with_selection_date && this.applied_jobs_with_selection_date.length > 0) {
+    //     return this.applied_jobs_with_selection_date.find(job => job.platform_job.selection_date === date)
+    //   }
+    // },
+    // hasUnfilledJobs(date, type) {
+    //   if (this.unfilled_jobs && this.unfilled_jobs.length > 0) {
+    //     return this.unfilled_jobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === type)
+    //   }
+    // },
+    // hasDeclinedJobs(date, type) {
+    //   if (this.declined_jobs && this.declined_jobs.length > 0) {
+    //     return this.declined_jobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === type)
+    //   }
+    // },
+    // it returns an array of dates
+    getDateArray(start, end) {
+      let arr = new Array();
+      let dt = new Date(start);
+      while (dt <= new Date(end)) {
+        arr.push(this.$moment(new Date(dt)).format('YYYY-MM-DD'));
+        dt.setDate(dt.getDate() + 1);
+      }
+      return arr;
+    },
+
   }
 }
 </script>
+<style scoped>
+</style>

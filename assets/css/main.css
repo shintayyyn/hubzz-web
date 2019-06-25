@@ -1,7 +1,7 @@
 * {
   font-family: 'Nunito', sans-serif;
 }
-
+/* modal */
 .slide-enter-active, .slide-leave-active {
   transition: all .5s;
 }
@@ -9,12 +9,29 @@
   transform: translateX(100px);
   opacity: 0;
 }
-
+/* confirmation */
 .drop-enter-active, .drop-leave-active {
   transition: all .5s;
 }
 .drop-enter, .drop-leave-active {
   transform: translateY(-100px);
+  opacity: 0;
+}
+/* tabs */
+.fade-enter-active, 
+.fade-leave-active {
+  transition: all .5s
+}
+.fade-enter, 
+.fade-leave-active {
+  opacity: 0
+}
+/* page */
+.page-enter-active, .page-leave-active {
+  transition: all .5s;
+}
+.page-enter, .page-leave-active {
+  transform: translateX(100px);
   opacity: 0;
 }
 /* remove */
@@ -27,11 +44,4 @@
   display: none;
 }
 
-.fade-enter-active, 
-.fade-leave-active {
-  transition: all .5s
-}
-.fade-enter, 
-.fade-leave-active {
-  opacity: 0
-}
+

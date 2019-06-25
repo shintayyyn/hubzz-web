@@ -38,11 +38,6 @@ export default {
     LocumDeclinedDetailModal,
     LocumCompletedDetailModal,
   },
-  data() {
-    return {
-      // loading: false,
-    }
-  },
   async asyncData({ app, route, store, error }) {
     try {
       let response = await app.$axios.get(`/api/v1/locum/jobs/${route.params.id}`)

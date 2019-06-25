@@ -6,7 +6,14 @@
     <div class="bg-pink absolute pin-l pin-t rounded-l-lg p-2 h-full"></div>
     <div class="ml-2">
       <div class="my-3 font-bold text-sm sm:text-md">Unavailable</div>
-      <div class="my-3 text-xs xl:text-sm">Shifts: {{shifts}}</div>
+      <div
+        class="my-3 text-xs xl:text-sm"
+        v-if="$store.state.calendar.view_type === 'per_month'"
+      >Shifts: {{shifts}}</div>
+      <div
+        class="my-3 text-xs xl:text-sm"
+        v-if="$store.state.calendar.view_type === 'per_week'"
+      >Shift: {{$store.state.calendar.selected_date_shift.shift}}</div>
     </div>
   </div>
 </template>
@@ -15,11 +22,7 @@ export default {
   props: ['job'],
   computed: {
     shifts() {
-      let shifts = []
-      this.job.shifts.forEach(shift => {
-        shifts.push(shift.name)
-      })
-      return shifts.join()
+      return this.job.shifts.map(shift => shift.name).join()
     }
   },
   methods: {

@@ -60,25 +60,6 @@
 
           <div class="flex flex-nowrap justify-between mx-1 mt-1">
             <div class="flex flex-col w-full">
-              <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 7">
-                <div class="m-1 h-10 w-auto">&nbsp;</div>
-              </div>
-              <div v-for="(item, index) in daysInMonth" :key="index">
-                <div
-                  @click="select(item.fullDate)"
-                  class="rounded-full relative m-1 flex justify-center items-center h-10 w-auto"
-                  :class="{
-                  'border-yellow-dark border-2': isSame(item.fullDate),
-                  'text-grey': isDisabled(item.fullDate), 
-                  'cursor-pointer hover:bg-grey-light': !isDisabled(item.fullDate)
-                }"
-                  v-if="item.day === 0"
-                >
-                  <div class="text-xs md:text-sm z-10">{{(item.date)}}</div>
-                </div>
-              </div>
-            </div>
-            <div class="flex flex-col w-full">
               <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 6">
                 <div class="m-1 h-10 w-auto">&nbsp;</div>
               </div>
@@ -93,7 +74,7 @@
                 }"
                   v-if="item.day === 1"
                 >
-                  <div class="text-xs md:text-sm z-10">{{item.date}}</div>
+                  <div class="text-xs md:text-sm z-10">{{(item.date)}}</div>
                 </div>
               </div>
             </div>
@@ -112,7 +93,7 @@
                 }"
                   v-if="item.day === 2"
                 >
-                  <div class="text-xs md:text-sm z-10">{{(item.date)}}</div>
+                  <div class="text-xs md:text-sm z-10">{{item.date}}</div>
                 </div>
               </div>
             </div>
@@ -131,7 +112,7 @@
                 }"
                   v-if="item.day === 3"
                 >
-                  <div class="text-xs md:text-sm z-10">{{item.date}}</div>
+                  <div class="text-xs md:text-sm z-10">{{(item.date)}}</div>
                 </div>
               </div>
             </div>
@@ -150,7 +131,7 @@
                 }"
                   v-if="item.day === 4"
                 >
-                  <div class="text-xs md:text-sm z-10">{{(item.date)}}</div>
+                  <div class="text-xs md:text-sm z-10">{{item.date}}</div>
                 </div>
               </div>
             </div>
@@ -169,7 +150,7 @@
                 }"
                   v-if="item.day === 5"
                 >
-                  <div class="text-xs md:text-sm z-10">{{item.date}}</div>
+                  <div class="text-xs md:text-sm z-10">{{(item.date)}}</div>
                 </div>
               </div>
             </div>
@@ -187,6 +168,25 @@
                   'cursor-pointer hover:bg-grey-light': !isDisabled(item.fullDate)
                 }"
                   v-if="item.day === 6"
+                >
+                  <div class="text-xs md:text-sm z-10">{{item.date}}</div>
+                </div>
+              </div>
+            </div>
+            <div class="flex flex-col w-full">
+              <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 1">
+                <div class="m-1 h-10 w-auto">&nbsp;</div>
+              </div>
+              <div v-for="(item, index) in daysInMonth" :key="index">
+                <div
+                  @click="select(item.fullDate)"
+                  class="rounded-full relative m-1 flex justify-center items-center h-10 w-auto"
+                  :class="{
+                  'border-yellow-dark border-2': isSame(item.fullDate),
+                  'text-grey': isDisabled(item.fullDate), 
+                  'cursor-pointer hover:bg-grey-light': !isDisabled(item.fullDate)
+                }"
+                  v-if="item.day === 0"
                 >
                   <div class="text-xs md:text-sm z-10">{{item.date}}</div>
                 </div>
@@ -235,6 +235,7 @@ export default {
     }
   },
   created() {
+
     // get current month and year
     let d = new Date()
     this.selectedMonth = d.getMonth()

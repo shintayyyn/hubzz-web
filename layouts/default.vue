@@ -26,7 +26,7 @@ import AppHeader from '@/components/AppHeader'
 // practice
 import CreateJobModal from '@/components/CreateJobModal'
 export default {
-  transitions: 'fade',
+  transitions: 'page',
   components: {
     AppSideBar,
     SignOut,

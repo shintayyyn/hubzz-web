@@ -27,6 +27,7 @@
               <td>{{item.job_number}}</td>
               <td>{{item.platform_job.practice.surgery.name}}</td>
               <td>{{item.platform_job.title}}</td>
+              <!-- ! ask arvi Need to add timestamp -->
               <td>{{item.platform_job.date_start}}</td>
               <td>{{item.platform_job.date_end}}</td>
               <td>{{item.platform_job.date_created}}</td>
@@ -38,49 +39,23 @@
         </tbody>
       </table>
     </div>
-    <!-- <div class="available-shield" v-if="modal"></div>
-    <transition name="slide" mode="out-in">
-      <div class="available-modal shadow-lg" v-if="modal">
-        <LocumAvailableDetailModal @close="modal = false" :job="job"/>
-      </div>
-    </transition>-->
   </section>
 </template>
 <script>
-import LocumAvailableDetailModal from '@/components/Jobs/LocumAvailableDetailModal'
 export default {
-  components: {
-    LocumAvailableDetailModal
-  },
   data() {
     return {
       jobs: [],
-      job: null,
-      modal: false
     }
   },
   created() {
-    // get available jobs
     this.$axios.$get(`/api/v1/locum/jobs?locum_status=Available`).then(res => {
       this.jobs = res.data.jobs
     })
   },
-  watch: {
-    modal(value) {
-      if (value) {
-        document.body.style.overflow = 'hidden'
-      } else {
-        document.body.style.overflow = 'auto'
-      }
-    }
-  },
   methods: {
     show(id) {
       this.$router.push(`/jobs/${id}?job_status=available`)
-      // this.$axios.$get(`/api/v1/locum/jobs/${id}`).then(res => {
-      //   this.job = res.data.job
-      //   this.modal = true
-      // })
     }
   }
 }
@@ -93,34 +68,6 @@ export default {
 .job-card {
   background-color: white;
   transition: background-color 0.5s ease-in-out;
-}
-.available-shield {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #333;
-  opacity: 0.5;
-  z-index: 509;
-}
-.available-modal {
-  position: fixed;
-  top: 0;
-  right: 0;
-  margin-right: 0%;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  border-left: solid 2px #edf2f7;
-  transition: all 0.3s ease-in-out;
-  background-color: white;
-  z-index: 510;
-}
-@media screen and (min-width: 1200px) {
-  .edit-appointment-modal {
-    width: 80%;
-  }
 }
 a {
   text-decoration: none;

@@ -288,7 +288,11 @@ export default {
       })
     },
     close() {
-      this.$router.push('/jobs?job_status=available')
+      if (this.$route.fullPath === '/dashboard') {
+        this.$emit('close')
+      } else {
+        this.$router.push('/jobs?job_status=available')
+      }
     }
   }
 }

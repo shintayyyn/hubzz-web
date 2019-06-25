@@ -103,7 +103,7 @@
             @checked="form.practice_type_id.push(parseInt($event))"
             @unchecked="uncheckOther($event)"
             :name="'practice_type_id'"
-            :label="'What type of Practice(s) are you?'"
+            :label="'What type of Practice(s) would you like to work for?'"
             :placeholder="''"
             :error="this.formError.find(item => item.field === 'practice_type_id')"
             :lists="practiceTypes"

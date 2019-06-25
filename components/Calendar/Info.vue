@@ -26,7 +26,11 @@
         />
       </template>
       <template v-for="(item, index) in foundLocumJobs">
-        <LocumJobCard :job="item" :key="`${index}-${item.id}`"/>
+        <LocumJobCard
+          @viewLocumJob="$emit('viewLocumJob', $event)"
+          :job="item"
+          :key="`${index}-${item.id}`"
+        />
       </template>
       <template v-for="(item, index) in foundUnavailabilities">
         <UnavailabilitiesCard :job="item" :key="`${index}-${item.id}`"/>
@@ -70,6 +74,16 @@ export default {
       date_info: null
     }
   },
+  created() {
+    if (this.$auth.user.domain === 'Practice') {
+      this.findPerMonth(this.selected_date)
+      return
+    }
+    if (this.$auth.user.domain === 'Locum') {
+      this.findPerMonthLocum(this.selected_date)
+      return
+    }
+  },
   watch: {
     selected_date(value) {
       this.date_info = value
@@ -83,9 +97,13 @@ export default {
       }
     },
     selected_date_shift(value) {
+      console.log(value)
       this.date_info = value.date
       if (this.$auth.user.domain === 'Practice') {
         this.findPerWeek(value)
+      }
+      if (this.$auth.user.domain === 'Locum') {
+        this.findPerWeekLocum(value)
       }
     }
   },
@@ -165,6 +183,19 @@ export default {
         this.foundUnavailabilities = this.unavailabilities.filter(job => job.date === date)
       }
     },
+    findPerWeekLocum({ date, shift }) {
+      if (this.appointment_jobs.length > 0) {
+        this.foundAppointmentJobs = this.appointment_jobs.filter(job => this.getDateArray(job.private_job.date_start, job.private_job.date_end).includes(date) && job.private_job.shift.name === shift)
+      }
+      if (this.locum_jobs.length > 0) {
+        // ! ask arvi need to response selection date on available jobs
+        this.locum_jobs.map(job => job.selection_date = '2019-06-26')
+        this.foundLocumJobs = this.locum_jobs.filter(job => job.selection_date === date && shift === 'Available')
+      }
+      if (this.unavailabilities.length > 0) {
+        this.foundUnavailabilities = this.unavailabilities.filter(job => job.date === date && job.shifts.map(shift => shift.name).includes(shift))
+      }
+    },
     getDateArray(start, end) {
       let arr = new Array();
       let dt = new Date(start);
@@ -179,14 +210,6 @@ export default {
 }
 </script>
 <style scoped>
-/* .slide-info-enter-active,
-.slide-info-leave-active {
-  transition: all 0.1s ease-in-out;
-}
-.slide-info-enter,
-.slide-info-leave-to {
-  transform: translateX(10px);
-} */
 .info-section {
   background-image: url("/images/hubzz-bg.png");
 }

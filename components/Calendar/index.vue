@@ -13,14 +13,17 @@
           </div>
         </div>
         <div class="w-full lg:w-1/3">
-          <Info @viewAppointmentJob="viewAppointmentJob"/>
+          <Info @viewAppointmentJob="viewAppointmentJob" @viewLocumJob="viewLocumJob"/>
         </div>
       </div>
     </div>
-    <div class="create-appointment-shield" v-if="modal"></div>
+    <div class="modal-shield" v-if="modal | locum_modal"></div>
     <transition name="slide" mode="out-in">
-      <div class="create-appointment-modal shadow-lg" v-if="modal">
+      <div class="modal-container shadow-lg" v-if="modal">
         <CreateAppointmentModal @close="modal = false" :job="job"/>
+      </div>
+      <div class="modal-container shadow-lg" v-if="locum_modal">
+        <LocumAvailableDetailModal @close="locum_modal = false" :job="locum_job"/>
       </div>
     </transition>
   </section>
@@ -42,7 +45,9 @@ export default {
   data() {
     return {
       modal: false,
-      job: null
+      job: null,
+      locum_modal: false,
+      locum_job: null
     }
   },
   created() {
@@ -61,8 +66,6 @@ export default {
   methods: {
     create() {
       if (this.$auth.user.domain === 'Locum') {
-        // this.$store.commit('jobs/SET_APPOINTMENT_JOB', null)
-        // document.body.style.overflow = 'hidden'
         this.createAppointmentJob()
       } else {
         this.$store.commit('TOGGLE_CREATE_JOB_MODAL', true)
@@ -77,7 +80,8 @@ export default {
       this.job = job
     },
     viewLocumJob(job) {
-
+      this.locum_modal = true
+      this.locum_job = job
     }
   }
 }
@@ -92,7 +96,7 @@ export default {
     height: auto;
   }
 }
-.create-appointment-shield {
+.modal-shield {
   position: fixed;
   top: 0;
   left: 0;
@@ -102,7 +106,7 @@ export default {
   opacity: 0.5;
   z-index: 509;
 }
-.create-appointment-modal {
+.modal-container {
   position: fixed;
   top: 0;
   right: 0;
@@ -116,7 +120,7 @@ export default {
   z-index: 510;
 }
 @media screen and (min-width: 1200px) {
-  .create-appointment-modal {
+  .modal-container {
     width: 80%;
   }
 }

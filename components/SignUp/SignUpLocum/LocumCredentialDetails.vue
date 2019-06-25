@@ -42,11 +42,10 @@
           />
 
           <AppInput
-            v-model="form.privacy_policy"
+            v-model="privacy_policy"
             :type="'single-checkbox'"
             :name="'privacy_policy'"
             :label="'I agree with the Terms and Conditions and Privacy Policy of Hubzz'"
-            :error="formError.find(item => item.field === 'privacy_policy')"
           />
         </form>
       </div>
@@ -73,8 +72,8 @@ export default {
         email: '',
         password: '',
         password_confirmation: '',
-        privacy_policy: false,
       },
+      privacy_policy: false,
       formError: [],
     }
   },
@@ -109,6 +108,9 @@ export default {
   methods: {
     next() {
       try {
+        if (!this.privacy_policy) {
+          return
+        }
         this.formError = []
         // this.Validate(this.form)
         if (!this.formError.length) {

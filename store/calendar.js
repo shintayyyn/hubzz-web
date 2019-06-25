@@ -55,6 +55,12 @@ export const mutations = {
     SET_LOCUM_JOBS(state, payload) {
         state.locum_jobs = payload
     },
+    SET_UNAVAILABILITIES(state, payload) {
+        state.unavailabilities = payload
+    },
+    SET_APPOINTMENT_JOBS(state, payload) {
+        state.appointment_jobs = payload
+    },
     ADD_APPOINTMENT(state, payload) {
         state.appointment_jobs.push(payload)
     },
@@ -66,55 +72,8 @@ export const mutations = {
         updateJob.private_job.date_end = payload.private_job.date_end
         updateJob.private_job.shift = payload.private_job.shift
     },
-    SET_APPOINTMENT_JOBS(state, payload) {
-        state.appointment_jobs = payload
-    },
-    SET_UNAVAILABILITIES(state, payload) {
-        state.unavailabilities = payload
-    }
+    
+    
 }
 
-export const getters = {
-    // getLiveJobs (state) {
-    //     let ids = []
-    //     state.jobs.forEach(job => {
-    //         let arr = new Array();
-    //         let dt = new Date(job.platform_job.date_start);
-    //         while (dt <= new Date(job.platform_job.date_end)) {
-    //           arr.push(moment(new Date(dt)).format('YYYY-MM-DD'));
-    //           dt.setDate(dt.getDate() + 1);
-    //         }
-    //         if (arr.includes(state.selected_date)) {
-    //             ids.push(job.id)
-    //         }
-    //     })
-    //     return state.jobs.filter(job => ids.includes(job.id))
-    // }
-    // getAppointmentsPerMonth (state) {
-    //     let ids = []
-    //     state.appointmentDates.forEach(item => {
-    //         let arr = new Array();
-    //         let dt = new Date(item.from);
-    //         while (dt <= new Date(item.to)) {
-    //           arr.push(moment(new Date(dt)).format('YYYY-MM-DD'));
-    //           dt.setDate(dt.getDate() + 1);
-    //         }
-    //         if (arr.includes(state.select_date)) {
-    //             ids.push(item.job_number)
-    //         }
-    //     })
-    //     return state.appointmentDates.filter(item => ids.includes(item.job_number))
-    // },
-    // getAppointmentsPerWeek (state) {
-    //     let id = ''
-    //     state.appointmentDates.find((item) => {
-    //         let arr = new Array();
-    //         let dt = new Date(item.from);
-    //         while (dt <= new Date(item.to)) {
-    //           arr.push(moment(new Date(dt)).format('YYYY-MM-DD'));
-    //           dt.setDate(dt.getDate() + 1);
-    //         }
-    //         if (arr.includes(state.select_date) && item.shifts === state.select_shift) {
-    //             id = item.job_number
-}
   

@@ -24,8 +24,9 @@ export default {
   props: ['job'],
   methods: {
     select() {
+      // this.$router.push(`/jobs/${this.job.id}?job_status=available`)
       this.$axios.$get(`/api/v1/locum/jobs/${this.job.id}`).then(res => {
-        // this.$emit('viewLocumJob', res.data.job)
+        this.$emit('viewLocumJob', res.data.job)
       })
     }
   }
