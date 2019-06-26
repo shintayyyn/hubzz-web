@@ -183,6 +183,8 @@ export default {
       })
     },
     save() {
+      this.form.date_start = this.$moment(this.form.date_start).format('YYYY-MM-DD')
+      this.form.date_end = this.$moment(this.form.date_end).format('YYYY-MM-DD')
       this.$axios.$post(`/api/v1/locum/jobs`, this.form).then(res => {
         this.$store.commit('calendar/ADD_APPOINTMENT', res.data.job)
         this.$emit('close')

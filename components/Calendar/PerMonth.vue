@@ -228,6 +228,8 @@ export default {
       selectedMonth: null,
       selectedYear: new Date().getFullYear(),
       daysInMonth: [],
+      startOfMonth: null,
+      endOfMonth: null,
       // practice
       jobs: [],
       applied_jobs_with_selection_date: [],
@@ -254,14 +256,13 @@ export default {
     }
   },
   created() {
-    // get current month and year
+    this.startOfMonth = this.$moment().startOf('month').format('YYYY-MM-DD')
+    this.endOfMonth = this.$moment().endOf('month').format('YYYY-MM-DD')
     let d = new Date()
     this.selectedMonth = d.getMonth()
 
-    // get days in current month
     this.getDaysInMonth(this.selectedMonth, this.selectedYear)
-
-    // get jobs
+    // ! refactor in gettings jobs
     this.getJobs()
   },
   methods: {
@@ -293,14 +294,23 @@ export default {
         return
       }
       if (this.$auth.user.domain === 'Locum') {
-        this.$axios.$get(`/api/v1/locum/calendars/monthly/${this.selectedYear}/${this.selectedMonth + 1}`).then(res => {
-          // console.log(res.data)
+        // current(private), current(platform), applied, unavailabilities
+        this.$axios.$get(`/api/v1/locum/jobs?locum_status=Current&date_start=${this.startOfMonth}&date_end=${this.endOfMonth}`).then(res => {
+          console.log(res)
           if (res.data.jobs && res.data.jobs.length > 0) {
             this.$store.commit('calendar/SET_APPOINTMENT_JOBS', res.data.jobs.filter(job => job.type === 'Private'))
-            this.$store.commit('calendar/SET_LOCUM_JOBS', res.data.jobs.filter(job => job.type === 'Platform'))
+            this.$store.commit('calendar/SET_LOCUM_JOBS', res.data.jobs.filter(job => job.locum_status === 'Current'))
           }
+        })
+        this.$axios.$get(`/api/v1/locum/jobs?locum_status=Applied&date_start=${this.startOfMonth}&date_end=${this.endOfMonth}`).then(res => {
+          console.log(res)
+          if (res.data.jobs && res.data.jobs.length > 0) {
+            this.$store.commit('calendar/SET_LOCUM_JOBS', res.data.jobs.filter(job => job.locum_status === 'Applied'))
+          }
+        })
+        this.$axios.$get(`/api/v1/locum/unavailabilities?date_start=${this.startOfMonth}&date_end=${this.endOfMonth}`).then(res => {
           if (res.data.unavailabilities && res.data.unavailabilities.length > 0) {
-            this.$store.commit('calendar/SET_UNAVAILABILITIES', res.data.unavailabilities)
+            // this.$store.commit('calendar/SET_UNAVAILABILITIES', res.data.unavailabilities)
           }
         })
       }

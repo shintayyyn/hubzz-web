@@ -14,6 +14,7 @@
             :name="'post_code'"
             :label="'Post code'"
             @onSelect="onSelect"
+            :inStyle="'background-color:#dae1e7;border-color:white'"
           />
           <AppInput
             v-model="form.address_line_1"

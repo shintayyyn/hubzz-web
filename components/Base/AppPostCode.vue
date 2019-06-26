@@ -8,8 +8,9 @@
         v-model="search"
         ref="search"
         type="text"
-        class="border-b-2 border-white bg-grey-light focus:border-yellow focus:outline-none py-4 font-bold text-xs sm:text-sm w-full"
+        class="border-b-2 focus:border-yellow focus:outline-none py-4 font-bold text-xs sm:text-sm w-full"
         :class="error? 'border-red':''"
+        :style="inStyle"
         @focus="toggledOn"
         @keydown="handleKeyDownEvent"
       >
@@ -53,6 +54,7 @@ export default {
     name: String,
     label: String,
     error: Object,
+    inStyle: String,
   },
   data() {
     return {

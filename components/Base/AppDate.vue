@@ -275,7 +275,7 @@ export default {
     select(date) {
       if (!this.isDisabled(date)) {
         this.modal = false
-        this.$emit('input', this.$moment(date).format('MM-DD-YYYY'))
+        this.$emit('input', this.$moment(date).format('MM/DD/YYYY'))
       }
     },
     toggledOff() {

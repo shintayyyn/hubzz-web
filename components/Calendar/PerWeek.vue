@@ -8,11 +8,11 @@
       </div>
       <div class="w-1/3 text-right sm:w-1/3 sm:text-center">
         <span class="cursor-pointer" @click="adjustWeek('previous')">
-          <svgicon name="arrow-left" height="15" width="15"/>
+          <svgicon name="arrow-left" height="12" width="12"/>
         </span>
         <span class="mx-4"></span>
         <span class="cursor-pointer" @click="adjustWeek('next')">
-          <svgicon name="arrow-right" height="15" width="15"/>
+          <svgicon name="arrow-right" height="12" width="12"/>
         </span>
       </div>
       <div class="w-full text-right sm:w-1/3">
@@ -217,6 +217,8 @@ export default {
     return {
       weekOfTheYear: null,
       firstDayOfTheWeek: null,
+      startOfMonth: null,
+      endOfMonth: null,
       // practice
       jobs: [],
       applied_jobs_with_selection_date: [],
@@ -230,11 +232,10 @@ export default {
     }
   },
   created() {
-    // get the first day of the current week
+    this.startOfMonth = this.$moment().startOf('month').format('YYYY-MM-DD')
+    this.endOfMonth = this.$moment().endOf('month').format('YYYY-MM-DD')
     this.firstDayOfTheWeek = this.$moment().day('Monday')
-    // get week of the year
     this.weekOfTheYear = this.$moment().week()
-    // get jobs
     this.getJobs()
   },
   computed: {
@@ -276,20 +277,25 @@ export default {
         })
       }
       if (this.$auth.user.domain === 'Locum') {
-        // ! ask arvi the date_start and date_end response should be from mon to sun
-        this.$axios(`/api/v1/locum/calendars/weekly/${this.selectedYear}/${this.weekOfTheYear}`).then(res => {
-          // console.log(res.data.data)
-          if (res.data.data.jobs && res.data.data.jobs.length > 0) {
-            this.appointment_jobs = res.data.data.jobs.filter(job => job.type === 'Private')
-            // ! ask arvi selection_date on platform job response not found
-            this.locum_jobs = res.data.data.jobs.filter(job => job.type === 'Platform')
-            this.locum_jobs.map(job => job.platform_job.selection_date = '2019-06-26')
-            this.$store.commit('calendar/SET_APPOINTMENT_JOBS', this.appointment_jobs)
-            this.$store.commit('calendar/SET_LOCUM_JOBS', this.locum_jobs)
-          }
-          if (res.data.data.unavailabilities && res.data.data.unavailabilities.length > 0) {
-            this.unavailabilities = res.data.data.unavailabilities
-            this.$store.commit('calendar/SET_UNAVAILABILITIES', this.unavailabilities)
+        // this.$axios(`/api/v1/locum/calendars/weekly/${this.selectedYear}/${this.weekOfTheYear}`).then(res => {
+        //   if (res.data.data.jobs && res.data.data.jobs.length > 0) {
+        //     this.appointment_jobs = res.data.data.jobs.filter(job => job.type === 'Private')
+        //     this.locum_jobs = res.data.data.jobs.filter(job => job.type === 'Platform')
+        //     this.locum_jobs.map(job => job.platform_job.selection_date = '2019-06-26')
+        //     this.$store.commit('calendar/SET_APPOINTMENT_JOBS', this.appointment_jobs)
+        //     this.$store.commit('calendar/SET_LOCUM_JOBS', this.locum_jobs)
+        //   }
+        //   if (res.data.data.unavailabilities && res.data.data.unavailabilities.length > 0) {
+        //     this.unavailabilities = res.data.data.unavailabilities
+        //     this.$store.commit('calendar/SET_UNAVAILABILITIES', this.unavailabilities)
+        //   }
+        // })
+        this.$axios.$get(`/api/v1/locum/jobs?date_start=${this.startOfMonth}&date_end=${this.endOfMonth}`).then(res => {
+          if (res.data.jobs && res.data.jobs.length > 0) {
+            this.appointment_jobs = res.data.jobs.filter(job => job.type === 'Private')
+            this.locum_jobs = res.data.jobs.filter(job => job.type === 'Platform')
+            this.$store.commit('calendar/SET_APPOINTMENT_JOBS', res.data.jobs.filter(job => job.type === 'Private'))
+            this.$store.commit('calendar/SET_LOCUM_JOBS', res.data.jobs.filter(job => job.type === 'Platform'))
           }
         })
       }

@@ -58,13 +58,11 @@
         :error="formError.find(item => item.field === 'mobile_number')"
       />
       <div class="rounded-lg bg-grey-light p-8 my-2">
-        <AppInput
+        <AppPostCode
           v-model="form.post_code"
-          :type="'text'"
           :name="'post_code'"
           :label="'Post code'"
-          :placeholder="''"
-          :error="formError.find(item => item.field === 'post_code')"
+          @onSelect="onSelect"
           :inStyle="'background-color:#dae1e7;border-color:white'"
         />
         <AppInput
@@ -101,11 +99,13 @@
 </template>
 <script>
 import AppInput from '@/components/Base/AppInput'
+import AppPostCode from '@/components/Base/AppPostCode'
 import AppSelect from '@/components/Base/AppSelect'
 import AppButton from '@/components/Base/AppButton'
 export default {
   components: {
     AppInput,
+    AppPostCode,
     AppSelect,
     AppButton
   },
@@ -143,7 +143,16 @@ export default {
     })
   },
   methods: {
-    async save() {
+    onSelect(value) {
+      let address_components = value.details.result.address_components
+      let postal_code = address_components.find(component => component.types.includes('postal_code'))
+      let route = address_components.find(component => component.types.includes('route'))
+      let postal_town = address_components.find(component => component.types.includes('postal_town'))
+      this.form.post_code = postal_code ? postal_code.long_name : ''
+      this.form.address_line_1 = route ? route.long_name : ''
+      this.form.address_line_3 = postal_town ? postal_town.long_name : ''
+    },
+    save() {
       try {
         this.formError = []
         // this.Validate(this.form, ['title', 'suffix', 'address_line_2'])

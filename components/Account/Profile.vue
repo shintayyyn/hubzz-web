@@ -119,13 +119,11 @@
           :error="this.formError.find(item => item.field === 'practice_type_id')"
           :lists="practiceTypes"
         />
-        <AppInput
+        <AppPostCode
           v-model="form.post_code"
-          :type="'text'"
           :name="'post_code'"
           :label="'The post code where I will be available at'"
-          :placeholder="''"
-          :error="formError.find(item => item.field === 'post_code')"
+          @onSelect="onSelect"
         />
         <AppInput
           v-model="form.miles"
@@ -206,6 +204,7 @@
 <script>
 import Avatar from '@/components/Account/Avatar'
 import AppInput from '@/components/Base/AppInput'
+import AppPostCode from '@/components/Base/AppPostCode'
 import AppTextarea from '@/components/Base/AppTextarea'
 import AppSelect from '@/components/Base/AppSelect'
 import AppFilterSearch from '@/components/Base/AppFilterSearch'
@@ -215,6 +214,7 @@ export default {
   components: {
     Avatar,
     AppInput,
+    AppPostCode,
     AppTextarea,
     AppSelect,
     AppFilterSearch,
@@ -331,6 +331,11 @@ export default {
 
   },
   methods: {
+    onSelect(value) {
+      let address_components = value.details.result.address_components
+      let postal_code = address_components.find(component => component.types.includes('postal_code'))
+      this.form.post_code = postal_code ? postal_code.long_name : ''
+    },
     uncheckOther(value) {
       this.form.practice_type_id = this.form.practice_type_id.filter(id => id != value)
     },
