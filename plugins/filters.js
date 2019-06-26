@@ -7,8 +7,15 @@ Vue.filter('localDate', function (date) {
     }
 })
 
-Vue.filter('StringMaxLength', function (str, numLenth) {
+Vue.filter('StringMaxLength', function (str, numLength) {
   if (str) {
-    return str.length > numLenth ? `${str.substring(0, numLenth)}..` : str
+    return str.length > numLength ? `${str.substring(0, numLength)}..` : str
+  }
+})
+
+Vue.filter('stringMatch', function(str, matchLength) {
+  if (str) {
+    console.log(matchLength)
+    return str
   }
 })

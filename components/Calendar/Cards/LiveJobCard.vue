@@ -29,7 +29,7 @@ export default {
       d.classList.toggle('toggled-right')
       document.body.style.overflow = 'hidden'
     }
-  }
+  },
 }
 </script>
 <style>

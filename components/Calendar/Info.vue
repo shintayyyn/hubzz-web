@@ -4,37 +4,38 @@
       class="text-white text-xs sm:text-sm py-4 px-8"
     >{{$moment(date_info || selected_date).format('Do MMM, YYYY')}}</div>
     <div class="flex flex-col overflow-y-auto px-8 h-full info-card">
-      <!-- practice -->
-      <template v-for="(item, index) in foundLiveJobs">
-        <LiveJobCard :job="item" :key="`${index}-${item.id}`"/>
-      </template>
-      <template v-for="item in foundAppliedJobs">
-        <AppliedJobCard :job="item" :key="item.id"/>
-      </template>
-      <template v-for="item in foundUnfilledJobs">
-        <UnfilledJobCard :job="item" :key="item.id"/>
-      </template>
-      <template v-for="item in foundDeclinedJobs">
-        <DeclinedJobCard :job="item" :key="item.id"/>
-      </template>
-      <!-- locums -->
-      <template v-for="(item, index) in foundAppointmentJobs">
-        <AppointmentJobCard
-          @viewAppointmentJob="$emit('viewAppointmentJob', $event)"
-          :job="item"
-          :key="`${index}-${item.id}`"
-        />
-      </template>
-      <template v-for="(item, index) in foundLocumJobs">
-        <LocumJobCard
-          @viewLocumJob="$emit('viewLocumJob', $event)"
-          :job="item"
-          :key="`${index}-${item.id}`"
-        />
-      </template>
-      <template v-for="(item, index) in foundUnavailabilities">
-        <UnavailabilitiesCard :job="item" :key="`${index}-${item.id}`"/>
-      </template>
+      <transition-group name="fade-card">
+        <div
+          class="mt-4 text-xl text-white"
+          v-if="noJobsToDisplay"
+          key="'no-jobs'"
+        >No jobs to display.</div>
+        <div v-for="(item, index) in foundLiveJobs" :key="`${index}-${item.id}`">
+          <LiveJobCard :job="item"/>
+        </div>
+        <div v-for="item in foundAppliedJobs" :key="item.id">
+          <AppliedJobCard :job="item"/>
+        </div>
+        <div v-for="item in foundUnfilledJobs" :key="item.id">
+          <UnfilledJobCard :job="item"/>
+        </div>
+        <div v-for="item in foundDeclinedJobs" :key="item.id">
+          <DeclinedJobCard :job="item"/>
+        </div>
+        <div v-for="(item, index) in foundAppointmentJobs" :key="`${index}-${item.id}`">
+          <AppointmentJobCard
+            @viewAppointmentJob="$emit('viewAppointmentJob', $event)"
+            :job="item"
+          />
+        </div>
+        <div v-for="(item, index) in foundLocumJobs" :key="`${index}-${item.id}`">
+          <LocumJobCard @viewLocumJob="$emit('viewLocumJob', $event)" :job="item"/>
+        </div>
+
+        <div v-for="(item, index) in foundUnavailabilities" :key="`${index}-${item.id}`">
+          <UnavailabilitiesCard :job="item"/>
+        </div>
+      </transition-group>
     </div>
   </div>
 </template>
@@ -71,6 +72,7 @@ export default {
       foundAppointmentJobs: [],
       foundLocumJobs: [],
       foundUnavailabilities: [],
+      // 
       date_info: null
     }
   },
@@ -97,7 +99,6 @@ export default {
       }
     },
     selected_date_shift(value) {
-      console.log(value)
       this.date_info = value.date
       if (this.$auth.user.domain === 'Practice') {
         this.findPerWeek(value)
@@ -113,6 +114,11 @@ export default {
     },
     selected_date_shift() {
       return this.$store.state.calendar.selected_date_shift
+    },
+    noJobsToDisplay() {
+      if (this.$auth.user.domain === 'Locum') {
+        return !this.foundAppointmentJobs.length && !this.foundLocumJobs.length && !this.foundUnavailabilities.length
+      }
     },
     // practice
     jobs() {
@@ -153,7 +159,6 @@ export default {
       if (this.declined_jobs.length > 0) {
         this.foundDeclinedJobs = this.declined_jobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date))
       }
-
     },
     findPerWeek({ date, shift }) {
       if (this.jobs.length > 0) {

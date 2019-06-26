@@ -1,5 +1,5 @@
 <template>
-  <section class="available-section overflow-x-auto">
+  <section class="available-section">
     <div
       class="mt-10 w-full text-center"
       style="font-family: Nunito"
@@ -8,7 +8,7 @@
     <div v-else class="mt-4">
       <table>
         <thead>
-          <tr class="text-xs sm:text-sm text-left">
+          <tr class="text-xs text-left">
             <th>Job number</th>
             <th>Practice</th>
             <th>Title</th>
@@ -21,7 +21,7 @@
           <template v-for="(item, index) in jobs">
             <tr
               :key="item.id"
-              class="job-card shadow-md cursor-pointer text-xs sm:text-sm text-left"
+              class="job-card shadow-md cursor-pointer text-xs text-left"
               @click="show(item.id)"
             >
               <td>{{item.job_number}}</td>

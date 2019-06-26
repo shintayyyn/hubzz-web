@@ -294,7 +294,7 @@ export default {
       }
       if (this.$auth.user.domain === 'Locum') {
         this.$axios.$get(`/api/v1/locum/calendars/monthly/${this.selectedYear}/${this.selectedMonth + 1}`).then(res => {
-          console.log(res.data)
+          // console.log(res.data)
           if (res.data.jobs && res.data.jobs.length > 0) {
             this.$store.commit('calendar/SET_APPOINTMENT_JOBS', res.data.jobs.filter(job => job.type === 'Private'))
             this.$store.commit('calendar/SET_LOCUM_JOBS', res.data.jobs.filter(job => job.type === 'Platform'))

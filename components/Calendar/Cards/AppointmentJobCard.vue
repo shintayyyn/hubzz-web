@@ -28,7 +28,7 @@ export default {
         this.$emit('viewAppointmentJob', res.data.job)
       })
     }
-  }
+  },
 }
 </script>
 <style>

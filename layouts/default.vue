@@ -8,7 +8,6 @@
     <!-- shields here -->
     <div class="sidebar-shield" v-if="$store.state.toggled_sidebar"></div>
     <div class="signout-shield" v-if="signout_modal"></div>
-    <div class="add-surgery-shield" v-if="$store.state.toggled_add_surgery_modal"></div>
     <!-- content -->
     <div class="content">
       <AppNotification/>
@@ -22,9 +21,6 @@ import AppSideBar from '@/components/AppSideBar'
 import SignOut from '@/components/Auth/SignOut'
 import AppNotification from '@/components/AppNotification'
 import AppHeader from '@/components/AppHeader'
-// locum
-// practice
-import CreateJobModal from '@/components/CreateJobModal'
 export default {
   transitions: 'page',
   components: {
@@ -32,9 +28,6 @@ export default {
     SignOut,
     AppNotification,
     AppHeader,
-    // locum
-    // practice
-    CreateJobModal
   },
   data() {
     return {
@@ -67,9 +60,6 @@ export default {
     this.$store.dispatch('signUp/getSpokenLanguages')
     this.$store.dispatch('signUp/getPracticeTypes')
   },
-  methods: {
-
-  }
 }
 </script>
 <style>

@@ -1,44 +1,17 @@
 <template>
-  <section v-if="!isNumberVerified || !isAvailabilityVerified">
-    <div class="text-sm sm:text-base font-bold">Reminders</div>
+  <section>
     <div class="flex flex-row flex-wrap justify-start">
-      <div class="pr-8 my-4 w-full sm:w-1/2 md:w-1/4">
-        <nuxt-link to="/account/profile">
-          <div class="reminder-card rounded-lg shadow-lg p-4" v-if="!isNumberVerified">
+      <div
+        class="pr-4 my-4 w-full sm:w-1/2 lg:w-1/4"
+        v-for="(item, index) in reminders"
+        :key="index"
+      >
+        <nuxt-link :to="item.route">
+          <div class="reminder-card rounded-lg shadow-lg p-4">
             <span class="leading-tight">
               <svgicon name="alert" height="20" width="20"/>
             </span>
-            Complete your Profile Credentials
-          </div>
-        </nuxt-link>
-      </div>
-      <div class="pr-8 my-4 w-full sm:w-1/2 md:w-1/4">
-        <nuxt-link to="/availability">
-          <div class="reminder-card rounded-lg shadow-lg p-4" v-if="!isAvailabilityVerified">
-            <span class="leading-tight">
-              <svgicon name="alert" height="20" width="20"/>
-            </span>
-            Completer your Availability Credentials
-          </div>
-        </nuxt-link>
-      </div>
-      <div class="pr-8 my-4 w-full sm:w-1/2 md:w-1/4">
-        <nuxt-link to="/account/profile">
-          <div class="reminder-card rounded-lg shadow-lg p-4" v-if="!isNumberVerified">
-            <span class="leading-tight">
-              <svgicon name="alert" height="20" width="20"/>
-            </span>
-            Complete your Profile Credentials
-          </div>
-        </nuxt-link>
-      </div>
-      <div class="pr-8 my-4 w-full sm:w-1/2 md:w-1/4">
-        <nuxt-link to="/availability">
-          <div class="reminder-card rounded-lg shadow-lg p-4" v-if="!isAvailabilityVerified">
-            <span class="leading-tight">
-              <svgicon name="alert" height="20" width="20"/>
-            </span>
-            Completer your Availability Credentials
+            {{item.label}}
           </div>
         </nuxt-link>
       </div>
@@ -47,19 +20,35 @@
 </template>
 <script>
 export default {
-  computed: {
-    isNumberVerified() {
-      return this.$auth.user.locum_detail.gmc_or_nmc_number.status === 'Verified' && this.$auth.user.locum_detail.mpl_or_npl_number.status === 'Verified'
-    },
-    isAvailabilityVerified() {
-      return Boolean(this.$auth.user.locum_detail.shifts.length)
+  data() {
+    return {
+      reminders: []
     }
   },
   created() {
-    // console.log(this.$auth.user)
-  }
+    if (this.$auth.user.domain === 'Locum') {
+      if (this.$auth.user.locum_detail.gmc_or_nmc_number.status === 'Pending') {
+        this.reminders.push({ label: 'Complete your GMC / NMC Number', route: '/compliance' })
+      }
+      if (this.$auth.user.locum_detail.mpl_or_npl_number.status === 'Pending') {
+        this.reminders.push({ label: 'Complete your MPL / NPL Number', route: '/compliance' })
+      }
+      if (this.$auth.user.locum_detail.shifts.length === 0) {
+        this.reminders.push({ label: 'Complete your Availability Credentials', route: '/availability' })
+      }
+      if (this.$auth.user.locum_detail.compliance_documents.filter(document => document.status !== 'Pending').length === 0) {
+        this.reminders.push({ label: 'Complete your Compliance documents', route: '/compliance' })
+      }
+      // ! ask arvi where to check billing address
+      if (true) {
+        this.reminders.push({ label: 'Complete your Billing address', route: '/billing' })
+      }
+
+    }
+  },
 }
 </script>
+
 <style scoped>
 a {
   text-decoration: none;
@@ -69,6 +58,5 @@ a {
   min-height: 130px;
 }
 </style>
-
 
 

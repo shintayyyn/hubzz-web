@@ -278,7 +278,7 @@ export default {
       if (this.$auth.user.domain === 'Locum') {
         // ! ask arvi the date_start and date_end response should be from mon to sun
         this.$axios(`/api/v1/locum/calendars/weekly/${this.selectedYear}/${this.weekOfTheYear}`).then(res => {
-          console.log(res.data.data)
+          // console.log(res.data.data)
           if (res.data.data.jobs && res.data.data.jobs.length > 0) {
             this.appointment_jobs = res.data.data.jobs.filter(job => job.type === 'Private')
             // ! ask arvi selection_date on platform job response not found

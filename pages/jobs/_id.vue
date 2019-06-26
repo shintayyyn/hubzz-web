@@ -28,7 +28,6 @@ import LocumUnsuccessfullDetailModal from '@/components/Jobs/LocumUnsuccessfullD
 import LocumDeclinedDetailModal from '@/components/Jobs/LocumDeclinedDetailModal'
 import LocumCompletedDetailModal from '@/components/Jobs/LocumCompletedDetailModal'
 export default {
-  transition: 'slide',
   components: {
     LocumAppointmentModal,
     LocumAllocatedDetailModal,

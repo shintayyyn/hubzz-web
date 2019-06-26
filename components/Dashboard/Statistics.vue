@@ -6,14 +6,14 @@
         v-for="(item, index) in statistics"
         :key="index"
       >
-        <div class="statistics-card rounded-lg shadow-lg p-4 hover:bg-grey-light">
-          <nuxt-link :to="item.route">
+        <nuxt-link :to="item.route">
+          <div class="statistics-card rounded-lg shadow-lg p-4 hover:bg-grey-light">
             <div class="flex flex-col my-2">
               <div class="text-sm sm:text-md">{{item.label}}</div>
               <div class="font-bold text-5xl mt-2">{{item.value}}</div>
             </div>
-          </nuxt-link>
-        </div>
+          </div>
+        </nuxt-link>
       </div>
     </div>
   </section>
@@ -29,6 +29,8 @@ export default {
     this.statistics = []
     if (this.$auth.user.domain === 'Locum') {
       this.getLocumStats()
+    } else if (this.$auth.user.domain === 'Practice') {
+      this.getPracticeStats()
     }
   },
   methods: {
@@ -44,7 +46,20 @@ export default {
           this.statistics.push({ label: 'Applied jobs', value: responses[2].data.count, route: '/jobs?job_status=applied' }),
           this.statistics.push({ label: 'Completed jobs', value: responses[3].data.count, route: '/jobs?job_status=completed' })
       })
-
+    },
+    getPracticeStats() {
+      Promise.all([
+        this.$axios.$get(`/api/v1/practice/locums/count`),
+        this.$axios.$get(`/api/v1/practice/jobs/count?status=Applied`),
+        this.$axios.$get(`/api/v1/practice/jobs/count?status=Current`),
+        this.$axios.$get(`/api/v1/practice/jobs/count?status=Available`),
+      ]).then(responses => {
+        // ! route might change
+        this.statistics.push({ label: 'My Banks', value: responses[0].data.count, route: '/my-banks' }),
+          this.statistics.push({ label: 'Applied jobs', value: responses[1].data.count, route: '/sessions' }),
+          this.statistics.push({ label: 'Assigned jobs', value: responses[2].data.count, route: '/sessions' }),
+          this.statistics.push({ label: 'Available jobs', value: responses[3].data.count, route: '/sessions' })
+      })
     }
   }
 }

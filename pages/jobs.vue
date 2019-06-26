@@ -6,7 +6,7 @@
         <Component :is="componentName"/>
       </transition>
     </div>
-    <div class="modal-shield" v-if="$store.state.jobs.shield"></div>
+    <div class="modal-shield" v-if="shield"></div>
     <nuxt-child/>
   </section>
 </template>
@@ -49,6 +49,18 @@ export default {
         return 'Completed'
       }
     },
+    shield() {
+      return this.$store.state.jobs.shield
+    }
+  },
+  watch: {
+    shield(value) {
+      if (value) {
+        document.body.style.overflow = 'hidden'
+      } else {
+        document.body.style.overflow = 'auto'
+      }
+    }
   },
   created() {
     const query = {
