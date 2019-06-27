@@ -52,13 +52,10 @@
           >
             <div class="text-xs md:text-sm z-10">{{(item.date)}}</div>
             <PerMonthInfoDateCell
-              :jobs="jobs"
-              :applied_jobs="applied_jobs_with_selection_date"
-              :unfilled_jobs="unfilled_jobs"
-              :declined_jobs="declined_jobs"
-              :appointment_jobs="appointment_jobs"
-              :locum_jobs="locum_jobs"
-              :unavailabilities="unavailabilities"
+              :locum_private_jobs="locum_private_jobs"
+              :locum_current_jobs="locum_current_jobs"
+              :locum_applied_jobs="locum_applied_jobs"
+              :locum_unavailabilities="locum_unavailabilities"
               :item="item"
             />
           </div>
@@ -77,13 +74,10 @@
           >
             <div class="text-xs md:text-sm z-10">{{item.date}}</div>
             <PerMonthInfoDateCell
-              :jobs="jobs"
-              :applied_jobs="applied_jobs_with_selection_date"
-              :unfilled_jobs="unfilled_jobs"
-              :declined_jobs="declined_jobs"
-              :appointment_jobs="appointment_jobs"
-              :locum_jobs="locum_jobs"
-              :unavailabilities="unavailabilities"
+              :locum_private_jobs="locum_private_jobs"
+              :locum_current_jobs="locum_current_jobs"
+              :locum_applied_jobs="locum_applied_jobs"
+              :locum_unavailabilities="locum_unavailabilities"
               :item="item"
             />
           </div>
@@ -102,13 +96,10 @@
           >
             <div class="text-xs md:text-sm z-10">{{(item.date)}}</div>
             <PerMonthInfoDateCell
-              :jobs="jobs"
-              :applied_jobs="applied_jobs_with_selection_date"
-              :unfilled_jobs="unfilled_jobs"
-              :declined_jobs="declined_jobs"
-              :appointment_jobs="appointment_jobs"
-              :locum_jobs="locum_jobs"
-              :unavailabilities="unavailabilities"
+              :locum_private_jobs="locum_private_jobs"
+              :locum_current_jobs="locum_current_jobs"
+              :locum_applied_jobs="locum_applied_jobs"
+              :locum_unavailabilities="locum_unavailabilities"
               :item="item"
             />
           </div>
@@ -127,13 +118,10 @@
           >
             <div class="text-xs md:text-sm z-10">{{item.date}}</div>
             <PerMonthInfoDateCell
-              :jobs="jobs"
-              :applied_jobs="applied_jobs_with_selection_date"
-              :unfilled_jobs="unfilled_jobs"
-              :declined_jobs="declined_jobs"
-              :appointment_jobs="appointment_jobs"
-              :locum_jobs="locum_jobs"
-              :unavailabilities="unavailabilities"
+              :locum_private_jobs="locum_private_jobs"
+              :locum_current_jobs="locum_current_jobs"
+              :locum_applied_jobs="locum_applied_jobs"
+              :locum_unavailabilities="locum_unavailabilities"
               :item="item"
             />
           </div>
@@ -152,13 +140,10 @@
           >
             <div class="text-xs md:text-sm z-10">{{(item.date)}}</div>
             <PerMonthInfoDateCell
-              :jobs="jobs"
-              :applied_jobs="applied_jobs_with_selection_date"
-              :unfilled_jobs="unfilled_jobs"
-              :declined_jobs="declined_jobs"
-              :appointment_jobs="appointment_jobs"
-              :locum_jobs="locum_jobs"
-              :unavailabilities="unavailabilities"
+              :locum_private_jobs="locum_private_jobs"
+              :locum_current_jobs="locum_current_jobs"
+              :locum_applied_jobs="locum_applied_jobs"
+              :locum_unavailabilities="locum_unavailabilities"
               :item="item"
             />
           </div>
@@ -177,20 +162,17 @@
           >
             <div class="text-xs md:text-sm z-10">{{item.date}}</div>
             <PerMonthInfoDateCell
-              :jobs="jobs"
-              :applied_jobs="applied_jobs_with_selection_date"
-              :unfilled_jobs="unfilled_jobs"
-              :declined_jobs="declined_jobs"
-              :appointment_jobs="appointment_jobs"
-              :locum_jobs="locum_jobs"
-              :unavailabilities="unavailabilities"
+              :locum_private_jobs="locum_private_jobs"
+              :locum_current_jobs="locum_current_jobs"
+              :locum_applied_jobs="locum_applied_jobs"
+              :locum_unavailabilities="locum_unavailabilities"
               :item="item"
             />
           </div>
         </div>
       </div>
       <div class="flex flex-col w-full">
-        <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 1">
+        <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 0">
           <div class="m-1 h-8 sm:h-12 md:h-16 lg:h-20 w-auto">&nbsp;</div>
         </div>
         <div v-for="(item, index) in daysInMonth" :key="index">
@@ -202,13 +184,10 @@
           >
             <div class="text-xs md:text-sm z-10">{{item.date}}</div>
             <PerMonthInfoDateCell
-              :jobs="jobs"
-              :applied_jobs="applied_jobs_with_selection_date"
-              :unfilled_jobs="unfilled_jobs"
-              :declined_jobs="declined_jobs"
-              :appointment_jobs="appointment_jobs"
-              :locum_jobs="locum_jobs"
-              :unavailabilities="unavailabilities"
+              :locum_private_jobs="locum_private_jobs"
+              :locum_current_jobs="locum_current_jobs"
+              :locum_applied_jobs="locum_applied_jobs"
+              :locum_unavailabilities="locum_unavailabilities"
               :item="item"
             />
           </div>
@@ -240,14 +219,17 @@ export default {
 
   computed: {
     // locum
-    unavailabilities() {
-      return this.$store.state.calendar.unavailabilities
+    locum_private_jobs() {
+      return this.$store.state.calendar.locum_private_jobs
     },
-    locum_jobs() {
-      return this.$store.state.calendar.locum_jobs
+    locum_current_jobs() {
+      return this.$store.state.calendar.locum_current_jobs
     },
-    appointment_jobs() {
-      return this.$store.state.calendar.appointment_jobs
+    locum_applied_jobs() {
+      return this.$store.state.calendar.locum_applied_jobs
+    },
+    locum_unavailabilities() {
+      return this.$store.state.calendar.locum_unavailabilities
     },
   },
   watch: {
@@ -260,9 +242,7 @@ export default {
     this.endOfMonth = this.$moment().endOf('month').format('YYYY-MM-DD')
     let d = new Date()
     this.selectedMonth = d.getMonth()
-
     this.getDaysInMonth(this.selectedMonth, this.selectedYear)
-    // ! refactor in gettings jobs
     this.getJobs()
   },
   methods: {
@@ -291,26 +271,28 @@ export default {
             this.$store.commit('calendar/SET_DECLINED_JOBS', res.data.declined_jobs)
           }
         })
-        return
       }
       if (this.$auth.user.domain === 'Locum') {
-        // current(private), current(platform), applied, unavailabilities
+        // current(private), current(platform)
         this.$axios.$get(`/api/v1/locum/jobs?locum_status=Current&date_start=${this.startOfMonth}&date_end=${this.endOfMonth}`).then(res => {
-          console.log(res)
+          console.log(res.data)
           if (res.data.jobs && res.data.jobs.length > 0) {
-            this.$store.commit('calendar/SET_APPOINTMENT_JOBS', res.data.jobs.filter(job => job.type === 'Private'))
-            this.$store.commit('calendar/SET_LOCUM_JOBS', res.data.jobs.filter(job => job.locum_status === 'Current'))
+            this.$store.commit('calendar/SET_LOCUM_PRIVATE_JOBS', res.data.jobs.filter(job => job.type === 'Private'))
+            this.$store.commit('calendar/SET_LOCUM_CURRENT_JOBS', res.data.jobs.filter(job => job.type === 'Platform'))
           }
         })
+        // applied
         this.$axios.$get(`/api/v1/locum/jobs?locum_status=Applied&date_start=${this.startOfMonth}&date_end=${this.endOfMonth}`).then(res => {
-          console.log(res)
+          // console.log(res.data)
           if (res.data.jobs && res.data.jobs.length > 0) {
-            this.$store.commit('calendar/SET_LOCUM_JOBS', res.data.jobs.filter(job => job.locum_status === 'Applied'))
+            this.$store.commit('calendar/SET_LOCUM_APPLIED_JOBS', res.data.jobs)
           }
         })
+        // unavailabilities
         this.$axios.$get(`/api/v1/locum/unavailabilities?date_start=${this.startOfMonth}&date_end=${this.endOfMonth}`).then(res => {
+          // console.log(res)
           if (res.data.unavailabilities && res.data.unavailabilities.length > 0) {
-            // this.$store.commit('calendar/SET_UNAVAILABILITIES', res.data.unavailabilities)
+            this.$store.commit('calendar/SET_LOCUM_UNAVAILABILITIES', res.data.unavailabilities)
           }
         })
       }
@@ -349,6 +331,8 @@ export default {
           this.selectedMonth++
         }
       }
+      this.startOfMonth = this.$moment(`${this.selectedYear}-${this.selectedMonth + 1}`).startOf('month').format('YYYY-MM-DD')
+      this.endOfMonth = this.$moment(`${this.selectedYear}-${this.selectedMonth + 1}`).endOf('month').format('YYYY-MM-DD')
       this.getJobs()
     }
   }

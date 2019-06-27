@@ -12,6 +12,7 @@
     <LocumAppliedDetailModal :job="job" v-if="job.status === 'Applied'"/>
     <LocumUnsuccessfullDetailModal :job="job" v-if="job.status === 'Unsuccessful'"/>
     <LocumDeclinedDetailModal :job="job" v-if="job.status === 'Declined'"/>
+    <LocumCancelledDetailModal :job="job" v-if="job.status === 'Cancelled'"/>
     <LocumCompletedDetailModal
       :job="job"
       v-if="job.status === 'Completed' && job.type === 'Platform'"
@@ -23,18 +24,22 @@
 import LocumAppointmentModal from '@/components/Jobs/LocumAppointmentModal'
 import LocumAllocatedDetailModal from '@/components/Jobs/LocumAllocatedDetailModal'
 import LocumAvailableDetailModal from '@/components/Jobs/LocumAvailableDetailModal'
+import LocumMatchedDetailModal from '@/components/Jobs/LocumMatchedDetailModal'
 import LocumAppliedDetailModal from '@/components/Jobs/LocumAppliedDetailModal'
 import LocumUnsuccessfullDetailModal from '@/components/Jobs/LocumUnsuccessfullDetailModal'
 import LocumDeclinedDetailModal from '@/components/Jobs/LocumDeclinedDetailModal'
+import LocumCancelledDetailModal from '@/components/Jobs/LocumCancelledDetailModal'
 import LocumCompletedDetailModal from '@/components/Jobs/LocumCompletedDetailModal'
 export default {
   components: {
     LocumAppointmentModal,
     LocumAllocatedDetailModal,
     LocumAvailableDetailModal,
+    LocumMatchedDetailModal,
     LocumAppliedDetailModal,
     LocumUnsuccessfullDetailModal,
     LocumDeclinedDetailModal,
+    LocumCancelledDetailModal,
     LocumCompletedDetailModal,
   },
   async asyncData({ app, route, store, error }) {

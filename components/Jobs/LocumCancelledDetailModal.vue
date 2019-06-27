@@ -5,7 +5,7 @@
     </div>
     <div class="flex flex-row justify-start mt-8">
       <div class="mx-2 leading-loose font-bold text-md sm:text-lg">{{job.platform_job.title}}</div>
-      <div class="mx-2 bg-red-dark text-white text-sm sm:text-sm p-2">DECLINED</div>
+      <div class="mx-2 bg-red-dark text-white text-sm sm:text-sm p-2">CANCELLED</div>
     </div>
     <div
       class="text-xs sm:text-sm mt-4"
@@ -55,17 +55,15 @@
                 class="text-xs sm:text-sm mb-6"
                 v-text="job.platform_job.email?job.platform_job.email:`(none)`"
               ></div>
-              <!-- ! ask arvi declined date and reason on show -->
-              <div class="font-bold text-sm sm:text-md">Declined At</div>
-              <!-- <div
+              <div class="font-bold text-sm sm:text-md">Cancelled At</div>
+              <div class="text-xs sm:text-sm mb-6">{{job.platform_job.cancelled_at | localDate}}</div>
+              <div class="font-bold text-sm sm:text-md">Cancelled By</div>
+              <div
                 class="text-xs sm:text-sm mb-6"
-                v-text="declined_at?$moment(declined_at).format('YYYY-MM-DD'):`(none)`"
-              ></div>-->
-              <div class="font-bold text-sm sm:text-md">Declined Reason</div>
-              <!-- <div
-                class="text-xs sm:text-sm mb-6"
-                v-text="declined_reason?declined_reason:`(none)`"
-              ></div>-->
+                v-text="job.platform_job.cancelled_by.personal_detail.name"
+              ></div>
+              <div class="font-bold text-sm sm:text-md">Cancelled Reason</div>
+              <div class="text-xs sm:text-sm mb-6" v-text="job.platform_job.cancelled_reason"></div>
             </div>
             <div class="flex flex-col w-full md:w-1/2 p-0 md:pl-4">
               <div class="font-bold text-sm sm:text-md">Duration</div>
@@ -173,9 +171,12 @@ export default {
       return this.job.platform_job.practice.surgery.address.coordinates
     },
   },
+  created() {
+    console.log(this.job)
+  },
   methods: {
     close() {
-      this.$router.push('/jobs?job_status=declined')
+      this.$router.push('/jobs?job_status=cancelled')
     }
   }
 }

@@ -10,29 +10,28 @@
 </template>
 <script>
 import MyPracticeTab from '@/components/MyPractice/MyPracticeTab'
-import FavouritePractices from '@/components/MyPractice/FavouritePractices'
-import AllPractices from '@/components/MyPractice/AllPractices'
+import Favorites from '@/components/MyPractice/Favorites'
+import Completed from '@/components/MyPractice/Completed'
+import All from '@/components/MyPractice/All'
+import Unsuccessful from '@/components/MyPractice/Unsuccessful'
 export default {
   components: {
     MyPracticeTab,
-    FavouritePractices,
-    AllPractices,
+    Favorites,
+    Completed,
+    All,
+    Unsuccessful,
   },
   created() {
     const query = {
       ...this.$route.query,
-      my_practice_tab: this.$route.query.my_practice_tab || 'favourites'
+      my_practice_tab: this.$route.query.my_practice_tab || 'favorites'
     }
     this.$router.push({ query })
   },
   computed: {
     activeComponent() {
-      if (this.$route.query.my_practice_tab === 'favourites') {
-        return 'FavouritePractices'
-      }
-      if (this.$route.query.my_practice_tab === 'all') {
-        return 'AllPractices'
-      }
+      return this.$route.query.my_practice_tab
     }
   },
 }

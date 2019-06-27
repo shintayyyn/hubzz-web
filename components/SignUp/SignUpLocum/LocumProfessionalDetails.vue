@@ -175,7 +175,6 @@ export default {
         max_rate_per_whole_day_session: 0,
         ir35: false,
         practice_type_id: [],
-        // ! ask arvi
         mandatory_training_id: []
       },
       formError: [],

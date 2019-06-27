@@ -13,17 +13,24 @@
           </div>
         </div>
         <div class="w-full lg:w-1/3">
-          <Info @viewAppointmentJob="viewAppointmentJob" @viewLocumJob="viewLocumJob"/>
+          <Info
+            @viewAppointmentJob="viewAppointmentJob"
+            @viewLocumCurrentJob="viewLocumCurrentJob"
+            @viewLocumAppliedJob="viewLocumAppliedJob"
+          />
         </div>
       </div>
     </div>
-    <div class="modal-shield" v-if="modal | locum_modal"></div>
+    <div class="modal-shield" v-if="modal | locum_current_modal | locum_applied_modal"></div>
     <transition name="slide" mode="out-in">
       <div class="modal-container shadow-lg" v-if="modal">
         <CreateAppointmentModal @close="modal = false" :job="job"/>
       </div>
-      <div class="modal-container shadow-lg" v-if="locum_modal">
-        <LocumAvailableDetailModal @close="locum_modal = false" :job="locum_job"/>
+      <div class="modal-container shadow-lg" v-if="locum_current_modal">
+        <LocumAllocatedDetailModal @close="locum_current_modal = false" :job="locum_current_job"/>
+      </div>
+      <div class="modal-container shadow-lg" v-if="locum_applied_modal">
+        <LocumAppliedDetailModal @close="locum_applied_modal = false" :job="locum_applied_job"/>
       </div>
     </transition>
   </section>
@@ -33,29 +40,37 @@ import PerMonth from '@/components/Calendar/PerMonth'
 import PerWeek from '@/components/Calendar/PerWeek'
 import Info from '@/components/Calendar/Info'
 import CreateAppointmentModal from '@/components/CreateAppointmentModal'
-import LocumAvailableDetailModal from '@/components/Jobs/LocumAvailableDetailModal'
+import LocumAllocatedDetailModal from '@/components/Jobs/LocumAllocatedDetailModal'
+import LocumAppliedDetailModal from '@/components/Jobs/LocumAppliedDetailModal'
 export default {
   components: {
     PerMonth,
     PerWeek,
     Info,
     CreateAppointmentModal,
-    LocumAvailableDetailModal
+    LocumAllocatedDetailModal,
+    LocumAppliedDetailModal
   },
   data() {
     return {
       modal: false,
       job: null,
-      locum_modal: false,
-      locum_job: null
+      locum_current_modal: false,
+      locum_current_job: null,
+      locum_applied_modal: false,
+      locum_applied_job: null
     }
   },
   created() {
-    // set the selected date and date today
     this.$store.commit('calendar/SET_DATE_TODAY')
   },
+  computed: {
+    toggleScroll() {
+      return this.modal | this.locum_current_modal | this.locum_applied_modal
+    }
+  },
   watch: {
-    modal(value) {
+    toggleScroll(value) {
       if (value) {
         document.body.style.overflow = 'hidden'
       } else {
@@ -79,9 +94,13 @@ export default {
       this.modal = true
       this.job = job
     },
-    viewLocumJob(job) {
-      this.locum_modal = true
-      this.locum_job = job
+    viewLocumCurrentJob(job) {
+      this.locum_current_modal = true
+      this.locum_current_job = job
+    },
+    viewLocumAppliedJob(job) {
+      this.locum_applied_modal = true
+      this.locum_applied_job = job
     }
   }
 }

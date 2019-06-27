@@ -31,6 +31,7 @@
           @close="close"
           :unavailableDate="unavailableDate"
           :appointmentDate="appointmentDate"
+          :currentJob="currentJob"
           :type="type"
         />
       </div>
@@ -55,6 +56,7 @@ export default {
       type: '',
       unavailableDate: null,
       appointmentDate: null,
+      currentJob: null
     }
   },
   created() {
@@ -72,9 +74,10 @@ export default {
       this.type = 'range'
       this.modal = true
     },
-    open(unavailableDate, appointmentDate) {
+    open(unavailableDate, appointmentDate, currentJob) {
       this.unavailableDate = unavailableDate
       this.appointmentDate = appointmentDate
+      this.currentJob = currentJob
       document.body.style.overflow = 'hidden'
       this.type = 'solo'
       this.modal = true

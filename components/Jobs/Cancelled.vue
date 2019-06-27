@@ -14,7 +14,7 @@
             <th>Title</th>
             <th>From</th>
             <th>To</th>
-            <th>Marked completed by Practice</th>
+            <th>Cancelled At</th>
           </tr>
         </thead>
         <tbody>
@@ -25,12 +25,11 @@
               @click="show(item.id)"
             >
               <td>{{item.job_number}}</td>
-              <td>{{item.type === 'Private' ? item.private_job.private_practice.surgery.name : item.platform_job.practice.surgery.name}}</td>
-              <td>{{item.type === 'Private' ? 'Private appointment' : item.platform_job.title}}</td>
-              <td>{{item.type === 'Private' ? item.private_job.date_start : item.platform_job.date_start}}</td>
-              <td>{{item.type === 'Private' ? item.private_job.date_end : item.platform_job.date_end}}</td>
-              <!-- // ! get completed date / practice user -->
-              <td>marked completed by practice</td>
+              <td>{{ item.platform_job.practice.surgery.name}}</td>
+              <td>{{item.platform_job.title}}</td>
+              <td>{{item.platform_job.date_start}}</td>
+              <td>{{item.platform_job.date_end}}</td>
+              <td>{{item.platform_job.cancelled_at | localDate}}</td>
             </tr>
             <tr :key="`${item.id}-${index}`">
               <td></td>
@@ -49,15 +48,14 @@ export default {
     }
   },
   created() {
-    //! ask arvi need marked completed by Practice
-    this.$axios.$get(`/api/v1/locum/jobs?locum_status=Completed`).then(res => {
-      console.log(res)
+    //   ! ask arvi cancelled by and reason on list all
+    this.$axios.$get(`/api/v1/locum/jobs?locum_status=Cancelled`).then(res => {
       this.jobs = res.data.jobs
     })
   },
   methods: {
     show(id) {
-      this.$router.push(`/jobs/${id}?job_status=completed`)
+      this.$router.push(`/jobs/${id}?job_status=cancelled`)
     }
   }
 }

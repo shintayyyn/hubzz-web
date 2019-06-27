@@ -53,13 +53,25 @@
       <div class="w-full text-left">AM</div>
       <template v-for="(date, index) in daysInWeek">
         <div
-          v-if="hasAppointmentJobs(date, 'AM')"
+          v-if="hasLocumPrivateJobs(date, 'AM')"
           class="w-full cursor-pointer border-t-2 border-grey bg-green-light hover:bg-grey-light"
           :key="`${date}-${index}`"
           @click="selectDateShift(date, 'AM')"
         ></div>
         <div
-          v-else-if="hasUnavailabilities(date, 'AM')"
+          v-else-if="hasLocumCurrentJob(date, 'AM')"
+          class="w-full cursor-pointer border-t-2 border-grey bg-green-light hover:bg-grey-light"
+          :key="`${date}-${index}`"
+          @click="selectDateShift(date, 'AM')"
+        ></div>
+        <!-- <div
+          v-else-if="hasLocumAppliedJobs(date, 'AM')"
+          class="w-full cursor-pointer border-t-2 border-grey bg-orange-light hover:bg-grey-light"
+          :key="`${date}-${index}`"
+          @click="selectDateShift(date, 'AM')"
+        ></div>-->
+        <div
+          v-else-if="hasLocumUnavailabilities(date, 'AM')"
           class="w-full cursor-pointer border-t-2 border-grey bg-pink hover:bg-grey-light"
           :key="`${date}-${index}`"
           @click="selectDateShift(date, 'AM')"
@@ -82,13 +94,25 @@
       <div class="w-full text-left">PM</div>
       <template v-for="(date, index) in daysInWeek">
         <div
-          v-if="hasAppointmentJobs(date, 'PM')"
+          v-if="hasLocumPrivateJobs(date, 'PM')"
           class="w-full cursor-pointer border-t-2 border-grey bg-green-light hover:bg-grey-light"
           :key="`${date}-${index}`"
           @click="selectDateShift(date, 'PM')"
         ></div>
         <div
-          v-else-if="hasUnavailabilities(date, 'PM')"
+          v-else-if="hasLocumCurrentJob(date, 'PM')"
+          class="w-full cursor-pointer border-t-2 border-grey bg-green-light hover:bg-grey-light"
+          :key="`${date}-${index}`"
+          @click="selectDateShift(date, 'PM')"
+        ></div>
+        <!-- <div
+          v-else-if="hasLocumAppliedJobs(date, 'PM')"
+          class="w-full cursor-pointer border-t-2 border-grey bg-green-light hover:bg-grey-light"
+          :key="`${date}-${index}`"
+          @click="selectDateShift(date, 'PM')"
+        ></div>-->
+        <div
+          v-else-if="hasLocumUnavailabilities(date, 'PM')"
           class="w-full cursor-pointer border-t-2 border-grey bg-pink hover:bg-grey-light"
           :key="`${date}-${index}`"
           @click="selectDateShift(date, 'PM')"
@@ -111,13 +135,25 @@
       <div class="w-full text-left">OOH</div>
       <template v-for="(date, index) in daysInWeek">
         <div
-          v-if="hasAppointmentJobs(date, 'OOH')"
+          v-if="hasLocumPrivateJobs(date, 'OOH')"
           class="w-full cursor-pointer border-t-2 border-grey bg-green-light hover:bg-grey-light"
           :key="`${date}-${index}`"
           @click="selectDateShift(date, 'OOH')"
         ></div>
         <div
-          v-else-if="hasUnavailabilities(date, 'OOH')"
+          v-else-if="hasLocumCurrentJob(date, 'OOH')"
+          class="w-full cursor-pointer border-t-2 border-grey bg-green-light hover:bg-grey-light"
+          :key="`${date}-${index}`"
+          @click="selectDateShift(date, 'OOH')"
+        ></div>
+        <!-- <div
+          v-else-if="hasLocumAppliedJobs(date, 'OOH')"
+          class="w-full cursor-pointer border-t-2 border-grey bg-green-light hover:bg-grey-light"
+          :key="`${date}-${index}`"
+          @click="selectDateShift(date, 'OOH')"
+        ></div>-->
+        <div
+          v-else-if="hasLocumUnavailabilities(date, 'OOH')"
           class="w-full cursor-pointer border-t-2 border-grey bg-pink hover:bg-grey-light"
           :key="`${date}-${index}`"
           @click="selectDateShift(date, 'OOH')"
@@ -140,13 +176,25 @@
       <div class="w-full text-left">Whole-day</div>
       <template v-for="(date, index) in daysInWeek">
         <div
-          v-if="hasAppointmentJobs(date, 'Whole Day')"
+          v-if="hasLocumPrivateJobs(date, 'Whole Day')"
           class="w-full cursor-pointer border-t-2 border-grey bg-green-light hover:bg-grey-light"
           :key="`${date}-${index}`"
           @click="selectDateShift(date, 'Whole Day')"
         ></div>
         <div
-          v-else-if="hasUnavailabilities(date, 'Whole Day')"
+          v-else-if="hasLocumCurrentJob(date, 'Whole Day')"
+          class="w-full cursor-pointer border-t-2 border-grey bg-green-light hover:bg-grey-light"
+          :key="`${date}-${index}`"
+          @click="selectDateShift(date, 'Whole Day')"
+        ></div>
+        <!-- <div
+          v-else-if="hasLocumAppliedJobs(date, 'Whole Day')"
+          class="w-full cursor-pointer border-t-2 border-grey bg-green-light hover:bg-grey-light"
+          :key="`${date}-${index}`"
+          @click="selectDateShift(date, 'Whole Day')"
+        ></div>-->
+        <div
+          v-else-if="hasLocumUnavailabilities(date, 'Whole Day')"
           class="w-full cursor-pointer border-t-2 border-grey bg-pink hover:bg-grey-light"
           :key="`${date}-${index}`"
           @click="selectDateShift(date, 'Whole Day')"
@@ -189,7 +237,7 @@
         <div class="w-full text-left">Available</div>
         <template v-for="(date, index) in daysInWeek">
           <div
-            v-if="hasLocumJobs(date, 'Available')"
+            v-if="hasLocumAppliedJobs(date, 'Available')"
             class="w-full cursor-pointer border-t-2 border-grey bg-orange-light hover:bg-grey-light"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'Available')"
@@ -215,30 +263,36 @@
 export default {
   data() {
     return {
-      weekOfTheYear: null,
+      // weekOfTheYear: null,
       firstDayOfTheWeek: null,
-      startOfMonth: null,
-      endOfMonth: null,
+      lastDayOfTheWeek: null,
       // practice
       jobs: [],
       applied_jobs_with_selection_date: [],
       unfilled_jobs: [],
       declined_jobs: [],
-      // locums
-      appointment_jobs: [],
-      locum_jobs: [],
-      unavailabilities: [],
-
     }
   },
   created() {
-    this.startOfMonth = this.$moment().startOf('month').format('YYYY-MM-DD')
-    this.endOfMonth = this.$moment().endOf('month').format('YYYY-MM-DD')
-    this.firstDayOfTheWeek = this.$moment().day('Monday')
-    this.weekOfTheYear = this.$moment().week()
+    this.firstDayOfTheWeek = this.$moment().day('Monday').format('YYYY-MM-DD')
+    this.lastDayOfTheWeek = this.$moment().add(1, 'week').day('sunday').format('YYYY-MM-DD')
+    // this.weekOfTheYear = this.$moment().week()
     this.getJobs()
   },
   computed: {
+    // locum
+    locum_private_jobs() {
+      return this.$store.state.calendar.locum_private_jobs
+    },
+    locum_current_jobs() {
+      return this.$store.state.calendar.locum_current_jobs
+    },
+    locum_applied_jobs() {
+      return this.$store.state.calendar.locum_applied_jobs
+    },
+    locum_unavailabilities() {
+      return this.$store.state.calendar.locum_unavailabilities
+    },
     daysInWeek() {
       let weekLists = []
       for (let i = 0; i < 7; i++) {
@@ -277,25 +331,26 @@ export default {
         })
       }
       if (this.$auth.user.domain === 'Locum') {
-        // this.$axios(`/api/v1/locum/calendars/weekly/${this.selectedYear}/${this.weekOfTheYear}`).then(res => {
-        //   if (res.data.data.jobs && res.data.data.jobs.length > 0) {
-        //     this.appointment_jobs = res.data.data.jobs.filter(job => job.type === 'Private')
-        //     this.locum_jobs = res.data.data.jobs.filter(job => job.type === 'Platform')
-        //     this.locum_jobs.map(job => job.platform_job.selection_date = '2019-06-26')
-        //     this.$store.commit('calendar/SET_APPOINTMENT_JOBS', this.appointment_jobs)
-        //     this.$store.commit('calendar/SET_LOCUM_JOBS', this.locum_jobs)
-        //   }
-        //   if (res.data.data.unavailabilities && res.data.data.unavailabilities.length > 0) {
-        //     this.unavailabilities = res.data.data.unavailabilities
-        //     this.$store.commit('calendar/SET_UNAVAILABILITIES', this.unavailabilities)
-        //   }
-        // })
-        this.$axios.$get(`/api/v1/locum/jobs?date_start=${this.startOfMonth}&date_end=${this.endOfMonth}`).then(res => {
+        // current(private), current(platform)
+        this.$axios.$get(`/api/v1/locum/jobs?locum_status=Current&date_start=${this.firstDayOfTheWeek}&date_end=${this.lastDayOfTheWeek}`).then(res => {
+          // console.log(res.data)
           if (res.data.jobs && res.data.jobs.length > 0) {
-            this.appointment_jobs = res.data.jobs.filter(job => job.type === 'Private')
-            this.locum_jobs = res.data.jobs.filter(job => job.type === 'Platform')
-            this.$store.commit('calendar/SET_APPOINTMENT_JOBS', res.data.jobs.filter(job => job.type === 'Private'))
-            this.$store.commit('calendar/SET_LOCUM_JOBS', res.data.jobs.filter(job => job.type === 'Platform'))
+            this.$store.commit('calendar/SET_LOCUM_PRIVATE_JOBS', res.data.jobs.filter(job => job.type === 'Private'))
+            this.$store.commit('calendar/SET_LOCUM_CURRENT_JOBS', res.data.jobs.filter(job => job.type === 'Platform'))
+          }
+        })
+        // applied
+        this.$axios.$get(`/api/v1/locum/jobs?locum_status=Applied&date_start=${this.firstDayOfTheWeek}&date_end=${this.lastDayOfTheWeek}`).then(res => {
+          // console.log(res.data)
+          if (res.data.jobs && res.data.jobs.length > 0) {
+            this.$store.commit('calendar/SET_LOCUM_APPLIED_JOBS', res.data.jobs)
+          }
+        })
+        // unavailabilities
+        this.$axios.$get(`/api/v1/locum/unavailabilities?date_start=${this.firstDayOfTheWeek}&date_end=${this.lastDayOfTheWeek}`).then(res => {
+          // console.log(res)
+          if (res.data.unavailabilities && res.data.unavailabilities.length > 0) {
+            this.$store.commit('calendar/SET_LOCUM_UNAVAILABILITIES', res.data.unavailabilities)
           }
         })
       }
@@ -305,12 +360,12 @@ export default {
     },
     adjustWeek(type) {
       if (type === 'next') {
-        this.firstDayOfTheWeek = this.$moment(this.daysInWeek[6]).add(1, 'days')
-        this.weekOfTheYear = this.$moment(this.daysInWeek[6]).week()
+        this.firstDayOfTheWeek = this.$moment(this.daysInWeek[6]).add(1, 'days').format('YYYY-MM-DD')
+        this.lastDayOfTheWeek = this.$moment(this.daysInWeek[6]).add(7, 'days').format('YYYY-MM-DD')
       }
       if (type === 'previous') {
-        this.firstDayOfTheWeek = this.$moment(this.daysInWeek[0]).subtract(7, 'days')
-        this.weekOfTheYear = this.$moment(this.daysInWeek[0]).week()
+        this.firstDayOfTheWeek = this.$moment(this.daysInWeek[0]).subtract(7, 'days').format('YYYY-MM-DD')
+        this.lastDayOfTheWeek = this.$moment(this.daysInWeek[0]).subtract(1, 'days').format('YYYY-MM-DD')
       }
       this.getJobs()
     },
@@ -322,19 +377,22 @@ export default {
       }
     },
     // locums
-    hasAppointmentJobs(date, type) {
-      if (this.appointment_jobs && this.appointment_jobs.length > 0) {
-        return this.appointment_jobs.find(job => this.getDateArray(job.private_job.date_start, job.private_job.date_end).includes(date) && job.private_job.shift.name === type)
+    hasLocumPrivateJobs(date, type) {
+      if (this.locum_private_jobs && this.locum_private_jobs.length > 0) {
+        return this.locum_private_jobs.find(job => this.getDateArray(job.private_job.date_start, job.private_job.date_end).includes(date) && job.private_job.shift.name === type)
       }
     },
-    hasLocumJobs(date, type) {
-      if (this.locum_jobs && this.locum_jobs.length > 0) {
-        return this.locum_jobs.find(job => job.platform_job.selection_date === date && type === 'Available')
+    hasLocumCurrentJob(date, type) {
+      if (this.locum_current_jobs && this.locum_current_jobs.length > 0) {
+        return this.locum_current_jobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === type)
       }
     },
-    hasUnavailabilities(date, type) {
-      if (this.unavailabilities && this.unavailabilities.length > 0) {
-        return this.unavailabilities.find(job => job.date === date && job.shifts.find(shift => shift.name === type))
+    hasLocumAppliedJobs(date, type) {
+      return this.locum_applied_jobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date))
+    },
+    hasLocumUnavailabilities(date, type) {
+      if (this.locum_unavailabilities && this.locum_unavailabilities.length > 0) {
+        return this.locum_unavailabilities.find(job => job.date === date && job.shifts.find(shift => shift.name === type))
       }
     },
     // hasJobs(date, type) {

@@ -74,7 +74,7 @@ import AppInput from '@/components/Base/AppInput'
 import AppDate from '@/components/Base/AppDate'
 import AppButton from '@/components/Base/AppButton'
 export default {
-  props: ['unavailableDate', 'appointmentDate', 'type'],
+  props: ['unavailableDate', 'appointmentDate', 'currentJob', 'type'],
   components: {
     AppInput,
     AppDate,
@@ -100,9 +100,10 @@ export default {
     }
   },
   created() {
+    console.log(this.unavailableDate)
     if (this.type === 'solo') {
       if (this.unavailableDate && this.appointmentDate) {
-        this.unavailableDate.shifts = this.unavailableDate.shifts.filter(shift => shift.id !== this.appointmentDate.shift.id)
+        // this.unavailableDate.shifts = this.unavailableDate.shifts.filter(shift => shift.id !== this.appointmentDate.shift.id)
       }
       if (this.unavailableDate) {
         this.form.id = this.unavailableDate.id

@@ -14,7 +14,7 @@
       <div
         class="text-grey-dark my-3 text-xs xl:text-sm"
       >From {{job.private_job.date_start}} to {{job.private_job.date_end}}</div>
-      <div class="text-grey-dark my-3 text-xs xl:text-sm">Shift {{job.private_job.shift.name}}</div>
+      <div class="text-grey-dark my-3 text-xs xl:text-sm">Shift: {{job.private_job.shift.name}}</div>
       <div class="my-3 text-xs xl:text-sm">{{job.private_job.description}}</div>
     </div>
   </div>

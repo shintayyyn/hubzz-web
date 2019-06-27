@@ -70,11 +70,13 @@
               <td v-else></td>
               <td v-if="item.info">{{item.info.expired_at | localDate}}</td>
               <td v-else></td>
-              <td class="max-w-xs" v-if="item.info">
-                <div
-                  class="text-xs sm:text-sm text-center text-white font-bold rounded-full px-2 py-1"
-                  :class="status(item.info.status)"
-                >{{item.info.status}}</div>
+              <td v-if="item.info">
+                <div class="flex max-w-xs">
+                  <div
+                    class="text-xs sm:text-sm text-center text-white font-bold rounded-full px-2 py-1"
+                    :class="status(item.info.status)"
+                  >{{item.info.status}}</div>
+                </div>
               </td>
               <td v-else></td>
 
@@ -107,7 +109,7 @@
                 </div>
               </td>
             </tr>
-            <tr :key="`${item.id}-tr`">
+            <tr :key="`${item.id}-${index}`">
               <td></td>
             </tr>
           </template>
@@ -183,7 +185,7 @@
                 </div>
               </td>
             </tr>
-            <tr :key="`${item.id}-tr`">
+            <tr :key="`${item.id}-${index}-optional`">
               <td></td>
             </tr>
           </template>
@@ -265,7 +267,7 @@
                 </div>
               </td>
             </tr>
-            <tr :key="`${item.id}-tr`">
+            <tr :key="`${item.id}-${index}-mandatory-training`">
               <td></td>
             </tr>
           </template>
@@ -332,6 +334,7 @@ export default {
         })
       }
       this.mandatory = this.profession.mandatory_compliance_documents.sort((a, b) => a.id - b.id)
+      console.log(this.mandatory)
       this.optional = this.profession.optional_compliance_documents.sort((a, b) => a.id - b.id)
     },
     status(status) {
@@ -342,8 +345,11 @@ export default {
         case 'Verified':
           return 'bg-green'
           break;
+        case 'Approved':
+          return 'bg-green'
+          break;
         case 'Rejected':
-          return 'bg-red-light'
+          return 'bg-red'
           break;
         default:
           return
@@ -362,8 +368,10 @@ export default {
       const formData = new FormData()
       formData.append('file', file)
       formData.append('compliance_document_id', id)
+      formData.append('locum_detail_id', this.$auth.user.id)
       // post request to API / send file 
       this.$axios.$post(`/api/v1/locum/locum-detail-compliance-documents`, formData).then(res => {
+        console.log(res)
         let inMandatory = this.mandatory.findIndex(document => document.id === res.data.locum_detail_compliance_document.compliance_document.id)
         if (inMandatory > 0) {
           this.mandatory.splice(index, 1)

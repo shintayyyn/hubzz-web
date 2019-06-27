@@ -24,22 +24,44 @@
     </div>
     <div class="flex flex-row flex-nowrap absolute justify-start pin-b pin-l w-full">
       <span
-        v-if="hasAppointmentJobs(item.fullDate, 'AM')"
+        v-if="hasLocumPrivateJobs(item.fullDate, 'AM')"
         class="bg-grey-light text-grey-light w-full h-2 sm:h-3 lg:h-4 rounded-bl-lg"
       >.</span>
       <span v-else class="w-full h-2 sm:h-3 lg:h-4 text-white"></span>
       <span
-        v-if="hasAppointmentJobs(item.fullDate, 'PM')"
+        v-if="hasLocumPrivateJobs(item.fullDate, 'PM')"
         class="bg-grey-light text-grey-light w-full h-2 sm:h-3 lg:h-4"
       >.</span>
       <span v-else class="w-full h-2 sm:h-3 lg:h-4 text-white"></span>
       <span
-        v-if="hasAppointmentJobs(item.fullDate, 'Whole Day')"
+        v-if="hasLocumPrivateJobs(item.fullDate, 'Whole Day')"
         class="bg-grey-light text-grey-light w-full h-2 sm:h-3 lg:h-4"
       >.</span>
       <span v-else class="w-full h-2 sm:h-3 lg:h-4 text-white"></span>
       <span
-        v-if="hasAppointmentJobs(item.fullDate, 'OOH')"
+        v-if="hasLocumPrivateJobs(item.fullDate, 'OOH')"
+        class="bg-grey-light text-grey-light w-full h-2 sm:h-3 lg:h-4 rounded-br-lg"
+      >.</span>
+      <span v-else class="w-full h-2 sm:h-3 lg:h-4 text-white"></span>
+    </div>
+    <div class="flex flex-row flex-nowrap absolute justify-start pin-b pin-l w-full">
+      <span
+        v-if="hasLocumCurrentJobs(item.fullDate, 'AM')"
+        class="bg-grey-light text-grey-light w-full h-2 sm:h-3 lg:h-4 rounded-bl-lg"
+      >.</span>
+      <span v-else class="w-full h-2 sm:h-3 lg:h-4 text-white"></span>
+      <span
+        v-if="hasLocumCurrentJobs(item.fullDate, 'PM')"
+        class="bg-grey-light text-grey-light w-full h-2 sm:h-3 lg:h-4"
+      >.</span>
+      <span v-else class="w-full h-2 sm:h-3 lg:h-4 text-white"></span>
+      <span
+        v-if="hasLocumCurrentJobs(item.fullDate, 'Whole Day')"
+        class="bg-grey-light text-grey-light w-full h-2 sm:h-3 lg:h-4"
+      >.</span>
+      <span v-else class="w-full h-2 sm:h-3 lg:h-4 text-white"></span>
+      <span
+        v-if="hasLocumCurrentJobs(item.fullDate, 'OOH')"
         class="bg-grey-light text-grey-light w-full h-2 sm:h-3 lg:h-4 rounded-br-lg"
       >.</span>
       <span v-else class="w-full h-2 sm:h-3 lg:h-4 text-white"></span>
@@ -48,13 +70,16 @@
 </template>
 <script>
 export default {
-  props: ['unavailabilities', 'appointment_jobs', 'item'],
+  props: ['unavailabilities', 'locum_private_jobs', 'locum_current_jobs', 'item'],
   methods: {
     hasUnavailableDate(date, type) {
       return this.unavailabilities.find(item => item.date === date && item.shifts.find(shift => shift.name === type))
     },
-    hasAppointmentJobs(date, type) {
-      return this.appointment_jobs.find(job => this.getDateArray(job.private_job.date_start, job.private_job.date_end).includes(date) && job.private_job.shift.name === type)
+    hasLocumPrivateJobs(date, type) {
+      return this.locum_private_jobs.find(job => this.getDateArray(job.private_job.date_start, job.private_job.date_end).includes(date) && job.private_job.shift.name === type)
+    },
+    hasLocumCurrentJobs(date, type) {
+      return this.locum_current_jobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === type)
     },
     getDateArray(start, end) {
       let arr = new Array();

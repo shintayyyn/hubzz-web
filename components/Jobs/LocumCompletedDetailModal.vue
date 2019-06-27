@@ -210,34 +210,34 @@ export default {
     console.log(this.job)
     this.practice.surgery.address.coordinates = this.job.type === 'Private' ? this.job.private_job.private_practice.surgery.address.coordinates : this.job.platform_job.practice.surgery.address.coordinates
     // ! arvi need completed date
-    // this.completed_at = this.job.platform_job.completed_at
-    // this.completed_by = this.job.platform_job.completed_by
-    // this.appointed_at = this.job.platform_job.appointed_at
-    // this.created_at = this.job.created_at
-    // this.title = this.job.platform_job.title
-    // this.job_number = this.job.job_number
-    // this.rate = this.job.platform_job.rate
-    // this.locum_detail_rate_type = this.job.platform_job.locum_detail_rate_type
-    // this.total_hours = this.job.platform_job.total_hours
-    // this.job_description = this.job.platform_job.job_description
-    // this.extra_information = this.job.platform_job.extra_information
-    // this.report_to = this.job.platform_job.report_to
-    // this.phone_number = this.job.platform_job.practice.phone_number
-    // this.email = this.job.platform_job.email
-    // this.date_start = this.job.platform_job.date_start
-    // this.date_end = this.job.platform_job.date_end
-    // this.time_start = this.job.platform_job.time_start
-    // this.time_end = this.job.platform_job.time_end
-    // this.shift = this.job.platform_job.shift
-    // this.auto_assign_at = this.job.platform_job.auto_assign_at
-    // this.ir35 = this.job.platform_job.ir35
-    // this.profession = this.job.platform_job.profession
-    // this.qualifications = this.job.platform_job.qualifications
-    // this.clinical_systems = this.job.platform_job.clinical_systems
-    // this.spoken_languages = this.job.platform_job.spoken_languages
-    // this.compliance_documents = this.job.platform_job.compliance_documents
-    // this.mandatory_trainings = this.job.platform_job.mandatory_trainings
-    // this.practice = this.job.platform_job.practice
+    this.completed_at = this.job.platform_job.completed_at
+    this.completed_by = this.job.platform_job.completed_by
+    this.appointed_at = this.job.platform_job.appointed_at
+    this.created_at = this.job.created_at
+    this.title = this.job.platform_job.title
+    this.job_number = this.job.job_number
+    this.rate = this.job.platform_job.rate
+    this.locum_detail_rate_type = this.job.platform_job.locum_detail_rate_type
+    this.total_hours = this.job.platform_job.total_hours
+    this.job_description = this.job.platform_job.job_description
+    this.extra_information = this.job.platform_job.extra_information
+    this.report_to = this.job.platform_job.report_to
+    this.phone_number = this.job.platform_job.practice.phone_number
+    this.email = this.job.platform_job.email
+    this.date_start = this.job.platform_job.date_start
+    this.date_end = this.job.platform_job.date_end
+    this.time_start = this.job.platform_job.time_start
+    this.time_end = this.job.platform_job.time_end
+    this.shift = this.job.platform_job.shift
+    this.auto_assign_at = this.job.platform_job.auto_assign_at
+    this.ir35 = this.job.platform_job.ir35
+    this.profession = this.job.platform_job.profession
+    this.qualifications = this.job.platform_job.qualifications
+    this.clinical_systems = this.job.platform_job.clinical_systems
+    this.spoken_languages = this.job.platform_job.spoken_languages
+    this.compliance_documents = this.job.platform_job.compliance_documents
+    this.mandatory_trainings = this.job.platform_job.mandatory_trainings
+    this.practice = this.job.platform_job.practice
 
   },
   methods: {

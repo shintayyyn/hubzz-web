@@ -18,36 +18,16 @@
     </div>
 
     <div class="flex flex-nowrap justify-between text-xs lg:text-base mx-1 mt-5">
-      <div class="w-full text-center text-grey font-bold">SUN</div>
       <div class="w-full text-center text-grey font-bold">MON</div>
       <div class="w-full text-center text-grey font-bold">TUE</div>
       <div class="w-full text-center text-grey font-bold">WED</div>
       <div class="w-full text-center text-grey font-bold">THU</div>
       <div class="w-full text-center text-grey font-bold">FRI</div>
       <div class="w-full text-center text-grey font-bold">SAT</div>
+      <div class="w-full text-center text-grey font-bold">SUN</div>
     </div>
 
     <div class="flex flex-nowrap justify-between mx-1 mt-5">
-      <div class="flex flex-col w-full">
-        <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 7">
-          <div class="m-1 h-8 sm:h-12 md:h-16 lg:h-20 w-auto">&nbsp;</div>
-        </div>
-        <div v-for="(item, index) in daysInMonth" :key="index">
-          <div
-            @click="selectDate(item.fullDate)"
-            class="relative border border-solid rounded-lg m-1 cursor-pointer flex justify-center items-center h-8 sm:h-12 md:h-16 lg:h-20 w-auto"
-            :class="$store.state.availability.date_today === item.fullDate ? 'border-yellow-dark text-lg font-bold':'hover:bg-grey-light'"
-            v-if="item.day === 0"
-          >
-            <div class="text-xs lg:text-base z-10">{{(item.date)}}</div>
-            <AvailabilityInfoDateCell
-              :unavailabilities="unavailabilities"
-              :appointment_jobs="appointment_jobs"
-              :item="item"
-            />
-          </div>
-        </div>
-      </div>
       <div class="flex flex-col w-full">
         <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 6">
           <div class="m-1 h-8 sm:h-12 md:h-16 lg:h-20 w-auto">&nbsp;</div>
@@ -62,7 +42,8 @@
             <div class="text-xs lg:text-base z-10">{{(item.date)}}</div>
             <AvailabilityInfoDateCell
               :unavailabilities="unavailabilities"
-              :appointment_jobs="appointment_jobs"
+              :locum_private_jobs="locum_private_jobs"
+              :locum_current_jobs="locum_current_jobs"
               :item="item"
             />
           </div>
@@ -82,7 +63,8 @@
             <div class="text-xs lg:text-base z-10">{{(item.date)}}</div>
             <AvailabilityInfoDateCell
               :unavailabilities="unavailabilities"
-              :appointment_jobs="appointment_jobs"
+              :locum_private_jobs="locum_private_jobs"
+              :locum_current_jobs="locum_current_jobs"
               :item="item"
             />
           </div>
@@ -102,7 +84,8 @@
             <div class="text-xs lg:text-base z-10">{{(item.date)}}</div>
             <AvailabilityInfoDateCell
               :unavailabilities="unavailabilities"
-              :appointment_jobs="appointment_jobs"
+              :locum_private_jobs="locum_private_jobs"
+              :locum_current_jobs="locum_current_jobs"
               :item="item"
             />
           </div>
@@ -122,7 +105,8 @@
             <div class="text-xs lg:text-base z-10">{{(item.date)}}</div>
             <AvailabilityInfoDateCell
               :unavailabilities="unavailabilities"
-              :appointment_jobs="appointment_jobs"
+              :locum_private_jobs="locum_private_jobs"
+              :locum_current_jobs="locum_current_jobs"
               :item="item"
             />
           </div>
@@ -142,7 +126,8 @@
             <div class="text-xs lg:text-base z-10">{{(item.date)}}</div>
             <AvailabilityInfoDateCell
               :unavailabilities="unavailabilities"
-              :appointment_jobs="appointment_jobs"
+              :locum_private_jobs="locum_private_jobs"
+              :locum_current_jobs="locum_current_jobs"
               :item="item"
             />
           </div>
@@ -162,7 +147,29 @@
             <div class="text-xs lg:text-base z-10">{{(item.date)}}</div>
             <AvailabilityInfoDateCell
               :unavailabilities="unavailabilities"
-              :appointment_jobs="appointment_jobs"
+              :locum_private_jobs="locum_private_jobs"
+              :locum_current_jobs="locum_current_jobs"
+              :item="item"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="flex flex-col w-full">
+        <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 0">
+          <div class="m-1 h-8 sm:h-12 md:h-16 lg:h-20 w-auto">&nbsp;</div>
+        </div>
+        <div v-for="(item, index) in daysInMonth" :key="index">
+          <div
+            @click="selectDate(item.fullDate)"
+            class="relative border border-solid rounded-lg m-1 cursor-pointer flex justify-center items-center h-8 sm:h-12 md:h-16 lg:h-20 w-auto"
+            :class="$store.state.availability.date_today === item.fullDate ? 'border-yellow-dark text-lg font-bold':'hover:bg-grey-light'"
+            v-if="item.day === 0"
+          >
+            <div class="text-xs lg:text-base z-10">{{(item.date)}}</div>
+            <AvailabilityInfoDateCell
+              :unavailabilities="unavailabilities"
+              :locum_private_jobs="locum_private_jobs"
+              :locum_current_jobs="locum_current_jobs"
               :item="item"
             />
           </div>
@@ -182,25 +189,28 @@ export default {
       selectedMonth: 0,
       selectedYear: new Date().getFullYear(),
       daysInMonth: [],
+      startOfMonth: null,
+      endOfMonth: null,
     }
   },
   computed: {
     unavailabilities() {
       return this.$store.state.availability.unavailabilities
     },
-    appointment_jobs() {
-      return this.$store.state.availability.appointment_jobs
-    }
+    locum_private_jobs() {
+      return this.$store.state.availability.locum_private_jobs
+    },
+    locum_current_jobs() {
+      return this.$store.state.availability.locum_current_jobs
+    },
   },
   created() {
-    // get current month and year
+    this.startOfMonth = this.$moment().startOf('month').format('YYYY-MM-DD')
+    this.endOfMonth = this.$moment().endOf('month').format('YYYY-MM-DD')
     let d = new Date()
     this.selectedMonth = d.getMonth()
-
-    // get days in current month
     this.getDaysInMonth(this.selectedMonth, this.selectedYear)
-
-    this.getAppointmentJobs()
+    this.getJobs()
   },
   watch: {
     selectedMonth(value) {
@@ -208,6 +218,17 @@ export default {
     }
   },
   methods: {
+    getJobs() {
+      this.$axios.$get(`/api/v1/locum/jobs?locum_status=Current&date_start=${this.startOfMonth}&date_end=${this.endOfMonth}`).then(res => {
+        if (res.data.jobs && res.data.jobs.length > 0) {
+          this.$store.commit('availability/SET_LOCUM_PRIVATE_JOBS', res.data.jobs.filter(job => job.type === 'Private'))
+          this.$store.commit('availability/SET_LOCUM_CURRENT_JOBS', res.data.jobs.filter(job => job.type === 'Platform'))
+        }
+      })
+      this.$axios.$get(`/api/v1/locum/unavailabilities?date_start=${this.startOfMonth}&date_end=${this.endOfMonth}`).then(res => {
+        this.$store.commit('availability/SET_UNAVAILABILITES', res.data.unavailabilities)
+      })
+    },
     getDaysInMonth(month, selectedYear) {
       let date = new Date(selectedYear, month, 1);
       let days = [];
@@ -224,21 +245,6 @@ export default {
         })
       })
       this.daysInMonth = daysInMonth
-
-      // get Unavailabilities
-      this.getUnavailabilities(this.daysInMonth[0].fullDate, this.daysInMonth[this.daysInMonth.length - 1].fullDate)
-    },
-    getUnavailabilities(date_start, date_end) {
-      this.$axios.$get(`/api/v1/locum/unavailabilities`, { date_start: date_start, date_end: date_end }).then(res => {
-        this.$store.commit('availability/SET_UNAVAILABILITES', res.data.unavailabilities)
-      })
-    },
-    getAppointmentJobs() {
-      this.$axios.$get(`/api/v1/locum/calendars/monthly/${this.selectedYear}/${this.selectedMonth + 1}`).then(res => {
-        if (res.data.jobs && res.data.jobs.length > 0) {
-          this.$store.commit('availability/SET_APPOINTMENT_JOBS', res.data.jobs.filter(job => job.status === 'Private'))
-        }
-      })
     },
     adjustMonth(type) {
       if (type === 'previous') {
@@ -257,11 +263,15 @@ export default {
           this.selectedMonth++
         }
       }
+      this.startOfMonth = this.$moment(`${this.selectedYear}-${this.selectedMonth + 1}`).startOf('month').format('YYYY-MM-DD')
+      this.endOfMonth = this.$moment(`${this.selectedYear}-${this.selectedMonth + 1}`).endOf('month').format('YYYY-MM-DD')
+      this.getJobs()
     },
     selectDate(date) {
       this.$store.commit('availability/SELECT_DATE', date)
       let unavaibleDate
       let appointmentDate
+      let currentJob
       // check if the selected date is already unavailable
       let isUnavailable = this.unavailabilities.find(unavailable => unavailable.date === date)
       if (isUnavailable) {
@@ -272,14 +282,21 @@ export default {
         }
       }
       // check if the selected date has an appointment already
-      let hasAppointment = this.appointment_jobs.find(appointment => this.getDateArray(appointment.private_job.date_start, appointment.private_job.date_end).includes(date))
-      if (hasAppointment) {
+      let hasLocumPrivateJob = this.locum_private_jobs.find(appointment => this.getDateArray(appointment.private_job.date_start, appointment.private_job.date_end).includes(date))
+      if (hasLocumPrivateJob) {
         // get the appointment selected shift
         appointmentDate = {
-          shift: hasAppointment.private_job.shift
+          shift: hasLocumPrivateJob.private_job.shift
         }
       }
-      this.$emit('open', unavaibleDate, appointmentDate)
+
+      let hasLocumCurrentJob = this.locum_current_jobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date))
+      if (hasLocumCurrentJob) {
+        currentJob = {
+          shift: hasLocumCurrentJob.platform_job.shift
+        }
+      }
+      this.$emit('open', unavaibleDate, appointmentDate, currentJob)
     },
     getDateArray(start, end) {
       let arr = new Array();

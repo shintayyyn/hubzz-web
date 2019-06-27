@@ -23,7 +23,7 @@
             <tr
               :key="item.id"
               class="job-card shadow-md cursor-pointer text-xs sm:text-sm text-left"
-              @click="show(item.id, item.type)"
+              @click="show(item.id)"
             >
               <td>{{item.job_number}}</td>
               <td>{{item.type === 'Private' ? item.private_job.private_practice.surgery.name : item.platform_job.practice.surgery.name}}</td>
@@ -31,7 +31,8 @@
               <td>{{item.type === 'Private' ? item.private_job.date_start : item.platform_job.date_start}}</td>
               <td>{{item.type === 'Private' ? item.private_job.date_end : item.platform_job.date_end}}</td>
               <td>{{item.created_at | localDate }}</td>
-              <td>{{item.type === 'Private' ? 'N/A' : `${item.platform_job.appointed_at | localDate}` }}</td>
+              <td v-if="item.type === 'Private'">N/A</td>
+              <td v-else>{{item.platform_job.appointed_at | localDate}}</td>
             </tr>
             <tr :key="`${item.id}-${index}`">
               <td></td>
