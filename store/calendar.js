@@ -65,7 +65,6 @@ export const mutations = {
     SET_LOCUM_UNAVAILABILITIES(state, payload) {
         state.locum_unavailabilities = payload
     },
-    
     ADD_APPOINTMENT(state, payload) {
         state.locum_private_jobs.push(payload)
     },
@@ -77,6 +76,9 @@ export const mutations = {
         updateJob.private_job.date_end = payload.private_job.date_end
         updateJob.private_job.shift = payload.private_job.shift
     },
+    REMOVE_APPOINTMENT(state, payload) {
+        state.locum_private_jobs = state.locum_private_jobs.filter(job => job.id !== payload)
+    }
     
     
 }

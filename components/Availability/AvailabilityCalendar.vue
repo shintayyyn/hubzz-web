@@ -271,32 +271,33 @@ export default {
       this.$store.commit('availability/SELECT_DATE', date)
       let unavaibleDate
       let appointmentDate
-      let currentJob
-      // check if the selected date is already unavailable
-      let isUnavailable = this.unavailabilities.find(unavailable => unavailable.date === date)
-      if (isUnavailable) {
-        // get the unavailable date Id and its selected shift
-        unavaibleDate = {
-          id: isUnavailable.id,
-          shifts: isUnavailable.shifts
+      let allocatedDate
+      if (this.unavailabilities && this.unavailabilities.length > 0) {
+        let isUnavailable = this.unavailabilities.find(unavailable => unavailable.date === date)
+        if (isUnavailable) {
+          unavaibleDate = {
+            id: isUnavailable.id,
+            shifts: isUnavailable.shifts
+          }
         }
       }
-      // check if the selected date has an appointment already
-      let hasLocumPrivateJob = this.locum_private_jobs.find(appointment => this.getDateArray(appointment.private_job.date_start, appointment.private_job.date_end).includes(date))
-      if (hasLocumPrivateJob) {
-        // get the appointment selected shift
-        appointmentDate = {
-          shift: hasLocumPrivateJob.private_job.shift
+      if (this.locum_private_jobs && this.locum_private_jobs.length > 0) {
+        let hasLocumPrivateJob = this.locum_private_jobs.find(appointment => this.getDateArray(appointment.private_job.date_start, appointment.private_job.date_end).includes(date))
+        if (hasLocumPrivateJob) {
+          appointmentDate = {
+            shift: hasLocumPrivateJob.private_job.shift
+          }
         }
       }
-
-      let hasLocumCurrentJob = this.locum_current_jobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date))
-      if (hasLocumCurrentJob) {
-        currentJob = {
-          shift: hasLocumCurrentJob.platform_job.shift
+      if (this.locum_current_jobs && this.locum_current_jobs.length > 0) {
+        let hasLocumCurrentJob = this.locum_current_jobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date))
+        if (hasLocumCurrentJob && hasLocumCurrentJob.length > 0) {
+          allocatedDate = hasLocumCurrentJob.map(item => {
+            return item.platform_job.shift
+          })
         }
       }
-      this.$emit('open', unavaibleDate, appointmentDate, currentJob)
+      this.$emit('open', unavaibleDate, appointmentDate, allocatedDate)
     },
     getDateArray(start, end) {
       let arr = new Array();

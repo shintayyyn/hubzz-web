@@ -46,14 +46,14 @@
             <button
               class="relative border border-solid rounded-lg p-5 m-2 text-center text-xs sm:text-sm focus:outline-none"
               :class="{
-                'bg-grey-light': appointmentDate && appointmentDate.shift && appointmentDate.shift.id === item.id,
-                'bg-yellow-dark cursor-pointer': form.shift_id.includes(item.id), 
-                'hover:bg-yellow-dark cursor-pointer': !form.shift_id.includes(item.id) && appointmentDate && appointmentDate.shift && appointmentDate.shift.id !== item.id,
+                'bg-grey-light': isDisabled(item.id),
+                'bg-yellow-dark': isSelected(item.id), 
+                'hover:bg-yellow-dark': !isSelected(item.id) && isSelectable(item.id),
               }"
               style="box-sizing:content-box;width:90px"
               v-for="item in shifts"
               :key="item.id"
-              :disabled="appointmentDate && appointmentDate.shift && appointmentDate.shift.id === item.id"
+              :disabled="isDisabled(item.id)"
               @click="select(item.id)"
             >{{item.name}}</button>
           </div>
@@ -74,7 +74,7 @@ import AppInput from '@/components/Base/AppInput'
 import AppDate from '@/components/Base/AppDate'
 import AppButton from '@/components/Base/AppButton'
 export default {
-  props: ['unavailableDate', 'appointmentDate', 'currentJob', 'type'],
+  props: ['unavailableDate', 'appointmentDate', 'allocatedDate', 'type'],
   components: {
     AppInput,
     AppDate,
@@ -97,15 +97,22 @@ export default {
     },
     isRemove() {
       return !Boolean(this.form.shift_id.length)
-    }
+    },
   },
   created() {
-    console.log(this.unavailableDate)
+    // filter shifts from appointmentDate / allocatedJobDate selected shifts
     if (this.type === 'solo') {
-      if (this.unavailableDate && this.appointmentDate) {
-        // this.unavailableDate.shifts = this.unavailableDate.shifts.filter(shift => shift.id !== this.appointmentDate.shift.id)
-      }
       if (this.unavailableDate) {
+        let shifts = this.unavailableDate.shifts
+        if (this.appointmentDate) {
+          shifts = this.unavailableDate.shifts.filter(shift => shift.id !== this.appointmentDate.shift.id)
+        }
+        if (this.allocatedDate && this.allocatedDate.length > 0) {
+          this.allocatedDate.forEach(item => {
+            shifts = this.unavailableDate.shifts.filter(shift => shift.id !== item.id)
+          })
+        }
+        this.unavailableDate.shifts = shifts
         this.form.id = this.unavailableDate.id
         this.form.shift_id = this.unavailableDate.shifts.map(shift => shift.id)
       }
@@ -148,6 +155,22 @@ export default {
         this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: `${res.message}` })
         this.$emit('close')
       })
+    },
+    isSelectable(id) {
+      // ! fix
+      // return (
+      //   (this.appointmentDate && this.appointmentDate.shift && this.appointmentDate.shift.id !== id) ||
+      //   (this.allocatedDate && this.allocatedDate.length && !this.allocatedDate.map(shift => shift.id).includes(id))
+      // )
+    },
+    isSelected(id) {
+      return this.form.shift_id.includes(id)
+    },
+    isDisabled(id) {
+      return (
+        (this.allocatedDate && this.allocatedDate.length && this.allocatedDate.find(shift => shift.id === id)) ||
+        (this.appointmentDate && this.appointmentDate.shift && this.appointmentDate.shift.id === id)
+      )
     }
   }
 }

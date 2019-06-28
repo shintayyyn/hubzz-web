@@ -235,7 +235,7 @@ export default {
   watch: {
     selectedMonth(value) {
       this.getDaysInMonth(value, this.selectedYear)
-    }
+    },
   },
   created() {
     this.startOfMonth = this.$moment().startOf('month').format('YYYY-MM-DD')
@@ -275,7 +275,7 @@ export default {
       if (this.$auth.user.domain === 'Locum') {
         // current(private), current(platform)
         this.$axios.$get(`/api/v1/locum/jobs?locum_status=Current&date_start=${this.startOfMonth}&date_end=${this.endOfMonth}`).then(res => {
-          console.log(res.data)
+          // console.log(res.data)
           if (res.data.jobs && res.data.jobs.length > 0) {
             this.$store.commit('calendar/SET_LOCUM_PRIVATE_JOBS', res.data.jobs.filter(job => job.type === 'Private'))
             this.$store.commit('calendar/SET_LOCUM_CURRENT_JOBS', res.data.jobs.filter(job => job.type === 'Platform'))

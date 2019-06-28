@@ -1,5 +1,32 @@
 <template>
   <section>
+    <div class="confirmation-shield" v-if="confirmation_modal"></div>
+    <transition name="drop" mode="out-in">
+      <div class="confirmation-modal flex justify-center" v-if="confirmation_modal">
+        <div class="border-solid rounded-b-lg bg-yellow-dark py-2 px-24">
+          <div class="flex justify-center">
+            <svgicon name="alert" height="20" width="20"/>
+            <div class="text-sm ml-2">Delete this appointment?</div>
+          </div>
+          <div class="flex justify-center my-2">
+            <div class="mx-2">
+              <button
+                class="border border-solid bg-yellow-dark hover:text-white focus:outline-none text-black font-bold py-5 rounded-lg"
+                style="width:100px;"
+                @click.prevent="remove"
+              >Yes</button>
+            </div>
+            <div class="mx-2">
+              <button
+                class="border border-solid bg-yellow-dark hover:text-white focus:outline-none text-black font-bold py-5 rounded-lg"
+                @click.prevent="confirmation_modal = false"
+                style="width:100px;"
+              >Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </transition>
     <div class="p-8 max-w-xl">
       <div @click="$emit('close')" class="cursor-pointer">
         <svgicon name="left-arrow" height="32" width="32"/>
@@ -88,12 +115,16 @@
             :placeholder="''"
           />
         </div>
-        <template v-if="!job">
-          <AppButton :label="'Save'" @click="save"/>
-        </template>
-        <template v-else>
-          <AppButton :label="'Save'" @click="edit"/>
-        </template>
+        <div class="flex flex-nowrap justify-start">
+          <template v-if="!job">
+            <AppButton :label="'Save'" @click="save"/>
+          </template>
+          <template v-else>
+            <AppButton :label="'Delete'" @click="confirmation_modal = true"/>
+            <div class="mx-1"></div>
+            <AppButton :label="'Save'" @click="edit"/>
+          </template>
+        </div>
       </div>
     </div>
     <div class="add-surgery-shield" v-if="modal"></div>
@@ -123,6 +154,7 @@ export default {
   },
   data() {
     return {
+      confirmation_modal: false,
       modal: false,
       shifts: [],
       rate_types: [],
@@ -187,15 +219,22 @@ export default {
       this.form.date_end = this.$moment(this.form.date_end).format('YYYY-MM-DD')
       this.$axios.$post(`/api/v1/locum/jobs`, this.form).then(res => {
         this.$store.commit('calendar/ADD_APPOINTMENT', res.data.job)
-        this.$emit('close')
+        // this.$emit('close')
         this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: `${res.message}` })
       })
     },
     edit() {
       this.$axios.$put(`/api/v1/locum/jobs/${this.job.id}`, this.form).then(res => {
-        console.log(res)
         this.$store.commit('calendar/UPDATE_APPOINTMENT', res.data.job)
         this.$emit('close')
+        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: `${res.message}` })
+      })
+    },
+    remove() {
+      this.$store.commit('calendar/REMOVE_APPOINTMENT', this.job.id)
+      this.$emit('close')
+      return
+      this.$axios.$delete(`/api/v1/locum/jobs/${this.job.id}`).then(res => {
         this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: `${res.message}` })
       })
     }
@@ -203,6 +242,24 @@ export default {
 }
 </script>
 <style scoped>
+.confirmation-shield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #333;
+  opacity: 0.5;
+  z-index: 511;
+}
+.confirmation-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: auto;
+  z-index: 512;
+}
 .add-surgery-shield {
   position: fixed;
   top: 0;

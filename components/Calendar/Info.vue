@@ -120,7 +120,7 @@ export default {
       if (this.$auth.user.domain === 'Locum') {
         this.findPerWeekLocum(value)
       }
-    }
+    },
   },
   computed: {
     selected_date() {
