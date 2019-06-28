@@ -10,17 +10,17 @@
         v-if="noJobsToDisplay"
         key="'no-jobs'"
       >No jobs to display.</div>
-      <div v-for="(item, index) in foundLiveJobs" :key="`${index}-${item.id}`">
-        <LiveJobCard :job="item"/>
+      <div v-for="(item, index) in foundPracticeAvailableJobs" :key="`${index}-${item.id}`">
+        <PracticeAvailableJobCard :job="item"/>
       </div>
-      <div v-for="item in foundAppliedJobs" :key="item.id">
-        <AppliedJobCard :job="item"/>
+      <div v-for="item in foundPracticeAppliedJobs" :key="item.id">
+        <PracticeAppliedJobCard :job="item"/>
       </div>
-      <div v-for="item in foundUnfilledJobs" :key="item.id">
-        <UnfilledJobCard :job="item"/>
+      <div v-for="item in foundPracticeUnfilledJobs" :key="item.id">
+        <PracticeUnfilledJobCard :job="item"/>
       </div>
-      <div v-for="item in foundDeclinedJobs" :key="item.id">
-        <DeclinedJobCard :job="item"/>
+      <div v-for="item in foundPracticeDeclinedJobs" :key="item.id">
+        <PracticeDeclinedJobCard :job="item"/>
       </div>
       <!-- locums -->
       <div v-for="(item, index) in foundLocumPrivateJobs" :key="`${index}-${item.id}`">
@@ -48,10 +48,10 @@
 </template>
 <script>
 // practice
-import LiveJobCard from '@/components/Calendar/Cards/LiveJobCard'
-import AppliedJobCard from '@/components/Calendar/Cards/AppliedJobCard'
-import UnfilledJobCard from '@/components/Calendar/Cards/UnfilledJobCard'
-import DeclinedJobCard from '@/components/Calendar/Cards/DeclinedJobCard'
+import PracticeAvailableJobCard from '@/components/Calendar/Cards/PracticeAvailableJobCard'
+import PracticeAppliedJobCard from '@/components/Calendar/Cards/PracticeAppliedJobCard'
+import PracticeUnfilledJobCard from '@/components/Calendar/Cards/PracticeUnfilledJobCard'
+import PracticeDeclinedJobCard from '@/components/Calendar/Cards/PracticeDeclinedJobCard'
 // locums
 import LocumPrivateJobCard from '@/components/Calendar/Cards/LocumPrivateJobCard'
 import LocumCurrentJobCard from '@/components/Calendar/Cards/LocumCurrentJobCard'
@@ -59,12 +59,12 @@ import LocumAppliedJobCard from '@/components/Calendar/Cards/LocumAppliedJobCard
 import LocumUnavailabilitiesCard from '@/components/Calendar/Cards/LocumUnavailabilitiesCard'
 export default {
   components: {
-    // locums
-    LiveJobCard,
-    AppliedJobCard,
-    UnfilledJobCard,
-    DeclinedJobCard,
     // practice
+    PracticeAvailableJobCard,
+    PracticeAppliedJobCard,
+    PracticeUnfilledJobCard,
+    PracticeDeclinedJobCard,
+    // locums
     LocumPrivateJobCard,
     LocumCurrentJobCard,
     LocumAppliedJobCard,
@@ -73,10 +73,10 @@ export default {
   data() {
     return {
       // practice
-      foundLiveJobs: [],
-      foundAppliedJobs: [],
-      foundUnfilledJobs: [],
-      foundDeclinedJobs: [],
+      foundPracticeAvailableJobs: [],
+      foundPracticeAppliedJobs: [],
+      foundPracticeUnfilledJobs: [],
+      foundPracticeDeclinedJobs: [],
       // locums
       foundLocumPrivateJobs: [],
       foundLocumCurrentJobs: [],
@@ -109,11 +109,16 @@ export default {
       }
     },
     selected_date_shift(value) {
+      // ! fix practice job card
       this.date_info = value.date
       this.foundLocumPrivateJobs = []
       this.foundLocumCurrentJobs = []
       this.foundLocumAppliedJobs = []
       this.foundLocumUnavailabilities = []
+      this.foundPracticeAvailableJobs = []
+      this.foundPracticeAppliedJobs = []
+      this.foundPracticeUnfilledJobs = []
+      this.foundPracticeDeclinedJobs = []
       if (this.$auth.user.domain === 'Practice') {
         this.findPerWeek(value)
       }
@@ -141,8 +146,14 @@ export default {
     practice_available_jobs() {
       return this.$store.state.calendar.practice_available_jobs
     },
+    practice_available_jobs_reminder() {
+      return this.$store.state.calendar.practice_available_jobs_reminder
+    },
     practice_applied_jobs() {
       return this.$store.state.calendar.practice_applied_jobs
+    },
+    practice_applied_jobs_reminder() {
+      return this.$store.state.calendar.practice_applied_jobs_reminder
     },
     practice_unfilled_jobs() {
       return this.$store.state.calendar.practice_unfilled_jobs
@@ -168,32 +179,32 @@ export default {
     // practice
     findPerMonth(date) {
       if (this.practice_available_jobs.length > 0) {
-        this.foundLiveJobs = this.practice_available_jobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date))
+        this.foundPracticeAvailableJobs = this.practice_available_jobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date))
       }
       if (this.practice_applied_jobs.length > 0) {
-        this.foundAppliedJobs = this.practice_applied_jobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date))
+        this.foundPracticeAppliedJobs = this.practice_applied_jobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date))
       }
       if (this.practice_unfilled_jobs.length > 0) {
-        this.foundUnfilledJobs = this.practice_unfilled_jobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date))
+        this.foundPracticeUnfilledJobs = this.practice_unfilled_jobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date))
       }
       if (this.practice_declined_jobs.length > 0) {
-        this.foundDeclinedJobs = this.practice_declined_jobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date))
+        this.foundPracticeDeclinedJobs = this.practice_declined_jobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date))
       }
     },
     findPerWeek({ date, shift }) {
       if (this.practice_available_jobs.length > 0) {
-        this.foundLiveJobs = this.practice_available_jobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === shift)
+        this.foundPracticeAvailableJobs = this.practice_available_jobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === shift)
       }
       if (this.unfilled_jobs.length > 0) {
-        this.foundUnfilledJobs = this.unfilled_jobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === shift)
+        this.foundPracticeUnfilledJobs = this.unfilled_jobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === shift)
       }
       if (this.declined_jobs.length > 0) {
-        this.foundDeclinedJobs = this.declined_jobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === shift)
+        this.foundPracticeDeclinedJobs = this.declined_jobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === shift)
       }
       // get all applied jobs based on selected date and shift
       // ! 
       // if (this.applied_jobs && this.applied_jobs.length > 0) {
-      //   this.foundAppliedJobs = this.applied_jobs.filter(job => job.platform_job.selection_date === date && job.platform_job.shift.name === shift)
+      //   this.foundPracticeAppliedJobs = this.applied_jobs.filter(job => job.platform_job.selection_date === date && job.platform_job.shift.name === shift)
       // }
     },
     // locums

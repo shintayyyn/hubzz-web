@@ -305,10 +305,9 @@ export default {
     getJobs() {
       if (this.$auth.user.domain === 'Practice') {
         this.$axios.$get(`/api/v1/practice/jobs?status=Available&date_start=${this.startOfMonth}&date_end=${this.endOfMonth}`).then(res => {
-          // ! fix practice available jobs with reminder
           if (res.data.jobs && res.data.jobs.length > 0) {
             this.$store.commit('calendar/SET_PRACTICE_AVAILABLE_JOBS', res.data.jobs)
-            // this.$store.commit('calendar/SET_PRACTICE_AVAILABLE_JOBS_REMINDER', res.data.jobs.filter(job => job.platform_job.selection_date))
+            this.$store.commit('calendar/SET_PRACTICE_AVAILABLE_JOBS_REMINDER', res.data.jobs.filter(job => job.platform_job.selection_date))
           }
         })
         this.$axios.$get(`/api/v1/practice/jobs?status=Applied&date_start=${this.startOfMonth}&date_end=${this.endOfMonth}`).then(res => {
