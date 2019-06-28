@@ -234,7 +234,7 @@
     </template>
     <template v-if="$auth.user.domain === 'Locum'">
       <div class="flex flex-nowrap justify-between text-xs mx-1" style="height:50px;">
-        <div class="w-full text-left">Available</div>
+        <div class="w-full text-left">Applied</div>
         <template v-for="(date, index) in daysInWeek">
           <div
             v-if="hasLocumAppliedJobs(date, 'Available')"
@@ -311,7 +311,7 @@ export default {
           // get jobs (green)
           if (res.data.jobs && res.data.jobs.length > 0) {
             this.jobs = res.data.jobs
-            this.$store.commit('calendar/SET_JOBS', res.data.jobs)
+            // this.$store.commit('calendar/SET_JOBS', res.data.jobs)
           }
           // applied jobs with selection date (grey / reminders)
           if (res.data.applied_jobs_with_selection_date && res.data.applied_jobs_with_selection_date.length > 0) {

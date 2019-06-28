@@ -241,11 +241,9 @@ export const actions = {
     registeredPractice({state, commit}) {
         let form = {}
         form = {...state.practice_details, ...state.practice_account_details}
-        console.log(state.practice_details)
         this.$axios
             .$post(`/api/v1/register/practice`, form)
             .then(res => {
-                console.log(res)
                 commit('CLEAR_FORM_PRACTICE_DETAILS')
                 this.$router.push('/sign-up/success')
             }).catch(err => {
@@ -256,9 +254,6 @@ export const actions = {
                         || errorMessage.field === 'password' || errorMessage.field === 'password_confirmation' || errorMessage.field === 'surgery_id'
                     })
                     commit('SET_PRACTICE_ACCOUNT_DETAIL_FORM_ERROR', practiceAccountDetailError)
-                    if (practiceAccountDetailError.length > 0) {
-                        commit('SET_ACTIVE_TAB', 'practice_account_details')
-                    }
                 }
             })
     },

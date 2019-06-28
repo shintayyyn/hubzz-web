@@ -52,6 +52,12 @@
           >
             <div class="text-xs md:text-sm z-10">{{(item.date)}}</div>
             <PerMonthInfoDateCell
+              :practice_available_jobs="practice_available_jobs"
+              :practice_available_jobs_reminder="practice_available_jobs_reminder"
+              :practice_applied_jobs="practice_applied_jobs"
+              :practice_applied_jobs_reminder="practice_applied_jobs_reminder"
+              :practice_unfilled_jobs="practice_unfilled_jobs"
+              :practice_declined_jobs="practice_declined_jobs"
               :locum_private_jobs="locum_private_jobs"
               :locum_current_jobs="locum_current_jobs"
               :locum_applied_jobs="locum_applied_jobs"
@@ -74,6 +80,12 @@
           >
             <div class="text-xs md:text-sm z-10">{{item.date}}</div>
             <PerMonthInfoDateCell
+              :practice_available_jobs="practice_available_jobs"
+              :practice_available_jobs_reminder="practice_available_jobs_reminder"
+              :practice_applied_jobs="practice_applied_jobs"
+              :practice_applied_jobs_reminder="practice_applied_jobs_reminder"
+              :practice_unfilled_jobs="practice_unfilled_jobs"
+              :practice_declined_jobs="practice_declined_jobs"
               :locum_private_jobs="locum_private_jobs"
               :locum_current_jobs="locum_current_jobs"
               :locum_applied_jobs="locum_applied_jobs"
@@ -96,6 +108,12 @@
           >
             <div class="text-xs md:text-sm z-10">{{(item.date)}}</div>
             <PerMonthInfoDateCell
+              :practice_available_jobs="practice_available_jobs"
+              :practice_available_jobs_reminder="practice_available_jobs_reminder"
+              :practice_applied_jobs="practice_applied_jobs"
+              :practice_applied_jobs_reminder="practice_applied_jobs_reminder"
+              :practice_unfilled_jobs="practice_unfilled_jobs"
+              :practice_declined_jobs="practice_declined_jobs"
               :locum_private_jobs="locum_private_jobs"
               :locum_current_jobs="locum_current_jobs"
               :locum_applied_jobs="locum_applied_jobs"
@@ -118,6 +136,12 @@
           >
             <div class="text-xs md:text-sm z-10">{{item.date}}</div>
             <PerMonthInfoDateCell
+              :practice_available_jobs="practice_available_jobs"
+              :practice_available_jobs_reminder="practice_available_jobs_reminder"
+              :practice_applied_jobs="practice_applied_jobs"
+              :practice_applied_jobs_reminder="practice_applied_jobs_reminder"
+              :practice_unfilled_jobs="practice_unfilled_jobs"
+              :practice_declined_jobs="practice_declined_jobs"
               :locum_private_jobs="locum_private_jobs"
               :locum_current_jobs="locum_current_jobs"
               :locum_applied_jobs="locum_applied_jobs"
@@ -140,6 +164,12 @@
           >
             <div class="text-xs md:text-sm z-10">{{(item.date)}}</div>
             <PerMonthInfoDateCell
+              :practice_available_jobs="practice_available_jobs"
+              :practice_available_jobs_reminder="practice_available_jobs_reminder"
+              :practice_applied_jobs="practice_applied_jobs"
+              :practice_applied_jobs_reminder="practice_applied_jobs_reminder"
+              :practice_unfilled_jobs="practice_unfilled_jobs"
+              :practice_declined_jobs="practice_declined_jobs"
               :locum_private_jobs="locum_private_jobs"
               :locum_current_jobs="locum_current_jobs"
               :locum_applied_jobs="locum_applied_jobs"
@@ -162,6 +192,12 @@
           >
             <div class="text-xs md:text-sm z-10">{{item.date}}</div>
             <PerMonthInfoDateCell
+              :practice_available_jobs="practice_available_jobs"
+              :practice_available_jobs_reminder="practice_available_jobs_reminder"
+              :practice_applied_jobs="practice_applied_jobs"
+              :practice_applied_jobs_reminder="practice_applied_jobs_reminder"
+              :practice_unfilled_jobs="practice_unfilled_jobs"
+              :practice_declined_jobs="practice_declined_jobs"
               :locum_private_jobs="locum_private_jobs"
               :locum_current_jobs="locum_current_jobs"
               :locum_applied_jobs="locum_applied_jobs"
@@ -184,6 +220,12 @@
           >
             <div class="text-xs md:text-sm z-10">{{item.date}}</div>
             <PerMonthInfoDateCell
+              :practice_available_jobs="practice_available_jobs"
+              :practice_available_jobs_reminder="practice_available_jobs_reminder"
+              :practice_applied_jobs="practice_applied_jobs"
+              :practice_applied_jobs_reminder="practice_applied_jobs_reminder"
+              :practice_unfilled_jobs="practice_unfilled_jobs"
+              :practice_declined_jobs="practice_declined_jobs"
               :locum_private_jobs="locum_private_jobs"
               :locum_current_jobs="locum_current_jobs"
               :locum_applied_jobs="locum_applied_jobs"
@@ -209,15 +251,29 @@ export default {
       daysInMonth: [],
       startOfMonth: null,
       endOfMonth: null,
-      // practice
-      jobs: [],
-      applied_jobs_with_selection_date: [],
-      unfilled_jobs: [],
-      declined_jobs: [],
     }
   },
 
   computed: {
+    //practice
+    practice_available_jobs() {
+      return this.$store.state.calendar.practice_available_jobs
+    },
+    practice_available_jobs_reminder() {
+      return this.$store.state.calendar.practice_available_jobs_reminder
+    },
+    practice_applied_jobs() {
+      return this.$store.state.calendar.practice_applied_jobs
+    },
+    practice_applied_jobs_reminder() {
+      return this.$store.state.calendar.practice_applied_jobs_reminder
+    },
+    practice_unfilled_jobs() {
+      return this.$store.state.calendar.practice_unfilled_jobs
+    },
+    practice_declined_jobs() {
+      return this.$store.state.calendar.practice_declined_jobs
+    },
     // locum
     locum_private_jobs() {
       return this.$store.state.calendar.locum_private_jobs
@@ -248,49 +304,43 @@ export default {
   methods: {
     getJobs() {
       if (this.$auth.user.domain === 'Practice') {
-        // live(color code per shift), applied(amber), current(green), unfilled(red)
-        this.$axios.$get(`/api/v1/practice/calendars/monthly/${this.selectedYear}/${this.selectedMonth + 1}`).then(res => {
-          // get jobs (green)
+        this.$axios.$get(`/api/v1/practice/jobs?status=Available&date_start=${this.startOfMonth}&date_end=${this.endOfMonth}`).then(res => {
+          // ! fix practice available jobs with reminder
           if (res.data.jobs && res.data.jobs.length > 0) {
-            this.jobs = res.data.jobs
-            this.$store.commit('calendar/SET_JOBS', res.data.jobs)
+            this.$store.commit('calendar/SET_PRACTICE_AVAILABLE_JOBS', res.data.jobs)
+            // this.$store.commit('calendar/SET_PRACTICE_AVAILABLE_JOBS_REMINDER', res.data.jobs.filter(job => job.platform_job.selection_date))
           }
-          // applied jobs with selection date (grey / reminders)
-          if (res.data.applied_jobs_with_selection_date && res.data.applied_jobs_with_selection_date.length > 0) {
-            this.applied_jobs_with_selection_date = res.data.applied_jobs_with_selection_date
-            this.$store.commit('calendar/SET_APPLIED_JOBS', res.data.applied_jobs_with_selection_date)
+        })
+        this.$axios.$get(`/api/v1/practice/jobs?status=Applied&date_start=${this.startOfMonth}&date_end=${this.endOfMonth}`).then(res => {
+          if (res.data.jobs && res.data.jobs.length > 0) {
+            this.$store.commit('calendar/SET_PRACTICE_APPLIED_JOBS', res.data.jobs)
+            this.$store.commit('calendar/SET_PRACTICE_APPLIED_JOBS_REMINDER', res.data.jobs.filter(job => job.platform_job.selection_date))
           }
-          // unfilled job (red)
-          if (res.data.unfilled_jobs && res.data.unfilled_jobs.length > 0) {
-            this.unfilled_jobs = res.data.unfilled_jobs
-            this.$store.commit('calendar/SET_UNFILLED_JOBS', res.data.unfilled_jobs)
+        })
+        this.$axios.$get(`/api/v1/practice/jobs?status=Unfilled&date_start=${this.startOfMonth}&date_end=${this.endOfMonth}`).then(res => {
+          if (res.data.jobs && res.data.jobs.length > 0) {
+            this.$store.commit('calendar/SET_PRACTICE_UNFILLED_JOBS', res.data.jobs)
           }
-          // decline jobs (red)
-          if (res.data.declined_jobs && res.data.declined_jobs.length > 0) {
-            this.declined_jobs = res.data.declined_jobs
-            this.$store.commit('calendar/SET_DECLINED_JOBS', res.data.declined_jobs)
+        })
+        this.$axios.$get(`/api/v1/practice/jobs?status=Declined&date_start=${this.startOfMonth}&date_end=${this.endOfMonth}`).then(res => {
+          if (res.data.jobs && res.data.jobs.length > 0) {
+            this.$store.commit('calendar/SET_PRACTICE_DECLINED_JOBS', res.data.jobs)
           }
         })
       }
       if (this.$auth.user.domain === 'Locum') {
-        // current(private), current(platform)
         this.$axios.$get(`/api/v1/locum/jobs?locum_status=Current&date_start=${this.startOfMonth}&date_end=${this.endOfMonth}`).then(res => {
-          // console.log(res.data)
           if (res.data.jobs && res.data.jobs.length > 0) {
             this.$store.commit('calendar/SET_LOCUM_PRIVATE_JOBS', res.data.jobs.filter(job => job.type === 'Private'))
             this.$store.commit('calendar/SET_LOCUM_CURRENT_JOBS', res.data.jobs.filter(job => job.type === 'Platform'))
           }
         })
-        // applied
         this.$axios.$get(`/api/v1/locum/jobs?locum_status=Applied&date_start=${this.startOfMonth}&date_end=${this.endOfMonth}`).then(res => {
-          // console.log(res.data)
           if (res.data.jobs && res.data.jobs.length > 0) {
             this.$store.commit('calendar/SET_LOCUM_APPLIED_JOBS', res.data.jobs)
           }
         })
-        // unavailabilities
         this.$axios.$get(`/api/v1/locum/unavailabilities?date_start=${this.startOfMonth}&date_end=${this.endOfMonth}`).then(res => {
-          // console.log(res)
           if (res.data.unavailabilities && res.data.unavailabilities.length > 0) {
             this.$store.commit('calendar/SET_LOCUM_UNAVAILABILITIES', res.data.unavailabilities)
           }

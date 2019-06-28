@@ -12,10 +12,12 @@ export const state = () => ({
     selected_date: null,
     selected_date_shift: null,
     // practice
-    jobs: [],
-    applied_jobs_with_selection_date: [],
-    unfilled_jobs: [],
-    declined_jobs: [],
+    practice_available_jobs: [],
+    practice_available_jobs_reminder: [],
+    practice_applied_jobs: [],
+    practice_applied_jobs_reminder: [],
+    practice_unfilled_jobs: [],
+    practice_declined_jobs: [],
     // locums
     locum_private_jobs: [],
     locum_current_jobs: [],
@@ -40,17 +42,23 @@ export const mutations = {
         state.selected_date_shift = payload
     },
     // practice
-    SET_JOBS (state, payload) {
-        state.jobs = payload
+    SET_PRACTICE_AVAILABLE_JOBS (state, payload) {
+        state.practice_available_jobs = payload
     },
-    SET_APPLIED_JOBS (state, payload) {
-        state.applied_jobs_with_selection_date = payload
+    SET_PRACTICE_AVAILABLE_JOBS_REMINDER (state, payload) {
+        state.practice_available_jobs_reminder = payload
     },
-    SET_UNFILLED_JOBS (state, payload) {
-        state.unfilled_jobs = payload
+    SET_PRACTICE_APPLIED_JOBS (state, payload) {
+        state.practice_applied_jobs = payload
     },
-    SET_DECLINED_JOBS (state, payload) {
-        state.declined_jobs = payload
+    SET_PRACTICE_APPLIED_JOBS_REMINDER (state, payload) {
+        state.practice_applied_jobs_reminder = payload
+    },
+    SET_PRACTICE_UNFILLED_JOBS (state, payload) {
+        state.practice_unfilled_jobs = payload
+    },
+    SET_PRACTICE_DECLINED_JOBS (state, payload) {
+        state.practice_declined_jobs = payload
     },
     // locums
     SET_LOCUM_PRIVATE_JOBS(state, payload) {

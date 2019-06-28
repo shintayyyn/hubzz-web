@@ -1,83 +1,125 @@
 <template>
   <section>
-    <!-- <div class="flex flex-row flex-nowrap absolute pin-l w-full">
-      <span v-if="hasAppliedJobs(item.fullDate)" class="bg-grey w-1/4 h-1 sm:h-3 lg:h-4"></span>
-    </div>
     <div
-      class="flex flex-row flex-nowrap absolute pin-t pin-r justify-start w-full"
-      v-if="jobs.length > 0"
+      class="flex flex-row flex-nowrap absolute pin-b pin-l justify-start w-full"
+      v-if="practice_available_jobs.length > 0"
     >
       <span
-        v-if="hasJobs(item.fullDate, 'AM')"
-        class="bg-green-light text-green-light w-full h-2 sm:h-3 lg:h-4 rounded-tl-lg"
+        v-if="hasPracticeAvailableJobs(item.fullDate, 'AM')"
+        class="bg-green-light text-green-light w-full h-2 sm:h-3 lg:h-4 rounded-bl-lg"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
       <span
-        v-if="hasJobs(item.fullDate, 'PM')"
+        v-if="hasPracticeAvailableJobs(item.fullDate, 'PM')"
         class="bg-green-light text-green-light w-full h-2 sm:h-3 lg:h-4"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
       <span
-        v-if="hasJobs(item.fullDate, 'Whole day')"
+        v-if="hasPracticeAvailableJobs(item.fullDate, 'Whole Day')"
         class="bg-green-light text-green-light w-full h-2 sm:h-3 lg:h-4"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
       <span
-        v-if="hasJobs(item.fullDate, 'OOH')"
-        class="bg-green-light text-green-light w-full h-2 sm:h-3 lg:h-4 rounded-tr-lg"
+        v-if="hasPracticeAvailableJobs(item.fullDate, 'OOH')"
+        class="bg-green-light text-green-light w-full h-2 sm:h-3 lg:h-4 rounded-br-lg"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
     </div>
     <div
-      class="flex flex-row flex-nowrap absolute pin-b pin-r justify-start w-full"
-      v-if="unfilled_jobs.length > 0"
+      class="flex flex-row flex-nowrap absolute pin-l justify-start w-full"
+      v-if="practice_available_jobs_reminder.length > 0"
     >
       <span
-        v-if="hasUnfilledJobs(item.fullDate, 'AM')"
-        class="bg-red-light text-red-light w-full h-2 sm:h-3 lg:h-4 rounded-bl-lg"
-      >.</span>
-      <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
-      <span
-        v-if="hasUnfilledJobs(item.fullDate, 'PM')"
-        class="bg-red-light text-red-light w-full h-2 sm:h-3 lg:h-4"
-      >.</span>
-      <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
-      <span
-        v-if="hasUnfilledJobs(item.fullDate, 'Whole day')"
-        class="bg-red-light text-red-light w-full h-2 sm:h-3 lg:h-4"
-      >.</span>
-      <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
-      <span
-        v-if="hasUnfilledJobs(item.fullDate, 'OOH')"
-        class="bg-red-light text-red-light w-full h-2 sm:h-3 lg:h-4 rounded-br-lg"
+        v-if="hasPracticeAvailableJobsReminder(item.fullDate, 'Reminder')"
+        class="bg-grey-light text-grey-light w-1/4 h-2 sm:h-3 lg:h-4"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
     </div>
     <div
-      class="flex flex-row flex-nowrap absolute pin-b pin-r justify-start w-full"
-      v-if="declined_jobs.length > 0"
+      class="flex flex-row flex-nowrap absolute pin-b pin-l justify-start w-full"
+      v-if="practice_applied_jobs.length > 0"
     >
       <span
-        v-if="hasDeclinedJobs(item.fullDate, 'AM')"
-        class="bg-red-light text-red-light w-full h-2 sm:h-3 lg:h-4 rounded-bl-lg"
+        v-if="hasPracticeAppliedJobs(item.fullDate, 'AM')"
+        class="bg-orange-light text-orange-light w-full h-2 sm:h-3 lg:h-4 rounded-bl-lg"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
       <span
-        v-if="hasDeclinedJobs(item.fullDate, 'PM')"
-        class="bg-red-light text-red-light w-full h-2 sm:h-3 lg:h-4"
+        v-if="hasPracticeAppliedJobs(item.fullDate, 'PM')"
+        class="bg-orange-light text-orange-light w-full h-2 sm:h-3 lg:h-4"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
       <span
-        v-if="hasDeclinedJobs(item.fullDate, 'Whole day')"
-        class="bg-red-light text-red-light w-full h-2 sm:h-3 lg:h-4"
+        v-if="hasPracticeAppliedJobs(item.fullDate, 'Whole Day')"
+        class="bg-orange-light text-orange-light w-full h-2 sm:h-3 lg:h-4"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
       <span
-        v-if="hasDeclinedJobs(item.fullDate, 'OOH')"
-        class="bg-red-light text-red-light w-full h-2 sm:h-3 lg:h-4 rounded-br-lg"
+        v-if="hasPracticeAppliedJobs(item.fullDate, 'OOH')"
+        class="bg-orange-light text-orange-light w-full h-2 sm:h-3 lg:h-4 rounded-br-lg"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
-    </div>-->
+    </div>
+    <div
+      class="flex flex-row flex-nowrap absolute pin-l justify-start w-full"
+      v-if="practice_applied_jobs_reminder.length > 0"
+    >
+      <span
+        v-if="hasPracticeAppliedJobsReminder(item.fullDate, 'Reminder')"
+        class="bg-grey-light text-grey-light w-1/4 h-2 sm:h-3 lg:h-4"
+      >.</span>
+      <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
+    </div>
+    <div
+      class="flex flex-row flex-nowrap absolute pin-b pin-l justify-start w-full"
+      v-if="practice_unfilled_jobs.length > 0"
+    >
+      <span
+        v-if="hasPracticeUnfilledJobs(item.fullDate, 'AM')"
+        class="bg-red text-red w-full h-2 sm:h-3 lg:h-4 rounded-bl-lg"
+      >.</span>
+      <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
+      <span
+        v-if="hasPracticeUnfilledJobs(item.fullDate, 'PM')"
+        class="bg-red text-red w-full h-2 sm:h-3 lg:h-4"
+      >.</span>
+      <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
+      <span
+        v-if="hasPracticeUnfilledJobs(item.fullDate, 'Whole Day')"
+        class="bg-red text-red w-full h-2 sm:h-3 lg:h-4"
+      >.</span>
+      <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
+      <span
+        v-if="hasPracticeUnfilledJobs(item.fullDate, 'OOH')"
+        class="bg-red text-red w-full h-2 sm:h-3 lg:h-4 rounded-br-lg"
+      >.</span>
+      <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
+    </div>
+    <div
+      class="flex flex-row flex-nowrap absolute pin-b pin-l justify-start w-full"
+      v-if="practice_declined_jobs.length > 0"
+    >
+      <span
+        v-if="hasPracticeDeclinedJobs(item.fullDate, 'AM')"
+        class="bg-red text-red w-full h-2 sm:h-3 lg:h-4 rounded-bl-lg"
+      >.</span>
+      <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
+      <span
+        v-if="hasPracticeDeclinedJobs(item.fullDate, 'PM')"
+        class="bg-red text-red w-full h-2 sm:h-3 lg:h-4"
+      >.</span>
+      <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
+      <span
+        v-if="hasPracticeDeclinedJobs(item.fullDate, 'Whole Day')"
+        class="bg-red text-red w-full h-2 sm:h-3 lg:h-4"
+      >.</span>
+      <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
+      <span
+        v-if="hasPracticeDeclinedJobs(item.fullDate, 'OOH')"
+        class="bg-red text-red w-full h-2 sm:h-3 lg:h-4 rounded-br-lg"
+      >.</span>
+      <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
+    </div>
     <div
       class="flex flex-row flex-nowrap absolute pin-b pin-l justify-start w-full"
       v-if="locum_private_jobs.length > 0"
@@ -183,22 +225,30 @@
 <script>
 export default {
   props: [
+    'practice_available_jobs', 'practice_applied_jobs', 'practice_unfilled_jobs', 'practice_declined_jobs',
+    'practice_applied_jobs_reminder', 'practice_available_jobs_reminder',
     'locum_private_jobs', 'locum_current_jobs', 'locum_applied_jobs', 'locum_unavailabilities',
     'item',
   ],
   methods: {
     // practice
-    hasJobs(date, type) {
-      // return this.jobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === type)
+    hasPracticeAvailableJobs(date, type) {
+      return this.practice_available_jobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === type)
     },
-    hasAppliedJobs(date) {
-      // return this.applied_jobs.find(job => job.platform_job.selection_date === date)
+    hasPracticeAvailableJobsReminder(date, type) {
+      return this.practice_available_jobs_reminder.find(job => job.platform_job.selection_date === date && type === 'Reminder')
     },
-    hasUnfilledJobs(date, type) {
-      // return this.unfilled_jobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === type)
+    hasPracticeAppliedJobs(date, type) {
+      return this.practice_applied_jobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === type)
     },
-    hasDeclinedJobs(date, type) {
-      // return this.declined_jobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === type)
+    hasPracticeAppliedJobsReminder(date, type) {
+      return this.practice_applied_jobs_reminder.find(job => job.platform_job.selection_date === date && type === 'Reminder')
+    },
+    hasPracticeUnfilledJobs(date, type) {
+      return this.practice_unfilled_jobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === type)
+    },
+    hasPracticeDeclinedJobs(date, type) {
+      return this.practice_declined_jobs.find(job => this.$moment(job.platform_job.declined_at).format('YYYY-MM-DD') === date && job.platform_job.shift.name === type)
     },
     // locum
     hasLocumPrivateJobs(date, type) {

@@ -21,7 +21,10 @@
         </div>
       </div>
     </div>
-    <div class="modal-shield" v-if="modal | locum_current_modal | locum_applied_modal"></div>
+    <div
+      class="modal-shield"
+      v-if="modal | locum_current_modal | locum_applied_modal | practice_create_modal"
+    ></div>
     <transition name="slide" mode="out-in">
       <div class="modal-container shadow-lg" v-if="modal">
         <CreateAppointmentModal @close="modal = false" :job="job"/>
@@ -32,6 +35,9 @@
       <div class="modal-container shadow-lg" v-if="locum_applied_modal">
         <LocumAppliedDetailModal @close="locum_applied_modal = false" :job="locum_applied_job"/>
       </div>
+      <div class="modal-container shadow-lg" v-if="practice_create_modal">
+        <CreateJobModal @close="practice_create_modal = false" :job="practice_create_job"/>
+      </div>
     </transition>
   </section>
 </template>
@@ -39,9 +45,12 @@
 import PerMonth from '@/components/Calendar/PerMonth'
 import PerWeek from '@/components/Calendar/PerWeek'
 import Info from '@/components/Calendar/Info'
+// locums
 import CreateAppointmentModal from '@/components/CreateAppointmentModal'
 import LocumAllocatedDetailModal from '@/components/Jobs/LocumAllocatedDetailModal'
 import LocumAppliedDetailModal from '@/components/Jobs/LocumAppliedDetailModal'
+// practice
+import CreateJobModal from '@/components/CreateJobModal'
 export default {
   components: {
     PerMonth,
@@ -49,7 +58,8 @@ export default {
     Info,
     CreateAppointmentModal,
     LocumAllocatedDetailModal,
-    LocumAppliedDetailModal
+    LocumAppliedDetailModal,
+    CreateJobModal,
   },
   data() {
     return {
@@ -58,7 +68,9 @@ export default {
       locum_current_modal: false,
       locum_current_job: null,
       locum_applied_modal: false,
-      locum_applied_job: null
+      locum_applied_job: null,
+      practice_create_modal: false,
+      practice_create_job: null
     }
   },
   created() {
@@ -66,7 +78,7 @@ export default {
   },
   computed: {
     toggleScroll() {
-      return this.modal | this.locum_current_modal | this.locum_applied_modal
+      return this.modal | this.locum_current_modal | this.locum_applied_modal | this.practice_create_modal
     }
   },
   watch: {
@@ -83,9 +95,10 @@ export default {
       if (this.$auth.user.domain === 'Locum') {
         this.createAppointmentJob()
       } else {
-        this.$store.commit('TOGGLE_CREATE_JOB_MODAL', true)
+        this.createJob()
       }
     },
+    // locum
     createAppointmentJob() {
       this.modal = true
       this.job = null
@@ -101,6 +114,11 @@ export default {
     viewLocumAppliedJob(job) {
       this.locum_applied_modal = true
       this.locum_applied_job = job
+    },
+    // practice
+    createJob(job) {
+      this.practice_create_modal = true
+      this.practice_create_job = null
     }
   }
 }

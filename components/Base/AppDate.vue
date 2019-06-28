@@ -17,6 +17,7 @@
         @click="modal = true"
         @keypress="validateInput($event)"
         @input="$emit('input', $event.target.value)"
+        :style="inStyle"
       >
     </div>
     <transition name="fade">
@@ -222,6 +223,7 @@ export default {
     label: String,
     placeholder: String,
     error: Object,
+    inStyle: String
   },
   data() {
     return {

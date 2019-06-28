@@ -138,17 +138,17 @@ export default {
       }
     },
     // practice
-    jobs() {
-      return this.$store.state.calendar.jobs
+    practice_available_jobs() {
+      return this.$store.state.calendar.practice_available_jobs
     },
-    applied_jobs() {
-      return this.$store.state.calendar.applied_jobs_with_selection_date
+    practice_applied_jobs() {
+      return this.$store.state.calendar.practice_applied_jobs
     },
-    unfilled_jobs() {
-      return this.$store.state.calendar.unfilled_jobs
+    practice_unfilled_jobs() {
+      return this.$store.state.calendar.practice_unfilled_jobs
     },
-    declined_jobs() {
-      return this.$store.state.calendar.declined_jobs
+    practice_declined_jobs() {
+      return this.$store.state.calendar.practice_declined_jobs
     },
     // locums
     locum_private_jobs() {
@@ -167,22 +167,22 @@ export default {
   methods: {
     // practice
     findPerMonth(date) {
-      if (this.jobs.length > 0) {
-        this.foundLiveJobs = this.jobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date))
+      if (this.practice_available_jobs.length > 0) {
+        this.foundLiveJobs = this.practice_available_jobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date))
       }
-      if (this.applied_jobs.length > 0) {
-        this.foundAppliedJobs = this.applied_jobs.filter(job => job.platform_job.selection_date == date)
+      if (this.practice_applied_jobs.length > 0) {
+        this.foundAppliedJobs = this.practice_applied_jobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date))
       }
-      if (this.unfilled_jobs.length > 0) {
-        this.foundUnfilledJobs = this.unfilled_jobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date))
+      if (this.practice_unfilled_jobs.length > 0) {
+        this.foundUnfilledJobs = this.practice_unfilled_jobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date))
       }
-      if (this.declined_jobs.length > 0) {
-        this.foundDeclinedJobs = this.declined_jobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date))
+      if (this.practice_declined_jobs.length > 0) {
+        this.foundDeclinedJobs = this.practice_declined_jobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date))
       }
     },
     findPerWeek({ date, shift }) {
-      if (this.jobs.length > 0) {
-        this.foundLiveJobs = this.jobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === shift)
+      if (this.practice_available_jobs.length > 0) {
+        this.foundLiveJobs = this.practice_available_jobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === shift)
       }
       if (this.unfilled_jobs.length > 0) {
         this.foundUnfilledJobs = this.unfilled_jobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === shift)
