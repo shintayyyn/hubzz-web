@@ -3,8 +3,10 @@
     class="relative rounded-lg py-3 px-5 my-1 bg-white cursor-pointer hover:bg-grey-lighter"
     @click="select"
   >
-    <div class="bg-red-light absolute pin-l pin-t rounded-l-lg p-2 h-full"></div>
+    <div class="bg-grey absolute pin-l pin-t rounded-l-lg p-2 h-full"></div>
     <div class="ml-2">
+      <div class="font-bold text-sm sm:text-md">REMINDER</div>
+      <div class="font-bold text-sm sm:text-md mb-3">to appoint a Locum</div>
       <div class="text-grey-dark text-xs xl:text-sm">Job Number: {{job.job_number}}</div>
       <div class="my-3 font-bold text-sm sm:text-md">{{job.platform_job.title}}</div>
       <div class="my-3 text-sm sm:text-md">{{job.platform_job.practice.surgery.name}}</div>
@@ -12,7 +14,7 @@
       <div
         class="text-grey-dark my-3 text-xs xl:text-sm"
       >From {{job.platform_job.date_start}} to {{job.platform_job.date_end}}</div>
-      <div class="text-grey-dark my-3 text-xs xl:text-sm">Shift {{job.platform_job.shift.name}}</div>
+      <div class="text-grey-dark my-3 text-xs xl:text-sm">Shift Reminder</div>
       <div class="my-3 text-xs xl:text-sm">{{job.platform_job.description}}</div>
     </div>
   </div>
@@ -23,7 +25,7 @@ export default {
   methods: {
     select() {
       this.$axios.$get(`/api/v1/practice/jobs/${this.job.id}`).then(res => {
-        this.$emit('viewPracticeDeclinedJob', res.data.job)
+        this.$emit('viewPracticeLiveJob', res.data.job)
       })
     }
   }

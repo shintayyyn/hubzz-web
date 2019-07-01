@@ -3,7 +3,7 @@
     <JobsTabs/>
     <div class="mt-5">
       <transition name="fade" mode="out-in">
-        <Component :is="componentName"/>
+        <Component :is="activeComponent"/>
       </transition>
     </div>
     <div class="modal-shield" v-if="shield"></div>
@@ -33,7 +33,7 @@ export default {
     Completed
   },
   computed: {
-    componentName() {
+    activeComponent() {
       return this.$route.query.job_status
     },
     shield() {

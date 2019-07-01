@@ -56,9 +56,9 @@ export default {
       ]).then(responses => {
         // ! route might change
         this.statistics.push({ label: 'My Banks', value: responses[0].data.count, route: '/my-banks' }),
-          this.statistics.push({ label: 'Applied jobs', value: responses[1].data.count, route: '/sessions' }),
-          this.statistics.push({ label: 'Assigned jobs', value: responses[2].data.count, route: '/sessions' }),
-          this.statistics.push({ label: 'Available jobs', value: responses[3].data.count, route: '/sessions' })
+          this.statistics.push({ label: 'Applied jobs', value: responses[1].data.count, route: '/sessions?session_status=applied' }),
+          this.statistics.push({ label: 'Assigned jobs', value: responses[2].data.count, route: '/sessions?session_status=allocated' }),
+          this.statistics.push({ label: 'Available jobs', value: responses[3].data.count, route: '/sessions?session_status=live' })
       })
     }
   }

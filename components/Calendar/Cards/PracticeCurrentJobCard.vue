@@ -22,12 +22,9 @@ export default {
   props: ['job'],
   methods: {
     select() {
-      this.$store.commit('session/SET_JOB_DETAIL_ID', this.job.id)
-      this.$store.commit('SET_JOBDETAIL_MODAL', true)
-      this.$store.commit('SET_JOBDETAIL_SHIELD', true)
-      let d = document.getElementsByClassName('job-detail-modal')[0]
-      d.classList.toggle('toggled-right')
-      document.body.style.overflow = 'hidden'
+      this.$axios.$get(`/api/v1/practice/jobs/${this.job.id}`).then(res => {
+        this.$emit('viewPracticeAllocatedJob', res.data.job)
+      })
     }
   },
 }

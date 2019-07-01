@@ -4,17 +4,17 @@
       class="mt-10 w-full text-center"
       style="font-family: Nunito"
       v-if="jobs.length === 0"
-    >You do not have any allocated jobs</div>
-    <div v-else class="mt-4">
+    >No locums are assigned to jobs yet</div>
+    <div v-else class="overflow-x-auto overflow-y-hidden">
       <table>
         <thead>
           <tr class="text-xs sm:text-sm text-left">
             <th>Job number</th>
-            <th>Practice</th>
+            <th>Practice / Surgery</th>
             <th>Title</th>
             <th>From</th>
             <th>To</th>
-            <th>Created</th>
+            <th>Locum</th>
             <th>Assigned</th>
           </tr>
         </thead>
@@ -23,16 +23,15 @@
             <tr
               :key="item.id"
               class="job-card shadow-md cursor-pointer text-xs text-left"
-              @click="show(item.id)"
+              @click="show(item.id, item.platform_job.appointed_to_locum.user.id)"
             >
               <td>{{item.job_number}}</td>
-              <td>{{item.type === 'Private' ? item.private_job.private_practice.surgery.name : item.platform_job.practice.surgery.name}}</td>
-              <td>{{item.type === 'Private' ? 'Private appointment' : item.platform_job.title}}</td>
-              <td>{{item.type === 'Private' ? item.private_job.date_start : item.platform_job.date_start}}</td>
-              <td>{{item.type === 'Private' ? item.private_job.date_end : item.platform_job.date_end}}</td>
-              <td>{{item.created_at | localDate }}</td>
-              <td v-if="item.type === 'Private'">N/A</td>
-              <td v-else>{{item.platform_job.appointed_at | localDate}}</td>
+              <td>{{item.platform_job.practice.surgery.name}}</td>
+              <td>{{item.platform_job.title}}</td>
+              <td>{{item.platform_job.date_start}}</td>
+              <td>{{item.platform_job.date_end}}</td>
+              <td>{{item.platform_job.appointed_to_locum.user.personal_detail.name}}</td>
+              <td>{{$moment(item.platform_job.appointed_at).format('YYYY-MM-DD')}}</td>
             </tr>
             <tr :key="`${item.id}-${index}`">
               <td></td>
@@ -47,17 +46,17 @@
 export default {
   data() {
     return {
-      jobs: [],
+      jobs: []
     }
   },
   created() {
-    this.$axios.$get(`/api/v1/locum/jobs?locum_status=Current`).then(res => {
+    this.$axios.$get(`/api/v1/practice/jobs?status=Current`).then(res => {
       this.jobs = res.data.jobs
     })
   },
   methods: {
     show(id) {
-      this.$router.push(`/jobs/${id}?job_status=allocated`)
+      this.$router.push(`/sessions/${id}?session_status=allocated`)
     }
   }
 }

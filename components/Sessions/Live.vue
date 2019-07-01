@@ -1,21 +1,20 @@
 <template>
-  <section class="allocated-section overflow-x-auto">
+  <section class="live-section overflow-x-auto">
     <div
       class="mt-10 w-full text-center"
       style="font-family: Nunito"
       v-if="jobs.length === 0"
-    >You do not have any allocated jobs</div>
+    >You have not yet created a job</div>
     <div v-else class="mt-4">
       <table>
         <thead>
           <tr class="text-xs sm:text-sm text-left">
             <th>Job number</th>
-            <th>Practice</th>
+            <th>Practice / Surgery</th>
             <th>Title</th>
             <th>From</th>
             <th>To</th>
             <th>Created</th>
-            <th>Assigned</th>
           </tr>
         </thead>
         <tbody>
@@ -26,13 +25,11 @@
               @click="show(item.id)"
             >
               <td>{{item.job_number}}</td>
-              <td>{{item.type === 'Private' ? item.private_job.private_practice.surgery.name : item.platform_job.practice.surgery.name}}</td>
-              <td>{{item.type === 'Private' ? 'Private appointment' : item.platform_job.title}}</td>
-              <td>{{item.type === 'Private' ? item.private_job.date_start : item.platform_job.date_start}}</td>
-              <td>{{item.type === 'Private' ? item.private_job.date_end : item.platform_job.date_end}}</td>
-              <td>{{item.created_at | localDate }}</td>
-              <td v-if="item.type === 'Private'">N/A</td>
-              <td v-else>{{item.platform_job.appointed_at | localDate}}</td>
+              <td>{{item.platform_job.practice.surgery.name}}</td>
+              <td>{{item.platform_job.title}}</td>
+              <td>{{item.platform_job.date_start}}</td>
+              <td>{{item.platform_job.date_end}}</td>
+              <td>{{item.platform_job.date_created}}</td>
             </tr>
             <tr :key="`${item.id}-${index}`">
               <td></td>
@@ -47,17 +44,17 @@
 export default {
   data() {
     return {
-      jobs: [],
+      jobs: []
     }
   },
   created() {
-    this.$axios.$get(`/api/v1/locum/jobs?locum_status=Current`).then(res => {
+    this.$axios.$get(`/api/v1/practice/jobs?status=Available`).then(res => {
       this.jobs = res.data.jobs
     })
   },
   methods: {
     show(id) {
-      this.$router.push(`/jobs/${id}?job_status=allocated`)
+      this.$router.push(`/sessions/${id}?session_status=live`)
     }
   }
 }

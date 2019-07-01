@@ -52,12 +52,12 @@
           >
             <div class="text-xs md:text-sm z-10">{{(item.date)}}</div>
             <PerMonthInfoDateCell
-              :practice_available_jobs="practice_available_jobs"
-              :practice_available_jobs_reminder="practice_available_jobs_reminder"
+              :practice_current_jobs="practice_current_jobs"
               :practice_applied_jobs="practice_applied_jobs"
-              :practice_applied_jobs_reminder="practice_applied_jobs_reminder"
               :practice_unfilled_jobs="practice_unfilled_jobs"
               :practice_declined_jobs="practice_declined_jobs"
+              :practice_applied_jobs_reminder="practice_applied_jobs_reminder"
+              :practice_available_jobs_reminder="practice_available_jobs_reminder"
               :locum_private_jobs="locum_private_jobs"
               :locum_current_jobs="locum_current_jobs"
               :locum_applied_jobs="locum_applied_jobs"
@@ -80,12 +80,12 @@
           >
             <div class="text-xs md:text-sm z-10">{{item.date}}</div>
             <PerMonthInfoDateCell
-              :practice_available_jobs="practice_available_jobs"
-              :practice_available_jobs_reminder="practice_available_jobs_reminder"
+              :practice_current_jobs="practice_current_jobs"
               :practice_applied_jobs="practice_applied_jobs"
-              :practice_applied_jobs_reminder="practice_applied_jobs_reminder"
               :practice_unfilled_jobs="practice_unfilled_jobs"
               :practice_declined_jobs="practice_declined_jobs"
+              :practice_applied_jobs_reminder="practice_applied_jobs_reminder"
+              :practice_available_jobs_reminder="practice_available_jobs_reminder"
               :locum_private_jobs="locum_private_jobs"
               :locum_current_jobs="locum_current_jobs"
               :locum_applied_jobs="locum_applied_jobs"
@@ -108,12 +108,12 @@
           >
             <div class="text-xs md:text-sm z-10">{{(item.date)}}</div>
             <PerMonthInfoDateCell
-              :practice_available_jobs="practice_available_jobs"
-              :practice_available_jobs_reminder="practice_available_jobs_reminder"
+              :practice_current_jobs="practice_current_jobs"
               :practice_applied_jobs="practice_applied_jobs"
-              :practice_applied_jobs_reminder="practice_applied_jobs_reminder"
               :practice_unfilled_jobs="practice_unfilled_jobs"
               :practice_declined_jobs="practice_declined_jobs"
+              :practice_applied_jobs_reminder="practice_applied_jobs_reminder"
+              :practice_available_jobs_reminder="practice_available_jobs_reminder"
               :locum_private_jobs="locum_private_jobs"
               :locum_current_jobs="locum_current_jobs"
               :locum_applied_jobs="locum_applied_jobs"
@@ -136,12 +136,12 @@
           >
             <div class="text-xs md:text-sm z-10">{{item.date}}</div>
             <PerMonthInfoDateCell
-              :practice_available_jobs="practice_available_jobs"
-              :practice_available_jobs_reminder="practice_available_jobs_reminder"
+              :practice_current_jobs="practice_current_jobs"
               :practice_applied_jobs="practice_applied_jobs"
-              :practice_applied_jobs_reminder="practice_applied_jobs_reminder"
               :practice_unfilled_jobs="practice_unfilled_jobs"
               :practice_declined_jobs="practice_declined_jobs"
+              :practice_applied_jobs_reminder="practice_applied_jobs_reminder"
+              :practice_available_jobs_reminder="practice_available_jobs_reminder"
               :locum_private_jobs="locum_private_jobs"
               :locum_current_jobs="locum_current_jobs"
               :locum_applied_jobs="locum_applied_jobs"
@@ -164,12 +164,12 @@
           >
             <div class="text-xs md:text-sm z-10">{{(item.date)}}</div>
             <PerMonthInfoDateCell
-              :practice_available_jobs="practice_available_jobs"
-              :practice_available_jobs_reminder="practice_available_jobs_reminder"
+              :practice_current_jobs="practice_current_jobs"
               :practice_applied_jobs="practice_applied_jobs"
-              :practice_applied_jobs_reminder="practice_applied_jobs_reminder"
               :practice_unfilled_jobs="practice_unfilled_jobs"
               :practice_declined_jobs="practice_declined_jobs"
+              :practice_applied_jobs_reminder="practice_applied_jobs_reminder"
+              :practice_available_jobs_reminder="practice_available_jobs_reminder"
               :locum_private_jobs="locum_private_jobs"
               :locum_current_jobs="locum_current_jobs"
               :locum_applied_jobs="locum_applied_jobs"
@@ -192,12 +192,12 @@
           >
             <div class="text-xs md:text-sm z-10">{{item.date}}</div>
             <PerMonthInfoDateCell
-              :practice_available_jobs="practice_available_jobs"
-              :practice_available_jobs_reminder="practice_available_jobs_reminder"
+              :practice_current_jobs="practice_current_jobs"
               :practice_applied_jobs="practice_applied_jobs"
-              :practice_applied_jobs_reminder="practice_applied_jobs_reminder"
               :practice_unfilled_jobs="practice_unfilled_jobs"
               :practice_declined_jobs="practice_declined_jobs"
+              :practice_applied_jobs_reminder="practice_applied_jobs_reminder"
+              :practice_available_jobs_reminder="practice_available_jobs_reminder"
               :locum_private_jobs="locum_private_jobs"
               :locum_current_jobs="locum_current_jobs"
               :locum_applied_jobs="locum_applied_jobs"
@@ -220,12 +220,12 @@
           >
             <div class="text-xs md:text-sm z-10">{{item.date}}</div>
             <PerMonthInfoDateCell
-              :practice_available_jobs="practice_available_jobs"
-              :practice_available_jobs_reminder="practice_available_jobs_reminder"
+              :practice_current_jobs="practice_current_jobs"
               :practice_applied_jobs="practice_applied_jobs"
-              :practice_applied_jobs_reminder="practice_applied_jobs_reminder"
               :practice_unfilled_jobs="practice_unfilled_jobs"
               :practice_declined_jobs="practice_declined_jobs"
+              :practice_applied_jobs_reminder="practice_applied_jobs_reminder"
+              :practice_available_jobs_reminder="practice_available_jobs_reminder"
               :locum_private_jobs="locum_private_jobs"
               :locum_current_jobs="locum_current_jobs"
               :locum_applied_jobs="locum_applied_jobs"
@@ -256,23 +256,23 @@ export default {
 
   computed: {
     //practice
-    practice_available_jobs() {
-      return this.$store.state.calendar.practice_available_jobs
-    },
-    practice_available_jobs_reminder() {
-      return this.$store.state.calendar.practice_available_jobs_reminder
+    practice_current_jobs() {
+      return this.$store.state.calendar.practice_current_jobs
     },
     practice_applied_jobs() {
       return this.$store.state.calendar.practice_applied_jobs
-    },
-    practice_applied_jobs_reminder() {
-      return this.$store.state.calendar.practice_applied_jobs_reminder
     },
     practice_unfilled_jobs() {
       return this.$store.state.calendar.practice_unfilled_jobs
     },
     practice_declined_jobs() {
       return this.$store.state.calendar.practice_declined_jobs
+    },
+    practice_applied_jobs_reminder() {
+      return this.$store.state.calendar.practice_applied_jobs_reminder
+    },
+    practice_available_jobs_reminder() {
+      return this.$store.state.calendar.practice_available_jobs_reminder
     },
     // locum
     locum_private_jobs() {
@@ -304,16 +304,15 @@ export default {
   methods: {
     getJobs() {
       if (this.$auth.user.domain === 'Practice') {
-        this.$axios.$get(`/api/v1/practice/jobs?status=Available&date_start=${this.startOfMonth}&date_end=${this.endOfMonth}`).then(res => {
+        // current(green), applied/not appointed(amber) unfilled/declined(red), reminder-available/applied na may selection date(grey)
+        this.$axios.$get(`/api/v1/practice/jobs?status=Current&date_start=${this.startOfMonth}&date_end=${this.endOfMonth}`).then(res => {
           if (res.data.jobs && res.data.jobs.length > 0) {
-            this.$store.commit('calendar/SET_PRACTICE_AVAILABLE_JOBS', res.data.jobs)
-            this.$store.commit('calendar/SET_PRACTICE_AVAILABLE_JOBS_REMINDER', res.data.jobs.filter(job => job.platform_job.selection_date))
+            this.$store.commit('calendar/SET_PRACTICE_CURRENT_JOBS', res.data.jobs)
           }
         })
         this.$axios.$get(`/api/v1/practice/jobs?status=Applied&date_start=${this.startOfMonth}&date_end=${this.endOfMonth}`).then(res => {
           if (res.data.jobs && res.data.jobs.length > 0) {
-            this.$store.commit('calendar/SET_PRACTICE_APPLIED_JOBS', res.data.jobs)
-            this.$store.commit('calendar/SET_PRACTICE_APPLIED_JOBS_REMINDER', res.data.jobs.filter(job => job.platform_job.selection_date))
+            this.$store.commit('calendar/SET_PRACTICE_APPLIED_JOBS', res.data.jobs.filter(job => job.appointed_to_locum_detail_id === null))
           }
         })
         this.$axios.$get(`/api/v1/practice/jobs?status=Unfilled&date_start=${this.startOfMonth}&date_end=${this.endOfMonth}`).then(res => {
@@ -324,6 +323,16 @@ export default {
         this.$axios.$get(`/api/v1/practice/jobs?status=Declined&date_start=${this.startOfMonth}&date_end=${this.endOfMonth}`).then(res => {
           if (res.data.jobs && res.data.jobs.length > 0) {
             this.$store.commit('calendar/SET_PRACTICE_DECLINED_JOBS', res.data.jobs)
+          }
+        })
+        this.$axios.$get(`/api/v1/practice/jobs?status=Applied&platform_selection_date_start=${this.startOfMonth}&platform_selection_date_end=${this.endOfMonth}`).then(res => {
+          if (res.data.jobs && res.data.jobs.length > 0) {
+            this.$store.commit('calendar/SET_PRACTICE_APPLIED_JOBS_REMINDER', res.data.jobs.filter(job => job.appointed_to_locum_detail_id === null))
+          }
+        })
+        this.$axios.$get(`/api/v1/practice/jobs?status=Available&platform_selection_date_start=${this.startOfMonth}&platform_selection_date_end=${this.endOfMonth}`).then(res => {
+          if (res.data.jobs && res.data.jobs.length > 0) {
+            this.$store.commit('calendar/SET_PRACTICE_AVAILABLE_JOBS_REMINDER', res.data.jobs.filter(job => job.appointed_to_locum_detail_id === null))
           }
         })
       }

@@ -190,104 +190,6 @@ export default {
       formError: []
     }
   },
-  watch: {
-    'form.email'(value) {
-      // splice from formerror
-      let index = this.formError.findIndex(item => item.field === 'email')
-      if (index >= 0) {
-        this.formError.splice(index, 1)
-      }
-      // validate
-      if (!value) {
-        // required
-        this.formError.push({ field: 'email', message: 'Required' })
-      } else {
-        // validate option
-        const error = this.ValidateEmail(value)
-        if (error) {
-          this.formError.push(error)
-        }
-      }
-    },
-    'form.phone_number'(value) {
-      // splice from formerror
-      let index = this.formError.findIndex(item => item.field === 'phone_number')
-      if (index >= 0) {
-        this.formError.splice(index, 1)
-      }
-      // validate
-      if (!value) {
-        // required
-        this.formError.push({ field: 'phone_number', message: 'Required' })
-      } else {
-        // validate options
-        const error = this.ValidateMobile(value, 'phone_number')
-        if (error) {
-          this.formError.push(error)
-        }
-      }
-    },
-    'form.report_to'(value) {
-      // splice from formerror
-      let index = this.formError.findIndex(item => item.field === 'report_to')
-      if (index >= 0) {
-        this.formError.splice(index, 1)
-      }
-      // validate
-      if (!value) {
-        // required
-        this.formError.push({ field: 'report_to', message: 'Required' })
-      }
-    },
-    'form.extra_information'(value) {
-      // splice from formerror
-      let index = this.formError.findIndex(item => item.field === 'extra_information')
-      if (index >= 0) {
-        this.formError.splice(index, 1)
-      }
-      // validate
-      if (!value) {
-        // required
-        this.formError.push({ field: 'extra_information', message: 'Required' })
-      }
-    },
-    'form.practice_type_id'(value) {
-      // splice from formerror
-      let index = this.formError.findIndex(item => item.field === 'practice_type_id')
-      if (index >= 0) {
-        this.formError.splice(index, 1)
-      }
-      // validate
-      if (!value.length) {
-        // required
-        this.formError.push({ field: 'practice_type_id', message: 'Required' })
-      }
-    },
-    'form.gp_compliance_document_id'(value) {
-      // splice from formerror
-      let index = this.formError.findIndex(item => item.field === 'gp_compliance_document_id')
-      if (index >= 0) {
-        this.formError.splice(index, 1)
-      }
-      // validate
-      if (!value.length) {
-        // required
-        this.formError.push({ field: 'gp_compliance_document_id', message: 'Required' })
-      }
-    },
-    'form.others_compliance_document_id'(value) {
-      // splice from formerror
-      let index = this.formError.findIndex(item => item.field === 'others_compliance_document_id')
-      if (index >= 0) {
-        this.formError.splice(index, 1)
-      }
-      // validate
-      if (!value.length) {
-        // required
-        this.formError.push({ field: 'others_compliance_document_id', message: 'Required' })
-      }
-    },
-  },
   created() {
     // get default data 
     this.$axios.$get(`/api/v1/me`).then(res => {
@@ -314,8 +216,6 @@ export default {
         this.form.others_compliance_document_id.push(item.id)
       })
     })
-    // console.log(this.form.practice_type_id)
-    // get practice types
     this.$axios.$get(`/api/v1/practice-types`)
       .then(res => {
         this.practice_types = []
@@ -382,7 +282,6 @@ export default {
           this.$axios.$put(`/api/v1/practice/me/profile`, this.form).then(res => {
             console.log(res)
             // set mandatory training
-            this.$store.commit('profile/SET_MANDATORY_TRAINING', res.data.practice.mandatory_trainings)
             this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: res.message })
           })
         }

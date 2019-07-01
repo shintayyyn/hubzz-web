@@ -1,32 +1,39 @@
 <template>
-  <section>
-    <div class="px-5 mb-5">
-      <div class="text-sm font-bold cursor-pointer">My Locums</div>
-    </div>
-    <div class="px-4 lg:px-10">
-      <MyBanksTab/>
-    </div>
-    <div class="px-4 lg:px-10 mt-5">
-      <FavouriteLocums v-if="$store.state.myBanks.activeTab === 'favourites'"/>
-      <AllLocums v-if="$store.state.myBanks.activeTab === 'all'"/>
-      <RejectedLocums v-if="$store.state.myBanks.activeTab === 'rejected'"/>
-      <WithdrawnLocums v-if="$store.state.myBanks.activeTab === 'withdrawn'"/>
+  <section class="my-banks-section">
+    <div class="mb-5 text-sm font-bold cursor-pointer">My Locums</div>
+    <MyBanksTab/>
+    <div class="mt-5">
+      <transition name="fade" mode="out-in">
+        <Component :is="activeComponent"/>
+      </transition>
     </div>
   </section>
 </template>
 <script>
 import MyBanksTab from '@/components/MyBanks/MyBanksTab'
-import FavouriteLocums from '@/components/MyBanks/FavouriteLocums'
-import AllLocums from '@/components/MyBanks/AllLocums'
-import RejectedLocums from '@/components/MyBanks/RejectedLocums'
-import WithdrawnLocums from '@/components/MyBanks/WithdrawnLocums'
+import Favourites from '@/components/MyBanks/Favourites'
+import All from '@/components/MyBanks/All'
+import Rejected from '@/components/MyBanks/Rejected'
+import Withdrawn from '@/components/MyBanks/Withdrawn'
 export default {
   components: {
     MyBanksTab,
-    FavouriteLocums,
-    AllLocums,
-    RejectedLocums,
-    WithdrawnLocums
+    Favourites,
+    All,
+    Rejected,
+    Withdrawn
+  },
+  created() {
+    const query = {
+      ...this.$route.query,
+      my_banks_tab: this.$route.query.my_banks_tab || 'favourites'
+    }
+    this.$router.push({ query })
+  },
+  computed: {
+    activeComponent() {
+      return this.$route.query.my_banks_tab
+    }
   },
 }
 </script>

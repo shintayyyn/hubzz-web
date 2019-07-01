@@ -88,9 +88,6 @@ export default {
   methods: {
     search() {
       this.$axios.$get(`/api/v1/surgeries?search=${this.search_text}&has_parent=false&is_parent=false&limit=10`).then(res => {
-        if (res.data.surgeries.length === 0) {
-          return
-        }
         this.surgeries = res.data.surgeries
         this.showResult = true
       })

@@ -1,7 +1,7 @@
 <template>
   <div class="p-8 max-w-xl">
     <div @click="$emit('close')" class="cursor-pointer">
-      <svgicon name="left-arrow" height="32" width="32"/>
+      <svgicon name="left-arrow" height="32" width="32" />
     </div>
     <div class="flex flex-row flex-nowrap justify-start mt-8">
       <div class="font-bold text-md sm:text-lg">{{user.personal_detail.name}}</div>
@@ -10,8 +10,10 @@
       <div class="w-full pr-0 lg:pr-2 lg:w-1/2">
         <div class="rounded-lg shadow-lg p-8">
           <div class="float-right">
-            <div class="font-bold text-sm sm:text-md">Avatar</div>
-            <div class="text-xs sm:text-sm mb-8">Avatar</div>
+            <!-- <div class="font-bold text-sm sm:text-md">Avatar</div> -->
+            <div class="text-xs sm:text-sm mb-8">
+              <svgicon name="no-avatar" height="80" width="80" />
+            </div>
           </div>
           <div class="font-bold text-sm sm:text-md">Candidate</div>
           <div class="text-xs sm:text-sm mb-8">{{user.locum_detail.profession.name}}</div>
@@ -59,8 +61,8 @@
               v-for="item in mandatory"
               :key="item.id"
             >
-              <svgicon name="cloud-download" height="24" width="24"/>
-              <div class="leading-normal mx-2">{{item.name}}</div>
+              <svgicon name="cloud-download" height="24" width="24" />
+              <div class="leading-normal mx-2 document-filename">{{item.file.filename}}</div>
             </div>
           </div>
           <div class="font-bold text-sm sm:text-md">Others documents</div>
@@ -70,8 +72,8 @@
               v-for="item in optional"
               :key="item.id"
             >
-              <svgicon name="cloud-download" height="24" width="24"/>
-              <div class="leading-normal mx-2">{{item.name}}</div>
+              <svgicon name="cloud-download" height="24" width="24" />
+              <div class="leading-normal mx-2 document-filename">{{item.file.filename}}</div>
             </div>
           </div>
 
@@ -96,7 +98,7 @@
             <div class="text-xs sm:text-sm">email</div>
           </div>
         </div>
-        <AppButton :label="'Appoint to this job'" @click="appoint"/>
+        <AppButton :label="'Appoint to this job'" @click="appoint" />
       </div>
     </div>
   </div>
@@ -104,34 +106,18 @@
 <script>
 import AppButton from '@/components/Base/AppButton'
 export default {
+  props: ['user'],
   components: {
     AppButton
   },
   data() {
     return {
-      user: {
-        personal_detail: {},
-        locum_detail: {
-          gmc_or_nmc_number: {},
-          mpl_or_npl_number: {},
-          profession: {},
-          qualifications: [],
-          clinical_systems: [],
-          spoken_languages: [],
-          compliance_documents: [],
-          rates: [],
-          referees: []
-        }
-      },
       mandatory: [],
       optional: []
     }
   },
   created() {
-    this.$axios.$get(`/api/v1/practice/locums/${this.$store.state.session.user_id}`).then(res => {
-      this.user = res.data.user
-      this.getProfessionCategory(res.data.user.locum_detail.profession.profession_category.id)
-    })
+    this.getProfessionCategory(this.user.locum_detail.profession.profession_category.id)
   },
   methods: {
     getProfessionCategory(id) {
@@ -145,25 +131,20 @@ export default {
       })
     },
     appoint() {
-      // api/v1/practice/jobs/1/applicants/43/appoint
-      this.$axios.$put(`/api/v1/practice/jobs/${this.$store.state.session.job_id}/applicants/${this.$store.state.session.user_id}/appoint`).then(res => {
+      this.$axios.$put(`/api/v1/practice/jobs/${this.$route.params.id}/applicants/${this.user.id}/appoint`).then(res => {
+        console.log(res)
         this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Assign locum successfully' })
-        // toggle off applied locum detail modal and shield
-        this.$store.commit('SET_APPLIEDLOCUMDETAIL_MODAL', false)
-        this.$store.commit('SET_APPLIEDLOCUMDETAIL_SHIELD', false)
-        let d = document.getElementsByClassName('applied-locum-detail-modal')[0]
-        d.classList.toggle('toggled-right')
-        document.body.style.overflow = 'hidden'
-        // toggle off applied detail modal and shield
-        this.$store.commit('SET_APPLIEDDETAIL_MODAL', false)
-        this.$store.commit('SET_APPLIEDDETAIL_SHIELD', false)
-        let d2 = document.getElementsByClassName('applied-detail-modal')[0]
-        d2.classList.toggle('toggled-right')
-        document.body.style.overflow = 'hidden'
-        // set session tab to allocated
-        this.$store.commit('session/SET_ACTIVE_TAB', 'allocated')
+        this.$router.push('/sessions?session_status=allocated')
       })
     }
   }
 }
 </script>
+<style scoped>
+.document-filename {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+</style>
+

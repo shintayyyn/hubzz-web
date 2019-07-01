@@ -21,7 +21,7 @@
           <template v-for="(item, index) in jobs">
             <tr
               :key="item.id"
-              class="job-card shadow-md cursor-pointer text-xs sm:text-sm text-left"
+              class="job-card shadow-md cursor-pointer text-xs text-left"
               @click="show(item.id)"
             >
               <td>{{item.job_number}}</td>
@@ -39,49 +39,23 @@
         </tbody>
       </table>
     </div>
-    <!-- <div class="applied-shield" v-if="modal"></div>
-    <transition name="slide" mode="out-in">
-      <div class="applied-modal shadow-lg" v-if="modal">
-        <LocumAppliedDetailModal @close="modal = false" :job="job"/>
-      </div>
-    </transition>-->
   </section>
 </template>
 <script>
-import LocumAppliedDetailModal from '@/components/Jobs/LocumAppliedDetailModal'
 export default {
-  components: {
-    LocumAppliedDetailModal
-  },
   data() {
     return {
       jobs: [],
-      job: null,
-      modal: false
     }
   },
   created() {
-    // get applied jobs
     this.$axios.$get(`/api/v1/locum/jobs?locum_status=Applied`).then(res => {
       this.jobs = res.data.jobs
     })
   },
-  watch: {
-    modal(value) {
-      if (value) {
-        document.body.style.overflow = 'hidden'
-      } else {
-        document.body.style.overflow = 'auto'
-      }
-    }
-  },
   methods: {
     show(id) {
       this.$router.push(`/jobs/${id}?job_status=applied`)
-      // this.$axios.$get(`/api/v1/locum/jobs/${id}`).then(res => {
-      //   this.job = res.data.job
-      //   this.modal = true
-      // })
     }
   }
 }
@@ -94,34 +68,6 @@ export default {
 .job-card {
   background-color: white;
   transition: background-color 0.5s ease-in-out;
-}
-.applied-shield {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #333;
-  opacity: 0.5;
-  z-index: 509;
-}
-.applied-modal {
-  position: fixed;
-  top: 0;
-  right: 0;
-  margin-right: 0%;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  border-left: solid 2px #edf2f7;
-  transition: all 0.3s ease-in-out;
-  background-color: white;
-  z-index: 510;
-}
-@media screen and (min-width: 1200px) {
-  .applied-modal {
-    width: 80%;
-  }
 }
 a {
   text-decoration: none;

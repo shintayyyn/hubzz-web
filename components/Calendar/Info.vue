@@ -10,21 +10,45 @@
         v-if="noJobsToDisplay"
         key="'no-jobs'"
       >No jobs to display.</div>
-      <div v-for="(item, index) in foundPracticeAvailableJobs" :key="`${index}-${item.id}`">
-        <PracticeAvailableJobCard :job="item"/>
+      <div v-for="(item, index) in foundPracticeCurrentJobs" :key="`${index}-${item.id}`">
+        <PracticeCurrentJobCard
+          @viewPracticeAllocatedJob="$emit('viewPracticeAllocatedJob', $event)"
+          :job="item"
+        />
       </div>
-      <div v-for="item in foundPracticeAppliedJobs" :key="item.id">
-        <PracticeAppliedJobCard :job="item"/>
+      <div v-for="(item, index) in foundPracticeAppliedJobs" :key="`${index}-${item.id}`">
+        <PracticeAppliedJobCard
+          @viewPracticeAppliedJob="$emit('viewPracticeAppliedJob', $event)"
+          :job="item"
+        />
       </div>
-      <div v-for="item in foundPracticeUnfilledJobs" :key="item.id">
-        <PracticeUnfilledJobCard :job="item"/>
+      <div v-for="(item, index) in foundPracticeUnfilledJobs" :key="`${index}-${item.id}`">
+        <PracticeUnfilledJobCard
+          @viewPracticeUnfilledJob="$emit('viewPracticeUnfilledJob', $event)"
+          :job="item"
+        />
       </div>
-      <div v-for="item in foundPracticeDeclinedJobs" :key="item.id">
-        <PracticeDeclinedJobCard :job="item"/>
+      <div v-for="(item, index) in foundPracticeDeclinedJobs" :key="`${index}-${item.id}`">
+        <PracticeDeclinedJobCard
+          @viewPracticeDeclinedJob="$emit('viewPracticeDeclinedJob', $event)"
+          :job="item"
+        />
+      </div>
+      <div v-for="(item, index) in foundPracticeAppliedJobsReminder" :key="`${index}-${item.id}`">
+        <PracticeAppliedJobReminderCard
+          @viewPracticeAppliedJob="$emit('viewPracticeAppliedJob', $event)"
+          :job="item"
+        />
+      </div>
+      <div v-for="(item, index) in foundPracticeAvailableJobsReminder" :key="`${index}-${item.id}`">
+        <PracticeAvailableJobReminderCard
+          @viewPracticeLiveJob="$emit('viewPracticeLiveJob', $event)"
+          :job="item"
+        />
       </div>
       <!-- locums -->
       <div v-for="(item, index) in foundLocumPrivateJobs" :key="`${index}-${item.id}`">
-        <LocumPrivateJobCard @viewAppointmentJob="$emit('viewAppointmentJob', $event)" :job="item"/>
+        <LocumPrivateJobCard @viewAppointmentJob="$emit('viewAppointmentJob', $event)" :job="item" />
       </div>
       <div v-for="(item, index) in foundLocumCurrentJobs" :key="`${index}-${item.id}`">
         <LocumCurrentJobCard
@@ -40,7 +64,7 @@
       </div>
 
       <div v-for="(item, index) in foundLocumUnavailabilities" :key="`${index}-${item.id}`">
-        <LocumUnavailabilitiesCard :job="item"/>
+        <LocumUnavailabilitiesCard :job="item" />
       </div>
       <!-- </transition-group> -->
     </div>
@@ -48,10 +72,12 @@
 </template>
 <script>
 // practice
-import PracticeAvailableJobCard from '@/components/Calendar/Cards/PracticeAvailableJobCard'
+import PracticeCurrentJobCard from '@/components/Calendar/Cards/PracticeCurrentJobCard'
 import PracticeAppliedJobCard from '@/components/Calendar/Cards/PracticeAppliedJobCard'
 import PracticeUnfilledJobCard from '@/components/Calendar/Cards/PracticeUnfilledJobCard'
 import PracticeDeclinedJobCard from '@/components/Calendar/Cards/PracticeDeclinedJobCard'
+import PracticeAppliedJobReminderCard from '@/components/Calendar/Cards/PracticeAppliedJobReminderCard'
+import PracticeAvailableJobReminderCard from '@/components/Calendar/Cards/PracticeAvailableJobReminderCard'
 // locums
 import LocumPrivateJobCard from '@/components/Calendar/Cards/LocumPrivateJobCard'
 import LocumCurrentJobCard from '@/components/Calendar/Cards/LocumCurrentJobCard'
@@ -60,10 +86,12 @@ import LocumUnavailabilitiesCard from '@/components/Calendar/Cards/LocumUnavaila
 export default {
   components: {
     // practice
-    PracticeAvailableJobCard,
+    PracticeCurrentJobCard,
     PracticeAppliedJobCard,
     PracticeUnfilledJobCard,
     PracticeDeclinedJobCard,
+    PracticeAppliedJobReminderCard,
+    PracticeAvailableJobReminderCard,
     // locums
     LocumPrivateJobCard,
     LocumCurrentJobCard,
@@ -73,10 +101,12 @@ export default {
   data() {
     return {
       // practice
-      foundPracticeAvailableJobs: [],
+      foundPracticeCurrentJobs: [],
       foundPracticeAppliedJobs: [],
       foundPracticeUnfilledJobs: [],
       foundPracticeDeclinedJobs: [],
+      foundPracticeAppliedJobsReminder: [],
+      foundPracticeAvailableJobsReminder: [],
       // locums
       foundLocumPrivateJobs: [],
       foundLocumCurrentJobs: [],
@@ -115,10 +145,12 @@ export default {
       this.foundLocumCurrentJobs = []
       this.foundLocumAppliedJobs = []
       this.foundLocumUnavailabilities = []
-      this.foundPracticeAvailableJobs = []
+      this.foundPracticeCurrentJobs = []
       this.foundPracticeAppliedJobs = []
       this.foundPracticeUnfilledJobs = []
       this.foundPracticeDeclinedJobs = []
+      this.foundPracticeAppliedJobsReminder = []
+      this.foundPracticeAvailableJobsReminder = []
       if (this.$auth.user.domain === 'Practice') {
         this.findPerWeek(value)
       }
@@ -143,23 +175,23 @@ export default {
       }
     },
     // practice
-    practice_available_jobs() {
-      return this.$store.state.calendar.practice_available_jobs
-    },
-    practice_available_jobs_reminder() {
-      return this.$store.state.calendar.practice_available_jobs_reminder
+    practice_current_jobs() {
+      return this.$store.state.calendar.practice_current_jobs
     },
     practice_applied_jobs() {
       return this.$store.state.calendar.practice_applied_jobs
-    },
-    practice_applied_jobs_reminder() {
-      return this.$store.state.calendar.practice_applied_jobs_reminder
     },
     practice_unfilled_jobs() {
       return this.$store.state.calendar.practice_unfilled_jobs
     },
     practice_declined_jobs() {
       return this.$store.state.calendar.practice_declined_jobs
+    },
+    practice_applied_jobs_reminder() {
+      return this.$store.state.calendar.practice_applied_jobs_reminder
+    },
+    practice_available_jobs_reminder() {
+      return this.$store.state.calendar.practice_available_jobs_reminder
     },
     // locums
     locum_private_jobs() {
@@ -178,8 +210,8 @@ export default {
   methods: {
     // practice
     findPerMonth(date) {
-      if (this.practice_available_jobs.length > 0) {
-        this.foundPracticeAvailableJobs = this.practice_available_jobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date))
+      if (this.practice_current_jobs.length > 0) {
+        this.foundPracticeCurrentJobs = this.practice_current_jobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date))
       }
       if (this.practice_applied_jobs.length > 0) {
         this.foundPracticeAppliedJobs = this.practice_applied_jobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date))
@@ -188,12 +220,18 @@ export default {
         this.foundPracticeUnfilledJobs = this.practice_unfilled_jobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date))
       }
       if (this.practice_declined_jobs.length > 0) {
-        this.foundPracticeDeclinedJobs = this.practice_declined_jobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date))
+        this.foundPracticeDeclinedJobs = this.practice_declined_jobs.filter(job => job.platform_job.declined_at === date)
+      }
+      if (this.practice_applied_jobs_reminder.length > 0) {
+        this.foundPracticeAppliedJobsReminder = this.practice_applied_jobs_reminder.filter(job => job.platform_job.selection_date === date)
+      }
+      if (this.practice_available_jobs_reminder.length > 0) {
+        this.foundPracticeAvailableJobsReminder = this.practice_available_jobs_reminder.filter(job => job.platform_job.selection_date === date)
       }
     },
     findPerWeek({ date, shift }) {
-      if (this.practice_available_jobs.length > 0) {
-        this.foundPracticeAvailableJobs = this.practice_available_jobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === shift)
+      if (this.practice_current_jobs.length > 0) {
+        this.foundPracticeCurrentJobs = this.practice_current_jobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === shift)
       }
       if (this.unfilled_jobs.length > 0) {
         this.foundPracticeUnfilledJobs = this.unfilled_jobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === shift)

@@ -23,9 +23,11 @@ export default {
     ChangePassword,
   },
   created() {
+    let firstTab = ''
+    this.$auth.user.domain === 'Locum' ? firstTab = 'general' : firstTab = 'user'
     const query = {
       ...this.$route.query,
-      account_tab: this.$route.query.account_tab || 'general'
+      account_tab: this.$route.query.account_tab || firstTab
     }
     this.$router.push({ query })
   },

@@ -1,11 +1,10 @@
 <template>
-  <section>
-    <div class="px-10">
-      <ProfileTabs/>
-    </div>
-    <div class="px-10 mt-5">
-      <Practice v-if="$store.state.profile.profileTab === 'practice'"/>
-      <Surgeries v-if="$store.state.profile.profileTab === 'surgeries'"/>
+  <section class="profile-section">
+    <ProfileTabs/>
+    <div class="mt-5">
+      <transition name="fade" mode="out-in">
+        <Component :is="activeComponent"/>
+      </transition>
     </div>
   </section>
 </template>
@@ -18,7 +17,19 @@ export default {
     ProfileTabs,
     Practice,
     Surgeries
-  }
+  },
+  created() {
+    const query = {
+      ...this.$route.query,
+      profile_tab: this.$route.query.profile_tab || 'practice'
+    }
+    this.$router.push({ query })
+  },
+  computed: {
+    activeComponent() {
+      return this.$route.query.profile_tab
+    }
+  },
 }
 </script>
 

@@ -1,10 +1,10 @@
 <template>
-  <div>
+  <section>
     <div class="flex flex-row justify-end">
       <button
         class="bg-yellow-dark rounded-full font-bold text-3xl hover:text-white focus:outline-none"
         style="width:40px;height:40px;"
-        @click="add"
+        @click="modal = true"
       >+</button>
       <div class="ml-2 text-xs sm:text-sm" style="line-height:280%">Add Surgery</div>
     </div>
@@ -24,44 +24,66 @@
         </div>
       </div>
     </div>
-  </div>
+    <div class="add-surgery-shield" v-if="modal"></div>
+    <transition name="slide" mode="out-in">
+      <div class="add-surgery-modal shadow-lg" v-if="modal">
+        <AddSurgeryModal @close="modal = false" @add="results.push($event)"/>
+      </div>
+    </transition>
+  </section>
 </template>
 <script>
+import AddSurgeryModal from '@/components/Profile/AddSurgeryModal'
 export default {
+  components: {
+    AddSurgeryModal
+  },
   data() {
     return {
+      modal: false,
       results: []
     }
   },
-  computed: {
-    // get added surgery from profile - surgeries tab
-    practiceChildren() {
-      return this.$store.state.profile.added_surgery
-    }
-  },
-  watch: {
-    // watch store added surgery for each added from profile - surgeries tab
-    practiceChildren(value) {
-      if (value) {
-        this.results.push(value)
-      }
-    }
-  },
   created() {
+    this.results = []
     // practice children
     this.$axios.$get(`/api/v1/practice/practice-children`).then(res => {
-      this.results = res.data.practice_children
+      this.results.push(this.$auth.user.practice_detail.practice)
+      res.data.practice_children.forEach(item => {
+        this.results.push(item)
+      })
     })
   },
-  methods: {
-    add() {
-      this.$store.commit('SET_ADDSURGERY_SHIELD', true)
-      let d = document.getElementsByClassName('add-surgery-modal')[0]
-      d.classList.toggle('toggled-right')
-      document.body.style.overflow = 'hidden'
-      this.$store.commit('SET_ADDSURGERY_MODAL', true)
-    }
-  }
 }
 </script>
+<style scoped>
+.add-surgery-shield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #333;
+  opacity: 0.5;
+  z-index: 511;
+}
+.add-surgery-modal {
+  position: fixed;
+  top: 0;
+  right: 0;
+  margin-right: 0%;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  border-left: solid 2px #edf2f7;
+  transition: all 0.3s ease-in-out;
+  background-color: white;
+  z-index: 512;
+}
+@media screen and (min-width: 1200px) {
+  .add-surgery-modal {
+    width: 70%;
+  }
+}
+</style>
 

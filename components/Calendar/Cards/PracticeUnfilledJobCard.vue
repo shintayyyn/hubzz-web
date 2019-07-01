@@ -5,8 +5,6 @@
   >
     <div class="bg-red-light absolute pin-l pin-t rounded-l-lg p-2 h-full"></div>
     <div class="ml-2">
-      <div class="font-bold text-sm sm:text-md">REMINDER</div>
-      <div class="font-bold text-sm sm:text-md mb-3">to appoint a Locum</div>
       <div class="text-grey-dark text-xs xl:text-sm">Job Number: {{job.job_number}}</div>
       <div class="my-3 font-bold text-sm sm:text-md">{{job.platform_job.title}}</div>
       <div class="my-3 text-sm sm:text-md">{{job.platform_job.practice.surgery.name}}</div>
@@ -24,12 +22,9 @@ export default {
   props: ['job'],
   methods: {
     select() {
-      this.$store.commit('session/SET_JOB_DETAIL_ID', this.job.id)
-      this.$store.commit('SET_UNFILLEDDETAIL_MODAL', true)
-      this.$store.commit('SET_UNFILLEDDETAIL_SHIELD', true)
-      let d = document.getElementsByClassName('unfilled-detail-modal')[0]
-      d.classList.toggle('toggled-right')
-      document.body.style.overflow = 'hidden'
+      this.$axios.$get(`/api/v1/practice/jobs/${this.job.id}`).then(res => {
+        this.$emit('viewPracticeUnfilledJob', res.data.job)
+      })
     }
   }
 }
