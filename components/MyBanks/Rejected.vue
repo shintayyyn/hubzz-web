@@ -7,7 +7,7 @@
     >
       <div class="flex flex-wrap text-center mt-4 cursor-pointer" @click="show(user.id)">
         <div class="w-full">
-          <svgicon name="no-avatar" height="60" width="60"/>
+          <svgicon name="no-avatar" height="60" width="60" />
         </div>
         <div class="w-full font-bold text-sm sm:text-lg my-4">{{user.personal_detail.name}}</div>
         <div class="w-full font-bold text-grey-dark text-sm sm:text-lg">sample headline</div>
@@ -24,7 +24,7 @@ export default {
   },
   created() {
     this.locums = []
-    this.$axios.$get(`/api/v1/practice/rejected-locums`).then(res => {
+    this.$axios.$get(`/api/v1/practice/locums?practice_locum_type=Rejected`).then(res => {
       console.log(res)
       this.locums = res.data.users
     })

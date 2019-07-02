@@ -34,7 +34,7 @@
                 <div class="flex flex-nowrap justify-between">
                   <div
                     class="text-xs sm:text-sm hover:underline document-filename"
-                  >{{standard_terms.file.filename}}</div>
+                  >{{standard_terms && standard_terms.file ? standard_terms.file.filename : ''}}</div>
                   <div class="font-bold text-md sm:text-lg hover:null" @click="modal = true">X</div>
                 </div>
               </div>
@@ -222,6 +222,7 @@ export default {
   created() {
     // get default data 
     this.$axios.$get(`/api/v1/me`).then(res => {
+      console.log(res)
       this.standard_terms = res.data.user.practice_detail.practice.standard_terms
       this.practice_detail.name = res.data.user.practice_detail.practice.surgery.name
       this.practice_detail.code = res.data.user.practice_detail.practice.surgery.code
