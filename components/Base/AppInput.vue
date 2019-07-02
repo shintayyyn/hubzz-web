@@ -14,7 +14,7 @@
           @input="inputCheck"
           class="mt-1 mr-1"
           :checked="isChecked.includes(item.value)"
-        >
+        />
         <label :for="item.name" class="text-xs sm:text-sm py-1">{{item.label}}</label>
       </div>
     </div>
@@ -30,7 +30,7 @@
             type="checkbox"
             @input="$emit('input', $event.target.checked)"
             class="mt-1 mr-1"
-          >
+          />
           <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
         </div>
         <div class="bg-red p-1 text-xs sm:text-base text-white" v-if="error">{{error.message}}</div>
@@ -61,7 +61,7 @@
           class="border-b-2 focus:border-yellow focus:outline-none py-4 font-bold text-xs sm:text-sm w-full"
           :class="error ? 'border-red':''"
           @input="$emit('input', $event.target.value)"
-        >
+        />
       </div>
     </div>
 
@@ -90,7 +90,7 @@
           @keypress.enter="$emit('submit')"
           @blur="$emit('blur')"
           :checked="value"
-        >
+        />
         <!-- v-on="name === 'mobile_number' || name === 'unpaid_breaks_in_minutes' || name === 'phone_number' || name === 'number_of_patients' || name === 'duration_for_each_appointment' ? { keypress: ValidateInput } : null" -->
       </div>
     </div>
@@ -112,7 +112,7 @@ export default {
   //   }
   // },
   props: {
-    value: [String, Boolean, Array, Number],
+    value: [String, Boolean, Array, Number, Object],
     type: String,
     name: String,
     label: String,

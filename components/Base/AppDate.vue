@@ -18,7 +18,7 @@
         @keypress="validateInput($event)"
         @input="$emit('input', $event.target.value)"
         :style="inStyle"
-      >
+      />
     </div>
     <transition name="fade">
       <div class="relative z-10" v-if="modal">
@@ -40,11 +40,11 @@
             </div>
             <div class="m-1 w-1/2 text-right">
               <span class="cursor-pointer" @click="adjustMonth('previous')">
-                <svgicon name="arrow-left" height="12" width="12"/>
+                <svgicon name="arrow-left" height="12" width="12" />
               </span>
               <span class="mx-4"></span>
               <span class="cursor-pointer" @click="adjustMonth('next')">
-                <svgicon name="arrow-right" height="12" width="12"/>
+                <svgicon name="arrow-right" height="12" width="12" />
               </span>
             </div>
           </div>
@@ -223,7 +223,8 @@ export default {
     label: String,
     placeholder: String,
     error: Object,
-    inStyle: String
+    inStyle: String,
+    isAfter: Boolean
   },
   data() {
     return {
@@ -237,7 +238,6 @@ export default {
     }
   },
   created() {
-
     // get current month and year
     let d = new Date()
     this.selectedMonth = d.getMonth()
@@ -272,6 +272,9 @@ export default {
     },
     isDisabled(date) {
       let newDate = this.$moment(new Date()).format('MM-DD-YYYY')
+      if (this.isAfter) {
+        return this.$moment(date).isAfter(newDate)
+      }
       return this.$moment(date).isBefore(newDate)
     },
     select(date) {

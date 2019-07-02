@@ -332,7 +332,14 @@ export default {
       }
     },
     save() {
-
+      let newForm = {}
+      newForm.locum_detail_rate_type_id = this.form.locum_detail_rate_type.id
+      newForm.rate = this.form.rate
+      newForm.total_hours = this.form.total_hours
+      // ! ask arvi will these update whole job or just the rate and total hours
+      this.$axios.$put(`/api/v1/practice/jobs/${this.$route.params.id}`, newForm).then(res => {
+        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: res.message })
+      })
     },
     cancel() {
       this.$axios.$put(`/api/v1/practice/jobs/${this.$route.params.id}/cancel`, this.form_cancel).then(res => {

@@ -55,7 +55,7 @@
               <td>{{item.name}}</td>
               <td class="hover:underline" v-if="item.info">
                 <div class="flex flex-row flex-nowrap">
-                  <svgicon name="cloud-download" height="24" width="24"/>
+                  <svgicon name="cloud-download" height="24" width="24" />
                   <div class="leading-loose mx-2">
                     <a
                       :href="item.info.file.url"
@@ -90,8 +90,8 @@
                     :id="`${item.id}_file`"
                     class="inputfile hidden"
                     @input="onFileInput($event, item.id)"
-                  >
-                  <svgicon name="cloud-upload" height="24" width="24"/>
+                  />
+                  <svgicon name="cloud-upload" height="24" width="24" />
                   <label :for="`${item.id}_file`" class="leading-loose mx-2 cursor-pointer">Upload</label>
                 </div>
               </td>
@@ -103,8 +103,8 @@
                     :id="`${item.id}_file`"
                     class="inputfile hidden"
                     @input="onFileUpdate($event, item.info.id, index)"
-                  >
-                  <svgicon name="cloud-upload" height="24" width="24"/>
+                  />
+                  <svgicon name="cloud-upload" height="24" width="24" />
                   <label :for="`${item.id}_file`" class="leading-loose mx-2 cursor-pointer">Update</label>
                 </div>
               </td>
@@ -143,7 +143,7 @@
               <td>{{item.name}}</td>
               <td class="hover:underline" v-if="item.info">
                 <div class="flex flex-row flex-nowrap">
-                  <svgicon name="cloud-download" height="24" width="24"/>
+                  <svgicon name="cloud-download" height="24" width="24" />
                   <div class="leading-loose mx-2">
                     <a
                       target="_blank"
@@ -166,8 +166,8 @@
                     :id="`${item.id}_file`"
                     class="inputfile hidden"
                     @input="onFileInput($event, item.id, index)"
-                  >
-                  <svgicon name="cloud-upload" height="24" width="24"/>
+                  />
+                  <svgicon name="cloud-upload" height="24" width="24" />
                   <label :for="`${item.id}_file`" class="leading-loose mx-2 cursor-pointer">Upload</label>
                 </div>
               </td>
@@ -179,8 +179,8 @@
                     :id="`${item.id}_file`"
                     class="inputfile hidden"
                     @input="onFileUpdate($event, item.info.id, index)"
-                  >
-                  <svgicon name="cloud-upload" height="24" width="24"/>
+                  />
+                  <svgicon name="cloud-upload" height="24" width="24" />
                   <label :for="`${item.id}_file`" class="leading-loose mx-2 cursor-pointer">Update</label>
                 </div>
               </td>
@@ -219,7 +219,7 @@
               <td>{{item.name}}</td>
               <td class="hover:underline" v-if="item.info">
                 <div class="flex flex-row flex-nowrap">
-                  <svgicon name="cloud-download" height="24" width="24"/>
+                  <svgicon name="cloud-download" height="24" width="24" />
                   <div class="leading-loose mx-2">
                     <a
                       target="_blank"
@@ -242,8 +242,8 @@
                     :id="`${item.id}_mandatory_file`"
                     class="inputfile hidden"
                     @input="onMandatoryFileInput($event, item.id, index)"
-                  >
-                  <svgicon name="cloud-upload" height="24" width="24"/>
+                  />
+                  <svgicon name="cloud-upload" height="24" width="24" />
                   <label
                     :for="`${item.id}_mandatory_file`"
                     class="leading-loose mx-2 cursor-pointer"
@@ -258,8 +258,8 @@
                     :id="`${item.id}_mandatory_file`"
                     class="inputfile hidden"
                     @input="onMandatoryFileUpdate($event, item.info.id, index)"
-                  >
-                  <svgicon name="cloud-upload" height="24" width="24"/>
+                  />
+                  <svgicon name="cloud-upload" height="24" width="24" />
                   <label
                     :for="`${item.id}_mandatory_file`"
                     class="leading-loose mx-2 cursor-pointer"
@@ -334,7 +334,6 @@ export default {
         })
       }
       this.mandatory = this.profession.mandatory_compliance_documents.sort((a, b) => a.id - b.id)
-      console.log(this.mandatory)
       this.optional = this.profession.optional_compliance_documents.sort((a, b) => a.id - b.id)
     },
     status(status) {
@@ -371,7 +370,6 @@ export default {
       formData.append('locum_detail_id', this.$auth.user.id)
       // post request to API / send file 
       this.$axios.$post(`/api/v1/locum/locum-detail-compliance-documents`, formData).then(res => {
-        console.log(res)
         let inMandatory = this.mandatory.findIndex(document => document.id === res.data.locum_detail_compliance_document.compliance_document.id)
         if (inMandatory > 0) {
           this.mandatory.splice(index, 1)

@@ -1,165 +1,189 @@
 <template>
-  <div class="flex flex-col">
-    <div class="flex flex-row flex-wrap justify-between">
-      <div class="w-full md:w-3/5 p-2">
-        <div class="rounded-lg shadow-lg p-8">
-          <div class="flex flex-row flex-wrap">
-            <div class="flex flex-col w-full md:w-1/3 p-1">
-              <div class="text-xs sm:text-sm">Practice name</div>
-              <div class="text-xs font-bold py-2">{{practice_detail.name}}</div>
-              <div class="text-xs sm:text-sm mt-4">CCG</div>
-              <div class="text-xs font-bold py-2">{{practice_detail.ccg}}</div>
+  <section>
+    <div class="flex flex-col">
+      <div class="flex flex-row flex-wrap justify-between">
+        <div class="w-full md:w-3/5 p-2">
+          <div class="rounded-lg shadow-lg p-8">
+            <div class="flex flex-row flex-wrap">
+              <div class="flex flex-col w-full md:w-1/3 p-1">
+                <div class="text-xs sm:text-sm">Practice name</div>
+                <div class="text-xs font-bold py-2">{{practice_detail.name}}</div>
+                <div class="text-xs sm:text-sm mt-4">CCG</div>
+                <div class="text-xs font-bold py-2">{{practice_detail.ccg}}</div>
+              </div>
+              <div class="flex flex-col w-full md:w-1/3 p-1">
+                <div class="text-xs sm:text-sm" mt-4>Practice code</div>
+                <div class="text-xs font-bold py-2">{{practice_detail.code}}</div>
+                <div class="text-xs sm:text-sm mt-4">Phone number</div>
+                <div class="text-xs font-bold py-2">{{practice_detail.phone_number}}</div>
+              </div>
+              <div class="flex flex-col w-full md:w-1/3 p-1">
+                <div class="text-xs sm:text-sm">Address</div>
+                <div
+                  class="text-xs font-bold py-2"
+                >{{practice_detail.address.line_1}} {{practice_detail.address.line_2}} {{practice_detail.address.line_3}} {{practice_detail.address.post_code}}</div>
+              </div>
             </div>
-            <div class="flex flex-col w-full md:w-1/3 p-1">
-              <div class="text-xs sm:text-sm" mt-4>Practice code</div>
-              <div class="text-xs font-bold py-2">{{practice_detail.code}}</div>
-              <div class="text-xs sm:text-sm mt-4">Phone number</div>
-              <div class="text-xs font-bold py-2">{{practice_detail.phone_number}}</div>
-            </div>
-            <div class="flex flex-col w-full md:w-1/3 p-1">
-              <div class="text-xs sm:text-sm">Address</div>
-              <div
-                class="text-xs font-bold py-2"
-              >{{practice_detail.address.line_1}} {{practice_detail.address.line_2}} {{practice_detail.address.line_3}} {{practice_detail.address.post_code}}</div>
+          </div>
+        </div>
+        <div class="w-full md:w-2/5 p-2">
+          <div class="rounded-lg shadow-lg p-8">
+            <div class="flex flex-col">
+              <div class="text-xs sm:text-sm">Your Practice's standard terms</div>
+              <div class="mt-4 bg-grey-lighter rounded-lg p-4 cursor-pointer">
+                <div class="flex flex-nowrap justify-between">
+                  <div
+                    class="text-xs sm:text-sm hover:underline document-filename"
+                  >{{standard_terms.file.filename}}</div>
+                  <div class="font-bold text-md sm:text-lg hover:null" @click="modal = true">X</div>
+                </div>
+              </div>
+              <div></div>
+              <div class="flex justify-start mt-4">
+                <label for="file-upload">
+                  <div class="flex flex-row flex-nowrap cursor-pointer hover:underline">
+                    <svgicon name="cloud-upload" height="24" width="24" />
+                    <div class="ml-2 text-xs sm:text-sm leading-loose">Upload</div>
+                  </div>
+                </label>
+                <input type="file" id="file-upload" class="hidden" @input="onFileInput($event)" />
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <div class="w-full md:w-2/5 p-2">
+
+      <div class="w-full p-2">
         <div class="rounded-lg shadow-lg p-8">
-          <div class="flex flex-col">
-            <div class="text-xs sm:text-sm">Your Practice's standard terms</div>
-            <!-- sample uploaded file -->
-            <div class="mt-4 bg-grey-lighter rounded-lg p-4 cursor-pointer">
-              <div class="flex flex-nowrap justify-between">
-                <div class="text-xs sm:text-sm hover:underline">Sample Uploaded File</div>
-                <div class="font-bold text-md sm:text-lg hover:null" @click="remove">X</div>
+          <div class="flex flex-row flex-wrap justify-between">
+            <div class="flex flex-col w-full md:w-1/3 pr-1">
+              <AppInput
+                v-model="form.phone_number"
+                :type="'text'"
+                :name="'phone_number'"
+                :label="'Phone number'"
+                :placeholder="''"
+                :error="this.formError.find(item => item.field === 'phone_number')"
+              />
+              <AppInput
+                v-model="form.report_to"
+                :type="'text'"
+                :name="'report_to'"
+                :label="'Report to'"
+                :placeholder="''"
+                :error="this.formError.find(item => item.field === 'report_to')"
+              />
+              <AppInput
+                v-model="form.email"
+                :type="'email'"
+                :name="'email'"
+                :label="'Email Address'"
+                :placeholder="''"
+                :error="this.formError.find(item => item.field === 'email')"
+              />
+              <AppInput
+                v-model="form.practice_type_id"
+                :type="'multi-checkbox'"
+                @checked="form.practice_type_id.push($event)"
+                @unchecked="uncheckPractice($event)"
+                :name="'practice_type_id'"
+                :label="'What type of Practice are you?'"
+                :placeholder="''"
+                :error="this.formError.find(item => item.field === 'practice_type_id')"
+                :lists="practice_types"
+              />
+              <AppTextarea
+                v-model="form.extra_information"
+                :name="'extra_information'"
+                :label="'Extra Information (Pracking restrictions, transport links, etc.)'"
+                :placeholder="''"
+                :error="this.formError.find(item => item.field === 'extra_information')"
+              />
+              <AppInput
+                v-model="form.mandatory_training_id"
+                :type="'multi-checkbox'"
+                @checked="form.mandatory_training_id.push($event)"
+                @unchecked="uncheckMandatory($event)"
+                :name="'mandatory_training_id'"
+                :label="'Mandatory training required from Locums:'"
+                :placeholder="''"
+                :error="this.formError.find(item => item.field === 'mandatory_training_id')"
+                :lists="mandatory_trainings"
+              />
+            </div>
+            <div class="flex flex-col w-full md:w-2/3 pl-1">
+              <div class="text-xs sm:text-sm mt-3">Compliance Documents</div>
+              <div class="flex flex-row flex-wrap justify-between">
+                <div class="flex flex-col w-full md:w-1/2 pr-1">
+                  <AppInput
+                    v-model="form.gp_compliance_document_id"
+                    :type="'multi-checkbox'"
+                    @checked="form.gp_compliance_document_id.push($event)"
+                    @unchecked="uncheckGp($event)"
+                    :name="'gp_compliance_document_id'"
+                    :label="'For GPs:'"
+                    :placeholder="''"
+                    :error="this.formError.find(item => item.field === 'gp_compliance_document_id')"
+                    :lists="gp_documents"
+                  />
+                </div>
+                <div class="flex flex-col w-full md:w-1/2 pl-1">
+                  <AppInput
+                    v-model="form.others_compliance_document_id"
+                    :type="'multi-checkbox'"
+                    @checked="form.others_compliance_document_id.push(parseInt($event))"
+                    @unchecked="uncheckOther($event)"
+                    :name="'others_compliance_document_id'"
+                    :label="'For Nurses, et al:'"
+                    :placeholder="''"
+                    :error="this.formError.find(item => item.field === 'others_compliance_document_id')"
+                    :lists="others_documents"
+                  />
+                </div>
               </div>
             </div>
-            <div></div>
-            <div class="flex justify-start mt-4">
-              <label for="file-upload">
-                <div class="flex flex-row flex-nowrap cursor-pointer hover:underline">
-                  <svgicon name="cloud-upload" height="24" width="24"/>
-                  <div class="ml-2 text-xs sm:text-sm leading-loose">Upload</div>
-                </div>
-              </label>
-              <input type="file" id="file-upload" style="display:none">
-            </div>
+          </div>
+          <div class="mt-8">
+            <AppButton :label="'Save changes'" @click="save" />
           </div>
         </div>
       </div>
     </div>
 
-    <div class="w-full p-2">
-      <div class="rounded-lg shadow-lg p-8">
-        <div class="flex flex-row flex-wrap justify-between">
-          <div class="flex flex-col w-full md:w-1/3 pr-1">
-            <AppInput
-              v-model="form.phone_number"
-              :type="'text'"
-              :name="'phone_number'"
-              :label="'Phone number'"
-              :placeholder="''"
-              :error="this.formError.find(item => item.field === 'phone_number')"
-            />
-            <AppInput
-              v-model="form.report_to"
-              :type="'text'"
-              :name="'report_to'"
-              :label="'Report to'"
-              :placeholder="''"
-              :error="this.formError.find(item => item.field === 'report_to')"
-            />
-            <AppInput
-              v-model="form.email"
-              :type="'email'"
-              :name="'email'"
-              :label="'Email Address'"
-              :placeholder="''"
-              :error="this.formError.find(item => item.field === 'email')"
-            />
-            <AppInput
-              v-model="form.practice_type_id"
-              :type="'multi-checkbox'"
-              @checked="form.practice_type_id.push($event)"
-              @unchecked="uncheckPractice($event)"
-              :name="'practice_type_id'"
-              :label="'What type of Practice are you?'"
-              :placeholder="''"
-              :error="this.formError.find(item => item.field === 'practice_type_id')"
-              :lists="practice_types"
-            />
-            <AppTextarea
-              v-model="form.extra_information"
-              :name="'extra_information'"
-              :label="'Extra Information (Pracking restrictions, transport links, etc.)'"
-              :placeholder="''"
-              :error="this.formError.find(item => item.field === 'extra_information')"
-            />
-            <AppInput
-              v-model="form.mandatory_training_id"
-              :type="'multi-checkbox'"
-              @checked="form.mandatory_training_id.push($event)"
-              @unchecked="uncheckMandatory($event)"
-              :name="'mandatory_training_id'"
-              :label="'Mandatory training required from Locums:'"
-              :placeholder="''"
-              :error="this.formError.find(item => item.field === 'mandatory_training_id')"
-              :lists="mandatory_trainings"
-            />
-          </div>
-          <div class="flex flex-col w-full md:w-2/3 pl-1">
-            <div class="text-xs sm:text-sm mt-3">Compliance Documents</div>
-            <div class="flex flex-row flex-wrap justify-between">
-              <div class="flex flex-col w-full md:w-1/2 pr-1">
-                <AppInput
-                  v-model="form.gp_compliance_document_id"
-                  :type="'multi-checkbox'"
-                  @checked="form.gp_compliance_document_id.push($event)"
-                  @unchecked="uncheckGp($event)"
-                  :name="'gp_compliance_document_id'"
-                  :label="'For GPs:'"
-                  :placeholder="''"
-                  :error="this.formError.find(item => item.field === 'gp_compliance_document_id')"
-                  :lists="gp_documents"
-                />
-              </div>
-              <div class="flex flex-col w-full md:w-1/2 pl-1">
-                <AppInput
-                  v-model="form.others_compliance_document_id"
-                  :type="'multi-checkbox'"
-                  @checked="form.others_compliance_document_id.push(parseInt($event))"
-                  @unchecked="uncheckOther($event)"
-                  :name="'others_compliance_document_id'"
-                  :label="'For Nurses, et al:'"
-                  :placeholder="''"
-                  :error="this.formError.find(item => item.field === 'others_compliance_document_id')"
-                  :lists="others_documents"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="mt-8">
-          <AppButton :label="'Save changes'" @click="save"/>
-        </div>
+    <div class="remove-confirmation-shield" v-if="modal"></div>
+    <transition name="drop" mode="out-in">
+      <div class="remove-confirmation-modal shadow-lg" v-if="modal">
+        <RemoveConfirmationModal @close="modal = false" @remove="remove" />
       </div>
-    </div>
-  </div>
+    </transition>
+  </section>
 </template>
 <script>
 import AppInput from '@/components/Base/AppInput'
 import AppTextarea from '@/components/Base/AppTextarea'
 import AppButton from '@/components/Base/AppButton'
+import RemoveConfirmationModal from '@/components/Profile/RemoveConfirmationModal'
 export default {
   components: {
     AppInput,
     AppTextarea,
-    AppButton
+    AppButton,
+    RemoveConfirmationModal,
   },
   data() {
     return {
+      modal: false,
+      standard_terms: {
+        file: {
+          create_at: null,
+          filename: '',
+          id: '',
+          size: '',
+          subtype: '',
+          type: '',
+          url: ''
+        }
+      },
       practice_types: [],
       mandatory_trainings: [],
       gp_documents: [],
@@ -190,9 +214,15 @@ export default {
       formError: []
     }
   },
+  watch: {
+    modal(value) {
+      value ? document.body.style.overflow = 'hidden' : document.body.style.overflow = 'auto'
+    }
+  },
   created() {
     // get default data 
     this.$axios.$get(`/api/v1/me`).then(res => {
+      this.standard_terms = res.data.user.practice_detail.practice.standard_terms
       this.practice_detail.name = res.data.user.practice_detail.practice.surgery.name
       this.practice_detail.code = res.data.user.practice_detail.practice.surgery.code
       this.practice_detail.address = res.data.user.practice_detail.practice.surgery.address
@@ -257,6 +287,23 @@ export default {
       })
   },
   methods: {
+    onFileInput(e) {
+      if (!e.target.files.length) {
+        return
+      }
+      let types = ['pdf', 'jpeg', 'msword', 'tif']
+      let file = e.target.files[0]
+      let fileType = file.type.split('/')[1]
+      if (!types.includes(fileType)) {
+        return
+      }
+      this.standard_terms.file.filename = file.name
+      const formData = new FormData()
+      formData.append('file', file)
+      this.$axios.$put(`/api/v1/practice/me/standard-terms`, formData).then(res => {
+        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: res.message })
+      })
+    },
     uncheckPractice(value) {
       this.form.practice_type_id = this.form.practice_type_id.filter(id => id != value)
     },
@@ -270,8 +317,11 @@ export default {
       this.form.mandatory_training_id = this.form.mandatory_training_id.filter(id => id != value)
     },
     remove() {
-      this.$store.commit('SET_REMOVEUPLOADED_MODAL', true)
-      this.$store.commit('SET_REMOVEUPLOADED_SHIELD', true)
+      // ! ask arvi hind na reremove ung document
+      this.$axios.$delete(`/api/v1/practice/me/standard-terms`).then(res => {
+        this.modal = false
+        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: res.message })
+      })
     },
     save() {
       try {
@@ -292,6 +342,31 @@ export default {
   }
 }
 </script>
+<style scoped>
+.document-filename {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.remove-confirmation-shield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #333;
+  opacity: 0.5;
+  z-index: 511;
+}
+.remove-confirmation-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: auto;
+  z-index: 512;
+}
+</style>
 
 
 

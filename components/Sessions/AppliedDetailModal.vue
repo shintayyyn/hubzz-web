@@ -2,7 +2,7 @@
   <section>
     <div class="p-8 max-w-2xl">
       <div @click="close" class="cursor-pointer">
-        <svgicon name="left-arrow" height="32" width="32"/>
+        <svgicon name="left-arrow" height="32" width="32" />
       </div>
       <div class="flex flex-row justify-start mt-8">
         <div class="leading-loose font-bold text-md sm:text-lg">{{job.platform_job.title}}</div>
@@ -25,7 +25,7 @@
                       v-model="form.rate"
                       type="text"
                       class="border-b-2 focus:border-yellow focus:outline-none py-2 font-bold text-xs w-1/4 text-right"
-                    >
+                    />
                     <div class="leading-loose mx-2">per</div>
                     <select
                       v-model="form.locum_detail_rate_type.id"
@@ -44,11 +44,11 @@
                       v-model="form.total_hours"
                       type="text"
                       class="border-b-2 focus:border-yellow focus:outline-none py-2 font-bold text-xs w-1/5 text-right"
-                    >
+                    />
                     <div class="leading-loose mx-2">hours</div>
                   </div>
                   <div class="mb-8">
-                    <AppButton :label="'Save changes'" :inStyle="'padding:8px'" @click="save"/>
+                    <AppButton :label="'Save changes'" :inStyle="'padding:8px'" @click="save" />
                   </div>
                   <div class="font-bold text-sm sm:text-md">Job description</div>
                   <div class="text-xs sm:text-sm mb-8">{{job.description}}</div>
@@ -150,7 +150,7 @@
                     map-type-id="terrain"
                     style="width: 100%; height:300px"
                   >
-                    <GmapMarker :position="google && new google.maps.LatLng(latLang.x, latLang.y)"/>
+                    <GmapMarker :position="google && new google.maps.LatLng(latLang.x, latLang.y)" />
                   </GmapMap>
                 </div>
               </div>
@@ -165,12 +165,12 @@
               @click="show(user.id)"
             >
               <div class="flex flex-row flex-nowrap justify-between items-center">
-                <svgicon name="no-avatar" height="40" width="40"/>
+                <svgicon name="no-avatar" height="40" width="40" />
                 <div
                   class="text-xs sm:text-sm font-bold leading-loose"
                 >{{user.personal_detail.name}}</div>
                 <div class="flex">
-                  <svgicon name="arrow-right" height="20" width="20"/>
+                  <svgicon name="arrow-right" height="20" width="20" />
                 </div>
               </div>
             </div>
@@ -185,14 +185,14 @@
             :placeholder="'Select..'"
             :items="reasons"
           />
-          <AppButton :label="'Cancel job'" @click="cancel"/>
+          <AppButton :label="'Cancel job'" @click="cancel" />
         </div>
       </div>
     </div>
     <div class="applied-locum-shield" v-if="modal"></div>
     <transition name="slide" mode="out-in">
       <div class="applied-locum-modal shadow-lg" v-if="modal">
-        <AppliedLocumDetailModal @close="modal = false" :user="user"/>
+        <AppliedLocumDetailModal @close="modal = false" :user="user" />
       </div>
     </transition>
   </section>
@@ -269,10 +269,14 @@ export default {
       }
     },
     save() {
-      // ! ask arvi will these update whole job or just the rate / rate type / total hours
-      // this.$axios.$put(`/api/v1/practice/jobs/${this.$route.params.id}`).then(res => {
-      //   console.log(res)
-      // })
+      let newForm = {}
+      newForm.locum_detail_rate_type_id = this.form.locum_detail_rate_type.id
+      newForm.rate = this.form.rate
+      newForm.total_hours = this.form.total_hours
+      // ! ask arvi will these update whole job or just the rate and total hours
+      this.$axios.$put(`/api/v1/practice/jobs/${this.$route.params.id}`, newForm).then(res => {
+        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: res.message })
+      })
     },
     cancel() {
       this.$axios.$put(`/api/v1/practice/jobs/${this.$route.params.id}/cancel`, this.form_cancel).then(res => {

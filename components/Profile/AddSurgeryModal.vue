@@ -3,13 +3,13 @@
     <div class="add-surgery-confirmation-shield" v-if="modal"></div>
     <transition name="drop" mode="out-in">
       <div class="add-surgery-confirmation-modal flex justify-center" v-if="modal">
-        <AddSurgeryConfirmationModal @add="add" @close="modal = false"/>
+        <AddSurgeryConfirmationModal @add="add" @close="modal = false" />
       </div>
     </transition>
 
     <div class="p-8 max-w-xl">
       <div @click="$emit('close')" class="cursor-pointer">
-        <svgicon name="left-arrow" height="32" width="32"/>
+        <svgicon name="left-arrow" height="32" width="32" />
       </div>
       <div class="flex justify-start font-bold text-sm sm:text-xl mt-8">Add Surgery</div>
       <div class="rounded-lg shadow-lg px-8 py-4 mt-4">
@@ -20,7 +20,7 @@
           :label="''"
           :placeholder="''"
         />
-        <AppButton :label="'Search'" @click="search" :inStyle="'padding:5px;'"/>
+        <AppButton :label="'Search'" @click="search" :inStyle="'padding:5px;'" />
       </div>
       <div v-if="showResult && surgeries.length === 0" class="mt-5">
         <div
@@ -85,11 +85,11 @@ export default {
       modal: false,
     }
   },
-  created() {
-    console.log('qwewqeq')
-  },
   methods: {
     search() {
+      if (!this.search_text) {
+        return
+      }
       this.$axios.$get(`/api/v1/surgeries?search=${this.search_text}&has_parent=false&is_parent=false&limit=10`).then(res => {
         this.surgeries = res.data.surgeries
         this.showResult = true

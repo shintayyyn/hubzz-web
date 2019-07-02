@@ -7,6 +7,13 @@ Vue.filter('localDate', function (date) {
     }
 })
 
+Vue.filter('currency', function (number) {
+    if (number) {
+      return  number.toFixed(2);
+    }
+    return '0.00'
+})
+
 Vue.filter('StringMaxLength', function (str, numLength) {
   if (str) {
     return str.length > numLength ? `${str.substring(0, numLength)}..` : str
