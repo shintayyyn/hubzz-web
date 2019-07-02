@@ -11,14 +11,14 @@
         <img src="/images/hubzz-icon-transparent.png" class="logo" />
       </div>
       <div class="w-full sm:w-1/3 text-right leading-loose">
-        <div class="text-xs xl:text-sm" v-if="$auth.user.domain === 'Practice'">
+        <div class="text-xs xl:text-sm" v-if="$auth.loggedIn && $auth.user.domain === 'Practice'">
           <AppButton
             :label="'Create Job'"
             @click="$store.commit('calendar/CREATE_JOB', true)"
             :inStyle="'font-size:small;padding:12px;'"
           />
         </div>
-        <div class="text-xs xl:text-sm" v-else>{{$auth.user.email}}</div>
+        <div class="text-xs xl:text-sm" v-else>{{$auth.loggedIn ? $auth.user.email : ''}}</div>
       </div>
     </div>
   </section>

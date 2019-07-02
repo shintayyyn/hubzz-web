@@ -43,35 +43,38 @@ export default {
     }
   },
   created() {
-    let domain = this.$auth.user.domain
-    let isActivated = this.$auth.user.is_activated
-    let addedLists = []
-    let defaultLists = [
-      { name: 'Dashboard', route: '/dashboard' },
-      { name: 'Account', route: '/account' }
-    ]
-    let otherLists = [
-      { name: 'Billing', route: '/billing' },
-      { name: 'FAQ', route: '/faq' },
-      { name: 'Terms and Conditions', route: '/terms-and-conditions' },
-      { name: 'Invite', route: '/invite' },
-      { name: 'Contact Us', route: '/contact-us' }
-    ]
-    if (domain === 'Practice') {
-      addedLists = [
-        { name: 'Profile', route: '/profile' },
-        { name: 'My Banks', route: '/my-banks' },
-        { name: 'Sessions', route: '/sessions' }
+    if (this.$auth.loggedIn) {
+
+      let domain = this.$auth.user.domain
+      let isActivated = this.$auth.user.is_activated
+      let addedLists = []
+      let defaultLists = [
+        { name: 'Dashboard', route: '/dashboard' },
+        { name: 'Account', route: '/account' }
       ]
-    } else if (domain === 'Locum') {
-      addedLists = [
-        { name: 'Compliance', route: '/compliance' },
-        { name: 'My Practice', route: '/my-practice' },
-        { name: 'Availability', route: '/availability' },
-        { name: 'Jobs', route: '/jobs' }
+      let otherLists = [
+        { name: 'Billing', route: '/billing' },
+        { name: 'FAQ', route: '/faq' },
+        { name: 'Terms and Conditions', route: '/terms-and-conditions' },
+        { name: 'Invite', route: '/invite' },
+        { name: 'Contact Us', route: '/contact-us' }
       ]
+      if (domain === 'Practice') {
+        addedLists = [
+          { name: 'Profile', route: '/profile' },
+          { name: 'My Banks', route: '/my-banks' },
+          { name: 'Sessions', route: '/sessions' }
+        ]
+      } else if (domain === 'Locum') {
+        addedLists = [
+          { name: 'Compliance', route: '/compliance' },
+          { name: 'My Practice', route: '/my-practice' },
+          { name: 'Availability', route: '/availability' },
+          { name: 'Jobs', route: '/jobs' }
+        ]
+      }
+      this.lists = [...defaultLists, ...addedLists, ...otherLists]
     }
-    this.lists = [...defaultLists, ...addedLists, ...otherLists]
 
   },
   methods: {
