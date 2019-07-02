@@ -5,7 +5,7 @@
     </div>
     <div class="flex flex-row justify-start mt-8">
       <div class="mx-2 leading-loose font-bold text-md sm:text-lg">{{title}}</div>
-      <div class="mx-2 bg-yellow-dark text-sm sm:text-sm p-2">APPLIED</div>
+      <div class="mx-2 bg-orange-dark text-white text-sm sm:text-sm p-2">APPLIED</div>
     </div>
     <div class="text-xs sm:text-sm mt-4">Posted {{$moment(created_at).format('DD/MM/YYYY')}}</div>
     <div class="flex flex-row flex-wrap justify-start mt-4">
@@ -239,12 +239,17 @@ export default {
   },
   methods: {
     cancel() {
-      alert('Waiting for API')
-      this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Cancelled' })
-      this.$router.push('/jobs?job_status=declined')
+      // this.$axios.$post(`/api/v1/locum/jobs/${this.$route.params.id}/decline`).then(res => {
+      //   this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Cancelled' })
+      //   this.$router.push('/jobs?job_status=declined')
+      // })
     },
     close() {
-      this.$router.push('/jobs?job_status=applied')
+      if (this.$route.fullPath === '/dashboard') {
+        this.$emit('close')
+      } else {
+        this.$router.push('/jobs?job_status=applied')
+      }
     }
   }
 }

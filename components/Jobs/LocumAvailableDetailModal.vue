@@ -5,7 +5,7 @@
     </div>
     <div class="flex flex-row justify-start mt-8">
       <div class="mx-2 leading-loose font-bold text-md sm:text-lg">{{title}}</div>
-      <div class="mx-2 bg-orange text-white text-sm sm:text-sm p-2">AVAILABLE</div>
+      <div class="mx-2 bg-yellow-dark text-sm sm:text-sm p-2">AVAILABLE</div>
     </div>
     <div class="text-xs sm:text-sm mt-4">Posted {{$moment(created_at).format('DD/MM/YYYY')}}</div>
     <div class="flex flex-row flex-wrap justify-start mt-4">
@@ -288,11 +288,7 @@ export default {
       })
     },
     close() {
-      if (this.$route.fullPath === '/dashboard') {
-        this.$emit('close')
-      } else {
-        this.$router.push('/jobs?job_status=available')
-      }
+      this.$router.push('/jobs?job_status=available')
     }
   }
 }

@@ -8,13 +8,13 @@
         </div>
       </div>
       <div class="w-1/2 text-right sm:w-1/3 sm:text-center">
-        <img src="/images/hubzz-icon-transparent.png" class="logo">
+        <img src="/images/hubzz-icon-transparent.png" class="logo" />
       </div>
       <div class="w-full sm:w-1/3 text-right leading-loose">
         <div class="text-xs xl:text-sm" v-if="$auth.user.domain === 'Practice'">
           <AppButton
             :label="'Create Job'"
-            @click="toggleCreateJobModal"
+            @click="$store.commit('calendar/CREATE_JOB', true)"
             :inStyle="'font-size:small;padding:12px;'"
           />
         </div>
@@ -34,9 +34,6 @@ export default {
       this.$store.commit('TOGGLE_SIDEBAR', true)
       document.body.style.overflow = 'hidden'
     },
-    toggleCreateJobModal() {
-
-    }
   }
 }
 </script>

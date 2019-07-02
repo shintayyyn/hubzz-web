@@ -55,6 +55,7 @@
                 class="text-xs sm:text-sm mb-6"
                 v-text="job.platform_job.email?job.platform_job.email:`(none)`"
               ></div>
+              <!-- ! ask arvi declined date and reason on show -->
               <div class="font-bold text-sm sm:text-md">Declined At</div>
               <!-- <div
                 class="text-xs sm:text-sm mb-6"

@@ -3,7 +3,7 @@
     <JobsTabs/>
     <div class="mt-5">
       <transition name="fade" mode="out-in">
-        <Component :is="componentName"/>
+        <Component :is="activeComponent"/>
       </transition>
     </div>
     <div class="modal-shield" v-if="shield"></div>
@@ -14,40 +14,27 @@
 import JobsTabs from '@/components/Jobs/JobsTabs'
 import Allocated from '@/components/Jobs/Allocated'
 import Available from '@/components/Jobs/Available'
+import Matched from '@/components/Jobs/Matched'
 import Applied from '@/components/Jobs/Applied'
 import Unsuccessfull from '@/components/Jobs/Unsuccessfull'
 import Declined from '@/components/Jobs/Declined'
+import Cancelled from '@/components/Jobs/Cancelled'
 import Completed from '@/components/Jobs/Completed'
 export default {
   components: {
     JobsTabs,
     Allocated,
     Available,
+    Matched,
     Applied,
     Unsuccessfull,
     Declined,
+    Cancelled,
     Completed
   },
   computed: {
-    componentName() {
-      if (this.$route.query.job_status === 'allocated') {
-        return 'Allocated'
-      }
-      if (this.$route.query.job_status === 'available') {
-        return 'available'
-      }
-      if (this.$route.query.job_status === 'applied') {
-        return 'Applied'
-      }
-      if (this.$route.query.job_status === 'unsuccessfull') {
-        return 'Unsuccessfull'
-      }
-      if (this.$route.query.job_status === 'declined') {
-        return 'Declined'
-      }
-      if (this.$route.query.job_status === 'completed') {
-        return 'Completed'
-      }
+    activeComponent() {
+      return this.$route.query.job_status
     },
     shield() {
       return this.$store.state.jobs.shield

@@ -13,10 +13,6 @@
 
       <transition name="fade" mode="out-in">
         <component :is="activeTab" @nextTab="activeTab = $event"></component>
-        <!-- <PracticeDetails v-if="$store.state.signUp.activeTab === 'practice_details'"/>
-        <PracticeAccountDetails
-          v-if="$store.state.signUp.activeTab === 'practice_account_details'"
-        />-->
       </transition>
     </div>
   </div>

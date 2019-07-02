@@ -49,8 +49,9 @@ export default {
     }
   },
   created() {
-    // get applied jobs //! ask arvi need marked completed by Practice
+    //! ask arvi need marked completed by Practice
     this.$axios.$get(`/api/v1/locum/jobs?locum_status=Completed`).then(res => {
+      console.log(res)
       this.jobs = res.data.jobs
     })
   },

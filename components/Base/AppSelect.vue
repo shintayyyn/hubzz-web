@@ -34,7 +34,7 @@
 <script>
 export default {
   props: {
-    value: [String, Number, Boolean, Array],
+    value: [String, Number, Boolean, Array, Object],
     name: String,
     label: String,
     placeholder: String,

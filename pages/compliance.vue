@@ -55,7 +55,7 @@
               <td>{{item.name}}</td>
               <td class="hover:underline" v-if="item.info">
                 <div class="flex flex-row flex-nowrap">
-                  <svgicon name="cloud-download" height="24" width="24"/>
+                  <svgicon name="cloud-download" height="24" width="24" />
                   <div class="leading-loose mx-2">
                     <a
                       :href="item.info.file.url"
@@ -70,11 +70,13 @@
               <td v-else></td>
               <td v-if="item.info">{{item.info.expired_at | localDate}}</td>
               <td v-else></td>
-              <td class="max-w-xs" v-if="item.info">
-                <div
-                  class="text-xs sm:text-sm text-center text-white font-bold rounded-full px-2 py-1"
-                  :class="status(item.info.status)"
-                >{{item.info.status}}</div>
+              <td v-if="item.info">
+                <div class="flex max-w-xs">
+                  <div
+                    class="text-xs sm:text-sm text-center text-white font-bold rounded-full px-2 py-1"
+                    :class="status(item.info.status)"
+                  >{{item.info.status}}</div>
+                </div>
               </td>
               <td v-else></td>
 
@@ -88,8 +90,8 @@
                     :id="`${item.id}_file`"
                     class="inputfile hidden"
                     @input="onFileInput($event, item.id)"
-                  >
-                  <svgicon name="cloud-upload" height="24" width="24"/>
+                  />
+                  <svgicon name="cloud-upload" height="24" width="24" />
                   <label :for="`${item.id}_file`" class="leading-loose mx-2 cursor-pointer">Upload</label>
                 </div>
               </td>
@@ -101,13 +103,13 @@
                     :id="`${item.id}_file`"
                     class="inputfile hidden"
                     @input="onFileUpdate($event, item.info.id, index)"
-                  >
-                  <svgicon name="cloud-upload" height="24" width="24"/>
+                  />
+                  <svgicon name="cloud-upload" height="24" width="24" />
                   <label :for="`${item.id}_file`" class="leading-loose mx-2 cursor-pointer">Update</label>
                 </div>
               </td>
             </tr>
-            <tr :key="`${item.id}-tr`">
+            <tr :key="`${item.id}-${index}`">
               <td></td>
             </tr>
           </template>
@@ -141,7 +143,7 @@
               <td>{{item.name}}</td>
               <td class="hover:underline" v-if="item.info">
                 <div class="flex flex-row flex-nowrap">
-                  <svgicon name="cloud-download" height="24" width="24"/>
+                  <svgicon name="cloud-download" height="24" width="24" />
                   <div class="leading-loose mx-2">
                     <a
                       target="_blank"
@@ -164,8 +166,8 @@
                     :id="`${item.id}_file`"
                     class="inputfile hidden"
                     @input="onFileInput($event, item.id, index)"
-                  >
-                  <svgicon name="cloud-upload" height="24" width="24"/>
+                  />
+                  <svgicon name="cloud-upload" height="24" width="24" />
                   <label :for="`${item.id}_file`" class="leading-loose mx-2 cursor-pointer">Upload</label>
                 </div>
               </td>
@@ -177,13 +179,13 @@
                     :id="`${item.id}_file`"
                     class="inputfile hidden"
                     @input="onFileUpdate($event, item.info.id, index)"
-                  >
-                  <svgicon name="cloud-upload" height="24" width="24"/>
+                  />
+                  <svgicon name="cloud-upload" height="24" width="24" />
                   <label :for="`${item.id}_file`" class="leading-loose mx-2 cursor-pointer">Update</label>
                 </div>
               </td>
             </tr>
-            <tr :key="`${item.id}-tr`">
+            <tr :key="`${item.id}-${index}-optional`">
               <td></td>
             </tr>
           </template>
@@ -217,7 +219,7 @@
               <td>{{item.name}}</td>
               <td class="hover:underline" v-if="item.info">
                 <div class="flex flex-row flex-nowrap">
-                  <svgicon name="cloud-download" height="24" width="24"/>
+                  <svgicon name="cloud-download" height="24" width="24" />
                   <div class="leading-loose mx-2">
                     <a
                       target="_blank"
@@ -240,8 +242,8 @@
                     :id="`${item.id}_mandatory_file`"
                     class="inputfile hidden"
                     @input="onMandatoryFileInput($event, item.id, index)"
-                  >
-                  <svgicon name="cloud-upload" height="24" width="24"/>
+                  />
+                  <svgicon name="cloud-upload" height="24" width="24" />
                   <label
                     :for="`${item.id}_mandatory_file`"
                     class="leading-loose mx-2 cursor-pointer"
@@ -256,8 +258,8 @@
                     :id="`${item.id}_mandatory_file`"
                     class="inputfile hidden"
                     @input="onMandatoryFileUpdate($event, item.info.id, index)"
-                  >
-                  <svgicon name="cloud-upload" height="24" width="24"/>
+                  />
+                  <svgicon name="cloud-upload" height="24" width="24" />
                   <label
                     :for="`${item.id}_mandatory_file`"
                     class="leading-loose mx-2 cursor-pointer"
@@ -265,7 +267,7 @@
                 </div>
               </td>
             </tr>
-            <tr :key="`${item.id}-tr`">
+            <tr :key="`${item.id}-${index}-mandatory-training`">
               <td></td>
             </tr>
           </template>
@@ -342,8 +344,11 @@ export default {
         case 'Verified':
           return 'bg-green'
           break;
+        case 'Approved':
+          return 'bg-green'
+          break;
         case 'Rejected':
-          return 'bg-red-light'
+          return 'bg-red'
           break;
         default:
           return
@@ -362,6 +367,7 @@ export default {
       const formData = new FormData()
       formData.append('file', file)
       formData.append('compliance_document_id', id)
+      formData.append('locum_detail_id', this.$auth.user.id)
       // post request to API / send file 
       this.$axios.$post(`/api/v1/locum/locum-detail-compliance-documents`, formData).then(res => {
         let inMandatory = this.mandatory.findIndex(document => document.id === res.data.locum_detail_compliance_document.compliance_document.id)

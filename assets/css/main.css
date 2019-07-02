@@ -1,23 +1,6 @@
 * {
   font-family: 'Nunito', sans-serif;
 }
-/*  calendar cards */
-.fade-card-enter, .fade-card-leave-to {
-  max-height: 0;
-  opacity: 0;
-}
-.fade-card-enter-to {
-  max-height: 400px;
-}
-.fade-card-enter-active {
-  transition: opacity .3s ease .3s, max-height .3s step-start;
-}
-.fade-card-leave {
-  max-height: 400px;
-}
-.fade-card-leave-active {
-  transition: opacity .3s ease, max-height .3s step-end;
-}
 
 /* modal */
 .slide-enter-active, .slide-leave-active {

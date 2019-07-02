@@ -14,6 +14,12 @@
     >Available</div>
     <div
       style="font-family:Nunito"
+      @click.prevent="goTo('matched')"
+      class="mr-5 p-3 text-sm font-bold cursor-pointer"
+      :class="$route.query.job_status === 'matched' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
+    >Matched</div>
+    <div
+      style="font-family:Nunito"
       @click.prevent="goTo('applied')"
       class="mr-5 p-3 text-sm font-bold cursor-pointer"
       :class="$route.query.job_status === 'applied' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
@@ -30,6 +36,12 @@
       class="mr-5 p-3 text-sm font-bold cursor-pointer"
       :class="$route.query.job_status === 'declined' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
     >Declined</div>
+    <div
+      style="font-family:Nunito"
+      @click.prevent="goTo('cancelled')"
+      class="mr-5 p-3 text-sm font-bold cursor-pointer"
+      :class="$route.query.job_status === 'cancelled' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
+    >Cancelled</div>
     <div
       style="font-family:Nunito"
       @click.prevent="goTo('completed')"

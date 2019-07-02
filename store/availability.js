@@ -10,7 +10,8 @@ export const state = () => ({
   selected_date: null,
   //
   unavailabilities: [],
-  appointment_jobs: [],
+  locum_private_jobs: [],
+  locum_current_jobs: []
 })
 
 export const mutations = {
@@ -44,8 +45,11 @@ export const mutations = {
   REMOVE_UNAVAILABILITIES (state, payload) {
     state.unavailabilities = state.unavailabilities.filter(item => item.id !== payload)
   },
-  SET_APPOINTMENT_JOBS(state, payload) {
-    state.appointment_jobs = payload
+  SET_LOCUM_PRIVATE_JOBS(state, payload) {
+    state.locum_private_jobs = payload
+  },
+  SET_LOCUM_CURRENT_JOBS(state, payload) {
+    state.locum_current_jobs = payload
   },
 }
 

@@ -1,8 +1,8 @@
 <template>
   <section class="forgot-password-section">
     <div class="p-10">
-      <nuxt-link to="/sign-in" class="focus:outline-none text-black">
-        <svgicon name="arrow-left-solid" height="32" width="32"/>
+      <nuxt-link to="/" class="focus:outline-none text-black">
+        <svgicon name="left-arrow" height="32" width="32" />
       </nuxt-link>
       <div class="flex flex-col mt-32">
         <div class="flex justify-center">
@@ -39,7 +39,7 @@
                     @blur="setFocus = ''"
                     v-model="form.email"
                     @keyup.enter="send"
-                  >
+                  />
                   <span
                     class="absolute pin-r bg-red text-white p-1"
                     v-if="formError.find(item => item.field === 'email')"
@@ -91,7 +91,9 @@ export default {
         this.formError = []
         this.Validate(this.form)
         if (!this.formError.length) {
-          this.success = true
+          this.$axios.$post(`/api/v1/forgot-password`, this.form).then(res => {
+            this.success = true
+          })
         }
       } catch (e) {
 
