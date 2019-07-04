@@ -6,31 +6,31 @@
         v-for="practice in practices"
         :key="practice.id"
       >
-        <!-- <div class="flex justify-end z-50">
-        <template v-if="practice.is_favorite">
-          <svgicon
-            name="on-star"
-            height="32"
-            width="32"
-            class="cursor-pointer"
-            @click="favorite(practice.id)"
-          />
-        </template>
-        <template v-else>
-          <svgicon
-            name="off-star"
-            height="32"
-            width="32"
-            class="cursor-pointer"
-            @click="favorite(practice.id)"
-          />
-        </template>
-        </div>-->
+        <div class="flex justify-end z-50">
+          <template v-if="practice.is_favorite">
+            <svgicon
+              name="on-star"
+              height="32"
+              width="32"
+              class="cursor-pointer"
+              @click="unfavorite(practice.id)"
+            />
+          </template>
+          <template v-else>
+            <svgicon
+              name="off-star"
+              height="32"
+              width="32"
+              class="cursor-pointer"
+              @click="favorite(practice.id)"
+            />
+          </template>
+        </div>
         <div class="flex flex-wrap text-center mt-4 cursor-pointer" @click="show(practice.id)">
           <div class="w-full">
-            <svgicon name="no-avatar" height="60" width="60"/>
+            <svgicon name="no-avatar" height="60" width="60" />
           </div>
-          <div class="w-full font-bold text-sm sm:text-lg my-4">{{practice.report_to}}</div>
+          <div class="w-full font-bold text-sm sm:text-lg my-4">{{practice.surgery.name}}</div>
           <div class="w-full font-bold text-grey-dark text-sm sm:text-lg">{{practice.email}}</div>
         </div>
       </div>
@@ -38,7 +38,7 @@
     <div class="shield" v-if="modal"></div>
     <transition name="slide" mode="out-in">
       <div class="modal shadow-lg" v-if="modal">
-        <MyPracticeDetailModal :practice="practice" @close="modal = false"/>
+        <MyPracticeDetailModal :practice="practice" @close="modal = false" />
       </div>
     </transition>
   </section>
@@ -62,6 +62,18 @@ export default {
     })
   },
   methods: {
+    favorite(id) {
+      console.log(id)
+      this.$axios.$post(`/api/v1/locum/practices/${id}/favorite`).then(res => {
+        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: `${res.message}` })
+      })
+    },
+    unfavorite(id, index) {
+      this.practices.splice(index, 1)
+      this.$axios.$delete(`/api/v1/locum/practices/${id}/favorite`).then(res => {
+        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: `${res.message}` })
+      })
+    },
     show(id) {
       this.$axios.$get(`/api/v1/locum/practices/${id}`).then(res => {
         this.practice = res.data.practice
@@ -71,9 +83,10 @@ export default {
   }
 }
 </script>
-<style>
+<style >
 .card {
   min-width: 200px;
+  max-width: 200px;
   height: 250px;
   box-sizing: content-box;
 }
