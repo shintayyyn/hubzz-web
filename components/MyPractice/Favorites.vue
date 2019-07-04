@@ -17,9 +17,9 @@
         </div>
         <div class="flex flex-wrap text-center mt-4 cursor-pointer" @click="show(practice.id)">
           <div class="w-full">
-            <svgicon name="no-avatar" height="60" width="60"/>
+            <svgicon name="no-avatar" height="60" width="60" />
           </div>
-          <div class="w-full font-bold text-sm sm:text-lg my-4">{{practice.report_to}}</div>
+          <div class="w-full font-bold text-sm sm:text-lg my-4">{{practice.surgery.name}}</div>
           <div class="w-full font-bold text-grey-dark text-sm sm:text-lg">{{practice.email}}</div>
         </div>
       </div>
@@ -27,7 +27,7 @@
     <div class="shield" v-if="modal"></div>
     <transition name="slide" mode="out-in">
       <div class="modal shadow-lg" v-if="modal">
-        <MyPracticeDetailModal :practice="practice" @close="modal = false"/>
+        <MyPracticeDetailModal :practice="practice" @close="modal = false" />
       </div>
     </transition>
   </section>
@@ -66,9 +66,10 @@ export default {
   }
 }
 </script>
-<style>
+<style >
 .card {
   min-width: 200px;
+  max-width: 200px;
   height: 250px;
   box-sizing: content-box;
 }

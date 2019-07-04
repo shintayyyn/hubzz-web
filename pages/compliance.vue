@@ -370,9 +370,9 @@ export default {
       formData.append('locum_detail_id', this.$auth.user.id)
       // post request to API / send file 
       this.$axios.$post(`/api/v1/locum/locum-detail-compliance-documents`, formData).then(res => {
-        let inMandatory = this.mandatory.findIndex(document => document.id === res.data.locum_detail_compliance_document.compliance_document.id)
-        if (inMandatory > 0) {
-          this.mandatory.splice(index, 1)
+        let mandatory_index = this.mandatory.findIndex(document => document.id === res.data.locum_detail_compliance_document.compliance_document.id)
+        if (mandatory_index >= 0) {
+          this.mandatory.splice(mandatory_index, 1)
           this.mandatory.push({
             id: res.data.locum_detail_compliance_document.compliance_document.id,
             name: res.data.locum_detail_compliance_document.compliance_document.name,
@@ -381,7 +381,8 @@ export default {
           this.mandatory = this.mandatory.sort((a, b) => a.id - b.id)
           this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Document uploaded!' })
         } else {
-          this.optional.splice(index, 1)
+          let optional_index = this.optional.findIndex(document => document.id === res.data.locum_detail_compliance_document.compliance_document.id)
+          this.optional.splice(optional_index, 1)
           this.optional.push({
             id: res.data.locum_detail_compliance_document.compliance_document.id,
             name: res.data.locum_detail_compliance_document.compliance_document.name,
