@@ -1,8 +1,8 @@
 <template>
   <section>
-    <AppSideBar @modal="signout_modal = $event"/>
+    <AppSideBar @modal="signout_modal = $event" />
     <transition name="drop" mode="out-in">
-      <SignOut v-if="signout_modal" @modal="signout_modal = $event"/>
+      <SignOut v-if="signout_modal" @modal="signout_modal = $event" />
     </transition>
     <!-- modals here -->
     <!-- shields here -->
@@ -10,9 +10,9 @@
     <div class="signout-shield" v-if="signout_modal"></div>
     <!-- content -->
     <div class="content">
-      <AppNotification/>
-      <AppHeader/>
-      <nuxt/>
+      <AppNotification />
+      <AppHeader />
+      <nuxt />
     </div>
   </section>
 </template>
@@ -59,6 +59,8 @@ export default {
     this.$store.dispatch('signUp/getClinicalSystems')
     this.$store.dispatch('signUp/getSpokenLanguages')
     this.$store.dispatch('signUp/getPracticeTypes')
+
+    this.$store.dispatch('chat/getConversations')
   },
 }
 </script>
