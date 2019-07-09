@@ -12,14 +12,14 @@
       </div>
       <div class="w-full sm:w-1/3 text-right leading-loose">
         <div class="flex flex-row justify-end" v-if="$auth.loggedIn">
-          <div class="text-xs xl:text-sm" v-if="$auth.user.domain === 'Practice'">
+          <div class="text-xs xl:text-sm" v-if="$auth.user.domain === 'Practice' && $auth.user.is_actived === true">
             <AppButton
               :label="'Create Job'"
               @click="$store.commit('calendar/CREATE_JOB', true)"
               :inStyle="'font-size:small;padding:12px;'"
             />
           </div>
-          <nuxt-link :to="'/messages'" class="text-xs sm:text-sm mx-1">M</nuxt-link>
+          <nuxt-link :to="'/messages'" class="text-xs sm:text-sm mx-1 no-underline px-2 py-1 rounded-lg bg-yellow-dark">Messages</nuxt-link>
           <div class="text-xs xl:text-sm" v-if="$auth.user.domain === 'Locum'">{{$auth.user.email}}</div>
         </div>
       </div>

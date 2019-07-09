@@ -46,7 +46,7 @@ export default {
     if (this.$auth.loggedIn) {
 
       let domain = this.$auth.user.domain
-      let isActivated = this.$auth.user.is_activated
+      let isActivated = this.$auth.user.is_actived
       let addedLists = []
       let defaultLists = [
         { name: 'Dashboard', route: '/dashboard' },
@@ -60,7 +60,7 @@ export default {
         { name: 'Invite', route: '/invite' },
         { name: 'Contact Us', route: '/contact-us' }
       ]
-      if (domain === 'Practice') {
+      if (domain === 'Practice' && isActivated === true) {
         addedLists = [
           { name: 'Profile', route: '/profile' },
           { name: 'My Banks', route: '/my-banks' },
@@ -69,10 +69,14 @@ export default {
       } else if (domain === 'Locum') {
         addedLists = [
           { name: 'Compliance', route: '/compliance' },
+        ]
+      }
+      if (domain === 'Locum' && isActivated === true){
+        addedLists = [
           { name: 'My Practice', route: '/my-practice' },
           { name: 'Availability', route: '/availability' },
           { name: 'Jobs', route: '/jobs' }
-        ]
+        ] 
       }
       this.lists = [...defaultLists, ...addedLists, ...otherLists]
     }
