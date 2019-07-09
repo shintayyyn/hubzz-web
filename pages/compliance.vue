@@ -53,7 +53,7 @@
               class="rounded-lg shadow-md hover:bg-grey-light cursor-pointer text-xs sm:text-sm text-left"
             >
               <td>{{item.name}}</td>
-              <td class="hover:underline" v-if="item.info">
+              <td class="hover:underline" v-if="item.info && item.info.file">
                 <div class="flex flex-row flex-nowrap">
                   <svgicon name="cloud-download" height="24" width="24" />
                   <div class="leading-loose mx-2">
@@ -66,7 +66,7 @@
                 </div>
               </td>
               <td v-else></td>
-              <td v-if="item.info">{{item.info.file.created_at | localDate}}</td>
+              <td v-if="item.info && item.info.file">{{item.info.file.created_at | localDate}}</td>
               <td v-else></td>
               <td v-if="item.info">{{item.info.expired_at | localDate}}</td>
               <td v-else></td>
@@ -141,7 +141,7 @@
               class="rounded-lg shadow-md hover:bg-grey-light cursor-pointer text-xs sm:text-sm text-left"
             >
               <td>{{item.name}}</td>
-              <td class="hover:underline" v-if="item.info">
+              <td class="hover:underline" v-if="item.info && item.info.file">
                 <div class="flex flex-row flex-nowrap">
                   <svgicon name="cloud-download" height="24" width="24" />
                   <div class="leading-loose mx-2">
@@ -153,7 +153,7 @@
                 </div>
               </td>
               <td v-else></td>
-              <td v-if="item.info">{{item.info.file.created_at | localDate}}</td>
+              <td v-if="item.info && item.info.file">{{item.info.file.created_at | localDate}}</td>
               <td v-else></td>
               <td></td>
               <td></td>
@@ -217,7 +217,7 @@
               class="rounded-lg shadow-md hover:bg-grey-light cursor-pointer text-xs sm:text-sm text-left"
             >
               <td>{{item.name}}</td>
-              <td class="hover:underline" v-if="item.info">
+              <td class="hover:underline" v-if="item.info && item.info.file">
                 <div class="flex flex-row flex-nowrap">
                   <svgicon name="cloud-download" height="24" width="24" />
                   <div class="leading-loose mx-2">
@@ -229,7 +229,7 @@
                 </div>
               </td>
               <td v-else></td>
-              <td v-if="item.info">{{item.info.file.created_at | localDate}}</td>
+              <td v-if="item.info && item.info.file">{{item.info.file.created_at | localDate}}</td>
               <td v-else></td>
               <td></td>
               <td></td>

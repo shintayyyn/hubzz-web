@@ -50,7 +50,8 @@ export default {
       let addedLists = []
       let defaultLists = [
         { name: 'Dashboard', route: '/dashboard' },
-        { name: 'Account', route: '/account' }
+        { name: 'Account', route: '/account' },
+        { name: 'Messages', route: '/messages' },
       ]
       let otherLists = [
         { name: 'Billing', route: '/billing' },
