@@ -47,6 +47,9 @@ export default {
 
       let domain = this.$auth.user.domain
       let isActivated = this.$auth.user.is_actived
+      let accountStatus = this.$auth.user.status
+     
+
       let addedLists = []
       let defaultLists = [
         { name: 'Dashboard', route: '/dashboard' },
@@ -71,7 +74,7 @@ export default {
           { name: 'Compliance', route: '/compliance' },
         ]
       }
-      if (domain === 'Locum' && isActivated === true){
+      if (domain === 'Locum' && accountStatus === 'Active'){
         addedLists = [
           { name: 'My Practice', route: '/my-practice' },
           { name: 'Availability', route: '/availability' },
