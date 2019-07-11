@@ -57,7 +57,6 @@ export default {
         { name: 'Messages', route: '/messages' },
       ]
       let otherLists = [
-        { name: 'Billing', route: '/billing' },
         { name: 'FAQ', route: '/faq' },
         { name: 'Terms and Conditions', route: '/terms-and-conditions' },
         { name: 'Invite', route: '/invite' },
@@ -67,18 +66,22 @@ export default {
         addedLists = [
           { name: 'Profile', route: '/profile' },
           { name: 'My Banks', route: '/my-banks' },
-          { name: 'Sessions', route: '/sessions' }
+          { name: 'Sessions', route: '/sessions' },
+          { name: 'Billing', route: '/billing' },
         ]
-      } else if (domain === 'Locum') {
+      } 
+      if (domain === 'Locum') {
         addedLists = [
           { name: 'Compliance', route: '/compliance' },
         ]
       }
       if (domain === 'Locum' && accountStatus === 'Active'){
         addedLists = [
+          { name: 'Compliance', route: '/compliance' },
           { name: 'My Practice', route: '/my-practice' },
           { name: 'Availability', route: '/availability' },
-          { name: 'Jobs', route: '/jobs' }
+          { name: 'Jobs', route: '/jobs' },
+          { name: 'Billing', route: '/billing' },
         ] 
       }
       this.lists = [...defaultLists, ...addedLists, ...otherLists]
