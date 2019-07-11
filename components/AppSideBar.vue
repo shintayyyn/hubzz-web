@@ -40,22 +40,20 @@ export default {
   data() {
     return {
       lists: []
-    }
+    };
   },
   created() {
     if (this.$auth.loggedIn) {
+      let domain = this.$auth.user.domain;
+      let isActivated = this.$auth.user.is_actived;
+      let accountStatus = this.$auth.user.status;
 
-      let domain = this.$auth.user.domain
-      let isActivated = this.$auth.user.is_actived
-      let accountStatus = this.$auth.user.status
-     
-
-      let addedLists = []
+      let addedLists = [];
       let defaultLists = [
-        { name: 'Dashboard', route: '/dashboard' },
-        { name: 'Account', route: '/account' },
-        { name: 'Messages', route: '/messages' },
-      ]
+        { name: "Dashboard", route: "/dashboard" },
+        { name: "Account", route: "/account" },
+        { name: "Messages", route: "/messages" }
+      ];
       let otherLists = [
         { name: 'FAQ', route: '/faq' },
         { name: 'Terms and Conditions', route: '/terms-and-conditions' },
@@ -72,10 +70,14 @@ export default {
       } 
       if (domain === 'Locum') {
         addedLists = [
-          { name: 'Compliance', route: '/compliance' },
-        ]
+          { name: "Profile", route: "/profile" },
+          { name: "My Banks", route: "/my-banks" },
+          { name: "Sessions", route: "/sessions" }
+        ];
+      } else if (domain === "Locum") {
+        addedLists = [{ name: "Compliance", route: "/compliance" }];
       }
-      if (domain === 'Locum' && accountStatus === 'Active'){
+      if (domain === "Locum" && accountStatus === "Active") {
         addedLists = [
           { name: 'Compliance', route: '/compliance' },
           { name: 'My Practice', route: '/my-practice' },
@@ -84,21 +86,20 @@ export default {
           { name: 'Billing', route: '/billing' },
         ] 
       }
-      this.lists = [...defaultLists, ...addedLists, ...otherLists]
+      this.lists = [...defaultLists, ...addedLists, ...otherLists];
     }
-
   },
   methods: {
     signout() {
-      this.$emit('modal', true)
+      this.$emit("modal", true);
       // this.$store.commit('TOGGLE_SIGNOUT', true)
     },
     close() {
-      this.$store.commit('TOGGLE_SIDEBAR', false)
-      document.body.style.overflow = 'auto'
+      this.$store.commit("TOGGLE_SIDEBAR", false);
+      document.body.style.overflow = "auto";
     }
   }
-}
+};
 </script>
 <style scoped>
 .sidebar {

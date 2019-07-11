@@ -5,7 +5,10 @@
       <div class="relative flex flex-row flex-nowrap justify-between">
         <label :for="name" class="text-xs sm:text-base py-1">{{label}}</label>
         <div class="bg-grey-light rounded-lg p-1 text-xs sm:text-sm" v-if="info">{{info}}</div>
-        <div class="bg-red p-1 text-xs sm:text-base text-white" v-if="error">{{error.message}}</div>
+        <div
+          class="absolute pin-r bg-red p-1 text-xs sm:text-sm text-white"
+          v-if="error"
+        >{{error.message}}</div>
       </div>
       <div class="flex flex-row justify-start mt-1" v-for="(item, index) in lists" :key="index">
         <input
@@ -32,8 +35,11 @@
             class="mt-1 mr-1"
           />
           <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
+          <div
+            class="absolute bg-red p-1 text-xs sm:text-sm text-white"
+            v-if="error"
+          >{{error.message}}</div>
         </div>
-        <div class="bg-red p-1 text-xs sm:text-base text-white" v-if="error">{{error.message}}</div>
       </div>
     </div>
 
@@ -44,7 +50,10 @@
           <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
           <span class="ml-2 bg-grey-light rounded-lg px-4 py-1 text-xs">Seperate with commas</span>
         </div>
-        <div class="bg-red p-1 text-xs sm:text-base text-white" v-if="error">{{error.message}}</div>
+        <div
+          class="absolute pin-r bg-red p-1 text-xs sm:text-sm text-white"
+          v-if="error"
+        >{{error.message}}</div>
       </div>
       <!-- <div class="flex flex-row flex-wrap justify-start">
         <div
@@ -72,11 +81,13 @@
     >
       <div class="relative flex flex-row flex-nowrap justify-between">
         <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
-        <div
-          class="absolute pin-r bg-red p-1 text-xs sm:text-base text-white"
-          v-if="error"
-        >{{error.message}}</div>
-        <div class="bg-grey-light rounded-lg p-1 text-xs sm:text-sm" v-if="info">{{info}}</div>
+        <div class="flex">
+          <div class="bg-grey-light rounded-lg px-4 py-1 text-xs sm:text-sm" v-if="info">{{info}}</div>
+          <div
+            class="absolute pin-r bg-red p-1 text-xs sm:text-sm text-white"
+            v-if="error"
+          >{{error.message}}</div>
+        </div>
       </div>
       <div class="flex flex-row justify-start mt-1">
         <input
@@ -101,7 +112,7 @@ export default {
   data() {
     return {
       isChecked: []
-    }
+    };
   },
   // watch: {
   //   value(value) {
@@ -122,32 +133,31 @@ export default {
     inStyle: String,
     // for multiselect checkbox
     lists: Array,
-    selected: Array,
+    selected: Array
     // for multiemail
     // selectedEmails: Array
   },
   watch: {
     value(data) {
       if (data instanceof Array) {
-        this.isChecked = data
+        this.isChecked = data;
       }
     }
   },
   created() {
     if (this.value instanceof Array) {
-      this.isChecked = this.value
+      this.isChecked = this.value;
     }
   },
   methods: {
     // for multiselect checkbox
     inputCheck(e) {
       if (e.target.checked) {
-        this.$emit('checked', e.target.value)
+        this.$emit("checked", e.target.value);
       } else {
-        this.$emit('unchecked', e.target.value)
+        this.$emit("unchecked", e.target.value);
       }
     }
   }
-}
+};
 </script>
-

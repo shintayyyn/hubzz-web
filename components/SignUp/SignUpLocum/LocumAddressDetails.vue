@@ -14,6 +14,7 @@
             :name="'post_code'"
             :label="'Post code'"
             @onSelect="onSelect"
+            :error="formError.find(error => error.name === 'post_code')"
             :inStyle="'background-color:#dae1e7;border-color:white'"
           />
           <AppInput
@@ -22,7 +23,7 @@
             :name="'address_line_1'"
             :label="'Address line 1'"
             :placeholder="''"
-            :error="formError.find(item => item.field === 'address_line_1')"
+            :error="formError.find(error => error.name === 'address_line_1')"
             :inStyle="'background-color:#dae1e7;border-color:white'"
           />
 
@@ -40,6 +41,7 @@
             :type="'text'"
             :name="'address_line_3'"
             :label="'City / Town / District'"
+            :error="formError.find(error => error.name === 'address_line_3')"
             :placeholder="''"
             :inStyle="'background-color:#dae1e7;border-color:white'"
           />
@@ -48,16 +50,19 @@
     </div>
 
     <div class="flex justify-center mt-4">
-      <AppButton :label="'<<'" @click="$emit('nextTab', 'LocumAccountDetails')"/>
+      <AppButton
+        :label="'<<'"
+        @click="$store.commit('signUp/SET_ACTIVE_COMPONENT', 'LocumAccountDetails')"
+      />
       <div class="mx-2"></div>
-      <AppButton :label="'Next'" @click="next"/>
+      <AppButton :label="'Next'" @click="next" />
     </div>
   </div>
 </template>
 <script>
-import AppInput from '@/components/Base/AppInput'
-import AppPostCode from '@/components/Base/AppPostCode'
-import AppButton from '@/components/Base/AppButton'
+import AppInput from "@/components/Base/AppInput";
+import AppPostCode from "@/components/Base/AppPostCode";
+import AppButton from "@/components/Base/AppButton";
 export default {
   components: {
     AppInput,
@@ -67,59 +72,116 @@ export default {
   data() {
     return {
       form: {
-        post_code: '',
-        address_line_1: '',
-        address_line_2: '',
-        address_line_3: ''
+        post_code: "",
+        address_line_1: "",
+        address_line_2: "",
+        address_line_3: ""
       },
       formError: []
-
-    }
+    };
   },
   computed: {
     addressDetails() {
-      return this.$store.state.signUp.address_details
+      return this.$store.state.signUp.address_details;
     },
     addressFormError() {
-      return this.$store.state.signUp.address_detail_form_error
+      return this.$store.state.signUp.address_detail_form_error;
+    }
+  },
+  watch: {
+    "form.post_code"(value) {
+      if (!value) {
+        this.formError.push({
+          name: "post_code",
+          message: "Post Code is Required"
+        });
+      }
     },
+    "form.address_line_1"(value) {
+      if (!value) {
+        this.formError.push({
+          name: "address_line_1",
+          message: "Address Line 1 is Required"
+        });
+      }
+    },
+    "form.address_line_3"(value) {
+      if (!value) {
+        this.formError.push({
+          name: "address_line_3",
+          message: "City / Town / District is Required"
+        });
+      }
+    }
   },
   mounted() {
-    this.form.post_code = this.addressDetails.post_code
-    this.form.address_line_1 = this.addressDetails.address_line_1
-    this.form.address_line_2 = this.addressDetails.address_line_2
-    this.form.address_line_3 = this.addressDetails.address_line_3
+    this.form.post_code = this.addressDetails.post_code;
+    this.form.address_line_1 = this.addressDetails.address_line_1;
+    this.form.address_line_2 = this.addressDetails.address_line_2;
+    this.form.address_line_3 = this.addressDetails.address_line_3;
 
     if (this.addressFormError.length > 0) {
       this.addressFormError.forEach(item => {
-        this.formError.push(item)
-      })
+        this.formError.push(item);
+      });
     }
   },
   methods: {
     onSelect(value) {
-      let address_components = value.details.result.address_components
-      let postal_code = address_components.find(component => component.types.includes('postal_code'))
-      let route = address_components.find(component => component.types.includes('route'))
-      let postal_town = address_components.find(component => component.types.includes('postal_town'))
-      this.form.post_code = postal_code ? postal_code.long_name : ''
-      this.form.address_line_1 = route ? route.long_name : ''
-      this.form.address_line_3 = postal_town ? postal_town.long_name : ''
+      let address_components = value.details.result.address_components;
+      let postal_code = address_components.find(component =>
+        component.types.includes("postal_code")
+      );
+      let route = address_components.find(component =>
+        component.types.includes("route")
+      );
+      let postal_town = address_components.find(component =>
+        component.types.includes("postal_town")
+      );
+      this.form.post_code = postal_code ? postal_code.long_name : "";
+      this.form.address_line_1 = route ? route.long_name : "";
+      this.form.address_line_3 = postal_town ? postal_town.long_name : "";
     },
     next() {
       try {
-        this.formError = []
+        this.formError = [];
+
+        if (!this.form.post_code) {
+          this.formError.push({
+            name: "post_code",
+            message: "Post Code is Required"
+          });
+        }
+
+        if (!this.form.address_line_1) {
+          this.formError.push({
+            name: "address_line_1",
+            message: "Address Line 1 is Required"
+          });
+        }
+
+        if (!this.form.address_line_3) {
+          this.formError.push({
+            name: "address_line_3",
+            message: "City / Town / District is Required"
+          });
+        }
+
         // this.Validate(this.form, ['address_line_2'])
         if (!this.formError.length) {
-          this.$store.commit('signUp/SET_ADDRESS_DETAILS', this.form)
-          this.$emit('nextTab', 'LocumProfessionalDetails')
+          this.$store.commit("signUp/SET_ADDRESS_DETAILS", this.form);
+          // this.$emit("nextTab", "LocumProfessionalDetails");
+          this.$store.commit(
+            "signUp/SET_ACTIVE_COMPONENT",
+            "LocumProfessionalDetails"
+          );
         }
       } catch (e) {
-        console.log(e)
+        console.log(e);
       }
     }
   }
-}
+};
 </script>
 <style scoped>
 </style>

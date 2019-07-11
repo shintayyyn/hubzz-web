@@ -8,10 +8,11 @@
             :type="'text'"
             :name="'search_text'"
             :label="'Search for a Practice'"
+            :error="this.formError.find(item => item.field === 'search_text')"
             :placeholder="'Practice code, name of practice'"
           />
         </div>
-        <AppButton :label="'Search'" @click="search" :inStyle="'padding:5px;'"/>
+        <AppButton :label="'Search'" @click="search" :inStyle="'padding:5px;'" />
       </div>
     </div>
 
@@ -58,60 +59,79 @@
       </div>
     </div>
     <div class="mt-4" v-if="selectedSurgeryId">
-      <AppButton :label="'Next'" @click="next"/>
+      <AppButton :label="'Next'" @click="next" />
     </div>
   </div>
 </template>
 <script>
-import AppInput from '@/components/Base/AppInput'
-import AppButton from '@/components/Base/AppButton'
+import AppInput from "@/components/Base/AppInput";
+import AppButton from "@/components/Base/AppButton";
 export default {
   components: {
     AppInput,
-    AppButton,
+    AppButton
   },
   data() {
     return {
-      search_text: '',
+      search_text: "",
       surgeries: [],
       selectedSurgeryId: null,
       showResult: false,
       modal: false,
-    }
+      formError: []
+    };
   },
   computed: {
     surgeryId() {
-      return this.$store.state.signUp.practice_details.surgery_id
+      return this.$store.state.signUp.practice_details.surgery_id;
     },
     search_results() {
-      return this.$store.state.signUp.search_results
+      return this.$store.state.signUp.search_results;
     }
   },
   mounted() {
     if (this.search_results.length > 0 && this.surgeryId) {
-      this.surgeries = this.search_results
-      this.selectedSurgeryId = this.surgeryId
-      this.showResult = true
+      this.surgeries = this.search_results;
+      this.selectedSurgeryId = this.surgeryId;
+      this.showResult = true;
     }
   },
   methods: {
     search() {
-      this.$axios.$get(`/api/v1/surgeries?search=${this.search_text}&has_parent=false&is_parent=false&limit=10`).then(res => {
-        this.surgeries = res.data.surgeries
-        this.showResult = true
-      })
+      this.formError = [];
+      if (!this.search_text) {
+        this.formError.push({
+          field: "search_text",
+          message: "Try with whole words, practice code or CCG."
+        });
+        this.showResult = false;
+      } else {
+        this.$axios
+          .$get(
+            `/api/v1/surgeries?search=${
+              this.search_text
+            }&has_parent=false&is_parent=false&limit=10`
+          )
+          .then(res => {
+            this.surgeries = res.data.surgeries;
+            this.showResult = true;
+          });
+      }
     },
     next() {
       try {
-        let item = this.surgeries.find(item => item.id === this.selectedSurgeryId)
-        this.$store.commit('signUp/SET_PRACTICE_DETAILS', { surgery_id: item.id, search_results: this.surgeries })
-        this.$emit('nextTab', 'PracticeAccountDetails')
-      } catch (e) {
-
-      }
+        let item = this.surgeries.find(
+          item => item.id === this.selectedSurgeryId
+        );
+        this.$store.commit("signUp/SET_PRACTICE_DETAILS", {
+          surgery_id: item.id,
+          search_results: this.surgeries
+        });
+        this.$emit("nextTab", "PracticeAccountDetails");
+      } catch (e) {}
     }
   }
-}
+};
 </script>
 <style scoped>
 .add-surgery-confirmation-modal {

@@ -45,6 +45,7 @@
             v-model="privacy_policy"
             :type="'single-checkbox'"
             :name="'privacy_policy'"
+            :error="formError.find(item => item.field === 'privacy_policy')"
             :label="'I agree with the Terms and Conditions and Privacy Policy of Hubzz'"
           />
         </form>
@@ -52,15 +53,18 @@
     </div>
 
     <div class="flex justify-center mt-4">
-      <AppButton :label="'<<'" @click="$emit('nextTab', 'LocumProfessionalDetails')"/>
+      <AppButton
+        :label="'<<'"
+        @click="$store.commit('signUp/SET_ACTIVE_COMPONENT', 'LocumProfessionalDetails')"
+      />
       <div class="mx-2"></div>
-      <AppButton :label="'Next'" @click="next"/>
+      <AppButton :label="'Next'" @click="next" />
     </div>
   </div>
 </template>
 <script>
-import AppInput from '@/components/Base/AppInput'
-import AppButton from '@/components/Base/AppButton'
+import AppInput from "@/components/Base/AppInput";
+import AppButton from "@/components/Base/AppButton";
 export default {
   components: {
     AppInput,
@@ -69,62 +73,118 @@ export default {
   data() {
     return {
       form: {
-        email: '',
-        password: '',
-        password_confirmation: '',
+        email: "",
+        password: "",
+        password_confirmation: ""
       },
       privacy_policy: false,
-      formError: [],
-    }
+      formError: []
+    };
   },
   computed: {
     credentialDetails() {
-      return this.$store.state.signUp.credential_details
+      return this.$store.state.signUp.credential_details;
     },
     credentialFormError() {
-      return this.$store.state.signUp.credential_detail_form_error
+      return this.$store.state.signUp.credential_detail_form_error;
     }
   },
   watch: {
     credentialFormError(value) {
       if (value.length > 0) {
         value.forEach(item => {
-          this.formError.push(item)
-        })
+          this.formError.push(item);
+        });
       }
     },
+    "form.email"(value) {
+      if (!value) {
+        this.formError.push({ field: "email", message: "Email is Required" });
+      }
+    },
+
+    "form.password"(value) {
+      if (!value) {
+        this.formError.push({
+          field: "password",
+          message: "Password is Required"
+        });
+      }
+    },
+
+    "form.password_confirmation"(value) {
+      if (!value) {
+        this.formError.push({
+          field: "password_confirmation",
+          message: "Password do not match"
+        });
+      }
+    }
   },
   mounted() {
-    this.form.email = this.credentialDetails.email
-    this.form.password = this.credentialDetails.password
-    this.form.password_confirmation = this.credentialDetails.password_confirmation
-    this.form.privacy_policy = false
+    this.form.email = this.credentialDetails.email;
+    this.form.password = this.credentialDetails.password;
+    this.form.password_confirmation = this.credentialDetails.password_confirmation;
+    this.form.privacy_policy = false;
     if (this.credentialFormError.length > 0) {
       this.credentialFormError.forEach(item => {
-        this.formError.push(item)
-      })
+        this.formError.push(item);
+      });
     }
   },
   methods: {
     next() {
       try {
-        if (!this.privacy_policy) {
-          return
-        }
-        this.formError = []
+        this.formError = [];
+
         // this.Validate(this.form)
         if (!this.formError.length) {
-          this.$store.commit('signUp/SET_CREDENTIAL_DETAILS', this.form)
+          if (!this.form.email) {
+            this.formError.push({
+              field: "email",
+              message: "Email is Required"
+            });
+          }
+
+          if (!this.form.password) {
+            this.formError.push({
+              field: "password",
+              message: "Password is Required"
+            });
+          }
+
+          if (this.form.password.length < 6) {
+            this.formError.push({
+              field: "password",
+              message: "Password Must Be Atleast 6 Characters"
+            });
+          }
+
+          if (this.form.password != this.form.password_confirmation) {
+            this.formError.push({
+              field: "password_confirmation",
+              message: "Password Do Not Match"
+            });
+          }
+          if (!this.privacy_policy) {
+            this.formError.push({
+              field: "privacy_policy",
+              message:
+                "You must agree first in our Terms and Conditions and Privacy Policy "
+            });
+            return;
+          }
+          this.$store.commit("signUp/SET_CREDENTIAL_DETAILS", this.form);
           setTimeout(() => {
-            this.$store.dispatch('signUp/registeredLocum')
-          }, 1000)
+            this.$store.dispatch("signUp/registeredLocum");
+          }, 1000);
         }
       } catch (e) {
-        console.log(e)
+        console.log(e);
       }
     }
   }
-}
+};
 </script>
 <style scoped>
 button:active {
