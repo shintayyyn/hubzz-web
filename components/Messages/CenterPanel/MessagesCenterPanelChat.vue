@@ -1,7 +1,7 @@
 <template>
   <div class="panel-chat overflow-y-auto">
-    <div class="flex flex-col">
-      <div v-for="item in messages_2" :key="item.id">
+    <div class="flex flex-col" ref="messagesContainer">
+      <div v-for="item in messages" :key="item.id">
         <div
           class="my-1 rounded-lg text-xs px-2 py-1"
           :class="isReceiver(item) ? 'float-left bg-grey-light' : 'float-right bg-blue-light text-white'"
@@ -13,27 +13,49 @@
 <script>
 export default {
   computed: {
-    messages_2() {
-      return this.$store.state.chat.messages_2
+    messages() {
+      return this.$store.state.chat.messages
     },
-  },
-  watch: {
-    messages_2(value) {
-      console.log('watch', value)
-    }
   },
   beforeMount() {
     this.getNewChatRealTime()
+    this.getSeenChatRealTime()
+  },
+  watch: {
+    messages(value) {
+      if (this.$refs.messagesContainer) {
+        if (
+          this.$refs.messagesContainer.scrollHeight -
+          (500 + this.$refs.messagesContainer.offsetHeight) <=
+          this.$refs.messagesContainer.scrollTop
+        ) {
+          this.scrollToBottom();
+        } else {
+          // this.backToBottomButtonActive = true;
+        }
+      }
+      this.scrollToBottom()
+    }
   },
   methods: {
+    scrollToBottom() {
+      this.$nextTick(() => {
+        this.$refs.messagesContainer.scrollTop = this.$refs.messagesContainer.scrollHeight;
+      });
+    },
     getNewChatRealTime() {
       this.$socket.on("new chat", newChat => {
-        this.$store.commit('chat/NEW_CHAT', newChat)
-        // console.log('event', newChat)
+        this.$store.commit('chat/PUSH_MESSAGE', newChat)
+        this.$store.dispatch('chat/seenNewMessage', newChat.conversation_id)
+      });
+    },
+    getSeenChatRealTime() {
+      this.$socket.on("seen chat", chat => {
+        this.$store.commit('chat/UPDATE_MESSAGE', chat)
       });
     },
     isReceiver(item) {
-      return this.$auth.user.id === item.receiver_user_id
+      return this.$auth.user.id === item.receiver_id
     }
   }
 }
