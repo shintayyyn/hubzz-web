@@ -350,6 +350,12 @@ export default {
         case 'Rejected':
           return 'bg-red'
           break;
+        case 'Expiring':
+          return 'bg-orange'
+          break;
+        case 'Expired':
+          return 'bg-red'
+          break;
         default:
           return
       }

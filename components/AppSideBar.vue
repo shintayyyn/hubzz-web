@@ -74,7 +74,8 @@ export default {
           { name: "My Banks", route: "/my-banks" },
           { name: "Sessions", route: "/sessions" }
         ];
-      } else if (domain === "Locum") {
+      }
+      if (domain === "Locum") {
         addedLists = [{ name: "Compliance", route: "/compliance" }];
       }
       if (domain === "Locum" && accountStatus === "Active") {
