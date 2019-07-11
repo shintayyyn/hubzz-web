@@ -9,7 +9,7 @@
     <div class="invoice-shield" v-if="modal"></div>
     <transition name="slide" mode="out-in">
       <div class="invoice-modal shadow-lg" v-if="modal">
-        <AddInvoiceModal @close="modal = false" @add="add/>
+        <AddInvoiceModal @close="modal = false" @add="add" />
       </div>
     </transition>
   </section>
@@ -63,6 +63,11 @@ export default {
       }
     }
   },
+  methods: {
+    add(data) {
+      console.log(data)
+    }
+  }
 }
 </script>
 <style scoped>

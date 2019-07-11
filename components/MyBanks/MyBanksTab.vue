@@ -14,6 +14,12 @@
     >All</div>
     <div
       style="font-family:Nunito"
+      @click.prevent="goTo('appointed')"
+      class="mr-5 p-3 text-sm font-bold cursor-pointer"
+      :class="$route.query.my_banks_tab === 'appointed' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
+    >Appointed</div>
+    <div
+      style="font-family:Nunito"
       @click.prevent="goTo('rejected')"
       class="mr-5 p-3 text-sm font-bold cursor-pointer"
       :class="$route.query.my_banks_tab === 'rejected' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"

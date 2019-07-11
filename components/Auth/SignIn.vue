@@ -22,10 +22,12 @@
     </div>
 
     <div class="flex justify-end mb-8">
-      <span class="hover:underline cursor-pointer">Forgot password?</span>
+      <nuxt-link to="/forgot-password">
+        <span class="hover:underline cursor-pointer">Forgot password?</span>
+      </nuxt-link>
     </div>
     <div class="flex justify-center">
-      <AppButton :label="'Sign In'" @click="login"/>
+      <AppButton :label="'Sign In'" @click="login" />
     </div>
   </div>
 </template>
@@ -121,5 +123,9 @@ export default {
 }
 </script>
 <style scoped>
+a {
+  text-decoration: none;
+  color: black;
+}
 </style>
 

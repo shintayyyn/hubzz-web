@@ -53,7 +53,7 @@
               class="rounded-lg shadow-md hover:bg-grey-light cursor-pointer text-xs sm:text-sm text-left"
             >
               <td>{{item.name}}</td>
-              <td class="hover:underline" v-if="item.info">
+              <td class="hover:underline" v-if="item.info && item.info.file">
                 <div class="flex flex-row flex-nowrap">
                   <svgicon name="cloud-download" height="24" width="24" />
                   <div class="leading-loose mx-2">
@@ -66,7 +66,7 @@
                 </div>
               </td>
               <td v-else></td>
-              <td v-if="item.info">{{item.info.file.created_at | localDate}}</td>
+              <td v-if="item.info && item.info.file">{{item.info.file.created_at | localDate}}</td>
               <td v-else></td>
               <td v-if="item.info">{{item.info.expired_at | localDate}}</td>
               <td v-else></td>
@@ -141,7 +141,7 @@
               class="rounded-lg shadow-md hover:bg-grey-light cursor-pointer text-xs sm:text-sm text-left"
             >
               <td>{{item.name}}</td>
-              <td class="hover:underline" v-if="item.info">
+              <td class="hover:underline" v-if="item.info && item.info.file">
                 <div class="flex flex-row flex-nowrap">
                   <svgicon name="cloud-download" height="24" width="24" />
                   <div class="leading-loose mx-2">
@@ -153,7 +153,7 @@
                 </div>
               </td>
               <td v-else></td>
-              <td v-if="item.info">{{item.info.file.created_at | localDate}}</td>
+              <td v-if="item.info && item.info.file">{{item.info.file.created_at | localDate}}</td>
               <td v-else></td>
               <td></td>
               <td></td>
@@ -217,7 +217,7 @@
               class="rounded-lg shadow-md hover:bg-grey-light cursor-pointer text-xs sm:text-sm text-left"
             >
               <td>{{item.name}}</td>
-              <td class="hover:underline" v-if="item.info">
+              <td class="hover:underline" v-if="item.info && item.info.file">
                 <div class="flex flex-row flex-nowrap">
                   <svgicon name="cloud-download" height="24" width="24" />
                   <div class="leading-loose mx-2">
@@ -229,7 +229,7 @@
                 </div>
               </td>
               <td v-else></td>
-              <td v-if="item.info">{{item.info.file.created_at | localDate}}</td>
+              <td v-if="item.info && item.info.file">{{item.info.file.created_at | localDate}}</td>
               <td v-else></td>
               <td></td>
               <td></td>
@@ -370,9 +370,9 @@ export default {
       formData.append('locum_detail_id', this.$auth.user.id)
       // post request to API / send file 
       this.$axios.$post(`/api/v1/locum/locum-detail-compliance-documents`, formData).then(res => {
-        let inMandatory = this.mandatory.findIndex(document => document.id === res.data.locum_detail_compliance_document.compliance_document.id)
-        if (inMandatory > 0) {
-          this.mandatory.splice(index, 1)
+        let mandatory_index = this.mandatory.findIndex(document => document.id === res.data.locum_detail_compliance_document.compliance_document.id)
+        if (mandatory_index >= 0) {
+          this.mandatory.splice(mandatory_index, 1)
           this.mandatory.push({
             id: res.data.locum_detail_compliance_document.compliance_document.id,
             name: res.data.locum_detail_compliance_document.compliance_document.name,
@@ -381,7 +381,8 @@ export default {
           this.mandatory = this.mandatory.sort((a, b) => a.id - b.id)
           this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Document uploaded!' })
         } else {
-          this.optional.splice(index, 1)
+          let optional_index = this.optional.findIndex(document => document.id === res.data.locum_detail_compliance_document.compliance_document.id)
+          this.optional.splice(optional_index, 1)
           this.optional.push({
             id: res.data.locum_detail_compliance_document.compliance_document.id,
             name: res.data.locum_detail_compliance_document.compliance_document.name,
