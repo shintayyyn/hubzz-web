@@ -27,6 +27,7 @@
             :error="formError.find(item => item.field === 'mpl_or_npl_number')"
             :info="'For compliance; to be verified by the hubzz team'"
           />
+
           <AppInput
             v-model="form.nhs_smart_card_id_number"
             :type="'text'"
@@ -83,16 +84,23 @@
               >To match available jobs with</div>
             </div>
             <div class="flex flex-row flex-wrap justify-between">
-              <AppRate v-model="per_hour" :name="'per_hour'" :label="'Per hour'"/>
+              <AppRate
+                v-model="per_hour"
+                :name="'per_hour'"
+                :label="'Per hour'"
+                :error="formError.find(item => item.field === 'per_hour')"
+              />
               <AppRate
                 v-model="per_half_day_session"
                 :name="'per_half_day_session'"
+                :error="formError.find(item => item.field === 'per_half_day_session')"
                 :label="'Per half day session'"
               />
               <AppRate
                 v-model="per_whole_day_session"
                 :name="'per_whole_day_session'"
                 :label="'Per whole day session'"
+                :error="formError.find(item => item.field === 'per_whole_day_session')"
               />
             </div>
           </div>
@@ -123,25 +131,29 @@
     </div>
 
     <div class="flex justify-center mt-4">
-      <AppButton :label="'<<'" @click="$emit('nextTab', 'LocumAddressDetails')"/>
+      <AppButton
+        :label="'<<'"
+        @click="$store.commit('signUp/SET_ACTIVE_COMPONENT', 'LocumAddressDetails')"
+      />
       <div class="mx-2"></div>
-      <AppButton :label="'Next'" @click="next"/>
+      <AppButton :label="'Next'" @click="next" />
     </div>
   </div>
 </template>
 <script>
-import AppInput from '@/components/Base/AppInput'
-import AppSelect from '@/components/Base/AppSelect'
-import AppButton from '@/components/Base/AppButton'
-import AppFilterSearch from '@/components/Base/AppFilterSearch'
-import AppRate from '@/components/Base/AppRate'
+import AppInput from "@/components/Base/AppInput";
+import AppSelect from "@/components/Base/AppSelect";
+import AppButton from "@/components/Base/AppButton";
+import AppFilterSearch from "@/components/Base/AppFilterSearch";
+import AppRate from "@/components/Base/AppRate";
+import { parse } from "cookie";
 export default {
   components: {
     AppInput,
     AppSelect,
     AppButton,
     AppFilterSearch,
-    AppRate,
+    AppRate
   },
   data() {
     return {
@@ -160,10 +172,10 @@ export default {
       },
 
       form: {
-        gmc_or_nmc_number: '',
-        mpl_or_npl_number: '',
-        nhs_smart_card_id_number: '',
-        profession_id: '',
+        gmc_or_nmc_number: "",
+        mpl_or_npl_number: "",
+        nhs_smart_card_id_number: "",
+        profession_id: "",
         qualification_id: [],
         clinical_system_id: [],
         spoken_language_id: [],
@@ -178,104 +190,284 @@ export default {
         mandatory_training_id: []
       },
       formError: [],
-      setFocus: ''
-    }
+      setFocus: ""
+    };
   },
   computed: {
     professions() {
-      return this.$store.getters['signUp/getProfessions']
+      return this.$store.getters["signUp/getProfessions"];
     },
     gpQualifications() {
-      return this.$store.getters['signUp/getGpQualifications']
+      return this.$store.getters["signUp/getGpQualifications"];
     },
     othersQualifications() {
-      return this.$store.getters['signUp/getOthersQualifications']
+      return this.$store.getters["signUp/getOthersQualifications"];
     },
     clinicalSystems() {
-      return this.$store.getters['signUp/getClinicalSystems']
+      return this.$store.getters["signUp/getClinicalSystems"];
     },
     spokenLanguages() {
-      return this.$store.getters['signUp/getSpokenLanguages']
+      return this.$store.getters["signUp/getSpokenLanguages"];
     },
     practiceTypes() {
-      return this.$store.getters['signUp/getPracticeTypes']
+      return this.$store.getters["signUp/getPracticeTypes"];
     },
     professionalDetails() {
-      return this.$store.state.signUp.professional_details
+      return this.$store.state.signUp.professional_details;
     },
     professionalFormError() {
-      return this.$store.state.signUp.professional_detail_form_error
+      return this.$store.state.signUp.professional_detail_form_error;
     }
   },
   created() {
-    this.pratice_types = this.practiceTypes
-    this.form.gmc_or_nmc_number = this.professionalDetails.gmc_or_nmc_number
-    this.form.mpl_or_npl_number = this.professionalDetails.mpl_or_npl_number
-    this.form.nhs_smart_card_id_number = this.professionalDetails.nhs_smart_card_id_number
-    this.form.profession_id = this.professionalDetails.profession_id
+    this.pratice_types = this.practiceTypes;
+    this.form.gmc_or_nmc_number = this.professionalDetails.gmc_or_nmc_number;
+    this.form.mpl_or_npl_number = this.professionalDetails.mpl_or_npl_number;
+    this.form.nhs_smart_card_id_number = this.professionalDetails.nhs_smart_card_id_number;
+    this.form.profession_id = this.professionalDetails.profession_id;
 
     if (this.form.profession_id == 1) {
       this.professionalDetails.qualification_id.forEach(id => {
-        this.form.qualification_id.push(this.gpQualifications.find(item => item.value === id))
-      })
+        this.form.qualification_id.push(
+          this.gpQualifications.find(item => item.value === id)
+        );
+      });
     } else {
       this.professionalDetails.qualification_id.forEach(id => {
-        this.form.qualification_id.push(this.othersQualifications.find(item => item.value === id))
-      })
+        this.form.qualification_id.push(
+          this.othersQualifications.find(item => item.value === id)
+        );
+      });
     }
 
     this.professionalDetails.clinical_system_id.forEach(id => {
-      this.form.clinical_system_id.push(this.clinicalSystems.find(item => item.value === id))
-    })
+      this.form.clinical_system_id.push(
+        this.clinicalSystems.find(item => item.value === id)
+      );
+    });
     this.professionalDetails.spoken_language_id.forEach(id => {
-      this.form.spoken_language_id.push(this.spokenLanguages.find(item => item.value === id))
-    })
+      this.form.spoken_language_id.push(
+        this.spokenLanguages.find(item => item.value === id)
+      );
+    });
 
-    this.per_hour.min = this.professionalDetails.min_rate_per_hour
-    this.per_hour.max = this.professionalDetails.max_rate_per_hour
-    this.per_half_day_session.min = this.professionalDetails.min_rate_per_half_day_session
-    this.per_half_day_session.max = this.professionalDetails.max_rate_per_half_day_session
-    this.per_whole_day_session.min = this.professionalDetails.min_rate_per_whole_day_session
-    this.per_whole_day_session.max = this.professionalDetails.max_rate_per_whole_day_session
-    this.form.ir35 = this.professionalDetails.ir35
+    this.per_hour.min = this.professionalDetails.min_rate_per_hour;
+    this.per_hour.max = this.professionalDetails.max_rate_per_hour;
+    this.per_half_day_session.min = this.professionalDetails.min_rate_per_half_day_session;
+    this.per_half_day_session.max = this.professionalDetails.max_rate_per_half_day_session;
+    this.per_whole_day_session.min = this.professionalDetails.min_rate_per_whole_day_session;
+    this.per_whole_day_session.max = this.professionalDetails.max_rate_per_whole_day_session;
+    this.form.ir35 = this.professionalDetails.ir35;
 
-    this.form.practice_type_id = []
+    this.form.practice_type_id = [];
     this.professionalDetails.practice_type_id.forEach(id => {
-      this.form.practice_type_id.push(id)
-    })
+      this.form.practice_type_id.push(id);
+    });
     // this.form.practice_type_id = this.professionalDetails.practice_type_id
 
     if (this.professionalFormError.length > 0) {
       this.professionalFormError.forEach(item => {
-        this.formError.push(item)
-      })
+        this.formError.push(item);
+      });
+    }
+  },
+  watch: {
+    "form.gmc_or_nmc_number"(value) {
+      if (!value) {
+        this.formError.push({
+          field: "gmc_or_nmc_number",
+          message: "GCM/NCM Number is Required"
+        });
+      }
+    },
+
+    "form.mpl_or_npl_number"(value) {
+      if (!value) {
+        this.formError.push({
+          field: "mpl_or_npl_number",
+          message: "MPL/NPL Number is Required"
+        });
+      }
+    },
+
+    "form.profession_id"(value) {
+      if (!value) {
+        this.formError.push({
+          field: "profession_id",
+          message: "Profession is Required"
+        });
+      }
+    },
+
+    "form.qualification_id"(value) {
+      if (value.length < 1) {
+        this.formError.push({
+          field: "qualification_id",
+          message: "Specialty is Required"
+        });
+      }
+    },
+
+    "form.clinical_system_id"(value) {
+      if (value.length < 1) {
+        this.formError.push({
+          field: "clinical_system_id",
+          message: "Clinical Systems is Required"
+        });
+      }
+    },
+
+    "form.spoken_language_id"(value) {
+      if (value.length < 1) {
+        this.formError.push({
+          field: "spoken_language_id",
+          message: "Spoken Language is Required"
+        });
+      }
     }
   },
   methods: {
     uncheckOther(value) {
-      this.form.practice_type_id = this.form.practice_type_id.filter(id => id != value)
+      this.form.practice_type_id = this.form.practice_type_id.filter(
+        id => id != value
+      );
     },
     next() {
       try {
-        this.formError = []
-        this.form.qualification_id = this.form.qualification_id.length ? this.form.qualification_id.map(item => item.value) : []
-        this.form.clinical_system_id = this.form.clinical_system_id ? this.form.clinical_system_id.map(item => item.value) : []
-        this.form.spoken_language_id = this.form.spoken_language_id ? this.form.spoken_language_id.map(item => item.value) : []
-        this.form.min_rate_per_hour = this.per_hour.min
-        this.form.max_rate_per_hour = this.per_hour.max
-        this.form.min_rate_per_half_day_session = this.per_half_day_session.min
-        this.form.max_rate_per_half_day_session = this.per_half_day_session.max
-        this.form.min_rate_per_whole_day_session = this.per_whole_day_session.max
-        this.form.max_rate_per_whole_day_session = this.per_whole_day_session.max
         // this.Validate(this.form, ['nhs_smart_card_id_number', 'spoken_language_id', 'mandatory_training_id'])
+        this.formError = [];
+
+        if (!this.form.gmc_or_nmc_number) {
+          this.formError.push({
+            field: "gmc_or_nmc_number",
+            message: "GCM/NCM Number is Required"
+          });
+        }
+
+        if (!this.form.mpl_or_npl_number) {
+          this.formError.push({
+            field: "mpl_or_npl_number",
+            message: "MPL/NPL Number is Required"
+          });
+        }
+
+        // if (!this.isNumeric(this.form.gmc_or_nmc_number)) {
+        //   this.formError.push({
+        //     field: "gmc_or_nmc_number",
+        //     message: "Invalid GCM/NCM Number"
+        //   });
+        // }
+
+        // if (!this.isNumeric(this.form.mpl_or_npl_number)) {
+        //   this.formError.push({
+        //     field: "mpl_or_npl_number",
+        //     message: "Invalid MPL/NPL Number"
+        //   });
+        // }
+
+        if (!this.form.profession_id) {
+          this.formError.push({
+            field: "profession_id",
+            message: "Profession is Required"
+          });
+        }
+
+        if (!this.form.qualification_id) {
+          this.formError.push({
+            field: "qualification_id",
+            message: "Specialty is Required"
+          });
+        }
+
+        if (!this.form.clinical_system_id) {
+          this.formError.push({
+            field: "clinical_system_id",
+            message: "Clinical systems is Required"
+          });
+        }
+
+        if (!this.form.spoken_language_id) {
+          this.formError.push({
+            field: "spoken_language_id",
+            message: "Spoken Language is Required"
+          });
+        }
+        if (
+          !this.per_hour.min ||
+          parseInt(this.per_hour.max) <= parseInt(this.per_hour.min)
+        ) {
+          this.formError.push({
+            field: "per_hour",
+            message: "Invalid Rate"
+          });
+        }
+
+        if (
+          !this.per_half_day_session.min ||
+          parseInt(this.per_half_day_session.max) <=
+            parseInt(this.per_half_day_session.min)
+        ) {
+          this.formError.push({
+            field: "per_half_day_session",
+            message: "Invalid Rate"
+          });
+        }
+
+        if (
+          !this.per_whole_day_session.min ||
+          parseInt(this.per_whole_day_session.max) <=
+            parseInt(this.per_whole_day_session.min)
+        ) {
+          this.formError.push({
+            field: "per_whole_day_session",
+            message: "Invalid Rate"
+          });
+        }
+
+        if (this.form.practice_type_id.length < 1) {
+          this.formError.push({
+            field: "practice_type_id",
+            message: "Practice Types is Required"
+          });
+        }
+
+        if (!this.form.ir35) {
+          this.formError.push({
+            field: "ir35",
+            message: "IR35 is Required"
+          });
+        }
+
         if (!this.formError.length) {
-          this.$store.commit('signUp/SET_PROFESSIONAL_DETAILS', this.form)
-          this.$emit('nextTab', 'LocumCredentialDetails')
+          this.form.qualification_id = this.form.qualification_id.length
+            ? this.form.qualification_id.map(item => item.value)
+            : [];
+          this.form.clinical_system_id = this.form.clinical_system_id
+            ? this.form.clinical_system_id.map(item => item.value)
+            : [];
+          this.form.spoken_language_id = this.form.spoken_language_id
+            ? this.form.spoken_language_id.map(item => item.value)
+            : [];
+          this.form.min_rate_per_hour = this.per_hour.min;
+          this.form.max_rate_per_hour = this.per_hour.max;
+          this.form.min_rate_per_half_day_session = this.per_half_day_session.min;
+          this.form.max_rate_per_half_day_session = this.per_half_day_session.max;
+          this.form.min_rate_per_whole_day_session = this.per_whole_day_session.min;
+          this.form.max_rate_per_whole_day_session = this.per_whole_day_session.max;
+
+          this.$store.commit("signUp/SET_PROFESSIONAL_DETAILS", this.form);
+          this.$store.commit(
+            "signUp/SET_ACTIVE_COMPONENT",
+            "LocumCredentialDetails"
+          );
         }
       } catch (e) {
-        console.log(e)
+        console.log(e);
       }
+    },
+    isNumeric(n) {
+      return !isNaN(parseFloat(n)) && isFinite(n);
     }
   }
-}
+};
 </script>

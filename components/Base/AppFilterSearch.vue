@@ -33,7 +33,7 @@
             class="border-b-2 focus:border-yellow focus:outline-none py-3 font-bold text-xs sm:text-sm"
             @focus="toggled = true"
             @keydown="handleKeyDownEvent"
-          >
+          />
         </div>
       </div>
       <!-- option -->
@@ -79,11 +79,11 @@ export default {
   methods: {
     add(item) {
       this.value.push(item);
-      this.$refs.input.focus()
+      this.$refs.input.focus();
     },
     remove(index) {
       this.value.splice(index, 1);
-      this.$refs.input.focus()
+      this.$refs.input.focus();
     },
     toggledOff() {
       this.toggled = false;
@@ -99,15 +99,15 @@ export default {
         this.activeIndex++;
       }
       if (event.key === "Enter") {
-        this.add(this.filteredItems[this.activeIndex])
+        this.add(this.filteredItems[this.activeIndex]);
       }
       if (event.key === "Backspace") {
         if (!this.filterSearch) {
-          this.remove(this.value.length - 1)
+          this.remove(this.value.length - 1);
         }
       }
       if (event.key === "Escape") {
-        this.toggledOff()
+        this.toggledOff();
       }
     }
   },

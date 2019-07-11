@@ -40,51 +40,52 @@ export default {
   data() {
     return {
       lists: []
-    }
+    };
   },
   created() {
-    let domain = this.$auth.user.domain
-    let isActivated = this.$auth.user.is_activated
-    let addedLists = []
+    let domain = this.$auth.loggedIn ? this.$auth.user.domain : null;
+    let isActivated = this.$auth.loggedIn
+      ? this.$auth.user.is_activated
+      : false;
+    let addedLists = [];
     let defaultLists = [
-      { name: 'Dashboard', route: '/dashboard' },
-      { name: 'Account', route: '/account' }
-    ]
+      { name: "Dashboard", route: "/dashboard" },
+      { name: "Account", route: "/account" }
+    ];
     let otherLists = [
-      { name: 'Billing', route: '/billing' },
-      { name: 'FAQ', route: '/faq' },
-      { name: 'Terms and Conditions', route: '/terms-and-conditions' },
-      { name: 'Invite', route: '/invite' },
-      { name: 'Contact Us', route: '/contact-us' }
-    ]
-    if (domain === 'Practice') {
+      { name: "Billing", route: "/billing" },
+      { name: "FAQ", route: "/faq" },
+      { name: "Terms and Conditions", route: "/terms-and-conditions" },
+      { name: "Invite", route: "/invite" },
+      { name: "Contact Us", route: "/contact-us" }
+    ];
+    if (domain === "Practice") {
       addedLists = [
-        { name: 'Profile', route: '/profile' },
-        { name: 'My Banks', route: '/my-banks' },
-        { name: 'Sessions', route: '/sessions' }
-      ]
-    } else if (domain === 'Locum') {
+        { name: "Profile", route: "/profile" },
+        { name: "My Banks", route: "/my-banks" },
+        { name: "Sessions", route: "/sessions" }
+      ];
+    } else if (domain === "Locum") {
       addedLists = [
-        { name: 'Compliance', route: '/compliance' },
-        { name: 'My Practice', route: '/my-practice' },
-        { name: 'Availability', route: '/availability' },
-        { name: 'Jobs', route: '/jobs' }
-      ]
+        { name: "Compliance", route: "/compliance" },
+        { name: "My Practice", route: "/my-practice" },
+        { name: "Availability", route: "/availability" },
+        { name: "Jobs", route: "/jobs" }
+      ];
     }
-    this.lists = [...defaultLists, ...addedLists, ...otherLists]
-
+    this.lists = [...defaultLists, ...addedLists, ...otherLists];
   },
   methods: {
     signout() {
-      this.$emit('modal', true)
+      this.$emit("modal", true);
       // this.$store.commit('TOGGLE_SIGNOUT', true)
     },
     close() {
-      this.$store.commit('TOGGLE_SIDEBAR', false)
-      document.body.style.overflow = 'auto'
+      this.$store.commit("TOGGLE_SIDEBAR", false);
+      document.body.style.overflow = "auto";
     }
   }
-}
+};
 </script>
 <style scoped>
 .sidebar {
