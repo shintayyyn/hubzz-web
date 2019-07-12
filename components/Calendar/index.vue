@@ -76,6 +76,7 @@ import UnfilledDetailModal from '@/components/Sessions/UnfilledDetailModal'
 import DeclinedDetailModal from '@/components/Sessions/DeclinedDetailModal'
 import AppliedDetailModal from '@/components/Sessions/AppliedDetailModal'
 import LiveDetailModal from '@/components/Sessions/LiveDetailModal'
+
 export default {
   components: {
     PerMonth,
@@ -111,8 +112,11 @@ export default {
       practice_applied_job: null,
       practice_live_modal: false,
       practice_live_job: null,
+      
     }
   },
+
+
   created() {
     this.$store.commit('calendar/SET_DATE_TODAY')
   },

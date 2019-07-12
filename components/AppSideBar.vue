@@ -57,7 +57,6 @@ export default {
       let otherLists = [
         { name: 'FAQ', route: '/faq' },
         { name: 'Terms and Conditions', route: '/terms-and-conditions' },
-        { name: 'Invite', route: '/invite' },
         { name: 'Contact Us', route: '/contact-us' }
       ]
       
@@ -67,6 +66,7 @@ export default {
           { name: 'My Banks', route: '/my-banks' },
           { name: 'Sessions', route: '/sessions' },
           { name: 'Billing', route: '/billing' },
+          { name: 'Invite', route: '/invite' },
         ]
       } 
 
@@ -83,6 +83,7 @@ export default {
           { name: 'Availability', route: '/availability' },
           { name: 'Jobs', route: '/jobs' },
           { name: 'Billing', route: '/billing' },
+          { name: 'Invite', route: '/invite' },
         ] 
       }
       this.lists = [...defaultLists, ...addedLists, ...otherLists];
