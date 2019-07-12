@@ -111,7 +111,14 @@ export default {
   },
   watch: {
     "form.first_name"(value) {
+      // splice from formerror
+      let index = this.formError.findIndex(item => item.field === "first_name");
+      if (index >= 0) {
+        this.formError.splice(index, 1);
+      }
+      // validate
       if (!value) {
+        // required
         this.formError.push({
           field: "first_name",
           message: "First Name is Required"
@@ -119,7 +126,14 @@ export default {
       }
     },
     "form.last_name"(value) {
+      // splice from formerror
+      let index = this.formError.findIndex(item => item.field === "last_name");
+      if (index >= 0) {
+        this.formError.splice(index, 1);
+      }
+      // validate
       if (!value) {
+        // required
         this.formError.push({
           field: "last_name",
           message: "Last Name is Required"
@@ -127,12 +141,28 @@ export default {
       }
     },
     "form.gender"(value) {
+      // splice from formerror
+      let index = this.formError.findIndex(item => item.field === "gender");
+      if (index >= 0) {
+        this.formError.splice(index, 1);
+      }
+      // validate
       if (!value) {
+        // required
         this.formError.push({ field: "gender", message: "Gender is Required" });
       }
     },
     "form.mobile_number"(value) {
+      // splice from formerror
+      let index = this.formError.findIndex(
+        item => item.field === "mobile_number"
+      );
+      if (index >= 0) {
+        this.formError.splice(index, 1);
+      }
+      // validate
       if (!value) {
+        // required
         this.formError.push({
           field: "mobile_number",
           message: "Mobile Number is Required"

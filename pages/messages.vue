@@ -13,7 +13,7 @@ export default {
   },
   computed: {
     conversations() {
-      return this.$store.getters['chat/getConversations']
+      return this.$store.state.chat.conversations
     }
   },
   watch: {
@@ -21,31 +21,27 @@ export default {
       if (to.name !== 'messages-slug') {
         return
       }
-
       if (to.params.slug === undefined) {
-        this.goTo()
+        // this.goToFirstConversation()
       }
-      this.$store.dispatch('chat/setActiveConversation', to.params.slug)
+      this.$store.dispatch('chat/getActiveConversationMessages', to.params.slug)
     },
     conversations() {
-      this.goTo()
+      // this.goToFirstConversation()
     }
   },
   mounted() {
     if (!this.$auth.loggedIn) {
       return this.$router.push('/')
     }
-    if (this.$route.params.slug !== undefined) {
-      this.$store.dispatch('chat/setActiveConversation', this.$route.params.slug)
+    if (!this.$store.state.chat.activeConversationId) {
+      this.goToFirstConversation()
     }
-    this.goTo()
+    this.$store.dispatch('chat/getActiveConversationMessages', this.$route.params.slug)
   },
   methods: {
-    goTo() {
-      if (
-        this.$route.name === 'messages-slug' &&
-        this.$route.params.slug === undefined
-      ) {
+    goToFirstConversation() {
+      if (this.conversations.length > 0) {
         let conversation = this.conversations.find((conversation, index) => index === 0)
         this.$router.push(`/messages/${conversation.id}`)
       }

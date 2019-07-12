@@ -65,42 +65,47 @@ export default {
   data() {
     return {
       form: {
-        email: ''
+        email: ""
       },
       formError: [],
-      setFocus: '',
+      setFocus: "",
       // sample
       success: false
-    }
+    };
   },
   watch: {
-    'form.email'(value) {
-      let index = this.formError.findIndex(item => item.field === 'email')
+    "form.email"(value) {
+      let index = this.formError.findIndex(item => item.field === "email");
       if (index >= 0) {
-        this.formError.splice(index, 1)
+        this.formError.splice(index, 1);
+      }
+
+      if (!value) {
+        this.formError.push({
+          field: "email",
+          message: "Email is Required"
+        });
       }
     }
   },
   mounted() {
-    this.success = false
-    this.$refs.email.focus()
+    this.success = false;
+    this.$refs.email.focus();
   },
   methods: {
     async send() {
       try {
-        this.formError = []
-        this.Validate(this.form)
+        this.formError = [];
+        this.Validate(this.form);
         if (!this.formError.length) {
           this.$axios.$post(`/api/v1/forgot-password`, this.form).then(res => {
-            this.success = true
-          })
+            this.success = true;
+          });
         }
-      } catch (e) {
-
-      }
+      } catch (e) {}
     }
   }
-}
+};
 </script>
 <style scoped>
 button:active {

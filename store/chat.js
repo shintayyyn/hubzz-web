@@ -1,65 +1,80 @@
 export const state = () => ({
+    conversations: [],
+    activeConversationId: null,
+    loadingMessages: false,
     messages: [],
-    messages_2: []
 })
 
 export const mutations = {
     SET_CONVERSATIONS(state, payload) {
-        state.messages = payload
+        state.conversations = payload
     },
-    SET_MESSAGES_2(state, payload) {
-        state.messages_2 = payload
+    SET_ACTIVE_CONVERSATION_ID(state, payload) {
+        state.messages = []
+
+        state.activeConversationId = payload
     },
-    NEW_CHAT(state, payload) {
-        state.messages_2.push(payload)
+    REMOVE_MESSAGES(state, payload) {
+        state.messages = []
+    },
+    LOADING_MESSSAGES(state, payload) {
+        state.loadingMessages = true
+    },
+    END_LOADING_MESSSAGES(state, payload) {
+        state.loadingMessages = false
+    },
+    UNSHIFT_MESSAGE(state, payload) {
+        const messageExists = state.messages.find(item => {
+            return item.id == payload.id
+        })
+        if (!messageExists) {
+            state.messages.unshift(payload)
+        }
+    },
+    PUSH_MESSAGE(state, payload) {
+        const messageExists = state.messages.find(item => {
+            return item.id == payload.id
+        })
+        if (!messageExists) {
+            state.messages.push(payload)
+        }
+    },
+    UPDATE_MESSAGE(state, payload) {
+        const index = state.messages.findIndex(item => item.id === payload.id)
+        state.messages.splice(index, 1)
+        state.messages[index] = payload
+        console.log(state.messages)
     }
 }
 
 export const actions = {
-    getConversations({commit}) {
-        this.$axios.$get(`/api/v1/messages`).then(res => {
-            commit('SET_CONVERSATIONS', res.data.messages)
+    fetchConversations({ state, commit }) {
+        this.$axios.$get(`/api/v1/conversations`).then(res => {
+            commit('SET_CONVERSATIONS', res.data.conversations)
         })
     },
-    setActiveConversation({ commit }, conversationId) {
-        console.log('settings messages')
-        this.$axios.$get(`/api/v1/messages?user_id=${conversationId}`).then(res => {
-            commit('SET_MESSAGES_2', res.data.messages)
+    getActiveConversationMessages({ state, commit }, conversationId) {
+        commit('REMOVE_MESSAGES')
+        commit('LOADING_MESSSAGES')
+        commit('SET_ACTIVE_CONVERSATION_ID', conversationId)
+        this.$axios.$get(`/api/v1/conversations/${conversationId}`).then(res => {
+            if (res.data.messages.length > 0) {
+                res.data.messages.forEach(message => {
+                    commit('UNSHIFT_MESSAGE', message)
+                })
+            }
+            commit('END_LOADING_MESSSAGES')
+        })
+    },
+    seenNewMessage({ state, commit }, conversationId) {
+        this.$axios.$put(`/api/v1/seen-message`, { conversation_id: conversationId }).then(res => {
+            console.log(res)
         })
     }
 }
 
 export const getters = {
     getConversations (state) {
-        let conversations = []
-        state.messages.forEach(message => {
-            if (conversations.length === 0) {
-                let conversation = {
-                    id: message.receiver_user_id,
-                    personal_detail: message.receiver.personal_detail,
-                    messages: [message]
-                }
-                conversations.push(conversation)
-            } 
-            else if (conversations.length > 0) {
-                if (conversations.map(conversation => conversation.id).includes(message.receiver_user_id)) {
-                    conversations.find(conversation => conversation.id === message.receiver_user_id).messages.push(message)
-                }
-                else if (conversations.map(conversation => conversation.id).includes(message.sender_user_id)) {
-                    conversations.find(conversation => conversation.id === message.sender_user_id).messages.push(message)
-                }
-                else {
-                    let conversation = {
-                        id: message.receiver_user_id,
-                        personal_detail: message.receiver.personal_detail,
-                        messages: [message]
-                    }
-                    conversations.push(conversation)
-                }
-            } 
-        })
-        console.log(conversations)
-        return conversations
-        
+        return state.conversations
     },
 }

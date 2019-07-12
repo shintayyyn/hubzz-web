@@ -8,7 +8,7 @@
         :key="item.id"
         @click="goTo(item.id)"
       >
-        <div>{{item.personal_detail.name}}</div>
+        <div>{{item.group_name}}</div>
       </div>
     </div>
   </div>

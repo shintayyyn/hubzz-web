@@ -98,22 +98,48 @@ export default {
       }
     },
     "form.email"(value) {
+      // splice from formerror
+      let index = this.formError.findIndex(item => item.field === "email");
+      if (index >= 0) {
+        this.formError.splice(index, 1);
+      }
+      // validate
       if (!value) {
         this.formError.push({ field: "email", message: "Email is Required" });
       }
     },
 
     "form.password"(value) {
+      // splice from formerror
+      let index = this.formError.findIndex(item => item.field === "password");
+      if (index >= 0) {
+        this.formError.splice(index, 1);
+      }
+      // validate
       if (!value) {
+        // required
         this.formError.push({
           field: "password",
           message: "Password is Required"
+        });
+      } else if (value && value.length < 6) {
+        this.formError.push({
+          field: "password",
+          message: "Password Must Be Atleast 6 Characters"
         });
       }
     },
 
     "form.password_confirmation"(value) {
-      if (!value) {
+      // splice from formerror
+      let index = this.formError.findIndex(
+        item => item.field === "password_confirmation"
+      );
+      if (index >= 0) {
+        this.formError.splice(index, 1);
+      }
+      // validate
+      if (value != this.form.password) {
         this.formError.push({
           field: "password_confirmation",
           message: "Password do not match"
