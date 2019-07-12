@@ -60,6 +60,7 @@ export default {
         { name: 'Invite', route: '/invite' },
         { name: 'Contact Us', route: '/contact-us' }
       ]
+      
       if (domain === 'Practice' && isActivated === true) {
         addedLists = [
           { name: 'Profile', route: '/profile' },
@@ -68,16 +69,13 @@ export default {
           { name: 'Billing', route: '/billing' },
         ]
       } 
+
       if (domain === 'Locum') {
         addedLists = [
-          { name: "Profile", route: "/profile" },
-          { name: "My Banks", route: "/my-banks" },
-          { name: "Sessions", route: "/sessions" }
+          { name: "Compliance", route: "/compliance" },
         ];
       }
-      if (domain === "Locum") {
-        addedLists = [{ name: "Compliance", route: "/compliance" }];
-      }
+
       if (domain === "Locum" && accountStatus === "Active") {
         addedLists = [
           { name: 'Compliance', route: '/compliance' },
