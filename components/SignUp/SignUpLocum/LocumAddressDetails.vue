@@ -14,7 +14,7 @@
             :name="'post_code'"
             :label="'Post code'"
             @onSelect="onSelect"
-            :error="formError.find(error => error.name === 'post_code')"
+            :error="formError.find(error => error.field === 'post_code')"
             :inStyle="'background-color:#dae1e7;border-color:white'"
           />
           <AppInput
@@ -23,7 +23,7 @@
             :name="'address_line_1'"
             :label="'Address line 1'"
             :placeholder="''"
-            :error="formError.find(error => error.name === 'address_line_1')"
+            :error="formError.find(error => error.field === 'address_line_1')"
             :inStyle="'background-color:#dae1e7;border-color:white'"
           />
 
@@ -41,7 +41,7 @@
             :type="'text'"
             :name="'address_line_3'"
             :label="'City / Town / District'"
-            :error="formError.find(error => error.name === 'address_line_3')"
+            :error="formError.find(error => error.field === 'address_line_3')"
             :placeholder="''"
             :inStyle="'background-color:#dae1e7;border-color:white'"
           />
@@ -90,25 +90,45 @@ export default {
   },
   watch: {
     "form.post_code"(value) {
+      let index = this.formError.findIndex(item => item.field === "post_code");
+      if (index >= 0) {
+        this.formError.splice(index, 1);
+      }
       if (!value) {
         this.formError.push({
-          name: "post_code",
+          field: "post_code",
           message: "Post Code is Required"
         });
       }
     },
     "form.address_line_1"(value) {
+      // splice from formerror
+      let index = this.formError.findIndex(
+        item => item.field === "address_line_1"
+      );
+      if (index >= 0) {
+        this.formError.splice(index, 1);
+      }
+      // validate
       if (!value) {
         this.formError.push({
-          name: "address_line_1",
+          field: "address_line_1",
           message: "Address Line 1 is Required"
         });
       }
     },
     "form.address_line_3"(value) {
+      // splice from formerror
+      let index = this.formError.findIndex(
+        item => item.field === "address_line_3"
+      );
+      if (index >= 0) {
+        this.formError.splice(index, 1);
+      }
+      // validate
       if (!value) {
         this.formError.push({
-          name: "address_line_3",
+          field: "address_line_3",
           message: "City / Town / District is Required"
         });
       }
@@ -148,21 +168,21 @@ export default {
 
         if (!this.form.post_code) {
           this.formError.push({
-            name: "post_code",
+            field: "post_code",
             message: "Post Code is Required"
           });
         }
 
         if (!this.form.address_line_1) {
           this.formError.push({
-            name: "address_line_1",
+            field: "address_line_1",
             message: "Address Line 1 is Required"
           });
         }
 
         if (!this.form.address_line_3) {
           this.formError.push({
-            name: "address_line_3",
+            field: "address_line_3",
             message: "City / Town / District is Required"
           });
         }

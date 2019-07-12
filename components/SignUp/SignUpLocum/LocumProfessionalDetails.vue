@@ -273,6 +273,14 @@ export default {
   },
   watch: {
     "form.gmc_or_nmc_number"(value) {
+      // splice from formerror
+      let index = this.formError.findIndex(
+        item => item.field === "gmc_or_nmc_number"
+      );
+      if (index >= 0) {
+        this.formError.splice(index, 1);
+      }
+      // validate
       if (!value) {
         this.formError.push({
           field: "gmc_or_nmc_number",
@@ -282,6 +290,14 @@ export default {
     },
 
     "form.mpl_or_npl_number"(value) {
+      // splice from formerror
+      let index = this.formError.findIndex(
+        item => item.field === "mpl_or_npl_number"
+      );
+      if (index >= 0) {
+        this.formError.splice(index, 1);
+      }
+      // validate
       if (!value) {
         this.formError.push({
           field: "mpl_or_npl_number",
@@ -291,6 +307,14 @@ export default {
     },
 
     "form.profession_id"(value) {
+      // splice from formerror
+      let index = this.formError.findIndex(
+        item => item.field === "profession_id"
+      );
+      if (index >= 0) {
+        this.formError.splice(index, 1);
+      }
+      // validate
       if (!value) {
         this.formError.push({
           field: "profession_id",
@@ -300,6 +324,14 @@ export default {
     },
 
     "form.qualification_id"(value) {
+      // splice from formerror
+      let index = this.formError.findIndex(
+        item => item.field === "qualification_id"
+      );
+      if (index >= 0) {
+        this.formError.splice(index, 1);
+      }
+      // validate
       if (value.length < 1) {
         this.formError.push({
           field: "qualification_id",
@@ -309,6 +341,14 @@ export default {
     },
 
     "form.clinical_system_id"(value) {
+      // splice from formerror
+      let index = this.formError.findIndex(
+        item => item.field === "clinical_system_id"
+      );
+      if (index >= 0) {
+        this.formError.splice(index, 1);
+      }
+      // validate
       if (value.length < 1) {
         this.formError.push({
           field: "clinical_system_id",
@@ -318,11 +358,55 @@ export default {
     },
 
     "form.spoken_language_id"(value) {
+      // splice from formerror
+      let index = this.formError.findIndex(
+        item => item.field === "spoken_language_id"
+      );
+      if (index >= 0) {
+        this.formError.splice(index, 1);
+      }
+      // validate
       if (value.length < 1) {
         this.formError.push({
           field: "spoken_language_id",
           message: "Spoken Language is Required"
         });
+      }
+    },
+
+    "form.per_hour"(value) {
+      // splice from formerror
+      let index = this.formError.findIndex(item => item.field === "per_hour");
+      if (index >= 0) {
+        this.formError.splice(index, 1);
+      }
+      if (!value.min) {
+        this.formError.push({
+          field: "per_hour",
+          message: "Rate is Required"
+        });
+      } else if (!value.min >= this.form.per_hour.max) {
+        this.formError.push({ field: "per_hour", message: "asdda" });
+      }
+    },
+
+    "form.practice_type_id"(value) {
+      console.log(this.form.practice_type_id);
+
+      // splice from formerror
+      let index = this.formError.findIndex(
+        item => item.field === "practice_type_id"
+      );
+      if (index >= 0) {
+        this.formError.splice(index, 1);
+      }
+    },
+
+    "form.ir35"(value) {
+      // splice from formerror
+      let index = this.formError.findIndex(item => item.field === "ir35");
+      if (index >= 0) {
+        this.formError.splice(index, 1);
       }
     }
   },
@@ -351,20 +435,6 @@ export default {
           });
         }
 
-        // if (!this.isNumeric(this.form.gmc_or_nmc_number)) {
-        //   this.formError.push({
-        //     field: "gmc_or_nmc_number",
-        //     message: "Invalid GCM/NCM Number"
-        //   });
-        // }
-
-        // if (!this.isNumeric(this.form.mpl_or_npl_number)) {
-        //   this.formError.push({
-        //     field: "mpl_or_npl_number",
-        //     message: "Invalid MPL/NPL Number"
-        //   });
-        // }
-
         if (!this.form.profession_id) {
           this.formError.push({
             field: "profession_id",
@@ -372,21 +442,21 @@ export default {
           });
         }
 
-        if (!this.form.qualification_id) {
+        if (this.form.qualification_id.length < 1) {
           this.formError.push({
             field: "qualification_id",
             message: "Specialty is Required"
           });
         }
 
-        if (!this.form.clinical_system_id) {
+        if (this.form.clinical_system_id.length < 1) {
           this.formError.push({
             field: "clinical_system_id",
             message: "Clinical systems is Required"
           });
         }
 
-        if (!this.form.spoken_language_id) {
+        if (this.form.spoken_language_id.length < 1) {
           this.formError.push({
             field: "spoken_language_id",
             message: "Spoken Language is Required"

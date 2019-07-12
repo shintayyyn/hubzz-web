@@ -24,12 +24,18 @@ export default {
       if (!this.form.message) {
         return
       }
-      this.form.receiver_user_id = parseInt(this.$route.params.slug)
+      let activeConversation = this.$store.state.chat.conversations.find(item => item.id === parseInt(this.$store.state.chat.activeConversationId))
+
+      if (activeConversation.receiver_id === this.$auth.user.id) {
+        this.form.receiver_user_id = activeConversation.sender_id
+      } else {
+        this.form.receiver_user_id = activeConversation.receiver_id
+      }
       this.$axios.$post(`/api/v1/messages`, this.form).then(res => {
-        console.log('response form', res)
-        if (res.data.message.sender_user_id === this.$auth.user.id) {
-          this.$store.commit('chat/NEW_CHAT', res.data.message)
+        if (res.data.message.sender_id === this.$auth.user.id) {
+          this.$store.commit('chat/PUSH_MESSAGE', res.data.message)
           this.form.message = ''
+          this.form.receiver_user_id = ''
         }
       })
     }

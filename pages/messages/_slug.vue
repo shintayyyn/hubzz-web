@@ -17,13 +17,7 @@ export default {
       if (this.$route.params.slug !== undefined) {
         return true
       }
-    }
-  },
-  async asyncData({ app, params }) {
-    const response = await app.$axios.$get(`/api/v1/messages?user_id=${params.id}`)
-    const messages = response.data.messages
-    return {
-      messages
+      return this.$store.state.chat.activeConversationId != null
     }
   },
 }
