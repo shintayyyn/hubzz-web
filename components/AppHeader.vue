@@ -11,7 +11,7 @@
         <img src="/images/hubzz-icon-transparent.png" class="logo" />
       </div>
       <div class="w-full sm:w-1/3 text-right leading-loose">
-        <div class="flex flex-row justify-end" v-if="$auth.loggedIn">
+        <div class="flex flex-row justify-end items-center" v-if="$auth.loggedIn">
           <div
             class="text-xs xl:text-sm"
             v-if="$auth.user.domain === 'Practice' && $auth.user.is_actived === true"
@@ -24,7 +24,7 @@
           </div>
           <nuxt-link
             :to="'/messages'"
-            class="text-xs sm:text-sm mx-1 no-underline px-2 py-1 rounded-lg bg-yellow-dark"
+            class="text-xs sm:text-sm mx-1 no-underline px-2 py-1 rounded-lg bg-yellow-dark mx-4"
           >Messages</nuxt-link>
           <div class="text-xs xl:text-sm" v-if="$auth.user.domain === 'Locum'">{{$auth.user.email}}</div>
         </div>

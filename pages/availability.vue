@@ -1,18 +1,18 @@
 <template>
   <section class="relative">
-    <div class="px-10">
+    <div class="px-0 md:px-10">
       <div class="text-sm font-bold">I'm available for...</div>
     </div>
-    <div class="px-10 mt-5">
+    <div class="px-0 md:px-10 mt-5">
       <AvailabilityShift/>
     </div>
-    <div class="px-10 mt-5">
+    <div class="px-0 md:px-10 mt-5">
       <div class="text-sm font-bold">When I won't be available</div>
       <div
         class="text-sm"
       >Add a date range from the + button below or click on a date to add or remove</div>
     </div>
-    <div class="px-10 my-5">
+    <div class="px-0 md:px-10 my-5">
       <div class="availability-calendar relative rounded-lg shadow-lg p-5">
         <!-- @update="update" -->
         <AvailabilityCalendar @open="open"/>

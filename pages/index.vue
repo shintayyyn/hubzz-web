@@ -1,10 +1,10 @@
 <template>
   <section class="sign-in-card">
     <div class="flex flex-col">
-      <AuthTabs @nextTab="activeComponent = $event" :activeComponent="activeComponent"/>
-      <div class="px-5 mt-5">
+      <AuthTabs @nextTab="activeComponent = $event" :activeComponent="activeComponent" />
+      <div class="px-5 my-5">
         <transition name="fade" mode="out-in">
-          <Component :is="activeComponent"/>
+          <Component :is="activeComponent" />
         </transition>
       </div>
     </div>
@@ -12,11 +12,11 @@
 </template>
 
 <script>
-import AuthTabs from '@/components/Auth/AuthTabs'
-import SignIn from '@/components/Auth/SignIn'
-import SignUp from '@/components/Auth/SignUp'
+import AuthTabs from "@/components/Auth/AuthTabs";
+import SignIn from "@/components/Auth/SignIn";
+import SignUp from "@/components/Auth/SignUp";
 export default {
-  layout: 'auth',
+  layout: "auth",
   components: {
     AuthTabs,
     SignIn,
@@ -24,10 +24,10 @@ export default {
   },
   data() {
     return {
-      activeComponent: 'SignIn'
-    }
-  },
-}
+      activeComponent: "SignIn"
+    };
+  }
+};
 </script>
 <style scoped>
 .sign-in-card {
@@ -38,14 +38,14 @@ export default {
   bottom: 0;
   margin: auto;
   max-width: 600px;
-  height: 500px;
+  height: 700px;
   padding: 1px;
 }
 
 @media screen and (max-width: 1205px) {
   .sign-in-card {
     position: relative;
-    top: 30px;
+    top: 20px;
   }
 }
 </style>
