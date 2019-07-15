@@ -56,37 +56,36 @@ export default {
         { name: "Messages", route: "/messages" }
       ];
       let otherLists = [
-        { name: "FAQ", route: "/faq" },
-        { name: "Terms and Conditions", route: "/terms-and-conditions" },
-        { name: "Invite", route: "/invite" },
-        { name: "Contact Us", route: "/contact-us" }
-      ];
-      if (domain === "Practice" && isActivated === true) {
+        { name: 'FAQ', route: '/faq' },
+        { name: 'Terms and Conditions', route: '/terms-and-conditions' },
+        { name: 'Contact Us', route: '/contact-us' }
+      ]
+      
+      if (domain === 'Practice' && isActivated === true) {
         addedLists = [
-          { name: "Profile", route: "/profile" },
-          { name: "My Banks", route: "/my-banks" },
-          { name: "Sessions", route: "/sessions" },
-          { name: "Billing", route: "/billing" }
-        ];
-      }
-      if (domain === "Locum") {
-        addedLists = [
-          { name: "Profile", route: "/profile" },
-          { name: "My Banks", route: "/my-banks" },
-          { name: "Sessions", route: "/sessions" }
-        ];
-      }
-      if (domain === "Locum") {
-        addedLists = [{ name: "Compliance", route: "/compliance" }];
-      }
-      if (domain === "Locum" && accountStatus === "Active") {
+          { name: 'Profile', route: '/profile' },
+          { name: 'My Banks', route: '/my-banks' },
+          { name: 'Sessions', route: '/sessions' },
+          { name: 'Billing', route: '/billing' },
+          { name: 'Invite', route: '/invite' },
+        ]
+      } 
+
+      if (domain === 'Locum') {
         addedLists = [
           { name: "Compliance", route: "/compliance" },
-          { name: "My Practice", route: "/my-practice" },
-          { name: "Availability", route: "/availability" },
-          { name: "Jobs", route: "/jobs" },
-          { name: "Billing", route: "/billing" }
         ];
+      }
+
+      if (domain === "Locum" && accountStatus === "Active") {
+        addedLists = [
+          { name: 'Compliance', route: '/compliance' },
+          { name: 'My Practice', route: '/my-practice' },
+          { name: 'Availability', route: '/availability' },
+          { name: 'Jobs', route: '/jobs' },
+          { name: 'Billing', route: '/billing' },
+          { name: 'Invite', route: '/invite' },
+        ] 
       }
       this.lists = [...defaultLists, ...addedLists, ...otherLists];
     }
