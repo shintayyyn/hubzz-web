@@ -42,7 +42,7 @@ export default {
         console.log("practice user is authorized")
       }else if(domain === 'Locum' && accountStatus === "Active"){
         this.userIsAuthorized = true
-        console.log("locum user is not authorized")
+        console.log("locum user is authorized")
       }else{
         this.userIsAuthorized = false
         console.log("user is not authorized")
