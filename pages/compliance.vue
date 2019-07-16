@@ -32,17 +32,17 @@
       <div class="fixed text-white bg-red-light py-4 px-12 mr-10 md:mr-0 md:w-1/3 shadow" style="border-radius: 0 0 10px 10px">
         <span class="text-base font-bold">Failed to upload file</span>
         <div class="flex flex-wrap md:flex-no-wrap">
-        <div class="w-full md:w-2/3 text-sm mt-2">
-          <span>File format should be any of the following: </span>
-          <ul>
-            <li>.pdf</li>
-            <li>.jpeg</li>
-            <li>.msword</li>
-            <li>.tif</li>
-          </ul>
+          <div class="w-full md:w-2/3 text-sm mt-2">
+            <span>File format should be any of the following: </span>
+            <ul>
+              <li>.pdf</li>
+              <li>.jpeg</li>
+              <li>.msword</li>
+              <li>.tif</li>
+            </ul>
+          </div>
+          <button class="mx-auto md:mx-10 md:absolute pin-r pin-b w-32 my-2 md:my-10 p-4 text-sm rounded-lg shadow border border-white text-white hover:bg-white hover:text-black" @click="showErrorModal = false">Okay</button>
         </div>
-        <button class="mx-auto md:mx-10 md:absolute pin-r pin-b w-32 my-2 md:my-10 p-4 text-sm rounded-lg shadow border border-white text-white hover:bg-white hover:text-black" @click="showErrorModal = false">Okay</button>
-     </div>
       </div>
     </div>
     <div class="mt-10">

@@ -26,16 +26,33 @@
             </div>
           </div>
         </div>
+        <div v-if="showErrorModal" class="absolute pin-t" >
+          <div class="fixed text-white bg-red-light py-4 px-12 mr-10 md:mr-0 md:w-1/3 shadow" style="border-radius: 0 0 10px 10px">
+            <span class="text-base font-bold">Failed to upload file</span>
+            <div class="flex flex-wrap md:flex-no-wrap">
+              <div class="w-full md:w-2/3 text-sm mt-2">
+                <span>File format should be any of the following: </span>
+                <ul>
+                  <li>.pdf</li>
+                  <li>.jpeg</li>
+                  <li>.msword</li>
+                  <li>.tif</li>
+                </ul>
+              </div>
+              <button class="mx-auto md:mx-10 md:absolute pin-r pin-b w-32 my-2 md:my-10 p-4 text-sm rounded-lg shadow border border-white text-white hover:bg-white hover:text-black" @click="showErrorModal = false">Okay</button>
+            </div>
+          </div>
+        </div>
         <div class="w-full md:w-2/5 p-2">
           <div class="rounded-lg shadow-lg p-8">
             <div class="flex flex-col">
               <div class="text-xs sm:text-sm">Your Practice's standard terms</div>
-              <div class="mt-4 bg-grey-lighter rounded-lg p-4 cursor-pointer">
+              <div class="mt-4 bg-grey-lighter rounded-lg p-4 ">
                 <div class="flex flex-nowrap justify-between">
                   <div
-                    class="text-xs sm:text-sm hover:underline document-filename"
-                  >{{standard_terms && standard_terms.file ? standard_terms.file.filename : ''}}</div>
-                  <div class="font-bold text-md sm:text-lg hover:null" @click="modal = true">X</div>
+                    class="text-xs sm:text-sm document-filename"
+                  >{{ standard_terms && standard_terms.file ? standard_terms.file.filename : '' }}</div>
+                  <div class="font-bold text-md sm:text-lg hover:null cursor-pointer ml-2" @click="modal = true">X</div>
                 </div>
               </div>
               <div></div>
@@ -211,8 +228,9 @@ export default {
       },
       mandatory_training: [],
       name: '',
-      formError: []
-    }
+      formError: [],
+      showErrorModal: false
+    };
   },
   watch: {
     modal(value) {
@@ -223,7 +241,7 @@ export default {
     // get default data 
     this.$axios.$get(`/api/v1/me`).then(res => {
       console.log(res)
-      this.standard_terms = res.data.user.practice_detail.practice.standard_terms
+      // this.standard_terms = res.data.user.practice_detail.practice.standard_terms
       this.practice_detail.name = res.data.user.practice_detail.practice.surgery.name
       this.practice_detail.code = res.data.user.practice_detail.practice.surgery.code
       this.practice_detail.address = res.data.user.practice_detail.practice.surgery.address
@@ -296,14 +314,16 @@ export default {
       let file = e.target.files[0]
       let fileType = file.type.split('/')[1]
       if (!types.includes(fileType)) {
+        this.showErrorModal = true;
         return
       }
-      this.standard_terms.file.filename = file.name
       const formData = new FormData()
       formData.append('file', file)
       this.$axios.$put(`/api/v1/practice/me/standard-terms`, formData).then(res => {
         this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: res.message })
       })
+      this.standard_terms.file.filename = file.name
+      console.log(file.name)
     },
     uncheckPractice(value) {
       this.form.practice_type_id = this.form.practice_type_id.filter(id => id != value)
@@ -322,6 +342,8 @@ export default {
       this.$axios.$delete(`/api/v1/practice/me/standard-terms`).then(res => {
         this.modal = false
         this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: res.message })
+        this.standard_terms.file.filename = null
+        console.log(this.standard_terms)
       })
     },
     save() {
