@@ -521,7 +521,8 @@ export default {
       this.form.mandatory_training_id = this.form.mandatory_training_id.map(item => item.value)
       this.form.date_start = this.$moment(this.form.date_start).format('YYYY-MM-DD')
       this.form.date_end = this.$moment(this.form.date_end).format('YYYY-MM-DD')
-      this.form.selection_date = this.$moment(this.form.selection_date).format('YYYY-MM-DD')
+      this.form.selection_date = this.$moment(this.form.selection_date).format('YYYY-MM-DD HH:mm:ss')
+      this.form.auto_assign_at = this.$moment(this.form.auto_assign_at).format('YYYY-MM-DD HH:mm:ss')
       this.form.session_requirements.length > 0 ? this.form.session_requirements = this.form.session_requirements.join() : this.form.session_requirements = ''
       this.unpaid_breaks !== 'other' ? this.form.unpaid_breaks_in_minutes = this.unpaid_breaks : this.form.unpaid_breaks_in_minutes = this.form.unpaid_breaks_in_minutes
       console.log(this.form)

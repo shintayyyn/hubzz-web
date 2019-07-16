@@ -77,7 +77,7 @@ export default {
         ];
       }
 
-      if (domain === "Locum" && accountStatus === "Active") {
+      if (domain === "Locum" && accountStatus === "Active" || accountStatus === "Dormant") {
         addedLists = [
           { name: 'Compliance', route: '/compliance' },
           { name: 'My Practice', route: '/my-practice' },
