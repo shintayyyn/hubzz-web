@@ -97,31 +97,34 @@ export default {
           this.$axios
             .$post("/api/v1/login", this.form)
             .then(async res => {
-              console.log(res);
-              const token = res.data.token.token;
-              this.$axios.setToken(token, "Bearer");
-              this.$auth.$storage.setUniversal(
-                "_token.local",
-                "Bearer " + token
-              );
-              await this.$auth.fetchUser();
-              this.$router.push("/dashboard");
-
-              if (this.$socket.connected) {
-                await this.$axios.post("/api/v1/socket/login", {
-                  socket_id: this.$socket.id
-                });
-
-                console.log("Socket Logged In");
-              }
-
+              //  if(res.data.user.is_email_verified === false){
+              //   console.log(res)
+              //   this.formError.push({field: "email", message: "Email is not yet verified. Check your email and verify your account first."})
+              // } else{
+                console.log(res);
+                const token = res.data.token.token;
+                this.$axios.setToken(token, "Bearer");
+                this.$auth.$storage.setUniversal(
+                  "_token.local",
+                  "Bearer " + token
+                );
+                await this.$auth.fetchUser();
+                this.$router.push("/dashboard");
+                if (this.$socket.connected) {
+                  await this.$axios.post("/api/v1/socket/login", {
+                    socket_id: this.$socket.id
+                  });
+                  console.log("Socket Logged In");
+                }
               await this.$store.dispatch("one-signal/setOneSignalUser");
+              // }
             })
             .catch(err => {
               err.response.data.error_messages.forEach(error => {
                 this.formError.push(error);
               });
             });
+            
         }
       } catch (e) {
         console.log(e);

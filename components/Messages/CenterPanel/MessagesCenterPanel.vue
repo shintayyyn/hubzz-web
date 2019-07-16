@@ -1,7 +1,11 @@
 <template>
   <div class="messages-center-panel">
-    <MessagesCenterPanelChat />
-    <MessagesCenterPanelForm />
+    <MessagesCenterPanelChat
+      :messages="messages"
+      @delete-confirmation="$emit('delete-confirmation', $event)"
+      @fetch-more-messages="$emit('fetch-more-messages')"
+    />
+    <MessagesCenterPanelForm @send-message="$emit('send-message', $event)" />
   </div>
 </template>
 <script>
@@ -12,6 +16,7 @@ export default {
     MessagesCenterPanelChat,
     MessagesCenterPanelForm,
   },
+  props: ['messages']
 }
 </script>
 <style scoped>
@@ -19,10 +24,7 @@ export default {
   padding-left: 50px;
   width: 70%;
   float: left;
+  height: 100vh;
   /* border: 1px solid black; */
-}
-.chat-message-lists {
-  overflow-y: auto;
-  height: 500px;
 }
 </style>
