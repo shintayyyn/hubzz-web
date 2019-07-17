@@ -41,6 +41,14 @@
             :items="practice_roles"
             :error="this.formError.find(item => item.field === 'practice_role')"
           />
+          <AppFilterSearch
+            v-model="form.practice_list"
+            :name="'practice_type_id'"
+            :label="'What type of Practice(s) do you do?'"
+            :placeholder="'Select...'"
+            :error="formError.find(item => item.field === 'practice_type_id')"
+            :items="practice_list"
+          />
           <AppInput
             v-model="form.email"
             :type="'email'"
@@ -79,98 +87,131 @@
     </div>
 
     <div class="flex justify-center mt-4">
-      <AppButton :label="'<<'" @click="$emit('nextTab', 'PracticeDetails')"/>
+      <AppButton :label="'<<'" @click="$emit('nextTab', 'PracticeDetails')" />
       <div class="mx-2"></div>
-      <AppButton :label="'Next'" @click="signUp"/>
+      <AppButton :label="'Next'" @click="signUp" />
     </div>
   </div>
 </template>
 <script>
-import AppInput from '@/components/Base/AppInput'
-import AppSelect from '@/components/Base/AppSelect'
-import AppButton from '@/components/Base/AppButton'
+import AppInput from "@/components/Base/AppInput";
+import AppSelect from "@/components/Base/AppSelect";
+import AppButton from "@/components/Base/AppButton";
+import AppFilterSearch from "@/components/Base/AppFilterSearch";
 const practice_roles = [
-  { value: 'Partner', label: 'Partner' },
-  { value: 'Practice Manager', label: 'Practice Manager' },
-  { value: 'Practice Staff', label: 'Practice Staff' }
-]
+  { value: "Partner", label: "Partner" },
+  { value: "Practice Manager", label: "Practice Manager" },
+  { value: "Practice Staff", label: "Practice Staff" }
+];
+// const practice_list = [
+//   { value: "Partner", label: "Partner" },
+//   { value: "Practice Manager", label: "Practice Manager" },
+//   { value: "Practice Staff", label: "Practice Staff" }
+// ];
 export default {
   components: {
     AppInput,
     AppSelect,
-    AppButton
+    AppButton,
+    AppFilterSearch
   },
   data() {
     return {
+      // pratice_types: [],
       practice_roles,
       form: {
-        title: '',
-        first_name: '',
-        last_name: '',
-        suffix: '',
-        practice_role: '',
-        email: '',
-        password: '',
-        password_confirmation: '',
+        practice_list: [],
+        title: "",
+        first_name: "",
+        last_name: "",
+        suffix: "",
+        practice_role: "",
+        // practice_type_id: [],
+        email: "",
+        password: "",
+        password_confirmation: "",
         privacy_policy: false
       },
       formError: []
-    }
+    };
   },
   computed: {
+    practiceTypes() {
+      return this.$store.getters["signUp/getPracticeTypes"];
+    },
     practiceAccountDetails() {
-      return this.$store.state.signUp.practice_account_details
+      return this.$store.state.signUp.practice_account_details;
     },
     practiceAccountFormError() {
-      return this.$store.state.signUp.practice_account_detail_form_error
+      return this.$store.state.signUp.practice_account_detail_form_error;
     }
+  },
+  created() {
+    this.practice_list = this.practiceTypes;
+    // this.pratice_types = this.practiceTypes;
+    this.practiceAccountDetails.practice_type_id.forEach(id => {
+      this.form.practice_type_id.push(
+        this.practiceTypes.find(item => item.value === id)
+      );
+    });
   },
   watch: {
     practiceAccountFormError(value) {
       if (value.length > 0) {
         value.forEach(item => {
-          this.formError.push(item)
-        })
+          this.formError.push(item);
+        });
       }
-    },
+    }
   },
   mounted() {
-    this.form.title = this.practiceAccountDetails.title
-    this.form.first_name = this.practiceAccountDetails.first_name
-    this.form.last_name = this.practiceAccountDetails.last_name
-    this.form.suffix = this.practiceAccountDetails.suffix
-    this.form.practice_role = this.practiceAccountDetails.practice_role
-    this.form.email = this.practiceAccountDetails.email
-    this.form.password = this.practiceAccountDetails.password
-    this.form.password_confirmation = this.practiceAccountDetails.password_confirmation
+    this.form.title = this.practiceAccountDetails.title;
+    this.form.first_name = this.practiceAccountDetails.first_name;
+    this.form.last_name = this.practiceAccountDetails.last_name;
+    this.form.suffix = this.practiceAccountDetails.suffix;
+    this.form.practice_role = this.practiceAccountDetails.practice_role;
+    this.form.practice_type_id = this.practiceAccountDetails.practice_type_id;
+    this.form.email = this.practiceAccountDetails.email;
+    this.form.password = this.practiceAccountDetails.password;
+    this.form.password_confirmation = this.practiceAccountDetails.password_confirmation;
 
     if (this.practiceAccountFormError.length > 0) {
       this.practiceAccountFormError.forEach(item => {
-        this.formError.push(item)
-      })
+        this.formError.push(item);
+      });
     }
   },
   methods: {
     // ! ask arvi unknown column 'normalized email'
     signUp() {
       try {
-        this.formError = []
+        this.formError = [];
         // this.Validate(this.form, ['title', 'suffix'])
         // this.ValidateSamePassword(this.form.password, this.form.password_confirmation)
+        console.log(this.form);
         if (!this.formError.length) {
-          this.$store.commit('signUp/SET_PRACTICE_ACCOUNT_DETAILS', this.form)
+          if (this.form.practice_list < 1) {
+            this.formError.push({
+              field: "practice_type_id",
+              message: "Practice Type is Required"
+            });
+          }
+          this.form.practice_type_id = this.form.practice_list
+            ? this.form.practice_list.map(item => item.value)
+            : [];
+          this.$store.commit("signUp/SET_PRACTICE_ACCOUNT_DETAILS", this.form);
           setTimeout(() => {
-            this.$store.dispatch('signUp/registeredPractice')
-          }, 1000)
+            this.$store.dispatch("signUp/registeredPractice");
+          }, 1000);
           // response here
           // this.$router.push('/sign-up/success')
         }
       } catch (e) {
-        console.log(e)
+        console.log(e);
       }
     }
   }
-}
+};
 </script>
 <style scoped>
 button:active {

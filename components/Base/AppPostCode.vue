@@ -2,6 +2,9 @@
   <div class="flex flex-col py-2 mb-6" v-on-clickaway="toggledOff">
     <div class="relative flex flex-row flex-nowrap justify-between">
       <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
+      <div class="flex">
+        <div class="bg-red ml-2 p-1 text-xs sm:text-base text-white" v-if="error">{{error.message}}</div>
+      </div>
     </div>
     <div class="flex flex-row justify-start mt-1">
       <input
@@ -13,7 +16,7 @@
         :style="inStyle"
         @focus="toggledOn"
         @keydown="handleKeyDownEvent"
-      >
+      />
     </div>
     <transition name="fade">
       <div class="relative z-10" v-if="showLists">
@@ -27,7 +30,7 @@
             @click="add()"
           >
             <div class="icon">
-              <img :src="item.details.result.icon">
+              <img :src="item.details.result.icon" />
             </div>
             <div class="leading-normal mx-2">
               <span
@@ -45,7 +48,7 @@
   </div>
 </template>
 <script>
-import debounce from 'lodash.debounce'
+import debounce from "lodash.debounce";
 import { mixin as clickaway } from "vue-clickaway";
 export default {
   mixins: [clickaway],
@@ -54,64 +57,68 @@ export default {
     name: String,
     label: String,
     error: Object,
-    inStyle: String,
+    inStyle: String
   },
   data() {
     return {
-      search: '',
+      search: "",
       showLists: false,
       predictions: [],
       activeIndex: 0
-    }
+    };
   },
   watch: {
     value(post_code) {
-      this.search = post_code
+      this.search = post_code;
     },
     search(value) {
       if (value) {
-        this.getPredictions(value)
+        this.getPredictions(value);
       } else {
-        this.showLists = false
+        this.showLists = false;
       }
     }
   },
   methods: {
     add() {
-      let selectedPostCode = this.predictions[this.activeIndex]
-      this.predictions = []
-      this.showLists = false
-      this.$emit('onSelect', selectedPostCode)
+      let selectedPostCode = this.predictions[this.activeIndex];
+      this.predictions = [];
+      this.showLists = false;
+      this.$emit("onSelect", selectedPostCode);
     },
-    getPredictions: debounce(function (input) {
+    getPredictions: debounce(function(input) {
       const params = {
         input: input
-      }
-      this.$axios
-        .$get(`/api/v1/predictions`, { params })
-        .then(res => {
-          if (res.predictions.length > 0) {
-            this.predictions = res.predictions
-            this.showLists = true
-          } else {
-            this.predictions = []
-            this.showLists = false
-          }
-        })
+      };
+      this.$axios.$get(`/api/v1/predictions`, { params }).then(res => {
+        if (res.predictions.length > 0) {
+          this.predictions = res.predictions;
+          this.showLists = true;
+        } else {
+          this.predictions = [];
+          this.showLists = false;
+        }
+      });
     }, 250),
     toggledOn() {
       if (this.search.length) {
-        this.showLists = true
+        this.showLists = true;
       }
     },
     toggledOff() {
-      this.showLists = false
+      this.showLists = false;
     },
     mainTextFormat(str, matchLength) {
-      return `<strong>${str.slice(0, matchLength)}</strong>${str.slice(matchLength, str.length)}`
+      return `<strong>${str.slice(0, matchLength)}</strong>${str.slice(
+        matchLength,
+        str.length
+      )}`;
     },
     subTextFormat(str, matchLength) {
-      return `<strong>${str.slice(0, matchLength)}</strong>${str.slice(matchLength, str.length)}`
+      return `<strong>${str.slice(0, matchLength)}</strong>${str.slice(
+        matchLength,
+        str.length
+      )}`;
     },
     handleKeyDownEvent(e) {
       if (!this.showLists) {
@@ -119,27 +126,27 @@ export default {
       }
       if (event.key === "ArrowUp") {
         if (this.activeIndex === 0) {
-          this.activeIndex = 4
+          this.activeIndex = 4;
         } else {
           this.activeIndex--;
         }
       }
       if (event.key === "ArrowDown") {
         if (this.activeIndex === 4) {
-          this.activeIndex = 0
+          this.activeIndex = 0;
         } else {
           this.activeIndex++;
         }
       }
       if (event.key === "Enter") {
-        this.add()
+        this.add();
       }
       if (event.key === "Escape" || event.key === "Tab") {
-        this.toggledOff()
+        this.toggledOff();
       }
-    },
+    }
   }
-}
+};
 </script>
 <style scoped>
 .icon {

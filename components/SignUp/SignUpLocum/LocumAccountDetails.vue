@@ -18,25 +18,27 @@
           <AppInput
             v-model="form.title"
             :type="'text'"
-            :name="'title'"
+            name="'title'"
             :label="'Title'"
             :placeholder="'(ex. Mr., Ms., Mrs.)'"
           />
+
           <AppInput
             v-model="form.first_name"
             :type="'text'"
             :name="'first_name'"
             :label="'First name'"
             :placeholder="'Your first name'"
-            :error="formError.find(item => item.field === 'first_name')"
+            :error="formError.find(error => error.field === 'first_name')"
           />
+
           <AppInput
             v-model="form.last_name"
             :type="'text'"
             :name="'last_name'"
             :label="'Last name'"
             :placeholder="'Your last name'"
-            :error="formError.find(item => item.field === 'last_name')"
+            :error="formError.find(error => error.field === 'last_name')"
           />
           <AppInput
             v-model="form.suffix"
@@ -50,16 +52,16 @@
             :name="'gender'"
             :label="'Gender'"
             :placeholder="'Select'"
-            :error="formError.find(item => item.field === 'gender')"
+            :error="formError.find(error => error.field === 'gender')"
             :items="genders"
           />
           <AppInput
-            v-model="form.mobile_number"
+            v-model.number="form.mobile_number"
             :type="'text'"
             :name="'mobile_number'"
             :label="'Mobile'"
             :placeholder="''"
-            :error="formError.find(item => item.field === 'mobile_number')"
+            :error="formError.find(error => error.field === 'mobile_number')"
             :info="'In case of emergency'"
           />
         </form>
@@ -67,18 +69,18 @@
     </div>
 
     <div class="flex justify-center mt-4">
-      <AppButton :label="'Next'" @click="next"/>
+      <AppButton :label="'Next'" @click="next" />
     </div>
   </div>
 </template>
 <script>
-import AppInput from '@/components/Base/AppInput'
-import AppSelect from '@/components/Base/AppSelect'
-import AppButton from '@/components/Base/AppButton'
+import AppInput from "@/components/Base/AppInput";
+import AppSelect from "@/components/Base/AppSelect";
+import AppButton from "@/components/Base/AppButton";
 const genders = [
-  { value: 'Male', label: 'Male' },
-  { value: 'Female', label: 'Female' }
-]
+  { value: "Male", label: "Male" },
+  { value: "Female", label: "Female" }
+];
 export default {
   components: {
     AppInput,
@@ -89,52 +91,142 @@ export default {
     return {
       genders,
       form: {
-        title: '',
-        first_name: '',
-        last_name: '',
-        suffix: '',
-        gender: '',
-        mobile_number: ''
+        title: "",
+        first_name: "",
+        last_name: "",
+        suffix: "",
+        gender: "",
+        mobile_number: ""
       },
       formError: []
-    }
+    };
   },
   computed: {
     accountDetails() {
-      return this.$store.state.signUp.account_details
+      return this.$store.state.signUp.account_details;
     },
     accountFormError() {
-      return this.$store.state.signUp.account_detail_form_error
+      return this.$store.state.signUp.account_detail_form_error;
+    }
+  },
+  watch: {
+    "form.first_name"(value) {
+      // splice from formerror
+      let index = this.formError.findIndex(item => item.field === "first_name");
+      if (index >= 0) {
+        this.formError.splice(index, 1);
+      }
+      // validate
+      if (!value) {
+        // required
+        this.formError.push({
+          field: "first_name",
+          message: "First Name is Required"
+        });
+      }
+    },
+    "form.last_name"(value) {
+      // splice from formerror
+      let index = this.formError.findIndex(item => item.field === "last_name");
+      if (index >= 0) {
+        this.formError.splice(index, 1);
+      }
+      // validate
+      if (!value) {
+        // required
+        this.formError.push({
+          field: "last_name",
+          message: "Last Name is Required"
+        });
+      }
+    },
+    "form.gender"(value) {
+      // splice from formerror
+      let index = this.formError.findIndex(item => item.field === "gender");
+      if (index >= 0) {
+        this.formError.splice(index, 1);
+      }
+      // validate
+      if (!value) {
+        // required
+        this.formError.push({ field: "gender", message: "Gender is Required" });
+      }
+    },
+    "form.mobile_number"(value) {
+      // splice from formerror
+      let index = this.formError.findIndex(
+        item => item.field === "mobile_number"
+      );
+      if (index >= 0) {
+        this.formError.splice(index, 1);
+      }
+      // validate
+      if (!value) {
+        // required
+        this.formError.push({
+          field: "mobile_number",
+          message: "Mobile Number is Required"
+        });
+      }
     }
   },
   mounted() {
-    this.form.title = this.accountDetails.title
-    this.form.first_name = this.accountDetails.first_name
-    this.form.last_name = this.accountDetails.last_name
-    this.form.suffix = this.accountDetails.suffix
-    this.form.gender = this.accountDetails.gender
-    this.form.mobile_number = this.accountDetails.mobile_number
+    this.form.title = this.accountDetails.title;
+    this.form.first_name = this.accountDetails.first_name;
+    this.form.last_name = this.accountDetails.last_name;
+    this.form.suffix = this.accountDetails.suffix;
+    this.form.gender = this.accountDetails.gender;
+    this.form.mobile_number = this.accountDetails.mobile_number;
 
     if (this.accountFormError.length > 0) {
       this.accountFormError.forEach(item => {
-        this.formError.push(item)
-      })
+        this.formError.push(item);
+      });
     }
   },
   methods: {
     next() {
       try {
-        this.formError = []
-        // this.Validate(this.form, ['title', 'suffix'])
-        // this.ValidateMobile(this.form.mobile_number, 'mobile_number')
+        this.formError = [];
+
+        if (!this.form.first_name) {
+          this.formError.push({
+            field: "first_name",
+            message: "First Name is Required"
+          });
+        }
+        if (!this.form.last_name) {
+          this.formError.push({
+            field: "last_name",
+            message: "Last Name is Required"
+          });
+        }
+        if (!this.form.gender) {
+          this.formError.push({
+            field: "gender",
+            message: "Gender is Required"
+          });
+        }
+        if (!this.form.mobile_number) {
+          this.formError.push({
+            field: "mobile_number",
+            message: "Mobile Number is Required"
+          });
+        }
+
         if (!this.formError.length) {
-          this.$store.commit('signUp/SET_ACCOUNT_DETAILS', this.form)
-          this.$emit('nextTab', 'LocumAddressDetails')
+          this.form.mobile_number = this.form.mobile_number.toString();
+          this.$store.commit("signUp/SET_ACCOUNT_DETAILS", this.form);
+          this.$store.commit(
+            "signUp/SET_ACTIVE_COMPONENT",
+            "LocumAddressDetails"
+          );
+          // this.$emit("nextTab", "LocumAddressDetails");
         }
       } catch (e) {
-        console.log(e)
+        console.log(e);
       }
     }
   }
-}
+};
 </script>

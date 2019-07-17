@@ -6,7 +6,7 @@
         <label :for="name" class="text-xs sm:text-base py-1">{{label}}</label>
         <div class="bg-grey-light rounded-lg p-1 text-xs sm:text-sm" v-if="info">{{info}}</div>
         <div
-          class="absolute pin-r bg-red p-1 text-xs sm:text-base text-white"
+          class="absolute pin-r bg-red p-1 text-xs sm:text-sm text-white"
           v-if="error"
         >{{error.message}}</div>
       </div>
@@ -42,8 +42,8 @@ export default {
     items: Array,
     info: String,
     inStyle: String
-  },
-}
+  }
+};
 </script>
 <style scoped>
 </style>

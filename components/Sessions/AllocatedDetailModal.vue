@@ -135,12 +135,12 @@
             <div class="mt-4">
               <!-- google map -->
               <GmapMap
-                :center="{lat:latLang.x, lng:latLang.y}"
+                :center="{lat:latLang.y, lng:latLang.x}"
                 :zoom="15"
                 map-type-id="terrain"
                 style="width: 100%; height:300px"
               >
-                <GmapMarker :position="google && new google.maps.LatLng(latLang.x, latLang.y)" />
+                <GmapMarker :position="google && new google.maps.LatLng(latLang.y, latLang.x)"/>
               </GmapMap>
             </div>
           </div>

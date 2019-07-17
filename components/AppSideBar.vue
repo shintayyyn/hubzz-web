@@ -2,10 +2,10 @@
   <div class="sidebar" :class="{'toggled-left': $store.state.toggled_sidebar}">
     <div class="sidebar-nav">
       <div
-        class="close-button cursor-pointer text-2xl font-bold text-yellow-dark mt-5 px-4 mb-24"
+        class="close-button cursor-pointer text-2xl font-bold text-yellow-dark mt-3 md:mt-5 px-4 md:mb-24"
         @click="close"
       >X</div>
-      <div class="mt-20"></div>
+      <div class="md:mt-20"></div>
       <div v-for="(item, index) in lists" :key="index" class="text-sm relative">
         <span
           class="absolute inset-y-0 left-0 border-solid bg-yellow-dark w-1 h-full"
@@ -40,55 +40,67 @@ export default {
   data() {
     return {
       lists: []
-    }
+    };
   },
   created() {
+    console.log(this.$auth.user);
     if (this.$auth.loggedIn) {
+      let domain = this.$auth.user.domain;
+      let isActivated = this.$auth.user.is_actived;
+      let accountStatus = this.$auth.user.status;
 
-      let domain = this.$auth.user.domain
-      let isActivated = this.$auth.user.is_activated
-      let addedLists = []
+      let addedLists = [];
       let defaultLists = [
-        { name: 'Dashboard', route: '/dashboard' },
-        { name: 'Account', route: '/account' },
-        { name: 'Messages', route: '/messages' },
-      ]
+        { name: "Dashboard", route: "/dashboard" },
+        { name: "Account", route: "/account" },
+        { name: "Messages", route: "/messages" }
+      ];
       let otherLists = [
-        { name: 'Billing', route: '/billing' },
         { name: 'FAQ', route: '/faq' },
         { name: 'Terms and Conditions', route: '/terms-and-conditions' },
-        { name: 'Invite', route: '/invite' },
         { name: 'Contact Us', route: '/contact-us' }
       ]
-      if (domain === 'Practice') {
+      
+      if (domain === 'Practice' && isActivated === true) {
         addedLists = [
           { name: 'Profile', route: '/profile' },
           { name: 'My Banks', route: '/my-banks' },
-          { name: 'Sessions', route: '/sessions' }
+          { name: 'Sessions', route: '/sessions' },
+          { name: 'Billing', route: '/billing' },
+          { name: 'Invite', route: '/invite' },
         ]
-      } else if (domain === 'Locum') {
+      } 
+
+      if (domain === 'Locum') {
+        addedLists = [
+          { name: "Compliance", route: "/compliance" },
+        ];
+      }
+
+      if (domain === "Locum" && accountStatus === "Active" || accountStatus === "Dormant") {
         addedLists = [
           { name: 'Compliance', route: '/compliance' },
           { name: 'My Practice', route: '/my-practice' },
           { name: 'Availability', route: '/availability' },
-          { name: 'Jobs', route: '/jobs' }
-        ]
+          { name: 'Jobs', route: '/jobs' },
+          { name: 'Billing', route: '/billing' },
+          { name: 'Invite', route: '/invite' },
+        ] 
       }
-      this.lists = [...defaultLists, ...addedLists, ...otherLists]
+      this.lists = [...defaultLists, ...addedLists, ...otherLists];
     }
-
   },
   methods: {
     signout() {
-      this.$emit('modal', true)
+      this.$emit("modal", true);
       // this.$store.commit('TOGGLE_SIGNOUT', true)
     },
     close() {
-      this.$store.commit('TOGGLE_SIDEBAR', false)
-      document.body.style.overflow = 'auto'
+      this.$store.commit("TOGGLE_SIDEBAR", false);
+      document.body.style.overflow = "auto";
     }
   }
-}
+};
 </script>
 <style scoped>
 .sidebar {

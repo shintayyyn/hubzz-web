@@ -119,15 +119,15 @@
               class="text-sm sm:text-md"
             >{{practice.surgery.address.line_1}} {{practice.surgery.address.line_2}} {{practice.surgery.address.line_3}} {{practice.surgery.address.post_code}}</div>
             <div class="mt-4">
-              <!-- google map -->
-              <GmapMap
-                :center="{lat:latLang.x, lng:latLang.y}"
-                :zoom="15"
-                map-type-id="terrain"
-                style="width: 100%; height:300px"
-              >
-                <GmapMarker :position="google && new google.maps.LatLng(latLang.x, latLang.y)"/>
-              </GmapMap>
+               <!-- google map -->
+                <GmapMap
+                  :center="{lat:latLang.y,lng:latLang.x}"
+                  :zoom="15"
+                  map-type-id="terrain"
+                  style="width: 100%; height:200px"
+                >
+                  <GmapMarker :position="google && new google.maps.LatLng(latLang.y, latLang.x)"/>
+                </GmapMap>
             </div>
           </div>
           <div class="rounded-lg shadow-lg p-8 mt-8">
