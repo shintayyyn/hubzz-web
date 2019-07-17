@@ -1,15 +1,15 @@
 <template>
   <section class="forgot-password-section">
-    <div class="p-10">
+    <div class="p-6 md:p-10">
       <nuxt-link to="/" class="focus:outline-none text-black">
         <svgicon name="left-arrow" height="32" width="32" />
       </nuxt-link>
-      <div class="flex flex-col mt-32">
+      <div class="flex flex-col mt-4 md:mt-32">
         <div class="flex justify-center">
-          <div class="font-bold text-3xl" style="width:70%">Reset password</div>
+          <div class="font-bold text-3xl w-full md:w-2/3">Reset password</div>
         </div>
         <div class="flex justify-center">
-          <div class="mt-5 rounded-lg shadow-md py-10 px-8" style="width:70%">
+          <div class="mt-5 rounded-lg shadow-md py-10 px-8 md:w-2/3">
             <template v-if="success">
               <div>
                 Check your email inbox for further instructions
@@ -24,7 +24,7 @@
 
               <form class="w-full">
                 <div
-                  class="relative flex flex-col mt-8 border-b-2 border-white"
+                  class="relative flex flex-col mt-8 border-b-2 border-grey-light"
                   :class="[setFocus === 'email' ? 'border-yellow':'', formError.find(item => item.field === 'email') ? 'border-red':'']"
                 >
                   <label for="email" class="text-lg mb-4">Email address</label>

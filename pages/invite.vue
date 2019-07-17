@@ -23,6 +23,7 @@ export default {
     InviteLocums,
     InvitePractices,
     InviteSuccess
-  }
+  },
+  middleware:'isVerified',
 }
 </script>

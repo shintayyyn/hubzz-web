@@ -30,6 +30,7 @@ export default {
     TaxReports,
     AddInvoiceModal,
   },
+  middleware:'isVerified',
   data() {
     return {
       modal: false

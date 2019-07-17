@@ -2,10 +2,10 @@
   <div class="sidebar" :class="{'toggled-left': $store.state.toggled_sidebar}">
     <div class="sidebar-nav">
       <div
-        class="close-button cursor-pointer text-2xl font-bold text-yellow-dark mt-5 px-4 mb-24"
+        class="close-button cursor-pointer text-2xl font-bold text-yellow-dark mt-3 md:mt-5 px-4 md:mb-24"
         @click="close"
       >X</div>
-      <div class="mt-20"></div>
+      <div class="md:mt-20"></div>
       <div v-for="(item, index) in lists" :key="index" class="text-sm relative">
         <span
           class="absolute inset-y-0 left-0 border-solid bg-yellow-dark w-1 h-full"
@@ -43,6 +43,7 @@ export default {
     };
   },
   created() {
+    console.log(this.$auth.user);
     if (this.$auth.loggedIn) {
       let domain = this.$auth.user.domain;
       let isActivated = this.$auth.user.is_actived;
@@ -51,22 +52,27 @@ export default {
       let addedLists = [];
       let defaultLists = [
         { name: "Dashboard", route: "/dashboard" },
+        { name: "Messages", route: "/messages" },
         { name: "Account", route: "/account" },
-        { name: "Messages", route: "/messages" }
       ];
       let otherLists = [
+        
         { name: 'FAQ', route: '/faq' },
         { name: 'Terms and Conditions', route: '/terms-and-conditions' },
-        { name: 'Invite', route: '/invite' },
-        { name: 'Contact Us', route: '/contact-us' }
+        { name: 'Contact Us', route: '/contact-us' },
       ]
+      if(domain === 'Practice'){
+        addedLists = [
+          { name: 'Profile', route: '/profile' },
+        ]
+      }
       
       if (domain === 'Practice' && isActivated === true) {
         addedLists = [
-          { name: 'Profile', route: '/profile' },
           { name: 'My Banks', route: '/my-banks' },
           { name: 'Sessions', route: '/sessions' },
           { name: 'Billing', route: '/billing' },
+          { name: 'Invite', route: '/invite' },
         ]
       } 
 
@@ -76,13 +82,14 @@ export default {
         ];
       }
 
-      if (domain === "Locum" && accountStatus === "Active") {
+      if (domain === "Locum" && accountStatus === "Active" || accountStatus === "Dormant") {
         addedLists = [
           { name: 'Compliance', route: '/compliance' },
           { name: 'My Practice', route: '/my-practice' },
           { name: 'Availability', route: '/availability' },
           { name: 'Jobs', route: '/jobs' },
           { name: 'Billing', route: '/billing' },
+          { name: 'Invite', route: '/invite' },
         ] 
       }
       this.lists = [...defaultLists, ...addedLists, ...otherLists];

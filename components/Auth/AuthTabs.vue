@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-row flex-nowrap justify-center mb-16">
+  <div class="flex flex-row flex-nowrap justify-center md:mb-16">
     <div
       @click.prevent="$emit('nextTab', 'SignIn')"
       class="px-12 py-5 font-bold text-sm cursor-pointer"
@@ -14,8 +14,8 @@
 </template>
 <script>
 export default {
-  props: ['activeComponent']
-}
+  props: ["activeComponent"]
+};
 </script>
 
 <style scoped>

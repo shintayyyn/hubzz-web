@@ -22,6 +22,7 @@ export default {
     All,
     Unsuccessful,
   },
+  middleware:'isVerified',
   created() {
     const query = {
       ...this.$route.query,

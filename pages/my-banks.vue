@@ -25,6 +25,7 @@ export default {
     Rejected,
     Withdrawn
   },
+  middleware:'isVerified',
   created() {
     const query = {
       ...this.$route.query,

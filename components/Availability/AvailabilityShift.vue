@@ -2,17 +2,18 @@
   <div class="availability-shift rounded-lg shadow-lg">
     <form class="w-full p-5">
       <div class="relative flex flex-col">
-        <div class="flex flex-row flex-wrap justify-start">
+        <div class="relative flex flex-row flex-wrap justify-start">
+          <div v-if="shifts_error" class="absolute pin-r bg-red p-1 text-xs sm:text-base text-white">Select atleast one shift</div>
           <div class="text-sm leading-loose mr-2">The shifts I am available for</div>
           <div
             class="py-2 px-1 rounded-lg text-sm bg-grey-lighter leading-tight"
           >Select all that apply</div>
         </div>
-        <div class="flex flex-row flex-wrap justify-start mt-5">
+        <div class="flex flex-row flex-wrap justify-around md:justify-start mt-5">
           <div
-            class="relative border border-solid rounded-lg p-5 m-2 text-center cursor-pointer"
+            class="relative border border-solid rounded-lg p-5 m-2 w-full sm:w-1/4 md:w-1/6 text-sm md:text-base text-center cursor-pointer"
             :class="selectedShifts.includes(item.id) ? 'bg-yellow-dark': 'hover:bg-yellow-dark'"
-            style="box-sizing:content-box;width:90px"
+            style="box-sizing:content-box;"
             v-for="item in shifts"
             :key="item.id"
             @click="select(item.id)"
@@ -21,7 +22,7 @@
       </div>
 
       <button
-        class="bg-yellow-dark hover:text-white focus:outline-none text-black font-bold text-xl p-6 rounded-lg mt-10 mb-5"
+        class="bg-yellow-dark hover:text-white focus:outline-none text-black font-bold text-xl py-4 px-6 md:p-6 rounded-lg mt-4 md:mt-10 mb-5"
         @click.prevent="update"
       >Update</button>
     </form>
@@ -32,6 +33,7 @@ export default {
   data() {
     return {
       selectedShifts: [],
+      shifts_error: false
     }
   },
   computed: {
@@ -43,6 +45,15 @@ export default {
     // get authenticated user's selected shift/s
     this.selectedShifts = this.$auth.user.locum_detail.shifts.map(shift => shift.id)
   },
+  // watch: {
+  //   "selectedShifts"(value){
+  //       this.shifts_error = false
+
+  //     if (value.length === 0){
+  //       this.shifts_error = true
+  //     }
+  //   }
+  // },
   methods: {
     select(id) {
       let shiftId = this.selectedShifts.find(item => item === id)
@@ -52,13 +63,21 @@ export default {
         let shiftIndex = this.selectedShifts.findIndex(item => item === id)
         this.selectedShifts.splice(shiftIndex, 1)
         // this.selectedShifts = this.selectedShifts.filter((item, index) => index !== shiftIndex)
+
       }
     },
     update() {
-      // post request to api
-      this.$axios.$put(`/api/v1/locum/me/shifts`, { shift_id: this.selectedShifts }).then(res => {
+        this.shifts_error = false
+
+      if (this.selectedShifts.length === 0){
+        this.shifts_error = true
+      } else{
+        // post request to api
+        this.$axios.$put(`/api/v1/locum/me/shifts`, { shift_id: this.selectedShifts }).then(res => {
         this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Shift updated!' })
       })
+      }
+      
     },
   }
 }
