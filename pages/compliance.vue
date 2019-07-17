@@ -2,7 +2,7 @@
   <section class="compliance-section">
     <div class="overflow-x-auto">
       <div class="number-status md:mt-10">
-        <div class="border-solid rounded-lg shadow-md px-1 py-4 mb-5  mx-1 md:mx-0">
+        <div class="border-solid rounded-lg shadow-md px-1 py-4 mb-5 mx-1 md:mx-0">
           <div class="flex flex-row flex-nowrap justify-start text-xs sm:text-sm">
             <div class="w-1/3 p-1 text-left">Your GMC / NMC Number</div>
             <div class="w-1/3 p-1 text-left">{{gmc_or_nmc_number.number}}</div>
@@ -14,7 +14,7 @@
             </div>
           </div>
         </div>
-        <div class="border-solid rounded-lg shadow-md px-1 py-4 mb-5  mx-1 md:mx-0">
+        <div class="border-solid rounded-lg shadow-md px-1 py-4 mb-5 mx-1 md:mx-0">
           <div class="flex flex-row flex-nowrap justify-start items-center text-xs sm:text-sm">
             <div class="w-1/3 p-1 text-left">Your MPL / NPL Number</div>
             <div class="w-1/3 p-1 text-left">{{mpl_or_npl_number.number}}</div>
@@ -28,12 +28,15 @@
         </div>
       </div>
     </div>
-    <div v-if="showErrorModal" class="absolute pin-t" >
-      <div class="fixed text-white bg-red-light py-4 px-12 mr-10 md:mr-0 md:w-1/3 shadow" style="border-radius: 0 0 10px 10px">
+    <div v-if="showErrorModal" class="absolute pin-t">
+      <div
+        class="fixed text-white bg-red-light py-4 px-12 mr-10 md:mr-0 md:w-1/3 shadow"
+        style="border-radius: 0 0 10px 10px"
+      >
         <span class="text-base font-bold">Failed to upload file</span>
         <div class="flex flex-wrap md:flex-no-wrap">
           <div class="w-full md:w-2/3 text-sm mt-2">
-            <span>File format should be any of the following: </span>
+            <span>File format should be any of the following:</span>
             <ul>
               <li>.pdf</li>
               <li>.jpeg</li>
@@ -41,7 +44,10 @@
               <li>.tif</li>
             </ul>
           </div>
-          <button class="mx-auto md:mx-10 md:absolute pin-r pin-b w-32 my-2 md:my-10 p-4 text-sm rounded-lg shadow border border-white text-white hover:bg-white hover:text-black" @click="showErrorModal = false">Okay</button>
+          <button
+            class="mx-auto md:mx-10 md:absolute pin-r pin-b w-32 my-2 md:my-10 p-4 text-sm rounded-lg shadow border border-white text-white hover:bg-white hover:text-black"
+            @click="showErrorModal = false"
+          >Okay</button>
         </div>
       </div>
     </div>
@@ -69,7 +75,7 @@
               class="rounded-lg shadow-md hover:bg-grey-light cursor-pointer text-xs sm:text-sm text-left"
             >
               <td>{{item.name}}</td>
-              <td class="hover:underline " v-if="item.info && item.info.file">
+              <td class="hover:underline" v-if="item.info && item.info.file">
                 <div class="flex flex-row flex-nowrap items-center">
                   <svgicon name="cloud-download" height="24" width="24" />
                   <div class="mx-2">
@@ -344,6 +350,8 @@ export default {
       this.mandatory_trainings = this.mandatory_trainings.sort(
         (a, b) => a.id - b.id
       );
+      console.log(this.mandatory)
+
     },
     // set mandatory and optional
     setComplianceDocuments() {
@@ -623,13 +631,11 @@ a {
 }
 table {
   width: 920px;
-
 }
 table thead th {
   padding: 10px 0;
 }
 table tbody td {
   padding: 15px 8px;
-
 }
 </style>
