@@ -32,6 +32,7 @@ export default {
     Cancelled,
     Completed
   },
+  middleware:'isVerified',
   computed: {
     activeComponent() {
       return this.$route.query.job_status

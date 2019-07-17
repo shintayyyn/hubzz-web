@@ -14,12 +14,16 @@
     <div v-if="!userIsAuthorized && $auth.user.domain === 'Practice'">
        <div class="text-sm sm:text-base font-bold">Please complete the Practice Verification Steps in order to have a complete access in the platform.</div>
     </div>
-    <div v-if="!userIsAuthorized && $auth.user.domain === 'Locum' && !complianceDocs">
-       <div class="text-sm sm:text-base font-bold">Please complete the required Locum Compliance Documents in order to have a complete access in the platform.</div>
+    <div v-if="!userIsAuthorized && $auth.user.domain === 'Locum'">
+        <div v-if="!complianceDocs" class="text-sm sm:text-base font-bold">
+         Please complete the required Locum Compliance Documents in order to have a complete access in the platform.
+        </div>
+
+        <div v-else-if="complianceDocs" class="text-sm sm:text-base font-bold">
+         Please wait for HUBZZ to verify your compliance requirements.
+        </div>
     </div>
-    <div v-if="!userIsAuthorized && $auth.user.domain === 'Locum' && complianceDocs">
-       <div class="text-sm sm:text-base font-bold">Please wait for HUBZZ to verify your compliance requirements.</div>
-    </div>
+  
   </section>
 </template>
 
@@ -43,12 +47,13 @@ export default {
   
   created(){
     if(this.$auth.loggedIn){
-      console.log(this.$auth.user.locum_detail.compliance_documents)
       let domain = this.$auth.user.domain
       let isActivated = this.$auth.user.is_actived;
       let accountStatus = this.$auth.user.status
-      let complianceDocs = this.$auth.user.locum_detail.compliance_documents
-
+      if(domain === 'Locum'){
+        let complianceDocs = this.$auth.user.locum_detail.compliance_documents
+      }
+    
 
       if(domain === 'Practice' && isActivated === true){
         this.userIsAuthorized = true

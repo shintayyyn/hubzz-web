@@ -52,18 +52,23 @@ export default {
       let addedLists = [];
       let defaultLists = [
         { name: "Dashboard", route: "/dashboard" },
+        { name: "Messages", route: "/messages" },
         { name: "Account", route: "/account" },
-        { name: "Messages", route: "/messages" }
       ];
       let otherLists = [
+        
         { name: 'FAQ', route: '/faq' },
         { name: 'Terms and Conditions', route: '/terms-and-conditions' },
-        { name: 'Contact Us', route: '/contact-us' }
+        { name: 'Contact Us', route: '/contact-us' },
       ]
+      if(domain === 'Practice'){
+        addedLists = [
+          { name: 'Profile', route: '/profile' },
+        ]
+      }
       
       if (domain === 'Practice' && isActivated === true) {
         addedLists = [
-          { name: 'Profile', route: '/profile' },
           { name: 'My Banks', route: '/my-banks' },
           { name: 'Sessions', route: '/sessions' },
           { name: 'Billing', route: '/billing' },
