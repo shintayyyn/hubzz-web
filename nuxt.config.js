@@ -103,6 +103,11 @@ export default {
   },
 
   auth: {
+    cookie: {
+      options: {
+        expires: 1825,
+      },
+    },
     strategies: {
       local: {
         endpoints: {
