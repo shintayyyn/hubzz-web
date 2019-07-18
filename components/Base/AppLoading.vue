@@ -1,13 +1,21 @@
 <template>
-  <div
-    class="loading-section bg-grey-dark flex justify-center items-center"
-    v-if="$store.state.loading.enabled"
-  >
-    <div class="loader font-bold">
-      <h1>{{$store.state.loading.message}}</h1>
-    </div>
+  <div class="loading-section bg-grey-light flex justify-center items-center">
+    <!-- <div class="loader font-bold">
+      <h1>{{message}}</h1>
+    </div>-->
   </div>
 </template>
+<script>
+export default {
+  props: {
+    message: {
+      type: String,
+      required: true
+    }
+  }
+}
+</script>
+
 <style scoped>
 .loading-section {
   position: fixed;
@@ -48,31 +56,6 @@ h1:after {
   }
 }
 .loader {
-  /* color: linear-gradient(to top, #f2d024, #efde86); */
-  /* border: 6px solid #f3f3f3;
-  border-top: 6px solid #f2d024;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  animation: spin 2s linear infinite;
-  -webkit-animation: spin 2s linear infinite; */
+  /* z-index: 999; */
 }
-
-/* @keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-@-webkit-keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-} */
 </style>

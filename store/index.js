@@ -4,10 +4,6 @@ export const state = () => ({
     status: '',
     text: ''
   },
-  loading: {
-    enabled: false,
-    message: '',
-  },
   toggled_sidebar: false,
   // locum
   // practice
@@ -21,10 +17,6 @@ export const mutations = {
     state.notification.enabled = payload.enabled
     state.notification.status = payload.status
     state.notification.text = payload.text
-  },
-  TOGGLE_LOADING(state, payload) {
-    state.loading.message = payload.message
-    state.loading.enabled = payload.enabled
   },
   TOGGLE_SIDEBAR(state, payload) {
     state.toggled_sidebar = payload
