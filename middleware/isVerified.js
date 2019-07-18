@@ -6,7 +6,7 @@ export default function ({store, error}) {
         }    
     } 
 
-    if (store.$auth.user.domain === 'Practice' && !store.$auth.user.is_actived) {
+    if (store.$auth.user.domain === 'Practice' && store.$auth.user.status !== "Active") {
        error({ statusCode: 401, message: 'Your Practice is Not Authorized'})    
     } 
    

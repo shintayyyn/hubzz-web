@@ -67,7 +67,7 @@ export default {
         ]
       }
       
-      if (domain === 'Practice' && isActivated === true) {
+      if (domain === 'Practice' && accountStatus === "Active") {
         addedLists = [
           { name: 'My Banks', route: '/my-banks' },
           { name: 'Sessions', route: '/sessions' },
