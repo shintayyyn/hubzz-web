@@ -69,6 +69,7 @@ export default {
       
       if (domain === 'Practice' && accountStatus === "Active") {
         addedLists = [
+          { name: 'Profile', route: '/profile' },
           { name: 'My Banks', route: '/my-banks' },
           { name: 'Sessions', route: '/sessions' },
           { name: 'Billing', route: '/billing' },
