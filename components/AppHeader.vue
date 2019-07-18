@@ -1,16 +1,16 @@
 <template>
   <section class="header-section">
     <div class="flex flex-row flex-wrap justify-between">
-      <div class="w-1/2 sm:w-1/3 cursor-pointer" @click="toggle">
+      <div class="w-1/2 sm:w-1/3 cursor-pointer py-2" @click="toggle">
         <div class="burger">
           <div class="my-2 bg-yellow-dark"></div>
           <div class="my-2 bg-yellow-dark"></div>
         </div>
       </div>
-      <div class="w-1/2 text-right sm:w-1/3 sm:text-center">
+      <div class="w-1/2 text-right sm:w-1/3 sm:text-center py-2">
         <img src="/images/hubzz-icon-transparent.png" class="logo" />
       </div>
-      <div class="w-full sm:w-1/3 text-right leading-loose">
+      <div class="w-full sm:w-1/3 text-right leading-loose py-2">
         <div class="flex flex-row justify-end items-center" v-if="$auth.loggedIn">
           <div
             class="text-xs xl:text-sm"
@@ -24,9 +24,9 @@
           </div>
           <nuxt-link
             :to="'/messages'"
-            class="text-xs sm:text-sm mx-1 no-underline px-2 py-1 rounded-lg bg-yellow-dark mx-4"
+            class="text-xs sm:text-sm no-underline px-2 py-1 rounded-lg bg-yellow-dark ml-4"
           >Messages</nuxt-link>
-          <div class="text-xs xl:text-sm" v-if="$auth.user.domain === 'Locum'">{{$auth.user.email}}</div>
+          <div class="text-xs xl:text-sm ml-4" v-if="$auth.user.domain === 'Locum'">{{$auth.user.email}}</div>
         </div>
       </div>
     </div>
