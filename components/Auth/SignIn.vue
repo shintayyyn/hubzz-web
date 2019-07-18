@@ -97,9 +97,9 @@ export default {
           this.$axios
             .$post("/api/v1/login", this.form)
             .then(async res => {
+              // Email Verification
               //  if(res.data.user.is_email_verified === false){
-              //   console.log(res)
-              //   this.formError.push({field: "email", message: "Email is not yet verified. Check your email and verify your account first."})
+              //   this.formError.push({ field: "email", message: "Email is not yet verified. Check your email and verify your account first." })
               // } else{
                 console.log(res);
                 const token = res.data.token.token;

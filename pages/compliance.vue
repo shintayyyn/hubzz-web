@@ -54,7 +54,6 @@
     <div class="mt-10">
       <div class="font-bold text-xs sm:text-base">Documents you need to be approved by hubzz HQ</div>
     </div>
-
     <div class="mt-4 overflow-x-auto px-2 md:px-0">
       <table>
         <thead>
@@ -79,11 +78,11 @@
                 <div class="flex flex-row flex-nowrap items-center">
                   <svgicon name="cloud-download" height="24" width="24" />
                   <div class="mx-2">
-                    <a
+                    <a @click.prevent="downloadItem(item.info.file.url, item.info.file.filename)"
                       :href="item.info.file.url"
                       :download="item.info.file.filename"
                       target="_blank"
-                    >{{item.info.file.filename | StringMaxLength(15)}}</a>
+                    >{{item.info.file.filename | StringMaxLength(15)}} 123</a>
                   </div>
                 </div>
               </td>
@@ -167,7 +166,7 @@
                 <div class="flex flex-row flex-nowrap">
                   <svgicon name="cloud-download" height="24" width="24" />
                   <div class="leading-loose mx-2">
-                    <a
+                    <a @click.prevent="downloadItem(item.info.file.url, item.info.file.filename)"
                       target="_blank"
                       :href="item.info.file.url"
                     >{{item.info.file.filename | StringMaxLength(15)}}</a>
@@ -243,7 +242,7 @@
                 <div class="flex flex-row flex-nowrap">
                   <svgicon name="cloud-download" height="24" width="24" />
                   <div class="leading-loose mx-2">
-                    <a
+                    <a @click.prevent="downloadItem(item.info.file.url, item.info.file.filename)"
                       target="_blank"
                       :href="item.info.file.url"
                     >{{item.info.file.filename | StringMaxLength(15)}}</a>
@@ -554,6 +553,7 @@ export default {
         this.showErrorModal = true;
         return;
       }
+      console.log(file)
       const formData = new FormData();
       formData.append("file", file);
       formData.append("mandatory_training_id", id);
@@ -617,6 +617,23 @@ export default {
         .catch(err => {
           console.log(err);
         });
+    },
+    downloadItem (imgUrl, imgFilename) {
+    //   const axios = require('axios');
+    //   axios({
+    //   url: 'imgUrl',
+    //   method: 'GET',
+    //   responseType: 'blob', // important
+    // }).then(response => {
+    //   console.log(response)
+    //   // const url = window.URL.createObjectURL(new Blob([response.data]));
+    //   const link = document.createElement('a');
+    //   // link.href = imgUrl;
+    //   // link.setAttribute('download', imgUrl);
+    //   document.body.appendChild(link);
+    //   link.click();
+    //   console.log(imgUrl)
+    //   });
     }
   }
 };

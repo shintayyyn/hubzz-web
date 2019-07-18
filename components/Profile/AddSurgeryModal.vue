@@ -104,7 +104,7 @@ export default {
         this.$emit('add', res.data.practice_child)
         this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: `${res.message}` })
         this.modal = false
-        this.$emit('close')
+        // this.$emit('close')
       })
     }
   }
