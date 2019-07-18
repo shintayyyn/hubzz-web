@@ -49,7 +49,6 @@ export default {
   methods: {
     goTo(type) {
       const query = {
-        ...this.$route.query,
         session_status: type
       }
       this.$router.push({ query })

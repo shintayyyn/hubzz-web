@@ -1,67 +1,130 @@
 <template>
-  <section class="applied-section overflow-x-auto">
-    <div
-      class="mt-10 w-full text-center"
-      style="font-family: Nunito"
-      v-if="jobs.length === 0"
-    >There are no locums applying for the jobs you created at the moment</div>
-    <div v-else class="overflow-x-auto overflow-y-hidden">
-      <table>
-        <thead>
-          <tr class="text-xs sm:text-sm text-left">
-            <th>Job number</th>
-            <th>Practice / Surgery</th>
-            <th>Title</th>
-            <th>From</th>
-            <th>To</th>
-            <th>Created</th>
-            <th>Locums Applied</th>
-          </tr>
-        </thead>
-        <tbody>
-          <template v-for="(item, index) in jobs">
-            <tr
-              :key="item.id"
-              class="job-card shadow-md cursor-pointer text-xs text-left"
-              @click="show(item.id)"
-            >
-              <td>{{item.job_number}}</td>
-              <td>{{item.platform_job.practice.surgery.name}}</td>
-              <td>{{item.platform_job.title}}</td>
-              <td>{{item.platform_job.date_start}}</td>
-              <td>{{item.platform_job.date_end}}</td>
-              <td>{{item.platform_job.date_created}}</td>
-              <td>{{item.applicants_count}}</td>
+  <section class="applied-section">
+    <div class="overflow-x-auto">
+      <div
+        class="mt-10 w-full text-center"
+        style="font-family: Nunito"
+        v-if="jobs.length === 0"
+      >There are no locums applying for the jobs you created at the moment</div>
+      <div v-else class="overflow-x-auto overflow-y-hidden">
+        <table>
+          <thead>
+            <tr class="text-xs sm:text-sm text-left">
+              <th>Job number</th>
+              <th>Practice / Surgery</th>
+              <th>Title</th>
+              <th>From</th>
+              <th>To</th>
+              <th>Created</th>
+              <th>Locums Applied</th>
             </tr>
-            <tr :key="`${item.id}-${index}`">
-              <td></td>
+          </thead>
+          <tbody :class="{ 'loading': loading }">
+            <tr v-if="loading">
+              <td colspan="6" class="text-center loader">
+                <h5 class="loader-message">Loading</h5>
+              </td>
             </tr>
-          </template>
-        </tbody>
-      </table>
+            <template v-else v-for="(item, index) in jobs">
+              <tr
+                :key="item.id"
+                class="job-card shadow-md cursor-pointer text-xs text-left"
+                @click="show(item.id)"
+              >
+                <td>{{item.job_number}}</td>
+                <td>{{item.platform_job.practice.surgery.name}}</td>
+                <td>{{item.platform_job.title}}</td>
+                <td>{{item.platform_job.date_start}}</td>
+                <td>{{item.platform_job.date_end}}</td>
+                <td>{{item.platform_job.date_created}}</td>
+                <td>{{item.applicants_count}}</td>
+              </tr>
+              <tr :key="`${item.id}-${index}`">
+                <td></td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="absolute pin-b w-full" v-if="jobs.length > 0">
+      <AppPagination
+        :total="total"
+        :totalPages="totalPages"
+        :currentPage="currentPage"
+        @pagechanged="pagechanged"
+      />
     </div>
   </section>
 </template>
 <script>
+import AppPagination from '@/components/Base/AppPagination'
 export default {
+  components: {
+    AppPagination
+  },
   data() {
     return {
-      jobs: []
+      jobs: [],
+      total: 0,
+      totalPages: 0,
+      currentPage: 0,
+      perPage: 0,
+      loading: false,
+    }
+  },
+  watch: {
+    $route(to, from) {
+      console.log('qwe')
+      this.currentPage = parseInt(to.query.current_page)
+      this.getAppliedSession()
     }
   },
   created() {
-    this.$axios.$get(`/api/v1/practice/jobs?status=Applied`).then(res => {
-      this.jobs = res.data.jobs
+    const query = {
+      ...this.$route.query,
+      current_page: this.$route.query.current_page || 1
+    }
+    this.currentPage = parseInt(this.$route.query.current_page)
+    this.$router.push({ query })
+    this.$axios.$get(`/api/v1/practice/jobs/count?status=Applied`).then(res => {
+      this.total = res.data.count
+      this.perPage = 5
+      this.totalPages = Math.ceil(this.total / this.perPage)
+      this.getAppliedSession()
     })
   },
   methods: {
+    getAppliedSession() {
+      this.loading = true
+      let offset = 0
+      offset = this.perPage * (parseInt(this.$route.query.current_page) - 1)
+      this.$axios.$get(`/api/v1/practice/jobs?status=Applied&limit=${this.perPage}&offset=${offset}`).then(res => {
+        this.jobs = res.data.jobs
+        this.loading = false
+      })
+    },
+    pagechanged(e) {
+      const query = {
+        ...this.$route.query,
+        current_page: e || 1
+      }
+      this.$router.push({ query })
+    },
     show(id) {
-      this.$router.push(`/sessions/${id}?session_status=applied`)
+      const query = {
+        ...this.$route.query
+      }
+      this.$router.push({ path: `/sessions/${id}`, query })
     }
   }
 }
 </script>
 <style scoped>
+.applied-section {
+  position: relative;
+  min-height: 500px;
+}
 .job-card:hover {
   background-color: #dee1e5;
   transition: background-color 0.5s ease-in-out;
@@ -82,5 +145,32 @@ table thead th {
 }
 table tbody td {
   padding: 15px;
+}
+.loader {
+  background-color: #edf2f7;
+  opacity: 0.5;
+}
+.loader-message:after {
+  content: " .";
+  animation: dots 1s steps(5, end) infinite;
+}
+
+@keyframes dots {
+  0%,
+  20% {
+    color: rgba(0, 0, 0, 0);
+    text-shadow: 0.25em 0 0 rgba(0, 0, 0, 0), 0.5em 0 0 rgba(0, 0, 0, 0);
+  }
+  40% {
+    color: white;
+    text-shadow: 0.25em 0 0 rgba(0, 0, 0, 0), 0.5em 0 0 rgba(0, 0, 0, 0);
+  }
+  60% {
+    text-shadow: 0.25em 0 0 white, 0.5em 0 0 rgba(0, 0, 0, 0);
+  }
+  80%,
+  100% {
+    text-shadow: 0.25em 0 0 white, 0.5em 0 0 white;
+  }
 }
 </style>

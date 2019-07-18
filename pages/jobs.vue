@@ -1,13 +1,13 @@
 <template>
   <section class="jobs-section">
-    <JobsTabs/>
+    <JobsTabs />
     <div class="mt-5">
       <transition name="fade" mode="out-in">
-        <Component :is="activeComponent"/>
+        <Component :is="activeComponent" />
       </transition>
     </div>
     <div class="modal-shield" v-if="shield"></div>
-    <nuxt-child/>
+    <nuxt-child />
   </section>
 </template>
 <script>
@@ -32,7 +32,12 @@ export default {
     Cancelled,
     Completed
   },
-  middleware:'isVerified',
+  middleware: 'isVerified',
+  // async asyncData({ store, error }) {
+  //   if (!store.$auth.user.is_actived) {
+  //     throw error({ statusCode: 404, message: 'Post not found' })
+  //   }
+  // },
   computed: {
     activeComponent() {
       return this.$route.query.job_status

@@ -43,7 +43,6 @@ export default {
     };
   },
   created() {
-    console.log(this.$auth.user);
     if (this.$auth.loggedIn) {
       let domain = this.$auth.user.domain;
       let isActivated = this.$auth.user.is_actived;
@@ -54,6 +53,7 @@ export default {
         { name: "Dashboard", route: "/dashboard" },
         { name: "Messages", route: "/messages" },
         { name: "Account", route: "/account" },
+        // { name: "Messages", route: "/messages" }
       ];
       let otherLists = [
         
@@ -75,7 +75,7 @@ export default {
           { name: 'Billing', route: '/billing' },
           { name: 'Invite', route: '/invite' },
         ]
-      } 
+      }
 
       if (domain === 'Locum') {
         addedLists = [
@@ -91,7 +91,7 @@ export default {
           { name: 'Jobs', route: '/jobs' },
           { name: 'Billing', route: '/billing' },
           { name: 'Invite', route: '/invite' },
-        ] 
+        ]
       }
       this.lists = [...defaultLists, ...addedLists, ...otherLists];
     }

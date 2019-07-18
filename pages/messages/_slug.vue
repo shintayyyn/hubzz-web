@@ -40,7 +40,7 @@ export default {
     async send(message) {
       let receiver_user_id = null
       this.messages[0].receiver_id === this.$auth.user.id ? receiver_user_id = this.messages[0].sender_id : receiver_user_id = this.messages[0].receiver_id
-      const response = await chatApi.sendMessage(this.$axios, receiver_user_id, message)
+      const response = await chatApi.sendMessage(this.$axios, receiver_user_id.toString(), message)
       this.messages.push(response.data.message)
     },
     async deleteConfirmation(id) {

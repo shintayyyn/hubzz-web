@@ -23,7 +23,6 @@
               @click="$emit('delete-confirmation', item.id)"
             >X</div>
           </div>
-          {{index}}
         </div>
       </div>
     </div>
@@ -42,16 +41,13 @@ export default {
   },
   watch: {
     $route(to, from) {
-      if (this.$refs.messagesContainer) {
+      if (this.$refs.messagesContainer && this.$refs.messagesContainer.scrollTop !== 0) {
         this.scrollToBottom()
       }
     },
     messages(value) {
-      console.log(value)
       let index = value.length - this.oldMessageCount
-      console.log(index)
       let messageSample = document.getElementById(`message-${index}`)
-      console.log(messageSample)
       // console.log(document.getElementById(`message-${value.length - this.oldMessageCount}`))
     },
   },
@@ -59,6 +55,7 @@ export default {
     scrollToBottom() {
       this.$nextTick(() => {
         this.$refs.messagesContainer.scrollTop = this.$refs.messagesContainer.scrollHeight;
+        console.log(this.$refs.messagesContainer.scrollTop, this.$refs.messagesContainer.scrollHeight)
       })
     },
     scrollHandler(e) {
@@ -70,7 +67,7 @@ export default {
         //   `message-${this.messages.length}`
         // );
         // console.log(firstMessageElementBeforeLoadMore)
-        this.$emit('fetch-more-messages')
+        // this.$emit('fetch-more-messages')
       }
     },
     isReceiver(item) {
