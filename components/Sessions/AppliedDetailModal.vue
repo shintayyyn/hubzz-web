@@ -143,14 +143,14 @@
                   class="text-sm sm:text-md"
                 >{{job.platform_job.practice.surgery.address.line_1}} {{job.platform_job.practice.surgery.address.line_2}} {{job.platform_job.practice.surgery.address.line_3}} {{job.platform_job.practice.surgery.address.post_code}}</div>
                 <div class="mt-4">
-                   <!-- google map -->
+                  <!-- google map -->
                   <GmapMap
                     :center="{lat:latLang.y, lng:latLang.x}"
                     :zoom="15"
                     map-type-id="terrain"
                     style="width: 100%; height:300px"
                   >
-                    <GmapMarker :position="google && new google.maps.LatLng(latLang.y, latLang.x)"/>
+                    <GmapMarker :position="google && new google.maps.LatLng(latLang.y, latLang.x)" />
                   </GmapMap>
                 </div>
               </div>
@@ -265,7 +265,11 @@ export default {
       if (this.$route.fullPath === '/dashboard') {
         this.$emit('close')
       } else {
-        this.$router.push('/sessions?session_status=applied')
+        const query = {
+          ...this.$route.query
+        }
+        this.$router.push({ path: `/sessions`, query })
+        // this.$router.push('/sessions?session_status=applied')
       }
     },
     save() {
