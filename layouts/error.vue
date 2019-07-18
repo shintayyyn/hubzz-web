@@ -1,7 +1,8 @@
 <template>
   <div class="error-container">
-    <h1 v-if="error.statusCode === 404">Page not found</h1>
-    <h1 v-else>{{error.message}}</h1>
+    <h1 v-if="error.statusCode === 404">Page not found.</h1>
+    <h1 v-if="error.statusCode === 401">You are not authorized to view this page.</h1>
+    <!-- <h1 v-else>{{error.message}}</h1> -->
     <nuxt-link to="/">Home page</nuxt-link>
   </div>
 </template>

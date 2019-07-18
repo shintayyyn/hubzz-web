@@ -30,6 +30,7 @@ export default {
     Cancelled,
     Declined,
   },
+  middleware:'isVerified',
   computed: {
     activeComponent() {
       return this.$route.query.session_status
