@@ -11,6 +11,7 @@
     <!-- content -->
     <div class="content">
       <AppNotification />
+      <AppLoading />
       <AppHeader />
       <nuxt />
     </div>
@@ -20,6 +21,7 @@
 import AppSideBar from '@/components/AppSideBar'
 import SignOut from '@/components/Auth/SignOut'
 import AppNotification from '@/components/AppNotification'
+import AppLoading from '@/components/Base/AppLoading'
 import AppHeader from '@/components/AppHeader'
 export default {
   transitions: 'page',
@@ -27,6 +29,7 @@ export default {
     AppSideBar,
     SignOut,
     AppNotification,
+    AppLoading,
     AppHeader,
   },
   data() {

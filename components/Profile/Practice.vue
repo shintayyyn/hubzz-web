@@ -26,12 +26,15 @@
             </div>
           </div>
         </div>
-        <div v-if="showErrorModal" class="absolute pin-t" >
-          <div class="fixed text-white bg-red-light py-4 px-12 mr-10 md:mr-0 md:w-1/3 shadow" style="border-radius: 0 0 10px 10px">
+        <div v-if="showErrorModal" class="absolute pin-t">
+          <div
+            class="fixed text-white bg-red-light py-4 px-12 mr-10 md:mr-0 md:w-1/3 shadow"
+            style="border-radius: 0 0 10px 10px"
+          >
             <span class="text-base font-bold">Failed to upload file</span>
             <div class="flex flex-wrap md:flex-no-wrap">
               <div class="w-full md:w-2/3 text-sm mt-2">
-                <span>File format should be any of the following: </span>
+                <span>File format should be any of the following:</span>
                 <ul>
                   <li>.pdf</li>
                   <li>.jpeg</li>
@@ -39,7 +42,10 @@
                   <li>.tif</li>
                 </ul>
               </div>
-              <button class="mx-auto md:mx-10 md:absolute pin-r pin-b w-32 my-2 md:my-10 p-4 text-sm rounded-lg shadow border border-white text-white hover:bg-white hover:text-black" @click="showErrorModal = false">Okay</button>
+              <button
+                class="mx-auto md:mx-10 md:absolute pin-r pin-b w-32 my-2 md:my-10 p-4 text-sm rounded-lg shadow border border-white text-white hover:bg-white hover:text-black"
+                @click="showErrorModal = false"
+              >Okay</button>
             </div>
           </div>
         </div>
@@ -47,12 +53,15 @@
           <div class="rounded-lg shadow-lg p-8">
             <div class="flex flex-col">
               <div class="text-xs sm:text-sm">Your Practice's standard terms</div>
-              <div class="mt-4 bg-grey-lighter rounded-lg p-4 ">
+              <div class="mt-4 bg-grey-lighter rounded-lg p-4">
                 <div class="flex flex-nowrap justify-between">
                   <div
                     class="text-xs sm:text-sm document-filename"
                   >{{ standard_terms && standard_terms.file ? standard_terms.file.filename : '' }}</div>
-                  <div class="font-bold text-md sm:text-lg hover:null cursor-pointer ml-2" @click="modal = true">X</div>
+                  <div
+                    class="font-bold text-md sm:text-lg hover:null cursor-pointer ml-2"
+                    @click="modal = true"
+                  >X</div>
                 </div>
               </div>
               <div></div>
@@ -240,7 +249,7 @@ export default {
   created() {
     // get default data 
     this.$axios.$get(`/api/v1/me`).then(res => {
-      console.log(res)
+      // console.log(res)
       // this.standard_terms = res.data.user.practice_detail.practice.standard_terms
       this.practice_detail.name = res.data.user.practice_detail.practice.surgery.name
       this.practice_detail.code = res.data.user.practice_detail.practice.surgery.code
@@ -323,7 +332,7 @@ export default {
         this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: res.message })
       })
       this.standard_terms.file.filename = file.name
-      console.log(file.name)
+      // console.log(file.name)
     },
     uncheckPractice(value) {
       this.form.practice_type_id = this.form.practice_type_id.filter(id => id != value)
@@ -343,17 +352,17 @@ export default {
         this.modal = false
         this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: res.message })
         this.standard_terms.file.filename = null
-        console.log(this.standard_terms)
+        // console.log(this.standard_terms)
       })
     },
     save() {
       try {
         this.formError = []
-        console.log(this.form)
+        // console.log(this.form)
         this.Validate(this.form, ['mandatory_training_id', 'extra_information'])
         if (!this.formError.length) {
           this.$axios.$put(`/api/v1/practice/me/profile`, this.form).then(res => {
-            console.log(res)
+            // console.log(res)
             // set mandatory training
             this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: res.message })
           })
