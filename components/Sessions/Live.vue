@@ -86,7 +86,7 @@ export default {
     this.$router.push({ query })
     this.$axios.$get(`/api/v1/practice/jobs/count?status=Available`).then(res => {
       this.total = res.data.count
-      this.perPage = 5
+      this.perPage = 2
       this.totalPages = Math.ceil(this.total / this.perPage)
       this.getLiveSession()
     })
