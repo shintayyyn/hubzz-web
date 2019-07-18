@@ -9,7 +9,7 @@
             <div
               class="rounded-full h-10 w-10 sm:h-12 sm:w-12 md:h-16 md:w-16 text-2xl sm:text-3xl md:text-4xl flex items-center focus:outline-none justify-center bg-yellow-dark font-semibold cursor-pointer shadow-md hover:text-white"
               @click="create"
-            >+</div>
+            >+</div> <!--Create Job button-->
           </div>
         </div>
         <div class="w-full lg:w-1/3">
@@ -38,7 +38,7 @@
         <LocumAppliedDetailModal @close="locum_applied_modal = false" :job="locum_applied_job" />
       </div>
       <div class="modal-container shadow-lg" v-if="practice_create_modal">
-        <CreateJobModal @close="practice_create_modal = false" :job="practice_create_job" />
+        <CreateJobModal @close="practice_create_modal = false" :job="practice_create_job" /> <!--Create Job-->
       </div>
       <div class="modal-container shadow-lg" v-if="practice_allocated_modal">
         <AllocatedDetailModal

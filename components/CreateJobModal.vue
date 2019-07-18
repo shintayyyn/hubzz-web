@@ -1,7 +1,7 @@
 <template>
   <div class="p-8 max-w-xl">
     <div @click="$emit('close')" class="cursor-pointer">
-      <svgicon name="left-arrow" height="32" width="32"/>
+      <svgicon name="left-arrow" height="32" width="32" />
     </div>
     <div class="flex justify-start font-bold text-sm sm:text-xl mt-8">Create a new job</div>
     <div class="flex flex-row flex-wrap justify-start mt-8">
@@ -126,7 +126,7 @@
                     :class="formError.find(item => item.field === 'rate')? 'border-red':''"
                     @keypress="ValidateInput"
                     style="text-align:right;width:100px;"
-                  >
+                  />
                 </div>
                 <div class="mt-2">
                   <label for="locum_detail_rate_type_id" class="text-xs sm:text-sm mt-2">per</label>
@@ -164,7 +164,7 @@
                   :class="this.formError.find(item => item.field === 'total_hours')? 'border-red':''"
                   @keypress="ValidateInput"
                   style="text-align:right;'"
-                >
+                />
                 <label for="total_hours" class="text-xs sm:text-sm mt-2">hours</label>
               </div>
             </div>
@@ -188,7 +188,7 @@
               :info="'Check all that apply'"
             />
             <div class="mb-6" v-if="mandatory_training_lists.length === 0">
-              <AppButton :label="'Go to Profile to add items here'" @click="addMandatory"/>
+              <AppButton :label="'Go to Profile to add items here'" @click="addMandatory" />
             </div>
           </div>
         </div>
@@ -334,7 +334,7 @@
           </div>
         </div>
         <div class="mt-4">
-          <AppButton :label="'Save and publish Job'" @click="publish"/>
+          <AppButton :label="'Save and publish Job'" @click="publish" />
         </div>
       </div>
     </div>
@@ -440,7 +440,6 @@ export default {
     },
   },
   created() {
-    console.log(this.$auth.user)
     // get practice lists
     this.$axios.$get(`/api/v1/practice/practice-children`).then(res => {
       this.practice_lists = []
@@ -521,7 +520,8 @@ export default {
       this.form.mandatory_training_id = this.form.mandatory_training_id.map(item => item.value)
       this.form.date_start = this.$moment(this.form.date_start).format('YYYY-MM-DD')
       this.form.date_end = this.$moment(this.form.date_end).format('YYYY-MM-DD')
-      this.form.selection_date = this.$moment(this.form.selection_date).format('YYYY-MM-DD')
+      this.form.selection_date = this.$moment(this.form.selection_date).format('YYYY-MM-DD HH:mm:ss')
+      this.form.auto_assign_at = this.$moment(this.form.auto_assign_at).format('YYYY-MM-DD HH:mm:ss')
       this.form.session_requirements.length > 0 ? this.form.session_requirements = this.form.session_requirements.join() : this.form.session_requirements = ''
       this.unpaid_breaks !== 'other' ? this.form.unpaid_breaks_in_minutes = this.unpaid_breaks : this.form.unpaid_breaks_in_minutes = this.form.unpaid_breaks_in_minutes
       console.log(this.form)

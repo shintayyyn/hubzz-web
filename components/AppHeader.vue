@@ -34,15 +34,17 @@
 </template>
 <script>
 import AppButton from "@/components/Base/AppButton";
+import CreateJobModal from '@/components/CreateJobModal'
 export default {
   components: {
-    AppButton
+    AppButton,
+    CreateJobModal
   },
   methods: {
     toggle() {
       this.$store.commit("TOGGLE_SIDEBAR", true);
-      document.body.style.overflow = "hidden";
-    }
+      document.body.style.overflow = "hidden";      
+    },
   }
 };
 </script>

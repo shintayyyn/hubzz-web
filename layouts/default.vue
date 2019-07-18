@@ -34,7 +34,7 @@ export default {
       signout_modal: false
     }
   },
-  // middleware: 'isAuthenticated',
+  middleware: 'isNotAuthenticated',
   computed: {
     notify() {
       return this.$store.state.notification.enabled
