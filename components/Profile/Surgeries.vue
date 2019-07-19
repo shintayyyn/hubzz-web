@@ -124,7 +124,7 @@ export default {
 .loader {
   position: relative;
   z-index: 999;
-  background-color: lightgrey;
+  background-color: #edf2f7;
   opacity: 0.5;
 }
 .loader-message {

@@ -13,6 +13,12 @@
         class="mr-5 p-3 text-sm font-bold cursor-pointer"
         :class="$route.query.profile_tab === 'surgeries' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
       >Branches / Surgeries</div>
+      <div
+        style="font-family:Nunito"
+        @click.prevent="goTo('practiceDocuments')"
+        class="mr-5 p-3 text-sm font-bold cursor-pointer"
+        :class="$route.query.profile_tab === 'practiceDocuments' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
+      >Practice Documents</div>
     </div>
   </div>
 </template>
@@ -24,6 +30,8 @@ export default {
         ...this.$route.query,
         profile_tab: type
       }
+      console.log(query)
+
       this.$router.push({ query })
     }
   }

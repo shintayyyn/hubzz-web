@@ -217,14 +217,19 @@ export default {
       return this.currentPage === this.totalPages
     },
     startPage() {
-      if (this.currentPage === 1) {
+      if (this.currentPage === 1 || this.currentPage === 2) {
         return 1
       }
 
-      if (this.currentPage === this.totalPages) {
+      if (this.currentPage === this.totalPages - 1) {
         return this.totalPages - this.maxVisibleButtons + 1
       }
-      return this.currentPage - 1
+
+      if (this.currentPage === this.totalPages && this.totalPages > this.maxVisibleButtons) {
+        return this.totalPages - this.maxVisibleButtons + 1
+      }
+
+      return this.currentPage - 2
     },
     pages() {
       const range = [];
