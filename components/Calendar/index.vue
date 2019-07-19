@@ -9,7 +9,8 @@
             <div
               class="rounded-full h-10 w-10 sm:h-12 sm:w-12 md:h-16 md:w-16 text-2xl sm:text-3xl md:text-4xl flex items-center focus:outline-none justify-center bg-yellow-dark font-semibold cursor-pointer shadow-md hover:text-white"
               @click="create"
-            >+</div> <!--Create Job button-->
+            >+</div>
+            <!--Create Job button-->
           </div>
         </div>
         <div class="w-full lg:w-1/3">
@@ -38,7 +39,7 @@
         <LocumAppliedDetailModal @close="locum_applied_modal = false" :job="locum_applied_job" />
       </div>
       <div class="modal-container shadow-lg" v-if="practice_create_modal">
-        <CreateJobModal @close="practice_create_modal = false" :job="practice_create_job" /> <!--Create Job-->
+        <CreateJobModal @close="practice_create_modal = false" :job="practice_create_job" />
       </div>
       <div class="modal-container shadow-lg" v-if="practice_allocated_modal">
         <AllocatedDetailModal
@@ -112,7 +113,7 @@ export default {
       practice_applied_job: null,
       practice_live_modal: false,
       practice_live_job: null,
-      
+
     }
   },
 
@@ -126,9 +127,6 @@ export default {
         | this.practice_allocated_modal | this.practice_unfilled_modal | this.practice_declined_modal | this.practice_applied_modal
         | this.practice_live_modal
     },
-    createJobModal() {
-      return this.$store.state.calendar.createJob
-    }
   },
   watch: {
     toggleScroll(value) {
@@ -138,11 +136,6 @@ export default {
         document.body.style.overflow = 'auto'
       }
     },
-    createJobModal(value) {
-      if (value) {
-        this.createJob()
-      }
-    }
   },
   methods: {
     create() {

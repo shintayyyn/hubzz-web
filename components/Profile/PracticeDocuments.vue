@@ -9,16 +9,19 @@
       <div class="rounded-lg shadow-lg p-4 mt-4" v-for="item in results" :key="item.id">
         <div class="flex flex-row flex-nowrap">
           <div class="text-xs sm:text-sm w-full px-1">{{item.practice_document_type.name}}</div>
-          <div class="text-xs sm:text-sm w-full px-1">{{(item.file.size / 1048576).toFixed(2) + "Mb"}}</div>
-          <div class="text-xs sm:text-sm w-full px-1">{{ $moment(item.created_at).format('MMM DD, YYYY | h:mm A')}}</div>
-          
+          <div
+            class="text-xs sm:text-sm w-full px-1"
+          >{{(item.file.size / 1048576).toFixed(2) + "Mb"}}</div>
+          <div
+            class="text-xs sm:text-sm w-full px-1"
+          >{{ $moment(item.created_at).format('MMM DD, YYYY | h:mm A')}}</div>
         </div>
       </div>
     </div>
     <div class="add-surgery-shield" v-if="modal"></div>
     <transition name="slide" mode="out-in">
       <div class="add-surgery-modal shadow-lg" v-if="modal">
-        <AddSurgeryModal @close="modal = false" @add="results.push($event)"/>
+        <AddSurgeryModal @close="modal = false" @add="results.push($event)" />
       </div>
     </transition>
   </section>
@@ -36,30 +39,30 @@ export default {
     }
   },
 
-//   async asyncData({app}){
-//       try{
-//            let response = this.$axios.$get(`/api/v1/practice/practice-documents`)
-//            const results = response.data.data.practice_documents
-//            console.log(results)
-//             return{
-//                 results
-//             }
-            
-//       }catch(err){
-//           console.log("index practices index _id index asyncData err", err);
-//       }
-//   },
+  //   async asyncData({app}){
+  //       try{
+  //            let response = this.$axios.$get(`/api/v1/practice/practice-documents`)
+  //            const results = response.data.data.practice_documents
+  //            console.log(results)
+  //             return{
+  //                 results
+  //             }
+
+  //       }catch(err){
+  //           console.log("index practices index _id index asyncData err", err);
+  //       }
+  //   },
   created() {
     this.results = []
 
-    this.$axios.$get(`/api/v1/practice/practice-documents`).then(res => {
+    this.$axios.$get(`/api/v1/practice-document-types`).then(res => {
       res.data.practice_documents.forEach(item => {
         this.results.push(item)
       })
     })
 
     console.log(this.results)
-    
+
   },
 }
 </script>

@@ -80,7 +80,7 @@ export default {
       return this.currentPage === this.totalPages
     },
     startPage() {
-      if (this.currentPage === 1 || this.currentPage === 2) {
+      if (this.currentPage === 1 || (this.currentPage === 2 || this.totalPages <= this.maxVisibleButtons)) {
         return 1
       }
 

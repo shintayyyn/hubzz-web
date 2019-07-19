@@ -24,9 +24,13 @@
           </div>
           <nuxt-link
             :to="'/messages'"
-            class="text-xs sm:text-sm no-underline px-2 py-1 rounded-lg bg-yellow-dark ml-4"
+            class="font-bold text-xs sm:text-sm no-underline px-2 py-1 rounded-lg bg-yellow-dark ml-4"
           >Messages</nuxt-link>
-          <div class="text-xs xl:text-sm ml-4" v-if="$auth.user.domain === 'Locum'">{{$auth.user.email}}</div>
+          {{$store.state.calendar.createJob}}
+          <div
+            class="text-xs xl:text-sm ml-4"
+            v-if="$auth.user.domain === 'Locum'"
+          >{{$auth.user.email}}</div>
         </div>
       </div>
     </div>
@@ -43,7 +47,7 @@ export default {
   methods: {
     toggle() {
       this.$store.commit("TOGGLE_SIDEBAR", true);
-      document.body.style.overflow = "hidden";      
+      document.body.style.overflow = "hidden";
     },
   }
 };
