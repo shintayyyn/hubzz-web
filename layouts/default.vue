@@ -66,7 +66,7 @@ export default {
 .content {
   /* box-sizing: content-box; */
   max-width: 1000px;
-  padding: 5px 40px;
+  padding: 5px 30px;
 }
 .sidebar-shield {
   position: fixed;
@@ -91,6 +91,13 @@ export default {
 @media screen and (min-width: 1200px) {
   .content {
     margin-left: 200px;
+  }
+}
+
+@media screen and (min-width: 480px){
+  .content{
+  padding: 5px 40px;
+    
   }
 }
 </style>
