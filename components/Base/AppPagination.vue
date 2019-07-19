@@ -5,7 +5,7 @@
         type="button"
         class="rounded-lg py-2 px-4 font-bold text-sm focus:outline-none"
         @click="onClickFirstPage"
-        :disabled="isInFirstPage"
+        :disabled="loading || isInFirstPage"
       >First</button>
     </div>
 
@@ -14,7 +14,7 @@
         type="button"
         class="rounded-lg py-2 px-4 font-bold text-sm focus:outline-none"
         @click="onClickPreviousPage"
-        :disabled="isInFirstPage"
+        :disabled="loading || isInFirstPage"
       >Previous</button>
     </div>
 
@@ -23,7 +23,7 @@
         type="button"
         class="rounded-lg py-2 px-4 font-bold text-sm focus:outline-none"
         @click="onClickPage(page.name)"
-        :disabled="page.isDisabled"
+        :disabled="loading || page.isDisabled"
         :class="{ active: isPageActive(page.name) }"
       >{{ page.name }}</button>
     </div>
@@ -33,7 +33,7 @@
         type="button"
         class="rounded-lg py-2 px-4 font-bold text-sm focus:outline-none"
         @click="onClickNextPage"
-        :disabled="isInLastPage"
+        :disabled="loading || isInLastPage"
       >Next</button>
     </div>
 
@@ -42,7 +42,7 @@
         type="button"
         class="rounded-lg py-2 px-4 font-bold text-sm focus:outline-none"
         @click="onClickLastPage"
-        :disabled="isInLastPage"
+        :disabled="isInLastPage || loading"
       >Last</button>
     </div>
   </div>
@@ -70,6 +70,10 @@ export default {
     currentPage: {
       type: Number,
       required: true
+    },
+    loading: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {

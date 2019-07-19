@@ -54,6 +54,11 @@ export default {
     })
   },
   methods: {
+    getLocumJobAvailableNotification() {
+      this.$socket.on('Locum Notification Job Available', (job) => {
+        this.jobs.push(job)
+      })
+    },
     show(id) {
       this.$router.push(`/jobs/${id}?job_status=available`)
     }

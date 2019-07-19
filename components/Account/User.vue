@@ -1,6 +1,7 @@
 <template>
   <div class="border-solid rounded-lg shadow-lg p-8">
-    <form class="w-full">
+    <form class="relative w-full">
+      <AppLoading :loading="loading" :message="'Loading'" v-if="loading" />
       <AppInput
         v-model="form.email"
         :type="'email'"
@@ -48,7 +49,7 @@
         :items="roles"
       />
       <div class="text-left mt-5">
-        <AppButton :label="'Save changes'" @click="save"/>
+        <AppButton :label="'Save changes'" @click="save" />
       </div>
     </form>
   </div>
@@ -57,6 +58,7 @@
 import AppInput from '@/components/Base/AppInput'
 import AppSelect from '@/components/Base/AppSelect'
 import AppButton from '@/components/Base/AppButton'
+import AppLoading from '@/components/Base/AppLoading'
 const roles = [
   { value: 'Practice Staff', label: 'Practice Staff' },
   { value: 'Practice Manager', label: 'Practice Manager' },
@@ -66,7 +68,8 @@ export default {
   components: {
     AppInput,
     AppSelect,
-    AppButton
+    AppButton,
+    AppLoading,
   },
   data() {
     return {
@@ -79,10 +82,12 @@ export default {
         suffix: '',
         practice_role: ''
       },
-      formError: []
+      formError: [],
+      loading: false
     }
   },
   created() {
+    this.loading = true
     this.$axios.$get('/api/v1/me').then(res => {
       this.form.email = res.data.user.email
       this.form.title = res.data.user.personal_detail.title
@@ -90,6 +95,7 @@ export default {
       this.form.last_name = res.data.user.personal_detail.last_name
       this.form.suffix = res.data.user.personal_detail.suffix
       this.form.practice_role = res.data.user.practice_detail.practice_role
+      this.loading = false
     })
   },
   watch: {
@@ -150,6 +156,7 @@ export default {
   },
   methods: {
     async save() {
+      this.loading = true
       try {
         this.formError = []
         this.Validate(this.form, ['title', 'suffix'])
@@ -157,14 +164,17 @@ export default {
           this.$axios.$put(`/api/v1/practice/me/account`, this.form).then(res => {
             console.log(res)
             this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Saved' })
+            this.loading = false
           })
         }
       } catch (e) {
+        this.loading = false
         console.log(e)
       }
     }
   }
 }
 </script>
+
 
 

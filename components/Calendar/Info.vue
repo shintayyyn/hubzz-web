@@ -158,6 +158,18 @@ export default {
         this.findPerWeekLocum(value)
       }
     },
+    practice_available_jobs_reminder(value) {
+      this.findPerMonth(this.$store.state.calendar.selected_date)
+    },
+    practice_current_jobs(value) {
+      this.findPerMonth(this.$store.state.calendar.selected_date)
+    },
+    practice_applied_jobs(value) {
+      this.findPerMonth(this.$store.state.calendar.selected_date)
+    },
+    practice_applied_jobs_reminder(value) {
+      this.findPerMonth(this.$store.state.calendar.selected_date)
+    },
   },
   computed: {
     selected_date() {

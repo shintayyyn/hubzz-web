@@ -132,9 +132,11 @@ export default {
     },
     appoint() {
       this.$axios.$put(`/api/v1/practice/jobs/${this.$route.params.id}/applicants/${this.user.id}/appoint`).then(res => {
-        console.log(res)
         this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Assign locum successfully' })
-        this.$router.push('/sessions?session_status=allocated')
+        // add confirmation modal if the user want to view the appointed locum or want to appoint more locum in the applied jobs
+        this.$store.commit('session/UPDATE_APPLIED_JOBS', this.$route.params.id)
+        this.$emit('close')
+        // this.$router.push('/sessions?session_status=allocated')
       })
     }
   }

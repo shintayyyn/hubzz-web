@@ -44,6 +44,9 @@ export const mutations = {
   UPDATE_APPLIED_JOBS(state, payload) {
     state.appliedJobs = state.appliedJobs.filter(job => job.id !== parseInt(payload))
   },
+  ADD_APPLIED_JOBS(state, payload) {
+    state.appliedJobs.push(payload)
+  },
   UPDATE_ALLOCATED_JOBS(state, payload) {
     state.allocatedJobs = state.allocatedJobs.filter(job => job.id !== parseInt(payload))
   },
