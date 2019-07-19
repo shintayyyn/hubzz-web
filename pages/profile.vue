@@ -3,7 +3,8 @@
     <ProfileTabs/>
     <div class="mt-5">
       <transition name="fade" mode="out-in">
-        <Component :is="activeComponent"/>
+        <!-- <Component :is="activeComponent"/> -->
+        <nuxt-child/>
       </transition>
     </div>
   </section>
@@ -25,7 +26,6 @@ export default {
       ...this.$route.query,
       profile_tab: this.$route.query.profile_tab || 'practice'
     }
-    console.log(query)
     this.$router.push({ query })
   },
   computed: {
@@ -35,4 +35,15 @@ export default {
   },
 }
 </script>
-
+<style scoped>
+.modal-shield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #333;
+  opacity: 0.5;
+  z-index: 509;
+}
+</style>

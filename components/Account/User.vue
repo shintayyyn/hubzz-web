@@ -9,6 +9,13 @@
         :placeholder="''"
         :error="formError.find(item => item.field === 'email')"
       />
+      <div class="-mt-6 mb-4" v-if="email_isVerified === true ">
+        <span class="text-xs"> E-mail is Verified on {{$moment(email_verifiedAt).format('MMM DD, YYYY | hh:mm A')}} </span> 
+      </div>
+      <div class="-mt-6 mb-4" v-if="email_isVerified === false ">
+        <span class="text-red text-xs">E-mail is not yet verified. </span>
+        <span class="p-1 bg-grey rounded text-xs" @click="resendEmailVerification()">Click here to re-send</span>
+      </div>
       <AppInput
         v-model="form.title"
         :type="'text'"
@@ -79,6 +86,8 @@ export default {
         suffix: '',
         practice_role: ''
       },
+      email_isVerified:'',
+      email_verifiedAt:'',
       formError: []
     }
   },
@@ -90,6 +99,8 @@ export default {
       this.form.last_name = res.data.user.personal_detail.last_name
       this.form.suffix = res.data.user.personal_detail.suffix
       this.form.practice_role = res.data.user.practice_detail.practice_role
+      this.email_isVerified = res.data.user.is_email_verified
+      this.email_verifiedAt = res.data.user.email_verified_at
     })
   },
   watch: {
@@ -159,8 +170,16 @@ export default {
             this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Saved' })
           })
         }
-      } catch (e) {
-        console.log(e)
+      } catch (err) {
+        console.log(err)
+      }
+    },
+    async resendEmailVerification(){
+      try{
+        await this.$axios.post(`/api/v1/email-verification/resend`)
+        alert('Confirmation e-mail sent')
+      }catch(err){
+        console.log("Something went wrong! ", err)
       }
     }
   }

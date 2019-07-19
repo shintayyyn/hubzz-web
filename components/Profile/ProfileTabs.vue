@@ -1,24 +1,27 @@
 <template>
   <div>
     <div class="relative flex flex-nowrap">
-      <div
+        <!-- @click.prevent="goTo('practice')" -->
+      <nuxt-link
         style="font-family:Nunito"
-        @click.prevent="goTo('practice')"
-        class="mr-5 p-3 text-sm font-bold cursor-pointer"
+        to="/profile"
+        class="mr-5 p-3 text-sm font-bold cursor-pointer no-underline"
         :class="$route.query.profile_tab === 'practice' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
-      >Practice</div>
-      <div
+      >Practice</nuxt-link>
+        <!-- @click.prevent="goTo('surgeries')" -->
+      <nuxt-link
         style="font-family:Nunito"
-        @click.prevent="goTo('surgeries')"
-        class="mr-5 p-3 text-sm font-bold cursor-pointer"
+        to="/profile/surgeries"
+        class="mr-5 p-3 text-sm font-bold cursor-pointer no-underline"
         :class="$route.query.profile_tab === 'surgeries' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
-      >Branches / Surgeries</div>
-      <div
+      >Branches / Surgeries</nuxt-link>
+        <!-- @click.prevent="goTo('practiceDocuments')" -->
+      <nuxt-link
         style="font-family:Nunito"
-        @click.prevent="goTo('practiceDocuments')"
-        class="mr-5 p-3 text-sm font-bold cursor-pointer"
+        to="/profile/documents"
+        class="mr-5 p-3 text-sm font-bold cursor-pointer no-underline"
         :class="$route.query.profile_tab === 'practiceDocuments' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
-      >Practice Documents</div>
+      >Practice Documents</nuxt-link>
     </div>
   </div>
 </template>
