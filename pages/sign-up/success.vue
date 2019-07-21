@@ -8,18 +8,18 @@
       <div class="flex flex-row justify-center font-bold">Please check your inbox for it to proceed.</div>
     </div>
     <div class="flex flex-row justify-center mt-5">
-      <AppButton :label="'Home'" @click="$router.push('/')"/>
+      <AppButton :label="'Home'" @click="$router.push('/')" />
     </div>
   </section>
 </template>
 <script>
-import AppButton from '@/components/Base/AppButton'
+import AppButton from "@/components/Base/AppButton";
 export default {
-  layout: 'auth',
+  layout: "auth",
   components: {
     AppButton
   }
-}
+};
 </script>
 <style scoped>
 a:active {

@@ -22,42 +22,46 @@
       >No practice matched that name. Try again with whole words, practice code or CCG.</div>
     </div>
 
-    <div
-      class="rounded-lg shadow-lg overflow-auto mt-5 mx-4"
-      v-if="showResult && surgeries.length > 0"
-    >
+    <div class="flex w-full justify-center xl:justify-start">
       <div
-        class="text-xs lg:text-base font-bold p-4"
-      >Select by clicking on the practice that you wish to add</div>
-      <div
-        class="border-t-2 p-4 cursor-pointer"
-        :class="selectedSurgeryId === item.id ? 'bg-yellow-dark':'hover:bg-grey'"
-        v-for="(item) in surgeries"
-        :key="item.id"
-        @click="selectedSurgeryId = item.id"
+        class="rounded-lg shadow-lg mt-5 mx-4 m-1"
+        style="flex: 0 1 600px;"
+        v-if="showResult && surgeries.length > 0"
       >
-        <div class="flex flex-col justify-start text-xs xl:text-base">
-          <div class="font-bold">{{item.name}}</div>
-          <div
-            class="mt-4"
-          >{{item.address.line_1}}, {{item.address.line_2}}, {{item.address.line_3}}, {{item.address.post_code}}</div>
-          <div class="flex flex-row flex-nowrap mt-1">
-            <div class="rounded-lg bg-grey-light py-1 px-2 mr-1">CCG</div>
-            <div class="flex items-center">{{item.clinical_commissioning_group.name}}</div>
-          </div>
-          <div class="flex flex-row flex-nowrap mt-1">
-            <div class="rounded-lg bg-grey-light py-1 px-2 mr-1">Practice Code</div>
-            <div class="flex items-center">{{item.code}}</div>
+        <div
+          class="text-xs lg:text-base font-bold p-4"
+        >Select by clicking on the practice that you wish to add</div>
+        <div
+          class="border-t-2 p-4 cursor-pointer"
+          :class="selectedSurgeryId === item.id ? 'bg-yellow-dark':'hover:bg-grey'"
+          v-for="(item) in surgeries"
+          :key="item.id"
+          @click="selectedSurgeryId = item.id"
+        >
+          <div class="flex flex-col justify-start text-xs xl:text-base">
+            <div class="font-bold">{{item.name}}</div>
+            <div
+              class="mt-4"
+            >{{item.address.line_1}}, {{item.address.line_2}}, {{item.address.line_3}}, {{item.address.post_code}}</div>
+            <div class="flex flex-row flex-nowrap mt-1">
+              <div class="rounded-lg bg-grey-light py-1 px-2 mr-1">CCG</div>
+              <div class="flex items-center">{{item.clinical_commissioning_group.name}}</div>
+            </div>
+            <div class="flex flex-row flex-nowrap mt-1">
+              <div class="rounded-lg bg-grey-light py-1 px-2 mr-1">Practice Code</div>
+              <div class="flex items-center">{{item.code}}</div>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="border-t-2 p-4 text-xs xl:text-base">
-        <p class="font-bold">These are just top 10 matches from your search term.</p>
-        <p
-          class="font-bold"
-        >Try again with practice code or its full name if the practice isn't in the result.</p>
+        <div class="border-t-2 p-4 text-xs xl:text-base">
+          <p class="font-bold">These are just top 10 matches from your search term.</p>
+          <p
+            class="font-bold"
+          >Try again with practice code or its full name if the practice isn't in the result.</p>
+        </div>
       </div>
     </div>
+
     <div class="mt-4" v-if="selectedSurgeryId">
       <AppButton :label="'Next'" @click="next" />
     </div>
@@ -127,9 +131,7 @@ export default {
       } else {
         this.$axios
           .$get(
-            `/api/v1/surgeries?search=${
-              this.search_text
-            }&has_parent=false&is_parent=false&limit=10`
+            `/api/v1/surgeries?search=${this.search_text}&has_parent=false&is_parent=false&limit=10`
           )
           .then(res => {
             this.surgeries = res.data.surgeries;

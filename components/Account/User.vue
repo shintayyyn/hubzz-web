@@ -55,125 +55,132 @@
   </div>
 </template>
 <script>
-import AppInput from '@/components/Base/AppInput'
-import AppSelect from '@/components/Base/AppSelect'
-import AppButton from '@/components/Base/AppButton'
-import AppLoading from '@/components/Base/AppLoading'
+import AppInput from "@/components/Base/AppInput";
+import AppSelect from "@/components/Base/AppSelect";
+import AppButton from "@/components/Base/AppButton";
+import AppLoading from "@/components/Base/AppLoading";
 const roles = [
-  { value: 'Practice Staff', label: 'Practice Staff' },
-  { value: 'Practice Manager', label: 'Practice Manager' },
-  { value: 'Partner', label: 'Partner' }
-]
+  { value: "Practice Staff", label: "Practice Staff" },
+  { value: "Practice Manager", label: "Practice Manager" },
+  { value: "Partner", label: "Partner" }
+];
 export default {
   components: {
     AppInput,
     AppSelect,
     AppButton,
-    AppLoading,
+    AppLoading
   },
   data() {
     return {
       roles,
       form: {
-        email: '',
-        title: '',
-        first_name: '',
-        last_name: '',
-        suffix: '',
-        practice_role: ''
+        email: "",
+        title: "",
+        first_name: "",
+        last_name: "",
+        suffix: "",
+        practice_role: ""
       },
       formError: [],
       loading: false
-    }
+    };
   },
   created() {
-    this.loading = true
-    this.$axios.$get('/api/v1/me').then(res => {
-      this.form.email = res.data.user.email
-      this.form.title = res.data.user.personal_detail.title
-      this.form.first_name = res.data.user.personal_detail.first_name
-      this.form.last_name = res.data.user.personal_detail.last_name
-      this.form.suffix = res.data.user.personal_detail.suffix
-      this.form.practice_role = res.data.user.practice_detail.practice_role
-      this.loading = false
-    })
+    this.loading = true;
+    this.$axios.$get("/api/v1/me").then(res => {
+      this.form.email = res.data.user.email;
+      this.form.title = res.data.user.personal_detail.title;
+      this.form.first_name = res.data.user.personal_detail.first_name;
+      this.form.last_name = res.data.user.personal_detail.last_name;
+      this.form.suffix = res.data.user.personal_detail.suffix;
+      this.form.practice_role = res.data.user.practice_detail.practice_role;
+      this.loading = false;
+    });
   },
   watch: {
-    'form.email'(value) {
+    "form.email"(value) {
       // splice from formerror
-      let index = this.formError.findIndex(item => item.field === 'email')
+      let index = this.formError.findIndex(item => item.field === "email");
       if (index >= 0) {
-        this.formError.splice(index, 1)
+        this.formError.splice(index, 1);
       }
       // validate
       if (!value) {
         // required
-        this.formError.push({ field: 'email', message: 'Required' })
+        this.formError.push({ field: "email", message: "Required" });
       } else {
         // validate option
-        const error = this.ValidateEmail(value)
+        const error = this.ValidateEmail(value);
         if (error) {
-          this.formError.push(error)
+          this.formError.push(error);
         }
       }
     },
-    'form.first_name'(value) {
+    "form.first_name"(value) {
       // splice from formerror
-      let index = this.formError.findIndex(item => item.field === 'first_name')
+      let index = this.formError.findIndex(item => item.field === "first_name");
       if (index >= 0) {
-        this.formError.splice(index, 1)
+        this.formError.splice(index, 1);
       }
       // validate
       if (!value) {
         // required
-        this.formError.push({ field: 'first_name', message: 'Required' })
+        this.formError.push({ field: "first_name", message: "Required" });
       }
     },
-    'form.last_name'(value) {
+    "form.last_name"(value) {
       // splice from formerror
-      let index = this.formError.findIndex(item => item.field === 'last_name')
+      let index = this.formError.findIndex(item => item.field === "last_name");
       if (index >= 0) {
-        this.formError.splice(index, 1)
+        this.formError.splice(index, 1);
       }
       // validate
       if (!value) {
         // required
-        this.formError.push({ field: 'last_name', message: 'Required' })
+        this.formError.push({ field: "last_name", message: "Required" });
       }
     },
-    'form.practice_role'(value) {
+    "form.practice_role"(value) {
       // splice from formerror
-      let index = this.formError.findIndex(item => item.field === 'practice_role')
+      let index = this.formError.findIndex(
+        item => item.field === "practice_role"
+      );
       if (index >= 0) {
-        this.formError.splice(index, 1)
+        this.formError.splice(index, 1);
       }
       // validate
       if (!value) {
         // required
-        this.formError.push({ field: 'practice_role', message: 'Required' })
+        this.formError.push({ field: "practice_role", message: "Required" });
       }
-    },
+    }
   },
   methods: {
     async save() {
-      this.loading = true
+      this.loading = true;
       try {
-        this.formError = []
-        this.Validate(this.form, ['title', 'suffix'])
+        this.formError = [];
+        this.Validate(this.form, ["title", "suffix"]);
         if (!this.formError.length) {
-          this.$axios.$put(`/api/v1/practice/me/account`, this.form).then(res => {
-            console.log(res)
-            this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Saved' })
-            this.loading = false
-          })
+          this.$axios
+            .$put(`/api/v1/practice/me/account`, this.form)
+            .then(res => {
+              this.$store.commit("SET_NOTIFICATION", {
+                enabled: true,
+                status: "success",
+                text: "Saved"
+              });
+              this.loading = false;
+            });
         }
       } catch (e) {
-        this.loading = false
-        console.log(e)
+        this.loading = false;
+        console.log(e);
       }
     }
   }
-}
+};
 </script>
 
 
