@@ -3,7 +3,7 @@
     <div
       class="mt-10 w-full text-center"
       style="font-family: Nunito"
-      v-if="jobs.length === 0"
+      v-if="getLocumAllocatedJobs.length === 0 && !loadingJobs"
     >You do not have any allocated jobs</div>
     <div v-else class="mt-4">
       <table>
@@ -19,7 +19,7 @@
           </tr>
         </thead>
         <tbody>
-          <template v-for="(item, index) in jobs">
+          <template v-for="(item, index) in getLocumAllocatedJobs">
             <tr
               :key="item.id"
               class="job-card shadow-md cursor-pointer text-xs text-left"
@@ -45,22 +45,55 @@
 </template>
 <script>
 export default {
-  data() {
-    return {
-      jobs: [],
+  computed: {
+    getLocumAllocatedJobs() {
+      return this.$store.getters["jobs/getLocumAllocatedJobs"];
+    },
+    perPage() {
+      return 5;
+    },
+    total() {
+      return this.$store.state.jobs.locum_allocated_jobs_count;
+    },
+    totalPages() {
+      return Math.ceil(this.total / this.perPage);
+    },
+    currentPage() {
+      return parseInt(this.$route.query.current_page);
+    },
+    loadingJobs() {
+      return this.$store.state.jobs.loading_jobs;
     }
   },
   created() {
-    this.$axios.$get(`/api/v1/locum/jobs?locum_status=Current`).then(res => {
-      this.jobs = res.data.jobs
-    })
+    const query = {
+      ...this.$route.query,
+      current_page: this.$route.query.current_page || 1
+    };
+    this.$router.push({ query });
+    this.getJobsCount();
+    this.getJobs();
   },
   methods: {
+    getJobsCount() {
+      this.$store.dispatch("jobs/fetchLocumJobs", {
+        countOnly: true
+      });
+    },
+    getJobs() {
+      let offset = 0;
+      offset = this.perPage * (parseInt(this.$route.query.current_page) - 1);
+      this.$store.dispatch("jobs/fetchLocumJobs", {
+        offset: offset,
+        limit: this.perPage,
+        status: "Current"
+      });
+    },
     show(id) {
-      this.$router.push(`/jobs/${id}?job_status=allocated`)
+      this.$router.push(`/jobs/${id}?job_status=allocated`);
     }
   }
-}
+};
 </script>
 <style scoped>
 .job-card:hover {

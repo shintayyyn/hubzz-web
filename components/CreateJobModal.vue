@@ -341,18 +341,18 @@
   </div>
 </template>
 <script>
-import { mixin as clickaway } from 'vue-clickaway'
-import AppInput from '@/components/Base/AppInput'
-import AppSelect from '@/components/Base/AppSelect'
-import AppTextarea from '@/components/Base/AppTextarea'
-import AppFilterSearch from '@/components/Base/AppFilterSearch'
-import AppDate from '@/components/Base/AppDate'
-import AppButton from '@/components/Base/AppButton'
+import { mixin as clickaway } from "vue-clickaway";
+import AppInput from "@/components/Base/AppInput";
+import AppSelect from "@/components/Base/AppSelect";
+import AppTextarea from "@/components/Base/AppTextarea";
+import AppFilterSearch from "@/components/Base/AppFilterSearch";
+import AppDate from "@/components/Base/AppDate";
+import AppButton from "@/components/Base/AppButton";
 const session_requirements_lists = [
-  { label: 'Practice admin', value: 'Practice admin' },
-  { label: 'Telephone triage', value: 'Telephone triage' },
-  { label: 'Home visits', value: 'Home visits' },
-]
+  { label: "Practice admin", value: "Practice admin" },
+  { label: "Telephone triage", value: "Telephone triage" },
+  { label: "Home visits", value: "Home visits" }
+];
 export default {
   mixins: [clickaway],
   components: {
@@ -384,28 +384,28 @@ export default {
       },
       qualifications: [],
       compliances: [],
-      unpaid_breaks: '',
+      unpaid_breaks: "",
       shifts: [],
 
       form: {
-        practice_id: '',
-        title: '',
-        description: '',
-        email: '',
-        report_to: '',
+        practice_id: "",
+        title: "",
+        description: "",
+        email: "",
+        report_to: "",
         is_another_doctor: false,
         is_nurse_available: false,
-        number_of_patients: '',
-        duration_for_each_appointment: '',
+        number_of_patients: "",
+        duration_for_each_appointment: "",
         opportunity_for_catch_up_slots: false,
         session_requirements: [],
-        session_structure_information: '',
-        extra_information: '',
-        rate: '',
+        session_structure_information: "",
+        extra_information: "",
+        rate: "",
         locum_detail_rate_type_id: 1,
         ir35: false,
         mandatory_training_id: [],
-        profession_id: '',
+        profession_id: "",
         qualification_id: [],
         clinical_system_id: [],
         spoken_language_id: [],
@@ -414,125 +414,180 @@ export default {
         time_start: null,
         date_end: null,
         time_end: null,
-        unpaid_breaks_in_minutes: '',
-        shift_id: '',
+        unpaid_breaks_in_minutes: "",
+        shift_id: "",
         auto_assign_at: null,
         selection_date: null
       },
       formError: []
-    }
+    };
   },
   watch: {
-    'form.profession_id'(value) {
+    "form.profession_id"(value) {
       if (value) {
-        this.selectedProfession = this.professions_categories.find(item => item.id == value)
+        this.selectedProfession = this.professions_categories.find(
+          item => item.id == value
+        );
         if (this.selectedProfession.profession_category.id == 1) {
-          this.qualifications = this.gp_qualification_lists
-          this.compliances = this.gp_compliance_documents_lists
-          return
+          this.qualifications = this.gp_qualification_lists;
+          this.compliances = this.gp_compliance_documents_lists;
+          return;
         }
         if (this.selectedProfession.profession_category.id == 2) {
-          this.qualifications = this.other_qualification_lists
-          this.compliances = this.others_compliance_documents_lists
-          return
+          this.qualifications = this.other_qualification_lists;
+          this.compliances = this.others_compliance_documents_lists;
+          return;
         }
       }
-    },
+    }
   },
   created() {
     // get practice lists
     this.$axios.$get(`/api/v1/practice/practice-children`).then(res => {
-      this.practice_lists = []
-      this.practice_lists.push({ label: this.$auth.user.practice_detail.practice.surgery.name, value: this.$auth.user.practice_detail.practice.id })
+      this.practice_lists = [];
+      this.practice_lists.push({
+        label: this.$auth.user.practice_detail.practice.surgery.name,
+        value: this.$auth.user.practice_detail.practice.id
+      });
       res.data.practice_children.forEach(item => {
-        this.practice_lists.push({ label: item.surgery.name, value: item.id })
-      })
-    })
+        this.practice_lists.push({ label: item.surgery.name, value: item.id });
+      });
+    });
 
     this.$axios.$get(`/api/v1/locum-detail-rate-types`).then(res => {
-      this.rate_lists = []
+      this.rate_lists = [];
       res.data.locum_detail_rate_types.forEach(item => {
-        this.rate_lists.push({ label: item.name, value: item.id })
-      })
-    })
+        this.rate_lists.push({ label: item.name, value: item.id });
+      });
+    });
     this.$axios.$get(`/api/v1/me`).then(res => {
-      this.form.report_to = res.data.user.practice_detail.practice.report_to
-      this.form.email = res.data.user.practice_detail.practice.email
-      res.data.user.practice_detail.practice.mandatory_trainings.forEach(item => {
-        this.mandatory_training_lists.push({ label: item.name, value: item.id })
-      })
-      res.data.user.practice_detail.practice.gp_compliance_documents.forEach(item => {
-        this.gp_compliance_documents_lists.push({ label: item.name, value: item.id })
-      })
-      res.data.user.practice_detail.practice.others_compliance_documents.forEach(item => {
-        this.others_compliance_documents_lists.push({ label: item.name, value: item.id })
-      })
-    })
+      this.form.report_to = res.data.user.practice_detail.practice.report_to;
+      this.form.email = res.data.user.practice_detail.practice.email;
+      res.data.user.practice_detail.practice.mandatory_trainings.forEach(
+        item => {
+          this.mandatory_training_lists.push({
+            label: item.name,
+            value: item.id
+          });
+        }
+      );
+      res.data.user.practice_detail.practice.gp_compliance_documents.forEach(
+        item => {
+          this.gp_compliance_documents_lists.push({
+            label: item.name,
+            value: item.id
+          });
+        }
+      );
+      res.data.user.practice_detail.practice.others_compliance_documents.forEach(
+        item => {
+          this.others_compliance_documents_lists.push({
+            label: item.name,
+            value: item.id
+          });
+        }
+      );
+    });
     this.$axios.$get(`/api/v1/professions`).then(res => {
-      this.professions = []
+      this.professions = [];
       res.data.professions.forEach(item => {
-        this.professions.push({ label: item.name, value: item.id })
-        this.professions_categories.push(item)
-      })
-    })
+        this.professions.push({ label: item.name, value: item.id });
+        this.professions_categories.push(item);
+      });
+    });
     this.$axios.$get(`/api/v1/profession-categories`).then(res => {
-      this.gp_qualification_lists = []
-      res.data.profession_categories.find(item => item.id === 1).qualifications.forEach(item => {
-        this.gp_qualification_lists.push({ label: item.name, value: item.id })
-      })
-      this.other_qualification_lists = []
-      res.data.profession_categories.find(item => item.id === 2).qualifications.forEach(item => {
-        this.other_qualification_lists.push({ label: item.name, value: item.id })
-      })
-    })
+      this.gp_qualification_lists = [];
+      res.data.profession_categories
+        .find(item => item.id === 1)
+        .qualifications.forEach(item => {
+          this.gp_qualification_lists.push({
+            label: item.name,
+            value: item.id
+          });
+        });
+      this.other_qualification_lists = [];
+      res.data.profession_categories
+        .find(item => item.id === 2)
+        .qualifications.forEach(item => {
+          this.other_qualification_lists.push({
+            label: item.name,
+            value: item.id
+          });
+        });
+    });
     this.$axios.$get(`/api/v1/clinical-systems`).then(res => {
-      this.clinical_system_lists = []
+      this.clinical_system_lists = [];
       res.data.clinical_systems.forEach(item => {
-        this.clinical_system_lists.push({ label: item.name, value: item.id })
-      })
-    })
+        this.clinical_system_lists.push({ label: item.name, value: item.id });
+      });
+    });
     this.$axios.$get(`/api/v1/spoken-languages`).then(res => {
-      this.spoken_language_lists = []
+      this.spoken_language_lists = [];
       res.data.spoken_languages.forEach(item => {
-        this.spoken_language_lists.push({ label: item.name, value: item.id })
-      })
-    })
+        this.spoken_language_lists.push({ label: item.name, value: item.id });
+      });
+    });
     this.$axios.$get(`/api/v1/shifts`).then(res => {
-      this.shifts = []
+      this.shifts = [];
       res.data.shifts.forEach(item => {
-        this.shifts.push({ label: item.name, value: item.id })
-      })
-    })
+        this.shifts.push({ label: item.name, value: item.id });
+      });
+    });
   },
   methods: {
     addMandatory() {
       // ! change route
       // this.$emit('close')
-      this.$router.push('/profile')
+      this.$router.push("/profile");
     },
     uncheckMandatory(value) {
-      this.form.mandatory_training_id = this.form.mandatory_training_id.filter(id => id != value)
+      this.form.mandatory_training_id = this.form.mandatory_training_id.filter(
+        id => id != value
+      );
     },
     publish() {
-      this.form.clinical_system_id = this.form.clinical_system_id.map(item => item.value)
-      this.form.qualification_id = this.form.qualification_id.map(item => item.value)
-      this.form.spoken_language_id = this.form.spoken_language_id.map(item => item.value)
-      this.form.mandatory_training_id = this.form.mandatory_training_id.map(item => item.value)
-      this.form.date_start = this.$moment(this.form.date_start).format('YYYY-MM-DD')
-      this.form.date_end = this.$moment(this.form.date_end).format('YYYY-MM-DD')
-      this.form.selection_date = this.$moment(this.form.selection_date).format('YYYY-MM-DD HH:mm:ss')
-      this.form.auto_assign_at = this.$moment(this.form.auto_assign_at).format('YYYY-MM-DD HH:mm:ss')
-      this.form.session_requirements.length > 0 ? this.form.session_requirements = this.form.session_requirements.join() : this.form.session_requirements = ''
-      this.unpaid_breaks !== 'other' ? this.form.unpaid_breaks_in_minutes = this.unpaid_breaks : this.form.unpaid_breaks_in_minutes = this.form.unpaid_breaks_in_minutes
-      console.log(this.form)
+      this.form.clinical_system_id = this.form.clinical_system_id.map(
+        item => item.value
+      );
+      this.form.qualification_id = this.form.qualification_id.map(
+        item => item.value
+      );
+      this.form.spoken_language_id = this.form.spoken_language_id.map(
+        item => item.value
+      );
+      this.form.mandatory_training_id = this.form.mandatory_training_id.map(
+        item => item.value
+      );
+      this.form.date_start = this.$moment(this.form.date_start).format(
+        "YYYY-MM-DD"
+      );
+      this.form.date_end = this.$moment(this.form.date_end).format(
+        "YYYY-MM-DD"
+      );
+      this.form.selection_date = this.$moment(this.form.selection_date).format(
+        "YYYY-MM-DD HH:mm:ss"
+      );
+      this.form.auto_assign_at = this.$moment(this.form.auto_assign_at).format(
+        "YYYY-MM-DD HH:mm:ss"
+      );
+      this.form.session_requirements.length > 0
+        ? (this.form.session_requirements = this.form.session_requirements.join())
+        : (this.form.session_requirements = "");
+      this.unpaid_breaks !== "other"
+        ? (this.form.unpaid_breaks_in_minutes = this.unpaid_breaks)
+        : (this.form.unpaid_breaks_in_minutes = this.form.unpaid_breaks_in_minutes);
       this.$axios.$post(`/api/v1/practice/jobs`, this.form).then(res => {
-        console.log(res)
-        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Successfully created job' })
-        this.$emit('close')
-      })
+        console.log(res);
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "success",
+          text: "Successfully created job"
+        });
+        this.$emit("close");
+      });
     }
   }
-}
+};
 </script>
 <style>
 .clinical-system-list {

@@ -63,7 +63,6 @@ export default {
   },
   data() {
     return {
-      jobs: [],
       total: 0,
       totalPages: 0,
       currentPage: 0,
@@ -75,6 +74,11 @@ export default {
     $route(to, from) {
       this.currentPage = parseInt(to.query.current_page)
       this.getUnfilledSession()
+    }
+  },
+  computed: {
+    jobs() {
+      return this.$store.state.session.unfilledJobs
     }
   },
   created() {
@@ -97,7 +101,10 @@ export default {
       let offset = 0
       offset = this.perPage * (parseInt(this.$route.query.current_page) - 1)
       this.$axios.$get(`/api/v1/practice/jobs?status=Unfilled&limit=${this.perPage}&offset=${offset}`).then(res => {
-        this.jobs = res.data.jobs
+        if (res.data.jobs.length === 0 && this.$route.query.current_page !== 1) {
+          this.pagechanged(this.$route.query.current_page - 1)
+        }
+        this.$store.commit('session/SET_UNFILLED_JOBS', res.data.jobs)
         this.loading = false
       })
     },

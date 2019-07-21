@@ -33,11 +33,6 @@ export default {
     Completed
   },
   middleware: 'isVerified',
-  // async asyncData({ store, error }) {
-  //   if (!store.$auth.user.is_actived) {
-  //     throw error({ statusCode: 404, message: 'Post not found' })
-  //   }
-  // },
   computed: {
     activeComponent() {
       return this.$route.query.job_status
@@ -61,7 +56,7 @@ export default {
       job_status: this.$route.query.job_status || 'allocated'
     }
     this.$router.push({ query })
-  }
+  },
 }
 </script>
 <style scoped>

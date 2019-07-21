@@ -51,47 +51,43 @@ export default {
       let addedLists = [];
       let defaultLists = [
         { name: "Dashboard", route: "/dashboard" },
-        { name: "Messages", route: "/messages" },
-        { name: "Account", route: "/account" },
-        // { name: "Messages", route: "/messages" }
+        { name: "Account", route: "/account" }
       ];
       let otherLists = [
-        
-        { name: 'FAQ', route: '/faq' },
-        { name: 'Terms and Conditions', route: '/terms-and-conditions' },
-        { name: 'Contact Us', route: '/contact-us' },
-      ]
-      if(domain === 'Practice'){
-        addedLists = [
-          { name: 'Profile', route: '/profile' },
-        ]
-      }
-      
-      if (domain === 'Practice' && accountStatus === "Active") {
-        addedLists = [
-          { name: 'Profile', route: '/profile' },
-          { name: 'My Banks', route: '/my-banks' },
-          { name: 'Sessions', route: '/sessions' },
-          { name: 'Billing', route: '/billing' },
-          { name: 'Invite', route: '/invite' },
-        ]
+        { name: "FAQ", route: "/faq" },
+        { name: "Terms and Conditions", route: "/terms-and-conditions" },
+        { name: "Contact Us", route: "/contact-us" }
+      ];
+      if (domain === "Practice") {
+        addedLists = [{ name: "Profile", route: "/profile" }];
       }
 
-      if (domain === 'Locum') {
+      if (domain === "Practice" && accountStatus === "Active") {
         addedLists = [
-          { name: "Compliance", route: "/compliance" },
+          { name: "Profile", route: "/profile" },
+          { name: "My Banks", route: "/my-banks" },
+          { name: "Sessions", route: "/sessions" },
+          { name: "Billing", route: "/billing" },
+          { name: "Invite", route: "/invite" }
         ];
       }
 
-      if (domain === "Locum" && accountStatus === "Active" || accountStatus === "Dormant") {
+      if (domain === "Locum") {
+        addedLists = [{ name: "Compliance", route: "/compliance" }];
+      }
+
+      if (
+        (domain === "Locum" && accountStatus === "Active") ||
+        accountStatus === "Dormant"
+      ) {
         addedLists = [
-          { name: 'Compliance', route: '/compliance' },
-          { name: 'My Practice', route: '/my-practice' },
-          { name: 'Availability', route: '/availability' },
-          { name: 'Jobs', route: '/jobs' },
-          { name: 'Billing', route: '/billing' },
-          { name: 'Invite', route: '/invite' },
-        ]
+          { name: "Compliance", route: "/compliance" },
+          { name: "My Practice", route: "/my-practice" },
+          { name: "Availability", route: "/availability" },
+          { name: "Jobs", route: "/jobs" },
+          { name: "Billing", route: "/billing" },
+          { name: "Invite", route: "/invite" }
+        ];
       }
       this.lists = [...defaultLists, ...addedLists, ...otherLists];
     }

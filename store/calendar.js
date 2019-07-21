@@ -64,6 +64,18 @@ export const mutations = {
     SET_PRACTICE_AVAILABLE_JOBS_REMINDER (state, payload) {
         state.practice_available_jobs_reminder = payload
     },
+    UPDATE_PRACTICE_AVAILABLE_JOBS_REMINDER (state, payload) {
+        state.practice_available_jobs_reminder = state.practice_available_jobs_reminder.filter(job => job.id !== payload)
+    },
+    UPDATE_PRACTICE_CURRENT_JOBS (state, payload) {
+        state.practice_current_jobs = state.practice_current_jobs.filter(job => job.id !== payload)
+    },
+    UPDATE_PRACTICE_APPLIED_JOBS (state, payload) {
+        state.practice_applied_jobs = state.practice_applied_jobs.filter(job => job.id !== payload)
+    },
+    UPDATE_PRACTICE_APPLIED_JOBS_REMINDER (state, payload) {
+        state.practice_applied_jobs_reminder = state.practice_applied_jobs_reminder.filter(job => job.id !== payload)
+    },
     // locums
     SET_LOCUM_PRIVATE_JOBS(state, payload) {
         state.locum_private_jobs = payload

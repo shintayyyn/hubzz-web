@@ -27,15 +27,15 @@
       />
 
       <div class="text-left mt-5">
-        <AppButton :label="'Update'" @click="update"/>
+        <AppButton :label="'Update'" @click="update" />
       </div>
     </form>
   </div>
 </template>
 <script>
-import AppInput from '@/components/Base/AppInput'
-import AppSelect from '@/components/Base/AppSelect'
-import AppButton from '@/components/Base/AppButton'
+import AppInput from "@/components/Base/AppInput";
+import AppSelect from "@/components/Base/AppSelect";
+import AppButton from "@/components/Base/AppButton";
 export default {
   components: {
     AppInput,
@@ -45,52 +45,65 @@ export default {
   data() {
     return {
       form: {
-        old_password: '',
-        new_password: '',
-        new_password_confirmation: '',
+        old_password: "",
+        new_password: "",
+        new_password_confirmation: ""
       },
       formError: []
-    }
+    };
   },
   watch: {
-    'form.old_password'(value) {
+    "form.old_password"(value) {
       // splice from formerror
-      let index = this.formError.findIndex(item => item.field === 'old_password')
+      let index = this.formError.findIndex(
+        item => item.field === "old_password"
+      );
       if (index >= 0) {
-        this.formError.splice(index, 1)
+        this.formError.splice(index, 1);
       }
       // validate
       if (!value) {
         // required
-        this.formError.push({ field: 'old_password', message: 'Required' })
+        this.formError.push({ field: "old_password", message: "Required" });
       }
     },
-    'form.new_password'(value) {
+    "form.new_password"(value) {
       // splice from formerror
-      let index = this.formError.findIndex(item => item.field === 'new_password')
+      let index = this.formError.findIndex(
+        item => item.field === "new_password"
+      );
       if (index >= 0) {
-        this.formError.splice(index, 1)
+        this.formError.splice(index, 1);
       }
       // validate
       if (!value) {
         // required
-        this.formError.push({ field: 'new_password', message: 'Required' })
+        this.formError.push({ field: "new_password", message: "Required" });
       }
     },
-    'form.new_password_confirmation'(value) {
+    "form.new_password_confirmation"(value) {
       // splice from formerror
-      let index = this.formError.findIndex(item => item.field === 'new_password_confirmation')
+      let index = this.formError.findIndex(
+        item => item.field === "new_password_confirmation"
+      );
       if (index >= 0) {
-        this.formError.splice(index, 1)
+        this.formError.splice(index, 1);
       }
       // validate
       if (!value) {
         // required
-        this.formError.push({ field: 'new_password_confirmation', message: 'Required' })
+        this.formError.push({
+          field: "new_password_confirmation",
+          message: "Required"
+        });
       } else {
-        const error = this.ValidateSamePassword(this.form.new_password, value, 'new_password_confirmation')
+        const error = this.ValidateSamePassword(
+          this.form.new_password,
+          value,
+          "new_password_confirmation"
+        );
         if (error) {
-          this.formError.push(error)
+          this.formError.push(error);
         }
       }
     }
@@ -98,25 +111,29 @@ export default {
   methods: {
     async update() {
       try {
-        this.formError = []
-        this.Validate(this.form)
+        this.formError = [];
+        this.Validate(this.form);
         if (!this.formError.length) {
           this.$axios
             .$put(`/api/v1/me/change-password`, this.form)
             .then(res => {
-              console.log(res)
-              this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Password changed' })
-            }).catch(err => {
-              err.response.data.error_messages.forEach(error => {
-                this.formError.push(error)
-              })
+              this.$store.commit("SET_NOTIFICATION", {
+                enabled: true,
+                status: "success",
+                text: "Password changed"
+              });
             })
+            .catch(err => {
+              err.response.data.error_messages.forEach(error => {
+                this.formError.push(error);
+              });
+            });
         }
       } catch (e) {
-        console.log(e)
+        console.log(e);
       }
     }
   }
-}
+};
 </script>
 

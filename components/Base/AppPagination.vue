@@ -7,13 +7,13 @@
           type="button"
           class="rounded-lg hidden md:block py-2 px-4 font-bold text-sm focus:outline-none"
           @click="onClickFirstPage"
-          :disabled="isInFirstPage"
+          :disabled="loading || isInFirstPage"
         >First</button>
         <button
           type="button"
           class="relative rounded-lg md:hidden py-4 px-5 font-bold text-sm focus:outline-none"
           @click="onClickFirstPage"
-          :disabled="isInFirstPage"
+          :disabled="loading || isInFirstPage"
         >
           <span class="absolute mx-2 my-1 pin-l pin-t">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" >
@@ -28,13 +28,13 @@
           type="button"
           class="rounded-lg hidden md:block py-2 px-4 font-bold text-sm focus:outline-none"
           @click="onClickPreviousPage"
-          :disabled="isInFirstPage"
+          :disabled="loading || isInFirstPage"
         >Previous</button>
         <button
           type="button"
           class="relative rounded-lg md:hidden py-4 px-4 font-bold text-sm focus:outline-none"
           @click="onClickPreviousPage"
-          :disabled="isInFirstPage"
+          :disabled="loading || isInFirstPage"
         >
           <span class="absolute mx-1 my-1 pin-l pin-t">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18">
@@ -49,7 +49,7 @@
           type="button"
           class="rounded-lg py-2 px-3 md:px-4 font-bold text-sm focus:outline-none"
           @click="onClickPage(page.name)"
-          :disabled="page.isDisabled"
+          :disabled="loading || page.isDisabled"
           :class="{ active: isPageActive(page.name) }"
         >{{ page.name }}</button>
       </div>
@@ -59,13 +59,13 @@
           type="button"
           class="rounded-lg hidden md:block py-2 px-4 font-bold text-sm focus:outline-none"
           @click="onClickNextPage"
-          :disabled="isInLastPage"
+          :disabled="loading || isInLastPage"
         >Next</button>
         <button
           type="button"
           class="relative rounded-lg md:hidden py-4 px-4 font-bold text-sm focus:outline-none"
           @click="onClickNextPage"
-          :disabled="isInLastPage"
+          :disabled="loading || isInLastPage"
         >
           <span class="absolute mx-1 my-1 pin-l pin-t">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18">
@@ -80,13 +80,13 @@
           type="button"
           class="rounded-lg hidden md:block py-2 px-4 font-bold text-sm focus:outline-none"
           @click="onClickLastPage"
-          :disabled="isInLastPage"
+          :disabled="loading || isInLastPage"
         >Last</button>
         <button
           type="button"
           class="relative rounded-lg md:hidden py-4 px-5 font-bold text-sm focus:outline-none"
           @click="onClickLastPage"
-          :disabled="isInLastPage"
+          :disabled="loading || isInLastPage"
         >
           <span class="absolute mx-2 my-1 pin-l pin-t">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18">
@@ -103,13 +103,13 @@
           type="button"
           class="rounded-lg hidden md:block py-2 px-4 font-bold text-sm focus:outline-none"
           @click="onClickFirstPage"
-          :disabled="isInFirstPage"
+          :disabled="loading || isInFirstPage"
         >First</button>
         <button
           type="button"
           class="relative rounded-lg md:hidden py-4 px-5 font-bold text-sm focus:outline-none"
           @click="onClickFirstPage"
-          :disabled="isInFirstPage"
+          :disabled="loading || isInFirstPage"
         >
           <span class="absolute mx-2 my-1 pin-l pin-t">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" >
@@ -124,13 +124,13 @@
           type="button"
           class="rounded-lg hidden md:block py-2 px-4 font-bold text-sm focus:outline-none"
           @click="onClickPreviousPage"
-          :disabled="isInFirstPage"
+          :disabled="loading || isInFirstPage"
         >Previous</button>
         <button
           type="button"
           class="relative rounded-lg md:hidden py-4 px-4 font-bold text-sm focus:outline-none"
           @click="onClickPreviousPage"
-          :disabled="isInFirstPage"
+          :disabled="loading || isInFirstPage"
         >
           <span class="absolute mx-1 my-1 pin-l pin-t">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18">
@@ -145,13 +145,13 @@
           type="button"
           class="rounded-lg hidden md:block py-2 px-4 font-bold text-sm focus:outline-none"
           @click="onClickNextPage"
-          :disabled="isInLastPage"
+          :disabled="loading || isInLastPage"
         >Next</button>
         <button
           type="button"
           class="relative rounded-lg md:hidden py-4 px-4 font-bold text-sm focus:outline-none"
           @click="onClickNextPage"
-          :disabled="isInLastPage"
+          :disabled="loading || isInLastPage"
         >
           <span class="absolute mx-1 my-1 pin-l pin-t">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18">
@@ -166,13 +166,13 @@
           type="button"
           class="rounded-lg hidden md:block py-2 px-4 font-bold text-sm focus:outline-none"
           @click="onClickLastPage"
-          :disabled="isInLastPage"
+          :disabled="loading || isInLastPage"
         >Last</button>
         <button
           type="button"
           class="relative rounded-lg md:hidden py-4 px-5 font-bold text-sm focus:outline-none"
           @click="onClickLastPage"
-          :disabled="isInLastPage"
+          :disabled="loading || isInLastPage"
         >
           <span class="absolute mx-2 my-1 pin-l pin-t">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18">
@@ -207,6 +207,10 @@ export default {
     currentPage: {
       type: Number,
       required: true
+    },
+    loading: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {
@@ -217,7 +221,7 @@ export default {
       return this.currentPage === this.totalPages
     },
     startPage() {
-      if (this.currentPage === 1 || this.currentPage === 2) {
+      if (this.currentPage === 1 || (this.currentPage === 2 || this.totalPages <= this.maxVisibleButtons)) {
         return 1
       }
 

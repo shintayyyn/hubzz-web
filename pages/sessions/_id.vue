@@ -46,7 +46,7 @@ export default {
   },
   created() {
     this.$store.commit('jobs/TOGGLE_SHIELD', true)
-  }
+  },
 }
 </script>
 
