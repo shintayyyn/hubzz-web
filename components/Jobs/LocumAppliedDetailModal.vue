@@ -248,12 +248,6 @@ export default {
       if (this.$route.fullPath === '/dashboard') {
         this.$emit('close')
       } else {
-        this.$router.push('/jobs?job_status=applied')
-      }
-
-      if (this.$route.fullPath === '/dashboard') {
-        this.$emit('close')
-      } else {
         const query = {
           ...this.$route.query
         }

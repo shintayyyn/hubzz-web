@@ -6,13 +6,16 @@
     />
     <LocumAllocatedDetailModal
       :job="job"
-      v-if="job.status === 'Current' && job.type === 'Platform'"
+      v-if="job.status === 'Current' && job.type === 'Platform' && job.platform_job.appointed_to_locum.user.id === $auth.user.id"
     />
-    <LocumAvailableDetailModal :job="job" v-if="job.status === 'Available'"/>
-    <LocumAppliedDetailModal :job="job" v-if="job.status === 'Applied'"/>
-    <LocumUnsuccessfullDetailModal :job="job" v-if="job.status === 'Unsuccessful'"/>
-    <LocumDeclinedDetailModal :job="job" v-if="job.status === 'Declined'"/>
-    <LocumCancelledDetailModal :job="job" v-if="job.status === 'Cancelled'"/>
+    <LocumAvailableDetailModal :job="job" v-if="job.status === 'Available'" />
+    <LocumAppliedDetailModal :job="job" v-if="job.status === 'Applied'" />
+    <LocumUnsuccessfulDetailModal
+      :job="job"
+      v-if="job.status === 'Current' && job.type === 'Platform' && job.platform_job.appointed_to_locum.user.id !== $auth.user.id"
+    />
+    <LocumDeclinedDetailModal :job="job" v-if="job.status === 'Declined'" />
+    <LocumCancelledDetailModal :job="job" v-if="job.status === 'Cancelled'" />
     <LocumCompletedDetailModal
       :job="job"
       v-if="job.status === 'Completed' && job.type === 'Platform'"
@@ -26,7 +29,7 @@ import LocumAllocatedDetailModal from '@/components/Jobs/LocumAllocatedDetailMod
 import LocumAvailableDetailModal from '@/components/Jobs/LocumAvailableDetailModal'
 import LocumMatchedDetailModal from '@/components/Jobs/LocumMatchedDetailModal'
 import LocumAppliedDetailModal from '@/components/Jobs/LocumAppliedDetailModal'
-import LocumUnsuccessfullDetailModal from '@/components/Jobs/LocumUnsuccessfullDetailModal'
+import LocumUnsuccessfulDetailModal from '@/components/Jobs/LocumUnsuccessfulDetailModal'
 import LocumDeclinedDetailModal from '@/components/Jobs/LocumDeclinedDetailModal'
 import LocumCancelledDetailModal from '@/components/Jobs/LocumCancelledDetailModal'
 import LocumCompletedDetailModal from '@/components/Jobs/LocumCompletedDetailModal'
@@ -37,7 +40,7 @@ export default {
     LocumAvailableDetailModal,
     LocumMatchedDetailModal,
     LocumAppliedDetailModal,
-    LocumUnsuccessfullDetailModal,
+    LocumUnsuccessfulDetailModal,
     LocumDeclinedDetailModal,
     LocumCancelledDetailModal,
     LocumCompletedDetailModal,

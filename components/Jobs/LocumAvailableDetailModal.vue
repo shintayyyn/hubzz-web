@@ -288,7 +288,10 @@ export default {
       })
     },
     close() {
-      this.$router.push('/jobs?job_status=available')
+      const query = {
+        ...this.$route.query
+      }
+      this.$router.push({ path: '/jobs', query })
     }
   }
 }
