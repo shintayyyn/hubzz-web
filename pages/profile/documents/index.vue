@@ -1,7 +1,8 @@
 <template>
     <div>
         <PracticeDocuments/>
-        <div class="modal-shield" v-if="shield"></div>
+        
+        <!-- <div class="modal-shield" v-if="shield"></div> -->
     </div>
 </template>
 
@@ -11,20 +12,20 @@ export default {
     components: {
         PracticeDocuments
     },
-    computed:{
-        shield() {
-        return this.$store.state.practiceDocuments.shield
-        }
-    },
-    watch: {
-        shield(value) {
-            if (value) {
-                document.body.style.overflow = 'hidden'
-            } else {
-                document.body.style.overflow = 'auto'
-            }
-        }
-    },
+    // computed:{
+    //     shield() {
+    //     return this.$store.state.practiceDocuments.shield
+    //     }
+    // },
+    // watch: {
+    //     shield(value) {
+    //         if (value) {
+    //             document.body.style.overflow = 'hidden'
+    //         } else {
+    //             document.body.style.overflow = 'auto'
+    //         }
+    //     }
+    // },
 
 }
 </script>

@@ -29,6 +29,14 @@
         </div>
       </div>
     </div>
+
+    <div class="show-document-shield" v-if="modal"></div>
+    <transition name="slide" mode="out-in">
+      <!-- <div class="show-document-shield shadow-lg" v-if="modal">
+        <PracticeDocumentDetailModal @close="modal = false"/>
+      </div> -->
+    </transition>
+
   </section>
 </template>
 <script>
@@ -77,6 +85,16 @@ export default {
 .practice-doc-card {
   background-color: white;
   transition: background-color 0.5s ease-in-out;
+}
+.show-document-shield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #333;
+  opacity: 0.5;
+  z-index: 511;
 }
 /*  */
 </style>

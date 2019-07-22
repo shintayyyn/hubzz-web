@@ -57,7 +57,7 @@ export default {
     width: 80%;
   }
 }
-/* .modal-shield {
+.modal-shield {
   position: fixed;
   top: 0;
   left: 0;
@@ -66,5 +66,5 @@ export default {
   background-color: #333;
   opacity: 0.5;
   z-index: 509;
-} */
+}
 </style>

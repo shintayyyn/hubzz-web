@@ -3,8 +3,8 @@
     <ProfileTabs/>
     <div class="mt-5">
       <transition name="fade" mode="out-in">
-        <!-- <Component :is="activeComponent"/> -->
-        <nuxt-child/>
+        <Component :is="activeComponent"/>
+        <!-- <nuxt-child/> -->
       </transition>
     </div>
   </section>
