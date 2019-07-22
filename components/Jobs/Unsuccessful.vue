@@ -4,22 +4,22 @@
       <div
         class="mt-10 w-full text-center"
         style="font-family: Nunito"
-        v-if="getLocumMatchedJobs.length === 0"
-      >There are no matched jobs nearby and suited for you at this time</div>
+        v-if="getLocumUnsuccessfulJobs.length === 0"
+      >You have not yet rejected for a job</div>
       <div v-else class="overflow-x-auto overflow-y-hidden">
         <table>
           <thead>
-            <tr class="text-xs text-left">
+            <tr class="text-xs sm:text-sm text-left">
               <th>Job number</th>
               <th>Practice</th>
               <th>Title</th>
               <th>From</th>
               <th>To</th>
-              <th>Created</th>
+              <th>Rejected</th>
             </tr>
           </thead>
           <tbody>
-            <template v-for="(item, index) in getLocumMatchedJobs">
+            <template v-for="(item, index) in getLocumUnsuccessfulJobs">
               <tr
                 :key="item.id"
                 class="__job-card shadow-md cursor-pointer text-xs text-left"
@@ -28,10 +28,9 @@
                 <td>{{item.job_number}}</td>
                 <td>{{item.platform_job.practice.surgery.name}}</td>
                 <td>{{item.platform_job.title}}</td>
-                <!-- ! ask arvi Need to add timestamp -->
                 <td>{{item.platform_job.date_start}}</td>
                 <td>{{item.platform_job.date_end}}</td>
-                <td>{{item.platform_job.date_created}}</td>
+                <td>{{item.platform_job.rejected_at}}</td>
               </tr>
               <tr :key="`${item.id}-${index}`">
                 <td></td>
@@ -41,7 +40,7 @@
         </table>
       </div>
     </div>
-    <div class="absolute pin-b w-full" v-if="getLocumMatchedJobs.length > 0">
+    <div class="absolute pin-b w-full" v-if="getLocumUnsuccessfulJobs.length > 0">
       <AppPagination
         :total="total"
         :totalPages="totalPages"
@@ -58,14 +57,14 @@ export default {
     AppPagination
   },
   computed: {
-    getLocumMatchedJobs() {
-      return this.$store.getters["jobs/getLocumMatchedJobs"];
+    getLocumUnsuccessfulJobs() {
+      return this.$store.getters["jobs/getLocumUnsuccessfulJobs"];
     },
     perPage() {
       return 2;
     },
     total() {
-      return this.$store.state.jobs.locum_matched_jobs_count;
+      return this.$store.state.jobs.locum_unsuccessful_jobs_count;
     },
     totalPages() {
       return Math.ceil(this.total / this.perPage);
@@ -75,10 +74,10 @@ export default {
     },
     loadingJobs() {
       return this.$store.state.jobs.loading_jobs;
-    },
+    }
   },
   watch: {
-    getLocumMatchedJobs() {
+    getLocumUnsuccessfulJobs() {
       this.goToLastPageThatHasJob()
     },
     $route(to, from) {
@@ -99,7 +98,7 @@ export default {
   methods: {
     getJobsCount() {
       this.$store.dispatch("jobs/fetchLocumJobs", {
-        status: "Matched",
+        status: "Unsuccessful",
         countOnly: true
       });
     },
@@ -109,11 +108,12 @@ export default {
       this.$store.dispatch("jobs/fetchLocumJobs", {
         offset: offset,
         limit: this.perPage,
-        status: "Matched"
+        status: "Unsuccessful"
       });
     },
     goToLastPageThatHasJob() {
-      if (this.getLocumMatchedJobs.length === 0 && this.$route.query.current_page !== 1 && !this.loadingJobs) {
+      this.$store.commit('jobs/TOGGLE_LOADING', false)
+      if (this.getLocumUnsuccessfulJobs.length === 0 && this.$route.query.current_page !== 1 && !this.loadingJobs) {
         this.pagechanged(this.$route.query.current_page - 1)
       }
     },

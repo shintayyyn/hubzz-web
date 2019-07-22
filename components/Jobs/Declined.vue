@@ -1,138 +1,135 @@
 <template>
-  <section class="declined-section overflow-x-auto">
-    <div
-      class="mt-10 w-full text-center"
-      style="font-family: Nunito"
-      v-if="jobs.length === 0"
-    >You have not yet declined a job</div>
-    <div v-else class="mt-4">
-      <table>
-        <thead>
-          <tr class="text-xs sm:text-sm text-left">
-            <th>Job number</th>
-            <th>Practice</th>
-            <th>Title</th>
-            <th>From</th>
-            <th>To</th>
-            <th>Declined</th>
-          </tr>
-        </thead>
-        <tbody>
-          <template v-for="(item, index) in jobs">
-            <tr
-              :key="item.id"
-              class="job-card rounded-lg shadow-md cursor-pointer text-xs lg:text-sm"
-              @click="show(item.id)"
-            >
-              <td>{{item.job_number}}</td>
-              <td>{{item.platform_job.practice.surgery.name}}</td>
-              <td>{{item.platform_job.title}}</td>
-              <td>{{item.platform_job.date_start}}</td>
-              <td>{{item.platform_job.date_end}}</td>
-              <td>{{item.platform_job.declined_at | localDate}}</td>
+  <section class="__jobs-section" v-if="!loadingJobs">
+    <div class="overflow-x-auto">
+      <div
+        class="mt-10 w-full text-center"
+        style="font-family: Nunito"
+        v-if="getLocumDeclinedJobs.length === 0"
+      >You have not yet declined a job</div>
+      <div v-else class="overflow-x-auto overflow-y-hidden">
+        <table>
+          <thead>
+            <tr class="text-xs sm:text-sm text-left">
+              <th>Job number</th>
+              <th>Practice</th>
+              <th>Title</th>
+              <th>From</th>
+              <th>To</th>
+              <th>Declined</th>
             </tr>
-            <tr :key="`${item.id}-${index}`">
-              <td></td>
-            </tr>
-          </template>
-        </tbody>
-      </table>
-    </div>
-    <!-- <div class="declined-shield" v-if="modal"></div>
-    <transition name="slide" mode="out-in">
-      <div class="declined-modal shadow-lg" v-if="modal">
-        <LocumDeclinedDetailModal @close="modal = false" :job="job"/>
+          </thead>
+          <tbody>
+            <template v-for="(item, index) in getLocumDeclinedJobs">
+              <tr
+                :key="item.id"
+                class="__job-card shadow-md cursor-pointer text-xs text-left"
+                @click="show(item.id)"
+              >
+                <td>{{item.job_number}}</td>
+                <td>{{item.platform_job.practice.surgery.name}}</td>
+                <td>{{item.platform_job.title}}</td>
+                <td>{{item.platform_job.date_start}}</td>
+                <td>{{item.platform_job.date_end}}</td>
+                <td>{{item.platform_job.declined_at | localDate}}</td>
+              </tr>
+              <tr :key="`${item.id}-${index}`">
+                <td></td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
       </div>
-    </transition>-->
+    </div>
+    <div class="absolute pin-b w-full" v-if="getLocumDeclinedJobs.length > 0">
+      <AppPagination
+        :total="total"
+        :totalPages="totalPages"
+        :currentPage="currentPage"
+        @pagechanged="pagechanged"
+      />
+    </div>
   </section>
 </template>
 <script>
-import LocumDeclinedDetailModal from '@/components/Jobs/LocumDeclinedDetailModal'
+import AppPagination from '@/components/Base/AppPagination'
 export default {
   components: {
-    LocumDeclinedDetailModal
+    AppPagination
   },
-  data() {
-    return {
-      jobs: [],
-      job: null,
-      modal: false
+  computed: {
+    getLocumDeclinedJobs() {
+      return this.$store.getters["jobs/getLocumDeclinedJobs"];
+    },
+    perPage() {
+      return 2;
+    },
+    total() {
+      return this.$store.state.jobs.locum_declined_jobs_count;
+    },
+    totalPages() {
+      return Math.ceil(this.total / this.perPage);
+    },
+    currentPage() {
+      return parseInt(this.$route.query.current_page);
+    },
+    loadingJobs() {
+      return this.$store.state.jobs.loading_jobs;
     }
   },
-  created() {
-    // get applied jobs
-    this.$axios.$get(`/api/v1/locum/jobs?locum_status=Declined`).then(res => {
-      this.jobs = res.data.jobs
-    })
-  },
   watch: {
-    modal(value) {
-      if (value) {
-        document.body.style.overflow = 'hidden'
-      } else {
-        document.body.style.overflow = 'auto'
+    getLocumDeclinedJobs() {
+      this.goToLastPageThatHasJob()
+    },
+    $route(to, from) {
+      if (from.query.current_page !== to.query.current_page) {
+        this.getJobs()
       }
     }
   },
+  created() {
+    const query = {
+      ...this.$route.query,
+      current_page: this.$route.query.current_page || 1
+    };
+    this.$router.push({ query });
+    this.getJobsCount();
+    this.getJobs();
+  },
   methods: {
+    getJobsCount() {
+      this.$store.dispatch("jobs/fetchLocumJobs", {
+        status: "Declined",
+        countOnly: true
+      });
+    },
+    getJobs() {
+      let offset = 0;
+      offset = this.perPage * (parseInt(this.$route.query.current_page) - 1);
+      this.$store.dispatch("jobs/fetchLocumJobs", {
+        offset: offset,
+        limit: this.perPage,
+        status: "Declined"
+      });
+    },
+    goToLastPageThatHasJob() {
+      this.$store.commit('jobs/TOGGLE_LOADING', false)
+      if (this.getLocumDeclinedJobs.length === 0 && this.$route.query.current_page !== 1 && !this.loadingJobs) {
+        this.pagechanged(this.$route.query.current_page - 1)
+      }
+    },
+    pagechanged(e) {
+      const query = {
+        ...this.$route.query,
+        current_page: e || 1
+      }
+      this.$router.push({ query })
+    },
     show(id) {
-      this.$router.push(`/jobs/${id}?job_status=declined`)
-      // this.$axios.$get(`/api/v1/locum/jobs/${id}`).then(res => {
-      //   this.job = res.data.job
-      //   this.modal = true
-      // })
+      const query = {
+        ...this.$route.query
+      }
+      this.$router.push({ path: `/jobs/${id}`, query })
     }
   }
 }
 </script>
-<style scoped>
-.job-card:hover {
-  background-color: #dee1e5;
-  transition: background-color 0.5s ease-in-out;
-}
-.job-card {
-  background-color: white;
-  transition: background-color 0.5s ease-in-out;
-}
-.declined-shield {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #333;
-  opacity: 0.5;
-  z-index: 509;
-}
-.declined-modal {
-  position: fixed;
-  top: 0;
-  right: 0;
-  margin-right: 0%;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  border-left: solid 2px #edf2f7;
-  transition: all 0.3s ease-in-out;
-  background-color: white;
-  z-index: 510;
-}
-@media screen and (min-width: 1200px) {
-  .declined-modal {
-    width: 80%;
-  }
-}
-a {
-  text-decoration: none;
-  color: black;
-}
-table {
-  width: 920px;
-}
-table thead th {
-  padding: 15px;
-}
-table tbody td {
-  padding: 15px;
-}
-</style>

@@ -10,7 +10,7 @@ export default (ctx, inject) => {
   })
 
   socket.on('connect', () => {
-    console.log('Socket Connected')
+    ctx.store.dispatch('jobs/initializeJobListener')
     console.log('Socket ID:', socket.id)
   })
 

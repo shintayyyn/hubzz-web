@@ -6,3 +6,7 @@ export function fetchLocumJobs(axios, payload) {
 
     return axios.$get(`/api/v1/locum/jobs${payload.countOnly ? '/count' : ''}`, { params: params })
 }
+
+export function fetchLocumJob(axios, payload) {
+    return axios.$get(`/api/v1/locum/jobs/${payload}`)
+}
