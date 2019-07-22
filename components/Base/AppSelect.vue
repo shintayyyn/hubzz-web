@@ -14,7 +14,7 @@
         <select
           :value="value"
           class="border-b-2 focus:border-yellow focus:outline-none py-2 font-bold text-xs sm:text-sm w-full"
-          :class="error? 'border-red':''"
+          :class="error ? 'border-red':''"
           @input="$emit('input', $event.target.value)"
           :style="inStyle"
         >

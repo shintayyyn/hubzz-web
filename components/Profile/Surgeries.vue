@@ -48,6 +48,7 @@
         <AddSurgeryModal @close="modal = false" @add="results.push($event)" />
       </div>
     </transition>
+
   </section>
 </template>
 <script>

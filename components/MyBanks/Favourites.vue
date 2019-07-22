@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-row flex-wrap justify-start">
     <div
-      class="card rounded-lg shadow-lg m-2 p-5 hover:bg-grey"
+      class="card w-24 rounded-lg shadow-lg m-2 p-5 hover:bg-grey"
       v-for="(user, index) in locums"
       :key="user.id"
     >
@@ -16,10 +16,16 @@
       </div>
       <div class="flex flex-wrap text-center mt-4 cursor-pointer" @click="show(user.id)">
         <div class="w-full">
-          <svgicon name="no-avatar" height="60" width="60" />
+          <div v-if="!user.avatar">
+             <svgicon name="no-avatar" height="115" width="115"/>
+          </div>
+          <embed
+          class="object-contain h-32 rounded-full mr-4"
+          :src="user.avatar ? user.avatar.file.url:null" 
+          >
         </div>
         <div class="w-full font-bold text-sm sm:text-lg my-4">{{user.personal_detail.name}}</div>
-        <div class="w-full font-bold text-grey-dark text-sm sm:text-lg">sample headline</div>
+        <div class="w-full font-bold text-grey-dark text-sm sm:text-lg">{{user.locum_detail.headline}}</div>
       </div>
     </div>
   </div>
