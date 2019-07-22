@@ -26,7 +26,6 @@
             :to="'/messages'"
             class="font-bold text-xs sm:text-sm no-underline px-2 py-1 rounded-lg bg-yellow-dark ml-4"
           >Messages</nuxt-link>
-          {{$store.state.calendar.createJob}}
           <div
             class="text-xs xl:text-sm ml-4"
             v-if="$auth.user.domain === 'Locum'"

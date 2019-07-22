@@ -33,7 +33,6 @@ export default {
         ...this.$route.query,
         profile_tab: type
       }
-      console.log(query)
 
       this.$router.push({ query })
     }

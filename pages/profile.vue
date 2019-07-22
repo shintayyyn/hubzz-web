@@ -1,10 +1,9 @@
 <template>
   <section class="profile-section">
-    <ProfileTabs/>
+    <ProfileTabs />
     <div class="mt-5">
       <transition name="fade" mode="out-in">
-        <Component :is="activeComponent"/>
-        <!-- <nuxt-child/> -->
+        <Component :is="activeComponent" />
       </transition>
     </div>
   </section>

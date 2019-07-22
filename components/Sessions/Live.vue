@@ -57,9 +57,11 @@
 </template>
 <script>
 import AppPagination from '@/components/Base/AppPagination'
+import AppLoading from '@/components/Base/AppLoading'
 export default {
   components: {
     AppPagination,
+    AppLoading,
   },
   data() {
     return {
