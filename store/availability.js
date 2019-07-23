@@ -8,10 +8,6 @@ export const state = () => ({
   shifts: [],
   date_today: null,
   selected_date: null,
-  //
-  unavailabilities: [],
-  locum_private_jobs: [],
-  locum_current_jobs: []
 })
 
 export const mutations = {
@@ -24,32 +20,6 @@ export const mutations = {
   },
   SELECT_DATE (state, payload) {
     state.selected_date = payload
-  },
-  SET_UNAVAILABILITES (state, payload) {
-    state.unavailabilities = payload
-  },
-  ADD_UNAVAILABILITIES (state, payload) {
-    payload.forEach(data => {
-      let foundTest = state.unavailabilities.find(item => item.id === data.id)
-      if (foundTest) {
-        foundTest.shifts = data.shifts
-      } else {
-        state.unavailabilities.push(data)
-      }
-    })
-  },
-  UPDATE_UNAVAILABILITIES (state, payload) {
-    let unavailableDate = state.unavailabilities.find(item => item.id === payload.id)
-    unavailableDate.shifts = payload.shifts
-  },
-  REMOVE_UNAVAILABILITIES (state, payload) {
-    state.unavailabilities = state.unavailabilities.filter(item => item.id !== payload)
-  },
-  SET_LOCUM_PRIVATE_JOBS(state, payload) {
-    state.locum_private_jobs = payload
-  },
-  SET_LOCUM_CURRENT_JOBS(state, payload) {
-    state.locum_current_jobs = payload
   },
 }
 

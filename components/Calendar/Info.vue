@@ -286,6 +286,7 @@ export default {
       if (this.getLocumUnavailabilities.length > 0) {
         this.foundLocumUnavailabilities = this.getLocumUnavailabilities.filter(job => job.date === date && job.shifts.map(shift => shift.name).includes(shift))
       }
+
     },
     getDateArray(start, end) {
       let arr = new Array();

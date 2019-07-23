@@ -124,4 +124,23 @@ export default {
     SET_LOCUM_UNAVAILABILITIES_COUNT(state, payload) {
         state.locum_unavailabilities_count = payload
     },
+    ADD_LOCUM_UNAVAILABILITIES(state, payload) {
+        payload.forEach(data => {
+            let hasUnavailable = state.locum_unavailabilities.find(item => item.id === data.id)
+            if (hasUnavailable) {
+              hasUnavailable.shifts = data.shifts
+            } else {
+              state.locum_unavailabilities.push(data)
+              state.locum_unavailabilities_count = state.locum_unavailabilities_count + 1
+            }
+          })
+    },
+    UPDATE_LOCUM_UNAVAILABILITIES(state, payload) {
+        let hasUnavailable = state.locum_unavailabilities.find(item => item.id === payload.id)
+        hasUnavailable.shifts = payload.shifts
+    },
+    REMOVE_LOCUM_UNAVAILABILITIES(state, payload) {
+        state.locum_unavailabilities = state.locum_unavailabilities.filter(item => item.id !== payload)
+        state.locum_unavailabilities_count = state.locum_unavailabilities_count - 1
+    },
 }

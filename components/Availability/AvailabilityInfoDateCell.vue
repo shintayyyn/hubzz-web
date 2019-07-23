@@ -70,16 +70,27 @@
 </template>
 <script>
 export default {
-  props: ['unavailabilities', 'locum_private_jobs', 'locum_current_jobs', 'item'],
+  props: ['item'],
+  computed: {
+    getLocumAllocatedPrivateJobs() {
+      return this.$store.getters['jobs/getLocumAllocatedPrivateJobs']
+    },
+    getLocumAllocatedCurrentJobs() {
+      return this.$store.getters['jobs/getLocumAllocatedCurrentJobs']
+    },
+    getLocumUnavailabilities() {
+      return this.$store.getters['jobs/getLocumUnavailabilities']
+    },
+  },
   methods: {
     hasUnavailableDate(date, type) {
-      return this.unavailabilities.find(item => item.date === date && item.shifts.find(shift => shift.name === type))
+      return this.getLocumUnavailabilities.find(item => item.date === date && item.shifts.find(shift => shift.name === type))
     },
     hasLocumPrivateJobs(date, type) {
-      return this.locum_private_jobs.find(job => this.getDateArray(job.private_job.date_start, job.private_job.date_end).includes(date) && job.private_job.shift.name === type)
+      return this.getLocumAllocatedPrivateJobs.find(job => this.getDateArray(job.private_job.date_start, job.private_job.date_end).includes(date) && job.private_job.shift.name === type)
     },
     hasLocumCurrentJobs(date, type) {
-      return this.locum_current_jobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === type)
+      return this.getLocumAllocatedCurrentJobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === type)
     },
     getDateArray(start, end) {
       let arr = new Array();
