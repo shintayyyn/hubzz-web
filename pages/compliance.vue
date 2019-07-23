@@ -330,29 +330,6 @@ export default {
     });
   },
   methods: {
-    // set mandatory training
-    setMandatoryTrainings() {
-      if (this.$auth.user.locum_detail.mandatory_trainings.length > 0) {
-        this.$auth.user.locum_detail.mandatory_trainings.forEach(
-          userMandatoryTraining => {
-            this.mandatory_trainings.forEach(mandatoryTraining => {
-              if (
-                userMandatoryTraining.mandatory_training.id ===
-                mandatoryTraining.id
-              ) {
-                mandatoryTraining.info = userMandatoryTraining;
-              }
-            });
-          }
-        );
-      }
-      this.mandatory_trainings = this.mandatory_trainings.sort(
-        (a, b) => a.id - b.id
-      );
-      console.log(this.mandatory)
-
-    },
-    // set mandatory and optional
     setComplianceDocuments() {
       if (this.$auth.user.locum_detail.compliance_documents.length > 0) {
         this.$auth.user.locum_detail.compliance_documents.forEach(
@@ -387,6 +364,30 @@ export default {
         (a, b) => a.id - b.id
       );
     },
+    // set mandatory training
+    setMandatoryTrainings() {
+      if (this.$auth.user.locum_detail.mandatory_trainings.length > 0) {
+        this.$auth.user.locum_detail.mandatory_trainings.forEach(
+          userMandatoryTraining => {
+            this.mandatory_trainings.forEach(mandatoryTraining => {
+              if (
+                userMandatoryTraining.mandatory_training.id ===
+                mandatoryTraining.id
+              ) {
+                mandatoryTraining.info = userMandatoryTraining;
+              }
+            });
+          }
+        );
+      }
+      this.mandatory_trainings = this.mandatory_trainings.sort(
+        (a, b) => a.id - b.id
+      );
+      console.log(this.mandatory)
+
+    },
+    // set mandatory and optional
+ 
     status(status) {
       switch (status) {
         case "Pending":

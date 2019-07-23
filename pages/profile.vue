@@ -6,7 +6,7 @@
         <Component :is="activeComponent" />
       </transition>
     </div>
-    <div class="modal-shield" v-if="shield"></div>
+    <div class="modal-shield" v-if="shield"></div> <!--SHIELD ITSELF IS IN HERE.-->
     <nuxt-child v-if="this.$route.params.id" />
   </section>
 </template>
