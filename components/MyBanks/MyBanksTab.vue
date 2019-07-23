@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-no-wrap justify-start">
+  <div class="flex flex-row flex-wrap justify-start">
     <div
       style="font-family:Nunito"
       @click.prevent="goTo('favourites')"
