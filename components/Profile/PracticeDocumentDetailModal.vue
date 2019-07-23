@@ -31,6 +31,7 @@
             <p class="mt-2 text-base"> {{practiceDocument.created_by_user.personal_detail.name}}</p>
           </div>
           <div class="flex m-2">
+            jidajidsajiosaddsjoi
              <embed
               width=800px
               height=600px

@@ -770,7 +770,7 @@ export default {
       );
     },
     publish() {
-      // if(this.formError===[]){
+      if(this.formError===[]){
         this.form.clinical_system_id = this.form.clinical_system_id.map(
           item => item.value
         );
@@ -810,10 +810,10 @@ export default {
           });
           this.$emit("close");
         });
-      // }else{
-      //   console.log(this.formError)
-      //   this.showErrorModal = true
-      // }
+      }else{
+        console.log(this.formError)
+        this.showErrorModal = true
+      }
     }
   }
 };
