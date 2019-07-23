@@ -1,7 +1,7 @@
 <template>
   <div class="p-8 max-w-2xl">
     <div @click="close" class="cursor-pointer">
-      <svgicon name="left-arrow" height="32" width="32"/>
+      <svgicon name="left-arrow" height="32" width="32" />
     </div>
     <div class="flex flex-row justify-start mt-8">
       <div class="mx-2 leading-loose font-bold text-md sm:text-lg">{{job.platform_job.title}}</div>
@@ -55,17 +55,6 @@
                 class="text-xs sm:text-sm mb-6"
                 v-text="job.platform_job.email?job.platform_job.email:`(none)`"
               ></div>
-              <!-- ! ask arvi declined date and reason on show -->
-              <div class="font-bold text-sm sm:text-md">Declined At</div>
-              <!-- <div
-                class="text-xs sm:text-sm mb-6"
-                v-text="declined_at?$moment(declined_at).format('YYYY-MM-DD'):`(none)`"
-              ></div>-->
-              <div class="font-bold text-sm sm:text-md">Declined Reason</div>
-              <!-- <div
-                class="text-xs sm:text-sm mb-6"
-                v-text="declined_reason?declined_reason:`(none)`"
-              ></div>-->
             </div>
             <div class="flex flex-col w-full md:w-1/2 p-0 md:pl-4">
               <div class="font-bold text-sm sm:text-md">Duration</div>
@@ -154,7 +143,7 @@
                 map-type-id="terrain"
                 style="width: 100%; height:300px"
               >
-                <GmapMarker :position="google && new google.maps.LatLng(latLang.y, latLang.x)"/>
+                <GmapMarker :position="google && new google.maps.LatLng(latLang.y, latLang.x)" />
               </GmapMap>
             </div>
           </div>
@@ -175,7 +164,14 @@ export default {
   },
   methods: {
     close() {
-      this.$router.push('/jobs?job_status=declined')
+      if (this.$route.fullPath === '/dashboard') {
+        this.$emit('close')
+      } else {
+        const query = {
+          ...this.$route.query
+        }
+        this.$router.push({ path: '/jobs', query })
+      }
     }
   }
 }

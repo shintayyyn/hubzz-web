@@ -1,13 +1,13 @@
 <template>
   <section>
-    <div class="px-10" v-if="$store.state.invite.activeTab === 'invite_success'">
-      <InviteSuccess/>
+    <div class="px-10" v-if="$route.query.invite === 'success'">
+      <InviteSuccess />
     </div>
     <div class="px-10" v-else>
-      <InviteTabs/>
+      <InviteTabs />
       <div class="mt-5">
-        <InviteLocums v-if="$store.state.invite.activeTab === 'invite_locums'"/>
-        <InvitePractices v-if="$store.state.invite.activeTab === 'invite_practices'"/>
+        <InviteLocums v-if="$route.query.invite_domain === 'locums'" />
+        <InvitePractices v-if="$route.query.invite_domain === 'practices'" />
       </div>
     </div>
   </section>
@@ -24,6 +24,13 @@ export default {
     InvitePractices,
     InviteSuccess
   },
-  middleware:'isVerified',
+  middleware: 'isVerified',
+  created() {
+    const query = {
+      ...this.$route.query,
+      invite_domain: this.$route.query.invite_domain || 'locums'
+    }
+    this.$router.push({ query })
+  }
 }
 </script>

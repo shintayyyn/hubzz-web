@@ -8,11 +8,11 @@
       </div>
       <div class="w-1/3 text-right sm:w-1/3 sm:text-center">
         <span class="cursor-pointer" @click="adjustWeek('previous')">
-          <svgicon name="arrow-left" height="12" width="12"/>
+          <svgicon name="arrow-left" height="12" width="12" />
         </span>
         <span class="mx-4"></span>
         <span class="cursor-pointer" @click="adjustWeek('next')">
-          <svgicon name="arrow-right" height="12" width="12"/>
+          <svgicon name="arrow-right" height="12" width="12" />
         </span>
       </div>
       <div class="w-full text-right sm:w-1/3">
@@ -449,17 +449,17 @@ export default {
       return this.$store.state.calendar.practice_available_jobs_reminder
     },
     // locum
-    locum_private_jobs() {
-      return this.$store.state.calendar.locum_private_jobs
+    getLocumAllocatedPrivateJobs() {
+      return this.$store.getters['jobs/getLocumAllocatedPrivateJobs']
     },
-    locum_current_jobs() {
-      return this.$store.state.calendar.locum_current_jobs
+    getLocumAllocatedCurrentJobs() {
+      return this.$store.getters['jobs/getLocumAllocatedCurrentJobs']
     },
-    locum_applied_jobs() {
-      return this.$store.state.calendar.locum_applied_jobs
+    getLocumAppliedJobs() {
+      return this.$store.getters['jobs/getLocumAppliedJobs']
     },
-    locum_unavailabilities() {
-      return this.$store.state.calendar.locum_unavailabilities
+    getLocumUnavailabilities() {
+      return this.$store.getters['jobs/getLocumUnavailabilities']
     },
     daysInWeek() {
       let weekLists = []
@@ -529,22 +529,22 @@ export default {
 
       }
       if (this.$auth.user.domain === 'Locum') {
-        this.$axios.$get(`/api/v1/locum/jobs?locum_status=Current&date_start=${this.firstDayOfTheWeek}&date_end=${this.lastDayOfTheWeek}`).then(res => {
-          if (res.data.jobs && res.data.jobs.length > 0) {
-            this.$store.commit('calendar/SET_LOCUM_PRIVATE_JOBS', res.data.jobs.filter(job => job.type === 'Private'))
-            this.$store.commit('calendar/SET_LOCUM_CURRENT_JOBS', res.data.jobs.filter(job => job.type === 'Platform'))
-          }
-        })
-        this.$axios.$get(`/api/v1/locum/jobs?locum_status=Applied&date_start=${this.firstDayOfTheWeek}&date_end=${this.lastDayOfTheWeek}`).then(res => {
-          if (res.data.jobs && res.data.jobs.length > 0) {
-            this.$store.commit('calendar/SET_LOCUM_APPLIED_JOBS', res.data.jobs)
-          }
-        })
-        this.$axios.$get(`/api/v1/locum/unavailabilities?date_start=${this.firstDayOfTheWeek}&date_end=${this.lastDayOfTheWeek}`).then(res => {
-          if (res.data.unavailabilities && res.data.unavailabilities.length > 0) {
-            this.$store.commit('calendar/SET_LOCUM_UNAVAILABILITIES', res.data.unavailabilities)
-          }
-        })
+        this.$store.dispatch("jobs/fetchLocumJobs", {
+          date_start: this.startOfMonth,
+          date_end: this.endOfMonth,
+          status: "Current"
+        });
+
+        this.$store.dispatch("jobs/fetchLocumJobs", {
+          date_start: this.startOfMonth,
+          date_end: this.endOfMonth,
+          status: "Applied"
+        });
+
+        this.$store.dispatch("jobs/fetchLocumUnavailabilities", {
+          date_start: this.startOfMonth,
+          date_end: this.endOfMonth,
+        });
       }
     },
     // practice
@@ -580,21 +580,21 @@ export default {
     },
     // locums
     hasLocumPrivateJobs(date, type) {
-      if (this.locum_private_jobs && this.locum_private_jobs.length > 0) {
-        return this.locum_private_jobs.find(job => this.getDateArray(job.private_job.date_start, job.private_job.date_end).includes(date) && job.private_job.shift.name === type)
+      if (this.getLocumAllocatedPrivateJobs && this.getLocumAllocatedPrivateJobs.length > 0) {
+        return this.getLocumAllocatedPrivateJobs.find(job => this.getDateArray(job.private_job.date_start, job.private_job.date_end).includes(date) && job.private_job.shift.name === type)
       }
     },
     hasLocumCurrentJob(date, type) {
-      if (this.locum_current_jobs && this.locum_current_jobs.length > 0) {
-        return this.locum_current_jobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === type)
+      if (this.getLocumAllocatedCurrentJobs && this.getLocumAllocatedCurrentJobs.length > 0) {
+        return this.getLocumAllocatedCurrentJobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === type)
       }
     },
     hasLocumAppliedJobs(date, type) {
-      return this.locum_applied_jobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date))
+      return this.getLocumAppliedJobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date))
     },
     hasLocumUnavailabilities(date, type) {
-      if (this.locum_unavailabilities && this.locum_unavailabilities.length > 0) {
-        return this.locum_unavailabilities.find(job => job.date === date && job.shifts.find(shift => shift.name === type))
+      if (this.getLocumUnavailabilities && this.getLocumUnavailabilities.length > 0) {
+        return this.getLocumUnavailabilities.find(job => job.date === date && job.shifts.find(shift => shift.name === type))
       }
     },
 

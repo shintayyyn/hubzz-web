@@ -2,6 +2,33 @@
   font-family: 'Nunito', sans-serif;
 }
 
+.__jobs-section {
+  position: relative;
+  min-height: 500px;
+}
+
+.__job-card:hover {
+  background-color: #dee1e5;
+  transition: background-color 0.5s ease-in-out;
+}
+.__job-card {
+  background-color: white;
+  transition: background-color 0.5s ease-in-out;
+}
+a {
+  text-decoration: none;
+  color: black;
+}
+table {
+  width: 920px;
+}
+table thead th {
+  padding: 15px;
+}
+table tbody td {
+  padding: 15px;
+}
+
 /* modal */
 .slide-enter-active, .slide-leave-active {
   transition: all .5s;

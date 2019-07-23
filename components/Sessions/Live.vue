@@ -57,13 +57,14 @@
 </template>
 <script>
 import AppPagination from '@/components/Base/AppPagination'
+import AppLoading from '@/components/Base/AppLoading'
 export default {
   components: {
     AppPagination,
+    AppLoading,
   },
   data() {
     return {
-      jobs: [],
       total: 0,
       totalPages: 0,
       currentPage: 0,
@@ -75,6 +76,11 @@ export default {
     $route(to, from) {
       this.currentPage = parseInt(to.query.current_page)
       this.getLiveSession()
+    },
+  },
+  computed: {
+    jobs() {
+      return this.$store.state.session.liveJobs
     }
   },
   created() {
@@ -86,7 +92,7 @@ export default {
     this.$router.push({ query })
     this.$axios.$get(`/api/v1/practice/jobs/count?status=Available`).then(res => {
       this.total = res.data.count
-      this.perPage = 2
+      this.perPage = 5
       this.totalPages = Math.ceil(this.total / this.perPage)
       this.getLiveSession()
     })
@@ -97,9 +103,13 @@ export default {
       let offset = 0
       offset = this.perPage * (parseInt(this.$route.query.current_page) - 1)
       this.$axios.$get(`/api/v1/practice/jobs?status=Available&limit=${this.perPage}&offset=${offset}`).then(res => {
-        this.jobs = res.data.jobs
+        if (res.data.jobs.length === 0 && this.$route.query.current_page !== 1) {
+          this.pagechanged(this.$route.query.current_page - 1)
+        }
+        this.$store.commit('session/SET_LIVE_JOBS', res.data.jobs)
         this.loading = false
       })
+
     },
     pagechanged(e) {
       const query = {
@@ -113,7 +123,7 @@ export default {
         ...this.$route.query
       }
       this.$router.push({ path: `/sessions/${id}`, query })
-    }
+    },
   }
 }
 </script>

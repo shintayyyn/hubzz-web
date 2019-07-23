@@ -202,19 +202,19 @@
 <script>
 import { mixin as clickaway } from "vue-clickaway";
 let months = [
-  { label: 'Jan', value: 0 },
-  { label: 'Feb', value: 1 },
-  { label: 'Mar', value: 2 },
-  { label: 'Apr', value: 3 },
-  { label: 'May', value: 4 },
-  { label: 'Jun', value: 5 },
-  { label: 'Jul', value: 6 },
-  { label: 'Aug', value: 7 },
-  { label: 'Sep', value: 8 },
-  { label: 'Oct', value: 9 },
-  { label: 'Nov', value: 10 },
-  { label: 'Dec', value: 11 },
-]
+  { label: "Jan", value: 0 },
+  { label: "Feb", value: 1 },
+  { label: "Mar", value: 2 },
+  { label: "Apr", value: 3 },
+  { label: "May", value: 4 },
+  { label: "Jun", value: 5 },
+  { label: "Jul", value: 6 },
+  { label: "Aug", value: 7 },
+  { label: "Sep", value: 8 },
+  { label: "Oct", value: 9 },
+  { label: "Nov", value: 10 },
+  { label: "Dec", value: 11 }
+];
 export default {
   mixins: [clickaway],
   props: {
@@ -232,90 +232,93 @@ export default {
       months,
       monthLists: [],
       yearLists: [],
-      selectedMonth: '',
+      selectedMonth: "",
       selectedYear: new Date().getFullYear(),
-      daysInMonth: [],
-    }
+      daysInMonth: []
+    };
   },
   created() {
     // get current month and year
-    let d = new Date()
-    this.selectedMonth = d.getMonth()
+    let d = new Date();
+    this.selectedMonth = d.getMonth();
     // get month list
-    this.getMonthLists()
+    this.getMonthLists();
     // get year list
-    this.getYearLists()
+    this.getYearLists();
   },
   watch: {
     selectedMonth(value) {
-      this.getDaysInMonth(value, this.selectedYear)
+      this.getDaysInMonth(value, this.selectedYear);
     },
     selectedYear(value) {
       if (value === new Date().getFullYear()) {
-        this.selectedMonth = this.filteredMonths[0].value
+        this.selectedMonth = this.filteredMonths[0].value;
       }
-      this.getDaysInMonth(this.selectedMonth, value)
+      this.getDaysInMonth(this.selectedMonth, value);
     }
   },
   computed: {
     filteredMonths() {
       if (this.selectedYear === new Date().getFullYear()) {
-        return this.months.filter(month => month.value >= new Date().getMonth())
+        return this.months.filter(
+          month => month.value >= new Date().getMonth()
+        );
       }
-      return this.months
+      return this.months;
     }
   },
   methods: {
     isSame(date) {
-      let newDate = this.$moment(new Date()).format('MM-DD-YYYY')
-      return this.$moment(date).isSame(newDate)
+      let newDate = this.$moment(new Date()).format("MM-DD-YYYY");
+      return this.$moment(date).isSame(newDate);
     },
     isDisabled(date) {
-      let newDate = this.$moment(new Date()).format('MM-DD-YYYY')
+      let newDate = this.$moment(new Date()).format("MM-DD-YYYY");
       if (this.isAfter) {
-        return this.$moment(date).isAfter(newDate)
+        return this.$moment(date).isAfter(newDate);
       }
-      return this.$moment(date).isBefore(newDate)
+      return this.$moment(date).isBefore(newDate);
     },
     select(date) {
       if (!this.isDisabled(date)) {
-        this.modal = false
-        this.$emit('input', this.$moment(date).format('MM/DD/YYYY'))
+        this.modal = false;
+        this.$emit("input", this.$moment(date).format("MM/DD/YYYY"));
       }
     },
     toggledOff() {
-      this.modal = false
+      this.modal = false;
     },
     getMonthLists() {
-      // console.log(this.selectedMonth)
       for (let i = this.selectedMonth; i <= this.months.length; i++) {
-        this.monthLists.push(i)
+        this.monthLists.push(i);
       }
     },
     getYearLists() {
       for (let i = 0; i <= 10; i++) {
-        this.yearLists.push(this.selectedYear + i)
+        this.yearLists.push(this.selectedYear + i);
       }
     },
     adjustMonth(type) {
-      if (type === 'previous') {
-        let index = this.filteredMonths.findIndex(month => month.value === this.selectedMonth)
+      if (type === "previous") {
+        let index = this.filteredMonths.findIndex(
+          month => month.value === this.selectedMonth
+        );
         if (index === 0 && this.selectedYear === new Date().getFullYear()) {
-          return
+          return;
         }
         if (index === 0) {
-          this.selectedMonth = 11
-          this.selectedYear--
+          this.selectedMonth = 11;
+          this.selectedYear--;
         } else {
-          this.selectedMonth--
+          this.selectedMonth--;
         }
       }
-      if (type === 'next') {
+      if (type === "next") {
         if (this.selectedMonth === 11) {
-          this.selectedYear++
-          this.selectedMonth = 0
+          this.selectedYear++;
+          this.selectedMonth = 0;
         } else {
-          this.selectedMonth++
+          this.selectedMonth++;
         }
       }
     },
@@ -326,24 +329,24 @@ export default {
         days.push(new Date(date));
         date.setDate(date.getDate() + 1);
       }
-      this.daysInMonth = []
+      this.daysInMonth = [];
       days.forEach(day => {
         this.daysInMonth.push({
           day: day.getDay(),
           date: day.getDate(),
-          fullDate: this.$moment(day).format('MM-DD-YYYY')
-        })
-      })
+          fullDate: this.$moment(day).format("MM-DD-YYYY")
+        });
+      });
     },
     validateInput(e) {
-      if ((e.key >= 0 && e.key <= 9) || e.key === '/') {
-        return
+      if ((e.key >= 0 && e.key <= 9) || e.key === "/") {
+        return;
       } else {
-        e.preventDefault()
+        e.preventDefault();
       }
     }
   }
-}
+};
 </script>
 <style scoped>
 .calendar {

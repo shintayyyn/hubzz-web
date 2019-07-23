@@ -13,7 +13,7 @@
       <div
         class="my-3 text-xs xl:text-sm"
         v-if="$store.state.calendar.view_type === 'per_week'"
-      >Shift: {{$store.state.calendar.selected_date_shift.shift}}</div>
+      >Shift: {{shifts}}</div>
     </div>
   </div>
 </template>
@@ -22,7 +22,10 @@ export default {
   props: ['job'],
   computed: {
     shifts() {
-      return this.job.shifts.map(shift => shift.name).join()
+      if (this.$store.state.calendar.view_type === 'per_month') {
+        return this.job.shifts.map(shift => shift.name).join()
+      }
+      return this.job.shifts.filter(job => job.name === this.$store.state.calendar.selected_date_shift.shift || 'AM')[0].name
     }
   },
   methods: {

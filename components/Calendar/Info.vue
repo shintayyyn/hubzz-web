@@ -158,6 +158,27 @@ export default {
         this.findPerWeekLocum(value)
       }
     },
+    practice_available_jobs_reminder(value) {
+      this.findPerMonth(this.$store.state.calendar.selected_date)
+    },
+    practice_current_jobs(value) {
+      this.findPerMonth(this.$store.state.calendar.selected_date)
+    },
+    practice_applied_jobs(value) {
+      this.findPerMonth(this.$store.state.calendar.selected_date)
+    },
+    practice_applied_jobs_reminder(value) {
+      this.findPerMonth(this.$store.state.calendar.selected_date)
+    },
+    getLocumAllocatedPrivateJobs(value) {
+      this.findPerMonthLocum(this.selected_date)
+    },
+    getLocumAllocatedCurrentJobs(value) {
+      this.findPerMonthLocum(this.selected_date)
+    },
+    getLocumAppliedJobs(value) {
+      this.findPerMonthLocum(this.selected_date)
+    },
   },
   computed: {
     selected_date() {
@@ -194,18 +215,18 @@ export default {
       return this.$store.state.calendar.practice_available_jobs_reminder
     },
     // locums
-    locum_private_jobs() {
-      return this.$store.state.calendar.locum_private_jobs
+    getLocumAllocatedPrivateJobs() {
+      return this.$store.getters['jobs/getLocumAllocatedPrivateJobs']
     },
-    locum_current_jobs() {
-      return this.$store.state.calendar.locum_current_jobs
+    getLocumAllocatedCurrentJobs() {
+      return this.$store.getters['jobs/getLocumAllocatedCurrentJobs']
     },
-    locum_applied_jobs() {
-      return this.$store.state.calendar.locum_applied_jobs
+    getLocumAppliedJobs() {
+      return this.$store.getters['jobs/getLocumAppliedJobs']
     },
-    locum_unavailabilities() {
-      return this.$store.state.calendar.locum_unavailabilities
-    }
+    getLocumUnavailabilities() {
+      return this.$store.getters['jobs/getLocumUnavailabilities']
+    },
   },
   methods: {
     // practice
@@ -247,32 +268,25 @@ export default {
     },
     // locums
     findPerMonthLocum(date) {
-      if (this.locum_private_jobs.length > 0) {
-        this.foundLocumPrivateJobs = this.locum_private_jobs.filter(job => this.getDateArray(job.private_job.date_start, job.private_job.date_end).includes(date))
-      }
-      if (this.locum_current_jobs.length > 0) {
-        this.foundLocumCurrentJobs = this.locum_current_jobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date))
-      }
-      if (this.locum_applied_jobs.length > 0) {
-        this.foundLocumAppliedJobs = this.locum_applied_jobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date))
-      }
-      if (this.locum_unavailabilities.length > 0) {
-        this.foundLocumUnavailabilities = this.locum_unavailabilities.filter(job => job.date === date)
-      }
+      this.foundLocumPrivateJobs = this.getLocumAllocatedPrivateJobs.filter(job => this.getDateArray(job.private_job.date_start, job.private_job.date_end).includes(date))
+      this.foundLocumCurrentJobs = this.getLocumAllocatedCurrentJobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date))
+      this.foundLocumAppliedJobs = this.getLocumAppliedJobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date))
+      this.foundLocumUnavailabilities = this.getLocumUnavailabilities.filter(job => job.date === date)
     },
     findPerWeekLocum({ date, shift }) {
-      if (this.locum_private_jobs.length > 0) {
-        this.foundLocumPrivateJobs = this.locum_private_jobs.filter(job => this.getDateArray(job.private_job.date_start, job.private_job.date_end).includes(date) && job.private_job.shift.name === shift)
+      if (this.getLocumAllocatedPrivateJobs.length > 0) {
+        this.foundLocumPrivateJobs = this.getLocumAllocatedPrivateJobs.filter(job => this.getDateArray(job.private_job.date_start, job.private_job.date_end).includes(date) && job.private_job.shift.name === shift)
       }
-      if (this.locum_current_jobs.length > 0) {
-        this.foundLocumCurrentJobs = this.locum_current_jobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === shift)
+      if (this.getLocumAllocatedCurrentJobs.length > 0) {
+        this.foundLocumCurrentJobs = this.getLocumAllocatedCurrentJobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === shift)
       }
-      if (this.locum_applied_jobs.length > 0) {
-        this.foundLocumAppliedJobs = this.locum_applied_jobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && shift === 'Available')
+      if (this.getLocumAppliedJobs.length > 0) {
+        this.foundLocumAppliedJobs = this.getLocumAppliedJobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && shift === 'Available')
       }
-      if (this.locum_unavailabilities.length > 0) {
-        this.foundLocumUnavailabilities = this.locum_unavailabilities.filter(job => job.date === date && job.shifts.map(shift => shift.name).includes(shift))
+      if (this.getLocumUnavailabilities.length > 0) {
+        this.foundLocumUnavailabilities = this.getLocumUnavailabilities.filter(job => job.date === date && job.shifts.map(shift => shift.name).includes(shift))
       }
+
     },
     getDateArray(start, end) {
       let arr = new Array();

@@ -147,17 +147,16 @@
             </div>
           </div>
         </div>
-        <div class="rounded-lg shadow-lg p-8 mt-4 w-full md:w-3/4">
-          <div class="font-bold text-md sm:text-lg">Cancel this job</div>
-          <AppSelect
-            v-model="form_cancel.cancelled_reason"
-            :name="'cancelled_reason'"
-            :label="'Please select your reason'"
-            :placeholder="'Select..'"
-            :items="reasons"
-          />
-          <AppButton :label="'Cancel job'" @click="cancel" />
-        </div>
+
+        <div class="font-bold text-md sm:text-lg">Cancel this job</div>
+        <AppSelect
+          v-model="form_cancel.cancelled_reason"
+          :name="'cancelled_reason'"
+          :label="'Please select your reason'"
+          :placeholder="'Select..'"
+          :items="reasons"
+        />
+        <AppButton :label="'Cancel job'" @click="cancel" />
       </div>
     </div>
   </div>
@@ -185,7 +184,8 @@ export default {
       },
       form_cancel: {
         cancelled_reason: ''
-      }
+      },
+
     }
   },
   computed: {
@@ -230,14 +230,28 @@ export default {
       })
     },
     cancel() {
-      this.$axios.$put(`/api/v1/practice/jobs/${this.$route.params.id}/cancel`, this.form_cancel).then(res => {
-        this.close()
+      let jobId = this.$route.params.id || this.job.id
+      this.$axios.$put(`/api/v1/practice/jobs/${jobId}/cancel`, this.form_cancel).then(res => {
+        this.$store.commit('session/UPDATE_LIVE_JOBS', jobId)
+        this.$store.commit('calendar/UPDATE_PRACTICE_AVAILABLE_JOBS_REMINDER', jobId)
         this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Job cancelled' })
+        this.close()
       })
     }
   }
 }
 </script>
 <style scoped>
+.loader {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  opacity: 0.5;
+}
+.loading {
+  background-color: lightgray;
+}
 </style>
 

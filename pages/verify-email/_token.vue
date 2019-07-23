@@ -20,6 +20,7 @@ export default {
     try {
       let response = await app.$axios.$get(`/api/v1/email-verification/${params.token}`)
       const email_verification_token = response.data.email_verification_token
+
       return {
         email_verification_token
       }

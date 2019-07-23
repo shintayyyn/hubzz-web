@@ -345,15 +345,21 @@ export default {
       })
     },
     cancel() {
-      this.$axios.$put(`/api/v1/practice/jobs/${this.$route.params.id}/cancel`, this.form_cancel).then(res => {
-        this.close()
+      let jobId = this.$route.params.id || this.job.id
+      this.$axios.$put(`/api/v1/practice/jobs/${jobId}/cancel`, this.form_cancel).then(res => {
+        this.$store.commit('session/UPDATE_ALLOCATED_JOBS', jobId)
+        this.$store.commit('calendar/UPDATE_PRACTICE_CURRENT_JOBS', jobId)
         this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Job cancelled' })
+        this.close()
       })
     },
     complete() {
-      this.$axios.$put(`/api/v1/practice/jobs/${this.$route.params.id}/complete`).then(res => {
-        this.close()
+      let jobId = this.$route.params.id || this.job.id
+      this.$axios.$put(`/api/v1/practice/jobs/${jobId}/complete`).then(res => {
+        this.$store.commit('session/UPDATE_ALLOCATED_JOBS', jobId)
+        this.$store.commit('calendar/UPDATE_PRACTICE_CURRENT_JOBS', jobId)
         this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Job completed' })
+        this.close()
       })
     }
   }

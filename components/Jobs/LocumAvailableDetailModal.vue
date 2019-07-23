@@ -1,7 +1,7 @@
 <template>
   <div class="p-8 max-w-2xl">
     <div @click="close" class="cursor-pointer">
-      <svgicon name="left-arrow" height="32" width="32"/>
+      <svgicon name="left-arrow" height="32" width="32" />
     </div>
     <div class="flex flex-row justify-start mt-8">
       <div class="mx-2 leading-loose font-bold text-md sm:text-lg">{{title}}</div>
@@ -119,28 +119,28 @@
               class="text-sm sm:text-md"
             >{{practice.surgery.address.line_1}} {{practice.surgery.address.line_2}} {{practice.surgery.address.line_3}} {{practice.surgery.address.post_code}}</div>
             <div class="mt-4">
-               <!-- google map -->
-                <GmapMap
-                  :center="{lat:latLang.y,lng:latLang.x}"
-                  :zoom="15"
-                  map-type-id="terrain"
-                  style="width: 100%; height:200px"
-                >
-                  <GmapMarker :position="google && new google.maps.LatLng(latLang.y, latLang.x)"/>
-                </GmapMap>
+              <!-- google map -->
+              <GmapMap
+                :center="{lat:latLang.y,lng:latLang.x}"
+                :zoom="15"
+                map-type-id="terrain"
+                style="width: 100%; height:200px"
+              >
+                <GmapMarker :position="google && new google.maps.LatLng(latLang.y, latLang.x)" />
+              </GmapMap>
             </div>
           </div>
           <div class="rounded-lg shadow-lg p-8 mt-8">
             <template v-if="isReadyToApply">
               <div class="text-sm sm:text-base mb-4">This job is still open</div>
-              <AppButton :label="'Apply now'" @click="apply"/>
+              <AppButton :label="'Apply now'" @click="apply" />
             </template>
             <template v-else>
               <div class="text-sm sm:text-base mb-4">
                 Please complete your
                 <strong>compliance</strong> requirements to be eligible to apply for this job
               </div>
-              <AppButton :label="'Go to Compliance'" @click="goTo"/>
+              <AppButton :label="'Go to Compliance'" @click="goTo" />
             </template>
           </div>
         </div>
@@ -284,11 +284,14 @@ export default {
       this.$axios.$post(`/api/v1/locum/jobs/${this.job.id}/apply`).then(res => {
         this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Saved' })
         // or pass the id
-        this.$router.push('/jobs?job_status=applied')
+        this.$router.push(`/jobs?job_status=applied`)
       })
     },
     close() {
-      this.$router.push('/jobs?job_status=available')
+      const query = {
+        ...this.$route.query
+      }
+      this.$router.push({ path: '/jobs', query })
     }
   }
 }

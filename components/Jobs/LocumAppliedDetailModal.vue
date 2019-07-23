@@ -1,7 +1,7 @@
 <template>
   <div class="p-8 max-w-2xl">
     <div @click="close" class="cursor-pointer">
-      <svgicon name="left-arrow" height="32" width="32"/>
+      <svgicon name="left-arrow" height="32" width="32" />
     </div>
     <div class="flex flex-row justify-start mt-8">
       <div class="mx-2 leading-loose font-bold text-md sm:text-lg">{{title}}</div>
@@ -126,13 +126,13 @@
                 map-type-id="terrain"
                 style="width: 100%; height:300px"
               >
-                <GmapMarker :position="google && new google.maps.LatLng(latLang.y, latLang.x)"/>
+                <GmapMarker :position="google && new google.maps.LatLng(latLang.y, latLang.x)" />
               </GmapMap>
             </div>
           </div>
           <div class="rounded-lg shadow-lg p-8 mt-8">
             <div class="text-sm sm:text-base mb-4">You can cancel your application to this job</div>
-            <AppButton :label="'Cancel'" @click="cancel"/>
+            <AppButton :label="'Cancel'" @click="cancel" />
           </div>
         </div>
       </div>
@@ -239,16 +239,19 @@ export default {
   },
   methods: {
     cancel() {
-      // this.$axios.$post(`/api/v1/locum/jobs/${this.$route.params.id}/decline`).then(res => {
-      //   this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Cancelled' })
-      //   this.$router.push('/jobs?job_status=declined')
-      // })
+      this.$axios.$delete(`/api/v1/locum/jobs/${this.$route.params.id}/apply`).then(res => {
+        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Cancelled' })
+        this.$router.push('/jobs?job_status=available')
+      })
     },
     close() {
       if (this.$route.fullPath === '/dashboard') {
         this.$emit('close')
       } else {
-        this.$router.push('/jobs?job_status=applied')
+        const query = {
+          ...this.$route.query
+        }
+        this.$router.push({ path: '/jobs', query })
       }
     }
   }

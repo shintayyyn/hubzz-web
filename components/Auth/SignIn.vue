@@ -101,21 +101,21 @@ export default {
               //  if(res.data.user.is_email_verified === false){
               //   this.formError.push({ field: "email", message: "Email is not yet verified. Check your email and verify your account first." })
               // } else{
-                console.log(res);
-                const token = res.data.token.token;
-                this.$axios.setToken(token, "Bearer");
-                this.$auth.$storage.setUniversal(
-                  "_token.local",
-                  "Bearer " + token
-                );
-                await this.$auth.fetchUser();
-                this.$router.push("/dashboard");
-                if (this.$socket.connected) {
-                  await this.$axios.post("/api/v1/socket/login", {
-                    socket_id: this.$socket.id
-                  });
-                  console.log("Socket Logged In");
-                }
+              console.log(res);
+              const token = res.data.token.token;
+              this.$axios.setToken(token, "Bearer");
+              this.$auth.$storage.setUniversal(
+                "_token.local",
+                "Bearer " + token
+              );
+              await this.$auth.fetchUser();
+              this.$router.push("/dashboard");
+              if (this.$socket.connected) {
+                await this.$axios.post("/api/v1/socket/login", {
+                  socket_id: this.$socket.id
+                });
+                console.log("Socket Logged In");
+              }
               await this.$store.dispatch("one-signal/setOneSignalUser");
               // }
             })
@@ -124,7 +124,6 @@ export default {
                 this.formError.push(error);
               });
             });
-            
         }
       } catch (e) {
         console.log(e);

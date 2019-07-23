@@ -1,13 +1,13 @@
 <template>
   <section class="sessions-tab">
-    <SessionsTabs/>
+    <SessionsTabs />
     <div class="mt-5">
       <transition name="fade" mode="out-in">
-        <Component :is="activeComponent"/>
+        <Component :is="activeComponent" />
       </transition>
     </div>
     <div class="modal-shield" v-if="shield"></div>
-    <nuxt-child/>
+    <nuxt-child />
   </section>
 </template>
 <script>
@@ -30,7 +30,7 @@ export default {
     Cancelled,
     Declined,
   },
-  middleware:'isVerified',
+  middleware: 'isVerified',
   computed: {
     activeComponent() {
       return this.$route.query.session_status
@@ -54,7 +54,7 @@ export default {
       session_status: this.$route.query.session_status || 'live'
     }
     this.$router.push({ query })
-  }
+  },
 }
 </script>
 <style scoped>

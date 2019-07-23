@@ -8,7 +8,6 @@
       :placeholder="''"
       :info="'Seperate with commas'"
     />
-    <!-- :error="formError.find(item => item.field === 'email')" -->
     <div class="flex justify-start mt-8">
       <div class="text-xs sm:text-sm">The message to be sent to Locums</div>
     </div>
@@ -26,7 +25,7 @@
       </span>
     </div>
     <div class="flex justify-start mt-5">
-      <AppButton :label="'Send'" @click="send"/>
+      <AppButton :label="'Send'" @click="send" />
     </div>
   </div>
 </template>
@@ -48,9 +47,10 @@ export default {
   },
   methods: {
     send() {
-      this.$axios.$post(`api/v1/invite`, { email: this.form.email, domain: 'Locums' }).then(res => {
+      this.$axios.$post(`api/v1/invite`, { emails: this.form.email, domain: 'Locums' }).then(res => {
+        console.log(res)
         this.form.email = ''
-        this.$store.commit('invite/SET_ACTIVE_TAB', 'invite_success')
+        this.$router.push('/invite?invite=success')
       })
     }
   }

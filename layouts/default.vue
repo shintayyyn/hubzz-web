@@ -4,11 +4,14 @@
     <transition name="drop" mode="out-in">
       <SignOut v-if="signout_modal" @modal="signout_modal = $event" />
     </transition>
-    <!-- modals here -->
-    <!-- shields here -->
+    <transition name="slide" mode="out-in">
+      <div class="modal-container shadow-lg" v-if="$store.state.calendar.createJob">
+        <CreateJobModal @close="$store.commit('calendar/CREATE_JOB', false)" :job="null" />
+      </div>
+    </transition>
     <div class="sidebar-shield" v-if="$store.state.toggled_sidebar"></div>
     <div class="signout-shield" v-if="signout_modal"></div>
-    <!-- content -->
+    <div class="modal-shield" v-if="$store.state.calendar.createJob"></div>
     <div class="content">
       <AppNotification />
       <AppHeader />
@@ -17,56 +20,62 @@
   </section>
 </template>
 <script>
-import AppSideBar from '@/components/AppSideBar'
-import SignOut from '@/components/Auth/SignOut'
-import AppNotification from '@/components/AppNotification'
-import AppHeader from '@/components/AppHeader'
+import AppSideBar from "@/components/AppSideBar";
+import SignOut from "@/components/Auth/SignOut";
+import AppNotification from "@/components/AppNotification";
+import AppHeader from "@/components/AppHeader";
+import CreateJobModal from "@/components/CreateJobModal";
 export default {
-  transitions: 'page',
+  transitions: "page",
   components: {
     AppSideBar,
     SignOut,
     AppNotification,
     AppHeader,
+    CreateJobModal
   },
   data() {
     return {
       signout_modal: false
-    }
+    };
   },
-  middleware: 'isNotAuthenticated',
+  middleware: "isNotAuthenticated",
   computed: {
     notify() {
-      return this.$store.state.notification.enabled
+      return this.$store.state.notification.enabled;
     }
   },
   watch: {
     notify(value) {
       if (value) {
         setTimeout(() => {
-          this.$store.commit('SET_NOTIFICATION', { enabled: false, status: '', text: '' })
-        }, 2000)
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: false,
+            status: "",
+            text: ""
+          });
+        }, 2000);
       }
     },
-    '$route'(value) {
-      this.$store.commit('TOGGLE_SIDEBAR', false)
-      document.body.style.overflow = 'auto'
-    },
+    $route(value) {
+      this.$store.commit("TOGGLE_SIDEBAR", false);
+      document.body.style.overflow = "auto";
+    }
   },
   mounted() {
-    this.$store.dispatch('signUp/getProfessions')
-    this.$store.dispatch('signUp/getQualifications')
-    this.$store.dispatch('signUp/getClinicalSystems')
-    this.$store.dispatch('signUp/getSpokenLanguages')
-    this.$store.dispatch('signUp/getPracticeTypes')
-  },
-}
+    this.$store.dispatch("signUp/getProfessions");
+    this.$store.dispatch("signUp/getQualifications");
+    this.$store.dispatch("signUp/getClinicalSystems");
+    this.$store.dispatch("signUp/getSpokenLanguages");
+    this.$store.dispatch("signUp/getPracticeTypes");
+  }
+};
 </script>
 <style>
 .content {
   /* box-sizing: content-box; */
   max-width: 1000px;
-  padding: 5px 40px;
+  padding: 5px 30px;
 }
 .sidebar-shield {
   position: fixed;
@@ -91,6 +100,13 @@ export default {
 @media screen and (min-width: 1200px) {
   .content {
     margin-left: 200px;
+  }
+}
+
+@media screen and (min-width: 480px){
+  .content{
+  padding: 5px 40px;
+    
   }
 }
 </style>

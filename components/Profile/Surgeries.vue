@@ -15,8 +15,8 @@
         <div class="text-xs sm:text-sm w-full px-1">Practice code</div>
         <div class="text-xs sm:text-sm w-full px-1">Location</div>
       </div>
-      <div :class="{'loader': loading}">
-        <h1 class="loader-message" v-if="loading">Loading</h1>
+      <div class="relative">
+        <AppLoading :loading="loading" :message="'Loading'" v-if="loading" />
         <div
           class="rounded-lg shadow-lg p-4 mt-4"
           v-for="(item, index) in results"
@@ -37,6 +37,7 @@
           :totalPages="totalPages"
           :currentPage="currentPage"
           @pagechanged="pagechanged"
+          :loading="loading"
         />
       </div>
     </div>
@@ -72,9 +73,9 @@ export default {
     }
   },
   beforeDestroy() {
-    if (this.$route.query.profile_tab === 'practice') {
-      this.$router.push('/profile?profile_tab=practice')
-    }
+    let query = Object.assign({}, this.$route.query)
+    delete query.current_page
+    this.$router.push({ query })
   },
   watch: {
     $route(to, from) {
@@ -121,41 +122,6 @@ export default {
 }
 </script>
 <style scoped>
-.loader {
-  position: relative;
-  z-index: 999;
-  background-color: #edf2f7;
-  opacity: 0.5;
-}
-.loader-message {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-.loader-message:after {
-  content: " .";
-  animation: dots 1s steps(5, end) infinite;
-}
-
-@keyframes dots {
-  0%,
-  20% {
-    color: rgba(0, 0, 0, 0);
-    text-shadow: 0.25em 0 0 rgba(0, 0, 0, 0), 0.5em 0 0 rgba(0, 0, 0, 0);
-  }
-  40% {
-    color: white;
-    text-shadow: 0.25em 0 0 rgba(0, 0, 0, 0), 0.5em 0 0 rgba(0, 0, 0, 0);
-  }
-  60% {
-    text-shadow: 0.25em 0 0 white, 0.5em 0 0 rgba(0, 0, 0, 0);
-  }
-  80%,
-  100% {
-    text-shadow: 0.25em 0 0 white, 0.5em 0 0 white;
-  }
-}
 .add-surgery-shield {
   position: fixed;
   top: 0;

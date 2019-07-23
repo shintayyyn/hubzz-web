@@ -2,20 +2,28 @@
   <div class="flex flex-no-wrap justify-start">
     <div
       style="font-family:Nunito"
-      @click.prevent="$store.commit('invite/SET_ACTIVE_TAB', 'invite_locums')"
+      @click.prevent="goTo('locums')"
       class="mr-5 p-3 text-sm font-bold cursor-pointer"
-      :class="$store.state.invite.activeTab === 'invite_locums' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
+      :class="$route.query.invite_domain === 'locums' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
     >Invite Locums</div>
     <div
       style="font-family:Nunito"
-      @click.prevent="$store.commit('invite/SET_ACTIVE_TAB', 'invite_practices')"
+      @click.prevent="goTo('practices')"
       class="mr-5 p-3 text-sm font-bold cursor-pointer"
-      :class="$store.state.invite.activeTab === 'invite_practices' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
+      :class="$route.query.invite_domain === 'practices' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
     >Invite Practices</div>
   </div>
 </template>
 <script>
 export default {
-
+  methods: {
+    goTo(type) {
+      const query = {
+        ...this.$route.query,
+        invite_domain: type
+      }
+      this.$router.push({ query })
+    }
+  }
 }
 </script>

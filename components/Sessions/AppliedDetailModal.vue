@@ -249,14 +249,12 @@ export default {
   methods: {
     getJobApplicants() {
       this.$axios.$get(`/api/v1/practice/jobs/${this.$route.params.id}/applicants`).then(res => {
-        console.log(res.data.users)
         this.applicants = res.data.users
       })
     },
     show(id) {
       // ! negate scroll when showing applicants
       this.$axios.$get(`/api/v1/practice/locums/${id}`).then(res => {
-        console.log(res)
         this.user = res.data.user
         this.modal = true
       })
@@ -269,7 +267,6 @@ export default {
           ...this.$route.query
         }
         this.$router.push({ path: `/sessions`, query })
-        // this.$router.push('/sessions?session_status=applied')
       }
     },
     save() {
@@ -283,9 +280,13 @@ export default {
       })
     },
     cancel() {
-      this.$axios.$put(`/api/v1/practice/jobs/${this.$route.params.id}/cancel`, this.form_cancel).then(res => {
-        this.close()
+      let jobId = this.$route.params.id || this.job.id
+      this.$axios.$put(`/api/v1/practice/jobs/${jobId}/cancel`, this.form_cancel).then(res => {
+        this.$store.commit('session/UPDATE_APPLIED_JOBS', jobId)
+        this.$store.commit('calendar/UPDATE_PRACTICE_APPLIED_JOBS', jobId)
+        this.$store.commit('calendar/UPDATE_PRACTICE_APPLIED_JOBS_REMINDER', jobId)
         this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Job cancelled' })
+        this.close()
       })
     }
   }
