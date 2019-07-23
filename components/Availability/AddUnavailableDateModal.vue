@@ -1,7 +1,7 @@
 <template>
   <div class="p-8 max-w-lg">
     <div @click="$emit('close')" class="cursor-pointer">
-      <svgicon name="left-arrow" height="32" width="32"/>
+      <svgicon name="left-arrow" height="32" width="32" />
     </div>
     <div class="flex justify-start font-bold text-sm sm:text-xl mt-8">Availability</div>
     <div class="mt-4">
@@ -34,36 +34,45 @@
         </div>
         <div class="flex flex-row flex-wrap justify-start mt-4 relative">
           <div class="text-sm sm:text-md leading-loose mr-2">On theses shifts</div>
-          <div class="rounded-lg bg-grey-light px-2 py-1 text-sm sm:text-md flex items-center" v-if="type === 'solo'">
-            Select all that apply. Shifts that are already booked are greyed-out.</div>
-          <div class="rounded-lg bg-grey-light px-2 py-1 text-sm sm:text-md flex items-center" v-else>Select all that apply.
-            <div v-if="shifts_error" class="absolute pin-r bg-red p-1 text-xs sm:text-base text-white">Select atleast one shift</div>
+          <div
+            class="rounded-lg bg-grey-light px-2 py-1 text-sm sm:text-md flex items-center"
+            v-if="type === 'solo'"
+          >Select all that apply. Shifts that are already booked are greyed-out.</div>
+          <div
+            class="rounded-lg bg-grey-light px-2 py-1 text-sm sm:text-md flex items-center"
+            v-else
+          >
+            Select all that apply.
+            <div
+              v-if="shifts_error"
+              class="absolute pin-r bg-red p-1 text-xs sm:text-base text-white"
+            >Select atleast one shift</div>
           </div>
         </div>
 
-          <div class="flex flex-row flex-wrap justify-around md:justify-between mt-4">
-            <button
-              class="relative border border-solid rounded-lg p-5 my-2 md:m-1 text-center text-xs sm:text-sm focus:outline-none w-full sm:w-1/4 md:w-1/6"
-              :class="{
+        <div class="flex flex-row flex-wrap justify-around md:justify-between mt-4">
+          <button
+            class="relative border border-solid rounded-lg p-5 my-2 md:m-1 text-center text-xs sm:text-sm focus:outline-none w-full sm:w-1/4 md:w-1/6"
+            :class="{
                 'bg-grey-light': isDisabled(item.id),
                 'bg-yellow-dark': isSelected(item.id), 
                 'hover:bg-yellow-dark': !isSelected(item.id) && isSelectable(item.id),
               }"
-              style="box-sizing:content-box;"
-              v-for="item in shifts"
-              :key="item.id"
-              :disabled="isDisabled(item.id)"
-              @click="select(item.id)"
-            >{{item.name}}</button>
-          </div>
+            style="box-sizing:content-box;"
+            v-for="item in shifts"
+            :key="item.id"
+            :disabled="isDisabled(item.id)"
+            @click="select(item.id)"
+          >{{item.name}}</button>
+        </div>
       </div>
     </div>
     <div class="mt-4">
       <template v-if="form.id">
-        <AppButton :label="'Remove'" @click="remove" v-if="isRemove"/>
-        <AppButton :label="'Update'" @click="update" v-else/>
+        <AppButton :label="'Remove'" @click="remove" v-if="isRemove" />
+        <AppButton :label="'Update'" @click="update" v-else />
       </template>
-      <AppButton :label="'Add'" @click="add" v-else/>
+      <AppButton :label="'Add'" @click="add" v-else />
     </div>
   </div>
 </template>
@@ -120,10 +129,10 @@ export default {
     }
   },
   watch: {
-    "form.date_start"(value){
+    "form.date_start"(value) {
       this.form.date_start = this.$moment(this.form.date_start).format('YYYY-MM-DD')
 
-       // splice from formerror
+      // splice from formerror
       let index = this.formError.findIndex(
         item => item.field === "date_start"
       );
@@ -139,10 +148,10 @@ export default {
         });
       }
     },
-    "form.date_end"(value){
+    "form.date_end"(value) {
       this.form.date_end = this.$moment(this.form.date_end).format('YYYY-MM-DD')
 
-       // splice from formerror
+      // splice from formerror
       let index = this.formError.findIndex(
         item => item.field === "date_end"
       );
@@ -158,8 +167,8 @@ export default {
         });
       }
     },
-    "form.shift_id"(value){  
-        this.shifts_error = false
+    "form.shift_id"(value) {
+      this.shifts_error = false
       // validate
       if (value.length === 0) {
         this.shifts_error = true
@@ -179,34 +188,34 @@ export default {
     },
     add() {
       this.formError = [];
-       this.shifts_error = false
+      this.shifts_error = false
 
-      if (!this.form.date_start){
+      if (!this.form.date_start) {
         this.formError.push({
           field: "date_start", message: "Enter start date"
         })
       }
-       if(this.$moment(this.form.date_end).diff(this.form.date_start)){
+      if (this.$moment(this.form.date_end).diff(this.form.date_start) < 0) {
         this.formError.push({
           field: "date_end", message: "Invalid Date End"
         });
       }
-      if (!this.form.date_end){
+      if (!this.form.date_end) {
         this.formError.push({
           field: "date_end", message: "Enter end date"
         })
       }
       if (this.form.shift_id.length === 0) {
-       this.shifts_error = true
+        this.shifts_error = true
         return
       }
-     
+
 
       this.form.date_start = this.$moment(this.form.date_start).format('YYYY-MM-DD')
       this.form.date_end = this.$moment(this.form.date_end).format('YYYY-MM-DD')
-      if (!this.formError.length){
+      if (!this.formError.length) {
         this.$axios.$post(`/api/v1/locum/unavailabilities`, this.form).then(res => {
-          this.$store.commit('availability/ADD_UNAVAILABILITIES', res.data.unavailabilities)
+          this.$store.commit('jobs/ADD_LOCUM_UNAVAILABILITIES', res.data.unavailabilities)
           this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: `${res.message}` })
           this.$emit('close')
         })
@@ -214,14 +223,14 @@ export default {
     },
     update() {
       this.$axios.$put(`/api/v1/locum/unavailabilities/${this.form.id}`, { shift_id: this.form.shift_id }).then(res => {
-        this.$store.commit('availability/UPDATE_UNAVAILABILITIES', res.data.unavailability)
+        this.$store.commit('jobs/UPDATE_LOCUM_UNAVAILABILITIES', res.data.unavailability)
         this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Shift updated' })
         this.$emit('close')
       })
     },
     remove() {
       this.$axios.$delete(`/api/v1/locum/unavailabilities/${this.form.id}`).then(res => {
-        this.$store.commit('availability/REMOVE_UNAVAILABILITIES', this.form.id)
+        this.$store.commit('jobs/REMOVE_LOCUM_UNAVAILABILITIES', this.form.id)
         this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: `${res.message}` })
         this.$emit('close')
       })
