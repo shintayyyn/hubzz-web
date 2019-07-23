@@ -2,22 +2,24 @@
   <section>
     <!-- <div class="practice-doc-detail-modal-shield" v-if="modal">
       HWLLO
-    </div> -->
+    </div>-->
     <!-- <transition name="drop" mode="out-in">
       <div class="practice-doc-detail-modal flex justify-center" v-if="modal">
         <PracticeDocumentDetailModal/>
       </div>
-    </transition> -->
+    </transition>-->
     <div class="flex flex-col mt-4">
       <div class="flex flex-row px-4 flex-nowrap justify-between">
         <div class="text-xs sm:text-sm w-full px-1">Title</div>
         <div class="text-xs sm:text-sm w-full px-1">File Size</div>
         <div class="text-xs sm:text-sm w-full px-1">Last Upload Date</div>
       </div>
-      <div class="practice-doc-card rounded-lg shadow-lg p-4 mt-4"
-       v-for="item in results" 
-       :key="item.id"
-       @click="show(item.id)">
+      <div
+        class="practice-doc-card rounded-lg shadow-lg p-4 mt-4"
+        v-for="item in results"
+        :key="item.id"
+        @click="show(item.id)"
+      >
         <div class="flex flex-row flex-nowrap">
           <div class="text-xs sm:text-sm w-full px-1">{{item.practice_document_type.name}}</div>
           <div
@@ -34,12 +36,44 @@
     <transition name="slide" mode="out-in">
       <!-- <div class="show-document-shield shadow-lg" v-if="modal">
         <PracticeDocumentDetailModal @close="modal = false"/>
-      </div> -->
+      </div>-->
     </transition>
-
   </section>
 </template>
 <script>
+// sample 
+const results = [
+  {
+    id: 1,
+    practice_document_type: {
+      name: 'title'
+    },
+    file: {
+      size: 20
+    },
+    created_at: '2019-07-24'
+  },
+  {
+    id: 2,
+    practice_document_type: {
+      name: 'title 1'
+    },
+    file: {
+      size: 15
+    },
+    created_at: '2019-07-12'
+  },
+  {
+    id: 3,
+    practice_document_type: {
+      name: 'title 2'
+    },
+    file: {
+      size: 30
+    },
+    created_at: '2019-07-22'
+  },
+]
 import PracticeDocumentDetailModal from '@/components/Profile/PracticeDocumentDetailModal'
 export default {
   components: {
@@ -48,32 +82,25 @@ export default {
   data() {
     return {
       modal: false,
-      results: []
+      // results: [],
+      results
     }
   },
 
   created() {
-    this.results = []
     this.$axios.$get(`/api/v1/practice/practice-documents`).then(res => {
       res.data.practice_documents.forEach(item => {
         this.results.push(item)
       })
     })
-
-    console.log(this.results)
-
   },
-
-  methods:{
-
+  methods: {
     show(id) {
-      this.modal=true
       const query = {
         ...this.$route.query
       }
-      this.$router.push({ path: `/profile/documents/${id}`, query })
+      this.$router.push({ path: `/profile/${id}`, query })
     },
-
   }
 }
 </script>

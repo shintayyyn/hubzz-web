@@ -48,7 +48,6 @@
         <AddSurgeryModal @close="modal = false" @add="results.push($event)" />
       </div>
     </transition>
-
   </section>
 </template>
 <script>
@@ -74,9 +73,9 @@ export default {
     }
   },
   beforeDestroy() {
-    if (this.$route.query.profile_tab === 'practice') {
-      this.$router.push('/profile?profile_tab=practice')
-    }
+    let query = Object.assign({}, this.$route.query)
+    delete query.current_page
+    this.$router.push({ query })
   },
   watch: {
     $route(to, from) {
