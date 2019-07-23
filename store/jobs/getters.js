@@ -1,4 +1,9 @@
 export default {
+    // practice
+    getPracticeAvailableJobs(state) {
+        return state.practice_available_jobs
+    },
+    // locum
     getLocumAllocatedJobs(state) {
         return state.locum_allocated_jobs
     },

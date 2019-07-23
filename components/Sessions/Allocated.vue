@@ -4,7 +4,7 @@
       <div
         class="mt-10 w-full text-center"
         style="font-family: Nunito"
-        v-if="jobs.length === 0"
+        v-if="!loadingJobs && getPracticeAvailableJobs.length === 0"
       >No locums are assigned to jobs yet</div>
       <div v-else class="overflow-x-auto overflow-y-hidden">
         <table>
@@ -19,13 +19,8 @@
               <th>Assigned</th>
             </tr>
           </thead>
-          <tbody :class="{'loading':loading}">
-            <tr v-if="loading">
-              <td colspan="6" class="text-center loader">
-                <h5 class="loader-message">Loading</h5>
-              </td>
-            </tr>
-            <template v-else v-for="(item, index) in jobs">
+          <tbody>
+            <template v-for="(item, index) in getPracticeAvailableJobs">
               <tr
                 :key="item.id"
                 class="job-card shadow-md cursor-pointer text-xs text-left"
@@ -47,7 +42,7 @@
         </table>
       </div>
     </div>
-    <div class="absolute pin-b w-full" v-if="jobs.length > 0">
+    <div class="absolute pin-b w-full" v-if="getPracticeAvailableJobs.length > 0">
       <AppPagination
         :total="total"
         :totalPages="totalPages"
@@ -63,53 +58,65 @@ export default {
   components: {
     AppPagination,
   },
-  data() {
-    return {
-      total: 0,
-      totalPages: 0,
-      currentPage: 0,
-      perPage: 0,
-      loading: false,
+  computed: {
+    getPracticeAvailableJobs() {
+      return this.$store.getters["jobs/getPracticeAvailableJobs"];
+    },
+    perPage() {
+      return 5;
+    },
+    total() {
+      return this.$store.state.jobs.locum_allocated_jobs_count;
+    },
+    totalPages() {
+      return Math.ceil(this.total / this.perPage);
+    },
+    currentPage() {
+      return parseInt(this.$route.query.current_page);
+    },
+    loadingJobs() {
+      return this.$store.state.jobs.loading_jobs;
     }
   },
   watch: {
+    getPracticeAvailableJobs(newValue, oldValue) {
+      if (newValue.length !== 0 && (oldValue.length > newValue.length)) {
+        this.getJobs()
+      }
+      if (newValue.length === 0 && this.$route.query.current_page !== 1) {
+        this.pagechanged(this.totalPages)
+      }
+    },
     $route(to, from) {
-      this.currentPage = parseInt(to.query.current_page)
-      this.getAllocatedSession()
-    }
-  },
-  computed: {
-    jobs() {
-      return this.$store.state.session.allocatedJobs
+      if (from.query.current_page !== to.query.current_page) {
+        this.getJobs()
+      }
     }
   },
   created() {
     const query = {
       ...this.$route.query,
       current_page: this.$route.query.current_page || 1
-    }
-    this.currentPage = parseInt(this.$route.query.current_page)
-    this.$router.push({ query })
-    this.$axios.$get(`/api/v1/practice/jobs/count?status=Current`).then(res => {
-      this.total = res.data.count
-      this.perPage = 5
-      this.totalPages = Math.ceil(this.total / this.perPage)
-      this.getAllocatedSession()
-    })
-
+    };
+    this.$router.push({ query });
+    this.getJobsCount();
+    this.getJobs();
   },
   methods: {
-    getAllocatedSession() {
-      this.loading = true
-      let offset = 0
-      offset = this.perPage * (parseInt(this.$route.query.current_page) - 1)
-      this.$axios.$get(`/api/v1/practice/jobs?status=Current&limit=${this.perPage}&offset=${offset}`).then(res => {
-        if (res.data.jobs.length === 0 && this.$route.query.current_page !== 1) {
-          this.pagechanged(this.$route.query.current_page - 1)
-        }
-        this.$store.commit('session/SET_ALLOCATED_JOBS', res.data.jobs)
-        this.loading = false
-      })
+    getJobsCount() {
+      this.$store.dispatch("jobs/fetchPracticeJobs", {
+        status: "Allocated",
+        countOnly: true
+      });
+    },
+    getJobs() {
+      let offset = 0;
+      offset = this.perPage * (parseInt(this.$route.query.current_page) - 1);
+      this.$store.dispatch("jobs/fetchPracticeJobs", {
+        offset: offset,
+        limit: this.perPage,
+        status: "Allocated"
+      });
     },
     pagechanged(e) {
       const query = {

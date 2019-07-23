@@ -5,6 +5,13 @@ export default {
     TOGGLE_SHIELD(state, payload) {
         state.modal_shield = payload
     },
+    // PRACTICE
+    SET_PRACTICE_AVAILABLE_JOBS(state, payload) {
+        state.practice_available_jobs = payload
+    },
+    SET_PRACTICE_AVAILABLE_JOBS_COUNT(state, payload) {
+        state.practice_available_jobs_count = payload
+    },
     // LOCUM
     SET_LOCUM_ALLOCATED_JOBS(state, payload) {
         state.locum_allocated_jobs = payload

@@ -88,7 +88,6 @@ export default {
         commit('SET_LOCUM_UNAVAILABILITIES', response.data.unavailabilities)
         commit('SET_LOCUM_UNAVAILABILITIES_COUNT', response.data.count)
     },
-
     async fetchLocumJobs({ commit }, payload) {
         commit('TOGGLE_LOADING', true)
         const response = await jobsApi.fetchLocumJobs(this.$axios, payload)
@@ -152,5 +151,53 @@ export default {
         if (response.data.job.status === 'Current' && !state.locum_unsuccessful_jobs.find(unsuccessfulJob => unsuccessfulJob.id === payload)) {
             return commit('ADD_LOCUM_UNSUCCESSFUL_JOB', response.data.job)
         }
-    }
+    },
+    async fetchPracticeJobs({ commit }, payload) {
+        commit('TOGGLE_LOADING', true)
+        const response = await jobsApi.fetchPracticeJobs(this.$axios, payload)
+        console.log(response)
+        commit('TOGGLE_LOADING', false)
+        if (payload.status === "Available") {
+            if (payload.countOnly) {
+                return commit('SET_PRACTICE_AVAILABLE_JOBS_COUNT', response.data.count)
+            }  
+            return commit('SET_PRACTICE_AVAILABLE_JOBS', response.data.jobs)
+        }
+        if (payload.status === "Applied") {
+            if (payload.countOnly) {
+                return commit('SET_PRACTICE_APPLIED_JOBS_COUNT', response.data.count)
+            }  
+            return commit('SET_PRACTICE_APPLIED_JOBS', response.data.jobs)
+        }
+        if (payload.status === "Current") {
+            if (payload.countOnly) {
+                return commit('SET_PRACTICE_ALLOCATED_JOBS_COUNT', response.data.count)
+            }  
+            return commit('SET_PRACTICE_ALLOCATED_JOBS', response.data.jobs)
+        }
+        if (payload.status === "Completed") {
+            if (payload.countOnly) {
+                return commit('SET_PRACTICE_COMPLETED_JOBS_COUNT', response.data.count)
+            }  
+            return commit('SET_PRACTICE_COMPLETED_JOBS', response.data.jobs)
+        }
+        if (payload.status === "Unfilled") {
+            if (payload.countOnly) {
+                return commit('SET_PRACTICE_UNFILLED_JOBS_COUNT', response.data.count)
+            }  
+            return commit('SET_PRACTICE_UNFILLED_JOBS', response.data.jobs)
+        }
+        if (payload.status === "Cancelled") {
+            if (payload.countOnly) {
+                return commit('SET_PRACTICE_CANCELLED_JOBS_COUNT', response.data.count)
+            }  
+            return commit('SET_PRACTICE_CANCELLED_JOBS', response.data.jobs)
+        }
+        if (payload.status === "Declined") {
+            if (payload.countOnly) {
+                return commit('SET_PRACTICE_DECLINED_JOBS_COUNT', response.data.count)
+            }  
+            return commit('SET_PRACTICE_DECLINED_JOBS', response.data.jobs)
+        }
+    },
 }
