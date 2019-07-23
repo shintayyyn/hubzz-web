@@ -24,7 +24,7 @@
                 <h5 class="loader-message">Loading</h5>
               </td>
             </tr>
-            <template v-for="(item, index) in jobs">
+            <template v-else v-for="(item, index) in jobs">
               <tr
                 :key="item.id"
                 class="job-card shadow-md cursor-pointer text-xs text-left"

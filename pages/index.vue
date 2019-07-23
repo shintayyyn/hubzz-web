@@ -26,6 +26,9 @@ export default {
     return {
       activeComponent: "SignIn"
     };
+  },
+  mounted() {
+    this.$store.commit("signUp/SET_ACTIVE_COMPONENT", "LocumAccountDetails");
   }
 };
 </script>

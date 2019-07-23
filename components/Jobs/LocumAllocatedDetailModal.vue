@@ -1,7 +1,7 @@
 <template>
   <div class="p-8 max-w-2xl">
     <div @click="close" class="cursor-pointer">
-      <svgicon name="left-arrow" height="32" width="32"/>
+      <svgicon name="left-arrow" height="32" width="32" />
     </div>
     <div class="flex flex-row justify-start mt-8">
       <div class="mx-2 leading-loose font-bold text-md sm:text-lg">{{title}}</div>
@@ -126,7 +126,7 @@
                 map-type-id="terrain"
                 style="width: 100%; height:300px"
               >
-                <GmapMarker :position="google && new google.maps.LatLng(latLang.y, latLang.x)"/>
+                <GmapMarker :position="google && new google.maps.LatLng(latLang.y, latLang.x)" />
               </GmapMap>
             </div>
           </div>
@@ -139,7 +139,7 @@
               :placeholder="''"
               :error="this.formError.find(item => item.field === 'declined_reason')"
             />
-            <AppButton :label="'Unassign from this job'" @click="unassign"/>
+            <AppButton :label="'Unassign from this job'" @click="unassign" />
           </div>
         </div>
       </div>
@@ -257,7 +257,6 @@ export default {
       if (!this.formError.length) {
         this.$axios.$post(`/api/v1/locum/jobs/${this.$route.params.id}/decline`, this.form).then(res => {
           this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Declined' })
-          // this.close()
           this.$router.push('/jobs?job_status=declined')
         })
       }
@@ -266,7 +265,10 @@ export default {
       if (this.$route.fullPath === '/dashboard') {
         this.$emit('close')
       } else {
-        this.$router.push('/jobs?job_status=allocated')
+        const query = {
+          ...this.$route.query
+        }
+        this.$router.push({ path: '/jobs', query })
       }
     }
   }

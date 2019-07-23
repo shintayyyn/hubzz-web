@@ -1,13 +1,15 @@
 <template>
-  <div class="loading-section bg-grey-light flex justify-center items-center">
-    <!-- <div class="loader font-bold">
-      <h1>{{message}}</h1>
-    </div>-->
+  <div class="shield">
+    <h1 class="loader-message">{{message}}</h1>
   </div>
 </template>
 <script>
 export default {
   props: {
+    loading: {
+      type: Boolean,
+      default: false
+    },
     message: {
       type: String,
       required: true
@@ -17,22 +19,23 @@ export default {
 </script>
 
 <style scoped>
-.loading-section {
-  position: fixed;
+.shield {
+  position: absolute;
   top: 0;
+  bottom: 0;
   left: 0;
   right: 0;
-  bottom: 0;
+  z-index: 998;
+  background-color: lightgray;
   opacity: 0.5;
-  z-index: 999;
 }
-h1 {
-  z-index: 999;
-  background: -webkit-linear-gradient(#f2d024, #efde86);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+.loader-message {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
-h1:after {
+.loader-message:after {
   content: " .";
   animation: dots 1s steps(5, end) infinite;
 }
@@ -54,8 +57,5 @@ h1:after {
   100% {
     text-shadow: 0.25em 0 0 white, 0.5em 0 0 white;
   }
-}
-.loader {
-  /* z-index: 999; */
 }
 </style>

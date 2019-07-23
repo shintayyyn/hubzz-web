@@ -149,128 +149,139 @@
   </section>
 </template>
 <script>
-import AppDate from '@/components/Base/AppDate'
-import AppSelect from '@/components/Base/AppSelect'
+import AppDate from "@/components/Base/AppDate";
+import AppSelect from "@/components/Base/AppSelect";
 export default {
   components: {
     AppDate,
-    AppSelect,
+    AppSelect
   },
   computed: {
     amount() {
       if (this.rowData && this.rowData.length > 0) {
-        let amount = 0
+        let amount = 0;
         this.rowData.forEach(item => {
           if (item.total) {
-            amount += parseInt(item.total)
+            amount += parseInt(item.total);
           }
-        })
-        return amount
+        });
+        return amount;
       }
     }
   },
   data() {
     return {
       practices: [],
-      practice_id: '',
+      practice_id: "",
       address: {
-        line_1: '',
-        line_2: '',
-        line_3: '',
-        post_code: ''
+        line_1: "",
+        line_2: "",
+        line_3: "",
+        post_code: ""
       },
       jobs: [],
-      invoice: '',
+      invoice: "",
       rowData: [],
-      description: '',
-      total: '',
+      description: "",
+      total: "",
       form: {
         date_start: null,
         date_end: null
       },
       formError: []
-    }
+    };
   },
   created() {
     this.$axios.$get(`/api/v1/locum/private-practices`).then(res => {
-      this.practices = []
+      this.practices = [];
       res.data.private_practices.forEach(practice => {
-        this.practices.push({ label: practice.surgery.name, value: practice.id })
-      })
-    })
+        this.practices.push({
+          label: practice.surgery.name,
+          value: practice.id
+        });
+      });
+    });
   },
   watch: {
     practice_id(value) {
       if (value) {
-        this.getPracticeDetail(value)
+        this.getPracticeDetail(value);
       }
     },
     invoice(value) {
       if (value) {
-        this.rowData.push({ description: value, total: 5 })
+        this.rowData.push({ description: value, total: 5 });
       }
-      this.invoice = null
+      this.invoice = null;
     }
   },
   methods: {
     getPracticeDetail(id) {
       this.$axios.$get(`/api/v1/locum/private-practices/${id}`).then(res => {
-        this.address = res.data.private_practice.surgery.address
-        this.getPracticeJobs(res.data.private_practice.id)
-      })
+        this.address = res.data.private_practice.surgery.address;
+        this.getPracticeJobs(res.data.private_practice.id);
+      });
     },
     getPracticeJobs(id) {
       // ! ask arvi get all the jobs based on practice
       // sample
       this.jobs = [
         {
-          label: 'Job number P0000000099 Private appointment at £1 per hour from 26/04/2019 / OOH / Total hours at 1',
-          value: 'Job number P0000000099 Private appointment at £1 per hour from 26/04/2019 / OOH / Total hours at 1'
+          label:
+            "Job number P0000000099 Private appointment at £1 per hour from 26/04/2019 / OOH / Total hours at 1",
+          value:
+            "Job number P0000000099 Private appointment at £1 per hour from 26/04/2019 / OOH / Total hours at 1"
         },
         {
-          label: 'Job number P0000000109 Private appointment at £43 per hour from 26/04/2019 / AM / Total hours at 5',
-          value: 'Job number P0000000109 Private appointment at £43 per hour from 26/04/2019 / AM / Total hours at 5'
+          label:
+            "Job number P0000000109 Private appointment at £43 per hour from 26/04/2019 / AM / Total hours at 5",
+          value:
+            "Job number P0000000109 Private appointment at £43 per hour from 26/04/2019 / AM / Total hours at 5"
         },
         {
-          label: 'Job number P0000000129 Private appointment at £9 per hour from 26/04/2019 / OOH / Total hours at 51',
-          value: 'Job number P0000000129 Private appointment at £9 per hour from 26/04/2019 / OOH / Total hours at 51'
+          label:
+            "Job number P0000000129 Private appointment at £9 per hour from 26/04/2019 / OOH / Total hours at 51",
+          value:
+            "Job number P0000000129 Private appointment at £9 per hour from 26/04/2019 / OOH / Total hours at 51"
         },
         {
-          label: 'Job number P0000000090 Private appointment at £2 per hour from 26/04/2019 / PM / Total hours at 4',
-          value: 'Job number P0000000090 Private appointment at £2 per hour from 26/04/2019 / PM / Total hours at 4'
+          label:
+            "Job number P0000000090 Private appointment at £2 per hour from 26/04/2019 / PM / Total hours at 4",
+          value:
+            "Job number P0000000090 Private appointment at £2 per hour from 26/04/2019 / PM / Total hours at 4"
         },
         {
-          label: 'Job number P0000000095 Private appointment at £76 per hour from 26/04/2019 / Whole Day / Total hours at 27',
-          value: 'Job number P0000000095 Private appointment at £76 per hour from 26/04/2019 / Whole Day / Total hours at 27',
-        },
-      ]
+          label:
+            "Job number P0000000095 Private appointment at £76 per hour from 26/04/2019 / Whole Day / Total hours at 27",
+          value:
+            "Job number P0000000095 Private appointment at £76 per hour from 26/04/2019 / Whole Day / Total hours at 27"
+        }
+      ];
     },
     save() {
-      let invoiceForm = {}
-      invoiceForm.practice_id = this.practice_id
-      invoiceForm.total_amount = this.amount
-      invoiceForm.invoices = this.rowData
-      invoiceForm.date_start = this.form.date_start
-      invoiceForm.date_end = this.form.date_end
-      this.$emit('add', invoiceForm)
+      let invoiceForm = {};
+      invoiceForm.practice_id = this.practice_id;
+      invoiceForm.total_amount = this.amount;
+      invoiceForm.invoices = this.rowData;
+      invoiceForm.date_start = this.form.date_start;
+      invoiceForm.date_end = this.form.date_end;
+      this.$emit("add", invoiceForm);
     },
-    archive() {
-      //   console.log(this.rowData)
-    },
+    archive() {},
     removeItem(index) {
-      this.rowData.splice(index, 1)
+      this.rowData.splice(index, 1);
     },
     addItem() {
       let my_object = {
         description: this.description,
         total: this.total
-      }
-      this.rowData.push(my_object)
-      this.description = ''
-      this.total = ''
+      };
+      this.rowData.push(my_object);
+      this.description = "";
+      this.total = "";
     }
   }
-}
+};
 </script>
 
 <style scoped>

@@ -1,49 +1,186 @@
 <template>
-  <div class="pagination flex flex-row flex-wrap justify-center">
-    <div class="pagination-item m-1">
-      <button
-        type="button"
-        class="rounded-lg py-2 px-4 font-bold text-sm focus:outline-none"
-        @click="onClickFirstPage"
-        :disabled="isInFirstPage"
-      >First</button>
+  <div class="pagination flex flex-col">
+    <div class="flex justify-center">
+      <!-- asd -->
+      <div class="pagination-item m-1 hidden md:block">
+        <button
+          type="button"
+          class="rounded-lg hidden md:block py-2 px-4 font-bold text-sm focus:outline-none"
+          @click="onClickFirstPage"
+          :disabled="loading || isInFirstPage"
+        >First</button>
+        <button
+          type="button"
+          class="relative rounded-lg md:hidden py-4 px-5 font-bold text-sm focus:outline-none"
+          @click="onClickFirstPage"
+          :disabled="loading || isInFirstPage"
+        >
+          <span class="absolute mx-2 my-1 pin-l pin-t">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" >
+                <path d="M18.41 16.59L13.82 12l4.59-4.59L17 6l-6 6 6 6zM6 6h2v12H6z"></path>
+            </svg>
+          </span>
+        </button>
+      </div>
+
+      <div class="pagination-item m-1 hidden md:block">
+        <button
+          type="button"
+          class="rounded-lg hidden md:block py-2 px-4 font-bold text-sm focus:outline-none"
+          @click="onClickPreviousPage"
+          :disabled="loading || isInFirstPage"
+        >Previous</button>
+        <button
+          type="button"
+          class="relative rounded-lg md:hidden py-4 px-4 font-bold text-sm focus:outline-none"
+          @click="onClickPreviousPage"
+          :disabled="loading || isInFirstPage"
+        >
+          <span class="absolute mx-1 my-1 pin-l pin-t">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18">
+                <path d="M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z"/>
+            </svg>
+          </span>
+        </button>
+      </div>
+      <!-- asd -->
+      <div class="pagination-item m-1" v-for="page in pages" :key="page.name">
+        <button
+          type="button"
+          class="rounded-lg py-2 px-3 md:px-4 font-bold text-sm focus:outline-none"
+          @click="onClickPage(page.name)"
+          :disabled="loading || page.isDisabled"
+          :class="{ active: isPageActive(page.name) }"
+        >{{ page.name }}</button>
+      </div>
+
+      <div class="pagination-item next m-1 hidden md:block">
+        <button
+          type="button"
+          class="rounded-lg hidden md:block py-2 px-4 font-bold text-sm focus:outline-none"
+          @click="onClickNextPage"
+          :disabled="loading || isInLastPage"
+        >Next</button>
+        <button
+          type="button"
+          class="relative rounded-lg md:hidden py-4 px-4 font-bold text-sm focus:outline-none"
+          @click="onClickNextPage"
+          :disabled="loading || isInLastPage"
+        >
+          <span class="absolute mx-1 my-1 pin-l pin-t">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18">
+                <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+            </svg>
+          </span>
+        </button>
+      </div>
+
+      <div class="pagination-item m-1 hidden md:block">
+        <button
+          type="button"
+          class="rounded-lg hidden md:block py-2 px-4 font-bold text-sm focus:outline-none"
+          @click="onClickLastPage"
+          :disabled="loading || isInLastPage"
+        >Last</button>
+        <button
+          type="button"
+          class="relative rounded-lg md:hidden py-4 px-5 font-bold text-sm focus:outline-none"
+          @click="onClickLastPage"
+          :disabled="loading || isInLastPage"
+        >
+          <span class="absolute mx-2 my-1 pin-l pin-t">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18">
+                <path d="M5.59 7.41L10.18 12l-4.59 4.59L7 18l6-6-6-6zM16 6h2v12h-2z"></path>
+            </svg>
+          </span>
+        </button>
+      </div>
     </div>
 
-    <div class="pagination-item m-1">
-      <button
-        type="button"
-        class="rounded-lg py-2 px-4 font-bold text-sm focus:outline-none"
-        @click="onClickPreviousPage"
-        :disabled="isInFirstPage"
-      >Previous</button>
-    </div>
+    <div class="flex justify-center md:hidden">
+      <div class="pagination-item m-1">
+        <button
+          type="button"
+          class="rounded-lg hidden md:block py-2 px-4 font-bold text-sm focus:outline-none"
+          @click="onClickFirstPage"
+          :disabled="loading || isInFirstPage"
+        >First</button>
+        <button
+          type="button"
+          class="relative rounded-lg md:hidden py-4 px-5 font-bold text-sm focus:outline-none"
+          @click="onClickFirstPage"
+          :disabled="loading || isInFirstPage"
+        >
+          <span class="absolute mx-2 my-1 pin-l pin-t">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" >
+                <path d="M18.41 16.59L13.82 12l4.59-4.59L17 6l-6 6 6 6zM6 6h2v12H6z"></path>
+            </svg>
+          </span>
+        </button>
+      </div>
 
-    <div class="pagination-item m-1" v-for="page in pages" :key="page.name">
-      <button
-        type="button"
-        class="rounded-lg py-2 px-4 font-bold text-sm focus:outline-none"
-        @click="onClickPage(page.name)"
-        :disabled="page.isDisabled"
-        :class="{ active: isPageActive(page.name) }"
-      >{{ page.name }}</button>
-    </div>
+      <div class="pagination-item m-1">
+        <button
+          type="button"
+          class="rounded-lg hidden md:block py-2 px-4 font-bold text-sm focus:outline-none"
+          @click="onClickPreviousPage"
+          :disabled="loading || isInFirstPage"
+        >Previous</button>
+        <button
+          type="button"
+          class="relative rounded-lg md:hidden py-4 px-4 font-bold text-sm focus:outline-none"
+          @click="onClickPreviousPage"
+          :disabled="loading || isInFirstPage"
+        >
+          <span class="absolute mx-1 my-1 pin-l pin-t">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18">
+                <path d="M15.41 16.09l-4.58-4.59 4.58-4.59L14 5.5l-6 6 6 6z"/>
+            </svg>
+          </span>
+        </button>
+      </div>
+      
+      <div class="pagination-item next m-1">
+        <button
+          type="button"
+          class="rounded-lg hidden md:block py-2 px-4 font-bold text-sm focus:outline-none"
+          @click="onClickNextPage"
+          :disabled="loading || isInLastPage"
+        >Next</button>
+        <button
+          type="button"
+          class="relative rounded-lg md:hidden py-4 px-4 font-bold text-sm focus:outline-none"
+          @click="onClickNextPage"
+          :disabled="loading || isInLastPage"
+        >
+          <span class="absolute mx-1 my-1 pin-l pin-t">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18">
+                <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+            </svg>
+          </span>
+        </button>
+      </div>
 
-    <div class="pagination-item m-1">
-      <button
-        type="button"
-        class="rounded-lg py-2 px-4 font-bold text-sm focus:outline-none"
-        @click="onClickNextPage"
-        :disabled="isInLastPage"
-      >Next</button>
-    </div>
-
-    <div class="pagination-item m-1">
-      <button
-        type="button"
-        class="rounded-lg py-2 px-4 font-bold text-sm focus:outline-none"
-        @click="onClickLastPage"
-        :disabled="isInLastPage"
-      >Last</button>
+      <div class="pagination-item m-1">
+        <button
+          type="button"
+          class="rounded-lg hidden md:block py-2 px-4 font-bold text-sm focus:outline-none"
+          @click="onClickLastPage"
+          :disabled="loading || isInLastPage"
+        >Last</button>
+        <button
+          type="button"
+          class="relative rounded-lg md:hidden py-4 px-5 font-bold text-sm focus:outline-none"
+          @click="onClickLastPage"
+          :disabled="loading || isInLastPage"
+        >
+          <span class="absolute mx-2 my-1 pin-l pin-t">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18">
+                <path d="M5.59 7.41L10.18 12l-4.59 4.59L7 18l6-6-6-6zM16 6h2v12h-2z"></path>
+            </svg>
+          </span>
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -70,6 +207,10 @@ export default {
     currentPage: {
       type: Number,
       required: true
+    },
+    loading: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {
@@ -125,7 +266,8 @@ export default {
     },
     isPageActive(page) {
       return this.currentPage === page
-    }
+    },
+  
   }
 }
 </script>
@@ -145,8 +287,13 @@ export default {
 button {
   background: linear-gradient(to top, #f2d024, #efde86);
 }
+
 button:active {
   transform: translate(2px, 2px);
+}
+
+button:disabled svg{
+  fill: #aaa;
 }
 </style>
 

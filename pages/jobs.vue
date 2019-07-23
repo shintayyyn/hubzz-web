@@ -16,7 +16,7 @@ import Allocated from '@/components/Jobs/Allocated'
 import Available from '@/components/Jobs/Available'
 import Matched from '@/components/Jobs/Matched'
 import Applied from '@/components/Jobs/Applied'
-import Unsuccessfull from '@/components/Jobs/Unsuccessfull'
+import Unsuccessful from '@/components/Jobs/Unsuccessful'
 import Declined from '@/components/Jobs/Declined'
 import Cancelled from '@/components/Jobs/Cancelled'
 import Completed from '@/components/Jobs/Completed'
@@ -27,23 +27,18 @@ export default {
     Available,
     Matched,
     Applied,
-    Unsuccessfull,
+    Unsuccessful,
     Declined,
     Cancelled,
     Completed
   },
   middleware: 'isVerified',
-  // async asyncData({ store, error }) {
-  //   if (!store.$auth.user.is_actived) {
-  //     throw error({ statusCode: 404, message: 'Post not found' })
-  //   }
-  // },
   computed: {
     activeComponent() {
       return this.$route.query.job_status
     },
     shield() {
-      return this.$store.state.jobs.shield
+      return this.$store.state.jobs.modal_shield
     }
   },
   watch: {
@@ -61,7 +56,7 @@ export default {
       job_status: this.$route.query.job_status || 'allocated'
     }
     this.$router.push({ query })
-  }
+  },
 }
 </script>
 <style scoped>

@@ -1,87 +1,136 @@
 <template>
-  <section class="completed-section">
-    <div
-      class="mt-10 w-full text-center"
-      style="font-family: Nunito"
-      v-if="jobs.length === 0"
-    >You do not have any live jobs</div>
-    <div v-else class="mt-4">
-      <table>
-        <thead>
-          <tr class="text-xs text-left">
-            <th>Job number</th>
-            <th>Practice</th>
-            <th>Title</th>
-            <th>From</th>
-            <th>To</th>
-            <th>Marked completed by Practice</th>
-          </tr>
-        </thead>
-        <tbody>
-          <template v-for="(item, index) in jobs">
-            <tr
-              :key="item.id"
-              class="job-card shadow-md cursor-pointer text-xs text-left"
-              @click="show(item.id)"
-            >
-              <td>{{item.job_number}}</td>
-              <td>{{item.type === 'Private' ? item.private_job.private_practice.surgery.name : item.platform_job.practice.surgery.name}}</td>
-              <td>{{item.type === 'Private' ? 'Private appointment' : item.platform_job.title}}</td>
-              <td>{{item.type === 'Private' ? item.private_job.date_start : item.platform_job.date_start}}</td>
-              <td>{{item.type === 'Private' ? item.private_job.date_end : item.platform_job.date_end}}</td>
-              <!-- // ! get completed date / practice user -->
-              <td>marked completed by practice</td>
+  <section class="__jobs-section" v-if="!loadingJobs">
+    <div class="overflow-x-auto">
+      <div
+        class="mt-10 w-full text-center"
+        style="font-family: Nunito"
+        v-if="getLocumCompletedJobs.length === 0"
+      >You have not yet completed any job</div>
+      <div v-else class="overflow-x-auto overflow-y-hidden">
+        <table>
+          <thead>
+            <tr class="text-xs sm:text-sm text-left">
+              <th>Job number</th>
+              <th>Practice</th>
+              <th>Title</th>
+              <th>From</th>
+              <th>To</th>
+              <th>Marked completed by Practice</th>
             </tr>
-            <tr :key="`${item.id}-${index}`">
-              <td></td>
-            </tr>
-          </template>
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            <template v-for="(item, index) in getLocumCompletedJobs">
+              <tr
+                :key="item.id"
+                class="__job-card shadow-md cursor-pointer text-xs text-left"
+                @click="show(item.id)"
+              >
+                <td>{{item.job_number}}</td>
+                <td>{{item.platform_job.practice.surgery.name}}</td>
+                <td>{{item.platform_job.title}}</td>
+                <td>{{item.platform_job.date_start}}</td>
+                <td>{{item.platform_job.date_end}}</td>
+                <!-- // ! get completed date / practice user -->
+                <td>marked completed by practice</td>
+              </tr>
+              <tr :key="`${item.id}-${index}`">
+                <td></td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="absolute pin-b w-full" v-if="getLocumCompletedJobs.length > 0">
+      <AppPagination
+        :total="total"
+        :totalPages="totalPages"
+        :currentPage="currentPage"
+        @pagechanged="pagechanged"
+      />
     </div>
   </section>
 </template>
 <script>
+import AppPagination from '@/components/Base/AppPagination'
 export default {
-  data() {
-    return {
-      jobs: [],
+  components: {
+    AppPagination
+  },
+  computed: {
+    getLocumCompletedJobs() {
+      return this.$store.getters["jobs/getLocumCompletedJobs"];
+    },
+    perPage() {
+      return 2;
+    },
+    total() {
+      return this.$store.state.jobs.locum_completed_jobs_count;
+    },
+    totalPages() {
+      return Math.ceil(this.total / this.perPage);
+    },
+    currentPage() {
+      return parseInt(this.$route.query.current_page);
+    },
+    loadingJobs() {
+      return this.$store.state.jobs.loading_jobs;
+    }
+  },
+  watch: {
+    getLocumCompletedJobs() {
+      this.goToLastPageThatHasJob()
+    },
+    $route(to, from) {
+      if (from.query.current_page !== to.query.current_page) {
+        this.getJobs()
+      }
     }
   },
   created() {
-    //! ask arvi need marked completed by Practice
-    this.$axios.$get(`/api/v1/locum/jobs?locum_status=Completed`).then(res => {
-      console.log(res)
-      this.jobs = res.data.jobs
-    })
+    const query = {
+      ...this.$route.query,
+      current_page: this.$route.query.current_page || 1
+    };
+    this.$router.push({ query });
+    this.getJobsCount();
+    this.getJobs();
   },
   methods: {
+    getJobsCount() {
+      this.$store.dispatch("jobs/fetchLocumJobs", {
+        status: "Completed",
+        countOnly: true
+      });
+    },
+    getJobs() {
+      let offset = 0;
+      offset = this.perPage * (parseInt(this.$route.query.current_page) - 1);
+      this.$store.dispatch("jobs/fetchLocumJobs", {
+        offset: offset,
+        limit: this.perPage,
+        status: "Completed"
+      });
+    },
+    goToLastPageThatHasJob() {
+      this.$store.commit('jobs/TOGGLE_LOADING', false)
+      if (this.getLocumCompletedJobs.length === 0 && this.$route.query.current_page !== 1 && !this.loadingJobs) {
+        this.pagechanged(this.$route.query.current_page - 1)
+      }
+    },
+    pagechanged(e) {
+      const query = {
+        ...this.$route.query,
+        current_page: e || 1
+      }
+      this.$router.push({ query })
+    },
     show(id) {
-      this.$router.push(`/jobs/${id}?job_status=completed`)
+      const query = {
+        ...this.$route.query
+      }
+      this.$router.push({ path: `/jobs/${id}`, query })
     }
   }
 }
 </script>
-<style scoped>
-.job-card:hover {
-  background-color: #dee1e5;
-  transition: background-color 0.5s ease-in-out;
-}
-.job-card {
-  background-color: white;
-  transition: background-color 0.5s ease-in-out;
-}
-a {
-  text-decoration: none;
-  color: black;
-}
-table {
-  width: 920px;
-}
-table thead th {
-  padding: 15px;
-}
-table tbody td {
-  padding: 15px;
-}
-</style>

@@ -93,15 +93,15 @@
           :inStyle="'background-color:#dae1e7;border-color:white'"
         />
       </div>
-      <AppButton :label="'Save changes'" @click="save"/>
+      <AppButton :label="'Save changes'" @click="save" />
     </div>
   </div>
 </template>
 <script>
-import AppInput from '@/components/Base/AppInput'
-import AppPostCode from '@/components/Base/AppPostCode'
-import AppSelect from '@/components/Base/AppSelect'
-import AppButton from '@/components/Base/AppButton'
+import AppInput from "@/components/Base/AppInput";
+import AppPostCode from "@/components/Base/AppPostCode";
+import AppSelect from "@/components/Base/AppSelect";
+import AppButton from "@/components/Base/AppButton";
 export default {
   components: {
     AppInput,
@@ -112,64 +112,73 @@ export default {
   data() {
     return {
       form: {
-        email: '',
-        title: '',
-        first_name: '',
-        last_name: '',
-        suffix: '',
-        gender: '',
-        mobile_number: '',
-        post_code: '',
-        address_line_1: '',
-        address_line_2: '',
-        address_line_3: '',
+        email: "",
+        title: "",
+        first_name: "",
+        last_name: "",
+        suffix: "",
+        gender: "",
+        mobile_number: "",
+        post_code: "",
+        address_line_1: "",
+        address_line_2: "",
+        address_line_3: ""
       },
       formError: []
-    }
+    };
   },
   created() {
-    this.$axios.$get('/api/v1/me').then(res => {
-      this.form.email = res.data.user.email
-      this.form.title = res.data.user.personal_detail.title
-      this.form.first_name = res.data.user.personal_detail.first_name
-      this.form.last_name = res.data.user.personal_detail.last_name
-      this.form.suffix = res.data.user.personal_detail.suffix
-      this.form.gender = res.data.user.personal_detail.gender
-      this.form.mobile_number = res.data.user.contact_detail.mobile_number
-      this.form.address_line_1 = res.data.user.address_detail.address.line_1
-      this.form.address_line_2 = res.data.user.address_detail.address.line_2
-      this.form.address_line_3 = res.data.user.address_detail.address.line_3
-      this.form.post_code = res.data.user.address_detail.address.post_code
-    })
+    this.$axios.$get("/api/v1/me").then(res => {
+      this.form.email = res.data.user.email;
+      this.form.title = res.data.user.personal_detail.title;
+      this.form.first_name = res.data.user.personal_detail.first_name;
+      this.form.last_name = res.data.user.personal_detail.last_name;
+      this.form.suffix = res.data.user.personal_detail.suffix;
+      this.form.gender = res.data.user.personal_detail.gender;
+      this.form.mobile_number = res.data.user.contact_detail.mobile_number;
+      this.form.address_line_1 = res.data.user.address_detail.address.line_1;
+      this.form.address_line_2 = res.data.user.address_detail.address.line_2;
+      this.form.address_line_3 = res.data.user.address_detail.address.line_3;
+      this.form.post_code = res.data.user.address_detail.address.post_code;
+    });
   },
   methods: {
     onSelect(value) {
-      let address_components = value.details.result.address_components
-      let postal_code = address_components.find(component => component.types.includes('postal_code'))
-      let route = address_components.find(component => component.types.includes('route'))
-      let postal_town = address_components.find(component => component.types.includes('postal_town'))
-      this.form.post_code = postal_code ? postal_code.long_name : ''
-      this.form.address_line_1 = route ? route.long_name : ''
-      this.form.address_line_3 = postal_town ? postal_town.long_name : ''
+      let address_components = value.details.result.address_components;
+      let postal_code = address_components.find(component =>
+        component.types.includes("postal_code")
+      );
+      let route = address_components.find(component =>
+        component.types.includes("route")
+      );
+      let postal_town = address_components.find(component =>
+        component.types.includes("postal_town")
+      );
+      this.form.post_code = postal_code ? postal_code.long_name : "";
+      this.form.address_line_1 = route ? route.long_name : "";
+      this.form.address_line_3 = postal_town ? postal_town.long_name : "";
     },
     save() {
       try {
-        this.formError = []
+        this.formError = [];
         // this.Validate(this.form, ['title', 'suffix', 'address_line_2'])
         // this.ValidateEmail({ email: this.form.email, field: 'email' })
         // this.ValidateMobile(this.form.mobile)
         if (!this.formError.length) {
           this.$axios.$put(`/api/v1/locum/me/account`, this.form).then(res => {
-            console.log(res)
-            this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Saved' })
-          })
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: "Saved"
+            });
+          });
         }
       } catch (e) {
-        console.log(e)
+        console.log(e);
       }
     }
   }
-}
+};
 </script>
 
 

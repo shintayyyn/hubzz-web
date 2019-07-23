@@ -17,12 +17,11 @@ export const mutations = {
     state.notification.enabled = payload.enabled
     state.notification.status = payload.status
     state.notification.text = payload.text
+    console.log(state.notification)
   },
   TOGGLE_SIDEBAR(state, payload) {
     state.toggled_sidebar = payload
   },
- 
- 
   // practice
   TOGGLE_CREATE_JOB_MODAL(state, payload) {
     state.toggled_create_job_modal = payload
@@ -45,6 +44,6 @@ export const getters = {
   getLocumPrivatePractices(state) {
     return state.locum_private_practices.map((item) => {
       return { value: item.id, label: item.surgery.name }
-  })
+    })
   }
 }

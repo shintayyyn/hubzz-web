@@ -95,7 +95,7 @@
             >To match available jobs with</div>
           </div>
           <div class="flex flex-row flex-wrap justify-between">
-            <AppRate v-model="per_hour" :name="'per_hour'" :label="'Per hour'"/>
+            <AppRate v-model="per_hour" :name="'per_hour'" :label="'Per hour'" />
             <AppRate
               v-model="per_half_day_session"
               :name="'per_half_day_session'"
@@ -193,23 +193,23 @@
             :inStyle="'background-color:#dae1e7;border-color:white'"
           />
         </div>
-        <AppButton :label="'Save changes'" @click="save"/>
+        <AppButton :label="'Save changes'" @click="save" />
       </div>
     </div>
     <div class="w-auto p-0 mt-4 lg:mt-0 lg:w-1/3 lg:pr-4">
-      <Avatar :avatar="avatar"/>
+      <Avatar :avatar="avatar" />
     </div>
   </div>
 </template>
 <script>
-import Avatar from '@/components/Account/Avatar'
-import AppInput from '@/components/Base/AppInput'
-import AppPostCode from '@/components/Base/AppPostCode'
-import AppTextarea from '@/components/Base/AppTextarea'
-import AppSelect from '@/components/Base/AppSelect'
-import AppFilterSearch from '@/components/Base/AppFilterSearch'
-import AppRate from '@/components/Base/AppRate'
-import AppButton from '@/components/Base/AppButton'
+import Avatar from "@/components/Account/Avatar";
+import AppInput from "@/components/Base/AppInput";
+import AppPostCode from "@/components/Base/AppPostCode";
+import AppTextarea from "@/components/Base/AppTextarea";
+import AppSelect from "@/components/Base/AppSelect";
+import AppFilterSearch from "@/components/Base/AppFilterSearch";
+import AppRate from "@/components/Base/AppRate";
+import AppButton from "@/components/Base/AppButton";
 export default {
   components: {
     Avatar,
@@ -224,187 +224,262 @@ export default {
   data() {
     return {
       per_hour: {
-        min: '',
-        max: ''
+        min: "",
+        max: ""
       },
       per_half_day_session: {
-        min: '',
-        max: ''
+        min: "",
+        max: ""
       },
       per_whole_day_session: {
-        min: '',
-        max: ''
+        min: "",
+        max: ""
       },
       form: {
-        gmc_or_nmc_number: '',
-        mpl_or_npl_number: '',
-        nhs_smart_card_id_number: '',
-        headline: '',
-        short_biography: '',
-        special_requirements: '',
-        profession_id: '',
+        gmc_or_nmc_number: "",
+        mpl_or_npl_number: "",
+        nhs_smart_card_id_number: "",
+        headline: "",
+        short_biography: "",
+        special_requirements: "",
+        profession_id: "",
         qualification_id: [],
         clinical_system_id: [],
         spoken_language_id: [],
-        min_rate_per_hour: '',
-        max_rate_per_hour: '',
-        min_rate_per_half_day_session: '',
-        max_rate_per_half_day_session: '',
-        min_rate_per_whole_day_session: '',
-        max_rate_per_whole_day_session: '',
+        min_rate_per_hour: "",
+        max_rate_per_hour: "",
+        min_rate_per_half_day_session: "",
+        max_rate_per_half_day_session: "",
+        min_rate_per_whole_day_session: "",
+        max_rate_per_whole_day_session: "",
         practice_type_id: [],
-        post_code: '',
-        miles: '',
-        referee_1_contact_name: '',
-        referee_1_phone_number: '',
-        referee_1_email: '',
-        referee_2_contact_name: '',
-        referee_2_phone_number: '',
-        referee_2_email: '',
+        post_code: "",
+        miles: "",
+        referee_1_contact_name: "",
+        referee_1_phone_number: "",
+        referee_1_email: "",
+        referee_2_contact_name: "",
+        referee_2_phone_number: "",
+        referee_2_email: ""
       },
       avatar: null,
       formError: []
-    }
+    };
   },
   computed: {
     professions() {
-      return this.$store.getters['signUp/getProfessions']
+      return this.$store.getters["signUp/getProfessions"];
     },
     gpQualifications() {
-      return this.$store.getters['signUp/getGpQualifications']
+      return this.$store.getters["signUp/getGpQualifications"];
     },
     othersQualifications() {
-      return this.$store.getters['signUp/getOthersQualifications']
+      return this.$store.getters["signUp/getOthersQualifications"];
     },
     clinicalSystems() {
-      return this.$store.getters['signUp/getClinicalSystems']
+      return this.$store.getters["signUp/getClinicalSystems"];
     },
     spokenLanguages() {
-      return this.$store.getters['signUp/getSpokenLanguages']
+      return this.$store.getters["signUp/getSpokenLanguages"];
     },
     practiceTypes() {
-      return this.$store.getters['signUp/getPracticeTypes']
-    },
+      return this.$store.getters["signUp/getPracticeTypes"];
+    }
   },
   created() {
-    this.$axios.$get('/api/v1/me').then(res => {
-      console.log(res.data.user.avatar)
-      this.avatar = res.data.user.avatar
-      this.form.gmc_or_nmc_number = res.data.user.locum_detail.gmc_or_nmc_number,
-        this.form.mpl_or_npl_number = res.data.user.locum_detail.mpl_or_npl_number,
-        this.form.nhs_smart_card_id_number = res.data.user.locum_detail.nhs_smart_card_id_number,
-        this.form.headline = res.data.user.locum_detail.headline,
-        this.form.short_biography = res.data.user.locum_detail.short_biography,
-        this.form.special_requirements = res.data.user.locum_detail.special_requirements,
-        this.form.profession_id = res.data.user.locum_detail.profession.id,
-        this.form.qualification_id = res.data.user.locum_detail.qualifications.map(item => {
-          return { label: item.name, value: item.id }
-        })
-      this.form.clinical_system_id = res.data.user.locum_detail.clinical_systems.map(item => {
-        return { label: item.name, value: item.id }
-      })
-      this.form.spoken_language_id = res.data.user.locum_detail.spoken_languages.map(item => {
-        return { label: item.name, value: item.id }
-      })
-      this.per_hour.min = res.data.user.locum_detail.rates.find(rate => rate.rate_type.id === 1).min
-      this.per_hour.max = res.data.user.locum_detail.rates.find(rate => rate.rate_type.id === 1).max
-      this.per_half_day_session.min = res.data.user.locum_detail.rates.find(rate => rate.rate_type.id === 2).min
-      this.per_half_day_session.max = res.data.user.locum_detail.rates.find(rate => rate.rate_type.id === 2).max
-      this.per_whole_day_session.min = res.data.user.locum_detail.rates.find(rate => rate.rate_type.id === 3).min
-      this.per_whole_day_session.max = res.data.user.locum_detail.rates.find(rate => rate.rate_type.id === 3).max
-      this.form.practice_type_id = res.data.user.locum_detail.practice_types.map(item => {
-        return item.id
-      })
-      this.form.post_code = res.data.user.locum_detail.post_code
-      this.form.miles = res.data.user.locum_detail.miles
+    this.$axios.$get("/api/v1/me").then(res => {
+      this.avatar = res.data.user.avatar;
+      (this.form.gmc_or_nmc_number =
+        res.data.user.locum_detail.gmc_or_nmc_number),
+        (this.form.mpl_or_npl_number =
+          res.data.user.locum_detail.mpl_or_npl_number),
+        (this.form.nhs_smart_card_id_number =
+          res.data.user.locum_detail.nhs_smart_card_id_number),
+        (this.form.headline = res.data.user.locum_detail.headline),
+        (this.form.short_biography =
+          res.data.user.locum_detail.short_biography),
+        (this.form.special_requirements =
+          res.data.user.locum_detail.special_requirements),
+        (this.form.profession_id = res.data.user.locum_detail.profession.id),
+        (this.form.qualification_id = res.data.user.locum_detail.qualifications.map(
+          item => {
+            return { label: item.name, value: item.id };
+          }
+        ));
+      this.form.clinical_system_id = res.data.user.locum_detail.clinical_systems.map(
+        item => {
+          return { label: item.name, value: item.id };
+        }
+      );
+      this.form.spoken_language_id = res.data.user.locum_detail.spoken_languages.map(
+        item => {
+          return { label: item.name, value: item.id };
+        }
+      );
+      this.per_hour.min = res.data.user.locum_detail.rates.find(
+        rate => rate.rate_type.id === 1
+      ).min;
+      this.per_hour.max = res.data.user.locum_detail.rates.find(
+        rate => rate.rate_type.id === 1
+      ).max;
+      this.per_half_day_session.min = res.data.user.locum_detail.rates.find(
+        rate => rate.rate_type.id === 2
+      ).min;
+      this.per_half_day_session.max = res.data.user.locum_detail.rates.find(
+        rate => rate.rate_type.id === 2
+      ).max;
+      this.per_whole_day_session.min = res.data.user.locum_detail.rates.find(
+        rate => rate.rate_type.id === 3
+      ).min;
+      this.per_whole_day_session.max = res.data.user.locum_detail.rates.find(
+        rate => rate.rate_type.id === 3
+      ).max;
+      this.form.practice_type_id = res.data.user.locum_detail.practice_types.map(
+        item => {
+          return item.id;
+        }
+      );
+      this.form.post_code = res.data.user.locum_detail.post_code;
+      this.form.miles = res.data.user.locum_detail.miles;
       if (res.data.user.locum_detail.referees[0]) {
-        this.form.referee_1_contact_name = res.data.user.locum_detail.referees[0].name
-        this.form.referee_1_phone_number = res.data.user.locum_detail.referees[0].phone_number
-        this.form.referee_1_email = res.data.user.locum_detail.referees[0].email
+        this.form.referee_1_contact_name =
+          res.data.user.locum_detail.referees[0].name;
+        this.form.referee_1_phone_number =
+          res.data.user.locum_detail.referees[0].phone_number;
+        this.form.referee_1_email =
+          res.data.user.locum_detail.referees[0].email;
       }
       if (res.data.user.locum_detail.referees[1]) {
-        this.form.referee_2_contact_name = res.data.user.locum_detail.referees[1].name
-        this.form.referee_2_phone_number = res.data.user.locum_detail.referees[1].phone_number
-        this.form.referee_2_email = res.data.user.locum_detail.referees[1].email
+        this.form.referee_2_contact_name =
+          res.data.user.locum_detail.referees[1].name;
+        this.form.referee_2_phone_number =
+          res.data.user.locum_detail.referees[1].phone_number;
+        this.form.referee_2_email =
+          res.data.user.locum_detail.referees[1].email;
       }
-    })
-
+    });
   },
   methods: {
     onSelect(value) {
-      let address_components = value.details.result.address_components
-      let postal_code = address_components.find(component => component.types.includes('postal_code'))
-      this.form.post_code = postal_code ? postal_code.long_name : ''
+      let address_components = value.details.result.address_components;
+      let postal_code = address_components.find(component =>
+        component.types.includes("postal_code")
+      );
+      this.form.post_code = postal_code ? postal_code.long_name : "";
     },
     uncheckOther(value) {
-      this.form.practice_type_id = this.form.practice_type_id.filter(id => id != value)
+      this.form.practice_type_id = this.form.practice_type_id.filter(
+        id => id != value
+      );
     },
     save() {
-      this.form.profession_id = this.form.profession_id.toString()
-      this.form.gmc_or_nmc_number = this.form.gmc_or_nmc_number.number
-      this.form.mpl_or_npl_number = this.form.mpl_or_npl_number.number
-      this.form.qualification_id = this.form.qualification_id.length ? this.form.qualification_id.map(item => item.value) : []
-      this.form.clinical_system_id = this.form.clinical_system_id ? this.form.clinical_system_id.map(item => item.value) : []
-      this.form.spoken_language_id = this.form.spoken_language_id ? this.form.spoken_language_id.map(item => item.value) : []
-      this.form.min_rate_per_hour = this.per_hour.min
-      this.form.max_rate_per_hour = this.per_hour.max
-      this.form.min_rate_per_half_day_session = this.per_half_day_session.min
-      this.form.max_rate_per_half_day_session = this.per_half_day_session.max
-      this.form.min_rate_per_whole_day_session = this.per_whole_day_session.max
-      this.form.max_rate_per_whole_day_session = this.per_whole_day_session.max
-      this.formError = []
+      this.form.profession_id = this.form.profession_id.toString();
+      this.form.gmc_or_nmc_number = this.form.gmc_or_nmc_number.number;
+      this.form.mpl_or_npl_number = this.form.mpl_or_npl_number.number;
+      this.form.qualification_id = this.form.qualification_id.length
+        ? this.form.qualification_id.map(item => item.value)
+        : [];
+      this.form.clinical_system_id = this.form.clinical_system_id
+        ? this.form.clinical_system_id.map(item => item.value)
+        : [];
+      this.form.spoken_language_id = this.form.spoken_language_id
+        ? this.form.spoken_language_id.map(item => item.value)
+        : [];
+      this.form.min_rate_per_hour = this.per_hour.min;
+      this.form.max_rate_per_hour = this.per_hour.max;
+      this.form.min_rate_per_half_day_session = this.per_half_day_session.min;
+      this.form.max_rate_per_half_day_session = this.per_half_day_session.max;
+      this.form.min_rate_per_whole_day_session = this.per_whole_day_session.max;
+      this.form.max_rate_per_whole_day_session = this.per_whole_day_session.max;
+      this.formError = [];
       // this.Validate(this.form, ['contact_name_1', 'contact_telephone_number_1', 'contact_email_address_1',
       //   'nhs_smart_card_id_number', 'headline', 'short_biography', 'special_requirements',
       //   'contact_name_2', 'contact_telephone_number_2', 'contact_email_address_2'])
       // this.ValidateEmail({ email: this.form.contact_email_address_1, field: 'contact_email_address_1' })
       // this.ValidateEmail({ email: this.form.contact_email_address_2, field: 'contact_email_address_2' })
       if (!this.formError.length) {
-        this.$axios.$put('/api/v1/locum/me/profile', this.form).then(res => {
-          this.form.gmc_or_nmc_number = res.data.user.locum_detail.gmc_or_nmc_number,
-            this.form.mpl_or_npl_number = res.data.user.locum_detail.mpl_or_npl_number,
-            this.form.nhs_smart_card_id_number = res.data.user.locum_detail.nhs_smart_card_id_number,
-            this.form.headline = res.data.user.locum_detail.headline,
-            this.form.short_biography = res.data.user.locum_detail.short_biography,
-            this.form.special_requirements = res.data.user.locum_detail.special_requirements,
-            this.form.profession_id = res.data.user.locum_detail.profession.id,
-            this.form.qualification_id = res.data.user.locum_detail.qualifications.map(item => {
-              return { label: item.name, value: item.id }
-            })
-          this.form.clinical_system_id = res.data.user.locum_detail.clinical_systems.map(item => {
-            return { label: item.name, value: item.id }
-          })
-          this.form.spoken_language_id = res.data.user.locum_detail.spoken_languages.map(item => {
-            return { label: item.name, value: item.id }
-          })
-          this.per_hour.min = res.data.user.locum_detail.rates.find(rate => rate.rate_type.id === 1).min
-          this.per_hour.max = res.data.user.locum_detail.rates.find(rate => rate.rate_type.id === 1).max
-          this.per_half_day_session.min = res.data.user.locum_detail.rates.find(rate => rate.rate_type.id === 2).min
-          this.per_half_day_session.max = res.data.user.locum_detail.rates.find(rate => rate.rate_type.id === 2).max
-          this.per_whole_day_session.min = res.data.user.locum_detail.rates.find(rate => rate.rate_type.id === 3).min
-          this.per_whole_day_session.max = res.data.user.locum_detail.rates.find(rate => rate.rate_type.id === 3).max
-          this.form.practice_type_id = res.data.user.locum_detail.practice_types.map(item => {
-            return item.id
-          })
-          this.form.post_code = res.data.user.locum_detail.post_code
-          this.form.miles = res.data.user.locum_detail.miles
+        this.$axios.$put("/api/v1/locum/me/profile", this.form).then(res => {
+          (this.form.gmc_or_nmc_number =
+            res.data.user.locum_detail.gmc_or_nmc_number),
+            (this.form.mpl_or_npl_number =
+              res.data.user.locum_detail.mpl_or_npl_number),
+            (this.form.nhs_smart_card_id_number =
+              res.data.user.locum_detail.nhs_smart_card_id_number),
+            (this.form.headline = res.data.user.locum_detail.headline),
+            (this.form.short_biography =
+              res.data.user.locum_detail.short_biography),
+            (this.form.special_requirements =
+              res.data.user.locum_detail.special_requirements),
+            (this.form.profession_id =
+              res.data.user.locum_detail.profession.id),
+            (this.form.qualification_id = res.data.user.locum_detail.qualifications.map(
+              item => {
+                return { label: item.name, value: item.id };
+              }
+            ));
+          this.form.clinical_system_id = res.data.user.locum_detail.clinical_systems.map(
+            item => {
+              return { label: item.name, value: item.id };
+            }
+          );
+          this.form.spoken_language_id = res.data.user.locum_detail.spoken_languages.map(
+            item => {
+              return { label: item.name, value: item.id };
+            }
+          );
+          this.per_hour.min = res.data.user.locum_detail.rates.find(
+            rate => rate.rate_type.id === 1
+          ).min;
+          this.per_hour.max = res.data.user.locum_detail.rates.find(
+            rate => rate.rate_type.id === 1
+          ).max;
+          this.per_half_day_session.min = res.data.user.locum_detail.rates.find(
+            rate => rate.rate_type.id === 2
+          ).min;
+          this.per_half_day_session.max = res.data.user.locum_detail.rates.find(
+            rate => rate.rate_type.id === 2
+          ).max;
+          this.per_whole_day_session.min = res.data.user.locum_detail.rates.find(
+            rate => rate.rate_type.id === 3
+          ).min;
+          this.per_whole_day_session.max = res.data.user.locum_detail.rates.find(
+            rate => rate.rate_type.id === 3
+          ).max;
+          this.form.practice_type_id = res.data.user.locum_detail.practice_types.map(
+            item => {
+              return item.id;
+            }
+          );
+          this.form.post_code = res.data.user.locum_detail.post_code;
+          this.form.miles = res.data.user.locum_detail.miles;
           if (res.data.user.locum_detail.referees[0]) {
-            this.form.referee_1_contact_name = res.data.user.locum_detail.referees[0].name
-            this.form.referee_1_phone_number = res.data.user.locum_detail.referees[0].phone_number
-            this.form.referee_1_email = res.data.user.locum_detail.referees[0].email
+            this.form.referee_1_contact_name =
+              res.data.user.locum_detail.referees[0].name;
+            this.form.referee_1_phone_number =
+              res.data.user.locum_detail.referees[0].phone_number;
+            this.form.referee_1_email =
+              res.data.user.locum_detail.referees[0].email;
           }
           if (res.data.user.locum_detail.referees[1]) {
-            this.form.referee_2_contact_name = res.data.user.locum_detail.referees[1].name
-            this.form.referee_2_phone_number = res.data.user.locum_detail.referees[1].phone_number
-            this.form.referee_2_email = res.data.user.locum_detail.referees[1].email
+            this.form.referee_2_contact_name =
+              res.data.user.locum_detail.referees[1].name;
+            this.form.referee_2_phone_number =
+              res.data.user.locum_detail.referees[1].phone_number;
+            this.form.referee_2_email =
+              res.data.user.locum_detail.referees[1].email;
           }
-          this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Saved !' })
-        })
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: "Saved !"
+          });
+        });
       } else {
-        this.loading = false
+        this.loading = false;
       }
     }
   }
-}
+};
 </script>
 <style scoped>
 button:active {

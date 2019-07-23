@@ -5,7 +5,7 @@
     </div>
     <div class="flex flex-row justify-start mt-8">
       <div class="mx-2 leading-loose font-bold text-md sm:text-lg">{{job.platform_job.title}}</div>
-      <div class="mx-2 bg-red-dark text-white text-sm sm:text-sm p-2">DECLINED</div>
+      <div class="mx-2 bg-red-dark text-white text-sm sm:text-sm p-2">UNSUCCESSFUL</div>
     </div>
     <div
       class="text-xs sm:text-sm mt-4"

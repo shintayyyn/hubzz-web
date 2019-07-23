@@ -632,7 +632,6 @@ export default {
       link.setAttribute('download', imgFilename);
       document.body.appendChild(link);
       link.click();
-      console.log(imgUrl)
       });
     }
   }

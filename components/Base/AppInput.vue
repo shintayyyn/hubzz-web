@@ -114,14 +114,6 @@ export default {
       isChecked: []
     };
   },
-  // watch: {
-  //   value(value) {
-  //     if (this.value instanceof Array) {
-  //       console.log(value)
-  //       this.isChecked = value
-  //     }
-  //   }
-  // },
   props: {
     value: [String, Boolean, Array, Number, Object],
     type: String,
