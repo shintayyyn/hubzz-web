@@ -1,10 +1,10 @@
 <template>
-  <section class="__jobs-section" v-if="!loadingJobs">
+  <section class="__jobs-section">
     <div class="overflow-x-auto">
       <div
         class="mt-10 w-full text-center"
         style="font-family: Nunito"
-        v-if="getLocumMatchedJobs.length === 0"
+        v-if="!loadingJobs && getLocumMatchedJobs.length === 0"
       >There are no matched jobs nearby and suited for you at this time</div>
       <div v-else class="overflow-x-auto overflow-y-hidden">
         <table>
@@ -62,7 +62,7 @@ export default {
       return this.$store.getters["jobs/getLocumMatchedJobs"];
     },
     perPage() {
-      return 2;
+      return 5;
     },
     total() {
       return this.$store.state.jobs.locum_matched_jobs_count;
@@ -78,8 +78,13 @@ export default {
     },
   },
   watch: {
-    getLocumMatchedJobs() {
-      this.goToLastPageThatHasJob()
+    getLocumMatchedJobs(newValue, oldValue) {
+      if (newValue.length !== 0 && (oldValue.length > newValue.length)) {
+        this.getJobs()
+      }
+      if (newValue.length === 0 && this.$route.query.current_page !== 1) {
+        this.pagechanged(this.totalPages)
+      }
     },
     $route(to, from) {
       if (from.query.current_page !== to.query.current_page) {
@@ -111,11 +116,6 @@ export default {
         limit: this.perPage,
         status: "Matched"
       });
-    },
-    goToLastPageThatHasJob() {
-      if (this.getLocumMatchedJobs.length === 0 && this.$route.query.current_page !== 1 && !this.loadingJobs) {
-        this.pagechanged(this.$route.query.current_page - 1)
-      }
     },
     pagechanged(e) {
       const query = {

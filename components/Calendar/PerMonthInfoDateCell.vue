@@ -122,7 +122,7 @@
     </div>
     <div
       class="flex flex-row flex-nowrap absolute pin-b pin-l justify-start w-full"
-      v-if="locum_private_jobs.length > 0"
+      v-if="getLocumAllocatedPrivateJobs.length > 0"
     >
       <span
         v-if="hasLocumPrivateJobs(item.fullDate, 'AM')"
@@ -147,7 +147,7 @@
     </div>
     <div
       class="flex flex-row flex-nowrap absolute pin-b pin-l justify-start w-full"
-      v-if="locum_current_jobs.length > 0"
+      v-if="getLocumAllocatedCurrentJobs.length > 0"
     >
       <span
         v-if="hasLocumCurrentJobs(item.fullDate, 'AM')"
@@ -172,7 +172,7 @@
     </div>
     <div
       class="flex flex-row flex-nowrap absolute pin-b pin-l justify-start w-full"
-      v-if="locum_applied_jobs.length > 0"
+      v-if="getLocumAppliedJobs.length > 0"
     >
       <span
         v-if="hasLocumAppliedJobs(item.fullDate, 'AM')"
@@ -197,7 +197,7 @@
     </div>
     <div
       class="flex flex-row flex-nowrap absolute pin-t pin-l justify-start w-full"
-      v-if="locum_unavailabilities.length > 0"
+      v-if="getLocumUnavailabilities.length > 0"
     >
       <span
         v-if="hasLocumUnavailabilities(item.fullDate, 'AM')"
@@ -227,9 +227,22 @@ export default {
   props: [
     'practice_current_jobs', 'practice_applied_jobs', 'practice_unfilled_jobs', 'practice_declined_jobs',
     'practice_applied_jobs_reminder', 'practice_available_jobs_reminder',
-    'locum_private_jobs', 'locum_current_jobs', 'locum_applied_jobs', 'locum_unavailabilities',
     'item',
   ],
+  computed: {
+    getLocumAllocatedPrivateJobs() {
+      return this.$store.getters['jobs/getLocumAllocatedPrivateJobs']
+    },
+    getLocumAllocatedCurrentJobs() {
+      return this.$store.getters['jobs/getLocumAllocatedCurrentJobs']
+    },
+    getLocumAppliedJobs() {
+      return this.$store.getters['jobs/getLocumAppliedJobs']
+    },
+    getLocumUnavailabilities() {
+      return this.$store.getters['jobs/getLocumUnavailabilities']
+    },
+  },
   methods: {
     // practice
     hasPracticeCurrentJobs(date, type) {
@@ -252,16 +265,16 @@ export default {
     },
     // locum
     hasLocumPrivateJobs(date, type) {
-      return this.locum_private_jobs.find(job => this.getDateArray(job.private_job.date_start, job.private_job.date_end).includes(date) && job.private_job.shift.name === type)
+      return this.getLocumAllocatedPrivateJobs.find(job => this.getDateArray(job.private_job.date_start, job.private_job.date_end).includes(date) && job.private_job.shift.name === type)
     },
     hasLocumCurrentJobs(date, type) {
-      return this.locum_current_jobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === type)
+      return this.getLocumAllocatedCurrentJobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === type)
     },
     hasLocumAppliedJobs(date, type) {
-      return this.locum_applied_jobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === type)
+      return this.getLocumAppliedJobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === type)
     },
     hasLocumUnavailabilities(date, type) {
-      return this.locum_unavailabilities.find(job => job.date === date && job.shifts.find(shift => shift.name === type))
+      return this.getLocumUnavailabilities.find(job => job.date === date && job.shifts.find(shift => shift.name === type))
     },
 
     // it returns an array of dates

@@ -118,10 +118,10 @@ export default {
         state.locum_completed_jobs = state.locum_completed_jobs.filter(job => job.id !== payload)
         state.locum_completed_jobs_count = state.locum_completed_jobs_count - 1
     },
-    // SET_LOCUM_PRIVATE_JOBS(state, payload) {
-    //     state.locum_private_jobs = payload
-    // },
-    // SET_LOCUM_UNAVAILABILITIES(state, payload) {
-    //     state.locum_unavailabilities = payload
-    // },
+    SET_LOCUM_UNAVAILABILITIES(state, payload) {
+        state.locum_unavailabilities = payload
+    },
+    SET_LOCUM_UNAVAILABILITIES_COUNT(state, payload) {
+        state.locum_unavailabilities_count = payload
+    },
 }
