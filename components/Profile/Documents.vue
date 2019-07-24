@@ -14,22 +14,48 @@
         <div class="text-xs sm:text-sm w-full px-1">File Size</div>
         <div class="text-xs sm:text-sm w-full px-1">Last Upload Date</div>
       </div>
-      <div
-        class="practice-doc-card rounded-lg shadow-lg p-4 mt-4"
-        v-for="item in results"
-        :key="item.id"
-        @click="show(item.id)"
-      >
-        <div class="flex flex-row flex-nowrap">
-          <div class="text-xs sm:text-sm w-full px-1">{{item.practice_document_type.name}}</div>
-          <div
-            class="text-xs sm:text-sm w-full px-1"
-          >{{(item.file.size / 1048576).toFixed(2) + "Mb"}}</div>
-          <div
-            class="text-xs sm:text-sm w-full px-1"
-          >{{ $moment(item.created_at).format('MMM DD, YYYY | h:mm A')}}</div>
+      <div v-if="!practiceDocuments == []">
+         <div
+          class="practice-doc-card rounded-lg shadow-lg p-4 mt-4"
+          v-for="item in practiceDocuments"
+          :key="item.id"
+          @click="show(item.id)"
+        >
+          <div class="flex flex-row flex-nowrap">
+            <div class="text-xs sm:text-sm w-full px-1">{{item.practice_document_type.name}}</div>
+
+            <div
+              class="text-xs sm:text-sm w-full px-1"
+            >{{(item.file.size / 1048576).toFixed(2) + "Mb"}}</div>
+            <div
+              class="text-xs sm:text-sm w-full px-1"
+            >{{ $moment(item.created_at).format('MMM DD, YYYY | h:mm A')}}</div>
+
+          </div>
         </div>
       </div>
+
+      <div v-if="practiceDocuments == []">
+         <div
+          class="practice-doc-card rounded-lg shadow-lg p-4 mt-4"
+          v-for="item in practiceDocumentTypes"
+          :key="item.id"
+          @click="show(item.id)"
+        >
+          <div class="flex flex-row flex-nowrap">
+            <div class="text-xs sm:text-sm w-full px-1">{{item.name}}</div>
+          <!-- 
+            <div
+              class="text-xs sm:text-sm w-full px-1"
+            >{{(item.file.size / 1048576).toFixed(2) + "Mb"}}</div>
+            <div
+              class="text-xs sm:text-sm w-full px-1"
+            >{{ $moment(item.created_at).format('MMM DD, YYYY | h:mm A')}}</div> -->
+
+          </div>
+        </div>
+      </div>
+     
     </div>
 
     <div class="show-document-shield" v-if="modal"></div>
@@ -41,39 +67,7 @@
   </section>
 </template>
 <script>
-// sample 
-const results = [
-  {
-    id: 1,
-    practice_document_type: {
-      name: 'title'
-    },
-    file: {
-      size: 20
-    },
-    created_at: '2019-07-24'
-  },
-  {
-    id: 2,
-    practice_document_type: {
-      name: 'title 1'
-    },
-    file: {
-      size: 15
-    },
-    created_at: '2019-07-12'
-  },
-  {
-    id: 3,
-    practice_document_type: {
-      name: 'title 2'
-    },
-    file: {
-      size: 30
-    },
-    created_at: '2019-07-22'
-  },
-]
+
 import PracticeDocumentDetailModal from '@/components/Profile/PracticeDocumentDetailModal'
 export default {
   components: {
@@ -82,18 +76,51 @@ export default {
   data() {
     return {
       modal: false,
-      // results: [],
-      results
+      practiceDocuments: [],
+      practiceDocumentTypes: [],
+      practiceComplianceDocuments:[]
+      // results
     }
   },
 
   created() {
+
+    this.practiceDocuments = []
+    this.practiceDocumentTypes = []
+    this.practiceComplianceDocuments = [] 
+
+    //------------------EXISTING PRACTICE DOCUMENTS----------------------2
     this.$axios.$get(`/api/v1/practice/practice-documents`).then(res => {
       res.data.practice_documents.forEach(item => {
-        this.results.push(item)
+        this.practiceDocuments.push(item)
       })
     })
+
+    //---------------PRACTICE DOCUMENT TYPES-----------------
+    this.$axios.$get(`/api/v1/practice-document-types`).then(res => {
+      res.data.practice_document_types.forEach(item => {
+        this.practiceDocumentTypes.push(item)
+      })
+    })
+
+    console.log(this.practiceDocumentTypes)
+
+
+    
+    // this.practiceComplianceDocuments = this.practiceDocumentTypes.map((practiceDocumentType) => {
+    //   const existingPracticeComplianceDocuments = this.practiceDocuments.find((existingPracticeDocument) =>{
+    //     return existingPracticeDocument.practice_document_types.id === practiceDocumentType.id
+    //   })
+    //   return {
+    //     practiceDocumentType,
+    //     existingPracticeComplianceDocuments
+    //   }
+    // })
+
+    // console.log(this.practiceComplianceDocuments)
+
   },
+
   methods: {
     show(id) {
       const query = {

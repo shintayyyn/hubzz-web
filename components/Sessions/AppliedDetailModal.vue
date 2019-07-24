@@ -248,7 +248,7 @@ export default {
   },
   methods: {
     getJobApplicants() {
-      this.$axios.$get(`/api/v1/practice/jobs/${this.$route.params.id}/applicants`).then(res => {
+      this.$axios.$get(`/api/v1/practice/jobs/${this.job.id}/applicants`).then(res => {
         this.applicants = res.data.users
       })
     },

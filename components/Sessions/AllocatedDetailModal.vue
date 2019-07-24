@@ -156,8 +156,32 @@
           />
           <AppButton :label="'Cancel job'" @click="cancel" />
         </div>
-        <div class="rounded-lg shadow-lg p-8 mt-4">
-          <AppButton :label="'Mark this job as Complete'" @click="complete" />
+        <div class="rounded-lg shadow-lg flex flex-col p-8 mt-4">
+          <div
+            class="flex flex-row flex-nowrap"
+            v-for="(jobPart, index) in job_parts"
+            :key="jobPart.id"
+          >
+            <div class="w-1/2 p-1 text-lg font-bold flex flex-col justify-center">
+              <div>From: {{jobPart.date_start | localDate('dateOnly')}}</div>
+              <div class="my-2"></div>
+              <div>To: {{jobPart.date_end | localDate('dateOnly')}}</div>
+            </div>
+            <div class="w-1/2 p-1">
+              <AppButton
+                :disabled="Boolean(jobPart.completed_at) || isDisabled(index)"
+                :label="`Mark this week as Complete`"
+                @click="complete(jobPart.id, index)"
+              />
+            </div>
+            <!-- <AppButton
+            class="w-full md:w-1/2 p-1"
+            v-for="(job_part, index) in job.job_parts"
+            :key="job_part.id"
+            :label="`Mark this ${getWeek(index)} week as Complete`"
+            @click="complete(job_part.id)"
+            />-->
+          </div>
         </div>
       </div>
       <div class="flex flex-col w-full lg:w-1/3 p-0 lg:pl-4 mt-4 lg:m-0" v-if="user">
@@ -283,7 +307,8 @@ export default {
       },
       user: null,
       mandatory: [],
-      optional: []
+      optional: [],
+      job_parts: []
     }
   },
   computed: {
@@ -296,6 +321,7 @@ export default {
     }
   },
   created() {
+    this.job_parts = this.job.job_parts
     this.form.rate = this.job.platform_job.rate
     this.form.locum_detail_rate_type = this.job.platform_job.locum_detail_rate_type
     this.form.total_hours = this.job.platform_job.total_hours
@@ -308,6 +334,22 @@ export default {
     this.getAssignedLocum()
   },
   methods: {
+    getWeek(index) {
+      let numOfWeek = index + 1
+      return numOfWeek === 1 ? `${numOfWeek}st` :
+        numOfWeek === 2 ? `${numOfWeek}nd` :
+          numOfWeek === 3 ? `${numOfWeek}rd` : `${numOfWeek}th`
+    },
+    isDisabled(index) {
+      if (index == 0) {
+        return false
+      } else {
+        if (this.job_parts[index - 1].completed_at) {
+          return false
+        }
+      }
+      return true
+    },
     getAssignedLocum() {
       this.$axios.$get(`/api/v1/practice/locums/${this.job.platform_job.appointed_to_locum.user.id}`).then(res => {
         this.user = res.data.user
@@ -353,13 +395,16 @@ export default {
         this.close()
       })
     },
-    complete() {
-      let jobId = this.$route.params.id || this.job.id
-      this.$axios.$put(`/api/v1/practice/jobs/${jobId}/complete`).then(res => {
-        this.$store.commit('session/UPDATE_ALLOCATED_JOBS', jobId)
-        this.$store.commit('calendar/UPDATE_PRACTICE_CURRENT_JOBS', jobId)
-        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Job completed' })
-        this.close()
+    complete(id, index) {
+      // let jobId = this.$route.params.id || this.job.id
+      this.$axios.$put(`/api/v1/practice/job-parts/${id}/complete`).then(res => {
+        this.job_parts[index].completed_at = res.data.job_part.completed_at
+        // this.$store.commit('session/UPDATE_ALLOCATED_JOBS', jobId)
+        // this.$store.commit('calendar/UPDATE_PRACTICE_CURRENT_JOBS', jobId)
+        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Job Part completed' })
+        if (this.job_parts.filter(jobPart => jobPart.completed_at === null).length === 0) {
+          this.close()
+        }
       })
     }
   }

@@ -1,6 +1,23 @@
 export default () => ({
     loading_jobs: true,
     modal_shield: false,
+    // PRACTICE
+    practice_available_jobs: [],
+    practice_available_jobs_count: 0,
+    practice_available_jobs_reminder: [],
+    practice_applied_jobs: [],
+    practice_applied_jobs_count: 0,
+    practice_applied_jobs_reminder: [],
+    practice_allocated_jobs: [],
+    practice_allocated_jobs_count: 0,
+    practice_completed_jobs: [],
+    practice_completed_jobs_count: 0,
+    practice_unfilled_jobs: [],
+    practice_unfilled_jobs_count: 0,
+    practice_cancelled_jobs: [],
+    practice_cancelled_jobs_count: 0,
+    practice_declined_jobs: [],
+    practice_declined_jobs_count: 0,
     // LOCUM
     locum_allocated_jobs: [],
     locum_allocated_jobs_count: 0,

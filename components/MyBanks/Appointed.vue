@@ -1,5 +1,6 @@
 <template>
   <div class="flex flex-row flex-wrap justify-start">
+      <AppLoading :loading="loading" :message="'Loading'" v-if="loading" />
     <div
       class="card w-24 rounded-lg shadow-lg bg-grey-light m-2 p-4 hover:bg-grey"
       v-for="user in locums"
@@ -39,22 +40,74 @@
         <div class="w-full font-bold text-grey-dark text-sm sm:text-lg">{{user.locum_detail.headline}}</div>
       </div>
     </div>
+    <div class="m-10">
+      <AppPagination
+        :total="total"
+        :totalPages="totalPages"
+        :currentPage="currentPage"
+        @pagechanged="pagechanged"
+        :loading="loading"
+      />
+    </div>
   </div>
 </template>
 <script>
+import AppPagination from '@/components/Base/AppPagination'
+import AppLoading from '@/components/Base/AppLoading'
 export default {
+  components: {
+    AppPagination,
+    AppLoading,
+  },
   data() {
     return {
-      locums: []
+      locums: [],
+      total: 0,
+      totalPages: 0,
+      currentPage: 0,
+      perPage: 0,
+      loading: false,
+    }
+  },
+  beforeDestroy() {
+    let query = Object.assign({}, this.$route.query)
+    delete query.current_page
+    this.$router.push({ query })
+  },
+  watch: {
+    $route(to, from) {
+      this.currentPage = parseInt(to.query.current_page)
+      this.getAppointedLocums()
     }
   },
   created() {
-    this.$axios.$get(`/api/v1/practice/locums?practice_locum_type=Appointed`).then(res => {
-      console.log(res)
-      this.locums = res.data.users
+    const query = {
+      ...this.$route.query,
+      current_page: this.$route.query.current_page || 1
+    }
+
+    this.$axios.$get(`/api/v1/practice/locums/count?practice_locum_type=Appointed`).then(res => { //GET QUANTITY OF DATA
+      this.total = res.data.count
+      this.perPage = 6
+      this.totalPages = Math.ceil(this.total / this.perPage)
+      this.getAppointedLocums()
     })
+
+    // this.$axios.$get(`/api/v1/practice/locums?practice_locum_type=Appointed`).then(res => {
+    //   console.log(res)
+    //   this.locums = res.data.users
+    // })
   },
   methods: {
+    getAppointedLocums(){
+      this.loading = true
+      let offset = 0
+      offset = this.perPage * (parseInt(this.$route.query.current_page) - 1)
+      this.$axios.$get(`/api/v1/practice/locums?practice_locum_type=Appointed&limit=${this.perPage}&offset=${offset}`).then(res => {
+        this.locums = res.data.users
+      })
+      this.loading=false
+    },
     favorite(id) {
       let locum = this.locums.find(locum => locum.id === id)
       if (!locum.is_favorite) {
@@ -79,6 +132,13 @@ export default {
       d.classList.toggle('toggled-right')
       document.body.style.overflow = 'hidden'
       this.$store.commit('SET_MYLOCUMDETAIL_MODAL', true)
+    },
+    pagechanged(e) {
+      const query = {
+        ...this.$route.query,
+        current_page: e || 1
+      }
+      this.$router.push({ query })
     }
   }
 }

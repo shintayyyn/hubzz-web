@@ -90,7 +90,7 @@ export default {
     }
     this.currentPage = parseInt(this.$route.query.current_page)
     this.$router.push({ query })
-    this.$axios.$get(`/api/v1/practice/practice-children/count`).then(res => {
+    this.$axios.$get(`/api/v1/practice/practice-children/count`).then(res => { //GET QUANTITY OF DATA
       this.total = res.data.count
       this.perPage = 5
       this.totalPages = Math.ceil(this.total / this.perPage)

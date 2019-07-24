@@ -78,7 +78,7 @@ export default {
     this.$store.commit('profile/TOGGLE_SHIELD', false)
   },
   created() {
-    this.$store.commit('profile/TOGGLE_SHIELD', true)
+    this.$store.commit('profile/TOGGLE_SHIELD', true) // SHIELD IS TOGGLED HERE
     this.$axios.get(`/api/v1/practice/practice-documents/${this.$route.params.id}`).then(res => {
       console.log(res)
     }).catch(err => {

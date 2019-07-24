@@ -1,4 +1,33 @@
 export default {
+    // practice
+    getPracticeAvailableJobs(state) {
+        return state.practice_available_jobs
+    },
+    getPracticeAvailableJobsReminder(state) {
+        return state.practice_available_jobs_reminder
+    },
+    getPracticeAppliedJobs(state) {
+        return state.practice_applied_jobs
+    },
+    getPracticeAppliedJobsReminder(state) {
+        return state.practice_applied_jobs_reminder
+    },
+    getPracticeAllocatedJobs(state) {
+        return state.practice_allocated_jobs
+    },
+    getPracticeCompletedJobs(state) {
+        return state.practice_completed_jobs
+    },
+    getPracticeUnfilledJobs(state) {
+        return state.practice_unfilled_jobs
+    },
+    getPracticeCancelledJobs(state) {
+        return state.practice_cancelled_jobs
+    },
+    getPracticeDeclinedJobs(state) {
+        return state.practice_declined_jobs
+    },
+    // locum
     getLocumAllocatedJobs(state) {
         return state.locum_allocated_jobs
     },
