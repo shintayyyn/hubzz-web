@@ -111,6 +111,7 @@
               :placeholder="''"
               :error="formError.find(item => item.field === 'number_of_patients')"
               :inStyle="'text-align:right;'"
+              @blur="checkEmptyField(form.number_of_patients,'number_of_patients')"
             />
             <AppInput
               v-model="form.duration_for_each_appointment"
@@ -120,6 +121,7 @@
               :placeholder="''"
               :error="formError.find(item => item.field === 'duration_for_each_appointment')"
               :inStyle="'text-align:right;'"
+              @blur="checkEmptyField(form.duration_for_each_appointment, 'duration_for_each_appointment')"
             />
             <AppSelect
               v-model="form.opportunity_for_catch_up_slots"
@@ -137,6 +139,7 @@
               :placeholder="''"
               :error="this.formError.find(item => item.field === 'session_requirements')"
               :lists="session_requirements_lists"
+              @blur="checkEmptyField(form.session_requirements, 'session_requirements')"
             />
             <AppTextarea
               v-model="form.session_structure_information"
@@ -144,6 +147,7 @@
               :label="'Session structure information'"
               :placeholder="'For e.g. the first 2 hours of the session is for booked appointments, 3rd hour is walk-ins, and home visits to x number of patients to the end of the session'"
               :error="this.formError.find(item => item.field === 'session_structure_information')"
+              @blur="checkEmptyField(form.session_structure_information, 'session_structure_information')"
             />
             <AppTextarea
               v-model="form.extra_information"
@@ -253,6 +257,7 @@
                 :error="formError.find(item => item.field === 'qualification_id')"
                 :items="qualifications"
                 :info="'Choose at least one qualification'"
+                @blur="checkEmptyField(form.qualification_id,'qualification_id')"
               />
               <AppFilterSearch
                 v-model="form.clinical_system_id"
@@ -339,7 +344,7 @@
             </div>
             <AppSelect
               v-model="unpaid_breaks"
-              :name="'unpaid_breaks '"
+              :name="'unpaid_breaks'"
               :label="'Unpaid break'"
               :error="formError.find(item => item.field === 'unpaid_breaks_in_minutes')"
               :items="[ {value: 15, label: '15'}, {value: 30, label: '30'}, {value: 60, label: '60'}, {value: 'other', label: 'Other'} ]"
@@ -363,18 +368,21 @@
               :error="formError.find(item => item.field === 'shift_id')"
               :items="shifts"
               :placeholder="'Select..'"
+              @blur="checkEmptyField(form.shift_id,'shift_id')"
             />
             <AppDate
               v-model="form.auto_assign_at"
               :name="'auto_assign_at'"
               :label="'Auto -assign job to the first matching Favourite applicant?'"
               :error="formError.find(item => item.field === 'auto_assign_at')"
+              @blur="checkEmptyField(form.auto_assign_at,'auto_assign_at')"
             />
             <AppDate
               v-model="form.selection_date"
               :name="'selection_date'"
               :label="'Selection will be made and you will receive a notification by this date'"
               :error="formError.find(item => item.field === 'selection_date')"
+              @blur="checkEmptyField(form.selection_date,'selection_date')"
             />
           </div>
         </div>
@@ -433,43 +441,45 @@ export default {
       shifts: [],
 
       form: {
-        practice_id: "",
-        title: "",
-        description: "",
-        email: "",
-        report_to: "",
+        practice_id: "", //req
+        title: "", //req
+        description: "", //req
+        email: "", //req
+        report_to: "", //req
         is_another_doctor: false,
         is_nurse_available: false,
-        number_of_patients: "",
-        duration_for_each_appointment: "",
+        number_of_patients: "", //?????????????
+        duration_for_each_appointment: "",  //?????????????
         opportunity_for_catch_up_slots: false,
-        session_requirements: [],
-        session_structure_information: "",
-        extra_information: "",
-        rate: "",
-        locum_detail_rate_type_id: 1,
-        ir35: false,
+        session_requirements: [], 
+        session_structure_information: "", //??????????????
+        extra_information: "", //???????????
+        rate: "", //req
+        total_hours:"", //req
+        locum_detail_rate_type_id: 1, //req - already filled
+        ir35: false, //req - already filled
         mandatory_training_id: [],
-        profession_id: "",
-        qualification_id: [],
-        clinical_system_id: [],
-        spoken_language_id: [],
-        compliance_document_id: [],
-        date_start: null,
-        time_start: null,
-        date_end: null,
-        time_end: null,
-        unpaid_breaks_in_minutes: "",
-        shift_id: "",
+        profession_id: "", //req
+        qualification_id: [], //req
+        clinical_system_id: [], //req
+        spoken_language_id: [], //req
+        compliance_document_id: [], //req
+        date_start: null, //req
+        time_start: null, //req
+        date_end: null, //req
+        time_end: null, //req
+        unpaid_breaks_in_minutes: "", //req
+        shift_id: "", //req
         auto_assign_at: null,
         selection_date: null
       },
       formError: [],
-      showErrorModal:false
+      showErrorModal:false,
     }
   },
   watch: {
-    "form.profession_id"(value) {
+    'form.profession_id'(value) {
+      this.checkEmptyField(value,'profession_id')
       if (value) {
         this.selectedProfession = this.professions_categories.find(
           item => item.id == value
@@ -486,162 +496,106 @@ export default {
         }
       }
     },
+
     'form.practice_id'(value) {
-      // splice from formerror
-      let index = this.formError.findIndex(item => item.field === 'practice_id')
-      if (index >= 0) {
-        this.formError.splice(index, 1)
-      }
-      // validate
-      if (!value) {
-        // required
-        this.formError.push({ field: 'practice_id', message: 'Required' })
-      }
+      this.checkEmptyField(value,'practice_id')
     },
+
     'form.title'(value) {
-      // splice from formerror
-      let index = this.formError.findIndex(item => item.field === 'title')
-      if (index >= 0) {
-        this.formError.splice(index, 1)
-      }
-      // validate
-      if (!value) {
-        // required
-        this.formError.push({ field: 'title', message: 'Required' })
-      }
+      this.checkEmptyField(value,'title')
     },
+    
     'form.description'(value) {
-      // splice from formerror
-      let index = this.formError.findIndex(item => item.field === 'description')
-      if (index >= 0) {
-        this.formError.splice(index, 1)
-      }
-      // validate
-      if (!value) {
-        // required
-        this.formError.push({ field: 'description', message: 'Required' })
-      }
+      this.checkEmptyField(value,'description')
     },
+
     'form.report_to'(value) {
-      // splice from formerror
-      let index = this.formError.findIndex(item => item.field === 'report_to')
-      if (index >= 0) {
-        this.formError.splice(index, 1)
-      }
-      // validate
-      if (!value) {
-        // required
-        this.formError.push({ field: 'report_to', message: 'Required' })
-      }
+      this.checkEmptyField(value,'report_to')
     },
+     
+    'form.number_of_patients'(value) {
+      this.checkEmptyField(value,'number_of_patients')
+    },
+
+    'form.duration_for_each_appointment'(value){
+      this.checkEmptyField(value,'duration_for_each_appointment')
+    },
+
+     'form.session_requirements'(value){
+      this.checkEmptyField(value,'session_requirements')
+    },
+
+    'form.session_structure_information'(value){
+      this.checkEmptyField(value,'session_structure_information')
+    },
+
+    // 'form.extra_information'(value){
+    //   this.checkEmptyField(value,'extra_information')
+    // },
+
     'form.rate'(value) {
-      // splice from formerror
-      let index = this.formError.findIndex(item => item.field === 'rate')
-      if (index >= 0) {
-        this.formError.splice(index, 1)
-      }
-      // validate
-      if (!value) {
-        // required
-        this.formError.push({ field: 'rate', message: 'Required' })
-      }
+      this.checkEmptyField(value,'rate')
     },
+
     'form.date_start'(value) {
-      // splice from formerror
-      let index = this.formError.findIndex(item => item.field === 'date_start')
-      if (index >= 0) {
-        this.formError.splice(index, 1)
-      }
-      // validate
-      if (!value) {
-        // required
-        this.formError.push({ field: 'date_start', message: 'Required' })
-      }
+      this.checkEmptyField(value,'date_start')
     },
+    
     'form.date_end'(value) {
-      // splice from formerror
-      let index = this.formError.findIndex(item => item.field === 'date_end')
-      if (index >= 0) {
-        this.formError.splice(index, 1)
-      }
-      // validate
-      if (!value) {
-        // required
-        this.formError.push({ field: 'date_end', message: 'Required' })
-      }
+      this.checkEmptyField(value,'date_end')
     },
+
     'form.time_start'(value) {
-      // splice from formerror
-      let index = this.formError.findIndex(item => item.field === 'time_start')
-      if (index >= 0) {
-        this.formError.splice(index, 1)
-      }
-      // validate
-      if (!value) {
-        // required
-        this.formError.push({ field: 'time_start', message: 'Required' })
-      }
+      this.checkEmptyField(value,'time_start')
     },
+
     'form.time_end'(value) {
-      // splice from formerror
-      let index = this.formError.findIndex(item => item.field === 'time_end')
-      if (index >= 0) {
-        this.formError.splice(index, 1)
-      }
-      // validate
-      if (!value) {
-        // required
-        this.formError.push({ field: 'time_end', message: 'Required' })
-      }
+      this.checkEmptyField(value,'time_end')  
     },
+
     'form.total_hours'(value) {
-      // splice from formerror
-      let index = this.formError.findIndex(item => item.field === 'total_hours')
-      if (index >= 0) {
-        this.formError.splice(index, 1)
-      }
-      // validate
-      if (!value) {
-        // required
-        this.formError.push({ field: 'total_hours', message: 'Required' })
-      }
+     this.checkEmptyField(value,'total_hours')
     },
+
+    'form.qualification_id'(value) {
+     this.checkEmptyField(value,'qualification_id')
+    },
+
+    'form.clinical_system_id'(value) {
+     this.checkEmptyField(value,'clinical_system_id')
+    },
+
+    'form.spoken_language_id'(value) {
+     this.checkEmptyField(value,'spoken_language_id')
+    },
+
+    'form.compliance_document_id'(value) {
+     this.checkEmptyField(value,'compliance_document_id')
+    },
+    
+    'form.unpaid_breaks_in_minutes'(value) {
+     this.checkEmptyField(value,'unpaid_breaks_in_minutes')
+    },
+
+    'form.shift_id'(value) {
+     this.checkEmptyField(value,'shift_id')
+    },
+
     'form.auto_assign_at'(value) {
-      // splice from formerror
-      let index = this.formError.findIndex(item => item.field === 'auto_assign_at')
-      if (index >= 0) {
-        this.formError.splice(index, 1)
-      }
-      // validate
-      if (!value) {
-        // required
-        this.formError.push({ field: 'auto_assign_at', message: 'Required' })
-      }
+     this.checkEmptyField(value,'auto_assign_at')
     },
     'form.selection_date'(value) {
-      // splice from formerror
-      let index = this.formError.findIndex(item => item.field === 'selection_date')
-      if (index >= 0) {
-        this.formError.splice(index, 1)
-      }
-      // validate
-      if (!value) {
-        // required
-        this.formError.push({ field: 'selection_date', message: 'Required' })
-      }
+      this.checkEmptyField(value,'selection_date')
     },
     'form.email'(value) {
-      // splice from formerror
       let index = this.formError.findIndex(item => item.field === 'email')
       if (index >= 0) {
         this.formError.splice(index, 1)
       }
-      // validate
+
       if (!value) {
-        // required
         this.formError.push({ field: 'email', message: 'Required' })
       } else {
-        // validate option
         const error = this.ValidateEmail(value)
         if (error) {
           this.formError.push(error)
@@ -748,21 +702,89 @@ export default {
 
   methods: {
     checkEmptyField(inputField,fieldName){
+      // splice from formError
       let index = this.formError.findIndex(item => item.field === fieldName)
       if (index >= 0) {
         this.formError.splice(index, 1)
       }
-      if(inputField === '' ){
+
+      //check if empty
+      if(!inputField){
         this.formError.push({ field: fieldName, message: 'Required' })
       } 
-      console.log(this.formError)
+    },
 
-    },  
+    reCheckEmptyField(){
+      const requiredFields = [
+        this.form.practice_id,
+        this.form.title,
+        this.form.description,
+        this.form.email,
+        this.form.report_to,
+        this.form.number_of_patients,
+        this.form.duration_for_each_appointment,
+        this.form.session_requirements,
+        this.form.session_structure_information,
+        // this.form.extra_information,
+        this.form.rate,
+        this.form.total_hours,
+        this.form.profession_id,
+        this.form.qualification_id,
+        this.form.clinical_system_id,
+        this.form.spoken_language_id,
+        this.form.compliance_document_id,
+        this.form.date_start,
+        this.form.time_start,
+        this.form.date_end,
+        this.form.time_end,
+        this.form.shift_id,
+        this.form.auto_assign_at,
+        this.form.selection_date
+      ]
+      console.log(this.form.session_requirements)
+      console.log(requiredFields)
+      const requiredFieldNames = [
+        'practice_id',
+        'title',
+        'description',
+        'email',
+        'report_to',
+        'number_of_patients',
+        'duration_for_each_appointment',
+        'session_requirements',
+        'session_structure_information',
+        // 'extra_information',
+        'rate',
+        'total_hours',
+        'profession_id',
+        'qualification_id',
+        'clinical_system_id',
+        'spoken_language_id',
+        'compliance_document_id',
+        'date_start',
+        'time_start',
+        'date_end',
+        'time_end',
+        'shift_id',
+        'auto_assign_at',
+        'selection_date'
+      ]
+      let counter = 0
+      let requiredLength = requiredFields.length
+      console.log(requiredLength)
+      
+      while(counter<requiredLength){
+  
+        this.checkEmptyField(requiredFields[counter],requiredFieldNames[counter])
+        ++counter
+      }
+    },
+  
 
     addMandatory() {
       // ! change route
       // this.$emit('close')
-      this.$router.push("/profile");
+      this.$router.push("/profile")
     },
     uncheckMandatory(value) {
       this.form.mandatory_training_id = this.form.mandatory_training_id.filter(
@@ -770,7 +792,8 @@ export default {
       );
     },
     publish() {
-      if(this.formError===[]){
+      this.reCheckEmptyField()
+      if(this.formError.length == 0){
         this.form.clinical_system_id = this.form.clinical_system_id.map(
           item => item.value
         );
