@@ -1,10 +1,10 @@
 <template>
-  <section class="allocated-section">
+  <section class="__jobs-section">
     <div class="overflow-x-auto">
       <div
         class="mt-10 w-full text-center"
         style="font-family: Nunito"
-        v-if="!loadingJobs && getPracticeAvailableJobs.length === 0"
+        v-if="!loadingJobs && getPracticeAllocatedJobs.length === 0"
       >No locums are assigned to jobs yet</div>
       <div v-else class="overflow-x-auto overflow-y-hidden">
         <table>
@@ -20,10 +20,10 @@
             </tr>
           </thead>
           <tbody>
-            <template v-for="(item, index) in getPracticeAvailableJobs">
+            <template v-for="(item, index) in getPracticeAllocatedJobs">
               <tr
                 :key="item.id"
-                class="job-card shadow-md cursor-pointer text-xs text-left"
+                class="__job-card shadow-md cursor-pointer text-xs text-left"
                 @click="show(item.id, item.platform_job.appointed_to_locum.user.id)"
               >
                 <td>{{item.job_number}}</td>
@@ -42,7 +42,7 @@
         </table>
       </div>
     </div>
-    <div class="absolute pin-b w-full" v-if="getPracticeAvailableJobs.length > 0">
+    <div class="absolute pin-b w-full" v-if="getPracticeAllocatedJobs.length > 0">
       <AppPagination
         :total="total"
         :totalPages="totalPages"
@@ -59,14 +59,14 @@ export default {
     AppPagination,
   },
   computed: {
-    getPracticeAvailableJobs() {
-      return this.$store.getters["jobs/getPracticeAvailableJobs"];
+    getPracticeAllocatedJobs() {
+      return this.$store.getters["jobs/getPracticeAllocatedJobs"];
     },
     perPage() {
       return 5;
     },
     total() {
-      return this.$store.state.jobs.locum_allocated_jobs_count;
+      return this.$store.state.jobs.practice_allocated_jobs_count;
     },
     totalPages() {
       return Math.ceil(this.total / this.perPage);
@@ -79,7 +79,7 @@ export default {
     }
   },
   watch: {
-    getPracticeAvailableJobs(newValue, oldValue) {
+    getPracticeAllocatedJobs(newValue, oldValue) {
       if (newValue.length !== 0 && (oldValue.length > newValue.length)) {
         this.getJobs()
       }
@@ -94,6 +94,7 @@ export default {
     }
   },
   created() {
+    console.log(this.total)
     const query = {
       ...this.$route.query,
       current_page: this.$route.query.current_page || 1
@@ -105,7 +106,7 @@ export default {
   methods: {
     getJobsCount() {
       this.$store.dispatch("jobs/fetchPracticeJobs", {
-        status: "Allocated",
+        status: "Current",
         countOnly: true
       });
     },
@@ -115,7 +116,7 @@ export default {
       this.$store.dispatch("jobs/fetchPracticeJobs", {
         offset: offset,
         limit: this.perPage,
-        status: "Allocated"
+        status: "Current"
       });
     },
     pagechanged(e) {
@@ -134,57 +135,3 @@ export default {
   }
 }
 </script>
-<style scoped>
-.allocated-section {
-  position: relative;
-  min-height: 500px;
-}
-.job-card:hover {
-  background-color: #dee1e5;
-  transition: background-color 0.5s ease-in-out;
-}
-.job-card {
-  background-color: white;
-  transition: background-color 0.5s ease-in-out;
-}
-a {
-  text-decoration: none;
-  color: black;
-}
-table {
-  width: 920px;
-}
-table thead th {
-  padding: 15px;
-}
-table tbody td {
-  padding: 15px;
-}
-.loader {
-  background-color: #edf2f7;
-  opacity: 0.5;
-}
-.loader-message:after {
-  content: " .";
-  animation: dots 1s steps(5, end) infinite;
-}
-
-@keyframes dots {
-  0%,
-  20% {
-    color: rgba(0, 0, 0, 0);
-    text-shadow: 0.25em 0 0 rgba(0, 0, 0, 0), 0.5em 0 0 rgba(0, 0, 0, 0);
-  }
-  40% {
-    color: white;
-    text-shadow: 0.25em 0 0 rgba(0, 0, 0, 0), 0.5em 0 0 rgba(0, 0, 0, 0);
-  }
-  60% {
-    text-shadow: 0.25em 0 0 white, 0.5em 0 0 rgba(0, 0, 0, 0);
-  }
-  80%,
-  100% {
-    text-shadow: 0.25em 0 0 white, 0.5em 0 0 white;
-  }
-}
-</style>

@@ -1,5 +1,5 @@
 <template>
-  <section class="live-section">
+  <section class="__jobs-section">
     <div class="overflow-x-auto">
       <div
         class="mt-10 w-full text-center"
@@ -22,7 +22,7 @@
             <template v-for="(item, index) in getPracticeAvailableJobs">
               <tr
                 :key="item.id"
-                class="job-card shadow-md cursor-pointer text-xs text-left"
+                class="__job-card shadow-md cursor-pointer text-xs text-left"
                 @click="show(item.id)"
               >
                 <td>{{item.job_number}}</td>
@@ -134,57 +134,3 @@ export default {
   }
 }
 </script>
-<style scoped>
-.live-section {
-  position: relative;
-  min-height: 500px;
-}
-.job-card:hover {
-  background-color: #dee1e5;
-  transition: background-color 0.5s ease-in-out;
-}
-.job-card {
-  background-color: white;
-  transition: background-color 0.5s ease-in-out;
-}
-a {
-  text-decoration: none;
-  color: black;
-}
-table {
-  width: 920px;
-}
-table thead th {
-  padding: 15px;
-}
-table tbody td {
-  padding: 15px;
-}
-.loader {
-  background-color: #edf2f7;
-  opacity: 0.5;
-}
-.loader-message:after {
-  content: " .";
-  animation: dots 1s steps(5, end) infinite;
-}
-
-@keyframes dots {
-  0%,
-  20% {
-    color: rgba(0, 0, 0, 0);
-    text-shadow: 0.25em 0 0 rgba(0, 0, 0, 0), 0.5em 0 0 rgba(0, 0, 0, 0);
-  }
-  40% {
-    color: white;
-    text-shadow: 0.25em 0 0 rgba(0, 0, 0, 0), 0.5em 0 0 rgba(0, 0, 0, 0);
-  }
-  60% {
-    text-shadow: 0.25em 0 0 white, 0.5em 0 0 rgba(0, 0, 0, 0);
-  }
-  80%,
-  100% {
-    text-shadow: 0.25em 0 0 white, 0.5em 0 0 white;
-  }
-}
-</style>

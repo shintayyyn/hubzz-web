@@ -23,6 +23,7 @@ export default {
   methods: {
     select() {
       this.$axios.$get(`/api/v1/practice/jobs/${this.job.id}`).then(res => {
+        console.log(res)
         this.$emit('viewPracticeAppliedJob', res.data.job)
       })
     }

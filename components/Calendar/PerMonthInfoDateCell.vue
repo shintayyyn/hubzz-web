@@ -2,7 +2,7 @@
   <section>
     <div
       class="flex flex-row flex-nowrap absolute pin-b pin-l justify-start w-full"
-      v-if="practice_current_jobs.length > 0"
+      v-if="getPracticeAllocatedJobs.length > 0"
     >
       <span
         v-if="hasPracticeCurrentJobs(item.fullDate, 'AM')"
@@ -27,7 +27,7 @@
     </div>
     <div
       class="flex flex-row flex-nowrap absolute pin-b pin-l justify-start w-full"
-      v-if="practice_applied_jobs.length > 0"
+      v-if="getPracticeAppliedJobs.length > 0"
     >
       <span
         v-if="hasPracticeAppliedJobs(item.fullDate, 'AM')"
@@ -52,7 +52,7 @@
     </div>
     <div
       class="flex flex-row flex-nowrap absolute pin-b pin-l justify-start w-full"
-      v-if="practice_unfilled_jobs.length > 0"
+      v-if="getPracticeUnfilledJobs.length > 0"
     >
       <span
         v-if="hasPracticeUnfilledJobs(item.fullDate, 'AM')"
@@ -77,7 +77,7 @@
     </div>
     <div
       class="flex flex-row flex-nowrap absolute pin-b pin-l justify-start w-full"
-      v-if="practice_declined_jobs.length > 0"
+      v-if="getPracticeDeclinedJobs.length > 0"
     >
       <span
         v-if="hasPracticeDeclinedJobs(item.fullDate, 'AM')"
@@ -102,7 +102,7 @@
     </div>
     <div
       class="flex flex-row flex-nowrap absolute pin-l justify-start w-full"
-      v-if="practice_applied_jobs_reminder.length > 0"
+      v-if="getPracticeAppliedJobsReminder.length > 0"
     >
       <span
         v-if="hasPracticeAppliedJobsReminder(item.fullDate, 'Reminder')"
@@ -112,7 +112,7 @@
     </div>
     <div
       class="flex flex-row flex-nowrap absolute pin-l justify-start w-full"
-      v-if="practice_available_jobs_reminder.length > 0"
+      v-if="getPracticeAvailableJobsReminder.length > 0"
     >
       <span
         v-if="hasPracticeAvailableJobsReminder(item.fullDate, 'Reminder')"
@@ -224,12 +224,28 @@
 </template>
 <script>
 export default {
-  props: [
-    'practice_current_jobs', 'practice_applied_jobs', 'practice_unfilled_jobs', 'practice_declined_jobs',
-    'practice_applied_jobs_reminder', 'practice_available_jobs_reminder',
-    'item',
-  ],
+  props: ['item'],
   computed: {
+    // practice
+    getPracticeAllocatedJobs() {
+      return this.$store.getters['jobs/getPracticeAllocatedJobs']
+    },
+    getPracticeAppliedJobs() {
+      return this.$store.getters['jobs/getPracticeAppliedJobs']
+    },
+    getPracticeUnfilledJobs() {
+      return this.$store.getters['jobs/getPracticeUnfilledJobs']
+    },
+    getPracticeDeclinedJobs() {
+      return this.$store.getters['jobs/getPracticeDeclinedJobs']
+    },
+    getPracticeAvailableJobsReminder() {
+      return this.$store.getters['jobs/getPracticeAvailableJobsReminder']
+    },
+    getPracticeAppliedJobsReminder() {
+      return this.$store.getters['jobs/getPracticeAppliedJobsReminder']
+    },
+    // locum
     getLocumAllocatedPrivateJobs() {
       return this.$store.getters['jobs/getLocumAllocatedPrivateJobs']
     },
@@ -246,22 +262,22 @@ export default {
   methods: {
     // practice
     hasPracticeCurrentJobs(date, type) {
-      return this.practice_current_jobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === type)
+      return this.getPracticeAllocatedJobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === type)
     },
     hasPracticeAppliedJobs(date, type) {
-      return this.practice_applied_jobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === type)
+      return this.getPracticeAppliedJobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === type)
     },
     hasPracticeUnfilledJobs(date, type) {
-      return this.practice_unfilled_jobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === type)
+      return this.getPracticeUnfilledJobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === type)
     },
     hasPracticeDeclinedJobs(date, type) {
-      return this.practice_declined_jobs.find(job => this.$moment(job.platform_job.declined_at).format('YYYY-MM-DD') === date && job.platform_job.shift.name === type)
+      return this.getPracticeDeclinedJobs.find(job => this.$moment(job.platform_job.declined_at).format('YYYY-MM-DD') === date && job.platform_job.shift.name === type)
     },
     hasPracticeAppliedJobsReminder(date, type) {
-      return this.practice_applied_jobs_reminder.find(job => job.platform_job.selection_date === date && type === 'Reminder')
+      return this.getPracticeAppliedJobsReminder.find(job => job.platform_job.selection_date === date && type === 'Reminder')
     },
     hasPracticeAvailableJobsReminder(date, type) {
-      return this.practice_available_jobs_reminder.find(job => job.platform_job.selection_date === date && type === 'Reminder')
+      return this.getPracticeAvailableJobsReminder.find(job => job.platform_job.selection_date === date && type === 'Reminder')
     },
     // locum
     hasLocumPrivateJobs(date, type) {
@@ -276,7 +292,6 @@ export default {
     hasLocumUnavailabilities(date, type) {
       return this.getLocumUnavailabilities.find(job => job.date === date && job.shifts.find(shift => shift.name === type))
     },
-
     // it returns an array of dates
     getDateArray(start, end) {
       let arr = new Array();
