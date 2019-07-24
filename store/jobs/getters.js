@@ -2,6 +2,12 @@ export default {
     getLocumAllocatedJobs(state) {
         return state.locum_allocated_jobs
     },
+    getLocumAllocatedPrivateJobs(state) {
+        return state.locum_allocated_jobs.filter(job => job.type === 'Private')
+    },
+    getLocumAllocatedCurrentJobs(state) {
+        return state.locum_allocated_jobs.filter(job => job.type === 'Platform')
+    },
     getLocumAvailableJobs(state) {
         return state.locum_available_jobs
     },
@@ -22,6 +28,9 @@ export default {
     },
     getLocumCompletedJobs(state) {
         return state.locum_completed_jobs
+    },
+    getLocumUnavailabilities(state) {
+        return state.locum_unavailabilities
     },
     
 }

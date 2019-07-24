@@ -78,7 +78,8 @@
                 <div class="flex flex-row flex-nowrap items-center">
                   <svgicon name="cloud-download" height="24" width="24" />
                   <div class="mx-2">
-                    <a @click.prevent="downloadItem(item.info.file.url, item.info.file.filename)"
+                    <a
+                      @click.prevent="downloadItem(item.info.file.url, item.info.file.filename)"
                       :href="item.info.file.url"
                       :download="item.info.file.filename"
                       target="_blank"
@@ -166,7 +167,8 @@
                 <div class="flex flex-row flex-nowrap">
                   <svgicon name="cloud-download" height="24" width="24" />
                   <div class="leading-loose mx-2">
-                    <a @click.prevent="downloadItem(item.info.file.url, item.info.file.filename)"
+                    <a
+                      @click.prevent="downloadItem(item.info.file.url, item.info.file.filename)"
                       target="_blank"
                       :href="item.info.file.url"
                     >{{item.info.file.filename | StringMaxLength(15)}}</a>
@@ -242,7 +244,8 @@
                 <div class="flex flex-row flex-nowrap">
                   <svgicon name="cloud-download" height="24" width="24" />
                   <div class="leading-loose mx-2">
-                    <a @click.prevent="downloadItem(item.info.file.url, item.info.file.filename)"
+                    <a
+                      @click.prevent="downloadItem(item.info.file.url, item.info.file.filename)"
                       target="_blank"
                       :href="item.info.file.url"
                     >{{item.info.file.filename | StringMaxLength(15)}}</a>
@@ -330,6 +333,28 @@ export default {
     });
   },
   methods: {
+    // set mandatory training
+    setMandatoryTrainings() {
+      if (this.$auth.user.locum_detail.mandatory_trainings.length > 0) {
+        this.$auth.user.locum_detail.mandatory_trainings.forEach(
+          userMandatoryTraining => {
+            this.mandatory_trainings.forEach(mandatoryTraining => {
+              if (
+                userMandatoryTraining.mandatory_training.id ===
+                mandatoryTraining.id
+              ) {
+                mandatoryTraining.info = userMandatoryTraining;
+              }
+            });
+          }
+        );
+      }
+      this.mandatory_trainings = this.mandatory_trainings.sort(
+        (a, b) => a.id - b.id
+      );
+
+    },
+    // set mandatory and optional
     setComplianceDocuments() {
       if (this.$auth.user.locum_detail.compliance_documents.length > 0) {
         this.$auth.user.locum_detail.compliance_documents.forEach(
@@ -554,7 +579,6 @@ export default {
         this.showErrorModal = true;
         return;
       }
-      console.log(file)
       const formData = new FormData();
       formData.append("file", file);
       formData.append("mandatory_training_id", id);
@@ -619,20 +643,19 @@ export default {
           console.log(err);
         });
     },
-    downloadItem (imgUrl, imgFilename) {
+    downloadItem(imgUrl, imgFilename) {
       const axios = require('axios');
       axios({
-      url: imgUrl,
-      method: 'GET',
-      responseType: 'blob', // important
-    }).then(response => {
-      console.log(response)
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', imgFilename);
-      document.body.appendChild(link);
-      link.click();
+        url: imgUrl,
+        method: 'GET',
+        responseType: 'blob', // important
+      }).then(response => {
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', imgFilename);
+        document.body.appendChild(link);
+        link.click();
       });
     }
   }

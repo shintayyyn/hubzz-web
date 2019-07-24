@@ -20,4 +20,5 @@ export default () => ({
     locum_completed_jobs_count: 0,
     locum_private_jobs: [],
     locum_unavailabilities: [],
+    locum_unavailabilities_count: 0,
 })

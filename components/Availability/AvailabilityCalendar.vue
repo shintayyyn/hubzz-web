@@ -8,11 +8,11 @@
       </div>
       <div class="w-1/2 text-right">
         <span class="cursor-pointer" @click="adjustMonth('previous')">
-          <svgicon name="arrow-left" height="15" width="15"/>
+          <svgicon name="arrow-left" height="15" width="15" />
         </span>
         <span class="mx-4"></span>
         <span class="cursor-pointer" @click="adjustMonth('next')">
-          <svgicon name="arrow-right" height="15" width="15"/>
+          <svgicon name="arrow-right" height="15" width="15" />
         </span>
       </div>
     </div>
@@ -40,12 +40,7 @@
             v-if="item.day === 1"
           >
             <div class="text-xs lg:text-base z-10">{{(item.date)}}</div>
-            <AvailabilityInfoDateCell
-              :unavailabilities="unavailabilities"
-              :locum_private_jobs="locum_private_jobs"
-              :locum_current_jobs="locum_current_jobs"
-              :item="item"
-            />
+            <AvailabilityInfoDateCell :item="item" />
           </div>
         </div>
       </div>
@@ -61,12 +56,7 @@
             v-if="item.day === 2"
           >
             <div class="text-xs lg:text-base z-10">{{(item.date)}}</div>
-            <AvailabilityInfoDateCell
-              :unavailabilities="unavailabilities"
-              :locum_private_jobs="locum_private_jobs"
-              :locum_current_jobs="locum_current_jobs"
-              :item="item"
-            />
+            <AvailabilityInfoDateCell :item="item" />
           </div>
         </div>
       </div>
@@ -82,12 +72,7 @@
             v-if="item.day === 3"
           >
             <div class="text-xs lg:text-base z-10">{{(item.date)}}</div>
-            <AvailabilityInfoDateCell
-              :unavailabilities="unavailabilities"
-              :locum_private_jobs="locum_private_jobs"
-              :locum_current_jobs="locum_current_jobs"
-              :item="item"
-            />
+            <AvailabilityInfoDateCell :item="item" />
           </div>
         </div>
       </div>
@@ -103,12 +88,7 @@
             v-if="item.day === 4"
           >
             <div class="text-xs lg:text-base z-10">{{(item.date)}}</div>
-            <AvailabilityInfoDateCell
-              :unavailabilities="unavailabilities"
-              :locum_private_jobs="locum_private_jobs"
-              :locum_current_jobs="locum_current_jobs"
-              :item="item"
-            />
+            <AvailabilityInfoDateCell :item="item" />
           </div>
         </div>
       </div>
@@ -124,12 +104,7 @@
             v-if="item.day === 5"
           >
             <div class="text-xs lg:text-base z-10">{{(item.date)}}</div>
-            <AvailabilityInfoDateCell
-              :unavailabilities="unavailabilities"
-              :locum_private_jobs="locum_private_jobs"
-              :locum_current_jobs="locum_current_jobs"
-              :item="item"
-            />
+            <AvailabilityInfoDateCell :item="item" />
           </div>
         </div>
       </div>
@@ -145,12 +120,7 @@
             v-if="item.day === 6"
           >
             <div class="text-xs lg:text-base z-10">{{(item.date)}}</div>
-            <AvailabilityInfoDateCell
-              :unavailabilities="unavailabilities"
-              :locum_private_jobs="locum_private_jobs"
-              :locum_current_jobs="locum_current_jobs"
-              :item="item"
-            />
+            <AvailabilityInfoDateCell :item="item" />
           </div>
         </div>
       </div>
@@ -166,12 +136,7 @@
             v-if="item.day === 0"
           >
             <div class="text-xs lg:text-base z-10">{{(item.date)}}</div>
-            <AvailabilityInfoDateCell
-              :unavailabilities="unavailabilities"
-              :locum_private_jobs="locum_private_jobs"
-              :locum_current_jobs="locum_current_jobs"
-              :item="item"
-            />
+            <AvailabilityInfoDateCell :item="item" />
           </div>
         </div>
       </div>
@@ -194,14 +159,14 @@ export default {
     }
   },
   computed: {
-    unavailabilities() {
-      return this.$store.state.availability.unavailabilities
+    getLocumAllocatedPrivateJobs() {
+      return this.$store.getters['jobs/getLocumAllocatedPrivateJobs']
     },
-    locum_private_jobs() {
-      return this.$store.state.availability.locum_private_jobs
+    getLocumAllocatedCurrentJobs() {
+      return this.$store.getters['jobs/getLocumAllocatedCurrentJobs']
     },
-    locum_current_jobs() {
-      return this.$store.state.availability.locum_current_jobs
+    getLocumUnavailabilities() {
+      return this.$store.getters['jobs/getLocumUnavailabilities']
     },
   },
   created() {
@@ -219,15 +184,16 @@ export default {
   },
   methods: {
     getJobs() {
-      this.$axios.$get(`/api/v1/locum/jobs?locum_status=Current&date_start=${this.startOfMonth}&date_end=${this.endOfMonth}`).then(res => {
-        if (res.data.jobs && res.data.jobs.length > 0) {
-          this.$store.commit('availability/SET_LOCUM_PRIVATE_JOBS', res.data.jobs.filter(job => job.type === 'Private'))
-          this.$store.commit('availability/SET_LOCUM_CURRENT_JOBS', res.data.jobs.filter(job => job.type === 'Platform'))
-        }
-      })
-      this.$axios.$get(`/api/v1/locum/unavailabilities?date_start=${this.startOfMonth}&date_end=${this.endOfMonth}`).then(res => {
-        this.$store.commit('availability/SET_UNAVAILABILITES', res.data.unavailabilities)
-      })
+      this.$store.dispatch("jobs/fetchLocumJobs", {
+        date_start: this.startOfMonth,
+        date_end: this.endOfMonth,
+        status: "Current"
+      });
+
+      this.$store.dispatch("jobs/fetchLocumUnavailabilities", {
+        date_start: this.startOfMonth,
+        date_end: this.endOfMonth,
+      });
     },
     getDaysInMonth(month, selectedYear) {
       let date = new Date(selectedYear, month, 1);
@@ -272,8 +238,8 @@ export default {
       let unavaibleDate
       let appointmentDate
       let allocatedDate
-      if (this.unavailabilities && this.unavailabilities.length > 0) {
-        let isUnavailable = this.unavailabilities.find(unavailable => unavailable.date === date)
+      if (this.getLocumUnavailabilities && this.getLocumUnavailabilities.length > 0) {
+        let isUnavailable = this.getLocumUnavailabilities.find(unavailable => unavailable.date === date)
         if (isUnavailable) {
           unavaibleDate = {
             id: isUnavailable.id,
@@ -281,16 +247,16 @@ export default {
           }
         }
       }
-      if (this.locum_private_jobs && this.locum_private_jobs.length > 0) {
-        let hasLocumPrivateJob = this.locum_private_jobs.find(appointment => this.getDateArray(appointment.private_job.date_start, appointment.private_job.date_end).includes(date))
+      if (this.getLocumAllocatedPrivateJobs && this.getLocumAllocatedPrivateJobs.length > 0) {
+        let hasLocumPrivateJob = this.getLocumAllocatedPrivateJobs.find(appointment => this.getDateArray(appointment.private_job.date_start, appointment.private_job.date_end).includes(date))
         if (hasLocumPrivateJob) {
           appointmentDate = {
             shift: hasLocumPrivateJob.private_job.shift
           }
         }
       }
-      if (this.locum_current_jobs && this.locum_current_jobs.length > 0) {
-        let hasLocumCurrentJob = this.locum_current_jobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date))
+      if (this.getLocumAllocatedCurrentJobs && this.getLocumAllocatedCurrentJobs.length > 0) {
+        let hasLocumCurrentJob = this.getLocumAllocatedCurrentJobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date))
         if (hasLocumCurrentJob && hasLocumCurrentJob.length > 0) {
           allocatedDate = hasLocumCurrentJob.map(item => {
             return item.platform_job.shift

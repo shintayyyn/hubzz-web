@@ -30,9 +30,19 @@ export const mutations = {
     SET_DATE_TODAY (state) {
         state.date_today = this.$moment(new Date()).format('YYYY-MM-DD')
         state.selected_date = this.$moment(new Date()).format('YYYY-MM-DD')
+        state.selected_date_shift = {
+            date: this.$moment(new Date()).format('YYYY-MM-DD'),
+            shift: 'AM'
+        }
     },
     TOGGLE_CALENDAR_VIEW_TYPE (state, payload) {
         state.view_type = payload
+        state.date_today = this.$moment(new Date()).format('YYYY-MM-DD')
+        state.selected_date = this.$moment(new Date()).format('YYYY-MM-DD')
+        state.selected_date_shift = {
+            date: this.$moment(new Date()).format('YYYY-MM-DD'),
+            shift: 'AM'
+        }
     },
     // per month
     SELECT_DATE (state, payload) {

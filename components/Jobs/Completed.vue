@@ -1,10 +1,10 @@
 <template>
-  <section class="__jobs-section" v-if="!loadingJobs">
+  <section class="__jobs-section">
     <div class="overflow-x-auto">
       <div
         class="mt-10 w-full text-center"
         style="font-family: Nunito"
-        v-if="getLocumCompletedJobs.length === 0"
+        v-if="!loadingJobs && getLocumCompletedJobs.length === 0"
       >You have not yet completed any job</div>
       <div v-else class="overflow-x-auto overflow-y-hidden">
         <table>
@@ -62,7 +62,7 @@ export default {
       return this.$store.getters["jobs/getLocumCompletedJobs"];
     },
     perPage() {
-      return 2;
+      return 5;
     },
     total() {
       return this.$store.state.jobs.locum_completed_jobs_count;
@@ -78,8 +78,13 @@ export default {
     }
   },
   watch: {
-    getLocumCompletedJobs() {
-      this.goToLastPageThatHasJob()
+    getLocumCompletedJobs(newValue, oldValue) {
+      if (newValue.length !== 0 && (oldValue.length > newValue.length)) {
+        this.getJobs()
+      }
+      if (newValue.length === 0 && this.$route.query.current_page !== 1) {
+        this.pagechanged(this.totalPages)
+      }
     },
     $route(to, from) {
       if (from.query.current_page !== to.query.current_page) {
@@ -111,12 +116,6 @@ export default {
         limit: this.perPage,
         status: "Completed"
       });
-    },
-    goToLastPageThatHasJob() {
-      this.$store.commit('jobs/TOGGLE_LOADING', false)
-      if (this.getLocumCompletedJobs.length === 0 && this.$route.query.current_page !== 1 && !this.loadingJobs) {
-        this.pagechanged(this.$route.query.current_page - 1)
-      }
     },
     pagechanged(e) {
       const query = {
