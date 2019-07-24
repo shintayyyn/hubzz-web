@@ -770,7 +770,7 @@ export default {
       );
     },
     publish() {
-      if(this.formError===[]){
+      if(this.formError.length == 0){
         this.form.clinical_system_id = this.form.clinical_system_id.map(
           item => item.value
         );
