@@ -17,11 +17,7 @@
             @viewAppointmentJob="viewAppointmentJob"
             @viewLocumCurrentJob="viewLocumCurrentJob"
             @viewLocumAppliedJob="viewLocumAppliedJob"
-            @viewPracticeAllocatedJob="viewPracticeAllocatedJob"
-            @viewPracticeUnfilledJob="viewPracticeUnfilledJob"
-            @viewPracticeDeclinedJob="viewPracticeDeclinedJob"
-            @viewPracticeAppliedJob="viewPracticeAppliedJob"
-            @viewPracticeLiveJob="viewPracticeLiveJob"
+            @viewPracticeJob="viewPracticeJob"
           />
         </div>
       </div>
@@ -40,23 +36,8 @@
       <div class="modal-container shadow-lg" v-if="practice_create_modal">
         <CreateJobModal @close="practice_create_modal = false" :job="practice_create_job" />
       </div>
-      <div class="modal-container shadow-lg" v-if="practice_allocated_modal">
-        <AllocatedDetailModal
-          @close="practice_allocated_modal = false"
-          :job="practice_allocated_job"
-        />
-      </div>
-      <div class="modal-container shadow-lg" v-if="practice_unfilled_modal">
-        <UnfilledDetailModal @close="practice_unfilled_modal = false" :job="practice_unfilled_job" />
-      </div>
-      <div class="modal-container shadow-lg" v-if="practice_declined_modal">
-        <DeclinedDetailModal @close="practice_declined_modal = false" :job="practice_declined_job" />
-      </div>
-      <div class="modal-container shadow-lg" v-if="practice_applied_modal">
-        <AppliedDetailModal @close="practice_applied_modal = false" :job="practice_applied_job" />
-      </div>
-      <div class="modal-container shadow-lg" v-if="practice_live_modal">
-        <LiveDetailModal @close="practice_live_modal = false" :job="practice_live_job" />
+      <div class="modal-container shadow-lg" v-if="practice_modal">
+        <JobDetailModal @close="practice_modal = false" :job="practice_job" />
       </div>
     </transition>
   </section>
@@ -71,11 +52,7 @@ import LocumAllocatedDetailModal from '@/components/Jobs/LocumAllocatedDetailMod
 import LocumAppliedDetailModal from '@/components/Jobs/LocumAppliedDetailModal'
 // practice
 import CreateJobModal from '@/components/CreateJobModal'
-import AllocatedDetailModal from '@/components/Sessions/AllocatedDetailModal'
-import UnfilledDetailModal from '@/components/Sessions/UnfilledDetailModal'
-import DeclinedDetailModal from '@/components/Sessions/DeclinedDetailModal'
-import AppliedDetailModal from '@/components/Sessions/AppliedDetailModal'
-import LiveDetailModal from '@/components/Sessions/LiveDetailModal'
+import JobDetailModal from '@/components/Sessions/JobDetailModal'
 
 export default {
   components: {
@@ -86,14 +63,12 @@ export default {
     LocumAllocatedDetailModal,
     LocumAppliedDetailModal,
     CreateJobModal,
-    AllocatedDetailModal,
-    UnfilledDetailModal,
-    DeclinedDetailModal,
-    AppliedDetailModal,
-    LiveDetailModal,
+    JobDetailModal,
   },
   data() {
     return {
+      practice_modal: false,
+      practice_job: null,
       modal: false,
       job: null,
       locum_current_modal: false,
@@ -115,8 +90,6 @@ export default {
 
     }
   },
-
-
   created() {
     this.$store.commit('calendar/SET_DATE_TODAY')
   },
@@ -166,26 +139,9 @@ export default {
       this.practice_create_modal = true
       this.practice_create_job = null
     },
-    viewPracticeAllocatedJob(job) {
-      this.practice_allocated_modal = true
-      this.practice_allocated_job = job
-    },
-    viewPracticeUnfilledJob(job) {
-      this.practice_unfilled_modal = true
-      this.practice_unfilled_job = job
-    },
-    viewPracticeDeclinedJob(job) {
-      this.practice_declined_modal = true
-      this.practice_declined_job = job
-    },
-    viewPracticeAppliedJob(job) {
-      console.log(job)
-      this.practice_applied_modal = true
-      this.practice_applied_job = job
-    },
-    viewPracticeLiveJob(job) {
-      this.practice_live_modal = true
-      this.practice_live_job = job
+    viewPracticeJob(job) {
+      this.practice_modal = true
+      this.practice_job = job
     },
   }
 }

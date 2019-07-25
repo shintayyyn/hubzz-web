@@ -12,37 +12,37 @@
       >No jobs to display.</div>
       <div v-for="(item, index) in foundPracticeCurrentJobs" :key="`${index}-${item.id}`">
         <PracticeCurrentJobCard
-          @viewPracticeAllocatedJob="$emit('viewPracticeAllocatedJob', $event)"
+          @viewPracticeAllocatedJob="$emit('viewPracticeJob', $event)"
           :job="item"
         />
       </div>
       <div v-for="(item, index) in foundPracticeAppliedJobs" :key="`${index}-${item.id}`">
         <PracticeAppliedJobCard
-          @viewPracticeAppliedJob="$emit('viewPracticeAppliedJob', $event)"
+          @viewPracticeAppliedJob="$emit('viewPracticeJob', $event)"
           :job="item"
         />
       </div>
       <div v-for="(item, index) in foundPracticeUnfilledJobs" :key="`${index}-${item.id}`">
         <PracticeUnfilledJobCard
-          @viewPracticeUnfilledJob="$emit('viewPracticeUnfilledJob', $event)"
+          @viewPracticeUnfilledJob="$emit('viewPracticeJob', $event)"
           :job="item"
         />
       </div>
       <div v-for="(item, index) in foundPracticeDeclinedJobs" :key="`${index}-${item.id}`">
         <PracticeDeclinedJobCard
-          @viewPracticeDeclinedJob="$emit('viewPracticeDeclinedJob', $event)"
+          @viewPracticeDeclinedJob="$emit('viewPracticeJob', $event)"
           :job="item"
         />
       </div>
       <div v-for="(item, index) in foundPracticeAppliedJobsReminder" :key="`${index}-${item.id}`">
         <PracticeAppliedJobReminderCard
-          @viewPracticeAppliedJob="$emit('viewPracticeAppliedJob', $event)"
+          @viewPracticeAppliedJob="$emit('viewPracticeJob', $event)"
           :job="item"
         />
       </div>
       <div v-for="(item, index) in foundPracticeAvailableJobsReminder" :key="`${index}-${item.id}`">
         <PracticeAvailableJobReminderCard
-          @viewPracticeLiveJob="$emit('viewPracticeLiveJob', $event)"
+          @viewPracticeLiveJob="$emit('viewPracticeJob', $event)"
           :job="item"
         />
       </div>
