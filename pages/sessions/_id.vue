@@ -1,12 +1,12 @@
 <template>
   <div class="modal-container shadow-lg">
-    <LiveDetailModal :job="job" v-if="job.status === 'Available'" />
+    <!-- <LiveDetailModal :job="job" v-if="job.status === 'Available'" />
     <AppliedDetailModal :job="job" v-if="job.status === 'Applied'" />
     <AllocatedDetailModal :job="job" v-if="job.status === 'Current'" />
     <CompletedDetailModal :job="job" v-if="job.status === 'Completed'" />
     <UnfilledDetailModal :job="job" v-if="job.status === 'Unfilled'" />
     <CancelledDetailModal :job="job" v-if="job.status === 'Cancelled'" />
-    <DeclinedDetailModal :job="job" v-if="job.status === 'Declined'" />
+    <DeclinedDetailModal :job="job" v-if="job.status === 'Declined'" />-->
   </div>
 </template>
 <script>

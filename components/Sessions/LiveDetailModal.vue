@@ -17,24 +17,31 @@
             <div class="flex flex-col w-full md:w-1/2 p-0 md:pr-4">
               <div class="font-bold text-sm sm:text-md">Job number</div>
               <div class="text-xs sm:text-sm mb-4">{{job.job_number}}</div>
-              <div class="font-bold text-sm sm:text-md">Rate</div>
+              <AppSelect
+                v-model="form.practice_id"
+                :name="'practice_id'"
+                :items="practice_lists"
+                :label="'Practice'"
+                :placeholder="'Select..'"
+              />
               <div class="text-xs sm:text-sm mt-2 mb-4 flex flex-row flex-wrap">
-                <input
-                  v-model="form.rate"
-                  type="text"
-                  class="border-b-2 focus:border-yellow focus:outline-none py-2 font-bold text-xs w-1/4 text-right"
-                />
-                <div class="leading-loose mx-2">per</div>
-                <select
-                  v-model="form.locum_detail_rate_type_id"
-                  class="border-b-2 focus:border-yellow focus:outline-none py-2 font-bold text-xs"
-                >
-                  <option
-                    v-for="item in rate_types"
-                    :key="item.id"
-                    :value="item.value"
-                  >{{item.label}}</option>
-                </select>
+                <div class="w-full md:w-1/2 p-1">
+                  <AppInput
+                    v-model="form.rate"
+                    :type="'text'"
+                    :name="'rate'"
+                    :label="'Rate £'"
+                    :placeholder="''"
+                  />
+                </div>
+                <div class="w-full md:w-1/2 p-1">
+                  <AppSelect
+                    v-model="form.locum_detail_rate_type_id"
+                    :name="'locum_detail_rate_type_id'"
+                    :label="'per'"
+                    :items="rate_types"
+                  />
+                </div>
               </div>
               <AppInput
                 v-model="form.total_hours"
@@ -113,6 +120,7 @@
               />
               <AppInput
                 :type="'multi-checkbox'"
+                v-model="form.session_requirements"
                 @checked="form.session_requirements.push($event)"
                 @unchecked="form.session_requirements.splice(form.session_requirements.findIndex(item => item === $event), 1)"
                 :name="'session_requirements'"
@@ -129,7 +137,7 @@
               <AppTextarea
                 v-model="form.extra_information"
                 :name="'extra_information'"
-                :label="'Job description'"
+                :label="'Extra information'"
                 :placeholder="'For example, number of expected patients, nearby car park, etc.'"
               />
               <AppTextarea
@@ -189,7 +197,6 @@
                 :label="'Other'"
                 :placeholder="''"
                 :inStyle="'text-align:right;'"
-                @blur="checkEmptyField(form.unpaid_breaks_in_minutes,'unpaid_breaks_in_minutes')"
               />
               <AppDate
                 v-model="form.auto_assign_at"
@@ -241,24 +248,34 @@
               />
 
               <div class="font-bold text-sm sm:text-md">Compliance requirements</div>
-              <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
-                <div class="mt-1" v-if="job.platform_job.compliance_documents.length === 0">(none)</div>
-                <div
-                  v-else
-                  class="rounded-lg bg-yellow-dark p-2 m-1"
-                  v-for="item in job.platform_job.compliance_documents"
-                  :key="item.id"
-                >{{item.name}}</div>
-              </div>
-              <div class="font-bold text-sm sm:text-md">Mandatory training</div>
-              <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
-                <div class="mt-1" v-if="job.platform_job.mandatory_trainings.length === 0">(none)</div>
-                <div
-                  v-else
-                  class="rounded-lg bg-yellow-dark p-2 m-1"
-                  v-for="item in job.platform_job.mandatory_trainings"
-                  :key="item.id"
-                >{{item.name}}</div>
+              <AppInput
+                v-model="form.compliance_document_id"
+                :type="'multi-checkbox'"
+                @checked="form.compliance_document_id.push($event)"
+                @unchecked="form.compliance_document_id.splice(form.compliance_document_id.findIndex(item => item === $event), 1)"
+                :name="'compliance_document_id'"
+                :label="`${selectedProfession.profession_category.id === 1 ? 'For GPs:' : selectedProfession.profession_category.id === 2 ? 'For Nurses, et al:' : ''}`"
+                :placeholder="''"
+                :lists="compliances"
+              />
+              <div class="font-bold text-sm sm:text-md">Mandatory trainings</div>
+              <AppInput
+                v-model="form.mandatory_training_id"
+                :type="'multi-checkbox'"
+                @checked="form.mandatory_training_id.push($event)"
+                @unchecked="uncheckMandatory($event)"
+                :name="'mandatory_training_id'"
+                :label="'Mandatory training required for this job'"
+                :placeholder="'Select..'"
+                :lists="mandatory_training_lists"
+                :info="'Check all that apply'"
+              />
+              <div class="my-3" v-if="mandatory_training_lists.length === 0">
+                <AppButton
+                  :label="'Go to Profile to add items here'"
+                  @click="$router.push('/profile')"
+                  :inStyle="'padding:4px;'"
+                />
               </div>
             </div>
           </div>
@@ -284,7 +301,6 @@
             </div>
           </div>
         </div>
-
         <div class="rounded-lg shadow-lg p-8 mt-4 w-full md:w-3/4">
           <div class="font-bold text-md sm:text-lg">Cancel this job</div>
           <AppSelect
@@ -325,14 +341,24 @@ export default {
   },
   data() {
     return {
+      practice_lists: [],
+      gp_qualification_lists: [],
+      other_qualification_lists: [],
+      gp_compliance_documents_lists: [],
+      others_compliance_documents_lists: [],
+      qualifications: [],
+      compliances: [],
+      selectedProfession: {
+        profession_category: {}
+      },
       session_requirements_lists,
       rate_types: [],
       shifts: [],
       professions: [],
-      gp_qualification_lists: [],
-      other_qualification_lists: [],
+      professions_categories: [],
       clinical_system_lists: [],
       spoken_language_lists: [],
+      mandatory_training_lists: [],
       unpaid_breaks: '',
       form: {
         practice_id: '',
@@ -345,8 +371,9 @@ export default {
         is_nurse_available: '',
         number_of_patients: '',
         duration_for_each_appointment: '',
-        opporunity_for_catch_up_slots: '',
-        session_requirements: '',
+        opporunity_for_catch_up_slots: false,
+        session_requirements: [],
+        session_structure_information: '',
         locum_detail_rate_type_id: '',
         rate: '',
         total_hours: '',
@@ -373,6 +400,25 @@ export default {
       },
     }
   },
+  watch: {
+    'form.profession_id'(value) {
+      if (value && this.professions_categories.length > 0) {
+        this.selectedProfession = this.professions_categories.find(
+          item => item.id == value
+        );
+        if (this.selectedProfession.profession_category.id == 1) {
+          this.qualifications = this.gp_qualification_lists;
+          this.compliances = this.gp_compliance_documents_lists;
+          return;
+        }
+        if (this.selectedProfession.profession_category.id == 2) {
+          this.qualifications = this.other_qualification_lists;
+          this.compliances = this.others_compliance_documents_lists;
+          return;
+        }
+      }
+    }
+  },
   computed: {
     google: gmapApi,
     latLang() {
@@ -381,11 +427,16 @@ export default {
     reasons() {
       return this.$store.state.session.reasons
     },
-    qualifications() {
-      return this.gp_qualification_lists || this.other_qualification_lists
-    }
   },
   created() {
+    this.getPracticeLists()
+    this.getRateTypes()
+    this.getShifts()
+    this.getProfessions()
+    this.getQualifications()
+    this.getClinicalSystems()
+    this.getSpokenLanguages()
+    this.getMandatoryTrainings()
     this.form.practice_id = this.job.platform_job.practice.id,
       this.form.title = this.job.platform_job.title,
       this.form.description = this.job.platform_job.description,
@@ -396,15 +447,14 @@ export default {
       this.form.is_nurse_available = this.job.platform_job.is_nurse_available,
       this.form.number_of_patients = this.job.platform_job.number_of_patients,
       this.form.duration_for_each_appointment = this.job.platform_job.duration_for_each_appointment,
-      this.form.opporunity_for_catch_up_slots = this.job.platform_job.opporunity_for_catch_up_slots,
-
-      this.form.locum_detail_rate_type_id = this.job.platform_job.locum_detail_rate_type.id,
+      this.form.opportunity_for_catch_up_slots = this.job.platform_job.opportunity_for_catch_up_slots,
+      this.form.session_structure_information = this.job.platform_job.session_structure_information
+    this.form.locum_detail_rate_type_id = this.job.platform_job.locum_detail_rate_type.id,
       this.form.rate = this.job.platform_job.rate,
       this.form.total_hours = this.job.platform_job.total_hours,
       this.form.unpaid_breaks_in_minutes = this.job.platform_job.unpaid_breaks_in_minutes,
       this.form.ir35 = this.job.platform_job.ir35,
       this.form.mandatory_training_id = this.job.platform_job.mandatory_trainings.map(mandatoryTraining => mandatoryTraining.id),
-      this.form.profession_id = this.job.platform_job.profession.id,
       this.form.compliance_document_id = this.job.platform_job.compliance_documents.map(complianceDocument => complianceDocument.id),
       this.form.date_start = this.job.platform_job.date_start,
       this.form.date_end = this.job.platform_job.date_end,
@@ -416,25 +466,37 @@ export default {
       this.form.favorite_only_until = this.job.platform_job.favorite_only_until,
       this.form.update_remarks = this.job.update_remarks
 
-    this.job.platform_job.session_requirements === '' ? this.form.session_requirements = [] : this.job.platform_job.session_requirements.split("")
+    this.job.platform_job.session_requirements === '' ? this.form.session_requirements = [] : this.form.session_requirements = this.job.platform_job.session_requirements.split(",")
 
     this.job.platform_job.qualifications.forEach(qualication => {
       this.form.qualification_id.push({ label: qualication.name, value: qualication.id })
     })
-    this.job.platform_job.clinical_systems.forEach(qualication => {
-      this.form.clinical_system_id.push({ label: qualication.name, value: qualication.id })
+    this.job.platform_job.clinical_systems.forEach(clinicalSystem => {
+      this.form.clinical_system_id.push({ label: clinicalSystem.name, value: clinicalSystem.id })
     })
-    this.job.platform_job.spoken_languages.forEach(qualication => {
-      this.form.spoken_language_id.push({ label: qualication.name, value: qualication.id })
+    this.job.platform_job.spoken_languages.forEach(spokenLanguage => {
+      this.form.spoken_language_id.push({ label: spokenLanguage.name, value: spokenLanguage.id })
     })
-    this.getRateTypes()
-    this.getShifts()
-    this.getProfessions()
-    this.getQualifications()
-    this.getClinicalSystems()
-    this.getSpokenLanguages()
+    this.job.platform_job.mandatory_trainings.forEach(mandatoryTraining => {
+      this.form.mandatory_training_id.push({ label: mandatoryTraining.name, value: mandatoryTraining.id })
+    })
+    this.form.profession_id = this.job.platform_job.profession.id
+    // this.selectedProfession = this.professions_categories
+
   },
   methods: {
+    getPracticeLists() {
+      this.$axios.$get(`/api/v1/practice/practice-children`).then(res => {
+        this.practice_lists = [];
+        this.practice_lists.push({
+          label: this.$auth.user.practice_detail.practice.surgery.name,
+          value: this.$auth.user.practice_detail.practice.id
+        });
+        res.data.practice_children.forEach(item => {
+          this.practice_lists.push({ label: item.surgery.name, value: item.id });
+        });
+      });
+    },
     getRateTypes() {
       this.$axios.$get(`/api/v1/locum-detail-rate-types`).then(res => {
         this.rate_types = []
@@ -456,12 +518,12 @@ export default {
         this.professions = [];
         res.data.professions.forEach(item => {
           this.professions.push({ label: item.name, value: item.id });
+          this.professions_categories.push(item)
         });
       });
     },
     getQualifications() {
       this.$axios.$get(`/api/v1/profession-categories`).then(res => {
-
         this.gp_qualification_lists = [];
         res.data.profession_categories
           .find(item => item.id === 1)
@@ -499,6 +561,22 @@ export default {
           this.spoken_language_lists.push({ label: item.name, value: item.id });
         });
       });
+    },
+    getMandatoryTrainings() {
+      this.$axios.$get(`/api/v1/me`).then(res => {
+        res.data.user.practice_detail.practice.mandatory_trainings.forEach(item => {
+          this.mandatory_training_lists.push({ label: item.name, value: item.id })
+        })
+        res.data.user.practice_detail.practice.gp_compliance_documents.forEach(item => {
+          this.gp_compliance_documents_lists.push({ label: item.name, value: item.id });
+        })
+        res.data.user.practice_detail.practice.others_compliance_documents.forEach(item => {
+          this.others_compliance_documents_lists.push({ label: item.name, value: item.id });
+        })
+      })
+    },
+    uncheckMandatory(value) {
+      this.form.mandatory_training_id = this.form.mandatory_training_id.filter(id => id != value);
     },
     close() {
       if (this.$route.fullPath === '/dashboard') {
@@ -542,10 +620,6 @@ export default {
         ? (this.form.unpaid_breaks_in_minutes = this.unpaid_breaks)
         : (this.form.unpaid_breaks_in_minutes = this.form.unpaid_breaks_in_minutes);
       this.$axios.$put(`/api/v1/practice/jobs/${this.job.id}`, this.form).then(res => {
-        // remove old job
-        console.log(res.data.job)
-        // push new job
-        console.log(res.data.new_job)
         this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: res.message })
         this.close()
       })
