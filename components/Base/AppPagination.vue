@@ -43,7 +43,7 @@
           </span>
         </button>
       </div>
-      <!-- asd -->
+
       <div class="pagination-item m-1" v-for="page in pages" :key="page.name">
         <button
           type="button"
