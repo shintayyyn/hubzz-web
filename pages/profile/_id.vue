@@ -30,25 +30,20 @@
           <div class="inline-flex text-sm m-4">
             <div class="m-2 mr-20">
               <p class="mr-20 font-semibold">Title</p>
-              <p
-                class="mt-2 text-base"
+              <p class="mt-2 text-base"
               >{{practiceDocument.practice_document_type ? practiceDocument.practice_document_type.name: null}}</p>
-              <p class="mt-5 mr-20 font-semibold">Practice</p>
-              <p
-                class="mt-2 text-base"
-              >{{practiceDocument.practice ? practiceDocument.practice.surgery.name: null}}</p>
               <p class="mt-5 mr-20 font-semibold">File last uploaded</p>
-              <p
-                class="mt-2 text-base"
+              <p class="mt-2 text-base"
               >{{practiceDocument.file ? $moment(practiceDocument.file.created_at).format('MM/DD/YYYY HH:mm:ss') : null}}</p>
               <p class="mt-5 mr-20 font-semibold">Uploaded By</p>
-              <p class="mt-2 text-base">{{practiceDocument.created_by_user.personal_detail.name}}</p>
+              <p class="mt-2 text-base">{{practiceDocument.created_by_user.personal_detail}}</p>
             </div>
             <div class="flex m-2">
               <embed
+                v-if="showFile"
                 width="800px"
                 height="600px"
-                :src="practiceDocument.file ? practiceDocument.file.url:null"
+                :src="practiceDocument.file.url"
               />
             </div>
           </div>
@@ -63,26 +58,36 @@ export default {
     return {
       practiceDocument: {
         file: {},
-        practice_document_type: {},
+        practice_document_type: {
+          name:''
+        },
         practice: {
-          surgery: {}
+          surgery: ''
         },
         created_by_user: {
-          personal_detail: {}
+          personal_detail: ''
         }
       },
-      notFound: false
+      notFound: false,
+      showFile: false
     }
   },
   beforeDestroy() {
     this.$store.commit('profile/TOGGLE_SHIELD', false)
   },
-  created() {
+  mounted() {
     this.$store.commit('profile/TOGGLE_SHIELD', true) // SHIELD IS TOGGLED HERE
     this.$axios.get(`/api/v1/practice/practice-documents/${this.$route.params.id}`).then(res => {
       console.log(res)
+      this.practiceDocument.file = res.data.data.practice_document.file
+      this.practiceDocument.practice_document_type.name = res.data.data.practice_document.practice_document_type.name
+      this.practiceDocument.practice.surgery = res.data.data.practice_document.practice.surgery.name
+      this.practiceDocument.created_by_user.personal_detail = res.data.data.practice_document.created_by_user.personal_detail.name
+      console.log('hey')
+      console.log(this.practiceDocument)
+      this.showFile = true
     }).catch(err => {
-      console.log(err.response)
+      console.log(err.response || err)
       this.notFound = true
     })
   },

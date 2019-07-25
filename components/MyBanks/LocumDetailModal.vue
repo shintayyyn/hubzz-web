@@ -68,7 +68,13 @@
               :key="item.id"
             >
               <svgicon name="cloud-download" height="24" width="24" />
-              <div class="leading-normal mx-2 document-filename">{{item.file.filename}}</div>
+              <a
+                @click.prevent="downloadItem(item.file.url, item.file.filename)"
+                :href="item.file.url"
+                :download="item.file.filename"
+                target="_blank"
+              >{{item.file.filename}}</a>
+              <!-- <div class="leading-normal mx-2 document-filename">{{item.file.filename}}</div> -->
             </div>
           </div>
           <div class="font-bold text-sm sm:text-md">Others documents</div>
@@ -79,7 +85,13 @@
               :key="item.id"
             >
               <svgicon name="cloud-download" height="24" width="24" />
-              <div class="leading-normal mx-2 document-filename">{{item.file.filename}}</div>
+              <a
+                @click.prevent="downloadItem(item.file.url, item.file.filename)"
+                :href="item.file.url"
+                :download="item.file.filename"
+                target="_blank"
+              >{{item.file.filename}}</a>
+              <!-- <div class="leading-normal mx-2 document-filename">{{item.file.filename}}</div> -->
             </div>
           </div>
 
@@ -111,7 +123,7 @@
 </template>
 <script>
 export default {
-  props: ['user'],
+  props: ['user'], //insert 'jobs' in array
   components: {
   },
   data() {
@@ -134,6 +146,21 @@ export default {
         })
       })
     },
+    downloadItem(fileUrl, fileName) {
+      const axios = require('axios');
+      axios({
+        url: fileUrl,
+        method: 'GET',
+        responseType: 'blob', // important
+      }).then(response => {
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', fileName);
+        document.body.appendChild(link);
+        link.click();
+      });
+    }
   }
 }
 </script>
