@@ -239,16 +239,19 @@ export default {
   },
   methods: {
     cancel() {
-      // this.$axios.$post(`/api/v1/locum/jobs/${this.$route.params.id}/decline`).then(res => {
-      //   this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Cancelled' })
-      //   this.$router.push('/jobs?job_status=declined')
-      // })
+      this.$axios.$delete(`/api/v1/locum/jobs/${this.$route.params.id}/apply`).then(res => {
+        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Cancelled' })
+        this.$router.push('/jobs?job_status=available')
+      })
     },
     close() {
       if (this.$route.fullPath === '/dashboard') {
         this.$emit('close')
       } else {
-        this.$router.push('/jobs?job_status=applied')
+        const query = {
+          ...this.$route.query
+        }
+        this.$router.push({ path: '/jobs', query })
       }
     }
   }

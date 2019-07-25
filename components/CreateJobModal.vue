@@ -5,6 +5,37 @@
     </div>
     <div class="flex justify-start font-bold text-sm sm:text-xl mt-8">Create a new job</div>
     <div class="flex flex-row flex-wrap justify-start mt-8">
+      <!--VALIDATION MODAL-->
+      <div v-if="showErrorModal == true" class="absolute pin-t">
+        <div
+          class="fixed text-white bg-red-light py-2 px-12 mr-10 md:mr-0 md:w-1/3 shadow"
+          style="border-radius: 0 0 10px 10px"
+        >
+          <span class="text-base font-bold">Validation Error!</span>
+          <div class="flex flex-wrap md:flex-no-wrap">
+
+            <div v-if="formError" class="w-full md:w-2/3 text-sm mt-2">
+              <span class="font-bold mb-2">Please correct the following errors.</span>
+              <div v-for="(formErr, index) in formError"
+              :key="`formErr-${index}`"
+              >
+                <span>{{'Field "'+formErr.field+'" is '+formErr.message}}</span>
+              </div>
+            </div>
+            <div class="w-full md:w-2/3 text-sm mt-2" v-if="formError===''">
+              <span>The form is empty.</span>
+            </div>
+            <div>
+              <button
+              class="mx-auto md:mx-10 md:absolute pin-r pin-b w-32 md:my-10 p-2 text-sm rounded-lg shadow border border-white text-white hover:bg-white hover:text-black"
+              @click="showErrorModal = false"
+            >Okay</button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <!--VALIDATION MODAL ENDS HERE-->
       <div class="w-full md:w-1/2 pr-4 mb-4">
         <div class="flex flex-col">
           <h4 class="font-bold">Practice</h4>
@@ -15,6 +46,7 @@
               :error="formError.find(item => item.field === 'practice_id')"
               :items="practice_lists"
               :placeholder="'Select..'"
+              @blur="checkEmptyField(form.practice_id,'practice_id')"
             />
           </div>
           <h4 class="font-bold mt-4">Overview</h4>
@@ -26,6 +58,7 @@
               :label="'Title'"
               :placeholder="''"
               :error="formError.find(item => item.field === 'title')"
+              @blur="checkEmptyField(form.title,'title')"
             />
             <AppTextarea
               v-model="form.description"
@@ -33,6 +66,7 @@
               :label="'Description'"
               :placeholder="''"
               :error="this.formError.find(item => item.field === 'description')"
+              @blur="checkEmptyField(form.description,'description')"
             />
             <!-- report to -->
             <AppInput
@@ -42,6 +76,8 @@
               :label="'Report to'"
               :placeholder="''"
               :error="formError.find(item => item.field === 'report_to')"
+              @blur="checkEmptyField(form.report_to,'report_to')"
+              
             />
             <!-- email -->
             <AppInput
@@ -51,6 +87,7 @@
               :label="'Email'"
               :placeholder="''"
               :error="formError.find(item => item.field === 'email')"
+              @blur="checkEmptyField(form.email,'email')"
             />
             <AppSelect
               v-model="form.is_another_doctor"
@@ -74,6 +111,7 @@
               :placeholder="''"
               :error="formError.find(item => item.field === 'number_of_patients')"
               :inStyle="'text-align:right;'"
+              @blur="checkEmptyField(form.number_of_patients,'number_of_patients')"
             />
             <AppInput
               v-model="form.duration_for_each_appointment"
@@ -83,6 +121,7 @@
               :placeholder="''"
               :error="formError.find(item => item.field === 'duration_for_each_appointment')"
               :inStyle="'text-align:right;'"
+              @blur="checkEmptyField(form.duration_for_each_appointment, 'duration_for_each_appointment')"
             />
             <AppSelect
               v-model="form.opportunity_for_catch_up_slots"
@@ -100,6 +139,7 @@
               :placeholder="''"
               :error="this.formError.find(item => item.field === 'session_requirements')"
               :lists="session_requirements_lists"
+              @blur="checkEmptyField(form.session_requirements, 'session_requirements')"
             />
             <AppTextarea
               v-model="form.session_structure_information"
@@ -107,6 +147,7 @@
               :label="'Session structure information'"
               :placeholder="'For e.g. the first 2 hours of the session is for booked appointments, 3rd hour is walk-ins, and home visits to x number of patients to the end of the session'"
               :error="this.formError.find(item => item.field === 'session_structure_information')"
+              @blur="checkEmptyField(form.session_structure_information, 'session_structure_information')"
             />
             <AppTextarea
               v-model="form.extra_information"
@@ -126,6 +167,7 @@
                     :class="formError.find(item => item.field === 'rate')? 'border-red':''"
                     @keypress="ValidateInput"
                     style="text-align:right;width:100px;"
+                    @blur="checkEmptyField(form.rate,'rate')"
                   />
                 </div>
                 <div class="mt-2">
@@ -163,6 +205,7 @@
                   class="border-b-2 focus:border-yellow focus:outline-none font-bold py-2 text-xs sm:text-sm mx-1"
                   :class="this.formError.find(item => item.field === 'total_hours')? 'border-red':''"
                   @keypress="ValidateInput"
+                  @blur="checkEmptyField(form.total_hours,'total_hours')"
                   style="text-align:right;'"
                 />
                 <label for="total_hours" class="text-xs sm:text-sm mt-2">hours</label>
@@ -214,6 +257,7 @@
                 :error="formError.find(item => item.field === 'qualification_id')"
                 :items="qualifications"
                 :info="'Choose at least one qualification'"
+                @blur="checkEmptyField(form.qualification_id,'qualification_id')"
               />
               <AppFilterSearch
                 v-model="form.clinical_system_id"
@@ -225,6 +269,7 @@
                 :info="'Choose at least one qualification'"
               />
             </template>
+
             <AppFilterSearch
               v-model="form.spoken_language_id"
               :name="'spoken_language_id'"
@@ -262,6 +307,7 @@
                   :name="'date_start'"
                   :label="'Start Date'"
                   :error="formError.find(item => item.field === 'date_start')"
+                  @blur="checkEmptyField(form.date_start,'date_start')"
                 />
               </div>
               <div class="px-1 w-full md:w-1/2">
@@ -272,6 +318,7 @@
                   :label="'Start Time'"
                   :placeholder="''"
                   :error="formError.find(item => item.field === 'time_start')"
+                  @blur="checkEmptyField(form.time_start,'time_start')"
                 />
               </div>
               <div class="px-1 w-full md:w-1/2">
@@ -280,6 +327,7 @@
                   :name="'date_end'"
                   :label="'End Date'"
                   :error="formError.find(item => item.field === 'date_end')"
+                  @blur="checkEmptyField(form.date_end,'date_end')"
                 />
               </div>
               <div class="px-1 w-full md:w-1/2">
@@ -290,12 +338,13 @@
                   :label="'End Time'"
                   :placeholder="''"
                   :error="formError.find(item => item.field === 'time_end')"
+                  @blur="checkEmptyField(form.time_end,'time_end')"
                 />
               </div>
             </div>
             <AppSelect
               v-model="unpaid_breaks"
-              :name="'unpaid_breaks '"
+              :name="'unpaid_breaks'"
               :label="'Unpaid break'"
               :error="formError.find(item => item.field === 'unpaid_breaks_in_minutes')"
               :items="[ {value: 15, label: '15'}, {value: 30, label: '30'}, {value: 60, label: '60'}, {value: 'other', label: 'Other'} ]"
@@ -310,6 +359,7 @@
               :placeholder="''"
               :error="formError.find(item => item.field === 'unpaid_breaks_in_minutes')"
               :inStyle="'text-align:right;'"
+              @blur="checkEmptyField(form.unpaid_breaks_in_minutes,'unpaid_breaks_in_minutes')"
             />
             <AppSelect
               v-model="form.shift_id"
@@ -318,18 +368,21 @@
               :error="formError.find(item => item.field === 'shift_id')"
               :items="shifts"
               :placeholder="'Select..'"
+              @blur="checkEmptyField(form.shift_id,'shift_id')"
             />
             <AppDate
               v-model="form.auto_assign_at"
               :name="'auto_assign_at'"
               :label="'Auto -assign job to the first matching Favourite applicant?'"
               :error="formError.find(item => item.field === 'auto_assign_at')"
+              @blur="checkEmptyField(form.auto_assign_at,'auto_assign_at')"
             />
             <AppDate
               v-model="form.selection_date"
               :name="'selection_date'"
               :label="'Selection will be made and you will receive a notification by this date'"
               :error="formError.find(item => item.field === 'selection_date')"
+              @blur="checkEmptyField(form.selection_date,'selection_date')"
             />
           </div>
         </div>
@@ -388,42 +441,45 @@ export default {
       shifts: [],
 
       form: {
-        practice_id: "",
-        title: "",
-        description: "",
-        email: "",
-        report_to: "",
+        practice_id: "", //req
+        title: "", //req
+        description: "", //req
+        email: "", //req
+        report_to: "", //req
         is_another_doctor: false,
         is_nurse_available: false,
-        number_of_patients: "",
-        duration_for_each_appointment: "",
+        number_of_patients: "", //?????????????
+        duration_for_each_appointment: "",  //?????????????
         opportunity_for_catch_up_slots: false,
-        session_requirements: [],
-        session_structure_information: "",
-        extra_information: "",
-        rate: "",
-        locum_detail_rate_type_id: 1,
-        ir35: false,
+        session_requirements: [], 
+        session_structure_information: "", //??????????????
+        extra_information: "", //???????????
+        rate: "", //req
+        total_hours:"", //req
+        locum_detail_rate_type_id: 1, //req - already filled
+        ir35: false, //req - already filled
         mandatory_training_id: [],
-        profession_id: "",
-        qualification_id: [],
-        clinical_system_id: [],
-        spoken_language_id: [],
-        compliance_document_id: [],
-        date_start: null,
-        time_start: null,
-        date_end: null,
-        time_end: null,
-        unpaid_breaks_in_minutes: "",
-        shift_id: "",
+        profession_id: "", //req
+        qualification_id: [], //req
+        clinical_system_id: [], //req
+        spoken_language_id: [], //req
+        compliance_document_id: [], //req
+        date_start: null, //req
+        time_start: null, //req
+        date_end: null, //req
+        time_end: null, //req
+        unpaid_breaks_in_minutes: "", //req
+        shift_id: "", //req
         auto_assign_at: null,
         selection_date: null
       },
-      formError: []
-    };
+      formError: [],
+      showErrorModal:false,
+    }
   },
   watch: {
-    "form.profession_id"(value) {
+    'form.profession_id'(value) {
+      this.checkEmptyField(value,'profession_id')
       if (value) {
         this.selectedProfession = this.professions_categories.find(
           item => item.id == value
@@ -439,7 +495,113 @@ export default {
           return;
         }
       }
-    }
+    },
+
+    'form.practice_id'(value) {
+      this.checkEmptyField(value,'practice_id')
+    },
+
+    'form.title'(value) {
+      this.checkEmptyField(value,'title')
+    },
+    
+    'form.description'(value) {
+      this.checkEmptyField(value,'description')
+    },
+
+    'form.report_to'(value) {
+      this.checkEmptyField(value,'report_to')
+    },
+     
+    'form.number_of_patients'(value) {
+      this.checkEmptyField(value,'number_of_patients')
+    },
+
+    'form.duration_for_each_appointment'(value){
+      this.checkEmptyField(value,'duration_for_each_appointment')
+    },
+
+     'form.session_requirements'(value){
+      this.checkEmptyField(value,'session_requirements')
+    },
+
+    'form.session_structure_information'(value){
+      this.checkEmptyField(value,'session_structure_information')
+    },
+
+    // 'form.extra_information'(value){
+    //   this.checkEmptyField(value,'extra_information')
+    // },
+
+    'form.rate'(value) {
+      this.checkEmptyField(value,'rate')
+    },
+
+    'form.date_start'(value) {
+      this.checkEmptyField(value,'date_start')
+    },
+    
+    'form.date_end'(value) {
+      this.checkEmptyField(value,'date_end')
+    },
+
+    'form.time_start'(value) {
+      this.checkEmptyField(value,'time_start')
+    },
+
+    'form.time_end'(value) {
+      this.checkEmptyField(value,'time_end')  
+    },
+
+    'form.total_hours'(value) {
+     this.checkEmptyField(value,'total_hours')
+    },
+
+    'form.qualification_id'(value) {
+     this.checkEmptyField(value,'qualification_id')
+    },
+
+    'form.clinical_system_id'(value) {
+     this.checkEmptyField(value,'clinical_system_id')
+    },
+
+    'form.spoken_language_id'(value) {
+     this.checkEmptyField(value,'spoken_language_id')
+    },
+
+    'form.compliance_document_id'(value) {
+     this.checkEmptyField(value,'compliance_document_id')
+    },
+    
+    'form.unpaid_breaks_in_minutes'(value) {
+     this.checkEmptyField(value,'unpaid_breaks_in_minutes')
+    },
+
+    'form.shift_id'(value) {
+     this.checkEmptyField(value,'shift_id')
+    },
+
+    'form.auto_assign_at'(value) {
+     this.checkEmptyField(value,'auto_assign_at')
+    },
+    'form.selection_date'(value) {
+      this.checkEmptyField(value,'selection_date')
+    },
+    'form.email'(value) {
+      let index = this.formError.findIndex(item => item.field === 'email')
+      if (index >= 0) {
+        this.formError.splice(index, 1)
+      }
+
+      if (!value) {
+        this.formError.push({ field: 'email', message: 'Required' })
+      } else {
+        const error = this.ValidateEmail(value)
+        if (error) {
+          this.formError.push(error)
+        }
+      }
+    },
   },
   created() {
     // get practice lists
@@ -496,6 +658,7 @@ export default {
       });
     });
     this.$axios.$get(`/api/v1/profession-categories`).then(res => {
+   
       this.gp_qualification_lists = [];
       res.data.profession_categories
         .find(item => item.id === 1)
@@ -505,6 +668,7 @@ export default {
             value: item.id
           });
         });
+
       this.other_qualification_lists = [];
       res.data.profession_categories
         .find(item => item.id === 2)
@@ -514,6 +678,7 @@ export default {
             value: item.id
           });
         });
+
     });
     this.$axios.$get(`/api/v1/clinical-systems`).then(res => {
       this.clinical_system_lists = [];
@@ -534,11 +699,92 @@ export default {
       });
     });
   },
+
   methods: {
+    checkEmptyField(inputField,fieldName){
+      // splice from formError
+      let index = this.formError.findIndex(item => item.field === fieldName)
+      if (index >= 0) {
+        this.formError.splice(index, 1)
+      }
+
+      //check if empty
+      if(!inputField){
+        this.formError.push({ field: fieldName, message: 'Required' })
+      } 
+    },
+
+    reCheckEmptyField(){
+      const requiredFields = [
+        this.form.practice_id,
+        this.form.title,
+        this.form.description,
+        this.form.email,
+        this.form.report_to,
+        this.form.number_of_patients,
+        this.form.duration_for_each_appointment,
+        this.form.session_requirements,
+        this.form.session_structure_information,
+        // this.form.extra_information,
+        this.form.rate,
+        this.form.total_hours,
+        this.form.profession_id,
+        this.form.qualification_id,
+        this.form.clinical_system_id,
+        this.form.spoken_language_id,
+        this.form.compliance_document_id,
+        this.form.date_start,
+        this.form.time_start,
+        this.form.date_end,
+        this.form.time_end,
+        this.form.shift_id,
+        this.form.auto_assign_at,
+        this.form.selection_date
+      ]
+      console.log(this.form.session_requirements)
+      console.log(requiredFields)
+      const requiredFieldNames = [
+        'practice_id',
+        'title',
+        'description',
+        'email',
+        'report_to',
+        'number_of_patients',
+        'duration_for_each_appointment',
+        'session_requirements',
+        'session_structure_information',
+        // 'extra_information',
+        'rate',
+        'total_hours',
+        'profession_id',
+        'qualification_id',
+        'clinical_system_id',
+        'spoken_language_id',
+        'compliance_document_id',
+        'date_start',
+        'time_start',
+        'date_end',
+        'time_end',
+        'shift_id',
+        'auto_assign_at',
+        'selection_date'
+      ]
+      let counter = 0
+      let requiredLength = requiredFields.length
+      console.log(requiredLength)
+      
+      while(counter<requiredLength){
+  
+        this.checkEmptyField(requiredFields[counter],requiredFieldNames[counter])
+        ++counter
+      }
+    },
+  
+
     addMandatory() {
       // ! change route
       // this.$emit('close')
-      this.$router.push("/profile");
+      this.$router.push("/profile")
     },
     uncheckMandatory(value) {
       this.form.mandatory_training_id = this.form.mandatory_training_id.filter(
@@ -546,45 +792,51 @@ export default {
       );
     },
     publish() {
-      this.form.clinical_system_id = this.form.clinical_system_id.map(
-        item => item.value
-      );
-      this.form.qualification_id = this.form.qualification_id.map(
-        item => item.value
-      );
-      this.form.spoken_language_id = this.form.spoken_language_id.map(
-        item => item.value
-      );
-      this.form.mandatory_training_id = this.form.mandatory_training_id.map(
-        item => item.value
-      );
-      this.form.date_start = this.$moment(this.form.date_start).format(
-        "YYYY-MM-DD"
-      );
-      this.form.date_end = this.$moment(this.form.date_end).format(
-        "YYYY-MM-DD"
-      );
-      this.form.selection_date = this.$moment(this.form.selection_date).format(
-        "YYYY-MM-DD HH:mm:ss"
-      );
-      this.form.auto_assign_at = this.$moment(this.form.auto_assign_at).format(
-        "YYYY-MM-DD HH:mm:ss"
-      );
-      this.form.session_requirements.length > 0
-        ? (this.form.session_requirements = this.form.session_requirements.join())
-        : (this.form.session_requirements = "");
-      this.unpaid_breaks !== "other"
-        ? (this.form.unpaid_breaks_in_minutes = this.unpaid_breaks)
-        : (this.form.unpaid_breaks_in_minutes = this.form.unpaid_breaks_in_minutes);
-      this.$axios.$post(`/api/v1/practice/jobs`, this.form).then(res => {
-        console.log(res);
-        this.$store.commit("SET_NOTIFICATION", {
-          enabled: true,
-          status: "success",
-          text: "Successfully created job"
+      this.reCheckEmptyField()
+      if(this.formError.length == 0){
+        this.form.clinical_system_id = this.form.clinical_system_id.map(
+          item => item.value
+        );
+        this.form.qualification_id = this.form.qualification_id.map(
+          item => item.value
+        );
+        this.form.spoken_language_id = this.form.spoken_language_id.map(
+          item => item.value
+        );
+        this.form.mandatory_training_id = this.form.mandatory_training_id.map(
+          item => item.value
+        );
+        this.form.date_start = this.$moment(this.form.date_start).format(
+          "YYYY-MM-DD"
+        );
+        this.form.date_end = this.$moment(this.form.date_end).format(
+          "YYYY-MM-DD"
+        );
+        this.form.selection_date = this.$moment(this.form.selection_date).format(
+          "YYYY-MM-DD HH:mm:ss"
+        );
+        this.form.auto_assign_at = this.$moment(this.form.auto_assign_at).format(
+          "YYYY-MM-DD HH:mm:ss"
+        );
+        this.form.session_requirements.length > 0
+          ? (this.form.session_requirements = this.form.session_requirements.join())
+          : (this.form.session_requirements = "");
+        this.unpaid_breaks !== "other"
+          ? (this.form.unpaid_breaks_in_minutes = this.unpaid_breaks)
+          : (this.form.unpaid_breaks_in_minutes = this.form.unpaid_breaks_in_minutes);
+        this.$axios.$post(`/api/v1/practice/jobs`, this.form).then(res => {
+          console.log(res);
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: "Successfully created job"
+          });
+          this.$emit("close");
         });
-        this.$emit("close");
-      });
+      }else{
+        console.log(this.formError)
+        this.showErrorModal = true
+      }
     }
   }
 };

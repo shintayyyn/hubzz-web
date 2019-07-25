@@ -2,7 +2,7 @@
   <section>
     <div class="p-8 max-w-xl">
       <div @click="close" class="cursor-pointer">
-        <svgicon name="left-arrow" height="32" width="32"/>
+        <svgicon name="left-arrow" height="32" width="32" />
       </div>
       <div class="flex justify-start font-bold text-sm sm:text-xl mt-8">Appointment</div>
       <div class="rounded-lg shadow-lg px-8 py-4 mt-4">
@@ -14,7 +14,7 @@
           :error="formError.find(item => item.field === 'private_practice_id')"
           :items="practices"
         />
-        <AppButton :label="'Add'" @click="modal = true" :inStyle="'padding:5px;'"/>
+        <AppButton :label="'Add'" @click="modal = true" :inStyle="'padding:5px;'" />
         <div class="flex flex-row flex-wrap justify-start mt-8">
           <div class="px-1">
             <AppDate
@@ -51,7 +51,7 @@
               name="rate"
               v-model="form.rate"
               class="border-b-2 focus:border-yellow focus:outline-none py-2 font-bold text-xs sm:text-sm text-right"
-            >
+            />
           </div>
           <div class="flex flex-wrap items-center mt-2">
             <div class="text-xs sm:text-sm px-2 mb-2">per</div>
@@ -76,7 +76,7 @@
               name="total_hours"
               v-model="form.total_hours"
               class="border-b-2 focus:border-yellow focus:outline-none py-2 font-bold text-xs sm:text-sm text-right"
-            >
+            />
             <div class="text-xs sm:text-sm px-2 mb-2">hours</div>
           </div>
         </div>
@@ -89,17 +89,17 @@
           />
         </div>
         <template v-if="!job">
-          <AppButton :label="'Save'" @click="save"/>
+          <AppButton :label="'Save'" @click="save" />
         </template>
         <template v-else>
-          <AppButton :label="'Save'" @click="edit"/>
+          <AppButton :label="'Save'" @click="edit" />
         </template>
       </div>
     </div>
     <div class="add-surgery-shield" v-if="modal"></div>
     <transition name="slide" mode="out-in">
       <div class="add-surgery-modal shadow-lg" v-if="modal">
-        <AddSurgeryModal @close="modal = false"/>
+        <AddSurgeryModal @close="modal = false" />
       </div>
     </transition>
   </section>
@@ -183,7 +183,14 @@ export default {
       })
     },
     close() {
-      this.$router.push(`/jobs?job_status=${this.$route.query.job_status}`)
+      if (this.$route.fullPath === '/dashboard') {
+        this.$emit('close')
+      } else {
+        const query = {
+          ...this.$route.query
+        }
+        this.$router.push({ path: '/jobs', query })
+      }
     },
     save() {
       this.$axios.$post(`/api/v1/locum/jobs`, this.form).then(res => {

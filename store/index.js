@@ -17,7 +17,6 @@ export const mutations = {
     state.notification.enabled = payload.enabled
     state.notification.status = payload.status
     state.notification.text = payload.text
-    console.log(state.notification)
   },
   TOGGLE_SIDEBAR(state, payload) {
     state.toggled_sidebar = payload

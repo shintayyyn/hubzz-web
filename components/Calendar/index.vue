@@ -179,6 +179,7 @@ export default {
       this.practice_declined_job = job
     },
     viewPracticeAppliedJob(job) {
+      console.log(job)
       this.practice_applied_modal = true
       this.practice_applied_job = job
     },

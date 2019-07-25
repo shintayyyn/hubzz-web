@@ -26,10 +26,10 @@
     >Applied</div>
     <div
       style="font-family:Nunito"
-      @click.prevent="goTo('unsuccessfull')"
+      @click.prevent="goTo('unsuccessful')"
       class="mr-5 p-3 text-sm font-bold cursor-pointer"
-      :class="$route.query.job_status === 'unsuccessfull' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
-    >Unsuccessfull</div>
+      :class="$route.query.job_status === 'unsuccessful' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
+    >Unsuccessful</div>
     <div
       style="font-family:Nunito"
       @click.prevent="goTo('declined')"

@@ -1,5 +1,65 @@
 export default {
+    // practice
+    getPracticeAvailableJobs(state) {
+        return state.practice_available_jobs
+    },
+    getPracticeAvailableJobsReminder(state) {
+        return state.practice_available_jobs_reminder
+    },
+    getPracticeAppliedJobs(state) {
+        return state.practice_applied_jobs
+    },
+    getPracticeAppliedJobsReminder(state) {
+        return state.practice_applied_jobs_reminder
+    },
+    getPracticeAllocatedJobs(state) {
+        return state.practice_allocated_jobs
+    },
+    getPracticeCompletedJobs(state) {
+        return state.practice_completed_jobs
+    },
+    getPracticeUnfilledJobs(state) {
+        return state.practice_unfilled_jobs
+    },
+    getPracticeCancelledJobs(state) {
+        return state.practice_cancelled_jobs
+    },
+    getPracticeDeclinedJobs(state) {
+        return state.practice_declined_jobs
+    },
+    // locum
     getLocumAllocatedJobs(state) {
         return state.locum_allocated_jobs
-    }
+    },
+    getLocumAllocatedPrivateJobs(state) {
+        return state.locum_allocated_jobs.filter(job => job.type === 'Private')
+    },
+    getLocumAllocatedCurrentJobs(state) {
+        return state.locum_allocated_jobs.filter(job => job.type === 'Platform')
+    },
+    getLocumAvailableJobs(state) {
+        return state.locum_available_jobs
+    },
+    getLocumMatchedJobs(state) {
+        return state.locum_matched_jobs
+    },
+    getLocumAppliedJobs(state) {
+        return state.locum_applied_jobs
+    },
+    getLocumUnsuccessfulJobs(state) {
+        return state.locum_unsuccessful_jobs
+    },
+    getLocumDeclinedJobs(state) {
+        return state.locum_declined_jobs
+    },
+    getLocumCancelledJobs(state) {
+        return state.locum_cancelled_jobs
+    },
+    getLocumCompletedJobs(state) {
+        return state.locum_completed_jobs
+    },
+    getLocumUnavailabilities(state) {
+        return state.locum_unavailabilities
+    },
+    
 }

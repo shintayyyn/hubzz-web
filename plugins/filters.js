@@ -1,7 +1,10 @@
 import Vue from 'vue'
 import moment from 'moment'
 
-Vue.filter('localDate', function (date) {
+Vue.filter('localDate', function (date, dateOnly) {
+    if (dateOnly) {
+      return `${moment(date).format('L')}`
+    }
     if (date) {
       return `${moment(date).format('L')} ${moment(date).format('HH:mm:ss')}`
     }

@@ -8,11 +8,11 @@
       </div>
       <div class="w-1/3 text-right sm:w-1/3 sm:text-center">
         <span class="cursor-pointer" @click="adjustWeek('previous')">
-          <svgicon name="arrow-left" height="12" width="12"/>
+          <svgicon name="arrow-left" height="12" width="12" />
         </span>
         <span class="mx-4"></span>
         <span class="cursor-pointer" @click="adjustWeek('next')">
-          <svgicon name="arrow-right" height="12" width="12"/>
+          <svgicon name="arrow-right" height="12" width="12" />
         </span>
       </div>
       <div class="w-full text-right sm:w-1/3">
@@ -430,36 +430,36 @@ export default {
   },
   computed: {
     //practice
-    practice_current_jobs() {
-      return this.$store.state.calendar.practice_current_jobs
+    getPracticeAllocatedJobs() {
+      return this.$store.getters['jobs/getPracticeAllocatedJobs']
     },
-    practice_applied_jobs() {
-      return this.$store.state.calendar.practice_applied_jobs
+    getPracticeAppliedJobs() {
+      return this.$store.getters['jobs/getPracticeAppliedJobs']
     },
-    practice_unfilled_jobs() {
-      return this.$store.state.calendar.practice_unfilled_jobs
+    getPracticeUnfilledJobs() {
+      return this.$store.getters['jobs/getPracticeUnfilledJobs']
     },
-    practice_declined_jobs() {
-      return this.$store.state.calendar.practice_declined_jobs
+    getPracticeDeclinedJobs() {
+      return this.$store.getters['jobs/getPracticeDeclinedJobs']
     },
-    practice_applied_jobs_reminder() {
-      return this.$store.state.calendar.practice_applied_jobs_reminder
+    getPracticeAvailableJobsReminder() {
+      return this.$store.getters['jobs/getPracticeAvailableJobsReminder']
     },
-    practice_available_jobs_reminder() {
-      return this.$store.state.calendar.practice_available_jobs_reminder
+    getPracticeAppliedJobsReminder() {
+      return this.$store.getters['jobs/getPracticeAppliedJobsReminder']
     },
     // locum
-    locum_private_jobs() {
-      return this.$store.state.calendar.locum_private_jobs
+    getLocumAllocatedPrivateJobs() {
+      return this.$store.getters['jobs/getLocumAllocatedPrivateJobs']
     },
-    locum_current_jobs() {
-      return this.$store.state.calendar.locum_current_jobs
+    getLocumAllocatedCurrentJobs() {
+      return this.$store.getters['jobs/getLocumAllocatedCurrentJobs']
     },
-    locum_applied_jobs() {
-      return this.$store.state.calendar.locum_applied_jobs
+    getLocumAppliedJobs() {
+      return this.$store.getters['jobs/getLocumAppliedJobs']
     },
-    locum_unavailabilities() {
-      return this.$store.state.calendar.locum_unavailabilities
+    getLocumUnavailabilities() {
+      return this.$store.getters['jobs/getLocumUnavailabilities']
     },
     daysInWeek() {
       let weekLists = []
@@ -496,105 +496,110 @@ export default {
     },
     getJobs() {
       if (this.$auth.user.domain === 'Practice') {
-        this.$axios.$get(`/api/v1/practice/jobs?status=Current&date_start=${this.firstDayOfTheWeek}&date_end=${this.lastDayOfTheWeek}`).then(res => {
-          if (res.data.jobs && res.data.jobs.length > 0) {
-            this.$store.commit('calendar/SET_PRACTICE_CURRENT_JOBS', res.data.jobs)
-          }
-        })
-        this.$axios.$get(`/api/v1/practice/jobs?status=Applied&date_start=${this.firstDayOfTheWeek}&date_end=${this.lastDayOfTheWeek}`).then(res => {
-          if (res.data.jobs && res.data.jobs.length > 0) {
-            this.$store.commit('calendar/SET_PRACTICE_APPLIED_JOBS', res.data.jobs.filter(job => job.appointed_to_locum_detail_id === null))
-          }
-        })
-        this.$axios.$get(`/api/v1/practice/jobs?status=Unfilled&date_start=${this.firstDayOfTheWeek}&date_end=${this.lastDayOfTheWeek}`).then(res => {
-          if (res.data.jobs && res.data.jobs.length > 0) {
-            this.$store.commit('calendar/SET_PRACTICE_UNFILLED_JOBS', res.data.jobs)
-          }
-        })
-        this.$axios.$get(`/api/v1/practice/jobs?status=Declined&date_start=${this.firstDayOfTheWeek}&date_end=${this.lastDayOfTheWeek}`).then(res => {
-          if (res.data.jobs && res.data.jobs.length > 0) {
-            this.$store.commit('calendar/SET_PRACTICE_DECLINED_JOBS', res.data.jobs)
-          }
-        })
-        this.$axios.$get(`/api/v1/practice/jobs?status=Applied&platform_selection_date_start=${this.firstDayOfTheWeek}&platform_selection_date_end=${this.lastDayOfTheWeek}`).then(res => {
-          if (res.data.jobs && res.data.jobs.length > 0) {
-            this.$store.commit('calendar/SET_PRACTICE_APPLIED_JOBS_REMINDER', res.data.jobs.filter(job => job.appointed_to_locum_detail_id === null))
-          }
-        })
-        this.$axios.$get(`/api/v1/practice/jobs?status=Available&platform_selection_date_start=${this.firstDayOfTheWeek}&platform_selection_date_end=${this.lastDayOfTheWeek}`).then(res => {
-          if (res.data.jobs && res.data.jobs.length > 0) {
-            this.$store.commit('calendar/SET_PRACTICE_AVAILABLE_JOBS_REMINDER', res.data.jobs.filter(job => job.appointed_to_locum_detail_id === null))
-          }
-        })
 
+        this.$store.dispatch("jobs/fetchPracticeJobs", {
+          data_start: this.firstDayOfTheWeek,
+          date_end: this.lastDayOfTheWeek,
+          status: "Current"
+        });
+
+        this.$store.dispatch("jobs/fetchPracticeJobs", {
+          data_start: this.firstDayOfTheWeek,
+          date_end: this.lastDayOfTheWeek,
+          status: "Applied"
+        });
+
+        this.$store.dispatch("jobs/fetchPracticeJobs", {
+          data_start: this.firstDayOfTheWeek,
+          date_end: this.lastDayOfTheWeek,
+          status: "Unfilled"
+        });
+
+        this.$store.dispatch("jobs/fetchPracticeJobs", {
+          data_start: this.firstDayOfTheWeek,
+          date_end: this.lastDayOfTheWeek,
+          status: "Declined"
+        });
+
+        this.$store.dispatch("jobs/fetchPracticeJobsReminder", {
+          platform_selection_date_start: this.firstDayOfTheWeek,
+          platform_selection_date_end: this.lastDayOfTheWeek,
+          status: "Available"
+        });
+
+        // this.$store.dispatch("jobs/fetchPracticeJobsReminder", {
+        //   platform_selection_date_start: this.firstDayOfTheWeek,
+        //   platform_selection_date_end: this.lastDayOfTheWeek,
+        //   status: "Applied"
+        // });
       }
       if (this.$auth.user.domain === 'Locum') {
-        this.$axios.$get(`/api/v1/locum/jobs?locum_status=Current&date_start=${this.firstDayOfTheWeek}&date_end=${this.lastDayOfTheWeek}`).then(res => {
-          if (res.data.jobs && res.data.jobs.length > 0) {
-            this.$store.commit('calendar/SET_LOCUM_PRIVATE_JOBS', res.data.jobs.filter(job => job.type === 'Private'))
-            this.$store.commit('calendar/SET_LOCUM_CURRENT_JOBS', res.data.jobs.filter(job => job.type === 'Platform'))
-          }
-        })
-        this.$axios.$get(`/api/v1/locum/jobs?locum_status=Applied&date_start=${this.firstDayOfTheWeek}&date_end=${this.lastDayOfTheWeek}`).then(res => {
-          if (res.data.jobs && res.data.jobs.length > 0) {
-            this.$store.commit('calendar/SET_LOCUM_APPLIED_JOBS', res.data.jobs)
-          }
-        })
-        this.$axios.$get(`/api/v1/locum/unavailabilities?date_start=${this.firstDayOfTheWeek}&date_end=${this.lastDayOfTheWeek}`).then(res => {
-          if (res.data.unavailabilities && res.data.unavailabilities.length > 0) {
-            this.$store.commit('calendar/SET_LOCUM_UNAVAILABILITIES', res.data.unavailabilities)
-          }
-        })
+        this.$store.dispatch("jobs/fetchLocumJobs", {
+          date_start: this.firstDayOfTheWeek,
+          date_end: this.lastDayOfTheWeek,
+          status: "Current"
+        });
+
+        this.$store.dispatch("jobs/fetchLocumJobs", {
+          date_start: this.firstDayOfTheWeek,
+          date_end: this.lastDayOfTheWeek,
+          status: "Applied"
+        });
+
+        this.$store.dispatch("jobs/fetchLocumUnavailabilities", {
+          date_start: this.firstDayOfTheWeek,
+          date_end: this.lastDayOfTheWeek,
+        });
       }
     },
     // practice
     hasPracticeCurrentJobs(date, type) {
-      if (this.practice_current_jobs && this.practice_current_jobs.length > 0) {
-        return this.practice_current_jobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === type)
+      if (this.getPracticeAllocatedJobs && this.getPracticeAllocatedJobs.length > 0) {
+        return this.getPracticeAllocatedJobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === type)
       }
     },
     hasPracticeAppliedJobs(date, type) {
-      if (this.practice_applied_jobs && this.practice_applied_jobs.length > 0) {
-        return this.practice_applied_jobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === type)
+      if (this.getPracticeAppliedJobs && this.getPracticeAppliedJobs.length > 0) {
+        return this.getPracticeAppliedJobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === type)
       }
     },
     hasPracticeUnfilledJobs(date, type) {
-      if (this.practice_unfilled_jobs && this.practice_unfilled_jobs.length > 0) {
-        return this.practice_unfilled_jobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === type)
+      if (this.getPracticeUnfilledJobs && this.getPracticeUnfilledJobs.length > 0) {
+        return this.getPracticeUnfilledJobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === type)
       }
     },
     hasPracticeDeclinedJobs(date, type) {
-      if (this.practice_declined_jobs && this.practice_declined_jobs.length > 0) {
-        return this.practice_declined_jobs.find(job => this.$moment(job.platform_job.declined_at).format('YYYY-MM-DD') === date && job.platform_job.shift.name === type)
+      if (this.getPracticeDeclinedJobs && this.getPracticeDeclinedJobs.length > 0) {
+        return this.getPracticeDeclinedJobs.find(job => this.$moment(job.platform_job.declined_at).format('YYYY-MM-DD') === date && job.platform_job.shift.name === type)
       }
     },
     hasPracticeAppliedJobsReminder(date, type) {
-      if (this.practice_applied_jobs_reminder && this.practice_applied_jobs_reminder.length > 0) {
-        return this.practice_applied_jobs_reminder.find(job => job.platform_job.selection_date === date && type === 'Reminder')
+      if (this.getPracticeAppliedJobsReminder && this.getPracticeAppliedJobsReminder.length > 0) {
+        return this.getPracticeAppliedJobsReminder.find(job => job.platform_job.selection_date === date && type === 'Reminder')
       }
     },
     hasPracticeAvailableJobsReminder(date, type) {
-      if (this.practice_available_jobs_reminder && this.practice_available_jobs_reminder.length > 0) {
-        return this.practice_available_jobs_reminder.find(job => job.platform_job.selection_date === date && type === 'Reminder')
+      if (this.getPracticeAvailableJobsReminder && this.getPracticeAvailableJobsReminder.length > 0) {
+        return this.getPracticeAvailableJobsReminder.find(job => job.platform_job.selection_date === date && type === 'Reminder')
       }
     },
     // locums
     hasLocumPrivateJobs(date, type) {
-      if (this.locum_private_jobs && this.locum_private_jobs.length > 0) {
-        return this.locum_private_jobs.find(job => this.getDateArray(job.private_job.date_start, job.private_job.date_end).includes(date) && job.private_job.shift.name === type)
+      if (this.getLocumAllocatedPrivateJobs && this.getLocumAllocatedPrivateJobs.length > 0) {
+        return this.getLocumAllocatedPrivateJobs.find(job => this.getDateArray(job.private_job.date_start, job.private_job.date_end).includes(date) && job.private_job.shift.name === type)
       }
     },
     hasLocumCurrentJob(date, type) {
-      if (this.locum_current_jobs && this.locum_current_jobs.length > 0) {
-        return this.locum_current_jobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === type)
+      if (this.getLocumAllocatedCurrentJobs && this.getLocumAllocatedCurrentJobs.length > 0) {
+        return this.getLocumAllocatedCurrentJobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === type)
       }
     },
     hasLocumAppliedJobs(date, type) {
-      return this.locum_applied_jobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date))
+      return this.getLocumAppliedJobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date))
     },
     hasLocumUnavailabilities(date, type) {
-      if (this.locum_unavailabilities && this.locum_unavailabilities.length > 0) {
-        return this.locum_unavailabilities.find(job => job.date === date && job.shifts.find(shift => shift.name === type))
+      if (this.getLocumUnavailabilities && this.getLocumUnavailabilities.length > 0) {
+        return this.getLocumUnavailabilities.find(job => job.date === date && job.shifts.find(shift => shift.name === type))
       }
     },
 

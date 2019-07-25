@@ -4,22 +4,22 @@
       <div
         class="mt-10 w-full text-center"
         style="font-family: Nunito"
-        v-if="!loadingJobs && getPracticeAvailableJobs.length === 0"
-      >You have not yet created a job</div>
+        v-if="!loadingJobs && getLocumUnsuccessfulJobs.length === 0"
+      >You have not yet rejected for a job</div>
       <div v-else class="overflow-x-auto overflow-y-hidden">
         <table>
           <thead>
             <tr class="text-xs sm:text-sm text-left">
               <th>Job number</th>
-              <th>Practice / Surgery</th>
+              <th>Practice</th>
               <th>Title</th>
               <th>From</th>
               <th>To</th>
-              <th>Created</th>
+              <th>Rejected</th>
             </tr>
           </thead>
           <tbody>
-            <template v-for="(item, index) in getPracticeAvailableJobs">
+            <template v-for="(item, index) in getLocumUnsuccessfulJobs">
               <tr
                 :key="item.id"
                 class="__job-card shadow-md cursor-pointer text-xs text-left"
@@ -30,7 +30,7 @@
                 <td>{{item.platform_job.title}}</td>
                 <td>{{item.platform_job.date_start}}</td>
                 <td>{{item.platform_job.date_end}}</td>
-                <td>{{item.platform_job.date_created}}</td>
+                <td>{{item.platform_job.rejected_at}}</td>
               </tr>
               <tr :key="`${item.id}-${index}`">
                 <td></td>
@@ -40,7 +40,7 @@
         </table>
       </div>
     </div>
-    <div class="absolute pin-b w-full" v-if="getPracticeAvailableJobs.length > 0">
+    <div class="absolute pin-b w-full" v-if="getLocumUnsuccessfulJobs.length > 0">
       <AppPagination
         :total="total"
         :totalPages="totalPages"
@@ -52,21 +52,19 @@
 </template>
 <script>
 import AppPagination from '@/components/Base/AppPagination'
-import AppLoading from '@/components/Base/AppLoading'
 export default {
   components: {
-    AppPagination,
-    AppLoading,
+    AppPagination
   },
   computed: {
-    getPracticeAvailableJobs() {
-      return this.$store.getters["jobs/getPracticeAvailableJobs"];
+    getLocumUnsuccessfulJobs() {
+      return this.$store.getters["jobs/getLocumUnsuccessfulJobs"];
     },
     perPage() {
       return 5;
     },
     total() {
-      return this.$store.state.jobs.practice_available_jobs_count;
+      return this.$store.state.jobs.locum_unsuccessful_jobs_count;
     },
     totalPages() {
       return Math.ceil(this.total / this.perPage);
@@ -79,7 +77,7 @@ export default {
     }
   },
   watch: {
-    getPracticeAvailableJobs(newValue, oldValue) {
+    getLocumUnsuccessfulJobs(newValue, oldValue) {
       if (newValue.length !== 0 && (oldValue.length > newValue.length)) {
         this.getJobs()
       }
@@ -104,18 +102,18 @@ export default {
   },
   methods: {
     getJobsCount() {
-      this.$store.dispatch("jobs/fetchPracticeJobs", {
-        status: "Available",
+      this.$store.dispatch("jobs/fetchLocumJobs", {
+        status: "Unsuccessful",
         countOnly: true
       });
     },
     getJobs() {
       let offset = 0;
       offset = this.perPage * (parseInt(this.$route.query.current_page) - 1);
-      this.$store.dispatch("jobs/fetchPracticeJobs", {
+      this.$store.dispatch("jobs/fetchLocumJobs", {
         offset: offset,
         limit: this.perPage,
-        status: "Available"
+        status: "Unsuccessful"
       });
     },
     pagechanged(e) {
@@ -129,7 +127,7 @@ export default {
       const query = {
         ...this.$route.query
       }
-      this.$router.push({ path: `/sessions/${id}`, query })
+      this.$router.push({ path: `/jobs/${id}`, query })
     }
   }
 }

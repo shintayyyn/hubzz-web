@@ -10,6 +10,13 @@
         :placeholder="''"
         :error="formError.find(item => item.field === 'email')"
       />
+      <div class="-mt-6 mb-4" v-if="email_isVerified === true ">
+        <span class="text-xs"> E-mail is Verified on {{$moment(email_verifiedAt).format('MMM DD, YYYY | hh:mm A')}} </span> 
+      </div>
+      <div class="-mt-6 mb-4" v-if="email_isVerified === false ">
+        <span class="text-red text-xs">E-mail is not yet verified. </span>
+        <span class="p-1 bg-grey rounded text-xs" @click="resendEmailVerification()">Click here to re-send</span>
+      </div>
       <AppInput
         v-model="form.title"
         :type="'text'"
@@ -82,21 +89,24 @@ export default {
         suffix: "",
         practice_role: ""
       },
-      formError: [],
-      loading: false
-    };
+      email_isVerified:'',
+      email_verifiedAt:'',
+      loading: false,
+      formError: []
+    }
   },
   created() {
-    this.loading = true;
-    this.$axios.$get("/api/v1/me").then(res => {
-      this.form.email = res.data.user.email;
-      this.form.title = res.data.user.personal_detail.title;
-      this.form.first_name = res.data.user.personal_detail.first_name;
-      this.form.last_name = res.data.user.personal_detail.last_name;
-      this.form.suffix = res.data.user.personal_detail.suffix;
-      this.form.practice_role = res.data.user.practice_detail.practice_role;
+    this.$axios.$get('/api/v1/me').then(res => {
+      this.form.email = res.data.user.email
+      this.form.title = res.data.user.personal_detail.title
+      this.form.first_name = res.data.user.personal_detail.first_name
+      this.form.last_name = res.data.user.personal_detail.last_name
+      this.form.suffix = res.data.user.personal_detail.suffix
+      this.form.practice_role = res.data.user.practice_detail.practice_role
+      this.email_isVerified = res.data.user.is_email_verified
+      this.email_verifiedAt = res.data.user.email_verified_at
       this.loading = false;
-    });
+    })
   },
   watch: {
     "form.email"(value) {
@@ -174,9 +184,16 @@ export default {
               this.loading = false;
             });
         }
-      } catch (e) {
-        this.loading = false;
-        console.log(e);
+      } catch (err) {
+        console.log(err)
+      }
+    },
+    async resendEmailVerification(){
+      try{
+        await this.$axios.post(`/api/v1/email-verification/resend`)
+        alert('Confirmation e-mail sent')
+      }catch(err){
+        console.log("Something went wrong! ", err)
       }
     }
   }

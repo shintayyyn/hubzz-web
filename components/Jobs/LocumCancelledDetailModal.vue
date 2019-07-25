@@ -1,7 +1,7 @@
 <template>
   <div class="p-8 max-w-2xl">
     <div @click="close" class="cursor-pointer">
-      <svgicon name="left-arrow" height="32" width="32"/>
+      <svgicon name="left-arrow" height="32" width="32" />
     </div>
     <div class="flex flex-row justify-start mt-8">
       <div class="mx-2 leading-loose font-bold text-md sm:text-lg">{{job.platform_job.title}}</div>
@@ -145,20 +145,20 @@
               class="text-sm sm:text-md"
             >{{job.platform_job.practice.surgery.address.line_1}} {{job.platform_job.practice.surgery.address.line_2}} {{job.platform_job.practice.surgery.address.line_3}} {{job.platform_job.practice.surgery.address.post_code}}</div>
             <div class="mt-4">
-             <!-- google map -->
+              <!-- google map -->
               <GmapMap
                 :center="{lat:latLang.y, lng:latLang.x}"
                 :zoom="15"
                 map-type-id="terrain"
                 style="width: 100%; height:300px"
               >
-                <GmapMarker :position="google && new google.maps.LatLng(latLang.y, latLang.x)"/>
+                <GmapMarker :position="google && new google.maps.LatLng(latLang.y, latLang.x)" />
               </GmapMap>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
   </div>
 </template>
 <script>
@@ -176,7 +176,14 @@ export default {
   },
   methods: {
     close() {
-      this.$router.push('/jobs?job_status=cancelled')
+      if (this.$route.fullPath === '/dashboard') {
+        this.$emit('close')
+      } else {
+        const query = {
+          ...this.$route.query
+        }
+        this.$router.push({ path: '/jobs', query })
+      }
     }
   }
 }

@@ -1,10 +1,10 @@
 <template>
-  <section class="allocated-section">
+  <section class="__jobs-section">
     <div class="overflow-x-auto">
       <div
         class="mt-10 w-full text-center"
         style="font-family: Nunito"
-        v-if="jobs.length === 0"
+        v-if="!loadingJobs && getPracticeAllocatedJobs.length === 0"
       >No locums are assigned to jobs yet</div>
       <div v-else class="overflow-x-auto overflow-y-hidden">
         <table>
@@ -19,16 +19,11 @@
               <th>Assigned</th>
             </tr>
           </thead>
-          <tbody :class="{'loading':loading}">
-            <tr v-if="loading">
-              <td colspan="6" class="text-center loader">
-                <h5 class="loader-message">Loading</h5>
-              </td>
-            </tr>
-            <template v-else v-for="(item, index) in jobs">
+          <tbody>
+            <template v-for="(item, index) in getPracticeAllocatedJobs">
               <tr
                 :key="item.id"
-                class="job-card shadow-md cursor-pointer text-xs text-left"
+                class="__job-card shadow-md cursor-pointer text-xs text-left"
                 @click="show(item.id, item.platform_job.appointed_to_locum.user.id)"
               >
                 <td>{{item.job_number}}</td>
@@ -47,7 +42,7 @@
         </table>
       </div>
     </div>
-    <div class="absolute pin-b w-full" v-if="jobs.length > 0">
+    <div class="absolute pin-b w-full" v-if="getPracticeAllocatedJobs.length > 0">
       <AppPagination
         :total="total"
         :totalPages="totalPages"
@@ -63,53 +58,66 @@ export default {
   components: {
     AppPagination,
   },
-  data() {
-    return {
-      total: 0,
-      totalPages: 0,
-      currentPage: 0,
-      perPage: 0,
-      loading: false,
+  computed: {
+    getPracticeAllocatedJobs() {
+      return this.$store.getters["jobs/getPracticeAllocatedJobs"];
+    },
+    perPage() {
+      return 5;
+    },
+    total() {
+      return this.$store.state.jobs.practice_allocated_jobs_count;
+    },
+    totalPages() {
+      return Math.ceil(this.total / this.perPage);
+    },
+    currentPage() {
+      return parseInt(this.$route.query.current_page);
+    },
+    loadingJobs() {
+      return this.$store.state.jobs.loading_jobs;
     }
   },
   watch: {
+    getPracticeAllocatedJobs(newValue, oldValue) {
+      if (newValue.length !== 0 && (oldValue.length > newValue.length)) {
+        this.getJobs()
+      }
+      if (newValue.length === 0 && this.$route.query.current_page !== 1) {
+        this.pagechanged(this.totalPages)
+      }
+    },
     $route(to, from) {
-      this.currentPage = parseInt(to.query.current_page)
-      this.getAllocatedSession()
-    }
-  },
-  computed: {
-    jobs() {
-      return this.$store.state.session.allocatedJobs
+      if (from.query.current_page !== to.query.current_page) {
+        this.getJobs()
+      }
     }
   },
   created() {
+    console.log(this.total)
     const query = {
       ...this.$route.query,
       current_page: this.$route.query.current_page || 1
-    }
-    this.currentPage = parseInt(this.$route.query.current_page)
-    this.$router.push({ query })
-    this.$axios.$get(`/api/v1/practice/jobs/count?status=Current`).then(res => {
-      this.total = res.data.count
-      this.perPage = 5
-      this.totalPages = Math.ceil(this.total / this.perPage)
-      this.getAllocatedSession()
-    })
-
+    };
+    this.$router.push({ query });
+    this.getJobsCount();
+    this.getJobs();
   },
   methods: {
-    getAllocatedSession() {
-      this.loading = true
-      let offset = 0
-      offset = this.perPage * (parseInt(this.$route.query.current_page) - 1)
-      this.$axios.$get(`/api/v1/practice/jobs?status=Current&limit=${this.perPage}&offset=${offset}`).then(res => {
-        if (res.data.jobs.length === 0 && this.$route.query.current_page !== 1) {
-          this.pagechanged(this.$route.query.current_page - 1)
-        }
-        this.$store.commit('session/SET_ALLOCATED_JOBS', res.data.jobs)
-        this.loading = false
-      })
+    getJobsCount() {
+      this.$store.dispatch("jobs/fetchPracticeJobs", {
+        status: "Current",
+        countOnly: true
+      });
+    },
+    getJobs() {
+      let offset = 0;
+      offset = this.perPage * (parseInt(this.$route.query.current_page) - 1);
+      this.$store.dispatch("jobs/fetchPracticeJobs", {
+        offset: offset,
+        limit: this.perPage,
+        status: "Current"
+      });
     },
     pagechanged(e) {
       const query = {
@@ -127,57 +135,3 @@ export default {
   }
 }
 </script>
-<style scoped>
-.allocated-section {
-  position: relative;
-  min-height: 500px;
-}
-.job-card:hover {
-  background-color: #dee1e5;
-  transition: background-color 0.5s ease-in-out;
-}
-.job-card {
-  background-color: white;
-  transition: background-color 0.5s ease-in-out;
-}
-a {
-  text-decoration: none;
-  color: black;
-}
-table {
-  width: 920px;
-}
-table thead th {
-  padding: 15px;
-}
-table tbody td {
-  padding: 15px;
-}
-.loader {
-  background-color: #edf2f7;
-  opacity: 0.5;
-}
-.loader-message:after {
-  content: " .";
-  animation: dots 1s steps(5, end) infinite;
-}
-
-@keyframes dots {
-  0%,
-  20% {
-    color: rgba(0, 0, 0, 0);
-    text-shadow: 0.25em 0 0 rgba(0, 0, 0, 0), 0.5em 0 0 rgba(0, 0, 0, 0);
-  }
-  40% {
-    color: white;
-    text-shadow: 0.25em 0 0 rgba(0, 0, 0, 0), 0.5em 0 0 rgba(0, 0, 0, 0);
-  }
-  60% {
-    text-shadow: 0.25em 0 0 white, 0.5em 0 0 rgba(0, 0, 0, 0);
-  }
-  80%,
-  100% {
-    text-shadow: 0.25em 0 0 white, 0.5em 0 0 white;
-  }
-}
-</style>
