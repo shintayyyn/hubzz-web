@@ -15,6 +15,12 @@ export default {
     SET_PRACTICE_AVAILABLE_JOBS_REMINDER(state, payload) {
         state.practice_available_jobs_reminder = payload
     },
+    ADD_PRACTICE_AVAILABLE_JOBS_REMINDER(state, payload) {
+        state.practice_available_jobs_reminder.push(payload)
+    },
+    REMOVE_PRACTICE_AVAILABLE_JOBS_REMINDER(state, payload) {
+        state.practice_available_jobs_reminder = state.practice_available_jobs_reminder.filter(job => job.id !== payload)
+    },
     ADD_PRACTICE_AVAILABLE_JOB(state, payload) {
         state.practice_available_jobs.push(payload)
         state.practice_available_jobs_count = state.practice_available_jobs_count + 1
@@ -31,6 +37,12 @@ export default {
     },
     SET_PRACTICE_APPLIED_JOBS_REMINDER(state, payload) {
         state.practice_applied_jobs_reminder = payload
+    },
+    ADD_PRACTICE_APPLIED_JOBS_REMINDER(state, payload) {
+        state.practice_applied_jobs_reminder.push(payload)
+    },
+    REMOVE_PRACTICE_APPLIED_JOBS_REMINDER(state, payload) {
+        state.practice_applied_jobs_reminder = state.practice_applied_jobs_reminder.filter(job => job.id !== payload)
     },
     REMOVE_PRACTICE_APPLIED_JOB(state, payload) {
         state.practice_applied_jobs = state.practice_applied_jobs.filter(job => job.id !== payload)

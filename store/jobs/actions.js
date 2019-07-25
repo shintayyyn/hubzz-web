@@ -89,25 +89,37 @@ export default {
             })
             this.$socket.on('Practice Notification Job Updated', (job) => {
                 if (state.practice_available_jobs.find(availableJobs => availableJobs.id == job.job.id)) {
-                    return commit('REMOVE_PRACTICE_AVAILABLE_JOB', job.job.id)
+                    commit('REMOVE_PRACTICE_AVAILABLE_JOB', job.job.id)
+                }
+                if (state.practice_available_jobs_reminder.find(availableJobsReminder => availableJobsReminder.id == job.job.id)) {
+                    commit('REMOVE_PRACTICE_AVAILABLE_JOBS_REMINDER', job.job.id)
+                }
+                if (!state.practice_available_jobs_reminder.find(availableJobsReminder => availableJobsReminder == job.new_job.id) && job.new_job.status === "Available") {
+                    commit('ADD_PRACTICE_AVAILABLE_JOBS_REMINDER', job.new_job)
                 }
                 if (state.practice_applied_jobs.find(appliedJobs => appliedJobs.id == job.job.id)) {
-                    return commit('REMOVE_PRACTICE_APPLIED_JOB', job.job.id)
+                    commit('REMOVE_PRACTICE_APPLIED_JOB', job.job.id)
+                }
+                if (state.practice_applied_jobs_reminder.find(appliedJobsReminder => appliedJobsReminder.id == job.job.id)) {
+                    commit('REMOVE_PRACTICE_APPLIED_JOBS_REMINDER', job.job.id)
+                }
+                if (!state.practice_applied_jobs_reminder.find(appliedJobsReminder => appliedJobsReminder == job.new_job.id) && job.new_job.status === "Applied") {
+                    commit('ADD_PRACTICE_APPLIED_JOBS_REMINDER', job.new_job)
                 }
                 if (state.practice_allocated_jobs.find(allocatedJobs => allocatedJobs.id == job.job.id)) {
-                    return commit('REMOVE_PRACTICE_ALLOCATED_JOB', job.job.id)
+                    commit('REMOVE_PRACTICE_ALLOCATED_JOB', job.job.id)
                 }
                 if (state.practice_completed_jobs.find(completedJobs => completedJobs.id == job.job.id)) {
-                    return commit('REMOVE_PRACTICE_COMPLETED_JOB', job.job.id)
+                    commit('REMOVE_PRACTICE_COMPLETED_JOB', job.job.id)
                 }
                 if (state.practice_unfilled_jobs.find(unfilledJobs => unfilledJobs.id == job.job.id)) {
-                    return commit('REMOVE_PRACTICE_UNFILLED_JOB', job.job.id)
+                    commit('REMOVE_PRACTICE_UNFILLED_JOB', job.job.id)
                 }
                 if (state.practice_cancelled_jobs.find(cancelledJobs => cancelledJobs.id == job.job.id)) {
-                    return commit('REMOVE_PRACTICE_CANCELLED_JOB', job.job.id)
+                    commit('REMOVE_PRACTICE_CANCELLED_JOB', job.job.id)
                 }
                 if (state.practice_declined_jobs.find(declinedJobs => declinedJobs.id == job.job.id)) {
-                    return commit('REMOVE_PRACTICE_DECLINED_JOB', job.job.id)
+                    commit('REMOVE_PRACTICE_DECLINED_JOB', job.job.id)
                 }
             })
             this.$socket.on('Practice Notification Job Applied', (job) => {
