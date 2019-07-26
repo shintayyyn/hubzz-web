@@ -126,18 +126,6 @@ export default {
     }
   },
   watch: {
-    selectedHour(newValue, oldValue) {
-      if (!oldValue) {
-        return
-      }
-      this.activeView = 'minutes'
-    },
-    selectedMinute(newValue, oldValue) {
-      if (!oldValue) {
-        return
-      }
-      this.activeView = 'seconds'
-    },
     selectedSecond(newValue, oldValue) {
       if (!oldValue) {
         return
@@ -151,14 +139,19 @@ export default {
       this.selectedMinute = this.value.split(':')[1]
       this.selectedSecond = this.value.split(':')[2]
     }
+    this.activeView = 'hours'
   },
   methods: {
     selectTime(value, type) {
       if (type === 'hour') {
         this.selectedHour = value
+        this.activeView = 'minutes'
+
       }
       if (type === 'minute') {
         this.selectedMinute = value
+        this.activeView = 'seconds'
+
       }
       if (type === 'second') {
         this.selectedSecond = value
