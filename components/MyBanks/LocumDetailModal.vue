@@ -116,14 +116,20 @@
             <div class="text-xs sm:text-sm">email</div>
           </div>
         </div>
+      </div>
+      <div>
+        jdsjidsaijasdji
+        <div v-for="item in jobs" :key="item.id">
+          {{item.id}}
 
+        </div>
       </div>
     </div>
   </div>
 </template>
 <script>
 export default {
-  props: ['user'], //insert 'jobs' in array
+  props: ['user','jobs'], //insert 'jobs' in array
   components: {
   },
   data() {
@@ -134,6 +140,8 @@ export default {
   },
   created() {
     this.getProfessionCategory(this.user.locum_detail.profession.profession_category.id)
+    console.log(this.user)
+    console.log(this.jobs)
   },
   methods: {
     getProfessionCategory(id) {
