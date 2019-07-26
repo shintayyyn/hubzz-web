@@ -46,7 +46,7 @@
     <div class="locum-shield" v-if="modal"></div>
     <transition name="slide" mode="out-in">
       <div class="locum-modal shadow-lg" v-if="modal">
-        <LocumDetailModal @close="modal = false" :user="user"/> <!--insert :locum jobs here-->
+        <MyLocumDetailModal @close="modal = false" :user="user" :jobs="jobs"/> <!--insert :locum jobs here-->
       </div>
     </transition>
 
@@ -55,12 +55,12 @@
 <script>
 import AppPagination from '@/components/Base/AppPagination'
 import AppLoading from '@/components/Base/AppLoading'
-import LocumDetailModal from '@/components/MyBanks/LocumDetailModal' //TEMPORARY
+import MyLocumDetailModal from '@/components/MyBanks/MyLocumDetailModal' //TEMPORARY
 export default {
   components: {
     AppPagination,
     AppLoading,
-    LocumDetailModal
+    MyLocumDetailModal
   },
   data() {
     return {
@@ -71,7 +71,8 @@ export default {
       perPage: 0,
       loading: false,
       modal:false, //TEMPORARY
-      user:null //TEMPORARY
+      user:null, //TEMPORARY
+      jobs:null
     }
   },
   beforeDestroy() {
@@ -127,10 +128,15 @@ export default {
       // d.classList.toggle('toggled-right')
       // document.body.style.overflow = 'hidden'
       // this.$store.commit('SET_MYLOCUMDETAIL_MODAL', true)
-      console.log('hey')
-      this.$axios.$get(`/api/v1/practice/locums/${id}`).then(res => {  //TEMPORARY 
-        this.user = res.data.user
-        this.modal = true                                           
+      Promise.all([
+        this.$axios.$get(`/api/v1/practice/locums/${id}`).then(res => {  
+          this.user = res.data.user                                       
+        }),
+      ]).then(() =>{
+        this.$axios.$get(`/api/v1/practice/jobs?locum_detail_id=${this.user.locum_detail.id}`).then(res =>{
+          this.jobs = res.data.jobs
+        }),
+        this.modal = true
       })
     },
     pagechanged(e) {

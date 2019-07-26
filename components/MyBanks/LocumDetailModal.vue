@@ -1,17 +1,14 @@
 <template>
   <div class="p-8 max-w-xl">
-    <div @click="$emit('close')" class="cursor-pointer">
-      <svgicon name="left-arrow" height="32" width="32" />
-    </div>
-    <div class="flex flex-row flex-nowrap justify-start mt-8">
+    <div class="flex flex-row flex-nowrap justify-start">
       <div class="font-bold text-md sm:text-lg">{{user.personal_detail.name}}</div>
     </div>
     <div class="flex flex-row flex-wrap justify-between mt-4">
       <div class="w-full pr-0 lg:pr-2 lg:w-1/2">
-        <div class="rounded-lg shadow-lg p-8">
+        <div class="rounded-lg shadow-lg ">
           <div class="float-right">
             <!-- <div class="font-bold text-sm sm:text-md">Avatar</div> -->
-            <div class="text-xs sm:text-sm mb-8">
+            <div class="text-xs sm:text-sm mb-6">
                 <div v-if="!user.avatar">
                   <svgicon name="no-avatar" height="115" width="115"/>
                 </div>
@@ -117,19 +114,12 @@
           </div>
         </div>
       </div>
-      <div>
-        jdsjidsaijasdji
-        <div v-for="item in jobs" :key="item.id">
-          {{item.id}}
-
-        </div>
-      </div>
     </div>
   </div>
 </template>
 <script>
 export default {
-  props: ['user','jobs'], //insert 'jobs' in array
+  props: ['user'], //insert 'jobs' in array
   components: {
   },
   data() {

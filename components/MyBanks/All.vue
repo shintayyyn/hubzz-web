@@ -58,7 +58,7 @@
     <div class="locum-shield" v-if="modal"></div>
     <transition name="slide" mode="out-in">
       <div class="locum-modal shadow-lg" v-if="modal">
-        <LocumDetailModal @close="modal = false" :user="user" :jobs="jobs"/> <!--insert :locum jobs here-->
+        <MyLocumDetailModal @close="modal = false" :user="user" :jobs="jobs"/> <!--insert :locum jobs here-->
       </div>
     </transition>
     
@@ -67,12 +67,12 @@
 <script>
 import AppPagination from '@/components/Base/AppPagination'
 import AppLoading from '@/components/Base/AppLoading'
-import LocumDetailModal from '@/components/MyBanks/LocumDetailModal' //TEMPORARY
+import MyLocumDetailModal from '@/components/MyBanks/MyLocumDetailModal' //TEMPORARY
 export default {
   components: {
     AppPagination,
     AppLoading,
-    LocumDetailModal
+    MyLocumDetailModal
   },
   data() {
     return {

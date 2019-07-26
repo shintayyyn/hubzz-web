@@ -1,16 +1,16 @@
 <template>
-  <div class="flex flex-no-wrap justify-start">
+  <div class="flex flex-no-wrap mt-4 ml-6  justify-start">
     <div
       style="font-family:Nunito"
-      @click.prevent="goTo('locums')"
+      @click.prevent="goTo('locum_detail')"
       class="mr-5 p-3 text-sm font-bold cursor-pointer"
-      :class="$route.query.locum_detail_active_tab === 'locums' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
-    >Profile</div>
+      :class="$route.query.my_locum === 'locum_detail' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
+    >Profile</div> 
     <div
       style="font-family:Nunito"
-      @click.prevent="goTo('practices')"
+      @click.prevent="goTo('locum_jobs')"
       class="mr-5 p-3 text-sm font-bold cursor-pointer"
-      :class="$route.query.locum_detail_active_tab === 'practices' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
+      :class="$route.query.my_locum === 'locum_jobs' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
     >Related Jobs</div>
   </div>
 </template>
@@ -20,7 +20,7 @@ export default {
     goTo(type) {
       const query = {
         ...this.$route.query,
-        locum_detail_active_tab: type
+        my_locum: type
       }
       this.$router.push({ query })
     }
