@@ -42,9 +42,9 @@
         v-if="job.status === 'Current'"
       />
     </div>
-    <div class="applied-locum-shield" v-if="modal"></div>
+    <div class="shield" v-if="modal"></div>
     <transition name="slide" mode="out-in">
-      <div class="applied-locum-modal shadow-lg" v-if="modal">
+      <div class="modal shadow-lg" v-if="modal">
         <JobDetailModalShowCandidate @close="modal = false" :user="user" @appointed="close" />
       </div>
     </transition>
@@ -153,7 +153,7 @@ export default {
 }
 </script>
 <style scoped>
-.applied-locum-shield {
+.shield {
   position: fixed;
   top: 0;
   left: 0;
@@ -163,7 +163,7 @@ export default {
   opacity: 0.5;
   z-index: 511;
 }
-.applied-locum-modal {
+.modal {
   position: fixed;
   top: 0;
   right: 0;
@@ -177,7 +177,7 @@ export default {
   z-index: 512;
 }
 @media screen and (min-width: 1200px) {
-  .applied-locum-modal {
+  .modal {
     width: 70%;
   }
 }

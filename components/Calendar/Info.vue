@@ -4,70 +4,40 @@
       class="text-white text-xs sm:text-sm py-4 px-8"
     >{{$moment(date_info || selected_date).format('Do MMM, YYYY')}}</div>
     <div class="flex flex-col overflow-y-auto px-8 h-full info-card">
-      <transition name="slide" mode="out-in">
-        <div
-          class="mt-4 text-xl text-white"
-          v-if="!viewPracticeJobs"
-          key="'no-jobs'"
-        >No jobs to display.</div>
-        <div v-if="viewPracticeJobs">
-          <div v-for="job in foundPracticeJobs" :key="job.id">
-            <PracticeJobCard :job="job" @viewPracticeJob="$emit('viewPracticeJob', $event)" />
-          </div>
+      <!-- <transition name="slide" mode="out-in"> -->
+      <div
+        class="mt-4 text-xl text-white"
+        v-if="!viewPracticeJobs && !viewLocumJobs"
+        key="'no-jobs'"
+      >No jobs to display.</div>
+      <div v-if="viewPracticeJobs">
+        <div v-for="job in foundPracticeJobs" :key="job.id">
+          <PracticeJobCard :job="job" @viewPracticeJob="$emit('viewPracticeJob', $event)" />
         </div>
-        <!-- locums -->
-        <!-- <div v-for="(item, index) in foundLocumPrivateJobs" :key="`${index}-${item.id}`">
-        <LocumPrivateJobCard @viewAppointmentJob="$emit('viewAppointmentJob', $event)" :job="item" />
       </div>
-      <div v-for="(item, index) in foundLocumCurrentJobs" :key="`${index}-${item.id}`">
-        <LocumCurrentJobCard
-          @viewLocumCurrentJob="$emit('viewLocumCurrentJob', $event)"
-          :job="item"
-        />
+      <div v-if="viewLocumJobs">
+        <div v-for="job in foundLocumJobs" :key="job.id">
+          <LocumJobCard :job="job" @viewLocumJob="$emit('viewLocumJob', $event)" />
+        </div>
       </div>
-      <div v-for="(item, index) in foundLocumAppliedJobs" :key="`${index}-${item.id}`">
-        <LocumAppliedJobCard
-          @viewLocumAppliedJob="$emit('viewLocumAppliedJob', $event)"
-          :job="item"
-        />
-      </div>
-
-      <div v-for="(item, index) in foundLocumUnavailabilities" :key="`${index}-${item.id}`">
-        <LocumUnavailabilitiesCard :job="item" />
-        </div>-->
-      </transition>
+      <!-- </transition> -->
     </div>
   </div>
 </template>
 <script>
-// practice
 import PracticeJobCard from '@/components/Calendar/Cards/PracticeJobCard'
-// locums
-import LocumPrivateJobCard from '@/components/Calendar/Cards/LocumPrivateJobCard'
-import LocumCurrentJobCard from '@/components/Calendar/Cards/LocumCurrentJobCard'
-import LocumAppliedJobCard from '@/components/Calendar/Cards/LocumAppliedJobCard'
-import LocumUnavailabilitiesCard from '@/components/Calendar/Cards/LocumUnavailabilitiesCard'
+import LocumJobCard from '@/components/Calendar/Cards/LocumJobCard'
 export default {
   components: {
-    // practice
     PracticeJobCard,
-    // locums
-    LocumPrivateJobCard,
-    LocumCurrentJobCard,
-    LocumAppliedJobCard,
-    LocumUnavailabilitiesCard,
+    LocumJobCard,
   },
   data() {
     return {
-      // practice
       foundPracticeJobs: [],
       viewPracticeJobs: false,
-      // locums
-      foundLocumPrivateJobs: [],
-      foundLocumCurrentJobs: [],
-      foundLocumAppliedJobs: [],
-      foundLocumUnavailabilities: [],
-      // 
+      foundLocumJobs: [],
+      viewLocumJobs: false,
       date_info: null
     }
   },
@@ -240,10 +210,34 @@ export default {
     },
     // locums
     findPerMonthLocum(date) {
-      this.foundLocumPrivateJobs = this.getLocumAllocatedPrivateJobs.filter(job => this.getDateArray(job.private_job.date_start, job.private_job.date_end).includes(date))
-      this.foundLocumCurrentJobs = this.getLocumAllocatedCurrentJobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date))
-      this.foundLocumAppliedJobs = this.getLocumAppliedJobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date))
-      this.foundLocumUnavailabilities = this.getLocumUnavailabilities.filter(job => job.date === date)
+      this.viewLocumJobs = false
+      let foundLocumPrivateJobs = []
+      let foundLocumCurrentJobs = []
+      let foundLocumAppliedJobs = []
+      let foundLocumUnavailabilities = []
+
+      if (this.getLocumAllocatedPrivateJobs.length > 0) {
+        foundLocumPrivateJobs = this.getLocumAllocatedPrivateJobs.filter(job => this.getDateArray(job.private_job.date_start, job.private_job.date_end).includes(date))
+      }
+      if (this.getLocumAllocatedCurrentJobs.length > 0) {
+        foundLocumCurrentJobs = this.getLocumAllocatedCurrentJobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date))
+      }
+      if (this.getLocumAppliedJobs.length > 0) {
+        foundLocumAppliedJobs = this.getLocumAppliedJobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date))
+      }
+      if (this.getLocumUnavailabilities.length > 0) {
+        foundLocumUnavailabilities = this.getLocumUnavailabilities.filter(job => job.date === date)
+      }
+      this.foundLocumJobs = [
+        ...foundLocumPrivateJobs, ...foundLocumCurrentJobs,
+        ...foundLocumAppliedJobs, ...foundLocumUnavailabilities
+      ]
+      if (this.foundLocumJobs.length > 0) {
+        setTimeout(() => {
+          this.viewLocumJobs = true
+        }, 500)
+      }
+      console.log(this.foundLocumJobs)
     },
     findPerWeekLocum({ date, shift }) {
       if (this.getLocumAllocatedPrivateJobs.length > 0) {

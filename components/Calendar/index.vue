@@ -13,12 +13,7 @@
           </div>
         </div>
         <div class="w-full lg:w-1/3">
-          <Info
-            @viewAppointmentJob="viewAppointmentJob"
-            @viewLocumCurrentJob="viewLocumCurrentJob"
-            @viewLocumAppliedJob="viewLocumAppliedJob"
-            @viewPracticeJob="viewPracticeJob"
-          />
+          <Info @viewPracticeJob="viewPracticeJob" @viewLocumJob="viewLocumJob" />
         </div>
       </div>
     </div>
@@ -27,11 +22,8 @@
       <div class="modal-container shadow-lg" v-if="modal">
         <CreateAppointmentModal @close="modal = false" :job="job" />
       </div>
-      <div class="modal-container shadow-lg" v-if="locum_current_modal">
-        <LocumAllocatedDetailModal @close="locum_current_modal = false" :job="locum_current_job" />
-      </div>
-      <div class="modal-container shadow-lg" v-if="locum_applied_modal">
-        <LocumAppliedDetailModal @close="locum_applied_modal = false" :job="locum_applied_job" />
+      <div class="modal-container shadow-lg" v-if="locum_modal">
+        <JobDetailModalLocum @close="locum_modal = false" :job="locum_job" />
       </div>
       <div class="modal-container shadow-lg" v-if="practice_create_modal">
         <CreateJobModal @close="practice_create_modal = false" :job="practice_create_job" />
@@ -48,8 +40,8 @@ import PerWeek from '@/components/Calendar/PerWeek'
 import Info from '@/components/Calendar/Info'
 // locums
 import CreateAppointmentModal from '@/components/CreateAppointmentModal'
-import LocumAllocatedDetailModal from '@/components/Jobs/LocumAllocatedDetailModal'
-import LocumAppliedDetailModal from '@/components/Jobs/LocumAppliedDetailModal'
+import JobDetailModalLocum from '@/components/Jobs/JobDetailModalLocum'
+
 // practice
 import CreateJobModal from '@/components/CreateJobModal'
 import JobDetailModal from '@/components/Sessions/JobDetailModal'
@@ -60,8 +52,7 @@ export default {
     PerWeek,
     Info,
     CreateAppointmentModal,
-    LocumAllocatedDetailModal,
-    LocumAppliedDetailModal,
+    JobDetailModalLocum,
     CreateJobModal,
     JobDetailModal,
   },
@@ -69,25 +60,12 @@ export default {
     return {
       practice_modal: false,
       practice_job: null,
-      modal: false,
-      job: null,
-      locum_current_modal: false,
-      locum_current_job: null,
-      locum_applied_modal: false,
-      locum_applied_job: null,
+      locum_modal: false,
+      locum_job: null,
       practice_create_modal: false,
       practice_create_job: null,
-      practice_allocated_modal: false,
-      practice_allocated_job: null,
-      practice_unfilled_modal: false,
-      practice_unfilled_job: null,
-      practice_declined_modal: false,
-      practice_declined_job: null,
-      practice_applied_modal: false,
-      practice_applied_job: null,
-      practice_live_modal: false,
-      practice_live_job: null,
-
+      modal: false,
+      job: null,
     }
   },
   created() {
@@ -95,9 +73,7 @@ export default {
   },
   computed: {
     toggleScroll() {
-      return this.modal | this.locum_current_modal | this.locum_applied_modal | this.practice_create_modal
-        | this.practice_allocated_modal | this.practice_unfilled_modal | this.practice_declined_modal | this.practice_applied_modal
-        | this.practice_live_modal
+      return this.modal | this.locum_modal | this.practice_modal
     },
   },
   watch: {
@@ -122,17 +98,14 @@ export default {
       this.modal = true
       this.job = null
     },
-    viewAppointmentJob(job) {
-      this.modal = true
-      this.job = job
-    },
-    viewLocumCurrentJob(job) {
-      this.locum_current_modal = true
-      this.locum_current_job = job
-    },
-    viewLocumAppliedJob(job) {
-      this.locum_applied_modal = true
-      this.locum_applied_job = job
+    viewLocumJob(job) {
+      if (job.status === 'Private') {
+        this.modal = true
+        this.job = job
+        return
+      }
+      this.locum_modal = true
+      this.locum_job = job
     },
     // practice
     createJob(job) {
