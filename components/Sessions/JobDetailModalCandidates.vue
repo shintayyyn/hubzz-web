@@ -22,15 +22,16 @@ export default {
   props: ['applicants'],
   methods: {
     show(id) {
+      this.$emit('show', id)
       // this.$axios.$get(`/api/v1/practice/locums/${id}`).then(res => {
       //   console.log(res)
       //   this.user = res.data.user
       // })
-      console.log(this.$route.query)
-      const query = {
-        ...this.$route.query
-      }
-      this.$router.push({ path: `/sessions/${this.$route.params.id}/locum/${id}`, query })
+      // console.log(this.$route.query)
+      // const query = {
+      //   ...this.$route.query
+      // }
+      // this.$router.push({ path: `/sessions/${this.$route.params.id}/locum/${id}`, query })
     },
   }
 }

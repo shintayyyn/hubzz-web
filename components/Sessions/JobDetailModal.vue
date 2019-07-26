@@ -20,19 +20,29 @@
           :job="job"
           v-if="job.status === 'Current' || job.status === 'Applied' || job.status === 'Completed' || job.status === 'Available'"
         />
-        <JobDetailModalCandidates :applicants="applicants" v-if="job.status === 'Applied'" />
+        <JobDetailModalCandidates
+          :applicants="applicants"
+          v-if="job.status === 'Applied'"
+          @show="modal = true"
+        />
         <JobDetailModalLocum
           :user="user"
           :mandatory="mandatory"
           :optional="optional"
-          v-if="job.status === 'Current' && user"
+          v-if="(job.status === 'Current' || job.status === 'Completed') && user"
         />
       </div>
       <JobDetailModalCancelForm
         @close="close"
-        v-if="job.status === 'Current' || job.status === 'Applied' || job.status === 'Available '"
+        v-if="job.status === 'Current' || job.status === 'Applied' || job.status === 'Available'"
       />
     </div>
+    <div class="applied-locum-shield" v-if="modal"></div>
+    <transition name="slide" mode="out-in">
+      <div class="applied-locum-modal shadow-lg" v-if="modal">
+        <AppliedLocumDetailModal @close="modal = false" :user="user" />
+      </div>
+    </transition>
   </div>
 </template>
 <script>
@@ -41,6 +51,7 @@ import JobDetailModalUpdateForm from '@/components/Sessions/JobDetailModalUpdate
 import JobDetailModalCandidates from '@/components/Sessions/JobDetailModalCandidates'
 import JobDetailModalLocum from '@/components/Sessions/JobDetailModalLocum'
 import JobDetailModalCancelForm from '@/components/Sessions/JobDetailModalCancelForm'
+import AppliedLocumDetailModal from '@/components/Sessions/AppliedLocumDetailModal'
 export default {
   props: ['job'],
   components: {
@@ -49,6 +60,7 @@ export default {
     JobDetailModalCandidates,
     JobDetailModalLocum,
     JobDetailModalCancelForm,
+    AppliedLocumDetailModal,
   },
   data() {
     return {
@@ -56,6 +68,7 @@ export default {
       mandatory: [],
       optional: [],
       applicants: [],
+      modal: false,
     }
   },
   created() {
@@ -128,4 +141,34 @@ export default {
   }
 }
 </script>
+<style scoped>
+.applied-locum-shield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #333;
+  opacity: 0.5;
+  z-index: 511;
+}
+.applied-locum-modal {
+  position: fixed;
+  top: 0;
+  right: 0;
+  margin-right: 0%;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  border-left: solid 2px #edf2f7;
+  transition: all 0.3s ease-in-out;
+  background-color: white;
+  z-index: 512;
+}
+@media screen and (min-width: 1200px) {
+  .applied-locum-modal {
+    width: 70%;
+  }
+}
+</style>
 

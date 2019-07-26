@@ -8,6 +8,7 @@
         :label="'Please select your reason'"
         :placeholder="'Select..'"
         :items="reasons"
+        :error="this.formError.find(error => error.field === 'cancelled_reason')"
       />
       <AppButton :label="'Cancel job'" @click="cancel" />
     </div>
@@ -35,15 +36,20 @@ export default {
       form_cancel: {
         cancelled_reason: ''
       },
+      formError: []
     }
   },
   methods: {
     cancel() {
       let jobId = this.$route.params.id || this.job.id
-      this.$axios.$put(`/api/v1/practice/jobs/${jobId}/cancel`, this.form_cancel).then(res => {
-        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Job cancelled' })
-        this.$emit('close')
-      })
+      this.formError = []
+      this.Validate(this.form_cancel)
+      if (!this.formError.length) {
+        this.$axios.$put(`/api/v1/practice/jobs/${jobId}/cancel`, this.form_cancel).then(res => {
+          this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Job cancelled' })
+          this.$emit('close')
+        })
+      }
     }
   }
 }

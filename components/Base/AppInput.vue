@@ -24,8 +24,6 @@
 
     <!-- single checkbox -->
     <div v-if="type === 'single-checkbox'" class="flex flex-col py-2 mb-6">
-      <!-- <div class="relative flex flex-row flex-nowrap justify-end"> -->
-      <!-- </div> -->
       <div class="flex flex-row flex-nowrap justify-between">
         <div>
           <input
@@ -55,13 +53,6 @@
           v-if="error"
         >{{error.message}}</div>
       </div>
-      <!-- <div class="flex flex-row flex-wrap justify-start">
-        <div
-          class="rounded-lg bg-yellow-dark py-1 px-3 m-1"
-          v-for="(item, index) in selectedEmails"
-          :key="index"
-        >{{item}}</div>
-      </div>-->
       <div class="flex flex-row justify-start mt-1">
         <input
           :value="value"
@@ -102,7 +93,6 @@
           @blur="$emit('blur')"
           :checked="value"
         />
-        <!-- v-on="name === 'mobile_number' || name === 'unpaid_breaks_in_minutes' || name === 'phone_number' || name === 'number_of_patients' || name === 'duration_for_each_appointment' ? { keypress: ValidateInput } : null" -->
       </div>
     </div>
   </section>
