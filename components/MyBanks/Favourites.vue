@@ -41,15 +41,25 @@
         :loading="loading"
       />
     </div>
+
+    <div class="locum-shield" v-if="modal"></div>
+    <transition name="slide" mode="out-in">
+      <div class="locum-modal shadow-lg" v-if="modal">
+        <LocumDetailModal @close="modal = false" :user="user"/> <!--insert :locum jobs here-->
+      </div>
+    </transition>
+
   </div>
 </template>
 <script>
 import AppPagination from '@/components/Base/AppPagination'
 import AppLoading from '@/components/Base/AppLoading'
+import LocumDetailModal from '@/components/MyBanks/LocumDetailModal' //TEMPORARY
 export default {
   components: {
     AppPagination,
     AppLoading,
+    LocumDetailModal
   },
   data() {
     return {
@@ -59,6 +69,8 @@ export default {
       currentPage: 0,
       perPage: 0,
       loading: false,
+      modal:false, //TEMPORARY
+      user:null //TEMPORARY
     }
   },
   beforeDestroy() {
@@ -108,12 +120,17 @@ export default {
     },
     show(id) {
       // set id to store
-      this.$store.commit('myBanks/SET_MY_LOCUM_ID', id)
-      this.$store.commit('SET_MYLOCUMDETAIL_SHIELD', true)
-      let d = document.getElementsByClassName('my-locum-detail-modal')[0]
-      d.classList.toggle('toggled-right')
-      document.body.style.overflow = 'hidden'
-      this.$store.commit('SET_MYLOCUMDETAIL_MODAL', true)
+      // this.$store.commit('myBanks/SET_MY_LOCUM_ID', id)
+      // this.$store.commit('SET_MYLOCUMDETAIL_SHIELD', true)
+      // let d = document.getElementsByClassName('my-locum-detail-modal')[0]
+      // d.classList.toggle('toggled-right')
+      // document.body.style.overflow = 'hidden'
+      // this.$store.commit('SET_MYLOCUMDETAIL_MODAL', true)
+      console.log('hey')
+       this.$axios.$get(`/api/v1/practice/locums/${id}`).then(res => {  //TEMPORARY 
+        this.user = res.data.user
+        this.modal = true                                           
+      })
     },
     pagechanged(e) {
       const query = {
@@ -130,6 +147,34 @@ export default {
   min-width: 200px;
   height: 250px;
   box-sizing: content-box;
+}
+.locum-shield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #333;
+  opacity: 0.5;
+  z-index: 511;
+}
+.locum-modal {
+  position: fixed;
+  top: 0;
+  right: 0;
+  margin-right: 0%;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  border-left: solid 2px #edf2f7;
+  transition: all 0.3s ease-in-out;
+  background-color: white;
+  z-index: 512;
+}
+@media screen and (min-width: 1200px) {
+  .locum-modal {
+    width: 80%;
+  }
 }
 </style>
 

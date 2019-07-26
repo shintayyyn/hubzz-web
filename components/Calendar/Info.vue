@@ -4,50 +4,19 @@
       class="text-white text-xs sm:text-sm py-4 px-8"
     >{{$moment(date_info || selected_date).format('Do MMM, YYYY')}}</div>
     <div class="flex flex-col overflow-y-auto px-8 h-full info-card">
-      <!-- <transition-group name="fade-card"> -->
-      <div
-        class="mt-4 text-xl text-white"
-        v-if="noJobsToDisplay"
-        key="'no-jobs'"
-      >No jobs to display.</div>
-      <div v-for="(item, index) in foundPracticeCurrentJobs" :key="`${index}-${item.id}`">
-        <PracticeCurrentJobCard
-          @viewPracticeAllocatedJob="$emit('viewPracticeAllocatedJob', $event)"
-          :job="item"
-        />
-      </div>
-      <div v-for="(item, index) in foundPracticeAppliedJobs" :key="`${index}-${item.id}`">
-        <PracticeAppliedJobCard
-          @viewPracticeAppliedJob="$emit('viewPracticeAppliedJob', $event)"
-          :job="item"
-        />
-      </div>
-      <div v-for="(item, index) in foundPracticeUnfilledJobs" :key="`${index}-${item.id}`">
-        <PracticeUnfilledJobCard
-          @viewPracticeUnfilledJob="$emit('viewPracticeUnfilledJob', $event)"
-          :job="item"
-        />
-      </div>
-      <div v-for="(item, index) in foundPracticeDeclinedJobs" :key="`${index}-${item.id}`">
-        <PracticeDeclinedJobCard
-          @viewPracticeDeclinedJob="$emit('viewPracticeDeclinedJob', $event)"
-          :job="item"
-        />
-      </div>
-      <div v-for="(item, index) in foundPracticeAppliedJobsReminder" :key="`${index}-${item.id}`">
-        <PracticeAppliedJobReminderCard
-          @viewPracticeAppliedJob="$emit('viewPracticeAppliedJob', $event)"
-          :job="item"
-        />
-      </div>
-      <div v-for="(item, index) in foundPracticeAvailableJobsReminder" :key="`${index}-${item.id}`">
-        <PracticeAvailableJobReminderCard
-          @viewPracticeLiveJob="$emit('viewPracticeLiveJob', $event)"
-          :job="item"
-        />
-      </div>
-      <!-- locums -->
-      <div v-for="(item, index) in foundLocumPrivateJobs" :key="`${index}-${item.id}`">
+      <transition name="slide" mode="out-in">
+        <div
+          class="mt-4 text-xl text-white"
+          v-if="!viewPracticeJobs"
+          key="'no-jobs'"
+        >No jobs to display.</div>
+        <div v-if="viewPracticeJobs">
+          <div v-for="job in foundPracticeJobs" :key="job.id">
+            <PracticeJobCard :job="job" @viewPracticeJob="$emit('viewPracticeJob', $event)" />
+          </div>
+        </div>
+        <!-- locums -->
+        <!-- <div v-for="(item, index) in foundLocumPrivateJobs" :key="`${index}-${item.id}`">
         <LocumPrivateJobCard @viewAppointmentJob="$emit('viewAppointmentJob', $event)" :job="item" />
       </div>
       <div v-for="(item, index) in foundLocumCurrentJobs" :key="`${index}-${item.id}`">
@@ -65,19 +34,14 @@
 
       <div v-for="(item, index) in foundLocumUnavailabilities" :key="`${index}-${item.id}`">
         <LocumUnavailabilitiesCard :job="item" />
-      </div>
-      <!-- </transition-group> -->
+        </div>-->
+      </transition>
     </div>
   </div>
 </template>
 <script>
 // practice
-import PracticeCurrentJobCard from '@/components/Calendar/Cards/PracticeCurrentJobCard'
-import PracticeAppliedJobCard from '@/components/Calendar/Cards/PracticeAppliedJobCard'
-import PracticeUnfilledJobCard from '@/components/Calendar/Cards/PracticeUnfilledJobCard'
-import PracticeDeclinedJobCard from '@/components/Calendar/Cards/PracticeDeclinedJobCard'
-import PracticeAppliedJobReminderCard from '@/components/Calendar/Cards/PracticeAppliedJobReminderCard'
-import PracticeAvailableJobReminderCard from '@/components/Calendar/Cards/PracticeAvailableJobReminderCard'
+import PracticeJobCard from '@/components/Calendar/Cards/PracticeJobCard'
 // locums
 import LocumPrivateJobCard from '@/components/Calendar/Cards/LocumPrivateJobCard'
 import LocumCurrentJobCard from '@/components/Calendar/Cards/LocumCurrentJobCard'
@@ -86,12 +50,7 @@ import LocumUnavailabilitiesCard from '@/components/Calendar/Cards/LocumUnavaila
 export default {
   components: {
     // practice
-    PracticeCurrentJobCard,
-    PracticeAppliedJobCard,
-    PracticeUnfilledJobCard,
-    PracticeDeclinedJobCard,
-    PracticeAppliedJobReminderCard,
-    PracticeAvailableJobReminderCard,
+    PracticeJobCard,
     // locums
     LocumPrivateJobCard,
     LocumCurrentJobCard,
@@ -101,12 +60,8 @@ export default {
   data() {
     return {
       // practice
-      foundPracticeCurrentJobs: [],
-      foundPracticeAppliedJobs: [],
-      foundPracticeUnfilledJobs: [],
-      foundPracticeDeclinedJobs: [],
-      foundPracticeAppliedJobsReminder: [],
-      foundPracticeAvailableJobsReminder: [],
+      foundPracticeJobs: [],
+      viewPracticeJobs: false,
       // locums
       foundLocumPrivateJobs: [],
       foundLocumCurrentJobs: [],
@@ -118,7 +73,7 @@ export default {
   },
   created() {
     if (this.$auth.user.domain === 'Practice') {
-      this.findPerMonth(this.selected_date)
+      this.findPerMonthPractice(this.selected_date)
       return
     }
     if (this.$auth.user.domain === 'Locum') {
@@ -130,7 +85,7 @@ export default {
     selected_date(value) {
       this.date_info = value
       if (this.$auth.user.domain === 'Practice') {
-        this.findPerMonth(value)
+        this.findPerMonthPractice(value)
         return
       }
       if (this.$auth.user.domain === 'Locum') {
@@ -139,20 +94,8 @@ export default {
       }
     },
     selected_date_shift(value) {
-      // // ! fix practice job card
-      // this.date_info = value.date
-      // this.foundLocumPrivateJobs = []
-      // this.foundLocumCurrentJobs = []
-      // this.foundLocumAppliedJobs = []
-      // this.foundLocumUnavailabilities = []
-      // this.foundPracticeCurrentJobs = []
-      // this.foundPracticeAppliedJobs = []
-      // this.foundPracticeUnfilledJobs = []
-      // this.foundPracticeDeclinedJobs = []
-      // this.foundPracticeAppliedJobsReminder = []
-      // this.foundPracticeAvailableJobsReminder = []
       if (this.$auth.user.domain === 'Practice') {
-        this.findPerWeek(value)
+        this.findPerWeekPractice(value)
       }
       if (this.$auth.user.domain === 'Locum') {
         this.findPerWeekLocum(value)
@@ -160,22 +103,22 @@ export default {
     },
     // practice
     getPracticeAllocatedJobs(value) {
-      this.findPerMonth(this.selected_date)
+      this.findPerMonthPractice(this.selected_date)
     },
     getPracticeAppliedJobs(value) {
-      this.findPerMonth(this.selected_date)
+      this.findPerMonthPractice(this.selected_date)
     },
     getPracticeUnfilledJobs(value) {
-      this.findPerMonth(this.selected_date)
+      this.findPerMonthPractice(this.selected_date)
     },
     getPracticeDeclinedJobs(value) {
-      this.findPerMonth(this.selected_date)
+      this.findPerMonthPractice(this.selected_date)
     },
     getPracticeAvailableJobsReminder(value) {
-      this.findPerMonth(this.selected_date)
+      this.findPerMonthPractice(this.selected_date)
     },
     getPracticeAppliedJobsReminder(value) {
-      this.findPerMonth(this.selected_date)
+      this.findPerMonthPractice(this.selected_date)
     },
     // locum
     getLocumAllocatedPrivateJobs(value) {
@@ -238,27 +181,44 @@ export default {
   },
   methods: {
     // practice
-    findPerMonth(date) {
+    findPerMonthPractice(date) {
+      this.viewPracticeJobs = false
+      let foundPracticeCurrentJobs = []
+      let foundPracticeAppliedJobs = []
+      let foundPracticeUnfilledJobs = []
+      let foundPracticeDeclinedJobs = []
+      let foundPracticeAppliedJobsReminder = []
+      let foundPracticeAvailableJobsReminder = []
+
       if (this.getPracticeAllocatedJobs.length > 0) {
-        this.foundPracticeCurrentJobs = this.getPracticeAllocatedJobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date))
+        foundPracticeCurrentJobs = this.getPracticeAllocatedJobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date))
       }
       if (this.getPracticeAppliedJobs.length > 0) {
-        this.foundPracticeAppliedJobs = this.getPracticeAppliedJobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date))
+        foundPracticeAppliedJobs = this.getPracticeAppliedJobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date))
       }
       if (this.getPracticeUnfilledJobs.length > 0) {
-        this.foundPracticeUnfilledJobs = this.getPracticeUnfilledJobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date))
+        foundPracticeUnfilledJobs = this.getPracticeUnfilledJobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date))
       }
       if (this.getPracticeDeclinedJobs.length > 0) {
-        this.foundPracticeDeclinedJobs = this.getPracticeDeclinedJobs.filter(job => job.platform_job.declined_at === date)
+        foundPracticeDeclinedJobs = this.getPracticeDeclinedJobs.filter(job => job.platform_job.declined_at === date)
       }
       if (this.getPracticeAppliedJobsReminder.length > 0) {
-        this.foundPracticeAppliedJobsReminder = this.getPracticeAppliedJobsReminder.filter(job => job.platform_job.selection_date === date)
+        foundPracticeAppliedJobsReminder = this.getPracticeAppliedJobsReminder.filter(job => job.platform_job.selection_date === date)
       }
       if (this.getPracticeAvailableJobsReminder.length > 0) {
-        this.foundPracticeAvailableJobsReminder = this.getPracticeAvailableJobsReminder.filter(job => job.platform_job.selection_date === date)
+        foundPracticeAvailableJobsReminder = this.getPracticeAvailableJobsReminder.filter(job => job.platform_job.selection_date === date)
+      }
+      this.foundPracticeJobs = [
+        ...foundPracticeCurrentJobs, ...foundPracticeAppliedJobs, ...foundPracticeUnfilledJobs,
+        ...foundPracticeDeclinedJobs, ...foundPracticeAppliedJobsReminder, ...foundPracticeAvailableJobsReminder
+      ]
+      if (this.foundPracticeJobs.length > 0) {
+        setTimeout(() => {
+          this.viewPracticeJobs = true
+        }, 500)
       }
     },
-    findPerWeek({ date, shift }) {
+    findPerWeekPractice({ date, shift }) {
       if (this.getPracticeAllocatedJobs.length > 0) {
         this.foundPracticeCurrentJobs = this.getPracticeAllocatedJobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === shift)
       }
@@ -315,6 +275,14 @@ export default {
 <style scoped>
 .info-section {
   background-image: url("/images/hubzz-bg.png");
+}
+.info-card {
+  height: 300px;
+}
+@media screen and (min-width: 768px) {
+  .info-card {
+    height: 600px;
+  }
 }
 ::-webkit-scrollbar {
   width: 10px;

@@ -3,7 +3,7 @@
     <div>
       <div class="flex flex-row flex-wrap justify-start">
         <div
-          class="card cursor-pointer rounded-lg shadow-lg m-2 p-5 hover:bg-grey"
+          class="card cursor-pointer rounded-lg shadow-lg m-2 p-5 bg-grey-light"
           v-for="practice in practices"
           :key="practice.id"
         >

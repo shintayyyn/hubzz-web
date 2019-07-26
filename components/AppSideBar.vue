@@ -13,6 +13,7 @@
         ></span>
         <nuxt-link
           :to="item.route"
+          :event="isDisabled(item.route)"
           class="block no-underline p-4"
           :class="`/${$route.path.split('/')[1]}` == item.route ? 'text-yellow-dark' : 'text-black hover:text-grey-light'"
         >
@@ -93,9 +94,11 @@ export default {
     }
   },
   methods: {
+    isDisabled(routeName) {
+      return this.$route.path === routeName ? '' : 'click'
+    },
     signout() {
       this.$emit("modal", true);
-      // this.$store.commit('TOGGLE_SIGNOUT', true)
     },
     close() {
       this.$store.commit("TOGGLE_SIDEBAR", false);

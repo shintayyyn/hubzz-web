@@ -54,12 +54,14 @@
         :loading="loading"
       />
     </div>
+
     <div class="locum-shield" v-if="modal"></div>
     <transition name="slide" mode="out-in">
       <div class="locum-modal shadow-lg" v-if="modal">
         <LocumDetailModal @close="modal = false" :user="user"/> <!--insert :locum jobs here-->
       </div>
     </transition>
+    
   </div>
 </template>
 <script>
