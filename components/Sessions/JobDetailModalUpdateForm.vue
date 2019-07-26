@@ -165,12 +165,11 @@
               />
             </div>
             <div class="px-1 w-full md:w-1/2">
-              <AppInput
+              <AppTime
                 v-model="form.time_start"
                 :type="'time'"
                 :name="'time_start'"
                 :label="'Start Time'"
-                :placeholder="''"
                 :error="this.formError.find(error => error.field === 'time_start')"
               />
             </div>
@@ -183,12 +182,11 @@
               />
             </div>
             <div class="px-1 w-full md:w-1/2">
-              <AppInput
+              <AppTime
                 v-model="form.time_end"
                 :type="'time'"
                 :name="'time_end'"
                 :label="'End Time'"
-                :placeholder="''"
                 :error="this.formError.find(error => error.field === 'time_end')"
               />
             </div>
@@ -336,6 +334,7 @@
 import { gmapApi } from 'vue2-google-maps'
 import AppInput from '@/components/Base/AppInput'
 import AppDate from '@/components/Base/AppDate'
+import AppTime from '@/components/Base/AppTime'
 import AppSelect from '@/components/Base/AppSelect'
 import AppButton from '@/components/Base/AppButton'
 import AppTextarea from '@/components/Base/AppTextarea'
@@ -350,6 +349,7 @@ export default {
   components: {
     AppInput,
     AppDate,
+    AppTime,
     AppSelect,
     AppButton,
     AppTextarea,

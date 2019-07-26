@@ -10,7 +10,6 @@
       <div class="w-full pr-0 lg:pr-2 lg:w-1/2">
         <div class="rounded-lg shadow-lg p-8">
           <div class="float-right">
-            <!-- <div class="font-bold text-sm sm:text-md">Avatar</div> -->
             <div class="text-xs sm:text-sm mb-8">
               <svgicon name="no-avatar" height="80" width="80" />
             </div>
@@ -144,11 +143,8 @@ export default {
     },
     appoint() {
       this.$axios.$put(`/api/v1/practice/jobs/${this.$route.params.id}/applicants/${this.user.id}/appoint`).then(res => {
+        this.$emit('appointed')
         this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Assign locum successfully' })
-        // add confirmation modal if the user want to view the appointed locum or want to appoint more locum in the applied jobs
-        this.$store.commit('session/UPDATE_APPLIED_JOBS', this.$route.params.id)
-        this.$emit('close')
-        // this.$router.push('/sessions?session_status=allocated')
       })
     },
     downloadItem(fileUrl, fileName) {
