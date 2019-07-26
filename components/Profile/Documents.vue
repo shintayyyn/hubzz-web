@@ -84,7 +84,7 @@ export default {
         res.data.practice_document_types.forEach(item => {
           this.practiceDocumentTypes.push(item)
         })
-      })
+      }),
 
     ]).then(() => {
        this.practiceComplianceDocuments = this.practiceDocumentTypes.map((practiceDocumentType) => {

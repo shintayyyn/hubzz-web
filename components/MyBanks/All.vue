@@ -149,11 +149,18 @@ export default {
       // d.classList.toggle('toggled-right')
       // document.body.style.overflow = 'hidden'
       // this.$store.commit('SET_MYLOCUMDETAIL_MODAL', true)
-      console.log('hey')
-       this.$axios.$get(`/api/v1/practice/locums/${id}`).then(res => {  //TEMPORARY 
+
+      Promise.all([
+        
+        this.$axios.$get(`/api/v1/practice/locums/${id}`).then(res => {  //TEMPORARY 
         this.user = res.data.user
-        this.modal = true                                           
+                                                   
       })
+      ]).then(() =>{
+
+        this.modal = true
+      })
+      
       //call jobs
     },
     pagechanged(e) {
