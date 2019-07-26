@@ -23,7 +23,7 @@
         <JobDetailModalCandidates
           :applicants="applicants"
           v-if="job.status === 'Applied'"
-          @show="modal = true"
+          @show="showLocum($event)"
         />
         <JobDetailModalLocum
           :user="user"
@@ -36,11 +36,16 @@
         @close="close"
         v-if="job.status === 'Current' || job.status === 'Applied' || job.status === 'Available'"
       />
+      <JobDetailModalCompleteForm
+        :job_parts="job.job_parts"
+        @close="close"
+        v-if="job.status === 'Current'"
+      />
     </div>
     <div class="applied-locum-shield" v-if="modal"></div>
     <transition name="slide" mode="out-in">
       <div class="applied-locum-modal shadow-lg" v-if="modal">
-        <AppliedLocumDetailModal @close="modal = false" :user="user" />
+        <JobDetailModalShowCandidate @close="modal = false" :user="user" @appointed="close" />
       </div>
     </transition>
   </div>
@@ -51,7 +56,8 @@ import JobDetailModalUpdateForm from '@/components/Sessions/JobDetailModalUpdate
 import JobDetailModalCandidates from '@/components/Sessions/JobDetailModalCandidates'
 import JobDetailModalLocum from '@/components/Sessions/JobDetailModalLocum'
 import JobDetailModalCancelForm from '@/components/Sessions/JobDetailModalCancelForm'
-import AppliedLocumDetailModal from '@/components/Sessions/AppliedLocumDetailModal'
+import JobDetailModalCompleteForm from '@/components/Sessions/JobDetailModalCompleteForm'
+import JobDetailModalShowCandidate from '@/components/Sessions/JobDetailModalShowCandidate'
 export default {
   props: ['job'],
   components: {
@@ -59,8 +65,9 @@ export default {
     JobDetailModalUpdateForm,
     JobDetailModalCandidates,
     JobDetailModalLocum,
+    JobDetailModalCompleteForm,
     JobDetailModalCancelForm,
-    AppliedLocumDetailModal,
+    JobDetailModalShowCandidate,
   },
   data() {
     return {
@@ -100,6 +107,10 @@ export default {
           return res.data.profession_category.optional_compliance_documents.some(optional_compliance_document => optional_compliance_document.id === compliance_document.compliance_document.id)
         })
       })
+    },
+    showLocum(user) {
+      this.user = user
+      this.modal = true
     },
     close() {
       if (this.$route.fullPath === '/dashboard') {

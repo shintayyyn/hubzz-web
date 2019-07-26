@@ -94,7 +94,6 @@ export default {
     }
   },
   created() {
-    console.log(this.total)
     const query = {
       ...this.$route.query,
       current_page: this.$route.query.current_page || 1

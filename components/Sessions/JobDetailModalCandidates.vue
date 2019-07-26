@@ -22,11 +22,10 @@ export default {
   props: ['applicants'],
   methods: {
     show(id) {
-      this.$emit('show', id)
-      // this.$axios.$get(`/api/v1/practice/locums/${id}`).then(res => {
-      //   console.log(res)
-      //   this.user = res.data.user
-      // })
+      this.$axios.$get(`/api/v1/practice/locums/${id}`).then(res => {
+        const user = res.data.user
+        this.$emit('show', user)
+      })
       // console.log(this.$route.query)
       // const query = {
       //   ...this.$route.query
