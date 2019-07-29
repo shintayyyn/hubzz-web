@@ -301,6 +301,7 @@
                   :label="'Start Date'"
                   :error="formError.find(item => item.field === 'date_start')"
                   @blur="checkEmptyField(form.date_start,'date_start')"
+
                 />
               </div>
               <div class="px-1 w-full md:w-1/2">
@@ -785,6 +786,11 @@ export default {
       );
     },
     publish() {
+      this.formError = []
+      /*this.Validate(this.form)
+      if (!this.formError.length) {
+
+      } --> REFACTOR VALIDATION USING THIS. READ ABOUT VUE MIXIN*/ 
       this.reCheckEmptyField()
       if (this.formError.length == 0) {
         this.form.clinical_system_id = this.form.clinical_system_id.map(

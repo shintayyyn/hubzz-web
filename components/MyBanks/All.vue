@@ -1,50 +1,53 @@
 <template>
-  <div class="flex flex-row flex-wrap w-full justify-start">
+  <div>
     <AppLoading :loading="loading" :message="'Loading'" v-if="loading" />
-    <div
-      class="card xl:w-4 sm:w-full sm:bg-yellow-dark md:bg-purple lg:bg-red xl:bg-blue bg-orange-lighter rounded-lg shadow-lg bg-grey-light m-2 p-4 hover:bg-grey"
-      v-for="user in locums"
-      :key="user.id"
-    >
-      <div class="flex justify-end z-50">
-        <template v-if="user.is_favorite">
-          <svgicon
-            name="on-star"
-            height="32"
-            width="32"
-            class="cursor-pointer"
-            @click="favorite(user.id)"
-          />
-        </template>
-        <template v-else>
-          <svgicon
-            name="off-star"
-            height="32"
-            width="32"
-            class="cursor-pointer"
-            @click="favorite(user.id)"
-          />
-        </template>
-      </div>
-      <div class="flex flex-wrap text-center mt-4 cursor-pointer" @click="show(user.id)">
-        <div class="w-full">
-          <div v-if="!user.avatar">
-            <svgicon name="no-avatar" height="115" width="115" />
-          </div>
-          <embed
-            class="object-contain h-32 rounded-full mr-4"
-            :src="user.avatar ? user.avatar.file.url:null"
-          />
+    <div class="flex flex-row flex-wrap w-full justify-start">
+      <div
+        class="card w-24 rounded-lg shadow-lg bg-grey-light m-2 p-4 hover:bg-grey"
+        v-for="user in locums"
+        :key="user.id"
+      >
+        <div class="flex justify-end z-50">
+          <template v-if="user.is_favorite">
+            <svgicon
+              name="on-star"
+              height="32"
+              width="32"
+              class="cursor-pointer"
+              @click="favorite(user.id)"
+            />
+          </template>
+          <template v-else>
+            <svgicon
+              name="off-star"
+              height="32"
+              width="32"
+              class="cursor-pointer"
+              @click="favorite(user.id)"
+            />
+          </template>
         </div>
+        <div class="flex flex-wrap text-center mt-4 cursor-pointer" @click="show(user.id)">
+          <div class="w-full">
+            <div v-if="!user.avatar">
+              <svgicon name="no-avatar" height="115" width="115" />
+            </div>
+            <embed
+              class="object-contain h-32 rounded-full mr-4"
+              :src="user.avatar ? user.avatar.file.url:null"
+            />
+          </div>
 
-        <div class="w-full font-bold text-sm sm:text-lg my-4">{{user.personal_detail.name}}</div>
-        <div
-          class="w-full mb-4 font-bold text-grey-dark text-sm sm:text-lg"
-        >{{user.locum_detail.profession.name}}</div>
-        <!-- <div class="w-full font-bold text-grey-dark text-sm sm:text-lg">{{user.locum_detail.headline}}</div> -->
+          <div class="w-full font-bold text-sm sm:text-lg my-4">{{user.personal_detail.name}}</div>
+          <div
+            class="w-full mb-4 font-bold text-grey-dark text-sm sm:text-lg"
+          >{{user.locum_detail.profession.name}}</div>
+          <!-- <div class="w-full font-bold text-grey-dark text-sm sm:text-lg">{{user.locum_detail.headline}}</div> -->
+        </div>
       </div>
     </div>
-    <div class="m-10">
+
+    <div v-if="locums" class="m-10 xl:-ml-32">
       <AppPagination
         :total="total"
         :totalPages="totalPages"
@@ -53,10 +56,12 @@
         :loading="loading"
       />
     </div>
+
     <div class="locum-shield" v-if="modal"></div>
     <transition name="slide" mode="out-in">
       <div class="locum-modal shadow-lg" v-if="modal">
-        <LocumDetailModal @close="modal = false" :user="user" />
+        <MyLocumDetailModal @close="modal = false" :user="user" :jobs="jobs" />
+        <!--insert :locum jobs here-->
       </div>
     </transition>
   </div>
@@ -64,12 +69,12 @@
 <script>
 import AppPagination from '@/components/Base/AppPagination'
 import AppLoading from '@/components/Base/AppLoading'
-import LocumDetailModal from '@/components/MyBanks/LocumDetailModal' //TEMPORARY
+import MyLocumDetailModal from '@/components/MyBanks/MyLocumDetailModal' //TEMPORARY
 export default {
   components: {
     AppPagination,
     AppLoading,
-    LocumDetailModal
+    MyLocumDetailModal
   },
   data() {
     return {
@@ -80,7 +85,8 @@ export default {
       perPage: 0,
       loading: false,
       modal: false, //TEMPORARY
-      user: null //TEMPORARY
+      user: null, //TEMPORARY
+      jobs: null
     }
   },
   beforeDestroy() {
@@ -146,11 +152,19 @@ export default {
       // d.classList.toggle('toggled-right')
       // document.body.style.overflow = 'hidden'
       // this.$store.commit('SET_MYLOCUMDETAIL_MODAL', true)
-      console.log('hey')
-      this.$axios.$get(`/api/v1/practice/locums/${id}`).then(res => {  //TEMPORARY 
-        this.user = res.data.user
-        this.modal = true
+
+      Promise.all([
+        this.$axios.$get(`/api/v1/practice/locums/${id}`).then(res => {
+          this.user = res.data.user
+        }),
+      ]).then(() => {
+        this.$axios.$get(`/api/v1/practice/jobs?locum_detail_id=${this.user.locum_detail.id}`).then(res => {
+          this.jobs = res.data.jobs
+        }),
+          this.modal = true
       })
+
+      //call jobs
     },
     pagechanged(e) {
       const query = {
@@ -193,7 +207,7 @@ export default {
 }
 @media screen and (min-width: 1200px) {
   .locum-modal {
-    width: 70%;
+    width: 80%;
   }
 }
 </style>

@@ -1,29 +1,42 @@
 <template>
   <section>
-    <div class="flex flex-row flex-wrap justify-start">
-      <div
-        class="card cursor-pointer rounded-lg shadow-lg m-2 p-5 hover:bg-grey"
-        v-for="practice in practices"
-        :key="practice.id"
-      >
-        <div class="flex justify-end z-50">
-          <svgicon
-            name="on-star"
-            height="32"
-            width="32"
-            class="cursor-pointer"
-            @click="unfavorite(practice.id, index)"
-          />
-        </div>
-        <div class="flex flex-wrap text-center mt-4 cursor-pointer" @click="show(practice.id)">
-          <div class="w-full">
-            <svgicon name="no-avatar" height="60" width="60" />
+    <div>
+      <div class="flex flex-row flex-wrap justify-start">
+        <div
+          class="card cursor-pointer rounded-lg shadow-lg m-2 p-5 bg-grey-light"
+          v-for="practice in practices"
+          :key="practice.id"
+        >
+          <div class="flex justify-end z-50">
+            <svgicon
+              name="on-star"
+              height="32"
+              width="32"
+              class="cursor-pointer"
+              @click="unfavorite(practice.id, index)"
+            />
           </div>
-          <div class="w-full font-bold text-sm sm:text-lg my-4">{{practice.surgery.name}}</div>
-          <div class="w-full font-bold text-grey-dark text-sm sm:text-lg">{{practice.email}}</div>
+          <div class="flex flex-wrap text-center mt-4 cursor-pointer" @click="show(practice.id)">
+            <div class="w-full">
+              <svgicon name="no-avatar" height="60" width="60" />
+            </div>
+            <div class="w-full font-bold text-sm sm:text-lg my-4">{{practice.surgery.name}}</div>
+            <div class="w-full font-bold text-grey-dark text-sm sm:text-lg">{{practice.email}}</div>
+          </div>
         </div>
       </div>
     </div>
+
+    <div v-if="practices" class="m-10 xl:-ml-32">
+      <AppPagination
+        :total="total"
+        :totalPages="totalPages"
+        :currentPage="currentPage"
+        @pagechanged="pagechanged"
+        :loading="loading"
+      />
+    </div>
+
     <div class="shield" v-if="modal"></div>
     <transition name="slide" mode="out-in">
       <div class="modal shadow-lg" v-if="modal">
@@ -33,35 +46,85 @@
   </section>
 </template>
 <script>
+import AppPagination from '@/components/Base/AppPagination'
+import AppLoading from '@/components/Base/AppLoading'
 import MyPracticeDetailModal from '@/components/MyPractice/MyPracticeDetailModal'
 export default {
   components: {
+    AppPagination,
+    AppLoading,
     MyPracticeDetailModal
   },
   data() {
     return {
       practices: [],
+      total: 0,
+      totalPages: 0,
+      currentPage: 0,
+      perPage: 0,
+      loading: false,
       modal: false,
       practice: null
     }
   },
+  beforeDestroy() {
+    let query = Object.assign({}, this.$route.query)
+    delete query.current_page
+    this.$router.push({ query })
+  },
+  watch: {
+    $route(to, from) {
+      this.currentPage = parseInt(to.query.current_page)
+      this.getFavoritePractices()
+    }
+  },
   created() {
-    this.$axios.$get(`/api/v1/locum/practices?locum_practice_type=Favorite`).then(res => {
-      this.practices = res.data.practices
+    const query = {
+      ...this.$route.query,
+      current_page: this.$route.query.current_page || 1
+    }
+
+    this.$axios.$get(`/api/v1/locum/practices/count?locum_practice_type=Favorite`).then(res => { //GET QUANTITY OF DATA
+      this.total = res.data.count
+      this.perPage = 6
+      this.totalPages = Math.ceil(this.total / this.perPage)
+      this.getFavoritePractices()
     })
+    // this.$axios.$get(`/api/v1/locum/practices?locum_practice_type=Favorite`).then(res => {
+    //   this.practices = res.data.practices
+    // })
   },
   methods: {
+    getFavoritePractices(){
+      this.loading = true
+      let offset = 0
+      offset = this.perPage * (parseInt(this.$route.query.current_page) - 1)
+      this.$axios.$get(`/api/v1/locum/practices?locum_practice_type=Favorite&limit=${this.perPage}&offset=${offset}`).then(res => {
+        this.practices = res.data.practices
+      })
+      this.loading=false
+    },
+
     unfavorite(id, index) {
       this.practices.splice(index, 1)
       this.$axios.$delete(`/api/v1/locum/practices/${id}/favorite`).then(res => {
         this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: [`${res.message}`] })
       })
     },
+
     show(id) {
       this.$axios.$get(`/api/v1/locum/practices/${id}`).then(res => {
         this.practice = res.data.practice
         this.modal = true
       })
+    },
+
+    pagechanged(e) {
+      const query = {
+        ...this.$route.query,
+        current_page: e || 1
+      }
+      this.$router.push({ query })
     }
   }
 }

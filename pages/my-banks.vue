@@ -16,6 +16,7 @@ import All from '@/components/MyBanks/All'
 import Appointed from '@/components/MyBanks/Appointed'
 import Rejected from '@/components/MyBanks/Rejected'
 import Withdrawn from '@/components/MyBanks/Withdrawn'
+
 export default {
   components: {
     MyBanksTab,
@@ -23,7 +24,7 @@ export default {
     All,
     Appointed,
     Rejected,
-    Withdrawn
+    Withdrawn,
   },
   middleware:'isVerified',
   created() {
