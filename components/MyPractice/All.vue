@@ -58,12 +58,12 @@ export default {
   },
   created() {
     this.$axios.$get(`/api/v1/locum/practices`).then(res => {
+      console.log(res)
       this.practices = res.data.practices
     })
   },
   methods: {
     favorite(id) {
-      console.log(id)
       this.$axios.$post(`/api/v1/locum/practices/${id}/favorite`).then(res => {
         this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: [`${res.message}`] })
       })

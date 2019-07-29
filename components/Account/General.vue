@@ -127,6 +127,32 @@ export default {
       formError: []
     };
   },
+  watch: {
+    'form.email'(value) {
+      this.formError = this.formError.filter(error => error.field !== 'email')
+    },
+    'form.first_name'() {
+      this.formError = this.formError.filter(error => error.field !== 'first_name')
+    },
+    'form.last_name'() {
+      this.formError = this.formError.filter(error => error.field !== 'last_name')
+    },
+    'form.gender'() {
+      this.formError = this.formError.filter(error => error.field !== 'gender')
+    },
+    'form.mobile_number'() {
+      this.formError = this.formError.filter(error => error.field !== 'mobile_number')
+    },
+    'form.post_code'() {
+      this.formError = this.formError.filter(error => error.field !== 'post_code')
+    },
+    'form.address_line_1'() {
+      this.formError = this.formError.filter(error => error.field !== 'address_line_1')
+    },
+    'form.address_line_3'() {
+      this.formError = this.formError.filter(error => error.field !== 'address_line_3')
+    },
+  },
   created() {
     this.$axios.$get("/api/v1/me").then(res => {
       this.form.email = res.data.user.email;

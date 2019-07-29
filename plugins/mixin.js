@@ -1,6 +1,15 @@
 import Vue from 'vue'
 Vue.mixin({
   methods: {
+    getDateArray(start, end) {
+      let arr = new Array();
+      let dt = new Date(start);
+      while (dt <= new Date(end)) {
+        arr.push(this.$moment(new Date(dt)).format('YYYY-MM-DD'));
+        dt.setDate(dt.getDate() + 1);
+      }
+      return arr;
+    },
     Validate(form, lists) {
       let items = Object.entries(form)
       for (const [key, value] of items) {
@@ -63,37 +72,5 @@ Vue.mixin({
         )
       }
     },
-    ValidateInput(e) {
-      // if (e.key >= 0 && e.key <= 9) {
-      //   if (e.target.value.length > 11) {
-      //     e.preventDefault()
-      //   }
-      // } else {
-      //   e.preventDefault()
-      // }
-    },
-    // 
-    ValidateText(value, field) {
-      let index = this.formError.findIndex(item => item.field === field)
-      if (index >= 0) {
-        this.formError.splice(index, 1)
-      }
-      if (!value) {
-        this.formError.push(
-          { field: field, message: 'Required', validation: 'required'}
-        )
-      } 
-    },
-    
-    ValidateDate(start, end) {
-      if (this.$moment(end).format('YYYY-MM-DD') < this.$moment(start).format('YYYY-MM-DD')) {
-        this.formError.push(
-          { field: 'to', message: 'End Date must be later than Start Date', validation: 'invalid'}
-        )
-      }
-    },
-    ValidateAppointment(appointment, unavailable) {
-      
-    }
   }
 })

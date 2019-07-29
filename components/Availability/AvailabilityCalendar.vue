@@ -265,15 +265,6 @@ export default {
       }
       this.$emit('open', unavaibleDate, appointmentDate, allocatedDate)
     },
-    getDateArray(start, end) {
-      let arr = new Array();
-      let dt = new Date(start);
-      while (dt <= new Date(end)) {
-        arr.push(this.$moment(new Date(dt)).format('YYYY-MM-DD'));
-        dt.setDate(dt.getDate() + 1);
-      }
-      return arr;
-    }
   }
 }
 </script>
