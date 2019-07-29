@@ -37,16 +37,14 @@
         </div>
       </div>
 
-      <div v-if="practices" class="m-10 xl:-ml-32">
+      <div class="mt-5 flex justify-center" v-if="practices.length > 0">
         <AppPagination
           :total="total"
           :totalPages="totalPages"
           :currentPage="currentPage"
           @pagechanged="pagechanged"
-          :loading="loading"
         />
       </div>
- 
     </div>
     <div class="shield" v-if="modal"></div>
     <transition name="slide" mode="out-in">
@@ -58,22 +56,18 @@
 </template>
 <script>
 import AppPagination from '@/components/Base/AppPagination'
-import AppLoading from '@/components/Base/AppLoading'
 import MyPracticeDetailModal from '@/components/MyPractice/MyPracticeDetailModal'
 export default {
   components: {
     AppPagination,
-    AppLoading,
     MyPracticeDetailModal
   },
   data() {
     return {
       practices: [],
+      perPage: 5,
       total: 0,
-      totalPages: 0,
-      currentPage: 0,
-      perPage: 0,
-      loading: false,
+      currentPage: parseInt(this.$route.query.current_page),
       modal: false,
       practice: null
     }
@@ -83,10 +77,24 @@ export default {
     delete query.current_page
     this.$router.push({ query })
   },
+  computed: {
+    totalPages() {
+      return Math.ceil(this.total / this.perPage);
+    }
+  },
   watch: {
+    practices(newValue, oldValue) {
+      if (newValue.length !== 0 && (oldValue.length > newValue.length)) {
+        this.getPractices()
+      }
+      if (newValue.length === 0 && this.$route.query.current_page !== 1) {
+        this.pagechanged(this.totalPages)
+      }
+    },
     $route(to, from) {
-      this.currentPage = parseInt(to.query.current_page)
-      this.getAllPractices()
+      if (from.query.current_page !== to.query.current_page) {
+        this.getPractices()
+      }
     }
   },
   created() {
@@ -94,40 +102,35 @@ export default {
       ...this.$route.query,
       current_page: this.$route.query.current_page || 1
     }
+    this.$router.push({ query })
+    this.getPracticesCount()
+    this.getPractices()
 
-    this.$axios.$get(`/api/v1/locum/practices/count`).then(res => { //GET QUANTITY OF DATA
-      this.total = res.data.count
-      this.perPage = 6
-      this.totalPages = Math.ceil(this.total / this.perPage)
-      this.getAllPractices()
-    })
-
-    // this.$axios.$get(`/api/v1/locum/practices`).then(res => {
-    //   this.practices = res.data.practices
-    // })
   },
   methods: {
-    getAllPractices(){
-      this.loading = true
-      let offset = 0
-      offset = this.perPage * (parseInt(this.$route.query.current_page) - 1)
+    getPracticesCount() {
+      this.$axios.$get(`/api/v1/locum/practices/count`).then(res => { //GET QUANTITY OF DATA
+        this.total = res.data.count
+      })
+    },
+    getPractices() {
+      let offset = 0;
+      offset = this.perPage * (parseInt(this.$route.query.current_page) - 1);
       this.$axios.$get(`/api/v1/locum/practices?limit=${this.perPage}&offset=${offset}`).then(res => {
         this.practices = res.data.practices
       })
-      this.loading=false
     },
 
     favorite(id) {
-      console.log(id)
       this.$axios.$post(`/api/v1/locum/practices/${id}/favorite`).then(res => {
-        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: `${res.message}` })
+        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: [`${res.message}`] })
       })
     },
 
     unfavorite(id, index) {
       this.practices.splice(index, 1)
       this.$axios.$delete(`/api/v1/locum/practices/${id}/favorite`).then(res => {
-        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: `${res.message}` })
+        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: [`${res.message}`] })
       })
     },
 

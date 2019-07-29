@@ -292,16 +292,6 @@ export default {
     hasLocumUnavailabilities(date, type) {
       return this.getLocumUnavailabilities.find(job => job.date === date && job.shifts.find(shift => shift.name === type))
     },
-    // it returns an array of dates
-    getDateArray(start, end) {
-      let arr = new Array();
-      let dt = new Date(start);
-      while (dt <= new Date(end)) {
-        arr.push(this.$moment(new Date(dt)).format('YYYY-MM-DD'));
-        dt.setDate(dt.getDate() + 1);
-      }
-      return arr;
-    }
   }
 }
 </script>

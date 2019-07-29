@@ -3,9 +3,10 @@
     <div class="px-10">
       <TermsAndConditionsTabs />
     </div>
-    <div class="px-10 mt-5" >
-      <TermsAndConditions v-if="$store.state.termsAndConditions.activeTab === 'terms_and_conditions'" />
-      <PrivacyPolicy v-if="$store.state.termsAndConditions.activeTab === 'privacy_policy'" />
+    <div class="px-10 mt-5">
+      <transition name="fade" mode="out-in">
+        <component :is="activeComponent" />
+      </transition>
     </div>
   </section>
 </template>
@@ -18,6 +19,18 @@ export default {
     TermsAndConditionsTabs,
     TermsAndConditions,
     PrivacyPolicy
-  }
+  },
+  computed: {
+    activeComponent() {
+      return this.$route.query.active_tab
+    },
+  },
+  created() {
+    const query = {
+      ...this.$route.query,
+      active_tab: this.$route.query.active_tab || 'termsAndConditions'
+    }
+    this.$router.push({ query })
+  },
 }
 </script>

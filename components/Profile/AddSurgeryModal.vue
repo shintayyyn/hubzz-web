@@ -102,7 +102,7 @@ export default {
     add() {
       this.$axios.$post(`/api/v1/practice/practice-children`, { surgery_id: this.selectedSurgery.id }).then(res => {
         this.$emit('add', res.data.practice_child)
-        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: `${res.message}` })
+        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: [`${res.message}`] })
         this.modal = false
         // this.$emit('close')
       })

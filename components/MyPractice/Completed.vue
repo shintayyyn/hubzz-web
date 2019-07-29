@@ -4,13 +4,10 @@
       <div class="flex flex-row flex-wrap justify-start">
         <div
           class="card cursor-pointer rounded-lg shadow-lg m-2 p-5 bg-grey-light"
-          
           v-for="practice in practices"
           :key="practice.id"
         >
-          <div 
-            v-if="practice.is_favorite==0"
-            class="flex justify-end z-50">
+          <div v-if="practice.is_favorite==0" class="flex justify-end z-50">
             <svgicon
               name="off-star"
               height="32"
@@ -29,7 +26,7 @@
         </div>
       </div>
 
-        <div v-if="practices" class="m-10 xl:-ml-32">
+      <div v-if="practices" class="m-10 xl:-ml-32">
         <AppPagination
           :total="total"
           :totalPages="totalPages"
@@ -38,7 +35,6 @@
           :loading="loading"
         />
       </div>
-    
     </div>
     <div class="shield" v-if="modal"></div>
     <transition name="slide" mode="out-in">
@@ -61,11 +57,9 @@ export default {
   data() {
     return {
       practices: [],
+      perPage: 5,
       total: 0,
-      totalPages: 0,
-      currentPage: 0,
-      perPage: 0,
-      loading: false,
+      currentPage: parseInt(this.$route.query.current_page),
       modal: false,
       practice: null
     }
@@ -75,10 +69,24 @@ export default {
     delete query.current_page
     this.$router.push({ query })
   },
+  computed: {
+    totalPages() {
+      return Math.ceil(this.total / this.perPage);
+    }
+  },
   watch: {
+    practices(newValue, oldValue) {
+      if (newValue.length !== 0 && (oldValue.length > newValue.length)) {
+        this.getCompletedPractices()
+      }
+      if (newValue.length === 0 && this.$route.query.current_page !== 1) {
+        this.pagechanged(this.totalPages)
+      }
+    },
     $route(to, from) {
-      this.currentPage = parseInt(to.query.current_page)
-      this.getCompletedPractices()
+      if (from.query.current_page !== to.query.current_page) {
+        this.getCompletedPractices()
+      }
     }
   },
   created() {
@@ -86,32 +94,34 @@ export default {
       ...this.$route.query,
       current_page: this.$route.query.current_page || 1
     }
-
-    this.$axios.$get(`/api/v1/locum/practices/count?locum_practice_type=Completed`).then(res => { //GET QUANTITY OF DATA
-      this.total = res.data.count
-      this.perPage = 6
-      this.totalPages = Math.ceil(this.total / this.perPage)
-      this.getCompletedPractices()
-    })
-
-    // this.$axios.$get(`/api/v1/locum/practices?locum_practice_type=Completed`).then(res => {
-    //   this.practices = res.data.practices
-    // })
+    this.$router.push({ query })
+    this.getCompletedPracticesCount()
+    this.getCompletedPractices()
   },
   methods: {
-    getCompletedPractices(){
-      this.loading = true
+    getCompletedPracticesCount() {
+      this.$axios.$get(`/api/v1/locum/practices/count?locum_practice_type=Completed`).then(res => { //GET QUANTITY OF DATA
+        this.total = res.data.count
+        this.perPage = 6
+      })
+    },
+    getCompletedPractices() {
       let offset = 0
       offset = this.perPage * (parseInt(this.$route.query.current_page) - 1)
       this.$axios.$get(`/api/v1/locum/practices?locum_practice_type=Completed&limit=${this.perPage}&offset=${offset}`).then(res => {
         this.practices = res.data.practices
       })
-      this.loading=false
     },
 
     favorite(id) {
       this.$axios.$post(`/api/v1/locum/practices/${id}/favorite`).then(res => {
-        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: `${res.message}` })
+        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: [`${res.message}`] })
+      })
+    },
+    unfavorite(id, index) {
+      this.practices.splice(index, 1)
+      this.$axios.$delete(`/api/v1/locum/practices/${id}/favorite`).then(res => {
+        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: [`${res.message}`] })
       })
     },
     show(id) {

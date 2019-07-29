@@ -2,13 +2,10 @@ export const state = () => ({
   notification: {
     enabled: false,
     status: '',
-    text: ''
+    text: [],
+    closable: false,
   },
   toggled_sidebar: false,
-  // locum
-  // practice
-  toggled_create_job_modal: false,
-  toggled_add_surgery_modal: false,
   locum_private_practices: [],
 })
 
@@ -17,16 +14,10 @@ export const mutations = {
     state.notification.enabled = payload.enabled
     state.notification.status = payload.status
     state.notification.text = payload.text
+    state.notification.closable = payload.closable
   },
   TOGGLE_SIDEBAR(state, payload) {
     state.toggled_sidebar = payload
-  },
-  // practice
-  TOGGLE_CREATE_JOB_MODAL(state, payload) {
-    state.toggled_create_job_modal = payload
-  },
-  TOGGLE_ADD_SURGERY_MODAL(state, payload) {
-    state.toggled_add_surgery_modal = payload
   },
   SET_LOCUM_PRIVATE_PRACTICES(state, payload) {
     state.locum_private_practices = payload
@@ -37,6 +28,7 @@ export const mutations = {
 }
 
 export const actions = {
+
 }
 
 export const getters = {

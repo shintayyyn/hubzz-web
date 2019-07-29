@@ -37,14 +37,20 @@
           <div
             class="rounded-lg bg-grey-light px-2 py-1 text-sm sm:text-md flex items-center"
             v-if="type === 'solo'"
-          >Select all that apply. Shifts that are already booked are greyed-out.</div>
+          >
+            Select all that apply. Shifts that are already booked are greyed-out.
+            <div
+              v-if="formError.find(item => item.field === 'shift_id')"
+              class="absolute pin-r bg-red p-1 text-xs sm:text-base text-white"
+            >Select atleast one shift</div>
+          </div>
           <div
             class="rounded-lg bg-grey-light px-2 py-1 text-sm sm:text-md flex items-center"
             v-else
           >
             Select all that apply.
             <div
-              v-if="shifts_error"
+              v-if="formError.find(item => item.field === 'shift_id')"
               class="absolute pin-r bg-red p-1 text-xs sm:text-base text-white"
             >Select atleast one shift</div>
           </div>
@@ -108,7 +114,6 @@ export default {
     },
   },
   created() {
-    // filter shifts from appointmentDate / allocatedJobDate selected shifts
     if (this.type === 'solo') {
       if (this.unavailableDate) {
         let shifts = this.unavailableDate.shifts
@@ -129,52 +134,15 @@ export default {
     }
   },
   watch: {
-    "form.date_start"(value) {
-      this.form.date_start = this.$moment(this.form.date_start).format('YYYY-MM-DD')
-
-      // splice from formerror
-      let index = this.formError.findIndex(
-        item => item.field === "date_start"
-      );
-      if (index >= 0) {
-        this.formError.splice(index, 1);
-      }
-      // validate
-      if (!value) {
-        // required
-        this.formError.push({
-          field: "date_start",
-          message: "Enter start date"
-        });
-      }
+    'form.date_start'(value) {
+      this.formError = this.formError.filter(error => error.field !== 'date_start')
     },
-    "form.date_end"(value) {
-      this.form.date_end = this.$moment(this.form.date_end).format('YYYY-MM-DD')
-
-      // splice from formerror
-      let index = this.formError.findIndex(
-        item => item.field === "date_end"
-      );
-      if (index >= 0) {
-        this.formError.splice(index, 1);
-      }
-      // validate
-      if (!value) {
-        // required
-        this.formError.push({
-          field: "date_end",
-          message: "Enter end date"
-        });
-      }
+    'form.date_end'(value) {
+      this.formError = this.formError.filter(error => error.field !== 'date_end')
     },
-    "form.shift_id"(value) {
-      this.shifts_error = false
-      // validate
-      if (value.length === 0) {
-        this.shifts_error = true
-      }
-    }
-
+    'form.shift_id'(value) {
+      this.formError = this.formError.filter(error => error.field !== 'shift_id')
+    },
   },
   methods: {
     select(id) {
@@ -188,50 +156,43 @@ export default {
     },
     add() {
       this.formError = [];
-      this.shifts_error = false
-
-      if (!this.form.date_start) {
-        this.formError.push({
-          field: "date_start", message: "Enter start date"
-        })
-      }
-      if (this.$moment(this.form.date_end).diff(this.form.date_start) < 0) {
-        this.formError.push({
-          field: "date_end", message: "Invalid Date End"
-        });
-      }
-      if (!this.form.date_end) {
-        this.formError.push({
-          field: "date_end", message: "Enter end date"
-        })
-      }
-      if (this.form.shift_id.length === 0) {
-        this.shifts_error = true
-        return
-      }
-
-
-      this.form.date_start = this.$moment(this.form.date_start).format('YYYY-MM-DD')
-      this.form.date_end = this.$moment(this.form.date_end).format('YYYY-MM-DD')
+      this.Validate(this.form, ['id'])
       if (!this.formError.length) {
+        this.form.date_start = this.$moment(this.form.date_start).format('YYYY-MM-DD')
+        this.form.date_end = this.$moment(this.form.date_end).format('YYYY-MM-DD')
         this.$axios.$post(`/api/v1/locum/unavailabilities`, this.form).then(res => {
           this.$store.commit('jobs/ADD_LOCUM_UNAVAILABILITIES', res.data.unavailabilities)
-          this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: `${res.message}` })
+          this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: [`${res.message}`] })
           this.$emit('close')
+        }).catch(err => {
+          err.response.data.error_messages.forEach(error => {
+            this.formError.push(error)
+          })
+          this.$store.commit('SET_NOTIFICATION', {
+            enabled: true,
+            status: "danger",
+            text: this.formError.map(error => error.message)
+          })
+        })
+      } else {
+        this.$store.commit('SET_NOTIFICATION', {
+          enabled: true,
+          status: "danger",
+          text: ["Please fill up all the forms"]
         })
       }
     },
     update() {
       this.$axios.$put(`/api/v1/locum/unavailabilities/${this.form.id}`, { shift_id: this.form.shift_id }).then(res => {
         this.$store.commit('jobs/UPDATE_LOCUM_UNAVAILABILITIES', res.data.unavailability)
-        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Shift updated' })
+        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: ['Shift updated'] })
         this.$emit('close')
       })
     },
     remove() {
       this.$axios.$delete(`/api/v1/locum/unavailabilities/${this.form.id}`).then(res => {
         this.$store.commit('jobs/REMOVE_LOCUM_UNAVAILABILITIES', this.form.id)
-        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: `${res.message}` })
+        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: [`${res.message}`] })
         this.$emit('close')
       })
     },

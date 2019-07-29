@@ -113,7 +113,7 @@ export default {
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
-            text: `${res.message}`
+            text: [`${res.message}`]
           });
           this.modal = false;
           this.$emit("close");

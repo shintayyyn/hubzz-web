@@ -54,44 +54,35 @@ export default {
   },
   watch: {
     "form.old_password"(value) {
-      // splice from formerror
       let index = this.formError.findIndex(
         item => item.field === "old_password"
       );
       if (index >= 0) {
         this.formError.splice(index, 1);
       }
-      // validate
       if (!value) {
-        // required
         this.formError.push({ field: "old_password", message: "Required" });
       }
     },
     "form.new_password"(value) {
-      // splice from formerror
       let index = this.formError.findIndex(
         item => item.field === "new_password"
       );
       if (index >= 0) {
         this.formError.splice(index, 1);
       }
-      // validate
       if (!value) {
-        // required
         this.formError.push({ field: "new_password", message: "Required" });
       }
     },
     "form.new_password_confirmation"(value) {
-      // splice from formerror
       let index = this.formError.findIndex(
         item => item.field === "new_password_confirmation"
       );
       if (index >= 0) {
         this.formError.splice(index, 1);
       }
-      // validate
       if (!value) {
-        // required
         this.formError.push({
           field: "new_password_confirmation",
           message: "Required"
@@ -120,7 +111,7 @@ export default {
               this.$store.commit("SET_NOTIFICATION", {
                 enabled: true,
                 status: "success",
-                text: "Password changed"
+                text: ["Password changed"]
               });
             })
             .catch(err => {
@@ -128,6 +119,12 @@ export default {
                 this.formError.push(error);
               });
             });
+        } else {
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "danger",
+            text: ["Please fill up all the forms"]
+          });
         }
       } catch (e) {
         console.log(e);

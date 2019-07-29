@@ -13,8 +13,9 @@ export default {
   methods: {
     cancel() {
       this.$axios.$delete(`/api/v1/locum/jobs/${this.$route.params.id}/apply`).then(res => {
-        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Cancelled' })
-        this.$router.push('/jobs?job_status=available')
+        this.$store.commit('jobs/REMOVE_LOCUM_APPLIED_JOB', res.data.job.id)
+        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: ['Cancelled'] })
+        this.$emit('close')
       })
     },
   }

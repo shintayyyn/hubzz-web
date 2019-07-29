@@ -19,7 +19,7 @@ export default {
   components: {
     AppButton
   },
-  props: ['compliances'],
+  props: ['compliances', 'job'],
   data() {
     return {
       userCompliance: [],
@@ -57,9 +57,10 @@ export default {
     },
     apply() {
       this.$axios.$post(`/api/v1/locum/jobs/${this.job.id}/apply`).then(res => {
-        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Saved' })
-        // or pass the id
-        this.$router.push(`/jobs?job_status=applied`)
+        this.$store.commit('jobs/REMOVE_LOCUM_AVAILABLE_JOB', res.data.job.id)
+        this.$store.commit('jobs/ADD_LOCUM_APPLIED_JOB', res.data.job)
+        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: ['Saved'] })
+        this.$emit('close')
       })
     },
   }

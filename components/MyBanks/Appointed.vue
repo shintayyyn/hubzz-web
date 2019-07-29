@@ -30,15 +30,17 @@
         <div class="flex flex-wrap text-center mt-4 cursor-pointer" @click="show(user.id)">
           <div class="w-full">
             <div v-if="!user.avatar">
-              <svgicon name="no-avatar" height="115" width="115"/>
+              <svgicon name="no-avatar" height="115" width="115" />
             </div>
             <embed
-            class="object-contain h-32 rounded-full mr-4"
-            :src="user.avatar ? user.avatar.file.url:null" 
-            >
+              class="object-contain h-32 rounded-full mr-4"
+              :src="user.avatar ? user.avatar.file.url:null"
+            />
           </div>
           <div class="w-full font-bold text-sm sm:text-lg my-4">{{user.personal_detail.name}}</div>
-          <div class="w-full font-bold text-grey-dark text-sm sm:text-lg">{{user.locum_detail.headline}}</div>
+          <div
+            class="w-full font-bold text-grey-dark text-sm sm:text-lg"
+          >{{user.locum_detail.headline}}</div>
         </div>
       </div>
     </div>
@@ -56,10 +58,10 @@
     <div class="locum-shield" v-if="modal"></div>
     <transition name="slide" mode="out-in">
       <div class="locum-modal shadow-lg" v-if="modal">
-        <MyLocumDetailModal @close="modal = false" :user="user" :jobs="jobs"/> <!--insert :locum jobs here-->
+        <MyLocumDetailModal @close="modal = false" :user="user" :jobs="jobs" />
+        <!--insert :locum jobs here-->
       </div>
     </transition>
-
   </div>
 </template>
 <script>
@@ -80,9 +82,9 @@ export default {
       currentPage: 0,
       perPage: 0,
       loading: false,
-      modal:false, //TEMPORARY
-      user:null,
-      jobs:null //TEMPORARY
+      modal: false, //TEMPORARY
+      user: null,
+      jobs: null //TEMPORARY
     }
   },
   beforeDestroy() {
@@ -115,14 +117,14 @@ export default {
     // })
   },
   methods: {
-    getAppointedLocums(){
+    getAppointedLocums() {
       this.loading = true
       let offset = 0
       offset = this.perPage * (parseInt(this.$route.query.current_page) - 1)
       this.$axios.$get(`/api/v1/practice/locums?practice_locum_type=Appointed&limit=${this.perPage}&offset=${offset}`).then(res => {
         this.locums = res.data.users
       })
-      this.loading=false
+      this.loading = false
     },
     favorite(id) {
       let locum = this.locums.find(locum => locum.id === id)
@@ -130,13 +132,13 @@ export default {
         this.$axios.$post(`/api/v1/practice/locums/${id}/favorite`).then(res => {
           console.log(res)
           locum.is_favorite = !locum.is_favorite
-          this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Added to favourites' })
+          this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: ['Added to favourites'] })
         })
       } else {
         this.$axios.$delete(`/api/v1/practice/locums/${id}/favorite`).then(res => {
           console.log(res)
           locum.is_favorite = !locum.is_favorite
-          this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Remove to favourites' })
+          this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: ['Remove to favourites'] })
         })
       }
     },
@@ -149,14 +151,14 @@ export default {
       // document.body.style.overflow = 'hidden'
       // this.$store.commit('SET_MYLOCUMDETAIL_MODAL', true)
       Promise.all([
-        this.$axios.$get(`/api/v1/practice/locums/${id}`).then(res => {  
-          this.user = res.data.user                                       
+        this.$axios.$get(`/api/v1/practice/locums/${id}`).then(res => {
+          this.user = res.data.user
         }),
-      ]).then(() =>{
-        this.$axios.$get(`/api/v1/practice/jobs?locum_detail_id=${this.user.locum_detail.id}`).then(res =>{
+      ]).then(() => {
+        this.$axios.$get(`/api/v1/practice/jobs?locum_detail_id=${this.user.locum_detail.id}`).then(res => {
           this.jobs = res.data.jobs
         }),
-        this.modal = true
+          this.modal = true
       })
     },
     pagechanged(e) {

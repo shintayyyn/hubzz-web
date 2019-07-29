@@ -33,7 +33,7 @@ export default {
     complete(id, index) {
       this.$axios.$put(`/api/v1/practice/job-parts/${id}/complete`).then(res => {
         this.job_parts[index].completed_at = res.data.job_part.completed_at
-        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Job Part completed' })
+        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: ['Job Part completed'] })
         if (this.job_parts.filter(jobPart => jobPart.completed_at === null).length === 0) {
           this.$emit('close')
         }

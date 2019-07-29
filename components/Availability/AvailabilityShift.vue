@@ -73,7 +73,7 @@ export default {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
-              text: "Shift updated!"
+              text: ["Shift updated!"]
             });
           });
       }

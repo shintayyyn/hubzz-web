@@ -373,31 +373,31 @@ export default {
       );
     },
     save() {
-      this.form.profession_id = this.form.profession_id.toString();
-      this.form.gmc_or_nmc_number = this.form.gmc_or_nmc_number.number;
-      this.form.mpl_or_npl_number = this.form.mpl_or_npl_number.number;
-      this.form.qualification_id = this.form.qualification_id.length
-        ? this.form.qualification_id.map(item => item.value)
-        : [];
-      this.form.clinical_system_id = this.form.clinical_system_id
-        ? this.form.clinical_system_id.map(item => item.value)
-        : [];
-      this.form.spoken_language_id = this.form.spoken_language_id
-        ? this.form.spoken_language_id.map(item => item.value)
-        : [];
-      this.form.min_rate_per_hour = this.per_hour.min;
-      this.form.max_rate_per_hour = this.per_hour.max;
-      this.form.min_rate_per_half_day_session = this.per_half_day_session.min;
-      this.form.max_rate_per_half_day_session = this.per_half_day_session.max;
-      this.form.min_rate_per_whole_day_session = this.per_whole_day_session.max;
-      this.form.max_rate_per_whole_day_session = this.per_whole_day_session.max;
       this.formError = [];
-      // this.Validate(this.form, ['contact_name_1', 'contact_telephone_number_1', 'contact_email_address_1',
-      //   'nhs_smart_card_id_number', 'headline', 'short_biography', 'special_requirements',
-      //   'contact_name_2', 'contact_telephone_number_2', 'contact_email_address_2'])
-      // this.ValidateEmail({ email: this.form.contact_email_address_1, field: 'contact_email_address_1' })
-      // this.ValidateEmail({ email: this.form.contact_email_address_2, field: 'contact_email_address_2' })
+      this.Validate(this.form, [
+        'nhs_smart_card_id_number', 'headline', 'short_biography', 'special_requirements', 'spoken_language_id',
+        'referee_1_contact_name', 'referee_1_phone_number', 'referee_1_email',
+        'referee_2_contact_name', 'referee_2_phone_number', 'referee_2_email',
+      ])
       if (!this.formError.length) {
+        this.form.profession_id = this.form.profession_id.toString();
+        this.form.gmc_or_nmc_number = this.form.gmc_or_nmc_number.number;
+        this.form.mpl_or_npl_number = this.form.mpl_or_npl_number.number;
+        this.form.qualification_id = this.form.qualification_id.length
+          ? this.form.qualification_id.map(item => item.value)
+          : [];
+        this.form.clinical_system_id = this.form.clinical_system_id
+          ? this.form.clinical_system_id.map(item => item.value)
+          : [];
+        this.form.spoken_language_id = this.form.spoken_language_id
+          ? this.form.spoken_language_id.map(item => item.value)
+          : [];
+        this.form.min_rate_per_hour = this.per_hour.min;
+        this.form.max_rate_per_hour = this.per_hour.max;
+        this.form.min_rate_per_half_day_session = this.per_half_day_session.min;
+        this.form.max_rate_per_half_day_session = this.per_half_day_session.max;
+        this.form.min_rate_per_whole_day_session = this.per_whole_day_session.max;
+        this.form.max_rate_per_whole_day_session = this.per_whole_day_session.max;
         this.$axios.$put("/api/v1/locum/me/profile", this.form).then(res => {
           (this.form.gmc_or_nmc_number =
             res.data.user.locum_detail.gmc_or_nmc_number),
@@ -471,10 +471,15 @@ export default {
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
-            text: "Saved !"
+            text: ["Saved !"]
           });
         });
       } else {
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "danger",
+          text: ["Please fill up all the forms"]
+        });
         this.loading = false;
       }
     }

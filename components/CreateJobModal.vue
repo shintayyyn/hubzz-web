@@ -160,7 +160,6 @@
                     type="text"
                     class="border-b-2 focus:border-yellow focus:outline-none font-bold text-xs sm:text-sm mx-1 py-2"
                     :class="formError.find(item => item.field === 'rate')? 'border-red':''"
-                    @keypress="ValidateInput"
                     style="text-align:right;width:100px;"
                     @blur="checkEmptyField(form.rate,'rate')"
                   />
@@ -199,7 +198,6 @@
                   type="text"
                   class="border-b-2 focus:border-yellow focus:outline-none font-bold py-2 text-xs sm:text-sm mx-1"
                   :class="this.formError.find(item => item.field === 'total_hours')? 'border-red':''"
-                  @keypress="ValidateInput"
                   @blur="checkEmptyField(form.total_hours,'total_hours')"
                   style="text-align:right;'"
                 />
@@ -830,7 +828,7 @@ export default {
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
-            text: "Successfully created job"
+            text: ["Successfully created job"]
           });
           this.$emit("close");
         });

@@ -144,7 +144,7 @@ export default {
     appoint() {
       this.$axios.$put(`/api/v1/practice/jobs/${this.$route.params.id}/applicants/${this.user.id}/appoint`).then(res => {
         this.$emit('appointed')
-        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Assign locum successfully' })
+        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: ['Assign locum successfully'] })
       })
     },
     downloadItem(fileUrl, fileName) {
