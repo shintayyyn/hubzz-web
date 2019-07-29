@@ -27,9 +27,9 @@
               >
                 <td>{{item.job_number}}</td>
                 <td>{{item.platform_job.practice.surgery.name}}</td>
-                <td>{{item.platform_job.title}}</td>
-                <td>{{item.platform_job.date_start}}</td>
-                <td>{{item.platform_job.date_end}}</td>
+                <td>{{item.title}}</td>
+                <td>{{item.date_start}}</td>
+                <td>{{item.date_end}}</td>
                 <td>{{item.platform_job.date_created}}</td>
               </tr>
               <tr :key="`${item.id}-${index}`">

@@ -1,7 +1,7 @@
 <template>
   <div>
     <AppLoading :loading="loading" :message="'Loading'" v-if="loading" />
-    <div class="flex flex-row flex-wrap justify-start">
+    <div v-if="!locums.length == 0" class="flex flex-row flex-wrap justify-start">
       <div
         class="card w-24 rounded-lg shadow-lg bg-grey-light m-2 p-4 hover:bg-grey"
         v-for="user in locums"
@@ -44,8 +44,11 @@
         </div>
       </div>
     </div>
+    <div v-else>
+      <span>There are no appointed locums.</span>
+    </div>
 
-    <div class="m-10 xl:-ml-32">
+    <div v-if="!locums.length == 0" class="m-10 xl:-ml-32">
       <AppPagination
         :total="total"
         :totalPages="totalPages"
@@ -55,7 +58,7 @@
       />
     </div>
 
-    <div class="locum-shield" v-if="modal"></div>
+    <div  class="locum-shield" v-if="modal"></div>
     <transition name="slide" mode="out-in">
       <div class="locum-modal shadow-lg" v-if="modal">
         <MyLocumDetailModal @close="modal = false" :user="user" :jobs="jobs" />

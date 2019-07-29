@@ -57,7 +57,6 @@ export default {
   created() {
     if (this.$auth.loggedIn) {
       let domain = this.$auth.user.domain;
-      let isActivated = this.$auth.user.is_actived;
       let accountStatus = this.$auth.user.status;
 
       let addedLists = [];

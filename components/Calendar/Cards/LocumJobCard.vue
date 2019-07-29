@@ -56,16 +56,16 @@ export default {
       return status === 'Private' ? this.job.private_job.private_practice.surgery.code : this.job.platform_job.practice.surgery.code
     },
     dateStart(status) {
-      return status === 'Private' ? this.job.private_job.date_start : this.job.platform_job.date_start
+      return status === 'Private' ? this.job.date_start : this.job.date_start
     },
     dateEnd(status) {
-      return status === 'Private' ? this.job.private_job.date_end : this.job.platform_job.date_end
+      return status === 'Private' ? this.job.date_end : this.job.date_end
     },
     shift(status) {
-      return status === 'Private' ? this.job.private_job.shift.name : this.job.platform_job.shift.name
+      return status === 'Private' ? this.job.shift.name : this.job.shift.name
     },
     description(status) {
-      return status === 'Private' ? this.job.private_job.description : this.job.platform_job.description
+      return status === 'Private' ? this.job.description : this.job.description
     },
     unavailableShift(shifts) {
       if (this.$store.state.calendar.view_type === 'per_month') {
