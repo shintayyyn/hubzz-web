@@ -7,17 +7,17 @@
         <div class="font-bold text-sm sm:text-md">Rate</div>
         <div
           class="text-xs sm:text-sm mb-6"
-          v-text="job.platform_job.rate?`£ ${job.platform_job.rate} ${job.platform_job.locum_detail_rate_type.name}`:`(none)`"
+          v-text="job.rate?`£ ${job.rate} ${job.locum_detail_rate_type.name}`:`(none)`"
         ></div>
         <div class="font-bold text-sm sm:text-md">Total hours</div>
         <div
           class="text-xs sm:text-sm mb-4"
-          v-text="job.platform_job.total_hours?job.platform_job.total_hours:`(none)`"
+          v-text="job.total_hours?job.total_hours:`(none)`"
         ></div>
         <div class="font-bold text-sm sm:text-md">Job description</div>
         <div
           class="text-xs sm:text-sm mb-6"
-          v-text="job.platform_job.description?job.platform_job.description:`(none)`"
+          v-text="job.description?job.description:`(none)`"
         ></div>
         <div class="font-bold text-sm sm:text-md">Extra information</div>
         <div
@@ -32,7 +32,7 @@
         <div class="font-bold text-sm sm:text-md">Telephone number</div>
         <div
           class="text-xs sm:text-sm mb-6"
-          v-text="job.platform_job.phone_number?job.platform_job.phone_number:`(none)`"
+          v-text="job.platform_job.practice.phone_number?job.platform_job.practice.phone_number:`(none)`"
         ></div>
         <div class="font-bold text-sm sm:text-md">Email address</div>
         <div
@@ -55,7 +55,7 @@
         <div class="font-bold text-sm sm:text-md">Duration</div>
         <div class="text-xs sm:text-sm">From {{job.date_start}}</div>
         <div class="text-xs sm:text-sm my-2">To {{job.date_end}}</div>
-        <div class="text-xs sm:text-sm mb-8">Shift {{job.platform_job.shift.name}}</div>
+        <div class="text-xs sm:text-sm mb-8">Shift {{job.shift.name}}</div>
         <div
           class="font-bold text-sm sm:text-md"
         >Auto-assigns this job to the first, matching Favourite applicant</div>

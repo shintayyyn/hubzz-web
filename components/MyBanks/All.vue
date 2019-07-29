@@ -1,7 +1,8 @@
 <template>
   <div>
     <AppLoading :loading="loading" :message="'Loading'" v-if="loading" />
-    <div class="flex flex-row flex-wrap w-full justify-start">
+        
+    <div v-if="!locums.length == 0" class="flex flex-row flex-wrap w-full justify-start">
       <div
         class="card w-24 rounded-lg shadow-lg bg-grey-light m-2 p-4 hover:bg-grey"
         v-for="user in locums"
@@ -46,8 +47,11 @@
         </div>
       </div>
     </div>
+    <div v-else>
+      <span>There are no locums connected to your practice yet.</span>
+    </div>
 
-    <div v-if="locums" class="m-10 xl:-ml-32">
+    <div v-if="!locums.length == 0" class="m-10 xl:-ml-32">
       <AppPagination
         :total="total"
         :totalPages="totalPages"
@@ -70,11 +74,12 @@
 import AppPagination from '@/components/Base/AppPagination'
 import AppLoading from '@/components/Base/AppLoading'
 import MyLocumDetailModal from '@/components/MyBanks/MyLocumDetailModal' //TEMPORARY
+
 export default {
   components: {
     AppPagination,
     AppLoading,
-    MyLocumDetailModal
+    MyLocumDetailModal,
   },
   data() {
     return {
@@ -161,7 +166,7 @@ export default {
         this.$axios.$get(`/api/v1/practice/jobs?locum_detail_id=${this.user.locum_detail.id}`).then(res => {
           this.jobs = res.data.jobs
         }),
-          this.modal = true
+        this.modal = true
       })
 
       //call jobs

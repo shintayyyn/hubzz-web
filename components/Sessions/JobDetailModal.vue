@@ -4,12 +4,12 @@
       <svgicon name="left-arrow" height="32" width="32" />
     </div>
     <div class="flex flex-row justify-start mt-8">
-      <div class="leading-loose font-bold text-md sm:text-lg">{{job.platform_job.title}}</div>
+      <div class="leading-loose font-bold text-md sm:text-lg">{{job.title}}</div>
       <div class="mx-2 text-sm sm:text-sm p-2" :class="bgStatus(job.status)">{{status(job.status)}}</div>
     </div>
-    <div
+    <!-- <div
       class="text-xs sm:text-sm"
-    >Posted {{$moment(job.platform_job.date_created).format('DD/MM/YYYY')}}</div>
+    >Posted {{$moment(job.platform_job.date_created).format('DD/MM/YYYY')}}</div> -->
     <div class="flex flex-col mt-4">
       <div class="flex flex-row flex-wrap justify-start">
         <JobDetailModalForm

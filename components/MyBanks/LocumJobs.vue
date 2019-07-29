@@ -1,54 +1,39 @@
 <template>
-    <div>
-        <div class="overflow-x-auto overflow-y-hidden">
-        <div v-if="!jobs">
-          <div
-          class="mt-10 w-full text-center"
-          style="font-family: Nunito"
-          >This locum had no transaction with your practice</div>
-        </div>
-        <div v-else>
-           <table>
-            <thead>
-              <tr class="text-xs sm:text-sm text-left">
-                <th>Job number</th>
-                <th>Practice / Surgery</th>
-                <th>Title</th>
-                <th>From</th>
-                <th>To</th>
-                <th>Created</th>
-              </tr>
-            </thead>
-            <tbody>
-              <template v-for="(item, index) in jobs">
-                <tr
-                  :key="item.id"
-                  class="__job-card shadow-md cursor-pointer text-xs text-left"
-                  @click="show(item.id)"
-                >
-                  <td>{{item.job_number}}</td>
-                  <td>{{item.platform_job.practice.surgery.name}}</td>
-                  <td>{{item.platform_job.title}}</td>
-                  <td>{{item.platform_job.date_start}}</td>
-                  <td>{{item.platform_job.date_end}}</td>
-                  <td>{{item.platform_job.date_created}}</td>
-                </tr>
-                <tr :key="`${item.id}-${index}`">
-                  <td></td>
-                </tr>
-              </template>
-            </tbody>
-          </table>
-        </div>
-       
+    <div class="max-w-xl">
+      <LocumDetailJobsModalTabs />
+      <div>
+        <transition name="fade" mode="out-in">
+          <Component :is="activeComponent" :user="user" :jobs="jobs" />
+        </transition>
       </div>
     </div>
 </template>
 </<script>
+import LocumDetailJobsModalTabs from '@/components/MyBanks/LocumDetailJobsModalTabs'
+import LocumAvailableJobs from '@/components/MyBanks/LocumAvailableJobs'
+import LocumAppliedJobs from '@/components/MyBanks/LocumAppliedJobs'
+import LocumCurrentJobs from '@/components/MyBanks/LocumCurrentJobs'
+import LocumCompletedJobs from '@/components/MyBanks/LocumCompletedJobs'
+import LocumUnsuccessfulJobs from '@/components/MyBanks/LocumUnsuccessfulJobs'
+import LocumCancelledJobs from '@/components/MyBanks/LocumCancelledJobs'
+import LocumDeclinedJobs from '@/components/MyBanks/LocumDeclinedJobs'
 export default {
-    props:['jobs'],
+    props:['user','jobs'],
     components:{
+      LocumDetailJobsModalTabs,
+      locum_available: LocumAvailableJobs,
+      locum_applied: LocumAppliedJobs,
+      locum_current: LocumCurrentJobs,
+      locum_completed: LocumCompletedJobs,
+      locum_unsuccessful: LocumUnsuccessfulJobs,
+      locum_cancelled: LocumCancelledJobs,
+      locum_declined: LocumDeclinedJobs
+    },
 
+    computed: {
+      activeComponent(){
+        return this.$route.query.locum_jobs
+      }
     },
     data(){
         return{
@@ -56,7 +41,14 @@ export default {
         }
     },
     created(){
+      console.log(this.jobs)
+      const query = {
+        ...this.$route.query,
+        locum_jobs: this.$route.query.locum_jobs || 'locum_available'
 
+      }
+      this.$router.push({ query })
+      
     },
     methods:{
         show(id) {
