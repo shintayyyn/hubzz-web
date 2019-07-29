@@ -1,11 +1,7 @@
 <template>
   <div>
     <AppLoading :loading="loading" :message="'Loading'" v-if="loading" />
-        <AppSelect
-              :name="'Filter Locums by'"
-              :label="'Filter Locums by'"
-              :items="[ {value: true, label: 'YES'}, {value: false, label: 'NO'} ]"
-            />
+        
     <div v-if="!locums.length == 0" class="flex flex-row flex-wrap w-full justify-start">
       <div
         class="card w-24 rounded-lg shadow-lg bg-grey-light m-2 p-4 hover:bg-grey"
@@ -78,13 +74,12 @@
 import AppPagination from '@/components/Base/AppPagination'
 import AppLoading from '@/components/Base/AppLoading'
 import MyLocumDetailModal from '@/components/MyBanks/MyLocumDetailModal' //TEMPORARY
-import AppSelect from '@/components/Base/AppSelect'
+
 export default {
   components: {
     AppPagination,
     AppLoading,
     MyLocumDetailModal,
-    AppSelect
   },
   data() {
     return {
