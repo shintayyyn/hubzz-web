@@ -4,23 +4,23 @@
       class="text-white text-xs sm:text-sm py-4 px-8"
     >{{$moment(date_info || selected_date).format('Do MMM, YYYY')}}</div>
     <div class="flex flex-col overflow-y-auto px-8 h-full info-card">
-      <!-- <transition name="slide" mode="out-in"> -->
-      <div
-        class="mt-4 text-xl text-white"
-        v-if="!viewPracticeJobs && !viewLocumJobs"
-        key="'no-jobs'"
-      >No jobs to display.</div>
-      <div v-if="viewPracticeJobs">
-        <div v-for="job in foundPracticeJobs" :key="job.id">
-          <PracticeJobCard :job="job" @viewPracticeJob="$emit('viewPracticeJob', $event)" />
+      <transition name="slide" mode="out-in">
+        <div
+          class="mt-4 text-xl text-white"
+          v-if="!viewPracticeJobs && !viewLocumJobs"
+          key="'no-jobs'"
+        >No jobs to display.</div>
+        <div v-if="viewPracticeJobs">
+          <div v-for="job in foundPracticeJobs" :key="job.id">
+            <PracticeJobCard :job="job" @viewPracticeJob="$emit('viewPracticeJob', $event)" />
+          </div>
         </div>
-      </div>
-      <div v-if="viewLocumJobs">
-        <div v-for="job in foundLocumJobs" :key="job.id">
-          <LocumJobCard :job="job" @viewLocumJob="$emit('viewLocumJob', $event)" />
+        <div v-if="viewLocumJobs">
+          <div v-for="job in foundLocumJobs" :key="job.id">
+            <LocumJobCard :job="job" @viewLocumJob="$emit('viewLocumJob', $event)" />
+          </div>
         </div>
-      </div>
-      <!-- </transition> -->
+      </transition>
     </div>
   </div>
 </template>
@@ -189,23 +189,40 @@ export default {
       }
     },
     findPerWeekPractice({ date, shift }) {
+      this.viewPracticeJobs = false
+      let foundPracticeCurrentJobs = []
+      let foundPracticeAppliedJobs = []
+      let foundPracticeUnfilledJobs = []
+      let foundPracticeDeclinedJobs = []
+      let foundPracticeAppliedJobsReminder = []
+      let foundPracticeAvailableJobsReminder = []
+
       if (this.getPracticeAllocatedJobs.length > 0) {
-        this.foundPracticeCurrentJobs = this.getPracticeAllocatedJobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === shift)
+        foundPracticeCurrentJobs = this.getPracticeAllocatedJobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === shift)
       }
       if (this.getPracticeAppliedJobs.length > 0) {
-        this.foundPracticeAppliedJobs = this.getPracticeAppliedJobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === shift)
+        foundPracticeAppliedJobs = this.getPracticeAppliedJobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === shift)
       }
       if (this.getPracticeUnfilledJobs.length > 0) {
-        this.foundPracticeUnfilledJobs = this.getPracticeUnfilledJobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === shift)
+        foundPracticeUnfilledJobs = this.getPracticeUnfilledJobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === shift)
       }
       if (this.getPracticeDeclinedJobs.length > 0) {
-        this.foundPracticeDeclinedJobs = this.getPracticeDeclinedJobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === shift)
+        foundPracticeDeclinedJobs = this.getPracticeDeclinedJobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === shift)
       }
       if (this.getPracticeAvailableJobsReminder.length > 0) {
-        this.foundPracticeAvailableJobsReminder = this.getPracticeAvailableJobsReminder.filter(job => job.platform_job.selection_date === date)
+        foundPracticeAvailableJobsReminder = this.getPracticeAvailableJobsReminder.filter(job => job.platform_job.selection_date === date)
       }
       if (this.getPracticeAppliedJobsReminder.length > 0) {
-        this.foundPracticeAppliedJobsReminder = this.getPracticeAppliedJobsReminder.filter(job => job.platform_job.selection_date === date)
+        foundPracticeAppliedJobsReminder = this.getPracticeAppliedJobsReminder.filter(job => job.platform_job.selection_date === date)
+      }
+      this.foundPracticeJobs = [
+        ...foundPracticeCurrentJobs, ...foundPracticeAppliedJobs, ...foundPracticeUnfilledJobs,
+        ...foundPracticeDeclinedJobs, ...foundPracticeAppliedJobsReminder, ...foundPracticeAvailableJobsReminder
+      ]
+      if (this.foundPracticeJobs.length > 0) {
+        setTimeout(() => {
+          this.viewPracticeJobs = true
+        }, 500)
       }
     },
     // locums
@@ -237,20 +254,34 @@ export default {
           this.viewLocumJobs = true
         }, 500)
       }
-      console.log(this.foundLocumJobs)
     },
     findPerWeekLocum({ date, shift }) {
+      this.viewLocumJobs = false
+      let foundLocumPrivateJobs = []
+      let foundLocumCurrentJobs = []
+      let foundLocumAppliedJobs = []
+      let foundLocumUnavailabilities = []
+
       if (this.getLocumAllocatedPrivateJobs.length > 0) {
-        this.foundLocumPrivateJobs = this.getLocumAllocatedPrivateJobs.filter(job => this.getDateArray(job.private_job.date_start, job.private_job.date_end).includes(date) && job.private_job.shift.name === shift)
+        foundLocumPrivateJobs = this.getLocumAllocatedPrivateJobs.filter(job => this.getDateArray(job.private_job.date_start, job.private_job.date_end).includes(date) && job.private_job.shift.name === shift)
       }
       if (this.getLocumAllocatedCurrentJobs.length > 0) {
-        this.foundLocumCurrentJobs = this.getLocumAllocatedCurrentJobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === shift)
+        foundLocumCurrentJobs = this.getLocumAllocatedCurrentJobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === shift)
       }
       if (this.getLocumAppliedJobs.length > 0) {
-        this.foundLocumAppliedJobs = this.getLocumAppliedJobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && shift === 'Available')
+        foundLocumAppliedJobs = this.getLocumAppliedJobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && shift === 'Available')
       }
       if (this.getLocumUnavailabilities.length > 0) {
-        this.foundLocumUnavailabilities = this.getLocumUnavailabilities.filter(job => job.date === date && job.shifts.map(shift => shift.name).includes(shift))
+        foundLocumUnavailabilities = this.getLocumUnavailabilities.filter(job => job.date === date && job.shifts.map(shift => shift.name).includes(shift))
+      }
+      this.foundLocumJobs = [
+        ...foundLocumPrivateJobs, ...foundLocumCurrentJobs,
+        ...foundLocumAppliedJobs, ...foundLocumUnavailabilities
+      ]
+      if (this.foundLocumJobs.length > 0) {
+        setTimeout(() => {
+          this.viewLocumJobs = true
+        }, 500)
       }
     },
     getDateArray(start, end) {

@@ -4,12 +4,13 @@
       v-model="form.email"
       :type="'multiemail'"
       :name="'email'"
-      :label="'Email addresses to Locums'"
+      :label="`Email addresses to ${$route.query.invite_domain.toUpperCase()}`"
       :placeholder="''"
       :info="'Seperate with commas'"
+      :error="formError.find(error => error.field === 'email')"
     />
     <div class="flex justify-start mt-8">
-      <div class="text-xs sm:text-sm">The message to be sent to Locums</div>
+      <div class="text-xs sm:text-sm">The message to be sent to {{$route.query.invite_domain}}</div>
     </div>
     <div class="flex justify-start mt-5">
       <div class="text-xs sm:text-sm font-bold">Have you heard the buzz about hubzz?</div>
@@ -45,13 +46,30 @@ export default {
       formError: [],
     }
   },
+  watch: {
+    'form.email'() {
+      this.formError = this.formError.filter(error => error.field !== 'email')
+    },
+    $route(to, from) {
+      this.formError = []
+    }
+  },
   methods: {
     send() {
-      this.$axios.$post(`api/v1/invite`, { emails: this.form.email, domain: 'Locums' }).then(res => {
-        console.log(res)
-        this.form.email = ''
-        this.$router.push('/invite?invite=success')
-      })
+      this.formError = []
+      this.Validate(this.form)
+      if (!this.formError.length) {
+        this.$axios.$post(`api/v1/invite`, { emails: this.form.email, domain: 'Locums' }).then(res => {
+          this.form.email = ''
+          this.$router.push('/invite?invite=success')
+        })
+      } else {
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "danger",
+          text: ["Please fill up all the forms"]
+        });
+      }
     }
   }
 }

@@ -13,7 +13,7 @@
       <div class="text-xs xl:text-base hidden sm:w-1/6 sm:block">{{form.note}}</div>
       <div class="text-xs xl:text-base w-1/3 sm:w-1/6">
         <div v-if="imageUrl" class="flex flex justify-start items-center">
-          <svgicon name="cloud-download" height="24" width="24"/>
+          <svgicon name="cloud-download" height="24" width="24" />
           <a
             class="no-underline text-black hover:underline px-2"
             :href="imageUrl"
@@ -27,8 +27,8 @@
             :id="`${item.id}_file`"
             class="inputfile hidden"
             @input="onFileInput($event)"
-          >
-          <svgicon name="cloud-upload" height="24" width="24"/>
+          />
+          <svgicon name="cloud-upload" height="24" width="24" />
           <label :for="`${item.id}_file`" class="cursor-pointer hover:underline px-2">Upload</label>
         </div>
       </div>
@@ -76,7 +76,7 @@ export default {
       this.form.note = 'Verifying your uploaded document'
       this.form.fileName = e.target.files[0].name
 
-      this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Document uploaded!' })
+      this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: ['Document uploaded!'] })
     },
     getBase64(img, callback) {
       const reader = new FileReader()

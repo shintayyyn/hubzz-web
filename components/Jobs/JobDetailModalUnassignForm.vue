@@ -15,6 +15,7 @@
 import AppTextarea from '@/components/Base/AppTextarea'
 import AppButton from '@/components/Base/AppButton'
 export default {
+  props: ['job'],
   components: {
     AppTextarea,
     AppButton,
@@ -32,9 +33,26 @@ export default {
       this.formError = []
       this.Validate(this.form)
       if (!this.formError.length) {
-        this.$axios.$post(`/api/v1/locum/jobs/${this.$route.params.id}/decline`, this.form).then(res => {
-          this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Declined' })
-          this.$router.push('/jobs?job_status=declined')
+        this.$axios.$post(`/api/v1/locum/jobs/${this.job.id}/decline`, this.form).then(res => {
+          this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: ['Declined'] })
+          this.$store.commit('jobs/REMOVE_LOCUM_ALLOCATED_JOB', res.data.job.id)
+          this.$store.commit('jobs/ADD_LOCUM_DECLINED_JOB', res.data.job)
+          this.$emit('close')
+        }).catch(err => {
+          err.response.data.error_messages.forEach(error => {
+            this.formError.push(error)
+          })
+          this.$store.commit('SET_NOTIFICATION', {
+            enabled: true,
+            status: "danger",
+            text: this.formError.map(error => error.message)
+          })
+        })
+      } else {
+        this.$store.commit('SET_NOTIFICATION', {
+          enabled: true,
+          status: "danger",
+          text: ["Please fill up all the forms"]
         })
       }
     },

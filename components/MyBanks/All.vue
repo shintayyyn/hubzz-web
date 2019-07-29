@@ -29,16 +29,18 @@
       <div class="flex flex-wrap text-center mt-4 cursor-pointer" @click="show(user.id)">
         <div class="w-full">
           <div v-if="!user.avatar">
-             <svgicon name="no-avatar" height="115" width="115"/>
+            <svgicon name="no-avatar" height="115" width="115" />
           </div>
           <embed
-          class="object-contain h-32 rounded-full mr-4"
-          :src="user.avatar ? user.avatar.file.url:null" 
-          >
-        </div> 
-               
+            class="object-contain h-32 rounded-full mr-4"
+            :src="user.avatar ? user.avatar.file.url:null"
+          />
+        </div>
+
         <div class="w-full font-bold text-sm sm:text-lg my-4">{{user.personal_detail.name}}</div>
-        <div class="w-full mb-4 font-bold text-grey-dark text-sm sm:text-lg">{{user.locum_detail.profession.name}}</div>
+        <div
+          class="w-full mb-4 font-bold text-grey-dark text-sm sm:text-lg"
+        >{{user.locum_detail.profession.name}}</div>
         <!-- <div class="w-full font-bold text-grey-dark text-sm sm:text-lg">{{user.locum_detail.headline}}</div> -->
       </div>
     </div>
@@ -77,8 +79,8 @@ export default {
       currentPage: 0,
       perPage: 0,
       loading: false,
-      modal:false, //TEMPORARY
-      user:null //TEMPORARY
+      modal: false, //TEMPORARY
+      user: null //TEMPORARY
     }
   },
   beforeDestroy() {
@@ -111,14 +113,14 @@ export default {
     // })
   },
   methods: {
-    getAllLocums(){
+    getAllLocums() {
       this.loading = true
       let offset = 0
       offset = this.perPage * (parseInt(this.$route.query.current_page) - 1)
       this.$axios.$get(`/api/v1/practice/locums?limit=${this.perPage}&offset=${offset}`).then(res => {
         this.locums = res.data.users
       })
-      this.loading=false
+      this.loading = false
     },
     favorite(id) {
       let locum = this.locums.find(locum => locum.id === id)
@@ -126,13 +128,13 @@ export default {
         this.$axios.$post(`/api/v1/practice/locums/${id}/favorite`).then(res => {
           console.log(res)
           locum.is_favorite = !locum.is_favorite
-          this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Added to favourites' })
+          this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: ['Added to favourites'] })
         })
       } else {
         this.$axios.$delete(`/api/v1/practice/locums/${id}/favorite`).then(res => {
           console.log(res)
           locum.is_favorite = !locum.is_favorite
-          this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Remove to favourites' })
+          this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: ['Remove to favourites'] })
         })
       }
     },
@@ -145,9 +147,9 @@ export default {
       // document.body.style.overflow = 'hidden'
       // this.$store.commit('SET_MYLOCUMDETAIL_MODAL', true)
       console.log('hey')
-       this.$axios.$get(`/api/v1/practice/locums/${id}`).then(res => {  //TEMPORARY 
+      this.$axios.$get(`/api/v1/practice/locums/${id}`).then(res => {  //TEMPORARY 
         this.user = res.data.user
-        this.modal = true                                           
+        this.modal = true
       })
     },
     pagechanged(e) {

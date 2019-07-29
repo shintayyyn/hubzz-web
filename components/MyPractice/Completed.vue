@@ -53,7 +53,7 @@ export default {
   methods: {
     favorite(id) {
       this.$axios.$post(`/api/v1/locum/practices/${id}/favorite`).then(res => {
-        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: `${res.message}` })
+        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: [`${res.message}`] })
       })
     },
     show(id) {

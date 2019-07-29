@@ -329,7 +329,7 @@ export default {
       const formData = new FormData()
       formData.append('file', file)
       this.$axios.$put(`/api/v1/practice/me/standard-terms`, formData).then(res => {
-        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: res.message })
+        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: [res.message] })
       })
       this.standard_terms.file.filename = file.name
       // console.log(file.name)
@@ -350,7 +350,7 @@ export default {
       // ! ask arvi hind na reremove ung document
       this.$axios.$delete(`/api/v1/practice/me/standard-terms`).then(res => {
         this.modal = false
-        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: res.message })
+        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: [res.message] })
         this.standard_terms.file.filename = null
         // console.log(this.standard_terms)
       })
@@ -364,7 +364,7 @@ export default {
           this.$axios.$put(`/api/v1/practice/me/profile`, this.form).then(res => {
             // console.log(res)
             // set mandatory training
-            this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: res.message })
+            this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: [res.message] })
           })
         }
       } catch (e) {

@@ -626,7 +626,7 @@ export default {
           ? (this.form.unpaid_breaks_in_minutes = this.unpaid_breaks)
           : (this.form.unpaid_breaks_in_minutes = this.form.unpaid_breaks_in_minutes);
         this.$axios.$put(`/api/v1/practice/jobs/${this.job.id}`, this.form).then(res => {
-          this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: res.message })
+          this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: [res.message] })
           this.close()
         })
       }
@@ -634,7 +634,7 @@ export default {
     cancel() {
       let jobId = this.$route.params.id || this.job.id
       this.$axios.$put(`/api/v1/practice/jobs/${jobId}/cancel`, this.form_cancel).then(res => {
-        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Job cancelled' })
+        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: ['Job cancelled'] })
         this.close()
       })
     }

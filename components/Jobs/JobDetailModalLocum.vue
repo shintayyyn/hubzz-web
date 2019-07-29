@@ -22,12 +22,18 @@
       <div class="p-0 md:pl-4 mt-8 md:m-0 w-full md:w-1/2">
         <div class="flex flex-col">
           <JobDetailModalMap :job="job" />
-          <JobDetailModalUnassignForm v-if="job.locum_status === 'Current'" />
+          <JobDetailModalUnassignForm
+            :job="job"
+            v-if="job.locum_status === 'Current'"
+            @close="close"
+          />
           <JobDetailModalApplyForm
+            :job="job"
             v-if="job.locum_status === 'Available' || job.locum_status === 'Matched'"
             :compliances="job.platform_job.compliance_documents.map(item => item.id)"
+            @close="close"
           />
-          <JobDetailModalCancelForm v-if="job.locum_status === 'Applied'" />
+          <JobDetailModalCancelForm v-if="job.locum_status === 'Applied'" @close="close" />
         </div>
       </div>
     </div>
@@ -51,8 +57,11 @@ export default {
   methods: {
     close() {
       if (this.$route.fullPath === '/dashboard') {
+        console.log('close dashboard')
         this.$emit('close')
+        return
       } else {
+        console.log('close query')
         const query = {
           ...this.$route.query
         }

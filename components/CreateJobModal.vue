@@ -824,7 +824,7 @@ export default {
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
-            text: "Successfully created job"
+            text: ["Successfully created job"]
           });
           this.$emit("close");
         });

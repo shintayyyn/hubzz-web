@@ -6,22 +6,19 @@
     <div class="px-10" v-else>
       <InviteTabs />
       <div class="mt-5">
-        <InviteLocums v-if="$route.query.invite_domain === 'locums'" />
-        <InvitePractices v-if="$route.query.invite_domain === 'practices'" />
+        <Invite />
       </div>
     </div>
   </section>
 </template>
 <script>
 import InviteTabs from '@/components/Invite/InviteTabs'
-import InviteLocums from '@/components/Invite/InviteLocums'
-import InvitePractices from '@/components/Invite/InvitePractices'
+import Invite from '@/components/Invite/Invite'
 import InviteSuccess from '@/components/Invite/InviteSuccess'
 export default {
   components: {
     InviteTabs,
-    InviteLocums,
-    InvitePractices,
+    Invite,
     InviteSuccess
   },
   middleware: 'isVerified',

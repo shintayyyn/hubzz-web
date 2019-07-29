@@ -1,45 +1,56 @@
 <template>
-  <div class="sidebar" :class="{'toggled-left': $store.state.toggled_sidebar}">
-    <div class="sidebar-nav">
-      <div
-        class="close-button cursor-pointer text-2xl font-bold text-yellow-dark mt-3 md:mt-5 px-4 md:mb-24"
-        @click="close"
-      >X</div>
-      <div class="md:mt-20"></div>
-      <div v-for="(item, index) in lists" :key="index" class="text-sm relative">
-        <span
-          class="absolute inset-y-0 left-0 border-solid bg-yellow-dark w-1 h-full"
-          v-if="`/${$route.path.split('/')[1]}` == item.route"
-        ></span>
-        <nuxt-link
-          :to="item.route"
-          :event="isDisabled(item.route)"
-          class="block no-underline p-4"
-          :class="`/${$route.path.split('/')[1]}` == item.route ? 'text-yellow-dark' : 'text-black hover:text-grey-light'"
-        >
-          <span class="font-sans">{{item.name}}</span>
-        </nuxt-link>
-      </div>
-      <div class="text-sm relative">
-        <span
-          class="absolute pin-l border-solid bg-yellow-dark w-1 h-full"
-          v-if="`/${$route.path.split('/')[1]}` == '/sign-out'"
-        ></span>
-        <button
-          @click.prevent="signout"
-          class="block no-underline p-4 focus:outline-none"
-          :class="`/${$route.path.split('/')[1]}` == '/sign-out' ? 'text-yellow-dark' : 'text-black hover:text-grey-light'"
-        >
-          <span class="font-sans">Sign Out</span>
-        </button>
+  <section>
+    <div class="sidebar" :class="{'toggled-left': $store.state.toggled_sidebar}">
+      <div class="sidebar-nav">
+        <div
+          class="close-button cursor-pointer text-2xl font-bold text-yellow-dark mt-3 md:mt-5 px-4 md:mb-24"
+          @click="close"
+        >X</div>
+        <div class="md:mt-20"></div>
+        <div v-for="(item, index) in lists" :key="index" class="text-sm relative">
+          <span
+            class="absolute inset-y-0 left-0 border-solid bg-yellow-dark w-1 h-full"
+            v-if="`/${$route.path.split('/')[1]}` == item.route"
+          ></span>
+          <nuxt-link
+            :to="item.route"
+            :event="isDisabled(item.route)"
+            class="block no-underline p-4"
+            :class="`/${$route.path.split('/')[1]}` == item.route ? 'text-yellow-dark' : 'text-black hover:text-grey-light'"
+          >
+            <span class="font-sans">{{item.name}}</span>
+          </nuxt-link>
+        </div>
+        <div class="text-sm relative">
+          <span
+            class="absolute pin-l border-solid bg-yellow-dark w-1 h-full"
+            v-if="`/${$route.path.split('/')[1]}` == '/sign-out'"
+          ></span>
+          <button
+            @click.prevent="signout_modal = true"
+            class="block no-underline p-4 focus:outline-none"
+            :class="`/${$route.path.split('/')[1]}` == '/sign-out' ? 'text-yellow-dark' : 'text-black hover:text-grey-light'"
+          >
+            <span class="font-sans">Sign Out</span>
+          </button>
+        </div>
       </div>
     </div>
-  </div>
+    <div class="signout-shield" v-if="signout_modal"></div>
+    <transition name="drop" mode="out-in">
+      <SignOut v-if="signout_modal" @modal="signout_modal = $event" />
+    </transition>
+  </section>
 </template>
 <script>
+import SignOut from "@/components/Auth/SignOut";
 export default {
+  components: {
+    SignOut
+  },
   data() {
     return {
+      signout_modal: false,
       lists: []
     };
   },
@@ -97,9 +108,6 @@ export default {
     isDisabled(routeName) {
       return this.$route.path === routeName ? '' : 'click'
     },
-    signout() {
-      this.$emit("modal", true);
-    },
     close() {
       this.$store.commit("TOGGLE_SIDEBAR", false);
       document.body.style.overflow = "auto";
@@ -108,6 +116,16 @@ export default {
 };
 </script>
 <style scoped>
+.signout-shield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #333;
+  opacity: 0.5;
+  z-index: 599;
+}
 .sidebar {
   position: fixed;
   margin-left: -200px;

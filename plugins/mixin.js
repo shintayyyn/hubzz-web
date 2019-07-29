@@ -9,12 +9,12 @@ Vue.mixin({
           if (value.length === 0) {
             if (!lists) {
               this.formError.push(
-                { field: key, message: 'Required' }
+                { field: key, message: `${key} Is Required` }
               )
             }
             if (lists && !lists.includes(key)) {
               this.formError.push(
-                { field: key, message: 'Required' }
+                { field: key, message: `${key} Is Required` }
               )
             } 
           } 
@@ -22,12 +22,12 @@ Vue.mixin({
           if (!value) {
             if (!lists) {
               this.formError.push(
-                { field: key, message: 'Required' }
+                { field: key, message: `${key} Is Required` }
               )
             }
             if (lists && !lists.includes(key)) {
               this.formError.push(
-                { field: key, message: 'Required' }
+                { field: key, message: `${key} Is Required` }
               )
             } 
           } 

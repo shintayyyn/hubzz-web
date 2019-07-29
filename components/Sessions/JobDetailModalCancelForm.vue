@@ -46,7 +46,7 @@ export default {
       this.Validate(this.form_cancel)
       if (!this.formError.length) {
         this.$axios.$put(`/api/v1/practice/jobs/${jobId}/cancel`, this.form_cancel).then(res => {
-          this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Job cancelled' })
+          this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: ['Job cancelled'] })
           this.$emit('close')
         })
       }

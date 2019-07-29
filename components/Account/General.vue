@@ -161,16 +161,20 @@ export default {
     save() {
       try {
         this.formError = [];
-        // this.Validate(this.form, ['title', 'suffix', 'address_line_2'])
-        // this.ValidateEmail({ email: this.form.email, field: 'email' })
-        // this.ValidateMobile(this.form.mobile)
+        this.Validate(this.form, ['title', 'suffix', 'address_line_2'])
         if (!this.formError.length) {
           this.$axios.$put(`/api/v1/locum/me/account`, this.form).then(res => {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
-              text: "Saved"
+              text: ["Saved"]
             });
+          });
+        } else {
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "danger",
+            text: ["Please fill up all the forms"]
           });
         }
       } catch (e) {

@@ -19,8 +19,11 @@
     </div>
     <div class="modal-shield" v-if="toggleScroll"></div>
     <transition name="slide" mode="out-in">
-      <div class="modal-container shadow-lg" v-if="modal">
-        <CreateAppointmentModal @close="modal = false" :job="job" />
+      <div class="modal-container shadow-lg" v-if="locum_appointment_modal">
+        <JobDetailModalAppointment
+          @close="locum_appointment_modal = false"
+          :job="locum_appointment_job"
+        />
       </div>
       <div class="modal-container shadow-lg" v-if="locum_modal">
         <JobDetailModalLocum @close="locum_modal = false" :job="locum_job" />
@@ -39,8 +42,8 @@ import PerMonth from '@/components/Calendar/PerMonth'
 import PerWeek from '@/components/Calendar/PerWeek'
 import Info from '@/components/Calendar/Info'
 // locums
-import CreateAppointmentModal from '@/components/CreateAppointmentModal'
 import JobDetailModalLocum from '@/components/Jobs/JobDetailModalLocum'
+import JobDetailModalAppointment from '@/components/Jobs/JobDetailModalAppointment'
 
 // practice
 import CreateJobModal from '@/components/CreateJobModal'
@@ -51,8 +54,8 @@ export default {
     PerMonth,
     PerWeek,
     Info,
-    CreateAppointmentModal,
     JobDetailModalLocum,
+    JobDetailModalAppointment,
     CreateJobModal,
     JobDetailModal,
   },
@@ -60,12 +63,12 @@ export default {
     return {
       practice_modal: false,
       practice_job: null,
-      locum_modal: false,
-      locum_job: null,
       practice_create_modal: false,
       practice_create_job: null,
-      modal: false,
-      job: null,
+      locum_modal: false,
+      locum_job: null,
+      locum_appointment_modal: false,
+      locum_appointment_job: null,
     }
   },
   created() {
@@ -73,7 +76,7 @@ export default {
   },
   computed: {
     toggleScroll() {
-      return this.modal | this.locum_modal | this.practice_modal
+      return this.locum_appointment_modal | this.locum_modal | this.practice_modal
     },
   },
   watch: {
@@ -95,13 +98,13 @@ export default {
     },
     // locum
     createAppointmentJob() {
-      this.modal = true
-      this.job = null
+      this.locum_appointment_modal = true
+      this.locum_appointment_job = null
     },
     viewLocumJob(job) {
       if (job.status === 'Private') {
-        this.modal = true
-        this.job = job
+        this.locum_appointment_modal = true
+        this.locum_appointment_job = job
         return
       }
       this.locum_modal = true

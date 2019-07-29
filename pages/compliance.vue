@@ -452,7 +452,7 @@ export default {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
-              text: "Document uploaded!"
+              text: ["Document uploaded!"]
             });
           } else {
             let optional_index = this.optional.findIndex(
@@ -474,7 +474,7 @@ export default {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
-              text: "Document uploaded!"
+              text: ["Document uploaded!"]
             });
           }
         })
@@ -519,7 +519,7 @@ export default {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
-              text: "Document uploaded!"
+              text: ["Document uploaded!"]
             });
           } else {
             this.optional.splice(index, 1);
@@ -536,7 +536,7 @@ export default {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
-              text: "Document uploaded!"
+              text: ["Document uploaded!"]
             });
           }
         })
@@ -575,7 +575,7 @@ export default {
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
-            text: "Document uploaded!"
+            text: ["Document uploaded!"]
           });
         })
         .catch(err => {
@@ -612,7 +612,7 @@ export default {
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
-            text: "Document uploaded!"
+            text: ["Document uploaded!"]
           });
         })
         .catch(err => {

@@ -11,11 +11,16 @@
         :error="formError.find(item => item.field === 'email')"
       />
       <div class="-mt-6 mb-4" v-if="email_isVerified === true ">
-        <span class="text-xs"> E-mail is Verified on {{$moment(email_verifiedAt).format('MMM DD, YYYY | hh:mm A')}} </span> 
+        <span
+          class="text-xs"
+        >E-mail is Verified on {{$moment(email_verifiedAt).format('MMM DD, YYYY | hh:mm A')}}</span>
       </div>
       <div class="-mt-6 mb-4" v-if="email_isVerified === false ">
-        <span class="text-red text-xs">E-mail is not yet verified. </span>
-        <span class="p-1 bg-grey rounded text-xs" @click="resendEmailVerification()">Click here to re-send</span>
+        <span class="text-red text-xs">E-mail is not yet verified.</span>
+        <span
+          class="p-1 bg-grey rounded text-xs"
+          @click="resendEmailVerification()"
+        >Click here to re-send</span>
       </div>
       <AppInput
         v-model="form.title"
@@ -89,8 +94,8 @@ export default {
         suffix: "",
         practice_role: ""
       },
-      email_isVerified:'',
-      email_verifiedAt:'',
+      email_isVerified: '',
+      email_verifiedAt: '',
       loading: false,
       formError: []
     }
@@ -179,20 +184,26 @@ export default {
               this.$store.commit("SET_NOTIFICATION", {
                 enabled: true,
                 status: "success",
-                text: "Saved"
+                text: ["Saved"]
               });
               this.loading = false;
             });
+        } else {
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "danger",
+            text: ["Please fill up all the forms"]
+          });
         }
       } catch (err) {
         console.log(err)
       }
     },
-    async resendEmailVerification(){
-      try{
+    async resendEmailVerification() {
+      try {
         await this.$axios.post(`/api/v1/email-verification/resend`)
         alert('Confirmation e-mail sent')
-      }catch(err){
+      } catch (err) {
         console.log("Something went wrong! ", err)
       }
     }

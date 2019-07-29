@@ -15,21 +15,23 @@
           @click="unfavorite(user.id, index)"
         />
       </div>
-       <div class="flex flex-wrap text-center mt-4 cursor-pointer" @click="show(user.id)">
+      <div class="flex flex-wrap text-center mt-4 cursor-pointer" @click="show(user.id)">
         <div class="w-full">
           <div v-if="!user.avatar">
-             <svgicon name="no-avatar" height="115" width="115"/>
+            <svgicon name="no-avatar" height="115" width="115" />
           </div>
           <embed
-          class="object-contain h-32 rounded-full mr-4"
-          :src="user.avatar ? user.avatar.file.url:null" 
-          >
+            class="object-contain h-32 rounded-full mr-4"
+            :src="user.avatar ? user.avatar.file.url:null"
+          />
         </div>
         <div class="w-full font-bold text-sm sm:text-lg my-4">{{user.personal_detail.name}}</div>
-        <div class="w-full font-bold text-grey-dark text-sm sm:text-lg">{{user.locum_detail.headline}}</div>
+        <div
+          class="w-full font-bold text-grey-dark text-sm sm:text-lg"
+        >{{user.locum_detail.headline}}</div>
       </div>
     </div>
-     <div class="m-10">
+    <div class="m-10">
       <AppPagination
         :total="total"
         :totalPages="totalPages"
@@ -74,7 +76,7 @@ export default {
       ...this.$route.query,
       current_page: this.$route.query.current_page || 1
     }
-        this.$axios.$get(`/api/v1/practice/locums/count?practice_locum_type=Declined`).then(res => { //GET QUANTITY OF DATA
+    this.$axios.$get(`/api/v1/practice/locums/count?practice_locum_type=Declined`).then(res => { //GET QUANTITY OF DATA
       this.total = res.data.count
       this.perPage = 6
       this.totalPages = Math.ceil(this.total / this.perPage)
@@ -87,20 +89,20 @@ export default {
     // })
   },
   methods: {
-    getWithrawnLocums(){
+    getWithrawnLocums() {
       this.loading = true
       let offset = 0
       offset = this.perPage * (parseInt(this.$route.query.current_page) - 1)
       this.$axios.$get(`/api/v1/practice/locums?practice_locum_type=Declined&limit=${this.perPage}&offset=${offset}`).then(res => {
         this.locums = res.data.users
       })
-      this.loading=false
+      this.loading = false
     },
     unfavorite(id, index) {
       this.$axios.$delete(`/api/v1/practice/locums/${id}/favorite`).then(res => {
         console.log(res)
         this.locums.splice(index, 1)
-        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Remove to favourites' })
+        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: ['Remove to favourites'] })
       })
     },
     show(id) {
