@@ -57,11 +57,9 @@ export default {
   data() {
     return {
       practices: [],
+      perPage: 5,
       total: 0,
-      totalPages: 0,
-      currentPage: 0,
-      perPage: 0,
-      loading: false,
+      currentPage: parseInt(this.$route.query.current_page),
       modal: false,
       practice: null
     }
@@ -71,10 +69,24 @@ export default {
     delete query.current_page
     this.$router.push({ query })
   },
+  computed: {
+    totalPages() {
+      return Math.ceil(this.total / this.perPage);
+    }
+  },
   watch: {
+    practices(newValue, oldValue) {
+      if (newValue.length !== 0 && (oldValue.length > newValue.length)) {
+        this.getCompletedPractices()
+      }
+      if (newValue.length === 0 && this.$route.query.current_page !== 1) {
+        this.pagechanged(this.totalPages)
+      }
+    },
     $route(to, from) {
-      this.currentPage = parseInt(to.query.current_page)
-      this.getCompletedPractices()
+      if (from.query.current_page !== to.query.current_page) {
+        this.getCompletedPractices()
+      }
     }
   },
   created() {
@@ -82,27 +94,23 @@ export default {
       ...this.$route.query,
       current_page: this.$route.query.current_page || 1
     }
-
-    this.$axios.$get(`/api/v1/locum/practices/count?locum_practice_type=Completed`).then(res => { //GET QUANTITY OF DATA
-      this.total = res.data.count
-      this.perPage = 6
-      this.totalPages = Math.ceil(this.total / this.perPage)
-      this.getCompletedPractices()
-    })
-
-    // this.$axios.$get(`/api/v1/locum/practices?locum_practice_type=Completed`).then(res => {
-    //   this.practices = res.data.practices
-    // })
+    this.$router.push({ query })
+    this.getCompletedPracticesCount()
+    this.getCompletedPractices()
   },
   methods: {
+    getCompletedPracticesCount() {
+      this.$axios.$get(`/api/v1/locum/practices/count?locum_practice_type=Completed`).then(res => { //GET QUANTITY OF DATA
+        this.total = res.data.count
+        this.perPage = 6
+      })
+    },
     getCompletedPractices() {
-      this.loading = true
       let offset = 0
       offset = this.perPage * (parseInt(this.$route.query.current_page) - 1)
       this.$axios.$get(`/api/v1/locum/practices?locum_practice_type=Completed&limit=${this.perPage}&offset=${offset}`).then(res => {
         this.practices = res.data.practices
       })
-      this.loading = false
     },
 
     favorite(id) {

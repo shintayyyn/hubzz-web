@@ -7,26 +7,26 @@
           v-for="practice in practices"
           :key="practice.id"
         >
-          <!-- <div class="flex justify-end z-50">
-          <template v-if="practice.is_favorite">
-            <svgicon
-              name="on-star"
-              height="32"
-              width="32"
-              class="cursor-pointer"
-              @click="favorite(practice.id)"
-            />
-          </template>
-          <template v-else>
-            <svgicon
-              name="off-star"
-              height="32"
-              width="32"
-              class="cursor-pointer"
-              @click="favorite(practice.id)"
-            />
-          </template>
-          </div>-->
+          <div class="flex justify-end z-50">
+            <template v-if="practice.is_favorite">
+              <svgicon
+                name="on-star"
+                height="32"
+                width="32"
+                class="cursor-pointer"
+                @click="unfavorite(practice.id)"
+              />
+            </template>
+            <template v-else>
+              <svgicon
+                name="off-star"
+                height="32"
+                width="32"
+                class="cursor-pointer"
+                @click="favorite(practice.id)"
+              />
+            </template>
+          </div>
           <div class="flex flex-wrap text-center mt-4 cursor-pointer" @click="show(practice.id)">
             <div class="w-full">
               <svgicon name="no-avatar" height="60" width="60" />
@@ -37,7 +37,7 @@
         </div>
       </div>
 
-      <div v-if="practices" class="m-10 xl:-ml-32">
+      <div class="mt-5 flex justify-center" v-if="practices.length > 0">
         <AppPagination
           :total="total"
           :totalPages="totalPages"
@@ -68,11 +68,9 @@ export default {
   data() {
     return {
       practices: [],
+      perPage: 5,
       total: 0,
-      totalPages: 0,
-      currentPage: 0,
-      perPage: 0,
-      loading: false,
+      currentPage: parseInt(this.$route.query.current_page),
       modal: false,
       practice: null
     }
@@ -82,10 +80,24 @@ export default {
     delete query.current_page
     this.$router.push({ query })
   },
+  computed: {
+    totalPages() {
+      return Math.ceil(this.total / this.perPage);
+    }
+  },
   watch: {
+    practices(newValue, oldValue) {
+      if (newValue.length !== 0 && (oldValue.length > newValue.length)) {
+        this.getUnsuccessfulPractices()
+      }
+      if (newValue.length === 0 && this.$route.query.current_page !== 1) {
+        this.pagechanged(this.totalPages)
+      }
+    },
     $route(to, from) {
-      this.currentPage = parseInt(to.query.current_page)
-      this.getUnsuccessfulPractices()
+      if (from.query.current_page !== to.query.current_page) {
+        this.getUnsuccessfulPractices()
+      }
     }
   },
   created() {
@@ -93,26 +105,22 @@ export default {
       ...this.$route.query,
       current_page: this.$route.query.current_page || 1
     }
-
-    this.$axios.$get(`/api/v1/locum/practices/count?locum_practice_type=Unsuccessful`).then(res => { //GET QUANTITY OF DATA
-      this.total = res.data.count
-      this.perPage = 6
-      this.totalPages = Math.ceil(this.total / this.perPage)
-      this.getUnsuccessfulPractices()
-    })
-    // this.$axios.$get(`/api/v1/locum/practices?locum_practice_type=Unsuccessful`).then(res => {
-    //     this.practices = res.data.practices
-    //   })
+    this.$router.push({ query })
+    this.getUnsuccessfulPracticesCount()
+    this.getUnsuccessfulPractices()
   },
   methods: {
+    getUnsuccessfulPracticesCount() {
+      this.$axios.$get(`/api/v1/locum/practices/count?locum_practice_type=Unsuccessful`).then(res => { //GET QUANTITY OF DATA
+        this.total = res.data.count
+      })
+    },
     getUnsuccessfulPractices() {
-      this.loading = true
       let offset = 0
       offset = this.perPage * (parseInt(this.$route.query.current_page) - 1)
       this.$axios.$get(`/api/v1/locum/practices?locum_practice_type=Unsuccessful&limit=${this.perPage}&offset=${offset}`).then(res => {
         this.practices = res.data.practices
       })
-      this.loading = false
     },
     show(id) {
       this.$axios.$get(`/api/v1/locum/practices/${id}`).then(res => {
