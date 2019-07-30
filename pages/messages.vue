@@ -55,10 +55,10 @@ export default {
 </script>
 <style scoped>
 .messages-section {
-  overflow-y: hidden;
-  display: flex;
+  /* overflow-y: hidden; */
+  /* display: flex; */
   /* border: 2px solid black; */
-  height: 100vh;
+  /* height: 100vh; */
 }
 </style>
 

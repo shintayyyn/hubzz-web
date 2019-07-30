@@ -1,5 +1,6 @@
 <template>
-  <div class="messages-left-panel">
+  <section class="messages-left-panel">
+    <MessagesSearchPanel />
     <div class="flex flex-col">
       <div
         class="p-2 cursor-pointer"
@@ -11,10 +12,14 @@
         <div>{{item.group_name}}</div>
       </div>
     </div>
-  </div>
+  </section>
 </template>
 <script>
+import MessagesSearchPanel from '@/components/Messages/LeftPanel/MessagesSearchPanel'
 export default {
+  components: {
+    MessagesSearchPanel
+  },
   props: {
     conversations: {
       type: Array,
