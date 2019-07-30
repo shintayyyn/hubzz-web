@@ -1,7 +1,19 @@
 <template>
   <div>
+    <div class="-mt-2">
+      <AppSelect
+        v-model="profession_id"
+        :name="'Filter Locums by'"
+        :label="'Filter Locums by'"
+        :items="professions"
+        :placeholder="'All'"
+      />
+    </div>
+    <div class="mt-10 w-full text-center" v-if="locums.length == 0">
+      No locums have withrawn.
+    </div>
+    <div v-else class="flex flex-row flex-wrap justify-start">
     <AppLoading :loading="loading" :message="'Loading'" v-if="loading" />
-    <div v-if="!locums.length == 0" class="flex flex-row flex-wrap justify-start">
       <div
         class="card w-24 rounded-lg shadow-lg m-2 p-5 hover:bg-grey"
         v-for="(user, index) in locums"
@@ -33,9 +45,6 @@
         </div>
       </div>
     </div>
-     <div v-else>
-      <span>No locums have withrawn.</span>
-    </div>
 
     <div v-if="!locums.length == 0" class="m-10 xl:-ml-32">
       <AppPagination
@@ -60,11 +69,13 @@
 import AppPagination from '@/components/Base/AppPagination'
 import AppLoading from '@/components/Base/AppLoading'
 import MyLocumDetailModal from '@/components/MyBanks/MyLocumDetailModal' //TEMPORARY
+import AppSelect from '@/components/Base/AppSelect'
 export default {
   components: {
     AppPagination,
     AppLoading,
-    MyLocumDetailModal
+    MyLocumDetailModal,
+    AppSelect
   },
   data() {
     return {
@@ -76,7 +87,10 @@ export default {
       loading: false,
       modal: false, //TEMPORARY
       user: null, //TEMPORARY
-      jobs: null
+      jobs: null,
+      professions:[],
+      profession_id: null,
+      filteredUsers: []
     }
   },
   beforeDestroy() {
@@ -87,6 +101,9 @@ export default {
   watch: {
     $route(to, from) {
       this.currentPage = parseInt(to.query.current_page)
+      this.getWithrawnLocums()
+    },
+     profession_id:function(){
       this.getWithrawnLocums()
     }
   },
@@ -101,6 +118,13 @@ export default {
       this.totalPages = Math.ceil(this.total / this.perPage)
       this.getWithrawnLocums()
     })
+
+    this.$axios.$get(`/api/v1/professions`).then(res => {
+      this.professions = [];
+      res.data.professions.forEach(item => {
+        this.professions.push({ label: item.name, value: item.id });
+      });
+    });
     // this.locums = []
     // this.$axios.$get(`/api/v1/practice/locums?practice_locum_type=Declined`).then(res => {
     //   console.log(res)
@@ -112,9 +136,15 @@ export default {
       this.loading = true
       let offset = 0
       offset = this.perPage * (parseInt(this.$route.query.current_page) - 1)
-      this.$axios.$get(`/api/v1/practice/locums?practice_locum_type=Declined&limit=${this.perPage}&offset=${offset}`).then(res => {
-        this.locums = res.data.users
-      })
+      if(!this.profession_id){
+        this.$axios.$get(`/api/v1/practice/locums?practice_locum_type=Declined&limit=${this.perPage}&offset=${offset}`).then(res => {
+          this.locums = res.data.users
+        })
+      }else{
+         this.$axios.$get(`/api/v1/practice/locums?profession_id=${this.profession_id}&practice_locum_type=Declined&limit=${this.perPage}&offset=${offset}`).then(res => {
+          this.locums = res.data.users
+        })
+      }
       this.loading = false
     },
     unfavorite(id, index) {

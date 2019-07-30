@@ -262,32 +262,32 @@ export default {
   methods: {
     // practice
     hasPracticeCurrentJobs(date, type) {
-      return this.getPracticeAllocatedJobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === type)
+      return this.getPracticeAllocatedJobs.find(job => this.getDateArray(job.date_start, job.date_end).includes(date) && job.shift.name === type)
     },
     hasPracticeAppliedJobs(date, type) {
-      return this.getPracticeAppliedJobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === type)
+      return this.getPracticeAppliedJobs.find(job => this.getDateArray(job.date_start, job.date_end).includes(date) && job.shift.name === type)
     },
     hasPracticeUnfilledJobs(date, type) {
-      return this.getPracticeUnfilledJobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === type)
+      return this.getPracticeUnfilledJobs.find(job => this.getDateArray(job.date_start, job.date_end).includes(date) && job.shift.name === type)
     },
     hasPracticeDeclinedJobs(date, type) {
-      return this.getPracticeDeclinedJobs.find(job => this.$moment(job.platform_job.declined_at).format('YYYY-MM-DD') === date && job.platform_job.shift.name === type)
+      return this.getPracticeDeclinedJobs.find(job => this.$moment(job.platform_job.declined_at).format('YYYY-MM-DD') === date && job.shift.name === type)
     },
     hasPracticeAppliedJobsReminder(date, type) {
-      return this.getPracticeAppliedJobsReminder.find(job => job.platform_job.selection_date === date && type === 'Reminder')
+      return this.getPracticeAppliedJobsReminder.find(job => job.selection_date === date && type === 'Reminder')
     },
     hasPracticeAvailableJobsReminder(date, type) {
-      return this.getPracticeAvailableJobsReminder.find(job => job.platform_job.selection_date === date && type === 'Reminder')
+      return this.getPracticeAvailableJobsReminder.find(job => job.selection_date === date && type === 'Reminder')
     },
     // locum
     hasLocumPrivateJobs(date, type) {
       return this.getLocumAllocatedPrivateJobs.find(job => this.getDateArray(job.private_job.date_start, job.private_job.date_end).includes(date) && job.private_job.shift.name === type)
     },
     hasLocumCurrentJobs(date, type) {
-      return this.getLocumAllocatedCurrentJobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === type)
+      return this.getLocumAllocatedCurrentJobs.find(job => this.getDateArray(job.date_start, job.date_end).includes(date) && job.shift.name === type)
     },
     hasLocumAppliedJobs(date, type) {
-      return this.getLocumAppliedJobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === type)
+      return this.getLocumAppliedJobs.find(job => this.getDateArray(job.date_start, job.date_end).includes(date) && job.shift.name === type)
     },
     hasLocumUnavailabilities(date, type) {
       return this.getLocumUnavailabilities.find(job => job.date === date && job.shifts.find(shift => shift.name === type))
