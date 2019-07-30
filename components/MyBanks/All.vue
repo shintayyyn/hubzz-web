@@ -1,8 +1,19 @@
 <template>
   <div>
-    <AppLoading :loading="loading" :message="'Loading'" v-if="loading" />
-        
-    <div v-if="!locums.length == 0" class="flex flex-row flex-wrap w-full justify-start">
+    <div class="-mt-2">
+      <AppSelect
+        v-model="profession_id"
+        :name="'Filter Locums by'"
+        :label="'Filter Locums by'"
+        :items="professions"
+        :placeholder="'All'"
+      />
+    </div>
+    <div class="mt-10 w-full text-center" v-if="locums.length == 0" >
+      There are no locums connected to your practice yet.
+    </div>   
+    <div v-else class="flex flex-row flex-wrap w-full justify-start">
+      <AppLoading :loading="loading" :message="'Loading'" v-if="loading" />
       <div
         class="card w-24 rounded-lg shadow-lg bg-grey-light m-2 p-4 hover:bg-grey"
         v-for="user in locums"
@@ -40,15 +51,10 @@
           </div>
 
           <div class="w-full font-bold text-sm sm:text-lg my-4">{{user.personal_detail.name}}</div>
-          <div
-            class="w-full mb-4 font-bold text-grey-dark text-sm sm:text-lg"
-          >{{user.locum_detail.profession.name}}</div>
+          <div class="w-full mb-4 font-bold text-grey-dark text-sm sm:text-lg">{{user.locum_detail.profession.name}}</div>
           <!-- <div class="w-full font-bold text-grey-dark text-sm sm:text-lg">{{user.locum_detail.headline}}</div> -->
         </div>
       </div>
-    </div>
-    <div v-else>
-      <span>There are no locums connected to your practice yet.</span>
     </div>
 
     <div v-if="!locums.length == 0" class="m-10 xl:-ml-32">
@@ -74,12 +80,13 @@
 import AppPagination from '@/components/Base/AppPagination'
 import AppLoading from '@/components/Base/AppLoading'
 import MyLocumDetailModal from '@/components/MyBanks/MyLocumDetailModal' //TEMPORARY
-
+import AppSelect from '@/components/Base/AppSelect'
 export default {
   components: {
     AppPagination,
     AppLoading,
     MyLocumDetailModal,
+    AppSelect
   },
   data() {
     return {
@@ -88,10 +95,13 @@ export default {
       totalPages: 0,
       currentPage: 0,
       perPage: 0,
-      loading: false,
+      loading: true,
       modal: false, //TEMPORARY
       user: null, //TEMPORARY
-      jobs: null
+      jobs: null,
+      professions:[],
+      profession_id: null,
+      filteredUsers: []
     }
   },
   beforeDestroy() {
@@ -102,6 +112,9 @@ export default {
   watch: {
     $route(to, from) {
       this.currentPage = parseInt(to.query.current_page)
+      this.getAllLocums()
+    },
+    profession_id:function(){
       this.getAllLocums()
     }
   },
@@ -118,19 +131,29 @@ export default {
       this.getAllLocums()
     })
 
-    // this.$axios.$get(`/api/v1/practice/locums`).then(res => {
-    //   console.log(res)
-    //   this.locums = res.data.users
-    // })
+    this.$axios.$get(`/api/v1/professions`).then(res => {
+      this.professions = [];
+      res.data.professions.forEach(item => {
+        this.professions.push({ label: item.name, value: item.id });
+      });
+    });
+
   },
+
   methods: {
     getAllLocums() {
       this.loading = true
       let offset = 0
       offset = this.perPage * (parseInt(this.$route.query.current_page) - 1)
-      this.$axios.$get(`/api/v1/practice/locums?limit=${this.perPage}&offset=${offset}`).then(res => {
-        this.locums = res.data.users
-      })
+      if(!this.profession_id){
+        this.$axios.$get(`/api/v1/practice/locums?&limit=${this.perPage}&offset=${offset}`).then(res => {
+          this.locums = res.data.users
+        })
+      }else{
+         this.$axios.$get(`/api/v1/practice/locums?profession_id=${this.profession_id}&limit=${this.perPage}&offset=${offset}`).then(res => {
+          this.locums = res.data.users
+        })
+      }
       this.loading = false
     },
     favorite(id) {
@@ -163,9 +186,9 @@ export default {
           this.user = res.data.user
         }),
       ]).then(() => {
-        this.$axios.$get(`/api/v1/practice/jobs?locum_detail_id=${this.user.locum_detail.id}`).then(res => {
-          this.jobs = res.data.jobs
-        }),
+        // this.$axios.$get(`/api/v1/practice/jobs?locum_detail_id=${this.user.locum_detail.id}`).then(res => {
+        //   this.jobs = res.data.jobs
+        // }),
         this.modal = true
       })
 

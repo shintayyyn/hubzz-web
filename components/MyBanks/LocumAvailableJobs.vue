@@ -1,11 +1,11 @@
 <template>
     <div>
         <div class="overflow-x-auto overflow-y-hidden">
-        <div v-if="!jobs">
+        <div v-if="availableJobs.length == 0">
           <div
           class="mt-10 w-full text-center"
           style="font-family: Nunito"
-          >This locum had no transaction with your practice</div>
+          >This locum has no available jobs.</div>
         </div>
         <div v-else>
            <table>
@@ -48,24 +48,31 @@
 </template>
 </<script>
 export default {
-    props:['jobs'],
+    props:['user'],
     components:{
 
     },
     data(){
         return{
-
+          availableJobs:[]
         }
     },
     created(){
-
+      Promise.all([
+        console.log(this.user),
+        this.$axios.$get(`/api/v1/practice/jobs?locum_detail_id=${this.user.locum_detail.id}&locum_status=Available`).then(res=>{
+          this.availableJobs = res.data.jobs
+        })
+      ]).then(() => {
+        console.log(this.availableJobs)
+      })
     },
     computed:{
-      availableJobs:function(){
-        return this.jobs.filter(function(job) {
-          return job.locum_status === "Available"
-        })
-      }
+      // availableJobs:function(){
+      //   return this.jobs.filter(function(job) {
+      //     return job.locum_status === "Available"
+      //   })
+      // }
     },
     methods:{
         show(id) {

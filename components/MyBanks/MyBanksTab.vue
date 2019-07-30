@@ -38,23 +38,9 @@
     </div>
 
     <div class="w-1/3 overflow-hidden">
-      <div>
-         <AppSelect
-        :name="'Filter Locums by'"
-        :label="'Filter Locums by'"
-        :items="[ 
-        {value: 1, label: 'GP'}, 
-        {value: 2, label: 'Nurse | Advanced Nurse Practitioners (ANP)'}, 
-        {value: 3, label: 'Nurse | Emergency Nurse Practitioners (ENP)'},
-        {value: 4, label: 'Nurse | Nurse Practitioners'},
-        {value: 5, label: 'Nurse | Practice Nurses'},
-        {value: 6, label: 'Paramedic | Paramedic Practitioner'},
-        {value: 7, label: 'Paramedic | Urgent Care Practitioner'},
-        {value: 8, label: 'Paramedic | Emergency Care Practitioner'}, ]"
-      />
-      </div>
      
     </div>
+
   </div>
 </div>
  

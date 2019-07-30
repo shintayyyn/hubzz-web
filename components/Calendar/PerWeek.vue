@@ -555,22 +555,22 @@ export default {
     // practice
     hasPracticeCurrentJobs(date, type) {
       if (this.getPracticeAllocatedJobs && this.getPracticeAllocatedJobs.length > 0) {
-        return this.getPracticeAllocatedJobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === type)
+        return this.getPracticeAllocatedJobs.find(job => this.getDateArray(job.date_start, job.date_end).includes(date) && job.shift.name === type)
       }
     },
     hasPracticeAppliedJobs(date, type) {
       if (this.getPracticeAppliedJobs && this.getPracticeAppliedJobs.length > 0) {
-        return this.getPracticeAppliedJobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === type)
+        return this.getPracticeAppliedJobs.find(job => this.getDateArray(job.date_start, job.date_end).includes(date) && job.shift.name === type)
       }
     },
     hasPracticeUnfilledJobs(date, type) {
       if (this.getPracticeUnfilledJobs && this.getPracticeUnfilledJobs.length > 0) {
-        return this.getPracticeUnfilledJobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === type)
+        return this.getPracticeUnfilledJobs.find(job => this.getDateArray(job.date_start, job.date_end).includes(date) && job.shift.name === type)
       }
     },
     hasPracticeDeclinedJobs(date, type) {
       if (this.getPracticeDeclinedJobs && this.getPracticeDeclinedJobs.length > 0) {
-        return this.getPracticeDeclinedJobs.find(job => this.$moment(job.platform_job.declined_at).format('YYYY-MM-DD') === date && job.platform_job.shift.name === type)
+        return this.getPracticeDeclinedJobs.find(job => this.$moment(job.platform_job.declined_at).format('YYYY-MM-DD') === date && job.shift.name === type)
       }
     },
     hasPracticeAppliedJobsReminder(date, type) {
@@ -591,11 +591,11 @@ export default {
     },
     hasLocumCurrentJob(date, type) {
       if (this.getLocumAllocatedCurrentJobs && this.getLocumAllocatedCurrentJobs.length > 0) {
-        return this.getLocumAllocatedCurrentJobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date) && job.platform_job.shift.name === type)
+        return this.getLocumAllocatedCurrentJobs.find(job => this.getDateArray(job.date_start, job.date_end).includes(date) && job.shift.name === type)
       }
     },
     hasLocumAppliedJobs(date, type) {
-      return this.getLocumAppliedJobs.find(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date))
+      return this.getLocumAppliedJobs.find(job => this.getDateArray(job.date_start, job.date_end).includes(date))
     },
     hasLocumUnavailabilities(date, type) {
       if (this.getLocumUnavailabilities && this.getLocumUnavailabilities.length > 0) {

@@ -6,19 +6,25 @@
     <div class="flex flex-row justify-start mt-8">
       <div class="leading-loose font-bold text-md sm:text-lg">{{job.title}}</div>
       <div class="mx-2 text-sm sm:text-sm p-2" :class="bgStatus(job.status)">{{status(job.status)}}</div>
+      <!-- <div class="font-bold text-xs sm:text-sm no-underline px-2 py-2 rounded-lg bg-yellow-dark ml-4">
+        Edit this job
+      </div> -->
     </div>
+   
     <!-- <div
       class="text-xs sm:text-sm"
     >Posted {{$moment(job.platform_job.date_created).format('DD/MM/YYYY')}}</div> -->
     <div class="flex flex-col mt-4">
       <div class="flex flex-row flex-wrap justify-start">
+        <!--SHOW THE DEAILS OF THE JOB-->
         <JobDetailModalForm
           :job="job"
-          v-if="job.status === 'Unfilled' || job.status === 'Cancelled' || job.status === 'Declined'"
+          v-if="job.status === 'Unfilled' || job.status === 'Cancelled' || job.status === 'Declined'|| job.status === 'Completed'"
         />
+        <!--UPDATE THE JOB-->
         <JobDetailModalUpdateForm
           :job="job"
-          v-if="job.status === 'Current' || job.status === 'Applied' || job.status === 'Completed' || job.status === 'Available'"
+          v-if="job.status === 'Current' || job.status === 'Applied' || job.status === 'Available'"
         />
         <JobDetailModalCandidates
           :applicants="applicants"
