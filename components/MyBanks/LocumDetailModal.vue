@@ -1,17 +1,14 @@
 <template>
   <div class="p-8 max-w-xl">
-    <div @click="$emit('close')" class="cursor-pointer">
-      <svgicon name="left-arrow" height="32" width="32" />
-    </div>
-    <div class="flex flex-row flex-nowrap justify-start mt-8">
+    <div class="flex flex-row flex-nowrap justify-start">
       <div class="font-bold text-md sm:text-lg">{{user.personal_detail.name}}</div>
     </div>
     <div class="flex flex-row flex-wrap justify-between mt-4">
       <div class="w-full pr-0 lg:pr-2 lg:w-1/2">
-        <div class="rounded-lg shadow-lg p-8">
+        <div class="rounded-lg shadow-lg ">
           <div class="float-right">
             <!-- <div class="font-bold text-sm sm:text-md">Avatar</div> -->
-            <div class="text-xs sm:text-sm mb-8">
+            <div class="text-xs sm:text-sm mb-6">
                 <div v-if="!user.avatar">
                   <svgicon name="no-avatar" height="115" width="115"/>
                 </div>
@@ -68,7 +65,13 @@
               :key="item.id"
             >
               <svgicon name="cloud-download" height="24" width="24" />
-              <div class="leading-normal mx-2 document-filename">{{item.file.filename}}</div>
+              <a
+                @click.prevent="downloadItem(item.file.url, item.file.filename)"
+                :href="item.file.url"
+                :download="item.file.filename"
+                target="_blank"
+              >{{item.file.filename}}</a>
+              <!-- <div class="leading-normal mx-2 document-filename">{{item.file.filename}}</div> -->
             </div>
           </div>
           <div class="font-bold text-sm sm:text-md">Others documents</div>
@@ -79,7 +82,13 @@
               :key="item.id"
             >
               <svgicon name="cloud-download" height="24" width="24" />
-              <div class="leading-normal mx-2 document-filename">{{item.file.filename}}</div>
+              <a
+                @click.prevent="downloadItem(item.file.url, item.file.filename)"
+                :href="item.file.url"
+                :download="item.file.filename"
+                target="_blank"
+              >{{item.file.filename}}</a>
+              <!-- <div class="leading-normal mx-2 document-filename">{{item.file.filename}}</div> -->
             </div>
           </div>
 
@@ -104,14 +113,13 @@
             <div class="text-xs sm:text-sm">email</div>
           </div>
         </div>
-
       </div>
     </div>
   </div>
 </template>
 <script>
 export default {
-  props: ['user'],
+  props: ['user'], //insert 'jobs' in array
   components: {
   },
   data() {
@@ -122,6 +130,8 @@ export default {
   },
   created() {
     this.getProfessionCategory(this.user.locum_detail.profession.profession_category.id)
+    console.log(this.user)
+    console.log(this.jobs)
   },
   methods: {
     getProfessionCategory(id) {
@@ -134,6 +144,21 @@ export default {
         })
       })
     },
+    downloadItem(fileUrl, fileName) {
+      const axios = require('axios');
+      axios({
+        url: fileUrl,
+        method: 'GET',
+        responseType: 'blob', // important
+      }).then(response => {
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', fileName);
+        document.body.appendChild(link);
+        link.click();
+      });
+    }
   }
 }
 </script>

@@ -60,7 +60,7 @@
                       :href="item.info.file.url"
                       :download="item.info.file.filename"
                       target="_blank"
-                    >{{item.info.file.filename | StringMaxLength(15)}} 123</a>
+                    >{{item.info.file.filename | StringMaxLength(15)}}</a>
                   </div>
                 </div>
               </td>
@@ -431,7 +431,7 @@ export default {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
-              text: "Document uploaded!"
+              text: ["Document uploaded!"]
             });
           } else {
             let optional_index = this.optional.findIndex(
@@ -453,7 +453,7 @@ export default {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
-              text: "Document uploaded!"
+              text: ["Document uploaded!"]
             });
           }
         })
@@ -502,7 +502,7 @@ export default {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
-              text: "Document uploaded!"
+              text: ["Document uploaded!"]
             });
           } else {
             this.optional.splice(index, 1);
@@ -519,7 +519,7 @@ export default {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
-              text: "Document uploaded!"
+              text: ["Document uploaded!"]
             });
           }
         })
@@ -562,7 +562,7 @@ export default {
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
-            text: "Document uploaded!"
+            text: ["Document uploaded!"]
           });
         })
         .catch(err => {
@@ -603,24 +603,24 @@ export default {
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
-            text: "Document uploaded!"
+            text: ["Document uploaded!"]
           });
         })
         .catch(err => {
           console.log(err);
         });
     },
-    downloadItem(imgUrl, imgFilename) {
-      const axios = require("axios");
+    downloadItem(fileUrl, fileName) {
+      const axios = require('axios');
       axios({
-        url: imgUrl,
-        method: "GET",
-        responseType: "blob" // important
+        url: fileUrl,
+        method: 'GET',
+        responseType: 'blob', // important
       }).then(response => {
         const url = window.URL.createObjectURL(new Blob([response.data]));
         const link = document.createElement("a");
         link.href = url;
-        link.setAttribute("download", imgFilename);
+        link.setAttribute('download', fileName);
         document.body.appendChild(link);
         link.click();
       });

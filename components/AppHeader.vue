@@ -14,7 +14,7 @@
         <div class="flex flex-row justify-end items-center" v-if="$auth.loggedIn">
           <div
             class="text-xs xl:text-sm"
-            v-if="$auth.user.domain === 'Practice' && $auth.user.is_actived === true"
+            v-if="$auth.user.domain === 'Practice' && $auth.user.status === 'Active'"
           >
             <AppButton
               :label="'Create Job'"

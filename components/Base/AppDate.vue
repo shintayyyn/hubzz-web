@@ -175,7 +175,7 @@
               </div>
             </div>
             <div class="flex flex-col w-full">
-              <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 1">
+              <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 0">
                 <div class="m-1 h-10 w-auto">&nbsp;</div>
               </div>
               <div v-for="(item, index) in daysInMonth" :key="index">
@@ -221,7 +221,6 @@ export default {
     value: String,
     name: String,
     label: String,
-    placeholder: String,
     error: Object,
     inStyle: String,
     isAfter: Boolean

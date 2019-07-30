@@ -1,8 +1,8 @@
 <template>
   <div class="avatar-container rounded-lg shadow-lg p-8 flex justify-center">
     <div class="relative avatar flex justify-center">
-      <img :src="avatar.file.url" v-if="avatar && avatar.file && !imageUrl">
-      <img :src="imageUrl" v-else>
+      <img :src="avatar.file.url" v-if="avatar && avatar.file && !imageUrl" />
+      <img :src="imageUrl" v-else />
       <div class="icon absolute pin-r pin-t">
         <input
           type="file"
@@ -10,9 +10,9 @@
           id="input_file"
           class="hidden"
           @input="onFileInput($event)"
-        >
+        />
         <label for="input_file" class="cursor-pointer">
-          <svgicon name="camera" height="42" width="42"/>
+          <svgicon name="camera" height="42" width="42" />
         </label>
       </div>
     </div>
@@ -35,7 +35,7 @@ export default {
       const formData = new FormData()
       formData.append('file', file)
       this.$axios.$put(`/api/v1/me/change-avatar`, formData).then(res => {
-        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: 'Avatar changed' })
+        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: ['Avatar changed'] })
         this.getBase64(file, (imageUrl) => {
           this.imageUrl = imageUrl
         })

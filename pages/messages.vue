@@ -8,7 +8,6 @@
 import MessagesLeftPanel from '@/components/Messages/LeftPanel/MessagesLeftPanel'
 import * as chatApi from '@/api/chat'
 export default {
-  layout: 'chat',
   components: {
     MessagesLeftPanel
   },

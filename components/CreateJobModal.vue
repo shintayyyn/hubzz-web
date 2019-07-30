@@ -13,12 +13,9 @@
         >
           <span class="text-base font-bold">Validation Error!</span>
           <div class="flex flex-wrap md:flex-no-wrap">
-
             <div v-if="formError" class="w-full md:w-2/3 text-sm mt-2">
               <span class="font-bold mb-2">Please correct the following errors.</span>
-              <div v-for="(formErr, index) in formError"
-              :key="`formErr-${index}`"
-              >
+              <div v-for="(formErr, index) in formError" :key="`formErr-${index}`">
                 <span>{{'Field "'+formErr.field+'" is '+formErr.message}}</span>
               </div>
             </div>
@@ -27,11 +24,10 @@
             </div>
             <div>
               <button
-              class="mx-auto md:mx-10 md:absolute pin-r pin-b w-32 md:my-10 p-2 text-sm rounded-lg shadow border border-white text-white hover:bg-white hover:text-black"
-              @click="showErrorModal = false"
-            >Okay</button>
+                class="mx-auto md:mx-10 md:absolute pin-r pin-b w-32 md:my-10 p-2 text-sm rounded-lg shadow border border-white text-white hover:bg-white hover:text-black"
+                @click="showErrorModal = false"
+              >Okay</button>
             </div>
-
           </div>
         </div>
       </div>
@@ -77,7 +73,6 @@
               :placeholder="''"
               :error="formError.find(item => item.field === 'report_to')"
               @blur="checkEmptyField(form.report_to,'report_to')"
-              
             />
             <!-- email -->
             <AppInput
@@ -165,7 +160,6 @@
                     type="text"
                     class="border-b-2 focus:border-yellow focus:outline-none font-bold text-xs sm:text-sm mx-1 py-2"
                     :class="formError.find(item => item.field === 'rate')? 'border-red':''"
-                    @keypress="ValidateInput"
                     style="text-align:right;width:100px;"
                     @blur="checkEmptyField(form.rate,'rate')"
                   />
@@ -204,7 +198,6 @@
                   type="text"
                   class="border-b-2 focus:border-yellow focus:outline-none font-bold py-2 text-xs sm:text-sm mx-1"
                   :class="this.formError.find(item => item.field === 'total_hours')? 'border-red':''"
-                  @keypress="ValidateInput"
                   @blur="checkEmptyField(form.total_hours,'total_hours')"
                   style="text-align:right;'"
                 />
@@ -308,16 +301,16 @@
                   :label="'Start Date'"
                   :error="formError.find(item => item.field === 'date_start')"
                   @blur="checkEmptyField(form.date_start,'date_start')"
+
                 />
               </div>
               <div class="px-1 w-full md:w-1/2">
-                <AppInput
+                <AppTime
                   v-model="form.time_start"
                   :type="'time'"
                   :name="'time_start'"
                   :label="'Start Time'"
-                  :placeholder="''"
-                  :error="formError.find(item => item.field === 'time_start')"
+                  :error="this.formError.find(error => error.field === 'time_start')"
                   @blur="checkEmptyField(form.time_start,'time_start')"
                 />
               </div>
@@ -331,13 +324,12 @@
                 />
               </div>
               <div class="px-1 w-full md:w-1/2">
-                <AppInput
+                <AppTime
                   v-model="form.time_end"
                   :type="'time'"
                   :name="'time_end'"
                   :label="'End Time'"
-                  :placeholder="''"
-                  :error="formError.find(item => item.field === 'time_end')"
+                  :error="this.formError.find(error => error.field === 'time_end')"
                   @blur="checkEmptyField(form.time_end,'time_end')"
                 />
               </div>
@@ -401,6 +393,7 @@ import AppTextarea from "@/components/Base/AppTextarea";
 import AppFilterSearch from "@/components/Base/AppFilterSearch";
 import AppDate from "@/components/Base/AppDate";
 import AppButton from "@/components/Base/AppButton";
+import AppTime from "@/components/Base/AppTime";
 const session_requirements_lists = [
   { label: "Practice admin", value: "Practice admin" },
   { label: "Telephone triage", value: "Telephone triage" },
@@ -414,7 +407,8 @@ export default {
     AppTextarea,
     AppFilterSearch,
     AppDate,
-    AppButton
+    AppButton,
+    AppTime,
   },
   data() {
     return {
@@ -451,11 +445,11 @@ export default {
         number_of_patients: "", //?????????????
         duration_for_each_appointment: "",  //?????????????
         opportunity_for_catch_up_slots: false,
-        session_requirements: [], 
+        session_requirements: [],
         session_structure_information: "", //??????????????
         extra_information: "", //???????????
         rate: "", //req
-        total_hours:"", //req
+        total_hours: "", //req
         locum_detail_rate_type_id: 1, //req - already filled
         ir35: false, //req - already filled
         mandatory_training_id: [],
@@ -474,12 +468,12 @@ export default {
         selection_date: null
       },
       formError: [],
-      showErrorModal:false,
+      showErrorModal: false,
     }
   },
   watch: {
     'form.profession_id'(value) {
-      this.checkEmptyField(value,'profession_id')
+      this.checkEmptyField(value, 'profession_id')
       if (value) {
         this.selectedProfession = this.professions_categories.find(
           item => item.id == value
@@ -498,35 +492,35 @@ export default {
     },
 
     'form.practice_id'(value) {
-      this.checkEmptyField(value,'practice_id')
+      this.checkEmptyField(value, 'practice_id')
     },
 
     'form.title'(value) {
-      this.checkEmptyField(value,'title')
+      this.checkEmptyField(value, 'title')
     },
-    
+
     'form.description'(value) {
-      this.checkEmptyField(value,'description')
+      this.checkEmptyField(value, 'description')
     },
 
     'form.report_to'(value) {
-      this.checkEmptyField(value,'report_to')
+      this.checkEmptyField(value, 'report_to')
     },
-     
+
     'form.number_of_patients'(value) {
-      this.checkEmptyField(value,'number_of_patients')
+      this.checkEmptyField(value, 'number_of_patients')
     },
 
-    'form.duration_for_each_appointment'(value){
-      this.checkEmptyField(value,'duration_for_each_appointment')
+    'form.duration_for_each_appointment'(value) {
+      this.checkEmptyField(value, 'duration_for_each_appointment')
     },
 
-     'form.session_requirements'(value){
-      this.checkEmptyField(value,'session_requirements')
+    'form.session_requirements'(value) {
+      this.checkEmptyField(value, 'session_requirements')
     },
 
-    'form.session_structure_information'(value){
-      this.checkEmptyField(value,'session_structure_information')
+    'form.session_structure_information'(value) {
+      this.checkEmptyField(value, 'session_structure_information')
     },
 
     // 'form.extra_information'(value){
@@ -534,58 +528,58 @@ export default {
     // },
 
     'form.rate'(value) {
-      this.checkEmptyField(value,'rate')
+      this.checkEmptyField(value, 'rate')
     },
 
     'form.date_start'(value) {
-      this.checkEmptyField(value,'date_start')
+      this.checkEmptyField(value, 'date_start')
     },
-    
+
     'form.date_end'(value) {
-      this.checkEmptyField(value,'date_end')
+      this.checkEmptyField(value, 'date_end')
     },
 
     'form.time_start'(value) {
-      this.checkEmptyField(value,'time_start')
+      this.checkEmptyField(value, 'time_start')
     },
 
     'form.time_end'(value) {
-      this.checkEmptyField(value,'time_end')  
+      this.checkEmptyField(value, 'time_end')
     },
 
     'form.total_hours'(value) {
-     this.checkEmptyField(value,'total_hours')
+      this.checkEmptyField(value, 'total_hours')
     },
 
     'form.qualification_id'(value) {
-     this.checkEmptyField(value,'qualification_id')
+      this.checkEmptyField(value, 'qualification_id')
     },
 
     'form.clinical_system_id'(value) {
-     this.checkEmptyField(value,'clinical_system_id')
+      this.checkEmptyField(value, 'clinical_system_id')
     },
 
     'form.spoken_language_id'(value) {
-     this.checkEmptyField(value,'spoken_language_id')
+      this.checkEmptyField(value, 'spoken_language_id')
     },
 
     'form.compliance_document_id'(value) {
-     this.checkEmptyField(value,'compliance_document_id')
+      this.checkEmptyField(value, 'compliance_document_id')
     },
-    
+
     'form.unpaid_breaks_in_minutes'(value) {
-     this.checkEmptyField(value,'unpaid_breaks_in_minutes')
+      this.checkEmptyField(value, 'unpaid_breaks_in_minutes')
     },
 
     'form.shift_id'(value) {
-     this.checkEmptyField(value,'shift_id')
+      this.checkEmptyField(value, 'shift_id')
     },
 
     'form.auto_assign_at'(value) {
-     this.checkEmptyField(value,'auto_assign_at')
+      this.checkEmptyField(value, 'auto_assign_at')
     },
     'form.selection_date'(value) {
-      this.checkEmptyField(value,'selection_date')
+      this.checkEmptyField(value, 'selection_date')
     },
     'form.email'(value) {
       let index = this.formError.findIndex(item => item.field === 'email')
@@ -658,7 +652,7 @@ export default {
       });
     });
     this.$axios.$get(`/api/v1/profession-categories`).then(res => {
-   
+
       this.gp_qualification_lists = [];
       res.data.profession_categories
         .find(item => item.id === 1)
@@ -701,7 +695,7 @@ export default {
   },
 
   methods: {
-    checkEmptyField(inputField,fieldName){
+    checkEmptyField(inputField, fieldName) {
       // splice from formError
       let index = this.formError.findIndex(item => item.field === fieldName)
       if (index >= 0) {
@@ -709,12 +703,12 @@ export default {
       }
 
       //check if empty
-      if(!inputField){
+      if (!inputField) {
         this.formError.push({ field: fieldName, message: 'Required' })
-      } 
+      }
     },
 
-    reCheckEmptyField(){
+    reCheckEmptyField() {
       const requiredFields = [
         this.form.practice_id,
         this.form.title,
@@ -772,14 +766,14 @@ export default {
       let counter = 0
       let requiredLength = requiredFields.length
       console.log(requiredLength)
-      
-      while(counter<requiredLength){
-  
-        this.checkEmptyField(requiredFields[counter],requiredFieldNames[counter])
+
+      while (counter < requiredLength) {
+
+        this.checkEmptyField(requiredFields[counter], requiredFieldNames[counter])
         ++counter
       }
     },
-  
+
 
     addMandatory() {
       // ! change route
@@ -792,8 +786,13 @@ export default {
       );
     },
     publish() {
+      this.formError = []
+      /*this.Validate(this.form)
+      if (!this.formError.length) {
+
+      } --> REFACTOR VALIDATION USING THIS. READ ABOUT VUE MIXIN*/ 
       this.reCheckEmptyField()
-      if(this.formError.length == 0){
+      if (this.formError.length == 0) {
         this.form.clinical_system_id = this.form.clinical_system_id.map(
           item => item.value
         );
@@ -829,11 +828,11 @@ export default {
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
-            text: "Successfully created job"
+            text: ["Successfully created job"]
           });
           this.$emit("close");
         });
-      }else{
+      } else {
         console.log(this.formError)
         this.showErrorModal = true
       }

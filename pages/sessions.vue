@@ -36,7 +36,7 @@ export default {
       return this.$route.query.session_status
     },
     shield() {
-      return this.$store.state.jobs.shield
+      return this.$store.state.jobs.modal_shield
     }
   },
   watch: {

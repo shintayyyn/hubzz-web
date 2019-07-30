@@ -28,9 +28,9 @@
               >
                 <td>{{item.job_number}}</td>
                 <td>{{item.platform_job.practice.surgery.name}}</td>
-                <td>{{item.platform_job.title}}</td>
-                <td>{{item.platform_job.date_start}}</td>
-                <td>{{item.platform_job.date_end}}</td>
+                <td>{{item.title}}</td>
+                <td>{{item.date_start}}</td>
+                <td>{{item.date_end}}</td>
                 <td>{{item.platform_job.appointed_to_locum.user.personal_detail.name}}</td>
                 <td>{{$moment(item.platform_job.appointed_at).format('YYYY-MM-DD')}}</td>
               </tr>
@@ -94,7 +94,6 @@ export default {
     }
   },
   created() {
-    console.log(this.total)
     const query = {
       ...this.$route.query,
       current_page: this.$route.query.current_page || 1

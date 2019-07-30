@@ -1,38 +1,49 @@
 <template>
   <section>
-    <div class="flex flex-row flex-wrap justify-start">
-      <div
-        class="card cursor-pointer rounded-lg shadow-lg m-2 p-5 hover:bg-grey"
-        v-for="practice in practices"
-        :key="practice.id"
-      >
-        <div class="flex justify-end z-50">
-          <template v-if="practice.is_favorite">
-            <svgicon
-              name="on-star"
-              height="32"
-              width="32"
-              class="cursor-pointer"
-              @click="unfavorite(practice.id)"
-            />
-          </template>
-          <template v-else>
-            <svgicon
-              name="off-star"
-              height="32"
-              width="32"
-              class="cursor-pointer"
-              @click="favorite(practice.id)"
-            />
-          </template>
-        </div>
-        <div class="flex flex-wrap text-center mt-4 cursor-pointer" @click="show(practice.id)">
-          <div class="w-full">
-            <svgicon name="no-avatar" height="60" width="60" />
+    <div>
+      <div class="flex flex-row flex-wrap justify-start">
+        <div
+          class="card cursor-pointer rounded-lg shadow-lg m-2 p-5 bg-grey-light"
+          v-for="practice in practices"
+          :key="practice.id"
+        >
+          <div class="flex justify-end z-50">
+            <template v-if="practice.is_favorite">
+              <svgicon
+                name="on-star"
+                height="32"
+                width="32"
+                class="cursor-pointer"
+                @click="unfavorite(practice.id)"
+              />
+            </template>
+            <template v-else>
+              <svgicon
+                name="off-star"
+                height="32"
+                width="32"
+                class="cursor-pointer"
+                @click="favorite(practice.id)"
+              />
+            </template>
           </div>
-          <div class="w-full font-bold text-sm sm:text-lg my-4">{{practice.surgery.name}}</div>
-          <div class="w-full font-bold text-grey-dark text-sm sm:text-lg">{{practice.email}}</div>
+          <div class="flex flex-wrap text-center mt-4 cursor-pointer" @click="show(practice.id)">
+            <div class="w-full">
+              <svgicon name="no-avatar" height="60" width="60" />
+            </div>
+            <div class="w-full font-bold text-sm sm:text-lg my-4">{{practice.surgery.name}}</div>
+            <div class="w-full font-bold text-grey-dark text-sm sm:text-lg">{{practice.email}}</div>
+          </div>
         </div>
+      </div>
+
+      <div class="mt-5 flex justify-center" v-if="practices.length > 0">
+        <AppPagination
+          :total="total"
+          :totalPages="totalPages"
+          :currentPage="currentPage"
+          @pagechanged="pagechanged"
+        />
       </div>
     </div>
     <div class="shield" v-if="modal"></div>
@@ -44,41 +55,98 @@
   </section>
 </template>
 <script>
+import AppPagination from '@/components/Base/AppPagination'
 import MyPracticeDetailModal from '@/components/MyPractice/MyPracticeDetailModal'
 export default {
   components: {
+    AppPagination,
     MyPracticeDetailModal
   },
   data() {
     return {
       practices: [],
+      perPage: 5,
+      total: 0,
+      currentPage: parseInt(this.$route.query.current_page),
       modal: false,
       practice: null
     }
   },
+  beforeDestroy() {
+    let query = Object.assign({}, this.$route.query)
+    delete query.current_page
+    this.$router.push({ query })
+  },
+  computed: {
+    totalPages() {
+      return Math.ceil(this.total / this.perPage);
+    }
+  },
+  watch: {
+    practices(newValue, oldValue) {
+      if (newValue.length !== 0 && (oldValue.length > newValue.length)) {
+        this.getPractices()
+      }
+      if (newValue.length === 0 && this.$route.query.current_page !== 1) {
+        this.pagechanged(this.totalPages)
+      }
+    },
+    $route(to, from) {
+      if (from.query.current_page !== to.query.current_page) {
+        this.getPractices()
+      }
+    }
+  },
   created() {
-    this.$axios.$get(`/api/v1/locum/practices`).then(res => {
-      this.practices = res.data.practices
-    })
+    const query = {
+      ...this.$route.query,
+      current_page: this.$route.query.current_page || 1
+    }
+    this.$router.push({ query })
+    this.getPracticesCount()
+    this.getPractices()
+
   },
   methods: {
-    favorite(id) {
-      console.log(id)
-      this.$axios.$post(`/api/v1/locum/practices/${id}/favorite`).then(res => {
-        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: `${res.message}` })
+    getPracticesCount() {
+      this.$axios.$get(`/api/v1/locum/practices/count`).then(res => { //GET QUANTITY OF DATA
+        this.total = res.data.count
       })
     },
+    getPractices() {
+      let offset = 0;
+      offset = this.perPage * (parseInt(this.$route.query.current_page) - 1);
+      this.$axios.$get(`/api/v1/locum/practices?limit=${this.perPage}&offset=${offset}`).then(res => {
+        this.practices = res.data.practices
+      })
+    },
+
+    favorite(id) {
+      this.$axios.$post(`/api/v1/locum/practices/${id}/favorite`).then(res => {
+        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: [`${res.message}`] })
+      })
+    },
+
     unfavorite(id, index) {
       this.practices.splice(index, 1)
       this.$axios.$delete(`/api/v1/locum/practices/${id}/favorite`).then(res => {
-        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: `${res.message}` })
+        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: [`${res.message}`] })
       })
     },
+
     show(id) {
       this.$axios.$get(`/api/v1/locum/practices/${id}`).then(res => {
         this.practice = res.data.practice
         this.modal = true
       })
+    },
+
+    pagechanged(e) {
+      const query = {
+        ...this.$route.query,
+        current_page: e || 1
+      }
+      this.$router.push({ query })
     }
   }
 }

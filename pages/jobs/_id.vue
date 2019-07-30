@@ -1,49 +1,16 @@
 <template>
   <div class="modal-container shadow-lg">
-    <LocumAppointmentModal
-      :job="job"
-      v-if="(job.locum_status === 'Current' && job.type === 'Private') || (job.locum_status === 'Completed' && job.type === 'Private')"
-    />
-    <LocumAllocatedDetailModal
-      :job="job"
-      v-if="job.status === 'Current' && job.type === 'Platform' && job.platform_job.appointed_to_locum.user.id === $auth.user.id"
-    />
-    <LocumAvailableDetailModal :job="job" v-if="job.status === 'Available'" />
-    <LocumAppliedDetailModal :job="job" v-if="job.status === 'Applied'" />
-    <LocumUnsuccessfulDetailModal
-      :job="job"
-      v-if="job.status === 'Current' && job.type === 'Platform' && job.platform_job.appointed_to_locum.user.id !== $auth.user.id"
-    />
-    <LocumDeclinedDetailModal :job="job" v-if="job.status === 'Declined'" />
-    <LocumCancelledDetailModal :job="job" v-if="job.status === 'Cancelled'" />
-    <LocumCompletedDetailModal
-      :job="job"
-      v-if="job.status === 'Completed' && job.type === 'Platform'"
-    />
+    <JobDetailModalAppointment :job="job" v-if="job.type === 'Private'" />
+    <JobDetailModalLocum :job="job" v-else />
   </div>
 </template>
 <script>
-// ! import all detail modal
-import LocumAppointmentModal from '@/components/Jobs/LocumAppointmentModal'
-import LocumAllocatedDetailModal from '@/components/Jobs/LocumAllocatedDetailModal'
-import LocumAvailableDetailModal from '@/components/Jobs/LocumAvailableDetailModal'
-import LocumMatchedDetailModal from '@/components/Jobs/LocumMatchedDetailModal'
-import LocumAppliedDetailModal from '@/components/Jobs/LocumAppliedDetailModal'
-import LocumUnsuccessfulDetailModal from '@/components/Jobs/LocumUnsuccessfulDetailModal'
-import LocumDeclinedDetailModal from '@/components/Jobs/LocumDeclinedDetailModal'
-import LocumCancelledDetailModal from '@/components/Jobs/LocumCancelledDetailModal'
-import LocumCompletedDetailModal from '@/components/Jobs/LocumCompletedDetailModal'
+import JobDetailModalLocum from '@/components/Jobs/JobDetailModalLocum'
+import JobDetailModalAppointment from '@/components/Jobs/JobDetailModalAppointment'
 export default {
   components: {
-    LocumAppointmentModal,
-    LocumAllocatedDetailModal,
-    LocumAvailableDetailModal,
-    LocumMatchedDetailModal,
-    LocumAppliedDetailModal,
-    LocumUnsuccessfulDetailModal,
-    LocumDeclinedDetailModal,
-    LocumCancelledDetailModal,
-    LocumCompletedDetailModal,
+    JobDetailModalLocum,
+    JobDetailModalAppointment,
   },
   async asyncData({ app, route, store, error }) {
     try {

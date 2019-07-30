@@ -1,17 +1,13 @@
 <template>
   <section>
+    <div class="sidebar-shield" v-if="$store.state.toggled_sidebar"></div>
     <AppSideBar @modal="signout_modal = $event" />
-    <transition name="drop" mode="out-in">
-      <SignOut v-if="signout_modal" @modal="signout_modal = $event" />
-    </transition>
+    <div class="modal-shield" v-if="$store.state.calendar.createJob"></div>
     <transition name="slide" mode="out-in">
       <div class="modal-container shadow-lg" v-if="$store.state.calendar.createJob">
         <CreateJobModal @close="$store.commit('calendar/CREATE_JOB', false)" :job="null" />
       </div>
     </transition>
-    <div class="sidebar-shield" v-if="$store.state.toggled_sidebar" @click="close"></div>
-    <div class="signout-shield" v-if="signout_modal"></div>
-    <div class="modal-shield" v-if="$store.state.calendar.createJob"></div>
     <div class="content">
       <AppNotification />
       <AppHeader />
@@ -21,7 +17,6 @@
 </template>
 <script>
 import AppSideBar from "@/components/AppSideBar";
-import SignOut from "@/components/Auth/SignOut";
 import AppNotification from "@/components/AppNotification";
 import AppHeader from "@/components/AppHeader";
 import CreateJobModal from "@/components/CreateJobModal";
@@ -29,7 +24,6 @@ export default {
   transitions: "page",
   components: {
     AppSideBar,
-    SignOut,
     AppNotification,
     AppHeader,
     CreateJobModal
@@ -47,23 +41,18 @@ export default {
   },
   watch: {
     notify(value) {
-      if (value) {
+      if (!this.$store.state.notification.closable) {
         setTimeout(() => {
           this.$store.commit("SET_NOTIFICATION", {
             enabled: false,
             status: "",
-            text: ""
+            text: "",
+            closable: false
           });
         }, 2000);
       }
     },
     $route(value) {
-      this.$store.commit("TOGGLE_SIDEBAR", false);
-      document.body.style.overflow = "auto";
-    }
-  },
-  methods: {
-     close() {
       this.$store.commit("TOGGLE_SIDEBAR", false);
       document.body.style.overflow = "auto";
     }
@@ -93,26 +82,15 @@ export default {
   opacity: 0.5;
   z-index: 499;
 }
-.signout-shield {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #333;
-  opacity: 0.5;
-  z-index: 599;
-}
 @media screen and (min-width: 1200px) {
   .content {
     margin-left: 200px;
   }
 }
 
-@media screen and (min-width: 480px){
-  .content{
-  padding: 5px 40px;
-    
+@media screen and (min-width: 480px) {
+  .content {
+    padding: 5px 40px;
   }
 }
 </style>

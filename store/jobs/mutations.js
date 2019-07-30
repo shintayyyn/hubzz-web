@@ -116,8 +116,10 @@ export default {
         state.practice_declined_jobs.push(payload)
     },
     REMOVE_PRACTICE_DECLINED_JOB(state, payload) {
-        state.practice_declined_jobs = state.practice_declined_jobs.filter(job => job.id !== payload)
-        state.practice_declined_jobs_count = state.practice_declined_jobs_count - 1
+        if (state.practice_declined_jobs.find(declinedJob => declinedJob.id === payload)) {
+            state.practice_declined_jobs = state.practice_declined_jobs.filter(job => job.id !== payload)
+            state.practice_declined_jobs_count = state.practice_declined_jobs_count - 1
+        }
     },
     // LOCUM
     SET_LOCUM_ALLOCATED_JOBS(state, payload) {
@@ -130,9 +132,15 @@ export default {
         state.locum_allocated_jobs.push(payload)
         state.locum_allocated_jobs_count = state.locum_allocated_jobs_count + 1
     },
+    UPDATE_LOCUM_ALLOCATED_JOB(state, payload) {
+        state.locum_allocated_jobs = state.locum_allocated_jobs.filter(job => job.id !== payload.id)
+        state.locum_allocated_jobs.push(payload)
+    },
     REMOVE_LOCUM_ALLOCATED_JOB(state, payload) {
-        state.locum_allocated_jobs = state.locum_allocated_jobs.filter(job => job.id !== payload)
-        state.locum_allocated_jobs_count = state.locum_allocated_jobs_count - 1
+        if (state.locum_allocated_jobs.find(allocatedJob => allocatedJob.id === payload)) {
+            state.locum_allocated_jobs = state.locum_allocated_jobs.filter(job => job.id !== payload)
+            state.locum_allocated_jobs_count = state.locum_allocated_jobs_count - 1
+        }
     },
     SET_LOCUM_AVAILABLE_JOBS(state, payload) {
         state.locum_available_jobs = payload
@@ -145,8 +153,10 @@ export default {
         state.locum_available_jobs_count = state.locum_available_jobs_count + 1
     },
     REMOVE_LOCUM_AVAILABLE_JOB(state, payload) {
-        state.locum_available_jobs = state.locum_available_jobs.filter(job => job.id !== payload)
-        state.locum_available_jobs_count = state.locum_available_jobs_count - 1
+        if (state.locum_available_jobs.find(availableJob => availableJob.id === payload)) {
+            state.locum_available_jobs = state.locum_available_jobs.filter(job => job.id !== payload)
+            state.locum_available_jobs_count = state.locum_available_jobs_count - 1
+        }
     },
     SET_LOCUM_MATCHED_JOBS(state, payload) {
         state.locum_matched_jobs = payload
@@ -159,8 +169,10 @@ export default {
         state.locum_matched_jobs_count = state.locum_matched_jobs_count + 1
     },
     REMOVE_LOCUM_MATCHED_JOB(state, payload) {
-        state.locum_matched_jobs = state.locum_matched_jobs.filter(job => job.id !== payload)
-        state.locum_matched_jobs_count = state.locum_matched_jobs_count - 1
+        if (state.locum_matched_jobs.find(matchedJob => matchedJob.id === payload)) {
+            state.locum_matched_jobs = state.locum_matched_jobs.filter(job => job.id !== payload)
+            state.locum_matched_jobs_count = state.locum_matched_jobs_count - 1
+        }
     },
     SET_LOCUM_APPLIED_JOBS(state, payload) {
         state.locum_applied_jobs = payload
@@ -173,8 +185,10 @@ export default {
         state.locum_applied_jobs_count = state.locum_applied_jobs_count + 1
     },
     REMOVE_LOCUM_APPLIED_JOB(state, payload) {
-        state.locum_applied_jobs = state.locum_applied_jobs.filter(job => job.id !== payload)
-        state.locum_applied_jobs_count = state.locum_applied_jobs_count - 1
+        if (state.locum_applied_jobs.find(appliedJob => appliedJob.id === payload)) {
+            state.locum_applied_jobs = state.locum_applied_jobs.filter(job => job.id !== payload)
+            state.locum_applied_jobs_count = state.locum_applied_jobs_count - 1
+        }
     },
     SET_LOCUM_UNSUCCESSFUL_JOBS(state, payload) {
         state.locum_unsuccessful_jobs = payload
@@ -187,8 +201,10 @@ export default {
         state.locum_unsuccessful_jobs_count = state.locum_unsuccessful_jobs_count + 1
     },
     REMOVE_LOCUM_UNSUCCESSFUL_JOB(state, payload) {
-        state.locum_unsuccessful_jobs = state.locum_unsuccessful_jobs.filter(job => job.id !== payload)
-        state.locum_unsuccessful_jobs_count = state.locum_unsuccessful_jobs_count - 1
+        if (state.locum_unsuccessful_jobs.find(unsuccessfulJob => unsuccessfulJob.id === payload)) {
+            state.locum_unsuccessful_jobs = state.locum_unsuccessful_jobs.filter(job => job.id !== payload)
+            state.locum_unsuccessful_jobs_count = state.locum_unsuccessful_jobs_count - 1
+        }
     },
     SET_LOCUM_DECLINED_JOBS(state, payload) {
         state.locum_declined_jobs = payload
@@ -197,12 +213,16 @@ export default {
         state.locum_declined_jobs_count = payload
     },
     ADD_LOCUM_DECLINED_JOB(state, payload) {
-        state.locum_declined_jobs.push(payload)
-        state.locum_declined_jobs_count = state.locum_declined_jobs_count + 1
+        if (!state.locum_declined_jobs.find(declinedJob => declinedJob.id === payload.id)) {
+            state.locum_declined_jobs.push(payload)
+            state.locum_declined_jobs_count = state.locum_declined_jobs_count + 1
+        }
     },
     REMOVE_LOCUM_DECLINED_JOB(state, payload) {
-        state.locum_declined_jobs = state.locum_declined_jobs.filter(job => job.id !== payload)
-        state.locum_declined_jobs_count = state.locum_declined_jobs_count - 1
+        if (state.locum_declined_jobs.find(declinedJob => declinedJob.id === payload)) {
+            state.locum_declined_jobs = state.locum_declined_jobs.filter(job => job.id !== payload)
+            state.locum_declined_jobs_count = state.locum_declined_jobs_count - 1
+        }
     },
     SET_LOCUM_CANCELLED_JOBS(state, payload) {
         state.locum_cancelled_jobs = payload
@@ -215,8 +235,10 @@ export default {
         state.locum_cancelled_jobs_count = state.locum_cancelled_jobs_count + 1
     },
     REMOVE_LOCUM_CANCELLED_JOB(state, payload) {
-        state.locum_cancelled_jobs = state.locum_cancelled_jobs.filter(job => job.id !== payload)
-        state.locum_cancelled_jobs_count = state.locum_cancelled_jobs_count - 1
+        if (state.locum_cancelled_jobs.find(declinedJob => declinedJob.id === payload)) {
+            state.locum_cancelled_jobs = state.locum_cancelled_jobs.filter(job => job.id !== payload)
+            state.locum_cancelled_jobs_count = state.locum_cancelled_jobs_count - 1
+        }
     },
     SET_LOCUM_COMPLETED_JOBS(state, payload) {
         state.locum_completed_jobs = payload
@@ -229,8 +251,10 @@ export default {
         state.locum_completed_jobs_count = state.locum_completed_jobs_count + 1
     },
     REMOVE_LOCUM_COMPLETED_JOB(state, payload) {
-        state.locum_completed_jobs = state.locum_completed_jobs.filter(job => job.id !== payload)
-        state.locum_completed_jobs_count = state.locum_completed_jobs_count - 1
+        if (state.locum_completed_jobs.find(declinedJob => declinedJob.id === payload)) {
+            state.locum_completed_jobs = state.locum_completed_jobs.filter(job => job.id !== payload)
+            state.locum_completed_jobs_count = state.locum_completed_jobs_count - 1
+        }
     },
     SET_LOCUM_UNAVAILABILITIES(state, payload) {
         state.locum_unavailabilities = payload
@@ -254,7 +278,9 @@ export default {
         hasUnavailable.shifts = payload.shifts
     },
     REMOVE_LOCUM_UNAVAILABILITIES(state, payload) {
-        state.locum_unavailabilities = state.locum_unavailabilities.filter(item => item.id !== payload)
-        state.locum_unavailabilities_count = state.locum_unavailabilities_count - 1
+        if (state.locum_unavailabilities.find(declinedJob => declinedJob.id === payload)) {
+            state.locum_unavailabilities = state.locum_unavailabilities.filter(item => item.id !== payload)
+            state.locum_unavailabilities_count = state.locum_unavailabilities_count - 1
+        }
     },
 }

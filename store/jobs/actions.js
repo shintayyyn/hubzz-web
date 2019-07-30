@@ -132,6 +132,9 @@ export default {
                 if (!state.practice_allocated_jobs.find(allocatedJobs => allocatedJobs.id == job.id)) {
                     commit('ADD_PRACTICE_ALLOCATED_JOB', job)
                 }
+                if(state.practice_applied_jobs.find(appliedJobs => appliedJobs.id == job.id)) {
+                    commit('REMOVE_PRACTICE_APPLIED_JOB', job.id)
+                }
             })
             this.$socket.on('Practice Notification Job Declined', (job) => {
                 if(state.practice_allocated_jobs.find(allocatedJob => allocatedJob.id == job.id)) {

@@ -1,38 +1,20 @@
 <template>
   <div class="modal-container shadow-lg">
-    <!-- <LiveDetailModal :job="job" v-if="job.status === 'Available'" />
-    <AppliedDetailModal :job="job" v-if="job.status === 'Applied'" />
-    <AllocatedDetailModal :job="job" v-if="job.status === 'Current'" />
-    <CompletedDetailModal :job="job" v-if="job.status === 'Completed'" />
-    <UnfilledDetailModal :job="job" v-if="job.status === 'Unfilled'" />
-    <CancelledDetailModal :job="job" v-if="job.status === 'Cancelled'" />
-    <DeclinedDetailModal :job="job" v-if="job.status === 'Declined'" />-->
+    <JobDetailModal :job="job" />
   </div>
 </template>
 <script>
-import LiveDetailModal from '@/components/Sessions/LiveDetailModal'
-import AppliedDetailModal from '@/components/Sessions/AppliedDetailModal'
-import AllocatedDetailModal from '@/components/Sessions/AllocatedDetailModal'
-import CompletedDetailModal from '@/components/Sessions/CompletedDetailModal'
-import UnfilledDetailModal from '@/components/Sessions/UnfilledDetailModal'
-import CancelledDetailModal from '@/components/Sessions/CancelledDetailModal'
-import DeclinedDetailModal from '@/components/Sessions/DeclinedDetailModal'
+import JobDetailModal from '@/components/Sessions/JobDetailModal'
 export default {
   components: {
-    LiveDetailModal,
-    AppliedDetailModal,
-    AllocatedDetailModal,
-    CompletedDetailModal,
-    UnfilledDetailModal,
-    CancelledDetailModal,
-    DeclinedDetailModal,
+    JobDetailModal,
   },
   async asyncData({ app, route, store, error }) {
     try {
-      let response = await app.$axios.get(`/api/v1/practice/jobs/${route.params.id}`)
-      const job = response.data.data.job
+      let jobRes = await app.$axios.get(`/api/v1/practice/jobs/${route.params.id}`)
+      const job = jobRes.data.data.job
       return {
-        job
+        job,
       }
     } catch (err) {
       if (err && err.response.status === 404) {
