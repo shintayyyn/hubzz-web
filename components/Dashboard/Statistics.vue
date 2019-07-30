@@ -2,7 +2,7 @@
   <section>
     <div class="flex flex-row flex-wrap justify-start">
       <div
-        class="pr-4 my-4 w-full sm:w-1/2 lg:w-1/4"
+        class="px-2 my-2 sm:my-4 w-full sm:w-1/2 lg:w-1/4"
         v-for="(item, index) in statistics"
         :key="index"
       >

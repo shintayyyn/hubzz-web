@@ -9,7 +9,7 @@
         <CreateJobModal @close="$store.commit('calendar/CREATE_JOB', false)" :job="null" />
       </div>
     </transition>
-    <div class="sidebar-shield" v-if="$store.state.toggled_sidebar"></div>
+    <div class="sidebar-shield" v-if="$store.state.toggled_sidebar" @click="close"></div>
     <div class="signout-shield" v-if="signout_modal"></div>
     <div class="modal-shield" v-if="$store.state.calendar.createJob"></div>
     <div class="content">
@@ -58,6 +58,12 @@ export default {
       }
     },
     $route(value) {
+      this.$store.commit("TOGGLE_SIDEBAR", false);
+      document.body.style.overflow = "auto";
+    }
+  },
+  methods: {
+     close() {
       this.$store.commit("TOGGLE_SIDEBAR", false);
       document.body.style.overflow = "auto";
     }

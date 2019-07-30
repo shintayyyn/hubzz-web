@@ -1,12 +1,12 @@
 <template>
   <section>
     <div class="flex flex-row flex-wrap mx-1">
-      <div class="w-2/3 sm:w-1/3">
+      <div class="w-2/3 py-1 sm:w-1/3">
         <div
           class="text-xs sm:text-sm"
         >{{$moment(daysInWeek[0]).format('MMM')}} {{$moment(daysInWeek[0]).format('YYYY')}} - {{$moment(daysInWeek[6]).format('MMM')}} {{$moment(daysInWeek[6]).format('YYYY')}}</div>
       </div>
-      <div class="w-1/3 text-right sm:w-1/3 sm:text-center">
+      <div class="w-1/3 py-1 text-right sm:w-1/3 sm:text-center">
         <span class="cursor-pointer" @click="adjustWeek('previous')">
           <svgicon name="arrow-left" height="12" width="12" />
         </span>
@@ -15,7 +15,7 @@
           <svgicon name="arrow-right" height="12" width="12" />
         </span>
       </div>
-      <div class="w-full text-right sm:w-1/3">
+      <div class="w-full py-1 text-right sm:w-1/3">
         <span
           class="cursor-pointer px-3 text-xs sm:text-sm hover:underline"
           :class="$store.state.calendar.view_type === 'per_month' ? 'py-1 px-3 bg-yellow-dark':''"
@@ -29,7 +29,7 @@
       </div>
     </div>
 
-    <div class="flex flex-nowrap justify-between text-xs sm:text-sm mx-1 mt-5">
+    <div class="flex flex-nowrap justify-between text-xs sm:text-sm mx-1 mt-3 md:mt-5">
       <div class="w-full text-center text-grey font-bold"></div>
       <div class="w-full text-center text-grey font-bold">MON</div>
       <div class="w-full text-center text-grey font-bold">TUE</div>
@@ -40,7 +40,7 @@
       <div class="w-full text-center text-grey font-bold">SUN</div>
     </div>
 
-    <div class="flex flex-nowrap justify-between text-xs sm:text-sm mx-1 mt-5">
+    <div class="flex flex-nowrap justify-between text-xs sm:text-sm mx-1 mt-3 md:mt-5">
       <div class="w-full text-center text-grey-darkest"></div>
       <div
         class="w-full text-center text-grey-darkest font-bold"
@@ -51,7 +51,7 @@
 
     <template v-if="$auth.user.domain === 'Practice'">
       <div class="flex flex-nowrap justify-between text-xs mx-1 mt-5" style="height:50px;">
-        <div class="w-full text-left">AM</div>
+        <div class="w-full text-left my-auto" style="min-width: 60px">AM</div>
         <template v-for="(date, index) in daysInWeek">
           <div
             v-if="hasPracticeCurrentJobs(date, 'AM')"
@@ -93,7 +93,7 @@
       </div>
 
       <div class="flex flex-nowrap justify-between text-xs mx-1" style="height:50px;">
-        <div class="w-full text-left">PM</div>
+        <div class="w-full text-left my-auto" style="min-width: 60px">PM</div>
         <template v-for="(date, index) in daysInWeek">
           <div
             v-if="hasPracticeCurrentJobs(date, 'PM')"
@@ -135,7 +135,7 @@
       </div>
 
       <div class="flex flex-nowrap justify-between text-xs mx-1" style="height:50px;">
-        <div class="w-full text-left">OOH</div>
+        <div class="w-full text-left my-auto" style="min-width: 60px">OOH</div>
         <template v-for="(date, index) in daysInWeek">
           <div
             v-if="hasPracticeCurrentJobs(date, 'OOH')"
@@ -177,7 +177,7 @@
       </div>
 
       <div class="flex flex-nowrap justify-between text-xs mx-1" style="height:50px;">
-        <div class="w-full text-left">Whole Day</div>
+        <div class="w-full text-left my-auto" style="min-width: 60px">Whole Day</div>
         <template v-for="(date, index) in daysInWeek">
           <div
             v-if="hasPracticeCurrentJobs(date, 'Whole Day')"
@@ -219,7 +219,7 @@
       </div>
 
       <div class="flex flex-nowrap justify-between text-xs mx-1" style="height:50px;">
-        <div class="w-full text-left">Reminder</div>
+        <div class="w-full text-left my-auto" style="min-width: 60px">Reminder</div>
         <template v-for="(date, index) in daysInWeek">
           <div
             v-if="hasPracticeAppliedJobsReminder(date, 'Reminder')"
@@ -247,6 +247,7 @@
           ></div>
         </template>
       </div>
+
     </template>
     <template v-if="$auth.user.domain === 'Locum'">
       <div class="flex flex-nowrap justify-between text-xs mx-1 mt-5" style="height:50px;">

@@ -1,15 +1,15 @@
 <template>
-    <div class="flex flex-row flex-wrap justify-start">
-        <div style="width:70%" class="p-2">
+    <div class="flex flex-col-reverse md:flex-row justify-start">
+        <div class="w-full md:w-2/3 p-2">
             <p class="text-sm">No invoice has been raised for this tax year</p>
         </div>
-        <div style="width:30%" class="p-2">
-            <div class="border-solid rounded-lg shadow-lg p-8">
+        <div class="w-full md:w-1/3 p-2">
+            <div class="border-solid rounded-lg shadow-lg p-6 md:p-10">
                 <label for="year_end" class="block text-sm mb-2">Tax year end</label>
-                    <select name="year_end" id="year_end"
-                        class="p-2 font-semibold w-full" v-model="form.year_end">
-                        <option v-for="(item, index) in year_end" :key="index" :value="item">{{item}}</option>
-                    </select>
+                <select name="year_end" id="year_end"
+                    class="p-2 font-semibold w-full" v-model="form.year_end">
+                    <option v-for="(item, index) in year_end" :key="index" :value="item">{{item}}</option>
+                </select>
             </div>
         </div>
     </div>

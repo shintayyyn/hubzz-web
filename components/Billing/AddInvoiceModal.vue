@@ -1,5 +1,5 @@
 <template>
-  <section>
+  <section class="bg-white">
     <div class="p-8 max-w-xl h-screen">
       <div class="flex flex-row flex-wrap justify-start">
         <div @click="$emit('close')" class="cursor-pointer">
@@ -15,8 +15,8 @@
         >Save and archive as final</div>
       </div>
 
-      <div class="max-w-lg mt-4 bg-white p-2">
-        <div class="flex flex-col mt-4">
+      <div class="max-w-lg my-4 bg-white px-4 py-4 border shadow-md">
+        <div class="flex flex-col">
           <div class="text-xs sm:text-sm text-right leading-normal">
             <div>Mr. QQ AA QQ ZZ</div>
             <div>wqe</div>
@@ -26,24 +26,26 @@
             <div>cacheng.halcyondigital@gmail.com</div>
             <div>UTR 7337#4*OR</div>
           </div>
-          <div class="text-xs sm:text-sm text-left rounded-lg border-2 border-black p-2 sm:w-1/2">
-            <AppSelect
-              v-model="practice_id"
-              :name="'profession_id'"
-              :label="'To: Accounts Department'"
-              :placeholder="'Select the practice for this invoice'"
-              :items="practices"
-            />
-            <div class="text-xs sm:text-sm" v-if="practice_id">
-              <div>{{address.line_1}}</div>
-              <div>{{address.line_2}}</div>
-              <div>{{address.line_3}}</div>
-              <div>{{address.post_code}}</div>
+          <div class="flex justify-between my-2">
+            <div class="text-xs sm:text-sm text-left rounded-lg border-2 border-black p-2 sm:w-1/2">
+              <AppSelect
+                v-model="practice_id"
+                :name="'profession_id'"
+                :label="'To: Accounts Department'"
+                :placeholder="'Select the practice for this invoice'"
+                :items="practices"
+              />
+              <div class="text-xs sm:text-sm" v-if="practice_id">
+                <div>{{address.line_1}}</div>
+                <div>{{address.line_2}}</div>
+                <div>{{address.line_3}}</div>
+                <div>{{address.post_code}}</div>
+              </div>
             </div>
-          </div>
-          <div class="text-right leading-normal">
-            <div class="font-bold text-sm sm:text-lg">INVOICE</div>
-            <div class="text-xs sm:text-sm">Not yet issued</div>
+            <div class="text-right leading-normal">
+              <div class="font-bold text-sm sm:text-lg">INVOICE</div>
+              <div class="text-xs sm:text-sm">Not yet issued</div>
+            </div>
           </div>
           <div v-if="practice_id">
             <AppSelect
@@ -59,28 +61,28 @@
         <div class="my-4 text-xs sm:text-sm">Select a job to add to this invoice</div>
         <table class="w-full">
           <thead>
-            <tr class="text-center">
-              <th class="bg-grey-darkest text-white" style="width:75%">Description</th>
-              <th class="bg-grey-darkest text-white" style="width:20%">Total</th>
+            <tr class="text-center bg-grey-darkest">
+              <th class="text-white" style="width:75%">Description</th>
+              <th class="text-white" style="width:20%">Total</th>
               <th style="width:5%"></th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(item, index) in rowData" :key="index">
+            <tr class="border-b" v-for="(item, index) in rowData" :key="index">
               <td style="width:75%">
                 <textarea
                   v-model="item.description"
+                  placeholder="Enter description"
                   rows="4"
-                  class="w-full text-xs sm:text-sm p-2"
-                  style="border:1px solid black"
+                  class="w-full text-xs sm:text-sm p-2 border border-black"
                 ></textarea>
               </td>
               <td style="width:20%;position:relative">
                 <input
                   type="text"
                   v-model="item.total"
-                  class="w-full text-xs sm:text-sm text-right p-2"
-                  style="border:1px solid black;top:1px;position:absolute"
+                  placeholder="Enter value"
+                  class="w-full text-xs sm:text-sm text-right border border-black p-2"
                 />
               </td>
               <td style="width:5%">
@@ -293,8 +295,10 @@ textarea {
   background-color: #ecc94b;
 }
 .save-button:hover {
-  color: #ecc94b;
-  background-color: rgb(80, 80, 80);
+  color: #fff;
+  /* background-color: rgb(80, 80, 80); */
+  background-color: #d1b244;
+  border-color: #d1b244;
   cursor: pointer;
 }
 </style>

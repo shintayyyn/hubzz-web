@@ -92,7 +92,8 @@ export default {
   overflow: auto;
   /* border-left: solid 2px #edf2f7; */
   transition: all 0.3s ease-in-out;
-  background-color: rgb(80, 80, 80);
+  /* background-color: rgb(80, 80, 80); */
+  background: #fff;
   z-index: 512;
 }
 @media screen and (min-width: 1200px) {

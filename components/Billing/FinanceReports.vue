@@ -15,7 +15,7 @@
       >Tax Year Totals</div>
     </div>
 
-    <div class="mt-8">
+    <div class="my-4 md:mt-8">
       <InvoicesByMonth v-if="$store.state.billing.financeReportsActiveTab === 'invoices_by_month'" />
       <TaxYearTotals v-if="$store.state.billing.financeReportsActiveTab === 'tax_year_totals'" />
     </div>

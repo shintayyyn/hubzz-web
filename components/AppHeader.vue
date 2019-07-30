@@ -55,7 +55,7 @@ export default {
 <style scoped>
 .header-section {
   width: 100%;
-  margin-bottom: 50px;
+  margin-bottom: 20px;
 }
 .burger {
   display: block;
@@ -74,6 +74,9 @@ export default {
 @media screen and (min-width: 1200px) {
   .burger {
     display: none;
+  }
+  .header-section{
+    margin-bottom: 50px;
   }
 }
 a {

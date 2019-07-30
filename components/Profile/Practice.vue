@@ -26,29 +26,6 @@
             </div>
           </div>
         </div>
-        <div v-if="showErrorModal" class="absolute pin-t">
-          <div
-            class="fixed text-white bg-red-light py-4 px-12 mr-10 md:mr-0 md:w-1/3 shadow"
-            style="border-radius: 0 0 10px 10px"
-          >
-            <span class="text-base font-bold">Failed to upload file</span>
-            <div class="flex flex-wrap md:flex-no-wrap">
-              <div class="w-full md:w-2/3 text-sm mt-2">
-                <span>File format should be any of the following:</span>
-                <ul>
-                  <li>.pdf</li>
-                  <li>.jpeg</li>
-                  <li>.msword</li>
-                  <li>.tif</li>
-                </ul>
-              </div>
-              <button
-                class="mx-auto md:mx-10 md:absolute pin-r pin-b w-32 my-2 md:my-10 p-4 text-sm rounded-lg shadow border border-white text-white hover:bg-white hover:text-black"
-                @click="showErrorModal = false"
-              >Okay</button>
-            </div>
-          </div>
-        </div>
         <div class="w-full md:w-2/5 p-2">
           <div class="rounded-lg shadow-lg p-8">
             <div class="flex flex-col">
@@ -238,8 +215,7 @@ export default {
       },
       mandatory_training: [],
       name: "",
-      formError: [],
-      showErrorModal: false
+      formError: []
     };
   },
   watch: {
@@ -252,7 +228,7 @@ export default {
   created() {
     // get default data
     this.$axios.$get(`/api/v1/me`).then(res => {
-      // console.log(res)
+      console.log(res)
       this.standard_terms =
         res.data.user.practice_detail.practice.standard_terms;
       this.practice_detail.name =
@@ -356,7 +332,11 @@ export default {
       let file = e.target.files[0];
       let fileType = file.type.split("/")[1];
       if (!types.includes(fileType)) {
-        this.showErrorModal = true;
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "alert",
+          text: "Invalid File Format"
+        });
         return;
       }
       const formData = new FormData();
@@ -401,8 +381,6 @@ export default {
           status: "success",
           text: res.message
         });
-        // this.standard_terms.file.filename = null;
-        // console.log(this.standard_terms)
       });
     },
     save() {

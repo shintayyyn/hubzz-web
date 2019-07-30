@@ -1,12 +1,12 @@
 <template>
   <section class="per-month-section">
     <div class="flex flex-row flex-wrap justify-between mx-1">
-      <div class="w-2/3 sm:w-1/3">
+      <div class="w-2/3 py-1 sm:w-1/3">
         <div
           class="text-xs sm:text-sm"
         >{{$store.state.calendar.months[selectedMonth]}} {{selectedYear}}</div>
       </div>
-      <div class="w-1/3 text-right sm:w-1/3 sm:text-center">
+      <div class="w-1/3 text-right py-1 sm:w-1/3 sm:text-center">
         <span class="cursor-pointer" @click="adjustMonth('previous')">
           <svgicon name="arrow-left" height="12" width="12" />
         </span>
@@ -15,7 +15,7 @@
           <svgicon name="arrow-right" height="12" width="12" />
         </span>
       </div>
-      <div class="w-full text-right sm:w-1/3">
+      <div class="w-full text-right py-1 sm:w-1/3">
         <span
           class="cursor-pointer px-3 text-xs sm:text-sm hover:underline"
           :class="$store.state.calendar.view_type === 'per_month' ? 'py-1 px-3 bg-yellow-dark':''"
@@ -28,7 +28,7 @@
         >Week</span>
       </div>
     </div>
-    <div class="flex flex-nowrap justify-between text-xs sm:text-sm mx-1 mt-5">
+    <div class="flex flex-nowrap justify-between text-xs sm:text-sm mx-1 mt-3 md:mt-5">
       <div class="w-full text-center text-grey font-bold">MON</div>
       <div class="w-full text-center text-grey font-bold">TUE</div>
       <div class="w-full text-center text-grey font-bold">WED</div>
@@ -38,7 +38,7 @@
       <div class="w-full text-center text-grey font-bold">SUN</div>
     </div>
 
-    <div class="flex flex-nowrap justify-between mx-1 mt-5">
+    <div class="flex flex-nowrap justify-between mx-1 mt-2 md:mt-5">
       <div class="flex flex-col w-full">
         <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 6">
           <div class="m-1 h-8 sm:h-12 md:h-16 lg:h-20 w-auto">&nbsp;</div>
@@ -281,6 +281,3 @@ export default {
   }
 }
 </script>
-<style scoped>
-</style>
-

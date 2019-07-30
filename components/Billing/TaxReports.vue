@@ -1,6 +1,6 @@
 <template>
-    <div class="flex flex-row flex-wrap justify-start">
-        <div style="width:70%" class="p-2" id="printArea">
+    <div class="flex flex-col-reverse md:flex-row justify-start">
+        <div class="w-full md:w-2/3 p-2" id="printArea">
             <p class="text-sm">You have not yet completed your billing information.</p>
             <div class="mt-5 ml-2">
                 <button class="bg-yellow-dark hover:text-white focus:outline-none text-black font-bold text-xl p-6 rounded-lg"
@@ -9,16 +9,16 @@
                 </button>
             </div>
         </div>
-        <div style="width:30%" class="p-2">
-            <div class="border-solid rounded-lg shadow-lg p-8">
+        <div class="w-full md:w-1/3 p-2 flex flex-row md:flex-col">
+            <div class="w-3/4 md:w-full border-solid rounded-lg shadow-lg p-6 md:p-10">
                 <label for="year_end" class="block text-sm mb-2">Tax year end</label>
                 <select name="year_end" id="year_end"
                     class="p-2 font-semibold w-full" v-model="form.year_end">
                     <option v-for="(item, index) in year_end" :key="index" :value="item">{{item}}</option>
                 </select>
             </div>
-            <div class="mt-5">
-                <span class="rounded-lg bg-yellow-dark font-bold p-2 shadow-md hover:text-white cursor-pointer" @click="print('printArea')">print</span>
+            <div class="flex w-1/4 md:my-5">
+                <span class="rounded-lg bg-yellow-dark font-bold m-auto px-4 py-2 shadow-md hover:text-white cursor-pointer" @click="print('printArea')">Print</span>
             </div>
         </div>
     </div>
