@@ -42,29 +42,58 @@
             </tbody>
           </table>
         </div>
+        <div v-if="!currentJobs.length == 0" class="m-10 xl:-ml-32">
+          <AppPagination
+            :total="total"
+            :totalPages="totalPages"
+            :currentPage="currentPage"
+            @pagechanged="pagechanged"
+          />
+        </div>
        
       </div>
     </div>
 </template>
-</<script>
+<script>
+import AppPagination from '@/components/Base/AppPagination'
 export default {
     props:['user'],
     components:{
-
+      AppPagination,
     },
     data(){
-        return{ 
-          currentJobs:[]
-        }
+      return{ 
+        currentJobs:[],
+        total:0,
+        totalPages:0,
+        currentPage:0,
+        perPage:0,
+      }
+    },
+    beforeDestroy() {
+      let query = Object.assign({}, this.$route.query)
+      delete query.current_job_page
+      this.$router.push({ query })
+    },
+    watch: {
+      $route(to, from) {
+        this.currentPage = parseInt(to.query.current_job_page)
+        this.getCurrentJobs()
+      },
+
     },
     created(){
       Promise.all([
         console.log(this.user),
-        this.$axios.$get(`/api/v1/practice/jobs?locum_detail_id=${this.user.locum_detail.id}&locum_status=Current`).then(res=>{
-          this.currentJobs = res.data.jobs
+        this.$axios.$get(`/api/v1/practice/jobs/count?locum_detail_id=${this.user.locum_detail.id}&locum_status=Available`).then(res=>{
+          this.total = res.data.count
+          this.perPage = 5
+          this.totalPages = Math.ceil(this.total / this.perPage)
+          
         })
       ]).then(() => {
-        console.log(this.currentJobs)
+        this.getCurrentJobs(),
+        console.log("Current",this.currentJobs)
       })
     },
     computed:{ 
@@ -75,12 +104,27 @@ export default {
       // }
     },
     methods:{
-        show(id) {
-            const query = {
-            ...this.$route.query
-            }
-        this.$router.push({ path: `/sessions/${id}`, query })
+      getCurrentJobs(){
+        let offset = 0
+        offset = this.perPage * (parseInt(this.$route.query.current_job_page) - 1)
+        this.$axios.$get(`/api/v1/practice/jobs?locum_detail_id=${this.user.locum_detail.id}&locum_status=Current&limit=${this.perPage}&offset=${offset}`).then(res=>{
+          this.currentJobs = res.data.jobs
+        })
+       
+      },
+      show(id) {
+          const query = {
+          ...this.$route.query
+          }
+      this.$router.push({ path: `/sessions/${id}`, query })
+      },
+      pagechanged(e) {
+        const query = {
+          ...this.$route.query,
+          current_job_page: e || 1
         }
+        this.$router.push({ query })
+      }
         
     }
 }

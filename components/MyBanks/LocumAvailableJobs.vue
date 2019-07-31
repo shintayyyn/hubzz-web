@@ -48,14 +48,12 @@
             :totalPages="totalPages"
             :currentPage="currentPage"
             @pagechanged="pagechanged"
-
           />
         </div>
-       
       </div>
     </div>
 </template>
-</<script>
+<script>
 import AppPagination from '@/components/Base/AppPagination'
 export default {
     props:['user'],
@@ -69,25 +67,23 @@ export default {
         totalPages:0,
         currentPage:0,
         perPage:0,
-
       }
     },
     beforeDestroy() {
       let query = Object.assign({}, this.$route.query)
-      delete query.current_page
+      delete query.available_job_page
       this.$router.push({ query })
     },
     watch: {
       $route(to, from) {
-        this.currentPage = parseInt(to.query.current_page)
+        this.currentPage = parseInt(to.query.available_job_page)
         this.getAvailableJobs()
       },
-
     },
     created(){
       const query = {
         ...this.$route.query,
-        current_page: this.$route.query.current_page || 1
+        available_job_page: this.$route.query.available_job_page || 1
       }
       Promise.all([
         console.log(this.user),
@@ -95,7 +91,6 @@ export default {
           this.total = res.data.count
           this.perPage = 5
           this.totalPages = Math.ceil(this.total / this.perPage)
-          
         })
       ]).then(() => {
         this.getAvailableJobs(),
@@ -112,11 +107,10 @@ export default {
     methods:{
       getAvailableJobs(){
         let offset = 0
-        offset = this.perPage * (parseInt(this.$route.query.current_page) - 1)
+        offset = this.perPage * (parseInt(this.$route.query.available_job_page) - 1)
         this.$axios.$get(`/api/v1/practice/jobs?locum_detail_id=${this.user.locum_detail.id}&locum_status=Available&limit=${this.perPage}&offset=${offset}`).then(res=>{
           this.availableJobs = res.data.jobs
         })
-       
       },
       show(id) {
           const query = {
@@ -124,14 +118,13 @@ export default {
           }
       this.$router.push({ path: `/sessions/${id}`, query })
       },
-        pagechanged(e) {
+      pagechanged(e) {
         const query = {
           ...this.$route.query,
-          current_page: e || 1
+          available_job_page: e || 1
         }
         this.$router.push({ query })
       }
-        
     }
 }
 </script>

@@ -56,8 +56,6 @@
         </div>
       </div>
     </div>
-   
-  
 
     <div v-if="!locums.length == 0" class="m-10 xl:-ml-32">
       <AppPagination
@@ -68,7 +66,7 @@
         :loading="loading"
       />
     </div>
-
+    
     <div  class="locum-shield" v-if="modal"></div>
     <transition name="slide" mode="out-in">
       <div class="locum-modal shadow-lg" v-if="modal">
