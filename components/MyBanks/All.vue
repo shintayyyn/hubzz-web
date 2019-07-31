@@ -186,9 +186,7 @@ export default {
           this.user = res.data.user
         }),
       ]).then(() => {
-        // this.$axios.$get(`/api/v1/practice/jobs?locum_detail_id=${this.user.locum_detail.id}`).then(res => {
-        //   this.jobs = res.data.jobs
-        // }),
+
         this.modal = true
       })
 

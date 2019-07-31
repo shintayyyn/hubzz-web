@@ -197,12 +197,12 @@ export default {
     this.getRateType()
     if (this.job) {
       this.form.private_practice_id = this.job.private_job.private_practice.id
-      this.form.date_start = this.job.private_job.date_start
-      this.form.date_end = this.job.private_job.date_end
-      this.form.shift_id = this.job.private_job.shift.id
-      this.form.locum_detail_rate_type_id = this.job.private_job.locum_detail_rate_type.id
-      this.form.rate = this.job.private_job.rate
-      this.form.total_hours = this.job.private_job.total_hours
+      this.form.date_start = this.date_start
+      this.form.date_end = this.date_end
+      // this.form.shift_id = this.shift.id
+      this.form.locum_detail_rate_type_id = this.job.locum_detail_rate_type.id
+      this.form.rate = this.job.rate
+      this.form.total_hours = this.job.total_hours
       this.form.private_notes = this.job.private_job.private_notes
     }
   },
