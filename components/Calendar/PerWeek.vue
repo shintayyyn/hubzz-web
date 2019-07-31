@@ -424,8 +424,9 @@ export default {
     }
   },
   created() {
-    this.firstDayOfTheWeek = this.$moment().day('Monday').format('YYYY-MM-DD')
-    this.lastDayOfTheWeek = this.$moment().add(1, 'week').day('sunday').format('YYYY-MM-DD')
+    let selectedDate = this.$store.state.calendar.selected_date
+    this.firstDayOfTheWeek = this.$moment(selectedDate).day('Monday').format('YYYY-MM-DD')
+    this.lastDayOfTheWeek = this.$moment(selectedDate).add(1, 'week').day('sunday').format('YYYY-MM-DD')
     this.getJobs()
   },
   computed: {
