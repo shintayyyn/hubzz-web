@@ -6,9 +6,21 @@
     <div class="flex flex-row justify-start mt-8">
       <div class="leading-loose font-bold text-md sm:text-lg">{{job.title}}</div>
       <div class="mx-2 text-sm sm:text-sm p-2" :class="bgStatus(job.status)">{{status(job.status)}}</div>
-      <!-- <div class="font-bold text-xs sm:text-sm no-underline px-2 py-2 rounded-lg bg-yellow-dark ml-4">
-        Edit this job
-      </div> -->
+      <div>
+        <button 
+          class="font-bold text-xs sm:text-sm no-underline px-2 py-2 rounded-lg bg-yellow-dark ml-4"
+          v-if="job.status === 'Current' && toEdit === false || job.status === 'Applied' && toEdit === false || job.status === 'Available' && toEdit === false"
+          @click.prevent="editJob()">
+          Edit this job
+        </button>
+        <button 
+          class="font-bold text-xs sm:text-sm no-underline px-2 py-2 rounded-lg bg-yellow-dark ml-4"
+          v-if="job.status === 'Current' && toEdit === true || job.status === 'Applied' && toEdit === true || job.status === 'Available' && toEdit === true"
+          @click.prevent="cancelEdit()">
+          Cancel Editing
+        </button>
+      </div>
+      
     </div>
    
     <!-- <div
@@ -19,12 +31,18 @@
         <!--SHOW THE DEAILS OF THE JOB-->
         <JobDetailModalForm
           :job="job"
-          v-if="job.status === 'Unfilled' || job.status === 'Cancelled' || job.status === 'Declined'|| job.status === 'Completed'"
+          v-if="job.status === 'Unfilled' && toEdit === false || 
+                job.status === 'Cancelled' && toEdit === false  || 
+                job.status === 'Declined' && toEdit === false || 
+                job.status === 'Completed' && toEdit === false ||
+                job.status === 'Current' && toEdit === false || 
+                job.status === 'Applied' && toEdit === false || 
+                job.status === 'Available' && toEdit === false " 
         />
         <!--UPDATE THE JOB-->
         <JobDetailModalUpdateForm
           :job="job"
-          v-if="job.status === 'Current' || job.status === 'Applied' || job.status === 'Available'"
+          v-if="job.status === 'Current' && toEdit === true  || job.status === 'Applied' && toEdit === true  || job.status === 'Available' && toEdit === true "
         />
         <JobDetailModalCandidates
           :applicants="applicants"
@@ -52,6 +70,13 @@
     <transition name="slide" mode="out-in">
       <div class="modal shadow-lg" v-if="modal">
         <JobDetailModalShowCandidate @close="modal = false" :user="user" @appointed="close" />
+      </div>
+    </transition>
+
+    <div class="shield" v-if="editModal"></div>
+    <transition name="slide" mode="out-in">
+      <div class="modal shadow-lg" v-if="editModal">
+        <JobDetailModalUpdateForm @close="editModal = false" :job="job" />
       </div>
     </transition>
   </div>
@@ -82,6 +107,7 @@ export default {
       optional: [],
       applicants: [],
       modal: false,
+      toEdit: false 
     }
   },
   created() {
@@ -117,6 +143,12 @@ export default {
     showLocum(user) {
       this.user = user
       this.modal = true
+    },
+    editJob(){
+      this.toEdit = true
+    },
+    cancelEdit(){
+      this.toEdit = false
     },
     close() {
       if (this.$route.fullPath === '/dashboard') {

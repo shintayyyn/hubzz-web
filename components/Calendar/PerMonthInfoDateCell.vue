@@ -263,6 +263,7 @@ export default {
     // practice
     hasPracticeCurrentJobs(date, type) {
       return this.getPracticeAllocatedJobs.find(job => this.getDateArray(job.date_start, job.date_end).includes(date) && job.shift.name === type)
+      console.log(this.getPracticeAllocatedJobs)
     },
     hasPracticeAppliedJobs(date, type) {
       return this.getPracticeAppliedJobs.find(job => this.getDateArray(job.date_start, job.date_end).includes(date) && job.shift.name === type)
@@ -281,7 +282,7 @@ export default {
     },
     // locum
     hasLocumPrivateJobs(date, type) {
-      return this.getLocumAllocatedPrivateJobs.find(job => this.getDateArray(job.private_job.date_start, job.private_job.date_end).includes(date) && job.private_job.shift.name === type)
+      return this.getLocumAllocatedPrivateJobs.find(job => this.getDateArray(job.date_start, job.date_end).includes(date) && job.shift.name === type)
     },
     hasLocumCurrentJobs(date, type) {
       return this.getLocumAllocatedCurrentJobs.find(job => this.getDateArray(job.date_start, job.date_end).includes(date) && job.shift.name === type)
