@@ -72,7 +72,7 @@
         </button>
       </div>
     </div>
-  </div>
+  </section>
 </template>
 <script>
 import AppInput from '~/components/Base/AppInput';

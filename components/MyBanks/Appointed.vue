@@ -1,7 +1,19 @@
 <template>
   <div>
-    <AppLoading :loading="loading" :message="'Loading'" v-if="loading" />
-    <div v-if="!locums.length == 0" class="flex flex-row flex-wrap justify-start">
+     <div class="-mt-2">
+      <AppSelect
+        v-model="profession_id"
+        :name="'Filter Locums by'"
+        :label="'Filter Locums by'"
+        :items="professions"
+        :placeholder="'All'"
+      />
+    </div>
+    <div class="mt-10 w-full text-center" v-if="locums.length == 0" >
+      There are no appointed locums.
+    </div>
+    <div v-else class="flex flex-row flex-wrap justify-start">
+      <AppLoading :loading="loading" :message="'Loading'" v-if="loading" />
       <div
         class="card w-24 rounded-lg shadow-lg bg-grey-light m-2 p-4 hover:bg-grey"
         v-for="user in locums"
@@ -44,9 +56,6 @@
         </div>
       </div>
     </div>
-    <div v-else>
-      <span>There are no appointed locums.</span>
-    </div>
 
     <div v-if="!locums.length == 0" class="m-10 xl:-ml-32">
       <AppPagination
@@ -57,7 +66,7 @@
         :loading="loading"
       />
     </div>
-
+    
     <div  class="locum-shield" v-if="modal"></div>
     <transition name="slide" mode="out-in">
       <div class="locum-modal shadow-lg" v-if="modal">
@@ -71,11 +80,13 @@
 import AppPagination from '@/components/Base/AppPagination'
 import AppLoading from '@/components/Base/AppLoading'
 import MyLocumDetailModal from '@/components/MyBanks/MyLocumDetailModal' //TEMPORARY
+import AppSelect from '@/components/Base/AppSelect'
 export default {
   components: {
     AppPagination,
     AppLoading,
-    MyLocumDetailModal
+    MyLocumDetailModal,
+    AppSelect
   },
   data() {
     return {
@@ -87,7 +98,10 @@ export default {
       loading: false,
       modal: false, //TEMPORARY
       user: null,
-      jobs: null //TEMPORARY
+      jobs: null, //TEMPORARY
+      professions:[],
+      profession_id: null,
+      filteredUsers: []
     }
   },
   beforeDestroy() {
@@ -98,6 +112,9 @@ export default {
   watch: {
     $route(to, from) {
       this.currentPage = parseInt(to.query.current_page)
+      this.getAppointedLocums()
+    },
+    profession_id:function(){
       this.getAppointedLocums()
     }
   },
@@ -114,19 +131,28 @@ export default {
       this.getAppointedLocums()
     })
 
-    // this.$axios.$get(`/api/v1/practice/locums?practice_locum_type=Appointed`).then(res => {
-    //   console.log(res)
-    //   this.locums = res.data.users
-    // })
+     this.$axios.$get(`/api/v1/professions`).then(res => {
+      this.professions = [];
+      res.data.professions.forEach(item => {
+        this.professions.push({ label: item.name, value: item.id });
+      });
+    });
+
   },
   methods: {
     getAppointedLocums() {
       this.loading = true
       let offset = 0
       offset = this.perPage * (parseInt(this.$route.query.current_page) - 1)
-      this.$axios.$get(`/api/v1/practice/locums?practice_locum_type=Appointed&limit=${this.perPage}&offset=${offset}`).then(res => {
-        this.locums = res.data.users
-      })
+      if(!this.profession_id){
+        this.$axios.$get(`/api/v1/practice/locums?&practice_locum_type=Appointed&limit=${this.perPage}&offset=${offset}`).then(res => {
+          this.locums = res.data.users
+        })
+      }else{
+         this.$axios.$get(`/api/v1/practice/locums?profession_id=${this.profession_id}&practice_locum_type=Appointed&limit=${this.perPage}&offset=${offset}`).then(res => {
+          this.locums = res.data.users
+        })
+      }
       this.loading = false
     },
     favorite(id) {

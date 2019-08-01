@@ -33,7 +33,11 @@
             :compliances="job.platform_job.compliance_documents.map(item => item.id)"
             @close="close"
           />
-          <JobDetailModalCancelForm v-if="job.locum_status === 'Applied'" @close="close" />
+          <JobDetailModalCancelForm
+            :job="job"
+            v-if="job.locum_status === 'Applied'"
+            @close="close"
+          />
         </div>
       </div>
     </div>

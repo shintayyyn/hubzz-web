@@ -175,9 +175,10 @@ export default {
     },
   },
   created() {
-    this.startOfMonth = this.$moment().startOf('month').format('YYYY-MM-DD')
-    this.endOfMonth = this.$moment().endOf('month').format('YYYY-MM-DD')
-    let d = new Date()
+    let selectedDate = this.$store.state.calendar.selected_date
+    this.startOfMonth = this.$moment(selectedDate).startOf('month').format('YYYY-MM-DD')
+    this.endOfMonth = this.$moment(selectedDate).endOf('month').format('YYYY-MM-DD')
+    let d = new Date(selectedDate)
     this.selectedMonth = d.getMonth()
     this.getDaysInMonth(this.selectedMonth, this.selectedYear)
     this.getJobs()

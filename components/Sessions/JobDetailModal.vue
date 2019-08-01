@@ -6,19 +6,43 @@
     <div class="flex flex-row justify-start mt-8">
       <div class="leading-loose font-bold text-md sm:text-lg">{{job.title}}</div>
       <div class="mx-2 text-sm sm:text-sm p-2" :class="bgStatus(job.status)">{{status(job.status)}}</div>
+      <div>
+        <button 
+          class="font-bold text-xs sm:text-sm no-underline px-2 py-2 rounded-lg bg-yellow-dark ml-4"
+          v-if="job.status === 'Current' && toEdit === false && jobOngoing === false || job.status === 'Applied' && toEdit === false || job.status === 'Available' && toEdit === false"
+          @click.prevent="editJob()">
+          Edit this job
+        </button>
+        <button 
+          class="font-bold text-xs sm:text-sm no-underline px-2 py-2 rounded-lg bg-yellow-dark ml-4"
+          v-if="job.status === 'Current' && toEdit === true && jobOngoing === false || job.status === 'Applied' && toEdit === true || job.status === 'Available' && toEdit === true"
+          @click.prevent="cancelEdit()">
+          Cancel Editing
+        </button>
+      </div>
+      
     </div>
+   
     <!-- <div
       class="text-xs sm:text-sm"
     >Posted {{$moment(job.platform_job.date_created).format('DD/MM/YYYY')}}</div> -->
     <div class="flex flex-col mt-4">
       <div class="flex flex-row flex-wrap justify-start">
+        <!--SHOW THE DEAILS OF THE JOB-->
         <JobDetailModalForm
           :job="job"
-          v-if="job.status === 'Unfilled' || job.status === 'Cancelled' || job.status === 'Declined'"
+          v-if="job.status === 'Unfilled' && toEdit === false || 
+                job.status === 'Cancelled' && toEdit === false  || 
+                job.status === 'Declined' && toEdit === false || 
+                job.status === 'Completed' && toEdit === false ||
+                job.status === 'Current' && toEdit === false || 
+                job.status === 'Applied' && toEdit === false || 
+                job.status === 'Available' && toEdit === false " 
         />
+        <!--UPDATE THE JOB-->
         <JobDetailModalUpdateForm
           :job="job"
-          v-if="job.status === 'Current' || job.status === 'Applied' || job.status === 'Completed' || job.status === 'Available'"
+          v-if="job.status === 'Current' && toEdit === true && jobOngoing === false  || job.status === 'Applied' && toEdit === true  || job.status === 'Available' && toEdit === true"
         />
         <JobDetailModalCandidates
           :applicants="applicants"
@@ -48,6 +72,7 @@
         <JobDetailModalShowCandidate @close="modal = false" :user="user" @appointed="close" />
       </div>
     </transition>
+
   </div>
 </template>
 <script>
@@ -76,6 +101,8 @@ export default {
       optional: [],
       applicants: [],
       modal: false,
+      toEdit: false,
+      jobOngoing: false 
     }
   },
   created() {
@@ -85,6 +112,16 @@ export default {
     if (this.job.status === 'Applied') {
       this.getCandidates()
     }
+
+    if(this.$moment().diff(this.job.date_start,'days') >=0  ){
+      console.log("Job is either ongoing or unfilled. Cannot be edited",this.$moment().diff(this.job.date_start,'days'))
+      this.jobOngoing = true
+    }else{
+      console.log("Job can still be edited",this.$moment().diff(this.job.date_start,'days'))
+      this.jobOngoing = false
+    }
+       
+
   },
   methods: {
     getCandidates() {
@@ -111,6 +148,12 @@ export default {
     showLocum(user) {
       this.user = user
       this.modal = true
+    },
+    editJob(){
+      this.toEdit = true
+    },
+    cancelEdit(){
+      this.toEdit = false
     },
     close() {
       if (this.$route.fullPath === '/dashboard') {

@@ -507,26 +507,6 @@ export default {
       this.checkEmptyField(value, 'report_to')
     },
 
-    'form.number_of_patients'(value) {
-      this.checkEmptyField(value, 'number_of_patients')
-    },
-
-    'form.duration_for_each_appointment'(value) {
-      this.checkEmptyField(value, 'duration_for_each_appointment')
-    },
-
-    'form.session_requirements'(value) {
-      this.checkEmptyField(value, 'session_requirements')
-    },
-
-    'form.session_structure_information'(value) {
-      this.checkEmptyField(value, 'session_structure_information')
-    },
-
-    // 'form.extra_information'(value){
-    //   this.checkEmptyField(value,'extra_information')
-    // },
-
     'form.rate'(value) {
       this.checkEmptyField(value, 'rate')
     },
@@ -575,12 +555,6 @@ export default {
       this.checkEmptyField(value, 'shift_id')
     },
 
-    'form.auto_assign_at'(value) {
-      this.checkEmptyField(value, 'auto_assign_at')
-    },
-    'form.selection_date'(value) {
-      this.checkEmptyField(value, 'selection_date')
-    },
     'form.email'(value) {
       let index = this.formError.findIndex(item => item.field === 'email')
       if (index >= 0) {
@@ -708,9 +682,20 @@ export default {
       }
     },
 
-    reCheckEmptyField() {
-      const requiredFields = [
-        this.form.practice_id,
+    addMandatory() {
+      // ! change route
+      // this.$emit('close')
+      this.$router.push("/profile")
+    },
+    uncheckMandatory(value) {
+      this.form.mandatory_training_id = this.form.mandatory_training_id.filter(
+        id => id != value
+      );
+    },
+    publish() {
+      this.formError = []
+
+      this.Validate([this.form.practice_id,
         this.form.title,
         this.form.description,
         this.form.email,
@@ -719,7 +704,6 @@ export default {
         this.form.duration_for_each_appointment,
         this.form.session_requirements,
         this.form.session_structure_information,
-        // this.form.extra_information,
         this.form.rate,
         this.form.total_hours,
         this.form.profession_id,
@@ -734,11 +718,8 @@ export default {
         this.form.shift_id,
         this.form.auto_assign_at,
         this.form.selection_date
-      ]
-      console.log(this.form.session_requirements)
-      console.log(requiredFields)
-      const requiredFieldNames = [
-        'practice_id',
+      ],
+      ['practice_id',
         'title',
         'description',
         'email',
@@ -747,7 +728,6 @@ export default {
         'duration_for_each_appointment',
         'session_requirements',
         'session_structure_information',
-        // 'extra_information',
         'rate',
         'total_hours',
         'profession_id',
@@ -761,37 +741,10 @@ export default {
         'time_end',
         'shift_id',
         'auto_assign_at',
-        'selection_date'
-      ]
-      let counter = 0
-      let requiredLength = requiredFields.length
-      console.log(requiredLength)
+        'selection_date'])
 
-      while (counter < requiredLength) {
+      console.log('errors',this.formError)
 
-        this.checkEmptyField(requiredFields[counter], requiredFieldNames[counter])
-        ++counter
-      }
-    },
-
-
-    addMandatory() {
-      // ! change route
-      // this.$emit('close')
-      this.$router.push("/profile")
-    },
-    uncheckMandatory(value) {
-      this.form.mandatory_training_id = this.form.mandatory_training_id.filter(
-        id => id != value
-      );
-    },
-    publish() {
-      this.formError = []
-      /*this.Validate(this.form)
-      if (!this.formError.length) {
-
-      } --> REFACTOR VALIDATION USING THIS. READ ABOUT VUE MIXIN*/ 
-      this.reCheckEmptyField()
       if (this.formError.length == 0) {
         this.form.clinical_system_id = this.form.clinical_system_id.map(
           item => item.value

@@ -3,7 +3,7 @@
     class="relative rounded-lg py-3 px-5 my-1 bg-white cursor-pointer hover:bg-grey-lighter"
     @click="select"
   >
-    <template v-if="job.status">
+    <template v-if="job.type">
       <div class="absolute pin-l pin-t rounded-l-lg p-2 h-full" :class="bgStatus(job.locum_status)"></div>
       <div class="ml-2">
         <div class="text-grey-dark text-xs xl:text-sm">Job Number: {{job.job_number}}</div>
@@ -38,7 +38,7 @@ export default {
   props: ['job'],
   methods: {
     select() {
-      if (this.job.status) {
+      if (this.job.type) {
         this.$axios.$get(`/api/v1/locum/jobs/${this.job.id}`).then(res => {
           this.$emit('viewLocumJob', res.data.job)
         })
@@ -68,10 +68,11 @@ export default {
       return status === 'Private' ? this.job.description : this.job.description
     },
     unavailableShift(shifts) {
+      console.log(this.job)
       if (this.$store.state.calendar.view_type === 'per_month') {
         return shifts.map(shift => shift.name).join()
       }
-      return shifts.filter(job => job.name === this.$store.state.calendar.selected_date_shift.shift || 'AM')[0].name
+      return shifts.filter(job => job.name === this.$store.state.calendar.selected_date_shift.shift)[0].name
     },
     bgStatus(status, reminder) {
       switch (status) {

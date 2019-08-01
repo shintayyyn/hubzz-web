@@ -10,7 +10,6 @@ export default (ctx, inject) => {
   })
 
   socket.on('connect', () => {
-    ctx.store.dispatch('jobs/initializeJobListener')
     console.log('Socket ID:', socket.id)
   })
 
@@ -24,8 +23,8 @@ export default (ctx, inject) => {
   })
 
   ctx.$socket = socket
-
   inject('socket', socket)
-
   ctx.store.dispatch('socket/init')
+  ctx.store.dispatch('jobs/initializeJobListener')
+
 }

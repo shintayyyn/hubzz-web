@@ -7,12 +7,13 @@
 <script>
 import AppButton from '@/components/Base/AppButton'
 export default {
+  props: ['job'],
   components: {
     AppButton
   },
   methods: {
     cancel() {
-      this.$axios.$delete(`/api/v1/locum/jobs/${this.$route.params.id}/apply`).then(res => {
+      this.$axios.$delete(`/api/v1/locum/jobs/${this.job.id}/apply`).then(res => {
         this.$store.commit('jobs/REMOVE_LOCUM_APPLIED_JOB', res.data.job.id)
         this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: ['Cancelled'] })
         this.$emit('close')

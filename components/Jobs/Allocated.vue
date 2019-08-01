@@ -29,9 +29,9 @@
                 <td>{{item.job_number}}</td>
                 <td>{{item.type === 'Private' ? item.private_job.private_practice.surgery.name : item.platform_job.practice.surgery.name}}</td>
                 <td>{{item.type === 'Private' ? 'Private appointment' : item.title}}</td>
-                <td>{{item.type === 'Private' ? item.private_job.date_start : item.date_start}}</td>
-                <td>{{item.type === 'Private' ? item.private_job.date_end : item.date_end}}</td>
-                <td>{{item.created_at | localDate }}</td>
+                <td>{{item.date_start}}</td>
+                <td>{{item.date_end}}</td>
+                <td>{{$moment(item.date_created).format('YYYY-MM-DD') }}</td>
                 <td v-if="item.type === 'Private'">N/A</td>
                 <td v-else>{{item.platform_job.appointed_at | localDate}}</td>
               </tr>

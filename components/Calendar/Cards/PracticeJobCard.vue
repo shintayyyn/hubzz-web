@@ -10,7 +10,7 @@
 
     <div class="ml-2">
       <div class="text-grey-dark text-xs xl:text-sm">Job Number: {{job.job_number}}</div>
-      <div class="my-3 font-bold text-sm sm:text-md">{{job.platform_job.title}}</div>
+      <div class="my-3 font-bold text-sm sm:text-md">{{job.title}}</div>
       <div class="my-3 text-sm sm:text-md">{{job.platform_job.practice.surgery.name}}</div>
       <div class="my-3 text-sm sm:text-md">{{job.platform_job.practice.surgery.code}}</div>
       <div
@@ -42,7 +42,7 @@ export default {
             return 'bg-green-light';
             break;
           case 'Current':
-            return 'bg-green-light';
+            return 'bg-green-dark';
             break;
           default:
             return 'bg-red'

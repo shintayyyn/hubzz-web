@@ -1,4 +1,3 @@
-import moment from 'moment'
 export const state = () => ({
     months: [
         'January', 'February', 'March', 'April',
@@ -23,12 +22,17 @@ export const mutations = {
     },
     TOGGLE_CALENDAR_VIEW_TYPE (state, payload) {
         state.view_type = payload
-        state.date_today = this.$moment(new Date()).format('YYYY-MM-DD')
-        state.selected_date = this.$moment(new Date()).format('YYYY-MM-DD')
-        state.selected_date_shift = {
-            date: this.$moment(new Date()).format('YYYY-MM-DD'),
-            shift: 'AM'
+        if (payload === 'per_month') {
+            state.selected_date = state.selected_date_shift.date
+        } else {
+            state.selected_date_shift.date = state.selected_date
         }
+        // state.date_today = this.$moment(new Date()).format('YYYY-MM-DD')
+        // state.selected_date = this.$moment(new Date()).format('YYYY-MM-DD')
+        // state.selected_date_shift = {
+        //     date: this.$moment(new Date()).format('YYYY-MM-DD'),
+        //     shift: 'AM'
+        // }
     },
     SELECT_DATE (state, payload) {
         state.selected_date = payload
