@@ -228,6 +228,12 @@
             :label="'Selection will be made and you will receive a notification by this date'"
             :error="this.formError.find(error => error.field === 'selection_date')"
           />
+           <AppDate
+            v-model="form.favorite_only_until"
+            :name="'favorite_only_until'"
+            :label="'Only Favorite locums can apply until'"
+            :error="this.formError.find(error => error.field === 'favorite_only_until')"
+          />
           <AppSelect
             v-model="form.ir35"
             :name="'ir35'"
@@ -385,7 +391,7 @@ export default {
         is_nurse_available: '',
         number_of_patients: '',
         duration_for_each_appointment: '',
-        opporunity_for_catch_up_slots: false,
+        opportunity_for_catch_up_slots: false,
         session_requirements: [],
         session_structure_information: '',
         locum_detail_rate_type_id: '',
@@ -594,6 +600,9 @@ export default {
     save() {
       this.formError = []
       this.Validate(this.form, ['spoken_language_id'])
+      
+      console.log("form",this.form)
+      console.log("error",this.formError)
       if (!this.formError.length) {
         this.form.clinical_system_id = this.form.clinical_system_id.map(
           item => item.value

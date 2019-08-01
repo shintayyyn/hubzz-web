@@ -43,7 +43,6 @@
           :totalPages="totalPages"
           :currentPage="currentPage"
           @pagechanged="pagechanged"
-          :loading="loading"
         />
       </div>
     </div>

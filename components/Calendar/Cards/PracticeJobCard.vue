@@ -42,7 +42,7 @@ export default {
             return 'bg-green-light';
             break;
           case 'Current':
-            return 'bg-green-light';
+            return 'bg-green-dark';
             break;
           default:
             return 'bg-red'

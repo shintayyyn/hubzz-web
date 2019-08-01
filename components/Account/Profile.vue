@@ -42,7 +42,7 @@
           :name="'short_biography'"
           :label="'Short Biography'"
           :placeholder="''"
-          :info="'A little bit about yourslef to inform to the Practices'"
+          :info="'A little bit about yourself to inform to the Practices'"
         />
         <AppTextarea
           v-model="form.special_requirements"
@@ -95,16 +95,24 @@
             >To match available jobs with</div>
           </div>
           <div class="flex flex-row flex-wrap justify-between">
-            <AppRate v-model="per_hour" :name="'per_hour'" :label="'Per hour'" />
+            <AppRate 
+              v-model="per_hour" 
+              :name="'per_hour'" 
+              :label="'Per hour'"
+              :error="formError.find(item => item.field === 'per_hour')"
+            />
+
             <AppRate
               v-model="per_half_day_session"
               :name="'per_half_day_session'"
               :label="'Per half day session'"
+              :error="formError.find(item => item.field === 'per_half_day_session')"
             />
             <AppRate
               v-model="per_whole_day_session"
               :name="'per_whole_day_session'"
               :label="'Per whole day session'"
+              :error="formError.find(item => item.field === 'per_whole_day_session')"
             />
           </div>
         </div>
@@ -286,6 +294,20 @@ export default {
       return this.$store.getters["signUp/getPracticeTypes"];
     }
   },
+  watch:{
+    per_hour:function(){
+      console.log(this.per_hour)
+    },
+
+    per_half_day_session: function(){
+      console.log(this.per_half_day_session)
+    },
+
+    per_whole_day_session: function(){
+      console.log(this.per_whole_day_session)
+    },
+
+  },
   created() {
     this.$axios.$get("/api/v1/me").then(res => {
       this.avatar = res.data.user.avatar;
@@ -374,11 +396,51 @@ export default {
     },
     save() {
       this.formError = [];
-      this.Validate(this.form, [
-        'nhs_smart_card_id_number', 'headline', 'short_biography', 'special_requirements', 'spoken_language_id',
-        'referee_1_contact_name', 'referee_1_phone_number', 'referee_1_email',
-        'referee_2_contact_name', 'referee_2_phone_number', 'referee_2_email',
-      ])
+      // this.Validate(this.form, [
+      //   'nhs_smart_card_id_number', 'headline', 'short_biography', 'special_requirements', 'spoken_language_id',
+      //   'referee_1_contact_name', 'referee_1_phone_number', 'referee_1_email',
+      //   'referee_2_contact_name', 'referee_2_phone_number', 'referee_2_email',
+      // ])
+      // this.Validate(this.form, [
+      //   'nhs_smart_card_id_number', 'headline', 'short_biography', 'special_requirements', 'spoken_language_id',
+      //   'referee_1_contact_name', 'referee_1_phone_number', 'referee_1_email',
+      //   'referee_2_contact_name', 'referee_2_phone_number', 'referee_2_email',
+      // ])
+      console.log([this.form.gmc_or_nmc_number,
+        this.form.mpl_or_npl_number,
+        this.form.profession_id,
+        this.form.qualification_id,
+        this.form.clinical_system_id,
+        this.form.spoken_language_id,
+        this.form.min_rate_per_hour,
+        this.form.max_rate_per_hour,
+        this.form.min_rate_per_half_day_session,
+        this.form.max_rate_per_half_day_session,
+        this.form.practice_type_id])
+
+        this.Validate([this.form.gmc_or_nmc_number,
+        this.form.mpl_or_npl_number,
+        this.form.profession_id,
+        this.form.qualification_id,
+        this.form.clinical_system_id,
+        this.form.spoken_language_id,
+        this.per_hour,
+        this.per_half_day_session,
+        this.per_whole_day_session,
+        this.form.practice_type_id],
+        ['gmc_or_nmc_number',
+        'mpl_or_npl_number',
+        'profession_id',
+        'qualification_id',
+        'clinical_system_id',
+        'spoken_language_id',
+        'per_hour',
+        'per_half_day_session',
+        'per_whole_day_session',
+        'practice_type_id'])
+
+        console.log('errors',this.formError)
+
       if (!this.formError.length) {
         this.form.profession_id = this.form.profession_id.toString();
         this.form.gmc_or_nmc_number = this.form.gmc_or_nmc_number.number;
@@ -474,14 +536,16 @@ export default {
             text: ["Saved !"]
           });
         });
-      } else {
-        this.$store.commit("SET_NOTIFICATION", {
-          enabled: true,
-          status: "danger",
-          text: ["Please fill up all the forms"]
-        });
-        this.loading = false;
-      }
+      } 
+      
+      // else {
+      //   this.$store.commit("SET_NOTIFICATION", {
+      //     enabled: true,
+      //     status: "danger",
+      //     text: ["Please fill up all the forms"]
+      //   });
+      //   this.loading = false;
+      // }
     }
   }
 };

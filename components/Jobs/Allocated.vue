@@ -31,7 +31,7 @@
                 <td>{{item.type === 'Private' ? 'Private appointment' : item.title}}</td>
                 <td>{{item.date_start}}</td>
                 <td>{{item.date_end}}</td>
-                <td>{{item.created_at | localDate }}</td>
+                <td>{{$moment(item.date_created).format('YYYY-MM-DD') }}</td>
                 <td v-if="item.type === 'Private'">N/A</td>
                 <td v-else>{{item.platform_job.appointed_at | localDate}}</td>
               </tr>

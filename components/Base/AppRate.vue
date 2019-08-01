@@ -6,7 +6,7 @@
       <div
         class="absolute mt-12 bg-red p-1 text-xs sm:text-sm text-white"
         v-if="error"
-      >{{ error.message}}</div>
+      >{{error.message}}</div>
       <div class="flex flex-row justify-start mt-1">
         <div class="text-xs sm:text-sm">From £{{value.min}} - to £{{value.max}}</div>
       </div>

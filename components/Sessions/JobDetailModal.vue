@@ -113,7 +113,7 @@ export default {
       this.getCandidates()
     }
 
-    if(this.$moment().diff(this.job.date_start,'days') > 0  ){
+    if(this.$moment().diff(this.job.date_start,'days') >=0  ){
       console.log("Job is either ongoing or unfilled. Cannot be edited",this.$moment().diff(this.job.date_start,'days'))
       this.jobOngoing = true
     }else{
