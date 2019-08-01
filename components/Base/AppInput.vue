@@ -95,6 +95,35 @@
         />
       </div>
     </div>
+    <div v-if="type === 'search'" class="flex flex-col">
+      <div class="relative flex flex-row flex-nowrap justify-between">
+        <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
+        <div class="flex">
+          <div class="bg-grey-light rounded-lg px-4 py-1 text-xs sm:text-sm" v-if="info">{{info}}</div>
+          <div
+            class="absolute pin-r bg-red p-1 text-xs sm:text-sm text-white"
+            v-if="error"
+          >{{error.message}}</div>
+        </div>
+      </div>
+      <div class="relative flex flex-row justify-start items-center mt-1 border-2 focus:border-yellow rounded-lg">
+        <input
+          :value="value"
+          :type="type"
+          :placeholder="placeholder"
+          class="focus:outline-none pl-2 pr-4 py-4 font-bold text-xs sm:text-sm w-full rounded-lg"
+          :class="error? 'border-red':''"
+          @input="$emit('input', $event.target.value)"
+          :style="inStyle"
+          @keypress.enter="$emit('submit')"
+          @blur="$emit('blur')"
+          :checked="value"
+        />
+        <span class="absolute pin-r px-1 py-2 bg-white">
+					<svgicon name="search" height="21" width="21" class="text-grey fill-current"/>
+        </span>
+      </div>
+    </div>
   </section>
 </template>
 <script>

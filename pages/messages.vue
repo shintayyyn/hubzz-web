@@ -1,5 +1,5 @@
 <template>
-  <section class="messages-section">
+  <section class="messages-section border">
     <MessagesLeftPanel :conversations="conversations" />
     <nuxt-child />
   </section>
@@ -57,8 +57,9 @@ export default {
 .messages-section {
   overflow-y: hidden;
   display: flex;
+  min-height: 80vh;
+  max-height: 80vh;
   /* border: 2px solid black; */
-  height: 100vh;
 }
 </style>
 

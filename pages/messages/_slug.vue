@@ -1,22 +1,19 @@
 <template>
-  <section class="info-panel">
+  <section class="flex w-full">
     <MessagesCenterPanel
       :messages="messages"
       @send-message="send"
       @delete-confirmation="deleteConfirmation"
       @fetch-more-messages="fetchMoreMessages"
     />
-    <!-- <MessagesRightPanel /> -->
   </section>
 </template>
 <script>
 import MessagesCenterPanel from '@/components/Messages/CenterPanel/MessagesCenterPanel'
-import MessagesRightPanel from '@/components/Messages/RightPanel/MessagesRightPanel'
 import * as chatApi from '@/api/chat'
 export default {
   components: {
     MessagesCenterPanel,
-    MessagesRightPanel,
   },
   async asyncData({ app, params }) {
     const response = await chatApi.fetchActiveConversationMessages(app.$axios, 0, 20, params.slug)
@@ -73,9 +70,9 @@ export default {
 }
 </script>
 <style scoped>
-.info-panel {
+/* .info-panel {
   display: flex;
   width: 75%;
-}
+} */
 </style>
 
