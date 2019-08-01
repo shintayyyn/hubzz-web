@@ -352,14 +352,6 @@ export default {
         id => id != value
       );
     },
-<<<<<<< HEAD
-    uncheckOther(value) {
-      this.form.others_compliance_document_id = this.form.others_compliance_document_id.filter(
-        id => id != value
-      );
-    },
-=======
->>>>>>> 9c052c00877d86d2ed70d990199be06e7b829e5e
     uncheckGp(value) {
       this.form.gp_compliance_document_id = this.form.gp_compliance_document_id.filter(
         id => id != value
