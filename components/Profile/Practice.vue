@@ -157,7 +157,7 @@
                   <AppInput
                     v-model="form.others_compliance_document_id"
                     :type="'multi-checkbox'"
-                    @checked="form.others_compliance_document_id.push(parseInt($event))"
+                    @checked="form.others_compliance_document_id.push($event), check($event)"
                     @unchecked="uncheckOther($event)"
                     :name="'others_compliance_document_id'"
                     :label="'For Nurses, et al:'"
@@ -170,7 +170,7 @@
             </div>
           </div>
           <div class="mt-8">
-            <AppButton :label="'Save changes'" @click="save" />
+            <AppButton :label="'Save changes'" @click="save()" />
           </div>
         </div>
       </div>
@@ -337,14 +337,18 @@ export default {
     uncheckPractice(value) {
       this.form.practice_type_id = this.form.practice_type_id.filter(id => id != value)
     },
-    uncheckOther(value) {
-      this.form.others_compliance_document_id = this.form.others_compliance_document_id.filter(id => id != value)
-    },
     uncheckGp(value) {
       this.form.gp_compliance_document_id = this.form.gp_compliance_document_id.filter(id => id != value)
     },
+    uncheckOther(value) {
+      this.form.others_compliance_document_id = this.form.others_compliance_document_id.filter(id => id != value)
+      console.log(this.form.others_compliance_document_id)
+    },
     uncheckMandatory(value) {
       this.form.mandatory_training_id = this.form.mandatory_training_id.filter(id => id != value)
+    },
+    check(value){
+      console.log(this.form.others_compliance_document_id)
     },
     remove() {
       // ! ask arvi hind na reremove ung document
@@ -358,11 +362,11 @@ export default {
     save() {
       try {
         this.formError = []
-        // console.log(this.form)
+        console.log(this.form)
         this.Validate(this.form, ['mandatory_training_id', 'extra_information'])
         if (!this.formError.length) {
           this.$axios.$put(`/api/v1/practice/me/profile`, this.form).then(res => {
-            // console.log(res)
+            console.log(res)
             // set mandatory training
             this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: [res.message] })
           })

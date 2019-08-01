@@ -42,7 +42,7 @@
           :name="'short_biography'"
           :label="'Short Biography'"
           :placeholder="''"
-          :info="'A little bit about yourslef to inform to the Practices'"
+          :info="'A little bit about yourself to inform to the Practices'"
         />
         <AppTextarea
           v-model="form.special_requirements"
@@ -95,16 +95,24 @@
             >To match available jobs with</div>
           </div>
           <div class="flex flex-row flex-wrap justify-between">
-            <AppRate v-model="per_hour" :name="'per_hour'" :label="'Per hour'" />
+            <AppRate
+              v-model="per_hour"
+              :name="'per_hour'"
+              :label="'Per hour'"
+              :error="formError.find(item => item.field === 'per_hour')"
+            />
+
             <AppRate
               v-model="per_half_day_session"
               :name="'per_half_day_session'"
               :label="'Per half day session'"
+              :error="formError.find(item => item.field === 'per_half_day_session')"
             />
             <AppRate
               v-model="per_whole_day_session"
               :name="'per_whole_day_session'"
               :label="'Per whole day session'"
+              :error="formError.find(item => item.field === 'per_whole_day_session')"
             />
           </div>
         </div>
@@ -285,6 +293,20 @@ export default {
     practiceTypes() {
       return this.$store.getters["signUp/getPracticeTypes"];
     }
+  },
+  watch: {
+    per_hour: function () {
+      console.log(this.per_hour)
+    },
+
+    per_half_day_session: function () {
+      console.log(this.per_half_day_session)
+    },
+
+    per_whole_day_session: function () {
+      console.log(this.per_whole_day_session)
+    },
+
   },
   created() {
     this.$axios.$get("/api/v1/me").then(res => {
@@ -480,14 +502,16 @@ export default {
             text: ["Saved !"]
           });
         });
-      } else {
-        this.$store.commit("SET_NOTIFICATION", {
-          enabled: true,
-          status: "danger",
-          text: ["Please fill up all the forms"]
-        });
-        this.loading = false;
       }
+
+      // else {
+      //   this.$store.commit("SET_NOTIFICATION", {
+      //     enabled: true,
+      //     status: "danger",
+      //     text: ["Please fill up all the forms"]
+      //   });
+      //   this.loading = false;
+      // }
     }
   }
 };

@@ -31,7 +31,7 @@
                 <!-- ! ask arvi Need to add timestamp -->
                 <td>{{item.date_start}}</td>
                 <td>{{item.date_end}}</td>
-                <td>{{item.platform_job.date_created}}</td>
+                <td>{{$moment(item.date_created).format('YYYY-MM-DD') }}</td>
               </tr>
               <tr :key="`${item.id}-${index}`">
                 <td></td>
