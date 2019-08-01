@@ -374,6 +374,12 @@ export default {
     },
     save() {
       this.formError = [];
+      this.form.min_rate_per_hour = this.per_hour.min;
+      this.form.max_rate_per_hour = this.per_hour.max;
+      this.form.min_rate_per_half_day_session = this.per_half_day_session.min;
+      this.form.max_rate_per_half_day_session = this.per_half_day_session.max;
+      this.form.min_rate_per_whole_day_session = this.per_whole_day_session.max;
+      this.form.max_rate_per_whole_day_session = this.per_whole_day_session.max;
       this.Validate(this.form, [
         'nhs_smart_card_id_number', 'headline', 'short_biography', 'special_requirements', 'spoken_language_id',
         'referee_1_contact_name', 'referee_1_phone_number', 'referee_1_email',

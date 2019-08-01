@@ -57,6 +57,13 @@ export default {
     }
     this.$router.push({ query })
   },
+  mounted() {
+    this.$axios.$post('api/v1/socket/join-room', { socket_id: this.$socket.id, room_name: 'jobroom' }).then(res => {
+      console.log(res)
+    }).catch(err => {
+      console.log(err.response.data)
+    })
+  }
 }
 </script>
 <style scoped>
