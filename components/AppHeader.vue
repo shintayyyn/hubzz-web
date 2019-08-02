@@ -14,7 +14,7 @@
         <div class="flex flex-row justify-end items-center" v-if="$auth.loggedIn">
           <div
             class="text-xs xl:text-sm"
-            v-if="$auth.user.domain === 'Practice' && $auth.user.is_actived === true"
+            v-if="$auth.user.domain === 'Practice' && $auth.user.status === 'Active'"
           >
             <AppButton
               :label="'Create Job'"
@@ -55,7 +55,7 @@ export default {
 <style scoped>
 .header-section {
   width: 100%;
-  margin-bottom: 50px;
+  margin-bottom: 20px;
 }
 .burger {
   display: block;
@@ -74,6 +74,9 @@ export default {
 @media screen and (min-width: 1200px) {
   .burger {
     display: none;
+  }
+  .header-section{
+    margin-bottom: 50px;
   }
 }
 a {

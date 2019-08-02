@@ -27,11 +27,11 @@
               >
                 <td>{{item.job_number}}</td>
                 <td>{{item.platform_job.practice.surgery.name}}</td>
-                <td>{{item.platform_job.title}}</td>
+                <td>{{item.title}}</td>
                 <!-- ! ask arvi Need to add timestamp -->
-                <td>{{item.platform_job.date_start}}</td>
-                <td>{{item.platform_job.date_end}}</td>
-                <td>{{item.platform_job.date_created}}</td>
+                <td>{{item.date_start}}</td>
+                <td>{{item.date_end}}</td>
+                <td>{{$moment(item.date_created).format('YYYY-MM-DD') }}</td>
               </tr>
               <tr :key="`${item.id}-${index}`">
                 <td></td>

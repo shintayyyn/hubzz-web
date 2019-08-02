@@ -27,11 +27,10 @@
               >
                 <td>{{item.job_number}}</td>
                 <td>{{item.status === 'Private' ? item.private_job.private_practice.surgery.name : item.platform_job.practice.surgery.name}}</td>
-                <td>{{item.status === 'Private' ? 'Private Appointment' : item.platform_job.title}}</td>
-                <td>{{item.status === 'Private' ? item.private_job.date_start : item.platform_job.date_start}}</td>
-                <td>{{item.status === 'Private' ? item.private_job.date_end : item.platform_job.date_end}}</td>
-                <!-- // ! get completed date / practice user -->
-                <td>marked completed by practice</td>
+                <td>{{item.status === 'Private' ? 'Private Appointment' : item.title}}</td>
+                <td>{{item.date_start}}</td>
+                <td>{{item.date_end}}</td>
+                <td>{{item.job_parts[item.job_parts.length - 1].completed_at | localDate }}</td>
               </tr>
               <tr :key="`${item.id}-${index}`">
                 <td></td>

@@ -43,7 +43,6 @@ export default {
           return "bg-white";
       }
     },
-
     notificationIcon() {
       switch (this.$store.state.notification.status) {
         case "success":
@@ -62,7 +61,6 @@ export default {
           return "alert";
       }
     },
-
     iconSvgColor() {
       switch (this.$store.state.notification.status) {
         case "danger":
@@ -95,13 +93,13 @@ export default {
 .app-notification {
   position: fixed;
   top: 0;
-  /* left: 40%; */
+  left: 40%;
   z-index: 999;
-  margin-left: -40px;
+  /* margin-left: -40px; */
 }
 @media screen and (min-width: 1200px) {
   .app-notification {
-    margin-left: -240px;
+    /* margin-left: -240px; */
   }
 }
 @media screen and (max-width: 600px) {

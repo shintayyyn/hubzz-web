@@ -228,6 +228,12 @@
             :label="'Selection will be made and you will receive a notification by this date'"
             :error="this.formError.find(error => error.field === 'selection_date')"
           />
+           <AppDate
+            v-model="form.favorite_only_until"
+            :name="'favorite_only_until'"
+            :label="'Only Favorite locums can apply until'"
+            :error="this.formError.find(error => error.field === 'favorite_only_until')"
+          />
           <AppSelect
             v-model="form.ir35"
             :name="'ir35'"
@@ -385,7 +391,7 @@ export default {
         is_nurse_available: '',
         number_of_patients: '',
         duration_for_each_appointment: '',
-        opporunity_for_catch_up_slots: false,
+        opportunity_for_catch_up_slots: false,
         session_requirements: [],
         session_structure_information: '',
         locum_detail_rate_type_id: '',
@@ -455,18 +461,18 @@ export default {
       this.form.duration_for_each_appointment = this.job.platform_job.duration_for_each_appointment,
       this.form.opportunity_for_catch_up_slots = this.job.platform_job.opportunity_for_catch_up_slots,
       this.form.session_structure_information = this.job.platform_job.session_structure_information
-    this.form.locum_detail_rate_type_id = this.job.platform_job.locum_detail_rate_type.id,
+      this.form.locum_detail_rate_type_id = this.job.locum_detail_rate_type.id,
       this.form.rate = this.job.platform_job.rate,
       this.form.total_hours = this.job.platform_job.total_hours,
       this.form.unpaid_breaks_in_minutes = this.job.platform_job.unpaid_breaks_in_minutes,
       this.form.ir35 = this.job.platform_job.ir35,
       this.form.mandatory_training_id = this.job.platform_job.mandatory_trainings.map(mandatoryTraining => mandatoryTraining.id),
       this.form.compliance_document_id = this.job.platform_job.compliance_documents.map(complianceDocument => complianceDocument.id),
-      this.form.date_start = this.job.platform_job.date_start,
-      this.form.date_end = this.job.platform_job.date_end,
-      this.form.time_start = this.job.platform_job.time_start,
-      this.form.time_end = this.job.platform_job.time_end,
-      this.form.shift_id = this.job.platform_job.shift.id,
+      this.form.date_start = this.job.date_start,
+      this.form.date_end = this.job.date_end,
+      this.form.time_start = this.job.time_start,
+      this.form.time_end = this.job.time_end,
+      this.form.shift_id = this.job.shift.id,
       this.form.auto_assign_at = this.job.platform_job.auto_assign_at,
       this.form.selection_date = this.job.platform_job.selection_date,
       this.form.favorite_only_until = this.job.platform_job.favorite_only_until,
@@ -594,6 +600,9 @@ export default {
     save() {
       this.formError = []
       this.Validate(this.form, ['spoken_language_id'])
+      
+      console.log("form",this.form)
+      console.log("error",this.formError)
       if (!this.formError.length) {
         this.form.clinical_system_id = this.form.clinical_system_id.map(
           item => item.value

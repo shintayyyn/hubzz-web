@@ -51,12 +51,11 @@ export default {
   created() {
     if (this.$auth.loggedIn) {
       let domain = this.$auth.user.domain
-      let isActivated = this.$auth.user.is_actived;
       let accountStatus = this.$auth.user.status
       if (domain === 'Locum') {
         let complianceDocs = this.$auth.user.locum_detail.compliance_documents
       }
-      if (domain === 'Practice' && isActivated === true) {
+      if (domain === 'Practice' && accountStatus === 'Active') {
         this.userIsAuthorized = true
         console.log("practice user is authorized")
       } else if (domain === 'Locum' && accountStatus === "Active" || accountStatus === "Dormant") {
@@ -69,6 +68,13 @@ export default {
 
     }
   },
+  mounted() {
+    this.$axios.$post('api/v1/socket/join-room', { socket_id: this.$socket.id, room_name: 'jobroom' }).then(res => {
+      console.log(res)
+    }).catch(err => {
+      console.log(err.response.data)
+    })
+  }
 }
 </script>
 <style scoped>

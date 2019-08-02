@@ -4,7 +4,7 @@
       <svgicon name="left-arrow" height="32" width="32" />
     </div>
     <div class="flex flex-row justify-start mt-8">
-      <div class="leading-loose font-bold text-md sm:text-lg">{{job.platform_job.title}}</div>
+      <div class="leading-loose font-bold text-md sm:text-lg">{{job.title}}</div>
       <div
         class="mx-2 text-sm sm:text-sm p-2"
         :class="bgStatus(job.locum_status)"
@@ -33,7 +33,11 @@
             :compliances="job.platform_job.compliance_documents.map(item => item.id)"
             @close="close"
           />
-          <JobDetailModalCancelForm v-if="job.locum_status === 'Applied'" @close="close" />
+          <JobDetailModalCancelForm
+            :job="job"
+            v-if="job.locum_status === 'Applied'"
+            @close="close"
+          />
         </div>
       </div>
     </div>

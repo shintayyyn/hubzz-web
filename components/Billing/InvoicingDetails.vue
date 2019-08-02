@@ -1,7 +1,7 @@
 <template>
   <section>
     <div class="flex flex-row flex-wrap justify-start">
-      <div style="width:50%;" class="p-2">
+      <div class="w-full md:w-1/2 p-2">
         <p style="font-family:Nunito" class="text-sm font-bold">Bank account</p>
         <div class="border-solid rounded-lg shadow-lg mt-5 p-10">
           <div
@@ -87,7 +87,7 @@
         </div>
       </div>
 
-      <div style="width:50%;" class="p-2">
+      <div class="w-full md:w-1/2 p-2">
         <p style="font-family:Nunito" class="text-sm font-bold">Details</p>
         <div class="border-solid rounded-lg shadow-lg mt-5 p-10">
           <label for="tax_year_end_month" class="text-sm mb-2">Your tax year end date</label>

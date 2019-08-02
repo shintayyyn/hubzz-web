@@ -28,29 +28,6 @@
         </div>
       </div>
     </div>
-    <div v-if="showErrorModal" class="absolute pin-t">
-      <div
-        class="fixed text-white bg-red-light py-4 px-12 mr-10 md:mr-0 md:w-1/3 shadow"
-        style="border-radius: 0 0 10px 10px"
-      >
-        <span class="text-base font-bold">Failed to upload file</span>
-        <div class="flex flex-wrap md:flex-no-wrap">
-          <div class="w-full md:w-2/3 text-sm mt-2">
-            <span>File format should be any of the following:</span>
-            <ul>
-              <li>.pdf</li>
-              <li>.jpeg</li>
-              <li>.msword</li>
-              <li>.tif</li>
-            </ul>
-          </div>
-          <button
-            class="mx-auto md:mx-10 md:absolute pin-r pin-b w-32 my-2 md:my-10 p-4 text-sm rounded-lg shadow border border-white text-white hover:bg-white hover:text-black"
-            @click="showErrorModal = false"
-          >Okay</button>
-        </div>
-      </div>
-    </div>
     <div class="mt-10">
       <div class="font-bold text-xs sm:text-base">Documents you need to be approved by hubzz HQ</div>
     </div>
@@ -309,8 +286,7 @@ export default {
       profession: {},
       mandatory: [],
       optional: [],
-      mandatory_trainings: [],
-      showErrorModal: false
+      mandatory_trainings: []
     };
   },
   created() {
@@ -352,7 +328,6 @@ export default {
       this.mandatory_trainings = this.mandatory_trainings.sort(
         (a, b) => a.id - b.id
       );
-
     },
     // set mandatory and optional
     setComplianceDocuments() {
@@ -421,7 +396,11 @@ export default {
       let file = e.target.files[0];
       let fileType = file.type.split("/")[1];
       if (!types.includes(fileType)) {
-        this.showErrorModal = true;
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "alert",
+          text: "Invalid File Format"
+        });
         return;
       }
       const formData = new FormData();
@@ -490,7 +469,11 @@ export default {
       let file = e.target.files[0];
       let fileType = file.type.split("/")[1];
       if (!types.includes(fileType)) {
-        this.showErrorModal = true;
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "alert",
+          text: "Invalid File Format"
+        });
         return;
       }
       const formData = new FormData();
@@ -552,7 +535,11 @@ export default {
       let file = e.target.files[0];
       let fileType = file.type.split("/")[1];
       if (!types.includes(fileType)) {
-        this.showErrorModal = true;
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "alert",
+          text: "Invalid File Format"
+        });
         return;
       }
       const formData = new FormData();
@@ -590,7 +577,11 @@ export default {
       let file = e.target.files[0];
       let fileType = file.type.split("/")[1];
       if (!types.includes(fileType)) {
-        this.showErrorModal = true;
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "alert",
+          text: "Invalid File Format"
+        });
         return;
       }
       const formData = new FormData();
@@ -627,7 +618,7 @@ export default {
         responseType: 'blob', // important
       }).then(response => {
         const url = window.URL.createObjectURL(new Blob([response.data]));
-        const link = document.createElement('a');
+        const link = document.createElement("a");
         link.href = url;
         link.setAttribute('download', fileName);
         document.body.appendChild(link);

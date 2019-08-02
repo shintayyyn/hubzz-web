@@ -1,171 +1,167 @@
 import * as jobsApi from '@/api/jobs'
 export default {
     async initializeJobListener({ state, commit, dispatch }) {
-        if (this.$auth.$state.user.domain === "Locum") {
-            this.$socket.on('Locum Notification Job Matched', (job) => {
-                if (!state.locum_matched_jobs.find(matchedJobs => matchedJobs.id == job.id)) {
-                    commit('ADD_LOCUM_MATCHED_JOB', job)
-                }
-            })
-            this.$socket.on('Locum Notification Job Available', (job) => {
-                if (!state.locum_available_jobs.find(availableJobs => availableJobs.id == job.id)) {
-                    commit('ADD_LOCUM_AVAILABLE_JOB', job)
-                }
-            })
-            this.$socket.on('Locum Notification Job Updated', (job) => {
-                if (state.locum_allocated_jobs.find(allocatedJobs => allocatedJobs.id == job.job.id)) {
-                    return commit('REMOVE_LOCUM_ALLOCATED_JOB', job.job.id)
-                }
-                if (state.locum_available_jobs.find(availableJobs => availableJobs.id == job.job.id)) {
-                    return commit('REMOVE_LOCUM_AVAILABLE_JOB', job.job.id)
-                }
-                if (state.locum_matched_jobs.find(matchedJobs => matchedJobs.id == job.job.id)) {
-                    return commit('REMOVE_LOCUM_MATCHED_JOB', job.job.id)
-                }
-                if (state.locum_applied_jobs.find(appliedJobs => appliedJobs.id == job.job.id)) {
-                    return commit('REMOVE_LOCUM_APPLIED_JOB', job.job.id)
-                }
-                if (state.locum_unsuccessful_jobs.find(unsuccessfulJobs => unsuccessfulJobs.id == job.job.id)) {
-                    return commit('REMOVE_LOCUM_UNSUCCESSFUL_JOB', job.job.id)
-                }
-                if (state.locum_declined_jobs.find(declinedJobs => declinedJobs.id == job.job.id)) {
-                    return commit('REMOVE_LOCUM_DECLINED_JOB', job.job.id)
-                }
-                if (state.locum_cancelled_jobs.find(cancelledJobs => cancelledJobs.id == job.job.id)) {
-                    return commit('REMOVE_LOCUM_CANCELLED_JOB', job.job.id)
-                }
-                if (state.locum_completed_jobs.find(completedJobs => completedJobs.id == job.job.id)) {
-                    return commit('REMOVE_LOCUM_COMPLETED_JOB', job.job.id)
-                }
-            })
-            this.$socket.on('Locum Notification Job Current', (job) => {
-                if (state.locum_applied_jobs.find(appliedJob => appliedJob.id === job.id)) {
-                    commit('REMOVE_LOCUM_APPLIED_JOB', job.id)
-                }
-                dispatch('fetchLocumJob', job.id)
-            })
-            this.$socket.on('Locum Notification Job Unsuccessful', (job) => {
-                if (state.locum_applied_jobs.find(appliedJob => appliedJob.id === job.id)) {
-                    commit('REMOVE_LOCUM_APPLIED_JOB', job.id)
-                }
-                dispatch('fetchLocumJob', job.id)
-            })
-            this.$socket.on('Locum Notification Job Unavailable', (job) => {
-                if (state.locum_available_jobs.find(availableJob => availableJob.id === job.id)) {
-                    return commit('REMOVE_LOCUM_AVAILABLE_JOB', job.id)
-                }
-                if (state.locum_matched_jobs.find(matchedJob => matchedJob.id === job.id)) {
-                    return commit('REMOVE_LOCUM_MATCHED_JOB', job.id)
-                }
-            })
-            this.$socket.on('Locum Notification Job Cancelled', (job) => {
-                if (state.locum_allocated_jobs.find(allocatedJob => allocatedJob.id === job.id)) {
-                    return commit('REMOVE_LOCUM_ALLOCATED_JOB', job.id)
-                }
-                if (state.locum_applied_jobs.find(appliedJob => appliedJob.id === job.id)) {
-                    return commit('REMOVE_LOCUM_APPLIED_JOB', job.id)
-                }
-                if (!state.locum_cancelled_jobs.find(cancelledJob => cancelledJob.id === job.id)) {
-                    return commit('ADD_LOCUM_CANCELLED_JOB', job)
-                }
-            })
-            this.$socket.on('Locum Notification Job Part Completed', (job) => {
-
-            })
-            this.$socket.on('Locum Notification Job Completed', (job) => {
-                if (state.locum_allocated_jobs.find(allocatedJob => allocatedJob.id === job.id)) {
-                    commit('REMOVE_LOCUM_ALLOCATED_JOB', job.id)
-                }
-                if (!state.locum_completed_jobs.find(completedJob => completedJob.id === job.id)) {
-                    commit('ADD_LOCUM_COMPLETED_JOB', job)
-                }
-            })
-        }
-        if (this.$auth.$state.user.domain === "Practice") {
-            this.$socket.on('Practice Notification Job Available', (job) => {
-                if (!state.practice_available_jobs.find(availableJob => availableJob.id == job.id)) {
-                    commit('ADD_PRACTICE_AVAILABLE_JOB', job)
-                }
-            })
-            this.$socket.on('Practice Notification Job Updated', (job) => {
-                if (state.practice_available_jobs.find(availableJobs => availableJobs.id == job.job.id)) {
-                    commit('REMOVE_PRACTICE_AVAILABLE_JOB', job.job.id)
-                }
-                if (state.practice_available_jobs_reminder.find(availableJobsReminder => availableJobsReminder.id == job.job.id)) {
-                    commit('REMOVE_PRACTICE_AVAILABLE_JOBS_REMINDER', job.job.id)
-                }
-                if (!state.practice_available_jobs_reminder.find(availableJobsReminder => availableJobsReminder == job.new_job.id) && job.new_job.status === "Available") {
-                    commit('ADD_PRACTICE_AVAILABLE_JOBS_REMINDER', job.new_job)
-                }
-                if (state.practice_applied_jobs.find(appliedJobs => appliedJobs.id == job.job.id)) {
-                    commit('REMOVE_PRACTICE_APPLIED_JOB', job.job.id)
-                }
-                if (state.practice_applied_jobs_reminder.find(appliedJobsReminder => appliedJobsReminder.id == job.job.id)) {
-                    commit('REMOVE_PRACTICE_APPLIED_JOBS_REMINDER', job.job.id)
-                }
-                if (!state.practice_applied_jobs_reminder.find(appliedJobsReminder => appliedJobsReminder == job.new_job.id) && job.new_job.status === "Applied") {
-                    commit('ADD_PRACTICE_APPLIED_JOBS_REMINDER', job.new_job)
-                }
-                if (state.practice_allocated_jobs.find(allocatedJobs => allocatedJobs.id == job.job.id)) {
-                    commit('REMOVE_PRACTICE_ALLOCATED_JOB', job.job.id)
-                }
-                if (state.practice_completed_jobs.find(completedJobs => completedJobs.id == job.job.id)) {
-                    commit('REMOVE_PRACTICE_COMPLETED_JOB', job.job.id)
-                }
-                if (state.practice_unfilled_jobs.find(unfilledJobs => unfilledJobs.id == job.job.id)) {
-                    commit('REMOVE_PRACTICE_UNFILLED_JOB', job.job.id)
-                }
-                if (state.practice_cancelled_jobs.find(cancelledJobs => cancelledJobs.id == job.job.id)) {
-                    commit('REMOVE_PRACTICE_CANCELLED_JOB', job.job.id)
-                }
-                if (state.practice_declined_jobs.find(declinedJobs => declinedJobs.id == job.job.id)) {
-                    commit('REMOVE_PRACTICE_DECLINED_JOB', job.job.id)
-                }
-            })
-            this.$socket.on('Practice Notification Job Applied', (job) => {
-                if(state.practice_available_jobs.find(availableJob => availableJob.id == job.id)) {
-                    commit('REMOVE_PRACTICE_AVAILABLE_JOB', job.id)
-                }
-                dispatch('fetchPracticeJob', job.id)
-            })
-            this.$socket.on('Practice Notification Job Current', (job) => {
-                if (!state.practice_allocated_jobs.find(allocatedJobs => allocatedJobs.id == job.id)) {
-                    commit('ADD_PRACTICE_ALLOCATED_JOB', job)
-                }
-                if(state.practice_applied_jobs.find(appliedJobs => appliedJobs.id == job.id)) {
-                    commit('REMOVE_PRACTICE_APPLIED_JOB', job.id)
-                }
-            })
-            this.$socket.on('Practice Notification Job Declined', (job) => {
-                if(state.practice_allocated_jobs.find(allocatedJob => allocatedJob.id == job.id)) {
-                    commit('REMOVE_PRACTICE_ALLOCATED_JOB', job.id)
-                }
-                commit('ADD_PRACTICE_DECLINED_JOB', job)
-            })
-            this.$socket.on('Practice Notification Job Cancelled', (job) => {
-                if (state.practice_available_jobs.find(availableJobs => availableJobs.id == job.id)) {
-                    commit('REMOVE_PRACTICE_AVAILABLE_JOB', job.id)
-                }
-                if (state.practice_applied_jobs.find(appliedJobs => appliedJobs.id == job.id)) {
-                      commit('REMOVE_PRACTICE_APPLIED_JOB', job.id)
-                }
-                if (state.practice_allocated_jobs.find(allocatedJobs => allocatedJobs.id == job.id)) {
-                    commit('REMOVE_PRACTICE_ALLOCATED_JOB', job.id)
-                }
-                commit('ADD_PRACTICE_CANCELLED_JOB', job)
-            })
-            this.$socket.on('Practice Notification Job Part Completed', (jobPart) => {
-                
-            })
-            this.$socket.on('Practice Notification Job Completed', (job) => {
-                if (state.practice_allocated_jobs.find(allocatedJob => allocatedJob.id == job.id)) {
-                    commit('REMOVE_PRACTICE_ALLOCATED_JOB', job.id)
-                }
-                if (!state.practice_completed_jobs.find(completedJob => completedJob.id == job.id)) {
-                    commit('ADD_PRACTICE_COMPLETED_JOB', job)
-                }
-            })
-        }
+                this.$socket.on('Locum Notification Job Matched', (job) => {
+                    if (!state.locum_matched_jobs.find(matchedJobs => matchedJobs.id == job.id)) {
+                        commit('ADD_LOCUM_MATCHED_JOB', job)
+                    }
+                })
+                this.$socket.on('Locum Notification Job Available', (job) => {
+                    if (!state.locum_available_jobs.find(availableJobs => availableJobs.id == job.id)) {
+                        commit('ADD_LOCUM_AVAILABLE_JOB', job)
+                    }
+                })
+                this.$socket.on('Locum Notification Job Updated', (job) => {
+                    if (state.locum_allocated_jobs.find(allocatedJobs => allocatedJobs.id == job.job.id)) {
+                        return commit('REMOVE_LOCUM_ALLOCATED_JOB', job.job.id)
+                    }
+                    if (state.locum_available_jobs.find(availableJobs => availableJobs.id == job.job.id)) {
+                        return commit('REMOVE_LOCUM_AVAILABLE_JOB', job.job.id)
+                    }
+                    if (state.locum_matched_jobs.find(matchedJobs => matchedJobs.id == job.job.id)) {
+                        return commit('REMOVE_LOCUM_MATCHED_JOB', job.job.id)
+                    }
+                    if (state.locum_applied_jobs.find(appliedJobs => appliedJobs.id == job.job.id)) {
+                        return commit('REMOVE_LOCUM_APPLIED_JOB', job.job.id)
+                    }
+                    if (state.locum_unsuccessful_jobs.find(unsuccessfulJobs => unsuccessfulJobs.id == job.job.id)) {
+                        return commit('REMOVE_LOCUM_UNSUCCESSFUL_JOB', job.job.id)
+                    }
+                    if (state.locum_declined_jobs.find(declinedJobs => declinedJobs.id == job.job.id)) {
+                        return commit('REMOVE_LOCUM_DECLINED_JOB', job.job.id)
+                    }
+                    if (state.locum_cancelled_jobs.find(cancelledJobs => cancelledJobs.id == job.job.id)) {
+                        return commit('REMOVE_LOCUM_CANCELLED_JOB', job.job.id)
+                    }
+                    if (state.locum_completed_jobs.find(completedJobs => completedJobs.id == job.job.id)) {
+                        return commit('REMOVE_LOCUM_COMPLETED_JOB', job.job.id)
+                    }
+                })
+                this.$socket.on('Locum Notification Job Current', (job) => {
+                    if (state.locum_applied_jobs.find(appliedJob => appliedJob.id === job.id)) {
+                        commit('REMOVE_LOCUM_APPLIED_JOB', job.id)
+                    }
+                    dispatch('fetchLocumJob', job.id)
+                })
+                this.$socket.on('Locum Notification Job Unsuccessful', (job) => {
+                    if (state.locum_applied_jobs.find(appliedJob => appliedJob.id === job.id)) {
+                        commit('REMOVE_LOCUM_APPLIED_JOB', job.id)
+                    }
+                    dispatch('fetchLocumJob', job.id)
+                })
+                this.$socket.on('Locum Notification Job Unavailable', (job) => {
+                    if (state.locum_available_jobs.find(availableJob => availableJob.id === job.id)) {
+                        return commit('REMOVE_LOCUM_AVAILABLE_JOB', job.id)
+                    }
+                    if (state.locum_matched_jobs.find(matchedJob => matchedJob.id === job.id)) {
+                        return commit('REMOVE_LOCUM_MATCHED_JOB', job.id)
+                    }
+                })
+                this.$socket.on('Locum Notification Job Cancelled', (job) => {
+                    if (state.locum_allocated_jobs.find(allocatedJob => allocatedJob.id === job.id)) {
+                        return commit('REMOVE_LOCUM_ALLOCATED_JOB', job.id)
+                    }
+                    if (state.locum_applied_jobs.find(appliedJob => appliedJob.id === job.id)) {
+                        return commit('REMOVE_LOCUM_APPLIED_JOB', job.id)
+                    }
+                    if (!state.locum_cancelled_jobs.find(cancelledJob => cancelledJob.id === job.id)) {
+                        return commit('ADD_LOCUM_CANCELLED_JOB', job)
+                    }
+                })
+                this.$socket.on('Locum Notification Job Part Completed', (job) => {
+    
+                })
+                this.$socket.on('Locum Notification Job Completed', (job) => {
+                    if (state.locum_allocated_jobs.find(allocatedJob => allocatedJob.id === job.id)) {
+                        commit('REMOVE_LOCUM_ALLOCATED_JOB', job.id)
+                    }
+                    if (!state.locum_completed_jobs.find(completedJob => completedJob.id === job.id)) {
+                        commit('ADD_LOCUM_COMPLETED_JOB', job)
+                    }
+                })
+                this.$socket.on('Practice Notification Job Available', (job) => {
+                    if (!state.practice_available_jobs.find(availableJob => availableJob.id == job.id)) {
+                        commit('ADD_PRACTICE_AVAILABLE_JOB', job)
+                    }
+                })
+                this.$socket.on('Practice Notification Job Updated', (job) => {
+                    if (state.practice_available_jobs.find(availableJobs => availableJobs.id == job.job.id)) {
+                        commit('REMOVE_PRACTICE_AVAILABLE_JOB', job.job.id)
+                    }
+                    if (state.practice_available_jobs_reminder.find(availableJobsReminder => availableJobsReminder.id == job.job.id)) {
+                        commit('REMOVE_PRACTICE_AVAILABLE_JOBS_REMINDER', job.job.id)
+                    }
+                    if (!state.practice_available_jobs_reminder.find(availableJobsReminder => availableJobsReminder == job.new_job.id) && job.new_job.status === "Available") {
+                        commit('ADD_PRACTICE_AVAILABLE_JOBS_REMINDER', job.new_job)
+                    }
+                    if (state.practice_applied_jobs.find(appliedJobs => appliedJobs.id == job.job.id)) {
+                        commit('REMOVE_PRACTICE_APPLIED_JOB', job.job.id)
+                    }
+                    if (state.practice_applied_jobs_reminder.find(appliedJobsReminder => appliedJobsReminder.id == job.job.id)) {
+                        commit('REMOVE_PRACTICE_APPLIED_JOBS_REMINDER', job.job.id)
+                    }
+                    if (!state.practice_applied_jobs_reminder.find(appliedJobsReminder => appliedJobsReminder == job.new_job.id) && job.new_job.status === "Applied") {
+                        commit('ADD_PRACTICE_APPLIED_JOBS_REMINDER', job.new_job)
+                    }
+                    if (state.practice_allocated_jobs.find(allocatedJobs => allocatedJobs.id == job.job.id)) {
+                        commit('REMOVE_PRACTICE_ALLOCATED_JOB', job.job.id)
+                    }
+                    if (state.practice_completed_jobs.find(completedJobs => completedJobs.id == job.job.id)) {
+                        commit('REMOVE_PRACTICE_COMPLETED_JOB', job.job.id)
+                    }
+                    if (state.practice_unfilled_jobs.find(unfilledJobs => unfilledJobs.id == job.job.id)) {
+                        commit('REMOVE_PRACTICE_UNFILLED_JOB', job.job.id)
+                    }
+                    if (state.practice_cancelled_jobs.find(cancelledJobs => cancelledJobs.id == job.job.id)) {
+                        commit('REMOVE_PRACTICE_CANCELLED_JOB', job.job.id)
+                    }
+                    if (state.practice_declined_jobs.find(declinedJobs => declinedJobs.id == job.job.id)) {
+                        commit('REMOVE_PRACTICE_DECLINED_JOB', job.job.id)
+                    }
+                })
+                this.$socket.on('Practice Notification Job Applied', (job) => {
+                    if(state.practice_available_jobs.find(availableJob => availableJob.id == job.id)) {
+                        commit('REMOVE_PRACTICE_AVAILABLE_JOB', job.id)
+                    }
+                    dispatch('fetchPracticeJob', job.id)
+                })
+                this.$socket.on('Practice Notification Job Current', (job) => {
+                    if (!state.practice_allocated_jobs.find(allocatedJobs => allocatedJobs.id == job.id)) {
+                        commit('ADD_PRACTICE_ALLOCATED_JOB', job)
+                    }
+                    if(state.practice_applied_jobs.find(appliedJobs => appliedJobs.id == job.id)) {
+                        commit('REMOVE_PRACTICE_APPLIED_JOB', job.id)
+                    }
+                })
+                this.$socket.on('Practice Notification Job Declined', (job) => {
+                    if(state.practice_allocated_jobs.find(allocatedJob => allocatedJob.id == job.id)) {
+                        commit('REMOVE_PRACTICE_ALLOCATED_JOB', job.id)
+                    }
+                    commit('ADD_PRACTICE_DECLINED_JOB', job)
+                })
+                this.$socket.on('Practice Notification Job Cancelled', (job) => {
+                    if (state.practice_available_jobs.find(availableJobs => availableJobs.id == job.id)) {
+                        commit('REMOVE_PRACTICE_AVAILABLE_JOB', job.id)
+                    }
+                    if (state.practice_applied_jobs.find(appliedJobs => appliedJobs.id == job.id)) {
+                          commit('REMOVE_PRACTICE_APPLIED_JOB', job.id)
+                    }
+                    if (state.practice_allocated_jobs.find(allocatedJobs => allocatedJobs.id == job.id)) {
+                        commit('REMOVE_PRACTICE_ALLOCATED_JOB', job.id)
+                    }
+                    commit('ADD_PRACTICE_CANCELLED_JOB', job)
+                })
+                this.$socket.on('Practice Notification Job Part Completed', (jobPart) => {
+                    
+                })
+                this.$socket.on('Practice Notification Job Completed', (job) => {
+                    if (state.practice_allocated_jobs.find(allocatedJob => allocatedJob.id == job.id)) {
+                        commit('REMOVE_PRACTICE_ALLOCATED_JOB', job.id)
+                    }
+                    if (!state.practice_completed_jobs.find(completedJob => completedJob.id == job.id)) {
+                        commit('ADD_PRACTICE_COMPLETED_JOB', job)
+                    }
+                })
     },
     async fetchLocumUnavailabilities({ commit }, payload) {
         commit('TOGGLE_LOADING', true)

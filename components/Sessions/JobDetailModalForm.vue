@@ -6,13 +6,13 @@
           <div class="font-bold text-sm sm:text-md">Job number</div>
           <div class="text-xs sm:text-sm mb-4">{{job.job_number}}</div>
           <div class="font-bold text-sm sm:text-md">Job description</div>
-          <div class="text-xs sm:text-sm mb-8">{{job.platform_job.job_description}}</div>
+          <div class="text-xs sm:text-sm mb-8">{{job.description}}</div>
           <div class="font-bold text-sm sm:text-md">Extra information</div>
           <div class="text-xs sm:text-sm mb-8">{{job.platform_job.extra_information}}</div>
           <div class="font-bold text-sm sm:text-md">Report to</div>
           <div class="text-xs sm:text-sm mb-8">{{job.platform_job.report_to}}</div>
           <div class="font-bold text-sm sm:text-md">Telephone number</div>
-          <div class="text-xs sm:text-sm mb-8">{{job.platform_job.phone_number}}</div>
+          <div class="text-xs sm:text-sm mb-8">{{job.platform_job.practice.phone_number}}</div>
           <div class="font-bold text-sm sm:text-md">Email address</div>
           <div class="text-xs sm:text-sm mb-8">{{job.platform_job.email}}</div>
           <template v-if="job.status === 'Cancelled'">
@@ -32,9 +32,9 @@
         </div>
         <div class="flex flex-col w-full md:w-1/2 p-0 md:pl-4">
           <div class="font-bold text-sm sm:text-md">Duration</div>
-          <div class="text-xs sm:text-sm">From {{job.platform_job.date_start}}</div>
-          <div class="text-xs sm:text-sm my-2">To {{job.platform_job.date_end}}</div>
-          <div class="text-xs sm:text-sm mb-8">Shift {{job.platform_job.shift.name}}</div>
+          <div class="text-xs sm:text-sm">From {{job.date_start}}</div>
+          <div class="text-xs sm:text-sm my-2">To {{job.date_end}}</div>
+          <div class="text-xs sm:text-sm mb-8">Shift {{job.shift.name}}</div>
           <div
             class="font-bold text-sm sm:text-md"
           >Auto-assigns this job to the first, matching Favourite applicant</div>

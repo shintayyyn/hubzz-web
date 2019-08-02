@@ -1,6 +1,6 @@
 <template>
   <section>
-    <div class="sidebar-shield" v-if="$store.state.toggled_sidebar"></div>
+    <div class="sidebar-shield" v-if="$store.state.toggled_sidebar" @click="close"></div>
     <AppSideBar @modal="signout_modal = $event" />
     <div class="modal-shield" v-if="$store.state.calendar.createJob"></div>
     <transition name="slide" mode="out-in">
@@ -56,6 +56,12 @@ export default {
       this.$store.commit("TOGGLE_SIDEBAR", false);
       document.body.style.overflow = "auto";
     }
+  },
+  methods: {
+    close() {
+        this.$store.commit("TOGGLE_SIDEBAR", false);
+        document.body.style.overflow = "auto";
+      }
   },
   mounted() {
     this.$store.dispatch("signUp/getProfessions");

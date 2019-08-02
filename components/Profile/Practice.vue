@@ -26,29 +26,6 @@
             </div>
           </div>
         </div>
-        <div v-if="showErrorModal" class="absolute pin-t">
-          <div
-            class="fixed text-white bg-red-light py-4 px-12 mr-10 md:mr-0 md:w-1/3 shadow"
-            style="border-radius: 0 0 10px 10px"
-          >
-            <span class="text-base font-bold">Failed to upload file</span>
-            <div class="flex flex-wrap md:flex-no-wrap">
-              <div class="w-full md:w-2/3 text-sm mt-2">
-                <span>File format should be any of the following:</span>
-                <ul>
-                  <li>.pdf</li>
-                  <li>.jpeg</li>
-                  <li>.msword</li>
-                  <li>.tif</li>
-                </ul>
-              </div>
-              <button
-                class="mx-auto md:mx-10 md:absolute pin-r pin-b w-32 my-2 md:my-10 p-4 text-sm rounded-lg shadow border border-white text-white hover:bg-white hover:text-black"
-                @click="showErrorModal = false"
-              >Okay</button>
-            </div>
-          </div>
-        </div>
         <div class="w-full md:w-2/5 p-2">
           <div class="rounded-lg shadow-lg p-8">
             <div class="flex flex-col">
@@ -61,6 +38,7 @@
                   <div
                     class="font-bold text-md sm:text-lg hover:null cursor-pointer ml-2"
                     @click="modal = true"
+                    v-if="standard_terms !== null"
                   >X</div>
                 </div>
               </div>
@@ -157,7 +135,7 @@
                   <AppInput
                     v-model="form.others_compliance_document_id"
                     :type="'multi-checkbox'"
-                    @checked="form.others_compliance_document_id.push(parseInt($event))"
+                    @checked="form.others_compliance_document_id.push($event), check($event)"
                     @unchecked="uncheckOther($event)"
                     :name="'others_compliance_document_id'"
                     :label="'For Nurses, et al:'"
@@ -170,7 +148,7 @@
             </div>
           </div>
           <div class="mt-8">
-            <AppButton :label="'Save changes'" @click="save" />
+            <AppButton :label="'Save changes'" @click="save()" />
           </div>
         </div>
       </div>
@@ -185,16 +163,16 @@
   </section>
 </template>
 <script>
-import AppInput from '@/components/Base/AppInput'
-import AppTextarea from '@/components/Base/AppTextarea'
-import AppButton from '@/components/Base/AppButton'
-import RemoveConfirmationModal from '@/components/Profile/RemoveConfirmationModal'
+import AppInput from "@/components/Base/AppInput";
+import AppTextarea from "@/components/Base/AppTextarea";
+import AppButton from "@/components/Base/AppButton";
+import RemoveConfirmationModal from "@/components/Profile/RemoveConfirmationModal";
 export default {
   components: {
     AppInput,
     AppTextarea,
     AppButton,
-    RemoveConfirmationModal,
+    RemoveConfirmationModal
   },
   data() {
     return {
@@ -202,12 +180,12 @@ export default {
       standard_terms: {
         file: {
           create_at: null,
-          filename: '',
-          id: '',
-          size: '',
-          subtype: '',
-          type: '',
-          url: ''
+          filename: "",
+          id: "",
+          size: "",
+          subtype: "",
+          type: "",
+          url: ""
         }
       },
       practice_types: [],
@@ -219,112 +197,147 @@ export default {
       others_mandatory_compliance_documents: [],
       others_optional_compliance_documents: [],
       practice_detail: {
-        name: '',
-        code: '',
-        address: '',
-        phone_number: '',
-        ccg: '',
+        name: "",
+        code: "",
+        address: "",
+        phone_number: "",
+        ccg: ""
       },
       form: {
-        email: '',
-        phone_number: '',
-        report_to: '',
-        extra_information: '',
+        email: "",
+        phone_number: "",
+        report_to: "",
+        extra_information: "",
         practice_type_id: [],
         mandatory_training_id: [],
         gp_compliance_document_id: [],
         others_compliance_document_id: []
       },
       mandatory_training: [],
-      name: '',
-      formError: [],
-      showErrorModal: false
+      name: "",
+      formError: []
     };
   },
   watch: {
     modal(value) {
-      value ? document.body.style.overflow = 'hidden' : document.body.style.overflow = 'auto'
+      value
+        ? (document.body.style.overflow = "hidden")
+        : (document.body.style.overflow = "auto");
     }
   },
   created() {
-    // get default data 
+    // get default data
     this.$axios.$get(`/api/v1/me`).then(res => {
-      // console.log(res)
-      // this.standard_terms = res.data.user.practice_detail.practice.standard_terms
-      this.practice_detail.name = res.data.user.practice_detail.practice.surgery.name
-      this.practice_detail.code = res.data.user.practice_detail.practice.surgery.code
-      this.practice_detail.address = res.data.user.practice_detail.practice.surgery.address
-      this.practice_detail.phone_number = res.data.user.practice_detail.practice.surgery.phone_number
-      this.practice_detail.ccg = res.data.user.practice_detail.practice.surgery.clinical_commissioning_group.name
-      this.form.phone_number = res.data.user.practice_detail.practice.phone_number
-      this.form.report_to = res.data.user.practice_detail.practice.report_to
-      this.form.email = res.data.user.practice_detail.practice.email
-      this.form.extra_information = res.data.user.practice_detail.practice.extra_information
+      console.log(res)
+      this.standard_terms =
+        res.data.user.practice_detail.practice.standard_terms;
+      this.practice_detail.name =
+        res.data.user.practice_detail.practice.surgery.name;
+      this.practice_detail.code =
+        res.data.user.practice_detail.practice.surgery.code;
+      this.practice_detail.address =
+        res.data.user.practice_detail.practice.surgery.address;
+      this.practice_detail.phone_number =
+        res.data.user.practice_detail.practice.surgery.phone_number;
+      this.practice_detail.ccg =
+        res.data.user.practice_detail.practice.surgery.clinical_commissioning_group.name;
+      this.form.phone_number =
+        res.data.user.practice_detail.practice.phone_number;
+      this.form.report_to = res.data.user.practice_detail.practice.report_to;
+      this.form.email = res.data.user.practice_detail.practice.email;
+      this.form.extra_information =
+        res.data.user.practice_detail.practice.extra_information;
 
       res.data.user.practice_detail.practice.practice_types.forEach(item => {
-        this.form.practice_type_id.push(item.id)
-      })
-      res.data.user.practice_detail.practice.mandatory_trainings.forEach(item => {
-        this.form.mandatory_training_id.push(item.id)
-      })
-      res.data.user.practice_detail.practice.gp_compliance_documents.forEach(item => {
-        this.form.gp_compliance_document_id.push(item.id)
-      })
-      res.data.user.practice_detail.practice.others_compliance_documents.forEach(item => {
-        this.form.others_compliance_document_id.push(item.id)
-      })
-    })
-    this.$axios.$get(`/api/v1/practice-types`)
-      .then(res => {
-        this.practice_types = []
-        res.data.practice_types.forEach(item => {
-          this.practice_types.push({ value: item.id, label: item.name })
-        })
-      })
-    // get mandatory training 
+        this.form.practice_type_id.push(item.id);
+      });
+      res.data.user.practice_detail.practice.mandatory_trainings.forEach(
+        item => {
+          this.form.mandatory_training_id.push(item.id);
+        }
+      );
+      res.data.user.practice_detail.practice.gp_compliance_documents.forEach(
+        item => {
+          this.form.gp_compliance_document_id.push(item.id);
+        }
+      );
+      res.data.user.practice_detail.practice.others_compliance_documents.forEach(
+        item => {
+          this.form.others_compliance_document_id.push(item.id);
+        }
+      );
+    });
+    this.$axios.$get(`/api/v1/practice-types`).then(res => {
+      this.practice_types = [];
+      res.data.practice_types.forEach(item => {
+        this.practice_types.push({ value: item.id, label: item.name });
+      });
+    });
+    // get mandatory training
     this.$axios.$get(`/api/v1/mandatory-trainings`).then(res => {
-      this.mandatory_trainings = []
+      this.mandatory_trainings = [];
       res.data.mandatory_trainings.forEach(item => {
-        this.mandatory_trainings.push({ label: item.name, value: item.id })
-      })
-    })
+        this.mandatory_trainings.push({ label: item.name, value: item.id });
+      });
+    });
 
     // get compliance documents based on profession category (GP, Other)
-    this.$axios.$get(`/api/v1/profession-categories`)
-      .then(res => {
-        const gp = res.data.profession_categories.find(item => item.id === 1)
-        const others = res.data.profession_categories.find(item => item.id === 2)
-        this.gp_mandatory_compliance_documents = []
-        gp.mandatory_compliance_documents.forEach(item => {
-          this.gp_mandatory_compliance_documents.push({ value: item.id, label: item.name })
-        })
-        this.gp_optional_compliance_documents = []
-        gp.optional_compliance_documents.forEach(item => {
-          this.gp_optional_compliance_documents.push({ value: item.id, label: item.name })
-        })
-        this.gp_documents = [...this.gp_mandatory_compliance_documents, ...this.gp_optional_compliance_documents]
-        this.others_mandatory_compliance_documents = []
-        others.mandatory_compliance_documents.forEach(item => {
-          this.others_mandatory_compliance_documents.push({ value: item.id, label: item.name })
-        })
-        this.others_optional_compliance_documents = []
-        others.optional_compliance_documents.forEach(item => {
-          this.others_optional_compliance_documents.push({ value: item.id, label: item.name })
-        })
-        this.others_documents = [...this.others_mandatory_compliance_documents, ...this.others_optional_compliance_documents]
-      })
+    this.$axios.$get(`/api/v1/profession-categories`).then(res => {
+      const gp = res.data.profession_categories.find(item => item.id === 1);
+      const others = res.data.profession_categories.find(item => item.id === 2);
+      this.gp_mandatory_compliance_documents = [];
+      gp.mandatory_compliance_documents.forEach(item => {
+        this.gp_mandatory_compliance_documents.push({
+          value: item.id,
+          label: item.name
+        });
+      });
+      this.gp_optional_compliance_documents = [];
+      gp.optional_compliance_documents.forEach(item => {
+        this.gp_optional_compliance_documents.push({
+          value: item.id,
+          label: item.name
+        });
+      });
+      this.gp_documents = [
+        ...this.gp_mandatory_compliance_documents,
+        ...this.gp_optional_compliance_documents
+      ];
+      this.others_mandatory_compliance_documents = [];
+      others.mandatory_compliance_documents.forEach(item => {
+        this.others_mandatory_compliance_documents.push({
+          value: item.id,
+          label: item.name
+        });
+      });
+      this.others_optional_compliance_documents = [];
+      others.optional_compliance_documents.forEach(item => {
+        this.others_optional_compliance_documents.push({
+          value: item.id,
+          label: item.name
+        });
+      });
+      this.others_documents = [
+        ...this.others_mandatory_compliance_documents,
+        ...this.others_optional_compliance_documents
+      ];
+    });
   },
   methods: {
     onFileInput(e) {
       if (!e.target.files.length) {
-        return
+        return;
       }
-      let types = ['pdf', 'jpeg', 'msword', 'tif']
-      let file = e.target.files[0]
-      let fileType = file.type.split('/')[1]
+      let types = ["pdf", "jpeg", "msword", "tif"];
+      let file = e.target.files[0];
+      let fileType = file.type.split("/")[1];
       if (!types.includes(fileType)) {
-        this.showErrorModal = true;
-        return
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "alert",
+          text: "Invalid File Format"
+        });
+        return;
       }
       const formData = new FormData()
       formData.append('file', file)
@@ -335,16 +348,26 @@ export default {
       // console.log(file.name)
     },
     uncheckPractice(value) {
-      this.form.practice_type_id = this.form.practice_type_id.filter(id => id != value)
+      this.form.practice_type_id = this.form.practice_type_id.filter(
+        id => id != value
+      );
+    },
+    uncheckGp(value) {
+      this.form.gp_compliance_document_id = this.form.gp_compliance_document_id.filter(
+        id => id != value
+      );
     },
     uncheckOther(value) {
       this.form.others_compliance_document_id = this.form.others_compliance_document_id.filter(id => id != value)
-    },
-    uncheckGp(value) {
-      this.form.gp_compliance_document_id = this.form.gp_compliance_document_id.filter(id => id != value)
+      console.log(this.form.others_compliance_document_id)
     },
     uncheckMandatory(value) {
-      this.form.mandatory_training_id = this.form.mandatory_training_id.filter(id => id != value)
+      this.form.mandatory_training_id = this.form.mandatory_training_id.filter(
+        id => id != value
+      );
+    },
+    check(value){
+      console.log(this.form.others_compliance_document_id)
     },
     remove() {
       // ! ask arvi hind na reremove ung document
@@ -358,21 +381,21 @@ export default {
     save() {
       try {
         this.formError = []
-        // console.log(this.form)
+        console.log(this.form)
         this.Validate(this.form, ['mandatory_training_id', 'extra_information'])
         if (!this.formError.length) {
           this.$axios.$put(`/api/v1/practice/me/profile`, this.form).then(res => {
-            // console.log(res)
+            console.log(res)
             // set mandatory training
             this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: [res.message] })
           })
         }
       } catch (e) {
-        console.log(e)
+        console.log(e);
       }
     }
   }
-}
+};
 </script>
 <style scoped>
 .document-filename {
