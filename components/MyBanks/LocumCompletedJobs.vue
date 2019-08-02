@@ -11,12 +11,13 @@
            <table>
             <thead>
               <tr class="text-xs sm:text-sm text-left">
-                <th>Job number</th>
+                <th @click="getCompletedJobs('id:desc')">Job number</th>
                 <th>Practice / Surgery</th>
-                <th>Title</th>
-                <th>From</th>
-                <th>To</th>
-                <th>Created</th>
+                <th @click="getCompletedJobs('title:desc')">Title</th>
+                <th @click="getCompletedJobs('date_start:desc')">From</th>
+                <th @click="getCompletedJobs('date_end:desc')">To</th>
+                <th @click="getCompletedJobs('date_created:desc')">Created</th>
+                <th>Status</th>
               </tr>
             </thead>
             <tbody>
@@ -31,7 +32,7 @@
                   <td>{{item.title}}</td>
                   <td>{{item.date_start}}</td>
                   <td>{{item.date_end}}</td>
-                  <td>{{item.platform_job.date_created}}</td>
+                  <td>{{item.date_created}}</td>
                 </tr>
                 <tr :key="`${item.id}-${index}`">
                   <td></td>
@@ -65,6 +66,7 @@ export default {
         totalPages:0,
         currentPage:0,
         perPage:0,
+        ascendDescend:0
       }
     },
     beforeDestroy() {
@@ -75,7 +77,7 @@ export default {
     watch: {
       $route(to, from) {
         this.currentPage = parseInt(to.query.completed_job_page)
-        this.getCompletedJobs()
+        this.getCompletedJobs('date_created:desc')
       },
 
     },
@@ -92,7 +94,7 @@ export default {
           this.totalPages = Math.ceil(this.total / this.perPage)
         })
       ]).then(() => {
-        this.getCompletedJobs(),
+        this.getCompletedJobs('date_created:desc'),
         console.log(this.completedJobs)
       })
     },
@@ -104,12 +106,23 @@ export default {
       // }
     },
     methods:{
-      getCompletedJobs(){
+      getCompletedJobs(orderBy){
+        
         let offset = 0
+        if(this.ascendDescend == 0){
+          orderBy = orderBy.replace('desc','asc')
+          this.ascendDescend = 1
+          console.log('true',this.ascendDescend)
+        }else if(this.ascendDescend == 1){
+          orderBy = orderBy.replace('asc','desc')
+          this.ascendDescend = 0
+        }
+        
         offset = this.perPage * (parseInt(this.$route.query.completed_job_page) - 1)
-        this.$axios.$get(`/api/v1/practice/jobs?locum_detail_id=${this.user.locum_detail.id}&locum_status=Completed&limit=${this.perPage}&offset=${offset}`).then(res=>{
-          this.completedJobs = res.data.jobs
-        })
+          this.$axios.$get(`/api/v1/practice/jobs?locum_detail_id=${this.user.locum_detail.id}&locum_status=Completed&order_by=${orderBy}&order_by=id%3Adesc&limit=${this.perPage}&offset=${offset}`).then(res=>{
+            this.completedJobs = res.data.jobs
+          })
+       
       },
       show(id) {
           const query = {

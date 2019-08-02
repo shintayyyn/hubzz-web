@@ -83,10 +83,14 @@
             </div>
           </div>
           <div class="font-bold text-sm sm:text-md">Referees</div>
-          <div class="rounded-lg flex flex-col bg-grey-light my-2 p-4">
-            <div class="text-xs sm:text-sm">name</div>
-            <div class="text-xs sm:text-sm">number</div>
-            <div class="text-xs sm:text-sm">email</div>
+          <div v-if="user.locum_detail.referees.length > 0">
+            <div class="rounded-lg flex flex-col bg-grey-light my-2 p-4"
+              v-for="item in user.locum_detail.referees"
+              :key="item.id">
+              <div class="text-xs sm:text-sm">{{item ? item.name:null}}</div>
+              <div class="text-xs sm:text-sm">{{item ? item.phone_number:null}}</div>
+              <div class="text-xs sm:text-sm">{{item ? item.email:null}}</div>
+            </div>
           </div>
         </div>
       </div>

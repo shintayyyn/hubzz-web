@@ -42,6 +42,7 @@ export default {
         this.$axios.$get(`/api/v1/locum/jobs/${this.job.id}`).then(res => {
           this.$emit('viewLocumJob', res.data.job)
         })
+        console.log(this.job)
       } else {
         this.$router.push('/availability')
       }
@@ -50,10 +51,10 @@ export default {
       return status === 'Private' ? 'Private appointment' : this.job.title
     },
     surgeryName(status) {
-      return status === 'Private' ? this.job.private_job.private_practice.surgery.name : this.job.platform_job.practice.surgery.name
+      return status === 'Private' ? this.job.private_job.private_practice.surgery.name : null
     },
     surgeryCode(status) {
-      return status === 'Private' ? this.job.private_job.private_practice.surgery.code : this.job.platform_job.practice.surgery.code
+      return status === 'Private' ? this.job.private_job.private_practice.surgery.code : null
     },
     dateStart(status) {
       return status === 'Private' ? this.job.date_start : this.job.date_start

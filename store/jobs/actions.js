@@ -184,7 +184,7 @@ export default {
         commit('SET_LOCUM_UNAVAILABILITIES', response.data.unavailabilities)
         commit('SET_LOCUM_UNAVAILABILITIES_COUNT', response.data.count)
     },
-    async fetchLocumJobs({ commit }, payload) {
+    async fetchLocumJobs({ commit }, payload) { // /hubzz-web/api folder -> actions -> mutations
         commit('TOGGLE_LOADING', true)
         const response = await jobsApi.fetchLocumJobs(this.$axios, payload)
         commit('TOGGLE_LOADING', false)
