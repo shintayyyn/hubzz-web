@@ -1,6 +1,6 @@
 <template>
   <section class="messages-section border">
-    <MessagesLeftPanel :conversations="conversations" />
+    <MessagesLeftPanel />
     <nuxt-child />
   </section>
 </template>
@@ -11,45 +11,51 @@ export default {
   components: {
     MessagesLeftPanel
   },
-  async asyncData({ app }) {
+  async asyncData({ app, store, params }) {
     const response = await chatApi.fetchConversations(app.$axios, 0, 1)
     const conversations = response.data.conversations
-    return {
-      conversations
-    }
+    store.commit('chat/SET_CONVERSATIONS', response.data.conversations)
   },
-  data() {
-    return {
-    }
+  computed: {
+    socketId() {
+      return this.$store.state.socket_id
+    },
+    conversations() {
+      return this.$store.state.chat.conversations
+    },
   },
   watch: {
     $route(to, from) {
-      // this.fetchActiveConversationMessages(to.params.slug)
+      if (to.params.slug) {
+        this.$store.dispatch('chat/setActiveConversation', to.params.slug)
+      }
     },
+    socketId(value) {
+      this.$store.dispatch('joinRoom', { socket_id: value, room_name: 'messageroom', })
+    }
+  },
+  beforeDestroy() {
+    this.$store.dispatch('leaveRoom', { socket_id: this.$socket.id, room_name: 'messageroom' })
+  },
+  created() {
+    this.$store.dispatch('chat/setActiveConversation', this.$route.params.slug)
   },
   mounted() {
+    if (this.socketId) {
+      this.$store.dispatch('joinRoom', { socket_id: this.socketId, room_name: 'messageroom' })
+    }
     if (!this.$auth.loggedIn) {
       return this.$router.push('/')
     }
     if (this.conversations.length > 0 && !this.$route.params.slug) {
       this.goToFirstConversation()
     }
-    // if (this.$route.params.slug) {
-    //   this.fetchActiveConversationMessages(this.$route.params.slug)
-    // }
   },
   methods: {
     goToFirstConversation() {
       let conversation = this.conversations.find((conversation, index) => index === 0)
       this.$router.push(`/messages/${conversation.id}`)
     },
-    // async fetchActiveConversationMessages() {
-    //   const response = await chatApi.fetchActiveConversationMessages(this.$axios, 0, 1, this.$route.params.slug)
-    //   const messages = response.data.messages
-    //   return {
-    //     messages
-    //   }
-    // }
   }
 }
 </script>

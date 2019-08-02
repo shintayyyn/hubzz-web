@@ -1,5 +1,9 @@
 <template>
-  <div class="panel-chat overflow-y-auto py-2 px-4 h-full border-t border-b" ref="messagesContainer" @scroll="scrollHandler">
+  <div
+    class="panel-chat overflow-y-auto py-2 px-4 h-full border-t border-b"
+    ref="messagesContainer"
+    @scroll="scrollHandler"
+  >
     <div class="flex flex-col h-full">
       <div v-if="!messageEmpty">
         <div v-for="(item, index) in messages" :key="item.id">
@@ -14,7 +18,11 @@
                 :class="{'mx-4' : !isReceiver(item)}"
               >Deleted</div>
             </div>
-            <div v-else class="flex items-center" :class="isReceiver(item) ? 'justify-start': 'justify-end'">
+            <div
+              v-else
+              class="flex items-center"
+              :class="isReceiver(item) ? 'justify-start': 'justify-end'"
+            >
               <div
                 class="my-1 rounded-lg text-xs px-4 py-2"
                 :class="isReceiver(item) ? 'bg-grey-light' : 'bg-blue-light text-white'"
@@ -22,7 +30,7 @@
               <div
                 class="text-xs font-bold text-grey-dark m-1 cursor-pointer"
                 :class="isReceiver(item) ? 'hidden' : ''"
-                @click="$emit('delete-confirmation', item.id)"
+                @click="deleteMessage(item.id)"
               >X</div>
             </div>
           </div>
@@ -31,11 +39,11 @@
       <div v-if="messageEmpty === true">
         <div class="flex flex-col justify-center items-center py-4">
           <img src="https://image.flaticon.com/icons/svg/236/236832.svg" width="150" />
-          <MessagesCenterPanelTop  class="text-center"/>
+          <MessagesCenterPanelTop class="text-center" />
         </div>
       </div>
 
-     <!--<div v-if="route === 'new'" class="flex flex-col h-full py-4">
+      <!--<div v-if="route === 'new'" class="flex flex-col h-full py-4">
         ads
         <span class="font-bold text-lg">Create Message</span>
         <AppInput
@@ -67,9 +75,9 @@
           </div>
         </div>
         <span v-if="messages.length === 0 && showResult === true" class="flex h-full items-center justify-center font-bold text-grey">Nothing to show</span>
-      </div> -->
-      </div>
+      </div>-->
     </div>
+  </div>
 </template>
 <script>
 import AppInput from '~/components/Base/AppInput';
@@ -79,7 +87,6 @@ export default {
     AppInput,
     MessagesCenterPanelTop
   },
-  props: ['messages'],
   data() {
     return {
       oldMessageCount: null,
@@ -90,7 +97,12 @@ export default {
       hidden: 'hidden'
     }
   },
-  created(){
+  computed: {
+    messages() {
+      return this.$store.getters['chat/getMessages']
+    }
+  },
+  created() {
     this.route = this.$router.app._route.params.slug
   },
   mounted() {
@@ -107,21 +119,26 @@ export default {
       let messageSample = document.getElementById(`message-${index}`)
       // console.log(document.getElementById(`message-${value.length - this.oldMessageCount}`))
     },
-    "search_text"(value){
-      if (!value){
+    "search_text"(value) {
+      if (!value) {
         this.showResult = false
         console.log('empty search')
-      }else{
+      } else {
         this.getResults(value)
       }
     }
   },
   methods: {
+    deleteMessage(id) {
+      if (confirm("Do you want to delete this message?")) {
+        this.$store.dispatch('chat/deleteMessage', id)
+      }
+    },
     scrollToBottom() {
       this.$nextTick(() => {
         this.$refs.messagesContainer.scrollTop = this.$refs.messagesContainer.scrollHeight;
-        console.log(this.$refs.messagesContainer.scrollTop, this.$refs.messagesContainer.scrollHeight)
-      console.log(this.$auth.user)
+        // console.log(this.$refs.messagesContainer.scrollTop, this.$refs.messagesContainer.scrollHeight)
+        // console.log(this.$auth.user)
 
       })
     },
@@ -152,17 +169,13 @@ export default {
         }
       }
     },
-    getResults(value){
+    getResults(value) {
       let search = this.search_text
       this.$axios.$get(`/api/v1/conversations/?search=${search}`).then(res => {
-          this.messages = res.data.conversations
-          this.showResult = true
+        this.messages = res.data.conversations
+        this.showResult = true
       })
     },
-    // goTo(id) {
-    //   // this.route = id
-    //   this.$router.push(`/messages/${id}`)
-    // },
   }
 }
 </script>
@@ -176,15 +189,15 @@ export default {
   transition: background-color 0.5s ease-in-out;
 }
 
-.panel-chat::-webkit-scrollbar{
+.panel-chat::-webkit-scrollbar {
   width: 8px;
 }
 
-.panel-chat::-webkit-scrollbar-track{
+.panel-chat::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.panel-chat::-webkit-scrollbar-thumb{
+.panel-chat::-webkit-scrollbar-thumb {
   background: #ccc;
   border-radius: 50px;
 }

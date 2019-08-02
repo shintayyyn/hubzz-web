@@ -87,11 +87,10 @@ export default {
       showResult: false
     };
   },
-  props: {
-    conversations: {
-      type: Array,
-      required: true
-    }
+  computed: {
+    conversations() {
+      return this.$store.state.chat.conversations
+    },
   },
   watch: {
      $route(to, from) {
@@ -109,7 +108,6 @@ export default {
   methods: {
     goTo(id) {
       this.$router.push(`/messages/${id}`)
-      console.log(this.conversations)
     },
     getResults(value){
       let search = this.search_text
