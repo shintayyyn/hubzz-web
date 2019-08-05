@@ -5,6 +5,7 @@ export function fetchPracticeJobs(axios, payload) {
     payload.status ? params.status = payload.status : null
     payload.date_start ? params.date_start = payload.date_start : null
     payload.date_end ? params.date_end = payload.date_end : null
+    payload.order_by ? params.order_by = payload.order_by : null
     return axios.$get(`/api/v1/practice/jobs${payload.countOnly ? '/count' : ''}`, { params: params })
 }
 
@@ -29,6 +30,7 @@ export function fetchLocumJobs(axios, payload) {
     payload.near_post_code ? params.near_post_code = payload.near_post_code : null
     payload.miles ? params.miles = payload.miles : null
     payload.surgery_name ? params.surgery_name = payload.surgery_name : null
+    payload.order_by ? params.order_by = payload.order_by : null
     return axios.$get(`/api/v1/locum/jobs${payload.countOnly ? '/count' : ''}`, { params: params })
 }
 
@@ -38,7 +40,6 @@ export function fetchLocumUnavailabilities(axios, payload) {
     payload.limit ? params.limit = payload.limit : null
     payload.date_start ? params.date_start = payload.date_start : null
     payload.date_end ? params.date_end = payload.date_end : null
-
     return axios.$get(`/api/v1/locum/unavailabilities${payload.countOnly ? '/count' : ''}`, { params: params })
 }
 

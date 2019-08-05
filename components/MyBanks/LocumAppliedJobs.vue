@@ -11,12 +11,12 @@
            <table>
             <thead>
               <tr class="text-xs sm:text-sm text-left">
-                <th>Job number</th>
+                <th @click="getAppliedJobs('id:desc')">Job number</th>
                 <th>Practice / Surgery</th>
-                <th>Title</th>
-                <th>From</th>
-                <th>To</th>
-                <th>Created</th>
+                <th @click="getAppliedJobs('title:desc')">Title</th>
+                <th @click="getAppliedJobs('date_start:desc')">From</th>
+                <th @click="getAppliedJobs('date_end:desc')">To</th>
+                <th @click="getAppliedJobs('date_created:desc')">Created</th>
                 <th>Status</th>
               </tr>
             </thead>
@@ -32,7 +32,7 @@
                   <td>{{item.title}}</td>
                   <td>{{item.date_start}}</td>
                   <td>{{item.date_end}}</td>
-                  <td>{{item.platform_job.date_created}}</td>
+                  <td>{{item.date_created}}</td>
                   <td>{{item.locum_status}}</td>
                 </tr>
                 <tr :key="`${item.id}-${index}`">
@@ -68,6 +68,7 @@ export default {
         totalPages:0,
         currentPage:0,
         perPage:0,
+        ascendDescend:0
       }
     },
     beforeDestroy() {
@@ -78,7 +79,7 @@ export default {
     watch: {
       $route(to, from) {
         this.currentPage = parseInt(to.query.applied_job_page)
-        this.getAppliedJobs()
+        this.getAppliedJobs('date_created:desc')
       },
 
     },
@@ -95,11 +96,9 @@ export default {
           this.totalPages = Math.ceil(this.total / this.perPage)
         })
       ]).then(() => {
-        this.getAppliedJobs()
+        this.getAppliedJobs('date_created:desc'),
         console.log(this.appliedJobs)
-        
       })
-
     },
     computed:{
       // appliedJobs:function(){
@@ -109,13 +108,22 @@ export default {
       // }
     },
     methods:{
-      getAppliedJobs(){
+      getAppliedJobs(orderBy){
+        
         let offset = 0
+        if(this.ascendDescend == 0){
+          orderBy = orderBy.replace('desc','asc')
+          this.ascendDescend = 1
+          console.log('true',this.ascendDescend)
+        }else if(this.ascendDescend == 1){
+          orderBy = orderBy.replace('asc','desc')
+          this.ascendDescend = 0
+        }
+        
         offset = this.perPage * (parseInt(this.$route.query.applied_job_page) - 1)
-        this.$axios.$get(`/api/v1/practice/jobs?locum_detail_id=${this.user.locum_detail.id}&locum_status=Available&limit=${this.perPage}&offset=${offset}`).then(res=>{
-          this.appliedJobs = res.data.jobs
-        })
-        console.log("applied",this.appliedJobs)
+          this.$axios.$get(`/api/v1/practice/jobs?locum_detail_id=${this.user.locum_detail.id}&locum_status=Applied&order_by=${orderBy}&order_by=id%3Adesc&limit=${this.perPage}&offset=${offset}`).then(res=>{
+            this.appliedJobs = res.data.jobs
+          })
        
       },
       show(id) {

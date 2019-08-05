@@ -114,7 +114,8 @@ export default {
       this.$store.dispatch("jobs/fetchLocumJobs", {
         offset: offset,
         limit: this.perPage,
-        status: "Matched"
+        status: "Matched",
+        order_by: ''
       });
     },
     pagechanged(e) {

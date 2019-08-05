@@ -570,6 +570,10 @@ export default {
         }
       }
     },
+    'form.mandatory_training_id'(value){
+      console.log(value)
+      console.log('form mandatory training',this.form.mandatory_training_id)
+    }
   },
   created() {
     // get practice lists
@@ -743,7 +747,8 @@ export default {
         'auto_assign_at',
         'selection_date'])
 
-      console.log('errors',this.formError)
+      console.log('errors',this.formError.length)
+      console.log('form',this.form)
 
       if (this.formError.length == 0) {
         this.form.clinical_system_id = this.form.clinical_system_id.map(
@@ -753,9 +758,6 @@ export default {
           item => item.value
         );
         this.form.spoken_language_id = this.form.spoken_language_id.map(
-          item => item.value
-        );
-        this.form.mandatory_training_id = this.form.mandatory_training_id.map(
           item => item.value
         );
         this.form.date_start = this.$moment(this.form.date_start).format(

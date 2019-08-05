@@ -42,6 +42,7 @@ export default {
         this.$axios.$get(`/api/v1/locum/jobs/${this.job.id}`).then(res => {
           this.$emit('viewLocumJob', res.data.job)
         })
+        console.log(this.job)
       } else {
         this.$router.push('/availability')
       }

@@ -102,7 +102,7 @@ export default {
       this.locum_appointment_job = null
     },
     viewLocumJob(job) {
-      if (job.status === 'Private') {
+      if (job.type === 'Private') {
         this.locum_appointment_modal = true
         this.locum_appointment_job = job
         return
