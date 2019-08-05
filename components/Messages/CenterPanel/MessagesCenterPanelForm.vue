@@ -5,7 +5,7 @@
       class="focus:outline-none p-4 font-bold text-xs w-full text-right"
       type="text"
       @keydown.enter="send"
-    /> -->
+    />-->
     <textarea
       v-model="message"
       class="message-box w-full p-4 text-sm align-middle focus:outline-none"
@@ -27,7 +27,7 @@ export default {
       if (!this.message) {
         return
       }
-      this.$emit('send-message', this.message)
+      this.$store.dispatch('chat/sendMessage', this.message)
       this.message = ''
     }
   }
@@ -35,13 +35,13 @@ export default {
 </script>
 
 <style>
-.message-box::-webkit-scrollbar{
+.message-box::-webkit-scrollbar {
   width: 8px;
 }
-.message-box::-webkit-scrollbar-thumb{
+.message-box::-webkit-scrollbar-thumb {
   background: #ccc;
 }
-.message-box::-webkit-scrollbar-track{
+.message-box::-webkit-scrollbar-track {
   background: #eee;
 }
 </style>

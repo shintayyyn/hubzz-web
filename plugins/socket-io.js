@@ -11,6 +11,7 @@ export default (ctx, inject) => {
 
   socket.on('connect', () => {
     console.log('Socket ID:', socket.id)
+    ctx.store.commit('SET_SOCKET', socket.id)
   })
 
   socket.on('disconnect', reason => {
@@ -26,5 +27,6 @@ export default (ctx, inject) => {
   inject('socket', socket)
   ctx.store.dispatch('socket/init')
   ctx.store.dispatch('jobs/initializeJobListener')
+  ctx.store.dispatch('chat/initializeChatListener')
 
 }
