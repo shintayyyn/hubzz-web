@@ -106,8 +106,8 @@
         </div>
         <div class="mt-4">
           <AppTextarea
-            v-model="form.private_notes"
-            :name="'private_notes'"
+            v-model="form.description"
+            :name="'description'"
             :label="'Private notes'"
             :placeholder="''"
           />
@@ -163,7 +163,7 @@ export default {
         locum_detail_rate_type_id: '',
         rate: '',
         total_hours: '',
-        private_notes: ''
+        description: ''
       },
       formError: []
     }
@@ -196,14 +196,15 @@ export default {
     this.getShifts()
     this.getRateType()
     if (this.job) {
+      console.log(this.job)
       this.form.private_practice_id = this.job.private_job.private_practice.id
-      this.form.date_start = this.date_start
-      this.form.date_end = this.date_end
-      // this.form.shift_id = this.shift.id
+      this.form.date_start = this.job.date_start
+      this.form.date_end = this.job.date_end
+      this.form.shift_id = this.job.shift.id
       this.form.locum_detail_rate_type_id = this.job.locum_detail_rate_type.id
       this.form.rate = this.job.rate
       this.form.total_hours = this.job.total_hours
-      this.form.private_notes = this.job.private_job.private_notes
+      this.form.description = this.job.description
     }
   },
   computed: {
@@ -246,7 +247,7 @@ export default {
     },
     save() {
       this.formError = []
-      this.Validate(this.form, ['private_notes'])
+      this.Validate(this.form, ['description'])
       if (!this.formError.length) {
         this.form.date_start = this.$moment(this.form.date_start).format('YYYY-MM-DD')
         this.form.date_end = this.$moment(this.form.date_end).format('YYYY-MM-DD')
@@ -274,9 +275,11 @@ export default {
     },
     edit() {
       this.formError = []
-      this.Validate(this.form, ['private_notes'])
+      this.Validate(this.form, ['description'])
       if (!this.formError.length) {
         this.$axios.$put(`/api/v1/locum/jobs/${this.job.id}`, this.form).then(res => {
+          console.log(res)
+
           if (res.data.job.locum_status === 'Current') {
             this.$store.commit('jobs/UPDATE_LOCUM_ALLOCATED_JOB', res.data.job)
           } else if (res.data.job.locum_status === 'Completed') {
@@ -285,6 +288,7 @@ export default {
           this.close()
           this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: [`${res.message}`] })
         }).catch(err => {
+          console.log(err.response)
           err.response.data.error_messages.forEach(error => {
             this.formError.push(error)
           })
