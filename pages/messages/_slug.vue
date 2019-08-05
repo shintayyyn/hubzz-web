@@ -1,5 +1,5 @@
 <template>
-  <section class="flex w-full">
+  <section class="w-full">
     <MessagesCenterPanel
       :messages="messages"
       @send-message="send"
@@ -16,7 +16,7 @@ export default {
     MessagesCenterPanel,
   },
   async asyncData({ app, params }) {
-    const response = await chatApi.fetchActiveConversationMessages(app.$axios, 0, 20, params.slug)
+    const response = await chatApi.fetchActiveConversationMessages(app.$axios, 0, 0, params.slug)
     const messages = response.data.messages.sort((a, b) => a.id - b.id)
     return {
       messages
@@ -54,6 +54,8 @@ export default {
     getNewChatRealTime() {
       this.$socket.on("new chat", newChat => {
         this.messages.push(newChat)
+        console.log(newChat)
+
       });
     },
     getDeleteChatRealTime() {

@@ -6,13 +6,14 @@
       type="text"
       @keydown.enter="send"
     /> -->
-    <textarea
-      v-model="message"
-      class="message-box w-full p-4 text-sm align-middle focus:outline-none"
-      placeholder="Type your message here"
-      @keydown.enter="send"
-    ></textarea>
-    <button class="px-8 bg-blue-light text-white" @click="send">Send</button>
+      <textarea
+        v-model="message"
+        class="message-box resize-none w-full p-4 text-sm align-middle focus:outline-none"
+        placeholder="Type your message here"
+        @keydown.enter="send"
+      ></textarea>
+      <button class="px-8 bg-blue-light text-white" @click="send">Send</button>
+    
   </div>
 </template>
 <script>
@@ -25,10 +26,12 @@ export default {
   methods: {
     send() {
       if (!this.message) {
-        return
+        console.log("nyongan")
+      } else{
+        this.$emit('send-message', this.message)
+        this.message = ''
       }
-      this.$emit('send-message', this.message)
-      this.message = ''
+      
     }
   }
 }

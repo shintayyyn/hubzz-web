@@ -1,5 +1,5 @@
 <template>
-  <div class="messages-center-panel w-full flex flex-col border-l">
+  <div class="messages-center-panel flex flex-col h-full w-full border-l">
     <MessagesCenterPanelTop/>
     <div class="flex flex-col h-full justify-between">
       <MessagesCenterPanelChat
@@ -7,7 +7,8 @@
         @delete-confirmation="$emit('delete-confirmation', $event)"
         @fetch-more-messages="$emit('fetch-more-messages')"
       />
-      <MessagesCenterPanelForm @send-message="$emit('send-message', $event)" />
+      <MessagesCenterPanelForm 
+      @send-message="$emit('send-message', $event)" />
     </div>
   </div>
 </template>
@@ -25,10 +26,4 @@ export default {
 }
 </script>
 <style scoped>
-.messages-center-panel {
-  /* float: left; */
-  min-height: 80vh;
-  max-height: 90vh;
-  /* border: 1px solid black; */
-}
 </style>
