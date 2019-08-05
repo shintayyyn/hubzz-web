@@ -10,12 +10,12 @@
         <table>
           <thead>
             <tr class="text-xs sm:text-sm text-left">
-              <th>Job number</th>
+              <th @click="getJobs('job_number')">Job number</th>
               <th>Practice</th>
-              <th>Title</th>
-              <th>From</th>
-              <th>To</th>
-              <th>Created</th>
+              <th @click="getJobs('title')">Title</th>
+              <th @click="getJobs('date_start')">From</th>
+              <th @click="getJobs('date_end')">To</th>
+              <th @click="getJobs('date_created')">Created</th>
               <th>Assigned</th>
             </tr>
           </thead>
@@ -110,14 +110,19 @@ export default {
         countOnly: true
       });
     },
-    getJobs() {
+    getJobs(sortBy) {
+      let order_by = []
+      if (sortBy) {
+        order_by.push(`${sortBy}:desc`)
+      }
+      order_by = [...order_by, 'date_created:desc', 'id:desc']
       let offset = 0;
       offset = this.perPage * (parseInt(this.$route.query.current_page) - 1);
       this.$store.dispatch("jobs/fetchLocumJobs", {
         offset: offset,
         limit: this.perPage,
         status: "Current",
-        order_by: ['date_created:desc','id:desc']
+        order_by: order_by
       });
     },
     pagechanged(e) {

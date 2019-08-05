@@ -12,7 +12,7 @@
 <script>
 import AppButton from '@/components/Base/AppButton'
 export default {
-  layout: 'auth',
+  layout: 'verification',
   components: {
     AppButton
   },
