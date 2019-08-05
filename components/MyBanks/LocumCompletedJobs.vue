@@ -11,13 +11,27 @@
            <table>
             <thead>
               <tr class="text-xs sm:text-sm text-left">
-                <th @click="getCompletedJobs('id:desc')">Job number</th>
+                <th @click="getCompletedJobs('id:desc')">
+                  Job number
+                <svgicon name="sort" height="12" width="12"/>
+              </th>
                 <th>Practice / Surgery</th>
-                <th @click="getCompletedJobs('title:desc')">Title</th>
-                <th @click="getCompletedJobs('date_start:desc')">From</th>
-                <th @click="getCompletedJobs('date_end:desc')">To</th>
-                <th @click="getCompletedJobs('date_created:desc')">Created</th>
-                <th>Status</th>
+                <th @click="getCompletedJobs('title:desc')">
+                  Title
+                  <svgicon name="sort" height="12" width="12"/>
+                </th>
+                <th @click="getCompletedJobs('date_start:desc')">
+                  From
+                  <svgicon name="sort" height="12" width="12"/>
+                </th>
+                <th @click="getCompletedJobs('date_end:desc')">
+                  To
+                  <svgicon name="sort" height="12" width="12"/>
+                </th>
+                <th @click="getCompletedJobs('date_created:desc')">
+                  Created
+                  <svgicon name="sort" height="12" width="12"/>
+                </th>
               </tr>
             </thead>
             <tbody>

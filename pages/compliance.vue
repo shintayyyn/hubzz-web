@@ -45,10 +45,13 @@
           </tr>
         </thead>
         <tbody>
+          <!--------------------------FILE SHOULD SHOW ON CLICK----------------------------->
           <template v-for="(item, index) in mandatory">
             <tr
               :key="item.id"
-              class="rounded-lg shadow-md hover:bg-grey-light cursor-pointer text-xs sm:text-sm text-left"
+              class="rounded-lg shadow-md cursor-pointer text-xs sm:text-sm text-left"
+              :class="item.info && item.info.file ? 'hover:bg-grey-light' : ''"
+              @click="item.info && item.info.file ? showComplianceDoc(item.info.id) : null"
             >
               <td>{{item.name}}</td>
               <td class="hover:underline" v-if="item.info && item.info.file">
@@ -94,7 +97,7 @@
                   <label :for="`${item.id}_file`" class="leading-loose mx-2 cursor-pointer">Upload</label>
                 </div>
               </td>
-              <td class="hover:underline" v-else>
+              <td class="hover:underline"  v-else>
                 <div class="flex flex-row flex-nowrap">
                   <input
                     type="file"
@@ -112,6 +115,7 @@
               <td></td>
             </tr>
           </template>
+          <!-------------------------FILE SHOULD SHOW ON CLICK------------------------------>
         </tbody>
       </table>
     </div>
@@ -137,7 +141,9 @@
           <template v-for="(item, index) in optional">
             <tr
               :key="item.id"
-              class="rounded-lg shadow-md hover:bg-grey-light cursor-pointer text-xs sm:text-sm text-left"
+              class="rounded-lg shadow-md cursor-pointer text-xs sm:text-sm text-left"
+              :class="item.info && item.info.file ? 'hover:bg-grey-light' : ''"
+              @click="item.info && item.info.file ? showComplianceDoc(item.info.id) : null"
             >
               <td>{{item.name}}</td>
               <td class="hover:underline" v-if="item.info && item.info.file">
@@ -214,7 +220,9 @@
           <template v-for="(item, index) in mandatory_trainings">
             <tr
               :key="item.id"
-              class="rounded-lg shadow-md hover:bg-grey-light cursor-pointer text-xs sm:text-sm text-left"
+              class="rounded-lg shadow-md cursor-pointer text-xs sm:text-sm text-left"
+              :class="item.info && item.info.file ? 'hover:bg-grey-light' : ''"
+              @click="item.info && item.info.file ? showMandatoryTraining(item.info.id) : null"
             >
               <td>{{item.name}}</td>
               <td class="hover:underline" v-if="item.info && item.info.file">
@@ -275,10 +283,36 @@
         </tbody>
       </table>
     </div>
+
+    <div>
+      <div class="shield" v-if="complianceModal"></div>
+      <transition name="slide" mode="out-in">
+        <div class="complianceModal shadow-lg" v-if="complianceModal">
+          <ShowComplianceDocument :specificComplianceDoc="specificComplianceDoc" @close="complianceModal = false" />
+        </div>
+      </transition>
+    </div>
+
+    <div>
+      <div class="shield" v-if="mandatoryTrainingModal"></div>
+      <transition name="slide" mode="out-in">
+        <div class="mandatoryTrainingModal shadow-lg" v-if="mandatoryTrainingModal">
+          <ShowMandatoryTraining :specificMandatoryTraining="specificMandatoryTraining" @close="mandatoryTrainingModal = false" />
+        </div>
+      </transition>
+    </div>
+
   </section>
+  
 </template>
 <script>
+import ShowComplianceDocument from '@/components/Compliance/ShowComplianceDocument'
+import ShowMandatoryTraining from '@/components/Compliance/ShowMandatoryTraining'
 export default {
+  components:{
+    ShowComplianceDocument,
+    ShowMandatoryTraining
+  },
   data() {
     return {
       gmc_or_nmc_number: {},
@@ -286,7 +320,11 @@ export default {
       profession: {},
       mandatory: [],
       optional: [],
-      mandatory_trainings: []
+      mandatory_trainings: [],
+      specificComplianceDoc:null,
+      specificMandatoryTraining:null,
+      complianceModal:false,
+      mandatoryTrainingModal:false,
     };
   },
   created() {
@@ -387,6 +425,23 @@ export default {
         default:
           return;
       }
+    },
+    showComplianceDoc(id){
+      console.log("docid",id)
+      this.$axios.$get(`/api/v1/locum/locum-detail-compliance-documents/${id}`).then(res => {
+        this.specificComplianceDoc = res.data.locum_detail_compliance_document
+        this.complianceModal = true
+        console.log(this.complianceModal)
+      })
+    },
+    showMandatoryTraining(id){
+      console.log("mandatorydocid",id)
+      this.$axios.$get(`/api/v1/locum/locum-detail-mandatory-trainings/${id}`).then(res => {
+        this.specificMandatoryTraining = res.data.locum_detail_mandatory_training
+        this.mandatoryTrainingModal = true
+        console.log(this.mandatoryTrainingModal)
+      })
+      
     },
     onFileInput(e, id, index) {
       if (!e.target.files.length) {
@@ -645,4 +700,47 @@ table thead th {
 table tbody td {
   padding: 15px 8px;
 }
+.shield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #333;
+  opacity: 0.5;
+  z-index: 509;
+}
+.mandatoryTrainingModal{
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  border-left: solid 2px #edf2f7;
+  transition: all 0.3s ease-in-out;
+  background-color: white;
+  z-index: 510;
+}
+.complianceModal {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  border-left: solid 2px #edf2f7;
+  transition: all 0.3s ease-in-out;
+  background-color: white;
+  z-index: 510;
+}
+@media screen and (min-width: 1200px) {
+  .complianceModal {
+    width: 80%;
+  }
+  .mandatoryTrainingModal {
+    width: 80%;
+  }
+}
+
 </style>
