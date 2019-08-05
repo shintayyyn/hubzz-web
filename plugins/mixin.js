@@ -36,7 +36,7 @@ Vue.mixin({
             }
             if (lists && !lists.includes(key)) {
               this.formError.push(
-                { field: key, message: `${key} Is Required` }
+                { field: key, message: `${key} Is required` }
               )
             } 
           } 

@@ -9,6 +9,18 @@
         :placeholder="''"
         :error="formError.find(item => item.field === 'email')"
       />
+      <div class="-mt-6 mb-4" v-if="email_isVerified === true ">
+        <span
+          class="text-xs"
+        >E-mail is Verified on {{$moment(email_verifiedAt).format('MMM DD, YYYY | hh:mm A')}}</span>
+      </div>
+      <div class="-mt-6 mb-4" v-if="email_isVerified === false ">
+        <span class="text-red text-xs">E-mail is not yet verified.</span>
+        <span
+          class="p-1 bg-grey rounded text-xs"
+          @click="resendEmailVerification()"
+        >Click here to re-send</span>
+      </div>
       <AppInput
         v-model="form.title"
         :type="'text'"
@@ -124,6 +136,8 @@ export default {
         address_line_2: "",
         address_line_3: ""
       },
+      email_isVerified: '',
+      email_verifiedAt: '',
       formError: []
     };
   },
@@ -166,6 +180,8 @@ export default {
       this.form.address_line_2 = res.data.user.address_detail.address.line_2;
       this.form.address_line_3 = res.data.user.address_detail.address.line_3;
       this.form.post_code = res.data.user.address_detail.address.post_code;
+      this.email_isVerified = res.data.user.is_email_verified;
+      this.email_verifiedAt = res.data.user.email_verified_at
     });
   },
   methods: {
@@ -205,6 +221,14 @@ export default {
         }
       } catch (e) {
         console.log(e);
+      }
+    },
+    async resendEmailVerification() {
+      try {
+        await this.$axios.post(`/api/v1/email-verification/resend`)
+        alert('Confirmation e-mail sent')
+      } catch (err) {
+        console.log("Something went wrong! ", err)
       }
     }
   }

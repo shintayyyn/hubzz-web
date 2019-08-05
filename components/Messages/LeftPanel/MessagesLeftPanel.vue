@@ -14,65 +14,74 @@
         <div class="chat-list h-full overflow-y-auto overflow-x-hidden">
           <!-- default -->
           <div v-if="showResult === false">
-            <div 
+            <div
               class="flex flex-col md:flex-row items-center px-2 md:pl-4 py-4 cursor-pointer border-b"
               :class="parseInt($route.params.slug) === item.id ? 'bg-grey-lighter' : 'hover:bg-grey-lightest'"
               v-for="item in conversations"
               :key="item.id"
-              @click="goTo(item.id)"
+              @click="goTo(item.conversation_id ? item.conversation_id : item.id)"
             >
-              <div class="">
+              <div class>
                 <img src="https://image.flaticon.com/icons/svg/236/236832.svg" width="50" />
               </div>
               <div class="hidden md:block w-5/6 px-2">
-              <div class="flex justify-between items-center">
-                <span :class="parseInt($route.params.slug) === item.id ? 'font-bold' : ''">{{ item.receiver_first_name }} {{ item.receiver_last_name }}</span>
-                <span class="h-2 w-2 py-1 px-1 bg-green-light rounded-full"></span>
-              </div>
-              <div class="flex">
-                <p class="text-sm truncate w-full">{{ item.message }}</p>
-                <span class="text-sm text-grey-darker">2hrs</span>
-              </div>
+                <div class="flex justify-between items-center">
+                  <span
+                    :class="parseInt($route.params.slug) === item.id ? 'font-bold' : ''"
+                  >{{ userFullname(item) }}</span>
+                  <span class="h-2 w-2 py-1 px-1 bg-green-light rounded-full"></span>
+                </div>
+                <div class="flex">
+                  <p class="text-sm truncate w-full">{{ item.message }}</p>
+                  <span class="text-sm text-grey-darker">2hrs</span>
+                </div>
               </div>
             </div>
           </div>
           <!-- show result -->
           <div v-if="showResult && messages.length > 0">
-             <div 
+            <div
               class="flex flex-col md:flex-row items-center px-2 md:pl-4 py-4 cursor-pointer border-b"
               :class="parseInt($route.params.slug) === item.id ? 'bg-grey-lighter' : 'hover:bg-grey-lightest'"
               v-for="item in messages"
               :key="item.id"
-              @click="goTo(item.id)"
+              @click="goTo(item.conversation_id ? item.conversation_id : item.id)"
             >
-              <div class="">
+              <div class>
                 <img src="https://image.flaticon.com/icons/svg/236/236832.svg" width="50" />
               </div>
               <div class="hidden md:block w-5/6 px-2">
-              <div class="flex justify-between items-center">
-                <span :class="parseInt($route.params.slug) === item.id ? 'font-bold' : ''">{{ item.receiver_first_name }} {{ item.receiver_last_name }}</span>
-                <span class="h-2 w-2 py-1 px-1 bg-green-light rounded-full"></span>
-              </div>
-              <div class="flex">
-                <p class="text-sm truncate w-full">{{ item.message }}</p>
-                <span class="text-sm text-grey-darker">2hrs</span>
-              </div>
+                <div class="flex justify-between items-center">
+                  <span
+                    :class="parseInt($route.params.slug) === item.id ? 'font-bold' : ''"
+                  >{{ userFullname(item) }}</span>
+                  <span class="h-2 w-2 py-1 px-1 bg-green-light rounded-full"></span>
+                </div>
+                <div class="flex">
+                  <p class="text-sm truncate w-full">{{ item.message }}</p>
+                  <span class="text-sm text-grey-darker">2hrs</span>
+                </div>
               </div>
             </div>
           </div>
           <!-- No results -->
-          <span v-if="messages.length === 0 && showResult === true" class="flex h-full items-center justify-center font-bold text-grey">Nothing to show</span>
-          </div>
-        </div> 
-        <button class="bg-yellow-dark border-yellow-dark text-sm md:mx-2 md:my-4 p-4 md:text-lg focus:outline-none" @click="createMessage">
-          <span class="hidden md:block">Create Message</span>
-          <span class="block md:hidden">
-  					<svgicon name="write-message" class="w-8 h-8 fill-current"/>
-          </span>
-        </button>
+          <span
+            v-if="messages.length === 0 && showResult === true"
+            class="flex h-full items-center justify-center font-bold text-grey"
+          >Nothing to show</span>
+        </div>
       </div>
+      <button
+        class="bg-yellow-dark border-yellow-dark text-sm md:mx-2 md:my-4 p-4 md:text-lg focus:outline-none"
+        @click="createMessage"
+      >
+        <span class="hidden md:block">Create Message</span>
+        <span class="block md:hidden">
+          <svgicon name="write-message" class="w-8 h-8 fill-current" />
+        </span>
+      </button>
     </div>
-  </section>
+  </div>
 </template>
 <script>
 import AppInput from '~/components/Base/AppInput';
@@ -93,34 +102,40 @@ export default {
     },
   },
   watch: {
-     $route(to, from) {
+    $route(to, from) {
       //  what happen
+      // shit happen
     },
-    "search_text"(value){
-      if (!value){
+    "search_text"(value) {
+      if (!value) {
         this.showResult = false
         console.log('empty search')
-      }else{
+      } else {
         this.getResults(value)
       }
     }
   },
   methods: {
     goTo(id) {
+      this.showResult = false
+      this.messages = []
       this.$router.push(`/messages/${id}`)
     },
-    getResults(value){
+    getResults(value) {
       let search = this.search_text
       let asd = this.$router.app._route.params.slug
       this.$axios.$get(`/api/v1/conversations/?search=${search}`).then(res => {
-          this.messages = res.data.conversations
-          this.showResult = true
+        this.messages = res.data.conversations
+        this.showResult = true
       })
     },
-    createMessage(){
+    userFullname(item) {
+      return item.receiver_id === this.$auth.user.id ? `${item.sender_first_name} ${item.sender_last_name}` : `${item.receiver_first_name} ${item.receiver_last_name}`
+    },
+    createMessage() {
       // this.$router.push(`/messages/new`)
     }
-   
+
   }
 }
 </script>
@@ -131,34 +146,34 @@ export default {
   max-height: 80vh;
 }
 
-.chat-list::-webkit-scrollbar{
+.chat-list::-webkit-scrollbar {
   width: 8px;
 }
 
-.chat-list::-webkit-scrollbar-track{
+.chat-list::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.chat-list::-webkit-scrollbar-thumb{
+.chat-list::-webkit-scrollbar-thumb {
   background: #ccc;
   border-radius: 50px;
 }
 
-@media screen and (max-width: 767px){
-  .messages-left-panel{
+@media screen and (max-width: 767px) {
+  .messages-left-panel {
     min-width: 12vw;
     max-width: 12vw;
   }
 }
-@media screen and (min-width: 768px){
-  .messages-left-panel{
+@media screen and (min-width: 768px) {
+  .messages-left-panel {
     min-width: 25vw;
     max-width: 25vw;
   }
 }
 
-@media screen and (min-width: 1200px){
-  .messages-left-panel{
+@media screen and (min-width: 1200px) {
+  .messages-left-panel {
     min-width: 18vw;
     max-width: 18vw;
   }

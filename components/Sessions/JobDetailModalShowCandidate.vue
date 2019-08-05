@@ -66,7 +66,8 @@
                 :href="item.file.url"
                 :download="item.file.filename"
                 target="_blank"
-              >{{item.file.filename}}</a>
+              >{{item.compliance_document.name}}</a>
+              
               <!-- <div class="leading-normal mx-2 document-filename">{{item.file.filename}}</div> -->
             </div>
           </div>
@@ -83,7 +84,7 @@
                 :href="item.file.url"
                 :download="item.file.filename"
                 target="_blank"
-              >{{item.file.filename}}</a>
+              >{{item.compliance_document.name}}</a>
               <!-- <div class="leading-normal mx-2 document-filename">{{item.file.filename}}</div> -->
             </div>
           </div>
@@ -101,12 +102,17 @@
             </div>
           </div>
           <div class="font-bold text-sm sm:text-md">Referees</div>
-          <div class="rounded-lg flex flex-col bg-grey-light my-2 p-4">
-            <!-- v-for="item in user.locum_detail.referees"
-            :key="item.id"-->
-            <div class="text-xs sm:text-sm">name</div>
-            <div class="text-xs sm:text-sm">number</div>
-            <div class="text-xs sm:text-sm">email</div>
+          <div v-if="user.locum_detail.referees.length > 0">
+            <div class="rounded-lg flex flex-col bg-grey-light my-2 p-4"
+              v-for="item in user.locum_detail.referees"
+              :key="item.id">
+              <div class="text-xs sm:text-sm">{{item ? item.name:null}}</div>
+              <div class="text-xs sm:text-sm">{{item ? item.phone_number:null}}</div>
+              <div class="text-xs sm:text-sm">{{item ? item.email:null}}</div>
+            </div>
+          </div>
+          <div v-else>
+            <div class="text-xs sm:text-sm">(none)</div>
           </div>
         </div>
         <AppButton :label="'Appoint to this job'" @click="appoint" />
@@ -140,6 +146,7 @@ export default {
           return res.data.profession_category.optional_compliance_documents.some(optional_compliance_document => optional_compliance_document.id === compliance_document.compliance_document.id)
         })
       })
+      
     },
     appoint() {
       this.$axios.$put(`/api/v1/practice/jobs/${this.$route.params.id}/applicants/${this.user.id}/appoint`).then(res => {

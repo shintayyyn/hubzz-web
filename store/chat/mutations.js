@@ -3,17 +3,13 @@ export default {
         state.loading_messages = payload
     },
     SET_CONVERSATIONS(state, payload) {
-        state.conversations = payload.map(conversation => {
-            const newConversation = Object.assign({}, conversation)
-            newConversation.messages = []
-            return newConversation
-        })
+        state.conversations = payload
     },
     SET_ACTIVE_CONVERSATION(state, payload) {
         state.activeConversationId = payload
     },
     ADD_CONVERSATION(state, payload) {
-        state.conversations.push(payload)
+        state.conversations.unshift(payload)
     },
     SET_MESSAGES(state, payload) {
         state.messages = payload.sort((a, b) => a.id - b.id);
