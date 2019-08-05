@@ -34,7 +34,11 @@
           <div class="font-bold text-sm sm:text-md">Duration</div>
           <div class="text-xs sm:text-sm">From {{job.date_start}}</div>
           <div class="text-xs sm:text-sm my-2">To {{job.date_end}}</div>
-          <div class="text-xs sm:text-sm mb-8">Shift {{job.shift.name}}</div>
+          <div class="text-xs sm:text-sm mb-4">Shift {{job.shift.name}}</div>
+          <div class="font-bold text-sm sm:text-md">Total Hours</div>
+          <div class="text-xs sm:text-sm mb-4"> {{job.total_hours}}</div>
+
+
           <div
             class="font-bold text-sm sm:text-md"
           >Auto-assigns this job to the first, matching Favourite applicant</div>
@@ -87,7 +91,7 @@
               :key="item.id"
             >{{item.name}}</div>
           </div>
-          <div class="font-bold text-sm sm:text-md">Mandatory training</div>
+          <div class="font-bold text-sm sm:text-md">Required Mandatory Trainings</div>
           <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
             <div class="mt-1" v-if="job.platform_job.mandatory_trainings.length === 0">(none)</div>
             <div
@@ -101,7 +105,7 @@
       </div>
       <div class="flex flex-col">
         <div class="font-bold text-xs sm:text-sm">Practice</div>
-        <div class="font-bold text-sm sm:text-md">{{job.platform_job.practice.surgery.name}}</div>
+        <div class="font-bold text-sm sm:text-md">{{job.platform_job ? job.platform_job.practice.surgery.name :null}}</div>
         <div
           class="text-sm sm:text-md"
         >{{job.platform_job.practice.surgery.address.line_1}} {{job.platform_job.practice.surgery.address.line_2}} {{job.platform_job.practice.surgery.address.line_3}} {{job.platform_job.practice.surgery.address.post_code}}</div>
@@ -124,6 +128,9 @@
 import { gmapApi } from 'vue2-google-maps'
 export default {
   props: ['job'],
+  created(){
+    console.log(this.job)
+  },
   computed: {
     google: gmapApi,
     latLang() {

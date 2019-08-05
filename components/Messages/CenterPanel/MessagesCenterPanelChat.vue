@@ -1,5 +1,9 @@
 <template>
-  <div class="panel-chat overflow-y-auto py-2 px-4 h-full border-t border-b" ref="messagesContainer" @scroll="scrollHandler">
+  <div
+    class="panel-chat overflow-y-auto py-2 px-4 h-full border-t border-b"
+    ref="messagesContainer"
+    @scroll="scrollHandler"
+  >
     <div class="flex flex-col h-full">
       <div v-if="messages.length > 0 && $route.params.slug !=='new'">
         <div v-for="(item, index) in messages" :key="item.id">
@@ -34,7 +38,7 @@
                 <div
                   class="text-xs font-bold text-grey-dark mx-1 cursor-pointer"
                   :class="isReceiver(item) ? 'hidden' : ''"
-                  @click="$emit('delete-confirmation', item.id)"
+                  @click="deleteMessage(item.id)"
                 >X</div>
               </div>
             </div>
@@ -44,20 +48,26 @@
       <div v-if="messages.length === 0 && $route.params.slug !=='new'">
         <div class="flex flex-col justify-center items-center py-4">
           <img src="https://image.flaticon.com/icons/svg/236/236832.svg" width="150" />
-          <MessagesCenterPanelTop  class="text-center"/>
+          <MessagesCenterPanelTop class="text-center" />
         </div>
       </div>
 
-     <!-- <div v-if="route === 'new'" class="flex flex-col h-full py-4"> -->
-        <!-- <span class="font-bold text-lg">Create Message</span> -->
-        <!-- <AppInput
+     <!-- <div v-if="route === 'new'" class="flex flex-col h-full px-20 pt-20">
+        <span class="font-bold text-lg">Create Message</span>
+        <AppInput
         v-model="search_text"
         :type="'search'"
         :name="'search_text'"
         :placeholder="'Search Messages'"
         @keydown.enter="search"
-        /> -->
-        <!-- <div v-if="showResult && messages.length > 0">
+        />
+        <AppAutoComplete
+          v-model="search_text"
+          :name="'search_text'"
+          :label="'Search Practice'"
+          :url="'/api/v1/search-practices'"
+        />
+        <div v-if="showResult && messages.length > 0">
             <div 
             class="flex flex-col md:flex-row items-center px-2 md:pl-4 py-4 cursor-pointer border-b"
             v-for="item in messages"
@@ -78,20 +88,19 @@
             </div>
           </div>
         </div>
-        <span v-if="messages.length === 0 && showResult === true" class="flex h-full items-center justify-center font-bold text-grey">Nothing to show</span> -->
-      <!-- </div> -->
+        <span v-if="messages.length === 0 && showResult === true" class="flex h-full items-center justify-center font-bold text-grey">Nothing to show</span>
+      </div> -->
       </div>
     </div>
 </template>
 <script>
-import AppInput from '~/components/Base/AppInput';
+import AppAutoComplete from '~/components/Base/AppAutoComplete';
 import MessagesCenterPanelTop from '@/components/Messages/CenterPanel/MessagesCenterPanelTop'
 export default {
   components: {
-    AppInput,
+    AppAutoComplete,
     MessagesCenterPanelTop
   },
-  props: ['messages'],
   data() {
     return {
       oldMessageCount: null,
@@ -100,7 +109,12 @@ export default {
       showResult: false,
     }
   },
-  created(){
+  computed: {
+    messages() {
+      return this.$store.getters['chat/getMessages']
+    }
+  },
+  created() {
     this.route = this.$router.app._route.params.slug
     // this.$axios.$get(`/api/v1/admin/`).then(res => {
     //   this.
@@ -121,21 +135,26 @@ export default {
       this.scrollToBottom()
       // console.log(document.getElementById(`message-${value.length - this.oldMessageCount}`))
     },
-    "search_text"(value){
-      if (!value){
+    "search_text"(value) {
+      if (!value) {
         this.showResult = false
         console.log('empty search')
-      }else{
+      } else {
         this.getResults(value)
       }
     }
   },
   methods: {
+    deleteMessage(id) {
+      if (confirm("Do you want to delete this message?")) {
+        this.$store.dispatch('chat/deleteMessage', id)
+      }
+    },
     scrollToBottom() {
       this.$nextTick(() => {
         this.$refs.messagesContainer.scrollTop = this.$refs.messagesContainer.scrollHeight;
         // console.log(this.$refs.messagesContainer.scrollTop, this.$refs.messagesContainer.scrollHeight)
-      // console.log(this.$auth.user)
+        // console.log(this.$auth.user)
 
       })
     },
@@ -166,17 +185,13 @@ export default {
         }
       }
     },
-    getResults(value){
+    getResults(value) {
       let search = this.search_text
       this.$axios.$get(`/api/v1/conversations/?search=${search}`).then(res => {
-          this.messages = res.data.conversations
-          this.showResult = true
+        this.messages = res.data.conversations
+        this.showResult = true
       })
     },
-    // goTo(id) {
-    //   // this.route = id
-    //   this.$router.push(`/messages/${id}`)
-    // },
   }
 }
 </script>
@@ -200,11 +215,11 @@ export default {
   width: 8px;
 }
 
-.panel-chat::-webkit-scrollbar-track{
+.panel-chat::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.panel-chat::-webkit-scrollbar-thumb{
+.panel-chat::-webkit-scrollbar-thumb {
   background: #ccc;
   border-radius: 50px;
 }

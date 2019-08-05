@@ -1,7 +1,6 @@
 import * as jobsApi from '@/api/jobs'
 export default {
     async initializeJobListener({ state, commit, dispatch }) {
-            if (this.$auth.$state.user.domain === "Locum") {
                 this.$socket.on('Locum Notification Job Matched', (job) => {
                     if (!state.locum_matched_jobs.find(matchedJobs => matchedJobs.id == job.id)) {
                         commit('ADD_LOCUM_MATCHED_JOB', job)
@@ -80,8 +79,6 @@ export default {
                         commit('ADD_LOCUM_COMPLETED_JOB', job)
                     }
                 })
-            }
-            if (this.$auth.$state.user.domain === "Practice") {
                 this.$socket.on('Practice Notification Job Available', (job) => {
                     if (!state.practice_available_jobs.find(availableJob => availableJob.id == job.id)) {
                         commit('ADD_PRACTICE_AVAILABLE_JOB', job)
@@ -165,17 +162,6 @@ export default {
                         commit('ADD_PRACTICE_COMPLETED_JOB', job)
                     }
                 })
-            }
-            this.$socket.on(`presence-in`, ({ user, online }) => {
-                console.log(user)
-                console.log('isOnline:', online)
-                // const username = user.username
-                // if (online) {
-                //   commit('addOnlineUsername', { username })
-                // } else {
-                //   commit('removeOnlineUsername', { username })
-                // }
-              })
     },
     async fetchLocumUnavailabilities({ commit }, payload) {
         commit('TOGGLE_LOADING', true)
@@ -184,7 +170,7 @@ export default {
         commit('SET_LOCUM_UNAVAILABILITIES', response.data.unavailabilities)
         commit('SET_LOCUM_UNAVAILABILITIES_COUNT', response.data.count)
     },
-    async fetchLocumJobs({ commit }, payload) {
+    async fetchLocumJobs({ commit }, payload) { // /hubzz-web/api folder -> actions -> mutations
         commit('TOGGLE_LOADING', true)
         const response = await jobsApi.fetchLocumJobs(this.$axios, payload)
         commit('TOGGLE_LOADING', false)

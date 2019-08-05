@@ -28,8 +28,11 @@ export default {
       if (!this.message) {
         console.log("nyongan")
       } else{
-        this.$emit('send-message', this.message)
-        this.message = ''
+        // this.$emit('send-message', this.message)
+        // this.message = ''
+
+        this.$store.dispatch('chat/sendMessage', this.message)
+      this.message = ''
       }
       
     }
@@ -38,13 +41,13 @@ export default {
 </script>
 
 <style>
-.message-box::-webkit-scrollbar{
+.message-box::-webkit-scrollbar {
   width: 8px;
 }
-.message-box::-webkit-scrollbar-thumb{
+.message-box::-webkit-scrollbar-thumb {
   background: #ccc;
 }
-.message-box::-webkit-scrollbar-track{
+.message-box::-webkit-scrollbar-track {
   background: #eee;
 }
 </style>

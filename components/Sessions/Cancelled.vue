@@ -30,7 +30,7 @@
                 <td>{{item.title}}</td>
                 <td>{{item.date_start}}</td>
                 <td>{{item.date_end}}</td>
-                <td>{{item.platform_job.cancelled_at | localDate}}</td>
+                <td>{{$moment(item.platform_job.cancelled_at).format('YYYY-MM-DD HH:mm:ss')}}</td>
               </tr>
               <tr :key="`${item.id}-${index}`">
                 <td></td>

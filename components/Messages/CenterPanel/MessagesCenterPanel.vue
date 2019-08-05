@@ -1,14 +1,9 @@
 <template>
-  <div class="messages-center-panel flex flex-col h-full w-full border-l">
-    <MessagesCenterPanelTop/>
+  <div class="messages-center-panel w-full flex flex-col border-l">
+    <MessagesCenterPanelTop />
     <div class="flex flex-col h-full justify-between">
-      <MessagesCenterPanelChat
-        :messages="messages"
-        @delete-confirmation="$emit('delete-confirmation', $event)"
-        @fetch-more-messages="$emit('fetch-more-messages')"
-      />
-      <MessagesCenterPanelForm 
-      @send-message="$emit('send-message', $event)" />
+      <MessagesCenterPanelChat @fetch-more-messages="$emit('fetch-more-messages')" />
+      <MessagesCenterPanelForm />
     </div>
   </div>
 </template>
@@ -22,7 +17,6 @@ export default {
     MessagesCenterPanelForm,
     MessagesCenterPanelTop
   },
-  props: ['messages']
 }
 </script>
 <style scoped>

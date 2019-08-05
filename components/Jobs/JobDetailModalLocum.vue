@@ -12,7 +12,7 @@
     </div>
     <div
       class="text-xs sm:text-sm"
-    >Posted {{$moment(job.platform_job.date_created).format('DD/MM/YYYY')}}</div>
+    >Posted {{$moment(job.date_created).format('DD/MM/YYYY')}}</div>
     <div class="flex flex-col mt-4"></div>
 
     <div class="flex flex-row flex-wrap justify-start mt-4">

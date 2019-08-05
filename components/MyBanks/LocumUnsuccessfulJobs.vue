@@ -11,12 +11,13 @@
            <table>
             <thead>
               <tr class="text-xs sm:text-sm text-left">
-                <th>Job number</th>
+                <th @click="getUnsuccessfulJobs('id:desc')">Job number</th>
                 <th>Practice / Surgery</th>
-                <th>Title</th>
-                <th>From</th>
-                <th>To</th>
-                <th>Created</th>
+                <th @click="getUnsuccessfulJobs('title:desc')">Title</th>
+                <th @click="getUnsuccessfulJobs('date_start:desc')">From</th>
+                <th @click="getUnsuccessfulJobs('date_end:desc')">To</th>
+                <th @click="getUnsuccessfulJobs('date_created:desc')">Created</th>
+                <th>Status</th>
               </tr>
             </thead>
             <tbody>
@@ -31,7 +32,7 @@
                   <td>{{item.title}}</td>
                   <td>{{item.date_start}}</td>
                   <td>{{item.date_end}}</td>
-                  <td>{{item.platform_job.date_created}}</td>
+                  <td>{{item.date_created}}</td>
                 </tr>
                 <tr :key="`${item.id}-${index}`">
                   <td></td>
@@ -65,6 +66,7 @@ export default {
         totalPages:0,
         currentPage:0,
         perPage:0,
+        ascendDescend:0
       }
     },
     beforeDestroy() {
@@ -75,7 +77,7 @@ export default {
     watch: {
       $route(to, from) {
         this.currentPage = parseInt(to.query.unsuccessful_job_page)
-        this.getUnsuccessfulJobs()
+        this.getUnsuccessfulJobs('date_created:desc')
       },
     },
     created(){
@@ -91,7 +93,7 @@ export default {
           this.totalPages = Math.ceil(this.total / this.perPage)
         })
       ]).then(() => {
-        this.getUnsuccessfulJobs(),
+        this.getUnsuccessfulJobs('date_created:desc'),
         console.log(this.unsuccessfulJobs)
       })
     },
@@ -103,12 +105,23 @@ export default {
       // }
     },
     methods:{
-      getUnsuccessfulJobs(){
+      getUnsuccessfulJobs(orderBy){
+        
         let offset = 0
+        if(this.ascendDescend == 0){
+          orderBy = orderBy.replace('desc','asc')
+          this.ascendDescend = 1
+          console.log('true',this.ascendDescend)
+        }else if(this.ascendDescend == 1){
+          orderBy = orderBy.replace('asc','desc')
+          this.ascendDescend = 0
+        }
+        
         offset = this.perPage * (parseInt(this.$route.query.unsuccessful_job_page) - 1)
-        this.$axios.$get(`/api/v1/practice/jobs?locum_detail_id=${this.user.locum_detail.id}&locum_status=Unsuccessful&limit=${this.perPage}&offset=${offset}`).then(res=>{
-          this.unsuccessfulJobs = res.data.jobs
-        })
+          this.$axios.$get(`/api/v1/practice/jobs?locum_detail_id=${this.user.locum_detail.id}&locum_status=Unsuccessful&order_by=${orderBy}&order_by=id%3Adesc&limit=${this.perPage}&offset=${offset}`).then(res=>{
+            this.unsuccessfulJobs = res.data.jobs
+          })
+       
       },
       show(id) {
           const query = {

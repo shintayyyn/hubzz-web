@@ -85,14 +85,14 @@
             v-model="form.is_another_doctor"
             :name="'is_another_doctor'"
             :label="'Is there another Dr on site?'"
-            :items="[ {value: true, label: 'YES'}, {value: false, label: 'NO'} ]"
+            :items="[ {value: 'true', label: 'YES'}, {value: 'false', label: 'NO'} ]"
             :error="this.formError.find(error => error.field === 'is_another_doctor')"
           />
           <AppSelect
             v-model="form.is_nurse_available"
             :name="'is_nurse_available'"
             :label="'Is nurse support available?'"
-            :items="[ {value: true, label: 'YES'}, {value: false, label: 'NO'} ]"
+            :items="[ {value: 'true', label: 'YES'}, {value: 'false', label: 'NO'} ]"
             :error="this.formError.find(error => error.field === 'is_nurse_available')"
           />
           <AppInput
@@ -238,7 +238,7 @@
             v-model="form.ir35"
             :name="'ir35'"
             :label="'IR35 - role inside or outside of scope'"
-            :items="[ {value: true, label: 'Inside of Scope'}, {value: false, label: 'Outside of Scope'} ]"
+            :items="[ {value: 'true', label: 'Inside of Scope'}, {value: 'false', label: 'Outside of Scope'} ]"
             :error="this.formError.find(error => error.field === 'ir35')"
           />
           <AppSelect
@@ -448,12 +448,12 @@ export default {
     this.getClinicalSystems()
     this.getSpokenLanguages()
     this.getMandatoryTrainings()
-    this.form.practice_id = this.job.platform_job.practice.id,
-      this.form.title = this.job.platform_job.title,
-      this.form.description = this.job.platform_job.description,
+      this.form.practice_id = this.job.platform_job.practice.id,
+      this.form.title = this.job.title,
+      this.form.description = this.job.description,
       this.form.report_to = this.job.platform_job.report_to,
       this.form.email = this.job.platform_job.email,
-      this.form.phone_number = this.job.platform_job.phone_number,
+      this.form.phone_number = this.job.platform_job.practice.phone_number,
       this.form.extra_information = this.job.platform_job.extra_information,
       this.form.is_another_doctor = this.job.platform_job.is_another_doctor,
       this.form.is_nurse_available = this.job.platform_job.is_nurse_available,
@@ -462,8 +462,8 @@ export default {
       this.form.opportunity_for_catch_up_slots = this.job.platform_job.opportunity_for_catch_up_slots,
       this.form.session_structure_information = this.job.platform_job.session_structure_information
       this.form.locum_detail_rate_type_id = this.job.locum_detail_rate_type.id,
-      this.form.rate = this.job.platform_job.rate,
-      this.form.total_hours = this.job.platform_job.total_hours,
+      this.form.rate = this.job.rate,
+      this.form.total_hours = this.job.total_hours,
       this.form.unpaid_breaks_in_minutes = this.job.platform_job.unpaid_breaks_in_minutes,
       this.form.ir35 = this.job.platform_job.ir35,
       this.form.mandatory_training_id = this.job.platform_job.mandatory_trainings.map(mandatoryTraining => mandatoryTraining.id),
@@ -599,11 +599,62 @@ export default {
     },
     save() {
       this.formError = []
-      this.Validate(this.form, ['spoken_language_id'])
+      this.Validate(
+      [this.form.practice_id,
+        this.form.title,
+        this.form.description,
+        this.form.report_to,
+        this.form.email,
+        this.form.phone_number,
+        this.form.extra_information,
+        this.form.number_of_patients,
+        this.form.duration_for_each_appointment,
+        this.form.session_structure_information,
+        this.form.locum_detail_rate_type_id,
+        this.form.rate,
+        this.form.total_hours,
+        this.form.mandatory_training_id,
+        this.form.compliance_document_id,
+        this.form.date_start,
+        this.form.date_end,
+        this.form.time_start,
+        this.form.time_end,
+        this.form.shift_id,
+        this.form.auto_assign_at,
+        this.form.selection_date,
+        this.form.favorite_only_until,
+        this.form.update_remarks],
+        ['practice_id',
+        'title',
+        'description',
+        'report_to',
+        'email',
+        'phone_number',
+        'extra_information',
+        'number_of_patients',
+        'duration_for_each_appointment',
+        'session_structure_information',
+        'locum_detail_rate_type_id',
+        'rate',
+        'total_hours',
+        'mandatory_training_id',
+        'compliance_document_id',
+        'date_start',
+        'date_end',
+        'time_start',
+        'time_end',
+        'shift_id',
+        'auto_assign_at',
+        'selection_date',
+        'favorite_only_until',
+        'update_remarks'
+        ])
       
       console.log("form",this.form)
-      console.log("error",this.formError)
-      if (!this.formError.length) {
+      console.log("error",this.formError.length)
+      console.log("errors",this.formError)
+
+      if (this.formError.length == 0) {
         this.form.clinical_system_id = this.form.clinical_system_id.map(
           item => item.value
         );
@@ -628,6 +679,9 @@ export default {
         this.form.auto_assign_at = this.$moment(this.form.auto_assign_at).format(
           "YYYY-MM-DD HH:mm:ss"
         );
+        this.form.favorite_only_until = this.$moment(this.form.favorite_only_until).format(
+          "YYYY-MM-DD HH:mm:ss"
+        );
         this.form.session_requirements.length > 0
           ? (this.form.session_requirements = this.form.session_requirements.join())
           : (this.form.session_requirements = "");
@@ -637,6 +691,7 @@ export default {
         this.$axios.$put(`/api/v1/practice/jobs/${this.job.id}`, this.form).then(res => {
           this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: [res.message] })
           this.close()
+          
         })
       }
     },

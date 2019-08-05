@@ -1,4 +1,5 @@
 export const state = () => ({
+  socket_id: '',
   notification: {
     enabled: false,
     status: '',
@@ -10,6 +11,9 @@ export const state = () => ({
 })
 
 export const mutations = {
+  SET_SOCKET(state, payload) {
+    state.socket_id = payload
+  },
   SET_NOTIFICATION(state, payload) {
     state.notification.enabled = payload.enabled
     state.notification.status = payload.status
@@ -28,7 +32,18 @@ export const mutations = {
 }
 
 export const actions = {
-
+  async joinRoom({ dispatch }, payload) {
+    try {
+      await this.$axios.$post('api/v1/socket/join-room', { socket_id: payload.socket_id, room_name: payload.room_name })
+    } catch (err) {
+      if (err.response.status === 400 && err.response.data.message === 'Invalid Socket Id') {
+        dispatch('joinRoom', payload)
+      }
+    }
+  },
+  async leaveRoom({}, payload) {
+      await this.$axios.$post('api/v1/socket/leave-room', { socket_id: payload.socket_id, room_name: payload.room_name })
+  },
 }
 
 export const getters = {

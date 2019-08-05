@@ -95,6 +95,7 @@
         />
       </div>
     </div>
+    <!-- search -->
     <div v-if="type === 'search'" class="flex flex-col">
       <div class="relative flex flex-row flex-nowrap justify-between">
         <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
@@ -106,7 +107,9 @@
           >{{error.message}}</div>
         </div>
       </div>
-      <div class="relative flex flex-row justify-start items-center border-2 focus:border-yellow rounded-lg mb-2">
+      <div
+        class="relative flex flex-row justify-start items-center border-2 mb-2 focus:border-yellow rounded-lg"
+      >
         <input
           :value="value"
           :type="type"
@@ -120,7 +123,7 @@
           :checked="value"
         />
         <span class="absolute pin-r px-1 py-2 bg-white">
-					<svgicon name="search" height="21" width="21" class="text-grey fill-current"/>
+          <svgicon name="search" height="21" width="21" class="text-grey fill-current" />
         </span>
       </div>
     </div>

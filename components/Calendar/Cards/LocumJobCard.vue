@@ -7,14 +7,14 @@
       <div class="absolute pin-l pin-t rounded-l-lg p-2 h-full" :class="bgStatus(job.locum_status)"></div>
       <div class="ml-2">
         <div class="text-grey-dark text-xs xl:text-sm">Job Number: {{job.job_number}}</div>
-        <div class="my-3 font-bold text-sm sm:text-md">{{title(job.status)}}</div>
-        <div class="my-3 text-sm sm:text-md">{{surgeryName(job.status)}}</div>
-        <div class="my-3 text-sm sm:text-md">{{surgeryCode(job.status)}}</div>
+        <div class="my-3 font-bold text-sm sm:text-md">{{title(job.type)}}</div>
+        <div class="my-3 text-sm sm:text-md">{{surgeryName(job.type)}}</div>
+        <div class="my-3 text-sm sm:text-md">{{surgeryCode(job.type)}}</div>
         <div
           class="text-grey-dark my-3 text-xs xl:text-sm"
-        >From {{dateStart(job.status)}} to {{dateEnd(job.status)}}</div>
-        <div class="text-grey-dark my-3 text-xs xl:text-sm">Shift {{shift(job.status)}}</div>
-        <div class="my-3 text-xs xl:text-sm">{{description(job.status)}}</div>
+        >From {{dateStart(job.type)}} to {{dateEnd(job.type)}}</div>
+        <div class="text-grey-dark my-3 text-xs xl:text-sm">Shift {{shift(job.type)}}</div>
+        <div class="my-3 text-xs xl:text-sm">{{description(job.type)}}</div>
       </div>
     </template>
     <template v-else>
@@ -42,30 +42,32 @@ export default {
         this.$axios.$get(`/api/v1/locum/jobs/${this.job.id}`).then(res => {
           this.$emit('viewLocumJob', res.data.job)
         })
+        console.log(this.job)
       } else {
         this.$router.push('/availability')
       }
     },
-    title(status) {
-      return status === 'Private' ? 'Private appointment' : this.job.title
+    title(type) {
+      return type === 'Private' ? 'Private appointment' : this.job.title
     },
-    surgeryName(status) {
-      return status === 'Private' ? this.job.private_job.private_practice.surgery.name : this.job.platform_job.practice.surgery.name
+    surgeryName(type) {
+      console.log(this.job)
+      return type === 'Private' ? this.job.private_job.private_practice.surgery.name : this.job.platform_job.practice.surgery.name
     },
-    surgeryCode(status) {
-      return status === 'Private' ? this.job.private_job.private_practice.surgery.code : this.job.platform_job.practice.surgery.code
+    surgeryCode(type) {
+      return type === 'Private' ? this.job.private_job.private_practice.surgery.code : this.job.platform_job.practice.surgery.code
     },
-    dateStart(status) {
-      return status === 'Private' ? this.job.date_start : this.job.date_start
+    dateStart(type) {
+      return type === 'Private' ? this.job.date_start : this.job.date_start
     },
-    dateEnd(status) {
-      return status === 'Private' ? this.job.date_end : this.job.date_end
+    dateEnd(type) {
+      return type === 'Private' ? this.job.date_end : this.job.date_end
     },
-    shift(status) {
-      return status === 'Private' ? this.job.shift.name : this.job.shift.name
+    shift(type) {
+      return type === 'Private' ? this.job.shift.name : this.job.shift.name
     },
-    description(status) {
-      return status === 'Private' ? this.job.description : this.job.description
+    description(type) {
+      return type === 'Private' ? this.job.description : this.job.description
     },
     unavailableShift(shifts) {
       console.log(this.job)
@@ -74,8 +76,8 @@ export default {
       }
       return shifts.filter(job => job.name === this.$store.state.calendar.selected_date_shift.shift)[0].name
     },
-    bgStatus(status, reminder) {
-      switch (status) {
+    bgStatus(type, reminder) {
+      switch (type) {
         case 'Applied':
           return 'bg-orange-dark';
           break;
