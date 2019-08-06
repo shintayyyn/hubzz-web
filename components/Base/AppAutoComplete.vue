@@ -29,13 +29,25 @@
             @mouseover="activeIndex = index"
             @click="add()"
           >
-            <div class="leading-normal mx-2">
+          <template v-if="keyword === 'practices'">
+            <span class="w-1/6 flex justify-center">
+              <img class="w-10 h-10 rounded-full" src="https://www.svgrepo.com/show/106812/doctor.svg" width="25" alt="avatar">
+            </span>
+            <div class="w-full flex flex-col justify-center mx-2">
+              <span class="font-bold text-base"> {{ item.first_name }} {{ item.last_name }}</span>
+              <span> {{ item.name }}</span>
+            </div>
+          </template>
+          <template v-else>
+              <div class="leading-normal mx-2">
               <span v-text="item.name"></span>
               <span
                 class="text-grey-dark"
                 v-text="`${item.clinical_commissioning_group.name} ${item.code}`"
               ></span>
             </div>
+          </template>
+            
           </div>
         </div>
       </div>
@@ -52,6 +64,7 @@ export default {
     name: String,
     label: String,
     url: String,
+    keyword: String,
     error: Object,
     inStyle: String
   },
@@ -80,15 +93,36 @@ export default {
       let selectedSurgery = this.results[this.activeIndex];
       this.results = [];
       this.showResults = false;
-      this.$emit("input", selectedSurgery.name);
+      if(this.keyword === 'practices'){
+        let fullName = selectedSurgery.first_name + " " + selectedSurgery.last_name
+        this.$emit("input", fullName);
+      }else{
+        this.$emit("input", selectedSurgery.name);
+      }
     },
+    // getSurgeries: debounce(function (input) {
+    //   const params = {
+    //     search: input,
+    //     limit: 5
+    //   };
+    //   this.$axios.$get(this.url, { params }).then(res => {
+    //     console.log(res)
+    //     this.results = res.data.practices
+    //     this.showResults = true
+    //   });
+    // }, 250),
     getSurgeries: debounce(function (input) {
       const params = {
         search: input,
         limit: 5
       };
       this.$axios.$get(this.url, { params }).then(res => {
-        this.results = res.data.surgeries
+        console.log(res)
+        if (this.keyword && this.keyword === 'practices'){
+          this.results = res.data.practices
+        } else{
+          this.results = res.data.surgeries
+        }
         this.showResults = true
       });
     }, 250),

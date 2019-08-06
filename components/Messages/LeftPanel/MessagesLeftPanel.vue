@@ -11,7 +11,6 @@
         @keydown.enter="search"
       />
       <div class="flex flex-col justify-between h-full border-t">
-      <!-- <nuxt-child v-if="this.$router !== `/messages/`" class="sm:hidden"/> -->
         <div class="chat-list h-full overflow-y-auto overflow-x-hidden">
           <!-- default -->
           <div v-if="showResult === false">
@@ -100,10 +99,6 @@ export default {
     },
   },
   watch: {
-    $route(to, from) {
-      //  what happen
-      // shit happen
-    },
     "search_text"(value) {
       if (!value) {
         this.showResult = false
@@ -131,7 +126,7 @@ export default {
       return item.receiver_id === this.$auth.user.id ? `${item.sender_first_name} ${item.sender_last_name}` : `${item.receiver_first_name} ${item.receiver_last_name}`
     },
     createMessage() {
-      // this.$router.push(`/messages/new`)
+      this.$router.push(`/messages/new`)
     }
 
   }

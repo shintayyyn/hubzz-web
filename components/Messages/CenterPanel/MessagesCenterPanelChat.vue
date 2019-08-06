@@ -5,7 +5,7 @@
     @scroll="scrollHandler"
   >
     <div class="flex flex-col h-full">
-      <div v-if="messages.length > 0 && $route.params.slug !=='new'">
+      <div v-if="messages.length > 0 && route !=='new'">
         <div v-for="(item, index) in messages" :key="item.id">
           <div class="flex flex-col" :id="`message-${index}`">
             <div
@@ -45,67 +45,49 @@
           </div>
         </div>
       </div>
-      <div v-if="messages.length === 0 && $route.params.slug !=='new'">
+      <!-- <div v-if="messages.length === 0 && route ==='new'">
         <div class="flex flex-col justify-center items-center py-4">
           <img src="https://image.flaticon.com/icons/svg/236/236832.svg" width="150" />
           <MessagesCenterPanelTop class="text-center" />
         </div>
-      </div>
+      </div> -->
 
-     <!-- <div v-if="route === 'new'" class="flex flex-col h-full px-20 pt-20">
+     <div v-if="route === 'new'" class="flex flex-col h-full px-20 pt-20">
         <span class="font-bold text-lg">Create Message</span>
-        <AppInput
-        v-model="search_text"
-        :type="'search'"
-        :name="'search_text'"
-        :placeholder="'Search Messages'"
-        @keydown.enter="search"
-        />
-        <AppAutoComplete
+        <!-- <AppInput
           v-model="search_text"
+          :type="'search'"
           :name="'search_text'"
+          :placeholder="'Search Messages'"
+          @keydown.enter="search"
+        /> -->
+        <AppAutoComplete
+          v-model="search_practice"
+          :name="'search_practice'"
           :label="'Search Practice'"
+          :keyword="'practices'"
           :url="'/api/v1/search-practices'"
         />
-        <div v-if="showResult && messages.length > 0">
-            <div 
-            class="flex flex-col md:flex-row items-center px-2 md:pl-4 py-4 cursor-pointer border-b"
-            v-for="item in messages"
-            :key="item.id"
-            @click="goTo(item.id)">
-            <div class="">
-              <img src="https://image.flaticon.com/icons/svg/236/236832.svg" width="50" />
-            </div>
-            <div class="hidden md:block w-5/6 px-2">
-              <div class="flex justify-between items-center">
-                <span :class="parseInt($route.params.slug) === item.id ? 'font-bold' : ''">{{ item.receiver_first_name }} {{ item.receiver_last_name }}</span>
-                <span class="h-2 w-2 py-1 px-1 bg-green-light rounded-full"></span>
-              </div>
-              <div class="flex">
-                <p class="text-sm truncate w-full">{{ item.message }}</p>
-                <span class="text-sm text-grey-darker">2hrs</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <span v-if="messages.length === 0 && showResult === true" class="flex h-full items-center justify-center font-bold text-grey">Nothing to show</span>
-      </div> -->
+        <AppButton :label="'Create'" @click="createMessage"/>
+      </div>
       </div>
     </div>
 </template>
 <script>
 import AppAutoComplete from '~/components/Base/AppAutoComplete';
+import AppButton from '~/components/Base/AppButton';
 import MessagesCenterPanelTop from '@/components/Messages/CenterPanel/MessagesCenterPanelTop'
 export default {
   components: {
     AppAutoComplete,
+    AppButton,
     MessagesCenterPanelTop
   },
   data() {
     return {
       oldMessageCount: null,
       route: '',
-      search_text: "",
+      search_practice: '',
       showResult: false,
     }
   },
@@ -116,10 +98,7 @@ export default {
   },
   created() {
     this.route = this.$router.app._route.params.slug
-    // this.$axios.$get(`/api/v1/admin/`).then(res => {
-    //   this.
-    // })
-},
+  },
   mounted() {
     this.scrollToBottom()
   },
@@ -135,14 +114,6 @@ export default {
       this.scrollToBottom()
       // console.log(document.getElementById(`message-${value.length - this.oldMessageCount}`))
     },
-    "search_text"(value) {
-      if (!value) {
-        this.showResult = false
-        console.log('empty search')
-      } else {
-        this.getResults(value)
-      }
-    }
   },
   methods: {
     deleteMessage(id) {
@@ -162,12 +133,12 @@ export default {
       if (e.target.scrollTop === 0) {
         this.oldMessageCount = this.messages.length
         // console.log(this.oldMessageCount)
-        // const firstMessageElementBeforeLoadMore = 
-        // document.getElementById(
-        //   `message-${this.messages.length}`
-        // );
-        // console.log(firstMessageElementBeforeLoadMore)
-        // this.$emit('fetch-more-messages')
+          // const firstMessageElementBeforeLoadMore = 
+          // document.getElementById(
+          //   `message-${this.messages.length}`
+          // );
+          // console.log(firstMessageElementBeforeLoadMore)
+          // this.$emit('fetch-more-messages')
       }
     },
     isReceiver(item) {
@@ -185,13 +156,9 @@ export default {
         }
       }
     },
-    getResults(value) {
-      let search = this.search_text
-      this.$axios.$get(`/api/v1/conversations/?search=${search}`).then(res => {
-        this.messages = res.data.conversations
-        this.showResult = true
-      })
-    },
+    createMessage(){
+      
+    }
   }
 }
 </script>
