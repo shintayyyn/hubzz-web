@@ -11,13 +11,27 @@
            <table>
             <thead>
               <tr class="text-xs sm:text-sm text-left">
-                <th @click="getAvailableJobs('id:desc')">Job number</th>
+                <th @click="getAvailableJobs('id:desc')">
+                  Job number
+                  <svgicon name="sort" height="12" width="12"/>
+                </th>
                 <th>Practice / Surgery</th>
-                <th @click="getAvailableJobs('title:desc')">Title</th>
-                <th @click="getAvailableJobs('date_start:desc')">From</th>
-                <th @click="getAvailableJobs('date_end:desc')">To</th>
-                <th @click="getAvailableJobs('date_created:desc')">Created</th>
-                <th>Status</th>
+                <th @click="getAvailableJobs('title:desc')">
+                  Title
+                  <svgicon name="sort" height="12" width="12"/>
+                </th>
+                <th @click="getAvailableJobs('date_start:desc')">
+                  From
+                  <svgicon name="sort" height="12" width="12"/>
+                </th>
+                <th @click="getAvailableJobs('date_end:desc')">
+                  To
+                  <svgicon name="sort" height="12" width="12"/>
+                </th>
+                <th @click="getAvailableJobs('date_created:desc')">
+                  Created
+                  <svgicon name="sort" height="12" width="12"/>
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -33,7 +47,6 @@
                   <td>{{item.date_start}}</td>
                   <td>{{item.date_end}}</td>
                   <td>{{item.date_created}}</td>
-                  <td>{{item.locum_status}}</td>
                 </tr>
                 <tr :key="`${item.id}-${index}`">
                   <td></td>
@@ -118,7 +131,7 @@ export default {
           this.ascendDescend = 0
         }
 
-        offset = this.perPage * (parseInt(this.$route.query.available_job_page) - 1)
+        offset = parseInt(this.perPage) * (parseInt(this.$route.query.available_job_page) - 1)
           this.$axios.$get(`/api/v1/practice/jobs?locum_detail_id=${this.user.locum_detail.id}&locum_status=Available&order_by=${orderBy}&order_by=id%3Adesc&limit=${this.perPage}&offset=${offset}`).then(res=>{
             this.availableJobs = res.data.jobs
           })
