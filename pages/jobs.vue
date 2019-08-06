@@ -73,7 +73,6 @@ export default {
       this.$socket.on('connect', () => {
         this.$store.dispatch('joinRoom', { socket_id: this.$socket.id, room_name: 'jobroom' })
       })
-
     }
   }
 }

@@ -4,11 +4,13 @@ export default {
                 this.$socket.on('Locum Notification Job Matched', (job) => {
                     if (!state.locum_matched_jobs.find(matchedJobs => matchedJobs.id == job.id)) {
                         commit('ADD_LOCUM_MATCHED_JOB', job)
+                        commit('ADD_LOCUM_ALLOCATED_BADGE')
                     }
                 })
                 this.$socket.on('Locum Notification Job Available', (job) => {
                     if (!state.locum_available_jobs.find(availableJobs => availableJobs.id == job.id)) {
                         commit('ADD_LOCUM_AVAILABLE_JOB', job)
+                        commit('ADD_LOCUM_AVAILABLE_BADGE')
                     }
                 })
                 this.$socket.on('Locum Notification Job Updated', (job) => {
@@ -65,6 +67,7 @@ export default {
                         return commit('REMOVE_LOCUM_APPLIED_JOB', job.id)
                     }
                     if (!state.locum_cancelled_jobs.find(cancelledJob => cancelledJob.id === job.id)) {
+                        commit('ADD_LOCUM_CANCELLED_BADGE')
                         return commit('ADD_LOCUM_CANCELLED_JOB', job)
                     }
                 })
@@ -77,6 +80,7 @@ export default {
                     }
                     if (!state.locum_completed_jobs.find(completedJob => completedJob.id === job.id)) {
                         commit('ADD_LOCUM_COMPLETED_JOB', job)
+                        commit('ADD_LOCUM_COMPLETED_BADGE')
                     }
                 })
                 this.$socket.on('Practice Notification Job Available', (job) => {
@@ -228,9 +232,11 @@ export default {
         const response = await jobsApi.fetchLocumJob(this.$axios, payload)
         commit('TOGGLE_LOADING', false)
         if (response.data.job.status === 'Current' && !state.locum_allocated_jobs.find(allocatedJob => allocatedJob.id === payload)) {
+            commit('ADD_LOCUM_ALLOCATED_BADGE')
             return commit('ADD_LOCUM_ALLOCATED_JOB', response.data.job)
         }
         if (response.data.job.status === 'Current' && !state.locum_unsuccessful_jobs.find(unsuccessfulJob => unsuccessfulJob.id === payload)) {
+            commit('ADD_LOCUM_UNSUCCESSFUL_BADGE')
             return commit('ADD_LOCUM_UNSUCCESSFUL_JOB', response.data.job)
         }
     },
