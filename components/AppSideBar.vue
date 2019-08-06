@@ -96,6 +96,7 @@ export default {
           { name: "Availability", route: "/availability" },
           { name: "Jobs", route: "/jobs" },
           { name: "Billing", route: "/billing" },
+          { name: "Locum Billing", route: "/locum-billing" },
           { name: "Invite", route: "/invite" }
         ];
       }
