@@ -10,12 +10,12 @@
         <table>
           <thead>
             <tr class="text-xs sm:text-sm text-left">
-              <th @click="getJobs('job_number')">Job number</th>
+              <th @click="sortBy('job_number')">Job number</th>
               <th>Practice</th>
-              <th @click="getJobs('title')">Title</th>
-              <th @click="getJobs('date_start')">From</th>
-              <th @click="getJobs('date_end')">To</th>
-              <th @click="getJobs('date_created')">Created</th>
+              <th>Title</th>
+              <th @click="sortBy('date_start')">From</th>
+              <th @click="sortBy('date_end')">To</th>
+              <th @click="sortBy('date_created')">Created</th>
               <th>Assigned</th>
             </tr>
           </thead>
@@ -59,6 +59,16 @@ export default {
   components: {
     AppPagination
   },
+  data() {
+    return {
+      sortType: '',
+      job_number: true,
+      date_start: true,
+      date_end: true,
+      date_created: true,
+      orderBy: 'date_created:desc'
+    }
+  },
   computed: {
     getLocumAllocatedJobs() {
       return this.$store.getters["jobs/getLocumAllocatedJobs"];
@@ -82,7 +92,7 @@ export default {
   watch: {
     getLocumAllocatedJobs(newValue, oldValue) {
       if (newValue.length !== 0 && (oldValue.length > newValue.length)) {
-        this.getJobs()
+        this.getJobs(this.orderBy)
       }
       if (newValue.length === 0 && this.$route.query.current_page !== 1) {
         this.pagechanged(this.totalPages)
@@ -90,7 +100,7 @@ export default {
     },
     $route(to, from) {
       if (from.query.current_page !== to.query.current_page) {
-        this.getJobs()
+        this.getJobs(this.orderBy)
       }
     }
   },
@@ -101,7 +111,7 @@ export default {
     };
     this.$router.push({ query });
     this.getJobsCount();
-    this.getJobs();
+    this.getJobs(this.orderBy);
   },
   methods: {
     getJobsCount() {
@@ -110,19 +120,36 @@ export default {
         countOnly: true
       });
     },
-    getJobs(sortBy) {
-      let order_by = []
-      if (sortBy) {
-        order_by.push(`${sortBy}:desc`)
+    sortBy(sortedBy) {
+      switch (sortedBy) {
+        case 'job_number':
+          this.job_number = !this.job_number
+          this.sortType = this.job_number
+          break;
+        case 'date_start':
+          this.date_start = !this.date_start
+          this.sortType = this.date_start
+          break;
+        case 'date_end':
+          this.date_end = !this.date_end
+          this.sortType = this.date_end
+          break;
+        case 'date_created':
+          this.date_created = !this.date_created
+          this.sortType = this.date_created
+          break;
       }
-      order_by = [...order_by, 'date_created:desc', 'id:desc']
+      this.orderBy = `${sortedBy}:${this.sortType ? 'desc' : 'asc'}`
+      this.getJobs(this.orderBy)
+    },
+    getJobs(orderBy) {
       let offset = 0;
       offset = this.perPage * (parseInt(this.$route.query.current_page) - 1);
       this.$store.dispatch("jobs/fetchLocumJobs", {
         offset: offset,
         limit: this.perPage,
         status: "Current",
-        order_by: order_by
+        order_by: orderBy
       });
     },
     pagechanged(e) {

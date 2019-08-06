@@ -142,6 +142,9 @@ export default {
             state.locum_allocated_jobs_count = state.locum_allocated_jobs_count - 1
         }
     },
+    CLEAR_LOCUM_ALLOCATED_BADGE(state) {
+        state.locum_new_allocated_jobs_count = 0
+    },
     SET_LOCUM_AVAILABLE_JOBS(state, payload) {
         state.locum_available_jobs = payload
     },

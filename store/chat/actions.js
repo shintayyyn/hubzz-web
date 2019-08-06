@@ -6,6 +6,11 @@ export default {
                 commit('ADD_CONVERSATION', conversation)
             }
         })
+        this.$socket.on('deleteConversation', (conversation) => {
+            if (state.conversations.find(item => item.id == conversation.id)) {
+                commit('DELETE_CONVERSATION', conversation.id)
+            }
+        })
         this.$socket.on('newMessage', (message) => {
             if (!state.messages.find(data => data.id == message.id)) {
                 commit('ADD_MESSAGE', message)
