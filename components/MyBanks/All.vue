@@ -146,7 +146,7 @@ export default {
       let offset = 0
       offset = this.perPage * (parseInt(this.$route.query.current_page) - 1)
       if(!this.profession_id){
-        this.$axios.$get(`/api/v1/practice/locums?&limit=${this.perPage}&offset=${offset}`).then(res => {
+        this.$axios.$get(`/api/v1/practice/locums?limit=${this.perPage}&offset=${offset}`).then(res => {
           this.locums = res.data.users
         })
       }else{
