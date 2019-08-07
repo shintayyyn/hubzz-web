@@ -1,69 +1,6 @@
 <template>
   <section class="__jobs-section">
-    <div class="flex flex-row flex-wrap">
-      <div class="w-full sm:w-1/3 p-1">
-        <AppSelect
-          v-model="params.shift_id"
-          :name="'shift'"
-          :label="'Shift'"
-          :placeholder="'Select...'"
-          :error="formError.find(item => item.field === 'shift')"
-          :items="shifts"
-        />
-      </div>
-      <div class="w-full sm:w-1/3 p-1">
-        <AppInput
-          v-model="params.rate"
-          :type="'text'"
-          :name="'rate'"
-          :label="'Rate'"
-          :placeholder="''"
-          :error="formError.find(item => item.field === 'rate')"
-        />
-      </div>
-      <div class="w-full sm:w-1/3 p-1">
-        <AppSelect
-          v-model="params.locum_detail_rate_type_id"
-          :name="'locum_detail_rate_type_id'"
-          :label="'per'"
-          :placeholder="'Select...'"
-          :error="formError.find(item => item.field === 'locum_detail_rate_type_id')"
-          :items="rate_types"
-        />
-      </div>
-      <div class="w-full sm:w-1/4 p-1">
-        <AppPostCode
-          v-model="params.near_post_code"
-          :name="'near_post_code'"
-          :label="'Post code'"
-          @onSelect="onSelect"
-          :inStyle="'background-color:#dae1e7;border-color:white'"
-        />
-      </div>
-      <div class="w-full sm:w-1/4 p-1">
-        <AppInput
-          v-model="params.miles"
-          :type="'text'"
-          :name="'miles'"
-          :label="'Miles'"
-          :placeholder="''"
-          :error="formError.find(item => item.field === 'miles')"
-          :inStyle="'text-align:right'"
-        />
-      </div>
-      <div class="w-full sm:w-1/4 p-1">
-        <AppAutoComplete
-          v-model="params.surgery_name"
-          :name="'surgery_name'"
-          :label="'Surgery'"
-          :url="'/api/v1/locum/surgeries'"
-          :error="formError.find(item => item.field === 'surgery_name')"
-        />
-      </div>
-      <div class="w-full sm:w-1/4">
-        <AppButton :label="'Search'" @click="getJobs" :inStyle="'padding:5px'" />
-      </div>
-    </div>
+    <AppJobFilter @getJobs="getJobs(1, params)" :params="params" />
     <div class="overflow-x-auto">
       <div
         class="mt-10 w-full text-center"
@@ -74,12 +11,12 @@
         <table>
           <thead>
             <tr class="text-xs text-left">
-              <th>Job number</th>
+              <th @click="sortBy('job_number')">Job number</th>
               <th>Practice</th>
               <th>Title</th>
-              <th>From</th>
-              <th>To</th>
-              <th>Created</th>
+              <th @click="sortBy('date_start')">From</th>
+              <th @click="sortBy('date_end')">To</th>
+              <th @click="sortBy('date_created')">Created</th>
             </tr>
           </thead>
           <tbody>
@@ -109,7 +46,7 @@
       <AppPagination
         :total="total"
         :totalPages="totalPages"
-        :currentPage="currentPage"
+        :currentPage="current_page"
         @pagechanged="pagechanged"
       />
     </div>
@@ -117,38 +54,38 @@
 </template>
 <script>
 import AppPagination from '@/components/Base/AppPagination'
-import AppInput from '@/components/Base/AppInput'
-import AppSelect from '@/components/Base/AppSelect'
-import AppPostCode from '@/components/Base/AppPostCode'
-import AppButton from '@/components/Base/AppButton'
-import AppAutoComplete from '@/components/Base/AppAutoComplete'
+import AppJobFilter from '@/components/Base/AppJobFilter'
 export default {
   components: {
     AppPagination,
-    AppInput,
-    AppSelect,
-    AppPostCode,
-    AppButton,
-    AppAutoComplete,
+    AppJobFilter,
   },
   data() {
     return {
-      shifts: [],
-      rate_types: [],
+      current_page: 1,
       params: {
         shift_id: '',
         rate: '',
         locum_detail_rate_type_id: '',
         near_post_code: '',
         miles: '',
-        surgery_name: ''
+        surgery_name: '',
+        order_by: '',
       },
-      formError: []
+      // sort
+      sortType: '',
+      job_number: true,
+      date_start: true,
+      date_end: true,
+      date_created: true,
     }
   },
   computed: {
     getLocumAvailableJobs() {
       return this.$store.getters["jobs/getLocumAvailableJobs"];
+    },
+    offset() {
+      return this.perPage * (this.current_page - 1);
     },
     perPage() {
       return 5;
@@ -159,96 +96,59 @@ export default {
     totalPages() {
       return Math.ceil(this.total / this.perPage);
     },
-    currentPage() {
-      return parseInt(this.$route.query.current_page);
-    },
     loadingJobs() {
       return this.$store.state.jobs.loading_jobs;
     },
   },
   watch: {
     getLocumAvailableJobs(newValue, oldValue) {
-      if (newValue.length !== 0 && (oldValue.length > newValue.length)) {
-        this.getJobs()
-      }
-      if (newValue.length === 0 && this.$route.query.current_page !== 1) {
-        this.pagechanged(this.totalPages)
+      if (newValue.length === 0 && this.current_page !== 1) {
+        this.pagechanged(this.totalPages, this.params)
       }
     },
-    $route(to, from) {
-      if (from.query.current_page !== to.query.current_page) {
-        this.getJobs()
-      }
-    }
   },
   created() {
-    const query = {
-      ...this.$route.query,
-      current_page: this.$route.query.current_page || 1
-    };
-    this.$router.push({ query });
     this.getJobsCount();
-    this.getJobs();
-    this.getShifts()
-    this.getRateType()
+    this.getJobs(this.current_page, this.params);
   },
   methods: {
-    onSelect(value) {
-      let address_components = value.details.result.address_components;
-      let postal_code = address_components.find(component =>
-        component.types.includes("postal_code")
-      );
-      if (!postal_code) {
-        this.params.near_post_code = ''
-
-        return
-      }
-      this.params.near_post_code = postal_code.long_name
-
-    },
-    getShifts() {
-      this.$axios.$get(`/api/v1/shifts`).then(res => {
-        this.shifts = []
-        res.data.shifts.forEach(item => {
-          this.shifts.push({ label: item.name, value: item.id })
-        })
-      })
-    },
-    getRateType() {
-      this.$axios.$get(`/api/v1/locum-detail-rate-types`).then(res => {
-        this.rate_types = []
-        res.data.locum_detail_rate_types.forEach(item => {
-          this.rate_types.push({ label: item.name, value: item.id })
-        })
-      })
-    },
     getJobsCount() {
       this.$store.dispatch("jobs/fetchLocumJobs", {
         status: "Available",
         countOnly: true
       });
     },
-    getJobs() {
-      let offset = 0;
-      offset = this.perPage * (parseInt(this.$route.query.current_page) - 1);
-      this.$store.dispatch("jobs/fetchLocumJobs", {
-        offset: offset,
-        limit: this.perPage,
-        status: "Available",
-        shift_id: this.params.shift_id,
-        rate: this.params.rate,
-        locum_detail_rate_type_id: this.params.locum_detail_rate_type_id,
-        near_post_code: this.params.near_post_code,
-        miles: this.params.miles,
-        surgery_name: this.params.surgery_name
-      });
+    sortBy(sortedBy) {
+      switch (sortedBy) {
+        case 'job_number':
+          this.job_number = !this.job_number
+          this.sortType = this.job_number
+          break;
+        case 'date_start':
+          this.date_start = !this.date_start
+          this.sortType = this.date_start
+          break;
+        case 'date_end':
+          this.date_end = !this.date_end
+          this.sortType = this.date_end
+          break;
+        case 'date_created':
+          this.date_created = !this.date_created
+          this.sortType = this.date_created
+          break;
+      }
+      this.params.order_by = `${sortedBy}:${this.sortType ? 'desc' : 'asc'}`
+      this.current_page = 1
+      this.getJobs(this.current_page, this.params)
+    },
+    getJobs(page, params) {
+      let defaultParams = { offset: this.offset, limit: this.perPage, status: "Available" }
+      let jobParams = { ...params, ...defaultParams }
+      this.$store.dispatch("jobs/fetchLocumJobs", jobParams);
     },
     pagechanged(e) {
-      const query = {
-        ...this.$route.query,
-        current_page: e || 1
-      }
-      this.$router.push({ query })
+      this.current_page = e
+      this.getJobs(this.current_page, this.params)
     },
     show(id) {
       const query = {

@@ -142,6 +142,12 @@ export default {
             state.locum_allocated_jobs_count = state.locum_allocated_jobs_count - 1
         }
     },
+    ADD_LOCUM_ALLOCATED_BADGE(state) {
+        state.locum_new_allocated_jobs_count = state.locum_new_allocated_jobs_count + 1 
+    },
+    CLEAR_LOCUM_ALLOCATED_BADGE(state) {
+        state.locum_new_allocated_jobs_count = 0
+    },
     SET_LOCUM_AVAILABLE_JOBS(state, payload) {
         state.locum_available_jobs = payload
     },
@@ -157,6 +163,12 @@ export default {
             state.locum_available_jobs = state.locum_available_jobs.filter(job => job.id !== payload)
             state.locum_available_jobs_count = state.locum_available_jobs_count - 1
         }
+    },
+    ADD_LOCUM_AVAILABLE_BADGE(state) {
+        state.locum_new_available_jobs_count = state.locum_new_available_jobs_count + 1 
+    },
+    CLEAR_LOCUM_AVAILABLE_BADGE(state) {
+        state.locum_new_available_jobs_count = 0
     },
     SET_LOCUM_MATCHED_JOBS(state, payload) {
         state.locum_matched_jobs = payload
@@ -174,6 +186,12 @@ export default {
             state.locum_matched_jobs_count = state.locum_matched_jobs_count - 1
         }
     },
+    ADD_LOCUM_MATCHED_BADGE(state) {
+        state.locum_new_matched_jobs_count = state.locum_new_matched_jobs_count + 1 
+    },
+    CLEAR_LOCUM_MATCHED_BADGE(state) {
+        state.locum_new_matched_jobs_count = 0
+    },
     SET_LOCUM_APPLIED_JOBS(state, payload) {
         state.locum_applied_jobs = payload
     },
@@ -190,6 +208,12 @@ export default {
             state.locum_applied_jobs_count = state.locum_applied_jobs_count - 1
         }
     },
+    ADD_LOCUM_APPLIED_BADGE(state) {
+        state.locum_new_applied_jobs_count = state.locum_new_applied_jobs_count + 1 
+    },
+    CLEAR_LOCUM_APPLIED_BADGE(state) {
+        state.locum_new_applied_jobs_count = 0
+    },
     SET_LOCUM_UNSUCCESSFUL_JOBS(state, payload) {
         state.locum_unsuccessful_jobs = payload
     },
@@ -205,6 +229,12 @@ export default {
             state.locum_unsuccessful_jobs = state.locum_unsuccessful_jobs.filter(job => job.id !== payload)
             state.locum_unsuccessful_jobs_count = state.locum_unsuccessful_jobs_count - 1
         }
+    },
+    ADD_LOCUM_UNSUCCESSFUL_BADGE(state) {
+        state.locum_new_unsuccessful_jobs_count = state.locum_new_unsuccessful_jobs_count + 1 
+    },
+    CLEAR_LOCUM_UNSUCCESSFUL_BADGE(state) {
+        state.locum_new_unsuccessful_jobs_count = 0
     },
     SET_LOCUM_DECLINED_JOBS(state, payload) {
         state.locum_declined_jobs = payload
@@ -224,6 +254,12 @@ export default {
             state.locum_declined_jobs_count = state.locum_declined_jobs_count - 1
         }
     },
+    ADD_LOCUM_DECLINED_BADGE(state) {
+        state.locum_new_declined_jobs_count = state.locum_new_declined_jobs_count + 1 
+    },
+    CLEAR_LOCUM_DECLINED_BADGE(state) {
+        state.locum_new_declined_jobs_count = 0
+    },
     SET_LOCUM_CANCELLED_JOBS(state, payload) {
         state.locum_cancelled_jobs = payload
     },
@@ -240,6 +276,12 @@ export default {
             state.locum_cancelled_jobs_count = state.locum_cancelled_jobs_count - 1
         }
     },
+    ADD_LOCUM_CANCELLED_BADGE(state) {
+        state.locum_new_cancelled_jobs_count = state.locum_new_cancelled_jobs_count + 1 
+    },
+    CLEAR_LOCUM_CANCELLED_BADGE(state) {
+        state.locum_new_cancelled_jobs_count = 0
+    },
     SET_LOCUM_COMPLETED_JOBS(state, payload) {
         state.locum_completed_jobs = payload
     },
@@ -255,6 +297,12 @@ export default {
             state.locum_completed_jobs = state.locum_completed_jobs.filter(job => job.id !== payload)
             state.locum_completed_jobs_count = state.locum_completed_jobs_count - 1
         }
+    },
+    ADD_LOCUM_COMPLETED_BADGE(state) {
+        state.locum_new_completed_jobs_count = state.locum_new_completed_jobs_count + 1 
+    },
+    CLEAR_LOCUM_COMPLETED_BADGE(state) {
+        state.locum_new_completed_jobs_count = 0
     },
     SET_LOCUM_UNAVAILABILITIES(state, payload) {
         state.locum_unavailabilities = payload

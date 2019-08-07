@@ -11,6 +11,9 @@ export default {
     ADD_CONVERSATION(state, payload) {
         state.conversations.unshift(payload)
     },
+    DELETE_CONVERSATION(state, payload) {
+        state.conversations = state.conversations.filter(conversation => conversation.id !== payload)
+    },
     SET_MESSAGES(state, payload) {
         state.messages = payload.sort((a, b) => a.id - b.id);
     },
