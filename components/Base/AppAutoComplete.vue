@@ -11,6 +11,7 @@
         v-model="search"
         ref="search"
         type="text"
+        :placeholder="placeholder"
         class="border-b-2 focus:border-yellow focus:outline-none py-4 font-bold text-xs sm:text-sm w-full"
         :class="error? 'border-red':''"
         :style="inStyle"
@@ -29,25 +30,29 @@
             @mouseover="activeIndex = index"
             @click="add()"
           >
-          <template v-if="keyword === 'practices'">
-            <span class="w-1/6 flex justify-center">
-              <img class="w-10 h-10 rounded-full" src="https://www.svgrepo.com/show/106812/doctor.svg" width="25" alt="avatar">
-            </span>
-            <div class="w-full flex flex-col justify-center mx-2">
-              <span class="font-bold text-base"> {{ item.first_name }} {{ item.last_name }}</span>
-              <span> {{ item.name }}</span>
-            </div>
-          </template>
-          <template v-else>
+            <template v-if="keyword === 'practices'">
+              <span class="w-1/6 flex justify-center">
+                <img
+                  class="w-10 h-10 rounded-full"
+                  src="https://www.svgrepo.com/show/106812/doctor.svg"
+                  width="25"
+                  alt="avatar"
+                />
+              </span>
+              <div class="w-full flex flex-col justify-center mx-2">
+                <span class="font-bold text-base">{{ item.first_name }} {{ item.last_name }}</span>
+                <span>{{ item.surgery }}</span>
+              </div>
+            </template>
+            <template v-else>
               <div class="leading-normal mx-2">
-              <span v-text="item.name"></span>
-              <span
-                class="text-grey-dark"
-                v-text="`${item.clinical_commissioning_group.name} ${item.code}`"
-              ></span>
-            </div>
-          </template>
-            
+                <span v-text="item.name"></span>
+                <span
+                  class="text-grey-dark"
+                  v-text="`${item.clinical_commissioning_group.name} ${item.code}`"
+                ></span>
+              </div>
+            </template>
           </div>
         </div>
       </div>
@@ -63,6 +68,7 @@ export default {
     value: String,
     name: String,
     label: String,
+    placeholder: String,
     url: String,
     keyword: String,
     error: Object,
@@ -93,10 +99,21 @@ export default {
       let selectedSurgery = this.results[this.activeIndex];
       this.results = [];
       this.showResults = false;
-      if(this.keyword === 'practices'){
-        let fullName = selectedSurgery.first_name + " " + selectedSurgery.last_name
+      if (this.keyword === "practices") {
+        let fullName =
+          selectedSurgery.first_name + " " + selectedSurgery.last_name;
         this.$emit("input", fullName);
-      }else{
+        this.$emit("selectUserId", selectedSurgery.id);
+        this.$axios
+          .$get(`/api/v1/conversations?search=${fullName}`)
+          .then(res => {
+            if (res.data.conversations.length > 0) {
+              let id = res.data.conversations[0].id;
+              console.log(id);
+              this.$router.push(`/messages/${id}`);
+            }
+          });
+      } else {
         this.$emit("input", selectedSurgery.name);
       }
     },
@@ -111,19 +128,24 @@ export default {
     //     this.showResults = true
     //   });
     // }, 250),
-    getSurgeries: debounce(function (input) {
+    getSurgeries: debounce(function(input) {
       const params = {
         search: input,
         limit: 5
       };
       this.$axios.$get(this.url, { params }).then(res => {
-        console.log(res)
-        if (this.keyword && this.keyword === 'practices'){
-          this.results = res.data.practices
-        } else{
-          this.results = res.data.surgeries
+        if (this.keyword && this.keyword === "practices") {
+          // res.data.practices.forEach(data => {
+          //   this.results.push({
+          //     value: '',
+
+          //   })
+          // })
+          this.results = res.data.users;
+        } else {
+          this.results = res.data.surgeries;
         }
-        this.showResults = true
+        this.showResults = true;
       });
     }, 250),
     toggledOn() {
@@ -160,7 +182,7 @@ export default {
       }
     }
   }
-}
+};
 </script>
 <style scoped>
 .icon {

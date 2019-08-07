@@ -14,14 +14,14 @@
         <div class="chat-list h-full overflow-y-auto overflow-x-hidden">
           <!-- default -->
           <div v-if="showResult === false">
-            <div 
+            <div
               class="flex flex-row items-center px-2 md:pl-4 py-4 cursor-pointer border-b"
               :class="parseInt($route.params.slug) === item.id ? 'bg-grey-lighter' : 'hover:bg-grey-lightest'"
               v-for="item in conversations"
               :key="item.id"
               @click="goTo(item.conversation_id ? item.conversation_id : item.id)"
             >
-              <div class>
+              <div class="w-1/6">
                 <img src="https://image.flaticon.com/icons/svg/236/236832.svg" width="50" />
               </div>
               <div class="hidden md:block w-5/6 px-2">
@@ -65,23 +65,54 @@
             </div>
           </div>
           <!-- No results -->
-          <span v-if="messages.length === 0 && showResult === true" class="flex h-full items-center justify-center font-bold text-grey">Nothing to show</span>
-          </div>
-        </div> 
-        <button class="bg-yellow-dark border-yellow-dark text-sm md:mx-2 md:my-4 p-4 md:text-lg focus:outline-none" @click="createMessage">Create Message</button>
+          <span
+            v-if="messages.length === 0 && showResult === true"
+            class="flex h-full items-center justify-center font-bold text-grey"
+          >Nothing to show</span>
+        </div>
       </div>
       <button
         class="bg-yellow-dark border-yellow-dark text-sm md:mx-2 md:my-4 p-4 md:text-lg focus:outline-none"
-        @submit.prevent="createMessage">
-        <span class="hidden md:block">Create Message</span>
-        <span class="block md:hidden">
-          <svgicon name="write-message" class="w-8 h-8 fill-current" />
-        </span>
-      </button>
+        @click="createMessage"
+      >Create Message</button>
     </div>
+    <button
+      class="bg-yellow-dark border-yellow-dark text-sm md:mx-2 md:my-4 p-4 md:text-lg focus:outline-none"
+      @click="modal = true"
+    >
+      <span class="hidden md:block">Create Message</span>
+      <span class="block md:hidden">
+        <svgicon name="write-message" class="w-8 h-8 fill-current" />
+      </span>
+    </button>
+
+    <div v-if="modal" class="modal rounded-lg bg-white shadow-lg p-4 max-w-sm">
+      <div class="flex flex-col">
+        <label :for="value.min">Min</label>
+        <input
+          :value="value.min"
+          :name="value.min"
+          @input="$emit('input', { min: $event.target.value, max: value.max})"
+          type="text"
+          class="border-b-2 focus:border-yellow focus:outline-none py-2 font-bold text-xs sm:text-sm text-right mb-4"
+        />
+        <label :for="value.max">Max</label>
+        <input
+          :value="value.max"
+          :name="value.max"
+          @input="$emit('input', { min: value.min, max: $event.target.value})"
+          type="text"
+          class="border-b-2 focus:border-yellow focus:outline-none py-2 font-bold text-xs sm:text-sm text-right mb-4"
+        />
+        <!-- <button
+          class="rounded-lg bg-yellow-dark font-bold text-xs sm:text-sm px-2 py-1 focus:outline-none hover:text-white cursor-pointer"
+        @click.prevent="save">Save</button>-->
+      </div>
+    </div>
+  </div>
 </template>
 <script>
-import AppInput from '~/components/Base/AppInput';
+import AppInput from "~/components/Base/AppInput";
 export default {
   components: {
     AppInput
@@ -90,47 +121,49 @@ export default {
     return {
       search_text: "",
       messages: [],
-      showResult: false
+      showResult: false,
+      modal: false
     };
   },
   computed: {
     conversations() {
-      return this.$store.state.chat.conversations
-    },
+      return this.$store.state.chat.conversations;
+    }
   },
   watch: {
-    "search_text"(value) {
+    search_text(value) {
       if (!value) {
-        this.showResult = false
-        console.log('empty search')
+        this.showResult = false;
+        console.log("empty search");
       } else {
-        this.getResults(value)
+        this.getResults(value);
       }
     }
   },
   methods: {
     goTo(id) {
-      this.showResult = false
-      this.messages = []
-      this.$router.push(`/messages/${id}`)
+      this.showResult = false;
+      this.messages = [];
+      this.$router.push(`/messages/${id}`);
       // console.log(this.conversations)
     },
     getResults(value) {
-      let search = this.search_text
+      let search = this.search_text;
       this.$axios.$get(`/api/v1/conversations/?search=${search}`).then(res => {
-        this.messages = res.data.conversations
-        this.showResult = true
-      })
+        this.messages = res.data.conversations;
+        this.showResult = true;
+      });
     },
     userFullname(item) {
-      return item.receiver_id === this.$auth.user.id ? `${item.sender_first_name} ${item.sender_last_name}` : `${item.receiver_first_name} ${item.receiver_last_name}`
+      return item.receiver_id === this.$auth.user.id
+        ? `${item.sender_first_name} ${item.sender_last_name}`
+        : `${item.receiver_first_name} ${item.receiver_last_name}`;
     },
     createMessage() {
-      this.$router.push(`/messages/new`)
+      this.$router.push(`/messages/new`);
     }
-
   }
-}
+};
 </script>
 <style scoped>
 .messages-left-panel {
@@ -152,15 +185,15 @@ export default {
   background: #ccc;
   border-radius: 50px;
 }
-@media screen and (min-width: 576px){
-  .messages-left-panel{
+@media screen and (min-width: 576px) {
+  .messages-left-panel {
     min-width: 30vw;
     max-width: 30vw;
   }
 }
 
-@media screen and (min-width: 768px){
-  .messages-left-panel{
+@media screen and (min-width: 768px) {
+  .messages-left-panel {
     min-width: 25vw;
     max-width: 25vw;
   }

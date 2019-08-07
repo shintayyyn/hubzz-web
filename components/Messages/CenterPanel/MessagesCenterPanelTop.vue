@@ -1,5 +1,5 @@
 <template>
-    <div class="p-4 w-full">
+    <div v-if="$route.params.slug !== 'new'" class="panel-top p-4 w-full flex flex-col justify-center border-b">
         <div 
         v-for="item in messages"
         :key="item.id"
@@ -34,3 +34,8 @@ export default {
     }
 }
 </script>
+<style>
+.panel-top{
+    min-height: 77px;
+}
+</style>

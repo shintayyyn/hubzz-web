@@ -1,25 +1,38 @@
-export function fetchConversations (axios, offset, limit = 20 ) {
-    let params = {}
+export function fetchConversations(axios, offset, limit = 20) {
+  let params = {}
 
-    limit ? params.limit = limit : null
-    offset ? params.offset = offset : null
-    return axios.$get(`/api/v1/conversations`, { params: params })
+  limit ? params.limit = limit : null
+  offset ? params.offset = offset : null
+  return axios.$get(`/api/v1/conversations`, {
+    params: params
+  })
 }
 
-export function fetchActiveConversationMessages (axios, offset, limit = 20, order_by, conversation_id ) {
-    let params = {}
+export function fetchActiveConversationMessages(axios, offset, limit = 20, order_by, conversation_id) {
+  let params = {}
 
-    limit ? params.limit = limit : null
-    offset ? params.offset = offset : null
-    order_by ? params.order_by = `created_at:${order_by}` : `created_at:asc`
+  limit ? params.limit = limit : null
+  offset ? params.offset = offset : null
+  order_by ? params.order_by = `created_at:${order_by}` : `created_at:asc`
 
-    return axios.$get(`/api/v1/conversations/${conversation_id}`, { params: params })
+  return axios.$get(`/api/v1/conversations/${conversation_id}`, {
+    params: params
+  })
 }
 
-export function sendMessage (axios, receiver_user_id, message ) {
-    return axios.$post(`/api/v1/messages`, {receiver_user_id: receiver_user_id, message: message})
+export function sendMessage(axios, {
+  receiver_user_id,
+  message
+}) {
+  return axios.$post(`/api/v1/messages`, {
+    receiver_user_id: receiver_user_id,
+    message: message
+  })
 }
 
-export function deleteMessage (axios, receiver_user_id, message_id ) {
-    return axios.$put(`/api/v1/delete-message`, {receiver_user_id: receiver_user_id, message_id: message_id})
+export function deleteMessage(axios, receiver_user_id, message_id) {
+  return axios.$put(`/api/v1/delete-message`, {
+    receiver_user_id: receiver_user_id,
+    message_id: message_id
+  })
 }
