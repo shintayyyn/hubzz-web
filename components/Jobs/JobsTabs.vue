@@ -21,54 +21,101 @@
         class="mr-5 p-3 text-sm font-bold cursor-pointer"
         :class="$route.query.job_status === 'available' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
       >Available</div>
-      <div
-        v-if="$store.state.jobs.locum_new_available_jobs_count > 0"
-        class="rounded-lg bg-red-dark text-white text-xs font-bold py-1 px-2 absolute pin-r pin-t"
-      >{{$store.state.jobs.locum_new_available_jobs_count}}</div>
+      <transition name="fade">
+        <div
+          v-if="$store.state.jobs.locum_new_available_jobs_count > 0"
+          class="rounded-lg bg-red-dark text-white text-xs font-bold py-1 px-2 absolute pin-r pin-t"
+        >{{$store.state.jobs.locum_new_available_jobs_count}}</div>
+      </transition>
     </div>
-    <div
-      style="font-family:Nunito"
-      @click.prevent="goTo('matched')"
-      class="mr-5 p-3 text-sm font-bold cursor-pointer"
-      :class="$route.query.job_status === 'matched' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
-    >Matched</div>
-    <div
-      style="font-family:Nunito"
-      @click.prevent="goTo('applied')"
-      class="mr-5 p-3 text-sm font-bold cursor-pointer"
-      :class="$route.query.job_status === 'applied' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
-    >Applied</div>
-    <div
-      style="font-family:Nunito"
-      @click.prevent="goTo('unsuccessful')"
-      class="mr-5 p-3 text-sm font-bold cursor-pointer"
-      :class="$route.query.job_status === 'unsuccessful' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
-    >Unsuccessful</div>
-    <div
-      style="font-family:Nunito"
-      @click.prevent="goTo('declined')"
-      class="mr-5 p-3 text-sm font-bold cursor-pointer"
-      :class="$route.query.job_status === 'declined' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
-    >Declined</div>
-    <div
-      style="font-family:Nunito"
-      @click.prevent="goTo('cancelled')"
-      class="mr-5 p-3 text-sm font-bold cursor-pointer"
-      :class="$route.query.job_status === 'cancelled' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
-    >Cancelled</div>
-    <div
-      style="font-family:Nunito"
-      @click.prevent="goTo('completed')"
-      class="mr-5 p-3 text-sm font-bold cursor-pointer"
-      :class="$route.query.job_status === 'completed' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
-    >Completed</div>
+    <div class="relative">
+      <div
+        style="font-family:Nunito"
+        @click.prevent="goTo('matched')"
+        class="mr-5 p-3 text-sm font-bold cursor-pointer"
+        :class="$route.query.job_status === 'matched' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
+      >Matched</div>
+      <transition name="fade">
+        <div
+          v-if="$store.state.jobs.locum_new_matched_jobs_count > 0"
+          class="rounded-lg bg-red-dark text-white text-xs font-bold py-1 px-2 absolute pin-r pin-t"
+        >{{$store.state.jobs.locum_new_matched_jobs_count}}</div>
+      </transition>
+    </div>
+    <div class="relative">
+      <div
+        style="font-family:Nunito"
+        @click.prevent="goTo('applied')"
+        class="mr-5 p-3 text-sm font-bold cursor-pointer"
+        :class="$route.query.job_status === 'applied' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
+      >Applied</div>
+      <transition name="fade">
+        <div
+          v-if="$store.state.jobs.locum_new_matched_jobs_count > 0"
+          class="rounded-lg bg-red-dark text-white text-xs font-bold py-1 px-2 absolute pin-r pin-t"
+        >{{$store.state.jobs.locum_new_matched_jobs_count}}</div>
+      </transition>
+    </div>
+    <div class="relative">
+      <div
+        style="font-family:Nunito"
+        @click.prevent="goTo('unsuccessful')"
+        class="mr-5 p-3 text-sm font-bold cursor-pointer"
+        :class="$route.query.job_status === 'unsuccessful' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
+      >Unsuccessful</div>
+      <transition name="fade">
+        <div
+          v-if="$store.state.jobs.locum_new_unsuccessful_jobs_count > 0"
+          class="rounded-lg bg-red-dark text-white text-xs font-bold py-1 px-2 absolute pin-r pin-t"
+        >{{$store.state.jobs.locum_new_unsuccessful_jobs_count}}</div>
+      </transition>
+    </div>
+    <div class="relative">
+      <div
+        style="font-family:Nunito"
+        @click.prevent="goTo('declined')"
+        class="mr-5 p-3 text-sm font-bold cursor-pointer"
+        :class="$route.query.job_status === 'declined' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
+      >Declined</div>
+      <transition name="fade">
+        <div
+          v-if="$store.state.jobs.locum_new_declined_jobs_count > 0"
+          class="rounded-lg bg-red-dark text-white text-xs font-bold py-1 px-2 absolute pin-r pin-t"
+        >{{$store.state.jobs.locum_new_declined_jobs_count}}</div>
+      </transition>
+    </div>
+    <div class="relative">
+      <div
+        style="font-family:Nunito"
+        @click.prevent="goTo('cancelled')"
+        class="mr-5 p-3 text-sm font-bold cursor-pointer"
+        :class="$route.query.job_status === 'cancelled' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
+      >Cancelled</div>
+      <transition name="fade">
+        <div
+          v-if="$store.state.jobs.locum_new_cancelled_jobs_count > 0"
+          class="rounded-lg bg-red-dark text-white text-xs font-bold py-1 px-2 absolute pin-r pin-t"
+        >{{$store.state.jobs.locum_new_cancelled_jobs_count}}</div>
+      </transition>
+    </div>
+    <div class="relative">
+      <div
+        style="font-family:Nunito"
+        @click.prevent="goTo('completed')"
+        class="mr-5 p-3 text-sm font-bold cursor-pointer"
+        :class="$route.query.job_status === 'completed' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
+      >Completed</div>
+      <transition name="fade">
+        <div
+          v-if="$store.state.jobs.locum_new_completed_jobs_count > 0"
+          class="rounded-lg bg-red-dark text-white text-xs font-bold py-1 px-2 absolute pin-r pin-t"
+        >{{$store.state.jobs.locum_new_completed_jobs_count}}</div>
+      </transition>
+    </div>
   </div>
 </template>
 <script>
 export default {
-  created() {
-    this.clearBadge(this.$route.query.job_status)
-  },
   methods: {
     goTo(type) {
       const query = {
@@ -90,9 +137,4 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.badge {
-}
-</style>
 

@@ -40,14 +40,25 @@ export default {
       userIsAuthorized: false,
       complianceDocs: []
     }
-
   },
   components: {
     Calendar,
     Reminders,
     Statistics,
   },
-
+  computed: {
+    socketId() {
+      return this.$store.state.socket_id
+    }
+  },
+  watch: {
+    socketId(value) {
+      this.$store.dispatch('joinRoom', { socket_id: value, room_name: 'jobroom', })
+    }
+  },
+  beforeDestroy() {
+    this.$store.dispatch('leaveRoom', { socket_id: this.$socket.id, room_name: 'jobroom' })
+  },
   created() {
     if (this.$auth.loggedIn) {
       let domain = this.$auth.user.domain
@@ -65,15 +76,16 @@ export default {
         this.userIsAuthorized = false
         console.log("user is not authorized")
       }
-
     }
   },
   mounted() {
-    this.$axios.$post('api/v1/socket/join-room', { socket_id: this.$socket.id, room_name: 'jobroom' }).then(res => {
-      console.log(res)
-    }).catch(err => {
-      console.log(err.response.data)
-    })
+    if (this.$socket.connected) {
+      this.$store.dispatch('joinRoom', { socket_id: this.$socket.id, room_name: 'jobroom' })
+    } else {
+      this.$socket.on('connect', () => {
+        this.$store.dispatch('joinRoom', { socket_id: this.$socket.id, room_name: 'jobroom' })
+      })
+    }
   }
 }
 </script>

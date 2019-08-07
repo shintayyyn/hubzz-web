@@ -99,19 +99,20 @@ export default {
       }
     },
     $route(to, from) {
-      if (from.query.current_page !== to.query.current_page) {
-        this.getJobs(this.orderBy)
+      if (from.query.current_page !== to.query.current_page || from.query.sort !== to.query.sort) {
+        this.getJobs()
       }
     }
   },
   created() {
     const query = {
       ...this.$route.query,
-      current_page: this.$route.query.current_page || 1
+      current_page: this.$route.query.current_page || 1,
+      sort: this.$route.query.sort || null,
     };
     this.$router.push({ query });
-    this.getJobsCount();
-    this.getJobs(this.orderBy);
+    // this.getJobsCount();
+    // this.getJobs();
   },
   methods: {
     getJobsCount() {
@@ -140,16 +141,24 @@ export default {
           break;
       }
       this.orderBy = `${sortedBy}:${this.sortType ? 'desc' : 'asc'}`
-      this.getJobs(this.orderBy)
+      // this.getJobs(this.orderBy)
+
+      const query = {
+        ...this.$route.query,
+        current_page: this.$route.query.current_page || 1,
+        sort: this.orderBy,
+      }
+      this.$router.push({ query })
     },
-    getJobs(orderBy) {
+    getJobs() {
       let offset = 0;
       offset = this.perPage * (parseInt(this.$route.query.current_page) - 1);
+      let order_by = this.$route.query.sort || null
       this.$store.dispatch("jobs/fetchLocumJobs", {
         offset: offset,
         limit: this.perPage,
         status: "Current",
-        order_by: orderBy
+        order_by,
       });
     },
     pagechanged(e) {
