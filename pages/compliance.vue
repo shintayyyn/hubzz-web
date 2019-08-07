@@ -97,7 +97,7 @@
                   <label :for="`${item.id}_file`" class="leading-loose mx-2 cursor-pointer">Upload</label>
                 </div>
               </td>
-              <td class="hover:underline"  v-else>
+              <td class="hover:underline" v-else>
                 <div class="flex flex-row flex-nowrap">
                   <input
                     type="file"
@@ -288,7 +288,10 @@
       <div class="shield" v-if="complianceModal"></div>
       <transition name="slide" mode="out-in">
         <div class="complianceModal shadow-lg" v-if="complianceModal">
-          <ShowComplianceDocument :specificComplianceDoc="specificComplianceDoc" @close="complianceModal = false" />
+          <ShowComplianceDocument
+            :specificComplianceDoc="specificComplianceDoc"
+            @close="complianceModal = false"
+          />
         </div>
       </transition>
     </div>
@@ -297,19 +300,20 @@
       <div class="shield" v-if="mandatoryTrainingModal"></div>
       <transition name="slide" mode="out-in">
         <div class="mandatoryTrainingModal shadow-lg" v-if="mandatoryTrainingModal">
-          <ShowMandatoryTraining :specificMandatoryTraining="specificMandatoryTraining" @close="mandatoryTrainingModal = false" />
+          <ShowMandatoryTraining
+            :specificMandatoryTraining="specificMandatoryTraining"
+            @close="mandatoryTrainingModal = false"
+          />
         </div>
       </transition>
     </div>
-
   </section>
-  
 </template>
 <script>
 import ShowComplianceDocument from '@/components/Compliance/ShowComplianceDocument'
 import ShowMandatoryTraining from '@/components/Compliance/ShowMandatoryTraining'
 export default {
-  components:{
+  components: {
     ShowComplianceDocument,
     ShowMandatoryTraining
   },
@@ -321,10 +325,10 @@ export default {
       mandatory: [],
       optional: [],
       mandatory_trainings: [],
-      specificComplianceDoc:null,
-      specificMandatoryTraining:null,
-      complianceModal:false,
-      mandatoryTrainingModal:false,
+      specificComplianceDoc: null,
+      specificMandatoryTraining: null,
+      complianceModal: false,
+      mandatoryTrainingModal: false,
     };
   },
   created() {
@@ -369,38 +373,41 @@ export default {
     },
     // set mandatory and optional
     setComplianceDocuments() {
-      if (this.$auth.user.locum_detail.compliance_documents.length > 0) {
-        this.$auth.user.locum_detail.compliance_documents.forEach(
-          userComplianceDocument => {
-            this.profession.mandatory_compliance_documents.forEach(
-              mandatoryDocument => {
-                if (
-                  userComplianceDocument.compliance_document.id ===
-                  mandatoryDocument.id
-                ) {
-                  mandatoryDocument.info = userComplianceDocument;
+      this.$axios.$get(`/api/v1/me`).then(res => {
+        if (res.data.user.locum_detail.compliance_documents.length > 0) {
+          res.data.user.locum_detail.compliance_documents.forEach(
+            userComplianceDocument => {
+              this.profession.mandatory_compliance_documents.forEach(
+                mandatoryDocument => {
+                  if (
+                    userComplianceDocument.compliance_document.id ===
+                    mandatoryDocument.id
+                  ) {
+                    mandatoryDocument.info = userComplianceDocument;
+                  }
                 }
-              }
-            );
-            this.profession.optional_compliance_documents.forEach(
-              optionalDocument => {
-                if (
-                  userComplianceDocument.compliance_document.id ===
-                  optionalDocument.id
-                ) {
-                  optionalDocument.info = userComplianceDocument;
+              );
+              this.profession.optional_compliance_documents.forEach(
+                optionalDocument => {
+                  if (
+                    userComplianceDocument.compliance_document.id ===
+                    optionalDocument.id
+                  ) {
+                    optionalDocument.info = userComplianceDocument;
+                  }
                 }
-              }
-            );
-          }
+              );
+            }
+          );
+        }
+        this.mandatory = this.profession.mandatory_compliance_documents.sort(
+          (a, b) => a.id - b.id
         );
-      }
-      this.mandatory = this.profession.mandatory_compliance_documents.sort(
-        (a, b) => a.id - b.id
-      );
-      this.optional = this.profession.optional_compliance_documents.sort(
-        (a, b) => a.id - b.id
-      );
+        this.optional = this.profession.optional_compliance_documents.sort(
+          (a, b) => a.id - b.id
+        );
+
+      })
     },
     status(status) {
       switch (status) {
@@ -426,22 +433,22 @@ export default {
           return;
       }
     },
-    showComplianceDoc(id){
-      console.log("docid",id)
+    showComplianceDoc(id) {
+      console.log("docid", id)
       this.$axios.$get(`/api/v1/locum/locum-detail-compliance-documents/${id}`).then(res => {
         this.specificComplianceDoc = res.data.locum_detail_compliance_document
         this.complianceModal = true
         console.log(this.complianceModal)
       })
     },
-    showMandatoryTraining(id){
-      console.log("mandatorydocid",id)
+    showMandatoryTraining(id) {
+      console.log("mandatorydocid", id)
       this.$axios.$get(`/api/v1/locum/locum-detail-mandatory-trainings/${id}`).then(res => {
         this.specificMandatoryTraining = res.data.locum_detail_mandatory_training
         this.mandatoryTrainingModal = true
         console.log(this.mandatoryTrainingModal)
       })
-      
+
     },
     onFileInput(e, id, index) {
       if (!e.target.files.length) {
@@ -710,7 +717,7 @@ table tbody td {
   opacity: 0.5;
   z-index: 509;
 }
-.mandatoryTrainingModal{
+.mandatoryTrainingModal {
   position: fixed;
   top: 0;
   right: 0;
@@ -742,5 +749,4 @@ table tbody td {
     width: 80%;
   }
 }
-
 </style>
