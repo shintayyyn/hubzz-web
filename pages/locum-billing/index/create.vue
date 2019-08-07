@@ -91,7 +91,7 @@
                 <!-- input select -->
                 <div class="flex flex-col py-2 mb-6">
                   <div class="relative flex flex-row flex-nowrap justify-between">
-                    <label class="text-xs sm:text-base py-1">To: Accounts Department</label>
+                    <label class="text-xs sm:text-base py-1">Select a job to add to this invoice</label>
                   </div>
                   <div class="flex flex-row justify-start mt-1">
                     <select
