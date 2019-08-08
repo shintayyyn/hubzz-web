@@ -3,10 +3,7 @@
     <section class="bg-white">
       <div class="p-8 max-w-xl h-screen">
         <div class="flex flex-row flex-wrap justify-start">
-          <nuxt-link 
-            to="/locum-billing"
-            class="cursor-pointer"
-          >
+          <nuxt-link to="/locum-billing" class="cursor-pointer">
             <svgicon name="left-arrow" height="32" width="32" />
           </nuxt-link>
           <div
@@ -20,7 +17,7 @@
         </div>
 
         <div class="flex flex-row flex-wrap justify-start items-center my-4">
-          <label class="mx-1 py-2 px-3">Type: </label>
+          <label class="mx-1 py-2 px-3">Type:</label>
           <button
             :class="type === 'Private' ? 'bg-yellow-dark' : ''"
             class="text-xs sm:text-sm mx-1 py-2 px-3 border-2 rounded-lg font-bold flex items-center"
@@ -45,25 +42,56 @@
               <div>UTR 7337#4*OR</div>
             </div>
             <div class="flex justify-between my-2">
-              <div class="text-xs sm:text-sm text-left rounded-lg border-2 border-black p-2 sm:w-1/2">
+              <div
+                class="text-xs sm:text-sm text-left rounded-lg border-2 border-black p-2 sm:w-1/2"
+              >
                 <section>
                   <!-- input select -->
-                  <div class="flex flex-col py-2 mb-6">
+                  <div
+                    class="relative flex flex-col py-2 mb-6"
+                    v-on-clickaway="toggledOffSurgeries"
+                  >
                     <div class="relative flex flex-row flex-nowrap justify-between">
-                      <label class="text-xs sm:text-base py-1">To: Accounts Department</label>
+                      <label class="text-xs sm:text-sm py-1">To: Accounts Department</label>
                     </div>
-                    <div class="flex flex-row justify-start mt-1">
-                      <select
-                        v-model="selectedSurgery"
-                        class="border-b-2 focus:border-yellow focus:outline-none py-2 font-bold text-xs sm:text-sm w-full"
+                    <div class="relative flex flex-row flex-wrap justify-start">
+                      <input
+                        v-model="searchSurgeries"
+                        type="text"
+                        placeholder="Select.."
+                        ref="input"
+                        class="border-b-2 w-full focus:border-yellow focus:outline-none py-3 font-bold text-xs sm:text-sm"
+                        @focus="toggledSurgeries = true"
+                        readonly
+                      />
+                    </div>
+                    <!-- @keydown="handleKeyDownEvent" -->
+                    <div class="relative flex flex-col w-full z-10">
+                      <div
+                        ref="surgeryLists"
+                        class="absolute w-full option-list flex flex-col bg-white shadow-md overflow-y-auto"
+                        :class="{'slide-down': toggledSurgeries}"
+                        @scroll="scrollHandlerSurgeries"
                       >
-                        <option :value="null">Select the practice for this invoice</option>
-                        <option
-                          v-for="(surgery, index) in surgeries"
-                          :key="index"
-                          :value="surgery"
-                        >{{surgery.name}}</option>
-                      </select>
+                        <div class="relative">
+                          <div
+                            class="py-2 px-3 cursor-pointer text-xs sm:text-sm"
+                            :class="{'bg-grey-light': activeIndexSurgeries === index}"
+                            v-for="(item, index) in surgeries"
+                            :key="item.id"
+                            @mouseover="activeIndexSurgeries = index"
+                            @click="addSurgery(item)"
+                          >{{item.name}}</div>
+                          <div
+                            class="absolute bg-grey-light w-full h-full pin-t pin-b pin-l pin-r opacity-50"
+                            v-if="loadingSurgeries"
+                          >
+                            <div
+                              class="absolute pin-b text-center w-full text-sm font-bold"
+                            >loading icon</div>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </section>
@@ -80,38 +108,61 @@
               </div>
             </div>
             <div v-if="selectedSurgery">
-              <AppSelect
-                v-model="invoice"
-                :name="'description'"
-                :label="'Select a job to add to this invoice'"
-                :placeholder="'Select...'"
-                :items="jobs"
-              />
               <section>
                 <!-- input select -->
-                <div class="flex flex-col py-2 mb-6">
+                <div class="relative flex flex-col py-2 mb-6" v-on-clickaway="toggledOffJobParts">
                   <div class="relative flex flex-row flex-nowrap justify-between">
-                    <label class="text-xs sm:text-base py-1">To: Accounts Department</label>
+                    <label class="text-xs sm:text-sm py-1">Select a job to add to this invoice</label>
                   </div>
-                  <div class="flex flex-row justify-start mt-1">
-                    <select
-                      v-model="invoice"
-                      class="border-b-2 focus:border-yellow focus:outline-none py-2 font-bold text-xs sm:text-sm w-full"
+                  <div class="relative flex flex-row flex-wrap justify-start">
+                    <input
+                      v-model="searchJobParts"
+                      type="text"
+                      placeholder="Select.."
+                      ref="input"
+                      class="border-b-2 w-full focus:border-yellow focus:outline-none py-3 font-bold text-xs sm:text-sm"
+                      @focus="toggledJobParts = true"
+                      readonly
+                    />
+                  </div>
+                  <!-- @keydown="handleKeyDownEvent" -->
+                  <div class="relative flex flex-col w-full z-10">
+                    <div
+                      ref="jobPartsLists"
+                      class="absolute w-full option-list flex flex-col bg-white shadow-md overflow-y-auto"
+                      :class="{'slide-down': toggledJobParts}"
+                      @scroll="scrollHandlerJobParts"
                     >
-                      <option :value="null">Select a job to add to this invoice</option>
-                      <option
-                        v-for="(jobPart, index) in jobParts"
-                        :key="index"
-                        :value="jobPart"
-                      >{{jobPart.job_part_number}}</option>
-                    </select>
+                      <div class="relative" v-if="jobParts.length > 0">
+                        <div
+                          class="py-2 px-3 cursor-pointer text-xs sm:text-sm"
+                          :class="{'bg-grey-light': activeIndexJobParts === index}"
+                          v-for="(item, index) in filteredJobParts"
+                          :key="item.id"
+                          @mouseover="activeIndexJobParts = index"
+                          @click="addJobPart(item)"
+                        >{{item.job_part_number}}</div>
+                        <div
+                          class="absolute bg-grey-light w-full h-full pin-t pin-b pin-l pin-r opacity-50"
+                          v-if="loadingJobParts"
+                        >
+                          <div
+                            class="absolute pin-b text-center w-full text-sm font-bold"
+                          >loading icon</div>
+                        </div>
+                      </div>
+                      <div class="relative" v-else>
+                        <div
+                          class="text-xs sm:text-sm text-center font-bold mt-5"
+                        >No Job Completed On This Surgery</div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </section>
             </div>
           </div>
 
-          <div class="my-4 text-xs sm:text-sm">Select a job to add to this invoice</div>
           <table class="w-full">
             <thead>
               <tr class="text-center bg-grey-darkest">
@@ -121,7 +172,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr class="border-b" v-for="(item, index) in rowData" :key="index">
+              <tr class="border-b" v-for="(item, index) in selectedJobParts" :key="index">
                 <td style="width:75%">
                   <textarea
                     v-model="item.description"
@@ -141,7 +192,7 @@
                 <td style="width:5%">
                   <span
                     class="cursor-pointer m-1 rounded-full bg-grey-darkest text-white font-semibold text-xl px-2 py-0"
-                    @click="removeItem(index)"
+                    @click="removeSelectedJobPart(item, index)"
                   >
                     <span class="text-2xl">-</span>
                   </span>
@@ -154,6 +205,7 @@
                   <span
                     class="cursor-pointer m-1 rounded-full bg-grey-darkest text-white font-semibold text-xl px-2"
                     @click="addItem"
+                    v-if="type === 'Private'"
                   >+</span>
                 </td>
               </tr>
@@ -206,271 +258,398 @@
 </template>
 
 <script>
-  import AppDate from "@/components/Base/AppDate";
-  import AppSelect from "@/components/Base/AppSelect";
+import AppDate from "@/components/Base/AppDate";
+import AppSelect from "@/components/Base/AppSelect";
+import AppFilterSearch from "@/components/Base/AppFilterSearch";
+import { mixin as clickaway } from "vue-clickaway";
+export default {
+  mixins: [clickaway],
+  transition: {
+    name: 'slide',
+    mode: 'out-in'
+  },
 
-  export default {
+  async asyncData({ app, error }) {
+    try {
+      if (process.client) {
+        document.body.style.cursor = 'wait'
+      }
 
-    transition: {
-      name: 'slide',
-      mode: 'out-in'
+      const type = 'Platform'
+
+      const params = {
+        invoiceable: true,
+        type,
+        limit: 10,
+        offset: 0,
+      }
+
+      const response = await app.$axios.get('/api/v1/locum/surgeries', { params })
+
+      const surgeries = response.data && response.data.data && response.data.data.surgeries ? response.data.data.surgeries : []
+
+      if (process.client) {
+        document.body.style.cursor = 'auto'
+      }
+
+      return {
+        type,
+        surgeries,
+      }
+    } catch (err) {
+      console.log('locum-billing create err', err.response || err)
+      console.log('locum-billing create error', {
+        statusCode: err.status || 500,
+        message: err.message || 'Something went wrong!',
+      })
+      error({
+        statusCode: err.status || 500,
+        message: err.message || 'Something went wrong!',
+      })
+    }
+  },
+
+  components: {
+    AppDate,
+    AppSelect,
+    AppFilterSearch,
+  },
+
+  computed: {
+    amount() {
+      if (this.selectedJobParts && this.selectedJobParts.length > 0) {
+        let amount = 0;
+        this.selectedJobParts.forEach(item => {
+          if (item.total) {
+            amount += parseInt(item.total);
+          }
+        });
+        return amount;
+      }
     },
+    filteredJobParts() {
+      return this.jobParts.filter(filterItem => {
+        const index = this.selectedJobParts.findIndex(item => {
+          return item.job_id === filterItem.job.id;
+        });
+        return (
+          index === -1 &&
+          filterItem
+        );
+      });
+    }
+  },
 
-    async asyncData ({ app, error }) {
-      try {
-        if (process.client) {
-          document.body.style.cursor = 'wait'
-        }
+  data() {
+    return {
+      type: null,
 
-        const type = 'Platform'
+      practices: [],
+      practice_id: "",
+      address: {
+        line_1: "",
+        line_2: "",
+        line_3: "",
+        post_code: ""
+      },
+      jobs: [],
+      invoice: '',
+      rowData: [],
+      description: "",
+      total: "",
+      form: {
+        surgery_id: null,
+        date_start: null,
+        date_end: null,
+        items: [],
+        final: null
+      },
+      formError: [],
+      // input select surgeries
+      surgeries: [],
+      activeIndexSurgeries: 0,
+      searchSurgeries: '',
+      toggledSurgeries: false,
+      loadingSurgeries: false,
+      noMoreLoadSurgeries: false,
+      selectedSurgery: null,
+      // input select job
+      jobParts: [],
+      activeIndexJobParts: 0,
+      searchJobParts: '',
+      toggledJobParts: false,
+      loadingJobParts: false,
+      noMoreLoadJobParts: false,
+      selectedJobParts: []
 
+
+    };
+  },
+
+  watch: {
+    type() {
+      this.surgeries = []
+      this.selectedSurgery = null
+      if (this.type === 'Private' || this.type === 'Platform') {
         const params = {
-          invoiceable: true,
-          type,
-          limit: 1000000,
+          invoiceable: false,
+          type: this.type,
+          limit: 10,
           offset: 0,
         }
 
-        const response = await app.$axios.get('/api/v1/locum/surgeries', { params })
+        this.$axios.get('/api/v1/locum/surgeries', { params }).then((response) => {
+          const surgeries = response.data && response.data.data && response.data.data.surgeries ? response.data.data.surgeries : []
 
-        const surgeries = response.data && response.data.data && response.data.data.surgeries ? response.data.data.surgeries : []
-
-        console.log('surgeries', surgeries)
-
-        if (process.client) {
-          document.body.style.cursor = 'auto'
-        }
-
-        return {
-          type,
-          surgeries,
-        }
-      } catch (err) {
-        console.log('locum-billing create err', err.response || err)
-        console.log('locum-billing create error', {
-          statusCode: err.status || 500,
-          message: err.message || 'Something went wrong!',
-        })
-        error({
-          statusCode: err.status || 500,
-          message: err.message || 'Something went wrong!',
+          this.surgeries = surgeries
+        }).catch((err) => {
+          console.log('err', err.response || err)
         })
       }
     },
 
-    components: {
-      AppDate,
-      AppSelect
-    },
+    selectedSurgery() {
+      this.jobParts = []
+      this.loadingJobParts = true
+      this.noMoreLoadJobParts = false
 
-    computed: {
-      amount() {
-        if (this.rowData && this.rowData.length > 0) {
-          let amount = 0;
-          this.rowData.forEach(item => {
-            if (item.total) {
-              amount += parseInt(item.total);
-            }
-          });
-          return amount;
+      if (this.selectedSurgery) {
+        const params = {
+          locum_status: 'Completed',
+          type: this.type,
+          surgery_id: this.selectedSurgery.id,
+          limit: 10,
+          offset: 0,
+          order_by: 'created_at:desc'
         }
+
+        this.$axios.get('/api/v1/locum/job-parts', { params }).then((response) => {
+          const jobParts = response.data && response.data.data && response.data.data.job_parts ? response.data.data.job_parts : []
+          if (jobParts.length < 10) {
+            this.noMoreLoadJobParts = true
+          }
+
+          this.jobParts = jobParts
+          this.loadingJobParts = false
+
+        }).catch((err) => {
+          console.log('err', err.response || err)
+        })
       }
     },
-
-    data() {
-      return {
-        type: null,
-        surgeries: [],
-        selectedSurgery: null,
-        jobParts: [],
-
-        practices: [],
-        practice_id: "",
-        address: {
-          line_1: "",
-          line_2: "",
-          line_3: "",
-          post_code: ""
-        },
-        jobs: [],
-        invoice: "",
-        rowData: [],
-        description: "",
-        total: "",
-        form: {
-          date_start: null,
-          date_end: null
-        },
-        formError: []
-      };
-    },
-
-    watch: {
-      type () {
-        this.surgeries = []
-        this.selectedSurgery = null
-
-        if (this.type === 'Private' || this.type === 'Platform') {
-          const params = {
-            invoiceable: true,
-            type: this.type,
-            limit: 1000000,
-            offset: 0,
-          }
-
-          this.$axios.get('/api/v1/locum/surgeries', { params }).then((response) => {
-            const surgeries = response.data && response.data.data && response.data.data.surgeries ? response.data.data.surgeries : []
-
-            console.log('surgeries', surgeries)
-
-            this.surgeries = surgeries
-          }).catch((err) => {
-            console.log('err', err.response || err)
-          })
-        }
-      },
-
-      selectedSurgery () {
-        this.jobParts = []
-
-        if (this.selectedSurgery) {
-          const params = {
-            locum_status: 'Completed',
-            type: this.type,
-            surgery_id: this.selectedSurgery.id,
-            limit: 1000000,
-            offset: 0,
-            order_by: 'created_at:desc'
-          }
-
-          this.$axios.get('/api/v1/locum/job-parts', { params }).then((response) => {
-            const jobParts = response.data && response.data.data && response.data.data.job_parts ? response.data.data.job_parts : []
-
-            console.log('jobParts', jobParts)
-
-            this.jobParts = jobParts
-          }).catch((err) => {
-            console.log('err', err.response || err)
-          })
-        }
-
-        this.jobs = [
-          {
-            label:
-              "Job number P0000000099 Private appointment at £1 per hour from 26/04/2019 / OOH / Total hours at 1",
-            value:
-              "Job number P0000000099 Private appointment at £1 per hour from 26/04/2019 / OOH / Total hours at 1"
-          },
-          {
-            label:
-              "Job number P0000000109 Private appointment at £43 per hour from 26/04/2019 / AM / Total hours at 5",
-            value:
-              "Job number P0000000109 Private appointment at £43 per hour from 26/04/2019 / AM / Total hours at 5"
-          },
-          {
-            label:
-              "Job number P0000000129 Private appointment at £9 per hour from 26/04/2019 / OOH / Total hours at 51",
-            value:
-              "Job number P0000000129 Private appointment at £9 per hour from 26/04/2019 / OOH / Total hours at 51"
-          },
-          {
-            label:
-              "Job number P0000000090 Private appointment at £2 per hour from 26/04/2019 / PM / Total hours at 4",
-            value:
-              "Job number P0000000090 Private appointment at £2 per hour from 26/04/2019 / PM / Total hours at 4"
-          },
-          {
-            label:
-              "Job number P0000000095 Private appointment at £76 per hour from 26/04/2019 / Whole Day / Total hours at 27",
-            value:
-              "Job number P0000000095 Private appointment at £76 per hour from 26/04/2019 / Whole Day / Total hours at 27"
-          }
-        ];
-      },
-      invoice(value) {
+    invoice(value) {
+      if (value) {
+        // type
+        // job_id
+        // description
+        // total
         if (value) {
           this.rowData.push({ description: value, total: 5 });
         }
         this.invoice = null;
       }
-    },
+    }
+  },
 
-    created() {
-      this.$axios.$get(`/api/v1/locum/private-practices`).then(res => {
-        this.practices = [];
-        res.data.private_practices.forEach(practice => {
-          this.practices.push({
-            label: practice.surgery.name,
-            value: practice.id
-          });
+  created() {
+    this.$axios.$get(`/api/v1/locum/private-practices`).then(res => {
+      this.practices = [];
+      res.data.private_practices.forEach(practice => {
+        this.practices.push({
+          label: practice.surgery.name,
+          value: practice.id
         });
       });
-    },
+    });
+  },
 
-    mounted () {
-      document.body.style.overflow = 'hidden'
-    },
+  mounted() {
+    document.body.style.overflow = 'hidden'
+  },
 
-    destroyed () {
-      document.body.style.overflow = 'auto'
-    },
+  destroyed() {
+    document.body.style.overflow = 'auto'
+  },
 
-    methods: {
-      save() {
-        let invoiceForm = {};
-        invoiceForm.practice_id = this.practice_id;
-        invoiceForm.total_amount = this.amount;
-        invoiceForm.invoices = this.rowData;
-        invoiceForm.date_start = this.form.date_start;
-        invoiceForm.date_end = this.form.date_end;
-        this.$emit("add", invoiceForm);
-      },
-      archive() {},
-      removeItem(index) {
-        this.rowData.splice(index, 1);
-      },
-      addItem() {
-        let my_object = {
-          description: this.description,
-          total: this.total
-        };
-        this.rowData.push(my_object);
-        this.description = "";
-        this.total = "";
+  methods: {
+    save() {
+      this.formError = []
+      this.Validate(this.form, ['final'])
+      if (!this.formError.length) {
+        this.form.type = this.type
+        this.form.surgery_id = this.selectedSurgery.id
+        this.form.date_start = this.$moment(this.form.date_start).format('YYYY-MM-DD');
+        this.form.date_end = this.$moment(this.form.date_end).format('YYYY-MM-DD');
+        this.form.items = this.selectedJobParts
+        this.form.final = false
+        this.$axios.$post(`/api/v1/locum/invoices`, form).then(res => {
+          console.log(res)
+          this.$router.push('/locum-billing')
+        })
       }
-    }
+    },
+    archive() { },
+    addItem() {
+      let my_object = {
+        description: this.description,
+        total: this.total
+      };
+      this.rowData.push(my_object);
+      this.description = "";
+      this.total = "";
+    },
+    // job part
+    toggledOffJobParts() {
+      this.toggledJobParts = false;
+    },
+    scrollHandlerJobParts(e) {
+      if (this.$refs.jobPartsLists.offsetHeight + this.$refs.jobPartsLists.scrollTop >= this.$refs.jobPartsLists.scrollHeight - 1) {
+        if (!this.noMoreLoadJobParts) {
+          this.loadingJobParts = true
+          this.fetchMoreJobParts()
+        }
+      }
+    },
+    addJobPart(jobPart) {
+      let hasJobPart = this.selectedJobParts.find(selectedJobPart => selectedJobPart.job_id === jobPart.id)
+      if (hasJobPart) {
+        return
+      }
+      let invoiceObj = {}
+      let total = null
+      // ! locum detail rate type id / shift id
+      if (jobPart) {
+        // if jobPart.locum_detail_rate_type_id === 'per hour'
+        total = parseInt(jobPart.job.rate) * parseInt(jobPart.job.total_hours)
+      }
+      invoiceObj = {
+        type: 'Job',
+        job_id: jobPart.job.id,
+        description: `Job number ${jobPart.job_part_number} ${jobPart.job.type} Job at £${jobPart.job.rate} per hour from ${jobPart.date_start} / OOH / Total hours at ${jobPart.job.total_hours}`,
+        total: total.toString(),
+      }
+      this.selectedJobParts.push(invoiceObj)
+    },
+    removeSelectedJobPart(jobPart, index) {
+      this.selectedJobParts.splice(index, 1)
+    },
+    async fetchMoreJobParts() {
+      const params = {
+        locum_status: 'Completed',
+        type: this.type,
+        surgery_id: this.selectedSurgery.id,
+        limit: 10,
+        offset: this.jobParts.length,
+        order_by: 'created_at:desc'
+      }
+
+      this.$axios.get('/api/v1/locum/job-parts', { params }).then((response) => {
+        const jobParts = response.data && response.data.data && response.data.data.job_parts ? response.data.data.job_parts : []
+
+        jobParts.forEach(part => {
+          this.jobParts.push(part)
+        })
+
+        if (jobParts.length < 10) {
+          this.noMoreLoadJobParts = true
+        }
+
+        this.loadingJobParts = false
+      }).catch((err) => {
+        console.log('err', err.response || err)
+      })
+    },
+    // surgeries
+    toggledOffSurgeries() {
+      this.toggledSurgeries = false
+    },
+    scrollHandlerSurgeries(e) {
+      if (this.$refs.surgeryLists.offsetHeight + this.$refs.surgeryLists.scrollTop >= this.$refs.surgeryLists.scrollHeight - 1) {
+        if (!this.noMoreLoadSurgeries) {
+          this.loadingSurgeries = true
+          this.fetchMoreSurgeries()
+        }
+      }
+    },
+    addSurgery(surgery) {
+      this.selectedSurgery = surgery
+      this.searchSurgeries = surgery.name
+      this.toggledSurgeries = false
+    },
+    async fetchMoreSurgeries() {
+      const params = {
+        invoiceable: true,
+        type: this.type,
+        limit: 10,
+        offset: this.surgeries.length,
+      }
+
+      const response = await this.$axios.get('/api/v1/locum/surgeries', { params })
+
+      response.data.data.surgeries.forEach(surgery => {
+        this.surgeries.push(surgery)
+      })
+
+      if (response.data.data.surgeries.length < 10) {
+        this.noMoreLoadSurgeries = true
+      }
+
+      this.loadingSurgeries = false
+    },
   }
+}
 </script>
 
 <style scoped>
+.invoice-modal {
+  position: fixed;
+  top: 0;
+  right: 0;
+  margin-right: 0%;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  /* border-left: solid 2px #edf2f7; */
+  transition: all 0.3s ease-in-out;
+  /* background-color: rgb(80, 80, 80); */
+  background: #fff;
+  z-index: 512;
+}
+@media screen and (min-width: 1200px) {
   .invoice-modal {
-    position: fixed;
-    top: 0;
-    right: 0;
-    margin-right: 0%;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    /* border-left: solid 2px #edf2f7; */
-    transition: all 0.3s ease-in-out;
-    /* background-color: rgb(80, 80, 80); */
-    background: #fff;
-    z-index: 512;
+    width: 70%;
   }
-  @media screen and (min-width: 1200px) {
-    .invoice-modal {
-      width: 70%;
-    }
-  }
-  .save-button {
-    border-color: #ecc94b;
-    background-color: #ecc94b;
-  }
-  .save-button:hover {
-    color: #fff;
-    /* background-color: rgb(80, 80, 80); */
-    background-color: #d1b244;
-    border-color: #d1b244;
-    cursor: pointer;
-  }
+}
+.save-button {
+  border-color: #ecc94b;
+  background-color: #ecc94b;
+}
+.save-button:hover {
+  color: #fff;
+  /* background-color: rgb(80, 80, 80); */
+  background-color: #d1b244;
+  border-color: #d1b244;
+  cursor: pointer;
+}
+.option-list {
+  transition: all 0.3s ease-in-out;
+  height: 0;
+}
+.slide-down {
+  transition: all 0.3s ease-in-out;
+  height: 200px;
+}
+/* surgery */
+.loader-surgery {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.5;
+  color: #ccc;
+}
+/* absolute bg-grey-light w-full h-full pin-t pin-b pin-l pin-r */
 </style>

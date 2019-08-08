@@ -61,7 +61,7 @@ export default {
 </script>
 <style scoped>
 .messages-section {
-  overflow-y: hidden;
+  overflow: hidden;
   display: flex;
   min-height: 80vh;
   max-height: 80vh;

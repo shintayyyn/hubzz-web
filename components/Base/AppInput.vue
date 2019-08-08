@@ -108,7 +108,7 @@
         </div>
       </div>
       <div
-        class="relative flex flex-row justify-start items-center mt-1 border-2 focus:border-yellow rounded-lg"
+        class="relative flex flex-row justify-start items-center border-2 mb-2 focus:border-yellow rounded-lg"
       >
         <input
           :value="value"
