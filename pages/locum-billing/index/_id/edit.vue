@@ -33,12 +33,12 @@
         <div class="max-w-lg my-4 bg-white px-4 py-4 border shadow-md">
           <div class="flex flex-col">
             <div class="text-xs sm:text-sm text-right leading-normal">
-              <div>Mr. QQ AA QQ ZZ</div>
-              <div>wqe</div>
-              <div>Oldham</div>
-              <div>OL1 1NL</div>
-              <div>Tel 090991191323</div>
-              <div>cacheng.halcyondigital@gmail.com</div>
+              <div>Mr. {{invoice.locum_detail.user.personal_detail.name}}</div>
+              <div>{{invoice.locum_detail.user.address_detail.address.line_1}}</div>
+              <div>{{invoice.locum_detail.user.address_detail.address.line_3}}</div>
+              <div>{{invoice.locum_detail.user.address_detail.address.post_code}}</div>
+              <div>Tel {{invoice.locum_detail.user.contact_detail.mobile_number}}</div>
+              <div>{{invoice.locum_detail.user.email}}</div>
               <div>UTR 7337#4*OR</div>
             </div>
             <div class="flex justify-between my-2">
@@ -73,7 +73,7 @@
                         :class="{'slide-down': toggledSurgeries}"
                         @scroll="scrollHandlerSurgeries"
                       >
-                        <div class="relative" v-if="surgeries.length > 0">
+                        <div class="relative">
                           <div
                             class="py-2 px-3 cursor-pointer text-xs sm:text-sm"
                             :class="{'bg-grey-light': activeIndexSurgeries === index}"
@@ -90,11 +90,6 @@
                               class="absolute pin-b text-center w-full text-sm font-bold"
                             >loading icon</div>
                           </div>
-                        </div>
-                        <div class="relative" v-else>
-                          <div
-                            class="text-xs sm:text-sm text-center font-bold mt-5"
-                          >No Practice / Surgeries Job Invoicable Yet</div>
                         </div>
                       </div>
                     </div>
@@ -274,24 +269,15 @@ export default {
     mode: 'out-in'
   },
 
-  async asyncData({ app, error }) {
+  async asyncData({ app, error, params }) {
     try {
       if (process.client) {
         document.body.style.cursor = 'wait'
       }
-
-      const type = 'Platform'
-
-      const params = {
-        invoiceable: true,
-        type,
-        limit: 10,
-        offset: 0,
-      }
-
-      const response = await app.$axios.get('/api/v1/locum/surgeries', { params })
-
-      const surgeries = response.data && response.data.data && response.data.data.surgeries ? response.data.data.surgeries : []
+      const response = await app.$axios.get(`/api/v1/locum/invoices/${params.id}`)
+      const invoice = response.data && response.data.data && response.data.data.invoice ? response.data.data.invoice : null
+      let type = invoice.type
+      console.log('invoice', invoice)
 
       if (process.client) {
         document.body.style.cursor = 'auto'
@@ -299,11 +285,11 @@ export default {
 
       return {
         type,
-        surgeries,
+        invoice,
       }
     } catch (err) {
-      console.log('locum-billing create err', err.response || err)
-      console.log('locum-billing create error', {
+      console.log('locum-invoice create err', err.response || err)
+      console.log('locum-invoice create error', {
         statusCode: err.status || 500,
         message: err.message || 'Something went wrong!',
       })
@@ -397,14 +383,13 @@ export default {
       this.selectedSurgery = null
       if (this.type === 'Private' || this.type === 'Platform') {
         const params = {
-          invoiceable: true,
+          invoiceable: false,
           type: this.type,
           limit: 10,
           offset: 0,
         }
 
         this.$axios.get('/api/v1/locum/surgeries', { params }).then((response) => {
-          console.log(response)
           const surgeries = response.data && response.data.data && response.data.data.surgeries ? response.data.data.surgeries : []
 
           this.surgeries = surgeries
@@ -413,6 +398,7 @@ export default {
         })
       }
     },
+
     selectedSurgery() {
       this.jobParts = []
       this.loadingJobParts = true
@@ -425,8 +411,7 @@ export default {
           surgery_id: this.selectedSurgery.id,
           limit: 10,
           offset: 0,
-          order_by: 'created_at:desc',
-          invoiced: false
+          order_by: 'created_at:desc'
         }
 
         this.$axios.get('/api/v1/locum/job-parts', { params }).then((response) => {
@@ -434,7 +419,7 @@ export default {
           if (jobParts.length < 10) {
             this.noMoreLoadJobParts = true
           }
-          console.log('job parts', this.jobParts)
+
           this.jobParts = jobParts
           this.loadingJobParts = false
 
@@ -458,6 +443,15 @@ export default {
   },
 
   created() {
+    this.searchSurgeries = this.invoice.surgery.name
+    this.selectedSurgery = this.invoice.surgery
+    this.invoice.items.forEach(item => {
+      item.job_part_id = item.job_part.id
+      this.selectedJobParts.push(item)
+    })
+    this.form.date_start = this.invoice.date_start
+    this.form.date_end = this.invoice.date_end
+    // this.form.items =
     this.$axios.$get(`/api/v1/locum/private-practices`).then(res => {
       this.practices = [];
       res.data.private_practices.forEach(practice => {
@@ -480,6 +474,8 @@ export default {
   methods: {
     save(final) {
       this.formError = []
+      // this.Validate(this.form)
+      // if (!this.formError.length) {
       this.form.type = this.type
       this.form.surgery_id = this.selectedSurgery.id
       this.form.date_start = this.$moment(this.form.date_start).format('YYYY-MM-DD');
@@ -487,14 +483,11 @@ export default {
       this.form.items = this.selectedJobParts
       this.form.total_amount = this.amount
       this.form.final = final
-      console.log(this.form.items)
-      this.Validate(this.form, ['final'])
-      if (!this.formError.length) {
-        this.$axios.$post(`/api/v1/locum/invoices`, this.form).then(res => {
-          console.log(res)
-          this.$router.push('/locum-billing')
-        })
-      }
+      this.$axios.$put(`/api/v1/locum/invoices/${this.invoice.id}`, this.form).then(res => {
+        console.log(res)
+        this.$router.push('/locum-billing')
+      })
+      // }
     },
     addItem() {
       let my_object = {
@@ -524,15 +517,14 @@ export default {
       }
       let invoiceObj = {}
       let total = null
-      if (jobPart.job.locum_detail_rate_type.id === 1) {
+      // ! locum detail rate type id / shift id
+      if (jobPart) {
+        // if jobPart.locum_detail_rate_type_id === 'per hour'
         total = parseInt(jobPart.job.rate) * parseInt(jobPart.job.total_hours)
-      } else {
-        let dividerTotal = this.$moment(jobPart.date_end).diff(jobPart.date_start, 'days')
-        total = parseInt(jobPart.job.rate) / dividerTotal
       }
       invoiceObj = {
-        type: 'Job Part',
-        job_part_id: jobPart.id,
+        type: 'Job',
+        job_id: jobPart.job.id,
         description: `Job number ${jobPart.job_part_number} ${jobPart.job.type} Job at £${jobPart.job.rate} per hour from ${jobPart.date_start} / OOH / Total hours at ${jobPart.job.total_hours}`,
         total: total.toString(),
       }
@@ -645,7 +637,7 @@ export default {
 }
 .slide-down {
   transition: all 0.3s ease-in-out;
-  height: auto;
+  height: 200px;
 }
 /* surgery */
 .loader-surgery {
@@ -659,6 +651,5 @@ export default {
   opacity: 0.5;
   color: #ccc;
 }
-
 /* absolute bg-grey-light w-full h-full pin-t pin-b pin-l pin-r */
 </style>

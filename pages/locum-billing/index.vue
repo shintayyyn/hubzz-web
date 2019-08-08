@@ -25,33 +25,53 @@
             </tr>
           </thead>
           <tbody>
-            <template v-for="(item, index) in invoices">
-              <tr
-                :key="item.id"
-                class="__job-card shadow-md cursor-pointer text-xs text-left"
-                @click="show(item)"
-              >
-                <td>{{item.type}}</td>
-                <td>{{item.surgery.name}}</td>
-                <td>{{item.date_created | localDate}}</td>
-                <td>{{item.issued_at | localDate}}</td>
-                <td>{{item.invoice_number}}</td>
+            <template v-if="invoices.length === 0">
+              <tr>
+                <td colspan="10" class="text-center">You haven't created any invoice/s yet</td>
+              </tr>
+            </template>
+            <template v-for="(invoice, index) in invoices">
+              <tr :key="invoice.id" class="__job-card shadow-md cursor-pointer text-xs text-left">
+                <!-- @click="show(invoice)" -->
+                <td>{{invoice.type}}</td>
+                <td>{{invoice.surgery.name}}</td>
+                <td>{{invoice.date_created | localDate}}</td>
+                <td>{{invoice.issued_at | localDate}}</td>
+                <td>{{invoice.invoice_number}}</td>
                 <td>
-                  <div v-for="part in item.items" :key="part.id">{{part.job.job_number}}</div>
+                  <div
+                    v-for="item in invoice.items.filter(item => item.type === 'Job Part' && item.job_part)"
+                    :key="item.id"
+                  >{{item.job_part.job_part_number}}</div>
                 </td>
-                <td>£ {{item.total_amount}}</td>
+                <td>£ {{invoice.total_amount}}</td>
                 <td>pension type</td>
-                <td>{{item.paid_at ? 'Paid' : item.issued_at ? 'Issued' : ''}}</td>
+                <td>{{invoice.paid_at ? 'Paid' : invoice.issued_at ? 'Issued' : ''}}</td>
                 <td>
-                  <button
-                    v-if="!item.paid_at"
-                    v-text="item.issued_at ? 'Mark as paid' : 'Delete'"
-                    class="px-2 py-3 text-white rounded-lg"
-                    :class="item.issued_at ? 'bg-green-dark' : 'bg-yellow-dark'"
-                  ></button>
+                  <div class="relative">
+                    <button
+                      v-if="!invoice.paid_at"
+                      v-text="invoice.issued_at ? 'Mark as paid' : 'Delete'"
+                      class="px-2 py-3 text-white rounded-lg"
+                      :class="invoice.issued_at ? 'bg-green-dark' : 'bg-yellow-dark'"
+                      @click="update(invoice)"
+                    ></button>
+                    <div class="relative z-50" v-if="modal">
+                      <div
+                        class="absolute pin-r border rounded-tl-lg rounded-bl-lg rounded-br-lg calendar bg-white shadow-md px-1"
+                      >
+                        <AppDate
+                          v-model="form.paid_at"
+                          :name="'paid_at'"
+                          :label="'Receive payment on'"
+                        />
+                        <AppButton :label="'Save'" :inStyle="'padding:2px'" />
+                      </div>
+                    </div>
+                  </div>
                 </td>
               </tr>
-              <tr :key="`${item.id}-${index}`">
+              <tr :key="`${invoice.id}-${index}`">
                 <td></td>
               </tr>
             </template>
@@ -63,8 +83,15 @@
 </template>
 
 <script>
+import AppDate from '@/components/Base/AppDate'
+import AppButton from '@/components/Base/AppButton'
+import { mixin as clickaway } from "vue-clickaway";
 export default {
-
+  mixins: [clickaway],
+  components: {
+    AppDate,
+    AppButton,
+  },
   transition: {
     name: 'fade',
     mode: 'out-in'
@@ -89,13 +116,32 @@ export default {
       })
     }
   },
-
+  data() {
+    return {
+      invoices: [],
+      modal: false,
+      confirmation: false,
+      form: {
+        paid_at: null
+      }
+    }
+  },
+  created() {
+    console.log('creating')
+  },
   methods: {
     show(item) {
-      if (!item.issued_at) {
-        this.$router.push('/locum-billing/create')
+      if (item.status === 'Issued' || item.status === 'Paid') {
+        this.$router.push(`/locum-billing/${item.id}`)
       } else {
-        // open pdf viewer
+        this.$router.push(`/locum-billing/${item.id}/edit`)
+      }
+    },
+    update(invoice) {
+      if (invoice.issued_at) {
+        this.modal = true
+      } else {
+        this.confirmation = true
       }
     }
   }
@@ -113,5 +159,14 @@ export default {
   background-color: #333;
   opacity: 0.5;
   z-index: 511;
+}
+.calendar {
+  min-width: 80px;
+  height: auto;
+}
+@media screen and (min-width: 468px) {
+  .calendar {
+    width: 160px;
+  }
 }
 </style>
