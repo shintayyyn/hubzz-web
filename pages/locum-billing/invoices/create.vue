@@ -3,7 +3,7 @@
     <section class="bg-white">
       <div class="p-8 max-w-xl h-screen">
         <div class="flex flex-row flex-wrap justify-start">
-          <nuxt-link to="/locum-billing" class="cursor-pointer">
+          <nuxt-link to="/locum-billing/invoices" class="cursor-pointer">
             <svgicon name="left-arrow" height="32" width="32" />
           </nuxt-link>
           <div
@@ -274,7 +274,7 @@ export default {
     mode: 'out-in'
   },
 
-  async asyncData({ app, error }) {
+  async asyncData({ app, error, route }) {
     try {
       if (process.client) {
         document.body.style.cursor = 'wait'
@@ -335,7 +335,7 @@ export default {
     filteredJobParts() {
       return this.jobParts.filter(filterItem => {
         const index = this.selectedJobParts.findIndex(item => {
-          return item.job_id === filterItem.job.id;
+          return item.job_part_id === filterItem.id;
         });
         return (
           index === -1 &&
@@ -404,7 +404,6 @@ export default {
         }
 
         this.$axios.get('/api/v1/locum/surgeries', { params }).then((response) => {
-          console.log(response)
           const surgeries = response.data && response.data.data && response.data.data.surgeries ? response.data.data.surgeries : []
 
           this.surgeries = surgeries
@@ -434,7 +433,6 @@ export default {
           if (jobParts.length < 10) {
             this.noMoreLoadJobParts = true
           }
-          console.log('job parts', this.jobParts)
           this.jobParts = jobParts
           this.loadingJobParts = false
 
@@ -487,12 +485,11 @@ export default {
       this.form.items = this.selectedJobParts
       this.form.total_amount = this.amount
       this.form.final = final
-      console.log(this.form.items)
       this.Validate(this.form, ['final'])
       if (!this.formError.length) {
         this.$axios.$post(`/api/v1/locum/invoices`, this.form).then(res => {
-          console.log(res)
-          this.$router.push('/locum-billing')
+          this.$store.commit('billing/ADD_INVOICE', res.data.invoice)
+          this.$router.push('/locum-billing/invoices')
         })
       }
     },

@@ -3,7 +3,7 @@
     <section class="bg-white">
       <div class="p-8 max-w-xl h-screen">
         <div class="flex flex-row flex-wrap justify-start">
-          <nuxt-link to="/locum-billing" class="cursor-pointer">
+          <nuxt-link to="/locum-billing/invoices" class="cursor-pointer">
             <svgicon name="left-arrow" height="32" width="32" />
           </nuxt-link>
           <div
@@ -277,7 +277,6 @@ export default {
       const response = await app.$axios.get(`/api/v1/locum/invoices/${params.id}`)
       const invoice = response.data && response.data.data && response.data.data.invoice ? response.data.data.invoice : null
       let type = invoice.type
-      console.log('invoice', invoice)
 
       if (process.client) {
         document.body.style.cursor = 'auto'
@@ -321,7 +320,7 @@ export default {
     filteredJobParts() {
       return this.jobParts.filter(filterItem => {
         const index = this.selectedJobParts.findIndex(item => {
-          return item.job_id === filterItem.job.id;
+          return item.job_part_id === filterItem.id;
         });
         return (
           index === -1 &&
@@ -411,7 +410,8 @@ export default {
           surgery_id: this.selectedSurgery.id,
           limit: 10,
           offset: 0,
-          order_by: 'created_at:desc'
+          order_by: 'created_at:desc',
+          invoiced: false
         }
 
         this.$axios.get('/api/v1/locum/job-parts', { params }).then((response) => {
@@ -484,8 +484,8 @@ export default {
       this.form.total_amount = this.amount
       this.form.final = final
       this.$axios.$put(`/api/v1/locum/invoices/${this.invoice.id}`, this.form).then(res => {
-        console.log(res)
-        this.$router.push('/locum-billing')
+        this.$store.commit('billing/UPDATE_INVOICE', res.data.invoice)
+        this.$router.push('/locum-billing/invoices')
       })
       // }
     },
@@ -523,8 +523,8 @@ export default {
         total = parseInt(jobPart.job.rate) * parseInt(jobPart.job.total_hours)
       }
       invoiceObj = {
-        type: 'Job',
-        job_id: jobPart.job.id,
+        type: 'Job Part',
+        job_part_id: jobPart.id,
         description: `Job number ${jobPart.job_part_number} ${jobPart.job.type} Job at £${jobPart.job.rate} per hour from ${jobPart.date_start} / OOH / Total hours at ${jobPart.job.total_hours}`,
         total: total.toString(),
       }
@@ -637,7 +637,7 @@ export default {
 }
 .slide-down {
   transition: all 0.3s ease-in-out;
-  height: 200px;
+  height: auto;
 }
 /* surgery */
 .loader-surgery {

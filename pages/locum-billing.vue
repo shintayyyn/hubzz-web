@@ -1,13 +1,12 @@
 <template>
   <section class="billing-section">
-
     <div class="relative flex flex-col md:flex-row justify-between items-end md:items-center">
       <div class="flex justify-between md:justify-start w-full md:w-4/5">
         <nuxt-link
           style="font-family:Nunito"
-          to="/locum-billing"
+          to="/locum-billing/invoices"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.path === '/locum-billing' || $route.path === '/locum-billing/create' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
+          :class="$route.path === '/locum-billing/invoices' || $route.path === '/locum-billing/create' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
         >Invoices</nuxt-link>
         <nuxt-link
           style="font-family:Nunito"
@@ -29,8 +28,8 @@
         >Tax reports</nuxt-link>
       </div>
       <nuxt-link
-        v-if="$route.path === '/locum-billing' || $route.path === '/locum-billing/create'"
-        to="/locum-billing/create"
+        v-if="$route.path === '/locum-billing/invoices' || $route.path === '/locum-billing/create'"
+        to="/locum-billing/invoices/create"
         style="font-family:Nunito"
         class="w-1/5 p-3 text-sm text-right cursor-pointer"
       >
@@ -40,60 +39,60 @@
     </div>
 
     <div class="mt-5">
-      <nuxt-child/>
+      <nuxt-child />
     </div>
   </section>
 </template>
 
 <script>
-  export default {
-    middleware:'isVerified',
-    data() {
-      return {
-        modal: false
-      }
-    },
-    watch: {
-      modal(value) {
-        value ? document.body.style.overflow = 'hidden' : document.body.style.overflow = 'auto'
-      }
-    },
-    methods: {
-      add(data) {
-        console.log(data)
-      }
+export default {
+  middleware: 'isVerified',
+  data() {
+    return {
+      modal: false
+    }
+  },
+  watch: {
+    modal(value) {
+      value ? document.body.style.overflow = 'hidden' : document.body.style.overflow = 'auto'
+    }
+  },
+  methods: {
+    add(data) {
+      console.log(data)
     }
   }
+}
 </script>
 
 <style scoped>
-  .invoice-shield {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #333;
-    opacity: 0.5;
-    z-index: 511;
-  }
+.invoice-shield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #333;
+  opacity: 0.5;
+  z-index: 511;
+}
+.invoice-modal {
+  position: fixed;
+  top: 0;
+  right: 0;
+  margin-right: 0%;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  /* border-left: solid 2px #edf2f7; */
+  transition: all 0.3s ease-in-out;
+  /* background-color: rgb(80, 80, 80); */
+  background: #fff;
+  z-index: 512;
+}
+@media screen and (min-width: 1200px) {
   .invoice-modal {
-    position: fixed;
-    top: 0;
-    right: 0;
-    margin-right: 0%;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    /* border-left: solid 2px #edf2f7; */
-    transition: all 0.3s ease-in-out;
-    /* background-color: rgb(80, 80, 80); */
-    background: #fff;
-    z-index: 512;
+    width: 70%;
   }
-  @media screen and (min-width: 1200px) {
-    .invoice-modal {
-      width: 70%;
-    }
-  }
+}
 </style>

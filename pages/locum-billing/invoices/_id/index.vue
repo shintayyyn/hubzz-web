@@ -3,7 +3,7 @@
     <section class="bg-white">
       <div class="p-8 max-w-xl h-screen">
         <div class="flex flex-row flex-wrap justify-start">
-          <nuxt-link to="/locum-billing" class="cursor-pointer">
+          <nuxt-link to="/locum-billing/invoices" class="cursor-pointer">
             <svgicon name="left-arrow" height="32" width="32" />
           </nuxt-link>
         </div>

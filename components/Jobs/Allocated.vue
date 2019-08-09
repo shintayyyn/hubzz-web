@@ -110,9 +110,6 @@ export default {
     totalPages() {
       return Math.ceil(this.total / this.perPage);
     },
-    currentPage() {
-      return parseInt(this.$route.query.current_page);
-    },
     loadingJobs() {
       return this.$store.state.jobs.loading_jobs;
     }
