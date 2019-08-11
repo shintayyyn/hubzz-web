@@ -2,7 +2,7 @@
   <div class="flex flex-col w-full lg:w-2/3 p-0 lg:pr-4">
     <div class="rounded-lg shadow-lg flex flex-col p-8 mt-4">
       <div
-        class="flex flex-row flex-nowrap"
+        class="flex flex-row flex-no-wrap"
         v-for="(jobPart, index) in job_parts"
         :key="jobPart.id"
       >

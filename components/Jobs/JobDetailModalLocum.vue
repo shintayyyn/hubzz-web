@@ -10,9 +10,7 @@
         :class="bgStatus(job.locum_status)"
       >{{status(job.locum_status)}}</div>
     </div>
-    <div
-      class="text-xs sm:text-sm"
-    >Posted {{$moment(job.date_created).format('DD/MM/YYYY')}}</div>
+    <div class="text-xs sm:text-sm">Posted {{$moment(job.date_created).format('DD/MM/YYYY')}}</div>
     <div class="flex flex-col mt-4"></div>
 
     <div class="flex flex-row flex-wrap justify-start mt-4">
@@ -84,19 +82,19 @@ export default {
     bgStatus(status) {
       switch (status) {
         case 'Available':
-          return 'bg-yellow-dark';
+          return 'bg-yellow-400';
           break;
         case 'Applied':
-          return 'bg-orange-dark text-white';
+          return 'bg-orange-400 text-white';
           break;
         case 'Completed':
-          return 'bg-green-light';
+          return 'bg-green-200';
           break;
         case 'Current':
-          return 'bg-green-light';
+          return 'bg-green-200';
           break;
         default:
-          return 'bg-red text-white'
+          return 'bg-red-300 text-white'
       }
     }
   }

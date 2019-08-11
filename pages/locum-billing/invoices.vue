@@ -8,22 +8,22 @@
     </transition>
     <transition name="drop" mode="out-in">
       <!-- <SignOut v-if="confirmation" @modal="confirmation = $event" /> -->
-      <div class="confirmation fixed pin-t w-full flex justify-center" v-if="deleteModal">
-        <div class="confirmation-modal border-solid rounded-b-lg bg-yellow-dark p-2">
+      <div class="confirmation fixed top-0 w-full flex justify-center" v-if="deleteModal">
+        <div class="confirmation-modal border-solid rounded-b-lg bg-yellow-400 p-2">
           <div class="flex justify-center">
             <div class>Proceed to delete this invoice?</div>
           </div>
           <div class="flex justify-center my-1">
             <div class="mx-2">
               <button
-                class="border border-solid bg-yellow-dark hover:text-white focus:outline-none text-black font-bold py-5 rounded-lg"
+                class="border border-solid bg-yellow-400 hover:text-white focus:outline-none text-black font-bold py-5 rounded-lg"
                 @click.prevent="deleteInvoice"
                 style="width:100px;"
               >Yes</button>
             </div>
             <div class="mx-2">
               <button
-                class="border border-solid bg-yellow-dark hover:text-white focus:outline-none text-black font-bold py-5 rounded-lg"
+                class="border border-solid bg-yellow-400 hover:text-white focus:outline-none text-black font-bold py-5 rounded-lg"
                 @click.prevent="deleteModal = false"
                 style="width:100px;"
               >Cancel</button>
@@ -89,7 +89,7 @@
                       v-if="!invoice.paid_at"
                       v-text="invoice.issued_at ? 'Mark as paid' : 'Delete'"
                       class="px-2 py-3 text-white rounded-lg"
-                      :class="invoice.issued_at ? 'bg-green-dark' : 'bg-yellow-dark'"
+                      :class="invoice.issued_at ? 'bg-green-400' : 'bg-yellow-400'"
                     ></button>
                   </td>
                 </tr>
@@ -101,7 +101,7 @@
           </table>
         </div>
       </div>
-      <div class="absolute pin-b w-full" v-if="getLocumInvoices.length > 0 && totalPages > 1">
+      <div class="absolute bottom-0 w-full" v-if="getLocumInvoices.length > 0 && totalPages > 1">
         <AppPagination
           :total="total"
           :totalPages="totalPages"
@@ -121,7 +121,7 @@
         :label="'Receive payment on'"
         :error="formError.find(item => item.field === 'paid_at')"
       />
-      <div class="flex flex-row flex-nowrap justify-center">
+      <div class="flex flex-row flex-no-wrap justify-center">
         <AppButton :label="'Save'" @click="updateInvoice" :inStyle="'padding:5px'" />
         <div class="mx-1"></div>
         <AppButton :label="'Cancel'" @click="paymentModal = false" :inStyle="'padding:5px'" />

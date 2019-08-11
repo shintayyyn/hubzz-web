@@ -36,7 +36,7 @@
         >Select by clicking on the practice that you wish to add</div>
         <div
           class="border-t-2 p-4 cursor-pointer"
-          :class="selectedSurgery.id === item.id ? 'bg-yellow-dark':'hover:bg-grey'"
+          :class="selectedSurgery.id === item.id ? 'bg-yellow-400':'hover:bg-grey'"
           v-for="(item) in surgeries"
           :key="item.id"
           @click="select(item)"
@@ -46,12 +46,12 @@
             <div
               class="mt-4"
             >{{item.address.line_1}}, {{item.address.line_2}}, {{item.address.line_3}}, {{item.address.post_code}}</div>
-            <div class="flex flex-row flex-nowrap mt-1">
-              <div class="rounded-lg bg-grey-light py-1 px-2 mr-1">CCG</div>
+            <div class="flex flex-row flex-no-wrap mt-1">
+              <div class="rounded-lg bg-gray-200 py-1 px-2 mr-1">CCG</div>
               <div class="flex items-center">{{item.clinical_commissioning_group.name}}</div>
             </div>
-            <div class="flex flex-row flex-nowrap mt-1">
-              <div class="rounded-lg bg-grey-light py-1 px-2 mr-1">Practice Code</div>
+            <div class="flex flex-row flex-no-wrap mt-1">
+              <div class="rounded-lg bg-gray-200 py-1 px-2 mr-1">Practice Code</div>
               <div class="flex items-center">{{item.code}}</div>
             </div>
           </div>

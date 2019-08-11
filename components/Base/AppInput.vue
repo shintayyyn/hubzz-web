@@ -2,11 +2,11 @@
   <section>
     <!-- multicheckbox -->
     <div v-if="type === 'multi-checkbox'" class="flex flex-col py-2 mb-6">
-      <div class="relative flex flex-row flex-nowrap justify-between">
+      <div class="relative flex flex-row flex-no-wrap justify-between">
         <label :for="name" class="text-xs sm:text-base py-1">{{label}}</label>
-        <div class="bg-grey-light rounded-lg p-1 text-xs sm:text-sm" v-if="info">{{info}}</div>
+        <div class="bg-gray-200 rounded-lg p-1 text-xs sm:text-sm" v-if="info">{{info}}</div>
         <div
-          class="absolute pin-r bg-red p-1 text-xs sm:text-sm text-white"
+          class="absolute right-0 bg-red-300 p-1 text-xs sm:text-sm text-white"
           v-if="error"
         >{{error.message}}</div>
       </div>
@@ -24,7 +24,7 @@
 
     <!-- single checkbox -->
     <div v-if="type === 'single-checkbox'" class="flex flex-col py-2 mb-6">
-      <div class="flex flex-row flex-nowrap justify-between">
+      <div class="flex flex-row flex-no-wrap justify-between">
         <div>
           <input
             :value="value"
@@ -34,7 +34,7 @@
           />
           <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
           <div
-            class="absolute bg-red p-1 text-xs sm:text-sm text-white"
+            class="absolute bg-red-300 p-1 text-xs sm:text-sm text-white"
             v-if="error"
           >{{error.message}}</div>
         </div>
@@ -43,13 +43,13 @@
 
     <!-- multiemail -->
     <div v-if="type === 'multiemail'" class="flex flex-col py-2 mb-6">
-      <div class="relative flex flex-row flex-nowrap justify-between">
+      <div class="relative flex flex-row flex-no-wrap justify-between">
         <div class="flex flex-wrap justify-start">
           <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
-          <span class="ml-2 bg-grey-light rounded-lg px-4 py-1 text-xs">Seperate with commas</span>
+          <span class="ml-2 bg-gray-200 rounded-lg px-4 py-1 text-xs">Seperate with commas</span>
         </div>
         <div
-          class="absolute pin-r bg-red p-1 text-xs sm:text-sm text-white"
+          class="absolute right-0 bg-red-300 p-1 text-xs sm:text-sm text-white"
           v-if="error"
         >{{error.message}}</div>
       </div>
@@ -58,8 +58,8 @@
           :value="value"
           type="email"
           :placeholder="placeholder"
-          class="border-b-2 focus:border-yellow focus:outline-none py-4 font-bold text-xs sm:text-sm w-full"
-          :class="error ? 'border-red':''"
+          class="border-b-2 focus:border-yellow-300 focus:outline-none py-4 font-bold text-xs sm:text-sm w-full"
+          :class="error ? 'border-red-300':''"
           @input="$emit('input', $event.target.value)"
         />
       </div>
@@ -70,12 +70,12 @@
       v-if="type === 'text' || type === 'time' || type === 'email' || type === 'password' || type === 'date'"
       class="flex flex-col py-2 mb-6"
     >
-      <div class="relative flex flex-row flex-nowrap justify-between">
+      <div class="relative flex flex-row flex-no-wrap justify-between">
         <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
         <div class="flex">
-          <div class="bg-grey-light rounded-lg px-4 py-1 text-xs sm:text-sm" v-if="info">{{info}}</div>
+          <div class="bg-gray-200 rounded-lg px-4 py-1 text-xs sm:text-sm" v-if="info">{{info}}</div>
           <div
-            class="absolute pin-r bg-red p-1 text-xs sm:text-sm text-white"
+            class="absolute right-0 bg-red-300 p-1 text-xs sm:text-sm text-white"
             v-if="error"
           >{{error.message}}</div>
         </div>
@@ -85,8 +85,8 @@
           :value="value"
           :type="type"
           :placeholder="placeholder"
-          class="border-b-2 focus:border-yellow focus:outline-none py-4 font-bold text-xs sm:text-sm w-full"
-          :class="error? 'border-red':''"
+          class="border-b-2 focus:border-yellow-300 focus:outline-none py-4 font-bold text-xs sm:text-sm w-full"
+          :class="error? 'border-red-300':''"
           @input="$emit('input', $event.target.value)"
           :style="inStyle"
           @keypress.enter="$emit('submit')"
@@ -97,32 +97,32 @@
     </div>
     <!-- search -->
     <div v-if="type === 'search'" class="flex flex-col">
-      <div class="relative flex flex-row flex-nowrap justify-between">
+      <div class="relative flex flex-row flex-no-wrap justify-between">
         <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
         <div class="flex">
-          <div class="bg-grey-light rounded-lg px-4 py-1 text-xs sm:text-sm" v-if="info">{{info}}</div>
+          <div class="bg-gray-200 rounded-lg px-4 py-1 text-xs sm:text-sm" v-if="info">{{info}}</div>
           <div
-            class="absolute pin-r bg-red p-1 text-xs sm:text-sm text-white"
+            class="absolute right-0 bg-red-300 p-1 text-xs sm:text-sm text-white"
             v-if="error"
           >{{error.message}}</div>
         </div>
       </div>
       <div
-        class="relative flex flex-row justify-start items-center border-2 mb-2 focus:border-yellow rounded-lg"
+        class="relative flex flex-row justify-start items-center border-2 mb-2 focus:border-yellow-300 rounded-lg"
       >
         <input
           :value="value"
           :type="type"
           :placeholder="placeholder"
           class="focus:outline-none pl-2 pr-4 py-4 font-bold text-xs sm:text-sm w-full rounded-lg"
-          :class="error? 'border-red':''"
+          :class="error? 'border-red-300':''"
           @input="$emit('input', $event.target.value)"
           :style="inStyle"
           @keypress.enter="$emit('submit')"
           @blur="$emit('blur')"
           :checked="value"
         />
-        <span class="absolute pin-r px-1 py-2 bg-white">
+        <span class="absolute right-0 px-1 py-2 bg-white">
           <svgicon name="search" height="21" width="21" class="text-grey fill-current" />
         </span>
       </div>

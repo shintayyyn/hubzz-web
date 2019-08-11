@@ -43,7 +43,7 @@
       <div class="border-solid rounded-lg shadow-lg mt-5 p-10">
         <div class="flex flex-col">
           <div class="w-full text-xs sm:text-base flex items-center">Your tax year end date</div>
-          <div class="w-full flex flex-row flex-nowrap">
+          <div class="w-full flex flex-row flex-no-wrap">
             <div class="mr-1 w-1/2">
               <AppSelect
                 v-model="form.tax_year_end_month"

@@ -16,7 +16,7 @@
           <div v-if="showResult === false">
             <div
               class="flex flex-row items-center px-2 md:pl-4 py-4 cursor-pointer border-b"
-              :class="parseInt($route.params.slug) === item.id ? 'bg-grey-lighter' : 'hover:bg-grey-lightest'"
+              :class="parseInt($route.params.slug) === item.id ? 'bg-gray-200' : 'hover:bg-gray-200est'"
               v-for="item in conversations"
               :key="item.id"
               @click="goTo(item.conversation_id ? item.conversation_id : item.id)"
@@ -29,7 +29,7 @@
                   <span
                     :class="parseInt($route.params.slug) === item.id ? 'font-bold' : ''"
                   >{{ userFullname(item) }}</span>
-                  <span class="h-2 w-2 py-1 px-1 bg-green-light rounded-full"></span>
+                  <span class="h-2 w-2 py-1 px-1 bg-green-200 rounded-full"></span>
                 </div>
                 <div class="flex">
                   <p class="text-sm truncate w-full">{{ item.message }}</p>
@@ -42,7 +42,7 @@
           <div v-if="showResult && messages.length > 0">
             <div
               class="flex flex-col md:flex-row items-center px-2 md:pl-4 py-4 cursor-pointer border-b"
-              :class="parseInt($route.params.slug) === item.id ? 'bg-grey-lighter' : 'hover:bg-grey-lightest'"
+              :class="parseInt($route.params.slug) === item.id ? 'bg-gray-200' : 'hover:bg-gray-200est'"
               v-for="item in messages"
               :key="item.id"
               @click="goTo(item.conversation_id ? item.conversation_id : item.id)"
@@ -55,7 +55,7 @@
                   <span
                     :class="parseInt($route.params.slug) === item.id ? 'font-bold' : ''"
                   >{{ userFullname(item) }}</span>
-                  <span class="h-2 w-2 py-1 px-1 bg-green-light rounded-full"></span>
+                  <span class="h-2 w-2 py-1 px-1 bg-green-200 rounded-full"></span>
                 </div>
                 <div class="flex">
                   <p class="text-sm truncate w-full">{{ item.message }}</p>
@@ -72,12 +72,12 @@
         </div>
       </div>
       <button
-        class="bg-yellow-dark border-yellow-dark text-sm md:mx-2 md:my-4 p-4 md:text-lg focus:outline-none"
+        class="bg-yellow-400 border-yellow-400 text-sm md:mx-2 md:my-4 p-4 md:text-lg focus:outline-none"
         @click="createMessage"
       >Create Message</button>
     </div>
     <button
-      class="bg-yellow-dark border-yellow-dark text-sm md:mx-2 md:my-4 p-4 md:text-lg focus:outline-none"
+      class="bg-yellow-400 border-yellow-400 text-sm md:mx-2 md:my-4 p-4 md:text-lg focus:outline-none"
       @click="modal = true"
     >
       <span class="hidden md:block">Create Message</span>
@@ -94,7 +94,7 @@
           :name="value.min"
           @input="$emit('input', { min: $event.target.value, max: value.max})"
           type="text"
-          class="border-b-2 focus:border-yellow focus:outline-none py-2 font-bold text-xs sm:text-sm text-right mb-4"
+          class="border-b-2 focus:border-yellow-300 focus:outline-none py-2 font-bold text-xs sm:text-sm text-right mb-4"
         />
         <label :for="value.max">Max</label>
         <input
@@ -102,10 +102,10 @@
           :name="value.max"
           @input="$emit('input', { min: value.min, max: $event.target.value})"
           type="text"
-          class="border-b-2 focus:border-yellow focus:outline-none py-2 font-bold text-xs sm:text-sm text-right mb-4"
+          class="border-b-2 focus:border-yellow-300 focus:outline-none py-2 font-bold text-xs sm:text-sm text-right mb-4"
         />
         <!-- <button
-          class="rounded-lg bg-yellow-dark font-bold text-xs sm:text-sm px-2 py-1 focus:outline-none hover:text-white cursor-pointer"
+          class="rounded-lg bg-yellow-400 font-bold text-xs sm:text-sm px-2 py-1 focus:outline-none hover:text-white cursor-pointer"
         @click.prevent="save">Save</button>-->
       </div>
     </div>

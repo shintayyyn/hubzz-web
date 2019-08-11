@@ -5,17 +5,15 @@
         <div class="relative flex flex-row flex-wrap justify-start">
           <div
             v-if="shifts_error"
-            class="absolute pin-r bg-red p-1 text-xs sm:text-base text-white"
+            class="absolute right-0 bg-red-300 p-1 text-xs sm:text-base text-white"
           >Select atleast one shift</div>
           <div class="text-sm leading-loose mr-2">The shifts I am available for</div>
-          <div
-            class="py-2 px-1 rounded-lg text-sm bg-grey-lighter leading-tight"
-          >Select all that apply</div>
+          <div class="py-2 px-1 rounded-lg text-sm bg-gray-200 leading-tight">Select all that apply</div>
         </div>
         <div class="flex flex-row flex-wrap justify-around md:justify-start mt-5">
           <div
             class="relative border border-solid rounded-lg p-5 m-2 w-full sm:w-1/4 md:w-1/6 text-sm md:text-base text-center cursor-pointer"
-            :class="selectedShifts.includes(item.id) ? 'bg-yellow-dark': 'hover:bg-yellow-dark'"
+            :class="selectedShifts.includes(item.id) ? 'bg-yellow-400': 'hover:bg-yellow-400'"
             style="box-sizing:content-box;"
             v-for="item in shifts"
             :key="item.id"
@@ -25,7 +23,7 @@
       </div>
 
       <button
-        class="bg-yellow-dark hover:text-white focus:outline-none text-black font-bold text-xl py-4 px-6 md:p-6 rounded-lg mt-4 md:mt-10 mb-5"
+        class="bg-yellow-400 hover:text-white focus:outline-none text-black font-bold text-xl py-4 px-6 md:p-6 rounded-lg mt-4 md:mt-10 mb-5"
         @click.prevent="update"
       >Update</button>
     </form>

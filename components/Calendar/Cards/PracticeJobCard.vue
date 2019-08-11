@@ -1,10 +1,10 @@
 <template>
   <div
-    class="relative rounded-lg py-3 px-5 my-1 bg-white cursor-pointer hover:bg-grey-lighter"
+    class="relative rounded-lg py-3 px-5 my-1 bg-white cursor-pointer hover:bg-gray-200"
     @click="select"
   >
     <div
-      class="absolute pin-l pin-t rounded-l-lg p-2 h-full"
+      class="absolute left-0 top-0 rounded-l-lg p-2 h-full"
       :class="bgStatus(job.status, job.platform_job.selection_date)"
     ></div>
 
@@ -36,16 +36,16 @@ export default {
       } else {
         switch (status) {
           case 'Applied':
-            return 'bg-orange-dark';
+            return 'bg-orange-400';
             break;
           case 'Completed':
-            return 'bg-green-light';
+            return 'bg-green-200';
             break;
           case 'Current':
-            return 'bg-green-dark';
+            return 'bg-green-400';
             break;
           default:
-            return 'bg-red'
+            return 'bg-red-300'
         }
       }
     }

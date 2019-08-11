@@ -119,5 +119,5 @@ export default {
   opacity: 0.5;
   color: #ccc;
 }
-/* absolute bg-grey-light w-full h-full pin-t pin-b pin-l pin-r */
+/* absolute bg-gray-200 w-full h-full top-0 bottom-0 left-0 right-0 */
 </style>

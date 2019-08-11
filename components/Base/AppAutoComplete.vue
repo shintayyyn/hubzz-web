@@ -1,9 +1,12 @@
 <template>
   <div class="flex flex-col py-2 mb-6" v-on-clickaway="toggledOff">
-    <div class="relative flex flex-row flex-nowrap justify-between">
+    <div class="relative flex flex-row flex-no-wrap justify-between">
       <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
       <div class="flex">
-        <div class="bg-red ml-2 p-1 text-xs sm:text-base text-white" v-if="error">{{error.message}}</div>
+        <div
+          class="bg-red-300 ml-2 p-1 text-xs sm:text-base text-white"
+          v-if="error"
+        >{{error.message}}</div>
       </div>
     </div>
     <div class="flex flex-row justify-start mt-1">
@@ -12,8 +15,8 @@
         ref="search"
         type="text"
         :placeholder="placeholder"
-        class="border-b-2 focus:border-yellow focus:outline-none py-4 font-bold text-xs sm:text-sm w-full"
-        :class="error? 'border-red':''"
+        class="border-b-2 focus:border-yellow-300 focus:outline-none py-4 font-bold text-xs sm:text-sm w-full"
+        :class="error? 'border-red-300':''"
         :style="inStyle"
         @focus="toggledOn"
         @keydown="handleKeyDownEvent"
@@ -25,8 +28,8 @@
           <div
             v-for="(item, index) in results"
             :key="index"
-            class="flex flex-row flex-nowrap justify-start p-2 text-xs border-b-2 cursor-pointer"
-            :class="{'bg-grey-light': activeIndex === index}"
+            class="flex flex-row flex-no-wrap justify-start p-2 text-xs border-b-2 cursor-pointer"
+            :class="{'bg-gray-200': activeIndex === index}"
             @mouseover="activeIndex = index"
             @click="add()"
           >
@@ -128,7 +131,7 @@ export default {
     //     this.showResults = true
     //   });
     // }, 250),
-    getSurgeries: debounce(function(input) {
+    getSurgeries: debounce(function (input) {
       const params = {
         search: input,
         limit: 5

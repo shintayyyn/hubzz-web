@@ -2,19 +2,19 @@
   <section>
     <!-- input select -->
     <div class="flex flex-col py-2 mb-6">
-      <div class="relative flex flex-row flex-nowrap justify-between">
+      <div class="relative flex flex-row flex-no-wrap justify-between">
         <label :for="name" class="text-xs sm:text-base py-1">{{label}}</label>
-        <div class="bg-grey-light rounded-lg p-1 text-xs sm:text-sm" v-if="info">{{info}}</div>
+        <div class="bg-gray-200 rounded-lg p-1 text-xs sm:text-sm" v-if="info">{{info}}</div>
         <div
-          class="absolute pin-r bg-red p-1 text-xs sm:text-sm text-white"
+          class="absolute right-0 bg-red-300 p-1 text-xs sm:text-sm text-white"
           v-if="error"
         >{{error.message}}</div>
       </div>
       <div class="flex flex-row justify-start mt-1">
         <select
           :value="value"
-          class="border-b-2 focus:border-yellow focus:outline-none py-2 font-bold text-xs sm:text-sm w-full"
-          :class="error ? 'border-red':''"
+          class="border-b-2 focus:border-yellow-300 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full"
+          :class="error ? 'border-red-300':''"
           @input="$emit('input', $event.target.value)"
           :style="inStyle"
         >

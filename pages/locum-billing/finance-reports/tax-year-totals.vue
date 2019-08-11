@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-row flex-wrap justify-start">
-    <div class="p-1 w-full sm:w-1/4">
+    <div class="p-1 w-full sm:w-1/4 order-1 sm:order-2">
       <div class="rounded-lg shadow-md p-4 flex flex-col">
         <AppSelect
           v-model="tax_year_end"
@@ -11,7 +11,7 @@
         />
       </div>
     </div>
-    <div class="p-1 w-full sm:w-3/4">
+    <div class="p-1 w-full sm:w-3/4 order-2 sm:order-1">
       <div class="overflow-x-auto overflow-y-hidden">
         <table>
           <thead>
@@ -30,7 +30,7 @@
               </tr>
             </template>
             <template v-else v-for="(invoice, index) in lists">
-              <tr :key="invoice.id" class="__job-card shadow-md cursor-pointer text-xs text-left">
+              <tr :key="invoice.id" class="__job-card shadow-md cursor-pointer text-xs text-left" @click="showTax(item.id)">
                 <td>{{invoice.month_year}}</td>
                 <td>{{invoice.fees_charged}}</td>
                 <td>£ {{invoice.expenses_charged}}</td>
@@ -95,6 +95,11 @@ export default {
       lists,
       yearLists,
       tax_year_end: ''
+    }
+  },
+  methods: {
+    showTax(id) {
+      
     }
   }
 }

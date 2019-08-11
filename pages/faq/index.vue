@@ -2,43 +2,47 @@
   <section>
     <div class="px-10">
       <div class="flex flex-no-wrap justify-start">
-        <div style="font-family:Nunito" class="p-3 text-sm font-bold cursor-pointer border rounded-lg border-yellow-dark bg-yellow-dark">
-            Frequently asked questions
-        </div>
+        <div
+          style="font-family:Nunito"
+          class="p-3 text-sm font-bold cursor-pointer border rounded-lg border-yellow-400 bg-yellow-400"
+        >Frequently asked questions</div>
       </div>
     </div>
     <div class="px-10 mt-5">
       <div class="rounded-lg shadow-lg pt-10 px-5 pb-5" style="font-family:Nunito">
         <div class="font-bold text-xl">FAQs</div>
 
-        <div class="font-bold  mt-4 mb-2">Locum</div>
+        <div class="font-bold mt-4 mb-2">Locum</div>
         <div v-for="(item, index) in locum_faqs" :key="`locum-${index}`">
-          <div class="border border-white border-solid bg-grey-lighter p-4 flex justify-between cursor-pointer"
-            @click="item.view = !item.view">
+          <div
+            class="border border-white border-solid bg-gray-200 p-4 flex justify-between cursor-pointer"
+            @click="item.view = !item.view"
+          >
             <div>{{item.label}}</div>
             <div class="font-bold text-lg" v-text="item.view ? '^' : '>'"></div>
           </div>
-          <transition name="slide-down" >
+          <transition name="slide-down">
             <div class="p-4 flex justify-start" v-if="item.view" id="content">
               <div class="font-bold text-sm">{{item.value}}</div>
             </div>
           </transition>
         </div>
 
-        <div class="font-bold  mt-4 mb-2">Practice</div>
+        <div class="font-bold mt-4 mb-2">Practice</div>
         <div v-for="(item, index) in practice_faqs" :key="`practice-${index}`">
-          <div class="border border-white border-solid bg-grey-lighter p-4 flex justify-between cursor-pointer"
-            @click="item.view = !item.view">
+          <div
+            class="border border-white border-solid bg-gray-200 p-4 flex justify-between cursor-pointer"
+            @click="item.view = !item.view"
+          >
             <div>{{item.label}}</div>
             <div class="font-bold text-lg" v-text="item.view ? '^' : '>'"></div>
           </div>
-          <transition name="slide-down" >
+          <transition name="slide-down">
             <div class="p-4 flex justify-start" v-if="item.view" id="content">
               <div class="font-bold text-sm">{{item.value}}</div>
             </div>
           </transition>
         </div>
-        
       </div>
     </div>
   </section>
@@ -94,7 +98,7 @@ const practice_faqs = [
   },
 ]
 export default {
-  data () {
+  data() {
     return {
       locum_faqs,
       practice_faqs
@@ -103,10 +107,12 @@ export default {
 }
 </script>
 <style scoped>
-.slide-down-enter-active, .slide-down-leave-active {
+.slide-down-enter-active,
+.slide-down-leave-active {
   transition: all 0.25s ease-out;
 }
-.slide-down-enter, .slide-down-leave-to {
+.slide-down-enter,
+.slide-down-leave-to {
   opacity: 0;
 }
 /* #content {

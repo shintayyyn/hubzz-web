@@ -50,7 +50,10 @@
         </table>
       </div>
     </div>
-    <div class="absolute pin-b w-full" v-if="getLocumUnsuccessfulJobs.length > 0 && totalPages > 1">
+    <div
+      class="absolute bottom-0 w-full"
+      v-if="getLocumUnsuccessfulJobs.length > 0 && totalPages > 1"
+    >
       <AppPagination
         :total="total"
         :totalPages="totalPages"

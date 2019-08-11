@@ -4,7 +4,7 @@
       <div class="text-sm font-bold">I'm available for...</div>
     </div>
     <div class="px-0 md:px-10 mt-5">
-      <AvailabilityShift/>
+      <AvailabilityShift />
     </div>
     <div class="px-0 md:px-10 mt-5">
       <div class="text-sm font-bold">When I won't be available</div>
@@ -15,10 +15,10 @@
     <div class="px-0 md:px-10 my-5">
       <div class="availability-calendar relative rounded-lg shadow-lg p-5">
         <!-- @update="update" -->
-        <AvailabilityCalendar @open="open"/>
-        <div class="absolute pin-b pin-r m-5">
+        <AvailabilityCalendar @open="open" />
+        <div class="absolute bottom-0 right-0 m-5">
           <div
-            class="rounded-full h-10 w-10 sm:h-12 sm:w-12 md:h-16 md:w-16 text-2xl sm:text-3xl md:text-4xl flex items-center focus:outline-none justify-center bg-yellow-dark font-semibold cursor-pointer shadow-md hover:text-white"
+            class="rounded-full h-10 w-10 sm:h-12 sm:w-12 md:h-16 md:w-16 text-2xl sm:text-3xl md:text-4xl flex items-center focus:outline-none justify-center bg-yellow-400 font-semibold cursor-pointer shadow-md hover:text-white"
             @click="add"
           >+</div>
         </div>
@@ -48,7 +48,7 @@ export default {
     AvailabilityCalendar,
     AddUnavailableDateModal
   },
-  middleware:'isVerified',
+  middleware: 'isVerified',
   data() {
     return {
       shifts: [],

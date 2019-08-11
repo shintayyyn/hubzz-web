@@ -13,7 +13,7 @@
     <div v-else class="flex flex-row flex-wrap justify-start">
       <AppLoading :loading="loading" :message="'Loading'" v-if="loading" />
       <div
-        class="card w-24 rounded-lg shadow-lg bg-grey-light m-2 p-4 hover:bg-grey"
+        class="card w-24 rounded-lg shadow-lg bg-gray-200 m-2 p-4 hover:bg-grey"
         v-for="user in locums"
         :key="user.id"
       >

@@ -2,10 +2,18 @@
   <div>
     <div class="border-solid rounded-lg shadow-md p-8 mb-5">
       <div class="text-sm mb-5">Search for a Practice</div>
-      <input type="text" class="block mb-5 w-full search" placeholder="Practice code, name of practice" @keyup.enter="search" />
-      <button class="bg-yellow-dark hover:text-white focus:outline-none text-black font-semibold text-xs py-2 px-4 rounded-lg" @click.prevent="search">Search</button>
+      <input
+        type="text"
+        class="block mb-5 w-full search"
+        placeholder="Practice code, name of practice"
+        @keyup.enter="search"
+      />
+      <button
+        class="bg-yellow-400 hover:text-white focus:outline-none text-black font-semibold text-xs py-2 px-4 rounded-lg"
+        @click.prevent="search"
+      >Search</button>
     </div>
-    <PracticeSearchResult v-if="showResult" @nextStep="$emit('nextStep', $event)"/>
+    <PracticeSearchResult v-if="showResult" @nextStep="$emit('nextStep', $event)" />
   </div>
 </template>
 <script>
@@ -14,14 +22,14 @@ export default {
   components: {
     PracticeSearchResult
   },
-  data () {
+  data() {
     return {
       loading: false,
       showResult: false
     }
   },
   methods: {
-    search () {
+    search() {
       this.loading = true
       setTimeout(() => {
         this.showResult = true

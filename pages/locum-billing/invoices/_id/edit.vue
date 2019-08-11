@@ -19,12 +19,12 @@
         <div class="flex flex-row flex-wrap justify-start items-center my-4">
           <label class="mx-1 py-2 px-3">Type:</label>
           <button
-            :class="type === 'Private' ? 'bg-yellow-dark' : ''"
+            :class="type === 'Private' ? 'bg-yellow-400' : ''"
             class="text-xs sm:text-sm mx-1 py-2 px-3 border-2 rounded-lg font-bold flex items-center"
             @click="type = type !== 'Private' ? 'Private' : null"
           >Private</button>
           <button
-            :class="type === 'Platform' ? 'bg-yellow-dark' : ''"
+            :class="type === 'Platform' ? 'bg-yellow-400' : ''"
             class="text-xs sm:text-sm mx-1 py-2 px-3 border-2 rounded-lg font-bold flex items-center"
             @click="type = type !== 'Platform' ? 'Platform' : null"
           >Platform</button>
@@ -51,7 +51,7 @@
                     class="relative flex flex-col py-2 mb-6"
                     v-on-clickaway="toggledOffSurgeries"
                   >
-                    <div class="relative flex flex-row flex-nowrap justify-between">
+                    <div class="relative flex flex-row flex-no-wrap justify-between">
                       <label class="text-xs sm:text-sm py-1">To: Accounts Department</label>
                     </div>
                     <div class="relative flex flex-row flex-wrap justify-start">
@@ -60,7 +60,7 @@
                         type="text"
                         placeholder="Select.."
                         ref="input"
-                        class="border-b-2 w-full focus:border-yellow focus:outline-none py-3 font-bold text-xs sm:text-sm"
+                        class="border-b-2 w-full focus:border-yellow-300 focus:outline-none py-3 font-bold text-xs sm:text-sm"
                         @focus="toggledSurgeries = true"
                         readonly
                       />
@@ -76,18 +76,18 @@
                         <div class="relative">
                           <div
                             class="py-2 px-3 cursor-pointer text-xs sm:text-sm"
-                            :class="{'bg-grey-light': activeIndexSurgeries === index}"
+                            :class="{'bg-gray-200': activeIndexSurgeries === index}"
                             v-for="(item, index) in surgeries"
                             :key="item.id"
                             @mouseover="activeIndexSurgeries = index"
                             @click="addSurgery(item)"
                           >{{item.name}}</div>
                           <div
-                            class="absolute bg-grey-light w-full h-full pin-t pin-b pin-l pin-r opacity-50"
+                            class="absolute bg-gray-200 w-full h-full top-0 bottom-0 left-0 right-0 opacity-50"
                             v-if="loadingSurgeries"
                           >
                             <div
-                              class="absolute pin-b text-center w-full text-sm font-bold"
+                              class="absolute bottom-0 text-center w-full text-sm font-bold"
                             >loading icon</div>
                           </div>
                         </div>
@@ -111,7 +111,7 @@
               <section>
                 <!-- input select -->
                 <div class="relative flex flex-col py-2 mb-6" v-on-clickaway="toggledOffJobParts">
-                  <div class="relative flex flex-row flex-nowrap justify-between">
+                  <div class="relative flex flex-row flex-no-wrap justify-between">
                     <label class="text-xs sm:text-sm py-1">Select a job to add to this invoice</label>
                   </div>
                   <div class="relative flex flex-row flex-wrap justify-start">
@@ -120,7 +120,7 @@
                       type="text"
                       placeholder="Select.."
                       ref="input"
-                      class="border-b-2 w-full focus:border-yellow focus:outline-none py-3 font-bold text-xs sm:text-sm"
+                      class="border-b-2 w-full focus:border-yellow-300 focus:outline-none py-3 font-bold text-xs sm:text-sm"
                       @focus="toggledJobParts = true"
                       readonly
                     />
@@ -136,18 +136,18 @@
                       <div class="relative" v-if="jobParts.length > 0">
                         <div
                           class="py-2 px-3 cursor-pointer text-xs sm:text-sm"
-                          :class="{'bg-grey-light': activeIndexJobParts === index}"
+                          :class="{'bg-gray-200': activeIndexJobParts === index}"
                           v-for="(item, index) in filteredJobParts"
                           :key="item.id"
                           @mouseover="activeIndexJobParts = index"
                           @click="addJobPart(item)"
                         >{{item.job_part_number}}</div>
                         <div
-                          class="absolute bg-grey-light w-full h-full pin-t pin-b pin-l pin-r opacity-50"
+                          class="absolute bg-gray-200 w-full h-full top-0 bottom-0 left-0 right-0 opacity-50"
                           v-if="loadingJobParts"
                         >
                           <div
-                            class="absolute pin-b text-center w-full text-sm font-bold"
+                            class="absolute bottom-0 text-center w-full text-sm font-bold"
                           >loading icon</div>
                         </div>
                       </div>
@@ -211,7 +211,7 @@
               </tr>
               <tr>
                 <td colspan="2">
-                  <div class="flex flex-row flex-nowrap justify-between">
+                  <div class="flex flex-row flex-no-wrap justify-between">
                     <div class="w-full pr-1">
                       <AppDate
                         v-model="form.date_start"
@@ -651,5 +651,5 @@ export default {
   opacity: 0.5;
   color: #ccc;
 }
-/* absolute bg-grey-light w-full h-full pin-t pin-b pin-l pin-r */
+/* absolute bg-gray-200 w-full h-full top-0 bottom-0 left-0 right-0 */
 </style>

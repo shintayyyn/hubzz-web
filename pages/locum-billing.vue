@@ -6,25 +6,25 @@
           style="font-family:Nunito"
           to="/locum-billing/invoices"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.path === '/locum-billing/invoices' || $route.path === '/locum-billing/create' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
+          :class="$route.path === '/locum-billing/invoices' || $route.path === '/locum-billing/create' ? 'border rounded-lg border-yellow-400 bg-yellow-400' : 'text-grey-darker'"
         >Invoices</nuxt-link>
         <nuxt-link
           style="font-family:Nunito"
           to="/locum-billing/invoicing-details"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.path === '/locum-billing/invoicing-details' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
+          :class="$route.path === '/locum-billing/invoicing-details' ? 'border rounded-lg border-yellow-400 bg-yellow-400' : 'text-grey-darker'"
         >Invoicing details</nuxt-link>
         <nuxt-link
           style="font-family:Nunito"
           to="/locum-billing/finance-reports"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.path === '/locum-billing/finance-reports' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
+          :class="$route.path === '/locum-billing/finance-reports' ? 'border rounded-lg border-yellow-400 bg-yellow-400' : 'text-grey-darker'"
         >Finance reports</nuxt-link>
         <nuxt-link
           style="font-family:Nunito"
           to="/locum-billing/tax-reports"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.path === '/locum-billing/tax-reports' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
+          :class="$route.path === '/locum-billing/tax-reports' ? 'border rounded-lg border-yellow-400 bg-yellow-400' : 'text-grey-darker'"
         >Tax reports</nuxt-link>
       </div>
       <nuxt-link
@@ -34,7 +34,7 @@
         class="w-1/5 p-3 text-sm text-right cursor-pointer"
       >
         Add invoice
-        <!-- <span class="rounded-full h-4 w-4 bg-yellow-dark font-semibold text-xl px-3 py-1">+</span> -->
+        <!-- <span class="rounded-full h-4 w-4 bg-yellow-400 font-semibold text-xl px-3 py-1">+</span> -->
       </nuxt-link>
     </div>
 
