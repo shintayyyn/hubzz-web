@@ -3,8 +3,8 @@
     <div class="flex flex-row flex-wrap justify-between">
       <div class="w-1/2 sm:w-1/3 cursor-pointer py-2" @click="toggle">
         <div class="burger">
-          <div class="my-2 bg-yellow-dark"></div>
-          <div class="my-2 bg-yellow-dark"></div>
+          <div class="my-2 bg-yellow-400"></div>
+          <div class="my-2 bg-yellow-400"></div>
         </div>
       </div>
       <div class="w-1/2 text-right sm:w-1/3 sm:text-center py-2">
@@ -24,7 +24,7 @@
           </div>
           <nuxt-link
             :to="'/messages'"
-            class="font-bold text-xs sm:text-sm no-underline px-2 py-1 rounded-lg bg-yellow-dark ml-4"
+            class="font-bold text-xs sm:text-sm no-underline px-2 py-1 rounded-lg bg-yellow-400 ml-4"
           >Messages</nuxt-link>
           <div
             class="text-xs xl:text-sm ml-4"
@@ -75,7 +75,7 @@ export default {
   .burger {
     display: none;
   }
-  .header-section{
+  .header-section {
     margin-bottom: 50px;
   }
 }

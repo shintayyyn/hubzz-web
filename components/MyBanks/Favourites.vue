@@ -9,9 +9,7 @@
         :placeholder="'All'"
       />
     </div>
-    <div class="mt-10 w-full text-center" v-if="locums.length == 0">
-      You have no favorite locums.
-    </div>
+    <div class="mt-10 w-full text-center" v-if="locums.length == 0">You have no favorite locums.</div>
     <div v-else class="flex flex-row flex-wrap justify-start">
       <AppLoading :loading="loading" :message="'Loading'" v-if="loading" />
       <div
@@ -46,7 +44,7 @@
       </div>
     </div>
 
-    <div v-if="!locums.length == 0" class="m-10 xl:-ml-32">
+    <div class="m-10 xl:-ml-32" v-if="locums.length > 0 && totalPages > 1">
       <AppPagination
         :total="total"
         :totalPages="totalPages"
@@ -89,7 +87,7 @@ export default {
       modal: false, //TEMPORARY
       user: null, //TEMPORARY
       jobs: null,
-      professions:[],
+      professions: [],
       profession_id: null,
       filteredUsers: []
     }
@@ -104,7 +102,7 @@ export default {
       this.currentPage = parseInt(to.query.current_page)
       this.getFavoriteLocums()
     },
-    profession_id:function(){
+    profession_id: function () {
       this.getFavoriteLocums()
     }
   },
@@ -134,12 +132,12 @@ export default {
       this.loading = true
       let offset = 0
       offset = this.perPage * (parseInt(this.$route.query.current_page) - 1)
-      if(!this.profession_id){
+      if (!this.profession_id) {
         this.$axios.$get(`/api/v1/practice/locums?practice_locum_type=Favorite&limit=${this.perPage}&offset=${offset}`).then(res => {
           this.locums = res.data.users
         })
-      }else{
-         this.$axios.$get(`/api/v1/practice/locums?profession_id=${this.profession_id}&practice_locum_type=Favorite&limit=${this.perPage}&offset=${offset}`).then(res => {
+      } else {
+        this.$axios.$get(`/api/v1/practice/locums?profession_id=${this.profession_id}&practice_locum_type=Favorite&limit=${this.perPage}&offset=${offset}`).then(res => {
           this.locums = res.data.users
         })
       }

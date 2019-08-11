@@ -1,10 +1,13 @@
 <template>
   <div
-    class="relative rounded-lg py-3 px-5 my-1 bg-white cursor-pointer hover:bg-grey-lighter"
+    class="relative rounded-lg py-3 px-5 my-1 bg-white cursor-pointer hover:bg-gray-200"
     @click="select"
   >
     <template v-if="job.type">
-      <div class="absolute pin-l pin-t rounded-l-lg p-2 h-full" :class="bgStatus(job.locum_status)"></div>
+      <div
+        class="absolute left-0 top-0 rounded-l-lg p-2 h-full"
+        :class="bgStatus(job.locum_status)"
+      ></div>
       <div class="ml-2">
         <div class="text-grey-dark text-xs xl:text-sm">Job Number: {{job.job_number}}</div>
         <div class="my-3 font-bold text-sm sm:text-md">{{title(job.type)}}</div>
@@ -18,7 +21,7 @@
       </div>
     </template>
     <template v-else>
-      <div class="bg-pink absolute pin-l pin-t rounded-l-lg p-2 h-full"></div>
+      <div class="bg-pink-300 absolute left-0 top-0 rounded-l-lg p-2 h-full"></div>
       <div class="ml-2">
         <div class="my-3 font-bold text-sm sm:text-md">Unavailable</div>
         <div
@@ -79,16 +82,16 @@ export default {
     bgStatus(type, reminder) {
       switch (type) {
         case 'Applied':
-          return 'bg-orange-dark';
+          return 'bg-orange-400';
           break;
         case 'Completed':
-          return 'bg-green-light';
+          return 'bg-green-200';
           break;
         case 'Current':
-          return 'bg-green-light';
+          return 'bg-green-200';
           break;
         default:
-          return 'bg-red'
+          return 'bg-red-300'
       }
     }
   }

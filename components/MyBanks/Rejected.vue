@@ -9,7 +9,7 @@
         :placeholder="'All'"
       />
     </div>
-    <div class="mt-10 w-full text-center" v-if="locums.length == 0" >
+    <div class="mt-10 w-full text-center" v-if="locums.length == 0">
       <span>You have not rejected any locums.</span>
     </div>
     <div v-else class="flex flex-row flex-wrap justify-start">
@@ -19,23 +19,25 @@
         v-for="user in locums"
         :key="user.id"
       >
-      <div class="flex flex-wrap text-center mt-4 cursor-pointer" @click="show(user.id)">
+        <div class="flex flex-wrap text-center mt-4 cursor-pointer" @click="show(user.id)">
           <div class="w-full">
             <div v-if="!user.avatar">
-              <svgicon name="no-avatar" height="115" width="115"/>
+              <svgicon name="no-avatar" height="115" width="115" />
             </div>
             <embed
-            class="object-contain h-32 rounded-full mr-4"
-            :src="user.avatar ? user.avatar.file.url:null" 
-            >
+              class="object-contain h-32 rounded-full mr-4"
+              :src="user.avatar ? user.avatar.file.url:null"
+            />
           </div>
           <div class="w-full font-bold text-sm sm:text-lg my-4">{{user.personal_detail.name}}</div>
-          <div class="w-full font-bold text-grey-dark text-sm sm:text-lg">{{user.locum_detail.profession.name}}</div>
+          <div
+            class="w-full font-bold text-grey-dark text-sm sm:text-lg"
+          >{{user.locum_detail.profession.name}}</div>
         </div>
       </div>
     </div>
 
-    <div v-if="!locums.length == 0" class="m-10 xl:-ml-32">
+    <div class="m-10 xl:-ml-32" v-if="locums.length > 0 && totalPages > 1">
       <AppPagination
         :total="total"
         :totalPages="totalPages"
@@ -48,10 +50,10 @@
     <div class="locum-shield" v-if="modal"></div>
     <transition name="slide" mode="out-in">
       <div class="locum-modal shadow-lg" v-if="modal">
-        <MyLocumDetailModal @close="modal = false" :user="user" :jobs="jobs"/> <!--insert :locum jobs here-->
+        <MyLocumDetailModal @close="modal = false" :user="user" :jobs="jobs" />
+        <!--insert :locum jobs here-->
       </div>
     </transition>
-
   </div>
 </template>
 <script>
@@ -75,10 +77,10 @@ export default {
       currentPage: 0,
       perPage: 0,
       loading: false,
-      modal:false, //TEMPORARY
-      user:null,//TEMPORARY
-      jobs:null, 
-      professions:[],
+      modal: false, //TEMPORARY
+      user: null,//TEMPORARY
+      jobs: null,
+      professions: [],
       profession_id: null,
       filteredUsers: []
     }
@@ -93,7 +95,7 @@ export default {
       this.currentPage = parseInt(to.query.current_page)
       this.getRejectedLocums()
     },
-    profession_id:function(){
+    profession_id: function () {
       this.getRejectedLocums()
     }
   },
@@ -102,7 +104,7 @@ export default {
       ...this.$route.query,
       current_page: this.$route.query.current_page || 1
     }
-    
+
     this.$axios.$get(`/api/v1/practice/locums/count?practice_locum_type=Rejected`).then(res => { //GET QUANTITY OF DATA
       this.total = res.data.count
       this.perPage = 6
@@ -123,20 +125,20 @@ export default {
     // })
   },
   methods: {
-    getRejectedLocums(){
+    getRejectedLocums() {
       this.loading = true
       let offset = 0
       offset = this.perPage * (parseInt(this.$route.query.current_page) - 1)
-      if(!this.profession_id){
+      if (!this.profession_id) {
         this.$axios.$get(`/api/v1/practice/locums?practice_locum_type=Rejected&limit=${this.perPage}&offset=${offset}`).then(res => {
           this.locums = res.data.users
         })
-      }else{
-         this.$axios.$get(`/api/v1/practice/locums?profession_id=${this.profession_id}&practice_locum_type=Rejected&limit=${this.perPage}&offset=${offset}`).then(res => {
+      } else {
+        this.$axios.$get(`/api/v1/practice/locums?profession_id=${this.profession_id}&practice_locum_type=Rejected&limit=${this.perPage}&offset=${offset}`).then(res => {
           this.locums = res.data.users
         })
       }
-      this.loading=false
+      this.loading = false
     },
     show(id) {
       // set id to store
@@ -147,14 +149,14 @@ export default {
       // document.body.style.overflow = 'hidden'
       // this.$store.commit('SET_MYLOCUMDETAIL_MODAL', true)
       Promise.all([
-        this.$axios.$get(`/api/v1/practice/locums/${id}`).then(res => {  
-          this.user = res.data.user                                       
+        this.$axios.$get(`/api/v1/practice/locums/${id}`).then(res => {
+          this.user = res.data.user
         }),
-      ]).then(() =>{
-        this.$axios.$get(`/api/v1/practice/jobs?locum_detail_id=${this.user.locum_detail.id}`).then(res =>{
+      ]).then(() => {
+        this.$axios.$get(`/api/v1/practice/jobs?locum_detail_id=${this.user.locum_detail.id}`).then(res => {
           this.jobs = res.data.jobs
         }),
-        this.modal = true
+          this.modal = true
       })
     },
     pagechanged(e) {

@@ -1,9 +1,12 @@
 <template>
   <div class="flex flex-col py-2 mb-6" v-on-clickaway="toggledOff">
-    <div class="relative flex flex-row flex-nowrap justify-between">
+    <div class="relative flex flex-row flex-no-wrap justify-between">
       <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
       <div class="flex">
-        <div class="bg-red ml-2 p-1 text-xs sm:text-base text-white" v-if="error">{{error.message}}</div>
+        <div
+          class="bg-red-300 ml-2 p-1 text-xs sm:text-base text-white"
+          v-if="error"
+        >{{error.message}}</div>
       </div>
     </div>
     <div class="flex flex-row justify-start mt-1">
@@ -11,8 +14,9 @@
         v-model="search"
         ref="search"
         type="text"
-        class="border-b-2 focus:border-yellow focus:outline-none py-4 font-bold text-xs sm:text-sm w-full"
-        :class="error? 'border-red':''"
+        :placeholder="placeholder"
+        class="border-b-2 focus:border-yellow-300 focus:outline-none py-4 font-bold text-xs sm:text-sm w-full"
+        :class="error? 'border-red-300':''"
         :style="inStyle"
         @focus="toggledOn"
         @keydown="handleKeyDownEvent"
@@ -24,18 +28,34 @@
           <div
             v-for="(item, index) in results"
             :key="index"
-            class="flex flex-row flex-nowrap justify-start p-2 text-xs border-b-2 cursor-pointer"
-            :class="{'bg-grey-light': activeIndex === index}"
+            class="flex flex-row flex-no-wrap justify-start p-2 text-xs border-b-2 cursor-pointer"
+            :class="{'bg-gray-200': activeIndex === index}"
             @mouseover="activeIndex = index"
             @click="add()"
           >
-            <div class="leading-normal mx-2">
-              <span v-text="item.name"></span>
-              <span
-                class="text-grey-dark"
-                v-text="`${item.clinical_commissioning_group.name} ${item.code}`"
-              ></span>
-            </div>
+            <template v-if="keyword === 'practices'">
+              <span class="w-1/6 flex justify-center">
+                <img
+                  class="w-10 h-10 rounded-full"
+                  src="https://www.svgrepo.com/show/106812/doctor.svg"
+                  width="25"
+                  alt="avatar"
+                />
+              </span>
+              <div class="w-full flex flex-col justify-center mx-2">
+                <span class="font-bold text-base">{{ item.first_name }} {{ item.last_name }}</span>
+                <span>{{ item.surgery }}</span>
+              </div>
+            </template>
+            <template v-else>
+              <div class="leading-normal mx-2">
+                <span v-text="item.name"></span>
+                <span
+                  class="text-grey-dark"
+                  v-text="`${item.clinical_commissioning_group.name} ${item.code}`"
+                ></span>
+              </div>
+            </template>
           </div>
         </div>
       </div>
@@ -51,7 +71,9 @@ export default {
     value: String,
     name: String,
     label: String,
+    placeholder: String,
     url: String,
+    keyword: String,
     error: Object,
     inStyle: String
   },
@@ -80,16 +102,53 @@ export default {
       let selectedSurgery = this.results[this.activeIndex];
       this.results = [];
       this.showResults = false;
-      this.$emit("input", selectedSurgery.name);
+      if (this.keyword === "practices") {
+        let fullName =
+          selectedSurgery.first_name + " " + selectedSurgery.last_name;
+        this.$emit("input", fullName);
+        this.$emit("selectUserId", selectedSurgery.id);
+        this.$axios
+          .$get(`/api/v1/conversations?search=${fullName}`)
+          .then(res => {
+            if (res.data.conversations.length > 0) {
+              let id = res.data.conversations[0].id;
+              console.log(id);
+              this.$router.push(`/messages/${id}`);
+            }
+          });
+      } else {
+        this.$emit("input", selectedSurgery.name);
+      }
     },
+    // getSurgeries: debounce(function (input) {
+    //   const params = {
+    //     search: input,
+    //     limit: 5
+    //   };
+    //   this.$axios.$get(this.url, { params }).then(res => {
+    //     console.log(res)
+    //     this.results = res.data.practices
+    //     this.showResults = true
+    //   });
+    // }, 250),
     getSurgeries: debounce(function (input) {
       const params = {
         search: input,
         limit: 5
       };
       this.$axios.$get(this.url, { params }).then(res => {
-        this.results = res.data.surgeries
-        this.showResults = true
+        if (this.keyword && this.keyword === "practices") {
+          // res.data.practices.forEach(data => {
+          //   this.results.push({
+          //     value: '',
+
+          //   })
+          // })
+          this.results = res.data.users;
+        } else {
+          this.results = res.data.surgeries;
+        }
+        this.showResults = true;
       });
     }, 250),
     toggledOn() {
@@ -126,7 +185,7 @@ export default {
       }
     }
   }
-}
+};
 </script>
 <style scoped>
 .icon {

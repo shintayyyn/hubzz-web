@@ -20,10 +20,4 @@ export default {
 }
 </script>
 <style scoped>
-.messages-center-panel {
-  /* float: left; */
-  min-height: 80vh;
-  max-height: 90vh;
-  /* border: 1px solid black; */
-}
 </style>

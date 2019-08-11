@@ -106,7 +106,7 @@
             </tr>
             <tr>
               <td colspan="2">
-                <div class="flex flex-row flex-nowrap justify-between">
+                <div class="flex flex-row flex-no-wrap justify-between">
                   <div class="w-full pr-1">
                     <AppDate
                       v-model="form.date_start"
@@ -269,7 +269,7 @@ export default {
       invoiceForm.date_end = this.form.date_end;
       this.$emit("add", invoiceForm);
     },
-    archive() {},
+    archive() { },
     removeItem(index) {
       this.rowData.splice(index, 1);
     },

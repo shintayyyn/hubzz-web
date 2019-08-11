@@ -6,6 +6,11 @@ export default {
                 commit('ADD_CONVERSATION', conversation)
             }
         })
+        this.$socket.on('deleteConversation', (conversation) => {
+            if (state.conversations.find(item => item.id == conversation.id)) {
+                commit('DELETE_CONVERSATION', conversation.id)
+            }
+        })
         this.$socket.on('newMessage', (message) => {
             if (!state.messages.find(data => data.id == message.id)) {
                 commit('ADD_MESSAGE', message)
@@ -38,7 +43,8 @@ export default {
         } else {
             receiver_user_id = foundConversation.receiver_id
         }
-        const response = await chatApi.sendMessage(this.$axios, receiver_user_id.toString(), payload)
+        payload.receiver_user_id = receiver_user_id.toString()
+        const response = await chatApi.sendMessage(this.$axios, payload)
         if (!state.messages.find(message => message.id === response.data.message.id)) {
             commit('ADD_MESSAGE', response.data.message)
         }

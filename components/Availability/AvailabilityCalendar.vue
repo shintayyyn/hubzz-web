@@ -6,7 +6,7 @@
           class="text-xs lg:text-base"
         >{{$store.state.availability.months[selectedMonth]}} {{selectedYear}}</div>
       </div>
-      <div class="w-1/2 text-right">
+      <div class="w-1/2 flex flex-row flex-no-wrap justify-end">
         <span class="cursor-pointer" @click="adjustMonth('previous')">
           <svgicon name="arrow-left" height="15" width="15" />
         </span>
@@ -17,7 +17,7 @@
       </div>
     </div>
 
-    <div class="flex flex-nowrap justify-between text-xs lg:text-base mx-1 mt-5">
+    <div class="flex flex-no-wrap justify-between text-xs lg:text-base mx-1 mt-5">
       <div class="w-full text-center text-grey font-bold">MON</div>
       <div class="w-full text-center text-grey font-bold">TUE</div>
       <div class="w-full text-center text-grey font-bold">WED</div>
@@ -27,7 +27,7 @@
       <div class="w-full text-center text-grey font-bold">SUN</div>
     </div>
 
-    <div class="flex flex-nowrap justify-between mx-1 mt-5">
+    <div class="flex flex-no-wrap justify-between mx-1 mt-5">
       <div class="flex flex-col w-full">
         <div v-if="daysInMonth.findIndex(({ day }) => day === 0) < 6">
           <div class="m-1 h-8 sm:h-12 md:h-16 lg:h-20 w-auto">&nbsp;</div>
@@ -36,7 +36,7 @@
           <div
             @click="selectDate(item.fullDate)"
             class="relative border border-solid rounded-lg m-1 cursor-pointer flex justify-center items-center h-8 sm:h-12 md:h-16 lg:h-20 w-auto"
-            :class="$store.state.availability.date_today === item.fullDate ? 'border-yellow-dark text-lg font-bold':'hover:bg-grey-light'"
+            :class="$store.state.availability.date_today === item.fullDate ? 'border-yellow-400 text-lg font-bold':'hover:bg-gray-200'"
             v-if="item.day === 1"
           >
             <div class="text-xs lg:text-base z-10">{{(item.date)}}</div>
@@ -52,7 +52,7 @@
           <div
             @click="selectDate(item.fullDate)"
             class="relative border border-solid rounded-lg m-1 cursor-pointer flex justify-center items-center h-8 sm:h-12 md:h-16 lg:h-20 w-auto"
-            :class="$store.state.availability.date_today === item.fullDate ? 'border-yellow-dark text-lg font-bold':'hover:bg-grey-light'"
+            :class="$store.state.availability.date_today === item.fullDate ? 'border-yellow-400 text-lg font-bold':'hover:bg-gray-200'"
             v-if="item.day === 2"
           >
             <div class="text-xs lg:text-base z-10">{{(item.date)}}</div>
@@ -68,7 +68,7 @@
           <div
             @click="selectDate(item.fullDate)"
             class="relative border border-solid rounded-lg m-1 cursor-pointer flex justify-center items-center h-8 sm:h-12 md:h-16 lg:h-20 w-auto"
-            :class="$store.state.availability.date_today === item.fullDate ? 'border-yellow-dark text-lg font-bold':'hover:bg-grey-light'"
+            :class="$store.state.availability.date_today === item.fullDate ? 'border-yellow-400 text-lg font-bold':'hover:bg-gray-200'"
             v-if="item.day === 3"
           >
             <div class="text-xs lg:text-base z-10">{{(item.date)}}</div>
@@ -84,7 +84,7 @@
           <div
             @click="selectDate(item.fullDate)"
             class="relative border border-solid rounded-lg m-1 cursor-pointer flex justify-center items-center h-8 sm:h-12 md:h-16 lg:h-20 w-auto"
-            :class="$store.state.availability.date_today === item.fullDate ? 'border-yellow-dark text-lg font-bold':'hover:bg-grey-light'"
+            :class="$store.state.availability.date_today === item.fullDate ? 'border-yellow-400 text-lg font-bold':'hover:bg-gray-200'"
             v-if="item.day === 4"
           >
             <div class="text-xs lg:text-base z-10">{{(item.date)}}</div>
@@ -100,7 +100,7 @@
           <div
             @click="selectDate(item.fullDate)"
             class="relative border border-solid rounded-lg m-1 cursor-pointer flex justify-center items-center h-8 sm:h-12 md:h-16 lg:h-20 w-auto"
-            :class="$store.state.availability.date_today === item.fullDate ? 'border-yellow-dark text-lg font-bold':'hover:bg-grey-light'"
+            :class="$store.state.availability.date_today === item.fullDate ? 'border-yellow-400 text-lg font-bold':'hover:bg-gray-200'"
             v-if="item.day === 5"
           >
             <div class="text-xs lg:text-base z-10">{{(item.date)}}</div>
@@ -116,7 +116,7 @@
           <div
             @click="selectDate(item.fullDate)"
             class="relative border border-solid rounded-lg m-1 cursor-pointer flex justify-center items-center h-8 sm:h-12 md:h-16 lg:h-20 w-auto"
-            :class="$store.state.availability.date_today === item.fullDate ? 'border-yellow-dark text-lg font-bold':'hover:bg-grey-light'"
+            :class="$store.state.availability.date_today === item.fullDate ? 'border-yellow-400 text-lg font-bold':'hover:bg-gray-200'"
             v-if="item.day === 6"
           >
             <div class="text-xs lg:text-base z-10">{{(item.date)}}</div>
@@ -132,7 +132,7 @@
           <div
             @click="selectDate(item.fullDate)"
             class="relative border border-solid rounded-lg m-1 cursor-pointer flex justify-center items-center h-8 sm:h-12 md:h-16 lg:h-20 w-auto"
-            :class="$store.state.availability.date_today === item.fullDate ? 'border-yellow-dark text-lg font-bold':'hover:bg-grey-light'"
+            :class="$store.state.availability.date_today === item.fullDate ? 'border-yellow-400 text-lg font-bold':'hover:bg-gray-200'"
             v-if="item.day === 0"
           >
             <div class="text-xs lg:text-base z-10">{{(item.date)}}</div>

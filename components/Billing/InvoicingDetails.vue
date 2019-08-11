@@ -6,12 +6,12 @@
         <div class="border-solid rounded-lg shadow-lg mt-5 p-10">
           <div
             class="mb-4 border-b border-b-2 border-grey py-2"
-            :class="{'border-yellow-dark':setFocus === 'account_name', 'border-red': formError.includes('account_name')}"
+            :class="{'border-yellow-400':setFocus === 'account_name', 'border-red-300': formError.includes('account_name')}"
           >
             <label for="account_name" class="block text-sm mb-2">Account Name</label>
             <em
               v-if="formError.includes('account_name')"
-              class="text-xs text-red-darker float-right"
+              class="text-xs text-red-400 float-right"
             >Required</em>
             <input
               @focus="setFocus = 'account_name'"
@@ -26,12 +26,12 @@
           </div>
           <div
             class="mb-4 border-b border-b-2 border-grey py-2"
-            :class="{'border-yellow-dark':setFocus === 'bank_name', 'border-red': formError.includes('bank_name')}"
+            :class="{'border-yellow-400':setFocus === 'bank_name', 'border-red-300': formError.includes('bank_name')}"
           >
             <label for="bank_name" class="block text-sm mb-2">Bank Name</label>
             <em
               v-if="formError.includes('bank_name')"
-              class="text-xs text-red-darker float-right"
+              class="text-xs text-red-400 float-right"
             >Required</em>
             <input
               @focus="setFocus = 'bank_name'"
@@ -46,12 +46,12 @@
           </div>
           <div
             class="mb-4 border-b border-b-2 border-grey py-2"
-            :class="{'border-yellow-dark':setFocus === 'sort_code', 'border-red': formError.includes('sort_code')}"
+            :class="{'border-yellow-400':setFocus === 'sort_code', 'border-red-300': formError.includes('sort_code')}"
           >
             <label for="sort_code" class="block text-sm mb-2">Sort code</label>
             <em
               v-if="formError.includes('sort_code')"
-              class="text-xs text-red-darker float-right"
+              class="text-xs text-red-400 float-right"
             >Required</em>
             <input
               @focus="setFocus = 'sort_code'"
@@ -66,12 +66,12 @@
           </div>
           <div
             class="mb-4 border-b border-b-2 border-grey py-2"
-            :class="{'border-yellow-dark':setFocus === 'account_number', 'border-red': formError.includes('account_number')}"
+            :class="{'border-yellow-400':setFocus === 'account_number', 'border-red-300': formError.includes('account_number')}"
           >
             <label for="account_number" class="block text-sm mb-2">Account number</label>
             <em
               v-if="formError.includes('account_number')"
-              class="text-xs text-red-darker float-right"
+              class="text-xs text-red-400 float-right"
             >Required</em>
             <input
               @focus="setFocus = 'account_number'"
@@ -123,12 +123,12 @@
 
           <div
             class="mb-4 border-b border-b-2 border-grey py-2 mt-5"
-            :class="{'border-yellow-dark':setFocus === 'utr_number', 'border-red': formError.includes('utr_number')}"
+            :class="{'border-yellow-400':setFocus === 'utr_number', 'border-red-300': formError.includes('utr_number')}"
           >
             <label for="utr_number" class="block text-sm mb-2">UTR Number</label>
             <em
               v-if="formError.includes('utr_number')"
-              class="text-xs text-red-darker float-right"
+              class="text-xs text-red-400 float-right"
             >Required</em>
             <input
               @focus="setFocus = 'utr_number'"
@@ -145,7 +145,7 @@
 
         <div class="mt-4">
           <button
-            class="bg-yellow-dark hover:text-white focus:outline-none text-black font-bold text-xl p-6 rounded-lg shadow-md"
+            class="bg-yellow-400 hover:text-white focus:outline-none text-black font-bold text-xl p-6 rounded-lg shadow-md"
             @click.prevent="save"
           >Save changes</button>
         </div>
@@ -222,7 +222,7 @@ export default {
       });
       this.daysInMonth = daysInMonth;
     },
-    save() {}
+    save() { }
   }
 };
 </script>

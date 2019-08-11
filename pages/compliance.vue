@@ -3,24 +3,24 @@
     <div class="overflow-x-auto">
       <div class="number-status md:mt-10">
         <div class="border-solid rounded-lg shadow-md px-1 py-4 mb-5 mx-1 md:mx-0">
-          <div class="flex flex-row flex-nowrap justify-start text-xs sm:text-sm">
+          <div class="flex flex-row flex-no-wrap justify-start text-xs sm:text-sm">
             <div class="w-1/3 p-1 text-left">Your GMC / NMC Number</div>
             <div class="w-1/3 p-1 text-left">{{gmc_or_nmc_number.number}}</div>
             <div class="max-w-xs p-1">
               <div
-                class="text-xs sm:text-sm text-center bg-orange text-white font-bold rounded-full px-2 py-1"
+                class="text-xs sm:text-sm text-center bg-orange-300 text-white font-bold rounded-full px-2 py-1"
                 :class="status(gmc_or_nmc_number.status)"
               >{{gmc_or_nmc_number.status}}</div>
             </div>
           </div>
         </div>
         <div class="border-solid rounded-lg shadow-md px-1 py-4 mb-5 mx-1 md:mx-0">
-          <div class="flex flex-row flex-nowrap justify-start items-center text-xs sm:text-sm">
+          <div class="flex flex-row flex-no-wrap justify-start items-center text-xs sm:text-sm">
             <div class="w-1/3 p-1 text-left">Your MPL / NPL Number</div>
             <div class="w-1/3 p-1 text-left">{{mpl_or_npl_number.number}}</div>
             <div class="max-w-xs p-1">
               <div
-                class="text-xs sm:text-sm text-center bg-orange text-white font-bold rounded-full px-2 py-1"
+                class="text-xs sm:text-sm text-center bg-orange-300 text-white font-bold rounded-full px-2 py-1"
                 :class="status(mpl_or_npl_number.status)"
               >{{mpl_or_npl_number.status}}</div>
             </div>
@@ -45,14 +45,17 @@
           </tr>
         </thead>
         <tbody>
+          <!--------------------------FILE SHOULD SHOW ON CLICK----------------------------->
           <template v-for="(item, index) in mandatory">
             <tr
               :key="item.id"
-              class="rounded-lg shadow-md hover:bg-grey-light cursor-pointer text-xs sm:text-sm text-left"
+              class="rounded-lg shadow-md cursor-pointer text-xs sm:text-sm text-left"
+              :class="item.info && item.info.file ? 'hover:bg-gray-200' : ''"
+              @click="item.info && item.info.file ? showComplianceDoc(item.info.id) : null"
             >
               <td>{{item.name}}</td>
               <td class="hover:underline" v-if="item.info && item.info.file">
-                <div class="flex flex-row flex-nowrap items-center">
+                <div class="flex flex-row flex-no-wrap items-center">
                   <svgicon name="cloud-download" height="24" width="24" />
                   <div class="mx-2">
                     <a
@@ -82,7 +85,7 @@
               <td v-if="item.info">{{item.info.note | StringMaxLength}}</td>
               <td v-else></td>
               <td class="hover:underline" v-if="!item.info">
-                <div class="flex flex-row flex-nowrap">
+                <div class="flex flex-row flex-no-wrap">
                   <input
                     type="file"
                     :name="`${item.id}_file`"
@@ -95,7 +98,7 @@
                 </div>
               </td>
               <td class="hover:underline" v-else>
-                <div class="flex flex-row flex-nowrap">
+                <div class="flex flex-row flex-no-wrap">
                   <input
                     type="file"
                     :name="`${item.id}_file`"
@@ -112,6 +115,7 @@
               <td></td>
             </tr>
           </template>
+          <!-------------------------FILE SHOULD SHOW ON CLICK------------------------------>
         </tbody>
       </table>
     </div>
@@ -137,11 +141,13 @@
           <template v-for="(item, index) in optional">
             <tr
               :key="item.id"
-              class="rounded-lg shadow-md hover:bg-grey-light cursor-pointer text-xs sm:text-sm text-left"
+              class="rounded-lg shadow-md cursor-pointer text-xs sm:text-sm text-left"
+              :class="item.info && item.info.file ? 'hover:bg-gray-200' : ''"
+              @click="item.info && item.info.file ? showComplianceDoc(item.info.id) : null"
             >
               <td>{{item.name}}</td>
               <td class="hover:underline" v-if="item.info && item.info.file">
-                <div class="flex flex-row flex-nowrap">
+                <div class="flex flex-row flex-no-wrap">
                   <svgicon name="cloud-download" height="24" width="24" />
                   <div class="leading-loose mx-2">
                     <a
@@ -159,7 +165,7 @@
               <td></td>
               <td></td>
               <td class="hover:underline" v-if="!item.info">
-                <div class="flex flex-row flex-nowrap">
+                <div class="flex flex-row flex-no-wrap">
                   <input
                     type="file"
                     :name="`${item.id}_file`"
@@ -172,7 +178,7 @@
                 </div>
               </td>
               <td class="hover:underline" v-else>
-                <div class="flex flex-row flex-nowrap">
+                <div class="flex flex-row flex-no-wrap">
                   <input
                     type="file"
                     :name="`${item.id}_file`"
@@ -214,11 +220,13 @@
           <template v-for="(item, index) in mandatory_trainings">
             <tr
               :key="item.id"
-              class="rounded-lg shadow-md hover:bg-grey-light cursor-pointer text-xs sm:text-sm text-left"
+              class="rounded-lg shadow-md cursor-pointer text-xs sm:text-sm text-left"
+              :class="item.info && item.info.file ? 'hover:bg-gray-200' : ''"
+              @click="item.info && item.info.file ? showMandatoryTraining(item.info.id) : null"
             >
               <td>{{item.name}}</td>
               <td class="hover:underline" v-if="item.info && item.info.file">
-                <div class="flex flex-row flex-nowrap">
+                <div class="flex flex-row flex-no-wrap">
                   <svgicon name="cloud-download" height="24" width="24" />
                   <div class="leading-loose mx-2">
                     <a
@@ -236,7 +244,7 @@
               <td></td>
               <td></td>
               <td class="hover:underline" v-if="!item.info">
-                <div class="flex flex-row flex-nowrap">
+                <div class="flex flex-row flex-no-wrap">
                   <input
                     type="file"
                     :name="`${item.id}_mandatory_file`"
@@ -252,7 +260,7 @@
                 </div>
               </td>
               <td class="hover:underline" v-else>
-                <div class="flex flex-row flex-nowrap">
+                <div class="flex flex-row flex-no-wrap">
                   <input
                     type="file"
                     :name="`${item.id}_mandatory_file`"
@@ -275,10 +283,40 @@
         </tbody>
       </table>
     </div>
+
+    <div>
+      <div class="shield" v-if="complianceModal"></div>
+      <transition name="slide" mode="out-in">
+        <div class="complianceModal shadow-lg" v-if="complianceModal">
+          <ShowComplianceDocument
+            :specificComplianceDoc="specificComplianceDoc"
+            @close="complianceModal = false"
+          />
+        </div>
+      </transition>
+    </div>
+
+    <div>
+      <div class="shield" v-if="mandatoryTrainingModal"></div>
+      <transition name="slide" mode="out-in">
+        <div class="mandatoryTrainingModal shadow-lg" v-if="mandatoryTrainingModal">
+          <ShowMandatoryTraining
+            :specificMandatoryTraining="specificMandatoryTraining"
+            @close="mandatoryTrainingModal = false"
+          />
+        </div>
+      </transition>
+    </div>
   </section>
 </template>
 <script>
+import ShowComplianceDocument from '@/components/Compliance/ShowComplianceDocument'
+import ShowMandatoryTraining from '@/components/Compliance/ShowMandatoryTraining'
 export default {
+  components: {
+    ShowComplianceDocument,
+    ShowMandatoryTraining
+  },
   data() {
     return {
       gmc_or_nmc_number: {},
@@ -286,7 +324,11 @@ export default {
       profession: {},
       mandatory: [],
       optional: [],
-      mandatory_trainings: []
+      mandatory_trainings: [],
+      specificComplianceDoc: null,
+      specificMandatoryTraining: null,
+      complianceModal: false,
+      mandatoryTrainingModal: false,
     };
   },
   created() {
@@ -331,62 +373,82 @@ export default {
     },
     // set mandatory and optional
     setComplianceDocuments() {
-      if (this.$auth.user.locum_detail.compliance_documents.length > 0) {
-        this.$auth.user.locum_detail.compliance_documents.forEach(
-          userComplianceDocument => {
-            this.profession.mandatory_compliance_documents.forEach(
-              mandatoryDocument => {
-                if (
-                  userComplianceDocument.compliance_document.id ===
-                  mandatoryDocument.id
-                ) {
-                  mandatoryDocument.info = userComplianceDocument;
+      this.$axios.$get(`/api/v1/me`).then(res => {
+        if (res.data.user.locum_detail.compliance_documents.length > 0) {
+          res.data.user.locum_detail.compliance_documents.forEach(
+            userComplianceDocument => {
+              this.profession.mandatory_compliance_documents.forEach(
+                mandatoryDocument => {
+                  if (
+                    userComplianceDocument.compliance_document.id ===
+                    mandatoryDocument.id
+                  ) {
+                    mandatoryDocument.info = userComplianceDocument;
+                  }
                 }
-              }
-            );
-            this.profession.optional_compliance_documents.forEach(
-              optionalDocument => {
-                if (
-                  userComplianceDocument.compliance_document.id ===
-                  optionalDocument.id
-                ) {
-                  optionalDocument.info = userComplianceDocument;
+              );
+              this.profession.optional_compliance_documents.forEach(
+                optionalDocument => {
+                  if (
+                    userComplianceDocument.compliance_document.id ===
+                    optionalDocument.id
+                  ) {
+                    optionalDocument.info = userComplianceDocument;
+                  }
                 }
-              }
-            );
-          }
+              );
+            }
+          );
+        }
+        this.mandatory = this.profession.mandatory_compliance_documents.sort(
+          (a, b) => a.id - b.id
         );
-      }
-      this.mandatory = this.profession.mandatory_compliance_documents.sort(
-        (a, b) => a.id - b.id
-      );
-      this.optional = this.profession.optional_compliance_documents.sort(
-        (a, b) => a.id - b.id
-      );
+        this.optional = this.profession.optional_compliance_documents.sort(
+          (a, b) => a.id - b.id
+        );
+
+      })
     },
     status(status) {
       switch (status) {
         case "Pending":
-          return "bg-orange";
+          return "bg-orange-300";
           break;
         case "Verified":
-          return "bg-green";
+          return "bg-green-300";
           break;
         case "Approved":
-          return "bg-green";
+          return "bg-green-300";
           break;
         case "Rejected":
-          return "bg-red";
+          return "bg-red-300";
           break;
         case "Expiring":
-          return "bg-orange";
+          return "bg-orange-300";
           break;
         case "Expired":
-          return "bg-red";
+          return "bg-red-300";
           break;
         default:
           return;
       }
+    },
+    showComplianceDoc(id) {
+      console.log("docid", id)
+      this.$axios.$get(`/api/v1/locum/locum-detail-compliance-documents/${id}`).then(res => {
+        this.specificComplianceDoc = res.data.locum_detail_compliance_document
+        this.complianceModal = true
+        console.log(this.complianceModal)
+      })
+    },
+    showMandatoryTraining(id) {
+      console.log("mandatorydocid", id)
+      this.$axios.$get(`/api/v1/locum/locum-detail-mandatory-trainings/${id}`).then(res => {
+        this.specificMandatoryTraining = res.data.locum_detail_mandatory_training
+        this.mandatoryTrainingModal = true
+        console.log(this.mandatoryTrainingModal)
+      })
+
     },
     onFileInput(e, id, index) {
       if (!e.target.files.length) {
@@ -644,5 +706,47 @@ table thead th {
 }
 table tbody td {
   padding: 15px 8px;
+}
+.shield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #333;
+  opacity: 0.5;
+  z-index: 509;
+}
+.mandatoryTrainingModal {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  border-left: solid 2px #edf2f7;
+  transition: all 0.3s ease-in-out;
+  background-color: white;
+  z-index: 510;
+}
+.complianceModal {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  border-left: solid 2px #edf2f7;
+  transition: all 0.3s ease-in-out;
+  background-color: white;
+  z-index: 510;
+}
+@media screen and (min-width: 1200px) {
+  .complianceModal {
+    width: 80%;
+  }
+  .mandatoryTrainingModal {
+    width: 80%;
+  }
 }
 </style>

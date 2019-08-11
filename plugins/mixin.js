@@ -10,7 +10,7 @@ Vue.mixin({
       }
       return arr;
     },
-    Validate(form, lists) {
+    Validate(form, lists) { //'form' is the INPUT form to be validated. 'lists' are the FIELDS that are not required to be validated.
       let items = Object.entries(form)
       for (const [key, value] of items) {
         // check if value is array

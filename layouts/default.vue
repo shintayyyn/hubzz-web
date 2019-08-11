@@ -59,9 +59,9 @@ export default {
   },
   methods: {
     close() {
-        this.$store.commit("TOGGLE_SIDEBAR", false);
-        document.body.style.overflow = "auto";
-      }
+      this.$store.commit("TOGGLE_SIDEBAR", false);
+      document.body.style.overflow = "auto";
+    }
   },
   mounted() {
     this.$store.dispatch("signUp/getProfessions");
@@ -77,6 +77,7 @@ export default {
   /* box-sizing: content-box; */
   max-width: 1000px;
   padding: 5px 30px;
+  height: 100%;
 }
 .sidebar-shield {
   position: fixed;

@@ -1,26 +1,26 @@
 <template>
   <div>
-    <div class="relative flex flex-nowrap">
+    <div class="relative flex flex-no-wrap">
       <!-- @click.prevent="goTo('practice')" 
       <nuxt-link
         style="font-family:Nunito"
         to="/profile"
         class="mr-5 p-3 text-sm font-bold cursor-pointer no-underline"
-        :class="$route.query.profile_tab === 'practice' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
+        :class="$route.query.profile_tab === 'practice' ? 'border rounded-lg border-yellow-400 bg-yellow-400' : 'text-grey-darker'"
       >Practice</nuxt-link>
         @click.prevent="goTo('surgeries')"
       <nuxt-link
         style="font-family:Nunito"
         to="/profile/surgeries"
         class="mr-5 p-3 text-sm font-bold cursor-pointer no-underline"
-        :class="$route.query.profile_tab === 'surgeries' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
+        :class="$route.query.profile_tab === 'surgeries' ? 'border rounded-lg border-yellow-400 bg-yellow-400' : 'text-grey-darker'"
       >Branches / Surgeries</nuxt-link>
         @click.prevent="goTo('practiceDocuments')" 
       <nuxt-link
         style="font-family:Nunito"
         to="/profile/documents"
         class="mr-5 p-3 text-sm font-bold cursor-pointer no-underline"
-        :class="$route.query.profile_tab === 'practiceDocuments' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
+        :class="$route.query.profile_tab === 'practiceDocuments' ? 'border rounded-lg border-yellow-400 bg-yellow-400' : 'text-grey-darker'"
       >Practice Documents</nuxt-link>-->
 
       <div
@@ -28,7 +28,7 @@
         style="font-family:Nunito"
         to="/profile"
         class="mr-5 p-3 text-sm font-bold cursor-pointer no-underline"
-        :class="$route.query.profile_tab === 'practice' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
+        :class="$route.query.profile_tab === 'practice' ? 'border rounded-lg border-yellow-400 bg-yellow-400' : 'text-grey-darker'"
       >Practice</div>
 
       <div
@@ -36,7 +36,7 @@
         style="font-family:Nunito"
         to="/profile/surgeries"
         class="mr-5 p-3 text-sm font-bold cursor-pointer no-underline"
-        :class="$route.query.profile_tab === 'surgeries' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
+        :class="$route.query.profile_tab === 'surgeries' ? 'border rounded-lg border-yellow-400 bg-yellow-400' : 'text-grey-darker'"
       >Branches / Surgeries</div>
 
       <div
@@ -44,7 +44,7 @@
         style="font-family:Nunito"
         to="/profile/documents"
         class="mr-5 p-3 text-sm font-bold cursor-pointer no-underline"
-        :class="$route.query.profile_tab === 'documents' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
+        :class="$route.query.profile_tab === 'documents' ? 'border rounded-lg border-yellow-400 bg-yellow-400' : 'text-grey-darker'"
       >Practice Documents</div>
     </div>
   </div>

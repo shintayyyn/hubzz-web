@@ -80,7 +80,7 @@
             <div class="flex flex-row justify-between">
               <label for="rates" class="text-xs sm:text-sm py-1">Your preferred rates £</label>
               <div
-                class="rounded-lg bg-grey-light p-1 text-xs sm:text-sm"
+                class="rounded-lg bg-gray-200 p-1 text-xs sm:text-sm"
               >To match available jobs with</div>
             </div>
             <div class="flex flex-row flex-wrap justify-between">
@@ -475,7 +475,7 @@ export default {
         if (
           !this.per_half_day_session.min ||
           parseInt(this.per_half_day_session.max) <=
-            parseInt(this.per_half_day_session.min)
+          parseInt(this.per_half_day_session.min)
         ) {
           this.formError.push({
             field: "per_half_day_session",
@@ -486,7 +486,7 @@ export default {
         if (
           !this.per_whole_day_session.min ||
           parseInt(this.per_whole_day_session.max) <=
-            parseInt(this.per_whole_day_session.min)
+          parseInt(this.per_whole_day_session.min)
         ) {
           this.formError.push({
             field: "per_whole_day_session",

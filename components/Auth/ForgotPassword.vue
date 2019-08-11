@@ -24,8 +24,8 @@
 
               <form class="w-full">
                 <div
-                  class="relative flex flex-col mt-8 border-b-2 border-grey-light"
-                  :class="[setFocus === 'email' ? 'border-yellow':'', formError.find(item => item.field === 'email') ? 'border-red':'']"
+                  class="relative flex flex-col mt-8 border-b-2 border-gray-200"
+                  :class="[setFocus === 'email' ? 'border-yellow-300':'', formError.find(item => item.field === 'email') ? 'border-red-300':'']"
                 >
                   <label for="email" class="text-lg mb-4">Email address</label>
                   <input
@@ -41,7 +41,7 @@
                     @keyup.enter="send"
                   />
                   <span
-                    class="absolute pin-r bg-red text-white p-1"
+                    class="absolute right-0 bg-red-300 text-white p-1"
                     v-if="formError.find(item => item.field === 'email')"
                   >{{formError.find(item => item.field === 'email').message}}</span>
                 </div>
@@ -49,7 +49,7 @@
 
               <div class="mt-5 flex justify-start">
                 <button
-                  class="rounded-lg bg-yellow-dark shadow-md p-8 font-bold text-xl focus:outline-none hover:text-white"
+                  class="rounded-lg bg-yellow-400 shadow-md p-8 font-bold text-xl focus:outline-none hover:text-white"
                   @click="send"
                 >Send</button>
               </div>
@@ -102,7 +102,7 @@ export default {
             this.success = true;
           });
         }
-      } catch (e) {}
+      } catch (e) { }
     }
   }
 };

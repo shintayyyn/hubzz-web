@@ -90,9 +90,7 @@
         <div class="flex flex-col my-8">
           <div class="flex flex-row justify-between">
             <label for="rates" class="text-xs sm:text-sm py-1">Your preferred rates £</label>
-            <div
-              class="rounded-lg bg-grey-light p-1 text-xs sm:text-sm"
-            >To match available jobs with</div>
+            <div class="rounded-lg bg-gray-200 p-1 text-xs sm:text-sm">To match available jobs with</div>
           </div>
           <div class="flex flex-row flex-wrap justify-between">
             <AppRate
@@ -143,7 +141,7 @@
           :inStyle="'text-align:right;'"
         />
         <div class="text-xs sm:text-sm">Referees</div>
-        <div class="rounded-lg bg-grey-light p-6 my-4">
+        <div class="rounded-lg bg-gray-200 p-6 my-4">
           <AppInput
             v-model="form.referee_1_contact_name"
             :type="'text'"
@@ -172,7 +170,7 @@
             :inStyle="'background-color:#dae1e7;border-color:white'"
           />
         </div>
-        <div class="rounded-lg bg-grey-light p-6 my-4">
+        <div class="rounded-lg bg-gray-200 p-6 my-4">
           <AppInput
             v-model="form.referee_2_contact_name"
             :type="'text'"

@@ -1,37 +1,37 @@
 <template>
-  <div class="relative flex">
-    <!-- <input
-      v-model="message"
-      class="focus:outline-none p-4 font-bold text-xs w-full text-right"
-      type="text"
-      @keydown.enter="send"
-    />-->
+  <div v-if="$route.params.slug !== 'new'" class="flex">
     <textarea
       v-model="message"
-      class="message-box w-full p-4 text-sm align-middle focus:outline-none"
+      class="message-box resize-none w-full p-4 text-sm focus:outline-none border-t"
       placeholder="Type your message here"
       @keydown.enter="send"
     ></textarea>
-    <button class="px-8 bg-blue-light text-white" @click="send">Send</button>
+    <button class="px-8 bg-blue-300light text-white" @click="send">Send</button>
   </div>
 </template>
 <script>
 export default {
   data() {
     return {
-      message: ''
-    }
+      message: ""
+    };
   },
   methods: {
     send() {
       if (!this.message) {
-        return
+        console.log("nyongan");
+      } else {
+        // this.$emit('send-message', this.message)
+        // this.message = ''
+        this.$store.dispatch("chat/sendMessage", {
+          receiver_user_id: null,
+          message: this.message
+        });
+        this.message = "";
       }
-      this.$store.dispatch('chat/sendMessage', this.message)
-      this.message = ''
     }
   }
-}
+};
 </script>
 
 <style>

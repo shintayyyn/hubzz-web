@@ -2,18 +2,30 @@
   <div>
     <div class="border-solid rounded-lg shadow-md mb-8">
       <div class="text-sm font-semibold p-5">Select by clicking on the practice that you wish to add</div>
-      <div v-for="(item, index) in results" :key="index" class="p-5 cursor-pointer hover:bg-grey-light focus:bg-yellow-dark outline-none" :tabindex="index" @click.prevent="select(item._id)">
+      <div
+        v-for="(item, index) in results"
+        :key="index"
+        class="p-5 cursor-pointer hover:bg-gray-200 focus:bg-yellow-400 outline-none"
+        :tabindex="index"
+        @click.prevent="select(item._id)"
+      >
         <div class="text-xl font-semibold mb-2">{{item.name}}</div>
         <div class="text-sm">{{item.address}}</div>
-        <div class="text-sm"><span class="px-1 text-xs rounded-sm bg-grey-light">Practice Code</span> {{item.code}}</div>
+        <div class="text-sm">
+          <span class="px-1 text-xs rounded-sm bg-gray-200">Practice Code</span>
+          {{item.code}}
+        </div>
       </div>
       <div class="p-5 text-sm font-semibold leading-tight">
-        These are just top 10 matches from your search term.<br>
-        Try again with practice code of its full name if the practice isn't in the result.
+        These are just top 10 matches from your search term.
+        <br />Try again with practice code of its full name if the practice isn't in the result.
       </div>
     </div>
     <div class="text-center" v-if="selectedPractice">
-      <button class="bg-yellow-dark hover:text-white focus:outline-none text-black font-bold text-xl p-6 rounded-lg" @click.prevent="next()">Next</button>
+      <button
+        class="bg-yellow-400 hover:text-white focus:outline-none text-black font-bold text-xl p-6 rounded-lg"
+        @click.prevent="next()"
+      >Next</button>
     </div>
   </div>
 </template>
@@ -39,17 +51,17 @@ const results = [
   },
 ]
 export default {
-  data () {
+  data() {
     return {
       results,
       selectedPractice: ''
     }
   },
   methods: {
-    select (id) {
+    select(id) {
       this.selectedPractice = id
     },
-    next () {
+    next() {
       this.$emit('nextStep', this.selectedPractice)
     }
   }
