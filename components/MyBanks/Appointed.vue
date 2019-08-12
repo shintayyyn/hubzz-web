@@ -1,6 +1,6 @@
 <template>
   <div>
-     <div class="-mt-2">
+    <div class="-mt-2">
       <AppSelect
         v-model="profession_id"
         :name="'Filter Locums by'"
@@ -9,9 +9,7 @@
         :placeholder="'All'"
       />
     </div>
-    <div class="mt-10 w-full text-center" v-if="locums.length == 0" >
-      There are no appointed locums.
-    </div>
+    <div class="mt-10 w-full text-center" v-if="locums.length == 0">There are no appointed locums.</div>
     <div v-else class="flex flex-row flex-wrap justify-start">
       <AppLoading :loading="loading" :message="'Loading'" v-if="loading" />
       <div
@@ -57,7 +55,7 @@
       </div>
     </div>
 
-    <div v-if="!locums.length == 0" class="m-10 xl:-ml-32">
+    <div class="m-10 xl:-ml-32" v-if="locums.length > 0 && totalPages > 1">
       <AppPagination
         :total="total"
         :totalPages="totalPages"
@@ -66,8 +64,8 @@
         :loading="loading"
       />
     </div>
-    
-    <div  class="locum-shield" v-if="modal"></div>
+
+    <div class="locum-shield" v-if="modal"></div>
     <transition name="slide" mode="out-in">
       <div class="locum-modal shadow-lg" v-if="modal">
         <MyLocumDetailModal @close="modal = false" :user="user" :jobs="jobs" />
@@ -99,7 +97,7 @@ export default {
       modal: false, //TEMPORARY
       user: null,
       jobs: null, //TEMPORARY
-      professions:[],
+      professions: [],
       profession_id: null,
       filteredUsers: []
     }
@@ -114,7 +112,7 @@ export default {
       this.currentPage = parseInt(to.query.current_page)
       this.getAppointedLocums()
     },
-    profession_id:function(){
+    profession_id: function () {
       this.getAppointedLocums()
     }
   },
@@ -131,7 +129,7 @@ export default {
       this.getAppointedLocums()
     })
 
-     this.$axios.$get(`/api/v1/professions`).then(res => {
+    this.$axios.$get(`/api/v1/professions`).then(res => {
       this.professions = [];
       res.data.professions.forEach(item => {
         this.professions.push({ label: item.name, value: item.id });
@@ -144,12 +142,12 @@ export default {
       this.loading = true
       let offset = 0
       offset = this.perPage * (parseInt(this.$route.query.current_page) - 1)
-      if(!this.profession_id){
+      if (!this.profession_id) {
         this.$axios.$get(`/api/v1/practice/locums?&practice_locum_type=Appointed&limit=${this.perPage}&offset=${offset}`).then(res => {
           this.locums = res.data.users
         })
-      }else{
-         this.$axios.$get(`/api/v1/practice/locums?profession_id=${this.profession_id}&practice_locum_type=Appointed&limit=${this.perPage}&offset=${offset}`).then(res => {
+      } else {
+        this.$axios.$get(`/api/v1/practice/locums?profession_id=${this.profession_id}&practice_locum_type=Appointed&limit=${this.perPage}&offset=${offset}`).then(res => {
           this.locums = res.data.users
         })
       }

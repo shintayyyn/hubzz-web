@@ -27,7 +27,7 @@
       </div>
     </div>
 
-    <div class="mt-5 flex justify-center" v-if="practices.length > 0">
+    <div class="mt-5 flex justify-center" v-if="practices.length > 0 && totalPages > 1">
       <AppPagination
         :total="total"
         :totalPages="totalPages"

@@ -1,5 +1,6 @@
 <template>
   <section class="__jobs-section">
+    <AppJobFilter @getJobs="getJobs(1, params)" :params="params" />
     <div class="overflow-x-auto">
       <div
         class="mt-10 w-full text-center"
@@ -10,12 +11,24 @@
         <table>
           <thead>
             <tr class="text-xs sm:text-sm text-left">
-              <th @click="sortBy('job_number')">Job number</th>
+              <th @click="sortBy('job_number')">
+                Job number
+                <svgicon name="sort" height="12" width="12" />
+              </th>
               <th>Practice</th>
               <th>Title</th>
-              <th @click="sortBy('date_start')">From</th>
-              <th @click="sortBy('date_end')">To</th>
-              <th @click="sortBy('date_created')">Created</th>
+              <th @click="sortBy('date_start')">
+                From
+                <svgicon name="sort" height="12" width="12" />
+              </th>
+              <th @click="sortBy('date_end')">
+                To
+                <svgicon name="sort" height="12" width="12" />
+              </th>
+              <th @click="sortBy('date_created')">
+                Created
+                <svgicon name="sort" height="12" width="12" />
+              </th>
               <th>Assigned</th>
             </tr>
           </thead>
@@ -43,11 +56,11 @@
         </table>
       </div>
     </div>
-    <div class="absolute pin-b w-full" v-if="getLocumAllocatedJobs.length > 0">
+    <div class="absolute pin-b w-full" v-if="getLocumAllocatedJobs.length > 0 && totalPages > 1">
       <AppPagination
         :total="total"
         :totalPages="totalPages"
-        :currentPage="currentPage"
+        :currentPage="current_page"
         @pagechanged="pagechanged"
       />
     </div>
@@ -55,23 +68,38 @@
 </template>
 <script>
 import AppPagination from '@/components/Base/AppPagination'
+import AppJobFilter from '@/components/Base/AppJobFilter'
 export default {
   components: {
-    AppPagination
+    AppPagination,
+    AppJobFilter,
   },
   data() {
     return {
+      current_page: 1,
+      params: {
+        shift_id: '',
+        rate: '',
+        locum_detail_rate_type_id: '',
+        near_post_code: '',
+        miles: '',
+        surgery_name: '',
+        order_by: 'date_created:desc',
+      },
+      // sort
       sortType: '',
       job_number: true,
       date_start: true,
       date_end: true,
-      date_created: true,
-      orderBy: 'date_created:desc'
+      date_created: false,
     }
   },
   computed: {
     getLocumAllocatedJobs() {
       return this.$store.getters["jobs/getLocumAllocatedJobs"];
+    },
+    offset() {
+      return this.perPage * (this.current_page - 1);
     },
     perPage() {
       return 5;
@@ -89,30 +117,9 @@ export default {
       return this.$store.state.jobs.loading_jobs;
     }
   },
-  watch: {
-    getLocumAllocatedJobs(newValue, oldValue) {
-      if (newValue.length !== 0 && (oldValue.length > newValue.length)) {
-        this.getJobs(this.orderBy)
-      }
-      if (newValue.length === 0 && this.$route.query.current_page !== 1) {
-        this.pagechanged(this.totalPages)
-      }
-    },
-    $route(to, from) {
-      if (from.query.current_page !== to.query.current_page || from.query.sort !== to.query.sort) {
-        this.getJobs()
-      }
-    }
-  },
   created() {
-    const query = {
-      ...this.$route.query,
-      current_page: this.$route.query.current_page || 1,
-      sort: this.$route.query.sort || null,
-    };
-    this.$router.push({ query });
-    // this.getJobsCount();
-    // this.getJobs();
+    this.getJobsCount();
+    this.getJobs(this.current_page, this.params);
   },
   methods: {
     getJobsCount() {
@@ -140,33 +147,19 @@ export default {
           this.sortType = this.date_created
           break;
       }
-      this.orderBy = `${sortedBy}:${this.sortType ? 'desc' : 'asc'}`
-      // this.getJobs(this.orderBy)
-
-      const query = {
-        ...this.$route.query,
-        current_page: this.$route.query.current_page || 1,
-        sort: this.orderBy,
-      }
-      this.$router.push({ query })
+      this.params.order_by = `${sortedBy}:${this.sortType ? 'asc' : 'desc'}`
+      this.current_page = 1
+      this.getJobs(this.current_page, this.params)
     },
-    getJobs() {
-      let offset = 0;
-      offset = this.perPage * (parseInt(this.$route.query.current_page) - 1);
-      let order_by = this.$route.query.sort || null
-      this.$store.dispatch("jobs/fetchLocumJobs", {
-        offset: offset,
-        limit: this.perPage,
-        status: "Current",
-        order_by,
-      });
+    getJobs(page, params) {
+      this.current_page = page
+      let defaultParams = { offset: this.offset, limit: this.perPage, status: "Current" }
+      let jobParams = { ...params, ...defaultParams }
+      this.$store.dispatch("jobs/fetchLocumJobs", jobParams);
     },
     pagechanged(e) {
-      const query = {
-        ...this.$route.query,
-        current_page: e || 1
-      }
-      this.$router.push({ query })
+      this.current_page = e
+      this.getJobs(this.current_page, this.params)
     },
     show(id) {
       const query = {

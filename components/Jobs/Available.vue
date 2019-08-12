@@ -11,12 +11,24 @@
         <table>
           <thead>
             <tr class="text-xs text-left">
-              <th @click="sortBy('job_number')">Job number</th>
+              <th @click="sortBy('job_number')">
+                Job number
+                <svgicon name="sort" height="12" width="12" />
+              </th>
               <th>Practice</th>
               <th>Title</th>
-              <th @click="sortBy('date_start')">From</th>
-              <th @click="sortBy('date_end')">To</th>
-              <th @click="sortBy('date_created')">Created</th>
+              <th @click="sortBy('date_start')">
+                From
+                <svgicon name="sort" height="12" width="12" />
+              </th>
+              <th @click="sortBy('date_end')">
+                To
+                <svgicon name="sort" height="12" width="12" />
+              </th>
+              <th @click="sortBy('date_created')">
+                Created
+                <svgicon name="sort" height="12" width="12" />
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -42,7 +54,7 @@
         </table>
       </div>
     </div>
-    <div class="absolute pin-b w-full" v-if="getLocumAvailableJobs.length > 0">
+    <div class="absolute pin-b w-full" v-if="getLocumAvailableJobs.length > 0 && totalPages > 1">
       <AppPagination
         :total="total"
         :totalPages="totalPages"
@@ -70,14 +82,14 @@ export default {
         near_post_code: '',
         miles: '',
         surgery_name: '',
-        order_by: '',
+        order_by: 'date_created:desc',
       },
       // sort
       sortType: '',
       job_number: true,
       date_start: true,
       date_end: true,
-      date_created: true,
+      date_created: false,
     }
   },
   computed: {
@@ -98,13 +110,6 @@ export default {
     },
     loadingJobs() {
       return this.$store.state.jobs.loading_jobs;
-    },
-  },
-  watch: {
-    getLocumAvailableJobs(newValue, oldValue) {
-      if (newValue.length === 0 && this.current_page !== 1) {
-        this.pagechanged(this.totalPages, this.params)
-      }
     },
   },
   created() {
@@ -137,11 +142,12 @@ export default {
           this.sortType = this.date_created
           break;
       }
-      this.params.order_by = `${sortedBy}:${this.sortType ? 'desc' : 'asc'}`
+      this.params.order_by = `${sortedBy}:${this.sortType ? 'asc' : 'desc'}`
       this.current_page = 1
       this.getJobs(this.current_page, this.params)
     },
     getJobs(page, params) {
+      this.current_page = page
       let defaultParams = { offset: this.offset, limit: this.perPage, status: "Available" }
       let jobParams = { ...params, ...defaultParams }
       this.$store.dispatch("jobs/fetchLocumJobs", jobParams);

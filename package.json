@@ -23,6 +23,7 @@
     "dotenv": "^7.0.0",
     "eslint-plugin-nuxt": "^0.4.3",
     "eslint-plugin-vue": "^5.2.2",
+    "jspdf": "^1.5.3",
     "lodash.debounce": "^4.0.8",
     "moment": "^2.24.0",
     "nuxt": "^2.7.1",

@@ -26,7 +26,7 @@
         </div>
       </div>
 
-      <div v-if="practices" class="m-10 xl:-ml-32">
+      <div class="m-10 xl:-ml-32" v-if="practices.length > 0 && totalPages > 1">
         <AppPagination
           :total="total"
           :totalPages="totalPages"

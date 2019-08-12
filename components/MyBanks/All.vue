@@ -9,9 +9,10 @@
         :placeholder="'All'"
       />
     </div>
-    <div class="mt-10 w-full text-center" v-if="locums.length == 0" >
-      There are no locums connected to your practice yet.
-    </div>   
+    <div
+      class="mt-10 w-full text-center"
+      v-if="locums.length == 0"
+    >There are no locums connected to your practice yet.</div>
     <div v-else class="flex flex-row flex-wrap w-full justify-start">
       <AppLoading :loading="loading" :message="'Loading'" v-if="loading" />
       <div
@@ -51,13 +52,15 @@
           </div>
 
           <div class="w-full font-bold text-sm sm:text-lg my-4">{{user.personal_detail.name}}</div>
-          <div class="w-full mb-4 font-bold text-grey-dark text-sm sm:text-lg">{{user.locum_detail.profession.name}}</div>
+          <div
+            class="w-full mb-4 font-bold text-grey-dark text-sm sm:text-lg"
+          >{{user.locum_detail.profession.name}}</div>
           <!-- <div class="w-full font-bold text-grey-dark text-sm sm:text-lg">{{user.locum_detail.headline}}</div> -->
         </div>
       </div>
     </div>
 
-    <div v-if="!locums.length == 0" class="m-10 xl:-ml-32">
+    <div class="m-10 xl:-ml-32" v-if="locums.length > 0 && totalPages > 1">
       <AppPagination
         :total="total"
         :totalPages="totalPages"
@@ -99,7 +102,7 @@ export default {
       modal: false, //TEMPORARY
       user: null, //TEMPORARY
       jobs: null,
-      professions:[],
+      professions: [],
       profession_id: null,
       filteredUsers: []
     }
@@ -114,7 +117,7 @@ export default {
       this.currentPage = parseInt(to.query.current_page)
       this.getAllLocums()
     },
-    profession_id:function(){
+    profession_id: function () {
       this.getAllLocums()
     }
   },
@@ -149,8 +152,8 @@ export default {
         this.$axios.$get(`/api/v1/practice/locums?limit=${this.perPage}&offset=${offset}`).then(res => {
           this.locums = res.data.users
         })
-      }else{
-         this.$axios.$get(`/api/v1/practice/locums?profession_id=${this.profession_id}&limit=${this.perPage}&offset=${offset}`).then(res => {
+      } else {
+        this.$axios.$get(`/api/v1/practice/locums?profession_id=${this.profession_id}&limit=${this.perPage}&offset=${offset}`).then(res => {
           this.locums = res.data.users
         })
       }

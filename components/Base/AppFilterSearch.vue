@@ -60,7 +60,7 @@ import { mixin as clickaway } from "vue-clickaway";
 export default {
   mixins: [clickaway],
   props: {
-    value: Array,
+    value: [Array, String],
     name: String,
     label: String,
     placeholder: String,
