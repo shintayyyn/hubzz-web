@@ -3,12 +3,12 @@
     <div
       @click.prevent="$emit('nextTab', 'SignIn')"
       class="px-12 py-5 font-bold text-sm cursor-pointer"
-      :class="activeComponent === 'SignIn' ? 'rounded-full bg-yellow-400 text-black' : 'text-grey-darker'"
+      :class="activeComponent === 'SignIn' ? 'rounded-full bg-yellow-400 text-black' : 'text-gray-500'"
     >Sign In</div>
     <div
       @click.prevent="$emit('nextTab', 'SignUp')"
       class="px-12 py-5 font-bold text-sm cursor-pointer"
-      :class="activeComponent === 'SignUp' ? 'rounded-full bg-yellow-400 text-black' : 'text-grey-darker'"
+      :class="activeComponent === 'SignUp' ? 'rounded-full bg-yellow-400 text-black' : 'text-gray-500'"
     >Sign Up</div>
   </div>
 </template>

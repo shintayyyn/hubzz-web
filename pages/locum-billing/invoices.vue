@@ -46,11 +46,11 @@
                 <th>Practice / Surgery</th>
                 <th @click="sortBy('date_created')">
                   Created
-                  <svgicon name="sort" height="12" width="12" />
+                  <svgicon class="inline" name="sort" height="12" width="12" />
                 </th>
                 <th @click="sortBy('issued_at')">
                   Issued
-                  <svgicon name="sort" height="12" width="12" />
+                  <svgicon class="inline" name="sort" height="12" width="12" />
                 </th>
                 <th>Invoice number</th>
                 <th>Job numbers</th>
@@ -275,13 +275,11 @@ export default {
       this.Validate(this.form)
       if (!this.formError.length) {
         this.form.paid_at = this.$moment(this.form.paid_at).format('YYYY-MM-DD')
-        this.$store.commit('billing/UPDATE_INVOICE', res.data.invoice)
-        this.paymentModal = false
+        this.$axios.$put(`/api/v1/locum/invoices/${this.selectedInvoiceId}/paid`, this.form).then(res => {
+          this.$store.commit('billing/UPDATE_INVOICE', res.data.invoice)
+          this.paymentModal = false
+        })
       }
-
-      return
-      this.$axios.$put(`/api/v1/locum/invoices/${this.selectedInvoiceId}/paid`, this.form).then(res => {
-      })
     },
     deleteInvoice() {
       this.$axios.$delete(`/api/v1/locum/invoices/${this.selectedInvoiceId}`).then(res => {

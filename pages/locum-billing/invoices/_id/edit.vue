@@ -1,7 +1,7 @@
 <template>
   <div class="invoice-modal shadow-lg">
-    <section class="bg-white">
-      <div class="p-8 max-w-xl h-screen">
+    <section class="bg-gray-700">
+      <div class="p-8 max-w-3xl">
         <div class="flex flex-row flex-wrap justify-start">
           <nuxt-link to="/locum-billing/invoices" class="cursor-pointer">
             <svgicon name="left-arrow" height="32" width="32" />
@@ -33,13 +33,13 @@
         <div class="max-w-lg my-4 bg-white px-4 py-4 border shadow-md">
           <div class="flex flex-col">
             <div class="text-xs sm:text-sm text-right leading-normal">
-              <div>Mr. {{invoice.locum_detail.user.personal_detail.name}}</div>
-              <div>{{invoice.locum_detail.user.address_detail.address.line_1}}</div>
-              <div>{{invoice.locum_detail.user.address_detail.address.line_3}}</div>
-              <div>{{invoice.locum_detail.user.address_detail.address.post_code}}</div>
-              <div>Tel {{invoice.locum_detail.user.contact_detail.mobile_number}}</div>
-              <div>{{invoice.locum_detail.user.email}}</div>
-              <div>UTR 7337#4*OR</div>
+              <div>Mr. {{$auth.user.personal_detail.name}}</div>
+              <div>{{$auth.user.address_detail.address.line_1}}</div>
+              <div>{{$auth.user.address_detail.address.line_3}}</div>
+              <div>{{$auth.user.address_detail.address.post_code}}</div>
+              <div>Tel {{$auth.user.contact_detail.mobile_number}}</div>
+              <div>{{$auth.user.email}}</div>
+              <div>UTR {{$auth.user.locum_detail.invoice_detail.utr_number}}</div>
             </div>
             <div class="flex justify-between my-2">
               <div

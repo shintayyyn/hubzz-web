@@ -4,7 +4,7 @@ export default {
                 this.$socket.on('Locum Notification Job Matched', (job) => {
                     if (!state.locum_matched_jobs.find(matchedJobs => matchedJobs.id == job.id)) {
                         commit('ADD_LOCUM_MATCHED_JOB', job)
-                        commit('ADD_LOCUM_ALLOCATED_BADGE')
+                        commit('ADD_LOCUM_MATCHED_BADGE')
                     }
                 })
                 this.$socket.on('Locum Notification Job Available', (job) => {

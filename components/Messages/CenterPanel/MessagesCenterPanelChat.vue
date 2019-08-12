@@ -40,12 +40,12 @@
                       :class="isReceiver(item) ? 'bg-gray-200' : 'bg-blue-300light text-white'"
                     >{{item.message}}</span>
                     <span
-                      class="text-grey-dark py-1"
+                      class="text-gray-400 py-1"
                       :class="isReceiver(item) ? 'text-right ': ''"
                     >2hrs ago</span>
                   </div>
                   <div
-                    class="text-xs font-bold mx-1 mt-3 cursor-pointer text-white hover:text-grey-dark"
+                    class="text-xs font-bold mx-1 mt-3 cursor-pointer text-white hover:text-gray-400"
                     @click="deleteMessage(item.id)"
                   >X</div>
                 </div>

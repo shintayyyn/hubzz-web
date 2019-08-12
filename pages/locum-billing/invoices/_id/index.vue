@@ -1,7 +1,7 @@
 <template>
   <div class="invoice-modal shadow-lg">
-    <section class="bg-white">
-      <div class="p-8 max-w-xl h-screen">
+    <section class="bg-gray-700">
+      <div class="p-8 max-w-3xl h-screen">
         <div class="flex flex-row flex-wrap justify-start">
           <nuxt-link to="/locum-billing/invoices" class="cursor-pointer">
             <svgicon name="left-arrow" height="32" width="32" />

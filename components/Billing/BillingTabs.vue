@@ -5,25 +5,25 @@
         style="font-family:Nunito"
         @click.prevent="goTo('invoices')"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-        :class="$route.query.billing_tab === 'invoices' ? 'border rounded-lg border-yellow-400 bg-yellow-400' : 'text-grey-darker'"
+        :class="$route.query.billing_tab === 'invoices' ? 'border rounded-lg border-yellow-400 bg-yellow-400' : 'text-gray-500'"
       >Invoices</div>
       <div
         style="font-family:Nunito"
         @click.prevent="goTo('invoicing-details')"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-        :class="$route.query.billing_tab === 'invoicing-details' ? 'border rounded-lg border-yellow-400 bg-yellow-400' : 'text-grey-darker'"
+        :class="$route.query.billing_tab === 'invoicing-details' ? 'border rounded-lg border-yellow-400 bg-yellow-400' : 'text-gray-500'"
       >Invoicing details</div>
       <div
         style="font-family:Nunito"
         @click.prevent="goTo('finance-reports')"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-        :class="$route.query.billing_tab === 'finance-reports' ? 'border rounded-lg border-yellow-400 bg-yellow-400' : 'text-grey-darker'"
+        :class="$route.query.billing_tab === 'finance-reports' ? 'border rounded-lg border-yellow-400 bg-yellow-400' : 'text-gray-500'"
       >Finance reports</div>
       <div
         style="font-family:Nunito"
         @click.prevent="goTo('tax-reports')"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-        :class="$route.query.billing_tab === 'tax-reports' ? 'border rounded-lg border-yellow-400 bg-yellow-400' : 'text-grey-darker'"
+        :class="$route.query.billing_tab === 'tax-reports' ? 'border rounded-lg border-yellow-400 bg-yellow-400' : 'text-gray-500'"
       >Tax reports</div>
     </div>
     <div

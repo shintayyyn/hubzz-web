@@ -27,10 +27,10 @@ export default () => ({
     locum_new_available_jobs_count: 0,
     locum_matched_jobs: [],
     locum_matched_jobs_count: 0,
-    locum_new_matched_jobs_count: 0,
+    locum_new_matched_jobs_count: 2,
     locum_applied_jobs: [],
     locum_applied_jobs_count: 0,
-    locum_new_applied_jobs_count: 0,
+    locum_new_applied_jobs_count: 3,
     locum_unsuccessful_jobs: [],
     locum_unsuccessful_jobs_count: 0,
     locum_new_unsuccessful_jobs_count: 0,
@@ -42,8 +42,9 @@ export default () => ({
     locum_new_cancelled_jobs_count: 0,
     locum_completed_jobs: [],
     locum_completed_jobs_count: 0,
-    locum_new_completed_jobs_count: 0,
+    locum_new_completed_jobs_count: 7,
     locum_private_jobs: [],
     locum_unavailabilities: [],
     locum_unavailabilities_count: 0,
+    locum_jobs_badge: 0
 })

@@ -61,5 +61,12 @@ export default {
     getLocumUnavailabilities(state) {
         return state.locum_unavailabilities
     },
-    
-}
+    getLocumJobsBadge(state) {
+        return [
+            state.locum_new_allocated_jobs_count, state.locum_new_available_jobs_count, 
+            state.locum_new_matched_jobs_count, state.locum_new_applied_jobs_count, 
+            state.locum_new_unsuccessful_jobs_count, state.locum_new_declined_jobs_count, 
+            state.locum_new_cancelled_jobs_count, state.locum_new_completed_jobs_count
+        ].reduce((accumulator, currentValue) => accumulator + currentValue)
+    }
+}   

@@ -1,6 +1,6 @@
 <template>
   <section class="bg-white">
-    <div class="p-8 max-w-xl h-screen">
+    <div class="p-8 max-w-3xl h-screen">
       <div class="flex flex-row flex-wrap justify-start">
         <div @click="$emit('close')" class="cursor-pointer">
           <svgicon name="left-arrow" height="32" width="32" />

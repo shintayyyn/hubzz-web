@@ -94,7 +94,7 @@
               type="date"
               name="days_work_from"
               id="days_work_from"
-              class="appearance-none bg-transparent border-none w-full text-grey-darker mr-3 py-1 px-2 leading-tight focus:outline-none"
+              class="appearance-none bg-transparent border-none w-full text-gray-500 mr-3 py-1 px-2 leading-tight focus:outline-none"
             />
           </div>
         </div>
@@ -111,7 +111,7 @@
               type="date"
               name="days_work_to"
               id="days_work_to"
-              class="appearance-none bg-transparent border-none w-full text-grey-darker mr-3 py-1 px-2 leading-tight focus:outline-none"
+              class="appearance-none bg-transparent border-none w-full text-gray-500 mr-3 py-1 px-2 leading-tight focus:outline-none"
             />
           </div>
         </div>

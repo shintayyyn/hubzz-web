@@ -1,7 +1,7 @@
 <template>
   <div class="invoice-modal shadow-lg">
-    <section class="bg-white">
-      <div class="p-8 max-w-xl h-screen">
+    <section class="bg-gray-700">
+      <div class="p-8 max-w-3xl">
         <div class="flex flex-row flex-wrap justify-start">
           <nuxt-link to="/locum-billing/invoices" class="cursor-pointer">
             <svgicon name="left-arrow" height="32" width="32" />
@@ -33,13 +33,13 @@
         <div class="max-w-lg my-4 bg-white px-4 py-4 border shadow-md">
           <div class="flex flex-col">
             <div class="text-xs sm:text-sm text-right leading-normal">
-              <div>Mr. QQ AA QQ ZZ</div>
-              <div>wqe</div>
-              <div>Oldham</div>
-              <div>OL1 1NL</div>
-              <div>Tel 090991191323</div>
-              <div>cacheng.halcyondigital@gmail.com</div>
-              <div>UTR 7337#4*OR</div>
+              <div>Mr. {{$auth.user.personal_detail.name}}</div>
+              <div>{{$auth.user.address_detail.address.line_1}}</div>
+              <div>{{$auth.user.address_detail.address.line_3}}</div>
+              <div>{{$auth.user.address_detail.address.post_code}}</div>
+              <div>Tel {{$auth.user.contact_detail.mobile_number}}</div>
+              <div>{{$auth.user.email}}</div>
+              <div>UTR {{$auth.user.locum_detail.invoice_detail.utr_number}}</div>
             </div>
             <div class="flex justify-between my-2">
               <div
@@ -319,7 +319,6 @@ export default {
     AppSelect,
     AppFilterSearch,
   },
-
   computed: {
     amount() {
       if (this.selectedJobParts && this.selectedJobParts.length > 0) {
@@ -456,6 +455,8 @@ export default {
   },
 
   created() {
+    console.log(this.$auth.user)
+
     this.$axios.$get(`/api/v1/locum/private-practices`).then(res => {
       this.practices = [];
       res.data.private_practices.forEach(practice => {

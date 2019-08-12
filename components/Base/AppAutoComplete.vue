@@ -51,7 +51,7 @@
               <div class="leading-normal mx-2">
                 <span v-text="item.name"></span>
                 <span
-                  class="text-grey-dark"
+                  class="text-gray-400"
                   v-text="`${item.clinical_commissioning_group.name} ${item.code}`"
                 ></span>
               </div>

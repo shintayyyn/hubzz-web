@@ -40,7 +40,7 @@
                 v-html="mainTextFormat(item.structured_formatting.main_text, item.structured_formatting.main_text_matched_substrings[0].length)"
               ></span>
               <span
-                class="text-grey-dark"
+                class="text-gray-400"
                 v-html="subTextFormat(item.structured_formatting.secondary_text, item.structured_formatting.secondary_text_matched_substrings ? item.structured_formatting.secondary_text_matched_substrings[0].length : 0)"
               ></span>
             </div>

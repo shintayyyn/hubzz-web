@@ -9,14 +9,14 @@
         :class="bgStatus(job.locum_status)"
       ></div>
       <div class="ml-2">
-        <div class="text-grey-dark text-xs xl:text-sm">Job Number: {{job.job_number}}</div>
+        <div class="text-gray-400 text-xs xl:text-sm">Job Number: {{job.job_number}}</div>
         <div class="my-3 font-bold text-sm sm:text-md">{{title(job.type)}}</div>
         <div class="my-3 text-sm sm:text-md">{{surgeryName(job.type)}}</div>
         <div class="my-3 text-sm sm:text-md">{{surgeryCode(job.type)}}</div>
         <div
-          class="text-grey-dark my-3 text-xs xl:text-sm"
+          class="text-gray-400 my-3 text-xs xl:text-sm"
         >From {{dateStart(job.type)}} to {{dateEnd(job.type)}}</div>
-        <div class="text-grey-dark my-3 text-xs xl:text-sm">Shift {{shift(job.type)}}</div>
+        <div class="text-gray-400 my-3 text-xs xl:text-sm">Shift {{shift(job.type)}}</div>
         <div class="my-3 text-xs xl:text-sm">{{description(job.type)}}</div>
       </div>
     </template>

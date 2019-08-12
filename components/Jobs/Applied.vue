@@ -13,17 +13,17 @@
             <tr class="text-xs sm:text-sm text-left">
               <th @click="sortBy('job_number')">
                 Job number
-                <svgicon name="sort" height="12" width="12" />
+                <svgicon class="inline" name="sort" height="12" width="12" />
               </th>
               <th>Practice</th>
               <th>Title</th>
               <th @click="sortBy('date_start')">
                 From
-                <svgicon name="sort" height="12" width="12" />
+                <svgicon class="inline" name="sort" height="12" width="12" />
               </th>
               <th @click="sortBy('date_end')">
                 To
-                <svgicon name="sort" height="12" width="12" />
+                <svgicon class="inline" name="sort" height="12" width="12" />
               </th>
               <th>Applied</th>
             </tr>
@@ -114,6 +114,9 @@ export default {
   created() {
     this.getJobsCount();
     this.getJobs(this.current_page, this.params);
+    setTimeout(() => {
+      this.$store.commit('jobs/CLEAR_LOCUM_APPLIED_BADGE')
+    }, 1000)
   },
   methods: {
     getJobsCount() {

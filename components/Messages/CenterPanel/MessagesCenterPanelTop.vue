@@ -8,7 +8,7 @@
         :class="parseInt($route.params.slug) === item.id ? '' : 'hidden'"
       >{{ item.receiver_first_name }} {{ item.receiver_last_name }}</span>
     </div>
-    <div class="text-sm text-grey-dark">
+    <div class="text-sm text-gray-400">
       <span class>{{ profession }}</span>
       <span class="px-2 text-lg">|</span>
       <span class>

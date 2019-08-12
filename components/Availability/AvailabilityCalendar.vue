@@ -18,13 +18,13 @@
     </div>
 
     <div class="flex flex-no-wrap justify-between text-xs lg:text-base mx-1 mt-5">
-      <div class="w-full text-center text-grey font-bold">MON</div>
-      <div class="w-full text-center text-grey font-bold">TUE</div>
-      <div class="w-full text-center text-grey font-bold">WED</div>
-      <div class="w-full text-center text-grey font-bold">THU</div>
-      <div class="w-full text-center text-grey font-bold">FRI</div>
-      <div class="w-full text-center text-grey font-bold">SAT</div>
-      <div class="w-full text-center text-grey font-bold">SUN</div>
+      <div class="w-full text-center text-gray-400 font-bold">MON</div>
+      <div class="w-full text-center text-gray-400 font-bold">TUE</div>
+      <div class="w-full text-center text-gray-400 font-bold">WED</div>
+      <div class="w-full text-center text-gray-400 font-bold">THU</div>
+      <div class="w-full text-center text-gray-400 font-bold">FRI</div>
+      <div class="w-full text-center text-gray-400 font-bold">SAT</div>
+      <div class="w-full text-center text-gray-400 font-bold">SUN</div>
     </div>
 
     <div class="flex flex-no-wrap justify-between mx-1 mt-5">

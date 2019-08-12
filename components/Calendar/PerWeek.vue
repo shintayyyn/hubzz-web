@@ -6,7 +6,7 @@
           class="text-xs sm:text-sm"
         >{{$moment(daysInWeek[0]).format('MMM')}} {{$moment(daysInWeek[0]).format('YYYY')}} - {{$moment(daysInWeek[6]).format('MMM')}} {{$moment(daysInWeek[6]).format('YYYY')}}</div>
       </div>
-      <div class="w-1/3 py-1 text-right sm:w-1/3 sm:text-center">
+      <div class="w-1/3 py-1 flex flex-row flex-no-wrap justify-center">
         <span class="cursor-pointer" @click="adjustWeek('previous')">
           <svgicon name="arrow-left" height="12" width="12" />
         </span>
@@ -30,20 +30,20 @@
     </div>
 
     <div class="flex flex-no-wrap justify-between text-xs sm:text-sm mx-1 mt-3 md:mt-5">
-      <div class="w-full text-center text-grey font-bold"></div>
-      <div class="w-full text-center text-grey font-bold">MON</div>
-      <div class="w-full text-center text-grey font-bold">TUE</div>
-      <div class="w-full text-center text-grey font-bold">WED</div>
-      <div class="w-full text-center text-grey font-bold">THU</div>
-      <div class="w-full text-center text-grey font-bold">FRI</div>
-      <div class="w-full text-center text-grey font-bold">SAT</div>
-      <div class="w-full text-center text-grey font-bold">SUN</div>
+      <div class="w-full text-center text-gray-400 font-bold"></div>
+      <div class="w-full text-center text-gray-400 font-bold">MON</div>
+      <div class="w-full text-center text-gray-400 font-bold">TUE</div>
+      <div class="w-full text-center text-gray-400 font-bold">WED</div>
+      <div class="w-full text-center text-gray-400 font-bold">THU</div>
+      <div class="w-full text-center text-gray-400 font-bold">FRI</div>
+      <div class="w-full text-center text-gray-400 font-bold">SAT</div>
+      <div class="w-full text-center text-gray-400 font-bold">SUN</div>
     </div>
 
     <div class="flex flex-no-wrap justify-between text-xs sm:text-sm mx-1 mt-3 md:mt-5">
-      <div class="w-full text-center text-grey-darkest"></div>
+      <div class="w-full text-center text-gray-500"></div>
       <div
-        class="w-full text-center text-grey-darkest font-bold"
+        class="w-full text-center text-gray-500 font-bold"
         v-for="(date, index) in daysInWeek"
         :key="index"
       >{{$moment(date).format('DD')}}</div>

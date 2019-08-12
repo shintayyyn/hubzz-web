@@ -21,7 +21,7 @@
               name="account_name"
               id="account_name"
               placeholder="The business name that's registered to the bank account"
-              class="appearance-none bg-transparent border-none w-full text-grey-darker mr-3 py-1 px-2 leading-tight focus:outline-none"
+              class="appearance-none bg-transparent border-none w-full text-gray-500 mr-3 py-1 px-2 leading-tight focus:outline-none"
             />
           </div>
           <div
@@ -41,7 +41,7 @@
               name="bank_name"
               id="bank_name"
               placeholder="The name of your bank"
-              class="appearance-none bg-transparent border-none w-full text-grey-darker mr-3 py-1 px-2 leading-tight focus:outline-none"
+              class="appearance-none bg-transparent border-none w-full text-gray-500 mr-3 py-1 px-2 leading-tight focus:outline-none"
             />
           </div>
           <div
@@ -61,7 +61,7 @@
               name="sort_code"
               id="sort_code"
               placeholder="e.g. 12-34-56"
-              class="appearance-none bg-transparent border-none w-full text-grey-darker mr-3 py-1 px-2 leading-tight focus:outline-none"
+              class="appearance-none bg-transparent border-none w-full text-gray-500 mr-3 py-1 px-2 leading-tight focus:outline-none"
             />
           </div>
           <div
@@ -81,7 +81,7 @@
               name="account_number"
               id="account_number"
               placeholder="e.g. 12-34-56"
-              class="appearance-none bg-transparent border-none w-full text-grey-darker mr-3 py-1 px-2 leading-tight focus:outline-none"
+              class="appearance-none bg-transparent border-none w-full text-gray-500 mr-3 py-1 px-2 leading-tight focus:outline-none"
             />
           </div>
         </div>
@@ -138,7 +138,7 @@
               name="utr_number"
               id="utr_number"
               placeholder="The name of your bank"
-              class="appearance-none bg-transparent border-none w-full text-grey-darker mr-3 py-1 px-2 leading-tight focus:outline-none"
+              class="appearance-none bg-transparent border-none w-full text-gray-500 mr-3 py-1 px-2 leading-tight focus:outline-none"
             />
           </div>
         </div>

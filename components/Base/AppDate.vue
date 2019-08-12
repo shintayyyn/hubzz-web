@@ -70,7 +70,7 @@
                   class="rounded-full relative m-1 flex justify-center items-center h-10 w-auto"
                   :class="{
                   'border-yellow-400 border-2': isSame(item.fullDate),
-                  'text-grey': isDisabled(item.fullDate), 
+                  'text-gray-400': isDisabled(item.fullDate), 
                   'cursor-pointer hover:bg-gray-200': !isDisabled(item.fullDate)
                 }"
                   v-if="item.day === 1"
@@ -89,7 +89,7 @@
                   class="rounded-full relative m-1 flex justify-center items-center h-10 w-auto"
                   :class="{
                   'border-yellow-400 border-2': isSame(item.fullDate),
-                  'text-grey': isDisabled(item.fullDate), 
+                  'text-gray-400': isDisabled(item.fullDate), 
                   'cursor-pointer hover:bg-gray-200': !isDisabled(item.fullDate)
                 }"
                   v-if="item.day === 2"
@@ -108,7 +108,7 @@
                   class="rounded-full relative m-1 flex justify-center items-center h-10 w-auto"
                   :class="{
                   'border-yellow-400 border-2': isSame(item.fullDate),
-                  'text-grey': isDisabled(item.fullDate), 
+                  'text-gray-400': isDisabled(item.fullDate), 
                   'cursor-pointer hover:bg-gray-200': !isDisabled(item.fullDate)
                 }"
                   v-if="item.day === 3"
@@ -127,7 +127,7 @@
                   class="rounded-full relative m-1 flex justify-center items-center h-10 w-auto"
                   :class="{
                   'border-yellow-400 border-2': isSame(item.fullDate),
-                  'text-grey': isDisabled(item.fullDate), 
+                  'text-gray-400': isDisabled(item.fullDate), 
                   'cursor-pointer hover:bg-gray-200': !isDisabled(item.fullDate)
                 }"
                   v-if="item.day === 4"
@@ -146,7 +146,7 @@
                   class="rounded-full relative m-1 flex justify-center items-center h-10 w-auto"
                   :class="{
                   'border-yellow-400 border-2': isSame(item.fullDate),
-                  'text-grey': isDisabled(item.fullDate), 
+                  'text-gray-400': isDisabled(item.fullDate), 
                   'cursor-pointer hover:bg-gray-200': !isDisabled(item.fullDate)
                 }"
                   v-if="item.day === 5"
@@ -165,7 +165,7 @@
                   class="rounded-full relative m-1 flex justify-center items-center h-10 w-auto"
                   :class="{
                   'border-yellow-400 border-2': isSame(item.fullDate),
-                  'text-grey': isDisabled(item.fullDate), 
+                  'text-gray-400': isDisabled(item.fullDate), 
                   'cursor-pointer hover:bg-gray-200': !isDisabled(item.fullDate)
                 }"
                   v-if="item.day === 6"
@@ -184,7 +184,7 @@
                   class="rounded-full relative m-1 flex justify-center items-center h-10 w-auto"
                   :class="{
                   'border-yellow-400 border-2': isSame(item.fullDate),
-                  'text-grey': isDisabled(item.fullDate), 
+                  'text-gray-400': isDisabled(item.fullDate), 
                   'cursor-pointer hover:bg-gray-200': !isDisabled(item.fullDate)
                 }"
                   v-if="item.day === 0"

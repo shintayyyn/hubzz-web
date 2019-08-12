@@ -32,7 +32,7 @@
               <svgicon name="no-avatar" height="60" width="60" />
             </div>
             <div class="w-full font-bold text-sm sm:text-lg my-4">{{practice.surgery.name}}</div>
-            <div class="w-full font-bold text-grey-dark text-sm sm:text-lg">{{practice.email}}</div>
+            <div class="w-full font-bold text-gray-400 text-sm sm:text-lg">{{practice.email}}</div>
           </div>
         </div>
       </div>

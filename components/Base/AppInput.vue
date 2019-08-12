@@ -123,7 +123,7 @@
           :checked="value"
         />
         <span class="absolute right-0 px-1 py-2 bg-white">
-          <svgicon name="search" height="21" width="21" class="text-grey fill-current" />
+          <svgicon name="search" height="21" width="21" class="text-gray-400 fill-current" />
         </span>
       </div>
     </div>

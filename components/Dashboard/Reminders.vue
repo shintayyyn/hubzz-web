@@ -9,7 +9,7 @@
         <nuxt-link :to="item.route">
           <div class="reminder-card rounded-lg shadow-lg p-4">
             <span class="leading-tight">
-              <svgicon name="alert" height="20" width="20"/>
+              <svgicon name="alert" height="20" width="20" />
             </span>
             {{item.label}}
           </div>
@@ -26,25 +26,47 @@ export default {
     }
   },
   created() {
-    if (this.$auth.user.domain === 'Locum') {
-      if (this.$auth.user.locum_detail.gmc_or_nmc_number.status === 'Pending') {
-        this.reminders.push({ label: 'Complete your GMC / NMC Number', route: '/compliance' })
-      }
-      if (this.$auth.user.locum_detail.mpl_or_npl_number.status === 'Pending') {
-        this.reminders.push({ label: 'Complete your MPL / NPL Number', route: '/compliance' })
-      }
-      if (this.$auth.user.locum_detail.shifts.length === 0) {
-        this.reminders.push({ label: 'Complete your Availability Credentials', route: '/availability' })
-      }
-      if (this.$auth.user.locum_detail.compliance_documents.filter(document => document.status !== 'Pending').length === 0) {
-        this.reminders.push({ label: 'Complete your Compliance documents', route: '/compliance' })
-      }
-      // ! ask arvi where to check billing address
-      if (true) {
-        this.reminders.push({ label: 'Complete your Billing address', route: '/billing' })
-      }
+    this.$axios.$get('/api/v1/me').then(res => {
+      if (res.data.user.domain === 'Locum') {
+        if (res.data.user.locum_detail.gmc_or_nmc_number.status === 'Pending') {
+          this.reminders.push({ label: 'Complete your GMC / NMC Number', route: '/compliance' })
+        }
+        if (res.data.user.locum_detail.mpl_or_npl_number.status === 'Pending') {
+          this.reminders.push({ label: 'Complete your MPL / NPL Number', route: '/compliance' })
+        }
+        if (res.data.user.locum_detail.shifts.length === 0) {
+          this.reminders.push({ label: 'Complete your Availability Credentials', route: '/availability' })
+        }
+        res.data.user.locum_detail.compliance_documents.forEach(document => {
+          if ([1, 2, 3, 4].includes(document.compliance_document.id) && document.status !== "Approved") {
+            this.reminders.push({ label: 'Complete your Compliance documents', route: '/compliance' })
+          }
+        })
+        let isBillingComplete = true
+        let bank_account = Object.entries(res.data.user.locum_detail.bank_account)
+        let invoice_detail = Object.entries(res.data.user.locum_detail.invoice_detail)
+        for (const [key, value] of bank_account) {
+          if (!value) {
+            isBillingComplete = false
+          }
+        }
+        for (const [key, value] of invoice_detail) {
+          if (key === 'ir35' && !value) {
+            isBillingComplete = false
+          }
+          if (key === 'tax_year_end_date' && !value) {
+            isBillingComplete = false
+          }
+          if (key === 'tax_year_end_month' && !value) {
+            isBillingComplete = false
+          }
+          if (key === 'employment_type' && !value) {
+            isBillingComplete = false
+          }
+        }
 
-    }
+      }
+    })
   },
 }
 </script>

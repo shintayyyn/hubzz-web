@@ -17,7 +17,15 @@
             class="block no-underline p-4"
             :class="`/${$route.path.split('/')[1]}` == item.route ? 'text-yellow-400' : 'text-black hover:text-gray-200'"
           >
-            <span class="font-sans">{{item.name}}</span>
+            <span class="font-sans">
+              {{item.name}}
+              <transition name="fade">
+                <span
+                  v-if="getLocumJobsBadge > 0 && item.name === 'Jobs'"
+                  class="rounded-lg bg-red-400 text-white text-xs font-bold py-1 px-2"
+                >{{getLocumJobsBadge}}</span>
+              </transition>
+            </span>
           </nuxt-link>
         </div>
         <div class="text-sm relative">
@@ -52,6 +60,11 @@ export default {
       signout_modal: false,
       lists: []
     };
+  },
+  computed: {
+    getLocumJobsBadge() {
+      return this.$store.getters['jobs/getLocumJobsBadge']
+    }
   },
   created() {
     if (this.$auth.loggedIn) {

@@ -33,7 +33,7 @@
                 </div>
                 <div class="flex">
                   <p class="text-sm truncate w-full">{{ item.message }}</p>
-                  <span class="text-sm text-grey-darker">2hrs</span>
+                  <span class="text-sm text-gray-500">2hrs</span>
                 </div>
               </div>
             </div>
@@ -59,7 +59,7 @@
                 </div>
                 <div class="flex">
                   <p class="text-sm truncate w-full">{{ item.message }}</p>
-                  <span class="text-sm text-grey-darker">2hrs</span>
+                  <span class="text-sm text-gray-500">2hrs</span>
                 </div>
               </div>
             </div>
@@ -67,7 +67,7 @@
           <!-- No results -->
           <span
             v-if="messages.length === 0 && showResult === true"
-            class="flex h-full items-center justify-center font-bold text-grey"
+            class="flex h-full items-center justify-center font-bold text-gray-400"
           >Nothing to show</span>
         </div>
       </div>

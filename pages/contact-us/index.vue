@@ -34,7 +34,7 @@
               name="message"
               id="message"
               placeholder="Enter your message here..."
-              class="appearance-none bg-transparent border-none w-full text-grey-darker mr-3 py-1 px-2 leading-tight focus:outline-none"
+              class="appearance-none bg-transparent border-none w-full text-gray-500 mr-3 py-1 px-2 leading-tight focus:outline-none"
             ></textarea>
           </div>
         </div>

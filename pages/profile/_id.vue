@@ -1,12 +1,12 @@
 <template>
   <div class="modal-container shadow-lg">
-    <div class="p-8 max-w-xl" v-if="notFound">
+    <div class="p-8 max-w-3xl" v-if="notFound">
       <div @click="close" class="cursor-pointer">
         <svgicon name="left-arrow" height="32" />
       </div>
       <div>Not Found</div>
     </div>
-    <div class="p-8 max-w-xl" v-else>
+    <div class="p-8 max-w-3xl" v-else>
       <div @click="close" class="cursor-pointer">
         <svgicon name="left-arrow" height="32" />
       </div>

@@ -31,7 +31,7 @@
           </div>
           <div class="w-full font-bold text-sm sm:text-lg my-4">{{user.personal_detail.name}}</div>
           <div
-            class="w-full font-bold text-grey-dark text-sm sm:text-lg"
+            class="w-full font-bold text-gray-400 text-sm sm:text-lg"
           >{{user.locum_detail.profession.name}}</div>
         </div>
       </div>

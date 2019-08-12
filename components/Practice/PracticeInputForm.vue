@@ -4,21 +4,21 @@
       <div class="w-full">
         <form class="px-8 pt-6 pb-8 mb-4">
           <div class="mb-4 border-b border-b-2 border-grey py-2">
-            <label for="title" class="block text-grey-darker text-sm font-bold mb-2">Title</label>
+            <label for="title" class="block text-gray-500 text-sm font-bold mb-2">Title</label>
             <input
               v-model="form.title"
               type="text"
               name="title"
               id="title"
               placeholder="(ex. Mr., Ms., Mrs.)"
-              class="appearance-none bg-transparent border-none w-full text-grey-darker mr-3 py-1 px-2 leading-tight focus:outline-none"
+              class="appearance-none bg-transparent border-none w-full text-gray-500 mr-3 py-1 px-2 leading-tight focus:outline-none"
             />
           </div>
           <div
             class="mb-4 border-b border-b-2 border-grey py-2"
             :class="{ 'border-red-300': formError.includes('firstName') }"
           >
-            <label for="firstName" class="block text-grey-darker text-sm font-bold mb-2">First name</label>
+            <label for="firstName" class="block text-gray-500 text-sm font-bold mb-2">First name</label>
             <em
               v-if="formError.includes('firstName')"
               class="text-xs text-red-400 float-right"
@@ -29,14 +29,14 @@
               name="firstName"
               id="firstName"
               placeholder="Your first name"
-              class="appearance-none bg-transparent border-none w-full text-grey-darker mr-3 py-1 px-2 leading-tight focus:outline-none"
+              class="appearance-none bg-transparent border-none w-full text-gray-500 mr-3 py-1 px-2 leading-tight focus:outline-none"
             />
           </div>
           <div
             class="mb-4 border-b border-b-2 border-grey py-2"
             :class="{ 'border-red-300': formError.includes('lastName') }"
           >
-            <label for="lastName" class="block text-grey-darker text-sm font-bold mb-2">Last name</label>
+            <label for="lastName" class="block text-gray-500 text-sm font-bold mb-2">Last name</label>
             <em
               v-if="formError.includes('lastName')"
               class="text-xs text-red-400 float-right"
@@ -47,31 +47,31 @@
               name="lastName"
               id="lastName"
               placeholder="Your last name"
-              class="appearance-none bg-transparent border-none w-full text-grey-darker mr-3 py-1 px-2 leading-tight focus:outline-none"
+              class="appearance-none bg-transparent border-none w-full text-gray-500 mr-3 py-1 px-2 leading-tight focus:outline-none"
             />
           </div>
           <div class="mb-4 border-b border-b-2 border-grey py-2">
-            <label for="suffix" class="block text-grey-darker text-sm font-bold mb-2">Suffix</label>
+            <label for="suffix" class="block text-gray-500 text-sm font-bold mb-2">Suffix</label>
             <input
               v-model="form.suffix"
               type="text"
               name="suffix"
               id="suffix"
               placeholder="(ex. Ph.D., M.D., etc)"
-              class="appearance-none bg-transparent border-none w-full text-grey-darker mr-3 py-1 px-2 leading-tight focus:outline-none"
+              class="appearance-none bg-transparent border-none w-full text-gray-500 mr-3 py-1 px-2 leading-tight focus:outline-none"
             />
           </div>
           <div
             class="mb-4 border-b border-b-2 border-grey py-2"
             :class="{ 'border-red-300': formError.includes('role') }"
           >
-            <label for="role" class="block text-grey-darker text-sm font-bold mb-2">Role</label>
+            <label for="role" class="block text-gray-500 text-sm font-bold mb-2">Role</label>
             <em v-if="formError.includes('role')" class="text-xs text-red-400 float-right">Required</em>
             <select
               v-model="form.role"
               name="role"
               id="role"
-              class="appearance-none bg-transparent border-none w-full text-grey-darker mr-3 py-1 px-2 leading-tight focus:outline-none"
+              class="appearance-none bg-transparent border-none w-full text-gray-500 mr-3 py-1 px-2 leading-tight focus:outline-none"
             >
               Role
               <option value>Select..</option>
@@ -84,7 +84,7 @@
             class="mb-4 border-b border-b-2 border-grey py-2"
             :class="{ 'border-red-300': formError.includes('email') }"
           >
-            <label for="email" class="block text-grey-darker text-sm font-bold mb-2">Email</label>
+            <label for="email" class="block text-gray-500 text-sm font-bold mb-2">Email</label>
             <em v-if="formError.includes('email')" class="text-xs text-red-400 float-right">Required</em>
             <input
               v-model="form.email"
@@ -92,14 +92,14 @@
               name="email"
               id="email"
               placeholder="Your email address"
-              class="appearance-none bg-transparent border-none w-full text-grey-darker mr-3 py-1 px-2 leading-tight focus:outline-none"
+              class="appearance-none bg-transparent border-none w-full text-gray-500 mr-3 py-1 px-2 leading-tight focus:outline-none"
             />
           </div>
           <div
             class="mb-4 border-b border-b-2 border-grey py-2"
             :class="{ 'border-red-300': formError.includes('password') }"
           >
-            <label for="password" class="block text-grey-darker text-sm font-bold mb-2">Password</label>
+            <label for="password" class="block text-gray-500 text-sm font-bold mb-2">Password</label>
             <em
               v-if="formError.includes('password')"
               class="text-xs text-red-400 float-right"
@@ -110,7 +110,7 @@
               name="password"
               id="password"
               placeholder="Your password address"
-              class="appearance-none bg-transparent border-none w-full text-grey-darker mr-3 py-1 px-2 leading-tight focus:outline-none"
+              class="appearance-none bg-transparent border-none w-full text-gray-500 mr-3 py-1 px-2 leading-tight focus:outline-none"
             />
           </div>
           <div
@@ -119,7 +119,7 @@
           >
             <label
               for="confirmPassword"
-              class="block text-grey-darker text-sm font-bold mb-2"
+              class="block text-gray-500 text-sm font-bold mb-2"
             >Repeat password to verify</label>
             <em
               v-if="formError.includes('confirmPassword')"
@@ -131,11 +131,11 @@
               name="confirmPassword"
               id="confirmPassword"
               placeholder="Repeat Password"
-              class="appearance-none bg-transparent border-none w-full text-grey-darker mr-3 py-1 px-2 leading-tight focus:outline-none"
+              class="appearance-none bg-transparent border-none w-full text-gray-500 mr-3 py-1 px-2 leading-tight focus:outline-none"
             />
           </div>
           <div class="mb-4 py-2">
-            <label for="agree" class="text-grey-darker">
+            <label for="agree" class="text-gray-500">
               <input
                 v-model="form.agree"
                 type="checkbox"
