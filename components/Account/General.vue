@@ -17,7 +17,7 @@
       <div class="-mt-6 mb-4" v-if="email_isVerified === false ">
         <span class="text-red-300 text-xs">E-mail is not yet verified.</span>
         <span
-          class="p-1 bg-grey rounded text-xs"
+          class="p-1 bg-gray-800 rounded text-xs"
           @click="resendEmailVerification()"
         >Click here to re-send</span>
       </div>

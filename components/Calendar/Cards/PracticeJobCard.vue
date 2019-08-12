@@ -30,7 +30,7 @@ export default {
     },
     bgStatus(status, reminder, job) {
       if (reminder && status !== 'Unfilled') {
-        return 'bg-grey'
+        return 'bg-gray-800'
       } else {
         switch (status) {
           case 'Applied':

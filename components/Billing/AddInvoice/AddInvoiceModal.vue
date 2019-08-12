@@ -1,6 +1,6 @@
 <template>
   <div
-    class="absolute right-0 top-0 z-10 p-10 bg-grey-darkest"
+    class="absolute right-0 top-0 z-10 p-10 bg-gray-800"
     style="height:130%"
     :style="$store.state.mobile ? 'width:100%' : 'width:70%'"
   >
@@ -12,11 +12,11 @@
         <span v-text="'<'"></span>
       </div>
       <button
-        class="border border-solid border-yellow-400 bg-yellow-400 text-black font-bold p-2 rounded-lg mx-2 hover:text-yellow-300 hover:bg-grey-darkest"
+        class="border border-solid border-yellow-400 bg-yellow-400 text-black font-bold p-2 rounded-lg mx-2 hover:text-yellow-300 hover:bg-gray-800"
         @click.prevent="save_changes"
       >Save changes</button>
       <button
-        class="border border-solid border-yellow-400 bg-yellow-400 text-black font-bold p-2 rounded-lg mx-2 hover:text-yellow-300 hover:bg-grey-darkest"
+        class="border border-solid border-yellow-400 bg-yellow-400 text-black font-bold p-2 rounded-lg mx-2 hover:text-yellow-300 hover:bg-gray-800"
         @click.prevent="archive_as_file"
       >Save and archive as file</button>
     </div>

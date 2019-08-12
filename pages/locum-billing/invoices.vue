@@ -2,7 +2,9 @@
   <div>
     <transition name="fade" mode="out-in">
       <div
-        v-if="$route.path === '/locum-billing/create' || deleteModal || paymentModal"
+        v-if="$route.path === '/locum-billing/invoices/create' || deleteModal 
+        || paymentModal || $route.name === 'locum-billing-invoices-id' 
+        || $route.name === 'locum-billing-invoices-id-edit'"
         class="invoice-shield"
       ></div>
     </transition>

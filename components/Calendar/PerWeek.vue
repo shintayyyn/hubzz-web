@@ -223,13 +223,13 @@
         <template v-for="(date, index) in daysInWeek">
           <div
             v-if="hasPracticeAppliedJobsReminder(date, 'Reminder')"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-grey hover:bg-gray-200"
+            class="w-full cursor-pointer border-t-2 border-gray-300 bg-gray-800 hover:bg-gray-200"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'Reminder')"
           ></div>
           <div
             v-else-if="hasPracticeAvailableJobsReminder(date, 'Reminder')"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-grey hover:bg-gray-200"
+            class="w-full cursor-pointer border-t-2 border-gray-300 bg-gray-800 hover:bg-gray-200"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'Reminder')"
           ></div>

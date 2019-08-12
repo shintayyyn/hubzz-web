@@ -38,15 +38,12 @@ export default {
         invoice,
       }
     } catch (err) {
-      console.log('locum-invoice create err', err.response || err)
-      console.log('locum-invoice create error', {
-        statusCode: err.status || 500,
-        message: err.message || 'Something went wrong!',
-      })
-      error({
-        statusCode: err.status || 500,
-        message: err.message || 'Something went wrong!',
-      })
+      if (err && err.response.status === 404) {
+        return error({ status: 404, message: 'This page could not be found' })
+      } else if (err & err.response.status === 500) {
+        return error({ status: 500, message: 'Something went wrong!' })
+      }
+      throw err
     }
   },
 

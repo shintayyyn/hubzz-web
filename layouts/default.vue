@@ -67,7 +67,7 @@ export default {
 <style>
 .content {
   /* box-sizing: content-box; */
-  max-width: 1000px;
+  max-width: 1466px;
   padding: 5px 30px;
   height: 100%;
 }

@@ -31,7 +31,7 @@
             >
               <div
                 class="flex flex-row justify-center cursor-pointer"
-                :class="{'bg-grey-dark': selectedHour === hour}"
+                :class="{'bg-gray-800': selectedHour === hour}"
                 v-for="(hour, index) in hours"
                 :key="index"
                 @click="selectTime(hour, 'hour')"
@@ -43,7 +43,7 @@
             >
               <div
                 class="flex flex-row justify-center cursor-pointer"
-                :class="{'bg-grey-dark': selectedMinute === minute}"
+                :class="{'bg-gray-800': selectedMinute === minute}"
                 v-for="(minute, index) in minutes"
                 :key="index"
                 @click="selectTime(minute, 'minute')"
@@ -55,7 +55,7 @@
             >
               <div
                 class="flex flex-row justify-center cursor-pointer"
-                :class="{'bg-grey-dark': selectedSecond === second}"
+                :class="{'bg-gray-800': selectedSecond === second}"
                 v-for="(second, index) in seconds"
                 :key="index"
                 @click="selectTime(second, 'second')"

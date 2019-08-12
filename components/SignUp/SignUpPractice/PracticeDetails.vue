@@ -33,7 +33,7 @@
         >Select by clicking on the practice that you wish to add</div>
         <div
           class="border-t-2 p-4 cursor-pointer"
-          :class="selectedSurgeryId === item.id ? 'bg-yellow-400':'hover:bg-grey'"
+          :class="selectedSurgeryId === item.id ? 'bg-yellow-400':'hover:bg-gray-800'"
           v-for="(item) in surgeries"
           :key="item.id"
           @click="selectedSurgeryId = item.id"

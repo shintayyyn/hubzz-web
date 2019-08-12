@@ -32,9 +32,9 @@
         v-if="$route.path === '/locum-billing/invoices' || $route.path === '/locum-billing/create'"
         to="/locum-billing/invoices/create"
         style="font-family:Nunito"
-        class="flex flex-row leading-loose hover:underline"
+        class="flex flex-row leading-loose group"
       >
-        Add invoice
+        <span class="hover:underline">Add invoice</span>
         <div
           class="rounded-full h-8 w-8 text-2xl sm:text-3xl md:text-4xl flex items-center focus:outline-none justify-center bg-yellow-400 font-semibold cursor-pointer shadow-md hover:text-white hover:no-underline"
           @click="add"

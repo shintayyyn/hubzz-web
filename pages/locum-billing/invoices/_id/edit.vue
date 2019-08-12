@@ -30,7 +30,7 @@
           >Platform</button>
         </div>
 
-        <div class="max-w-lg my-4 bg-white px-4 py-4 border shadow-md">
+        <div class="max-w-2xl my-4 bg-white px-4 py-4 border shadow-md">
           <div class="flex flex-col">
             <div class="text-xs sm:text-sm text-right leading-normal">
               <div>Mr. {{$auth.user.personal_detail.name}}</div>
@@ -165,7 +165,7 @@
 
           <table class="w-full">
             <thead>
-              <tr class="text-center bg-grey-darkest">
+              <tr class="text-center bg-gray-800">
                 <th class="text-white" style="width:75%">Description</th>
                 <th class="text-white" style="width:20%">Total</th>
                 <th style="width:5%"></th>
@@ -191,7 +191,7 @@
                 </td>
                 <td style="width:5%">
                   <span
-                    class="cursor-pointer m-1 rounded-full bg-grey-darkest text-white font-semibold text-xl px-2 py-0"
+                    class="cursor-pointer m-1 rounded-full bg-gray-800 text-white font-semibold text-xl px-2 py-0"
                     @click="removeSelectedJobPart(item, index)"
                   >
                     <span class="text-2xl">-</span>
@@ -203,7 +203,7 @@
                 <td style="width:20%"></td>
                 <td style="width:5%">
                   <span
-                    class="cursor-pointer m-1 rounded-full bg-grey-darkest text-white font-semibold text-xl px-2"
+                    class="cursor-pointer m-1 rounded-full bg-gray-800 text-white font-semibold text-xl px-2"
                     @click="addItem"
                     v-if="type === 'Private'"
                   >+</span>
@@ -446,7 +446,7 @@ export default {
     this.searchSurgeries = this.invoice.surgery.name
     this.selectedSurgery = this.invoice.surgery
     this.invoice.items.forEach(item => {
-      item.job_part_id = item.job_part.id
+      item.job_part_id = item.job_part ? item.job_part.id : null
       this.selectedJobParts.push(item)
     })
     this.form.date_start = this.invoice.date_start
