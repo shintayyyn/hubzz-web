@@ -55,14 +55,14 @@
           </tbody>
         </table>
       </div>
-      <div v-if="!currentJobs.length == 0" class="m-10 xl:-ml-32">
-        <AppPagination
-          :total="total"
-          :totalPages="totalPages"
-          :currentPage="currentPage"
-          @pagechanged="pagechanged"
-        />
-      </div>
+    </div>
+    <div v-if="!currentJobs.length == 0" class="m-10 xl:-ml-32">
+      <AppPagination
+        :total="total"
+        :totalPages="totalPages"
+        :currentPage="currentPage"
+        @pagechanged="pagechanged"
+      />
     </div>
   </div>
 </template>

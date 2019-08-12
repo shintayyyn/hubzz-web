@@ -5,7 +5,7 @@
     </div>
     <div class="flex flex-row flex-wrap justify-between mt-4">
       <div class="w-full pr-0 lg:pr-2 lg:w-1/2">
-        <div class="rounded-lg shadow-lg">
+        <div class="rounded-lg shadow-lg p-4">
           <div class="float-right">
             <!-- <div class="font-bold text-sm sm:text-md">Avatar</div> -->
             <div class="text-xs sm:text-sm mb-6">

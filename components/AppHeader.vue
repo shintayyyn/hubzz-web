@@ -18,7 +18,7 @@
           >
             <AppButton
               :label="'Create Job'"
-              @click="$store.commit('calendar/CREATE_JOB', true)"
+              @click="$store.commit('calendar/CREATE_JOB_MODAL', true)"
               :inStyle="'font-size:medium;padding:2px;'"
             />
           </div>
@@ -37,11 +37,9 @@
 </template>
 <script>
 import AppButton from "@/components/Base/AppButton";
-import CreateJobModal from '@/components/CreateJobModal'
 export default {
   components: {
     AppButton,
-    CreateJobModal
   },
   methods: {
     toggle() {

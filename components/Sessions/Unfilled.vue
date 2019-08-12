@@ -1,5 +1,6 @@
 <template>
   <section class="__jobs-section">
+    <AppJobFilter @getJobs="getJobs(1, params)" :params="params" />
     <div class="overflow-x-auto">
       <div
         class="mt-10 w-full text-center"
@@ -16,6 +17,12 @@
               </th>
               <th>Practice / Surgery</th>
               <th>Title</th>
+              <th>Shift</th>
+              <th @click="sortBy('rate')">
+                Rate
+                <svgicon class="inline" name="sort" height="12" width="12" />
+              </th>
+              <th>Per</th>
               <th @click="sortBy('date_start')">
                 From
                 <svgicon class="inline" name="sort" height="12" width="12" />
@@ -40,6 +47,9 @@
                 <td>{{item.job_number}}</td>
                 <td>{{item.platform_job.practice.surgery.name}}</td>
                 <td>{{item.title}}</td>
+                <td>{{item.shift.name}}</td>
+                <td>{{item.rate}}</td>
+                <td>{{item.locum_detail_rate_type.name}}</td>
                 <td>{{item.date_start}}</td>
                 <td>{{item.date_end}}</td>
                 <td>{{item.date_created}}</td>
@@ -64,9 +74,11 @@
 </template>
 <script>
 import AppPagination from '@/components/Base/AppPagination'
+import AppJobFilter from '@/components/Base/AppJobFilter'
 export default {
   components: {
-    AppPagination
+    AppPagination,
+    AppJobFilter,
   },
   data() {
     return {
@@ -77,6 +89,7 @@ export default {
       // sort
       sortType: '',
       job_number: true,
+      rate: true,
       date_start: true,
       date_end: true,
       date_created: true,
@@ -121,6 +134,10 @@ export default {
     },
     sortBy(sortedBy) {
       switch (sortedBy) {
+        case 'rate':
+          this.rate = !this.rate
+          this.sortType = this.rate
+          break;
         case 'job_number':
           this.job_number = !this.job_number
           this.sortType = this.job_number

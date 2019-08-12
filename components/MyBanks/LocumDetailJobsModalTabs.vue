@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-no-wrap mt-4 ml-6 justify-start">
+  <div class="flex flex-wrap mt-4 justify-start">
     <div
       style="font-family:Nunito"
       @click.prevent="goTo('locum_available')"

@@ -1,12 +1,12 @@
 <template>
   <div class="p-8 max-w-3xl">
-    <div @click="$emit('close')" class="cursor-pointer">
+    <div @click="close" class="cursor-pointer">
       <svgicon name="left-arrow" height="32" width="32" />
     </div>
     <div class="flex justify-start font-bold text-sm sm:text-xl mt-8">Create a new job</div>
     <div class="flex flex-row flex-wrap justify-start mt-8">
       <!--VALIDATION MODAL-->
-      <div v-if="showErrorModal == true" class="absolute top-0">
+      <div v-if="showErrorModal == true" class="absolute top-0 z-50">
         <div
           class="fixed text-white bg-red-200 py-2 px-12 mr-10 md:mr-0 md:w-1/3 shadow"
           style="border-radius: 0 0 10px 10px"
@@ -672,6 +672,9 @@ export default {
   },
 
   methods: {
+    close() {
+      this.$store.commit('calendar/CREATE_JOB_MODAL', false)
+    },
     checkEmptyField(inputField, fieldName) {
       // splice from formError
       let index = this.formError.findIndex(item => item.field === fieldName)

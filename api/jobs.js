@@ -5,6 +5,10 @@ export function fetchPracticeJobs(axios, payload) {
     payload.status ? params.status = payload.status : null
     payload.date_start ? params.date_start = payload.date_start : null
     payload.date_end ? params.date_end = payload.date_end : null
+    payload.shift_id ? params.shift_id = payload.shift_id : null
+    payload.rate ? params.rate = payload.rate : null
+    payload.locum_detail_rate_type_id ? params.locum_detail_rate_type_id = payload.locum_detail_rate_type_id : null
+    payload.near_post_code ? params.near_post_code = payload.near_post_code : null
     payload.order_by ? params.order_by = payload.order_by : null
     return axios.$get(`/api/v1/practice/jobs${payload.countOnly ? '/count' : ''}`, { params: params })
 }
