@@ -13,7 +13,7 @@ export const state = () => ({
     },
     ADD_INVOICE(state, payload) {
       if (!state.locum_invoices.find(invoice => invoice.id === payload.id)) {
-        state.locum_invoices.push(payload)
+        state.locum_invoices.unshift(payload)
       }
     },
     REMOVE_INVOICE(state, payload) {

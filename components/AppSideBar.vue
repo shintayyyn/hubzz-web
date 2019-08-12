@@ -25,6 +25,12 @@
                   class="rounded-lg bg-red-400 text-white text-xs font-bold py-1 px-2"
                 >{{getLocumJobsBadge}}</span>
               </transition>
+              <transition name="fade">
+                <span
+                  v-if="getPracticeJobsBadge > 0 && item.name === 'Sessions'"
+                  class="rounded-lg bg-red-400 text-white text-xs font-bold py-1 px-2"
+                >{{getPracticeJobsBadge}}</span>
+              </transition>
             </span>
           </nuxt-link>
         </div>
@@ -64,7 +70,10 @@ export default {
   computed: {
     getLocumJobsBadge() {
       return this.$store.getters['jobs/getLocumJobsBadge']
-    }
+    },
+    getPracticeJobsBadge() {
+      return this.$store.getters['jobs/getPracticeJobsBadge']
+    },
   },
   created() {
     if (this.$auth.loggedIn) {

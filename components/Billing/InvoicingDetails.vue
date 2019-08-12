@@ -5,7 +5,7 @@
         <p style="font-family:Nunito" class="text-sm font-bold">Bank account</p>
         <div class="border-solid rounded-lg shadow-lg mt-5 p-10">
           <div
-            class="mb-4 border-b border-b-2 border-grey py-2"
+            class="mb-4 border-b border-b-2 border-gray-300 py-2"
             :class="{'border-yellow-400':setFocus === 'account_name', 'border-red-300': formError.includes('account_name')}"
           >
             <label for="account_name" class="block text-sm mb-2">Account Name</label>
@@ -25,7 +25,7 @@
             />
           </div>
           <div
-            class="mb-4 border-b border-b-2 border-grey py-2"
+            class="mb-4 border-b border-b-2 border-gray-300 py-2"
             :class="{'border-yellow-400':setFocus === 'bank_name', 'border-red-300': formError.includes('bank_name')}"
           >
             <label for="bank_name" class="block text-sm mb-2">Bank Name</label>
@@ -45,7 +45,7 @@
             />
           </div>
           <div
-            class="mb-4 border-b border-b-2 border-grey py-2"
+            class="mb-4 border-b border-b-2 border-gray-300 py-2"
             :class="{'border-yellow-400':setFocus === 'sort_code', 'border-red-300': formError.includes('sort_code')}"
           >
             <label for="sort_code" class="block text-sm mb-2">Sort code</label>
@@ -65,7 +65,7 @@
             />
           </div>
           <div
-            class="mb-4 border-b border-b-2 border-grey py-2"
+            class="mb-4 border-b border-b-2 border-gray-300 py-2"
             :class="{'border-yellow-400':setFocus === 'account_number', 'border-red-300': formError.includes('account_number')}"
           >
             <label for="account_number" class="block text-sm mb-2">Account number</label>
@@ -122,7 +122,7 @@
           </select>
 
           <div
-            class="mb-4 border-b border-b-2 border-grey py-2 mt-5"
+            class="mb-4 border-b border-b-2 border-gray-300 py-2 mt-5"
             :class="{'border-yellow-400':setFocus === 'utr_number', 'border-red-300': formError.includes('utr_number')}"
           >
             <label for="utr_number" class="block text-sm mb-2">UTR Number</label>

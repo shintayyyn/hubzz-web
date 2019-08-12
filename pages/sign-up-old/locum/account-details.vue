@@ -18,7 +18,7 @@
           <label class="text-xs">Title</label>
           <input
             class="outline-none py-1 mt-1 mb-8 border-b"
-            :class="showTitleFocus ? 'border-yellow-400' : false ? 'border-red-300' : 'border-grey-dark'"
+            :class="showTitleFocus ? 'border-yellow-400' : false ? 'border-red-300' : 'border-gray-400'"
             v-model="title"
             @focus="showTitleFocus = true"
             @blur="showTitleFocus = false"
@@ -34,7 +34,7 @@
           </div>
           <input
             class="outline-none py-1 mt-1 mb-8 border-b"
-            :class="showFirstNameFocus ? 'border-yellow-400' : showFirstNameRequired ? 'border-red-300' : 'border-grey-dark'"
+            :class="showFirstNameFocus ? 'border-yellow-400' : showFirstNameRequired ? 'border-red-300' : 'border-gray-400'"
             v-model="firstName"
             @focus="showFirstNameFocus = true"
             @blur="showFirstNameFocus = false, checkFirstName()"
@@ -50,7 +50,7 @@
           </div>
           <input
             class="outline-none py-1 mt-1 mb-8 border-b"
-            :class="showLastNameFocus ? 'border-yellow-400' : showLastNameRequired ? 'border-red-300' : 'border-grey-dark'"
+            :class="showLastNameFocus ? 'border-yellow-400' : showLastNameRequired ? 'border-red-300' : 'border-gray-400'"
             v-model="lastName"
             @focus="showLastNameFocus = true"
             @blur="showLastNameFocus = false, checkLastName()"
@@ -60,7 +60,7 @@
           <label class="text-xs">Suffix</label>
           <input
             class="outline-none py-1 mt-1 mb-8 border-b"
-            :class="showSuffixFocus ? 'border-yellow-400' : false ? 'border-red-300' : 'border-grey-dark'"
+            :class="showSuffixFocus ? 'border-yellow-400' : false ? 'border-red-300' : 'border-gray-400'"
             v-model="suffix"
             @focus="showSuffixFocus = true"
             @blur="showSuffixFocus = false"
@@ -76,7 +76,7 @@
           </div>
           <select
             class="outline-none py-2 mt-1 mb-8 border-b bg-gray-200"
-            :class="showGenderFocus ? 'border-yellow-400' : showGenderRequired ? 'border-red-300' : 'border-grey-dark'"
+            :class="showGenderFocus ? 'border-yellow-400' : showGenderRequired ? 'border-red-300' : 'border-gray-400'"
             v-model="gender"
             @focus="showGenderFocus = true"
             @blur="showGenderFocus = false, checkGender()"
@@ -99,7 +99,7 @@
           </div>
           <input
             class="outline-none py-1 mt-1 mb-8 border-b"
-            :class="showMobileNumberFocus ? 'border-yellow-400' : showMobileNumberRequired ? 'border-red-300' : 'border-grey-dark'"
+            :class="showMobileNumberFocus ? 'border-yellow-400' : showMobileNumberRequired ? 'border-red-300' : 'border-gray-400'"
             v-model="mobileNumber"
             @focus="showMobileNumberFocus = true"
             @blur="showMobileNumberFocus = false, checkMobileNumber()"
@@ -108,7 +108,7 @@
           <label class="text-xs">Home/Land line number</label>
           <input
             class="outline-none py-1 mt-1 mb-8 border-b"
-            :class="showHomeNumberFocus ? 'border-yellow-400' : false ? 'border-red-300' : 'border-grey-dark'"
+            :class="showHomeNumberFocus ? 'border-yellow-400' : false ? 'border-red-300' : 'border-gray-400'"
             v-model="homeNumber"
             @focus="showHomeNumberFocus = true"
             @blur="showHomeNumberFocus = false"

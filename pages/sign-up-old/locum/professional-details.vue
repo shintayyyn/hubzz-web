@@ -25,7 +25,7 @@
             </div>
             <input
               class="outline-none py-1 mt-1 border-b"
-              :class="showGMCNumberFocus ? 'border-yellow-400' : gmcNumberErrorMessage ? 'border-red-300' : 'border-grey-dark'"
+              :class="showGMCNumberFocus ? 'border-yellow-400' : gmcNumberErrorMessage ? 'border-red-300' : 'border-gray-400'"
               v-model="gmcNumber"
               @focus="showGMCNumberFocus = true"
               @blur="showGMCNumberFocus = false, checkGMCNumber()"
@@ -49,7 +49,7 @@
             </div>
             <input
               class="outline-none py-1 mt-1 border-b"
-              :class="showMPLNumberFocus ? 'border-yellow-400' : mplNumberErrorMessage ? 'border-red-300' : 'border-grey-dark'"
+              :class="showMPLNumberFocus ? 'border-yellow-400' : mplNumberErrorMessage ? 'border-red-300' : 'border-gray-400'"
               v-model="mplNumber"
               @focus="showMPLNumberFocus = true"
               @blur="showMPLNumberFocus = false, checkMPLNumber()"
@@ -69,7 +69,7 @@
             </div>
             <input
               class="outline-none py-1 mt-1 border-b"
-              :class="showSmartCardIdNumberFocus ? 'border-yellow-400' : smartCardIdNumberErrorMessage ? 'border-red-300' : 'border-grey-dark'"
+              :class="showSmartCardIdNumberFocus ? 'border-yellow-400' : smartCardIdNumberErrorMessage ? 'border-red-300' : 'border-gray-400'"
               v-model="smartCardIdNumber"
               @focus="showSmartCardIdNumberFocus = true"
               @blur="showSmartCardIdNumberFocus = false, checkSmartCardIdNumber()"
@@ -88,7 +88,7 @@
             </div>
             <select
               class="outline-none py-2 mt-1 border-b w-full bg-gray-200"
-              :class="showPrefossionFocus ? 'border-yellow-400' : professionErrorMessage ? 'border-red-300' : 'border-grey-dark'"
+              :class="showPrefossionFocus ? 'border-yellow-400' : professionErrorMessage ? 'border-red-300' : 'border-gray-400'"
               v-model="profession"
               @focus="showPrefossionFocus = true"
               @blur="showPrefossionFocus = false, checkProfession()"
@@ -119,7 +119,7 @@
             <div class="relative" v-on-clickaway="hideQualificationsSelect">
               <div
                 class="flex items-center flex-wrap border-b"
-                :class="showQualificationsSelect ? 'border-yellow-400' : selectedQualificationsErrorMessage ? 'border-red-300' : 'border-grey-dark'"
+                :class="showQualificationsSelect ? 'border-yellow-400' : selectedQualificationsErrorMessage ? 'border-red-300' : 'border-gray-400'"
               >
                 <div
                   class="px-2 py-1 rounded-lg m-1"
@@ -181,7 +181,7 @@
             <div class="relative" v-on-clickaway="hideSystemSelect">
               <div
                 class="flex items-center flex-wrap border-b"
-                :class="showSystemsSelect ? 'border-yellow-400' : selectedSystemsErrorMessage ? 'border-red-300' : 'border-grey-dark'"
+                :class="showSystemsSelect ? 'border-yellow-400' : selectedSystemsErrorMessage ? 'border-red-300' : 'border-gray-400'"
               >
                 <div
                   class="px-2 py-1 rounded-lg m-1"
@@ -243,7 +243,7 @@
             <div class="relative" v-on-clickaway="hideLanguageSelect">
               <div
                 class="flex items-center flex-wrap border-b"
-                :class="showLanguagesSelect ? 'border-yellow-400' : selectedLanguagesErrorMessage ? 'border-red-300' : 'border-grey-dark'"
+                :class="showLanguagesSelect ? 'border-yellow-400' : selectedLanguagesErrorMessage ? 'border-red-300' : 'border-gray-400'"
               >
                 <div class="px-2 py-1 rounded-lg m-1" style="background-color: #FFDA3A;">
                   <span class="text-sm">English</span>
@@ -310,7 +310,7 @@
                 </div>
                 <input
                   class="outline-none py-1 mt-1 border-b w-full text-right"
-                  :class="showRatePerHourFocus ? 'border-yellow-400' : ratePerHourErrorMessage ? 'border-red-300' : 'border-grey-dark'"
+                  :class="showRatePerHourFocus ? 'border-yellow-400' : ratePerHourErrorMessage ? 'border-red-300' : 'border-gray-400'"
                   v-model="ratePerHour"
                   @focus="showRatePerHourFocus = true"
                   @blur="showRatePerHourFocus = false, checkRatePerHour()"
@@ -328,7 +328,7 @@
                 </div>
                 <input
                   class="outline-none py-1 mt-1 border-b w-full text-right"
-                  :class="showRatePerSessionFocus ? 'border-yellow-400' : ratePerSessionErrorMessage ? 'border-red-300' : 'border-grey-dark'"
+                  :class="showRatePerSessionFocus ? 'border-yellow-400' : ratePerSessionErrorMessage ? 'border-red-300' : 'border-gray-400'"
                   v-model="ratePerSession"
                   @focus="showRatePerSessionFocus = true"
                   @blur="showRatePerSessionFocus = false, checkRatePerSession()"
@@ -345,7 +345,7 @@
             </div>
             <select
               class="outline-none py-2 mt-1 border-b w-full bg-gray-200"
-              :class="showScopeIR35Focus ? 'border-yellow-400' : false ? 'border-red-300' : 'border-grey-dark'"
+              :class="showScopeIR35Focus ? 'border-yellow-400' : false ? 'border-red-300' : 'border-gray-400'"
               v-model="scopeIR35"
               @focus="showScopeIR35Focus = true"
               @blur="showScopeIR35Focus = false"

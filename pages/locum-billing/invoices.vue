@@ -7,7 +7,6 @@
       ></div>
     </transition>
     <transition name="drop" mode="out-in">
-      <!-- <SignOut v-if="confirmation" @modal="confirmation = $event" /> -->
       <div class="confirmation fixed top-0 w-full flex justify-center" v-if="deleteModal">
         <div class="confirmation-modal border-solid rounded-b-lg bg-yellow-400 p-2">
           <div class="flex justify-center">
@@ -101,14 +100,14 @@
           </table>
         </div>
       </div>
-      <div class="absolute bottom-0 w-full" v-if="getLocumInvoices.length > 0 && totalPages > 1">
-        <AppPagination
-          :total="total"
-          :totalPages="totalPages"
-          :currentPage="current_page"
-          @pagechanged="pagechanged"
-        />
-      </div>
+    </div>
+    <div class="bottom-0 w-full" v-if="getLocumInvoices.length > 0 && totalPages > 1">
+      <AppPagination
+        :total="total"
+        :totalPages="totalPages"
+        :currentPage="current_page"
+        @pagechanged="pagechanged"
+      />
     </div>
     <div
       v-if="paymentModal"
@@ -285,6 +284,7 @@ export default {
       this.$axios.$delete(`/api/v1/locum/invoices/${this.selectedInvoiceId}`).then(res => {
         this.$store.commit('billing/REMOVE_INVOICE', this.selectedInvoiceId)
         this.deleteModal = false
+        this.getInvoice(this.current_page, this.params)
       })
     }
   }

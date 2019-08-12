@@ -21,7 +21,7 @@
               <div class="relative" v-on-clickaway="hidePredictions">
                 <input
                   class="w-full bg-transparent outline-none py-1 mt-1 mb-8 border-b"
-                  :class="showPostCodeFocus ? 'border-yellow-400' : showPostCodeRequired ? 'border-red-300' : 'border-grey-dark'"
+                  :class="showPostCodeFocus ? 'border-yellow-400' : showPostCodeRequired ? 'border-red-300' : 'border-gray-400'"
                   v-model="postCode"
                   @focus="showPostCodeFocus = true"
                   @click="showPredictions = true, getPredictionsIfNoPredictions()"
@@ -60,7 +60,7 @@
             </div>
             <input
               class="bg-transparent outline-none py-1 mt-1 mb-8 border-b"
-              :class="showAddressLine1Focus ? 'border-yellow-400' : showAddressLine1Required ? 'border-red-300' : 'border-grey-dark'"
+              :class="showAddressLine1Focus ? 'border-yellow-400' : showAddressLine1Required ? 'border-red-300' : 'border-gray-400'"
               v-model="addressLine1"
               @focus="showAddressLine1Focus = true"
               @blur="showAddressLine1Focus = false, checkAddressLine1()"
@@ -69,7 +69,7 @@
             <label class="text-xs">Address line 2 (optional)</label>
             <input
               class="bg-transparent outline-none py-1 mt-1 mb-8 border-b"
-              :class="showAddressLine2Focus ? 'border-yellow-400' : false ? 'border-red-300' : 'border-grey-dark'"
+              :class="showAddressLine2Focus ? 'border-yellow-400' : false ? 'border-red-300' : 'border-gray-400'"
               v-model="addressLine2"
               @focus="showAddressLine2Focus = true"
               @blur="showAddressLine2Focus = false"
@@ -84,7 +84,7 @@
             </div>
             <input
               class="bg-transparent outline-none py-1 mt-1 mb-8 border-b"
-              :class="showAddressLine3Focus ? 'border-yellow-400' : showAddressLine3Required ? 'border-red-300' : 'border-grey-dark'"
+              :class="showAddressLine3Focus ? 'border-yellow-400' : showAddressLine3Required ? 'border-red-300' : 'border-gray-400'"
               v-model="addressLine3"
               @focus="showAddressLine3Focus = true"
               @blur="showAddressLine3Focus = false, checkAddressLine3()"

@@ -73,7 +73,6 @@ export default {
       return type === 'Private' ? this.job.description : this.job.description
     },
     unavailableShift(shifts) {
-      console.log(this.job)
       if (this.$store.state.calendar.view_type === 'per_month') {
         return shifts.map(shift => shift.name).join()
       }

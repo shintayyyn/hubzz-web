@@ -67,8 +67,10 @@
               v-for="item in mandatory"
               :key="item.id"
             >
-              <svgicon name="cloud-download" height="24" width="24" />
-              <div class="leading-normal mx-2 document-filename">{{item.compliance_document.name}}</div>
+              <div class="w-5 h-5">
+                <svgicon name="cloud-download" height="24" width="24" />
+              </div>
+              <div class="leading-loose mx-2 text-xs">{{item.compliance_document.name}}</div>
             </div>
           </div>
           <div class="font-bold text-sm sm:text-md">Other documents</div>
@@ -78,8 +80,10 @@
               v-for="item in optional"
               :key="item.id"
             >
-              <svgicon name="cloud-download" height="24" width="24" />
-              <div class="leading-normal mx-2 document-filename">{{item.compliance_document.name}}</div>
+              <div class="w-5 h-5">
+                <svgicon name="cloud-download" height="24" width="24" />
+              </div>
+              <div class="leading-loose mx-2 text-xs">{{item.compliance_document.name}}</div>
             </div>
           </div>
           <div class="font-bold text-sm sm:text-md">Referees</div>

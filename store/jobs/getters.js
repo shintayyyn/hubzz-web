@@ -27,6 +27,13 @@ export default {
     getPracticeDeclinedJobs(state) {
         return state.practice_declined_jobs
     },
+    getPracticeJobsBadge(state) {
+        return [
+            state.practice_new_allocated_jobs_count, state.practice_new_available_jobs_count, state.practice_new_applied_jobs_count, 
+            state.practice_new_unfilled_jobs_count, state.practice_new_declined_jobs_count, 
+            state.practice_new_cancelled_jobs_count, state.practice_new_completed_jobs_count
+        ].reduce((accumulator, currentValue) => accumulator + currentValue)
+    },
     // locum
     getLocumAllocatedJobs(state) {
         return state.locum_allocated_jobs

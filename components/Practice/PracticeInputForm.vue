@@ -3,7 +3,7 @@
     <div class="border-solid rounded-lg shadow-md mb-8">
       <div class="w-full">
         <form class="px-8 pt-6 pb-8 mb-4">
-          <div class="mb-4 border-b border-b-2 border-grey py-2">
+          <div class="mb-4 border-b border-b-2 border-gray-300 py-2">
             <label for="title" class="block text-gray-500 text-sm font-bold mb-2">Title</label>
             <input
               v-model="form.title"
@@ -15,7 +15,7 @@
             />
           </div>
           <div
-            class="mb-4 border-b border-b-2 border-grey py-2"
+            class="mb-4 border-b border-b-2 border-gray-300 py-2"
             :class="{ 'border-red-300': formError.includes('firstName') }"
           >
             <label for="firstName" class="block text-gray-500 text-sm font-bold mb-2">First name</label>
@@ -33,7 +33,7 @@
             />
           </div>
           <div
-            class="mb-4 border-b border-b-2 border-grey py-2"
+            class="mb-4 border-b border-b-2 border-gray-300 py-2"
             :class="{ 'border-red-300': formError.includes('lastName') }"
           >
             <label for="lastName" class="block text-gray-500 text-sm font-bold mb-2">Last name</label>
@@ -50,7 +50,7 @@
               class="appearance-none bg-transparent border-none w-full text-gray-500 mr-3 py-1 px-2 leading-tight focus:outline-none"
             />
           </div>
-          <div class="mb-4 border-b border-b-2 border-grey py-2">
+          <div class="mb-4 border-b border-b-2 border-gray-300 py-2">
             <label for="suffix" class="block text-gray-500 text-sm font-bold mb-2">Suffix</label>
             <input
               v-model="form.suffix"
@@ -62,7 +62,7 @@
             />
           </div>
           <div
-            class="mb-4 border-b border-b-2 border-grey py-2"
+            class="mb-4 border-b border-b-2 border-gray-300 py-2"
             :class="{ 'border-red-300': formError.includes('role') }"
           >
             <label for="role" class="block text-gray-500 text-sm font-bold mb-2">Role</label>
@@ -81,7 +81,7 @@
             </select>
           </div>
           <div
-            class="mb-4 border-b border-b-2 border-grey py-2"
+            class="mb-4 border-b border-b-2 border-gray-300 py-2"
             :class="{ 'border-red-300': formError.includes('email') }"
           >
             <label for="email" class="block text-gray-500 text-sm font-bold mb-2">Email</label>
@@ -96,7 +96,7 @@
             />
           </div>
           <div
-            class="mb-4 border-b border-b-2 border-grey py-2"
+            class="mb-4 border-b border-b-2 border-gray-300 py-2"
             :class="{ 'border-red-300': formError.includes('password') }"
           >
             <label for="password" class="block text-gray-500 text-sm font-bold mb-2">Password</label>
@@ -114,7 +114,7 @@
             />
           </div>
           <div
-            class="mb-4 border-b border-b-2 border-grey py-2"
+            class="mb-4 border-b border-b-2 border-gray-300 py-2"
             :class="{ 'border-red-300': formError.includes('confirmPassword') }"
           >
             <label

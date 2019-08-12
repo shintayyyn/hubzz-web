@@ -51,10 +51,7 @@
         </table>
       </div>
     </div>
-    <div
-      class="absolute bottom-0 w-full"
-      v-if="getPracticeAllocatedJobs.length > 0 && totalPages > 1"
-    >
+    <div class="bottom-0 w-full" v-if="getPracticeAllocatedJobs.length > 0 && totalPages > 1">
       <AppPagination
         :total="total"
         :totalPages="totalPages"
@@ -109,6 +106,9 @@ export default {
   created() {
     this.getJobsCount();
     this.getJobs(this.current_page, this.params);
+    setTimeout(() => {
+      this.$store.commit('jobs/CLEAR_PRACTICE_ALLOCATED_BADGE')
+    }, 1000)
   },
   methods: {
     getJobsCount() {

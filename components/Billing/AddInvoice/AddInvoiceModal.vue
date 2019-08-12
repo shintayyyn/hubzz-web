@@ -83,7 +83,7 @@
       <div class="flex justify-start mt-5">
         <div class="mr-1" style="width:30%;">
           <div
-            class="mb-4 border-b border-b-2 border-grey py-2"
+            class="mb-4 border-b border-b-2 border-gray-300 py-2"
             :class="{'border-yellow-400':setFocus === 'days_work_from'}"
           >
             <label for="days_work_from" class="block text-sm mb-2">Days worked from</label>
@@ -100,7 +100,7 @@
         </div>
         <div cclass style="width:30%;">
           <div
-            class="mb-4 border-b border-b-2 border-grey py-2"
+            class="mb-4 border-b border-b-2 border-gray-300 py-2"
             :class="{'border-yellow-400':setFocus === 'days_work_to'}"
           >
             <label for="days_work_to" class="block text-sm mb-2">To</label>

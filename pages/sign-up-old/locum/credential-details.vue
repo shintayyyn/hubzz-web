@@ -27,7 +27,7 @@
             </div>
             <input
               class="outline-none py-1 mt-1 border-b"
-              :class="showEmailFocus ? 'border-yellow-400' : emailErrorMessage ? 'border-red-300' : 'border-grey-dark'"
+              :class="showEmailFocus ? 'border-yellow-400' : emailErrorMessage ? 'border-red-300' : 'border-gray-400'"
               v-model="email"
               @focus="showEmailFocus = true"
               @blur="showEmailFocus = false, checkEmail()"
@@ -48,7 +48,7 @@
             <input
               type="password"
               class="outline-none py-1 mt-1 border-b"
-              :class="showPasswordFocus ? 'border-yellow-400' : passwordErrorMessage ? 'border-red-300' : 'border-grey-dark'"
+              :class="showPasswordFocus ? 'border-yellow-400' : passwordErrorMessage ? 'border-red-300' : 'border-gray-400'"
               v-model="password"
               @focus="showPasswordFocus = true"
               @blur="showPasswordFocus = false, checkPassword()"
@@ -69,7 +69,7 @@
             <input
               type="password"
               class="outline-none py-1 mt-1 border-b"
-              :class="showPasswordConfirmationFocus ? 'border-yellow-400' : passwordConfirmationErrorMessage ? 'border-red-300' : 'border-grey-dark'"
+              :class="showPasswordConfirmationFocus ? 'border-yellow-400' : passwordConfirmationErrorMessage ? 'border-red-300' : 'border-gray-400'"
               v-model="passwordConfirmation"
               @focus="showPasswordConfirmationFocus = true"
               @blur="showPasswordConfirmationFocus = false, checkPasswordConfirmation()"

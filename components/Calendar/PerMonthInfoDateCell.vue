@@ -263,7 +263,6 @@ export default {
     // practice
     hasPracticeCurrentJobs(date, type) {
       return this.getPracticeAllocatedJobs.find(job => this.getDateArray(job.date_start, job.date_end).includes(date) && job.shift.name === type)
-      console.log(this.getPracticeAllocatedJobs)
     },
     hasPracticeAppliedJobs(date, type) {
       return this.getPracticeAppliedJobs.find(job => this.getDateArray(job.date_start, job.date_end).includes(date) && job.shift.name === type)
@@ -272,7 +271,7 @@ export default {
       return this.getPracticeUnfilledJobs.find(job => this.getDateArray(job.date_start, job.date_end).includes(date) && job.shift.name === type)
     },
     hasPracticeDeclinedJobs(date, type) {
-      return this.getPracticeDeclinedJobs.find(job => this.$moment(job.platform_job.declined_at).format('YYYY-MM-DD') === date && job.shift.name === type)
+      return this.getPracticeDeclinedJobs.find(job => this.getDateArray(job.date_start, job.date_end).includes(date) && job.shift.name === type)
     },
     hasPracticeAppliedJobsReminder(date, type) {
       return this.getPracticeAppliedJobsReminder.find(job => job.selection_date === date && type === 'Reminder')

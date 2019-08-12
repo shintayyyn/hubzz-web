@@ -5,7 +5,7 @@
   >
     <div
       class="absolute left-0 top-0 rounded-l-lg p-2 h-full"
-      :class="bgStatus(job.status, job.platform_job.selection_date)"
+      :class="bgStatus(job.status, job.platform_job.selection_date, job)"
     ></div>
 
     <div class="ml-2">
@@ -28,8 +28,8 @@ export default {
         this.$emit('viewPracticeJob', res.data.job)
       })
     },
-    bgStatus(status, reminder) {
-      if (reminder) {
+    bgStatus(status, reminder, job) {
+      if (reminder && status !== 'Unfilled') {
         return 'bg-grey'
       } else {
         switch (status) {
@@ -41,6 +41,9 @@ export default {
             break;
           case 'Current':
             return 'bg-green-400';
+            break;
+          case 'Unfilled':
+            return 'bg-red-300';
             break;
           default:
             return 'bg-red-300'

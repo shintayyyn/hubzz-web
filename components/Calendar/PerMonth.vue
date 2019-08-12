@@ -174,6 +174,9 @@ export default {
       this.getDaysInMonth(value, this.selectedYear)
     },
   },
+  beforeDestroy() {
+    this.$store.commit('jobs/CLEAR_JOBS')
+  },
   created() {
     let selectedDate = this.$store.state.calendar.selected_date
     this.startOfMonth = this.$moment(selectedDate).startOf('month').format('YYYY-MM-DD')

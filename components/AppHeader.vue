@@ -19,7 +19,7 @@
             <AppButton
               :label="'Create Job'"
               @click="$store.commit('calendar/CREATE_JOB', true)"
-              :inStyle="'font-size:small;padding:12px;'"
+              :inStyle="'font-size:medium;padding:2px;'"
             />
           </div>
           <nuxt-link

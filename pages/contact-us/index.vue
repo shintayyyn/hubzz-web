@@ -18,7 +18,7 @@
       <div class="flex flex-row flex-wrap justify-start">
         <div class="p-2 w-full">
           <div
-            class="mb-4 border-b border-b-2 border-grey py-2"
+            class="mb-4 border-b border-b-2 border-gray-300 py-2"
             :class="{'border-yellow-400':setFocus === 'message', 'border-red-300': formError.includes('message')}"
           >
             <label for="message" class="block text-sm mb-2">Your message</label>

@@ -178,7 +178,8 @@ export default {
         foundPracticeUnfilledJobs = this.getPracticeUnfilledJobs.filter(job => this.getDateArray(job.date_start, job.date_end).includes(date))
       }
       if (this.getPracticeDeclinedJobs.length > 0) {
-        foundPracticeDeclinedJobs = this.getPracticeDeclinedJobs.filter(job => job.declined_at === date)
+        foundPracticeDeclinedJobs = this.getPracticeDeclinedJobs.filter(job => this.getDateArray(job.date_start, job.date_end).includes(date))
+        // foundPracticeDeclinedJobs = this.getPracticeDeclinedJobs.filter(job => this.$moment(job.platform_job.declined_at).format('YYYY-MM-DD') === date)
       }
       if (this.getPracticeAppliedJobsReminder.length > 0) {
         foundPracticeAppliedJobsReminder = this.getPracticeAppliedJobsReminder.filter(job => job.selection_date === date)
@@ -216,6 +217,7 @@ export default {
       }
       if (this.getPracticeDeclinedJobs.length > 0) {
         foundPracticeDeclinedJobs = this.getPracticeDeclinedJobs.filter(job => this.getDateArray(job.date_start, job.date_end).includes(date) && job.shift.name === shift)
+        // foundPracticeDeclinedJobs = this.getPracticeDeclinedJobs.filter(job => this.$moment(job.platform_job.declined_at).format('YYYY-MM-DD') && job.shift.name === shift)
       }
       if (this.getPracticeAvailableJobsReminder.length > 0) {
         foundPracticeAvailableJobsReminder = this.getPracticeAvailableJobsReminder.filter(job => job.selection_date === date)
