@@ -7,7 +7,7 @@
       <div class="text-xs xl:text-base w-1/3 sm:w-1/6 pr-2">
         <div
           class="text-xs xl:text-base text-center font-bold rounded-full p-2"
-          :class="{ 'bg-orange text-white' : form.status === 'Pending', 'border border-black bg-transparent' : form.status === 'Empty'}"
+          :class="{ 'bg-orange-300 text-white' : form.status === 'Pending', 'border border-black bg-transparent' : form.status === 'Empty'}"
         >{{form.status}}</div>
       </div>
       <div class="text-xs xl:text-base hidden sm:w-1/6 sm:block">{{form.note}}</div>

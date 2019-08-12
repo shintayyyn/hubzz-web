@@ -1,6 +1,6 @@
 <template>
   <div class="shield">
-    <h1 class="loader-message">{{message}}</h1>
+    <h1 class="text-sm loader-message">{{message}}</h1>
   </div>
 </template>
 <script>

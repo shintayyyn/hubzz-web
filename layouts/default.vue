@@ -2,12 +2,6 @@
   <section>
     <div class="sidebar-shield" v-if="$store.state.toggled_sidebar" @click="close"></div>
     <AppSideBar @modal="signout_modal = $event" />
-    <div class="modal-shield" v-if="$store.state.calendar.createJob"></div>
-    <transition name="slide" mode="out-in">
-      <div class="modal-container shadow-lg" v-if="$store.state.calendar.createJob">
-        <CreateJobModal @close="$store.commit('calendar/CREATE_JOB', false)" :job="null" />
-      </div>
-    </transition>
     <div class="content">
       <AppNotification />
       <AppHeader />
@@ -19,14 +13,12 @@
 import AppSideBar from "@/components/AppSideBar";
 import AppNotification from "@/components/AppNotification";
 import AppHeader from "@/components/AppHeader";
-import CreateJobModal from "@/components/CreateJobModal";
 export default {
   transitions: "page",
   components: {
     AppSideBar,
     AppNotification,
     AppHeader,
-    CreateJobModal
   },
   data() {
     return {

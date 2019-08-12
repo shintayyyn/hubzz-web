@@ -3,24 +3,24 @@
     <div class="overflow-x-auto">
       <div class="number-status md:mt-10">
         <div class="border-solid rounded-lg shadow-md px-1 py-4 mb-5 mx-1 md:mx-0">
-          <div class="flex flex-row flex-nowrap justify-start text-xs sm:text-sm">
+          <div class="flex flex-row flex-no-wrap justify-start text-xs sm:text-sm">
             <div class="w-1/3 p-1 text-left">Your GMC / NMC Number</div>
             <div class="w-1/3 p-1 text-left">{{gmc_or_nmc_number.number}}</div>
             <div class="max-w-xs p-1">
               <div
-                class="text-xs sm:text-sm text-center bg-orange text-white font-bold rounded-full px-2 py-1"
+                class="text-xs sm:text-sm text-center bg-orange-300 text-white font-bold rounded-full px-2 py-1"
                 :class="status(gmc_or_nmc_number.status)"
               >{{gmc_or_nmc_number.status}}</div>
             </div>
           </div>
         </div>
         <div class="border-solid rounded-lg shadow-md px-1 py-4 mb-5 mx-1 md:mx-0">
-          <div class="flex flex-row flex-nowrap justify-start items-center text-xs sm:text-sm">
+          <div class="flex flex-row flex-no-wrap justify-start items-center text-xs sm:text-sm">
             <div class="w-1/3 p-1 text-left">Your MPL / NPL Number</div>
             <div class="w-1/3 p-1 text-left">{{mpl_or_npl_number.number}}</div>
             <div class="max-w-xs p-1">
               <div
-                class="text-xs sm:text-sm text-center bg-orange text-white font-bold rounded-full px-2 py-1"
+                class="text-xs sm:text-sm text-center bg-orange-300 text-white font-bold rounded-full px-2 py-1"
                 :class="status(mpl_or_npl_number.status)"
               >{{mpl_or_npl_number.status}}</div>
             </div>
@@ -50,12 +50,12 @@
             <tr
               :key="item.id"
               class="rounded-lg shadow-md cursor-pointer text-xs sm:text-sm text-left"
-              :class="item.info && item.info.file ? 'hover:bg-grey-light' : ''"
+              :class="item.info && item.info.file ? 'hover:bg-gray-200' : ''"
               @click="item.info && item.info.file ? showComplianceDoc(item.info.id) : null"
             >
               <td>{{item.name}}</td>
               <td class="hover:underline" v-if="item.info && item.info.file">
-                <div class="flex flex-row flex-nowrap items-center">
+                <div class="flex flex-row flex-no-wrap items-center">
                   <svgicon name="cloud-download" height="24" width="24" />
                   <div class="mx-2">
                     <a
@@ -85,7 +85,7 @@
               <td v-if="item.info">{{item.info.note | StringMaxLength}}</td>
               <td v-else></td>
               <td class="hover:underline" v-if="!item.info">
-                <div class="flex flex-row flex-nowrap">
+                <div class="flex flex-row flex-no-wrap">
                   <input
                     type="file"
                     :name="`${item.id}_file`"
@@ -98,7 +98,7 @@
                 </div>
               </td>
               <td class="hover:underline" v-else>
-                <div class="flex flex-row flex-nowrap">
+                <div class="flex flex-row flex-no-wrap">
                   <input
                     type="file"
                     :name="`${item.id}_file`"
@@ -142,12 +142,12 @@
             <tr
               :key="item.id"
               class="rounded-lg shadow-md cursor-pointer text-xs sm:text-sm text-left"
-              :class="item.info && item.info.file ? 'hover:bg-grey-light' : ''"
+              :class="item.info && item.info.file ? 'hover:bg-gray-200' : ''"
               @click="item.info && item.info.file ? showComplianceDoc(item.info.id) : null"
             >
               <td>{{item.name}}</td>
               <td class="hover:underline" v-if="item.info && item.info.file">
-                <div class="flex flex-row flex-nowrap">
+                <div class="flex flex-row flex-no-wrap">
                   <svgicon name="cloud-download" height="24" width="24" />
                   <div class="leading-loose mx-2">
                     <a
@@ -165,7 +165,7 @@
               <td></td>
               <td></td>
               <td class="hover:underline" v-if="!item.info">
-                <div class="flex flex-row flex-nowrap">
+                <div class="flex flex-row flex-no-wrap">
                   <input
                     type="file"
                     :name="`${item.id}_file`"
@@ -178,7 +178,7 @@
                 </div>
               </td>
               <td class="hover:underline" v-else>
-                <div class="flex flex-row flex-nowrap">
+                <div class="flex flex-row flex-no-wrap">
                   <input
                     type="file"
                     :name="`${item.id}_file`"
@@ -221,12 +221,12 @@
             <tr
               :key="item.id"
               class="rounded-lg shadow-md cursor-pointer text-xs sm:text-sm text-left"
-              :class="item.info && item.info.file ? 'hover:bg-grey-light' : ''"
+              :class="item.info && item.info.file ? 'hover:bg-gray-200' : ''"
               @click="item.info && item.info.file ? showMandatoryTraining(item.info.id) : null"
             >
               <td>{{item.name}}</td>
               <td class="hover:underline" v-if="item.info && item.info.file">
-                <div class="flex flex-row flex-nowrap">
+                <div class="flex flex-row flex-no-wrap">
                   <svgicon name="cloud-download" height="24" width="24" />
                   <div class="leading-loose mx-2">
                     <a
@@ -244,7 +244,7 @@
               <td></td>
               <td></td>
               <td class="hover:underline" v-if="!item.info">
-                <div class="flex flex-row flex-nowrap">
+                <div class="flex flex-row flex-no-wrap">
                   <input
                     type="file"
                     :name="`${item.id}_mandatory_file`"
@@ -260,7 +260,7 @@
                 </div>
               </td>
               <td class="hover:underline" v-else>
-                <div class="flex flex-row flex-nowrap">
+                <div class="flex flex-row flex-no-wrap">
                   <input
                     type="file"
                     :name="`${item.id}_mandatory_file`"
@@ -412,22 +412,22 @@ export default {
     status(status) {
       switch (status) {
         case "Pending":
-          return "bg-orange";
+          return "bg-orange-300";
           break;
         case "Verified":
-          return "bg-green";
+          return "bg-green-300";
           break;
         case "Approved":
-          return "bg-green";
+          return "bg-green-300";
           break;
         case "Rejected":
-          return "bg-red";
+          return "bg-red-300";
           break;
         case "Expiring":
-          return "bg-orange";
+          return "bg-orange-300";
           break;
         case "Expired":
-          return "bg-red";
+          return "bg-red-300";
           break;
         default:
           return;

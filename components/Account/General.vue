@@ -15,7 +15,7 @@
         >E-mail is Verified on {{$moment(email_verifiedAt).format('MMM DD, YYYY | hh:mm A')}}</span>
       </div>
       <div class="-mt-6 mb-4" v-if="email_isVerified === false ">
-        <span class="text-red text-xs">E-mail is not yet verified.</span>
+        <span class="text-red-300 text-xs">E-mail is not yet verified.</span>
         <span
           class="p-1 bg-grey rounded text-xs"
           @click="resendEmailVerification()"
@@ -69,7 +69,7 @@
         :placeholder="''"
         :error="formError.find(item => item.field === 'mobile_number')"
       />
-      <div class="rounded-lg bg-grey-light p-8 my-2">
+      <div class="rounded-lg bg-gray-200 p-8 my-2">
         <AppPostCode
           v-model="form.post_code"
           :name="'post_code'"

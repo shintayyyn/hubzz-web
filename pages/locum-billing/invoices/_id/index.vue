@@ -1,9 +1,9 @@
 <template>
   <div class="invoice-modal shadow-lg">
-    <section class="bg-white">
-      <div class="p-8 max-w-xl h-screen">
+    <section class="bg-gray-700">
+      <div class="p-8 max-w-3xl h-screen">
         <div class="flex flex-row flex-wrap justify-start">
-          <nuxt-link to="/locum-billing" class="cursor-pointer">
+          <nuxt-link to="/locum-billing/invoices" class="cursor-pointer">
             <svgicon name="left-arrow" height="32" width="32" />
           </nuxt-link>
         </div>
@@ -119,5 +119,5 @@ export default {
   opacity: 0.5;
   color: #ccc;
 }
-/* absolute bg-grey-light w-full h-full pin-t pin-b pin-l pin-r */
+/* absolute bg-gray-200 w-full h-full top-0 bottom-0 left-0 right-0 */
 </style>

@@ -13,11 +13,11 @@
     <div v-else class="flex flex-row flex-wrap justify-start">
       <AppLoading :loading="loading" :message="'Loading'" v-if="loading" />
       <div
-        class="card w-24 rounded-lg shadow-lg m-2 p-5 hover:bg-grey"
+        class="w-full md:w-1/3 lg:w-1/4 rounded-lg shadow-lg bg-gray-200 m-2 p-4 hover:bg-gray-400"
         v-for="(user, index) in locums"
         :key="user.id"
       >
-        <div class="flex justify-end">
+        <div class="flex justify-end z-50">
           <svgicon
             name="on-star"
             height="32"
@@ -26,20 +26,22 @@
             @click="unfavorite(user.id, index)"
           />
         </div>
+
         <div class="flex flex-wrap text-center mt-4 cursor-pointer" @click="show(user.id)">
-          <div class="w-full">
-            <div v-if="!user.avatar">
-              <svgicon name="no-avatar" height="115" width="115" />
+          <div class="w-full flex justify-center">
+            <div class="relative avatar flex justify-center">
+              <img
+                :src="user.avatar.file.url"
+                v-if="user.avatar && user.avatar.file && user.avatar.file.url"
+              />
+              <svgicon name="no-avatar" height="115" width="115" v-else />
             </div>
-            <embed
-              class="object-contain h-32 rounded-full mr-4"
-              :src="user.avatar ? user.avatar.file.url:null"
-            />
           </div>
+
           <div class="w-full font-bold text-sm sm:text-lg my-4">{{user.personal_detail.name}}</div>
           <div
-            class="w-full font-bold text-grey-dark text-sm sm:text-lg"
-          >{{user.locum_detail.headline}}</div>
+            class="w-full mb-4 font-bold text-gray-500 text-sm sm:text-lg"
+          >{{user.locum_detail.profession.name}}</div>
         </div>
       </div>
     </div>
@@ -180,11 +182,19 @@ export default {
   }
 }
 </script>
-<style>
-.card {
-  min-width: 200px;
-  height: 250px;
+<style >
+.avatar-container {
   box-sizing: content-box;
+  height: 170px;
+}
+.avatar {
+  max-width: 170px;
+  max-height: 170px;
+  min-width: 170px;
+  min-height: 170px;
+}
+img {
+  border-radius: 50%;
 }
 .locum-shield {
   position: fixed;

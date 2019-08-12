@@ -1,9 +1,9 @@
 <template>
   <div class="invoice-modal shadow-lg">
-    <section class="bg-white">
-      <div class="p-8 max-w-xl h-screen">
+    <section class="bg-gray-700">
+      <div class="p-8 max-w-3xl">
         <div class="flex flex-row flex-wrap justify-start">
-          <nuxt-link to="/locum-billing" class="cursor-pointer">
+          <nuxt-link to="/locum-billing/invoices" class="cursor-pointer">
             <svgicon name="left-arrow" height="32" width="32" />
           </nuxt-link>
           <div
@@ -19,12 +19,12 @@
         <div class="flex flex-row flex-wrap justify-start items-center my-4">
           <label class="mx-1 py-2 px-3">Type:</label>
           <button
-            :class="type === 'Private' ? 'bg-yellow-dark' : ''"
+            :class="type === 'Private' ? 'bg-yellow-400' : ''"
             class="text-xs sm:text-sm mx-1 py-2 px-3 border-2 rounded-lg font-bold flex items-center"
             @click="type = type !== 'Private' ? 'Private' : null"
           >Private</button>
           <button
-            :class="type === 'Platform' ? 'bg-yellow-dark' : ''"
+            :class="type === 'Platform' ? 'bg-yellow-400' : ''"
             class="text-xs sm:text-sm mx-1 py-2 px-3 border-2 rounded-lg font-bold flex items-center"
             @click="type = type !== 'Platform' ? 'Platform' : null"
           >Platform</button>
@@ -33,13 +33,13 @@
         <div class="max-w-lg my-4 bg-white px-4 py-4 border shadow-md">
           <div class="flex flex-col">
             <div class="text-xs sm:text-sm text-right leading-normal">
-              <div>Mr. {{invoice.locum_detail.user.personal_detail.name}}</div>
-              <div>{{invoice.locum_detail.user.address_detail.address.line_1}}</div>
-              <div>{{invoice.locum_detail.user.address_detail.address.line_3}}</div>
-              <div>{{invoice.locum_detail.user.address_detail.address.post_code}}</div>
-              <div>Tel {{invoice.locum_detail.user.contact_detail.mobile_number}}</div>
-              <div>{{invoice.locum_detail.user.email}}</div>
-              <div>UTR 7337#4*OR</div>
+              <div>Mr. {{$auth.user.personal_detail.name}}</div>
+              <div>{{$auth.user.address_detail.address.line_1}}</div>
+              <div>{{$auth.user.address_detail.address.line_3}}</div>
+              <div>{{$auth.user.address_detail.address.post_code}}</div>
+              <div>Tel {{$auth.user.contact_detail.mobile_number}}</div>
+              <div>{{$auth.user.email}}</div>
+              <div>UTR {{$auth.user.locum_detail.invoice_detail.utr_number}}</div>
             </div>
             <div class="flex justify-between my-2">
               <div
@@ -51,7 +51,7 @@
                     class="relative flex flex-col py-2 mb-6"
                     v-on-clickaway="toggledOffSurgeries"
                   >
-                    <div class="relative flex flex-row flex-nowrap justify-between">
+                    <div class="relative flex flex-row flex-no-wrap justify-between">
                       <label class="text-xs sm:text-sm py-1">To: Accounts Department</label>
                     </div>
                     <div class="relative flex flex-row flex-wrap justify-start">
@@ -60,7 +60,7 @@
                         type="text"
                         placeholder="Select.."
                         ref="input"
-                        class="border-b-2 w-full focus:border-yellow focus:outline-none py-3 font-bold text-xs sm:text-sm"
+                        class="border-b-2 w-full focus:border-yellow-300 focus:outline-none py-3 font-bold text-xs sm:text-sm"
                         @focus="toggledSurgeries = true"
                         readonly
                       />
@@ -76,18 +76,18 @@
                         <div class="relative">
                           <div
                             class="py-2 px-3 cursor-pointer text-xs sm:text-sm"
-                            :class="{'bg-grey-light': activeIndexSurgeries === index}"
+                            :class="{'bg-gray-200': activeIndexSurgeries === index}"
                             v-for="(item, index) in surgeries"
                             :key="item.id"
                             @mouseover="activeIndexSurgeries = index"
                             @click="addSurgery(item)"
                           >{{item.name}}</div>
                           <div
-                            class="absolute bg-grey-light w-full h-full pin-t pin-b pin-l pin-r opacity-50"
+                            class="absolute bg-gray-200 w-full h-full top-0 bottom-0 left-0 right-0 opacity-50"
                             v-if="loadingSurgeries"
                           >
                             <div
-                              class="absolute pin-b text-center w-full text-sm font-bold"
+                              class="absolute bottom-0 text-center w-full text-sm font-bold"
                             >loading icon</div>
                           </div>
                         </div>
@@ -111,7 +111,7 @@
               <section>
                 <!-- input select -->
                 <div class="relative flex flex-col py-2 mb-6" v-on-clickaway="toggledOffJobParts">
-                  <div class="relative flex flex-row flex-nowrap justify-between">
+                  <div class="relative flex flex-row flex-no-wrap justify-between">
                     <label class="text-xs sm:text-sm py-1">Select a job to add to this invoice</label>
                   </div>
                   <div class="relative flex flex-row flex-wrap justify-start">
@@ -120,7 +120,7 @@
                       type="text"
                       placeholder="Select.."
                       ref="input"
-                      class="border-b-2 w-full focus:border-yellow focus:outline-none py-3 font-bold text-xs sm:text-sm"
+                      class="border-b-2 w-full focus:border-yellow-300 focus:outline-none py-3 font-bold text-xs sm:text-sm"
                       @focus="toggledJobParts = true"
                       readonly
                     />
@@ -136,18 +136,18 @@
                       <div class="relative" v-if="jobParts.length > 0">
                         <div
                           class="py-2 px-3 cursor-pointer text-xs sm:text-sm"
-                          :class="{'bg-grey-light': activeIndexJobParts === index}"
+                          :class="{'bg-gray-200': activeIndexJobParts === index}"
                           v-for="(item, index) in filteredJobParts"
                           :key="item.id"
                           @mouseover="activeIndexJobParts = index"
                           @click="addJobPart(item)"
                         >{{item.job_part_number}}</div>
                         <div
-                          class="absolute bg-grey-light w-full h-full pin-t pin-b pin-l pin-r opacity-50"
+                          class="absolute bg-gray-200 w-full h-full top-0 bottom-0 left-0 right-0 opacity-50"
                           v-if="loadingJobParts"
                         >
                           <div
-                            class="absolute pin-b text-center w-full text-sm font-bold"
+                            class="absolute bottom-0 text-center w-full text-sm font-bold"
                           >loading icon</div>
                         </div>
                       </div>
@@ -211,7 +211,7 @@
               </tr>
               <tr>
                 <td colspan="2">
-                  <div class="flex flex-row flex-nowrap justify-between">
+                  <div class="flex flex-row flex-no-wrap justify-between">
                     <div class="w-full pr-1">
                       <AppDate
                         v-model="form.date_start"
@@ -277,7 +277,6 @@ export default {
       const response = await app.$axios.get(`/api/v1/locum/invoices/${params.id}`)
       const invoice = response.data && response.data.data && response.data.data.invoice ? response.data.data.invoice : null
       let type = invoice.type
-      console.log('invoice', invoice)
 
       if (process.client) {
         document.body.style.cursor = 'auto'
@@ -321,7 +320,7 @@ export default {
     filteredJobParts() {
       return this.jobParts.filter(filterItem => {
         const index = this.selectedJobParts.findIndex(item => {
-          return item.job_id === filterItem.job.id;
+          return item.job_part_id === filterItem.id;
         });
         return (
           index === -1 &&
@@ -411,7 +410,8 @@ export default {
           surgery_id: this.selectedSurgery.id,
           limit: 10,
           offset: 0,
-          order_by: 'created_at:desc'
+          order_by: 'created_at:desc',
+          invoiced: false
         }
 
         this.$axios.get('/api/v1/locum/job-parts', { params }).then((response) => {
@@ -484,8 +484,8 @@ export default {
       this.form.total_amount = this.amount
       this.form.final = final
       this.$axios.$put(`/api/v1/locum/invoices/${this.invoice.id}`, this.form).then(res => {
-        console.log(res)
-        this.$router.push('/locum-billing')
+        this.$store.commit('billing/UPDATE_INVOICE', res.data.invoice)
+        this.$router.push('/locum-billing/invoices')
       })
       // }
     },
@@ -523,8 +523,8 @@ export default {
         total = parseInt(jobPart.job.rate) * parseInt(jobPart.job.total_hours)
       }
       invoiceObj = {
-        type: 'Job',
-        job_id: jobPart.job.id,
+        type: 'Job Part',
+        job_part_id: jobPart.id,
         description: `Job number ${jobPart.job_part_number} ${jobPart.job.type} Job at £${jobPart.job.rate} per hour from ${jobPart.date_start} / OOH / Total hours at ${jobPart.job.total_hours}`,
         total: total.toString(),
       }
@@ -637,7 +637,7 @@ export default {
 }
 .slide-down {
   transition: all 0.3s ease-in-out;
-  height: 200px;
+  height: auto;
 }
 /* surgery */
 .loader-surgery {
@@ -651,5 +651,5 @@ export default {
   opacity: 0.5;
   color: #ccc;
 }
-/* absolute bg-grey-light w-full h-full pin-t pin-b pin-l pin-r */
+/* absolute bg-gray-200 w-full h-full top-0 bottom-0 left-0 right-0 */
 </style>

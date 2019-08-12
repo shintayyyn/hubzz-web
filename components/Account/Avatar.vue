@@ -3,7 +3,7 @@
     <div class="relative avatar flex justify-center">
       <img :src="avatar.file.url" v-if="avatar && avatar.file && !imageUrl" />
       <img :src="imageUrl" v-else />
-      <div class="icon absolute pin-r pin-t">
+      <div class="icon absolute right-0 top-0">
         <input
           type="file"
           name="input_file"

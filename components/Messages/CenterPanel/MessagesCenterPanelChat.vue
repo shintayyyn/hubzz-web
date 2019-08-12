@@ -17,7 +17,7 @@
                     width="25"
                   />
                   <div
-                    class="my-1 mx-2 rounded-lg text-xs px-4 py-2 bg-red-light text-white"
+                    class="my-1 mx-2 rounded-lg text-xs px-4 py-2 bg-red-200 text-white"
                     :class="{'mx-4' : !isReceiver(item)}"
                   >Deleted</div>
                 </div>
@@ -37,15 +37,15 @@
                     <!-- <span class="py-1">asd</span> -->
                     <span
                       class="chat-message rounded-lg px-2 py-2"
-                      :class="isReceiver(item) ? 'bg-grey-light' : 'bg-blue-light text-white'"
+                      :class="isReceiver(item) ? 'bg-gray-200' : 'bg-blue-300light text-white'"
                     >{{item.message}}</span>
                     <span
-                      class="text-grey-dark py-1"
+                      class="text-gray-400 py-1"
                       :class="isReceiver(item) ? 'text-right ': ''"
                     >2hrs ago</span>
                   </div>
                   <div
-                    class="text-xs font-bold mx-1 mt-3 cursor-pointer text-white hover:text-grey-dark"
+                    class="text-xs font-bold mx-1 mt-3 cursor-pointer text-white hover:text-gray-400"
                     @click="deleteMessage(item.id)"
                   >X</div>
                 </div>
@@ -93,7 +93,7 @@
               :error="this.formError.find(item => item.field === 'message')"
               class="w-full -mb-2 px-2"
             />-->
-            <button class="px-8 bg-yellow-dark h-full" @click="createMessage">Send</button>
+            <button class="px-8 bg-yellow-400 h-full" @click="createMessage">Send</button>
 
             <!-- <AppButton :label="'Create'" @click="createMessage()" class="mx-2" /> -->
           </div>

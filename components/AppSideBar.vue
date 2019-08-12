@@ -3,32 +3,46 @@
     <div class="sidebar" :class="{'toggled-left': $store.state.toggled_sidebar}">
       <div class="sidebar-nav pt-8 xl:pt-20">
         <div
-          class="close-button cursor-pointer text-2xl font-bold text-yellow-dark px-4"
+          class="close-button cursor-pointer text-2xl font-bold text-yellow-400 px-4"
           @click="close"
         >X</div>
         <div v-for="(item, index) in lists" :key="index" class="text-sm relative">
           <span
-            class="absolute inset-y-0 left-0 border-solid bg-yellow-dark w-1 h-full"
+            class="absolute inset-y-0 left-0 border-solid bg-yellow-400 w-1 h-full"
             v-if="`/${$route.path.split('/')[1]}` == item.route"
           ></span>
           <nuxt-link
             :to="item.route"
             :event="isDisabled(item.route)"
             class="block no-underline p-4"
-            :class="`/${$route.path.split('/')[1]}` == item.route ? 'text-yellow-dark' : 'text-black hover:text-grey-light'"
+            :class="`/${$route.path.split('/')[1]}` == item.route ? 'text-yellow-400' : 'text-black hover:text-gray-200'"
           >
-            <span class="font-sans">{{item.name}}</span>
+            <span class="font-sans">
+              {{item.name}}
+              <transition name="fade">
+                <span
+                  v-if="getLocumJobsBadge > 0 && item.name === 'Jobs'"
+                  class="rounded-lg bg-red-400 text-white text-xs font-bold py-1 px-2"
+                >{{getLocumJobsBadge}}</span>
+              </transition>
+              <transition name="fade">
+                <span
+                  v-if="getPracticeJobsBadge > 0 && item.name === 'Sessions'"
+                  class="rounded-lg bg-red-400 text-white text-xs font-bold py-1 px-2"
+                >{{getPracticeJobsBadge}}</span>
+              </transition>
+            </span>
           </nuxt-link>
         </div>
         <div class="text-sm relative">
           <span
-            class="absolute pin-l border-solid bg-yellow-dark w-1 h-full"
+            class="absolute left-0 border-solid bg-yellow-400 w-1 h-full"
             v-if="`/${$route.path.split('/')[1]}` == '/sign-out'"
           ></span>
           <button
             @click.prevent="signout_modal = true"
             class="block no-underline p-4 focus:outline-none"
-            :class="`/${$route.path.split('/')[1]}` == '/sign-out' ? 'text-yellow-dark' : 'text-black hover:text-grey-light'"
+            :class="`/${$route.path.split('/')[1]}` == '/sign-out' ? 'text-yellow-400' : 'text-black hover:text-gray-200'"
           >
             <span class="font-sans">Sign Out</span>
           </button>
@@ -52,6 +66,14 @@ export default {
       signout_modal: false,
       lists: []
     };
+  },
+  computed: {
+    getLocumJobsBadge() {
+      return this.$store.getters['jobs/getLocumJobsBadge']
+    },
+    getPracticeJobsBadge() {
+      return this.$store.getters['jobs/getPracticeJobsBadge']
+    },
   },
   created() {
     if (this.$auth.loggedIn) {

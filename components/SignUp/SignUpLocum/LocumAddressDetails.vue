@@ -8,7 +8,7 @@
 
     <div class="flex w-full justify-center xl:justify-start mt-5">
       <div class="mx-4 flex flex-col p-8 m-1 rounded-lg shadow-lg" style="flex: 0 1 600px;">
-        <form class="w-full rounded-lg bg-grey-light px-8 pb-8">
+        <form class="w-full rounded-lg bg-gray-200 px-8 pb-8">
           <AppPostCode
             v-model="form.post_code"
             :name="'post_code'"

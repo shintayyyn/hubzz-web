@@ -1,9 +1,9 @@
 <template>
   <div class="flex flex-col py-2 mb-6 leading-normal" v-on-clickaway="toggledOff">
-    <div class="relative flex flex-row flex-nowrap justify-between">
+    <div class="relative flex flex-row flex-no-wrap justify-between">
       <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
       <div
-        class="absolute pin-r bg-red p-1 text-xs sm:text-base text-white"
+        class="absolute right-0 bg-red-300 p-1 text-xs sm:text-base text-white"
         v-if="error"
       >{{error.message}}</div>
     </div>
@@ -12,8 +12,8 @@
         :value="value"
         type="input"
         placeholder="hh:mm:ss"
-        class="border-b-2 focus:border-yellow focus:outline-none py-4 font-bold text-xs sm:text-sm w-full text-center"
-        :class="error? 'border-red':''"
+        class="border-b-2 focus:border-yellow-300 focus:outline-none py-4 font-bold text-xs sm:text-sm w-full text-center"
+        :class="error? 'border-red-300':''"
         @click="modal = true"
         @input="$emit('input', $event.target.value)"
         :style="inStyle"

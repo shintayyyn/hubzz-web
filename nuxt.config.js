@@ -1,5 +1,5 @@
 import dotenv from 'dotenv'
-
+import path from 'path'
 dotenv.config()
 
 import pkg from './package'
@@ -148,6 +148,13 @@ export default {
     ** You can extend webpack config here
     */
     extend(config, ctx) {
-    }
+    },
+    postcss: {
+      plugins: {
+        tailwindcss: path.resolve(__dirname, './tailwind.config.js'),
+        autoprefixer: {}
+      }
+    },
+    
   }
 }

@@ -13,17 +13,23 @@
             <tr class="text-xs sm:text-sm text-left">
               <th @click="sortBy('job_number')">
                 Job number
-                <svgicon name="sort" height="12" width="12" />
+                <svgicon class="inline" name="sort" height="12" width="12" />
               </th>
               <th>Practice</th>
               <th>Title</th>
+              <th>Shift</th>
+              <th @click="sortBy('rate')">
+                Rate
+                <svgicon class="inline" name="sort" height="12" width="12" />
+              </th>
+              <th>Per</th>
               <th @click="sortBy('date_start')">
                 From
-                <svgicon name="sort" height="12" width="12" />
+                <svgicon class="inline" name="sort" height="12" width="12" />
               </th>
               <th @click="sortBy('date_end')">
                 To
-                <svgicon name="sort" height="12" width="12" />
+                <svgicon class="inline" name="sort" height="12" width="12" />
               </th>
               <th>Rejected</th>
             </tr>
@@ -38,6 +44,9 @@
                 <td>{{item.job_number}}</td>
                 <td>{{item.platform_job.practice.surgery.name}}</td>
                 <td>{{item.title}}</td>
+                <td>{{item.shift.name}}</td>
+                <td>{{item.rate}}</td>
+                <td>{{item.locum_detail_rate_type.name}}</td>
                 <th>{{item.date_start}}</th>
                 <th>{{item.date_end}}</th>
                 <td>{{item.platform_job.rejected_at}}</td>
@@ -50,7 +59,7 @@
         </table>
       </div>
     </div>
-    <div class="absolute pin-b w-full" v-if="getLocumUnsuccessfulJobs.length > 0 && totalPages > 1">
+    <div class="bottom-0 w-full" v-if="getLocumUnsuccessfulJobs.length > 0 && totalPages > 1">
       <AppPagination
         :total="total"
         :totalPages="totalPages"
@@ -83,6 +92,7 @@ export default {
       // sort
       sortType: '',
       job_number: true,
+      rate: true,
       date_start: false,
       date_end: true,
     }
@@ -113,6 +123,9 @@ export default {
   created() {
     this.getJobsCount();
     this.getJobs(this.current_page, this.params);
+    setTimeout(() => {
+      this.$store.commit('jobs/CLEAR_LOCUM_UNSUCCESSFUL_BADGE')
+    }, 1000)
   },
   methods: {
     getJobsCount() {
@@ -123,6 +136,9 @@ export default {
     },
     sortBy(sortedBy) {
       switch (sortedBy) {
+        case 'rate':
+          this.rate = !this.rate
+          this.sortType = this.rate
         case 'job_number':
           this.job_number = !this.job_number
           this.sortType = this.job_number

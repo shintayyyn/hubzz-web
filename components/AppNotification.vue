@@ -1,7 +1,7 @@
 <template>
   <div class="app-notification">
     <div
-      class="relative rounded-b-lg py-2 px-12 flex flex-row flex-nowrap justify-center"
+      class="relative rounded-b-lg py-2 px-12 flex flex-row flex-no-wrap justify-center"
       :class="notificationStatus"
       v-if="$store.state.notification.enabled"
     >
@@ -16,7 +16,7 @@
         >{{message}}</div>
       </div>
       <!-- <div
-        class="absolute pin-r pin-t px-2 py-1 text-lg font-bold cursor-pointer"
+        class="absolute right-0 top-0 px-2 py-1 text-lg font-bold cursor-pointer"
         @click="close"
         v-if="closable"
       >x</div>-->
@@ -29,16 +29,16 @@ export default {
     notificationStatus() {
       switch (this.$store.state.notification.status) {
         case "success":
-          return "bg-green-lighter";
+          return "bg-green-200";
           break;
         case "danger":
-          return "bg-red text-white";
+          return "bg-red-300 text-white";
           break;
         case "alert":
-          return "bg-yellow";
+          return "bg-yellow-300";
           break;
         case "info":
-          return "bg-blue text-blue-lightest";
+          return "bg-blue-300 text-blue-200est";
         default:
           return "bg-white";
       }

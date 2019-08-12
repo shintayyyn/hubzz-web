@@ -7,7 +7,7 @@
         :key="index"
       >
         <nuxt-link :to="item.route">
-          <div class="statistics-card rounded-lg shadow-lg p-4 hover:bg-grey-light">
+          <div class="statistics-card rounded-lg shadow-lg p-4 hover:bg-gray-200">
             <div class="flex flex-col my-2">
               <div class="text-sm sm:text-md">{{item.label}}</div>
               <div class="font-bold text-5xl mt-2">{{item.value}}</div>

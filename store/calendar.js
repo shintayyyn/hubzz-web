@@ -8,7 +8,7 @@ export const state = () => ({
     view_type: 'per_month',
     selected_date: null,
     selected_date_shift: null,
-    createJob: false,
+    create_job_modal: false,
 })
 
 export const mutations = {
@@ -40,8 +40,8 @@ export const mutations = {
     SELECT_DATE_SHIFT(state, payload) {
         state.selected_date_shift = payload
     },
-    CREATE_JOB(state, payload) {
-        state.createJob = payload
+    CREATE_JOB_MODAL(state, payload) {
+        state.create_job_modal = payload
     },
 }
 

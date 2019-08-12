@@ -7,7 +7,7 @@
       :key="user.id"
       @click="show(user.id)"
     >
-      <div class="flex flex-row flex-nowrap justify-between items-center">
+      <div class="flex flex-row flex-no-wrap justify-between items-center">
         <svgicon name="no-avatar" height="40" width="40" />
         <div class="text-xs sm:text-sm font-bold leading-loose">{{user.personal_detail.name}}</div>
         <div class="flex">
