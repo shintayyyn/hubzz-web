@@ -248,18 +248,18 @@ export default {
         }
       }
       if (this.getLocumAllocatedPrivateJobs && this.getLocumAllocatedPrivateJobs.length > 0) {
-        let hasLocumPrivateJob = this.getLocumAllocatedPrivateJobs.find(appointment => this.getDateArray(appointment.private_job.date_start, appointment.private_job.date_end).includes(date))
+        let hasLocumPrivateJob = this.getLocumAllocatedPrivateJobs.find(appointment => this.getDateArray(appointment.date_start, appointment.date_end).includes(date))
         if (hasLocumPrivateJob) {
           appointmentDate = {
-            shift: hasLocumPrivateJob.private_job.shift
+            shift: hasLocumPrivateJob.shift
           }
         }
       }
       if (this.getLocumAllocatedCurrentJobs && this.getLocumAllocatedCurrentJobs.length > 0) {
-        let hasLocumCurrentJob = this.getLocumAllocatedCurrentJobs.filter(job => this.getDateArray(job.platform_job.date_start, job.platform_job.date_end).includes(date))
+        let hasLocumCurrentJob = this.getLocumAllocatedCurrentJobs.filter(job => this.getDateArray(job.date_start, job.date_end).includes(date))
         if (hasLocumCurrentJob && hasLocumCurrentJob.length > 0) {
           allocatedDate = hasLocumCurrentJob.map(item => {
-            return item.platform_job.shift
+            return item.shift
           })
         }
       }

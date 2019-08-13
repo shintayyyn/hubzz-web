@@ -19,6 +19,7 @@
 </template>
 <script>
 export default {
+  props: ['terms'],
   data() {
     return {
       form: {
@@ -28,8 +29,7 @@ export default {
     }
   },
   created() {
-    // get from API
-    this.form.privacy_policy = ''
+    this.form.privacy_policy = this.terms.privacy_policy
   }
 }
 </script>
