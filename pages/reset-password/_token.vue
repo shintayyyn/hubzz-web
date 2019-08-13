@@ -59,7 +59,6 @@ export default {
   methods: {
     reset() {
       this.$axios.$post(`/api/v1/reset-password/${this.forgot_password_token.token}`, this.form).then(res => {
-        console.log(res)
         this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: [res.message] })
         this.$router.push('/')
       })

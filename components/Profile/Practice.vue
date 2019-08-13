@@ -228,7 +228,6 @@ export default {
   created() {
     // get default data
     this.$axios.$get(`/api/v1/me`).then(res => {
-      console.log(res)
       this.standard_terms =
         res.data.user.practice_detail.practice.standard_terms;
       this.practice_detail.name =
@@ -359,33 +358,30 @@ export default {
     },
     uncheckOther(value) {
       this.form.others_compliance_document_id = this.form.others_compliance_document_id.filter(id => id != value)
-      console.log(this.form.others_compliance_document_id)
     },
     uncheckMandatory(value) {
       this.form.mandatory_training_id = this.form.mandatory_training_id.filter(
         id => id != value
       );
     },
-    check(value) {
-      console.log(this.form.others_compliance_document_id)
-    },
+    // check(value) {
+    //   console.log(this.form.others_compliance_document_id)
+    // },
     remove() {
       // ! ask arvi hind na reremove ung document
       this.$axios.$delete(`/api/v1/practice/me/standard-terms`).then(res => {
         this.modal = false
         this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: [res.message] })
         this.standard_terms.file.filename = null
-        // console.log(this.standard_terms)
+        // standard_terms)
       })
     },
     save() {
       try {
         this.formError = []
-        console.log(this.form)
         this.Validate(this.form, ['mandatory_training_id', 'extra_information'])
         if (!this.formError.length) {
           this.$axios.$put(`/api/v1/practice/me/profile`, this.form).then(res => {
-            console.log(res)
             // set mandatory training
             this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: [res.message] })
           })

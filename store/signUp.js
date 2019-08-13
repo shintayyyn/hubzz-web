@@ -286,7 +286,6 @@ export const actions = {
     this.$axios
       .$post(`/api/v1/register/locum`, form)
       .then((res) => {
-        console.log(res)
         commit('CLEAR_FORM_DETAILS')
         this.$router.push('/sign-up/success')
       })

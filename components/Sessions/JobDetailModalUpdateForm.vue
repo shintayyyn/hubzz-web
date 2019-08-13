@@ -228,7 +228,7 @@
             :label="'Selection will be made and you will receive a notification by this date'"
             :error="this.formError.find(error => error.field === 'selection_date')"
           />
-           <AppDate
+          <AppDate
             v-model="form.favorite_only_until"
             :name="'favorite_only_until'"
             :label="'Only Favorite locums can apply until'"
@@ -448,7 +448,7 @@ export default {
     this.getClinicalSystems()
     this.getSpokenLanguages()
     this.getMandatoryTrainings()
-      this.form.practice_id = this.job.platform_job.practice.id,
+    this.form.practice_id = this.job.platform_job.practice.id,
       this.form.title = this.job.title,
       this.form.description = this.job.description,
       this.form.report_to = this.job.platform_job.report_to,
@@ -461,7 +461,7 @@ export default {
       this.form.duration_for_each_appointment = this.job.platform_job.duration_for_each_appointment,
       this.form.opportunity_for_catch_up_slots = this.job.platform_job.opportunity_for_catch_up_slots,
       this.form.session_structure_information = this.job.platform_job.session_structure_information
-      this.form.locum_detail_rate_type_id = this.job.locum_detail_rate_type.id,
+    this.form.locum_detail_rate_type_id = this.job.locum_detail_rate_type.id,
       this.form.rate = this.job.rate,
       this.form.total_hours = this.job.total_hours,
       this.form.unpaid_breaks_in_minutes = this.job.platform_job.unpaid_breaks_in_minutes,
@@ -600,11 +600,11 @@ export default {
     save() {
       this.formError = []
       this.Validate(this.form,
-      ['extra_information',
-      'is_another_doctor',
-      'is_nurse_available',
-      'opportunity_for_catch_up_slots',
-      'ir35'])
+        ['extra_information',
+          'is_another_doctor',
+          'is_nurse_available',
+          'opportunity_for_catch_up_slots',
+          'ir35'])
       // this.Validate(
       // [this.form.practice_id,
       //   this.form.title,
@@ -655,10 +655,7 @@ export default {
       //   'favorite_only_until',
       //   'update_remarks'
       //   ])
-      
-      console.log("form",this.form)
-      console.log("error",this.formError.length)
-      console.log("errors",this.formError)
+
 
       if (this.formError.length == 0) {
         this.form.clinical_system_id = this.form.clinical_system_id.map(
@@ -697,7 +694,7 @@ export default {
         this.$axios.$put(`/api/v1/practice/jobs/${this.job.id}`, this.form).then(res => {
           this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: [res.message] })
           this.close()
-          
+
         })
       }
     },

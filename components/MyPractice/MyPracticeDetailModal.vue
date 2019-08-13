@@ -65,9 +65,6 @@
 import { gmapApi } from 'vue2-google-maps'
 export default {
   props: ['practice'],
-  created() {
-    console.log(this.practice)
-  },
   computed: {
     google: gmapApi,
     latLang() {

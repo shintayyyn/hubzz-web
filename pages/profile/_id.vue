@@ -75,13 +75,10 @@ export default {
   mounted() {
     this.$store.commit('profile/TOGGLE_SHIELD', true) // SHIELD IS TOGGLED HERE
     this.$axios.get(`/api/v1/practice/practice-documents/${this.$route.params.id}`).then(res => {
-      console.log(res)
       this.practiceDocument.file = res.data.data.practice_document.file
       this.practiceDocument.practice_document_type.name = res.data.data.practice_document.practice_document_type.name
       this.practiceDocument.practice.surgery = res.data.data.practice_document.practice.surgery.name
       this.practiceDocument.created_by_user.personal_detail = res.data.data.practice_document.created_by_user.personal_detail.name
-      console.log('hey')
-      console.log(this.practiceDocument)
       this.showFile = true
     }).catch(err => {
       console.log(err.response || err)

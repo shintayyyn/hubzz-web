@@ -158,13 +158,11 @@ export default {
       let locum = this.locums.find(locum => locum.id === id)
       if (!locum.is_favorite) {
         this.$axios.$post(`/api/v1/practice/locums/${id}/favorite`).then(res => {
-          console.log(res)
           locum.is_favorite = !locum.is_favorite
           this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: ['Added to favourites'] })
         })
       } else {
         this.$axios.$delete(`/api/v1/practice/locums/${id}/favorite`).then(res => {
-          console.log(res)
           locum.is_favorite = !locum.is_favorite
           this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: ['Remove to favourites'] })
         })
