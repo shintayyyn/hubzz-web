@@ -2,22 +2,22 @@
   <section>
     <!-- input select -->
     <div class="relative flex flex-col py-2 mb-6" v-on-clickaway="toggledOff">
-      <div class="relative flex flex-row flex-nowrap justify-between">
+      <div class="relative flex flex-row flex-no-wrap justify-between">
         <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
-        <div class="rounded-lg bg-grey-light p-1 text-xs sm:text-sm" v-if="info">{{info}}</div>
+        <div class="rounded-lg bg-gray-300 p-1 text-xs sm:text-sm" v-if="info">{{info}}</div>
         <div
-          class="absolute pin-r bg-red p-1 text-xs sm:text-sm text-white"
+          class="absolute right-0 bg-red-500 p-1 text-xs sm:text-sm text-white"
           v-if="error"
         >{{error.message}}</div>
       </div>
       <!-- selected -->
       <div class="relative flex flex-row flex-wrap justify-start">
         <div
-          class="rounded-lg bg-yellow-dark py-2 px-3 m-1 text-xs sm:text-sm"
+          class="rounded-lg bg-yellow-500 py-2 px-3 m-1 text-xs sm:text-sm"
           v-if="defaultItem"
         >English</div>
         <div
-          class="rounded-lg bg-yellow-dark py-2 px-3 m-1 text-xs sm:text-sm"
+          class="rounded-lg bg-yellow-500 py-2 px-3 m-1 text-xs sm:text-sm"
           v-for="(item, index) in value"
           :key="item.value"
         >
@@ -30,7 +30,7 @@
             type="text"
             placeholder="Select.."
             ref="input"
-            class="border-b-2 focus:border-yellow focus:outline-none py-3 font-bold text-xs sm:text-sm"
+            class="border-b-2 focus:border-yellow-400 focus:outline-none py-3 font-bold text-xs sm:text-sm"
             @focus="toggled = true"
             @keydown="handleKeyDownEvent"
           />
@@ -44,7 +44,7 @@
         >
           <div
             class="py-2 px-3 cursor-pointer text-xs sm:text-sm"
-            :class="{'bg-grey-light': activeIndex === index}"
+            :class="{'bg-gray-300': activeIndex === index}"
             v-for="(item, index) in filteredItems"
             :key="item.value"
             @mouseover="activeIndex = index"
@@ -60,7 +60,7 @@ import { mixin as clickaway } from "vue-clickaway";
 export default {
   mixins: [clickaway],
   props: {
-    value: Array,
+    value: [Array, String],
     name: String,
     label: String,
     placeholder: String,

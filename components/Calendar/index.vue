@@ -5,9 +5,9 @@
         <div class="relative w-full lg:w-2/3 p-5 pb-12 md:pb-20">
           <PerMonth v-if="$store.state.calendar.view_type === 'per_month'" />
           <PerWeek v-if="$store.state.calendar.view_type === 'per_week'" />
-          <div class="absolute pin-b pin-r mx-5 my-3 md:my-5">
+          <div class="absolute bottom-0 right-0 mx-5 my-3 md:my-5">
             <div
-              class="rounded-full h-10 w-10 sm:h-12 sm:w-12 md:h-16 md:w-16 text-2xl sm:text-3xl md:text-4xl flex items-center focus:outline-none justify-center bg-yellow-dark font-semibold cursor-pointer shadow-md hover:text-white"
+              class="rounded-full h-10 w-10 sm:h-12 sm:w-12 md:h-16 md:w-16 text-2xl sm:text-3xl md:text-4xl flex items-center focus:outline-none justify-center bg-yellow-500 font-semibold cursor-pointer shadow-md hover:text-white"
               @click="create"
             >+</div>
           </div>
@@ -28,8 +28,8 @@
       <div class="modal-container shadow-lg" v-if="locum_modal">
         <JobDetailModalLocum @close="locum_modal = false" :job="locum_job" />
       </div>
-      <div class="modal-container shadow-lg" v-if="practice_create_modal">
-        <CreateJobModal @close="practice_create_modal = false" :job="practice_create_job" />
+      <div class="modal-container shadow-lg" v-if="create_job_modal">
+        <CreateJobModal />
       </div>
       <div class="modal-container shadow-lg" v-if="practice_modal">
         <JobDetailModal @close="practice_modal = false" :job="practice_job" />
@@ -63,8 +63,6 @@ export default {
     return {
       practice_modal: false,
       practice_job: null,
-      practice_create_modal: false,
-      practice_create_job: null,
       locum_modal: false,
       locum_job: null,
       locum_appointment_modal: false,
@@ -76,8 +74,11 @@ export default {
   },
   computed: {
     toggleScroll() {
-      return this.locum_appointment_modal | this.locum_modal | this.practice_modal
+      return this.locum_appointment_modal | this.locum_modal | this.practice_modal | this.create_job_modal
     },
+    create_job_modal() {
+      return this.$store.state.calendar.create_job_modal
+    }
   },
   watch: {
     toggleScroll(value) {
@@ -93,7 +94,7 @@ export default {
       if (this.$auth.user.domain === 'Locum') {
         this.createAppointmentJob()
       } else {
-        this.createJob()
+        this.$store.commit('calendar/CREATE_JOB_MODAL', true)
       }
     },
     // locum
@@ -111,10 +112,6 @@ export default {
       this.locum_job = job
     },
     // practice
-    createJob(job) {
-      this.practice_create_modal = true
-      this.practice_create_job = null
-    },
     viewPracticeJob(job) {
       this.practice_modal = true
       this.practice_job = job

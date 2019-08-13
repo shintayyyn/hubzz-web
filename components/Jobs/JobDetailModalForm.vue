@@ -10,15 +10,9 @@
           v-text="job.rate?`£ ${job.rate} ${job.locum_detail_rate_type.name}`:`(none)`"
         ></div>
         <div class="font-bold text-sm sm:text-md">Total hours</div>
-        <div
-          class="text-xs sm:text-sm mb-4"
-          v-text="job.total_hours?job.total_hours:`(none)`"
-        ></div>
+        <div class="text-xs sm:text-sm mb-4" v-text="job.total_hours?job.total_hours:`(none)`"></div>
         <div class="font-bold text-sm sm:text-md">Job description</div>
-        <div
-          class="text-xs sm:text-sm mb-6"
-          v-text="job.description?job.description:`(none)`"
-        ></div>
+        <div class="text-xs sm:text-sm mb-6" v-text="job.description?job.description:`(none)`"></div>
         <div class="font-bold text-sm sm:text-md">Extra information</div>
         <div
           class="text-xs sm:text-sm mb-6"
@@ -76,7 +70,7 @@
         <div class="font-bold text-sm sm:text-md">Specialty</div>
         <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
           <div
-            class="rounded-lg bg-yellow-dark p-2 m-1"
+            class="rounded-lg bg-yellow-500 p-2 m-1"
             v-for="item in job.platform_job.qualifications"
             :key="item.id"
           >{{item.name}}</div>
@@ -84,16 +78,16 @@
         <div class="font-bold text-sm sm:text-md">Clinical systems</div>
         <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
           <div
-            class="rounded-lg bg-yellow-dark p-2 m-1"
+            class="rounded-lg bg-yellow-500 p-2 m-1"
             v-for="item in job.platform_job.clinical_systems"
             :key="item.id"
           >{{item.name}}</div>
         </div>
         <div class="font-bold text-sm sm:text-md">Spoken languages</div>
         <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
-          <div class="rounded-lg bg-yellow-dark p-2 m-1">English</div>
+          <div class="rounded-lg bg-yellow-500 p-2 m-1">English</div>
           <div
-            class="rounded-lg bg-yellow-dark p-2 m-1"
+            class="rounded-lg bg-yellow-500 p-2 m-1"
             v-for="item in job.platform_job.spoken_languages"
             :key="item.id"
           >{{item.name}}</div>
@@ -103,7 +97,7 @@
           <div class="mt-1" v-if="job.platform_job.compliance_documents.length === 0">(none)</div>
           <div
             v-else
-            class="rounded-lg bg-yellow-dark p-2 m-1"
+            class="rounded-lg bg-yellow-500 p-2 m-1"
             v-for="item in job.platform_job.compliance_documents"
             :key="item.id"
           >{{item.name}}</div>
@@ -113,7 +107,7 @@
           <div class="mt-1" v-if="job.platform_job.mandatory_trainings.length === 0">(none)</div>
           <div
             v-else
-            class="rounded-lg bg-yellow-dark p-2 m-1"
+            class="rounded-lg bg-yellow-500 p-2 m-1"
             v-for="item in job.platform_job.mandatory_trainings"
             :key="item.id"
           >{{item.name}}</div>

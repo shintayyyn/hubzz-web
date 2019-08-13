@@ -36,8 +36,7 @@
           <div class="text-xs sm:text-sm my-2">To {{job.date_end}}</div>
           <div class="text-xs sm:text-sm mb-4">Shift {{job.shift.name}}</div>
           <div class="font-bold text-sm sm:text-md">Total Hours</div>
-          <div class="text-xs sm:text-sm mb-4"> {{job.total_hours}}</div>
-
+          <div class="text-xs sm:text-sm mb-4">{{job.total_hours}}</div>
 
           <div
             class="font-bold text-sm sm:text-md"
@@ -59,7 +58,7 @@
           <div class="font-bold text-sm sm:text-md">Specialty</div>
           <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
             <div
-              class="rounded-lg bg-yellow-dark p-2 m-1"
+              class="rounded-lg bg-yellow-500 p-2 m-1"
               v-for="item in job.platform_job.qualifications"
               :key="item.id"
             >{{item.name}}</div>
@@ -67,16 +66,16 @@
           <div class="font-bold text-sm sm:text-md">Clinical systems</div>
           <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
             <div
-              class="rounded-lg bg-yellow-dark p-2 m-1"
+              class="rounded-lg bg-yellow-500 p-2 m-1"
               v-for="item in job.platform_job.clinical_systems"
               :key="item.id"
             >{{item.name}}</div>
           </div>
           <div class="font-bold text-sm sm:text-md">Spoken languages</div>
           <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
-            <div class="rounded-lg bg-yellow-dark p-2 m-1">English</div>
+            <div class="rounded-lg bg-yellow-500 p-2 m-1">English</div>
             <div
-              class="rounded-lg bg-yellow-dark p-2 m-1"
+              class="rounded-lg bg-yellow-500 p-2 m-1"
               v-for="item in job.platform_job.spoken_languages"
               :key="item.id"
             >{{item.name}}</div>
@@ -86,7 +85,7 @@
             <div class="mt-1" v-if="job.platform_job.compliance_documents.length === 0">(none)</div>
             <div
               v-else
-              class="rounded-lg bg-yellow-dark p-2 m-1"
+              class="rounded-lg bg-yellow-500 p-2 m-1"
               v-for="item in job.platform_job.compliance_documents"
               :key="item.id"
             >{{item.name}}</div>
@@ -96,7 +95,7 @@
             <div class="mt-1" v-if="job.platform_job.mandatory_trainings.length === 0">(none)</div>
             <div
               v-else
-              class="rounded-lg bg-yellow-dark p-2 m-1"
+              class="rounded-lg bg-yellow-500 p-2 m-1"
               v-for="item in job.platform_job.mandatory_trainings"
               :key="item.id"
             >{{item.name}}</div>
@@ -105,7 +104,9 @@
       </div>
       <div class="flex flex-col">
         <div class="font-bold text-xs sm:text-sm">Practice</div>
-        <div class="font-bold text-sm sm:text-md">{{job.platform_job ? job.platform_job.practice.surgery.name :null}}</div>
+        <div
+          class="font-bold text-sm sm:text-md"
+        >{{job.platform_job ? job.platform_job.practice.surgery.name :null}}</div>
         <div
           class="text-sm sm:text-md"
         >{{job.platform_job.practice.surgery.address.line_1}} {{job.platform_job.practice.surgery.address.line_2}} {{job.platform_job.practice.surgery.address.line_3}} {{job.platform_job.practice.surgery.address.post_code}}</div>
@@ -128,7 +129,7 @@
 import { gmapApi } from 'vue2-google-maps'
 export default {
   props: ['job'],
-  created(){
+  created() {
     console.log(this.job)
   },
   computed: {

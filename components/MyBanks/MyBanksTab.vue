@@ -1,54 +1,49 @@
 <template>
-<div>
- <div class="flex flex-wrap overflow-hidden">
-
-    <div class="w-2/3 overflow-hidden">
-      <div class="flex flex-row flex-wrap justify-start">
-        <div
-          style="font-family:Nunito"
-          @click.prevent="goTo('favourites')"
-          class="mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.query.my_banks_tab === 'favourites' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
-        >Favourites</div>
-        <div
-          style="font-family:Nunito"
-          @click.prevent="goTo('all')"
-          class="mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.query.my_banks_tab === 'all' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
-        >All</div>
-        <div
-          style="font-family:Nunito"
-          @click.prevent="goTo('appointed')"
-          class="mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.query.my_banks_tab === 'appointed' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
-        >Appointed</div>
-        <div
-          style="font-family:Nunito"
-          @click.prevent="goTo('rejected')"
-          class="mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.query.my_banks_tab === 'rejected' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
-        >Rejected</div>
-        <div
-          style="font-family:Nunito"
-          @click.prevent="goTo('withdrawn')"
-          class="mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.query.my_banks_tab === 'withdrawn' ? 'border rounded-lg border-yellow-dark bg-yellow-dark' : 'text-grey-darker'"
-        >Withdrawn</div>
+  <div>
+    <div class="flex flex-wrap overflow-hidden">
+      <div class="w-2/3 overflow-hidden">
+        <div class="flex flex-row flex-wrap justify-start">
+          <div
+            style="font-family:Nunito"
+            @click.prevent="goTo('favourites')"
+            class="mr-5 p-3 text-sm font-bold cursor-pointer"
+            :class="$route.query.my_banks_tab === 'favourites' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          >Favourites</div>
+          <div
+            style="font-family:Nunito"
+            @click.prevent="goTo('all')"
+            class="mr-5 p-3 text-sm font-bold cursor-pointer"
+            :class="$route.query.my_banks_tab === 'all' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          >All</div>
+          <div
+            style="font-family:Nunito"
+            @click.prevent="goTo('appointed')"
+            class="mr-5 p-3 text-sm font-bold cursor-pointer"
+            :class="$route.query.my_banks_tab === 'appointed' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          >Appointed</div>
+          <div
+            style="font-family:Nunito"
+            @click.prevent="goTo('rejected')"
+            class="mr-5 p-3 text-sm font-bold cursor-pointer"
+            :class="$route.query.my_banks_tab === 'rejected' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          >Rejected</div>
+          <div
+            style="font-family:Nunito"
+            @click.prevent="goTo('withdrawn')"
+            class="mr-5 p-3 text-sm font-bold cursor-pointer"
+            :class="$route.query.my_banks_tab === 'withdrawn' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          >Withdrawn</div>
+        </div>
       </div>
-    </div>
 
-    <div class="w-1/3 overflow-hidden">
-     
+      <div class="w-1/3 overflow-hidden"></div>
     </div>
-
   </div>
-</div>
- 
 </template>
 <script>
 import AppSelect from '@/components/Base/AppSelect'
 export default {
-  components:{
+  components: {
     AppSelect
   },
   methods: {

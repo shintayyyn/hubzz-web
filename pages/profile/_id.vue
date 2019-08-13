@@ -1,16 +1,16 @@
 <template>
   <div class="modal-container shadow-lg">
-    <div class="p-8 max-w-xl" v-if="notFound">
+    <div class="p-8 max-w-3xl" v-if="notFound">
       <div @click="close" class="cursor-pointer">
         <svgicon name="left-arrow" height="32" />
       </div>
       <div>Not Found</div>
     </div>
-    <div class="p-8 max-w-xl" v-else>
+    <div class="p-8 max-w-3xl" v-else>
       <div @click="close" class="cursor-pointer">
         <svgicon name="left-arrow" height="32" />
       </div>
-      <div class="ml-8 hover:text-black hover:bg-yellow-dark rounded-lg inline-flex p-2">
+      <div class="ml-8 hover:text-black hover:bg-yellow-500 rounded-lg inline-flex p-2">
         <a
           @click.prevent="downloadItem(practiceDocument.file.url,practiceDocument.file.filename)"
           class="text-black no-underline"
@@ -26,25 +26,22 @@
         </a>
       </div>
       <div class="flex flex-row justify-start">
-        <div class="flex-col shadow-lg rounded-lg bg-grey-light mx-6 mt-10">
+        <div class="flex-col shadow-lg rounded-lg bg-gray-300 mx-6 mt-10">
           <div class="inline-flex text-sm m-4">
             <div class="m-2 mr-20">
               <p class="mr-20 font-semibold">Title</p>
-              <p class="mt-2 text-base"
+              <p
+                class="mt-2 text-base"
               >{{practiceDocument.practice_document_type ? practiceDocument.practice_document_type.name: null}}</p>
               <p class="mt-5 mr-20 font-semibold">File last uploaded</p>
-              <p class="mt-2 text-base"
+              <p
+                class="mt-2 text-base"
               >{{practiceDocument.file ? $moment(practiceDocument.file.created_at).format('MM/DD/YYYY HH:mm:ss') : null}}</p>
               <p class="mt-5 mr-20 font-semibold">Uploaded By</p>
               <p class="mt-2 text-base">{{practiceDocument.created_by_user.personal_detail}}</p>
             </div>
             <div class="flex m-2">
-              <embed
-                v-if="showFile"
-                width="800px"
-                height="600px"
-                :src="practiceDocument.file.url"
-              />
+              <embed v-if="showFile" width="800px" height="600px" :src="practiceDocument.file.url" />
             </div>
           </div>
         </div>
@@ -59,7 +56,7 @@ export default {
       practiceDocument: {
         file: {},
         practice_document_type: {
-          name:''
+          name: ''
         },
         practice: {
           surgery: ''

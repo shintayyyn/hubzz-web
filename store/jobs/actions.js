@@ -4,7 +4,7 @@ export default {
                 this.$socket.on('Locum Notification Job Matched', (job) => {
                     if (!state.locum_matched_jobs.find(matchedJobs => matchedJobs.id == job.id)) {
                         commit('ADD_LOCUM_MATCHED_JOB', job)
-                        commit('ADD_LOCUM_ALLOCATED_BADGE')
+                        commit('ADD_LOCUM_MATCHED_BADGE')
                     }
                 })
                 this.$socket.on('Locum Notification Job Available', (job) => {
@@ -86,6 +86,7 @@ export default {
                 this.$socket.on('Practice Notification Job Available', (job) => {
                     if (!state.practice_available_jobs.find(availableJob => availableJob.id == job.id)) {
                         commit('ADD_PRACTICE_AVAILABLE_JOB', job)
+                        commit('ADD_PRACTICE_AVAILABLE_BADGE')
                     }
                 })
                 this.$socket.on('Practice Notification Job Updated', (job) => {
@@ -132,6 +133,7 @@ export default {
                 this.$socket.on('Practice Notification Job Current', (job) => {
                     if (!state.practice_allocated_jobs.find(allocatedJobs => allocatedJobs.id == job.id)) {
                         commit('ADD_PRACTICE_ALLOCATED_JOB', job)
+                        commit('ADD_PRACTICE_ALLOCATED_BADGE')
                     }
                     if(state.practice_applied_jobs.find(appliedJobs => appliedJobs.id == job.id)) {
                         commit('REMOVE_PRACTICE_APPLIED_JOB', job.id)
@@ -141,6 +143,7 @@ export default {
                     if(state.practice_allocated_jobs.find(allocatedJob => allocatedJob.id == job.id)) {
                         commit('REMOVE_PRACTICE_ALLOCATED_JOB', job.id)
                     }
+                    commit('ADD_PRACTICE_DECLINED_BADGE', job)
                     commit('ADD_PRACTICE_DECLINED_JOB', job)
                 })
                 this.$socket.on('Practice Notification Job Cancelled', (job) => {
@@ -153,6 +156,7 @@ export default {
                     if (state.practice_allocated_jobs.find(allocatedJobs => allocatedJobs.id == job.id)) {
                         commit('REMOVE_PRACTICE_ALLOCATED_JOB', job.id)
                     }
+                    commit('ADD_PRACTICE_CANCELLED_BADGE', job)
                     commit('ADD_PRACTICE_CANCELLED_JOB', job)
                 })
                 this.$socket.on('Practice Notification Job Part Completed', (jobPart) => {
@@ -164,6 +168,7 @@ export default {
                     }
                     if (!state.practice_completed_jobs.find(completedJob => completedJob.id == job.id)) {
                         commit('ADD_PRACTICE_COMPLETED_JOB', job)
+                        commit('ADD_PRACTICE_COMPLETED_BADGE', job)
                     }
                 })
     },
@@ -305,6 +310,7 @@ export default {
         const response = await jobsApi.fetchPracticeJob(this.$axios, payload)
         commit('TOGGLE_LOADING', false)
         if (response.data.job.status === 'Applied' && !state.locum_applied_jobs.find(appliedJob => appliedJob.id === payload)) {
+            commit('ADD_PRACTICE_APPLIED_BADGE')
             return commit('ADD_PRACTICE_APPLIED_JOB', response.data.job)
         }
     }

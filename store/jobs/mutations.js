@@ -5,6 +5,25 @@ export default {
     TOGGLE_SHIELD(state, payload) {
         state.modal_shield = payload
     },
+    CLEAR_JOBS(state) {
+        state.practice_available_jobs = []
+        state.practice_applied_jobs = []
+        state.practice_allocated_jobs = []
+        state.practice_completed_jobs = []
+        state.practice_unfilled_jobs = []
+        state.practice_cancelled_jobs = []
+        state.practice_declined_jobs = []
+        state.locum_allocated_jobs = []
+        state.locum_available_jobs = []
+        state.locum_matched_jobs = []
+        state.locum_applied_jobs = []
+        state.locum_unsuccessful_jobs = []
+        state.locum_declined_jobs = []
+        state.locum_cancelled_jobs = []
+        state.locum_completed_jobs = []
+        state.locum_private_jobs = []
+        state.locum_unavailabilities = []
+    },
     // PRACTICE
     SET_PRACTICE_AVAILABLE_JOBS(state, payload) {
         state.practice_available_jobs = payload
@@ -29,6 +48,12 @@ export default {
         state.practice_available_jobs = state.practice_available_jobs.filter(job => job.id !== payload)
         state.practice_available_jobs_count = state.practice_available_jobs_count - 1
     },
+    ADD_PRACTICE_AVAILABLE_BADGE(state) {
+        state.practice_new_available_jobs_count = state.practice_new_available_jobs_count + 1 
+    },
+    CLEAR_PRACTICE_AVAILABLE_BADGE(state) {
+        state.practice_new_available_jobs_count = 0
+    },
     SET_PRACTICE_APPLIED_JOBS(state, payload) {
         state.practice_applied_jobs = payload
     },
@@ -52,6 +77,12 @@ export default {
         state.practice_applied_jobs.push(payload)
         state.practice_applied_jobs_count = state.practice_applied_jobs_count + 1
     },  
+    ADD_PRACTICE_APPLIED_BADGE(state) {
+        state.practice_new_applied_jobs_count = state.practice_new_applied_jobs_count + 1 
+    },
+    CLEAR_PRACTICE_APPLIED_BADGE(state) {
+        state.practice_new_applied_jobs_count = 0
+    },
     SET_PRACTICE_ALLOCATED_JOBS(state, payload) {
         state.practice_allocated_jobs = payload
     },
@@ -70,6 +101,12 @@ export default {
         state.practice_allocated_jobs = state.practice_allocated_jobs.filter(job => job.id !== payload)
         state.practice_allocated_jobs_count = state.practice_allocated_jobs_count - 1
     },
+    ADD_PRACTICE_ALLOCATED_BADGE(state) {
+        state.practice_new_allocated_jobs_count = state.practice_new_allocated_jobs_count + 1 
+    },
+    CLEAR_PRACTICE_ALLOCATED_BADGE(state) {
+        state.practice_new_allocated_jobs_count = 0
+    },
     SET_PRACTICE_COMPLETED_JOBS(state, payload) {
         state.practice_completed_jobs = payload
     },
@@ -83,6 +120,12 @@ export default {
         state.practice_completed_jobs = state.practice_completed_jobs.filter(job => job.id !== payload)
         state.practice_completed_jobs_count = state.practice_completed_jobs_count - 1
     },
+    ADD_PRACTICE_COMPLETED_BADGE(state) {
+        state.practice_new_completed_jobs_count = state.practice_new_completed_jobs_count + 1 
+    },
+    CLEAR_PRACTICE_COMPLETED_BADGE(state) {
+        state.practice_new_completed_jobs_count = 0
+    },
     SET_PRACTICE_UNFILLED_JOBS(state, payload) {
         state.practice_unfilled_jobs = payload
     },
@@ -92,6 +135,12 @@ export default {
     REMOVE_PRACTICE_UNFILLED_JOB(state, payload) {
         state.practice_unfilled_jobs = state.practice_unfilled_jobs.filter(job => job.id !== payload)
         state.practice_unfilled_jobs_count = state.practice_unfilled_jobs_count - 1
+    },
+    ADD_PRACTICE_UNFILLED_BADGE(state) {
+        state.practice_new_unfilled_jobs_count = state.practice_new_unfilled_jobs_count + 1 
+    },
+    CLEAR_PRACTICE_UNFILLED_BADGE(state) {
+        state.practice_new_unfilled_jobs_count = 0
     },
     SET_PRACTICE_CANCELLED_JOBS(state, payload) {
         state.practice_cancelled_jobs = payload
@@ -105,6 +154,12 @@ export default {
     REMOVE_PRACTICE_CANCELLED_JOB(state, payload) {
         state.practice_cancelled_jobs = state.practice_cancelled_jobs.filter(job => job.id !== payload)
         state.practice_cancelled_jobs_count = state.practice_cancelled_jobs_count - 1
+    },
+    ADD_PRACTICE_CANCELLED_BADGE(state) {
+        state.practice_new_cancelled_jobs_count = state.practice_new_cancelled_jobs_count + 1 
+    },
+    CLEAR_PRACTICE_CANCELLED_BADGE(state) {
+        state.practice_new_cancelled_jobs_count = 0
     },
     SET_PRACTICE_DECLINED_JOBS(state, payload) {
         state.practice_declined_jobs = payload
@@ -120,6 +175,12 @@ export default {
             state.practice_declined_jobs = state.practice_declined_jobs.filter(job => job.id !== payload)
             state.practice_declined_jobs_count = state.practice_declined_jobs_count - 1
         }
+    },
+    ADD_PRACTICE_DECLINED_BADGE(state) {
+        state.practice_new_declined_jobs_count = state.practice_new_declined_jobs_count + 1 
+    },
+    CLEAR_PRACTICE_DECLINED_BADGE(state) {
+        state.practice_new_declined_jobs_count = 0
     },
     // LOCUM
     SET_LOCUM_ALLOCATED_JOBS(state, payload) {

@@ -1,14 +1,14 @@
 <template>
-  <div class="p-8 max-w-xl">
-    <div @click="$emit('close')" class="cursor-pointer">
+  <div class="p-8 max-w-3xl">
+    <div @click="close" class="cursor-pointer">
       <svgicon name="left-arrow" height="32" width="32" />
     </div>
     <div class="flex justify-start font-bold text-sm sm:text-xl mt-8">Create a new job</div>
     <div class="flex flex-row flex-wrap justify-start mt-8">
       <!--VALIDATION MODAL-->
-      <div v-if="showErrorModal == true" class="absolute pin-t">
+      <div v-if="showErrorModal == true" class="absolute top-0 z-50">
         <div
-          class="fixed text-white bg-red-light py-2 px-12 mr-10 md:mr-0 md:w-1/3 shadow"
+          class="fixed text-white bg-red-400 py-2 px-12 mr-10 md:mr-0 md:w-1/3 shadow"
           style="border-radius: 0 0 10px 10px"
         >
           <span class="text-base font-bold">Validation Error!</span>
@@ -24,7 +24,7 @@
             </div>
             <div>
               <button
-                class="mx-auto md:mx-10 md:absolute pin-r pin-b w-32 md:my-10 p-2 text-sm rounded-lg shadow border border-white text-white hover:bg-white hover:text-black"
+                class="mx-auto md:mx-10 md:absolute right-0 bottom-0 w-32 md:my-10 p-2 text-sm rounded-lg shadow border border-white text-white hover:bg-white hover:text-black"
                 @click="showErrorModal = false"
               >Okay</button>
             </div>
@@ -158,8 +158,8 @@
                   <input
                     v-model="form.rate"
                     type="text"
-                    class="border-b-2 focus:border-yellow focus:outline-none font-bold text-xs sm:text-sm mx-1 py-2"
-                    :class="formError.find(item => item.field === 'rate')? 'border-red':''"
+                    class="border-b-2 focus:border-yellow-400 focus:outline-none font-bold text-xs sm:text-sm mx-1 py-2"
+                    :class="formError.find(item => item.field === 'rate')? 'border-red-500':''"
                     style="text-align:right;width:100px;"
                     @blur="checkEmptyField(form.rate,'rate')"
                   />
@@ -168,8 +168,8 @@
                   <label for="locum_detail_rate_type_id" class="text-xs sm:text-sm mt-2">per</label>
                   <select
                     v-model="form.locum_detail_rate_type_id"
-                    class="border-b-2 focus:border-yellow focus:outline-none font-bold text-xs sm:text-sm mx-1 py-2"
-                    :class="formError.find(item => item.field === 'locum_detail_rate_type_id')? 'border-red':''"
+                    class="border-b-2 focus:border-yellow-400 focus:outline-none font-bold text-xs sm:text-sm mx-1 py-2"
+                    :class="formError.find(item => item.field === 'locum_detail_rate_type_id')? 'border-red-500':''"
                   >
                     <option
                       v-for="(item, index) in rate_lists"
@@ -179,25 +179,25 @@
                   </select>
                 </div>
                 <div
-                  class="absolute pin-r bg-red p-1 text-xs sm:text-base text-white"
+                  class="absolute right-0 bg-red-500 p-1 text-xs sm:text-base text-white"
                   v-if="formError.find(item => item.field === 'rate')"
                 >{{formError.find(item => item.field === 'rate').message}}</div>
               </div>
             </div>
             <div class="flex flex-col py-2 mb-6">
-              <div class="relative flex flex-row flex-nowrap justify-between">
+              <div class="relative flex flex-row flex-no-wrap justify-between">
                 <label for="total_hours" class="text-xs sm:text-sm py-1 mt-2">Total hours</label>
                 <div
-                  class="absolute pin-r bg-red p-1 text-xs sm:text-base text-white"
+                  class="absolute right-0 bg-red-500 p-1 text-xs sm:text-base text-white"
                   v-if="this.formError.find(item => item.field === 'total_hours')"
                 >{{this.formError.find(item => item.field === 'total_hours').message}}</div>
               </div>
-              <div class="flex flex-row flex-nowrap justify-start mt-1">
+              <div class="flex flex-row flex-no-wrap justify-start mt-1">
                 <input
                   v-model="form.total_hours"
                   type="text"
-                  class="border-b-2 focus:border-yellow focus:outline-none font-bold py-2 text-xs sm:text-sm mx-1"
-                  :class="this.formError.find(item => item.field === 'total_hours')? 'border-red':''"
+                  class="border-b-2 focus:border-yellow-400 focus:outline-none font-bold py-2 text-xs sm:text-sm mx-1"
+                  :class="this.formError.find(item => item.field === 'total_hours')? 'border-red-500':''"
                   @blur="checkEmptyField(form.total_hours,'total_hours')"
                   style="text-align:right;'"
                 />
@@ -301,7 +301,6 @@
                   :label="'Start Date'"
                   :error="formError.find(item => item.field === 'date_start')"
                   @blur="checkEmptyField(form.date_start,'date_start')"
-
                 />
               </div>
               <div class="px-1 w-full md:w-1/2">
@@ -570,9 +569,9 @@ export default {
         }
       }
     },
-    'form.mandatory_training_id'(value){
+    'form.mandatory_training_id'(value) {
       console.log(value)
-      console.log('form mandatory training',this.form.mandatory_training_id)
+      console.log('form mandatory training', this.form.mandatory_training_id)
     }
   },
   created() {
@@ -673,6 +672,9 @@ export default {
   },
 
   methods: {
+    close() {
+      this.$store.commit('calendar/CREATE_JOB_MODAL', false)
+    },
     checkEmptyField(inputField, fieldName) {
       // splice from formError
       let index = this.formError.findIndex(item => item.field === fieldName)
@@ -700,21 +702,21 @@ export default {
       this.formError = []
 
       this.Validate(this.form,
-      ['extra_information',
-      'is_another_doctor',
-      'is_nurse_available',
-      'duration_for_each_appointment',
-      'opportunity_for_catch_up_slots',
-      'session_requirements',
-      'ir35',
-      'unpaid_breaks_in_minutes',
-      'mandatory_training_id',
-      'auto_assign_at',
-      'selection_date',
-      'favorite_only_until'])
+        ['extra_information',
+          'is_another_doctor',
+          'is_nurse_available',
+          'duration_for_each_appointment',
+          'opportunity_for_catch_up_slots',
+          'session_requirements',
+          'ir35',
+          'unpaid_breaks_in_minutes',
+          'mandatory_training_id',
+          'auto_assign_at',
+          'selection_date',
+          'favorite_only_until'])
 
-      console.log('errors',this.formError.length)
-      console.log('form',this.form)
+      console.log('errors', this.formError.length)
+      console.log('form', this.form)
 
       if (this.formError.length == 0) {
         this.form.clinical_system_id = this.form.clinical_system_id.map(

@@ -30,8 +30,8 @@
           <div class="rounded-lg shadow-lg p-8">
             <div class="flex flex-col">
               <div class="text-xs sm:text-sm">Your Practice's standard terms</div>
-              <div class="mt-4 bg-grey-lighter rounded-lg p-4">
-                <div class="flex flex-nowrap justify-between">
+              <div class="mt-4 bg-gray-300 rounded-lg p-4">
+                <div class="flex flex-no-wrap justify-between">
                   <div
                     class="text-xs sm:text-sm document-filename"
                   >{{ standard_terms && standard_terms.file ? standard_terms.file.filename : '' }}</div>
@@ -45,7 +45,7 @@
               <div></div>
               <div class="flex justify-start mt-4">
                 <label for="file-upload">
-                  <div class="flex flex-row flex-nowrap cursor-pointer hover:underline">
+                  <div class="flex flex-row flex-no-wrap cursor-pointer hover:underline">
                     <svgicon name="cloud-upload" height="24" width="24" />
                     <div class="ml-2 text-xs sm:text-sm leading-loose">Upload</div>
                   </div>
@@ -366,7 +366,7 @@ export default {
         id => id != value
       );
     },
-    check(value){
+    check(value) {
       console.log(this.form.others_compliance_document_id)
     },
     remove() {

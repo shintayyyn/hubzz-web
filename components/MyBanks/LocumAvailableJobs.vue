@@ -13,24 +13,24 @@
             <tr class="text-xs sm:text-sm text-left">
               <th @click="getAvailableJobs('id:desc')">
                 Job number
-                <svgicon name="sort" height="12" width="12" />
+                <svgicon class="inline align-baseline" name="sort" height="12" width="12" />
               </th>
               <th>Practice / Surgery</th>
               <th @click="getAvailableJobs('title:desc')">
                 Title
-                <svgicon name="sort" height="12" width="12" />
+                <svgicon class="inline align-baseline" name="sort" height="12" width="12" />
               </th>
               <th @click="getAvailableJobs('date_start:desc')">
                 From
-                <svgicon name="sort" height="12" width="12" />
+                <svgicon class="inline align-baseline" name="sort" height="12" width="12" />
               </th>
               <th @click="getAvailableJobs('date_end:desc')">
                 To
-                <svgicon name="sort" height="12" width="12" />
+                <svgicon class="inline align-baseline" name="sort" height="12" width="12" />
               </th>
               <th @click="getAvailableJobs('date_created:desc')">
                 Created
-                <svgicon name="sort" height="12" width="12" />
+                <svgicon class="inline align-baseline" name="sort" height="12" width="12" />
               </th>
             </tr>
           </thead>
@@ -55,14 +55,14 @@
           </tbody>
         </table>
       </div>
-      <div v-if="!availableJobs.length == 0" class="m-10 xl:-ml-32">
-        <AppPagination
-          :total="total"
-          :totalPages="totalPages"
-          :currentPage="currentPage"
-          @pagechanged="pagechanged"
-        />
-      </div>
+    </div>
+    <div v-if="!availableJobs.length == 0" class="m-10 xl:-ml-32">
+      <AppPagination
+        :total="total"
+        :totalPages="totalPages"
+        :currentPage="currentPage"
+        @pagechanged="pagechanged"
+      />
     </div>
   </div>
 </template>

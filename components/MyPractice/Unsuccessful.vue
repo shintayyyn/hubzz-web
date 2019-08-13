@@ -1,10 +1,10 @@
 <template>
   <section>
-    <div>
+    <div v-if="practices.length > 0">
       <div class="flex flex-row flex-wrap justify-start">
         <div
-          class="card cursor-pointer rounded-lg shadow-lg m-2 p-5 bg-grey-light"
-          v-for="practice in practices"
+          class="w-full md:w-1/3 lg:w-1/4 rounded-lg shadow-lg bg-gray-300 m-2 p-4 hover:bg-gray-500"
+          v-for="(practice, index) in practices"
           :key="practice.id"
         >
           <div class="flex justify-end z-50">
@@ -14,7 +14,7 @@
                 height="32"
                 width="32"
                 class="cursor-pointer"
-                @click="unfavorite(practice.id)"
+                @click="unfavorite(practice.id, index)"
               />
             </template>
             <template v-else>
@@ -23,28 +23,40 @@
                 height="32"
                 width="32"
                 class="cursor-pointer"
-                @click="favorite(practice.id)"
+                @click="favorite(practice.id, index)"
               />
             </template>
           </div>
           <div class="flex flex-wrap text-center mt-4 cursor-pointer" @click="show(practice.id)">
-            <div class="w-full">
-              <svgicon name="no-avatar" height="60" width="60" />
+            <div class="w-full flex justify-center">
+              <div class="relative avatar flex justify-center">
+                <img
+                  :src="practice.user.avatar.file.url"
+                  v-if="practice.user && practice.user.avatar && practice.user.avatar.file && practice.user.avatar.file.url"
+                />
+                <svgicon name="no-avatar" height="115" width="115" v-else />
+              </div>
             </div>
+
             <div class="w-full font-bold text-sm sm:text-lg my-4">{{practice.surgery.name}}</div>
-            <div class="w-full font-bold text-grey-dark text-sm sm:text-lg">{{practice.email}}</div>
+            <div
+              class="w-full mb-4 font-bold text-gray-600 text-sm sm:text-lg"
+            >{{practice.surgery.address.line_1}} {{practice.surgery.address.line_2}} {{practice.surgery.address.line_3}} {{practice.surgery.address.post_code}}</div>
           </div>
         </div>
       </div>
 
-      <div class="mt-5 flex justify-center" v-if="practices.length > 0">
+      <div class="mt-5 flex justify-center" v-if="practices.length > 0 && totalPages > 1">
         <AppPagination
           :total="total"
           :totalPages="totalPages"
-          :currentPage="currentPage"
+          :currentPage="current_page"
           @pagechanged="pagechanged"
         />
       </div>
+    </div>
+    <div v-else class="flex flex-row flex-wrap justify-center">
+      <div>You do not have any Unsuccessful Job for any Practices</div>
     </div>
     <div class="shield" v-if="modal"></div>
     <transition name="slide" mode="out-in">
@@ -67,57 +79,36 @@ export default {
   data() {
     return {
       practices: [],
-      perPage: 5,
+      current_page: 1,
       total: 0,
-      currentPage: parseInt(this.$route.query.current_page),
       modal: false,
       practice: null
     }
   },
-  beforeDestroy() {
-    let query = Object.assign({}, this.$route.query)
-    delete query.current_page
-    this.$router.push({ query })
-  },
   computed: {
+    offset() {
+      return this.perPage * (this.current_page - 1);
+    },
+    perPage() {
+      return 5;
+    },
     totalPages() {
       return Math.ceil(this.total / this.perPage);
-    }
-  },
-  watch: {
-    practices(newValue, oldValue) {
-      if (newValue.length !== 0 && (oldValue.length > newValue.length)) {
-        this.getUnsuccessfulPractices()
-      }
-      if (newValue.length === 0 && this.$route.query.current_page !== 1) {
-        this.pagechanged(this.totalPages)
-      }
     },
-    $route(to, from) {
-      if (from.query.current_page !== to.query.current_page) {
-        this.getUnsuccessfulPractices()
-      }
-    }
   },
   created() {
-    const query = {
-      ...this.$route.query,
-      current_page: this.$route.query.current_page || 1
-    }
-    this.$router.push({ query })
     this.getUnsuccessfulPracticesCount()
-    this.getUnsuccessfulPractices()
   },
   methods: {
     getUnsuccessfulPracticesCount() {
-      this.$axios.$get(`/api/v1/locum/practices/count?locum_practice_type=Unsuccessful`).then(res => { //GET QUANTITY OF DATA
+      this.$axios.$get(`/api/v1/locum/practices/count?locum_practice_type=Unsuccessful`).then(res => {
         this.total = res.data.count
+        this.getUnsuccessfulPractices(this.current_page)
+
       })
     },
-    getUnsuccessfulPractices() {
-      let offset = 0
-      offset = this.perPage * (parseInt(this.$route.query.current_page) - 1)
-      this.$axios.$get(`/api/v1/locum/practices?locum_practice_type=Unsuccessful&limit=${this.perPage}&offset=${offset}`).then(res => {
+    getUnsuccessfulPractices(page) {
+      this.$axios.$get(`/api/v1/locum/practices?locum_practice_type=Unsuccessful&offset=${this.offset}&limit=${this.perPage}`).then(res => {
         this.practices = res.data.practices
       })
     },
@@ -128,21 +119,25 @@ export default {
       })
     },
     pagechanged(e) {
-      const query = {
-        ...this.$route.query,
-        current_page: e || 1
-      }
-      this.$router.push({ query })
+      this.current_page = e
+      this.getCompletedPractices(this.current_page)
     }
   }
 }
 </script>
-<style >
-.card {
-  min-width: 200px;
-  max-width: 200px;
-  height: 250px;
+<style scoped>
+.avatar-container {
   box-sizing: content-box;
+  height: 170px;
+}
+.avatar {
+  max-width: 170px;
+  max-height: 170px;
+  min-width: 170px;
+  min-height: 170px;
+}
+img {
+  border-radius: 50%;
 }
 .shield {
   position: fixed;

@@ -9,34 +9,32 @@
       </div>
     </transition>-->
     <div class="flex flex-col mt-4">
-      <div class="flex flex-row px-4 flex-nowrap justify-between">
+      <div class="flex flex-row px-4 flex-no-wrap justify-between">
         <div class="text-xs sm:text-sm w-full px-1">Title</div>
         <div class="text-xs sm:text-sm w-full px-1">File Size</div>
         <div class="text-xs sm:text-sm w-full px-1">Last Upload Date</div>
       </div>
       <div>
-         <div
+        <div
           class="practice-doc-card rounded-lg shadow-lg p-4 mt-4"
           v-for="item in practiceComplianceDocuments"
-          :class="item.existingPracticeComplianceDocument ? 'bg-orange':'bg-blue' " 
+          :class="item.existingPracticeComplianceDocument ? 'bg-orange-300':'bg-blue-500' "
           :key="item.practiceDocumentType.id"
           @click="item.existingPracticeComplianceDocument ? show(item.existingPracticeComplianceDocument.id) : ''"
         >
-          <div class="flex flex-row flex-nowrap">
+          <div class="flex flex-row flex-no-wrap">
             <div class="text-xs sm:text-sm w-full px-1">{{item.practiceDocumentType.name}}</div>
-            <div class="text-xs sm:text-sm w-full px-1">
-              {{ item.existingPracticeComplianceDocument ? (item.existingPracticeComplianceDocument.file.size / 1048576).toFixed(2) + 'Mb' : "Please Wait for Admin's confirmation" }}
-            </div>
             <div
               class="text-xs sm:text-sm w-full px-1"
-            >{{ item.existingPracticeComplianceDocument && item.existingPracticeComplianceDocument.file &&
+            >{{ item.existingPracticeComplianceDocument ? (item.existingPracticeComplianceDocument.file.size / 1048576).toFixed(2) + 'Mb' : "Please Wait for Admin's confirmation" }}</div>
+            <div class="text-xs sm:text-sm w-full px-1">
+              {{ item.existingPracticeComplianceDocument && item.existingPracticeComplianceDocument.file &&
               item.existingPracticeComplianceDocument.file.created_at ? $moment(item.existingPracticeComplianceDocument.file.created_at)
-              .format('DD/MM/YYYY HH:mm:ss') : null }}</div>
-
+              .format('DD/MM/YYYY HH:mm:ss') : null }}
+            </div>
           </div>
         </div>
       </div>
-   
     </div>
 
     <div class="show-document-shield" v-if="modal"></div>
@@ -59,8 +57,8 @@ export default {
       modal: false,
       practiceDocuments: [],
       practiceDocumentTypes: [],
-      practiceComplianceDocuments:[],
-      disabled:'true'
+      practiceComplianceDocuments: [],
+      disabled: 'true'
     }
   },
 
@@ -68,7 +66,7 @@ export default {
 
     this.practiceDocuments = []
     this.practiceDocumentTypes = []
-    this.practiceComplianceDocuments = [] 
+    this.practiceComplianceDocuments = []
 
     Promise.all([
 
@@ -87,8 +85,8 @@ export default {
       }),
 
     ]).then(() => {
-       this.practiceComplianceDocuments = this.practiceDocumentTypes.map((practiceDocumentType) => {
-        const existingPracticeComplianceDocument = this.practiceDocuments.find((existingPracticeDocument) =>{
+      this.practiceComplianceDocuments = this.practiceDocumentTypes.map((practiceDocumentType) => {
+        const existingPracticeComplianceDocument = this.practiceDocuments.find((existingPracticeDocument) => {
           return existingPracticeDocument.practice_document_type.id === practiceDocumentType.id
         })
         return {
@@ -97,10 +95,10 @@ export default {
         }
 
       })
-      console.log('2',this.practiceComplianceDocuments)
+      console.log('2', this.practiceComplianceDocuments)
 
     })
-  
+
   },
 
   methods: {

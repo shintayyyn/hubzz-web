@@ -1,6 +1,6 @@
 <template>
   <div>
-     <div class="-mt-2">
+    <div class="-mt-2">
       <AppSelect
         v-model="profession_id"
         :name="'Filter Locums by'"
@@ -9,13 +9,11 @@
         :placeholder="'All'"
       />
     </div>
-    <div class="mt-10 w-full text-center" v-if="locums.length == 0" >
-      There are no appointed locums.
-    </div>
+    <div class="mt-10 w-full text-center" v-if="locums.length == 0">There are no appointed locums.</div>
     <div v-else class="flex flex-row flex-wrap justify-start">
       <AppLoading :loading="loading" :message="'Loading'" v-if="loading" />
       <div
-        class="card w-24 rounded-lg shadow-lg bg-grey-light m-2 p-4 hover:bg-grey"
+        class="w-full md:w-1/3 lg:w-1/4 rounded-lg shadow-lg bg-gray-300 m-2 p-4 hover:bg-gray-500"
         v-for="user in locums"
         :key="user.id"
       >
@@ -40,24 +38,25 @@
           </template>
         </div>
         <div class="flex flex-wrap text-center mt-4 cursor-pointer" @click="show(user.id)">
-          <div class="w-full">
-            <div v-if="!user.avatar">
-              <svgicon name="no-avatar" height="115" width="115" />
+          <div class="w-full flex justify-center">
+            <div class="relative avatar flex justify-center">
+              <img
+                :src="user.avatar.file.url"
+                v-if="user.avatar && user.avatar.file && user.avatar.file.url"
+              />
+              <svgicon name="no-avatar" height="115" width="115" v-else />
             </div>
-            <embed
-              class="object-contain h-32 rounded-full mr-4"
-              :src="user.avatar ? user.avatar.file.url:null"
-            />
           </div>
+
           <div class="w-full font-bold text-sm sm:text-lg my-4">{{user.personal_detail.name}}</div>
           <div
-            class="w-full font-bold text-grey-dark text-sm sm:text-lg"
-          >{{user.locum_detail.headline}}</div>
+            class="w-full mb-4 font-bold text-gray-600 text-sm sm:text-lg"
+          >{{user.locum_detail.profession.name}}</div>
         </div>
       </div>
     </div>
 
-    <div v-if="!locums.length == 0" class="m-10 xl:-ml-32">
+    <div class="m-10 xl:-ml-32" v-if="locums.length > 0 && totalPages > 1">
       <AppPagination
         :total="total"
         :totalPages="totalPages"
@@ -66,8 +65,8 @@
         :loading="loading"
       />
     </div>
-    
-    <div  class="locum-shield" v-if="modal"></div>
+
+    <div class="locum-shield" v-if="modal"></div>
     <transition name="slide" mode="out-in">
       <div class="locum-modal shadow-lg" v-if="modal">
         <MyLocumDetailModal @close="modal = false" :user="user" :jobs="jobs" />
@@ -99,7 +98,7 @@ export default {
       modal: false, //TEMPORARY
       user: null,
       jobs: null, //TEMPORARY
-      professions:[],
+      professions: [],
       profession_id: null,
       filteredUsers: []
     }
@@ -114,7 +113,7 @@ export default {
       this.currentPage = parseInt(to.query.current_page)
       this.getAppointedLocums()
     },
-    profession_id:function(){
+    profession_id: function () {
       this.getAppointedLocums()
     }
   },
@@ -131,7 +130,7 @@ export default {
       this.getAppointedLocums()
     })
 
-     this.$axios.$get(`/api/v1/professions`).then(res => {
+    this.$axios.$get(`/api/v1/professions`).then(res => {
       this.professions = [];
       res.data.professions.forEach(item => {
         this.professions.push({ label: item.name, value: item.id });
@@ -144,12 +143,12 @@ export default {
       this.loading = true
       let offset = 0
       offset = this.perPage * (parseInt(this.$route.query.current_page) - 1)
-      if(!this.profession_id){
+      if (!this.profession_id) {
         this.$axios.$get(`/api/v1/practice/locums?&practice_locum_type=Appointed&limit=${this.perPage}&offset=${offset}`).then(res => {
           this.locums = res.data.users
         })
-      }else{
-         this.$axios.$get(`/api/v1/practice/locums?profession_id=${this.profession_id}&practice_locum_type=Appointed&limit=${this.perPage}&offset=${offset}`).then(res => {
+      } else {
+        this.$axios.$get(`/api/v1/practice/locums?profession_id=${this.profession_id}&practice_locum_type=Appointed&limit=${this.perPage}&offset=${offset}`).then(res => {
           this.locums = res.data.users
         })
       }
@@ -201,10 +200,18 @@ export default {
 }
 </script>
 <style>
-.card {
-  min-width: 200px;
-  height: 250px;
+.avatar-container {
   box-sizing: content-box;
+  height: 170px;
+}
+.avatar {
+  max-width: 170px;
+  max-height: 170px;
+  min-width: 170px;
+  min-height: 170px;
+}
+img {
+  border-radius: 50%;
 }
 .locum-shield {
   position: fixed;

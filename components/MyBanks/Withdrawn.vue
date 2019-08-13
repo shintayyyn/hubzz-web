@@ -9,13 +9,11 @@
         :placeholder="'All'"
       />
     </div>
-    <div class="mt-10 w-full text-center" v-if="locums.length == 0">
-      No locums have withrawn.
-    </div>
+    <div class="mt-10 w-full text-center" v-if="locums.length == 0">No locums have withrawn.</div>
     <div v-else class="flex flex-row flex-wrap justify-start">
-    <AppLoading :loading="loading" :message="'Loading'" v-if="loading" />
+      <AppLoading :loading="loading" :message="'Loading'" v-if="loading" />
       <div
-        class="card w-24 rounded-lg shadow-lg m-2 p-5 hover:bg-grey"
+        class="w-full md:w-1/3 lg:w-1/4 rounded-lg shadow-lg bg-gray-300 m-2 p-4 hover:bg-gray-500"
         v-for="(user, index) in locums"
         :key="user.id"
       >
@@ -29,24 +27,25 @@
           />
         </div>
         <div class="flex flex-wrap text-center mt-4 cursor-pointer" @click="show(user.id)">
-          <div class="w-full">
-            <div v-if="!user.avatar">
-              <svgicon name="no-avatar" height="115" width="115" />
+          <div class="w-full flex justify-center">
+            <div class="relative avatar flex justify-center">
+              <img
+                :src="user.avatar.file.url"
+                v-if="user.avatar && user.avatar.file && user.avatar.file.url"
+              />
+              <svgicon name="no-avatar" height="115" width="115" v-else />
             </div>
-            <embed
-              class="object-contain h-32 rounded-full mr-4"
-              :src="user.avatar ? user.avatar.file.url:null"
-            />
           </div>
+
           <div class="w-full font-bold text-sm sm:text-lg my-4">{{user.personal_detail.name}}</div>
           <div
-            class="w-full font-bold text-grey-dark text-sm sm:text-lg"
-          >{{user.locum_detail.headline}}</div>
+            class="w-full mb-4 font-bold text-gray-600 text-sm sm:text-lg"
+          >{{user.locum_detail.profession.name}}</div>
         </div>
       </div>
     </div>
 
-    <div v-if="!locums.length == 0" class="m-10 xl:-ml-32">
+    <div class="m-10 xl:-ml-32" v-if="locums.length > 0 && totalPages > 1">
       <AppPagination
         :total="total"
         :totalPages="totalPages"
@@ -88,7 +87,7 @@ export default {
       modal: false, //TEMPORARY
       user: null, //TEMPORARY
       jobs: null,
-      professions:[],
+      professions: [],
       profession_id: null,
       filteredUsers: []
     }
@@ -103,7 +102,7 @@ export default {
       this.currentPage = parseInt(to.query.current_page)
       this.getWithrawnLocums()
     },
-     profession_id:function(){
+    profession_id: function () {
       this.getWithrawnLocums()
     }
   },
@@ -136,12 +135,12 @@ export default {
       this.loading = true
       let offset = 0
       offset = this.perPage * (parseInt(this.$route.query.current_page) - 1)
-      if(!this.profession_id){
+      if (!this.profession_id) {
         this.$axios.$get(`/api/v1/practice/locums?practice_locum_type=Declined&limit=${this.perPage}&offset=${offset}`).then(res => {
           this.locums = res.data.users
         })
-      }else{
-         this.$axios.$get(`/api/v1/practice/locums?profession_id=${this.profession_id}&practice_locum_type=Declined&limit=${this.perPage}&offset=${offset}`).then(res => {
+      } else {
+        this.$axios.$get(`/api/v1/practice/locums?profession_id=${this.profession_id}&practice_locum_type=Declined&limit=${this.perPage}&offset=${offset}`).then(res => {
           this.locums = res.data.users
         })
       }
@@ -185,10 +184,18 @@ export default {
 }
 </script>
 <style>
-.card {
-  min-width: 200px;
-  height: 250px;
+.avatar-container {
   box-sizing: content-box;
+  height: 170px;
+}
+.avatar {
+  max-width: 170px;
+  max-height: 170px;
+  min-width: 170px;
+  min-height: 170px;
+}
+img {
+  border-radius: 50%;
 }
 .locum-shield {
   position: fixed;

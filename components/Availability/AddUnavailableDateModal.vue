@@ -1,5 +1,5 @@
 <template>
-  <div class="p-8 max-w-lg">
+  <div class="p-8 max-w-3xl">
     <div @click="$emit('close')" class="cursor-pointer">
       <svgicon name="left-arrow" height="32" width="32" />
     </div>
@@ -35,34 +35,31 @@
         <div class="flex flex-row flex-wrap justify-start mt-4 relative">
           <div class="text-sm sm:text-md leading-loose mr-2">On theses shifts</div>
           <div
-            class="rounded-lg bg-grey-light px-2 py-1 text-sm sm:text-md flex items-center"
+            class="rounded-lg bg-gray-300 px-2 py-1 text-sm sm:text-md flex items-center"
             v-if="type === 'solo'"
           >
             Select all that apply. Shifts that are already booked are greyed-out.
             <div
               v-if="formError.find(item => item.field === 'shift_id')"
-              class="absolute pin-r bg-red p-1 text-xs sm:text-base text-white"
+              class="absolute right-0 bg-red-500 p-1 text-xs sm:text-base text-white"
             >Select atleast one shift</div>
           </div>
-          <div
-            class="rounded-lg bg-grey-light px-2 py-1 text-sm sm:text-md flex items-center"
-            v-else
-          >
+          <div class="rounded-lg bg-gray-300 px-2 py-1 text-sm sm:text-md flex items-center" v-else>
             Select all that apply.
             <div
               v-if="formError.find(item => item.field === 'shift_id')"
-              class="absolute pin-r bg-red p-1 text-xs sm:text-base text-white"
+              class="absolute right-0 bg-red-500 p-1 text-xs sm:text-base text-white"
             >Select atleast one shift</div>
           </div>
         </div>
 
         <div class="flex flex-row flex-wrap justify-around md:justify-between mt-4">
           <button
-            class="relative border border-solid rounded-lg p-5 my-2 md:m-1 text-center text-xs sm:text-sm focus:outline-none w-full sm:w-1/4 md:w-1/6"
+            class="relative border border-solid rounded-lg p-5 my-2 md:m-1 text-center text-xs sm:text-sm focus:outline-none w-full sm:w-1/3 md:w-1/6"
             :class="{
-                'bg-grey-light': isDisabled(item.id),
-                'bg-yellow-dark': isSelected(item.id), 
-                'hover:bg-yellow-dark': !isSelected(item.id) && isSelectable(item.id),
+                'bg-gray-300': isDisabled(item.id),
+                'bg-yellow-500': isSelected(item.id), 
+                'hover:bg-yellow-500': !isSelected(item.id) && isSelectable(item.id),
               }"
             style="box-sizing:content-box;"
             v-for="item in shifts"

@@ -1,5 +1,6 @@
 <template>
   <section class="__jobs-section">
+    <AppJobFilter @getJobs="getJobs(1, params)" :params="params" />
     <div class="overflow-x-auto">
       <div
         class="mt-10 w-full text-center"
@@ -10,11 +11,26 @@
         <table>
           <thead>
             <tr class="text-xs sm:text-sm text-left">
-              <th @click="sortBy('job_number')">Job number</th>
+              <th @click="sortBy('job_number')">
+                Job number
+                <svgicon class="inline align-baseline" name="sort" height="12" width="12" />
+              </th>
               <th>Practice</th>
               <th>Title</th>
-              <th @click="sortBy('date_start')">From</th>
-              <th @click="sortBy('date_end')">To</th>
+              <th>Shift</th>
+              <th @click="sortBy('rate')">
+                Rate
+                <svgicon class="inline align-baseline" name="sort" height="12" width="12" />
+              </th>
+              <th>Per</th>
+              <th @click="sortBy('date_start')">
+                From
+                <svgicon class="inline align-baseline" name="sort" height="12" width="12" />
+              </th>
+              <th @click="sortBy('date_end')">
+                To
+                <svgicon class="inline align-baseline" name="sort" height="12" width="12" />
+              </th>
               <th>Rejected</th>
             </tr>
           </thead>
@@ -28,6 +44,9 @@
                 <td>{{item.job_number}}</td>
                 <td>{{item.platform_job.practice.surgery.name}}</td>
                 <td>{{item.title}}</td>
+                <td>{{item.shift.name}}</td>
+                <td>{{item.rate}}</td>
+                <td>{{item.locum_detail_rate_type.name}}</td>
                 <th>{{item.date_start}}</th>
                 <th>{{item.date_end}}</th>
                 <td>{{item.platform_job.rejected_at}}</td>
@@ -40,11 +59,11 @@
         </table>
       </div>
     </div>
-    <div class="absolute pin-b w-full" v-if="getLocumUnsuccessfulJobs.length > 0">
+    <div class="bottom-0 w-full" v-if="getLocumUnsuccessfulJobs.length > 0 && totalPages > 1">
       <AppPagination
         :total="total"
         :totalPages="totalPages"
-        :currentPage="currentPage"
+        :currentPage="current_page"
         @pagechanged="pagechanged"
       />
     </div>
@@ -52,22 +71,38 @@
 </template>
 <script>
 import AppPagination from '@/components/Base/AppPagination'
+import AppJobFilter from '@/components/Base/AppJobFilter'
 export default {
   components: {
-    AppPagination
+    AppPagination,
+    AppJobFilter,
   },
   data() {
     return {
+      current_page: 1,
+      params: {
+        shift_id: '',
+        rate: '',
+        locum_detail_rate_type_id: '',
+        near_post_code: '',
+        miles: '',
+        surgery_name: '',
+        order_by: 'date_start:desc',
+      },
+      // sort
       sortType: '',
       job_number: true,
-      date_start: true,
+      rate: true,
+      date_start: false,
       date_end: true,
-      orderBy: 'date_start:desc'
     }
   },
   computed: {
     getLocumUnsuccessfulJobs() {
       return this.$store.getters["jobs/getLocumUnsuccessfulJobs"];
+    },
+    offset() {
+      return this.perPage * (this.current_page - 1);
     },
     perPage() {
       return 5;
@@ -85,29 +120,12 @@ export default {
       return this.$store.state.jobs.loading_jobs;
     }
   },
-  watch: {
-    getLocumUnsuccessfulJobs(newValue, oldValue) {
-      if (newValue.length !== 0 && (oldValue.length > newValue.length)) {
-        this.getJobs(this.orderBy)
-      }
-      if (newValue.length === 0 && this.$route.query.current_page !== 1) {
-        this.pagechanged(this.totalPages)
-      }
-    },
-    $route(to, from) {
-      if (from.query.current_page !== to.query.current_page) {
-        this.getJobs(this.orderBy)
-      }
-    }
-  },
   created() {
-    const query = {
-      ...this.$route.query,
-      current_page: this.$route.query.current_page || 1
-    };
-    this.$router.push({ query });
     this.getJobsCount();
-    this.getJobs(this.orderBy);
+    this.getJobs(this.current_page, this.params);
+    setTimeout(() => {
+      this.$store.commit('jobs/CLEAR_LOCUM_UNSUCCESSFUL_BADGE')
+    }, 1000)
   },
   methods: {
     getJobsCount() {
@@ -118,6 +136,9 @@ export default {
     },
     sortBy(sortedBy) {
       switch (sortedBy) {
+        case 'rate':
+          this.rate = !this.rate
+          this.sortType = this.rate
         case 'job_number':
           this.job_number = !this.job_number
           this.sortType = this.job_number
@@ -130,26 +151,24 @@ export default {
           this.date_end = !this.date_end
           this.sortType = this.date_end
           break;
+        case 'date_created':
+          this.date_created = !this.date_created
+          this.sortType = this.date_created
+          break;
       }
-      this.orderBy = `${sortedBy}:${this.sortType ? 'desc' : 'asc'}`
-      this.getJobs(this.orderBy)
+      this.params.order_by = `${sortedBy}:${this.sortType ? 'asc' : 'desc'}`
+      this.current_page = 1
+      this.getJobs(this.current_page, this.params)
     },
-    getJobs(orderBy) {
-      let offset = 0;
-      offset = this.perPage * (parseInt(this.$route.query.current_page) - 1);
-      this.$store.dispatch("jobs/fetchLocumJobs", {
-        offset: offset,
-        limit: this.perPage,
-        status: "Unsuccessful",
-        order_by: orderBy
-      });
+    getJobs(page, params) {
+      this.current_page = page
+      let defaultParams = { offset: this.offset, limit: this.perPage, status: "Unsuccessful" }
+      let jobParams = { ...params, ...defaultParams }
+      this.$store.dispatch("jobs/fetchLocumJobs", jobParams);
     },
     pagechanged(e) {
-      const query = {
-        ...this.$route.query,
-        current_page: e || 1
-      }
-      this.$router.push({ query })
+      this.current_page = e
+      this.getJobs(this.current_page, this.params)
     },
     show(id) {
       const query = {

@@ -2,7 +2,7 @@
   <section>
     <div class="flex flex-row justify-end">
       <button
-        class="bg-yellow-dark rounded-full font-bold text-3xl hover:text-white focus:outline-none"
+        class="bg-yellow-500 rounded-full font-bold text-3xl hover:text-white focus:outline-none"
         style="width:40px;height:40px;"
         @click="modal = true"
       >+</button>
@@ -10,7 +10,7 @@
     </div>
     <div class="list-section flex flex-col mt-4 pb-32">
       <!-- <AppLoading /> -->
-      <div class="flex flex-row px-4 flex-nowrap justify-between">
+      <div class="flex flex-row px-4 flex-no-wrap justify-between">
         <div class="text-xs sm:text-sm w-full px-1">Practice</div>
         <div class="text-xs sm:text-sm w-full px-1">Practice code</div>
         <div class="text-xs sm:text-sm w-full px-1">Location</div>
@@ -22,7 +22,7 @@
           v-for="(item, index) in results"
           :key="`${item.id}-${index}`"
         >
-          <div class="flex flex-row flex-nowrap">
+          <div class="flex flex-row flex-no-wrap">
             <div class="text-xs sm:text-sm w-full px-1">{{item.surgery.name}}</div>
             <div class="text-xs sm:text-sm w-full px-1">{{item.surgery.code}}</div>
             <div
@@ -31,7 +31,7 @@
           </div>
         </div>
       </div>
-      <div class="absolute pin-b my-4 w-full">
+      <div class="absolute bottom-0 my-4 w-full">
         <AppPagination
           :total="total"
           :totalPages="totalPages"

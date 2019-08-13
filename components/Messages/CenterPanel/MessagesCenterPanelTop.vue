@@ -1,18 +1,18 @@
 <template>
   <div
     v-if="$route.params.slug !== 'new'"
-    class="panel-top p-4 w-full flex flex-col justify-center border-b"
+    class="panel-top p-4 w-full flex flex-col justify-center border-b leading-none"
   >
     <div class="font-bold text-lg">
       <span>{{ details.name }}</span>
     </div>
-    <div class="text-sm text-grey-dark">
+    <div class="text-gray-600">
       <span class>{{ details.profession }}</span>
       <span class="px-2 text-lg">|</span>
-      <span class>
         <span
-          :class="details.status ? 'bg-green-light' : 'bg-grey'"
-          class="inline-block py-1 px-1 rounded-full"
+          :class="details.status ? 'bg-green-400' : 'bg-gray-300'"
+          class="inline-block rounded-full"
+          style="padding: 5px"
         ></span>
         {{ details.status === true ? 'Online' : 'Offline' }}
       </span>
@@ -27,7 +27,7 @@ export default {
       details: {
         name: "",
         profession: "",
-        status: false
+        status: true
       }
     };
   },

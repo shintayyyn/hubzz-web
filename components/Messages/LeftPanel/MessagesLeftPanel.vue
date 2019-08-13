@@ -16,7 +16,7 @@
           <div v-if="showResult === false">
             <div
               class="flex flex-row items-center px-2 md:pl-4 py-4 cursor-pointer border-b"
-              :class="parseInt($route.params.slug) === item.id ? 'bg-grey-lighter' : 'hover:bg-grey-lightest'"
+              :class="parseInt($route.params.slug) === item.id ? 'bg-gray-300' : 'hover:bg-gray-300est'"
               v-for="item in conversations"
               :key="item.id"
               @click="goTo(item.conversation_id ? item.conversation_id : item.id)"
@@ -30,14 +30,11 @@
                     class="truncate"
                     :class="parseInt($route.params.slug) === item.id ? 'font-bold' : ''"
                   >{{ userFullname(item) }}</span>
-                  <span
-                    :class="user.status ? 'bg-green-light' : 'bg-grey'"
-                    class="h-2 w-2 py-1 px-1 rounded-full"
-                  ></span>
+                  <span class="inline-block rounded-full bg-green-400" style="padding: 4px"></span>
                 </div>
                 <div class="flex">
                   <p class="text-sm truncate w-full">{{ item.message }}</p>
-                  <span class="text-sm text-grey-darker">2hrs</span>
+                  <span class="text-sm text-gray-600">2hrs</span>
                 </div>
               </div>
             </div>
@@ -46,7 +43,7 @@
           <div v-if="showResult && messages.length > 0">
             <div
               class="flex flex-col md:flex-row items-center px-2 md:pl-4 py-4 cursor-pointer border-b"
-              :class="parseInt($route.params.slug) === item.id ? 'bg-grey-lighter' : 'hover:bg-grey-lightest'"
+              :class="parseInt($route.params.slug) === item.id ? 'bg-gray-300' : 'hover:bg-gray-300est'"
               v-for="item in messages"
               :key="item.id"
               @click="goTo(item.conversation_id ? item.conversation_id : item.id)"
@@ -60,14 +57,12 @@
                     class="truncate"
                     :class="parseInt($route.params.slug) === item.id ? 'font-bold' : ''"
                   >{{ userFullname(item) }}</span>
-                  <span
-                    :class="user.status ? 'bg-green-light' : 'bg-grey'"
-                    class="h-2 w-2 py-1 px-1 rounded-full"
-                  ></span>
+                  <span class="inline-block rounded-full bg-green-400" style="padding: 5px"></span>
+                  <!-- <span class="h-2 w-2 py-1 px-1 bg-green-400 rounded-full" style="padding: 5px"></span> -->
                 </div>
                 <div class="flex">
                   <p class="text-sm truncate w-full">{{ item.message }}</p>
-                  <span class="text-sm text-grey-darker">2hrs</span>
+                  <span class="text-sm text-gray-600">2hrs</span>
                 </div>
               </div>
             </div>
@@ -75,7 +70,7 @@
           <!-- No results -->
           <span
             v-if="messages.length === 0 && showResult === true"
-            class="flex h-full items-center justify-center font-bold text-grey"
+            class="flex h-full items-center justify-center font-bold text-gray-500"
           >Nothing to show</span>
         </div>
         <!-- <transition name="fade" mode="in-out">
@@ -94,7 +89,7 @@
         </transition>-->
       </div>
       <button
-        class="bg-yellow-dark border-yellow-dark text-sm p-4 md:text-lg focus:outline-none"
+        class="bg-yellow-500 border-yellow-500 text-sm p-4 md:text-lg focus:outline-none"
         @click="createMessage"
       >Create Message</button>
     </div>

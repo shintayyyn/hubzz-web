@@ -1,5 +1,5 @@
 <template>
-  <div class="p-8 max-w-xl">
+  <div class="p-8 max-w-5xl">
     <div @click="close" class="cursor-pointer">
       <svgicon name="left-arrow" height="32" width="32" />
     </div>
@@ -7,25 +7,22 @@
       <div class="leading-loose font-bold text-md sm:text-lg">{{job.title}}</div>
       <div class="mx-2 text-sm sm:text-sm p-2" :class="bgStatus(job.status)">{{status(job.status)}}</div>
       <div>
-        <button 
-          class="font-bold text-xs sm:text-sm no-underline px-2 py-2 rounded-lg bg-yellow-dark ml-4"
+        <button
+          class="font-bold text-xs sm:text-sm no-underline px-2 py-2 rounded-lg bg-yellow-500 ml-4"
           v-if="job.status === 'Current' && toEdit === false && jobOngoing === false || job.status === 'Applied' && toEdit === false || job.status === 'Available' && toEdit === false"
-          @click.prevent="editJob()">
-          Edit this job
-        </button>
-        <button 
-          class="font-bold text-xs sm:text-sm no-underline px-2 py-2 rounded-lg bg-yellow-dark ml-4"
+          @click.prevent="editJob()"
+        >Edit this job</button>
+        <button
+          class="font-bold text-xs sm:text-sm no-underline px-2 py-2 rounded-lg bg-yellow-500 ml-4"
           v-if="job.status === 'Current' && toEdit === true && jobOngoing === false || job.status === 'Applied' && toEdit === true || job.status === 'Available' && toEdit === true"
-          @click.prevent="cancelEdit()">
-          Cancel Editing
-        </button>
+          @click.prevent="cancelEdit()"
+        >Cancel Editing</button>
       </div>
-      
     </div>
-   
+
     <!-- <div
       class="text-xs sm:text-sm"
-    >Posted {{$moment(job.platform_job.date_created).format('DD/MM/YYYY')}}</div> -->
+    >Posted {{$moment(job.platform_job.date_created).format('DD/MM/YYYY')}}</div>-->
     <div class="flex flex-col mt-4">
       <div class="flex flex-row flex-wrap justify-start">
         <!--SHOW THE DEAILS OF THE JOB-->
@@ -37,7 +34,7 @@
                 job.status === 'Completed' && toEdit === false ||
                 job.status === 'Current' && toEdit === false || 
                 job.status === 'Applied' && toEdit === false || 
-                job.status === 'Available' && toEdit === false " 
+                job.status === 'Available' && toEdit === false "
         />
         <!--UPDATE THE JOB-->
         <JobDetailModalUpdateForm
@@ -72,7 +69,6 @@
         <JobDetailModalShowCandidate @close="modal = false" :user="user" @appointed="close" />
       </div>
     </transition>
-
   </div>
 </template>
 <script>
@@ -102,7 +98,7 @@ export default {
       applicants: [],
       modal: false,
       toEdit: false,
-      jobOngoing: false 
+      jobOngoing: false
     }
   },
   created() {
@@ -113,14 +109,14 @@ export default {
       this.getCandidates()
     }
 
-    if(this.$moment().diff(this.job.date_start,'days') >=0  ){
-      console.log("Job is either ongoing or unfilled. Cannot be edited",this.$moment().diff(this.job.date_start,'days'))
+    if (this.$moment().diff(this.job.date_start, 'days') >= 0) {
+      console.log("Job is either ongoing or unfilled. Cannot be edited", this.$moment().diff(this.job.date_start, 'days'))
       this.jobOngoing = true
-    }else{
-      console.log("Job can still be edited",this.$moment().diff(this.job.date_start,'days'))
+    } else {
+      console.log("Job can still be edited", this.$moment().diff(this.job.date_start, 'days'))
       this.jobOngoing = false
     }
-       
+
 
   },
   methods: {
@@ -149,10 +145,10 @@ export default {
       this.user = user
       this.modal = true
     },
-    editJob(){
+    editJob() {
       this.toEdit = true
     },
-    cancelEdit(){
+    cancelEdit() {
       this.toEdit = false
     },
     close() {
@@ -177,19 +173,19 @@ export default {
     bgStatus(status) {
       switch (status) {
         case 'Available':
-          return 'bg-yellow-dark';
+          return 'bg-yellow-500';
           break;
         case 'Applied':
-          return 'bg-orange-dark text-white';
+          return 'bg-orange-400 text-white';
           break;
         case 'Completed':
-          return 'bg-green-light';
+          return 'bg-green-400';
           break;
         case 'Current':
-          return 'bg-green-light';
+          return 'bg-green-400';
           break;
         default:
-          return 'bg-red text-white'
+          return 'bg-red-500 text-white'
       }
     }
   }

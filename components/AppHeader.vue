@@ -3,8 +3,8 @@
     <div class="flex flex-row flex-wrap justify-between">
       <div class="w-1/2 sm:w-1/3 cursor-pointer py-2" @click="toggle">
         <div class="burger">
-          <div class="my-2 bg-yellow-dark"></div>
-          <div class="my-2 bg-yellow-dark"></div>
+          <div class="my-2 bg-yellow-500"></div>
+          <div class="my-2 bg-yellow-500"></div>
         </div>
       </div>
       <div class="w-1/2 text-right sm:w-1/3 sm:text-center py-2">
@@ -18,13 +18,13 @@
           >
             <AppButton
               :label="'Create Job'"
-              @click="$store.commit('calendar/CREATE_JOB', true)"
-              :inStyle="'font-size:small;padding:12px;'"
+              @click="$store.commit('calendar/CREATE_JOB_MODAL', true)"
+              :inStyle="'font-size:medium;padding:2px;'"
             />
           </div>
           <nuxt-link
             :to="'/messages'"
-            class="font-bold text-xs sm:text-sm no-underline px-2 py-1 rounded-lg bg-yellow-dark ml-4"
+            class="font-bold text-xs sm:text-sm no-underline px-2 py-1 rounded-lg bg-yellow-500 ml-4"
           >Messages</nuxt-link>
           <div
             class="text-xs xl:text-sm ml-4"
@@ -37,11 +37,9 @@
 </template>
 <script>
 import AppButton from "@/components/Base/AppButton";
-import CreateJobModal from '@/components/CreateJobModal'
 export default {
   components: {
     AppButton,
-    CreateJobModal
   },
   methods: {
     toggle() {
@@ -75,7 +73,7 @@ export default {
   .burger {
     display: none;
   }
-  .header-section{
+  .header-section {
     margin-bottom: 50px;
   }
 }

@@ -6,7 +6,7 @@
           <span class="relative w-full flex justify-center">
             <button
               v-if="loadMore"
-              class="absolute text-center py-4 px-8 shadow-md text-xs text-grey-darkest font-bold my-4 rounded-full focus:outline-none hover:bg-grey-lighter"
+              class="absolute text-center py-4 px-8 shadow-md text-xs text-grey-darkest font-bold my-4 rounded-full focus:outline-none hover:bg-gray-200"
               @click="loadMoreMessages"
             >Load More Messages</button>
           </span>
@@ -27,7 +27,7 @@
                     width="25"
                   />
                   <div
-                    class="my-1 mx-2 rounded-lg text-xs px-4 py-2 bg-red-light text-white"
+                    class="my-1 mx-2 rounded-lg text-xs px-4 py-2 bg-red-400 text-white"
                     :class="{'mx-4' : !isReceiver(item)}"
                   >Deleted</div>
                 </div>
@@ -48,15 +48,15 @@
                   <div class="flex text-xs my-1 mx-2 flex-col">
                     <span
                       class="chat-message rounded-lg px-2 py-2"
-                      :class="isReceiver(item) ? 'bg-grey-light' : 'bg-blue-light text-white'"
+                      :class="isReceiver(item) ? 'bg-gray-300' : 'bg-blue-500 text-white'"
                     >{{item.message}}</span>
                     <span
-                      class="text-grey-dark py-1"
+                      class="text-gray-500 py-1"
                       :class="isReceiver(item) ? 'text-right ': ''"
                     >2hrs ago</span>
                   </div>
                   <div
-                    class="text-xs font-bold mx-1 mt-3 cursor-pointer text-white hover:text-grey-dark"
+                    class="text-xs font-bold mx-1 mt-3 cursor-pointer text-white hover:text-gray-500"
                     @click="deleteMessage(item.id)"
                   >X</div>
                 </div>
@@ -69,7 +69,7 @@
         <div class="relative h-full flex flex-col justify-between pt-20 overflow-y-hidden">
           <div class="h-full px-20 pt-20">
             <button
-              class="absolute pin-t pin-l m-6 flex items-center font-bold focus:outline-none"
+              class="absolute top-0 left-0 m-6 flex items-center font-bold focus:outline-none"
               @click="$router.go(-1)"
             >
               <svgicon name="left-arrow" height="32" width="32" />
@@ -90,22 +90,14 @@
           <div v-if="search_user" class="flex">
             <textarea
               v-model="message"
-              class="message-box resize-none w-full p-4 text-sm align-middle focus:outline-none border-t"
+              class="message-box resize-none w-full p-3 text-sm align-middle focus:outline-none border-t"
               placeholder="Type your message here"
               @keydown.enter="createMessage"
             ></textarea>
-            <button class="px-8 bg-yellow-dark h-full" @click="createMessage">Send</button>
+            <button class="px-8 bg-yellow-500 h-full" @click="createMessage">Send</button>
           </div>
         </div>
       </template>
-      <!-- <template v-if="route !== 'new' && messages.length === 0">
-        <div>
-          <div class="flex flex-col justify-center items-center py-4">
-            <img src="https://image.flaticon.com/icons/svg/236/236832.svg" width="150" />
-            <MessagesCenterPanelTop class="text-center" />
-          </div>
-        </div>
-      </template>-->
     </div>
   </div>
 </template>
