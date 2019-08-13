@@ -19,10 +19,10 @@ import debounce from "lodash.debounce";
 export default {
   data() {
     return {
-      search: '',
+      search: "",
       results: [],
       showResults: false
-    }
+    };
   },
   watch: {
     search(value) {
@@ -34,12 +34,11 @@ export default {
     }
   },
   methods: {
-    searchConversation: debounce(function (input) {
+    searchConversation: debounce(function(input) {
       const params = {
         search: input
       };
       this.$axios.$get(`/api/v1/conversations`, { params }).then(res => {
-        console.log(res)
         if (res.data.conversations.length > 0) {
           this.results = res.data.conversations;
           this.showResults = true;
@@ -48,9 +47,9 @@ export default {
           this.showResults = false;
         }
       });
-    }, 250),
+    }, 250)
   }
-}
+};
 </script>
 <style scoped>
 .messages-search-section {

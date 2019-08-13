@@ -10,8 +10,8 @@
         class="mx-4 my-1"
         @keydown.enter="search"
       />
-      <div class="flex flex-col justify-between h-full border-t">
-        <div class="chat-list h-full overflow-y-auto overflow-x-hidden">
+      <div class="relative flex flex-col justify-between h-full border-t">
+        <div class="chat-list h-full overflow-y-auto overflow-x-hidden" @scroll="scrollHandler">
           <!-- default -->
           <div v-if="showResult === false">
             <div
@@ -21,15 +21,19 @@
               :key="item.id"
               @click="goTo(item.conversation_id ? item.conversation_id : item.id)"
             >
-              <div class="w-1/6">
-                <img src="https://image.flaticon.com/icons/svg/236/236832.svg" width="50" />
+              <div class="w-1/6 flex rounded-full">
+                <img class="rounded-full" :src="user.avatar" width="300" height="300" />
               </div>
-              <div class="hidden md:block w-5/6 px-2">
+              <div class="w-5/6 px-2">
                 <div class="flex justify-between items-center">
                   <span
+                    class="truncate"
                     :class="parseInt($route.params.slug) === item.id ? 'font-bold' : ''"
                   >{{ userFullname(item) }}</span>
-                  <span class="h-2 w-2 py-1 px-1 bg-green-light rounded-full"></span>
+                  <span
+                    :class="user.status ? 'bg-green-light' : 'bg-grey'"
+                    class="h-2 w-2 py-1 px-1 rounded-full"
+                  ></span>
                 </div>
                 <div class="flex">
                   <p class="text-sm truncate w-full">{{ item.message }}</p>
@@ -47,15 +51,19 @@
               :key="item.id"
               @click="goTo(item.conversation_id ? item.conversation_id : item.id)"
             >
-              <div class>
-                <img src="https://image.flaticon.com/icons/svg/236/236832.svg" width="50" />
+              <div class="w-1/6 flex rounded-full">
+                <!-- <img class="rounded-full" :src="setAvatar(item)" width="300" height="300" /> -->
               </div>
-              <div class="hidden md:block w-5/6 px-2">
+              <div class="w-5/6 px-2">
                 <div class="flex justify-between items-center">
                   <span
+                    class="truncate"
                     :class="parseInt($route.params.slug) === item.id ? 'font-bold' : ''"
                   >{{ userFullname(item) }}</span>
-                  <span class="h-2 w-2 py-1 px-1 bg-green-light rounded-full"></span>
+                  <span
+                    :class="user.status ? 'bg-green-light' : 'bg-grey'"
+                    class="h-2 w-2 py-1 px-1 rounded-full"
+                  ></span>
                 </div>
                 <div class="flex">
                   <p class="text-sm truncate w-full">{{ item.message }}</p>
@@ -70,44 +78,25 @@
             class="flex h-full items-center justify-center font-bold text-grey"
           >Nothing to show</span>
         </div>
+        <!-- <transition name="fade" mode="in-out">
+          <span
+            class="absolute pin-b w-full text-center"
+            style="background: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,.3));"
+          >
+            <button
+              v-if="loadMore"
+              class="text-center mb-2 rounded-full text-xs focus:outline-none hover:font-bold"
+              @click="loadMoreConversation"
+            >
+              <svgicon name="left-arrow" height="16" width="16" style="transform: rotate(90deg)" />
+            </button>
+          </span>
+        </transition>-->
       </div>
       <button
-        class="bg-yellow-dark border-yellow-dark text-sm md:mx-2 md:my-4 p-4 md:text-lg focus:outline-none"
+        class="bg-yellow-dark border-yellow-dark text-sm p-4 md:text-lg focus:outline-none"
         @click="createMessage"
       >Create Message</button>
-    </div>
-    <button
-      class="bg-yellow-dark border-yellow-dark text-sm md:mx-2 md:my-4 p-4 md:text-lg focus:outline-none"
-      @click="modal = true"
-    >
-      <span class="hidden md:block">Create Message</span>
-      <span class="block md:hidden">
-        <svgicon name="write-message" class="w-8 h-8 fill-current" />
-      </span>
-    </button>
-
-    <div v-if="modal" class="modal rounded-lg bg-white shadow-lg p-4 max-w-sm">
-      <div class="flex flex-col">
-        <label :for="value.min">Min</label>
-        <input
-          :value="value.min"
-          :name="value.min"
-          @input="$emit('input', { min: $event.target.value, max: value.max})"
-          type="text"
-          class="border-b-2 focus:border-yellow focus:outline-none py-2 font-bold text-xs sm:text-sm text-right mb-4"
-        />
-        <label :for="value.max">Max</label>
-        <input
-          :value="value.max"
-          :name="value.max"
-          @input="$emit('input', { min: value.min, max: $event.target.value})"
-          type="text"
-          class="border-b-2 focus:border-yellow focus:outline-none py-2 font-bold text-xs sm:text-sm text-right mb-4"
-        />
-        <!-- <button
-          class="rounded-lg bg-yellow-dark font-bold text-xs sm:text-sm px-2 py-1 focus:outline-none hover:text-white cursor-pointer"
-        @click.prevent="save">Save</button>-->
-      </div>
     </div>
   </div>
 </template>
@@ -119,10 +108,14 @@ export default {
   },
   data() {
     return {
+      user: {
+        avatar: "https://via.placeholder.com/300/",
+        status: false
+      },
       search_text: "",
       messages: [],
       showResult: false,
-      modal: false
+      loadMore: false
     };
   },
   computed: {
@@ -134,7 +127,6 @@ export default {
     search_text(value) {
       if (!value) {
         this.showResult = false;
-        console.log("empty search");
       } else {
         this.getResults(value);
       }
@@ -145,7 +137,6 @@ export default {
       this.showResult = false;
       this.messages = [];
       this.$router.push(`/messages/${id}`);
-      // console.log(this.conversations)
     },
     getResults(value) {
       let search = this.search_text;
@@ -161,7 +152,48 @@ export default {
     },
     createMessage() {
       this.$router.push(`/messages/new`);
+    },
+    scrollHandler({ target: { scrollTop, offsetHeight, scrollHeight } }) {
+      let scroll = Math.round(offsetHeight + scrollTop);
+      if (scroll === scrollHeight) {
+        // this.loadMore = true;
+        this.$axios.$get(`/api/v1/conversations/`).then(res => {
+          if (res.data.conversations.length != this.conversations.length) {
+            // this.loadMoreConversation();
+            this.$store.dispatch("chat/fetchMoreConversation", {
+              offset: this.conversations.length
+            });
+          }
+        });
+      }
     }
+    // loadMoreConversation() {
+    //   this.$store.dispatch("chat/fetchMoreConversation", {
+    //     offset: this.conversations.length
+    //   });
+    //   this.loadMore = false;
+    // },
+    // setAvatar(item) {
+    //   this.$axios.$get(`/api/v1/conversations/${item.id}`).then(res => {
+    //     if (res.data.messages[0].receiver_id !== this.$auth.user.id) {
+    //       if (res.data.messages[0].receiver.avatar === null) {
+    //         console.log("a", res.data.messages[0].receiver_id);
+    //         // this.user.avatar = "https://via.placeholder.com/300/";
+    //       } else {
+    //         this.user.avatar = res.data.messages[0].receiver.avatar.file.url;
+    //       }
+    //     } else {
+    //       if (res.data.messages[0].sender.avatar === null) {
+    //         console.log("a", res.data.messages[0].sender_id);
+    //         console.log("b");
+    //         // this.user.avatar = "https://via.placeholder.com/300/";
+    //       } else {
+    //         console.log("url: ", res.data.messages[0].sender.avatar.file.url);
+    //         this.user.avatar = res.data.messages[0].sender.avatar.file.url;
+    //       }
+    //     }
+    //   });
+    // }
   }
 };
 </script>

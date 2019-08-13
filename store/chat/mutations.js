@@ -1,29 +1,40 @@
 export default {
-    TOGGLE_LOADING(state, payload) {
-        state.loading_messages = payload
-    },
-    SET_CONVERSATIONS(state, payload) {
-        state.conversations = payload
-    },
-    SET_ACTIVE_CONVERSATION(state, payload) {
-        state.activeConversationId = payload
-    },
-    ADD_CONVERSATION(state, payload) {
-        state.conversations.unshift(payload)
-    },
-    DELETE_CONVERSATION(state, payload) {
-        state.conversations = state.conversations.filter(conversation => conversation.id !== payload)
-    },
-    SET_MESSAGES(state, payload) {
-        state.messages = payload.sort((a, b) => a.id - b.id);
-    },
-    ADD_MESSAGE(state, payload) {
-        state.messages.push(payload)
-    },
-    DELETE_MESSAGE(state, payload) {
-        let index = state.messages.findIndex(message => message.id == payload.id)
-        if (index >= 0) {
-            state.messages.splice(index, 1, payload)
-        }
+  TOGGLE_LOADING(state, payload) {
+    state.loading_messages = payload
+  },
+  SET_CONVERSATIONS(state, payload) {
+    state.conversations = payload
+  },
+  FETCH_CONVERSATIONS(state, payload) {
+    payload.forEach(item => {
+      state.conversations.push(item)
+    })
+  },
+  // FETCH_MESSAGES(state, payload) {
+  //   state.messages = payload
+  // },
+  FETCH_MESSAGES(state, payload) {
+    payload.forEach(item => {
+      state.messages.unshift(item)
+    })
+  },
+  SET_ACTIVE_CONVERSATION(state, payload) {
+    state.activeConversationId = payload
+  },
+  ADD_CONVERSATION(state, payload) {
+    state.conversations.unshift(payload)
+  },
+  SET_MESSAGES(state, payload) {
+    state.messages = payload.sort((a, b) => a.id - b.id);
+  },
+  ADD_MESSAGE(state, payload) {
+    state.messages.push(payload)
+  },
+
+  DELETE_MESSAGE(state, payload) {
+    let index = state.messages.findIndex(message => message.id == payload.id)
+    if (index >= 0) {
+      state.messages.splice(index, 1, payload)
     }
+  }
 }

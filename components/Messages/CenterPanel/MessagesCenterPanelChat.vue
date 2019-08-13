@@ -2,6 +2,15 @@
   <div class="panel-chat overflow-y-auto h-full" ref="messagesContainer" @scroll="scrollHandler">
     <div class="flex flex-col h-full">
       <template v-if="messages.length > 0">
+        <transition name="fade" mode="in-out">
+          <span class="relative w-full flex justify-center">
+            <button
+              v-if="loadMore"
+              class="absolute text-center py-4 px-8 shadow-md text-xs text-grey-darkest font-bold my-4 rounded-full focus:outline-none hover:bg-grey-lighter"
+              @click="loadMoreMessages"
+            >Load More Messages</button>
+          </span>
+        </transition>
         <div class="py-2 px-4">
           <div v-for="(item, index) in messages" :key="item.id">
             <div class="flex flex-col" :id="`message-${index}`">
@@ -12,8 +21,9 @@
               >
                 <div class="flex" :class="isReceiver(item) ? '': 'flex-row-reverse'">
                   <img
+                    v-if="isPractice(item)"
                     class="w-10 h-10 rounded-full border"
-                    :src="isReceiver(item) ? 'https://www.svgrepo.com/show/106812/doctor.svg' : 'https://image.flaticon.com/icons/svg/236/236832.svg'"
+                    :src="setAvatar(item)"
                     width="25"
                   />
                   <div
@@ -22,6 +32,7 @@
                   >Deleted</div>
                 </div>
               </div>
+
               <div
                 v-else
                 class="flex my-1"
@@ -29,12 +40,12 @@
               >
                 <div class="flex items-start" :class="isReceiver(item) ? '': 'flex-row-reverse'">
                   <img
+                    v-if="isPractice(item)"
                     class="w-10 h-10 rounded-full border"
-                    :src="isReceiver(item) ? 'https://www.svgrepo.com/show/106812/doctor.svg' : 'https://image.flaticon.com/icons/svg/236/236832.svg'"
+                    :src="setAvatar(item)"
                     width="25"
                   />
                   <div class="flex text-xs my-1 mx-2 flex-col">
-                    <!-- <span class="py-1">asd</span> -->
                     <span
                       class="chat-message rounded-lg px-2 py-2"
                       :class="isReceiver(item) ? 'bg-grey-light' : 'bg-blue-light text-white'"
@@ -55,16 +66,15 @@
         </div>
       </template>
       <template v-if="$route.params.slug === 'new'">
-        <div class="h-full flex flex-col justify-between pt-20 overflow-y-hidden">
+        <div class="relative h-full flex flex-col justify-between pt-20 overflow-y-hidden">
           <div class="h-full px-20 pt-20">
+            <button
+              class="absolute pin-t pin-l m-6 flex items-center font-bold focus:outline-none"
+              @click="$router.go(-1)"
+            >
+              <svgicon name="left-arrow" height="32" width="32" />
+            </button>
             <span class="font-bold text-lg">Create Message</span>
-            <!-- <AppInput
-              v-model="search_text"
-              :type="'search'"
-              :name="'search_text'"
-              :placeholder="'Search Messages'"
-              @keydown.enter="search"
-            />-->
             <AppAutoComplete
               v-model="search_user"
               :name="'search_user'"
@@ -84,18 +94,7 @@
               placeholder="Type your message here"
               @keydown.enter="createMessage"
             ></textarea>
-            <!-- <AppTextarea
-              v-model="message"
-              :name="'message'"
-              :rows="0"
-              :resize="false"
-              :placeholder="'Type your message here'"
-              :error="this.formError.find(item => item.field === 'message')"
-              class="w-full -mb-2 px-2"
-            />-->
             <button class="px-8 bg-yellow-dark h-full" @click="createMessage">Send</button>
-
-            <!-- <AppButton :label="'Create'" @click="createMessage()" class="mx-2" /> -->
           </div>
         </div>
       </template>
@@ -130,7 +129,8 @@ export default {
       showResult: false,
       formError: [],
       selectedUserId: "",
-      message: ""
+      message: "",
+      loadMore: false
     };
   },
   computed: {
@@ -150,13 +150,16 @@ export default {
         this.$refs.messagesContainer &&
         this.$refs.messagesContainer.scrollTop !== 0
       ) {
-        this.scrollToBottom();
+        // this.scrollToBottom();
       }
+      this.loadMore = false;
     },
     messages(value) {
       let index = value.length - this.oldMessageCount;
       let messageSample = document.getElementById(`message-${index}`);
-      this.scrollToBottom();
+      if (this.messages.length === 20) {
+        this.scrollToBottom();
+      }
       // console.log(document.getElementById(`message-${value.length - this.oldMessageCount}`))
     }
   },
@@ -170,20 +173,23 @@ export default {
       this.$nextTick(() => {
         this.$refs.messagesContainer.scrollTop = this.$refs.messagesContainer.scrollHeight;
         // console.log(this.$refs.messagesContainer.scrollTop, this.$refs.messagesContainer.scrollHeight)
-        // console.log(this.$auth.user)
       });
     },
     scrollHandler(e) {
-      if (e.target.scrollTop === 0) {
-        this.oldMessageCount = this.messages.length;
-        // console.log(this.oldMessageCount)
-        // const firstMessageElementBeforeLoadMore =
-        // document.getElementById(
-        //   `message-${this.messages.length}`
-        // );
-        // console.log(firstMessageElementBeforeLoadMore)
-        // this.$emit('fetch-more-messages')
+      if (
+        e.target.scrollHeight > e.target.clientHeight &&
+        e.target.scrollTop === 0
+      ) {
+        this.loadMore = true;
       }
+    },
+    loadMoreMessages() {
+      this.oldMessageCount = this.messages.length;
+      this.$store.dispatch("chat/fetchMoreMessage", {
+        offset: this.messages.length,
+        conversation_id: this.$route.params.slug
+      });
+      this.loadMore = false;
     },
     isReceiver(item) {
       return this.$auth.user.id === item.receiver_id;
@@ -198,6 +204,20 @@ export default {
         } else {
           return false;
         }
+      }
+    },
+    isPractice(item) {
+      if (item.sender.domain === "Practice") {
+        return false;
+      } else {
+        return true;
+      }
+    },
+    setAvatar(item) {
+      if (item.sender.avatar === null) {
+        return "https://via.placeholder.com/300/";
+      } else {
+        return item.sender.avatar.file.url;
       }
     },
     createMessage() {
@@ -217,7 +237,6 @@ export default {
                 message: this.message
               });
               let conversation = this.$store.state.chat.conversations[0];
-              console.log(conversation);
               this.$router.push(`/messages/${conversation.id + 1}`);
             }
             this.search_user = "";
@@ -241,6 +260,10 @@ export default {
   min-width: 100%;
   word-wrap: wrap;
   word-break: break-all;
+}
+
+.panel-chat {
+  scroll-behavior: smooth;
 }
 
 .panel-chat::-webkit-scrollbar {

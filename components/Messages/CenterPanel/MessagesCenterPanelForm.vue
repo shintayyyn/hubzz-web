@@ -19,10 +19,7 @@ export default {
   methods: {
     send() {
       if (!this.message) {
-        console.log("nyongan");
       } else {
-        // this.$emit('send-message', this.message)
-        // this.message = ''
         this.$store.dispatch("chat/sendMessage", {
           receiver_user_id: null,
           message: this.message

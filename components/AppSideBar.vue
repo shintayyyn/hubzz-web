@@ -15,7 +15,7 @@
             :to="item.route"
             :event="isDisabled(item.route)"
             class="block no-underline p-4"
-            :class="`/${$route.path.split('/')[1]}` == item.route ? 'text-yellow-dark' : 'text-black hover:text-grey-light'"
+            :class="`/${$route.path.split('/')[1]}` == item.route ? 'text-yellow-dark' : 'text-black hover:text-yellow-dark'"
           >
             <span class="font-sans">{{item.name}}</span>
           </nuxt-link>
@@ -28,7 +28,7 @@
           <button
             @click.prevent="signout_modal = true"
             class="block no-underline p-4 focus:outline-none"
-            :class="`/${$route.path.split('/')[1]}` == '/sign-out' ? 'text-yellow-dark' : 'text-black hover:text-grey-light'"
+            :class="`/${$route.path.split('/')[1]}` == '/sign-out' ? 'text-yellow-dark' : 'text-black hover:text-yellow-dark'"
           >
             <span class="font-sans">Sign Out</span>
           </button>
@@ -105,7 +105,7 @@ export default {
   },
   methods: {
     isDisabled(routeName) {
-      return this.$route.path === routeName ? '' : 'click'
+      return this.$route.path === routeName ? "" : "click";
     },
     close() {
       this.$store.commit("TOGGLE_SIDEBAR", false);
