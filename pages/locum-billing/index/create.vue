@@ -113,7 +113,7 @@
           <div class="my-4 text-xs sm:text-sm">Select a job to add to this invoice</div>
           <table class="w-full">
             <thead>
-              <tr class="text-center bg-grey-darkest">
+              <tr class="text-center bg-gray-900">
                 <th class="text-white" style="width:75%">Description</th>
                 <th class="text-white" style="width:20%">Total</th>
                 <th style="width:5%"></th>
@@ -139,7 +139,7 @@
                 </td>
                 <td style="width:5%">
                   <span
-                    class="cursor-pointer m-1 rounded-full bg-grey-darkest text-white font-semibold text-xl px-2 py-0"
+                    class="cursor-pointer m-1 rounded-full bg-gray-900 text-white font-semibold text-xl px-2 py-0"
                     @click="removeItem(index)"
                   >
                     <span class="text-2xl">-</span>
@@ -151,7 +151,7 @@
                 <td style="width:20%"></td>
                 <td style="width:5%">
                   <span
-                    class="cursor-pointer m-1 rounded-full bg-grey-darkest text-white font-semibold text-xl px-2"
+                    class="cursor-pointer m-1 rounded-full bg-gray-900 text-white font-semibold text-xl px-2"
                     @click="addItem"
                   >+</span>
                 </td>

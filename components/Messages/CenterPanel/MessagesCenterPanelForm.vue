@@ -6,7 +6,7 @@
       placeholder="Type your message here"
       @keydown.enter="send"
     ></textarea>
-    <button class="px-8 bg-blue-300light text-white" @click="send">Send</button>
+    <button class="px-8 bg-blue-500light text-white" @click="send">Send</button>
   </div>
 </template>
 <script>

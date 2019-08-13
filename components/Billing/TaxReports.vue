@@ -4,7 +4,7 @@
       <p class="text-sm">You have not yet completed your billing information.</p>
       <div class="mt-5 ml-2">
         <button
-          class="bg-yellow-400 hover:text-white focus:outline-none text-black font-bold text-xl p-6 rounded-lg"
+          class="bg-yellow-500 hover:text-white focus:outline-none text-black font-bold text-xl p-6 rounded-lg"
           @click.prevent="$store.commit('billing/setActiveTab', 'invoicingDetails')"
         >Go to Invoicing details</button>
       </div>
@@ -23,7 +23,7 @@
       </div>
       <div class="flex w-1/4 md:my-5">
         <span
-          class="rounded-lg bg-yellow-400 font-bold m-auto px-4 py-2 shadow-md hover:text-white cursor-pointer"
+          class="rounded-lg bg-yellow-500 font-bold m-auto px-4 py-2 shadow-md hover:text-white cursor-pointer"
           @click="print('printArea')"
         >Print</span>
       </div>

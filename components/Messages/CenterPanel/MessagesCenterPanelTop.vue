@@ -8,11 +8,11 @@
         :class="parseInt($route.params.slug) === item.id ? '' : 'hidden'"
       >{{ item.receiver_first_name }} {{ item.receiver_last_name }}</span>
     </div>
-    <div class="text-sm text-gray-400">
+    <div class="text-sm text-gray-500">
       <span class>{{ profession }}</span>
       <span class="px-2 text-lg">|</span>
       <span class>
-        <span class="inline-block py-1 px-1 bg-green-200 rounded-full"></span>
+        <span class="inline-block py-1 px-1 bg-green-400 rounded-full"></span>
         Online
       </span>
     </div>

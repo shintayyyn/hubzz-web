@@ -13,23 +13,23 @@
             <tr class="text-xs sm:text-sm text-left">
               <th @click="sortBy('job_number')">
                 Job number
-                <svgicon class="inline" name="sort" height="12" width="12" />
+                <svgicon class="inline align-baseline" name="sort" height="12" width="12" />
               </th>
               <th>Practice</th>
               <th>Title</th>
               <th>Shift</th>
               <th @click="sortBy('rate')">
                 Rate
-                <svgicon class="inline" name="sort" height="12" width="12" />
+                <svgicon class="inline align-baseline" name="sort" height="12" width="12" />
               </th>
               <th>Per</th>
               <th @click="sortBy('date_start')">
                 From
-                <svgicon class="inline" name="sort" height="12" width="12" />
+                <svgicon class="inline align-baseline" name="sort" height="12" width="12" />
               </th>
               <th @click="sortBy('date_end')">
                 To
-                <svgicon class="inline" name="sort" height="12" width="12" />
+                <svgicon class="inline align-baseline" name="sort" height="12" width="12" />
               </th>
               <th>Cancelled</th>
             </tr>

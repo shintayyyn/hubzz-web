@@ -80,7 +80,7 @@
             <div class="flex flex-row justify-between">
               <label for="rates" class="text-xs sm:text-sm py-1">Your preferred rates £</label>
               <div
-                class="rounded-lg bg-gray-200 p-1 text-xs sm:text-sm"
+                class="rounded-lg bg-gray-300 p-1 text-xs sm:text-sm"
               >To match available jobs with</div>
             </div>
             <div class="flex flex-row flex-wrap justify-between">

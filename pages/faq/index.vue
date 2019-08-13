@@ -4,7 +4,7 @@
       <div class="flex flex-no-wrap justify-start">
         <div
           style="font-family:Nunito"
-          class="p-3 text-sm font-bold cursor-pointer border rounded-lg border-yellow-400 bg-yellow-400"
+          class="p-3 text-sm font-bold cursor-pointer border rounded-lg border-yellow-500 bg-yellow-500"
         >Frequently asked questions</div>
       </div>
     </div>
@@ -15,7 +15,7 @@
         <div class="font-bold mt-4 mb-2">Locum</div>
         <div v-for="(item, index) in locum_faqs" :key="`locum-${index}`">
           <div
-            class="border border-white border-solid bg-gray-200 p-4 flex justify-between cursor-pointer"
+            class="border border-white border-solid bg-gray-300 p-4 flex justify-between cursor-pointer"
             @click="item.view = !item.view"
           >
             <div>{{item.label}}</div>
@@ -31,7 +31,7 @@
         <div class="font-bold mt-4 mb-2">Practice</div>
         <div v-for="(item, index) in practice_faqs" :key="`practice-${index}`">
           <div
-            class="border border-white border-solid bg-gray-200 p-4 flex justify-between cursor-pointer"
+            class="border border-white border-solid bg-gray-300 p-4 flex justify-between cursor-pointer"
             @click="item.view = !item.view"
           >
             <div>{{item.label}}</div>

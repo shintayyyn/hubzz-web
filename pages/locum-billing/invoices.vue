@@ -2,27 +2,29 @@
   <div>
     <transition name="fade" mode="out-in">
       <div
-        v-if="$route.path === '/locum-billing/create' || deleteModal || paymentModal"
+        v-if="$route.path === '/locum-billing/invoices/create' || deleteModal 
+        || paymentModal || $route.name === 'locum-billing-invoices-id' 
+        || $route.name === 'locum-billing-invoices-id-edit'"
         class="invoice-shield"
       ></div>
     </transition>
     <transition name="drop" mode="out-in">
       <div class="confirmation fixed top-0 w-full flex justify-center" v-if="deleteModal">
-        <div class="confirmation-modal border-solid rounded-b-lg bg-yellow-400 p-2">
+        <div class="confirmation-modal border-solid rounded-b-lg bg-yellow-500 p-2">
           <div class="flex justify-center">
             <div class>Proceed to delete this invoice?</div>
           </div>
           <div class="flex justify-center my-1">
             <div class="mx-2">
               <button
-                class="border border-solid bg-yellow-400 hover:text-white focus:outline-none text-black font-bold py-5 rounded-lg"
+                class="border border-solid bg-yellow-500 hover:text-white focus:outline-none text-black font-bold py-5 rounded-lg"
                 @click.prevent="deleteInvoice"
                 style="width:100px;"
               >Yes</button>
             </div>
             <div class="mx-2">
               <button
-                class="border border-solid bg-yellow-400 hover:text-white focus:outline-none text-black font-bold py-5 rounded-lg"
+                class="border border-solid bg-yellow-500 hover:text-white focus:outline-none text-black font-bold py-5 rounded-lg"
                 @click.prevent="deleteModal = false"
                 style="width:100px;"
               >Cancel</button>
@@ -45,11 +47,11 @@
                 <th>Practice / Surgery</th>
                 <th @click="sortBy('date_created')">
                   Created
-                  <svgicon class="inline" name="sort" height="12" width="12" />
+                  <svgicon class="inline align-baseline" name="sort" height="12" width="12" />
                 </th>
                 <th @click="sortBy('issued_at')">
                   Issued
-                  <svgicon class="inline" name="sort" height="12" width="12" />
+                  <svgicon class="inline align-baseline" name="sort" height="12" width="12" />
                 </th>
                 <th>Invoice number</th>
                 <th>Job numbers</th>
@@ -88,7 +90,7 @@
                       v-if="!invoice.paid_at"
                       v-text="invoice.issued_at ? 'Mark as paid' : 'Delete'"
                       class="px-2 py-3 text-white rounded-lg"
-                      :class="invoice.issued_at ? 'bg-green-400' : 'bg-yellow-400'"
+                      :class="invoice.issued_at ? 'bg-green-600' : 'bg-yellow-500'"
                     ></button>
                   </td>
                 </tr>

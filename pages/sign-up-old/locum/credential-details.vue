@@ -20,14 +20,14 @@
               <label class="text-xs my-1 py-1">Email *</label>
               <div class="m-1 flex-auto flex justify-end">
                 <span
-                  class="text-xs bg-red-300 p-1 text-white"
+                  class="text-xs bg-red-500 p-1 text-white"
                   v-if="emailErrorMessage && !showEmailFocus"
                 >{{ emailErrorMessage }}</span>
               </div>
             </div>
             <input
               class="outline-none py-1 mt-1 border-b"
-              :class="showEmailFocus ? 'border-yellow-400' : emailErrorMessage ? 'border-red-300' : 'border-gray-400'"
+              :class="showEmailFocus ? 'border-yellow-500' : emailErrorMessage ? 'border-red-500' : 'border-gray-500'"
               v-model="email"
               @focus="showEmailFocus = true"
               @blur="showEmailFocus = false, checkEmail()"
@@ -40,7 +40,7 @@
               <label class="text-xs my-1 py-1">Password *</label>
               <div class="m-1 flex-auto flex justify-end">
                 <span
-                  class="text-xs bg-red-300 p-1 text-white"
+                  class="text-xs bg-red-500 p-1 text-white"
                   v-if="passwordErrorMessage && !showPasswordFocus"
                 >{{ passwordErrorMessage }}</span>
               </div>
@@ -48,7 +48,7 @@
             <input
               type="password"
               class="outline-none py-1 mt-1 border-b"
-              :class="showPasswordFocus ? 'border-yellow-400' : passwordErrorMessage ? 'border-red-300' : 'border-gray-400'"
+              :class="showPasswordFocus ? 'border-yellow-500' : passwordErrorMessage ? 'border-red-500' : 'border-gray-500'"
               v-model="password"
               @focus="showPasswordFocus = true"
               @blur="showPasswordFocus = false, checkPassword()"
@@ -61,7 +61,7 @@
               <label class="text-xs my-1 py-1">Repeat password to verify *</label>
               <div class="m-1 flex-auto flex justify-end">
                 <span
-                  class="text-xs bg-red-300 p-1 text-white"
+                  class="text-xs bg-red-500 p-1 text-white"
                   v-if="passwordConfirmationErrorMessage && !showPasswordConfirmationFocus"
                 >{{ passwordConfirmationErrorMessage }}</span>
               </div>
@@ -69,7 +69,7 @@
             <input
               type="password"
               class="outline-none py-1 mt-1 border-b"
-              :class="showPasswordConfirmationFocus ? 'border-yellow-400' : passwordConfirmationErrorMessage ? 'border-red-300' : 'border-gray-400'"
+              :class="showPasswordConfirmationFocus ? 'border-yellow-500' : passwordConfirmationErrorMessage ? 'border-red-500' : 'border-gray-500'"
               v-model="passwordConfirmation"
               @focus="showPasswordConfirmationFocus = true"
               @blur="showPasswordConfirmationFocus = false, checkPasswordConfirmation()"

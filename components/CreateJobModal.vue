@@ -8,7 +8,7 @@
       <!--VALIDATION MODAL-->
       <div v-if="showErrorModal == true" class="absolute top-0 z-50">
         <div
-          class="fixed text-white bg-red-200 py-2 px-12 mr-10 md:mr-0 md:w-1/3 shadow"
+          class="fixed text-white bg-red-400 py-2 px-12 mr-10 md:mr-0 md:w-1/3 shadow"
           style="border-radius: 0 0 10px 10px"
         >
           <span class="text-base font-bold">Validation Error!</span>
@@ -158,8 +158,8 @@
                   <input
                     v-model="form.rate"
                     type="text"
-                    class="border-b-2 focus:border-yellow-300 focus:outline-none font-bold text-xs sm:text-sm mx-1 py-2"
-                    :class="formError.find(item => item.field === 'rate')? 'border-red-300':''"
+                    class="border-b-2 focus:border-yellow-400 focus:outline-none font-bold text-xs sm:text-sm mx-1 py-2"
+                    :class="formError.find(item => item.field === 'rate')? 'border-red-500':''"
                     style="text-align:right;width:100px;"
                     @blur="checkEmptyField(form.rate,'rate')"
                   />
@@ -168,8 +168,8 @@
                   <label for="locum_detail_rate_type_id" class="text-xs sm:text-sm mt-2">per</label>
                   <select
                     v-model="form.locum_detail_rate_type_id"
-                    class="border-b-2 focus:border-yellow-300 focus:outline-none font-bold text-xs sm:text-sm mx-1 py-2"
-                    :class="formError.find(item => item.field === 'locum_detail_rate_type_id')? 'border-red-300':''"
+                    class="border-b-2 focus:border-yellow-400 focus:outline-none font-bold text-xs sm:text-sm mx-1 py-2"
+                    :class="formError.find(item => item.field === 'locum_detail_rate_type_id')? 'border-red-500':''"
                   >
                     <option
                       v-for="(item, index) in rate_lists"
@@ -179,7 +179,7 @@
                   </select>
                 </div>
                 <div
-                  class="absolute right-0 bg-red-300 p-1 text-xs sm:text-base text-white"
+                  class="absolute right-0 bg-red-500 p-1 text-xs sm:text-base text-white"
                   v-if="formError.find(item => item.field === 'rate')"
                 >{{formError.find(item => item.field === 'rate').message}}</div>
               </div>
@@ -188,7 +188,7 @@
               <div class="relative flex flex-row flex-no-wrap justify-between">
                 <label for="total_hours" class="text-xs sm:text-sm py-1 mt-2">Total hours</label>
                 <div
-                  class="absolute right-0 bg-red-300 p-1 text-xs sm:text-base text-white"
+                  class="absolute right-0 bg-red-500 p-1 text-xs sm:text-base text-white"
                   v-if="this.formError.find(item => item.field === 'total_hours')"
                 >{{this.formError.find(item => item.field === 'total_hours').message}}</div>
               </div>
@@ -196,8 +196,8 @@
                 <input
                   v-model="form.total_hours"
                   type="text"
-                  class="border-b-2 focus:border-yellow-300 focus:outline-none font-bold py-2 text-xs sm:text-sm mx-1"
-                  :class="this.formError.find(item => item.field === 'total_hours')? 'border-red-300':''"
+                  class="border-b-2 focus:border-yellow-400 focus:outline-none font-bold py-2 text-xs sm:text-sm mx-1"
+                  :class="this.formError.find(item => item.field === 'total_hours')? 'border-red-500':''"
                   @blur="checkEmptyField(form.total_hours,'total_hours')"
                   style="text-align:right;'"
                 />

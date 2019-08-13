@@ -18,7 +18,7 @@
         <AvailabilityCalendar @open="open" />
         <div class="absolute bottom-0 right-0 m-5">
           <div
-            class="rounded-full h-10 w-10 sm:h-12 sm:w-12 md:h-16 md:w-16 text-2xl sm:text-3xl md:text-4xl flex items-center focus:outline-none justify-center bg-yellow-400 font-semibold cursor-pointer shadow-md hover:text-white"
+            class="rounded-full h-10 w-10 sm:h-12 sm:w-12 md:h-16 md:w-16 text-2xl sm:text-3xl md:text-4xl flex items-center focus:outline-none justify-center bg-yellow-500 font-semibold cursor-pointer shadow-md hover:text-white"
             @click="add"
           >+</div>
         </div>

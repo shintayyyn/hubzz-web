@@ -4,9 +4,9 @@
     <div v-if="type === 'multi-checkbox'" class="flex flex-col py-2 mb-6">
       <div class="relative flex flex-row flex-no-wrap justify-between">
         <label :for="name" class="text-xs sm:text-base py-1">{{label}}</label>
-        <div class="bg-gray-200 rounded-lg p-1 text-xs sm:text-sm" v-if="info">{{info}}</div>
+        <div class="bg-gray-300 rounded-lg p-1 text-xs sm:text-sm" v-if="info">{{info}}</div>
         <div
-          class="absolute right-0 bg-red-300 p-1 text-xs sm:text-sm text-white"
+          class="absolute right-0 bg-red-500 p-1 text-xs sm:text-sm text-white"
           v-if="error"
         >{{error.message}}</div>
       </div>
@@ -34,7 +34,7 @@
           />
           <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
           <div
-            class="absolute bg-red-300 p-1 text-xs sm:text-sm text-white"
+            class="absolute bg-red-500 p-1 text-xs sm:text-sm text-white"
             v-if="error"
           >{{error.message}}</div>
         </div>
@@ -46,10 +46,10 @@
       <div class="relative flex flex-row flex-no-wrap justify-between">
         <div class="flex flex-wrap justify-start">
           <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
-          <span class="ml-2 bg-gray-200 rounded-lg px-4 py-1 text-xs">Seperate with commas</span>
+          <span class="ml-2 bg-gray-300 rounded-lg px-4 py-1 text-xs">Seperate with commas</span>
         </div>
         <div
-          class="absolute right-0 bg-red-300 p-1 text-xs sm:text-sm text-white"
+          class="absolute right-0 bg-red-500 p-1 text-xs sm:text-sm text-white"
           v-if="error"
         >{{error.message}}</div>
       </div>
@@ -58,8 +58,8 @@
           :value="value"
           type="email"
           :placeholder="placeholder"
-          class="border-b-2 focus:border-yellow-300 focus:outline-none py-4 font-bold text-xs sm:text-sm w-full"
-          :class="error ? 'border-red-300':''"
+          class="border-b-2 focus:border-yellow-400 focus:outline-none py-4 font-bold text-xs sm:text-sm w-full"
+          :class="error ? 'border-red-500':''"
           @input="$emit('input', $event.target.value)"
         />
       </div>
@@ -73,9 +73,9 @@
       <div class="relative flex flex-row flex-no-wrap justify-between">
         <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
         <div class="flex">
-          <div class="bg-gray-200 rounded-lg px-4 py-1 text-xs sm:text-sm" v-if="info">{{info}}</div>
+          <div class="bg-gray-300 rounded-lg px-4 py-1 text-xs sm:text-sm" v-if="info">{{info}}</div>
           <div
-            class="absolute right-0 bg-red-300 p-1 text-xs sm:text-sm text-white"
+            class="absolute right-0 bg-red-500 p-1 text-xs sm:text-sm text-white"
             v-if="error"
           >{{error.message}}</div>
         </div>
@@ -85,8 +85,8 @@
           :value="value"
           :type="type"
           :placeholder="placeholder"
-          class="border-b-2 focus:border-yellow-300 focus:outline-none py-4 font-bold text-xs sm:text-sm w-full"
-          :class="error? 'border-red-300':''"
+          class="border-b-2 focus:border-yellow-400 focus:outline-none py-4 font-bold text-xs sm:text-sm w-full"
+          :class="error? 'border-red-500':''"
           @input="$emit('input', $event.target.value)"
           :style="inStyle"
           @keypress.enter="$emit('submit')"
@@ -100,22 +100,22 @@
       <div class="relative flex flex-row flex-no-wrap justify-between">
         <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
         <div class="flex">
-          <div class="bg-gray-200 rounded-lg px-4 py-1 text-xs sm:text-sm" v-if="info">{{info}}</div>
+          <div class="bg-gray-300 rounded-lg px-4 py-1 text-xs sm:text-sm" v-if="info">{{info}}</div>
           <div
-            class="absolute right-0 bg-red-300 p-1 text-xs sm:text-sm text-white"
+            class="absolute right-0 bg-red-500 p-1 text-xs sm:text-sm text-white"
             v-if="error"
           >{{error.message}}</div>
         </div>
       </div>
       <div
-        class="relative flex flex-row justify-start items-center border-2 mb-2 focus:border-yellow-300 rounded-lg"
+        class="relative flex flex-row justify-start items-center border-2 mb-2 focus:border-yellow-400 rounded-lg"
       >
         <input
           :value="value"
           :type="type"
           :placeholder="placeholder"
           class="focus:outline-none pl-2 pr-4 py-4 font-bold text-xs sm:text-sm w-full rounded-lg"
-          :class="error? 'border-red-300':''"
+          :class="error? 'border-red-500':''"
           @input="$emit('input', $event.target.value)"
           :style="inStyle"
           @keypress.enter="$emit('submit')"
@@ -123,7 +123,7 @@
           :checked="value"
         />
         <span class="absolute right-0 px-1 py-2 bg-white">
-          <svgicon name="search" height="21" width="21" class="text-gray-400 fill-current" />
+          <svgicon name="search" height="21" width="21" class="text-gray-500 fill-current" />
         </span>
       </div>
     </div>

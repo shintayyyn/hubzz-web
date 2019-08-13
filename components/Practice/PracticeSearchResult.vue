@@ -5,14 +5,14 @@
       <div
         v-for="(item, index) in results"
         :key="index"
-        class="p-5 cursor-pointer hover:bg-gray-200 focus:bg-yellow-400 outline-none"
+        class="p-5 cursor-pointer hover:bg-gray-300 focus:bg-yellow-500 outline-none"
         :tabindex="index"
         @click.prevent="select(item._id)"
       >
         <div class="text-xl font-semibold mb-2">{{item.name}}</div>
         <div class="text-sm">{{item.address}}</div>
         <div class="text-sm">
-          <span class="px-1 text-xs rounded-sm bg-gray-200">Practice Code</span>
+          <span class="px-1 text-xs rounded-sm bg-gray-300">Practice Code</span>
           {{item.code}}
         </div>
       </div>
@@ -23,7 +23,7 @@
     </div>
     <div class="text-center" v-if="selectedPractice">
       <button
-        class="bg-yellow-400 hover:text-white focus:outline-none text-black font-bold text-xl p-6 rounded-lg"
+        class="bg-yellow-500 hover:text-white focus:outline-none text-black font-bold text-xl p-6 rounded-lg"
         @click.prevent="next()"
       >Next</button>
     </div>

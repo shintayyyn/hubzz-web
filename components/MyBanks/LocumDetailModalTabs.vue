@@ -4,13 +4,13 @@
       style="font-family:Nunito"
       @click.prevent="goTo('locum_detail')"
       class="mr-5 p-3 text-sm font-bold cursor-pointer"
-      :class="$route.query.my_locum === 'locum_detail' ? 'border rounded-lg border-yellow-400 bg-yellow-400' : 'text-gray-500'"
+      :class="$route.query.my_locum === 'locum_detail' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
     >Profile</div>
     <div
       style="font-family:Nunito"
       @click.prevent="goTo('locum_jobs')"
       class="mr-5 p-3 text-sm font-bold cursor-pointer"
-      :class="$route.query.my_locum === 'locum_jobs' ? 'border rounded-lg border-yellow-400 bg-yellow-400' : 'text-gray-500'"
+      :class="$route.query.my_locum === 'locum_jobs' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
     >Related Jobs</div>
   </div>
 </template>

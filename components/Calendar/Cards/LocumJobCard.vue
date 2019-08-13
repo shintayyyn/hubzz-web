@@ -1,6 +1,6 @@
 <template>
   <div
-    class="relative rounded-lg py-3 px-5 my-1 bg-white cursor-pointer hover:bg-gray-200"
+    class="relative rounded-lg py-3 px-5 my-1 bg-white cursor-pointer hover:bg-gray-300"
     @click="select"
   >
     <template v-if="job.type">
@@ -9,19 +9,19 @@
         :class="bgStatus(job.locum_status)"
       ></div>
       <div class="ml-2">
-        <div class="text-gray-400 text-xs xl:text-sm">Job Number: {{job.job_number}}</div>
+        <div class="text-gray-500 text-xs xl:text-sm">Job Number: {{job.job_number}}</div>
         <div class="my-3 font-bold text-sm sm:text-md">{{title(job.type)}}</div>
         <div class="my-3 text-sm sm:text-md">{{surgeryName(job.type)}}</div>
         <div class="my-3 text-sm sm:text-md">{{surgeryCode(job.type)}}</div>
         <div
-          class="text-gray-400 my-3 text-xs xl:text-sm"
+          class="text-gray-500 my-3 text-xs xl:text-sm"
         >From {{dateStart(job.type)}} to {{dateEnd(job.type)}}</div>
-        <div class="text-gray-400 my-3 text-xs xl:text-sm">Shift {{shift(job.type)}}</div>
+        <div class="text-gray-500 my-3 text-xs xl:text-sm">Shift {{shift(job.type)}}</div>
         <div class="my-3 text-xs xl:text-sm">{{description(job.type)}}</div>
       </div>
     </template>
     <template v-else>
-      <div class="bg-pink-300 absolute left-0 top-0 rounded-l-lg p-2 h-full"></div>
+      <div class="bg-pink-500 absolute left-0 top-0 rounded-l-lg p-2 h-full"></div>
       <div class="ml-2">
         <div class="my-3 font-bold text-sm sm:text-md">Unavailable</div>
         <div
@@ -84,13 +84,13 @@ export default {
           return 'bg-orange-400';
           break;
         case 'Completed':
-          return 'bg-green-200';
+          return 'bg-green-400';
           break;
         case 'Current':
-          return 'bg-green-200';
+          return 'bg-green-400';
           break;
         default:
-          return 'bg-red-300'
+          return 'bg-red-500'
       }
     }
   }
