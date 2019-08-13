@@ -50,7 +50,7 @@
             <tr
               :key="item.id"
               class="rounded-lg shadow-md cursor-pointer text-xs sm:text-sm text-left"
-              :class="item.info && item.info.file ? 'hover:bg-gray-200' : ''"
+              :class="item.info && item.info.file ? 'hover:bg-gray-300' : ''"
               @click="item.info && item.info.file ? showComplianceDoc(item.info.id) : null"
             >
               <td>{{item.name}}</td>
@@ -142,7 +142,7 @@
             <tr
               :key="item.id"
               class="rounded-lg shadow-md cursor-pointer text-xs sm:text-sm text-left"
-              :class="item.info && item.info.file ? 'hover:bg-gray-200' : ''"
+              :class="item.info && item.info.file ? 'hover:bg-gray-300' : ''"
               @click="item.info && item.info.file ? showComplianceDoc(item.info.id) : null"
             >
               <td>{{item.name}}</td>
@@ -221,7 +221,7 @@
             <tr
               :key="item.id"
               class="rounded-lg shadow-md cursor-pointer text-xs sm:text-sm text-left"
-              :class="item.info && item.info.file ? 'hover:bg-gray-200' : ''"
+              :class="item.info && item.info.file ? 'hover:bg-gray-300' : ''"
               @click="item.info && item.info.file ? showMandatoryTraining(item.info.id) : null"
             >
               <td>{{item.name}}</td>
@@ -415,19 +415,19 @@ export default {
           return "bg-orange-300";
           break;
         case "Verified":
-          return "bg-green-300";
+          return "bg-green-500";
           break;
         case "Approved":
-          return "bg-green-300";
+          return "bg-green-500";
           break;
         case "Rejected":
-          return "bg-red-300";
+          return "bg-red-500";
           break;
         case "Expiring":
           return "bg-orange-300";
           break;
         case "Expired":
-          return "bg-red-300";
+          return "bg-red-500";
           break;
         default:
           return;

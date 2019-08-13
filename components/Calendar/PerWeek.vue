@@ -18,32 +18,32 @@
       <div class="w-full py-1 text-right sm:w-1/3">
         <span
           class="cursor-pointer px-3 text-xs sm:text-sm hover:underline"
-          :class="$store.state.calendar.view_type === 'per_month' ? 'py-1 px-3 bg-yellow-400':''"
+          :class="$store.state.calendar.view_type === 'per_month' ? 'py-1 px-3 bg-yellow-500':''"
           @click="$store.commit('calendar/TOGGLE_CALENDAR_VIEW_TYPE', 'per_month')"
         >Month</span>
         <span
           class="cursor-pointer px-3 text-xs sm:text-sm hover:underline"
-          :class="$store.state.calendar.view_type === 'per_week' ? 'py-1 px-3 bg-yellow-400':''"
+          :class="$store.state.calendar.view_type === 'per_week' ? 'py-1 px-3 bg-yellow-500':''"
           @click="$store.commit('calendar/TOGGLE_CALENDAR_VIEW_TYPE', 'per_week')"
         >Week</span>
       </div>
     </div>
 
     <div class="flex flex-no-wrap justify-between text-xs sm:text-sm mx-1 mt-3 md:mt-5">
-      <div class="w-full text-center text-gray-400 font-bold"></div>
-      <div class="w-full text-center text-gray-400 font-bold">MON</div>
-      <div class="w-full text-center text-gray-400 font-bold">TUE</div>
-      <div class="w-full text-center text-gray-400 font-bold">WED</div>
-      <div class="w-full text-center text-gray-400 font-bold">THU</div>
-      <div class="w-full text-center text-gray-400 font-bold">FRI</div>
-      <div class="w-full text-center text-gray-400 font-bold">SAT</div>
-      <div class="w-full text-center text-gray-400 font-bold">SUN</div>
+      <div class="w-full text-center text-gray-500 font-bold"></div>
+      <div class="w-full text-center text-gray-500 font-bold">MON</div>
+      <div class="w-full text-center text-gray-500 font-bold">TUE</div>
+      <div class="w-full text-center text-gray-500 font-bold">WED</div>
+      <div class="w-full text-center text-gray-500 font-bold">THU</div>
+      <div class="w-full text-center text-gray-500 font-bold">FRI</div>
+      <div class="w-full text-center text-gray-500 font-bold">SAT</div>
+      <div class="w-full text-center text-gray-500 font-bold">SUN</div>
     </div>
 
     <div class="flex flex-no-wrap justify-between text-xs sm:text-sm mx-1 mt-3 md:mt-5">
-      <div class="w-full text-center text-gray-500"></div>
+      <div class="w-full text-center text-gray-600"></div>
       <div
-        class="w-full text-center text-gray-500 font-bold"
+        class="w-full text-center text-gray-600 font-bold"
         v-for="(date, index) in daysInWeek"
         :key="index"
       >{{$moment(date).format('DD')}}</div>
@@ -55,37 +55,37 @@
         <template v-for="(date, index) in daysInWeek">
           <div
             v-if="hasPracticeCurrentJobs(date, 'AM')"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-green-200 hover:bg-gray-200"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-green-400 hover:bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'AM')"
           ></div>
           <div
             v-else-if="hasPracticeAppliedJobs(date, 'AM')"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-orange-200 hover:bg-gray-200"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-orange-200 hover:bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'AM')"
           ></div>
           <div
             v-else-if="hasPracticeUnfilledJobs(date, 'AM')"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-red-300 hover:bg-gray-200"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-red-500 hover:bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'AM')"
           ></div>
           <div
             v-else-if="hasPracticeDeclinedJobs(date, 'AM')"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-red-300 hover:bg-gray-200"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-red-500 hover:bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'AM')"
           ></div>
           <div
             v-else-if="currentDate(date)"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-gray-200"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'AM')"
           ></div>
           <div
             v-else
-            class="w-full cursor-pointer border-t-2 border-gray-300 hover:bg-gray-200"
+            class="w-full cursor-pointer border-t-2 border-gray-400 hover:bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'AM')"
           ></div>
@@ -97,37 +97,37 @@
         <template v-for="(date, index) in daysInWeek">
           <div
             v-if="hasPracticeCurrentJobs(date, 'PM')"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-green-200 hover:bg-gray-200"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-green-400 hover:bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'PM')"
           ></div>
           <div
             v-else-if="hasPracticeAppliedJobs(date, 'PM')"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-orange-200 hover:bg-gray-200"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-orange-200 hover:bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'PM')"
           ></div>
           <div
             v-else-if="hasPracticeUnfilledJobs(date, 'PM')"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-red-300 hover:bg-gray-200"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-red-500 hover:bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'PM')"
           ></div>
           <div
             v-else-if="hasPracticeDeclinedJobs(date, 'PM')"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-red-300 hover:bg-gray-200"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-red-500 hover:bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'PM')"
           ></div>
           <div
             v-else-if="currentDate(date)"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-gray-200"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'PM')"
           ></div>
           <div
             v-else
-            class="w-full cursor-pointer border-t-2 border-gray-300 hover:bg-gray-200"
+            class="w-full cursor-pointer border-t-2 border-gray-400 hover:bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'PM')"
           ></div>
@@ -139,37 +139,37 @@
         <template v-for="(date, index) in daysInWeek">
           <div
             v-if="hasPracticeCurrentJobs(date, 'OOH')"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-green-200 hover:bg-gray-200"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-green-400 hover:bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'OOH')"
           ></div>
           <div
             v-else-if="hasPracticeAppliedJobs(date, 'OOH')"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-orange-200 hover:bg-gray-200"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-orange-200 hover:bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'OOH')"
           ></div>
           <div
             v-else-if="hasPracticeUnfilledJobs(date, 'OOH')"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-red-300 hover:bg-gray-200"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-red-500 hover:bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'OOH')"
           ></div>
           <div
             v-else-if="hasPracticeDeclinedJobs(date, 'OOH')"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-red-300 hover:bg-gray-200"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-red-500 hover:bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'OOH')"
           ></div>
           <div
             v-else-if="currentDate(date)"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-gray-200"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'OOH')"
           ></div>
           <div
             v-else
-            class="w-full cursor-pointer border-t-2 border-gray-300 hover:bg-gray-200"
+            class="w-full cursor-pointer border-t-2 border-gray-400 hover:bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'OOH')"
           ></div>
@@ -181,37 +181,37 @@
         <template v-for="(date, index) in daysInWeek">
           <div
             v-if="hasPracticeCurrentJobs(date, 'Whole Day')"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-green-200 hover:bg-gray-200"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-green-400 hover:bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'Whole Day')"
           ></div>
           <div
             v-else-if="hasPracticeAppliedJobs(date, 'Whole Day')"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-orange-200 hover:bg-gray-200"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-orange-200 hover:bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'Whole Day')"
           ></div>
           <div
             v-else-if="hasPracticeUnfilledJobs(date, 'Whole Day')"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-red-300 hover:bg-gray-200"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-red-500 hover:bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'Whole Day')"
           ></div>
           <div
             v-else-if="hasPracticeDeclinedJobs(date, 'Whole Day')"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-red-300 hover:bg-gray-200"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-red-500 hover:bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'Whole Day')"
           ></div>
           <div
             v-else-if="currentDate(date)"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-gray-200"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'Whole Day')"
           ></div>
           <div
             v-else
-            class="w-full cursor-pointer border-t-2 border-gray-300 hover:bg-gray-200"
+            class="w-full cursor-pointer border-t-2 border-gray-400 hover:bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'Whole Day')"
           ></div>
@@ -223,25 +223,25 @@
         <template v-for="(date, index) in daysInWeek">
           <div
             v-if="hasPracticeAppliedJobsReminder(date, 'Reminder')"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-gray-800 hover:bg-gray-200"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-gray-900 hover:bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'Reminder')"
           ></div>
           <div
             v-else-if="hasPracticeAvailableJobsReminder(date, 'Reminder')"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-gray-800 hover:bg-gray-200"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-gray-900 hover:bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'Reminder')"
           ></div>
           <div
             v-else-if="currentDate(date)"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-gray-200"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'Reminder')"
           ></div>
           <div
             v-else
-            class="w-full cursor-pointer border-t-2 border-gray-300 hover:bg-gray-200"
+            class="w-full cursor-pointer border-t-2 border-gray-400 hover:bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'Reminder')"
           ></div>
@@ -254,31 +254,31 @@
         <template v-for="(date, index) in daysInWeek">
           <div
             v-if="hasLocumPrivateJobs(date, 'AM')"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-green-200 hover:bg-gray-200"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-green-400 hover:bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'AM')"
           ></div>
           <div
             v-else-if="hasLocumCurrentJob(date, 'AM')"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-green-200 hover:bg-gray-200"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-green-400 hover:bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'AM')"
           ></div>
           <div
             v-else-if="hasLocumUnavailabilities(date, 'AM')"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-pink-300 hover:bg-gray-200"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-pink-500 hover:bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'AM')"
           ></div>
           <div
             v-else-if="currentDate(date)"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-gray-200"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'AM')"
           ></div>
           <div
             v-else
-            class="w-full cursor-pointer border-t-2 border-gray-300 hover:bg-gray-200"
+            class="w-full cursor-pointer border-t-2 border-gray-400 hover:bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'AM')"
           ></div>
@@ -289,31 +289,31 @@
         <template v-for="(date, index) in daysInWeek">
           <div
             v-if="hasLocumPrivateJobs(date, 'PM')"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-green-200 hover:bg-gray-200"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-green-400 hover:bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'PM')"
           ></div>
           <div
             v-else-if="hasLocumCurrentJob(date, 'PM')"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-green-200 hover:bg-gray-200"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-green-400 hover:bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'PM')"
           ></div>
           <div
             v-else-if="hasLocumUnavailabilities(date, 'PM')"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-pink-300 hover:bg-gray-200"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-pink-500 hover:bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'PM')"
           ></div>
           <div
             v-else-if="currentDate(date)"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-gray-200"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'PM')"
           ></div>
           <div
             v-else
-            class="w-full cursor-pointer border-t-2 border-gray-300 hover:bg-gray-200"
+            class="w-full cursor-pointer border-t-2 border-gray-400 hover:bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'PM')"
           ></div>
@@ -324,31 +324,31 @@
         <template v-for="(date, index) in daysInWeek">
           <div
             v-if="hasLocumPrivateJobs(date, 'OOH')"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-green-200 hover:bg-gray-200"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-green-400 hover:bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'OOH')"
           ></div>
           <div
             v-else-if="hasLocumCurrentJob(date, 'OOH')"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-green-200 hover:bg-gray-200"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-green-400 hover:bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'OOH')"
           ></div>
           <div
             v-else-if="hasLocumUnavailabilities(date, 'OOH')"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-pink-300 hover:bg-gray-200"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-pink-500 hover:bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'OOH')"
           ></div>
           <div
             v-else-if="currentDate(date)"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-gray-200"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'OOH')"
           ></div>
           <div
             v-else
-            class="w-full cursor-pointer border-t-2 border-gray-300 hover:bg-gray-200"
+            class="w-full cursor-pointer border-t-2 border-gray-400 hover:bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'OOH')"
           ></div>
@@ -359,31 +359,31 @@
         <template v-for="(date, index) in daysInWeek">
           <div
             v-if="hasLocumPrivateJobs(date, 'Whole Day')"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-green-200 hover:bg-gray-200"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-green-400 hover:bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'Whole Day')"
           ></div>
           <div
             v-else-if="hasLocumCurrentJob(date, 'Whole Day')"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-green-200 hover:bg-gray-200"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-green-400 hover:bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'Whole Day')"
           ></div>
           <div
             v-else-if="hasLocumUnavailabilities(date, 'Whole Day')"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-pink-300 hover:bg-gray-200"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-pink-500 hover:bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'Whole Day')"
           ></div>
           <div
             v-else-if="currentDate(date)"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-gray-200"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'Whole Day')"
           ></div>
           <div
             v-else
-            class="w-full cursor-pointer border-t-2 border-gray-300 hover:bg-gray-200"
+            class="w-full cursor-pointer border-t-2 border-gray-400 hover:bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'Whole Day')"
           ></div>
@@ -394,19 +394,19 @@
         <template v-for="(date, index) in daysInWeek">
           <div
             v-if="hasLocumAppliedJobs(date, 'Available')"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-orange-200 hover:bg-gray-200"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-orange-200 hover:bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'Available')"
           ></div>
           <div
             v-else-if="currentDate(date)"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-gray-200"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'Available')"
           ></div>
           <div
             v-else
-            class="w-full cursor-pointer border-t-2 border-gray-300 hover:bg-gray-200"
+            class="w-full cursor-pointer border-t-2 border-gray-400 hover:bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'Available')"
           ></div>

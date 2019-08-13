@@ -1,6 +1,6 @@
 <template>
   <div class="invoice-modal shadow-lg">
-    <section class="bg-gray-700">
+    <section class="bg-gray-800">
       <div class="p-8 max-w-3xl">
         <div class="flex flex-row flex-wrap justify-start">
           <nuxt-link to="/locum-billing/invoices" class="cursor-pointer">
@@ -19,12 +19,12 @@
         <div class="flex flex-row flex-wrap justify-start items-center my-4">
           <label class="mx-1 py-2 px-3">Type:</label>
           <button
-            :class="type === 'Private' ? 'bg-yellow-400' : ''"
+            :class="type === 'Private' ? 'bg-yellow-500' : ''"
             class="text-xs sm:text-sm mx-1 py-2 px-3 border-2 rounded-lg font-bold flex items-center"
             @click="type = type !== 'Private' ? 'Private' : null"
           >Private</button>
           <button
-            :class="type === 'Platform' ? 'bg-yellow-400' : ''"
+            :class="type === 'Platform' ? 'bg-yellow-500' : ''"
             class="text-xs sm:text-sm mx-1 py-2 px-3 border-2 rounded-lg font-bold flex items-center"
             @click="type = type !== 'Platform' ? 'Platform' : null"
           >Platform</button>
@@ -60,7 +60,7 @@
                         type="text"
                         placeholder="Select.."
                         ref="input"
-                        class="border-b-2 w-full focus:border-yellow-300 focus:outline-none py-3 font-bold text-xs sm:text-sm"
+                        class="border-b-2 w-full focus:border-yellow-400 focus:outline-none py-3 font-bold text-xs sm:text-sm"
                         @focus="toggledSurgeries = true"
                         readonly
                       />
@@ -76,14 +76,14 @@
                         <div class="relative" v-if="surgeries.length > 0">
                           <div
                             class="py-2 px-3 cursor-pointer text-xs sm:text-sm"
-                            :class="{'bg-gray-200': activeIndexSurgeries === index}"
+                            :class="{'bg-gray-300': activeIndexSurgeries === index}"
                             v-for="(item, index) in surgeries"
                             :key="item.id"
                             @mouseover="activeIndexSurgeries = index"
                             @click="addSurgery(item)"
                           >{{item.name}}</div>
                           <div
-                            class="absolute bg-gray-200 w-full h-full top-0 bottom-0 left-0 right-0 opacity-50"
+                            class="absolute bg-gray-300 w-full h-full top-0 bottom-0 left-0 right-0 opacity-50"
                             v-if="loadingSurgeries"
                           >
                             <div
@@ -125,7 +125,7 @@
                       type="text"
                       placeholder="Select.."
                       ref="input"
-                      class="border-b-2 w-full focus:border-yellow-300 focus:outline-none py-3 font-bold text-xs sm:text-sm"
+                      class="border-b-2 w-full focus:border-yellow-400 focus:outline-none py-3 font-bold text-xs sm:text-sm"
                       @focus="toggledJobParts = true"
                       readonly
                     />
@@ -141,14 +141,14 @@
                       <div class="relative" v-if="jobParts.length > 0">
                         <div
                           class="py-2 px-3 cursor-pointer text-xs sm:text-sm"
-                          :class="{'bg-gray-200': activeIndexJobParts === index}"
+                          :class="{'bg-gray-300': activeIndexJobParts === index}"
                           v-for="(item, index) in filteredJobParts"
                           :key="item.id"
                           @mouseover="activeIndexJobParts = index"
                           @click="addJobPart(item)"
                         >{{item.job_part_number}}</div>
                         <div
-                          class="absolute bg-gray-200 w-full h-full top-0 bottom-0 left-0 right-0 opacity-50"
+                          class="absolute bg-gray-300 w-full h-full top-0 bottom-0 left-0 right-0 opacity-50"
                           v-if="loadingJobParts"
                         >
                           <div
@@ -170,7 +170,7 @@
 
           <table class="w-full">
             <thead>
-              <tr class="text-center bg-gray-800">
+              <tr class="text-center bg-gray-900">
                 <th class="text-white" style="width:75%">Description</th>
                 <th class="text-white" style="width:20%">Total</th>
                 <th style="width:5%"></th>
@@ -196,7 +196,7 @@
                 </td>
                 <td style="width:5%">
                   <span
-                    class="cursor-pointer m-1 rounded-full bg-gray-800 text-white font-semibold text-xl px-2 py-0"
+                    class="cursor-pointer m-1 rounded-full bg-gray-900 text-white font-semibold text-xl px-2 py-0"
                     @click="removeSelectedJobPart(item, index)"
                   >
                     <span class="text-2xl">-</span>
@@ -208,7 +208,7 @@
                 <td style="width:20%"></td>
                 <td style="width:5%">
                   <span
-                    class="cursor-pointer m-1 rounded-full bg-gray-800 text-white font-semibold text-xl px-2"
+                    class="cursor-pointer m-1 rounded-full bg-gray-900 text-white font-semibold text-xl px-2"
                     @click="addItem"
                     v-if="type === 'Private'"
                   >+</span>
@@ -655,5 +655,5 @@ export default {
   color: #ccc;
 }
 
-/* absolute bg-gray-200 w-full h-full top-0 bottom-0 left-0 right-0 */
+/* absolute bg-gray-300 w-full h-full top-0 bottom-0 left-0 right-0 */
 </style>

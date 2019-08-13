@@ -1,8 +1,8 @@
 <template>
   <div class="rounded-lg shadow-lg pt-10 px-5 pb-5 font-bold text-sm">
     <div
-      class="mb-4 border-b border-b-2 border-gray-300 py-2"
-      :class="{'border-yellow-400':setFocus}"
+      class="mb-4 border-b border-b-2 border-gray-400 py-2"
+      :class="{'border-yellow-500':setFocus}"
     >
       <textarea
         rows="30"

@@ -13,24 +13,24 @@
             <tr class="text-xs sm:text-sm text-left">
               <th @click="getCurrentJobs('id:desc')">
                 Job number
-                <svgicon class="inline" name="sort" height="12" width="12" />
+                <svgicon class="inline align-baseline" name="sort" height="12" width="12" />
               </th>
               <th>Practice / Surgery</th>
               <th @click="getCurrentJobs('title:desc')">
                 Title
-                <svgicon class="inline" name="sort" height="12" width="12" />
+                <svgicon class="inline align-baseline" name="sort" height="12" width="12" />
               </th>
               <th @click="getCurrentJobs('date_start:desc')">
                 From
-                <svgicon class="inline" name="sort" height="12" width="12" />
+                <svgicon class="inline align-baseline" name="sort" height="12" width="12" />
               </th>
               <th @click="getCurrentJobs('date_end:desc')">
                 To
-                <svgicon class="inline" name="sort" height="12" width="12" />
+                <svgicon class="inline align-baseline" name="sort" height="12" width="12" />
               </th>
               <th @click="getCurrentJobs('date_created:desc')">
                 Created
-                <svgicon class="inline" name="sort" height="12" width="12" />
+                <svgicon class="inline align-baseline" name="sort" height="12" width="12" />
               </th>
             </tr>
           </thead>

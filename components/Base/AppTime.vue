@@ -3,7 +3,7 @@
     <div class="relative flex flex-row flex-no-wrap justify-between">
       <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
       <div
-        class="absolute right-0 bg-red-300 p-1 text-xs sm:text-base text-white"
+        class="absolute right-0 bg-red-500 p-1 text-xs sm:text-base text-white"
         v-if="error"
       >{{error.message}}</div>
     </div>
@@ -12,8 +12,8 @@
         :value="value"
         type="input"
         placeholder="hh:mm:ss"
-        class="border-b-2 focus:border-yellow-300 focus:outline-none py-4 font-bold text-xs sm:text-sm w-full text-center"
-        :class="error? 'border-red-300':''"
+        class="border-b-2 focus:border-yellow-400 focus:outline-none py-4 font-bold text-xs sm:text-sm w-full text-center"
+        :class="error? 'border-red-500':''"
         @click="modal = true"
         @input="$emit('input', $event.target.value)"
         :style="inStyle"
@@ -31,7 +31,7 @@
             >
               <div
                 class="flex flex-row justify-center cursor-pointer"
-                :class="{'bg-gray-800': selectedHour === hour}"
+                :class="{'bg-gray-900': selectedHour === hour}"
                 v-for="(hour, index) in hours"
                 :key="index"
                 @click="selectTime(hour, 'hour')"
@@ -43,7 +43,7 @@
             >
               <div
                 class="flex flex-row justify-center cursor-pointer"
-                :class="{'bg-gray-800': selectedMinute === minute}"
+                :class="{'bg-gray-900': selectedMinute === minute}"
                 v-for="(minute, index) in minutes"
                 :key="index"
                 @click="selectTime(minute, 'minute')"
@@ -55,7 +55,7 @@
             >
               <div
                 class="flex flex-row justify-center cursor-pointer"
-                :class="{'bg-gray-800': selectedSecond === second}"
+                :class="{'bg-gray-900': selectedSecond === second}"
                 v-for="(second, index) in seconds"
                 :key="index"
                 @click="selectTime(second, 'second')"

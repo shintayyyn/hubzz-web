@@ -1,5 +1,5 @@
 <template>
-  <div class="border-solid rounded-b-lg bg-yellow-400 py-2 px-24">
+  <div class="border-solid rounded-b-lg bg-yellow-500 py-2 px-24">
     <div class="flex justify-center">
       <svgicon name="alert" height="20" width="20" />
       <div class="text-sm ml-2">Proceed to remove the uploaded document?</div>

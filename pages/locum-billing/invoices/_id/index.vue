@@ -1,6 +1,6 @@
 <template>
   <div class="invoice-modal shadow-lg">
-    <section class="bg-gray-700">
+    <section class="bg-gray-800">
       <div class="p-8 max-w-3xl h-screen">
         <div class="flex flex-row flex-wrap justify-start">
           <nuxt-link to="/locum-billing/invoices" class="cursor-pointer">
@@ -116,5 +116,5 @@ export default {
   opacity: 0.5;
   color: #ccc;
 }
-/* absolute bg-gray-200 w-full h-full top-0 bottom-0 left-0 right-0 */
+/* absolute bg-gray-300 w-full h-full top-0 bottom-0 left-0 right-0 */
 </style>

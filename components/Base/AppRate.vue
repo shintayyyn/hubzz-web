@@ -4,7 +4,7 @@
     <div class="flex flex-col py-2 cursor-pointer" @click="modal = true">
       <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
       <div
-        class="absolute mt-12 bg-red-300 p-1 text-xs sm:text-sm text-white"
+        class="absolute mt-12 bg-red-500 p-1 text-xs sm:text-sm text-white"
         v-if="error"
       >{{error.message}}</div>
       <div class="flex flex-row justify-start mt-1">
@@ -19,7 +19,7 @@
           :name="value.min"
           @input="$emit('input', { min: $event.target.value, max: value.max})"
           type="text"
-          class="border-b-2 focus:border-yellow-300 focus:outline-none py-2 font-bold text-xs sm:text-sm text-right mb-4"
+          class="border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm text-right mb-4"
         />
         <label :for="value.max">Max</label>
         <input
@@ -27,10 +27,10 @@
           :name="value.max"
           @input="$emit('input', { min: value.min, max: $event.target.value})"
           type="text"
-          class="border-b-2 focus:border-yellow-300 focus:outline-none py-2 font-bold text-xs sm:text-sm text-right mb-4"
+          class="border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm text-right mb-4"
         />
         <!-- <button
-          class="rounded-lg bg-yellow-400 font-bold text-xs sm:text-sm px-2 py-1 focus:outline-none hover:text-white cursor-pointer"
+          class="rounded-lg bg-yellow-500 font-bold text-xs sm:text-sm px-2 py-1 focus:outline-none hover:text-white cursor-pointer"
           @click.prevent="save"
         >Save</button>-->
       </div>

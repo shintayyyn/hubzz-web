@@ -1,22 +1,22 @@
 <template>
   <div
-    class="absolute right-0 top-0 z-10 p-10 bg-gray-800"
+    class="absolute right-0 top-0 z-10 p-10 bg-gray-900"
     style="height:130%"
     :style="$store.state.mobile ? 'width:100%' : 'width:70%'"
   >
     <div class="flex flex-row flex-no-wrap justify-start">
       <div
         @click="$store.commit('TOGGLE_INVOICE_MODAL', false)"
-        class="flex text-xl cursor-pointer text-yellow-300 items-center"
+        class="flex text-xl cursor-pointer text-yellow-400 items-center"
       >
         <span v-text="'<'"></span>
       </div>
       <button
-        class="border border-solid border-yellow-400 bg-yellow-400 text-black font-bold p-2 rounded-lg mx-2 hover:text-yellow-300 hover:bg-gray-800"
+        class="border border-solid border-yellow-500 bg-yellow-500 text-black font-bold p-2 rounded-lg mx-2 hover:text-yellow-400 hover:bg-gray-900"
         @click.prevent="save_changes"
       >Save changes</button>
       <button
-        class="border border-solid border-yellow-400 bg-yellow-400 text-black font-bold p-2 rounded-lg mx-2 hover:text-yellow-300 hover:bg-gray-800"
+        class="border border-solid border-yellow-500 bg-yellow-500 text-black font-bold p-2 rounded-lg mx-2 hover:text-yellow-400 hover:bg-gray-900"
         @click.prevent="archive_as_file"
       >Save and archive as file</button>
     </div>
@@ -83,8 +83,8 @@
       <div class="flex justify-start mt-5">
         <div class="mr-1" style="width:30%;">
           <div
-            class="mb-4 border-b border-b-2 border-gray-300 py-2"
-            :class="{'border-yellow-400':setFocus === 'days_work_from'}"
+            class="mb-4 border-b border-b-2 border-gray-400 py-2"
+            :class="{'border-yellow-500':setFocus === 'days_work_from'}"
           >
             <label for="days_work_from" class="block text-sm mb-2">Days worked from</label>
             <input
@@ -94,14 +94,14 @@
               type="date"
               name="days_work_from"
               id="days_work_from"
-              class="appearance-none bg-transparent border-none w-full text-gray-500 mr-3 py-1 px-2 leading-tight focus:outline-none"
+              class="appearance-none bg-transparent border-none w-full text-gray-600 mr-3 py-1 px-2 leading-tight focus:outline-none"
             />
           </div>
         </div>
         <div cclass style="width:30%;">
           <div
-            class="mb-4 border-b border-b-2 border-gray-300 py-2"
-            :class="{'border-yellow-400':setFocus === 'days_work_to'}"
+            class="mb-4 border-b border-b-2 border-gray-400 py-2"
+            :class="{'border-yellow-500':setFocus === 'days_work_to'}"
           >
             <label for="days_work_to" class="block text-sm mb-2">To</label>
             <input
@@ -111,7 +111,7 @@
               type="date"
               name="days_work_to"
               id="days_work_to"
-              class="appearance-none bg-transparent border-none w-full text-gray-500 mr-3 py-1 px-2 leading-tight focus:outline-none"
+              class="appearance-none bg-transparent border-none w-full text-gray-600 mr-3 py-1 px-2 leading-tight focus:outline-none"
             />
           </div>
         </div>

@@ -1,5 +1,5 @@
 <template>
-  <div class="p-8 max-w-3xl">
+  <div class="p-8 max-w-5xl">
     <div @click="close" class="cursor-pointer">
       <svgicon name="left-arrow" height="32" width="32" />
     </div>
@@ -82,19 +82,19 @@ export default {
     bgStatus(status) {
       switch (status) {
         case 'Available':
-          return 'bg-yellow-400';
+          return 'bg-yellow-500';
           break;
         case 'Applied':
           return 'bg-orange-400 text-white';
           break;
         case 'Completed':
-          return 'bg-green-200';
+          return 'bg-green-400';
           break;
         case 'Current':
-          return 'bg-green-200';
+          return 'bg-green-400';
           break;
         default:
-          return 'bg-red-300 text-white'
+          return 'bg-red-500 text-white'
       }
     }
   }

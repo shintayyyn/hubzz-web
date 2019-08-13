@@ -10,7 +10,7 @@
       <div @click="close" class="cursor-pointer">
         <svgicon name="left-arrow" height="32" />
       </div>
-      <div class="ml-8 hover:text-black hover:bg-yellow-400 rounded-lg inline-flex p-2">
+      <div class="ml-8 hover:text-black hover:bg-yellow-500 rounded-lg inline-flex p-2">
         <a
           @click.prevent="downloadItem(practiceDocument.file.url,practiceDocument.file.filename)"
           class="text-black no-underline"
@@ -26,7 +26,7 @@
         </a>
       </div>
       <div class="flex flex-row justify-start">
-        <div class="flex-col shadow-lg rounded-lg bg-gray-200 mx-6 mt-10">
+        <div class="flex-col shadow-lg rounded-lg bg-gray-300 mx-6 mt-10">
           <div class="inline-flex text-sm m-4">
             <div class="m-2 mr-20">
               <p class="mr-20 font-semibold">Title</p>

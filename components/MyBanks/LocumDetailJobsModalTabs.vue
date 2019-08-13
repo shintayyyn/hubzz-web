@@ -4,43 +4,43 @@
       style="font-family:Nunito"
       @click.prevent="goTo('locum_available')"
       class="mr-5 p-3 text-sm font-bold cursor-pointer"
-      :class="$route.query.locum_jobs === 'locum_available' ? 'border rounded-lg border-yellow-400 bg-yellow-400' : 'text-gray-500'"
+      :class="$route.query.locum_jobs === 'locum_available' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
     >Available</div>
     <div
       style="font-family:Nunito"
       @click.prevent="goTo('locum_applied')"
       class="mr-5 p-3 text-sm font-bold cursor-pointer"
-      :class="$route.query.locum_jobs === 'locum_applied' ? 'border rounded-lg border-yellow-400 bg-yellow-400' : 'text-gray-500'"
+      :class="$route.query.locum_jobs === 'locum_applied' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
     >Applied</div>
     <div
       style="font-family:Nunito"
       @click.prevent="goTo('locum_current')"
       class="mr-5 p-3 text-sm font-bold cursor-pointer"
-      :class="$route.query.locum_jobs === 'locum_current' ? 'border rounded-lg border-yellow-400 bg-yellow-400' : 'text-gray-500'"
+      :class="$route.query.locum_jobs === 'locum_current' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
     >Current</div>
     <div
       style="font-family:Nunito"
       @click.prevent="goTo('locum_completed')"
       class="mr-5 p-3 text-sm font-bold cursor-pointer"
-      :class="$route.query.locum_jobs === 'locum_completed' ? 'border rounded-lg border-yellow-400 bg-yellow-400' : 'text-gray-500'"
+      :class="$route.query.locum_jobs === 'locum_completed' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
     >Completed</div>
     <div
       style="font-family:Nunito"
       @click.prevent="goTo('locum_unsuccessful')"
       class="mr-5 p-3 text-sm font-bold cursor-pointer"
-      :class="$route.query.locum_jobs === 'locum_unsuccessful' ? 'border rounded-lg border-yellow-400 bg-yellow-400' : 'text-gray-500'"
+      :class="$route.query.locum_jobs === 'locum_unsuccessful' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
     >Unsucessful</div>
     <div
       style="font-family:Nunito"
       @click.prevent="goTo('locum_cancelled')"
       class="mr-5 p-3 text-sm font-bold cursor-pointer"
-      :class="$route.query.locum_jobs === 'locum_cancelled' ? 'border rounded-lg border-yellow-400 bg-yellow-400' : 'text-gray-500'"
+      :class="$route.query.locum_jobs === 'locum_cancelled' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
     >Cancelled</div>
     <div
       style="font-family:Nunito"
       @click.prevent="goTo('locum_declined')"
       class="mr-5 p-3 text-sm font-bold cursor-pointer"
-      :class="$route.query.locum_jobs === 'locum_declined' ? 'border rounded-lg border-yellow-400 bg-yellow-400' : 'text-gray-500'"
+      :class="$route.query.locum_jobs === 'locum_declined' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
     >Declined</div>
   </div>
 </template>

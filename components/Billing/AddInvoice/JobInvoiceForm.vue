@@ -7,14 +7,14 @@
         id="description"
         rows="3"
         style="width:100%;"
-        class="border border-solid border-gray-400"
+        class="border border-solid border-gray-500"
       ></textarea>
     </div>
     <div style="width:35%" class="px-1">
       <input
         type="text"
         v-model="form.total"
-        class="border border-solid border-gray-400"
+        class="border border-solid border-gray-500"
         style="width:100%"
       />
     </div>

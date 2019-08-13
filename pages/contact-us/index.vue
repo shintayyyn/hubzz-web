@@ -18,13 +18,13 @@
       <div class="flex flex-row flex-wrap justify-start">
         <div class="p-2 w-full">
           <div
-            class="mb-4 border-b border-b-2 border-gray-300 py-2"
-            :class="{'border-yellow-400':setFocus === 'message', 'border-red-300': formError.includes('message')}"
+            class="mb-4 border-b border-b-2 border-gray-400 py-2"
+            :class="{'border-yellow-500':setFocus === 'message', 'border-red-500': formError.includes('message')}"
           >
             <label for="message" class="block text-sm mb-2">Your message</label>
             <em
               v-if="formError.includes('message')"
-              class="text-xs text-red-400 float-right"
+              class="text-xs text-red-600 float-right"
             >Required</em>
             <textarea
               rows="10"
@@ -34,7 +34,7 @@
               name="message"
               id="message"
               placeholder="Enter your message here..."
-              class="appearance-none bg-transparent border-none w-full text-gray-500 mr-3 py-1 px-2 leading-tight focus:outline-none"
+              class="appearance-none bg-transparent border-none w-full text-gray-600 mr-3 py-1 px-2 leading-tight focus:outline-none"
             ></textarea>
           </div>
         </div>
@@ -42,7 +42,7 @@
       <div class="flex justify-start">
         <div class="text-left p-2">
           <button
-            class="bg-yellow-400 hover:text-white focus:outline-none text-black font-bold text-xl p-6 rounded-lg"
+            class="bg-yellow-500 hover:text-white focus:outline-none text-black font-bold text-xl p-6 rounded-lg"
             @click.prevent="send"
           >Send</button>
         </div>

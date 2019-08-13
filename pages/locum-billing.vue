@@ -6,25 +6,25 @@
           style="font-family:Nunito"
           to="/locum-billing/invoices"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.path === '/locum-billing/invoices' || $route.path === '/locum-billing/create' ? 'border rounded-lg border-yellow-400 bg-yellow-400' : 'text-gray-500'"
+          :class="$route.path === '/locum-billing/invoices' || $route.path === '/locum-billing/create' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Invoices</nuxt-link>
         <nuxt-link
           style="font-family:Nunito"
           to="/locum-billing/invoicing-details"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.path === '/locum-billing/invoicing-details' ? 'border rounded-lg border-yellow-400 bg-yellow-400' : 'text-gray-500'"
+          :class="$route.path === '/locum-billing/invoicing-details' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Invoicing details</nuxt-link>
         <nuxt-link
           style="font-family:Nunito"
           to="/locum-billing/finance-reports"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="['/locum-billing/finance-reports','/locum-billing/finance-reports/invoices-by-month','/locum-billing/finance-reports/tax-year-totals'].includes($route.path) ? 'border rounded-lg border-yellow-400 bg-yellow-400' : 'text-gray-500'"
+          :class="['/locum-billing/finance-reports','/locum-billing/finance-reports/invoices-by-month','/locum-billing/finance-reports/tax-year-totals'].includes($route.path) ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Finance reports</nuxt-link>
         <nuxt-link
           style="font-family:Nunito"
           to="/locum-billing/tax-reports"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.path === '/locum-billing/tax-reports' ? 'border rounded-lg border-yellow-400 bg-yellow-400' : 'text-gray-500'"
+          :class="$route.path === '/locum-billing/tax-reports' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Tax reports</nuxt-link>
       </div>
 
@@ -36,7 +36,7 @@
       >
         <span class="hover:underline">Add invoice</span>
         <div
-          class="rounded-full h-8 w-8 text-2xl sm:text-3xl md:text-4xl flex items-center focus:outline-none justify-center bg-yellow-400 font-semibold cursor-pointer shadow-md hover:text-white hover:no-underline"
+          class="rounded-full h-8 w-8 text-2xl sm:text-3xl md:text-4xl flex items-center focus:outline-none justify-center bg-yellow-500 font-semibold cursor-pointer shadow-md hover:text-white hover:no-underline"
           @click="add"
         >+</div>
       </nuxt-link>

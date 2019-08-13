@@ -18,7 +18,7 @@
           <label class="text-xs">Title</label>
           <input
             class="outline-none py-1 mt-1 mb-8 border-b"
-            :class="showTitleFocus ? 'border-yellow-400' : false ? 'border-red-300' : 'border-gray-400'"
+            :class="showTitleFocus ? 'border-yellow-500' : false ? 'border-red-500' : 'border-gray-500'"
             v-model="title"
             @focus="showTitleFocus = true"
             @blur="showTitleFocus = false"
@@ -28,13 +28,13 @@
           <div class="relative">
             <label class="text-xs">First name *</label>
             <span
-              class="text-xs absolute right-0 bottom-0 bg-red-300 p-1 text-white"
+              class="text-xs absolute right-0 bottom-0 bg-red-500 p-1 text-white"
               v-if="showFirstNameRequired && !showFirstNameFocus"
             >Required</span>
           </div>
           <input
             class="outline-none py-1 mt-1 mb-8 border-b"
-            :class="showFirstNameFocus ? 'border-yellow-400' : showFirstNameRequired ? 'border-red-300' : 'border-gray-400'"
+            :class="showFirstNameFocus ? 'border-yellow-500' : showFirstNameRequired ? 'border-red-500' : 'border-gray-500'"
             v-model="firstName"
             @focus="showFirstNameFocus = true"
             @blur="showFirstNameFocus = false, checkFirstName()"
@@ -44,13 +44,13 @@
           <div class="relative">
             <label class="text-xs">Last name *</label>
             <span
-              class="text-xs absolute right-0 bottom-0 bg-red-300 p-1 text-white"
+              class="text-xs absolute right-0 bottom-0 bg-red-500 p-1 text-white"
               v-if="showLastNameRequired && !showLastNameFocus"
             >Required</span>
           </div>
           <input
             class="outline-none py-1 mt-1 mb-8 border-b"
-            :class="showLastNameFocus ? 'border-yellow-400' : showLastNameRequired ? 'border-red-300' : 'border-gray-400'"
+            :class="showLastNameFocus ? 'border-yellow-500' : showLastNameRequired ? 'border-red-500' : 'border-gray-500'"
             v-model="lastName"
             @focus="showLastNameFocus = true"
             @blur="showLastNameFocus = false, checkLastName()"
@@ -60,7 +60,7 @@
           <label class="text-xs">Suffix</label>
           <input
             class="outline-none py-1 mt-1 mb-8 border-b"
-            :class="showSuffixFocus ? 'border-yellow-400' : false ? 'border-red-300' : 'border-gray-400'"
+            :class="showSuffixFocus ? 'border-yellow-500' : false ? 'border-red-500' : 'border-gray-500'"
             v-model="suffix"
             @focus="showSuffixFocus = true"
             @blur="showSuffixFocus = false"
@@ -70,13 +70,13 @@
           <div class="relative">
             <label class="text-xs">Gender *</label>
             <span
-              class="text-xs absolute right-0 top-0 bg-red-300 p-1 text-white"
+              class="text-xs absolute right-0 top-0 bg-red-500 p-1 text-white"
               v-if="showGenderRequired && !showGenderFocus"
             >Required</span>
           </div>
           <select
-            class="outline-none py-2 mt-1 mb-8 border-b bg-gray-200"
-            :class="showGenderFocus ? 'border-yellow-400' : showGenderRequired ? 'border-red-300' : 'border-gray-400'"
+            class="outline-none py-2 mt-1 mb-8 border-b bg-gray-300"
+            :class="showGenderFocus ? 'border-yellow-500' : showGenderRequired ? 'border-red-500' : 'border-gray-500'"
             v-model="gender"
             @focus="showGenderFocus = true"
             @blur="showGenderFocus = false, checkGender()"
@@ -89,17 +89,17 @@
           <div class="relative">
             <label class="text-xs">Mobile number *</label>
             <span
-              class="text-xs absolute right-0 bottom-0 p-1 bg-gray-200"
+              class="text-xs absolute right-0 bottom-0 p-1 bg-gray-300"
               v-if="!showMobileNumberRequired || showMobileNumberFocus"
             >In case of emergency</span>
             <span
-              class="text-xs absolute right-0 bottom-0 bg-red-300 p-1 text-white"
+              class="text-xs absolute right-0 bottom-0 bg-red-500 p-1 text-white"
               v-if="showMobileNumberRequired && !showMobileNumberFocus"
             >Required</span>
           </div>
           <input
             class="outline-none py-1 mt-1 mb-8 border-b"
-            :class="showMobileNumberFocus ? 'border-yellow-400' : showMobileNumberRequired ? 'border-red-300' : 'border-gray-400'"
+            :class="showMobileNumberFocus ? 'border-yellow-500' : showMobileNumberRequired ? 'border-red-500' : 'border-gray-500'"
             v-model="mobileNumber"
             @focus="showMobileNumberFocus = true"
             @blur="showMobileNumberFocus = false, checkMobileNumber()"
@@ -108,7 +108,7 @@
           <label class="text-xs">Home/Land line number</label>
           <input
             class="outline-none py-1 mt-1 mb-8 border-b"
-            :class="showHomeNumberFocus ? 'border-yellow-400' : false ? 'border-red-300' : 'border-gray-400'"
+            :class="showHomeNumberFocus ? 'border-yellow-500' : false ? 'border-red-500' : 'border-gray-500'"
             v-model="homeNumber"
             @focus="showHomeNumberFocus = true"
             @blur="showHomeNumberFocus = false"

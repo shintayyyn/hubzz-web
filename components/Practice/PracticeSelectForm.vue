@@ -9,7 +9,7 @@
         @keyup.enter="search"
       />
       <button
-        class="bg-yellow-400 hover:text-white focus:outline-none text-black font-semibold text-xs py-2 px-4 rounded-lg"
+        class="bg-yellow-500 hover:text-white focus:outline-none text-black font-semibold text-xs py-2 px-4 rounded-lg"
         @click.prevent="search"
       >Search</button>
     </div>

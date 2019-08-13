@@ -35,20 +35,20 @@
         <div class="flex flex-row flex-wrap justify-start mt-4 relative">
           <div class="text-sm sm:text-md leading-loose mr-2">On theses shifts</div>
           <div
-            class="rounded-lg bg-gray-200 px-2 py-1 text-sm sm:text-md flex items-center"
+            class="rounded-lg bg-gray-300 px-2 py-1 text-sm sm:text-md flex items-center"
             v-if="type === 'solo'"
           >
             Select all that apply. Shifts that are already booked are greyed-out.
             <div
               v-if="formError.find(item => item.field === 'shift_id')"
-              class="absolute right-0 bg-red-300 p-1 text-xs sm:text-base text-white"
+              class="absolute right-0 bg-red-500 p-1 text-xs sm:text-base text-white"
             >Select atleast one shift</div>
           </div>
-          <div class="rounded-lg bg-gray-200 px-2 py-1 text-sm sm:text-md flex items-center" v-else>
+          <div class="rounded-lg bg-gray-300 px-2 py-1 text-sm sm:text-md flex items-center" v-else>
             Select all that apply.
             <div
               v-if="formError.find(item => item.field === 'shift_id')"
-              class="absolute right-0 bg-red-300 p-1 text-xs sm:text-base text-white"
+              class="absolute right-0 bg-red-500 p-1 text-xs sm:text-base text-white"
             >Select atleast one shift</div>
           </div>
         </div>
@@ -57,9 +57,9 @@
           <button
             class="relative border border-solid rounded-lg p-5 my-2 md:m-1 text-center text-xs sm:text-sm focus:outline-none w-full sm:w-1/3 md:w-1/6"
             :class="{
-                'bg-gray-200': isDisabled(item.id),
-                'bg-yellow-400': isSelected(item.id), 
-                'hover:bg-yellow-400': !isSelected(item.id) && isSelectable(item.id),
+                'bg-gray-300': isDisabled(item.id),
+                'bg-yellow-500': isSelected(item.id), 
+                'hover:bg-yellow-500': !isSelected(item.id) && isSelectable(item.id),
               }"
             style="box-sizing:content-box;"
             v-for="item in shifts"

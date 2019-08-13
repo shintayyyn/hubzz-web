@@ -27,7 +27,7 @@
           <div class="font-bold text-sm sm:text-md">Specialty</div>
           <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
             <div
-              class="rounded-lg bg-yellow-400 p-2 m-1"
+              class="rounded-lg bg-yellow-500 p-2 m-1"
               v-for="item in user.locum_detail.qualifications"
               :key="item.id"
             >{{item.name}}</div>
@@ -35,16 +35,16 @@
           <div class="font-bold text-sm sm:text-md">Clinical systems</div>
           <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
             <div
-              class="rounded-lg bg-yellow-400 p-2 m-1"
+              class="rounded-lg bg-yellow-500 p-2 m-1"
               v-for="item in user.locum_detail.clinical_systems"
               :key="item.id"
             >{{item.name}}</div>
           </div>
           <div class="font-bold text-sm sm:text-md">Languages</div>
           <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
-            <div class="rounded-lg bg-yellow-400 p-2 m-1">English</div>
+            <div class="rounded-lg bg-yellow-500 p-2 m-1">English</div>
             <div
-              class="rounded-lg bg-yellow-400 p-2 m-1"
+              class="rounded-lg bg-yellow-500 p-2 m-1"
               v-for="item in user.locum_detail.spoken_languages"
               :key="item.id"
             >{{item.name}}</div>
@@ -104,7 +104,7 @@
           <div class="font-bold text-sm sm:text-md">Referees</div>
           <div v-if="user.locum_detail.referees.length > 0">
             <div
-              class="rounded-lg flex flex-col bg-gray-200 my-2 p-4"
+              class="rounded-lg flex flex-col bg-gray-300 my-2 p-4"
               v-for="item in user.locum_detail.referees"
               :key="item.id"
             >
