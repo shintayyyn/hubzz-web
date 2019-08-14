@@ -1,6 +1,7 @@
 <template>
-  <div class="rounded-lg shadow-lg max-w-md">
+  <div class="rounded-lg shadow-lg max-w-xl">
     <div class="w-full p-8">
+      <AppFormError :formError="formError" v-if="formError.length > 0" />
       <AppInput
         v-model="form.email"
         :type="'email'"
@@ -110,12 +111,18 @@
   </div>
 </template>
 <script>
+import AppFormError from "@/components/Base/AppFormError";
 import AppInput from "@/components/Base/AppInput";
 import AppPostCode from "@/components/Base/AppPostCode";
 import AppSelect from "@/components/Base/AppSelect";
 import AppButton from "@/components/Base/AppButton";
 export default {
+  transition: {
+    name: 'fade',
+    mode: 'out-in'
+  },
   components: {
+    AppFormError,
     AppInput,
     AppPostCode,
     AppSelect,
@@ -167,22 +174,31 @@ export default {
       this.formError = this.formError.filter(error => error.field !== 'address_line_3')
     },
   },
+  async asyncData({ app, error }) {
+    try {
+      const response = await app.$axios.$get('/api/v1/me')
+      const user = response.data && response.data && response.data.user ? response.data.user : null
+      return {
+        user
+      }
+    } catch (err) {
+      throw err
+    }
+  },
   created() {
-    this.$axios.$get("/api/v1/me").then(res => {
-      this.form.email = res.data.user.email;
-      this.form.title = res.data.user.personal_detail.title;
-      this.form.first_name = res.data.user.personal_detail.first_name;
-      this.form.last_name = res.data.user.personal_detail.last_name;
-      this.form.suffix = res.data.user.personal_detail.suffix;
-      this.form.gender = res.data.user.personal_detail.gender;
-      this.form.mobile_number = res.data.user.contact_detail.mobile_number;
-      this.form.address_line_1 = res.data.user.address_detail.address.line_1;
-      this.form.address_line_2 = res.data.user.address_detail.address.line_2;
-      this.form.address_line_3 = res.data.user.address_detail.address.line_3;
-      this.form.post_code = res.data.user.address_detail.address.post_code;
-      this.email_isVerified = res.data.user.is_email_verified;
-      this.email_verifiedAt = res.data.user.email_verified_at
-    });
+    this.form.email = this.user.email;
+    this.form.title = this.user.personal_detail.title;
+    this.form.first_name = this.user.personal_detail.first_name;
+    this.form.last_name = this.user.personal_detail.last_name;
+    this.form.suffix = this.user.personal_detail.suffix;
+    this.form.gender = this.user.personal_detail.gender;
+    this.form.mobile_number = this.user.contact_detail.mobile_number;
+    this.form.address_line_1 = this.user.address_detail.address.line_1;
+    this.form.address_line_2 = this.user.address_detail.address.line_2;
+    this.form.address_line_3 = this.user.address_detail.address.line_3;
+    this.form.post_code = this.user.address_detail.address.post_code;
+    this.email_isVerified = this.user.is_email_verified;
+    this.email_verifiedAt = this.user.email_verified_at
   },
   methods: {
     onSelect(value) {
@@ -200,17 +216,16 @@ export default {
       this.form.address_line_1 = route ? route.long_name : "";
       this.form.address_line_3 = postal_town ? postal_town.long_name : "";
     },
-    save() {
+    async save() {
       try {
-        this.formError = [];
+        this.formError = []
         this.Validate(this.form, ['title', 'suffix', 'address_line_2'])
         if (!this.formError.length) {
-          this.$axios.$put(`/api/v1/locum/me/account`, this.form).then(res => {
-            this.$store.commit("SET_NOTIFICATION", {
-              enabled: true,
-              status: "success",
-              text: ["Saved"]
-            });
+          await this.$axios.$put(`/api/v1/locum/me/account`, this.form)
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: ["Saved"]
           });
         } else {
           this.$store.commit("SET_NOTIFICATION", {
@@ -219,8 +234,9 @@ export default {
             text: ["Please fill up all the forms"]
           });
         }
-      } catch (e) {
-        console.log(e);
+      } catch (err) {
+        this.formError = err.response.data.error_messages
+        this.scrollToTop()
       }
     },
     async resendEmailVerification() {

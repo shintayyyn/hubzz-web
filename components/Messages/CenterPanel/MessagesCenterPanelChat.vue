@@ -37,7 +37,7 @@
                     <!-- <span class="py-1">asd</span> -->
                     <span
                       class="chat-message rounded-lg px-2 py-2"
-                      :class="isReceiver(item) ? 'bg-gray-300' : 'bg-blue-500light text-white'"
+                      :class="isReceiver(item) ? 'bg-gray-300' : 'bg-blue-500 text-white'"
                     >{{item.message}}</span>
                     <span
                       class="text-gray-500 py-1"

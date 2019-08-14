@@ -1,6 +1,7 @@
 <template>
   <div class="border-solid rounded-lg shadow-lg p-8">
     <form class="w-full">
+      <AppFormError :formError="formError" v-if="formError.length > 0" />
       <AppInput
         v-model="form.old_password"
         :type="'password'"
@@ -33,11 +34,17 @@
   </div>
 </template>
 <script>
+import AppFormError from "@/components/Base/AppFormError";
 import AppInput from "@/components/Base/AppInput";
 import AppSelect from "@/components/Base/AppSelect";
 import AppButton from "@/components/Base/AppButton";
 export default {
+  transition: {
+    name: 'fade',
+    mode: 'out-in'
+  },
   components: {
+    AppFormError,
     AppInput,
     AppSelect,
     AppButton
@@ -105,20 +112,12 @@ export default {
         this.formError = [];
         this.Validate(this.form);
         if (!this.formError.length) {
-          this.$axios
-            .$put(`/api/v1/me/change-password`, this.form)
-            .then(res => {
-              this.$store.commit("SET_NOTIFICATION", {
-                enabled: true,
-                status: "success",
-                text: ["Password changed"]
-              });
-            })
-            .catch(err => {
-              err.response.data.error_messages.forEach(error => {
-                this.formError.push(error);
-              });
-            });
+          await this.$axios.$put(`/api/v1/me/change-password`, this.form)
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: ["Password changed"]
+          });
         } else {
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
@@ -126,8 +125,9 @@ export default {
             text: ["Please fill up all the forms"]
           });
         }
-      } catch (e) {
-        console.log(e);
+      } catch (err) {
+        this.formError = err.response.data.error_messages
+        this.scrollToTop()
       }
     }
   }

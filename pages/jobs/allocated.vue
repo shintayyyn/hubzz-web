@@ -1,5 +1,5 @@
 <template>
-  <section class="__jobs-section">
+  <section class="__jobs-section" v-if="!loading">
     <AppJobFilter @getJobs="getJobs(1, params)" :params="params" />
     <div class="overflow-x-auto">
       <div
@@ -102,6 +102,7 @@ export default {
       date_start: true,
       date_end: true,
       date_created: false,
+      loading: true
     }
   },
   computed: {
@@ -169,6 +170,7 @@ export default {
       let defaultParams = { offset: this.offset, limit: this.perPage, status: "Current" }
       let jobParams = { ...params, ...defaultParams }
       this.$store.dispatch("jobs/fetchLocumJobs", jobParams);
+      this.loading = false
     },
     pagechanged(e) {
       this.current_page = e

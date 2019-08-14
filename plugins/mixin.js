@@ -1,6 +1,9 @@
 import Vue from 'vue'
 Vue.mixin({
   methods: {
+    scrollToTop() {
+      window.scrollTo(0,0)
+    },
     getDateArray(start, end) {
       let arr = new Array();
       let dt = new Date(start);

@@ -1,37 +1,82 @@
 <template>
   <section class="jobs-section">
-    <JobsTabs />
+    <!-- <JobsTabs />
     <div class="mt-5">
       <transition name="fade" mode="out-in">
         <Component :is="activeComponent" />
       </transition>
     </div>
     <div class="modal-shield" v-if="shield"></div>
-    <nuxt-child />
+    <nuxt-child />-->
+    <div class="flex flex-row flex-wrap justify-start">
+      <nuxt-link
+        to="/jobs/allocated"
+        class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+        :class="$route.name === 'jobs-allocated'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+      >Allocated</nuxt-link>
+      <nuxt-link
+        to="/jobs/available"
+        class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+        :class="$route.name === 'jobs-available'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+      >Available</nuxt-link>
+      <nuxt-link
+        to="/jobs/matched"
+        class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+        :class="$route.name === 'jobs-matched'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+      >Matched</nuxt-link>
+      <nuxt-link
+        to="/jobs/applied"
+        class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+        :class="$route.name === 'jobs-applied'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+      >Applied</nuxt-link>
+      <nuxt-link
+        to="/jobs/unsuccessful"
+        class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+        :class="$route.name === 'jobs-unsuccessful'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+      >Unsuccessful</nuxt-link>
+      <nuxt-link
+        to="/jobs/declined"
+        class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+        :class="$route.name === 'jobs-declined'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+      >Declined</nuxt-link>
+      <nuxt-link
+        to="/jobs/cancelled"
+        class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+        :class="$route.name === 'jobs-cancelled'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+      >Cancelled</nuxt-link>
+      <nuxt-link
+        to="/jobs/completed"
+        class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+        :class="$route.name === 'jobs-completed'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+      >Completed</nuxt-link>
+    </div>
+    <div class="mt-5">
+      <nuxt-child />
+    </div>
   </section>
 </template>
 <script>
-import JobsTabs from '@/components/Jobs/JobsTabs'
-import Allocated from '@/components/Jobs/Allocated'
-import Available from '@/components/Jobs/Available'
-import Matched from '@/components/Jobs/Matched'
-import Applied from '@/components/Jobs/Applied'
-import Unsuccessful from '@/components/Jobs/Unsuccessful'
-import Declined from '@/components/Jobs/Declined'
-import Cancelled from '@/components/Jobs/Cancelled'
-import Completed from '@/components/Jobs/Completed'
+// import JobsTabs from '@/components/Jobs/JobsTabs'
+// import Allocated from '@/components/Jobs/Allocated'
+// import Available from '@/components/Jobs/Available'
+// import Matched from '@/components/Jobs/Matched'
+// import Applied from '@/components/Jobs/Applied'
+// import Unsuccessful from '@/components/Jobs/Unsuccessful'
+// import Declined from '@/components/Jobs/Declined'
+// import Cancelled from '@/components/Jobs/Cancelled'
+// import Completed from '@/components/Jobs/Completed'
 export default {
-  components: {
-    JobsTabs,
-    Allocated,
-    Available,
-    Matched,
-    Applied,
-    Unsuccessful,
-    Declined,
-    Cancelled,
-    Completed
-  },
+  // components: {
+  //   JobsTabs,
+  //   Allocated,
+  //   Available,
+  //   Matched,
+  //   Applied,
+  //   Unsuccessful,
+  //   Declined,
+  //   Cancelled,
+  //   Completed
+  // },
   middleware: 'isVerified',
   computed: {
     activeComponent() {

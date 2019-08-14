@@ -61,6 +61,7 @@ export default {
     this.$store.dispatch("signUp/getClinicalSystems");
     this.$store.dispatch("signUp/getSpokenLanguages");
     this.$store.dispatch("signUp/getPracticeTypes");
+    this.$store.dispatch("signUp/getMandatoryTrainings");
   }
 };
 </script>

@@ -12,7 +12,7 @@ export default {
     MessagesLeftPanel
   },
   async asyncData({ app, store, params }) {
-    const response = await chatApi.fetchConversations(app.$axios, 0, 1)
+    const response = await chatApi.fetchConversations(app.$axios, 0, 10)
     const conversations = response.data.conversations
     store.commit('chat/SET_CONVERSATIONS', response.data.conversations)
   },

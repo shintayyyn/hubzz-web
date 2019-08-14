@@ -77,6 +77,10 @@ const roles = [
   { value: "Partner", label: "Partner" }
 ];
 export default {
+  transition: {
+    name: 'fade',
+    mode: 'out-in'
+  },
   components: {
     AppInput,
     AppSelect,

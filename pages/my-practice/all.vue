@@ -1,5 +1,5 @@
 <template>
-  <section>
+  <section v-if="!loading">
     <div v-if="practices.length > 0">
       <div class="flex flex-row flex-wrap justify-start">
         <div
@@ -27,6 +27,7 @@
               />
             </template>
           </div>
+
           <div class="flex flex-wrap text-center mt-4 cursor-pointer" @click="show(practice.id)">
             <div class="w-full flex justify-center">
               <div class="relative avatar flex justify-center">
@@ -56,24 +57,22 @@
       </div>
     </div>
     <div v-else class="flex flex-row flex-wrap justify-center">
-      <div>You do not have any Unsuccessful Job for any Practices</div>
+      <div>You do not have any Associated Job for any Practices</div>
     </div>
-    <div class="shield" v-if="modal"></div>
-    <transition name="slide" mode="out-in">
-      <div class="modal shadow-lg" v-if="modal">
-        <MyPracticeDetailModal :practice="practice" @close="modal = false" />
-      </div>
-    </transition>
+    <div class="shield" v-if="$route.name === 'my-practice-all-id'"></div>
+    <nuxt-child />
   </section>
 </template>
 <script>
 import AppPagination from '@/components/Base/AppPagination'
-import AppLoading from '@/components/Base/AppLoading'
 import MyPracticeDetailModal from '@/components/MyPractice/MyPracticeDetailModal'
 export default {
+  transition: {
+    name: 'fade',
+    mode: 'out-in'
+  },
   components: {
     AppPagination,
-    AppLoading,
     MyPracticeDetailModal
   },
   data() {
@@ -82,7 +81,8 @@ export default {
       current_page: 1,
       total: 0,
       modal: false,
-      practice: null
+      practice: null,
+      loading: true
     }
   },
   computed: {
@@ -97,30 +97,40 @@ export default {
     },
   },
   created() {
-    this.getUnsuccessfulPracticesCount()
+    this.getPracticesCount()
   },
   methods: {
-    getUnsuccessfulPracticesCount() {
-      this.$axios.$get(`/api/v1/locum/practices/count?locum_practice_type=Unsuccessful`).then(res => {
+    getPracticesCount() {
+      this.$axios.$get(`/api/v1/locum/practices/count`).then(res => {
         this.total = res.data.count
-        this.getUnsuccessfulPractices(this.current_page)
-
+        this.getPractices(this.current_page)
       })
     },
-    getUnsuccessfulPractices(page) {
-      this.$axios.$get(`/api/v1/locum/practices?locum_practice_type=Unsuccessful&offset=${this.offset}&limit=${this.perPage}`).then(res => {
+    getPractices(page) {
+      this.current_page = page
+      this.$axios.$get(`/api/v1/locum/practices?offset=${this.offset}&limit=${this.perPage}`).then(res => {
         this.practices = res.data.practices
+        this.loading = false
+      })
+    },
+    favorite(id, index) {
+      this.$axios.$post(`/api/v1/locum/practices/${id}/favorite`).then(res => {
+        this.practices.splice(index, 1, res.data.practice)
+        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: [`${res.message}`] })
+      })
+    },
+    unfavorite(id, index) {
+      this.$axios.$delete(`/api/v1/locum/practices/${id}/favorite`).then(res => {
+        this.practices.splice(index, 1, res.data.practice)
+        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: [`${res.message}`] })
       })
     },
     show(id) {
-      this.$axios.$get(`/api/v1/locum/practices/${id}`).then(res => {
-        this.practice = res.data.practice
-        this.modal = true
-      })
+      this.$router.push(`/my-practice/all/${id}`)
     },
     pagechanged(e) {
       this.current_page = e
-      this.getCompletedPractices(this.current_page)
+      this.getPractices(this.current_page)
     }
   }
 }

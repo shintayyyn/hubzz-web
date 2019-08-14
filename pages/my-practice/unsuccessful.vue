@@ -1,5 +1,5 @@
 <template>
-  <section>
+  <section v-if="!loading">
     <div v-if="practices.length > 0">
       <div class="flex flex-row flex-wrap justify-start">
         <div
@@ -8,13 +8,24 @@
           :key="practice.id"
         >
           <div class="flex justify-end z-50">
-            <svgicon
-              name="on-star"
-              height="32"
-              width="32"
-              class="cursor-pointer"
-              @click="unfavorite(practice.id, index)"
-            />
+            <template v-if="practice.is_favorite">
+              <svgicon
+                name="on-star"
+                height="32"
+                width="32"
+                class="cursor-pointer"
+                @click="unfavorite(practice.id, index)"
+              />
+            </template>
+            <template v-else>
+              <svgicon
+                name="off-star"
+                height="32"
+                width="32"
+                class="cursor-pointer"
+                @click="favorite(practice.id, index)"
+              />
+            </template>
           </div>
           <div class="flex flex-wrap text-center mt-4 cursor-pointer" @click="show(practice.id)">
             <div class="w-full flex justify-center">
@@ -34,25 +45,21 @@
           </div>
         </div>
       </div>
+
+      <div class="mt-5 flex justify-center" v-if="practices.length > 0 && totalPages > 1">
+        <AppPagination
+          :total="total"
+          :totalPages="totalPages"
+          :currentPage="current_page"
+          @pagechanged="pagechanged"
+        />
+      </div>
     </div>
     <div v-else class="flex flex-row flex-wrap justify-center">
-      <div>You haven't favorite any Practices yet</div>
+      <div>You do not have any Unsuccessful Job for any Practices</div>
     </div>
-    <div class="mt-5 flex justify-center" v-if="practices.length > 0 && totalPages > 1">
-      <AppPagination
-        :total="total"
-        :totalPages="totalPages"
-        :currentPage="current_page"
-        @pagechanged="pagechanged"
-      />
-    </div>
-
-    <div class="shield" v-if="modal"></div>
-    <transition name="slide" mode="out-in">
-      <div class="modal shadow-lg" v-if="modal">
-        <MyPracticeDetailModal :practice="practice" @close="modal = false" />
-      </div>
-    </transition>
+    <div class="shield" v-if="$route.name === 'my-practice-unsuccessful-id'"></div>
+    <nuxt-child />
   </section>
 </template>
 <script>
@@ -60,6 +67,10 @@ import AppPagination from '@/components/Base/AppPagination'
 import AppLoading from '@/components/Base/AppLoading'
 import MyPracticeDetailModal from '@/components/MyPractice/MyPracticeDetailModal'
 export default {
+  transition: {
+    name: 'fade',
+    mode: 'out-in'
+  },
   components: {
     AppPagination,
     AppLoading,
@@ -71,7 +82,8 @@ export default {
       current_page: 1,
       total: 0,
       modal: false,
-      practice: null
+      practice: null,
+      loading: true
     }
   },
   computed: {
@@ -86,37 +98,25 @@ export default {
     },
   },
   created() {
-    this.getFavoritePracticesCount()
+    this.getUnsuccessfulPracticesCount()
   },
   methods: {
-    getFavoritePracticesCount() {
-      this.$axios.$get(`/api/v1/locum/practices/count?locum_practice_type=Favorite`).then(res => { //GET QUANTITY OF DATA
+    getUnsuccessfulPracticesCount() {
+      this.$axios.$get(`/api/v1/locum/practices/count?locum_practice_type=Unsuccessful`).then(res => {
         this.total = res.data.count
-        this.getFavoritePractices(this.current_page)
+        this.getUnsuccessfulPractices(this.current_page)
 
       })
     },
-    getFavoritePractices(page) {
-      this.current_page = page
-      this.$axios.$get(`/api/v1/locum/practices?locum_practice_type=Favorite&offset=${this.offset}&limit=${this.perPage}`).then(res => {
+    getUnsuccessfulPractices(page) {
+      this.$axios.$get(`/api/v1/locum/practices?locum_practice_type=Unsuccessful&offset=${this.offset}&limit=${this.perPage}`).then(res => {
         this.practices = res.data.practices
+        this.loading = false
       })
     },
-
-    unfavorite(id, index) {
-      this.practices.splice(index, 1)
-      this.$axios.$delete(`/api/v1/locum/practices/${id}/favorite`).then(res => {
-        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: [`${res.message}`] })
-      })
-    },
-
     show(id) {
-      this.$axios.$get(`/api/v1/locum/practices/${id}`).then(res => {
-        this.practice = res.data.practice
-        this.modal = true
-      })
+      this.$router.push(`/my-practice/unsuccessful/${id}`)
     },
-
     pagechanged(e) {
       this.current_page = e
       this.getCompletedPractices(this.current_page)

@@ -4,8 +4,7 @@
 <script>
 export default {
   created() {
-    this.$router.push('/jobs/allocated')
+    this.$router.push('/my-practice/favorites')
   }
 }
 </script>
-

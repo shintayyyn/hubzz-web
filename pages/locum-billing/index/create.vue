@@ -48,7 +48,7 @@
                 <section>
                   <!-- input select -->
                   <div class="flex flex-col py-2 mb-6">
-                    <div class="relative flex flex-row flex-nowrap justify-between">
+                    <div class="relative flex flex-row flex-no-wrap justify-between">
                       <label class="text-xs sm:text-base py-1">To: Accounts Department</label>
                     </div>
                     <div class="flex flex-row justify-start mt-1">
@@ -89,7 +89,7 @@
               <section>
                 <!-- input select -->
                 <div class="flex flex-col py-2 mb-6">
-                  <div class="relative flex flex-row flex-nowrap justify-between">
+                  <div class="relative flex flex-row flex-no-wrap justify-between">
                     <label class="text-xs sm:text-base py-1">Select a job to add to this invoice</label>
                   </div>
                   <div class="flex flex-row justify-start mt-1">
@@ -158,7 +158,7 @@
               </tr>
               <tr>
                 <td colspan="2">
-                  <div class="flex flex-row flex-nowrap justify-between">
+                  <div class="flex flex-row flex-no-wrap justify-between">
                     <div class="w-full pr-1">
                       <AppDate
                         v-model="form.date_start"

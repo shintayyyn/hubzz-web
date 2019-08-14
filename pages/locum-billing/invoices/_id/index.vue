@@ -28,7 +28,6 @@ export default {
       }
       const response = await app.$axios.get(`/api/v1/locum/invoices/${params.id}`)
       const invoice = response.data && response.data.data && response.data.data.invoice ? response.data.data.invoice : null
-      console.log('invoice', invoice)
 
       if (process.client) {
         document.body.style.cursor = 'auto'

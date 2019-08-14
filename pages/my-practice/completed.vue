@@ -1,5 +1,5 @@
 <template>
-  <section>
+  <section v-if="!loading">
     <div v-if="practices.length > 0">
       <div class="flex flex-row flex-wrap justify-start">
         <div
@@ -58,12 +58,8 @@
     <div v-else class="flex flex-row flex-wrap justify-center">
       <div>You do not have any Completed Job for any Practices</div>
     </div>
-    <div class="shield" v-if="modal"></div>
-    <transition name="slide" mode="out-in">
-      <div class="modal shadow-lg" v-if="modal">
-        <MyPracticeDetailModal :practice="practice" @close="modal = false" />
-      </div>
-    </transition>
+    <div class="shield" v-if="$route.name === 'my-practice-completed-id'"></div>
+    <nuxt-child />
   </section>
 </template>
 <script>
@@ -71,6 +67,10 @@ import AppPagination from '@/components/Base/AppPagination'
 import AppLoading from '@/components/Base/AppLoading'
 import MyPracticeDetailModal from '@/components/MyPractice/MyPracticeDetailModal'
 export default {
+  transition: {
+    name: 'fade',
+    mode: 'out-in'
+  },
   components: {
     AppPagination,
     AppLoading,
@@ -82,7 +82,8 @@ export default {
       current_page: 1,
       total: 0,
       modal: false,
-      practice: null
+      practice: null,
+      loading: true
     }
   },
   computed: {
@@ -110,6 +111,7 @@ export default {
       this.current_page = page
       this.$axios.$get(`/api/v1/locum/practices?locum_practice_type=Completed&offset=${this.offset}&limit=${this.perPage}`).then(res => {
         this.practices = res.data.practices
+        this.loading = false
       })
     },
 
@@ -127,10 +129,7 @@ export default {
       })
     },
     show(id) {
-      this.$axios.$get(`/api/v1/locum/practices/${id}`).then(res => {
-        this.practice = res.data.practice
-        this.modal = true
-      })
+      this.$router.push(`/my-practice/completed/${id}`)
     },
     pagechanged(e) {
       this.current_page = e
