@@ -147,7 +147,6 @@ export default {
     },
     unfavorite(id, index) {
       this.$axios.$delete(`/api/v1/practice/locums/${id}/favorite`).then(res => {
-        console.log(res)
         this.locums.splice(index, 1)
         this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: ['Remove to favourites'] })
       })

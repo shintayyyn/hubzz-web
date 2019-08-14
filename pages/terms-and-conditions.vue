@@ -5,7 +5,7 @@
     </div>
     <div class="px-10 mt-5">
       <transition name="fade" mode="out-in">
-        <component :is="activeComponent" />
+        <component :is="activeComponent" :terms="terms" />
       </transition>
     </div>
   </section>
@@ -24,6 +24,17 @@ export default {
     activeComponent() {
       return this.$route.query.active_tab
     },
+  },
+  async asyncData({ app, error }) {
+    try {
+      const response = await app.$axios(`/api/v1/terms-and-conditions`)
+      const terms = response.data && response.data.data && response.data.data.terms ? response.data.data.terms : null
+      return {
+        terms
+      }
+    } catch (err) {
+      throw err
+    }
   },
   created() {
     const query = {

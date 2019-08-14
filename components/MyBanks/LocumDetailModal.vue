@@ -137,7 +137,6 @@ export default {
   },
   created() {
     this.getProfessionCategory(this.user.locum_detail.profession.profession_category.id)
-    console.log(this.user)
   },
   methods: {
     getProfessionCategory(id) {

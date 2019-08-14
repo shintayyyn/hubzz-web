@@ -455,7 +455,6 @@ export default {
   },
 
   created() {
-    console.log(this.$auth.user)
 
     this.$axios.$get(`/api/v1/locum/private-practices`).then(res => {
       this.practices = [];

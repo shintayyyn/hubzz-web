@@ -134,7 +134,6 @@ export default {
     search_text(value) {
       if (!value) {
         this.showResult = false;
-        console.log("empty search");
       } else {
         this.getResults(value);
       }
@@ -145,7 +144,6 @@ export default {
       this.showResult = false;
       this.messages = [];
       this.$router.push(`/messages/${id}`);
-      // console.log(this.conversations)
     },
     getResults(value) {
       let search = this.search_text;

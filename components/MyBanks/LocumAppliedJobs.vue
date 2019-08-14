@@ -101,15 +101,13 @@ export default {
       applied_job_page: this.$route.query.applied_job_page || 1
     }
     Promise.all([
-      console.log(this.user),
       this.$axios.$get(`/api/v1/practice/jobs/count?locum_detail_id=${this.user.locum_detail.id}&locum_status=Applied`).then(res => {
         this.total = res.data.count
         this.perPage = 5
         this.totalPages = Math.ceil(this.total / this.perPage)
       })
     ]).then(() => {
-      this.getAppliedJobs('date_created:desc'),
-        console.log(this.appliedJobs)
+      this.getAppliedJobs('date_created:desc')
     })
   },
   computed: {
@@ -126,7 +124,6 @@ export default {
       if (this.ascendDescend == 0) {
         orderBy = orderBy.replace('desc', 'asc')
         this.ascendDescend = 1
-        console.log('true', this.ascendDescend)
       } else if (this.ascendDescend == 1) {
         orderBy = orderBy.replace('asc', 'desc')
         this.ascendDescend = 0

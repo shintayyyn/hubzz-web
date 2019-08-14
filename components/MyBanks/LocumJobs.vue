@@ -41,7 +41,6 @@ export default {
         }
     },
     created(){
-      console.log(this.jobs)
       const query = {
         ...this.$route.query,
         locum_jobs: this.$route.query.locum_jobs || 'locum_available'

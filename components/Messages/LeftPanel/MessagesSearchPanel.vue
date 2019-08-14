@@ -39,7 +39,6 @@ export default {
         search: input
       };
       this.$axios.$get(`/api/v1/conversations`, { params }).then(res => {
-        console.log(res)
         if (res.data.conversations.length > 0) {
           this.results = res.data.conversations;
           this.showResults = true;

@@ -59,11 +59,9 @@ export default {
   methods: {
     close() {
       if (this.$route.fullPath === '/dashboard') {
-        console.log('close dashboard')
         this.$emit('close')
         return
       } else {
-        console.log('close query')
         const query = {
           ...this.$route.query
         }

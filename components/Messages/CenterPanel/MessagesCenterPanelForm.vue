@@ -19,7 +19,6 @@ export default {
   methods: {
     send() {
       if (!this.message) {
-        console.log("nyongan");
       } else {
         // this.$emit('send-message', this.message)
         // this.message = ''

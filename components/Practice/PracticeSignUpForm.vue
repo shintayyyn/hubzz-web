@@ -1,7 +1,7 @@
 <template>
   <div>
-    <PracticeSelectForm v-if="step === 1" @nextStep="nextStep"/>
-    <PracticeInputForm v-if="step === 2" @backStep="step = 1" @submitForm="submitForm"/>
+    <PracticeSelectForm v-if="step === 1" @nextStep="nextStep" />
+    <PracticeInputForm v-if="step === 2" @backStep="step = 1" @submitForm="submitForm" />
   </div>
 </template>
 <script>
@@ -12,7 +12,7 @@ export default {
     PracticeSelectForm,
     PracticeInputForm
   },
-  data () {
+  data() {
     return {
       step: 1,
       selectedPractice: ''
@@ -29,7 +29,6 @@ export default {
       this.step = 2
     },
     submitForm(form) {
-      console.log(form)
       // if success thru api
       this.$emit('success')
     }

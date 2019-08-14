@@ -59,6 +59,5 @@ export default {
         }
         const response = await chatApi.deleteMessage(this.$axios, receiver_user_id.toString(), payload)
         commit('DELETE_MESSAGE', response.data.message)
-        console.log(response)
     }
 }

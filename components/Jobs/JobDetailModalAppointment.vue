@@ -196,7 +196,6 @@ export default {
     this.getShifts()
     this.getRateType()
     if (this.job) {
-      console.log(this.job)
       this.form.private_practice_id = this.job.private_job.private_practice.id
       this.form.date_start = this.job.date_start
       this.form.date_end = this.job.date_end
@@ -278,7 +277,6 @@ export default {
       this.Validate(this.form, ['description'])
       if (!this.formError.length) {
         this.$axios.$put(`/api/v1/locum/jobs/${this.job.id}`, this.form).then(res => {
-          console.log(res)
 
           if (res.data.job.locum_status === 'Current') {
             this.$store.commit('jobs/UPDATE_LOCUM_ALLOCATED_JOB', res.data.job)
@@ -288,7 +286,6 @@ export default {
           this.close()
           this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: [`${res.message}`] })
         }).catch(err => {
-          console.log(err.response)
           err.response.data.error_messages.forEach(error => {
             this.formError.push(error)
           })

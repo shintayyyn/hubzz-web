@@ -24,7 +24,6 @@ export function sendMessage(axios, {
   receiver_user_id,
   message
 }) {
-  console.log(receiver_user_id, message)
   return axios.$post(`/api/v1/messages`, {
     receiver_user_id: receiver_user_id,
     message: message

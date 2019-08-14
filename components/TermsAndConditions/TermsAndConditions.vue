@@ -11,6 +11,7 @@
         @focus="setFocus = true"
         @blur="setFocus = false"
         v-html="form.terms_and_conditions"
+        v-model="form.terms_and_conditions"
         class="appearance-none bg-transparent border-none w-full px-2 leading-tight font-bold focus:outline-none"
         style="font-family:Nunito"
       ></textarea>
@@ -19,6 +20,7 @@
 </template>
 <script>
 export default {
+  props: ['terms'],
   data() {
     return {
       form: {
@@ -28,8 +30,7 @@ export default {
     }
   },
   created() {
-    // get from API
-    this.form.terms_and_conditions = ''
+    this.form.terms_and_conditions = this.terms.terms_and_conditions
   }
 }
 </script>

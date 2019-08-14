@@ -60,9 +60,6 @@
 <script>
 export default {
   props: ['specificMandatoryTraining'],
-  created() {
-    console.log(this.specificMandatoryTraining)
-  }
 
 }
 </script>

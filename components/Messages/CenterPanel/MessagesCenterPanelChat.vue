@@ -169,14 +169,11 @@ export default {
     scrollToBottom() {
       this.$nextTick(() => {
         this.$refs.messagesContainer.scrollTop = this.$refs.messagesContainer.scrollHeight;
-        // console.log(this.$refs.messagesContainer.scrollTop, this.$refs.messagesContainer.scrollHeight)
-        // console.log(this.$auth.user)
       });
     },
     scrollHandler(e) {
       if (e.target.scrollTop === 0) {
         this.oldMessageCount = this.messages.length;
-        // console.log(this.oldMessageCount)
         // const firstMessageElementBeforeLoadMore =
         // document.getElementById(
         //   `message-${this.messages.length}`
@@ -217,7 +214,6 @@ export default {
                 message: this.message
               });
               let conversation = this.$store.state.chat.conversations[0];
-              console.log(conversation);
               this.$router.push(`/messages/${conversation.id + 1}`);
             }
             this.search_user = "";
