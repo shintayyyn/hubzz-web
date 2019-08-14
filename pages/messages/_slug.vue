@@ -1,6 +1,6 @@
 <template>
   <section class="flex w-full">
-    <MessagesCenterPanel @fetch-more-messages="fetchMoreMessages" />
+    <MessagesCenterPanel />
   </section>
 </template>
 <script>
@@ -10,31 +10,12 @@ export default {
   components: {
     MessagesCenterPanel
   },
+
   computed: {
     messages() {
+      console.log(window.innerWidth);
       return this.$store.state.chat.messages;
-    }
-  },
-  methods: {
-    async fetchMoreMessages() {
-      const response = await chatApi.fetchActiveConversationMessages(
-        this.$axios,
-        this.messages.length,
-        20,
-        this.$route.params.slug
-      );
-      const messages = response.data.messages.sort((a, b) => b.id - a.id);
-      messages.forEach(message => {
-        this.messages.unshift(message);
-      });
     }
   }
 };
 </script>
-<style scoped>
-/* .info-panel {
-  display: flex;
-  width: 75%;
-} */
-</style>
-

@@ -6,7 +6,7 @@
       placeholder="Type your message here"
       @keydown.enter="send"
     ></textarea>
-    <button class="px-8 bg-blue-500 text-white" @click="send">Send</button>
+    <button class="px-8 bg-blue-500 hover:bg-blue-600 text-white" @click="send">Send</button>
   </div>
 </template>
 <script>
@@ -18,8 +18,7 @@ export default {
   },
   methods: {
     send() {
-      if (!this.message) {
-      } else {
+      if (this.message) {
         this.$store.dispatch("chat/sendMessage", {
           receiver_user_id: null,
           message: this.message

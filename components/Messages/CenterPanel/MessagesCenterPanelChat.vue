@@ -2,11 +2,11 @@
   <div class="panel-chat overflow-y-auto h-full" ref="messagesContainer" @scroll="scrollHandler">
     <div class="flex flex-col h-full">
       <template v-if="messages.length > 0">
-        <transition name="fade" mode="in-out">
+        <transition name="drop" mode="in-out">
           <span class="relative w-full flex justify-center">
             <button
               v-if="loadMore"
-              class="absolute text-center py-4 px-8 shadow-md text-xs text-grey-darkest font-bold my-4 rounded-full focus:outline-none hover:bg-gray-200"
+              class="absolute text-center py-4 px-8 shadow-md text-xs text-grey-darkest font-bold my-4 rounded-full bg-white focus:outline-none hover:bg-gray-200"
               @click="loadMoreMessages"
             >Load More Messages</button>
           </span>
@@ -21,9 +21,9 @@
               >
                 <div class="flex" :class="isReceiver(item) ? '': 'flex-row-reverse'">
                   <img
-                    v-if="isPractice(item)"
+                    :class="item.sender.domain === 'Locum' ? '' : 'hidden'"
                     class="w-10 h-10 rounded-full border"
-                    :src="setAvatar(item)"
+                    :src="setAvatar(item.sender)"
                     width="25"
                   />
                   <div
@@ -40,9 +40,9 @@
               >
                 <div class="flex items-start" :class="isReceiver(item) ? '': 'flex-row-reverse'">
                   <img
-                    v-if="isPractice(item)"
                     class="w-10 h-10 rounded-full border"
-                    :src="setAvatar(item)"
+                    :class="item.sender.domain === 'Locum' ? '' : 'hidden'"
+                    :src="setAvatar(item.sender)"
                     width="25"
                   />
                   <div class="flex text-xs my-1 mx-2 flex-col">
@@ -53,7 +53,7 @@
                     <span
                       class="text-gray-500 py-1"
                       :class="isReceiver(item) ? 'text-right ': ''"
-                    >2hrs ago</span>
+                    >{{ $moment(item.created_at).startOf("day").fromNow() }}</span>
                   </div>
                   <div
                     class="text-xs font-bold mx-1 mt-3 cursor-pointer text-white hover:text-gray-500"
@@ -67,7 +67,7 @@
       </template>
       <template v-if="$route.params.slug === 'new'">
         <div class="relative h-full flex flex-col justify-between pt-20 overflow-y-hidden">
-          <div class="h-full px-20 pt-20">
+          <div class="h-full px-8 md:px-20 md:pt-20">
             <button
               class="absolute top-0 left-0 m-6 flex items-center font-bold focus:outline-none"
               @click="$router.go(-1)"
@@ -122,7 +122,8 @@ export default {
       formError: [],
       selectedUserId: "",
       message: "",
-      loadMore: false
+      loadMore: false,
+      time: ""
     };
   },
   computed: {
@@ -149,10 +150,9 @@ export default {
     messages(value) {
       let index = value.length - this.oldMessageCount;
       let messageSample = document.getElementById(`message-${index}`);
-      if (this.messages.length === 20) {
+      if (value.length === 20) {
         this.scrollToBottom();
       }
-      // console.log(document.getElementById(`message-${value.length - this.oldMessageCount}`))
     }
   },
   methods: {
@@ -164,7 +164,10 @@ export default {
     scrollToBottom() {
       this.$nextTick(() => {
         this.$refs.messagesContainer.scrollTop = this.$refs.messagesContainer.scrollHeight;
-        // console.log(this.$refs.messagesContainer.scrollTop, this.$refs.messagesContainer.scrollHeight)
+        // console.log(
+        //   this.$refs.messagesContainer.scrollTop,
+        //   this.$refs.messagesContainer.scrollHeight
+        // );
       });
     },
     scrollHandler(e) {
@@ -172,16 +175,27 @@ export default {
         e.target.scrollHeight > e.target.clientHeight &&
         e.target.scrollTop === 0
       ) {
-        this.loadMore = true;
+        this.$axios.$get(`/api/v1/conversations/${this.route}`).then(res => {
+          if (this.messages.length === res.data.messages.length) {
+            this.loadMore = false;
+          } else {
+            this.loadMore = true;
+          }
+        });
       }
     },
     loadMoreMessages() {
-      this.oldMessageCount = this.messages.length;
       this.$store.dispatch("chat/fetchMoreMessage", {
         offset: this.messages.length,
         conversation_id: this.$route.params.slug
       });
       this.loadMore = false;
+      let scrollPosition =
+        this.$refs.messagesContainer.scrollHeight -
+        this.$refs.messagesContainer.offsetHeight;
+      this.$nextTick(() => {
+        this.$refs.messagesContainer.scrollTop = this.$refs.messagesContainer.offsetHeight;
+      });
     },
     isReceiver(item) {
       return this.$auth.user.id === item.receiver_id;
@@ -198,18 +212,11 @@ export default {
         }
       }
     },
-    isPractice(item) {
-      if (item.sender.domain === "Practice") {
-        return false;
-      } else {
-        return true;
-      }
-    },
     setAvatar(item) {
-      if (item.sender.avatar === null) {
+      if (item.avatar === null) {
         return "https://via.placeholder.com/300/";
       } else {
-        return item.sender.avatar.file.url;
+        return item.avatar.file.url;
       }
     },
     createMessage() {
@@ -223,12 +230,14 @@ export default {
           .$get(`/api/v1/conversations/?search=${this.search_user}`)
           .then(res => {
             if (res.data.conversations.length === 0) {
-              //if conversation doesn't exist -- create message
               this.$store.dispatch("chat/sendMessage", {
                 receiver_user_id: this.selectedUserId,
                 message: this.message
               });
               let conversation = this.$store.state.chat.conversations[0];
+              if (window.innerWidth < 768) {
+                this.$store.commit("IS_MOBILE", false);
+              }
               this.$router.push(`/messages/${conversation.id + 1}`);
             }
             this.search_user = "";

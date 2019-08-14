@@ -10,9 +10,18 @@ export default {
       state.conversations.push(item)
     })
   },
-  // FETCH_MESSAGES(state, payload) {
-  //   state.messages = payload
-  // },
+  SET_USERS_ONLINE(state, payload) {
+    state.users_online = payload
+  },
+  ADD_USER_ONLINE(state, payload) {
+    state.users_online.push(payload)
+  },
+  DELETE_USER_ONLINE(state, payload) {
+    let index = state.users_online.findIndex(users => users == payload)
+    if (index >= 0) {
+      state.users_online.splice(index, 1, payload)
+    }
+  },
   FETCH_MESSAGES(state, payload) {
     payload.forEach(item => {
       state.messages.unshift(item)

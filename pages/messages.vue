@@ -14,6 +14,7 @@ export default {
   async asyncData({ app, store, params }) {
     const response = await chatApi.fetchConversations(app.$axios, 0, 10);
     const conversations = response.data.conversations;
+
     store.commit("chat/SET_CONVERSATIONS", conversations);
   },
   computed: {
@@ -21,7 +22,6 @@ export default {
       return this.$store.state.socket_id;
     },
     conversations() {
-      // return this.$store.state.chat.conversations;
       return this.$store.getters["chat/getConversations"];
     }
   },
@@ -46,6 +46,9 @@ export default {
   },
   created() {
     this.$store.dispatch("chat/setActiveConversation", this.$route.params.slug);
+    this.$axios.$get(`/api/v1/messages/user-presence`).then(res => {
+      this.$store.commit("chat/SET_USERS_ONLINE", res.data.users);
+    });
   },
   mounted() {
     if (this.socketId) {
@@ -58,7 +61,10 @@ export default {
       return this.$router.push("/");
     }
     if (this.conversations.length > 0 && !this.$route.params.slug) {
-      this.goToFirstConversation();
+      // ! conditional responsive if web view
+      if (window.innerWidth > 768) {
+        this.goToFirstConversation();
+      }
     }
   },
   methods: {
@@ -77,7 +83,13 @@ export default {
   display: flex;
   min-height: 80vh;
   max-height: 80vh;
-  /* border: 2px solid black; */
+  width: 100%;
+}
+
+@media screen and (min-width: 1200px) {
+  .messages-section {
+    width: 53vw;
+  }
 }
 </style>
 
