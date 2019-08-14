@@ -19,13 +19,19 @@
             <AppButton
               :label="'Create Job'"
               @click="$store.commit('calendar/CREATE_JOB_MODAL', true)"
-              :inStyle="'font-size:medium;padding:2px;'"
+              :inStyle="'font-size: small; padding:2px 14px;'"
+              class="mx-2"
             />
           </div>
-          <nuxt-link
+          <AppButton
+            :label="'Messages'"
+            @click="$router.push('/messages')"
+            :inStyle="'font-size: small; padding:2px 14px;'"
+          />
+          <!-- <nuxt-link
             :to="'/messages'"
             class="font-bold text-xs sm:text-sm no-underline px-2 py-1 rounded-lg bg-yellow-500 ml-4"
-          >Messages</nuxt-link>
+          >Messages</nuxt-link>-->
           <div
             class="text-xs xl:text-sm ml-4"
             v-if="$auth.user.domain === 'Locum'"
@@ -39,13 +45,13 @@
 import AppButton from "@/components/Base/AppButton";
 export default {
   components: {
-    AppButton,
+    AppButton
   },
   methods: {
     toggle() {
       this.$store.commit("TOGGLE_SIDEBAR", true);
       document.body.style.overflow = "hidden";
-    },
+    }
   }
 };
 </script>
@@ -75,6 +81,7 @@ export default {
   }
   .header-section {
     margin-bottom: 50px;
+    width: 53vw;
   }
 }
 a {

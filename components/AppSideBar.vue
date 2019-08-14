@@ -15,7 +15,7 @@
             :to="item.route"
             :event="isDisabled(item.route)"
             class="block no-underline p-4"
-            :class="`/${$route.path.split('/')[1]}` == item.route ? 'text-yellow-500' : 'text-black hover:text-gray-300'"
+            :class="`/${$route.path.split('/')[1]}` == item.route ? 'text-yellow-500' : 'text-black hover:text-yellow-600'"
           >
             <span class="font-sans">
               {{item.name}}
@@ -42,7 +42,7 @@
           <button
             @click.prevent="signout_modal = true"
             class="block no-underline p-4 focus:outline-none"
-            :class="`/${$route.path.split('/')[1]}` == '/sign-out' ? 'text-yellow-500' : 'text-black hover:text-gray-300'"
+            :class="`/${$route.path.split('/')[1]}` == '/sign-out' ? 'text-yellow-500' : 'text-black hover:text-yellow-600'"
           >
             <span class="font-sans">Sign Out</span>
           </button>
@@ -69,11 +69,11 @@ export default {
   },
   computed: {
     getLocumJobsBadge() {
-      return this.$store.getters['jobs/getLocumJobsBadge']
+      return this.$store.getters["jobs/getLocumJobsBadge"];
     },
     getPracticeJobsBadge() {
-      return this.$store.getters['jobs/getPracticeJobsBadge']
-    },
+      return this.$store.getters["jobs/getPracticeJobsBadge"];
+    }
   },
   created() {
     if (this.$auth.loggedIn) {
@@ -118,7 +118,13 @@ export default {
           { name: "Availability", route: "/availability" },
           { name: "Jobs", route: "/jobs" },
           { name: "Billing old", route: "/billing" },
-          { name: "Billing", route: this.$auth.user.domain === 'Locum' ? "/locum-billing" : "/practice-billing" },
+          {
+            name: "Billing",
+            route:
+              this.$auth.user.domain === "Locum"
+                ? "/locum-billing"
+                : "/practice-billing"
+          },
           { name: "Invite", route: "/invite" }
         ];
       }
@@ -127,7 +133,7 @@ export default {
   },
   methods: {
     isDisabled(routeName) {
-      return this.$route.path === routeName ? '' : 'click'
+      return this.$route.path === routeName ? "" : "click";
     },
     close() {
       this.$store.commit("TOGGLE_SIDEBAR", false);

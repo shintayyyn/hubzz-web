@@ -6,7 +6,7 @@ export default (ctx, inject) => {
   console.log('API_URL', API_URL)
 
   const socket = io(API_URL, {
-    transports: [ 'websocket' ]
+    transports: ['websocket']
   })
 
   socket.on('connect', () => {
@@ -28,5 +28,5 @@ export default (ctx, inject) => {
   ctx.store.dispatch('socket/init')
   ctx.store.dispatch('jobs/initializeJobListener')
   ctx.store.dispatch('chat/initializeChatListener')
-
+  ctx.store.dispatch('chat/initializeUsersOnline')
 }

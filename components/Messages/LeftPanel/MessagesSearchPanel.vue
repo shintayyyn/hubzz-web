@@ -19,10 +19,10 @@ import debounce from "lodash.debounce";
 export default {
   data() {
     return {
-      search: '',
+      search: "",
       results: [],
       showResults: false
-    }
+    };
   },
   watch: {
     search(value) {
@@ -34,7 +34,7 @@ export default {
     }
   },
   methods: {
-    searchConversation: debounce(function (input) {
+    searchConversation: debounce(function(input) {
       const params = {
         search: input
       };
@@ -47,9 +47,9 @@ export default {
           this.showResults = false;
         }
       });
-    }, 250),
+    }, 250)
   }
-}
+};
 </script>
 <style scoped>
 .messages-search-section {

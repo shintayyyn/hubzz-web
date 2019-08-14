@@ -114,7 +114,7 @@
           :value="value"
           :type="type"
           :placeholder="placeholder"
-          class="focus:outline-none pl-2 pr-4 py-4 font-bold text-xs sm:text-sm w-full rounded-lg"
+          class="focus:outline-none pl-4 pr-6 py-4 font-bold text-xs sm:text-sm w-full rounded-lg"
           :class="error? 'border-red-500':''"
           @input="$emit('input', $event.target.value)"
           :style="inStyle"
@@ -122,7 +122,7 @@
           @blur="$emit('blur')"
           :checked="value"
         />
-        <span class="absolute right-0 px-1 py-2 bg-white">
+        <span class="absolute right-0 px-2 py-2 bg-white">
           <svgicon name="search" height="21" width="21" class="text-gray-500 fill-current" />
         </span>
       </div>
