@@ -60,9 +60,5 @@
 <script>
 export default {
   props: ['specificComplianceDoc'],
-  created() {
-    console.log(this.specificComplianceDoc)
-  }
-
 }
 </script>

@@ -95,7 +95,6 @@ export default {
         }
 
       })
-      console.log('2', this.practiceComplianceDocuments)
 
     })
 

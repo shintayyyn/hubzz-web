@@ -45,7 +45,6 @@ export default {
         this.$axios.$get(`/api/v1/locum/jobs/${this.job.id}`).then(res => {
           this.$emit('viewLocumJob', res.data.job)
         })
-        console.log(this.job)
       } else {
         this.$router.push('/availability')
       }
@@ -54,23 +53,22 @@ export default {
       return type === 'Private' ? 'Private appointment' : this.job.title
     },
     surgeryName(type) {
-      console.log(this.job)
-      return type === 'Private' ? this.job.private_job.private_practice.surgery.name : this.job.platform_job.practice.surgery.name
+      return this.job.surgery_name
     },
     surgeryCode(type) {
       return type === 'Private' ? this.job.private_job.private_practice.surgery.code : this.job.platform_job.practice.surgery.code
     },
     dateStart(type) {
-      return type === 'Private' ? this.job.date_start : this.job.date_start
+      return this.job.date_start
     },
     dateEnd(type) {
-      return type === 'Private' ? this.job.date_end : this.job.date_end
+      return this.job.date_end
     },
     shift(type) {
-      return type === 'Private' ? this.job.shift.name : this.job.shift.name
+      return this.job.shift.name
     },
     description(type) {
-      return type === 'Private' ? this.job.description : this.job.description
+      return this.job.description
     },
     unavailableShift(shifts) {
       if (this.$store.state.calendar.view_type === 'per_month') {

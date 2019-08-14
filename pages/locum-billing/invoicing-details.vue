@@ -232,7 +232,6 @@ export default {
       this.Validate(this.form, notRequired)
       if (!this.formError.length) {
         this.$axios.$put(`/api/v1/locum/me/billing_details`, this.form).then(res => {
-          console.log(res.message)
           this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: [res.message] })
         })
       }

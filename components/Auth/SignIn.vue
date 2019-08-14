@@ -91,7 +91,6 @@ export default {
       try {
         this.formError = [];
         this.Validate(this.form);
-        console.log(this.formError);
 
         if (!this.formError.length) {
           this.$axios
@@ -101,7 +100,6 @@ export default {
               //  if(res.data.user.is_email_verified === false){
               //   this.formError.push({ field: "email", message: "Email is not yet verified. Check your email and verify your account first." })
               // } else{
-              console.log(res);
               const token = res.data.token.token;
               this.$axios.setToken(token, "Bearer");
               this.$auth.$storage.setUniversal(

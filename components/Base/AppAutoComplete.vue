@@ -112,7 +112,6 @@ export default {
           .then(res => {
             if (res.data.conversations.length > 0) {
               let id = res.data.conversations[0].id;
-              console.log(id);
               this.$router.push(`/messages/${id}`);
             }
           });

@@ -71,9 +71,9 @@ export default {
     this.sender = 'Mr. Kenneth Alvin Abad'
   },
   methods: {
-    send() {
-      console.log(this.form)
-    }
+    // send() {
+    //   console.log(this.form)
+    // }
   }
 }
 </script>

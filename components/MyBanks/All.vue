@@ -147,10 +147,9 @@ export default {
       this.loading = true
       let offset = 0
       offset = this.perPage * (parseInt(this.$route.query.current_page) - 1)
-      if (!this.profession_id) {
-        this.$axios.$get(`/api/v1/practice/locums?&limit=${this.perPage}&offset=${offset}`).then(res => {
+      if(!this.profession_id){
+        this.$axios.$get(`/api/v1/practice/locums?limit=${this.perPage}&offset=${offset}`).then(res => {
           this.locums = res.data.users
-          console.log(this.locums)
         })
       } else {
         this.$axios.$get(`/api/v1/practice/locums?profession_id=${this.profession_id}&limit=${this.perPage}&offset=${offset}`).then(res => {
@@ -163,13 +162,11 @@ export default {
       let locum = this.locums.find(locum => locum.id === id)
       if (!locum.is_favorite) {
         this.$axios.$post(`/api/v1/practice/locums/${id}/favorite`).then(res => {
-          console.log(res)
           locum.is_favorite = !locum.is_favorite
           this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: ['Added to favourites'] })
         })
       } else {
         this.$axios.$delete(`/api/v1/practice/locums/${id}/favorite`).then(res => {
-          console.log(res)
           locum.is_favorite = !locum.is_favorite
           this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: ['Remove to favourites'] })
         })

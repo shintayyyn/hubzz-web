@@ -188,7 +188,6 @@ export default {
         this.formError = [];
         // this.Validate(this.form, ['title', 'suffix'])
         // this.ValidateSamePassword(this.form.password, this.form.password_confirmation)
-        console.log(this.form);
         if (!this.formError.length) {
           if (this.form.practice_list < 1) {
             this.formError.push({

@@ -434,19 +434,15 @@ export default {
       }
     },
     showComplianceDoc(id) {
-      console.log("docid", id)
       this.$axios.$get(`/api/v1/locum/locum-detail-compliance-documents/${id}`).then(res => {
         this.specificComplianceDoc = res.data.locum_detail_compliance_document
         this.complianceModal = true
-        console.log(this.complianceModal)
       })
     },
     showMandatoryTraining(id) {
-      console.log("mandatorydocid", id)
       this.$axios.$get(`/api/v1/locum/locum-detail-mandatory-trainings/${id}`).then(res => {
         this.specificMandatoryTraining = res.data.locum_detail_mandatory_training
         this.mandatoryTrainingModal = true
-        console.log(this.mandatoryTrainingModal)
       })
 
     },

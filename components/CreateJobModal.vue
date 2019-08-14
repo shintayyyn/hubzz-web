@@ -569,10 +569,6 @@ export default {
         }
       }
     },
-    'form.mandatory_training_id'(value) {
-      console.log(value)
-      console.log('form mandatory training', this.form.mandatory_training_id)
-    }
   },
   created() {
     // get practice lists
@@ -715,8 +711,6 @@ export default {
           'selection_date',
           'favorite_only_until'])
 
-      console.log('errors', this.formError.length)
-      console.log('form', this.form)
 
       if (this.formError.length == 0) {
         this.form.clinical_system_id = this.form.clinical_system_id.map(
@@ -747,7 +741,6 @@ export default {
           ? (this.form.unpaid_breaks_in_minutes = this.unpaid_breaks)
           : (this.form.unpaid_breaks_in_minutes = this.form.unpaid_breaks_in_minutes);
         this.$axios.$post(`/api/v1/practice/jobs`, this.form).then(res => {
-          console.log(res);
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
@@ -756,7 +749,6 @@ export default {
           this.$emit("close");
         });
       } else {
-        console.log(this.formError)
         this.showErrorModal = true
       }
     }

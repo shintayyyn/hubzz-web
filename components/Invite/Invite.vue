@@ -4,7 +4,7 @@
       v-model="form.email"
       :type="'multiemail'"
       :name="'email'"
-      :label="`Email addresses to ${$route.query.invite_domain.toUpperCase()}`"
+      :label="`Email addresses to ${domain}`"
       :placeholder="''"
       :info="'Seperate with commas'"
       :error="formError.find(error => error.field === 'email')"
@@ -52,6 +52,11 @@ export default {
     },
     $route(to, from) {
       this.formError = []
+    },
+  },
+  computed: {
+    domain() {
+      return this.$route.query && this.$route.query.invite_domain ? this.$route.query.invite_domain.toUpperCase() : ''
     }
   },
   methods: {
@@ -59,7 +64,8 @@ export default {
       this.formError = []
       this.Validate(this.form)
       if (!this.formError.length) {
-        this.$axios.$post(`api/v1/invite`, { emails: this.form.email, domain: 'Locums' }).then(res => {
+        let domain = this.$route.query.invite_domain === 'locums' ? 'Locum' : 'Practice'
+        this.$axios.$post(`api/v1/invite`, { emails: this.form.email.split(","), domain }).then(res => {
           this.form.email = ''
           this.$router.push('/invite?invite=success')
         })

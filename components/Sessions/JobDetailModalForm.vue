@@ -130,7 +130,6 @@ import { gmapApi } from 'vue2-google-maps'
 export default {
   props: ['job'],
   created() {
-    console.log(this.job)
   },
   computed: {
     google: gmapApi,

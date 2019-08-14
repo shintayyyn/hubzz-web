@@ -391,7 +391,6 @@ export default {
     },
 
     "form.practice_type_id"(value) {
-      console.log(this.form.practice_type_id);
 
       // splice from formerror
       let index = this.formError.findIndex(

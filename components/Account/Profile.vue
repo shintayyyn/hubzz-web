@@ -292,20 +292,6 @@ export default {
       return this.$store.getters["signUp/getPracticeTypes"];
     }
   },
-  watch: {
-    per_hour: function () {
-      console.log(this.per_hour)
-    },
-
-    per_half_day_session: function () {
-      console.log(this.per_half_day_session)
-    },
-
-    per_whole_day_session: function () {
-      console.log(this.per_whole_day_session)
-    },
-
-  },
   created() {
     this.$axios.$get("/api/v1/me").then(res => {
       this.avatar = res.data.user.avatar;
