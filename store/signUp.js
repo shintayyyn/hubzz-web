@@ -24,6 +24,7 @@ export const state = () => ({
   clinical_systems: [],
   spoken_languages: [],
   practice_types: [],
+  mandatory_trainings: [],
   account_details: {
     title: '',
     first_name: '',
@@ -132,6 +133,9 @@ export const mutations = {
     payload.forEach((item) => {
       state.practice_types.push(item)
     })
+  },
+  SET_MANDATORY_TRAININGS(state, payload) {
+    state.mandatory_trainings = payload
   },
   SET_ACCOUNT_DETAILS(state, payload) {
     state.account_details.title = payload.title
@@ -245,6 +249,11 @@ export const actions = {
       commit('SET_PRACTICE_TYPES', res.data.practice_types)
     })
   },
+  getMandatoryTrainings({commit}) {
+    this.$axios.$get('/api/v1/mandatory-trainings').then((res) => {
+      commit('SET_MANDATORY_TRAININGS', res.data.mandatory_trainings)
+    })
+  },
   registeredPractice({state, commit}) {
     let form = {}
     form = {...state.practice_details, ...state.practice_account_details}
@@ -286,7 +295,6 @@ export const actions = {
     this.$axios
       .$post(`/api/v1/register/locum`, form)
       .then((res) => {
-        console.log(res)
         commit('CLEAR_FORM_DETAILS')
         this.$router.push('/sign-up/success')
       })
@@ -392,6 +400,11 @@ export const getters = {
   getPracticeTypes(state) {
     return state.practice_types.map((item) => {
       return {value: item.id, label: item.name}
+    })
+  },
+  getMandatoryTrainings(state) {
+    return state.mandatory_trainings.map((item) => {
+      return { value: item.id, label: item.name }
     })
   }
 }

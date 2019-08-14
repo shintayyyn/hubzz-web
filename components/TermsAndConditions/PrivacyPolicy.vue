@@ -1,6 +1,9 @@
 <template>
   <div class="rounded-lg shadow-lg pt-10 px-5 pb-5 font-bold text-sm">
-    <div class="mb-4 border-b border-b-2 border-grey py-2" :class="{'border-yellow-400':setFocus}">
+    <div
+      class="mb-4 border-b border-b-2 border-gray-400 py-2"
+      :class="{'border-yellow-500':setFocus}"
+    >
       <textarea
         rows="30"
         name="privacy_policy"
@@ -16,6 +19,7 @@
 </template>
 <script>
 export default {
+  props: ['terms'],
   data() {
     return {
       form: {
@@ -25,8 +29,7 @@ export default {
     }
   },
   created() {
-    // get from API
-    this.form.privacy_policy = ''
+    this.form.privacy_policy = this.terms.privacy_policy
   }
 }
 </script>

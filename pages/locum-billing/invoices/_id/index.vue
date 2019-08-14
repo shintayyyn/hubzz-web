@@ -1,7 +1,7 @@
 <template>
   <div class="invoice-modal shadow-lg">
-    <section class="bg-white">
-      <div class="p-8 max-w-xl h-screen">
+    <section class="bg-gray-800">
+      <div class="p-8 max-w-3xl h-screen">
         <div class="flex flex-row flex-wrap justify-start">
           <nuxt-link to="/locum-billing/invoices" class="cursor-pointer">
             <svgicon name="left-arrow" height="32" width="32" />
@@ -28,7 +28,6 @@ export default {
       }
       const response = await app.$axios.get(`/api/v1/locum/invoices/${params.id}`)
       const invoice = response.data && response.data.data && response.data.data.invoice ? response.data.data.invoice : null
-      console.log('invoice', invoice)
 
       if (process.client) {
         document.body.style.cursor = 'auto'
@@ -38,15 +37,12 @@ export default {
         invoice,
       }
     } catch (err) {
-      console.log('locum-invoice create err', err.response || err)
-      console.log('locum-invoice create error', {
-        statusCode: err.status || 500,
-        message: err.message || 'Something went wrong!',
-      })
-      error({
-        statusCode: err.status || 500,
-        message: err.message || 'Something went wrong!',
-      })
+      if (err && err.response.status === 404) {
+        return error({ status: 404, message: 'This page could not be found' })
+      } else if (err & err.response.status === 500) {
+        return error({ status: 500, message: 'Something went wrong!' })
+      }
+      throw err
     }
   },
 
@@ -119,5 +115,5 @@ export default {
   opacity: 0.5;
   color: #ccc;
 }
-/* absolute bg-gray-200 w-full h-full top-0 bottom-0 left-0 right-0 */
+/* absolute bg-gray-300 w-full h-full top-0 bottom-0 left-0 right-0 */
 </style>

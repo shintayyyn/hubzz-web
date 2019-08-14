@@ -18,7 +18,7 @@
         <div
           class="practice-doc-card rounded-lg shadow-lg p-4 mt-4"
           v-for="item in practiceComplianceDocuments"
-          :class="item.existingPracticeComplianceDocument ? 'bg-orange-300':'bg-blue-300' "
+          :class="item.existingPracticeComplianceDocument ? 'bg-orange-300':'bg-blue-500' "
           :key="item.practiceDocumentType.id"
           @click="item.existingPracticeComplianceDocument ? show(item.existingPracticeComplianceDocument.id) : ''"
         >
@@ -95,7 +95,6 @@ export default {
         }
 
       })
-      console.log('2', this.practiceComplianceDocuments)
 
     })
 

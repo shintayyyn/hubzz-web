@@ -3,7 +3,7 @@
     <div class="confirmation-shield" v-if="confirmation_modal"></div>
     <transition name="drop" mode="out-in">
       <div class="confirmation-modal flex justify-center" v-if="confirmation_modal">
-        <div class="border-solid rounded-b-lg bg-yellow-400 py-2 px-24">
+        <div class="border-solid rounded-b-lg bg-yellow-500 py-2 px-24">
           <div class="flex justify-center">
             <svgicon name="alert" height="20" width="20" />
             <div class="text-sm ml-2">Delete this appointment?</div>
@@ -11,14 +11,14 @@
           <div class="flex justify-center my-2">
             <div class="mx-2">
               <button
-                class="border border-solid bg-yellow-400 hover:text-white focus:outline-none text-black font-bold py-5 rounded-lg"
+                class="border border-solid bg-yellow-500 hover:text-white focus:outline-none text-black font-bold py-5 rounded-lg"
                 style="width:100px;"
                 @click.prevent="remove"
               >Yes</button>
             </div>
             <div class="mx-2">
               <button
-                class="border border-solid bg-yellow-400 hover:text-white focus:outline-none text-black font-bold py-5 rounded-lg"
+                class="border border-solid bg-yellow-500 hover:text-white focus:outline-none text-black font-bold py-5 rounded-lg"
                 @click.prevent="confirmation_modal = false"
                 style="width:100px;"
               >Cancel</button>
@@ -27,7 +27,7 @@
         </div>
       </div>
     </transition>
-    <div class="p-8 max-w-xl">
+    <div class="p-8 max-w-3xl">
       <div @click="close" class="cursor-pointer">
         <svgicon name="left-arrow" height="32" width="32" />
       </div>
@@ -196,7 +196,6 @@ export default {
     this.getShifts()
     this.getRateType()
     if (this.job) {
-      console.log(this.job)
       this.form.private_practice_id = this.job.private_job.private_practice.id
       this.form.date_start = this.job.date_start
       this.form.date_end = this.job.date_end
@@ -278,7 +277,6 @@ export default {
       this.Validate(this.form, ['description'])
       if (!this.formError.length) {
         this.$axios.$put(`/api/v1/locum/jobs/${this.job.id}`, this.form).then(res => {
-          console.log(res)
 
           if (res.data.job.locum_status === 'Current') {
             this.$store.commit('jobs/UPDATE_LOCUM_ALLOCATED_JOB', res.data.job)
@@ -288,7 +286,6 @@ export default {
           this.close()
           this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: [`${res.message}`] })
         }).catch(err => {
-          console.log(err.response)
           err.response.data.error_messages.forEach(error => {
             this.formError.push(error)
           })

@@ -1,6 +1,9 @@
 <template>
   <div class="rounded-lg shadow-lg pt-10 px-5 pb-5 font-bold text-sm">
-    <div class="mb-4 border-b border-b-2 border-grey py-2" :class="{'border-yellow-400':setFocus}">
+    <div
+      class="mb-4 border-b border-b-2 border-gray-400 py-2"
+      :class="{'border-yellow-500':setFocus}"
+    >
       <textarea
         rows="30"
         name="terms_and_conditions"
@@ -8,6 +11,7 @@
         @focus="setFocus = true"
         @blur="setFocus = false"
         v-html="form.terms_and_conditions"
+        v-model="form.terms_and_conditions"
         class="appearance-none bg-transparent border-none w-full px-2 leading-tight font-bold focus:outline-none"
         style="font-family:Nunito"
       ></textarea>
@@ -16,6 +20,7 @@
 </template>
 <script>
 export default {
+  props: ['terms'],
   data() {
     return {
       form: {
@@ -25,8 +30,7 @@ export default {
     }
   },
   created() {
-    // get from API
-    this.form.terms_and_conditions = ''
+    this.form.terms_and_conditions = this.terms.terms_and_conditions
   }
 }
 </script>

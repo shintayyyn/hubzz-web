@@ -1,5 +1,5 @@
 <template>
-  <div class="p-8 max-w-2xl">
+  <div class="p-8 max-w-5xl">
     <div @click="$emit('close')" class="cursor-pointer">
       <svgicon name="left-arrow" height="32" width="32" />
     </div>
@@ -7,12 +7,12 @@
       <span class="font-bold text-md sm:text-lg">{{practice.surgery.name}}</span>
       <span
         class="font-bold text-md sm:text-lg mx-4 -mt-2"
-        :class="practice.practice_parent ? 'bg-blue-300light p-2 rounded' : 'bg-red-200 p-2 rounded'"
+        :class="practice.practice_parent ? 'bg-blue-500 p-2 rounded' : 'bg-red-400 p-2 rounded'"
       >{{practice.practice_parent ? 'SPOKE': 'HUB'}}</span>
     </div>
 
-    <div class="flex flex-wrap -mx-1 overflow-hidden">
-      <div class="my-1 px-1 xl:w-1/3 sm:w-full overflow-hidden">
+    <div class="flex flex-row flex-wrap justify-start overflow-hidden">
+      <div class="my-1 w-full lg:w-1/3 px-1 overflow-hidden">
         <div class="m-4 shadow-lg p-2 rounded-lg">
           <div>
             <div class="font-bold my-4 text-sm sm:text-lg">Contact Number</div>
@@ -24,7 +24,7 @@
             <div class="font-bold my-4 text-sm sm:text-lg">Practice Types</div>
             <div v-if="practice.practice_types">
               <p
-                class="inline-flex m-1 rounded-lg text-sm text-black p-2 bg-yellow-400"
+                class="inline-flex m-1 rounded-lg text-sm text-black p-2 bg-yellow-500"
                 v-for="item in practice.practice_types"
                 :key="item.id"
               >{{item ? item.name:null}}</p>
@@ -40,7 +40,7 @@
           </div>
         </div>
       </div>
-      <div class="my-1 px-1 xl:w-2/3 sm:w-full overflow-hidden">
+      <div class="my-1 w-full lg:w-2/3 px-1 overflow-hidden">
         <div class="m-4 p-4 shadow-lg rounded-lg">
           <div>
             <span class="font-bold text-md sm:text-lg">Location</span>
@@ -65,9 +65,6 @@
 import { gmapApi } from 'vue2-google-maps'
 export default {
   props: ['practice'],
-  created() {
-    console.log(this.practice)
-  },
   computed: {
     google: gmapApi,
     latLang() {

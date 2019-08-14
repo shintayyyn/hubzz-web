@@ -1,12 +1,9 @@
 <template>
   <div class="invoice-modal shadow-lg">
     <section class="bg-white">
-      <div class="p-8 max-w-xl h-screen">
+      <div class="p-8 max-w-3xl h-screen">
         <div class="flex flex-row flex-wrap justify-start">
-          <nuxt-link 
-            to="/locum-billing"
-            class="cursor-pointer"
-          >
+          <nuxt-link to="/locum-billing" class="cursor-pointer">
             <svgicon name="left-arrow" height="32" width="32" />
           </nuxt-link>
           <div
@@ -20,7 +17,7 @@
         </div>
 
         <div class="flex flex-row flex-wrap justify-start items-center my-4">
-          <label class="mx-1 py-2 px-3">Type: </label>
+          <label class="mx-1 py-2 px-3">Type:</label>
           <button
             :class="type === 'Private' ? 'bg-yellow-dark' : ''"
             class="text-xs sm:text-sm mx-1 py-2 px-3 border-2 rounded-lg font-bold flex items-center"
@@ -45,11 +42,13 @@
               <div>UTR 7337#4*OR</div>
             </div>
             <div class="flex justify-between my-2">
-              <div class="text-xs sm:text-sm text-left rounded-lg border-2 border-black p-2 sm:w-1/2">
+              <div
+                class="text-xs sm:text-sm text-left rounded-lg border-2 border-black p-2 sm:w-1/2"
+              >
                 <section>
                   <!-- input select -->
                   <div class="flex flex-col py-2 mb-6">
-                    <div class="relative flex flex-row flex-nowrap justify-between">
+                    <div class="relative flex flex-row flex-no-wrap justify-between">
                       <label class="text-xs sm:text-base py-1">To: Accounts Department</label>
                     </div>
                     <div class="flex flex-row justify-start mt-1">
@@ -90,7 +89,7 @@
               <section>
                 <!-- input select -->
                 <div class="flex flex-col py-2 mb-6">
-                  <div class="relative flex flex-row flex-nowrap justify-between">
+                  <div class="relative flex flex-row flex-no-wrap justify-between">
                     <label class="text-xs sm:text-base py-1">Select a job to add to this invoice</label>
                   </div>
                   <div class="flex flex-row justify-start mt-1">
@@ -114,7 +113,7 @@
           <div class="my-4 text-xs sm:text-sm">Select a job to add to this invoice</div>
           <table class="w-full">
             <thead>
-              <tr class="text-center bg-grey-darkest">
+              <tr class="text-center bg-gray-900">
                 <th class="text-white" style="width:75%">Description</th>
                 <th class="text-white" style="width:20%">Total</th>
                 <th style="width:5%"></th>
@@ -140,7 +139,7 @@
                 </td>
                 <td style="width:5%">
                   <span
-                    class="cursor-pointer m-1 rounded-full bg-grey-darkest text-white font-semibold text-xl px-2 py-0"
+                    class="cursor-pointer m-1 rounded-full bg-gray-900 text-white font-semibold text-xl px-2 py-0"
                     @click="removeItem(index)"
                   >
                     <span class="text-2xl">-</span>
@@ -152,14 +151,14 @@
                 <td style="width:20%"></td>
                 <td style="width:5%">
                   <span
-                    class="cursor-pointer m-1 rounded-full bg-grey-darkest text-white font-semibold text-xl px-2"
+                    class="cursor-pointer m-1 rounded-full bg-gray-900 text-white font-semibold text-xl px-2"
                     @click="addItem"
                   >+</span>
                 </td>
               </tr>
               <tr>
                 <td colspan="2">
-                  <div class="flex flex-row flex-nowrap justify-between">
+                  <div class="flex flex-row flex-no-wrap justify-between">
                     <div class="w-full pr-1">
                       <AppDate
                         v-model="form.date_start"
@@ -206,271 +205,271 @@
 </template>
 
 <script>
-  import AppDate from "@/components/Base/AppDate";
-  import AppSelect from "@/components/Base/AppSelect";
+import AppDate from "@/components/Base/AppDate";
+import AppSelect from "@/components/Base/AppSelect";
 
-  export default {
+export default {
 
-    transition: {
-      name: 'slide',
-      mode: 'out-in'
-    },
+  transition: {
+    name: 'slide',
+    mode: 'out-in'
+  },
 
-    async asyncData ({ app, error }) {
-      try {
-        if (process.client) {
-          document.body.style.cursor = 'wait'
-        }
+  async asyncData({ app, error }) {
+    try {
+      if (process.client) {
+        document.body.style.cursor = 'wait'
+      }
 
-        const type = 'Platform'
+      const type = 'Platform'
 
+      const params = {
+        invoiceable: true,
+        type,
+        limit: 1000000,
+        offset: 0,
+      }
+
+      const response = await app.$axios.get('/api/v1/locum/surgeries', { params })
+
+      const surgeries = response.data && response.data.data && response.data.data.surgeries ? response.data.data.surgeries : []
+
+      console.log('surgeries', surgeries)
+
+      if (process.client) {
+        document.body.style.cursor = 'auto'
+      }
+
+      return {
+        type,
+        surgeries,
+      }
+    } catch (err) {
+      console.log('locum-billing create err', err.response || err)
+      console.log('locum-billing create error', {
+        statusCode: err.status || 500,
+        message: err.message || 'Something went wrong!',
+      })
+      error({
+        statusCode: err.status || 500,
+        message: err.message || 'Something went wrong!',
+      })
+    }
+  },
+
+  components: {
+    AppDate,
+    AppSelect
+  },
+
+  computed: {
+    amount() {
+      if (this.rowData && this.rowData.length > 0) {
+        let amount = 0;
+        this.rowData.forEach(item => {
+          if (item.total) {
+            amount += parseInt(item.total);
+          }
+        });
+        return amount;
+      }
+    }
+  },
+
+  data() {
+    return {
+      type: null,
+      surgeries: [],
+      selectedSurgery: null,
+      jobParts: [],
+
+      practices: [],
+      practice_id: "",
+      address: {
+        line_1: "",
+        line_2: "",
+        line_3: "",
+        post_code: ""
+      },
+      jobs: [],
+      invoice: "",
+      rowData: [],
+      description: "",
+      total: "",
+      form: {
+        date_start: null,
+        date_end: null
+      },
+      formError: []
+    };
+  },
+
+  watch: {
+    type() {
+      this.surgeries = []
+      this.selectedSurgery = null
+
+      if (this.type === 'Private' || this.type === 'Platform') {
         const params = {
           invoiceable: true,
-          type,
+          type: this.type,
           limit: 1000000,
           offset: 0,
         }
 
-        const response = await app.$axios.get('/api/v1/locum/surgeries', { params })
+        this.$axios.get('/api/v1/locum/surgeries', { params }).then((response) => {
+          const surgeries = response.data && response.data.data && response.data.data.surgeries ? response.data.data.surgeries : []
 
-        const surgeries = response.data && response.data.data && response.data.data.surgeries ? response.data.data.surgeries : []
+          console.log('surgeries', surgeries)
 
-        console.log('surgeries', surgeries)
-
-        if (process.client) {
-          document.body.style.cursor = 'auto'
-        }
-
-        return {
-          type,
-          surgeries,
-        }
-      } catch (err) {
-        console.log('locum-billing create err', err.response || err)
-        console.log('locum-billing create error', {
-          statusCode: err.status || 500,
-          message: err.message || 'Something went wrong!',
-        })
-        error({
-          statusCode: err.status || 500,
-          message: err.message || 'Something went wrong!',
+          this.surgeries = surgeries
+        }).catch((err) => {
+          console.log('err', err.response || err)
         })
       }
     },
 
-    components: {
-      AppDate,
-      AppSelect
-    },
+    selectedSurgery() {
+      this.jobParts = []
 
-    computed: {
-      amount() {
-        if (this.rowData && this.rowData.length > 0) {
-          let amount = 0;
-          this.rowData.forEach(item => {
-            if (item.total) {
-              amount += parseInt(item.total);
-            }
-          });
-          return amount;
+      if (this.selectedSurgery) {
+        const params = {
+          locum_status: 'Completed',
+          type: this.type,
+          surgery_id: this.selectedSurgery.id,
+          limit: 1000000,
+          offset: 0,
+          order_by: 'created_at:desc'
         }
+
+        this.$axios.get('/api/v1/locum/job-parts', { params }).then((response) => {
+          const jobParts = response.data && response.data.data && response.data.data.job_parts ? response.data.data.job_parts : []
+
+          console.log('jobParts', jobParts)
+
+          this.jobParts = jobParts
+        }).catch((err) => {
+          console.log('err', err.response || err)
+        })
       }
-    },
 
-    data() {
-      return {
-        type: null,
-        surgeries: [],
-        selectedSurgery: null,
-        jobParts: [],
-
-        practices: [],
-        practice_id: "",
-        address: {
-          line_1: "",
-          line_2: "",
-          line_3: "",
-          post_code: ""
+      this.jobs = [
+        {
+          label:
+            "Job number P0000000099 Private appointment at £1 per hour from 26/04/2019 / OOH / Total hours at 1",
+          value:
+            "Job number P0000000099 Private appointment at £1 per hour from 26/04/2019 / OOH / Total hours at 1"
         },
-        jobs: [],
-        invoice: "",
-        rowData: [],
-        description: "",
-        total: "",
-        form: {
-          date_start: null,
-          date_end: null
+        {
+          label:
+            "Job number P0000000109 Private appointment at £43 per hour from 26/04/2019 / AM / Total hours at 5",
+          value:
+            "Job number P0000000109 Private appointment at £43 per hour from 26/04/2019 / AM / Total hours at 5"
         },
-        formError: []
-      };
+        {
+          label:
+            "Job number P0000000129 Private appointment at £9 per hour from 26/04/2019 / OOH / Total hours at 51",
+          value:
+            "Job number P0000000129 Private appointment at £9 per hour from 26/04/2019 / OOH / Total hours at 51"
+        },
+        {
+          label:
+            "Job number P0000000090 Private appointment at £2 per hour from 26/04/2019 / PM / Total hours at 4",
+          value:
+            "Job number P0000000090 Private appointment at £2 per hour from 26/04/2019 / PM / Total hours at 4"
+        },
+        {
+          label:
+            "Job number P0000000095 Private appointment at £76 per hour from 26/04/2019 / Whole Day / Total hours at 27",
+          value:
+            "Job number P0000000095 Private appointment at £76 per hour from 26/04/2019 / Whole Day / Total hours at 27"
+        }
+      ];
     },
-
-    watch: {
-      type () {
-        this.surgeries = []
-        this.selectedSurgery = null
-
-        if (this.type === 'Private' || this.type === 'Platform') {
-          const params = {
-            invoiceable: true,
-            type: this.type,
-            limit: 1000000,
-            offset: 0,
-          }
-
-          this.$axios.get('/api/v1/locum/surgeries', { params }).then((response) => {
-            const surgeries = response.data && response.data.data && response.data.data.surgeries ? response.data.data.surgeries : []
-
-            console.log('surgeries', surgeries)
-
-            this.surgeries = surgeries
-          }).catch((err) => {
-            console.log('err', err.response || err)
-          })
-        }
-      },
-
-      selectedSurgery () {
-        this.jobParts = []
-
-        if (this.selectedSurgery) {
-          const params = {
-            locum_status: 'Completed',
-            type: this.type,
-            surgery_id: this.selectedSurgery.id,
-            limit: 1000000,
-            offset: 0,
-            order_by: 'created_at:desc'
-          }
-
-          this.$axios.get('/api/v1/locum/job-parts', { params }).then((response) => {
-            const jobParts = response.data && response.data.data && response.data.data.job_parts ? response.data.data.job_parts : []
-
-            console.log('jobParts', jobParts)
-
-            this.jobParts = jobParts
-          }).catch((err) => {
-            console.log('err', err.response || err)
-          })
-        }
-
-        this.jobs = [
-          {
-            label:
-              "Job number P0000000099 Private appointment at £1 per hour from 26/04/2019 / OOH / Total hours at 1",
-            value:
-              "Job number P0000000099 Private appointment at £1 per hour from 26/04/2019 / OOH / Total hours at 1"
-          },
-          {
-            label:
-              "Job number P0000000109 Private appointment at £43 per hour from 26/04/2019 / AM / Total hours at 5",
-            value:
-              "Job number P0000000109 Private appointment at £43 per hour from 26/04/2019 / AM / Total hours at 5"
-          },
-          {
-            label:
-              "Job number P0000000129 Private appointment at £9 per hour from 26/04/2019 / OOH / Total hours at 51",
-            value:
-              "Job number P0000000129 Private appointment at £9 per hour from 26/04/2019 / OOH / Total hours at 51"
-          },
-          {
-            label:
-              "Job number P0000000090 Private appointment at £2 per hour from 26/04/2019 / PM / Total hours at 4",
-            value:
-              "Job number P0000000090 Private appointment at £2 per hour from 26/04/2019 / PM / Total hours at 4"
-          },
-          {
-            label:
-              "Job number P0000000095 Private appointment at £76 per hour from 26/04/2019 / Whole Day / Total hours at 27",
-            value:
-              "Job number P0000000095 Private appointment at £76 per hour from 26/04/2019 / Whole Day / Total hours at 27"
-          }
-        ];
-      },
-      invoice(value) {
-        if (value) {
-          this.rowData.push({ description: value, total: 5 });
-        }
-        this.invoice = null;
+    invoice(value) {
+      if (value) {
+        this.rowData.push({ description: value, total: 5 });
       }
-    },
+      this.invoice = null;
+    }
+  },
 
-    created() {
-      this.$axios.$get(`/api/v1/locum/private-practices`).then(res => {
-        this.practices = [];
-        res.data.private_practices.forEach(practice => {
-          this.practices.push({
-            label: practice.surgery.name,
-            value: practice.id
-          });
+  created() {
+    this.$axios.$get(`/api/v1/locum/private-practices`).then(res => {
+      this.practices = [];
+      res.data.private_practices.forEach(practice => {
+        this.practices.push({
+          label: practice.surgery.name,
+          value: practice.id
         });
       });
-    },
+    });
+  },
 
-    mounted () {
-      document.body.style.overflow = 'hidden'
-    },
+  mounted() {
+    document.body.style.overflow = 'hidden'
+  },
 
-    destroyed () {
-      document.body.style.overflow = 'auto'
-    },
+  destroyed() {
+    document.body.style.overflow = 'auto'
+  },
 
-    methods: {
-      save() {
-        let invoiceForm = {};
-        invoiceForm.practice_id = this.practice_id;
-        invoiceForm.total_amount = this.amount;
-        invoiceForm.invoices = this.rowData;
-        invoiceForm.date_start = this.form.date_start;
-        invoiceForm.date_end = this.form.date_end;
-        this.$emit("add", invoiceForm);
-      },
-      archive() {},
-      removeItem(index) {
-        this.rowData.splice(index, 1);
-      },
-      addItem() {
-        let my_object = {
-          description: this.description,
-          total: this.total
-        };
-        this.rowData.push(my_object);
-        this.description = "";
-        this.total = "";
-      }
+  methods: {
+    save() {
+      let invoiceForm = {};
+      invoiceForm.practice_id = this.practice_id;
+      invoiceForm.total_amount = this.amount;
+      invoiceForm.invoices = this.rowData;
+      invoiceForm.date_start = this.form.date_start;
+      invoiceForm.date_end = this.form.date_end;
+      this.$emit("add", invoiceForm);
+    },
+    archive() { },
+    removeItem(index) {
+      this.rowData.splice(index, 1);
+    },
+    addItem() {
+      let my_object = {
+        description: this.description,
+        total: this.total
+      };
+      this.rowData.push(my_object);
+      this.description = "";
+      this.total = "";
     }
   }
+}
 </script>
 
 <style scoped>
+.invoice-modal {
+  position: fixed;
+  top: 0;
+  right: 0;
+  margin-right: 0%;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  /* border-left: solid 2px #edf2f7; */
+  transition: all 0.3s ease-in-out;
+  /* background-color: rgb(80, 80, 80); */
+  background: #fff;
+  z-index: 512;
+}
+@media screen and (min-width: 1200px) {
   .invoice-modal {
-    position: fixed;
-    top: 0;
-    right: 0;
-    margin-right: 0%;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    /* border-left: solid 2px #edf2f7; */
-    transition: all 0.3s ease-in-out;
-    /* background-color: rgb(80, 80, 80); */
-    background: #fff;
-    z-index: 512;
+    width: 70%;
   }
-  @media screen and (min-width: 1200px) {
-    .invoice-modal {
-      width: 70%;
-    }
-  }
-  .save-button {
-    border-color: #ecc94b;
-    background-color: #ecc94b;
-  }
-  .save-button:hover {
-    color: #fff;
-    /* background-color: rgb(80, 80, 80); */
-    background-color: #d1b244;
-    border-color: #d1b244;
-    cursor: pointer;
-  }
+}
+.save-button {
+  border-color: #ecc94b;
+  background-color: #ecc94b;
+}
+.save-button:hover {
+  color: #fff;
+  /* background-color: rgb(80, 80, 80); */
+  background-color: #d1b244;
+  border-color: #d1b244;
+  cursor: pointer;
+}
 </style>

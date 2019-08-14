@@ -6,22 +6,22 @@
     >
       <span
         v-if="hasPracticeCurrentJobs(item.fullDate, 'AM')"
-        class="bg-green-200 text-green-200 w-full h-2 sm:h-3 lg:h-4 rounded-bl-lg"
+        class="bg-green-400 text-green-400 w-full h-2 sm:h-3 lg:h-4 rounded-bl-lg"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
       <span
         v-if="hasPracticeCurrentJobs(item.fullDate, 'PM')"
-        class="bg-green-200 text-green-200 w-full h-2 sm:h-3 lg:h-4"
+        class="bg-green-400 text-green-400 w-full h-2 sm:h-3 lg:h-4"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
       <span
         v-if="hasPracticeCurrentJobs(item.fullDate, 'Whole Day')"
-        class="bg-green-200 text-green-200 w-full h-2 sm:h-3 lg:h-4"
+        class="bg-green-400 text-green-400 w-full h-2 sm:h-3 lg:h-4"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
       <span
         v-if="hasPracticeCurrentJobs(item.fullDate, 'OOH')"
-        class="bg-green-200 text-green-200 w-full h-2 sm:h-3 lg:h-4 rounded-br-lg"
+        class="bg-green-400 text-green-400 w-full h-2 sm:h-3 lg:h-4 rounded-br-lg"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
     </div>
@@ -56,22 +56,22 @@
     >
       <span
         v-if="hasPracticeUnfilledJobs(item.fullDate, 'AM')"
-        class="bg-red-300 text-red-300 w-full h-2 sm:h-3 lg:h-4 rounded-bl-lg"
+        class="bg-red-500 text-red-500 w-full h-2 sm:h-3 lg:h-4 rounded-bl-lg"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
       <span
         v-if="hasPracticeUnfilledJobs(item.fullDate, 'PM')"
-        class="bg-red-300 text-red-300 w-full h-2 sm:h-3 lg:h-4"
+        class="bg-red-500 text-red-500 w-full h-2 sm:h-3 lg:h-4"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
       <span
         v-if="hasPracticeUnfilledJobs(item.fullDate, 'Whole Day')"
-        class="bg-red-300 text-red-300 w-full h-2 sm:h-3 lg:h-4"
+        class="bg-red-500 text-red-500 w-full h-2 sm:h-3 lg:h-4"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
       <span
         v-if="hasPracticeUnfilledJobs(item.fullDate, 'OOH')"
-        class="bg-red-300 text-red-300 w-full h-2 sm:h-3 lg:h-4 rounded-br-lg"
+        class="bg-red-500 text-red-500 w-full h-2 sm:h-3 lg:h-4 rounded-br-lg"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
     </div>
@@ -81,22 +81,22 @@
     >
       <span
         v-if="hasPracticeDeclinedJobs(item.fullDate, 'AM')"
-        class="bg-red-300 text-red-300 w-full h-2 sm:h-3 lg:h-4 rounded-bl-lg"
+        class="bg-red-500 text-red-500 w-full h-2 sm:h-3 lg:h-4 rounded-bl-lg"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
       <span
         v-if="hasPracticeDeclinedJobs(item.fullDate, 'PM')"
-        class="bg-red-300 text-red-300 w-full h-2 sm:h-3 lg:h-4"
+        class="bg-red-500 text-red-500 w-full h-2 sm:h-3 lg:h-4"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
       <span
         v-if="hasPracticeDeclinedJobs(item.fullDate, 'Whole Day')"
-        class="bg-red-300 text-red-300 w-full h-2 sm:h-3 lg:h-4"
+        class="bg-red-500 text-red-500 w-full h-2 sm:h-3 lg:h-4"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
       <span
         v-if="hasPracticeDeclinedJobs(item.fullDate, 'OOH')"
-        class="bg-red-300 text-red-300 w-full h-2 sm:h-3 lg:h-4 rounded-br-lg"
+        class="bg-red-500 text-red-500 w-full h-2 sm:h-3 lg:h-4 rounded-br-lg"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
     </div>
@@ -106,7 +106,7 @@
     >
       <span
         v-if="hasPracticeAppliedJobsReminder(item.fullDate, 'Reminder')"
-        class="bg-gray-200 text-gray-200 w-1/4 h-2 sm:h-3 lg:h-4"
+        class="bg-gray-300 text-gray-300 w-1/4 h-2 sm:h-3 lg:h-4"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
     </div>
@@ -116,7 +116,7 @@
     >
       <span
         v-if="hasPracticeAvailableJobsReminder(item.fullDate, 'Reminder')"
-        class="bg-gray-200 text-gray-200 w-1/4 h-2 sm:h-3 lg:h-4"
+        class="bg-gray-300 text-gray-300 w-1/4 h-2 sm:h-3 lg:h-4"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
     </div>
@@ -126,22 +126,22 @@
     >
       <span
         v-if="hasLocumPrivateJobs(item.fullDate, 'AM')"
-        class="bg-green-200 text-green-200 w-full h-2 sm:h-3 lg:h-4 rounded-bl-lg"
+        class="bg-green-400 text-green-400 w-full h-2 sm:h-3 lg:h-4 rounded-bl-lg"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
       <span
         v-if="hasLocumPrivateJobs(item.fullDate, 'PM')"
-        class="bg-green-200 text-green-200 w-full h-2 sm:h-3 lg:h-4"
+        class="bg-green-400 text-green-400 w-full h-2 sm:h-3 lg:h-4"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
       <span
         v-if="hasLocumPrivateJobs(item.fullDate, 'Whole Day')"
-        class="bg-green-200 text-green-200 w-full h-2 sm:h-3 lg:h-4"
+        class="bg-green-400 text-green-400 w-full h-2 sm:h-3 lg:h-4"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
       <span
         v-if="hasLocumPrivateJobs(item.fullDate, 'OOH')"
-        class="bg-green-200 text-green-200 w-full h-2 sm:h-3 lg:h-4 rounded-br-lg"
+        class="bg-green-400 text-green-400 w-full h-2 sm:h-3 lg:h-4 rounded-br-lg"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
     </div>
@@ -151,22 +151,22 @@
     >
       <span
         v-if="hasLocumCurrentJobs(item.fullDate, 'AM')"
-        class="bg-green-200 text-green-200 w-full h-2 sm:h-3 lg:h-4 rounded-bl-lg"
+        class="bg-green-400 text-green-400 w-full h-2 sm:h-3 lg:h-4 rounded-bl-lg"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
       <span
         v-if="hasLocumCurrentJobs(item.fullDate, 'PM')"
-        class="bg-green-200 text-green-200 w-full h-2 sm:h-3 lg:h-4"
+        class="bg-green-400 text-green-400 w-full h-2 sm:h-3 lg:h-4"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
       <span
         v-if="hasLocumCurrentJobs(item.fullDate, 'Whole day')"
-        class="bg-green-200 text-green-200 w-full h-2 sm:h-3 lg:h-4"
+        class="bg-green-400 text-green-400 w-full h-2 sm:h-3 lg:h-4"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
       <span
         v-if="hasLocumCurrentJobs(item.fullDate, 'OOH')"
-        class="bg-green-200 text-green-200 w-full h-2 sm:h-3 lg:h-4 rounded-br-lg"
+        class="bg-green-400 text-green-400 w-full h-2 sm:h-3 lg:h-4 rounded-br-lg"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
     </div>
@@ -201,22 +201,22 @@
     >
       <span
         v-if="hasLocumUnavailabilities(item.fullDate, 'AM')"
-        class="bg-pink-300 text-pink-300 w-full h-2 sm:h-3 lg:h-4 rounded-tl-lg"
+        class="bg-pink-500 text-pink-500 w-full h-2 sm:h-3 lg:h-4 rounded-tl-lg"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
       <span
         v-if="hasLocumUnavailabilities(item.fullDate, 'PM')"
-        class="bg-pink-300 text-pink-300 w-full h-2 sm:h-3 lg:h-4"
+        class="bg-pink-500 text-pink-500 w-full h-2 sm:h-3 lg:h-4"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
       <span
         v-if="hasLocumUnavailabilities(item.fullDate, 'Whole Day')"
-        class="bg-pink-300 text-pink-300 w-full h-2 sm:h-3 lg:h-4"
+        class="bg-pink-500 text-pink-500 w-full h-2 sm:h-3 lg:h-4"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
       <span
         v-if="hasLocumUnavailabilities(item.fullDate, 'OOH')"
-        class="bg-pink-300 text-pink-300 w-full h-2 sm:h-3 lg:h-4 rounded-tr-lg"
+        class="bg-pink-500 text-pink-500 w-full h-2 sm:h-3 lg:h-4 rounded-tr-lg"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
     </div>
@@ -263,7 +263,6 @@ export default {
     // practice
     hasPracticeCurrentJobs(date, type) {
       return this.getPracticeAllocatedJobs.find(job => this.getDateArray(job.date_start, job.date_end).includes(date) && job.shift.name === type)
-      console.log(this.getPracticeAllocatedJobs)
     },
     hasPracticeAppliedJobs(date, type) {
       return this.getPracticeAppliedJobs.find(job => this.getDateArray(job.date_start, job.date_end).includes(date) && job.shift.name === type)
@@ -272,7 +271,7 @@ export default {
       return this.getPracticeUnfilledJobs.find(job => this.getDateArray(job.date_start, job.date_end).includes(date) && job.shift.name === type)
     },
     hasPracticeDeclinedJobs(date, type) {
-      return this.getPracticeDeclinedJobs.find(job => this.$moment(job.platform_job.declined_at).format('YYYY-MM-DD') === date && job.shift.name === type)
+      return this.getPracticeDeclinedJobs.find(job => this.getDateArray(job.date_start, job.date_end).includes(date) && job.shift.name === type)
     },
     hasPracticeAppliedJobsReminder(date, type) {
       return this.getPracticeAppliedJobsReminder.find(job => job.selection_date === date && type === 'Reminder')

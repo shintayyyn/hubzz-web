@@ -7,7 +7,7 @@
       </div>
     </transition>
 
-    <div class="p-8 max-w-xl">
+    <div class="p-8 max-w-3xl">
       <div @click="$emit('close')" class="cursor-pointer">
         <svgicon name="left-arrow" height="32" width="32" />
       </div>
@@ -36,7 +36,7 @@
         >Select by clicking on the practice that you wish to add</div>
         <div
           class="border-t-2 p-4 cursor-pointer"
-          :class="selectedSurgery.id === item.id ? 'bg-yellow-400':'hover:bg-grey'"
+          :class="selectedSurgery.id === item.id ? 'bg-yellow-500':'hover:bg-gray-900'"
           v-for="(item) in surgeries"
           :key="item.id"
           @click="select(item)"
@@ -47,11 +47,11 @@
               class="mt-4"
             >{{item.address.line_1}}, {{item.address.line_2}}, {{item.address.line_3}}, {{item.address.post_code}}</div>
             <div class="flex flex-row flex-no-wrap mt-1">
-              <div class="rounded-lg bg-gray-200 py-1 px-2 mr-1">CCG</div>
+              <div class="rounded-lg bg-gray-300 py-1 px-2 mr-1">CCG</div>
               <div class="flex items-center">{{item.clinical_commissioning_group.name}}</div>
             </div>
             <div class="flex flex-row flex-no-wrap mt-1">
-              <div class="rounded-lg bg-gray-200 py-1 px-2 mr-1">Practice Code</div>
+              <div class="rounded-lg bg-gray-300 py-1 px-2 mr-1">Practice Code</div>
               <div class="flex items-center">{{item.code}}</div>
             </div>
           </div>

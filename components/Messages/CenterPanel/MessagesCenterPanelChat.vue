@@ -2,6 +2,15 @@
   <div class="panel-chat overflow-y-auto h-full" ref="messagesContainer" @scroll="scrollHandler">
     <div class="flex flex-col h-full">
       <template v-if="messages.length > 0">
+        <transition name="drop" mode="in-out">
+          <span class="relative w-full flex justify-center">
+            <button
+              v-if="loadMore"
+              class="absolute text-center py-4 px-8 shadow-md text-xs text-grey-darkest font-bold my-4 rounded-full bg-white focus:outline-none hover:bg-gray-200"
+              @click="loadMoreMessages"
+            >Load More Messages</button>
+          </span>
+        </transition>
         <div class="py-2 px-4">
           <div v-for="(item, index) in messages" :key="item.id">
             <div class="flex flex-col" :id="`message-${index}`">
@@ -12,16 +21,18 @@
               >
                 <div class="flex" :class="isReceiver(item) ? '': 'flex-row-reverse'">
                   <img
+                    :class="item.sender.domain === 'Locum' ? '' : 'hidden'"
                     class="w-10 h-10 rounded-full border"
-                    :src="isReceiver(item) ? 'https://www.svgrepo.com/show/106812/doctor.svg' : 'https://image.flaticon.com/icons/svg/236/236832.svg'"
+                    :src="setAvatar(item.sender)"
                     width="25"
                   />
                   <div
-                    class="my-1 mx-2 rounded-lg text-xs px-4 py-2 bg-red-200 text-white"
+                    class="my-1 mx-2 rounded-lg text-xs px-4 py-2 bg-red-400 text-white"
                     :class="{'mx-4' : !isReceiver(item)}"
                   >Deleted</div>
                 </div>
               </div>
+
               <div
                 v-else
                 class="flex my-1"
@@ -30,22 +41,22 @@
                 <div class="flex items-start" :class="isReceiver(item) ? '': 'flex-row-reverse'">
                   <img
                     class="w-10 h-10 rounded-full border"
-                    :src="isReceiver(item) ? 'https://www.svgrepo.com/show/106812/doctor.svg' : 'https://image.flaticon.com/icons/svg/236/236832.svg'"
+                    :class="item.sender.domain === 'Locum' ? '' : 'hidden'"
+                    :src="setAvatar(item.sender)"
                     width="25"
                   />
                   <div class="flex text-xs my-1 mx-2 flex-col">
-                    <!-- <span class="py-1">asd</span> -->
                     <span
                       class="chat-message rounded-lg px-2 py-2"
-                      :class="isReceiver(item) ? 'bg-gray-200' : 'bg-blue-300light text-white'"
+                      :class="isReceiver(item) ? 'bg-gray-300' : 'bg-blue-500 text-white'"
                     >{{item.message}}</span>
                     <span
-                      class="text-grey-dark py-1"
+                      class="text-gray-500 py-1"
                       :class="isReceiver(item) ? 'text-right ': ''"
-                    >2hrs ago</span>
+                    >{{ $moment(item.created_at).startOf("day").fromNow() }}</span>
                   </div>
                   <div
-                    class="text-xs font-bold mx-1 mt-3 cursor-pointer text-white hover:text-grey-dark"
+                    class="text-xs font-bold mx-1 mt-3 cursor-pointer text-white hover:text-gray-500"
                     @click="deleteMessage(item.id)"
                   >X</div>
                 </div>
@@ -55,16 +66,15 @@
         </div>
       </template>
       <template v-if="$route.params.slug === 'new'">
-        <div class="h-full flex flex-col justify-between pt-20 overflow-y-hidden">
-          <div class="h-full px-20 pt-20">
+        <div class="relative h-full flex flex-col justify-between pt-20 overflow-y-hidden">
+          <div class="h-full px-8 md:px-20 md:pt-20">
+            <button
+              class="absolute top-0 left-0 m-6 flex items-center font-bold focus:outline-none"
+              @click="$router.go(-1)"
+            >
+              <svgicon name="left-arrow" height="32" width="32" />
+            </button>
             <span class="font-bold text-lg">Create Message</span>
-            <!-- <AppInput
-              v-model="search_text"
-              :type="'search'"
-              :name="'search_text'"
-              :placeholder="'Search Messages'"
-              @keydown.enter="search"
-            />-->
             <AppAutoComplete
               v-model="search_user"
               :name="'search_user'"
@@ -80,33 +90,14 @@
           <div v-if="search_user" class="flex">
             <textarea
               v-model="message"
-              class="message-box resize-none w-full p-4 text-sm align-middle focus:outline-none border-t"
+              class="message-box resize-none w-full p-3 text-sm align-middle focus:outline-none border-t"
               placeholder="Type your message here"
               @keydown.enter="createMessage"
             ></textarea>
-            <!-- <AppTextarea
-              v-model="message"
-              :name="'message'"
-              :rows="0"
-              :resize="false"
-              :placeholder="'Type your message here'"
-              :error="this.formError.find(item => item.field === 'message')"
-              class="w-full -mb-2 px-2"
-            />-->
-            <button class="px-8 bg-yellow-400 h-full" @click="createMessage">Send</button>
-
-            <!-- <AppButton :label="'Create'" @click="createMessage()" class="mx-2" /> -->
+            <button class="px-8 bg-yellow-500 h-full" @click="createMessage">Send</button>
           </div>
         </div>
       </template>
-      <!-- <template v-if="route !== 'new' && messages.length === 0">
-        <div>
-          <div class="flex flex-col justify-center items-center py-4">
-            <img src="https://image.flaticon.com/icons/svg/236/236832.svg" width="150" />
-            <MessagesCenterPanelTop class="text-center" />
-          </div>
-        </div>
-      </template>-->
     </div>
   </div>
 </template>
@@ -130,7 +121,9 @@ export default {
       showResult: false,
       formError: [],
       selectedUserId: "",
-      message: ""
+      message: "",
+      loadMore: false,
+      time: ""
     };
   },
   computed: {
@@ -150,14 +143,16 @@ export default {
         this.$refs.messagesContainer &&
         this.$refs.messagesContainer.scrollTop !== 0
       ) {
-        this.scrollToBottom();
+        // this.scrollToBottom();
       }
+      this.loadMore = false;
     },
     messages(value) {
       let index = value.length - this.oldMessageCount;
       let messageSample = document.getElementById(`message-${index}`);
-      this.scrollToBottom();
-      // console.log(document.getElementById(`message-${value.length - this.oldMessageCount}`))
+      if (value.length === 20) {
+        this.scrollToBottom();
+      }
     }
   },
   methods: {
@@ -169,21 +164,38 @@ export default {
     scrollToBottom() {
       this.$nextTick(() => {
         this.$refs.messagesContainer.scrollTop = this.$refs.messagesContainer.scrollHeight;
-        // console.log(this.$refs.messagesContainer.scrollTop, this.$refs.messagesContainer.scrollHeight)
-        // console.log(this.$auth.user)
+        // console.log(
+        //   this.$refs.messagesContainer.scrollTop,
+        //   this.$refs.messagesContainer.scrollHeight
+        // );
       });
     },
     scrollHandler(e) {
-      if (e.target.scrollTop === 0) {
-        this.oldMessageCount = this.messages.length;
-        // console.log(this.oldMessageCount)
-        // const firstMessageElementBeforeLoadMore =
-        // document.getElementById(
-        //   `message-${this.messages.length}`
-        // );
-        // console.log(firstMessageElementBeforeLoadMore)
-        // this.$emit('fetch-more-messages')
+      if (
+        e.target.scrollHeight > e.target.clientHeight &&
+        e.target.scrollTop === 0
+      ) {
+        this.$axios.$get(`/api/v1/conversations/${this.route}`).then(res => {
+          if (this.messages.length === res.data.messages.length) {
+            this.loadMore = false;
+          } else {
+            this.loadMore = true;
+          }
+        });
       }
+    },
+    loadMoreMessages() {
+      this.$store.dispatch("chat/fetchMoreMessage", {
+        offset: this.messages.length,
+        conversation_id: this.$route.params.slug
+      });
+      this.loadMore = false;
+      let scrollPosition =
+        this.$refs.messagesContainer.scrollHeight -
+        this.$refs.messagesContainer.offsetHeight;
+      this.$nextTick(() => {
+        this.$refs.messagesContainer.scrollTop = this.$refs.messagesContainer.offsetHeight;
+      });
     },
     isReceiver(item) {
       return this.$auth.user.id === item.receiver_id;
@@ -200,6 +212,13 @@ export default {
         }
       }
     },
+    setAvatar(item) {
+      if (item.avatar === null) {
+        return "https://via.placeholder.com/300/";
+      } else {
+        return item.avatar.file.url;
+      }
+    },
     createMessage() {
       if (!this.search_user) {
         this.formError.push({
@@ -211,13 +230,14 @@ export default {
           .$get(`/api/v1/conversations/?search=${this.search_user}`)
           .then(res => {
             if (res.data.conversations.length === 0) {
-              //if conversation doesn't exist -- create message
               this.$store.dispatch("chat/sendMessage", {
                 receiver_user_id: this.selectedUserId,
                 message: this.message
               });
               let conversation = this.$store.state.chat.conversations[0];
-              console.log(conversation);
+              if (window.innerWidth < 768) {
+                this.$store.commit("IS_MOBILE", false);
+              }
               this.$router.push(`/messages/${conversation.id + 1}`);
             }
             this.search_user = "";
@@ -241,6 +261,10 @@ export default {
   min-width: 100%;
   word-wrap: wrap;
   word-break: break-all;
+}
+
+.panel-chat {
+  scroll-behavior: smooth;
 }
 
 .panel-chat::-webkit-scrollbar {

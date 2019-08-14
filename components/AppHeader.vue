@@ -3,8 +3,8 @@
     <div class="flex flex-row flex-wrap justify-between">
       <div class="w-1/2 sm:w-1/3 cursor-pointer py-2" @click="toggle">
         <div class="burger">
-          <div class="my-2 bg-yellow-400"></div>
-          <div class="my-2 bg-yellow-400"></div>
+          <div class="my-2 bg-yellow-500"></div>
+          <div class="my-2 bg-yellow-500"></div>
         </div>
       </div>
       <div class="w-1/2 text-right sm:w-1/3 sm:text-center py-2">
@@ -18,14 +18,20 @@
           >
             <AppButton
               :label="'Create Job'"
-              @click="$store.commit('calendar/CREATE_JOB', true)"
-              :inStyle="'font-size:small;padding:12px;'"
+              @click="$store.commit('calendar/CREATE_JOB_MODAL', true)"
+              :inStyle="'font-size: small; padding:2px 14px;'"
+              class="mx-2"
             />
           </div>
-          <nuxt-link
+          <AppButton
+            :label="'Messages'"
+            @click="$router.push('/messages')"
+            :inStyle="'font-size: small; padding:2px 14px;'"
+          />
+          <!-- <nuxt-link
             :to="'/messages'"
-            class="font-bold text-xs sm:text-sm no-underline px-2 py-1 rounded-lg bg-yellow-400 ml-4"
-          >Messages</nuxt-link>
+            class="font-bold text-xs sm:text-sm no-underline px-2 py-1 rounded-lg bg-yellow-500 ml-4"
+          >Messages</nuxt-link>-->
           <div
             class="text-xs xl:text-sm ml-4"
             v-if="$auth.user.domain === 'Locum'"
@@ -37,17 +43,15 @@
 </template>
 <script>
 import AppButton from "@/components/Base/AppButton";
-import CreateJobModal from '@/components/CreateJobModal'
 export default {
   components: {
-    AppButton,
-    CreateJobModal
+    AppButton
   },
   methods: {
     toggle() {
       this.$store.commit("TOGGLE_SIDEBAR", true);
       document.body.style.overflow = "hidden";
-    },
+    }
   }
 };
 </script>
@@ -77,6 +81,7 @@ export default {
   }
   .header-section {
     margin-bottom: 50px;
+    width: 53vw;
   }
 }
 a {

@@ -7,7 +7,8 @@ export const state = () => ({
     closable: false,
   },
   toggled_sidebar: false,
-  locum_private_practices: [],
+  mobile: false,
+  locum_private_practices: []
 })
 
 export const mutations = {
@@ -28,13 +29,21 @@ export const mutations = {
   },
   ADD_LOCUM_PRIVATE_PRACTICE(state, payload) {
     state.locum_private_practices.push(payload)
+  },
+  IS_MOBILE(state, payload) {
+    state.mobile = payload
   }
 }
 
 export const actions = {
-  async joinRoom({ dispatch }, payload) {
+  async joinRoom({
+    dispatch
+  }, payload) {
     try {
-      await this.$axios.$post('api/v1/socket/join-room', { socket_id: payload.socket_id, room_name: payload.room_name })
+      await this.$axios.$post('api/v1/socket/join-room', {
+        socket_id: payload.socket_id,
+        room_name: payload.room_name
+      })
     } catch (err) {
       if (err.response.status === 400 && err.response.data.message === 'Invalid Socket Id') {
         dispatch('joinRoom', payload)
@@ -42,14 +51,20 @@ export const actions = {
     }
   },
   async leaveRoom({}, payload) {
-      await this.$axios.$post('api/v1/socket/leave-room', { socket_id: payload.socket_id, room_name: payload.room_name })
+    await this.$axios.$post('api/v1/socket/leave-room', {
+      socket_id: payload.socket_id,
+      room_name: payload.room_name
+    })
   },
 }
 
 export const getters = {
   getLocumPrivatePractices(state) {
     return state.locum_private_practices.map((item) => {
-      return { value: item.id, label: item.surgery.name }
+      return {
+        value: item.id,
+        label: item.surgery.name
+      }
     })
   }
 }

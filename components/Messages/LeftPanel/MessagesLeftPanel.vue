@@ -1,5 +1,5 @@
 <template>
-  <div class="messages-left-panel">
+  <div class="messages-left-panel" :class="$store.state.mobile ? '' : 'hidden'">
     <div class="flex flex-col h-full">
       <!-- <span class="font-bold text-sm px-2 md:px-4 pt-4 md:text-base md:px-4">Messages</span> -->
       <AppInput
@@ -10,104 +10,67 @@
         class="mx-4 my-1"
         @keydown.enter="search"
       />
-      <div class="flex flex-col justify-between h-full border-t">
-        <div class="chat-list h-full overflow-y-auto overflow-x-hidden">
+      <div class="relative flex flex-col justify-between h-full border-t">
+        <div class="chat-list w-full h-full overflow-y-auto" @scroll="scrollHandler">
           <!-- default -->
-          <div v-if="showResult === false">
+          <template v-if="showResult === false">
             <div
-              class="flex flex-row items-center px-2 md:pl-4 py-4 cursor-pointer border-b"
-              :class="parseInt($route.params.slug) === item.id ? 'bg-gray-200' : 'hover:bg-gray-200est'"
+              class="relative flex w-full items-center px-2 py-4 cursor-pointer border-b"
+              :class="parseInt($route.params.slug) === item.id ? 'bg-gray-300' : 'hover:bg-gray-200'"
               v-for="item in conversations"
               :key="item.id"
               @click="goTo(item.conversation_id ? item.conversation_id : item.id)"
             >
-              <div class="w-1/6">
-                <img src="https://image.flaticon.com/icons/svg/236/236832.svg" width="50" />
-              </div>
-              <div class="hidden md:block w-5/6 px-2">
-                <div class="flex justify-between items-center">
-                  <span
+              <img class="w-1/6 md:ml-2 rounded-full" :src="user.avatar" width="12%" height="12%" />
+              <div class="w-5/6 flex items-center justify-between">
+                <div class="w-5/6 px-2">
+                  <p
+                    class="truncate"
                     :class="parseInt($route.params.slug) === item.id ? 'font-bold' : ''"
-                  >{{ userFullname(item) }}</span>
-                  <span class="h-2 w-2 py-1 px-1 bg-green-200 rounded-full"></span>
+                  >{{ userFullname(item) }}</p>
+                  <p class="text-sm truncate">{{ item.message }}</p>
                 </div>
-                <div class="flex">
-                  <p class="text-sm truncate w-full">{{ item.message }}</p>
-                  <span class="text-sm text-grey-darker">2hrs</span>
-                </div>
+                <span
+                  class="w-12 pr-1 text-right text-xs text-gray-600 leading-none absolute right-0"
+                >{{ $moment(item.created_at).startOf('hour').fromNow() }}</span>
               </div>
             </div>
-          </div>
+          </template>
           <!-- show result -->
-          <div v-if="showResult && messages.length > 0">
+          <template v-if="showResult && messages.length > 0">
             <div
-              class="flex flex-col md:flex-row items-center px-2 md:pl-4 py-4 cursor-pointer border-b"
-              :class="parseInt($route.params.slug) === item.id ? 'bg-gray-200' : 'hover:bg-gray-200est'"
+              class="relative flex w-full items-center px-2 py-4 cursor-pointer border-b"
+              :class="parseInt($route.params.slug) === item.id ? 'bg-gray-300' : 'hover:bg-gray-200'"
               v-for="item in messages"
               :key="item.id"
               @click="goTo(item.conversation_id ? item.conversation_id : item.id)"
             >
-              <div class>
-                <img src="https://image.flaticon.com/icons/svg/236/236832.svg" width="50" />
-              </div>
-              <div class="hidden md:block w-5/6 px-2">
-                <div class="flex justify-between items-center">
-                  <span
+              <img class="w-1/6 md:ml-2 rounded-full" :src="user.avatar" width="12%" height="12%" />
+              <div class="w-5/6 flex items-center justify-between">
+                <div class="w-5/6 px-2">
+                  <p
+                    class="truncate"
                     :class="parseInt($route.params.slug) === item.id ? 'font-bold' : ''"
-                  >{{ userFullname(item) }}</span>
-                  <span class="h-2 w-2 py-1 px-1 bg-green-200 rounded-full"></span>
+                  >{{ userFullname(item) }}</p>
+                  <p class="text-sm truncate">{{ item.message }}</p>
                 </div>
-                <div class="flex">
-                  <p class="text-sm truncate w-full">{{ item.message }}</p>
-                  <span class="text-sm text-grey-darker">2hrs</span>
-                </div>
+                <span
+                  class="w-12 pr-1 text-right text-xs text-gray-600 leading-none absolute right-0"
+                >{{ $moment(item.created_at).startOf('hour').fromNow() }}</span>
               </div>
             </div>
-          </div>
+          </template>
           <!-- No results -->
           <span
             v-if="messages.length === 0 && showResult === true"
-            class="flex h-full items-center justify-center font-bold text-grey"
+            class="flex h-full items-center justify-center font-bold text-gray-500"
           >Nothing to show</span>
         </div>
       </div>
       <button
-        class="bg-yellow-400 border-yellow-400 text-sm md:mx-2 md:my-4 p-4 md:text-lg focus:outline-none"
+        class="bg-yellow-500 border-yellow-500 text-sm p-4 md:text-lg focus:outline-none"
         @click="createMessage"
       >Create Message</button>
-    </div>
-    <button
-      class="bg-yellow-400 border-yellow-400 text-sm md:mx-2 md:my-4 p-4 md:text-lg focus:outline-none"
-      @click="modal = true"
-    >
-      <span class="hidden md:block">Create Message</span>
-      <span class="block md:hidden">
-        <svgicon name="write-message" class="w-8 h-8 fill-current" />
-      </span>
-    </button>
-
-    <div v-if="modal" class="modal rounded-lg bg-white shadow-lg p-4 max-w-sm">
-      <div class="flex flex-col">
-        <label :for="value.min">Min</label>
-        <input
-          :value="value.min"
-          :name="value.min"
-          @input="$emit('input', { min: $event.target.value, max: value.max})"
-          type="text"
-          class="border-b-2 focus:border-yellow-300 focus:outline-none py-2 font-bold text-xs sm:text-sm text-right mb-4"
-        />
-        <label :for="value.max">Max</label>
-        <input
-          :value="value.max"
-          :name="value.max"
-          @input="$emit('input', { min: value.min, max: $event.target.value})"
-          type="text"
-          class="border-b-2 focus:border-yellow-300 focus:outline-none py-2 font-bold text-xs sm:text-sm text-right mb-4"
-        />
-        <!-- <button
-          class="rounded-lg bg-yellow-400 font-bold text-xs sm:text-sm px-2 py-1 focus:outline-none hover:text-white cursor-pointer"
-        @click.prevent="save">Save</button>-->
-      </div>
     </div>
   </div>
 </template>
@@ -119,11 +82,18 @@ export default {
   },
   data() {
     return {
+      user: {
+        avatar: "https://via.placeholder.com/300/",
+        status: false
+      },
       search_text: "",
       messages: [],
       showResult: false,
-      modal: false
+      loadMore: false
     };
+  },
+  mounted() {
+    this.$store.commit("IS_MOBILE", true);
   },
   computed: {
     conversations() {
@@ -134,7 +104,6 @@ export default {
     search_text(value) {
       if (!value) {
         this.showResult = false;
-        console.log("empty search");
       } else {
         this.getResults(value);
       }
@@ -144,8 +113,10 @@ export default {
     goTo(id) {
       this.showResult = false;
       this.messages = [];
+      if (window.innerWidth < 768) {
+        this.$store.commit("IS_MOBILE", false);
+      }
       this.$router.push(`/messages/${id}`);
-      // console.log(this.conversations)
     },
     getResults(value) {
       let search = this.search_text;
@@ -160,14 +131,30 @@ export default {
         : `${item.receiver_first_name} ${item.receiver_last_name}`;
     },
     createMessage() {
+      if (window.innerWidth < 768) {
+        this.$store.commit("IS_MOBILE", false);
+      }
       this.$router.push(`/messages/new`);
+    },
+    scrollHandler({ target: { scrollTop, offsetHeight, scrollHeight } }) {
+      let scroll = Math.round(offsetHeight + scrollTop);
+      if (scroll === scrollHeight) {
+        this.$axios.$get(`/api/v1/conversations/`).then(res => {
+          if (res.data.conversations.length != this.conversations.length) {
+            this.$store.dispatch("chat/fetchMoreConversation", {
+              offset: this.conversations.length
+            });
+          }
+        });
+      }
     }
   }
 };
 </script>
 <style scoped>
 .messages-left-panel {
-  width: 100%;
+  min-width: 100%;
+  max-width: 100%;
   float: left;
   min-height: 80vh;
   max-height: 80vh;
@@ -185,17 +172,11 @@ export default {
   background: #ccc;
   border-radius: 50px;
 }
-@media screen and (min-width: 576px) {
-  .messages-left-panel {
-    min-width: 30vw;
-    max-width: 30vw;
-  }
-}
 
 @media screen and (min-width: 768px) {
   .messages-left-panel {
-    min-width: 25vw;
-    max-width: 25vw;
+    min-width: 30vw;
+    max-width: 30vw;
   }
 }
 

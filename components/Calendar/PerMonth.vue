@@ -18,24 +18,24 @@
       <div class="w-full text-right py-1 sm:w-1/3">
         <span
           class="cursor-pointer px-3 text-xs sm:text-sm hover:underline"
-          :class="$store.state.calendar.view_type === 'per_month' ? 'py-1 px-3 bg-yellow-400':''"
+          :class="$store.state.calendar.view_type === 'per_month' ? 'py-1 px-3 bg-yellow-500':''"
           @click="$store.commit('calendar/TOGGLE_CALENDAR_VIEW_TYPE', 'per_month')"
         >Month</span>
         <span
           class="cursor-pointer px-3 text-xs sm:text-sm hover:underline"
-          :class="$store.state.calendar.view_type === 'per_week' ? 'py-1 px-3 bg-yellow-400':''"
+          :class="$store.state.calendar.view_type === 'per_week' ? 'py-1 px-3 bg-yellow-500':''"
           @click="$store.commit('calendar/TOGGLE_CALENDAR_VIEW_TYPE', 'per_week')"
         >Week</span>
       </div>
     </div>
     <div class="flex flex-no-wrap justify-between text-xs sm:text-sm mx-1 mt-3 md:mt-5">
-      <div class="w-full text-center text-grey font-bold">MON</div>
-      <div class="w-full text-center text-grey font-bold">TUE</div>
-      <div class="w-full text-center text-grey font-bold">WED</div>
-      <div class="w-full text-center text-grey font-bold">THU</div>
-      <div class="w-full text-center text-grey font-bold">FRI</div>
-      <div class="w-full text-center text-grey font-bold">SAT</div>
-      <div class="w-full text-center text-grey font-bold">SUN</div>
+      <div class="w-full text-center text-gray-500 font-bold">MON</div>
+      <div class="w-full text-center text-gray-500 font-bold">TUE</div>
+      <div class="w-full text-center text-gray-500 font-bold">WED</div>
+      <div class="w-full text-center text-gray-500 font-bold">THU</div>
+      <div class="w-full text-center text-gray-500 font-bold">FRI</div>
+      <div class="w-full text-center text-gray-500 font-bold">SAT</div>
+      <div class="w-full text-center text-gray-500 font-bold">SUN</div>
     </div>
 
     <div class="flex flex-no-wrap justify-between mx-1 mt-2 md:mt-5">
@@ -47,7 +47,7 @@
           <div
             @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
             class="relative border border-solid rounded-lg m-1 cursor-pointer flex justify-center items-center h-8 sm:h-12 md:h-16 lg:h-20 w-auto"
-            :class="$store.state.calendar.date_today === item.fullDate ? 'border-yellow-400 text-lg font-bold':'hover:bg-gray-200'"
+            :class="$store.state.calendar.date_today === item.fullDate ? 'border-yellow-500 text-lg font-bold':'hover:bg-gray-300'"
             v-if="item.day === 1"
           >
             <div class="text-xs md:text-sm z-10">{{(item.date)}}</div>
@@ -63,7 +63,7 @@
           <div
             @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
             class="relative border border-solid rounded-lg m-1 cursor-pointer flex justify-center items-center h-8 sm:h-12 md:h-16 lg:h-20 w-auto"
-            :class="$store.state.calendar.date_today === item.fullDate ? 'border-yellow-400 text-lg font-bold':'hover:bg-gray-200'"
+            :class="$store.state.calendar.date_today === item.fullDate ? 'border-yellow-500 text-lg font-bold':'hover:bg-gray-300'"
             v-if="item.day === 2"
           >
             <div class="text-xs md:text-sm z-10">{{item.date}}</div>
@@ -79,7 +79,7 @@
           <div
             @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
             class="relative border border-solid rounded-lg m-1 cursor-pointer flex justify-center items-center h-8 sm:h-12 md:h-16 lg:h-20 w-auto"
-            :class="$store.state.calendar.date_today === item.fullDate ? 'border-yellow-400 text-lg font-bold':'hover:bg-gray-200'"
+            :class="$store.state.calendar.date_today === item.fullDate ? 'border-yellow-500 text-lg font-bold':'hover:bg-gray-300'"
             v-if="item.day === 3"
           >
             <div class="text-xs md:text-sm z-10">{{(item.date)}}</div>
@@ -95,7 +95,7 @@
           <div
             @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
             class="relative border border-solid rounded-lg m-1 cursor-pointer flex justify-center items-center h-8 sm:h-12 md:h-16 lg:h-20 w-auto"
-            :class="$store.state.calendar.date_today === item.fullDate ? 'border-yellow-400 text-lg font-bold':'hover:bg-gray-200'"
+            :class="$store.state.calendar.date_today === item.fullDate ? 'border-yellow-500 text-lg font-bold':'hover:bg-gray-300'"
             v-if="item.day === 4"
           >
             <div class="text-xs md:text-sm z-10">{{item.date}}</div>
@@ -111,7 +111,7 @@
           <div
             @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
             class="relative border border-solid rounded-lg m-1 cursor-pointer flex justify-center items-center h-8 sm:h-12 md:h-16 lg:h-20 w-auto"
-            :class="$store.state.calendar.date_today === item.fullDate ? 'border-yellow-400 text-lg font-bold':'hover:bg-gray-200'"
+            :class="$store.state.calendar.date_today === item.fullDate ? 'border-yellow-500 text-lg font-bold':'hover:bg-gray-300'"
             v-if="item.day === 5"
           >
             <div class="text-xs md:text-sm z-10">{{(item.date)}}</div>
@@ -127,7 +127,7 @@
           <div
             @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
             class="relative border border-solid rounded-lg m-1 cursor-pointer flex justify-center items-center h-8 sm:h-12 md:h-16 lg:h-20 w-auto"
-            :class="$store.state.calendar.date_today === item.fullDate ? 'border-yellow-400 text-lg font-bold':'hover:bg-gray-200'"
+            :class="$store.state.calendar.date_today === item.fullDate ? 'border-yellow-500 text-lg font-bold':'hover:bg-gray-300'"
             v-if="item.day === 6"
           >
             <div class="text-xs md:text-sm z-10">{{item.date}}</div>
@@ -143,7 +143,7 @@
           <div
             @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
             class="relative border border-solid rounded-lg m-1 cursor-pointer flex justify-center items-center h-8 sm:h-12 md:h-16 lg:h-20 w-auto"
-            :class="$store.state.calendar.date_today === item.fullDate ? 'border-yellow-400 text-lg font-bold':'hover:bg-gray-200'"
+            :class="$store.state.calendar.date_today === item.fullDate ? 'border-yellow-500 text-lg font-bold':'hover:bg-gray-300'"
             v-if="item.day === 0"
           >
             <div class="text-xs md:text-sm z-10">{{item.date}}</div>
@@ -173,6 +173,9 @@ export default {
     selectedMonth(value) {
       this.getDaysInMonth(value, this.selectedYear)
     },
+  },
+  beforeDestroy() {
+    this.$store.commit('jobs/CLEAR_JOBS')
   },
   created() {
     let selectedDate = this.$store.state.calendar.selected_date

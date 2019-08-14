@@ -1,12 +1,12 @@
 <template>
-    <div class="max-w-xl">
-      <LocumDetailJobsModalTabs />
-      <div>
-        <transition name="fade" mode="out-in">
-          <Component :is="activeComponent" :user="user" :jobs="jobs" />
-        </transition>
-      </div>
+  <div class="max-w-3xl">
+    <LocumDetailJobsModalTabs />
+    <div>
+      <transition name="fade" mode="out-in">
+        <Component :is="activeComponent" :user="user" :jobs="jobs" />
+      </transition>
     </div>
+  </div>
 </template>
 </<script>
 import LocumDetailJobsModalTabs from '@/components/MyBanks/LocumDetailJobsModalTabs'
@@ -41,7 +41,6 @@ export default {
         }
     },
     created(){
-      console.log(this.jobs)
       const query = {
         ...this.$route.query,
         locum_jobs: this.$route.query.locum_jobs || 'locum_available'

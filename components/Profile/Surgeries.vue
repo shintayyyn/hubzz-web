@@ -2,7 +2,7 @@
   <section>
     <div class="flex flex-row justify-end">
       <button
-        class="bg-yellow-400 rounded-full font-bold text-3xl hover:text-white focus:outline-none"
+        class="bg-yellow-500 rounded-full font-bold text-3xl hover:text-white focus:outline-none"
         style="width:40px;height:40px;"
         @click="modal = true"
       >+</button>

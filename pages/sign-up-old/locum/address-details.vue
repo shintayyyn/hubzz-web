@@ -9,19 +9,19 @@
 
       <div class="flex w-full justify-center xl:justify-start">
         <div class="flex flex-col p-4 m-1 rounded-lg shadow-lg" style="flex: 0 1 600px;">
-          <div class="flex flex-col p-6 rounded-lg bg-gray-200">
+          <div class="flex flex-col p-6 rounded-lg bg-gray-300">
             <div class="flex flex-col">
               <div class="relative">
                 <label class="text-xs">Post code *</label>
                 <span
-                  class="text-xs absolute right-0 bottom-0 bg-red-300 p-1 text-white"
+                  class="text-xs absolute right-0 bottom-0 bg-red-500 p-1 text-white"
                   v-if="showPostCodeRequired && !showPostCodeFocus"
                 >Required</span>
               </div>
               <div class="relative" v-on-clickaway="hidePredictions">
                 <input
                   class="w-full bg-transparent outline-none py-1 mt-1 mb-8 border-b"
-                  :class="showPostCodeFocus ? 'border-yellow-400' : showPostCodeRequired ? 'border-red-300' : 'border-grey-dark'"
+                  :class="showPostCodeFocus ? 'border-yellow-500' : showPostCodeRequired ? 'border-red-500' : 'border-gray-500'"
                   v-model="postCode"
                   @focus="showPostCodeFocus = true"
                   @click="showPredictions = true, getPredictionsIfNoPredictions()"
@@ -40,7 +40,7 @@
                   <div
                     v-for="(prediction, index) in predictions"
                     class="p-2 cursor-pointer"
-                    :class="`${index !== predictions.length ? 'border-b' : ''} ${index === predictionIndex ? 'bg-gray-200' : ''}`"
+                    :class="`${index !== predictions.length ? 'border-b' : ''} ${index === predictionIndex ? 'bg-gray-300' : ''}`"
                     @click="selectPrediction(prediction)"
                     @mouseover="predictionIndex = index"
                   >
@@ -54,13 +54,13 @@
             <div class="relative">
               <label class="text-xs">Address line 1 *</label>
               <span
-                class="text-xs absolute right-0 bottom-0 bg-red-300 p-1 text-white"
+                class="text-xs absolute right-0 bottom-0 bg-red-500 p-1 text-white"
                 v-if="showAddressLine1Required && !showAddressLine1Focus"
               >Required</span>
             </div>
             <input
               class="bg-transparent outline-none py-1 mt-1 mb-8 border-b"
-              :class="showAddressLine1Focus ? 'border-yellow-400' : showAddressLine1Required ? 'border-red-300' : 'border-grey-dark'"
+              :class="showAddressLine1Focus ? 'border-yellow-500' : showAddressLine1Required ? 'border-red-500' : 'border-gray-500'"
               v-model="addressLine1"
               @focus="showAddressLine1Focus = true"
               @blur="showAddressLine1Focus = false, checkAddressLine1()"
@@ -69,7 +69,7 @@
             <label class="text-xs">Address line 2 (optional)</label>
             <input
               class="bg-transparent outline-none py-1 mt-1 mb-8 border-b"
-              :class="showAddressLine2Focus ? 'border-yellow-400' : false ? 'border-red-300' : 'border-grey-dark'"
+              :class="showAddressLine2Focus ? 'border-yellow-500' : false ? 'border-red-500' : 'border-gray-500'"
               v-model="addressLine2"
               @focus="showAddressLine2Focus = true"
               @blur="showAddressLine2Focus = false"
@@ -78,13 +78,13 @@
             <div class="relative">
               <label class="text-xs">City / Town / District *</label>
               <span
-                class="text-xs absolute right-0 bottom-0 bg-red-300 p-1 text-white"
+                class="text-xs absolute right-0 bottom-0 bg-red-500 p-1 text-white"
                 v-if="showAddressLine3Required && !showAddressLine3Focus"
               >Required</span>
             </div>
             <input
               class="bg-transparent outline-none py-1 mt-1 mb-8 border-b"
-              :class="showAddressLine3Focus ? 'border-yellow-400' : showAddressLine3Required ? 'border-red-300' : 'border-grey-dark'"
+              :class="showAddressLine3Focus ? 'border-yellow-500' : showAddressLine3Required ? 'border-red-500' : 'border-gray-500'"
               v-model="addressLine3"
               @focus="showAddressLine3Focus = true"
               @blur="showAddressLine3Focus = false, checkAddressLine3()"

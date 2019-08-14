@@ -3,7 +3,7 @@
     <div class="relative flex flex-row flex-no-wrap justify-between">
       <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
       <div
-        class="absolute right-0 bg-red-300 p-1 text-xs sm:text-base text-white"
+        class="absolute right-0 bg-red-500 p-1 text-xs sm:text-base text-white"
         v-if="error"
       >{{error.message}}</div>
     </div>
@@ -12,8 +12,8 @@
         :value="value"
         type="input"
         placeholder="mm/dd/yyyy"
-        class="border-b-2 focus:border-yellow-300 focus:outline-none py-4 font-bold text-xs sm:text-sm w-full text-center"
-        :class="error? 'border-red-300':''"
+        class="border-b-2 focus:border-yellow-400 focus:outline-none py-4 font-bold text-xs sm:text-sm w-full text-center"
+        :class="error? 'border-red-500':''"
         @click="modal = true"
         @keypress="validateInput($event)"
         @input="$emit('input', $event.target.value)"
@@ -25,7 +25,7 @@
         <div
           class="absolute border rounded-tr-lg rounded-bl-lg rounded-br-lg calendar bg-white shadow-md"
         >
-          <div class="p-2 flex flex-row flex-no-wrap justify-start border-b-2 border-yellow-400">
+          <div class="p-2 flex flex-row flex-no-wrap justify-start border-b-2 border-yellow-500">
             <div class="m-1 w-1/2 text-left">
               <select v-model="selectedMonth" class="text-xs sm:text-sm">
                 <option
@@ -69,9 +69,9 @@
                   @click="select(item.fullDate)"
                   class="rounded-full relative m-1 flex justify-center items-center h-10 w-auto"
                   :class="{
-                  'border-yellow-400 border-2': isSame(item.fullDate),
-                  'text-grey': isDisabled(item.fullDate), 
-                  'cursor-pointer hover:bg-gray-200': !isDisabled(item.fullDate)
+                  'border-yellow-500 border-2': isSame(item.fullDate),
+                  'text-gray-500': isDisabled(item.fullDate), 
+                  'cursor-pointer hover:bg-gray-300': !isDisabled(item.fullDate)
                 }"
                   v-if="item.day === 1"
                 >
@@ -88,9 +88,9 @@
                   @click="select(item.fullDate)"
                   class="rounded-full relative m-1 flex justify-center items-center h-10 w-auto"
                   :class="{
-                  'border-yellow-400 border-2': isSame(item.fullDate),
-                  'text-grey': isDisabled(item.fullDate), 
-                  'cursor-pointer hover:bg-gray-200': !isDisabled(item.fullDate)
+                  'border-yellow-500 border-2': isSame(item.fullDate),
+                  'text-gray-500': isDisabled(item.fullDate), 
+                  'cursor-pointer hover:bg-gray-300': !isDisabled(item.fullDate)
                 }"
                   v-if="item.day === 2"
                 >
@@ -107,9 +107,9 @@
                   @click="select(item.fullDate)"
                   class="rounded-full relative m-1 flex justify-center items-center h-10 w-auto"
                   :class="{
-                  'border-yellow-400 border-2': isSame(item.fullDate),
-                  'text-grey': isDisabled(item.fullDate), 
-                  'cursor-pointer hover:bg-gray-200': !isDisabled(item.fullDate)
+                  'border-yellow-500 border-2': isSame(item.fullDate),
+                  'text-gray-500': isDisabled(item.fullDate), 
+                  'cursor-pointer hover:bg-gray-300': !isDisabled(item.fullDate)
                 }"
                   v-if="item.day === 3"
                 >
@@ -126,9 +126,9 @@
                   @click="select(item.fullDate)"
                   class="rounded-full relative m-1 flex justify-center items-center h-10 w-auto"
                   :class="{
-                  'border-yellow-400 border-2': isSame(item.fullDate),
-                  'text-grey': isDisabled(item.fullDate), 
-                  'cursor-pointer hover:bg-gray-200': !isDisabled(item.fullDate)
+                  'border-yellow-500 border-2': isSame(item.fullDate),
+                  'text-gray-500': isDisabled(item.fullDate), 
+                  'cursor-pointer hover:bg-gray-300': !isDisabled(item.fullDate)
                 }"
                   v-if="item.day === 4"
                 >
@@ -145,9 +145,9 @@
                   @click="select(item.fullDate)"
                   class="rounded-full relative m-1 flex justify-center items-center h-10 w-auto"
                   :class="{
-                  'border-yellow-400 border-2': isSame(item.fullDate),
-                  'text-grey': isDisabled(item.fullDate), 
-                  'cursor-pointer hover:bg-gray-200': !isDisabled(item.fullDate)
+                  'border-yellow-500 border-2': isSame(item.fullDate),
+                  'text-gray-500': isDisabled(item.fullDate), 
+                  'cursor-pointer hover:bg-gray-300': !isDisabled(item.fullDate)
                 }"
                   v-if="item.day === 5"
                 >
@@ -164,9 +164,9 @@
                   @click="select(item.fullDate)"
                   class="rounded-full relative m-1 flex justify-center items-center h-10 w-auto"
                   :class="{
-                  'border-yellow-400 border-2': isSame(item.fullDate),
-                  'text-grey': isDisabled(item.fullDate), 
-                  'cursor-pointer hover:bg-gray-200': !isDisabled(item.fullDate)
+                  'border-yellow-500 border-2': isSame(item.fullDate),
+                  'text-gray-500': isDisabled(item.fullDate), 
+                  'cursor-pointer hover:bg-gray-300': !isDisabled(item.fullDate)
                 }"
                   v-if="item.day === 6"
                 >
@@ -183,9 +183,9 @@
                   @click="select(item.fullDate)"
                   class="rounded-full relative m-1 flex justify-center items-center h-10 w-auto"
                   :class="{
-                  'border-yellow-400 border-2': isSame(item.fullDate),
-                  'text-grey': isDisabled(item.fullDate), 
-                  'cursor-pointer hover:bg-gray-200': !isDisabled(item.fullDate)
+                  'border-yellow-500 border-2': isSame(item.fullDate),
+                  'text-gray-500': isDisabled(item.fullDate), 
+                  'cursor-pointer hover:bg-gray-300': !isDisabled(item.fullDate)
                 }"
                   v-if="item.day === 0"
                 >

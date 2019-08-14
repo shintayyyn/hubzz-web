@@ -1,5 +1,5 @@
 <template>
-  <div class="p-8 max-w-xl">
+  <div class="p-8 max-w-5xl">
     <div @click="close" class="cursor-pointer">
       <svgicon name="left-arrow" height="32" width="32" />
     </div>
@@ -59,15 +59,43 @@ export default {
   methods: {
     close() {
       if (this.$route.fullPath === '/dashboard') {
-        console.log('close dashboard')
         this.$emit('close')
         return
       } else {
-        console.log('close query')
-        const query = {
-          ...this.$route.query
+        console.log(this.job)
+        let status = this.job.locum_status
+        switch (status) {
+          case 'Current':
+            this.$router.push(`/jobs/allocated`)
+            break;
+          case 'Available':
+            this.$router.push(`/jobs/available`)
+            break;
+          case 'Matched':
+            this.$router.push(`/jobs/matched`)
+            break;
+          case 'Applied':
+            this.$router.push(`/jobs/applied`)
+            break;
+          case 'Unsuccessful':
+            this.$router.push(`/jobs/unsuccessful`)
+            break;
+          case 'Declined':
+            this.$router.push(`/jobs/declined`)
+            break;
+          case 'Cancelled':
+            this.$router.push(`/jobs/cancelled`)
+            break;
+          case 'Completed':
+            this.$router.push(`/jobs/completed`)
+            break;
+
+
         }
-        this.$router.push({ path: `/jobs`, query })
+        // const query = {
+        //   ...this.$route.query
+        // }
+        // this.$router.push({ path: `/jobs`, query })
       }
     },
     status(status) {
@@ -82,19 +110,19 @@ export default {
     bgStatus(status) {
       switch (status) {
         case 'Available':
-          return 'bg-yellow-400';
+          return 'bg-yellow-500';
           break;
         case 'Applied':
           return 'bg-orange-400 text-white';
           break;
         case 'Completed':
-          return 'bg-green-200';
+          return 'bg-green-400';
           break;
         case 'Current':
-          return 'bg-green-200';
+          return 'bg-green-400';
           break;
         default:
-          return 'bg-red-300 text-white'
+          return 'bg-red-500 text-white'
       }
     }
   }

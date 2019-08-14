@@ -16,9 +16,9 @@
         >E-mail is Verified on {{$moment(email_verifiedAt).format('MMM DD, YYYY | hh:mm A')}}</span>
       </div>
       <div class="-mt-6 mb-4" v-if="email_isVerified === false ">
-        <span class="text-red-300 text-xs">E-mail is not yet verified.</span>
+        <span class="text-red-500 text-xs">E-mail is not yet verified.</span>
         <span
-          class="p-1 bg-grey rounded text-xs"
+          class="p-1 bg-gray-900 rounded text-xs"
           @click="resendEmailVerification()"
         >Click here to re-send</span>
       </div>
@@ -77,6 +77,10 @@ const roles = [
   { value: "Partner", label: "Partner" }
 ];
 export default {
+  transition: {
+    name: 'fade',
+    mode: 'out-in'
+  },
   components: {
     AppInput,
     AppSelect,

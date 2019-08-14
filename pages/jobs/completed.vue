@@ -13,17 +13,23 @@
             <tr class="text-xs sm:text-sm text-left">
               <th @click="sortBy('job_number')">
                 Job number
-                <svgicon name="sort" height="12" width="12" />
+                <svgicon class="inline align-baseline" name="sort" height="12" width="12" />
               </th>
               <th>Practice</th>
               <th>Title</th>
+              <th>Shift</th>
+              <th @click="sortBy('rate')">
+                Rate
+                <svgicon class="inline align-baseline" name="sort" height="12" width="12" />
+              </th>
+              <th>Per</th>
               <th @click="sortBy('date_start')">
                 From
-                <svgicon name="sort" height="12" width="12" />
+                <svgicon class="inline align-baseline" name="sort" height="12" width="12" />
               </th>
               <th @click="sortBy('date_end')">
                 To
-                <svgicon name="sort" height="12" width="12" />
+                <svgicon class="inline align-baseline" name="sort" height="12" width="12" />
               </th>
               <th>Marked completed by Practice</th>
             </tr>
@@ -38,6 +44,9 @@
                 <td>{{item.job_number}}</td>
                 <td>{{item.type === 'Private' ? item.private_job.private_practice.surgery.name : item.platform_job.practice.surgery.name}}</td>
                 <td>{{item.status === 'Private' ? 'Private Appointment' : item.title}}</td>
+                <td>{{item.shift.name}}</td>
+                <td>{{item.rate}}</td>
+                <td>{{item.locum_detail_rate_type.name}}</td>
                 <td>{{item.date_start}}</td>
                 <td>{{item.date_end}}</td>
                 <td>{{item.job_parts[item.job_parts.length - 1].completed_at | localDate }}</td>
@@ -50,7 +59,7 @@
         </table>
       </div>
     </div>
-    <div class="absolute bottom-0 w-full" v-if="getLocumCompletedJobs.length > 0 && totalPages > 1">
+    <div class="bottom-0 w-full" v-if="getLocumCompletedJobs.length > 0 && totalPages > 1">
       <AppPagination
         :total="total"
         :totalPages="totalPages"
@@ -83,6 +92,7 @@ export default {
       // sort
       sortType: '',
       job_number: true,
+      rate: true,
       date_start: false,
       date_end: true,
     }
@@ -113,6 +123,9 @@ export default {
   created() {
     this.getJobsCount();
     this.getJobs(this.current_page, this.params);
+    setTimeout(() => {
+      this.$store.commit('jobs/CLEAR_LOCUM_COMPLETED_BADGE')
+    }, 1000)
   },
   methods: {
     getJobsCount() {
@@ -123,6 +136,9 @@ export default {
     },
     sortBy(sortedBy) {
       switch (sortedBy) {
+        case 'rate':
+          this.rate = !this.rate
+          this.sortType = this.rate
         case 'job_number':
           this.job_number = !this.job_number
           this.sortType = this.job_number

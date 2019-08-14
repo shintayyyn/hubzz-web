@@ -1,41 +1,34 @@
 <template>
   <section class="account-section">
-    <MyPracticeTab/>
+    <div class="flex flex-row flex-wrap justify-start">
+      <nuxt-link
+        to="/my-practice/favorites"
+        class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+        :class="$route.name === 'my-practice-favorites'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+      >Favorites</nuxt-link>
+      <nuxt-link
+        to="/my-practice/completed"
+        class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+        :class="$route.name === 'my-practice-completed'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+      >Completed</nuxt-link>
+      <nuxt-link
+        to="/my-practice/all"
+        class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+        :class="$route.name === 'my-practice-all'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+      >All</nuxt-link>
+      <nuxt-link
+        to="/my-practice/Unsuccessful"
+        class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+        :class="$route.name === 'my-practice-Unsuccessful'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+      >Unsuccessful</nuxt-link>
+    </div>
     <div class="mt-5">
-      <transition name="fade" mode="out-in">
-        <Component :is="activeComponent"/>
-      </transition>
+      <nuxt-child />
     </div>
   </section>
 </template>
 <script>
-import MyPracticeTab from '@/components/MyPractice/MyPracticeTab'
-import Favorites from '@/components/MyPractice/Favorites'
-import Completed from '@/components/MyPractice/Completed'
-import All from '@/components/MyPractice/All'
-import Unsuccessful from '@/components/MyPractice/Unsuccessful'
 export default {
-  components: {
-    MyPracticeTab,
-    Favorites,
-    Completed,
-    All,
-    Unsuccessful,
-  },
-  middleware:'isVerified',
-  created() {
-    const query = {
-      ...this.$route.query,
-      my_practice_tab: this.$route.query.my_practice_tab || 'favorites'
-    }
-    this.$router.push({ query })
-  },
-  computed: {
-    activeComponent() {
-      return this.$route.query.my_practice_tab
-    }
-  },
+  middleware: 'isVerified',
 }
 </script>
-<style scoped>
-</style>

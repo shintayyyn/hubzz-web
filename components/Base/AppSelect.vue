@@ -4,17 +4,17 @@
     <div class="flex flex-col py-2 mb-6">
       <div class="relative flex flex-row flex-no-wrap justify-between">
         <label :for="name" class="text-xs sm:text-base py-1">{{label}}</label>
-        <div class="bg-gray-200 rounded-lg p-1 text-xs sm:text-sm" v-if="info">{{info}}</div>
+        <div class="bg-gray-300 rounded-lg p-1 text-xs sm:text-sm" v-if="info">{{info}}</div>
         <div
-          class="absolute right-0 bg-red-300 p-1 text-xs sm:text-sm text-white"
+          class="absolute right-0 bg-red-500 p-1 text-xs sm:text-sm text-white"
           v-if="error"
         >{{error.message}}</div>
       </div>
       <div class="flex flex-row justify-start mt-1">
         <select
           :value="value"
-          class="border-b-2 focus:border-yellow-300 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full"
-          :class="error ? 'border-red-300':''"
+          class="border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full"
+          :class="error ? 'border-red-500':''"
           @input="$emit('input', $event.target.value)"
           :style="inStyle"
         >

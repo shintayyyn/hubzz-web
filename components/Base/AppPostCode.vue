@@ -4,7 +4,7 @@
       <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
       <div class="flex">
         <div
-          class="bg-red-300 ml-2 p-1 text-xs sm:text-base text-white"
+          class="bg-red-500 ml-2 p-1 text-xs sm:text-base text-white"
           v-if="error"
         >{{error.message}}</div>
       </div>
@@ -14,8 +14,8 @@
         v-model="search"
         ref="search"
         type="text"
-        class="border-b-2 focus:border-yellow-300 focus:outline-none py-4 font-bold text-xs sm:text-sm w-full"
-        :class="error? 'border-red-300':''"
+        class="border-b-2 focus:border-yellow-400 focus:outline-none py-4 font-bold text-xs sm:text-sm w-full"
+        :class="error? 'border-red-500':''"
         :style="inStyle"
         @focus="toggledOn"
         @keydown="handleKeyDownEvent"
@@ -28,7 +28,7 @@
             v-for="(item, index) in predictions"
             :key="index"
             class="flex flex-row flex-no-wrap justify-start p-2 text-xs border-b-2 cursor-pointer"
-            :class="{'bg-gray-200': activeIndex === index}"
+            :class="{'bg-gray-300': activeIndex === index}"
             @mouseover="activeIndex = index"
             @click="add()"
           >
@@ -40,7 +40,7 @@
                 v-html="mainTextFormat(item.structured_formatting.main_text, item.structured_formatting.main_text_matched_substrings[0].length)"
               ></span>
               <span
-                class="text-grey-dark"
+                class="text-gray-500"
                 v-html="subTextFormat(item.structured_formatting.secondary_text, item.structured_formatting.secondary_text_matched_substrings ? item.structured_formatting.secondary_text_matched_substrings[0].length : 0)"
               ></span>
             </div>
@@ -72,6 +72,7 @@ export default {
   },
   watch: {
     value(post_code) {
+      console.log('post_code', post_code)
       this.search = post_code;
     },
     search(value) {

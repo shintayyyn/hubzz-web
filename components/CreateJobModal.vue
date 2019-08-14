@@ -1,14 +1,14 @@
 <template>
-  <div class="p-8 max-w-xl">
-    <div @click="$emit('close')" class="cursor-pointer">
+  <div class="p-8 max-w-3xl">
+    <div @click="close" class="cursor-pointer">
       <svgicon name="left-arrow" height="32" width="32" />
     </div>
     <div class="flex justify-start font-bold text-sm sm:text-xl mt-8">Create a new job</div>
     <div class="flex flex-row flex-wrap justify-start mt-8">
       <!--VALIDATION MODAL-->
-      <div v-if="showErrorModal == true" class="absolute top-0">
+      <div v-if="showErrorModal == true" class="absolute top-0 z-50">
         <div
-          class="fixed text-white bg-red-200 py-2 px-12 mr-10 md:mr-0 md:w-1/3 shadow"
+          class="fixed text-white bg-red-400 py-2 px-12 mr-10 md:mr-0 md:w-1/3 shadow"
           style="border-radius: 0 0 10px 10px"
         >
           <span class="text-base font-bold">Validation Error!</span>
@@ -158,8 +158,8 @@
                   <input
                     v-model="form.rate"
                     type="text"
-                    class="border-b-2 focus:border-yellow-300 focus:outline-none font-bold text-xs sm:text-sm mx-1 py-2"
-                    :class="formError.find(item => item.field === 'rate')? 'border-red-300':''"
+                    class="border-b-2 focus:border-yellow-400 focus:outline-none font-bold text-xs sm:text-sm mx-1 py-2"
+                    :class="formError.find(item => item.field === 'rate')? 'border-red-500':''"
                     style="text-align:right;width:100px;"
                     @blur="checkEmptyField(form.rate,'rate')"
                   />
@@ -168,8 +168,8 @@
                   <label for="locum_detail_rate_type_id" class="text-xs sm:text-sm mt-2">per</label>
                   <select
                     v-model="form.locum_detail_rate_type_id"
-                    class="border-b-2 focus:border-yellow-300 focus:outline-none font-bold text-xs sm:text-sm mx-1 py-2"
-                    :class="formError.find(item => item.field === 'locum_detail_rate_type_id')? 'border-red-300':''"
+                    class="border-b-2 focus:border-yellow-400 focus:outline-none font-bold text-xs sm:text-sm mx-1 py-2"
+                    :class="formError.find(item => item.field === 'locum_detail_rate_type_id')? 'border-red-500':''"
                   >
                     <option
                       v-for="(item, index) in rate_lists"
@@ -179,7 +179,7 @@
                   </select>
                 </div>
                 <div
-                  class="absolute right-0 bg-red-300 p-1 text-xs sm:text-base text-white"
+                  class="absolute right-0 bg-red-500 p-1 text-xs sm:text-base text-white"
                   v-if="formError.find(item => item.field === 'rate')"
                 >{{formError.find(item => item.field === 'rate').message}}</div>
               </div>
@@ -188,7 +188,7 @@
               <div class="relative flex flex-row flex-no-wrap justify-between">
                 <label for="total_hours" class="text-xs sm:text-sm py-1 mt-2">Total hours</label>
                 <div
-                  class="absolute right-0 bg-red-300 p-1 text-xs sm:text-base text-white"
+                  class="absolute right-0 bg-red-500 p-1 text-xs sm:text-base text-white"
                   v-if="this.formError.find(item => item.field === 'total_hours')"
                 >{{this.formError.find(item => item.field === 'total_hours').message}}</div>
               </div>
@@ -196,8 +196,8 @@
                 <input
                   v-model="form.total_hours"
                   type="text"
-                  class="border-b-2 focus:border-yellow-300 focus:outline-none font-bold py-2 text-xs sm:text-sm mx-1"
-                  :class="this.formError.find(item => item.field === 'total_hours')? 'border-red-300':''"
+                  class="border-b-2 focus:border-yellow-400 focus:outline-none font-bold py-2 text-xs sm:text-sm mx-1"
+                  :class="this.formError.find(item => item.field === 'total_hours')? 'border-red-500':''"
                   @blur="checkEmptyField(form.total_hours,'total_hours')"
                   style="text-align:right;'"
                 />
@@ -569,10 +569,6 @@ export default {
         }
       }
     },
-    'form.mandatory_training_id'(value) {
-      console.log(value)
-      console.log('form mandatory training', this.form.mandatory_training_id)
-    }
   },
   created() {
     // get practice lists
@@ -672,6 +668,9 @@ export default {
   },
 
   methods: {
+    close() {
+      this.$store.commit('calendar/CREATE_JOB_MODAL', false)
+    },
     checkEmptyField(inputField, fieldName) {
       // splice from formError
       let index = this.formError.findIndex(item => item.field === fieldName)
@@ -712,8 +711,6 @@ export default {
           'selection_date',
           'favorite_only_until'])
 
-      console.log('errors', this.formError.length)
-      console.log('form', this.form)
 
       if (this.formError.length == 0) {
         this.form.clinical_system_id = this.form.clinical_system_id.map(
@@ -744,7 +741,6 @@ export default {
           ? (this.form.unpaid_breaks_in_minutes = this.unpaid_breaks)
           : (this.form.unpaid_breaks_in_minutes = this.form.unpaid_breaks_in_minutes);
         this.$axios.$post(`/api/v1/practice/jobs`, this.form).then(res => {
-          console.log(res);
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
@@ -753,7 +749,6 @@ export default {
           this.$emit("close");
         });
       } else {
-        console.log(this.formError)
         this.showErrorModal = true
       }
     }

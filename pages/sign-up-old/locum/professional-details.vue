@@ -14,18 +14,18 @@
               <label class="text-xs my-1 py-1">Your GMC / NMC Number *</label>
               <div class="m-1 flex-auto flex justify-end">
                 <span
-                  class="text-xs p-1 bg-gray-200"
+                  class="text-xs p-1 bg-gray-300"
                   v-if="!gmcNumberErrorMessage || showGMCNumberFocus"
                 >For compliance; to be verified by the hubzz team</span>
                 <span
-                  class="text-xs bg-red-300 p-1 text-white"
+                  class="text-xs bg-red-500 p-1 text-white"
                   v-if="gmcNumberErrorMessage && !showGMCNumberFocus"
                 >{{ gmcNumberErrorMessage }}</span>
               </div>
             </div>
             <input
               class="outline-none py-1 mt-1 border-b"
-              :class="showGMCNumberFocus ? 'border-yellow-400' : gmcNumberErrorMessage ? 'border-red-300' : 'border-grey-dark'"
+              :class="showGMCNumberFocus ? 'border-yellow-500' : gmcNumberErrorMessage ? 'border-red-500' : 'border-gray-500'"
               v-model="gmcNumber"
               @focus="showGMCNumberFocus = true"
               @blur="showGMCNumberFocus = false, checkGMCNumber()"
@@ -38,18 +38,18 @@
               <label class="text-xs my-1 py-1">Your MPL / NPL Number *</label>
               <div class="m-1 flex-auto flex justify-end">
                 <span
-                  class="text-xs p-1 bg-gray-200"
+                  class="text-xs p-1 bg-gray-300"
                   v-if="!mplNumberErrorMessage || showMPLNumberFocus"
                 >For compliance; to be verified by the hubzz team</span>
                 <span
-                  class="text-xs bg-red-300 p-1 text-white"
+                  class="text-xs bg-red-500 p-1 text-white"
                   v-if="mplNumberErrorMessage && !showMPLNumberFocus"
                 >{{ mplNumberErrorMessage }}</span>
               </div>
             </div>
             <input
               class="outline-none py-1 mt-1 border-b"
-              :class="showMPLNumberFocus ? 'border-yellow-400' : mplNumberErrorMessage ? 'border-red-300' : 'border-grey-dark'"
+              :class="showMPLNumberFocus ? 'border-yellow-500' : mplNumberErrorMessage ? 'border-red-500' : 'border-gray-500'"
               v-model="mplNumber"
               @focus="showMPLNumberFocus = true"
               @blur="showMPLNumberFocus = false, checkMPLNumber()"
@@ -62,14 +62,14 @@
               <label class="text-xs my-1 py-1">Your NHS Smart Card ID number *</label>
               <div class="m-1 flex-auto flex justify-end">
                 <span
-                  class="text-xs bg-red-300 p-1 text-white"
+                  class="text-xs bg-red-500 p-1 text-white"
                   v-if="smartCardIdNumberErrorMessage && !showSmartCardIdNumberFocus"
                 >{{ smartCardIdNumberErrorMessage }}</span>
               </div>
             </div>
             <input
               class="outline-none py-1 mt-1 border-b"
-              :class="showSmartCardIdNumberFocus ? 'border-yellow-400' : smartCardIdNumberErrorMessage ? 'border-red-300' : 'border-grey-dark'"
+              :class="showSmartCardIdNumberFocus ? 'border-yellow-500' : smartCardIdNumberErrorMessage ? 'border-red-500' : 'border-gray-500'"
               v-model="smartCardIdNumber"
               @focus="showSmartCardIdNumberFocus = true"
               @blur="showSmartCardIdNumberFocus = false, checkSmartCardIdNumber()"
@@ -81,14 +81,14 @@
               <label class="text-xs my-1 py-1">Profession *</label>
               <div class="m-1 flex-auto flex justify-end">
                 <span
-                  class="text-xs bg-red-300 p-1 text-white"
+                  class="text-xs bg-red-500 p-1 text-white"
                   v-if="professionErrorMessage && !showPrefossionFocus"
                 >{{ professionErrorMessage }}</span>
               </div>
             </div>
             <select
-              class="outline-none py-2 mt-1 border-b w-full bg-gray-200"
-              :class="showPrefossionFocus ? 'border-yellow-400' : professionErrorMessage ? 'border-red-300' : 'border-grey-dark'"
+              class="outline-none py-2 mt-1 border-b w-full bg-gray-300"
+              :class="showPrefossionFocus ? 'border-yellow-500' : professionErrorMessage ? 'border-red-500' : 'border-gray-500'"
               v-model="profession"
               @focus="showPrefossionFocus = true"
               @blur="showPrefossionFocus = false, checkProfession()"
@@ -107,11 +107,11 @@
               <label class="text-xs my-1 py-1">Speciality *</label>
               <div class="m-1 flex-auto flex justify-end">
                 <span
-                  class="text-xs p-1 bg-gray-200"
+                  class="text-xs p-1 bg-gray-300"
                   v-if="!selectedQualificationsErrorMessage || showQualificationsSelect"
                 >Choose at least one qualification</span>
                 <span
-                  class="text-xs bg-red-300 p-1 text-white"
+                  class="text-xs bg-red-500 p-1 text-white"
                   v-if="selectedQualificationsErrorMessage && !showQualificationsSelect"
                 >{{ selectedQualificationsErrorMessage }}</span>
               </div>
@@ -119,7 +119,7 @@
             <div class="relative" v-on-clickaway="hideQualificationsSelect">
               <div
                 class="flex items-center flex-wrap border-b"
-                :class="showQualificationsSelect ? 'border-yellow-400' : selectedQualificationsErrorMessage ? 'border-red-300' : 'border-grey-dark'"
+                :class="showQualificationsSelect ? 'border-yellow-500' : selectedQualificationsErrorMessage ? 'border-red-500' : 'border-gray-500'"
               >
                 <div
                   class="px-2 py-1 rounded-lg m-1"
@@ -131,7 +131,7 @@
                 </div>
                 <div style="flex: 1 0 50%;">
                   <input
-                    class="w-full bg-gray-200 outline-none px-1 py-2 mt-1"
+                    class="w-full bg-gray-300 outline-none px-1 py-2 mt-1"
                     ref="inputQualificationsSearch"
                     v-model="qualificationsSearch"
                     @click="showQualificationsSelect = true"
@@ -152,7 +152,7 @@
                   v-for="(qualification, index) in filteredQualifications"
                   :ref="`qualification-${index}`"
                   class="p-2 cursor-pointer"
-                  :class="`${index !== qualifications.length ? 'border-b' : ''} ${index === qualificationIndex ? 'bg-gray-200' : ''}`"
+                  :class="`${index !== qualifications.length ? 'border-b' : ''} ${index === qualificationIndex ? 'bg-gray-300' : ''}`"
                   @click="addQualification(qualification)"
                   @mouseover="qualificationIndex = index"
                 >
@@ -169,11 +169,11 @@
               <label class="text-xs my-1 py-1">Clinical systems *</label>
               <div class="m-1 flex-auto flex justify-end">
                 <span
-                  class="text-xs p-1 bg-gray-200"
+                  class="text-xs p-1 bg-gray-300"
                   v-if="!selectedSystemsErrorMessage || showSystemsSelect"
                 >Choose at least one IT system</span>
                 <span
-                  class="text-xs bg-red-300 p-1 text-white"
+                  class="text-xs bg-red-500 p-1 text-white"
                   v-if="selectedSystemsErrorMessage && !showSystemsSelect"
                 >{{ selectedSystemsErrorMessage }}</span>
               </div>
@@ -181,7 +181,7 @@
             <div class="relative" v-on-clickaway="hideSystemSelect">
               <div
                 class="flex items-center flex-wrap border-b"
-                :class="showSystemsSelect ? 'border-yellow-400' : selectedSystemsErrorMessage ? 'border-red-300' : 'border-grey-dark'"
+                :class="showSystemsSelect ? 'border-yellow-500' : selectedSystemsErrorMessage ? 'border-red-500' : 'border-gray-500'"
               >
                 <div
                   class="px-2 py-1 rounded-lg m-1"
@@ -193,7 +193,7 @@
                 </div>
                 <div style="flex: 1 0 50%;">
                   <input
-                    class="w-full bg-gray-200 outline-none px-1 py-2 mt-1"
+                    class="w-full bg-gray-300 outline-none px-1 py-2 mt-1"
                     ref="inputSystemsSearch"
                     v-model="systemsSearch"
                     @click="showSystemsSelect = true"
@@ -214,7 +214,7 @@
                   v-for="(system, index) in filteredSystems"
                   :ref="`system-${index}`"
                   class="p-2 cursor-pointer"
-                  :class="`${index !== systems.length ? 'border-b' : ''} ${index === systemIndex ? 'bg-gray-200' : ''}`"
+                  :class="`${index !== systems.length ? 'border-b' : ''} ${index === systemIndex ? 'bg-gray-300' : ''}`"
                   @click="addSystem(system)"
                   @mouseover="systemIndex = index"
                 >
@@ -231,11 +231,11 @@
               <label class="text-xs my-1 py-1">Spoken languages *</label>
               <div class="m-1 flex-auto flex justify-end">
                 <span
-                  class="text-xs p-1 bg-gray-200"
+                  class="text-xs p-1 bg-gray-300"
                   v-if="!selectedLanguagesErrorMessage || showLanguagesSelect"
                 >Choose other languages you can speak</span>
                 <span
-                  class="text-xs bg-red-300 p-1 text-white"
+                  class="text-xs bg-red-500 p-1 text-white"
                   v-if="selectedLanguagesErrorMessage && !showLanguagesSelect"
                 >{{ selectedLanguagesErrorMessage }}</span>
               </div>
@@ -243,7 +243,7 @@
             <div class="relative" v-on-clickaway="hideLanguageSelect">
               <div
                 class="flex items-center flex-wrap border-b"
-                :class="showLanguagesSelect ? 'border-yellow-400' : selectedLanguagesErrorMessage ? 'border-red-300' : 'border-grey-dark'"
+                :class="showLanguagesSelect ? 'border-yellow-500' : selectedLanguagesErrorMessage ? 'border-red-500' : 'border-gray-500'"
               >
                 <div class="px-2 py-1 rounded-lg m-1" style="background-color: #FFDA3A;">
                   <span class="text-sm">English</span>
@@ -258,7 +258,7 @@
                 </div>
                 <div style="flex: 1 0 50%;">
                   <input
-                    class="w-full bg-gray-200 outline-none px-1 py-2 mt-1"
+                    class="w-full bg-gray-300 outline-none px-1 py-2 mt-1"
                     ref="inputLanguagesSearch"
                     v-model="languagesSearch"
                     @click="showLanguagesSelect = true"
@@ -279,7 +279,7 @@
                   v-for="(language, index) in filteredLanguages"
                   :ref="`language-${index}`"
                   class="p-2 cursor-pointer"
-                  :class="`${index !== languages.length ? 'border-b' : ''} ${index === languageIndex ? 'bg-gray-200' : ''}`"
+                  :class="`${index !== languages.length ? 'border-b' : ''} ${index === languageIndex ? 'bg-gray-300' : ''}`"
                   @click="addLanguage(language)"
                   @mouseover="languageIndex = index"
                 >
@@ -294,7 +294,7 @@
             <div class="flex flex-wrap justify-between">
               <label class="text-xs my-1 py-1">Your preferred rates £</label>
               <div class="m-1 flex-auto flex justify-end">
-                <span class="text-xs p-1 bg-gray-200">To match available jobs with</span>
+                <span class="text-xs p-1 bg-gray-300">To match available jobs with</span>
               </div>
             </div>
             <div class="flex flex-wrap">
@@ -303,14 +303,14 @@
                   <label class="text-xs my-1 py-1">Per hour</label>
                   <div class="m-1 flex-auto flex justify-end">
                     <span
-                      class="text-xs bg-red-300 p-1 text-white"
+                      class="text-xs bg-red-500 p-1 text-white"
                       v-if="ratePerHourErrorMessage && !showRatePerHourFocus"
                     >{{ ratePerHourErrorMessage }}</span>
                   </div>
                 </div>
                 <input
                   class="outline-none py-1 mt-1 border-b w-full text-right"
-                  :class="showRatePerHourFocus ? 'border-yellow-400' : ratePerHourErrorMessage ? 'border-red-300' : 'border-grey-dark'"
+                  :class="showRatePerHourFocus ? 'border-yellow-500' : ratePerHourErrorMessage ? 'border-red-500' : 'border-gray-500'"
                   v-model="ratePerHour"
                   @focus="showRatePerHourFocus = true"
                   @blur="showRatePerHourFocus = false, checkRatePerHour()"
@@ -321,14 +321,14 @@
                   <label class="text-xs my-1 py-1">Per session</label>
                   <div class="m-1 flex-auto flex justify-end">
                     <span
-                      class="text-xs bg-red-300 p-1 text-white"
+                      class="text-xs bg-red-500 p-1 text-white"
                       v-if="ratePerSessionErrorMessage && !showRatePerSessionFocus"
                     >{{ ratePerSessionErrorMessage }}</span>
                   </div>
                 </div>
                 <input
                   class="outline-none py-1 mt-1 border-b w-full text-right"
-                  :class="showRatePerSessionFocus ? 'border-yellow-400' : ratePerSessionErrorMessage ? 'border-red-300' : 'border-grey-dark'"
+                  :class="showRatePerSessionFocus ? 'border-yellow-500' : ratePerSessionErrorMessage ? 'border-red-500' : 'border-gray-500'"
                   v-model="ratePerSession"
                   @focus="showRatePerSessionFocus = true"
                   @blur="showRatePerSessionFocus = false, checkRatePerSession()"
@@ -344,8 +344,8 @@
               >Are you OK to work with Practices that are inside of scope for IR35?</label>
             </div>
             <select
-              class="outline-none py-2 mt-1 border-b w-full bg-gray-200"
-              :class="showScopeIR35Focus ? 'border-yellow-400' : false ? 'border-red-300' : 'border-grey-dark'"
+              class="outline-none py-2 mt-1 border-b w-full bg-gray-300"
+              :class="showScopeIR35Focus ? 'border-yellow-500' : false ? 'border-red-500' : 'border-gray-500'"
               v-model="scopeIR35"
               @focus="showScopeIR35Focus = true"
               @blur="showScopeIR35Focus = false"

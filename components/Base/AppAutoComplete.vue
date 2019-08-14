@@ -4,7 +4,7 @@
       <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
       <div class="flex">
         <div
-          class="bg-red-300 ml-2 p-1 text-xs sm:text-base text-white"
+          class="bg-red-500 ml-2 p-1 text-xs sm:text-base text-white"
           v-if="error"
         >{{error.message}}</div>
       </div>
@@ -15,8 +15,8 @@
         ref="search"
         type="text"
         :placeholder="placeholder"
-        class="border-b-2 focus:border-yellow-300 focus:outline-none py-4 font-bold text-xs sm:text-sm w-full"
-        :class="error? 'border-red-300':''"
+        class="border-b-2 focus:border-yellow-400 focus:outline-none py-4 font-bold text-xs sm:text-sm w-full"
+        :class="error? 'border-red-500':''"
         :style="inStyle"
         @focus="toggledOn"
         @keydown="handleKeyDownEvent"
@@ -29,7 +29,7 @@
             v-for="(item, index) in results"
             :key="index"
             class="flex flex-row flex-no-wrap justify-start p-2 text-xs border-b-2 cursor-pointer"
-            :class="{'bg-gray-200': activeIndex === index}"
+            :class="{'bg-gray-300': activeIndex === index}"
             @mouseover="activeIndex = index"
             @click="add()"
           >
@@ -51,7 +51,7 @@
               <div class="leading-normal mx-2">
                 <span v-text="item.name"></span>
                 <span
-                  class="text-grey-dark"
+                  class="text-gray-500"
                   v-text="`${item.clinical_commissioning_group.name} ${item.code}`"
                 ></span>
               </div>
@@ -112,7 +112,6 @@ export default {
           .then(res => {
             if (res.data.conversations.length > 0) {
               let id = res.data.conversations[0].id;
-              console.log(id);
               this.$router.push(`/messages/${id}`);
             }
           });

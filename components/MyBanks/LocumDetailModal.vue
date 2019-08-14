@@ -1,11 +1,11 @@
 <template>
-  <div class="p-8 max-w-xl">
+  <div class="p-8 max-w-3xl">
     <div class="flex flex-row flex-no-wrap justify-start">
       <div class="font-bold text-md sm:text-lg">{{user.personal_detail.name}}</div>
     </div>
     <div class="flex flex-row flex-wrap justify-between mt-4">
       <div class="w-full pr-0 lg:pr-2 lg:w-1/2">
-        <div class="rounded-lg shadow-lg">
+        <div class="rounded-lg shadow-lg p-4">
           <div class="float-right">
             <!-- <div class="font-bold text-sm sm:text-md">Avatar</div> -->
             <div class="text-xs sm:text-sm mb-6">
@@ -31,7 +31,7 @@
           <div class="font-bold text-sm sm:text-md">Specialty</div>
           <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
             <div
-              class="rounded-lg bg-yellow-400 p-2 m-1"
+              class="rounded-lg bg-yellow-500 p-2 m-1"
               v-for="item in user.locum_detail.qualifications"
               :key="item.id"
             >{{item.name}}</div>
@@ -39,16 +39,16 @@
           <div class="font-bold text-sm sm:text-md">Clinical systems</div>
           <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
             <div
-              class="rounded-lg bg-yellow-400 p-2 m-1"
+              class="rounded-lg bg-yellow-500 p-2 m-1"
               v-for="item in user.locum_detail.clinical_systems"
               :key="item.id"
             >{{item.name}}</div>
           </div>
           <div class="font-bold text-sm sm:text-md">Languages</div>
           <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
-            <div class="rounded-lg bg-yellow-400 p-2 m-1">English</div>
+            <div class="rounded-lg bg-yellow-500 p-2 m-1">English</div>
             <div
-              class="rounded-lg bg-yellow-400 p-2 m-1"
+              class="rounded-lg bg-yellow-500 p-2 m-1"
               v-for="item in user.locum_detail.spoken_languages"
               :key="item.id"
             >{{item.name}}</div>
@@ -107,7 +107,7 @@
           <div class="font-bold text-sm sm:text-md">Referees</div>
           <div v-if="user.locum_detail.referees.length > 0">
             <div
-              class="rounded-lg flex flex-col bg-gray-200 my-2 p-4"
+              class="rounded-lg flex flex-col bg-gray-300 my-2 p-4"
               v-for="item in user.locum_detail.referees"
               :key="item.id"
             >
@@ -137,7 +137,6 @@ export default {
   },
   created() {
     this.getProfessionCategory(this.user.locum_detail.profession.profession_category.id)
-    console.log(this.user)
   },
   methods: {
     getProfessionCategory(id) {
