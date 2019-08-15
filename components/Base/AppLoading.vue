@@ -1,6 +1,6 @@
 <template>
-  <div class="shield">
-    <h1 class="text-sm loader-message">{{message}}</h1>
+  <div class="shield shadow-md" v-if="loading">
+    <h1 class="text-5xl loader-message">Loading</h1>
   </div>
 </template>
 <script>
@@ -26,7 +26,9 @@ export default {
   left: 0;
   right: 0;
   z-index: 998;
-  background-color: lightgray;
+  background-color: #f5f6f9;
+  /* h-offset v-offset blur spread color */
+  box-shadow: 10px 10px 0.1 10px #f5f6f9;
   opacity: 0.5;
 }
 .loader-message {

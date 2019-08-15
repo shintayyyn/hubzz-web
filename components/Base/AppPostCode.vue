@@ -72,6 +72,7 @@ export default {
   },
   watch: {
     value(post_code) {
+      console.log('post_code', post_code)
       this.search = post_code;
     },
     search(value) {

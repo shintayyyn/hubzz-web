@@ -4,10 +4,12 @@
       <div @click="$emit('close')" class="cursor-pointer">
         <svgicon name="left-arrow" height="32" />
       </div>
-      <div class="ml-8 hover:text-black hover:bg-yellow-500 rounded-lg inline-flex p-2">
+      <div
+        class="ml-8 hover:text-black hover:bg-yellow-500 rounded-lg inline-flex p-2 cursor-pointer"
+      >
         <a
           @click.prevent="downloadItem(specificComplianceDoc.file.url,specificComplianceDoc.file.filename)"
-          class="text-black no-underline"
+          class="text-black no-underline flex justify-center"
         >
           <svgicon
             name="cloud-download"
@@ -15,6 +17,7 @@
             height="21"
             color="black"
             hover="transparent black"
+            class="inline"
           ></svgicon>
           <span>Download</span>
         </a>

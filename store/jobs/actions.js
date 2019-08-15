@@ -180,9 +180,7 @@ export default {
         commit('SET_LOCUM_UNAVAILABILITIES_COUNT', response.data.count)
     },
     async fetchLocumJobs({ commit }, payload) { // /hubzz-web/api folder -> actions -> mutations
-        commit('TOGGLE_LOADING', true)
         const response = await jobsApi.fetchLocumJobs(this.$axios, payload)
-        commit('TOGGLE_LOADING', false)
         if (payload.status === "Current") {
             if (payload.countOnly) {
                 return commit('SET_LOCUM_ALLOCATED_JOBS_COUNT', response.data.count)
@@ -236,11 +234,12 @@ export default {
         commit('TOGGLE_LOADING', true)
         const response = await jobsApi.fetchLocumJob(this.$axios, payload)
         commit('TOGGLE_LOADING', false)
-        if (response.data.job.status === 'Current' && !state.locum_allocated_jobs.find(allocatedJob => allocatedJob.id === payload)) {
+
+        if (response.data.job.locum_status === 'Current' && !state.locum_allocated_jobs.find(allocatedJob => allocatedJob.id === payload)) {
             commit('ADD_LOCUM_ALLOCATED_BADGE')
             return commit('ADD_LOCUM_ALLOCATED_JOB', response.data.job)
         }
-        if (response.data.job.status === 'Current' && !state.locum_unsuccessful_jobs.find(unsuccessfulJob => unsuccessfulJob.id === payload)) {
+        if (response.data.job.locum_status === 'Current' && !state.locum_unsuccessful_jobs.find(unsuccessfulJob => unsuccessfulJob.id === payload)) {
             commit('ADD_LOCUM_UNSUCCESSFUL_BADGE')
             return commit('ADD_LOCUM_UNSUCCESSFUL_JOB', response.data.job)
         }

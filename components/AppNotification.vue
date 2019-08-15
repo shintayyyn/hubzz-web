@@ -38,7 +38,7 @@ export default {
           return "bg-yellow-400";
           break;
         case "info":
-          return "bg-blue-500 text-blue-400est";
+          return "bg-blue-500 text-blue-400";
         default:
           return "bg-white";
       }
