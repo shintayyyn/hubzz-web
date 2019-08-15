@@ -6,8 +6,8 @@
         <Component :is="activeComponent" />
       </transition>
     </div>
-    <div class="modal-shield" v-if="shield"></div>
     <nuxt-child />-->
+    <div class="modal-shield" v-if="shield"></div>
     <div class="flex flex-row flex-wrap justify-start">
       <nuxt-link
         to="/jobs/allocated"
@@ -50,6 +50,9 @@
         :class="$route.name === 'jobs-completed'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >Completed</nuxt-link>
     </div>
+    <!-- <transition name="fade" mode="out-in">
+      <div v-if="$route.name === 'jobs-id'" class="modal-shield"></div>
+    </transition>-->
     <div class="mt-5">
       <nuxt-child />
     </div>
@@ -65,18 +68,20 @@
 // import Declined from '@/components/Jobs/Declined'
 // import Cancelled from '@/components/Jobs/Cancelled'
 // import Completed from '@/components/Jobs/Completed'
+import AppLoading from '@/components/Base/AppLoading'
 export default {
-  // components: {
-  //   JobsTabs,
-  //   Allocated,
-  //   Available,
-  //   Matched,
-  //   Applied,
-  //   Unsuccessful,
-  //   Declined,
-  //   Cancelled,
-  //   Completed
-  // },
+  components: {
+    AppLoading
+    //   JobsTabs,
+    //   Allocated,
+    //   Available,
+    //   Matched,
+    //   Applied,
+    //   Unsuccessful,
+    //   Declined,
+    //   Cancelled,
+    //   Completed
+  },
   middleware: 'isVerified',
   computed: {
     activeComponent() {
@@ -87,6 +92,9 @@ export default {
     },
     socketId() {
       return this.$store.state.socket_id
+    },
+    loadingJobs() {
+      return this.$store.state.jobs.loading_jobs;
     }
   },
   watch: {
@@ -104,13 +112,13 @@ export default {
   beforeDestroy() {
     this.$store.dispatch('leaveRoom', { socket_id: this.$socket.id, room_name: 'jobroom' })
   },
-  created() {
-    const query = {
-      ...this.$route.query,
-      job_status: this.$route.query.job_status || 'allocated'
-    }
-    this.$router.push({ query })
-  },
+  // created() {
+  //   const query = {
+  //     ...this.$route.query,
+  //     job_status: this.$route.query.job_status || 'allocated'
+  //   }
+  //   this.$router.push({ query })
+  // },
   mounted() {
     if (this.$socket.connected) {
       this.$store.dispatch('joinRoom', { socket_id: this.$socket.id, room_name: 'jobroom' })
