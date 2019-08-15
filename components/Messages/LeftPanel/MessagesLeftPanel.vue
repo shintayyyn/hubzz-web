@@ -1,7 +1,6 @@
 <template>
   <div class="messages-left-panel" :class="$store.state.mobile ? '' : 'hidden'">
     <div class="flex flex-col h-full">
-      <!-- <span class="font-bold text-sm px-2 md:px-4 pt-4 md:text-base md:px-4">Messages</span> -->
       <AppInput
         v-model="search_text"
         :type="'search'"
@@ -12,7 +11,6 @@
       />
       <div class="relative flex flex-col justify-between h-full border-t">
         <div class="chat-list w-full h-full overflow-y-auto" @scroll="scrollHandler">
-          <!-- default -->
           <template v-if="showResult === false">
             <div
               class="relative flex w-full items-center px-2 py-4 cursor-pointer border-b"
@@ -21,7 +19,13 @@
               :key="item.id"
               @click="goTo(item.conversation_id ? item.conversation_id : item.id)"
             >
-              <img class="w-1/6 md:ml-2 rounded-full" :src="user.avatar" width="12%" height="12%" />
+              <img
+                v-if="$auth.user.domain === 'Practice'"
+                class="w-1/6 md:ml-2 rounded-full"
+                :src="userAvatar(item)"
+                width="12%"
+                height="12%"
+              />
               <div class="w-5/6 flex items-center justify-between">
                 <div class="w-5/6 px-2">
                   <p
@@ -31,12 +35,11 @@
                   <p class="text-sm truncate">{{ item.message }}</p>
                 </div>
                 <span
-                  class="w-12 pr-1 text-right text-xs text-gray-600 leading-none absolute right-0"
+                  class="w-12 pr-1 text-right text-xs text-gray-600 leading-none absolute right-0 mr-2"
                 >{{ $moment(item.created_at).startOf('hour').fromNow() }}</span>
               </div>
             </div>
           </template>
-          <!-- show result -->
           <template v-if="showResult && messages.length > 0">
             <div
               class="relative flex w-full items-center px-2 py-4 cursor-pointer border-b"
@@ -45,7 +48,13 @@
               :key="item.id"
               @click="goTo(item.conversation_id ? item.conversation_id : item.id)"
             >
-              <img class="w-1/6 md:ml-2 rounded-full" :src="user.avatar" width="12%" height="12%" />
+              <img
+                v-if="$auth.user.domain === 'Practice'"
+                class="w-1/6 md:ml-2 rounded-full"
+                :src="user.avatar"
+                width="12%"
+                height="12%"
+              />
               <div class="w-5/6 flex items-center justify-between">
                 <div class="w-5/6 px-2">
                   <p
@@ -55,16 +64,18 @@
                   <p class="text-sm truncate">{{ item.message }}</p>
                 </div>
                 <span
-                  class="w-12 pr-1 text-right text-xs text-gray-600 leading-none absolute right-0"
+                  class="w-12 pr-1 text-right text-xs text-gray-600 leading-none absolute right-0 mr-2"
                 >{{ $moment(item.created_at).startOf('hour').fromNow() }}</span>
               </div>
             </div>
           </template>
-          <!-- No results -->
-          <span
+          <div
             v-if="messages.length === 0 && showResult === true"
-            class="flex h-full items-center justify-center font-bold text-gray-500"
-          >Nothing to show</span>
+            class="flex flex-col h-full items-center pt-20 font-bold text-gray-500"
+          >
+            <img src="/images/hubzz-icon-transparent.png" class="logo m-4" />
+            <span>Nothing to show</span>
+          </div>
         </div>
       </div>
       <button
@@ -83,7 +94,7 @@ export default {
   data() {
     return {
       user: {
-        avatar: "https://via.placeholder.com/300/",
+        avatar: "",
         status: false
       },
       search_text: "",
@@ -129,6 +140,15 @@ export default {
       return item.receiver_id === this.$auth.user.id
         ? `${item.sender_first_name} ${item.sender_last_name}`
         : `${item.receiver_first_name} ${item.receiver_last_name}`;
+    },
+    userAvatar(item) {
+      if (item.sender_avatar === null && item.receiver_avatar === null) {
+        return "https://via.placeholder.com/350";
+      } else if (item.receiver_id === this.$auth.user.id) {
+        return item.sender_avatar;
+      } else {
+        return item.receiver_avatar;
+      }
     },
     createMessage() {
       if (window.innerWidth < 768) {
