@@ -6,6 +6,7 @@
     <div class="flex justify-start font-bold text-sm sm:text-xl mt-8">Availability</div>
     <div class="mt-4">
       <div class="rounded-lg shadow-lg p-8">
+        <AppFormError :formError="formError" v-if="formError.length > 0" />
         <div class="font-bold text-sm sm:text-md mt-4">
           I won't be available
           <span v-if="type === 'solo'">for</span>...
@@ -83,12 +84,14 @@
 import AppInput from '@/components/Base/AppInput'
 import AppDate from '@/components/Base/AppDate'
 import AppButton from '@/components/Base/AppButton'
+import AppFormError from '@/components/Base/AppFormError'
 export default {
   props: ['unavailableDate', 'appointmentDate', 'allocatedDate', 'type'],
   components: {
     AppInput,
     AppDate,
-    AppButton
+    AppButton,
+    AppFormError
   },
   data() {
     return {

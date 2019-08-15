@@ -238,10 +238,12 @@ export default {
         this.$emit('close')
       }
       else {
-        const query = {
-          ...this.$route.query
+        if (this.$route.name === 'jobs-completed-id') {
+          this.$router.push('/jobs/completed')
         }
-        this.$router.push({ path: `/jobs`, query })
+        if (this.$route.name === 'jobs-allocated-id') {
+          this.$router.push('/jobs/allocated')
+        }
       }
     },
     save() {
