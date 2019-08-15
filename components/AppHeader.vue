@@ -1,37 +1,36 @@
 <template>
   <section class="header-section">
     <div class="flex flex-row flex-wrap justify-between">
-      <div class="w-1/2 sm:w-1/3 cursor-pointer py-2" @click="toggle">
-        <div class="burger">
+      <div class="w-1/3 py-2">
+        <div class="burger cursor-pointer" @click="toggle">
           <div class="my-2 bg-yellow-500"></div>
           <div class="my-2 bg-yellow-500"></div>
         </div>
       </div>
-      <div class="w-1/2 text-right sm:w-1/3 sm:text-center py-2">
-        <img src="/images/hubzz-icon-transparent.png" class="logo" />
+      <div class="w-1/3 sm:w-1/3 py-2">
+        <img src="/images/hubzz-icon-transparent.png" class="logo mx-auto" />
       </div>
-      <div class="w-full sm:w-1/3 text-right leading-loose py-2">
-        <div class="flex flex-row justify-end items-center" v-if="$auth.loggedIn">
-          <div
-            class="text-xs xl:text-sm"
-            v-if="$auth.user.domain === 'Practice' && $auth.user.status === 'Active'"
-          >
+      <div class="w-1/3 text-right leading-loose py-2">
+        <div class="flex flex-col md:flex-row justify-end md:items-center" v-if="$auth.loggedIn">
+          <div class="flex flex-col md:flex-row">
+            <div v-if="$auth.user.domain === 'Practice' && $auth.user.status === 'Active'">
+              <AppButton
+                :label="'Create Job'"
+                @click="$store.commit('calendar/CREATE_JOB_MODAL', true)"
+                :inStyle="'font-size: medium; padding:10px;'"
+                class="mb-2 md:mx-2 leading-none"
+              />
+            </div>
             <AppButton
-              :label="'Create Job'"
-              @click="$store.commit('calendar/CREATE_JOB_MODAL', true)"
-              :inStyle="'font-size: small; padding:2px 14px;'"
-              class="mx-2"
+              :label="'Messages'"
+              @click="$router.push('/messages')"
+              :inStyle="'font-size: medium; padding:2px 14px;'"
             />
-          </div>
-          <AppButton
-            :label="'Messages'"
-            @click="$router.push('/messages')"
-            :inStyle="'font-size: small; padding:2px 14px;'"
-          />
-          <!-- <nuxt-link
+            <!-- <nuxt-link
             :to="'/messages'"
             class="font-bold text-xs sm:text-sm no-underline px-2 py-1 rounded-lg bg-yellow-500 ml-4"
-          >Messages</nuxt-link>-->
+            >Messages</nuxt-link>-->
+          </div>
           <div
             class="text-xs xl:text-sm ml-4"
             v-if="$auth.user.domain === 'Locum'"
@@ -81,7 +80,7 @@ export default {
   }
   .header-section {
     margin-bottom: 50px;
-    width: 53vw;
+    max-width: 1466px;
   }
 }
 a {

@@ -30,6 +30,9 @@ export default {
       if (to.params.slug) {
         this.$store.dispatch("chat/setActiveConversation", to.params.slug);
       }
+      if (to.path === "/messages") {
+        this.$store.commit("IS_MOBILE", true);
+      }
     },
     socketId(value) {
       this.$store.dispatch("joinRoom", {
