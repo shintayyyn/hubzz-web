@@ -273,7 +273,7 @@ export default {
       let foundLocumUnavailabilities = []
 
       if (this.getLocumAllocatedPrivateJobs.length > 0) {
-        foundLocumPrivateJobs = this.getLocumAllocatedPrivateJobs.filter(job => this.getDateArray(job.date_start, job.date_end).includes(date) && job.private_job.shift.name === shift)
+        foundLocumPrivateJobs = this.getLocumAllocatedPrivateJobs.filter(job => this.getDateArray(job.date_start, job.date_end).includes(date) && job.shift.name === shift)
       }
       if (this.getLocumAllocatedCurrentJobs.length > 0) {
         foundLocumCurrentJobs = this.getLocumAllocatedCurrentJobs.filter(job => this.getDateArray(job.date_start, job.date_end).includes(date) && job.shift.name === shift)

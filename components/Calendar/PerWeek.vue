@@ -587,7 +587,7 @@ export default {
     // locums
     hasLocumPrivateJobs(date, type) {
       if (this.getLocumAllocatedPrivateJobs && this.getLocumAllocatedPrivateJobs.length > 0) {
-        return this.getLocumAllocatedPrivateJobs.find(job => this.getDateArray(job.private_job.date_start, job.private_job.date_end).includes(date) && job.private_job.shift.name === type)
+        return this.getLocumAllocatedPrivateJobs.find(job => this.getDateArray(job.date_start, job.date_end).includes(date) && job.shift.name === type)
       }
     },
     hasLocumCurrentJob(date, type) {
