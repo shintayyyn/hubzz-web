@@ -8,7 +8,8 @@
       @click="show(user.id)"
     >
       <div class="flex flex-row flex-no-wrap justify-between items-center">
-        <svgicon name="no-avatar" height="40" width="40" />
+        <img :src="user.avatar.file.url" alt="avatar" class="rounded-full" width="40" />
+        <!-- <svgicon name="no-avatar" height="40" width="40" /> -->
         <div class="text-xs sm:text-sm font-bold leading-loose">{{user.personal_detail.name}}</div>
         <div class="flex">
           <svgicon name="arrow-right" height="20" width="20" />
@@ -19,20 +20,20 @@
 </template>
 <script>
 export default {
-  props: ['applicants'],
+  props: ["applicants"],
   methods: {
     show(id) {
       this.$axios.$get(`/api/v1/practice/locums/${id}`).then(res => {
-        const user = res.data.user
-        this.$emit('show', user)
-      })
+        const user = res.data.user;
+        this.$emit("show", user);
+      });
       // console.log(this.$route.query)
       // const query = {
       //   ...this.$route.query
       // }
       // this.$router.push({ path: `/sessions/${this.$route.params.id}/locum/${id}`, query })
-    },
+    }
   }
-}
+};
 </script>
 

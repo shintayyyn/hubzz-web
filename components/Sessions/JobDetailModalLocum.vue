@@ -5,7 +5,8 @@
       <div class="flex flex-col">
         <div class="head-info">
           <div class="float-left mr-4">
-            <svgicon name="no-avatar" height="80" width="80" />
+            <img :src="user.avatar.file.url" alt="avatar" class="rounded-full" width="80" />
+            <!-- <svgicon name="no-avatar" height="80" width="80" /> -->
           </div>
           <div class="font-bold mt-4 text-sm lg:text-lg">{{user.personal_detail.name}}</div>
           <div class="text-xs lg:text-sm">{{user.locum_detail.profession.name}}</div>
@@ -105,7 +106,7 @@
 </template>
 <script>
 export default {
-  props: ['user', 'mandatory', 'optional']
-}
+  props: ["user", "mandatory", "optional"]
+};
 </script>
 
