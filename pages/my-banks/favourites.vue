@@ -1,49 +1,52 @@
 <template>
-  <div>
-    <div class="-mt-2">
-      <AppSelect
-        v-model="profession_id"
-        :name="'Filter Locums by'"
-        :label="'Filter Locums by'"
-        :items="professions"
-        :placeholder="'All'"
-      />
-    </div>
-    <div class="mt-10 w-full text-center" v-if="locums.length == 0">You have no favorite locums.</div>
-    <div v-else class="flex flex-row flex-wrap justify-start">
-      <AppLoading :loading="loading" :message="'Loading'" v-if="loading" />
-      <div
-        class="w-full md:w-1/3 lg:w-1/4 rounded-lg shadow-lg bg-gray-300 m-2 p-4 hover:bg-gray-500"
-        v-for="(user, index) in locums"
-        :key="user.id"
-      >
-        <div class="flex justify-end z-50">
-          <svgicon
-            name="on-star"
-            height="32"
-            width="32"
-            class="cursor-pointer"
-            @click="unfavorite(user.id, index)"
-          />
-        </div>
-
-        <div class="flex flex-wrap text-center mt-4 cursor-pointer" @click="show(user.id)">
-          <div class="w-full flex justify-center">
-            <div class="relative avatar flex justify-center">
-              <img
-                :src="user.avatar.file.url"
-                v-if="user.avatar && user.avatar.file && user.avatar.file.url"
-              />
-              <svgicon name="no-avatar" height="115" width="115" v-else />
-            </div>
+  <section v-if="!loading">
+    <div v-if="locums.length">
+      <div class="-mt-2">
+        <AppSelect
+          v-model="profession_id"
+          :name="'Filter Locums by'"
+          :label="'Filter Locums by'"
+          :items="professions"
+          :placeholder="'All'"
+        />
+      </div>
+      <div class="flex flex-row flex-wrap justify-start">
+        <div
+          class="w-full md:w-1/3 lg:w-1/4 rounded-lg shadow-lg bg-gray-300 m-2 p-4 hover:bg-gray-500"
+          v-for="(user, index) in locums"
+          :key="user.id"
+        >
+          <div class="flex justify-end z-50">
+            <svgicon
+              name="on-star"
+              height="32"
+              width="32"
+              class="cursor-pointer"
+              @click="unfavorite(user.id, index)"
+            />
           </div>
 
-          <div class="w-full font-bold text-sm sm:text-lg my-4">{{user.personal_detail.name}}</div>
-          <div
-            class="w-full mb-4 font-bold text-gray-600 text-sm sm:text-lg"
-          >{{user.locum_detail.profession.name}}</div>
+          <div class="flex flex-wrap text-center mt-4 cursor-pointer" @click="show(user.id)">
+            <div class="w-full flex justify-center">
+              <div class="relative avatar flex justify-center">
+                <img
+                  :src="user.avatar.file.url"
+                  v-if="user.avatar && user.avatar.file && user.avatar.file.url"
+                />
+                <svgicon name="no-avatar" height="115" width="115" v-else />
+              </div>
+            </div>
+
+            <div class="w-full font-bold text-sm sm:text-lg my-4">{{user.personal_detail.name}}</div>
+            <div
+              class="w-full mb-4 font-bold text-gray-600 text-sm sm:text-lg"
+            >{{user.locum_detail.profession.name}}</div>
+          </div>
         </div>
       </div>
+    </div>
+    <div v-else class="flex flex-row flex-wrap justify-center">
+      <div>You have no favorite locums</div>
     </div>
 
     <div class="m-10 xl:-ml-32" v-if="locums.length > 0 && totalPages > 1">
@@ -60,32 +63,35 @@
     <transition name="slide" mode="out-in">
       <div class="locum-modal shadow-lg" v-if="modal">
         <MyLocumDetailModal @close="modal = false" :user="user" :jobs="jobs" />
-        <!--insert :locum jobs here-->
       </div>
     </transition>
-  </div>
+  </section>
 </template>
 <script>
 import AppPagination from '@/components/Base/AppPagination'
-import AppLoading from '@/components/Base/AppLoading'
 import MyLocumDetailModal from '@/components/MyBanks/MyLocumDetailModal' //TEMPORARY
 import AppSelect from '@/components/Base/AppSelect'
 
 export default {
   components: {
     AppPagination,
-    AppLoading,
     MyLocumDetailModal,
     AppSelect
   },
   data() {
     return {
+      // practices: [],
+      // current_page: 1,
+      // total: 0,
+      // modal: false,
+      // practice: null,
+      loading: true,
+      //
       locums: [],
       total: 0,
       totalPages: 0,
       currentPage: 0,
       perPage: 0,
-      loading: false,
       modal: false, //TEMPORARY
       user: null, //TEMPORARY
       jobs: null,
@@ -94,11 +100,11 @@ export default {
       filteredUsers: []
     }
   },
-  beforeDestroy() {
-    let query = Object.assign({}, this.$route.query)
-    delete query.current_page
-    this.$router.push({ query })
-  },
+  // beforeDestroy() {
+  //   let query = Object.assign({}, this.$route.query)
+  //   delete query.current_page
+  //   this.$router.push({ query })
+  // },
   watch: {
     $route(to, from) {
       this.currentPage = parseInt(to.query.current_page)

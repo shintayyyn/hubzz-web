@@ -45,9 +45,7 @@ export const actions = {
         room_name: payload.room_name
       })
     } catch (err) {
-      if (err.response.status === 400 && err.response.data.message === 'Invalid Socket Id') {
-        dispatch('joinRoom', payload)
-      }
+      console.log(err.response)
     }
   },
   async leaveRoom({}, payload) {

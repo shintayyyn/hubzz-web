@@ -46,14 +46,12 @@
         @pagechanged="pagechanged"
       />
     </div>
-
     <div class="shield" v-if="$route.name === 'my-practice-favorites-id'"></div>
     <nuxt-child />
   </section>
 </template>
 <script>
 import AppPagination from '@/components/Base/AppPagination'
-import AppLoading from '@/components/Base/AppLoading'
 import MyPracticeDetailModal from '@/components/MyPractice/MyPracticeDetailModal'
 export default {
   transition: {
@@ -62,7 +60,6 @@ export default {
   },
   components: {
     AppPagination,
-    AppLoading,
     MyPracticeDetailModal
   },
   data() {

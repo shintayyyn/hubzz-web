@@ -46,16 +46,16 @@ export default {
     Reminders,
     Statistics,
   },
-  computed: {
-    socketId() {
-      return this.$store.state.socket_id
-    }
-  },
-  watch: {
-    socketId(value) {
-      this.$store.dispatch('joinRoom', { socket_id: value, room_name: 'jobroom', })
-    }
-  },
+  // computed: {
+  //   socketId() {
+  //     return this.$store.state.socket_id
+  //   }
+  // },
+  // watch: {
+  //   socketId(value) {
+  //     this.$store.dispatch('joinRoom', { socket_id: value, room_name: 'jobroom', })
+  //   }
+  // },
   beforeDestroy() {
     this.$store.dispatch('leaveRoom', { socket_id: this.$socket.id, room_name: 'jobroom' })
   },

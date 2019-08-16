@@ -1,11 +1,19 @@
 export const state = () => ({
-    shield: false,
+    surgeries_count: 0,
+    surgeries: []
   })
   
   export const mutations = {
-    TOGGLE_SHIELD(state, payload) {
-      state.shield = payload
+    SET_SURGERIES_COUNT(state, payload) {
+      state.surgeries_count = payload
     },
-    
+    SET_SURGERIES(state, payload) {
+      state.surgeries = payload
+    },
+    ADD_SURGERY(state, payload) {
+      if (!state.surgeries.find(surgery => surgery.id == payload.id)) {
+        state.surgeries.push(payload)
+      }
+    }
   }
   
