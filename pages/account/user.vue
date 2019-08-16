@@ -2,7 +2,8 @@
   <div class="border-solid rounded-lg shadow-lg p-8">
     <AppFormError :formError="formError" v-if="formError.length > 0" />
     <form class="relative w-full">
-      <AppLoading :loading="loading" :message="'Loading'" v-if="loading" />
+      <AppLoading :loading="loading" :message="'Loading'" />
+      <AppFormError :formError="formError" v-if="formError.length" />
       <AppInput
         v-model="form.email"
         :type="'email'"
@@ -118,17 +119,14 @@ export default {
   },
   watch: {
     "form.email"(value) {
-      // splice from formerror
       let index = this.formError.findIndex(item => item.field === "email");
       if (index >= 0) {
         this.formError.splice(index, 1);
       }
-      // validate
       if (!value) {
         // required
         this.formError.push({ field: "email", message: "Email Is Required" });
       } else {
-        // validate option
         const error = this.ValidateEmail(value);
         if (error) {
           this.formError.push(error);
@@ -136,12 +134,10 @@ export default {
       }
     },
     "form.first_name"(value) {
-      // splice from formerror
       let index = this.formError.findIndex(item => item.field === "first_name");
       if (index >= 0) {
         this.formError.splice(index, 1);
       }
-      // validate
       if (!value) {
         // required
         this.formError.push({
@@ -151,12 +147,10 @@ export default {
       }
     },
     "form.last_name"(value) {
-      // splice from formerror
       let index = this.formError.findIndex(item => item.field === "last_name");
       if (index >= 0) {
         this.formError.splice(index, 1);
       }
-      // validate
       if (!value) {
         // required
         this.formError.push({
@@ -166,16 +160,13 @@ export default {
       }
     },
     "form.practice_role"(value) {
-      // splice from formerror
       let index = this.formError.findIndex(
         item => item.field === "practice_role"
       );
       if (index >= 0) {
         this.formError.splice(index, 1);
       }
-      // validate
       if (!value) {
-        // required
         this.formError.push({ field: "practice_role", message: "Required" });
       }
     }
@@ -187,25 +178,28 @@ export default {
         this.formError = [];
         this.Validate(this.form, ["title", "suffix"]);
         if (!this.formError.length) {
-          this.$axios
-            .$put(`/api/v1/practice/me/account`, this.form)
-            .then(res => {
-              this.$store.commit("SET_NOTIFICATION", {
-                enabled: true,
-                status: "success",
-                text: ["Saved"]
-              });
-              this.loading = false;
-            });
+          const response = await this.$axios.$put(
+            `/api/v1/practice/me/account`,
+            this.form
+          );
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: ["Saved"]
+          });
+          this.loading = false;
         } else {
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "danger",
             text: ["Please fill up all the forms"]
           });
+          this.loading = false;
         }
       } catch (err) {
-        console.log(err);
+        this.formError = err.response.data.error_messages;
+        this.scrollToTop();
+        this.loading = false;
       }
     },
     async resendEmailVerification() {

@@ -116,7 +116,7 @@ export default {
       this.currentPage = parseInt(to.query.current_page);
       this.getAllLocums();
     },
-    profession_id: function() {
+    profession_id: function () {
       this.getAllLocums();
     }
   },

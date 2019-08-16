@@ -236,7 +236,7 @@ export default {
             console.log("res", res);
             if (res.data.conversations.length === 0) {
               this.$store.dispatch("chat/sendMessage", {
-                receiver_user_id: this.selectedUserId,
+                receiver_user_id: this.selectedUserId.toString(),
                 message: this.message
               });
               let conversation = this.$store.state.chat.conversations[0];
@@ -246,7 +246,7 @@ export default {
               console.log("conversation", conversation);
               console.log("res", res);
               this.$router.push(
-                `/messages/${conversation.conversation_id + 1}`
+                `/messages/${parseInt(conversation.conversation_id) + 1}`
               );
             }
             this.search_user = "";

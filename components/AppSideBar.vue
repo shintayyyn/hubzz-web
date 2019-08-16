@@ -117,7 +117,6 @@ export default {
           { name: "My Practice", route: "/my-practice" },
           { name: "Availability", route: "/availability" },
           { name: "Jobs", route: "/jobs" },
-          { name: "Billing old", route: "/billing" },
           {
             name: "Billing",
             route:
