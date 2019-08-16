@@ -2,8 +2,7 @@
   <section>
     <div class="flex flex-row justify-end">
       <button
-        class="bg-yellow-500 rounded-full font-bold text-3xl hover:text-white focus:outline-none"
-        style="width:40px;height:40px;"
+        class="bg-yellow-500 w-12 h-12 rounded-full font-bold text-3xl hover:text-white focus:outline-none"
         @click="modal = true"
       >+</button>
       <div class="ml-2 text-xs sm:text-sm" style="line-height:280%">Add Surgery</div>
@@ -51,14 +50,14 @@
   </section>
 </template>
 <script>
-import AddSurgeryModal from '@/components/Profile/AddSurgeryModal'
-import AppPagination from '@/components/Base/AppPagination'
-import AppLoading from '@/components/Base/AppLoading'
+import AddSurgeryModal from "@/components/Profile/AddSurgeryModal";
+import AppPagination from "@/components/Base/AppPagination";
+import AppLoading from "@/components/Base/AppLoading";
 export default {
   components: {
     AddSurgeryModal,
     AppPagination,
-    AppLoading,
+    AppLoading
   },
 
   data() {
@@ -69,57 +68,62 @@ export default {
       totalPages: 0,
       currentPage: 0,
       perPage: 0,
-      loading: false,
-    }
+      loading: false
+    };
   },
   beforeDestroy() {
-    let query = Object.assign({}, this.$route.query)
-    delete query.current_page
-    this.$router.push({ query })
+    let query = Object.assign({}, this.$route.query);
+    delete query.current_page;
+    this.$router.push({ query });
   },
   watch: {
     $route(to, from) {
-      this.currentPage = parseInt(to.query.current_page)
-      this.getSurgeries()
+      this.currentPage = parseInt(to.query.current_page);
+      this.getSurgeries();
     }
   },
   created() {
     const query = {
       ...this.$route.query,
       current_page: this.$route.query.current_page || 1
-    }
-    this.currentPage = parseInt(this.$route.query.current_page)
-    this.$router.push({ query })
-    this.$axios.$get(`/api/v1/practice/practice-children/count`).then(res => { //GET QUANTITY OF DATA
-      this.total = res.data.count
-      this.perPage = 5
-      this.totalPages = Math.ceil(this.total / this.perPage)
-      this.getSurgeries()
-    })
+    };
+    this.currentPage = parseInt(this.$route.query.current_page);
+    this.$router.push({ query });
+    this.$axios.$get(`/api/v1/practice/practice-children/count`).then(res => {
+      //GET QUANTITY OF DATA
+      this.total = res.data.count;
+      this.perPage = 5;
+      this.totalPages = Math.ceil(this.total / this.perPage);
+      this.getSurgeries();
+    });
   },
   methods: {
     getSurgeries() {
-      this.loading = true
-      let offset = 0
-      offset = this.perPage * (parseInt(this.$route.query.current_page) - 1)
-      this.$axios.$get(`/api/v1/practice/practice-children?limit=${this.perPage}&offset=${offset}`).then(res => {
-        this.results = []
-        this.results.push(this.$auth.user.practice_detail.practice)
-        res.data.practice_children.forEach(item => {
-          this.results.push(item)
-        })
-        this.loading = false
-      })
+      this.loading = true;
+      let offset = 0;
+      offset = this.perPage * (parseInt(this.$route.query.current_page) - 1);
+      this.$axios
+        .$get(
+          `/api/v1/practice/practice-children?limit=${this.perPage}&offset=${offset}`
+        )
+        .then(res => {
+          this.results = [];
+          this.results.push(this.$auth.user.practice_detail.practice);
+          res.data.practice_children.forEach(item => {
+            this.results.push(item);
+          });
+          this.loading = false;
+        });
     },
     pagechanged(e) {
       const query = {
         ...this.$route.query,
         current_page: e || 1
-      }
-      this.$router.push({ query })
+      };
+      this.$router.push({ query });
     }
   }
-}
+};
 </script>
 <style scoped>
 .add-surgery-shield {

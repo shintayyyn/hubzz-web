@@ -8,12 +8,12 @@
       <div class="mx-2 text-sm sm:text-sm p-2" :class="bgStatus(job.status)">{{status(job.status)}}</div>
       <div>
         <button
-          class="font-bold text-xs sm:text-sm no-underline px-2 py-2 rounded-lg bg-yellow-500 ml-4"
+          class="font-bold text-xs sm:text-sm no-underline px-2 py-2 rounded-lg bg-yellow-500 ml-4 focus:outline-none"
           v-if="job.status === 'Current' && toEdit === false && jobOngoing === false || job.status === 'Applied' && toEdit === false || job.status === 'Available' && toEdit === false"
           @click.prevent="editJob()"
         >Edit this job</button>
         <button
-          class="font-bold text-xs sm:text-sm no-underline px-2 py-2 rounded-lg bg-yellow-500 ml-4"
+          class="font-bold text-xs sm:text-sm no-underline px-2 py-2 rounded-lg bg-yellow-500 ml-4 focus:outline-none"
           v-if="job.status === 'Current' && toEdit === true && jobOngoing === false || job.status === 'Applied' && toEdit === true || job.status === 'Available' && toEdit === true"
           @click.prevent="cancelEdit()"
         >Cancel Editing</button>
@@ -72,15 +72,15 @@
   </div>
 </template>
 <script>
-import JobDetailModalForm from '@/components/Sessions/JobDetailModalForm'
-import JobDetailModalUpdateForm from '@/components/Sessions/JobDetailModalUpdateForm'
-import JobDetailModalCandidates from '@/components/Sessions/JobDetailModalCandidates'
-import JobDetailModalLocum from '@/components/Sessions/JobDetailModalLocum'
-import JobDetailModalCancelForm from '@/components/Sessions/JobDetailModalCancelForm'
-import JobDetailModalCompleteForm from '@/components/Sessions/JobDetailModalCompleteForm'
-import JobDetailModalShowCandidate from '@/components/Sessions/JobDetailModalShowCandidate'
+import JobDetailModalForm from "@/components/Sessions/JobDetailModalForm";
+import JobDetailModalUpdateForm from "@/components/Sessions/JobDetailModalUpdateForm";
+import JobDetailModalCandidates from "@/components/Sessions/JobDetailModalCandidates";
+import JobDetailModalLocum from "@/components/Sessions/JobDetailModalLocum";
+import JobDetailModalCancelForm from "@/components/Sessions/JobDetailModalCancelForm";
+import JobDetailModalCompleteForm from "@/components/Sessions/JobDetailModalCompleteForm";
+import JobDetailModalShowCandidate from "@/components/Sessions/JobDetailModalShowCandidate";
 export default {
-  props: ['job'],
+  props: ["job"],
   components: {
     JobDetailModalForm,
     JobDetailModalUpdateForm,
@@ -88,7 +88,7 @@ export default {
     JobDetailModalLocum,
     JobDetailModalCompleteForm,
     JobDetailModalCancelForm,
-    JobDetailModalShowCandidate,
+    JobDetailModalShowCandidate
   },
   data() {
     return {
@@ -99,97 +99,121 @@ export default {
       modal: false,
       toEdit: false,
       jobOngoing: false
-    }
+    };
   },
   created() {
     if (this.job.platform_job.appointed_to_locum !== null) {
-      this.getAppointedLocum()
+      this.getAppointedLocum();
     }
-    if (this.job.status === 'Applied') {
-      this.getCandidates()
+    if (this.job.status === "Applied") {
+      this.getCandidates();
     }
 
-    if (this.$moment().diff(this.job.date_start, 'days') >= 0) {
-      console.log("Job is either ongoing or unfilled. Cannot be edited", this.$moment().diff(this.job.date_start, 'days'))
-      this.jobOngoing = true
+    if (this.$moment().diff(this.job.date_start, "days") >= 0) {
+      console.log(
+        "Job is either ongoing or unfilled. Cannot be edited",
+        this.$moment().diff(this.job.date_start, "days")
+      );
+      this.jobOngoing = true;
     } else {
-      console.log("Job can still be edited", this.$moment().diff(this.job.date_start, 'days'))
-      this.jobOngoing = false
+      console.log(
+        "Job can still be edited",
+        this.$moment().diff(this.job.date_start, "days")
+      );
+      this.jobOngoing = false;
     }
-
-
   },
   methods: {
     getCandidates() {
-      this.$axios.$get(`/api/v1/practice/jobs/${this.job.id}/applicants`).then(res => {
-        this.applicants = res.data.users
-      })
+      this.$axios
+        .$get(`/api/v1/practice/jobs/${this.job.id}/applicants`)
+        .then(res => {
+          this.applicants = res.data.users;
+        });
     },
     getAppointedLocum() {
-      this.$axios.$get(`/api/v1/practice/locums/${this.job.platform_job.appointed_to_locum.user.id}`).then(res => {
-        this.user = res.data.user
-        this.getProfessionCategory(res.data.user.locum_detail.profession.profession_category.id)
-      })
+      this.$axios
+        .$get(
+          `/api/v1/practice/locums/${this.job.platform_job.appointed_to_locum.user.id}`
+        )
+        .then(res => {
+          this.user = res.data.user;
+          this.getProfessionCategory(
+            res.data.user.locum_detail.profession.profession_category.id
+          );
+        });
     },
     getProfessionCategory(id) {
       this.$axios.$get(`/api/v1/profession-categories/${id}`).then(res => {
-        this.mandatory = this.user.locum_detail.compliance_documents.filter(compliance_document => {
-          return res.data.profession_category.mandatory_compliance_documents.some(mandatory_compliance_document => mandatory_compliance_document.id === compliance_document.compliance_document.id)
-        })
-        this.optional = this.user.locum_detail.compliance_documents.filter(compliance_document => {
-          return res.data.profession_category.optional_compliance_documents.some(optional_compliance_document => optional_compliance_document.id === compliance_document.compliance_document.id)
-        })
-      })
+        this.mandatory = this.user.locum_detail.compliance_documents.filter(
+          compliance_document => {
+            return res.data.profession_category.mandatory_compliance_documents.some(
+              mandatory_compliance_document =>
+                mandatory_compliance_document.id ===
+                compliance_document.compliance_document.id
+            );
+          }
+        );
+        this.optional = this.user.locum_detail.compliance_documents.filter(
+          compliance_document => {
+            return res.data.profession_category.optional_compliance_documents.some(
+              optional_compliance_document =>
+                optional_compliance_document.id ===
+                compliance_document.compliance_document.id
+            );
+          }
+        );
+      });
     },
     showLocum(user) {
-      this.user = user
-      this.modal = true
+      this.user = user;
+      this.modal = true;
     },
     editJob() {
-      this.toEdit = true
+      this.toEdit = true;
     },
     cancelEdit() {
-      this.toEdit = false
+      this.toEdit = false;
     },
     close() {
-      if (this.$route.fullPath === '/dashboard') {
-        this.$emit('close')
+      if (this.$route.fullPath === "/dashboard") {
+        this.$emit("close");
       } else {
         const query = {
           ...this.$route.query
-        }
-        this.$router.push({ path: `/sessions`, query })
+        };
+        this.$router.push({ path: `/sessions`, query });
       }
     },
     status(status) {
-      if (status === 'Available') {
-        return 'LIVE'
+      if (status === "Available") {
+        return "LIVE";
       }
-      if (status === 'Current') {
-        return 'ALLOCATED'
+      if (status === "Current") {
+        return "ALLOCATED";
       }
-      return status.toUpperCase()
+      return status.toUpperCase();
     },
     bgStatus(status) {
       switch (status) {
-        case 'Available':
-          return 'bg-yellow-500';
+        case "Available":
+          return "bg-yellow-500";
           break;
-        case 'Applied':
-          return 'bg-orange-400 text-white';
+        case "Applied":
+          return "bg-orange-400 text-white";
           break;
-        case 'Completed':
-          return 'bg-green-400';
+        case "Completed":
+          return "bg-green-400";
           break;
-        case 'Current':
-          return 'bg-green-400';
+        case "Current":
+          return "bg-green-400";
           break;
         default:
-          return 'bg-red-500 text-white'
+          return "bg-red-500 text-white";
       }
     }
   }
-}
+};
 </script>
 <style scoped>
 .shield {

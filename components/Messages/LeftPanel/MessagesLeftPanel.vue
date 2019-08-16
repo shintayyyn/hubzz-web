@@ -104,7 +104,9 @@ export default {
     };
   },
   mounted() {
-    this.$store.commit("IS_MOBILE", true);
+    if (window.innerWidth > 768) {
+      this.$store.commit("IS_MOBILE", true);
+    }
   },
   computed: {
     conversations() {
