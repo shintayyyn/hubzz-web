@@ -52,7 +52,6 @@
 </template>
 <script>
 import AppPagination from '@/components/Base/AppPagination'
-import MyPracticeDetailModal from '@/components/MyPractice/MyPracticeDetailModal'
 export default {
   transition: {
     name: 'fade',
@@ -60,14 +59,12 @@ export default {
   },
   components: {
     AppPagination,
-    MyPracticeDetailModal
   },
   data() {
     return {
       practices: [],
       current_page: 1,
       total: 0,
-      modal: false,
       practice: null,
       loading: true
     }
@@ -91,7 +88,6 @@ export default {
       this.$axios.$get(`/api/v1/locum/practices/count?locum_practice_type=Favorite`).then(res => { //GET QUANTITY OF DATA
         this.total = res.data.count
         this.getFavoritePractices(this.current_page)
-
       })
     },
     getFavoritePractices(page) {
@@ -115,7 +111,7 @@ export default {
 
     pagechanged(e) {
       this.current_page = e
-      this.getCompletedPractices(this.current_page)
+      this.getFavoritePractices(this.current_page)
     }
   }
 }
@@ -144,7 +140,7 @@ img {
   opacity: 0.5;
   z-index: 509;
 }
-.modal {
+/* .modal {
   position: fixed;
   top: 0;
   right: 0;
@@ -160,7 +156,7 @@ img {
   .modal {
     width: 80%;
   }
-}
+} */
 </style>
 
 

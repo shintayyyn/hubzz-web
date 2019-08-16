@@ -49,55 +49,62 @@
       <div>You have no favorite locums</div>
     </div>
 
-    <div class="m-10 xl:-ml-32" v-if="locums.length > 0 && totalPages > 1">
+    <div class="mt-5 flex justify-center" v-if="locums.length > 0 && totalPages > 1">
       <AppPagination
         :total="total"
         :totalPages="totalPages"
-        :currentPage="currentPage"
+        :currentPage="current_page"
         @pagechanged="pagechanged"
-        :loading="loading"
       />
     </div>
+    <transition name="fade" mode="out-in">
+      <div class="shield" v-if="$route.name === 'my-banks-favourites-id'"></div>
+    </transition>
+    <nuxt-child />
 
-    <div class="locum-shield" v-if="modal"></div>
+    <!-- <div class="shield" v-if="modal"></div>
     <transition name="slide" mode="out-in">
       <div class="locum-modal shadow-lg" v-if="modal">
         <MyLocumDetailModal @close="modal = false" :user="user" :jobs="jobs" />
       </div>
-    </transition>
+    </transition>-->
   </section>
 </template>
 <script>
 import AppPagination from '@/components/Base/AppPagination'
-import MyLocumDetailModal from '@/components/MyBanks/MyLocumDetailModal' //TEMPORARY
+// import MyLocumDetailModal from '@/components/MyBanks/MyLocumDetailModal' 
 import AppSelect from '@/components/Base/AppSelect'
 
 export default {
+  transition: {
+    name: 'fade',
+    mode: 'out-in'
+  },
   components: {
     AppPagination,
-    MyLocumDetailModal,
+    // MyLocumDetailModal,
     AppSelect
   },
   data() {
     return {
-      // practices: [],
-      // current_page: 1,
-      // total: 0,
-      // modal: false,
-      // practice: null,
+      locums: [],
+      current_page: 1,
+      total: 0,
+      practice: null,
       loading: true,
       //
-      locums: [],
-      total: 0,
-      totalPages: 0,
-      currentPage: 0,
-      perPage: 0,
-      modal: false, //TEMPORARY
-      user: null, //TEMPORARY
-      jobs: null,
-      professions: [],
       profession_id: null,
-      filteredUsers: []
+      professions: [],
+
+      // locums: [],
+      // total: 0,
+      // totalPages: 0,
+      // currentPage: 0,
+      // perPage: 0,
+      // modal: false, //TEMPORARY
+      // user: null, //TEMPORARY
+      // jobs: null,
+      // filteredUsers: []
     }
   },
   // beforeDestroy() {
@@ -105,51 +112,79 @@ export default {
   //   delete query.current_page
   //   this.$router.push({ query })
   // },
-  watch: {
-    $route(to, from) {
-      this.currentPage = parseInt(to.query.current_page)
-      this.getFavoriteLocums()
+  computed: {
+    offset() {
+      return this.perPage * (this.current_page - 1);
     },
-    profession_id: function () {
-      this.getFavoriteLocums()
-    }
+    perPage() {
+      return 5;
+    },
+    totalPages() {
+      return Math.ceil(this.total / this.perPage);
+    },
   },
+  // watch: {
+  //   $route(to, from) {
+  //     this.currentPage = parseInt(to.query.current_page)
+  //     this.getFavoriteLocums()
+  //   },
+  //   profession_id: function () {
+  //     this.getFavoriteLocums()
+  //   }
+  // },
   created() {
-    const query = {
-      ...this.$route.query,
-      current_page: this.$route.query.current_page || 1
-    }
+    this.getProfessions()
+    this.getFavoriteLocumsCount()
 
-    this.$axios.$get(`/api/v1/practice/locums/count?practice_locum_type=Favorite`).then(res => { //GET QUANTITY OF DATA
-      this.total = res.data.count
-      this.perPage = 6
-      this.totalPages = Math.ceil(this.total / this.perPage)
-      this.getFavoriteLocums()
-    })
+    // this.$axios.$get(`/api/v1/practice/locums/count?practice_locum_type=Favorite`).then(res => { //GET QUANTITY OF DATA
+    //   this.total = res.data.count
+    //   this.perPage = 6
+    //   this.totalPages = Math.ceil(this.total / this.perPage)
+    //   this.getFavoriteLocums()
+    // })
 
-    this.$axios.$get(`/api/v1/professions`).then(res => {
-      this.professions = [];
-      res.data.professions.forEach(item => {
-        this.professions.push({ label: item.name, value: item.id });
-      });
-    });
+    // this.$axios.$get(`/api/v1/professions`).then(res => {
+    //   this.professions = [];
+    //   res.data.professions.forEach(item => {
+    //     this.professions.push({ label: item.name, value: item.id });
+    //   });
+    // });
 
   },
   methods: {
-    getFavoriteLocums() {
-      this.loading = true
-      let offset = 0
-      offset = this.perPage * (parseInt(this.$route.query.current_page) - 1)
-      if (!this.profession_id) {
-        this.$axios.$get(`/api/v1/practice/locums?practice_locum_type=Favorite&limit=${this.perPage}&offset=${offset}`).then(res => {
-          this.locums = res.data.users
-        })
-      } else {
-        this.$axios.$get(`/api/v1/practice/locums?profession_id=${this.profession_id}&practice_locum_type=Favorite&limit=${this.perPage}&offset=${offset}`).then(res => {
-          this.locums = res.data.users
-        })
-      }
-      this.loading = false
+    getProfessions() {
+      this.$axios.$get(`/api/v1/professions`).then(res => {
+        this.professions = [];
+        res.data.professions.forEach(item => {
+          this.professions.push({ label: item.name, value: item.id });
+        });
+      });
+    },
+    getFavoriteLocumsCount() {
+      this.$axios.$get(`/api/v1/practice/locums/count?practice_locum_type=Favorite`).then(res => {
+        this.total = res.data.count
+        this.getFavoriteLocums(this.current_page)
+      })
+    },
+    getFavoriteLocums(page) {
+      this.current_page = page
+      this.$axios.$get(`/api/v1/practice/locums?practice_locum_type=Favorite&offset=${this.offset}&limit=${this.perPage}`).then(res => {
+        this.locums = res.data.users
+        this.loading = false
+      })
+      // this.loading = true
+      // let offset = 0
+      // offset = this.perPage * (parseInt(this.$route.query.current_page) - 1)
+      // if (!this.profession_id) {
+      //   this.$axios.$get(`/api/v1/practice/locums?practice_locum_type=Favorite&limit=${this.perPage}&offset=${offset}`).then(res => {
+      //     this.locums = res.data.users
+      //   })
+      // } else {
+      //   this.$axios.$get(`/api/v1/practice/locums?profession_id=${this.profession_id}&practice_locum_type=Favorite&limit=${this.perPage}&offset=${offset}`).then(res => {
+      //     this.locums = res.data.users
+      //   })
+      // }
+      // this.loading = false
     },
     unfavorite(id, index) {
       this.$axios.$delete(`/api/v1/practice/locums/${id}/favorite`).then(res => {
@@ -158,6 +193,7 @@ export default {
       })
     },
     show(id) {
+      this.$router.push(`/my-banks/favourites/${id}`)
       // set id to store
       // this.$store.commit('myBanks/SET_MY_LOCUM_ID', id)
       // this.$store.commit('SET_MYLOCUMDETAIL_SHIELD', true)
@@ -166,23 +202,25 @@ export default {
       // document.body.style.overflow = 'hidden'
       // this.$store.commit('SET_MYLOCUMDETAIL_MODAL', true)
 
-      Promise.all([
-        this.$axios.$get(`/api/v1/practice/locums/${id}`).then(res => {
-          this.user = res.data.user
-        }),
-      ]).then(() => {
-        this.$axios.$get(`/api/v1/practice/jobs?locum_detail_id=${this.user.locum_detail.id}`).then(res => {
-          this.jobs = res.data.jobs
-        }),
-          this.modal = true
-      })
+      // Promise.all([
+      //   this.$axios.$get(`/api/v1/practice/locums/${id}`).then(res => {
+      //     this.user = res.data.user
+      //   }),
+      // ]).then(() => {
+      //   this.$axios.$get(`/api/v1/practice/jobs?locum_detail_id=${this.user.locum_detail.id}`).then(res => {
+      //     this.jobs = res.data.jobs
+      //   }),
+      //     this.modal = true
+      // })
     },
     pagechanged(e) {
-      const query = {
-        ...this.$route.query,
-        current_page: e || 1
-      }
-      this.$router.push({ query })
+      this.current_page = e
+      this.getFavoriteLocums(this.current_page)
+      // const query = {
+      //   ...this.$route.query,
+      //   current_page: e || 1
+      // }
+      // this.$router.push({ query })
     }
   }
 }
@@ -201,7 +239,7 @@ export default {
 img {
   border-radius: 50%;
 }
-.locum-shield {
+.shield {
   position: fixed;
   top: 0;
   left: 0;
@@ -210,24 +248,6 @@ img {
   background-color: #333;
   opacity: 0.5;
   z-index: 511;
-}
-.locum-modal {
-  position: fixed;
-  top: 0;
-  right: 0;
-  margin-right: 0%;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  border-left: solid 2px #edf2f7;
-  transition: all 0.3s ease-in-out;
-  background-color: white;
-  z-index: 512;
-}
-@media screen and (min-width: 1200px) {
-  .locum-modal {
-    width: 80%;
-  }
 }
 </style>
 
