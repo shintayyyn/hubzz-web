@@ -613,57 +613,6 @@ export default {
         "opportunity_for_catch_up_slots",
         "ir35"
       ]);
-      // this.Validate(
-      // [this.form.practice_id,
-      //   this.form.title,
-      //   this.form.description,
-      //   this.form.report_to,
-      //   this.form.email,
-      //   this.form.phone_number,
-      //   this.form.extra_information,
-      //   this.form.number_of_patients,
-      //   this.form.duration_for_each_appointment,
-      //   this.form.session_structure_information,
-      //   this.form.locum_detail_rate_type_id,
-      //   this.form.rate,
-      //   this.form.total_hours,
-      //   this.form.mandatory_training_id,
-      //   this.form.compliance_document_id,
-      //   this.form.date_start,
-      //   this.form.date_end,
-      //   this.form.time_start,
-      //   this.form.time_end,
-      //   this.form.shift_id,
-      //   this.form.auto_assign_at,
-      //   this.form.selection_date,
-      //   this.form.favorite_only_until,
-      //   this.form.update_remarks],
-      //   ['practice_id',
-      //   'title',
-      //   'description',
-      //   'report_to',
-      //   'email',
-      //   'phone_number',
-      //   'extra_information',
-      //   'number_of_patients',
-      //   'duration_for_each_appointment',
-      //   'session_structure_information',
-      //   'locum_detail_rate_type_id',
-      //   'rate',
-      //   'total_hours',
-      //   'mandatory_training_id',
-      //   'compliance_document_id',
-      //   'date_start',
-      //   'date_end',
-      //   'time_start',
-      //   'time_end',
-      //   'shift_id',
-      //   'auto_assign_at',
-      //   'selection_date',
-      //   'favorite_only_until',
-      //   'update_remarks'
-      //   ])
-
       if (this.formError.length == 0) {
         this.form.clinical_system_id = this.form.clinical_system_id.map(
           item => item.value
@@ -708,6 +657,10 @@ export default {
             });
             this.close();
           });
+      } else {
+        this.$nextTick(() => {
+          this.$parent.$refs.modalContainer.scrollTop = 0;
+        });
       }
     },
     cancel() {

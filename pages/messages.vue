@@ -34,7 +34,9 @@ export default {
         this.$store.dispatch("chat/setActiveConversation", to.params.slug);
       }
       if (to.path === "/messages") {
-        this.$store.commit("IS_MOBILE", true);
+        if (window.innerWidth < 768) {
+          this.$store.commit("IS_MOBILE", true);
+        }
       }
     },
     socketId(value) {
@@ -51,15 +53,17 @@ export default {
     });
   },
   created() {
-    console.log('created parent')
+    console.log("created parent");
     this.$store.dispatch("chat/setActiveConversation", this.$route.params.slug);
     this.$axios.$get(`/api/v1/messages/user-presence`).then(res => {
       this.$store.commit("chat/SET_USERS_ONLINE", res.data.users);
     });
   },
   mounted() {
-    console.log('mounted parent')
-    this.$store.commit("IS_MOBILE", true);
+    // console.log("mounted parent");
+    if (!this.$route.params.slug) {
+      this.$store.commit("IS_MOBILE", true);
+    }
     if (this.socketId) {
       this.$store.dispatch("joinRoom", {
         socket_id: this.socketId,

@@ -103,11 +103,6 @@ export default {
       loadMore: false
     };
   },
-  mounted() {
-    if (window.innerWidth > 768) {
-      this.$store.commit("IS_MOBILE", true);
-    }
-  },
   computed: {
     conversations() {
       return this.$store.state.chat.conversations;

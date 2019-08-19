@@ -20,34 +20,38 @@
 </template>
 <script>
 export default {
-  props: ['avatar'],
+  props: ["avatar"],
   data() {
     return {
-      imageUrl: ''
-    }
+      imageUrl: ""
+    };
   },
   methods: {
     onFileInput(e) {
-      if (e.target.files[0].type.split('/')[0] !== 'image') {
-        return
+      if (e.target.files[0].type.split("/")[0] !== "image") {
+        return;
       }
-      let file = e.target.files[0]
-      const formData = new FormData()
-      formData.append('file', file)
+      let file = e.target.files[0];
+      const formData = new FormData();
+      formData.append("file", file);
       this.$axios.$put(`/api/v1/me/change-avatar`, formData).then(res => {
-        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: ['Avatar changed'] })
-        this.getBase64(file, (imageUrl) => {
-          this.imageUrl = imageUrl
-        })
-      })
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "success",
+          text: ["Avatar changed"]
+        });
+        this.getBase64(file, imageUrl => {
+          this.imageUrl = imageUrl;
+        });
+      });
     },
     getBase64(img, callback) {
-      const reader = new FileReader()
-      reader.addEventListener('load', () => callback(reader.result))
-      reader.readAsDataURL(img)
-    },
+      const reader = new FileReader();
+      reader.addEventListener("load", () => callback(reader.result));
+      reader.readAsDataURL(img);
+    }
   }
-}
+};
 </script>
 <style scoped>
 .avatar-container {
@@ -59,9 +63,6 @@ export default {
   max-height: 170px;
   min-width: 170px;
   min-height: 170px;
-}
-img {
-  border-radius: 50%;
 }
 </style>
 

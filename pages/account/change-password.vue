@@ -127,10 +127,10 @@ export default {
             status: "danger",
             text: ["Please fill up all the forms"]
           });
+          this.scrollToTop();
         }
       } catch (err) {
         this.formError = err.response.data.error_messages;
-        this.scrollToTop();
       }
     }
   }

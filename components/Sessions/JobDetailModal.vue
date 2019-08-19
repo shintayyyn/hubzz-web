@@ -1,74 +1,79 @@
 <template>
-  <div class="p-8 max-w-5xl">
-    <div @click="close" class="cursor-pointer">
-      <svgicon name="left-arrow" height="32" width="32" />
-    </div>
-    <div class="flex flex-row justify-start mt-8">
-      <div class="leading-loose font-bold text-md sm:text-lg">{{job.title}}</div>
-      <div class="mx-2 text-sm sm:text-sm p-2" :class="bgStatus(job.status)">{{status(job.status)}}</div>
-      <div>
-        <button
-          class="font-bold text-xs sm:text-sm no-underline px-2 py-2 rounded-lg bg-yellow-500 ml-4 focus:outline-none"
-          v-if="job.status === 'Current' && toEdit === false && jobOngoing === false || job.status === 'Applied' && toEdit === false || job.status === 'Available' && toEdit === false"
-          @click.prevent="editJob()"
-        >Edit this job</button>
-        <button
-          class="font-bold text-xs sm:text-sm no-underline px-2 py-2 rounded-lg bg-yellow-500 ml-4 focus:outline-none"
-          v-if="job.status === 'Current' && toEdit === true && jobOngoing === false || job.status === 'Applied' && toEdit === true || job.status === 'Available' && toEdit === true"
-          @click.prevent="cancelEdit()"
-        >Cancel Editing</button>
+  <div class="modal-container shadow-lg" ref="modalContainer">
+    <div class="p-8 max-w-5xl">
+      <div @click="close" class="cursor-pointer">
+        <svgicon name="left-arrow" height="32" width="32" />
       </div>
-    </div>
+      <div class="flex flex-row justify-start mt-8">
+        <div class="leading-loose font-bold text-md sm:text-lg">{{job.title}}</div>
+        <div
+          class="mx-2 text-sm sm:text-sm p-2"
+          :class="bgStatus(job.status)"
+        >{{status(job.status)}}</div>
+        <div>
+          <button
+            class="font-bold text-xs sm:text-sm no-underline px-2 py-2 rounded-lg bg-yellow-500 ml-4 focus:outline-none"
+            v-if="job.status === 'Current' && toEdit === false && jobOngoing === false || job.status === 'Applied' && toEdit === false || job.status === 'Available' && toEdit === false"
+            @click.prevent="editJob()"
+          >Edit this job</button>
+          <button
+            class="font-bold text-xs sm:text-sm no-underline px-2 py-2 rounded-lg bg-yellow-500 ml-4 focus:outline-none"
+            v-if="job.status === 'Current' && toEdit === true && jobOngoing === false || job.status === 'Applied' && toEdit === true || job.status === 'Available' && toEdit === true"
+            @click.prevent="cancelEdit()"
+          >Cancel Editing</button>
+        </div>
+      </div>
 
-    <!-- <div
+      <!-- <div
       class="text-xs sm:text-sm"
-    >Posted {{$moment(job.platform_job.date_created).format('DD/MM/YYYY')}}</div>-->
-    <div class="flex flex-col mt-4">
-      <div class="flex flex-row flex-wrap justify-start">
-        <!--SHOW THE DEAILS OF THE JOB-->
-        <JobDetailModalForm
-          :job="job"
-          v-if="job.status === 'Unfilled' && toEdit === false || 
+      >Posted {{$moment(job.platform_job.date_created).format('DD/MM/YYYY')}}</div>-->
+      <div class="flex flex-col mt-4">
+        <div class="flex flex-row flex-wrap justify-start">
+          <!--SHOW THE DEAILS OF THE JOB-->
+          <JobDetailModalForm
+            :job="job"
+            v-if="job.status === 'Unfilled' && toEdit === false || 
                 job.status === 'Cancelled' && toEdit === false  || 
                 job.status === 'Declined' && toEdit === false || 
                 job.status === 'Completed' && toEdit === false ||
                 job.status === 'Current' && toEdit === false || 
                 job.status === 'Applied' && toEdit === false || 
                 job.status === 'Available' && toEdit === false "
+          />
+          <!--UPDATE THE JOB-->
+          <JobDetailModalUpdateForm
+            :job="job"
+            v-if="job.status === 'Current' && toEdit === true && jobOngoing === false  || job.status === 'Applied' && toEdit === true  || job.status === 'Available' && toEdit === true"
+          />
+          <JobDetailModalCandidates
+            :applicants="applicants"
+            v-if="job.status === 'Applied'"
+            @show="showLocum($event)"
+          />
+          <JobDetailModalLocum
+            :user="user"
+            :mandatory="mandatory"
+            :optional="optional"
+            v-if="(job.status === 'Current' || job.status === 'Completed') && user"
+          />
+        </div>
+        <JobDetailModalCancelForm
+          @close="close"
+          v-if="job.status === 'Current' || job.status === 'Applied' || job.status === 'Available'"
         />
-        <!--UPDATE THE JOB-->
-        <JobDetailModalUpdateForm
-          :job="job"
-          v-if="job.status === 'Current' && toEdit === true && jobOngoing === false  || job.status === 'Applied' && toEdit === true  || job.status === 'Available' && toEdit === true"
-        />
-        <JobDetailModalCandidates
-          :applicants="applicants"
-          v-if="job.status === 'Applied'"
-          @show="showLocum($event)"
-        />
-        <JobDetailModalLocum
-          :user="user"
-          :mandatory="mandatory"
-          :optional="optional"
-          v-if="(job.status === 'Current' || job.status === 'Completed') && user"
+        <JobDetailModalCompleteForm
+          :job_parts="job.job_parts"
+          @close="close"
+          v-if="job.status === 'Current'"
         />
       </div>
-      <JobDetailModalCancelForm
-        @close="close"
-        v-if="job.status === 'Current' || job.status === 'Applied' || job.status === 'Available'"
-      />
-      <JobDetailModalCompleteForm
-        :job_parts="job.job_parts"
-        @close="close"
-        v-if="job.status === 'Current'"
-      />
+      <div class="shield" v-if="modal"></div>
+      <transition name="slide" mode="out-in">
+        <div class="modal shadow-lg" v-if="modal">
+          <JobDetailModalShowCandidate @close="modal = false" :user="user" @appointed="close" />
+        </div>
+      </transition>
     </div>
-    <div class="shield" v-if="modal"></div>
-    <transition name="slide" mode="out-in">
-      <div class="modal shadow-lg" v-if="modal">
-        <JobDetailModalShowCandidate @close="modal = false" :user="user" @appointed="close" />
-      </div>
-    </transition>
   </div>
 </template>
 <script>

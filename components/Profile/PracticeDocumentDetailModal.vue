@@ -50,49 +50,41 @@
   </div>
 </template>
 <script>
-
 export default {
-  props: ['practiceDocument'],
+  props: ["practiceDocument"],
   data() {
-    return {
-    }
+    return {};
   },
-  computed: {
-
-  },
-  created() {
-
-  },
+  computed: {},
+  created() {},
   methods: {
     close() {
-      if (this.$route.fullPath === '/dashboard') {
-        this.$emit('close')
-      }
-      else {
+      if (this.$route.fullPath === "/dashboard") {
+        this.$emit("close");
+      } else {
         const query = {
           ...this.$route.query
-        }
-        this.$router.push({ path: `/profile/documents`, query })
+        };
+        this.$router.push({ path: `/profile/documents`, query });
       }
     },
     downloadItem(fileUrl, fileFilename) {
-      const axios = require('axios');
+      const axios = require("axios");
       axios({
         url: fileUrl,
-        method: 'GET',
-        responseType: 'blob', // important
+        method: "GET",
+        responseType: "blob" // important
       }).then(response => {
         const url = window.URL.createObjectURL(new Blob([response.data]));
-        const link = document.createElement('a');
+        const link = document.createElement("a");
         link.href = url;
-        link.setAttribute('download', fileFilename);
+        link.setAttribute("download", fileFilename);
         document.body.appendChild(link);
         link.click();
       });
-    },
-
+    }
   }
-}
+};
 </script>
 <style scoped>
 </style>

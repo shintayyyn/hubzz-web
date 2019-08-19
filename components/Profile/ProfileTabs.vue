@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="flex flex-row flex-wrap justify-start">
+    <div class="flex border overflow-x-auto">
       <div
         @click.prevent="goTo('practice')"
         style="font-family:Nunito"
@@ -34,10 +34,10 @@ export default {
       const query = {
         ...this.$route.query,
         profile_tab: type
-      }
+      };
 
-      this.$router.push({ query })
+      this.$router.push({ query });
     }
   }
-}
+};
 </script>

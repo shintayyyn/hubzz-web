@@ -55,7 +55,7 @@
               </div>
             </div>
             <div class="flex m-2">
-              <embed class="document" :src="specificComplianceDoc.file.url" />
+              <embed width="800px" height="600px" :src="specificComplianceDoc.file.url" />
             </div>
           </div>
         </div>

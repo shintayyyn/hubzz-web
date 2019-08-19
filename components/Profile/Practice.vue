@@ -391,7 +391,6 @@ export default {
           "extra_information"
         ]);
         if (!this.formError.length) {
-          console.log("123");
           this.$axios
             .$put(`/api/v1/practice/me/profile`, this.form)
             .then(res => {

@@ -68,7 +68,6 @@
                 :name="'phone_number'"
                 :label="'Phone number'"
                 :placeholder="''"
-                :error="this.formError.find(item => item.field === 'phone_number')"
               />
               <AppInput
                 v-model="form.report_to"
@@ -76,7 +75,6 @@
                 :name="'report_to'"
                 :label="'Report to'"
                 :placeholder="''"
-                :error="this.formError.find(item => item.field === 'report_to')"
               />
               <AppInput
                 v-model="form.email"
@@ -84,7 +82,6 @@
                 :name="'email'"
                 :label="'Email Address'"
                 :placeholder="''"
-                :error="this.formError.find(item => item.field === 'email')"
               />
               <AppInput
                 v-model="form.practice_type_id"
@@ -94,7 +91,6 @@
                 :name="'practice_type_id'"
                 :label="'What type of Practice are you?'"
                 :placeholder="''"
-                :error="this.formError.find(item => item.field === 'practice_type_id')"
                 :lists="practice_types"
               />
               <AppTextarea
@@ -102,7 +98,6 @@
                 :name="'extra_information'"
                 :label="'Extra Information (Pracking restrictions, transport links, etc.)'"
                 :placeholder="''"
-                :error="this.formError.find(item => item.field === 'extra_information')"
               />
               <AppInput
                 v-model="form.mandatory_training_id"
@@ -112,7 +107,6 @@
                 :name="'mandatory_training_id'"
                 :label="'Mandatory training required from Locums:'"
                 :placeholder="''"
-                :error="this.formError.find(item => item.field === 'mandatory_training_id')"
                 :lists="mandatory_trainings"
               />
             </div>
@@ -128,7 +122,6 @@
                     :name="'gp_compliance_document_id'"
                     :label="'For GPs:'"
                     :placeholder="''"
-                    :error="this.formError.find(item => item.field === 'gp_compliance_document_id')"
                     :lists="gp_documents"
                   />
                 </div>
@@ -141,7 +134,6 @@
                     :name="'others_compliance_document_id'"
                     :label="'For Nurses, et al:'"
                     :placeholder="''"
-                    :error="this.formError.find(item => item.field === 'others_compliance_document_id')"
                     :lists="others_documents"
                   />
                 </div>
@@ -173,15 +165,15 @@ import AppFormError from "@/components/Base/AppFormError";
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
 export default {
   transition: {
-    name: 'fade',
-    mode: 'out-in'
+    name: "fade",
+    mode: "out-in"
   },
   components: {
     AppInput,
     AppTextarea,
     AppButton,
     AppFormError,
-    AppConfirmationModal,
+    AppConfirmationModal
   },
   data() {
     return {
@@ -206,85 +198,132 @@ export default {
         ? (document.body.style.overflow = "hidden")
         : (document.body.style.overflow = "auto");
     },
-    'form.phone_number'(value) {
+    "form.phone_number"(value) {
       if (value) {
-        this.formError = this.formError.filter(err => err.field !== 'phone_number')
+        this.formError = this.formError.filter(
+          err => err.field !== "phone_number"
+        );
       }
     },
-    'form.report_to'(value) {
+    "form.report_to"(value) {
       if (value) {
-        this.formError = this.formError.filter(err => err.field !== 'report_to')
+        this.formError = this.formError.filter(
+          err => err.field !== "report_to"
+        );
       }
     },
-    'form.email'(value) {
+    "form.email"(value) {
       if (value) {
-        this.formError = this.formError.filter(err => err.field !== 'email')
+        this.formError = this.formError.filter(err => err.field !== "email");
       }
     },
-    'form.extra_information'(value) {
+    "form.extra_information"(value) {
       if (value) {
-        this.formError = this.formError.filter(err => err.field !== 'extra_information')
+        this.formError = this.formError.filter(
+          err => err.field !== "extra_information"
+        );
       }
     },
-    'form.practice_type_id'(value) {
+    "form.practice_type_id"(value) {
       if (value.length) {
-        this.formError = this.formError.filter(err => err.field !== 'practice_type_id')
+        this.formError = this.formError.filter(
+          err => err.field !== "practice_type_id"
+        );
       }
     },
-    'form.mandatory_training_id'(value) {
+    "form.mandatory_training_id"(value) {
       if (value.length) {
-        this.formError = this.formError.filter(err => err.field !== 'mandatory_training_id')
+        this.formError = this.formError.filter(
+          err => err.field !== "mandatory_training_id"
+        );
       }
     },
-    'form.gp_compliance_document_id'(value) {
+    "form.gp_compliance_document_id"(value) {
       if (value.length) {
-        this.formError = this.formError.filter(err => err.field !== 'gp_compliance_document_id')
+        this.formError = this.formError.filter(
+          err => err.field !== "gp_compliance_document_id"
+        );
       }
     },
-    'form.others_compliance_document_id'(value) {
+    "form.others_compliance_document_id"(value) {
       if (value.length) {
-        this.formError = this.formError.filter(err => err.field !== 'others_compliance_document_id')
+        this.formError = this.formError.filter(
+          err => err.field !== "others_compliance_document_id"
+        );
       }
-    },
-
+    }
   },
   async asyncData({ app, error }) {
-    const response = await app.$axios.$get(`/api/v1/me`)
-    const surgery = response.data && response.data.user && response.data.user.practice_detail && response.data.user.practice_detail.practice && response.data.user.practice_detail.practice.surgery ? response.data.user.practice_detail.practice.surgery : null
-    const practice = response.data && response.data.user && response.data.user.practice_detail && response.data.user.practice_detail.practice ? response.data.user.practice_detail.practice : null
+    const response = await app.$axios.$get(`/api/v1/me`);
+    const surgery =
+      response.data &&
+      response.data.user &&
+      response.data.user.practice_detail &&
+      response.data.user.practice_detail.practice &&
+      response.data.user.practice_detail.practice.surgery
+        ? response.data.user.practice_detail.practice.surgery
+        : null;
+    const practice =
+      response.data &&
+      response.data.user &&
+      response.data.user.practice_detail &&
+      response.data.user.practice_detail.practice
+        ? response.data.user.practice_detail.practice
+        : null;
 
-    const responsePracticeTypes = await app.$axios.$get(`/api/v1/practice-types`)
-    let practice_types = responsePracticeTypes.data && responsePracticeTypes.data.practice_types && responsePracticeTypes.data.practice_types.length ? responsePracticeTypes.data.practice_types : []
-    practice_types = practice_types.map((practiceType) => {
-      return { label: practiceType.name, value: practiceType.id }
-    })
+    const responsePracticeTypes = await app.$axios.$get(
+      `/api/v1/practice-types`
+    );
+    let practice_types =
+      responsePracticeTypes.data &&
+      responsePracticeTypes.data.practice_types &&
+      responsePracticeTypes.data.practice_types.length
+        ? responsePracticeTypes.data.practice_types
+        : [];
+    practice_types = practice_types.map(practiceType => {
+      return { label: practiceType.name, value: practiceType.id };
+    });
 
-    const responseMandatoryTrainings = await app.$axios.$get(`/api/v1/mandatory-trainings`)
-    let mandatory_trainings = responseMandatoryTrainings.data && responseMandatoryTrainings.data.mandatory_trainings && responseMandatoryTrainings.data.mandatory_trainings.length ? responseMandatoryTrainings.data.mandatory_trainings : []
-    mandatory_trainings = mandatory_trainings.map((mandatoryTraining) => {
-      return { label: mandatoryTraining.name, value: mandatoryTraining.id }
-    })
+    const responseMandatoryTrainings = await app.$axios.$get(
+      `/api/v1/mandatory-trainings`
+    );
+    let mandatory_trainings =
+      responseMandatoryTrainings.data &&
+      responseMandatoryTrainings.data.mandatory_trainings &&
+      responseMandatoryTrainings.data.mandatory_trainings.length
+        ? responseMandatoryTrainings.data.mandatory_trainings
+        : [];
+    mandatory_trainings = mandatory_trainings.map(mandatoryTraining => {
+      return { label: mandatoryTraining.name, value: mandatoryTraining.id };
+    });
 
-    const responseProfessionCategories = await app.$axios.$get(`/api/v1/profession-categories`)
-    let profession_categories = responseProfessionCategories.data && responseProfessionCategories.data.profession_categories && responseProfessionCategories.data.profession_categories.length ? responseProfessionCategories.data.profession_categories : []
+    const responseProfessionCategories = await app.$axios.$get(
+      `/api/v1/profession-categories`
+    );
+    let profession_categories =
+      responseProfessionCategories.data &&
+      responseProfessionCategories.data.profession_categories &&
+      responseProfessionCategories.data.profession_categories.length
+        ? responseProfessionCategories.data.profession_categories
+        : [];
     const gp = profession_categories.find(item => item.id === 1);
     const others = profession_categories.find(item => item.id === 2);
     const gp_documents = [
-      ...gp.mandatory_compliance_documents.map((gpMandatoryDoc) => {
-        return { value: gpMandatoryDoc.id, label: gpMandatoryDoc.name }
+      ...gp.mandatory_compliance_documents.map(gpMandatoryDoc => {
+        return { value: gpMandatoryDoc.id, label: gpMandatoryDoc.name };
       }),
-      ...gp.optional_compliance_documents.map((gpOptionalDoc) => {
-        return { value: gpOptionalDoc.id, label: gpOptionalDoc.name }
+      ...gp.optional_compliance_documents.map(gpOptionalDoc => {
+        return { value: gpOptionalDoc.id, label: gpOptionalDoc.name };
       })
-    ]
+    ];
     const others_documents = [
-      ...others.mandatory_compliance_documents.map((othersMandatoryDoc) => {
-        return { value: othersMandatoryDoc.id, label: othersMandatoryDoc.name }
+      ...others.mandatory_compliance_documents.map(othersMandatoryDoc => {
+        return { value: othersMandatoryDoc.id, label: othersMandatoryDoc.name };
       }),
-      ...others.optional_compliance_documents.map((othersOptionalDoc) => {
-        return { value: othersOptionalDoc.id, label: othersOptionalDoc.name }
+      ...others.optional_compliance_documents.map(othersOptionalDoc => {
+        return { value: othersOptionalDoc.id, label: othersOptionalDoc.name };
       })
-    ]
+    ];
 
     return {
       surgery,
@@ -292,8 +331,8 @@ export default {
       practice_types,
       mandatory_trainings,
       gp_documents,
-      others_documents,
-    }
+      others_documents
+    };
   },
   created() {
     this.form.phone_number = this.practice.phone_number;
@@ -329,16 +368,22 @@ export default {
         });
         return;
       }
-      const formData = new FormData()
-      formData.append('file', file)
-      this.$axios.$put(`/api/v1/practice/me/standard-terms`, formData).then(res => {
-        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: [res.message] })
-      })
+      const formData = new FormData();
+      formData.append("file", file);
+      this.$axios
+        .$put(`/api/v1/practice/me/standard-terms`, formData)
+        .then(res => {
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: [res.message]
+          });
+        });
       this.practice.standard_terms = {
         file: {
           filename: file.name
         }
-      }
+      };
     },
     uncheckPractice(value) {
       this.form.practice_type_id = this.form.practice_type_id.filter(
@@ -351,7 +396,9 @@ export default {
       );
     },
     uncheckOther(value) {
-      this.form.others_compliance_document_id = this.form.others_compliance_document_id.filter(id => id != value)
+      this.form.others_compliance_document_id = this.form.others_compliance_document_id.filter(
+        id => id != value
+      );
     },
     uncheckMandatory(value) {
       this.form.mandatory_training_id = this.form.mandatory_training_id.filter(
@@ -360,30 +407,44 @@ export default {
     },
     remove() {
       this.$axios.$delete(`/api/v1/practice/me/standard-terms`).then(res => {
-        this.modal = false
-        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: [res.message] })
-        this.practice.standard_terms.file.filename = null
+        this.modal = false;
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "success",
+          text: [res.message]
+        });
+        this.practice.standard_terms.file.filename = null;
         // standard_terms)
-      })
+      });
     },
     async save() {
       try {
-        this.formError = []
-        this.Validate(this.form, ['mandatory_training_id', 'extra_information'])
+        this.formError = [];
+        this.Validate(this.form, [
+          "mandatory_training_id",
+          "extra_information"
+        ]);
         if (!this.formError.length) {
-          const res = await this.$axios.$put(`/api/v1/practice/me/profile`, this.form)
-          this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: [res.message] })
+          const res = await this.$axios.$put(
+            `/api/v1/practice/me/profile`,
+            this.form
+          );
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: [res.message]
+          });
         } else {
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "danger",
             text: ["Please fill up all the forms"]
           });
+          this.scrollToTop();
         }
       } catch (err) {
-        this.formError = err.response.data.error_messages
+        this.formError = err.response.data.error_messages;
       }
-      this.scrollToTop()
     }
   }
 };

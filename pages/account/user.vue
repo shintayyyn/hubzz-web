@@ -3,7 +3,6 @@
     <AppFormError :formError="formError" v-if="formError.length > 0" />
     <form class="relative w-full">
       <AppLoading :loading="loading" :message="'Loading'" />
-      <AppFormError :formError="formError" v-if="formError.length" />
       <AppInput
         v-model="form.email"
         :type="'email'"
@@ -194,11 +193,11 @@ export default {
             status: "danger",
             text: ["Please fill up all the forms"]
           });
+          this.scrollToTop();
           this.loading = false;
         }
       } catch (err) {
         this.formError = err.response.data.error_messages;
-        this.scrollToTop();
         this.loading = false;
       }
     },
