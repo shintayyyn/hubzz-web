@@ -2,6 +2,7 @@
 require('./alert')
 require('./arrow-left')
 require('./arrow-right')
+require('./arrow-up')
 require('./camera')
 require('./cloud-download')
 require('./cloud-upload')
