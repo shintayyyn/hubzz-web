@@ -103,9 +103,6 @@ export default {
       loadMore: false
     };
   },
-  mounted() {
-    this.$store.commit("IS_MOBILE", true);
-  },
   computed: {
     conversations() {
       return this.$store.state.chat.conversations;

@@ -29,7 +29,7 @@ export default {
     notificationStatus() {
       switch (this.$store.state.notification.status) {
         case "success":
-          return "bg-green-400";
+          return "bg-green-400 text-white";
           break;
         case "danger":
           return "bg-red-500 text-white";
@@ -63,6 +63,9 @@ export default {
     },
     iconSvgColor() {
       switch (this.$store.state.notification.status) {
+        case "success":
+          return "#fff";
+          break;
         case "danger":
           return "#fff";
           break;
@@ -70,21 +73,21 @@ export default {
           return "#dae1e7";
           break;
         default:
-          return "#000";
+          return "#fff, #000";
       }
-    },
+    }
     // closable() {
     //   return this.$store.state.notification.closable
     // }
   },
   methods: {
     close() {
-      this.$store.commit('SET_NOTIFICATION', {
+      this.$store.commit("SET_NOTIFICATION", {
         enabled: false,
-        status: '',
-        text: '',
+        status: "",
+        text: ""
         // closable: false
-      })
+      });
     }
   }
 };

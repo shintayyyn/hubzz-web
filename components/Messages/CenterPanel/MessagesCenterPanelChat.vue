@@ -179,7 +179,6 @@ export default {
           if (this.messages.length == res.data.messages.length) {
             this.loadMore = false;
           } else if (this.messages.length >= res.data.messages.length / 2) {
-            console.log("half");
             this.backToBottom = true;
             this.loadMore = true;
           } else {
@@ -233,7 +232,6 @@ export default {
         this.$axios
           .$get(`/api/v1/conversations/?search=${this.search_user}`)
           .then(res => {
-            console.log("res", res);
             if (res.data.conversations.length === 0) {
               this.$store.dispatch("chat/sendMessage", {
                 receiver_user_id: this.selectedUserId.toString(),
@@ -243,8 +241,6 @@ export default {
               if (window.innerWidth < 768) {
                 this.$store.commit("IS_MOBILE", false);
               }
-              console.log("conversation", conversation);
-              console.log("res", res);
               this.$router.push(
                 `/messages/${parseInt(conversation.conversation_id) + 1}`
               );

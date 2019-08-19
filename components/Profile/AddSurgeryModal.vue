@@ -36,7 +36,7 @@
         >Select by clicking on the practice that you wish to add</div>
         <div
           class="border-t-2 p-4 cursor-pointer"
-          :class="selectedSurgery.id === item.id ? 'bg-yellow-500':'hover:bg-gray-900'"
+          :class="selectedSurgery.id === item.id ? 'bg-yellow-500':'hover:bg-gray-200'"
           v-for="(item) in surgeries"
           :key="item.id"
           @click="select(item)"
@@ -67,48 +67,60 @@
   </section>
 </template>
 <script>
-import AppInput from '@/components/Base/AppInput'
-import AppButton from '@/components/Base/AppButton'
-import AddSurgeryConfirmationModal from '@/components/Profile/AddSurgeryConfirmationModal'
+import AppInput from "@/components/Base/AppInput";
+import AppButton from "@/components/Base/AppButton";
+import AddSurgeryConfirmationModal from "@/components/Profile/AddSurgeryConfirmationModal";
 export default {
   components: {
     AppInput,
     AppButton,
-    AddSurgeryConfirmationModal,
+    AddSurgeryConfirmationModal
   },
   data() {
     return {
-      search_text: '',
+      search_text: "",
       surgeries: [],
       selectedSurgery: {},
       showResult: false,
-      modal: false,
-    }
+      modal: false
+    };
   },
   methods: {
     search() {
       if (!this.search_text) {
-        return
+        return;
       }
-      this.$axios.$get(`/api/v1/surgeries?search=${this.search_text}&has_parent=false&is_parent=false&limit=10`).then(res => {
-        this.surgeries = res.data.surgeries
-        this.showResult = true
-      })
+      this.$axios
+        .$get(
+          `/api/v1/surgeries?search=${this.search_text}&has_parent=false&is_parent=false&limit=10`
+        )
+        .then(res => {
+          this.surgeries = res.data.surgeries;
+          this.showResult = true;
+        });
     },
     select(item) {
-      this.selectedSurgery = item
-      this.modal = true
+      this.selectedSurgery = item;
+      this.modal = true;
     },
     add() {
-      this.$axios.$post(`/api/v1/practice/practice-children`, { surgery_id: this.selectedSurgery.id }).then(res => {
-        this.$emit('add', res.data.practice_child)
-        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: [`${res.message}`] })
-        this.modal = false
-        // this.$emit('close')
-      })
+      this.$axios
+        .$post(`/api/v1/practice/practice-children`, {
+          surgery_id: this.selectedSurgery.id
+        })
+        .then(res => {
+          this.$emit("add", res.data.practice_child);
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: [`${res.message}`]
+          });
+          this.modal = false;
+          // this.$emit('close')
+        });
     }
   }
-}
+};
 </script>
 
 <style scoped>

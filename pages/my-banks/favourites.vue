@@ -25,8 +25,7 @@
               @click="unfavorite(user.id, index)"
             />
           </div>
-
-          <div class="flex flex-wrap text-center mt-4 cursor-pointer" @click="show(user.id)">
+          <div class="flex flex-wrap text-center pt-4 cursor-pointer" @click="show(user.id)">
             <div class="w-full flex justify-center">
               <div class="relative avatar flex justify-center">
                 <img
@@ -71,9 +70,9 @@
   </section>
 </template>
 <script>
-import AppPagination from '@/components/Base/AppPagination'
-// import MyLocumDetailModal from '@/components/MyBanks/MyLocumDetailModal' 
-import AppSelect from '@/components/Base/AppSelect'
+import AppPagination from "@/components/Base/AppPagination";
+import MyLocumDetailModal from "@/components/MyBanks/MyLocumDetailModal"; //TEMPORARY
+import AppSelect from "@/components/Base/AppSelect";
 
 export default {
   transition: {
@@ -94,34 +93,22 @@ export default {
       loading: true,
       //
       profession_id: null,
-      professions: [],
-
-      // locums: [],
-      // total: 0,
-      // totalPages: 0,
-      // currentPage: 0,
-      // perPage: 0,
-      // modal: false, //TEMPORARY
-      // user: null, //TEMPORARY
-      // jobs: null,
-      // filteredUsers: []
-    }
+      filteredUsers: []
+    };
   },
   // beforeDestroy() {
   //   let query = Object.assign({}, this.$route.query)
   //   delete query.current_page
   //   this.$router.push({ query })
   // },
-  computed: {
-    offset() {
-      return this.perPage * (this.current_page - 1);
+  watch: {
+    $route(to, from) {
+      this.currentPage = parseInt(to.query.current_page);
+      this.getFavoriteLocums();
     },
-    perPage() {
-      return 5;
-    },
-    totalPages() {
-      return Math.ceil(this.total / this.perPage);
-    },
+    profession_id: function() {
+      this.getFavoriteLocums();
+    }
   },
   // watch: {
   //   $route(to, from) {
@@ -133,64 +120,63 @@ export default {
   //   }
   // },
   created() {
-    this.getProfessions()
-    this.getFavoriteLocumsCount()
+    const query = {
+      ...this.$route.query,
+      current_page: this.$route.query.current_page || 1
+    };
 
-    // this.$axios.$get(`/api/v1/practice/locums/count?practice_locum_type=Favorite`).then(res => { //GET QUANTITY OF DATA
-    //   this.total = res.data.count
-    //   this.perPage = 6
-    //   this.totalPages = Math.ceil(this.total / this.perPage)
-    //   this.getFavoriteLocums()
-    // })
+    this.$axios
+      .$get(`/api/v1/practice/locums/count?practice_locum_type=Favorite`)
+      .then(res => {
+        //GET QUANTITY OF DATA
+        this.total = res.data.count;
+        this.perPage = 6;
+        this.totalPages = Math.ceil(this.total / this.perPage);
+        this.getFavoriteLocums();
+      });
 
-    // this.$axios.$get(`/api/v1/professions`).then(res => {
-    //   this.professions = [];
-    //   res.data.professions.forEach(item => {
-    //     this.professions.push({ label: item.name, value: item.id });
-    //   });
-    // });
-
+    this.$axios.$get(`/api/v1/professions`).then(res => {
+      this.professions = [];
+      res.data.professions.forEach(item => {
+        this.professions.push({ label: item.name, value: item.id });
+      });
+    });
   },
   methods: {
-    getProfessions() {
-      this.$axios.$get(`/api/v1/professions`).then(res => {
-        this.professions = [];
-        res.data.professions.forEach(item => {
-          this.professions.push({ label: item.name, value: item.id });
-        });
-      });
-    },
-    getFavoriteLocumsCount() {
-      this.$axios.$get(`/api/v1/practice/locums/count?practice_locum_type=Favorite`).then(res => {
-        this.total = res.data.count
-        this.getFavoriteLocums(this.current_page)
-      })
-    },
-    getFavoriteLocums(page) {
-      this.current_page = page
-      this.$axios.$get(`/api/v1/practice/locums?practice_locum_type=Favorite&offset=${this.offset}&limit=${this.perPage}`).then(res => {
-        this.locums = res.data.users
-        this.loading = false
-      })
-      // this.loading = true
-      // let offset = 0
-      // offset = this.perPage * (parseInt(this.$route.query.current_page) - 1)
-      // if (!this.profession_id) {
-      //   this.$axios.$get(`/api/v1/practice/locums?practice_locum_type=Favorite&limit=${this.perPage}&offset=${offset}`).then(res => {
-      //     this.locums = res.data.users
-      //   })
-      // } else {
-      //   this.$axios.$get(`/api/v1/practice/locums?profession_id=${this.profession_id}&practice_locum_type=Favorite&limit=${this.perPage}&offset=${offset}`).then(res => {
-      //     this.locums = res.data.users
-      //   })
-      // }
-      // this.loading = false
+    getFavoriteLocums() {
+      this.loading = true;
+      let offset = 0;
+      offset = this.perPage * (parseInt(this.$route.query.current_page) - 1);
+      if (!this.profession_id) {
+        this.$axios
+          .$get(
+            `/api/v1/practice/locums?practice_locum_type=Favorite&limit=${this.perPage}&offset=${offset}`
+          )
+          .then(res => {
+            this.locums = res.data.users;
+          });
+      } else {
+        this.$axios
+          .$get(
+            `/api/v1/practice/locums?profession_id=${this.profession_id}&practice_locum_type=Favorite&limit=${this.perPage}&offset=${offset}`
+          )
+          .then(res => {
+            this.locums = res.data.users;
+          });
+      }
+      this.loading = false;
     },
     unfavorite(id, index) {
-      this.$axios.$delete(`/api/v1/practice/locums/${id}/favorite`).then(res => {
-        this.locums.splice(index, 1)
-        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: ['Remove to favourites'] })
-      })
+      this.$axios
+        .$delete(`/api/v1/practice/locums/${id}/favorite`)
+        .then(res => {
+          this.locums.splice(index, 1);
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: ["Remove to favourites"]
+          });
+        });
     },
     show(id) {
       this.$router.push(`/my-banks/favourites/${id}`)
@@ -202,28 +188,30 @@ export default {
       // document.body.style.overflow = 'hidden'
       // this.$store.commit('SET_MYLOCUMDETAIL_MODAL', true)
 
-      // Promise.all([
-      //   this.$axios.$get(`/api/v1/practice/locums/${id}`).then(res => {
-      //     this.user = res.data.user
-      //   }),
-      // ]).then(() => {
-      //   this.$axios.$get(`/api/v1/practice/jobs?locum_detail_id=${this.user.locum_detail.id}`).then(res => {
-      //     this.jobs = res.data.jobs
-      //   }),
-      //     this.modal = true
-      // })
+      Promise.all([
+        this.$axios.$get(`/api/v1/practice/locums/${id}`).then(res => {
+          this.user = res.data.user;
+        })
+      ]).then(() => {
+        this.$axios
+          .$get(
+            `/api/v1/practice/jobs?locum_detail_id=${this.user.locum_detail.id}`
+          )
+          .then(res => {
+            this.jobs = res.data.jobs;
+          }),
+          (this.modal = true);
+      });
     },
     pagechanged(e) {
-      this.current_page = e
-      this.getFavoriteLocums(this.current_page)
-      // const query = {
-      //   ...this.$route.query,
-      //   current_page: e || 1
-      // }
-      // this.$router.push({ query })
+      const query = {
+        ...this.$route.query,
+        current_page: e || 1
+      };
+      this.$router.push({ query });
     }
   }
-}
+};
 </script>
 <style >
 .avatar-container {
@@ -236,7 +224,7 @@ export default {
   min-width: 170px;
   min-height: 170px;
 }
-img {
+.avatar img {
   border-radius: 50%;
 }
 .shield {

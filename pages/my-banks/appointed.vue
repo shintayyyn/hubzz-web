@@ -76,10 +76,10 @@
   </div>
 </template>
 <script>
-import AppPagination from '@/components/Base/AppPagination'
-import AppLoading from '@/components/Base/AppLoading'
-import MyLocumDetailModal from '@/components/MyBanks/MyLocumDetailModal' //TEMPORARY
-import AppSelect from '@/components/Base/AppSelect'
+import AppPagination from "@/components/Base/AppPagination";
+import AppLoading from "@/components/Base/AppLoading";
+import MyLocumDetailModal from "@/components/MyBanks/MyLocumDetailModal"; //TEMPORARY
+import AppSelect from "@/components/Base/AppSelect";
 export default {
   components: {
     AppPagination,
@@ -101,34 +101,37 @@ export default {
       professions: [],
       profession_id: null,
       filteredUsers: []
-    }
+    };
   },
   beforeDestroy() {
-    let query = Object.assign({}, this.$route.query)
-    delete query.current_page
-    this.$router.push({ query })
+    let query = Object.assign({}, this.$route.query);
+    delete query.current_page;
+    this.$router.push({ query });
   },
   watch: {
     $route(to, from) {
-      this.currentPage = parseInt(to.query.current_page)
-      this.getAppointedLocums()
+      this.currentPage = parseInt(to.query.current_page);
+      this.getAppointedLocums();
     },
-    profession_id: function () {
-      this.getAppointedLocums()
+    profession_id: function() {
+      this.getAppointedLocums();
     }
   },
   created() {
     const query = {
       ...this.$route.query,
       current_page: this.$route.query.current_page || 1
-    }
+    };
 
-    this.$axios.$get(`/api/v1/practice/locums/count?practice_locum_type=Appointed`).then(res => { //GET QUANTITY OF DATA
-      this.total = res.data.count
-      this.perPage = 6
-      this.totalPages = Math.ceil(this.total / this.perPage)
-      this.getAppointedLocums()
-    })
+    this.$axios
+      .$get(`/api/v1/practice/locums/count?practice_locum_type=Appointed`)
+      .then(res => {
+        //GET QUANTITY OF DATA
+        this.total = res.data.count;
+        this.perPage = 6;
+        this.totalPages = Math.ceil(this.total / this.perPage);
+        this.getAppointedLocums();
+      });
 
     this.$axios.$get(`/api/v1/professions`).then(res => {
       this.professions = [];
@@ -136,36 +139,55 @@ export default {
         this.professions.push({ label: item.name, value: item.id });
       });
     });
-
   },
   methods: {
     getAppointedLocums() {
-      this.loading = true
-      let offset = 0
-      offset = this.perPage * (parseInt(this.$route.query.current_page) - 1)
+      this.loading = true;
+      let offset = 0;
+      offset = this.perPage * (parseInt(this.$route.query.current_page) - 1);
       if (!this.profession_id) {
-        this.$axios.$get(`/api/v1/practice/locums?&practice_locum_type=Appointed&limit=${this.perPage}&offset=${offset}`).then(res => {
-          this.locums = res.data.users
-        })
+        this.$axios
+          .$get(
+            `/api/v1/practice/locums?&practice_locum_type=Appointed&limit=${this.perPage}&offset=${offset}`
+          )
+          .then(res => {
+            this.locums = res.data.users;
+          });
       } else {
-        this.$axios.$get(`/api/v1/practice/locums?profession_id=${this.profession_id}&practice_locum_type=Appointed&limit=${this.perPage}&offset=${offset}`).then(res => {
-          this.locums = res.data.users
-        })
+        this.$axios
+          .$get(
+            `/api/v1/practice/locums?profession_id=${this.profession_id}&practice_locum_type=Appointed&limit=${this.perPage}&offset=${offset}`
+          )
+          .then(res => {
+            this.locums = res.data.users;
+          });
       }
-      this.loading = false
+      this.loading = false;
     },
     favorite(id) {
-      let locum = this.locums.find(locum => locum.id === id)
+      let locum = this.locums.find(locum => locum.id === id);
       if (!locum.is_favorite) {
-        this.$axios.$post(`/api/v1/practice/locums/${id}/favorite`).then(res => {
-          locum.is_favorite = !locum.is_favorite
-          this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: ['Added to favourites'] })
-        })
+        this.$axios
+          .$post(`/api/v1/practice/locums/${id}/favorite`)
+          .then(res => {
+            locum.is_favorite = !locum.is_favorite;
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: ["Added to favourites"]
+            });
+          });
       } else {
-        this.$axios.$delete(`/api/v1/practice/locums/${id}/favorite`).then(res => {
-          locum.is_favorite = !locum.is_favorite
-          this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: ['Remove to favourites'] })
-        })
+        this.$axios
+          .$delete(`/api/v1/practice/locums/${id}/favorite`)
+          .then(res => {
+            locum.is_favorite = !locum.is_favorite;
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: ["Remove to favourites"]
+            });
+          });
       }
     },
     show(id) {
@@ -178,24 +200,28 @@ export default {
       // this.$store.commit('SET_MYLOCUMDETAIL_MODAL', true)
       Promise.all([
         this.$axios.$get(`/api/v1/practice/locums/${id}`).then(res => {
-          this.user = res.data.user
-        }),
+          this.user = res.data.user;
+        })
       ]).then(() => {
-        this.$axios.$get(`/api/v1/practice/jobs?locum_detail_id=${this.user.locum_detail.id}`).then(res => {
-          this.jobs = res.data.jobs
-        }),
-          this.modal = true
-      })
+        this.$axios
+          .$get(
+            `/api/v1/practice/jobs?locum_detail_id=${this.user.locum_detail.id}`
+          )
+          .then(res => {
+            this.jobs = res.data.jobs;
+          }),
+          (this.modal = true);
+      });
     },
     pagechanged(e) {
       const query = {
         ...this.$route.query,
         current_page: e || 1
-      }
-      this.$router.push({ query })
+      };
+      this.$router.push({ query });
     }
   }
-}
+};
 </script>
 <style>
 .avatar-container {
@@ -207,9 +233,6 @@ export default {
   max-height: 170px;
   min-width: 170px;
   min-height: 170px;
-}
-img {
-  border-radius: 50%;
 }
 .locum-shield {
   position: fixed;

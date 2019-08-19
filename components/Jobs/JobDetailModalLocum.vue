@@ -42,55 +42,53 @@
   </div>
 </template>
 <script>
-import JobDetailModalForm from '@/components/Jobs/JobDetailModalForm'
-import JobDetailModalMap from '@/components/Jobs/JobDetailModalMap'
-import JobDetailModalUnassignForm from '@/components/Jobs/JobDetailModalUnassignForm'
-import JobDetailModalApplyForm from '@/components/Jobs/JobDetailModalApplyForm'
-import JobDetailModalCancelForm from '@/components/Jobs/JobDetailModalCancelForm'
+import JobDetailModalForm from "@/components/Jobs/JobDetailModalForm";
+import JobDetailModalMap from "@/components/Jobs/JobDetailModalMap";
+import JobDetailModalUnassignForm from "@/components/Jobs/JobDetailModalUnassignForm";
+import JobDetailModalApplyForm from "@/components/Jobs/JobDetailModalApplyForm";
+import JobDetailModalCancelForm from "@/components/Jobs/JobDetailModalCancelForm";
 export default {
-  props: ['job'],
+  props: ["job"],
   components: {
     JobDetailModalForm,
     JobDetailModalMap,
     JobDetailModalUnassignForm,
     JobDetailModalApplyForm,
-    JobDetailModalCancelForm,
+    JobDetailModalCancelForm
   },
   methods: {
     close() {
-      if (this.$route.fullPath === '/dashboard') {
-        this.$emit('close')
-        return
+      if (this.$route.fullPath === "/dashboard") {
+        this.$emit("close");
+        return;
       } else {
-        console.log(this.job)
-        let status = this.job.locum_status
+        console.log(this.job);
+        let status = this.job.locum_status;
         switch (status) {
-          case 'Current':
-            this.$router.push(`/jobs/allocated`)
+          case "Current":
+            this.$router.push(`/jobs/allocated`);
             break;
-          case 'Available':
-            this.$router.push(`/jobs/available`)
+          case "Available":
+            this.$router.push(`/jobs/available`);
             break;
-          case 'Matched':
-            this.$router.push(`/jobs/matched`)
+          case "Matched":
+            this.$router.push(`/jobs/matched`);
             break;
-          case 'Applied':
-            this.$router.push(`/jobs/applied`)
+          case "Applied":
+            this.$router.push(`/jobs/applied`);
             break;
-          case 'Unsuccessful':
-            this.$router.push(`/jobs/unsuccessful`)
+          case "Unsuccessful":
+            this.$router.push(`/jobs/unsuccessful`);
             break;
-          case 'Declined':
-            this.$router.push(`/jobs/declined`)
+          case "Declined":
+            this.$router.push(`/jobs/declined`);
             break;
-          case 'Cancelled':
-            this.$router.push(`/jobs/cancelled`)
+          case "Cancelled":
+            this.$router.push(`/jobs/cancelled`);
             break;
-          case 'Completed':
-            this.$router.push(`/jobs/completed`)
+          case "Completed":
+            this.$router.push(`/jobs/completed`);
             break;
-
-
         }
         // const query = {
         //   ...this.$route.query
@@ -99,33 +97,33 @@ export default {
       }
     },
     status(status) {
-      if (status === 'Available') {
-        return 'LIVE'
+      if (status === "Available") {
+        return "LIVE";
       }
-      if (status === 'Current') {
-        return 'ALLOCATED'
+      if (status === "Current") {
+        return "ALLOCATED";
       }
-      return status.toUpperCase()
+      return status.toUpperCase();
     },
     bgStatus(status) {
       switch (status) {
-        case 'Available':
-          return 'bg-yellow-500';
+        case "Available":
+          return "bg-yellow-500";
           break;
-        case 'Applied':
-          return 'bg-orange-400 text-white';
+        case "Applied":
+          return "bg-orange-400 text-white";
           break;
-        case 'Completed':
-          return 'bg-green-400';
+        case "Completed":
+          return "bg-green-400";
           break;
-        case 'Current':
-          return 'bg-green-400';
+        case "Current":
+          return "bg-green-400";
           break;
         default:
-          return 'bg-red-500 text-white'
+          return "bg-red-500 text-white";
       }
     }
   }
-}
+};
 </script>
 

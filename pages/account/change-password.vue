@@ -8,7 +8,6 @@
         :name="'old_password'"
         :label="'Current password'"
         :placeholder="''"
-        :error="formError.find(item => item.field === 'old_password')"
       />
       <AppInput
         v-model="form.new_password"
@@ -16,7 +15,6 @@
         :name="'new_password'"
         :label="'New password'"
         :placeholder="''"
-        :error="formError.find(item => item.field === 'new_password')"
       />
       <AppInput
         v-model="form.new_password_confirmation"
@@ -24,7 +22,6 @@
         :name="'new_password_confirmation'"
         :label="'Repeat password to confirm'"
         :placeholder="''"
-        :error="formError.find(item => item.field === 'new_password_confirmation')"
       />
 
       <div class="text-left mt-5">
@@ -40,8 +37,8 @@ import AppSelect from "@/components/Base/AppSelect";
 import AppButton from "@/components/Base/AppButton";
 export default {
   transition: {
-    name: 'fade',
-    mode: 'out-in'
+    name: "fade",
+    mode: "out-in"
   },
   components: {
     AppFormError,
@@ -68,7 +65,10 @@ export default {
         this.formError.splice(index, 1);
       }
       if (!value) {
-        this.formError.push({ field: "old_password", message: "Required" });
+        this.formError.push({
+          field: "old_password",
+          message: "Current Password Required"
+        });
       }
     },
     "form.new_password"(value) {
@@ -79,7 +79,10 @@ export default {
         this.formError.splice(index, 1);
       }
       if (!value) {
-        this.formError.push({ field: "new_password", message: "Required" });
+        this.formError.push({
+          field: "new_password",
+          message: "New Password Required"
+        });
       }
     },
     "form.new_password_confirmation"(value) {
@@ -92,7 +95,7 @@ export default {
       if (!value) {
         this.formError.push({
           field: "new_password_confirmation",
-          message: "Required"
+          message: "Password Confirmation Required"
         });
       } else {
         const error = this.ValidateSamePassword(
@@ -112,7 +115,7 @@ export default {
         this.formError = [];
         this.Validate(this.form);
         if (!this.formError.length) {
-          await this.$axios.$put(`/api/v1/me/change-password`, this.form)
+          await this.$axios.$put(`/api/v1/me/change-password`, this.form);
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
@@ -124,10 +127,10 @@ export default {
             status: "danger",
             text: ["Please fill up all the forms"]
           });
+          this.scrollToTop();
         }
       } catch (err) {
-        this.formError = err.response.data.error_messages
-        this.scrollToTop()
+        this.formError = err.response.data.error_messages;
       }
     }
   }

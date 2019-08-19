@@ -13,12 +13,13 @@
 import AppSideBar from "@/components/AppSideBar";
 import AppNotification from "@/components/AppNotification";
 import AppHeader from "@/components/AppHeader";
+
 export default {
   transitions: "page",
   components: {
     AppSideBar,
     AppNotification,
-    AppHeader,
+    AppHeader
   },
   data() {
     return {
@@ -71,6 +72,7 @@ export default {
   max-width: 1466px;
   padding: 5px 30px;
   height: 100%;
+  scroll-behavior: smooth;
 }
 .sidebar-shield {
   position: fixed;

@@ -8,7 +8,6 @@
         :name="'email'"
         :label="'Email address'"
         :placeholder="''"
-        :error="formError.find(item => item.field === 'email')"
       />
       <div class="-mt-6 mb-4" v-if="email_isVerified === true ">
         <span
@@ -18,7 +17,7 @@
       <div class="-mt-6 mb-4" v-if="email_isVerified === false ">
         <span class="text-red-500 text-xs">E-mail is not yet verified.</span>
         <span
-          class="p-1 bg-gray-900 rounded text-xs"
+          class="p-1 bg-gray-900 rounded text-xs text-white cursor-pointer"
           @click="resendEmailVerification()"
         >Click here to re-send</span>
       </div>
@@ -28,7 +27,6 @@
         :name="'title'"
         :label="'Title'"
         :placeholder="''"
-        :error="formError.find(item => item.field === 'title')"
       />
       <AppInput
         v-model="form.first_name"
@@ -36,7 +34,6 @@
         :name="'first_name'"
         :label="'First name'"
         :placeholder="''"
-        :error="formError.find(item => item.field === 'first_name')"
       />
       <AppInput
         v-model="form.last_name"
@@ -44,7 +41,6 @@
         :name="'last_name'"
         :label="'Last name'"
         :placeholder="''"
-        :error="formError.find(item => item.field === 'last_name')"
       />
       <AppInput
         v-model="form.suffix"
@@ -52,14 +48,12 @@
         :name="'suffix'"
         :label="'Suffix'"
         :placeholder="''"
-        :error="formError.find(item => item.field === 'suffix')"
       />
       <AppSelect
         v-model="form.gender"
         :name="'gender'"
         :label="'Gender'"
         :placeholder="'Select...'"
-        :error="formError.find(item => item.field === 'gender')"
         :items="[{label: 'Male', value: 'Male'}, {label: 'Female', value: 'Female'}]"
       />
       <AppInput
@@ -68,7 +62,6 @@
         :name="'mobile_number'"
         :label="'Mobile Number'"
         :placeholder="''"
-        :error="formError.find(item => item.field === 'mobile_number')"
       />
       <div class="rounded-lg bg-gray-300 p-8 my-2">
         <AppPostCode
@@ -84,7 +77,6 @@
           :name="'address_line_1'"
           :label="'Address line 1'"
           :placeholder="''"
-          :error="formError.find(item => item.field === 'address_line_1')"
           :inStyle="'background-color:#dae1e7;border-color:white'"
         />
         <AppInput
@@ -93,7 +85,6 @@
           :name="'address_line_2'"
           :label="'Address line 2 (optional)'"
           :placeholder="''"
-          :error="formError.find(item => item.field === 'address_line_2')"
           :inStyle="'background-color:#dae1e7;border-color:white'"
         />
         <AppInput
@@ -102,7 +93,6 @@
           :name="'address_line_3'"
           :label="'City / Town / District'"
           :placeholder="''"
-          :error="formError.find(item => item.field === 'address_line_3')"
           :inStyle="'background-color:#dae1e7;border-color:white'"
         />
       </div>
@@ -118,8 +108,8 @@ import AppSelect from "@/components/Base/AppSelect";
 import AppButton from "@/components/Base/AppButton";
 export default {
   transition: {
-    name: 'fade',
-    mode: 'out-in'
+    name: "fade",
+    mode: "out-in"
   },
   components: {
     AppFormError,
@@ -143,46 +133,61 @@ export default {
         address_line_2: "",
         address_line_3: ""
       },
-      email_isVerified: '',
-      email_verifiedAt: '',
+      email_isVerified: "",
+      email_verifiedAt: "",
       formError: []
     };
   },
   watch: {
-    'form.email'(value) {
-      this.formError = this.formError.filter(error => error.field !== 'email')
+    "form.email"(value) {
+      this.formError = this.formError.filter(error => error.field !== "email");
     },
-    'form.first_name'() {
-      this.formError = this.formError.filter(error => error.field !== 'first_name')
+    "form.first_name"() {
+      this.formError = this.formError.filter(
+        error => error.field !== "first_name"
+      );
     },
-    'form.last_name'() {
-      this.formError = this.formError.filter(error => error.field !== 'last_name')
+    "form.last_name"() {
+      this.formError = this.formError.filter(
+        error => error.field !== "last_name"
+      );
     },
-    'form.gender'() {
-      this.formError = this.formError.filter(error => error.field !== 'gender')
+    "form.gender"() {
+      this.formError = this.formError.filter(error => error.field !== "gender");
     },
-    'form.mobile_number'() {
-      this.formError = this.formError.filter(error => error.field !== 'mobile_number')
+    "form.mobile_number"() {
+      this.formError = this.formError.filter(
+        error => error.field !== "mobile_number"
+      );
     },
-    'form.post_code'() {
-      this.formError = this.formError.filter(error => error.field !== 'post_code')
+    "form.post_code"() {
+      this.formError = this.formError.filter(
+        error => error.field !== "post_code"
+      );
     },
-    'form.address_line_1'() {
-      this.formError = this.formError.filter(error => error.field !== 'address_line_1')
+    "form.address_line_1"() {
+      this.formError = this.formError.filter(
+        error => error.field !== "address_line_1"
+      );
     },
-    'form.address_line_3'() {
-      this.formError = this.formError.filter(error => error.field !== 'address_line_3')
-    },
+    "form.address_line_3"() {
+      this.formError = this.formError.filter(
+        error => error.field !== "address_line_3"
+      );
+    }
   },
   async asyncData({ app, error }) {
     try {
-      const response = await app.$axios.$get('/api/v1/me')
-      const user = response.data && response.data && response.data.user ? response.data.user : null
+      const response = await app.$axios.$get("/api/v1/me");
+      const user =
+        response.data && response.data && response.data.user
+          ? response.data.user
+          : null;
       return {
         user
-      }
+      };
     } catch (err) {
-      throw err
+      throw err;
     }
   },
   created() {
@@ -198,7 +203,7 @@ export default {
     this.form.address_line_3 = this.user.address_detail.address.line_3;
     this.form.post_code = this.user.address_detail.address.post_code;
     this.email_isVerified = this.user.is_email_verified;
-    this.email_verifiedAt = this.user.email_verified_at
+    this.email_verifiedAt = this.user.email_verified_at;
   },
   methods: {
     onSelect(value) {
@@ -218,10 +223,10 @@ export default {
     },
     async save() {
       try {
-        this.formError = []
-        this.Validate(this.form, ['title', 'suffix', 'address_line_2'])
+        this.formError = [];
+        this.Validate(this.form, ["title", "suffix", "address_line_2"]);
         if (!this.formError.length) {
-          await this.$axios.$put(`/api/v1/locum/me/account`, this.form)
+          await this.$axios.$put(`/api/v1/locum/me/account`, this.form);
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
@@ -235,16 +240,16 @@ export default {
           });
         }
       } catch (err) {
-        this.formError = err.response.data.error_messages
-        this.scrollToTop()
+        this.formError = err.response.data.error_messages;
+        this.scrollToTop();
       }
     },
     async resendEmailVerification() {
       try {
-        await this.$axios.post(`/api/v1/email-verification/resend`)
-        alert('Confirmation e-mail sent')
+        await this.$axios.post(`/api/v1/email-verification/resend`);
+        alert("Confirmation e-mail sent");
       } catch (err) {
-        console.log("Something went wrong! ", err)
+        console.log("Something went wrong! ", err);
       }
     }
   }

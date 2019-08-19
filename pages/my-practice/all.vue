@@ -64,12 +64,12 @@
   </section>
 </template>
 <script>
-import AppPagination from '@/components/Base/AppPagination'
-import MyPracticeDetailModal from '@/components/MyPractice/MyPracticeDetailModal'
+import AppPagination from "@/components/Base/AppPagination";
+import MyPracticeDetailModal from "@/components/MyPractice/MyPracticeDetailModal";
 export default {
   transition: {
-    name: 'fade',
-    mode: 'out-in'
+    name: "fade",
+    mode: "out-in"
   },
   components: {
     AppPagination,
@@ -83,7 +83,7 @@ export default {
       modal: false,
       practice: null,
       loading: true
-    }
+    };
   },
   computed: {
     offset() {
@@ -94,46 +94,60 @@ export default {
     },
     totalPages() {
       return Math.ceil(this.total / this.perPage);
-    },
+    }
   },
   created() {
-    this.getPracticesCount()
+    this.getPracticesCount();
   },
   methods: {
     getPracticesCount() {
       this.$axios.$get(`/api/v1/locum/practices/count`).then(res => {
-        this.total = res.data.count
-        this.getPractices(this.current_page)
-      })
+        this.total = res.data.count;
+        this.getPractices(this.current_page);
+      });
     },
     getPractices(page) {
-      this.current_page = page
-      this.$axios.$get(`/api/v1/locum/practices?offset=${this.offset}&limit=${this.perPage}`).then(res => {
-        this.practices = res.data.practices
-        this.loading = false
-      })
+      this.current_page = page;
+      this.$axios
+        .$get(
+          `/api/v1/locum/practices?offset=${this.offset}&limit=${this.perPage}`
+        )
+        .then(res => {
+          this.practices = res.data.practices;
+          this.loading = false;
+        });
     },
     favorite(id, index) {
       this.$axios.$post(`/api/v1/locum/practices/${id}/favorite`).then(res => {
-        this.practices.splice(index, 1, res.data.practice)
-        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: [`${res.message}`] })
-      })
+        this.practices.splice(index, 1, res.data.practice);
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "success",
+          text: [`${res.message}`]
+        });
+      });
     },
     unfavorite(id, index) {
-      this.$axios.$delete(`/api/v1/locum/practices/${id}/favorite`).then(res => {
-        this.practices.splice(index, 1, res.data.practice)
-        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: [`${res.message}`] })
-      })
+      this.$axios
+        .$delete(`/api/v1/locum/practices/${id}/favorite`)
+        .then(res => {
+          this.practices.splice(index, 1, res.data.practice);
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: [`${res.message}`]
+          });
+        });
     },
     show(id) {
-      this.$router.push(`/my-practice/all/${id}`)
+      this.$router.push(`/my-practice/all/${id}`);
     },
     pagechanged(e) {
-      this.current_page = e
-      this.getPractices(this.current_page)
+      this.current_page = e;
+      this.getPractices(this.current_page);
     }
   }
-}
+};
 </script>
 <style scoped>
 .avatar-container {
@@ -146,9 +160,7 @@ export default {
   min-width: 170px;
   min-height: 170px;
 }
-img {
-  border-radius: 50%;
-}
+
 .shield {
   position: fixed;
   top: 0;

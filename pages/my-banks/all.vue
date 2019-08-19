@@ -116,7 +116,7 @@ export default {
       this.currentPage = parseInt(to.query.current_page);
       this.getAllLocums();
     },
-    profession_id: function () {
+    profession_id: function() {
       this.getAllLocums();
     }
   },
@@ -231,9 +231,6 @@ export default {
   max-height: 170px;
   min-width: 170px;
   min-height: 170px;
-}
-img {
-  border-radius: 50%;
 }
 .card {
   /* min-width: 100px; */
