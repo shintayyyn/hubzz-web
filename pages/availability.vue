@@ -39,71 +39,61 @@
   </section>
 </template>
 <script>
-import AvailabilityShift from '@/components/Availability/AvailabilityShift'
-import AvailabilityCalendar from '@/components/Availability/AvailabilityCalendar'
-import AddUnavailableDateModal from '@/components/Availability/AddUnavailableDateModal'
+import AvailabilityShift from "@/components/Availability/AvailabilityShift";
+import AvailabilityCalendar from "@/components/Availability/AvailabilityCalendar";
+import AddUnavailableDateModal from "@/components/Availability/AddUnavailableDateModal";
 export default {
   components: {
     AvailabilityShift,
     AvailabilityCalendar,
     AddUnavailableDateModal
   },
-  middleware: 'isVerified',
+  middleware: "isVerified",
   data() {
     return {
       shifts: [],
       modal: false,
       // passing prop to modal
-      type: '',
+      type: "",
       unavailableDate: null,
       appointmentDate: null,
       allocatedDate: null
-    }
+    };
   },
   created() {
     // get all shifts
-    this.$store.dispatch('availability/getShifts')
+    this.$store.dispatch("availability/getShifts");
 
     // set the selected date and date today
-    this.$store.commit('availability/SET_DATE_TODAY')
+    this.$store.commit("availability/SET_DATE_TODAY");
   },
   methods: {
     add() {
-      this.unavailableDate = null
-      this.appointmentDate = null
-      document.body.style.overflow = 'hidden'
-      this.type = 'range'
-      this.modal = true
+      this.unavailableDate = null;
+      this.appointmentDate = null;
+      document.body.style.overflow = "hidden";
+      this.type = "range";
+      this.modal = true;
     },
     open(unavailableDate, appointmentDate, allocatedDate) {
-      this.unavailableDate = unavailableDate
-      this.appointmentDate = appointmentDate
-      this.allocatedDate = allocatedDate
-      document.body.style.overflow = 'hidden'
-      this.type = 'solo'
-      this.modal = true
+      this.unavailableDate = unavailableDate;
+      this.appointmentDate = appointmentDate;
+      this.allocatedDate = allocatedDate;
+      document.body.style.overflow = "hidden";
+      this.type = "solo";
+      this.modal = true;
     },
     close() {
-      this.modal = false
-      document.body.style.overflow = 'auto'
+      this.modal = false;
+      document.body.style.overflow = "auto";
     }
   }
-}
+};
 </script>
 <style scoped>
 .availability-calendar {
-  height: 350px;
+  height: auto;
   max-width: 800px;
-}
-@media screen and (min-width: 568px) {
-  .availability-calendar {
-    height: 450px;
-  }
-}
-@media screen and (min-width: 768px) {
-  .availability-calendar {
-    height: 600px;
-  }
 }
 .add-unavailable-date-shield {
   position: fixed;

@@ -540,6 +540,7 @@ export default {
     }
   },
   created() {
+    this.$store.commit("jobs/TOGGLE_SHIELD", true);
     // get practice lists
     this.$axios.$get(`/api/v1/practice/practice-children`).then(res => {
       this.practice_lists = [];
@@ -637,6 +638,7 @@ export default {
   methods: {
     close() {
       this.$store.commit("calendar/CREATE_JOB_MODAL", false);
+      this.$store.commit("jobs/TOGGLE_SHIELD", false);
     },
     checkEmptyField(inputField, fieldName) {
       // splice from formError

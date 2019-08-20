@@ -131,6 +131,7 @@ export default {
         }
       } catch (err) {
         this.formError = err.response.data.error_messages;
+        this.scrollToTop();
       }
     }
   }

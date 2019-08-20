@@ -1,6 +1,6 @@
 <template >
-  <div>
-    <div class="p-8 max-w-3xl">
+  <div class="flex h-full pb-10">
+    <div class="p-8 w-full h-full md:max-w-6xl">
       <div class="flex items-center">
         <div @click="$emit('close')" class="cursor-pointer">
           <svgicon name="left-arrow" height="32" />
@@ -26,9 +26,9 @@
       </div>
 
       <div class="flex flex-row justify-start">
-        <div class="flex-col shadow-lg rounded-lg bg-gray-300 mx-6 mt-10">
-          <div class="inline-flex flex-col md:flex-row text-sm m-4">
-            <div class="m-2 mr-20">
+        <div class="w-full flex-col shadow-lg rounded-lg bg-gray-300 px-2 md:px-6 mt-10 border">
+          <div class="w-full inline-flex flex-col md:flex-row text-sm p-4">
+            <div class="m-2 md:mr-20">
               <p class="mr-20 font-semibold">Title</p>
               <p
                 class="mt-2 text-base"
@@ -54,8 +54,12 @@
                 >{{specificComplianceDoc && specificComplianceDoc.note ? specificComplianceDoc.note : null}}</p>
               </div>
             </div>
-            <div class="flex m-2">
-              <embed width="800px" height="600px" :src="specificComplianceDoc.file.url" />
+            <div class="flex m-2 w-full">
+              <embed
+                class="object-contain object-top w-full"
+                :class="specificComplianceDoc.file.type == 'image' ? '' : 'document h-full'"
+                :src="specificComplianceDoc.file.url"
+              />
             </div>
           </div>
         </div>
@@ -70,11 +74,11 @@ export default {
 </script>
 <style>
 .document {
-  max-width: 100%;
+  min-height: 100%;
 }
-@media screen and (min-width: 1200px) {
+@media screen and (min-width: 768px) {
   .document {
-    max-width: 600px;
+    min-height: 70vh;
   }
 }
 </style>

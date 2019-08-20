@@ -20,7 +20,7 @@
           to="/my-banks/appointed"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
           :class="$route.path === '/my-banks/appointed' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-        >Apppointed</nuxt-link>
+        >Appointed</nuxt-link>
         <nuxt-link
           style="font-family:Nunito"
           to="/my-banks/rejected"

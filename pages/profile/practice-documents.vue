@@ -16,9 +16,9 @@
       </div>
       <div>
         <div
-          class="practice-doc-card rounded-lg shadow-lg p-4 mt-4"
+          class="practice-doc-card bg-white rounded-lg shadow-lg p-4 mt-4"
           v-for="item in practiceComplianceDocuments"
-          :class="item.existingPracticeComplianceDocument ? 'bg-orange-300':'bg-blue-500' "
+          :class="item.existingPracticeComplianceDocument ? 'hover:bg-gray-300 cursor-pointer':'bg-gray-200 text-gray-500 select-none' "
           :key="item.practiceDocumentType.id"
           @click="item.existingPracticeComplianceDocument ? show(item.existingPracticeComplianceDocument.id) : ''"
         >
@@ -44,12 +44,11 @@
   </section>
 </template>
 <script>
-
-import PracticeDocumentDetailModal from '@/components/Profile/PracticeDocumentDetailModal'
+import PracticeDocumentDetailModal from "@/components/Profile/PracticeDocumentDetailModal";
 export default {
   transition: {
-    name: 'fade',
-    mode: 'out-in'
+    name: "fade",
+    mode: "out-in"
   },
   components: {
     PracticeDocumentDetailModal
@@ -60,61 +59,58 @@ export default {
       practiceDocuments: [],
       practiceDocumentTypes: [],
       practiceComplianceDocuments: [],
-      disabled: 'true'
-    }
+      disabled: "true"
+    };
   },
 
   created() {
-    this.practiceDocuments = []
-    this.practiceDocumentTypes = []
-    this.practiceComplianceDocuments = []
+    this.practiceDocuments = [];
+    this.practiceDocumentTypes = [];
+    this.practiceComplianceDocuments = [];
 
     Promise.all([
-
       //------------------EXISTING PRACTICE DOCUMENTS----------------------2
       this.$axios.$get(`/api/v1/practice/practice-documents`).then(res => {
         res.data.practice_documents.forEach(item => {
-          this.practiceDocuments.push(item)
-        })
+          this.practiceDocuments.push(item);
+        });
       }),
 
       //---------------PRACTICE DOCUMENT TYPES-----------------
       this.$axios.$get(`/api/v1/practice-document-types`).then(res => {
         res.data.practice_document_types.forEach(item => {
-          this.practiceDocumentTypes.push(item)
-        })
-      }),
-
-    ]).then(() => {
-      this.practiceComplianceDocuments = this.practiceDocumentTypes.map((practiceDocumentType) => {
-        const existingPracticeComplianceDocument = this.practiceDocuments.find((existingPracticeDocument) => {
-          return existingPracticeDocument.practice_document_type.id === practiceDocumentType.id
-        })
-        return {
-          practiceDocumentType,
-          existingPracticeComplianceDocument
-        }
-
+          this.practiceDocumentTypes.push(item);
+        });
       })
-
-    })
-
+    ]).then(() => {
+      this.practiceComplianceDocuments = this.practiceDocumentTypes.map(
+        practiceDocumentType => {
+          const existingPracticeComplianceDocument = this.practiceDocuments.find(
+            existingPracticeDocument => {
+              return (
+                existingPracticeDocument.practice_document_type.id ===
+                practiceDocumentType.id
+              );
+            }
+          );
+          return {
+            practiceDocumentType,
+            existingPracticeComplianceDocument
+          };
+        }
+      );
+    });
   },
 
   methods: {
     show(id) {
-      this.$router.push(`/profile/practice-documents/${id}`)
-    },
+      this.$router.push(`/profile/practice-documents/${id}`);
+    }
   }
-}
+};
 </script>
 <style scoped>
-.practice-doc-card:hover {
-  background-color: #dee1e5;
-  transition: background-color 0.5s ease-in-out;
-}
 .practice-doc-card {
-  background-color: white;
   transition: background-color 0.5s ease-in-out;
 }
 .show-document-shield {

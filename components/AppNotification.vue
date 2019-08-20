@@ -34,6 +34,9 @@ export default {
         case "danger":
           return "bg-red-500 text-white";
           break;
+        case "uploading":
+          return "bg-yellow-500 text-white";
+          break;
         case "alert":
           return "bg-yellow-400";
           break;
@@ -51,6 +54,9 @@ export default {
         case "danger":
           return "exclamation-mark";
           break;
+        case "uploading":
+          return "cloud-upload";
+          break;
         case "alert":
           return "alert";
           break;
@@ -67,6 +73,9 @@ export default {
           return "#fff";
           break;
         case "danger":
+          return "#fff";
+          break;
+        case "uploading":
           return "#fff";
           break;
         case "info":

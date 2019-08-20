@@ -41,6 +41,7 @@
         </div>
       </div>
     </div>
+    <div class="modal-shield" v-if="this.$store.state.jobs.modal_shield"></div>
   </section>
 </template>
 <script>
@@ -50,6 +51,20 @@ export default {
   components: {
     AppButton,
     CreateJobModal
+  },
+  computed: {
+    shield() {
+      return this.$store.state.jobs.modal_shield;
+    }
+  },
+  watch: {
+    shield(value) {
+      if (value) {
+        document.body.style.overflow = "hidden";
+      } else {
+        document.body.style.overflow = "auto";
+      }
+    }
   },
   methods: {
     toggle() {

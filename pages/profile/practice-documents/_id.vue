@@ -2,7 +2,7 @@
   <div class="modal-container shadow-lg">
     <div class="p-8 max-w-3xl">
       <div class="flex items-center">
-        <div @click="close" class="bordercursor-pointer">
+        <div @click="close" class="cursor-pointer">
           <svgicon name="left-arrow" height="32" />
         </div>
         <div

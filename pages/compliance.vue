@@ -49,11 +49,13 @@
           <template v-for="(item, index) in mandatory">
             <tr
               :key="item.id"
-              class="rounded-lg shadow-md cursor-pointer text-xs sm:text-sm text-left"
+              class="rounded-lg shadow-md text-xs sm:text-sm text-left"
               :class="item.info && item.info.file ? 'hover:bg-gray-300' : ''"
-              @click="item.info && item.info.file ? showComplianceDoc(item.info.id) : null"
             >
-              <td>{{item.name}}</td>
+              <td
+                class="cursor-pointer"
+                @click="item.info && item.info.file ? showComplianceDoc(item.info.id) : null"
+              >{{item.name}}</td>
               <td class="hover:underline" v-if="item.info && item.info.file">
                 <div class="flex flex-row flex-no-wrap items-center">
                   <svgicon name="cloud-download" height="24" width="24" />
@@ -91,6 +93,7 @@
                     :name="`${item.id}_file`"
                     :id="`${item.id}_file`"
                     class="inputfile hidden"
+                    @click="complianceModal = false"
                     @input="onFileInput($event, item.id)"
                   />
                   <svgicon name="cloud-upload" height="24" width="24" />
@@ -104,6 +107,7 @@
                     :name="`${item.id}_file`"
                     :id="`${item.id}_file`"
                     class="inputfile hidden"
+                    @click="complianceModal = false"
                     @input="onFileUpdate($event, item.info.id, index)"
                   />
                   <svgicon name="cloud-upload" height="24" width="24" />
@@ -141,11 +145,13 @@
           <template v-for="(item, index) in optional">
             <tr
               :key="item.id"
-              class="rounded-lg shadow-md cursor-pointer text-xs sm:text-sm text-left"
+              class="rounded-lg shadow-md text-xs sm:text-sm text-left"
               :class="item.info && item.info.file ? 'hover:bg-gray-300' : ''"
-              @click="item.info && item.info.file ? showComplianceDoc(item.info.id) : null"
             >
-              <td>{{item.name}}</td>
+              <td
+                class="cursor-pointer"
+                @click="item.info && item.info.file ? showComplianceDoc(item.info.id) : null"
+              >{{item.name}}</td>
               <td class="hover:underline" v-if="item.info && item.info.file">
                 <div class="flex flex-row flex-no-wrap">
                   <svgicon name="cloud-download" height="24" width="24" />
@@ -171,6 +177,7 @@
                     :name="`${item.id}_file`"
                     :id="`${item.id}_file`"
                     class="inputfile hidden"
+                    @click="complianceModal = false"
                     @input="onFileInput($event, item.id, index)"
                   />
                   <svgicon name="cloud-upload" height="24" width="24" />
@@ -184,6 +191,7 @@
                     :name="`${item.id}_file`"
                     :id="`${item.id}_file`"
                     class="inputfile hidden"
+                    @click="complianceModal = false"
                     @input="onFileUpdate($event, item.info.id, index)"
                   />
                   <svgicon name="cloud-upload" height="24" width="24" />
@@ -220,11 +228,13 @@
           <template v-for="(item, index) in mandatory_trainings">
             <tr
               :key="item.id"
-              class="rounded-lg shadow-md cursor-pointer text-xs sm:text-sm text-left"
+              class="rounded-lg shadow-md text-xs sm:text-sm text-left"
               :class="item.info && item.info.file ? 'hover:bg-gray-300' : ''"
-              @click="item.info && item.info.file ? showMandatoryTraining(item.info.id) : null"
             >
-              <td>{{item.name}}</td>
+              <td
+                class="cursor-pointer"
+                @click="item.info && item.info.file ? showMandatoryTraining(item.info.id) : null"
+              >{{item.name}}</td>
               <td class="hover:underline" v-if="item.info && item.info.file">
                 <div class="flex flex-row flex-no-wrap">
                   <svgicon name="cloud-download" height="24" width="24" />
@@ -250,6 +260,7 @@
                     :name="`${item.id}_mandatory_file`"
                     :id="`${item.id}_mandatory_file`"
                     class="inputfile hidden"
+                    @click="complianceModal = false"
                     @input="onMandatoryFileInput($event, item.id, index)"
                   />
                   <svgicon name="cloud-upload" height="24" width="24" />
@@ -266,6 +277,7 @@
                     :name="`${item.id}_mandatory_file`"
                     :id="`${item.id}_mandatory_file`"
                     class="inputfile hidden"
+                    @click="complianceModal = false"
                     @input="onMandatoryFileUpdate($event, item.info.id, index)"
                   />
                   <svgicon name="cloud-upload" height="24" width="24" />
@@ -310,8 +322,8 @@
   </section>
 </template>
 <script>
-import ShowComplianceDocument from '@/components/Compliance/ShowComplianceDocument'
-import ShowMandatoryTraining from '@/components/Compliance/ShowMandatoryTraining'
+import ShowComplianceDocument from "@/components/Compliance/ShowComplianceDocument";
+import ShowMandatoryTraining from "@/components/Compliance/ShowMandatoryTraining";
 export default {
   components: {
     ShowComplianceDocument,
@@ -328,7 +340,7 @@ export default {
       specificComplianceDoc: null,
       specificMandatoryTraining: null,
       complianceModal: false,
-      mandatoryTrainingModal: false,
+      mandatoryTrainingModal: false
     };
   },
   created() {
@@ -349,6 +361,15 @@ export default {
       this.mandatory_trainings = res.data.mandatory_trainings;
       this.setMandatoryTrainings();
     });
+  },
+  watch: {
+    complianceModal(value) {
+      if (value === true) {
+        console.log("modal true", value);
+      } else {
+        console.log("modal false", value);
+      }
+    }
   },
   methods: {
     // set mandatory training
@@ -406,8 +427,7 @@ export default {
         this.optional = this.profession.optional_compliance_documents.sort(
           (a, b) => a.id - b.id
         );
-
-      })
+      });
     },
     status(status) {
       switch (status) {
@@ -434,17 +454,22 @@ export default {
       }
     },
     showComplianceDoc(id) {
-      this.$axios.$get(`/api/v1/locum/locum-detail-compliance-documents/${id}`).then(res => {
-        this.specificComplianceDoc = res.data.locum_detail_compliance_document
-        this.complianceModal = true
-      })
+      this.$axios
+        .$get(`/api/v1/locum/locum-detail-compliance-documents/${id}`)
+        .then(res => {
+          this.specificComplianceDoc =
+            res.data.locum_detail_compliance_document;
+          this.complianceModal = true;
+        });
     },
     showMandatoryTraining(id) {
-      this.$axios.$get(`/api/v1/locum/locum-detail-mandatory-trainings/${id}`).then(res => {
-        this.specificMandatoryTraining = res.data.locum_detail_mandatory_training
-        this.mandatoryTrainingModal = true
-      })
-
+      this.$axios
+        .$get(`/api/v1/locum/locum-detail-mandatory-trainings/${id}`)
+        .then(res => {
+          this.specificMandatoryTraining =
+            res.data.locum_detail_mandatory_training;
+          this.mandatoryTrainingModal = true;
+        });
     },
     onFileInput(e, id, index) {
       if (!e.target.files.length) {
@@ -457,10 +482,15 @@ export default {
         this.$store.commit("SET_NOTIFICATION", {
           enabled: true,
           status: "alert",
-          text: "Invalid File Format"
+          text: ["Invalid File Format"]
         });
         return;
       }
+      this.$store.commit("SET_NOTIFICATION", {
+        enabled: true,
+        status: "uploading",
+        text: ["Uploading"]
+      });
       const formData = new FormData();
       formData.append("file", file);
       formData.append("compliance_document_id", id);
@@ -534,6 +564,11 @@ export default {
         });
         return;
       }
+      this.$store.commit("SET_NOTIFICATION", {
+        enabled: true,
+        status: "uploading",
+        text: ["Uploading"]
+      });
       const formData = new FormData();
       formData.append("file", file);
       // post request to API / send file
@@ -586,9 +621,6 @@ export default {
         });
     },
     onMandatoryFileInput(e, id, index) {
-      if (!e.target.files.length) {
-        return;
-      }
       let types = ["pdf", "jpeg", "msword", "tif"];
       let file = e.target.files[0];
       let fileType = file.type.split("/")[1];
@@ -669,16 +701,16 @@ export default {
         });
     },
     downloadItem(fileUrl, fileName) {
-      const axios = require('axios');
+      const axios = require("axios");
       axios({
         url: fileUrl,
-        method: 'GET',
-        responseType: 'blob', // important
+        method: "GET",
+        responseType: "blob" // important
       }).then(response => {
         const url = window.URL.createObjectURL(new Blob([response.data]));
         const link = document.createElement("a");
         link.href = url;
-        link.setAttribute('download', fileName);
+        link.setAttribute("download", fileName);
         document.body.appendChild(link);
         link.click();
       });

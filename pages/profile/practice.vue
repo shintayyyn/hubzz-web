@@ -27,24 +27,32 @@
           </div>
         </div>
         <div class="w-full md:w-2/5 p-2">
-          <div class="rounded-lg shadow-lg p-8">
-            <div class="flex flex-col">
+          <div class="h-48 min-h-full flex items-center rounded-lg shadow-lg p-8">
+            <div class="flex flex-col w-full">
               <div class="text-xs sm:text-sm">Your Practice's standard terms</div>
               <div class="mt-4 bg-gray-300 rounded-lg p-4">
-                <div class="flex flex-no-wrap justify-between">
+                <div class="flex flex-no-wrap justify-between items-center">
+                  <div class="flex text-sm" v-if="uploading">
+                    <label for="file-upload">Uploading</label>
+                    <div class="spinner">
+                      <div class="bounce1"></div>
+                      <div class="bounce2"></div>
+                      <div class="bounce3"></div>
+                    </div>
+                  </div>
                   <div
+                    v-if="!uploading"
                     class="text-xs sm:text-sm document-filename"
                   >{{ practice.standard_terms && practice.standard_terms.file ? practice.standard_terms.file.filename : '' }}</div>
                   <div
-                    class="font-bold text-md sm:text-lg hover:null cursor-pointer ml-2"
+                    class="font-bold text-md sm:text-lg hover:null cursor-pointer text-gray-600 hover:text-black"
                     @click="modal = true"
-                    v-if="practice.standard_terms !== null"
-                  >X</div>
+                    v-if="practice.standard_terms"
+                  >x</div>
                 </div>
               </div>
-              <div></div>
-              <div class="flex justify-start mt-4">
-                <label for="file-upload">
+              <div class="relative flex justify-start mt-2 items-center">
+                <label v-if="uploading == false" for="file-upload">
                   <div class="flex flex-row flex-no-wrap cursor-pointer hover:underline">
                     <svgicon name="cloud-upload" height="24" width="24" />
                     <div class="ml-2 text-xs sm:text-sm leading-loose">Upload</div>
@@ -189,6 +197,7 @@ export default {
         others_compliance_document_id: []
       },
       name: "",
+      uploading: false,
       formError: []
     };
   },
@@ -370,6 +379,8 @@ export default {
       }
       const formData = new FormData();
       formData.append("file", file);
+      this.uploading = true;
+      console.log("uploading");
       this.$axios
         .$put(`/api/v1/practice/me/standard-terms`, formData)
         .then(res => {
@@ -378,6 +389,7 @@ export default {
             status: "success",
             text: [res.message]
           });
+          this.uploading = false;
         });
       this.practice.standard_terms = {
         file: {
@@ -413,7 +425,7 @@ export default {
           status: "success",
           text: [res.message]
         });
-        this.practice.standard_terms.file.filename = null;
+        this.practice.standard_terms = null;
         // standard_terms)
       });
     },
@@ -443,6 +455,7 @@ export default {
           this.scrollToTop();
         }
       } catch (err) {
+        this.scrollToTop();
         this.formError = err.response.data.error_messages;
       }
     }

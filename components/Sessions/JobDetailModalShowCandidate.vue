@@ -57,11 +57,13 @@
           <div class="font-bold text-sm sm:text-md">Compliance documents</div>
           <div class="flex flex-col mb-8">
             <div
-              class="flex flex-row flex-no-wrap mt-2 cursor-pointer hover:underline"
+              class="flex flex-row mt-2 cursor-pointer hover:underline"
               v-for="item in mandatory"
               :key="item.id"
             >
-              <svgicon name="cloud-download" height="24" width="24" />
+              <span>
+                <svgicon name="cloud-download" height="24" width="24" />
+              </span>
               <a
                 class="px-2"
                 @click.prevent="downloadItem(item.file.url, item.file.filename)"
@@ -76,11 +78,13 @@
           <div class="font-bold text-sm sm:text-md">Others documents</div>
           <div class="flex flex-col mb-8">
             <div
-              class="flex flex-row flex-no-wrap mt-2 cursor-pointer hover:underline"
+              class="flex flex-row mt-2 cursor-pointer hover:underline"
               v-for="item in optional"
               :key="item.id"
             >
-              <svgicon name="cloud-download" height="24" width="24" />
+              <span>
+                <svgicon name="cloud-download" height="24" width="24" />
+              </span>
               <a
                 class="px-2"
                 @click.prevent="downloadItem(item.file.url, item.file.filename)"
