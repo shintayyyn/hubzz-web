@@ -1,8 +1,8 @@
 <template>
   <section class="header-section">
-    <transition name="slide" mode="in-out">
+    <!-- <transition name="slide" mode="in-out">
       <CreateJobModal v-if="$store.state.calendar.create_job_modal" />
-    </transition>
+    </transition>-->
     <div class="flex flex-row flex-wrap justify-between">
       <div class="w-1/3 py-2">
         <div class="burger cursor-pointer" @click="toggle">
@@ -29,10 +29,6 @@
               @click="$router.push('/messages')"
               :inStyle="'font-size: medium; padding:2px 14px;'"
             />
-            <!-- <nuxt-link
-            :to="'/messages'"
-            class="font-bold text-xs sm:text-sm no-underline px-2 py-1 rounded-lg bg-yellow-500 ml-4"
-            >Messages</nuxt-link>-->
           </div>
           <div
             class="text-xs xl:text-sm ml-4"
@@ -41,7 +37,12 @@
         </div>
       </div>
     </div>
-    <div class="modal-shield" v-if="this.$store.state.jobs.modal_shield"></div>
+    <div class="modal-shield" v-if="create_job_modal"></div>
+    <transition name="slide" mode="out-in">
+      <div class="modal-container shadow-lg" v-if="create_job_modal">
+        <CreateJobModal />
+      </div>
+    </transition>
   </section>
 </template>
 <script>
@@ -50,21 +51,21 @@ import CreateJobModal from "@/components/CreateJobModal";
 export default {
   components: {
     AppButton,
-    CreateJobModal
+    CreateJobModal,
   },
   computed: {
-    shield() {
-      return this.$store.state.jobs.modal_shield;
+    create_job_modal() {
+      return this.$store.state.calendar.create_job_modal
     }
   },
   watch: {
-    shield(value) {
+    create_job_modal(value) {
       if (value) {
-        document.body.style.overflow = "hidden";
+        document.body.style.overflow = 'hidden'
       } else {
-        document.body.style.overflow = "auto";
+        document.body.style.overflow = 'auto'
       }
-    }
+    },
   },
   methods: {
     toggle() {
@@ -106,5 +107,32 @@ export default {
 a {
   text-decoration: none;
   color: black;
+}
+.modal-shield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #333;
+  opacity: 0.5;
+  z-index: 509;
+}
+.modal-container {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  border-left: solid 2px #edf2f7;
+  transition: all 0.3s ease-in-out;
+  background-color: white;
+  z-index: 510;
+}
+@media screen and (min-width: 1200px) {
+  .modal-container {
+    width: 80%;
+  }
 }
 </style>

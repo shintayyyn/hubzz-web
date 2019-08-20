@@ -68,7 +68,7 @@
         @pagechanged="pagechanged"
       />
     </div>
-    <div class="modal-shield" v-if="shield"></div>
+    <div class="modal-shield" v-if="$route.name === 'jobs-applied-id'"></div>
     <nuxt-child />
   </section>
 </template>
@@ -107,9 +107,6 @@ export default {
     }
   },
   computed: {
-    shield() {
-      return this.$store.state.jobs.modal_shield
-    },
     getLocumAppliedJobs() {
       return this.$store.getters["jobs/getLocumAppliedJobs"];
     },

@@ -1,6 +1,6 @@
 <template>
   <section>
-    <div class="list-section flex flex-col mt-4 pb-32">
+    <div class="list-section flex flex-col mt-4 pb-32" v-if="surgeries.length > 0">
       <div class="flex flex-row px-4 flex-no-wrap justify-between">
         <div class="text-xs sm:text-sm w-full px-1">Practice</div>
         <div class="text-xs sm:text-sm w-full px-1">Practice code</div>
@@ -21,6 +21,7 @@
         </div>
       </div>
     </div>
+    <div v-else class="flex justify-center">no branches / surgeries</div>
     <div class="bottom-0 w-full" v-if="surgeries.length > 0 && totalPages > 1">
       <AppPagination
         :total="total"

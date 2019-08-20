@@ -1,72 +1,92 @@
 <template>
   <section class="sessions-tab">
-    <SessionsTabs />
+    <!-- <SessionsTabs />
     <div class="mt-5">
       <transition name="fade" mode="out-in">
         <Component :is="activeComponent" />
       </transition>
     </div>
     <div class="modal-shield" v-if="shield"></div>
-    <nuxt-child />
+    <nuxt-child />-->
+    <div class="flex flex-row flex-wrap justify-start">
+      <div class="relative">
+        <nuxt-link
+          to="/sessions/live"
+          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          :class="$route.name === 'sessions-live' || $route.name === 'sessions-live-id' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        >Live</nuxt-link>
+      </div>
+      <div class="relative">
+        <nuxt-link
+          to="/sessions/applied"
+          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          :class="$route.name === 'sessions-applied' || $route.name === 'sessions-applied-id' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        >Applied</nuxt-link>
+      </div>
+      <div class="relative">
+        <nuxt-link
+          to="/sessions/allocated"
+          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          :class="$route.name === 'sessions-allocated' || $route.name === 'sessions-allocated-id' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        >Allocated</nuxt-link>
+      </div>
+      <div class="relative">
+        <nuxt-link
+          to="/sessions/completed"
+          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          :class="$route.name === 'sessions-completed' || $route.name === 'sessions-completed-id' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        >Completed</nuxt-link>
+      </div>
+      <div class="relative">
+        <nuxt-link
+          to="/sessions/unfilled"
+          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          :class="$route.name === 'sessions-unfilled' || $route.name === 'sessions-unfilled-id' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        >Unfilled</nuxt-link>
+      </div>
+      <div class="relative">
+        <nuxt-link
+          to="/sessions/cancelled"
+          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          :class="$route.name === 'sessions-cancelled' || $route.name === 'sessions-cancelled-id' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        >Cancelled</nuxt-link>
+      </div>
+      <div class="relative">
+        <nuxt-link
+          to="/sessions/declined"
+          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          :class="$route.name === 'sessions-declined' || $route.name === 'sessions-declined-id' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        >Declined</nuxt-link>
+      </div>
+    </div>
+    <div class="mt-5">
+      <nuxt-child />
+    </div>
   </section>
 </template>
 <script>
-import SessionsTabs from '@/components/Sessions/SessionsTabs'
-import Live from '@/components/Sessions/Live'
-import Applied from '@/components/Sessions/Applied'
-import Allocated from '@/components/Sessions/Allocated'
-import Completed from '@/components/Sessions/Completed'
-import Unfilled from '@/components/Sessions/Unfilled'
-import Cancelled from '@/components/Sessions/Cancelled'
-import Declined from '@/components/Sessions/Declined'
+const tabs = [
+  'sessions-live-id', 'sessions-applied-id',
+  'sessions-allocated-id', 'sessions-completed-id',
+  'sessions-unfilled-id', 'sessions-cancelled-id',
+  'sessions-declined-id',
+]
 export default {
-  components: {
-    SessionsTabs,
-    Live,
-    Applied,
-    Allocated,
-    Completed,
-    Unfilled,
-    Cancelled,
-    Declined,
-  },
   middleware: 'isVerified',
-  computed: {
-    activeComponent() {
-      return this.$route.query.session_status
-    },
-    shield() {
-      return this.$store.state.jobs.modal_shield
+  data() {
+    return {
+      tabs
     }
   },
   watch: {
-    shield(value) {
-      if (value) {
+    $route(value) {
+      if (this.tabs.includes(value.name)) {
         document.body.style.overflow = 'hidden'
       } else {
         document.body.style.overflow = 'auto'
       }
-    }
-  },
-  created() {
-    const query = {
-      ...this.$route.query,
-      session_status: this.$route.query.session_status || 'live'
-    }
-    this.$router.push({ query })
+    },
   },
 }
 </script>
-<style scoped>
-.modal-shield {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #333;
-  opacity: 0.5;
-  z-index: 509;
-}
-</style>
 

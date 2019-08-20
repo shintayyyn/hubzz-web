@@ -1,12 +1,13 @@
 <template>
-  <div class="rounded-lg bg-red-400 text-white px-4 py-2 text-xs sm:text-sm">
-    <div v-for="(item, index) in formError" :key="index">
-      <p>{{item.message}}</p>
-    </div>
+  <div class="rounded-lg bg-red-400 p-2 text-white text-sm md:text-base">
+    <ul v-for="(item, index) in formError" :key="index" class="list-disc list-inside">
+      <li>{{item.message}} on {{item.field}} field</li>
+    </ul>
   </div>
 </template>
 <script>
 export default {
-  props: ["formError"]
-};
+  props: ['formError'],
+}
 </script>
+

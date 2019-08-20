@@ -1,6 +1,7 @@
 <template>
-  <div class="rounded-lg shadow-lg max-w-xl">
-    <div class="w-full p-8">
+  <div class="border-solid rounded-lg shadow-lg p-8">
+    <div class="relative w-full">
+      <AppLoading :loading="loading" :message="'Loading'" />
       <AppFormError :formError="formError" v-if="formError.length > 0" />
       <AppInput
         v-model="form.email"
@@ -17,7 +18,7 @@
       <div class="-mt-6 mb-4" v-if="email_isVerified === false ">
         <span class="text-red-500 text-xs">E-mail is not yet verified.</span>
         <span
-          class="p-1 bg-gray-700 hover:bg-gray-800 rounded text-xs text-white cursor-pointer"
+          class="p-1 bg-gray-800 rounded text-xs text-white cursor-pointer"
           @click="resendEmailVerification()"
         >Click here to re-send</span>
       </div>
@@ -102,6 +103,7 @@
 </template>
 <script>
 import AppFormError from "@/components/Base/AppFormError";
+import AppLoading from "@/components/Base/AppLoading";
 import AppInput from "@/components/Base/AppInput";
 import AppPostCode from "@/components/Base/AppPostCode";
 import AppSelect from "@/components/Base/AppSelect";
@@ -113,6 +115,7 @@ export default {
   },
   components: {
     AppFormError,
+    AppLoading,
     AppInput,
     AppPostCode,
     AppSelect,
@@ -133,8 +136,9 @@ export default {
         address_line_2: "",
         address_line_3: ""
       },
-      email_isVerified: "",
-      email_verifiedAt: "",
+      loading: false,
+      email_isVerified: '',
+      email_verifiedAt: '',
       formError: []
     };
   },
@@ -222,6 +226,7 @@ export default {
       this.form.address_line_3 = postal_town ? postal_town.long_name : "";
     },
     async save() {
+      this.loading = true
       try {
         this.formError = [];
         this.Validate(this.form, ["title", "suffix", "address_line_2"]);
@@ -232,23 +237,28 @@ export default {
             status: "success",
             text: ["Saved"]
           });
+          this.scrollToTop()
+          this.loading = false
         } else {
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "danger",
             text: ["Please fill up all the forms"]
           });
-          this.scrollToTop();
+          this.scrollToTop()
+          this.loading = false
         }
       } catch (err) {
-        this.formError = err.response.data.error_messages;
-        this.scrollToTop();
+        this.formError = err.response.data.error_messages
+        this.scrollToTop()
+        this.loading = false
       }
     },
     async resendEmailVerification() {
       try {
-        await this.$axios.post(`/api/v1/email-verification/resend`);
-        alert("Confirmation e-mail sent");
+        await this.$axios.post(`/api/v1/email-verification/resend`)
+        // alert('Confirmation e-mail sent')
+        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: ['Confirmation e-mail sent'] })
       } catch (err) {
         console.log("Something went wrong! ", err);
       }

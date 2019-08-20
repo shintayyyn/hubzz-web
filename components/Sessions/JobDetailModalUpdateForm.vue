@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col w-full lg:w-2/3 p-0 lg:pr-4">
     <AppFormError :formError="formError" v-if="formError.length > 0" />
-    <div class="rounded-lg shadow-lg p-8 mt-4">
+    <!-- <div class="rounded-lg shadow-lg p-8 mt-4">
       <div class="flex flex-row flex-wrap">
         <div class="flex flex-col w-full md:w-1/2 p-0 md:pr-4">
           <div class="font-bold text-sm sm:text-md">Job number</div>
@@ -12,6 +12,7 @@
             :items="practice_lists"
             :label="'Practice'"
             :placeholder="'Select..'"
+            :error="formError.find(item => item.field === 'practice_id')"
           />
           <div class="text-xs sm:text-sm mt-2 mb-4 flex flex-row flex-wrap">
             <div class="w-full md:w-1/2 p-1">
@@ -21,6 +22,7 @@
                 :name="'rate'"
                 :label="'Rate £'"
                 :placeholder="''"
+                :error="formError.find(item => item.field === 'rate')"
               />
             </div>
             <div class="w-full md:w-1/2 p-1">
@@ -28,7 +30,8 @@
                 v-model="form.locum_detail_rate_type_id"
                 :name="'locum_detail_rate_type_id'"
                 :label="'per'"
-                :items="rate_types"
+                :items="rate_lists"
+                :error="formError.find(item => item.field === 'locum_detail_rate_type_id')"
               />
             </div>
           </div>
@@ -38,6 +41,7 @@
             :name="'total_hours'"
             :label="'Total hours'"
             :placeholder="''"
+            :error="formError.find(item => item.field === 'total_hours')"
           />
           <AppInput
             v-model="form.title"
@@ -45,12 +49,14 @@
             :name="'title'"
             :label="'Title'"
             :placeholder="''"
+            :error="formError.find(item => item.field === 'title')"
           />
           <AppTextarea
             v-model="form.description"
             :name="'description'"
             :label="'Job description'"
             :placeholder="''"
+            :error="formError.find(item => item.field === 'description')"
           />
           <AppInput
             v-model="form.report_to"
@@ -58,6 +64,7 @@
             :name="'report_to'"
             :label="'Report to'"
             :placeholder="''"
+            :error="formError.find(item => item.field === 'report_to')"
           />
           <AppInput
             v-model="form.email"
@@ -65,6 +72,7 @@
             :name="'email'"
             :label="'Email address'"
             :placeholder="''"
+            :error="formError.find(item => item.field === 'email')"
           />
           <AppInput
             v-model="form.phone_number"
@@ -72,18 +80,21 @@
             :name="'phone_number'"
             :label="'Telephone number'"
             :placeholder="''"
+            :error="formError.find(item => item.field === 'phone_number')"
           />
           <AppSelect
             v-model="form.is_another_doctor"
             :name="'is_another_doctor'"
             :label="'Is there another Dr on site?'"
             :items="[ {value: 'true', label: 'YES'}, {value: 'false', label: 'NO'} ]"
+            :error="formError.find(item => item.field === 'is_another_doctor')"
           />
           <AppSelect
             v-model="form.is_nurse_available"
             :name="'is_nurse_available'"
             :label="'Is nurse support available?'"
             :items="[ {value: 'true', label: 'YES'}, {value: 'false', label: 'NO'} ]"
+            :error="formError.find(item => item.field === 'is_nurse_available')"
           />
           <AppInput
             v-model="form.number_of_patients"
@@ -92,6 +103,7 @@
             :label="'Number of patients to be seen during the session?'"
             :placeholder="''"
             :inStyle="'text-align:right;'"
+            :error="formError.find(item => item.field === 'number_of_patients')"
           />
           <AppInput
             v-model="form.duration_for_each_appointment"
@@ -100,12 +112,14 @@
             :label="'Duration of each appointment?'"
             :placeholder="''"
             :inStyle="'text-align:right;'"
+            :error="formError.find(item => item.field === 'duration_for_each_appointment')"
           />
           <AppSelect
             v-model="form.opportunity_for_catch_up_slots"
             :name="'opportunity_for_catch_up_slots'"
             :label="'Opportunity for catch up slots?'"
             :items="[ {value: true, label: 'YES'}, {value: false, label: 'NO'} ]"
+            :error="formError.find(item => item.field === 'opportunity_for_catch_up_slots')"
           />
           <AppInput
             :type="'multi-checkbox'"
@@ -116,31 +130,40 @@
             :label="'Session requirements'"
             :placeholder="''"
             :lists="session_requirements_lists"
+            :error="formError.find(item => item.field === 'session_requirements')"
           />
           <AppTextarea
             v-model="form.session_structure_information"
             :name="'session_structure_information'"
             :label="'Session structure information'"
             :placeholder="'For e.g. the first 2 hours of the session is for booked appointments, 3rd hour is walk-ins, and home visits to x number of patients to the end of the session'"
+            :error="formError.find(item => item.field === 'session_structure_information')"
           />
           <AppTextarea
             v-model="form.extra_information"
             :name="'extra_information'"
             :label="'Extra information'"
             :placeholder="'For example, number of expected patients, nearby car park, etc.'"
+            :error="formError.find(item => item.field === 'extra_information')"
           />
           <AppTextarea
             v-model="form.update_remarks"
             :name="'update_remarks'"
             :label="'Update Remarks'"
             :placeholder="''"
+            :error="formError.find(item => item.field === 'update_remarks')"
           />
         </div>
         <div class="flex flex-col w-full md:w-1/2 p-0 md:pl-4">
           <div class="font-bold text-sm sm:text-md">Duration</div>
           <div class="flex flex-row flex-wrap justify-between">
             <div class="px-1 w-full md:w-1/2">
-              <AppDate v-model="form.date_start" :name="'date_start'" :label="'Start Date'" />
+              <AppDate
+                v-model="form.date_start"
+                :name="'date_start'"
+                :label="'Start Date'"
+                :error="formError.find(item => item.field === 'date_start')"
+              />
             </div>
             <div class="px-1 w-full md:w-1/2">
               <AppTime
@@ -151,7 +174,12 @@
               />
             </div>
             <div class="px-1 w-full md:w-1/2">
-              <AppDate v-model="form.date_end" :name="'date_end'" :label="'End Date'" />
+              <AppDate
+                v-model="form.date_end"
+                :name="'date_end'"
+                :label="'End Date'"
+                :error="formError.find(item => item.field === 'date_end')"
+              />
             </div>
             <div class="px-1 w-full md:w-1/2">
               <AppTime
@@ -281,7 +309,6 @@
           class="text-sm sm:text-md"
         >{{job.platform_job.practice.surgery.address.line_1}} {{job.platform_job.practice.surgery.address.line_2}} {{job.platform_job.practice.surgery.address.line_3}} {{job.platform_job.practice.surgery.address.post_code}}</div>
         <div class="mt-4">
-          <!-- google map -->
           <GmapMap
             :center="{lat:latLang.y, lng:latLang.x}"
             :zoom="15"
@@ -292,7 +319,7 @@
           </GmapMap>
         </div>
       </div>
-    </div>
+    </div>-->
   </div>
 </template>
 <script>
@@ -325,6 +352,19 @@ export default {
   data() {
     return {
       practice_lists: [],
+      rate_lists: [],
+      mandatory_training: [],
+      professions: [],
+      session_requirements_lists,
+      mandatory_training_lists: [],
+      gp_qualification_lists: [],
+      other_qualification_lists: [],
+      clinical_system_lists: [],
+      spoken_language_lists: [],
+      gp_compliance_documents_lists: [],
+      others_compliance_documents_lists: [],
+
+      practice_lists: [],
       gp_qualification_lists: [],
       other_qualification_lists: [],
       gp_compliance_documents_lists: [],
@@ -334,7 +374,6 @@ export default {
         profession_category: {}
       },
       session_requirements_lists,
-      rate_types: [],
       shifts: [],
       professions: [],
       clinical_system_lists: [],
@@ -450,8 +489,8 @@ export default {
     this.job.platform_job.session_requirements === ""
       ? (this.form.session_requirements = [])
       : (this.form.session_requirements = this.job.platform_job.session_requirements.split(
-          ","
-        ));
+        ","
+      ));
 
     this.job.platform_job.qualifications.forEach(qualication => {
       this.form.qualification_id.push({
@@ -497,9 +536,9 @@ export default {
     },
     getRateTypes() {
       this.$axios.$get(`/api/v1/locum-detail-rate-types`).then(res => {
-        this.rate_types = [];
-        res.data.locum_detail_rate_types.forEach(item => {
-          this.rate_types.push({ label: item.name, value: item.id });
+        this.rate_lists = [];
+        res.data.locum_detail_rate_lists.forEach(item => {
+          this.rate_lists.push({ label: item.name, value: item.id });
         });
       });
     },

@@ -11,7 +11,7 @@
         >{{error.message}}</div>
       </div>
       <div
-        class="flex flex-row justify-start mt-1 py-1"
+        class="flex flex-row justify-start content-center mt-1"
         v-for="(item, index) in lists"
         :key="index"
       >

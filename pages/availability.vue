@@ -95,6 +95,16 @@ export default {
   height: auto;
   max-width: 800px;
 }
+@media screen and (min-width: 568px) {
+  .availability-calendar {
+    height: 450px;
+  }
+}
+@media screen and (min-width: 768px) {
+  .availability-calendar {
+    height: auto;
+  }
+}
 .add-unavailable-date-shield {
   position: fixed;
   top: 0;

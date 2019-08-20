@@ -18,7 +18,7 @@
       <div class="-mt-6 mb-4" v-if="email_isVerified === false ">
         <span class="text-red-500 text-xs">E-mail is not yet verified.</span>
         <span
-          class="p-1 bg-gray-700 hover:bg-gray-800 text-white rounded text-xs cursor-pointer"
+          class="p-1 bg-gray-800 rounded text-xs text-white cursor-pointer"
           @click="resendEmailVerification()"
         >Click here to re-send</span>
       </div>
@@ -185,16 +185,17 @@ export default {
             enabled: true,
             status: "success",
             text: ["Saved"]
-          });
-          this.loading = false;
+          })
+          this.scrollToTop()
+          this.loading = false
         } else {
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "danger",
             text: ["Please fill up all the forms"]
           });
-          this.scrollToTop();
-          this.loading = false;
+          this.scrollToTop()
+          this.loading = false
         }
       } catch (err) {
         this.formError = err.response.data.error_messages;
@@ -203,8 +204,9 @@ export default {
     },
     async resendEmailVerification() {
       try {
-        await this.$axios.post(`/api/v1/email-verification/resend`);
-        alert("Confirmation e-mail sent");
+        await this.$axios.post(`/api/v1/email-verification/resend`)
+        // alert('Confirmation e-mail sent')
+        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: ['Confirmation e-mail sent'] })
       } catch (err) {
         console.log("Something went wrong! ", err);
       }

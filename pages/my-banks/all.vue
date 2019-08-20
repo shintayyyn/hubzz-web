@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <section v-if="!loading">
     <div class="-mt-2">
       <AppSelect
         v-model="profession_id"
@@ -9,165 +9,153 @@
         :placeholder="'All'"
       />
     </div>
-    <div
-      class="mt-10 w-full text-center"
-      v-if="locums.length == 0"
-    >There are no locums connected to your practice yet.</div>
-    <div v-else class="flex flex-row flex-wrap justify-start">
-      <AppLoading :loading="loading" :message="'Loading'" v-if="loading" />
-      <div
-        class="w-full md:w-1/3 lg:w-1/4 rounded-lg shadow-lg bg-gray-300 m-2 p-4 hover:bg-gray-500"
-        v-for="user in locums"
-        :key="user.id"
-      >
-        <div class="flex justify-end z-50">
-          <template v-if="user.is_favorite">
-            <svgicon
-              name="on-star"
-              height="32"
-              width="32"
-              class="cursor-pointer"
-              @click="favorite(user.id)"
-            />
-          </template>
-          <template v-else>
-            <svgicon
-              name="off-star"
-              height="32"
-              width="32"
-              class="cursor-pointer"
-              @click="favorite(user.id)"
-            />
-          </template>
-        </div>
-        <div class="flex flex-wrap text-center mt-4 cursor-pointer" @click="show(user.id)">
-          <div class="w-full flex justify-center">
-            <div class="relative avatar flex justify-center">
-              <img
-                :src="user.avatar.file.url"
-                v-if="user.avatar && user.avatar.file && user.avatar.file.url"
+    <div v-if="users.length > 0">
+      <div class="flex flex-row flex-wrap justify-start">
+        <div
+          class="w-full md:w-1/3 lg:w-1/4 rounded-lg shadow-lg bg-gray-300 m-2 p-4 hover:bg-gray-500"
+          v-for="(user, index) in users"
+          :key="user.id"
+        >
+          <div class="flex justify-end z-50">
+            <template v-if="user.is_favorite">
+              <svgicon
+                name="on-star"
+                height="32"
+                width="32"
+                class="cursor-pointer"
+                @click="favorite(user.id, index)"
               />
-              <svgicon name="no-avatar" height="115" width="115" />
-            </div>
+            </template>
+            <template v-else>
+              <svgicon
+                name="off-star"
+                height="32"
+                width="32"
+                class="cursor-pointer"
+                @click="favorite(user.id, index)"
+              />
+            </template>
           </div>
 
-          <div class="w-full font-bold text-sm sm:text-lg my-4">{{user.personal_detail.name}}</div>
-          <div
-            class="w-full mb-4 font-bold text-gray-600 text-sm sm:text-lg"
-          >{{user.locum_detail.profession.name}}</div>
+          <div class="flex flex-wrap text-center mt-4 cursor-pointer" @click="show(user.id)">
+            <div class="w-full flex justify-center">
+              <div class="relative avatar flex justify-center">
+                <img
+                  :src="user.avatar.file.url"
+                  v-if="user.avatar && user.avatar.file && user.avatar.file.url"
+                />
+                <svgicon v-else name="no-avatar" height="115" width="115" />
+              </div>
+            </div>
+
+            <div class="w-full font-bold text-sm sm:text-lg my-4">{{user.personal_detail.name}}</div>
+            <div
+              class="w-full mb-4 font-bold text-gray-600 text-sm sm:text-lg"
+            >{{user.locum_detail.profession.name}}</div>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="m-10 xl:-ml-32" v-if="locums.length > 0 && totalPages > 1">
-      <AppPagination
-        :total="total"
-        :totalPages="totalPages"
-        :currentPage="currentPage"
-        @pagechanged="pagechanged"
-        :loading="loading"
-      />
-    </div>
-
-    <div class="locum-shield" v-if="modal"></div>
-    <transition name="slide" mode="out-in">
-      <div class="locum-modal shadow-lg" v-if="modal">
-        <MyLocumDetailModal @close="modal = false" :user="user" :jobs="jobs" />
-        <!--insert :locum jobs here-->
+      <div class="mt-5 flex justify-center" v-if="users.length > 0 && totalPages > 1">
+        <AppPagination
+          :total="total"
+          :totalPages="totalPages"
+          :currentPage="current_page"
+          @pagechanged="pagechanged"
+        />
       </div>
-    </transition>
-  </div>
+    </div>
+    <div v-else class="flex flex-row flex-wrap justify-center">
+      <div>There are no locums connected to your practice yet.</div>
+    </div>
+    <div class="shield" v-if="tabs.includes($route.name)"></div>
+    <nuxt-child />
+  </section>
 </template>
 <script>
 import AppPagination from "@/components/Base/AppPagination";
-import AppLoading from "@/components/Base/AppLoading";
-import MyLocumDetailModal from "@/components/MyBanks/MyLocumDetailModal"; //TEMPORARY
 import AppSelect from "@/components/Base/AppSelect";
+const tabs = [
+  'my-banks-all-userId', 'my-banks-all-userId-profile', 'my-banks-all-userId-related-jobs',
+  'my-banks-all-userId-related-jobs-available', 'my-banks-all-userId-related-jobs-applied',
+  'my-banks-all-userId-related-jobs-current', 'my-banks-all-userId-related-jobs-completed',
+  'my-banks-all-userId-related-jobs-unsuccessful', 'my-banks-all-userId-related-jobs-cancelled',
+  'my-banks-all-userId-related-jobs-declined',
+]
 export default {
+  transition: {
+    name: 'fade',
+    mode: 'out-in'
+  },
   components: {
     AppPagination,
-    AppLoading,
-    MyLocumDetailModal,
     AppSelect
   },
   data() {
     return {
-      locums: [],
-      total: 0,
-      totalPages: 0,
-      currentPage: 0,
-      perPage: 0,
-      loading: true,
-      modal: false, //TEMPORARY
-      user: null, //TEMPORARY
-      jobs: null,
+      tabs,
       professions: [],
-      profession_id: null,
-      filteredUsers: []
+      users: [],
+      current_page: 1,
+      total: 0,
+      modal: false,
+      user: null,
+      loading: true,
+
+      params: {
+        profession_id: '1'
+      },
+
+      profession_id: '1',
     };
   },
-  beforeDestroy() {
-    let query = Object.assign({}, this.$route.query);
-    delete query.current_page;
-    this.$router.push({ query });
-  },
-  watch: {
-    $route(to, from) {
-      this.currentPage = parseInt(to.query.current_page);
-      this.getAllLocums();
+  computed: {
+    offset() {
+      return this.perPage * (this.current_page - 1);
     },
-    profession_id: function() {
-      this.getAllLocums();
-    }
+    perPage() {
+      return 5;
+    },
+    totalPages() {
+      return Math.ceil(this.total / this.perPage);
+    },
   },
   created() {
-    const query = {
-      ...this.$route.query,
-      current_page: this.$route.query.current_page || 1
-    };
-
-    this.$axios.$get(`/api/v1/practice/locums/count`).then(res => {
-      //GET QUANTITY OF DATA
-      this.total = res.data.count;
-      this.perPage = 6;
-      this.totalPages = Math.ceil(this.total / this.perPage);
-      this.getAllLocums();
-    });
-
-    this.$axios.$get(`/api/v1/professions`).then(res => {
-      this.professions = [];
-      res.data.professions.forEach(item => {
-        this.professions.push({ label: item.name, value: item.id });
-      });
-    });
+    this.getProfessions()
+    this.getLocumsCount()
   },
-
+  watch: {
+    profession_id(value) {
+      this.params.profession_id = value
+      this.getLocums(this.current_page)
+    }
+  },
   methods: {
-    getAllLocums() {
-      this.loading = true;
-      let offset = 0;
-      offset = this.perPage * (parseInt(this.$route.query.current_page) - 1);
-      if (!this.profession_id) {
-        this.$axios
-          .$get(
-            `/api/v1/practice/locums?limit=${this.perPage}&offset=${offset}`
-          )
-          .then(res => {
-            this.locums = res.data.users;
-          });
-      } else {
-        this.$axios
-          .$get(
-            `/api/v1/practice/locums?profession_id=${this.profession_id}&limit=${this.perPage}&offset=${offset}`
-          )
-          .then(res => {
-            this.locums = res.data.users;
-          });
-      }
-      this.loading = false;
+    getProfessions() {
+      this.$axios.$get(`/api/v1/professions`).then(res => {
+        this.professions = [];
+        res.data.professions.forEach(item => {
+          this.professions.push({ label: item.name, value: item.id });
+        });
+      });
+    },
+    getLocumsCount() {
+      this.$axios.$get(`/api/v1/practice/locums/count`).then(res => {
+        this.total = res.data.count
+        this.getLocums(this.current_page)
+      })
+    },
+    getLocums(page) {
+      this.current_page = page
+      let defaultParams = { offset: this.offset, limit: this.perPage }
+      let locumParams = { ...defaultParams, ...this.params }
+      this.$axios.$get(`/api/v1/practice/locums`, { params: locumParams }).then(res => {
+        this.users = res.data.users
+        this.loading = false
+      })
     },
     favorite(id) {
-      let locum = this.locums.find(locum => locum.id === id);
+      let locum = this.users.find(locum => locum.id === id);
       if (!locum.is_favorite) {
         this.$axios
           .$post(`/api/v1/practice/locums/${id}/favorite`)
@@ -193,35 +181,16 @@ export default {
       }
     },
     show(id) {
-      // set id to store
-      // this.$store.commit('myBanks/SET_MY_LOCUM_ID', id)
-      // this.$store.commit('SET_MYLOCUMDETAIL_SHIELD', true)
-      // let d = document.getElementsByClassName('my-locum-detail-modal')[0]
-      // d.classList.toggle('toggled-right')
-      // document.body.style.overflow = 'hidden'
-      // this.$store.commit('SET_MYLOCUMDETAIL_MODAL', true)
-
-      Promise.all([
-        this.$axios.$get(`/api/v1/practice/locums/${id}`).then(res => {
-          this.user = res.data.user;
-        })
-      ]).then(() => {
-        this.modal = true;
-      });
-
-      //call jobs
+      this.$router.push(`/my-banks/all/${id}`)
     },
     pagechanged(e) {
-      const query = {
-        ...this.$route.query,
-        current_page: e || 1
-      };
-      this.$router.push({ query });
+      this.current_page = e
+      this.getLocums(this.current_page)
     }
   }
 };
 </script>
-<style>
+<style scoped>
 .avatar-container {
   box-sizing: content-box;
   height: 170px;
@@ -232,12 +201,10 @@ export default {
   min-width: 170px;
   min-height: 170px;
 }
-.card {
-  /* min-width: 100px; */
-  /* height: 250px; */
-  /* box-sizing: content-box; */
+img {
+  border-radius: 50%;
 }
-.locum-shield {
+.shield {
   position: fixed;
   top: 0;
   left: 0;
@@ -245,25 +212,7 @@ export default {
   bottom: 0;
   background-color: #333;
   opacity: 0.5;
-  z-index: 511;
-}
-.locum-modal {
-  position: fixed;
-  top: 0;
-  right: 0;
-  margin-right: 0%;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  border-left: solid 2px #edf2f7;
-  transition: all 0.3s ease-in-out;
-  background-color: white;
-  z-index: 512;
-}
-@media screen and (min-width: 1200px) {
-  .locum-modal {
-    width: 80%;
-  }
+  z-index: 509;
 }
 </style>
 

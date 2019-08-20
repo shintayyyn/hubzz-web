@@ -23,7 +23,7 @@
                   :src="practice.user.avatar.file.url"
                   v-if="practice.user && practice.user.avatar && practice.user.avatar.file && practice.user.avatar.file.url"
                 />
-                <svgicon name="no-avatar" height="115" width="115" v-else />
+                <svgicon v-else name="no-avatar" height="115" width="115" />
               </div>
             </div>
 

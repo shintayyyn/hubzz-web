@@ -15,6 +15,7 @@
         class="border-b-2 focus:border-yellow-400 focus:outline-none py-4 font-bold text-xs sm:text-sm w-full"
         :class="[error ? 'border-red-500':'', resize ? '' : 'resize-none']"
         @input="$emit('input', $event.target.value)"
+        @blur="$emit('blur', $event)"
       ></textarea>
     </div>
   </div>

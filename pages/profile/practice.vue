@@ -27,8 +27,8 @@
           </div>
         </div>
         <div class="w-full md:w-2/5 p-2">
-          <div class="h-48 min-h-full flex items-center rounded-lg shadow-lg p-8">
-            <div class="flex flex-col w-full">
+          <div class="relative rounded-lg shadow-lg p-8">
+            <div class="flex flex-col">
               <div class="text-xs sm:text-sm">Your Practice's standard terms</div>
               <div class="mt-4 bg-gray-300 rounded-lg p-4">
                 <div class="flex flex-no-wrap justify-between items-center">
@@ -61,6 +61,7 @@
                 <input type="file" id="file-upload" class="hidden" @input="onFileInput($event)" />
               </div>
             </div>
+            <AppLoading :loading="loading" :message="'Loading'" v-if="loading" />
           </div>
         </div>
       </div>
@@ -170,6 +171,7 @@ import AppInput from "@/components/Base/AppInput";
 import AppTextarea from "@/components/Base/AppTextarea";
 import AppButton from "@/components/Base/AppButton";
 import AppFormError from "@/components/Base/AppFormError";
+import AppLoading from "@/components/Base/AppLoading";
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
 export default {
   transition: {
@@ -181,11 +183,13 @@ export default {
     AppTextarea,
     AppButton,
     AppFormError,
-    AppConfirmationModal
+    AppLoading,
+    AppConfirmationModal,
   },
   data() {
     return {
       modal: false,
+      loading: false,
       form: {
         email: "",
         phone_number: "",
@@ -266,17 +270,17 @@ export default {
     const response = await app.$axios.$get(`/api/v1/me`);
     const surgery =
       response.data &&
-      response.data.user &&
-      response.data.user.practice_detail &&
-      response.data.user.practice_detail.practice &&
-      response.data.user.practice_detail.practice.surgery
+        response.data.user &&
+        response.data.user.practice_detail &&
+        response.data.user.practice_detail.practice &&
+        response.data.user.practice_detail.practice.surgery
         ? response.data.user.practice_detail.practice.surgery
         : null;
     const practice =
       response.data &&
-      response.data.user &&
-      response.data.user.practice_detail &&
-      response.data.user.practice_detail.practice
+        response.data.user &&
+        response.data.user.practice_detail &&
+        response.data.user.practice_detail.practice
         ? response.data.user.practice_detail.practice
         : null;
 
@@ -285,8 +289,8 @@ export default {
     );
     let practice_types =
       responsePracticeTypes.data &&
-      responsePracticeTypes.data.practice_types &&
-      responsePracticeTypes.data.practice_types.length
+        responsePracticeTypes.data.practice_types &&
+        responsePracticeTypes.data.practice_types.length
         ? responsePracticeTypes.data.practice_types
         : [];
     practice_types = practice_types.map(practiceType => {
@@ -298,8 +302,8 @@ export default {
     );
     let mandatory_trainings =
       responseMandatoryTrainings.data &&
-      responseMandatoryTrainings.data.mandatory_trainings &&
-      responseMandatoryTrainings.data.mandatory_trainings.length
+        responseMandatoryTrainings.data.mandatory_trainings &&
+        responseMandatoryTrainings.data.mandatory_trainings.length
         ? responseMandatoryTrainings.data.mandatory_trainings
         : [];
     mandatory_trainings = mandatory_trainings.map(mandatoryTraining => {
@@ -311,8 +315,8 @@ export default {
     );
     let profession_categories =
       responseProfessionCategories.data &&
-      responseProfessionCategories.data.profession_categories &&
-      responseProfessionCategories.data.profession_categories.length
+        responseProfessionCategories.data.profession_categories &&
+        responseProfessionCategories.data.profession_categories.length
         ? responseProfessionCategories.data.profession_categories
         : [];
     const gp = profession_categories.find(item => item.id === 1);
@@ -363,6 +367,7 @@ export default {
   },
   methods: {
     onFileInput(e) {
+      console.log('uploading')
       if (!e.target.files.length) {
         return;
       }
@@ -377,20 +382,13 @@ export default {
         });
         return;
       }
-      const formData = new FormData();
-      formData.append("file", file);
-      this.uploading = true;
-      console.log("uploading");
-      this.$axios
-        .$put(`/api/v1/practice/me/standard-terms`, formData)
-        .then(res => {
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "success",
-            text: [res.message]
-          });
-          this.uploading = false;
-        });
+      const formData = new FormData()
+      formData.append('file', file)
+      this.loading = true
+      this.$axios.$put(`/api/v1/practice/me/standard-terms`, formData).then(res => {
+        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: [res.message] })
+        this.loading = false
+      })
       this.practice.standard_terms = {
         file: {
           filename: file.name
@@ -418,14 +416,13 @@ export default {
       );
     },
     remove() {
+      this.loading = true
       this.$axios.$delete(`/api/v1/practice/me/standard-terms`).then(res => {
-        this.modal = false;
-        this.$store.commit("SET_NOTIFICATION", {
-          enabled: true,
-          status: "success",
-          text: [res.message]
-        });
-        this.practice.standard_terms = null;
+        this.loading = false
+        this.modal = false
+        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: [res.message] })
+        // this.practice.standard_terms.file.filename = null
+        this.practice.standard_terms = null
         // standard_terms)
       });
     },

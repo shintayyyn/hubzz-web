@@ -1,6 +1,5 @@
 export default () => ({
     loading_jobs: true,
-    modal_shield: false,
     // PRACTICE
     practice_available_jobs: [],
     practice_available_jobs_count: 0,
