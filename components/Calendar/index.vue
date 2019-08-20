@@ -25,13 +25,13 @@
           :job="locum_appointment_job"
         />
       </div>
-      <div class="shadow-lg" v-if="locum_modal">
+      <div class="modal-container shadow-lg" v-if="locum_modal">
         <JobDetailModalLocum @close="locum_modal = false" :job="locum_job" />
       </div>
-      <div class="shadow-lg" v-if="create_job_modal">
+      <div class="modal-container shadow-lg" v-if="create_job_modal">
         <CreateJobModal />
       </div>
-      <div class="shadow-lg" v-if="practice_modal">
+      <div class="modal-container shadow-lg" v-if="practice_modal">
         <JobDetailModal @close="practice_modal = false" :job="practice_job" />
       </div>
     </transition>

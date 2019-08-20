@@ -19,17 +19,25 @@
                 class="flex my-1"
                 :class="isReceiver(item) ? 'justify-start': 'justify-end'"
               >
-                <div class="flex" :class="isReceiver(item) ? '': 'flex-row-reverse'">
-                  <img
-                    v-if="item.sender.domain === 'Locum'"
-                    class="w-10 h-10 rounded-full border"
-                    :src="setAvatar(item.sender)"
-                    width="25"
-                  />
-                  <div
-                    class="my-1 mx-2 rounded-lg text-xs px-4 py-2 bg-red-400 text-white"
-                    :class="{'mx-4' : !isReceiver(item)}"
-                  >Deleted</div>
+                <div class="flex flex-col text-sm">
+                  <div class="flex" :class="isReceiver(item) ? '': 'flex-row-reverse'">
+                    <img
+                      v-if="item.sender.domain === 'Locum'"
+                      :class="item.sender.domain === 'Locum' ? '' : 'hidden'"
+                      class="w-10 h-10 rounded-full"
+                      :src="setAvatar(item.sender)"
+                      width="25"
+                    />
+                    <div
+                      class="my-1 mx-2 rounded-lg text-xs px-4 py-2 bg-red-400 text-white"
+                      :class="{'mx-4' : !isReceiver(item)}"
+                    >Deleted</div>
+                  </div>
+                  <div class="mx-2" :class="isReceiver(item) ? 'text-right ': ''">
+                    <span
+                      class="text-xs text-gray-500 py-1"
+                    >{{ $moment(item.created_at).startOf("hours").fromNow() }}</span>
+                  </div>
                 </div>
               </div>
 
@@ -52,15 +60,15 @@
                       class="chat-message rounded-lg px-2 py-2 mx-2"
                       :class="isReceiver(item) ? 'bg-gray-300' : 'bg-blue-500 text-white'"
                     >{{item.message}}</span>
-                    <!-- <div
+                    <div
                       class="text-xs text-gray-500 font-bold mx-1 mt-3 cursor-pointer px-2"
                       @click="deleteMessage(item.id)"
-                    >X</div>-->
+                    >X</div>
                   </div>
                   <div class="mx-2" :class="isReceiver(item) ? 'text-right ': ''">
                     <span
                       class="text-xs text-gray-500 py-1"
-                    >{{ $moment(item.created_at).startOf("day").fromNow() }}</span>
+                    >{{ $moment(item.created_at).startOf("hours").fromNow() }}</span>
                   </div>
                 </div>
               </div>
@@ -152,6 +160,8 @@ export default {
       this.loadMore = false;
     },
     messages(value) {
+      console.log(value);
+
       if (value.length <= 20) {
         this.scrollToBottom();
       }

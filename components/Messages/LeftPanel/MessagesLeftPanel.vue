@@ -105,7 +105,8 @@ export default {
   },
   computed: {
     conversations() {
-      return this.$store.state.chat.conversations;
+      return this.$store.getters["chat/getConversations"];
+      // return this.$store.state.chat.conversations;
     }
   },
   watch: {
@@ -115,6 +116,9 @@ export default {
       } else {
         this.getResults(value);
       }
+    },
+    messages(value) {
+      console.log(value.length);
     }
   },
   methods: {
