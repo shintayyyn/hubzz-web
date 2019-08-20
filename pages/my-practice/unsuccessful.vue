@@ -34,7 +34,7 @@
                   :src="practice.user.avatar.file.url"
                   v-if="practice.user && practice.user.avatar && practice.user.avatar.file && practice.user.avatar.file.url"
                 />
-                <svgicon name="no-avatar" height="115" width="115" v-else />
+                <svgicon v-else name="no-avatar" height="115" width="115" />
               </div>
             </div>
 
@@ -65,7 +65,6 @@
 <script>
 import AppPagination from '@/components/Base/AppPagination'
 import AppLoading from '@/components/Base/AppLoading'
-import MyPracticeDetailModal from '@/components/MyPractice/MyPracticeDetailModal'
 export default {
   transition: {
     name: 'fade',
@@ -74,7 +73,6 @@ export default {
   components: {
     AppPagination,
     AppLoading,
-    MyPracticeDetailModal
   },
   data() {
     return {

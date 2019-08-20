@@ -3,7 +3,7 @@
     <div
       class="text-white text-xs sm:text-sm py-4 px-8"
     >{{$moment(dateInfo).format('Do MMM, YYYY')}}</div>
-    <div class="flex flex-col overflow-y-auto px-8 h-full info-card">
+    <div class="flex flex-col overflow-y-auto overflow-x-hidden px-8 h-full info-card">
       <transition name="slide" mode="out-in">
         <div
           class="mt-4 text-xl text-white"

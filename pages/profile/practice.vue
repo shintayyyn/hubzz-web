@@ -27,7 +27,7 @@
           </div>
         </div>
         <div class="w-full md:w-2/5 p-2">
-          <div class="rounded-lg shadow-lg p-8">
+          <div class="relative rounded-lg shadow-lg p-8">
             <div class="flex flex-col">
               <div class="text-xs sm:text-sm">Your Practice's standard terms</div>
               <div class="mt-4 bg-gray-300 rounded-lg p-4">
@@ -53,6 +53,7 @@
                 <input type="file" id="file-upload" class="hidden" @input="onFileInput($event)" />
               </div>
             </div>
+            <AppLoading :loading="loading" :message="'Loading'" v-if="loading" />
           </div>
         </div>
       </div>
@@ -170,6 +171,7 @@ import AppInput from "@/components/Base/AppInput";
 import AppTextarea from "@/components/Base/AppTextarea";
 import AppButton from "@/components/Base/AppButton";
 import AppFormError from "@/components/Base/AppFormError";
+import AppLoading from "@/components/Base/AppLoading";
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
 export default {
   transition: {
@@ -181,11 +183,13 @@ export default {
     AppTextarea,
     AppButton,
     AppFormError,
+    AppLoading,
     AppConfirmationModal,
   },
   data() {
     return {
       modal: false,
+      loading: false,
       form: {
         email: "",
         phone_number: "",
@@ -315,6 +319,7 @@ export default {
   },
   methods: {
     onFileInput(e) {
+      console.log('uploading')
       if (!e.target.files.length) {
         return;
       }
@@ -331,8 +336,10 @@ export default {
       }
       const formData = new FormData()
       formData.append('file', file)
+      this.loading = true
       this.$axios.$put(`/api/v1/practice/me/standard-terms`, formData).then(res => {
         this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: [res.message] })
+        this.loading = false
       })
       this.practice.standard_terms = {
         file: {
@@ -359,10 +366,13 @@ export default {
       );
     },
     remove() {
+      this.loading = true
       this.$axios.$delete(`/api/v1/practice/me/standard-terms`).then(res => {
+        this.loading = false
         this.modal = false
         this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: [res.message] })
-        this.practice.standard_terms.file.filename = null
+        // this.practice.standard_terms.file.filename = null
+        this.practice.standard_terms = null
         // standard_terms)
       })
     },

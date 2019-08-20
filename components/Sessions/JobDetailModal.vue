@@ -152,14 +152,15 @@ export default {
       this.toEdit = false
     },
     close() {
-      if (this.$route.fullPath === '/dashboard') {
-        this.$emit('close')
-      } else {
-        const query = {
-          ...this.$route.query
-        }
-        this.$router.push({ path: `/sessions`, query })
-      }
+      this.$emit('close')
+      // if (this.$route.fullPath === '/dashboard') {
+      //   this.$emit('close')
+      // } else {
+      //   const query = {
+      //     ...this.$route.query
+      //   }
+      //   this.$router.push({ path: `/sessions`, query })
+      // }
     },
     status(status) {
       if (status === 'Available') {

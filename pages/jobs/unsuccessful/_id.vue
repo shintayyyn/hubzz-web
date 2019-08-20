@@ -26,12 +26,6 @@ export default {
       throw err
     }
   },
-  beforeDestroy() {
-    this.$store.commit('jobs/TOGGLE_SHIELD', false)
-  },
-  created() {
-    this.$store.commit('jobs/TOGGLE_SHIELD', true)
-  }
 }
 </script>
 

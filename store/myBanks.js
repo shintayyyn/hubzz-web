@@ -1,6 +1,6 @@
 export const state = () => ({
     activeTab: 'favourites',
-    my_bank_id: ''
+    my_bank_id: '',
   })
   
   export const mutations = {

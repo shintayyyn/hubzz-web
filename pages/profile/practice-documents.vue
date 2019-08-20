@@ -15,10 +15,11 @@
         <div class="text-xs sm:text-sm w-full px-1">Last Upload Date</div>
       </div>
       <div>
+        <!-- :class="item.existingPracticeComplianceDocument ? 'bg-orange-300':'bg-blue-500' " -->
         <div
-          class="practice-doc-card rounded-lg shadow-lg p-4 mt-4"
+          class="rounded-lg shadow-lg p-4 mt-4"
+          :class="{'practice-doc-card cursor-pointer' : item.existingPracticeComplianceDocument}"
           v-for="item in practiceComplianceDocuments"
-          :class="item.existingPracticeComplianceDocument ? 'bg-orange-300':'bg-blue-500' "
           :key="item.practiceDocumentType.id"
           @click="item.existingPracticeComplianceDocument ? show(item.existingPracticeComplianceDocument.id) : ''"
         >

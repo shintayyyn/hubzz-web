@@ -1,12 +1,13 @@
 <template>
-  <div class="p-8 max-w-3xl">
+  <div class="p-8 max-w-5xl">
     <div @click="close" class="cursor-pointer">
       <svgicon name="left-arrow" height="32" width="32" />
     </div>
     <div class="flex justify-start font-bold text-sm sm:text-xl mt-8">Create a new job</div>
+    <AppFormError :formError="formError" v-if="formError.length" />
+
     <div class="flex flex-row flex-wrap justify-start mt-8">
-      <!--VALIDATION MODAL-->
-      <div v-if="showErrorModal == true" class="absolute top-0 z-50">
+      <!-- <div v-if="showErrorModal == true" class="absolute top-0 z-50">
         <div
           class="fixed text-white bg-red-400 py-2 px-12 mr-10 md:mr-0 md:w-1/3 shadow"
           style="border-radius: 0 0 10px 10px"
@@ -30,8 +31,7 @@
             </div>
           </div>
         </div>
-      </div>
-      <!--VALIDATION MODAL ENDS HERE-->
+      </div>-->
       <div class="w-full md:w-1/2 pr-4 mb-4">
         <div class="flex flex-col">
           <h4 class="font-bold">Practice</h4>
@@ -42,7 +42,7 @@
               :error="formError.find(item => item.field === 'practice_id')"
               :items="practice_lists"
               :placeholder="'Select..'"
-              @blur="checkEmptyField(form.practice_id,'practice_id')"
+              @blur="CheckEmptyField(form.practice_id,'practice_id')"
             />
           </div>
           <h4 class="font-bold mt-4">Overview</h4>
@@ -54,7 +54,7 @@
               :label="'Title'"
               :placeholder="''"
               :error="formError.find(item => item.field === 'title')"
-              @blur="checkEmptyField(form.title,'title')"
+              @blur="CheckEmptyField(form.title,'title')"
             />
             <AppTextarea
               v-model="form.description"
@@ -62,7 +62,7 @@
               :label="'Description'"
               :placeholder="''"
               :error="this.formError.find(item => item.field === 'description')"
-              @blur="checkEmptyField(form.description,'description')"
+              @blur="CheckEmptyField(form.description,'description')"
             />
             <!-- report to -->
             <AppInput
@@ -72,7 +72,7 @@
               :label="'Report to'"
               :placeholder="''"
               :error="formError.find(item => item.field === 'report_to')"
-              @blur="checkEmptyField(form.report_to,'report_to')"
+              @blur="CheckEmptyField(form.report_to,'report_to')"
             />
             <!-- email -->
             <AppInput
@@ -82,7 +82,7 @@
               :label="'Email'"
               :placeholder="''"
               :error="formError.find(item => item.field === 'email')"
-              @blur="checkEmptyField(form.email,'email')"
+              @blur="CheckEmptyField(form.email,'email')"
             />
             <AppSelect
               v-model="form.is_another_doctor"
@@ -106,7 +106,7 @@
               :placeholder="''"
               :error="formError.find(item => item.field === 'number_of_patients')"
               :inStyle="'text-align:right;'"
-              @blur="checkEmptyField(form.number_of_patients,'number_of_patients')"
+              @blur="CheckEmptyField(form.number_of_patients,'number_of_patients')"
             />
             <AppInput
               v-model="form.duration_for_each_appointment"
@@ -116,7 +116,7 @@
               :placeholder="''"
               :error="formError.find(item => item.field === 'duration_for_each_appointment')"
               :inStyle="'text-align:right;'"
-              @blur="checkEmptyField(form.duration_for_each_appointment, 'duration_for_each_appointment')"
+              @blur="CheckEmptyField(form.duration_for_each_appointment, 'duration_for_each_appointment')"
             />
             <AppSelect
               v-model="form.opportunity_for_catch_up_slots"
@@ -134,7 +134,7 @@
               :placeholder="''"
               :error="this.formError.find(item => item.field === 'session_requirements')"
               :lists="session_requirements_lists"
-              @blur="checkEmptyField(form.session_requirements, 'session_requirements')"
+              @blur="CheckEmptyField(form.session_requirements, 'session_requirements')"
             />
             <AppTextarea
               v-model="form.session_structure_information"
@@ -142,7 +142,7 @@
               :label="'Session structure information'"
               :placeholder="'For e.g. the first 2 hours of the session is for booked appointments, 3rd hour is walk-ins, and home visits to x number of patients to the end of the session'"
               :error="this.formError.find(item => item.field === 'session_structure_information')"
-              @blur="checkEmptyField(form.session_structure_information, 'session_structure_information')"
+              @blur="CheckEmptyField(form.session_structure_information, 'session_structure_information')"
             />
             <AppTextarea
               v-model="form.extra_information"
@@ -161,7 +161,7 @@
                     class="border-b-2 focus:border-yellow-400 focus:outline-none font-bold text-xs sm:text-sm mx-1 py-2"
                     :class="formError.find(item => item.field === 'rate')? 'border-red-500':''"
                     style="text-align:right;width:100px;"
-                    @blur="checkEmptyField(form.rate,'rate')"
+                    @blur="CheckEmptyField(form.rate,'rate')"
                   />
                 </div>
                 <div class="mt-2">
@@ -198,7 +198,7 @@
                   type="text"
                   class="border-b-2 focus:border-yellow-400 focus:outline-none font-bold py-2 text-xs sm:text-sm mx-1"
                   :class="this.formError.find(item => item.field === 'total_hours')? 'border-red-500':''"
-                  @blur="checkEmptyField(form.total_hours,'total_hours')"
+                  @blur="CheckEmptyField(form.total_hours,'total_hours')"
                   style="text-align:right;'"
                 />
                 <label for="total_hours" class="text-xs sm:text-sm mt-2">hours</label>
@@ -224,7 +224,11 @@
               :info="'Check all that apply'"
             />
             <div class="mb-6" v-if="mandatory_training_lists.length === 0">
-              <AppButton :label="'Go to Profile to add items here'" @click="addMandatory" />
+              <AppButton
+                :label="'Go to Profile to add items here'"
+                @click="addMandatory"
+                :inStyle="'padding:5px;'"
+              />
             </div>
           </div>
         </div>
@@ -250,7 +254,7 @@
                 :error="formError.find(item => item.field === 'qualification_id')"
                 :items="qualifications"
                 :info="'Choose at least one qualification'"
-                @blur="checkEmptyField(form.qualification_id,'qualification_id')"
+                @blur="CheckEmptyField(form.qualification_id,'qualification_id')"
               />
               <AppFilterSearch
                 v-model="form.clinical_system_id"
@@ -286,6 +290,7 @@
                 :label="`${selectedProfession.profession_category.id === 1 ? 'For GPs:' : selectedProfession.profession_category.id === 2 ? 'For Nurses, et al:' : ''}`"
                 :placeholder="''"
                 :lists="compliances"
+                :error="formError.find(item => item.field === 'compliance_document_id')"
               />
             </template>
           </div>
@@ -300,7 +305,7 @@
                   :name="'date_start'"
                   :label="'Start Date'"
                   :error="formError.find(item => item.field === 'date_start')"
-                  @blur="checkEmptyField(form.date_start,'date_start')"
+                  @blur="CheckEmptyField(form.date_start,'date_start')"
                 />
               </div>
               <div class="px-1 w-full md:w-1/2">
@@ -310,7 +315,7 @@
                   :name="'time_start'"
                   :label="'Start Time'"
                   :error="this.formError.find(error => error.field === 'time_start')"
-                  @blur="checkEmptyField(form.time_start,'time_start')"
+                  @blur="CheckEmptyField(form.time_start,'time_start')"
                 />
               </div>
               <div class="px-1 w-full md:w-1/2">
@@ -319,7 +324,7 @@
                   :name="'date_end'"
                   :label="'End Date'"
                   :error="formError.find(item => item.field === 'date_end')"
-                  @blur="checkEmptyField(form.date_end,'date_end')"
+                  @blur="CheckEmptyField(form.date_end,'date_end')"
                 />
               </div>
               <div class="px-1 w-full md:w-1/2">
@@ -329,10 +334,26 @@
                   :name="'time_end'"
                   :label="'End Time'"
                   :error="this.formError.find(error => error.field === 'time_end')"
-                  @blur="checkEmptyField(form.time_end,'time_end')"
+                  @blur="CheckEmptyField(form.time_end,'time_end')"
                 />
               </div>
             </div>
+            <AppSelect
+              v-model="form.include_saturday"
+              :name="'include_saturday'"
+              :label="'Include Saturday'"
+              :error="formError.find(item => item.field === 'include_saturday')"
+              :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
+              :placeholder="'Select..'"
+            />
+            <AppSelect
+              v-model="form.include_sunday"
+              :name="'include_sunday'"
+              :label="'Include Sunday'"
+              :error="formError.find(item => item.field === 'include_sunday')"
+              :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
+              :placeholder="'Select..'"
+            />
             <AppSelect
               v-model="unpaid_breaks"
               :name="'unpaid_breaks'"
@@ -350,7 +371,7 @@
               :placeholder="''"
               :error="formError.find(item => item.field === 'unpaid_breaks_in_minutes')"
               :inStyle="'text-align:right;'"
-              @blur="checkEmptyField(form.unpaid_breaks_in_minutes,'unpaid_breaks_in_minutes')"
+              @blur="CheckEmptyField(form.unpaid_breaks_in_minutes,'unpaid_breaks_in_minutes')"
             />
             <AppSelect
               v-model="form.shift_id"
@@ -359,22 +380,73 @@
               :error="formError.find(item => item.field === 'shift_id')"
               :items="shifts"
               :placeholder="'Select..'"
-              @blur="checkEmptyField(form.shift_id,'shift_id')"
+              @blur="CheckEmptyField(form.shift_id,'shift_id')"
             />
-            <AppDate
-              v-model="form.auto_assign_at"
-              :name="'auto_assign_at'"
-              :label="'Auto -assign job to the first matching Favourite applicant?'"
-              :error="formError.find(item => item.field === 'auto_assign_at')"
-              @blur="checkEmptyField(form.auto_assign_at,'auto_assign_at')"
-            />
-            <AppDate
-              v-model="form.selection_date"
-              :name="'selection_date'"
-              :label="'Selection will be made and you will receive a notification by this date'"
-              :error="formError.find(item => item.field === 'selection_date')"
-              @blur="checkEmptyField(form.selection_date,'selection_date')"
-            />
+            <div class="flex flex-row flex-wrap justify-between">
+              <div>Auto -assign job to the first matching Favourite applicant?</div>
+              <div class="px-1 w-full md:w-1/2">
+                <AppDate
+                  v-model="auto_assign_at.date"
+                  :name="'auto_assign_at'"
+                  :label="'Date'"
+                  :error="formError.find(item => item.field === 'auto_assign_at')"
+                  @blur="CheckEmptyField(form.auto_assign_at,'auto_assign_at')"
+                />
+              </div>
+              <div class="px-1 w-full md:w-1/2">
+                <AppTime
+                  v-model="auto_assign_at.time"
+                  :type="'time'"
+                  :name="'time_end'"
+                  :label="'Time'"
+                  :error="formError.find(item => item.field === 'auto_assign_at')"
+                />
+              </div>
+            </div>
+
+            <div class="flex flex-row flex-wrap justify-between">
+              <div>Selection will be made and you will receive a notification by this date</div>
+              <div class="px-1 w-full md:w-1/2">
+                <AppDate
+                  v-model="selection_date.date"
+                  :name="'selection_date'"
+                  :label="'Date'"
+                  :error="formError.find(item => item.field === 'selection_date')"
+                  @blur="CheckEmptyField(form.selection_date,'selection_date')"
+                />
+              </div>
+              <div class="px-1 w-full md:w-1/2">
+                <AppTime
+                  v-model="selection_date.time"
+                  :type="'time'"
+                  :name="'time_end'"
+                  :label="'Time'"
+                  :error="formError.find(item => item.field === 'selection_date')"
+                />
+              </div>
+            </div>
+
+            <div class="flex flex-row flex-wrap justify-between">
+              <div>Only favorite locum will be notified until this date</div>
+              <div class="px-1 w-full md:w-1/2">
+                <AppDate
+                  v-model="favorite_only_until.date"
+                  :name="'favorite_only_until'"
+                  :label="'Date'"
+                  :error="formError.find(item => item.field === 'favorite_only_until')"
+                  @blur="CheckEmptyField(form.favorite_only_until,'favorite_only_until')"
+                />
+              </div>
+              <div class="px-1 w-full md:w-1/2">
+                <AppTime
+                  v-model="favorite_only_until.time"
+                  :type="'time'"
+                  :name="'time_end'"
+                  :label="'Time'"
+                  :error="formError.find(item => item.field === 'favorite_only_until')"
+                />
+              </div>
+            </div>
           </div>
         </div>
         <div class="mt-4">
@@ -393,6 +465,7 @@ import AppFilterSearch from "@/components/Base/AppFilterSearch";
 import AppDate from "@/components/Base/AppDate";
 import AppButton from "@/components/Base/AppButton";
 import AppTime from "@/components/Base/AppTime";
+import AppFormError from "@/components/Base/AppFormError";
 const session_requirements_lists = [
   { label: "Practice admin", value: "Practice admin" },
   { label: "Telephone triage", value: "Telephone triage" },
@@ -408,6 +481,7 @@ export default {
     AppDate,
     AppButton,
     AppTime,
+    AppFormError,
   },
   data() {
     return {
@@ -433,6 +507,20 @@ export default {
       unpaid_breaks: "",
       shifts: [],
 
+      auto_assign_at: {
+        date: null,
+        time: null
+      },
+      selection_date: {
+        date: null,
+        time: null
+      },
+      favorite_only_until: {
+        date: null,
+        time: null
+      },
+
+      // auto_
       form: {
         practice_id: "", //req
         title: "", //req
@@ -461,18 +549,20 @@ export default {
         time_start: null, //req
         date_end: null, //req
         time_end: null, //req
+        include_saturday: false,
+        include_sunday: false,
         unpaid_breaks_in_minutes: "", //req
         shift_id: "", //req
         auto_assign_at: null,
-        selection_date: null
+        selection_date: null,
+        favorite_only_until: null
       },
       formError: [],
-      showErrorModal: false,
     }
   },
   watch: {
     'form.profession_id'(value) {
-      this.checkEmptyField(value, 'profession_id')
+      this.CheckEmptyField(value, 'profession_id')
       if (value) {
         this.selectedProfession = this.professions_categories.find(
           item => item.id == value
@@ -491,67 +581,67 @@ export default {
     },
 
     'form.practice_id'(value) {
-      this.checkEmptyField(value, 'practice_id')
+      this.CheckEmptyField(value, 'practice_id')
     },
 
     'form.title'(value) {
-      this.checkEmptyField(value, 'title')
+      this.CheckEmptyField(value, 'title')
     },
 
     'form.description'(value) {
-      this.checkEmptyField(value, 'description')
+      this.CheckEmptyField(value, 'description')
     },
 
     'form.report_to'(value) {
-      this.checkEmptyField(value, 'report_to')
+      this.CheckEmptyField(value, 'report_to')
     },
 
     'form.rate'(value) {
-      this.checkEmptyField(value, 'rate')
+      this.CheckEmptyField(value, 'rate')
     },
 
     'form.date_start'(value) {
-      this.checkEmptyField(value, 'date_start')
+      this.CheckEmptyField(value, 'date_start')
     },
 
     'form.date_end'(value) {
-      this.checkEmptyField(value, 'date_end')
+      this.CheckEmptyField(value, 'date_end')
     },
 
     'form.time_start'(value) {
-      this.checkEmptyField(value, 'time_start')
+      this.CheckEmptyField(value, 'time_start')
     },
 
     'form.time_end'(value) {
-      this.checkEmptyField(value, 'time_end')
+      this.CheckEmptyField(value, 'time_end')
     },
 
     'form.total_hours'(value) {
-      this.checkEmptyField(value, 'total_hours')
+      this.CheckEmptyField(value, 'total_hours')
     },
 
     'form.qualification_id'(value) {
-      this.checkEmptyField(value, 'qualification_id')
+      this.CheckEmptyField(value, 'qualification_id')
     },
 
     'form.clinical_system_id'(value) {
-      this.checkEmptyField(value, 'clinical_system_id')
+      this.CheckEmptyField(value, 'clinical_system_id')
     },
 
     'form.spoken_language_id'(value) {
-      this.checkEmptyField(value, 'spoken_language_id')
+      this.CheckEmptyField(value, 'spoken_language_id')
     },
 
     'form.compliance_document_id'(value) {
-      this.checkEmptyField(value, 'compliance_document_id')
+      this.CheckEmptyField(value, 'compliance_document_id')
     },
 
     'form.unpaid_breaks_in_minutes'(value) {
-      this.checkEmptyField(value, 'unpaid_breaks_in_minutes')
+      this.CheckEmptyField(value, 'unpaid_breaks_in_minutes')
     },
 
     'form.shift_id'(value) {
-      this.checkEmptyField(value, 'shift_id')
+      this.CheckEmptyField(value, 'shift_id')
     },
 
     'form.email'(value) {
@@ -671,23 +761,9 @@ export default {
     close() {
       this.$store.commit('calendar/CREATE_JOB_MODAL', false)
     },
-    checkEmptyField(inputField, fieldName) {
-      // splice from formError
-      let index = this.formError.findIndex(item => item.field === fieldName)
-      if (index >= 0) {
-        this.formError.splice(index, 1)
-      }
-
-      //check if empty
-      if (!inputField) {
-        this.formError.push({ field: fieldName, message: 'Required' })
-      }
-    },
-
     addMandatory() {
-      // ! change route
-      // this.$emit('close')
-      this.$router.push("/profile")
+      this.$store.commit('calendar/CREATE_JOB_MODAL', false)
+      this.$router.push("/profile/practice")
     },
     uncheckMandatory(value) {
       this.form.mandatory_training_id = this.form.mandatory_training_id.filter(
@@ -704,15 +780,18 @@ export default {
           'duration_for_each_appointment',
           'opportunity_for_catch_up_slots',
           'session_requirements',
+          'spoken_language_id',
           'ir35',
           'unpaid_breaks_in_minutes',
           'mandatory_training_id',
+          'include_saturday',
+          'include_sunday',
           'auto_assign_at',
           'selection_date',
           'favorite_only_until'])
 
 
-      if (this.formError.length == 0) {
+      if (!this.formError.length) {
         this.form.clinical_system_id = this.form.clinical_system_id.map(
           item => item.value
         );
@@ -728,12 +807,10 @@ export default {
         this.form.date_end = this.$moment(this.form.date_end).format(
           "YYYY-MM-DD"
         );
-        this.form.selection_date = this.$moment(this.form.selection_date).format(
-          "YYYY-MM-DD HH:mm:ss"
-        );
-        this.form.auto_assign_at = this.$moment(this.form.auto_assign_at).format(
-          "YYYY-MM-DD HH:mm:ss"
-        );
+
+        this.form.auto_assign_at = `${this.$moment(this.auto_assign_at.date).format('YYYY-MM-DD')} ${this.auto_assign_at.time}`
+        this.form.selection_date = `${this.$moment(this.selection_date.date).format('YYYY-MM-DD')} ${this.selection_date.time}`
+
         this.form.session_requirements.length > 0
           ? (this.form.session_requirements = this.form.session_requirements.join())
           : (this.form.session_requirements = "");
@@ -746,10 +823,29 @@ export default {
             status: "success",
             text: ["Successfully created job"]
           });
-          this.$emit("close");
-        });
+          this.$store.commit('calendar/CREATE_JOB_MODAL', false)
+        }).catch(err => {
+          this.clinical_system_lists.forEach((clinicalSystem, index) => {
+            if (this.form.clinical_system_id.includes(clinicalSystem.value)) {
+              this.form.clinical_system_id.splice(index, 1, clinicalSystem)
+            }
+          })
+          this.qualifications.forEach((qualification, index) => {
+            if (this.form.qualification_id.includes(qualification.value)) {
+              this.form.qualification_id.splice(index, 1, qualification)
+            }
+          })
+          this.spoken_language_lists.forEach((spokenLanguage, index) => {
+            if (this.form.spoken_language_id.includes(spokenLanguage.value)) {
+              this.form.spoken_language_id.splice(index, 1, spokenLanguage)
+            }
+          })
+          this.form.session_requirements = this.form.session_requirements.split(",")
+
+          this.formError = err.response.data.error_messages
+        })
       } else {
-        this.showErrorModal = true
+        // this.showErrorModal = true
       }
     }
   }

@@ -4,7 +4,7 @@
 <script>
 export default {
   transition: {
-    name: 'slide',
+    name: 'fade',
     mode: 'out-in'
   },
 }

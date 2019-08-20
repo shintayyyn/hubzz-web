@@ -2,9 +2,6 @@ export default {
     TOGGLE_LOADING(state, payload) {
         state.loading_jobs = payload
     },
-    TOGGLE_SHIELD(state, payload) {
-        state.modal_shield = payload
-    },
     CLEAR_JOBS(state) {
         state.practice_available_jobs = []
         state.practice_applied_jobs = []

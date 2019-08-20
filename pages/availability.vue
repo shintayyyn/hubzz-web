@@ -102,7 +102,7 @@ export default {
 }
 @media screen and (min-width: 768px) {
   .availability-calendar {
-    height: 600px;
+    height: auto;
   }
 }
 .add-unavailable-date-shield {

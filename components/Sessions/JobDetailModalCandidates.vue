@@ -8,8 +8,13 @@
       @click="show(user.id)"
     >
       <div class="flex flex-row flex-no-wrap justify-between items-center">
-        <img :src="user.avatar.file.url" alt="avatar" class="rounded-full" width="40" />
-        <!-- <svgicon name="no-avatar" height="40" width="40" /> -->
+        <div class="relative avatar flex">
+          <img
+            :src="user.avatar.file.url"
+            v-if="user.avatar && user.avatar.file && user.avatar.file.url"
+          />
+          <svgicon v-else name="no-avatar" height="40" width="40" />
+        </div>
         <div class="text-xs sm:text-sm font-bold leading-loose">{{user.personal_detail.name}}</div>
         <div class="flex">
           <svgicon name="arrow-right" height="20" width="20" />
@@ -36,4 +41,15 @@ export default {
   }
 };
 </script>
+<style scoped>
+.avatar {
+  max-width: 40px;
+  max-height: 40px;
+  min-width: 40px;
+  min-height: 40px;
+}
+img {
+  border-radius: 50%;
+}
+</style>
 

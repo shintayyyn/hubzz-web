@@ -25,7 +25,7 @@ export default {
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: 998;
+  z-index: 400;
   background-color: #f5f6f9;
   /* h-offset v-offset blur spread color */
   box-shadow: 10px 10px 0.1 10px #f5f6f9;

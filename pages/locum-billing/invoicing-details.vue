@@ -173,16 +173,16 @@ export default {
     }
   },
   mounted() {
-    this.form.tax_year_end_month = this.user.locum_detail.invoice_detail.tax_year_end_month
-    this.form.tax_year_end_date = this.user.locum_detail.invoice_detail.tax_year_end_date
-    this.form.utr_number = this.user.locum_detail.invoice_detail.utr_number
-    this.form.company_registration_number = this.user.locum_detail.invoice_detail.company_registration_number
-    this.form.employment_type = this.user.locum_detail.invoice_detail.employment_type
-    this.form.ir35 = this.user.locum_detail.invoice_detail.ir35
-    this.form.account_name = this.user.locum_detail.bank_account.account_name
-    this.form.bank_name = this.user.locum_detail.bank_account.bank_name
-    this.form.account_number = this.user.locum_detail.bank_account.account_number
-    this.form.sort_code = this.user.locum_detail.bank_account.sort_code
+    this.form.tax_year_end_month = this.user.locum_detail.invoice_detail && this.user.locum_detail.invoice_detail.tax_year_end_month ? this.user.locum_detail.invoice_detail.tax_year_end_month : null
+    this.form.tax_year_end_date = this.user.locum_detail.invoice_detail && this.user.locum_detail.invoice_detail.tax_year_end_date ? this.user.locum_detail.invoice_detail.tax_year_end_date : null
+    this.form.utr_number = this.user.locum_detail.invoice_detail && this.user.locum_detail.invoice_detail.utr_number ? this.user.locum_detail.invoice_detail.utr_number : null
+    this.form.company_registration_number = this.user.locum_detail.invoice_detail && this.user.locum_detail.invoice_detail.company_registration_number ? this.user.locum_detail.invoice_detail.company_registration_number : null
+    this.form.employment_type = this.user.locum_detail.invoice_detail && this.user.locum_detail.invoice_detail.employment_type ? this.user.locum_detail.invoice_detail.employment_type : null
+    this.form.ir35 = this.user.locum_detail.invoice_detail && this.user.locum_detail.invoice_detail.ir35 ? this.user.locum_detail.invoice_detail.ir35 : null
+    this.form.account_name = this.user.locum_detail.bank_account && this.user.locum_detail.bank_account.account_name ? this.user.locum_detail.bank_account.account_name : null
+    this.form.bank_name = this.user.locum_detail.bank_account && this.user.locum_detail.bank_account.bank_name ? this.user.locum_detail.bank_account.bank_name : null
+    this.form.account_number = this.user.locum_detail.bank_account && this.user.locum_detail.bank_account.account_number ? this.user.locum_detail.bank_account.account_number : null
+    this.form.sort_code = this.user.locum_detail.bank_account && this.user.locum_detail.bank_account.sort_code ? this.user.locum_detail.bank_account.sort_code : null
   },
   data() {
     return {

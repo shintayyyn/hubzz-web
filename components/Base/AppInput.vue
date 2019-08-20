@@ -10,7 +10,11 @@
           v-if="error"
         >{{error.message}}</div>
       </div>
-      <div class="flex flex-row justify-start mt-1" v-for="(item, index) in lists" :key="index">
+      <div
+        class="flex flex-row justify-start content-center mt-1"
+        v-for="(item, index) in lists"
+        :key="index"
+      >
         <input
           :value="item.value"
           type="checkbox"
@@ -18,7 +22,7 @@
           class="mt-1 mr-1"
           :checked="isChecked.includes(item.value)"
         />
-        <label :for="item.name" class="text-xs sm:text-sm py-1">{{item.label}}</label>
+        <label :for="item.name" class="text-xs sm:text-sm">{{item.label}}</label>
       </div>
     </div>
 

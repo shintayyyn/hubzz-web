@@ -1,6 +1,6 @@
 <template>
   <div class="modal-container shadow-lg">
-    <JobDetailModal :job="job" />
+    <JobDetailModal :job="job" @close="$router.push('/sessions')" />
   </div>
 </template>
 <script>

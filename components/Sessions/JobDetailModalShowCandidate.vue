@@ -10,9 +10,12 @@
       <div class="w-full pr-0 lg:pr-2 lg:w-1/2">
         <div class="rounded-lg shadow-lg p-8">
           <div class="float-right">
-            <div class="text-xs sm:text-sm mb-8">
-              <img :src="user.avatar.file.url" alt="avatar" class="rounded-full" width="80" />
-              <!-- <svgicon name="no-avatar" height="80" width="80" /> -->
+            <div class="relative avatar flex justify-center">
+              <img
+                :src="user.avatar.file.url"
+                v-if="user.avatar && user.avatar.file && user.avatar.file.url"
+              />
+              <svgicon v-else name="no-avatar" height="80" width="80" />
             </div>
           </div>
           <div class="font-bold text-sm sm:text-md">Candidate</div>
@@ -203,6 +206,15 @@ export default {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.avatar {
+  max-width: 80px;
+  max-height: 80px;
+  min-width: 80px;
+  min-height: 80px;
+}
+img {
+  border-radius: 50%;
 }
 </style>
 
