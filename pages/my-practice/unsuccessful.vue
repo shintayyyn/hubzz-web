@@ -34,7 +34,7 @@
                   :src="practice.user.avatar.file.url"
                   v-if="practice.user && practice.user.avatar && practice.user.avatar.file && practice.user.avatar.file.url"
                 />
-                <svgicon name="no-avatar" height="115" width="115" v-else />
+                <svgicon v-else name="no-avatar" height="115" width="115" />
               </div>
             </div>
 
@@ -65,16 +65,14 @@
 <script>
 import AppPagination from '@/components/Base/AppPagination'
 import AppLoading from '@/components/Base/AppLoading'
-import MyPracticeDetailModal from '@/components/MyPractice/MyPracticeDetailModal'
 export default {
   transition: {
-    name: 'fade',
-    mode: 'out-in'
+    name: "fade",
+    mode: "out-in"
   },
   components: {
     AppPagination,
     AppLoading,
-    MyPracticeDetailModal
   },
   data() {
     return {
@@ -84,7 +82,7 @@ export default {
       modal: false,
       practice: null,
       loading: true
-    }
+    };
   },
   computed: {
     offset() {
@@ -95,34 +93,39 @@ export default {
     },
     totalPages() {
       return Math.ceil(this.total / this.perPage);
-    },
+    }
   },
   created() {
-    this.getUnsuccessfulPracticesCount()
+    this.getUnsuccessfulPracticesCount();
   },
   methods: {
     getUnsuccessfulPracticesCount() {
-      this.$axios.$get(`/api/v1/locum/practices/count?locum_practice_type=Unsuccessful`).then(res => {
-        this.total = res.data.count
-        this.getUnsuccessfulPractices(this.current_page)
-
-      })
+      this.$axios
+        .$get(`/api/v1/locum/practices/count?locum_practice_type=Unsuccessful`)
+        .then(res => {
+          this.total = res.data.count;
+          this.getUnsuccessfulPractices(this.current_page);
+        });
     },
     getUnsuccessfulPractices(page) {
-      this.$axios.$get(`/api/v1/locum/practices?locum_practice_type=Unsuccessful&offset=${this.offset}&limit=${this.perPage}`).then(res => {
-        this.practices = res.data.practices
-        this.loading = false
-      })
+      this.$axios
+        .$get(
+          `/api/v1/locum/practices?locum_practice_type=Unsuccessful&offset=${this.offset}&limit=${this.perPage}`
+        )
+        .then(res => {
+          this.practices = res.data.practices;
+          this.loading = false;
+        });
     },
     show(id) {
-      this.$router.push(`/my-practice/unsuccessful/${id}`)
+      this.$router.push(`/my-practice/unsuccessful/${id}`);
     },
     pagechanged(e) {
-      this.current_page = e
-      this.getCompletedPractices(this.current_page)
+      this.current_page = e;
+      this.getCompletedPractices(this.current_page);
     }
   }
-}
+};
 </script>
 <style scoped>
 .avatar-container {
@@ -134,9 +137,6 @@ export default {
   max-height: 170px;
   min-width: 170px;
   min-height: 170px;
-}
-img {
-  border-radius: 50%;
 }
 .shield {
   position: fixed;

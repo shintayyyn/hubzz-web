@@ -25,12 +25,12 @@
           :job="locum_appointment_job"
         />
       </div>
-      <div class="modal-container shadow-lg" v-if="locum_modal">
+      <div class="shadow-lg" v-if="locum_modal">
         <JobDetailModalLocum @close="locum_modal = false" :job="locum_job" />
       </div>
-      <div class="modal-container shadow-lg" v-if="create_job_modal">
+      <!-- <div class="modal-container shadow-lg" v-if="create_job_modal">
         <CreateJobModal />
-      </div>
+      </div>-->
       <div class="modal-container shadow-lg" v-if="practice_modal">
         <JobDetailModal @close="practice_modal = false" :job="practice_job" />
       </div>
@@ -38,16 +38,16 @@
   </section>
 </template>
 <script>
-import PerMonth from '@/components/Calendar/PerMonth'
-import PerWeek from '@/components/Calendar/PerWeek'
-import Info from '@/components/Calendar/Info'
+import PerMonth from "@/components/Calendar/PerMonth";
+import PerWeek from "@/components/Calendar/PerWeek";
+import Info from "@/components/Calendar/Info";
 // locums
-import JobDetailModalLocum from '@/components/Jobs/JobDetailModalLocum'
-import JobDetailModalAppointment from '@/components/Jobs/JobDetailModalAppointment'
+import JobDetailModalLocum from "@/components/Jobs/JobDetailModalLocum";
+import JobDetailModalAppointment from "@/components/Jobs/JobDetailModalAppointment";
 
 // practice
-import CreateJobModal from '@/components/CreateJobModal'
-import JobDetailModal from '@/components/Sessions/JobDetailModal'
+import CreateJobModal from "@/components/CreateJobModal";
+import JobDetailModal from "@/components/Sessions/JobDetailModal";
 
 export default {
   components: {
@@ -57,7 +57,7 @@ export default {
     JobDetailModalLocum,
     JobDetailModalAppointment,
     CreateJobModal,
-    JobDetailModal,
+    JobDetailModal
   },
   data() {
     return {
@@ -66,58 +66,63 @@ export default {
       locum_modal: false,
       locum_job: null,
       locum_appointment_modal: false,
-      locum_appointment_job: null,
-    }
+      locum_appointment_job: null
+    };
   },
   created() {
-    this.$store.commit('calendar/SET_DATE_TODAY')
+    this.$store.commit("calendar/SET_DATE_TODAY");
   },
   computed: {
     toggleScroll() {
-      return this.locum_appointment_modal | this.locum_modal | this.practice_modal | this.create_job_modal
+      return (
+        this.locum_appointment_modal |
+        this.locum_modal |
+        this.practice_modal |
+        this.create_job_modal
+      );
     },
     create_job_modal() {
-      return this.$store.state.calendar.create_job_modal
+      return this.$store.state.calendar.create_job_modal;
     }
   },
   watch: {
     toggleScroll(value) {
       if (value) {
-        document.body.style.overflow = 'hidden'
+        document.body.style.overflow = "hidden";
       } else {
-        document.body.style.overflow = 'auto'
+        document.body.style.overflow = "auto";
       }
-    },
+    }
   },
   methods: {
     create() {
-      if (this.$auth.user.domain === 'Locum') {
-        this.createAppointmentJob()
+      if (this.$auth.user.domain === "Locum") {
+        this.createAppointmentJob();
       } else {
-        this.$store.commit('calendar/CREATE_JOB_MODAL', true)
+        this.$store.commit("calendar/CREATE_JOB_MODAL", true);
       }
     },
     // locum
     createAppointmentJob() {
-      this.locum_appointment_modal = true
-      this.locum_appointment_job = null
+      this.locum_appointment_modal = true;
+      this.locum_appointment_job = null;
     },
     viewLocumJob(job) {
-      if (job.type === 'Private') {
-        this.locum_appointment_modal = true
-        this.locum_appointment_job = job
-        return
+      if (job.type === "Private") {
+        this.locum_appointment_modal = true;
+        this.locum_appointment_job = job;
+        return;
       }
-      this.locum_modal = true
-      this.locum_job = job
+      this.locum_modal = true;
+      this.locum_job = job;
     },
     // practice
     viewPracticeJob(job) {
-      this.practice_modal = true
-      this.practice_job = job
-    },
+      this.practice_modal = true;
+      this.practice_job = job;
+    }
   }
-}
+};
 </script>
 <style>
 .calendar {
@@ -127,33 +132,6 @@ export default {
 @media screen and (min-width: 991px) {
   .calendar {
     height: auto;
-  }
-}
-.modal-shield {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #333;
-  opacity: 0.5;
-  z-index: 509;
-}
-.modal-container {
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  border-left: solid 2px #edf2f7;
-  transition: all 0.3s ease-in-out;
-  background-color: white;
-  z-index: 510;
-}
-@media screen and (min-width: 1200px) {
-  .modal-container {
-    width: 80%;
   }
 }
 </style>

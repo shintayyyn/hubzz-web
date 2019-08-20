@@ -1,52 +1,56 @@
 <template>
   <section class="profile-section">
-    <ProfileTabs />
-    <div class="mt-5">
-      <transition name="fade" mode="out-in">
-        <Component :is="activeComponent" />
-      </transition>
+    <div class="modal-shield" v-if="shield"></div>
+    <div class="flex overflow-x-auto whitespace-no-wrap">
+      <nuxt-link
+        to="/profile/practice"
+        class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+        :class="$route.name === 'profile-practice'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+      >Practice</nuxt-link>
+      <nuxt-link
+        to="/profile/branches-surgeries"
+        class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+        :class="$route.name === 'profile-branches-surgeries' || $route.name === 'profile-branches-surgeries-create'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+      >Branches / Surgeries</nuxt-link>
+      <nuxt-link
+        to="/profile/practice-documents"
+        class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+        :class="$route.name === 'profile-practice-documents'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+      >Practice Documents</nuxt-link>
+      <nuxt-link
+        v-if="$route.name === 'profile-branches-surgeries' || $route.name === 'profile-branches-surgeries-create'"
+        to="/profile/branches-surgeries/create"
+        class="md:mr-5 p-3 text-sm font-bold cursor-pointer hover:bg-yellow-500 rounded-lg"
+      >
+        Create
+        <!-- <button
+          class="bg-yellow-500 rounded-full font-bold text-3xl hover:text-white focus:outline-none"
+          style="width:40px;height:40px;"
+        >+</button>-->
+      </nuxt-link>
     </div>
-    <div class="modal-shield" v-if="shield"></div> <!--SHIELD ITSELF IS IN HERE.-->
-    <nuxt-child v-if="this.$route.params.id" />
+    <div class="mt-5">
+      <nuxt-child />
+    </div>
   </section>
 </template>
 <script>
-import ProfileTabs from '@/components/Profile/ProfileTabs'
-import Practice from '@/components/Profile/Practice'
-import Surgeries from '@/components/Profile/Surgeries'
-import Documents from '@/components/Profile/Documents'
 export default {
-  components: {
-    ProfileTabs,
-    Practice,
-    Surgeries,
-    Documents
-  },
   computed: {
-    activeComponent() {
-      return this.$route.query.profile_tab
-    },
     shield() {
-      return this.$store.state.profile.shield
+      return this.$store.state.profile.shield;
     }
   },
   watch: {
     shield(value) {
       if (value) {
-        document.body.style.overflow = 'hidden'
+        document.body.style.overflow = "hidden";
       } else {
-        document.body.style.overflow = 'auto'
+        document.body.style.overflow = "auto";
       }
     }
-  },
-  created() {
-    const query = {
-      ...this.$route.query,
-      profile_tab: this.$route.query.profile_tab || 'practice'
-    }
-    this.$router.push({ query })
-  },
-}
+  }
+};
 </script>
 <style scoped>
 .modal-shield {

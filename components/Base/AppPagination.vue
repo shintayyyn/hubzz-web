@@ -7,12 +7,14 @@
           type="button"
           class="rounded-lg hidden md:block py-2 px-4 font-bold text-sm focus:outline-none"
           @click="onClickFirstPage"
+          :class="{ 'text-gray-500': isInFirstPage }"
           :disabled="loading || isInFirstPage"
         >First</button>
         <button
           type="button"
           class="relative rounded-lg md:hidden py-4 px-5 font-bold text-sm focus:outline-none"
           @click="onClickFirstPage"
+          :class="{ 'text-gray-500': isInFirstPage }"
           :disabled="loading || isInFirstPage"
         >
           <span class="absolute mx-2 my-1 left-0 top-0">
@@ -28,12 +30,14 @@
           type="button"
           class="rounded-lg hidden md:block py-2 px-4 font-bold text-sm focus:outline-none"
           @click="onClickPreviousPage"
+          :class="{ 'text-gray-500': isInFirstPage }"
           :disabled="loading || isInFirstPage"
         >Previous</button>
         <button
           type="button"
           class="relative rounded-lg md:hidden py-4 px-4 font-bold text-sm focus:outline-none"
           @click="onClickPreviousPage"
+          :class="{ 'text-gray-500': isInFirstPage }"
           :disabled="loading || isInFirstPage"
         >
           <span class="absolute mx-1 my-1 left-0 top-0">
@@ -58,6 +62,7 @@
         <button
           type="button"
           class="rounded-lg hidden md:block py-2 px-4 font-bold text-sm focus:outline-none"
+          :class="{ 'text-gray-500': isInLastPage }"
           @click="onClickNextPage"
           :disabled="loading || isInLastPage"
         >Next</button>
@@ -65,6 +70,7 @@
           type="button"
           class="relative rounded-lg md:hidden py-4 px-4 font-bold text-sm focus:outline-none"
           @click="onClickNextPage"
+          :class="{ 'text-gray-500': isInLastPage }"
           :disabled="loading || isInLastPage"
         >
           <span class="absolute mx-1 my-1 left-0 top-0">
@@ -80,12 +86,14 @@
           type="button"
           class="rounded-lg hidden md:block py-2 px-4 font-bold text-sm focus:outline-none"
           @click="onClickLastPage"
+          :class="{ 'text-gray-500': isInLastPage }"
           :disabled="loading || isInLastPage"
         >Last</button>
         <button
           type="button"
           class="relative rounded-lg md:hidden py-4 px-5 font-bold text-sm focus:outline-none"
           @click="onClickLastPage"
+          :class="{ 'text-gray-500': isInLastPage }"
           :disabled="loading || isInLastPage"
         >
           <span class="absolute mx-2 my-1 left-0 top-0">
@@ -103,12 +111,14 @@
           type="button"
           class="rounded-lg hidden md:block py-2 px-4 font-bold text-sm focus:outline-none"
           @click="onClickFirstPage"
+          :class="{ 'text-gray-500': isInFirstPage }"
           :disabled="loading || isInFirstPage"
         >First</button>
         <button
           type="button"
           class="relative rounded-lg md:hidden py-4 px-5 font-bold text-sm focus:outline-none"
           @click="onClickFirstPage"
+          :class="{ 'text-gray-500': isInFirstPage }"
           :disabled="loading || isInFirstPage"
         >
           <span class="absolute mx-2 my-1 left-0 top-0">
@@ -124,12 +134,14 @@
           type="button"
           class="rounded-lg hidden md:block py-2 px-4 font-bold text-sm focus:outline-none"
           @click="onClickPreviousPage"
+          :class="{ 'text-gray-500': isInFirstPage }"
           :disabled="loading || isInFirstPage"
         >Previous</button>
         <button
           type="button"
           class="relative rounded-lg md:hidden py-4 px-4 font-bold text-sm focus:outline-none"
           @click="onClickPreviousPage"
+          :class="{ 'text-gray-500': isInFirstPage }"
           :disabled="loading || isInFirstPage"
         >
           <span class="absolute mx-1 my-1 left-0 top-0">
@@ -145,12 +157,14 @@
           type="button"
           class="rounded-lg hidden md:block py-2 px-4 font-bold text-sm focus:outline-none"
           @click="onClickNextPage"
+          :class="{ 'text-gray-500': isInLastPage }"
           :disabled="loading || isInLastPage"
         >Next</button>
         <button
           type="button"
           class="relative rounded-lg md:hidden py-4 px-4 font-bold text-sm focus:outline-none"
           @click="onClickNextPage"
+          :class="{ 'text-gray-500': isInLastPage }"
           :disabled="loading || isInLastPage"
         >
           <span class="absolute mx-1 my-1 left-0 top-0">
@@ -166,12 +180,14 @@
           type="button"
           class="rounded-lg hidden md:block py-2 px-4 font-bold text-sm focus:outline-none"
           @click="onClickLastPage"
+          :class="{ 'text-gray-500': isInLastPage }"
           :disabled="loading || isInLastPage"
         >Last</button>
         <button
           type="button"
           class="relative rounded-lg md:hidden py-4 px-5 font-bold text-sm focus:outline-none"
           @click="onClickLastPage"
+          :class="{ 'text-gray-500': isInLastPage }"
           :disabled="loading || isInLastPage"
         >
           <span class="absolute mx-2 my-1 left-0 top-0">

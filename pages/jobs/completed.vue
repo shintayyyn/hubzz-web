@@ -1,5 +1,6 @@
 <template>
   <section class="__jobs-section">
+    <AppLoading :loading="loadingJobs" :message="'Loading'" />
     <AppJobFilter @getJobs="getJobs(1, params)" :params="params" />
     <div class="overflow-x-auto">
       <div
@@ -7,7 +8,7 @@
         style="font-family: Nunito"
         v-if="!loadingJobs && getLocumCompletedJobs.length === 0"
       >You have not yet completed any job</div>
-      <div v-else class="overflow-x-auto overflow-y-hidden">
+      <div v-if="getLocumCompletedJobs.length > 0" class="overflow-x-auto overflow-y-hidden">
         <table>
           <thead>
             <tr class="text-xs sm:text-sm text-left">
@@ -67,15 +68,23 @@
         @pagechanged="pagechanged"
       />
     </div>
+    <div class="modal-shield" v-if="$route.name === 'jobs-completed-id'"></div>
+    <nuxt-child />
   </section>
 </template>
 <script>
 import AppPagination from '@/components/Base/AppPagination'
 import AppJobFilter from '@/components/Base/AppJobFilter'
+import AppLoading from '@/components/Base/AppLoading'
 export default {
+  transition: {
+    name: 'fade',
+    mode: 'out-in'
+  },
   components: {
     AppPagination,
     AppJobFilter,
+    AppLoading,
   },
   data() {
     return {
@@ -120,6 +129,12 @@ export default {
       return this.$store.state.jobs.loading_jobs;
     }
   },
+  beforeCreate() {
+    this.$store.commit('jobs/TOGGLE_LOADING', true)
+  },
+  beforeDestroy() {
+    this.$store.commit('jobs/CLEAR_JOBS')
+  },
   created() {
     this.getJobsCount();
     this.getJobs(this.current_page, this.params);
@@ -161,21 +176,33 @@ export default {
       this.getJobs(this.current_page, this.params)
     },
     getJobs(page, params) {
+      this.$store.commit('jobs/TOGGLE_LOADING', true)
       this.current_page = page
       let defaultParams = { offset: this.offset, limit: this.perPage, status: "Completed" }
       let jobParams = { ...params, ...defaultParams }
-      this.$store.dispatch("jobs/fetchLocumJobs", jobParams);
+      this.$store.dispatch("jobs/fetchLocumJobs", jobParams).finally(() => {
+        this.$store.commit('jobs/TOGGLE_LOADING', false)
+      })
     },
     pagechanged(e) {
       this.current_page = e
       this.getJobs(this.current_page, this.params)
     },
     show(id) {
-      const query = {
-        ...this.$route.query
-      }
-      this.$router.push({ path: `/jobs/${id}`, query })
+      this.$router.push(`/jobs/completed/${id}`)
     }
   }
 }
 </script>
+<style scoped>
+.modal-shield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #333;
+  opacity: 0.5;
+  z-index: 509;
+}
+</style>

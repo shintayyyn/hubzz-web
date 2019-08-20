@@ -31,7 +31,7 @@
             <div class="flex flex-col">
               <div class="text-xs sm:text-sm">Your Practice's standard terms</div>
               <div class="mt-4 bg-gray-300 rounded-lg p-4">
-                <div class="flex flex-no-wrap justify-between">
+                <div class="flex flex-no-wrap justify-between items-center">
                   <div
                     class="text-xs sm:text-sm document-filename"
                   >{{ standard_terms && standard_terms.file ? standard_terms.file.filename : '' }}</div>
@@ -58,7 +58,8 @@
       </div>
 
       <div class="w-full p-2">
-        <div class="rounded-lg shadow-lg p-8">
+        <AppFormError :formError="formError" v-if="formError.length > 0" />
+        <div class="rounded-lg shadow-lg p-8 mt-4">
           <div class="flex flex-row flex-wrap justify-between">
             <div class="flex flex-col w-full md:w-1/3 pr-1">
               <AppInput
@@ -67,7 +68,6 @@
                 :name="'phone_number'"
                 :label="'Phone number'"
                 :placeholder="''"
-                :error="this.formError.find(item => item.field === 'phone_number')"
               />
               <AppInput
                 v-model="form.report_to"
@@ -75,7 +75,6 @@
                 :name="'report_to'"
                 :label="'Report to'"
                 :placeholder="''"
-                :error="this.formError.find(item => item.field === 'report_to')"
               />
               <AppInput
                 v-model="form.email"
@@ -83,7 +82,6 @@
                 :name="'email'"
                 :label="'Email Address'"
                 :placeholder="''"
-                :error="this.formError.find(item => item.field === 'email')"
               />
               <AppInput
                 v-model="form.practice_type_id"
@@ -93,7 +91,6 @@
                 :name="'practice_type_id'"
                 :label="'What type of Practice are you?'"
                 :placeholder="''"
-                :error="this.formError.find(item => item.field === 'practice_type_id')"
                 :lists="practice_types"
               />
               <AppTextarea
@@ -101,7 +98,6 @@
                 :name="'extra_information'"
                 :label="'Extra Information (Pracking restrictions, transport links, etc.)'"
                 :placeholder="''"
-                :error="this.formError.find(item => item.field === 'extra_information')"
               />
               <AppInput
                 v-model="form.mandatory_training_id"
@@ -111,7 +107,6 @@
                 :name="'mandatory_training_id'"
                 :label="'Mandatory training required from Locums:'"
                 :placeholder="''"
-                :error="this.formError.find(item => item.field === 'mandatory_training_id')"
                 :lists="mandatory_trainings"
               />
             </div>
@@ -127,7 +122,6 @@
                     :name="'gp_compliance_document_id'"
                     :label="'For GPs:'"
                     :placeholder="''"
-                    :error="this.formError.find(item => item.field === 'gp_compliance_document_id')"
                     :lists="gp_documents"
                   />
                 </div>
@@ -140,7 +134,6 @@
                     :name="'others_compliance_document_id'"
                     :label="'For Nurses, et al:'"
                     :placeholder="''"
-                    :error="this.formError.find(item => item.field === 'others_compliance_document_id')"
                     :lists="others_documents"
                   />
                 </div>
@@ -167,12 +160,14 @@ import AppInput from "@/components/Base/AppInput";
 import AppTextarea from "@/components/Base/AppTextarea";
 import AppButton from "@/components/Base/AppButton";
 import RemoveConfirmationModal from "@/components/Profile/RemoveConfirmationModal";
+import AppFormError from "@/components/Base/AppFormError";
 export default {
   components: {
     AppInput,
     AppTextarea,
     AppButton,
-    RemoveConfirmationModal
+    RemoveConfirmationModal,
+    AppFormError
   },
   data() {
     return {
@@ -338,12 +333,18 @@ export default {
         });
         return;
       }
-      const formData = new FormData()
-      formData.append('file', file)
-      this.$axios.$put(`/api/v1/practice/me/standard-terms`, formData).then(res => {
-        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: [res.message] })
-      })
-      this.standard_terms.file.filename = file.name
+      const formData = new FormData();
+      formData.append("file", file);
+      this.$axios
+        .$put(`/api/v1/practice/me/standard-terms`, formData)
+        .then(res => {
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: [res.message]
+          });
+        });
+      this.standard_terms.file.filename = file.name;
       // console.log(file.name)
     },
     uncheckPractice(value) {
@@ -357,7 +358,9 @@ export default {
       );
     },
     uncheckOther(value) {
-      this.form.others_compliance_document_id = this.form.others_compliance_document_id.filter(id => id != value)
+      this.form.others_compliance_document_id = this.form.others_compliance_document_id.filter(
+        id => id != value
+      );
     },
     uncheckMandatory(value) {
       this.form.mandatory_training_id = this.form.mandatory_training_id.filter(
@@ -370,21 +373,40 @@ export default {
     remove() {
       // ! ask arvi hind na reremove ung document
       this.$axios.$delete(`/api/v1/practice/me/standard-terms`).then(res => {
-        this.modal = false
-        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: [res.message] })
-        this.standard_terms.file.filename = null
+        this.modal = false;
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "success",
+          text: [res.message]
+        });
+        this.standard_terms.file.filename = null;
         // standard_terms)
-      })
+      });
     },
     save() {
       try {
-        this.formError = []
-        this.Validate(this.form, ['mandatory_training_id', 'extra_information'])
+        this.formError = [];
+        this.Validate(this.form, [
+          "mandatory_training_id",
+          "extra_information"
+        ]);
         if (!this.formError.length) {
-          this.$axios.$put(`/api/v1/practice/me/profile`, this.form).then(res => {
-            // set mandatory training
-            this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: [res.message] })
-          })
+          this.$axios
+            .$put(`/api/v1/practice/me/profile`, this.form)
+            .then(res => {
+              // set mandatory training
+              this.$store.commit("SET_NOTIFICATION", {
+                enabled: true,
+                status: "success",
+                text: [res.message]
+              });
+            });
+        } else {
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "danger",
+            text: ["Please fill up all the forms"]
+          });
         }
       } catch (e) {
         console.log(e);

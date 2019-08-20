@@ -1,43 +1,42 @@
 <template>
   <section class="my-banks-section">
     <div class="mb-5 text-sm font-bold cursor-pointer">My Locums</div>
-    <MyBanksTab />
+    <div class="relative flex flex-col md:flex-row justify-between items-end md:items-center">
+      <div class="flex justify-between md:justify-start w-full md:w-4/5 overflow-x-auto">
+        <nuxt-link
+          to="/my-banks/favourites"
+          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          :class="$route.name === 'my-banks-favourites' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        >Favourites</nuxt-link>
+        <nuxt-link
+          to="/my-banks/all"
+          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          :class="$route.name === 'my-banks-all' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        >All</nuxt-link>
+        <nuxt-link
+          to="/my-banks/appointed"
+          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          :class="$route.name === 'my-banks-appointed' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        >Appointed</nuxt-link>
+        <nuxt-link
+          to="/my-banks/rejected"
+          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          :class="$route.name === 'my-banks-rejected' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        >Rejected</nuxt-link>
+        <nuxt-link
+          to="/my-banks/withdrawn"
+          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          :class="$route.name === 'my-banks-withdrawn' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        >Withdrawn</nuxt-link>
+      </div>
+    </div>
     <div class="mt-5">
-      <transition name="fade" mode="out-in">
-        <Component :is="activeComponent" />
-      </transition>
+      <nuxt-child />
     </div>
   </section>
 </template>
 <script>
-import MyBanksTab from '@/components/MyBanks/MyBanksTab'
-import Favourites from '@/components/MyBanks/Favourites'
-import All from '@/components/MyBanks/All'
-import Appointed from '@/components/MyBanks/Appointed'
-import Rejected from '@/components/MyBanks/Rejected'
-import Withdrawn from '@/components/MyBanks/Withdrawn'
-
 export default {
-  components: {
-    MyBanksTab,
-    Favourites,
-    All,
-    Appointed,
-    Rejected,
-    Withdrawn,
-  },
-  middleware:'isVerified',
-  created() {
-    const query = {
-      ...this.$route.query,
-      my_banks_tab: this.$route.query.my_banks_tab || 'favourites'
-    }
-    this.$router.push({ query })
-  },
-  computed: {
-    activeComponent() {
-      return this.$route.query.my_banks_tab
-    }
-  },
-}
+  middleware: "isVerified"
+};
 </script>

@@ -11,11 +11,14 @@ export default {
   components: {
     MessagesLeftPanel
   },
-  async asyncData({ app, store, params }) {
+  async asyncData({ app, store, route, params, redirect }) {
     const response = await chatApi.fetchConversations(app.$axios, 0, 10);
     const conversations = response.data.conversations;
-
     store.commit("chat/SET_CONVERSATIONS", conversations);
+
+    // if (route.name === 'messages-slug') {
+    //   redirect(`/messages/${params.slug}`)
+    // }
   },
   computed: {
     socketId() {
@@ -29,6 +32,11 @@ export default {
     $route(to, from) {
       if (to.params.slug) {
         this.$store.dispatch("chat/setActiveConversation", to.params.slug);
+      }
+      if (to.path === "/messages") {
+        if (window.innerWidth < 768) {
+          this.$store.commit("IS_MOBILE", true);
+        }
       }
     },
     socketId(value) {
@@ -45,12 +53,17 @@ export default {
     });
   },
   created() {
+    console.log("created parent");
     this.$store.dispatch("chat/setActiveConversation", this.$route.params.slug);
     this.$axios.$get(`/api/v1/messages/user-presence`).then(res => {
       this.$store.commit("chat/SET_USERS_ONLINE", res.data.users);
     });
   },
   mounted() {
+    // console.log("mounted parent");
+    if (!this.$route.params.slug) {
+      this.$store.commit("IS_MOBILE", true);
+    }
     if (this.socketId) {
       this.$store.dispatch("joinRoom", {
         socket_id: this.socketId,

@@ -212,8 +212,11 @@ export default {
     },
   },
   mounted() {
-    this.$store.commit('billing/SET_INVOICES', this.invoices)
-    this.$store.commit('billing/SET_INVOICE_COUNT', this.count)
+    this.$store.commit('billing/SET_LOCUM_INVOICES', this.invoices)
+    this.$store.commit('billing/SET_LOCUM_INVOICE_COUNT', this.count)
+  },
+  beforeDestroy() {
+    this.$store.commit('billing/CLEAR_INVOICES')
   },
   methods: {
     pagechanged(e) {
@@ -247,7 +250,7 @@ export default {
       }
       let invoiceParams = { ...params, ...defaultParams }
       this.$axios.$get('/api/v1/locum/invoices', { params: invoiceParams }).then(res => {
-        this.$store.commit('billing/SET_INVOICES', res.data.invoices)
+        this.$store.commit('billing/SET_LOCUM_INVOICES', res.data.invoices)
       })
     },
 
@@ -277,14 +280,14 @@ export default {
       if (!this.formError.length) {
         this.form.paid_at = this.$moment(this.form.paid_at).format('YYYY-MM-DD')
         this.$axios.$put(`/api/v1/locum/invoices/${this.selectedInvoiceId}/paid`, this.form).then(res => {
-          this.$store.commit('billing/UPDATE_INVOICE', res.data.invoice)
+          this.$store.commit('billing/UPDATE_LOCUM_INVOICE', res.data.invoice)
           this.paymentModal = false
         })
       }
     },
     deleteInvoice() {
       this.$axios.$delete(`/api/v1/locum/invoices/${this.selectedInvoiceId}`).then(res => {
-        this.$store.commit('billing/REMOVE_INVOICE', this.selectedInvoiceId)
+        this.$store.commit('billing/REMOVE_LOCUM_INVOICE', this.selectedInvoiceId)
         this.deleteModal = false
         this.getInvoice(this.current_page, this.params)
       })
@@ -295,9 +298,6 @@ export default {
 </script>
 
 <style scoped>
-.calendar-container {
-  min-width: 1000px;
-}
 .invoice-shield {
   position: fixed;
   top: 0;

@@ -31,63 +31,75 @@
 </template>
 
 <script>
-import Calendar from '@/components/Calendar'
-import Reminders from '@/components/Dashboard/Reminders'
-import Statistics from '@/components/Dashboard/Statistics'
+import Calendar from "@/components/Calendar";
+import Reminders from "@/components/Dashboard/Reminders";
+import Statistics from "@/components/Dashboard/Statistics";
 export default {
   data() {
     return {
       userIsAuthorized: false,
       complianceDocs: []
-    }
+    };
   },
   components: {
     Calendar,
     Reminders,
-    Statistics,
+    Statistics
   },
-  computed: {
-    socketId() {
-      return this.$store.state.socket_id
-    }
-  },
-  watch: {
-    socketId(value) {
-      this.$store.dispatch('joinRoom', { socket_id: value, room_name: 'jobroom', })
-    }
-  },
+  // computed: {
+  //   socketId() {
+  //     return this.$store.state.socket_id
+  //   }
+  // },
+  // watch: {
+  //   socketId(value) {
+  //     this.$store.dispatch('joinRoom', { socket_id: value, room_name: 'jobroom', })
+  //   }
+  // },
   beforeDestroy() {
-    this.$store.dispatch('leaveRoom', { socket_id: this.$socket.id, room_name: 'jobroom' })
+    this.$store.dispatch("leaveRoom", {
+      socket_id: this.$socket.id,
+      room_name: "jobroom"
+    });
   },
   created() {
     if (this.$auth.loggedIn) {
-      let domain = this.$auth.user.domain
-      let accountStatus = this.$auth.user.status
-      if (domain === 'Locum') {
-        let complianceDocs = this.$auth.user.locum_detail.compliance_documents
+      let domain = this.$auth.user.domain;
+      let accountStatus = this.$auth.user.status;
+      if (domain === "Locum") {
+        let complianceDocs = this.$auth.user.locum_detail.compliance_documents;
       }
-      if (domain === 'Practice' && accountStatus === 'Active') {
-        this.userIsAuthorized = true
-        console.log("practice user is authorized")
-      } else if (domain === 'Locum' && accountStatus === "Active" || accountStatus === "Dormant") {
-        this.userIsAuthorized = true
-        console.log("locum user is authorized")
+      if (domain === "Practice" && accountStatus === "Active") {
+        this.userIsAuthorized = true;
+        console.log("practice user is authorized");
+      } else if (
+        (domain === "Locum" && accountStatus === "Active") ||
+        accountStatus === "Dormant"
+      ) {
+        this.userIsAuthorized = true;
+        console.log("locum user is authorized");
       } else {
-        this.userIsAuthorized = false
-        console.log("user is not authorized")
+        this.userIsAuthorized = false;
+        console.log("user is not authorized");
       }
     }
   },
   mounted() {
     if (this.$socket.connected) {
-      this.$store.dispatch('joinRoom', { socket_id: this.$socket.id, room_name: 'jobroom' })
+      this.$store.dispatch("joinRoom", {
+        socket_id: this.$socket.id,
+        room_name: "jobroom"
+      });
     } else {
-      this.$socket.on('connect', () => {
-        this.$store.dispatch('joinRoom', { socket_id: this.$socket.id, room_name: 'jobroom' })
-      })
+      this.$socket.on("connect", () => {
+        this.$store.dispatch("joinRoom", {
+          socket_id: this.$socket.id,
+          room_name: "jobroom"
+        });
+      });
     }
   }
-}
+};
 </script>
 <style scoped>
 .dashboard-section {

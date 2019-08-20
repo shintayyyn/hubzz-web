@@ -34,7 +34,7 @@
           :name="'near_post_code'"
           :label="'Post code'"
           @onSelect="onSelect"
-          :inStyle="'background-color:#dae1e7;border-color:white'"
+          :inStyle="'background-color:#dae1e7;border-color:white; padding: 1rem .5rem'"
         />
       </div>
       <div class="w-full sm:w-1/4 p-1">
@@ -56,7 +56,7 @@
         />
       </div>
       <div class="w-full sm:w-1/4">
-        <AppButton :label="'Search'" @click="$emit('getJobs')" :inStyle="'padding:5px'" />
+        <AppButton :label="'Search'" @click="$emit('getJobs')" :inStyle="'padding:5px 14px'" />
       </div>
     </div>
     <div class="flex flex-row flex-wrap" v-if="$auth.user.domain === 'Practice'">
@@ -88,35 +88,35 @@
         />
       </div>
       <div class="w-full sm:w-1/4">
-        <AppButton :label="'Search'" @click="$emit('getJobs')" :inStyle="'padding:5px'" />
+        <AppButton :label="'Search'" @click="$emit('getJobs')" :inStyle="'padding:5px 14px'" />
       </div>
     </div>
   </div>
 </template>
 <script>
-import AppInput from '@/components/Base/AppInput'
-import AppSelect from '@/components/Base/AppSelect'
-import AppPostCode from '@/components/Base/AppPostCode'
-import AppButton from '@/components/Base/AppButton'
-import AppAutoComplete from '@/components/Base/AppAutoComplete'
+import AppInput from "@/components/Base/AppInput";
+import AppSelect from "@/components/Base/AppSelect";
+import AppPostCode from "@/components/Base/AppPostCode";
+import AppButton from "@/components/Base/AppButton";
+import AppAutoComplete from "@/components/Base/AppAutoComplete";
 export default {
   components: {
     AppInput,
     AppSelect,
     AppPostCode,
     AppButton,
-    AppAutoComplete,
+    AppAutoComplete
   },
-  props: ['params'],
+  props: ["params"],
   data() {
     return {
       shifts: [],
-      rate_types: [],
-    }
+      rate_types: []
+    };
   },
   created() {
-    this.getShifts()
-    this.getRateType()
+    this.getShifts();
+    this.getRateType();
   },
   methods: {
     onSelect(value) {
@@ -125,29 +125,28 @@ export default {
         component.types.includes("postal_code")
       );
       if (!postal_code) {
-        this.params.near_post_code = ''
+        this.params.near_post_code = "";
 
-        return
+        return;
       }
-      this.params.near_post_code = postal_code.long_name
-
+      this.params.near_post_code = postal_code.long_name;
     },
     getShifts() {
       this.$axios.$get(`/api/v1/shifts`).then(res => {
-        this.shifts = []
+        this.shifts = [];
         res.data.shifts.forEach(item => {
-          this.shifts.push({ label: item.name, value: item.id })
-        })
-      })
+          this.shifts.push({ label: item.name, value: item.id });
+        });
+      });
     },
     getRateType() {
       this.$axios.$get(`/api/v1/locum-detail-rate-types`).then(res => {
-        this.rate_types = []
+        this.rate_types = [];
         res.data.locum_detail_rate_types.forEach(item => {
-          this.rate_types.push({ label: item.name, value: item.id })
-        })
-      })
-    },
+          this.rate_types.push({ label: item.name, value: item.id });
+        });
+      });
+    }
   }
-}
+};
 </script>

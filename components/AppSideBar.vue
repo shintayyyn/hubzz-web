@@ -99,7 +99,7 @@ export default {
           { name: "Profile", route: "/profile" },
           { name: "My Banks", route: "/my-banks" },
           { name: "Sessions", route: "/sessions" },
-          { name: "Billing", route: "/billing" },
+          { name: "Billing", route: "/practice-billing" },
           { name: "Invite", route: "/invite" }
         ];
       }
@@ -117,14 +117,7 @@ export default {
           { name: "My Practice", route: "/my-practice" },
           { name: "Availability", route: "/availability" },
           { name: "Jobs", route: "/jobs" },
-          { name: "Billing old", route: "/billing" },
-          {
-            name: "Billing",
-            route:
-              this.$auth.user.domain === "Locum"
-                ? "/locum-billing"
-                : "/practice-billing"
-          },
+          { name: "Billing", route: "/locum-billing" },
           { name: "Invite", route: "/invite" }
         ];
       }

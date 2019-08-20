@@ -1,14 +1,14 @@
 <template>
   <div class="border-solid rounded-lg shadow-lg p-8">
+    <AppFormError :formError="formError" v-if="formError.length > 0" />
     <form class="relative w-full">
-      <AppLoading :loading="loading" :message="'Loading'" v-if="loading" />
+      <AppLoading :loading="loading" :message="'Loading'" />
       <AppInput
         v-model="form.email"
         :type="'email'"
         :name="'email'"
         :label="'Email address'"
         :placeholder="''"
-        :error="formError.find(item => item.field === 'email')"
       />
       <div class="-mt-6 mb-4" v-if="email_isVerified === true ">
         <span
@@ -18,7 +18,7 @@
       <div class="-mt-6 mb-4" v-if="email_isVerified === false ">
         <span class="text-red-500 text-xs">E-mail is not yet verified.</span>
         <span
-          class="p-1 bg-gray-900 rounded text-xs"
+          class="p-1 bg-gray-800 rounded text-xs text-white cursor-pointer"
           @click="resendEmailVerification()"
         >Click here to re-send</span>
       </div>
@@ -35,7 +35,6 @@
         :name="'first_name'"
         :label="'First name'"
         :placeholder="''"
-        :error="formError.find(item => item.field === 'first_name')"
       />
       <AppInput
         v-model="form.last_name"
@@ -43,7 +42,6 @@
         :name="'last_name'"
         :label="'Last name'"
         :placeholder="''"
-        :error="formError.find(item => item.field === 'last_name')"
       />
       <AppInput
         v-model="form.suffix"
@@ -57,7 +55,6 @@
         :name="'practice_role'"
         :label="'Role'"
         :placeholder="'Role'"
-        :error="formError.find(item => item.field === 'practice_role')"
         :items="roles"
       />
       <div class="text-left mt-5">
@@ -71,6 +68,7 @@ import AppInput from "@/components/Base/AppInput";
 import AppSelect from "@/components/Base/AppSelect";
 import AppButton from "@/components/Base/AppButton";
 import AppLoading from "@/components/Base/AppLoading";
+import AppFormError from "@/components/Base/AppFormError";
 const roles = [
   { value: "Practice Staff", label: "Practice Staff" },
   { value: "Practice Manager", label: "Practice Manager" },
@@ -78,14 +76,15 @@ const roles = [
 ];
 export default {
   transition: {
-    name: 'fade',
-    mode: 'out-in'
+    name: "fade",
+    mode: "out-in"
   },
   components: {
     AppInput,
     AppSelect,
     AppButton,
-    AppLoading
+    AppLoading,
+    AppFormError
   },
   data() {
     return {
@@ -98,38 +97,35 @@ export default {
         suffix: "",
         practice_role: ""
       },
-      email_isVerified: '',
-      email_verifiedAt: '',
+      email_isVerified: "",
+      email_verifiedAt: "",
       loading: false,
       formError: []
-    }
+    };
   },
   created() {
-    this.$axios.$get('/api/v1/me').then(res => {
-      this.form.email = res.data.user.email
-      this.form.title = res.data.user.personal_detail.title
-      this.form.first_name = res.data.user.personal_detail.first_name
-      this.form.last_name = res.data.user.personal_detail.last_name
-      this.form.suffix = res.data.user.personal_detail.suffix
-      this.form.practice_role = res.data.user.practice_detail.practice_role
-      this.email_isVerified = res.data.user.is_email_verified
-      this.email_verifiedAt = res.data.user.email_verified_at
+    this.$axios.$get("/api/v1/me").then(res => {
+      this.form.email = res.data.user.email;
+      this.form.title = res.data.user.personal_detail.title;
+      this.form.first_name = res.data.user.personal_detail.first_name;
+      this.form.last_name = res.data.user.personal_detail.last_name;
+      this.form.suffix = res.data.user.personal_detail.suffix;
+      this.form.practice_role = res.data.user.practice_detail.practice_role;
+      this.email_isVerified = res.data.user.is_email_verified;
+      this.email_verifiedAt = res.data.user.email_verified_at;
       this.loading = false;
-    })
+    });
   },
   watch: {
     "form.email"(value) {
-      // splice from formerror
       let index = this.formError.findIndex(item => item.field === "email");
       if (index >= 0) {
         this.formError.splice(index, 1);
       }
-      // validate
       if (!value) {
         // required
-        this.formError.push({ field: "email", message: "Required" });
+        this.formError.push({ field: "email", message: "Email Is Required" });
       } else {
-        // validate option
         const error = this.ValidateEmail(value);
         if (error) {
           this.formError.push(error);
@@ -137,78 +133,82 @@ export default {
       }
     },
     "form.first_name"(value) {
-      // splice from formerror
       let index = this.formError.findIndex(item => item.field === "first_name");
       if (index >= 0) {
         this.formError.splice(index, 1);
       }
-      // validate
       if (!value) {
         // required
-        this.formError.push({ field: "first_name", message: "Required" });
+        this.formError.push({
+          field: "first_name",
+          message: "First Name Is Required"
+        });
       }
     },
     "form.last_name"(value) {
-      // splice from formerror
       let index = this.formError.findIndex(item => item.field === "last_name");
       if (index >= 0) {
         this.formError.splice(index, 1);
       }
-      // validate
       if (!value) {
         // required
-        this.formError.push({ field: "last_name", message: "Required" });
+        this.formError.push({
+          field: "last_name",
+          message: "Last Name Is Required"
+        });
       }
     },
     "form.practice_role"(value) {
-      // splice from formerror
       let index = this.formError.findIndex(
         item => item.field === "practice_role"
       );
       if (index >= 0) {
         this.formError.splice(index, 1);
       }
-      // validate
       if (!value) {
-        // required
         this.formError.push({ field: "practice_role", message: "Required" });
       }
     }
   },
   methods: {
     async save() {
-      this.loading = true;
+      // this.loading = true;
       try {
         this.formError = [];
         this.Validate(this.form, ["title", "suffix"]);
         if (!this.formError.length) {
-          this.$axios
-            .$put(`/api/v1/practice/me/account`, this.form)
-            .then(res => {
-              this.$store.commit("SET_NOTIFICATION", {
-                enabled: true,
-                status: "success",
-                text: ["Saved"]
-              });
-              this.loading = false;
-            });
+          const response = await this.$axios.$put(
+            `/api/v1/practice/me/account`,
+            this.form
+          );
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: ["Saved"]
+          })
+          this.scrollToTop()
+          this.loading = false
         } else {
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "danger",
             text: ["Please fill up all the forms"]
           });
+          this.scrollToTop()
+          this.loading = false
         }
       } catch (err) {
-        console.log(err)
+        this.formError = err.response.data.error_messages;
+        this.loading = false;
       }
     },
     async resendEmailVerification() {
       try {
         await this.$axios.post(`/api/v1/email-verification/resend`)
-        alert('Confirmation e-mail sent')
+        // alert('Confirmation e-mail sent')
+        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: ['Confirmation e-mail sent'] })
       } catch (err) {
-        console.log("Something went wrong! ", err)
+        console.log("Something went wrong! ", err);
       }
     }
   }

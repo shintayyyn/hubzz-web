@@ -39,7 +39,7 @@
               <div>{{$auth.user.address_detail.address.post_code}}</div>
               <div>Tel {{$auth.user.contact_detail.mobile_number}}</div>
               <div>{{$auth.user.email}}</div>
-              <div>UTR {{$auth.user.locum_detail.invoice_detail.utr_number}}</div>
+              <div>UTR {{$auth.user.locum_detail.invoice_detail && $auth.user.locum_detail.invoice_detail.utr_number ? $auth.user.locum_detail.invoice_detail.utr_number : null}}</div>
             </div>
             <div class="flex justify-between my-2">
               <div
@@ -404,7 +404,7 @@ export default {
 
         this.$axios.get('/api/v1/locum/surgeries', { params }).then((response) => {
           const surgeries = response.data && response.data.data && response.data.data.surgeries ? response.data.data.surgeries : []
-
+          this.selectedJobParts = []
           this.surgeries = surgeries
         }).catch((err) => {
           console.log('err', err.response || err)
@@ -488,7 +488,7 @@ export default {
       this.Validate(this.form, ['final'])
       if (!this.formError.length) {
         this.$axios.$post(`/api/v1/locum/invoices`, this.form).then(res => {
-          this.$store.commit('billing/ADD_INVOICE', res.data.invoice)
+          this.$store.commit('billing/ADD_LOCUM_INVOICE', res.data.invoice)
           this.$router.push('/locum-billing/invoices')
         })
       }

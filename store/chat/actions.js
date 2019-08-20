@@ -90,9 +90,9 @@ export default {
     if (!payload.receiver_user_id) {
       let foundConversation = state.conversations.find(conversation => conversation.id == state.activeConversationId);
       if (foundConversation.receiver_id == this.$auth.user.id) {
-        payload.receiver_user_id = foundConversation.sender_id;
+        payload.receiver_user_id = foundConversation.sender_id.toString();
       } else {
-        payload.receiver_user_id = foundConversation.receiver_id;
+        payload.receiver_user_id = foundConversation.receiver_id.toString();
       }
     }
     const response = await chatApi.sendMessage(this.$axios, payload);
