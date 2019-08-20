@@ -51,11 +51,12 @@
   </section>
 </template>
 <script>
-import AppPagination from '@/components/Base/AppPagination'
+import AppPagination from "@/components/Base/AppPagination";
+import MyPracticeDetailModal from "@/components/MyPractice/MyPracticeDetailModal";
 export default {
   transition: {
-    name: 'fade',
-    mode: 'out-in'
+    name: "fade",
+    mode: "out-in"
   },
   components: {
     AppPagination,
@@ -67,7 +68,7 @@ export default {
       total: 0,
       practice: null,
       loading: true
-    }
+    };
   },
   computed: {
     offset() {
@@ -78,43 +79,56 @@ export default {
     },
     totalPages() {
       return Math.ceil(this.total / this.perPage);
-    },
+    }
   },
   created() {
-    this.getFavoritePracticesCount()
+    this.getFavoritePracticesCount();
   },
   methods: {
     getFavoritePracticesCount() {
-      this.$axios.$get(`/api/v1/locum/practices/count?locum_practice_type=Favorite`).then(res => { //GET QUANTITY OF DATA
-        this.total = res.data.count
-        this.getFavoritePractices(this.current_page)
-      })
+      this.$axios
+        .$get(`/api/v1/locum/practices/count?locum_practice_type=Favorite`)
+        .then(res => {
+          //GET QUANTITY OF DATA
+          this.total = res.data.count;
+          this.getFavoritePractices(this.current_page);
+        });
     },
     getFavoritePractices(page) {
-      this.current_page = page
-      this.$axios.$get(`/api/v1/locum/practices?locum_practice_type=Favorite&offset=${this.offset}&limit=${this.perPage}`).then(res => {
-        this.practices = res.data.practices
-        this.loading = false
-      })
+      this.current_page = page;
+      this.$axios
+        .$get(
+          `/api/v1/locum/practices?locum_practice_type=Favorite&offset=${this.offset}&limit=${this.perPage}`
+        )
+        .then(res => {
+          this.practices = res.data.practices;
+          this.loading = false;
+        });
     },
 
     unfavorite(id, index) {
-      this.practices.splice(index, 1)
-      this.$axios.$delete(`/api/v1/locum/practices/${id}/favorite`).then(res => {
-        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: [`${res.message}`] })
-      })
+      this.practices.splice(index, 1);
+      this.$axios
+        .$delete(`/api/v1/locum/practices/${id}/favorite`)
+        .then(res => {
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: [`${res.message}`]
+          });
+        });
     },
 
     show(id) {
-      this.$router.push(`/my-practice/favorites/${id}`)
+      this.$router.push(`/my-practice/favorites/${id}`);
     },
 
     pagechanged(e) {
-      this.current_page = e
-      this.getFavoritePractices(this.current_page)
+      this.current_page = e;
+      this.getCompletedPractices(this.current_page);
     }
   }
-}
+};
 </script>
 <style scoped>
 .avatar-container {
@@ -126,9 +140,6 @@ export default {
   max-height: 170px;
   min-width: 170px;
   min-height: 170px;
-}
-img {
-  border-radius: 50%;
 }
 .shield {
   position: fixed;

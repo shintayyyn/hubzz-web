@@ -34,7 +34,7 @@
           :name="'near_post_code'"
           :label="'Post code'"
           @onSelect="onSelect"
-          :inStyle="'background-color:#dae1e7;border-color:white'"
+          :inStyle="'background-color:#dae1e7;border-color:white; padding: 1rem .5rem'"
         />
       </div>
       <div class="w-full sm:w-1/4 p-1">
@@ -56,7 +56,7 @@
         />
       </div>
       <div class="w-full sm:w-1/4">
-        <AppButton :label="'Search'" @click="$emit('getJobs')" :inStyle="'padding:5px'" />
+        <AppButton :label="'Search'" @click="$emit('getJobs')" :inStyle="'padding:5px 14px'" />
       </div>
     </div>
     <div class="flex flex-row flex-wrap" v-if="$auth.user.domain === 'Practice'">

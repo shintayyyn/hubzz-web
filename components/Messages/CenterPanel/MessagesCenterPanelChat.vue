@@ -118,7 +118,7 @@ export default {
   },
   data() {
     return {
-      oldMessageCount: null,
+      oldMessageCount: 0,
       route: "",
       search_user: "",
       showResult: false,
@@ -126,7 +126,6 @@ export default {
       selectedUserId: "",
       message: "",
       loadMore: false,
-      backToBottom: false,
       time: false
     };
   },
@@ -137,6 +136,7 @@ export default {
   },
   created() {
     this.route = this.$route.params.slug;
+    this.oldMessageCount = this.messages.length;
   },
   mounted() {
     this.scrollToBottom();
@@ -152,10 +152,11 @@ export default {
       this.loadMore = false;
     },
     messages(value) {
-      let index = value.length - this.oldMessageCount;
-      let messageSample = document.getElementById(`message-${index}`);
-      if (value.length === 20) {
+      if (value.length <= 20) {
         this.scrollToBottom();
+      } else if (value.length === this.oldMessageCount + 1) {
+        this.scrollToBottom();
+        this.oldMessageCount += +1;
       }
     }
   },
@@ -178,10 +179,6 @@ export default {
         this.$axios.$get(`/api/v1/conversations/${this.route}`).then(res => {
           if (this.messages.length == res.data.messages.length) {
             this.loadMore = false;
-          } else if (this.messages.length >= res.data.messages.length / 2) {
-            console.log("half");
-            this.backToBottom = true;
-            this.loadMore = true;
           } else {
             this.loadMore = true;
           }
@@ -194,12 +191,12 @@ export default {
         conversation_id: this.$route.params.slug
       });
       this.loadMore = false;
-      // let scrollPosition =
-      //   this.$refs.messagesContainer.scrollHeight -
-      //   this.$refs.messagesContainer.offsetHeight;
-      // this.$nextTick(() => {
-      //   this.$refs.messagesContainer.scrollTop = this.$refs.messagesContainer.offsetHeight;
-      // });
+      let scrollPosition =
+        this.$refs.messagesContainer.scrollHeight -
+        this.$refs.messagesContainer.offsetHeight;
+      this.$nextTick(() => {
+        this.$refs.messagesContainer.scrollTop = this.$refs.messagesContainer.offsetHeight;
+      });
     },
     isReceiver(item) {
       return this.$auth.user.id === item.receiver_id;
@@ -233,7 +230,6 @@ export default {
         this.$axios
           .$get(`/api/v1/conversations/?search=${this.search_user}`)
           .then(res => {
-            console.log("res", res);
             if (res.data.conversations.length === 0) {
               this.$store.dispatch("chat/sendMessage", {
                 receiver_user_id: this.selectedUserId.toString(),
@@ -243,8 +239,6 @@ export default {
               if (window.innerWidth < 768) {
                 this.$store.commit("IS_MOBILE", false);
               }
-              console.log("conversation", conversation);
-              console.log("res", res);
               this.$router.push(
                 `/messages/${parseInt(conversation.conversation_id) + 1}`
               );

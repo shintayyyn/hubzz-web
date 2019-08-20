@@ -27,103 +27,92 @@
         </div>
       </div>
     </transition>
-    <div class="p-8 max-w-3xl">
-      <div @click="close" class="cursor-pointer">
-        <svgicon name="left-arrow" height="32" width="32" />
-      </div>
-      <div class="flex justify-start font-bold text-sm sm:text-xl mt-8">Appointment</div>
-      <div class="rounded-lg shadow-lg px-8 py-4 mt-4">
-        <AppSelect
-          v-model="form.private_practice_id"
-          :name="'private_practice_id'"
-          :label="'Practice'"
-          :placeholder="'Select...'"
-          :error="formError.find(item => item.field === 'private_practice_id')"
-          :items="practices"
-        />
-        <AppButton :label="'Add'" @click="modal = true" :inStyle="'padding:5px;'" />
-        <div class="flex flex-row flex-wrap justify-start mt-8">
-          <div class="px-1">
-            <AppDate
-              v-model="form.date_start"
-              :name="'date_start'"
-              :label="'From'"
-              :error="formError.find(item => item.field === 'date_start')"
-            />
-          </div>
-          <div class="px-1">
-            <AppDate
-              v-model="form.date_end"
-              :name="'date_end'"
-              :label="'To'"
-              :error="formError.find(item => item.field === 'date_end')"
-            />
-          </div>
-          <div class="px-1 leading-loose">
-            <AppSelect
-              v-model="form.shift_id"
-              :name="'shift_id'"
-              :label="'Shift'"
-              :placeholder="'Select...'"
-              :error="formError.find(item => item.field === 'shift_id')"
-              :items="shifts"
-            />
-          </div>
+    <div class="modal-container shadow-lg" ref="modalContainer">
+      <div class="p-8 max-w-3xl">
+        <div @click="close" class="cursor-pointer">
+          <svgicon name="left-arrow" height="32" width="32" />
         </div>
-        <div class="flex flex-row flex-wrap justify-start mt-4">
-          <AppInput
-            v-model="form.rate"
-            :type="'text'"
-            :name="'rate'"
-            :label="'Rate £'"
-            :placeholder="''"
-            :error="formError.find(item => item.field === 'rate')"
-            :inStyle="'text-align:right'"
-          />
-          <div class="mx-2"></div>
+        <div class="flex justify-start font-bold text-sm sm:text-xl mt-8">Appointment</div>
+        <AppFormError :formError="formError" v-if="formError.length > 0" id="error" />
+        <div class="rounded-lg shadow-lg px-8 py-4 mt-4">
           <AppSelect
-            v-model="form.locum_detail_rate_type_id"
-            :name="'locum_detail_rate_type_id'"
-            :label="'per'"
+            v-model="form.private_practice_id"
+            :name="'private_practice_id'"
+            :label="'Practice'"
             :placeholder="'Select...'"
-            :error="formError.find(item => item.field === 'locum_detail_rate_type_id')"
-            :items="rate_types"
+            :items="practices"
           />
-        </div>
-        <div class="flex flex-row flex-wrap justify-start mt-4">
-          <div class="flex flex-wrap items-center mt-2">
+          <AppButton :label="'Add'" @click="modal = true" :inStyle="'padding:5px;'" />
+          <div class="flex flex-row flex-wrap justify-start mt-8">
+            <div class="px-1">
+              <AppDate v-model="form.date_start" :name="'date_start'" :label="'From'" />
+            </div>
+            <div class="px-1">
+              <AppDate v-model="form.date_end" :name="'date_end'" :label="'To'" />
+            </div>
+            <div class="px-1 leading-loose">
+              <AppSelect
+                v-model="form.shift_id"
+                :name="'shift_id'"
+                :label="'Shift'"
+                :placeholder="'Select...'"
+                :items="shifts"
+              />
+            </div>
+          </div>
+          <div class="flex flex-row flex-wrap justify-start mt-4">
             <AppInput
-              v-model="form.total_hours"
+              v-model="form.rate"
               :type="'text'"
-              :name="'total_hours'"
-              :label="'Total hours'"
+              :name="'rate'"
+              :label="'Rate £'"
               :placeholder="''"
-              :error="formError.find(item => item.field === 'total_hours')"
               :inStyle="'text-align:right'"
             />
-            <div class="text-xs sm:text-sm mx-2 mb-2">hours</div>
+            <div class="mx-2"></div>
+            <AppSelect
+              v-model="form.locum_detail_rate_type_id"
+              :name="'locum_detail_rate_type_id'"
+              :label="'per'"
+              :placeholder="'Select...'"
+              :items="rate_types"
+            />
           </div>
-        </div>
-        <div class="mt-4">
-          <AppTextarea
-            v-model="form.description"
-            :name="'description'"
-            :label="'Private notes'"
-            :placeholder="''"
-          />
-        </div>
-        <div class="flex flex-no-wrap justify-start">
-          <template v-if="!job">
-            <AppButton :label="'Save'" @click="save" />
-          </template>
-          <template v-else>
-            <AppButton :label="'Delete'" @click="confirmation_modal = true" />
-            <div class="mx-1"></div>
-            <AppButton :label="'Save'" @click="edit" />
-          </template>
+          <div class="flex flex-row flex-wrap justify-start mt-4">
+            <div class="flex flex-wrap items-center mt-2">
+              <AppInput
+                v-model="form.total_hours"
+                :type="'text'"
+                :name="'total_hours'"
+                :label="'Total hours'"
+                :placeholder="''"
+                :inStyle="'text-align:right'"
+              />
+              <div class="text-xs sm:text-sm mx-2 mb-2">hours</div>
+            </div>
+          </div>
+          <div class="mt-4">
+            <AppTextarea
+              v-model="form.description"
+              :name="'description'"
+              :label="'Private notes'"
+              :placeholder="''"
+            />
+          </div>
+          <div class="flex flex-no-wrap justify-start">
+            <template v-if="!job">
+              <AppButton :label="'Save'" @click="save" />
+            </template>
+            <template v-else>
+              <AppButton :label="'Delete'" @click="confirmation_modal = true" />
+              <div class="mx-1"></div>
+              <AppButton :label="'Save'" @click="edit" />
+            </template>
+          </div>
         </div>
       </div>
     </div>
+
     <div class="add-surgery-shield" v-if="modal"></div>
     <transition name="slide" mode="out-in">
       <div class="add-surgery-modal shadow-lg" v-if="modal">
@@ -133,21 +122,23 @@
   </section>
 </template>
 <script>
-import AppInput from '@/components/Base/AppInput'
-import AppDate from '@/components/Base/AppDate'
-import AppSelect from '@/components/Base/AppSelect'
-import AppTextarea from '@/components/Base/AppTextarea'
-import AppButton from '@/components/Base/AppButton'
-import AddSurgeryModal from '@/components/AddSurgeryModal'
+import AppInput from "@/components/Base/AppInput";
+import AppDate from "@/components/Base/AppDate";
+import AppSelect from "@/components/Base/AppSelect";
+import AppTextarea from "@/components/Base/AppTextarea";
+import AppButton from "@/components/Base/AppButton";
+import AddSurgeryModal from "@/components/AddSurgeryModal";
+import AppFormError from "@/components/Base/AppFormError";
 export default {
-  props: ['job'],
+  props: ["job"],
   components: {
     AppInput,
     AppDate,
     AppSelect,
     AppTextarea,
     AppButton,
-    AddSurgeryModal
+    AddSurgeryModal,
+    AppFormError
   },
   data() {
     return {
@@ -156,164 +147,215 @@ export default {
       shifts: [],
       rate_types: [],
       form: {
-        private_practice_id: '',
-        date_start: '',
-        date_end: '',
-        shift_id: '',
-        locum_detail_rate_type_id: '',
-        rate: '',
-        total_hours: '',
-        description: ''
+        private_practice_id: "",
+        date_start: "",
+        date_end: "",
+        shift_id: "",
+        locum_detail_rate_type_id: "",
+        rate: "",
+        total_hours: "",
+        description: ""
       },
       formError: []
-    }
+    };
   },
   watch: {
-    'form.private_practice_id'(value) {
-      this.formError = this.formError.filter(error => error.field !== 'private_practice_id')
+    "form.private_practice_id"(value) {
+      this.formError = this.formError.filter(
+        error => error.field !== "private_practice_id"
+      );
     },
-    'form.date_start'(value) {
-      this.formError = this.formError.filter(error => error.field !== 'date_start')
+    "form.date_start"(value) {
+      this.formError = this.formError.filter(
+        error => error.field !== "date_start"
+      );
     },
-    'form.date_end'(value) {
-      this.formError = this.formError.filter(error => error.field !== 'date_end')
+    "form.date_end"(value) {
+      this.formError = this.formError.filter(
+        error => error.field !== "date_end"
+      );
     },
-    'form.shift_id'(value) {
-      this.formError = this.formError.filter(error => error.field !== 'shift_id')
+    "form.shift_id"(value) {
+      this.formError = this.formError.filter(
+        error => error.field !== "shift_id"
+      );
     },
-    'form.locum_detail_rate_type_id'(value) {
-      this.formError = this.formError.filter(error => error.field !== 'locum_detail_rate_type_id')
+    "form.locum_detail_rate_type_id"(value) {
+      this.formError = this.formError.filter(
+        error => error.field !== "locum_detail_rate_type_id"
+      );
     },
-    'form.rate'(value) {
-      this.formError = this.formError.filter(error => error.field !== 'rate')
+    "form.rate"(value) {
+      this.formError = this.formError.filter(error => error.field !== "rate");
     },
-    'form.total_hours'(value) {
-      this.formError = this.formError.filter(error => error.field !== 'total_hours')
-    },
+    "form.total_hours"(value) {
+      this.formError = this.formError.filter(
+        error => error.field !== "total_hours"
+      );
+    }
   },
   created() {
-    this.getPractices()
-    this.getShifts()
-    this.getRateType()
+    this.getPractices();
+    this.getShifts();
+    this.getRateType();
     if (this.job) {
-      this.form.private_practice_id = this.job.private_job.private_practice.id
-      this.form.date_start = this.job.date_start
-      this.form.date_end = this.job.date_end
-      this.form.shift_id = this.job.shift.id
-      this.form.locum_detail_rate_type_id = this.job.locum_detail_rate_type.id
-      this.form.rate = this.job.rate
-      this.form.total_hours = this.job.total_hours
-      this.form.description = this.job.description
+      this.form.private_practice_id = this.job.private_job.private_practice.id;
+      this.form.date_start = this.job.date_start;
+      this.form.date_end = this.job.date_end;
+      this.form.shift_id = this.job.shift.id;
+      this.form.locum_detail_rate_type_id = this.job.locum_detail_rate_type.id;
+      this.form.rate = this.job.rate;
+      this.form.total_hours = this.job.total_hours;
+      this.form.description = this.job.description;
     }
   },
   computed: {
     practices() {
-      return this.$store.getters['getLocumPrivatePractices']
-    },
+      return this.$store.getters["getLocumPrivatePractices"];
+    }
   },
   methods: {
     getPractices() {
       this.$axios.$get(`/api/v1/locum/private-practices`).then(res => {
-        this.$store.commit('SET_LOCUM_PRIVATE_PRACTICES', res.data.private_practices)
-      })
+        this.$store.commit(
+          "SET_LOCUM_PRIVATE_PRACTICES",
+          res.data.private_practices
+        );
+      });
     },
     getShifts() {
       this.$axios.$get(`/api/v1/shifts`).then(res => {
-        this.shifts = []
+        this.shifts = [];
         res.data.shifts.forEach(item => {
-          this.shifts.push({ label: item.name, value: item.id })
-        })
-      })
+          this.shifts.push({ label: item.name, value: item.id });
+        });
+      });
     },
     getRateType() {
       this.$axios.$get(`/api/v1/locum-detail-rate-types`).then(res => {
-        this.rate_types = []
+        this.rate_types = [];
         res.data.locum_detail_rate_types.forEach(item => {
-          this.rate_types.push({ label: item.name, value: item.id })
-        })
-      })
+          this.rate_types.push({ label: item.name, value: item.id });
+        });
+      });
     },
     close() {
-      if (this.$route.fullPath === '/dashboard') {
-        this.$emit('close')
-      }
-      else {
-        if (this.$route.name === 'jobs-completed-id') {
-          this.$router.push('/jobs/completed')
+      if (this.$route.fullPath === "/dashboard") {
+        this.$emit("close");
+      } else {
+        if (this.$route.name === "jobs-completed-id") {
+          this.$router.push("/jobs/completed");
         }
-        if (this.$route.name === 'jobs-allocated-id') {
-          this.$router.push('/jobs/allocated')
+        if (this.$route.name === "jobs-allocated-id") {
+          this.$router.push("/jobs/allocated");
         }
       }
     },
     save() {
-      this.formError = []
-      this.Validate(this.form, ['description'])
+      this.formError = [];
+      this.Validate(this.form, ["description"]);
       if (!this.formError.length) {
-        this.form.date_start = this.$moment(this.form.date_start).format('YYYY-MM-DD')
-        this.form.date_end = this.$moment(this.form.date_end).format('YYYY-MM-DD')
-        this.$axios.$post(`/api/v1/locum/jobs`, this.form).then(res => {
-          this.$store.commit('jobs/ADD_LOCUM_ALLOCATED_JOB', res.data.job)
-          this.close()
-          this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: [`${res.message}`] })
-        }).catch(err => {
-          err.response.data.error_messages.forEach(error => {
-            this.formError.push(error)
+        this.form.date_start = this.$moment(this.form.date_start).format(
+          "YYYY-MM-DD"
+        );
+        this.form.date_end = this.$moment(this.form.date_end).format(
+          "YYYY-MM-DD"
+        );
+        this.$axios
+          .$post(`/api/v1/locum/jobs`, this.form)
+          .then(res => {
+            this.$store.commit("jobs/ADD_LOCUM_ALLOCATED_JOB", res.data.job);
+            this.close();
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: [`${res.message}`]
+            });
           })
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "danger",
-            text: this.formError.map(error => error.message),
+          .catch(err => {
+            err.response.data.error_messages.forEach(error => {
+              this.formError.push(error);
+            });
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "danger",
+              text: this.formError.map(error => error.message)
+            });
           });
-        })
-      } else {
-        this.$store.commit("SET_NOTIFICATION", {
-          enabled: true,
-          status: "danger",
-          text: ["Please fill up all the forms"],
-        });
-      }
-    },
-    edit() {
-      this.formError = []
-      this.Validate(this.form, ['description'])
-      if (!this.formError.length) {
-        this.$axios.$put(`/api/v1/locum/jobs/${this.job.id}`, this.form).then(res => {
-
-          if (res.data.job.locum_status === 'Current') {
-            this.$store.commit('jobs/UPDATE_LOCUM_ALLOCATED_JOB', res.data.job)
-          } else if (res.data.job.locum_status === 'Completed') {
-            this.$store.commit('jobs/REMOVE_LOCUM_ALLOCATED_JOB', res.data.job.id)
-          }
-          this.close()
-          this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: [`${res.message}`] })
-        }).catch(err => {
-          err.response.data.error_messages.forEach(error => {
-            this.formError.push(error)
-          })
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "danger",
-            text: this.formError.map(error => error.message)
-          });
-        })
       } else {
         this.$store.commit("SET_NOTIFICATION", {
           enabled: true,
           status: "danger",
           text: ["Please fill up all the forms"]
         });
+        this.$nextTick(() => {
+          this.$refs.modalContainer.scrollTop = 0;
+        });
+      }
+    },
+    edit() {
+      this.formError = [];
+      this.Validate(this.form, ["description"]);
+      if (!this.formError.length) {
+        this.$axios
+          .$put(`/api/v1/locum/jobs/${this.job.id}`, this.form)
+          .then(res => {
+            if (res.data.job.locum_status === "Current") {
+              this.$store.commit(
+                "jobs/UPDATE_LOCUM_ALLOCATED_JOB",
+                res.data.job
+              );
+            } else if (res.data.job.locum_status === "Completed") {
+              this.$store.commit(
+                "jobs/REMOVE_LOCUM_ALLOCATED_JOB",
+                res.data.job.id
+              );
+            }
+            this.close();
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: [`${res.message}`]
+            });
+          })
+          .catch(err => {
+            err.response.data.error_messages.forEach(error => {
+              this.formError.push(error);
+            });
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "danger",
+              text: this.formError.map(error => error.message)
+            });
+            this.$nextTick(() => {
+              this.$refs.modalContainer.scrollTop = 0;
+            });
+          });
+      } else {
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "danger",
+          text: ["Please fill up all the forms"]
+        });
+        console.log(s.$refs.modalContainer.scrollTop);
+        this.$nextTick(() => {
+          this.$refs.modalContainer.scrollTop = 0;
+        });
       }
     },
     remove() {
       this.$axios.$delete(`/api/v1/locum/jobs/${this.job.id}`).then(res => {
-        this.$store.commit('jobs/REMOVE_LOCUM_ALLOCATED_JOB', this.job.id)
-        this.close()
-        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: [`${res.message}`] })
-      })
+        this.$store.commit("jobs/REMOVE_LOCUM_ALLOCATED_JOB", this.job.id);
+        this.close();
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "success",
+          text: [`${res.message}`]
+        });
+      });
     }
   }
-}
+};
 </script>
 <style scoped>
 .confirmation-shield {

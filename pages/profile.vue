@@ -1,7 +1,7 @@
 <template>
   <section class="profile-section">
     <div class="modal-shield" v-if="shield"></div>
-    <div class="flex flex-row flex-wrap justify-start">
+    <div class="flex overflow-x-auto whitespace-no-wrap">
       <nuxt-link
         to="/profile/practice"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
@@ -20,9 +20,9 @@
       <nuxt-link
         v-if="$route.name === 'profile-branches-surgeries' || $route.name === 'profile-branches-surgeries-create'"
         to="/profile/branches-surgeries/create"
-        class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+        class="md:mr-5 p-3 text-sm font-bold cursor-pointer hover:bg-yellow-500 rounded-lg"
       >
-        create
+        Create
         <!-- <button
           class="bg-yellow-500 rounded-full font-bold text-3xl hover:text-white focus:outline-none"
           style="width:40px;height:40px;"
@@ -38,19 +38,19 @@
 export default {
   computed: {
     shield() {
-      return this.$store.state.profile.shield
+      return this.$store.state.profile.shield;
     }
   },
   watch: {
     shield(value) {
       if (value) {
-        document.body.style.overflow = 'hidden'
+        document.body.style.overflow = "hidden";
       } else {
-        document.body.style.overflow = 'auto'
+        document.body.style.overflow = "auto";
       }
     }
-  },
-}
+  }
+};
 </script>
 <style scoped>
 .modal-shield {

@@ -36,8 +36,7 @@
               />
             </template>
           </div>
-
-          <div class="flex flex-wrap text-center mt-4 cursor-pointer" @click="show(user.id)">
+          <div class="flex flex-wrap text-center pt-4 cursor-pointer" @click="show(user.id)">
             <div class="w-full flex justify-center">
               <div class="relative avatar flex justify-center">
                 <img
@@ -202,7 +201,7 @@ export default {
   min-width: 170px;
   min-height: 170px;
 }
-img {
+.avatar img {
   border-radius: 50%;
 }
 .shield {

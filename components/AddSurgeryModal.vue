@@ -17,8 +17,8 @@
           v-model="search_text"
           :type="'text'"
           :name="'search'"
-          :label="''"
-          :placeholder="''"
+          :error="formError.find(item => item.field === 'search_text')"
+          :placeholder="'Surgery Name, Surgery Code, or keywords'"
         />
         <AppButton :label="'Search'" @click="search" :inStyle="'padding:5px;'" />
       </div>
@@ -82,19 +82,48 @@ export default {
       surgeries: [],
       selectedSurgery: {},
       showResult: false,
-      modal: false
+      modal: false,
+      formError: []
     };
+  },
+  watch: {
+    search_text(value) {
+      // splice from formerror
+      let index = this.formError.findIndex(
+        item => item.field === "search_text"
+      );
+      if (index >= 0) {
+        this.formError.splice(index, 1);
+      }
+      // validate
+      if (!value) {
+        // required
+        this.formError.push({ field: "search_text", message: "Required" });
+      } else {
+        const error = this.ValidateEmail(value);
+        if (error) {
+          this.formError.push(error);
+        }
+      }
+    }
   },
   methods: {
     search() {
-      this.$axios
-        .$get(
-          `/api/v1/surgeries?search=${this.search_text}&has_parent=false&is_parent=false&limit=10`
-        )
-        .then(res => {
-          this.surgeries = res.data.surgeries;
-          this.showResult = true;
+      if (!this.search_text) {
+        this.formError.push({
+          field: "search_text",
+          message: "Search for surgery"
         });
+      } else {
+        this.$axios
+          .$get(
+            `/api/v1/surgeries?search=${this.search_text}&has_parent=false&is_parent=false&limit=10`
+          )
+          .then(res => {
+            this.surgeries = res.data.surgeries;
+            this.showResult = true;
+          });
+      }
     },
     select(item) {
       this.selectedSurgery = item;

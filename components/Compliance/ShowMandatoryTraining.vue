@@ -62,7 +62,6 @@
 </template>
 <script>
 export default {
-  props: ['specificMandatoryTraining'],
-
-}
+  props: ["specificMandatoryTraining"]
+};
 </script>

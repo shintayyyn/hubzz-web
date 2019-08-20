@@ -14,19 +14,15 @@
         <svgicon name="left-arrow" height="32" width="32" />
       </div>
       <div class="flex justify-start font-bold text-sm sm:text-xl mt-8">Add Surgery</div>
-      <div class="relative rounded-lg shadow-lg px-8 py-4 mt-4">
-        <div
-          v-if="formError.length"
-          class="absolute bg-red-500 p-1 text-xs sm:text-sm text-white"
-        >{{formError.join("")}}</div>
+      <div class="relative rounded-lg shadow-lg p-8 mt-4">
         <AppInput
           v-model="search_text"
           :type="'text'"
           :name="'search'"
-          :label="''"
-          :placeholder="''"
+          :error="formError.find(item => item.field === 'search_text')"
+          :placeholder="'Surgery Name, Surgery Code, or keywords'"
         />
-        <AppButton :label="'Search'" @click="search" :inStyle="'padding:5px;'" />
+        <AppButton :label="'Search'" @click="search" :inStyle="'padding:5px 14px;'" />
       </div>
       <div v-if="showResult && surgeries.length === 0" class="mt-5">
         <div
@@ -73,61 +69,100 @@
   </div>
 </template>
 <script>
-import AppInput from '@/components/Base/AppInput'
-import AppButton from '@/components/Base/AppButton'
-import AppConfirmationModal from '@/components/Base/AppConfirmationModal'
+import AppInput from "@/components/Base/AppInput";
+import AppButton from "@/components/Base/AppButton";
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
 export default {
   transition: {
-    name: 'slide',
-    mode: 'out-in'
+    name: "slide",
+    mode: "out-in"
   },
   components: {
     AppInput,
     AppButton,
-    AppConfirmationModal,
+    AppConfirmationModal
   },
   data() {
     return {
-      search_text: '',
+      search_text: "",
       surgeries: [],
       selectedSurgery: {},
       showResult: false,
       modal: false,
       formError: []
+    };
+  },
+  watch: {
+    search_text(value) {
+      // splice from formerror
+      let index = this.formError.findIndex(
+        item => item.field === "search_text"
+      );
+      if (index >= 0) {
+        this.formError.splice(index, 1);
+      }
+      // validate
+      if (!value) {
+        // required
+        this.formError.push({ field: "search_text", message: "Required" });
+      } else {
+        const error = this.ValidateEmail(value);
+        if (error) {
+          this.formError.push(error);
+        }
+      }
     }
   },
   methods: {
     search() {
       if (!this.search_text) {
-        return
+        this.formError.push({
+          field: "search_text",
+          message: "Search for surgery"
+        });
+      } else {
+        this.$axios
+          .$get(
+            `/api/v1/surgeries?search=${this.search_text}&has_parent=false&is_parent=false&limit=10`
+          )
+          .then(res => {
+            this.surgeries = res.data.surgeries;
+            this.showResult = true;
+          })
+          .catch(err => {
+            console.log(err.response);
+          });
       }
-      this.$axios.$get(`/api/v1/surgeries?search=${this.search_text}&has_parent=false&is_parent=false&limit=10`).then(res => {
-        this.surgeries = res.data.surgeries
-        this.showResult = true
-      }).catch(err => {
-        console.log(err.response)
-      })
     },
     select(item) {
-      this.formError = []
-      this.selectedSurgery = item
-      this.modal = true
+      this.formError = [];
+      this.selectedSurgery = item;
+      this.modal = true;
     },
     add() {
-      this.formError = []
-      this.$axios.$post(`/api/v1/practice/practice-children`, { surgery_id: this.selectedSurgery.id }).then(res => {
-        this.$emit('add', res.data.practice_child)
-        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: [`${res.message}`] })
-        this.$store.commit('profile/ADD_SURGERY', res.data.practice_child)
-        this.modal = false
-        this.$router.push('/profile/branches-surgeries')
-      }).catch(err => {
-        this.formError.push(err.response.data.message)
-        this.modal = false
-      })
+      this.formError = [];
+      this.$axios
+        .$post(`/api/v1/practice/practice-children`, {
+          surgery_id: this.selectedSurgery.id
+        })
+        .then(res => {
+          this.$emit("add", res.data.practice_child);
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: [`${res.message}`]
+          });
+          this.$store.commit("profile/ADD_SURGERY", res.data.practice_child);
+          this.modal = false;
+          this.$router.push("/profile/branches-surgeries");
+        })
+        .catch(err => {
+          this.formError.push(err.response.data.message);
+          this.modal = false;
+        });
     }
   }
-}
+};
 </script>
 <style scoped>
 .modal {

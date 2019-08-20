@@ -23,7 +23,7 @@
       </div>
 
       <button
-        class="bg-yellow-500 hover:text-white focus:outline-none text-black font-bold text-xl py-4 px-6 md:p-6 rounded-lg mt-4 md:mt-10 mb-5"
+        class="bg-yellow-500 hover:text-white focus:outline-none text-black font-bold text-xl py-4 px-6 md:p-6 rounded-lg mx-2 mt-4 md:mt-10 mb-5"
         @click.prevent="update"
       >Update</button>
     </form>

@@ -1,5 +1,8 @@
 <template>
   <section class="header-section">
+    <!-- <transition name="slide" mode="in-out">
+      <CreateJobModal v-if="$store.state.calendar.create_job_modal" />
+    </transition>-->
     <div class="flex flex-row flex-wrap justify-between">
       <div class="w-1/3 py-2">
         <div class="burger cursor-pointer" @click="toggle">

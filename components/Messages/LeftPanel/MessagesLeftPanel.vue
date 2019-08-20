@@ -1,5 +1,5 @@
 <template>
-  <div class="messages-left-panel" :class="$store.state.mobile ? '' : 'hidden'">
+  <div class="messages-left-panel" :class="$store.state.mobile ? '' : 'hidden md:flex'">
     <div class="flex flex-col h-full">
       <AppInput
         v-model="search_text"
@@ -35,7 +35,7 @@
                   <p class="text-sm truncate">{{ item.message }}</p>
                 </div>
                 <span
-                  class="w-12 pr-1 text-right text-xs text-gray-600 leading-none absolute right-0 mr-2"
+                  class="w-10 pr-1 text-right text-xs text-gray-600 leading-none absolute right-0 mr-1 h-full flex items-center"
                 >{{ $moment(item.created_at).startOf('hour').fromNow() }}</span>
               </div>
             </div>
@@ -51,7 +51,7 @@
               <img
                 v-if="$auth.user.domain === 'Practice'"
                 class="w-1/6 md:ml-2 rounded-full"
-                :src="user.avatar"
+                :src="userAvatar(item)"
                 width="12%"
                 height="12%"
               />
@@ -64,7 +64,7 @@
                   <p class="text-sm truncate">{{ item.message }}</p>
                 </div>
                 <span
-                  class="w-12 pr-1 text-right text-xs text-gray-600 leading-none absolute right-0 mr-2"
+                  class="w-12 pr-1 text-right text-xs text-gray-600 leading-none absolute right-0 mr-1"
                 >{{ $moment(item.created_at).startOf('hour').fromNow() }}</span>
               </div>
             </div>
@@ -102,9 +102,6 @@ export default {
       showResult: false,
       loadMore: false
     };
-  },
-  mounted() {
-    this.$store.commit("IS_MOBILE", true);
   },
   computed: {
     conversations() {

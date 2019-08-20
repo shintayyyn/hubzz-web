@@ -67,6 +67,7 @@
                 :href="item.file.url"
                 :download="item.file.filename"
                 target="_blank"
+                class="px-2"
               >{{item.compliance_document.name}}</a>
             </div>
           </div>
@@ -130,39 +131,53 @@ export default {
     return {
       mandatory: [],
       optional: []
-    }
+    };
   },
   created() {
-    this.getProfessionCategory(this.user.locum_detail.profession.profession_category.id)
+    this.getProfessionCategory(
+      this.user.locum_detail.profession.profession_category.id
+    );
   },
   methods: {
     getProfessionCategory(id) {
       this.$axios.$get(`/api/v1/profession-categories/${id}`).then(res => {
-        this.mandatory = this.user.locum_detail.compliance_documents.filter(compliance_document => {
-          return res.data.profession_category.mandatory_compliance_documents.some(mandatory_compliance_document => mandatory_compliance_document.id === compliance_document.compliance_document.id)
-        })
-        this.optional = this.user.locum_detail.compliance_documents.filter(compliance_document => {
-          return res.data.profession_category.optional_compliance_documents.some(optional_compliance_document => optional_compliance_document.id === compliance_document.compliance_document.id)
-        })
-      })
+        this.mandatory = this.user.locum_detail.compliance_documents.filter(
+          compliance_document => {
+            return res.data.profession_category.mandatory_compliance_documents.some(
+              mandatory_compliance_document =>
+                mandatory_compliance_document.id ===
+                compliance_document.compliance_document.id
+            );
+          }
+        );
+        this.optional = this.user.locum_detail.compliance_documents.filter(
+          compliance_document => {
+            return res.data.profession_category.optional_compliance_documents.some(
+              optional_compliance_document =>
+                optional_compliance_document.id ===
+                compliance_document.compliance_document.id
+            );
+          }
+        );
+      });
     },
     downloadItem(fileUrl, fileName) {
-      const axios = require('axios');
+      const axios = require("axios");
       axios({
         url: fileUrl,
         method: 'GET',
         responseType: 'blob',
       }).then(response => {
         const url = window.URL.createObjectURL(new Blob([response.data]));
-        const link = document.createElement('a');
+        const link = document.createElement("a");
         link.href = url;
-        link.setAttribute('download', fileName);
+        link.setAttribute("download", fileName);
         document.body.appendChild(link);
         link.click();
       });
     }
   }
-}
+};
 </script>
 <style scoped>
 .document-filename {
