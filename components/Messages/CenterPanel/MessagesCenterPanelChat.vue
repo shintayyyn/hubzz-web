@@ -154,10 +154,12 @@ export default {
     messages(value) {
       if (value.length <= 20) {
         this.scrollToBottom();
-      } else if (value.length === this.oldMessageCount + 1) {
+      }
+      if (value.length === this.oldMessageCount + 1) {
         this.scrollToBottom();
         this.oldMessageCount += +1;
       }
+      this.oldMessageCount = value.length;
     }
   },
   methods: {

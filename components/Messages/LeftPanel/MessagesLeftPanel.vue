@@ -1,6 +1,6 @@
 <template>
   <div class="messages-left-panel" :class="$store.state.mobile ? '' : 'hidden md:flex'">
-    <div class="flex flex-col h-full">
+    <div class="flex flex-col h-full w-full">
       <AppInput
         v-model="search_text"
         :type="'search'"
