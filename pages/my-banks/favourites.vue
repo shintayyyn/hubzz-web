@@ -48,22 +48,25 @@
       <div>You have no favorite locums</div>
     </div>
 
-    <div class="m-10 xl:-ml-32" v-if="locums.length > 0 && totalPages > 1">
+    <div class="mt-5 flex justify-center" v-if="locums.length > 0 && totalPages > 1">
       <AppPagination
         :total="total"
         :totalPages="totalPages"
-        :currentPage="currentPage"
+        :currentPage="current_page"
         @pagechanged="pagechanged"
-        :loading="loading"
       />
     </div>
+    <transition name="fade" mode="out-in">
+      <div class="shield" v-if="$route.name === 'my-banks-favourites-id'"></div>
+    </transition>
+    <nuxt-child />
 
-    <div class="locum-shield" v-if="modal"></div>
+    <!-- <div class="shield" v-if="modal"></div>
     <transition name="slide" mode="out-in">
       <div class="locum-modal shadow-lg" v-if="modal">
         <MyLocumDetailModal @close="modal = false" :user="user" :jobs="jobs" />
       </div>
-    </transition>
+    </transition>-->
   </section>
 </template>
 <script>
@@ -72,29 +75,23 @@ import MyLocumDetailModal from "@/components/MyBanks/MyLocumDetailModal"; //TEMP
 import AppSelect from "@/components/Base/AppSelect";
 
 export default {
+  transition: {
+    name: 'fade',
+    mode: 'out-in'
+  },
   components: {
     AppPagination,
-    MyLocumDetailModal,
+    // MyLocumDetailModal,
     AppSelect
   },
   data() {
     return {
-      // practices: [],
-      // current_page: 1,
-      // total: 0,
-      // modal: false,
-      // practice: null,
+      locums: [],
+      current_page: 1,
+      total: 0,
+      practice: null,
       loading: true,
       //
-      locums: [],
-      total: 0,
-      totalPages: 0,
-      currentPage: 0,
-      perPage: 0,
-      modal: false, //TEMPORARY
-      user: null, //TEMPORARY
-      jobs: null,
-      professions: [],
       profession_id: null,
       filteredUsers: []
     };
@@ -113,6 +110,15 @@ export default {
       this.getFavoriteLocums();
     }
   },
+  // watch: {
+  //   $route(to, from) {
+  //     this.currentPage = parseInt(to.query.current_page)
+  //     this.getFavoriteLocums()
+  //   },
+  //   profession_id: function () {
+  //     this.getFavoriteLocums()
+  //   }
+  // },
   created() {
     const query = {
       ...this.$route.query,
@@ -173,6 +179,7 @@ export default {
         });
     },
     show(id) {
+      this.$router.push(`/my-banks/favourites/${id}`)
       // set id to store
       // this.$store.commit('myBanks/SET_MY_LOCUM_ID', id)
       // this.$store.commit('SET_MYLOCUMDETAIL_SHIELD', true)
@@ -220,7 +227,7 @@ export default {
 .avatar img {
   border-radius: 50%;
 }
-.locum-shield {
+.shield {
   position: fixed;
   top: 0;
   left: 0;
@@ -229,24 +236,6 @@ export default {
   background-color: #333;
   opacity: 0.5;
   z-index: 511;
-}
-.locum-modal {
-  position: fixed;
-  top: 0;
-  right: 0;
-  margin-right: 0%;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  border-left: solid 2px #edf2f7;
-  transition: all 0.3s ease-in-out;
-  background-color: white;
-  z-index: 512;
-}
-@media screen and (min-width: 1200px) {
-  .locum-modal {
-    width: 80%;
-  }
 }
 </style>
 

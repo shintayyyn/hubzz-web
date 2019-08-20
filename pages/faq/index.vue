@@ -21,14 +21,14 @@
             <div>{{item.question}}</div>
             <div class="font-bold text-lg">
               <svgicon name="arrow-right" height="15" width="15" v-if="!item.toggled" />
-              <span v-else class="font-bold text-lg">^</span>
+              <svgicon name="arrow-up" height="25" width="25" color="black" v-else/>
             </div>
           </div>
           <div
             class="flex justify-start item-answer font-bold text-sm overflow-hidden"
             :class="{'toggled': item.toggled}"
           >
-            <div class="p-4">{{item.answer}}</div>
+            <div v-html="item.answer" class="w-full h-auto mx-4"></div>
           </div>
         </div>
 
@@ -41,14 +41,14 @@
             <div>{{item.question}}</div>
             <div class="font-bold text-lg">
               <svgicon name="arrow-right" height="15" width="15" v-if="!item.toggled" />
-              <span v-else class="font-bold text-lg">^</span>
+              <svgicon name="arrow-up" height="25" width="25" color="black" v-else/>
             </div>
           </div>
           <div
             class="flex justify-start item-answer font-bold text-sm overflow-hidden"
             :class="{'toggled': item.toggled}"
           >
-            <div class="p-4">{{item.answer}}</div>
+            <div v-html="item.answer" class="w-full h-auto mx-4"></div>
           </div>
         </div>
       </div>
@@ -81,6 +81,6 @@ export default {
   transition: all 0.3s ease-in-out;
 }
 .toggled {
-  height: 50px;
+  height: auto;
 }
 </style>
