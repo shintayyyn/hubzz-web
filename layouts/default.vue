@@ -2,10 +2,10 @@
   <section>
     <div class="sidebar-shield" v-if="$store.state.toggled_sidebar" @click="close"></div>
     <AppSideBar @modal="signout_modal = $event" />
+    <AppHeader />
     <div class="content">
       <AppNotification />
-      <AppHeader />
-      <nuxt />
+      <nuxt class="mt-20" />
     </div>
   </section>
 </template>

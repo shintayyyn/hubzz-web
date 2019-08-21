@@ -155,7 +155,7 @@ export default {
   border-right: solid 1px #edf2f7;
   transition: all 0.3s ease-in-out;
   background-color: white;
-  z-index: 500;
+  z-index: 510;
 }
 .toggled-left {
   margin-left: 0;

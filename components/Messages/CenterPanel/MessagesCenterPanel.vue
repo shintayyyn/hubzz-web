@@ -2,7 +2,7 @@
   <div class="messages-center-panel w-full flex flex-col md:border-l">
     <MessagesCenterPanelTop />
     <div class="flex flex-col h-full justify-between">
-      <MessagesCenterPanelChat @fetch-more-messages="$emit('fetch-more-messages')" />
+      <MessagesCenterPanelChat />
       <MessagesCenterPanelForm />
     </div>
   </div>

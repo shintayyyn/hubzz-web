@@ -19,7 +19,7 @@ export default {
   DELETE_USER_ONLINE(state, payload) {
     let index = state.users_online.findIndex(users => users == payload)
     if (index >= 0) {
-      state.users_online.splice(index, 1, payload)
+      state.users_online.splice(index, 1)
     }
   },
   FETCH_MESSAGES(state, payload) {

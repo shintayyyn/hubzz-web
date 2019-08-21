@@ -62,7 +62,6 @@ export default {
         this.$emit("close");
         return;
       } else {
-        console.log(this.job);
         let status = this.job.locum_status;
         switch (status) {
           case "Current":

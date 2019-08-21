@@ -6,9 +6,19 @@
           <span class="relative w-full flex justify-center">
             <button
               v-if="loadMore"
-              class="absolute text-center py-4 px-8 shadow-md text-xs text-grey-darkest font-bold my-4 rounded-full bg-white focus:outline-none hover:bg-gray-200"
+              class="text-center py-4 px-8 shadow-md text-xs text-grey-darkest font-bold my-4 rounded-full bg-white focus:outline-none hover:bg-gray-200"
               @click="loadMoreMessages"
             >Load More Messages</button>
+          </span>
+        </transition>
+        <transition name="drop" mode="in-out">
+          <span class="relative w-full flex justify-center">
+            <button
+              v-if="newMessage"
+              :class="loadMore ? 'my-0' : 'my-4'"
+              class="fixed text-center py-4 px-8 shadow-md text-xs text-grey-darkest font-bold rounded-full bg-white focus:outline-none hover:bg-gray-200"
+              @click="scrollToBottom"
+            >New Message</button>
           </span>
         </transition>
         <div class="py-2 px-4">
@@ -134,7 +144,7 @@ export default {
       selectedUserId: "",
       message: "",
       loadMore: false,
-      time: false
+      newMessage: false
     };
   },
   computed: {
@@ -160,15 +170,26 @@ export default {
       this.loadMore = false;
     },
     messages(value) {
-      console.log(value);
-
+      let newMessageIndex = value.length - 1;
       if (value.length <= 20) {
         this.scrollToBottom();
       }
       if (value.length === this.oldMessageCount + 1) {
-        this.scrollToBottom();
+        let newChatSender = value[newMessageIndex].sender_id;
+        if (
+          (this.$refs.messagesContainer.scrollHeight >
+            this.$refs.messagesContainer.clientHeight ||
+            this.$refs.messagesContainer.scrollTop === 0) &&
+          newChatSender !== this.$auth.user.id
+        ) {
+          console.log(newChatSender, this.$auth.user.id);
+          this.newMessage = true;
+        } else {
+          this.scrollToBottom();
+        }
         this.oldMessageCount += +1;
       }
+
       this.oldMessageCount = value.length;
     }
   },
@@ -182,6 +203,7 @@ export default {
       this.$nextTick(() => {
         this.$refs.messagesContainer.scrollTop = this.$refs.messagesContainer.scrollHeight;
       });
+      this.newMessage = false;
     },
     scrollHandler(e) {
       if (
@@ -195,6 +217,8 @@ export default {
             this.loadMore = true;
           }
         });
+      } else {
+        this.loadMore = false;
       }
     },
     loadMoreMessages() {

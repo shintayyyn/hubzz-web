@@ -32,7 +32,10 @@
                     class="truncate"
                     :class="parseInt($route.params.slug) === item.id ? 'font-bold' : ''"
                   >{{ userFullname(item) }}</p>
-                  <p class="text-sm truncate">{{ item.message }}</p>
+                  <p
+                    class="text-sm truncate"
+                    :class="getMessage(item) ? 'font-bold' : ''"
+                  >{{ item.message }}</p>
                 </div>
                 <span
                   class="w-10 pr-1 text-right text-xs text-gray-600 leading-none absolute right-0 mr-1 h-full flex items-center"
@@ -61,7 +64,10 @@
                     class="truncate"
                     :class="parseInt($route.params.slug) === item.id ? 'font-bold' : ''"
                   >{{ userFullname(item) }}</p>
-                  <p class="text-sm truncate">{{ item.message }}</p>
+                  <p
+                    class="text-sm truncate"
+                    :class="getMessage(item.message) ? 'font-bold' : ''"
+                  >{{ getMessage(item.message) }}</p>
                 </div>
                 <span
                   class="w-12 pr-1 text-right text-xs text-gray-600 leading-none absolute right-0 mr-1"
@@ -117,8 +123,8 @@ export default {
         this.getResults(value);
       }
     },
-    messages(value) {
-      console.log(value.length);
+    conversations(value) {
+      console.log(value);
     }
   },
   methods: {
@@ -136,6 +142,9 @@ export default {
         this.messages = res.data.conversations;
         this.showResult = true;
       });
+    },
+    getMessage(message) {
+      // console.log(this.conversations);
     },
     userFullname(item) {
       return item.receiver_id === this.$auth.user.id

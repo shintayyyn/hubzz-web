@@ -1,9 +1,9 @@
 <template>
-  <section class="header-section">
+  <section class="bg-white fixed w-full z-50">
     <!-- <transition name="slide" mode="in-out">
       <CreateJobModal v-if="$store.state.calendar.create_job_modal" />
     </transition>-->
-    <div class="flex flex-row flex-wrap justify-between">
+    <div class="header-section px-4 flex flex-row flex-wrap justify-between">
       <div class="w-1/3 py-2">
         <div class="burger cursor-pointer" @click="toggle">
           <div class="my-2 bg-yellow-500"></div>
@@ -15,20 +15,33 @@
       </div>
       <div class="w-1/3 text-right leading-loose py-2">
         <div class="flex flex-col md:flex-row justify-end md:items-center" v-if="$auth.loggedIn">
-          <div class="flex flex-col md:flex-row">
+          <div class="flex justify-end">
             <div v-if="$auth.user.domain === 'Practice' && $auth.user.status === 'Active'">
               <AppButton
                 :label="'Create Job'"
                 @click="$store.commit('calendar/CREATE_JOB_MODAL', true)"
                 :inStyle="'font-size: medium; padding:10px;'"
-                class="mb-2 md:mx-2 leading-none"
+                class="hidden md:block mb-2 md:mx-2 leading-none"
               />
+              <button
+                @click="$store.commit('calendar/CREATE_JOB_MODAL', true)"
+                class="block md:hidden button rounded-lg p-2 focus:outline-none cursor-pointer mx-2"
+              >
+                <svgicon name="create-job" color="#000" width="21" height="21"></svgicon>
+              </button>
             </div>
             <AppButton
               :label="'Messages'"
               @click="$router.push('/messages')"
               :inStyle="'font-size: medium; padding:2px 14px;'"
+              class="hidden md:block"
             />
+            <button
+              @click="$router.push('/messages')"
+              class="block md:hidden button rounded-lg p-2 focus:outline-none cursor-pointer"
+            >
+              <svgicon name="write-message" color="#000" width="21" height="21"></svgicon>
+            </button>
           </div>
           <div
             class="text-xs xl:text-sm ml-4"
@@ -37,12 +50,12 @@
         </div>
       </div>
     </div>
-    <div class="modal-shield" v-if="create_job_modal"></div>
     <transition name="slide" mode="out-in">
       <div class="modal-container shadow-lg" v-if="create_job_modal">
         <CreateJobModal />
       </div>
     </transition>
+    <div class="modal-shield" v-if="create_job_modal"></div>
   </section>
 </template>
 <script>
@@ -51,21 +64,21 @@ import CreateJobModal from "@/components/CreateJobModal";
 export default {
   components: {
     AppButton,
-    CreateJobModal,
+    CreateJobModal
   },
   computed: {
     create_job_modal() {
-      return this.$store.state.calendar.create_job_modal
+      return this.$store.state.calendar.create_job_modal;
     }
   },
   watch: {
     create_job_modal(value) {
       if (value) {
-        document.body.style.overflow = 'hidden'
+        document.body.style.overflow = "hidden";
       } else {
-        document.body.style.overflow = 'auto'
+        document.body.style.overflow = "auto";
       }
-    },
+    }
   },
   methods: {
     toggle() {
@@ -79,7 +92,9 @@ export default {
 <style scoped>
 .header-section {
   width: 100%;
-  margin-bottom: 20px;
+  z-index: 600;
+
+  /* margin-bottom: 20px; */
 }
 .burger {
   display: block;
@@ -100,39 +115,12 @@ export default {
     display: none;
   }
   .header-section {
-    margin-bottom: 50px;
+    /* margin-bottom: 50px; */
     max-width: 1466px;
   }
 }
 a {
   text-decoration: none;
   color: black;
-}
-.modal-shield {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #333;
-  opacity: 0.5;
-  z-index: 509;
-}
-.modal-container {
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  border-left: solid 2px #edf2f7;
-  transition: all 0.3s ease-in-out;
-  background-color: white;
-  z-index: 510;
-}
-@media screen and (min-width: 1200px) {
-  .modal-container {
-    width: 80%;
-  }
 }
 </style>
