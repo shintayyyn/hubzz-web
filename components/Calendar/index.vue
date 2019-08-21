@@ -46,7 +46,7 @@ import JobDetailModalLocum from "@/components/Jobs/JobDetailModalLocum";
 import JobDetailModalAppointment from "@/components/Jobs/JobDetailModalAppointment";
 
 // practice
-import CreateJobModal from "@/components/CreateJobModal";
+// import CreateJobModal from "@/components/CreateJobModal";
 import JobDetailModal from "@/components/Sessions/JobDetailModal";
 
 export default {
@@ -56,7 +56,7 @@ export default {
     Info,
     JobDetailModalLocum,
     JobDetailModalAppointment,
-    CreateJobModal,
+    // CreateJobModal,
     JobDetailModal
   },
   data() {

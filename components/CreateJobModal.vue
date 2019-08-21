@@ -1,5 +1,5 @@
 <template>
-  <div class="p-8 max-w-5xl">
+  <div class="p-8 max-w-5xl" ref="createJobModal">
     <div @click="close" class="cursor-pointer">
       <svgicon name="left-arrow" height="32" width="32" />
     </div>
@@ -131,14 +131,14 @@
                 <div class="mt-2">
                   <label for="rate" class="text-xs sm:text-sm mt-2">Rate £</label>
                   <input
-                    v-model="form.total_hours"
+                    v-model="form.rate"
                     type="text"
                     class="border-b-2 focus:border-yellow-400 focus:outline-none font-bold text-xs sm:text-sm mx-1 py-2"
                     :class="formError.find(item => item.field === 'rate')? 'border-red-500':''"
                     style="text-align:right;width:100px;"
                     @blur="CheckEmptyField(form.rate,'rate')"
                   />
-                  <label for="total_hours" class="text-xs sm:text-sm mt-2">hours</label>
+                  <label for="rate" class="text-xs sm:text-sm mt-2">hours</label>
                 </div>
               </div>
             </div>
@@ -203,124 +203,54 @@
               :items="professions"
               :placeholder="'Select..'"
             />
+
             <template v-if="form.profession_id">
               <AppFilterSearch
                 v-model="form.qualification_id"
                 :name="'qualification_id'"
                 :label="'Specialty'"
                 :placeholder="'Select...'"
-                :error="formError.find(item => item.field === 'qualification_id')"
                 :items="qualifications"
                 :info="'Choose at least one qualification'"
-                @blur="CheckEmptyField(form.qualification_id,'qualification_id')"
+                @blur="checkEmptyField(form.qualification_id,'qualification_id')"
               />
-              <template v-if="form.profession_id">
-                <AppFilterSearch
-                  v-model="form.qualification_id"
-                  :name="'qualification_id'"
-                  :label="'Specialty'"
-                  :placeholder="'Select...'"
-                  :items="qualifications"
-                  :info="'Choose at least one qualification'"
-                  @blur="checkEmptyField(form.qualification_id,'qualification_id')"
-                />
-                <AppFilterSearch
-                  v-model="form.clinical_system_id"
-                  :name="'clinical_system_id'"
-                  :label="'Clnical systems'"
-                  :placeholder="'Select...'"
-                  :items="clinical_system_lists"
-                  :info="'Choose at least one qualification'"
-                />
-              </template>
-
               <AppFilterSearch
-                v-model="form.spoken_language_id"
-                :name="'spoken_language_id'"
-                :label="'Spoken languages'"
+                v-model="form.clinical_system_id"
+                :name="'clinical_system_id'"
+                :label="'Clnical systems'"
                 :placeholder="'Select...'"
-                :items="spoken_language_lists"
+                :items="clinical_system_lists"
                 :info="'Choose at least one qualification'"
-                :defaultItem="'English'"
               />
-              <template v-if="form.profession_id">
-                <div class="relative flex flex-col pt-2">
-                  <div class="text-xs sm:text-sm py-1">Compliance documents</div>
-                </div>
-                <AppInput
-                  v-model="form.compliance_document_id"
-                  :type="'multi-checkbox'"
-                  @checked="form.compliance_document_id.push($event)"
-                  @unchecked="form.compliance_document_id.splice(form.compliance_document_id.findIndex(item => item === $event), 1)"
-                  :name="'compliance_document_id'"
-                  :label="`${selectedProfession.profession_category.id === 1 ? 'For GPs:' : selectedProfession.profession_category.id === 2 ? 'For Nurses, et al:' : ''}`"
-                  :placeholder="''"
-                  :lists="compliances"
-                />
-              </template>
             </template>
-          </div>
-        </div>
-        <div class="flex flex-col">
-          <h4 class="font-bold mt-4">Duration</h4>
-          <div class="rounded-lg shadow-lg px-8 py-4 mt-4">
-            <template>
-              <div class="flex flex-row flex-wrap justify-between">
-                <div class="px-1 w-full md:w-1/2">
-                  <AppDate
-                    v-model="form.date_start"
-                    :name="'date_start'"
-                    :label="'Start Date'"
-                    @blur="checkEmptyField(form.date_start,'date_start')"
-                  />
-                </div>
-                <div class="px-1 w-full md:w-1/2">
-                  <AppTime
-                    v-model="form.time_start"
-                    :type="'time'"
-                    :name="'time_start'"
-                    :label="'Start Time'"
-                    @blur="checkEmptyField(form.time_start,'time_start')"
-                  />
-                </div>
-                <div class="px-1 w-full md:w-1/2">
-                  <AppDate
-                    v-model="form.date_end"
-                    :name="'date_end'"
-                    :label="'End Date'"
-                    @blur="checkEmptyField(form.date_end,'date_end')"
-                  />
-                </div>
-                <div class="px-1 w-full md:w-1/2">
-                  <AppTime
-                    v-model="form.time_end"
-                    :type="'time'"
-                    :name="'time_end'"
-                    :label="'End Time'"
-                    @blur="checkEmptyField(form.time_end,'time_end')"
-                  />
-                </div>
+
+            <AppFilterSearch
+              v-model="form.spoken_language_id"
+              :name="'spoken_language_id'"
+              :label="'Spoken languages'"
+              :placeholder="'Select...'"
+              :items="spoken_language_lists"
+              :info="'Choose at least one qualification'"
+              :defaultItem="'English'"
+            />
+            <template v-if="form.profession_id">
+              <div class="relative flex flex-col pt-2">
+                <div class="text-xs sm:text-sm py-1">Compliance documents</div>
               </div>
-              <AppSelect
-                v-model="unpaid_breaks"
-                :name="'unpaid_breaks'"
-                :label="'Unpaid break'"
-                :items="[ {value: 15, label: '15'}, {value: 30, label: '30'}, {value: 60, label: '60'}, {value: 'other', label: 'Other'} ]"
-                :placeholder="'Select..'"
-              />
               <AppInput
-                v-if="unpaid_breaks === 'other'"
-                v-model="form.unpaid_breaks_in_minutes"
-                :type="'text'"
-                :name="'unpaid_breaks_in_minutes'"
-                :label="'Other'"
+                v-model="form.compliance_document_id"
+                :type="'multi-checkbox'"
+                @checked="form.compliance_document_id.push($event)"
+                @unchecked="form.compliance_document_id.splice(form.compliance_document_id.findIndex(item => item === $event), 1)"
+                :name="'compliance_document_id'"
+                :label="`${selectedProfession.profession_category.id === 1 ? 'For GPs:' : selectedProfession.profession_category.id === 2 ? 'For Nurses, et al:' : ''}`"
                 :placeholder="''"
                 :lists="compliances"
-                :error="formError.find(item => item.field === 'compliance_document_id')"
               />
             </template>
           </div>
         </div>
+
         <div class="flex flex-col">
           <h4 class="font-bold mt-4">Duration</h4>
           <div class="rounded-lg shadow-lg px-8 py-4 mt-4">
@@ -546,39 +476,38 @@ export default {
         time: null
       },
 
-      // auto_
       form: {
-        practice_id: "", //req
-        title: "", //req
-        description: "", //req
-        email: "", //req
-        report_to: "", //req
+        practice_id: "",
+        title: "",
+        description: "",
+        email: "",
+        report_to: "",
         is_another_doctor: false,
         is_nurse_available: false,
-        number_of_patients: "", //?????????????
-        duration_for_each_appointment: "", //?????????????
+        number_of_patients: "",
+        duration_for_each_appointment: "",
         opportunity_for_catch_up_slots: false,
         session_requirements: [],
-        session_structure_information: "", //??????????????
-        extra_information: "", //???????????
-        rate: "", //req
-        total_hours: "", //req
-        locum_detail_rate_type_id: 1, //req - already filled
-        ir35: false, //req - already filled
+        session_structure_information: "",
+        extra_information: "",
+        rate: "",
+        total_hours: "",
+        locum_detail_rate_type_id: 1,
+        ir35: false,
         mandatory_training_id: [],
-        profession_id: "", //req
-        qualification_id: [], //req
-        clinical_system_id: [], //req
-        spoken_language_id: [], //req
-        compliance_document_id: [], //req
-        date_start: null, //req
-        time_start: null, //req
-        date_end: null, //req
-        time_end: null, //req
+        profession_id: "",
+        qualification_id: [],
+        clinical_system_id: [],
+        spoken_language_id: [],
+        compliance_document_id: [],
+        date_start: null,
+        time_start: null,
+        date_end: null,
+        time_end: null,
         include_saturday: false,
         include_sunday: false,
-        unpaid_breaks_in_minutes: "", //req
-        shift_id: "", //req
+        unpaid_breaks_in_minutes: "",
+        shift_id: "",
         auto_assign_at: null,
         selection_date: null,
         favorite_only_until: null
@@ -687,55 +616,23 @@ export default {
     }
   },
   created() {
-    // get practice surgeries
     this.$axios.$get(`/api/v1/practice/me/practice-practices`).then(res => {
-      // res.data.practices.forEach
+      this.practice_lists = []
+      res.data.practices.forEach(item => {
+        this.practice_lists.push({ label: item.surgery.name, value: item.id });
+      });
     })
-    // get practice lists
-    this.$axios.$get(`/api/v1/practice/practice-children`).then(res => {
-      // this.practice_lists = [];
-      // this.practice_lists.push({
-      //   label: this.$auth.user.practice_detail.practice.surgery.name,
-      //   value: this.$auth.user.practice_detail.practice.id
-      // });
-      // res.data.practice_children.forEach(item => {
-      //   this.practice_lists.push({ label: item.surgery.name, value: item.id });
-      // });
-    });
-
     this.$axios.$get(`/api/v1/locum-detail-rate-types`).then(res => {
       this.rate_lists = [];
       res.data.locum_detail_rate_types.forEach(item => {
         this.rate_lists.push({ label: item.name, value: item.id });
       });
     });
-    this.$axios.$get(`/api/v1/me`).then(res => {
-      this.form.report_to = res.data.user.practice_detail.practice.report_to;
-      this.form.email = res.data.user.practice_detail.practice.email;
-      res.data.user.practice_detail.practice.mandatory_trainings.forEach(
-        item => {
-          this.mandatory_training_lists.push({
-            label: item.name,
-            value: item.id
-          });
-        }
-      );
-      res.data.user.practice_detail.practice.gp_compliance_documents.forEach(
-        item => {
-          this.gp_compliance_documents_lists.push({
-            label: item.name,
-            value: item.id
-          });
-        }
-      );
-      res.data.user.practice_detail.practice.others_compliance_documents.forEach(
-        item => {
-          this.others_compliance_documents_lists.push({
-            label: item.name,
-            value: item.id
-          });
-        }
-      );
+    this.$axios.$get(`/api/v1/shifts`).then(res => {
+      this.shifts = [];
+      res.data.shifts.forEach(item => {
+        this.shifts.push({ label: item.name, value: item.id });
+      });
     });
     this.$axios.$get(`/api/v1/professions`).then(res => {
       this.professions = [];
@@ -777,11 +674,33 @@ export default {
         this.spoken_language_lists.push({ label: item.name, value: item.id });
       });
     });
-    this.$axios.$get(`/api/v1/shifts`).then(res => {
-      this.shifts = [];
-      res.data.shifts.forEach(item => {
-        this.shifts.push({ label: item.name, value: item.id });
-      });
+    this.$axios.$get(`/api/v1/me`).then(res => {
+      this.form.report_to = res.data.user.practice_detail.practice.report_to;
+      this.form.email = res.data.user.practice_detail.practice.email;
+      res.data.user.practice_detail.practice.mandatory_trainings.forEach(
+        item => {
+          this.mandatory_training_lists.push({
+            label: item.name,
+            value: item.id
+          });
+        }
+      );
+      res.data.user.practice_detail.practice.gp_compliance_documents.forEach(
+        item => {
+          this.gp_compliance_documents_lists.push({
+            label: item.name,
+            value: item.id
+          });
+        }
+      );
+      res.data.user.practice_detail.practice.others_compliance_documents.forEach(
+        item => {
+          this.others_compliance_documents_lists.push({
+            label: item.name,
+            value: item.id
+          });
+        }
+      );
     });
   },
 
@@ -789,14 +708,14 @@ export default {
     close() {
       this.$store.commit("calendar/CREATE_JOB_MODAL", false);
     },
-    addMandatory() {
-      this.$store.commit('calendar/CREATE_JOB_MODAL', false)
-      this.$router.push("/profile/practice")
-    },
     uncheckMandatory(value) {
       this.form.mandatory_training_id = this.form.mandatory_training_id.filter(
         id => id != value
       );
+    },
+    addMandatory() {
+      this.$store.commit('calendar/CREATE_JOB_MODAL', false)
+      this.$router.push("/profile/practice")
     },
     publish() {
       this.formError = []
@@ -838,6 +757,7 @@ export default {
 
         this.form.auto_assign_at = `${this.$moment(this.auto_assign_at.date).format('YYYY-MM-DD')} ${this.auto_assign_at.time}`
         this.form.selection_date = `${this.$moment(this.selection_date.date).format('YYYY-MM-DD')} ${this.selection_date.time}`
+        this.form.favorite_only_until = `${this.$moment(this.favorite_only_until.date).format('YYYY-MM-DD')} ${this.favorite_only_until.time}`
 
         this.form.session_requirements.length > 0
           ? (this.form.session_requirements = this.form.session_requirements.join())
@@ -845,6 +765,7 @@ export default {
         this.unpaid_breaks !== "other"
           ? (this.form.unpaid_breaks_in_minutes = this.unpaid_breaks)
           : (this.form.unpaid_breaks_in_minutes = this.form.unpaid_breaks_in_minutes);
+
         this.$axios.$post(`/api/v1/practice/jobs`, this.form).then(res => {
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
@@ -853,6 +774,7 @@ export default {
           });
           this.$store.commit('calendar/CREATE_JOB_MODAL', false)
         }).catch(err => {
+          this.$refs.createJobModal.scrollTop = 0;
           this.clinical_system_lists.forEach((clinicalSystem, index) => {
             if (this.form.clinical_system_id.includes(clinicalSystem.value)) {
               this.form.clinical_system_id.splice(index, 1, clinicalSystem)
@@ -873,56 +795,11 @@ export default {
           this.formError = err.response.data.error_messages
         })
       } else {
-        // this.showErrorModal = true
+        this.$nextTick(() => {
+          this.$parent.$refs.modalContainer.scrollTop = 0;
+        });
       }
     }
   }
 };
 </script>
-<style>
-.clinical-system-list {
-  max-height: 0;
-  transition: all 0.3s ease-in-out;
-}
-.qualification-list {
-  max-height: 0;
-  transition: all 0.3s ease-in-out;
-}
-.spoken-language-list {
-  max-height: 0;
-  transition: all 0.3s ease-in-out;
-}
-.spoken-language-list::-webkit-scrollbar {
-  width: 10px;
-}
-.spoken-language-list::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-.spoken-language-list::-webkit-scrollbar-thumb {
-  background: lightgrey;
-}
-.spoken-language-list::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
-.toggle-list {
-  max-height: 150px;
-}
-.create-job-modal {
-  position: fixed;
-  top: 0;
-  right: 0;
-  margin-right: 0%;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  border-left: solid 2px #edf2f7;
-  transition: all 0.3s ease-in-out;
-  background-color: white;
-  z-index: 510;
-}
-@media screen and (max-width: 1000px) {
-  .create-job-modal {
-    width: 50%;
-  }
-}
-</style>

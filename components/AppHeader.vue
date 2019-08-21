@@ -39,7 +39,7 @@
     </div>
     <div class="modal-shield" v-if="create_job_modal"></div>
     <transition name="slide" mode="out-in">
-      <div class="modal-container shadow-lg" v-if="create_job_modal">
+      <div class="modal-container shadow-lg" ref="modalContainer" v-if="create_job_modal">
         <CreateJobModal />
       </div>
     </transition>
