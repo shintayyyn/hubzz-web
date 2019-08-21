@@ -687,16 +687,20 @@ export default {
     }
   },
   created() {
+    // get practice surgeries
+    this.$axios.$get(`/api/v1/practice/me/practice-practices`).then(res => {
+      // res.data.practices.forEach
+    })
     // get practice lists
     this.$axios.$get(`/api/v1/practice/practice-children`).then(res => {
-      this.practice_lists = [];
-      this.practice_lists.push({
-        label: this.$auth.user.practice_detail.practice.surgery.name,
-        value: this.$auth.user.practice_detail.practice.id
-      });
-      res.data.practice_children.forEach(item => {
-        this.practice_lists.push({ label: item.surgery.name, value: item.id });
-      });
+      // this.practice_lists = [];
+      // this.practice_lists.push({
+      //   label: this.$auth.user.practice_detail.practice.surgery.name,
+      //   value: this.$auth.user.practice_detail.practice.id
+      // });
+      // res.data.practice_children.forEach(item => {
+      //   this.practice_lists.push({ label: item.surgery.name, value: item.id });
+      // });
     });
 
     this.$axios.$get(`/api/v1/locum-detail-rate-types`).then(res => {
