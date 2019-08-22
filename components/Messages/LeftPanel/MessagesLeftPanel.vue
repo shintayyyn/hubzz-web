@@ -112,6 +112,14 @@ export default {
       } else {
         this.getResults(value);
       }
+    },
+    conversations(newValue, oldValue) {
+      let receiver_id = newValue[0].receiver_id;
+      let sender_id = newValue[0].sender_id;
+      if (this.$auth.user.id === receiver_id) {
+        return;
+      }
+      this.$router.push(`/messages/${newValue[0].conversation_id}`);
     }
   },
   methods: {

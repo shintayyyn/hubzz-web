@@ -183,7 +183,7 @@ export default {
       let atBottom =
         Math.round(
           this.$refs.messagesContainer.offsetHeight +
-            this.$refs.messagesContainer.scrollTop
+          this.$refs.messagesContainer.scrollTop
         ) === this.$refs.messagesContainer.scrollHeight;
       let newMessageIndex = value.length - 1;
       if (value.length <= 20) {
@@ -296,9 +296,9 @@ export default {
               if (window.innerWidth < 768) {
                 this.$store.commit("IS_MOBILE", false);
               }
-              this.$router.push(
-                `/messages/${parseInt(conversation.conversation_id) + 1}`
-              );
+              // this.$router.push(
+              //   `/messages/${parseInt(conversation.conversation_id) + 1}`
+              // );
             }
             this.search_user = "";
           });
