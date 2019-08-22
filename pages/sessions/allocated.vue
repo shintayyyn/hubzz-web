@@ -4,13 +4,15 @@
     <AppJobFilter @clear="clearFilters" @getJobs="getJobs(1, params)" :params="params" />
     <div
       class="mt-10 w-full text-center"
-      style="font-family: Nunito"
       v-if="!loadingJobs && getPracticeAllocatedJobs.length === 0 "
     >You do not have any allocated jobs</div>
     <div v-if="getPracticeAllocatedJobs.length > 0" class="overflow-x-auto overflow-y-hidden">
       <JobTable :columns="columns" :jobs="getPracticeAllocatedJobs" @sortBy="sortBy" @show="show" />
     </div>
-    <div class="bottom-0 w-full" v-if="getPracticeAllocatedJobs.length > 0 && totalPages > 1">
+    <div
+      class="absolute bottom-0 w-full"
+      v-if="getPracticeAllocatedJobs.length > 0 && totalPages > 1"
+    >
       <AppPagination
         :total="total"
         :totalPages="totalPages"

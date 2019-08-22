@@ -28,13 +28,13 @@
         <div class="flex flex-row flex-wrap justify-start">
           <JobDetailModalForm
             :job="job"
-            v-if="job.status === 'Unfilled' && toEdit === false || 
-                job.status === 'Cancelled' && toEdit === false  || 
-                job.status === 'Declined' && toEdit === false || 
-                job.status === 'Completed' && toEdit === false ||
-                job.status === 'Current' && toEdit === false || 
-                job.status === 'Applied' && toEdit === false || 
-                job.status === 'Available' && toEdit === false "
+            v-if="toEdit === false || 
+                toEdit === false  || 
+                toEdit === false || 
+                toEdit === false ||
+                toEdit === false || 
+                toEdit === false || 
+                toEdit === false "
           />
           <JobDetailModalUpdateForm
             :job="job"
@@ -102,13 +102,12 @@ export default {
     };
   },
   created() {
-    if (this.job.platform_job.appointed_to_locum !== null) {
-      this.getAppointedLocum();
-    }
     if (this.job.status === "Applied") {
       this.getCandidates();
     }
-
+    if (this.job.platform_job.appointed_to_locum !== null) {
+      this.getAppointedLocum();
+    }
     if (this.$moment().diff(this.job.date_start, "days") >= 0) {
       console.log(
         "Job is either ongoing or unfilled. Cannot be edited",
