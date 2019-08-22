@@ -29,6 +29,31 @@ export default {
     },
     src: String,
     type: String
+  },
+  methods: {
+    onFileInput(e) {
+      if (e.target.files[0].type.split("/")[0] !== "image") {
+        return;
+      }
+      let file = e.target.files[0];
+      const formData = new FormData();
+      formData.append("file", file);
+      this.$axios.$put(`/api/v1/me/change-avatar`, formData).then(res => {
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "success",
+          text: ["Avatar changed"]
+        });
+        this.getBase64(file, imageUrl => {
+          this.imageUrl = imageUrl;
+        });
+      });
+    },
+    getBase64(img, callback) {
+      const reader = new FileReader();
+      reader.addEventListener("load", () => callback(reader.result));
+      reader.readAsDataURL(img);
+    }
   }
 };
 </script>
