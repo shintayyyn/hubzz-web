@@ -38,15 +38,8 @@
           </div>
           <div class="flex flex-wrap text-center pt-4 cursor-pointer" @click="show(user.id)">
             <div class="w-full flex justify-center">
-              <div class="relative avatar flex justify-center">
-                <img
-                  :src="user.avatar.file.url"
-                  v-if="user.avatar && user.avatar.file && user.avatar.file.url"
-                />
-                <svgicon v-else name="no-avatar" height="115" width="115" />
-              </div>
+              <AppAvatar :src="user.avatar.file.url" />
             </div>
-
             <div class="w-full font-bold text-sm sm:text-lg my-4">{{user.personal_detail.name}}</div>
             <div
               class="w-full mb-4 font-bold text-gray-600 text-sm sm:text-lg"
@@ -74,21 +67,28 @@
 <script>
 import AppPagination from "@/components/Base/AppPagination";
 import AppSelect from "@/components/Base/AppSelect";
+import AppAvatar from "@/components/Base/AppAvatar";
 const tabs = [
-  'my-banks-favourites-userId', 'my-banks-favourites-userId-profile', 'my-banks-favourites-userId-related-jobs',
-  'my-banks-favourites-userId-related-jobs-available', 'my-banks-favourites-userId-related-jobs-applied',
-  'my-banks-favourites-userId-related-jobs-current', 'my-banks-favourites-userId-related-jobs-completed',
-  'my-banks-favourites-userId-related-jobs-unsuccessful', 'my-banks-favourites-userId-related-jobs-cancelled',
-  'my-banks-favourites-userId-related-jobs-declined',
-]
+  "my-banks-favourites-userId",
+  "my-banks-favourites-userId-profile",
+  "my-banks-favourites-userId-related-jobs",
+  "my-banks-favourites-userId-related-jobs-available",
+  "my-banks-favourites-userId-related-jobs-applied",
+  "my-banks-favourites-userId-related-jobs-current",
+  "my-banks-favourites-userId-related-jobs-completed",
+  "my-banks-favourites-userId-related-jobs-unsuccessful",
+  "my-banks-favourites-userId-related-jobs-cancelled",
+  "my-banks-favourites-userId-related-jobs-declined"
+];
 export default {
   transition: {
-    name: 'fade',
-    mode: 'out-in'
+    name: "fade",
+    mode: "out-in"
   },
   components: {
     AppPagination,
-    AppSelect
+    AppSelect,
+    AppAvatar
   },
   data() {
     return {
@@ -102,10 +102,10 @@ export default {
       loading: true,
 
       params: {
-        profession_id: '1'
+        profession_id: "1"
       },
 
-      profession_id: '1',
+      profession_id: "1"
     };
   },
   computed: {
@@ -117,16 +117,16 @@ export default {
     },
     totalPages() {
       return Math.ceil(this.total / this.perPage);
-    },
+    }
   },
   created() {
-    this.getProfessions()
-    this.getLocumsCount()
+    this.getProfessions();
+    this.getLocumsCount();
   },
   watch: {
     profession_id(value) {
-      this.params.profession_id = value
-      this.getLocums(this.current_page)
+      this.params.profession_id = value;
+      this.getLocums(this.current_page);
     }
   },
   methods: {
@@ -140,18 +140,24 @@ export default {
     },
     getLocumsCount() {
       this.$axios.$get(`/api/v1/practice/locums/count`).then(res => {
-        this.total = res.data.count
-        this.getLocums(this.current_page)
-      })
+        this.total = res.data.count;
+        this.getLocums(this.current_page);
+      });
     },
     getLocums(page) {
-      this.current_page = page
-      let defaultParams = { offset: this.offset, limit: this.perPage, practice_locum_type: 'Favorite' }
-      let locumParams = { ...defaultParams, ...this.params }
-      this.$axios.$get(`/api/v1/practice/locums`, { params: locumParams }).then(res => {
-        this.users = res.data.users
-        this.loading = false
-      })
+      this.current_page = page;
+      let defaultParams = {
+        offset: this.offset,
+        limit: this.perPage,
+        practice_locum_type: "Favorite"
+      };
+      let locumParams = { ...defaultParams, ...this.params };
+      this.$axios
+        .$get(`/api/v1/practice/locums`, { params: locumParams })
+        .then(res => {
+          this.users = res.data.users;
+          this.loading = false;
+        });
     },
     favorite(id, index) {
       let locum = this.users.find(locum => locum.id === id);
@@ -176,16 +182,16 @@ export default {
               status: "success",
               text: ["Remove to favourites"]
             });
-            this.users.splice(index, 1)
+            this.users.splice(index, 1);
           });
       }
     },
     show(id) {
-      this.$router.push(`/my-banks/favourites/${id}`)
+      this.$router.push(`/my-banks/favourites/${id}`);
     },
     pagechanged(e) {
-      this.current_page = e
-      this.getLocums(this.current_page)
+      this.current_page = e;
+      this.getLocums(this.current_page);
     }
   }
 };

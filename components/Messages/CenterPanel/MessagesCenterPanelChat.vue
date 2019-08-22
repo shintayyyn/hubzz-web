@@ -6,9 +6,19 @@
           <span class="relative w-full flex justify-center">
             <button
               v-if="loadMore"
-              class="absolute text-center py-4 px-8 shadow-md text-xs text-grey-darkest font-bold my-4 rounded-full bg-white focus:outline-none hover:bg-gray-200"
+              class="text-center py-4 px-8 shadow-md text-xs text-grey-darkest font-bold my-4 rounded-full bg-white focus:outline-none hover:bg-gray-200"
               @click="loadMoreMessages"
             >Load More Messages</button>
+          </span>
+        </transition>
+        <transition name="drop" mode="in-out">
+          <span class="relative w-full flex justify-center">
+            <button
+              v-if="newMessage"
+              :class="loadMore ? 'my-0' : 'my-4'"
+              class="fixed text-center py-4 px-8 shadow-md text-xs text-grey-darkest font-bold rounded-full bg-white focus:outline-none hover:bg-gray-200"
+              @click="scrollToBottom"
+            >New Message</button>
           </span>
         </transition>
         <div class="py-2 px-4">
@@ -19,17 +29,31 @@
                 class="flex my-1"
                 :class="isReceiver(item) ? 'justify-start': 'justify-end'"
               >
-                <div class="flex" :class="isReceiver(item) ? '': 'flex-row-reverse'">
-                  <img
-                    v-if="item.sender.domain === 'Locum'"
-                    class="w-10 h-10 rounded-full border"
-                    :src="setAvatar(item.sender)"
-                    width="25"
-                  />
-                  <div
-                    class="my-1 mx-2 rounded-lg text-xs px-4 py-2 bg-red-400 text-white"
-                    :class="{'mx-4' : !isReceiver(item)}"
-                  >Deleted</div>
+                <div class="flex flex-col text-sm">
+                  <div class="flex" :class="isReceiver(item) ? '': 'flex-row-reverse'">
+                    <div
+                      v-if="item.sender.domain === 'Locum'"
+                      :class="item.sender.domain === 'Locum' ? '' : 'hidden'"
+                      class="w-10 h-10"
+                    >
+                      <AppAvatar
+                        class="m-auto"
+                        :width="'40px'"
+                        :height="'40px'"
+                        :src="setAvatar(item.sender)"
+                      />
+                    </div>
+
+                    <div
+                      class="my-1 mx-2 rounded-lg text-xs px-4 py-2 bg-red-400 text-white"
+                      :class="{'mx-4' : !isReceiver(item)}"
+                    >Deleted</div>
+                  </div>
+                  <div class="mx-2" :class="isReceiver(item) ? 'text-right ': ''">
+                    <span
+                      class="text-xs text-gray-500 py-1"
+                    >{{ $moment(item.created_at).startOf("hours").fromNow() }}</span>
+                  </div>
                 </div>
               </div>
 
@@ -40,27 +64,29 @@
               >
                 <div class="flex flex-col text-sm">
                   <div class="flex items-start" :class="isReceiver(item) ? '': 'flex-row-reverse'">
-                    <img
-                      class="w-10 h-10 rounded-full"
-                      :class="item.sender.domain === 'Locum' ? '' : 'hidden'"
-                      :src="setAvatar(item.sender)"
-                      width="25"
-                    />
+                    <div :class="item.sender.domain === 'Locum' ? '' : 'hidden'" class="w-10 h-10">
+                      <AppAvatar
+                        class="m-auto"
+                        :height="'40px'"
+                        :width="'40px'"
+                        :src="setAvatar(item.sender)"
+                      />
+                    </div>
                     <span
                       @mouseover="time=true"
                       @mouseleave="time=false"
                       class="chat-message rounded-lg px-2 py-2 mx-2"
                       :class="isReceiver(item) ? 'bg-gray-300' : 'bg-blue-500 text-white'"
                     >{{item.message}}</span>
-                    <!-- <div
+                    <div
                       class="text-xs text-gray-500 font-bold mx-1 mt-3 cursor-pointer px-2"
                       @click="deleteMessage(item.id)"
-                    >X</div>-->
+                    >X</div>
                   </div>
                   <div class="mx-2" :class="isReceiver(item) ? 'text-right ': ''">
                     <span
                       class="text-xs text-gray-500 py-1"
-                    >{{ $moment(item.created_at).startOf("day").fromNow() }}</span>
+                    >{{ $moment(item.created_at).startOf("hours").fromNow() }}</span>
                   </div>
                 </div>
               </div>
@@ -108,12 +134,14 @@
 import AppAutoComplete from "~/components/Base/AppAutoComplete";
 import AppButton from "~/components/Base/AppButton";
 import AppTextarea from "~/components/Base/AppTextarea";
+import AppAvatar from "~/components/Base/AppAvatar";
 import MessagesCenterPanelTop from "@/components/Messages/CenterPanel/MessagesCenterPanelTop";
 export default {
   components: {
     AppAutoComplete,
     AppButton,
     AppTextarea,
+    AppAvatar,
     MessagesCenterPanelTop
   },
   data() {
@@ -126,7 +154,7 @@ export default {
       selectedUserId: "",
       message: "",
       loadMore: false,
-      time: false
+      newMessage: false
     };
   },
   computed: {
@@ -152,12 +180,35 @@ export default {
       this.loadMore = false;
     },
     messages(value) {
+      let atBottom =
+        Math.round(
+          this.$refs.messagesContainer.offsetHeight +
+          this.$refs.messagesContainer.scrollTop
+        ) === this.$refs.messagesContainer.scrollHeight;
+      let newMessageIndex = value.length - 1;
       if (value.length <= 20) {
         this.scrollToBottom();
-      } else if (value.length === this.oldMessageCount + 1) {
-        this.scrollToBottom();
+      }
+      if (value.length === this.oldMessageCount + 1) {
+        let newChatSender = value[newMessageIndex].sender_id;
+        if (
+          (this.$refs.messagesContainer.scrollHeight >
+            this.$refs.messagesContainer.clientHeight ||
+            this.$refs.messagesContainer.scrollTop === 0) &&
+          newChatSender !== this.$auth.user.id
+        ) {
+          if (atBottom) {
+            this.scrollToBottom();
+          } else {
+            this.newMessage = true;
+          }
+        } else {
+          this.scrollToBottom();
+        }
         this.oldMessageCount += +1;
       }
+
+      this.oldMessageCount = value.length;
     }
   },
   methods: {
@@ -170,8 +221,12 @@ export default {
       this.$nextTick(() => {
         this.$refs.messagesContainer.scrollTop = this.$refs.messagesContainer.scrollHeight;
       });
+      this.newMessage = false;
     },
     scrollHandler(e) {
+      let atBottom =
+        Math.round(e.target.offsetHeight + e.target.scrollTop) ===
+        e.target.scrollHeight;
       if (
         e.target.scrollHeight > e.target.clientHeight &&
         e.target.scrollTop === 0
@@ -183,6 +238,8 @@ export default {
             this.loadMore = true;
           }
         });
+      } else {
+        this.loadMore = false;
       }
     },
     loadMoreMessages() {
@@ -239,9 +296,9 @@ export default {
               if (window.innerWidth < 768) {
                 this.$store.commit("IS_MOBILE", false);
               }
-              this.$router.push(
-                `/messages/${parseInt(conversation.conversation_id) + 1}`
-              );
+              // this.$router.push(
+              //   `/messages/${parseInt(conversation.conversation_id) + 1}`
+              // );
             }
             this.search_user = "";
           });

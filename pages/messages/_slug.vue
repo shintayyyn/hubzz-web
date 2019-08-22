@@ -13,7 +13,6 @@ export default {
 
   computed: {
     messages() {
-      console.log(window.innerWidth);
       return this.$store.state.chat.messages;
     }
   },

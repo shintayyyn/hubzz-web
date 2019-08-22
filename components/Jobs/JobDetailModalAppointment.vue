@@ -42,7 +42,7 @@
             :placeholder="'Select...'"
             :items="practices"
           />
-          <AppButton :label="'Add'" @click="modal = true" :inStyle="'padding:5px;'" />
+          <AppButton :label="'Add'" @click="modal = true" :inStyle="'padding:5px 14px;'" />
           <div class="flex flex-row flex-wrap justify-start mt-8">
             <div class="px-1">
               <AppDate v-model="form.date_start" :name="'date_start'" :label="'From'" />
@@ -337,7 +337,6 @@ export default {
           status: "danger",
           text: ["Please fill up all the forms"]
         });
-        console.log(s.$refs.modalContainer.scrollTop);
         this.$nextTick(() => {
           this.$refs.modalContainer.scrollTop = 0;
         });

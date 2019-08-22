@@ -1,13 +1,5 @@
 <template>
   <section class="sessions-tab">
-    <!-- <SessionsTabs />
-    <div class="mt-5">
-      <transition name="fade" mode="out-in">
-        <Component :is="activeComponent" />
-      </transition>
-    </div>
-    <div class="modal-shield" v-if="shield"></div>
-    <nuxt-child />-->
     <div class="flex flex-row flex-wrap justify-start">
       <div class="relative">
         <nuxt-link

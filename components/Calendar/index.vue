@@ -25,13 +25,13 @@
           :job="locum_appointment_job"
         />
       </div>
-      <div class="shadow-lg" v-if="locum_modal">
+      <div class="modal-container shadow-lg" v-if="locum_modal">
         <JobDetailModalLocum @close="locum_modal = false" :job="locum_job" />
       </div>
       <!-- <div class="modal-container shadow-lg" v-if="create_job_modal">
         <CreateJobModal />
       </div>-->
-      <div class="modal-container shadow-lg" v-if="practice_modal">
+      <div v-if="practice_modal">
         <JobDetailModal @close="practice_modal = false" :job="practice_job" />
       </div>
     </transition>
@@ -46,7 +46,7 @@ import JobDetailModalLocum from "@/components/Jobs/JobDetailModalLocum";
 import JobDetailModalAppointment from "@/components/Jobs/JobDetailModalAppointment";
 
 // practice
-import CreateJobModal from "@/components/CreateJobModal";
+// import CreateJobModal from "@/components/CreateJobModal";
 import JobDetailModal from "@/components/Sessions/JobDetailModal";
 
 export default {
@@ -56,7 +56,7 @@ export default {
     Info,
     JobDetailModalLocum,
     JobDetailModalAppointment,
-    CreateJobModal,
+    // CreateJobModal,
     JobDetailModal
   },
   data() {

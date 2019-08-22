@@ -4,13 +4,12 @@
     <div class="rounded-lg shadow-lg p-8 mt-4">
       <div class="flex flex-col">
         <div class="flex flex-row flex-no-wrap justify-between items-center">
-          <div class="relative avatar flex">
-            <img
-              :src="user.avatar.file.url"
-              v-if="user.avatar && user.avatar.file && user.avatar.file.url"
-            />
-            <svgicon v-else name="no-avatar" height="80" width="80" />
-          </div>
+          <AppAvatar
+            v-if="user.avatar && user.avatar.file && user.avatar.file.url"
+            :height="'80px'"
+            :width="'80px'"
+            :src="user.avatar.file.url"
+          />
           <div class="flex flex-col">
             <div class="font-bold mt-4 text-sm lg:text-lg">{{user.personal_detail.name}}</div>
             <div class="text-xs lg:text-sm">{{user.locum_detail.profession.name}}</div>
@@ -110,7 +109,11 @@
   </div>
 </template>
 <script>
+import AppAvatar from "~/components/Base/AppAvatar";
 export default {
+  components: {
+    AppAvatar
+  },
   props: ["user", "mandatory", "optional"]
 };
 </script>

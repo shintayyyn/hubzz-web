@@ -19,7 +19,7 @@ export default {
   DELETE_USER_ONLINE(state, payload) {
     let index = state.users_online.findIndex(users => users == payload)
     if (index >= 0) {
-      state.users_online.splice(index, 1, payload)
+      state.users_online.splice(index, 1)
     }
   },
   FETCH_MESSAGES(state, payload) {
@@ -37,7 +37,9 @@ export default {
     state.messages = payload.sort((a, b) => a.id - b.id);
   },
   ADD_MESSAGE(state, payload) {
-    state.messages.push(payload)
+    if (state.activeConversationId === payload.conversation_id) {
+      state.messages.push(payload)
+    }
   },
 
   DELETE_MESSAGE(state, payload) {

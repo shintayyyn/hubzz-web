@@ -19,8 +19,8 @@
           v-model="search_text"
           :type="'text'"
           :name="'search'"
-          :error="formError.find(item => item.field === 'search_text')"
           :placeholder="'Surgery Name, Surgery Code, or keywords'"
+          :error="formError.find(item => item.field ==='surgery_id')"
         />
         <AppButton :label="'Search'" @click="search" :inStyle="'padding:5px 14px;'" />
       </div>
@@ -92,34 +92,21 @@ export default {
       formError: []
     };
   },
-  watch: {
-    search_text(value) {
-      // splice from formerror
-      let index = this.formError.findIndex(
-        item => item.field === "search_text"
-      );
-      if (index >= 0) {
-        this.formError.splice(index, 1);
+  async asyncData({ app, error }) {
+    try {
+      const response = await app.$axios.$get(`/api/v1/practice/me/practice-type`)
+      const type = response.data && response.data.practice && response.data.practice.type ? response.data.practice.type : null
+      return {
+        type
       }
-      // validate
-      if (!value) {
-        // required
-        this.formError.push({ field: "search_text", message: "Required" });
-      } else {
-        const error = this.ValidateEmail(value);
-        if (error) {
-          this.formError.push(error);
-        }
-      }
+    } catch (err) {
+      throw err
     }
   },
   methods: {
     search() {
       if (!this.search_text) {
-        this.formError.push({
-          field: "search_text",
-          message: "Search for surgery"
-        });
+        return
       } else {
         this.$axios
           .$get(
@@ -140,26 +127,46 @@ export default {
       this.modal = true;
     },
     add() {
-      this.formError = [];
-      this.$axios
-        .$post(`/api/v1/practice/practice-children`, {
-          surgery_id: this.selectedSurgery.id
-        })
-        .then(res => {
-          this.$emit("add", res.data.practice_child);
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "success",
-            text: [`${res.message}`]
-          });
-          this.$store.commit("profile/ADD_SURGERY", res.data.practice_child);
-          this.modal = false;
-          this.$router.push("/profile/branches-surgeries");
-        })
-        .catch(err => {
-          this.formError.push(err.response.data.message);
-          this.modal = false;
-        });
+      if (this.type === 'Hub') {
+        this.$axios.$post(`/api/v1/practice/me/practice-surgeries`, { surgery_id: this.selectedSurgery.id })
+          .then(res => {
+            this.modal = false
+            this.$store.commit('profile/ADD_SURGERY', res.data.practice_surgery)
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: [`${res.message}`]
+            })
+            this.$router.push('/profile/branches-surgeries')
+          })
+          .catch(err => {
+            this.modal = false
+            this.formError = err.response.data.error_messages
+          })
+      }
+      else if (this.type === 'Spoke') {
+        this.$axios.$post(`/api/v1/practice/me/parent-surgery`, { surgery_id: this.selectedSurgery.id })
+          .then(res => {
+            this.modal = false
+            let surgery = {
+              id: res.data.practice.parent_surgery.id,
+              pay_for_surgery: res.data.practice.pay_for_surgery,
+              verify_job_creation: res.data.practice.verify_job_creation,
+              surgery: res.data.practice.parent_surgery
+            }
+            this.$store.commit('profile/ADD_SURGERY', surgery)
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: [`${res.message}`]
+            });
+            this.$router.push('/profile/branches-surgeries')
+          })
+          .catch(err => {
+            this.modal = false
+            this.formError = err.response.data.error_messages
+          })
+      }
     }
   }
 };

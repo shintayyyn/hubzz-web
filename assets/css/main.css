@@ -4,7 +4,7 @@
 
 .__jobs-section {
   position: relative;
-  min-height: 500px;
+  min-height: 1180px;
 }
 
 .__job-card:hover {
@@ -44,16 +44,7 @@ table tbody td {
   animation: dots 1s steps(5, end) infinite;
 }
 
-.modal-shield {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #333;
-  opacity: 0.5;
-  z-index: 509;
-}
+
 
 .modal-container {
   position: fixed;

@@ -1,8 +1,22 @@
 <template>
   <section>
     <div class="flex flex-col">
+      <div class="flex flex-row flex-wrap justify-end">
+        <div class="w-full md:w-1/3 p-1">
+          <div class="rounded-lg shadow-lg px-2">
+            <AppSelect
+              v-model="practiceType"
+              :name="'type'"
+              :label="'Practice Type'"
+              :placeholder="'Select...'"
+              :items="[{ value: 'Stand Alone', label: 'Stand Alone'},{ value: 'Hub', label: 'Hub'},{ value: 'Spoke', label: 'Spoke'}]"
+              @change="practiceTypeOnchange"
+            />
+          </div>
+        </div>
+      </div>
       <div class="flex flex-row flex-wrap justify-between">
-        <div class="w-full md:w-3/5 p-2">
+        <div class="w-full md:w-2/3 p-1">
           <div class="rounded-lg shadow-lg p-8">
             <div class="flex flex-row flex-wrap">
               <div class="flex flex-col w-full md:w-1/3 p-1">
@@ -26,8 +40,71 @@
             </div>
           </div>
         </div>
-        <div class="w-full md:w-2/5 p-2">
-          <div class="relative rounded-lg shadow-lg p-8">
+        <div class="w-full md:w-1/3 p-1">
+          <div class="flex flex-col">
+            <div class="rounded-lg shadow-lg p-8">
+              <div class="flex flex-col">
+                <div class="text-xs sm:text-sm">Your Practice's standard terms</div>
+                <div class="mt-4 bg-gray-300 rounded-lg p-4">
+                  <div class="flex flex-no-wrap justify-between items-center">
+                    <div class="flex text-sm" v-if="uploading">
+                      <label for="file-upload">Uploading</label>
+                      <div class="spinner">
+                        <div class="bounce1"></div>
+                        <div class="bounce2"></div>
+                        <div class="bounce3"></div>
+                      </div>
+                    </div>
+                    <div
+                      v-if="!uploading"
+                      class="text-xs sm:text-sm document-filename"
+                    >{{ practice.standard_terms && practice.standard_terms.file ? practice.standard_terms.file.filename : '' }}</div>
+                    <div
+                      class="font-bold text-md sm:text-lg hover:null cursor-pointer text-gray-600 hover:text-black"
+                      @click="modal = true"
+                      v-if="practice.standard_terms"
+                    >x</div>
+                  </div>
+                </div>
+                <div class="relative flex justify-start mt-2 items-center">
+                  <label v-if="uploading == false" for="file-upload">
+                    <div class="flex flex-row flex-no-wrap cursor-pointer hover:underline">
+                      <svgicon name="cloud-upload" height="24" width="24" />
+                      <div class="ml-2 text-xs sm:text-sm leading-loose">Upload</div>
+                    </div>
+                  </label>
+                  <input type="file" id="file-upload" class="hidden" @input="onFileInput($event)" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- <div class="self-start w-full md:w-3/5 p-2">
+          <div class="rounded-lg shadow-lg p-8">
+            <div class="flex flex-row flex-wrap">
+              <div class="flex flex-col w-full md:w-1/3 p-1">
+                <div class="text-xs sm:text-sm">Practice name</div>
+                <div class="text-xs font-bold py-2">{{surgery.name}}</div>
+                <div class="text-xs sm:text-sm mt-4">CCG</div>
+                <div class="text-xs font-bold py-2">{{surgery.clinical_commissioning_group.name}}</div>
+              </div>
+              <div class="flex flex-col w-full md:w-1/3 p-1">
+                <div class="text-xs sm:text-sm" mt-4>Practice code</div>
+                <div class="text-xs font-bold py-2">{{surgery.code}}</div>
+                <div class="text-xs sm:text-sm mt-4">Phone number</div>
+                <div class="text-xs font-bold py-2">{{surgery.phone_number}}</div>
+              </div>
+              <div class="flex flex-col w-full md:w-1/3 p-1">
+                <div class="text-xs sm:text-sm">Address</div>
+                <div
+                  class="text-xs font-bold py-2"
+                >{{surgery.address.line_1}} {{surgery.address.line_2}} {{surgery.address.line_3}} {{surgery.address.post_code}}</div>
+              </div>
+            </div>
+          </div>
+        </div>-->
+        <!-- <div class="self-start w-full md:w-2/5 p-2">
+          <div class="rounded-lg shadow-lg p-8">
             <div class="flex flex-col">
               <div class="text-xs sm:text-sm">Your Practice's standard terms</div>
               <div class="mt-4 bg-gray-300 rounded-lg p-4">
@@ -63,7 +140,7 @@
             </div>
             <AppLoading :loading="loading" :message="'Loading'" v-if="loading" />
           </div>
-        </div>
+        </div>-->
       </div>
 
       <div class="w-full p-2">
@@ -164,10 +241,19 @@
       @confirm="remove"
       @cancel="modal = false"
     />
+    <AppConfirmationModal
+      :label="'Are you sure you want to change your Practice type? All of your branches/surgeries will be remove.'"
+      :confirmLabel="'Yes'"
+      :cancelLabel="'Cancel'"
+      :modal="practiceTypeConfirmationModal"
+      @confirm="confirmPracticeType"
+      @cancel="cancelPracticeType"
+    />
   </section>
 </template>
 <script>
 import AppInput from "@/components/Base/AppInput";
+import AppSelect from "@/components/Base/AppSelect";
 import AppTextarea from "@/components/Base/AppTextarea";
 import AppButton from "@/components/Base/AppButton";
 import AppFormError from "@/components/Base/AppFormError";
@@ -180,6 +266,7 @@ export default {
   },
   components: {
     AppInput,
+    AppSelect,
     AppTextarea,
     AppButton,
     AppFormError,
@@ -189,7 +276,10 @@ export default {
   data() {
     return {
       modal: false,
+      practiceTypeConfirmationModal: false,
       loading: false,
+      selectedPracticeType: '',
+      oldPracticeType: '',
       form: {
         email: "",
         phone_number: "",
@@ -210,6 +300,9 @@ export default {
       value
         ? (document.body.style.overflow = "hidden")
         : (document.body.style.overflow = "auto");
+    },
+    practiceType(newValue, oldValue) {
+      this.oldPracticeType = oldValue
     },
     "form.phone_number"(value) {
       if (value) {
@@ -338,13 +431,22 @@ export default {
       })
     ];
 
+    const responsePracticeType = await app.$axios.$get(`/api/v1/practice/me/practice-type`)
+    const practiceType =
+      responsePracticeType.data &&
+        responsePracticeType.data.practice &&
+        responsePracticeType.data.practice.type
+        ? responsePracticeType.data.practice.type
+        : null
+
     return {
       surgery,
       practice,
       practice_types,
       mandatory_trainings,
       gp_documents,
-      others_documents
+      others_documents,
+      practiceType
     };
   },
   created() {
@@ -367,7 +469,6 @@ export default {
   },
   methods: {
     onFileInput(e) {
-      console.log('uploading')
       if (!e.target.files.length) {
         return;
       }
@@ -414,6 +515,26 @@ export default {
       this.form.mandatory_training_id = this.form.mandatory_training_id.filter(
         id => id != value
       );
+    },
+    practiceTypeOnchange(value) {
+      this.selectedPracticeType = value
+      console.log(value)
+      this.practiceTypeConfirmationModal = true
+    },
+    cancelPracticeType() {
+      this.practiceType = this.oldPracticeType
+      this.practiceTypeConfirmationModal = false
+    },
+    confirmPracticeType() {
+      this.$axios.$put(`/api/v1/practice/me/practice-type`, { type: this.selectedPracticeType }).then(res => {
+        this.practiceTypeConfirmationModal = false
+        this.$store.commit('profile/SET_PRACTICE_TYPE', res.data.practice.type)
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "success",
+          text: ["Practice Type Changed"]
+        });
+      })
     },
     remove() {
       this.loading = true
@@ -464,24 +585,6 @@ export default {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-.remove-confirmation-shield {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #333;
-  opacity: 0.5;
-  z-index: 511;
-}
-.remove-confirmation-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: auto;
-  z-index: 512;
 }
 </style>
 
