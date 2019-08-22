@@ -227,7 +227,6 @@ export default {
       let atBottom =
         Math.round(e.target.offsetHeight + e.target.scrollTop) ===
         e.target.scrollHeight;
-      console.log(atBottom);
       if (
         e.target.scrollHeight > e.target.clientHeight &&
         e.target.scrollTop === 0

@@ -339,7 +339,6 @@ export default {
   },
   created() {
     this.avatar = this.user.avatar;
-    console.log(this.avatar);
     this.form.gmc_or_nmc_number = this.user.locum_detail.gmc_or_nmc_number.number;
     this.form.mpl_or_npl_number = this.user.locum_detail.mpl_or_npl_number.number;
     this.form.nhs_smart_card_id_number = this.user.locum_detail.nhs_smart_card_id_number;

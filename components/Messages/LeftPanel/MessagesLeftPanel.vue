@@ -112,9 +112,6 @@ export default {
       } else {
         this.getResults(value);
       }
-    },
-    conversations(value) {
-      console.log(value);
     }
   },
   methods: {
