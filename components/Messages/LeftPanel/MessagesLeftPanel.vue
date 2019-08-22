@@ -1,6 +1,6 @@
 <template>
   <div class="messages-left-panel" :class="$store.state.mobile ? '' : 'hidden md:flex'">
-    <div class="flex flex-col h-full">
+    <div class="flex flex-col h-full w-full">
       <AppInput
         v-model="search_text"
         :type="'search'"
@@ -19,20 +19,24 @@
               :key="item.id"
               @click="goTo(item.conversation_id ? item.conversation_id : item.id)"
             >
-              <img
-                v-if="$auth.user.domain === 'Practice'"
-                class="w-1/6 md:ml-2 rounded-full"
-                :src="userAvatar(item)"
-                width="12%"
-                height="12%"
-              />
+              <div class="w-1/6 h-12">
+                <img
+                  class="object-cover w-full h-full rounded-full"
+                  v-if="$auth.user.domain === 'Practice'"
+                  :src="userAvatar(item)"
+                />
+              </div>
+
               <div class="w-5/6 flex items-center justify-between">
                 <div class="w-5/6 px-2">
                   <p
                     class="truncate"
                     :class="parseInt($route.params.slug) === item.id ? 'font-bold' : ''"
                   >{{ userFullname(item) }}</p>
-                  <p class="text-sm truncate">{{ item.message }}</p>
+                  <p
+                    class="text-sm truncate"
+                    :class="getMessage(item) ? 'font-bold' : ''"
+                  >{{ item.message }}</p>
                 </div>
                 <span
                   class="w-10 pr-1 text-right text-xs text-gray-600 leading-none absolute right-0 mr-1 h-full flex items-center"
@@ -48,20 +52,23 @@
               :key="item.id"
               @click="goTo(item.conversation_id ? item.conversation_id : item.id)"
             >
-              <img
-                v-if="$auth.user.domain === 'Practice'"
-                class="w-1/6 md:ml-2 rounded-full"
-                :src="userAvatar(item)"
-                width="12%"
-                height="12%"
-              />
+              <div class="w-1/6 h-12">
+                <img
+                  class="object-cover w-full h-full rounded-full"
+                  v-if="$auth.user.domain === 'Practice'"
+                  :src="userAvatar(item)"
+                />
+              </div>
               <div class="w-5/6 flex items-center justify-between">
                 <div class="w-5/6 px-2">
                   <p
                     class="truncate"
                     :class="parseInt($route.params.slug) === item.id ? 'font-bold' : ''"
                   >{{ userFullname(item) }}</p>
-                  <p class="text-sm truncate">{{ item.message }}</p>
+                  <p
+                    class="text-sm truncate"
+                    :class="getMessage(item.message) ? 'font-bold' : ''"
+                  >{{ getMessage(item.message) }}</p>
                 </div>
                 <span
                   class="w-12 pr-1 text-right text-xs text-gray-600 leading-none absolute right-0 mr-1"
@@ -105,7 +112,8 @@ export default {
   },
   computed: {
     conversations() {
-      return this.$store.state.chat.conversations;
+      return this.$store.getters["chat/getConversations"];
+      // return this.$store.state.chat.conversations;
     }
   },
   watch: {
@@ -115,6 +123,9 @@ export default {
       } else {
         this.getResults(value);
       }
+    },
+    conversations(value) {
+      console.log(value);
     }
   },
   methods: {
@@ -132,6 +143,9 @@ export default {
         this.messages = res.data.conversations;
         this.showResult = true;
       });
+    },
+    getMessage(message) {
+      // console.log(this.conversations);
     },
     userFullname(item) {
       return item.receiver_id === this.$auth.user.id

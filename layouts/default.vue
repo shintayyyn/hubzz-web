@@ -2,10 +2,10 @@
   <section>
     <div class="sidebar-shield" v-if="$store.state.toggled_sidebar" @click="close"></div>
     <AppSideBar @modal="signout_modal = $event" />
+    <AppHeader />
     <div class="content">
       <AppNotification />
-      <AppHeader />
-      <nuxt />
+      <nuxt class="mt-20" />
     </div>
   </section>
 </template>
@@ -82,7 +82,7 @@ export default {
   bottom: 0;
   background-color: #333;
   opacity: 0.5;
-  z-index: 499;
+  z-index: 55;
 }
 @media screen and (min-width: 1200px) {
   .content {

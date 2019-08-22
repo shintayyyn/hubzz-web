@@ -175,7 +175,7 @@ export default {
       this.toEdit = false;
     },
     close() {
-      this.$emit('close')
+      this.$emit("close");
     },
     status(status) {
       if (status === "Available") {

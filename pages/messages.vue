@@ -53,14 +53,12 @@ export default {
     });
   },
   created() {
-    console.log("created parent");
     this.$store.dispatch("chat/setActiveConversation", this.$route.params.slug);
     this.$axios.$get(`/api/v1/messages/user-presence`).then(res => {
       this.$store.commit("chat/SET_USERS_ONLINE", res.data.users);
     });
   },
   mounted() {
-    // console.log("mounted parent");
     if (!this.$route.params.slug) {
       this.$store.commit("IS_MOBILE", true);
     }
@@ -74,7 +72,6 @@ export default {
       return this.$router.push("/");
     }
     if (this.conversations.length > 0 && !this.$route.params.slug) {
-      // ! conditional responsive if web view
       if (window.innerWidth > 768) {
         this.goToFirstConversation();
       }

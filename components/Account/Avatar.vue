@@ -1,9 +1,15 @@
 <template>
   <div class="avatar-container rounded-lg shadow-lg p-8 flex justify-center">
-    <div class="relative avatar flex justify-center">
-      <img :src="avatar.file.url" v-if="avatar && avatar.file && !imageUrl" />
-      <img :src="imageUrl" v-else />
-      <div class="icon absolute right-0 top-0">
+    <div class="avatar relative flex justify-center">
+      <div class="w-full h-full">
+        <img
+          class="object-cover h-full"
+          :src="avatar.file.url"
+          v-if="avatar && avatar.file && !imageUrl"
+        />
+        <img :src="imageUrl" v-else />
+      </div>
+      <div class="icon absolute right-0 top-0 mx-2 my-1">
         <input
           type="file"
           name="input_file"
@@ -12,7 +18,7 @@
           @input="onFileInput($event)"
         />
         <label for="input_file" class="cursor-pointer">
-          <svgicon name="camera" height="42" width="42" />
+          <svgicon class="opacity-50 hover:opacity-100" name="camera" height="36" width="36" />
         </label>
       </div>
     </div>

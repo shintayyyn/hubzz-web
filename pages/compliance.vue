@@ -362,15 +362,6 @@ export default {
       this.setMandatoryTrainings();
     });
   },
-  watch: {
-    complianceModal(value) {
-      if (value === true) {
-        console.log("modal true", value);
-      } else {
-        console.log("modal false", value);
-      }
-    }
-  },
   methods: {
     // set mandatory training
     setMandatoryTrainings() {
