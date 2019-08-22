@@ -24,12 +24,8 @@
         </div>
       </div>
 
-      <!-- <div
-      class="text-xs sm:text-sm"
-      >Posted {{$moment(job.platform_job.date_created).format('DD/MM/YYYY')}}</div>-->
       <div class="flex flex-col mt-4">
         <div class="flex flex-row flex-wrap justify-start">
-          <!--SHOW THE DEAILS OF THE JOB-->
           <JobDetailModalForm
             :job="job"
             v-if="job.status === 'Unfilled' && toEdit === false || 
@@ -40,7 +36,6 @@
                 job.status === 'Applied' && toEdit === false || 
                 job.status === 'Available' && toEdit === false "
           />
-          <!--UPDATE THE JOB-->
           <JobDetailModalUpdateForm
             :job="job"
             v-if="job.status === 'Current' && toEdit === true && jobOngoing === false  || job.status === 'Applied' && toEdit === true  || job.status === 'Available' && toEdit === true"
@@ -182,14 +177,6 @@ export default {
     },
     close() {
       this.$emit('close')
-      // if (this.$route.fullPath === '/dashboard') {
-      //   this.$emit('close')
-      // } else {
-      //   const query = {
-      //     ...this.$route.query
-      //   }
-      //   this.$router.push({ path: `/sessions`, query })
-      // }
     },
     status(status) {
       if (status === "Available") {
@@ -222,6 +209,23 @@ export default {
 };
 </script>
 <style scoped>
+.modal-container {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  border-left: solid 2px #edf2f7;
+  transition: all 0.3s ease-in-out;
+  background-color: white;
+  z-index: 510;
+}
+@media screen and (min-width: 1200px) {
+  .modal-container {
+    width: 80%;
+  }
+}
 .shield {
   position: fixed;
   top: 0;

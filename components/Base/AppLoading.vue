@@ -1,5 +1,5 @@
 <template>
-  <div class="shield shadow-md" v-if="loading">
+  <div class="loading-shield shadow-md" v-if="loading">
     <h1 class="text-5xl loader-message">Loading</h1>
   </div>
 </template>
@@ -19,7 +19,7 @@ export default {
 </script>
 
 <style scoped>
-.shield {
+.loading-shield {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -27,7 +27,6 @@ export default {
   right: 0;
   z-index: 400;
   background-color: #f5f6f9;
-  /* h-offset v-offset blur spread color */
   box-shadow: 10px 10px 0.1 10px #f5f6f9;
   opacity: 0.5;
 }
@@ -49,15 +48,15 @@ export default {
     text-shadow: 0.25em 0 0 rgba(0, 0, 0, 0), 0.5em 0 0 rgba(0, 0, 0, 0);
   }
   40% {
-    color: white;
+    color: #333;
     text-shadow: 0.25em 0 0 rgba(0, 0, 0, 0), 0.5em 0 0 rgba(0, 0, 0, 0);
   }
   60% {
-    text-shadow: 0.25em 0 0 white, 0.5em 0 0 rgba(0, 0, 0, 0);
+    text-shadow: 0.25em 0 0 #333, 0.5em 0 0 rgba(0, 0, 0, 0);
   }
   80%,
   100% {
-    text-shadow: 0.25em 0 0 white, 0.5em 0 0 white;
+    text-shadow: 0.25em 0 0 #333, 0.5em 0 0 #333;
   }
 }
 </style>

@@ -433,6 +433,16 @@ export default {
         this.selectedProfession = this.professions_categories.find(
           item => item.id == value
         );
+        if (this.selectedProfession.profession_category.id == 1) {
+          this.qualifications = this.gp_qualification_lists;
+          this.compliances = this.gp_compliance_documents_lists;
+          return;
+        }
+        if (this.selectedProfession.profession_category.id == 2) {
+          this.qualifications = this.other_qualification_lists;
+          this.compliances = this.others_compliance_documents_lists;
+          return;
+        }
       }
     }
   },
@@ -462,16 +472,6 @@ export default {
         this.shifts.push({ label: item.name, value: item.id });
       });
     });
-    this.$axios.$get(`/api/v1/professions`).then(res => {
-      this.professions = [];
-      res.data.professions.forEach(item => {
-        this.professions.push({ label: item.name, value: item.id });
-        this.professions_categories.push(item);
-      });
-      this.selectedProfession = this.professions_categories.find(
-        item => item.id == this.form.profession_id
-      );
-    });
     this.$axios.$get(`/api/v1/profession-categories`).then(res => {
       this.gp_qualification_lists = [];
       res.data.profession_categories
@@ -492,6 +492,27 @@ export default {
           });
         });
     });
+    this.$axios.$get(`/api/v1/professions`).then(res => {
+      this.professions = [];
+      res.data.professions.forEach(item => {
+        this.professions.push({ label: item.name, value: item.id });
+        this.professions_categories.push(item);
+      });
+      this.selectedProfession = this.professions_categories.find(
+        item => item.id == this.form.profession_id
+      );
+      if (this.selectedProfession.profession_category.id == 1) {
+        this.qualifications = this.gp_qualification_lists;
+        this.compliances = this.gp_compliance_documents_lists;
+        return;
+      }
+      if (this.selectedProfession.profession_category.id == 2) {
+        this.qualifications = this.other_qualification_lists;
+        this.compliances = this.others_compliance_documents_lists;
+        return;
+      }
+    });
+
     this.$axios.$get(`/api/v1/clinical-systems`).then(res => {
       this.clinical_system_lists = [];
       res.data.clinical_systems.forEach(item => {
@@ -530,8 +551,6 @@ export default {
         }
       );
     });
-
-    console.log(this.job)
     this.form.practice_id = this.job.platform_job.practice.id
     this.form.title = this.job.title
     this.form.description = this.job.description

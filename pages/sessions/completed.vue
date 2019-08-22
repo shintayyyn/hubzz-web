@@ -1,63 +1,20 @@
 <template>
-  <section class="__jobs-section">
+  <section class="relative __jobs-section">
     <AppLoading :loading="loadingJobs" :message="'Loading'" />
-    <AppJobFilter @getJobs="getJobs(1, params)" :params="params" />
+    <AppJobFilter @clear="clearFilters" @getJobs="getJobs(1, params)" :params="params" />
     <div class="overflow-x-auto">
       <div
         class="mt-10 w-full text-center"
         style="font-family: Nunito"
         v-if="!loadingJobs && getPracticeCompletedJobs.length === 0 "
-      >You do not have any allocated jobs</div>
+      >You do not have any completed jobs</div>
       <div v-if="getPracticeCompletedJobs.length > 0" class="overflow-x-auto overflow-y-hidden">
-        <table>
-          <thead>
-            <tr class="text-xs sm:text-sm text-left">
-              <th @click="sortBy('job_number')">
-                Job number
-                <svgicon class="inline align-baseline" name="sort" height="12" width="12" />
-              </th>
-              <th>Practice</th>
-              <th>Title</th>
-              <th>Shift</th>
-              <th @click="sortBy('rate')">
-                Rate
-                <svgicon class="inline align-baseline" name="sort" height="12" width="12" />
-              </th>
-              <th>Per</th>
-              <th @click="sortBy('date_start')">
-                From
-                <svgicon class="inline align-baseline" name="sort" height="12" width="12" />
-              </th>
-              <th @click="sortBy('date_end')">
-                To
-                <svgicon class="inline align-baseline" name="sort" height="12" width="12" />
-              </th>
-              <th>Marked completed by Practice</th>
-            </tr>
-          </thead>
-          <tbody>
-            <template v-for="(item, index) in getPracticeCompletedJobs">
-              <tr
-                :key="item.id"
-                class="__job-card shadow-md cursor-pointer text-xs text-left"
-                @click="show(item.id)"
-              >
-                <td>{{item.job_number}}</td>
-                <td>{{item.type === 'Private' ? item.private_job.private_practice.surgery.name : item.platform_job.practice.surgery.name}}</td>
-                <td>{{item.type === 'Private' ? 'Private appointment' : item.title}}</td>
-                <td>{{item.shift.name}}</td>
-                <td>{{item.rate}}</td>
-                <td>{{item.locum_detail_rate_type.name}}</td>
-                <td>{{item.date_start}}</td>
-                <td>{{item.date_end}}</td>
-                <td>{{item.job_parts[item.job_parts.length - 1].completed_at | localDate }}</td>
-              </tr>
-              <tr :key="`${item.id}-${index}`">
-                <td></td>
-              </tr>
-            </template>
-          </tbody>
-        </table>
+        <JobTable
+          :columns="columns"
+          :jobs="getPracticeCompletedJobs"
+          @sortBy="sortBy"
+          @show="show"
+        />
       </div>
     </div>
     <div class="bottom-0 w-full" v-if="getPracticeCompletedJobs.length > 0 && totalPages > 1">
@@ -73,6 +30,7 @@
   </section>
 </template>
 <script>
+import JobTable from '@/components/Sessions/JobTable'
 import AppPagination from '@/components/Base/AppPagination'
 import AppJobFilter from '@/components/Base/AppJobFilter'
 import AppLoading from '@/components/Base/AppLoading'
@@ -83,12 +41,57 @@ export default {
     mode: 'out-in'
   },
   components: {
+    JobTable,
     AppPagination,
     AppJobFilter,
     AppLoading,
   },
   data() {
     return {
+      // table
+      columns: [
+        {
+          label: 'Job number',
+          dataIndex: 'job_number',
+          sortable: true
+        },
+        {
+          label: 'Practice',
+          dataIndex: 'practice',
+        },
+        {
+          label: 'Title',
+          dataIndex: 'title',
+        },
+        {
+          label: 'Shift',
+          dataIndex: 'shift',
+        },
+        {
+          label: 'Rate',
+          dataIndex: 'rate',
+          sortable: true
+        },
+        {
+          label: 'per',
+          dataIndex: 'per',
+        },
+        {
+          label: 'From',
+          dataIndex: 'date_start',
+          sortable: true
+        },
+        {
+          label: 'To',
+          dataIndex: 'date_end',
+          sortable: true
+        },
+        {
+          label: 'Marked completed by Practice',
+          dataIndex: 'completed_at',
+        },
+      ],
+      // params
       current_page: 1,
       params: {
         shift_id: '',
@@ -116,7 +119,7 @@ export default {
       return this.perPage * (this.current_page - 1);
     },
     perPage() {
-      return 5;
+      return 10;
     },
     total() {
       return this.$store.state.jobs.practice_completed_jobs_count;
@@ -137,9 +140,6 @@ export default {
   created() {
     this.getJobsCount()
     this.getJobs(this.current_page, this.params);
-    // setTimeout(() => {
-    //   this.$store.commit('jobs/CLEAR_LOCUM_ALLOCATED_BADGE')
-    // }, 1000)
   },
   methods: {
     getJobsCount() {
@@ -173,6 +173,13 @@ export default {
       this.params.order_by = `${sortedBy}:${this.sortType ? 'asc' : 'desc'}`
       this.current_page = 1
       this.getJobs(this.current_page, this.params)
+    },
+    clearFilters() {
+      this.params.shift_id = '',
+        this.params.rate = '',
+        this.params.locum_detail_rate_type_id = '',
+        this.params.order_by = 'date_created:desc',
+        this.getJobs(this.current_page, this.params)
     },
     getJobs(page, params) {
       this.$store.commit('jobs/TOGGLE_LOADING', true)
