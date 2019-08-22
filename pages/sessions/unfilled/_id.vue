@@ -1,7 +1,5 @@
 <template>
-  <div class="modal-container shadow-lg">
-    <JobDetailModal :job="job" @close="$router.push(`/sessions/unfilled`)" />
-  </div>
+  <JobDetailModal :job="job" @close="$router.push(`/sessions/unfilled`)" />
 </template>
 <script>
 import JobDetailModal from '@/components/Sessions/JobDetailModal'

@@ -1,9 +1,7 @@
 <template>
-  <section>
-    <div>
-      <JobDetailModal :job="job" @close="$router.push(`/sessions/applied`)" />
-    </div>
-  </section>
+  <div>
+    <JobDetailModal :job="job" @close="$router.push(`/sessions/applied`)" />
+  </div>
 </template>
 <script>
 import JobDetailModal from "@/components/Sessions/JobDetailModal";

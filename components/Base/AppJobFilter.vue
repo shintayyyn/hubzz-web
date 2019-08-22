@@ -55,7 +55,9 @@
           :url="'/api/v1/locum/surgeries'"
         />
       </div>
-      <div class="w-full sm:w-1/4">
+      <div class="w-full sm:w-1/4 flex flex-row">
+        <AppButton :label="'Clear'" @click="$emit('clear')" :inStyle="'padding:5px 14px'" />
+        <div class="mx-1"></div>
         <AppButton :label="'Search'" @click="$emit('getJobs')" :inStyle="'padding:5px 14px'" />
       </div>
     </div>
@@ -87,7 +89,9 @@
           :items="rate_types"
         />
       </div>
-      <div class="w-full sm:w-1/4">
+      <div class="w-full sm:w-1/4 flex flex-row">
+        <AppButton :label="'Clear'" @click="$emit('clear')" :inStyle="'padding:5px 14px'" />
+        <div class="mx-1"></div>
         <AppButton :label="'Search'" @click="$emit('getJobs')" :inStyle="'padding:5px 14px'" />
       </div>
     </div>
