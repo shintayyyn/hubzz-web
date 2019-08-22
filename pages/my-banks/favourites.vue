@@ -38,18 +38,8 @@
           </div>
           <div class="flex flex-wrap text-center pt-4 cursor-pointer" @click="show(user.id)">
             <div class="w-full flex justify-center">
-              <div class="relative avatar flex justify-center">
-                <div class="w-full h-full">
-                  <img
-                    class="object-cover h-full"
-                    :src="user.avatar.file.url"
-                    v-if="user.avatar && user.avatar.file && user.avatar.file.url"
-                  />
-                  <svgicon v-else name="no-avatar" height="115" width="115" />
-                </div>
-              </div>
+              <AppAvatar :src="user.avatar.file.url" />
             </div>
-
             <div class="w-full font-bold text-sm sm:text-lg my-4">{{user.personal_detail.name}}</div>
             <div
               class="w-full mb-4 font-bold text-gray-600 text-sm sm:text-lg"
@@ -77,6 +67,7 @@
 <script>
 import AppPagination from "@/components/Base/AppPagination";
 import AppSelect from "@/components/Base/AppSelect";
+import AppAvatar from "@/components/Base/AppAvatar";
 const tabs = [
   "my-banks-favourites-userId",
   "my-banks-favourites-userId-profile",
@@ -96,7 +87,8 @@ export default {
   },
   components: {
     AppPagination,
-    AppSelect
+    AppSelect,
+    AppAvatar
   },
   data() {
     return {

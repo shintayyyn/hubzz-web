@@ -41,6 +41,7 @@
             v-if="job.status === 'Current' && toEdit === true && jobOngoing === false  || job.status === 'Applied' && toEdit === true  || job.status === 'Available' && toEdit === true"
           />
           <JobDetailModalCandidates
+            class="order-first lg:order-none"
             :applicants="applicants"
             v-if="job.status === 'Applied'"
             @show="showLocum($event)"

@@ -31,14 +31,19 @@
               >
                 <div class="flex flex-col text-sm">
                   <div class="flex" :class="isReceiver(item) ? '': 'flex-row-reverse'">
-                    <div class="w-10 h-10">
-                      <img
-                        v-if="item.sender.domain === 'Locum'"
-                        :class="item.sender.domain === 'Locum' ? '' : 'hidden'"
-                        class="object-cover w-full h-full rounded-full"
+                    <div
+                      v-if="item.sender.domain === 'Locum'"
+                      :class="item.sender.domain === 'Locum' ? '' : 'hidden'"
+                      class="w-10 h-10"
+                    >
+                      <AppAvatar
+                        class="m-auto"
+                        :width="'40px'"
+                        :height="'40px'"
                         :src="setAvatar(item.sender)"
                       />
                     </div>
+
                     <div
                       class="my-1 mx-2 rounded-lg text-xs px-4 py-2 bg-red-400 text-white"
                       :class="{'mx-4' : !isReceiver(item)}"
@@ -59,10 +64,11 @@
               >
                 <div class="flex flex-col text-sm">
                   <div class="flex items-start" :class="isReceiver(item) ? '': 'flex-row-reverse'">
-                    <div class="w-10 h-10">
-                      <img
-                        class="object-cover w-full h-full rounded-full"
-                        :class="item.sender.domain === 'Locum' ? '' : 'hidden'"
+                    <div :class="item.sender.domain === 'Locum' ? '' : 'hidden'" class="w-10 h-10">
+                      <AppAvatar
+                        class="m-auto"
+                        :height="'40px'"
+                        :width="'40px'"
                         :src="setAvatar(item.sender)"
                       />
                     </div>
@@ -128,12 +134,14 @@
 import AppAutoComplete from "~/components/Base/AppAutoComplete";
 import AppButton from "~/components/Base/AppButton";
 import AppTextarea from "~/components/Base/AppTextarea";
+import AppAvatar from "~/components/Base/AppAvatar";
 import MessagesCenterPanelTop from "@/components/Messages/CenterPanel/MessagesCenterPanelTop";
 export default {
   components: {
     AppAutoComplete,
     AppButton,
     AppTextarea,
+    AppAvatar,
     MessagesCenterPanelTop
   },
   data() {

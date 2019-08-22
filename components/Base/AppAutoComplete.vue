@@ -86,8 +86,8 @@ export default {
     };
   },
   watch: {
-    value(surger_name) {
-      this.search = surger_name;
+    value(search) {
+      this.search = search;
     },
     search(value) {
       if (value) {
@@ -115,6 +115,7 @@ export default {
               this.$router.push(`/messages/${id}`);
             }
           });
+        this.search = fullName;
       } else {
         this.$emit("input", selectedSurgery.name);
       }
@@ -130,7 +131,7 @@ export default {
     //     this.showResults = true
     //   });
     // }, 250),
-    getSurgeries: debounce(function (input) {
+    getSurgeries: debounce(function(input) {
       const params = {
         search: input,
         limit: 5

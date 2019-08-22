@@ -19,14 +19,7 @@
               :key="item.id"
               @click="goTo(item.conversation_id ? item.conversation_id : item.id)"
             >
-              <div class="w-1/6 h-12">
-                <img
-                  class="object-cover w-full h-full rounded-full"
-                  v-if="$auth.user.domain === 'Practice'"
-                  :src="userAvatar(item)"
-                />
-              </div>
-
+              <AppAvatar :height="'50px'" :width="'50px'" :src="userAvatar(item)" />
               <div class="w-5/6 flex items-center justify-between">
                 <div class="w-5/6 px-2">
                   <p
@@ -52,13 +45,7 @@
               :key="item.id"
               @click="goTo(item.conversation_id ? item.conversation_id : item.id)"
             >
-              <div class="w-1/6 h-12">
-                <img
-                  class="object-cover w-full h-full rounded-full"
-                  v-if="$auth.user.domain === 'Practice'"
-                  :src="userAvatar(item)"
-                />
-              </div>
+              <AppAvatar :height="'50px'" :width="'50px'" :src="userAvatar(item)" />
               <div class="w-5/6 flex items-center justify-between">
                 <div class="w-5/6 px-2">
                   <p
@@ -94,9 +81,11 @@
 </template>
 <script>
 import AppInput from "~/components/Base/AppInput";
+import AppAvatar from "~/components/Base/AppAvatar";
 export default {
   components: {
-    AppInput
+    AppInput,
+    AppAvatar
   },
   data() {
     return {

@@ -239,7 +239,9 @@
       </div>
     </div>
     <div class="w-auto p-0 mb-4 lg:mb-0 lg:w-1/3 lg:pr-4 order-1 lg:order-2">
-      <Avatar :avatar="avatar" />
+      <div class="shadow-lg p-8">
+        <AppAvatar class="m-auto" :type="'update'" :src="avatar.file.url" />
+      </div>
     </div>
   </div>
 </template>
@@ -252,6 +254,7 @@ import AppTextarea from "@/components/Base/AppTextarea";
 import AppSelect from "@/components/Base/AppSelect";
 import AppFilterSearch from "@/components/Base/AppFilterSearch";
 import AppButton from "@/components/Base/AppButton";
+import AppAvatar from "@/components/Base/AppAvatar";
 export default {
   transition: {
     name: "fade",
@@ -265,7 +268,8 @@ export default {
     AppTextarea,
     AppSelect,
     AppFilterSearch,
-    AppButton
+    AppButton,
+    AppAvatar
   },
   data() {
     return {
@@ -335,6 +339,7 @@ export default {
   },
   created() {
     this.avatar = this.user.avatar;
+    console.log(this.avatar);
     this.form.gmc_or_nmc_number = this.user.locum_detail.gmc_or_nmc_number.number;
     this.form.mpl_or_npl_number = this.user.locum_detail.mpl_or_npl_number.number;
     this.form.nhs_smart_card_id_number = this.user.locum_detail.nhs_smart_card_id_number;
