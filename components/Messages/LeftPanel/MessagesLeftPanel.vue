@@ -19,13 +19,14 @@
               :key="item.id"
               @click="goTo(item.conversation_id ? item.conversation_id : item.id)"
             >
-              <img
-                v-if="$auth.user.domain === 'Practice'"
-                class="w-1/6 md:ml-2 rounded-full"
-                :src="userAvatar(item)"
-                width="12%"
-                height="12%"
-              />
+              <div class="w-1/6 h-12">
+                <img
+                  class="object-cover w-full h-full rounded-full"
+                  v-if="$auth.user.domain === 'Practice'"
+                  :src="userAvatar(item)"
+                />
+              </div>
+
               <div class="w-5/6 flex items-center justify-between">
                 <div class="w-5/6 px-2">
                   <p
@@ -51,13 +52,13 @@
               :key="item.id"
               @click="goTo(item.conversation_id ? item.conversation_id : item.id)"
             >
-              <img
-                v-if="$auth.user.domain === 'Practice'"
-                class="w-1/6 md:ml-2 rounded-full"
-                :src="userAvatar(item)"
-                width="12%"
-                height="12%"
-              />
+              <div class="w-1/6 h-12">
+                <img
+                  class="object-cover w-full h-full rounded-full"
+                  v-if="$auth.user.domain === 'Practice'"
+                  :src="userAvatar(item)"
+                />
+              </div>
               <div class="w-5/6 flex items-center justify-between">
                 <div class="w-5/6 px-2">
                   <p

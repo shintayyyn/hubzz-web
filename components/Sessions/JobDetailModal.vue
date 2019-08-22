@@ -181,7 +181,7 @@ export default {
       this.toEdit = false;
     },
     close() {
-      this.$emit('close')
+      this.$emit("close");
       // if (this.$route.fullPath === '/dashboard') {
       //   this.$emit('close')
       // } else {

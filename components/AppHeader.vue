@@ -1,8 +1,5 @@
 <template>
-  <section class="header-section bg-white fixed w-full z-50">
-    <!-- <transition name="slide" mode="in-out">
-      <CreateJobModal v-if="$store.state.calendar.create_job_modal" />
-    </transition>-->
+  <section class="header-section fixed bg-white z-50">
     <div class="px-4 flex flex-row flex-wrap justify-between" style="z-index: 600">
       <div class="w-1/3 py-2">
         <div class="burger cursor-pointer" @click="toggle">
@@ -51,7 +48,7 @@
       </div>
     </div>
     <transition name="slide" mode="out-in">
-      <div class="modal-container shadow-lg" ref="modalContainer" v-if="create_job_modal">
+      <div v-if="create_job_modal">
         <CreateJobModal />
       </div>
     </transition>
@@ -90,10 +87,6 @@ export default {
 </script>
 
 <style scoped>
-.header-section {
-  width: 100%;
-  /* margin-bottom: 20px; */
-}
 .burger {
   display: block;
 }
@@ -108,14 +101,20 @@ export default {
 .logo {
   width: 25px;
 }
+
+@media screen and (max-width: 1199px) {
+  .header-section {
+    width: 100%;
+  }
+}
 @media screen and (min-width: 1200px) {
   .burger {
     display: none;
   }
   .header-section {
-    /* margin-bottom: 50px; */
-    max-width: 1466px;
-    margin-left: 200px;
+    /* max-width: 1466px; */
+    right: 0;
+    left: 200px;
   }
 }
 a {

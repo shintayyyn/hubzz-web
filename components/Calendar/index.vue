@@ -31,7 +31,7 @@
       <!-- <div class="modal-container shadow-lg" v-if="create_job_modal">
         <CreateJobModal />
       </div>-->
-      <div class="modal-container shadow-lg" v-if="practice_modal">
+      <div v-if="practice_modal">
         <JobDetailModal @close="practice_modal = false" :job="practice_job" />
       </div>
     </transition>

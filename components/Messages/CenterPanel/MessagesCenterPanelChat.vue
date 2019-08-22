@@ -31,13 +31,14 @@
               >
                 <div class="flex flex-col text-sm">
                   <div class="flex" :class="isReceiver(item) ? '': 'flex-row-reverse'">
-                    <img
-                      v-if="item.sender.domain === 'Locum'"
-                      :class="item.sender.domain === 'Locum' ? '' : 'hidden'"
-                      class="w-10 h-10 rounded-full"
-                      :src="setAvatar(item.sender)"
-                      width="25"
-                    />
+                    <div class="w-10 h-10">
+                      <img
+                        v-if="item.sender.domain === 'Locum'"
+                        :class="item.sender.domain === 'Locum' ? '' : 'hidden'"
+                        class="object-cover w-full h-full rounded-full"
+                        :src="setAvatar(item.sender)"
+                      />
+                    </div>
                     <div
                       class="my-1 mx-2 rounded-lg text-xs px-4 py-2 bg-red-400 text-white"
                       :class="{'mx-4' : !isReceiver(item)}"
@@ -58,12 +59,13 @@
               >
                 <div class="flex flex-col text-sm">
                   <div class="flex items-start" :class="isReceiver(item) ? '': 'flex-row-reverse'">
-                    <img
-                      class="w-10 h-10 rounded-full"
-                      :class="item.sender.domain === 'Locum' ? '' : 'hidden'"
-                      :src="setAvatar(item.sender)"
-                      width="25"
-                    />
+                    <div class="w-10 h-10">
+                      <img
+                        class="object-cover w-full h-full rounded-full"
+                        :class="item.sender.domain === 'Locum' ? '' : 'hidden'"
+                        :src="setAvatar(item.sender)"
+                      />
+                    </div>
                     <span
                       @mouseover="time=true"
                       @mouseleave="time=false"
@@ -170,6 +172,11 @@ export default {
       this.loadMore = false;
     },
     messages(value) {
+      let atBottom =
+        Math.round(
+          this.$refs.messagesContainer.offsetHeight +
+            this.$refs.messagesContainer.scrollTop
+        ) === this.$refs.messagesContainer.scrollHeight;
       let newMessageIndex = value.length - 1;
       if (value.length <= 20) {
         this.scrollToBottom();
@@ -182,8 +189,11 @@ export default {
             this.$refs.messagesContainer.scrollTop === 0) &&
           newChatSender !== this.$auth.user.id
         ) {
-          console.log(newChatSender, this.$auth.user.id);
-          this.newMessage = true;
+          if (atBottom) {
+            this.scrollToBottom();
+          } else {
+            this.newMessage = true;
+          }
         } else {
           this.scrollToBottom();
         }
@@ -206,6 +216,10 @@ export default {
       this.newMessage = false;
     },
     scrollHandler(e) {
+      let atBottom =
+        Math.round(e.target.offsetHeight + e.target.scrollTop) ===
+        e.target.scrollHeight;
+      console.log(atBottom);
       if (
         e.target.scrollHeight > e.target.clientHeight &&
         e.target.scrollTop === 0
