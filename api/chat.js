@@ -20,10 +20,7 @@ export function fetchActiveConversationMessages(axios, offset, limit = 20, order
   })
 }
 
-export function sendMessage(axios, {
-  receiver_user_id,
-  message
-}) {
+export function sendMessage(axios, { receiver_user_id, message }) {
   return axios.$post(`/api/v1/messages`, {
     receiver_user_id: receiver_user_id,
     message: message

@@ -86,8 +86,8 @@ export default {
     };
   },
   watch: {
-    value(surger_name) {
-      this.search = surger_name;
+    value(surgery) {
+      this.search = surgery;
     },
     search(value) {
       if (value) {
@@ -114,22 +114,12 @@ export default {
               let id = res.data.conversations[0].id;
               this.$router.push(`/messages/${id}`);
             }
+            this.search = fullName
           });
       } else {
         this.$emit("input", selectedSurgery.name);
       }
     },
-    // getSurgeries: debounce(function (input) {
-    //   const params = {
-    //     search: input,
-    //     limit: 5
-    //   };
-    //   this.$axios.$get(this.url, { params }).then(res => {
-    //     console.log(res)
-    //     this.results = res.data.practices
-    //     this.showResults = true
-    //   });
-    // }, 250),
     getSurgeries: debounce(function (input) {
       const params = {
         search: input,
@@ -137,12 +127,6 @@ export default {
       };
       this.$axios.$get(this.url, { params }).then(res => {
         if (this.keyword && this.keyword === "practices") {
-          // res.data.practices.forEach(data => {
-          //   this.results.push({
-          //     value: '',
-
-          //   })
-          // })
           this.results = res.data.users;
         } else {
           this.results = res.data.surgeries;
