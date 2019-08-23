@@ -27,24 +27,24 @@ export default {
     };
   },
   middleware: "isNotAuthenticated",
-  computed: {
-    notify() {
-      return this.$store.state.notification.enabled;
-    }
-  },
+  // computed: {
+  //   notify() {
+  //     return this.$store.state.notification.enabled;
+  //   }
+  // },
   watch: {
-    notify(value) {
-      if (!this.$store.state.notification.closable) {
-        setTimeout(() => {
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: false,
-            status: "",
-            text: "",
-            closable: false
-          });
-        }, 2000);
-      }
-    },
+    //   notify(value) {
+    //     if (!this.$store.state.notification.closable) {
+    //       setTimeout(() => {
+    //         this.$store.commit("SET_NOTIFICATION", {
+    //           enabled: false,
+    //           status: "",
+    //           text: "",
+    //           closable: false
+    //         });
+    //       }, 2000);
+    //     }
+    //   },
     $route(value) {
       this.$store.commit("TOGGLE_SIDEBAR", false);
       document.body.style.overflow = "auto";
@@ -64,7 +64,7 @@ export default {
     this.$store.dispatch("signUp/getPracticeTypes");
     this.$store.dispatch("signUp/getMandatoryTrainings");
   }
-};
+}
 </script>
 <style>
 .content {

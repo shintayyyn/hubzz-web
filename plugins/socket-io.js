@@ -12,6 +12,23 @@ export default (ctx, inject) => {
   socket.on('connect', () => {
     console.log('Socket ID:', socket.id)
     ctx.store.commit('SET_SOCKET', socket.id)
+
+    // api restore
+    ctx.store.commit("SET_NOTIFICATION", {
+      enabled: false,
+      status: '',
+      text: [],
+      closable: false,
+    });
+  })
+
+  socket.on('connect_error', reason => {
+    ctx.store.commit("SET_NOTIFICATION", {
+      enabled: true,
+      status: "danger",
+      text: ['Server offline'],
+      closable: true
+    });
   })
 
   socket.on('disconnect', reason => {
@@ -20,6 +37,15 @@ export default (ctx, inject) => {
 
     if (reason === 'io server disconnect') {
       socket.connect()
+    }
+    // api shut down
+    if (reason === 'transport close') {
+      ctx.store.commit("SET_NOTIFICATION", {
+        enabled: true,
+        status: "danger",
+        text: ['Server shut down'],
+        closable: true
+      });
     }
   })
 
