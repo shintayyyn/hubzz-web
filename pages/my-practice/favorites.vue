@@ -19,11 +19,16 @@
           <div class="flex flex-wrap text-center mt-4 cursor-pointer" @click="show(practice.id)">
             <div class="w-full flex justify-center">
               <div class="relative avatar flex justify-center">
-                <img
+                <!-- <img
                   :src="practice.user.avatar.file.url"
                   v-if="practice.user && practice.user.avatar && practice.user.avatar.file && practice.user.avatar.file.url"
                 />
-                <svgicon v-else name="no-avatar" height="115" width="115" />
+                <svgicon v-else name="no-avatar" height="115" width="115" />-->
+                <AppAvatar
+                  :height="'150px'"
+                  :width="'150px'"
+                  :src="practice.user && practice.user.avatar && practice.user.avatar.file && practice.user.avatar.file.url ? practice.user.avatar.file.url : ''"
+                />
               </div>
             </div>
 
@@ -53,6 +58,7 @@
 <script>
 import AppPagination from "@/components/Base/AppPagination";
 import MyPracticeDetailModal from "@/components/MyPractice/MyPracticeDetailModal";
+import AppAvatar from '@/components/Base/AppAvatar'
 export default {
   transition: {
     name: "fade",
@@ -60,6 +66,7 @@ export default {
   },
   components: {
     AppPagination,
+    AppAvatar,
   },
   data() {
     return {

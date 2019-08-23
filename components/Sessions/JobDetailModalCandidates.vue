@@ -9,10 +9,9 @@
     >
       <div class="flex flex-row flex-no-wrap justify-between items-center">
         <AppAvatar
-          v-if="user.avatar && user.avatar.file && user.avatar.file.url"
           :height="'40px'"
           :width="'40px'"
-          :src="user.avatar.file.url"
+          :src="user.avatar && user.avatar.file && user.avatar.file.url ? user.avatar.file.url : ''"
         />
         <div class="text-xs sm:text-sm font-bold leading-loose">{{user.personal_detail.name}}</div>
         <div class="flex">
