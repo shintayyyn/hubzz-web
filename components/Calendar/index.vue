@@ -17,23 +17,24 @@
         </div>
       </div>
     </div>
-    <div class="modal-shield" v-if="toggleScroll"></div>
+    <div class="shield" v-if="toggleScroll"></div>
     <transition name="slide" mode="out-in">
-      <div v-if="locum_appointment_modal">
+      <template v-if="locum_appointment_modal">
         <JobDetailModalAppointment
+          v-if="locum_appointment_modal"
           @close="locum_appointment_modal = false"
           :job="locum_appointment_job"
         />
-      </div>
-      <div v-if="locum_modal">
+      </template>
+      <template v-if="locum_modal">
         <JobDetailModalLocum @close="locum_modal = false" :job="locum_job" />
-      </div>
+      </template>
       <!-- <div class="modal-container shadow-lg" v-if="create_job_modal">
         <CreateJobModal />
       </div>-->
-      <div v-if="practice_modal">
+      <template v-if="practice_modal">
         <JobDetailModal @close="practice_modal = false" :job="practice_job" />
-      </div>
+      </template>
     </transition>
   </section>
 </template>
@@ -75,9 +76,9 @@ export default {
   computed: {
     toggleScroll() {
       return (
-        this.locum_appointment_modal |
-        this.locum_modal |
-        this.practice_modal |
+        this.locum_appointment_modal ||
+        this.locum_modal ||
+        this.practice_modal ||
         this.create_job_modal
       );
     },
@@ -134,7 +135,7 @@ export default {
     height: auto;
   }
 }
-.modal-shield {
+.shield {
   position: fixed;
   top: 0;
   left: 0;

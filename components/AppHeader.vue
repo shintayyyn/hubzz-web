@@ -115,6 +115,7 @@ export default {
     max-width: 1466px;
     right: 0;
     left: 200px;
+    padding: 5px 30px;
   }
 }
 a {

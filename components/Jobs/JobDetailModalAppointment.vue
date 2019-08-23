@@ -1,5 +1,5 @@
 <template>
-  <section>
+  <section class="modal-container shadow-lg" ref="modalContainer">
     <div class="confirmation-shield" v-if="confirmation_modal"></div>
     <transition name="drop" mode="out-in">
       <div class="confirmation-modal flex justify-center" v-if="confirmation_modal">
@@ -27,7 +27,7 @@
         </div>
       </div>
     </transition>
-    <div class="modal-container shadow-lg" ref="modalContainer">
+    <div>
       <div class="p-8 max-w-3xl">
         <div @click="close" class="cursor-pointer">
           <svgicon name="left-arrow" height="32" width="32" />
