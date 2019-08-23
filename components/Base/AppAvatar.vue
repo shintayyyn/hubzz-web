@@ -23,8 +23,8 @@
   </div>
 </template>
 <script>
-import AppLoading from '@/components/Base/AppLoading'
-import favouritesVue from '../../pages/my-banks/favourites.vue';
+import AppLoading from "@/components/Base/AppLoading";
+import favouritesVue from "../../pages/my-banks/favourites.vue";
 export default {
   components: {
     AppLoading
@@ -46,43 +46,41 @@ export default {
   },
   data() {
     return {
-<<<<<<< HEAD
-      imageUrl: ""
-    };
-=======
       loading: false,
-      imageUrl: '',
-      error: ''
-    }
->>>>>>> 552d780456e04a05d4fb25e0d5596e035e38b3c1
+      imageUrl: "",
+      error: ""
+    };
   },
   methods: {
     onFileInput(e) {
-      this.error = ''
+      this.error = "";
       if (e.target.files[0].type.split("/")[0] !== "image") {
         return;
       }
       let file = e.target.files[0];
       const formData = new FormData();
       formData.append("file", file);
-      this.loading = true
-      this.$axios.$put(`/api/v1/me/change-avatar`, formData).then(res => {
-        this.$store.commit("SET_NOTIFICATION", {
-          enabled: true,
-          status: "success",
-          text: ["Avatar changed"]
+      this.loading = true;
+      this.$axios
+        .$put(`/api/v1/me/change-avatar`, formData)
+        .then(res => {
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: ["Avatar changed"]
+          });
+          this.getBase64(file, imageUrl => {
+            this.imageUrl = imageUrl;
+          });
+          this.loading = false;
+        })
+        .catch(err => {
+          this.loading = false;
+          if (err.response.data.status === 500) {
+            this.error = "File size too large";
+          }
+          console.log(err.response.data);
         });
-        this.getBase64(file, imageUrl => {
-          this.imageUrl = imageUrl;
-        });
-        this.loading = false
-      }).catch(err => {
-        this.loading = false
-        if (err.response.data.status === 500) {
-          this.error = 'File size too large'
-        }
-        console.log(err.response.data)
-      })
     },
     getBase64(img, callback) {
       const reader = new FileReader();
