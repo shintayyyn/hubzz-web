@@ -17,7 +17,6 @@ export default {
     }
   },
   mounted() {
-    console.log("mounted children");
     if (window.innerWidth < 768) {
       this.$store.commit("IS_MOBILE", false);
     }

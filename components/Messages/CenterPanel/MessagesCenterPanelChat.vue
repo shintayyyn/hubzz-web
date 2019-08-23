@@ -179,6 +179,37 @@ export default {
       }
       this.loadMore = false;
     },
+    messages(newValue, oldValue) {
+      // console.log(newValue, oldValue)
+      // if (newValue.length === 0) {
+      //   return
+      // }
+      // if (newValue.length >= oldValue.length && oldValue.length !== 0) {
+      //   // check if newMessage and oldMessage is not in the same conversation
+      //   if (newValue[newValue.length - 1].conversation_id !== oldValue[oldValue.length - 1].conversation_id) {
+      //     // if not, scrollToBottom()
+      //     this.scrollToBottom()
+      //   } else {
+      //     // else, check if newmessage is from another user
+      //     if (newValue[newValue.length - 1].sender_id !== this.$auth.user.id) {
+      //       // if it is, check if your scrollbar is at the bottom
+      //       const scrollPosition = this.$refs.messagesContainer.scrollTop / (this.$refs.messagesContainer.scrollHeight - this.$refs.messagesContainer.clientHeight)
+      //       if (scrollPosition === 1) {
+      //         // if it is scrollToBottom()
+      //         this.scrollToBottom()
+      //       } else {
+      //         // notify theres a new message
+      //       }
+      //     } else {
+      //       // else scrollToBottom()
+      //       this.scrollToBottom()
+      //     }
+      //   }
+      // } else {
+      //   // this.scrollToBottom()
+      //   this.scrollToBottom()
+      // }
+    },
     messages(value) {
       let atBottom =
         Math.round(
