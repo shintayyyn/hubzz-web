@@ -240,14 +240,17 @@
     </div>
     <div class="w-auto p-0 mb-4 lg:mb-0 lg:w-1/3 lg:pr-4 order-1 lg:order-2">
       <div class="shadow-lg p-8">
-        <AppAvatar class="m-auto" :type="'update'" :src="avatar.file.url" />
+        <AppAvatar
+          class="m-auto"
+          :type="'update'"
+          :src="avatar.file && avatar.file.url ? avatar.file.url : ''"
+        />
       </div>
     </div>
   </div>
 </template>
 <script>
 import AppFormError from "@/components/Base/AppFormError";
-import Avatar from "@/components/Account/Avatar";
 import AppInput from "@/components/Base/AppInput";
 import AppPostCode from "@/components/Base/AppPostCode";
 import AppTextarea from "@/components/Base/AppTextarea";
@@ -262,7 +265,6 @@ export default {
   },
   components: {
     AppFormError,
-    Avatar,
     AppInput,
     AppPostCode,
     AppTextarea,
@@ -335,7 +337,7 @@ export default {
       return {
         user
       };
-    } catch (err) {}
+    } catch (err) { }
   },
   created() {
     this.avatar = this.user.avatar;

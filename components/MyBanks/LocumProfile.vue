@@ -7,13 +7,18 @@
       <div class="w-full pr-0 lg:pr-2 lg:w-1/2">
         <div class="rounded-lg shadow-lg p-4">
           <div class="float-right">
-            <div class="relative avatar flex justify-center">
+            <!-- <div class="relative avatar flex justify-center">
               <img
                 :src="user.avatar.file.url"
                 v-if="user.avatar && user.avatar.file && user.avatar.file.url"
               />
               <svgicon v-else name="no-avatar" height="115" width="115" />
-            </div>
+            </div>-->
+            <AppAvatar
+              :height="'150px'"
+              :width="'150px'"
+              :src="user.avatar && user.avatar.file && user.avatar.file.url ? user.avatar.file.url : ''"
+            />
           </div>
           <div class="font-bold text-sm sm:text-md">Candidate</div>
           <div class="text-xs sm:text-sm mb-8">{{user.locum_detail.profession.name}}</div>
@@ -121,10 +126,14 @@
   </div>
 </template>
 <script>
+import AppAvatar from '@/components/Base/AppAvatar'
 export default {
   transition: {
     name: 'fade',
     mode: 'out-in'
+  },
+  components: {
+    AppAvatar
   },
   props: ['user'],
   data() {

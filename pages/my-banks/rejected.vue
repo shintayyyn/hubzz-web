@@ -39,7 +39,9 @@
 
           <div class="flex flex-wrap text-center mt-4 cursor-pointer" @click="show(user.id)">
             <div class="w-full flex justify-center">
-              <AppAvatar :src="user.avatar.file.url" />
+              <AppAvatar
+                :src="user.avatar && user.avatar.file && user.avatar.file.url ? user.avatar.file.url : ''"
+              />
             </div>
 
             <div class="w-full font-bold text-sm sm:text-lg my-4">{{user.personal_detail.name}}</div>

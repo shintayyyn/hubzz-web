@@ -38,7 +38,9 @@
           </div>
           <div class="flex flex-wrap text-center pt-4 cursor-pointer" @click="show(user.id)">
             <div class="w-full flex justify-center">
-              <AppAvatar :src="user.avatar.file.url" />
+              <AppAvatar
+                :src="user.avatar && user.avatar.file && user.avatar.file.url ? user.avatar.file.url : ''"
+              />
             </div>
             <div class="w-full font-bold text-sm sm:text-lg my-4">{{user.personal_detail.name}}</div>
             <div
@@ -156,6 +158,7 @@ export default {
         .$get(`/api/v1/practice/locums`, { params: locumParams })
         .then(res => {
           this.users = res.data.users;
+          console.log(this.users)
           this.loading = false;
         });
     },

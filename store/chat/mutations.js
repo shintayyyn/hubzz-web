@@ -37,7 +37,7 @@ export default {
     state.messages = payload.sort((a, b) => a.id - b.id);
   },
   ADD_MESSAGE(state, payload) {
-    if (state.activeConversationId === payload.conversation_id) {
+    if (state.activeConversationId == payload.conversation_id) {
       state.messages.push(payload)
     }
   },
