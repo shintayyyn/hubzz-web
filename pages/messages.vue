@@ -79,11 +79,12 @@ export default {
   },
   methods: {
     goToFirstConversation() {
-      console.log(this.conversations)
+      console.log(this.conversations);
       let conversation = this.conversations.find(
         (conversation, index) => index === 0
       );
-      this.$router.push(`/messages/${conversation.conversation_id}`);
+      this.$router.push(`/messages/${conversation.id}`);
+      // this.$router.push(`/messages/${conversation.conversation_id}`);
     }
   }
 };

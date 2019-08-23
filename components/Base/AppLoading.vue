@@ -1,7 +1,10 @@
 <template>
-  <div class="loading-shield shadow-md" v-if="loading">
-    <h1 class="loader-message" :class="inClass">Loading</h1>
-  </div>
+  <transition name="fade" mode="out-in">
+    <div class="loading-shield flex flex-col items-center justify-center shadow-md" v-if="loading">
+      <h1 :class="inClass">{{ message }}</h1>
+      <svgicon name="loader" width="60" height="60" />
+    </div>
+  </transition>
 </template>
 <script>
 export default {
@@ -16,7 +19,7 @@ export default {
     },
     inClass: String
   }
-}
+};
 </script>
 
 <style scoped>

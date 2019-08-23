@@ -1,12 +1,16 @@
 <template>
-  <div class="panel-chat overflow-y-auto h-full" ref="messagesContainer" @scroll="scrollHandler">
+  <div
+    class="panel-chat overflow-y-auto overflow-x-hidden h-full"
+    ref="messagesContainer"
+    @scroll="scrollHandler"
+  >
     <div class="relative flex flex-col h-full">
       <template v-if="messages.length > 0">
         <transition name="drop" mode="in-out">
           <span class="relative w-full flex justify-center">
             <button
               v-if="loadMore"
-              class="text-center py-4 px-8 shadow-md text-xs text-grey-darkest font-bold my-4 rounded-full bg-white focus:outline-none hover:bg-gray-200"
+              class="absolute text-center py-4 px-8 shadow-md text-xs text-grey-darkest font-bold my-4 rounded-full bg-white focus:outline-none hover:bg-gray-200"
               @click="loadMoreMessages"
             >Load More Messages</button>
           </span>
@@ -95,7 +99,7 @@
         </div>
       </template>
       <template v-if="$route.params.slug === 'new'">
-        <div class="relative h-full flex flex-col justify-between pt-20 overflow-y-hidden">
+        <div class="relative h-full flex flex-col justify-between pt-20 overflow-y-hidden z-50">
           <div class="h-full px-8 md:px-20 md:pt-20">
             <button
               class="absolute top-0 left-0 m-6 flex items-center font-bold focus:outline-none"
@@ -214,7 +218,7 @@ export default {
       let atBottom =
         Math.round(
           this.$refs.messagesContainer.offsetHeight +
-          this.$refs.messagesContainer.scrollTop
+            this.$refs.messagesContainer.scrollTop
         ) === this.$refs.messagesContainer.scrollHeight;
       let newMessageIndex = value.length - 1;
       if (value.length <= 20) {

@@ -10,7 +10,10 @@
         @keydown.enter="search"
       />
       <div class="relative flex flex-col justify-between h-full border-t">
-        <div class="chat-list w-full h-full overflow-y-auto" @scroll="scrollHandler">
+        <div
+          class="chat-list w-full h-full overflow-y-auto overflow-x-hidden"
+          @scroll="scrollHandler"
+        >
           <template v-if="showResult === false">
             <div
               class="relative flex w-full items-center px-2 py-4 cursor-pointer border-b"
@@ -32,7 +35,7 @@
                   >{{ item.message }}</p>
                 </div>
                 <span
-                  class="w-10 pr-1 text-right text-xs text-gray-600 leading-none absolute right-0 mr-1 h-full flex items-center"
+                  class="w-10 text-right text-xs text-gray-600 leading-none absolute right-0 mx-1 h-full flex items-center"
                 >{{ $moment(item.created_at).startOf('hour').fromNow() }}</span>
               </div>
             </div>
@@ -58,7 +61,7 @@
                   >{{ getMessage(item.message) }}</p>
                 </div>
                 <span
-                  class="w-12 pr-1 text-right text-xs text-gray-600 leading-none absolute right-0 mr-1"
+                  class="w-12 text-right text-xs text-gray-600 leading-none absolute right-0 mx-1"
                 >{{ $moment(item.created_at).startOf('hour').fromNow() }}</span>
               </div>
             </div>
@@ -148,9 +151,9 @@ export default {
     },
     userAvatar(item) {
       if (item.receiver_id === this.$auth.user.id) {
-        return item.sender_avatar ? item.sender_avatar : ''
+        return item.sender_avatar ? item.sender_avatar : "";
       }
-      return item.receiver_avatar ? item.receiver_avatar : ''
+      return item.receiver_avatar ? item.receiver_avatar : "";
       // if (item.sender_avatar === null && item.receiver_avatar === null) {
       //   return "https://via.placeholder.com/350";
       // } else if (item.receiver_id === this.$auth.user.id) {

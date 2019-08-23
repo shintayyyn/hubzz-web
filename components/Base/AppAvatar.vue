@@ -1,5 +1,5 @@
 <template>
-  <div class="relative" :style="[{ width: width }, {height: height}]">
+  <div class="relative" :style="[{ width: width }, {height: height}]" style="z-index: 401">
     <img :src="imageUrl" v-if="imageUrl" class="object-cover rounded-full w-full h-full" />
     <img v-if="src && !imageUrl" :src="src" class="object-cover rounded-full w-full h-full" />
     <svgicon v-if="!src" name="no-avatar" :height="height" :width="width" />
@@ -12,14 +12,14 @@
         @input="onFileInput($event)"
       />
       <label for="input_file" class="flex items-center cursor-pointer">
-        <svgicon class="opacity-50 hover:opacity-100" name="camera" height="36" width="36" />
+        <svgicon class="opacity-50 hover:opacity-75" name="camera" height="36" width="36" />
       </label>
     </div>
     <div
       class="absolute top-0 left-0 bg-red-500 p-1 text-xs sm:text-sm text-white"
       v-if="error"
     >{{error}}</div>
-    <AppLoading :loading="loading" :message="'Uploading'" :inClass="'text-xl'" />
+    <AppLoading class="rounded-full" :loading="loading" :message="'Uploading'" />
   </div>
 </template>
 <script>

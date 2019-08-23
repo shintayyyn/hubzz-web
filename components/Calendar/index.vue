@@ -19,13 +19,13 @@
     </div>
     <div class="modal-shield" v-if="toggleScroll"></div>
     <transition name="slide" mode="out-in">
-      <div class="modal-container shadow-lg" v-if="locum_appointment_modal">
+      <div v-if="locum_appointment_modal">
         <JobDetailModalAppointment
           @close="locum_appointment_modal = false"
           :job="locum_appointment_job"
         />
       </div>
-      <div class="modal-container shadow-lg" v-if="locum_modal">
+      <div v-if="locum_modal">
         <JobDetailModalLocum @close="locum_modal = false" :job="locum_job" />
       </div>
       <!-- <div class="modal-container shadow-lg" v-if="create_job_modal">
@@ -133,6 +133,16 @@ export default {
   .calendar {
     height: auto;
   }
+}
+.modal-shield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #333;
+  opacity: 0.5;
+  z-index: 509;
 }
 </style>
 
