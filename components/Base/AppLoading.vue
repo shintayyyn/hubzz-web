@@ -1,6 +1,6 @@
 <template>
   <div class="loading-shield shadow-md" v-if="loading">
-    <h1 class="text-5xl loader-message">Loading</h1>
+    <h1 class="loader-message" :class="inClass">Loading</h1>
   </div>
 </template>
 <script>
@@ -13,7 +13,8 @@ export default {
     message: {
       type: String,
       required: true
-    }
+    },
+    inClass: String
   }
 }
 </script>

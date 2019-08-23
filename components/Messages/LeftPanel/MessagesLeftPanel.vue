@@ -147,13 +147,17 @@ export default {
         : `${item.receiver_first_name} ${item.receiver_last_name}`;
     },
     userAvatar(item) {
-      if (item.sender_avatar === null && item.receiver_avatar === null) {
-        return "https://via.placeholder.com/350";
-      } else if (item.receiver_id === this.$auth.user.id) {
-        return item.sender_avatar;
-      } else {
-        return item.receiver_avatar;
+      if (item.receiver_id === this.$auth.user.id) {
+        return item.sender_avatar ? item.sender_avatar : ''
       }
+      return item.receiver_avatar ? item.receiver_avatar : ''
+      // if (item.sender_avatar === null && item.receiver_avatar === null) {
+      //   return "https://via.placeholder.com/350";
+      // } else if (item.receiver_id === this.$auth.user.id) {
+      //   return item.sender_avatar;
+      // } else {
+      //   return item.receiver_avatar;
+      // }
     },
     createMessage() {
       if (window.innerWidth < 768) {

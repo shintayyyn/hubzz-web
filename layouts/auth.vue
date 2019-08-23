@@ -16,6 +16,9 @@
 
     <div class="__main overflow-auto relative">
       <nuxt />
+      <div class="absolute bottom-0">
+        <AppNotification />
+      </div>
     </div>
 
     <div
@@ -38,7 +41,11 @@
 </template>
 
 <script>
+import AppNotification from "@/components/AppNotification";
 export default {
+  components: {
+    AppNotification
+  },
   middleware: 'isAuthenticated',
   // transitions: 'fade',
   async asyncData({ app }) {

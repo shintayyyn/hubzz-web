@@ -40,7 +40,7 @@
                         class="m-auto"
                         :width="'40px'"
                         :height="'40px'"
-                        :src="setAvatar(item.sender)"
+                        :src="item.sender && item.sender.avatar && item.sender.avatar.file && item.sender.avatar.file.url ? item.sender.avatar.file.url : ''"
                       />
                     </div>
 
@@ -69,7 +69,7 @@
                         class="m-auto"
                         :height="'40px'"
                         :width="'40px'"
-                        :src="setAvatar(item.sender)"
+                        :src="item.sender && item.sender.avatar && item.sender.avatar.file && item.sender.avatar.file.url ? item.sender.avatar.file.url : ''"
                       />
                     </div>
                     <span
