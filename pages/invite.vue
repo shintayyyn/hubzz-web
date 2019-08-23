@@ -1,33 +1,26 @@
 <template>
   <section>
-    <div class="px-10" v-if="$route.query.invite === 'success'">
-      <InviteSuccess />
+    <div class="flex flex-no-wrap justify-start">
+      <nuxt-link
+        style="font-family:Nunito"
+        :to="'/invite/invite-locums'"
+        class="mr-5 p-3 text-sm font-bold cursor-pointer"
+        :class="$route.name === 'invite-invite-locums' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+      >Invite Locums</nuxt-link>
+      <nuxt-link
+        style="font-family:Nunito"
+        :to="'/invite/invite-practices'"
+        class="mr-5 p-3 text-sm font-bold cursor-pointer"
+        :class="$route.name === 'invite-invite-practices' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+      >Invite Practices</nuxt-link>
     </div>
-    <div class="px-10" v-else>
-      <InviteTabs />
-      <div class="mt-5">
-        <Invite />
-      </div>
+    <div class="mt-5">
+      <nuxt-child />
     </div>
   </section>
 </template>
 <script>
-import InviteTabs from '@/components/Invite/InviteTabs'
-import Invite from '@/components/Invite/Invite'
-import InviteSuccess from '@/components/Invite/InviteSuccess'
 export default {
-  components: {
-    InviteTabs,
-    Invite,
-    InviteSuccess
-  },
   middleware: 'isVerified',
-  created() {
-    const query = {
-      ...this.$route.query,
-      invite_domain: this.$route.query.invite_domain || 'locums'
-    }
-    this.$router.push({ query })
-  }
 }
 </script>

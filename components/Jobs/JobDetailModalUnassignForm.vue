@@ -1,6 +1,9 @@
 <template>
   <div class="rounded-lg shadow-lg p-8 mt-8">
-    <div class="text-sm sm:text-base mb-4">You can unassign from this job</div>
+    <div class="text-base font-bold mb-4">You can unassign from this job</div>
+    <div
+      class="text-sm text-gray-700"
+    >Cancellation should be at least be 72 hours before the start of the job.</div>
     <AppTextarea
       v-model="form.declined_reason"
       :name="'declined_reason'"
