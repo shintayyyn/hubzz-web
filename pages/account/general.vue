@@ -18,7 +18,7 @@
       <div class="-mt-6 mb-4" v-if="email_isVerified === false ">
         <span class="text-red-500 text-xs">E-mail is not yet verified.</span>
         <span
-          class="p-1 bg-gray-800 rounded text-xs text-white cursor-pointer"
+          class="p-1 bg-gray-800 rounded text-xs text-white cursor-pointer whitespace-no-wrap"
           @click="resendEmailVerification()"
         >Click here to re-send</span>
       </div>
@@ -137,8 +137,8 @@ export default {
         address_line_3: ""
       },
       loading: false,
-      email_isVerified: '',
-      email_verifiedAt: '',
+      email_isVerified: "",
+      email_verifiedAt: "",
       formError: []
     };
   },
@@ -226,7 +226,7 @@ export default {
       this.form.address_line_3 = postal_town ? postal_town.long_name : "";
     },
     async save() {
-      this.loading = true
+      this.loading = true;
       try {
         this.formError = [];
         this.Validate(this.form, ["title", "suffix", "address_line_2"]);
@@ -237,28 +237,32 @@ export default {
             status: "success",
             text: ["Saved"]
           });
-          this.scrollToTop()
-          this.loading = false
+          this.scrollToTop();
+          this.loading = false;
         } else {
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "danger",
             text: ["Please fill up all the forms"]
           });
-          this.scrollToTop()
-          this.loading = false
+          this.scrollToTop();
+          this.loading = false;
         }
       } catch (err) {
-        this.formError = err.response.data.error_messages
-        this.scrollToTop()
-        this.loading = false
+        this.formError = err.response.data.error_messages;
+        this.scrollToTop();
+        this.loading = false;
       }
     },
     async resendEmailVerification() {
       try {
-        await this.$axios.post(`/api/v1/email-verification/resend`)
+        await this.$axios.post(`/api/v1/email-verification/resend`);
         // alert('Confirmation e-mail sent')
-        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: ['Confirmation e-mail sent'] })
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "success",
+          text: ["Confirmation e-mail sent"]
+        });
       } catch (err) {
         console.log("Something went wrong! ", err);
       }

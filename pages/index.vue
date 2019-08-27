@@ -41,8 +41,8 @@ export default {
   bottom: 0;
   margin: auto;
   max-width: 600px;
-  height: 700px;
-  padding: 1px;
+  max-height: 700px;
+  padding: 20px 1px;
 }
 
 @media screen and (max-width: 1200px) {

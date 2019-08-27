@@ -1,6 +1,6 @@
 <template>
   <section class="account-section">
-    <div class="flex flex-row flex-wrap justify-start">
+    <div class="flex flex-row justify-start overflow-x-auto">
       <nuxt-link
         to="/my-practice/favorites"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
@@ -29,6 +29,6 @@
 </template>
 <script>
 export default {
-  middleware: 'isVerified',
-}
+  middleware: "isVerified"
+};
 </script>

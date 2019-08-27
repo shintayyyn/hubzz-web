@@ -34,7 +34,7 @@
 
             <div class="w-full font-bold text-sm sm:text-lg my-4">{{practice.surgery.name}}</div>
             <div
-              class="w-full mb-4 font-bold text-gray-600 text-sm sm:text-lg"
+              class="w-full mb-4 font-bold text-gray-600 text-xs sm:text-sm"
             >{{practice.surgery.address.line_1}} {{practice.surgery.address.line_2}} {{practice.surgery.address.line_3}} {{practice.surgery.address.post_code}}</div>
           </div>
         </div>
@@ -58,7 +58,7 @@
 <script>
 import AppPagination from "@/components/Base/AppPagination";
 import MyPracticeDetailModal from "@/components/MyPractice/MyPracticeDetailModal";
-import AppAvatar from '@/components/Base/AppAvatar'
+import AppAvatar from "@/components/Base/AppAvatar";
 export default {
   transition: {
     name: "fade",
@@ -66,7 +66,7 @@ export default {
   },
   components: {
     AppPagination,
-    AppAvatar,
+    AppAvatar
   },
   data() {
     return {
