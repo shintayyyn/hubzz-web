@@ -158,7 +158,7 @@ export default {
         .$get(`/api/v1/practice/locums`, { params: locumParams })
         .then(res => {
           this.users = res.data.users;
-          console.log(this.users)
+          // console.log(this.users)
           this.loading = false;
         });
     },

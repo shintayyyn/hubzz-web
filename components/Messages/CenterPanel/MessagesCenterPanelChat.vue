@@ -82,10 +82,10 @@
                       class="chat-message rounded-lg px-2 py-2 mx-2"
                       :class="isReceiver(item) ? 'bg-gray-300' : 'bg-blue-500 text-white'"
                     >{{item.message}}</span>
-                    <div
+                    <!-- <div
                       class="text-xs text-gray-500 font-bold mx-1 mt-3 cursor-pointer px-2"
                       @click="deleteMessage(item.id)"
-                    >X</div>
+                    >X</div>-->
                   </div>
                   <div class="mx-2" :class="isReceiver(item) ? 'text-right ': ''">
                     <span
@@ -98,12 +98,13 @@
           </div>
         </div>
       </template>
-      <template v-if="$route.params.slug === 'new'">
-        <div class="relative h-full flex flex-col justify-between pt-20 overflow-y-hidden z-50">
+      <template v-if="$route.params.slug === 'new' || messages.length === 0">
+        <div class="relative h-full flex flex-col justify-between pt-20 overflow-y-hidden">
           <div class="h-full px-8 md:px-20 md:pt-20">
             <button
               class="absolute top-0 left-0 m-6 flex items-center font-bold focus:outline-none"
               @click="$router.go(-1)"
+              v-if="$route.params.slug === 'new'"
             >
               <svgicon name="left-arrow" height="32" width="32" />
             </button>

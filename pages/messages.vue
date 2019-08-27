@@ -79,7 +79,6 @@ export default {
   },
   methods: {
     goToFirstConversation() {
-      console.log(this.conversations);
       let conversation = this.conversations.find(
         (conversation, index) => index === 0
       );

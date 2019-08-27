@@ -1,6 +1,10 @@
 import * as chatApi from "@/api/chat";
 export default {
-  async initializeChatListener({ state, commit, dispatch }) {
+  async initializeChatListener({
+    state,
+    commit,
+    dispatch
+  }) {
     this.$socket.on("newConversation", conversation => {
       if (!state.conversations.find(item => item.id == conversation.conversation_id)) {
         commit("ADD_CONVERSATION", conversation);
@@ -25,7 +29,11 @@ export default {
     //     // }
     // })
   },
-  async initializeUsersOnline({ state, commit, dispatch }) {
+  async initializeUsersOnline({
+    state,
+    commit,
+    dispatch
+  }) {
     this.$socket.on("presence-in", users => {
       commit("ADD_USER_ONLINE", users.user.id);
     });
@@ -33,17 +41,25 @@ export default {
       commit("DELETE_USER_ONLINE", users.user.id);
     });
   },
-  async setConversation({ commit }) {
+  async setConversation({
+    commit
+  }) {
     const response = await chatApi.fetchConversations(this.$axios, 0, 10);
     commit("SET_CONVERSATIONS", response.data.conversations);
   },
 
-  async fetchMoreConversation({ state, commit }, payload) {
+  async fetchMoreConversation({
+    state,
+    commit
+  }, payload) {
     const response = await chatApi.fetchConversations(this.$axios, payload.offset, 10);
     commit("FETCH_CONVERSATIONS", response.data.conversations);
   },
 
-  async fetchMoreMessage({ state, commit }, payload) {
+  async fetchMoreMessage({
+    state,
+    commit
+  }, payload) {
     const response = await chatApi.fetchActiveConversationMessages(
       this.$axios,
       payload.offset,
@@ -56,16 +72,22 @@ export default {
     }
   },
 
-  async setActiveConversation({ state, commit }, payload) {
+  async setActiveConversation({
+    state,
+    commit
+  }, payload) {
     const response = await chatApi.fetchActiveConversationMessages(this.$axios, 0, 20, "desc", payload);
     commit("SET_ACTIVE_CONVERSATION", payload);
     commit("SET_MESSAGES", response.data.messages);
   },
 
-  async sendMessage({ state,commit }, payload) {
+  async sendMessage({
+    state,
+    commit
+  }, payload) {
     // let receiver_user_id = null
     if (!payload.receiver_user_id) {
-      let foundConversation = state.conversations.find(conversation => conversation.conversation_id == state.activeConversationId);
+      let foundConversation = state.conversations.find(conversation => conversation.id == state.activeConversationId);
       if (foundConversation.receiver_id == this.$auth.user.id) {
         payload.receiver_user_id = foundConversation.sender_id.toString();
       } else {
@@ -77,9 +99,12 @@ export default {
       return commit("ADD_MESSAGE", response.data.message);
     }
   },
-  async deleteMessage({ state,commit }, payload) {
+  async deleteMessage({
+    state,
+    commit
+  }, payload) {
     let receiver_user_id = null;
-    let foundConversation = state.conversations.find(conversation => conversation.conversation_id == state.activeConversationId);
+    let foundConversation = state.conversations.find(conversation => conversation.id == state.activeConversationId);
     if (foundConversation.receiver_id == this.$auth.user.id) {
       receiver_user_id = foundConversation.sender_id;
     } else {

@@ -57,8 +57,8 @@
                   >{{ userFullname(item) }}</p>
                   <p
                     class="text-sm truncate"
-                    :class="getMessage(item.message) ? 'font-bold' : ''"
-                  >{{ getMessage(item.message) }}</p>
+                    :class="getMessage(item) ? 'font-bold' : ''"
+                  >{{ item.message }}</p>
                 </div>
                 <span
                   class="w-12 text-right text-xs text-gray-600 leading-none absolute right-0 mx-1"
@@ -67,11 +67,12 @@
             </div>
           </template>
           <div
-            v-if="messages.length === 0 && showResult === true"
+            v-if="(messages.length === 0 && showResult === true) || conversations.length === 0"
             class="flex flex-col h-full items-center pt-20 font-bold text-gray-500"
           >
             <img src="/images/hubzz-icon-transparent.png" class="logo m-4" />
-            <span>Nothing to show</span>
+            <span v-if="showResult === true">Nothing to show</span>
+            <span v-else>No messages</span>
           </div>
         </div>
       </div>

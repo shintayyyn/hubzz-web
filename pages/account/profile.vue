@@ -243,7 +243,7 @@
         <AppAvatar
           class="m-auto"
           :type="'update'"
-          :src="avatar.file && avatar.file.url ? avatar.file.url : ''"
+          :src="avatar && avatar.file.url ? avatar.file.url : ''"
         />
       </div>
     </div>
@@ -337,7 +337,7 @@ export default {
       return {
         user
       };
-    } catch (err) { }
+    } catch (err) {}
   },
   created() {
     this.avatar = this.user.avatar;

@@ -1,5 +1,5 @@
 <template>
-  <div class="relative" :style="[{ width: width }, {height: height}]" style="z-index: 401">
+  <div class="relative" :style="[{ width: width }, {height: height}]">
     <img :src="imageUrl" v-if="imageUrl" class="object-cover rounded-full w-full h-full" />
     <img v-if="src && !imageUrl" :src="src" class="object-cover rounded-full w-full h-full" />
     <svgicon v-if="!src" name="no-avatar" :height="height" :width="width" />
