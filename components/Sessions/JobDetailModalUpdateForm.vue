@@ -189,6 +189,22 @@
                 :label="'End Time'"
               />
             </div>
+            <div>
+              <AppInput
+                v-if="show_saturday"
+                v-model="form.include_saturday"
+                :type="'single-checkbox'"
+                :name="'include_saturday'"
+                :label="'Include Saturday'"
+              />
+              <AppInput
+                v-if="show_sunday"
+                v-model="form.include_sunday"
+                :type="'single-checkbox'"
+                :name="'include_sunday'"
+                :label="'Include Sunday'"
+              />
+            </div>
           </div>
           <AppSelect
             v-model="form.shift_id"
@@ -425,7 +441,9 @@ export default {
         favorite_only_until: null
       },
       formError: [],
-    }
+      show_saturday: false,
+      show_sunday: false
+    };
   },
   watch: {
     "form.profession_id"(value) {
@@ -444,22 +462,39 @@ export default {
           return;
         }
       }
+    },
+    "form.date_end"(value) {
+      let end = this.$moment(value);
+      let days = [];
+      let day = this.$moment(this.form.date_start);
+      while (day <= end) {
+        days.push(day.day());
+        day = day.clone().add(1, "d");
+      }
+      if (days.includes(6)) {
+        this.show_saturday = true;
+      } else if (days.includes(7)) {
+        this.show_sunday = true;
+      } else {
+        this.show_saturday = false;
+        this.show_sunday = false;
+      }
     }
   },
   computed: {
     google: gmapApi,
     latLang() {
       return this.job.platform_job.practice.surgery.address.coordinates;
-    },
+    }
   },
   created() {
-    this.getInit()
+    this.getInit();
     this.$axios.$get(`/api/v1/practice/me/practice-practices`).then(res => {
-      this.practice_lists = []
+      this.practice_lists = [];
       res.data.practices.forEach(item => {
         this.practice_lists.push({ label: item.surgery.name, value: item.id });
       });
-    })
+    });
     this.$axios.$get(`/api/v1/locum-detail-rate-types`).then(res => {
       this.rate_lists = [];
       res.data.locum_detail_rate_types.forEach(item => {
@@ -551,63 +586,83 @@ export default {
         }
       );
     });
-    this.form.practice_id = this.job.platform_job.practice.id
-    this.form.title = this.job.title
-    this.form.description = this.job.description
-    this.form.report_to = this.job.platform_job.report_to
-    this.form.email = this.job.platform_job.email
-    this.form.phone_number = this.job.platform_job.phone_number
-    this.form.extra_information = this.job.platform_job.extra_information
-    this.form.is_another_doctor = this.job.platform_job.is_another_doctor
-    this.form.is_nurse_available = this.job.platform_job.is_nurse_available
-    this.form.number_of_patients = this.job.platform_job.number_of_patients
-    this.form.duration_for_each_appointment = this.job.platform_job.duration_for_each_appointment
-    this.form.opportunity_for_catch_up_slots = this.job.platform_job.opportunity_for_catch_up_slots
-    this.form.session_structure_information = this.job.platform_job.session_structure_information
-    this.form.locum_detail_rate_type_id = this.job.locum_detail_rate_type.id
-    this.form.rate = this.job.rate
-    this.form.total_hours = this.job.total_hours
+    this.form.practice_id = this.job.platform_job.practice.id;
+    this.form.title = this.job.title;
+    this.form.description = this.job.description;
+    this.form.report_to = this.job.platform_job.report_to;
+    this.form.email = this.job.platform_job.email;
+    this.form.phone_number = this.job.platform_job.phone_number;
+    this.form.extra_information = this.job.platform_job.extra_information;
+    this.form.is_another_doctor = this.job.platform_job.is_another_doctor;
+    this.form.is_nurse_available = this.job.platform_job.is_nurse_available;
+    this.form.number_of_patients = this.job.platform_job.number_of_patients;
+    this.form.duration_for_each_appointment = this.job.platform_job.duration_for_each_appointment;
+    this.form.opportunity_for_catch_up_slots = this.job.platform_job.opportunity_for_catch_up_slots;
+    this.form.session_structure_information = this.job.platform_job.session_structure_information;
+    this.form.locum_detail_rate_type_id = this.job.locum_detail_rate_type.id;
+    this.form.rate = this.job.rate;
+    this.form.total_hours = this.job.total_hours;
 
-    if (![15, 30, 60].includes(this.job.platform_job.unpaid_breaks_in_minutes)) {
-      this.unpaid_breaks = 'other'
-      this.form.unpaid_breaks_in_minutes = this.job.platform_job.unpaid_breaks_in_minutes
+    if (
+      ![15, 30, 60].includes(this.job.platform_job.unpaid_breaks_in_minutes)
+    ) {
+      this.unpaid_breaks = "other";
+      this.form.unpaid_breaks_in_minutes = this.job.platform_job.unpaid_breaks_in_minutes;
     } else {
-      this.unpaid_breaks = this.job.platform_job.unpaid_breaks_in_minutes
+      this.unpaid_breaks = this.job.platform_job.unpaid_breaks_in_minutes;
     }
 
-    this.form.ir35 = this.job.platform_job.ir35
-    this.form.mandatory_training_id = this.job.platform_job.mandatory_trainings.map(item => item.id)
-    this.form.compliance_document_id = this.job.platform_job.compliance_documents.map(item => item.id)
-    this.form.date_start = this.job.date_start
-    this.form.date_end = this.job.date_end
-    this.form.time_start = this.$moment(this.job.time_start).format('HH:mm')
-    this.form.time_end = this.$moment(this.job.time_end).format('HH:mm')
-    this.form.shift_id = this.job.shift.id
+    this.form.ir35 = this.job.platform_job.ir35;
+    this.form.mandatory_training_id = this.job.platform_job.mandatory_trainings.map(
+      item => item.id
+    );
+    this.form.compliance_document_id = this.job.platform_job.compliance_documents.map(
+      item => item.id
+    );
+    this.form.date_start = this.job.date_start;
+    this.form.date_end = this.job.date_end;
+    this.form.time_start = this.$moment(this.job.time_start).format("HH:mm");
+    this.form.time_end = this.$moment(this.job.time_end).format("HH:mm");
+    this.form.shift_id = this.job.shift.id;
 
-    this.form.include_saturdary = this.job.include_saturdary
-    this.form.include_sunday = this.job.include_sunday
+    this.form.include_saturday = this.job.include_saturday;
+    this.form.include_sunday = this.job.include_sunday;
 
     if (this.job.platform_job.auto_assign_at) {
-      this.auto_assign_at.date = this.$moment(this.job.platform_job.auto_assign_at).format('YYYY-MM-DD')
-      this.auto_assign_at.time = this.$moment(this.job.platform_job.auto_assign_at).format('HH:mm')
+      this.auto_assign_at.date = this.$moment(
+        this.job.platform_job.auto_assign_at
+      ).format("YYYY-MM-DD");
+      this.auto_assign_at.time = this.$moment(
+        this.job.platform_job.auto_assign_at
+      ).format("HH:mm");
     }
 
     if (this.job.platform_job.selection_date) {
-      this.selection_date.date = this.$moment(this.job.platform_job.selection_date).format('YYYY-MM-DD')
-      this.selection_date.time = this.$moment(this.job.platform_job.selection_date).format('HH:mm')
+      this.selection_date.date = this.$moment(
+        this.job.platform_job.selection_date
+      ).format("YYYY-MM-DD");
+      this.selection_date.time = this.$moment(
+        this.job.platform_job.selection_date
+      ).format("HH:mm");
     }
 
     if (this.job.platform_job.favorite_only_until) {
-      this.favorite_only_until.date = this.$moment(this.job.platform_job.favorite_only_until).format('YYYY-MM-DD')
-      this.favorite_only_until.time = this.$moment(this.job.platform_job.favorite_only_until).format('HH:mm')
+      this.favorite_only_until.date = this.$moment(
+        this.job.platform_job.favorite_only_until
+      ).format("YYYY-MM-DD");
+      this.favorite_only_until.time = this.$moment(
+        this.job.platform_job.favorite_only_until
+      ).format("HH:mm");
     }
 
-    this.form.update_remarks = this.job.update_remarks
+    this.form.update_remarks = this.job.update_remarks;
 
-    if (this.job.platform_job.session_requirements === '') {
-      this.form.session_requirements = []
+    if (this.job.platform_job.session_requirements === "") {
+      this.form.session_requirements = [];
     } else {
-      this.form.session_requirements = this.job.platform_job.session_requirements.split(",")
+      this.form.session_requirements = this.job.platform_job.session_requirements.split(
+        ","
+      );
     }
 
     this.job.platform_job.qualifications.forEach(qualication => {
@@ -634,15 +689,14 @@ export default {
     this.form.profession_id = this.job.platform_job.profession.id;
   },
   methods: {
-    getInit() {
-
-    },
+    getInit() {},
     uncheckMandatory(value) {
       this.form.mandatory_training_id = this.form.mandatory_training_id.filter(
         id => id != value
       );
     },
     save() {
+      console.log(this.form.include_saturdary);
       this.formError = [];
       this.Validate(this.form, [
         "extra_information",
@@ -699,7 +753,7 @@ export default {
           this.$parent.$refs.modalContainer.scrollTop = 0;
         });
       }
-    },
+    }
   }
 };
 </script>

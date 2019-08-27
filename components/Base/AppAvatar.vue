@@ -55,7 +55,11 @@ export default {
     onFileInput(e) {
       this.error = "";
       if (e.target.files[0].type.split("/")[0] !== "image") {
-        return;
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "danger",
+          text: ["Invalid file format"]
+        });
       }
       let file = e.target.files[0];
       const formData = new FormData();

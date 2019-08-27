@@ -11,7 +11,10 @@
         <img src="/images/hubzz-icon-transparent.png" class="logo mx-auto" />
       </div>
       <div class="w-1/3 text-right leading-loose py-2">
-        <div class="flex flex-col md:flex-row justify-end md:items-center" v-if="$auth.loggedIn">
+        <div
+          class="flex flex-row-reverse flex-wrap justify-start items-center"
+          v-if="$auth.loggedIn"
+        >
           <div class="flex justify-end">
             <div v-if="$auth.user.domain === 'Practice' && $auth.user.status === 'Active'">
               <AppButton
@@ -41,7 +44,7 @@
             </button>
           </div>
           <div
-            class="text-xs xl:text-sm ml-4"
+            class="text-xs xl:text-sm mr-2"
             v-if="$auth.user.domain === 'Locum'"
           >{{$auth.user.email}}</div>
         </div>

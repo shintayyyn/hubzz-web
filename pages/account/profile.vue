@@ -10,6 +10,7 @@
           :label="'GMC / NMC Number'"
           :placeholder="''"
           :info="'For compliance; to be verified by the hubzz team'"
+          :error="formError.find(item => item.field === 'gmc_or_nmc_number')"
         />
         <AppInput
           v-model="form.mpl_or_npl_number"
@@ -238,7 +239,7 @@
         <AppButton :label="'Save changes'" @click="save" />
       </div>
     </div>
-    <div class="w-auto p-0 mb-4 lg:mb-0 lg:w-1/3 lg:pr-4 order-1 lg:order-2">
+    <div class="lg:w-1/3 p-0 mb-4 lg:mb-0 lg:pr-4 order-1 lg:order-2">
       <div class="shadow-lg p-8">
         <AppAvatar
           class="m-auto"

@@ -2,13 +2,18 @@
   <section>
     <!-- multicheckbox -->
     <div v-if="type === 'multi-checkbox'" class="flex flex-col py-2 mb-6">
-      <div class="relative flex flex-row flex-no-wrap justify-between">
-        <label :for="name" class="text-xs sm:text-base py-1">{{label}}</label>
-        <div class="bg-gray-300 rounded-lg p-1 text-xs sm:text-sm" v-if="info">{{info}}</div>
-        <div
-          class="absolute right-0 bg-red-500 p-1 text-xs sm:text-sm text-white"
-          v-if="error"
-        >{{error.message}}</div>
+      <div class="relative w-full flex flex-col lg:flex-row justify-between">
+        <label :for="name" class="text-xs sm:text-sm lg:py-1">{{label}}</label>
+        <div class="flex">
+          <div
+            class="rounded-lg py-1 text-xs text-gray-600 sm:text-sm lg:text-black lg:bg-gray-300 lg:px-2"
+            v-if="info"
+          >{{info}}</div>
+          <div
+            class="absolute right-0 bg-red-500 p-1 text-xs sm:text-sm text-white"
+            v-if="error"
+          >{{error.message}}</div>
+        </div>
       </div>
       <div
         class="flex flex-row justify-start content-center mt-1"
@@ -28,34 +33,35 @@
 
     <!-- single checkbox -->
     <div v-if="type === 'single-checkbox'" class="flex flex-col py-2 mb-6">
-      <div class="flex flex-row flex-no-wrap justify-between">
-        <div>
-          <input
-            :value="value"
-            type="checkbox"
-            @input="$emit('input', $event.target.checked)"
-            class="mt-1 mr-1"
-          />
-          <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
-          <div
-            class="absolute bg-red-500 p-1 text-xs sm:text-sm text-white"
-            v-if="error"
-          >{{error.message}}</div>
-        </div>
+      <div class="flex flex-row flex-no-wrap items-center justify-between">
+        <input
+          :value="value"
+          type="checkbox"
+          @input="$emit('input', $event.target.checked)"
+          class="mr-1"
+        />
+        <label :for="name" class="text-xs sm:text-sm">{{label}}</label>
+        <div
+          class="absolute bg-red-500 p-1 text-xs sm:text-sm text-white"
+          v-if="error"
+        >{{error.message}}</div>
       </div>
     </div>
 
     <!-- multiemail -->
     <div v-if="type === 'multiemail'" class="flex flex-col py-2 mb-6">
-      <div class="relative flex flex-row flex-no-wrap justify-between">
-        <div class="flex flex-wrap justify-start">
-          <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
-          <span class="ml-2 bg-gray-300 rounded-lg px-4 py-1 text-xs">Seperate with commas</span>
+      <div class="relative w-full flex flex-col lg:flex-row justify-between">
+        <label :for="name" class="text-xs sm:text-sm lg:py-1">{{label}}</label>
+        <div class="flex">
+          <div
+            class="rounded-lg py-1 text-xs text-gray-600 sm:text-sm lg:text-black lg:bg-gray-300 lg:px-2"
+            v-if="info"
+          >Seperate with commas</div>
+          <div
+            class="absolute right-0 bg-red-500 p-1 text-xs sm:text-sm text-white"
+            v-if="error"
+          >{{error.message}}</div>
         </div>
-        <div
-          class="absolute right-0 bg-red-500 p-1 text-xs sm:text-sm text-white"
-          v-if="error"
-        >{{error.message}}</div>
       </div>
       <div class="flex flex-row justify-start mt-1">
         <input
@@ -74,10 +80,13 @@
       v-if="type === 'text' || type === 'time' || type === 'email' || type === 'password' || type === 'date'"
       class="flex flex-col py-2 mb-6"
     >
-      <div class="relative flex flex-row flex-no-wrap justify-between">
-        <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
+      <div class="relative w-full flex flex-col lg:flex-row justify-between">
+        <label :for="name" class="text-xs sm:text-sm lg:py-1">{{label}}</label>
         <div class="flex">
-          <div class="bg-gray-300 rounded-lg px-4 py-1 text-xs sm:text-sm" v-if="info">{{info}}</div>
+          <div
+            class="rounded-lg py-1 text-xs text-gray-600 sm:text-sm lg:text-black lg:bg-gray-300 lg:px-2"
+            v-if="info"
+          >{{info}}</div>
           <div
             class="absolute right-0 bg-red-500 p-1 text-xs sm:text-sm text-white"
             v-if="error"

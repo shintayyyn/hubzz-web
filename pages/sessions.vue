@@ -1,6 +1,6 @@
 <template>
   <section class="sessions-tab">
-    <div class="flex flex-row flex-wrap justify-start">
+    <div class="flex flex-row justify-start overflow-x-auto py-3">
       <div class="relative">
         <nuxt-link
           to="/sessions/live"
@@ -58,27 +58,30 @@
 </template>
 <script>
 const tabs = [
-  'sessions-live-id', 'sessions-applied-id',
-  'sessions-allocated-id', 'sessions-completed-id',
-  'sessions-unfilled-id', 'sessions-cancelled-id',
-  'sessions-declined-id',
-]
+  "sessions-live-id",
+  "sessions-applied-id",
+  "sessions-allocated-id",
+  "sessions-completed-id",
+  "sessions-unfilled-id",
+  "sessions-cancelled-id",
+  "sessions-declined-id"
+];
 export default {
-  middleware: 'isVerified',
+  middleware: "isVerified",
   data() {
     return {
       tabs
-    }
+    };
   },
   watch: {
     $route(value) {
       if (this.tabs.includes(value.name)) {
-        document.body.style.overflow = 'hidden'
+        document.body.style.overflow = "hidden";
       } else {
-        document.body.style.overflow = 'auto'
+        document.body.style.overflow = "auto";
       }
-    },
-  },
-}
+    }
+  }
+};
 </script>
 
