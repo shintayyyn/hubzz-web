@@ -696,14 +696,15 @@ export default {
       );
     },
     save() {
-      console.log(this.form.include_saturdary);
       this.formError = [];
       this.Validate(this.form, [
         "extra_information",
         "is_another_doctor",
         "is_nurse_available",
         "opportunity_for_catch_up_slots",
-        "ir35"
+        "ir35",
+        "include_saturday",
+        "include_sunday"
       ]);
       if (this.formError.length == 0) {
         this.form.clinical_system_id = this.form.clinical_system_id.map(
