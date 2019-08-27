@@ -69,7 +69,7 @@
 <script>
 import AppPagination from "@/components/Base/AppPagination";
 import AppSelect from "@/components/Base/AppSelect";
-import AppAvatar from "~/components/Base/AppAvatar";
+import AppAvatar from "@/components/Base/AppAvatar";
 const tabs = [
   "my-banks-favourites-userId",
   "my-banks-favourites-userId-profile",

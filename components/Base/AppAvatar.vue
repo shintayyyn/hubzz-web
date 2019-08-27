@@ -24,7 +24,6 @@
 </template>
 <script>
 import AppLoading from "@/components/Base/AppLoading";
-import favouritesVue from "../../pages/my-banks/favourites.vue";
 export default {
   components: {
     AppLoading
