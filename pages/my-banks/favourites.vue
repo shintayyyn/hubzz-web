@@ -42,7 +42,7 @@
                 :src="user.avatar && user.avatar.file && user.avatar.file.url ? user.avatar.file.url : ''"
               />
             </div>
-            <div class="w-full font-bold text-sm sm:text-lg my-4">{{user.personal_detail.name}}</div>
+            <div class="w-full font-bold text-sm sm:text-lg mt-4">{{user.personal_detail.name}}</div>
             <div
               class="w-full mb-4 font-bold text-gray-600 text-sm sm:text-lg"
             >{{user.locum_detail.profession.name}}</div>
@@ -158,7 +158,7 @@ export default {
         .$get(`/api/v1/practice/locums`, { params: locumParams })
         .then(res => {
           this.users = res.data.users;
-          console.log(this.users)
+          // console.log(this.users)
           this.loading = false;
         });
     },

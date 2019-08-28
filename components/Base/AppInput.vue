@@ -190,7 +190,7 @@ export default {
       type: Boolean
     },
     // for multicheckbox
-    lists: Array,
+    lists: Array
   },
   methods: {
     // for multicheckbox

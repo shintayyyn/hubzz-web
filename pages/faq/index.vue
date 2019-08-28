@@ -1,6 +1,6 @@
 <template>
   <section>
-    <div class="px-10">
+    <div class="lg:px-10">
       <div class="flex flex-no-wrap justify-start">
         <div
           style="font-family:Nunito"
@@ -8,7 +8,7 @@
         >Frequently asked questions</div>
       </div>
     </div>
-    <div class="px-10 mt-5">
+    <div class="lg:px-10 mt-5">
       <div class="rounded-lg shadow-lg pt-10 px-5 pb-5 mb-10" style="font-family:Nunito">
         <div class="font-bold text-xl">FAQs</div>
         <div>faqs</div>
@@ -21,7 +21,7 @@
             <div>{{item.question}}</div>
             <div class="font-bold text-lg">
               <svgicon name="arrow-right" height="15" width="15" v-if="!item.toggled" />
-              <svgicon name="arrow-up" height="25" width="25" color="black" v-else/>
+              <svgicon name="arrow-up" height="25" width="25" color="black" v-else />
             </div>
           </div>
           <div
@@ -41,7 +41,7 @@
             <div>{{item.question}}</div>
             <div class="font-bold text-lg">
               <svgicon name="arrow-right" height="15" width="15" v-if="!item.toggled" />
-              <svgicon name="arrow-up" height="25" width="25" color="black" v-else/>
+              <svgicon name="arrow-up" height="25" width="25" color="black" v-else />
             </div>
           </div>
           <div
@@ -58,22 +58,23 @@
 <script>
 export default {
   async asyncData({ app, route, store, error }) {
-    const response = await app.$axios.$get(`/api/v1/faqs`)
-    let faqs = response && response.data && response.data.faqs ? response.data.faqs : []
-    faqs = faqs.map((faq) => {
+    const response = await app.$axios.$get(`/api/v1/faqs`);
+    let faqs =
+      response && response.data && response.data.faqs ? response.data.faqs : [];
+    faqs = faqs.map(faq => {
       return {
         ...faq,
-        'toggled': false
-      }
-    })
-    const locum_faqs = faqs.filter(faq => faq.domain === 'Locum')
-    const practice_faqs = faqs.filter(faq => faq.domain === 'Practice')
+        toggled: false
+      };
+    });
+    const locum_faqs = faqs.filter(faq => faq.domain === "Locum");
+    const practice_faqs = faqs.filter(faq => faq.domain === "Practice");
     return {
       locum_faqs,
       practice_faqs
-    }
-  },
-}
+    };
+  }
+};
 </script>
 <style scoped>
 .item-answer {

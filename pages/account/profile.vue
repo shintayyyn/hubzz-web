@@ -270,7 +270,7 @@
         <AppAvatar
           class="m-auto"
           :type="'update'"
-          :src="avatar.file && avatar.file.url ? avatar.file.url : ''"
+          :src="avatar && avatar.file.url ? avatar.file.url : ''"
         />
       </div>
     </div>-->

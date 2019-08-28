@@ -2,9 +2,9 @@
 var icon = require('vue-svgicon')
 icon.register({
   'loader': {
-    width: 24,
-    height: 30,
-    viewBox: '0 0 24 30',
-    data: '<path pid="0" _fill="#333" d="M0 0h4v20H0z"><animate attributeName="opacity" attributeType="XML" values="1; .2; 1" begin="0s" dur="1s" repeatCount="indefinite"/></path><path pid="1" _fill="#333" d="M7 0h4v20H7z"><animate attributeName="opacity" attributeType="XML" values="1; .2; 1" begin="0.2s" dur="1s" repeatCount="indefinite"/></path><path pid="2" _fill="#333" d="M14 0h4v20h-4z"><animate attributeName="opacity" attributeType="XML" values="1; .2; 1" begin="0.4s" dur="1s" repeatCount="indefinite"/></path>'
+    width: 16,
+    height: 16,
+    viewBox: '0 0 100 100',
+    data: '<path pid="0" _fill="#fff" d="M73 50c0-12.7-10.3-23-23-23S27 37.3 27 50m3.9 0c0-10.5 8.5-19.1 19.1-19.1S69.1 39.5 69.1 50"><animateTransform attributeName="transform" attributeType="XML" type="rotate" dur="1s" from="0 50 50" to="360 50 50" repeatCount="indefinite"/></path>'
   }
 })

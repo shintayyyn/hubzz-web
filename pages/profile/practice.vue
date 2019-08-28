@@ -1,7 +1,7 @@
 <template>
   <section>
     <div class="flex flex-col">
-      <div class="flex flex-row flex-wrap justify-end">
+      <!-- <div class="flex flex-row flex-wrap justify-end">
         <div class="w-full md:w-1/3 p-1">
           <div class="rounded-lg shadow-lg px-2">
             <AppSelect
@@ -14,10 +14,10 @@
             />
           </div>
         </div>
-      </div>
+      </div>-->
       <div class="flex flex-row flex-wrap justify-between">
         <div class="w-full md:w-2/3 p-1">
-          <div class="rounded-lg shadow-lg p-8">
+          <div class="rounded-lg shadow-lg p-8 h-full flex items-center">
             <div class="flex flex-row flex-wrap">
               <div class="flex flex-col w-full md:w-1/3 p-1">
                 <div class="text-xs sm:text-sm">Practice name</div>
@@ -42,7 +42,17 @@
         </div>
         <div class="w-full md:w-1/3 p-1">
           <div class="flex flex-col">
-            <div class="rounded-lg shadow-lg p-8">
+            <div class="rounded-lg shadow-lg px-4">
+              <AppSelect
+                v-model="practiceType"
+                :name="'type'"
+                :label="'Practice Type'"
+                :placeholder="'Select...'"
+                :items="[{ value: 'Stand Alone', label: 'Stand Alone'},{ value: 'Hub', label: 'Hub'},{ value: 'Spoke', label: 'Spoke'}]"
+                @change="practiceTypeOnchange"
+              />
+            </div>
+            <div class="rounded-lg shadow-lg p-4 mt-4">
               <div class="flex flex-col">
                 <div class="text-xs sm:text-sm">Your Practice's standard terms</div>
                 <div class="mt-4 bg-gray-300 rounded-lg p-4">
@@ -271,15 +281,15 @@ export default {
     AppButton,
     AppFormError,
     AppLoading,
-    AppConfirmationModal,
+    AppConfirmationModal
   },
   data() {
     return {
       modal: false,
       practiceTypeConfirmationModal: false,
       loading: false,
-      selectedPracticeType: '',
-      oldPracticeType: '',
+      selectedPracticeType: "",
+      oldPracticeType: "",
       form: {
         email: "",
         phone_number: "",
@@ -302,7 +312,7 @@ export default {
         : (document.body.style.overflow = "auto");
     },
     practiceType(newValue, oldValue) {
-      this.oldPracticeType = oldValue
+      this.oldPracticeType = oldValue;
     },
     "form.phone_number"(value) {
       if (value) {
@@ -363,17 +373,17 @@ export default {
     const response = await app.$axios.$get(`/api/v1/me`);
     const surgery =
       response.data &&
-        response.data.user &&
-        response.data.user.practice_detail &&
-        response.data.user.practice_detail.practice &&
-        response.data.user.practice_detail.practice.surgery
+      response.data.user &&
+      response.data.user.practice_detail &&
+      response.data.user.practice_detail.practice &&
+      response.data.user.practice_detail.practice.surgery
         ? response.data.user.practice_detail.practice.surgery
         : null;
     const practice =
       response.data &&
-        response.data.user &&
-        response.data.user.practice_detail &&
-        response.data.user.practice_detail.practice
+      response.data.user &&
+      response.data.user.practice_detail &&
+      response.data.user.practice_detail.practice
         ? response.data.user.practice_detail.practice
         : null;
 
@@ -382,8 +392,8 @@ export default {
     );
     let practice_types =
       responsePracticeTypes.data &&
-        responsePracticeTypes.data.practice_types &&
-        responsePracticeTypes.data.practice_types.length
+      responsePracticeTypes.data.practice_types &&
+      responsePracticeTypes.data.practice_types.length
         ? responsePracticeTypes.data.practice_types
         : [];
     practice_types = practice_types.map(practiceType => {
@@ -395,8 +405,8 @@ export default {
     );
     let mandatory_trainings =
       responseMandatoryTrainings.data &&
-        responseMandatoryTrainings.data.mandatory_trainings &&
-        responseMandatoryTrainings.data.mandatory_trainings.length
+      responseMandatoryTrainings.data.mandatory_trainings &&
+      responseMandatoryTrainings.data.mandatory_trainings.length
         ? responseMandatoryTrainings.data.mandatory_trainings
         : [];
     mandatory_trainings = mandatory_trainings.map(mandatoryTraining => {
@@ -408,8 +418,8 @@ export default {
     );
     let profession_categories =
       responseProfessionCategories.data &&
-        responseProfessionCategories.data.profession_categories &&
-        responseProfessionCategories.data.profession_categories.length
+      responseProfessionCategories.data.profession_categories &&
+      responseProfessionCategories.data.profession_categories.length
         ? responseProfessionCategories.data.profession_categories
         : [];
     const gp = profession_categories.find(item => item.id === 1);
@@ -431,13 +441,15 @@ export default {
       })
     ];
 
-    const responsePracticeType = await app.$axios.$get(`/api/v1/practice/me/practice-type`)
+    const responsePracticeType = await app.$axios.$get(
+      `/api/v1/practice/me/practice-type`
+    );
     const practiceType =
       responsePracticeType.data &&
-        responsePracticeType.data.practice &&
-        responsePracticeType.data.practice.type
+      responsePracticeType.data.practice &&
+      responsePracticeType.data.practice.type
         ? responsePracticeType.data.practice.type
-        : null
+        : null;
 
     return {
       surgery,
@@ -483,13 +495,19 @@ export default {
         });
         return;
       }
-      const formData = new FormData()
-      formData.append('file', file)
-      this.loading = true
-      this.$axios.$put(`/api/v1/practice/me/standard-terms`, formData).then(res => {
-        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: [res.message] })
-        this.loading = false
-      })
+      const formData = new FormData();
+      formData.append("file", file);
+      this.loading = true;
+      this.$axios
+        .$put(`/api/v1/practice/me/standard-terms`, formData)
+        .then(res => {
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: [res.message]
+          });
+          this.loading = false;
+        });
       this.practice.standard_terms = {
         file: {
           filename: file.name
@@ -517,33 +535,44 @@ export default {
       );
     },
     practiceTypeOnchange(value) {
-      this.selectedPracticeType = value
-      console.log(value)
-      this.practiceTypeConfirmationModal = true
+      this.selectedPracticeType = value;
+      console.log(value);
+      this.practiceTypeConfirmationModal = true;
     },
     cancelPracticeType() {
-      this.practiceType = this.oldPracticeType
-      this.practiceTypeConfirmationModal = false
+      this.practiceType = this.oldPracticeType;
+      this.practiceTypeConfirmationModal = false;
     },
     confirmPracticeType() {
-      this.$axios.$put(`/api/v1/practice/me/practice-type`, { type: this.selectedPracticeType }).then(res => {
-        this.practiceTypeConfirmationModal = false
-        this.$store.commit('profile/SET_PRACTICE_TYPE', res.data.practice.type)
+      this.$axios
+        .$put(`/api/v1/practice/me/practice-type`, {
+          type: this.selectedPracticeType
+        })
+        .then(res => {
+          this.practiceTypeConfirmationModal = false;
+          this.$store.commit(
+            "profile/SET_PRACTICE_TYPE",
+            res.data.practice.type
+          );
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: ["Practice Type Changed"]
+          });
+        });
+    },
+    remove() {
+      this.loading = true;
+      this.$axios.$delete(`/api/v1/practice/me/standard-terms`).then(res => {
+        this.loading = false;
+        this.modal = false;
         this.$store.commit("SET_NOTIFICATION", {
           enabled: true,
           status: "success",
-          text: ["Practice Type Changed"]
+          text: [res.message]
         });
-      })
-    },
-    remove() {
-      this.loading = true
-      this.$axios.$delete(`/api/v1/practice/me/standard-terms`).then(res => {
-        this.loading = false
-        this.modal = false
-        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: [res.message] })
         // this.practice.standard_terms.file.filename = null
-        this.practice.standard_terms = null
+        this.practice.standard_terms = null;
         // standard_terms)
       });
     },

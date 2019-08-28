@@ -43,9 +43,9 @@
               </div>
             </div>
 
-            <div class="w-full font-bold text-sm sm:text-lg my-4">{{practice.surgery.name}}</div>
+            <div class="w-full font-bold text-sm sm:text-lg mt-4">{{practice.surgery.name}}</div>
             <div
-              class="w-full mb-4 font-bold text-gray-600 text-sm sm:text-lg"
+              class="w-full mb-4 font-bold text-gray-600 text-sm"
             >{{practice.surgery.address.line_1}} {{practice.surgery.address.line_2}} {{practice.surgery.address.line_3}} {{practice.surgery.address.post_code}}</div>
           </div>
         </div>
@@ -68,9 +68,9 @@
   </section>
 </template>
 <script>
-import AppPagination from '@/components/Base/AppPagination'
-import AppLoading from '@/components/Base/AppLoading'
-import AppAvatar from '@/components/Base/AppAvatar'
+import AppPagination from "@/components/Base/AppPagination";
+import AppLoading from "@/components/Base/AppLoading";
+import AppAvatar from "@/components/Base/AppAvatar";
 export default {
   transition: {
     name: "fade",

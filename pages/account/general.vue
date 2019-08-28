@@ -20,7 +20,7 @@
       <template v-if="email_isVerified === false">
         <span class="text-red-500 text-xs">E-mail is not yet verified.</span>
         <span
-          class="p-1 bg-gray-800 rounded text-xs text-white cursor-pointer"
+          class="p-1 bg-gray-800 rounded text-xs text-white cursor-pointer whitespace-no-wrap"
           @click="resendEmailVerification()"
         >Click here to re-send</span>
       </template>
@@ -172,34 +172,34 @@ export default {
       },
       formError: [],
       loading: false,
-      email_isVerified: '',
-      email_verifiedAt: '',
+      email_isVerified: "",
+      email_verifiedAt: ""
     };
   },
   watch: {
     "form.email"() {
-      this.CheckEmptyField(this.form.email, 'email')
+      this.CheckEmptyField(this.form.email, "email");
     },
     "form.first_name"() {
-      this.CheckEmptyField(this.form.first_name, 'first_name')
+      this.CheckEmptyField(this.form.first_name, "first_name");
     },
     "form.last_name"() {
-      this.CheckEmptyField(this.form.last_name, 'last_name')
+      this.CheckEmptyField(this.form.last_name, "last_name");
     },
     "form.gender"() {
-      this.CheckEmptyField(this.form.gender, 'gender')
+      this.CheckEmptyField(this.form.gender, "gender");
     },
     "form.mobile_number"() {
-      this.CheckEmptyField(this.form.mobile_number, 'mobile_number')
+      this.CheckEmptyField(this.form.mobile_number, "mobile_number");
     },
     "form.post_code"() {
-      this.CheckEmptyField(this.form.post_code, 'post_code')
+      this.CheckEmptyField(this.form.post_code, "post_code");
     },
     "form.address_line_1"() {
-      this.CheckEmptyField(this.form.address_line_1, 'address_line_1')
+      this.CheckEmptyField(this.form.address_line_1, "address_line_1");
     },
     "form.address_line_3"() {
-      this.CheckEmptyField(this.form.address_line_3, 'address_line_3')
+      this.CheckEmptyField(this.form.address_line_3, "address_line_3");
     }
   },
   async asyncData({ app, error }) {
@@ -250,7 +250,7 @@ export default {
       this.form.address_line_3 = postal_town ? postal_town.long_name : "";
     },
     async save() {
-      this.loading = true
+      this.loading = true;
       try {
         this.formError = [];
         this.Validate(this.form, ["title", "suffix", "address_line_2"]);
@@ -261,31 +261,35 @@ export default {
             status: "success",
             text: ["Saved"]
           });
-          this.scrollToTop()
-          this.loading = false
+          this.scrollToTop();
+          this.loading = false;
         } else {
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "danger",
             text: ["Please fill up all the forms"]
           });
-          this.scrollToTop()
-          this.loading = false
+          this.scrollToTop();
+          this.loading = false;
         }
       } catch (err) {
-        this.formError = err.response.data.error_messages
-        this.scrollToTop()
-        this.loading = false
+        this.formError = err.response.data.error_messages;
+        this.scrollToTop();
+        this.loading = false;
       }
     },
     async resendEmailVerification() {
       try {
-        this.loading = true
-        await this.$axios.post(`/api/v1/email-verification/resend`)
-        this.loading = false
-        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: ['Confirmation e-mail sent'] })
+        this.loading = true;
+        await this.$axios.post(`/api/v1/email-verification/resend`);
+        this.loading = false;
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "success",
+          text: ["Confirmation e-mail sent"]
+        });
       } catch (err) {
-        this.loading = false
+        this.loading = false;
         console.log("Something went wrong! ", err);
       }
     }

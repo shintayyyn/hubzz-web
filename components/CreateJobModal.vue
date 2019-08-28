@@ -177,7 +177,7 @@
             </div>
           </div>
         </div>
-        <div class="w-full md:w-1/2 pl-4 mb-4">
+        <div class="w-full md:w-1/2 lg:pl-4 mb-4">
           <div class="flex flex-col">
             <h4 class="font-bold">Criteria</h4>
             <div class="rounded-lg shadow-lg px-8 py-4 mt-4">
