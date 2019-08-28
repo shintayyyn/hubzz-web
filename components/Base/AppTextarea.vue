@@ -43,8 +43,6 @@ export default {
     error: Object,
     info: String,
     inStyle: String,
-    // for multiselect checkbox
-    lists: Array
   }
 };
 </script>
