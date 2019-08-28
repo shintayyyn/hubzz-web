@@ -56,8 +56,8 @@
             </div>
             <div class="flex m-2 w-full">
               <embed
-                class="object-contain object-top w-full"
-                :class="specificComplianceDoc.file.type == 'image' ? '' : 'document h-full'"
+                class="object-contain object-top object-center"
+                :class="specificComplianceDoc.file.type == 'image' ? '' : 'document h-full w-full'"
                 :src="specificComplianceDoc.file.url"
               />
             </div>
