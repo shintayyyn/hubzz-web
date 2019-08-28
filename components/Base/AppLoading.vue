@@ -16,7 +16,7 @@ export default {
     },
     inClass: String
   }
-}
+};
 </script>
 
 <style scoped>
@@ -26,16 +26,18 @@ export default {
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: 400;
+  z-index: 49;
   background-color: #f5f6f9;
   box-shadow: 10px 10px 0.1 10px #f5f6f9;
   opacity: 0.5;
 }
 .loader-message {
-  position: absolute;
+  position: -webkit-sticky;
+  position: sticky;
   top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  text-align: center;
+  /* left: 50%; */
+  /* transform: translate(-50%, -50%); */
 }
 .loader-message:after {
   content: " .";

@@ -4,7 +4,7 @@
       <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
       <div class="flex">
         <div
-          class="bg-red-500 ml-2 p-1 text-xs sm:text-base text-white"
+          class="absolute rounded-lg right-0 bg-red-400 p-1 text-xs sm:text-sm text-white"
           v-if="error"
         >{{error.message}}</div>
       </div>
@@ -19,6 +19,8 @@
         :style="inStyle"
         @focus="toggledOn"
         @keydown="handleKeyDownEvent"
+        @input="$emit('input', $event.target.value)"
+        @blur="$emit('blur')"
       />
     </div>
     <transition name="fade">
@@ -72,7 +74,6 @@ export default {
   },
   watch: {
     value(post_code) {
-      console.log('post_code', post_code)
       this.search = post_code;
     },
     search(value) {
@@ -82,6 +83,9 @@ export default {
         this.showLists = false;
       }
     }
+  },
+  created() {
+    this.search = this.value
   },
   methods: {
     add() {
