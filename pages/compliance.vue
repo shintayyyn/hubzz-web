@@ -48,14 +48,19 @@
           <!--------------------------FILE SHOULD SHOW ON CLICK----------------------------->
           <template v-for="(item, index) in mandatory">
             <tr
+              class="rounded-lg shadow-md text-xs sm:text-sm text-left bg-gray-200"
+              v-if="activeLoading.includes(item.id)"
+              :key="item.id"
+            >
+              <td colspan="7" class="loader-message text-center text-gray-800">Uploading</td>
+            </tr>
+            <tr
+              v-else
               :key="item.id"
               class="rounded-lg shadow-md text-xs sm:text-sm text-left"
               :class="item.info && item.info.file ? 'hover:bg-gray-300' : ''"
             >
-              <td
-                class="cursor-pointer"
-                @click="item.info && item.info.file ? showComplianceDoc(item.info.id) : null"
-              >{{item.name}}</td>
+              <td class="cursor-pointer" @click="show(item, 'compliance')">{{item.name}}</td>
               <td class="hover:underline" v-if="item.info && item.info.file">
                 <div class="flex flex-row flex-no-wrap items-center">
                   <svgicon name="cloud-download" height="24" width="24" />
@@ -144,14 +149,19 @@
         <tbody>
           <template v-for="(item, index) in optional">
             <tr
+              class="rounded-lg shadow-md text-xs sm:text-sm text-left bg-gray-200"
+              v-if="activeLoading.includes(item.id)"
+              :key="item.id"
+            >
+              <td colspan="7" class="loader-message text-center text-gray-800">Uploading</td>
+            </tr>
+            <tr
+              v-else
               :key="item.id"
               class="rounded-lg shadow-md text-xs sm:text-sm text-left"
               :class="item.info && item.info.file ? 'hover:bg-gray-300' : ''"
             >
-              <td
-                class="cursor-pointer"
-                @click="item.info && item.info.file ? showComplianceDoc(item.info.id) : null"
-              >{{item.name}}</td>
+              <td class="cursor-pointer" @click="show(item, 'compliance')">{{item.name}}</td>
               <td class="hover:underline" v-if="item.info && item.info.file">
                 <div class="flex flex-row flex-no-wrap">
                   <svgicon name="cloud-download" height="24" width="24" />
@@ -192,7 +202,7 @@
                     :id="`${item.id}_file`"
                     class="inputfile hidden"
                     @click="complianceModal = false"
-                    @input="onFileUpdate($event, item.info.id, index)"
+                    @input="onFileUpdate($event, item.info.id, index, item.id)"
                   />
                   <svgicon name="cloud-upload" height="24" width="24" />
                   <label :for="`${item.id}_file`" class="leading-loose mx-2 cursor-pointer">Update</label>
@@ -227,14 +237,19 @@
         <tbody>
           <template v-for="(item, index) in mandatory_trainings">
             <tr
+              class="rounded-lg shadow-md text-xs sm:text-sm text-left bg-gray-200"
+              v-if="activeLoading.includes(item.id)"
+              :key="item.id"
+            >
+              <td colspan="7" class="loader-message text-center text-gray-800">Uploading</td>
+            </tr>
+            <tr
+              v-else
               :key="item.id"
               class="rounded-lg shadow-md text-xs sm:text-sm text-left"
               :class="item.info && item.info.file ? 'hover:bg-gray-300' : ''"
             >
-              <td
-                class="cursor-pointer"
-                @click="item.info && item.info.file ? showMandatoryTraining(item.info.id) : null"
-              >{{item.name}}</td>
+              <td class="cursor-pointer" @click="show(item, 'mandatory')">{{item.name}}</td>
               <td class="hover:underline" v-if="item.info && item.info.file">
                 <div class="flex flex-row flex-no-wrap">
                   <svgicon name="cloud-download" height="24" width="24" />
@@ -296,41 +311,16 @@
       </table>
     </div>
 
-    <div>
-      <div class="shield" v-if="complianceModal"></div>
-      <transition name="slide" mode="out-in">
-        <div class="complianceModal shadow-lg" v-if="complianceModal">
-          <ShowComplianceDocument
-            :specificComplianceDoc="specificComplianceDoc"
-            @close="complianceModal = false"
-          />
-        </div>
-      </transition>
-    </div>
-
-    <div>
-      <div class="shield" v-if="mandatoryTrainingModal"></div>
-      <transition name="slide" mode="out-in">
-        <div class="mandatoryTrainingModal shadow-lg" v-if="mandatoryTrainingModal">
-          <ShowMandatoryTraining
-            :specificMandatoryTraining="specificMandatoryTraining"
-            @close="mandatoryTrainingModal = false"
-          />
-        </div>
-      </transition>
-    </div>
+    <div class="shield" v-if="['compliance-id','compliance-mandatory-id'].includes($route.name)"></div>
+    <nuxt-child />
   </section>
 </template>
 <script>
-import ShowComplianceDocument from "@/components/Compliance/ShowComplianceDocument";
-import ShowMandatoryTraining from "@/components/Compliance/ShowMandatoryTraining";
 export default {
-  components: {
-    ShowComplianceDocument,
-    ShowMandatoryTraining
-  },
   data() {
     return {
+      loading: false,
+      activeLoading: [],
       gmc_or_nmc_number: {},
       mpl_or_npl_number: {},
       profession: {},
@@ -362,7 +352,25 @@ export default {
       this.setMandatoryTrainings();
     });
   },
+  watch: {
+    $route(value) {
+      if (["compliance-id", "compliance-mandatory-id"].includes(value.name)) {
+        document.body.style.overflow = "hidden";
+      } else {
+        document.body.style.overflow = "auto";
+      }
+    }
+  },
   methods: {
+    show(item, type) {
+      if (item.info && item.info.file) {
+        if (type === "compliance") {
+          this.$router.push(`/compliance/${item.info.id}`);
+        }
+        if (type === "mandatory")
+          this.$router.push(`/compliance/mandatory/${item.info.id}`);
+      }
+    },
     // set mandatory training
     setMandatoryTrainings() {
       if (this.$auth.user.locum_detail.mandatory_trainings.length > 0) {
@@ -444,24 +452,6 @@ export default {
           return;
       }
     },
-    showComplianceDoc(id) {
-      this.$axios
-        .$get(`/api/v1/locum/locum-detail-compliance-documents/${id}`)
-        .then(res => {
-          this.specificComplianceDoc =
-            res.data.locum_detail_compliance_document;
-          this.complianceModal = true;
-        });
-    },
-    showMandatoryTraining(id) {
-      this.$axios
-        .$get(`/api/v1/locum/locum-detail-mandatory-trainings/${id}`)
-        .then(res => {
-          this.specificMandatoryTraining =
-            res.data.locum_detail_mandatory_training;
-          this.mandatoryTrainingModal = true;
-        });
-    },
     onFileInput(e, id, index) {
       if (!e.target.files.length) {
         return;
@@ -487,6 +477,9 @@ export default {
       formData.append("compliance_document_id", id);
       formData.append("locum_detail_id", this.$auth.user.id);
       // post request to API / send file
+      this.loading = true;
+      this.activeLoading.push(id);
+
       this.$axios
         .$post(`/api/v1/locum/locum-detail-compliance-documents`, formData)
         .then(res => {
@@ -512,6 +505,7 @@ export default {
               status: "success",
               text: ["Document uploaded!"]
             });
+            this.loading = false;
           } else {
             let optional_index = this.optional.findIndex(
               document =>
@@ -534,13 +528,15 @@ export default {
               status: "success",
               text: ["Document uploaded!"]
             });
+            this.loading = false;
           }
+          this.activeLoading = this.activeLoading.filter(item => item !== id);
         })
         .catch(err => {
           console.log(err);
         });
     },
-    onFileUpdate(e, id, index) {
+    onFileUpdate(e, id, index, loadingId) {
       if (!e.target.files.length) {
         return;
       }
@@ -560,6 +556,9 @@ export default {
         status: "uploading",
         text: ["Uploading"]
       });
+      this.loading = true;
+      this.activeLoading.push(loadingId);
+
       const formData = new FormData();
       formData.append("file", file);
       // post request to API / send file
@@ -588,6 +587,7 @@ export default {
               status: "success",
               text: ["Document uploaded!"]
             });
+            this.loading = false;
           } else {
             this.optional.splice(index, 1);
             this.optional.push({
@@ -605,7 +605,11 @@ export default {
               status: "success",
               text: ["Document uploaded!"]
             });
+            this.loading = false;
           }
+          this.activeLoading = this.activeLoading.filter(
+            item => item !== loadingId
+          );
         })
         .catch(err => {
           console.log(err);
@@ -627,6 +631,9 @@ export default {
       formData.append("file", file);
       formData.append("mandatory_training_id", id);
       // post request to API / send file
+      this.loading = true;
+      this.activeLoading.push(id);
+
       this.$axios
         .$post(`/api/v1/locum/locum-detail-mandatory-trainings`, formData)
         .then(res => {
@@ -645,6 +652,8 @@ export default {
             status: "success",
             text: ["Document uploaded!"]
           });
+          this.loading = false;
+          this.activeLoading = this.activeLoading.filter(item => item !== id);
         })
         .catch(err => {
           console.log(err);
@@ -710,6 +719,9 @@ export default {
 };
 </script>
 <style scoped>
+.loading {
+  background-color: #ccc;
+}
 .number-status {
   width: 920px;
 }
@@ -766,6 +778,29 @@ table tbody td {
   }
   .mandatoryTrainingModal {
     width: 80%;
+  }
+}
+.loader-message:after {
+  content: " .";
+  animation: dots 1s steps(5, end) infinite;
+}
+
+@keyframes dots {
+  0%,
+  20% {
+    color: rgba(0, 0, 0, 0);
+    text-shadow: 0.25em 0 0 rgba(0, 0, 0, 0), 0.5em 0 0 rgba(0, 0, 0, 0);
+  }
+  40% {
+    color: #333;
+    text-shadow: 0.25em 0 0 rgba(0, 0, 0, 0), 0.5em 0 0 rgba(0, 0, 0, 0);
+  }
+  60% {
+    text-shadow: 0.25em 0 0 #333, 0.5em 0 0 rgba(0, 0, 0, 0);
+  }
+  80%,
+  100% {
+    text-shadow: 0.25em 0 0 #333, 0.5em 0 0 #333;
   }
 }
 </style>
