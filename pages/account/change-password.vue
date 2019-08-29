@@ -39,7 +39,6 @@
 <script>
 import AppFormError from "@/components/Base/AppFormError";
 import AppInput from "@/components/Base/AppInput";
-import AppSelect from "@/components/Base/AppSelect";
 import AppButton from "@/components/Base/AppButton";
 export default {
   transition: {
@@ -49,7 +48,6 @@ export default {
   components: {
     AppFormError,
     AppInput,
-    AppSelect,
     AppButton
   },
   data() {

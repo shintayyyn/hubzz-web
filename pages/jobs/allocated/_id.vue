@@ -1,7 +1,7 @@
 <template>
-  <div class="modal-container shadow-lg">
-    <JobDetailModalAppointment :job="job" v-if="job.type === 'Private'" />
-    <JobDetailModalLocum :job="job" v-else />
+  <div>
+    <JobDetailModalAppointment :job="job" />
+    <!-- <JobDetailModalLocum :job="job" v-else /> -->
   </div>
 </template>
 <script>
@@ -11,6 +11,10 @@ export default {
   components: {
     JobDetailModalLocum,
     JobDetailModalAppointment
+  },
+  transitions: {
+    name: "slide",
+    mode: "out-in"
   },
   async asyncData({ app, route, store, error }) {
     try {

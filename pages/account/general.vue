@@ -138,7 +138,6 @@ import AppFormError from "@/components/Base/AppFormError";
 import AppLoading from "@/components/Base/AppLoading";
 import AppInput from "@/components/Base/AppInput";
 import AppPostCode from "@/components/Base/AppPostCode";
-import AppSelect from "@/components/Base/AppSelect";
 import AppButton from "@/components/Base/AppButton";
 export default {
   transition: {
@@ -150,7 +149,6 @@ export default {
     AppLoading,
     AppInput,
     AppPostCode,
-    AppSelect,
     AppButton
   },
   data() {

@@ -1,20 +1,6 @@
 <template>
   <section>
     <div class="flex flex-col">
-      <!-- <div class="flex flex-row flex-wrap justify-end">
-        <div class="w-full md:w-1/3 p-1">
-          <div class="rounded-lg shadow-lg px-2">
-            <AppSelect
-              v-model="practiceType"
-              :name="'type'"
-              :label="'Practice Type'"
-              :placeholder="'Select...'"
-              :items="[{ value: 'Stand Alone', label: 'Stand Alone'},{ value: 'Hub', label: 'Hub'},{ value: 'Spoke', label: 'Spoke'}]"
-              @change="practiceTypeOnchange"
-            />
-          </div>
-        </div>
-      </div>-->
       <div class="flex flex-row flex-wrap justify-between">
         <div class="w-full md:w-2/3 p-1">
           <div class="rounded-lg shadow-lg p-8 h-full flex items-center">
@@ -43,10 +29,12 @@
         <div class="w-full md:w-1/3 p-1">
           <div class="flex flex-col">
             <div class="rounded-lg shadow-lg px-4">
-              <AppSelect
+              <AppInput
                 v-model="practiceType"
+                :type="'select'"
                 :name="'type'"
                 :label="'Practice Type'"
+                :error="formError.find(item => item.field === 'type')"
                 :placeholder="'Select...'"
                 :items="[{ value: 'Stand Alone', label: 'Stand Alone'},{ value: 'Hub', label: 'Hub'},{ value: 'Spoke', label: 'Spoke'}]"
                 @change="practiceTypeOnchange"
@@ -189,11 +177,12 @@
                 :placeholder="''"
                 :lists="practice_types"
               />
-              <AppTextarea
+              <AppInput
                 v-model="form.extra_information"
+                :type="'textarea'"
                 :name="'extra_information'"
                 :label="'Extra Information (Pracking restrictions, transport links, etc.)'"
-                :placeholder="''"
+                :resize="false"
               />
               <AppInput
                 v-model="form.mandatory_training_id"
@@ -263,8 +252,6 @@
 </template>
 <script>
 import AppInput from "@/components/Base/AppInput";
-import AppSelect from "@/components/Base/AppSelect";
-import AppTextarea from "@/components/Base/AppTextarea";
 import AppButton from "@/components/Base/AppButton";
 import AppFormError from "@/components/Base/AppFormError";
 import AppLoading from "@/components/Base/AppLoading";
@@ -276,8 +263,6 @@ export default {
   },
   components: {
     AppInput,
-    AppSelect,
-    AppTextarea,
     AppButton,
     AppFormError,
     AppLoading,

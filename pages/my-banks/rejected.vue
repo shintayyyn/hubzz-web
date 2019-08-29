@@ -1,12 +1,14 @@
 <template>
   <section v-if="!loading">
     <div class="-mt-2">
-      <AppSelect
+      <AppInput
         v-model="profession_id"
-        :name="'Filter Locums by'"
+        :type="'select'"
+        :name="'profession_id'"
         :label="'Filter Locums by'"
-        :items="professions"
         :placeholder="'All'"
+        :items="professions"
+        @blur="CheckEmptyField(form.gender, 'gender')"
       />
     </div>
     <div v-if="users.length > 0">
@@ -70,8 +72,8 @@
 </template>
 <script>
 import AppPagination from "@/components/Base/AppPagination";
-import AppSelect from "@/components/Base/AppSelect";
 import AppAvatar from "@/components/Base/AppAvatar";
+import AppInput from "@/components/Base/AppInput";
 const tabs = [
   "my-banks-rejected-userId",
   "my-banks-rejected-userId-profile",
@@ -91,8 +93,8 @@ export default {
   },
   components: {
     AppPagination,
-    AppSelect,
-    AppAvatar
+    AppAvatar,
+    AppInput
   },
   data() {
     return {

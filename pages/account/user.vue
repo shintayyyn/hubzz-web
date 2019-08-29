@@ -50,11 +50,12 @@
         :label="'Suffix'"
         :placeholder="''"
       />
-      <AppSelect
+      <AppInput
         v-model="form.practice_role"
+        :type="'select'"
         :name="'practice_role'"
         :label="'Role'"
-        :placeholder="'Role'"
+        :placeholder="'Role...'"
         :items="roles"
       />
       <div class="text-left mt-5">
@@ -65,7 +66,6 @@
 </template>
 <script>
 import AppInput from "@/components/Base/AppInput";
-import AppSelect from "@/components/Base/AppSelect";
 import AppButton from "@/components/Base/AppButton";
 import AppLoading from "@/components/Base/AppLoading";
 import AppFormError from "@/components/Base/AppFormError";
@@ -81,7 +81,6 @@ export default {
   },
   components: {
     AppInput,
-    AppSelect,
     AppButton,
     AppLoading,
     AppFormError

@@ -12,12 +12,13 @@
           <div class="flex flex-col">
             <h4 class="font-bold">Practice</h4>
             <div class="rounded-lg shadow-lg px-8 pt-4 mt-4">
-              <AppSelect
+              <AppInput
                 v-model="form.practice_id"
+                :type="'select'"
                 :name="'practice_id'"
+                :placeholder="'Select...'"
                 :items="practice_lists"
-                :placeholder="'Select..'"
-                @blur="CheckEmptyField(form.practice_id,'practice_id')"
+                @blur="CheckEmptyField(form.practice_id, 'practice_id')"
               />
             </div>
             <h4 class="font-bold mt-4">Overview</h4>
@@ -30,11 +31,13 @@
                 :placeholder="''"
                 @blur="CheckEmptyField(form.title,'title')"
               />
-              <AppTextarea
+
+              <AppInput
                 v-model="form.description"
+                :type="'textarea'"
                 :name="'description'"
                 :label="'Description'"
-                :placeholder="''"
+                :resize="false"
                 @blur="CheckEmptyField(form.description,'description')"
               />
               <!-- report to -->
@@ -55,16 +58,18 @@
                 :placeholder="''"
                 @blur="CheckEmptyField(form.email,'email')"
               />
-              <AppSelect
+              <AppInput
+                :type="'select'"
                 v-model="form.is_another_doctor"
                 :name="'is_another_doctor'"
                 :label="'Is there another Dr on site?'"
                 :items="[ {value: true, label: 'YES'}, {value: false, label: 'NO'} ]"
               />
-              <AppSelect
-                v-model="form.is_nurse_available"
-                :name="'is_nurse_available'"
-                :label="'Is nurse support available?'"
+              <AppInput
+                :type="'select'"
+                v-model="form.is_another_doctor"
+                :name="'is_another_doctor'"
+                :label="'Is there another Dr on site?'"
                 :items="[ {value: true, label: 'YES'}, {value: false, label: 'NO'} ]"
               />
               <AppInput
@@ -85,13 +90,15 @@
                 :inStyle="'text-align:right;'"
                 @blur="CheckEmptyField(form.duration_for_each_appointment, 'duration_for_each_appointment')"
               />
-              <AppSelect
+              <AppInput
+                :type="'select'"
                 v-model="form.opportunity_for_catch_up_slots"
                 :name="'opportunity_for_catch_up_slots'"
                 :label="'Opportunity for catch up slots?'"
                 :items="[ {value: true, label: 'YES'}, {value: false, label: 'NO'} ]"
               />
               <AppInput
+                v-model="form.session_requirements"
                 :type="'multi-checkbox'"
                 @checked="form.session_requirements.push($event)"
                 @unchecked="form.session_requirements.splice(form.session_requirements.findIndex(item => item === $event), 1)"
@@ -101,18 +108,23 @@
                 :lists="session_requirements_lists"
                 @blur="CheckEmptyField(form.session_requirements, 'session_requirements')"
               />
-              <AppTextarea
+
+              <AppInput
                 v-model="form.session_structure_information"
+                :type="'textarea'"
                 :name="'session_structure_information'"
                 :label="'Session structure information'"
                 :placeholder="'For e.g. the first 2 hours of the session is for booked appointments, 3rd hour is walk-ins, and home visits to x number of patients to the end of the session'"
+                :resize="false"
                 @blur="CheckEmptyField(form.session_structure_information, 'session_structure_information')"
               />
-              <AppTextarea
+              <AppInput
                 v-model="form.extra_information"
+                :type="'textarea'"
                 :name="'extra_information'"
                 :label="'Extra information'"
                 :placeholder="'For example, number of expected patients, nearby car park, etc.'"
+                :resize="false"
               />
               <div class="flex flex-col py-2 mb-6">
                 <div class="relative flex flex-row flex-wrap justify-start">
@@ -150,8 +162,9 @@
                   <label for="total_hours" class="text-xs sm:text-sm mt-2">hours</label>
                 </div>
               </div>
-              <AppSelect
+              <AppInput
                 v-model="form.ir35"
+                :type="'select'"
                 :name="'ir35'"
                 :label="'IR35 - role inside or outside of scope'"
                 :items="[ {value: true, label: 'Inside of Scope'}, {value: false, label: 'Outside of Scope'} ]"
@@ -181,13 +194,15 @@
           <div class="flex flex-col">
             <h4 class="font-bold">Criteria</h4>
             <div class="rounded-lg shadow-lg px-8 py-4 mt-4">
-              <AppSelect
+              <AppInput
                 v-model="form.profession_id"
+                :type="'select'"
                 :name="'profession_id'"
                 :label="'Role'"
+                :placeholder="'Select...'"
                 :items="professions"
-                :placeholder="'Select..'"
               />
+
               <template v-if="form.profession_id">
                 <AppFilterSearch
                   v-model="form.qualification_id"
@@ -199,15 +214,6 @@
                   @blur="CheckEmptyField(form.qualification_id,'qualification_id')"
                 />
                 <template v-if="form.profession_id">
-                  <!-- <AppFilterSearch
-                  v-model="form.qualification_id"
-                  :name="'qualification_id'"
-                  :label="'Specialty'"
-                  :placeholder="'Select...'"
-                  :items="qualifications"
-                  :info="'Choose at least one qualification'"
-                  @blur="checkEmptyField(form.qualification_id,'qualification_id')"
-                  />-->
                   <AppFilterSearch
                     v-model="form.clinical_system_id"
                     :name="'clinical_system_id'"
@@ -245,59 +251,6 @@
               </template>
             </div>
           </div>
-          <!-- <div class="flex flex-col">
-          <h4 class="font-bold mt-4">Duration</h4>
-          <div class="rounded-lg shadow-lg px-8 py-4 mt-4">
-            <template>
-              <div class="flex flex-row flex-wrap justify-between">
-                <div class="px-1 w-full md:w-1/2">
-                  <AppDate
-                    v-model="form.date_start"
-                    :name="'date_start'"
-                    :label="'Start Date'"
-                    @blur="checkEmptyField(form.date_start,'date_start')"
-                  />
-                </div>
-                <div class="px-1 w-full md:w-1/2">
-                  <AppTime
-                    v-model="form.time_start"
-                    :type="'time'"
-                    :name="'time_start'"
-                    :label="'Start Time'"
-                    @blur="checkEmptyField(form.time_start,'time_start')"
-                  />
-                </div>
-                <div class="px-1 w-full md:w-1/2">
-                  <AppDate
-                    v-model="form.date_end"
-                    :name="'date_end'"
-                    :label="'End Date'"
-                    @blur="checkEmptyField(form.date_end,'date_end')"
-                  />
-                </div>
-                <div class="px-1 w-full md:w-1/2">
-                  <AppTime
-                    v-model="form.time_end"
-                    :type="'time'"
-                    :name="'time_end'"
-                    :label="'End Time'"
-                    @blur="checkEmptyField(form.time_end,'time_end')"
-                  />
-                </div>
-              </div>
-              <AppInput
-                v-model="form.compliance_document_id"
-                :type="'multi-checkbox'"
-                @checked="form.compliance_document_id.push($event)"
-                @unchecked="form.compliance_document_id.splice(form.compliance_document_id.findIndex(item => item === $event), 1)"
-                :name="'compliance_document_id'"
-                :label="`${selectedProfession.profession_category.id === 1 ? 'For GPs:' : selectedProfession.profession_category.id === 2 ? 'For Nurses, et al:' : ''}`"
-                :placeholder="''"
-                :lists="compliances"
-              />
-            </template>
-          </div>
-          </div>-->
           <div class="flex flex-col">
             <h4 class="font-bold mt-4">Duration</h4>
             <div class="rounded-lg shadow-lg px-8 py-4 mt-4">
@@ -337,27 +290,31 @@
                   />
                 </div>
               </div>
-              <AppSelect
+              <AppInput
+                :type="'select'"
                 v-model="form.include_saturday"
                 :name="'include_saturday'"
                 :label="'Include Saturday'"
                 :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
                 :placeholder="'Select..'"
               />
-              <AppSelect
+              <AppInput
+                :type="'select'"
                 v-model="form.include_sunday"
                 :name="'include_sunday'"
                 :label="'Include Sunday'"
                 :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
                 :placeholder="'Select..'"
               />
-              <AppSelect
+              <AppInput
+                :type="'select'"
                 v-model="unpaid_breaks"
                 :name="'unpaid_breaks'"
                 :label="'Unpaid break'"
                 :items="[ {value: 15, label: '15'}, {value: 30, label: '30'}, {value: 60, label: '60'}, {value: 'other', label: 'Other'} ]"
                 :placeholder="'Select..'"
               />
+
               <AppInput
                 v-if="unpaid_breaks === 'other'"
                 v-model="form.unpaid_breaks_in_minutes"
@@ -368,13 +325,14 @@
                 :inStyle="'text-align:right;'"
                 @blur="CheckEmptyField(form.unpaid_breaks_in_minutes,'unpaid_breaks_in_minutes')"
               />
-              <AppSelect
+              <AppInput
                 v-model="form.shift_id"
+                :type="'select'"
                 :name="'shift_id'"
                 :label="'Shifts'"
+                :placeholder="'Select...'"
                 :items="shifts"
-                :placeholder="'Select..'"
-                @blur="CheckEmptyField(form.shift_id,'shift_id')"
+                @blur="CheckEmptyField(form.shift_id, 'shift_id')"
               />
               <div class="flex flex-row flex-wrap justify-between">
                 <div>Auto -assign job to the first matching Favourite applicant?</div>
@@ -448,8 +406,6 @@
 <script>
 import { mixin as clickaway } from "vue-clickaway";
 import AppInput from "@/components/Base/AppInput";
-import AppSelect from "@/components/Base/AppSelect";
-import AppTextarea from "@/components/Base/AppTextarea";
 import AppFilterSearch from "@/components/Base/AppFilterSearch";
 import AppDate from "@/components/Base/AppDate";
 import AppButton from "@/components/Base/AppButton";
@@ -464,8 +420,6 @@ export default {
   mixins: [clickaway],
   components: {
     AppInput,
-    AppSelect,
-    AppTextarea,
     AppFilterSearch,
     AppDate,
     AppButton,

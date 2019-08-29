@@ -1,7 +1,7 @@
 <template>
   <transition name="fade" mode="out-in">
     <div class="loading-shield flex flex-col items-center justify-center shadow-md" v-if="loading">
-      <h1 :class="inClass">{{ message }}</h1>
+      <h1 :class="inClass" class="loader-message">{{ message }}</h1>
       <svgicon name="loader" width="60" height="60" />
     </div>
   </transition>

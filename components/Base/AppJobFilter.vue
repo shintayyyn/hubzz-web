@@ -2,8 +2,9 @@
   <div>
     <div class="flex flex-row flex-wrap" v-if="$auth.user.domain === 'Locum'">
       <div class="w-full sm:w-1/3 p-1">
-        <AppSelect
+        <AppInput
           v-model="params.shift_id"
+          :type="'select'"
           :name="'shift'"
           :label="'Shift'"
           :placeholder="'Select...'"
@@ -20,8 +21,9 @@
         />
       </div>
       <div class="w-full sm:w-1/3 p-1">
-        <AppSelect
+        <AppInput
           v-model="params.locum_detail_rate_type_id"
+          :type="'select'"
           :name="'locum_detail_rate_type_id'"
           :label="'per'"
           :placeholder="'Select...'"
@@ -63,8 +65,9 @@
     </div>
     <div class="flex flex-row flex-wrap" v-if="$auth.user.domain === 'Practice'">
       <div class="w-full sm:w-1/3 p-1">
-        <AppSelect
+        <AppInput
           v-model="params.shift_id"
+          :type="'select'"
           :name="'shift'"
           :label="'Shift'"
           :placeholder="'Select...'"
@@ -81,8 +84,9 @@
         />
       </div>
       <div class="w-full sm:w-1/3 p-1">
-        <AppSelect
+        <AppInput
           v-model="params.locum_detail_rate_type_id"
+          :type="'select'"
           :name="'locum_detail_rate_type_id'"
           :label="'per'"
           :placeholder="'Select...'"
@@ -99,14 +103,12 @@
 </template>
 <script>
 import AppInput from "@/components/Base/AppInput";
-import AppSelect from "@/components/Base/AppSelect";
 import AppPostCode from "@/components/Base/AppPostCode";
 import AppButton from "@/components/Base/AppButton";
 import AppAutoComplete from "@/components/Base/AppAutoComplete";
 export default {
   components: {
     AppInput,
-    AppSelect,
     AppPostCode,
     AppButton,
     AppAutoComplete

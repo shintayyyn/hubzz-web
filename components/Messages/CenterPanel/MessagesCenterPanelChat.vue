@@ -154,14 +154,12 @@
 <script>
 import AppAutoComplete from "~/components/Base/AppAutoComplete";
 import AppButton from "~/components/Base/AppButton";
-import AppTextarea from "~/components/Base/AppTextarea";
 import AppAvatar from "~/components/Base/AppAvatar";
 import MessagesCenterPanelTop from "@/components/Messages/CenterPanel/MessagesCenterPanelTop";
 export default {
   components: {
     AppAutoComplete,
     AppButton,
-    AppTextarea,
     AppAvatar,
     MessagesCenterPanelTop
   },
