@@ -111,7 +111,7 @@ export default {
           .$get(`/api/v1/conversations?search=${fullName}`)
           .then(res => {
             if (res.data.conversations.length > 0) {
-              let id = res.data.conversations[0].id;
+              let id = res.data.conversations[0].conversation_id;
               this.$router.push(`/messages/${id}`);
             }
             this.search = fullName;

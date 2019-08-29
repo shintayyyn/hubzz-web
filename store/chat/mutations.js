@@ -3,9 +3,7 @@ export default {
     state.loading_messages = payload
   },
   SET_CONVERSATIONS(state, payload) {
-    state.conversations = payload.sort((a, b) => {
-      new Date(a.created_at) - new Date(b.created_at)
-    })
+    state.conversations = payload
   },
   FETCH_CONVERSATIONS(state, payload) {
     payload.forEach(item => {
@@ -41,12 +39,14 @@ export default {
   ADD_MESSAGE(state, payload) {
     if (state.activeConversationId == payload.conversation_id) {
       state.messages.push(payload)
-      let index = state.conversations.findIndex(message => message.id == payload.conversation_id)
-      state.conversations[index].message = payload.message
-      state.conversations[index].created_at = payload.created_at
     }
+    let index = state.conversations.findIndex(conversations => conversations.conversation_id == payload.conversation_id)
+    state.conversations[index].created_at = payload.created_at
+    state.conversations[index].message = payload.message
+    state.conversations = state.conversations.sort(
+      (a, b) => new Date(b.created_at) - new Date(a.created_at)
+    );
   },
-
   DELETE_MESSAGE(state, payload) {
     let index = state.messages.findIndex(message => message.id == payload.id)
     if (index >= 0) {
