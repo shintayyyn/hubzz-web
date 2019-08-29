@@ -64,7 +64,6 @@
           :label="'Profession'"
           :placeholder="'Select...'"
           :items="professions"
-          @change="'qwe'"
         />
         <AppFilterSearch
           v-model="form.qualification_id"

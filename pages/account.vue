@@ -6,7 +6,7 @@
           <nuxt-link
             to="/account/general"
             class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-            :class="$route.name === 'account-general'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+            :class="['account','account-general'].includes($route.name) ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
           >General</nuxt-link>
         </div>
         <div class="relative">
@@ -22,7 +22,7 @@
           <nuxt-link
             to="/account/user"
             class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-            :class="$route.name === 'account-user'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+            :class="['account','account-user'].includes($route.name) ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
           >User</nuxt-link>
         </div>
       </template>
@@ -49,5 +49,5 @@ export default {
     store.dispatch("signUp/getPracticeTypes");
     store.dispatch("signUp/getMandatoryTrainings");
   }
-}
+};
 </script>

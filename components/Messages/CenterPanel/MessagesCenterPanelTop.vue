@@ -45,6 +45,8 @@ export default {
   },
   created() {
     this.getDetails();
+    let isOnline = this.usersOnline.map(user => user).includes(this.details.id);
+    this.details.status = isOnline;
   },
   watch: {
     $route(to, from) {
@@ -52,7 +54,6 @@ export default {
     },
     usersOnline(value) {
       let isOnline = value.map(user => user).includes(this.details.id);
-      console.log(this.details.name, isOnline);
       this.details.status = isOnline;
     }
   },

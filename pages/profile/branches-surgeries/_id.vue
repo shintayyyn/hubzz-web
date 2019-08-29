@@ -44,16 +44,19 @@
 </template>
 <script>
 import AppButton from "@/components/Base/AppButton";
+import AppInput from "@/components/Base/AppInput";
 export default {
   components: {
-    AppButton
+    AppButton,
+    AppInput
   },
   data() {
     return {
       form: {
         pay_for_surgery: "",
         verify_job_creation: ""
-      }
+      },
+      formError: []
     };
   },
   async asyncData({ app, store, params, error }) {

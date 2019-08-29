@@ -77,68 +77,6 @@
             </div>
           </div>
         </div>
-        <!-- <div class="self-start w-full md:w-3/5 p-2">
-          <div class="rounded-lg shadow-lg p-8">
-            <div class="flex flex-row flex-wrap">
-              <div class="flex flex-col w-full md:w-1/3 p-1">
-                <div class="text-xs sm:text-sm">Practice name</div>
-                <div class="text-xs font-bold py-2">{{surgery.name}}</div>
-                <div class="text-xs sm:text-sm mt-4">CCG</div>
-                <div class="text-xs font-bold py-2">{{surgery.clinical_commissioning_group.name}}</div>
-              </div>
-              <div class="flex flex-col w-full md:w-1/3 p-1">
-                <div class="text-xs sm:text-sm" mt-4>Practice code</div>
-                <div class="text-xs font-bold py-2">{{surgery.code}}</div>
-                <div class="text-xs sm:text-sm mt-4">Phone number</div>
-                <div class="text-xs font-bold py-2">{{surgery.phone_number}}</div>
-              </div>
-              <div class="flex flex-col w-full md:w-1/3 p-1">
-                <div class="text-xs sm:text-sm">Address</div>
-                <div
-                  class="text-xs font-bold py-2"
-                >{{surgery.address.line_1}} {{surgery.address.line_2}} {{surgery.address.line_3}} {{surgery.address.post_code}}</div>
-              </div>
-            </div>
-          </div>
-        </div>-->
-        <!-- <div class="self-start w-full md:w-2/5 p-2">
-          <div class="rounded-lg shadow-lg p-8">
-            <div class="flex flex-col">
-              <div class="text-xs sm:text-sm">Your Practice's standard terms</div>
-              <div class="mt-4 bg-gray-300 rounded-lg p-4">
-                <div class="flex flex-no-wrap justify-between items-center">
-                  <div class="flex text-sm" v-if="uploading">
-                    <label for="file-upload">Uploading</label>
-                    <div class="spinner">
-                      <div class="bounce1"></div>
-                      <div class="bounce2"></div>
-                      <div class="bounce3"></div>
-                    </div>
-                  </div>
-                  <div
-                    v-if="!uploading"
-                    class="text-xs sm:text-sm document-filename"
-                  >{{ practice.standard_terms && practice.standard_terms.file ? practice.standard_terms.file.filename : '' }}</div>
-                  <div
-                    class="font-bold text-md sm:text-lg hover:null cursor-pointer text-gray-600 hover:text-black"
-                    @click="modal = true"
-                    v-if="practice.standard_terms"
-                  >x</div>
-                </div>
-              </div>
-              <div class="relative flex justify-start mt-2 items-center">
-                <label v-if="uploading == false" for="file-upload">
-                  <div class="flex flex-row flex-no-wrap cursor-pointer hover:underline">
-                    <svgicon name="cloud-upload" height="24" width="24" />
-                    <div class="ml-2 text-xs sm:text-sm leading-loose">Upload</div>
-                  </div>
-                </label>
-                <input type="file" id="file-upload" class="hidden" @input="onFileInput($event)" />
-              </div>
-            </div>
-            <AppLoading :loading="loading" :message="'Loading'" v-if="loading" />
-          </div>
-        </div>-->
       </div>
 
       <div class="w-full p-2">

@@ -17,7 +17,7 @@
           <template v-if="showResult === false">
             <div
               class="relative flex w-full items-center px-2 py-4 cursor-pointer border-b"
-              :class="parseInt($route.params.slug) === item.id ? 'bg-gray-300' : 'hover:bg-gray-200'"
+              :class="[parseInt($route.params.slug) === item.id ? 'bg-gray-300' : 'hover:bg-gray-200']"
               v-for="item in conversations"
               :key="item.id"
               @click="goTo(item.conversation_id ? item.conversation_id : item.id)"
@@ -36,7 +36,7 @@
                 </div>
                 <span
                   class="w-10 text-right text-xs text-gray-600 leading-none absolute right-0 mx-1 h-full flex items-center"
-                >{{ $moment(item.created_at).startOf('hour').fromNow() }}</span>
+                >{{ $moment(item.created_at).fromNow() }}</span>
               </div>
             </div>
           </template>
@@ -62,7 +62,7 @@
                 </div>
                 <span
                   class="w-12 text-right text-xs text-gray-600 leading-none absolute right-0 mx-1"
-                >{{ $moment(item.created_at).startOf('hour').fromNow() }}</span>
+                >{{ $moment(item.created_at).fromNow() }}</span>
               </div>
             </div>
           </template>
@@ -99,6 +99,7 @@ export default {
       },
       search_text: "",
       messages: [],
+      recentMessage: "",
       showResult: false,
       loadMore: false
     };
