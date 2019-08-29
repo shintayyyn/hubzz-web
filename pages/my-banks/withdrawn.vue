@@ -1,12 +1,13 @@
 <template>
   <section v-if="!loading">
     <div class="-mt-2">
-      <AppSelect
-        v-model="profession_id"
+      <AppInput
+        v-model="form.profession_id"
+        :type="'select'"
         :name="'Filter Locums by'"
         :label="'Filter Locums by'"
-        :items="professions"
         :placeholder="'All'"
+        :items="professions"
       />
     </div>
     <div v-if="users.length > 0">
@@ -70,7 +71,6 @@
 </template>
 <script>
 import AppPagination from "@/components/Base/AppPagination";
-import AppSelect from "@/components/Base/AppSelect";
 import AppAvatar from "@/components/Base/AppAvatar";
 const tabs = [
   "my-banks-withdrawn-userId",
@@ -91,7 +91,6 @@ export default {
   },
   components: {
     AppPagination,
-    AppSelect,
     AppAvatar
   },
   data() {

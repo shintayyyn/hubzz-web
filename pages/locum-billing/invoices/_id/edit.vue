@@ -259,50 +259,53 @@
 
 <script>
 import AppDate from "@/components/Base/AppDate";
-import AppSelect from "@/components/Base/AppSelect";
 import AppFilterSearch from "@/components/Base/AppFilterSearch";
 import { mixin as clickaway } from "vue-clickaway";
 export default {
   mixins: [clickaway],
   transition: {
-    name: 'slide',
-    mode: 'out-in'
+    name: "slide",
+    mode: "out-in"
   },
 
   async asyncData({ app, error, params }) {
     try {
       if (process.client) {
-        document.body.style.cursor = 'wait'
+        document.body.style.cursor = "wait";
       }
-      const response = await app.$axios.get(`/api/v1/locum/invoices/${params.id}`)
-      const invoice = response.data && response.data.data && response.data.data.invoice ? response.data.data.invoice : null
-      let type = invoice.type
+      const response = await app.$axios.get(
+        `/api/v1/locum/invoices/${params.id}`
+      );
+      const invoice =
+        response.data && response.data.data && response.data.data.invoice
+          ? response.data.data.invoice
+          : null;
+      let type = invoice.type;
 
       if (process.client) {
-        document.body.style.cursor = 'auto'
+        document.body.style.cursor = "auto";
       }
 
       return {
         type,
-        invoice,
-      }
+        invoice
+      };
     } catch (err) {
-      console.log('locum-invoice create err', err.response || err)
-      console.log('locum-invoice create error', {
+      console.log("locum-invoice create err", err.response || err);
+      console.log("locum-invoice create error", {
         statusCode: err.status || 500,
-        message: err.message || 'Something went wrong!',
-      })
+        message: err.message || "Something went wrong!"
+      });
       error({
         statusCode: err.status || 500,
-        message: err.message || 'Something went wrong!',
-      })
+        message: err.message || "Something went wrong!"
+      });
     }
   },
 
   components: {
     AppDate,
-    AppSelect,
-    AppFilterSearch,
+    AppFilterSearch
   },
 
   computed: {
@@ -322,10 +325,7 @@ export default {
         const index = this.selectedJobParts.findIndex(item => {
           return item.job_part_id === filterItem.id;
         });
-        return (
-          index === -1 &&
-          filterItem
-        );
+        return index === -1 && filterItem;
       });
     }
   },
@@ -343,7 +343,7 @@ export default {
         post_code: ""
       },
       jobs: [],
-      invoice: '',
+      invoice: "",
       rowData: [],
       description: "",
       total: "",
@@ -358,7 +358,7 @@ export default {
       // input select surgeries
       surgeries: [],
       activeIndexSurgeries: 0,
-      searchSurgeries: '',
+      searchSurgeries: "",
       toggledSurgeries: false,
       loadingSurgeries: false,
       noMoreLoadSurgeries: false,
@@ -366,66 +366,79 @@ export default {
       // input select job
       jobParts: [],
       activeIndexJobParts: 0,
-      searchJobParts: '',
+      searchJobParts: "",
       toggledJobParts: false,
       loadingJobParts: false,
       noMoreLoadJobParts: false,
       selectedJobParts: []
-
-
     };
   },
 
   watch: {
     type() {
-      this.surgeries = []
-      this.selectedSurgery = null
-      if (this.type === 'Private' || this.type === 'Platform') {
+      this.surgeries = [];
+      this.selectedSurgery = null;
+      if (this.type === "Private" || this.type === "Platform") {
         const params = {
           invoiceable: false,
           type: this.type,
           limit: 10,
-          offset: 0,
-        }
+          offset: 0
+        };
 
-        this.$axios.get('/api/v1/locum/surgeries', { params }).then((response) => {
-          const surgeries = response.data && response.data.data && response.data.data.surgeries ? response.data.data.surgeries : []
+        this.$axios
+          .get("/api/v1/locum/surgeries", { params })
+          .then(response => {
+            const surgeries =
+              response.data &&
+              response.data.data &&
+              response.data.data.surgeries
+                ? response.data.data.surgeries
+                : [];
 
-          this.surgeries = surgeries
-        }).catch((err) => {
-          console.log('err', err.response || err)
-        })
+            this.surgeries = surgeries;
+          })
+          .catch(err => {
+            console.log("err", err.response || err);
+          });
       }
     },
 
     selectedSurgery() {
-      this.jobParts = []
-      this.loadingJobParts = true
-      this.noMoreLoadJobParts = false
+      this.jobParts = [];
+      this.loadingJobParts = true;
+      this.noMoreLoadJobParts = false;
 
       if (this.selectedSurgery) {
         const params = {
-          locum_status: 'Completed',
+          locum_status: "Completed",
           type: this.type,
           surgery_id: this.selectedSurgery.id,
           limit: 10,
           offset: 0,
-          order_by: 'created_at:desc',
+          order_by: "created_at:desc",
           invoiced: false
-        }
+        };
 
-        this.$axios.get('/api/v1/locum/job-parts', { params }).then((response) => {
-          const jobParts = response.data && response.data.data && response.data.data.job_parts ? response.data.data.job_parts : []
-          if (jobParts.length < 10) {
-            this.noMoreLoadJobParts = true
-          }
+        this.$axios
+          .get("/api/v1/locum/job-parts", { params })
+          .then(response => {
+            const jobParts =
+              response.data &&
+              response.data.data &&
+              response.data.data.job_parts
+                ? response.data.data.job_parts
+                : [];
+            if (jobParts.length < 10) {
+              this.noMoreLoadJobParts = true;
+            }
 
-          this.jobParts = jobParts
-          this.loadingJobParts = false
-
-        }).catch((err) => {
-          console.log('err', err.response || err)
-        })
+            this.jobParts = jobParts;
+            this.loadingJobParts = false;
+          })
+          .catch(err => {
+            console.log("err", err.response || err);
+          });
       }
     },
     invoice(value) {
@@ -443,14 +456,14 @@ export default {
   },
 
   created() {
-    this.searchSurgeries = this.invoice.surgery.name
-    this.selectedSurgery = this.invoice.surgery
+    this.searchSurgeries = this.invoice.surgery.name;
+    this.selectedSurgery = this.invoice.surgery;
     this.invoice.items.forEach(item => {
-      item.job_part_id = item.job_part ? item.job_part.id : null
-      this.selectedJobParts.push(item)
-    })
-    this.form.date_start = this.invoice.date_start
-    this.form.date_end = this.invoice.date_end
+      item.job_part_id = item.job_part ? item.job_part.id : null;
+      this.selectedJobParts.push(item);
+    });
+    this.form.date_start = this.invoice.date_start;
+    this.form.date_end = this.invoice.date_end;
     // this.form.items =
     this.$axios.$get(`/api/v1/locum/private-practices`).then(res => {
       this.practices = [];
@@ -464,29 +477,35 @@ export default {
   },
 
   mounted() {
-    document.body.style.overflow = 'hidden'
+    document.body.style.overflow = "hidden";
   },
 
   destroyed() {
-    document.body.style.overflow = 'auto'
+    document.body.style.overflow = "auto";
   },
 
   methods: {
     save(final) {
-      this.formError = []
+      this.formError = [];
       // this.Validate(this.form)
       // if (!this.formError.length) {
-      this.form.type = this.type
-      this.form.surgery_id = this.selectedSurgery.id
-      this.form.date_start = this.$moment(this.form.date_start).format('YYYY-MM-DD');
-      this.form.date_end = this.$moment(this.form.date_end).format('YYYY-MM-DD');
-      this.form.items = this.selectedJobParts
-      this.form.total_amount = this.amount
-      this.form.final = final
-      this.$axios.$put(`/api/v1/locum/invoices/${this.invoice.id}`, this.form).then(res => {
-        this.$store.commit('billing/UPDATE_INVOICE', res.data.invoice)
-        this.$router.push('/locum-billing/invoices')
-      })
+      this.form.type = this.type;
+      this.form.surgery_id = this.selectedSurgery.id;
+      this.form.date_start = this.$moment(this.form.date_start).format(
+        "YYYY-MM-DD"
+      );
+      this.form.date_end = this.$moment(this.form.date_end).format(
+        "YYYY-MM-DD"
+      );
+      this.form.items = this.selectedJobParts;
+      this.form.total_amount = this.amount;
+      this.form.final = final;
+      this.$axios
+        .$put(`/api/v1/locum/invoices/${this.invoice.id}`, this.form)
+        .then(res => {
+          this.$store.commit("billing/UPDATE_INVOICE", res.data.invoice);
+          this.$router.push("/locum-billing/invoices");
+        });
       // }
     },
     addItem() {
@@ -503,101 +522,119 @@ export default {
       this.toggledJobParts = false;
     },
     scrollHandlerJobParts(e) {
-      if (this.$refs.jobPartsLists.offsetHeight + this.$refs.jobPartsLists.scrollTop >= this.$refs.jobPartsLists.scrollHeight - 1) {
+      if (
+        this.$refs.jobPartsLists.offsetHeight +
+          this.$refs.jobPartsLists.scrollTop >=
+        this.$refs.jobPartsLists.scrollHeight - 1
+      ) {
         if (!this.noMoreLoadJobParts) {
-          this.loadingJobParts = true
-          this.fetchMoreJobParts()
+          this.loadingJobParts = true;
+          this.fetchMoreJobParts();
         }
       }
     },
     addJobPart(jobPart) {
-      let hasJobPart = this.selectedJobParts.find(selectedJobPart => selectedJobPart.job_id === jobPart.id)
+      let hasJobPart = this.selectedJobParts.find(
+        selectedJobPart => selectedJobPart.job_id === jobPart.id
+      );
       if (hasJobPart) {
-        return
+        return;
       }
-      let invoiceObj = {}
-      let total = null
+      let invoiceObj = {};
+      let total = null;
       // ! locum detail rate type id / shift id
       if (jobPart) {
         // if jobPart.locum_detail_rate_type_id === 'per hour'
-        total = parseInt(jobPart.job.rate) * parseInt(jobPart.job.total_hours)
+        total = parseInt(jobPart.job.rate) * parseInt(jobPart.job.total_hours);
       }
       invoiceObj = {
-        type: 'Job Part',
+        type: "Job Part",
         job_part_id: jobPart.id,
         description: `Job number ${jobPart.job_part_number} ${jobPart.job.type} Job at £${jobPart.job.rate} per hour from ${jobPart.date_start} / OOH / Total hours at ${jobPart.job.total_hours}`,
-        total: total.toString(),
-      }
-      this.selectedJobParts.push(invoiceObj)
+        total: total.toString()
+      };
+      this.selectedJobParts.push(invoiceObj);
     },
     removeSelectedJobPart(jobPart, index) {
-      this.selectedJobParts.splice(index, 1)
+      this.selectedJobParts.splice(index, 1);
     },
     async fetchMoreJobParts() {
       const params = {
-        locum_status: 'Completed',
+        locum_status: "Completed",
         type: this.type,
         surgery_id: this.selectedSurgery.id,
         limit: 10,
         offset: this.jobParts.length,
-        order_by: 'created_at:desc'
-      }
+        order_by: "created_at:desc"
+      };
 
-      this.$axios.get('/api/v1/locum/job-parts', { params }).then((response) => {
-        const jobParts = response.data && response.data.data && response.data.data.job_parts ? response.data.data.job_parts : []
+      this.$axios
+        .get("/api/v1/locum/job-parts", { params })
+        .then(response => {
+          const jobParts =
+            response.data && response.data.data && response.data.data.job_parts
+              ? response.data.data.job_parts
+              : [];
 
-        jobParts.forEach(part => {
-          this.jobParts.push(part)
+          jobParts.forEach(part => {
+            this.jobParts.push(part);
+          });
+
+          if (jobParts.length < 10) {
+            this.noMoreLoadJobParts = true;
+          }
+
+          this.loadingJobParts = false;
         })
-
-        if (jobParts.length < 10) {
-          this.noMoreLoadJobParts = true
-        }
-
-        this.loadingJobParts = false
-      }).catch((err) => {
-        console.log('err', err.response || err)
-      })
+        .catch(err => {
+          console.log("err", err.response || err);
+        });
     },
     // surgeries
     toggledOffSurgeries() {
-      this.toggledSurgeries = false
+      this.toggledSurgeries = false;
     },
     scrollHandlerSurgeries(e) {
-      if (this.$refs.surgeryLists.offsetHeight + this.$refs.surgeryLists.scrollTop >= this.$refs.surgeryLists.scrollHeight - 1) {
+      if (
+        this.$refs.surgeryLists.offsetHeight +
+          this.$refs.surgeryLists.scrollTop >=
+        this.$refs.surgeryLists.scrollHeight - 1
+      ) {
         if (!this.noMoreLoadSurgeries) {
-          this.loadingSurgeries = true
-          this.fetchMoreSurgeries()
+          this.loadingSurgeries = true;
+          this.fetchMoreSurgeries();
         }
       }
     },
     addSurgery(surgery) {
-      this.selectedSurgery = surgery
-      this.searchSurgeries = surgery.name
-      this.toggledSurgeries = false
+      this.selectedSurgery = surgery;
+      this.searchSurgeries = surgery.name;
+      this.toggledSurgeries = false;
     },
     async fetchMoreSurgeries() {
       const params = {
         invoiceable: true,
         type: this.type,
         limit: 10,
-        offset: this.surgeries.length,
-      }
+        offset: this.surgeries.length
+      };
 
-      const response = await this.$axios.get('/api/v1/locum/surgeries', { params })
+      const response = await this.$axios.get("/api/v1/locum/surgeries", {
+        params
+      });
 
       response.data.data.surgeries.forEach(surgery => {
-        this.surgeries.push(surgery)
-      })
+        this.surgeries.push(surgery);
+      });
 
       if (response.data.data.surgeries.length < 10) {
-        this.noMoreLoadSurgeries = true
+        this.noMoreLoadSurgeries = true;
       }
 
-      this.loadingSurgeries = false
-    },
+      this.loadingSurgeries = false;
+    }
   }
-}
+};
 </script>
 
 <style scoped>

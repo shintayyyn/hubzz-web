@@ -33,13 +33,14 @@
             :label="'Suffix'"
             :placeholder="'(ex. Ph.D., M.D., etc.)'"
           />
-          <AppSelect
+          <AppInput
             v-model="form.practice_role"
+            :type="'select'"
             :name="'practice_role'"
             :label="'Role'"
-            :placeholder="'Select..'"
+            :error="formError.find(item => item.field === 'practice_role')"
+            :placeholder="'Select...'"
             :items="practice_roles"
-            :error="this.formError.find(item => item.field === 'practice_role')"
           />
           <AppFilterSearch
             v-model="form.practice_list"
@@ -95,7 +96,6 @@
 </template>
 <script>
 import AppInput from "@/components/Base/AppInput";
-import AppSelect from "@/components/Base/AppSelect";
 import AppButton from "@/components/Base/AppButton";
 import AppFilterSearch from "@/components/Base/AppFilterSearch";
 const practice_roles = [
@@ -111,7 +111,6 @@ const practice_roles = [
 export default {
   components: {
     AppInput,
-    AppSelect,
     AppButton,
     AppFilterSearch
   },

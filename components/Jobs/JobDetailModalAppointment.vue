@@ -35,8 +35,9 @@
         <div class="flex justify-start font-bold text-sm sm:text-xl mt-8">Appointment</div>
         <AppFormError :formError="formError" v-if="formError.length > 0" id="error" />
         <div class="rounded-lg shadow-lg px-8 py-4 mt-4">
-          <AppSelect
+          <AppInput
             v-model="form.private_practice_id"
+            :type="'select'"
             :name="'private_practice_id'"
             :label="'Practice'"
             :placeholder="'Select...'"
@@ -51,8 +52,9 @@
               <AppDate v-model="form.date_end" :name="'date_end'" :label="'To'" />
             </div>
             <div class="px-1 leading-loose">
-              <AppSelect
+              <AppInput
                 v-model="form.shift_id"
+                :type="'select'"
                 :name="'shift_id'"
                 :label="'Shift'"
                 :placeholder="'Select...'"
@@ -70,8 +72,9 @@
               :inStyle="'text-align:right'"
             />
             <div class="mx-2"></div>
-            <AppSelect
+            <AppInput
               v-model="form.locum_detail_rate_type_id"
+              :type="'select'"
               :name="'locum_detail_rate_type_id'"
               :label="'per'"
               :placeholder="'Select...'"
@@ -92,11 +95,12 @@
             </div>
           </div>
           <div class="mt-4">
-            <AppTextarea
+            <AppInput
               v-model="form.description"
+              :type="'textarea'"
               :name="'description'"
               :label="'Private notes'"
-              :placeholder="''"
+              :resize="false"
             />
           </div>
           <div class="flex flex-no-wrap justify-start">
@@ -124,8 +128,6 @@
 <script>
 import AppInput from "@/components/Base/AppInput";
 import AppDate from "@/components/Base/AppDate";
-import AppSelect from "@/components/Base/AppSelect";
-import AppTextarea from "@/components/Base/AppTextarea";
 import AppButton from "@/components/Base/AppButton";
 import AddSurgeryModal from "@/components/AddSurgeryModal";
 import AppFormError from "@/components/Base/AppFormError";
@@ -134,8 +136,6 @@ export default {
   components: {
     AppInput,
     AppDate,
-    AppSelect,
-    AppTextarea,
     AppButton,
     AddSurgeryModal,
     AppFormError

@@ -4,7 +4,6 @@
       <svgicon name="left-arrow" height="32" width="32" />
     </div>
     <div class="flex justify-start font-bold text-sm sm:text-xl mt-8 mb-2">Availability</div>
-    <AppFormError :formError="formError" v-if="formError.length > 0" />
     <div class="mt-4">
       <div class="rounded-lg shadow-lg p-8">
         <AppFormError :formError="formError" v-if="formError.length > 0" />
@@ -14,10 +13,20 @@
         </div>
         <div class="flex flex-row flex-wrap justify-between" v-if="type === 'range'">
           <div class="w-full p-0 sm:w-1/2 pr-2">
-            <AppDate v-model="form.date_start" :name="'date_start'" :label="'From'" />
+            <AppDate
+              v-model="form.date_start"
+              :name="'date_start'"
+              :label="'From'"
+              :error="formError.find(item => item.field === 'date_start')"
+            />
           </div>
           <div class="w-full p-0 sm:w-1/2 pl-2">
-            <AppDate v-model="form.date_end" :name="'date_end'" :label="'To'" />
+            <AppDate
+              v-model="form.date_end"
+              :name="'date_end'"
+              :label="'To'"
+              :error="formError.find(item => item.field === 'date_end')"
+            />
           </div>
         </div>
         <div class="flex flex-col w-full my-6" v-else>
@@ -29,20 +38,15 @@
           <div
             class="rounded-lg bg-gray-300 px-2 py-1 text-sm sm:text-md flex items-center"
             v-if="type === 'solo'"
-          >
-            Select all that apply. Shifts that are already booked are greyed-out.
-            <!-- <div
-              v-if="formError.find(item => item.field === 'shift_id')"
-              class="absolute right-0 bg-red-500 p-1 text-xs sm:text-base text-white"
-            >Select atleast one shift</div>-->
-          </div>
-          <div class="rounded-lg bg-gray-300 px-2 py-1 text-sm sm:text-md flex items-center" v-else>
-            Select all that apply.
-            <!-- <div
-              v-if="formError.find(item => item.field === 'shift_id')"
-              class="absolute right-0 bg-red-500 p-1 text-xs sm:text-base text-white"
-            >Select atleast one shift</div>-->
-          </div>
+          >Select all that apply. Shifts that are already booked are greyed-out.</div>
+          <div
+            class="rounded-lg bg-gray-300 px-2 py-1 text-sm sm:text-md flex items-center"
+            v-else
+          >Select all that apply.</div>
+          <div
+            class="absolute right-0 bg-red-500 p-1 text-xs sm:text-base text-white"
+            v-if="formError.find(item => item.field === 'shift_id') && formError.find(item => item.field === 'shift_id').message"
+          >{{formError.find(item => item.field === 'shift_id').message}}</div>
         </div>
 
         <div class="flex flex-row flex-wrap justify-around md:justify-between mt-4">
@@ -51,7 +55,7 @@
             :class="{
                 'bg-gray-300': isDisabled(item.id),
                 'bg-yellow-500': isSelected(item.id), 
-                'hover:bg-yellow-500': !isSelected(item.id) && isSelectable(item.id),
+                'hover:bg-yellow-500': !isSelected(item.id) && !isDisabled(item.id),
               }"
             style="box-sizing:content-box;"
             v-for="item in shifts"
@@ -130,39 +134,14 @@ export default {
   },
   watch: {
     "form.date_start"(value) {
-      let index = this.formError.findIndex(item => item.field === "date_start");
-      if (index >= 0) {
-        this.formError.splice(index, 1);
-      }
-      if (!value) {
-        this.formError.push({
-          field: "date_start",
-          message: "Date Start Required"
-        });
-      }
+      this.CheckEmptyField(this.form.date_start, "date_start");
     },
     "form.date_end"(value) {
-      let index = this.formError.findIndex(item => item.field === "date_start");
-      if (index >= 0) {
-        this.formError.splice(index, 1);
-      }
-      if (!value) {
-        this.formError.push({
-          field: "date_start",
-          message: "Date End Required"
-        });
-      }
+      this.CheckEmptyField(this.form.date_end, "date_end");
     },
     "form.shift_id"(value) {
-      let index = this.formError.findIndex(item => item.field === "date_start");
-      if (index >= 0) {
-        this.formError.splice(index, 1);
-      }
-      if (!value) {
-        this.formError.push({
-          field: "date_start",
-          message: "Shift Required"
-        });
+      if (this.type === "range") {
+        this.CheckEmptyField(this.form.shift_id, "shift_id");
       }
     }
   },
@@ -201,6 +180,12 @@ export default {
             this.$emit("close");
           })
           .catch(err => {
+            this.form.date_start = this.$moment(this.form.date_start).format(
+              "MM/DD/YYYY"
+            );
+            this.form.date_end = this.$moment(this.form.date_end).format(
+              "MM/DD/YYYY"
+            );
             err.response.data.error_messages.forEach(error => {
               this.formError.push(error);
             });
@@ -251,13 +236,6 @@ export default {
           });
           this.$emit("close");
         });
-    },
-    isSelectable(id) {
-      // ! fix
-      // return (
-      //   (this.appointmentDate && this.appointmentDate.shift && this.appointmentDate.shift.id !== id) ||
-      //   (this.allocatedDate && this.allocatedDate.length && !this.allocatedDate.map(shift => shift.id).includes(id))
-      // )
     },
     isSelected(id) {
       return this.form.shift_id.includes(id);

@@ -281,8 +281,6 @@ import AppFormError from "@/components/Base/AppFormError";
 import AppLoading from "@/components/Base/AppLoading";
 import AppInput from "@/components/Base/AppInput";
 import AppPostCode from "@/components/Base/AppPostCode";
-import AppTextarea from "@/components/Base/AppTextarea";
-import AppSelect from "@/components/Base/AppSelect";
 import AppFilterSearch from "@/components/Base/AppFilterSearch";
 import AppButton from "@/components/Base/AppButton";
 import AppAvatar from "@/components/Base/AppAvatar";
@@ -296,8 +294,6 @@ export default {
     AppLoading,
     AppInput,
     AppPostCode,
-    AppTextarea,
-    AppSelect,
     AppFilterSearch,
     AppButton,
     AppAvatar

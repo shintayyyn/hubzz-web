@@ -3,16 +3,17 @@
     <div class="text-xs sm:text-sm font-bold">Locum</div>
     <div class="rounded-lg shadow-lg p-8 mt-4">
       <div class="flex flex-col">
-        <div class="flex flex-row flex-no-wrap justify-between items-center">
+        <div class="flex flex-row flex-wrap justify-between items-center">
+          <div class="flex flex-col order-2 md:order-1 w-full md:w-1/2">
+            <div class="font-bold mt-4 text-sm lg:text-lg">{{user.personal_detail.name}}</div>
+            <div class="text-xs lg:text-sm">{{user.locum_detail.profession.name}}</div>
+          </div>
           <AppAvatar
+            class="order-1 md:order-2"
             :height="'80px'"
             :width="'80px'"
             :src="user.avatar && user.avatar.file && user.avatar.file.url ? user.avatar.file.url : ''"
           />
-          <div class="flex flex-col">
-            <div class="font-bold mt-4 text-sm lg:text-lg">{{user.personal_detail.name}}</div>
-            <div class="text-xs lg:text-sm">{{user.locum_detail.profession.name}}</div>
-          </div>
         </div>
         <div class="body-info my-4">
           <div class="font-bold text-sm sm:text-md">Headline</div>

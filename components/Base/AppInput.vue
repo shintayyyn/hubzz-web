@@ -2,7 +2,7 @@
   <section>
     <!-- text / email / password / date / time / select / textarea / multicheckbox -->
     <template
-      v-if="['text','time','email','password','date', 'select', 'textarea', 'multi-checkbox'].includes(type)"
+      v-if="['text','time','email','password', 'select', 'textarea', 'multi-checkbox'].includes(type)"
     >
       <div class="flex flex-col py-2 mb-6">
         <div class="relative flex flex-row flex-no-wrap justify-between">
@@ -29,7 +29,7 @@
         </template>
         <template v-else>
           <div class="flex flex-row justify-start mt-1">
-            <template v-if="['text','time','email','password','date'].includes(type)">
+            <template v-if="['text','time','email','password'].includes(type)">
               <input
                 :value="value"
                 :type="type"

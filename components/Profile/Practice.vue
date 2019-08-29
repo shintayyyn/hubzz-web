@@ -93,11 +93,12 @@
                 :placeholder="''"
                 :lists="practice_types"
               />
-              <AppTextarea
+              <AppInput
                 v-model="form.extra_information"
+                :type="'textarea'"
                 :name="'extra_information'"
                 :label="'Extra Information (Pracking restrictions, transport links, etc.)'"
-                :placeholder="''"
+                :resize="false"
               />
               <AppInput
                 v-model="form.mandatory_training_id"
@@ -157,14 +158,12 @@
 </template>
 <script>
 import AppInput from "@/components/Base/AppInput";
-import AppTextarea from "@/components/Base/AppTextarea";
 import AppButton from "@/components/Base/AppButton";
 import RemoveConfirmationModal from "@/components/Profile/RemoveConfirmationModal";
 import AppFormError from "@/components/Base/AppFormError";
 export default {
   components: {
     AppInput,
-    AppTextarea,
     AppButton,
     RemoveConfirmationModal,
     AppFormError
