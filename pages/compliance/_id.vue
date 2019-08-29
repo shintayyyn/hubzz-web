@@ -53,8 +53,6 @@
             <div class="w-full mt-5 lg:mt-0 lg:w-3/4">
               <embed
                 class="object-contain object-top"
-                width="100%"
-                height="auto"
                 :class="compliance_document.file.type == 'image' ? '' : 'document h-full w-full'"
                 :src="compliance_document.file.url"
               />

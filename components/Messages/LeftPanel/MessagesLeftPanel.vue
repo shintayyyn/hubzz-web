@@ -17,25 +17,22 @@
           <template v-if="showResult === false">
             <div
               class="relative flex w-full items-center px-2 py-4 cursor-pointer border-b"
-              :class="[parseInt($route.params.slug) === item.id ? 'bg-gray-300' : 'hover:bg-gray-200']"
+              :class="[parseInt($route.params.slug) === item.conversation_id ? 'bg-gray-300' : 'hover:bg-gray-200']"
               v-for="item in conversations"
-              :key="item.id"
-              @click="goTo(item.conversation_id ? item.conversation_id : item.id)"
+              :key="item.conversation_id"
+              @click="goTo(item.conversation_id ? item.conversation_id : item.conversation_id)"
             >
               <AppAvatar :height="'50px'" :width="'50px'" :src="userAvatar(item)" />
               <div class="w-5/6 flex items-center justify-between">
                 <div class="w-5/6 px-2">
                   <p
                     class="truncate"
-                    :class="parseInt($route.params.slug) === item.id ? 'font-bold' : ''"
+                    :class="parseInt($route.params.slug) === item.conversation_id ? 'font-bold' : ''"
                   >{{ userFullname(item) }}</p>
-                  <p
-                    class="text-sm truncate"
-                    :class="getMessage(item) ? 'font-bold' : ''"
-                  >{{ item.message }}</p>
+                  <p class="text-sm truncate">{{ item.message }}</p>
                 </div>
                 <span
-                  class="w-10 text-right text-xs text-gray-600 leading-none absolute right-0 mx-1 h-full flex items-center"
+                  class="w-10 text-right text-xs text-gray-600 leading-none absolute right-0 mx-2 h-full flex items-center"
                 >{{ $moment(item.created_at).fromNow() }}</span>
               </div>
             </div>
@@ -43,25 +40,22 @@
           <template v-if="showResult && messages.length > 0">
             <div
               class="relative flex w-full items-center px-2 py-4 cursor-pointer border-b"
-              :class="parseInt($route.params.slug) === item.id ? 'bg-gray-300' : 'hover:bg-gray-200'"
+              :class="parseInt($route.params.slug) === item.conversation_id ? 'bg-gray-300' : 'hover:bg-gray-200'"
               v-for="item in messages"
-              :key="item.id"
-              @click="goTo(item.conversation_id ? item.conversation_id : item.id)"
+              :key="item.conversation_id"
+              @click="goTo(item.conversation_id ? item.conversation_id : item.conversation_id)"
             >
               <AppAvatar :height="'50px'" :width="'50px'" :src="userAvatar(item)" />
               <div class="w-5/6 flex items-center justify-between">
                 <div class="w-5/6 px-2">
                   <p
                     class="truncate"
-                    :class="parseInt($route.params.slug) === item.id ? 'font-bold' : ''"
+                    :class="parseInt($route.params.slug) === item.conversation_id ? 'font-bold' : ''"
                   >{{ userFullname(item) }}</p>
-                  <p
-                    class="text-sm truncate"
-                    :class="getMessage(item) ? 'font-bold' : ''"
-                  >{{ item.message }}</p>
+                  <p class="text-sm truncate">{{ item.message }}</p>
                 </div>
                 <span
-                  class="w-12 text-right text-xs text-gray-600 leading-none absolute right-0 mx-1"
+                  class="w-12 text-right text-xs text-gray-600 leading-none absolute right-0 mx-2"
                 >{{ $moment(item.created_at).fromNow() }}</span>
               </div>
             </div>
@@ -93,13 +87,8 @@ export default {
   },
   data() {
     return {
-      user: {
-        avatar: "",
-        status: false
-      },
       search_text: "",
       messages: [],
-      recentMessage: "",
       showResult: false,
       loadMore: false
     };
@@ -107,7 +96,6 @@ export default {
   computed: {
     conversations() {
       return this.$store.getters["chat/getConversations"];
-      // return this.$store.state.chat.conversations;
     }
   },
   watch: {
@@ -142,9 +130,6 @@ export default {
         this.messages = res.data.conversations;
         this.showResult = true;
       });
-    },
-    getMessage(message) {
-      // console.log(this.conversations);
     },
     userFullname(item) {
       return item.receiver_id === this.$auth.user.id
@@ -209,15 +194,8 @@ export default {
 
 @media screen and (min-width: 768px) {
   .messages-left-panel {
-    min-width: 30vw;
-    max-width: 30vw;
-  }
-}
-
-@media screen and (min-width: 1200px) {
-  .messages-left-panel {
-    min-width: 18vw;
-    max-width: 18vw;
+    min-width: 35%;
+    max-width: 35%;
   }
 }
 </style>
