@@ -8,7 +8,6 @@
         :label="'Filter Locums by'"
         :placeholder="'All'"
         :items="professions"
-        @blur="CheckEmptyField(form.gender, 'gender')"
       />
     </div>
     <div v-if="users.length > 0">
@@ -93,8 +92,8 @@ export default {
   },
   components: {
     AppPagination,
-    AppAvatar,
-    AppInput
+    AppInput,
+    AppAvatar
   },
   data() {
     return {
@@ -108,10 +107,10 @@ export default {
       loading: true,
 
       params: {
-        profession_id: "1"
+        profession_id: ""
       },
 
-      profession_id: "1"
+      profession_id: "All"
     };
   },
   computed: {
@@ -131,7 +130,11 @@ export default {
   },
   watch: {
     profession_id(value) {
-      this.params.profession_id = value;
+      if (value === "All") {
+        this.params.profession_id = "";
+      } else {
+        this.params.profession_id = value;
+      }
       this.getLocums(this.current_page);
     }
   },
@@ -139,6 +142,7 @@ export default {
     getProfessions() {
       this.$axios.$get(`/api/v1/professions`).then(res => {
         this.professions = [];
+        this.professions.push({ label: "All", value: "All" });
         res.data.professions.forEach(item => {
           this.professions.push({ label: item.name, value: item.id });
         });
