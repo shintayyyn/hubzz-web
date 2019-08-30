@@ -46,8 +46,10 @@ export default {
     //     }
     //   },
     $route(value) {
-      this.$store.commit("TOGGLE_SIDEBAR", false);
-      document.body.style.overflow = "auto";
+      if (value) {
+        this.$store.commit("TOGGLE_SIDEBAR", false);
+        document.body.style.overflow = "auto";
+      }
     }
   },
   methods: {
@@ -64,7 +66,7 @@ export default {
     // this.$store.dispatch("signUp/getPracticeTypes");
     // this.$store.dispatch("signUp/getMandatoryTrainings");
   }
-}
+};
 </script>
 <style>
 .content {

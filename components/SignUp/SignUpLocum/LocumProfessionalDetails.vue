@@ -35,13 +35,13 @@
             :label="'Your NHS Smart Card ID number'"
             :placeholder="'NHS Smart Card ID number'"
           />
-
-          <AppSelect
+          <AppInput
             v-model="form.profession_id"
+            :type="'select'"
             :name="'profession_id'"
             :label="'Profession'"
-            :placeholder="'Select...'"
             :error="formError.find(item => item.field === 'profession_id')"
+            :placeholder="'Select...'"
             :items="professions"
           />
 
@@ -117,12 +117,13 @@
             :lists="practiceTypes"
           />
 
-          <AppSelect
+          <AppInput
             v-model="form.ir35"
+            :type="'select'"
             :name="'ir35'"
             :label="'Are you OK to work with Practices that are inside of scope for IR35?'"
-            :placeholder="'Select'"
             :error="formError.find(item => item.field === 'ir35')"
+            :placeholder="'Select...'"
             :items="[{value: false, label: 'No'},{value: true, label: 'Yes'}]"
             :info="'Only apply if you are self-employed'"
           />
@@ -142,7 +143,6 @@
 </template>
 <script>
 import AppInput from "@/components/Base/AppInput";
-import AppSelect from "@/components/Base/AppSelect";
 import AppButton from "@/components/Base/AppButton";
 import AppFilterSearch from "@/components/Base/AppFilterSearch";
 import AppRate from "@/components/Base/AppRate";
@@ -150,7 +150,6 @@ import { parse } from "cookie";
 export default {
   components: {
     AppInput,
-    AppSelect,
     AppButton,
     AppFilterSearch,
     AppRate
@@ -391,7 +390,6 @@ export default {
     },
 
     "form.practice_type_id"(value) {
-
       // splice from formerror
       let index = this.formError.findIndex(
         item => item.field === "practice_type_id"
@@ -474,7 +472,7 @@ export default {
         if (
           !this.per_half_day_session.min ||
           parseInt(this.per_half_day_session.max) <=
-          parseInt(this.per_half_day_session.min)
+            parseInt(this.per_half_day_session.min)
         ) {
           this.formError.push({
             field: "per_half_day_session",
@@ -485,7 +483,7 @@ export default {
         if (
           !this.per_whole_day_session.min ||
           parseInt(this.per_whole_day_session.max) <=
-          parseInt(this.per_whole_day_session.min)
+            parseInt(this.per_whole_day_session.min)
         ) {
           this.formError.push({
             field: "per_whole_day_session",

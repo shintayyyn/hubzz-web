@@ -8,7 +8,9 @@
         :type="'email'"
         :name="'email'"
         :label="'Email address'"
-        :placeholder="''"
+        :error="formError.find(item => item.field === 'email')"
+        @submit="save"
+        @blur="CheckEmptyField(form.email, 'email')"
       />
       <div class="-mt-6 mb-4" v-if="email_isVerified === true ">
         <span
@@ -22,50 +24,56 @@
           @click="resendEmailVerification()"
         >Click here to re-send</span>
       </div>
-      <AppInput
-        v-model="form.title"
-        :type="'text'"
-        :name="'title'"
-        :label="'Title'"
-        :placeholder="''"
-      />
-      <AppInput
-        v-model="form.first_name"
-        :type="'text'"
-        :name="'first_name'"
-        :label="'First name'"
-        :placeholder="''"
-      />
-      <AppInput
-        v-model="form.last_name"
-        :type="'text'"
-        :name="'last_name'"
-        :label="'Last name'"
-        :placeholder="''"
-      />
-      <AppInput
-        v-model="form.suffix"
-        :type="'text'"
-        :name="'suffix'"
-        :label="'Suffix'"
-        :placeholder="''"
-      />
-      <AppSelect
-        v-model="form.practice_role"
-        :name="'practice_role'"
-        :label="'Role'"
-        :placeholder="'Role'"
-        :items="roles"
-      />
-      <div class="text-left mt-5">
-        <AppButton :label="'Save changes'" @click="save" />
-      </div>
+      <template v-if="user.email_verified_at">
+        <AppInput
+          v-model="form.title"
+          :type="'text'"
+          :name="'title'"
+          :label="'Title'"
+          @submit="save"
+        />
+        <AppInput
+          v-model="form.first_name"
+          :type="'text'"
+          :name="'first_name'"
+          :label="'First name'"
+          :error="formError.find(item => item.field === 'first_name')"
+          @submit="save"
+          @blur="CheckEmptyField(form.first_name, 'first_name')"
+        />
+        <AppInput
+          v-model="form.last_name"
+          :type="'text'"
+          :name="'last_name'"
+          :label="'Last name'"
+          :error="formError.find(item => item.field === 'last_name')"
+          @submit="save"
+          @blur="CheckEmptyField(form.last_name, 'last_name')"
+        />
+        <AppInput
+          v-model="form.suffix"
+          :type="'text'"
+          :name="'suffix'"
+          :label="'Suffix'"
+          @submit="save"
+        />
+        <AppInput
+          v-model="form.practice_role"
+          :type="'select'"
+          :name="'practice_role'"
+          :label="'Role'"
+          :placeholder="'Role...'"
+          :items="roles"
+        />
+        <div class="text-left mt-5">
+          <AppButton :label="'Save changes'" @click="save" />
+        </div>
+      </template>
     </form>
   </div>
 </template>
 <script>
 import AppInput from "@/components/Base/AppInput";
-import AppSelect from "@/components/Base/AppSelect";
 import AppButton from "@/components/Base/AppButton";
 import AppLoading from "@/components/Base/AppLoading";
 import AppFormError from "@/components/Base/AppFormError";
@@ -81,7 +89,6 @@ export default {
   },
   components: {
     AppInput,
-    AppSelect,
     AppButton,
     AppLoading,
     AppFormError
@@ -103,76 +110,46 @@ export default {
       formError: []
     };
   },
+  async asyncData({ app, error }) {
+    try {
+      const response = await app.$axios.$get(`/api/v1/me`);
+      const user =
+        response.data && response.data.user ? response.data.user : null;
+      console.log(user);
+      return {
+        user
+      };
+    } catch (err) {
+      throw err;
+    }
+  },
   created() {
-    this.$axios.$get("/api/v1/me").then(res => {
-      this.form.email = res.data.user.email;
-      this.form.title = res.data.user.personal_detail.title;
-      this.form.first_name = res.data.user.personal_detail.first_name;
-      this.form.last_name = res.data.user.personal_detail.last_name;
-      this.form.suffix = res.data.user.personal_detail.suffix;
-      this.form.practice_role = res.data.user.practice_detail.practice_role;
-      this.email_isVerified = res.data.user.is_email_verified;
-      this.email_verifiedAt = res.data.user.email_verified_at;
-      this.loading = false;
-    });
+    this.form.email = this.user.email;
+    this.form.title = this.user.personal_detail.title;
+    this.form.first_name = this.user.personal_detail.first_name;
+    this.form.last_name = this.user.personal_detail.last_name;
+    this.form.suffix = this.user.personal_detail.suffix;
+    this.form.practice_role = this.user.practice_detail.practice_role;
+    this.email_isVerified = this.user.is_email_verified;
+    this.email_verifiedAt = this.user.email_verified_at;
   },
   watch: {
     "form.email"(value) {
-      let index = this.formError.findIndex(item => item.field === "email");
-      if (index >= 0) {
-        this.formError.splice(index, 1);
-      }
-      if (!value) {
-        // required
-        this.formError.push({ field: "email", message: "Email Is Required" });
-      } else {
-        const error = this.ValidateEmail(value);
-        if (error) {
-          this.formError.push(error);
-        }
-      }
+      this.CheckEmptyField(this.form.email, "email");
     },
     "form.first_name"(value) {
-      let index = this.formError.findIndex(item => item.field === "first_name");
-      if (index >= 0) {
-        this.formError.splice(index, 1);
-      }
-      if (!value) {
-        // required
-        this.formError.push({
-          field: "first_name",
-          message: "First Name Is Required"
-        });
-      }
+      this.CheckEmptyField(this.form.first_name, "first_name");
     },
     "form.last_name"(value) {
-      let index = this.formError.findIndex(item => item.field === "last_name");
-      if (index >= 0) {
-        this.formError.splice(index, 1);
-      }
-      if (!value) {
-        // required
-        this.formError.push({
-          field: "last_name",
-          message: "Last Name Is Required"
-        });
-      }
+      this.CheckEmptyField(this.form.last_name, "last_name");
     },
     "form.practice_role"(value) {
-      let index = this.formError.findIndex(
-        item => item.field === "practice_role"
-      );
-      if (index >= 0) {
-        this.formError.splice(index, 1);
-      }
-      if (!value) {
-        this.formError.push({ field: "practice_role", message: "Required" });
-      }
+      this.CheckEmptyField(this.form.practice_role, "practice_role");
     }
   },
   methods: {
     async save() {
-      // this.loading = true;
+      this.loading = true;
       try {
         this.formError = [];
         this.Validate(this.form, ["title", "suffix"]);

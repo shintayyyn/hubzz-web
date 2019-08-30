@@ -7,14 +7,14 @@
   </section>
 </template>
 <script>
-import LocumRelatedJobsTabs from '@/components/MyBanks/LocumRelatedJobsTabs'
+import LocumRelatedJobsTabs from "@/components/MyBanks/LocumRelatedJobsTabs";
 export default {
   transition: {
-    name: 'fade',
-    mode: 'out-in'
+    name: "fade",
+    mode: "out-in"
   },
   components: {
     LocumRelatedJobsTabs
   }
-}
+};
 </script>

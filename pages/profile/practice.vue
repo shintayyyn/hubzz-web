@@ -1,20 +1,6 @@
 <template>
   <section>
     <div class="flex flex-col">
-      <!-- <div class="flex flex-row flex-wrap justify-end">
-        <div class="w-full md:w-1/3 p-1">
-          <div class="rounded-lg shadow-lg px-2">
-            <AppSelect
-              v-model="practiceType"
-              :name="'type'"
-              :label="'Practice Type'"
-              :placeholder="'Select...'"
-              :items="[{ value: 'Stand Alone', label: 'Stand Alone'},{ value: 'Hub', label: 'Hub'},{ value: 'Spoke', label: 'Spoke'}]"
-              @change="practiceTypeOnchange"
-            />
-          </div>
-        </div>
-      </div>-->
       <div class="flex flex-row flex-wrap justify-between">
         <div class="w-full md:w-2/3 p-1">
           <div class="rounded-lg shadow-lg p-8 h-full flex items-center">
@@ -43,10 +29,12 @@
         <div class="w-full md:w-1/3 p-1">
           <div class="flex flex-col">
             <div class="rounded-lg shadow-lg px-4">
-              <AppSelect
+              <AppInput
                 v-model="practiceType"
+                :type="'select'"
                 :name="'type'"
                 :label="'Practice Type'"
+                :error="formError.find(item => item.field === 'type')"
                 :placeholder="'Select...'"
                 :items="[{ value: 'Stand Alone', label: 'Stand Alone'},{ value: 'Hub', label: 'Hub'},{ value: 'Spoke', label: 'Spoke'}]"
                 @change="practiceTypeOnchange"
@@ -57,7 +45,7 @@
                 <div class="text-xs sm:text-sm">Your Practice's standard terms</div>
                 <div class="mt-4 bg-gray-300 rounded-lg p-4">
                   <div class="flex flex-no-wrap justify-between items-center">
-                    <div class="flex text-sm" v-if="uploading">
+                    <div class="flex text-sm" v-if="loading">
                       <label for="file-upload">Uploading</label>
                       <div class="spinner">
                         <div class="bounce1"></div>
@@ -66,7 +54,7 @@
                       </div>
                     </div>
                     <div
-                      v-if="!uploading"
+                      v-if="!loading"
                       class="text-xs sm:text-sm document-filename"
                     >{{ practice.standard_terms && practice.standard_terms.file ? practice.standard_terms.file.filename : '' }}</div>
                     <div
@@ -77,7 +65,7 @@
                   </div>
                 </div>
                 <div class="relative flex justify-start mt-2 items-center">
-                  <label v-if="uploading == false" for="file-upload">
+                  <label v-if="loading == false" for="file-upload">
                     <div class="flex flex-row flex-no-wrap cursor-pointer hover:underline">
                       <svgicon name="cloud-upload" height="24" width="24" />
                       <div class="ml-2 text-xs sm:text-sm leading-loose">Upload</div>
@@ -89,68 +77,6 @@
             </div>
           </div>
         </div>
-        <!-- <div class="self-start w-full md:w-3/5 p-2">
-          <div class="rounded-lg shadow-lg p-8">
-            <div class="flex flex-row flex-wrap">
-              <div class="flex flex-col w-full md:w-1/3 p-1">
-                <div class="text-xs sm:text-sm">Practice name</div>
-                <div class="text-xs font-bold py-2">{{surgery.name}}</div>
-                <div class="text-xs sm:text-sm mt-4">CCG</div>
-                <div class="text-xs font-bold py-2">{{surgery.clinical_commissioning_group.name}}</div>
-              </div>
-              <div class="flex flex-col w-full md:w-1/3 p-1">
-                <div class="text-xs sm:text-sm" mt-4>Practice code</div>
-                <div class="text-xs font-bold py-2">{{surgery.code}}</div>
-                <div class="text-xs sm:text-sm mt-4">Phone number</div>
-                <div class="text-xs font-bold py-2">{{surgery.phone_number}}</div>
-              </div>
-              <div class="flex flex-col w-full md:w-1/3 p-1">
-                <div class="text-xs sm:text-sm">Address</div>
-                <div
-                  class="text-xs font-bold py-2"
-                >{{surgery.address.line_1}} {{surgery.address.line_2}} {{surgery.address.line_3}} {{surgery.address.post_code}}</div>
-              </div>
-            </div>
-          </div>
-        </div>-->
-        <!-- <div class="self-start w-full md:w-2/5 p-2">
-          <div class="rounded-lg shadow-lg p-8">
-            <div class="flex flex-col">
-              <div class="text-xs sm:text-sm">Your Practice's standard terms</div>
-              <div class="mt-4 bg-gray-300 rounded-lg p-4">
-                <div class="flex flex-no-wrap justify-between items-center">
-                  <div class="flex text-sm" v-if="uploading">
-                    <label for="file-upload">Uploading</label>
-                    <div class="spinner">
-                      <div class="bounce1"></div>
-                      <div class="bounce2"></div>
-                      <div class="bounce3"></div>
-                    </div>
-                  </div>
-                  <div
-                    v-if="!uploading"
-                    class="text-xs sm:text-sm document-filename"
-                  >{{ practice.standard_terms && practice.standard_terms.file ? practice.standard_terms.file.filename : '' }}</div>
-                  <div
-                    class="font-bold text-md sm:text-lg hover:null cursor-pointer text-gray-600 hover:text-black"
-                    @click="modal = true"
-                    v-if="practice.standard_terms"
-                  >x</div>
-                </div>
-              </div>
-              <div class="relative flex justify-start mt-2 items-center">
-                <label v-if="uploading == false" for="file-upload">
-                  <div class="flex flex-row flex-no-wrap cursor-pointer hover:underline">
-                    <svgicon name="cloud-upload" height="24" width="24" />
-                    <div class="ml-2 text-xs sm:text-sm leading-loose">Upload</div>
-                  </div>
-                </label>
-                <input type="file" id="file-upload" class="hidden" @input="onFileInput($event)" />
-              </div>
-            </div>
-            <AppLoading :loading="loading" :message="'Loading'" v-if="loading" />
-          </div>
-        </div>-->
       </div>
 
       <div class="w-full p-2">
@@ -163,46 +89,53 @@
                 :type="'text'"
                 :name="'phone_number'"
                 :label="'Phone number'"
-                :placeholder="''"
+                :error="formError.find(item => item.field === 'phone_number')"
+                @submit="save"
+                @blur="CheckEmptyField(form.phone_number, 'phone_number')"
               />
               <AppInput
                 v-model="form.report_to"
                 :type="'text'"
                 :name="'report_to'"
                 :label="'Report to'"
-                :placeholder="''"
+                :error="formError.find(item => item.field === 'report_to')"
+                @submit="save"
+                @blur="CheckEmptyField(form.report_to, 'report_to')"
               />
               <AppInput
                 v-model="form.email"
                 :type="'email'"
                 :name="'email'"
                 :label="'Email Address'"
-                :placeholder="''"
+                :error="formError.find(item => item.field === 'email')"
+                @submit="save"
+                @blur="CheckEmptyField(form.email, 'email')"
               />
               <AppInput
                 v-model="form.practice_type_id"
                 :type="'multi-checkbox'"
+                :error="formError.find(item => item.field === 'practice_type_id')"
                 @checked="form.practice_type_id.push($event)"
                 @unchecked="uncheckPractice($event)"
                 :name="'practice_type_id'"
                 :label="'What type of Practice are you?'"
-                :placeholder="''"
                 :lists="practice_types"
               />
-              <AppTextarea
+              <AppInput
                 v-model="form.extra_information"
+                :type="'textarea'"
                 :name="'extra_information'"
                 :label="'Extra Information (Pracking restrictions, transport links, etc.)'"
-                :placeholder="''"
+                :resize="false"
               />
               <AppInput
                 v-model="form.mandatory_training_id"
                 :type="'multi-checkbox'"
+                :error="formError.find(item => item.field === 'mandatory_training_id')"
                 @checked="form.mandatory_training_id.push($event)"
                 @unchecked="uncheckMandatory($event)"
                 :name="'mandatory_training_id'"
                 :label="'Mandatory training required from Locums:'"
-                :placeholder="''"
                 :lists="mandatory_trainings"
               />
             </div>
@@ -213,11 +146,11 @@
                   <AppInput
                     v-model="form.gp_compliance_document_id"
                     :type="'multi-checkbox'"
+                    :error="formError.find(item => item.field === 'gp_compliance_document_id')"
                     @checked="form.gp_compliance_document_id.push($event)"
                     @unchecked="uncheckGp($event)"
                     :name="'gp_compliance_document_id'"
                     :label="'For GPs:'"
-                    :placeholder="''"
                     :lists="gp_documents"
                   />
                 </div>
@@ -225,11 +158,11 @@
                   <AppInput
                     v-model="form.others_compliance_document_id"
                     :type="'multi-checkbox'"
+                    :error="formError.find(item => item.field === 'others_compliance_document_id')"
                     @checked="form.others_compliance_document_id.push($event)"
                     @unchecked="uncheckOther($event)"
                     :name="'others_compliance_document_id'"
                     :label="'For Nurses, et al:'"
-                    :placeholder="''"
                     :lists="others_documents"
                   />
                 </div>
@@ -237,7 +170,7 @@
             </div>
           </div>
           <div class="mt-8">
-            <AppButton :label="'Save changes'" @click="save()" />
+            <AppButton :label="'Save changes'" @click="save" />
           </div>
         </div>
       </div>
@@ -263,8 +196,6 @@
 </template>
 <script>
 import AppInput from "@/components/Base/AppInput";
-import AppSelect from "@/components/Base/AppSelect";
-import AppTextarea from "@/components/Base/AppTextarea";
 import AppButton from "@/components/Base/AppButton";
 import AppFormError from "@/components/Base/AppFormError";
 import AppLoading from "@/components/Base/AppLoading";
@@ -276,8 +207,6 @@ export default {
   },
   components: {
     AppInput,
-    AppSelect,
-    AppTextarea,
     AppButton,
     AppFormError,
     AppLoading,
@@ -315,58 +244,34 @@ export default {
       this.oldPracticeType = oldValue;
     },
     "form.phone_number"(value) {
-      if (value) {
-        this.formError = this.formError.filter(
-          err => err.field !== "phone_number"
-        );
-      }
+      this.CheckEmptyField(this.form.phone_number, "phone_number");
     },
     "form.report_to"(value) {
-      if (value) {
-        this.formError = this.formError.filter(
-          err => err.field !== "report_to"
-        );
-      }
+      this.CheckEmptyField(this.form.report_to, "report_to");
     },
     "form.email"(value) {
-      if (value) {
-        this.formError = this.formError.filter(err => err.field !== "email");
-      }
-    },
-    "form.extra_information"(value) {
-      if (value) {
-        this.formError = this.formError.filter(
-          err => err.field !== "extra_information"
-        );
-      }
+      this.CheckEmptyField(this.form.email, "email");
     },
     "form.practice_type_id"(value) {
-      if (value.length) {
-        this.formError = this.formError.filter(
-          err => err.field !== "practice_type_id"
-        );
-      }
+      this.CheckEmptyField(this.form.practice_type_id, "practice_type_id");
     },
     "form.mandatory_training_id"(value) {
-      if (value.length) {
-        this.formError = this.formError.filter(
-          err => err.field !== "mandatory_training_id"
-        );
-      }
+      this.CheckEmptyField(
+        this.form.mandatory_training_id,
+        "mandatory_training_id"
+      );
     },
     "form.gp_compliance_document_id"(value) {
-      if (value.length) {
-        this.formError = this.formError.filter(
-          err => err.field !== "gp_compliance_document_id"
-        );
-      }
+      this.CheckEmptyField(
+        this.form.gp_compliance_document_id,
+        "gp_compliance_document_id"
+      );
     },
     "form.others_compliance_document_id"(value) {
-      if (value.length) {
-        this.formError = this.formError.filter(
-          err => err.field !== "others_compliance_document_id"
-        );
-      }
+      this.CheckEmptyField(
+        this.form.others_compliance_document_id,
+        "others_compliance_document_id"
+      );
     }
   },
   async asyncData({ app, error }) {
@@ -536,7 +441,6 @@ export default {
     },
     practiceTypeOnchange(value) {
       this.selectedPracticeType = value;
-      console.log(value);
       this.practiceTypeConfirmationModal = true;
     },
     cancelPracticeType() {
@@ -593,6 +497,7 @@ export default {
             status: "success",
             text: [res.message]
           });
+          this.scrollToTop();
         } else {
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,

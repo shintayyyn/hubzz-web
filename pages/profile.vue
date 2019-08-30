@@ -5,7 +5,7 @@
       <nuxt-link
         to="/profile/practice"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-        :class="$route.name === 'profile-practice'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="['profile', 'profile-practice'].includes($route.name) ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >Practice</nuxt-link>
       <nuxt-link
         v-if="type !== 'Stand Alone'"
@@ -39,23 +39,25 @@
 export default {
   computed: {
     type() {
-      return this.$store.state.profile.practice_type
+      return this.$store.state.profile.practice_type;
     }
   },
   async asyncData({ app, store, error }) {
     try {
-      const responsePracticeType = await app.$axios.$get(`/api/v1/practice/me/practice-type`)
-      let type = responsePracticeType.data
-        && responsePracticeType.data.practice
-        && responsePracticeType.data.practice.type
-        ? responsePracticeType.data.practice.type
-        : null
+      const responsePracticeType = await app.$axios.$get(
+        `/api/v1/practice/me/practice-type`
+      );
+      let type =
+        responsePracticeType.data &&
+        responsePracticeType.data.practice &&
+        responsePracticeType.data.practice.type
+          ? responsePracticeType.data.practice.type
+          : null;
 
-      store.commit('profile/SET_PRACTICE_TYPE', type)
-
+      store.commit("profile/SET_PRACTICE_TYPE", type);
     } catch (err) {
-      throw err
+      throw err;
     }
   }
-}
+};
 </script>

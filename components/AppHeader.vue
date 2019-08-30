@@ -1,8 +1,8 @@
 <template>
   <section class="header-section fixed bg-white z-50">
     <div class="px-4 flex flex-row flex-wrap justify-between" style="z-index: 600">
-      <div class="w-1/3 py-2">
-        <div class="burger cursor-pointer" @click="toggle">
+      <div class="lg:w-1/3">
+        <div class="burger cursor-pointer py-2" @click="toggle">
           <div class="my-2 bg-yellow-500"></div>
           <div class="my-2 bg-yellow-500"></div>
         </div>

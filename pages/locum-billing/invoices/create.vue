@@ -265,7 +265,6 @@
 
 <script>
 import AppDate from "@/components/Base/AppDate";
-import AppSelect from "@/components/Base/AppSelect";
 import AppFilterSearch from "@/components/Base/AppFilterSearch";
 import { mixin as clickaway } from "vue-clickaway";
 export default {
@@ -322,7 +321,6 @@ export default {
 
   components: {
     AppDate,
-    AppSelect,
     AppFilterSearch
   },
   computed: {

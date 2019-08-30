@@ -6,13 +6,14 @@
         <div class="flex flex-col w-full md:w-1/2 p-0 md:pr-4">
           <div class="font-bold text-sm sm:text-md">Job number</div>
           <div class="text-xs sm:text-sm mb-4">{{job.job_number}}</div>
-          <AppSelect
+          <AppInput
             v-model="form.practice_id"
+            :type="'select'"
             :name="'practice_id'"
-            :items="practice_lists"
             :label="'Practice'"
-            :placeholder="'Select..'"
             :error="formError.find(item => item.field === 'practice_id')"
+            :placeholder="'Select...'"
+            :items="practice_lists"
           />
           <div class="text-xs sm:text-sm mt-2 mb-4 flex flex-row flex-wrap">
             <div class="w-full md:w-1/2 p-1">
@@ -26,12 +27,14 @@
               />
             </div>
             <div class="w-full md:w-1/2 p-1">
-              <AppSelect
+              <AppInput
                 v-model="form.locum_detail_rate_type_id"
+                :type="'select'"
                 :name="'locum_detail_rate_type_id'"
                 :label="'per'"
-                :items="rate_lists"
                 :error="formError.find(item => item.field === 'locum_detail_rate_type_id')"
+                :placeholder="'Select...'"
+                :items="rate_lists"
               />
             </div>
           </div>
@@ -51,12 +54,13 @@
             :placeholder="''"
             :error="formError.find(item => item.field === 'title')"
           />
-          <AppTextarea
+          <AppInput
             v-model="form.description"
+            :type="'textarea'"
             :name="'description'"
             :label="'Job description'"
-            :placeholder="''"
             :error="formError.find(item => item.field === 'description')"
+            :resize="false"
           />
           <AppInput
             v-model="form.report_to"
@@ -82,14 +86,16 @@
             :placeholder="''"
             :error="formError.find(item => item.field === 'phone_number')"
           />
-          <AppSelect
+          <AppInput
+            :type="'select'"
             v-model="form.is_another_doctor"
             :name="'is_another_doctor'"
             :label="'Is there another Dr on site?'"
             :items="[ {value: 'true', label: 'YES'}, {value: 'false', label: 'NO'} ]"
             :error="formError.find(item => item.field === 'is_another_doctor')"
           />
-          <AppSelect
+          <AppInput
+            :type="'select'"
             v-model="form.is_nurse_available"
             :name="'is_nurse_available'"
             :label="'Is nurse support available?'"
@@ -114,7 +120,8 @@
             :inStyle="'text-align:right;'"
             :error="formError.find(item => item.field === 'duration_for_each_appointment')"
           />
-          <AppSelect
+          <AppInput
+            :type="'select'"
             v-model="form.opportunity_for_catch_up_slots"
             :name="'opportunity_for_catch_up_slots'"
             :label="'Opportunity for catch up slots?'"
@@ -132,26 +139,31 @@
             :lists="session_requirements_lists"
             :error="formError.find(item => item.field === 'session_requirements')"
           />
-          <AppTextarea
+          <AppInput
             v-model="form.session_structure_information"
+            :type="'textarea'"
             :name="'session_structure_information'"
             :label="'Session structure information'"
             :placeholder="'For e.g. the first 2 hours of the session is for booked appointments, 3rd hour is walk-ins, and home visits to x number of patients to the end of the session'"
             :error="formError.find(item => item.field === 'session_structure_information')"
+            :resize="false"
           />
-          <AppTextarea
+          <AppInput
             v-model="form.extra_information"
+            :type="'textarea'"
             :name="'extra_information'"
             :label="'Extra information'"
             :placeholder="'For example, number of expected patients, nearby car park, etc.'"
             :error="formError.find(item => item.field === 'extra_information')"
+            :resize="false"
           />
-          <AppTextarea
+          <AppInput
             v-model="form.update_remarks"
+            :type="'textarea'"
             :name="'update_remarks'"
             :label="'Update Remarks'"
-            :placeholder="''"
             :error="formError.find(item => item.field === 'update_remarks')"
+            :resize="false"
           />
         </div>
         <div class="flex flex-col w-full md:w-1/2 p-0 md:pl-4">
@@ -206,15 +218,17 @@
               />
             </div>
           </div>
-          <AppSelect
+          <AppInput
             v-model="form.shift_id"
+            :type="'select'"
             :name="'shift_id'"
-            :label="'Shift'"
+            :label="'Gender'"
             :placeholder="'Select...'"
             :items="shifts"
           />
-          <AppSelect
-            v-model="unpaid_breaks"
+          <AppInput
+            v-model="form.unpaid_breaks"
+            :type="'select'"
             :name="'unpaid_breaks '"
             :label="'Unpaid break'"
             :items="[ {value: 15, label: '15'}, {value: 30, label: '30'}, {value: 60, label: '60'}, {value: 'other', label: 'Other'} ]"
@@ -244,42 +258,52 @@
             :name="'favorite_only_until'"
             :label="'Only Favorite locums can apply until'"
           />
-          <AppSelect
+          <AppInput
             v-model="form.ir35"
+            :type="'select'"
             :name="'ir35'"
             :label="'IR35 - role inside or outside of scope'"
             :items="[ {value: 'true', label: 'Inside of Scope'}, {value: 'false', label: 'Outside of Scope'} ]"
           />
-          <AppSelect
+          <AppInput
             v-model="form.profession_id"
+            :type="'select'"
             :name="'profession_id'"
             :label="'Role'"
             :items="professions"
-            :placeholder="'Select..'"
           />
+
           <AppFilterSearch
             v-model="form.qualification_id"
             :name="'qualification_id'"
             :label="'Specialty'"
             :placeholder="'Select...'"
-            :items="qualifications"
+            :error="formError.find(item => item.field === 'qualification_id')"
             :info="'Choose at least one qualification'"
+            :url="'/api/v1/qualifications'"
+            :professionCategoryId="professionCategoryId.toString()"
+            @add="CheckEmptyField(form.qualification_id, 'qualification_id')"
+            @remove="CheckEmptyField(form.qualification_id, 'qualification_id')"
           />
+
           <AppFilterSearch
             v-model="form.clinical_system_id"
             :name="'clinical_system_id'"
-            :label="'Clnical systems'"
+            :label="'Clinical systems'"
             :placeholder="'Select...'"
-            :items="clinical_system_lists"
-            :info="'Choose at least one qualification'"
+            :error="formError.find(item => item.field === 'clinical_system_id')"
+            :info="'Choose at least one IT system'"
+            :url="'/api/v1/clinical-systems'"
+            @add="CheckEmptyField(form.clinical_system_id, 'clinical_system_id')"
+            @remove="CheckEmptyField(form.clinical_system_id, 'clinical_system_id')"
           />
           <AppFilterSearch
             v-model="form.spoken_language_id"
             :name="'spoken_language_id'"
             :label="'Spoken languages'"
             :placeholder="'Select...'"
-            :items="spoken_language_lists"
-            :info="'Choose at least one qualification'"
+            :info="'Choose other languages you can speak'"
+            :url="'/api/v1/spoken-languages'"
             :defaultItem="'English'"
           />
 
@@ -344,9 +368,7 @@ import { mixin as clickaway } from "vue-clickaway";
 import AppInput from "@/components/Base/AppInput";
 import AppDate from "@/components/Base/AppDate";
 import AppTime from "@/components/Base/AppTime";
-import AppSelect from "@/components/Base/AppSelect";
 import AppButton from "@/components/Base/AppButton";
-import AppTextarea from "@/components/Base/AppTextarea";
 import AppFilterSearch from "@/components/Base/AppFilterSearch";
 import AppFormError from "@/components/Base/AppFormError";
 const session_requirements_lists = [
@@ -361,14 +383,14 @@ export default {
     AppInput,
     AppDate,
     AppTime,
-    AppSelect,
     AppButton,
-    AppTextarea,
     AppFilterSearch,
     AppFormError
   },
   data() {
     return {
+      professionCategoryId: "",
+
       practice_lists: [],
       rate_lists: [],
       mandatory_training: [],
@@ -451,6 +473,7 @@ export default {
         this.selectedProfession = this.professions_categories.find(
           item => item.id == value
         );
+        this.professionCategoryId = this.selectedProfession.profession_category.id;
         if (this.selectedProfession.profession_category.id == 1) {
           this.qualifications = this.gp_qualification_lists;
           this.compliances = this.gp_compliance_documents_lists;
@@ -489,6 +512,7 @@ export default {
   },
   created() {
     this.getInit();
+
     this.$axios.$get(`/api/v1/practice/me/practice-practices`).then(res => {
       this.practice_lists = [];
       res.data.practices.forEach(item => {
@@ -533,33 +557,36 @@ export default {
         this.professions.push({ label: item.name, value: item.id });
         this.professions_categories.push(item);
       });
-      this.selectedProfession = this.professions_categories.find(
-        item => item.id == this.form.profession_id
-      );
-      if (this.selectedProfession.profession_category.id == 1) {
-        this.qualifications = this.gp_qualification_lists;
-        this.compliances = this.gp_compliance_documents_lists;
-        return;
-      }
-      if (this.selectedProfession.profession_category.id == 2) {
-        this.qualifications = this.other_qualification_lists;
-        this.compliances = this.others_compliance_documents_lists;
-        return;
-      }
+      // this.selectedProfession = this.professions_categories.find(
+      //   item => item.id == this.form.profession_id
+      // );
+
+      // this.professionCategoryId = this.selectedProfession.profession_category.id;
+
+      // if (this.selectedProfession.profession_category.id == 1) {
+      //   this.qualifications = this.gp_qualification_lists;
+      //   this.compliances = this.gp_compliance_documents_lists;
+      //   return;
+      // }
+      // if (this.selectedProfession.profession_category.id == 2) {
+      //   this.qualifications = this.other_qualification_lists;
+      //   this.compliances = this.others_compliance_documents_lists;
+      //   return;
+      // }
     });
 
-    this.$axios.$get(`/api/v1/clinical-systems`).then(res => {
-      this.clinical_system_lists = [];
-      res.data.clinical_systems.forEach(item => {
-        this.clinical_system_lists.push({ label: item.name, value: item.id });
-      });
-    });
-    this.$axios.$get(`/api/v1/spoken-languages`).then(res => {
-      this.spoken_language_lists = [];
-      res.data.spoken_languages.forEach(item => {
-        this.spoken_language_lists.push({ label: item.name, value: item.id });
-      });
-    });
+    // this.$axios.$get(`/api/v1/clinical-systems`).then(res => {
+    //   this.clinical_system_lists = [];
+    //   res.data.clinical_systems.forEach(item => {
+    //     this.clinical_system_lists.push({ label: item.name, value: item.id });
+    //   });
+    // });
+    // this.$axios.$get(`/api/v1/spoken-languages`).then(res => {
+    //   this.spoken_language_lists = [];
+    //   res.data.spoken_languages.forEach(item => {
+    //     this.spoken_language_lists.push({ label: item.name, value: item.id });
+    //   });
+    // });
     this.$axios.$get(`/api/v1/me`).then(res => {
       res.data.user.practice_detail.practice.mandatory_trainings.forEach(
         item => {

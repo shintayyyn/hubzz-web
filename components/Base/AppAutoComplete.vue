@@ -31,7 +31,7 @@
             class="flex flex-row flex-no-wrap justify-start p-2 text-xs border-b-2 cursor-pointer"
             :class="{'bg-gray-300': activeIndex === index}"
             @mouseover="activeIndex = index"
-            @click="add()"
+            @click="add"
           >
             <template v-if="keyword === 'practices'">
               <span class="w-1/6 flex justify-center">
@@ -111,7 +111,7 @@ export default {
           .$get(`/api/v1/conversations?search=${fullName}`)
           .then(res => {
             if (res.data.conversations.length > 0) {
-              let id = res.data.conversations[0].id;
+              let id = res.data.conversations[0].conversation_id;
               this.$router.push(`/messages/${id}`);
             }
             this.search = fullName;

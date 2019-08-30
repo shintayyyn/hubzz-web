@@ -1,32 +1,14 @@
 <template>
   <section class="modal-container shadow-lg" ref="modalContainer">
-    <div class="confirmation-shield" v-if="confirmation_modal"></div>
-    <transition name="drop" mode="out-in">
-      <div class="confirmation-modal flex justify-center" v-if="confirmation_modal">
-        <div class="border-solid rounded-b-lg bg-yellow-500 py-2 px-24">
-          <div class="flex justify-center">
-            <svgicon name="alert" height="20" width="20" />
-            <div class="text-sm ml-2">Delete this appointment?</div>
-          </div>
-          <div class="flex justify-center my-2">
-            <div class="mx-2">
-              <button
-                class="border border-solid bg-yellow-500 hover:text-white focus:outline-none text-black font-bold py-5 rounded-lg"
-                style="width:100px;"
-                @click.prevent="remove"
-              >Yes</button>
-            </div>
-            <div class="mx-2">
-              <button
-                class="border border-solid bg-yellow-500 hover:text-white focus:outline-none text-black font-bold py-5 rounded-lg"
-                @click.prevent="confirmation_modal = false"
-                style="width:100px;"
-              >Cancel</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </transition>
+    <AppConfirmationModal
+      :label="'Delete this appointment?'"
+      :confirmLabel="'Yes'"
+      :cancelLabel="'Cancel'"
+      :modal="confirmation_modal"
+      @confirm="remove"
+      @cancel="confirmation_modal = false"
+    />
+
     <div>
       <div class="p-8 max-w-3xl">
         <div @click="close" class="cursor-pointer">
@@ -35,8 +17,9 @@
         <div class="flex justify-start font-bold text-sm sm:text-xl mt-8">Appointment</div>
         <AppFormError :formError="formError" v-if="formError.length > 0" id="error" />
         <div class="rounded-lg shadow-lg px-8 py-4 mt-4">
-          <AppSelect
+          <AppInput
             v-model="form.private_practice_id"
+            :type="'select'"
             :name="'private_practice_id'"
             :label="'Practice'"
             :placeholder="'Select...'"
@@ -51,8 +34,9 @@
               <AppDate v-model="form.date_end" :name="'date_end'" :label="'To'" />
             </div>
             <div class="px-1 leading-loose">
-              <AppSelect
+              <AppInput
                 v-model="form.shift_id"
+                :type="'select'"
                 :name="'shift_id'"
                 :label="'Shift'"
                 :placeholder="'Select...'"
@@ -70,8 +54,9 @@
               :inStyle="'text-align:right'"
             />
             <div class="mx-2"></div>
-            <AppSelect
+            <AppInput
               v-model="form.locum_detail_rate_type_id"
+              :type="'select'"
               :name="'locum_detail_rate_type_id'"
               :label="'per'"
               :placeholder="'Select...'"
@@ -92,11 +77,12 @@
             </div>
           </div>
           <div class="mt-4">
-            <AppTextarea
+            <AppInput
               v-model="form.description"
+              :type="'textarea'"
               :name="'description'"
               :label="'Private notes'"
-              :placeholder="''"
+              :resize="false"
             />
           </div>
           <div class="flex flex-no-wrap justify-start">
@@ -124,21 +110,19 @@
 <script>
 import AppInput from "@/components/Base/AppInput";
 import AppDate from "@/components/Base/AppDate";
-import AppSelect from "@/components/Base/AppSelect";
-import AppTextarea from "@/components/Base/AppTextarea";
 import AppButton from "@/components/Base/AppButton";
 import AddSurgeryModal from "@/components/AddSurgeryModal";
 import AppFormError from "@/components/Base/AppFormError";
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
 export default {
   props: ["job"],
   components: {
     AppInput,
     AppDate,
-    AppSelect,
-    AppTextarea,
     AppButton,
     AddSurgeryModal,
-    AppFormError
+    AppFormError,
+    AppConfirmationModal
   },
   data() {
     return {
@@ -357,24 +341,6 @@ export default {
 };
 </script>
 <style scoped>
-.confirmation-shield {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #333;
-  opacity: 0.5;
-  z-index: 511;
-}
-.confirmation-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: auto;
-  z-index: 512;
-}
 .add-surgery-shield {
   position: fixed;
   top: 0;

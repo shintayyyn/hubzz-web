@@ -1,12 +1,12 @@
 <template>
   <section v-if="!loading">
     <div class="-mt-2">
-      <AppSelect
+      <AppInput
         v-model="profession_id"
-        :name="'Filter Locums by'"
+        :type="'select'"
+        :name="'profession_id'"
         :label="'Filter Locums by'"
         :items="professions"
-        :placeholder="'All'"
       />
     </div>
     <div v-if="users.length > 0">
@@ -62,14 +62,14 @@
     <div v-else class="flex flex-row flex-wrap justify-center">
       <div>There are no favourite locums connected to your practice yet.</div>
     </div>
-    <div class="shield" v-if="tabs.includes($route.name)"></div>
+    <div class="shield" v-if="$route.name !== 'my-banks-favourites'"></div>
     <nuxt-child />
   </section>
 </template>
 <script>
 import AppPagination from "@/components/Base/AppPagination";
-import AppSelect from "@/components/Base/AppSelect";
 import AppAvatar from "@/components/Base/AppAvatar";
+import AppInput from "@/components/Base/AppInput";
 const tabs = [
   "my-banks-favourites-userId",
   "my-banks-favourites-userId-profile",
@@ -89,8 +89,8 @@ export default {
   },
   components: {
     AppPagination,
-    AppSelect,
-    AppAvatar
+    AppAvatar,
+    AppInput
   },
   data() {
     return {
@@ -104,10 +104,10 @@ export default {
       loading: true,
 
       params: {
-        profession_id: "1"
+        profession_id: ""
       },
 
-      profession_id: "1"
+      profession_id: "All"
     };
   },
   computed: {
@@ -126,8 +126,19 @@ export default {
     this.getLocumsCount();
   },
   watch: {
+    $route(value) {
+      if (value.name !== "my-banks-favourites") {
+        document.body.style.overflow = "hidden";
+      } else {
+        document.body.style.overflow = "auto";
+      }
+    },
     profession_id(value) {
-      this.params.profession_id = value;
+      if (value === "All") {
+        this.params.profession_id = "";
+      } else {
+        this.params.profession_id = value;
+      }
       this.getLocums(this.current_page);
     }
   },
@@ -135,6 +146,7 @@ export default {
     getProfessions() {
       this.$axios.$get(`/api/v1/professions`).then(res => {
         this.professions = [];
+        this.professions.push({ label: "All", value: "All" });
         res.data.professions.forEach(item => {
           this.professions.push({ label: item.name, value: item.id });
         });

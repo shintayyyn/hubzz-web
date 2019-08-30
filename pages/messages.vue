@@ -82,8 +82,7 @@ export default {
       let conversation = this.conversations.find(
         (conversation, index) => index === 0
       );
-      this.$router.push(`/messages/${conversation.id}`);
-      // this.$router.push(`/messages/${conversation.conversation_id}`);
+      this.$router.push(`/messages/${conversation.conversation_id}`);
     }
   }
 };
@@ -99,7 +98,7 @@ export default {
 
 @media screen and (min-width: 1200px) {
   .messages-section {
-    width: 53vw;
+    width: 80%;
   }
 }
 </style>
