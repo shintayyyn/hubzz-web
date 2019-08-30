@@ -186,7 +186,7 @@ export default {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
-              text: ["Remove to favourites"]
+              text: ["Removed to favourites"]
             });
           });
       }

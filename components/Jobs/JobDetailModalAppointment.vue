@@ -91,7 +91,7 @@
                 :placeholder="''"
                 :inStyle="'text-align:right'"
               />
-              <div class="text-xs sm:text-sm mx-2 mb-2">hours</div>
+              <div class="text-xs sm:text-sm mx-2">hours</div>
             </div>
           </div>
           <div class="mt-4">
@@ -199,6 +199,7 @@ export default {
     this.getShifts();
     this.getRateType();
     if (this.job) {
+      console.log(this.job);
       this.form.private_practice_id = this.job.private_job.private_practice.id;
       this.form.date_start = this.job.date_start;
       this.form.date_end = this.job.date_end;

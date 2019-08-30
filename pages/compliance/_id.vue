@@ -1,27 +1,28 @@
 <template>
   <div class="modal shadow-lg">
     <div class="p-8">
-      <div @click="$router.push('/compliance')" class="cursor-pointer">
-        <svgicon name="left-arrow" height="32" />
-      </div>
-      <div class="flex flex-col p-4">
-        <div class="flex flex-row flex-no-wrap items-center text-lg">
-          <a
-            @click.prevent="downloadItem(compliance_document.file.url,compliance_document.file.filename)"
-            class="text-black no-underline flex items-center w-auto hover:bg-yellow-500 rounded-lg cursor-pointer p-2"
-          >
-            <svgicon
-              name="cloud-download"
-              width="21"
-              height="21"
-              color="black"
-              hover="transparent black"
-              class="inline"
-            ></svgicon>
-            <span class="mx-1"></span>
-            <span>Download</span>
-          </a>
+      <div class="flex flex-row flex-no-wrap items-center text-lg">
+        <div @click="$router.push('/compliance')" class="cursor-pointer">
+          <svgicon name="left-arrow" height="32" />
         </div>
+        <a
+          @click.prevent="downloadItem(compliance_document.file.url,compliance_document.file.filename)"
+          class="text-black no-underline flex items-center w-auto hover:bg-yellow-500 rounded-lg cursor-pointer p-2 mx-4"
+        >
+          <svgicon
+            name="cloud-download"
+            width="21"
+            height="21"
+            color="black"
+            hover="transparent black"
+            class="inline"
+          ></svgicon>
+          <span class="mx-1"></span>
+          <span>Download</span>
+        </a>
+      </div>
+
+      <div class="flex flex-col p-4">
         <div class="shadow-lg rounded-lg bg-gray-300 mt-5">
           <div class="flex flex-row flex-wrap justify-start p-8">
             <div class="flex flex-col w-full lg:w-1/4">

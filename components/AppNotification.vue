@@ -87,7 +87,7 @@ export default {
     },
     notify() {
       return this.$store.state.notification.enabled;
-    },
+    }
     // closable() {
     //   return this.$store.state.notification.closable
     // }
@@ -104,7 +104,7 @@ export default {
           });
         }, 2000);
       }
-    },
+    }
   },
   methods: {
     close() {

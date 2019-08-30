@@ -158,7 +158,7 @@ export default {
   opacity: 0.5;
   z-index: 509;
 }
-/* .modal {
+.modal {
   position: fixed;
   top: 0;
   right: 0;
@@ -174,7 +174,7 @@ export default {
   .modal {
     width: 80%;
   }
-} */
+}
 </style>
 
 

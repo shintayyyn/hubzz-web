@@ -161,7 +161,7 @@
               class="rounded-lg shadow-md text-xs sm:text-sm text-left"
               :class="item.info && item.info.file ? 'hover:bg-gray-300' : ''"
             >
-              <td class="cursor-pointer" @click="show(item, 'compliance')">{{item.name}}</td>
+              <td class="cursor-pointer w-1/3" @click="show(item, 'compliance')">{{item.name}}</td>
               <td class="hover:underline" v-if="item.info && item.info.file">
                 <div class="flex flex-row flex-no-wrap">
                   <svgicon name="cloud-download" height="24" width="24" />
@@ -249,7 +249,7 @@
               class="rounded-lg shadow-md text-xs sm:text-sm text-left"
               :class="item.info && item.info.file ? 'hover:bg-gray-300' : ''"
             >
-              <td class="cursor-pointer" @click="show(item, 'mandatory')">{{item.name}}</td>
+              <td class="cursor-pointer w-1/3" @click="show(item, 'mandatory')">{{item.name}}</td>
               <td class="hover:underline" v-if="item.info && item.info.file">
                 <div class="flex flex-row flex-no-wrap">
                   <svgicon name="cloud-download" height="24" width="24" />
@@ -456,7 +456,7 @@ export default {
       if (!e.target.files.length) {
         return;
       }
-      let types = ["pdf", "jpeg", "msword", "tif"];
+      let types = ["pdf", "jpeg", "msword", "tiff"];
       let file = e.target.files[0];
       let fileType = file.type.split("/")[1];
       if (!types.includes(fileType)) {
@@ -540,14 +540,14 @@ export default {
       if (!e.target.files.length) {
         return;
       }
-      let types = ["pdf", "jpeg", "msword", "tif"];
+      let types = ["pdf", "jpeg", "msword", "tiff"];
       let file = e.target.files[0];
       let fileType = file.type.split("/")[1];
       if (!types.includes(fileType)) {
         this.$store.commit("SET_NOTIFICATION", {
           enabled: true,
           status: "alert",
-          text: "Invalid File Format"
+          text: ["Invalid File Format"]
         });
         return;
       }
@@ -616,14 +616,14 @@ export default {
         });
     },
     onMandatoryFileInput(e, id, index) {
-      let types = ["pdf", "jpeg", "msword", "tif"];
+      let types = ["pdf", "jpeg", "msword", "tiff"];
       let file = e.target.files[0];
       let fileType = file.type.split("/")[1];
       if (!types.includes(fileType)) {
         this.$store.commit("SET_NOTIFICATION", {
           enabled: true,
           status: "alert",
-          text: "Invalid File Format"
+          text: ["Invalid File Format"]
         });
         return;
       }
@@ -663,14 +663,14 @@ export default {
       if (!e.target.files.length) {
         return;
       }
-      let types = ["pdf", "jpeg", "msword", "tif"];
+      let types = ["pdf", "jpeg", "msword", "tiff"];
       let file = e.target.files[0];
       let fileType = file.type.split("/")[1];
       if (!types.includes(fileType)) {
         this.$store.commit("SET_NOTIFICATION", {
           enabled: true,
           status: "alert",
-          text: "Invalid File Format"
+          text: ["Invalid File Format"]
         });
         return;
       }

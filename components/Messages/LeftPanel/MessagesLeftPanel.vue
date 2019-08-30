@@ -17,7 +17,7 @@
           <template v-if="showResult === false">
             <div
               class="relative flex w-full items-center px-2 py-4 cursor-pointer border-b"
-              :class="[parseInt($route.params.slug) === item.conversation_id ? 'bg-gray-300' : 'hover:bg-gray-200']"
+              :class="[parseInt($route.params.slug) === item.conversation_id ? 'bg-gray-300' : 'hover:bg-gray-200', unread ? 'bg-gray-300 font-bold' : '', unreadMessages.includes(item.conversation_id) ? 'bg-gray-200 font-bold' : '']"
               v-for="item in conversations"
               :key="item.conversation_id"
               @click="goTo(item.conversation_id ? item.conversation_id : item.conversation_id)"
@@ -90,7 +90,9 @@ export default {
       search_text: "",
       messages: [],
       showResult: false,
-      loadMore: false
+      loadMore: false,
+      unreadMessages: [],
+      unread: false
     };
   },
   computed: {
@@ -107,12 +109,18 @@ export default {
       }
     },
     conversations(newValue, oldValue) {
-      let receiver_id = newValue[0].receiver_id;
-      let sender_id = newValue[0].sender_id;
-      if (this.$auth.user.id === receiver_id) {
-        return;
+      console.log(this.conversations);
+      if (
+        this.$store.state.chat.activeConversationId !=
+        newValue[0].conversation_id
+      ) {
+        this.unreadMessages.push(newValue[0].conversation_id);
       }
-      this.$router.push(`/messages/${newValue[0].conversation_id}`);
+      // let receiver_id = newValue[0].receiver_id;
+      // let sender_id = newValue[0].sender_id;
+      // if (this.$auth.user.id === receiver_id) {
+      //   return;
+      // }
     }
   },
   methods: {
@@ -121,6 +129,12 @@ export default {
       this.messages = [];
       if (window.innerWidth < 768) {
         this.$store.commit("IS_MOBILE", false);
+      }
+      if (this.unreadMessages.includes(id)) {
+        let index = this.unreadMessages.findIndex(
+          message_id => message_id === id
+        );
+        this.unreadMessages.splice(index, 1);
       }
       this.$router.push(`/messages/${id}`);
     },
@@ -132,7 +146,7 @@ export default {
       });
     },
     userFullname(item) {
-      return item.receiver_id === this.$auth.user.id
+      return item.receiver_id == this.$auth.user.id
         ? `${item.sender_first_name} ${item.sender_last_name}`
         : `${item.receiver_first_name} ${item.receiver_last_name}`;
     },

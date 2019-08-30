@@ -8,6 +8,7 @@ export default {
     this.$socket.on("newConversation", conversation => {
       if (!state.conversations.find(item => item.id == conversation.conversation_id)) {
         commit("ADD_CONVERSATION", conversation);
+        this.$router.push(`/messages/${conversation.conversation_id}`);
       }
     });
     this.$socket.on("newMessage", message => {
@@ -18,16 +19,6 @@ export default {
     this.$socket.on("deleteMessage", message => {
       commit("DELETE_MESSAGE", message);
     });
-    // this.$socket.on(`presence-in`, ({ user, online }) => {
-    //     console.log(user)
-    //     console.log('isOnline:', online)
-    //     // const username = user.username
-    //     // if (online) {
-    //     //   commit('addOnlineUsername', { username })
-    //     // } else {
-    //     //   commit('removeOnlineUsername', { username })
-    //     // }
-    // })
   },
   async initializeUsersOnline({
     state,
@@ -93,6 +84,7 @@ export default {
       } else {
         payload.receiver_user_id = foundConversation.receiver_id.toString();
       }
+
     }
     const response = await chatApi.sendMessage(this.$axios, payload);
     if (!state.messages.find(message => message.id === response.data.message.id) && !payload.receiver_user_id) {
@@ -113,7 +105,6 @@ export default {
       receiver_user_id = foundConversation.receiver_id;
     }
     const response = await chatApi.deleteMessage(this.$axios, receiver_user_id.toString(), payload);
-    console.log(response)
     commit("DELETE_MESSAGE", response.data.message);
   }
 };

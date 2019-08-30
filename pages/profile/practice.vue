@@ -469,20 +469,20 @@ export default {
       if (!e.target.files.length) {
         return;
       }
-      let types = ["pdf", "jpeg", "msword", "tif"];
+      let types = ["pdf", "jpeg", "msword", "tiff"];
       let file = e.target.files[0];
       let fileType = file.type.split("/")[1];
       if (!types.includes(fileType)) {
         this.$store.commit("SET_NOTIFICATION", {
           enabled: true,
           status: "alert",
-          text: "Invalid File Format"
+          text: ["Invalid File Format"]
         });
         return;
       }
       const formData = new FormData();
       formData.append("file", file);
-      this.loading = true;
+      this.uploading = true;
       this.$axios
         .$put(`/api/v1/practice/me/standard-terms`, formData)
         .then(res => {
@@ -491,7 +491,7 @@ export default {
             status: "success",
             text: [res.message]
           });
-          this.loading = false;
+          this.uploading = false;
         });
       this.practice.standard_terms = {
         file: {
@@ -521,7 +521,6 @@ export default {
     },
     practiceTypeOnchange(value) {
       this.selectedPracticeType = value;
-      console.log(value);
       this.practiceTypeConfirmationModal = true;
     },
     cancelPracticeType() {
@@ -547,16 +546,13 @@ export default {
         });
     },
     remove() {
-      this.loading = true;
       this.$axios.$delete(`/api/v1/practice/me/standard-terms`).then(res => {
-        this.loading = false;
         this.modal = false;
         this.$store.commit("SET_NOTIFICATION", {
           enabled: true,
           status: "success",
           text: [res.message]
         });
-        // this.practice.standard_terms.file.filename = null
         this.practice.standard_terms = null;
         // standard_terms)
       });

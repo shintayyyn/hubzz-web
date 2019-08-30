@@ -5,6 +5,7 @@
     @scroll="scrollHandler"
   >
     <div class="relative flex flex-col h-full">
+      <!-- CHAT -->
       <template v-if="messages.length > 0">
         <transition name="drop" mode="in-out">
           <span class="relative w-full flex justify-center">
@@ -60,8 +61,8 @@
                   >{{ isReceiver(item) ? userFullname(item) : 'Me' }}</span>-->
                   <div class="flex" :class="isReceiver(item) ? '': 'flex-row-reverse'">
                     <div
-                      class="my-1 mx-2 rounded-lg text-xs px-4 py-2 border text-gray-500 italic"
-                      :class="{'mx-4' : !isReceiver(item)}"
+                      class="my-1 rounded-lg text-xs px-4 py-2 border text-gray-500 italic"
+                      :class="{'ml-4' : isReceiver(item)}"
                     >This message has been removed.</div>
                   </div>
                   <div class="mx-2" :class="isReceiver(item) ? 'text-right ': ''">
@@ -77,7 +78,7 @@
                 class="flex my-1 md:max-w-sm lg:max-w-lg"
                 :class="isReceiver(item) ? '': 'flex-row-reverse'"
               >
-                <div :class="item.sender.domain === 'Locum' ? '' : ''" class="w-10 h-10">
+                <div :class="item.sender.domain === 'Locum' ? '' : 'hidden'" class="w-10 h-10">
                   <AppAvatar
                     class="m-auto"
                     :height="'40px'"
@@ -114,7 +115,8 @@
           </div>
         </div>
       </template>
-      <template v-if="$route.params.slug === 'new' || messages.length === 0">
+      <!-- CREATE NEW CONVERSATION -->
+      <template v-if="$route.params.slug && $route.params.slug === 'new' || messages.length === 0">
         <div class="relative h-full flex flex-col justify-between pt-20 overflow-y-hidden">
           <div class="h-full px-8 md:px-20 md:pt-20">
             <button
@@ -155,13 +157,11 @@
 import AppAutoComplete from "~/components/Base/AppAutoComplete";
 import AppButton from "~/components/Base/AppButton";
 import AppAvatar from "~/components/Base/AppAvatar";
-import MessagesCenterPanelTop from "@/components/Messages/CenterPanel/MessagesCenterPanelTop";
 export default {
   components: {
     AppAutoComplete,
     AppButton,
-    AppAvatar,
-    MessagesCenterPanelTop
+    AppAvatar
   },
   data() {
     return {
@@ -185,6 +185,7 @@ export default {
     this.route = this.$route.params.slug;
     this.oldMessageCount = this.messages.length;
   },
+
   mounted() {
     this.scrollToBottom();
   },
@@ -197,37 +198,6 @@ export default {
         this.scrollToBottom();
       }
       this.loadMore = false;
-    },
-    messages(newValue, oldValue) {
-      // console.log(newValue, oldValue)
-      // if (newValue.length === 0) {
-      //   return
-      // }
-      // if (newValue.length >= oldValue.length && oldValue.length !== 0) {
-      //   // check if newMessage and oldMessage is not in the same conversation
-      //   if (newValue[newValue.length - 1].conversation_id !== oldValue[oldValue.length - 1].conversation_id) {
-      //     // if not, scrollToBottom()
-      //     this.scrollToBottom()
-      //   } else {
-      //     // else, check if newmessage is from another user
-      //     if (newValue[newValue.length - 1].sender_id !== this.$auth.user.id) {
-      //       // if it is, check if your scrollbar is at the bottom
-      //       const scrollPosition = this.$refs.messagesContainer.scrollTop / (this.$refs.messagesContainer.scrollHeight - this.$refs.messagesContainer.clientHeight)
-      //       if (scrollPosition === 1) {
-      //         // if it is scrollToBottom()
-      //         this.scrollToBottom()
-      //       } else {
-      //         // notify theres a new message
-      //       }
-      //     } else {
-      //       // else scrollToBottom()
-      //       this.scrollToBottom()
-      //     }
-      //   }
-      // } else {
-      //   // this.scrollToBottom()
-      //   this.scrollToBottom()
-      // }
     },
     messages(value) {
       let atBottom =
@@ -287,7 +257,7 @@ export default {
         e.target.scrollTop === 0
       ) {
         this.$axios.$get(`/api/v1/conversations/${this.route}`).then(res => {
-          if (this.messages.length == res.data.messages.length) {
+          if (this.messages.length === res.data.messages.length) {
             this.loadMore = false;
           } else {
             this.loadMore = true;
@@ -347,14 +317,10 @@ export default {
                 receiver_user_id: this.selectedUserId.toString(),
                 message: this.message
               });
-              let conversation = this.$store.state.chat.conversations[0];
-              if (window.innerWidth < 768) {
-                this.$store.commit("IS_MOBILE", false);
-              }
             }
             this.search_user = "";
+            this.message = "";
           });
-        this.message = "";
       }
     }
   }

@@ -1,5 +1,7 @@
 <template>
   <div class="flex flex-row flex-wrap justify-start">
+    <AppFormError :formError="formError" v-if="formError.length > 0" />
+
     <div class="w-full md:w-1/2 p-2">
       <p style="font-family:Nunito" class="text-sm font-bold">Bank account</p>
       <div class="border-solid rounded-lg shadow-lg mt-5 p-10">
@@ -9,7 +11,6 @@
           :name="'account_name'"
           :label="'Account name'"
           :placeholder="''"
-          :error="formError.find(item => item.field === 'account_name')"
         />
         <AppInput
           v-model="form.bank_name"
@@ -17,7 +18,6 @@
           :name="'bank_name'"
           :label="'Bank name'"
           :placeholder="''"
-          :error="formError.find(item => item.field === 'bank_name')"
         />
         <AppInput
           v-model="form.sort_code"
@@ -25,7 +25,6 @@
           :name="'sort_code'"
           :label="'Sort code'"
           :placeholder="''"
-          :error="formError.find(item => item.field === 'sort_code')"
         />
         <AppInput
           v-model="form.account_number"
@@ -33,7 +32,6 @@
           :name="'account_number'"
           :label="'Account number'"
           :placeholder="''"
-          :error="formError.find(item => item.field === 'account_number')"
         />
       </div>
     </div>
@@ -49,7 +47,6 @@
                 v-model="form.tax_year_end_month"
                 :type="'select'"
                 :name="'tax_year_end_month'"
-                :error="formError.find(item => item.field === 'tax_year_end_month')"
                 :placeholder="'Select...'"
                 :items="months"
               />
@@ -59,7 +56,6 @@
                 v-model="form.tax_year_end_date"
                 :type="'select'"
                 :name="'tax_year_end_date'"
-                :error="formError.find(item => item.field === 'tax_year_end_date')"
                 :placeholder="'Select...'"
                 :items="days"
               />
@@ -71,7 +67,6 @@
           :type="'select'"
           :name="'employment_type'"
           :label="'Are you...?'"
-          :error="formError.find(item => item.field === 'employment_type')"
           :placeholder="'Select...'"
           :items="employmentTypes"
         />
@@ -82,7 +77,6 @@
             :name="'company_registration_number'"
             :label="'Company_registration_number'"
             :placeholder="'The number of your company from Companies House'"
-            :error="formError.find(item => item.field === 'company_registration_number')"
           />
         </template>
         <template v-else>
@@ -92,7 +86,6 @@
             :name="'utr_number'"
             :label="'UTR number'"
             :placeholder="''"
-            :error="formError.find(item => item.field === 'utr_number')"
           />
         </template>
 
@@ -101,7 +94,6 @@
           :type="'select'"
           :name="'ir35'"
           :label="'IR35 - role inside or outside of scope'"
-          :error="formError.find(item => item.field === 'ir35')"
           :placeholder="'Select...'"
           :items="[ {value: true, label: 'Inside of Scope'}, {value: false, label: 'Outside of Scope'} ]"
         />
@@ -117,6 +109,7 @@
 <script>
 import AppInput from "@/components/Base/AppInput";
 import AppButton from "@/components/Base/AppButton";
+import AppFormError from "@/components/Base/AppFormError";
 let months = [
   { label: "Jan", value: "1" },
   { label: "Feb", value: "2" },
@@ -142,7 +135,8 @@ export default {
   },
   components: {
     AppInput,
-    AppButton
+    AppButton,
+    AppFormError
   },
   async asyncData({ app, error }) {
     try {
