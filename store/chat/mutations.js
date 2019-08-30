@@ -4,6 +4,7 @@ export default {
   },
   SET_CONVERSATIONS(state, payload) {
     state.conversations = payload
+    console.log(state.conversations)
   },
   FETCH_CONVERSATIONS(state, payload) {
     payload.forEach(item => {

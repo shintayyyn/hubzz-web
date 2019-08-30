@@ -18,6 +18,7 @@
               :name="'date_start'"
               :label="'From'"
               :error="formError.find(item => item.field === 'date_start')"
+              @blur="CheckEmptyField(form.date_start,'date_start')"
             />
           </div>
           <div class="w-full p-0 sm:w-1/2 pl-2">
@@ -26,6 +27,7 @@
               :name="'date_end'"
               :label="'To'"
               :error="formError.find(item => item.field === 'date_end')"
+              @blur="CheckEmptyField(form.date_end,'date_end')"
             />
           </div>
         </div>

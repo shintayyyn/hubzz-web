@@ -15,22 +15,26 @@
 </template>
 <script>
 const tabs = [
-  'my-banks-favourites-userId-related-jobs-available', 'my-banks-favourites-userId-related-jobs-applied',
-  'my-banks-favourites-userId-related-jobs-current', 'my-banks-favourites-userId-related-jobs-completed',
-  'my-banks-favourites-userId-related-jobs-unsuccessful', 'my-banks-favourites-userId-related-jobs-cancelled',
-  'my-banks-favourites-userId-related-jobs-declined', 'my-banks-favourites-userId-related-jobs',
-]
-import LocumTabs from '@/components/MyBanks/LocumTabs'
+  "my-banks-favourites-userId-related-jobs-available",
+  "my-banks-favourites-userId-related-jobs-applied",
+  "my-banks-favourites-userId-related-jobs-current",
+  "my-banks-favourites-userId-related-jobs-completed",
+  "my-banks-favourites-userId-related-jobs-unsuccessful",
+  "my-banks-favourites-userId-related-jobs-cancelled",
+  "my-banks-favourites-userId-related-jobs-declined",
+  "my-banks-favourites-userId-related-jobs"
+];
+import LocumTabs from "@/components/MyBanks/LocumTabs";
 export default {
   components: {
     LocumTabs
   },
   data() {
     return {
-      tabs,
-    }
+      tabs
+    };
   }
-}
+};
 </script>
 
 <style scoped>

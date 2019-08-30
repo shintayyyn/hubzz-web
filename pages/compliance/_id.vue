@@ -53,6 +53,8 @@
             <div class="w-full mt-5 lg:mt-0 lg:w-3/4">
               <embed
                 class="object-contain object-top"
+                width="100%"
+                height="auto"
                 :class="compliance_document.file.type == 'image' ? '' : 'document h-full w-full'"
                 :src="compliance_document.file.url"
               />
@@ -65,7 +67,7 @@
 </template>
 <script>
 export default {
-  async asyncData({ app, params, error }) {
+  async asyncData({ app, params, error, redirect }) {
     try {
       const response = await app.$axios.$get(
         `/api/v1/locum/locum-detail-compliance-documents/${params.id}`
@@ -78,7 +80,28 @@ export default {
         compliance_document
       };
     } catch (err) {
+      if (err.response && err.response.status === 404) {
+        return redirect("/compliance");
+      }
       throw err;
+    }
+  },
+  methods: {
+    downloadItem(fileUrl, fileName) {
+      const axios = require("axios");
+      axios({
+        url: fileUrl,
+        method: "GET",
+        responseType: "blob" // important
+      }).then(response => {
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", fileName);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      });
     }
   }
 };

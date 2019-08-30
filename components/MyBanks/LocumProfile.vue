@@ -83,12 +83,13 @@
               v-for="item in optional"
               :key="item.id"
             >
-              <svgicon name="cloud-download" height="24" width="24" />
+              <svgicon class="mr-1" name="cloud-download" height="24" width="24" />
               <a
                 @click.prevent="downloadItem(item.file.url, item.file.filename)"
                 :href="item.file.url"
                 :download="item.file.filename"
                 target="_blank"
+                class="px-2"
               >{{item.compliance_document.name}}</a>
             </div>
           </div>
@@ -126,16 +127,16 @@
   </div>
 </template>
 <script>
-import AppAvatar from '@/components/Base/AppAvatar'
+import AppAvatar from "@/components/Base/AppAvatar";
 export default {
   transition: {
-    name: 'fade',
-    mode: 'out-in'
+    name: "fade",
+    mode: "out-in"
   },
   components: {
     AppAvatar
   },
-  props: ['user'],
+  props: ["user"],
   data() {
     return {
       mandatory: [],
@@ -174,8 +175,8 @@ export default {
       const axios = require("axios");
       axios({
         url: fileUrl,
-        method: 'GET',
-        responseType: 'blob',
+        method: "GET",
+        responseType: "blob"
       }).then(response => {
         const url = window.URL.createObjectURL(new Blob([response.data]));
         const link = document.createElement("a");

@@ -3,7 +3,6 @@ export default {
   async initializeChatListener({
     state,
     commit,
-    dispatch
   }) {
     this.$socket.on("newConversation", conversation => {
       if (!state.conversations.find(item => item.id == conversation.conversation_id)) {
@@ -18,21 +17,9 @@ export default {
     this.$socket.on("deleteMessage", message => {
       commit("DELETE_MESSAGE", message);
     });
-    // this.$socket.on(`presence-in`, ({ user, online }) => {
-    //     console.log(user)
-    //     console.log('isOnline:', online)
-    //     // const username = user.username
-    //     // if (online) {
-    //     //   commit('addOnlineUsername', { username })
-    //     // } else {
-    //     //   commit('removeOnlineUsername', { username })
-    //     // }
-    // })
   },
   async initializeUsersOnline({
-    state,
     commit,
-    dispatch
   }) {
     this.$socket.on("presence-in", users => {
       commit("ADD_USER_ONLINE", users.user.id);

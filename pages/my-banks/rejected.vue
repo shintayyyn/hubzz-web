@@ -65,7 +65,7 @@
     <div v-else class="flex flex-row flex-wrap justify-center">
       <div>There are no favourite locums connected to your practice yet.</div>
     </div>
-    <div class="shield" v-if="tabs.includes($route.name)"></div>
+    <div class="shield" v-if="$route.name !== 'my-banks-rejected'"></div>
     <nuxt-child />
   </section>
 </template>
@@ -129,6 +129,13 @@ export default {
     this.getLocumsCount();
   },
   watch: {
+    $route(value) {
+      if (value.name !== "my-banks-rejected") {
+        document.body.style.overflow = "hidden";
+      } else {
+        document.body.style.overflow = "auto";
+      }
+    },
     profession_id(value) {
       if (value === "All") {
         this.params.profession_id = "";

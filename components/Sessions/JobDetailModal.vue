@@ -54,6 +54,7 @@
           />
         </div>
         <JobDetailModalCancelForm
+          :job="job"
           @close="close"
           v-if="job.status === 'Current' || job.status === 'Applied' || job.status === 'Available'"
         />

@@ -1,7 +1,7 @@
 <template>
   <transition name="fade" mode="out-in">
     <div class="loading-shield flex flex-col items-center justify-center shadow-md" v-if="loading">
-      <h1 :class="inClass" class="loader-message">{{ message }}</h1>
+      <h1 :class="inClass" class="loader-message" v-if="message">{{ message }}</h1>
       <svgicon name="loader" width="60" height="60" />
     </div>
   </transition>
@@ -14,8 +14,7 @@ export default {
       default: false
     },
     message: {
-      type: String,
-      required: true
+      type: String
     },
     inClass: String
   }
@@ -39,6 +38,7 @@ export default {
   position: sticky;
   top: 50%;
   text-align: center;
+  z-index: 50;
   /* left: 50%; */
   /* transform: translate(-50%, -50%); */
 }

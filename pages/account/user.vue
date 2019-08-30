@@ -24,49 +24,51 @@
           @click="resendEmailVerification()"
         >Click here to re-send</span>
       </div>
-      <AppInput
-        v-model="form.title"
-        :type="'text'"
-        :name="'title'"
-        :label="'Title'"
-        @submit="save"
-      />
-      <AppInput
-        v-model="form.first_name"
-        :type="'text'"
-        :name="'first_name'"
-        :label="'First name'"
-        :error="formError.find(item => item.field === 'first_name')"
-        @submit="save"
-        @blur="CheckEmptyField(form.first_name, 'first_name')"
-      />
-      <AppInput
-        v-model="form.last_name"
-        :type="'text'"
-        :name="'last_name'"
-        :label="'Last name'"
-        :error="formError.find(item => item.field === 'last_name')"
-        @submit="save"
-        @blur="CheckEmptyField(form.last_name, 'last_name')"
-      />
-      <AppInput
-        v-model="form.suffix"
-        :type="'text'"
-        :name="'suffix'"
-        :label="'Suffix'"
-        @submit="save"
-      />
-      <AppInput
-        v-model="form.practice_role"
-        :type="'select'"
-        :name="'practice_role'"
-        :label="'Role'"
-        :placeholder="'Role...'"
-        :items="roles"
-      />
-      <div class="text-left mt-5">
-        <AppButton :label="'Save changes'" @click="save" />
-      </div>
+      <template v-if="user.email_verified_at">
+        <AppInput
+          v-model="form.title"
+          :type="'text'"
+          :name="'title'"
+          :label="'Title'"
+          @submit="save"
+        />
+        <AppInput
+          v-model="form.first_name"
+          :type="'text'"
+          :name="'first_name'"
+          :label="'First name'"
+          :error="formError.find(item => item.field === 'first_name')"
+          @submit="save"
+          @blur="CheckEmptyField(form.first_name, 'first_name')"
+        />
+        <AppInput
+          v-model="form.last_name"
+          :type="'text'"
+          :name="'last_name'"
+          :label="'Last name'"
+          :error="formError.find(item => item.field === 'last_name')"
+          @submit="save"
+          @blur="CheckEmptyField(form.last_name, 'last_name')"
+        />
+        <AppInput
+          v-model="form.suffix"
+          :type="'text'"
+          :name="'suffix'"
+          :label="'Suffix'"
+          @submit="save"
+        />
+        <AppInput
+          v-model="form.practice_role"
+          :type="'select'"
+          :name="'practice_role'"
+          :label="'Role'"
+          :placeholder="'Role...'"
+          :items="roles"
+        />
+        <div class="text-left mt-5">
+          <AppButton :label="'Save changes'" @click="save" />
+        </div>
+      </template>
     </form>
   </div>
 </template>
@@ -113,6 +115,7 @@ export default {
       const response = await app.$axios.$get(`/api/v1/me`);
       const user =
         response.data && response.data.user ? response.data.user : null;
+      console.log(user);
       return {
         user
       };
