@@ -31,7 +31,7 @@
             class="flex flex-row flex-no-wrap justify-start p-2 text-xs border-b-2 cursor-pointer"
             :class="{'bg-gray-300': activeIndex === index}"
             @mouseover="activeIndex = index"
-            @click="add()"
+            @click="add"
           >
             <template v-if="keyword === 'practices'">
               <span class="w-1/6 flex justify-center">

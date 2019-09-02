@@ -46,8 +46,10 @@ export default {
     //     }
     //   },
     $route(value) {
-      this.$store.commit("TOGGLE_SIDEBAR", false);
-      document.body.style.overflow = "auto";
+      if (value) {
+        this.$store.commit("TOGGLE_SIDEBAR", false);
+        document.body.style.overflow = "auto";
+      }
     }
   },
   methods: {

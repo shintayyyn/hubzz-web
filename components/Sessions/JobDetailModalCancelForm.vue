@@ -3,7 +3,7 @@
     <div class="rounded-lg shadow-lg p-8 mt-4">
       <div class="font-bold text-md sm:text-lg">Cancel this job</div>
       <AppInput
-        v-model="form_cancel.cancelled_reason"
+        v-model="form.cancelled_reason"
         :type="'select'"
         :name="'cancelled_reason'"
         :label="'Please select your reason'"
@@ -49,23 +49,31 @@ export default {
     AppButton,
     AppInput
   },
+  props: ["job"],
   data() {
     return {
       reasons,
-      form_cancel: {
+      form: {
         cancelled_reason: ""
       },
       formError: []
     };
   },
+  watch: {
+    "form.cancelled_reason"() {
+      this.CheckEmptyField(this.form.cancelled_reason, "cancelled_reason");
+    }
+  },
   methods: {
     cancel() {
+      console.log(this.$route.params);
+      console.log(this.job);
       let jobId = this.$route.params.id || this.job.id;
       this.formError = [];
-      this.Validate(this.form_cancel);
+      this.Validate(this.form);
       if (!this.formError.length) {
         this.$axios
-          .$put(`/api/v1/practice/jobs/${jobId}/cancel`, this.form_cancel)
+          .$put(`/api/v1/practice/jobs/${jobId}/cancel`, this.form)
           .then(res => {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,

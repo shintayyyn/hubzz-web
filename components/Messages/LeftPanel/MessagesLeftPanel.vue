@@ -26,7 +26,7 @@
                 v-if="$auth.user.domain === 'Practice'"
                 :height="'50px'"
                 :width="'50px'"
-                :src="item.receiver_avatar ? item.receiver_avatar : ''"
+                :src="item.sender_avatar ? item.sender_avatar : ''"
               />
               <div class="w-5/6 flex items-center justify-between">
                 <div class="w-5/6 px-2">

@@ -83,7 +83,7 @@
               v-for="item in optional"
               :key="item.id"
             >
-              <svgicon name="cloud-download" height="24" width="24" />
+              <svgicon class="mr-1" name="cloud-download" height="24" width="24" />
               <a
                 @click.prevent="downloadItem(item.file.url, item.file.filename)"
                 :href="item.file.url"

@@ -3,7 +3,6 @@ export default {
   async initializeChatListener({
     state,
     commit,
-    dispatch
   }) {
     this.$socket.on("newConversation", conversation => {
       if (!state.conversations.find(item => item.id == conversation.conversation_id)) {
@@ -21,9 +20,7 @@ export default {
     });
   },
   async initializeUsersOnline({
-    state,
     commit,
-    dispatch
   }) {
     this.$socket.on("presence-in", users => {
       commit("ADD_USER_ONLINE", users.user.id);

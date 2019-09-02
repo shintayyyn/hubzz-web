@@ -8,7 +8,7 @@
         :name="'old_password'"
         :label="'Current password'"
         :error="formError.find(item => item.field === 'old_password')"
-        @submit="save"
+        @submit="update"
         @blur="CheckEmptyField(form.old_password, 'old_password')"
       />
       <AppInput
@@ -17,7 +17,7 @@
         :name="'new_password'"
         :label="'New password'"
         :error="formError.find(item => item.field === 'new_password')"
-        @submit="save"
+        @submit="update"
         @blur="CheckEmptyField(form.new_password, 'new_password')"
       />
       <AppInput
@@ -26,7 +26,7 @@
         :name="'new_password_confirmation'"
         :label="'Repeat password to confirm'"
         :error="formError.find(item => item.field === 'new_password_confirmation')"
-        @submit="save"
+        @submit="update"
         @blur="CheckEmptyField(form.new_password_confirmation, 'new_password_confirmation')"
       />
 

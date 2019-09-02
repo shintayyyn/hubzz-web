@@ -13,7 +13,7 @@
         type="input"
         placeholder="mm/dd/yyyy"
         class="border-b-2 focus:border-yellow-400 focus:outline-none py-4 font-bold text-xs sm:text-sm w-full text-center"
-        :class="error? 'border-red-500':''"
+        :class="{ inClass, 'border-red-500': error}"
         @click="modal = true"
         @keypress="validateInput($event)"
         @input="$emit('input', $event.target.value)"
@@ -235,6 +235,7 @@ export default {
     label: String,
     error: Object,
     inStyle: String,
+    inClass: String,
     // disabled all dates past the current date
     isAfter: Boolean
   },

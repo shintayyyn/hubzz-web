@@ -3,7 +3,7 @@
     <div class="p-1 w-full sm:w-1/4 order-1 sm:order-2">
       <div class="rounded-lg shadow-md p-4 flex flex-col">
         <AppInput
-          v-model="form.tax_year_end"
+          v-model="tax_year_end"
           :type="'select'"
           :name="'tax_year_end'"
           :label="'Tax year end'"
@@ -93,7 +93,11 @@ const yearLists = [
     label: "2 June, 2020"
   }
 ];
+import AppInput from "@/components/Base/AppInput";
 export default {
+  components: {
+    AppInput
+  },
   data() {
     return {
       lists,

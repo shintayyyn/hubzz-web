@@ -101,7 +101,7 @@
                     <div
                       v-if="!isReceiver(item)"
                       class="text-xs text-gray-500 font-bold mt-3 cursor-pointer px-1"
-                      @click="deleteMessage(item.id)"
+                      @click="deleteMessageModal(item.id)"
                     >X</div>
                   </div>
                   <div class="mx-2" :class="isReceiver(item) ? 'text-right ': ''">
@@ -151,15 +151,26 @@
         </div>
       </template>
     </div>
+
+    <AppConfirmationModal
+      :label="'Do you want to delete this message?'"
+      :confirmLabel="'Yes'"
+      :cancelLabel="'Cancel'"
+      :modal="modal"
+      @confirm="deleteMessage"
+      @cancel="modal = false"
+    />
   </div>
 </template>
 <script>
 import AppAutoComplete from "~/components/Base/AppAutoComplete";
+import AppConfirmationModal from "~/components/Base/AppConfirmationModal";
 import AppButton from "~/components/Base/AppButton";
 import AppAvatar from "~/components/Base/AppAvatar";
 export default {
   components: {
     AppAutoComplete,
+    AppConfirmationModal,
     AppButton,
     AppAvatar
   },
@@ -173,7 +184,9 @@ export default {
       selectedUserId: "",
       message: "",
       loadMore: false,
-      newMessage: false
+      newMessage: false,
+      modal: false,
+      selectedMessageId: ""
     };
   },
   computed: {
@@ -237,10 +250,16 @@ export default {
         ? `${item.sender_first_name} ${item.sender_last_name}`
         : `${item.receiver_first_name} ${item.receiver_last_name}`;
     },
-    deleteMessage(id) {
-      if (confirm("Do you want to delete this message?")) {
-        this.$store.dispatch("chat/deleteMessage", id);
-      }
+    deleteMessageModal(id) {
+      this.modal = true;
+      this.selectedMessageId = id;
+      // if (confirm("Do you want to delete this message?")) {
+      //   this.$store.dispatch("chat/deleteMessage", id);
+      // }
+    },
+    deleteMessage() {
+      this.$store.dispatch("chat/deleteMessage", this.selectedMessageId);
+      this.modal = false;
     },
     scrollToBottom() {
       this.$nextTick(() => {

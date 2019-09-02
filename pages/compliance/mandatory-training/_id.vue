@@ -49,6 +49,9 @@
                   class="mt-2 text-sm md:text-base"
                 >{{mandatory_training && mandatory_training.note ? mandatory_training.note : null}}</p>
               </div>
+              <p class="mt-5 font-bold text-lg">Expiry date</p>
+              <AppDate v-model="expiry_date" :name="'expiry_date'" />
+              <AppButton :label="'Save'" @click="update" :inStyle="'padding:5px 10px'" />
             </div>
             <div class="w-full pl-0 lg:pl-5 mt-5 lg:mt-0 lg:w-3/4">
               <embed
@@ -66,7 +69,19 @@
   </div>
 </template>
 <script>
+import AppDate from "@/components/Base/AppDate";
+import AppButton from "@/components/Base/AppButton";
 export default {
+  components: {
+    AppDate,
+    AppButton
+  },
+  data() {
+    return {
+      expiry_date: null,
+      formError: []
+    };
+  },
   async asyncData({ app, params, error }) {
     try {
       const response = await app.$axios.$get(
@@ -82,6 +97,42 @@ export default {
       };
     } catch (err) {
       throw err;
+    }
+  },
+  methods: {
+    async update() {
+      try {
+        console.log(this.mandatory_training);
+        const formData = new FormData();
+        formData.append("file", this.mandatory_training.file);
+        formData.append(
+          "expired_at",
+          this.$moment(this.expiry_date).format("YYYY-MM-DD")
+        );
+        const response = await this.$axios.$put(
+          `/api/v1/locum/locum-detail-mandatory-trainings/${this.$route.params.id}`,
+          formData
+        );
+        console.log(response);
+      } catch (err) {
+        throw err;
+      }
+    },
+    downloadItem(fileUrl, fileName) {
+      const axios = require("axios");
+      axios({
+        url: fileUrl,
+        method: "GET",
+        responseType: "blob" // important
+      }).then(response => {
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", fileName);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      });
     }
   }
 };
