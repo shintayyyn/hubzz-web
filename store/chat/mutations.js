@@ -58,6 +58,11 @@ export default {
     state.conversations[index].receiver_first_name = payload.receiver_first_name;
     state.conversations[index].receiver_last_name = payload.receiver_last_name;
     state.conversations[index].sender_last_name = payload.sender_last_name;
+    let receiver_avatar = payload.receiver.avatar ? payload.receiver.avatar.file.url : payload.receiver.avatar
+    let sender_avatar = payload.sender.avatar ? payload.sender.avatar.file.url : payload.sender.avatar
+    state.conversations[index].receiver_avatar = receiver_avatar;
+    state.conversations[index].receiver_avatar = sender_avatar;
+
     state.conversations = state.conversations.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
   },
   DELETE_MESSAGE(state, payload) {

@@ -264,7 +264,7 @@
         <AppButton :label="'Save changes'" @click="save" />
       </div>
     </div>
-    <!-- <div class="w-auto p-0 mb-4 lg:mb-0 lg:w-1/3 lg:pr-4 order-1 lg:order-2">
+    <div class="w-auto p-0 mb-4 lg:mb-0 lg:w-1/3 lg:pr-4 order-1 lg:order-2">
       <div class="shadow-lg p-8">
         <AppAvatar
           class="m-auto"
@@ -272,7 +272,7 @@
           :src="avatar && avatar.file.url ? avatar.file.url : ''"
         />
       </div>
-    </div>-->
+    </div>
   </div>
 </template>
 <script>

@@ -14,7 +14,7 @@
           class="chat-list w-full h-full overflow-y-auto overflow-x-hidden"
           @scroll="scrollHandler"
         >
-          <template v-if="showResult === false">
+          <template v-if="showResult === false || $route.params.slug == '/messages'">
             <div
               class="relative flex w-full items-center px-2 py-4 cursor-pointer border-b"
               :class="[parseInt($route.params.slug) === item.conversation_id ? 'bg-gray-300' : 'hover:bg-gray-200', unreadMessages.includes(item.conversation_id) ? 'font-bold' : '']"
@@ -128,11 +128,6 @@ export default {
           "chat/ADD_UNREAD_MESSAGE",
           newValue[0].conversation_id
         );
-        this.$store.commit("SET_NOTIFICATION", {
-          enabled: true,
-          status: "info",
-          text: ["New Message"]
-        });
       }
       // let receiver_id = newValue[0].receiver_id;
       // let sender_id = newValue[0].sender_id;

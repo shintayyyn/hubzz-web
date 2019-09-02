@@ -27,7 +27,7 @@
                 @click="$store.commit('calendar/CREATE_JOB_MODAL', true)"
                 class="block md:hidden button rounded-lg p-2 focus:outline-none cursor-pointer mx-2"
               >
-                <svgicon name="create-job" color="#000" width="21" height="21"></svgicon>
+                <svgicon name="create-job" color="#3182ce" width="21" height="21"></svgicon>
               </button>
             </div>
             <AppButton
@@ -40,7 +40,7 @@
               @click="$router.push('/messages')"
               class="block md:hidden button rounded-lg p-2 focus:outline-none cursor-pointer"
             >
-              <svgicon name="write-message" color="#000" width="21" height="21"></svgicon>
+              <svgicon name="chat" color="#63b3ed #3182ce" width="21" height="21"></svgicon>
             </button>
           </div>
           <div

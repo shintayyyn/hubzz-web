@@ -86,7 +86,7 @@
                     :src="item.sender && item.sender.avatar && item.sender.avatar.file && item.sender.avatar.file.url ? item.sender.avatar.file.url : ''"
                   />
                 </div>
-                <div class="flex flex-col text-sm">
+                <div class="flex flex-col text-sm px-2">
                   <span
                     class="text-xs px-2"
                     :class="isReceiver(item) ? '': 'text-right'"
@@ -116,7 +116,7 @@
         </div>
       </template>
       <!-- CREATE NEW CONVERSATION -->
-      <template v-if="$route.params.slug && $route.params.slug === 'new' || messages.length === 0">
+      <template v-if="$route.params.slug && $route.params.slug === 'new' ">
         <div class="relative h-full flex flex-col justify-between pt-20 overflow-y-hidden">
           <div class="h-full px-8 md:px-20 md:pt-20">
             <button

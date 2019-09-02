@@ -4,25 +4,25 @@
       <div class="number-status md:mt-10">
         <div class="border-solid rounded-lg shadow-md px-1 py-4 mb-5 mx-1 md:mx-0">
           <div class="flex flex-row flex-no-wrap justify-start text-xs sm:text-sm">
-            <div class="w-1/3 p-1 text-left">Your GMC / NMC Number</div>
-            <div class="w-1/3 p-1 text-left">{{gmc_or_nmc_number.number}}</div>
-            <div class="max-w-xs p-1">
-              <div
-                class="text-xs sm:text-sm text-center bg-orange-300 text-white font-bold rounded-full px-2 py-1"
+            <div class="w-1/3 px-4 py-1 text-left">Your GMC / NMC Number</div>
+            <div class="w-1/3 p-1 text-center">{{gmc_or_nmc_number.number}}</div>
+            <div class="w-1/3 p-1 text-center">
+              <span
+                class="text-xs sm:text-sm text-center bg-orange-300 text-white font-bold rounded-full px-4 py-1"
                 :class="status(gmc_or_nmc_number.status)"
-              >{{gmc_or_nmc_number.status}}</div>
+              >{{ gmc_or_nmc_number.status }}</span>
             </div>
           </div>
         </div>
         <div class="border-solid rounded-lg shadow-md px-1 py-4 mb-5 mx-1 md:mx-0">
           <div class="flex flex-row flex-no-wrap justify-start items-center text-xs sm:text-sm">
-            <div class="w-1/3 p-1 text-left">Your MPL / NPL Number</div>
-            <div class="w-1/3 p-1 text-left">{{mpl_or_npl_number.number}}</div>
-            <div class="max-w-xs p-1">
-              <div
-                class="text-xs sm:text-sm text-center bg-orange-300 text-white font-bold rounded-full px-2 py-1"
+            <div class="w-1/3 px-4 py-1 text-left">Your MPL / NPL Number</div>
+            <div class="w-1/3 p-1 text-center">{{mpl_or_npl_number.number}}</div>
+            <div class="w-1/3 p-1 text-center">
+              <span
+                class="text-xs sm:text-sm text-center bg-orange-300 text-white font-bold rounded-full px-4 py-1"
                 :class="status(mpl_or_npl_number.status)"
-              >{{mpl_or_npl_number.status}}</div>
+              >{{ mpl_or_npl_number.status }}</span>
             </div>
           </div>
         </div>
@@ -46,6 +46,14 @@
         </thead>
         <tbody>
           <!--------------------------FILE SHOULD SHOW ON CLICK----------------------------->
+          <template>
+            <tr v-if="!mandatory.length">
+              <td
+                class="text-center font-bold text-gray-500"
+                colspan="7"
+              >This section is empty. Update your profile to fill this area.</td>
+            </tr>
+          </template>
           <template v-for="(item, index) in mandatory">
             <tr
               class="rounded-lg shadow-md text-xs sm:text-sm text-left bg-gray-200"
@@ -57,11 +65,10 @@
             <tr
               v-else
               :key="item.id"
-              @click="show(item, 'compliance')"
-              class="cursor-pointer rounded-lg shadow-md text-xs sm:text-sm text-left"
+              class="rounded-lg shadow-md text-xs sm:text-sm text-left"
               :class="item.info && item.info.file ? 'hover:bg-gray-300' : ''"
             >
-              <td>{{item.name}}</td>
+              <td class="cursor-pointer" @click="show(item, 'compliance')">{{item.name}}</td>
               <td class="hover:underline" v-if="item.info && item.info.file">
                 <div class="flex flex-row flex-no-wrap items-center">
                   <svgicon name="cloud-download" height="24" width="24" />
@@ -71,6 +78,7 @@
                       :href="item.info.file.url"
                       :download="item.info.file.filename"
                       target="_blank"
+                      class="whitespace-no-wrap"
                     >{{item.info.file.filename | StringMaxLength(15)}}</a>
                   </div>
                 </div>
@@ -83,7 +91,7 @@
               <td v-if="item.info">
                 <div class="flex max-w-xs">
                   <div
-                    class="text-xs sm:text-sm text-center text-white font-bold rounded-full px-2 py-1"
+                    class="text-xs sm:text-sm text-center text-white font-bold rounded-full px-4 py-1"
                     :class="status(item.info.status)"
                   >{{item.info.status}}</div>
                 </div>
@@ -154,6 +162,14 @@
           </tr>
         </thead>
         <tbody>
+          <template>
+            <tr v-if="!optional.length">
+              <td
+                class="text-center font-bold text-gray-500"
+                colspan="7"
+              >This section is empty. Update your profile to fill this area.</td>
+            </tr>
+          </template>
           <template v-for="(item, index) in optional">
             <tr
               class="rounded-lg shadow-md text-xs sm:text-sm text-left bg-gray-200"
@@ -165,7 +181,7 @@
             <tr
               v-else
               :key="item.id"
-              class="cursor-pointer rounded-lg shadow-md text-xs sm:text-sm text-left"
+              class="rounded-lg shadow-md text-xs sm:text-sm text-left"
               :class="item.info && item.info.file ? 'hover:bg-gray-300' : ''"
             >
               <td class="cursor-pointer w-1/3" @click="show(item, 'compliance')">{{item.name}}</td>
@@ -249,6 +265,14 @@
           </tr>
         </thead>
         <tbody>
+          <template>
+            <tr v-if="!mandatory_trainings.length">
+              <td
+                class="text-center font-bold text-gray-500"
+                colspan="7"
+              >This section is empty. Update your profile to fill this area.</td>
+            </tr>
+          </template>
           <template v-for="(item, index) in mandatory_trainings">
             <tr
               class="rounded-lg shadow-md text-xs sm:text-sm text-left bg-gray-200"
@@ -260,11 +284,14 @@
             <tr
               v-else
               :key="item.id"
-              class="cursor-pointer rounded-lg shadow-md text-xs sm:text-sm text-left"
+              class="rounded-lg shadow-md text-xs sm:text-sm text-left"
               :class="item && item.file ? 'hover:bg-gray-300' : ''"
             >
-              <td class="cursor-pointer w-1/3" @click="show(item, 'mandatory')">{{item.name}}</td>
-              <td class="hover:underline" v-if="item.info && item.info.file">
+              <td
+                class="cursor-pointer w-1/3"
+                @click="show(item, 'mandatory')"
+              >{{item.mandatory_training.name}}</td>
+              <td class="hover:underline" v-if="item.file">
                 <div class="flex flex-row flex-no-wrap">
                   <svgicon name="cloud-download" height="24" width="24" />
                   <div class="leading-loose mx-2">
@@ -272,6 +299,7 @@
                       @click.stop.prevent="downloadItem(item.file.url, item.file.filename)"
                       target="_blank"
                       :href="item.file.url"
+                      class="whitespace-no-wrap"
                     >{{item.file.filename | StringMaxLength(15)}}</a>
                   </div>
                 </div>
