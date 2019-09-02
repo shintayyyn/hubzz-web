@@ -16,6 +16,15 @@ export default {
   ADD_USER_ONLINE(state, payload) {
     state.users_online.push(payload);
   },
+  ADD_UNREAD_MESSAGE(state, payload) {
+    !state.unreadMessages.includes(payload) ? state.unreadMessages.push(payload) : '';
+  },
+  DELETE_UNREAD_MESSAGE(state, payload) {
+    let index = state.unreadMessages.findIndex(
+      message_id => message_id === payload
+    );
+    state.unreadMessages.splice(index, 1);
+  },
   DELETE_USER_ONLINE(state, payload) {
     let index = state.users_online.findIndex(users => users == payload);
     if (index >= 0) {
@@ -43,8 +52,12 @@ export default {
     let index = state.conversations.findIndex(conversations => conversations.conversation_id == payload.conversation_id);
     state.conversations[index].created_at = payload.created_at;
     state.conversations[index].message = payload.message;
-    // state.conversations[index].sender_id = payload.sender_id;
-    // state.conversations[index].sender_first_name = payload.sender_first_name;
+    state.conversations[index].sender_id = payload.sender_id;
+    state.conversations[index].receiver_id = payload.receiver_id;
+    state.conversations[index].sender_first_name = payload.sender_first_name;
+    state.conversations[index].receiver_first_name = payload.receiver_first_name;
+    state.conversations[index].receiver_last_name = payload.receiver_last_name;
+    state.conversations[index].sender_last_name = payload.sender_last_name;
     state.conversations = state.conversations.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
   },
   DELETE_MESSAGE(state, payload) {

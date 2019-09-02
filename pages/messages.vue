@@ -15,7 +15,6 @@ export default {
     const response = await chatApi.fetchConversations(app.$axios, 0, 10);
     const conversations = response.data.conversations;
     store.commit("chat/SET_CONVERSATIONS", conversations);
-
     // if (route.name === 'messages-slug') {
     //   redirect(`/messages/${params.slug}`)
     // }

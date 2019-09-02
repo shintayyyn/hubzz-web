@@ -35,7 +35,7 @@ export default {
   async setConversation({
     commit
   }) {
-    const response = await chatApi.fetchConversations(this.$axios, 0, 10);
+    const response = await chatApi.fetchConversations(this.$axios, 0, 0);
     commit("SET_CONVERSATIONS", response.data.conversations);
   },
 
@@ -90,6 +90,9 @@ export default {
     if (!state.messages.find(message => message.id === response.data.message.id) && !payload.receiver_user_id) {
       commit("ADD_MESSAGE", response.data.message);
     }
+
+
+
 
 
   },

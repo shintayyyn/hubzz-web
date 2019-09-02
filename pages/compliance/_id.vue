@@ -52,9 +52,10 @@
               </div>
             </div>
             <div class="w-full mt-5 lg:mt-0 lg:w-3/4">
+              <p>{{ compliance_document.file.type }}</p>
               <embed
                 class="object-contain object-top"
-                :class="compliance_document.file.type == 'image' ? '' : 'document h-full w-full'"
+                :class="compliance_document.file.type == 'image' ? '' : 'document border border-red-500 h-full w-full'"
                 :src="compliance_document.file.url"
               />
             </div>

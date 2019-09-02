@@ -2,7 +2,7 @@
   <div class="relative" :style="[{ width: width }, {height: height}]">
     <img :src="imageUrl" v-if="imageUrl" class="object-cover rounded-full w-full h-full" />
     <img v-if="src && !imageUrl" :src="src" class="object-cover rounded-full w-full h-full" />
-    <svgicon v-if="!src" name="no-avatar" :height="height" :width="width" />
+    <svgicon v-if="!src" name="user" :height="height" :width="width" />
     <div v-if="type == 'update'" class="icon absolute top-0 right-0">
       <input
         type="file"

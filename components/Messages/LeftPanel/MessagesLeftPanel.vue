@@ -17,19 +17,24 @@
           <template v-if="showResult === false">
             <div
               class="relative flex w-full items-center px-2 py-4 cursor-pointer border-b"
-              :class="[parseInt($route.params.slug) === item.conversation_id ? 'bg-gray-300' : 'hover:bg-gray-200', unread ? 'bg-gray-300 font-bold' : '', unreadMessages.includes(item.conversation_id) ? 'bg-gray-200 font-bold' : '']"
+              :class="[parseInt($route.params.slug) === item.conversation_id ? 'bg-gray-300' : 'hover:bg-gray-200', unreadMessages.includes(item.conversation_id) ? 'font-bold' : '']"
               v-for="item in conversations"
               :key="item.conversation_id"
               @click="goTo(item.conversation_id ? item.conversation_id : item.conversation_id)"
             >
-              <AppAvatar :height="'50px'" :width="'50px'" :src="userAvatar(item)" />
+              <AppAvatar
+                v-if="$auth.user.domain === 'Practice'"
+                :height="'50px'"
+                :width="'50px'"
+                :src="item.receiver_avatar ? item.receiver_avatar : ''"
+              />
               <div class="w-5/6 flex items-center justify-between">
                 <div class="w-5/6 px-2">
                   <p
                     class="truncate"
                     :class="parseInt($route.params.slug) === item.conversation_id ? 'font-bold' : ''"
                   >{{ userFullname(item) }}</p>
-                  <p class="text-sm truncate">{{ item.message }}</p>
+                  <p class="text-sm truncate">{{ senderFullname(item) }}: {{ item.message }}</p>
                 </div>
                 <span
                   class="w-10 text-right text-xs text-gray-600 leading-none absolute right-0 mx-2 h-full flex items-center"
@@ -45,14 +50,18 @@
               :key="item.conversation_id"
               @click="goTo(item.conversation_id ? item.conversation_id : item.conversation_id)"
             >
-              <AppAvatar :height="'50px'" :width="'50px'" :src="userAvatar(item)" />
+              <AppAvatar
+                :height="'50px'"
+                :width="'50px'"
+                :src="item.receiver_avatar ? item.receiver_avatar : ''"
+              />
               <div class="w-5/6 flex items-center justify-between">
                 <div class="w-5/6 px-2">
                   <p
                     class="truncate"
                     :class="parseInt($route.params.slug) === item.conversation_id ? 'font-bold' : ''"
                   >{{ userFullname(item) }}</p>
-                  <p class="text-sm truncate">{{ item.message }}</p>
+                  <p class="text-sm truncate">{{ item.sender_first_name }}: {{ item.message }}</p>
                 </div>
                 <span
                   class="w-12 text-right text-xs text-gray-600 leading-none absolute right-0 mx-2"
@@ -91,13 +100,15 @@ export default {
       messages: [],
       showResult: false,
       loadMore: false,
-      unreadMessages: [],
       unread: false
     };
   },
   computed: {
     conversations() {
       return this.$store.getters["chat/getConversations"];
+    },
+    unreadMessages() {
+      return this.$store.state.chat.unreadMessages;
     }
   },
   watch: {
@@ -109,12 +120,19 @@ export default {
       }
     },
     conversations(newValue, oldValue) {
-      console.log(this.conversations);
       if (
         this.$store.state.chat.activeConversationId !=
-        newValue[0].conversation_id
+        newValue[0].conversation_id.toString()
       ) {
-        this.unreadMessages.push(newValue[0].conversation_id);
+        this.$store.commit(
+          "chat/ADD_UNREAD_MESSAGE",
+          newValue[0].conversation_id
+        );
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "info",
+          text: ["New Message"]
+        });
       }
       // let receiver_id = newValue[0].receiver_id;
       // let sender_id = newValue[0].sender_id;
@@ -131,10 +149,7 @@ export default {
         this.$store.commit("IS_MOBILE", false);
       }
       if (this.unreadMessages.includes(id)) {
-        let index = this.unreadMessages.findIndex(
-          message_id => message_id === id
-        );
-        this.unreadMessages.splice(index, 1);
+        this.$store.commit("chat/DELETE_UNREAD_MESSAGE", id);
       }
       this.$router.push(`/messages/${id}`);
     },
@@ -145,23 +160,13 @@ export default {
         this.showResult = true;
       });
     },
+    senderFullname(item) {
+      return `${item.sender_first_name} ${item.sender_last_name}`;
+    },
     userFullname(item) {
-      return item.receiver_id == this.$auth.user.id
+      return this.$auth.user.id === item.receiver_id
         ? `${item.sender_first_name} ${item.sender_last_name}`
         : `${item.receiver_first_name} ${item.receiver_last_name}`;
-    },
-    userAvatar(item) {
-      if (item.receiver_id === this.$auth.user.id) {
-        return item.sender_avatar ? item.sender_avatar : "";
-      }
-      return item.receiver_avatar ? item.receiver_avatar : "";
-      // if (item.sender_avatar === null && item.receiver_avatar === null) {
-      //   return "https://via.placeholder.com/350";
-      // } else if (item.receiver_id === this.$auth.user.id) {
-      //   return item.sender_avatar;
-      // } else {
-      //   return item.receiver_avatar;
-      // }
     },
     createMessage() {
       if (window.innerWidth < 768) {

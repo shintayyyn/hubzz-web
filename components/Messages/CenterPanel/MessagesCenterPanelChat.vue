@@ -68,7 +68,7 @@
                   <div class="mx-2" :class="isReceiver(item) ? 'text-right ': ''">
                     <span
                       class="text-xs text-gray-500 py-1"
-                    >{{ $moment(item.created_at).startOf("hours").fromNow() }}</span>
+                    >{{ $moment(item.created_at).fromNow() }}</span>
                   </div>
                 </div>
               </div>
@@ -107,7 +107,7 @@
                   <div class="mx-2" :class="isReceiver(item) ? 'text-right ': ''">
                     <span
                       class="text-xs text-gray-500 py-1"
-                    >{{ $moment(item.created_at).startOf("hours").fromNow() }}</span>
+                    >{{ $moment(item.created_at).fromNow() }}</span>
                   </div>
                 </div>
               </div>
