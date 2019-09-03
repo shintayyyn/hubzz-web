@@ -116,10 +116,10 @@
         </div>
       </template>
       <!-- CREATE NEW CONVERSATION -->
-      <template v-if="$route.params.slug && $route.params.slug === 'new' ">
+      <template v-if="$route.params.slug && $route.params.slug === 'new' || messages.length === 0">
         <div class="relative h-full flex flex-col justify-between pt-20 overflow-y-hidden">
           <div class="h-full px-8 md:px-20 md:pt-20">
-            <div class="absolute top-0 left-0 w-full py-4 flex items-center">
+            <div class="absolute top-0 left-0 md:relative w-full py-4 flex items-center">
               <button
                 class="flex mx-6 items-center font-bold focus:outline-none"
                 @click="$router.go(-1)"

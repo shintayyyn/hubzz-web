@@ -126,7 +126,7 @@ export default {
     conversations(newValue, oldValue) {
       if (
         this.$store.state.chat.activeConversationId !=
-        newValue[0].conversation_id.toString()
+        newValue[0].conversation_id
       ) {
         this.$store.commit(
           "chat/ADD_UNREAD_MESSAGE",

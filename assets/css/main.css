@@ -45,7 +45,7 @@ table tbody td {
 }
 
 /* SCROLLBAR */
-
+/* 
 div::-webkit-scrollbar {
   height: 6px;
   width: 8px;
@@ -53,7 +53,7 @@ div::-webkit-scrollbar {
 
 div::-webkit-scrollbar-thumb {
   background-color: #bbb;
-}
+} */
 
 /* MODAL */
 .modal-container {
