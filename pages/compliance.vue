@@ -228,8 +228,7 @@
                 <div class="flex flex-row flex-no-wrap">
                   <input
                     type="file"
-                    :name="`${item.id}_file`"
-                    :ref="`${item.id}_file`"
+                    :ref="`${item.id}_file_optional_compliance`"
                     class="inputfile hidden"
                     @input="onFileUpdate($event, item.info.id, index, item.id)"
                     @click.stop
@@ -682,7 +681,7 @@ export default {
       // post request to API / send file
       this.loading = true;
       this.activeLoading.push(id);
-
+      console.log(formData, file);
       this.$axios
         .$post(`/api/v1/locum/locum-detail-mandatory-trainings`, formData)
         .then(res => {
@@ -753,6 +752,7 @@ export default {
           this.activeLoading = this.activeLoading.filter(item => item !== id);
         })
         .catch(err => {
+          console.log(file);
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "danger",

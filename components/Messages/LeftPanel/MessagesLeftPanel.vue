@@ -26,7 +26,7 @@
                 v-if="$auth.user.domain === 'Practice'"
                 :height="'50px'"
                 :width="'50px'"
-                :src="item.sender_avatar ? item.sender_avatar : ''"
+                :src="item.receiver_avatar"
               />
               <div class="w-5/6 flex items-center justify-between">
                 <div class="w-5/6 px-2">
@@ -50,11 +50,12 @@
               :key="item.conversation_id"
               @click="goTo(item.conversation_id ? item.conversation_id : item.conversation_id)"
             >
-              <!-- <AppAvatar
+              <AppAvatar
+                v-if="$auth.user.domain === 'Practice'"
                 :height="'50px'"
                 :width="'50px'"
-                :src="item.receiver_avatar ? item.receiver_avatar : ''"
-              />-->
+                :src="item.receiver_avatar "
+              />
               <div class="w-5/6 flex items-center justify-between">
                 <div class="w-5/6 px-2">
                   <p

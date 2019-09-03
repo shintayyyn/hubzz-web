@@ -52,7 +52,7 @@ div::-webkit-scrollbar {
 }
 
 div::-webkit-scrollbar-thumb {
-  background-color: #ddd;
+  background-color: #bbb;
 }
 
 /* MODAL */

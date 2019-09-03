@@ -127,11 +127,13 @@ export default {
       }
     },
     select(item) {
+      console.log(item);
       this.formError = [];
       this.selectedSurgery = item;
       this.modal = true;
     },
     add() {
+      console.log(this.type);
       if (this.type === "Hub") {
         this.$axios
           .$post(`/api/v1/practice/me/practice-surgeries`, {

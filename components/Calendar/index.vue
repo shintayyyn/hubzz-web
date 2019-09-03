@@ -76,10 +76,8 @@ export default {
   computed: {
     toggleScroll() {
       return (
-        this.locum_appointment_modal ||
-        this.locum_modal ||
-        this.practice_modal ||
-        this.create_job_modal
+        this.locum_appointment_modal || this.locum_modal || this.practice_modal
+        // this.create_job_modal
       );
     },
     create_job_modal() {

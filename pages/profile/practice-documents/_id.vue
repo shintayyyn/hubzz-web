@@ -46,8 +46,8 @@
           </div>
           <div class="w-full mt-5 lg:mt-0 lg:w-3/4">
             <embed
-              class="object-contain object-top"
-              :class="practiceDocument.file.type == 'image' ? '' : 'document h-full w-full'"
+              class="object-contain object-top w-full"
+              :class="practiceDocument.file.type == 'image' ? 'image' : 'document h-full '"
               :src="practiceDocument.file ? practiceDocument.file.url:null"
             />
           </div>
@@ -120,11 +120,23 @@ export default {
   }
 }
 .document {
+  width: 100%;
   min-height: 100%;
 }
+
+.image {
+  min-height: 100%;
+  max-height: 100%;
+}
+
 @media screen and (min-width: 768px) {
   .document {
     min-height: 70vh;
+  }
+
+  .image {
+    min-height: 60vh;
+    max-height: 60vh;
   }
 }
 </style>
