@@ -4,7 +4,7 @@
 
 .__jobs-section {
   position: relative;
-  min-height: 500px;
+  min-height: 1180px;
 }
 
 .__job-card:hover {
@@ -44,17 +44,18 @@ table tbody td {
   animation: dots 1s steps(5, end) infinite;
 }
 
-.modal-shield {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #333;
-  opacity: 0.5;
-  z-index: 509;
+/* SCROLLBAR */
+
+div::-webkit-scrollbar {
+  height: 6px;
+  width: 8px;
 }
 
+div::-webkit-scrollbar-thumb {
+  background-color: #ddd;
+}
+
+/* MODAL */
 .modal-container {
   position: fixed;
   top: 0;
@@ -209,16 +210,4 @@ table tbody td {
     -webkit-transform: scale(1);
     transform: scale(1);
   }
-}
-
-/* Loader SVG */
-.loader {
-  margin: 0 0 2em;
-  height: 100px;
-  width: 20%;
-  text-align: center;
-  padding: 1em;
-  margin: 0 auto 1em;
-  display: inline-block;
-  vertical-align: top;
 }

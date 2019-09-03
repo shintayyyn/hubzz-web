@@ -155,7 +155,7 @@ export default {
   border-right: solid 1px #edf2f7;
   transition: all 0.3s ease-in-out;
   background-color: white;
-  z-index: 500;
+  z-index: 55;
 }
 .toggled-left {
   margin-left: 0;
@@ -165,6 +165,7 @@ export default {
 }
 @media screen and (min-width: 1200px) {
   .sidebar {
+    z-index: 50;
     margin-left: 0;
   }
   .close-button {

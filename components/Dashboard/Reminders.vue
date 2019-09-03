@@ -42,29 +42,30 @@ export default {
             this.reminders.push({ label: 'Complete your Compliance documents', route: '/compliance' })
           }
         })
-        let isBillingComplete = true
-        let bank_account = Object.entries(res.data.user.locum_detail.bank_account)
-        let invoice_detail = Object.entries(res.data.user.locum_detail.invoice_detail)
-        for (const [key, value] of bank_account) {
-          if (!value) {
-            isBillingComplete = false
+        if (res.data.user.locum_detail.bank_account) {
+          let isBillingComplete = true
+          let bank_account = Object.entries(res.data.user.locum_detail.bank_account)
+          let invoice_detail = Object.entries(res.data.user.locum_detail.invoice_detail)
+          for (const [key, value] of bank_account) {
+            if (!value) {
+              isBillingComplete = false
+            }
+          }
+          for (const [key, value] of invoice_detail) {
+            if (key === 'ir35' && !value) {
+              isBillingComplete = false
+            }
+            if (key === 'tax_year_end_date' && !value) {
+              isBillingComplete = false
+            }
+            if (key === 'tax_year_end_month' && !value) {
+              isBillingComplete = false
+            }
+            if (key === 'employment_type' && !value) {
+              isBillingComplete = false
+            }
           }
         }
-        for (const [key, value] of invoice_detail) {
-          if (key === 'ir35' && !value) {
-            isBillingComplete = false
-          }
-          if (key === 'tax_year_end_date' && !value) {
-            isBillingComplete = false
-          }
-          if (key === 'tax_year_end_month' && !value) {
-            isBillingComplete = false
-          }
-          if (key === 'employment_type' && !value) {
-            isBillingComplete = false
-          }
-        }
-
       }
     })
   },

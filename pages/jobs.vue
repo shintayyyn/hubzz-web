@@ -1,6 +1,6 @@
 <template>
   <section class="jobs-section">
-    <div class="flex flex-row flex-wrap justify-start">
+    <div class="flex flex-row justify-start overflow-x-auto py-3">
       <div class="relative">
         <nuxt-link
           to="/jobs/allocated"
@@ -113,17 +113,21 @@
 </template>
 <script>
 const tabs = [
-  'jobs-allocated-id', 'jobs-available-id',
-  'jobs-matched-id', 'jobs-applied-id',
-  'jobs-unsuccessful-id', 'jobs-declined-id',
-  'jobs-cancelled-id', 'jobs-completed-id',
-]
+  "jobs-allocated-id",
+  "jobs-available-id",
+  "jobs-matched-id",
+  "jobs-applied-id",
+  "jobs-unsuccessful-id",
+  "jobs-declined-id",
+  "jobs-cancelled-id",
+  "jobs-completed-id"
+];
 export default {
-  middleware: 'isVerified',
+  middleware: "isVerified",
   data() {
     return {
       tabs
-    }
+    };
   },
   // computed: {
   //   socketId() {
@@ -133,27 +137,36 @@ export default {
   watch: {
     $route(value) {
       if (this.tabs.includes(value.name)) {
-        document.body.style.overflow = 'hidden'
+        document.body.style.overflow = "hidden";
       } else {
-        document.body.style.overflow = 'auto'
+        document.body.style.overflow = "auto";
       }
-    },
+    }
     // socketId(value) {
     //   this.$store.dispatch('joinRoom', { socket_id: value, room_name: 'jobroom', })
     // }
   },
   beforeDestroy() {
-    this.$store.dispatch('leaveRoom', { socket_id: this.$socket.id, room_name: 'jobroom' })
+    this.$store.dispatch("leaveRoom", {
+      socket_id: this.$socket.id,
+      room_name: "jobroom"
+    });
   },
   mounted() {
     if (this.$socket.connected) {
-      this.$store.dispatch('joinRoom', { socket_id: this.$socket.id, room_name: 'jobroom' })
+      this.$store.dispatch("joinRoom", {
+        socket_id: this.$socket.id,
+        room_name: "jobroom"
+      });
     } else {
-      this.$socket.on('connect', () => {
-        this.$store.dispatch('joinRoom', { socket_id: this.$socket.id, room_name: 'jobroom' })
-      })
+      this.$socket.on("connect", () => {
+        this.$store.dispatch("joinRoom", {
+          socket_id: this.$socket.id,
+          room_name: "jobroom"
+        });
+      });
     }
   }
-}
+};
 </script>
 

@@ -1,66 +1,15 @@
 <template>
-  <section class="__jobs-section">
+  <section class="relative __jobs-section">
     <AppLoading :loading="loadingJobs" :message="'Loading'" />
-    <AppJobFilter @getJobs="getJobs(1, params)" :params="params" />
-    <div class="overflow-x-auto">
-      <div
-        class="mt-10 w-full text-center"
-        style="font-family: Nunito"
-        v-if="!loadingJobs && getLocumCancelledJobs.length === 0"
-      >You have not yet cancelled any job</div>
-      <div v-if="getLocumCancelledJobs.length > 0" class="overflow-x-auto overflow-y-hidden">
-        <table>
-          <thead>
-            <tr class="text-xs sm:text-sm text-left">
-              <th @click="sortBy('job_number')">
-                Job number
-                <svgicon class="inline align-baseline" name="sort" height="12" width="12" />
-              </th>
-              <th>Practice</th>
-              <th>Title</th>
-              <th>Shift</th>
-              <th @click="sortBy('rate')">
-                Rate
-                <svgicon class="inline align-baseline" name="sort" height="12" width="12" />
-              </th>
-              <th>Per</th>
-              <th @click="sortBy('date_start')">
-                From
-                <svgicon class="inline align-baseline" name="sort" height="12" width="12" />
-              </th>
-              <th @click="sortBy('date_end')">
-                To
-                <svgicon class="inline align-baseline" name="sort" height="12" width="12" />
-              </th>
-              <th>Cancelled At</th>
-            </tr>
-          </thead>
-          <tbody>
-            <template v-for="(item, index) in getLocumCancelledJobs">
-              <tr
-                :key="item.id"
-                class="__job-card shadow-md cursor-pointer text-xs text-left"
-                @click="show(item.id)"
-              >
-                <td>{{item.job_number}}</td>
-                <td>{{item.platform_job.practice.surgery.name}}</td>
-                <td>{{item.title}}</td>
-                <td>{{item.shift.name}}</td>
-                <td>{{item.rate}}</td>
-                <td>{{item.locum_detail_rate_type.name}}</td>
-                <td>{{item.date_start}}</td>
-                <td>{{item.date_end}}</td>
-                <td>{{item.platform_job.cancelled_at | localDate}}</td>
-              </tr>
-              <tr :key="`${item.id}-${index}`">
-                <td></td>
-              </tr>
-            </template>
-          </tbody>
-        </table>
-      </div>
+    <AppJobFilter @clear="clearFilters" @getJobs="getJobs(1, params)" :params="params" />
+    <div
+      class="mt-10 w-full text-center"
+      v-if="!loadingJobs && getLocumCancelledJobs.length === 0"
+    >You have not yet cancelled any job</div>
+    <div v-if="getLocumCancelledJobs.length > 0" class="overflow-x-auto overflow-y-hidden">
+      <JobTable :columns="columns" :jobs="getLocumCancelledJobs" @sortBy="sortBy" @show="show" />
     </div>
-    <div class="bottom-0 w-full" v-if="getLocumCancelledJobs.length > 0 && totalPages > 1">
+    <div class="absolute bottom-0 w-full" v-if="getLocumCancelledJobs.length > 0 && totalPages > 1">
       <AppPagination
         :total="total"
         :totalPages="totalPages"
@@ -73,6 +22,7 @@
   </section>
 </template>
 <script>
+import JobTable from '@/components/Jobs/JobTable'
 import AppPagination from '@/components/Base/AppPagination'
 import AppJobFilter from '@/components/Base/AppJobFilter'
 import AppLoading from '@/components/Base/AppLoading'
@@ -82,12 +32,57 @@ export default {
     mode: 'out-in'
   },
   components: {
+    JobTable,
     AppPagination,
     AppJobFilter,
     AppLoading,
   },
   data() {
     return {
+      // table
+      columns: [
+        {
+          label: 'Job number',
+          dataIndex: 'job_number',
+          sortable: true
+        },
+        {
+          label: 'Practice',
+          dataIndex: 'practice',
+        },
+        {
+          label: 'Title',
+          dataIndex: 'title',
+        },
+        {
+          label: 'Shift',
+          dataIndex: 'shift',
+        },
+        {
+          label: 'Rate',
+          dataIndex: 'rate',
+          sortable: true
+        },
+        {
+          label: 'per',
+          dataIndex: 'per',
+        },
+        {
+          label: 'From',
+          dataIndex: 'date_start',
+          sortable: true
+        },
+        {
+          label: 'To',
+          dataIndex: 'date_end',
+          sortable: true
+        },
+        {
+          label: 'Cancelled',
+          dataIndex: 'cancelled_at',
+        },
+      ],
+      // params
       current_page: 1,
       params: {
         shift_id: '',
@@ -114,16 +109,13 @@ export default {
       return this.perPage * (this.current_page - 1);
     },
     perPage() {
-      return 5;
+      return 10;
     },
     total() {
       return this.$store.state.jobs.locum_cancelled_jobs_count;
     },
     totalPages() {
       return Math.ceil(this.total / this.perPage);
-    },
-    currentPage() {
-      return parseInt(this.$route.query.current_page);
     },
     loadingJobs() {
       return this.$store.state.jobs.loading_jobs;
@@ -173,6 +165,16 @@ export default {
       }
       this.params.order_by = `${sortedBy}:${this.sortType ? 'asc' : 'desc'}`
       this.current_page = 1
+      this.getJobs(this.current_page, this.params)
+    },
+    clearFilters() {
+      this.params.shift_id = ''
+      this.params.rate = ''
+      this.params.locum_detail_rate_type_id = ''
+      this.params.near_post_code = ''
+      this.params.miles = ''
+      this.params.surgery_name = ''
+      this.params.order_by = 'date_created:desc'
       this.getJobs(this.current_page, this.params)
     },
     getJobs(page, params) {

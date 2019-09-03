@@ -7,13 +7,18 @@
       <div class="w-full pr-0 lg:pr-2 lg:w-1/2">
         <div class="rounded-lg shadow-lg p-4">
           <div class="float-right">
-            <div class="relative avatar flex justify-center">
+            <!-- <div class="relative avatar flex justify-center">
               <img
                 :src="user.avatar.file.url"
                 v-if="user.avatar && user.avatar.file && user.avatar.file.url"
               />
               <svgicon v-else name="no-avatar" height="115" width="115" />
-            </div>
+            </div>-->
+            <AppAvatar
+              :height="'150px'"
+              :width="'150px'"
+              :src="user.avatar && user.avatar.file && user.avatar.file.url ? user.avatar.file.url : ''"
+            />
           </div>
           <div class="font-bold text-sm sm:text-md">Candidate</div>
           <div class="text-xs sm:text-sm mb-8">{{user.locum_detail.profession.name}}</div>
@@ -61,7 +66,7 @@
               v-for="item in mandatory"
               :key="item.id"
             >
-              <svgicon class="mr-1" name="cloud-download" height="24" width="24" />
+              <svgicon name="cloud-download" height="24" width="24" />
               <a
                 @click.prevent="downloadItem(item.file.url, item.file.filename)"
                 :href="item.file.url"
@@ -78,12 +83,13 @@
               v-for="item in optional"
               :key="item.id"
             >
-              <svgicon name="cloud-download" height="24" width="24" />
+              <svgicon class="mr-1" name="cloud-download" height="24" width="24" />
               <a
                 @click.prevent="downloadItem(item.file.url, item.file.filename)"
                 :href="item.file.url"
                 :download="item.file.filename"
                 target="_blank"
+                class="px-2"
               >{{item.compliance_document.name}}</a>
             </div>
           </div>
@@ -121,12 +127,16 @@
   </div>
 </template>
 <script>
+import AppAvatar from "@/components/Base/AppAvatar";
 export default {
   transition: {
-    name: 'fade',
-    mode: 'out-in'
+    name: "fade",
+    mode: "out-in"
   },
-  props: ['user'],
+  components: {
+    AppAvatar
+  },
+  props: ["user"],
   data() {
     return {
       mandatory: [],
@@ -165,8 +175,8 @@ export default {
       const axios = require("axios");
       axios({
         url: fileUrl,
-        method: 'GET',
-        responseType: 'blob',
+        method: "GET",
+        responseType: "blob"
       }).then(response => {
         const url = window.URL.createObjectURL(new Blob([response.data]));
         const link = document.createElement("a");

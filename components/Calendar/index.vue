@@ -17,23 +17,24 @@
         </div>
       </div>
     </div>
-    <div class="modal-shield" v-if="toggleScroll"></div>
+    <div class="shield" v-if="toggleScroll"></div>
     <transition name="slide" mode="out-in">
-      <div class="modal-container shadow-lg" v-if="locum_appointment_modal">
+      <template v-if="locum_appointment_modal">
         <JobDetailModalAppointment
+          v-if="locum_appointment_modal"
           @close="locum_appointment_modal = false"
           :job="locum_appointment_job"
         />
-      </div>
-      <div class="shadow-lg" v-if="locum_modal">
+      </template>
+      <template v-if="locum_modal">
         <JobDetailModalLocum @close="locum_modal = false" :job="locum_job" />
-      </div>
+      </template>
       <!-- <div class="modal-container shadow-lg" v-if="create_job_modal">
         <CreateJobModal />
       </div>-->
-      <div class="modal-container shadow-lg" v-if="practice_modal">
+      <template v-if="practice_modal">
         <JobDetailModal @close="practice_modal = false" :job="practice_job" />
-      </div>
+      </template>
     </transition>
   </section>
 </template>
@@ -46,7 +47,7 @@ import JobDetailModalLocum from "@/components/Jobs/JobDetailModalLocum";
 import JobDetailModalAppointment from "@/components/Jobs/JobDetailModalAppointment";
 
 // practice
-import CreateJobModal from "@/components/CreateJobModal";
+// import CreateJobModal from "@/components/CreateJobModal";
 import JobDetailModal from "@/components/Sessions/JobDetailModal";
 
 export default {
@@ -56,7 +57,7 @@ export default {
     Info,
     JobDetailModalLocum,
     JobDetailModalAppointment,
-    CreateJobModal,
+    // CreateJobModal,
     JobDetailModal
   },
   data() {
@@ -75,9 +76,9 @@ export default {
   computed: {
     toggleScroll() {
       return (
-        this.locum_appointment_modal |
-        this.locum_modal |
-        this.practice_modal |
+        this.locum_appointment_modal ||
+        this.locum_modal ||
+        this.practice_modal ||
         this.create_job_modal
       );
     },
@@ -133,6 +134,16 @@ export default {
   .calendar {
     height: auto;
   }
+}
+.shield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #333;
+  opacity: 0.5;
+  z-index: 509;
 }
 </style>
 

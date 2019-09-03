@@ -1,66 +1,19 @@
 <template>
-  <section class="__jobs-section">
+  <section class="relative __jobs-section">
     <AppLoading :loading="loadingJobs" :message="'Loading'" />
-    <AppJobFilter @getJobs="getJobs(1, params)" :params="params" />
-    <div class="overflow-x-auto">
-      <div
-        class="mt-10 w-full text-center"
-        style="font-family: Nunito"
-        v-if="!loadingJobs && getPracticeDeclinedJobs.length === 0 "
-      >You do not have any allocated jobs</div>
-      <div v-if="getPracticeDeclinedJobs.length > 0" class="overflow-x-auto overflow-y-hidden">
-        <table>
-          <thead>
-            <tr class="text-xs sm:text-sm text-left">
-              <th @click="sortBy('job_number')">
-                Job number
-                <svgicon class="inline align-baseline" name="sort" height="12" width="12" />
-              </th>
-              <th>Practice</th>
-              <th>Title</th>
-              <th>Shift</th>
-              <th @click="sortBy('rate')">
-                Rate
-                <svgicon class="inline align-baseline" name="sort" height="12" width="12" />
-              </th>
-              <th>Per</th>
-              <th @click="sortBy('date_start')">
-                From
-                <svgicon class="inline align-baseline" name="sort" height="12" width="12" />
-              </th>
-              <th @click="sortBy('date_end')">
-                To
-                <svgicon class="inline align-baseline" name="sort" height="12" width="12" />
-              </th>
-              <th>Declined</th>
-            </tr>
-          </thead>
-          <tbody>
-            <template v-for="(item, index) in getPracticeDeclinedJobs">
-              <tr
-                :key="item.id"
-                class="__job-card shadow-md cursor-pointer text-xs text-left"
-                @click="show(item.id)"
-              >
-                <td>{{item.job_number}}</td>
-                <td>{{item.type === 'Private' ? item.private_job.private_practice.surgery.name : item.platform_job.practice.surgery.name}}</td>
-                <td>{{item.type === 'Private' ? 'Private appointment' : item.title}}</td>
-                <td>{{item.shift.name}}</td>
-                <td>{{item.rate}}</td>
-                <td>{{item.locum_detail_rate_type.name}}</td>
-                <td>{{item.date_start}}</td>
-                <td>{{item.date_end}}</td>
-                <td>{{item.platform_job.declined_at | localDate}}</td>
-              </tr>
-              <tr :key="`${item.id}-${index}`">
-                <td></td>
-              </tr>
-            </template>
-          </tbody>
-        </table>
-      </div>
+    <AppJobFilter @clear="clearFilters" @getJobs="getJobs(1, params)" :params="params" />
+    <div
+      class="mt-10 w-full text-center"
+      style="font-family: Nunito"
+      v-if="!loadingJobs && getPracticeDeclinedJobs.length === 0 "
+    >You do not have any declined jobs</div>
+    <div v-if="getPracticeDeclinedJobs.length > 0" class="overflow-x-auto overflow-y-hidden">
+      <JobTable :columns="columns" :jobs="getPracticeDeclinedJobs" @sortBy="sortBy" @show="show" />
     </div>
-    <div class="bottom-0 w-full" v-if="getPracticeDeclinedJobs.length > 0 && totalPages > 1">
+    <div
+      class="absolute bottom-0 w-full"
+      v-if="getPracticeDeclinedJobs.length > 0 && totalPages > 1"
+    >
       <AppPagination
         :total="total"
         :totalPages="totalPages"
@@ -73,40 +26,87 @@
   </section>
 </template>
 <script>
-import AppPagination from '@/components/Base/AppPagination'
-import AppJobFilter from '@/components/Base/AppJobFilter'
-import AppLoading from '@/components/Base/AppLoading'
-import * as chatApi from '@/api/chat'
+import JobTable from "@/components/Sessions/JobTable";
+import AppPagination from "@/components/Base/AppPagination";
+import AppJobFilter from "@/components/Base/AppJobFilter";
+import AppLoading from "@/components/Base/AppLoading";
+import * as chatApi from "@/api/chat";
 export default {
   transition: {
-    name: 'fade',
-    mode: 'out-in'
+    name: "fade",
+    mode: "out-in"
   },
   components: {
+    JobTable,
     AppPagination,
     AppJobFilter,
-    AppLoading,
+    AppLoading
   },
   data() {
     return {
+      // table
+      columns: [
+        {
+          label: "Job number",
+          dataIndex: "job_number",
+          sortable: true
+        },
+        {
+          label: "Practice",
+          dataIndex: "practice"
+        },
+        {
+          label: "Title",
+          dataIndex: "title"
+        },
+        {
+          label: "Shift",
+          dataIndex: "shift"
+        },
+        {
+          label: "Rate",
+          dataIndex: "rate",
+          sortable: true
+        },
+        {
+          label: "per",
+          dataIndex: "per"
+        },
+        {
+          label: "From",
+          dataIndex: "date_start",
+          sortable: true
+        },
+        {
+          label: "To",
+          dataIndex: "date_end",
+          sortable: true
+        },
+        {
+          label: "Declined",
+          dataIndex: "declined_at",
+          sortable: true
+        }
+      ],
+      // params
       current_page: 1,
       params: {
-        shift_id: '',
-        rate: '',
-        locum_detail_rate_type_id: '',
-        near_post_code: '',
-        miles: '',
-        surgery_name: '',
-        order_by: 'date_created:desc',
+        shift_id: "",
+        rate: "",
+        locum_detail_rate_type_id: "",
+        near_post_code: "",
+        miles: "",
+        surgery_name: "",
+        order_by: "date_created:desc"
       },
       // sort
-      sortType: '',
+      sortType: "",
       job_number: true,
       rate: true,
       date_start: true,
       date_end: true,
-      date_created: false,
-    }
+      date_created: false
+    };
   },
   computed: {
     getPracticeDeclinedJobs() {
@@ -116,7 +116,7 @@ export default {
       return this.perPage * (this.current_page - 1);
     },
     perPage() {
-      return 5;
+      return 10;
     },
     total() {
       return this.$store.state.jobs.practice_declined_jobs_count;
@@ -129,17 +129,17 @@ export default {
     }
   },
   beforeCreate() {
-    this.$store.commit('jobs/TOGGLE_LOADING', true)
+    this.$store.commit("jobs/TOGGLE_LOADING", true);
   },
   beforeDestroy() {
-    this.$store.commit('jobs/CLEAR_JOBS')
+    this.$store.commit("jobs/CLEAR_JOBS");
   },
   created() {
-    this.getJobsCount()
+    this.getJobsCount();
     this.getJobs(this.current_page, this.params);
-    // setTimeout(() => {
-    //   this.$store.commit('jobs/CLEAR_LOCUM_ALLOCATED_BADGE')
-    // }, 1000)
+    setTimeout(() => {
+      this.$store.commit("jobs/CLEAR_PRACTICE_DECLINED_BADGE");
+    }, 1000);
   },
   methods: {
     getJobsCount() {
@@ -150,45 +150,56 @@ export default {
     },
     sortBy(sortedBy) {
       switch (sortedBy) {
-        case 'rate':
-          this.rate = !this.rate
-          this.sortType = this.rate
-        case 'job_number':
-          this.job_number = !this.job_number
-          this.sortType = this.job_number
+        case "rate":
+          this.rate = !this.rate;
+          this.sortType = this.rate;
+        case "job_number":
+          this.job_number = !this.job_number;
+          this.sortType = this.job_number;
           break;
-        case 'date_start':
-          this.date_start = !this.date_start
-          this.sortType = this.date_start
+        case "date_start":
+          this.date_start = !this.date_start;
+          this.sortType = this.date_start;
           break;
-        case 'date_end':
-          this.date_end = !this.date_end
-          this.sortType = this.date_end
+        case "date_end":
+          this.date_end = !this.date_end;
+          this.sortType = this.date_end;
           break;
-        case 'date_created':
-          this.date_created = !this.date_created
-          this.sortType = this.date_created
+        case "date_created":
+          this.date_created = !this.date_created;
+          this.sortType = this.date_created;
           break;
       }
-      this.params.order_by = `${sortedBy}:${this.sortType ? 'asc' : 'desc'}`
-      this.current_page = 1
-      this.getJobs(this.current_page, this.params)
+      this.params.order_by = `${sortedBy}:${this.sortType ? "asc" : "desc"}`;
+      this.current_page = 1;
+      this.getJobs(this.current_page, this.params);
+    },
+    clearFilters() {
+      (this.params.shift_id = ""),
+        (this.params.rate = ""),
+        (this.params.locum_detail_rate_type_id = ""),
+        (this.params.order_by = "date_created:desc"),
+        this.getJobs(this.current_page, this.params);
     },
     getJobs(page, params) {
-      this.$store.commit('jobs/TOGGLE_LOADING', true)
-      this.current_page = page
-      let defaultParams = { offset: this.offset, limit: this.perPage, status: "Declined" }
-      let jobParams = { ...params, ...defaultParams }
+      this.$store.commit("jobs/TOGGLE_LOADING", true);
+      this.current_page = page;
+      let defaultParams = {
+        offset: this.offset,
+        limit: this.perPage,
+        status: "Declined"
+      };
+      let jobParams = { ...params, ...defaultParams };
       this.$store.dispatch("jobs/fetchPracticeJobs", jobParams).finally(() => {
-        this.$store.commit('jobs/TOGGLE_LOADING', false)
-      })
+        this.$store.commit("jobs/TOGGLE_LOADING", false);
+      });
     },
     pagechanged(e) {
-      this.current_page = e
-      this.getJobs(this.current_page, this.params)
+      this.current_page = e;
+      this.getJobs(this.current_page, this.params);
     },
     show(id) {
-      this.$router.push(`/sessions/declined/${id}`)
+      this.$router.push(`/sessions/declined/${id}`);
     }
   }
 };

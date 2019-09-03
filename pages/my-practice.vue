@@ -1,6 +1,6 @@
 <template>
   <section class="account-section">
-    <div class="flex flex-row flex-wrap justify-start">
+    <div class="flex flex-row justify-start overflow-x-auto">
       <nuxt-link
         to="/my-practice/favorites"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
@@ -19,7 +19,7 @@
       <nuxt-link
         to="/my-practice/Unsuccessful"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-        :class="$route.name === 'my-practice-Unsuccessful'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name === 'my-practice-unsuccessful'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >Unsuccessful</nuxt-link>
     </div>
     <div class="mt-5">
@@ -29,6 +29,6 @@
 </template>
 <script>
 export default {
-  middleware: 'isVerified',
-}
+  middleware: "isVerified"
+};
 </script>

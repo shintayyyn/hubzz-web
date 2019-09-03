@@ -1,7 +1,7 @@
 /* eslint-disable */
 var icon = require('vue-svgicon')
 icon.register({
-  'no-avatar': {
+  'user': {
     width: 16,
     height: 16,
     viewBox: '0 0 53 53',

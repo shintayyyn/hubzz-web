@@ -1,7 +1,14 @@
 <template>
-  <div class="shield shadow-md" v-if="loading">
-    <h1 class="text-5xl loader-message">Loading</h1>
-  </div>
+  <transition name="fade" mode="out-in">
+    <div
+      :class="inClass"
+      class="loading-shield flex flex-col items-center justify-center shadow-md"
+      v-if="loading"
+    >
+      <svgicon v-if="spinner" name="loader" width="60" height="60" />
+      <h1 class="loader-message" v-if="message">{{ message }}</h1>
+    </div>
+  </transition>
 </template>
 <script>
 export default {
@@ -11,31 +18,37 @@ export default {
       default: false
     },
     message: {
-      type: String,
-      required: true
-    }
+      type: String
+    },
+    spinner: {
+      type: Boolean,
+      default: true
+    },
+    inClass: String
   }
-}
+};
 </script>
 
 <style scoped>
-.shield {
+.loading-shield {
   position: absolute;
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: 400;
+  z-index: 49;
   background-color: #f5f6f9;
-  /* h-offset v-offset blur spread color */
   box-shadow: 10px 10px 0.1 10px #f5f6f9;
   opacity: 0.5;
 }
 .loader-message {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  position: -webkit-sticky;
+  position: sticky;
+  /* top: 50%; */
+  text-align: center;
+  z-index: 50;
+  /* left: 50%; */
+  /* transform: translate(-50%, -50%); */
 }
 .loader-message:after {
   content: " .";
@@ -49,15 +62,15 @@ export default {
     text-shadow: 0.25em 0 0 rgba(0, 0, 0, 0), 0.5em 0 0 rgba(0, 0, 0, 0);
   }
   40% {
-    color: white;
+    color: #333;
     text-shadow: 0.25em 0 0 rgba(0, 0, 0, 0), 0.5em 0 0 rgba(0, 0, 0, 0);
   }
   60% {
-    text-shadow: 0.25em 0 0 white, 0.5em 0 0 rgba(0, 0, 0, 0);
+    text-shadow: 0.25em 0 0 #333, 0.5em 0 0 rgba(0, 0, 0, 0);
   }
   80%,
   100% {
-    text-shadow: 0.25em 0 0 white, 0.5em 0 0 white;
+    text-shadow: 0.25em 0 0 #333, 0.5em 0 0 #333;
   }
 }
 </style>

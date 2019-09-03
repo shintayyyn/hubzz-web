@@ -47,14 +47,16 @@
             :label="'Suffix'"
             :placeholder="'(ex. Ph.D., M.D., etc.)'"
           />
-          <AppSelect
+          <AppInput
             v-model="form.gender"
+            :type="'select'"
             :name="'gender'"
             :label="'Gender'"
-            :placeholder="'Select'"
-            :error="formError.find(error => error.field === 'gender')"
+            :error="formError.find(item => item.field === 'gender')"
+            :placeholder="'Select...'"
             :items="genders"
           />
+
           <AppInput
             v-model.number="form.mobile_number"
             :type="'text'"
@@ -75,7 +77,6 @@
 </template>
 <script>
 import AppInput from "@/components/Base/AppInput";
-import AppSelect from "@/components/Base/AppSelect";
 import AppButton from "@/components/Base/AppButton";
 const genders = [
   { value: "Male", label: "Male" },
@@ -84,7 +85,6 @@ const genders = [
 export default {
   components: {
     AppInput,
-    AppSelect,
     AppButton
   },
   data() {

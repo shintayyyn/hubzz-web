@@ -1,12 +1,13 @@
 <template>
   <section v-if="!loading">
     <div class="-mt-2">
-      <AppSelect
+      <AppInput
         v-model="profession_id"
+        :type="'select'"
         :name="'Filter Locums by'"
         :label="'Filter Locums by'"
-        :items="professions"
         :placeholder="'All'"
+        :items="professions"
       />
     </div>
     <div v-if="users.length > 0">
@@ -39,13 +40,9 @@
 
           <div class="flex flex-wrap text-center mt-4 cursor-pointer" @click="show(user.id)">
             <div class="w-full flex justify-center">
-              <div class="relative avatar flex justify-center">
-                <img
-                  :src="user.avatar.file.url"
-                  v-if="user.avatar && user.avatar.file && user.avatar.file.url"
-                />
-                <svgicon v-else name="no-avatar" height="115" width="115" />
-              </div>
+              <AppAvatar
+                :src="user.avatar && user.avatar.file && user.avatar.file.url ? user.avatar.file.url : ''"
+              />
             </div>
 
             <div class="w-full font-bold text-sm sm:text-lg my-4">{{user.personal_detail.name}}</div>
@@ -68,28 +65,35 @@
     <div v-else class="flex flex-row flex-wrap justify-center">
       <div>There are no favourite locums connected to your practice yet.</div>
     </div>
-    <div class="shield" v-if="tabs.includes($route.name)"></div>
+    <div class="shield" v-if="$route.name !== 'my-banks-withdrawn'"></div>
     <nuxt-child />
   </section>
 </template>
 <script>
 import AppPagination from "@/components/Base/AppPagination";
-import AppSelect from "@/components/Base/AppSelect";
+import AppAvatar from "@/components/Base/AppAvatar";
+import AppInput from "@/components/Base/AppInput";
 const tabs = [
-  'my-banks-withdrawn-userId', 'my-banks-withdrawn-userId-profile', 'my-banks-withdrawn-userId-related-jobs',
-  'my-banks-withdrawn-userId-related-jobs-available', 'my-banks-withdrawn-userId-related-jobs-applied',
-  'my-banks-withdrawn-userId-related-jobs-current', 'my-banks-withdrawn-userId-related-jobs-completed',
-  'my-banks-withdrawn-userId-related-jobs-unsuccessful', 'my-banks-withdrawn-userId-related-jobs-cancelled',
-  'my-banks-withdrawn-userId-related-jobs-declined',
-]
+  "my-banks-withdrawn-userId",
+  "my-banks-withdrawn-userId-profile",
+  "my-banks-withdrawn-userId-related-jobs",
+  "my-banks-withdrawn-userId-related-jobs-available",
+  "my-banks-withdrawn-userId-related-jobs-applied",
+  "my-banks-withdrawn-userId-related-jobs-current",
+  "my-banks-withdrawn-userId-related-jobs-completed",
+  "my-banks-withdrawn-userId-related-jobs-unsuccessful",
+  "my-banks-withdrawn-userId-related-jobs-cancelled",
+  "my-banks-withdrawn-userId-related-jobs-declined"
+];
 export default {
   transition: {
-    name: 'fade',
-    mode: 'out-in'
+    name: "fade",
+    mode: "out-in"
   },
   components: {
     AppPagination,
-    AppSelect
+    AppInput,
+    AppAvatar
   },
   data() {
     return {
@@ -103,10 +107,10 @@ export default {
       loading: true,
 
       params: {
-        profession_id: '1'
+        profession_id: ""
       },
 
-      profession_id: '1',
+      profession_id: "All"
     };
   },
   computed: {
@@ -118,22 +122,34 @@ export default {
     },
     totalPages() {
       return Math.ceil(this.total / this.perPage);
-    },
+    }
   },
   created() {
-    this.getProfessions()
-    this.getLocumsCount()
+    this.getProfessions();
+    this.getLocumsCount();
   },
   watch: {
+    $route(value) {
+      if (value.name !== "my-banks-withdrawn") {
+        document.body.style.overflow = "hidden";
+      } else {
+        document.body.style.overflow = "auto";
+      }
+    },
     profession_id(value) {
-      this.params.profession_id = value
-      this.getLocums(this.current_page)
+      if (value === "All") {
+        this.params.profession_id = "";
+      } else {
+        this.params.profession_id = value;
+      }
+      this.getLocums(this.current_page);
     }
   },
   methods: {
     getProfessions() {
       this.$axios.$get(`/api/v1/professions`).then(res => {
         this.professions = [];
+        this.professions.push({ label: "All", value: "All" });
         res.data.professions.forEach(item => {
           this.professions.push({ label: item.name, value: item.id });
         });
@@ -141,18 +157,24 @@ export default {
     },
     getLocumsCount() {
       this.$axios.$get(`/api/v1/practice/locums/count`).then(res => {
-        this.total = res.data.count
-        this.getLocums(this.current_page)
-      })
+        this.total = res.data.count;
+        this.getLocums(this.current_page);
+      });
     },
     getLocums(page) {
-      this.current_page = page
-      let defaultParams = { offset: this.offset, limit: this.perPage, practice_locum_type: 'Declined' }
-      let locumParams = { ...defaultParams, ...this.params }
-      this.$axios.$get(`/api/v1/practice/locums`, { params: locumParams }).then(res => {
-        this.users = res.data.users
-        this.loading = false
-      })
+      this.current_page = page;
+      let defaultParams = {
+        offset: this.offset,
+        limit: this.perPage,
+        practice_locum_type: "Declined"
+      };
+      let locumParams = { ...defaultParams, ...this.params };
+      this.$axios
+        .$get(`/api/v1/practice/locums`, { params: locumParams })
+        .then(res => {
+          this.users = res.data.users;
+          this.loading = false;
+        });
     },
     favorite(id, index) {
       let locum = this.users.find(locum => locum.id === id);
@@ -175,17 +197,17 @@ export default {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
-              text: ["Remove to favourites"]
+              text: ["Removed to favourites"]
             });
           });
       }
     },
     show(id) {
-      this.$router.push(`/my-banks/withdrawn/${id}`)
+      this.$router.push(`/my-banks/withdrawn/${id}`);
     },
     pagechanged(e) {
-      this.current_page = e
-      this.getLocums(this.current_page)
+      this.current_page = e;
+      this.getLocums(this.current_page);
     }
   }
 };

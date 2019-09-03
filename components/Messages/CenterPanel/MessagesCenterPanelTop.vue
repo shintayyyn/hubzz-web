@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="$route.params.slug && $route.params.slug !== 'new'"
+    v-if="$route.params.slug !== 'new'"
     class="panel-top p-4 w-full flex items-center border-b leading-none"
   >
     <div class="pr-4 md:hidden">
@@ -38,28 +38,29 @@ export default {
       }
     };
   },
+  computed: {
+    usersOnline() {
+      return this.$store.state.chat.users_online;
+    }
+  },
   created() {
     this.getDetails();
+    let isOnline = this.usersOnline.map(user => user).includes(this.details.id);
+    this.details.status = isOnline;
   },
   watch: {
     $route(to, from) {
       this.getDetails();
     },
     usersOnline(value) {
-      if (value.includes(parseInt(this.details.id))) {
-        this.details.status = true;
-      }
-    }
-  },
-  computed: {
-    usersOnline() {
-      return this.$store.state.chat.users_online;
+      let isOnline = value.map(user => user).includes(this.details.id);
+      this.details.status = isOnline;
     }
   },
   methods: {
     getDetails() {
       let route = this.$router.app._route.params.slug;
-      this.$axios.$get(`/api/v1/conversations/${route}`).then(res => {
+      this.$axios.$get(`/api/v1/conversations/${route}?limit=1`).then(res => {
         let domain = this.$auth.user.domain;
         if (res.data.messages.length > 0) {
           if (res.data.messages[0].sender.domain !== domain) {
@@ -90,6 +91,10 @@ export default {
             this.details.id = res.data.messages[0].receiver_id;
           }
         }
+        let isOnline = this.usersOnline
+          .map(user => user.id)
+          .includes(this.details.id);
+        this.details.status = isOnline;
       });
     },
     goBack() {

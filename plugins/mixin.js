@@ -2,7 +2,7 @@ import Vue from 'vue'
 Vue.mixin({
   methods: {
     scrollToTop() {
-      window.scrollTo(0,0)
+      window.scrollTo(0, 0)
     },
     getDateArray(start, end) {
       let arr = new Array();
@@ -14,16 +14,18 @@ Vue.mixin({
       return arr;
     },
     CheckEmptyField(inputField, fieldName) {
-      console.log('checking field')
       let index = this.formError.findIndex(item => item.field === fieldName)
       if (index >= 0) {
         this.formError.splice(index, 1)
       }
-      if (!inputField) {
+      if (!(inputField instanceof Array) && !inputField) {
+        this.formError.push({ field: fieldName, message: 'Required' })
+      }
+      if (inputField instanceof Array && !inputField.length) {
         this.formError.push({ field: fieldName, message: 'Required' })
       }
     },
-    Validate(form, lists) { //'form' is the INPUT form to be validated. 'lists' are the FIELDS that are not required to be validated.
+    Validate(form, lists) {
       let items = Object.entries(form)
       for (const [key, value] of items) {
         // check if value is array
@@ -38,8 +40,8 @@ Vue.mixin({
               this.formError.push(
                 { field: key, message: `${key} Is Required` }
               )
-            } 
-          } 
+            }
+          }
         } else {
           if (!value) {
             if (!lists) {
@@ -51,20 +53,20 @@ Vue.mixin({
               this.formError.push(
                 { field: key, message: `${key} Is required` }
               )
-            } 
-          } 
+            }
+          }
         }
       }
     },
     ValidateEmail(email) {
       let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
       if (email && !re.test(String(email).toLowerCase())) {
-        return { field: 'email', message: 'This is not a valid email'}
+        return { field: 'email', message: 'This is not a valid email' }
       }
     },
     ValidateSamePassword(password, new_password_confirmation, field) {
       if (password && new_password_confirmation && password !== new_password_confirmation) {
-        return  { field: field, message: 'The Password must be the same' }
+        return { field: field, message: 'The Password must be the same' }
       }
     },
     ValidateMobile(value, field) {
@@ -81,7 +83,7 @@ Vue.mixin({
       }
       if (value.length === 0) {
         this.formError.push(
-          { field: field, message: 'Required', validation: 'required'}
+          { field: field, message: 'Required', validation: 'required' }
         )
       }
     },

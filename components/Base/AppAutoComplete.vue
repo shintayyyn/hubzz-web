@@ -31,16 +31,22 @@
             class="flex flex-row flex-no-wrap justify-start p-2 text-xs border-b-2 cursor-pointer"
             :class="{'bg-gray-300': activeIndex === index}"
             @mouseover="activeIndex = index"
-            @click="add()"
+            @click="add"
           >
             <template v-if="keyword === 'practices'">
               <span class="w-1/6 flex justify-center">
-                <img
+                <!-- <img
                   class="w-10 h-10 rounded-full"
                   src="https://www.svgrepo.com/show/106812/doctor.svg"
                   width="25"
                   alt="avatar"
-                />
+                />-->
+                <!-- <AppAvatar
+                  class="w-10 h-10 rounded-full border"
+                  :width="'40px'"
+                  :height="'40px'"
+                  :src="null"
+                />-->
               </span>
               <div class="w-full flex flex-col justify-center mx-2">
                 <span class="font-bold text-base">{{ item.first_name }} {{ item.last_name }}</span>
@@ -64,8 +70,12 @@
 </template>
 <script>
 import debounce from "lodash.debounce";
+import AppAvatar from "@/components/Base/AppAvatar";
 import { mixin as clickaway } from "vue-clickaway";
 export default {
+  components: {
+    AppAvatar
+  },
   mixins: [clickaway],
   props: {
     value: String,
@@ -86,8 +96,8 @@ export default {
     };
   },
   watch: {
-    value(surger_name) {
-      this.search = surger_name;
+    value(surgery) {
+      this.search = surgery;
     },
     search(value) {
       if (value) {
@@ -111,38 +121,25 @@ export default {
           .$get(`/api/v1/conversations?search=${fullName}`)
           .then(res => {
             if (res.data.conversations.length > 0) {
-              let id = res.data.conversations[0].id;
+              this.search = "";
+              let id = res.data.conversations[0].conversation_id;
               this.$router.push(`/messages/${id}`);
+            } else {
+              this.search = fullName;
             }
           });
       } else {
         this.$emit("input", selectedSurgery.name);
       }
+      this.search = "";
     },
-    // getSurgeries: debounce(function (input) {
-    //   const params = {
-    //     search: input,
-    //     limit: 5
-    //   };
-    //   this.$axios.$get(this.url, { params }).then(res => {
-    //     console.log(res)
-    //     this.results = res.data.practices
-    //     this.showResults = true
-    //   });
-    // }, 250),
-    getSurgeries: debounce(function (input) {
+    getSurgeries: debounce(function(input) {
       const params = {
         search: input,
         limit: 5
       };
       this.$axios.$get(this.url, { params }).then(res => {
         if (this.keyword && this.keyword === "practices") {
-          // res.data.practices.forEach(data => {
-          //   this.results.push({
-          //     value: '',
-
-          //   })
-          // })
           this.results = res.data.users;
         } else {
           this.results = res.data.surgeries;

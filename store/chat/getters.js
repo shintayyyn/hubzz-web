@@ -8,4 +8,7 @@ export default {
   getMessages(state) {
     return state.messages
   },
+  getUnreadMessages(state) {
+    return state.unreadMessages
+  },
 }
