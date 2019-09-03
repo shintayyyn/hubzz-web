@@ -103,10 +103,15 @@ export default {
   },
 
   auth: {
+    localStorage: {
+      prefix: 'hubzz.auth.',
+    },
     cookie: {
+      prefix: 'hubzz.auth.',
       options: {
+        path: '/',
         expires: 1825,
-      },
+      }
     },
     strategies: {
       local: {
