@@ -228,8 +228,7 @@
                 <div class="flex flex-row flex-no-wrap">
                   <input
                     type="file"
-                    :name="`${item.id}_file`"
-                    :ref="`${item.id}_file`"
+                    :ref="`${item.id}_file_optional_compliance`"
                     class="inputfile hidden"
                     @input="onFileUpdate($event, item.info.id, index, item.id)"
                     @click.stop
@@ -337,7 +336,7 @@
                     type="file"
                     :ref="`${item.id}_file_mandatory_training`"
                     class="inputfile hidden"
-                    @input="onMandatoryFileUpdate($event, item.id, index)"
+                    @input="onMandatoryFileUpdate($event, item.id, index, item.mandatory_training.id)"
                     @click.stop
                   />
                   <svgicon name="cloud-upload" height="24" width="24" />
@@ -682,7 +681,7 @@ export default {
       // post request to API / send file
       this.loading = true;
       this.activeLoading.push(id);
-
+      console.log(id);
       this.$axios
         .$post(`/api/v1/locum/locum-detail-mandatory-trainings`, formData)
         .then(res => {
@@ -712,7 +711,7 @@ export default {
           this.activeLoading = this.activeLoading.filter(item => item !== id);
         });
     },
-    onMandatoryFileUpdate(e, id, index) {
+    onMandatoryFileUpdate(e, id, index, loadingId) {
       if (!e.target.files.length) {
         return;
       }
@@ -731,8 +730,7 @@ export default {
       formData.append("file", file);
       // post request to API / send file
       this.loading = true;
-      this.activeLoading.push(id);
-
+      this.activeLoading.push(loadingId);
       this.$axios
         .$put(`/api/v1/locum/locum-detail-mandatory-trainings/${id}`, formData)
         .then(res => {
@@ -750,7 +748,9 @@ export default {
             text: ["Document uploaded!"]
           });
           this.loading = false;
-          this.activeLoading = this.activeLoading.filter(item => item !== id);
+          this.activeLoading = this.activeLoading.filter(
+            item => item !== loadingId
+          );
         })
         .catch(err => {
           this.$store.commit("SET_NOTIFICATION", {
@@ -759,7 +759,9 @@ export default {
             text: [`${err.response.data.message}`]
           });
           this.loading = false;
-          this.activeLoading = this.activeLoading.filter(item => item !== id);
+          this.activeLoading = this.activeLoading.filter(
+            item => item !== loadingId
+          );
         });
     },
     downloadItem(fileUrl, fileName) {
