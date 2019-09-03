@@ -1,16 +1,16 @@
 <template>
-  <div class="px-10">
+  <div class="lg:px-10">
     <div class="rounded-lg shadow-lg p-5" style="max-width:700px;">
-      <div class="flex flex-row flex-wrap justify-between">
-        <div class="p-2" :class="$store.state.mobile? 'w-full':'w-1/2'">
+      <div class="flex flex-col md:flex-row flex-wrap justify-between">
+        <div class="p-2 w-full md:w-1/2">
           <div class="text-sm my-2">Email address</div>
           <div class="text-sm font-bold">{{email_address}}</div>
         </div>
-        <div class="p-2" :class="$store.state.mobile? 'w-full':'w-1/2'">
+        <div class="p-2 w-full md:w-1/2">
           <div class="text-sm my-2">Role</div>
           <div class="text-sm font-bold">{{role}}</div>
         </div>
-        <div class="p-2" :class="$store.state.mobile? 'w-full':'w-1/2'">
+        <div class="p-2 w-full md:w-1/2">
           <div class="text-sm my-2">Sender</div>
           <div class="text-sm font-bold">{{sender}}</div>
         </div>
@@ -54,28 +54,28 @@
 export default {
   data() {
     return {
-      email_address: '',
-      role: '',
-      sender: '',
+      email_address: "",
+      role: "",
+      sender: "",
       form: {
-        message: ''
+        message: ""
       },
       formError: [],
-      setFocus: ''
-    }
+      setFocus: ""
+    };
   },
   created() {
     // this should be on $auth.user
-    this.email_address = 'kpabad.halcyondigital@gmail.com'
-    this.role = 'Nurse | Advanced Nurse Practitioners (ANP)'
-    this.sender = 'Mr. Kenneth Alvin Abad'
+    this.email_address = "kpabad.halcyondigital@gmail.com";
+    this.role = "Nurse | Advanced Nurse Practitioners (ANP)";
+    this.sender = "Mr. Kenneth Alvin Abad";
   },
   methods: {
     // send() {
     //   console.log(this.form)
     // }
   }
-}
+};
 </script>
 <style scoped>
 button:active {

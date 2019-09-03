@@ -41,7 +41,7 @@ export default {
           return "bg-yellow-400";
           break;
         case "info":
-          return "bg-blue-500 text-blue-400";
+          return "bg-blue-500 text-white";
         default:
           return "bg-white";
       }
@@ -84,10 +84,27 @@ export default {
         default:
           return "#fff, #000";
       }
+    },
+    notify() {
+      return this.$store.state.notification.enabled;
     }
     // closable() {
     //   return this.$store.state.notification.closable
     // }
+  },
+  watch: {
+    notify(value) {
+      if (!this.$store.state.notification.closable) {
+        setTimeout(() => {
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: false,
+            status: "",
+            text: "",
+            closable: false
+          });
+        }, 2000);
+      }
+    }
   },
   methods: {
     close() {

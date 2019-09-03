@@ -8,13 +8,11 @@
       @click="show(user.id)"
     >
       <div class="flex flex-row flex-no-wrap justify-between items-center">
-        <div class="relative avatar flex">
-          <img
-            :src="user.avatar.file.url"
-            v-if="user.avatar && user.avatar.file && user.avatar.file.url"
-          />
-          <svgicon v-else name="no-avatar" height="40" width="40" />
-        </div>
+        <AppAvatar
+          :height="'40px'"
+          :width="'40px'"
+          :src="user.avatar && user.avatar.file && user.avatar.file.url ? user.avatar.file.url : ''"
+        />
         <div class="text-xs sm:text-sm font-bold leading-loose">{{user.personal_detail.name}}</div>
         <div class="flex">
           <svgicon name="arrow-right" height="20" width="20" />
@@ -24,7 +22,11 @@
   </div>
 </template>
 <script>
+import AppAvatar from "~/components/Base/AppAvatar";
 export default {
+  components: {
+    AppAvatar
+  },
   props: ["applicants"],
   methods: {
     show(id) {

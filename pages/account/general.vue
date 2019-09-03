@@ -1,104 +1,136 @@
 <template>
-  <div class="border-solid rounded-lg shadow-lg p-8">
-    <div class="relative w-full">
-      <AppLoading :loading="loading" :message="'Loading'" />
-      <AppFormError :formError="formError" v-if="formError.length > 0" />
-      <AppInput
-        v-model="form.email"
-        :type="'email'"
-        :name="'email'"
-        :label="'Email address'"
-        :placeholder="''"
-      />
-      <div class="-mt-6 mb-4" v-if="email_isVerified === true ">
+  <div class="relative rounded-lg shadow-lg w-full p-8">
+    <AppFormError :formError="formError" v-if="formError.length > 0" />
+    <AppLoading :loading="loading" :message="'Loading'" />
+    <AppInput
+      v-model="form.email"
+      :type="'email'"
+      :name="'email'"
+      :label="'Email address'"
+      :error="formError.find(item => item.field === 'email')"
+      @submit="save"
+      @blur="CheckEmptyField(form.email, 'email')"
+    />
+    <div class="-mt-6 mb-4">
+      <template v-if="email_isVerified === true">
         <span
           class="text-xs"
         >E-mail is Verified on {{$moment(email_verifiedAt).format('MMM DD, YYYY | hh:mm A')}}</span>
-      </div>
-      <div class="-mt-6 mb-4" v-if="email_isVerified === false ">
+      </template>
+      <template v-if="email_isVerified === false">
         <span class="text-red-500 text-xs">E-mail is not yet verified.</span>
         <span
-          class="p-1 bg-gray-800 rounded text-xs text-white cursor-pointer"
+          class="p-1 bg-gray-800 rounded text-xs text-white cursor-pointer whitespace-no-wrap"
           @click="resendEmailVerification()"
         >Click here to re-send</span>
-      </div>
-      <AppInput
-        v-model="form.title"
-        :type="'text'"
-        :name="'title'"
-        :label="'Title'"
-        :placeholder="''"
-      />
-      <AppInput
-        v-model="form.first_name"
-        :type="'text'"
-        :name="'first_name'"
-        :label="'First name'"
-        :placeholder="''"
-      />
-      <AppInput
-        v-model="form.last_name"
-        :type="'text'"
-        :name="'last_name'"
-        :label="'Last name'"
-        :placeholder="''"
-      />
-      <AppInput
-        v-model="form.suffix"
-        :type="'text'"
-        :name="'suffix'"
-        :label="'Suffix'"
-        :placeholder="''"
-      />
-      <AppSelect
-        v-model="form.gender"
-        :name="'gender'"
-        :label="'Gender'"
-        :placeholder="'Select...'"
-        :items="[{label: 'Male', value: 'Male'}, {label: 'Female', value: 'Female'}]"
-      />
-      <AppInput
-        v-model="form.mobile_number"
-        :type="'text'"
-        :name="'mobile_number'"
-        :label="'Mobile Number'"
-        :placeholder="''"
-      />
-      <div class="rounded-lg bg-gray-300 p-8 my-2">
-        <AppPostCode
-          v-model="form.post_code"
-          :name="'post_code'"
-          :label="'Post code'"
-          @onSelect="onSelect"
-          :inStyle="'background-color:#dae1e7;border-color:white'"
-        />
-        <AppInput
-          v-model="form.address_line_1"
-          :type="'text'"
-          :name="'address_line_1'"
-          :label="'Address line 1'"
-          :placeholder="''"
-          :inStyle="'background-color:#dae1e7;border-color:white'"
-        />
-        <AppInput
-          v-model="form.address_line_2"
-          :type="'text'"
-          :name="'address_line_2'"
-          :label="'Address line 2 (optional)'"
-          :placeholder="''"
-          :inStyle="'background-color:#dae1e7;border-color:white'"
-        />
-        <AppInput
-          v-model="form.address_line_3"
-          :type="'text'"
-          :name="'address_line_3'"
-          :label="'City / Town / District'"
-          :placeholder="''"
-          :inStyle="'background-color:#dae1e7;border-color:white'"
-        />
-      </div>
-      <AppButton :label="'Save changes'" @click="save" />
+      </template>
     </div>
+    <AppInput
+      v-model="form.title"
+      :type="'text'"
+      :name="'title'"
+      :label="'Title'"
+      :error="formError.find(item => item.field === 'title')"
+      @submit="save"
+    />
+    <AppInput
+      v-model="form.first_name"
+      :type="'text'"
+      :name="'first_name'"
+      :label="'First name'"
+      :error="formError.find(item => item.field === 'first_name')"
+      @submit="save"
+      @blur="CheckEmptyField(form.first_name, 'first_name')"
+    />
+    <AppInput
+      v-model="form.last_name"
+      :type="'text'"
+      :name="'last_name'"
+      :label="'Last name'"
+      :error="formError.find(item => item.field === 'last_name')"
+      @submit="save"
+      @blur="CheckEmptyField(form.last_name, 'last_name')"
+    />
+    <AppInput
+      v-model="form.suffix"
+      :type="'text'"
+      :name="'suffix'"
+      :label="'Suffix'"
+      @submit="save"
+    />
+    <AppInput
+      v-model="form.gender"
+      :type="'select'"
+      :name="'gender'"
+      :label="'Gender'"
+      :error="formError.find(item => item.field === 'gender')"
+      :placeholder="'Select...'"
+      :items="[{ label: 'Male', value: 'Male'}, { label: 'Female', value: 'Female' }]"
+      @blur="CheckEmptyField(form.gender, 'gender')"
+    />
+    <AppInput
+      v-model="form.mobile_number"
+      :type="'text'"
+      :name="'mobile_number'"
+      :label="'Mobile Number'"
+      :error="formError.find(item => item.field === 'mobile_number')"
+      @submit="save"
+      @blur="CheckEmptyField(form.mobile_number, 'mobile_number')"
+    />
+    <AppInput
+      v-model="form.home_number"
+      :type="'text'"
+      :name="'home_number'"
+      :label="'Home Number'"
+      @submit="save"
+    />
+    <AppInput
+      v-model="form.work_number"
+      :type="'text'"
+      :name="'work_number'"
+      :label="'Work Number'"
+      @submit="save"
+    />
+    <div class="rounded-lg bg-gray-400 p-8 my-2">
+      <AppPostCode
+        v-model="form.post_code"
+        :name="'post_code'"
+        :label="'Post code'"
+        :error="formError.find(item => item.field === 'post_code')"
+        :inStyle="'background-color:#dae1e7;border-color:white'"
+        @onSelect="onSelect"
+        @blur="CheckEmptyField(form.post_code, 'post_code')"
+      />
+      <AppInput
+        v-model="form.address_line_1"
+        :type="'text'"
+        :name="'address_line_1'"
+        :label="'Address line 1'"
+        :error="formError.find(item => item.field === 'address_line_1')"
+        :inStyle="'background-color:#dae1e7;border-color:white'"
+        @submit="save"
+        @blur="CheckEmptyField(form.address_line_1, 'address_line_1')"
+      />
+      <AppInput
+        v-model="form.address_line_2"
+        :type="'text'"
+        :name="'address_line_2'"
+        :label="'Address line 2 (optional)'"
+        :inStyle="'background-color:#dae1e7;border-color:white'"
+        @submit="save"
+      />
+      <AppInput
+        v-model="form.address_line_3"
+        :type="'text'"
+        :name="'address_line_3'"
+        :label="'City / Town / District'"
+        :error="formError.find(item => item.field === 'address_line_3')"
+        :inStyle="'background-color:#dae1e7;border-color:white'"
+        @submit="save"
+        @blur="CheckEmptyField(form.address_line_3, 'address_line_3')"
+      />
+    </div>
+    <AppButton :label="'Save changes'" @click="save" />
   </div>
 </template>
 <script>
@@ -106,7 +138,6 @@ import AppFormError from "@/components/Base/AppFormError";
 import AppLoading from "@/components/Base/AppLoading";
 import AppInput from "@/components/Base/AppInput";
 import AppPostCode from "@/components/Base/AppPostCode";
-import AppSelect from "@/components/Base/AppSelect";
 import AppButton from "@/components/Base/AppButton";
 export default {
   transition: {
@@ -118,7 +149,6 @@ export default {
     AppLoading,
     AppInput,
     AppPostCode,
-    AppSelect,
     AppButton
   },
   data() {
@@ -131,53 +161,43 @@ export default {
         suffix: "",
         gender: "",
         mobile_number: "",
+        home_number: "",
+        work_number: "",
         post_code: "",
         address_line_1: "",
         address_line_2: "",
         address_line_3: ""
       },
+      formError: [],
       loading: false,
-      email_isVerified: '',
-      email_verifiedAt: '',
-      formError: []
+      email_isVerified: "",
+      email_verifiedAt: ""
     };
   },
   watch: {
-    "form.email"(value) {
-      this.formError = this.formError.filter(error => error.field !== "email");
+    "form.email"() {
+      this.CheckEmptyField(this.form.email, "email");
     },
     "form.first_name"() {
-      this.formError = this.formError.filter(
-        error => error.field !== "first_name"
-      );
+      this.CheckEmptyField(this.form.first_name, "first_name");
     },
     "form.last_name"() {
-      this.formError = this.formError.filter(
-        error => error.field !== "last_name"
-      );
+      this.CheckEmptyField(this.form.last_name, "last_name");
     },
     "form.gender"() {
-      this.formError = this.formError.filter(error => error.field !== "gender");
+      this.CheckEmptyField(this.form.gender, "gender");
     },
     "form.mobile_number"() {
-      this.formError = this.formError.filter(
-        error => error.field !== "mobile_number"
-      );
+      this.CheckEmptyField(this.form.mobile_number, "mobile_number");
     },
     "form.post_code"() {
-      this.formError = this.formError.filter(
-        error => error.field !== "post_code"
-      );
+      this.CheckEmptyField(this.form.post_code, "post_code");
     },
     "form.address_line_1"() {
-      this.formError = this.formError.filter(
-        error => error.field !== "address_line_1"
-      );
+      this.CheckEmptyField(this.form.address_line_1, "address_line_1");
     },
     "form.address_line_3"() {
-      this.formError = this.formError.filter(
-        error => error.field !== "address_line_3"
-      );
+      this.CheckEmptyField(this.form.address_line_3, "address_line_3");
     }
   },
   async asyncData({ app, error }) {
@@ -202,6 +222,8 @@ export default {
     this.form.suffix = this.user.personal_detail.suffix;
     this.form.gender = this.user.personal_detail.gender;
     this.form.mobile_number = this.user.contact_detail.mobile_number;
+    this.form.home_number = this.user.contact_detail.home_number;
+    this.form.work_number = this.user.contact_detail.work_number;
     this.form.address_line_1 = this.user.address_detail.address.line_1;
     this.form.address_line_2 = this.user.address_detail.address.line_2;
     this.form.address_line_3 = this.user.address_detail.address.line_3;
@@ -226,7 +248,7 @@ export default {
       this.form.address_line_3 = postal_town ? postal_town.long_name : "";
     },
     async save() {
-      this.loading = true
+      this.loading = true;
       try {
         this.formError = [];
         this.Validate(this.form, ["title", "suffix", "address_line_2"]);
@@ -237,29 +259,35 @@ export default {
             status: "success",
             text: ["Saved"]
           });
-          this.scrollToTop()
-          this.loading = false
+          this.scrollToTop();
+          this.loading = false;
         } else {
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "danger",
             text: ["Please fill up all the forms"]
           });
-          this.scrollToTop()
-          this.loading = false
+          this.scrollToTop();
+          this.loading = false;
         }
       } catch (err) {
-        this.formError = err.response.data.error_messages
-        this.scrollToTop()
-        this.loading = false
+        this.formError = err.response.data.error_messages;
+        this.scrollToTop();
+        this.loading = false;
       }
     },
     async resendEmailVerification() {
       try {
-        await this.$axios.post(`/api/v1/email-verification/resend`)
-        // alert('Confirmation e-mail sent')
-        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: ['Confirmation e-mail sent'] })
+        this.loading = true;
+        await this.$axios.post(`/api/v1/email-verification/resend`);
+        this.loading = false;
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "success",
+          text: ["Confirmation e-mail sent"]
+        });
       } catch (err) {
+        this.loading = false;
         console.log("Something went wrong! ", err);
       }
     }

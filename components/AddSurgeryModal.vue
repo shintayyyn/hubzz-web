@@ -20,7 +20,7 @@
           :error="formError.find(item => item.field === 'search_text')"
           :placeholder="'Surgery Name, Surgery Code, or keywords'"
         />
-        <AppButton :label="'Search'" @click="search" :inStyle="'padding:5px;'" />
+        <AppButton :label="'Search'" @click="search" :inStyle="'padding:5px 14px;'" />
       </div>
       <div v-if="showResult && surgeries.length === 0" class="mt-5">
         <div

@@ -12,7 +12,7 @@
             :placeholder="'Practice code, name of practice'"
           />
         </div>
-        <AppButton :label="'Search'" @click="search" :inStyle="'padding:5px;'" />
+        <AppButton :label="'Search'" @click="search" :inStyle="'padding:5px 14px;'" />
       </div>
     </div>
 

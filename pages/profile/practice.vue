@@ -2,8 +2,8 @@
   <section>
     <div class="flex flex-col">
       <div class="flex flex-row flex-wrap justify-between">
-        <div class="w-full md:w-3/5 p-2">
-          <div class="rounded-lg shadow-lg p-8">
+        <div class="w-full md:w-2/3 p-1">
+          <div class="rounded-lg shadow-lg p-8 h-full flex items-center">
             <div class="flex flex-row flex-wrap">
               <div class="flex flex-col w-full md:w-1/3 p-1">
                 <div class="text-xs sm:text-sm">Practice name</div>
@@ -26,42 +26,49 @@
             </div>
           </div>
         </div>
-        <div class="w-full md:w-2/5 p-2">
-          <div class="relative rounded-lg shadow-lg p-8">
-            <div class="flex flex-col">
-              <div class="text-xs sm:text-sm">Your Practice's standard terms</div>
-              <div class="mt-4 bg-gray-300 rounded-lg p-4">
-                <div class="flex flex-no-wrap justify-between items-center">
-                  <div class="flex text-sm" v-if="uploading">
-                    <label for="file-upload">Uploading</label>
-                    <div class="spinner">
-                      <div class="bounce1"></div>
-                      <div class="bounce2"></div>
-                      <div class="bounce3"></div>
-                    </div>
+        <div class="w-full md:w-1/3 p-1">
+          <div class="flex flex-col">
+            <div class="rounded-lg shadow-lg px-4">
+              <AppInput
+                v-model="practiceType"
+                :type="'select'"
+                :name="'type'"
+                :label="'Practice Type'"
+                :error="formError.find(item => item.field === 'type')"
+                :placeholder="'Select...'"
+                :items="[{ value: 'Stand Alone', label: 'Stand Alone'},{ value: 'Hub', label: 'Hub'},{ value: 'Spoke', label: 'Spoke'}]"
+                @change="practiceTypeOnchange"
+              />
+            </div>
+            <div class="rounded-lg shadow-lg p-4 mt-4">
+              <div class="flex flex-col">
+                <div class="text-xs sm:text-sm">Your Practice's standard terms</div>
+                <div class="relative mt-4 bg-gray-300 rounded-lg p-4">
+                  <AppLoading :spinner="false" :loading="loading" :message="'Uploading'" />
+                  <div v-if="!loading" class="flex flex-no-wrap justify-between items-center">
+                    <div
+                      class="text-xs sm:text-sm document-filename"
+                    >{{ practice.standard_terms && practice.standard_terms.file ? practice.standard_terms.file.filename : '' }}</div>
+                    <div
+                      class="font-bold text-md sm:text-lg hover:null cursor-pointer text-gray-600 hover:text-black"
+                      @click="modal = true"
+                      v-if="practice.standard_terms "
+                    >x</div>
                   </div>
-                  <div
-                    v-if="!uploading"
-                    class="text-xs sm:text-sm document-filename"
-                  >{{ practice.standard_terms && practice.standard_terms.file ? practice.standard_terms.file.filename : '' }}</div>
-                  <div
-                    class="font-bold text-md sm:text-lg hover:null cursor-pointer text-gray-600 hover:text-black"
-                    @click="modal = true"
-                    v-if="practice.standard_terms"
-                  >x</div>
+                </div>
+                <div class="relative flex justify-start mt-2 items-center">
+                  <label v-if="loading == false" for="file-upload">
+                    <div class="flex flex-row flex-no-wrap cursor-pointer hover:underline">
+                      <svgicon name="cloud-upload" height="24" width="24" />
+                      <div
+                        class="ml-2 text-xs sm:text-sm leading-loose"
+                      >{{ practice.standard_terms ? 'Update' : 'Upload' }}</div>
+                    </div>
+                  </label>
+                  <input type="file" id="file-upload" class="hidden" @input="onFileInput($event)" />
                 </div>
               </div>
-              <div class="relative flex justify-start mt-2 items-center">
-                <label v-if="uploading == false" for="file-upload">
-                  <div class="flex flex-row flex-no-wrap cursor-pointer hover:underline">
-                    <svgicon name="cloud-upload" height="24" width="24" />
-                    <div class="ml-2 text-xs sm:text-sm leading-loose">Upload</div>
-                  </div>
-                </label>
-                <input type="file" id="file-upload" class="hidden" @input="onFileInput($event)" />
-              </div>
             </div>
-            <AppLoading :loading="loading" :message="'Loading'" v-if="loading" />
           </div>
         </div>
       </div>
@@ -76,46 +83,53 @@
                 :type="'text'"
                 :name="'phone_number'"
                 :label="'Phone number'"
-                :placeholder="''"
+                :error="formError.find(item => item.field === 'phone_number')"
+                @submit="save"
+                @blur="CheckEmptyField(form.phone_number, 'phone_number')"
               />
               <AppInput
                 v-model="form.report_to"
                 :type="'text'"
                 :name="'report_to'"
                 :label="'Report to'"
-                :placeholder="''"
+                :error="formError.find(item => item.field === 'report_to')"
+                @submit="save"
+                @blur="CheckEmptyField(form.report_to, 'report_to')"
               />
               <AppInput
                 v-model="form.email"
                 :type="'email'"
                 :name="'email'"
                 :label="'Email Address'"
-                :placeholder="''"
+                :error="formError.find(item => item.field === 'email')"
+                @submit="save"
+                @blur="CheckEmptyField(form.email, 'email')"
               />
               <AppInput
                 v-model="form.practice_type_id"
                 :type="'multi-checkbox'"
+                :error="formError.find(item => item.field === 'practice_type_id')"
                 @checked="form.practice_type_id.push($event)"
                 @unchecked="uncheckPractice($event)"
                 :name="'practice_type_id'"
                 :label="'What type of Practice are you?'"
-                :placeholder="''"
                 :lists="practice_types"
               />
-              <AppTextarea
+              <AppInput
                 v-model="form.extra_information"
+                :type="'textarea'"
                 :name="'extra_information'"
                 :label="'Extra Information (Pracking restrictions, transport links, etc.)'"
-                :placeholder="''"
+                :resize="false"
               />
               <AppInput
                 v-model="form.mandatory_training_id"
                 :type="'multi-checkbox'"
+                :error="formError.find(item => item.field === 'mandatory_training_id')"
                 @checked="form.mandatory_training_id.push($event)"
                 @unchecked="uncheckMandatory($event)"
                 :name="'mandatory_training_id'"
                 :label="'Mandatory training required from Locums:'"
-                :placeholder="''"
                 :lists="mandatory_trainings"
               />
             </div>
@@ -126,11 +140,11 @@
                   <AppInput
                     v-model="form.gp_compliance_document_id"
                     :type="'multi-checkbox'"
+                    :error="formError.find(item => item.field === 'gp_compliance_document_id')"
                     @checked="form.gp_compliance_document_id.push($event)"
                     @unchecked="uncheckGp($event)"
                     :name="'gp_compliance_document_id'"
                     :label="'For GPs:'"
-                    :placeholder="''"
                     :lists="gp_documents"
                   />
                 </div>
@@ -138,11 +152,11 @@
                   <AppInput
                     v-model="form.others_compliance_document_id"
                     :type="'multi-checkbox'"
+                    :error="formError.find(item => item.field === 'others_compliance_document_id')"
                     @checked="form.others_compliance_document_id.push($event)"
                     @unchecked="uncheckOther($event)"
                     :name="'others_compliance_document_id'"
                     :label="'For Nurses, et al:'"
-                    :placeholder="''"
                     :lists="others_documents"
                   />
                 </div>
@@ -150,7 +164,7 @@
             </div>
           </div>
           <div class="mt-8">
-            <AppButton :label="'Save changes'" @click="save()" />
+            <AppButton :label="'Save changes'" @click="save" />
           </div>
         </div>
       </div>
@@ -164,11 +178,18 @@
       @confirm="remove"
       @cancel="modal = false"
     />
+    <AppConfirmationModal
+      :label="'Are you sure you want to change your Practice type? All of your branches/surgeries will be remove.'"
+      :confirmLabel="'Yes'"
+      :cancelLabel="'Cancel'"
+      :modal="practiceTypeConfirmationModal"
+      @confirm="confirmPracticeType"
+      @cancel="cancelPracticeType"
+    />
   </section>
 </template>
 <script>
 import AppInput from "@/components/Base/AppInput";
-import AppTextarea from "@/components/Base/AppTextarea";
 import AppButton from "@/components/Base/AppButton";
 import AppFormError from "@/components/Base/AppFormError";
 import AppLoading from "@/components/Base/AppLoading";
@@ -180,16 +201,18 @@ export default {
   },
   components: {
     AppInput,
-    AppTextarea,
     AppButton,
     AppFormError,
     AppLoading,
-    AppConfirmationModal,
+    AppConfirmationModal
   },
   data() {
     return {
       modal: false,
+      practiceTypeConfirmationModal: false,
       loading: false,
+      selectedPracticeType: "",
+      oldPracticeType: "",
       form: {
         email: "",
         phone_number: "",
@@ -201,7 +224,6 @@ export default {
         others_compliance_document_id: []
       },
       name: "",
-      uploading: false,
       formError: []
     };
   },
@@ -211,76 +233,55 @@ export default {
         ? (document.body.style.overflow = "hidden")
         : (document.body.style.overflow = "auto");
     },
+    practiceType(newValue, oldValue) {
+      this.oldPracticeType = oldValue;
+    },
     "form.phone_number"(value) {
-      if (value) {
-        this.formError = this.formError.filter(
-          err => err.field !== "phone_number"
-        );
-      }
+      this.CheckEmptyField(this.form.phone_number, "phone_number");
     },
     "form.report_to"(value) {
-      if (value) {
-        this.formError = this.formError.filter(
-          err => err.field !== "report_to"
-        );
-      }
+      this.CheckEmptyField(this.form.report_to, "report_to");
     },
     "form.email"(value) {
-      if (value) {
-        this.formError = this.formError.filter(err => err.field !== "email");
-      }
-    },
-    "form.extra_information"(value) {
-      if (value) {
-        this.formError = this.formError.filter(
-          err => err.field !== "extra_information"
-        );
-      }
+      this.CheckEmptyField(this.form.email, "email");
     },
     "form.practice_type_id"(value) {
-      if (value.length) {
-        this.formError = this.formError.filter(
-          err => err.field !== "practice_type_id"
-        );
-      }
+      this.CheckEmptyField(this.form.practice_type_id, "practice_type_id");
     },
     "form.mandatory_training_id"(value) {
-      if (value.length) {
-        this.formError = this.formError.filter(
-          err => err.field !== "mandatory_training_id"
-        );
-      }
+      this.CheckEmptyField(
+        this.form.mandatory_training_id,
+        "mandatory_training_id"
+      );
     },
     "form.gp_compliance_document_id"(value) {
-      if (value.length) {
-        this.formError = this.formError.filter(
-          err => err.field !== "gp_compliance_document_id"
-        );
-      }
+      this.CheckEmptyField(
+        this.form.gp_compliance_document_id,
+        "gp_compliance_document_id"
+      );
     },
     "form.others_compliance_document_id"(value) {
-      if (value.length) {
-        this.formError = this.formError.filter(
-          err => err.field !== "others_compliance_document_id"
-        );
-      }
+      this.CheckEmptyField(
+        this.form.others_compliance_document_id,
+        "others_compliance_document_id"
+      );
     }
   },
   async asyncData({ app, error }) {
     const response = await app.$axios.$get(`/api/v1/me`);
     const surgery =
       response.data &&
-        response.data.user &&
-        response.data.user.practice_detail &&
-        response.data.user.practice_detail.practice &&
-        response.data.user.practice_detail.practice.surgery
+      response.data.user &&
+      response.data.user.practice_detail &&
+      response.data.user.practice_detail.practice &&
+      response.data.user.practice_detail.practice.surgery
         ? response.data.user.practice_detail.practice.surgery
         : null;
     const practice =
       response.data &&
-        response.data.user &&
-        response.data.user.practice_detail &&
-        response.data.user.practice_detail.practice
+      response.data.user &&
+      response.data.user.practice_detail &&
+      response.data.user.practice_detail.practice
         ? response.data.user.practice_detail.practice
         : null;
 
@@ -289,8 +290,8 @@ export default {
     );
     let practice_types =
       responsePracticeTypes.data &&
-        responsePracticeTypes.data.practice_types &&
-        responsePracticeTypes.data.practice_types.length
+      responsePracticeTypes.data.practice_types &&
+      responsePracticeTypes.data.practice_types.length
         ? responsePracticeTypes.data.practice_types
         : [];
     practice_types = practice_types.map(practiceType => {
@@ -302,8 +303,8 @@ export default {
     );
     let mandatory_trainings =
       responseMandatoryTrainings.data &&
-        responseMandatoryTrainings.data.mandatory_trainings &&
-        responseMandatoryTrainings.data.mandatory_trainings.length
+      responseMandatoryTrainings.data.mandatory_trainings &&
+      responseMandatoryTrainings.data.mandatory_trainings.length
         ? responseMandatoryTrainings.data.mandatory_trainings
         : [];
     mandatory_trainings = mandatory_trainings.map(mandatoryTraining => {
@@ -315,8 +316,8 @@ export default {
     );
     let profession_categories =
       responseProfessionCategories.data &&
-        responseProfessionCategories.data.profession_categories &&
-        responseProfessionCategories.data.profession_categories.length
+      responseProfessionCategories.data.profession_categories &&
+      responseProfessionCategories.data.profession_categories.length
         ? responseProfessionCategories.data.profession_categories
         : [];
     const gp = profession_categories.find(item => item.id === 1);
@@ -338,13 +339,24 @@ export default {
       })
     ];
 
+    const responsePracticeType = await app.$axios.$get(
+      `/api/v1/practice/me/practice-type`
+    );
+    const practiceType =
+      responsePracticeType.data &&
+      responsePracticeType.data.practice &&
+      responsePracticeType.data.practice.type
+        ? responsePracticeType.data.practice.type
+        : null;
+
     return {
       surgery,
       practice,
       practice_types,
       mandatory_trainings,
       gp_documents,
-      others_documents
+      others_documents,
+      practiceType
     };
   },
   created() {
@@ -367,28 +379,33 @@ export default {
   },
   methods: {
     onFileInput(e) {
-      console.log('uploading')
       if (!e.target.files.length) {
         return;
       }
-      let types = ["pdf", "jpeg", "msword", "tif"];
+      let types = ["pdf", "jpeg", "msword", "tiff"];
       let file = e.target.files[0];
       let fileType = file.type.split("/")[1];
       if (!types.includes(fileType)) {
         this.$store.commit("SET_NOTIFICATION", {
           enabled: true,
           status: "alert",
-          text: "Invalid File Format"
+          text: ["Invalid File Format"]
         });
         return;
       }
-      const formData = new FormData()
-      formData.append('file', file)
-      this.loading = true
-      this.$axios.$put(`/api/v1/practice/me/standard-terms`, formData).then(res => {
-        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: [res.message] })
-        this.loading = false
-      })
+      const formData = new FormData();
+      formData.append("file", file);
+      this.loading = true;
+      this.$axios
+        .$put(`/api/v1/practice/me/standard-terms`, formData)
+        .then(res => {
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: [res.message]
+          });
+          this.loading = false;
+        });
       this.practice.standard_terms = {
         file: {
           filename: file.name
@@ -415,14 +432,41 @@ export default {
         id => id != value
       );
     },
+    practiceTypeOnchange(value) {
+      this.selectedPracticeType = value;
+      this.practiceTypeConfirmationModal = true;
+    },
+    cancelPracticeType() {
+      this.practiceType = this.oldPracticeType;
+      this.practiceTypeConfirmationModal = false;
+    },
+    confirmPracticeType() {
+      this.$axios
+        .$put(`/api/v1/practice/me/practice-type`, {
+          type: this.selectedPracticeType
+        })
+        .then(res => {
+          this.practiceTypeConfirmationModal = false;
+          this.$store.commit(
+            "profile/SET_PRACTICE_TYPE",
+            res.data.practice.type
+          );
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: ["Practice Type Changed"]
+          });
+        });
+    },
     remove() {
-      this.loading = true
       this.$axios.$delete(`/api/v1/practice/me/standard-terms`).then(res => {
-        this.loading = false
-        this.modal = false
-        this.$store.commit('SET_NOTIFICATION', { enabled: true, status: 'success', text: [res.message] })
-        // this.practice.standard_terms.file.filename = null
-        this.practice.standard_terms = null
+        this.modal = false;
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "success",
+          text: [res.message]
+        });
+        this.practice.standard_terms = null;
         // standard_terms)
       });
     },
@@ -443,6 +487,7 @@ export default {
             status: "success",
             text: [res.message]
           });
+          this.scrollToTop();
         } else {
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
@@ -464,24 +509,6 @@ export default {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-.remove-confirmation-shield {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #333;
-  opacity: 0.5;
-  z-index: 511;
-}
-.remove-confirmation-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: auto;
-  z-index: 512;
 }
 </style>
 

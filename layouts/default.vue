@@ -2,10 +2,10 @@
   <section>
     <div class="sidebar-shield" v-if="$store.state.toggled_sidebar" @click="close"></div>
     <AppSideBar @modal="signout_modal = $event" />
+    <AppHeader />
     <div class="content">
       <AppNotification />
-      <AppHeader />
-      <nuxt />
+      <nuxt class="mt-20" />
     </div>
   </section>
 </template>
@@ -27,27 +27,29 @@ export default {
     };
   },
   middleware: "isNotAuthenticated",
-  computed: {
-    notify() {
-      return this.$store.state.notification.enabled;
-    }
-  },
+  // computed: {
+  //   notify() {
+  //     return this.$store.state.notification.enabled;
+  //   }
+  // },
   watch: {
-    notify(value) {
-      if (!this.$store.state.notification.closable) {
-        setTimeout(() => {
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: false,
-            status: "",
-            text: "",
-            closable: false
-          });
-        }, 2000);
-      }
-    },
+    //   notify(value) {
+    //     if (!this.$store.state.notification.closable) {
+    //       setTimeout(() => {
+    //         this.$store.commit("SET_NOTIFICATION", {
+    //           enabled: false,
+    //           status: "",
+    //           text: "",
+    //           closable: false
+    //         });
+    //       }, 2000);
+    //     }
+    //   },
     $route(value) {
-      this.$store.commit("TOGGLE_SIDEBAR", false);
-      document.body.style.overflow = "auto";
+      if (value) {
+        this.$store.commit("TOGGLE_SIDEBAR", false);
+        document.body.style.overflow = "auto";
+      }
     }
   },
   methods: {
@@ -57,12 +59,12 @@ export default {
     }
   },
   mounted() {
-    this.$store.dispatch("signUp/getProfessions");
-    this.$store.dispatch("signUp/getQualifications");
-    this.$store.dispatch("signUp/getClinicalSystems");
-    this.$store.dispatch("signUp/getSpokenLanguages");
-    this.$store.dispatch("signUp/getPracticeTypes");
-    this.$store.dispatch("signUp/getMandatoryTrainings");
+    // this.$store.dispatch("signUp/getProfessions");
+    // this.$store.dispatch("signUp/getQualifications");
+    // this.$store.dispatch("signUp/getClinicalSystems");
+    // this.$store.dispatch("signUp/getSpokenLanguages");
+    // this.$store.dispatch("signUp/getPracticeTypes");
+    // this.$store.dispatch("signUp/getMandatoryTrainings");
   }
 };
 </script>
@@ -82,7 +84,7 @@ export default {
   bottom: 0;
   background-color: #333;
   opacity: 0.5;
-  z-index: 499;
+  z-index: 55;
 }
 @media screen and (min-width: 1200px) {
   .content {

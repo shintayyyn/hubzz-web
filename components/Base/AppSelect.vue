@@ -17,6 +17,7 @@
           :class="error ? 'border-red-500':''"
           @input="$emit('input', $event.target.value)"
           :style="inStyle"
+          @change="$emit('change', $event.target.value)"
         >
           <option value disabled selected v-if="placeholder">{{placeholder}}</option>
           <option

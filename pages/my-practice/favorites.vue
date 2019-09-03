@@ -19,17 +19,22 @@
           <div class="flex flex-wrap text-center mt-4 cursor-pointer" @click="show(practice.id)">
             <div class="w-full flex justify-center">
               <div class="relative avatar flex justify-center">
-                <img
+                <!-- <img
                   :src="practice.user.avatar.file.url"
                   v-if="practice.user && practice.user.avatar && practice.user.avatar.file && practice.user.avatar.file.url"
                 />
-                <svgicon v-else name="no-avatar" height="115" width="115" />
+                <svgicon v-else name="no-avatar" height="115" width="115" />-->
+                <AppAvatar
+                  :height="'150px'"
+                  :width="'150px'"
+                  :src="practice.user && practice.user.avatar && practice.user.avatar.file && practice.user.avatar.file.url ? practice.user.avatar.file.url : ''"
+                />
               </div>
             </div>
 
             <div class="w-full font-bold text-sm sm:text-lg my-4">{{practice.surgery.name}}</div>
             <div
-              class="w-full mb-4 font-bold text-gray-600 text-sm sm:text-lg"
+              class="w-full mb-4 font-bold text-gray-600 text-xs sm:text-sm"
             >{{practice.surgery.address.line_1}} {{practice.surgery.address.line_2}} {{practice.surgery.address.line_3}} {{practice.surgery.address.post_code}}</div>
           </div>
         </div>
@@ -53,6 +58,7 @@
 <script>
 import AppPagination from "@/components/Base/AppPagination";
 import MyPracticeDetailModal from "@/components/MyPractice/MyPracticeDetailModal";
+import AppAvatar from "@/components/Base/AppAvatar";
 export default {
   transition: {
     name: "fade",
@@ -60,6 +66,7 @@ export default {
   },
   components: {
     AppPagination,
+    AppAvatar
   },
   data() {
     return {
@@ -151,7 +158,7 @@ export default {
   opacity: 0.5;
   z-index: 509;
 }
-/* .modal {
+.modal {
   position: fixed;
   top: 0;
   right: 0;
@@ -167,7 +174,7 @@ export default {
   .modal {
     width: 80%;
   }
-} */
+}
 </style>
 
 

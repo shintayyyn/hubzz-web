@@ -33,7 +33,10 @@
             <tbody>
               <template v-if="getPracticeInvoices.length === 0">
                 <tr>
-                  <td colspan="10" class="text-center">You haven't created any invoice/s yet</td>
+                  <td
+                    colspan="10"
+                    class="absolute inset-x-auto md:static md:text-center"
+                  >You haven't created any invoice/s yet</td>
                 </tr>
               </template>
               <template v-else v-for="(invoice, index) in getPracticeInvoices">
@@ -101,20 +104,20 @@
 </template>
 
 <script>
-import AppDate from '@/components/Base/AppDate'
-import AppButton from '@/components/Base/AppButton'
-import AppPagination from '@/components/Base/AppPagination'
+import AppDate from "@/components/Base/AppDate";
+import AppButton from "@/components/Base/AppButton";
+import AppPagination from "@/components/Base/AppPagination";
 import { mixin as clickaway } from "vue-clickaway";
 export default {
   mixins: [clickaway],
   components: {
     AppDate,
     AppButton,
-    AppPagination,
+    AppPagination
   },
   transition: {
-    name: 'fade',
-    mode: 'out-in'
+    name: "fade",
+    mode: "out-in"
   },
 
   async asyncData({ app, error }) {
@@ -122,32 +125,45 @@ export default {
       const params = {
         offset: 0,
         limit: 5,
-        order_by: 'date_created:desc'
-      }
-      const response = await app.$axios.get('/api/v1/practice/locum-invoices', { params })
-      const invoices = response.data && response.data.data && response.data.data.invoices ? response.data.data.invoices : []
-      const responseCount = await app.$axios.get('/api/v1/practice/locum-invoices/count')
-      const count = responseCount.data && response.data.data && responseCount.data.data.count ? responseCount.data.data.count : 0
+        order_by: "date_created:desc"
+      };
+      const response = await app.$axios.get("/api/v1/practice/locum-invoices", {
+        params
+      });
+      const invoices =
+        response.data && response.data.data && response.data.data.invoices
+          ? response.data.data.invoices
+          : [];
+      const responseCount = await app.$axios.get(
+        "/api/v1/practice/locum-invoices/count"
+      );
+      console.log(response);
+      const count =
+        responseCount.data &&
+        response.data.data &&
+        responseCount.data.data.count
+          ? responseCount.data.data.count
+          : 0;
       return {
         invoices,
         count
-      }
+      };
     } catch (err) {
-      console.log('practice-billing index err', err.response || err)
+      console.log("practice-billing index err", err.response || err);
       error({
         statusCode: err.status || 500,
-        message: err.message || 'Something went wrong!',
-      })
+        message: err.message || "Something went wrong!"
+      });
     }
   },
   data() {
     return {
       current_page: 1,
       params: {
-        order_by: 'date_created:desc',
+        order_by: "date_created:desc"
       },
       // sort
-      sortType: '',
+      sortType: "",
       issued_at: true,
       date_created: false,
       //
@@ -159,12 +175,12 @@ export default {
         paid_at: null
       },
       formError: [],
-      selectedInvoiceId: null,
-    }
+      selectedInvoiceId: null
+    };
   },
   computed: {
     getPracticeInvoices() {
-      return this.$store.getters['billing/getPracticeInvoices']
+      return this.$store.getters["billing/getPracticeInvoices"];
     },
     offset() {
       return this.perPage * (this.current_page - 1);
@@ -177,72 +193,86 @@ export default {
     },
     totalPages() {
       return Math.ceil(this.total / this.perPage);
-    },
+    }
   },
   mounted() {
-    this.$store.commit('billing/SET_PRACTICE_INVOICES', this.invoices)
-    this.$store.commit('billing/SET_PRACTICE_INVOICE_COUNT', this.count)
+    this.$store.commit("billing/SET_PRACTICE_INVOICES", this.invoices);
+    this.$store.commit("billing/SET_PRACTICE_INVOICE_COUNT", this.count);
   },
   beforeDestroy() {
-    this.$store.commit('billing/CLEAR_INVOICES')
+    this.$store.commit("billing/CLEAR_INVOICES");
   },
   methods: {
     pagechanged(e) {
-      this.current_page = e
-      this.getInvoice(this.current_page, this.params)
+      this.current_page = e;
+      this.getInvoice(this.current_page, this.params);
     },
     sortBy(sortedBy) {
       switch (sortedBy) {
-        case 'issued_at':
-          this.issued_at = !this.issued_at
-          this.sortType = this.issued_at
+        case "issued_at":
+          this.issued_at = !this.issued_at;
+          this.sortType = this.issued_at;
           break;
-        case 'date_created':
-          this.date_created = !this.date_created
-          this.sortType = this.date_created
+        case "date_created":
+          this.date_created = !this.date_created;
+          this.sortType = this.date_created;
           break;
       }
-      this.params.order_by = `${sortedBy}:${this.sortType ? 'asc' : 'desc'}`
-      this.current_page = 1
-      this.getInvoice(this.current_page, this.params)
+      this.params.order_by = `${sortedBy}:${this.sortType ? "asc" : "desc"}`;
+      this.current_page = 1;
+      this.getInvoice(this.current_page, this.params);
     },
     getInvoice(page, params) {
-      this.current_page = page
+      this.current_page = page;
       const defaultParams = {
         offset: this.offset,
         limit: this.perPage
-      }
-      let invoiceParams = { ...params, ...defaultParams }
-      this.$axios.$get('/api/v1/practice/locum-invoices', { params: invoiceParams }).then(res => {
-        this.$store.commit('billing/SET_PRACTICE_INVOICES', res.data.invoices)
-      })
+      };
+      let invoiceParams = { ...params, ...defaultParams };
+      this.$axios
+        .$get("/api/v1/practice/locum-invoices", { params: invoiceParams })
+        .then(res => {
+          this.$store.commit(
+            "billing/SET_PRACTICE_INVOICES",
+            res.data.invoices
+          );
+        });
     },
 
     show(item) {
-      this.$router.push(`/practice-billing/invoices-from-locums/${item.id}`)
+      this.$router.push(`/practice-billing/invoices-from-locums/${item.id}`);
     },
     onClick(invoice, index) {
-      this.selectedInvoiceId = null
-      this.form.paid_at = null
-      this.paymentModal = true
-      this.selectedInvoiceId = invoice.id
+      this.selectedInvoiceId = null;
+      this.form.paid_at = null;
+      this.paymentModal = true;
+      this.selectedInvoiceId = invoice.id;
     },
     closePaymentModal() {
-      this.paymentModal = false
+      this.paymentModal = false;
     },
     updateInvoice() {
-      this.Validate(this.form)
+      this.Validate(this.form);
       if (!this.formError.length) {
-        this.form.paid_at = this.$moment(this.form.paid_at).format('YYYY-MM-DD')
-        this.$axios.$put(`/api/v1/practice/locum-invoices/${this.selectedInvoiceId}/paid`, this.form).then(res => {
-          this.$store.commit('billing/UPDATE_PRACTICE_INVOICE', res.data.invoice)
-          this.paymentModal = false
-        })
+        this.form.paid_at = this.$moment(this.form.paid_at).format(
+          "YYYY-MM-DD"
+        );
+        this.$axios
+          .$put(
+            `/api/v1/practice/locum-invoices/${this.selectedInvoiceId}/paid`,
+            this.form
+          )
+          .then(res => {
+            this.$store.commit(
+              "billing/UPDATE_PRACTICE_INVOICE",
+              res.data.invoice
+            );
+            this.paymentModal = false;
+          });
       }
-    },
+    }
   }
-
-}
+};
 </script>
 
 <style scoped>

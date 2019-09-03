@@ -1,6 +1,6 @@
 <template>
   <div class="modal-container shadow-lg">
-    <div class="p-8 max-w-3xl">
+    <div class="p-8">
       <div class="flex items-center">
         <div @click="close" class="cursor-pointer">
           <svgicon name="left-arrow" height="32" />
@@ -24,32 +24,32 @@
         </div>
       </div>
 
-      <div class="flex flex-row justify-start">
-        <div class="flex-col shadow-lg rounded-lg bg-gray-300 mx-6 mt-10">
-          <div class="inline-flex flex-col md:flex-row text-sm m-4">
-            <div class="m-2 mr-20">
-              <p class="mr-20 font-semibold">Title</p>
-              <p
-                class="mt-2 text-base"
-              >{{practiceDocument.practice_document_type ? practiceDocument.practice_document_type.name: null}}</p>
-              <p class="mt-5 mr-20 font-semibold">Practice</p>
-              <p
-                class="mt-2 text-base"
-              >{{practiceDocument.practice ? practiceDocument.practice.surgery.name: null}}</p>
-              <p class="mt-5 mr-20 font-semibold">File last uploaded</p>
-              <p
-                class="mt-2 text-base"
-              >{{practiceDocument.file ? $moment(practiceDocument.file.created_at).format('MM/DD/YYYY HH:mm:ss') : null}}</p>
-              <p class="mt-5 mr-20 font-semibold">Uploaded By</p>
-              <p class="mt-2 text-base">{{practiceDocument.created_by_user.personal_detail.name}}</p>
-            </div>
-            <div class="flex w-full m-2">
-              <embed
-                width="800px"
-                height="600px"
-                :src="practiceDocument.file ? practiceDocument.file.url:null"
-              />
-            </div>
+      <div class="shadow-lg rounded-lg bg-gray-300 mt-5">
+        <div class="flex flex-row flex-wrap justify-start p-8">
+          <div class="flex flex-col w-full lg:w-1/4">
+            <p class="mr-20 font-semibold">Title</p>
+            <p
+              class="mt-2 text-base"
+            >{{practiceDocument.practice_document_type ? practiceDocument.practice_document_type.name: null}}</p>
+            <p class="mt-5 mr-20 font-semibold">Practice</p>
+            <p
+              class="mt-2 text-base"
+            >{{practiceDocument.practice ? practiceDocument.practice.surgery.name: null}}</p>
+            <p class="mt-5 mr-20 font-semibold">File last uploaded</p>
+            <p
+              class="mt-2 text-base"
+            >{{practiceDocument.file ? $moment(practiceDocument.file.created_at).format('MM/DD/YYYY HH:mm:ss') : null}}</p>
+            <p class="mt-5 mr-20 font-semibold">Uploaded By</p>
+            <p
+              class="mt-2 text-base"
+            >{{practiceDocument.created_by_user ? practiceDocument.created_by_user.personal_detail.name : ''}}</p>
+          </div>
+          <div class="w-full mt-5 lg:mt-0 lg:w-3/4">
+            <embed
+              class="object-contain object-top"
+              :class="practiceDocument.file.type == 'image' ? '' : 'document h-full w-full'"
+              :src="practiceDocument.file ? practiceDocument.file.url:null"
+            />
           </div>
         </div>
       </div>
@@ -67,6 +67,7 @@ export default {
       const response = await app.$axios.$get(
         `/api/v1/practice/practice-documents/${params.id}`
       );
+      console.log(response);
       const practiceDocument =
         response.data && response.data.practice_document
           ? response.data.practice_document
@@ -119,11 +120,11 @@ export default {
   }
 }
 .document {
-  width: 100%;
+  min-height: 100%;
 }
-@media screen and (min-width: 1200px) {
+@media screen and (min-width: 768px) {
   .document {
-    min-width: 600px;
+    min-height: 70vh;
   }
 }
 </style>

@@ -15,22 +15,23 @@
         <div
           class="rounded-lg bg-yellow-500 py-2 px-3 m-1 text-xs sm:text-sm"
           v-if="defaultItem"
-        >English</div>
+        >{{defaultItem}}</div>
         <div
           class="rounded-lg bg-yellow-500 py-2 px-3 m-1 text-xs sm:text-sm"
           v-for="(item, index) in value"
-          :key="item.value"
+          :key="`${item.value}-${index}`"
         >
           {{item.label}}
           <span class="font-bold cursor-pointer text-base" @click="remove(index)">X</span>
         </div>
         <div>
           <input
-            v-model="filterSearch"
+            v-model="search"
             type="text"
             placeholder="Select.."
             ref="input"
             class="border-b-2 focus:border-yellow-400 focus:outline-none py-3 font-bold text-xs sm:text-sm"
+            :class="error ? 'border-red-500' : ''"
             @focus="toggled = true"
             @keydown="handleKeyDownEvent"
           />
@@ -39,17 +40,23 @@
       <!-- option -->
       <div class="relative flex flex-col w-full z-10">
         <div
+          ref="filterSearchOptions"
           class="absolute w-full option-list flex flex-col bg-white shadow-md overflow-y-auto"
           :class="{'slide-down': toggled}"
+          @scroll="scrollHandler"
         >
-          <div
-            class="py-2 px-3 cursor-pointer text-xs sm:text-sm"
-            :class="{'bg-gray-300': activeIndex === index}"
-            v-for="(item, index) in filteredItems"
-            :key="item.value"
-            @mouseover="activeIndex = index"
-            @click="add(item)"
-          >{{item.label}}</div>
+          <div class="relative">
+            <div
+              :id="`${item.label}`"
+              class="py-2 px-3 cursor-pointer text-xs sm:text-sm"
+              :class="{'bg-gray-300': activeIndex === index}"
+              v-for="(item, index) in filteredItems"
+              :key="`${item.value}-${index}`"
+              @mouseover="activeIndex = index"
+              @click="add(item)"
+            >{{item.label}}</div>
+            <AppLoading :loading="loading" :message="'Loading'" />
+          </div>
         </div>
       </div>
     </div>
@@ -57,33 +64,158 @@
 </template>
 <script>
 import { mixin as clickaway } from "vue-clickaway";
+import AppLoading from "@/components/Base/AppLoading";
 export default {
   mixins: [clickaway],
+  components: {
+    AppLoading
+  },
   props: {
     value: [Array, String],
     name: String,
     label: String,
     placeholder: String,
     error: Object,
-    items: Array,
     info: String,
+    url: String,
+    // for qualification
+    professionCategoryId: String,
+    // for spoken-langauge
     defaultItem: String
   },
   data() {
     return {
-      filterSearch: "",
+      loading: false,
+      search: "",
+      total: 0,
+      loadMore: true,
+      items: [],
       toggled: false,
       activeIndex: 0
     };
   },
+  created() {
+    this.getListsCount(this.search);
+  },
+  watch: {
+    activeIndex(value) {
+      const getRef = document.getElementById(
+        `${this.filteredItems[value].label}`
+      );
+      getRef.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+        inline: "start"
+      });
+    },
+    // for qualification
+    professionCategoryId(value) {
+      this.items = [];
+      this.getListsCount(this.search);
+    },
+    search(value) {
+      this.items = [];
+      this.getListsCount(value);
+    }
+  },
   methods: {
+    scrollHandler(e) {
+      if (
+        this.$refs.filterSearchOptions.offsetHeight +
+          this.$refs.filterSearchOptions.scrollTop >=
+        this.$refs.filterSearchOptions.scrollHeight - 1
+      ) {
+        if (this.loadMore === true && !this.loading) {
+          this.getLists(this.items.length, this.search);
+        }
+      }
+    },
+    getListsCount(search) {
+      let params = {};
+      if (this.name === "qualification_id") {
+        params = {
+          ...params,
+          profession_category_id: this.professionCategoryId
+        };
+      }
+      params = { ...params, search };
+      this.$axios.$get(`${this.url}/count`, { params }).then(res => {
+        this.total = res.data.count;
+        this.getLists(this.items.length, this.search);
+      });
+    },
+    getLists(offset, search) {
+      this.loading = true;
+      this.loadMore = true;
+
+      let params = {};
+      if (this.name === "qualification_id") {
+        params = {
+          ...params,
+          profession_category_id: this.professionCategoryId
+        };
+      }
+      params = { ...params, offset, limit: 10, search };
+      this.$axios.$get(`${this.url}`, { params }).then(res => {
+        if (res.data.qualifications) {
+          if (res.data.qualifications.length === 0) {
+            this.loadMore = false;
+          } else {
+            res.data.qualifications.forEach(item => {
+              this.items.push({
+                label: item.name,
+                value: item.id
+              });
+            });
+            if (res.data.qualifications.length < 10) {
+              this.loadMore = false;
+            }
+          }
+        }
+
+        if (res.data.clinical_systems) {
+          if (res.data.clinical_systems.length === 0) {
+            this.loadMore = false;
+          } else {
+            res.data.clinical_systems.forEach(item => {
+              this.items.push({
+                label: item.name,
+                value: item.id
+              });
+            });
+            if (res.data.clinical_systems.length < 10) {
+              this.loadMore = false;
+            }
+          }
+        }
+
+        if (res.data.spoken_languages) {
+          if (res.data.spoken_languages.length === 0) {
+            this.loadMore = false;
+          } else {
+            res.data.spoken_languages.forEach(item => {
+              this.items.push({
+                label: item.name,
+                value: item.id
+              });
+            });
+            if (res.data.spoken_languages.length < 10) {
+              this.loadMore = false;
+            }
+          }
+        }
+        this.loading = false;
+      });
+    },
     add(item) {
       this.value.push(item);
       this.$refs.input.focus();
+      this.$emit("add");
     },
     remove(index) {
       this.value.splice(index, 1);
       this.$refs.input.focus();
+      this.$emit("remove");
     },
     toggledOff() {
       this.toggled = false;
@@ -93,18 +225,23 @@ export default {
         return;
       }
       if (event.key === "ArrowUp") {
-        this.activeIndex--;
+        if (this.activeIndex > 0) {
+          this.activeIndex--;
+        }
       }
       if (event.key === "ArrowDown") {
-        this.activeIndex++;
+        if (this.activeIndex < this.items.length - 1) {
+          this.activeIndex++;
+        }
       }
       if (event.key === "Enter") {
-        this.add(this.filteredItems[this.activeIndex]);
+        this.add(this.items[this.activeIndex]);
       }
       if (event.key === "Backspace") {
-        if (!this.filterSearch) {
+        if (!this.search) {
           this.remove(this.value.length - 1);
         }
+        this.$refs.input.focus();
       }
       if (event.key === "Escape") {
         this.toggledOff();
@@ -117,14 +254,11 @@ export default {
         const index = this.value.findIndex(item => {
           return item.value === filterItem.value;
         });
-        return (
-          index === -1 &&
-          filterItem.value &&
-          filterItem.label.includes(this.filterSearch)
-        );
+        return index === -1 && filterItem.value;
       });
     }
   }
+  // && filterItem.label.includes(this.filterSearch)
 };
 </script>
 <style scoped>

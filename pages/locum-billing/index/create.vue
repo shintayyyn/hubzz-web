@@ -79,13 +79,15 @@
               </div>
             </div>
             <div v-if="selectedSurgery">
-              <AppSelect
-                v-model="invoice"
+              <AppInput
+                v-model="form.invoice"
+                :type="'select'"
                 :name="'description'"
                 :label="'Select a job to add to this invoice'"
                 :placeholder="'Select...'"
                 :items="jobs"
               />
+
               <section>
                 <!-- input select -->
                 <div class="flex flex-col py-2 mb-6">
@@ -206,60 +208,62 @@
 
 <script>
 import AppDate from "@/components/Base/AppDate";
-import AppSelect from "@/components/Base/AppSelect";
 
 export default {
-
   transition: {
-    name: 'slide',
-    mode: 'out-in'
+    name: "slide",
+    mode: "out-in"
   },
 
   async asyncData({ app, error }) {
     try {
       if (process.client) {
-        document.body.style.cursor = 'wait'
+        document.body.style.cursor = "wait";
       }
 
-      const type = 'Platform'
+      const type = "Platform";
 
       const params = {
         invoiceable: true,
         type,
         limit: 1000000,
-        offset: 0,
-      }
+        offset: 0
+      };
 
-      const response = await app.$axios.get('/api/v1/locum/surgeries', { params })
+      const response = await app.$axios.get("/api/v1/locum/surgeries", {
+        params
+      });
 
-      const surgeries = response.data && response.data.data && response.data.data.surgeries ? response.data.data.surgeries : []
+      const surgeries =
+        response.data && response.data.data && response.data.data.surgeries
+          ? response.data.data.surgeries
+          : [];
 
-      console.log('surgeries', surgeries)
+      console.log("surgeries", surgeries);
 
       if (process.client) {
-        document.body.style.cursor = 'auto'
+        document.body.style.cursor = "auto";
       }
 
       return {
         type,
-        surgeries,
-      }
+        surgeries
+      };
     } catch (err) {
-      console.log('locum-billing create err', err.response || err)
-      console.log('locum-billing create error', {
+      console.log("locum-billing create err", err.response || err);
+      console.log("locum-billing create error", {
         statusCode: err.status || 500,
-        message: err.message || 'Something went wrong!',
-      })
+        message: err.message || "Something went wrong!"
+      });
       error({
         statusCode: err.status || 500,
-        message: err.message || 'Something went wrong!',
-      })
+        message: err.message || "Something went wrong!"
+      });
     }
   },
 
   components: {
-    AppDate,
-    AppSelect
+    AppDate
   },
 
   computed: {
@@ -306,51 +310,67 @@ export default {
 
   watch: {
     type() {
-      this.surgeries = []
-      this.selectedSurgery = null
+      this.surgeries = [];
+      this.selectedSurgery = null;
 
-      if (this.type === 'Private' || this.type === 'Platform') {
+      if (this.type === "Private" || this.type === "Platform") {
         const params = {
           invoiceable: true,
           type: this.type,
           limit: 1000000,
-          offset: 0,
-        }
+          offset: 0
+        };
 
-        this.$axios.get('/api/v1/locum/surgeries', { params }).then((response) => {
-          const surgeries = response.data && response.data.data && response.data.data.surgeries ? response.data.data.surgeries : []
+        this.$axios
+          .get("/api/v1/locum/surgeries", { params })
+          .then(response => {
+            const surgeries =
+              response.data &&
+              response.data.data &&
+              response.data.data.surgeries
+                ? response.data.data.surgeries
+                : [];
 
-          console.log('surgeries', surgeries)
+            console.log("surgeries", surgeries);
 
-          this.surgeries = surgeries
-        }).catch((err) => {
-          console.log('err', err.response || err)
-        })
+            this.surgeries = surgeries;
+          })
+          .catch(err => {
+            console.log("err", err.response || err);
+          });
       }
     },
 
     selectedSurgery() {
-      this.jobParts = []
+      this.jobParts = [];
 
       if (this.selectedSurgery) {
         const params = {
-          locum_status: 'Completed',
+          locum_status: "Completed",
           type: this.type,
           surgery_id: this.selectedSurgery.id,
           limit: 1000000,
           offset: 0,
-          order_by: 'created_at:desc'
-        }
+          order_by: "created_at:desc"
+        };
 
-        this.$axios.get('/api/v1/locum/job-parts', { params }).then((response) => {
-          const jobParts = response.data && response.data.data && response.data.data.job_parts ? response.data.data.job_parts : []
+        this.$axios
+          .get("/api/v1/locum/job-parts", { params })
+          .then(response => {
+            const jobParts =
+              response.data &&
+              response.data.data &&
+              response.data.data.job_parts
+                ? response.data.data.job_parts
+                : [];
 
-          console.log('jobParts', jobParts)
+            console.log("jobParts", jobParts);
 
-          this.jobParts = jobParts
-        }).catch((err) => {
-          console.log('err', err.response || err)
-        })
+            this.jobParts = jobParts;
+          })
+          .catch(err => {
+            console.log("err", err.response || err);
+          });
       }
 
       this.jobs = [
@@ -407,11 +427,11 @@ export default {
   },
 
   mounted() {
-    document.body.style.overflow = 'hidden'
+    document.body.style.overflow = "hidden";
   },
 
   destroyed() {
-    document.body.style.overflow = 'auto'
+    document.body.style.overflow = "auto";
   },
 
   methods: {
@@ -424,7 +444,7 @@ export default {
       invoiceForm.date_end = this.form.date_end;
       this.$emit("add", invoiceForm);
     },
-    archive() { },
+    archive() {},
     removeItem(index) {
       this.rowData.splice(index, 1);
     },
@@ -438,7 +458,7 @@ export default {
       this.total = "";
     }
   }
-}
+};
 </script>
 
 <style scoped>

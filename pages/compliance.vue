@@ -4,25 +4,25 @@
       <div class="number-status md:mt-10">
         <div class="border-solid rounded-lg shadow-md px-1 py-4 mb-5 mx-1 md:mx-0">
           <div class="flex flex-row flex-no-wrap justify-start text-xs sm:text-sm">
-            <div class="w-1/3 p-1 text-left">Your GMC / NMC Number</div>
-            <div class="w-1/3 p-1 text-left">{{gmc_or_nmc_number.number}}</div>
-            <div class="max-w-xs p-1">
-              <div
-                class="text-xs sm:text-sm text-center bg-orange-300 text-white font-bold rounded-full px-2 py-1"
+            <div class="w-1/3 px-4 py-1 text-left">Your GMC / NMC Number</div>
+            <div class="w-1/3 p-1 text-center">{{gmc_or_nmc_number.number}}</div>
+            <div class="w-1/3 p-1 text-center">
+              <span
+                class="text-xs sm:text-sm text-center bg-orange-300 text-white font-bold rounded-full px-4 py-1"
                 :class="status(gmc_or_nmc_number.status)"
-              >{{gmc_or_nmc_number.status}}</div>
+              >{{ gmc_or_nmc_number.status }}</span>
             </div>
           </div>
         </div>
         <div class="border-solid rounded-lg shadow-md px-1 py-4 mb-5 mx-1 md:mx-0">
           <div class="flex flex-row flex-no-wrap justify-start items-center text-xs sm:text-sm">
-            <div class="w-1/3 p-1 text-left">Your MPL / NPL Number</div>
-            <div class="w-1/3 p-1 text-left">{{mpl_or_npl_number.number}}</div>
-            <div class="max-w-xs p-1">
-              <div
-                class="text-xs sm:text-sm text-center bg-orange-300 text-white font-bold rounded-full px-2 py-1"
+            <div class="w-1/3 px-4 py-1 text-left">Your MPL / NPL Number</div>
+            <div class="w-1/3 p-1 text-center">{{mpl_or_npl_number.number}}</div>
+            <div class="w-1/3 p-1 text-center">
+              <span
+                class="text-xs sm:text-sm text-center bg-orange-300 text-white font-bold rounded-full px-4 py-1"
                 :class="status(mpl_or_npl_number.status)"
-              >{{mpl_or_npl_number.status}}</div>
+              >{{ mpl_or_npl_number.status }}</span>
             </div>
           </div>
         </div>
@@ -46,25 +46,39 @@
         </thead>
         <tbody>
           <!--------------------------FILE SHOULD SHOW ON CLICK----------------------------->
+          <template>
+            <tr v-if="!mandatory.length">
+              <td
+                class="text-center font-bold text-gray-500"
+                colspan="7"
+              >This section is empty. Update your profile to fill this area.</td>
+            </tr>
+          </template>
           <template v-for="(item, index) in mandatory">
             <tr
+              class="rounded-lg shadow-md text-xs sm:text-sm text-left bg-gray-200"
+              v-if="activeLoading.includes(item.id)"
+              :key="item.id"
+            >
+              <td colspan="7" class="loader-message text-center text-gray-800">Uploading</td>
+            </tr>
+            <tr
+              v-else
               :key="item.id"
               class="rounded-lg shadow-md text-xs sm:text-sm text-left"
               :class="item.info && item.info.file ? 'hover:bg-gray-300' : ''"
             >
-              <td
-                class="cursor-pointer"
-                @click="item.info && item.info.file ? showComplianceDoc(item.info.id) : null"
-              >{{item.name}}</td>
+              <td class="cursor-pointer" @click="show(item, 'compliance')">{{item.name}}</td>
               <td class="hover:underline" v-if="item.info && item.info.file">
                 <div class="flex flex-row flex-no-wrap items-center">
                   <svgicon name="cloud-download" height="24" width="24" />
                   <div class="mx-2">
                     <a
-                      @click.prevent="downloadItem(item.info.file.url, item.info.file.filename)"
+                      @click.stop.prevent="downloadItem(item.info.file.url, item.info.file.filename)"
                       :href="item.info.file.url"
                       :download="item.info.file.filename"
                       target="_blank"
+                      class="whitespace-no-wrap"
                     >{{item.info.file.filename | StringMaxLength(15)}}</a>
                   </div>
                 </div>
@@ -77,7 +91,7 @@
               <td v-if="item.info">
                 <div class="flex max-w-xs">
                   <div
-                    class="text-xs sm:text-sm text-center text-white font-bold rounded-full px-2 py-1"
+                    class="text-xs sm:text-sm text-center text-white font-bold rounded-full px-4 py-1"
                     :class="status(item.info.status)"
                   >{{item.info.status}}</div>
                 </div>
@@ -86,32 +100,38 @@
 
               <td v-if="item.info">{{item.info.note | StringMaxLength}}</td>
               <td v-else></td>
-              <td class="hover:underline" v-if="!item.info">
+              <td
+                class="hover:underline"
+                v-if="!item.info"
+                @click.stop="$refs[`${item.id}_file_mandatory_compliance`][0].click()"
+              >
                 <div class="flex flex-row flex-no-wrap">
                   <input
                     type="file"
-                    :name="`${item.id}_file`"
-                    :id="`${item.id}_file`"
+                    :ref="`${item.id}_file_mandatory_compliance`"
                     class="inputfile hidden"
-                    @click="complianceModal = false"
                     @input="onFileInput($event, item.id)"
+                    @click.stop
                   />
                   <svgicon name="cloud-upload" height="24" width="24" />
-                  <label :for="`${item.id}_file`" class="leading-loose mx-2 cursor-pointer">Upload</label>
+                  <label class="leading-loose mx-2 cursor-pointer">Upload</label>
                 </div>
               </td>
-              <td class="hover:underline" v-else>
+              <td
+                @click.stop="$refs[`${item.id}_file_mandatory_compliance`][0].click()"
+                class="hover:underline"
+                v-else
+              >
                 <div class="flex flex-row flex-no-wrap">
                   <input
                     type="file"
-                    :name="`${item.id}_file`"
-                    :id="`${item.id}_file`"
+                    :ref="`${item.id}_file_mandatory_compliance`"
                     class="inputfile hidden"
-                    @click="complianceModal = false"
                     @input="onFileUpdate($event, item.info.id, index)"
+                    @click.stop
                   />
                   <svgicon name="cloud-upload" height="24" width="24" />
-                  <label :for="`${item.id}_file`" class="leading-loose mx-2 cursor-pointer">Update</label>
+                  <label class="leading-loose mx-2 cursor-pointer">Update</label>
                 </div>
               </td>
             </tr>
@@ -142,22 +162,35 @@
           </tr>
         </thead>
         <tbody>
+          <template>
+            <tr v-if="!optional.length">
+              <td
+                class="text-center font-bold text-gray-500"
+                colspan="7"
+              >This section is empty. Update your profile to fill this area.</td>
+            </tr>
+          </template>
           <template v-for="(item, index) in optional">
             <tr
+              class="rounded-lg shadow-md text-xs sm:text-sm text-left bg-gray-200"
+              v-if="activeLoading.includes(item.id)"
+              :key="item.id"
+            >
+              <td colspan="7" class="loader-message text-center text-gray-800">Uploading</td>
+            </tr>
+            <tr
+              v-else
               :key="item.id"
               class="rounded-lg shadow-md text-xs sm:text-sm text-left"
               :class="item.info && item.info.file ? 'hover:bg-gray-300' : ''"
             >
-              <td
-                class="cursor-pointer"
-                @click="item.info && item.info.file ? showComplianceDoc(item.info.id) : null"
-              >{{item.name}}</td>
+              <td class="cursor-pointer w-1/3" @click="show(item, 'compliance')">{{item.name}}</td>
               <td class="hover:underline" v-if="item.info && item.info.file">
                 <div class="flex flex-row flex-no-wrap">
                   <svgicon name="cloud-download" height="24" width="24" />
                   <div class="leading-loose mx-2">
                     <a
-                      @click.prevent="downloadItem(item.info.file.url, item.info.file.filename)"
+                      @click.stop.prevent="downloadItem(item.info.file.url, item.info.file.filename)"
                       target="_blank"
                       :href="item.info.file.url"
                     >{{item.info.file.filename | StringMaxLength(15)}}</a>
@@ -170,32 +203,38 @@
               <td></td>
               <td></td>
               <td></td>
-              <td class="hover:underline" v-if="!item.info">
+              <td
+                @click.stop="$refs[`${item.id}_file_optional_compliance`][0].click()"
+                class="hover:underline"
+                v-if="!item.info"
+              >
                 <div class="flex flex-row flex-no-wrap">
                   <input
                     type="file"
-                    :name="`${item.id}_file`"
-                    :id="`${item.id}_file`"
+                    :ref="`${item.id}_file_optional_compliance`"
                     class="inputfile hidden"
-                    @click="complianceModal = false"
                     @input="onFileInput($event, item.id, index)"
+                    @click.stop
                   />
                   <svgicon name="cloud-upload" height="24" width="24" />
-                  <label :for="`${item.id}_file`" class="leading-loose mx-2 cursor-pointer">Upload</label>
+                  <label class="leading-loose mx-2 cursor-pointer">Upload</label>
                 </div>
               </td>
-              <td class="hover:underline" v-else>
+              <td
+                @click.stop="$refs[`${item.id}_file_optional_compliance`][0].click()"
+                class="hover:underline"
+                v-else
+              >
                 <div class="flex flex-row flex-no-wrap">
                   <input
                     type="file"
-                    :name="`${item.id}_file`"
-                    :id="`${item.id}_file`"
+                    :ref="`${item.id}_file_optional_compliance`"
                     class="inputfile hidden"
-                    @click="complianceModal = false"
-                    @input="onFileUpdate($event, item.info.id, index)"
+                    @input="onFileUpdate($event, item.info.id, index, item.id)"
+                    @click.stop
                   />
                   <svgicon name="cloud-upload" height="24" width="24" />
-                  <label :for="`${item.id}_file`" class="leading-loose mx-2 cursor-pointer">Update</label>
+                  <label class="leading-loose mx-2 cursor-pointer">Update</label>
                 </div>
               </td>
             </tr>
@@ -225,66 +264,83 @@
           </tr>
         </thead>
         <tbody>
+          <template>
+            <tr v-if="!mandatory_trainings.length">
+              <td
+                class="text-center font-bold text-gray-500"
+                colspan="7"
+              >This section is empty. Update your profile to fill this area.</td>
+            </tr>
+          </template>
           <template v-for="(item, index) in mandatory_trainings">
             <tr
+              class="rounded-lg shadow-md text-xs sm:text-sm text-left bg-gray-200"
+              v-if="activeLoading.includes(item.mandatory_training.id)"
+              :key="item.id"
+            >
+              <td colspan="7" class="loader-message text-center text-gray-800">Uploading</td>
+            </tr>
+            <tr
+              v-else
               :key="item.id"
               class="rounded-lg shadow-md text-xs sm:text-sm text-left"
-              :class="item.info && item.info.file ? 'hover:bg-gray-300' : ''"
+              :class="item && item.file ? 'hover:bg-gray-300' : ''"
             >
               <td
-                class="cursor-pointer"
-                @click="item.info && item.info.file ? showMandatoryTraining(item.info.id) : null"
-              >{{item.name}}</td>
-              <td class="hover:underline" v-if="item.info && item.info.file">
+                class="cursor-pointer w-1/3"
+                @click="show(item, 'mandatory')"
+              >{{item.mandatory_training.name}}</td>
+              <td class="hover:underline" v-if="item.file">
                 <div class="flex flex-row flex-no-wrap">
                   <svgicon name="cloud-download" height="24" width="24" />
                   <div class="leading-loose mx-2">
                     <a
-                      @click.prevent="downloadItem(item.info.file.url, item.info.file.filename)"
+                      @click.stop.prevent="downloadItem(item.file.url, item.file.filename)"
                       target="_blank"
-                      :href="item.info.file.url"
-                    >{{item.info.file.filename | StringMaxLength(15)}}</a>
+                      :href="item.file.url"
+                      class="whitespace-no-wrap"
+                    >{{item.file.filename | StringMaxLength(15)}}</a>
                   </div>
                 </div>
               </td>
               <td v-else></td>
-              <td v-if="item.info && item.info.file">{{item.info.file.created_at | localDate}}</td>
+              <td v-if="item && item.file">{{item.file.created_at | localDate}}</td>
               <td v-else></td>
               <td></td>
               <td></td>
               <td></td>
-              <td class="hover:underline" v-if="!item.info">
+              <td
+                @click.stop="$refs[`${item.id}_file_mandatory_training`][0].click()"
+                class="hover:underline"
+                v-if="!item.file"
+              >
                 <div class="flex flex-row flex-no-wrap">
                   <input
                     type="file"
-                    :name="`${item.id}_mandatory_file`"
-                    :id="`${item.id}_mandatory_file`"
+                    :ref="`${item.id}_file_mandatory_training`"
                     class="inputfile hidden"
-                    @click="complianceModal = false"
-                    @input="onMandatoryFileInput($event, item.id, index)"
+                    @input="onMandatoryFileInput($event, item.mandatory_training.id, index)"
+                    @click.stop
                   />
                   <svgicon name="cloud-upload" height="24" width="24" />
-                  <label
-                    :for="`${item.id}_mandatory_file`"
-                    class="leading-loose mx-2 cursor-pointer"
-                  >Upload</label>
+                  <label class="leading-loose mx-2 cursor-pointer">Upload</label>
                 </div>
               </td>
-              <td class="hover:underline" v-else>
+              <td
+                @click.stop="$refs[`${item.id}_file_mandatory_training`][0].click()"
+                class="hover:underline"
+                v-else
+              >
                 <div class="flex flex-row flex-no-wrap">
                   <input
                     type="file"
-                    :name="`${item.id}_mandatory_file`"
-                    :id="`${item.id}_mandatory_file`"
+                    :ref="`${item.id}_file_mandatory_training`"
                     class="inputfile hidden"
-                    @click="complianceModal = false"
-                    @input="onMandatoryFileUpdate($event, item.info.id, index)"
+                    @input="onMandatoryFileUpdate($event, item.id, index, item.mandatory_training.id)"
+                    @click.stop
                   />
                   <svgicon name="cloud-upload" height="24" width="24" />
-                  <label
-                    :for="`${item.id}_mandatory_file`"
-                    class="leading-loose mx-2 cursor-pointer"
-                  >Update</label>
+                  <label class="leading-loose mx-2 cursor-pointer">Update</label>
                 </div>
               </td>
             </tr>
@@ -296,41 +352,19 @@
       </table>
     </div>
 
-    <div>
-      <div class="shield" v-if="complianceModal"></div>
-      <transition name="slide" mode="out-in">
-        <div class="complianceModal shadow-lg" v-if="complianceModal">
-          <ShowComplianceDocument
-            :specificComplianceDoc="specificComplianceDoc"
-            @close="complianceModal = false"
-          />
-        </div>
-      </transition>
-    </div>
-
-    <div>
-      <div class="shield" v-if="mandatoryTrainingModal"></div>
-      <transition name="slide" mode="out-in">
-        <div class="mandatoryTrainingModal shadow-lg" v-if="mandatoryTrainingModal">
-          <ShowMandatoryTraining
-            :specificMandatoryTraining="specificMandatoryTraining"
-            @close="mandatoryTrainingModal = false"
-          />
-        </div>
-      </transition>
-    </div>
+    <div
+      class="shield"
+      v-if="['compliance-id','compliance-mandatory-training-id'].includes($route.name)"
+    ></div>
+    <nuxt-child />
   </section>
 </template>
 <script>
-import ShowComplianceDocument from "@/components/Compliance/ShowComplianceDocument";
-import ShowMandatoryTraining from "@/components/Compliance/ShowMandatoryTraining";
 export default {
-  components: {
-    ShowComplianceDocument,
-    ShowMandatoryTraining
-  },
   data() {
     return {
+      loading: false,
+      activeLoading: [],
       gmc_or_nmc_number: {},
       mpl_or_npl_number: {},
       profession: {},
@@ -357,42 +391,43 @@ export default {
       this.setComplianceDocuments();
     });
     // get all mandatory training list
-    this.$axios.$get(`/api/v1/mandatory-trainings`).then(res => {
-      this.mandatory_trainings = res.data.mandatory_trainings;
-      this.setMandatoryTrainings();
-    });
+    this.setMandatoryTrainings();
   },
   watch: {
-    complianceModal(value) {
-      if (value === true) {
-        console.log("modal true", value);
+    $route(value) {
+      if (
+        ["compliance-id", "compliance-mandatory-training-id"].includes(
+          value.name
+        )
+      ) {
+        document.body.style.overflow = "hidden";
       } else {
-        console.log("modal false", value);
+        document.body.style.overflow = "auto";
       }
     }
   },
   methods: {
+    show(item, type) {
+      if ((item.info && item.info.file) || item.file) {
+        if (type === "compliance") {
+          this.$router.push(`/compliance/${item.info.id}`);
+        }
+        if (type === "mandatory")
+          this.$router.push(`/compliance/mandatory-training/${item.id}`);
+      }
+    },
     // set mandatory training
     setMandatoryTrainings() {
-      if (this.$auth.user.locum_detail.mandatory_trainings.length > 0) {
-        this.$auth.user.locum_detail.mandatory_trainings.forEach(
-          userMandatoryTraining => {
-            this.mandatory_trainings.forEach(mandatoryTraining => {
-              if (
-                userMandatoryTraining.mandatory_training.id ===
-                mandatoryTraining.id
-              ) {
-                mandatoryTraining.info = userMandatoryTraining;
-              }
-            });
-          }
-        );
-      }
-      this.mandatory_trainings = this.mandatory_trainings.sort(
-        (a, b) => a.id - b.id
-      );
+      this.$axios
+        .$get(`/api/v1/locum/locum-detail-mandatory-trainings`)
+        .then(res => {
+          this.mandatory_trainings = res.data.locum_detail_mandatory_trainings;
+          this.mandatory_trainings = this.mandatory_trainings.sort(
+            (a, b) => a.id - b.id
+          );
+        });
     },
-    // set mandatory and optional
+    // set mandatory and optional compliance
     setComplianceDocuments() {
       this.$axios.$get(`/api/v1/me`).then(res => {
         if (res.data.user.locum_detail.compliance_documents.length > 0) {
@@ -432,7 +467,7 @@ export default {
     status(status) {
       switch (status) {
         case "Pending":
-          return "bg-orange-300";
+          return "bg-orange-400";
           break;
         case "Verified":
           return "bg-green-500";
@@ -453,29 +488,11 @@ export default {
           return;
       }
     },
-    showComplianceDoc(id) {
-      this.$axios
-        .$get(`/api/v1/locum/locum-detail-compliance-documents/${id}`)
-        .then(res => {
-          this.specificComplianceDoc =
-            res.data.locum_detail_compliance_document;
-          this.complianceModal = true;
-        });
-    },
-    showMandatoryTraining(id) {
-      this.$axios
-        .$get(`/api/v1/locum/locum-detail-mandatory-trainings/${id}`)
-        .then(res => {
-          this.specificMandatoryTraining =
-            res.data.locum_detail_mandatory_training;
-          this.mandatoryTrainingModal = true;
-        });
-    },
     onFileInput(e, id, index) {
       if (!e.target.files.length) {
         return;
       }
-      let types = ["pdf", "jpeg", "msword", "tif"];
+      let types = ["pdf", "jpeg", "msword", "tiff"];
       let file = e.target.files[0];
       let fileType = file.type.split("/")[1];
       if (!types.includes(fileType)) {
@@ -496,6 +513,9 @@ export default {
       formData.append("compliance_document_id", id);
       formData.append("locum_detail_id", this.$auth.user.id);
       // post request to API / send file
+      this.loading = true;
+      this.activeLoading.push(id);
+
       this.$axios
         .$post(`/api/v1/locum/locum-detail-compliance-documents`, formData)
         .then(res => {
@@ -521,6 +541,7 @@ export default {
               status: "success",
               text: ["Document uploaded!"]
             });
+            this.loading = false;
           } else {
             let optional_index = this.optional.findIndex(
               document =>
@@ -543,24 +564,32 @@ export default {
               status: "success",
               text: ["Document uploaded!"]
             });
+            this.loading = false;
           }
+          this.activeLoading = this.activeLoading.filter(item => item !== id);
         })
         .catch(err => {
-          console.log(err);
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "danger",
+            text: [`${err.response.data.message}`]
+          });
+          this.loading = false;
+          this.activeLoading = this.activeLoading.filter(item => item !== id);
         });
     },
-    onFileUpdate(e, id, index) {
+    onFileUpdate(e, id, index, loadingId) {
       if (!e.target.files.length) {
         return;
       }
-      let types = ["pdf", "jpeg", "msword", "tif"];
+      let types = ["pdf", "jpeg", "msword", "tiff"];
       let file = e.target.files[0];
       let fileType = file.type.split("/")[1];
       if (!types.includes(fileType)) {
         this.$store.commit("SET_NOTIFICATION", {
           enabled: true,
           status: "alert",
-          text: "Invalid File Format"
+          text: ["Invalid File Format"]
         });
         return;
       }
@@ -569,6 +598,9 @@ export default {
         status: "uploading",
         text: ["Uploading"]
       });
+      this.loading = true;
+      this.activeLoading.push(loadingId);
+
       const formData = new FormData();
       formData.append("file", file);
       // post request to API / send file
@@ -597,6 +629,7 @@ export default {
               status: "success",
               text: ["Document uploaded!"]
             });
+            this.loading = false;
           } else {
             this.optional.splice(index, 1);
             this.optional.push({
@@ -614,21 +647,31 @@ export default {
               status: "success",
               text: ["Document uploaded!"]
             });
+            this.loading = false;
           }
+          this.activeLoading = this.activeLoading.filter(
+            item => item !== loadingId
+          );
         })
         .catch(err => {
-          console.log(err);
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "danger",
+            text: [`${err.response.data.message}`]
+          });
+          this.loading = false;
+          this.activeLoading = this.activeLoading.filter(item => item !== id);
         });
     },
     onMandatoryFileInput(e, id, index) {
-      let types = ["pdf", "jpeg", "msword", "tif"];
+      let types = ["pdf", "jpeg", "msword", "tiff"];
       let file = e.target.files[0];
       let fileType = file.type.split("/")[1];
       if (!types.includes(fileType)) {
         this.$store.commit("SET_NOTIFICATION", {
           enabled: true,
           status: "alert",
-          text: "Invalid File Format"
+          text: ["Invalid File Format"]
         });
         return;
       }
@@ -636,16 +679,17 @@ export default {
       formData.append("file", file);
       formData.append("mandatory_training_id", id);
       // post request to API / send file
+      this.loading = true;
+      this.activeLoading.push(id);
+      console.log(id);
       this.$axios
         .$post(`/api/v1/locum/locum-detail-mandatory-trainings`, formData)
         .then(res => {
-          this.mandatory_trainings.splice(index, 1);
-          this.mandatory_trainings.push({
-            id: res.data.locum_detail_mandatory_training.mandatory_training.id,
-            name:
-              res.data.locum_detail_mandatory_training.mandatory_training.name,
-            info: res.data.locum_detail_mandatory_training
-          });
+          this.mandatory_trainings.splice(
+            index,
+            1,
+            res.data.locum_detail_mandatory_training
+          );
           this.mandatory_trainings = this.mandatory_trainings.sort(
             (a, b) => a.id - b.id
           );
@@ -654,39 +698,47 @@ export default {
             status: "success",
             text: ["Document uploaded!"]
           });
+          this.loading = false;
+          this.activeLoading = this.activeLoading.filter(item => item !== id);
         })
         .catch(err => {
-          console.log(err);
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "danger",
+            text: [`${err.response.data.message}`]
+          });
+          this.loading = false;
+          this.activeLoading = this.activeLoading.filter(item => item !== id);
         });
     },
-    onMandatoryFileUpdate(e, id, index) {
+    onMandatoryFileUpdate(e, id, index, loadingId) {
       if (!e.target.files.length) {
         return;
       }
-      let types = ["pdf", "jpeg", "msword", "tif"];
+      let types = ["pdf", "jpeg", "msword", "tiff"];
       let file = e.target.files[0];
       let fileType = file.type.split("/")[1];
       if (!types.includes(fileType)) {
         this.$store.commit("SET_NOTIFICATION", {
           enabled: true,
           status: "alert",
-          text: "Invalid File Format"
+          text: ["Invalid File Format"]
         });
         return;
       }
       const formData = new FormData();
       formData.append("file", file);
       // post request to API / send file
+      this.loading = true;
+      this.activeLoading.push(loadingId);
       this.$axios
         .$put(`/api/v1/locum/locum-detail-mandatory-trainings/${id}`, formData)
         .then(res => {
-          this.mandatory_trainings.splice(index, 1);
-          this.mandatory_trainings.push({
-            id: res.data.locum_detail_mandatory_training.mandatory_training.id,
-            name:
-              res.data.locum_detail_mandatory_training.mandatory_training.name,
-            info: res.data.locum_detail_mandatory_training
-          });
+          this.mandatory_trainings.splice(
+            index,
+            1,
+            res.data.locum_detail_mandatory_training
+          );
           this.mandatory_trainings = this.mandatory_trainings.sort(
             (a, b) => a.id - b.id
           );
@@ -695,9 +747,21 @@ export default {
             status: "success",
             text: ["Document uploaded!"]
           });
+          this.loading = false;
+          this.activeLoading = this.activeLoading.filter(
+            item => item !== loadingId
+          );
         })
         .catch(err => {
-          console.log(err);
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "danger",
+            text: [`${err.response.data.message}`]
+          });
+          this.loading = false;
+          this.activeLoading = this.activeLoading.filter(
+            item => item !== loadingId
+          );
         });
     },
     downloadItem(fileUrl, fileName) {
@@ -713,12 +777,16 @@ export default {
         link.setAttribute("download", fileName);
         document.body.appendChild(link);
         link.click();
+        document.body.removeChild(link);
       });
     }
   }
 };
 </script>
 <style scoped>
+.loading {
+  background-color: #ccc;
+}
 .number-status {
   width: 920px;
 }
@@ -730,7 +798,7 @@ table {
   width: 920px;
 }
 table thead th {
-  padding: 10px 0;
+  /* padding: 10px 0; */
 }
 table tbody td {
   padding: 15px 8px;
@@ -775,6 +843,29 @@ table tbody td {
   }
   .mandatoryTrainingModal {
     width: 80%;
+  }
+}
+.loader-message:after {
+  content: " .";
+  animation: dots 1s steps(5, end) infinite;
+}
+
+@keyframes dots {
+  0%,
+  20% {
+    color: rgba(0, 0, 0, 0);
+    text-shadow: 0.25em 0 0 rgba(0, 0, 0, 0), 0.5em 0 0 rgba(0, 0, 0, 0);
+  }
+  40% {
+    color: #333;
+    text-shadow: 0.25em 0 0 rgba(0, 0, 0, 0), 0.5em 0 0 rgba(0, 0, 0, 0);
+  }
+  60% {
+    text-shadow: 0.25em 0 0 #333, 0.5em 0 0 rgba(0, 0, 0, 0);
+  }
+  80%,
+  100% {
+    text-shadow: 0.25em 0 0 #333, 0.5em 0 0 #333;
   }
 }
 </style>

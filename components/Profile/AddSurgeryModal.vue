@@ -20,7 +20,7 @@
           :label="''"
           :placeholder="''"
         />
-        <AppButton :label="'Search'" @click="search" :inStyle="'padding:5px;'" />
+        <AppButton :label="'Search'" @click="search" :inStyle="'padding:5px 14px;'" />
       </div>
       <div v-if="showResult && surgeries.length === 0" class="mt-5">
         <div

@@ -7,21 +7,27 @@
         :type="'password'"
         :name="'old_password'"
         :label="'Current password'"
-        :placeholder="''"
+        :error="formError.find(item => item.field === 'old_password')"
+        @submit="update"
+        @blur="CheckEmptyField(form.old_password, 'old_password')"
       />
       <AppInput
         v-model="form.new_password"
         :type="'password'"
         :name="'new_password'"
         :label="'New password'"
-        :placeholder="''"
+        :error="formError.find(item => item.field === 'new_password')"
+        @submit="update"
+        @blur="CheckEmptyField(form.new_password, 'new_password')"
       />
       <AppInput
         v-model="form.new_password_confirmation"
         :type="'password'"
         :name="'new_password_confirmation'"
         :label="'Repeat password to confirm'"
-        :placeholder="''"
+        :error="formError.find(item => item.field === 'new_password_confirmation')"
+        @submit="update"
+        @blur="CheckEmptyField(form.new_password_confirmation, 'new_password_confirmation')"
       />
 
       <div class="text-left mt-5">
@@ -33,7 +39,6 @@
 <script>
 import AppFormError from "@/components/Base/AppFormError";
 import AppInput from "@/components/Base/AppInput";
-import AppSelect from "@/components/Base/AppSelect";
 import AppButton from "@/components/Base/AppButton";
 export default {
   transition: {
@@ -43,7 +48,6 @@ export default {
   components: {
     AppFormError,
     AppInput,
-    AppSelect,
     AppButton
   },
   data() {
@@ -57,56 +61,17 @@ export default {
     };
   },
   watch: {
-    "form.old_password"(value) {
-      let index = this.formError.findIndex(
-        item => item.field === "old_password"
-      );
-      if (index >= 0) {
-        this.formError.splice(index, 1);
-      }
-      if (!value) {
-        this.formError.push({
-          field: "old_password",
-          message: "Current Password Required"
-        });
-      }
+    "form.old_password"() {
+      this.CheckEmptyField(this.form.old_password, "old_password");
     },
-    "form.new_password"(value) {
-      let index = this.formError.findIndex(
-        item => item.field === "new_password"
-      );
-      if (index >= 0) {
-        this.formError.splice(index, 1);
-      }
-      if (!value) {
-        this.formError.push({
-          field: "new_password",
-          message: "New Password Required"
-        });
-      }
+    "form.new_password"() {
+      this.CheckEmptyField(this.form.new_password, "new_password");
     },
-    "form.new_password_confirmation"(value) {
-      let index = this.formError.findIndex(
-        item => item.field === "new_password_confirmation"
+    "form.new_password_confirmation"() {
+      this.CheckEmptyField(
+        this.form.new_password_confirmation,
+        "new_password_confirmation"
       );
-      if (index >= 0) {
-        this.formError.splice(index, 1);
-      }
-      if (!value) {
-        this.formError.push({
-          field: "new_password_confirmation",
-          message: "Password Confirmation Required"
-        });
-      } else {
-        const error = this.ValidateSamePassword(
-          this.form.new_password,
-          value,
-          "new_password_confirmation"
-        );
-        if (error) {
-          this.formError.push(error);
-        }
-      }
     }
   },
   methods: {
