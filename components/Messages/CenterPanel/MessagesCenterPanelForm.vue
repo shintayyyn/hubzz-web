@@ -1,5 +1,5 @@
 <template>
-  <div v-if="$route.params.slug && $route.params.slug !== 'new'" class="flex">
+  <div v-if="$route.params.slug !== 'new'" class="flex">
     <textarea
       v-model="message"
       class="message-box resize-none w-full p-2 text-sm focus:outline-none border-t"

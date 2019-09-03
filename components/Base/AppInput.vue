@@ -21,7 +21,7 @@
               :value="item.value"
               type="checkbox"
               @input="inputCheck"
-              class="mt-1 mr-1"
+              class="checkbox mt-1 mr-1"
               :checked="value.includes(item.value)"
             />
             <label :for="item.name" class="text-xs sm:text-sm">{{item.label}}</label>
@@ -89,7 +89,7 @@
               :value="value"
               type="checkbox"
               @input="$emit('input', $event.target.checked)"
-              class="mt-1 mr-1"
+              class="checkbox mt-1 mr-1"
             />
             <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
             <div

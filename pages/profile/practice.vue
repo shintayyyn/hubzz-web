@@ -43,24 +43,16 @@
             <div class="rounded-lg shadow-lg p-4 mt-4">
               <div class="flex flex-col">
                 <div class="text-xs sm:text-sm">Your Practice's standard terms</div>
-                <div class="mt-4 bg-gray-300 rounded-lg p-4">
-                  <div class="flex flex-no-wrap justify-between items-center">
-                    <div class="flex text-sm" v-if="loading">
-                      <label for="file-upload">Uploading</label>
-                      <div class="spinner">
-                        <div class="bounce1"></div>
-                        <div class="bounce2"></div>
-                        <div class="bounce3"></div>
-                      </div>
-                    </div>
+                <div class="relative mt-4 bg-gray-300 rounded-lg p-4">
+                  <AppLoading :spinner="false" :loading="loading" :message="'Uploading'" />
+                  <div v-if="!loading" class="flex flex-no-wrap justify-between items-center">
                     <div
-                      v-if="!loading"
                       class="text-xs sm:text-sm document-filename"
                     >{{ practice.standard_terms && practice.standard_terms.file ? practice.standard_terms.file.filename : '' }}</div>
                     <div
                       class="font-bold text-md sm:text-lg hover:null cursor-pointer text-gray-600 hover:text-black"
                       @click="modal = true"
-                      v-if="practice.standard_terms"
+                      v-if="practice.standard_terms "
                     >x</div>
                   </div>
                 </div>
@@ -68,7 +60,9 @@
                   <label v-if="loading == false" for="file-upload">
                     <div class="flex flex-row flex-no-wrap cursor-pointer hover:underline">
                       <svgicon name="cloud-upload" height="24" width="24" />
-                      <div class="ml-2 text-xs sm:text-sm leading-loose">Upload</div>
+                      <div
+                        class="ml-2 text-xs sm:text-sm leading-loose"
+                      >{{ practice.standard_terms ? 'Update' : 'Upload' }}</div>
                     </div>
                   </label>
                   <input type="file" id="file-upload" class="hidden" @input="onFileInput($event)" />
@@ -230,7 +224,6 @@ export default {
         others_compliance_document_id: []
       },
       name: "",
-      uploading: false,
       formError: []
     };
   },
@@ -402,7 +395,7 @@ export default {
       }
       const formData = new FormData();
       formData.append("file", file);
-      this.uploading = true;
+      this.loading = true;
       this.$axios
         .$put(`/api/v1/practice/me/standard-terms`, formData)
         .then(res => {
@@ -411,7 +404,7 @@ export default {
             status: "success",
             text: [res.message]
           });
-          this.uploading = false;
+          this.loading = false;
         });
       this.practice.standard_terms = {
         file: {

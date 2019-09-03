@@ -1,8 +1,12 @@
 <template>
   <transition name="fade" mode="out-in">
-    <div class="loading-shield flex flex-col items-center justify-center shadow-md" v-if="loading">
-      <h1 :class="inClass" class="loader-message" v-if="message">{{ message }}</h1>
-      <svgicon name="loader" width="60" height="60" />
+    <div
+      :class="inClass"
+      class="loading-shield flex flex-col items-center justify-center shadow-md"
+      v-if="loading"
+    >
+      <svgicon v-if="spinner" name="loader" width="60" height="60" />
+      <h1 class="loader-message" v-if="message">{{ message }}</h1>
     </div>
   </transition>
 </template>
@@ -15,6 +19,10 @@ export default {
     },
     message: {
       type: String
+    },
+    spinner: {
+      type: Boolean,
+      default: true
     },
     inClass: String
   }
@@ -36,7 +44,7 @@ export default {
 .loader-message {
   position: -webkit-sticky;
   position: sticky;
-  top: 50%;
+  /* top: 50%; */
   text-align: center;
   z-index: 50;
   /* left: 50%; */

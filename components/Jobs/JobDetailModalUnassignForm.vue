@@ -17,10 +17,12 @@
 </template>
 <script>
 import AppButton from "@/components/Base/AppButton";
+import AppInput from "@/components/Base/AppInput";
 export default {
   props: ["job"],
   components: {
-    AppButton
+    AppButton,
+    AppInput
   },
   data() {
     return {

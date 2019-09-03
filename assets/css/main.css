@@ -44,8 +44,18 @@ table tbody td {
   animation: dots 1s steps(5, end) infinite;
 }
 
+/* SCROLLBAR */
 
+div::-webkit-scrollbar {
+  height: 6px;
+  width: 8px;
+}
 
+div::-webkit-scrollbar-thumb {
+  background-color: #ddd;
+}
+
+/* MODAL */
 .modal-container {
   position: fixed;
   top: 0;

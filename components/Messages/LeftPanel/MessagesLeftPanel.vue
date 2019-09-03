@@ -50,18 +50,18 @@
               :key="item.conversation_id"
               @click="goTo(item.conversation_id ? item.conversation_id : item.conversation_id)"
             >
-              <AppAvatar
+              <!-- <AppAvatar
                 :height="'50px'"
                 :width="'50px'"
                 :src="item.receiver_avatar ? item.receiver_avatar : ''"
-              />
+              />-->
               <div class="w-5/6 flex items-center justify-between">
                 <div class="w-5/6 px-2">
                   <p
                     class="truncate"
                     :class="parseInt($route.params.slug) === item.conversation_id ? 'font-bold' : ''"
                   >{{ userFullname(item) }}</p>
-                  <p class="text-sm truncate">{{ item.sender_first_name }}: {{ item.message }}</p>
+                  <p class="text-sm truncate">{{ senderFullname(item) }}: {{ item.message }}</p>
                 </div>
                 <span
                   class="w-12 text-right text-xs text-gray-600 leading-none absolute right-0 mx-2"
@@ -73,8 +73,11 @@
             v-if="(messages.length === 0 && showResult === true) || conversations.length === 0"
             class="flex flex-col h-full items-center pt-20 font-bold text-gray-500"
           >
-            <img src="/images/hubzz-icon-transparent.png" class="logo m-4" />
-            <span v-if="showResult === true">Nothing to show</span>
+            <span v-if="showResult === true" class="text-center break-all px-4">
+              No messages found for
+              <br />
+              "{{ search_text }}"
+            </span>
             <span v-else>No messages</span>
           </div>
         </div>
