@@ -149,12 +149,11 @@ export default {
   },
   methods: {
     select(id) {
-      let shiftId = this.form.shift_id.find(item => item === id);
-      if (!shiftId) {
-        this.form.shift_id.push(id);
+      let index = this.form.shift_id.findIndex(item => item === id);
+      if (index >= 0) {
+        this.form.shift_id.splice(index, 1);
       } else {
-        let shiftIndex = this.form.shift_id.findIndex(item => item === id);
-        this.form.shift_id.splice(shiftIndex, 1);
+        this.form.shift_id.push(id);
       }
     },
     add() {
