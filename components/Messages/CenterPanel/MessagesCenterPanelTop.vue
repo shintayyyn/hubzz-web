@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="$route.params.slug && $route.params.slug !== 'new'"
+    v-if="$route.params.slug !== 'new'"
     class="panel-top p-4 w-full flex items-center border-b leading-none"
   >
     <div class="pr-4 md:hidden">

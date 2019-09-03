@@ -35,12 +35,18 @@
           >
             <template v-if="keyword === 'practices'">
               <span class="w-1/6 flex justify-center">
-                <img
+                <!-- <img
                   class="w-10 h-10 rounded-full"
                   src="https://www.svgrepo.com/show/106812/doctor.svg"
                   width="25"
                   alt="avatar"
-                />
+                />-->
+                <!-- <AppAvatar
+                  class="w-10 h-10 rounded-full border"
+                  :width="'40px'"
+                  :height="'40px'"
+                  :src="null"
+                />-->
               </span>
               <div class="w-full flex flex-col justify-center mx-2">
                 <span class="font-bold text-base">{{ item.first_name }} {{ item.last_name }}</span>
@@ -64,8 +70,12 @@
 </template>
 <script>
 import debounce from "lodash.debounce";
+import AppAvatar from "@/components/Base/AppAvatar";
 import { mixin as clickaway } from "vue-clickaway";
 export default {
+  components: {
+    AppAvatar
+  },
   mixins: [clickaway],
   props: {
     value: String,
@@ -111,15 +121,17 @@ export default {
           .$get(`/api/v1/conversations?search=${fullName}`)
           .then(res => {
             if (res.data.conversations.length > 0) {
+              this.search = "";
               let id = res.data.conversations[0].conversation_id;
               this.$router.push(`/messages/${id}`);
+            } else {
+              this.search = fullName;
             }
-            this.search = fullName;
           });
-        this.search = fullName;
       } else {
         this.$emit("input", selectedSurgery.name);
       }
+      this.search = "";
     },
     getSurgeries: debounce(function(input) {
       const params = {

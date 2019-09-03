@@ -33,7 +33,9 @@ export default {
         this.$store.dispatch("chat/setActiveConversation", to.params.slug);
       }
       if (to.path === "/messages") {
-        if (window.innerWidth < 768) {
+        if (window.innerWidth > 768) {
+          this.goToFirstConversation();
+        } else {
           this.$store.commit("IS_MOBILE", true);
         }
       }

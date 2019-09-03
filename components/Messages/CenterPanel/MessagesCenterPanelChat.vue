@@ -119,26 +119,26 @@
       <template v-if="$route.params.slug && $route.params.slug === 'new' ">
         <div class="relative h-full flex flex-col justify-between pt-20 overflow-y-hidden">
           <div class="h-full px-8 md:px-20 md:pt-20">
-            <button
-              class="absolute top-0 left-0 m-6 flex items-center font-bold focus:outline-none"
-              @click="$router.go(-1)"
-              v-if="$route.params.slug === 'new'"
-            >
-              <svgicon name="left-arrow" height="32" width="32" />
-            </button>
-            <span class="font-bold text-lg">Create Message</span>
+            <div class="absolute top-0 left-0 w-full py-4 flex items-center">
+              <button
+                class="flex mx-6 items-center font-bold focus:outline-none"
+                @click="$router.go(-1)"
+                v-if="$route.params.slug === 'new'"
+              >
+                <svgicon name="left-arrow" height="32" width="32" />
+              </button>
+              <span class="font-bold text-lg">Create Message</span>
+            </div>
             <AppAutoComplete
               v-model="search_user"
               :name="'search_user'"
-              :label="'To:'"
-              :placeholder="$auth.user.domain === 'Practice' ? 'Type the name of the Locum' : 'Type the name of the Practice'"
+              :label="'Send message to'"
+              :placeholder="'Search for...'"
               :keyword="'practices'"
               :url="'/api/v1/search-users'"
-              :error="formError.find(item => item.field === 'search_user')"
               @selectUserId="selectedUserId = $event"
             />
           </div>
-
           <div v-if="search_user" class="flex">
             <textarea
               v-model="message"
@@ -211,6 +211,7 @@ export default {
         this.scrollToBottom();
       }
       this.loadMore = false;
+      this.search_user = "";
     },
     messages(value) {
       let atBottom =
