@@ -1,7 +1,7 @@
 <template>
-  <div class="w-full">
+  <div class="w-full" ref="signUpContainer">
     <ProgressBar :percentage="percentage" />
-    <div class="w-full xl:max-w-md p-6">
+    <div class="w-full xl:max-w-2xl p-6">
       <div class="flex w-full justify-center xl:justify-start">
         <div class="mb-6 mt-1 mx-4" style="flex: 0 1 600px;">
           <nuxt-link to="/" class="text-black focus:outline-none">
@@ -12,7 +12,6 @@
       </div>
 
       <transition name="slide" mode="out-in">
-        <!-- <component :is="activeTab" @nextTab="activeTab = $event"></component> -->
         <component :is="activeTab"></component>
       </transition>
     </div>
@@ -34,49 +33,10 @@ export default {
     LocumProfessionalDetails,
     LocumCredentialDetails
   },
-  data() {
-    return {
-      // activeTab: "LocumAccountDetails"
-    };
-  },
-  watch: {
-    // credentialError(value) {
-    //   if (value.length > 0) {
-    //     this.activeTab = 'LocumCredentialDetails'
-    //   }
-    // },
-    // professionalError(value) {
-    //   if (value.length > 0) {
-    //     this.activeTab = 'LocumProfessionalDetails'
-    //   }
-    // },
-    // addressError(value) {
-    //   if (value.length > 0) {
-    //     this.activeTab = 'LocumAddressDetails'
-    //   }
-    // },
-    // accountError(value) {
-    //   if (value.length > 0) {
-    //     this.activeTab = 'LocumAccountDetails'
-    //   }
-    // },
-  },
   computed: {
     activeTab() {
       return this.$store.state.signUp.activeComponent;
     },
-    // accountError() {
-    //   return this.$store.state.signUp.account_detail_form_error
-    // },
-    // addressError() {
-    //   return this.$store.state.signUp.address_detail_form_error
-    // },
-    // professionalError() {
-    //   return this.$store.state.signUp.professional_detail_form_error
-    // },
-    // credentialError() {
-    //   return this.$store.state.signUp.credential_detail_form_error
-    // },
     percentage() {
       switch (this.activeTab) {
         case "LocumAccountDetails":

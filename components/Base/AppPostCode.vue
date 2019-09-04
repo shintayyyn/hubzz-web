@@ -4,7 +4,7 @@
       <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
       <div class="flex">
         <div
-          class="absolute rounded-lg right-0 bg-red-400 p-1 text-xs sm:text-sm text-white"
+          class="absolute rounded-lg right-0 bg-red-500 p-1 text-xs sm:text-sm text-white"
           v-if="error"
         >{{error.message}}</div>
       </div>
@@ -85,7 +85,7 @@ export default {
     }
   },
   created() {
-    this.search = this.value
+    this.search = this.value;
   },
   methods: {
     add() {
@@ -94,7 +94,7 @@ export default {
       this.showLists = false;
       this.$emit("onSelect", selectedPostCode);
     },
-    getPredictions: debounce(function (input) {
+    getPredictions: debounce(function(input) {
       const params = {
         input: input
       };

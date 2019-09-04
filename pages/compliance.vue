@@ -377,16 +377,26 @@ export default {
       mandatoryTrainingModal: false
     };
   },
+  async asyncData({ app, error }) {
+    try {
+      const response = await app.$axios.$get(`/api/v1/me`);
+      const user =
+        response.data && response.data.user ? response.data.user : null;
+      return {
+        user
+      };
+    } catch (err) {}
+  },
   created() {
     // get gmc, mpl status
-    this.gmc_or_nmc_number = this.$auth.user.locum_detail.gmc_or_nmc_number;
-    this.mpl_or_npl_number = this.$auth.user.locum_detail.mpl_or_npl_number;
+    this.gmc_or_nmc_number = this.user.locum_detail.gmc_or_nmc_number;
+    this.mpl_or_npl_number = this.user.locum_detail.mpl_or_npl_number;
     // get all compliance documents list based on profession category
     this.$axios.$get(`/api/v1/profession-categories`).then(res => {
       this.profession = res.data.profession_categories.find(
         profession =>
           profession.id ===
-          this.$auth.user.locum_detail.profession.profession_category.id
+          this.user.locum_detail.profession.profession_category.id
       );
       this.setComplianceDocuments();
     });

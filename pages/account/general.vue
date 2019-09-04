@@ -251,7 +251,13 @@ export default {
       this.loading = true;
       try {
         this.formError = [];
-        this.Validate(this.form, ["title", "suffix", "address_line_2"]);
+        this.Validate(this.form, [
+          "title",
+          "suffix",
+          "home_number",
+          "work_number",
+          "address_line_2"
+        ]);
         if (!this.formError.length) {
           await this.$axios.$put(`/api/v1/locum/me/account`, this.form);
           this.$store.commit("SET_NOTIFICATION", {

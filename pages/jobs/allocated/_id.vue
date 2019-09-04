@@ -1,7 +1,7 @@
 <template>
   <div>
     <JobDetailModalAppointment :job="job" v-if="job.type === 'Private'" />
-    <!-- <JobDetailModalLocum :job="job" v-else /> -->
+    <JobDetailModalLocum :job="job" v-else />
   </div>
 </template>
 <script>

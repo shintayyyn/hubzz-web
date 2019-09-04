@@ -13,18 +13,19 @@
             v-model="form.post_code"
             :name="'post_code'"
             :label="'Post code'"
-            @onSelect="onSelect"
             :error="formError.find(error => error.field === 'post_code')"
             :inStyle="'background-color:#dae1e7;border-color:white'"
+            @onSelect="onSelect"
+            @blur="CheckEmptyField(form.post_code, 'post_code')"
           />
           <AppInput
             v-model="form.address_line_1"
             :type="'text'"
             :name="'address_line_1'"
             :label="'Address line 1'"
-            :placeholder="''"
             :error="formError.find(error => error.field === 'address_line_1')"
             :inStyle="'background-color:#dae1e7;border-color:white'"
+            @blur="CheckEmptyField(form.address_line_1, 'address_line_1')"
           />
 
           <AppInput
@@ -42,8 +43,8 @@
             :name="'address_line_3'"
             :label="'City / Town / District'"
             :error="formError.find(error => error.field === 'address_line_3')"
-            :placeholder="''"
             :inStyle="'background-color:#dae1e7;border-color:white'"
+            @blur="CheckEmptyField(form.address_line_3, 'address_line_3')"
           />
         </form>
       </div>
@@ -89,50 +90,15 @@ export default {
     }
   },
   watch: {
-    "form.post_code"(value) {
-      let index = this.formError.findIndex(item => item.field === "post_code");
-      if (index >= 0) {
-        this.formError.splice(index, 1);
-      }
-      if (!value) {
-        this.formError.push({
-          field: "post_code",
-          message: "Post Code is Required"
-        });
-      }
-    },
-    "form.address_line_1"(value) {
-      // splice from formerror
-      let index = this.formError.findIndex(
-        item => item.field === "address_line_1"
-      );
-      if (index >= 0) {
-        this.formError.splice(index, 1);
-      }
-      // validate
-      if (!value) {
-        this.formError.push({
-          field: "address_line_1",
-          message: "Address Line 1 is Required"
-        });
-      }
-    },
-    "form.address_line_3"(value) {
-      // splice from formerror
-      let index = this.formError.findIndex(
-        item => item.field === "address_line_3"
-      );
-      if (index >= 0) {
-        this.formError.splice(index, 1);
-      }
-      // validate
-      if (!value) {
-        this.formError.push({
-          field: "address_line_3",
-          message: "City / Town / District is Required"
-        });
-      }
-    }
+    // "form.post_code"(value) {
+    //   this.CheckEmptyField(this.form.post_code, "post_code");
+    // },
+    // "form.address_line_1"(value) {
+    //   this.CheckEmptyField(this.form.address_line_1, "address_line_1");
+    // },
+    // "form.address_line_3"(value) {
+    //   this.CheckEmptyField(this.form.address_line_3, "address_line_3");
+    // }
   },
   mounted() {
     this.form.post_code = this.addressDetails.post_code;
@@ -163,45 +129,16 @@ export default {
       this.form.address_line_3 = postal_town ? postal_town.long_name : "";
     },
     next() {
-      try {
-        this.formError = [];
-
-        if (!this.form.post_code) {
-          this.formError.push({
-            field: "post_code",
-            message: "Post Code is Required"
-          });
-        }
-
-        if (!this.form.address_line_1) {
-          this.formError.push({
-            field: "address_line_1",
-            message: "Address Line 1 is Required"
-          });
-        }
-
-        if (!this.form.address_line_3) {
-          this.formError.push({
-            field: "address_line_3",
-            message: "City / Town / District is Required"
-          });
-        }
-
-        // this.Validate(this.form, ['address_line_2'])
-        if (!this.formError.length) {
-          this.$store.commit("signUp/SET_ADDRESS_DETAILS", this.form);
-          // this.$emit("nextTab", "LocumProfessionalDetails");
-          this.$store.commit(
-            "signUp/SET_ACTIVE_COMPONENT",
-            "LocumProfessionalDetails"
-          );
-        }
-      } catch (e) {
-        console.log(e);
+      this.formError = [];
+      // this.Validate(this.form, ["address_line_2"]);
+      if (!this.formError.length) {
+        this.$store.commit("signUp/SET_ADDRESS_DETAILS", this.form);
+        this.$store.commit(
+          "signUp/SET_ACTIVE_COMPONENT",
+          "LocumProfessionalDetails"
+        );
       }
     }
   }
 };
 </script>
-<style scoped>
-</style>

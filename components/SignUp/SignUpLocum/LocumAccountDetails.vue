@@ -18,7 +18,7 @@
           <AppInput
             v-model="form.title"
             :type="'text'"
-            name="'title'"
+            :name="'title'"
             :label="'Title'"
             :placeholder="'(ex. Mr., Ms., Mrs.)'"
           />
@@ -30,6 +30,7 @@
             :label="'First name'"
             :placeholder="'Your first name'"
             :error="formError.find(error => error.field === 'first_name')"
+            @blur="CheckEmptyField(form.first_name, 'first_name')"
           />
 
           <AppInput
@@ -39,6 +40,7 @@
             :label="'Last name'"
             :placeholder="'Your last name'"
             :error="formError.find(error => error.field === 'last_name')"
+            @blur="CheckEmptyField(form.last_name, 'last_name')"
           />
           <AppInput
             v-model="form.suffix"
@@ -52,8 +54,9 @@
             :type="'select'"
             :name="'gender'"
             :label="'Gender'"
-            :error="formError.find(item => item.field === 'gender')"
             :placeholder="'Select...'"
+            :error="formError.find(item => item.field === 'gender')"
+            @blur="CheckEmptyField(form.gender, 'gender')"
             :items="genders"
           />
 
@@ -62,9 +65,22 @@
             :type="'text'"
             :name="'mobile_number'"
             :label="'Mobile'"
-            :placeholder="''"
             :error="formError.find(error => error.field === 'mobile_number')"
+            @blur="CheckEmptyField(form.mobile_number, 'mobile_number')"
             :info="'In case of emergency'"
+          />
+
+          <AppInput
+            v-model.number="form.home_number"
+            :type="'text'"
+            :name="'home_number'"
+            :label="'Home number'"
+          />
+          <AppInput
+            v-model.number="form.work_number"
+            :type="'text'"
+            :name="'work_number'"
+            :label="'Work number'"
           />
         </form>
       </div>
@@ -96,7 +112,9 @@ export default {
         last_name: "",
         suffix: "",
         gender: "",
-        mobile_number: ""
+        mobile_number: "",
+        home_number: "",
+        work_number: ""
       },
       formError: []
     };
@@ -110,65 +128,18 @@ export default {
     }
   },
   watch: {
-    "form.first_name"(value) {
-      // splice from formerror
-      let index = this.formError.findIndex(item => item.field === "first_name");
-      if (index >= 0) {
-        this.formError.splice(index, 1);
-      }
-      // validate
-      if (!value) {
-        // required
-        this.formError.push({
-          field: "first_name",
-          message: "First Name is Required"
-        });
-      }
-    },
-    "form.last_name"(value) {
-      // splice from formerror
-      let index = this.formError.findIndex(item => item.field === "last_name");
-      if (index >= 0) {
-        this.formError.splice(index, 1);
-      }
-      // validate
-      if (!value) {
-        // required
-        this.formError.push({
-          field: "last_name",
-          message: "Last Name is Required"
-        });
-      }
-    },
-    "form.gender"(value) {
-      // splice from formerror
-      let index = this.formError.findIndex(item => item.field === "gender");
-      if (index >= 0) {
-        this.formError.splice(index, 1);
-      }
-      // validate
-      if (!value) {
-        // required
-        this.formError.push({ field: "gender", message: "Gender is Required" });
-      }
-    },
-    "form.mobile_number"(value) {
-      // splice from formerror
-      let index = this.formError.findIndex(
-        item => item.field === "mobile_number"
-      );
-      if (index >= 0) {
-        this.formError.splice(index, 1);
-      }
-      // validate
-      if (!value) {
-        // required
-        this.formError.push({
-          field: "mobile_number",
-          message: "Mobile Number is Required"
-        });
-      }
-    }
+    // "form.first_name"(value) {
+    //   this.CheckEmptyField(this.form.first_name, "first_name");
+    // },
+    // "form.last_name"(value) {
+    //   this.CheckEmptyField(this.form.last_name, "last_name");
+    // },
+    // "form.gender"(value) {
+    //   this.CheckEmptyField(this.form.gender, "gender");
+    // },
+    // "form.mobile_number"(value) {
+    //   this.CheckEmptyField(this.form.mobile_number, "mobile_number");
+    // }
   },
   mounted() {
     this.form.title = this.accountDetails.title;
@@ -177,6 +148,8 @@ export default {
     this.form.suffix = this.accountDetails.suffix;
     this.form.gender = this.accountDetails.gender;
     this.form.mobile_number = this.accountDetails.mobile_number;
+    this.form.home_number = this.accountDetails.home_number;
+    this.form.work_number = this.accountDetails.work_number;
 
     if (this.accountFormError.length > 0) {
       this.accountFormError.forEach(item => {
@@ -186,45 +159,24 @@ export default {
   },
   methods: {
     next() {
-      try {
-        this.formError = [];
-
-        if (!this.form.first_name) {
-          this.formError.push({
-            field: "first_name",
-            message: "First Name is Required"
-          });
-        }
-        if (!this.form.last_name) {
-          this.formError.push({
-            field: "last_name",
-            message: "Last Name is Required"
-          });
-        }
-        if (!this.form.gender) {
-          this.formError.push({
-            field: "gender",
-            message: "Gender is Required"
-          });
-        }
-        if (!this.form.mobile_number) {
-          this.formError.push({
-            field: "mobile_number",
-            message: "Mobile Number is Required"
-          });
-        }
-
-        if (!this.formError.length) {
-          this.form.mobile_number = this.form.mobile_number.toString();
-          this.$store.commit("signUp/SET_ACCOUNT_DETAILS", this.form);
-          this.$store.commit(
-            "signUp/SET_ACTIVE_COMPONENT",
-            "LocumAddressDetails"
-          );
-          // this.$emit("nextTab", "LocumAddressDetails");
-        }
-      } catch (e) {
-        console.log(e);
+      // this.Validate(this.form, [
+      //   "title",
+      //   "suffix",
+      //   "home_number",
+      //   "work_number"
+      // ]);
+      this.formError = [];
+      if (!this.formError.length) {
+        this.form.mobile_number = this.form.mobile_number.toString();
+        this.$store.commit("signUp/SET_ACCOUNT_DETAILS", this.form);
+        this.$store.commit(
+          "signUp/SET_ACTIVE_COMPONENT",
+          "LocumAddressDetails"
+        );
+      } else {
+        this.$nextTick(() => {
+          this.$parent.$refs.signUpContainer.scrollTop = 0;
+        });
       }
     }
   }
