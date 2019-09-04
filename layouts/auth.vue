@@ -11,6 +11,7 @@
         <a
           class="bg-white text-black p-1 m-1"
           href="whatsapp://send?text=Have+you+heard+the+buzz+about+hubzz%3F%0D%0A%0D%0AJoin+hubzz+at+locum.ml"
+          data-action="share/whatsapp/share"
           target="_blank"
         >Share ..</a>
       </div>
