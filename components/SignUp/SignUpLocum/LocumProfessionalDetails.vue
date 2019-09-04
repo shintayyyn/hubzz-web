@@ -45,15 +45,20 @@
             :items="professions"
           />
 
-          <AppFilterSearch
-            v-model="form.qualification_id"
-            :name="'qualification_id'"
-            :label="'Specialty'"
-            :placeholder="'Select...'"
-            :error="formError.find(item => item.field === 'qualification_id')"
-            :items="gpQualifications"
-            :info="'Choose at least one qualification'"
-          />
+          <template v-if="form.profession_id">
+            <AppFilterSearch
+              v-model="form.qualification_id"
+              :name="'qualification_id'"
+              :label="'Specialty'"
+              :placeholder="'Select...'"
+              :error="formError.find(item => item.field === 'qualification_id')"
+              :info="'Choose at least one qualification'"
+              :url="'/api/v1/qualifications'"
+              :professionCategoryId="form.profession_id.toString()"
+              @add="CheckEmptyField(form.qualification_id, 'qualification_id')"
+              @remove="CheckEmptyField(form.qualification_id, 'qualification_id')"
+            />
+          </template>
 
           <AppFilterSearch
             v-model="form.clinical_system_id"
@@ -61,8 +66,10 @@
             :label="'Clinical systems'"
             :placeholder="'Select...'"
             :error="formError.find(item => item.field === 'clinical_system_id')"
-            :items="clinicalSystems"
             :info="'Choose at least one IT system'"
+            :url="'/api/v1/clinical-systems'"
+            @add="CheckEmptyField(form.clinical_system_id, 'clinical_system_id')"
+            @remove="CheckEmptyField(form.clinical_system_id, 'clinical_system_id')"
           />
 
           <AppFilterSearch
@@ -70,9 +77,8 @@
             :name="'spoken_language_id'"
             :label="'Spoken languages'"
             :placeholder="'Select...'"
-            :error="formError.find(item => item.field === 'spoken_language_id')"
-            :items="spokenLanguages"
             :info="'Choose other languages you can speak'"
+            :url="'/api/v1/spoken-languages'"
             :defaultItem="'English'"
           />
 
