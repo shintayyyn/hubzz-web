@@ -4,7 +4,7 @@
 <script>
 export default {
   created() {
-    this.$router.push(`/my-banks/all/${this.$route.params.userId}/profile`)
+    this.$router.push(`/my-banks/applied/${this.$route.params.userId}/profile`);
   }
-}
+};
 </script>

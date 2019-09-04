@@ -65,7 +65,7 @@
     <div v-else class="flex flex-row flex-wrap justify-center">
       <div>There are no locums connected to your practice yet.</div>
     </div>
-    <div class="shield" v-if="$route.name !== 'my-banks-all'"></div>
+    <div class="shield" v-if="$route.name !== 'my-banks-applied'"></div>
     <nuxt-child />
   </section>
 </template>
@@ -74,16 +74,16 @@ import AppPagination from "@/components/Base/AppPagination";
 import AppAvatar from "@/components/Base/AppAvatar";
 import AppInput from "@/components/Base/AppInput";
 const tabs = [
-  "my-banks-all-userId",
-  "my-banks-all-userId-profile",
-  "my-banks-all-userId-related-jobs",
-  "my-banks-all-userId-related-jobs-available",
-  "my-banks-all-userId-related-jobs-applied",
-  "my-banks-all-userId-related-jobs-current",
-  "my-banks-all-userId-related-jobs-completed",
-  "my-banks-all-userId-related-jobs-unsuccessful",
-  "my-banks-all-userId-related-jobs-cancelled",
-  "my-banks-all-userId-related-jobs-declined"
+  "my-banks-applied-userId",
+  "my-banks-applied-userId-profile",
+  "my-banks-applied-userId-related-jobs",
+  "my-banks-applied-userId-related-jobs-available",
+  "my-banks-applied-userId-related-jobs-applied",
+  "my-banks-applied-userId-related-jobs-current",
+  "my-banks-applied-userId-related-jobs-completed",
+  "my-banks-applied-userId-related-jobs-unsuccessful",
+  "my-banks-applied-userId-related-jobs-cancelled",
+  "my-banks-applied-userId-related-jobs-declined"
 ];
 export default {
   transition: {
@@ -130,7 +130,7 @@ export default {
   },
   watch: {
     $route(value) {
-      if (value.name !== "my-banks-all") {
+      if (value.name !== "my-banks-applied") {
         document.body.style.overflow = "hidden";
       } else {
         document.body.style.overflow = "auto";
@@ -163,7 +163,11 @@ export default {
     },
     getLocums(page) {
       this.current_page = page;
-      let defaultParams = { offset: this.offset, limit: this.perPage };
+      let defaultParams = {
+        offset: this.offset,
+        limit: this.perPage,
+        practice_locum_type: "Applied"
+      };
       let locumParams = { ...defaultParams, ...this.params };
       this.$axios
         .$get(`/api/v1/practice/locums`, { params: locumParams })
@@ -199,7 +203,7 @@ export default {
       }
     },
     show(id) {
-      this.$router.push(`/my-banks/all/${id}`);
+      this.$router.push(`/my-banks/applied/${id}`);
     },
     pagechanged(e) {
       this.current_page = e;

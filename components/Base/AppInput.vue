@@ -10,7 +10,7 @@
           <div class="flex">
             <div class="bg-gray-300 rounded-lg px-4 py-1 text-xs sm:text-sm" v-if="info">{{info}}</div>
             <div
-              class="absolute rounded-lg right-0 bg-red-400 p-1 text-xs sm:text-sm text-white"
+              class="absolute rounded-lg right-0 bg-red-500 p-1 text-xs sm:text-sm text-white"
               v-if="error"
             >{{error.message}}</div>
           </div>
@@ -83,19 +83,16 @@
     <!-- single checkbox -->
     <template v-if="type === 'single-checkbox'">
       <div class="flex flex-col py-2 mb-6">
+        <div class="flex justify-end">
+          <div
+            class="rounded-lg bg-red-500 p-1 text-xs sm:text-sm text-white"
+            v-if="error"
+          >{{error.message}}</div>
+        </div>
         <div class="flex flex-row flex-no-wrap justify-between">
           <div>
-            <input
-              :value="value"
-              type="checkbox"
-              @input="$emit('input', $event.target.checked)"
-              class="checkbox mt-1 mr-1"
-            />
+            <input :value="value" type="checkbox" @input="inputCheck" class="checkbox mt-1 mr-1" />
             <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
-            <div
-              class="absolute bg-red-500 p-1 text-xs sm:text-sm text-white"
-              v-if="error"
-            >{{error.message}}</div>
           </div>
         </div>
       </div>

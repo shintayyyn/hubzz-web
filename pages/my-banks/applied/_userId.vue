@@ -1,11 +1,11 @@
 <template>
   <div class="modal-container shadow-lg">
     <div class="p-8 max-w-5xl">
-      <div @click="$router.push(`/my-banks/all`)" class="cursor-pointer">
+      <div @click="$router.push(`/my-banks/applied`)" class="cursor-pointer">
         <svgicon name="left-arrow" height="32" width="32" />
       </div>
       <div class="flex flex-row justify-start mt-8">
-        <LocumTabs :locumType="'all'" :tabs="tabs" />
+        <LocumTabs :locumType="'applied'" :tabs="tabs" />
       </div>
       <div class="mt-5">
         <nuxt-child />
@@ -15,22 +15,26 @@
 </template>
 <script>
 const tabs = [
-  'my-banks-all-userId-related-jobs-available', 'my-banks-all-userId-related-jobs-applied',
-  'my-banks-all-userId-related-jobs-current', 'my-banks-all-userId-related-jobs-completed',
-  'my-banks-all-userId-related-jobs-unsuccessful', 'my-banks-all-userId-related-jobs-cancelled',
-  'my-banks-all-userId-related-jobs-declined', 'my-banks-all-userId-related-jobs',
-]
-import LocumTabs from '@/components/MyBanks/LocumTabs'
+  "my-banks-applied-userId-related-jobs-available",
+  "my-banks-applied-userId-related-jobs-applied",
+  "my-banks-applied-userId-related-jobs-current",
+  "my-banks-applied-userId-related-jobs-completed",
+  "my-banks-applied-userId-related-jobs-unsuccessful",
+  "my-banks-applied-userId-related-jobs-cancelled",
+  "my-banks-applied-userId-related-jobs-declined",
+  "my-banks-applied-userId-related-jobs"
+];
+import LocumTabs from "@/components/MyBanks/LocumTabs";
 export default {
   components: {
     LocumTabs
   },
   data() {
     return {
-      tabs,
-    }
+      tabs
+    };
   }
-}
+};
 </script>
 
 <style scoped>

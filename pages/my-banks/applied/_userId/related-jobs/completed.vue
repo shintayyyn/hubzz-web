@@ -31,7 +31,7 @@
                 To
                 <svgicon class="inline align-baseline" name="sort" height="12" width="12" />
               </th>
-              <th>Applied</th>
+              <th>Marked completed by Practice</th>
             </tr>
           </thead>
           <tbody>
@@ -49,7 +49,7 @@
                 <td>{{item.locum_detail_rate_type.name}}</td>
                 <td>{{item.date_start}}</td>
                 <td>{{item.date_end}}</td>
-                <td>the date this user applied</td>
+                <td>{{item.job_parts[item.job_parts.length - 1].completed_at | localDate }}</td>
               </tr>
               <tr :key="`${item.id}-${index}`">
                 <td></td>
@@ -67,22 +67,25 @@
         @pagechanged="pagechanged"
       />
     </div>
-    <div class="shield" v-if="$route.name === 'my-banks-all-userId-related-jobs-applied-jobId'"></div>
+    <div
+      class="shield"
+      v-if="$route.name === 'my-banks-applied-userId-related-jobs-completed-jobId'"
+    ></div>
     <nuxt-child />
   </section>
 </template>
 <script>
-import AppPagination from '@/components/Base/AppPagination'
-import AppLoading from '@/components/Base/AppLoading'
-import * as chatApi from '@/api/chat'
+import AppPagination from "@/components/Base/AppPagination";
+import AppLoading from "@/components/Base/AppLoading";
+import * as chatApi from "@/api/chat";
 export default {
   transition: {
-    name: 'fade',
-    mode: 'out-in'
+    name: "fade",
+    mode: "out-in"
   },
   components: {
     AppPagination,
-    AppLoading,
+    AppLoading
   },
   data() {
     return {
@@ -93,16 +96,16 @@ export default {
       current_page: 1,
       loading: false,
       params: {
-        order_by: 'date_created:desc',
+        order_by: "date_created:desc"
       },
       // sort
-      sortType: '',
+      sortType: "",
       job_number: true,
       rate: true,
       date_start: true,
       date_end: true,
-      date_created: false,
-    }
+      date_created: false
+    };
   },
   computed: {
     offset() {
@@ -121,70 +124,90 @@ export default {
   async asyncData({ app, params, error }) {
     try {
       // user
-      const responseUser = await app.$axios.$get(`/api/v1/practice/locums/${params.userId}`)
-      const user = responseUser.data && responseUser.data.user ? responseUser.data.user : null
+      const responseUser = await app.$axios.$get(
+        `/api/v1/practice/locums/${params.userId}`
+      );
+      const user =
+        responseUser.data && responseUser.data.user
+          ? responseUser.data.user
+          : null;
       // count
-      const responseCount = await app.$axios.$get(`/api/v1/practice/jobs/count?locum_detail_id=${user.locum_detail.id}&locum_status=Applied`)
-      const total = responseCount.data && responseCount.data.count ? responseCount.data.count : 0
+      const responseCount = await app.$axios.$get(
+        `/api/v1/practice/jobs/count?locum_detail_id=${user.locum_detail.id}&locum_status=Completed`
+      );
+      const total =
+        responseCount.data && responseCount.data.count
+          ? responseCount.data.count
+          : 0;
       // jobs
-      const responseJobs = await app.$axios.$get(`/api/v1/practice/jobs?locum_detail_id=${user.locum_detail.id}&locum_status=Applied&offset=0&limit=5`)
-      const jobs = responseJobs.data && responseJobs.data.jobs ? responseJobs.data.jobs : []
+      const responseJobs = await app.$axios.$get(
+        `/api/v1/practice/jobs?locum_detail_id=${user.locum_detail.id}&locum_status=Completed&offset=0&limit=5`
+      );
+      const jobs =
+        responseJobs.data && responseJobs.data.jobs
+          ? responseJobs.data.jobs
+          : [];
       return {
         user,
         total,
         jobs
-      }
+      };
     } catch (err) {
-      throw err
+      throw err;
     }
   },
   methods: {
     getJobs(page, params) {
-      this.loading = true
-      this.current_page = page
-      const jobParams = { ...params }
+      this.loading = true;
+      this.current_page = page;
+      const jobParams = { ...params };
       this.$axios
-        .$get(`/api/v1/practice/jobs?locum_detail_id=${this.user.locum_detail.id}&locum_status=Applied&offset=${this.offset}&limit=${this.perPage}`, { params: jobParams })
+        .$get(
+          `/api/v1/practice/jobs?locum_detail_id=${this.user.locum_detail.id}&locum_status=Completed&offset=${this.offset}&limit=${this.perPage}`,
+          { params: jobParams }
+        )
         .then(res => {
-          this.jobs = res.data.jobs
-          this.loading = false
-        })
+          this.jobs = res.data.jobs;
+          this.loading = false;
+        });
     },
     sortBy(sortedBy) {
       switch (sortedBy) {
-        case 'rate':
-          this.rate = !this.rate
-          this.sortType = this.rate
-        case 'job_number':
-          this.job_number = !this.job_number
-          this.sortType = this.job_number
+        case "rate":
+          this.rate = !this.rate;
+          this.sortType = this.rate;
+        case "job_number":
+          this.job_number = !this.job_number;
+          this.sortType = this.job_number;
           break;
-        case 'date_start':
-          this.date_start = !this.date_start
-          this.sortType = this.date_start
+        case "date_start":
+          this.date_start = !this.date_start;
+          this.sortType = this.date_start;
           break;
-        case 'date_end':
-          this.date_end = !this.date_end
-          this.sortType = this.date_end
+        case "date_end":
+          this.date_end = !this.date_end;
+          this.sortType = this.date_end;
           break;
-        case 'date_created':
-          this.date_created = !this.date_created
-          this.sortType = this.date_created
+        case "date_created":
+          this.date_created = !this.date_created;
+          this.sortType = this.date_created;
           break;
       }
-      this.params.order_by = `${sortedBy}:${this.sortType ? 'asc' : 'desc'}`
-      this.current_page = 1
-      this.getJobs(this.current_page, this.params)
+      this.params.order_by = `${sortedBy}:${this.sortType ? "asc" : "desc"}`;
+      this.current_page = 1;
+      this.getJobs(this.current_page, this.params);
     },
     pagechanged(e) {
-      this.current_page = e
-      this.getJobs(this.current_page, this.params)
+      this.current_page = e;
+      this.getJobs(this.current_page, this.params);
     },
     show(id) {
-      this.$router.push(`/my-banks/all/${this.$route.params.userId}/related-jobs/applied/${id}`)
-    },
+      this.$router.push(
+        `/my-banks/applied/${this.$route.params.userId}/related-jobs/completed/${id}`
+      );
+    }
   }
-}
+};
 </script>
 <style scoped>
 .shield {
