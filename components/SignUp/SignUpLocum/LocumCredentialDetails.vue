@@ -44,15 +44,6 @@
             @blur="CheckEmptyField(form.password_confirmation, 'password_confirmation')"
           />
 
-          <!-- <AppInput
-            v-model="form.privacy_policy"
-            :type="'single-checkbox'"
-            :name="'privacy_policy'"
-            :error="formError.find(item => item.field === 'privacy_policy')"
-            :label="'I agree with the Terms and Conditions and Privacy Policy of Hubzz'"
-            @checked="form.privacy_policy = true, CheckEmptyField(form.privacy_policy, 'privacy_policy')"
-            @unchecked="form.privacy_policy = false, CheckEmptyField(form.privacy_policy, 'practice_type_id')"
-          />-->
           <div class="flex flex-col py-2 mb-6">
             <div class="flex justify-end">
               <div
@@ -86,7 +77,15 @@
       <AppButton :label="'Next'" @click="next" />
     </div>
 
-    <!-- <TermsAndConditions v-if="modal" /> -->
+    <div class="shield" v-if="modal"></div>
+    <transition name="slide" mode="out-in">
+      <div class="py-8 modal-container" v-if="modal">
+        <div @click="modal = false" class="cursor-pointer px-10 pb-4">
+          <svgicon name="left-arrow" height="32" width="32" />
+        </div>
+        <TermsAndConditions />
+      </div>
+    </transition>
   </div>
 </template>
 <script>
@@ -170,3 +169,32 @@ export default {
   }
 };
 </script>
+<style scoped>
+.modal-container {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  border-left: solid 2px #edf2f7;
+  transition: all 0.3s ease-in-out;
+  background-color: white;
+  z-index: 510;
+}
+@media screen and (min-width: 1200px) {
+  .modal-container {
+    width: 50%;
+  }
+}
+.shield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #333;
+  opacity: 0.5;
+  z-index: 509;
+}
+</style>
