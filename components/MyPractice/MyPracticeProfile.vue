@@ -1,8 +1,5 @@
 <template>
-  <div class="p-8 max-w-5xl">
-    <div @click="$emit('close')" class="cursor-pointer">
-      <svgicon name="left-arrow" height="32" width="32" />
-    </div>
+  <div>
     <div class="flex flex-row p-2 flex-no-wrap justify-start mt-8">
       <span class="font-bold text-md sm:text-lg">{{practice.surgery.name}}</span>
       <span
@@ -13,7 +10,7 @@
 
     <div class="flex flex-row flex-wrap justify-start overflow-hidden">
       <div class="my-1 w-full lg:w-1/3 px-1 overflow-hidden">
-        <div class="m-4 shadow-lg p-2 rounded-lg">
+        <div class="p-2 shadow-lg rounded-lg">
           <div>
             <div class="font-bold my-4 text-sm sm:text-lg">Contact Number</div>
             <span class="m-4 text-sm">{{practice.phone_number}}</span>
@@ -41,12 +38,11 @@
         </div>
       </div>
       <div class="my-1 w-full lg:w-2/3 px-1 overflow-hidden">
-        <div class="m-4 p-4 shadow-lg rounded-lg">
+        <div class="p-2 shadow-lg rounded-lg">
           <div>
             <span class="font-bold text-md sm:text-lg">Location</span>
           </div>
           <div class="mt-4">
-            <!-- google map -->
             <GmapMap
               :center="{lat:latLang.y,lng:latLang.x}"
               :zoom="15"
