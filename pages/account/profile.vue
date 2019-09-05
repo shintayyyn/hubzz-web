@@ -197,6 +197,14 @@
           @checked="form.practice_type_id.push(parseInt($event)), CheckEmptyField(form.practice_type_id, 'practice_type_id')"
           @unchecked="form.practice_type_id = form.practice_type_id.filter(id => id !== parseInt($event)), CheckEmptyField(form.practice_type_id, 'practice_type_id')"
         />
+        <AppInput
+          v-model="form.headline"
+          :type="'text'"
+          :name="'headline'"
+          :label="'Headline'"
+          :info="'A short headline about yourself to show to Practices'"
+          @submit="save"
+        />
         <AppPostCode
           v-model="form.post_code"
           :name="'post_code'"
@@ -432,7 +440,6 @@ export default {
         message: "Rejected"
       });
     }
-    console.log("qwe", this.formError);
     //
     this.form.nhs_smart_card_id_number = this.user.locum_detail.nhs_smart_card_id_number;
     this.form.headline = this.user.locum_detail.headline;

@@ -778,7 +778,11 @@ export default {
           });
       } else {
         this.$nextTick(() => {
-          this.$parent.$refs.modalContainer.scrollTop = 0;
+          // this.$refs.formError.scrollIntoView({
+          //   behavior: "smooth",
+          //   block: "end"
+          // });
+          // this.$parent.$refs.modalContainer.scrollTop = 0;
         });
       }
     }
