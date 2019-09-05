@@ -23,7 +23,6 @@
         :placeholder="'Enter your message here'"
         :resize="false"
         :error="formError.find(item => item.field === 'message')"
-        @blur="CheckEmptyField(form.message, 'message')"
       />
       <AppButton :label="'Send'" @click="send" />
     </div>
@@ -42,8 +41,7 @@ export default {
       form: {
         message: ""
       },
-      formError: [],
-      setFocus: ""
+      formError: []
     };
   },
   computed: {
@@ -71,13 +69,9 @@ export default {
       user
     };
   },
-  watch: {
-    "form.message"(value) {
-      this.CheckEmptyField(value, "message");
-    }
-  },
   methods: {
     send() {
+      this.formError = [];
       this.Validate(this.form);
       if (!this.formError.length) {
         this.$axios.$post(`/api/v1/contact-us`, this.form).then(res => {
@@ -89,7 +83,6 @@ export default {
           this.form.message = "";
           this.formError = [];
         });
-      } else {
       }
     }
   }
