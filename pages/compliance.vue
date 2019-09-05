@@ -475,27 +475,14 @@ export default {
       });
     },
     status(status) {
-      switch (status) {
-        case "Pending":
-          return "bg-orange-400";
-          break;
-        case "Verified":
-          return "bg-green-500";
-          break;
-        case "Approved":
-          return "bg-green-500";
-          break;
-        case "Rejected":
-          return "bg-red-500";
-          break;
-        case "Expiring":
-          return "bg-orange-300";
-          break;
-        case "Expired":
-          return "bg-red-500";
-          break;
-        default:
-          return;
+      if (status === "Pending" || status === "Expiring") {
+        return "bg-orange-400";
+      }
+      if (status === "Verified" || status === "Approved") {
+        return "bg-green-500";
+      }
+      if (status === "Rejected" || status === "Expired") {
+        return "bg-red-500";
       }
     },
     onFileInput(e, id, index) {
