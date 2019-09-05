@@ -8,7 +8,7 @@
             <div class="w-1/3 p-1 text-center">{{gmc_or_nmc_number.number}}</div>
             <div class="w-1/3 p-1 text-center">
               <span
-                class="text-xs sm:text-sm text-center bg-orange-300 text-white font-bold rounded-full px-4 py-1"
+                class="text-xs sm:text-sm text-center text-white font-bold rounded-full px-4 py-1"
                 :class="status(gmc_or_nmc_number.status)"
               >{{ gmc_or_nmc_number.status }}</span>
             </div>
@@ -20,7 +20,7 @@
             <div class="w-1/3 p-1 text-center">{{mpl_or_npl_number.number}}</div>
             <div class="w-1/3 p-1 text-center">
               <span
-                class="text-xs sm:text-sm text-center bg-orange-300 text-white font-bold rounded-full px-4 py-1"
+                class="text-xs sm:text-sm text-center text-white font-bold rounded-full px-4 py-1"
                 :class="status(mpl_or_npl_number.status)"
               >{{ mpl_or_npl_number.status }}</span>
             </div>
@@ -476,7 +476,7 @@ export default {
     },
     status(status) {
       if (status === "Pending" || status === "Expiring") {
-        return "bg-orange-400";
+        return "bg-orange-500";
       }
       if (status === "Verified" || status === "Approved") {
         return "bg-green-500";

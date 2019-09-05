@@ -92,35 +92,27 @@ export default {
       ];
       if (domain === "Practice") {
         addedLists = [{ name: "Profile", route: "/profile" }];
-      }
-
-      if (domain === "Practice" && accountStatus === "Active") {
-        addedLists = [
-          { name: "Profile", route: "/profile" },
-          { name: "My Banks", route: "/my-banks" },
-          { name: "Sessions", route: "/sessions" },
-          { name: "Billing", route: "/practice-billing" },
-          { name: "Invite", route: "/invite" }
-        ];
+        if (["Active", "Dormant"].includes(accountStatus)) {
+          addedLists.push({ name: "My Banks", route: "/my-banks" });
+          addedLists.push({ name: "Sessions", route: "/sessions" });
+          addedLists.push({ name: "Billing", route: "/practice-billing" });
+          addedLists.push({ name: "Invite", route: "/invite" });
+        }
       }
 
       if (domain === "Locum") {
-        addedLists = [{ name: "Compliance", route: "/compliance" }];
-      }
-
-      if (
-        (domain === "Locum" && accountStatus === "Active") ||
-        accountStatus === "Dormant"
-      ) {
         addedLists = [
           { name: "Compliance", route: "/compliance" },
-          { name: "My Practice", route: "/my-practice" },
-          { name: "Availability", route: "/availability" },
-          { name: "Jobs", route: "/jobs" },
-          { name: "Billing", route: "/locum-billing" },
-          { name: "Invite", route: "/invite" }
+          { name: "Availability", route: "/availability" }
         ];
+        if (["Active", "Dormant"].includes(accountStatus)) {
+          addedLists.push({ name: "My Practice", route: "/my-practice" });
+          addedLists.push({ name: "Jobs", route: "/jobs" });
+          addedLists.push({ name: "Billing", route: "/locum-billing" });
+          addedLists.push({ name: "Invite", route: "/invite" });
+        }
       }
+
       this.lists = [...defaultLists, ...addedLists, ...otherLists];
     }
   },
