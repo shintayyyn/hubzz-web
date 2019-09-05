@@ -353,12 +353,12 @@ export default {
         this.professionCategoryId = 2;
       }
     },
-    "form.gmc_or_nmc_number"() {
-      this.CheckEmptyField(this.form.gmc_or_nmc_number, "gmc_or_nmc_number");
-    },
-    "form.mpl_or_npl_number"() {
-      this.CheckEmptyField(this.form.mpl_or_npl_number, "mpl_or_npl_number");
-    },
+    // "form.gmc_or_nmc_number"() {
+    //   this.CheckEmptyField(this.form.gmc_or_nmc_number, "gmc_or_nmc_number");
+    // },
+    // "form.mpl_or_npl_number"() {
+    //   this.CheckEmptyField(this.form.mpl_or_npl_number, "mpl_or_npl_number");
+    // },
     "form.min_rate_per_hour"() {
       this.CheckEmptyField(this.form.min_rate_per_hour, "min_rate_per_hour");
     },
@@ -416,10 +416,24 @@ export default {
     } catch (err) {}
   },
   created() {
-    console.log(this.user.locum_detail);
     this.avatar = this.user.avatar;
+    // gmc/nmc & mpl/npl
     this.form.gmc_or_nmc_number = this.user.locum_detail.gmc_or_nmc_number.number;
     this.form.mpl_or_npl_number = this.user.locum_detail.mpl_or_npl_number.number;
+    if (this.user.locum_detail.gmc_or_nmc_number.status === "Rejected") {
+      this.formError.push({
+        field: "gmc_or_nmc_number",
+        message: "Rejected"
+      });
+    }
+    if (this.user.locum_detail.mpl_or_npl_number.status === "Rejected") {
+      this.formError.push({
+        field: "mpl_or_npl_number",
+        message: "Rejected"
+      });
+    }
+    console.log("qwe", this.formError);
+    //
     this.form.nhs_smart_card_id_number = this.user.locum_detail.nhs_smart_card_id_number;
     this.form.headline = this.user.locum_detail.headline;
     this.form.short_biography = this.user.locum_detail.short_biography;
@@ -486,7 +500,6 @@ export default {
         this.form.referee_2_email = referee.email;
       }
     });
-    console.log(this.form);
   },
   methods: {
     onSelect(value) {
