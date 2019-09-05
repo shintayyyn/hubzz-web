@@ -1,5 +1,5 @@
 <template>
-  <section class="modal-container shadow-lg" ref="modalContainer">
+  <section>
     <AppConfirmationModal
       :label="'Delete this appointment?'"
       :confirmLabel="'Yes'"
