@@ -49,7 +49,6 @@ export default {
     AvailabilityCalendar,
     AddUnavailableDateModal
   },
-  middleware: "isVerified",
   data() {
     return {
       shifts: [],

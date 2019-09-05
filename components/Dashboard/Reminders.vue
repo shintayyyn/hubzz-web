@@ -110,7 +110,7 @@ export default {
             if (!passportDoc || !medicalDoc || !supportDoc || !dbsDoc) {
               this.reminders.push({
                 label:
-                  "Please complete the required Locum Compliance Documents to be verified by HUBZZ.",
+                  "Please complete the required Compliance Documents to be verified by HUBZZ.",
                 route: "/compliance"
               });
             }
