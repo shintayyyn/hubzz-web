@@ -1,55 +1,12 @@
 <template>
   <section v-if="!loading">
     <div v-if="practices.length > 0">
-      <div class="flex flex-row flex-wrap justify-start">
-        <div
-          class="w-full md:w-1/3 lg:w-1/4 rounded-lg shadow-lg bg-gray-300 m-2 p-4 hover:bg-gray-500"
-          v-for="(practice, index) in practices"
-          :key="practice.id"
-        >
-          <div class="flex justify-end z-50">
-            <template v-if="practice.is_favorite">
-              <svgicon
-                name="on-star"
-                height="32"
-                width="32"
-                class="cursor-pointer"
-                @click="unfavorite(practice.id, index)"
-              />
-            </template>
-            <template v-else>
-              <svgicon
-                name="off-star"
-                height="32"
-                width="32"
-                class="cursor-pointer"
-                @click="favorite(practice.id, index)"
-              />
-            </template>
-          </div>
-          <div class="flex flex-wrap text-center mt-4 cursor-pointer" @click="show(practice.id)">
-            <div class="w-full flex justify-center">
-              <div class="relative avatar flex justify-center">
-                <!-- <img
-                  :src="practice.user.avatar.file.url"
-                  v-if="practice.user && practice.user.avatar && practice.user.avatar.file && practice.user.avatar.file.url"
-                />
-                <svgicon v-else name="no-avatar" height="115" width="115" />-->
-                <AppAvatar
-                  :height="'150px'"
-                  :width="'150px'"
-                  :src="practice.user && practice.user.avatar && practice.user.avatar.file && practice.user.avatar.file.url ? practice.user.avatar.file.url : ''"
-                />
-              </div>
-            </div>
-
-            <div class="w-full font-bold text-sm sm:text-lg mt-4">{{practice.surgery.name}}</div>
-            <div
-              class="w-full mb-4 font-bold text-gray-600 text-sm"
-            >{{practice.surgery.address.line_1}} {{practice.surgery.address.line_2}} {{practice.surgery.address.line_3}} {{practice.surgery.address.post_code}}</div>
-          </div>
-        </div>
-      </div>
+      <MyPractices
+        :practices="practices"
+        @show="show"
+        @unfavorite="unfavorite"
+        @favorite="favorite"
+      />
 
       <div class="m-10 xl:-ml-32" v-if="practices.length > 0 && totalPages > 1">
         <AppPagination
@@ -63,14 +20,21 @@
     <div v-else class="flex flex-row flex-wrap justify-center">
       <div>You do not have any Completed Job for any Practices</div>
     </div>
-    <div class="shield" v-if="$route.name === 'my-practice-completed-id'"></div>
+    <div class="shield" v-if="tabs.includes($route.name)"></div>
     <nuxt-child />
   </section>
 </template>
 <script>
+const tabs = [
+  "my-practice-completed-practiceId",
+  "my-practice-completed-practiceId-profile",
+  "my-practice-completed-practiceId-users",
+  "my-practice-completed-practiceId-surgeries",
+  "my-practice-completed-practiceId-standard-terms",
+  "my-practice-completed-practiceId-related-jobs"
+];
 import AppPagination from "@/components/Base/AppPagination";
-import AppLoading from "@/components/Base/AppLoading";
-import AppAvatar from "@/components/Base/AppAvatar";
+import MyPractices from "@/components/MyPractice/MyPractices";
 export default {
   transition: {
     name: "fade",
@@ -78,15 +42,14 @@ export default {
   },
   components: {
     AppPagination,
-    AppLoading,
-    AppAvatar
+    MyPractices
   },
   data() {
     return {
+      tabs,
       practices: [],
       current_page: 1,
       total: 0,
-      modal: false,
       practice: null,
       loading: true
     };
@@ -126,21 +89,21 @@ export default {
           this.loading = false;
         });
     },
-
-    favorite(id, index) {
-      this.$axios.$post(`/api/v1/locum/practices/${id}/favorite`).then(res => {
-        this.practices.splice(index, 1, res.data.practice);
-        this.$store.commit("SET_NOTIFICATION", {
-          enabled: true,
-          status: "success",
-          text: [`${res.message}`]
-        });
-      });
-    },
-
-    unfavorite(id, index) {
+    favorite({ practiceId, index }) {
       this.$axios
-        .$delete(`/api/v1/locum/practices/${id}/favorite`)
+        .$post(`/api/v1/locum/practices/${practiceId}/favorite`)
+        .then(res => {
+          this.practices.splice(index, 1, res.data.practice);
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: [`${res.message}`]
+          });
+        });
+    },
+    unfavorite({ practiceId, index }) {
+      this.$axios
+        .$delete(`/api/v1/locum/practices/${practiceId}/favorite`)
         .then(res => {
           this.practices.splice(index, 1, res.data.practice);
           this.$store.commit("SET_NOTIFICATION", {
@@ -161,16 +124,6 @@ export default {
 };
 </script>
 <style scoped>
-.avatar-container {
-  box-sizing: content-box;
-  height: 170px;
-}
-.avatar {
-  max-width: 170px;
-  max-height: 170px;
-  min-width: 170px;
-  min-height: 170px;
-}
 .shield {
   position: fixed;
   top: 0;
@@ -180,23 +133,6 @@ export default {
   background-color: #333;
   opacity: 0.5;
   z-index: 509;
-}
-.modal {
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  border-left: solid 2px #edf2f7;
-  transition: all 0.3s ease-in-out;
-  background-color: white;
-  z-index: 510;
-}
-@media screen and (min-width: 1200px) {
-  .modal {
-    width: 80%;
-  }
 }
 </style>
 
