@@ -29,7 +29,8 @@
       </div>
     </div>
     <div class="mt-10">
-      <div class="font-bold text-xs sm:text-base">Documents you need to be approved by hubzz HQ</div>
+      <div class="font-bold text-xs sm:text-base">Documents you need to be approved by Hubzz HQ</div>
+      <div class="text-sm font-hairline italic">(Note: Only file types .pdf, .jpeg, .msword, .tiff are acccepted)</div>
     </div>
     <div class="mt-4 overflow-x-auto px-2 md:px-0">
       <table>
