@@ -11,47 +11,7 @@
       />
     </div>
     <div v-if="users.length > 0">
-      <div class="flex flex-row flex-wrap justify-start">
-        <div
-          class="w-full md:w-1/3 lg:w-1/4 rounded-lg shadow-lg bg-gray-300 m-2 p-4 hover:bg-gray-500"
-          v-for="(user, index) in users"
-          :key="user.id"
-        >
-          <div class="flex justify-end z-50">
-            <template v-if="user.is_favorite">
-              <svgicon
-                name="on-star"
-                height="32"
-                width="32"
-                class="cursor-pointer"
-                @click="favorite(user.id, index)"
-              />
-            </template>
-            <template v-else>
-              <svgicon
-                name="off-star"
-                height="32"
-                width="32"
-                class="cursor-pointer"
-                @click="favorite(user.id, index)"
-              />
-            </template>
-          </div>
-
-          <div class="flex flex-wrap text-center mt-4 cursor-pointer" @click="show(user.id)">
-            <div class="w-full flex justify-center">
-              <AppAvatar
-                :src="user.avatar && user.avatar.file && user.avatar.file.url ? user.avatar.file.url : ''"
-              />
-            </div>
-
-            <div class="w-full font-bold text-sm sm:text-lg my-4">{{user.personal_detail.name}}</div>
-            <div
-              class="w-full mb-4 font-bold text-gray-600 text-sm sm:text-lg"
-            >{{user.locum_detail.profession.name}}</div>
-          </div>
-        </div>
-      </div>
+      <MyLocums :users="users" @show="show" @favorite="favorite" />
 
       <div class="mt-5 flex justify-center" v-if="users.length > 0 && totalPages > 1">
         <AppPagination
@@ -65,26 +25,14 @@
     <div v-else class="flex flex-row flex-wrap justify-center">
       <div>There are no favourite locums connected to your practice yet.</div>
     </div>
-    <div class="shield" v-if="$route.name !== 'my-banks-rejected'"></div>
+    <div class="shield" v-if="$route.name.includes('my-banks-rejected-userId')"></div>
     <nuxt-child />
   </section>
 </template>
 <script>
 import AppPagination from "@/components/Base/AppPagination";
-import AppAvatar from "@/components/Base/AppAvatar";
+import MyLocums from "@/components/MyBanks/MyLocums";
 import AppInput from "@/components/Base/AppInput";
-const tabs = [
-  "my-banks-rejected-userId",
-  "my-banks-rejected-userId-profile",
-  "my-banks-rejected-userId-related-jobs",
-  "my-banks-rejected-userId-related-jobs-available",
-  "my-banks-rejected-userId-related-jobs-applied",
-  "my-banks-rejected-userId-related-jobs-current",
-  "my-banks-rejected-userId-related-jobs-completed",
-  "my-banks-rejected-userId-related-jobs-unsuccessful",
-  "my-banks-rejected-userId-related-jobs-cancelled",
-  "my-banks-rejected-userId-related-jobs-declined"
-];
 export default {
   transition: {
     name: "fade",
@@ -93,16 +41,14 @@ export default {
   components: {
     AppPagination,
     AppInput,
-    AppAvatar
+    MyLocums
   },
   data() {
     return {
-      tabs,
       professions: [],
       users: [],
       current_page: 1,
       total: 0,
-      modal: false,
       user: null,
       loading: true,
 
@@ -130,7 +76,7 @@ export default {
   },
   watch: {
     $route(value) {
-      if (value.name !== "my-banks-rejected") {
+      if (value.name.includes("my-banks-rejected-userId")) {
         document.body.style.overflow = "hidden";
       } else {
         document.body.style.overflow = "auto";
@@ -156,10 +102,12 @@ export default {
       });
     },
     getLocumsCount() {
-      this.$axios.$get(`/api/v1/practice/locums/count`).then(res => {
-        this.total = res.data.count;
-        this.getLocums(this.current_page);
-      });
+      this.$axios
+        .$get(`/api/v1/practice/locums/count?practice_locum_type=Rejected`)
+        .then(res => {
+          this.total = res.data.count;
+          this.getLocums(this.current_page);
+        });
     },
     getLocums(page) {
       this.current_page = page;
@@ -213,19 +161,6 @@ export default {
 };
 </script>
 <style scoped>
-.avatar-container {
-  box-sizing: content-box;
-  height: 170px;
-}
-.avatar {
-  max-width: 170px;
-  max-height: 170px;
-  min-width: 170px;
-  min-height: 170px;
-}
-img {
-  border-radius: 50%;
-}
 .shield {
   position: fixed;
   top: 0;

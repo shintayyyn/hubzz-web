@@ -66,8 +66,6 @@ export default {
   },
   methods: {
     cancel() {
-      console.log(this.$route.params);
-      console.log(this.job);
       let jobId = this.$route.params.id || this.job.id;
       this.formError = [];
       this.Validate(this.form);
