@@ -1,11 +1,11 @@
 <template>
-  <div class="modal-container shadow-lg">
+  <div class="modal shadow-lg">
     <div class="p-8 max-w-5xl">
       <div @click="$router.push(`/my-banks/favourites`)" class="cursor-pointer">
         <svgicon name="left-arrow" height="32" width="32" />
       </div>
       <div class="flex flex-row justify-start mt-8">
-        <LocumTabs :locumType="'favourites'" :tabs="tabs" />
+        <MyLocumTabs :locumType="'favourites'" />
       </div>
       <div class="mt-5">
         <nuxt-child />
@@ -14,31 +14,16 @@
   </div>
 </template>
 <script>
-const tabs = [
-  "my-banks-favourites-userId-related-jobs-available",
-  "my-banks-favourites-userId-related-jobs-applied",
-  "my-banks-favourites-userId-related-jobs-current",
-  "my-banks-favourites-userId-related-jobs-completed",
-  "my-banks-favourites-userId-related-jobs-unsuccessful",
-  "my-banks-favourites-userId-related-jobs-cancelled",
-  "my-banks-favourites-userId-related-jobs-declined",
-  "my-banks-favourites-userId-related-jobs"
-];
-import LocumTabs from "@/components/MyBanks/LocumTabs";
+import MyLocumTabs from "@/components/MyBanks/MyLocumTabs";
 export default {
   components: {
-    LocumTabs
-  },
-  data() {
-    return {
-      tabs
-    };
+    MyLocumTabs
   }
 };
 </script>
 
 <style scoped>
-.modal-container {
+.modal {
   position: fixed;
   top: 0;
   right: 0;
@@ -51,7 +36,7 @@ export default {
   z-index: 510;
 }
 @media screen and (min-width: 1200px) {
-  .modal-container {
+  .modal {
     width: 80%;
   }
 }

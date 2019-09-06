@@ -6,54 +6,54 @@
     <div class="flex flex-row flex-wrap justify-between mt-4">
       <div class="w-full pr-0 lg:pr-2 lg:w-1/2">
         <div class="rounded-lg shadow-lg p-4">
-          <div class="float-right">
-            <!-- <div class="relative avatar flex justify-center">
-              <img
-                :src="user.avatar.file.url"
-                v-if="user.avatar && user.avatar.file && user.avatar.file.url"
+          <div class="flex flex-col">
+            <div class="flex flex-row flex-wrap justify-between items-center">
+              <div class="flex flex-col order-2 md:order-1 w-full md:w-1/2">
+                <div class="font-bold text-sm sm:text-md">Candidate</div>
+                <div class="text-xs sm:text-sm mb-8">{{user.locum_detail.profession.name}}</div>
+              </div>
+              <AppAvatar
+                class="order-1 md:order-2 mb-4 md:mb-0"
+                :height="'150px'"
+                :width="'150px'"
+                :src="user.avatar && user.avatar.file && user.avatar.file.url ? user.avatar.file.url : ''"
               />
-              <svgicon v-else name="no-avatar" height="115" width="115" />
-            </div>-->
-            <AppAvatar
-              :height="'150px'"
-              :width="'150px'"
-              :src="user.avatar && user.avatar.file && user.avatar.file.url ? user.avatar.file.url : ''"
-            />
-          </div>
-          <div class="font-bold text-sm sm:text-md">Candidate</div>
-          <div class="text-xs sm:text-sm mb-8">{{user.locum_detail.profession.name}}</div>
-          <div class="font-bold text-sm sm:text-md">Headline</div>
-          <div class="text-xs sm:text-sm mb-8">{{user.locum_detail.headline}}</div>
-          <div class="font-bold text-sm sm:text-md">Biography</div>
-          <div class="text-xs sm:text-sm mb-8">{{user.locum_detail.short_biography}}</div>
-          <div class="font-bold text-sm sm:text-md">GMC / NMC Number</div>
-          <div class="text-xs sm:text-sm mb-8">{{user.locum_detail.gmc_or_nmc_number.number}}</div>
-          <div class="font-bold text-sm sm:text-md">MPL / NPL Number</div>
-          <div class="text-xs sm:text-sm mb-8">{{user.locum_detail.mpl_or_npl_number.number}}</div>
-          <div class="font-bold text-sm sm:text-md">Specialty</div>
-          <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
-            <div
-              class="rounded-lg bg-yellow-500 p-2 m-1"
-              v-for="item in user.locum_detail.qualifications"
-              :key="item.id"
-            >{{item.name}}</div>
-          </div>
-          <div class="font-bold text-sm sm:text-md">Clinical systems</div>
-          <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
-            <div
-              class="rounded-lg bg-yellow-500 p-2 m-1"
-              v-for="item in user.locum_detail.clinical_systems"
-              :key="item.id"
-            >{{item.name}}</div>
-          </div>
-          <div class="font-bold text-sm sm:text-md">Languages</div>
-          <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
-            <div class="rounded-lg bg-yellow-500 p-2 m-1">English</div>
-            <div
-              class="rounded-lg bg-yellow-500 p-2 m-1"
-              v-for="item in user.locum_detail.spoken_languages"
-              :key="item.id"
-            >{{item.name}}</div>
+            </div>
+            <div class="font-bold text-sm sm:text-md">Candidate</div>
+            <div class="text-xs sm:text-sm mb-8">{{user.locum_detail.profession.name}}</div>
+            <div class="font-bold text-sm sm:text-md">Headline</div>
+            <div class="text-xs sm:text-sm mb-8">{{user.locum_detail.headline}}</div>
+            <div class="font-bold text-sm sm:text-md">Biography</div>
+            <div class="text-xs sm:text-sm mb-8">{{user.locum_detail.short_biography}}</div>
+            <div class="font-bold text-sm sm:text-md">GMC / NMC Number</div>
+            <div class="text-xs sm:text-sm mb-8">{{user.locum_detail.gmc_or_nmc_number.number}}</div>
+            <div class="font-bold text-sm sm:text-md">MPL / NPL Number</div>
+            <div class="text-xs sm:text-sm mb-8">{{user.locum_detail.mpl_or_npl_number.number}}</div>
+            <div class="font-bold text-sm sm:text-md">Specialty</div>
+            <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
+              <div
+                class="rounded-lg bg-yellow-500 p-2 m-1"
+                v-for="item in user.locum_detail.qualifications"
+                :key="item.id"
+              >{{item.name}}</div>
+            </div>
+            <div class="font-bold text-sm sm:text-md">Clinical systems</div>
+            <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
+              <div
+                class="rounded-lg bg-yellow-500 p-2 m-1"
+                v-for="item in user.locum_detail.clinical_systems"
+                :key="item.id"
+              >{{item.name}}</div>
+            </div>
+            <div class="font-bold text-sm sm:text-md">Languages</div>
+            <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
+              <div class="rounded-lg bg-yellow-500 p-2 m-1">English</div>
+              <div
+                class="rounded-lg bg-yellow-500 p-2 m-1"
+                v-for="item in user.locum_detail.spoken_languages"
+                :key="item.id"
+              >{{item.name}}</div>
+            </div>
           </div>
         </div>
       </div>
@@ -189,20 +189,4 @@ export default {
   }
 };
 </script>
-<style scoped>
-.document-filename {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.avatar {
-  max-width: 170px;
-  max-height: 170px;
-  min-width: 170px;
-  min-height: 170px;
-}
-img {
-  border-radius: 50%;
-}
-</style>
 

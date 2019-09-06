@@ -1,8 +1,7 @@
 <template>
   <section v-if="!loading">
     <div v-if="practices.length > 0">
-      <MyPractices :practices="practices" @show="show" />
-
+      <MyPractices :practices="practices" @show="show" @favorite="favorite" />
       <div class="mt-5 flex justify-center" v-if="practices.length > 0 && totalPages > 1">
         <AppPagination
           :total="total"
@@ -15,19 +14,11 @@
     <div v-else class="flex flex-row flex-wrap justify-center">
       <div>You do not have any Unsuccessful Job for any Practices</div>
     </div>
-    <div class="shield" v-if="tabs.includes($route.name)"></div>
+    <div class="shield" v-if="$route.name.includes('my-practice-unsuccessful-practiceId')"></div>
     <nuxt-child />
   </section>
 </template>
 <script>
-const tabs = [
-  "my-practice-completed-practiceId",
-  "my-practice-completed-practiceId-profile",
-  "my-practice-completed-practiceId-users",
-  "my-practice-completed-practiceId-surgeries",
-  "my-practice-completed-practiceId-standard-terms",
-  "my-practice-completed-practiceId-related-jobs"
-];
 import AppPagination from "@/components/Base/AppPagination";
 import MyPractices from "@/components/MyPractice/MyPractices";
 export default {
@@ -41,7 +32,6 @@ export default {
   },
   data() {
     return {
-      tabs,
       practices: [],
       current_page: 1,
       total: 0,
@@ -58,6 +48,15 @@ export default {
     },
     totalPages() {
       return Math.ceil(this.total / this.perPage);
+    }
+  },
+  watch: {
+    $route(value) {
+      if (value.name.includes("my-practice-unsuccessful-practiceId")) {
+        document.body.style.overflow = "hidden";
+      } else {
+        document.body.style.overflow = "auto";
+      }
     }
   },
   created() {
@@ -81,6 +80,32 @@ export default {
           this.practices = res.data.practices;
           this.loading = false;
         });
+    },
+    favorite(id) {
+      let practice = this.practices.find(practice => practice.id === id);
+      if (!practice.is_favorite) {
+        this.$axios
+          .$post(`/api/v1/locum/practices/${id}/favorite`)
+          .then(res => {
+            practice.is_favorite = !practice.is_favorite;
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: ["Added to favourites"]
+            });
+          });
+      } else {
+        this.$axios
+          .$delete(`/api/v1/locum/practices/${id}/favorite`)
+          .then(res => {
+            practice.is_favorite = !practice.is_favorite;
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: ["Remove to favourites"]
+            });
+          });
+      }
     },
     show(id) {
       this.$router.push(`/my-practice/unsuccessful/${id}`);

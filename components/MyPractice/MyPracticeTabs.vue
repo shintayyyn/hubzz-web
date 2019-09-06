@@ -23,7 +23,7 @@
     <nuxt-link
       :to="`/my-practice/${practiceType}/${$route.params.practiceId}/related-jobs`"
       class="mr-5 p-3 text-sm font-bold cursor-pointer"
-      :class="$route.name === `my-practice-${practiceType}-practiceId-related-jobs` ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+      :class="$route.name.includes(`my-practice-${practiceType}-practiceId-related-jobs`) ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
     >Related Jobs</nuxt-link>
   </div>
 </template>
