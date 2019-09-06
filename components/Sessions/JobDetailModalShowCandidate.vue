@@ -174,9 +174,12 @@ export default {
       });
     },
     appoint() {
+      let jobId = this.$route.params.id
+        ? this.$route.params.id
+        : this.$route.params.jobId;
       this.$axios
         .$put(
-          `/api/v1/practice/jobs/${this.$route.params.id}/applicants/${this.user.id}/appoint`
+          `/api/v1/practice/jobs/${jobId}/applicants/${this.user.id}/appoint`
         )
         .then(res => {
           this.$emit("appointed");

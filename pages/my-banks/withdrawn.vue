@@ -103,7 +103,7 @@ export default {
     },
     getLocumsCount() {
       this.$axios
-        .$get(`/api/v1/practice/locums/count?practice_locum_type=Withdrawn`)
+        .$get(`/api/v1/practice/locums/count?practice_locum_type=Declined`)
         .then(res => {
           this.total = res.data.count;
           this.getLocums(this.current_page);

@@ -1,5 +1,6 @@
 export function fetchPracticeJobs(axios, payload) {
     let params = {}
+    payload.locum_detail_id ? params.locum_detail_id = payload.locum_detail_id : null
     payload.offset ? params.offset = payload.offset : null
     payload.limit ? params.limit = payload.limit : null
     payload.status ? params.status = payload.status : null
