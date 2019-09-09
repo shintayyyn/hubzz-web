@@ -54,20 +54,28 @@
                   :src="item.user.avatar ? item.user.avatar.file.url : ''"
                 />
               </div>
-              <div class="flex flex-col text-sm">
+              <div class="flex flex-col text-sm px-2">
                 <span
-                  class="text-xs px-2"
+                  class="text-xs px-2 text-gray-600"
                   :class="isReceiver(item) ? '': 'text-right'"
                 >{{ isReceiver(item) ? userFullname(item) : 'Me' }}</span>
                 <div class="flex" :class="isReceiver(item) ? '': 'flex-row-reverse'">
                   <div
-                    class="my-1 rounded-lg text-xs px-4 py-2 border text-gray-500 italic"
-                    :class="{'ml-4' : isReceiver(item)}"
+                    @mouseover="onHover(item.id)"
+                    @mouseleave="selectedMessageId = ''"
+                    class="rounded-lg text-xs px-2 py-2 border text-gray-500 italic"
+                    :class="{'ml-2' : isReceiver(item)}"
                   >This message has been removed.</div>
                 </div>
-                <div class="mx-2" :class="isReceiver(item) ? 'text-right ': ''">
-                  <span class="text-xs text-gray-500 py-1">{{ $moment(item.created_at).fromNow() }}</span>
-                </div>
+                <transition name="fade" mode="out-in">
+                  <div
+                    v-if="item.id == selectedMessageId"
+                    class="mx-2"
+                    :class="isReceiver(item) ? 'text-right ': ''"
+                  >
+                    <span class="text-xs text-gray-500">{{ $moment(item.created_at).fromNow() }}</span>
+                  </div>
+                </transition>
               </div>
             </div>
 
@@ -90,7 +98,7 @@
               </div>
               <div class="flex flex-col text-sm px-2">
                 <span
-                  class="text-xs px-2"
+                  class="text-xs px-2 text-gray-600"
                   :class="isReceiver(item) ? '': 'text-right'"
                 >{{ isReceiver(item) ? userFullname(item) : 'Me' }}</span>
                 <div
@@ -118,9 +126,7 @@
                     class="mx-2"
                     :class="isReceiver(item) ? 'text-right ': 'ml-6'"
                   >
-                    <span
-                      class="text-xs text-gray-500 py-1"
-                    >{{ $moment(item.created_at).fromNow() }}</span>
+                    <span class="text-xs text-gray-500">{{ $moment(item.created_at).fromNow() }}</span>
                   </div>
                 </transition>
               </div>

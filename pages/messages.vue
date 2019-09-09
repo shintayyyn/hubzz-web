@@ -31,12 +31,8 @@ export default {
     $route(to, from) {
       if (to.name === "messages-slug") {
         if (to.path === "/messages") {
-          if (window.innerWidth > 768) {
-            this.goToFirstConversation();
-          } else {
-            this.$store.commit("IS_MOBILE", true);
-            this.$store.commit("chat/DELETE_ACTIVE_CONVERSATION");
-          }
+          this.$store.commit("IS_MOBILE", true);
+          this.$store.commit("chat/DELETE_ACTIVE_CONVERSATION");
         } else {
           this.$store.dispatch("chat/setActiveConversation", to.params.slug);
         }
@@ -74,6 +70,8 @@ export default {
     if (window.innerWidth > 768) {
       if (this.conversations.length === 0) {
         this.$router.push(`/messages/new`);
+      } else {
+        this.goToFirstConversation();
       }
     } else {
       if (this.$route.path === "/messages") {

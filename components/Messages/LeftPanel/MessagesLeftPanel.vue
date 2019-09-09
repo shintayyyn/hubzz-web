@@ -29,13 +29,13 @@
                 :src="userAvatar(item)"
               />
               <div class="w-5/6 flex items-center justify-between">
-                <div class="w-5/6 px-2">
+                <div class="w-5/6 px-2 leading-tight">
                   <p
                     class="truncate"
                     :class="parseInt($route.params.slug) === item.id ? 'font-bold' : ''"
                   >{{ userFullname(item) }}</p>
                   <p
-                    class="text-sm truncate"
+                    class="text-sm truncate text-gray-600"
                   >{{ senderFullname(item) }}: {{ item.latest_conversation_message.message }}</p>
                 </div>
                 <span
@@ -161,9 +161,9 @@ export default {
       });
     },
     senderFullname(item) {
-      return item.latest_conversation_message.user.id === this.$auth.user.id
-        ? "Me"
-        : `${item.latest_conversation_message.user.personal_detail.first_name} ${item.latest_conversation_message.user.personal_detail.last_name}`;
+      // return item.latest_conversation_message.user.id === this.$auth.user.id
+      // ? "Me"
+      return `${item.latest_conversation_message.user.personal_detail.first_name} ${item.latest_conversation_message.user.personal_detail.last_name}`;
     },
     userFullname(item) {
       return this.$auth.user.id === item.conversation_member_users[0].user.id

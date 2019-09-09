@@ -31,12 +31,14 @@
               </button>
             </div>
             <AppButton
+              v-if="$route.name != 'messages-slug' && $route.name != 'messages-new'"
               :label="'Messages'"
               @click="$router.push('/messages')"
               :inStyle="'font-size: medium; padding:2px 14px;'"
               class="hidden md:block"
             />
             <button
+              v-if="$route.name != 'messages-slug' && $route.name != 'messages-new'"
               @click="$router.push('/messages')"
               class="block md:hidden button rounded-lg p-2 focus:outline-none cursor-pointer"
             >
