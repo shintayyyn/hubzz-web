@@ -181,7 +181,9 @@ export default {
       this.getJobs(this.current_page, this.params);
     },
     show(id) {
-      this.$router.push(`/jobs/cancelled/${id}`);
+      this.$router.push(
+        `/my-practice/favorites/${this.$route.params.practiceId}/related-jobs/cancelled/${id}`
+      );
     }
   }
 };

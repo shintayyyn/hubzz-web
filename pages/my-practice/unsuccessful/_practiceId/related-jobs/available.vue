@@ -183,7 +183,9 @@ export default {
       this.getJobs(this.current_page, this.params);
     },
     show(id) {
-      this.$router.push(`/jobs/available/${id}`);
+      this.$router.push(
+        `/my-practice/unsuccessful/${this.$route.params.practiceId}/related-jobs/available/${id}`
+      );
     }
   }
 };

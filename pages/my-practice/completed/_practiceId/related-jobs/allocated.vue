@@ -187,7 +187,9 @@ export default {
       this.getJobs(this.current_page, this.params);
     },
     show(id) {
-      this.$router.push(`/jobs/allocated/${id}`);
+      this.$router.push(
+        `/my-practice/completed/${this.$route.params.practiceId}/related-jobs/allocated/${id}`
+      );
     }
   }
 };

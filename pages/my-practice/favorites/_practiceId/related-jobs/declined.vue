@@ -181,7 +181,9 @@ export default {
       this.getJobs(this.current_page, this.params);
     },
     show(id) {
-      this.$router.push(`/jobs/declined/${id}`);
+      this.$router.push(
+        `/my-practice/favorites/${this.$route.params.practiceId}/related-jobs/declined/${id}`
+      );
     }
   }
 };
