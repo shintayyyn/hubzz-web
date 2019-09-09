@@ -12,10 +12,10 @@
         :class="$route.name.includes('my-practice-completed')  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >Completed</nuxt-link>
       <nuxt-link
-        to="/my-practice/all"
+        to="/my-practice/applied"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-        :class="$route.name.includes('my-practice-all')  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-      >All</nuxt-link>
+        :class="$route.name.includes('my-practice-applied')  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+      >Applied</nuxt-link>
       <nuxt-link
         to="/my-practice/Unsuccessful"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer"

@@ -1,11 +1,11 @@
 <template>
   <div class="modal shadow-lg">
     <div class="p-8 max-w-5xl">
-      <div @click="$router.push(`/my-practice/all`)" class="cursor-pointer">
+      <div @click="$router.push(`/my-practice/applied`)" class="cursor-pointer">
         <svgicon name="left-arrow" height="32" width="32" />
       </div>
       <div class="flex flex-row justify-start mt-8">
-        <MyPracticeTabs :practiceType="'all'" />
+        <MyPracticeTabs :practiceType="'applied'" />
       </div>
       <div class="mt-5">
         <nuxt-child />

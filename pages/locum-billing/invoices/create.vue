@@ -21,12 +21,14 @@
           <button
             :class="type === 'Private' ? 'bg-yellow-500 border-yellow-500' : ''"
             class="text-xs sm:text-sm mx-1 py-2 px-3 border-2 rounded-lg font-bold flex items-center focus:outline-none"
-            @click="type = type !== 'Private' ? 'Private' : null"
+            @click="type = 'Private'"
+            :disabled="type === 'Private'"
           >Private</button>
           <button
             :class="type === 'Platform' ? 'bg-yellow-500 border-yellow-500' : ''"
             class="text-xs sm:text-sm mx-1 py-2 px-3 border-2 rounded-lg font-bold flex items-center focus:outline-none"
-            @click="type = type !== 'Platform' ? 'Platform' : null"
+            @click="type = 'Platform'"
+            :disabled="type === 'Platform'"
           >Platform</button>
         </div>
 
@@ -179,22 +181,36 @@
             <tbody>
               <tr class="border-b" v-for="(item, index) in selectedJobParts" :key="index">
                 <td>
-                  <textarea
+                  <!-- <textarea
                     v-model="item.description"
                     placeholder="Enter description"
                     rows="4"
                     class="w-full text-xs sm:text-sm p-2 resize-none border-b-2 border-gray-300 focus:outline-none focus:border-yellow-300"
-                  ></textarea>
+                  ></textarea>-->
+                  <AppInput
+                    v-model="item.description"
+                    :type="'textarea'"
+                    :name="'description'"
+                    :placeholder="'Enter description'"
+                    :resize="false"
+                    :rows="3"
+                  />
                 </td>
                 <td style="position:relative; padding: 15px 0;">
-                  <input
+                  <!-- <input
                     type="text"
                     v-model="item.total"
                     placeholder="Enter value"
                     class="w-full h-full text-xs sm:text-sm p-2 border-b-2 border-gray-300 focus:outline-none focus:border-yellow-300"
+                  />-->
+                  <AppInput
+                    v-model="item.total"
+                    :type="'text'"
+                    placeholder="Enter value"
+                    :inStyle="'margin-bottom:2px'"
                   />
                 </td>
-                <td v-if="type === 'Private'">
+                <td>
                   <span class="flex justify-center">
                     <span
                       class="cursor-pointer w-8 h-8 rounded-full bg-gray-900 text-white font-semibold text-xl text-center"
@@ -265,6 +281,7 @@
 
 <script>
 import AppDate from "@/components/Base/AppDate";
+import AppInput from "@/components/Base/AppInput";
 import AppFilterSearch from "@/components/Base/AppFilterSearch";
 import { mixin as clickaway } from "vue-clickaway";
 export default {
@@ -321,6 +338,7 @@ export default {
 
   components: {
     AppDate,
+    AppInput,
     AppFilterSearch
   },
   computed: {
@@ -393,6 +411,7 @@ export default {
     type() {
       this.surgeries = [];
       this.selectedSurgery = null;
+      this.searchSurgeries = "";
       if (this.type === "Private" || this.type === "Platform") {
         const params = {
           invoiceable: true,

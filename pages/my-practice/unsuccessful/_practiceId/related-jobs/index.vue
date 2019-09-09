@@ -5,7 +5,7 @@
 export default {
   created() {
     this.$router.push(
-      `/my-practice/all/${this.$route.params.practiceId}/profile`
+      `/my-practice/unsuccessful/${this.$route.params.practiceId}/related-jobs/allocated`
     );
   }
 };

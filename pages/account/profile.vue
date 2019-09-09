@@ -198,13 +198,84 @@
           @unchecked="form.practice_type_id = form.practice_type_id.filter(id => id !== parseInt($event)), CheckEmptyField(form.practice_type_id, 'practice_type_id')"
         />
         <AppInput
+          v-model="form.employment_type"
+          :type="'select'"
+          :name="'employment_type'"
+          :label="'Are you...?'"
+          :placeholder="'Select...'"
+          :items="employmentTypes"
+        />
+        <template v-if="form.employment_type === 'Limited company'">
+          <AppInput
+            v-model="form.company_registration_number"
+            :type="'text'"
+            :name="'company_registration_number'"
+            :label="'Company_registration_number'"
+            :placeholder="'The number of your company from Companies House'"
+          />
+        </template>
+        <template v-else>
+          <AppInput
+            v-model="form.utr_number"
+            :type="'text'"
+            :name="'utr_number'"
+            :label="'UTR number'"
+            :placeholder="''"
+          />
+        </template>
+        <AppInput
+          v-model="form.paid_under_payroll"
+          :type="'select'"
+          :name="'paid_under_payroll'"
+          :label="'Are you paid under payroll?'"
+          :items="[{ label: 'Yes', value: 'Yes' }, { label: 'No', value: 'No' }]"
+        />
+        <template v-if="form.paid_under_payroll === 'Yes'">
+          <AppInput
+            v-model="form.account_name"
+            :type="'text'"
+            :name="'account_name'"
+            :label="'Account name'"
+            :placeholder="''"
+          />
+          <AppInput
+            v-model="form.bank_name"
+            :type="'text'"
+            :name="'bank_name'"
+            :label="'Bank name'"
+            :placeholder="''"
+          />
+          <AppInput
+            v-model="form.sort_code"
+            :type="'text'"
+            :name="'sort_code'"
+            :label="'Sort code'"
+            :placeholder="''"
+          />
+          <AppInput
+            v-model="form.account_number"
+            :type="'text'"
+            :name="'account_number'"
+            :label="'Account number'"
+            :placeholder="''"
+          />
+        </template>
+        <AppInput
+          v-model="form.ir35"
+          :type="'single-checkbox'"
+          :name="'ir35'"
+          :label="'Are you willing to work for a role captured within IR35 rules, subject to deduction of Tax and N.I.?'"
+          :placeholder="''"
+          :error="this.formError.find(item => item.field === 'ir35')"
+        />
+        <!-- <AppInput
           v-model="form.headline"
           :type="'text'"
           :name="'headline'"
           :label="'Headline'"
           :info="'A short headline about yourself to show to Practices'"
           @submit="save"
-        />
+        />-->
         <AppPostCode
           v-model="form.post_code"
           :name="'post_code'"
@@ -284,6 +355,10 @@
   </div>
 </template>
 <script>
+let employmentTypes = [
+  { label: "Self-employed", value: "Self-employed" },
+  { label: "Limited company", value: "Limited company" }
+];
 import AppFormError from "@/components/Base/AppFormError";
 import AppLoading from "@/components/Base/AppLoading";
 import AppInput from "@/components/Base/AppInput";
@@ -307,6 +382,7 @@ export default {
   },
   data() {
     return {
+      employmentTypes,
       professionCategoryId: "",
       // qualifications: [],
       form: {
@@ -334,7 +410,17 @@ export default {
         referee_1_email: "",
         referee_2_contact_name: "",
         referee_2_phone_number: "",
-        referee_2_email: ""
+        referee_2_email: "",
+        // billing
+        employment_type: "",
+        company_registration_number: "",
+        utr_number: "",
+        paid_under_payroll: "No",
+        account_name: "",
+        bank_name: "",
+        sort_code: "",
+        account_number: "",
+        ir35: false
       },
       avatar: null,
       formError: [],

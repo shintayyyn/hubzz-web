@@ -10,39 +10,35 @@
 
     <div class="flex flex-row flex-wrap justify-start overflow-hidden">
       <div class="my-1 w-full lg:w-1/3 px-1 overflow-hidden">
-        <div class="p-2 shadow-lg rounded-lg">
-          <div>
-            <div class="font-bold my-4 text-sm sm:text-lg">Contact Number</div>
-            <span class="m-4 text-sm">{{practice.phone_number}}</span>
-
-            <div class="font-bold my-4 text-sm sm:text-lg">Practice Code</div>
-            <span class="m-4 text-sm">{{practice.surgery.code}}</span>
-
-            <div class="font-bold my-4 text-sm sm:text-lg">Practice Types</div>
-            <div v-if="practice.practice_types">
-              <p
-                class="inline-flex m-1 rounded-lg text-sm text-black p-2 bg-yellow-500"
-                v-for="item in practice.practice_types"
-                :key="item.id"
-              >{{item ? item.name:null}}</p>
-            </div>
-
-            <div class="font-bold my-4 text-sm sm:text-lg">Clinical Commissioning Group</div>
-            <span class="m-4 text-sm">{{practice.surgery.clinical_commissioning_group.name}}</span>
-
-            <div class="font-bold my-4 text-sm sm:text-lg">Address</div>
-            <div class="m-1 text-sm">{{practice.surgery.address.line_1}}</div>
-            <div class="m-1 text-sm">{{practice.surgery.address.line_2}}</div>
-            <div class="m-1 text-sm">{{practice.surgery.address.line_3}}</div>
+        <div class="flex flex-col p-2 shadow-lg rounded-lg">
+          <div class="font-bold text-md md:text-lg">Contact Number</div>
+          <div class="text-sm md:text-md m-4">{{practice.phone_number}}</div>
+          <div class="font-bold text-md md:text-lg">Practice Code</div>
+          <div class="text-sm md:text-md m-4">{{practice.surgery.code}}</div>
+          <div class="font-bold text-md md:text-lg">Practice Types</div>
+          <div v-if="practice.practice_types" class="flex flex-row flex-wrap justify-start m-4">
+            <div
+              class="rounded-lg text-sm md:text-md bg-yellow-500 m-1 p-2"
+              v-for="item in practice.practice_types"
+              :key="item.id"
+            >{{item.name}}</div>
           </div>
+          <div class="font-bold text-md md:text-lg">Clinical Commissioning Group</div>
+          <div class="text-sm md:text-md m-4">{{practice.surgery.clinical_commissioning_group.name}}</div>
+          <div class="font-bold text-md md:text-lg">Address</div>
+          <div class="m-4">
+            <div class="text-sm md:text-md">{{practice.surgery.address.line_1}}</div>
+            <div class="text-sm md:text-md">{{practice.surgery.address.line_2}}</div>
+            <div class="text-sm md:text-md">{{practice.surgery.address.line_3}}</div>
+          </div>
+          <div class="font-bold text-md md:text-lg">Distance from your coordinates</div>
+          <div class="text-sm md:text-md m-4">{{practice.distance_in_miles_from_coordinates}} miles</div>
         </div>
       </div>
       <div class="my-1 w-full lg:w-2/3 px-1 overflow-hidden">
-        <div class="p-2 shadow-lg rounded-lg">
-          <div>
-            <span class="font-bold text-md sm:text-lg">Location</span>
-          </div>
-          <div class="mt-4">
+        <div class="flex flex-col p-2 shadow-lg rounded-lg">
+          <div class="font-bold text-md md:text-lg mb-4">Location</div>
+          <div class>
             <GmapMap
               :center="{lat:latLang.y,lng:latLang.x}"
               :zoom="15"

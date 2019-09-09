@@ -14,7 +14,7 @@
     <div v-else class="flex flex-row flex-wrap justify-center">
       <div>You do not have any Associated Job for any Practices</div>
     </div>
-    <div class="shield" v-if="$route.name.includes('my-practice-all-practiceId')"></div>
+    <div class="shield" v-if="$route.name.includes('my-practice-applied-practiceId')"></div>
     <nuxt-child />
   </section>
 </template>
@@ -52,7 +52,7 @@ export default {
   },
   watch: {
     $route(value) {
-      if (value.name.includes("my-practice-all-practiceId")) {
+      if (value.name.includes("my-practice-applied-practiceId")) {
         document.body.style.overflow = "hidden";
       } else {
         document.body.style.overflow = "auto";
@@ -64,16 +64,18 @@ export default {
   },
   methods: {
     getPracticesCount() {
-      this.$axios.$get(`/api/v1/locum/practices/count`).then(res => {
-        this.total = res.data.count;
-        this.getPractices(this.current_page);
-      });
+      this.$axios
+        .$get(`/api/v1/locum/practices/count?locum_practice_type=Applied`)
+        .then(res => {
+          this.total = res.data.count;
+          this.getPractices(this.current_page);
+        });
     },
     getPractices(page) {
       this.current_page = page;
       this.$axios
         .$get(
-          `/api/v1/locum/practices?offset=${this.offset}&limit=${this.perPage}`
+          `/api/v1/locum/practices?locum_practice_type=Applied&offset=${this.offset}&limit=${this.perPage}`
         )
         .then(res => {
           this.practices = res.data.practices;
@@ -107,7 +109,7 @@ export default {
       }
     },
     show(id) {
-      this.$router.push(`/my-practice/all/${id}`);
+      this.$router.push(`/my-practice/applied/${id}`);
     },
     pagechanged(e) {
       this.current_page = e;
