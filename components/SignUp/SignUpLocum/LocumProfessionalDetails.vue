@@ -17,7 +17,9 @@
             :placeholder="'GMC / NMC Number'"
             :error="formError.find(item => item.field === 'gmc_or_nmc_number')"
             :info="'For compliance; to be verified by the hubzz team'"
+            @blur="CheckEmptyField(form.gmc_or_nmc_number, 'gmc_or_nmc_number')"
           />
+
           <AppInput
             v-model="form.mpl_or_npl_number"
             :type="'text'"
@@ -26,6 +28,7 @@
             :placeholder="'MPL / NPL Number'"
             :error="formError.find(item => item.field === 'mpl_or_npl_number')"
             :info="'For compliance; to be verified by the hubzz team'"
+            @blur="CheckEmptyField(form.mpl_or_npl_number, 'mpl_or_npl_number')"
           />
 
           <AppInput
@@ -40,20 +43,26 @@
             :type="'select'"
             :name="'profession_id'"
             :label="'Profession'"
-            :error="formError.find(item => item.field === 'profession_id')"
             :placeholder="'Select...'"
+            :error="formError.find(item => item.field === 'profession_id')"
+            @blur="CheckEmptyField(form.profession_id, 'profession_id')"
             :items="professions"
           />
 
-          <AppFilterSearch
-            v-model="form.qualification_id"
-            :name="'qualification_id'"
-            :label="'Specialty'"
-            :placeholder="'Select...'"
-            :error="formError.find(item => item.field === 'qualification_id')"
-            :items="gpQualifications"
-            :info="'Choose at least one qualification'"
-          />
+          <template v-if="form.profession_id">
+            <AppFilterSearch
+              v-model="form.qualification_id"
+              :name="'qualification_id'"
+              :label="'Specialty'"
+              :placeholder="'Select...'"
+              :error="formError.find(item => item.field === 'qualification_id')"
+              :info="'Choose at least one qualification'"
+              :url="'/api/v1/qualifications'"
+              :professionCategoryId="form.profession_id.toString()"
+              @add="CheckEmptyField(form.qualification_id, 'qualification_id')"
+              @remove="CheckEmptyField(form.qualification_id, 'qualification_id')"
+            />
+          </template>
 
           <AppFilterSearch
             v-model="form.clinical_system_id"
@@ -61,8 +70,10 @@
             :label="'Clinical systems'"
             :placeholder="'Select...'"
             :error="formError.find(item => item.field === 'clinical_system_id')"
-            :items="clinicalSystems"
             :info="'Choose at least one IT system'"
+            :url="'/api/v1/clinical-systems'"
+            @add="CheckEmptyField(form.clinical_system_id, 'clinical_system_id')"
+            @remove="CheckEmptyField(form.clinical_system_id, 'clinical_system_id')"
           />
 
           <AppFilterSearch
@@ -70,51 +81,108 @@
             :name="'spoken_language_id'"
             :label="'Spoken languages'"
             :placeholder="'Select...'"
-            :error="formError.find(item => item.field === 'spoken_language_id')"
-            :items="spokenLanguages"
             :info="'Choose other languages you can speak'"
+            :url="'/api/v1/spoken-languages'"
             :defaultItem="'English'"
           />
 
           <div class="flex flex-col my-8">
-            <div class="flex flex-row justify-between">
+            <div class="relative flex flex-row justify-between">
               <label for="rates" class="text-xs sm:text-sm py-1">Your preferred rates £</label>
               <div
                 class="rounded-lg bg-gray-300 p-1 text-xs sm:text-sm"
               >To match available jobs with</div>
             </div>
             <div class="flex flex-row flex-wrap justify-between">
-              <AppRate
-                v-model="per_hour"
-                :name="'per_hour'"
-                :label="'Per hour'"
-                :error="formError.find(item => item.field === 'per_hour')"
-              />
-              <AppRate
-                v-model="per_half_day_session"
-                :name="'per_half_day_session'"
-                :error="formError.find(item => item.field === 'per_half_day_session')"
-                :label="'Per half day session'"
-              />
-              <AppRate
-                v-model="per_whole_day_session"
-                :name="'per_whole_day_session'"
-                :label="'Per whole day session'"
-                :error="formError.find(item => item.field === 'per_whole_day_session')"
-              />
+              <div class="flex flex-col w-full sm:w-1/3 px-1">
+                <label for="rates" class="text-xs sm:text-sm py-1">Per Hour</label>
+                <div class="flex flex-row flex-no-wrap">
+                  <AppInput
+                    v-model="form.min_rate_per_hour"
+                    :type="'text'"
+                    :name="'min_rate_per_hour'"
+                    :label="'From £'"
+                    :error="formError.find(item => item.field === 'min_rate_per_hour')"
+                    @blur="CheckEmptyField(form.min_rate_per_hour, 'min_rate_per_hour')"
+                  />
+                  <div class="mx-1"></div>
+                  <AppInput
+                    v-model="form.max_rate_per_hour"
+                    :type="'text'"
+                    :name="'max_rate_per_hour'"
+                    :label="'To £'"
+                    :error="formError.find(item => item.field === 'max_rate_per_hour')"
+                    @blur="CheckEmptyField(form.max_rate_per_hour, 'max_rate_per_hour')"
+                  />
+                </div>
+              </div>
+              <div class="flex flex-col w-full sm:w-1/3 px-1">
+                <label for="rates" class="text-xs sm:text-sm py-1">Per Half Day Session</label>
+                <div class="flex flex-row flex-no-wrap">
+                  <AppInput
+                    v-model="form.min_rate_per_half_day_session"
+                    :type="'text'"
+                    :name="'min_rate_per_half_day_session'"
+                    :label="'From £'"
+                    :error="formError.find(item => item.field === 'min_rate_per_half_day_session')"
+                    @blur="CheckEmptyField(form.min_rate_per_half_day_session, 'min_rate_per_half_day_session')"
+                  />
+                  <div class="mx-1"></div>
+                  <AppInput
+                    v-model="form.max_rate_per_half_day_session"
+                    :type="'text'"
+                    :name="'max_rate_per_half_day_session'"
+                    :label="'To £'"
+                    :error="formError.find(item => item.field === 'max_rate_per_half_day_session')"
+                    @blur="CheckEmptyField(form.max_rate_per_half_day_session, 'max_rate_per_half_day_session')"
+                  />
+                </div>
+              </div>
+              <div class="flex flex-col w-full sm:w-1/3 px-1">
+                <label for="rates" class="text-xs sm:text-sm py-1">Per Whole Day Session</label>
+                <div class="flex flex-row flex-no-wrap">
+                  <AppInput
+                    v-model="form.min_rate_per_whole_day_session"
+                    :type="'text'"
+                    :name="'min_rate_per_whole_day_session'"
+                    :label="'From £'"
+                    :error="formError.find(item => item.field === 'min_rate_per_whole_day_session')"
+                    @blur="CheckEmptyField(form.min_rate_per_whole_day_session, 'min_rate_per_whole_day_session')"
+                  />
+                  <div class="mx-1"></div>
+                  <AppInput
+                    v-model="form.max_rate_per_whole_day_session"
+                    :type="'text'"
+                    :name="'max_rate_per_whole_day_session'"
+                    :label="'To £'"
+                    :error="formError.find(item => item.field === 'max_rate_per_whole_day_session')"
+                    @blur="CheckEmptyField(form.max_rate_per_whole_day_session, 'max_rate_per_whole_day_session')"
+                  />
+                </div>
+              </div>
             </div>
           </div>
 
           <AppInput
             v-model="form.practice_type_id"
             :type="'multi-checkbox'"
-            @checked="form.practice_type_id.push(parseInt($event))"
-            @unchecked="uncheckOther($event)"
             :name="'practice_type_id'"
-            :label="'What type of Practice(s) would you like to work for?'"
-            :placeholder="''"
-            :error="this.formError.find(item => item.field === 'practice_type_id')"
+            :label="'What type of Practice(s) are you?'"
+            :error="formError.find(item => item.field === 'practice_type_id')"
             :lists="practiceTypes"
+            @checked="form.practice_type_id.push(parseInt($event)), CheckEmptyField(form.practice_type_id, 'practice_type_id')"
+            @unchecked="form.practice_type_id = form.practice_type_id.filter(id => id !== parseInt($event)), CheckEmptyField(form.practice_type_id, 'practice_type_id')"
+          />
+
+          <AppInput
+            v-model="form.mandatory_training_id"
+            :type="'multi-checkbox'"
+            :name="'mandatory_training_id'"
+            :label="'What type of Training(s) are you trained for?'"
+            :error="formError.find(item => item.field === 'mandatory_training_id')"
+            :lists="mandatoryTrainings"
+            @checked="form.mandatory_training_id.push(parseInt($event)), CheckEmptyField(form.mandatory_training_id, 'mandatory_training_id')"
+            @unchecked="form.mandatory_training_id = form.mandatory_training_id.filter(id => id !== parseInt($event)), CheckEmptyField(form.mandatory_training_id, 'mandatory_training_id')"
           />
 
           <AppInput
@@ -122,10 +190,11 @@
             :type="'select'"
             :name="'ir35'"
             :label="'Are you OK to work with Practices that are inside of scope for IR35?'"
-            :error="formError.find(item => item.field === 'ir35')"
             :placeholder="'Select...'"
-            :items="[{value: false, label: 'No'},{value: true, label: 'Yes'}]"
             :info="'Only apply if you are self-employed'"
+            :error="formError.find(item => item.field === 'ir35')"
+            @blur="CheckEmptyField(form.ir35, 'ir35')"
+            :items="[{value: false, label: 'No'},{value: true, label: 'Yes'}]"
           />
         </form>
       </div>
@@ -157,19 +226,6 @@ export default {
   data() {
     return {
       pratice_types: [],
-      per_hour: {
-        min: 0,
-        max: 0
-      },
-      per_half_day_session: {
-        min: 0,
-        max: 0
-      },
-      per_whole_day_session: {
-        min: 0,
-        max: 0
-      },
-
       form: {
         gmc_or_nmc_number: "",
         mpl_or_npl_number: "",
@@ -188,8 +244,7 @@ export default {
         practice_type_id: [],
         mandatory_training_id: []
       },
-      formError: [],
-      setFocus: ""
+      formError: []
     };
   },
   computed: {
@@ -210,6 +265,9 @@ export default {
     },
     practiceTypes() {
       return this.$store.getters["signUp/getPracticeTypes"];
+    },
+    mandatoryTrainings() {
+      return this.$store.getters["signUp/getMandatoryTrainings"];
     },
     professionalDetails() {
       return this.$store.state.signUp.professional_details;
@@ -250,19 +308,22 @@ export default {
       );
     });
 
-    this.per_hour.min = this.professionalDetails.min_rate_per_hour;
-    this.per_hour.max = this.professionalDetails.max_rate_per_hour;
-    this.per_half_day_session.min = this.professionalDetails.min_rate_per_half_day_session;
-    this.per_half_day_session.max = this.professionalDetails.max_rate_per_half_day_session;
-    this.per_whole_day_session.min = this.professionalDetails.min_rate_per_whole_day_session;
-    this.per_whole_day_session.max = this.professionalDetails.max_rate_per_whole_day_session;
-    this.form.ir35 = this.professionalDetails.ir35;
+    this.form.min_rate_per_hour = this.professionalDetails.min_rate_per_hour;
+    this.form.max_rate_per_hour = this.professionalDetails.max_rate_per_hour;
+    this.form.min_rate_per_half_day_session = this.professionalDetails.min_rate_per_half_day_session;
+    this.form.max_rate_per_half_day_session = this.professionalDetails.max_rate_per_half_day_session;
+    this.form.min_rate_per_whole_day_session = this.professionalDetails.min_rate_per_whole_day_session;
+    this.form.max_rate_per_whole_day_session = this.professionalDetails.max_rate_per_whole_day_session;
 
     this.form.practice_type_id = [];
     this.professionalDetails.practice_type_id.forEach(id => {
       this.form.practice_type_id.push(id);
     });
-    // this.form.practice_type_id = this.professionalDetails.practice_type_id
+
+    this.form.mandatory_training_id = [];
+    this.professionalDetails.mandatory_training_id.forEach(id => {
+      this.form.mandatory_training_id.push(id);
+    });
 
     if (this.professionalFormError.length > 0) {
       this.professionalFormError.forEach(item => {
@@ -271,269 +332,72 @@ export default {
     }
   },
   watch: {
-    "form.gmc_or_nmc_number"(value) {
-      // splice from formerror
-      let index = this.formError.findIndex(
-        item => item.field === "gmc_or_nmc_number"
-      );
-      if (index >= 0) {
-        this.formError.splice(index, 1);
-      }
-      // validate
-      if (!value) {
-        this.formError.push({
-          field: "gmc_or_nmc_number",
-          message: "GCM/NCM Number is Required"
-        });
-      }
-    },
-
-    "form.mpl_or_npl_number"(value) {
-      // splice from formerror
-      let index = this.formError.findIndex(
-        item => item.field === "mpl_or_npl_number"
-      );
-      if (index >= 0) {
-        this.formError.splice(index, 1);
-      }
-      // validate
-      if (!value) {
-        this.formError.push({
-          field: "mpl_or_npl_number",
-          message: "MPL/NPL Number is Required"
-        });
-      }
-    },
-
-    "form.profession_id"(value) {
-      // splice from formerror
-      let index = this.formError.findIndex(
-        item => item.field === "profession_id"
-      );
-      if (index >= 0) {
-        this.formError.splice(index, 1);
-      }
-      // validate
-      if (!value) {
-        this.formError.push({
-          field: "profession_id",
-          message: "Profession is Required"
-        });
-      }
-    },
-
-    "form.qualification_id"(value) {
-      // splice from formerror
-      let index = this.formError.findIndex(
-        item => item.field === "qualification_id"
-      );
-      if (index >= 0) {
-        this.formError.splice(index, 1);
-      }
-      // validate
-      if (value.length < 1) {
-        this.formError.push({
-          field: "qualification_id",
-          message: "Specialty is Required"
-        });
-      }
-    },
-
-    "form.clinical_system_id"(value) {
-      // splice from formerror
-      let index = this.formError.findIndex(
-        item => item.field === "clinical_system_id"
-      );
-      if (index >= 0) {
-        this.formError.splice(index, 1);
-      }
-      // validate
-      if (value.length < 1) {
-        this.formError.push({
-          field: "clinical_system_id",
-          message: "Clinical Systems is Required"
-        });
-      }
-    },
-
-    "form.spoken_language_id"(value) {
-      // splice from formerror
-      let index = this.formError.findIndex(
-        item => item.field === "spoken_language_id"
-      );
-      if (index >= 0) {
-        this.formError.splice(index, 1);
-      }
-      // validate
-      if (value.length < 1) {
-        this.formError.push({
-          field: "spoken_language_id",
-          message: "Spoken Language is Required"
-        });
-      }
-    },
-
-    "form.per_hour"(value) {
-      // splice from formerror
-      let index = this.formError.findIndex(item => item.field === "per_hour");
-      if (index >= 0) {
-        this.formError.splice(index, 1);
-      }
-      if (!value.min) {
-        this.formError.push({
-          field: "per_hour",
-          message: "Rate is Required"
-        });
-      } else if (!value.min >= this.form.per_hour.max) {
-        this.formError.push({ field: "per_hour", message: "asdda" });
-      }
-    },
-
-    "form.practice_type_id"(value) {
-      // splice from formerror
-      let index = this.formError.findIndex(
-        item => item.field === "practice_type_id"
-      );
-      if (index >= 0) {
-        this.formError.splice(index, 1);
-      }
-    },
-
-    "form.ir35"(value) {
-      // splice from formerror
-      let index = this.formError.findIndex(item => item.field === "ir35");
-      if (index >= 0) {
-        this.formError.splice(index, 1);
-      }
-    }
+    // "form.profession_id"(value) {
+    //   this.CheckEmptyField(this.form.profession_id, "profession_id");
+    // },
+    // "form.gmc_or_nmc_number"(value) {
+    //   this.CheckEmptyField(this.form.gmc_or_nmc_number, "gmc_or_nmc_number");
+    // },
+    // "form.mpl_or_npl_number"(value) {
+    //   this.CheckEmptyField(this.form.mpl_or_npl_number, "mpl_or_npl_number");
+    // },
+    // "form.min_rate_per_hour"() {
+    //   this.CheckEmptyField(this.form.min_rate_per_hour, "min_rate_per_hour");
+    // },
+    // "form.max_rate_per_hour"() {
+    //   this.CheckEmptyField(this.form.max_rate_per_hour, "max_rate_per_hour");
+    // },
+    // "form.min_rate_per_half_day_session"() {
+    //   this.CheckEmptyField(
+    //     this.form.min_rate_per_half_day_session,
+    //     "min_rate_per_half_day_session"
+    //   );
+    // },
+    // "form.max_rate_per_half_day_session"() {
+    //   this.CheckEmptyField(
+    //     this.form.max_rate_per_half_day_session,
+    //     "max_rate_per_half_day_session"
+    //   );
+    // },
+    // "form.min_rate_per_whole_day_session"() {
+    //   this.CheckEmptyField(
+    //     this.form.min_rate_per_whole_day_session,
+    //     "min_rate_per_whole_day_session"
+    //   );
+    // },
+    // "form.max_rate_per_whole_day_session"() {
+    //   this.CheckEmptyField(
+    //     this.form.max_rate_per_whole_day_session,
+    //     "max_rate_per_whole_day_session"
+    //   );
+    // },
+    // "form.ir35"(value) {
+    //   this.CheckEmptyField(this.form.ir35, "ir35");
+    // }
   },
   methods: {
-    uncheckOther(value) {
-      this.form.practice_type_id = this.form.practice_type_id.filter(
-        id => id != value
-      );
-    },
     next() {
-      try {
-        // this.Validate(this.form, ['nhs_smart_card_id_number', 'spoken_language_id', 'mandatory_training_id'])
-        this.formError = [];
-
-        if (!this.form.gmc_or_nmc_number) {
-          this.formError.push({
-            field: "gmc_or_nmc_number",
-            message: "GCM/NCM Number is Required"
-          });
-        }
-
-        if (!this.form.mpl_or_npl_number) {
-          this.formError.push({
-            field: "mpl_or_npl_number",
-            message: "MPL/NPL Number is Required"
-          });
-        }
-
-        if (!this.form.profession_id) {
-          this.formError.push({
-            field: "profession_id",
-            message: "Profession is Required"
-          });
-        }
-
-        if (this.form.qualification_id.length < 1) {
-          this.formError.push({
-            field: "qualification_id",
-            message: "Specialty is Required"
-          });
-        }
-
-        if (this.form.clinical_system_id.length < 1) {
-          this.formError.push({
-            field: "clinical_system_id",
-            message: "Clinical systems is Required"
-          });
-        }
-
-        if (this.form.spoken_language_id.length < 1) {
-          this.formError.push({
-            field: "spoken_language_id",
-            message: "Spoken Language is Required"
-          });
-        }
-        if (
-          !this.per_hour.min ||
-          parseInt(this.per_hour.max) <= parseInt(this.per_hour.min)
-        ) {
-          this.formError.push({
-            field: "per_hour",
-            message: "Invalid Rate"
-          });
-        }
-
-        if (
-          !this.per_half_day_session.min ||
-          parseInt(this.per_half_day_session.max) <=
-            parseInt(this.per_half_day_session.min)
-        ) {
-          this.formError.push({
-            field: "per_half_day_session",
-            message: "Invalid Rate"
-          });
-        }
-
-        if (
-          !this.per_whole_day_session.min ||
-          parseInt(this.per_whole_day_session.max) <=
-            parseInt(this.per_whole_day_session.min)
-        ) {
-          this.formError.push({
-            field: "per_whole_day_session",
-            message: "Invalid Rate"
-          });
-        }
-
-        if (this.form.practice_type_id.length < 1) {
-          this.formError.push({
-            field: "practice_type_id",
-            message: "Practice Types is Required"
-          });
-        }
-
-        if (!this.form.ir35) {
-          this.formError.push({
-            field: "ir35",
-            message: "IR35 is Required"
-          });
-        }
-
-        if (!this.formError.length) {
-          this.form.qualification_id = this.form.qualification_id.length
-            ? this.form.qualification_id.map(item => item.value)
-            : [];
-          this.form.clinical_system_id = this.form.clinical_system_id
-            ? this.form.clinical_system_id.map(item => item.value)
-            : [];
-          this.form.spoken_language_id = this.form.spoken_language_id
-            ? this.form.spoken_language_id.map(item => item.value)
-            : [];
-          this.form.min_rate_per_hour = this.per_hour.min;
-          this.form.max_rate_per_hour = this.per_hour.max;
-          this.form.min_rate_per_half_day_session = this.per_half_day_session.min;
-          this.form.max_rate_per_half_day_session = this.per_half_day_session.max;
-          this.form.min_rate_per_whole_day_session = this.per_whole_day_session.min;
-          this.form.max_rate_per_whole_day_session = this.per_whole_day_session.max;
-
-          this.$store.commit("signUp/SET_PROFESSIONAL_DETAILS", this.form);
-          this.$store.commit(
-            "signUp/SET_ACTIVE_COMPONENT",
-            "LocumCredentialDetails"
-          );
-        }
-      } catch (e) {
-        console.log(e);
+      // this.Validate(this.form, [
+      //   "nhs_smart_card_id_number",
+      //   "spoken_language_id"
+      // ]);
+      this.formError = [];
+      if (!this.formError.length) {
+        this.form.qualification_id = this.form.qualification_id.length
+          ? this.form.qualification_id.map(item => item.value)
+          : [];
+        this.form.clinical_system_id = this.form.clinical_system_id
+          ? this.form.clinical_system_id.map(item => item.value)
+          : [];
+        this.form.spoken_language_id = this.form.spoken_language_id
+          ? this.form.spoken_language_id.map(item => item.value)
+          : [];
+        this.$store.commit("signUp/SET_PROFESSIONAL_DETAILS", this.form);
+        this.$store.commit(
+          "signUp/SET_ACTIVE_COMPONENT",
+          "LocumCredentialDetails"
+        );
       }
-    },
-    isNumeric(n) {
-      return !isNaN(parseFloat(n)) && isFinite(n);
     }
   }
 };

@@ -11,12 +11,12 @@
       <div class="text-sm sm:text-base font-bold">Quick Statistics</div>
       <Statistics />
     </div>
-    <div v-if="!userIsAuthorized && $auth.user.domain === 'Practice'">
+    <!--<div v-if="!userIsAuthorized && $auth.user.domain === 'Practice'">
       <div
         class="text-sm sm:text-base font-bold"
       >Please complete the Practice Verification Steps in order to have a complete access in the platform.</div>
     </div>
-    <div v-if="!userIsAuthorized && $auth.user.domain === 'Locum'">
+     <div v-if="!userIsAuthorized && $auth.user.domain === 'Locum'">
       <div
         v-if="!complianceDocs"
         class="text-sm sm:text-base font-bold"
@@ -26,7 +26,7 @@
         v-else-if="complianceDocs"
         class="text-sm sm:text-base font-bold"
       >Please wait for HUBZZ to verify your compliance requirements.</div>
-    </div>
+    </div>-->
   </section>
 </template>
 
@@ -45,22 +45,6 @@ export default {
     Calendar,
     Reminders,
     Statistics
-  },
-  // computed: {
-  //   socketId() {
-  //     return this.$store.state.socket_id
-  //   }
-  // },
-  // watch: {
-  //   socketId(value) {
-  //     this.$store.dispatch('joinRoom', { socket_id: value, room_name: 'jobroom', })
-  //   }
-  // },
-  beforeDestroy() {
-    this.$store.dispatch("leaveRoom", {
-      socket_id: this.$socket.id,
-      room_name: "jobroom"
-    });
   },
   created() {
     if (this.$auth.loggedIn) {
@@ -85,19 +69,19 @@ export default {
     }
   },
   mounted() {
-    if (this.$socket.connected) {
-      this.$store.dispatch("joinRoom", {
-        socket_id: this.$socket.id,
-        room_name: "jobroom"
-      });
-    } else {
-      this.$socket.on("connect", () => {
-        this.$store.dispatch("joinRoom", {
-          socket_id: this.$socket.id,
-          room_name: "jobroom"
-        });
-      });
-    }
+    // if (this.$socket.connected) {
+    //   this.$store.dispatch("joinRoom", {
+    //     socket_id: this.$socket.id,
+    //     room_name: "jobroom"
+    //   });
+    // } else {
+    //   this.$socket.on("connect", () => {
+    //     this.$store.dispatch("joinRoom", {
+    //       socket_id: this.$socket.id,
+    //       room_name: "jobroom"
+    //     });
+    //   });
+    // }
   }
 };
 </script>

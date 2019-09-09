@@ -1,0 +1,52 @@
+<template>
+  <div class="flex flex-row flex-wrap justify-start">
+    <div
+      class="w-full md:w-1/3 lg:w-1/4 rounded-lg shadow-lg bg-gray-300 m-2 p-4 hover:bg-gray-500"
+      v-for="user in users"
+      :key="user.id"
+    >
+      <div class="flex justify-end z-50">
+        <template v-if="user.is_favorite">
+          <svgicon
+            name="on-star"
+            height="32"
+            width="32"
+            class="cursor-pointer"
+            @click="$emit('favorite', user.id)"
+          />
+        </template>
+        <template v-else>
+          <svgicon
+            name="off-star"
+            height="32"
+            width="32"
+            class="cursor-pointer"
+            @click="$emit('favorite', user.id)"
+          />
+        </template>
+      </div>
+
+      <div class="flex flex-wrap text-center mt-4 cursor-pointer" @click="$emit('show', user.id)">
+        <div class="w-full flex justify-center">
+          <AppAvatar
+            :src="user.avatar && user.avatar.file && user.avatar.file.url ? user.avatar.file.url : ''"
+          />
+        </div>
+
+        <div class="w-full font-bold text-sm sm:text-lg my-4">{{user.personal_detail.name}}</div>
+        <div
+          class="w-full mb-4 font-bold text-gray-600 text-sm sm:text-lg"
+        >{{user.locum_detail.profession.name}}</div>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+import AppAvatar from "@/components/Base/AppAvatar";
+export default {
+  props: ["users"],
+  components: {
+    AppAvatar
+  }
+};
+</script>

@@ -98,7 +98,7 @@
           :defaultItem="'English'"
         />
         <div class="flex flex-col my-8">
-          <div class="flex flex-row justify-between">
+          <div class="relative flex flex-row justify-between">
             <label for="rates" class="text-xs sm:text-sm py-1">Your preferred rates £</label>
             <div class="rounded-lg bg-gray-300 p-1 text-xs sm:text-sm">To match available jobs with</div>
           </div>
@@ -196,6 +196,14 @@
           :lists="practiceTypes"
           @checked="form.practice_type_id.push(parseInt($event)), CheckEmptyField(form.practice_type_id, 'practice_type_id')"
           @unchecked="form.practice_type_id = form.practice_type_id.filter(id => id !== parseInt($event)), CheckEmptyField(form.practice_type_id, 'practice_type_id')"
+        />
+        <AppInput
+          v-model="form.headline"
+          :type="'text'"
+          :name="'headline'"
+          :label="'Headline'"
+          :info="'A short headline about yourself to show to Practices'"
+          @submit="save"
         />
         <AppPostCode
           v-model="form.post_code"
@@ -353,12 +361,12 @@ export default {
         this.professionCategoryId = 2;
       }
     },
-    "form.gmc_or_nmc_number"() {
-      this.CheckEmptyField(this.form.gmc_or_nmc_number, "gmc_or_nmc_number");
-    },
-    "form.mpl_or_npl_number"() {
-      this.CheckEmptyField(this.form.mpl_or_npl_number, "mpl_or_npl_number");
-    },
+    // "form.gmc_or_nmc_number"() {
+    //   this.CheckEmptyField(this.form.gmc_or_nmc_number, "gmc_or_nmc_number");
+    // },
+    // "form.mpl_or_npl_number"() {
+    //   this.CheckEmptyField(this.form.mpl_or_npl_number, "mpl_or_npl_number");
+    // },
     "form.min_rate_per_hour"() {
       this.CheckEmptyField(this.form.min_rate_per_hour, "min_rate_per_hour");
     },
@@ -389,6 +397,15 @@ export default {
         "max_rate_per_whole_day_session"
       );
     },
+    "form.practice_type_id"() {
+      this.CheckEmptyField(this.form.practice_type_id, "practice_type_id");
+    },
+    "form.mandatory_training_id"() {
+      this.CheckEmptyField(
+        this.form.mandatory_training_id,
+        "mandatory_training_id"
+      );
+    },
     "form.post_code"() {
       this.CheckEmptyField(this.form.post_code, "post_code");
     },
@@ -408,8 +425,22 @@ export default {
   },
   created() {
     this.avatar = this.user.avatar;
+    // gmc/nmc & mpl/npl
     this.form.gmc_or_nmc_number = this.user.locum_detail.gmc_or_nmc_number.number;
     this.form.mpl_or_npl_number = this.user.locum_detail.mpl_or_npl_number.number;
+    if (this.user.locum_detail.gmc_or_nmc_number.status === "Rejected") {
+      this.formError.push({
+        field: "gmc_or_nmc_number",
+        message: "Rejected"
+      });
+    }
+    if (this.user.locum_detail.mpl_or_npl_number.status === "Rejected") {
+      this.formError.push({
+        field: "mpl_or_npl_number",
+        message: "Rejected"
+      });
+    }
+    //
     this.form.nhs_smart_card_id_number = this.user.locum_detail.nhs_smart_card_id_number;
     this.form.headline = this.user.locum_detail.headline;
     this.form.short_biography = this.user.locum_detail.short_biography;
@@ -435,22 +466,22 @@ export default {
     );
     // rate
     this.form.min_rate_per_hour = this.user.locum_detail.rates.find(
-      rate => rate.rate_type.id === 1
+      rate => rate.rate_type.name === "Per Hour"
     ).min;
     this.form.max_rate_per_hour = this.user.locum_detail.rates.find(
-      rate => rate.rate_type.id === 1
+      rate => rate.rate_type.name === "Per Hour"
     ).max;
     this.form.min_rate_per_half_day_session = this.user.locum_detail.rates.find(
-      rate => rate.rate_type.id === 2
+      rate => rate.rate_type.name === "Per Half Day Session"
     ).min;
     this.form.max_rate_per_half_day_session = this.user.locum_detail.rates.find(
-      rate => rate.rate_type.id === 2
+      rate => rate.rate_type.name === "Per Half Day Session"
     ).max;
     this.form.min_rate_per_whole_day_session = this.user.locum_detail.rates.find(
-      rate => rate.rate_type.id === 3
+      rate => rate.rate_type.name === "Per Whole Day Session"
     ).min;
     this.form.max_rate_per_whole_day_session = this.user.locum_detail.rates.find(
-      rate => rate.rate_type.id === 3
+      rate => rate.rate_type.name === "Per Whole Day Session"
     ).max;
     //  practice type
     this.form.practice_type_id = this.user.locum_detail.practice_types.map(
@@ -603,6 +634,21 @@ export default {
           this.scrollToTop();
         }
       } catch (err) {
+        this.form.qualification_id = this.user.locum_detail.qualifications.map(
+          qualification => {
+            return { label: qualification.name, value: qualification.id };
+          }
+        );
+        this.form.clinical_system_id = this.user.locum_detail.clinical_systems.map(
+          clinicalSystem => {
+            return { label: clinicalSystem.name, value: clinicalSystem.id };
+          }
+        );
+        this.form.spoken_language_id = this.user.locum_detail.spoken_languages.map(
+          spokenLanguage => {
+            return { label: spokenLanguage.name, value: spokenLanguage.id };
+          }
+        );
         this.formError = err.response.data.error_messages;
         this.scrollToTop();
       }

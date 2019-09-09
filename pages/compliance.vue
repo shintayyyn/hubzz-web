@@ -8,7 +8,7 @@
             <div class="w-1/3 p-1 text-center">{{gmc_or_nmc_number.number}}</div>
             <div class="w-1/3 p-1 text-center">
               <span
-                class="text-xs sm:text-sm text-center bg-orange-300 text-white font-bold rounded-full px-4 py-1"
+                class="text-xs sm:text-sm text-center text-white font-bold rounded-full px-4 py-1"
                 :class="status(gmc_or_nmc_number.status)"
               >{{ gmc_or_nmc_number.status }}</span>
             </div>
@@ -20,7 +20,7 @@
             <div class="w-1/3 p-1 text-center">{{mpl_or_npl_number.number}}</div>
             <div class="w-1/3 p-1 text-center">
               <span
-                class="text-xs sm:text-sm text-center bg-orange-300 text-white font-bold rounded-full px-4 py-1"
+                class="text-xs sm:text-sm text-center text-white font-bold rounded-full px-4 py-1"
                 :class="status(mpl_or_npl_number.status)"
               >{{ mpl_or_npl_number.status }}</span>
             </div>
@@ -29,7 +29,8 @@
       </div>
     </div>
     <div class="mt-10">
-      <div class="font-bold text-xs sm:text-base">Documents you need to be approved by hubzz HQ</div>
+      <div class="font-bold text-xs sm:text-base">Documents you need to be approved by Hubzz HQ</div>
+      <div class="text-sm font-hairline italic">(Note: Only file types .pdf, .jpeg, .msword, .tiff are acccepted)</div>
     </div>
     <div class="mt-4 overflow-x-auto px-2 md:px-0">
       <table>
@@ -377,16 +378,26 @@ export default {
       mandatoryTrainingModal: false
     };
   },
+  async asyncData({ app, error }) {
+    try {
+      const response = await app.$axios.$get(`/api/v1/me`);
+      const user =
+        response.data && response.data.user ? response.data.user : null;
+      return {
+        user
+      };
+    } catch (err) {}
+  },
   created() {
     // get gmc, mpl status
-    this.gmc_or_nmc_number = this.$auth.user.locum_detail.gmc_or_nmc_number;
-    this.mpl_or_npl_number = this.$auth.user.locum_detail.mpl_or_npl_number;
+    this.gmc_or_nmc_number = this.user.locum_detail.gmc_or_nmc_number;
+    this.mpl_or_npl_number = this.user.locum_detail.mpl_or_npl_number;
     // get all compliance documents list based on profession category
     this.$axios.$get(`/api/v1/profession-categories`).then(res => {
       this.profession = res.data.profession_categories.find(
         profession =>
           profession.id ===
-          this.$auth.user.locum_detail.profession.profession_category.id
+          this.user.locum_detail.profession.profession_category.id
       );
       this.setComplianceDocuments();
     });
@@ -465,27 +476,14 @@ export default {
       });
     },
     status(status) {
-      switch (status) {
-        case "Pending":
-          return "bg-orange-400";
-          break;
-        case "Verified":
-          return "bg-green-500";
-          break;
-        case "Approved":
-          return "bg-green-500";
-          break;
-        case "Rejected":
-          return "bg-red-500";
-          break;
-        case "Expiring":
-          return "bg-orange-300";
-          break;
-        case "Expired":
-          return "bg-red-500";
-          break;
-        default:
-          return;
+      if (status === "Pending" || status === "Expiring") {
+        return "bg-orange-500";
+      }
+      if (status === "Verified" || status === "Approved") {
+        return "bg-green-500";
+      }
+      if (status === "Rejected" || status === "Expired") {
+        return "bg-red-500";
       }
     },
     onFileInput(e, id, index) {

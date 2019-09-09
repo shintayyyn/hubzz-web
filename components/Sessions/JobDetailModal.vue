@@ -1,76 +1,71 @@
 <template>
-  <div class="modal-container shadow-lg" ref="modalContainer">
-    <div class="p-8 max-w-5xl">
-      <div @click="close" class="cursor-pointer">
-        <svgicon name="left-arrow" height="32" width="32" />
+  <div class="p-8 max-w-5xl">
+    <div @click="close" class="cursor-pointer">
+      <svgicon name="left-arrow" height="32" width="32" />
+    </div>
+    <div class="flex flex-row justify-start mt-8">
+      <div class="leading-loose font-bold text-md sm:text-lg">{{job.title}}</div>
+      <div class="mx-2 text-sm sm:text-sm p-2" :class="bgStatus(job.status)">{{status(job.status)}}</div>
+      <div>
+        <button
+          class="font-bold text-xs sm:text-sm no-underline px-2 py-2 rounded-lg bg-yellow-500 ml-4 focus:outline-none"
+          v-if="job.status === 'Current' && toEdit === false && jobOngoing === false || job.status === 'Applied' && toEdit === false || job.status === 'Available' && toEdit === false"
+          @click.prevent="editJob()"
+        >Edit this job</button>
+        <button
+          class="font-bold text-xs sm:text-sm no-underline px-2 py-2 rounded-lg bg-yellow-500 ml-4 focus:outline-none"
+          v-if="job.status === 'Current' && toEdit === true && jobOngoing === false || job.status === 'Applied' && toEdit === true || job.status === 'Available' && toEdit === true"
+          @click.prevent="cancelEdit()"
+        >Cancel Editing</button>
       </div>
-      <div class="flex flex-row justify-start mt-8">
-        <div class="leading-loose font-bold text-md sm:text-lg">{{job.title}}</div>
-        <div
-          class="mx-2 text-sm sm:text-sm p-2"
-          :class="bgStatus(job.status)"
-        >{{status(job.status)}}</div>
-        <div>
-          <button
-            class="font-bold text-xs sm:text-sm no-underline px-2 py-2 rounded-lg bg-yellow-500 ml-4 focus:outline-none"
-            v-if="job.status === 'Current' && toEdit === false && jobOngoing === false || job.status === 'Applied' && toEdit === false || job.status === 'Available' && toEdit === false"
-            @click.prevent="editJob()"
-          >Edit this job</button>
-          <button
-            class="font-bold text-xs sm:text-sm no-underline px-2 py-2 rounded-lg bg-yellow-500 ml-4 focus:outline-none"
-            v-if="job.status === 'Current' && toEdit === true && jobOngoing === false || job.status === 'Applied' && toEdit === true || job.status === 'Available' && toEdit === true"
-            @click.prevent="cancelEdit()"
-          >Cancel Editing</button>
-        </div>
-      </div>
+    </div>
 
-      <div class="flex flex-col mt-4">
-        <div class="flex flex-row flex-wrap justify-start">
-          <JobDetailModalForm
-            :job="job"
-            v-if="toEdit === false || 
+    <div class="flex flex-col mt-4">
+      <div class="flex flex-row flex-wrap justify-start">
+        <JobDetailModalForm
+          :job="job"
+          v-if="toEdit === false || 
                 toEdit === false  || 
                 toEdit === false || 
                 toEdit === false ||
                 toEdit === false || 
                 toEdit === false || 
                 toEdit === false "
-          />
-          <JobDetailModalUpdateForm
-            :job="job"
-            v-if="job.status === 'Current' && toEdit === true && jobOngoing === false  || job.status === 'Applied' && toEdit === true  || job.status === 'Available' && toEdit === true"
-          />
-          <JobDetailModalCandidates
-            class="order-first lg:order-none"
-            :applicants="applicants"
-            v-if="job.status === 'Applied'"
-            @show="showLocum($event)"
-          />
-          <JobDetailModalLocum
-            :user="user"
-            :mandatory="mandatory"
-            :optional="optional"
-            v-if="(job.status === 'Current' || job.status === 'Completed') && user"
-          />
-        </div>
-        <JobDetailModalCancelForm
-          :job="job"
-          @close="close"
-          v-if="job.status === 'Current' || job.status === 'Applied' || job.status === 'Available'"
         />
-        <JobDetailModalCompleteForm
-          :job_parts="job.job_parts"
-          @close="close"
-          v-if="job.status === 'Current'"
+        <JobDetailModalUpdateForm
+          :job="job"
+          v-if="job.status === 'Current' && toEdit === true && jobOngoing === false  || job.status === 'Applied' && toEdit === true  || job.status === 'Available' && toEdit === true"
+        />
+        <JobDetailModalCandidates
+          class="order-first lg:order-none"
+          :applicants="applicants"
+          v-if="job.status === 'Applied'"
+          @show="showLocum($event)"
+        />
+        <JobDetailModalLocum
+          :user="user"
+          :mandatory="mandatory"
+          :optional="optional"
+          v-if="(job.status === 'Current' || job.status === 'Completed') && user"
         />
       </div>
-      <div class="shield" v-if="modal"></div>
-      <transition name="slide" mode="out-in">
-        <div class="modal shadow-lg" v-if="modal">
-          <JobDetailModalShowCandidate @close="modal = false" :user="user" @appointed="close" />
-        </div>
-      </transition>
+      <JobDetailModalCancelForm
+        :job="job"
+        @close="close"
+        v-if="job.status === 'Current' || job.status === 'Applied' || job.status === 'Available'"
+      />
+      <JobDetailModalCompleteForm
+        :job_parts="job.job_parts"
+        @close="close"
+        v-if="job.status === 'Current'"
+      />
     </div>
+    <div class="shield" v-if="modal"></div>
+    <transition name="slide" mode="out-in">
+      <div class="modal shadow-lg" v-if="modal">
+        <JobDetailModalShowCandidate @close="modal = false" :user="user" @appointed="close" />
+      </div>
+    </transition>
   </div>
 </template>
 <script>
@@ -210,23 +205,6 @@ export default {
 };
 </script>
 <style scoped>
-.modal-container {
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  border-left: solid 2px #edf2f7;
-  transition: all 0.3s ease-in-out;
-  background-color: white;
-  z-index: 510;
-}
-@media screen and (min-width: 1200px) {
-  .modal-container {
-    width: 80%;
-  }
-}
 .shield {
   position: fixed;
   top: 0;

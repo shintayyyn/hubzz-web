@@ -22,6 +22,7 @@
             :label="'Email'"
             :placeholder="'Your email address'"
             :error="formError.find(item => item.field === 'email')"
+            @blur="CheckEmptyField(form.email, 'email')"
           />
           <AppInput
             v-model="form.password"
@@ -30,6 +31,7 @@
             :label="'Password'"
             :placeholder="'Password'"
             :error="formError.find(item => item.field === 'password')"
+            @blur="CheckEmptyField(form.password, 'password')"
           />
           <AppInput
             v-model="form.password_confirmation"
@@ -39,15 +41,29 @@
             :placeholder="'Repeat password'"
             :password="form.password"
             :error="formError.find(item => item.field === 'password_confirmation')"
+            @blur="CheckEmptyField(form.password_confirmation, 'password_confirmation')"
           />
 
-          <AppInput
-            v-model="privacy_policy"
-            :type="'single-checkbox'"
-            :name="'privacy_policy'"
-            :error="formError.find(item => item.field === 'privacy_policy')"
-            :label="'I agree with the Terms and Conditions and Privacy Policy of Hubzz'"
-          />
+          <div class="flex flex-col py-2 mb-6">
+            <div class="flex justify-end">
+              <div
+                class="rounded-lg bg-red-500 p-1 text-xs sm:text-sm text-white"
+                v-if="formError.find(item => item.field === 'privacy_policy')"
+              >{{formError.find(item => item.field === 'privacy_policy').message}}</div>
+            </div>
+            <div class="flex flex-row flex-no-wrap justify-between">
+              <div>
+                <input v-model="form.privacy_policy" type="checkbox" class="checkbox mt-1 mr-1" />
+                <label for="privacy_policy" class="text-xs sm:text-sm py-1">
+                  I agree with the
+                  <span
+                    class="cursor-pointer hover:underline"
+                    @click="modal = true"
+                  >Terms and Conditions and Privacy Policy</span> of Hubzz
+                </label>
+              </div>
+            </div>
+          </div>
         </form>
       </div>
     </div>
@@ -60,25 +76,38 @@
       <div class="mx-2"></div>
       <AppButton :label="'Next'" @click="next" />
     </div>
+
+    <div class="shield" v-if="modal"></div>
+    <transition name="slide" mode="out-in">
+      <div class="py-8 modal-container" v-if="modal">
+        <div @click="modal = false" class="cursor-pointer px-10 pb-4">
+          <svgicon name="left-arrow" height="32" width="32" />
+        </div>
+        <TermsAndConditions />
+      </div>
+    </transition>
   </div>
 </template>
 <script>
 import AppInput from "@/components/Base/AppInput";
 import AppButton from "@/components/Base/AppButton";
+import TermsAndConditions from "@/components/TermsAndConditions";
 export default {
   components: {
     AppInput,
-    AppButton
+    AppButton,
+    TermsAndConditions
   },
   data() {
     return {
       form: {
         email: "",
         password: "",
-        password_confirmation: ""
+        password_confirmation: "",
+        privacy_policy: false
       },
-      privacy_policy: false,
-      formError: []
+      formError: [],
+      modal: false
     };
   },
   computed: {
@@ -96,56 +125,24 @@ export default {
           this.formError.push(item);
         });
       }
-    },
-    "form.email"(value) {
-      // splice from formerror
-      let index = this.formError.findIndex(item => item.field === "email");
-      if (index >= 0) {
-        this.formError.splice(index, 1);
-      }
-      // validate
-      if (!value) {
-        this.formError.push({ field: "email", message: "Email is Required" });
-      }
-    },
-
-    "form.password"(value) {
-      // splice from formerror
-      let index = this.formError.findIndex(item => item.field === "password");
-      if (index >= 0) {
-        this.formError.splice(index, 1);
-      }
-      // validate
-      if (!value) {
-        // required
-        this.formError.push({
-          field: "password",
-          message: "Password is Required"
-        });
-      } else if (value && value.length < 6) {
-        this.formError.push({
-          field: "password",
-          message: "Password Must Be Atleast 6 Characters"
-        });
-      }
-    },
-
-    "form.password_confirmation"(value) {
-      // splice from formerror
-      let index = this.formError.findIndex(
-        item => item.field === "password_confirmation"
-      );
-      if (index >= 0) {
-        this.formError.splice(index, 1);
-      }
-      // validate
-      if (value != this.form.password) {
-        this.formError.push({
-          field: "password_confirmation",
-          message: "Password do not match"
-        });
-      }
     }
+    // "form.email"(value) {
+    //   this.CheckEmptyField(this.form.email, "email");
+    // },
+
+    // "form.password"(value) {
+    //   this.CheckEmptyField(this.form.password, "password");
+    // },
+
+    // "form.password_confirmation"(value) {
+    //   this.CheckEmptyField(
+    //     this.form.password_confirmation,
+    //     "password_confirmation"
+    //   );
+    // },
+    // "form.privacy_policy"(value) {
+    //   this.CheckEmptyField(this.form.privacy_policy, "privacy_policy");
+    // }
   },
   mounted() {
     this.form.email = this.credentialDetails.email;
@@ -160,60 +157,44 @@ export default {
   },
   methods: {
     next() {
-      try {
-        this.formError = [];
-
-        // this.Validate(this.form)
-        if (!this.formError.length) {
-          if (!this.form.email) {
-            this.formError.push({
-              field: "email",
-              message: "Email is Required"
-            });
-          }
-
-          if (!this.form.password) {
-            this.formError.push({
-              field: "password",
-              message: "Password is Required"
-            });
-          }
-
-          if (this.form.password.length < 6) {
-            this.formError.push({
-              field: "password",
-              message: "Password Must Be Atleast 6 Characters"
-            });
-          }
-
-          if (this.form.password != this.form.password_confirmation) {
-            this.formError.push({
-              field: "password_confirmation",
-              message: "Password Do Not Match"
-            });
-          }
-          if (!this.privacy_policy) {
-            this.formError.push({
-              field: "privacy_policy",
-              message:
-                "You must agree first in our Terms and Conditions and Privacy Policy "
-            });
-            return;
-          }
-          this.$store.commit("signUp/SET_CREDENTIAL_DETAILS", this.form);
-          setTimeout(() => {
-            this.$store.dispatch("signUp/registeredLocum");
-          }, 1000);
-        }
-      } catch (e) {
-        console.log(e);
+      this.formError = [];
+      this.Validate(this.form);
+      if (!this.formError.length) {
+        this.$store.commit("signUp/SET_CREDENTIAL_DETAILS", this.form);
+        setTimeout(() => {
+          this.$store.dispatch("signUp/registeredLocum");
+        }, 1000);
       }
     }
   }
 };
 </script>
 <style scoped>
-button:active {
-  transform: translate(5px, 5px);
+.modal-container {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  border-left: solid 2px #edf2f7;
+  transition: all 0.3s ease-in-out;
+  background-color: white;
+  z-index: 510;
+}
+@media screen and (min-width: 1200px) {
+  .modal-container {
+    width: 50%;
+  }
+}
+.shield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #333;
+  opacity: 0.5;
+  z-index: 509;
 }
 </style>

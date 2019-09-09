@@ -54,7 +54,8 @@ export const state = () => ({
     min_rate_per_whole_day_session: 0,
     max_rate_per_whole_day_session: 0,
     ir35: null,
-    practice_type_id: []
+    practice_type_id: [],
+    mandatory_training_id: [],
   },
   credential_details: {
     email: '',
@@ -77,7 +78,7 @@ export const mutations = {
     state.search_results = payload.search_results
   },
   SET_PRACTICE_ACCOUNT_DETAILS(state, payload) {
-    ;(state.practice_account_details.title = payload.title),
+    (state.practice_account_details.title = payload.title),
       (state.practice_account_details.first_name = payload.first_name),
       (state.practice_account_details.last_name = payload.last_name),
       (state.practice_account_details.suffix = payload.suffix),
@@ -160,6 +161,7 @@ export const mutations = {
     state.professional_details.clinical_system_id = payload.clinical_system_id
     state.professional_details.spoken_language_id = payload.spoken_language_id
     state.professional_details.practice_type_id = payload.practice_type_id
+    state.professional_details.mandatory_training_id = payload.mandatory_training_id
     state.professional_details.min_rate_per_hour = payload.min_rate_per_hour
     state.professional_details.max_rate_per_hour = payload.max_rate_per_hour
     state.professional_details.min_rate_per_half_day_session = payload.min_rate_per_half_day_session
@@ -221,12 +223,12 @@ export const mutations = {
 }
 
 export const actions = {
-  getProfessions({commit}) {
+  getProfessions({ commit }) {
     this.$axios.$get(`/api/v1/professions`).then((res) => {
       commit('SET_PROFESSIONS', res.data.professions)
     })
   },
-  getQualifications({commit}) {
+  getQualifications({ commit }) {
     this.$axios.$get(`/api/v1/profession-categories`).then((res) => {
       let gp = res.data.profession_categories.find((category) => category.id === 1)
       let others = res.data.profession_categories.find((category) => category.id === 2)
@@ -234,29 +236,29 @@ export const actions = {
       commit('SET_OTHERS_QUALIFICATIONS', others.qualifications)
     })
   },
-  getClinicalSystems({commit}) {
+  getClinicalSystems({ commit }) {
     this.$axios.$get(`/api/v1/clinical-systems`).then((res) => {
       commit('SET_CLINICAL_SYSTEMS', res.data.clinical_systems)
     })
   },
-  getSpokenLanguages({commit}) {
+  getSpokenLanguages({ commit }) {
     this.$axios.$get(`/api/v1/spoken-languages`).then((res) => {
       commit('SET_SPOKEN_LANGUAGES', res.data.spoken_languages)
     })
   },
-  getPracticeTypes({commit}) {
+  getPracticeTypes({ commit }) {
     this.$axios.$get(`/api/v1/practice-types`).then((res) => {
       commit('SET_PRACTICE_TYPES', res.data.practice_types)
     })
   },
-  getMandatoryTrainings({commit}) {
+  getMandatoryTrainings({ commit }) {
     this.$axios.$get('/api/v1/mandatory-trainings').then((res) => {
       commit('SET_MANDATORY_TRAININGS', res.data.mandatory_trainings)
     })
   },
-  registeredPractice({state, commit}) {
+  registeredPractice({ state, commit }) {
     let form = {}
-    form = {...state.practice_details, ...state.practice_account_details}
+    form = { ...state.practice_details, ...state.practice_account_details }
     this.$axios
       .$post(`/api/v1/register/practice`, form)
       .then((res) => {
@@ -288,10 +290,10 @@ export const actions = {
         }
       })
   },
-  registeredLocum({state, commit}) {
+  registeredLocum({ state, commit }) {
     commit('SET_CREDENTIAL_DETAIL_FORM_ERROR', [])
     let form = {}
-    form = {...state.account_details, ...state.address_details, ...state.credential_details, ...state.professional_details}
+    form = { ...state.account_details, ...state.address_details, ...state.credential_details, ...state.professional_details }
     this.$axios
       .$post(`/api/v1/register/locum`, form)
       .then((res) => {
@@ -336,9 +338,14 @@ export const actions = {
               errorMessage.field === 'qualification_id' ||
               errorMessage.field === 'clinical_system_id' ||
               errorMessage.field === 'spoken_language_id' ||
-              errorMessage.field === 'rate_per_hour' ||
-              errorMessage.field === 'rate_per_hald_day_session' ||
-              errorMessage.field === 'rate_per_whole_day_session' ||
+              errorMessage.field === 'min_rate_per_hour' ||
+              errorMessage.field === 'max_rate_per_hour' ||
+              errorMessage.field === 'min_rate_per_half_day_session' ||
+              errorMessage.field === 'max_rate_per_half_day_session' ||
+              errorMessage.field === 'min_rate_per_whole_day_session' ||
+              errorMessage.field === 'max_rate_per_whole_day_session' ||
+              errorMessage.field === 'practice_type_id' ||
+              errorMessage.field === 'mandatory_training_id' ||
               errorMessage.field === 'ir35'
             )
           })
@@ -374,32 +381,32 @@ export const actions = {
 export const getters = {
   getProfessions(state) {
     return state.professions.map((item) => {
-      return {value: item.id, label: item.name}
+      return { value: item.id, label: item.name }
     })
   },
   getGpQualifications(state) {
     return state.gp_qualifications.map((item) => {
-      return {value: item.id, label: item.name}
+      return { value: item.id, label: item.name }
     })
   },
   getOthersQualifications(state) {
     return state.others_qualifications.map((item) => {
-      return {value: item.id, label: item.name}
+      return { value: item.id, label: item.name }
     })
   },
   getClinicalSystems(state) {
     return state.clinical_systems.map((item) => {
-      return {value: item.id, label: item.name}
+      return { value: item.id, label: item.name }
     })
   },
   getSpokenLanguages(state) {
     return state.spoken_languages.map((item) => {
-      return {value: item.id, label: item.name}
+      return { value: item.id, label: item.name }
     })
   },
   getPracticeTypes(state) {
     return state.practice_types.map((item) => {
-      return {value: item.id, label: item.name}
+      return { value: item.id, label: item.name }
     })
   },
   getMandatoryTrainings(state) {

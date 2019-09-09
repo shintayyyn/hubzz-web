@@ -8,6 +8,7 @@
           </div>
           <div class="font-bold text-2xl mt-4">Thank you!</div>
           <div class="font-bold text-base mt-4">Your invitation email have been sent</div>
+          <AppButton :label="'Confirm'" @click="success = false" :inStyle="'padding:5px'" />
         </div>
       </div>
     </div>
@@ -19,8 +20,9 @@
         :label="`Email addresses to locums`"
         :placeholder="''"
         :info="'Seperate with commas'"
-        :error="formError.find(error => error.field === 'email')"
+        :error="formError.find(error => error.field === 'emails')"
       />
+
       <div class="flex justify-start mt-8">
         <div class="text-xs sm:text-sm">The message to be sent to locums</div>
       </div>
@@ -44,8 +46,8 @@
   </section>
 </template>
 <script>
-import AppInput from '@/components/Base/AppInput'
-import AppButton from '@/components/Base/AppButton'
+import AppInput from "@/components/Base/AppInput";
+import AppButton from "@/components/Base/AppButton";
 export default {
   components: {
     AppInput,
@@ -54,28 +56,34 @@ export default {
   data() {
     return {
       form: {
-        email: ''
+        email: ""
       },
       formError: [],
       success: false
-    }
+    };
   },
   watch: {
-    'form.email'() {
-      this.formError = this.formError.filter(error => error.field !== 'email')
-    },
+    "form.email"() {
+      this.formError = this.formError.filter(error => error.field !== "emails");
+    }
   },
   methods: {
     send() {
-      this.formError = []
-      this.Validate(this.form)
+      this.formError = [];
+      this.Validate(this.form);
       if (!this.formError.length) {
-        this.$axios.$post(`api/v1/invite`, { emails: this.form.email.split(","), domain: 'Locum' }).then(res => {
-          this.form.email = ''
-          this.success = true
-        }).catch(err => {
-          this.formError = err.response.data.messages
-        })
+        this.$axios
+          .$post(`api/v1/invite`, {
+            emails: this.form.email.split(","),
+            domain: "Locum"
+          })
+          .then(res => {
+            this.form.email = "";
+            this.success = true;
+          })
+          .catch(err => {
+            this.formError = err.response.data.error_messages;
+          });
       } else {
         this.$store.commit("SET_NOTIFICATION", {
           enabled: true,
@@ -85,7 +93,7 @@ export default {
       }
     }
   }
-}
+};
 </script>
 <style scoped>
 textarea {

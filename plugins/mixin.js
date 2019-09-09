@@ -24,6 +24,9 @@ Vue.mixin({
       if (inputField instanceof Array && !inputField.length) {
         this.formError.push({ field: fieldName, message: 'Required' })
       }
+      if (typeof inputField === 'boolean' && inputField === false) {
+        this.formError.push({ field: fieldName, message: 'Required' })
+      }
     },
     Validate(form, lists) {
       let items = Object.entries(form)

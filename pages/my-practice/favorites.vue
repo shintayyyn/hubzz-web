@@ -1,44 +1,7 @@
 <template>
   <section v-if="!loading">
     <div v-if="practices.length > 0">
-      <div class="flex flex-row flex-wrap justify-start">
-        <div
-          class="w-full md:w-1/3 lg:w-1/4 rounded-lg shadow-lg bg-gray-300 m-2 p-4 hover:bg-gray-500"
-          v-for="(practice, index) in practices"
-          :key="practice.id"
-        >
-          <div class="flex justify-end z-50">
-            <svgicon
-              name="on-star"
-              height="32"
-              width="32"
-              class="cursor-pointer"
-              @click="unfavorite(practice.id, index)"
-            />
-          </div>
-          <div class="flex flex-wrap text-center mt-4 cursor-pointer" @click="show(practice.id)">
-            <div class="w-full flex justify-center">
-              <div class="relative avatar flex justify-center">
-                <!-- <img
-                  :src="practice.user.avatar.file.url"
-                  v-if="practice.user && practice.user.avatar && practice.user.avatar.file && practice.user.avatar.file.url"
-                />
-                <svgicon v-else name="no-avatar" height="115" width="115" />-->
-                <AppAvatar
-                  :height="'150px'"
-                  :width="'150px'"
-                  :src="practice.user && practice.user.avatar && practice.user.avatar.file && practice.user.avatar.file.url ? practice.user.avatar.file.url : ''"
-                />
-              </div>
-            </div>
-
-            <div class="w-full font-bold text-sm sm:text-lg my-4">{{practice.surgery.name}}</div>
-            <div
-              class="w-full mb-4 font-bold text-gray-600 text-xs sm:text-sm"
-            >{{practice.surgery.address.line_1}} {{practice.surgery.address.line_2}} {{practice.surgery.address.line_3}} {{practice.surgery.address.post_code}}</div>
-          </div>
-        </div>
-      </div>
+      <MyPractices :practices="practices" @show="show" @favorite="favorite" />
     </div>
     <div v-else class="flex flex-row flex-wrap justify-center">
       <div>You haven't favorite any Practices yet</div>
@@ -51,14 +14,13 @@
         @pagechanged="pagechanged"
       />
     </div>
-    <div class="shield" v-if="$route.name === 'my-practice-favorites-id'"></div>
+    <div class="shield" v-if="$route.name.includes('my-practice-favorites-practiceId')"></div>
     <nuxt-child />
   </section>
 </template>
 <script>
 import AppPagination from "@/components/Base/AppPagination";
-import MyPracticeDetailModal from "@/components/MyPractice/MyPracticeDetailModal";
-import AppAvatar from "@/components/Base/AppAvatar";
+import MyPractices from "@/components/MyPractice/MyPractices";
 export default {
   transition: {
     name: "fade",
@@ -66,7 +28,7 @@ export default {
   },
   components: {
     AppPagination,
-    AppAvatar
+    MyPractices
   },
   data() {
     return {
@@ -86,6 +48,15 @@ export default {
     },
     totalPages() {
       return Math.ceil(this.total / this.perPage);
+    }
+  },
+  watch: {
+    $route(value) {
+      if (value.name.includes("my-practice-favorites-practiceId")) {
+        document.body.style.overflow = "hidden";
+      } else {
+        document.body.style.overflow = "auto";
+      }
     }
   },
   created() {
@@ -112,24 +83,37 @@ export default {
           this.loading = false;
         });
     },
-
-    unfavorite(id, index) {
-      this.practices.splice(index, 1);
-      this.$axios
-        .$delete(`/api/v1/locum/practices/${id}/favorite`)
-        .then(res => {
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "success",
-            text: [`${res.message}`]
+    favorite(id) {
+      let practice = this.practices.find(practice => practice.id === id);
+      let index = this.practices.findIndex(practice => practice.id === id);
+      if (!practice.is_favorite) {
+        this.$axios
+          .$post(`/api/v1/locum/practices/${id}/favorite`)
+          .then(res => {
+            practice.is_favorite = !practice.is_favorite;
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: ["Added to favourites"]
+            });
           });
-        });
+      } else {
+        this.$axios
+          .$delete(`/api/v1/locum/practices/${id}/favorite`)
+          .then(res => {
+            practice.is_favorite = !practice.is_favorite;
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: ["Remove to favourites"]
+            });
+            this.practices.splice(index, 1);
+          });
+      }
     },
-
     show(id) {
       this.$router.push(`/my-practice/favorites/${id}`);
     },
-
     pagechanged(e) {
       this.current_page = e;
       this.getCompletedPractices(this.current_page);
@@ -138,16 +122,6 @@ export default {
 };
 </script>
 <style scoped>
-.avatar-container {
-  box-sizing: content-box;
-  height: 170px;
-}
-.avatar {
-  max-width: 170px;
-  max-height: 170px;
-  min-width: 170px;
-  min-height: 170px;
-}
 .shield {
   position: fixed;
   top: 0;
@@ -157,23 +131,6 @@ export default {
   background-color: #333;
   opacity: 0.5;
   z-index: 509;
-}
-.modal {
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  border-left: solid 2px #edf2f7;
-  transition: all 0.3s ease-in-out;
-  background-color: white;
-  z-index: 510;
-}
-@media screen and (min-width: 1200px) {
-  .modal {
-    width: 80%;
-  }
 }
 </style>
 

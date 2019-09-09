@@ -44,38 +44,6 @@ table tbody td {
   animation: dots 1s steps(5, end) infinite;
 }
 
-/* SCROLLBAR */
-/* 
-div::-webkit-scrollbar {
-  height: 6px;
-  width: 8px;
-}
-
-div::-webkit-scrollbar-thumb {
-  background-color: #bbb;
-} */
-
-/* MODAL */
-.modal-container {
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  border-left: solid 2px #edf2f7;
-  transition: all 0.3s ease-in-out;
-  background-color: white;
-  z-index: 510;
-  scroll-behavior: smooth;
-}
-
-@media screen and (min-width: 1200px) {
-  .modal-container {
-    width: 80%;
-  }
-}
-
 @keyframes dots {
 
   0%,
@@ -99,6 +67,38 @@ div::-webkit-scrollbar-thumb {
   }
 }
 
+/* SCROLLBAR */
+/* 
+div::-webkit-scrollbar {
+  height: 6px;
+  width: 8px;
+}
+
+div::-webkit-scrollbar-thumb {
+  background-color: #bbb;
+} */
+
+/* MODAL */
+/* .modal-container {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  border-left: solid 2px #edf2f7;
+  transition: all 0.3s ease-in-out;
+  background-color: white;
+  z-index: 510;
+  scroll-behavior: smooth;
+}
+
+@media screen and (min-width: 1200px) {
+  .modal-container {
+    width: 80%;
+  }
+} */
+
 /* modal */
 .slide-enter-active,
 .slide-leave-active {
@@ -120,6 +120,17 @@ div::-webkit-scrollbar-thumb {
 .drop-enter,
 .drop-leave-active {
   transform: translateY(-100px);
+  opacity: 0;
+}
+
+/* toggle */
+.drop-down-enter-active,
+.drop-down-leave-active {
+  transition: all .5s;
+}
+.drop-down-enter,
+.drop-down-leave-active {
+  transform: translateY(-5px);
   opacity: 0;
 }
 
