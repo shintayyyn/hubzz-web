@@ -1,11 +1,8 @@
 <template>
-  <div
-    v-if="$route.params.slug !== 'new'"
-    class="panel-top p-4 w-full flex items-center border-b leading-none"
-  >
+  <div class="panel-top p-4 w-full flex items-center border-b leading-none">
     <div class="pr-4 md:hidden">
       <button class="focus:outline-none" @click="goBack()">
-        <svgicon name="left-arrow" height="32" width="32" />
+        <svgicon name="left-arrow" height="20" width="20" />
       </button>
     </div>
     <div class="flex flex-col justify-center">
@@ -14,13 +11,17 @@
       </div>
       <div class="text-xs md:text-sm text-gray-600">
         <span class>{{ details.profession }}</span>
-        <span class="inline-block px-2 text-lg">|</span>
+        <span v-if="$route.name === 'messages-slug'" class="inline-block px-2 text-lg">|</span>
         <span
+          v-if="$route.name === 'messages-slug'"
           :class="details.status ? 'bg-green-400' : 'bg-gray-300'"
           class="inline-block rounded-full"
           style="padding: 5px"
         ></span>
-        {{ details.status ? 'Online' : 'Offline' }}
+        <p
+          v-if="$route.name === 'messages-slug'"
+          class="inline-block"
+        >{{ details.status ? 'Online' : 'Offline' }}</p>
       </div>
     </div>
   </div>
@@ -40,65 +41,65 @@ export default {
   },
   computed: {
     usersOnline() {
-      return this.$store.state.chat.users_online;
+      return this.$store.state.chat.usersOnline;
+    },
+    activeConversationId() {
+      return this.$store.state.chat.activeConversationId;
+    },
+    conversations() {
+      return this.$store.state.chat.conversations;
+    },
+    newUserMessage() {
+      return this.$store.state.chat.newMessageUser;
     }
   },
   created() {
     this.getDetails();
-    let isOnline = this.usersOnline.map(user => user).includes(this.details.id);
+    let isOnline = this.usersOnline.includes(this.details.id);
     this.details.status = isOnline;
   },
   watch: {
+    usersOnline(value) {
+      let isOnline = value.includes(this.details.id);
+      this.details.status = isOnline;
+    },
     $route(to, from) {
       this.getDetails();
-    },
-    usersOnline(value) {
-      let isOnline = value.map(user => user).includes(this.details.id);
-      this.details.status = isOnline;
     }
   },
   methods: {
     getDetails() {
-      let route = this.$router.app._route.params.slug;
-      this.$axios.$get(`/api/v1/conversations/${route}?limit=1`).then(res => {
-        let domain = this.$auth.user.domain;
-        if (res.data.messages.length > 0) {
-          if (res.data.messages[0].sender.domain !== domain) {
-            this.details.name =
-              res.data.messages[0].sender_first_name +
-              " " +
-              res.data.messages[0].sender_last_name;
-            this.details.id = res.data.messages[0].sender_id;
-            res.data.messages[0].sender.domain === "Locum"
-              ? (this.details.profession =
-                  res.data.messages[0].sender.locum_detail.profession.name +
-                  " " +
-                  res.data.messages[0].sender.domain)
-              : (this.details.profession =
-                  res.data.messages[0].sender.practice_detail.practice_role);
-          } else {
-            this.details.name =
-              res.data.messages[0].receiver_first_name +
-              " " +
-              res.data.messages[0].receiver_last_name;
-            res.data.messages[0].receiver.domain === "Locum"
-              ? (this.details.profession =
-                  res.data.messages[0].receiver.locum_detail.profession.name +
-                  " " +
-                  res.data.messages[0].receiver.domain)
-              : (this.details.profession =
-                  res.data.messages[0].receiver.practice_detail.practice_role);
-            this.details.id = res.data.messages[0].receiver_id;
-          }
-        }
-        let isOnline = this.usersOnline
-          .map(user => user.id)
-          .includes(this.details.id);
+      if (this.$route.name === "messages-new") {
+        this.details.name = `${this.newUserMessage.personal_detail.first_name} ${this.newUserMessage.personal_detail.last_name}`;
+        this.details.profession = this.newUserMessage.locum_detail
+          ? this.newUserMessage.locum_detail.profession.name
+          : this.newUserMessage.practice_detail.practice_role;
+      } else if (
+        this.$route.name === "messages-slug" &&
+        this.$route.params.slug
+      ) {
+        let conversation_details = this.conversations.find(
+          details => details.id.toString() === this.$route.params.slug
+        );
+        let user_details = conversation_details.conversation_member_users.find(
+          detail => detail.user.id != this.$auth.user.id
+        );
+        this.details.id = user_details.user.id;
+        let isOnline = this.usersOnline.includes(this.details.id);
         this.details.status = isOnline;
-      });
+        this.details.name =
+          conversation_details.type === "Private"
+            ? `${user_details.user.personal_detail.first_name} ${user_details.user.personal_detail.last_name}`
+            : conversation_details.title;
+        this.details.profession = user_details.user.locum_detail
+          ? user_details.user.locum_detail.profession.name
+          : user_details.user.practice_detail.practice_role;
+      }
     },
     goBack() {
-      this.$router.push(`/messages`);
+      if (this.$route.path != "/messages") {
+        this.$router.push(`/messages`);
+      }
     }
   }
 };

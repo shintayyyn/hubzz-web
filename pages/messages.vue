@@ -15,9 +15,6 @@ export default {
     const response = await chatApi.fetchConversations(app.$axios, 0, 10);
     const conversations = response.data.conversations;
     store.commit("chat/SET_CONVERSATIONS", conversations);
-    // if (route.name === 'messages-slug') {
-    //   redirect(`/messages/${params.slug}`)
-    // }
   },
   computed: {
     socketId() {
@@ -25,18 +22,23 @@ export default {
     },
     conversations() {
       return this.$store.getters["chat/getConversations"];
+    },
+    activeConversationId() {
+      return this.$store.state.chat.activeConversationId;
     }
   },
   watch: {
     $route(to, from) {
-      if (to.params.slug) {
-        this.$store.dispatch("chat/setActiveConversation", to.params.slug);
-      }
-      if (to.path === "/messages") {
-        if (window.innerWidth > 768) {
-          this.goToFirstConversation();
+      if (to.name === "messages-slug") {
+        if (to.path === "/messages") {
+          if (window.innerWidth > 768) {
+            this.goToFirstConversation();
+          } else {
+            this.$store.commit("IS_MOBILE", true);
+            this.$store.commit("chat/DELETE_ACTIVE_CONVERSATION");
+          }
         } else {
-          this.$store.commit("IS_MOBILE", true);
+          this.$store.dispatch("chat/setActiveConversation", to.params.slug);
         }
       }
     },
@@ -55,14 +57,11 @@ export default {
   },
   created() {
     this.$store.dispatch("chat/setActiveConversation", this.$route.params.slug);
-    this.$axios.$get(`/api/v1/messages/user-presence`).then(res => {
-      this.$store.commit("chat/SET_USERS_ONLINE", res.data.users);
-    });
+    // this.$axios.$get(`/api/v1/messages/user-presence`).then(res => {
+    //   this.$store.commit("chat/SET_USERS_ONLINE", res.data.users);
+    // });
   },
   mounted() {
-    if (!this.$route.params.slug) {
-      this.$store.commit("IS_MOBILE", true);
-    }
     if (this.socketId) {
       this.$store.dispatch("joinRoom", {
         socket_id: this.socketId,
@@ -72,10 +71,15 @@ export default {
     if (!this.$auth.loggedIn) {
       return this.$router.push("/");
     }
-    if (this.conversations.length > 0 && !this.$route.params.slug) {
-      if (window.innerWidth > 768) {
-        this.goToFirstConversation();
+    if (window.innerWidth > 768) {
+      if (this.conversations.length === 0) {
+        this.$router.push(`/messages/new`);
       }
+    } else {
+      if (this.$route.path === "/messages") {
+        this.$store.commit("IS_MOBILE", true);
+      }
+      this.$store.commit("chat/DELETE_ACTIVE_CONVERSATION");
     }
   },
   methods: {
@@ -83,7 +87,7 @@ export default {
       let conversation = this.conversations.find(
         (conversation, index) => index === 0
       );
-      this.$router.push(`/messages/${conversation.conversation_id}`);
+      this.$router.push(`/messages/${conversation.id}`);
     }
   }
 };

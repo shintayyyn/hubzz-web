@@ -29,7 +29,8 @@
       </div>
     </div>
     <div class="mt-10">
-      <div class="font-bold text-xs sm:text-base">Documents you need to be approved by hubzz HQ</div>
+      <div class="font-bold text-xs sm:text-base">Documents you need to be approved by Hubzz HQ</div>
+      <div class="text-sm font-hairline italic">(Note: Only file types .pdf, .jpeg, .msword, .tiff are acccepted)</div>
     </div>
     <div class="mt-4 overflow-x-auto px-2 md:px-0">
       <table>
@@ -678,7 +679,6 @@ export default {
       // post request to API / send file
       this.loading = true;
       this.activeLoading.push(id);
-      console.log(id);
       this.$axios
         .$post(`/api/v1/locum/locum-detail-mandatory-trainings`, formData)
         .then(res => {
@@ -750,6 +750,7 @@ export default {
           );
         })
         .catch(err => {
+          console.log(file);
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "danger",

@@ -24,6 +24,7 @@ export function fetchPracticeJobsReminder(axios, payload) {
 
 export function fetchLocumJobs(axios, payload) {
     let params = {}
+    payload.practice_id ? params.practice_id = payload.practice_id : null
     payload.offset ? params.offset = payload.offset : null
     payload.limit ? params.limit = payload.limit : null
     payload.status ? params.locum_status = payload.status : null

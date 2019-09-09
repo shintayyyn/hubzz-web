@@ -1,20 +1,18 @@
 <template>
   <div class="app-notification">
     <div
-      class="relative rounded-b-lg py-2 px-12 flex flex-row flex-no-wrap justify-center"
+      class="rounded-b-lg py-2 px-12 inline-block text-center"
       :class="notificationStatus"
       v-if="$store.state.notification.enabled"
     >
-      <div class="mr-2">
+      <span class="mr-2 inline-block align-middle">
         <svgicon :name="notificationIcon" height="20" width="20" :color="iconSvgColor" />
-      </div>
-      <div class="flex flex-col">
-        <div
-          class="font-bold text-sm leading-normal"
-          v-for="(message, index) in $store.state.notification.text"
-          :key="index"
-        >{{message}}</div>
-      </div>
+      </span>
+      <div
+        class="font-bold text-sm leading-normal inline-block"
+        v-for="(message, index) in $store.state.notification.text"
+        :key="index"
+      >{{message}}</div>
       <!-- <div
         class="absolute right-0 top-0 px-2 py-1 text-lg font-bold cursor-pointer"
         @click="close"
@@ -122,8 +120,11 @@ export default {
 .app-notification {
   position: fixed;
   top: 0;
-  left: 40%;
+  left: 0;
+  width: 100%;
   z-index: 999;
+  display: flex;
+  justify-content: center;
   /* margin-left: -40px; */
 }
 @media screen and (min-width: 1200px) {

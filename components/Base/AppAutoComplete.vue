@@ -34,23 +34,22 @@
             @click="add"
           >
             <template v-if="keyword === 'practices'">
-              <span class="w-1/6 flex justify-center">
-                <!-- <img
-                  class="w-10 h-10 rounded-full"
-                  src="https://www.svgrepo.com/show/106812/doctor.svg"
-                  width="25"
-                  alt="avatar"
-                />-->
-                <!-- <AppAvatar
+              <span v-if="$auth.user.domain === 'Practice'" class="flex justify-center">
+                <AppAvatar
                   class="w-10 h-10 rounded-full border"
                   :width="'40px'"
                   :height="'40px'"
-                  :src="null"
-                />-->
+                  :src="item.avatar ? item.avatar.file.url : ''"
+                />
               </span>
-              <div class="w-full flex flex-col justify-center mx-2">
-                <span class="font-bold text-base">{{ item.first_name }} {{ item.last_name }}</span>
-                <span>{{ item.surgery }}</span>
+              <div class="w-full flex flex-col justify-center mx-2 leading-none">
+                <p
+                  class="font-bold text-base"
+                >{{ item.personal_detail.first_name }} {{ item.personal_detail.last_name }}</p>
+                <p
+                  v-if="item.practice_detail"
+                  class="text-gray-600"
+                >{{ item.practice_detail.practice_role }}</p>
               </div>
             </template>
             <template v-else>
@@ -87,6 +86,11 @@ export default {
     error: Object,
     inStyle: String
   },
+  computed: {
+    conversations() {
+      return this.$store.getters["chat/getConversations"];
+    }
+  },
   data() {
     return {
       search: "",
@@ -110,23 +114,40 @@ export default {
   methods: {
     add() {
       let selectedSurgery = this.results[this.activeIndex];
-      this.results = [];
+      // this.results = [];
       this.showResults = false;
       if (this.keyword === "practices") {
-        let fullName =
-          selectedSurgery.first_name + " " + selectedSurgery.last_name;
-        this.$emit("input", fullName);
-        this.$emit("selectUserId", selectedSurgery.id);
+        // let fullName =
+        //   selectedSurgery.personal_detail.first_name +
+        //   " " +
+        //   selectedSurgery.personal_detail.last_name;
+        // this.$emit("input", fullName);
+        // this.$emit("selectUserId", selectedSurgery.id);
         this.$axios
-          .$get(`/api/v1/conversations?search=${fullName}`)
+          .$get(`/api/v1/conversations?user_id=${selectedSurgery.id}`)
           .then(res => {
-            if (res.data.conversations.length > 0) {
-              this.search = "";
-              let id = res.data.conversations[0].conversation_id;
-              this.$router.push(`/messages/${id}`);
+            if (res.data.user) {
+              this.$emit("newConversation", res.data.user);
+            } else if (res.data.conversation) {
+              this.$router.push(
+                `/messages/${res.data.conversation.conversation_id}`
+              );
             } else {
-              this.search = fullName;
+              console.log("asd");
             }
+            // if res.data.user, emit newConversation
+            // else if res.data.conversation, get conversation Id
+            // this.getConversation(res.dat.conversation.conversation_id)
+
+            // console.log("a", res);
+            // if (res.data.conversations) {
+            //   this.search = "";
+            //   this.$router.push(
+            //     `/messages/${res.data.conversation.conversation_id}`
+            //   );
+            // } else {
+            //   this.search = fullName;
+            // }
           });
       } else {
         this.$emit("input", selectedSurgery.name);
