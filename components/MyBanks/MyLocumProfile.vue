@@ -14,13 +14,11 @@
               </div>
               <AppAvatar
                 class="order-1 md:order-2 mb-4 md:mb-0"
-                :height="'150px'"
-                :width="'150px'"
+                :height="'80px'"
+                :width="'80px'"
                 :src="user.avatar && user.avatar.file && user.avatar.file.url ? user.avatar.file.url : ''"
               />
             </div>
-            <div class="font-bold text-sm sm:text-md">Candidate</div>
-            <div class="text-xs sm:text-sm mb-8">{{user.locum_detail.profession.name}}</div>
             <div class="font-bold text-sm sm:text-md">Headline</div>
             <div class="text-xs sm:text-sm mb-8">{{user.locum_detail.headline}}</div>
             <div class="font-bold text-sm sm:text-md">Biography</div>

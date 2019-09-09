@@ -1,65 +1,22 @@
 <template>
   <section class="__jobs-section">
-    <AppLoading :loading="loading" :message="'Loading'" />
+    <AppLoading :loading="loadingJobs" :message="'Loading'" />
     <div class="overflow-x-auto">
       <div
         class="mt-10 w-full text-center"
         style="font-family: Nunito"
-        v-if="!loading && jobs.length === 0"
+        v-if="!loadingJobs && getPracticeCancelledJobs.length === 0"
       >There are no available jobs nearby and suited for you at this time</div>
-      <div v-if="jobs.length > 0" class="overflow-x-auto overflow-y-hidden">
-        <table>
-          <thead>
-            <tr class="text-xs text-left">
-              <th @click="sortBy('job_number')">
-                Job number
-                <svgicon class="inline align-baseline" name="sort" height="12" width="12" />
-              </th>
-              <th>Practice</th>
-              <th>Title</th>
-              <th>Shift</th>
-              <th @click="sortBy('rate')">
-                Rate
-                <svgicon class="inline align-baseline" name="sort" height="12" width="12" />
-              </th>
-              <th>Per</th>
-              <th @click="sortBy('date_start')">
-                From
-                <svgicon class="inline align-baseline" name="sort" height="12" width="12" />
-              </th>
-              <th @click="sortBy('date_end')">
-                To
-                <svgicon class="inline align-baseline" name="sort" height="12" width="12" />
-              </th>
-              <th>Cancelled At</th>
-            </tr>
-          </thead>
-          <tbody>
-            <template v-for="(item, index) in jobs">
-              <tr
-                :key="item.id"
-                class="__job-card shadow-md cursor-pointer text-xs text-left"
-                @click="show(item.id)"
-              >
-                <td>{{item.job_number}}</td>
-                <td>{{item.platform_job.practice.surgery.name}}</td>
-                <td>{{item.title}}</td>
-                <td>{{item.shift.name}}</td>
-                <td>{{item.rate}}</td>
-                <td>{{item.locum_detail_rate_type.name}}</td>
-                <td>{{item.date_start}}</td>
-                <td>{{item.date_end}}</td>
-                <td>{{item.platform_job.cancelled_at | localDate}}</td>
-              </tr>
-              <tr :key="`${item.id}-${index}`">
-                <td></td>
-              </tr>
-            </template>
-          </tbody>
-        </table>
+      <div v-if="getPracticeCancelledJobs.length > 0" class="overflow-x-auto overflow-y-hidden">
+        <JobTable
+          :columns="columns"
+          :jobs="getPracticeCancelledJobs"
+          @sortBy="sortBy"
+          @show="show"
+        />
       </div>
     </div>
-    <div class="bottom-0 w-full" v-if="jobs.length > 0 && totalPages > 1">
+    <div class="bottom-0 w-full" v-if="getPracticeCancelledJobs.length > 0 && totalPages > 1">
       <AppPagination
         :total="total"
         :totalPages="totalPages"
@@ -75,44 +32,92 @@
   </section>
 </template>
 <script>
-import AppPagination from '@/components/Base/AppPagination'
-import AppLoading from '@/components/Base/AppLoading'
-import * as chatApi from '@/api/chat'
+import JobTable from "@/components/Sessions/JobTable";
+import AppPagination from "@/components/Base/AppPagination";
+import AppLoading from "@/components/Base/AppLoading";
+import * as chatApi from "@/api/chat";
 export default {
   transition: {
-    name: 'fade',
-    mode: 'out-in'
+    name: "fade",
+    mode: "out-in"
   },
   components: {
+    JobTable,
     AppPagination,
-    AppLoading,
+    AppLoading
   },
   data() {
     return {
       user: null,
-      total: 0,
-      jobs: [],
-      //
+      // table
+      columns: [
+        {
+          label: "Job number",
+          dataIndex: "job_number",
+          sortable: true
+        },
+        {
+          label: "Practice",
+          dataIndex: "practice"
+        },
+        {
+          label: "Title",
+          dataIndex: "title"
+        },
+        {
+          label: "Shift",
+          dataIndex: "shift"
+        },
+        {
+          label: "Rate",
+          dataIndex: "rate",
+          sortable: true
+        },
+        {
+          label: "per",
+          dataIndex: "per"
+        },
+        {
+          label: "From",
+          dataIndex: "date_start",
+          sortable: true
+        },
+        {
+          label: "To",
+          dataIndex: "date_end",
+          sortable: true
+        },
+        {
+          label: "Cancelled",
+          dataIndex: "cancelled_at"
+        }
+      ],
+      // params
       current_page: 1,
-      loading: false,
       params: {
-        order_by: 'date_created:desc',
+        order_by: "date_created:desc"
       },
       // sort
-      sortType: '',
+      sortType: "",
       job_number: true,
       rate: true,
       date_start: true,
       date_end: true,
-      date_created: false,
-    }
+      date_created: false
+    };
   },
   computed: {
+    getPracticeCancelledJobs() {
+      return this.$store.getters["jobs/getPracticeCancelledJobs"];
+    },
     offset() {
       return this.perPage * (this.current_page - 1);
     },
     perPage() {
       return 5;
+    },
+    total() {
+      return this.$store.state.jobs.practice_cancelled_jobs_count;
     },
     totalPages() {
       return Math.ceil(this.total / this.perPage);
@@ -121,73 +126,88 @@ export default {
       return this.$store.state.jobs.loading_jobs;
     }
   },
+  created() {
+    this.getJobsCount();
+    this.getJobs(this.current_page, this.params);
+    setTimeout(() => {
+      this.$store.commit("jobs/CLEAR_PRACTICE_CANCELLED_BADGE");
+    }, 1000);
+  },
   async asyncData({ app, params, error }) {
     try {
-      // user
-      const responseUser = await app.$axios.$get(`/api/v1/practice/locums/${params.userId}`)
-      const user = responseUser.data && responseUser.data.user ? responseUser.data.user : null
-      // count
-      const responseCount = await app.$axios.$get(`/api/v1/practice/jobs/count?locum_detail_id=${user.locum_detail.id}&locum_status=Cancelled`)
-      const total = responseCount.data && responseCount.data.count ? responseCount.data.count : 0
-      // jobs
-      const responseJobs = await app.$axios.$get(`/api/v1/practice/jobs?locum_detail_id=${user.locum_detail.id}&locum_status=Cancelled&offset=0&limit=5`)
-      const jobs = responseJobs.data && responseJobs.data.jobs ? responseJobs.data.jobs : []
+      const responseUser = await app.$axios.$get(
+        `/api/v1/practice/locums/${params.userId}`
+      );
+      const user =
+        responseUser.data && responseUser.data.user
+          ? responseUser.data.user
+          : null;
       return {
-        user,
-        total,
-        jobs
-      }
+        user
+      };
     } catch (err) {
-      throw err
+      throw err;
     }
   },
   methods: {
+    getJobsCount() {
+      this.$store.dispatch("jobs/fetchPracticeJobs", {
+        locum_detail_id: this.user.locum_detail.id,
+        status: "Cancelled",
+        countOnly: true
+      });
+    },
     getJobs(page, params) {
-      this.loading = true
-      this.current_page = page
-      const jobParams = { ...params }
-      this.$axios
-        .$get(`/api/v1/practice/jobs?locum_detail_id=${this.user.locum_detail.id}&locum_status=Cancelled&offset=${this.offset}&limit=${this.perPage}`, { params: jobParams })
-        .then(res => {
-          this.jobs = res.data.jobs
-          this.loading = false
-        })
+      this.$store.commit("jobs/TOGGLE_LOADING", true);
+      this.current_page = page;
+      let defaultParams = {
+        locum_detail_id: this.user.locum_detail.id,
+        offset: this.offset,
+        limit: this.perPage,
+        status: "Cancelled"
+      };
+      let jobParams = { ...params, ...defaultParams };
+      this.$store.dispatch("jobs/fetchPracticeJobs", jobParams).finally(() => {
+        this.$store.commit("jobs/TOGGLE_LOADING", false);
+      });
     },
     sortBy(sortedBy) {
       switch (sortedBy) {
-        case 'rate':
-          this.rate = !this.rate
-          this.sortType = this.rate
-        case 'job_number':
-          this.job_number = !this.job_number
-          this.sortType = this.job_number
+        case "rate":
+          this.rate = !this.rate;
+          this.sortType = this.rate;
+        case "job_number":
+          this.job_number = !this.job_number;
+          this.sortType = this.job_number;
           break;
-        case 'date_start':
-          this.date_start = !this.date_start
-          this.sortType = this.date_start
+        case "date_start":
+          this.date_start = !this.date_start;
+          this.sortType = this.date_start;
           break;
-        case 'date_end':
-          this.date_end = !this.date_end
-          this.sortType = this.date_end
+        case "date_end":
+          this.date_end = !this.date_end;
+          this.sortType = this.date_end;
           break;
-        case 'date_created':
-          this.date_created = !this.date_created
-          this.sortType = this.date_created
+        case "date_created":
+          this.date_created = !this.date_created;
+          this.sortType = this.date_created;
           break;
       }
-      this.params.order_by = `${sortedBy}:${this.sortType ? 'asc' : 'desc'}`
-      this.current_page = 1
-      this.getJobs(this.current_page, this.params)
+      this.params.order_by = `${sortedBy}:${this.sortType ? "asc" : "desc"}`;
+      this.current_page = 1;
+      this.getJobs(this.current_page, this.params);
     },
     pagechanged(e) {
-      this.current_page = e
-      this.getJobs(this.current_page, this.params)
+      this.current_page = e;
+      this.getJobs(this.current_page, this.params);
     },
     show(id) {
-      this.$router.push(`/my-banks/favourites/${this.$route.params.userId}/related-jobs/cancelled/${id}`)
-    },
+      this.$router.push(
+        `/my-banks/favourites/${this.$route.params.userId}/related-jobs/cancelled/${id}`
+      );
+    }
   }
-}
+};
 </script>
 <style scoped>
 .shield {
