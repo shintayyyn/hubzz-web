@@ -58,42 +58,43 @@ export default {
   },
   methods: {
     close() {
-      if (this.$route.fullPath === "/dashboard") {
-        this.$emit("close");
-        return;
-      } else {
-        let status = this.job.locum_status;
-        switch (status) {
-          case "Current":
-            this.$router.push(`/jobs/allocated`);
-            break;
-          case "Available":
-            this.$router.push(`/jobs/available`);
-            break;
-          case "Matched":
-            this.$router.push(`/jobs/matched`);
-            break;
-          case "Applied":
-            this.$router.push(`/jobs/applied`);
-            break;
-          case "Unsuccessful":
-            this.$router.push(`/jobs/unsuccessful`);
-            break;
-          case "Declined":
-            this.$router.push(`/jobs/declined`);
-            break;
-          case "Cancelled":
-            this.$router.push(`/jobs/cancelled`);
-            break;
-          case "Completed":
-            this.$router.push(`/jobs/completed`);
-            break;
-        }
-        // const query = {
-        //   ...this.$route.query
-        // }
-        // this.$router.push({ path: `/jobs`, query })
-      }
+      this.$emit("close");
+      // if (this.$route.fullPath === "/dashboard") {
+      // this.$emit("close");
+      //   return;
+      // } else {
+      //   let status = this.job.locum_status;
+      //   switch (status) {
+      //     case "Current":
+      //       this.$router.push(`/jobs/allocated`);
+      //       break;
+      //     case "Available":
+      //       this.$router.push(`/jobs/available`);
+      //       break;
+      //     case "Matched":
+      //       this.$router.push(`/jobs/matched`);
+      //       break;
+      //     case "Applied":
+      //       this.$router.push(`/jobs/applied`);
+      //       break;
+      //     case "Unsuccessful":
+      //       this.$router.push(`/jobs/unsuccessful`);
+      //       break;
+      //     case "Declined":
+      //       this.$router.push(`/jobs/declined`);
+      //       break;
+      //     case "Cancelled":
+      //       this.$router.push(`/jobs/cancelled`);
+      //       break;
+      //     case "Completed":
+      //       this.$router.push(`/jobs/completed`);
+      //       break;
+      //   }
+      //   // const query = {
+      //   //   ...this.$route.query
+      //   // }
+      //   // this.$router.push({ path: `/jobs`, query })
+      // }
     },
     status(status) {
       if (status === "Available") {

@@ -208,78 +208,14 @@
 
 <script>
 import AppDate from "@/components/Base/AppDate";
-
 export default {
   transition: {
     name: "slide",
     mode: "out-in"
   },
-
-  async asyncData({ app, error }) {
-    try {
-      if (process.client) {
-        document.body.style.cursor = "wait";
-      }
-
-      const type = "Platform";
-
-      const params = {
-        invoiceable: true,
-        type,
-        limit: 1000000,
-        offset: 0
-      };
-
-      const response = await app.$axios.get("/api/v1/locum/surgeries", {
-        params
-      });
-
-      const surgeries =
-        response.data && response.data.data && response.data.data.surgeries
-          ? response.data.data.surgeries
-          : [];
-
-      console.log("surgeries", surgeries);
-
-      if (process.client) {
-        document.body.style.cursor = "auto";
-      }
-
-      return {
-        type,
-        surgeries
-      };
-    } catch (err) {
-      console.log("locum-billing create err", err.response || err);
-      console.log("locum-billing create error", {
-        statusCode: err.status || 500,
-        message: err.message || "Something went wrong!"
-      });
-      error({
-        statusCode: err.status || 500,
-        message: err.message || "Something went wrong!"
-      });
-    }
-  },
-
   components: {
     AppDate
   },
-
-  computed: {
-    amount() {
-      if (this.rowData && this.rowData.length > 0) {
-        let amount = 0;
-        this.rowData.forEach(item => {
-          if (item.total) {
-            amount += parseInt(item.total);
-          }
-        });
-        return amount;
-      }
-    }
-  },
-
   data() {
     return {
       type: null,
@@ -307,9 +243,22 @@ export default {
       formError: []
     };
   },
-
+  computed: {
+    amount() {
+      if (this.rowData && this.rowData.length > 0) {
+        let amount = 0;
+        this.rowData.forEach(item => {
+          if (item.total) {
+            amount += parseInt(item.total);
+          }
+        });
+        return amount;
+      }
+    }
+  },
   watch: {
-    type() {
+    type(value) {
+      console.log("type", value);
       this.surgeries = [];
       this.selectedSurgery = null;
 
@@ -331,8 +280,6 @@ export default {
                 ? response.data.data.surgeries
                 : [];
 
-            console.log("surgeries", surgeries);
-
             this.surgeries = surgeries;
           })
           .catch(err => {
@@ -340,8 +287,8 @@ export default {
           });
       }
     },
-
-    selectedSurgery() {
+    selectedSurgery(value) {
+      console.log(value);
       this.jobParts = [];
 
       if (this.selectedSurgery) {
@@ -349,10 +296,12 @@ export default {
           locum_status: "Completed",
           type: this.type,
           surgery_id: this.selectedSurgery.id,
-          limit: 1000000,
+          limit: 5,
           offset: 0,
           order_by: "created_at:desc"
         };
+
+        console.log(params);
 
         this.$axios
           .get("/api/v1/locum/job-parts", { params })
@@ -413,8 +362,54 @@ export default {
       this.invoice = null;
     }
   },
+  async asyncData({ app, error }) {
+    try {
+      if (process.client) {
+        document.body.style.cursor = "wait";
+      }
+
+      const type = "Platform";
+
+      const params = {
+        invoiceable: true,
+        type,
+        limit: 1000000,
+        offset: 0
+      };
+
+      const response = await app.$axios.get("/api/v1/locum/surgeries", {
+        params
+      });
+
+      const surgeries =
+        response.data && response.data.data && response.data.data.surgeries
+          ? response.data.data.surgeries
+          : [];
+
+      console.log("surgeries", surgeries);
+      if (process.client) {
+        document.body.style.cursor = "auto";
+      }
+
+      return {
+        type,
+        surgeries
+      };
+    } catch (err) {
+      console.log("locum-billing create err", err.response || err);
+      console.log("locum-billing create error", {
+        statusCode: err.status || 500,
+        message: err.message || "Something went wrong!"
+      });
+      error({
+        statusCode: err.status || 500,
+        message: err.message || "Something went wrong!"
+      });
+    }
+  },
 
   created() {
+    console.log("start");
     this.$axios.$get(`/api/v1/locum/private-practices`).then(res => {
       this.practices = [];
       res.data.private_practices.forEach(practice => {
@@ -425,15 +420,12 @@ export default {
       });
     });
   },
-
   mounted() {
     document.body.style.overflow = "hidden";
   },
-
   destroyed() {
     document.body.style.overflow = "auto";
   },
-
   methods: {
     save() {
       let invoiceForm = {};

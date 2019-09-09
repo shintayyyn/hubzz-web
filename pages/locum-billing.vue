@@ -37,7 +37,6 @@
         <span class="hover:underline px-2">Add invoice</span>
         <div
           class="rounded-full h-8 w-8 text-2xl sm:text-3xl md:text-4xl flex items-center focus:outline-none justify-center bg-yellow-500 font-semibold cursor-pointer shadow-md hover:text-white hover:no-underline"
-          @click="add"
         >+</div>
       </nuxt-link>
       <!-- <div class="bottom-0 right-0">
@@ -67,9 +66,7 @@ export default {
     }
   },
   methods: {
-    add(data) {
-      console.log(data);
-    }
+    add(data) {}
   }
 };
 </script>

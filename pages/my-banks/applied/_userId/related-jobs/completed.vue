@@ -1,22 +1,18 @@
 <template>
   <section class="__jobs-section">
     <AppLoading :loading="loadingJobs" :message="'Loading'" />
-    <div class="overflow-x-auto">
-      <div
-        class="mt-10 w-full text-center"
-        style="font-family: Nunito"
-        v-if="!loadingJobs && getPracticeCompletedJobs.length === 0"
-      >There are no available jobs nearby and suited for you at this time</div>
-      <div v-if="getPracticeCompletedJobs.length > 0" class="overflow-x-auto overflow-y-hidden">
-        <JobTable
-          :columns="columns"
-          :jobs="getPracticeCompletedJobs"
-          @sortBy="sortBy"
-          @show="show"
-        />
-      </div>
+    <div
+      class="mt-10 w-full text-center"
+      style="font-family: Nunito"
+      v-if="!loadingJobs && getPracticeCompletedJobs.length === 0"
+    >There are no available jobs nearby and suited for you at this time</div>
+    <div v-if="getPracticeCompletedJobs.length > 0" class="overflow-x-auto overflow-y-hidden">
+      <JobTable :columns="columns" :jobs="getPracticeCompletedJobs" @sortBy="sortBy" @show="show" />
     </div>
-    <div class="bottom-0 w-full" v-if="getPracticeCompletedJobs.length > 0 && totalPages > 1">
+    <div
+      class="absolute bottom-0 w-full"
+      v-if="getPracticeCompletedJobs.length > 0 && totalPages > 1"
+    >
       <AppPagination
         :total="total"
         :totalPages="totalPages"

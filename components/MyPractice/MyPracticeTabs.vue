@@ -8,7 +8,7 @@
     <nuxt-link
       :to="`/my-practice/${practiceType}/${$route.params.practiceId}/users`"
       class="mr-5 p-3 text-sm font-bold cursor-pointer"
-      :class="$route.name === `my-practice-${practiceType}-practiceId-users` ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+      :class="$route.name.includes(`my-practice-${practiceType}-practiceId-users`) ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
     >Users</nuxt-link>
     <nuxt-link
       :to="`/my-practice/${practiceType}/${$route.params.practiceId}/surgeries`"
