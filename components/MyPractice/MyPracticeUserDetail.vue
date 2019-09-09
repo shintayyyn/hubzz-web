@@ -73,3 +73,5 @@ export default {
   props: ["user"]
 };
 </script>
+<style scoped>
+</style>
