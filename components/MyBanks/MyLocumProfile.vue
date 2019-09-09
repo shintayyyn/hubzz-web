@@ -111,9 +111,9 @@
               v-for="item in user.locum_detail.referees"
               :key="item.id"
             >
-              <div class="text-xs sm:text-sm">{{item ? item.name:null}}</div>
-              <div class="text-xs sm:text-sm">{{item ? item.phone_number:null}}</div>
-              <div class="text-xs sm:text-sm">{{item ? item.email:null}}</div>
+              <div class="text-xs sm:text-sm">Contact Name: {{item ? item.name:null}}</div>
+              <div class="text-xs sm:text-sm">Telephone No.: {{item ? item.phone_number:null}}</div>
+              <div class="text-xs sm:text-sm">Email Address: {{item ? item.email:null}}</div>
             </div>
           </div>
           <div v-else>

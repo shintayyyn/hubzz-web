@@ -1,5 +1,5 @@
 <template>
-  <div class="messages-left-panel" :class="$store.state.mobile ? '' : 'hidden md:flex'">
+  <div class="messages-left-panel border-r" :class="$store.state.mobile ? '' : 'hidden md:flex'">
     <div class="flex flex-col h-full w-full">
       <AppInput
         v-model="search_text"
@@ -17,55 +17,60 @@
           <template v-if="showResult === false || $route.params.slug == '/messages'">
             <div
               class="relative flex w-full items-center px-2 py-4 cursor-pointer border-b"
-              :class="[parseInt($route.params.slug) === item.conversation_id ? 'bg-gray-300' : 'hover:bg-gray-200', unreadMessages.includes(item.conversation_id) ? 'font-bold' : '']"
+              :class="[parseInt($route.params.slug) === item.id ? 'bg-gray-300' : 'hover:bg-gray-200', unreadMessages.includes(item.id) ? 'font-bold' : '']"
               v-for="item in conversations"
-              :key="item.conversation_id"
-              @click="goTo(item.conversation_id ? item.conversation_id : item.conversation_id)"
+              :key="item.id"
+              @click="goTo(item.id ? item.id : item.id)"
             >
               <AppAvatar
                 v-if="$auth.user.domain === 'Practice'"
                 :height="'50px'"
                 :width="'50px'"
-                :src="item.sender_avatar ? item.sender_avatar : ''"
+                :src="userAvatar(item)"
               />
               <div class="w-5/6 flex items-center justify-between">
                 <div class="w-5/6 px-2">
                   <p
                     class="truncate"
-                    :class="parseInt($route.params.slug) === item.conversation_id ? 'font-bold' : ''"
+                    :class="parseInt($route.params.slug) === item.id ? 'font-bold' : ''"
                   >{{ userFullname(item) }}</p>
-                  <p class="text-sm truncate">{{ senderFullname(item) }}: {{ item.message }}</p>
+                  <p
+                    class="text-sm truncate"
+                  >{{ senderFullname(item) }}: {{ item.latest_conversation_message.message }}</p>
                 </div>
                 <span
                   class="w-10 text-right text-xs text-gray-600 leading-none absolute right-0 mx-2 h-full flex items-center"
-                >{{ $moment(item.created_at).fromNow() }}</span>
+                >{{ $moment(item.latest_conversation_message.created_at).fromNow() }}</span>
               </div>
             </div>
           </template>
           <template v-if="showResult && messages.length > 0">
             <div
               class="relative flex w-full items-center px-2 py-4 cursor-pointer border-b"
-              :class="parseInt($route.params.slug) === item.conversation_id ? 'bg-gray-300' : 'hover:bg-gray-200'"
+              :class="parseInt($route.params.slug) === item.id ? 'bg-gray-300' : 'hover:bg-gray-200'"
               v-for="item in messages"
-              :key="item.conversation_id"
-              @click="goTo(item.conversation_id ? item.conversation_id : item.conversation_id)"
+              :key="item.id"
+              @click="goTo(item.id ? item.id : item.id)"
             >
-              <!-- <AppAvatar
+              <AppAvatar
+                v-if="$auth.user.domain === 'Practice'"
                 :height="'50px'"
                 :width="'50px'"
-                :src="item.receiver_avatar ? item.receiver_avatar : ''"
-              />-->
+                :src="userAvatar(item)"
+              />
               <div class="w-5/6 flex items-center justify-between">
                 <div class="w-5/6 px-2">
                   <p
                     class="truncate"
-                    :class="parseInt($route.params.slug) === item.conversation_id ? 'font-bold' : ''"
+                    :class="parseInt($route.params.slug) === item.id ? 'font-bold' : ''"
                   >{{ userFullname(item) }}</p>
-                  <p class="text-sm truncate">{{ senderFullname(item) }}: {{ item.message }}</p>
+                  <p
+                    class="text-sm truncate"
+                  >{{ senderFullname(item) }}: {{ item.latest_conversation_message.message }}</p>
                 </div>
                 <span
-                  class="w-12 text-right text-xs text-gray-600 leading-none absolute right-0 mx-2"
-                >{{ $moment(item.created_at).fromNow() }}</span>
+                  class="w-10 text-right text-xs text-gray-600 leading-none absolute right-0 mx-2 h-full flex items-center"
+                >{{ $moment(item.latest_conversation_message.created_at).fromNow() }}</span>
               </div>
             </div>
           </template>
@@ -110,6 +115,9 @@ export default {
     conversations() {
       return this.$store.getters["chat/getConversations"];
     },
+    activeConversationId() {
+      return this.$store.state.chat.activeConversationId;
+    },
     unreadMessages() {
       return this.$store.state.chat.unreadMessages;
     }
@@ -122,21 +130,14 @@ export default {
         this.getResults(value);
       }
     },
-    conversations(newValue, oldValue) {
-      if (
-        this.$store.state.chat.activeConversationId !=
-        newValue[0].conversation_id.toString()
-      ) {
-        this.$store.commit(
-          "chat/ADD_UNREAD_MESSAGE",
-          newValue[0].conversation_id
-        );
+    conversations(newValue) {
+      let conversation = newValue.find((conversation, index) => index === 0);
+      if (this.activeConversationId != conversation.id.toString()) {
+        this.$store.commit("chat/ADD_UNREAD_MESSAGE", newValue[0].id);
       }
-      // let receiver_id = newValue[0].receiver_id;
-      // let sender_id = newValue[0].sender_id;
-      // if (this.$auth.user.id === receiver_id) {
-      //   return;
-      // }
+      if (this.$route.name === "messages-new") {
+        this.$router.push(`/messages/${conversation.id}`);
+      }
     }
   },
   methods: {
@@ -149,28 +150,39 @@ export default {
       if (this.unreadMessages.includes(id)) {
         this.$store.commit("chat/DELETE_UNREAD_MESSAGE", id);
       }
-      this.$router.push(`/messages/${id}`);
+      if (this.$route.params.slug != id) {
+        this.$router.push(`/messages/${id}`);
+      }
     },
     getResults(value) {
-      let search = this.search_text;
-      this.$axios.$get(`/api/v1/conversations/?search=${search}`).then(res => {
+      this.$axios.$get(`/api/v1/conversations?search=${value}`).then(res => {
         this.messages = res.data.conversations;
         this.showResult = true;
       });
     },
     senderFullname(item) {
-      return `${item.sender_first_name} ${item.sender_last_name}`;
+      return item.latest_conversation_message.user.id === this.$auth.user.id
+        ? "Me"
+        : `${item.latest_conversation_message.user.personal_detail.first_name} ${item.latest_conversation_message.user.personal_detail.last_name}`;
     },
     userFullname(item) {
-      return this.$auth.user.id === item.receiver_id
-        ? `${item.sender_first_name} ${item.sender_last_name}`
-        : `${item.receiver_first_name} ${item.receiver_last_name}`;
+      return this.$auth.user.id === item.conversation_member_users[0].user.id
+        ? `${item.conversation_member_users[1].user.personal_detail.first_name} ${item.conversation_member_users[1].user.personal_detail.last_name}`
+        : `${item.conversation_member_users[0].user.personal_detail.first_name} ${item.conversation_member_users[0].user.personal_detail.last_name}`;
+    },
+    userAvatar(item) {
+      let user_detail = item.conversation_member_users.find(
+        item => item.user.id != this.$auth.user.id
+      );
+      return user_detail.user.avatar ? user_detail.user.avatar.file.url : "";
     },
     createMessage() {
       if (window.innerWidth < 768) {
         this.$store.commit("IS_MOBILE", false);
       }
-      this.$router.push(`/messages/new`);
+      if (this.$route.name === "messages-slug") {
+        this.$router.push(`/messages/new`);
+      }
     },
     scrollHandler({ target: { scrollTop, offsetHeight, scrollHeight } }) {
       let scroll = Math.round(offsetHeight + scrollTop);

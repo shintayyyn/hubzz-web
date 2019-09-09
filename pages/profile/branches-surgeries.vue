@@ -1,11 +1,11 @@
 <template>
   <section>
-    <div class="list-section flex flex-col mt-4 pb-32" v-if="surgeries.length > 0">
-      <div class="flex flex-row px-4 flex-no-wrap justify-between">
-        <div class="text-xs sm:text-sm w-full px-1">Surgery</div>
-        <div class="text-xs sm:text-sm w-full px-1">Practice code</div>
-        <div class="text-xs sm:text-sm w-full px-1">Pay for surgery</div>
-        <div class="text-xs sm:text-sm w-full px-1">Verify job creation</div>
+    <div class="list-section flex flex-col mt-4 pb-32 overflow-x-auto" v-if="surgeries.length > 0">
+      <!-- <div class="flex flex-row px-4 flex-no-wrap justify-between">
+        <div class="text-xs sm:text-sm w-full px-1 whitespace-no-wrap w-1/4">Surgery</div>
+        <div class="text-xs sm:text-sm w-full px-1 whitespace-no-wrap w-1/4">Practice code</div>
+        <div class="text-xs sm:text-sm w-full px-1 whitespace-no-wrap w-1/4">Pay for surgery</div>
+        <div class="text-xs sm:text-sm w-full px-1 whitespace-no-wrap w-1/4">Verify job creation</div>
       </div>
       <div
         class="__job-card rounded-lg shadow-lg p-4 mt-4"
@@ -13,19 +13,62 @@
         :key="item.id"
       >
         <div class="relative flex flex-row flex-no-wrap cursor-pointer">
-          <div @click="show(item.id)" class="text-xs sm:text-sm w-full px-1">{{item.surgery.name}}</div>
-          <div @click="show(item.id)" class="text-xs sm:text-sm w-full px-1">{{item.surgery.code}}</div>
           <div
             @click="show(item.id)"
-            class="text-xs sm:text-sm w-full px-1"
+            class="text-xs sm:text-sm w-full px-1 whitespace-no-wrap w-1/4"
+          >{{item.surgery.name}}</div>
+          <div
+            @click="show(item.id)"
+            class="text-xs sm:text-sm w-full px-1 whitespace-no-wrap w-1/4"
+          >{{item.surgery.code}}</div>
+          <div
+            @click="show(item.id)"
+            class="text-xs sm:text-sm w-full px-1 whitespace-no-wrap w-1/4"
           >{{item.pay_for_surgery ? 'Yes':'No'}}</div>
           <div
             @click="show(item.id)"
-            class="text-xs sm:text-sm w-full px-1"
+            class="text-xs sm:text-sm w-full px-1 whitespace-no-wrap w-1/4"
           >{{item.verify_job_creation ? 'Verified':'Not Verified'}}</div>
-          <div @click="removeModal(item.id)" class="absolute right-0 font-bold text-xs sm:text-sm">X</div>
+          <div @click="removeModal(item.id)" class="font-bold text-xs sm:text-sm">X</div>
         </div>
-      </div>
+      </div>-->
+
+      <table>
+        <thead>
+          <tr>
+            <th class="text-xs sm:text-sm text-left px-1">Surgery</th>
+            <th class="text-xs sm:text-sm text-left px-1">Practice code</th>
+            <th class="text-xs sm:text-sm text-left px-1">Pay for surgery</th>
+            <th class="text-xs sm:text-sm text-left px-1">Verify job creation</th>
+            <th class="w-10"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <template v-for="item in surgeries">
+            <tr class="__job-card rounded-lg shadow-lg p-4 mt-4 cursor-pointer" :key="item.id">
+              <td
+                @click="show(item.id)"
+                class="text-xs sm:text-sm px-1 rounded-l-lg"
+              >{{item.surgery.name}}</td>
+              <td @click="show(item.id)" class="text-xs sm:text-sm px-1">{{item.surgery.code}}</td>
+              <td
+                @click="show(item.id)"
+                class="text-xs sm:text-sm px-1"
+              >{{item.pay_for_surgery ? 'Yes':'No'}}</td>
+              <td
+                @click="show(item.id)"
+                class="text-xs sm:text-sm px-1"
+              >{{item.verify_job_creation ? 'Verified':'Not Verified'}}</td>
+              <td class="w-10 text-xs sm:text-sm px-1 rounded-r-lg text-center">
+                <div
+                  @click="removeModal(item.id)"
+                  class="cursor-pointer font-bold text-xs sm:text-sm"
+                >X</div>
+              </td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
     </div>
     <div v-else class="flex justify-center">no branches / surgeries</div>
     <transition name="fade" mode="out-in">
@@ -46,90 +89,94 @@
   </section>
 </template>
 <script>
-import AddSurgeryModal from '@/components/Profile/AddSurgeryModal'
-import AppConfirmationModal from '@/components/Base/AppConfirmationModal'
+import AddSurgeryModal from "@/components/Profile/AddSurgeryModal";
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
 export default {
   transition: {
-    name: 'fade',
-    mode: 'out-in'
+    name: "fade",
+    mode: "out-in"
   },
   components: {
     AddSurgeryModal,
-    AppConfirmationModal,
+    AppConfirmationModal
   },
 
   data() {
     return {
       current_page: 1,
       modal: false,
-      selectedSurgeryId: ''
-    }
+      selectedSurgeryId: ""
+    };
   },
   computed: {
     surgeries() {
-      return this.$store.state.profile.surgeries
-    },
+      return this.$store.state.profile.surgeries;
+    }
   },
   async asyncData({ app, store, error }) {
     try {
-      const responsePracticeType = await app.$axios.$get(`/api/v1/practice/me/practice-type`)
-      let practice = responsePracticeType.data
-        && responsePracticeType.data.practice
-        ? responsePracticeType.data.practice
-        : null
+      const responsePracticeType = await app.$axios.$get(
+        `/api/v1/practice/me/practice-type`
+      );
+      let practice =
+        responsePracticeType.data && responsePracticeType.data.practice
+          ? responsePracticeType.data.practice
+          : null;
 
-      let surgeries = []
-      let parent_surgery = null
-      if (practice.type === 'Hub') {
-        surgeries = practice.practice_surgeries
-      } else if (practice.type === 'Spoke') {
+      let surgeries = [];
+      let parent_surgery = null;
+      if (practice.type === "Hub") {
+        surgeries = practice.practice_surgeries;
+      } else if (practice.type === "Spoke") {
         if (practice.parent_surgery) {
           let surgery = {
             id: practice.parent_surgery.id,
             pay_for_surgery: practice.pay_for_surgery,
             verify_job_creation: practice.verify_job_creation,
             surgery: practice.parent_surgery
-          }
-          surgeries.push(surgery)
+          };
+          surgeries.push(surgery);
         }
       }
-      store.commit('profile/SET_SURGERIES', surgeries)
+      store.commit("profile/SET_SURGERIES", surgeries);
       return {
         practice
-      }
+      };
     } catch (err) {
-      throw err
+      throw err;
     }
   },
   methods: {
     show(id) {
-      if (this.practice.type === 'Hub') {
-        this.$router.push(`/profile/branches-surgeries/${id}`)
-      } else if (this.practice.type === 'Spoke') {
-        this.$router.push(`/profile/branches-surgeries/edit`)
+      if (this.practice.type === "Hub") {
+        this.$router.push(`/profile/branches-surgeries/${id}`);
+      } else if (this.practice.type === "Spoke") {
+        this.$router.push(`/profile/branches-surgeries/edit`);
       }
     },
     removeModal(id) {
-      this.selectedSurgeryId = id
-      this.modal = true
+      this.selectedSurgeryId = id;
+      this.modal = true;
     },
     async remove() {
-      if (this.practice.type === 'Hub') {
-        await this.$axios.$delete(`/api/v1/practice/me/practice-surgeries/${this.selectedSurgeryId}`)
-      } else if (this.practice.type === 'Spoke') {
-        await this.$axios.$delete(`/api/v1/practice/me/parent-surgery`)
+      if (this.practice.type === "Hub") {
+        await this.$axios.$delete(
+          `/api/v1/practice/me/practice-surgeries/${this.selectedSurgeryId}`
+        );
+      } else if (this.practice.type === "Spoke") {
+        await this.$axios.$delete(`/api/v1/practice/me/parent-surgery`);
       }
-      this.$store.commit('profile/REMOVE_SURGERY', this.selectedSurgeryId)
-      this.modal = false
-      this.selectedSurgeryId = ''
+      this.$store.commit("profile/REMOVE_SURGERY", this.selectedSurgeryId);
+      this.modal = false;
+      this.selectedSurgeryId = "";
       this.$store.commit("SET_NOTIFICATION", {
         enabled: true,
         status: "success",
-        text: ['Practice Surgery Deleted Successfully']
+        text: ["Practice Surgery Deleted Successfully"]
       });
     }
   }
-}
+};
 </script>
 <style scoped>
 .shield {

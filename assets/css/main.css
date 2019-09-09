@@ -68,15 +68,15 @@ table tbody td {
 }
 
 /* SCROLLBAR */
-
+/* 
 div::-webkit-scrollbar {
   height: 6px;
   width: 8px;
 }
 
 div::-webkit-scrollbar-thumb {
-  background-color: #ddd;
-}
+  background-color: #bbb;
+} */
 
 /* MODAL */
 /* .modal-container {

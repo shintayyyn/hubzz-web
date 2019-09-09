@@ -4,15 +4,19 @@ export default {
     state,
     commit,
   }) {
-    this.$socket.on("newConversation", conversation => {
-      if (!state.conversations.find(item => item.id == conversation.conversation_id)) {
-        commit("ADD_CONVERSATION", conversation);
-        this.$router.push(`/messages/${conversation.conversation_id}`);
-      }
-    });
     this.$socket.on("newMessage", message => {
-      if (!state.messages.find(data => data.id == message.id)) {
-        commit("ADD_MESSAGE", message);
+      let findMessage = state.messages.find(item => item.id == message.latest_conversation_message.id);
+      let findConversation = state.conversations.find(item =>
+        item.id == message.id
+      );
+      if (!findConversation) {
+        commit("ADD_CONVERSATION", message)
+      } else {
+        if (this.$auth.user.id != message.latest_conversation_message.user.id) {
+          if (!findMessage) {
+            commit("ADD_MESSAGE", message);
+          }
+        }
       }
     });
     this.$socket.on("deleteMessage", message => {
@@ -41,7 +45,7 @@ export default {
     commit
   }, payload) {
     const response = await chatApi.fetchConversations(this.$axios, payload.offset, 10);
-    commit("FETCH_CONVERSATIONS", response.data.conversations);
+    commit("GET_CONVERSATIONS", response.data.conversations);
   },
 
   async fetchMoreMessage({
@@ -55,8 +59,9 @@ export default {
       "desc",
       payload.conversation_id
     );
-    if (response.data.messages.length > 0) {
-      commit("FETCH_MESSAGES", response.data.messages);
+    let conversation = response.data.conversations.find(item => item.id.toString() === state.activeConversationId);
+    if (conversation.conversation_messages.length > 0) {
+      commit("GET_MESSAGES", conversation.conversation_messages);
     }
   },
 
@@ -65,46 +70,42 @@ export default {
     commit
   }, payload) {
     const response = await chatApi.fetchActiveConversationMessages(this.$axios, 0, 20, "desc", payload);
+    if (response.data.conversations.length) {
+      commit("SET_MESSAGES", response.data.conversations[0].conversation_messages);
+    }
     commit("SET_ACTIVE_CONVERSATION", payload);
-    commit("SET_MESSAGES", response.data.messages);
   },
 
   async sendMessage({
     state,
     commit
   }, payload) {
-    // let receiver_user_id = null
-    if (!payload.receiver_user_id) {
-      let foundConversation = state.conversations.find(conversation => conversation.conversation_id == state.activeConversationId);
-      if (foundConversation.receiver_id == this.$auth.user.id) {
-        payload.receiver_user_id = foundConversation.sender_id.toString();
+    if (payload.type === 'messages-new') {
+      payload.user_id = state.newMessageUser.id
+    } else {
+      let foundConversation = state.conversations.find(conversation => conversation.id == state.activeConversationId);
+      if (foundConversation.conversation_member_users[0].user.id == this.$auth.user.id) {
+        payload.user_id = foundConversation.conversation_member_users[1].user.id
       } else {
-        payload.receiver_user_id = foundConversation.receiver_id.toString();
+        payload.user_id = foundConversation.conversation_member_users[0].user.id
       }
-
     }
     const response = await chatApi.sendMessage(this.$axios, payload);
-    if (!state.messages.find(message => message.id === response.data.message.id) && !payload.receiver_user_id) {
-      commit("ADD_MESSAGE", response.data.message);
-    }
-
-
-
-
-
+    commit("ADD_MESSAGE", response.data.conversation);
   },
   async deleteMessage({
     state,
     commit
   }, payload) {
-    let receiver_user_id = null;
-    let foundConversation = state.conversations.find(conversation => conversation.conversation_id == state.activeConversationId);
-    if (foundConversation.receiver_id == this.$auth.user.id) {
-      receiver_user_id = foundConversation.sender_id;
-    } else {
-      receiver_user_id = foundConversation.receiver_id;
-    }
-    const response = await chatApi.deleteMessage(this.$axios, receiver_user_id.toString(), payload);
+    // let receiver_user_id = null;
+    // let foundConversation = state.conversations.find(conversation => conversation.conversation_id == state.activeConversationId);
+    // if (foundConversation.receiver_id == this.$auth.user.id) {
+    //   receiver_user_id = foundConversation.sender_id;
+    // } else {
+    //   receiver_user_id = foundConversation.receiver_id;
+    // }
+    const response = await chatApi.deleteMessage(this.$axios, payload);
+    console.log("delete message action", response)
     commit("DELETE_MESSAGE", response.data.message);
   }
 };

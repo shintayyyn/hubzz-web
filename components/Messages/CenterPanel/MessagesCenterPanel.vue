@@ -1,5 +1,5 @@
 <template>
-  <div class="messages-center-panel w-full flex flex-col md:border-l">
+  <div class="relative w-full flex flex-col" v-if="$route.name === 'messages-slug'">
     <MessagesCenterPanelTop />
     <div class="flex flex-col h-full justify-between">
       <MessagesCenterPanelChat />
