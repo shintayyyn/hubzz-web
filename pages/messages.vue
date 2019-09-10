@@ -85,7 +85,9 @@ export default {
       let conversation = this.conversations.find(
         (conversation, index) => index === 0
       );
-      this.$router.push(`/messages/${conversation.id}`);
+      if (this.$route.params.slug != conversation.id.toString()) {
+        this.$router.push(`/messages/${conversation.id}`);
+      }
     }
   }
 };

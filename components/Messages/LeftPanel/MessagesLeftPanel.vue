@@ -17,7 +17,7 @@
           <template v-if="showResult === false || $route.params.slug == '/messages'">
             <div
               class="relative flex w-full items-center px-2 py-4 cursor-pointer border-b"
-              :class="[parseInt($route.params.slug) === item.id ? 'bg-gray-300' : 'hover:bg-gray-200', unreadMessages.includes(item.id) ? 'font-bold' : '']"
+              :class="[parseInt($route.params.slug) === item.id ? 'bg-gray-300' : 'hover:bg-gray-200', unreadMessages.includes(item.id) ? 'font-bold bg-gray-100' : '']"
               v-for="item in conversations"
               :key="item.id"
               @click="goTo(item.id ? item.id : item.id)"
@@ -35,7 +35,7 @@
                     :class="parseInt($route.params.slug) === item.id ? 'font-bold' : ''"
                   >{{ userFullname(item) }}</p>
                   <p
-                    class="text-sm truncate text-gray-600"
+                    class="text-sm truncate text-gray-700"
                   >{{ senderFullname(item) }}: {{ item.latest_conversation_message.message }}</p>
                 </div>
                 <span
@@ -59,13 +59,13 @@
                 :src="userAvatar(item)"
               />
               <div class="w-5/6 flex items-center justify-between">
-                <div class="w-5/6 px-2">
+                <div class="w-5/6 px-2 leading-tight">
                   <p
                     class="truncate"
                     :class="parseInt($route.params.slug) === item.id ? 'font-bold' : ''"
                   >{{ userFullname(item) }}</p>
                   <p
-                    class="text-sm truncate"
+                    class="text-sm truncate text-gray-700"
                   >{{ senderFullname(item) }}: {{ item.latest_conversation_message.message }}</p>
                 </div>
                 <span

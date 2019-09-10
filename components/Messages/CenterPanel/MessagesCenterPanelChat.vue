@@ -67,7 +67,7 @@
                     :class="{'ml-2' : isReceiver(item)}"
                   >This message has been removed.</div>
                 </div>
-                <transition name="fade" mode="out-in">
+                <transition name="drop-down" mode="out-in">
                   <div
                     v-if="item.id == selectedMessageId"
                     class="mx-2"
@@ -120,7 +120,7 @@
                     >X</div>
                   </transition>
                 </div>
-                <transition name="fade" mode="out-in">
+                <transition name="drop-down" mode="out-in">
                   <div
                     v-if="item.id == selectedMessageId"
                     class="mx-2"

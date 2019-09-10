@@ -7,8 +7,10 @@
           <div class="my-2 bg-yellow-500"></div>
         </div>
       </div>
-      <div class="w-1/3 sm:w-1/3 py-2">
-        <img src="/images/hubzz-icon-transparent.png" class="logo mx-auto" />
+      <div class="flex w-1/3 sm:w-1/3 py-2">
+        <button @click="$router.push('/')" class="mx-auto focus:outline-none">
+          <img src="/images/hubzz-icon-transparent.png" class="logo" />
+        </button>
       </div>
       <div class="w-1/3 text-right leading-loose py-2">
         <div
@@ -27,7 +29,7 @@
                 @click="$store.commit('calendar/CREATE_JOB_MODAL', true)"
                 class="block md:hidden button rounded-lg p-2 focus:outline-none cursor-pointer mx-2"
               >
-                <svgicon name="create-job" color="#222 #555" width="21" height="21"></svgicon>
+                <svgicon name="create-job" color="#444 #555" width="21" height="21"></svgicon>
               </button>
             </div>
             <AppButton
