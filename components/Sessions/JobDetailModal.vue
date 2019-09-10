@@ -230,7 +230,7 @@ export default {
 }
 @media screen and (min-width: 1200px) {
   .modal {
-    width: 70%;
+    width: 60%;
   }
 }
 </style>

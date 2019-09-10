@@ -110,6 +110,7 @@ const tabs = [
 ];
 export default {
   middleware: "isVerified",
+  scrollToTop: true,
   data() {
     return {
       tabs

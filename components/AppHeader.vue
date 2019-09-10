@@ -54,12 +54,12 @@
         </div>
       </div>
     </div>
+    <div class="shield" v-if="create_job_modal"></div>
     <transition name="slide" mode="out-in">
-      <div v-if="create_job_modal">
-        <CreateJobModal />
-      </div>
+      <template v-if="create_job_modal">
+        <CreateJobModal v-if="create_job_modal" />
+      </template>
     </transition>
-    <div class="modal-shield" v-if="create_job_modal"></div>
   </section>
 </template>
 <script>
@@ -129,7 +129,7 @@ a {
   text-decoration: none;
   color: black;
 }
-.modal-shield {
+.shield {
   position: fixed;
   top: 0;
   left: 0;

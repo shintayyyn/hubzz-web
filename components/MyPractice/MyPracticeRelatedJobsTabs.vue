@@ -4,7 +4,7 @@
       <nuxt-link
         :to="`/my-practice/${practiceType}/${$route.params.practiceId}/related-jobs/allocated`"
         class="mr-5 p-3 text-sm font-bold cursor-pointer"
-        :class="$route.name === `my-practice-${practiceType}-practiceId-related-jobs-allocated` ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name === `my-practice-${practiceType}-practiceId-related-jobs` || $route.name.includes(`my-practice-${practiceType}-practiceId-related-jobs-allocated`) ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >Allocated</nuxt-link>
       <transition name="fade">
         <div
@@ -17,7 +17,7 @@
       <nuxt-link
         :to="`/my-practice/${practiceType}/${$route.params.practiceId}/related-jobs/available`"
         class="mr-5 p-3 text-sm font-bold cursor-pointer"
-        :class="$route.name === `my-practice-${practiceType}-practiceId-related-jobs` || $route.name === `my-practice-${practiceType}-practiceId-related-jobs-available` ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name.includes(`my-practice-${practiceType}-practiceId-related-jobs-available`) ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >Available</nuxt-link>
       <transition name="fade">
         <div
@@ -30,7 +30,7 @@
       <nuxt-link
         :to="`/my-practice/${practiceType}/${$route.params.practiceId}/related-jobs/matched`"
         class="mr-5 p-3 text-sm font-bold cursor-pointer"
-        :class="$route.name === `my-practice-${practiceType}-practiceId-related-jobs-matched` ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name.includes(`my-practice-${practiceType}-practiceId-related-jobs-matched`) ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >Matched</nuxt-link>
       <transition name="fade">
         <div
@@ -43,7 +43,7 @@
       <nuxt-link
         :to="`/my-practice/${practiceType}/${$route.params.practiceId}/related-jobs/applied`"
         class="mr-5 p-3 text-sm font-bold cursor-pointer"
-        :class="$route.name === `my-practice-${practiceType}-practiceId-related-jobs-applied` ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name.includes(`my-practice-${practiceType}-practiceId-related-jobs-applied`) ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >Applied</nuxt-link>
       <transition name="fade">
         <div
@@ -56,7 +56,7 @@
       <nuxt-link
         :to="`/my-practice/${practiceType}/${$route.params.practiceId}/related-jobs/unsuccessful`"
         class="mr-5 p-3 text-sm font-bold cursor-pointer"
-        :class="$route.name === `my-practice-${practiceType}-practiceId-related-jobs-unsuccessful` ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name.includes(`my-practice-${practiceType}-practiceId-related-jobs-unsuccessful`) ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >Unsuccessful</nuxt-link>
       <transition name="fade">
         <div
@@ -69,7 +69,7 @@
       <nuxt-link
         :to="`/my-practice/${practiceType}/${$route.params.practiceId}/related-jobs/declined`"
         class="mr-5 p-3 text-sm font-bold cursor-pointer"
-        :class="$route.name === `my-practice-${practiceType}-practiceId-related-jobs-declined` ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name.includes(`my-practice-${practiceType}-practiceId-related-jobs-declined`) ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >Declined</nuxt-link>
       <transition name="fade">
         <div
@@ -82,7 +82,7 @@
       <nuxt-link
         :to="`/my-practice/${practiceType}/${$route.params.practiceId}/related-jobs/cancelled`"
         class="mr-5 p-3 text-sm font-bold cursor-pointer"
-        :class="$route.name === `my-practice-${practiceType}-practiceId-related-jobs-cancelled` ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name.includes(`my-practice-${practiceType}-practiceId-related-jobs-cancelled`) ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >Cancelled</nuxt-link>
       <transition name="fade">
         <div
@@ -95,7 +95,7 @@
       <nuxt-link
         :to="`/my-practice/${practiceType}/${$route.params.practiceId}/related-jobs/completed`"
         class="mr-5 p-3 text-sm font-bold cursor-pointer"
-        :class="$route.name === `my-practice-${practiceType}-practiceId-related-jobs-completed` ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name.includes(`my-practice-${practiceType}-practiceId-related-jobs-completed`) ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >Completed</nuxt-link>
       <transition name="fade">
         <div
