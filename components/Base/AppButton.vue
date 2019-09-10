@@ -3,7 +3,8 @@
     <button
       @click.prevent="$emit('click')"
       :disabled="disabled"
-      class="button rounded-lg px-6 py-2 md:p-6 font-bold text-lg focus:outline-none hover:text-white cursor-pointer"
+      class="rounded-lg px-6 py-2 md:p-6 font-bold text-lg focus:outline-none button"
+      :class="disabled ? 'hover:text-gray-700 disabled-button' : 'hover:text-white'"
       :style="inStyle ? inStyle : ''"
     >{{label}}</button>
   </section>
@@ -23,6 +24,9 @@ export default {
 }
 .button:active {
   transform: translate(2px, 2px);
+}
+.disabled-button {
+  cursor: not-allowed;
 }
 </style>
 

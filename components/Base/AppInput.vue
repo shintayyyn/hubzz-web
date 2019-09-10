@@ -16,14 +16,18 @@
           </div>
         </div>
         <template v-if="type === 'multi-checkbox'">
-          <div class="flex flex-row justify-start mt-1" v-for="(item, index) in lists" :key="index">
+          <div
+            class="flex flex-row justify-start items-center mt-1"
+            v-for="(item, index) in lists"
+            :key="index"
+          >
             <input
               :value="item.value"
               type="checkbox"
-              @input="inputCheck"
-              class="checkbox mt-1 mr-1"
+              @input="inputMultiCheck"
               :checked="value.includes(item.value)"
             />
+            <div class="mx-1"></div>
             <label :for="item.name" class="text-xs sm:text-sm">{{item.label}}</label>
           </div>
         </template>
@@ -82,18 +86,17 @@
 
     <!-- single checkbox -->
     <template v-if="type === 'single-checkbox'">
-      <div class="flex flex-col py-2 mb-6">
+      <div class="flex flex-col py-2 mb-2">
         <div class="flex justify-end">
           <div
             class="rounded-lg bg-red-500 p-1 text-xs sm:text-sm text-white"
             v-if="error"
           >{{error.message}}</div>
         </div>
-        <div class="flex flex-row flex-no-wrap justify-between">
-          <div>
-            <input :value="value" type="checkbox" @input="inputCheck" class="checkbox mt-1 mr-1" />
-            <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
-          </div>
+        <div class="flex flex-row flex-no-wrap justify-start items-center">
+          <input type="checkbox" @change="$emit('input', $event.target.checked)" :checked="value" />
+          <div class="mx-1"></div>
+          <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
         </div>
       </div>
     </template>
@@ -190,8 +193,8 @@ export default {
     lists: Array
   },
   methods: {
-    // for multicheckbox
-    inputCheck(e) {
+    // for multi checkbox
+    inputMultiCheck(e) {
       if (e.target.checked) {
         this.$emit("checked", e.target.value);
       } else {

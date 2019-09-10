@@ -20,20 +20,26 @@
     <div class="shield" v-if="toggleScroll"></div>
     <transition name="slide" mode="out-in">
       <template v-if="locum_appointment_modal">
-        <JobDetailModalAppointment
-          v-if="locum_appointment_modal"
-          @close="locum_appointment_modal = false"
-          :job="locum_appointment_job"
-        />
+        <div class="modal">
+          <JobDetailModalAppointment
+            v-if="locum_appointment_modal"
+            @close="locum_appointment_modal = false"
+            :job="locum_appointment_job"
+          />
+        </div>
       </template>
       <template v-if="locum_modal">
-        <JobDetailModalLocum @close="locum_modal = false" :job="locum_job" />
+        <div class="modal">
+          <JobDetailModalLocum @close="locum_modal = false" :job="locum_job" />
+        </div>
       </template>
-      <!-- <div class="modal-container shadow-lg" v-if="create_job_modal">
+      <!-- <div class="modal shadow-lg" v-if="create_job_modal">
         <CreateJobModal />
       </div>-->
       <template v-if="practice_modal">
-        <JobDetailModal @close="practice_modal = false" :job="practice_job" />
+        <div class="modal">
+          <JobDetailModal @close="practice_modal = false" :job="practice_job" />
+        </div>
       </template>
     </transition>
   </section>
@@ -131,6 +137,23 @@ export default {
 @media screen and (min-width: 991px) {
   .calendar {
     height: auto;
+  }
+}
+.modal {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  border-left: solid 2px #edf2f7;
+  transition: all 0.3s ease-in-out;
+  background-color: white;
+  z-index: 510;
+}
+@media screen and (min-width: 1200px) {
+  .modal {
+    width: 80%;
   }
 }
 .shield {

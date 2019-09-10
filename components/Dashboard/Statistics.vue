@@ -23,14 +23,14 @@ export default {
   data() {
     return {
       statistics: []
-    }
+    };
   },
   created() {
-    this.statistics = []
-    if (this.$auth.user.domain === 'Locum') {
-      this.getLocumStats()
-    } else if (this.$auth.user.domain === 'Practice') {
-      this.getPracticeStats()
+    this.statistics = [];
+    if (this.$auth.user.domain === "Locum") {
+      this.getLocumStats();
+    } else if (this.$auth.user.domain === "Practice") {
+      this.getPracticeStats();
     }
   },
   methods: {
@@ -41,28 +41,73 @@ export default {
         this.$axios.$get(`/api/v1/locum/jobs/count?locum_status=Applied`),
         this.$axios.$get(`/api/v1/locum/jobs/count?locum_status=Completed`)
       ]).then(responses => {
-        this.statistics.push({ label: 'Available jobs', value: responses[0].data.count, route: '/jobs?job_status=available' }),
-          this.statistics.push({ label: 'Allocated jobs', value: responses[1].data.count, route: '/jobs?job_status=allocated' }),
-          this.statistics.push({ label: 'Applied jobs', value: responses[2].data.count, route: '/jobs?job_status=applied' }),
-          this.statistics.push({ label: 'Completed jobs', value: responses[3].data.count, route: '/jobs?job_status=completed' })
-      })
+        this.statistics.push({
+          label: "Available jobs",
+          value: responses[0].data.count,
+          route: "/jobs?job_status=available"
+        }),
+          this.statistics.push({
+            label: "Allocated jobs",
+            value: responses[1].data.count,
+            route: "/jobs?job_status=allocated"
+          }),
+          this.statistics.push({
+            label: "Applied jobs",
+            value: responses[2].data.count,
+            route: "/jobs?job_status=applied"
+          }),
+          this.statistics.push({
+            label: "Completed jobs",
+            value: responses[3].data.count,
+            route: "/jobs?job_status=completed"
+          });
+      });
     },
     getPracticeStats() {
       Promise.all([
-        this.$axios.$get(`/api/v1/practice/locums/count`),
+        this.$axios.$get(
+          `/api/v1/practice/locums/count?practice_locum_type=Applied`
+        ),
         this.$axios.$get(`/api/v1/practice/jobs/count?status=Applied`),
         this.$axios.$get(`/api/v1/practice/jobs/count?status=Current`),
         this.$axios.$get(`/api/v1/practice/jobs/count?status=Available`),
+        this.$axios.$get(`/api/v1/practice/jobs/count?status=Completed`),
+        this.$axios.$get(`/api/v1/practice/jobs/count?status=Unfilled`)
       ]).then(responses => {
-        // ! route might change
-        this.statistics.push({ label: 'My Banks', value: responses[0].data.count, route: '/my-banks' }),
-          this.statistics.push({ label: 'Applied jobs', value: responses[1].data.count, route: '/sessions?session_status=applied' }),
-          this.statistics.push({ label: 'Assigned jobs', value: responses[2].data.count, route: '/sessions?session_status=allocated' }),
-          this.statistics.push({ label: 'Available jobs', value: responses[3].data.count, route: '/sessions?session_status=live' })
-      })
+        this.statistics.push({
+          label: "My Banks",
+          value: responses[0].data.count,
+          route: "/my-banks"
+        }),
+          this.statistics.push({
+            label: "Applied jobs",
+            value: responses[1].data.count,
+            route: "/sessions/applied"
+          }),
+          this.statistics.push({
+            label: "Assigned jobs",
+            value: responses[2].data.count,
+            route: "/sessions/allocated"
+          }),
+          this.statistics.push({
+            label: "Available jobs",
+            value: responses[3].data.count,
+            route: "/sessions/live"
+          });
+        this.statistics.push({
+          label: "Completed jobs",
+          value: responses[4].data.count,
+          route: "/sessions/completed"
+        });
+        this.statistics.push({
+          label: "Unfilled jobs",
+          value: responses[5].data.count,
+          route: "/sessions/unfilled"
+        });
+      });
     }
   }
-}
+};
 </script>
 
 <style scoped>

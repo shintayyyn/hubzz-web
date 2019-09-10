@@ -22,13 +22,7 @@
         v-if="$route.name === 'profile-branches-surgeries' || $route.name === 'profile-branches-surgeries-create'"
         to="/profile/branches-surgeries/create"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer hover:bg-yellow-500 rounded-lg whitespace-no-wrap"
-      >
-        Create
-        <!-- <button
-          class="bg-yellow-500 rounded-full font-bold text-3xl hover:text-white focus:outline-none"
-          style="width:40px;height:40px;"
-        >+</button>-->
-      </nuxt-link>
+      >Create</nuxt-link>
     </div>
     <div class="mt-5">
       <nuxt-child />
