@@ -1,23 +1,34 @@
 <template>
-  <div class="flex flex-col w-full lg:w-2/3 p-0 lg:pr-4">
-    <div class="rounded-lg shadow-lg p-8 mt-4">
-      <div class="font-bold text-md sm:text-lg">Cancel this job</div>
-      <AppInput
-        v-model="form.cancelled_reason"
-        :type="'select'"
-        :name="'cancelled_reason'"
-        :label="'Please select your reason'"
-        :error="formError.find(item => item.field === 'cancelled_reason')"
-        :placeholder="'Select...'"
-        :items="reasons"
-      />
-      <AppButton :label="'Cancel job'" @click="cancel" />
+  <section>
+    <div class="flex flex-col w-full lg:w-2/3 p-0 lg:pr-4">
+      <div class="rounded-lg shadow-lg p-8 mt-4">
+        <div class="font-bold text-md sm:text-lg">Cancel this job</div>
+        <AppInput
+          v-model="form.cancelled_reason"
+          :type="'select'"
+          :name="'cancelled_reason'"
+          :label="'Please select your reason'"
+          :error="formError.find(item => item.field === 'cancelled_reason')"
+          :placeholder="'Select...'"
+          :items="reasons"
+        />
+        <AppButton :label="'Cancel job'" @click="cancelJob" />
+      </div>
     </div>
-  </div>
+    <AppConfirmationModal
+      :label="'Cancel this Job?'"
+      :confirmLabel="'Yes'"
+      :cancelLabel="'Cancel'"
+      :modal="confirmation_modal"
+      @confirm="cancel"
+      @cancel="confirmation_modal = false"
+    />
+  </section>
 </template>
 <script>
 import AppButton from "@/components/Base/AppButton";
 import AppInput from "@/components/Base/AppInput";
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
 const reasons = [
   {
     label: "In-house Locum can now cover the session",
@@ -47,12 +58,14 @@ const reasons = [
 export default {
   components: {
     AppButton,
+    AppConfirmationModal,
     AppInput
   },
   props: ["job"],
   data() {
     return {
       reasons,
+      confirmation_modal: false,
       form: {
         cancelled_reason: ""
       },
@@ -65,22 +78,25 @@ export default {
     }
   },
   methods: {
-    cancel() {
-      let jobId = this.$route.params.id || this.job.id;
+    cancelJob() {
       this.formError = [];
       this.Validate(this.form);
       if (!this.formError.length) {
-        this.$axios
-          .$put(`/api/v1/practice/jobs/${jobId}/cancel`, this.form)
-          .then(res => {
-            this.$store.commit("SET_NOTIFICATION", {
-              enabled: true,
-              status: "success",
-              text: ["Job cancelled"]
-            });
-            this.$emit("close");
-          });
+        this.confirmation_modal = true;
       }
+    },
+    cancel() {
+      let jobId = this.$route.params.id || this.job.id;
+      this.$axios
+        .$put(`/api/v1/practice/jobs/${jobId}/cancel`, this.form)
+        .then(res => {
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: ["Job cancelled"]
+          });
+          this.$emit("close");
+        });
     }
   }
 };

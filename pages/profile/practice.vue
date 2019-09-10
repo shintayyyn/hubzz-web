@@ -3,7 +3,7 @@
     <div class="flex flex-col">
       <div class="flex flex-row flex-wrap justify-between">
         <div class="w-full md:w-2/3 p-1">
-          <div class="rounded-lg shadow-lg p-8 h-full flex items-center">
+          <div class="rounded-lg shadow-lg p-8 h-full flex">
             <div class="flex flex-row flex-wrap">
               <div class="flex flex-col w-full md:w-1/3 p-1">
                 <div class="text-xs sm:text-sm">Practice name</div>
@@ -42,8 +42,34 @@
             </div>
             <div class="rounded-lg shadow-lg p-4 mt-4">
               <div class="flex flex-col">
-                <div class="text-xs sm:text-sm">Your Practice's standard terms</div>
+                <AppInput
+                  v-model="locum_standard_terms"
+                  :type="'single-checkbox'"
+                  :name="'locum_standard_terms'"
+                  :label="'Use Standard Terms with Locum?'"
+                />
+                <div class="flex flex-row flex-wrap justify-between items-center">
+                  <div class="text-xs sm:text-sm">Your Practice's standard terms</div>
+                  <div
+                    v-if="!locum_standard_terms"
+                    class="relative flex justify-start items-center"
+                  >
+                    <label v-if="loading == false" for="file-upload">
+                      <div class="flex flex-row flex-no-wrap cursor-pointer hover:underline">
+                        <svgicon name="cloud-upload" height="24" width="24" />
+                        <div
+                          class="ml-2 text-xs sm:text-sm leading-loose"
+                        >{{ practice.standard_terms ? 'Update' : 'Upload' }}</div>
+                      </div>
+                    </label>
+                    <input type="file" id="file-upload" class="hidden" @input="onFileInput($event)" />
+                  </div>
+                </div>
                 <div class="relative mt-4 bg-gray-300 rounded-lg p-4">
+                  <div
+                    v-if="locum_standard_terms"
+                    class="absolute top-0 bottom-0 left-0 right-0 rounded-lg p-4 bg-gray-500 opacity-75"
+                  ></div>
                   <AppLoading :spinner="false" :loading="loading" :message="'Uploading'" />
                   <div v-if="!loading" class="flex flex-no-wrap justify-between items-center">
                     <div
@@ -52,20 +78,9 @@
                     <div
                       class="font-bold text-md sm:text-lg hover:null cursor-pointer text-gray-600 hover:text-black"
                       @click="modal = true"
-                      v-if="practice.standard_terms "
+                      v-if="practice.standard_terms"
                     >x</div>
                   </div>
-                </div>
-                <div class="relative flex justify-start mt-2 items-center">
-                  <label v-if="loading == false" for="file-upload">
-                    <div class="flex flex-row flex-no-wrap cursor-pointer hover:underline">
-                      <svgicon name="cloud-upload" height="24" width="24" />
-                      <div
-                        class="ml-2 text-xs sm:text-sm leading-loose"
-                      >{{ practice.standard_terms ? 'Update' : 'Upload' }}</div>
-                    </div>
-                  </label>
-                  <input type="file" id="file-upload" class="hidden" @input="onFileInput($event)" />
                 </div>
               </div>
             </div>
@@ -77,7 +92,7 @@
         <div class="rounded-lg shadow-lg p-8">
           <AppFormError :formError="formError" v-if="formError.length" />
           <div class="flex flex-row flex-wrap justify-between">
-            <div class="flex flex-col w-full md:w-1/3 pr-1">
+            <div class="flex flex-col w-full md:w-1/2 pr-1">
               <AppInput
                 v-model="form.phone_number"
                 :type="'text'"
@@ -105,6 +120,8 @@
                 @submit="save"
                 @blur="CheckEmptyField(form.email, 'email')"
               />
+            </div>
+            <div class="flex flex-col w-full md:w-1/2 pl-1">
               <AppInput
                 v-model="form.practice_type_id"
                 :type="'multi-checkbox'"
@@ -115,13 +132,39 @@
                 :label="'What type of Practice are you?'"
                 :lists="practice_types"
               />
-              <AppInput
-                v-model="form.extra_information"
-                :type="'textarea'"
-                :name="'extra_information'"
-                :label="'Extra Information (Pracking restrictions, transport links, etc.)'"
-                :resize="false"
-              />
+            </div>
+          </div>
+          <div class="flex flex-col">
+            <div class="text-xs sm:text-sm mt-3">Compliance Documents</div>
+            <div class="flex flex-row flex-wrap justify-between">
+              <div class="flex flex-col w-full md:w-1/2 pr-1">
+                <AppInput
+                  v-model="form.gp_compliance_document_id"
+                  :type="'multi-checkbox'"
+                  :error="formError.find(item => item.field === 'gp_compliance_document_id')"
+                  @checked="form.gp_compliance_document_id.push($event)"
+                  @unchecked="uncheckGp($event)"
+                  :name="'gp_compliance_document_id'"
+                  :label="'For GPs:'"
+                  :lists="gp_documents"
+                />
+              </div>
+              <div class="flex flex-col w-full md:w-1/2 pl-1">
+                <AppInput
+                  v-model="form.others_compliance_document_id"
+                  :type="'multi-checkbox'"
+                  :error="formError.find(item => item.field === 'others_compliance_document_id')"
+                  @checked="form.others_compliance_document_id.push($event)"
+                  @unchecked="uncheckOther($event)"
+                  :name="'others_compliance_document_id'"
+                  :label="'For Nurses, et al:'"
+                  :lists="others_documents"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="flex flex-row flex-wrap justify-between">
+            <div class="flex flex-col w-full md:w-1/2 pr-1">
               <AppInput
                 v-model="form.mandatory_training_id"
                 :type="'multi-checkbox'"
@@ -133,35 +176,31 @@
                 :lists="mandatory_trainings"
               />
             </div>
-            <div class="flex flex-col w-full md:w-2/3 pl-1">
-              <div class="text-xs sm:text-sm mt-3">Compliance Documents</div>
-              <div class="flex flex-row flex-wrap justify-between">
-                <div class="flex flex-col w-full md:w-1/2 pr-1">
-                  <AppInput
-                    v-model="form.gp_compliance_document_id"
-                    :type="'multi-checkbox'"
-                    :error="formError.find(item => item.field === 'gp_compliance_document_id')"
-                    @checked="form.gp_compliance_document_id.push($event)"
-                    @unchecked="uncheckGp($event)"
-                    :name="'gp_compliance_document_id'"
-                    :label="'For GPs:'"
-                    :lists="gp_documents"
-                  />
-                </div>
-                <div class="flex flex-col w-full md:w-1/2 pl-1">
-                  <AppInput
-                    v-model="form.others_compliance_document_id"
-                    :type="'multi-checkbox'"
-                    :error="formError.find(item => item.field === 'others_compliance_document_id')"
-                    @checked="form.others_compliance_document_id.push($event)"
-                    @unchecked="uncheckOther($event)"
-                    :name="'others_compliance_document_id'"
-                    :label="'For Nurses, et al:'"
-                    :lists="others_documents"
-                  />
-                </div>
-              </div>
+            <div class="flex flex-col w-full md:w-1/2 pl-1">
+              <AppInput
+                v-model="vat_registered"
+                :type="'single-checkbox'"
+                :name="'vat_registered'"
+                :label="'Are you a VAT registered?'"
+              />
+              <template v-if="vat_registered">
+                <AppInput
+                  v-model="vat_number"
+                  :type="'text'"
+                  :name="'vat_number'"
+                  :label="'VAT Number'"
+                />
+              </template>
             </div>
+          </div>
+          <div class="flex flex-row flex-wrap justify-between">
+            <AppInput
+              v-model="form.extra_information"
+              :type="'textarea'"
+              :name="'extra_information'"
+              :label="'Extra Information (Pracking restrictions, transport links, etc.)'"
+              :resize="false"
+            />
           </div>
           <div class="mt-8">
             <AppButton :label="'Save changes'" @click="save" />
@@ -208,6 +247,11 @@ export default {
   },
   data() {
     return {
+      // new
+      locum_standard_terms: false,
+      vat_registered: false,
+      vat_number: "",
+      //
       modal: false,
       practiceTypeConfirmationModal: false,
       loading: false,
