@@ -34,7 +34,7 @@
               <tr
                 :key="invoice.id"
                 class="__job-card shadow-md cursor-pointer text-xs text-left"
-                @click="showTax(item.id)"
+                @click="showTax(invoice.id)"
               >
                 <td>{{invoice.month_year}}</td>
                 <td>{{invoice.fees_charged}}</td>
@@ -106,7 +106,9 @@ export default {
     };
   },
   methods: {
-    showTax(id) {}
+    showTax(id) {
+      console.log("id:", id);
+    }
   }
 };
 </script>

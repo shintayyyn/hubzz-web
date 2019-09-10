@@ -1,5 +1,5 @@
 <template>
-  <div class="messages-left-panel border-r" :class="$store.state.mobile ? '' : 'hidden md:flex'">
+  <div class="messages-left-panel md:border-r" :class="$store.state.mobile ? '' : 'hidden md:flex'">
     <div class="flex flex-col h-full w-full">
       <AppInput
         v-model="search_text"

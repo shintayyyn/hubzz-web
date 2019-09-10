@@ -343,7 +343,7 @@
         <AppButton :label="'Save changes'" @click="save" />
       </div>
     </div>
-    <div class="w-auto p-0 mb-4 lg:mb-0 lg:w-1/3 lg:pr-4 order-1 lg:order-2">
+    <div class="w-full p-0 mb-4 md:w-auto lg:mb-0 lg:w-1/3 lg:pr-4 order-1 lg:order-2">
       <div class="shadow-lg p-8">
         <AppAvatar
           class="m-auto"
@@ -605,7 +605,7 @@ export default {
     async save() {
       try {
         this.formError = [];
-        this.Validate(this.form, [
+        let notRequired = [
           "nhs_smart_card_id_number",
           "headline",
           "short_biography",
@@ -617,7 +617,25 @@ export default {
           "referee_2_contact_name",
           "referee_2_phone_number",
           "referee_2_email"
-        ]);
+        ];
+        if (this.form.employment_type === "Self-employed") {
+          notRequired.push("company_registration_number");
+        } else if (this.form.employment_type) {
+          notRequired.push("utr_number");
+        }
+
+        if (this.form.paid_under_payroll === "No") {
+          notRequired.push(
+            "account_name",
+            "bank_name",
+            "sort_code",
+            "account_number"
+          );
+        }
+
+        // if (this.form.employmentTypes)
+        this.Validate(this.form, notRequired);
+
         if (!this.formError.length) {
           this.form.profession_id = this.form.profession_id.toString();
           this.form.qualification_id = this.form.qualification_id.length
