@@ -17,7 +17,7 @@
           <template v-if="showResult === false || $route.params.slug == '/messages'">
             <div
               class="relative flex w-full items-center px-2 py-4 cursor-pointer border-b"
-              :class="[parseInt($route.params.slug) === item.id ? 'bg-gray-300' : 'hover:bg-gray-200', unreadMessages.includes(item.id) ? 'font-bold bg-gray-100' : '']"
+              :class="[parseInt($route.params.slug) === item.id ? 'bg-gray-300' : 'hover:bg-gray-200', unreadMessages.find(conversation => conversation.conversation_id == item.id && $auth.user.id == conversation.user_id) ? 'font-bold bg-gray-100' : '']"
               v-for="item in conversations"
               :key="item.id"
               @click="goTo(item.id ? item.id : item.id)"
@@ -119,7 +119,7 @@ export default {
       return this.$store.state.chat.activeConversationId;
     },
     unreadMessages() {
-      return this.$store.state.chat.unreadMessages;
+      return this.$store.getters["chat/getUnreadMessages"];
     }
   },
   watch: {
@@ -132,12 +132,13 @@ export default {
     },
     conversations(newValue) {
       let conversation = newValue.find((conversation, index) => index === 0);
+      let conversations = newValue.find(item => item.id === conversation.id);
       if (this.activeConversationId != conversation.id.toString()) {
-        this.$store.commit("chat/ADD_UNREAD_MESSAGE", newValue[0].id);
+        this.$store.commit("chat/ADD_UNREAD_MESSAGE", conversation);
       }
-      if (this.$route.name === "messages-new") {
-        this.$router.push(`/messages/${conversation.id}`);
-      }
+      // if (this.$route.name === "messages-new") {
+      //   this.$router.push(`/messages/${conversation.id}`);
+      // }
     }
   },
   methods: {
@@ -147,7 +148,7 @@ export default {
       if (window.innerWidth < 768) {
         this.$store.commit("IS_MOBILE", false);
       }
-      if (this.unreadMessages.includes(id)) {
+      if (this.unreadMessages.find(item => item.conversation_id == id)) {
         this.$store.commit("chat/DELETE_UNREAD_MESSAGE", id);
       }
       if (this.$route.params.slug != id) {

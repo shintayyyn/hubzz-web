@@ -44,11 +44,16 @@ export default {
     state.usersOnline.push(payload);
   },
   ADD_UNREAD_MESSAGE(state, payload) {
-    !state.unreadMessages.includes(payload) ? state.unreadMessages.push(payload) : '';
+    if (!state.unreadMessages.find(item => item.user_id === this.$auth.user.id && item.conversation_id === payload.id)) {
+      state.unreadMessages.push({
+        user_id: this.$auth.user.id,
+        conversation_id: payload.id,
+      })
+    }
   },
   DELETE_UNREAD_MESSAGE(state, payload) {
     let index = state.unreadMessages.findIndex(
-      message_id => message_id === payload
+      item => item.conversation_id === payload
     );
     state.unreadMessages.splice(index, 1);
   },

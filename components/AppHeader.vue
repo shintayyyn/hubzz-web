@@ -34,7 +34,7 @@
             </div>
             <AppButton
               v-if="$route.name != 'messages-slug' && $route.name != 'messages-new'"
-              :label="'Messages'"
+              :label="unreadMessages.length > 0 ? `Messages(${unreadMessages.length})` : 'Messages'"
               @click="$router.push('/messages')"
               :inStyle="'font-size: medium; padding:2px 14px;'"
               class="hidden md:block"
@@ -73,6 +73,12 @@ export default {
   computed: {
     create_job_modal() {
       return this.$store.state.calendar.create_job_modal;
+    },
+    conversations() {
+      return this.$store.getters["chat/getConversations"];
+    },
+    unreadMessages() {
+      return this.$store.getters["chat/getUnreadMessages"];
     }
   },
   watch: {
@@ -82,7 +88,23 @@ export default {
       } else {
         document.body.style.overflow = "auto";
       }
-    }
+    },
+    conversations(newValue) {
+      let conversation = newValue.find((conversation, index) => index === 0);
+      if (this.$route.name != "messages-slug") {
+        this.$store.commit("chat/ADD_UNREAD_MESSAGE", conversation);
+        // still working on this
+        // if (this.unreadMessages.length > 0) {
+        //   this.$store.commit("SET_NOTIFICATION", {
+        //     enabled: true,
+        //     closable: true,
+        //     status: "message",
+        //     text: [`${this.unreadMessages.length} New Message`]
+        //   });
+        // }
+      }
+    },
+    unreadMessages(value) {}
   },
   methods: {
     toggle() {

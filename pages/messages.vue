@@ -25,6 +25,9 @@ export default {
     },
     activeConversationId() {
       return this.$store.state.chat.activeConversationId;
+    },
+    unreadMessages() {
+      return this.$store.getters["chat/getUnreadMessages"];
     }
   },
   watch: {
@@ -36,6 +39,14 @@ export default {
         } else {
           this.$store.dispatch("chat/setActiveConversation", to.params.slug);
         }
+      }
+
+      if (
+        this.unreadMessages.find(item => {
+          item.conversation_id.toString() === to.params.slug;
+        })
+      ) {
+        this.$store.commit("chat/DELETE_UNREAD_MESSAGE", to.params.slug);
       }
     },
     socketId(value) {
@@ -67,6 +78,7 @@ export default {
     if (!this.$auth.loggedIn) {
       return this.$router.push("/");
     }
+    this.$store.commit("chat/DELETE_UNREAD_MESSAGE", this.$route.params.slug);
     if (window.innerWidth > 768) {
       if (this.conversations.length === 0) {
         this.$router.push(`/messages/new`);

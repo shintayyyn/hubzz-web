@@ -825,9 +825,9 @@ a {
 table {
   width: 920px;
 }
-table thead th {
-  /* padding: 10px 0; */
-}
+/* table thead th {
+  padding: 10px 0;
+} */
 table tbody td {
   padding: 15px 8px;
 }
