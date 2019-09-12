@@ -8,6 +8,7 @@
       <div class="flex justify-end z-50">
         <template v-if="practice.is_favorite">
           <svgicon
+            color="#fff"
             name="on-star"
             height="32"
             width="32"
@@ -17,6 +18,7 @@
         </template>
         <template v-else>
           <svgicon
+            color="#fff"
             name="off-star"
             height="32"
             width="32"
@@ -40,7 +42,9 @@
           </div>
         </div>
 
-        <div class="w-full font-bold text-md my-4 leading-tight">{{practice.surgery.name}}</div>
+        <div
+          class="w-full font-bold text-sm sm:text-lg my-4 leading-tight"
+        >{{practice.surgery.name}}</div>
         <div
           class="w-full mb-4 font-bold text-gray-700 text-xs leading-tight"
         >{{practice.surgery.address.line_1}} {{practice.surgery.address.line_2}} {{practice.surgery.address.line_3}} {{practice.surgery.address.post_code}}</div>

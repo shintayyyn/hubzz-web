@@ -46,6 +46,7 @@ export default {
     //     }
     //   },
     $route(value) {
+      console.log("Unread Messages: ", this.$store.state.chat.unreadMessages);
       if (value) {
         this.$store.commit("TOGGLE_SIDEBAR", false);
         document.body.style.overflow = "auto";

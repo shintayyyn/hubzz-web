@@ -12,7 +12,8 @@ export default {
       let user = this.$auth.user.id === message.latest_conversation_message.user.id;
       if (!findConversation) {
         commit("ADD_CONVERSATION", message)
-        if (user && this.route.name === 'messages-new') {
+        console.log(user, this.$route, this.$router.app._route.name)
+        if (user && this.$router.app._route.name === 'messages-new') {
           this.$router.push(`/messages/${message.id}`);
         }
       } else {

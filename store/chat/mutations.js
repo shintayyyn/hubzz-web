@@ -31,14 +31,17 @@ export default {
     state.newMessageUser = payload
   },
   ADD_MESSAGE(state, payload) {
-    if (state.activeConversationId === payload.id.toString()) {
-      state.messages.push(payload.latest_conversation_message);
+    if (state.activeConversationId != null) {
+      if (state.activeConversationId === payload.id.toString()) {
+        state.messages.push(payload.latest_conversation_message);
+      } else {
+        let conversation = state.conversations.find(message => message.id == payload.id)
+        conversation.latest_conversation_message = payload.latest_conversation_message
+        state.conversations = state.conversations.sort((a, b) =>
+          new Date(b.latest_conversation_message.created_at) - new Date(a.latest_conversation_message.created_at)
+        );
+      }
     }
-    let conversation = state.conversations.find(message => message.id == payload.id)
-    conversation.latest_conversation_message = payload.latest_conversation_message
-    state.conversations = state.conversations.sort((a, b) =>
-      new Date(b.latest_conversation_message.created_at) - new Date(a.latest_conversation_message.created_at)
-    );
   },
   ADD_USER_ONLINE(state, payload) {
     state.usersOnline.push(payload);
