@@ -36,7 +36,7 @@
                   <td
                     colspan="10"
                     class="absolute inset-x-auto md:static md:text-center"
-                  >You haven't created any invoice/s yet</td>
+                  >You don't have any invoice/s yet</td>
                 </tr>
               </template>
               <template v-else v-for="(invoice, index) in getPracticeInvoices">
