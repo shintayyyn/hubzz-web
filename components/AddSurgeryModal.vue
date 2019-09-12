@@ -1,6 +1,6 @@
 <template>
   <section>
-    <div class="add-surgery-confirmation-shield" v-if="modal"></div>
+    <div class="shield" v-if="modal"></div>
     <transition name="drop" mode="out-in">
       <div class="add-surgery-confirmation-modal flex justify-center" v-if="modal">
         <AddSurgeryConfirmationModal @add="add" @close="modal = false" />
@@ -161,14 +161,7 @@ export default {
   height: auto;
   z-index: 514;
 }
-.add-surgery-confirmation-shield {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #333;
-  opacity: 0.5;
+.shield {
   z-index: 513;
 }
 </style>

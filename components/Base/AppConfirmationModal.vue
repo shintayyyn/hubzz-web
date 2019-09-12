@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="remove-confirmation-shield" v-if="modal"></div>
+    <div class="shield" v-if="modal"></div>
     <transition name="drop" mode="out-in">
       <div class="remove-confirmation-modal shadow-lg" v-if="modal">
         <div class="border-solid rounded-b-lg bg-yellow-500 py-2 px-4 md:px-24">
@@ -55,14 +55,7 @@ export default {
 .button {
   background: linear-gradient(to top, #f2d024, #efde86);
 }
-.remove-confirmation-shield {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #333;
-  opacity: 0.5;
+.shield {
   z-index: 511;
 }
 .remove-confirmation-modal {

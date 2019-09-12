@@ -1,5 +1,5 @@
 <template>
-  <div class="modal shadow-lg">
+  <div class="modal-container shadow-lg">
     <MyPracticeUserDetail
       :user="user"
       @close="$router.push(`/my-practice/completed/${$route.params.practiceId}/users`)"
@@ -30,22 +30,12 @@ export default {
 };
 </script>
 <style scoped>
-.modal {
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  border-left: solid 2px #edf2f7;
-  transition: all 0.3s ease-in-out;
-  background-color: white;
+.modal-container {
   z-index: 510;
-  scroll-behavior: smooth;
 }
 
 @media screen and (min-width: 1200px) {
-  .modal {
+  .modal-container {
     width: 70%;
   }
 }

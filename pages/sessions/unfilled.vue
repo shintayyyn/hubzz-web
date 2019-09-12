@@ -4,7 +4,6 @@
     <AppJobFilter @clear="clearFilters" @getJobs="getJobs(1, params)" :params="params" />
     <div
       class="mt-10 w-full text-center"
-      style="font-family: Nunito"
       v-if="!loadingJobs && getPracticeUnfilledJobs.length === 0 "
     >You do not have any unfilled jobs</div>
     <div v-if="getPracticeUnfilledJobs.length > 0" class="overflow-x-auto overflow-y-hidden">
@@ -21,7 +20,7 @@
         @pagechanged="pagechanged"
       />
     </div>
-    <div class="modal-shield" v-if="$route.name === 'sessions-unfilled-id'"></div>
+    <div class="shield" v-if="$route.name === 'sessions-unfilled-id'"></div>
     <nuxt-child />
   </section>
 </template>
@@ -204,15 +203,3 @@ export default {
   }
 };
 </script>
-<style scoped>
-.modal-shield {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #333;
-  opacity: 0.5;
-  z-index: 509;
-}
-</style>

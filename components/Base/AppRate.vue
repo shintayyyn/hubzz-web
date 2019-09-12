@@ -1,6 +1,6 @@
 <template>
   <section>
-    <div class="rate-shield" :class="{'hidden': !modal}" @click="modal=false"></div>
+    <div class="shield" :class="{'hidden': !modal}" @click="modal=false"></div>
     <div class="flex flex-col py-2 cursor-pointer" @click="modal = true">
       <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
       <div
@@ -65,14 +65,7 @@ export default {
   overflow: hidden;
   box-sizing: content-box;
 }
-.rate-shield {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #333;
-  opacity: 0.5;
+.shield {
   z-index: 1;
 }
 </style>

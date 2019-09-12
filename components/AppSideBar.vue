@@ -49,7 +49,7 @@
         </div>
       </div>
     </div>
-    <div class="signout-shield" v-if="signout_modal"></div>
+    <div class="shield" v-if="signout_modal"></div>
     <transition name="drop" mode="out-in">
       <SignOut v-if="signout_modal" @modal="signout_modal = $event" />
     </transition>
@@ -128,14 +128,7 @@ export default {
 };
 </script>
 <style scoped>
-.signout-shield {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #333;
-  opacity: 0.5;
+.shield {
   z-index: 599;
 }
 .sidebar {

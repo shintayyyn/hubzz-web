@@ -20,7 +20,7 @@
     <div class="shield" v-if="toggleScroll"></div>
     <transition name="slide" mode="out-in">
       <template v-if="locum_appointment_modal">
-        <div class="modal">
+        <div class="modal-container">
           <JobDetailModalAppointment
             v-if="locum_appointment_modal"
             @close="locum_appointment_modal = false"
@@ -29,15 +29,15 @@
         </div>
       </template>
       <template v-if="locum_modal">
-        <div class="modal">
+        <div class="modal-container">
           <JobDetailModalLocum @close="locum_modal = false" :job="locum_job" />
         </div>
       </template>
-      <!-- <div class="modal shadow-lg" v-if="create_job_modal">
+      <!-- <div class="modal-container shadow-lg" v-if="create_job_modal">
         <CreateJobModal />
       </div>-->
       <template v-if="practice_modal">
-        <div class="modal">
+        <div class="modal-container">
           <JobDetailModal @close="practice_modal = false" :job="practice_job" />
         </div>
       </template>
@@ -139,33 +139,17 @@ export default {
     height: auto;
   }
 }
-.modal {
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  border-left: solid 2px #edf2f7;
-  transition: all 0.3s ease-in-out;
-  background-color: white;
+.modal-container {
   z-index: 510;
 }
 @media screen and (min-width: 1200px) {
-  .modal {
+  .modal-container {
     width: 80%;
   }
 }
-.shield {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #333;
-  opacity: 0.5;
+/* .shield {
   z-index: 509;
-}
+} */
 </style>
 
 

@@ -3,7 +3,6 @@
     <AppLoading :loading="loadingJobs" :message="'Loading'" />
     <div
       class="mt-10 w-full text-center"
-      style="font-family: Nunito"
       v-if="!loadingJobs && getPracticeDeclinedJobs.length === 0"
     >There are no available jobs nearby and suited for you at this time</div>
     <div v-if="getPracticeDeclinedJobs.length > 0" class="overflow-x-auto overflow-y-hidden">
@@ -206,15 +205,3 @@ export default {
   }
 };
 </script>
-<style scoped>
-.shield {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #333;
-  opacity: 0.5;
-  z-index: 511;
-}
-</style>

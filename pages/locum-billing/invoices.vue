@@ -5,7 +5,7 @@
         v-if="$route.path === '/locum-billing/invoices/create' || deleteModal 
         || paymentModal || $route.name === 'locum-billing-invoices-id' 
         || $route.name === 'locum-billing-invoices-id-edit'"
-        class="invoice-shield"
+        class="shield"
       ></div>
     </transition>
     <transition name="drop" mode="out-in">
@@ -132,20 +132,20 @@
 </template>
 
 <script>
-import AppDate from '@/components/Base/AppDate'
-import AppButton from '@/components/Base/AppButton'
-import AppPagination from '@/components/Base/AppPagination'
+import AppDate from "@/components/Base/AppDate";
+import AppButton from "@/components/Base/AppButton";
+import AppPagination from "@/components/Base/AppPagination";
 import { mixin as clickaway } from "vue-clickaway";
 export default {
   mixins: [clickaway],
   components: {
     AppDate,
     AppButton,
-    AppPagination,
+    AppPagination
   },
   transition: {
-    name: 'fade',
-    mode: 'out-in'
+    name: "fade",
+    mode: "out-in"
   },
 
   async asyncData({ app, error }) {
@@ -153,32 +153,44 @@ export default {
       const params = {
         offset: 0,
         limit: 5,
-        order_by: 'date_created:desc'
-      }
-      const response = await app.$axios.get('/api/v1/locum/invoices', { params })
-      const invoices = response.data && response.data.data && response.data.data.invoices ? response.data.data.invoices : []
-      const responseCount = await app.$axios.get('/api/v1/locum/invoices/count')
-      const count = responseCount.data && response.data.data && responseCount.data.data.count ? responseCount.data.data.count : 0
+        order_by: "date_created:desc"
+      };
+      const response = await app.$axios.get("/api/v1/locum/invoices", {
+        params
+      });
+      const invoices =
+        response.data && response.data.data && response.data.data.invoices
+          ? response.data.data.invoices
+          : [];
+      const responseCount = await app.$axios.get(
+        "/api/v1/locum/invoices/count"
+      );
+      const count =
+        responseCount.data &&
+        response.data.data &&
+        responseCount.data.data.count
+          ? responseCount.data.data.count
+          : 0;
       return {
         invoices,
         count
-      }
+      };
     } catch (err) {
-      console.log('locum-billing index err', err.response || err)
+      console.log("locum-billing index err", err.response || err);
       error({
         statusCode: err.status || 500,
-        message: err.message || 'Something went wrong!',
-      })
+        message: err.message || "Something went wrong!"
+      });
     }
   },
   data() {
     return {
       current_page: 1,
       params: {
-        order_by: 'date_created:desc',
+        order_by: "date_created:desc"
       },
       // sort
-      sortType: '',
+      sortType: "",
       issued_at: true,
       paid_at: true,
       date_created: false,
@@ -191,12 +203,12 @@ export default {
         paid_at: null
       },
       formError: [],
-      selectedInvoiceId: null,
-    }
+      selectedInvoiceId: null
+    };
   },
   computed: {
     getLocumInvoices() {
-      return this.$store.getters['billing/getLocumInvoices']
+      return this.$store.getters["billing/getLocumInvoices"];
     },
     offset() {
       return this.perPage * (this.current_page - 1);
@@ -209,103 +221,116 @@ export default {
     },
     totalPages() {
       return Math.ceil(this.total / this.perPage);
-    },
+    }
   },
   mounted() {
-    this.$store.commit('billing/SET_LOCUM_INVOICES', this.invoices)
-    this.$store.commit('billing/SET_LOCUM_INVOICE_COUNT', this.count)
+    this.$store.commit("billing/SET_LOCUM_INVOICES", this.invoices);
+    this.$store.commit("billing/SET_LOCUM_INVOICE_COUNT", this.count);
   },
   beforeDestroy() {
-    this.$store.commit('billing/CLEAR_INVOICES')
+    this.$store.commit("billing/CLEAR_INVOICES");
   },
   methods: {
     pagechanged(e) {
-      this.current_page = e
-      this.getInvoice(this.current_page, this.params)
+      this.current_page = e;
+      this.getInvoice(this.current_page, this.params);
     },
     sortBy(sortedBy) {
       switch (sortedBy) {
-        case 'issued_at':
-          this.issued_at = !this.issued_at
-          this.sortType = this.issued_at
+        case "issued_at":
+          this.issued_at = !this.issued_at;
+          this.sortType = this.issued_at;
           break;
-        case 'paid_at':
-          this.paid_at = !this.paid_at
-          this.sortType = this.paid_at
+        case "paid_at":
+          this.paid_at = !this.paid_at;
+          this.sortType = this.paid_at;
           break;
-        case 'date_created':
-          this.date_created = !this.date_created
-          this.sortType = this.date_created
+        case "date_created":
+          this.date_created = !this.date_created;
+          this.sortType = this.date_created;
           break;
       }
-      this.params.order_by = `${sortedBy}:${this.sortType ? 'asc' : 'desc'}`
-      this.current_page = 1
-      this.getInvoice(this.current_page, this.params)
+      this.params.order_by = `${sortedBy}:${this.sortType ? "asc" : "desc"}`;
+      this.current_page = 1;
+      this.getInvoice(this.current_page, this.params);
     },
     getInvoice(page, params) {
-      this.current_page = page
+      this.current_page = page;
       const defaultParams = {
         offset: this.offset,
         limit: this.perPage
-      }
-      let invoiceParams = { ...params, ...defaultParams }
-      this.$axios.$get('/api/v1/locum/invoices', { params: invoiceParams }).then(res => {
-        this.$store.commit('billing/SET_LOCUM_INVOICES', res.data.invoices)
-      })
+      };
+      let invoiceParams = { ...params, ...defaultParams };
+      this.$axios
+        .$get("/api/v1/locum/invoices", { params: invoiceParams })
+        .then(res => {
+          this.$store.commit("billing/SET_LOCUM_INVOICES", res.data.invoices);
+        });
     },
 
     show(item) {
-      if (item.status === 'Issued' || item.status === 'Paid' || item.issued_at) {
-        this.$router.push(`/locum-billing/invoices/${item.id}`)
+      if (
+        item.status === "Issued" ||
+        item.status === "Paid" ||
+        item.issued_at
+      ) {
+        this.$router.push(`/locum-billing/invoices/${item.id}`);
       } else {
-        this.$router.push(`/locum-billing/invoices/${item.id}/edit`)
+        this.$router.push(`/locum-billing/invoices/${item.id}/edit`);
       }
     },
     onClick(invoice, index) {
-      this.selectedInvoiceId = null
-      this.form.paid_at = null
+      this.selectedInvoiceId = null;
+      this.form.paid_at = null;
       if (invoice.issued_at) {
-        this.paymentModal = true
-        this.selectedInvoiceId = invoice.id
+        this.paymentModal = true;
+        this.selectedInvoiceId = invoice.id;
       } else {
-        this.deleteModal = true
-        this.selectedInvoiceId = invoice.id
+        this.deleteModal = true;
+        this.selectedInvoiceId = invoice.id;
       }
     },
     closePaymentModal() {
-      this.paymentModal = false
+      this.paymentModal = false;
     },
     updateInvoice() {
-      this.Validate(this.form)
+      this.Validate(this.form);
       if (!this.formError.length) {
-        this.form.paid_at = this.$moment(this.form.paid_at).format('YYYY-MM-DD')
-        this.$axios.$put(`/api/v1/locum/invoices/${this.selectedInvoiceId}/paid`, this.form).then(res => {
-          this.$store.commit('billing/UPDATE_LOCUM_INVOICE', res.data.invoice)
-          this.paymentModal = false
-        })
+        this.form.paid_at = this.$moment(this.form.paid_at).format(
+          "YYYY-MM-DD"
+        );
+        this.$axios
+          .$put(
+            `/api/v1/locum/invoices/${this.selectedInvoiceId}/paid`,
+            this.form
+          )
+          .then(res => {
+            this.$store.commit(
+              "billing/UPDATE_LOCUM_INVOICE",
+              res.data.invoice
+            );
+            this.paymentModal = false;
+          });
       }
     },
     deleteInvoice() {
-      this.$axios.$delete(`/api/v1/locum/invoices/${this.selectedInvoiceId}`).then(res => {
-        this.$store.commit('billing/REMOVE_LOCUM_INVOICE', this.selectedInvoiceId)
-        this.deleteModal = false
-        this.getInvoice(this.current_page, this.params)
-      })
+      this.$axios
+        .$delete(`/api/v1/locum/invoices/${this.selectedInvoiceId}`)
+        .then(res => {
+          this.$store.commit(
+            "billing/REMOVE_LOCUM_INVOICE",
+            this.selectedInvoiceId
+          );
+          this.deleteModal = false;
+          this.getInvoice(this.current_page, this.params);
+        });
     }
   }
-
-}
+};
 </script>
 
 <style scoped>
-.invoice-shield {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #333;
-  opacity: 0.5;
+.shield {
   z-index: 511;
 }
 /* .calendar {
