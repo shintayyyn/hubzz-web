@@ -322,14 +322,7 @@ export default {
 </script>
 
 <style scoped>
-.invoice-shield {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #333;
-  opacity: 0.5;
+.shield {
   z-index: 511;
 }
 /* .calendar {

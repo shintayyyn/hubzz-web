@@ -3,7 +3,7 @@
     <AppFormError class="w-full" :formError="formError" v-if="formError.length > 0" />
 
     <div class="w-full md:w-1/2 p-2">
-      <p style="font-family:Nunito" class="text-sm font-bold">Bank account</p>
+      <p class="text-sm font-bold">Bank account</p>
       <div class="border-solid rounded-lg shadow-lg mt-5 p-10">
         <AppInput
           v-model="form.account_name"
@@ -49,7 +49,7 @@
     </div>
 
     <div class="w-full md:w-1/2 p-2">
-      <p style="font-family:Nunito" class="text-sm font-bold">Details</p>
+      <p class="text-sm font-bold">Details</p>
       <div class="border-solid rounded-lg shadow-lg mt-5 p-10">
         <div class="flex flex-col">
           <div class="w-full text-xs sm:text-base flex items-center">Your tax year end date</div>

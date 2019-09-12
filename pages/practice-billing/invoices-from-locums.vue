@@ -5,7 +5,7 @@
         v-if="$route.path === '/locum-billing/invoices/create' 
         || paymentModal || $route.name === 'locum-billing-invoices-id' 
         || $route.name === 'locum-billing-invoices-id-edit'"
-        class="invoice-shield"
+        class="shield"
       ></div>
     </transition>
 
@@ -276,14 +276,7 @@ export default {
 </script>
 
 <style scoped>
-.invoice-shield {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #333;
-  opacity: 0.5;
+.shield {
   z-index: 511;
 }
 /* .calendar {

@@ -1,5 +1,5 @@
 <template>
-  <div class="modal shadow-lg">
+  <div class="modal-container shadow-lg">
     <div class="p-8 max-w-5xl">
       <div @click="$router.push(`/my-banks/withdrawn`)" class="cursor-pointer">
         <svgicon name="left-arrow" height="32" width="32" />
@@ -23,21 +23,12 @@ export default {
 </script>
 
 <style scoped>
-.modal {
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  border-left: solid 2px #edf2f7;
-  transition: all 0.3s ease-in-out;
-  background-color: white;
+/* .modal-container {
   z-index: 510;
 }
 @media screen and (min-width: 1200px) {
-  .modal {
+  .modal-container {
     width: 80%;
   }
-}
+} */
 </style>

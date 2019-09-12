@@ -73,14 +73,14 @@
                 <div class="flex" :class="isReceiver(item) ? '': 'flex-row-reverse'">
                   <div
                     @mouseover="onHover(item.id)"
-                    @mouseleave="selectedMessageId = ''"
+                    @mouseleave="hoverId = ''"
                     class="rounded-lg text-xs px-2 py-2 border text-gray-500 italic"
                     :class="{'ml-2' : isReceiver(item)}"
                   >This message has been removed.</div>
                 </div>
                 <transition name="drop-down" mode="out-in">
                   <div
-                    v-if="item.id == selectedMessageId"
+                    v-if="item.id == hoverId"
                     class="mx-2"
                     :class="isReceiver(item) ? 'text-right ': ''"
                   >
@@ -114,7 +114,7 @@
                 >{{ isReceiver(item) ? userFullname(item) : 'Me' }}</span>
                 <div
                   @mouseover="onHover(item.id)"
-                  @mouseleave="selectedMessageId = ''"
+                  @mouseleave="hoverId = ''"
                   class="flex items-center"
                   :class="isReceiver(item) ? '': 'flex-row-reverse'"
                 >
@@ -131,7 +131,7 @@
 
                   <transition name="fade" mode="out-in">
                     <div
-                      v-if="!isReceiver(item) && item.id == selectedMessageId"
+                      v-if="!isReceiver(item) && item.id == hoverId"
                       class="text-xs text-gray-500 hover:text-gray-700 font-bold cursor-pointer px-1"
                       @click="deleteMessageModal(item.id)"
                       title="Delete Message"
@@ -140,7 +140,7 @@
                 </div>
                 <transition name="drop-down" mode="out-in">
                   <div
-                    v-if="item.id == selectedMessageId"
+                    v-if="item.id == hoverId"
                     class="mx-2"
                     :class="isReceiver(item) ? 'text-right ': 'ml-6'"
                   >
@@ -187,6 +187,8 @@ export default {
       modal: false,
       selectedMessageId: null,
       deleteMessageId: null,
+      selectedMessageId: "",
+      hoverId: "",
       loading: true,
       showHidden: false,
       isLink: [
@@ -227,6 +229,7 @@ export default {
       }
     },
     messages(value) {
+      console.log("asd");
       let atBottom =
         Math.round(
           this.$refs.messagesContainer.offsetHeight +
@@ -262,11 +265,14 @@ export default {
         this.oldMessageCount += +1;
       }
       this.oldMessageCount = value.length;
+    },
+    selectedUserId(value) {
+      console.log("selected id Watched: ", value);
     }
   },
   methods: {
     onHover(id) {
-      this.selectedMessageId = id;
+      this.hoverId = id;
       this.showHidden = true;
     },
     userFullname(item) {

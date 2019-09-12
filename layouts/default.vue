@@ -1,6 +1,6 @@
 <template>
   <section>
-    <div class="sidebar-shield" v-if="$store.state.toggled_sidebar" @click="close"></div>
+    <div class="shield" v-if="$store.state.toggled_sidebar" @click="close"></div>
     <AppSideBar @modal="signout_modal = $event" />
     <AppHeader />
     <div class="content">
@@ -76,14 +76,7 @@ export default {
   height: 100%;
   scroll-behavior: smooth;
 }
-.sidebar-shield {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #333;
-  opacity: 0.5;
+.shield {
   z-index: 55;
 }
 @media screen and (min-width: 1200px) {

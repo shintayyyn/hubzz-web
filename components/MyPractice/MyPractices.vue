@@ -1,13 +1,14 @@
 <template>
   <div class="flex flex-row flex-wrap justify-start">
     <div
-      class="w-full md:w-1/3 lg:w-1/4 rounded-lg shadow-lg bg-gray-300 m-2 p-4 hover:bg-gray-500"
+      class="w-full md:w-1/3 lg:w-1/4 rounded-lg shadow-lg bg-gray-300 m-2 p-4 hover:bg-gray-400"
       v-for="practice in practices"
       :key="practice.id"
     >
       <div class="flex justify-end z-50">
         <template v-if="practice.is_favorite">
           <svgicon
+            color="#fff"
             name="on-star"
             height="32"
             width="32"
@@ -17,6 +18,7 @@
         </template>
         <template v-else>
           <svgicon
+            color="#fff"
             name="off-star"
             height="32"
             width="32"
@@ -40,9 +42,11 @@
           </div>
         </div>
 
-        <div class="w-full font-bold text-sm sm:text-lg my-4">{{practice.surgery.name}}</div>
         <div
-          class="w-full mb-4 font-bold text-gray-600 text-sm sm:text-lg"
+          class="w-full font-bold text-sm sm:text-lg my-4 leading-tight"
+        >{{practice.surgery.name}}</div>
+        <div
+          class="w-full mb-4 font-bold text-gray-700 text-xs leading-tight"
         >{{practice.surgery.address.line_1}} {{practice.surgery.address.line_2}} {{practice.surgery.address.line_3}} {{practice.surgery.address.post_code}}</div>
       </div>
     </div>
