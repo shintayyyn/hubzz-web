@@ -62,7 +62,7 @@
     </div>
     <div class="shield" v-if="modal"></div>
     <transition name="slide" mode="out-in">
-      <div class="modal shadow-lg" v-if="modal">
+      <div class="modal-container shadow-lg" v-if="modal">
         <JobDetailModalShowCandidate @close="modal = false" :user="user" @appointed="close" />
       </div>
     </transition>
@@ -206,30 +206,13 @@ export default {
 </script>
 <style scoped>
 .shield {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #333;
-  opacity: 0.5;
   z-index: 511;
 }
-.modal {
-  position: fixed;
-  top: 0;
-  right: 0;
-  margin-right: 0%;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  border-left: solid 2px #edf2f7;
-  transition: all 0.3s ease-in-out;
-  background-color: white;
+.modal-container {
   z-index: 512;
 }
 @media screen and (min-width: 1200px) {
-  .modal {
+  .modal-container {
     width: 60%;
   }
 }

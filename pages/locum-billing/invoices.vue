@@ -2,105 +2,78 @@
   <div>
     <transition name="fade" mode="out-in">
       <div
-        v-if="$route.path === '/locum-billing/invoices/create' || deleteModal 
-        || paymentModal || $route.name === 'locum-billing-invoices-id' 
-        || $route.name === 'locum-billing-invoices-id-edit'"
+        v-if="['locum-billing-invoices-id', 'locum-billing-invoices-create', 'locum-billing-invoices-id-edit'].includes($route.name) || confirmation_modal || paymentModal"
         class="invoice-shield"
       ></div>
     </transition>
-    <transition name="drop" mode="out-in">
-      <div class="confirmation fixed top-0 w-full flex justify-center" v-if="deleteModal">
-        <div class="confirmation-modal border-solid rounded-b-lg bg-yellow-500 p-2">
-          <div class="flex justify-center">
-            <div class>Proceed to delete this invoice?</div>
-          </div>
-          <div class="flex justify-center my-1">
-            <div class="mx-2">
-              <button
-                class="border border-solid bg-yellow-500 hover:text-white focus:outline-none text-black font-bold py-5 rounded-lg"
-                @click.prevent="deleteInvoice"
-                style="width:100px;"
-              >Yes</button>
-            </div>
-            <div class="mx-2">
-              <button
-                class="border border-solid bg-yellow-500 hover:text-white focus:outline-none text-black font-bold py-5 rounded-lg"
-                @click.prevent="deleteModal = false"
-                style="width:100px;"
-              >Cancel</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </transition>
-
     <nuxt-child />
 
     <div class="__jobs-section">
       <h1>Invoices</h1>
-      <div class="overflow-x-auto">
-        <div class="overflow-x-auto overflow-y-hidden">
-          <table>
-            <thead>
-              <tr class="text-xs sm:text-sm text-left">
-                <th>Type</th>
-                <th>Practice / Surgery</th>
-                <th @click="sortBy('date_created')">
-                  Created
-                  <svgicon class="inline align-baseline" name="sort" height="12" width="12" />
-                </th>
-                <th @click="sortBy('issued_at')">
-                  Issued
-                  <svgicon class="inline align-baseline" name="sort" height="12" width="12" />
-                </th>
-                <th>Invoice number</th>
-                <th>Job numbers</th>
-                <th>£ Amount</th>
-                <th>Pension type</th>
-                <th>Status</th>
-                <th>Copies</th>
+      <div class="overflow-x-auto overflow-y-hidden">
+        <table>
+          <thead>
+            <tr class="text-xs sm:text-sm text-left">
+              <th>Type</th>
+              <th>Practice / Surgery</th>
+              <th class="cursor-pointer" @click="sortBy('date_created')">
+                Created
+                <svgicon class="inline align-baseline" name="sort" height="12" width="12" />
+              </th>
+              <th class="cursor-pointer" @click="sortBy('issued_at')">
+                Issued
+                <svgicon class="inline align-baseline" name="sort" height="12" width="12" />
+              </th>
+              <th>Invoice number</th>
+              <th>Job numbers</th>
+              <th>£ Amount</th>
+              <th>Pension type</th>
+              <th>Status</th>
+              <th>Copies</th>
+            </tr>
+          </thead>
+          <tbody>
+            <template v-if="getLocumInvoices.length === 0">
+              <tr>
+                <td colspan="10" class="text-center">You haven't created any invoice/s yet</td>
               </tr>
-            </thead>
-            <tbody>
-              <template v-if="getLocumInvoices.length === 0">
-                <tr>
-                  <td colspan="10" class="text-center">You haven't created any invoice/s yet</td>
-                </tr>
-              </template>
-              <template v-else v-for="(invoice, index) in getLocumInvoices">
-                <tr :key="invoice.id" class="__job-card shadow-md cursor-pointer text-xs text-left">
-                  <td @click="show(invoice)">{{invoice.type}}</td>
-                  <td @click="show(invoice)">{{invoice.surgery.name}}</td>
-                  <td @click="show(invoice)">{{invoice.date_created | localDate}}</td>
-                  <td @click="show(invoice)">{{invoice.issued_at | localDate}}</td>
-                  <td @click="show(invoice)">{{invoice.invoice_number}}</td>
-                  <td @click="show(invoice)">
-                    <div
-                      v-for="item in invoice.items.filter(item => item.type === 'Job Part' && item.job_part)"
-                      :key="item.id"
-                    >{{item.job_part.job_part_number}}</div>
-                  </td>
-                  <td @click="show(invoice)">£ {{invoice.total_amount}}</td>
-                  <td @click="show(invoice)">pension type</td>
-                  <td
-                    @click="show(invoice)"
-                  >{{invoice.paid_at ? 'Paid' : invoice.issued_at ? 'Issued' : ''}}</td>
-                  <td @click="onClick(invoice, index)">
-                    <button
-                      v-if="!invoice.paid_at"
-                      v-text="invoice.issued_at ? 'Mark as paid' : 'Delete'"
-                      class="px-2 py-3 text-white rounded-lg"
-                      :class="invoice.issued_at ? 'bg-green-600' : 'bg-yellow-500'"
-                    ></button>
-                  </td>
-                </tr>
-                <tr :key="`${invoice.id}-${index}`">
-                  <td></td>
-                </tr>
-              </template>
-            </tbody>
-          </table>
-        </div>
+            </template>
+            <template v-else v-for="(invoice, index) in getLocumInvoices">
+              <tr
+                @click="show(invoice)"
+                :key="invoice.id"
+                class="__job-card shadow-md cursor-pointer text-xs text-left"
+              >
+                <td>{{invoice.type}}</td>
+                <td>{{invoice.surgery.name}}</td>
+                <td>{{invoice.date_created | localDate}}</td>
+                <td>{{invoice.issued_at | localDate}}</td>
+                <td>{{invoice.invoice_number}}</td>
+                <td>
+                  <div
+                    v-for="item in invoice.items.filter(item => item.type === 'Job Part' && item.job_part)"
+                    :key="item.id"
+                  >{{item.job_part.job_part_number}}</div>
+                </td>
+                <td>£ {{invoice.total_amount}}</td>
+                <td>pension type</td>
+                <td>{{invoice.paid_at ? 'Paid' : invoice.issued_at ? 'Issued' : ''}}</td>
+                <td>
+                  <button
+                    @click.stop.prevent="onClick(invoice, index)"
+                    v-if="!invoice.paid_at"
+                    v-text="invoice.issued_at ? 'Mark as paid' : 'Delete'"
+                    class="px-2 py-3 font-bold rounded-lg focus:outline-none"
+                    :class="invoice.issued_at ? 'text-white bg-green-600' : 'bg-yellow-500'"
+                  ></button>
+                </td>
+              </tr>
+              <tr :key="`${invoice.id}-${index}`">
+                <td></td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
       </div>
     </div>
     <div class="bottom-0 w-full" v-if="getLocumInvoices.length > 0 && totalPages > 1">
@@ -121,6 +94,7 @@
         :name="'paid_at'"
         :label="'Receive payment on'"
         :error="formError.find(item => item.field === 'paid_at')"
+        isAfter
       />
       <div class="flex flex-row flex-no-wrap justify-center">
         <AppButton :label="'Save'" @click="updateInvoice" :inStyle="'padding:5px'" />
@@ -128,24 +102,35 @@
         <AppButton :label="'Cancel'" @click="paymentModal = false" :inStyle="'padding:5px'" />
       </div>
     </div>
+
+    <AppConfirmationModal
+      :label="'Proceed to delete this invoice?'"
+      :confirmLabel="'Yes'"
+      :cancelLabel="'Cancel'"
+      :modal="confirmation_modal"
+      @confirm="deleteInvoice"
+      @cancel="confirmation_modal = false"
+    />
   </div>
 </template>
 
 <script>
-import AppDate from '@/components/Base/AppDate'
-import AppButton from '@/components/Base/AppButton'
-import AppPagination from '@/components/Base/AppPagination'
+import AppDate from "@/components/Base/AppDate";
+import AppButton from "@/components/Base/AppButton";
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
+import AppPagination from "@/components/Base/AppPagination";
 import { mixin as clickaway } from "vue-clickaway";
 export default {
   mixins: [clickaway],
   components: {
     AppDate,
     AppButton,
-    AppPagination,
+    AppConfirmationModal,
+    AppPagination
   },
   transition: {
-    name: 'fade',
-    mode: 'out-in'
+    name: "fade",
+    mode: "out-in"
   },
 
   async asyncData({ app, error }) {
@@ -153,32 +138,44 @@ export default {
       const params = {
         offset: 0,
         limit: 5,
-        order_by: 'date_created:desc'
-      }
-      const response = await app.$axios.get('/api/v1/locum/invoices', { params })
-      const invoices = response.data && response.data.data && response.data.data.invoices ? response.data.data.invoices : []
-      const responseCount = await app.$axios.get('/api/v1/locum/invoices/count')
-      const count = responseCount.data && response.data.data && responseCount.data.data.count ? responseCount.data.data.count : 0
+        order_by: "date_created:desc"
+      };
+      const response = await app.$axios.get("/api/v1/locum/invoices", {
+        params
+      });
+      const invoices =
+        response.data && response.data.data && response.data.data.invoices
+          ? response.data.data.invoices
+          : [];
+      const responseCount = await app.$axios.get(
+        "/api/v1/locum/invoices/count"
+      );
+      const count =
+        responseCount.data &&
+        response.data.data &&
+        responseCount.data.data.count
+          ? responseCount.data.data.count
+          : 0;
       return {
         invoices,
         count
-      }
+      };
     } catch (err) {
-      console.log('locum-billing index err', err.response || err)
+      console.log("locum-billing index err", err.response || err);
       error({
         statusCode: err.status || 500,
-        message: err.message || 'Something went wrong!',
-      })
+        message: err.message || "Something went wrong!"
+      });
     }
   },
   data() {
     return {
       current_page: 1,
       params: {
-        order_by: 'date_created:desc',
+        order_by: "date_created:desc"
       },
       // sort
-      sortType: '',
+      sortType: "",
       issued_at: true,
       paid_at: true,
       date_created: false,
@@ -186,17 +183,18 @@ export default {
       count: 0,
       invoices: [],
       paymentModal: false,
-      deleteModal: false,
+      // deleteModal: false,
+      confirmation_modal: false,
       form: {
         paid_at: null
       },
       formError: [],
-      selectedInvoiceId: null,
-    }
+      selectedInvoiceId: null
+    };
   },
   computed: {
     getLocumInvoices() {
-      return this.$store.getters['billing/getLocumInvoices']
+      return this.$store.getters["billing/getLocumInvoices"];
     },
     offset() {
       return this.perPage * (this.current_page - 1);
@@ -209,103 +207,122 @@ export default {
     },
     totalPages() {
       return Math.ceil(this.total / this.perPage);
-    },
+    }
   },
   mounted() {
-    this.$store.commit('billing/SET_LOCUM_INVOICES', this.invoices)
-    this.$store.commit('billing/SET_LOCUM_INVOICE_COUNT', this.count)
+    this.$store.commit("billing/SET_LOCUM_INVOICES", this.invoices);
+    this.$store.commit("billing/SET_LOCUM_INVOICE_COUNT", this.count);
   },
   beforeDestroy() {
-    this.$store.commit('billing/CLEAR_INVOICES')
+    this.$store.commit("billing/CLEAR_INVOICES");
   },
   methods: {
     pagechanged(e) {
-      this.current_page = e
-      this.getInvoice(this.current_page, this.params)
+      this.current_page = e;
+      this.getInvoice(this.current_page, this.params);
     },
     sortBy(sortedBy) {
       switch (sortedBy) {
-        case 'issued_at':
-          this.issued_at = !this.issued_at
-          this.sortType = this.issued_at
+        case "issued_at":
+          this.issued_at = !this.issued_at;
+          this.sortType = this.issued_at;
           break;
-        case 'paid_at':
-          this.paid_at = !this.paid_at
-          this.sortType = this.paid_at
+        case "paid_at":
+          this.paid_at = !this.paid_at;
+          this.sortType = this.paid_at;
           break;
-        case 'date_created':
-          this.date_created = !this.date_created
-          this.sortType = this.date_created
+        case "date_created":
+          this.date_created = !this.date_created;
+          this.sortType = this.date_created;
           break;
       }
-      this.params.order_by = `${sortedBy}:${this.sortType ? 'asc' : 'desc'}`
-      this.current_page = 1
-      this.getInvoice(this.current_page, this.params)
+      this.params.order_by = `${sortedBy}:${this.sortType ? "asc" : "desc"}`;
+      this.current_page = 1;
+      this.getInvoice(this.current_page, this.params);
     },
     getInvoice(page, params) {
-      this.current_page = page
+      this.current_page = page;
       const defaultParams = {
         offset: this.offset,
         limit: this.perPage
-      }
-      let invoiceParams = { ...params, ...defaultParams }
-      this.$axios.$get('/api/v1/locum/invoices', { params: invoiceParams }).then(res => {
-        this.$store.commit('billing/SET_LOCUM_INVOICES', res.data.invoices)
-      })
+      };
+      let invoiceParams = { ...params, ...defaultParams };
+      this.$axios
+        .$get("/api/v1/locum/invoices", { params: invoiceParams })
+        .then(res => {
+          this.$store.commit("billing/SET_LOCUM_INVOICES", res.data.invoices);
+        });
     },
 
     show(item) {
-      if (item.status === 'Issued' || item.status === 'Paid' || item.issued_at) {
-        this.$router.push(`/locum-billing/invoices/${item.id}`)
+      if (
+        item.status === "Issued" ||
+        item.status === "Paid" ||
+        item.issued_at
+      ) {
+        this.$router.push(`/locum-billing/invoices/${item.id}`);
       } else {
-        this.$router.push(`/locum-billing/invoices/${item.id}/edit`)
+        this.$router.push(`/locum-billing/invoices/${item.id}/edit`);
       }
     },
     onClick(invoice, index) {
-      this.selectedInvoiceId = null
-      this.form.paid_at = null
+      this.selectedInvoiceId = null;
+      this.form.paid_at = null;
       if (invoice.issued_at) {
-        this.paymentModal = true
-        this.selectedInvoiceId = invoice.id
+        this.paymentModal = true;
+        this.selectedInvoiceId = invoice.id;
       } else {
-        this.deleteModal = true
-        this.selectedInvoiceId = invoice.id
+        // this.deleteModal = true;
+        this.confirmation_modal = true;
+        this.selectedInvoiceId = invoice.id;
       }
     },
     closePaymentModal() {
-      this.paymentModal = false
+      this.paymentModal = false;
     },
     updateInvoice() {
-      this.Validate(this.form)
+      this.Validate(this.form);
       if (!this.formError.length) {
-        this.form.paid_at = this.$moment(this.form.paid_at).format('YYYY-MM-DD')
-        this.$axios.$put(`/api/v1/locum/invoices/${this.selectedInvoiceId}/paid`, this.form).then(res => {
-          this.$store.commit('billing/UPDATE_LOCUM_INVOICE', res.data.invoice)
-          this.paymentModal = false
-        })
+        this.form.paid_at = this.$moment(this.form.paid_at).format(
+          "YYYY-MM-DD"
+        );
+        this.$axios
+          .$put(
+            `/api/v1/locum/invoices/${this.selectedInvoiceId}/paid`,
+            this.form
+          )
+          .then(res => {
+            this.$store.commit(
+              "billing/UPDATE_LOCUM_INVOICE",
+              res.data.invoice
+            );
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: [`${res.message}`]
+            });
+            this.paymentModal = false;
+          });
       }
     },
     deleteInvoice() {
-      this.$axios.$delete(`/api/v1/locum/invoices/${this.selectedInvoiceId}`).then(res => {
-        this.$store.commit('billing/REMOVE_LOCUM_INVOICE', this.selectedInvoiceId)
-        this.deleteModal = false
-        this.getInvoice(this.current_page, this.params)
-      })
+      this.$axios
+        .$delete(`/api/v1/locum/invoices/${this.selectedInvoiceId}`)
+        .then(res => {
+          this.$store.commit(
+            "billing/REMOVE_LOCUM_INVOICE",
+            this.selectedInvoiceId
+          );
+          this.confirmation_modal = false;
+          this.getInvoice(this.current_page, this.params);
+        });
     }
   }
-
-}
+};
 </script>
 
 <style scoped>
-.invoice-shield {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #333;
-  opacity: 0.5;
+.shield {
   z-index: 511;
 }
 /* .calendar {

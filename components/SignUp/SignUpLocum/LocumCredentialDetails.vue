@@ -171,15 +171,6 @@ export default {
 </script>
 <style scoped>
 .modal-container {
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  border-left: solid 2px #edf2f7;
-  transition: all 0.3s ease-in-out;
-  background-color: white;
   z-index: 510;
 }
 @media screen and (min-width: 1200px) {
@@ -188,13 +179,6 @@ export default {
   }
 }
 .shield {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #333;
-  opacity: 0.5;
   z-index: 509;
 }
 </style>

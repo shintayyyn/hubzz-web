@@ -37,7 +37,7 @@
       </div>
     </div>
 
-    <div class="show-document-shield" v-if="modal"></div>
+    <div class="shield" v-if="modal"></div>
     <transition name="slide" mode="out-in">
       <!-- <div class="show-document-shield shadow-lg" v-if="modal">
         <PracticeDocumentDetailModal @close="modal = false"/>
@@ -46,8 +46,7 @@
   </section>
 </template>
 <script>
-
-import PracticeDocumentDetailModal from '@/components/Profile/PracticeDocumentDetailModal'
+import PracticeDocumentDetailModal from "@/components/Profile/PracticeDocumentDetailModal";
 export default {
   components: {
     PracticeDocumentDetailModal
@@ -58,57 +57,58 @@ export default {
       practiceDocuments: [],
       practiceDocumentTypes: [],
       practiceComplianceDocuments: [],
-      disabled: 'true'
-    }
+      disabled: "true"
+    };
   },
 
   created() {
-
-    this.practiceDocuments = []
-    this.practiceDocumentTypes = []
-    this.practiceComplianceDocuments = []
+    this.practiceDocuments = [];
+    this.practiceDocumentTypes = [];
+    this.practiceComplianceDocuments = [];
 
     Promise.all([
-
       //------------------EXISTING PRACTICE DOCUMENTS----------------------2
       this.$axios.$get(`/api/v1/practice/practice-documents`).then(res => {
         res.data.practice_documents.forEach(item => {
-          this.practiceDocuments.push(item)
-        })
+          this.practiceDocuments.push(item);
+        });
       }),
 
       //---------------PRACTICE DOCUMENT TYPES-----------------
       this.$axios.$get(`/api/v1/practice-document-types`).then(res => {
         res.data.practice_document_types.forEach(item => {
-          this.practiceDocumentTypes.push(item)
-        })
-      }),
-
-    ]).then(() => {
-      this.practiceComplianceDocuments = this.practiceDocumentTypes.map((practiceDocumentType) => {
-        const existingPracticeComplianceDocument = this.practiceDocuments.find((existingPracticeDocument) => {
-          return existingPracticeDocument.practice_document_type.id === practiceDocumentType.id
-        })
-        return {
-          practiceDocumentType,
-          existingPracticeComplianceDocument
-        }
-
+          this.practiceDocumentTypes.push(item);
+        });
       })
-
-    })
-
+    ]).then(() => {
+      this.practiceComplianceDocuments = this.practiceDocumentTypes.map(
+        practiceDocumentType => {
+          const existingPracticeComplianceDocument = this.practiceDocuments.find(
+            existingPracticeDocument => {
+              return (
+                existingPracticeDocument.practice_document_type.id ===
+                practiceDocumentType.id
+              );
+            }
+          );
+          return {
+            practiceDocumentType,
+            existingPracticeComplianceDocument
+          };
+        }
+      );
+    });
   },
 
   methods: {
     show(id) {
       const query = {
         ...this.$route.query
-      }
-      this.$router.push({ path: `/profile/${id}`, query })
-    },
+      };
+      this.$router.push({ path: `/profile/${id}`, query });
+    }
   }
-}
+};
 </script>
 <style scoped>
 .practice-doc-card:hover {
@@ -119,14 +119,7 @@ export default {
   background-color: white;
   transition: background-color 0.5s ease-in-out;
 }
-.show-document-shield {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #333;
-  opacity: 0.5;
+.shield {
   z-index: 511;
 }
 /*  */

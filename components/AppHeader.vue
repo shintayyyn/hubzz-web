@@ -7,8 +7,10 @@
           <div class="my-2 bg-yellow-500"></div>
         </div>
       </div>
-      <div class="w-1/3 sm:w-1/3 py-2">
-        <img src="/images/hubzz-icon-transparent.png" class="logo mx-auto" />
+      <div class="flex w-1/3 sm:w-1/3 py-2">
+        <button @click="$router.push('/')" class="mx-auto focus:outline-none">
+          <img src="/images/hubzz-icon-transparent.png" class="logo" />
+        </button>
       </div>
       <div class="w-1/3 text-right leading-loose py-2">
         <div
@@ -27,16 +29,18 @@
                 @click="$store.commit('calendar/CREATE_JOB_MODAL', true)"
                 class="block md:hidden button rounded-lg p-2 focus:outline-none cursor-pointer mx-2"
               >
-                <svgicon name="create-job" color="#222 #555" width="21" height="21"></svgicon>
+                <svgicon name="create-job" color="#444 #555" width="21" height="21"></svgicon>
               </button>
             </div>
             <AppButton
-              :label="'Messages'"
+              v-if="$route.name != 'messages-slug' && $route.name != 'messages-new'"
+              :label="unreadMessages.length > 0 ? `Messages(${unreadMessages.length})` : 'Messages'"
               @click="$router.push('/messages')"
               :inStyle="'font-size: medium; padding:2px 14px;'"
               class="hidden md:block"
             />
             <button
+              v-if="$route.name != 'messages-slug' && $route.name != 'messages-new'"
               @click="$router.push('/messages')"
               class="block md:hidden button rounded-lg p-2 focus:outline-none cursor-pointer"
             >
@@ -69,6 +73,12 @@ export default {
   computed: {
     create_job_modal() {
       return this.$store.state.calendar.create_job_modal;
+    },
+    conversations() {
+      return this.$store.getters["chat/getConversations"];
+    },
+    unreadMessages() {
+      return this.$store.getters["chat/getUnreadMessages"];
     }
   },
   watch: {
@@ -78,7 +88,38 @@ export default {
       } else {
         document.body.style.overflow = "auto";
       }
-    }
+    },
+    conversations(newValue) {
+      let conversation = newValue.find((conversation, index) => index === 0);
+      if (
+        (this.$route.name && this.$route.name != "messages-slug") ||
+        (this.$route.name && this.$route.name != "messages-new")
+      ) {
+        // this.$store.commit("chat/ADD_UNREAD_MESSAGE", conversation);
+        // still working on this
+        // if (
+        //   this.$route.name != "messages-slug" &&
+        //   this.$route.name != "messages-new" &&
+        //   this.unreadMessages.length > 0
+        // ) {
+        // let sender_name = `${conversation.latest_conversation_message.user.personal_detail.first_name} ${conversation.latest_conversation_message.user.personal_detail.last_name}`;
+        //   console.log("wae?", this.$route.name, conversation);
+        //   this.$store.commit("SET_NOTIFICATION", {
+        //     enabled: true,
+        //     closable: true,
+        //     status: "message",
+        //     text: [
+        //       {
+        //         title: `${sender_name}`,
+        //         message: `${sender_name}: ${conversation.latest_conversation_message.message}`,
+        //         time: `${conversation.latest_conversation_message.created_at}`
+        //       }
+        //     ]
+        //   });
+        // }
+      }
+    },
+    unreadMessages(value) {}
   },
   methods: {
     toggle() {
@@ -126,13 +167,6 @@ a {
   color: black;
 }
 .shield {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #333;
-  opacity: 0.5;
   z-index: 509;
 }
 </style>

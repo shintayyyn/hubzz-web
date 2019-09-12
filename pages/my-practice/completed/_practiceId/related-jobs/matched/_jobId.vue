@@ -35,20 +35,6 @@ export default {
 };
 </script>
 <style scoped>
-.modal-container {
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  border-left: solid 2px #edf2f7;
-  transition: all 0.3s ease-in-out;
-  background-color: white;
-  z-index: 510;
-  scroll-behavior: smooth;
-}
-
 @media screen and (min-width: 1200px) {
   .modal-container {
     width: 70%;

@@ -9,10 +9,14 @@ export default {
       let findConversation = state.conversations.find(item =>
         item.id == message.id
       );
+      let user = this.$auth.user.id === message.latest_conversation_message.user.id;
       if (!findConversation) {
         commit("ADD_CONVERSATION", message)
+        if (user && this.$router.app._route.name === 'messages-new') {
+          this.$router.push(`/messages/${message.id}`);
+        }
       } else {
-        if (this.$auth.user.id != message.latest_conversation_message.user.id) {
+        if (!user) {
           if (!findMessage) {
             commit("ADD_MESSAGE", message);
           }
@@ -105,7 +109,7 @@ export default {
     //   receiver_user_id = foundConversation.receiver_id;
     // }
     const response = await chatApi.deleteMessage(this.$axios, payload);
-    console.log("delete message action", response)
+    console.log("delete message action", response, payload)
     commit("DELETE_MESSAGE", response.data.message);
   }
 };

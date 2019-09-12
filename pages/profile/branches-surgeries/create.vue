@@ -1,5 +1,5 @@
 <template>
-  <div class="modal shadow-lg">
+  <div class="modal-container shadow-lg">
     <AppConfirmationModal
       :label="'Proceed to add this surgery?'"
       :confirmLabel="'Yes'"
@@ -187,21 +187,11 @@ export default {
 };
 </script>
 <style scoped>
-.modal {
-  position: fixed;
-  top: 0;
-  right: 0;
-  margin-right: 0%;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  border-left: solid 2px #edf2f7;
-  transition: all 0.3s ease-in-out;
-  background-color: white;
+.modal-container {
   z-index: 512;
 }
 @media screen and (min-width: 1200px) {
-  .modal {
+  .modal-container {
     width: 70%;
   }
 }
@@ -212,15 +202,6 @@ export default {
   right: 0;
   height: auto;
   z-index: 514;
-}
-.add-surgery-confirmation-shield {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #333;
-  opacity: 0.5;
 }
 </style>
 

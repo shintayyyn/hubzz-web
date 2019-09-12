@@ -33,9 +33,11 @@
           />
         </div>
 
-        <div class="w-full font-bold text-sm sm:text-lg my-4">{{user.personal_detail.name}}</div>
         <div
-          class="w-full mb-4 font-bold text-gray-600 text-sm sm:text-lg"
+          class="w-full font-bold text-sm sm:text-lg my-4 leading-tight"
+        >{{user.personal_detail.name}}</div>
+        <div
+          class="w-full mb-4 font-bold text-gray-600 text-sm leading-tight"
         >{{user.locum_detail.profession.name}}</div>
       </div>
     </div>

@@ -1,5 +1,5 @@
 <template>
-  <div class="messages-left-panel border-r" :class="$store.state.mobile ? '' : 'hidden md:flex'">
+  <div class="messages-left-panel md:border-r" :class="$store.state.mobile ? '' : 'hidden md:flex'">
     <div class="flex flex-col h-full w-full">
       <AppInput
         v-model="search_text"
@@ -17,29 +17,32 @@
           <template v-if="showResult === false || $route.params.slug == '/messages'">
             <div
               class="relative flex w-full items-center px-2 py-4 cursor-pointer border-b"
-              :class="[parseInt($route.params.slug) === item.id ? 'bg-gray-300' : 'hover:bg-gray-200', unreadMessages.includes(item.id) ? 'font-bold' : '']"
+              :class="[parseInt($route.params.slug) === item.id ? 'bg-gray-300' : 'hover:bg-gray-200', unreadMessages.find(conversation => conversation.conversation_id == item.id && $auth.user.id == conversation.user_id) ? 'font-bold bg-gray-100' : '']"
               v-for="item in conversations"
               :key="item.id"
               @click="goTo(item.id ? item.id : item.id)"
             >
-              <AppAvatar
-                v-if="$auth.user.domain === 'Practice'"
-                :height="'50px'"
-                :width="'50px'"
-                :src="userAvatar(item)"
-              />
+              <div>
+                <AppAvatar
+                  v-if="$auth.user.domain === 'Practice'"
+                  :height="'50px'"
+                  :width="'50px'"
+                  :src="userAvatar(item)"
+                />
+              </div>
               <div class="w-5/6 flex items-center justify-between">
-                <div class="w-5/6 px-2">
+                <div class="w-5/6 px-2 leading-tight">
                   <p
                     class="truncate"
                     :class="parseInt($route.params.slug) === item.id ? 'font-bold' : ''"
                   >{{ userFullname(item) }}</p>
                   <p
-                    class="text-sm truncate"
+                    class="text-sm truncate text-gray-700"
                   >{{ senderFullname(item) }}: {{ item.latest_conversation_message.message }}</p>
                 </div>
                 <span
-                  class="w-10 text-right text-xs text-gray-600 leading-none absolute right-0 mx-2 h-full flex items-center"
+                  class="absolute w-10 h-full flex items-center right-0 text-right text-xs text-gray-600 leading-none mx-2"
+                  :class="[parseInt($route.params.slug) === item.id ? 'bg-gray-300' : 'hover:bg-gray-200', unreadMessages.find(conversation => conversation.conversation_id == item.id && $auth.user.id == conversation.user_id) ? 'bg-gray-100' : '']"
                 >{{ $moment(item.latest_conversation_message.created_at).fromNow() }}</span>
               </div>
             </div>
@@ -52,24 +55,28 @@
               :key="item.id"
               @click="goTo(item.id ? item.id : item.id)"
             >
-              <AppAvatar
-                v-if="$auth.user.domain === 'Practice'"
-                :height="'50px'"
-                :width="'50px'"
-                :src="userAvatar(item)"
-              />
+              <div>
+                <AppAvatar
+                  v-if="$auth.user.domain === 'Practice'"
+                  :height="'50px'"
+                  :width="'50px'"
+                  :src="userAvatar(item)"
+                />
+              </div>
+
               <div class="w-5/6 flex items-center justify-between">
-                <div class="w-5/6 px-2">
+                <div class="w-5/6 px-2 leading-tight">
                   <p
                     class="truncate"
                     :class="parseInt($route.params.slug) === item.id ? 'font-bold' : ''"
                   >{{ userFullname(item) }}</p>
                   <p
-                    class="text-sm truncate"
+                    class="text-sm truncate text-gray-700"
                   >{{ senderFullname(item) }}: {{ item.latest_conversation_message.message }}</p>
                 </div>
                 <span
-                  class="w-10 text-right text-xs text-gray-600 leading-none absolute right-0 mx-2 h-full flex items-center"
+                  class="absolute w-10 h-full flex items-center right-0 text-right text-xs text-gray-600 leading-none mx-2"
+                  :class="[parseInt($route.params.slug) === item.id ? 'bg-gray-300' : 'hover:bg-gray-200', unreadMessages.find(conversation => conversation.conversation_id == item.id && $auth.user.id == conversation.user_id) ? 'bg-gray-200' : 'bg-white']"
                 >{{ $moment(item.latest_conversation_message.created_at).fromNow() }}</span>
               </div>
             </div>
@@ -119,7 +126,7 @@ export default {
       return this.$store.state.chat.activeConversationId;
     },
     unreadMessages() {
-      return this.$store.state.chat.unreadMessages;
+      return this.$store.getters["chat/getUnreadMessages"];
     }
   },
   watch: {
@@ -132,12 +139,13 @@ export default {
     },
     conversations(newValue) {
       let conversation = newValue.find((conversation, index) => index === 0);
+      let conversations = newValue.find(item => item.id === conversation.id);
       if (this.activeConversationId != conversation.id.toString()) {
-        this.$store.commit("chat/ADD_UNREAD_MESSAGE", newValue[0].id);
+        this.$store.commit("chat/ADD_UNREAD_MESSAGE", conversation);
       }
-      if (this.$route.name === "messages-new") {
-        this.$router.push(`/messages/${conversation.id}`);
-      }
+      // if (this.$route.name === "messages-new") {
+      //   this.$router.push(`/messages/${conversation.id}`);
+      // }
     }
   },
   methods: {
@@ -147,7 +155,7 @@ export default {
       if (window.innerWidth < 768) {
         this.$store.commit("IS_MOBILE", false);
       }
-      if (this.unreadMessages.includes(id)) {
+      if (this.unreadMessages.find(item => item.conversation_id == id)) {
         this.$store.commit("chat/DELETE_UNREAD_MESSAGE", id);
       }
       if (this.$route.params.slug != id) {
@@ -161,9 +169,9 @@ export default {
       });
     },
     senderFullname(item) {
-      return item.latest_conversation_message.user.id === this.$auth.user.id
-        ? "Me"
-        : `${item.latest_conversation_message.user.personal_detail.first_name} ${item.latest_conversation_message.user.personal_detail.last_name}`;
+      // return item.latest_conversation_message.user.id === this.$auth.user.id
+      // ? "Me"
+      return `${item.latest_conversation_message.user.personal_detail.first_name} ${item.latest_conversation_message.user.personal_detail.last_name}`;
     },
     userFullname(item) {
       return this.$auth.user.id === item.conversation_member_users[0].user.id

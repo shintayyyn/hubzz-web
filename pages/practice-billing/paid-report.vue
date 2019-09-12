@@ -74,34 +74,50 @@
 </template>
 <script>
 export default {
+  transition: {
+    name: "fade",
+    mode: "out-in"
+  },
   async asyncData({ app, error }) {
     try {
       let params = {
         offset: 0,
         limit: 5,
-        order_by: 'date_paid:desc',
-        status: 'Paid',
-      }
-      const response = await app.$axios.$get(`/api/v1/practice/locum-invoices`, { params })
-      const invoices = response.data && response.data.invoices && response.data.invoices.length ? response.data.invoices : []
-      const responseCount = await app.$axios.$get(`/api/v1/practice/locum-invoices/count`, { params })
-      const count = responseCount.data && responseCount.data.count ? responseCount.data.count : 0
+        order_by: "date_paid:desc",
+        status: "Paid"
+      };
+      const response = await app.$axios.$get(
+        `/api/v1/practice/locum-invoices`,
+        { params }
+      );
+      const invoices =
+        response.data && response.data.invoices && response.data.invoices.length
+          ? response.data.invoices
+          : [];
+      const responseCount = await app.$axios.$get(
+        `/api/v1/practice/locum-invoices/count`,
+        { params }
+      );
+      const count =
+        responseCount.data && responseCount.data.count
+          ? responseCount.data.count
+          : 0;
       return {
         invoices,
         count
-      }
+      };
     } catch (err) {
-      throw err
+      throw err;
     }
   },
   data() {
     return {
       current_page: 1,
       params: {
-        order_by: 'date_paid:desc',
+        order_by: "date_paid:desc"
       },
       // sort
-      sortType: '',
+      sortType: "",
       date_paid: false,
       //
       count: 0,
@@ -112,12 +128,12 @@ export default {
         paid_at: null
       },
       formError: [],
-      selectedInvoiceId: null,
-    }
+      selectedInvoiceId: null
+    };
   },
   computed: {
     getPracticeInvoices() {
-      return this.$store.getters['billing/getPracticeInvoices']
+      return this.$store.getters["billing/getPracticeInvoices"];
     },
     offset() {
       return this.perPage * (this.current_page - 1);
@@ -133,14 +149,16 @@ export default {
     },
     totalAmount() {
       if (!this.getPracticeInvoices.length) {
-        return 0
+        return 0;
       }
-      return this.getPracticeInvoices.map(invoice => invoice.amount).reduce((accumulator, currentValue) => accumulator + currentValue);
+      return this.getPracticeInvoices
+        .map(invoice => invoice.amount)
+        .reduce((accumulator, currentValue) => accumulator + currentValue);
     }
   },
   mounted() {
-    this.$store.commit('billing/SET_PRACTICE_INVOICES', this.invoices)
-    this.$store.commit('billing/SET_PRACTICE_INVOICE_COUNT', this.count)
-  },
-}
+    this.$store.commit("billing/SET_PRACTICE_INVOICES", this.invoices);
+    this.$store.commit("billing/SET_PRACTICE_INVOICE_COUNT", this.count);
+  }
+};
 </script>

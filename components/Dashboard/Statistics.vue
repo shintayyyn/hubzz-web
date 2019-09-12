@@ -2,12 +2,13 @@
   <section>
     <div class="flex flex-row flex-wrap justify-start">
       <div
-        class="px-2 my-2 sm:my-4 w-full sm:w-1/2 lg:w-1/4"
+        class="px-2 my-2 sm:my-4 w-full sm:w-1/2"
+        :class="$auth.user.domain === 'Locum' ? 'lg:w-1/4' : 'lg:w-1/3'"
         v-for="(item, index) in statistics"
         :key="index"
       >
         <nuxt-link :to="item.route">
-          <div class="statistics-card rounded-lg shadow-lg p-4 hover:bg-gray-300">
+          <div class="statistics-card rounded-lg shadow-lg px-8 py-4 hover:bg-gray-300">
             <div class="flex flex-col my-2">
               <div class="text-sm sm:text-md">{{item.label}}</div>
               <div class="font-bold text-5xl mt-2">{{item.value}}</div>

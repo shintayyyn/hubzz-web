@@ -39,7 +39,7 @@
     </div>
 
     <transition name="fade" mode="out-in">
-      <div class="show-document-shield" v-if="$route.name === 'profile-practice-documents-id'"></div>
+      <div class="shield" v-if="$route.name === 'profile-practice-documents-id'"></div>
     </transition>
     <nuxt-child />
   </section>
@@ -114,14 +114,7 @@ export default {
 .practice-doc-card {
   transition: background-color 0.5s ease-in-out;
 }
-.show-document-shield {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #333;
-  opacity: 0.5;
+.shield {
   z-index: 509;
 }
 /*  */

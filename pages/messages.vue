@@ -25,21 +25,28 @@ export default {
     },
     activeConversationId() {
       return this.$store.state.chat.activeConversationId;
+    },
+    unreadMessages() {
+      return this.$store.getters["chat/getUnreadMessages"];
     }
   },
   watch: {
     $route(to, from) {
       if (to.name === "messages-slug") {
         if (to.path === "/messages") {
-          if (window.innerWidth > 768) {
-            this.goToFirstConversation();
-          } else {
-            this.$store.commit("IS_MOBILE", true);
-            this.$store.commit("chat/DELETE_ACTIVE_CONVERSATION");
-          }
+          this.$store.commit("IS_MOBILE", true);
+          this.$store.commit("chat/DELETE_ACTIVE_CONVERSATION");
         } else {
           this.$store.dispatch("chat/setActiveConversation", to.params.slug);
         }
+      }
+
+      if (
+        this.unreadMessages.find(item => {
+          item.conversation_id.toString() === to.params.slug;
+        })
+      ) {
+        this.$store.commit("chat/DELETE_UNREAD_MESSAGE", to.params.slug);
       }
     },
     socketId(value) {
@@ -54,6 +61,7 @@ export default {
       socket_id: this.$socket.id,
       room_name: "messageroom"
     });
+    this.$store.commit("chat/DELETE_ACTIVE_CONVERSATION");
   },
   created() {
     this.$store.dispatch("chat/setActiveConversation", this.$route.params.slug);
@@ -71,9 +79,12 @@ export default {
     if (!this.$auth.loggedIn) {
       return this.$router.push("/");
     }
+    this.$store.commit("chat/DELETE_UNREAD_MESSAGE", this.$route.params.slug);
     if (window.innerWidth > 768) {
       if (this.conversations.length === 0) {
         this.$router.push(`/messages/new`);
+      } else {
+        this.goToFirstConversation();
       }
     } else {
       if (this.$route.path === "/messages") {
@@ -87,7 +98,9 @@ export default {
       let conversation = this.conversations.find(
         (conversation, index) => index === 0
       );
-      this.$router.push(`/messages/${conversation.id}`);
+      if (this.$route.params.slug != conversation.id.toString()) {
+        this.$router.push(`/messages/${conversation.id}`);
+      }
     }
   }
 };

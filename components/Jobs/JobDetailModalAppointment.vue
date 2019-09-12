@@ -99,7 +99,7 @@
       </div>
     </div>
 
-    <div class="add-surgery-shield" v-if="modal"></div>
+    <div class="shield" v-if="modal"></div>
     <transition name="slide" mode="out-in">
       <div class="add-surgery-modal shadow-lg" v-if="modal">
         <AddSurgeryModal @close="modal = false" />
@@ -342,14 +342,7 @@ export default {
 };
 </script>
 <style scoped>
-.add-surgery-shield {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #333;
-  opacity: 0.5;
+.shield {
   z-index: 511;
 }
 .add-surgery-modal {

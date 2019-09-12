@@ -3,20 +3,19 @@
     <div class="lg:px-10">
       <div class="flex flex-no-wrap justify-start">
         <div
-          style="font-family:Nunito"
           class="p-3 text-sm font-bold cursor-pointer border rounded-lg border-yellow-500 bg-yellow-500"
         >Frequently asked questions</div>
       </div>
     </div>
     <div class="lg:px-10 mt-5">
-      <div class="rounded-lg shadow-lg pt-10 px-5 pb-5 mb-10" style="font-family:Nunito">
+      <div class="rounded-lg shadow-lg pt-10 px-5 pb-5 mb-10">
         <div class="font-bold text-xl">FAQs</div>
         <div>faqs</div>
         <div class="font-bold mt-4 mb-2">Locum</div>
 
         <div v-for="item in locum_faqs" :key="item.id">
           <div
-            class="border border-white border-solid bg-gray-300 p-4 flex justify-between cursor-pointer"
+            class="border border-white border-solid bg-gray-300 p-4 flex justify-between items-center cursor-pointer"
             @click="item.toggled = !item.toggled"
           >
             <div>{{item.question}}</div>
@@ -30,7 +29,7 @@
               class="flex justify-start item-answer font-bold text-sm overflow-hidden"
               v-if="item.toggled"
             >
-              <div v-html="item.answer" class="w-full px-4 h-auto"></div>
+              <div v-html="item.answer" class="w-full px-4 py-2 h-auto"></div>
             </div>
           </transition>
           <!-- <div
@@ -44,7 +43,7 @@
         <div class="font-bold mt-4 mb-2">Practice</div>
         <div v-for="item in practice_faqs" :key="item.id">
           <div
-            class="border border-white border-solid bg-gray-300 p-4 flex justify-between cursor-pointer"
+            class="border border-white border-solid bg-gray-300 p-4 flex justify-between items-center cursor-pointer"
             @click="item.toggled = !item.toggled"
           >
             <div>{{item.question}}</div>
@@ -58,7 +57,7 @@
               class="flex justify-start item-answer font-bold text-sm overflow-hidden"
               v-if="item.toggled"
             >
-              <div v-html="item.answer" class="w-full px-4 h-auto"></div>
+              <div v-html="item.answer" class="w-full px-4 py-2 h-auto"></div>
             </div>
           </transition>
           <!-- <div

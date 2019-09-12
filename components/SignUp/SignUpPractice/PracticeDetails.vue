@@ -149,13 +149,13 @@ export default {
           search_results: this.surgeries
         });
         this.$emit("nextTab", "PracticeAccountDetails");
-      } catch (e) { }
+      } catch (e) {}
     }
   }
 };
 </script>
 <style scoped>
-.add-surgery-confirmation-modal {
+/* .add-surgery-confirmation-modal {
   position: fixed;
   top: 0;
   left: 0;
@@ -163,14 +163,7 @@ export default {
   height: auto;
   z-index: 514;
 }
-.add-surgery-confirmation-shield {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #333;
-  opacity: 0.5;
+.shield {
   z-index: 513;
-}
+} */
 </style>
