@@ -42,7 +42,7 @@
                 </div>
                 <span
                   class="absolute w-10 h-full flex items-center right-0 text-right text-xs text-gray-600 leading-none mx-2"
-                  :class="[parseInt($route.params.slug) === item.id ? 'bg-gray-300' : 'hover:bg-gray-200 bg-white', unreadMessages.find(conversation => conversation.conversation_id == item.id && $auth.user.id == conversation.user_id) ? 'bg-gray-100' : '']"
+                  :class="[parseInt($route.params.slug) === item.id ? 'bg-gray-300' : 'hover:bg-gray-200', unreadMessages.find(conversation => conversation.conversation_id == item.id && $auth.user.id == conversation.user_id) ? 'bg-gray-100' : '']"
                 >{{ $moment(item.latest_conversation_message.created_at).fromNow() }}</span>
               </div>
             </div>
@@ -76,7 +76,7 @@
                 </div>
                 <span
                   class="absolute w-10 h-full flex items-center right-0 text-right text-xs text-gray-600 leading-none mx-2"
-                  :class="[parseInt($route.params.slug) === item.id ? 'bg-gray-300' : 'bg-white', unreadMessages.find(conversation => conversation.conversation_id == item.id && $auth.user.id == conversation.user_id) ? 'bg-gray-200' : 'bg-white']"
+                  :class="[parseInt($route.params.slug) === item.id ? 'bg-gray-300' : 'hover:bg-gray-200', unreadMessages.find(conversation => conversation.conversation_id == item.id && $auth.user.id == conversation.user_id) ? 'bg-gray-200' : 'bg-white']"
                 >{{ $moment(item.latest_conversation_message.created_at).fromNow() }}</span>
               </div>
             </div>

@@ -12,7 +12,6 @@ export default {
       let user = this.$auth.user.id === message.latest_conversation_message.user.id;
       if (!findConversation) {
         commit("ADD_CONVERSATION", message)
-        console.log(user, this.$route, this.$router.app._route.name)
         if (user && this.$router.app._route.name === 'messages-new') {
           this.$router.push(`/messages/${message.id}`);
         }
@@ -110,7 +109,7 @@ export default {
     //   receiver_user_id = foundConversation.receiver_id;
     // }
     const response = await chatApi.deleteMessage(this.$axios, payload);
-    console.log("delete message action", response)
+    console.log("delete message action", response, payload)
     commit("DELETE_MESSAGE", response.data.message);
   }
 };
