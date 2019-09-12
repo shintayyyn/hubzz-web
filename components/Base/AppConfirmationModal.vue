@@ -63,7 +63,7 @@ export default {
   bottom: 0;
   background-color: #333;
   opacity: 0.5;
-  z-index: 511;
+  z-index: 600;
 }
 .remove-confirmation-modal {
   position: fixed;
@@ -71,6 +71,6 @@ export default {
   left: 0;
   right: 0;
   height: auto;
-  z-index: 512;
+  z-index: 601;
 }
 </style>

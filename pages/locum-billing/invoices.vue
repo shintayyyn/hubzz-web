@@ -16,11 +16,11 @@
             <tr class="text-xs sm:text-sm text-left">
               <th>Type</th>
               <th>Practice / Surgery</th>
-              <th @click="sortBy('date_created')">
+              <th class="cursor-pointer" @click="sortBy('date_created')">
                 Created
                 <svgicon class="inline align-baseline" name="sort" height="12" width="12" />
               </th>
-              <th @click="sortBy('issued_at')">
+              <th class="cursor-pointer" @click="sortBy('issued_at')">
                 Issued
                 <svgicon class="inline align-baseline" name="sort" height="12" width="12" />
               </th>
@@ -39,29 +39,32 @@
               </tr>
             </template>
             <template v-else v-for="(invoice, index) in getLocumInvoices">
-              <tr :key="invoice.id" class="__job-card shadow-md cursor-pointer text-xs text-left">
-                <td @click="show(invoice)">{{invoice.type}}</td>
-                <td @click="show(invoice)">{{invoice.surgery.name}}</td>
-                <td @click="show(invoice)">{{invoice.date_created | localDate}}</td>
-                <td @click="show(invoice)">{{invoice.issued_at | localDate}}</td>
-                <td @click="show(invoice)">{{invoice.invoice_number}}</td>
-                <td @click="show(invoice)">
+              <tr
+                @click="show(invoice)"
+                :key="invoice.id"
+                class="__job-card shadow-md cursor-pointer text-xs text-left"
+              >
+                <td>{{invoice.type}}</td>
+                <td>{{invoice.surgery.name}}</td>
+                <td>{{invoice.date_created | localDate}}</td>
+                <td>{{invoice.issued_at | localDate}}</td>
+                <td>{{invoice.invoice_number}}</td>
+                <td>
                   <div
                     v-for="item in invoice.items.filter(item => item.type === 'Job Part' && item.job_part)"
                     :key="item.id"
                   >{{item.job_part.job_part_number}}</div>
                 </td>
-                <td @click="show(invoice)">£ {{invoice.total_amount}}</td>
-                <td @click="show(invoice)">pension type</td>
-                <td
-                  @click="show(invoice)"
-                >{{invoice.paid_at ? 'Paid' : invoice.issued_at ? 'Issued' : ''}}</td>
-                <td @click="onClick(invoice, index)">
+                <td>£ {{invoice.total_amount}}</td>
+                <td>pension type</td>
+                <td>{{invoice.paid_at ? 'Paid' : invoice.issued_at ? 'Issued' : ''}}</td>
+                <td>
                   <button
+                    @click.stop.prevent="onClick(invoice, index)"
                     v-if="!invoice.paid_at"
                     v-text="invoice.issued_at ? 'Mark as paid' : 'Delete'"
-                    class="px-2 py-3 text-white rounded-lg"
-                    :class="invoice.issued_at ? 'bg-green-600' : 'bg-yellow-500'"
+                    class="px-2 py-3 font-bold rounded-lg focus:outline-none"
+                    :class="invoice.issued_at ? 'text-white bg-green-600' : 'bg-yellow-500'"
                   ></button>
                 </td>
               </tr>
@@ -91,6 +94,7 @@
         :name="'paid_at'"
         :label="'Receive payment on'"
         :error="formError.find(item => item.field === 'paid_at')"
+        isAfter
       />
       <div class="flex flex-row flex-no-wrap justify-center">
         <AppButton :label="'Save'" @click="updateInvoice" :inStyle="'padding:5px'" />
@@ -292,6 +296,11 @@ export default {
               "billing/UPDATE_LOCUM_INVOICE",
               res.data.invoice
             );
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: [`${res.message}`]
+            });
             this.paymentModal = false;
           });
       }

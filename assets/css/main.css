@@ -79,7 +79,7 @@ div::-webkit-scrollbar-thumb {
 } */
 
 /* MODAL */
-/* .modal-container {
+.modal-container {
   position: fixed;
   top: 0;
   right: 0;
@@ -97,7 +97,7 @@ div::-webkit-scrollbar-thumb {
   .modal-container {
     width: 80%;
   }
-} */
+}
 
 /* modal */
 .slide-enter-active,
@@ -128,6 +128,7 @@ div::-webkit-scrollbar-thumb {
 .drop-down-leave-active {
   transition: all .5s;
 }
+
 .drop-down-enter,
 .drop-down-leave-active {
   transform: translateY(-5px);

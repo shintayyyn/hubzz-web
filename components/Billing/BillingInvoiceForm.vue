@@ -1,6 +1,6 @@
 <template>
   <div class="modal shadow-lg">
-    <div class="p-8 max-w-3xl">
+    <div class="p-8 max-w-4xl">
       <div class="flex flex-wrap justify-start items-center">
         <nuxt-link to="/locum-billing/invoices" class="cursor-pointer">
           <svgicon name="left-arrow" height="32" width="32" />
@@ -10,7 +10,7 @@
           @click="save(false)"
         >Save changes</div>
         <div
-          class="save-button text-xs sm:text-sm mx-2 py-2 px-3 border-2 rounded-lg font-bold flex items-center"
+          class="save-button text-xs sm:text-sm my-2 mx-2 py-2 px-3 border-2 rounded-lg font-bold flex items-center"
           @click="save(true)"
         >Save and archive as final</div>
       </div>
@@ -31,9 +31,9 @@
         >Platform</button>
       </div>
 
-      <div class="max-w-2xl my-4 bg-white px-4 py-4 border shadow-md">
+      <div class="max-w-3xl my-4 bg-white px-4 py-4 border shadow-md">
         <div class="flex flex-col">
-          <div class="text-xs sm:text-sm text-right leading-normal">
+          <div class="text-xs sm:text-sm sm:text-right leading-normal">
             <div>Mr. {{$auth.user.personal_detail.name}}</div>
             <div>{{$auth.user.address_detail.address.line_1}}</div>
             <div>{{$auth.user.address_detail.address.line_3}}</div>
@@ -42,8 +42,10 @@
             <div>{{$auth.user.email}}</div>
             <div>UTR {{$auth.user.locum_detail.invoice_detail && $auth.user.locum_detail.invoice_detail.utr_number ? $auth.user.locum_detail.invoice_detail.utr_number : null}}</div>
           </div>
-          <div class="flex justify-between my-2">
-            <div class="text-xs sm:text-sm text-left rounded-lg border-2 border-gray-300 p-2 w-2/3">
+          <div class="flex flex-wrap justify-between my-2">
+            <div
+              class="w-full sm:w-1/2 order-2 sm:order-1 text-xs sm:text-sm text-left rounded-lg border-2 border-gray-300 p-2 w-2/3"
+            >
               <section>
                 <div class="relative flex flex-col py-2 mb-6" v-on-clickaway="toggledOffSurgeries">
                   <div class="relative flex flex-row flex-no-wrap justify-between">
@@ -101,16 +103,25 @@
                 <div>{{selectedSurgery.address.post_code}}</div>
               </div>
             </div>
-            <div class="text-right leading-normal">
+            <div class="w-full sm:w-1/2 order-1 sm:order-2 sm:text-right leading-normal">
               <div class="font-bold text-sm sm:text-lg">INVOICE</div>
               <div class="text-xs sm:text-sm">Not yet issued</div>
             </div>
           </div>
           <div v-if="selectedSurgery">
             <section>
-              <div class="relative flex flex-col py-2 mb-6" v-on-clickaway="toggledOffJobParts">
+              <div
+                class="relative flex flex-col py-2 mb-6 mt-2"
+                v-on-clickaway="toggledOffJobParts"
+              >
                 <div class="relative flex flex-row flex-no-wrap justify-between">
                   <label class="text-xs sm:text-sm py-1">Select a job to add to this invoice</label>
+                  <div class="flex justify-end">
+                    <div
+                      class="rounded-lg bg-red-500 p-1 text-xs sm:text-sm text-white"
+                      v-if="formError.find(item => item.field === 'items')"
+                    >{{formError.find(item => item.field === 'items').message}}</div>
+                  </div>
                 </div>
                 <div class="relative flex flex-row flex-wrap justify-start">
                   <input
@@ -160,85 +171,93 @@
           </div>
         </div>
 
-        <table class="w-full">
-          <thead>
-            <tr class="text-center bg-gray-900">
-              <th class="w-1/2 text-white">Description</th>
-              <th class="w-1/2 text-white">Total</th>
-              <th v-if="type === 'Private'"></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr class="border-b" v-for="(item, index) in selectedJobParts" :key="item.id">
-              <td class="w-2/3">
-                <textarea
-                  v-model="item.description"
-                  placeholder="Enter description"
-                  rows="4"
-                  class="w-full text-xs sm:text-sm p-2 resize-none border-b-2 border-gray-300 focus:outline-none focus:border-yellow-300"
-                ></textarea>
-              </td>
-              <td class="w-1/3">
-                <input
-                  type="text"
-                  v-model="item.total"
-                  placeholder="Enter value"
-                  class="pt-12 w-full h-full text-xs sm:text-sm p-2 border-b-2 border-gray-300 focus:outline-none focus:border-yellow-300 text-right"
-                />
-              </td>
-              <td class="w-full">
-                <span class="flex justify-center">
-                  <span
-                    class="cursor-pointer w-8 h-8 rounded-full bg-gray-900 text-white font-semibold text-xl text-center"
-                    @click="removeSelectedJobPart(item, index)"
-                  >-</span>
-                </span>
-              </td>
-            </tr>
-            <tr>
-              <td></td>
-              <td></td>
-              <td v-if="type === 'Private'">
-                <span class="flex justify-center">
-                  <span
-                    class="cursor-pointer w-8 h-8 rounded-full bg-gray-900 text-white font-semibold text-xl text-center"
-                    @click="addItem"
-                  >+</span>
-                </span>
-              </td>
-            </tr>
-            <tr>
-              <td colspan="2">
-                <div class="flex flex-row flex-no-wrap justify-between">
-                  <div class="w-full pr-1">
-                    <AppDate
-                      v-model="form.date_start"
-                      :name="'date_start'"
-                      :label="'Days worked from'"
-                      :error="formError.find(item => item.field === 'date_start')"
-                      isAfter
+        <div class="overflow-x-scroll">
+          <table class="items-table">
+            <thead>
+              <tr class="text-center bg-gray-900">
+                <th class="w-1/2 text-white">Description</th>
+                <th class="w-1/2 text-white" :colspan="type === 'Private' ? 1:2">
+                  <span class="flex justify-between items-center">
+                    Total
+                    <span
+                      v-if="type === 'Private'"
+                      class="cursor-pointer w-8 h-8 rounded-full bg-white text-gray-900 font-semibold text-xl text-center flex justify-center"
+                      @click="addItem"
+                    >+</span>
+                  </span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b" v-for="(item, index) in selectedJobParts" :key="item.id">
+                <td class="w-1/2">
+                  <textarea
+                    v-model="item.description"
+                    placeholder="Enter description"
+                    rows="4"
+                    class="w-full text-xs sm:text-sm p-2 resize-none border-b-2 border-gray-300 focus:outline-none focus:border-yellow-300"
+                  ></textarea>
+                </td>
+                <td class="w-1/2">
+                  <span class="flex justify-between items-center">
+                    <input
+                      type="text"
+                      v-model="item.total"
+                      placeholder="Enter value"
+                      class="pt-12 w-full h-full text-xs sm:text-sm p-2 border-b-2 border-gray-300 focus:outline-none focus:border-yellow-300 text-right"
                     />
+                    <span
+                      class="cursor-pointer w-8 h-8 rounded-full bg-gray-900 text-white font-semibold text-xl text-center flex justify-center items-center"
+                      @click="removeSelectedJobPart(item, index)"
+                    >-</span>
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <div class="flex flex-row flex-no-wrap justify-between">
+                    <div class="w-full pr-1">
+                      <AppDate
+                        v-model="form.date_start"
+                        :name="'date_start'"
+                        :label="'Days worked from'"
+                        :error="formError.find(item => item.field === 'date_start')"
+                        isAfter
+                      />
+                    </div>
+                    <div class="w-full pl-1">
+                      <AppDate
+                        v-model="form.date_end"
+                        :name="'date_end'"
+                        :label="'To'"
+                        :error="formError.find(item => item.field === 'date_end')"
+                        isAfter
+                      />
+                    </div>
                   </div>
-                  <div class="w-full pl-1">
-                    <AppDate
-                      v-model="form.date_end"
-                      :name="'date_end'"
-                      :label="'To'"
-                      :error="formError.find(item => item.field === 'date_end')"
-                      isAfter
-                    />
+                </td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td>Total</td>
+                <td class="text-right">
+                  <div class="flex justify-end">
+                    <div
+                      class="rounded-lg bg-red-500 p-1 text-xs sm:text-sm text-white"
+                      v-if="formError.find(item => item.field === 'total_amount')"
+                    >{{formError.find(item => item.field === 'total_amount').message}}</div>
                   </div>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-          <tfoot>
-            <tr>
-              <td>Total</td>
-              <td class="text-right">£ {{amount | currency}}</td>
-            </tr>
-          </tfoot>
-        </table>
+                  £ {{amount | currency}}
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
 
         <div class="rounded-lg border-2 border-gray-300 mt-24 p-4">
           <div class="flex flex-col text-xs sm:text-sm">
@@ -253,7 +272,6 @@
     </div>
   </div>
 </template>
-
 <script>
 import AppDate from "@/components/Base/AppDate";
 import AppInput from "@/components/Base/AppInput";
@@ -349,6 +367,7 @@ export default {
       this.fetchSurgeriesCount();
     },
     selectedSurgery(newValue, oldValue) {
+      console.log(newValue, oldValue);
       if (newValue && oldValue) {
         this.jobParts = [];
         this.selectedJobParts = [];
@@ -409,6 +428,7 @@ export default {
       this.form.total_amount = this.amount;
       this.form.final = final;
       this.Validate(this.form, ["final"]);
+      console.log(this.formError);
       if (!this.formError.length) {
         this.form.date_start = this.$moment(this.form.date_start).format(
           "YYYY-MM-DD"
@@ -420,6 +440,11 @@ export default {
           this.$axios.$post(`/api/v1/locum/invoices`, this.form).then(res => {
             this.$store.commit("billing/ADD_LOCUM_INVOICE", res.data.invoice);
             this.$router.push("/locum-billing/invoices");
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: [`${res.message}`]
+            });
           });
         } else {
           this.$axios
@@ -429,6 +454,11 @@ export default {
                 "billing/UPDATE_LOCUM_INVOICE",
                 res.data.invoice
               );
+              this.$store.commit("SET_NOTIFICATION", {
+                enabled: true,
+                status: "success",
+                text: [`${res.message}`]
+              });
               this.$router.push("/locum-billing/invoices");
             });
         }
@@ -450,8 +480,7 @@ export default {
           this.$refs.surgeryLists.scrollTop >=
         this.$refs.surgeryLists.scrollHeight - 1
       ) {
-        if (this.loadMoreSurgeries) {
-          // this.loadingSurgeries = true;
+        if (this.loadMoreSurgeries && !this.loadingSurgeries) {
           this.fetchSurgeriesCount();
         }
       }
@@ -537,7 +566,7 @@ export default {
           this.$refs.jobPartsLists.scrollTop >=
         this.$refs.jobPartsLists.scrollHeight - 1
       ) {
-        if (this.loadMoreJobParts) {
+        if (this.loadMoreJobParts && !this.loadingJobParts) {
           this.fetchJobPartsCount();
         }
       }
@@ -657,6 +686,9 @@ export default {
 };
 </script>
 <style scoped>
+.items-table {
+  width: 730px;
+}
 .modal {
   position: fixed;
   top: 0;

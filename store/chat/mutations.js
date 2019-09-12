@@ -41,24 +41,42 @@ export default {
     );
   },
   ADD_USER_ONLINE(state, payload) {
-    state.usersOnline.push(payload);
+    // state.usersOnline.push(payload);
+    let conversation = state.conversations.find(conversation => conversation.id == state.activeConversationId)
+    let user = conversation.conversation_member_users.find(member => member.user.id == payload)
+    user.user.is_online = true
+    conversation.conversation_member_users.splice(conversation.conversation_member_users.findIndex(item => item.user.id == payload), 1, user)
+    state.conversations.splice(state.conversations.findIndex(item => item.id == state.activeConversationId), 1, conversation)
+    console.log(state.conversations)
   },
   ADD_UNREAD_MESSAGE(state, payload) {
-    !state.unreadMessages.includes(payload) ? state.unreadMessages.push(payload) : '';
+    if (!state.unreadMessages.find(item => item.user_id === this.$auth.user.id && item.conversation_id === payload.id)) {
+      state.unreadMessages.push({
+        user_id: this.$auth.user.id,
+        conversation_id: payload.id,
+      })
+    }
   },
   DELETE_UNREAD_MESSAGE(state, payload) {
     let index = state.unreadMessages.findIndex(
-      message_id => message_id === payload
+      item => item.conversation_id === payload
     );
     state.unreadMessages.splice(index, 1);
   },
   DELETE_USER_ONLINE(state, payload) {
-    let index = state.usersOnline.findIndex(users => users == payload);
-    if (index >= 0) {
-      state.usersOnline.splice(index, 1);
-    }
+    // let index = state.usersOnline.findIndex(users => users == payload);
+    // if (index >= 0) {
+    //   state.usersOnline.splice(index, 1);
+    // }
+    let conversation = state.conversations.find(conversation => conversation.id == state.activeConversationId)
+    let user = conversation.conversation_member_users.find(member => member.user.id == payload)
+    user.user.is_online = false
+    conversation.conversation_member_users.splice(conversation.conversation_member_users.findIndex(item => item.user.id == payload), 1, user)
+    state.conversations.splice(state.conversations.findIndex(item => item.id == state.activeConversationId), 1, conversation)
+    console.log(state.conversations)
   },
   DELETE_ACTIVE_CONVERSATION(state) {
+    console.log('deleting active conversation id')
     state.activeConversationId = null
   },
   DELETE_MESSAGE(state, payload) {

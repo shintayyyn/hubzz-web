@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-row flex-wrap justify-start">
-    <AppFormError :formError="formError" v-if="formError.length > 0" />
+    <AppFormError class="w-full" :formError="formError" v-if="formError.length > 0" />
 
     <div class="w-full md:w-1/2 p-2">
       <p style="font-family:Nunito" class="text-sm font-bold">Bank account</p>
@@ -11,6 +11,9 @@
           :name="'account_name'"
           :label="'Account name'"
           :placeholder="''"
+          @submit="save"
+          @blur="CheckEmptyField(form.account_name, 'account_name')"
+          :error="formError.find(item => item.field === 'account_name')"
         />
         <AppInput
           v-model="form.bank_name"
@@ -18,6 +21,9 @@
           :name="'bank_name'"
           :label="'Bank name'"
           :placeholder="''"
+          @submit="save"
+          @blur="CheckEmptyField(form.bank_name, 'bank_name')"
+          :error="formError.find(item => item.field === 'bank_name')"
         />
         <AppInput
           v-model="form.sort_code"
@@ -25,6 +31,9 @@
           :name="'sort_code'"
           :label="'Sort code'"
           :placeholder="''"
+          @submit="save"
+          @blur="CheckEmptyField(form.sort_code, 'sort_code')"
+          :error="formError.find(item => item.field === 'sort_code')"
         />
         <AppInput
           v-model="form.account_number"
@@ -32,6 +41,9 @@
           :name="'account_number'"
           :label="'Account number'"
           :placeholder="''"
+          @submit="save"
+          @blur="CheckEmptyField(form.account_number, 'account_number')"
+          :error="formError.find(item => item.field === 'account_number')"
         />
       </div>
     </div>
@@ -49,6 +61,9 @@
                 :name="'tax_year_end_month'"
                 :placeholder="'Select...'"
                 :items="months"
+                @submit="save"
+                @blur="CheckEmptyField(form.tax_year_end_month, 'tax_year_end_month')"
+                :error="formError.find(item => item.field === 'tax_year_end_month')"
               />
             </div>
             <div class="ml-1 w-1/2">
@@ -58,6 +73,9 @@
                 :name="'tax_year_end_date'"
                 :placeholder="'Select...'"
                 :items="days"
+                @submit="save"
+                @blur="CheckEmptyField(form.tax_year_end_date, 'tax_year_end_date')"
+                :error="formError.find(item => item.field === 'tax_year_end_date')"
               />
             </div>
           </div>
@@ -69,14 +87,20 @@
           :label="'Are you...?'"
           :placeholder="'Select...'"
           :items="employmentTypes"
+          @submit="save"
+          @blur="CheckEmptyField(form.employment_type, 'employment_type')"
+          :error="formError.find(item => item.field === 'employment_type')"
         />
         <template v-if="form.employment_type === 'Limited company'">
           <AppInput
             v-model="form.company_registration_number"
             :type="'text'"
-            :name="'company_registration_number'"
+            :name="'Company registration number'"
             :label="'Company_registration_number'"
             :placeholder="'The number of your company from Companies House'"
+            @submit="save"
+            @blur="CheckEmptyField(form.company_registration_number, 'company_registration_number')"
+            :error="formError.find(item => item.field === 'company_registration_number')"
           />
         </template>
         <template v-else>
@@ -86,6 +110,9 @@
             :name="'utr_number'"
             :label="'UTR number'"
             :placeholder="''"
+            @submit="save"
+            @blur="CheckEmptyField(form.utr_number, 'utr_number')"
+            :error="formError.find(item => item.field === 'utr_number')"
           />
         </template>
 
@@ -96,6 +123,9 @@
           :label="'IR35 - role inside or outside of scope'"
           :placeholder="'Select...'"
           :items="[ {value: true, label: 'Inside of Scope'}, {value: false, label: 'Outside of Scope'} ]"
+          @submit="save"
+          @blur="CheckEmptyField(form.ir35, 'ir35')"
+          :error="formError.find(item => item.field === 'ir35')"
         />
       </div>
 
@@ -150,7 +180,6 @@ export default {
         response.data && response.data.data && response.data.data.user
           ? response.data.data.user
           : null;
-      console.log("user", user);
       if (process.client) {
         document.body.style.cursor = "auto";
       }
@@ -233,7 +262,7 @@ export default {
         account_number: "",
         tax_year_end_month: "",
         tax_year_end_date: "",
-        employment_type: "",
+        employment_type: "Self-employed",
         utr_number: "",
         company_registration_number: "",
         ir35: false
@@ -259,8 +288,29 @@ export default {
     }
   },
   watch: {
-    "form.employment_type"(value) {
-      this.formError = [];
+    "form.account_name"(value) {
+      this.CheckEmptyField(this.form.account_name, "account_name");
+    },
+    "form.bank_name"(value) {
+      this.CheckEmptyField(this.form.bank_name, "bank_name");
+    },
+    "form.sort_code"(value) {
+      this.CheckEmptyField(this.form.bank_name, "sort_code");
+    },
+    "form.account_number"(value) {
+      this.CheckEmptyField(this.form.bank_name, "account_number");
+    },
+    "form.tax_year_end_month"(value) {
+      this.CheckEmptyField(this.form.bank_name, "tax_year_end_month");
+    },
+    "form.tax_year_end_date"(value) {
+      this.CheckEmptyField(this.form.bank_name, "tax_year_end_date");
+    },
+    "form.utr_number"(value) {
+      this.CheckEmptyField(this.form.bank_name, "utr_number");
+    },
+    "form.ir35"(value) {
+      this.CheckEmptyField(this.form.bank_name, "ir35");
     }
   },
   methods: {

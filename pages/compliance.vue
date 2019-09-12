@@ -30,7 +30,9 @@
     </div>
     <div class="mt-10">
       <div class="font-bold text-xs sm:text-base">Documents you need to be approved by Hubzz HQ</div>
-      <div class="text-sm font-hairline italic">(Note: Only file types .pdf, .jpeg, .msword, .tiff are acccepted)</div>
+      <div
+        class="text-sm font-hairline italic"
+      >(Note: Only file types .pdf, .jpeg, .msword, .tiff are acccepted)</div>
     </div>
     <div class="mt-4 overflow-x-auto px-2 md:px-0">
       <table>
@@ -99,7 +101,7 @@
               </td>
               <td v-else></td>
 
-              <td v-if="item.info">{{item.info.note | StringMaxLength}}</td>
+              <td v-if="item.info">{{ item.info.note | StringMaxLength(15)}}</td>
               <td v-else></td>
               <td
                 class="hover:underline"
@@ -440,40 +442,68 @@ export default {
     },
     // set mandatory and optional compliance
     setComplianceDocuments() {
-      this.$axios.$get(`/api/v1/me`).then(res => {
-        if (res.data.user.locum_detail.compliance_documents.length > 0) {
-          res.data.user.locum_detail.compliance_documents.forEach(
-            userComplianceDocument => {
-              this.profession.mandatory_compliance_documents.forEach(
-                mandatoryDocument => {
-                  if (
-                    userComplianceDocument.compliance_document.id ===
-                    mandatoryDocument.id
-                  ) {
-                    mandatoryDocument.info = userComplianceDocument;
+      this.$axios
+        .$get(`/api/v1/locum/locum-detail-compliance-documents`)
+        .then(res => {
+          if (res.data.locum_detail_compliance_documents.length > 0) {
+            res.data.locum_detail_compliance_documents.forEach(
+              userComplianceDocument => {
+                this.profession.mandatory_compliance_documents.forEach(
+                  mandatoryDocument => {
+                    if (
+                      userComplianceDocument.compliance_document.id ===
+                      mandatoryDocument.id
+                    ) {
+                      mandatoryDocument.info = userComplianceDocument;
+                    }
                   }
-                }
-              );
-              this.profession.optional_compliance_documents.forEach(
-                optionalDocument => {
-                  if (
-                    userComplianceDocument.compliance_document.id ===
-                    optionalDocument.id
-                  ) {
-                    optionalDocument.info = userComplianceDocument;
+                );
+                this.profession.optional_compliance_documents.forEach(
+                  optionalDocument => {
+                    if (
+                      userComplianceDocument.compliance_document.id ===
+                      optionalDocument.id
+                    ) {
+                      optionalDocument.info = userComplianceDocument;
+                    }
                   }
-                }
-              );
-            }
+                );
+              }
+            );
+          }
+          // if (res.data.user.locum_detail.compliance_documents.length > 0) {
+          //   res.data.user.locum_detail.compliance_documents.forEach(
+          //     userComplianceDocument => {
+          //       this.profession.mandatory_compliance_documents.forEach(
+          //         mandatoryDocument => {
+          //           if (
+          //             userComplianceDocument.compliance_document.id ===
+          //             mandatoryDocument.id
+          //           ) {
+          //             mandatoryDocument.info = userComplianceDocument;
+          //           }
+          //         }
+          //       );
+          //       this.profession.optional_compliance_documents.forEach(
+          //         optionalDocument => {
+          //           if (
+          //             userComplianceDocument.compliance_document.id ===
+          //             optionalDocument.id
+          //           ) {
+          //             optionalDocument.info = userComplianceDocument;
+          //           }
+          //         }
+          //       );
+          //     }
+          //   );
+          // }
+          this.mandatory = this.profession.mandatory_compliance_documents.sort(
+            (a, b) => a.id - b.id
           );
-        }
-        this.mandatory = this.profession.mandatory_compliance_documents.sort(
-          (a, b) => a.id - b.id
-        );
-        this.optional = this.profession.optional_compliance_documents.sort(
-          (a, b) => a.id - b.id
-        );
-      });
+          this.optional = this.profession.optional_compliance_documents.sort(
+            (a, b) => a.id - b.id
+          );
+        });
     },
     status(status) {
       if (status === "Pending" || status === "Expiring") {
@@ -795,9 +825,9 @@ a {
 table {
   width: 920px;
 }
-table thead th {
-  /* padding: 10px 0; */
-}
+/* table thead th {
+  padding: 10px 0;
+} */
 table tbody td {
   padding: 15px 8px;
 }

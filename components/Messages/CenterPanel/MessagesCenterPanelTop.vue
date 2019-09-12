@@ -5,23 +5,23 @@
         <svgicon name="left-arrow" height="20" width="20" />
       </button>
     </div>
-    <div class="flex flex-col justify-center">
+    <div class="flex flex-col justify-center" v-if="userDetail">
       <div class="font-bold md:text-lg">
-        <span>{{ details.name }}</span>
+        <span>{{ userDetail.name }}</span>
       </div>
       <div class="text-xs md:text-sm text-gray-600">
-        <span class>{{ details.profession }}</span>
+        <span class>{{ userDetail.profession }}</span>
         <span v-if="$route.name === 'messages-slug'" class="inline-block px-2 text-lg">|</span>
         <span
           v-if="$route.name === 'messages-slug'"
-          :class="details.status ? 'bg-green-400' : 'bg-gray-300'"
+          :class="userDetail.status ? 'bg-green-400' : 'bg-gray-300'"
           class="inline-block rounded-full"
           style="padding: 5px"
         ></span>
         <p
           v-if="$route.name === 'messages-slug'"
           class="inline-block"
-        >{{ details.status ? 'Online' : 'Offline' }}</p>
+        >{{ userDetail.status ? 'Online' : 'Offline' }}</p>
       </div>
     </div>
   </div>
@@ -30,19 +30,10 @@
 export default {
   data() {
     return {
-      messages: [],
-      details: {
-        id: "",
-        name: "",
-        profession: "",
-        status: false
-      }
+      messages: []
     };
   },
   computed: {
-    usersOnline() {
-      return this.$store.state.chat.usersOnline;
-    },
     activeConversationId() {
       return this.$store.state.chat.activeConversationId;
     },
@@ -51,20 +42,38 @@ export default {
     },
     newUserMessage() {
       return this.$store.state.chat.newMessageUser;
-    }
-  },
-  created() {
-    this.getDetails();
-    let isOnline = this.usersOnline.includes(this.details.id);
-    this.details.status = isOnline;
-  },
-  watch: {
-    usersOnline(value) {
-      let isOnline = value.includes(this.details.id);
-      this.details.status = isOnline;
     },
-    $route(to, from) {
-      this.getDetails();
+    userDetail() {
+      let detail = null;
+      if (this.$store.state.chat.activeConversationId) {
+        let active_conversation = this.$store.state.chat.conversations.find(
+          conversation =>
+            conversation.id == this.$store.state.chat.activeConversationId
+        );
+        let user = active_conversation.conversation_member_users.find(
+          member => member.user.id !== this.$auth.user.id
+        );
+        let detail = {
+          name: `${user.user.personal_detail.first_name} ${user.user.personal_detail.last_name}`,
+          profession: user.user.practice_detail
+            ? user.user.practice_detail.practice_role
+            : user.user.locum_detail.profession.name,
+          status: user.user.is_online
+        };
+        console.log("detail", detail);
+
+        return detail;
+      } else {
+        let detail = {
+          name: `${this.newUserMessage.personal_detail.first_name} ${this.newUserMessage.personal_detail.last_name}`,
+          profession: this.newUserMessage.locum_detail
+            ? this.newUserMessage.locum_detail.profession.name
+            : this.newUserMessage.practice_detail.practice_role
+        };
+        console.log("detail", detail);
+
+        return detail;
+      }
     }
   },
   methods: {
@@ -78,22 +87,23 @@ export default {
         this.$route.name === "messages-slug" &&
         this.$route.params.slug
       ) {
-        let conversation_details = this.conversations.find(
-          details => details.id.toString() === this.$route.params.slug
-        );
-        let user_details = conversation_details.conversation_member_users.find(
-          detail => detail.user.id != this.$auth.user.id
-        );
-        this.details.id = user_details.user.id;
-        let isOnline = this.usersOnline.includes(this.details.id);
-        this.details.status = isOnline;
-        this.details.name =
-          conversation_details.type === "Private"
-            ? `${user_details.user.personal_detail.first_name} ${user_details.user.personal_detail.last_name}`
-            : conversation_details.title;
-        this.details.profession = user_details.user.locum_detail
-          ? user_details.user.locum_detail.profession.name
-          : user_details.user.practice_detail.practice_role;
+        // let conversation_details = this.conversations.find(
+        //   details => details.id.toString() === this.$route.params.slug
+        // );
+        // let user_details = conversation_details.conversation_member_users.find(
+        //   detail => detail.user.id != this.$auth.user.id
+        // );
+        // this.details.id = user_details.user.id;
+        // // let isOnline = this.usersOnline.includes(this.details.id);
+        // // this.details.status = isOnline;
+        // this.details.status = user_details.user.is_online;
+        // this.details.name =
+        //   conversation_details.type === "Private"
+        //     ? `${user_details.user.personal_detail.first_name} ${user_details.user.personal_detail.last_name}`
+        //     : conversation_details.title;
+        // this.details.profession = user_details.user.locum_detail
+        //   ? user_details.user.locum_detail.profession.name
+        //   : user_details.user.practice_detail.practice_role;
       }
     },
     goBack() {

@@ -52,7 +52,6 @@ export default {
   },
   methods: {
     newConversation(value) {
-      console.log(this.newUserMessage);
       this.$store.commit("chat/ADD_NEW_MESSAGE_USER", value);
       this.createMessage = true;
     },

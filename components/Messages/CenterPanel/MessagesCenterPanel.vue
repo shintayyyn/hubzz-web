@@ -1,6 +1,6 @@
 <template>
   <div class="relative w-full flex flex-col" v-if="$route.name === 'messages-slug'">
-    <MessagesCenterPanelTop />
+    <MessagesCenterPanelTop v-if="$store.state.chat.activeConversationId" />
     <div class="flex flex-col h-full justify-between">
       <MessagesCenterPanelChat />
       <MessagesCenterPanelForm />

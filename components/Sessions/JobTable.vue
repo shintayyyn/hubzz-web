@@ -64,8 +64,8 @@ export default {
     jobs: {
       type: Array,
       required: true
-    },
+    }
   }
-}
+};
 </script>
 

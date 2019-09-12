@@ -34,6 +34,17 @@
       <div class="py-2 px-4">
         <div v-for="(item, index) in messages" :key="item.id">
           <div
+            class="flex justify-center items-center"
+            v-if="$moment.duration(item.created_at).asWeeks() > 2"
+          >
+            <hr class="w-full" />
+            <span
+              class="text-xs text-gray-500 w-full text-center mx-2"
+            >{{ $moment(item.created_at).format("ddd, MMM D YYYY, h:mm A") }}</span>
+            <hr class="w-full" />
+          </div>
+
+          <div
             class="flex flex-col"
             :id="`message-${index}`"
             :class="isReceiver(item) ? 'items-start': 'items-end'"
@@ -54,20 +65,28 @@
                   :src="item.user.avatar ? item.user.avatar.file.url : ''"
                 />
               </div>
-              <div class="flex flex-col text-sm">
+              <div class="flex flex-col text-sm px-2">
                 <span
-                  class="text-xs px-2"
+                  class="text-xs px-2 text-gray-600"
                   :class="isReceiver(item) ? '': 'text-right'"
                 >{{ isReceiver(item) ? userFullname(item) : 'Me' }}</span>
                 <div class="flex" :class="isReceiver(item) ? '': 'flex-row-reverse'">
                   <div
-                    class="my-1 rounded-lg text-xs px-4 py-2 border text-gray-500 italic"
-                    :class="{'ml-4' : isReceiver(item)}"
+                    @mouseover="onHover(item.id)"
+                    @mouseleave="selectedMessageId = ''"
+                    class="rounded-lg text-xs px-2 py-2 border text-gray-500 italic"
+                    :class="{'ml-2' : isReceiver(item)}"
                   >This message has been removed.</div>
                 </div>
-                <div class="mx-2" :class="isReceiver(item) ? 'text-right ': ''">
-                  <span class="text-xs text-gray-500 py-1">{{ $moment(item.created_at).fromNow() }}</span>
-                </div>
+                <transition name="drop-down" mode="out-in">
+                  <div
+                    v-if="item.id == selectedMessageId"
+                    class="mx-2"
+                    :class="isReceiver(item) ? 'text-right ': ''"
+                  >
+                    <span class="text-xs text-gray-500">{{ $moment(item.created_at).fromNow() }}</span>
+                  </div>
+                </transition>
               </div>
             </div>
 
@@ -90,7 +109,7 @@
               </div>
               <div class="flex flex-col text-sm px-2">
                 <span
-                  class="text-xs px-2"
+                  class="text-xs px-2 text-gray-600"
                   :class="isReceiver(item) ? '': 'text-right'"
                 >{{ isReceiver(item) ? userFullname(item) : 'Me' }}</span>
                 <div
@@ -99,10 +118,17 @@
                   class="flex items-center"
                   :class="isReceiver(item) ? '': 'flex-row-reverse'"
                 >
+                  <!-- <a
+                    v-if="isLink.filter(link => link.id === item.id)"
+                    :href="getLink(item)"
+                    class="chat-message rounded-lg px-2 py-2 mx-2 whitespace-pre"
+                    :class="isReceiver(item) ? 'bg-gray-300' : 'bg-blue-500 text-right'"
+                  >{{ item.message }}</a>-->
                   <span
                     class="chat-message rounded-lg px-2 py-2 mx-2 whitespace-pre"
                     :class="isReceiver(item) ? 'bg-gray-300' : 'bg-blue-500 text-white text-right'"
-                  >{{item.message}}</span>
+                  >{{ item.message }}</span>
+
                   <transition name="fade" mode="out-in">
                     <div
                       v-if="!isReceiver(item) && item.id == selectedMessageId"
@@ -112,15 +138,13 @@
                     >X</div>
                   </transition>
                 </div>
-                <transition name="fade" mode="out-in">
+                <transition name="drop-down" mode="out-in">
                   <div
                     v-if="item.id == selectedMessageId"
                     class="mx-2"
                     :class="isReceiver(item) ? 'text-right ': 'ml-6'"
                   >
-                    <span
-                      class="text-xs text-gray-500 py-1"
-                    >{{ $moment(item.created_at).fromNow() }}</span>
+                    <span class="text-xs text-gray-500">{{ $moment(item.created_at).fromNow() }}</span>
                   </div>
                 </transition>
               </div>
@@ -161,9 +185,16 @@ export default {
       loadMore: false,
       newMessage: false,
       modal: false,
-      selectedMessageId: "",
+      selectedMessageId: null,
+      deleteMessageId: null,
       loading: true,
-      showHidden: false
+      showHidden: false,
+      isLink: [
+        {
+          id: 0,
+          link: ""
+        }
+      ]
     };
   },
   computed: {
@@ -202,6 +233,10 @@ export default {
             this.$refs.messagesContainer.scrollTop
         ) === this.$refs.messagesContainer.scrollHeight;
       let newMessageIndex = value.length - 1;
+      // value.map(item => {
+      //   this.convertTextToLink(item);
+      //   this.getLink(item);
+      // });
       if (value.length > 0) {
         this.loading = false;
       }
@@ -226,7 +261,6 @@ export default {
         }
         this.oldMessageCount += +1;
       }
-
       this.oldMessageCount = value.length;
     }
   },
@@ -239,14 +273,11 @@ export default {
       return `${item.user.personal_detail.first_name} ${item.user.personal_detail.last_name}`;
     },
     deleteMessageModal(id) {
+      this.deleteMessageId = id;
       this.modal = true;
-      this.selectedMessageId = id;
-      // if (confirm("Do you want to delete this message?")) {
-      //   this.$store.dispatch("chat/deleteMessage", id);
-      // }
     },
     deleteMessage() {
-      this.$store.dispatch("chat/deleteMessage", this.selectedMessageId);
+      this.$store.dispatch("chat/deleteMessage", this.deleteMessageId);
       this.modal = false;
     },
     scrollToBottom() {
@@ -310,6 +341,19 @@ export default {
         return item.avatar.file.url;
       }
     }
+    // getLink(item) {
+    //   let findLink = this.isLink.find(link => link.id === item.id);
+    //   return findLink.link;
+    // },
+    // convertTextToLink(item) {
+    //   let exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi;
+    //   let convertedText = item.message.replace(exp, `<a href='$1'>$1</a>`);
+    //   var regex = /(http|https):\/\/(\w+:{0,1}\w*)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/;
+
+    //   if (regex.test(item.message)) {
+    //     this.isLink.push({ id: item.id, link: regex.exec(item.message)[0] });
+    //   }
+    // }
   }
 };
 </script>
@@ -322,7 +366,6 @@ export default {
   background-color: white;
   transition: background-color 0.5s ease-in-out;
 }
-
 .chat-message {
   word-wrap: wrap;
   word-break: break-all;
