@@ -13,6 +13,7 @@
           :placeholder="''"
           @submit="save"
           @blur="CheckEmptyField(form.account_name, 'account_name')"
+          :error="formError.find(item => item.field === 'account_name')"
         />
         <AppInput
           v-model="form.bank_name"
@@ -22,6 +23,7 @@
           :placeholder="''"
           @submit="save"
           @blur="CheckEmptyField(form.bank_name, 'bank_name')"
+          :error="formError.find(item => item.field === 'bank_name')"
         />
         <AppInput
           v-model="form.sort_code"
@@ -31,6 +33,7 @@
           :placeholder="''"
           @submit="save"
           @blur="CheckEmptyField(form.sort_code, 'sort_code')"
+          :error="formError.find(item => item.field === 'sort_code')"
         />
         <AppInput
           v-model="form.account_number"
@@ -40,6 +43,7 @@
           :placeholder="''"
           @submit="save"
           @blur="CheckEmptyField(form.account_number, 'account_number')"
+          :error="formError.find(item => item.field === 'account_number')"
         />
       </div>
     </div>
@@ -59,6 +63,7 @@
                 :items="months"
                 @submit="save"
                 @blur="CheckEmptyField(form.tax_year_end_month, 'tax_year_end_month')"
+                :error="formError.find(item => item.field === 'tax_year_end_month')"
               />
             </div>
             <div class="ml-1 w-1/2">
@@ -70,6 +75,7 @@
                 :items="days"
                 @submit="save"
                 @blur="CheckEmptyField(form.tax_year_end_date, 'tax_year_end_date')"
+                :error="formError.find(item => item.field === 'tax_year_end_date')"
               />
             </div>
           </div>
@@ -83,16 +89,18 @@
           :items="employmentTypes"
           @submit="save"
           @blur="CheckEmptyField(form.employment_type, 'employment_type')"
+          :error="formError.find(item => item.field === 'employment_type')"
         />
         <template v-if="form.employment_type === 'Limited company'">
           <AppInput
             v-model="form.company_registration_number"
             :type="'text'"
-            :name="'company_registration_number'"
+            :name="'Company registration number'"
             :label="'Company_registration_number'"
             :placeholder="'The number of your company from Companies House'"
             @submit="save"
             @blur="CheckEmptyField(form.company_registration_number, 'company_registration_number')"
+            :error="formError.find(item => item.field === 'company_registration_number')"
           />
         </template>
         <template v-else>
@@ -104,6 +112,7 @@
             :placeholder="''"
             @submit="save"
             @blur="CheckEmptyField(form.utr_number, 'utr_number')"
+            :error="formError.find(item => item.field === 'utr_number')"
           />
         </template>
 
@@ -116,6 +125,7 @@
           :items="[ {value: true, label: 'Inside of Scope'}, {value: false, label: 'Outside of Scope'} ]"
           @submit="save"
           @blur="CheckEmptyField(form.ir35, 'ir35')"
+          :error="formError.find(item => item.field === 'ir35')"
         />
       </div>
 
@@ -170,7 +180,6 @@ export default {
         response.data && response.data.data && response.data.data.user
           ? response.data.data.user
           : null;
-      console.log("user", user);
       if (process.client) {
         document.body.style.cursor = "auto";
       }
@@ -253,7 +262,7 @@ export default {
         account_number: "",
         tax_year_end_month: "",
         tax_year_end_date: "",
-        employment_type: "",
+        employment_type: "Self-employed",
         utr_number: "",
         company_registration_number: "",
         ir35: false

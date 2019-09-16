@@ -64,6 +64,6 @@ export default {
   left: 0;
   right: 0;
   height: auto;
-  z-index: 512;
+  z-index: 601;
 }
 </style>

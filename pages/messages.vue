@@ -63,6 +63,7 @@ export default {
       socket_id: this.$socket.id,
       room_name: "messageroom"
     });
+    this.$store.commit("chat/DELETE_ACTIVE_CONVERSATION");
   },
   created() {
     this.$store.dispatch("chat/setActiveConversation", this.$route.params.slug);

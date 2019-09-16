@@ -169,11 +169,6 @@ export default {
   justify-content: center;
   margin-left: -40px;
 }
-/* @media screen and (min-width: 1200px) { */
-/* .app-notification { */
-/* margin-left: -240px; */
-/* } */
-/* } */
 @media screen and (max-width: 600px) {
   .app-notification {
     width: 100%;

@@ -174,6 +174,7 @@ export default {
       loadMore: false,
       newMessage: false,
       modal: false,
+      selectedMessageId: null,
       selectedMessageId: "",
       hoverId: "",
       loading: true,
