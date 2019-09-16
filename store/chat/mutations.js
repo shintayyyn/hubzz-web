@@ -43,13 +43,14 @@ export default {
     }
   },
   ADD_USER_ONLINE(state, payload) {
-    // state.usersOnline.push(payload);
     let conversation = state.conversations.find(conversation => conversation.id == state.activeConversationId)
     let user = conversation.conversation_member_users.find(member => member.user.id == payload)
-    user.user.is_online = true
-    conversation.conversation_member_users.splice(conversation.conversation_member_users.findIndex(item => item.user.id == payload), 1, user)
-    state.conversations.splice(state.conversations.findIndex(item => item.id == state.activeConversationId), 1, conversation)
-    console.log(state.conversations)
+    if (user) {
+      user.user.is_online = true
+      conversation.conversation_member_users.splice(conversation.conversation_member_users.findIndex(item => item.user.id == payload), 1, user)
+      state.conversations.splice(state.conversations.findIndex(item => item.id == state.activeConversationId), 1, conversation)
+    }
+
   },
   ADD_UNREAD_MESSAGE(state, payload) {
     if (!state.unreadMessages.find(item => item.user_id === this.$auth.user.id && item.conversation_id === payload.id)) {
@@ -72,9 +73,11 @@ export default {
     // }
     let conversation = state.conversations.find(conversation => conversation.id == state.activeConversationId)
     let user = conversation.conversation_member_users.find(member => member.user.id == payload)
-    user.user.is_online = false
-    conversation.conversation_member_users.splice(conversation.conversation_member_users.findIndex(item => item.user.id == payload), 1, user)
-    state.conversations.splice(state.conversations.findIndex(item => item.id == state.activeConversationId), 1, conversation)
+    if (user) {
+      user.user.is_online = false
+      conversation.conversation_member_users.splice(conversation.conversation_member_users.findIndex(item => item.user.id == payload), 1, user)
+      state.conversations.splice(state.conversations.findIndex(item => item.id == state.activeConversationId), 1, conversation)
+    }
   },
   DELETE_ACTIVE_CONVERSATION(state) {
     state.activeConversationId = null
