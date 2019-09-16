@@ -35,7 +35,9 @@ export default {
       if (to.name === "messages-slug") {
         if (to.path === "/messages") {
           this.$store.commit("IS_MOBILE", true);
-          this.$store.commit("chat/DELETE_ACTIVE_CONVERSATION");
+          if (this.$store.state.chat.activeConversationId) {
+            this.$store.commit("chat/DELETE_ACTIVE_CONVERSATION");
+          }
         } else {
           this.$store.dispatch("chat/setActiveConversation", to.params.slug);
         }

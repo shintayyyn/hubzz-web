@@ -1,7 +1,6 @@
 <template>
   <div class="pagination flex flex-col">
     <div class="flex justify-center">
-      <!-- asd -->
       <div class="pagination-item m-1 hidden md:block">
         <button
           type="button"
@@ -231,61 +230,69 @@ export default {
   },
   computed: {
     isInFirstPage() {
-      return this.currentPage === 1
+      return this.currentPage === 1;
     },
     isInLastPage() {
-      return this.currentPage === this.totalPages
+      return this.currentPage === this.totalPages;
     },
     startPage() {
-      if (this.currentPage === 1 || (this.currentPage === 2 || this.totalPages <= this.maxVisibleButtons)) {
-        return 1
+      if (
+        this.currentPage === 1 ||
+        (this.currentPage === 2 || this.totalPages <= this.maxVisibleButtons)
+      ) {
+        return 1;
       }
 
       if (this.currentPage === this.totalPages - 1) {
-        return this.totalPages - this.maxVisibleButtons + 1
+        return this.totalPages - this.maxVisibleButtons + 1;
       }
 
-      if (this.currentPage === this.totalPages && this.totalPages > this.maxVisibleButtons) {
-        return this.totalPages - this.maxVisibleButtons + 1
+      if (
+        this.currentPage === this.totalPages &&
+        this.totalPages > this.maxVisibleButtons
+      ) {
+        return this.totalPages - this.maxVisibleButtons + 1;
       }
 
-      return this.currentPage - 2
+      return this.currentPage - 2;
     },
     pages() {
       const range = [];
-      for (let i = this.startPage;
-        i <= Math.min(this.startPage + this.maxVisibleButtons - 1, this.totalPages);
-        i += 1) {
+      for (
+        let i = this.startPage;
+        i <=
+        Math.min(this.startPage + this.maxVisibleButtons - 1, this.totalPages);
+        i += 1
+      ) {
         range.push({
           name: i,
           isDisabled: i === this.currentPage
         });
       }
       return range;
-    },
+    }
   },
   methods: {
     onClickFirstPage() {
-      this.$emit('pagechanged', 1)
+      this.$emit("pagechanged", 1);
     },
     onClickPreviousPage() {
-      this.$emit('pagechanged', this.currentPage - 1)
+      this.$emit("pagechanged", this.currentPage - 1);
     },
     onClickPage(page) {
-      this.$emit('pagechanged', page)
+      this.$emit("pagechanged", page);
     },
     onClickNextPage() {
-      this.$emit('pagechanged', this.currentPage + 1)
+      this.$emit("pagechanged", this.currentPage + 1);
     },
     onClickLastPage() {
-      this.$emit('pagechanged', this.totalPages)
+      this.$emit("pagechanged", this.totalPages);
     },
     isPageActive(page) {
-      return this.currentPage === page
-    },
-
+      return this.currentPage === page;
+    }
   }
-}
+};
 </script>
 <style scoped>
 .pagination {
