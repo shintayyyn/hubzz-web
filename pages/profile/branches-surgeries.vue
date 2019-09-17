@@ -1,38 +1,6 @@
 <template>
   <section>
     <div class="list-section flex flex-col mt-4 pb-32 overflow-x-auto" v-if="surgeries.length > 0">
-      <!-- <div class="flex flex-row px-4 flex-no-wrap justify-between">
-        <div class="text-xs sm:text-sm w-full px-1 whitespace-no-wrap w-1/4">Surgery</div>
-        <div class="text-xs sm:text-sm w-full px-1 whitespace-no-wrap w-1/4">Practice code</div>
-        <div class="text-xs sm:text-sm w-full px-1 whitespace-no-wrap w-1/4">Pay for surgery</div>
-        <div class="text-xs sm:text-sm w-full px-1 whitespace-no-wrap w-1/4">Verify job creation</div>
-      </div>
-      <div
-        class="__job-card rounded-lg shadow-lg p-4 mt-4"
-        v-for="item in surgeries"
-        :key="item.id"
-      >
-        <div class="relative flex flex-row flex-no-wrap cursor-pointer">
-          <div
-            @click="show(item.id)"
-            class="text-xs sm:text-sm w-full px-1 whitespace-no-wrap w-1/4"
-          >{{item.surgery.name}}</div>
-          <div
-            @click="show(item.id)"
-            class="text-xs sm:text-sm w-full px-1 whitespace-no-wrap w-1/4"
-          >{{item.surgery.code}}</div>
-          <div
-            @click="show(item.id)"
-            class="text-xs sm:text-sm w-full px-1 whitespace-no-wrap w-1/4"
-          >{{item.pay_for_surgery ? 'Yes':'No'}}</div>
-          <div
-            @click="show(item.id)"
-            class="text-xs sm:text-sm w-full px-1 whitespace-no-wrap w-1/4"
-          >{{item.verify_job_creation ? 'Verified':'Not Verified'}}</div>
-          <div @click="removeModal(item.id)" class="font-bold text-xs sm:text-sm">X</div>
-        </div>
-      </div>-->
-
       <table>
         <thead>
           <tr>

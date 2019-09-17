@@ -87,7 +87,7 @@ export default {
       } else {
         this.params.profession_id = value;
       }
-      this.getLocums(this.current_page);
+      this.getLocumsCount();
     }
   },
   methods: {
@@ -105,7 +105,11 @@ export default {
         .$get(`/api/v1/practice/locums/count?practice_locum_type=Favorite`)
         .then(res => {
           this.total = res.data.count;
-          this.getLocums(this.current_page);
+          if (this.total > 0) {
+            this.getLocums(this.current_page);
+          } else {
+            this.loading = false;
+          }
         });
     },
     getLocums(page) {
