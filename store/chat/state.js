@@ -4,6 +4,5 @@ export default () => ({
   activeConversationId: null,
   unreadMessages: [],
   messages: [],
-  usersOnline: [],
   newMessageUser: null
 })

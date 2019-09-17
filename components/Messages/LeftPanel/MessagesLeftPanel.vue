@@ -31,18 +31,19 @@
                 />
               </div>
               <div class="w-5/6 flex items-center justify-between">
-                <div class="w-5/6 px-2 leading-tight">
+                <div class="w-4/6 sm:w-5/6 md:w-4/6 lg:w-5/6 px-2 leading-tight">
                   <p
                     class="truncate"
                     :class="parseInt($route.params.slug) === item.id ? 'font-bold' : ''"
                   >{{ userFullname(item) }}</p>
                   <p
                     class="text-sm truncate text-gray-700"
-                  >{{ senderFullname(item) }}: {{ item.latest_conversation_message.message }}</p>
+                    :class="item.latest_conversation_message.deleted_by_receiver || item.latest_conversation_message.deleted_by_sender ? 'italic':''"
+                  >{{ item.latest_conversation_message.deleted_by_receiver || item.latest_conversation_message.deleted_by_sender ? `${senderFullname(item)} deleted a message.` : `${senderFullname(item)}: ${item.latest_conversation_message.message}` }}</p>
                 </div>
                 <span
                   class="absolute w-10 h-full flex items-center right-0 text-right text-xs text-gray-600 leading-none mx-2"
-                  :class="[parseInt($route.params.slug) === item.id ? 'bg-gray-300' : 'hover:bg-gray-200', unreadMessages.find(conversation => conversation.conversation_id == item.id && $auth.user.id == conversation.user_id) ? 'bg-gray-100' : '']"
+                  :class="parseInt($route.params.slug) === item.id ? 'bg-gray-300 hover:bg-gray-300' : 'hover:bg-gray-200'"
                 >{{ $moment(item.latest_conversation_message.created_at).fromNow() }}</span>
               </div>
             </div>
@@ -72,11 +73,12 @@
                   >{{ userFullname(item) }}</p>
                   <p
                     class="text-sm truncate text-gray-700"
-                  >{{ senderFullname(item) }}: {{ item.latest_conversation_message.message }}</p>
+                    :class="item.latest_conversation_message.deleted_by_receiver || item.latest_conversation_message.deleted_by_sender ? 'italic':''"
+                  >{{ item.latest_conversation_message.deleted_by_receiver || item.latest_conversation_message.deleted_by_sender ? `${senderFullname(item)} deleted a message.` : `${senderFullname(item)}: ${item.latest_conversation_message.message}` }}</p>
                 </div>
                 <span
                   class="absolute w-10 h-full flex items-center right-0 text-right text-xs text-gray-600 leading-none mx-2"
-                  :class="[parseInt($route.params.slug) === item.id ? 'bg-gray-300' : 'hover:bg-gray-200', unreadMessages.find(conversation => conversation.conversation_id == item.id && $auth.user.id == conversation.user_id) ? 'bg-gray-200' : 'bg-white']"
+                  :class="parseInt($route.params.slug) === item.id ? 'bg-gray-300 hover:bg-gray-300' : 'hover:bg-gray-200'"
                 >{{ $moment(item.latest_conversation_message.created_at).fromNow() }}</span>
               </div>
             </div>
@@ -143,20 +145,21 @@ export default {
       if (this.activeConversationId != conversation.id.toString()) {
         this.$store.commit("chat/ADD_UNREAD_MESSAGE", conversation);
       }
-      // if (this.$route.name === "messages-new") {
-      //   this.$router.push(`/messages/${conversation.id}`);
-      // }
     }
   },
   methods: {
     goTo(id) {
       this.showResult = false;
       this.messages = [];
+      this.$store.dispatch("chat/setActiveConversation", id);
       if (window.innerWidth < 768) {
         this.$store.commit("IS_MOBILE", false);
       }
       if (this.unreadMessages.find(item => item.conversation_id == id)) {
         this.$store.commit("chat/DELETE_UNREAD_MESSAGE", id);
+      }
+      if (!this.conversations.find(item => item.id == id)) {
+        this.loadMoreConversation();
       }
       if (this.$route.params.slug != id) {
         this.$router.push(`/messages/${id}`);
@@ -169,14 +172,15 @@ export default {
       });
     },
     senderFullname(item) {
-      // return item.latest_conversation_message.user.id === this.$auth.user.id
-      // ? "Me"
-      return `${item.latest_conversation_message.user.personal_detail.first_name} ${item.latest_conversation_message.user.personal_detail.last_name}`;
+      return item.latest_conversation_message.user.id === this.$auth.user.id
+        ? "You"
+        : `${item.latest_conversation_message.user.personal_detail.first_name} ${item.latest_conversation_message.user.personal_detail.last_name}`;
     },
     userFullname(item) {
-      return this.$auth.user.id === item.conversation_member_users[0].user.id
-        ? `${item.conversation_member_users[1].user.personal_detail.first_name} ${item.conversation_member_users[1].user.personal_detail.last_name}`
-        : `${item.conversation_member_users[0].user.personal_detail.first_name} ${item.conversation_member_users[0].user.personal_detail.last_name}`;
+      let user = item.conversation_member_users.find(
+        item => item.user.id != this.$auth.user.id
+      );
+      return `${user.user.personal_detail.first_name} ${user.user.personal_detail.last_name}`;
     },
     userAvatar(item) {
       let user_detail = item.conversation_member_users.find(
@@ -195,14 +199,13 @@ export default {
     scrollHandler({ target: { scrollTop, offsetHeight, scrollHeight } }) {
       let scroll = Math.round(offsetHeight + scrollTop);
       if (scroll === scrollHeight) {
-        this.$axios.$get(`/api/v1/conversations/`).then(res => {
-          if (res.data.conversations.length != this.conversations.length) {
-            this.$store.dispatch("chat/fetchMoreConversation", {
-              offset: this.conversations.length
-            });
-          }
-        });
+        this.loadMoreConversation();
       }
+    },
+    loadMoreConversation() {
+      this.$store.dispatch("chat/fetchMoreConversation", {
+        offset: this.conversations.length
+      });
     }
   }
 };

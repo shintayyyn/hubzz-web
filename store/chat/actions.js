@@ -109,7 +109,6 @@ export default {
     //   receiver_user_id = foundConversation.receiver_id;
     // }
     const response = await chatApi.deleteMessage(this.$axios, payload);
-    console.log("delete message action", response, payload)
     commit("DELETE_MESSAGE", response.data.message);
   }
 };

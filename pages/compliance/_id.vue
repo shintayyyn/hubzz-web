@@ -55,8 +55,9 @@
               <embed
                 class="object-contain object-top w-full"
                 :class="compliance_document.file.type == 'image' ? 'image' : 'document h-full'"
-                :src="compliance_document.file.url"
+                :src="compliance_document.file.subtype === 'tiff' || compliance_document.file.subtype === 'msword' ? convertDoc(compliance_document.file.url) : compliance_document.file.url"
               />
+              <!-- :src="compliance_document.file.url" -->
             </div>
           </div>
         </div>
@@ -75,6 +76,36 @@ export default {
         response.data && response.data.locum_detail_compliance_document
           ? response.data.locum_detail_compliance_document
           : null;
+      if (
+        compliance_document.file.subtype === "tiff" ||
+        compliance_document.file.subtype === "msword"
+      ) {
+        // let getUrl = compliance_document.file.url.split(".");
+        // let getLastIndex = getUrl.length - 1;
+        // let url = getUrl.splice(0, getLastIndex).join(".");
+        // let extension;
+        // if (compliance_document.file.subtype === "tiff") {
+        //   extension = ".jpg";
+        // } else {
+        //   extension = ".pdf";
+        // }
+        // console.log("file", filepreview);
+        // filepreview.generateSync(
+        //   compliance_document.file.url,
+        //   url + extension,
+        //   function(error) {
+        //     console.log(error);
+        //   }
+        // );
+        // let newFile = filepreview.render(
+        //   compliance_document.file.url,
+        //   url + extension
+        // );
+        // // let newFile = `${url}${extension}`;
+        // console.log(newFile);
+        // compliance_document.file.url = newFile;
+      }
+
       return {
         compliance_document
       };
@@ -101,6 +132,13 @@ export default {
         link.click();
         document.body.removeChild(link);
       });
+    },
+    convertDoc(document) {
+      if (this.compliance_document.file.subtype === "tiff") {
+        return document;
+      } else if (this.compliance_document.file.subtype === "msword") {
+        return `https://docs.google.com/gview?url=${document}&embedded=true`;
+      }
     }
   }
 };

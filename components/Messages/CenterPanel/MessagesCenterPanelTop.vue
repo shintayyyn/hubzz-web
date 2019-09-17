@@ -30,7 +30,8 @@
 export default {
   data() {
     return {
-      messages: []
+      messages: [],
+      activeConversation: null
     };
   },
   computed: {
@@ -45,24 +46,44 @@ export default {
     },
     userDetail() {
       let detail = null;
-      if (this.$store.state.chat.activeConversationId) {
-        let active_conversation = this.$store.state.chat.conversations.find(
-          conversation =>
-            conversation.id == this.$store.state.chat.activeConversationId
-        );
-        let user = active_conversation.conversation_member_users.find(
-          member => member.user.id !== this.$auth.user.id
-        );
-        let detail = {
-          name: `${user.user.personal_detail.first_name} ${user.user.personal_detail.last_name}`,
-          profession: user.user.practice_detail
-            ? user.user.practice_detail.practice_role
-            : user.user.locum_detail.profession.name,
-          status: user.user.is_online
-        };
-        console.log("detail", detail);
-
-        return detail;
+      if (this.activeConversationId) {
+        this.$axios
+          .$get(`/api/v1/conversations/${this.activeConversationId}`)
+          .then(res => {
+            let active_conversation = res.data.conversations.find(
+              item => item.id == parseInt(this.activeConversationId)
+            );
+            let user = active_conversation.conversation_member_users.find(
+              member => member.user.id !== this.$auth.user.id
+            );
+            this.activeConversation = {
+              name: `${user.user.personal_detail.first_name} ${user.user.personal_detail.last_name}`,
+              profession: user.user.practice_detail
+                ? user.user.practice_detail.practice_role
+                : user.user.locum_detail.profession.name,
+              status: user.user.is_online
+            };
+          })
+          .catch(e => {
+            console.log(e);
+          });
+        return this.activeConversation;
+        // this.active_conversation = this.$store.state.chat.conversations.find(
+        //   conversation =>
+        //     conversation.id == this.$store.state.chat.activeConversationId
+        // );
+        // let user = active_conversation.conversation_member_users.find(
+        //   member => member.user.id !== this.$auth.user.id
+        // );
+        // let detail = {
+        //   name: `${user.user.personal_detail.first_name} ${user.user.personal_detail.last_name}`,
+        //   profession: user.user.practice_detail
+        //     ? user.user.practice_detail.practice_role
+        //     : user.user.locum_detail.profession.name,
+        //   status: user.user.is_online
+        // };
+        // console.log("detail", detail);
+        // return detail;
       } else {
         let detail = {
           name: `${this.newUserMessage.personal_detail.first_name} ${this.newUserMessage.personal_detail.last_name}`,
@@ -70,42 +91,11 @@ export default {
             ? this.newUserMessage.locum_detail.profession.name
             : this.newUserMessage.practice_detail.practice_role
         };
-        console.log("detail", detail);
-
         return detail;
       }
     }
   },
   methods: {
-    getDetails() {
-      if (this.$route.name === "messages-new") {
-        this.details.name = `${this.newUserMessage.personal_detail.first_name} ${this.newUserMessage.personal_detail.last_name}`;
-        this.details.profession = this.newUserMessage.locum_detail
-          ? this.newUserMessage.locum_detail.profession.name
-          : this.newUserMessage.practice_detail.practice_role;
-      } else if (
-        this.$route.name === "messages-slug" &&
-        this.$route.params.slug
-      ) {
-        // let conversation_details = this.conversations.find(
-        //   details => details.id.toString() === this.$route.params.slug
-        // );
-        // let user_details = conversation_details.conversation_member_users.find(
-        //   detail => detail.user.id != this.$auth.user.id
-        // );
-        // this.details.id = user_details.user.id;
-        // // let isOnline = this.usersOnline.includes(this.details.id);
-        // // this.details.status = isOnline;
-        // this.details.status = user_details.user.is_online;
-        // this.details.name =
-        //   conversation_details.type === "Private"
-        //     ? `${user_details.user.personal_detail.first_name} ${user_details.user.personal_detail.last_name}`
-        //     : conversation_details.title;
-        // this.details.profession = user_details.user.locum_detail
-        //   ? user_details.user.locum_detail.profession.name
-        //   : user_details.user.practice_detail.practice_role;
-      }
-    },
     goBack() {
       if (this.$route.path != "/messages") {
         this.$router.push(`/messages`);
