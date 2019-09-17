@@ -1,13 +1,5 @@
 <template>
   <section>
-    <!-- <div class="practice-doc-detail-modal-shield" v-if="modal">
-      HWLLO
-    </div>-->
-    <!-- <transition name="drop" mode="out-in">
-      <div class="practice-doc-detail-modal flex justify-center" v-if="modal">
-        <PracticeDocumentDetailModal/>
-      </div>
-    </transition>-->
     <div class="flex flex-col mt-4">
       <div class="flex flex-row px-4 flex-no-wrap justify-between">
         <div class="text-xs sm:text-sm w-full px-1">Title</div>
@@ -15,7 +7,6 @@
         <div class="text-xs sm:text-sm w-full px-1">Last Upload Date</div>
       </div>
       <div>
-        <!-- :class="item.existingPracticeComplianceDocument ? 'bg-orange-300':'bg-blue-500' " -->
         <div
           class="rounded-lg shadow-lg p-4 mt-4"
           :class="{'practice-doc-card cursor-pointer' : item.existingPracticeComplianceDocument}"

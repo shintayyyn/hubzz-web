@@ -220,13 +220,14 @@
                 <AppFilterSearch
                   v-model="form.qualification_id"
                   :name="'qualification_id'"
-                  :label="'Clinical systems'"
+                  :label="'Specialty'"
                   :placeholder="'Select...'"
                   :error="formError.find(item => item.field === 'qualification_id')"
-                  :info="'Choose at least one IT system'"
+                  :info="'Choose at least one qualification'"
                   :url="'/api/v1/qualifications'"
                   @add="CheckEmptyField(form.qualification_id, 'qualification_id')"
                   @remove="CheckEmptyField(form.qualification_id, 'qualification_id')"
+                  :professionCategoryId="form.profession_id"
                 />
 
                 <AppFilterSearch
@@ -448,10 +449,10 @@ export default {
       professions: [],
       session_requirements_lists,
       mandatory_training_lists: [],
-      gp_qualification_lists: [],
-      other_qualification_lists: [],
-      clinical_system_lists: [],
-      spoken_language_lists: [],
+      // gp_qualification_lists: [],
+      // other_qualification_lists: [],
+      // clinical_system_lists: [],
+      // spoken_language_lists: [],
       gp_compliance_documents_lists: [],
       others_compliance_documents_lists: [],
 
@@ -459,7 +460,7 @@ export default {
       selectedProfession: {
         profession_category: {}
       },
-      qualifications: [],
+      // qualifications: [],
       compliances: [],
       unpaid_breaks: "",
       shifts: [],
@@ -476,7 +477,9 @@ export default {
         date: null,
         time: null
       },
-
+      selectedQualification: [],
+      selectedClinicalSystem: [],
+      selectedSpokenLanguage: [],
       form: {
         practice_id: "",
         title: "",
@@ -534,12 +537,12 @@ export default {
           item => item.id == value
         );
         if (this.selectedProfession.profession_category.id == 1) {
-          this.qualifications = this.gp_qualification_lists;
+          // this.qualifications = this.gp_qualification_lists;
           this.compliances = this.gp_compliance_documents_lists;
           return;
         }
         if (this.selectedProfession.profession_category.id == 2) {
-          this.qualifications = this.other_qualification_lists;
+          // this.qualifications = this.other_qualification_lists;
           this.compliances = this.others_compliance_documents_lists;
           return;
         }
@@ -652,39 +655,39 @@ export default {
         this.professions_categories.push(item);
       });
     });
-    this.$axios.$get(`/api/v1/profession-categories`).then(res => {
-      this.gp_qualification_lists = [];
-      res.data.profession_categories
-        .find(item => item.id === 1)
-        .qualifications.forEach(item => {
-          this.gp_qualification_lists.push({
-            label: item.name,
-            value: item.id
-          });
-        });
+    // this.$axios.$get(`/api/v1/profession-categories`).then(res => {
+    //   this.gp_qualification_lists = [];
+    //   res.data.profession_categories
+    //     .find(item => item.id === 1)
+    //     .qualifications.forEach(item => {
+    //       this.gp_qualification_lists.push({
+    //         label: item.name,
+    //         value: item.id
+    //       });
+    //     });
 
-      this.other_qualification_lists = [];
-      res.data.profession_categories
-        .find(item => item.id === 2)
-        .qualifications.forEach(item => {
-          this.other_qualification_lists.push({
-            label: item.name,
-            value: item.id
-          });
-        });
-    });
-    this.$axios.$get(`/api/v1/clinical-systems`).then(res => {
-      this.clinical_system_lists = [];
-      res.data.clinical_systems.forEach(item => {
-        this.clinical_system_lists.push({ label: item.name, value: item.id });
-      });
-    });
-    this.$axios.$get(`/api/v1/spoken-languages`).then(res => {
-      this.spoken_language_lists = [];
-      res.data.spoken_languages.forEach(item => {
-        this.spoken_language_lists.push({ label: item.name, value: item.id });
-      });
-    });
+    //   this.other_qualification_lists = [];
+    //   res.data.profession_categories
+    //     .find(item => item.id === 2)
+    //     .qualifications.forEach(item => {
+    //       this.other_qualification_lists.push({
+    //         label: item.name,
+    //         value: item.id
+    //       });
+    //     });
+    // });
+    // this.$axios.$get(`/api/v1/clinical-systems`).then(res => {
+    //   this.clinical_system_lists = [];
+    //   res.data.clinical_systems.forEach(item => {
+    //     this.clinical_system_lists.push({ label: item.name, value: item.id });
+    //   });
+    // });
+    // this.$axios.$get(`/api/v1/spoken-languages`).then(res => {
+    //   this.spoken_language_lists = [];
+    //   res.data.spoken_languages.forEach(item => {
+    //     this.spoken_language_lists.push({ label: item.name, value: item.id });
+    //   });
+    // });
     this.$axios.$get(`/api/v1/me`).then(res => {
       this.form.report_to = res.data.user.practice_detail.practice.report_to;
       this.form.email = res.data.user.practice_detail.practice.email;
@@ -754,12 +757,15 @@ export default {
       ]);
 
       if (!this.formError.length) {
+        this.selectedClinicalSystem = [...this.form.clinical_system_id];
         this.form.clinical_system_id = this.form.clinical_system_id.map(
           item => item.value
         );
+        this.selectedQualification = [...this.form.qualification_id];
         this.form.qualification_id = this.form.qualification_id.map(
           item => item.value
         );
+        this.selectedSpokenLanguage = [...this.form.spoken_language_id];
         this.form.spoken_language_id = this.form.spoken_language_id.map(
           item => item.value
         );
@@ -799,21 +805,24 @@ export default {
           })
           .catch(err => {
             this.$refs.modalContainer.scrollTop = 0;
-            this.clinical_system_lists.forEach((clinicalSystem, index) => {
-              if (this.form.clinical_system_id.includes(clinicalSystem.value)) {
-                this.form.clinical_system_id.splice(index, 1, clinicalSystem);
-              }
-            });
-            this.qualifications.forEach((qualification, index) => {
-              if (this.form.qualification_id.includes(qualification.value)) {
-                this.form.qualification_id.splice(index, 1, qualification);
-              }
-            });
-            this.spoken_language_lists.forEach((spokenLanguage, index) => {
-              if (this.form.spoken_language_id.includes(spokenLanguage.value)) {
-                this.form.spoken_language_id.splice(index, 1, spokenLanguage);
-              }
-            });
+            this.form.clinical_system_id = this.selectedClinicalSystem;
+            // this.clinical_system_lists.forEach((clinicalSystem, index) => {
+            //   if (this.form.clinical_system_id.includes(clinicalSystem.value)) {
+            //     this.form.clinical_system_id.splice(index, 1, clinicalSystem);
+            //   }
+            // });
+            this.form.qualification_id = this.selectedQualification;
+            // this.qualifications.forEach((qualification, index) => {
+            //   if (this.form.qualification_id.includes(qualification.value)) {
+            //     this.form.qualification_id.splice(index, 1, qualification);
+            //   }
+            // });
+            this.form.spoken_language_id = this.selectedSpokenLanguage;
+            // this.spoken_language_lists.forEach((spokenLanguage, index) => {
+            //   if (this.form.spoken_language_id.includes(spokenLanguage.value)) {
+            //     this.form.spoken_language_id.splice(index, 1, spokenLanguage);
+            //   }
+            // });
             this.form.session_requirements = this.form.session_requirements.split(
               ","
             );

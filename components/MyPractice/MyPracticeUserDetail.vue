@@ -15,11 +15,8 @@
             <div class="font-bold text-md md:text-lg">Surgery</div>
             <div class="text-sm sm:text-md mb-8">{{user.practice_detail.practice.surgery.name}}</div>
             <div class="font-bold text-md md:text-lg">Email</div>
-            <div
-              class="text-sm sm:text-md mb-8"
-              v-text="user.practice_detail.practice.email ? user.practice_detail.practice.email : `(none)`"
-            ></div>
-            <div class="font-bold text-md md:text-lg">Phone number</div>
+            <div class="text-sm sm:text-md mb-8" v-text="user.email ? user.email : `(none)`"></div>
+            <!-- <div class="font-bold text-md md:text-lg">Phone number</div>
             <div
               class="text-sm sm:text-md mb-8"
               v-text="user.practice_detail.practice.phone_number ? user.practice_detail.practice.phone_number : `(none)`"
@@ -61,7 +58,7 @@
                 v-for="item in user.practice_detail.practice.mandatory_trainings"
                 :key="item.id"
               >{{item.name}}</div>
-            </div>
+            </div>-->
           </div>
         </div>
       </div>

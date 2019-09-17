@@ -49,17 +49,21 @@
         </div>
       </div>
     </div>
-    <div class="shield" v-if="signout_modal"></div>
-    <transition name="drop" mode="out-in">
-      <SignOut v-if="signout_modal" @modal="signout_modal = $event" />
-    </transition>
+    <AppConfirmationModal
+      :label="'Proceed to sign-out?'"
+      :confirmLabel="'Yes'"
+      :cancelLabel="'Cancel'"
+      :modal="signout_modal"
+      @confirm="logout"
+      @cancel="signout_modal = false"
+    />
   </section>
 </template>
 <script>
-import SignOut from "@/components/Auth/SignOut";
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
 export default {
   components: {
-    SignOut
+    AppConfirmationModal
   },
   data() {
     return {
@@ -117,6 +121,21 @@ export default {
     }
   },
   methods: {
+    logout() {
+      this.$axios
+        .post("/api/v1/logout")
+        .then(() => {
+          console.log("Socket Logged Out");
+          console.log("One Signal Logged Out");
+          return this.$auth.logout();
+        })
+        .then(() => {
+          this.$emit("modal", false);
+          this.$store.commit("TOGGLE_SIDEBAR", false);
+          this.$auth.$storage.setUniversal("_token.local", "");
+          this.$router.push("/");
+        });
+    },
     isDisabled(routeName) {
       return this.$route.path === routeName ? "" : "click";
     },

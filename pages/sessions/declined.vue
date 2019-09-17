@@ -26,7 +26,6 @@ import JobTable from "@/components/Sessions/JobTable";
 import AppPagination from "@/components/Base/AppPagination";
 import AppJobFilter from "@/components/Base/AppJobFilter";
 import AppLoading from "@/components/Base/AppLoading";
-import * as chatApi from "@/api/chat";
 export default {
   transition: {
     name: "fade",
