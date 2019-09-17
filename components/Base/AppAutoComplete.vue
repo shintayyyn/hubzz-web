@@ -132,8 +132,6 @@ export default {
               this.$router.push(
                 `/messages/${res.data.conversation.conversation_id}`
               );
-            } else {
-              console.log("asd");
             }
             // if res.data.user, emit newConversation
             // else if res.data.conversation, get conversation Id

@@ -34,17 +34,6 @@
       <div class="py-2 px-4">
         <div v-for="(item, index) in messages" :key="item.id">
           <div
-            class="flex justify-center items-center"
-            v-if="$moment.duration(item.created_at).asWeeks() > 2"
-          >
-            <hr class="w-full" />
-            <span
-              class="text-xs text-gray-500 w-full text-center mx-2"
-            >{{ $moment(item.created_at).format("ddd, MMM D YYYY, h:mm A") }}</span>
-            <hr class="w-full" />
-          </div>
-
-          <div
             class="flex flex-col"
             :id="`message-${index}`"
             :class="isReceiver(item) ? 'items-start': 'items-end'"
@@ -69,7 +58,7 @@
                 <span
                   class="text-xs px-2 text-gray-600"
                   :class="isReceiver(item) ? '': 'text-right'"
-                >{{ isReceiver(item) ? userFullname(item) : 'Me' }}</span>
+                >{{ isReceiver(item) ? userFullname(item) : 'You' }}</span>
                 <div class="flex" :class="isReceiver(item) ? '': 'flex-row-reverse'">
                   <div
                     @mouseover="onHover(item.id)"
@@ -111,7 +100,7 @@
                 <span
                   class="text-xs px-2 text-gray-600"
                   :class="isReceiver(item) ? '': 'text-right'"
-                >{{ isReceiver(item) ? userFullname(item) : 'Me' }}</span>
+                >{{ isReceiver(item) ? userFullname(item) : 'You' }}</span>
                 <div
                   @mouseover="onHover(item.id)"
                   @mouseleave="hoverId = ''"
@@ -186,7 +175,6 @@ export default {
       newMessage: false,
       modal: false,
       selectedMessageId: null,
-      deleteMessageId: null,
       selectedMessageId: "",
       hoverId: "",
       loading: true,
@@ -229,7 +217,6 @@ export default {
       }
     },
     messages(value) {
-      console.log("asd");
       let atBottom =
         Math.round(
           this.$refs.messagesContainer.offsetHeight +
@@ -265,9 +252,6 @@ export default {
         this.oldMessageCount += +1;
       }
       this.oldMessageCount = value.length;
-    },
-    selectedUserId(value) {
-      console.log("selected id Watched: ", value);
     }
   },
   methods: {
@@ -279,11 +263,14 @@ export default {
       return `${item.user.personal_detail.first_name} ${item.user.personal_detail.last_name}`;
     },
     deleteMessageModal(id) {
-      this.deleteMessageId = id;
       this.modal = true;
+      this.selectedMessageId = id;
+      // if (confirm("Do you want to delete this message?")) {
+      //   this.$store.dispatch("chat/deleteMessage", id);
+      // }
     },
     deleteMessage() {
-      this.$store.dispatch("chat/deleteMessage", this.deleteMessageId);
+      this.$store.dispatch("chat/deleteMessage", this.selectedMessageId);
       this.modal = false;
     },
     scrollToBottom() {

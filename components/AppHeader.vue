@@ -90,34 +90,35 @@ export default {
       }
     },
     conversations(newValue) {
-      let conversation = newValue.find((conversation, index) => index === 0);
-      if (
-        (this.$route.name && this.$route.name != "messages-slug") ||
-        (this.$route.name && this.$route.name != "messages-new")
-      ) {
-        // this.$store.commit("chat/ADD_UNREAD_MESSAGE", conversation);
-        // still working on this
-        // if (
-        //   this.$route.name != "messages-slug" &&
-        //   this.$route.name != "messages-new" &&
-        //   this.unreadMessages.length > 0
-        // ) {
-        // let sender_name = `${conversation.latest_conversation_message.user.personal_detail.first_name} ${conversation.latest_conversation_message.user.personal_detail.last_name}`;
-        //   console.log("wae?", this.$route.name, conversation);
-        //   this.$store.commit("SET_NOTIFICATION", {
-        //     enabled: true,
-        //     closable: true,
-        //     status: "message",
-        //     text: [
-        //       {
-        //         title: `${sender_name}`,
-        //         message: `${sender_name}: ${conversation.latest_conversation_message.message}`,
-        //         time: `${conversation.latest_conversation_message.created_at}`
-        //       }
-        //     ]
-        //   });
-        // }
-      }
+      // let conversation = newValue.find((conversation, index) => index === 0);
+      // if (
+      //   (this.$route.name && this.$route.name != "messages-slug") ||
+      //   (this.$route.name && this.$route.name != "messages-new")
+      // ) {
+      //   this.$store.commit("chat/ADD_UNREAD_MESSAGE", conversation);
+      //   // still working on this
+      //   if (
+      //     this.$route.name != "messages-slug" &&
+      //     this.$route.name != "messages-new" &&
+      //     this.unreadMessages.length > 0
+      //   ) {
+      //     let sender_name = `${conversation.latest_conversation_message.user.personal_detail.first_name} ${conversation.latest_conversation_message.user.personal_detail.last_name}`;
+      //     let isDeleted = conversation.latest_conversation_message.deleted_by_sender || conversation.
+      //     console.log("wae?", this.$route.name, conversation);
+      //     this.$store.commit("SET_NOTIFICATION", {
+      //       enabled: true,
+      //       closable: true,
+      //       status: "message",
+      //       text: [
+      //         {
+      //           title: `${sender_name}`,
+      //           message: `${sender_name}: ${conversation.latest_conversation_message.message}`,
+      //           time: `${conversation.latest_conversation_message.created_at}`
+      //         }
+      //       ]
+      //     });
+      //   }
+      // }
     },
     unreadMessages(value) {}
   },
