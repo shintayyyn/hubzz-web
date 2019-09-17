@@ -20,7 +20,7 @@
               :class="[parseInt($route.params.slug) === item.id ? 'bg-gray-300' : 'hover:bg-gray-200', unreadMessages.find(conversation => conversation.conversation_id == item.id && $auth.user.id == conversation.user_id) ? 'font-bold bg-gray-100' : '']"
               v-for="item in conversations"
               :key="item.id"
-              @click="goTo(item.id ? item.id : item.id)"
+              @click.stop="goTo(item.id ? item.id : item.id)"
             >
               <div>
                 <AppAvatar
@@ -54,7 +54,7 @@
               :class="parseInt($route.params.slug) === item.id ? 'bg-gray-300' : 'hover:bg-gray-200'"
               v-for="item in messages"
               :key="item.id"
-              @click="goTo(item.id ? item.id : item.id)"
+              @click.stop="goTo(item.id ? item.id : item.id)"
             >
               <div>
                 <AppAvatar
@@ -150,16 +150,17 @@ export default {
   methods: {
     goTo(id) {
       this.showResult = false;
+      this.search_text = "";
       this.messages = [];
       this.$store.dispatch("chat/setActiveConversation", id);
+      if (!this.conversations.find(item => item.id == id)) {
+        this.loadMoreConversation();
+      }
       if (window.innerWidth < 768) {
         this.$store.commit("IS_MOBILE", false);
       }
       if (this.unreadMessages.find(item => item.conversation_id == id)) {
         this.$store.commit("chat/DELETE_UNREAD_MESSAGE", id);
-      }
-      if (!this.conversations.find(item => item.id == id)) {
-        this.loadMoreConversation();
       }
       if (this.$route.params.slug != id) {
         this.$router.push(`/messages/${id}`);

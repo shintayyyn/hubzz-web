@@ -3,7 +3,7 @@
     <transition name="fade" mode="out-in">
       <div
         v-if="['locum-billing-invoices-id', 'locum-billing-invoices-create', 'locum-billing-invoices-id-edit'].includes($route.name) || confirmation_modal || paymentModal"
-        class="invoice-shield"
+        class="shield"
       ></div>
     </transition>
     <nuxt-child />

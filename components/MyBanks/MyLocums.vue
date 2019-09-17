@@ -11,7 +11,7 @@
             name="on-star"
             height="32"
             width="32"
-            class="cursor-pointer"
+            class="cursor-pointer fill-current text-gray-700 hover:text-gray-800"
             @click="$emit('favorite', user.id)"
           />
         </template>
@@ -20,7 +20,7 @@
             name="off-star"
             height="32"
             width="32"
-            class="cursor-pointer"
+            class="cursor-pointer fill-current text-gray-700 hover:text-gray-800"
             @click="$emit('favorite', user.id)"
           />
         </template>

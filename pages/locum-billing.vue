@@ -29,9 +29,11 @@
         to="/locum-billing/invoices/create"
         class="flex flex-row items-center justify-end leading-loose whitespace-no-wrap"
       >
-        <span class="hover:underline px-2">Add invoice</span>
+        <span
+          class="transition px-2 hover:bg-yellow-500 pl-3 pr-10 rounded-full hover:shadow-md"
+        >Add invoice</span>
         <div
-          class="rounded-full h-8 w-8 text-2xl sm:text-3xl md:text-4xl flex items-center focus:outline-none justify-center bg-yellow-500 font-semibold cursor-pointer shadow-md hover:text-white hover:no-underline"
+          class="absolute rounded-full h-8 w-8 text-2xl sm:text-3xl flex items-center focus:outline-none justify-center bg-yellow-500 font-semibold cursor-pointer hover:text-white hover:no-underline"
         >+</div>
       </nuxt-link>
       <!-- <div class="bottom-0 right-0">
@@ -88,5 +90,8 @@ export default {
   .invoice-modal {
     width: 70%;
   }
+}
+.transition {
+  transition: all 0.2s ease-in-out;
 }
 </style>

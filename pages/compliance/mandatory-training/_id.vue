@@ -1,66 +1,65 @@
 <template>
   <div class="modal-container shadow-lg">
-    <div class="p-8">
-      <div @click="$router.push('/compliance')" class="cursor-pointer">
-        <svgicon name="left-arrow" height="32" />
+    <div class="p-4 md:p-8">
+      <div class="flex flex-row flex-no-wrap items-center text-lg">
+        <div @click="$router.push('/compliance')" class="cursor-pointer">
+          <svgicon name="left-arrow" height="32" />
+        </div>
+        <a
+          @click.prevent="downloadItem(mandatory_training.file.url,mandatory_training.file.filename)"
+          class="text-black no-underline flex items-center w-auto hover:bg-yellow-500 rounded-lg cursor-pointer p-2 mx-4"
+        >
+          <svgicon
+            name="cloud-download"
+            width="21"
+            height="21"
+            color="black"
+            hover="transparent black"
+            class="inline"
+          ></svgicon>
+          <span class="mx-1"></span>
+          <span>Download</span>
+        </a>
       </div>
       <div class="flex flex-col p-4">
-        <div class="flex flex-row flex-no-wrap items-center text-lg">
-          <a
-            @click.prevent="downloadItem(mandatory_training.file.url,mandatory_training.file.filename)"
-            class="text-black no-underline flex items-center w-auto hover:bg-yellow-500 rounded-lg cursor-pointer p-2"
-          >
-            <svgicon
-              name="cloud-download"
-              width="21"
-              height="21"
-              color="black"
-              hover="transparent black"
-              class="inline"
-            ></svgicon>
-            <span class="mx-1"></span>
-            <span>Download</span>
-          </a>
-        </div>
-        <div class="shadow-lg rounded-lg bg-gray-300 mt-5">
-          <div class="flex flex-row flex-wrap justify-start p-8">
-            <div class="flex flex-col w-full lg:w-1/4">
-              <p class="font-bold text-lg">Title</p>
-              <p
-                class="mt-2 text-sm md:text-base"
-              >{{mandatory_training.mandatory_training ? mandatory_training.mandatory_training.name: null}}</p>
-              <p class="mt-5 font-bold text-lg">File last uploaded</p>
-              <p
-                class="mt-2 text-sm md:text-base"
-              >{{mandatory_training.file ? $moment(mandatory_training.file.created_at).format('DD/MM/YYYY HH:mm:ss') : null}}</p>
-              <div v-if="mandatory_training.status === 'Approved'">
-                <p class="mt-5 font-bold text-lg">Expiration Date</p>
+          <div class="shadow-lg rounded-lg bg-gray-300 mt-5">
+            <div class="flex flex-row flex-wrap justify-start p-8">
+              <div class="flex flex-col w-full lg:w-1/4 pr-4">
+                <p class="font-bold text-lg">Title</p>
                 <p
                   class="mt-2 text-sm md:text-base"
-                >{{mandatory_training.expired_at ? $moment(mandatory_training.expired_at).format('DD/MM/YYYY HH:mm:ss') : null}}</p>
+                >{{mandatory_training.mandatory_training ? mandatory_training.mandatory_training.name: null}}</p>
+                <p class="mt-5 font-bold text-lg">File last uploaded</p>
+                <p
+                  class="mt-2 text-sm md:text-base"
+                >{{mandatory_training.file ? $moment(mandatory_training.file.created_at).format('DD/MM/YYYY HH:mm:ss') : null}}</p>
+                <div v-if="mandatory_training.status === 'Approved'">
+                  <p class="mt-5 font-bold text-lg">Expiration Date</p>
+                  <p
+                    class="mt-2 text-sm md:text-base"
+                  >{{mandatory_training.expired_at ? $moment(mandatory_training.expired_at).format('DD/MM/YYYY HH:mm:ss') : null}}</p>
+                </div>
+                <div v-if="mandatory_training.status === 'Rejected'">
+                  <p class="mt-5 font-bold text-lg">Rejected At</p>
+                  <p
+                    class="mt-2 text-sm md:text-base"
+                  >{{mandatory_training && mandatory_training.rejected_at ? mandatory_training.rejected_at : null }}</p>
+                  <p class="mt-5 font-bold text-lg">Notes</p>
+                  <p
+                    class="mt-2 text-sm md:text-base"
+                  >{{mandatory_training && mandatory_training.note ? mandatory_training.note : null}}</p>
+                </div>
+                <p class="mt-5 font-bold text-lg">Expiry date</p>
+                <AppDate v-model="expiry_date" :name="'expiry_date'" />
+                <AppButton :label="'Save'" @click="update" :inStyle="'padding:5px 10px'" />
               </div>
-              <div v-if="mandatory_training.status === 'Rejected'">
-                <p class="mt-5 font-bold text-lg">Rejected At</p>
-                <p
-                  class="mt-2 text-sm md:text-base"
-                >{{mandatory_training && mandatory_training.rejected_at ? mandatory_training.rejected_at : null }}</p>
-                <p class="mt-5 font-bold text-lg">Notes</p>
-                <p
-                  class="mt-2 text-sm md:text-base"
-                >{{mandatory_training && mandatory_training.note ? mandatory_training.note : null}}</p>
+              <div class="mt-5 lg:mt-0 w-full lg:w-3/4">
+                <embed
+                  class="object-contain object-top w-full"
+                  :class="mandatory_training.file.type == 'image' ? '' : 'document h-full w-full'"
+                  :src="mandatory_training.file.subtype === 'tiff' || mandatory_training.file.subtype === 'msword' ? convertDoc(mandatory_training.file.url) : mandatory_training.file.url"
+                />
               </div>
-              <p class="mt-5 font-bold text-lg">Expiry date</p>
-              <AppDate v-model="expiry_date" :name="'expiry_date'" />
-              <AppButton :label="'Save'" @click="update" :inStyle="'padding:5px 10px'" />
-            </div>
-            <div class="w-full pl-0 lg:pl-5 mt-5 lg:mt-0 lg:w-3/4">
-              <embed
-                class="object-contain object-top"
-                width="100%"
-                height="auto"
-                :class="mandatory_training.file.type == 'image' ? '' : 'document h-full w-full'"
-                :src="mandatory_training.file.url"
-              />
             </div>
           </div>
         </div>
@@ -133,6 +132,13 @@ export default {
         link.click();
         document.body.removeChild(link);
       });
+    },
+    convertDoc(document) {
+      if (this.mandatory_training.file.subtype === "tiff") {
+        return document;
+      } else if (this.mandatory_training.file.subtype === "msword") {
+        return `https://docs.google.com/gview?url=${document}&embedded=true`;
+      }
     }
   }
 };
@@ -144,6 +150,26 @@ export default {
 @media screen and (min-width: 1200px) {
   .modal-container {
     width: 80%;
+  }
+}
+.document {
+  width: 100%;
+  min-height: 50vh;
+}
+
+.image {
+  min-height: 100%;
+  max-height: 100%;
+}
+
+@media screen and (min-width: 768px) {
+  .document {
+    min-height: 70vh;
+  }
+
+  .image {
+    min-height: 60vh;
+    max-height: 60vh;
   }
 }
 </style>

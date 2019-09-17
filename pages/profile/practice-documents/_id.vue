@@ -48,7 +48,7 @@
             <embed
               class="object-contain object-top w-full"
               :class="practiceDocument.file.type == 'image' ? 'image' : 'document h-full '"
-              :src="practiceDocument.file ? practiceDocument.file.url:null"
+              :src="practiceDocument.file.subtype === 'tiff' || practiceDocument.file.subtype === 'msword' ? convertDoc(practiceDocument.file.url) : practiceDocument.file.url"
             />
           </div>
         </div>
@@ -67,7 +67,6 @@ export default {
       const response = await app.$axios.$get(
         `/api/v1/practice/practice-documents/${params.id}`
       );
-      console.log(response);
       const practiceDocument =
         response.data && response.data.practice_document
           ? response.data.practice_document
@@ -97,6 +96,13 @@ export default {
         document.body.appendChild(link);
         link.click();
       });
+    },
+    convertDoc(document) {
+      if (this.practiceDocument.file.subtype === "tiff") {
+        return document;
+      } else if (this.practiceDocument.file.subtype === "msword") {
+        return `https://docs.google.com/gview?url=${document}&embedded=true`;
+      }
     }
   }
 };
@@ -112,7 +118,7 @@ export default {
 }
 .document {
   width: 100%;
-  min-height: 100%;
+  min-height: 50vh;
 }
 
 .image {

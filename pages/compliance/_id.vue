@@ -1,6 +1,6 @@
 <template>
   <div class="modal-container shadow-lg">
-    <div class="p-8">
+    <div class="p-4 md:p-8">
       <div class="flex flex-row flex-no-wrap items-center text-lg">
         <div @click="$router.push('/compliance')" class="cursor-pointer">
           <svgicon name="left-arrow" height="32" />
@@ -154,7 +154,7 @@ export default {
 }
 .document {
   width: 100%;
-  min-height: 100%;
+  min-height: 50vh;
 }
 
 .image {

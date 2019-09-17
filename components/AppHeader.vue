@@ -8,7 +8,7 @@
         </div>
       </div>
       <div class="flex w-1/3 sm:w-1/3 py-2">
-        <button @click="$router.push('/')" class="mx-auto focus:outline-none">
+        <button @click="goHome()" class="mx-auto focus:outline-none">
           <img src="/images/hubzz-icon-transparent.png" class="logo" />
         </button>
       </div>
@@ -74,9 +74,7 @@ export default {
     create_job_modal() {
       return this.$store.state.calendar.create_job_modal;
     },
-    conversations() {
-      return this.$store.getters["chat/getConversations"];
-    },
+
     unreadMessages() {
       return this.$store.getters["chat/getUnreadMessages"];
     }
@@ -88,44 +86,17 @@ export default {
       } else {
         document.body.style.overflow = "auto";
       }
-    },
-    conversations(newValue) {
-      // let conversation = newValue.find((conversation, index) => index === 0);
-      // if (
-      //   (this.$route.name && this.$route.name != "messages-slug") ||
-      //   (this.$route.name && this.$route.name != "messages-new")
-      // ) {
-      //   this.$store.commit("chat/ADD_UNREAD_MESSAGE", conversation);
-      //   // still working on this
-      //   if (
-      //     this.$route.name != "messages-slug" &&
-      //     this.$route.name != "messages-new" &&
-      //     this.unreadMessages.length > 0
-      //   ) {
-      //     let sender_name = `${conversation.latest_conversation_message.user.personal_detail.first_name} ${conversation.latest_conversation_message.user.personal_detail.last_name}`;
-      //     let isDeleted = conversation.latest_conversation_message.deleted_by_sender || conversation.
-      //     console.log("wae?", this.$route.name, conversation);
-      //     this.$store.commit("SET_NOTIFICATION", {
-      //       enabled: true,
-      //       closable: true,
-      //       status: "message",
-      //       text: [
-      //         {
-      //           title: `${sender_name}`,
-      //           message: `${sender_name}: ${conversation.latest_conversation_message.message}`,
-      //           time: `${conversation.latest_conversation_message.created_at}`
-      //         }
-      //       ]
-      //     });
-      //   }
-      // }
-    },
-    unreadMessages(value) {}
+    }
   },
   methods: {
     toggle() {
       this.$store.commit("TOGGLE_SIDEBAR", true);
       document.body.style.overflow = "hidden";
+    },
+    goHome() {
+      if (this.$route.path != "/dashboard") {
+        this.$router.push("/dashboard");
+      }
     }
   }
 };

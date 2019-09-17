@@ -71,7 +71,10 @@
               class="rounded-lg shadow-md text-xs sm:text-sm text-left"
               :class="item.info && item.info.file ? 'hover:bg-gray-300' : ''"
             >
-              <td class="cursor-pointer" @click="show(item, 'compliance')">{{item.name}}</td>
+              <td
+                :class="item.info && item.info.file ? 'cursor-pointer' : ''"
+                @click="show(item, 'compliance')"
+              >{{item.name}}</td>
               <td class="hover:underline" v-if="item.info && item.info.file">
                 <div class="flex flex-row flex-no-wrap items-center">
                   <svgicon name="cloud-download" height="24" width="24" />
@@ -187,7 +190,11 @@
               class="rounded-lg shadow-md text-xs sm:text-sm text-left"
               :class="item.info && item.info.file ? 'hover:bg-gray-300' : ''"
             >
-              <td class="cursor-pointer w-1/3" @click="show(item, 'compliance')">{{item.name}}</td>
+              <td
+                :class="item.info && item.info.file ? 'cursor-pointer' : ''"
+                class="w-1/3"
+                @click="show(item, 'compliance')"
+              >{{item.name}}</td>
               <td class="hover:underline" v-if="item.info && item.info.file">
                 <div class="flex flex-row flex-no-wrap">
                   <svgicon name="cloud-download" height="24" width="24" />
@@ -290,7 +297,8 @@
               :class="item && item.file ? 'hover:bg-gray-300' : ''"
             >
               <td
-                class="cursor-pointer w-1/3"
+                :class="item.info && item.info.file ? 'cursor-pointer' : ''"
+                class="w-1/3"
                 @click="show(item, 'mandatory')"
               >{{item.mandatory_training.name}}</td>
               <td class="hover:underline" v-if="item.file">
@@ -531,11 +539,6 @@ export default {
         });
         return;
       }
-      this.$store.commit("SET_NOTIFICATION", {
-        enabled: true,
-        status: "uploading",
-        text: ["Uploading"]
-      });
       const formData = new FormData();
       formData.append("file", file);
       formData.append("compliance_document_id", id);
@@ -621,11 +624,6 @@ export default {
         });
         return;
       }
-      this.$store.commit("SET_NOTIFICATION", {
-        enabled: true,
-        status: "uploading",
-        text: ["Uploading"]
-      });
       this.loading = true;
       this.activeLoading.push(loadingId);
 

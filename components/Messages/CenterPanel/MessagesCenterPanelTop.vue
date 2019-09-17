@@ -27,11 +27,11 @@
   </div>
 </template>
 <script>
+import { parse } from "cookie";
 export default {
   data() {
     return {
-      messages: [],
-      activeConversation: null
+      messages: []
     };
   },
   computed: {
@@ -39,7 +39,7 @@ export default {
       return this.$store.state.chat.activeConversationId;
     },
     conversations() {
-      return this.$store.state.chat.conversations;
+      return this.$store.getters["chat/getConversations"];
     },
     newUserMessage() {
       return this.$store.state.chat.newMessageUser;
@@ -47,43 +47,22 @@ export default {
     userDetail() {
       let detail = null;
       if (this.activeConversationId) {
-        this.$axios
-          .$get(`/api/v1/conversations/${this.activeConversationId}`)
-          .then(res => {
-            let active_conversation = res.data.conversations.find(
-              item => item.id == parseInt(this.activeConversationId)
-            );
-            let user = active_conversation.conversation_member_users.find(
-              member => member.user.id !== this.$auth.user.id
-            );
-            this.activeConversation = {
-              name: `${user.user.personal_detail.first_name} ${user.user.personal_detail.last_name}`,
-              profession: user.user.practice_detail
-                ? user.user.practice_detail.practice_role
-                : user.user.locum_detail.profession.name,
-              status: user.user.is_online
-            };
-          })
-          .catch(e => {
-            console.log(e);
-          });
-        return this.activeConversation;
-        // this.active_conversation = this.$store.state.chat.conversations.find(
-        //   conversation =>
-        //     conversation.id == this.$store.state.chat.activeConversationId
-        // );
-        // let user = active_conversation.conversation_member_users.find(
-        //   member => member.user.id !== this.$auth.user.id
-        // );
-        // let detail = {
-        //   name: `${user.user.personal_detail.first_name} ${user.user.personal_detail.last_name}`,
-        //   profession: user.user.practice_detail
-        //     ? user.user.practice_detail.practice_role
-        //     : user.user.locum_detail.profession.name,
-        //   status: user.user.is_online
-        // };
-        // console.log("detail", detail);
-        // return detail;
+        let active_conversation = this.conversations.find(
+          conversation => conversation.id == parseInt(this.activeConversationId)
+        );
+        if (active_conversation) {
+          let user = active_conversation.conversation_member_users.find(
+            member => member.user.id !== this.$auth.user.id
+          );
+          let detail = {
+            name: `${user.user.personal_detail.first_name} ${user.user.personal_detail.last_name}`,
+            profession: user.user.practice_detail
+              ? user.user.practice_detail.practice_role
+              : user.user.locum_detail.profession.name,
+            status: user.user.is_online
+          };
+          return detail;
+        }
       } else {
         let detail = {
           name: `${this.newUserMessage.personal_detail.first_name} ${this.newUserMessage.personal_detail.last_name}`,

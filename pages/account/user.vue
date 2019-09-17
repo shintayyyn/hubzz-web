@@ -113,7 +113,6 @@ export default {
       const response = await app.$axios.$get(`/api/v1/me`);
       const user =
         response.data && response.data.user ? response.data.user : null;
-      console.log(user);
       return {
         user
       };
