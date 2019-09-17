@@ -39,15 +39,3 @@
     </div>
   </section>
 </template>
-<script>
-export default {
-  async asyncData({ app, store, error }) {
-    store.dispatch("signUp/getProfessions");
-    store.dispatch("signUp/getQualifications");
-    store.dispatch("signUp/getClinicalSystems");
-    store.dispatch("signUp/getSpokenLanguages");
-    store.dispatch("signUp/getPracticeTypes");
-    store.dispatch("signUp/getMandatoryTrainings");
-  }
-};
-</script>

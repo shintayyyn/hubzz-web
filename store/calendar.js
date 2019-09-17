@@ -27,12 +27,6 @@ export const mutations = {
     } else {
       state.selected_date_shift.date = state.selected_date
     }
-    // state.date_today = this.$moment(new Date()).format('YYYY-MM-DD')
-    // state.selected_date = this.$moment(new Date()).format('YYYY-MM-DD')
-    // state.selected_date_shift = {
-    //     date: this.$moment(new Date()).format('YYYY-MM-DD'),
-    //     shift: 'AM'
-    // }
   },
   SELECT_DATE(state, payload) {
     state.selected_date = payload

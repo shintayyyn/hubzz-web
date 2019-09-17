@@ -53,7 +53,6 @@ export default {
     return {
       shifts: [],
       modal: false,
-      // passing prop to modal
       type: "",
       unavailableDate: null,
       appointmentDate: null,
@@ -61,10 +60,8 @@ export default {
     };
   },
   created() {
-    // get all shifts
     this.$store.dispatch("availability/getShifts");
 
-    // set the selected date and date today
     this.$store.commit("availability/SET_DATE_TODAY");
   },
   methods: {

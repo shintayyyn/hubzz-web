@@ -499,8 +499,11 @@ export default {
       this.CheckEmptyField(this.form.miles, "miles");
     }
   },
-  async asyncData({ app, error }) {
+  async asyncData({ app, store, error }) {
     try {
+      store.dispatch("signUp/getProfessions");
+      store.dispatch("signUp/getPracticeTypes");
+      store.dispatch("signUp/getMandatoryTrainings");
       const response = await app.$axios.$get(`/api/v1/me`);
       const user =
         response.data && response.data.user ? response.data.user : null;
@@ -618,22 +621,23 @@ export default {
           "referee_2_phone_number",
           "referee_2_email"
         ];
-        if (this.form.employment_type === "Self-employed") {
-          notRequired.push("company_registration_number");
-        } else if (this.form.employment_type) {
-          notRequired.push("utr_number");
-        }
+        // if (this.form.employment_type === "Self-employed") {
+        notRequired.push("employment_type");
+        notRequired.push("company_registration_number");
+        // } else if (this.form.employment_type) {
+        notRequired.push("ir35");
+        notRequired.push("utr_number");
+        // }
 
-        if (this.form.paid_under_payroll === "No") {
-          notRequired.push(
-            "account_name",
-            "bank_name",
-            "sort_code",
-            "account_number"
-          );
-        }
+        // if (this.form.paid_under_payroll === "No") {
+        notRequired.push(
+          "account_name",
+          "bank_name",
+          "sort_code",
+          "account_number"
+        );
+        // }
 
-        // if (this.form.employmentTypes)
         this.Validate(this.form, notRequired);
 
         if (!this.formError.length) {
