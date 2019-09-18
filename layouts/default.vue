@@ -5,7 +5,7 @@
     <AppHeader />
     <div class="content">
       <AppNotification />
-      <nuxt class="mt-20" />
+      <nuxt class="md:mt-20" />
     </div>
   </section>
 </template>

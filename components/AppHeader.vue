@@ -1,5 +1,8 @@
 <template>
-  <section class="header-section fixed bg-white z-50">
+  <section
+    class="header-section fixed bg-white z-50"
+    :class="$route.name === 'messages-slug' || $route.name === 'messages-new' ? 'border-b md:border-0' : ''"
+  >
     <div class="px-4 flex flex-row flex-wrap justify-between" style="z-index: 600">
       <div class="lg:w-1/3">
         <div class="burger cursor-pointer py-2" @click="toggle">
@@ -27,7 +30,8 @@
               />
               <button
                 @click="$store.commit('calendar/CREATE_JOB_MODAL', true)"
-                class="block md:hidden button rounded-lg p-2 focus:outline-none cursor-pointer mx-2"
+                class="block md:hidden button rounded-lg p-2 focus:outline-none cursor-pointer"
+                :class="$route.name === 'messages-slug' || $route.name === 'messages-new' ? '' : 'mx-2'"
               >
                 <svgicon name="create-job" color="#444 #555" width="21" height="21"></svgicon>
               </button>

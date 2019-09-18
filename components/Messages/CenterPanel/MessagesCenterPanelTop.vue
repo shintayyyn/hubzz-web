@@ -1,5 +1,8 @@
 <template>
-  <div class="panel-top p-4 w-full flex items-center border-b leading-none">
+  <div
+    class="panel-top pb-2 px-4 md:p-4 w-full flex items-center border-b leading-none"
+    :class="$auth.user.domain === 'Locum' ? 'pt-2' : 'pt-4'"
+  >
     <div class="pr-4 md:hidden">
       <button class="focus:outline-none" @click="goBack()">
         <svgicon name="left-arrow" height="20" width="20" />
@@ -9,19 +12,21 @@
       <div class="font-bold md:text-lg">
         <span>{{ userDetail.name }}</span>
       </div>
-      <div class="text-xs md:text-sm text-gray-600">
+      <div class="flex flex-col md:flex-row md:items-center text-xs md:text-sm text-gray-600">
         <span class>{{ userDetail.profession }}</span>
-        <span v-if="$route.name === 'messages-slug'" class="inline-block px-2 text-lg">|</span>
-        <span
-          v-if="$route.name === 'messages-slug'"
-          :class="userDetail.status ? 'bg-green-400' : 'bg-gray-300'"
-          class="inline-block rounded-full"
-          style="padding: 5px"
-        ></span>
-        <p
-          v-if="$route.name === 'messages-slug'"
-          class="inline-block"
-        >{{ userDetail.status ? 'Online' : 'Offline' }}</p>
+        <span v-if="$route.name === 'messages-slug'" class="hidden md:block mx-1 text-lg">|</span>
+        <div class="flex items-center">
+          <span
+            v-if="$route.name === 'messages-slug'"
+            :class="userDetail.status ? 'bg-green-400' : 'bg-gray-300'"
+            class="rounded-full mr-1"
+            style="padding: 5px"
+          ></span>
+          <p
+            v-if="$route.name === 'messages-slug'"
+            class="inline-block"
+          >{{ userDetail.status ? 'Online' : 'Offline' }}</p>
+        </div>
       </div>
     </div>
   </div>
@@ -84,7 +89,9 @@ export default {
 };
 </script>
 <style>
-.panel-top {
-  min-height: 77px;
+@media screen and (min-width: 768px) {
+  .panel-top {
+    min-height: 82px;
+  }
 }
 </style>

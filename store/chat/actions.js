@@ -14,6 +14,7 @@ export default {
         commit("ADD_CONVERSATION", message)
         if (user && this.$router.app._route.name === 'messages-new') {
           this.$router.push(`/messages/${message.id}`);
+          commit("SET_ACTIVE_CONVERSATION", message.id);
         }
       } else {
         if (!user) {

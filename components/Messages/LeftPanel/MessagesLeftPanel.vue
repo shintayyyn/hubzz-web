@@ -6,7 +6,8 @@
         :type="'search'"
         :name="'search_text'"
         :placeholder="'Search Messages'"
-        class="mx-4 my-1"
+        class="mx-4 my-1 pt-1 md:mt-0"
+        :class="$auth.user.domain === 'Locum' ? 'mt-10' : 'mt-12'"
         @keydown.enter="search"
       />
       <div class="relative flex flex-col justify-between h-full border-t">
@@ -216,8 +217,8 @@ export default {
   min-width: 100%;
   max-width: 100%;
   float: left;
-  min-height: 80vh;
-  max-height: 80vh;
+  min-height: 100%;
+  max-height: 1000%;
 }
 
 .chat-list::-webkit-scrollbar {
@@ -237,6 +238,8 @@ export default {
   .messages-left-panel {
     min-width: 35%;
     max-width: 35%;
+    min-height: 80vh;
+    max-height: 80vh;
   }
 }
 </style>

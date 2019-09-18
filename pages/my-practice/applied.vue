@@ -44,7 +44,7 @@ export default {
       return this.perPage * (this.current_page - 1);
     },
     perPage() {
-      return 5;
+      return 8;
     },
     totalPages() {
       return Math.ceil(this.total / this.perPage);
