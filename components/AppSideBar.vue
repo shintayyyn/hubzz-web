@@ -101,6 +101,10 @@ export default {
           addedLists.push({ name: "Sessions", route: "/sessions" });
           addedLists.push({ name: "Billing", route: "/practice-billing" });
           addedLists.push({ name: "Invite", route: "/invite" });
+          addedLists.push({
+            name: "Roles and Permissions",
+            route: "/roles-and-permissions"
+          });
         }
       }
 
