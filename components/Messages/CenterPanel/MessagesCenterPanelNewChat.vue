@@ -3,7 +3,7 @@
     <MessagesCenterPanelTop v-if="createMessage" class="mt-10 md:mt-0" />
     <div class="h-full px-4 md:px-20 md:pt-20">
       <div v-if="!createMessage">
-        <div class="md:absolute top-0 left-0 md:relative w-full py-4 flex items-center">
+        <div class="md:absolute top-0 left-0 md:relative w-full py-4 flex items-center mt-12">
           <button
             class="flex mr-4 items-center font-bold focus:outline-none md:hidden"
             @click="goBack()"

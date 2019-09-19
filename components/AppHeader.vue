@@ -4,14 +4,14 @@
     :class="$route.name === 'messages-slug' || $route.name === 'messages-new' ? 'border-b md:border-0' : ''"
   >
     <div class="px-4 flex flex-row flex-wrap justify-between" style="z-index: 600">
-      <div class="lg:w-1/3">
-        <div class="burger cursor-pointer py-2" @click="toggle">
+      <div class="w-1/3">
+        <button class="burger cursor-pointer py-2 focus:outline-none" @click="toggle">
           <div class="my-2 bg-yellow-500"></div>
           <div class="my-2 bg-yellow-500"></div>
-        </div>
+        </button>
       </div>
-      <div class="flex w-1/3 sm:w-1/3 py-2">
-        <button @click="goHome()" class="mx-auto focus:outline-none">
+      <div class="w-1/3 flex justify-center">
+        <button @click="goHome()" class="focus:outline-none">
           <img src="/images/hubzz-icon-transparent.png" class="logo" />
         </button>
       </div>
@@ -52,7 +52,7 @@
             </button>
           </div>
           <div
-            class="text-xs xl:text-sm mr-2"
+            class="text-xs xl:text-sm mr-2 hidden md:block"
             v-if="$auth.user.domain === 'Locum'"
           >{{$auth.user.email}}</div>
         </div>

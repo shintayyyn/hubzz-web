@@ -19,6 +19,9 @@ export default {
       } else {
         if (!user) {
           if (!findMessage) {
+            if (state.activeConversationId != message.id.toString()) {
+              commit("ADD_UNREAD_MESSAGE", message);
+            }
             commit("ADD_MESSAGE", message);
           }
         }

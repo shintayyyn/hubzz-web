@@ -35,13 +35,16 @@
           class="text-xs lg:text-base font-bold p-4"
         >Select by clicking on the practice that you wish to add</div>
         <div
-          class="border-t-2 p-4 cursor-pointer"
-          :class="selectedSurgery.id === item.id ? 'bg-yellow-500':'hover:bg-gray-500'"
+          class="border-t-2 p-4"
+          :class="[selectedSurgeries.includes(item.id) ? 'bg-gray-200': selectedSurgery.id === item.id ? 'bg-yellow-500':'hover:bg-gray-400 cursor-pointer']"
           v-for="(item) in surgeries"
           :key="item.id"
           @click="select(item)"
         >
-          <div class="flex flex-col justify-start text-xs xl:text-base">
+          <div class="relative flex flex-col justify-start text-xs xl:text-base">
+            <span v-if="selectedSurgeries.includes(item.id)" class="absolute right-0">
+              <svgicon name="success-checkmark" width="25" height="25" />
+            </span>
             <div class="font-bold">{{item.name}}</div>
             <div
               class="mt-4"
@@ -83,7 +86,8 @@ export default {
       selectedSurgery: {},
       showResult: false,
       modal: false,
-      formError: []
+      formError: [],
+      selectedSurgeries: []
     };
   },
   watch: {
@@ -115,6 +119,11 @@ export default {
           message: "Search for surgery"
         });
       } else {
+        this.$axios.$get(`/api/v1/locum/private-practices`).then(res => {
+          res.data.private_practices.find(item => {
+            this.selectedSurgeries.push(item.surgery.id);
+          });
+        });
         this.$axios
           .$get(
             `/api/v1/surgeries?search=${this.search_text}&has_parent=false&is_parent=false&limit=10`
@@ -126,8 +135,10 @@ export default {
       }
     },
     select(item) {
-      this.selectedSurgery = item;
-      this.modal = true;
+      if (!this.selectedSurgeries.includes(item.id)) {
+        this.selectedSurgery = item;
+        this.modal = true;
+      }
     },
     add() {
       this.$axios

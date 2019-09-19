@@ -88,7 +88,7 @@ export default {
           if (err.response.data.status === 500) {
             this.error = "File size too large";
           }
-          console.log(err.response.data);
+          console.log("AppAvatar", err.response.data);
         });
     },
     getBase64(img, callback) {

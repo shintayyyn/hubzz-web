@@ -64,7 +64,7 @@ export default {
           sortable: true
         },
         {
-          label: "per",
+          label: "Rate Type",
           dataIndex: "per"
         },
         {
@@ -77,11 +77,11 @@ export default {
           dataIndex: "date_end",
           sortable: true
         },
-        {
-          label: "Created",
-          dataIndex: "date_created",
-          sortable: true
-        },
+        // {
+        //   label: "Created",
+        //   dataIndex: "date_created",
+        //   sortable: true
+        // },
         {
           label: "Applied",
           dataIndex: "date_applied"

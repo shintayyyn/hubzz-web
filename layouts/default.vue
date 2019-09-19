@@ -5,7 +5,9 @@
     <AppHeader />
     <div class="content">
       <AppNotification />
-      <nuxt class="md:mt-20" />
+      <nuxt
+        :class="$route.name === 'messages-slug' || $route.name === 'messages-new' ? 'md:mt-20' : 'mt-20'"
+      />
     </div>
   </section>
 </template>
@@ -72,7 +74,7 @@ export default {
 .content {
   /* box-sizing: content-box; */
   max-width: 1466px;
-  padding: 5px 30px;
+  padding: 5px 20px;
   height: 100%;
   scroll-behavior: smooth;
 }

@@ -15,41 +15,41 @@
       <div class="my-3 text-sm sm:text-md">{{job.platform_job.practice.surgery.code}}</div>
       <div class="text-gray-500 my-3 text-xs xl:text-sm">From {{job.date_start}} to {{job.date_end}}</div>
       <div class="text-gray-500 my-3 text-xs xl:text-sm">Shift {{job.shift.name}}</div>
-      <div class="my-3 text-xs xl:text-sm">{{job.description}}</div>
+      <div class="my-3 text-xs xl:text-sm break-words">{{job.description}}</div>
     </div>
   </div>
 </template>
 <script>
 export default {
-  props: ['job'],
+  props: ["job"],
   methods: {
     select() {
       this.$axios.$get(`/api/v1/practice/jobs/${this.job.id}`).then(res => {
-        this.$emit('viewPracticeJob', res.data.job)
-      })
+        this.$emit("viewPracticeJob", res.data.job);
+      });
     },
     bgStatus(status, reminder, job) {
-      if (reminder && status !== 'Unfilled') {
-        return 'bg-gray-900'
+      if (reminder && status !== "Unfilled") {
+        return "bg-gray-900";
       } else {
         switch (status) {
-          case 'Applied':
-            return 'bg-orange-400';
+          case "Applied":
+            return "bg-orange-400";
             break;
-          case 'Completed':
-            return 'bg-green-400';
+          case "Completed":
+            return "bg-green-400";
             break;
-          case 'Current':
-            return 'bg-green-600';
+          case "Current":
+            return "bg-green-600";
             break;
-          case 'Unfilled':
-            return 'bg-red-500';
+          case "Unfilled":
+            return "bg-red-500";
             break;
           default:
-            return 'bg-red-500'
+            return "bg-red-500";
         }
       }
     }
   }
-}
+};
 </script>

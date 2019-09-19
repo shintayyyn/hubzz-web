@@ -130,7 +130,7 @@
     <!-- search -->
     <template v-if="type === 'search'">
       <div v-if="type === 'search'" class="flex flex-col">
-        <div class="relative flex flex-row flex-no-wrap justify-between">
+        <div v-if="label" class="relative flex flex-row flex-no-wrap justify-between">
           <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
           <div class="flex">
             <div class="bg-gray-300 rounded-lg px-4 py-1 text-xs sm:text-sm" v-if="info">{{info}}</div>

@@ -1,11 +1,11 @@
 <template>
   <div class="w-full">
-    <ProgressBar :percentage="percentage"/>
-    <div class="w-full xl:max-w-md p-6">
+    <ProgressBar :percentage="percentage" />
+    <div class="relative w-full xl:max-w-3xl p-6">
       <div class="flex w-full justify-center xl:justify-start">
         <div class="mb-6 mt-1 mx-4" style="flex: 0 1 600px;">
           <nuxt-link to="/" class="focus:outline-none text-black">
-            <svgicon name="left-arrow" height="32" width="32"/>
+            <svgicon name="left-arrow" height="32" width="32" />
           </nuxt-link>
           <div class="mt-1 text-xl font-bold">Sign up for a Practice</div>
         </div>
@@ -19,11 +19,11 @@
 </template>
 
 <script>
-import ProgressBar from '~/components/SignUp/ProgressBar.vue'
-import PracticeDetails from '~/components/SignUp/SignUpPractice/PracticeDetails.vue'
-import PracticeAccountDetails from '~/components/SignUp/SignUpPractice/PracticeAccountDetails.vue'
+import ProgressBar from "~/components/SignUp/ProgressBar.vue";
+import PracticeDetails from "~/components/SignUp/SignUpPractice/PracticeDetails.vue";
+import PracticeAccountDetails from "~/components/SignUp/SignUpPractice/PracticeAccountDetails.vue";
 export default {
-  layout: 'auth',
+  layout: "auth",
   components: {
     ProgressBar,
     PracticeDetails,
@@ -31,25 +31,24 @@ export default {
   },
   data() {
     return {
-      activeTab: 'PracticeDetails'
-    }
+      activeTab: "PracticeDetails"
+    };
   },
   computed: {
     percentage() {
       switch (this.activeTab) {
-        case 'PracticeDetails':
-          return 75
+        case "PracticeDetails":
+          return 75;
           break;
-        case 'PracticeAccountDetails':
-          return 100
+        case "PracticeAccountDetails":
+          return 100;
           break;
         default:
-          return 0
+          return 0;
       }
     }
-  },
-
-}
+  }
+};
 </script>
 <style scoped>
 </style>

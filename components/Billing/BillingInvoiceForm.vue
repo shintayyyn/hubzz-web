@@ -34,7 +34,7 @@
       <div class="max-w-3xl my-4 bg-white px-4 py-4 border shadow-md">
         <div class="flex flex-col">
           <div class="text-xs sm:text-sm sm:text-right leading-normal">
-            <div>Mr. {{$auth.user.personal_detail.name}}</div>
+            <div>{{$auth.user.personal_detail.name}}</div>
             <div>{{$auth.user.address_detail.address.line_1}}</div>
             <div>{{$auth.user.address_detail.address.line_3}}</div>
             <div>{{$auth.user.address_detail.address.post_code}}</div>
@@ -65,7 +65,7 @@
                   <div class="relative flex flex-col w-full z-10">
                     <div
                       ref="surgeryLists"
-                      class="absolute w-full option-list flex flex-col bg-white shadow-md overflow-y-auto"
+                      class="absolute z-10 w-full option-list flex flex-col bg-white shadow-md overflow-y-auto"
                       :class="{'slide-down': toggledSurgeries}"
                       @scroll="scrollHandlerSurgeries"
                     >
@@ -137,7 +137,7 @@
                 <div class="relative flex flex-col w-full z-10">
                   <div
                     ref="jobPartsLists"
-                    class="absolute w-full option-list flex flex-col bg-white shadow-md overflow-y-auto"
+                    class="absolute z-0 w-full option-list flex flex-col bg-white shadow-md overflow-y-auto"
                     :class="{'slide-down': toggledJobParts}"
                     @scroll="scrollHandlerJobParts"
                   >
@@ -161,7 +161,7 @@
                     </div>
                     <div class="relative" v-else>
                       <div
-                        class="text-xs sm:text-sm text-center font-bold mt-5"
+                        class="text-xs sm:text-sm text-center font-bold my-3"
                       >No Job Completed On This Surgery</div>
                     </div>
                   </div>
@@ -171,7 +171,7 @@
           </div>
         </div>
 
-        <div class="overflow-x-scroll">
+        <div class="overflow-x-auto">
           <table class="items-table">
             <thead>
               <tr class="text-center bg-gray-900">
@@ -259,7 +259,7 @@
           </table>
         </div>
 
-        <div class="rounded-lg border-2 border-gray-300 mt-24 p-4">
+        <div class="rounded-lg border-2 border-gray-300 mt-4 p-4">
           <div class="flex flex-col text-xs sm:text-sm">
             <div>Payment by BACS:</div>
             <div>Account name: Rick Sanchez</div>
@@ -347,6 +347,15 @@ export default {
       }
     },
     filteredJobParts() {
+      console.log(
+        "job",
+        this.jobParts.filter(filterItem => {
+          const index = this.selectedJobParts.findIndex(item => {
+            return item.job_part_id === filterItem.id;
+          });
+          return index === -1 && filterItem;
+        })
+      );
       return this.jobParts.filter(filterItem => {
         const index = this.selectedJobParts.findIndex(item => {
           return item.job_part_id === filterItem.id;
@@ -687,7 +696,7 @@ export default {
 </script>
 <style scoped>
 .items-table {
-  width: 730px;
+  width: 732px;
 }
 .modal {
   position: fixed;
@@ -725,7 +734,7 @@ export default {
 }
 .slide-down {
   transition: all 0.3s ease-in-out;
-  height: 200px;
+  height: auto;
 }
 /* surgery */
 .loader-surgery {

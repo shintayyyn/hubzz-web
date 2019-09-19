@@ -6,8 +6,8 @@
         :type="'search'"
         :name="'search_text'"
         :placeholder="'Search Messages'"
-        class="mx-4 my-1 pt-1 md:mt-0"
-        :class="$auth.user.domain === 'Locum' ? 'mt-10' : 'mt-12'"
+        class="mx-4 my-1 md:mt-0"
+        :class="$auth.user.domain === 'Locum' ? 'mt-10 pt-3' : 'mt-12 pt-1'"
         @keydown.enter="search"
       />
       <div class="relative flex flex-col justify-between h-full border-t">
@@ -141,11 +141,11 @@ export default {
       }
     },
     conversations(newValue) {
-      let conversation = newValue.find((conversation, index) => index === 0);
-      let conversations = newValue.find(item => item.id === conversation.id);
-      if (this.activeConversationId != conversation.id.toString()) {
-        this.$store.commit("chat/ADD_UNREAD_MESSAGE", conversation);
-      }
+      // let conversation = newValue.find((conversation, index) => index === 0);
+      // let conversations = newValue.find(item => item.id === conversation.id);
+      // if (this.activeConversationId != conversation.id.toString()) {
+      //   this.$store.commit("chat/ADD_UNREAD_MESSAGE", conversation);
+      // }
     }
   },
   methods: {

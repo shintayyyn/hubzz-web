@@ -20,13 +20,11 @@
     <div class="shield" v-if="toggleScroll"></div>
     <transition name="slide" mode="out-in">
       <template v-if="locum_appointment_modal">
-        <div class="modal-container">
-          <JobDetailModalAppointment
-            v-if="locum_appointment_modal"
-            @close="locum_appointment_modal = false"
-            :job="locum_appointment_job"
-          />
-        </div>
+        <JobDetailModalAppointment
+          v-if="locum_appointment_modal"
+          @close="locum_appointment_modal = false"
+          :job="locum_appointment_job"
+        />
       </template>
       <template v-if="locum_modal">
         <div class="modal-container">

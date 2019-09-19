@@ -1,17 +1,19 @@
 <template>
   <section>
-    <div class="flex flex-row flex-wrap justify-start">
+    <div class="flex flex-row flex-wrap justify-start mb-2 md:mb-0">
       <div
-        class="pr-4 my-4 w-full sm:w-1/2 lg:w-1/4"
+        class="pr-4 my-2 md:my-4 w-full sm:w-1/2 lg:w-1/4"
         v-for="(item, index) in reminders"
         :key="index"
       >
         <nuxt-link :to="item.route">
-          <div class="reminder-card rounded-lg shadow-lg p-4">
+          <div
+            class="reminder-card h-full flex flex-col justify-center rounded-lg shadow-lg p-4 hover:bg-gray-100"
+          >
             <span class="leading-tight">
-              <svgicon name="alert" height="20" width="20" />
+              <svgicon name="alert" height="20" width="20" class="fill-current text-gray-800" />
             </span>
-            {{item.label}}
+            <span>{{item.label}}</span>
           </div>
         </nuxt-link>
       </div>

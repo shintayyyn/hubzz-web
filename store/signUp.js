@@ -79,14 +79,14 @@ export const mutations = {
   },
   SET_PRACTICE_ACCOUNT_DETAILS(state, payload) {
     (state.practice_account_details.title = payload.title),
-      (state.practice_account_details.first_name = payload.first_name),
-      (state.practice_account_details.last_name = payload.last_name),
-      (state.practice_account_details.suffix = payload.suffix),
-      (state.practice_account_details.practice_role = payload.practice_role),
-      (state.practice_account_details.practice_type_id = payload.practice_type_id),
-      (state.practice_account_details.email = payload.email),
-      (state.practice_account_details.password = payload.password),
-      (state.practice_account_details.password_confirmation = payload.password_confirmation)
+    (state.practice_account_details.first_name = payload.first_name),
+    (state.practice_account_details.last_name = payload.last_name),
+    (state.practice_account_details.suffix = payload.suffix),
+    (state.practice_account_details.practice_role = payload.practice_role),
+    (state.practice_account_details.practice_type_id = payload.practice_type_id),
+    (state.practice_account_details.email = payload.email),
+    (state.practice_account_details.password = payload.password),
+    (state.practice_account_details.password_confirmation = payload.password_confirmation)
   },
   CLEAR_FORM_PRACTICE_DETAILS(state) {
     state.practice_details.surgery_id = ''
@@ -223,12 +223,16 @@ export const mutations = {
 }
 
 export const actions = {
-  getProfessions({ commit }) {
+  getProfessions({
+    commit
+  }) {
     this.$axios.$get(`/api/v1/professions`).then((res) => {
       commit('SET_PROFESSIONS', res.data.professions)
     })
   },
-  getQualifications({ commit }) {
+  getQualifications({
+    commit
+  }) {
     this.$axios.$get(`/api/v1/profession-categories`).then((res) => {
       let gp = res.data.profession_categories.find((category) => category.id === 1)
       let others = res.data.profession_categories.find((category) => category.id === 2)
@@ -236,31 +240,45 @@ export const actions = {
       commit('SET_OTHERS_QUALIFICATIONS', others.qualifications)
     })
   },
-  getClinicalSystems({ commit }) {
+  getClinicalSystems({
+    commit
+  }) {
     this.$axios.$get(`/api/v1/clinical-systems`).then((res) => {
       commit('SET_CLINICAL_SYSTEMS', res.data.clinical_systems)
     })
   },
-  getSpokenLanguages({ commit }) {
+  getSpokenLanguages({
+    commit
+  }) {
     this.$axios.$get(`/api/v1/spoken-languages`).then((res) => {
       commit('SET_SPOKEN_LANGUAGES', res.data.spoken_languages)
     })
   },
-  getPracticeTypes({ commit }) {
+  getPracticeTypes({
+    commit
+  }) {
     this.$axios.$get(`/api/v1/practice-types`).then((res) => {
       commit('SET_PRACTICE_TYPES', res.data.practice_types)
     })
   },
-  getMandatoryTrainings({ commit }) {
+  getMandatoryTrainings({
+    commit
+  }) {
     this.$axios.$get('/api/v1/mandatory-trainings').then((res) => {
       commit('SET_MANDATORY_TRAININGS', res.data.mandatory_trainings)
     })
   },
-  registeredPractice({ state, commit }) {
+  registeredPractice({
+    state,
+    commit
+  }) {
     let form = {}
-    form = { ...state.practice_details, ...state.practice_account_details }
+    form = {
+      ...state.practice_details,
+      ...state.practice_account_details
+    }
     this.$axios
-      .$post(`/api/v1/register/practice`, form)
+      .$post(`/api/v1/practice/register`, form)
       .then((res) => {
         commit('CLEAR_FORM_PRACTICE_DETAILS')
         this.$router.push('/sign-up/success')
@@ -290,12 +308,20 @@ export const actions = {
         }
       })
   },
-  registeredLocum({ state, commit }) {
+  registeredLocum({
+    state,
+    commit
+  }) {
     commit('SET_CREDENTIAL_DETAIL_FORM_ERROR', [])
     let form = {}
-    form = { ...state.account_details, ...state.address_details, ...state.credential_details, ...state.professional_details }
+    form = {
+      ...state.account_details,
+      ...state.address_details,
+      ...state.credential_details,
+      ...state.professional_details
+    }
     this.$axios
-      .$post(`/api/v1/register/locum`, form)
+      .$post(`/api/v1/locum/register`, form)
       .then((res) => {
         commit('CLEAR_FORM_DETAILS')
         this.$router.push('/sign-up/success')
@@ -381,37 +407,58 @@ export const actions = {
 export const getters = {
   getProfessions(state) {
     return state.professions.map((item) => {
-      return { value: item.id, label: item.name }
+      return {
+        value: item.id,
+        label: item.name
+      }
     })
   },
   getGpQualifications(state) {
     return state.gp_qualifications.map((item) => {
-      return { value: item.id, label: item.name }
+      return {
+        value: item.id,
+        label: item.name
+      }
     })
   },
   getOthersQualifications(state) {
     return state.others_qualifications.map((item) => {
-      return { value: item.id, label: item.name }
+      return {
+        value: item.id,
+        label: item.name
+      }
     })
   },
   getClinicalSystems(state) {
     return state.clinical_systems.map((item) => {
-      return { value: item.id, label: item.name }
+      return {
+        value: item.id,
+        label: item.name
+      }
     })
   },
   getSpokenLanguages(state) {
     return state.spoken_languages.map((item) => {
-      return { value: item.id, label: item.name }
+      return {
+        value: item.id,
+        label: item.name
+      }
     })
   },
   getPracticeTypes(state) {
     return state.practice_types.map((item) => {
-      return { value: item.id, label: item.name }
+      return {
+        value: item.id,
+        label: item.name
+      }
     })
   },
   getMandatoryTrainings(state) {
     return state.mandatory_trainings.map((item) => {
-      return { value: item.id, label: item.name }
+      return {
+        value: item.id,
+        label: item.name
+      }
     })
   }
 }
