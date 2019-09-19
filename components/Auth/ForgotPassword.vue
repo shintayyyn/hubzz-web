@@ -49,7 +49,7 @@
 
               <div class="mt-5 flex justify-start">
                 <button
-                  class="rounded-lg bg-yellow-500 shadow-md p-8 font-bold text-xl focus:outline-none hover:text-white"
+                  class="rounded-lg bg-yellow-500 shadow-md py-4 px-8 md:p-8 font-bold text-xl focus:outline-none hover:text-white"
                   @click="send"
                 >Send</button>
               </div>
@@ -102,7 +102,7 @@ export default {
             this.success = true;
           });
         }
-      } catch (e) { }
+      } catch (e) {}
     }
   }
 };

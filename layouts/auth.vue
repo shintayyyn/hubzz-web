@@ -33,14 +33,17 @@
       :style="`z-index: ${showPrivacyNotice ? 100 : -100}; opacity: ${showPrivacyNotice ? 1 : 0};`"
     >
       <div style="flex: 0 0 80%;">
-        <h2>Your Privacy</h2>
+        <h2 class="font-bold">Your Privacy</h2>
         <div>
           <span>We use cookies to improve your experience on our site. To find out more, read our</span>
-          <nuxt-link to="/">privacy policy.</nuxt-link>
+          <nuxt-link to="/" class="underline hover:no-underline">privacy policy.</nuxt-link>
         </div>
       </div>
       <div style="flex: 0 0 20%;" class="flex justify-end items-center">
-        <button class="p-2 rounded-full shadow-lg hover:text-white" @click="acceptCookies">OK</button>
+        <button
+          class="py-2 px-4 md:mx-4 font-bold border rounded-lg shadow-lg hover:text-white"
+          @click="acceptCookies"
+        >OK</button>
       </div>
     </div>
   </div>
@@ -52,46 +55,46 @@ export default {
   components: {
     AppNotification
   },
-  middleware: 'isAuthenticated',
+  middleware: "isAuthenticated",
   // transitions: 'fade',
   async asyncData({ app }) {
-    console.log('layout index asyncData')
+    console.log("layout index asyncData");
   },
 
   data() {
     return {
       showPrivacyNotice: false
-    }
+    };
   },
 
   methods: {
     acceptCookies() {
-      this.$cookies.set('cookies-accepted', true)
+      this.$cookies.set("cookies-accepted", true);
 
-      this.showPrivacyNotice = !this.$cookies.get('cookies-accepted')
+      this.showPrivacyNotice = !this.$cookies.get("cookies-accepted");
     },
 
     toggle() {
-      if (this.$cookies.get('cookies-accepted')) {
-        this.$cookies.remove('cookies-accepted')
+      if (this.$cookies.get("cookies-accepted")) {
+        this.$cookies.remove("cookies-accepted");
       } else {
-        this.$cookies.set('cookies-accepted', true)
+        this.$cookies.set("cookies-accepted", true);
       }
 
-      this.showPrivacyNotice = !this.$cookies.get('cookies-accepted')
+      this.showPrivacyNotice = !this.$cookies.get("cookies-accepted");
     }
   },
 
   mounted() {
-    this.showPrivacyNotice = !this.$cookies.get('cookies-accepted')
-    this.$store.dispatch('signUp/getProfessions')
-    this.$store.dispatch('signUp/getQualifications')
-    this.$store.dispatch('signUp/getClinicalSystems')
-    this.$store.dispatch('signUp/getSpokenLanguages')
-    this.$store.dispatch('signUp/getPracticeTypes')
-    this.$store.dispatch('signUp/getMandatoryTrainings')
+    this.showPrivacyNotice = !this.$cookies.get("cookies-accepted");
+    this.$store.dispatch("signUp/getProfessions");
+    this.$store.dispatch("signUp/getQualifications");
+    this.$store.dispatch("signUp/getClinicalSystems");
+    this.$store.dispatch("signUp/getSpokenLanguages");
+    this.$store.dispatch("signUp/getPracticeTypes");
+    this.$store.dispatch("signUp/getMandatoryTrainings");
   }
-}
+};
 </script>
 
 <style>

@@ -157,6 +157,22 @@ export default {
       }
       params = { ...params, offset, limit: 10, search };
       this.$axios.$get(`${this.url}`, { params }).then(res => {
+        if (res.data.practice_types) {
+          if (res.data.practice_types.length === 0) {
+            this.loadMore = false;
+          } else {
+            res.data.practice_types.forEach(item => {
+              this.items.push({
+                label: item.name,
+                value: item.id
+              });
+            });
+            if (res.data.practice_types.length < 10) {
+              this.loadMore = false;
+            }
+          }
+        }
+
         if (res.data.qualifications) {
           if (res.data.qualifications.length === 0) {
             this.loadMore = false;

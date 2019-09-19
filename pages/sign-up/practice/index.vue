@@ -1,9 +1,9 @@
 <template>
   <div class="w-full">
     <ProgressBar :percentage="percentage" />
-    <div class="relative w-full xl:max-w-3xl p-6">
-      <div class="flex w-full justify-center xl:justify-start">
-        <div class="mb-6 mt-1 mx-4" style="flex: 0 1 600px;">
+    <div class="relative w-full xl:max-w-3xl p-6 md:px-32 xl:p-6">
+      <div class="flex w-full xl:justify-start">
+        <div class="mb-6 mt-1 mx-4">
           <nuxt-link to="/" class="focus:outline-none text-black">
             <svgicon name="left-arrow" height="32" width="32" />
           </nuxt-link>
