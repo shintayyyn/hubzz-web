@@ -16,6 +16,7 @@
             :event="isDisabled(item.route)"
             class="block no-underline p-4"
             :class="`/${$route.path.split('/')[1]}` == item.route ? 'text-yellow-500' : 'text-black hover:text-yellow-600'"
+            v-if="hasPermissions(item.permissions ? item.permissions : [])"
           >
             <span class="font-sans">
               {{item.name}}
@@ -77,10 +78,32 @@ export default {
     },
     getPracticeJobsBadge() {
       return this.$store.getters["jobs/getPracticeJobsBadge"];
+    },
+    authPermissions() {
+      return this.$store.getters["auth/permissions"];
     }
   },
-  created() {
-    if (this.$auth.loggedIn) {
+  mounted() {
+    this.getInit();
+    this.$socket.on("changePermissions", role => {
+      this.$store.commit("auth/SET_PERMISSIONS", role.permissions);
+    });
+  },
+  methods: {
+    hasPermissions(permissions) {
+      if (permissions && permissions.length) {
+        let enable = false;
+        for (let i = 0; i < permissions.length; i++) {
+          if (this.authPermissions.includes(permissions[i])) {
+            enable = true;
+          }
+        }
+        return enable;
+      } else {
+        return true;
+      }
+    },
+    getInit() {
       let domain = this.$auth.user.domain;
       let accountStatus = this.$auth.user.status;
 
@@ -95,10 +118,25 @@ export default {
         { name: "Contact Us", route: "/contact-us" }
       ];
       if (domain === "Practice") {
-        addedLists = [{ name: "Profile", route: "/profile" }];
+        addedLists = [
+          {
+            name: "Profile",
+            route: "/profile",
+            permissions: [
+              "View Profile Practice",
+              "View Profile Surgeries",
+              "View Profile Users",
+              "View Profile Practice Document"
+            ]
+          }
+        ];
         if (["Active", "Dormant"].includes(accountStatus)) {
           addedLists.push({ name: "My Banks", route: "/my-banks" });
-          addedLists.push({ name: "Sessions", route: "/sessions" });
+          addedLists.push({
+            name: "Sessions",
+            route: "/sessions",
+            permissions: ["View Sessions Job"]
+          });
           addedLists.push({ name: "Billing", route: "/practice-billing" });
           addedLists.push({ name: "Invite", route: "/invite" });
           addedLists.push({
@@ -122,9 +160,7 @@ export default {
       }
 
       this.lists = [...defaultLists, ...addedLists, ...otherLists];
-    }
-  },
-  methods: {
+    },
     logout() {
       this.$axios
         .post("/api/v1/logout")

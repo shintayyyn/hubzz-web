@@ -4,7 +4,7 @@
 <script>
 export default {
   created() {
-    this.$router.push('/profile/practice')
+    this.$router.push("/profile/practice");
   }
-}
+};
 </script>

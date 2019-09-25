@@ -1,6 +1,11 @@
 <template>
   <div class="modal-container shadow-lg">
-    <PracticeRoleDetail :role="role" @close="$router.push(`/roles-and-permissions/roles`)" />
+    <PracticeRoleDetail
+      :role="role"
+      @close="$router.push(`/roles-and-permissions/roles`)"
+      @updateRole="$emit('updateRole', $event)"
+      @removeRole="$emit('removeRole', $event)"
+    />
   </div>
 </template>
 <script>

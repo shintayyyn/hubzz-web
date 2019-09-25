@@ -25,7 +25,7 @@
       class="absolute top-0 left-0 bg-red-500 p-1 text-xs sm:text-sm text-white"
       v-if="error"
     >{{error}}</div>
-    <AppLoading class="rounded-full" :loading="loading" :message="'Uploading'" />
+    <AppLoading :loading="loading" spinner />
   </div>
 </template>
 <script>

@@ -5,7 +5,7 @@
         <nuxt-link
           to="/locum-billing/invoices"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-          :class="$route.path === '/locum-billing/invoices' || $route.path === '/locum-billing/create' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          :class="['locum-billing-invoices-create', 'locum-billing-invoices'].includes($route.name) || $route.name.includes('locum-billing-invoices-id') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Invoices</nuxt-link>
         <nuxt-link
           to="/locum-billing/invoicing-details"
@@ -34,11 +34,7 @@
           class="rounded-full h-8 w-8 text-2xl sm:text-3xl md:text-4xl flex items-center focus:outline-none justify-center bg-yellow-500 font-semibold cursor-pointer shadow-md hover:text-white hover:no-underline"
         >+</div>
       </nuxt-link>
-      <!-- <div class="bottom-0 right-0">
-          
-      </div>-->
     </div>
-
     <div class="mt-5">
       <nuxt-child />
     </div>
@@ -47,46 +43,6 @@
 
 <script>
 export default {
-  middleware: "isVerified",
-  data() {
-    return {
-      modal: false
-    };
-  },
-  watch: {
-    modal(value) {
-      value
-        ? (document.body.style.overflow = "hidden")
-        : (document.body.style.overflow = "auto");
-    }
-  },
-  methods: {
-    add(data) {}
-  }
+  middleware: "isVerified"
 };
 </script>
-
-<style scoped>
-.shield {
-  z-index: 511;
-}
-.invoice-modal {
-  position: fixed;
-  top: 0;
-  right: 0;
-  margin-right: 0%;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  /* border-left: solid 2px #edf2f7; */
-  transition: all 0.3s ease-in-out;
-  /* background-color: rgb(80, 80, 80); */
-  background: #fff;
-  z-index: 512;
-}
-@media screen and (min-width: 1200px) {
-  .invoice-modal {
-    width: 70%;
-  }
-}
-</style>

@@ -6,7 +6,7 @@
     <div class="flex flex-row justify-start mt-8">
       <div class="leading-loose font-bold text-md sm:text-lg">{{job.title}}</div>
       <div class="mx-2 text-sm sm:text-sm p-2" :class="bgStatus(job.status)">{{status(job.status)}}</div>
-      <div>
+      <div v-if="authPermissions.includes('Update Sessions Job')">
         <button
           class="font-bold text-xs sm:text-sm no-underline px-2 py-2 rounded-lg bg-yellow-500 ml-4 focus:outline-none"
           v-if="job.status === 'Current' && toEdit === false && jobOngoing === false || job.status === 'Applied' && toEdit === false || job.status === 'Available' && toEdit === false"
@@ -52,12 +52,12 @@
       <JobDetailModalCancelForm
         :job="job"
         @close="close"
-        v-if="job.status === 'Current' || job.status === 'Applied' || job.status === 'Available'"
+        v-if="(job.status === 'Current' || job.status === 'Applied' || job.status === 'Available') && authPermissions.includes('Cancel Sessions Job')"
       />
       <JobDetailModalCompleteForm
         :job_parts="job.job_parts"
         @close="close"
-        v-if="job.status === 'Current'"
+        v-if="job.status === 'Current' && authPermissions.includes('Complete Sessions Job')"
       />
     </div>
     <div class="shield" v-if="modal"></div>
@@ -97,6 +97,11 @@ export default {
       toEdit: false,
       jobOngoing: false
     };
+  },
+  computed: {
+    authPermissions() {
+      return this.$store.getters["auth/permissions"];
+    }
   },
   created() {
     if (this.job.status === "Applied") {

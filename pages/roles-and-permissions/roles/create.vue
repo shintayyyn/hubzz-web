@@ -125,6 +125,7 @@ export default {
       });
     },
     create() {
+      this.formError = [];
       this.Validate(this.form, ["permission_id"]);
       if (!this.formError.length) {
         let ids = [];
@@ -139,7 +140,7 @@ export default {
         this.$axios
           .$post(`/api/v1/practice/practice-roles`, this.form)
           .then(res => {
-            this.$store.commit("roles/ADD_PRACTICE_ROLE", res.data.role);
+            this.$emit("addRole", res.data.role);
             this.$router.push(`/roles-and-permissions/roles`);
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,

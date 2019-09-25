@@ -136,13 +136,13 @@ export default {
   },
   computed: {
     practiceTypes() {
-      return this.$store.getters["signUp/getPracticeTypes"];
+      return this.$store.getters["sign-up/getPracticeTypes"];
     },
     practiceAccountDetails() {
-      return this.$store.state.signUp.practice_account_details;
+      return this.$store.getters["sign-up/practiceAccountDetails"];
     },
     practiceAccountFormError() {
-      return this.$store.state.signUp.practice_account_detail_form_error;
+      return this.$store.getters["sign-up/practiceAccountFormError"];
     }
   },
   created() {
@@ -197,9 +197,9 @@ export default {
           this.form.practice_type_id = this.form.practice_list
             ? this.form.practice_list.map(item => item.value)
             : [];
-          this.$store.commit("signUp/SET_PRACTICE_ACCOUNT_DETAILS", this.form);
+          this.$store.commit("sign-up/SET_PRACTICE_ACCOUNT_DETAILS", this.form);
           setTimeout(() => {
-            this.$store.dispatch("signUp/registeredPractice");
+            this.$store.dispatch("sign-up/registeredPractice");
           }, 1000);
           // response here
           // this.$router.push('/sign-up/success')

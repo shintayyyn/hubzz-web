@@ -87,10 +87,10 @@ export default {
   },
   computed: {
     surgeryId() {
-      return this.$store.state.signUp.practice_details.surgery_id;
+      return this.$store.getters["sign-up/surgeryId"];
     },
     search_results() {
-      return this.$store.state.signUp.search_results;
+      return this.$store.getters["sign-up/search_results"];
     }
   },
   mounted() {
@@ -144,7 +144,7 @@ export default {
         let item = this.surgeries.find(
           item => item.id === this.selectedSurgeryId
         );
-        this.$store.commit("signUp/SET_PRACTICE_DETAILS", {
+        this.$store.commit("sign-up/SET_PRACTICE_DETAILS", {
           surgery_id: item.id,
           search_results: this.surgeries
         });

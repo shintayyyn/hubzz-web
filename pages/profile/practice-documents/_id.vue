@@ -6,6 +6,7 @@
           <svgicon name="left-arrow" height="32" />
         </div>
         <div
+          v-if="authPermissions.includes('Download Profile Practice Document')"
           class="ml-8 hover:text-black hover:bg-yellow-500 rounded-lg inline-flex p-2 cursor-pointer"
         >
           <a
@@ -62,16 +63,31 @@ export default {
     name: "slide",
     mode: "out-in"
   },
+  computed: {
+    authPermissions() {
+      return this.$store.getters["auth/permissions"];
+    }
+  },
   async asyncData({ app, params, error }) {
     try {
+      if (
+        !app.$auth.user.practice_detail.role.permissions
+          .map(item => item.name)
+          .includes("Show Profile Practice Document")
+      ) {
+        error({
+          statusCode: 401,
+          message: "You're Not Authorized To View This Page"
+        });
+      }
       const response = await app.$axios.$get(
         `/api/v1/practice/practice-documents/${params.id}`
       );
-      console.log(response);
       const practiceDocument =
         response.data && response.data.practice_document
           ? response.data.practice_document
           : null;
+
       return {
         practiceDocument
       };

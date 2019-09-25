@@ -410,7 +410,11 @@
               </div>
             </div>
             <div class="mt-4">
-              <AppButton :label="'Save and publish Job'" @click="publish" />
+              <AppButton
+                :label="'Save and publish Job'"
+                @click="publish"
+                v-if="authPermissions.includes('Create Sessions Job')"
+              />
             </div>
           </div>
         </div>
@@ -518,6 +522,11 @@ export default {
       },
       formError: []
     };
+  },
+  computed: {
+    authPermissions() {
+      return this.$store.getters["auth/permissions"];
+    }
   },
   watch: {
     unpaid_breaks(value) {

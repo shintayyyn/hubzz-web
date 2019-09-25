@@ -128,6 +128,9 @@ export default {
     },
     loadingJobs() {
       return this.$store.state.jobs.loading_jobs;
+    },
+    authPermissions() {
+      return this.$store.getters["auth/permissions"];
     }
   },
   beforeCreate() {
@@ -201,7 +204,9 @@ export default {
       this.getJobs(this.current_page, this.params);
     },
     show(id) {
-      this.$router.push(`/sessions/allocated/${id}`);
+      if (this.authPermissions.includes("Show Sessions Job")) {
+        this.$router.push(`/sessions/allocated/${id}`);
+      }
     }
   }
 };

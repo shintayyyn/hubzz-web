@@ -11,6 +11,17 @@ export default {
   },
   async asyncData({ app, route, store, error }) {
     try {
+      if (
+        !app.$auth.user.practice_detail.role.permissions
+          .map(item => item.name)
+          .includes("Show Sessions Job")
+      ) {
+        error({
+          statusCode: 401,
+          message: "You're Not Authorized To View This Page"
+        });
+      }
+
       let response = await app.$axios.get(
         `/api/v1/practice/jobs/${route.params.id}`
       );

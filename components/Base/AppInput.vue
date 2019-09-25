@@ -94,7 +94,12 @@
           >{{error.message}}</div>
         </div>
         <div class="flex flex-row flex-no-wrap justify-start items-center">
-          <input type="checkbox" @change="$emit('input', $event.target.checked)" :checked="value" />
+          <input
+            type="checkbox"
+            @change="$emit('input', $event.target.checked)"
+            :checked="value"
+            :disabled="disabled"
+          />
           <div class="mx-1"></div>
           <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
         </div>
@@ -190,7 +195,12 @@ export default {
       type: Boolean
     },
     // for multicheckbox
-    lists: Array
+    lists: Array,
+    //
+    disabled: {
+      type: Boolean,
+      default: false
+    }
   },
   methods: {
     // for multi checkbox

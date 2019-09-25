@@ -7,6 +7,7 @@
           <PerWeek v-if="$store.state.calendar.view_type === 'per_week'" />
           <div class="absolute bottom-0 right-0 mx-5 my-3 md:my-5">
             <div
+              v-if="authPermissions.includes('Create Sessions Job')"
               class="rounded-full h-10 w-10 sm:h-12 sm:w-12 md:h-16 md:w-16 text-2xl sm:text-3xl md:text-4xl flex items-center focus:outline-none justify-center bg-yellow-500 font-semibold cursor-pointer shadow-md hover:text-white"
               @click="create"
             >+</div>
@@ -88,6 +89,9 @@ export default {
     },
     create_job_modal() {
       return this.$store.state.calendar.create_job_modal;
+    },
+    authPermissions() {
+      return this.$store.getters["auth/permissions"];
     }
   },
   watch: {
