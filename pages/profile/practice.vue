@@ -523,7 +523,7 @@ export default {
         ]);
         if (!this.formError.length) {
           const res = await this.$axios.$put(
-            `/api/v1/practice/me/profile`,
+            `/api/v1/practice/me/practice`,
             this.form
           );
           this.$store.commit("SET_NOTIFICATION", {

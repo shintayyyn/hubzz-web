@@ -104,7 +104,7 @@
               </td>
               <td v-else></td>
 
-              <td v-if="item.info.note">{{ item.info.note | StringMaxLength(15)}}</td>
+              <td v-if="item && item.info && item.info.note">{{ item && item.info && item.info.note ? item.info.note : 'N/A' | StringMaxLength(15)}}</td>
               <td v-else></td>
               <td
                 class="hover:underline"
