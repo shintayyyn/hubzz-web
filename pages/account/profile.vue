@@ -2,349 +2,347 @@
   <div class="flex flex-row flex-wrap justify-start">
     <div class="w-full p-0 lg:w-2/3 lg:pr-4 order-2 lg:order-1">
       <div class="relative rounded-lg shadow-lg w-full p-8">
+        <AppLoading :loading="loading" spinner />
         <AppFormError :formError="formError" v-if="formError.length > 0" />
-        <AppLoading :loading="loading" :message="'Loading'" />
-        <AppInput
-          v-model="form.gmc_or_nmc_number"
-          :type="'text'"
-          :name="'gmc_or_nmc_number'"
-          :label="'GMC / NMC Number'"
-          :error="formError.find(item => item.field === 'gmc_or_nmc_number')"
-          :info="'For compliance; to be verified by the hubzz team'"
-          @submit="save"
-          @blur="CheckEmptyField(form.gmc_or_nmc_number, 'gmc_or_nmc_number')"
-        />
-        <AppInput
-          v-model="form.mpl_or_npl_number"
-          :type="'text'"
-          :name="'mpl_or_npl_number'"
-          :label="'MPL / NPL Number'"
-          :error="formError.find(item => item.field === 'mpl_or_npl_number')"
-          :info="'For compliance; to be verified by the hubzz team'"
-          @submit="save"
-          @blur="CheckEmptyField(form.mpl_or_npl_number, 'mpl_or_npl_number')"
-        />
-        <AppInput
-          v-model="form.nhs_smart_card_id_number"
-          :type="'text'"
-          :name="'nhs_smart_card_id_number'"
-          :label="'Your NHS Smart Card ID number'"
-          @submit="save"
-        />
-        <AppInput
-          v-model="form.headline"
-          :type="'text'"
-          :name="'headline'"
-          :label="'Headline'"
-          :info="'A short headline about yourself to show to Practices'"
-          @submit="save"
-        />
-        <AppInput
-          v-model="form.short_biography"
-          :type="'textarea'"
-          :name="'short_biography'"
-          :label="'Short Biography'"
-          :info="'A little bit about yourself to inform to the Practices'"
-          :resize="false"
-          @submit="save"
-        />
-        <AppInput
-          v-model="form.special_requirements"
-          :type="'textarea'"
-          :name="'special_requirements'"
-          :label="'Special requirements'"
-          :info="'Information for Practices for your own needs'"
-          :resize="false"
-          @submit="save"
-        />
-        <AppInput
-          v-model="form.profession_id"
-          :type="'select'"
-          :name="'profession_id'"
-          :label="'Profession'"
-          :placeholder="'Select...'"
-          :items="professions"
-        />
-        <AppFilterSearch
-          v-model="form.qualification_id"
-          :name="'qualification_id'"
-          :label="'Specialty'"
-          :placeholder="'Select...'"
-          :error="formError.find(item => item.field === 'qualification_id')"
-          :info="'Choose at least one qualification'"
-          :url="'/api/v1/qualifications'"
-          :professionCategoryId="professionCategoryId.toString()"
-          @add="CheckEmptyField(form.qualification_id, 'qualification_id')"
-          @remove="CheckEmptyField(form.qualification_id, 'qualification_id')"
-        />
-        <AppFilterSearch
-          v-model="form.clinical_system_id"
-          :name="'clinical_system_id'"
-          :label="'Clinical systems'"
-          :placeholder="'Select...'"
-          :error="formError.find(item => item.field === 'clinical_system_id')"
-          :info="'Choose at least one IT system'"
-          :url="'/api/v1/clinical-systems'"
-          @add="CheckEmptyField(form.clinical_system_id, 'clinical_system_id')"
-          @remove="CheckEmptyField(form.clinical_system_id, 'clinical_system_id')"
-        />
-        <AppFilterSearch
-          v-model="form.spoken_language_id"
-          :name="'spoken_language_id'"
-          :label="'Spoken languages'"
-          :placeholder="'Select...'"
-          :info="'Choose other languages you can speak'"
-          :url="'/api/v1/spoken-languages'"
-          :defaultItem="'English'"
-        />
-        <div class="flex flex-col my-8">
-          <div class="relative flex flex-row justify-between">
-            <label for="rates" class="text-xs sm:text-sm py-1">Your preferred rates £</label>
-            <div class="rounded-lg bg-gray-300 p-1 text-xs sm:text-sm">To match available jobs with</div>
+        <form class="w-full">
+          <AppInput
+            v-model="form.gmc_or_nmc_number"
+            :type="'text'"
+            :name="'gmc_or_nmc_number'"
+            :label="'GMC / NMC Number'"
+            :error="formError.find(item => item.field === 'gmc_or_nmc_number')"
+            :info="'For compliance; to be verified by the hubzz team'"
+            @submit="save"
+            @blur="CheckEmptyField(form.gmc_or_nmc_number, 'gmc_or_nmc_number')"
+          />
+          <AppInput
+            v-model="form.mpl_or_npl_number"
+            :type="'text'"
+            :name="'mpl_or_npl_number'"
+            :label="'MPL / NPL Number'"
+            :error="formError.find(item => item.field === 'mpl_or_npl_number')"
+            :info="'For compliance; to be verified by the hubzz team'"
+            @submit="save"
+            @blur="CheckEmptyField(form.mpl_or_npl_number, 'mpl_or_npl_number')"
+          />
+          <AppInput
+            v-model="form.nhs_smart_card_id_number"
+            :type="'text'"
+            :name="'nhs_smart_card_id_number'"
+            :label="'Your NHS Smart Card ID number'"
+            @submit="save"
+          />
+          <AppInput
+            v-model="form.headline"
+            :type="'text'"
+            :name="'headline'"
+            :label="'Headline'"
+            :info="'A short headline about yourself to show to Practices'"
+            @submit="save"
+          />
+          <AppInput
+            v-model="form.short_biography"
+            :type="'textarea'"
+            :name="'short_biography'"
+            :label="'Short Biography'"
+            :info="'A little bit about yourself to inform to the Practices'"
+            :resize="false"
+            @submit="save"
+          />
+          <AppInput
+            v-model="form.special_requirements"
+            :type="'textarea'"
+            :name="'special_requirements'"
+            :label="'Special requirements'"
+            :info="'Information for Practices for your own needs'"
+            :resize="false"
+            @submit="save"
+          />
+          <AppInput
+            v-model="form.profession_id"
+            :type="'select'"
+            :name="'profession_id'"
+            :label="'Profession'"
+            :placeholder="'Select...'"
+            :items="professions"
+          />
+          <AppFilterSearch
+            v-model="form.qualification_id"
+            :name="'qualification_id'"
+            :label="'Specialty'"
+            :placeholder="'Select...'"
+            :error="formError.find(item => item.field === 'qualification_id')"
+            :info="'Choose at least one qualification'"
+            :url="'/api/v1/qualifications'"
+            :professionCategoryId="professionCategoryId.toString()"
+            @add="CheckEmptyField(form.qualification_id, 'qualification_id')"
+            @remove="CheckEmptyField(form.qualification_id, 'qualification_id')"
+          />
+          <AppFilterSearch
+            v-model="form.clinical_system_id"
+            :name="'clinical_system_id'"
+            :label="'Clinical systems'"
+            :placeholder="'Select...'"
+            :error="formError.find(item => item.field === 'clinical_system_id')"
+            :info="'Choose at least one IT system'"
+            :url="'/api/v1/clinical-systems'"
+            @add="CheckEmptyField(form.clinical_system_id, 'clinical_system_id')"
+            @remove="CheckEmptyField(form.clinical_system_id, 'clinical_system_id')"
+          />
+          <AppFilterSearch
+            v-model="form.spoken_language_id"
+            :name="'spoken_language_id'"
+            :label="'Spoken languages'"
+            :placeholder="'Select...'"
+            :info="'Choose other languages you can speak'"
+            :url="'/api/v1/spoken-languages'"
+            :defaultItem="'English'"
+          />
+          <div class="flex flex-col my-8">
+            <div class="relative flex flex-row justify-between">
+              <label for="rates" class="text-xs sm:text-sm py-1">Your preferred rates £</label>
+              <div
+                class="rounded-lg bg-gray-300 p-1 text-xs sm:text-sm"
+              >To match available jobs with</div>
+            </div>
+            <div class="flex flex-row flex-wrap justify-between">
+              <div class="flex flex-col w-full sm:w-1/3 px-1">
+                <label for="rates" class="text-xs sm:text-sm py-1">Per Hour</label>
+                <div class="flex flex-row flex-no-wrap">
+                  <AppInput
+                    v-model="form.min_rate_per_hour"
+                    :type="'text'"
+                    :name="'min_rate_per_hour'"
+                    :label="'From £'"
+                    :error="formError.find(item => item.field === 'min_rate_per_hour')"
+                    @submit="save"
+                    @blur="CheckEmptyField(form.min_rate_per_hour, 'min_rate_per_hour')"
+                  />
+                  <div class="mx-1"></div>
+                  <AppInput
+                    v-model="form.max_rate_per_hour"
+                    :type="'text'"
+                    :name="'max_rate_per_hour'"
+                    :label="'To £'"
+                    :error="formError.find(item => item.field === 'max_rate_per_hour')"
+                    @submit="save"
+                    @blur="CheckEmptyField(form.max_rate_per_hour, 'max_rate_per_hour')"
+                  />
+                </div>
+              </div>
+              <div class="flex flex-col w-full sm:w-1/3 px-1">
+                <label for="rates" class="text-xs sm:text-sm py-1">Per Half Day Session</label>
+                <div class="flex flex-row flex-no-wrap">
+                  <AppInput
+                    v-model="form.min_rate_per_half_day_session"
+                    :type="'text'"
+                    :name="'min_rate_per_half_day_session'"
+                    :label="'From £'"
+                    :error="formError.find(item => item.field === 'min_rate_per_half_day_session')"
+                    @submit="save"
+                    @blur="CheckEmptyField(form.min_rate_per_half_day_session, 'min_rate_per_half_day_session')"
+                  />
+                  <div class="mx-1"></div>
+                  <AppInput
+                    v-model="form.max_rate_per_half_day_session"
+                    :type="'text'"
+                    :name="'max_rate_per_half_day_session'"
+                    :label="'To £'"
+                    :error="formError.find(item => item.field === 'max_rate_per_half_day_session')"
+                    @submit="save"
+                    @blur="CheckEmptyField(form.max_rate_per_half_day_session, 'max_rate_per_half_day_session')"
+                  />
+                </div>
+              </div>
+              <div class="flex flex-col w-full sm:w-1/3 px-1">
+                <label for="rates" class="text-xs sm:text-sm py-1">Per Whole Day Session</label>
+                <div class="flex flex-row flex-no-wrap">
+                  <AppInput
+                    v-model="form.min_rate_per_whole_day_session"
+                    :type="'text'"
+                    :name="'min_rate_per_whole_day_session'"
+                    :label="'From £'"
+                    :error="formError.find(item => item.field === 'min_rate_per_whole_day_session')"
+                    @submit="save"
+                    @blur="CheckEmptyField(form.min_rate_per_whole_day_session, 'min_rate_per_whole_day_session')"
+                  />
+                  <div class="mx-1"></div>
+                  <AppInput
+                    v-model="form.max_rate_per_whole_day_session"
+                    :type="'text'"
+                    :name="'max_rate_per_whole_day_session'"
+                    :label="'To £'"
+                    :error="formError.find(item => item.field === 'max_rate_per_whole_day_session')"
+                    @submit="save"
+                    @blur="CheckEmptyField(form.max_rate_per_whole_day_session, 'max_rate_per_whole_day_session')"
+                  />
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="flex flex-row flex-wrap justify-between">
-            <div class="flex flex-col w-full sm:w-1/3 px-1">
-              <label for="rates" class="text-xs sm:text-sm py-1">Per Hour</label>
-              <div class="flex flex-row flex-no-wrap">
-                <AppInput
-                  v-model="form.min_rate_per_hour"
-                  :type="'text'"
-                  :name="'min_rate_per_hour'"
-                  :label="'From £'"
-                  :error="formError.find(item => item.field === 'min_rate_per_hour')"
-                  @submit="save"
-                  @blur="CheckEmptyField(form.min_rate_per_hour, 'min_rate_per_hour')"
-                />
-                <div class="mx-1"></div>
-                <AppInput
-                  v-model="form.max_rate_per_hour"
-                  :type="'text'"
-                  :name="'max_rate_per_hour'"
-                  :label="'To £'"
-                  :error="formError.find(item => item.field === 'max_rate_per_hour')"
-                  @submit="save"
-                  @blur="CheckEmptyField(form.max_rate_per_hour, 'max_rate_per_hour')"
-                />
-              </div>
-            </div>
-            <div class="flex flex-col w-full sm:w-1/3 px-1">
-              <label for="rates" class="text-xs sm:text-sm py-1">Per Half Day Session</label>
-              <div class="flex flex-row flex-no-wrap">
-                <AppInput
-                  v-model="form.min_rate_per_half_day_session"
-                  :type="'text'"
-                  :name="'min_rate_per_half_day_session'"
-                  :label="'From £'"
-                  :error="formError.find(item => item.field === 'min_rate_per_half_day_session')"
-                  @submit="save"
-                  @blur="CheckEmptyField(form.min_rate_per_half_day_session, 'min_rate_per_half_day_session')"
-                />
-                <div class="mx-1"></div>
-                <AppInput
-                  v-model="form.max_rate_per_half_day_session"
-                  :type="'text'"
-                  :name="'max_rate_per_half_day_session'"
-                  :label="'To £'"
-                  :error="formError.find(item => item.field === 'max_rate_per_half_day_session')"
-                  @submit="save"
-                  @blur="CheckEmptyField(form.max_rate_per_half_day_session, 'max_rate_per_half_day_session')"
-                />
-              </div>
-            </div>
-            <div class="flex flex-col w-full sm:w-1/3 px-1">
-              <label for="rates" class="text-xs sm:text-sm py-1">Per Whole Day Session</label>
-              <div class="flex flex-row flex-no-wrap">
-                <AppInput
-                  v-model="form.min_rate_per_whole_day_session"
-                  :type="'text'"
-                  :name="'min_rate_per_whole_day_session'"
-                  :label="'From £'"
-                  :error="formError.find(item => item.field === 'min_rate_per_whole_day_session')"
-                  @submit="save"
-                  @blur="CheckEmptyField(form.min_rate_per_whole_day_session, 'min_rate_per_whole_day_session')"
-                />
-                <div class="mx-1"></div>
-                <AppInput
-                  v-model="form.max_rate_per_whole_day_session"
-                  :type="'text'"
-                  :name="'max_rate_per_whole_day_session'"
-                  :label="'To £'"
-                  :error="formError.find(item => item.field === 'max_rate_per_whole_day_session')"
-                  @submit="save"
-                  @blur="CheckEmptyField(form.max_rate_per_whole_day_session, 'max_rate_per_whole_day_session')"
-                />
-              </div>
-            </div>
+          <AppInput
+            v-model="form.mandatory_training_id"
+            :type="'multi-checkbox'"
+            :name="'mandatory_training_id'"
+            :label="'What type of Training(s) would you like to work for?'"
+            :error="formError.find(item => item.field === 'mandatory_training_id')"
+            :lists="mandatoryTrainings"
+            @checked="form.mandatory_training_id.push(parseInt($event)), CheckEmptyField(form.mandatory_training_id, 'mandatory_training_id')"
+            @unchecked="form.mandatory_training_id = form.mandatory_training_id.filter(id => id !== parseInt($event)), CheckEmptyField(form.mandatory_training_id, 'mandatory_training_id')"
+          />
+          <AppInput
+            v-model="form.practice_type_id"
+            :type="'multi-checkbox'"
+            :name="'practice_type_id'"
+            :label="'What type of Practice(s) would you like to work for?'"
+            :error="formError.find(item => item.field === 'practice_type_id')"
+            :lists="practiceTypes"
+            @checked="form.practice_type_id.push(parseInt($event)), CheckEmptyField(form.practice_type_id, 'practice_type_id')"
+            @unchecked="form.practice_type_id = form.practice_type_id.filter(id => id !== parseInt($event)), CheckEmptyField(form.practice_type_id, 'practice_type_id')"
+          />
+          <AppInput
+            v-model="form.employment_type"
+            :type="'select'"
+            :name="'employment_type'"
+            :label="'Are you...?'"
+            :placeholder="'Select...'"
+            :items="employmentTypes"
+          />
+          <template v-if="form.employment_type === 'Limited company'">
+            <AppInput
+              v-model="form.company_registration_number"
+              :type="'text'"
+              :name="'company_registration_number'"
+              :label="'Company_registration_number'"
+              :placeholder="'The number of your company from Companies House'"
+            />
+          </template>
+          <template v-else>
+            <AppInput
+              v-model="form.utr_number"
+              :type="'text'"
+              :name="'utr_number'"
+              :label="'UTR number'"
+              :placeholder="''"
+            />
+          </template>
+          <AppInput
+            v-model="form.paid_under_payroll"
+            :type="'select'"
+            :name="'paid_under_payroll'"
+            :label="'Are you paid under payroll?'"
+            :items="[{ label: 'Yes', value: 'Yes' }, { label: 'No', value: 'No' }]"
+          />
+          <template v-if="form.paid_under_payroll === 'Yes'">
+            <AppInput
+              v-model="form.account_name"
+              :type="'text'"
+              :name="'account_name'"
+              :label="'Account name'"
+              :placeholder="''"
+            />
+            <AppInput
+              v-model="form.bank_name"
+              :type="'text'"
+              :name="'bank_name'"
+              :label="'Bank name'"
+              :placeholder="''"
+            />
+            <AppInput
+              v-model="form.sort_code"
+              :type="'text'"
+              :name="'sort_code'"
+              :label="'Sort code'"
+              :placeholder="''"
+            />
+            <AppInput
+              v-model="form.account_number"
+              :type="'text'"
+              :name="'account_number'"
+              :label="'Account number'"
+              :placeholder="''"
+            />
+          </template>
+          <AppInput
+            v-model="form.ir35"
+            :type="'single-checkbox'"
+            :name="'ir35'"
+            :label="'Are you willing to work for a role captured within IR35 rules, subject to deduction of Tax and N.I.?'"
+            :placeholder="''"
+            :error="this.formError.find(item => item.field === 'ir35')"
+          />
+          <AppPostCode
+            v-model="form.post_code"
+            :name="'post_code'"
+            :label="'The post code where I will be available at'"
+            :error="formError.find(item => item.field === 'post_code')"
+            @onSelect="onSelect"
+            @blur="CheckEmptyField(form.post_code, 'post_code')"
+          />
+          <AppInput
+            v-model="form.miles"
+            :type="'text'"
+            :name="'miles'"
+            :label="`I will travel up to ${form.miles ? form.miles : 'n'} miles from this postcode`"
+            :error="formError.find(item => item.field === 'miles')"
+            :inStyle="'text-align:right;'"
+            @blur="CheckEmptyField(form.miles, 'miles')"
+          />
+          <div class="text-xs sm:text-sm">Referees</div>
+          <div class="rounded-lg bg-gray-400 p-8 my-2">
+            <AppInput
+              v-model="form.referee_1_contact_name"
+              :type="'text'"
+              :name="'referee_1_contact_name'"
+              :label="'Contact name'"
+              :inStyle="'background-color:#dae1e7;border-color:white'"
+            />
+            <AppInput
+              v-model="form.referee_1_phone_number"
+              :type="'text'"
+              :name="'referee_1_phone_number'"
+              :label="'Telephone number'"
+              :inStyle="'background-color:#dae1e7;border-color:white'"
+            />
+            <AppInput
+              v-model="form.referee_1_email"
+              :type="'text'"
+              :name="'referee_1_email'"
+              :label="'Email address'"
+              :inStyle="'background-color:#dae1e7;border-color:white'"
+            />
           </div>
-        </div>
-        <AppInput
-          v-model="form.mandatory_training_id"
-          :type="'multi-checkbox'"
-          :name="'mandatory_training_id'"
-          :label="'What type of Training(s) would you like to work for?'"
-          :error="formError.find(item => item.field === 'mandatory_training_id')"
-          :lists="mandatoryTrainings"
-          @checked="form.mandatory_training_id.push(parseInt($event)), CheckEmptyField(form.mandatory_training_id, 'mandatory_training_id')"
-          @unchecked="form.mandatory_training_id = form.mandatory_training_id.filter(id => id !== parseInt($event)), CheckEmptyField(form.mandatory_training_id, 'mandatory_training_id')"
-        />
-        <AppInput
-          v-model="form.practice_type_id"
-          :type="'multi-checkbox'"
-          :name="'practice_type_id'"
-          :label="'What type of Practice(s) would you like to work for?'"
-          :error="formError.find(item => item.field === 'practice_type_id')"
-          :lists="practiceTypes"
-          @checked="form.practice_type_id.push(parseInt($event)), CheckEmptyField(form.practice_type_id, 'practice_type_id')"
-          @unchecked="form.practice_type_id = form.practice_type_id.filter(id => id !== parseInt($event)), CheckEmptyField(form.practice_type_id, 'practice_type_id')"
-        />
-        <AppInput
-          v-model="form.employment_type"
-          :type="'select'"
-          :name="'employment_type'"
-          :label="'Are you...?'"
-          :placeholder="'Select...'"
-          :items="employmentTypes"
-        />
-        <template v-if="form.employment_type === 'Limited company'">
-          <AppInput
-            v-model="form.company_registration_number"
-            :type="'text'"
-            :name="'company_registration_number'"
-            :label="'Company_registration_number'"
-            :placeholder="'The number of your company from Companies House'"
-          />
-        </template>
-        <template v-else>
-          <AppInput
-            v-model="form.utr_number"
-            :type="'text'"
-            :name="'utr_number'"
-            :label="'UTR number'"
-            :placeholder="''"
-          />
-        </template>
-        <AppInput
-          v-model="form.paid_under_payroll"
-          :type="'select'"
-          :name="'paid_under_payroll'"
-          :label="'Are you paid under payroll?'"
-          :items="[{ label: 'Yes', value: 'Yes' }, { label: 'No', value: 'No' }]"
-        />
-        <template v-if="form.paid_under_payroll === 'Yes'">
-          <AppInput
-            v-model="form.account_name"
-            :type="'text'"
-            :name="'account_name'"
-            :label="'Account name'"
-            :placeholder="''"
-          />
-          <AppInput
-            v-model="form.bank_name"
-            :type="'text'"
-            :name="'bank_name'"
-            :label="'Bank name'"
-            :placeholder="''"
-          />
-          <AppInput
-            v-model="form.sort_code"
-            :type="'text'"
-            :name="'sort_code'"
-            :label="'Sort code'"
-            :placeholder="''"
-          />
-          <AppInput
-            v-model="form.account_number"
-            :type="'text'"
-            :name="'account_number'"
-            :label="'Account number'"
-            :placeholder="''"
-          />
-        </template>
-        <AppInput
-          v-model="form.ir35"
-          :type="'single-checkbox'"
-          :name="'ir35'"
-          :label="'Are you willing to work for a role captured within IR35 rules, subject to deduction of Tax and N.I.?'"
-          :placeholder="''"
-          :error="this.formError.find(item => item.field === 'ir35')"
-        />
-        <!-- <AppInput
-          v-model="form.headline"
-          :type="'text'"
-          :name="'headline'"
-          :label="'Headline'"
-          :info="'A short headline about yourself to show to Practices'"
-          @submit="save"
-        />-->
-        <AppPostCode
-          v-model="form.post_code"
-          :name="'post_code'"
-          :label="'The post code where I will be available at'"
-          :error="formError.find(item => item.field === 'post_code')"
-          @onSelect="onSelect"
-          @blur="CheckEmptyField(form.post_code, 'post_code')"
-        />
-        <AppInput
-          v-model="form.miles"
-          :type="'text'"
-          :name="'miles'"
-          :label="`I will travel up to ${form.miles ? form.miles : 'n'} miles from this postcode`"
-          :error="formError.find(item => item.field === 'miles')"
-          :inStyle="'text-align:right;'"
-          @blur="CheckEmptyField(form.miles, 'miles')"
-        />
-        <div class="text-xs sm:text-sm">Referees</div>
-        <div class="rounded-lg bg-gray-400 p-8 my-2">
-          <AppInput
-            v-model="form.referee_1_contact_name"
-            :type="'text'"
-            :name="'referee_1_contact_name'"
-            :label="'Contact name'"
-            :inStyle="'background-color:#dae1e7;border-color:white'"
-          />
-          <AppInput
-            v-model="form.referee_1_phone_number"
-            :type="'text'"
-            :name="'referee_1_phone_number'"
-            :label="'Telephone number'"
-            :inStyle="'background-color:#dae1e7;border-color:white'"
-          />
-          <AppInput
-            v-model="form.referee_1_email"
-            :type="'text'"
-            :name="'referee_1_email'"
-            :label="'Email address'"
-            :inStyle="'background-color:#dae1e7;border-color:white'"
-          />
-        </div>
-        <div class="rounded-lg bg-gray-400 p-8 my-2">
-          <AppInput
-            v-model="form.referee_2_contact_name"
-            :type="'text'"
-            :name="'referee_2_contact_name'"
-            :label="'Contact name'"
-            :inStyle="'background-color:#dae1e7;border-color:white'"
-          />
-          <AppInput
-            v-model="form.referee_2_phone_number"
-            :type="'text'"
-            :name="'referee_2_phone_number'"
-            :label="'Telephone number'"
-            :inStyle="'background-color:#dae1e7;border-color:white'"
-          />
-          <AppInput
-            v-model="form.referee_2_email"
-            :type="'text'"
-            :name="'referee_2_email'"
-            :label="'Email address'"
-            :inStyle="'background-color:#dae1e7;border-color:white'"
-          />
-        </div>
-        <AppButton :label="'Save changes'" @click="save" />
+          <div class="rounded-lg bg-gray-400 p-8 my-2">
+            <AppInput
+              v-model="form.referee_2_contact_name"
+              :type="'text'"
+              :name="'referee_2_contact_name'"
+              :label="'Contact name'"
+              :inStyle="'background-color:#dae1e7;border-color:white'"
+            />
+            <AppInput
+              v-model="form.referee_2_phone_number"
+              :type="'text'"
+              :name="'referee_2_phone_number'"
+              :label="'Telephone number'"
+              :inStyle="'background-color:#dae1e7;border-color:white'"
+            />
+            <AppInput
+              v-model="form.referee_2_email"
+              :type="'text'"
+              :name="'referee_2_email'"
+              :label="'Email address'"
+              :inStyle="'background-color:#dae1e7;border-color:white'"
+            />
+          </div>
+          <div class="text-left mt-5">
+            <AppButton :label="'Save changes'" @click="save" />
+          </div>
+        </form>
       </div>
     </div>
     <div class="w-full p-0 mb-4 md:w-auto lg:mb-0 lg:w-1/3 lg:pr-4 order-1 lg:order-2">
-      <div class="shadow-lg p-8">
+      <div class="rounded-lg shadow-lg w-full p-8">
         <AppAvatar
           class="m-auto"
           :type="'update'"
@@ -384,7 +382,6 @@ export default {
     return {
       employmentTypes,
       professionCategoryId: "",
-      // qualifications: [],
       form: {
         gmc_or_nmc_number: "",
         mpl_or_npl_number: "",
@@ -429,13 +426,13 @@ export default {
   },
   computed: {
     professions() {
-      return this.$store.getters["signUp/getProfessions"];
+      return this.$store.getters["sign-up/getProfessions"];
     },
     practiceTypes() {
-      return this.$store.getters["signUp/getPracticeTypes"];
+      return this.$store.getters["sign-up/getPracticeTypes"];
     },
     mandatoryTrainings() {
-      return this.$store.getters["signUp/getMandatoryTrainings"];
+      return this.$store.getters["sign-up/getMandatoryTrainings"];
     }
   },
   watch: {
@@ -447,12 +444,6 @@ export default {
         this.professionCategoryId = 2;
       }
     },
-    // "form.gmc_or_nmc_number"() {
-    //   this.CheckEmptyField(this.form.gmc_or_nmc_number, "gmc_or_nmc_number");
-    // },
-    // "form.mpl_or_npl_number"() {
-    //   this.CheckEmptyField(this.form.mpl_or_npl_number, "mpl_or_npl_number");
-    // },
     "form.min_rate_per_hour"() {
       this.CheckEmptyField(this.form.min_rate_per_hour, "min_rate_per_hour");
     },
@@ -501,9 +492,9 @@ export default {
   },
   async asyncData({ app, store, error }) {
     try {
-      store.dispatch("signUp/getProfessions");
-      store.dispatch("signUp/getPracticeTypes");
-      store.dispatch("signUp/getMandatoryTrainings");
+      store.dispatch("sign-up/getProfessions");
+      store.dispatch("sign-up/getPracticeTypes");
+      store.dispatch("sign-up/getMandatoryTrainings");
       const response = await app.$axios.$get(`/api/v1/me`);
       const user =
         response.data && response.data.user ? response.data.user : null;
@@ -512,9 +503,8 @@ export default {
       };
     } catch (err) {}
   },
-  created() {
+  mounted() {
     this.avatar = this.user.avatar;
-    // gmc/nmc & mpl/npl
     this.form.gmc_or_nmc_number = this.user.locum_detail.gmc_or_nmc_number.number;
     this.form.mpl_or_npl_number = this.user.locum_detail.mpl_or_npl_number.number;
     if (this.user.locum_detail.gmc_or_nmc_number.status === "Rejected") {
@@ -529,12 +519,10 @@ export default {
         message: "Rejected"
       });
     }
-    //
     this.form.nhs_smart_card_id_number = this.user.locum_detail.nhs_smart_card_id_number;
     this.form.headline = this.user.locum_detail.headline;
     this.form.short_biography = this.user.locum_detail.short_biography;
     this.form.special_requirements = this.user.locum_detail.special_requirements;
-    // profession
     this.form.profession_id = this.user.locum_detail.profession.id;
     this.professionCategoryId = this.user.locum_detail.profession.profession_category.id;
 
@@ -553,7 +541,6 @@ export default {
         return { label: spokenLanguage.name, value: spokenLanguage.id };
       }
     );
-    // rate
     this.form.min_rate_per_hour = this.user.locum_detail.rates.find(
       rate => rate.rate_type.name === "Per Hour"
     ).min;
@@ -572,15 +559,12 @@ export default {
     this.form.max_rate_per_whole_day_session = this.user.locum_detail.rates.find(
       rate => rate.rate_type.name === "Per Whole Day Session"
     ).max;
-    //  practice type
     this.form.practice_type_id = this.user.locum_detail.practice_types.map(
       practiceType => practiceType.id
     );
-    // mandatory trainings list
     this.form.mandatory_training_id = this.user.locum_detail.mandatory_trainings.map(
       mandatoryTraining => mandatoryTraining.mandatory_training.id
     );
-    //
     this.form.post_code = this.user.locum_detail.post_code;
     this.form.miles = this.user.locum_detail.miles;
 
@@ -641,6 +625,7 @@ export default {
         this.Validate(this.form, notRequired);
 
         if (!this.formError.length) {
+          this.loading = true;
           this.form.profession_id = this.form.profession_id.toString();
           this.form.qualification_id = this.form.qualification_id.length
             ? this.form.qualification_id.map(item => item.value)
@@ -666,10 +651,8 @@ export default {
             response.data.user.locum_detail.short_biography;
           this.form.special_requirements =
             response.data.user.locum_detail.special_requirements;
-          // profession
           this.form.profession_id =
             response.data.user.locum_detail.profession.id;
-          //
           this.form.qualification_id = response.data.user.locum_detail.qualifications.map(
             qualification => {
               return { label: qualification.name, value: qualification.id };
@@ -685,7 +668,6 @@ export default {
               return { label: spokenLanguage.name, value: spokenLanguage.id };
             }
           );
-          // rate
           this.form.min_rate_per_hour = response.data.user.locum_detail.rates.find(
             rate => rate.rate_type.id === 1
           ).min;
@@ -704,15 +686,12 @@ export default {
           this.form.max_rate_per_whole_day_session = response.data.user.locum_detail.rates.find(
             rate => rate.rate_type.id === 3
           ).max;
-          //  practice type
           this.form.practice_type_id = response.data.user.locum_detail.practice_types.map(
             practiceType => practiceType.id
           );
-          // mandatory trainings list
           this.form.mandatory_training_id = response.data.user.locum_detail.mandatory_trainings.map(
             mandatoryTraining => mandatoryTraining.mandatory_training.id
           );
-          //
           this.form.post_code = response.data.user.locum_detail.post_code;
           this.form.miles = response.data.user.locum_detail.miles;
 
@@ -733,12 +712,15 @@ export default {
             status: "success",
             text: ["Saved !"]
           });
+          this.loading = false;
+          this.scrollToTop();
         } else {
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "danger",
             text: ["Please fill up all the forms"]
           });
+          this.loading = false;
           this.scrollToTop();
         }
       } catch (err) {
@@ -759,6 +741,7 @@ export default {
         );
         this.formError = err.response.data.error_messages;
         this.scrollToTop();
+        this.loading = false;
       }
     }
   }

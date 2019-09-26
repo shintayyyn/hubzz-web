@@ -29,24 +29,7 @@ export default {
     };
   },
   middleware: "isNotAuthenticated",
-  // computed: {
-  //   notify() {
-  //     return this.$store.state.notification.enabled;
-  //   }
-  // },
   watch: {
-    //   notify(value) {
-    //     if (!this.$store.state.notification.closable) {
-    //       setTimeout(() => {
-    //         this.$store.commit("SET_NOTIFICATION", {
-    //           enabled: false,
-    //           status: "",
-    //           text: "",
-    //           closable: false
-    //         });
-    //       }, 2000);
-    //     }
-    //   },
     $route(value) {
       if (value) {
         this.$store.commit("TOGGLE_SIDEBAR", false);
@@ -59,14 +42,6 @@ export default {
       this.$store.commit("TOGGLE_SIDEBAR", false);
       document.body.style.overflow = "auto";
     }
-  },
-  mounted() {
-    // this.$store.dispatch("signUp/getProfessions");
-    // this.$store.dispatch("signUp/getQualifications");
-    // this.$store.dispatch("signUp/getClinicalSystems");
-    // this.$store.dispatch("signUp/getSpokenLanguages");
-    // this.$store.dispatch("signUp/getPracticeTypes");
-    // this.$store.dispatch("signUp/getMandatoryTrainings");
   }
 };
 </script>

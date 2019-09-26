@@ -53,7 +53,7 @@
     <div class="flex justify-center mt-4">
       <AppButton
         :label="'<<'"
-        @click="$store.commit('signUp/SET_ACTIVE_COMPONENT', 'LocumAccountDetails')"
+        @click="$store.commit('sign-up/SET_ACTIVE_COMPONENT', 'LocumAccountDetails')"
       />
       <div class="mx-2"></div>
       <AppButton :label="'Next'" @click="next" />
@@ -83,10 +83,10 @@ export default {
   },
   computed: {
     addressDetails() {
-      return this.$store.state.signUp.address_details;
+      return this.$store.getters["sign-up/addressDetails"];
     },
     addressFormError() {
-      return this.$store.state.signUp.address_detail_form_error;
+      return this.$store.getters["sign-up/addressFormError"];
     }
   },
   watch: {
@@ -132,7 +132,7 @@ export default {
       this.formError = [];
       // this.Validate(this.form, ["address_line_2"]);
       if (!this.formError.length) {
-        this.$store.commit("signUp/SET_ADDRESS_DETAILS", this.form);
+        this.$store.commit("sign-up/SET_ADDRESS_DETAILS", this.form);
         this.$store.commit(
           "signUp/SET_ACTIVE_COMPONENT",
           "LocumProfessionalDetails"

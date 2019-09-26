@@ -94,6 +94,17 @@ export default {
   },
   async asyncData({ app, error }) {
     try {
+      if (
+        !app.$auth.user.practice_detail.role.permissions
+          .map(item => item.name)
+          .includes("Create Profile Surgeries")
+      ) {
+        error({
+          statusCode: 401,
+          message: "You're Not Authorized To View This Page"
+        });
+      }
+
       const response = await app.$axios.$get(
         `/api/v1/practice/me/practice-type`
       );
@@ -101,6 +112,7 @@ export default {
         response.data && response.data.practice && response.data.practice.type
           ? response.data.practice.type
           : null;
+
       return {
         type
       };
@@ -139,10 +151,7 @@ export default {
           })
           .then(res => {
             this.modal = false;
-            this.$store.commit(
-              "profile/ADD_SURGERY",
-              res.data.practice_surgery
-            );
+            this.$emit("addSurgery", res.data.practice_surgery);
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
@@ -168,6 +177,7 @@ export default {
               surgery: res.data.practice.parent_surgery
             };
             this.$store.commit("profile/ADD_SURGERY", surgery);
+            this.$emit("addSurgery", surgery);
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
@@ -186,7 +196,7 @@ export default {
 </script>
 <style scoped>
 .modal-container {
-  z-index: 512;
+  z-index: 510;
 }
 @media screen and (min-width: 1200px) {
   .modal-container {

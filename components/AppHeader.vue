@@ -21,12 +21,15 @@
           v-if="$auth.loggedIn"
         >
           <div class="flex justify-end">
-            <div v-if="$auth.user.domain === 'Practice' && $auth.user.status === 'Active'">
+            <div
+              v-if="$auth.user.domain === 'Practice' && $auth.user.status === 'Active'"
+              class="mx-1"
+            >
               <AppButton
+                v-if="authPermissions.includes('Create Sessions Job')"
                 :label="'Create Job'"
                 @click="$store.commit('calendar/CREATE_JOB_MODAL', true)"
-                :inStyle="'font-size: medium; padding:10px;'"
-                class="hidden md:block mb-2 md:mx-2 leading-none"
+                class="hidden md:block"
               />
               <button
                 @click="$store.commit('calendar/CREATE_JOB_MODAL', true)"
@@ -40,7 +43,6 @@
               v-if="$route.name != 'messages-slug' && $route.name != 'messages-new'"
               :label="unreadMessages.length > 0 ? `Messages(${unreadMessages.length})` : 'Messages'"
               @click="$router.push('/messages')"
-              :inStyle="'font-size: medium; padding:2px 14px;'"
               class="hidden md:block"
             />
             <button
@@ -81,6 +83,9 @@ export default {
 
     unreadMessages() {
       return this.$store.getters["chat/getUnreadMessages"];
+    },
+    authPermissions() {
+      return this.$store.getters["auth/permissions"];
     }
   },
   watch: {

@@ -1,5 +1,12 @@
 <template>
   <section>
+    <div class="flex overflow-x-auto whitespace-no-wrap">
+      <button
+        class="rounded-lg bg-yellow-500 p-2 cursor-pointer font-semibold text-xs sm:text-sm focus:outline-none"
+        @click="$router.push('/profile/branches-surgeries/create')"
+        v-if="authPermissions.includes('Create Profile Surgeries')"
+      >Add Surgeries</button>
+    </div>
     <div class="list-section flex flex-col mt-4 pb-32 overflow-x-auto" v-if="surgeries.length > 0">
       <table>
         <thead>
@@ -12,27 +19,28 @@
           </tr>
         </thead>
         <tbody>
-          <template v-for="item in surgeries">
-            <tr class="__job-card rounded-lg shadow-lg p-4 mt-4 cursor-pointer" :key="item.id">
+          <template v-for="(item, index) in surgeries">
+            <tr
+              @click="show(item)"
+              class="__job-card rounded-lg shadow-lg p-4 mt-4 cursor-pointer"
+              :key="item.id"
+            >
+              <td class="text-xs sm:text-sm px-1 rounded-l-lg">{{item.surgery.name}}</td>
+              <td class="text-xs sm:text-sm px-1">{{item.surgery.code}}</td>
+              <td class="text-xs sm:text-sm px-1">{{item.pay_for_surgery ? 'Yes':'No'}}</td>
               <td
-                @click="show(item.id)"
-                class="text-xs sm:text-sm px-1 rounded-l-lg"
-              >{{item.surgery.name}}</td>
-              <td @click="show(item.id)" class="text-xs sm:text-sm px-1">{{item.surgery.code}}</td>
-              <td
-                @click="show(item.id)"
-                class="text-xs sm:text-sm px-1"
-              >{{item.pay_for_surgery ? 'Yes':'No'}}</td>
-              <td
-                @click="show(item.id)"
                 class="text-xs sm:text-sm px-1"
               >{{item.verify_job_creation ? 'Verified':'Not Verified'}}</td>
               <td class="w-10 text-xs sm:text-sm px-1 rounded-r-lg text-center">
                 <div
-                  @click="removeModal(item.id)"
+                  v-if="authPermissions.includes('Delete Profile Surgeries')"
+                  @click.stop.prevent="removeModal(item)"
                   class="cursor-pointer font-bold text-xs sm:text-sm"
                 >X</div>
               </td>
+            </tr>
+            <tr :key="`${item.id}-${index}`">
+              <td></td>
             </tr>
           </template>
         </tbody>
@@ -45,7 +53,7 @@
         v-if="['profile-branches-surgeries-create', 'profile-branches-surgeries-id', 'profile-branches-surgeries-edit'].includes($route.name)"
       ></div>
     </transition>
-    <nuxt-child />
+    <nuxt-child @addSurgery="surgeries.push($event)" @updateSurgery="updateSurgery" />
     <AppConfirmationModal
       :label="'Are you sure you want to delete this surgery?'"
       :confirmLabel="'Yes'"
@@ -73,12 +81,13 @@ export default {
     return {
       current_page: 1,
       modal: false,
-      selectedSurgeryId: ""
+      selectedSurgeryId: "",
+      surgeries: []
     };
   },
   computed: {
-    surgeries() {
-      return this.$store.state.profile.surgeries;
+    authPermissions() {
+      return this.$store.getters["auth/permissions"];
     }
   },
   async asyncData({ app, store, error }) {
@@ -106,25 +115,29 @@ export default {
           surgeries.push(surgery);
         }
       }
-      store.commit("profile/SET_SURGERIES", surgeries);
       return {
-        practice
+        practice,
+        surgeries
       };
     } catch (err) {
       throw err;
     }
   },
   methods: {
-    show(id) {
-      if (this.practice.type === "Hub") {
-        this.$router.push(`/profile/branches-surgeries/${id}`);
-      } else if (this.practice.type === "Spoke") {
-        this.$router.push(`/profile/branches-surgeries/edit`);
+    show(item) {
+      if (this.authPermissions.includes("Show Profile Surgeries")) {
+        if (this.practice.type === "Hub") {
+          this.$router.push(`/profile/branches-surgeries/${item.id}`);
+        } else if (this.practice.type === "Spoke") {
+          this.$router.push(`/profile/branches-surgeries/edit`);
+        }
       }
     },
-    removeModal(id) {
-      this.selectedSurgeryId = id;
-      this.modal = true;
+    removeModal(item) {
+      if (this.authPermissions.includes("Delete Profile Surgeries")) {
+        this.selectedSurgeryId = item.id;
+        this.modal = true;
+      }
     },
     async remove() {
       if (this.practice.type === "Hub") {
@@ -134,7 +147,9 @@ export default {
       } else if (this.practice.type === "Spoke") {
         await this.$axios.$delete(`/api/v1/practice/me/parent-surgery`);
       }
-      this.$store.commit("profile/REMOVE_SURGERY", this.selectedSurgeryId);
+      this.surgeries = this.surgeries.filter(
+        surgery => surgery.id !== this.selectedSurgeryId
+      );
       this.modal = false;
       this.selectedSurgeryId = "";
       this.$store.commit("SET_NOTIFICATION", {
@@ -142,6 +157,14 @@ export default {
         status: "success",
         text: ["Practice Surgery Deleted Successfully"]
       });
+    },
+    updateSurgery(payload) {
+      let index = this.surgeries.findIndex(
+        surgery => surgery.id === payload.id
+      );
+      if (index >= 0) {
+        this.surgeries.splice(index, 1, payload);
+      }
     }
   }
 };

@@ -7,15 +7,15 @@
       <transition name="slide" mode="out-in">
         <div
           class="mt-4 text-xl text-white"
-          v-if="!viewPracticeJobs && !viewLocumJobs"
+          v-if="!viewPracticeJobs && !viewLocumJobs && !loading"
           key="'no-jobs'"
         >No jobs to display.</div>
-        <div v-if="viewPracticeJobs">
+        <div v-if="viewPracticeJobs && !loading">
           <div v-for="job in foundPracticeJobs" :key="job.id">
             <PracticeJobCard :job="job" @viewPracticeJob="$emit('viewPracticeJob', $event)" />
           </div>
         </div>
-        <div v-if="viewLocumJobs">
+        <div v-if="viewLocumJobs && !loading">
           <div v-for="job in foundLocumJobs" :key="job.id">
             <LocumJobCard :job="job" @viewLocumJob="$emit('viewLocumJob', $event)" />
           </div>
@@ -37,7 +37,8 @@ export default {
       foundPracticeJobs: [],
       viewPracticeJobs: false,
       foundLocumJobs: [],
-      viewLocumJobs: false
+      viewLocumJobs: false,
+      loading: false
       // date_info: null,
       // date_info_week: null
     };
@@ -53,6 +54,30 @@ export default {
     }
   },
   watch: {
+    view_type(value) {
+      if (value === "per_month") {
+        if (this.$auth.user.domain === "Practice") {
+          this.findPerMonthPractice(this.$store.state.calendar.selected_date);
+          return;
+        }
+        if (this.$auth.user.domain === "Locum") {
+          this.findPerMonthLocum(this.$store.state.calendar.selected_date);
+          return;
+        }
+      }
+      if (value === "per_week") {
+        if (this.$auth.user.domain === "Practice") {
+          this.findPerWeekPractice(
+            this.$store.state.calendar.selected_date_shift
+          );
+          return;
+        }
+        if (this.$auth.user.domain === "Locum") {
+          this.findPerWeekLocum(this.$store.state.calendar.selected_date_shift);
+          return;
+        }
+      }
+    },
     selected_date(value) {
       // this.date_info = value
       if (this.$auth.user.domain === "Practice") {
@@ -104,6 +129,9 @@ export default {
     }
   },
   computed: {
+    view_type() {
+      return this.$store.state.calendar.view_type;
+    },
     dateInfo() {
       if (this.$store.state.calendar.view_type === "per_month") {
         return this.$store.state.calendar.selected_date;
@@ -162,6 +190,7 @@ export default {
   methods: {
     // practice
     findPerMonthPractice(date) {
+      this.loading = true;
       this.viewPracticeJobs = false;
       let foundPracticeCurrentJobs = [];
       let foundPracticeAppliedJobs = [];
@@ -214,8 +243,12 @@ export default {
           this.viewPracticeJobs = true;
         }, 500);
       }
+      setTimeout(() => {
+        this.loading = false;
+      }, 600);
     },
     findPerWeekPractice({ date, shift }) {
+      this.loading = true;
       this.viewPracticeJobs = false;
       let foundPracticeCurrentJobs = [];
       let foundPracticeAppliedJobs = [];
@@ -276,10 +309,14 @@ export default {
           this.viewPracticeJobs = true;
         }, 500);
       }
+      setTimeout(() => {
+        this.loading = false;
+      }, 600);
     },
     // locums
     findPerMonthLocum(date) {
       this.viewLocumJobs = false;
+      this.loading = true;
       let foundLocumPrivateJobs = [];
       let foundLocumCurrentJobs = [];
       let foundLocumAppliedJobs = [];
@@ -316,9 +353,13 @@ export default {
           this.viewLocumJobs = true;
         }, 500);
       }
+      setTimeout(() => {
+        this.loading = false;
+      }, 600);
     },
     findPerWeekLocum({ date, shift }) {
       this.viewLocumJobs = false;
+      this.loading = false;
       let foundLocumPrivateJobs = [];
       let foundLocumCurrentJobs = [];
       let foundLocumAppliedJobs = [];
@@ -363,6 +404,9 @@ export default {
           this.viewLocumJobs = true;
         }, 500);
       }
+      setTimeout(() => {
+        this.loading = false;
+      }, 600);
     }
   }
 };

@@ -376,7 +376,6 @@ export default {
       this.fetchSurgeriesCount();
     },
     selectedSurgery(newValue, oldValue) {
-      console.log(newValue, oldValue);
       if (newValue && oldValue) {
         this.jobParts = [];
         this.selectedJobParts = [];
@@ -437,7 +436,6 @@ export default {
       this.form.total_amount = this.amount;
       this.form.final = final;
       this.Validate(this.form, ["final"]);
-      console.log(this.formError);
       if (!this.formError.length) {
         this.form.date_start = this.$moment(this.form.date_start).format(
           "YYYY-MM-DD"

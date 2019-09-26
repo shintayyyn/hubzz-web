@@ -67,28 +67,80 @@ Vue.mixin({
         return { field: 'email', message: 'This is not a valid email' }
       }
     },
-    ValidateSamePassword(password, new_password_confirmation, field) {
-      if (password && new_password_confirmation && password !== new_password_confirmation) {
-        return { field: field, message: 'The Password must be the same' }
+    CheckPermissions(permissions) {
+      let hasPermission = true;
+      switch (this.$route.name) {
+        case "profile-practice":
+          if (!permissions.includes("View Profile Practice")) {
+            hasPermission = false;
+          }
+          break;
+        case "profile-branches-surgeries":
+          if (!permissions.includes("View Profile Surgeries")) {
+            hasPermission = false;
+          }
+          break;
+        case "profile-branches-surgeries-id":
+          if (!permissions.includes("Show Profile Surgeries")) {
+            hasPermission = false;
+          }
+          break;
+        case "profile-branches-surgeries-create":
+          if (!permissions.includes("Create Profile Surgeries")) {
+            hasPermission = false;
+          }
+          break;
+        case "profile-users":
+          if (!permissions.includes("View Profile Users")) {
+            hasPermission = false;
+          }
+          break;
+        case "profile-users-id-general":
+          if (!permissions.includes("Show Profile Users")) {
+            hasPermission = false;
+          }
+          break;
+        case "profile-users-create":
+          if (!permissions.includes("Create Profile Users")) {
+            hasPermission = false;
+          }
+          break;
+        case "profile-practice-documents":
+          if (!permissions.includes("View Profile Practice Document")) {
+            hasPermission = false;
+          }
+          break;
+        case "profile-practice-documents-id":
+          if (!permissions.includes("Show Profile Practice Document")) {
+            hasPermission = false;
+          }
+          break;
+        case "sessions-live":
+        case "sessions-applied":
+        case "sessions-allocated":
+        case "sessions-completed":
+        case "sessions-unfilled":
+        case "sessions-cancelled":
+        case "sessions-declined":
+          if (!permissions.includes("View Sessions Job")) {
+            hasPermission = false
+          }
+          break;
+        case "sessions-live-id":
+        case "sessions-applied-id":
+        case "sessions-allocated-id":
+        case "sessions-completed-id":
+        case "sessions-unfilled-id":
+        case "sessions-cancelled-id":
+        case "sessions-declined-id":
+          if (!permissions.includes("Show Sessions Job")) {
+            hasPermission = false
+          }
+          break;
       }
-    },
-    ValidateMobile(value, field) {
-      // uk format
-      // let re = /((\+44(\s\(0\)\s|\s0\s|\s)?)|0)7\d{3}(\s)?\d{6}/g;
-      // if (value && !re.test(String(value).toLowerCase())) {
-      //   return  { field: field, message: 'Your mobile number is invalid' }
-      // }
-    },
-    ValidateArray(value, field) {
-      let index = this.formError.findIndex(item => item.field === field)
-      if (index >= 0) {
-        this.formError.splice(index, 1)
-      }
-      if (value.length === 0) {
-        this.formError.push(
-          { field: field, message: 'Required', validation: 'required' }
-        )
-      }
+      return {
+        hasPermission
+      };
     },
   }
 })

@@ -5,6 +5,7 @@ dotenv.config()
 import pkg from './package'
 
 export default {
+  // serverMiddleware: ['~/serverMiddleware/selectiveSSR.js'],
   mode: 'universal',
 
   env: {
@@ -34,7 +35,10 @@ export default {
   /*
   ** Customize the progress-bar color
   */
-  loading: { color: '#fff' },
+  loading: {
+    color: '#F6E05E',
+    throttle: 1000,
+  },
 
   /*
   ** Global CSS
@@ -132,15 +136,15 @@ export default {
       appId: process.env.ONE_SIGNAL_APP_ID,
       allowLocalhostAsSecureOrigin: true,
       welcomeNotification: {
-          disable: true
+        disable: true
       }
     }
   },
 
   vue: {
     config: {
-     productionTip: false,
-     devtools: true,
+      productionTip: false,
+      devtools: true,
     }
   },
 
@@ -160,6 +164,6 @@ export default {
         autoprefixer: {}
       }
     },
-    
+
   }
 }

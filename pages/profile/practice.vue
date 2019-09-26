@@ -43,15 +43,16 @@
             <div class="rounded-lg shadow-lg p-4 mt-4">
               <div class="flex flex-col">
                 <AppInput
-                  v-model="locum_standard_terms"
+                  v-model="form.use_variation_terms"
                   :type="'single-checkbox'"
-                  :name="'locum_standard_terms'"
+                  :name="'use_variation_terms'"
                   :label="'Use Standard Terms with Locum?'"
+                  :disabled="!authPermissions.includes('Update Profile Practice')"
                 />
                 <div class="flex flex-row flex-wrap justify-between items-center">
                   <div class="text-xs sm:text-sm">Your Practice's standard terms</div>
                   <div
-                    v-if="!locum_standard_terms"
+                    v-if="!form.use_variation_terms && authPermissions.includes('Update Profile Practice')"
                     class="relative flex justify-start items-center"
                   >
                     <label v-if="loading == false" for="file-upload">
@@ -59,7 +60,7 @@
                         <svgicon name="cloud-upload" height="24" width="24" />
                         <div
                           class="ml-2 text-xs sm:text-sm leading-loose"
-                        >{{ practice.standard_terms ? 'Update' : 'Upload' }}</div>
+                        >{{ practice.variation_terms_file ? 'Update' : 'Upload' }}</div>
                       </div>
                     </label>
                     <input type="file" id="file-upload" class="hidden" @input="onFileInput($event)" />
@@ -67,18 +68,18 @@
                 </div>
                 <div class="relative mt-4 bg-gray-300 rounded-lg p-4">
                   <div
-                    v-if="locum_standard_terms"
+                    v-if="form.use_variation_terms"
                     class="absolute top-0 bottom-0 left-0 right-0 rounded-lg p-4 bg-gray-500 opacity-75"
                   ></div>
                   <AppLoading :spinner="false" :loading="loading" :message="'Uploading'" />
                   <div v-if="!loading" class="flex flex-no-wrap justify-between items-center">
                     <div
                       class="text-xs sm:text-sm document-filename"
-                    >{{ practice.standard_terms && practice.standard_terms.file ? practice.standard_terms.file.filename : '' }}</div>
+                    >{{ practice.variation_terms_file && practice.variation_terms_file.filename ? practice.variation_terms_file.filename : '' }}</div>
                     <div
                       class="font-bold text-md sm:text-lg hover:null cursor-pointer text-gray-600 hover:text-black"
                       @click="modal = true"
-                      v-if="practice.standard_terms"
+                      v-if="practice.variation_terms_file"
                     >x</div>
                   </div>
                 </div>
@@ -203,7 +204,11 @@
             />
           </div>
           <div class="mt-8">
-            <AppButton :label="'Save changes'" @click="save" />
+            <AppButton
+              :label="'Save changes'"
+              @click="save"
+              v-if="authPermissions.includes('Update Profile Practice')"
+            />
           </div>
         </div>
       </div>
@@ -225,6 +230,12 @@
       @confirm="confirmPracticeType"
       @cancel="cancelPracticeType"
     />
+    <AppConfirmationModal
+      :label="'You do not have any Permission'"
+      :confirmLabel="'OK'"
+      :modal="permissionConfirmationModal"
+      @confirm="cancelPracticeType"
+    />
   </section>
 </template>
 <script>
@@ -245,15 +256,20 @@ export default {
     AppLoading,
     AppConfirmationModal
   },
+  computed: {
+    authPermissions() {
+      return this.$store.getters["auth/permissions"];
+    }
+  },
   data() {
     return {
       // new
-      locum_standard_terms: false,
       vat_registered: false,
       vat_number: "",
       //
       modal: false,
       practiceTypeConfirmationModal: false,
+      permissionConfirmationModal: false,
       loading: false,
       selectedPracticeType: "",
       oldPracticeType: "",
@@ -265,7 +281,8 @@ export default {
         practice_type_id: [],
         mandatory_training_id: [],
         gp_compliance_document_id: [],
-        others_compliance_document_id: []
+        others_compliance_document_id: [],
+        use_variation_terms: false
       },
       name: "",
       formError: []
@@ -312,22 +329,23 @@ export default {
     }
   },
   async asyncData({ app, error }) {
-    const response = await app.$axios.$get(`/api/v1/me`);
+    if (
+      !app.$auth.user.practice_detail.role.permissions
+        .map(item => item.name)
+        .includes("View Profile Practice")
+    ) {
+      error({
+        statusCode: 401,
+        message: "You're Not Authorized To View This Page"
+      });
+    }
+    const response = await app.$axios.$get(`/api/v1/practice/me/practice`);
     const surgery =
-      response.data &&
-      response.data.user &&
-      response.data.user.practice_detail &&
-      response.data.user.practice_detail.practice &&
-      response.data.user.practice_detail.practice.surgery
-        ? response.data.user.practice_detail.practice.surgery
+      response.data && response.data.practice && response.data.practice.surgery
+        ? response.data.practice.surgery
         : null;
     const practice =
-      response.data &&
-      response.data.user &&
-      response.data.user.practice_detail &&
-      response.data.user.practice_detail.practice
-        ? response.data.user.practice_detail.practice
-        : null;
+      response.data && response.data.practice ? response.data.practice : null;
 
     const responsePracticeTypes = await app.$axios.$get(
       `/api/v1/practice-types`
@@ -404,6 +422,7 @@ export default {
     };
   },
   created() {
+    this.form.use_variation_terms = this.practice.use_variation_terms;
     this.form.phone_number = this.practice.phone_number;
     this.form.report_to = this.practice.report_to;
     this.form.email = this.practice.email;
@@ -441,7 +460,7 @@ export default {
       formData.append("file", file);
       this.loading = true;
       this.$axios
-        .$put(`/api/v1/practice/me/standard-terms`, formData)
+        .$post(`/api/v1/practice/me/practice/variation-terms`, formData)
         .then(res => {
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
@@ -449,12 +468,13 @@ export default {
             text: [res.message]
           });
           this.loading = false;
+          this.practice.variation_terms_file =
+            res.data.practice.variation_terms_file;
+        })
+        .catch(err => {
+          this.loading = false;
+          this.formError = err.response.data.error_messages;
         });
-      this.practice.standard_terms = {
-        file: {
-          filename: file.name
-        }
-      };
     },
     uncheckPractice(value) {
       this.form.practice_type_id = this.form.practice_type_id.filter(
@@ -477,12 +497,17 @@ export default {
       );
     },
     practiceTypeOnchange(value) {
-      this.selectedPracticeType = value;
-      this.practiceTypeConfirmationModal = true;
+      if (this.authPermissions.includes("Update Profile Practice")) {
+        this.selectedPracticeType = value;
+        this.practiceTypeConfirmationModal = true;
+      } else {
+        this.permissionConfirmationModal = true;
+      }
     },
     cancelPracticeType() {
       this.practiceType = this.oldPracticeType;
       this.practiceTypeConfirmationModal = false;
+      this.permissionConfirmationModal = false;
     },
     confirmPracticeType() {
       this.$axios
@@ -491,10 +516,7 @@ export default {
         })
         .then(res => {
           this.practiceTypeConfirmationModal = false;
-          this.$store.commit(
-            "profile/SET_PRACTICE_TYPE",
-            res.data.practice.type
-          );
+          this.$emit("changeType", res.data.practice.type);
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
@@ -503,16 +525,17 @@ export default {
         });
     },
     remove() {
-      this.$axios.$delete(`/api/v1/practice/me/standard-terms`).then(res => {
-        this.modal = false;
-        this.$store.commit("SET_NOTIFICATION", {
-          enabled: true,
-          status: "success",
-          text: [res.message]
+      this.$axios
+        .$delete(`/api/v1/practice/me/practice/variation-terms`)
+        .then(res => {
+          this.modal = false;
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: [res.message]
+          });
+          this.practice.variation_terms_file = null;
         });
-        this.practice.standard_terms = null;
-        // standard_terms)
-      });
     },
     async save() {
       try {
@@ -523,7 +546,7 @@ export default {
         ]);
         if (!this.formError.length) {
           const res = await this.$axios.$put(
-            `/api/v1/practice/me/profile`,
+            `/api/v1/practice/me/practice`,
             this.form
           );
           this.$store.commit("SET_NOTIFICATION", {

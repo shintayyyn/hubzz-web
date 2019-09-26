@@ -121,10 +121,10 @@ export default {
   },
   computed: {
     accountDetails() {
-      return this.$store.state.signUp.account_details;
+      return this.$store.getters["sign-up/accountDetails"];
     },
     accountFormError() {
-      return this.$store.state.signUp.account_detail_form_error;
+      return this.$store.getters["sign-up/accountFormError"];
     }
   },
   watch: {
@@ -168,7 +168,7 @@ export default {
       this.formError = [];
       if (!this.formError.length) {
         this.form.mobile_number = this.form.mobile_number.toString();
-        this.$store.commit("signUp/SET_ACCOUNT_DETAILS", this.form);
+        this.$store.commit("sign-up/SET_ACCOUNT_DETAILS", this.form);
         this.$store.commit(
           "signUp/SET_ACTIVE_COMPONENT",
           "LocumAddressDetails"

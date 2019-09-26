@@ -71,7 +71,7 @@
     <div class="flex justify-center mt-4">
       <AppButton
         :label="'<<'"
-        @click="$store.commit('signUp/SET_ACTIVE_COMPONENT', 'LocumProfessionalDetails')"
+        @click="$store.commit('sign-up/SET_ACTIVE_COMPONENT', 'LocumProfessionalDetails')"
       />
       <div class="mx-2"></div>
       <AppButton :label="'Next'" @click="next" />
@@ -112,10 +112,10 @@ export default {
   },
   computed: {
     credentialDetails() {
-      return this.$store.state.signUp.credential_details;
+      return this.$store.getters["sign-up/credentialDetails"];
     },
     credentialFormError() {
-      return this.$store.state.signUp.credential_detail_form_error;
+      return this.$store.getters["sign-up/credentialFormError"];
     }
   },
   watch: {
@@ -160,9 +160,9 @@ export default {
       this.formError = [];
       this.Validate(this.form);
       if (!this.formError.length) {
-        this.$store.commit("signUp/SET_CREDENTIAL_DETAILS", this.form);
+        this.$store.commit("sign-up/SET_CREDENTIAL_DETAILS", this.form);
         setTimeout(() => {
-          this.$store.dispatch("signUp/registeredLocum");
+          this.$store.dispatch("sign-up/registeredLocum");
         }, 1000);
       }
     }

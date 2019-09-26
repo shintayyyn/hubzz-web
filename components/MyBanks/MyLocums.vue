@@ -5,7 +5,7 @@
       v-for="user in users"
       :key="user.id"
     >
-      <div class="flex justify-end z-50">
+      <div class="flex justify-end z-50" v-if="authPermissions.includes('Favorite MyBanks Locum')">
         <template v-if="user.is_favorite">
           <svgicon
             name="on-star"
@@ -49,6 +49,11 @@ export default {
   props: ["users"],
   components: {
     AppAvatar
+  },
+  computed: {
+    authPermissions() {
+      return this.$store.getters["auth/permissions"];
+    }
   }
 };
 </script>

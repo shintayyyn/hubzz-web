@@ -54,7 +54,27 @@ export default {
       disabled: "true"
     };
   },
-
+  computed: {
+    authPermissions() {
+      return this.$store.getters["auth/permissions"];
+    }
+  },
+  async asyncData({ app, error }) {
+    try {
+      if (
+        !app.$auth.user.practice_detail.role.permissions
+          .map(item => item.name)
+          .includes("View Profile Practice Document")
+      ) {
+        error({
+          statusCode: 401,
+          message: "You're Not Authorized To View This Page"
+        });
+      }
+    } catch (err) {
+      throw err;
+    }
+  },
   created() {
     this.practiceDocuments = [];
     this.practiceDocumentTypes = [];
@@ -96,7 +116,9 @@ export default {
 
   methods: {
     show(id) {
-      this.$router.push(`/profile/practice-documents/${id}`);
+      if (this.authPermissions.includes("Show Profile Practice Document")) {
+        this.$router.push(`/profile/practice-documents/${id}`);
+      }
     }
   }
 };

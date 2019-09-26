@@ -36,7 +36,12 @@
           </div>
         </div>
         <div class="flex flex-row justify-start">
-          <AppButton :label="'Save'" @click="save" :inStyle="'padding:5px'" />
+          <AppButton
+            :label="'Save'"
+            @click="save"
+            :inStyle="'padding:5px'"
+            v-if="authPermissions.includes('Update Profile Surgeries')"
+          />
         </div>
       </div>
     </div>
@@ -59,8 +64,24 @@ export default {
       formError: []
     };
   },
+  computed: {
+    authPermissions() {
+      return this.$store.getters["auth/permissions"];
+    }
+  },
   async asyncData({ app, store, params, error }) {
     try {
+      if (
+        !app.$auth.user.practice_detail.role.permissions
+          .map(item => item.name)
+          .includes("Show Profile Surgeries")
+      ) {
+        error({
+          statusCode: 401,
+          message: "You're Not Authorized To View This Page"
+        });
+      }
+
       const response = await app.$axios.$get(
         `/api/v1/practice/me/practice-surgeries/${params.id}`
       );
@@ -68,6 +89,7 @@ export default {
         response.data && response.data.practice_surgery
           ? response.data.practice_surgery
           : null;
+
       return {
         practice_surgery
       };
@@ -87,10 +109,7 @@ export default {
           this.form
         )
         .then(res => {
-          this.$store.commit(
-            "profile/UPDATE_SURGERY",
-            res.data.practice_surgery
-          );
+          this.$emit("updateSurgery", res.data.practice_surgery);
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",

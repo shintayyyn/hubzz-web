@@ -169,7 +169,8 @@ export default {
               status: "success",
               text: [`${res.message}`]
             });
-            this.$emit("close");
+            this.$emit("updateRole", res.data.role);
+            // this.$emit("close");
           });
       }
     },
@@ -177,10 +178,7 @@ export default {
       this.$axios
         .$delete(`/api/v1/practice/practice-roles/${this.$route.params.id}`)
         .then(res => {
-          this.$store.commit(
-            "roles/REMOVE_PRACTICE_ROLE",
-            this.$route.params.id
-          );
+          this.$emit("removeRole", this.$route.params.id);
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
