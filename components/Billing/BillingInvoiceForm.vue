@@ -6,7 +6,7 @@
           <svgicon name="left-arrow" height="32" width="32" />
         </nuxt-link>
         <div
-          class="save-button text-xs sm:text-sm mx-2 py-2 px-3 border-2 rounded-lg font-bold flex items-center"
+          class="save-button text-xs sm:text-sm ml-4 mx-2 py-2 px-3 border-2 rounded-lg font-bold flex items-center"
           @click="save(false)"
         >Save changes</div>
         <div
@@ -89,7 +89,7 @@
                       </div>
                       <div class="relative" v-else>
                         <div
-                          class="text-xs sm:text-sm text-center font-bold mt-5"
+                          class="text-xs sm:text-sm text-center font-bold my-2"
                         >No Practice / Surgeries Job Invoicable Yet</div>
                       </div>
                     </div>
@@ -134,7 +134,7 @@
                     readonly
                   />
                 </div>
-                <div class="relative flex flex-col w-full z-10">
+                <div class="relative flex flex-col w-full z-10 shadow-lg">
                   <div
                     ref="jobPartsLists"
                     class="absolute z-0 w-full option-list flex flex-col bg-white shadow-md overflow-y-auto"
@@ -175,8 +175,8 @@
           <table class="items-table">
             <thead>
               <tr class="text-center bg-gray-900">
-                <th class="w-1/2 text-white">Description</th>
-                <th class="w-1/2 text-white" :colspan="type === 'Private' ? 1:2">
+                <th class="text-white">Description</th>
+                <th class="text-white" :colspan="type === 'Private' ? 1:2">
                   <span class="flex justify-between items-center">
                     Total
                     <span
@@ -190,27 +190,31 @@
             </thead>
             <tbody>
               <tr class="border-b" v-for="(item, index) in selectedJobParts" :key="item.id">
-                <td class="w-1/2">
+                <td class="h-full p-2">
                   <textarea
                     v-model="item.description"
+                    rows="3"
                     placeholder="Enter description"
-                    rows="4"
-                    class="w-full text-xs sm:text-sm p-2 resize-none border-b-2 border-gray-300 focus:outline-none focus:border-yellow-300"
+                    class="w-full text-xs sm:text-sm resize-none border-b-2 border-gray-300 focus:outline-none px-4"
                   ></textarea>
                 </td>
-                <td class="w-1/2">
-                  <span class="flex justify-between items-center">
-                    <input
-                      type="text"
-                      v-model="item.total"
-                      placeholder="Enter value"
-                      class="pt-12 w-full h-full text-xs sm:text-sm p-2 border-b-2 border-gray-300 focus:outline-none focus:border-yellow-300 text-right"
-                    />
+                <td class="h-full p-2">
+                  <div class="clearfix">
                     <span
-                      class="cursor-pointer w-8 h-8 rounded-full bg-gray-900 text-white font-semibold text-xl text-center flex justify-center items-center"
+                      class="border-b-2 border-gray-300 focus:border-yellow-300 m-2 py-4 w-full"
+                    >
+                      <input
+                        type="text"
+                        v-model="item.total"
+                        placeholder="Enter value"
+                        class="focus:outline-none p-2 sm:text-sm text-right text-xs w-4/5"
+                      />
+                    </span>
+                    <span
+                      class="bg-gray-900 cursor-pointer float-right font-semibold inline-block px-3 mt-2 rounded-full text-center text-white text-xl"
                       @click="removeSelectedJobPart(item, index)"
                     >-</span>
-                  </span>
+                  </div>
                 </td>
               </tr>
               <tr>

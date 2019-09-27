@@ -42,7 +42,7 @@
               <tr
                 @click="show(invoice)"
                 :key="invoice.id"
-                class="__job-card shadow-md cursor-pointer text-xs text-left"
+                class="__job-card shadow-md cursor-pointer text-xs text-left rounded-lg"
               >
                 <td>{{invoice.type}}</td>
                 <td>{{invoice.surgery.name}}</td>
@@ -63,7 +63,7 @@
                     @click.stop.prevent="onClick(invoice, index)"
                     v-if="!invoice.paid_at"
                     v-text="invoice.issued_at ? 'Mark as paid' : 'Delete'"
-                    class="px-2 py-3 font-bold rounded-lg focus:outline-none"
+                    class="px-4 py-2 font-bold rounded-lg focus:outline-none"
                     :class="invoice.issued_at ? 'text-white bg-green-600' : 'bg-yellow-500'"
                   ></button>
                 </td>
@@ -251,7 +251,7 @@ export default {
         .$get("/api/v1/locum/invoices", { params: invoiceParams })
         .then(res => {
           // this.$store.commit("billing/SET_LOCUM_INVOICES", res.data.invoices);
-          this.invoices = res.data.invoices
+          this.invoices = res.data.invoices;
         });
     },
 
@@ -297,9 +297,11 @@ export default {
             //   "billing/UPDATE_LOCUM_INVOICE",
             //   res.data.invoice
             // );
-            let index = this.invoices.findIndex(invoice => invoice.id === res.data.invoice.id)
+            let index = this.invoices.findIndex(
+              invoice => invoice.id === res.data.invoice.id
+            );
             if (index >= 0) {
-              this.invoices.splice(index, 1, res.data.invoice)
+              this.invoices.splice(index, 1, res.data.invoice);
             }
 
             this.$store.commit("SET_NOTIFICATION", {
@@ -319,7 +321,9 @@ export default {
           //   "billing/REMOVE_LOCUM_INVOICE",
           //   this.selectedInvoiceId
           // );
-          this.invoices = this.invoices.filter(invoice => invoice.id !== this.selectedInvoiceId)
+          this.invoices = this.invoices.filter(
+            invoice => invoice.id !== this.selectedInvoiceId
+          );
           this.confirmation_modal = false;
           this.getInvoice(this.current_page, this.params);
         });
