@@ -120,6 +120,15 @@
                 @submit="save"
                 @blur="CheckEmptyField(form.email, 'email')"
               />
+              <AppInput
+                v-model="form.use_variation_terms"
+                :type="'select'"
+                :name="'type'"
+                :label="'Use Variation Terms?'"
+                :error="formError.find(item => item.field === 'use_variation_terms')"
+                :placeholder="'Select...'"
+                :items="[{ value: true , label: 'Yes'},{ value: 'false', label: 'No'}]"
+              />
             </div>
             <div class="flex flex-col w-full md:w-1/2 pl-1">
               <AppInput
@@ -258,9 +267,10 @@ export default {
       selectedPracticeType: "",
       oldPracticeType: "",
       form: {
-        email: "",
         phone_number: "",
         report_to: "",
+        email: "",
+        use_variation_terms: "",
         extra_information: "",
         practice_type_id: [],
         mandatory_training_id: [],
@@ -407,6 +417,7 @@ export default {
     this.form.phone_number = this.practice.phone_number;
     this.form.report_to = this.practice.report_to;
     this.form.email = this.practice.email;
+    this.form.use_variation_terms = this.practice.use_variation_terms
     this.form.extra_information = this.practice.extra_information;
     this.practice.practice_types.forEach(item => {
       this.form.practice_type_id.push(item.id);
