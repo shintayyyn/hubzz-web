@@ -34,7 +34,7 @@
               <td>{{item.created_at | localDate}}</td>
               <td class="w-10 text-xs sm:text-sm px-1 rounded-r-lg text-center">
                 <div
-                  v-if="$auth.user.id != item.id && item.practice_detail.role.id != 1 && authPermissions.includes('Delete Profile Users')"
+                  v-if="$auth.user.id != item.id && (!item.practice_detail.role || item.practice_detail.role.id != 1) && authPermissions.includes('Delete Profile Users')"
                   @click.stop.prevent="removeModal(item)"
                   class="rounded-lg bg-red-500 p-2 text-white cursor-pointer font-semibold text-xs sm:text-sm"
                 >Remove</div>
@@ -61,7 +61,7 @@
         v-if="['profile-users-create', 'profile-users-edit'].includes($route.name) || $route.name.includes('profile-users-id')"
       ></div>
     </transition>
-    <nuxt-child @addedUser="addUser" />
+    <nuxt-child @addedUser="addUser" @updateUser="updateUser" />
     <AppConfirmationModal
       :label="'Are you sure you want to delete this User?'"
       :confirmLabel="'Yes'"
@@ -117,18 +117,24 @@ export default {
       return this.$store.getters["auth/permissions"];
     }
   },
+  mounted() {
+    this.$socket.on("practiceNotificationCreateUser", user => {
+      if (!this.users.map(item => item.id).includes(user.id)) {
+        this.users.push(user);
+      }
+    });
+    this.$socket.on("practiceNotificationDeleteUser", userId => {
+      this.users = this.users.filter(item => item.id !== userId);
+    });
+    this.$socket.on("practiceNotificationUpdateUser", user => {
+      let index = this.users.findIndex(item => item.id == user.id);
+      if (index >= 0) {
+        this.users.splice(index, 1, user);
+      }
+    });
+  },
   async asyncData({ app, store, error }) {
     try {
-      if (
-        !app.$auth.user.practice_detail.role.permissions
-          .map(item => item.name)
-          .includes("View Profile Users")
-      ) {
-        error({
-          statusCode: 401,
-          message: "You're Not Authorized To View This Page"
-        });
-      }
       const responseCount = await app.$axios.$get(
         `/api/v1/practice/practice-users/count`
       );
@@ -150,6 +156,10 @@ export default {
         total
       };
     } catch (err) {
+      if (err.response && err.response.status === 401) {
+        error(err.response.data);
+        return;
+      }
       throw err;
     }
   },
@@ -170,10 +180,16 @@ export default {
     addUser(user) {
       this.users.push(user);
     },
+    updateUser(user) {
+      // let index = this.users.findIndex(item => item.id == user.id);
+      // if (index >= 0) {
+      //   this.users.splice(index, 1, user);
+      // }
+    },
     removeModal(item) {
       if (
         this.$auth.user.id != item.id &&
-        item.practice_detail.role.id != 1 &&
+        (!item.practice_detail.role || item.practice_detail.role.id != 1) &&
         this.authPermissions.includes("Delete Profile Users")
       ) {
         this.selectedUserId = item.id;
@@ -181,12 +197,36 @@ export default {
       }
     },
     remove() {
-      alert("User Remove");
+      this.loading = true;
+      this.$axios
+        .$delete(
+          `/api/v1/practice/practice-users/${this.selectedUserId}`,
+          this.form
+        )
+        .then(res => {
+          this.loading = false;
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: [`${res.message}`]
+          });
+          this.modal = false;
+          let index = this.users.findIndex(
+            item => item.id == this.selectedUserId
+          );
+          if (index >= 0) {
+            this.users.splice(index, 1);
+          }
+        })
+        .catch(err => {
+          this.loading = false;
+          this.modal = false;
+          this.formError = err.response.data.error_messages;
+        });
     },
     show(item) {
       if (
-        this.$auth.user.id != item.id &&
-        item.practice_detail.role.id != 1 &&
+        (!item.practice_detail.role || item.practice_detail.role.id != 1) &&
         this.authPermissions.includes("Show Profile Users")
       ) {
         this.$router.push(`/profile/users/${item.id}`);

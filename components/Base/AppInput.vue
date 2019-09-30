@@ -56,6 +56,7 @@
                 :style="inStyle"
                 @change="$emit('change', $event.target.value)"
                 @blur="$emit('blur')"
+                :disabled="disabled"
               >
                 <option value disabled selected v-if="placeholder">{{placeholder}}</option>
                 <option

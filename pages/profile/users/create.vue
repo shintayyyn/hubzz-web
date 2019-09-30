@@ -31,7 +31,7 @@
                 :label="'Last Name'"
                 :error="formError.find(item => item.field === 'last_name')"
               />
-              <AppInput v-model="form.suffix" :type="'text'" :name="'suffix'" :label="'suffix'" />
+              <AppInput v-model="form.suffix" :type="'text'" :name="'suffix'" :label="'Suffix'" />
               <AppInput
                 v-model="form.email"
                 :type="'email'"
@@ -48,15 +48,22 @@
                 :placeholder="'Select...'"
                 :items="practice_roles"
               />
+
+              <span v-if="!roles.length">
+                You haven't created any role yet, create role
+                <nuxt-link class="underline" :to="'/roles-and-permissions/roles'">here</nuxt-link>
+              </span>
               <AppInput
                 v-model="form.practice_user_role_id"
                 :type="'select'"
-                :name="'Practice User Role'"
-                :label="'Role'"
+                :name="'practice_user_role_id'"
+                :label="'Practice User Role'"
                 :error="formError.find(item => item.field === 'practice_user_role_id')"
                 :placeholder="'Select...'"
                 :items="roles"
+                :disabled="!roles.length"
               />
+
               <AppInput
                 v-model="form.password"
                 :type="'password'"
@@ -137,9 +144,6 @@ export default {
     } catch (err) {
       throw err;
     }
-  },
-  created() {
-    console.log(this.$auth.user);
   },
   methods: {
     create() {

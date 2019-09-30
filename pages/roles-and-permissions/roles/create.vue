@@ -73,7 +73,23 @@ export default {
       formError: []
     };
   },
-  created() {
+  async asyncData({ app, error }) {
+    try {
+      if (
+        !app.$auth.user.practice_detail.role.permissions
+          .map(item => item.name)
+          .includes("Create Role")
+      ) {
+        error({
+          statusCode: 401,
+          message: "You're Not Authorized To View This Page"
+        });
+      }
+    } catch (err) {
+      throw err;
+    }
+  },
+  mounted() {
     this.getPermissions();
   },
   methods: {

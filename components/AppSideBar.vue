@@ -58,6 +58,12 @@
       @confirm="logout"
       @cancel="signout_modal = false"
     />
+    <AppConfirmationModal
+      :label="'Your Profile Has Been Deleted, Contact Hubzz For More Info'"
+      :confirmLabel="'Yes'"
+      :modal="confirmation_modal"
+      @confirm="confirm"
+    />
   </section>
 </template>
 <script>
@@ -69,6 +75,7 @@ export default {
   data() {
     return {
       signout_modal: false,
+      confirmation_modal: false,
       lists: []
     };
   },
@@ -85,8 +92,23 @@ export default {
   },
   mounted() {
     this.getInit();
-    this.$socket.on("changePermissions", role => {
-      this.$store.commit("auth/SET_PERMISSIONS", role.permissions);
+    this.$socket.on("practiceNotificationUpdateProfile", user => {
+      if (
+        user.practice_detail &&
+        user.practice_detail.role &&
+        user.practice_detail.role.permissions &&
+        user.practice_detail.role.permissions.length > 0
+      ) {
+        this.$store.commit(
+          "auth/SET_PERMISSIONS",
+          user.practice_detail.role.permissions
+        );
+      } else {
+        this.$store.commit("auth/SET_PERMISSIONS", []);
+      }
+    });
+    this.$socket.on("practiceNotificationDeleteProfile", () => {
+      this.confirmation_modal = true;
     });
   },
   methods: {
@@ -141,7 +163,8 @@ export default {
           addedLists.push({ name: "Invite", route: "/invite" });
           addedLists.push({
             name: "Roles and Permissions",
-            route: "/roles-and-permissions"
+            route: "/roles-and-permissions",
+            permissions: ["View Role"]
           });
         }
       }
@@ -167,6 +190,11 @@ export default {
         .then(() => {
           console.log("Socket Logged Out");
           console.log("One Signal Logged Out");
+        })
+        .catch(err => {
+          console.log(err);
+        })
+        .finally(() => {
           return this.$auth.logout();
         })
         .then(() => {
@@ -174,7 +202,19 @@ export default {
           this.$store.commit("TOGGLE_SIDEBAR", false);
           this.$auth.$storage.setUniversal("_token.local", "");
           this.$router.push("/");
+        })
+        .catch(err => {
+          console.log(err);
         });
+    },
+    async confirm() {
+      try {
+        await this.$auth.logout();
+        this.$auth.$storage.setUniversal("_token.local", "");
+        this.$router.push("/");
+      } catch (err) {
+        console.log(err);
+      }
     },
     isDisabled(routeName) {
       return this.$route.path === routeName ? "" : "click";
