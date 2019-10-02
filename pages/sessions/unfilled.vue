@@ -17,7 +17,11 @@
         @pagechanged="pagechanged"
       />
     </div>
-    <div class="shield" v-if="$route.name === 'sessions-unfilled-id'"></div>
+    <div
+      class="shield"
+      v-if="$route.name === 'sessions-unfilled-id'"
+      @click="$router.push(`/sessions/unfilled`)"
+    ></div>
     <nuxt-child />
   </section>
 </template>

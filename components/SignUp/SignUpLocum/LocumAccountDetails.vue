@@ -128,18 +128,18 @@ export default {
     }
   },
   watch: {
-    // "form.first_name"(value) {
-    //   this.CheckEmptyField(this.form.first_name, "first_name");
-    // },
-    // "form.last_name"(value) {
-    //   this.CheckEmptyField(this.form.last_name, "last_name");
-    // },
-    // "form.gender"(value) {
-    //   this.CheckEmptyField(this.form.gender, "gender");
-    // },
-    // "form.mobile_number"(value) {
-    //   this.CheckEmptyField(this.form.mobile_number, "mobile_number");
-    // }
+    "form.first_name"(value) {
+      this.CheckEmptyField(this.form.first_name, "first_name");
+    },
+    "form.last_name"(value) {
+      this.CheckEmptyField(this.form.last_name, "last_name");
+    },
+    "form.gender"(value) {
+      this.CheckEmptyField(this.form.gender, "gender");
+    },
+    "form.mobile_number"(value) {
+      this.CheckEmptyField(this.form.mobile_number, "mobile_number");
+    }
   },
   mounted() {
     this.form.title = this.accountDetails.title;
@@ -159,18 +159,18 @@ export default {
   },
   methods: {
     next() {
-      // this.Validate(this.form, [
-      //   "title",
-      //   "suffix",
-      //   "home_number",
-      //   "work_number"
-      // ]);
+      this.Validate(this.form, [
+        "title",
+        "suffix",
+        "home_number",
+        "work_number"
+      ]);
       this.formError = [];
       if (!this.formError.length) {
         this.form.mobile_number = this.form.mobile_number.toString();
         this.$store.commit("sign-up/SET_ACCOUNT_DETAILS", this.form);
         this.$store.commit(
-          "signUp/SET_ACTIVE_COMPONENT",
+          "sign-up/SET_ACTIVE_COMPONENT",
           "LocumAddressDetails"
         );
       } else {

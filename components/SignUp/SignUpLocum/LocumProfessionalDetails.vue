@@ -394,7 +394,7 @@ export default {
           : [];
         this.$store.commit("sign-up/SET_PROFESSIONAL_DETAILS", this.form);
         this.$store.commit(
-          "signUp/SET_ACTIVE_COMPONENT",
+          "sign-up/SET_ACTIVE_COMPONENT",
           "LocumCredentialDetails"
         );
       }

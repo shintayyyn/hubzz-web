@@ -134,7 +134,7 @@ export default {
       if (!this.formError.length) {
         this.$store.commit("sign-up/SET_ADDRESS_DETAILS", this.form);
         this.$store.commit(
-          "signUp/SET_ACTIVE_COMPONENT",
+          "sign-up/SET_ACTIVE_COMPONENT",
           "LocumProfessionalDetails"
         );
       }

@@ -372,6 +372,7 @@
     <div
       class="shield"
       v-if="['compliance-id','compliance-mandatory-training-id'].includes($route.name)"
+      @click="$router.push('/compliance')"
     ></div>
     <nuxt-child />
   </section>

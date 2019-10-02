@@ -17,7 +17,11 @@
         @pagechanged="pagechanged"
       />
     </div>
-    <div class="shield" v-if="$route.name === 'jobs-available-id'"></div>
+    <div
+      class="shield"
+      v-if="$route.name === 'jobs-available-id'"
+      @click="$router.push('/jobs/available')"
+    ></div>
     <nuxt-child />
   </section>
 </template>

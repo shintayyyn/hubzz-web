@@ -24,7 +24,7 @@
           </div>
         </div>
       </div>
-      <div class="shield" v-if="modal"></div>
+      <div class="shield" v-if="modal" @click="close"></div>
       <transition name="slide" mode="out-in">
         <div class="add-unavailable-date-modal shadow-lg" v-if="modal">
           <AddUnavailableDateModal

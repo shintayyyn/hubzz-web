@@ -17,7 +17,11 @@
         @pagechanged="pagechanged"
       />
     </div>
-    <div class="shield" v-if="$route.name === 'jobs-unsuccessful-id'"></div>
+    <div
+      class="shield"
+      v-if="$route.name === 'jobs-unsuccessful-id'"
+      @click="$router.push('/jobs/unsuccessful')"
+    ></div>
     <nuxt-child />
   </section>
 </template>

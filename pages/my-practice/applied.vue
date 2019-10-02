@@ -14,7 +14,11 @@
     <div v-else class="flex flex-row flex-wrap justify-center">
       <div>You do not have any Associated Job for any Practices</div>
     </div>
-    <div class="shield" v-if="$route.name.includes('my-practice-applied-practiceId')"></div>
+    <div
+      class="shield"
+      v-if="$route.name.includes('my-practice-applied-practiceId')"
+      @click="$router.push('/my-practice/applied')"
+    ></div>
     <nuxt-child />
   </section>
 </template>

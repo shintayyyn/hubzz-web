@@ -1,7 +1,7 @@
 <template>
   <div
-    class="panel-top pb-2 px-4 md:p-4 w-full flex items-center border-b leading-none"
-    :class="$auth.user.domain === 'Locum' ? 'pt-2' : 'pt-4'"
+    class="panel-top px-4 md:p-4 w-full flex items-center border-b leading-none"
+    :class="$auth.user.domain === 'Locum' ? 'py-3' : 'pb-4 pt-6'"
   >
     <div class="pr-4 md:hidden">
       <button class="focus:outline-none" @click="goBack()">

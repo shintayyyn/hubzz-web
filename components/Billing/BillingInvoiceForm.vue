@@ -1,5 +1,5 @@
 <template>
-  <div class="modal shadow-lg">
+  <div class="modal shadow-lg" v-on-clickaway="close">
     <div class="p-8 max-w-4xl">
       <div class="flex flex-wrap justify-start items-center">
         <nuxt-link to="/locum-billing/invoices" class="cursor-pointer">
@@ -480,6 +480,9 @@ export default {
         description: "",
         total: ""
       });
+    },
+    close() {
+      this.$router.push("/locum-billing/invoices");
     },
     // surgeries
     toggledOffSurgeries() {

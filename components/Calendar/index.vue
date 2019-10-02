@@ -18,7 +18,11 @@
         </div>
       </div>
     </div>
-    <div class="shield" v-if="toggleScroll"></div>
+    <div
+      class="shield"
+      v-if="toggleScroll"
+      @click="locum_modal ? locum_modal = false : practice_modal = false"
+    ></div>
     <transition name="slide" mode="out-in">
       <template v-if="locum_appointment_modal">
         <JobDetailModalAppointment
