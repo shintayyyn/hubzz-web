@@ -21,12 +21,8 @@
             v-for="(item, index) in lists"
             :key="index"
           >
-            <input
-              :value="item.value"
-              type="checkbox"
-              @input="inputMultiCheck"
-              :checked="value.includes(item.value)"
-            />
+            <input :value="item.value" type="checkbox" @input="inputMultiCheck" />
+            <!-- :checked="value.includes(item.value)" -->
             <div class="mx-1"></div>
             <label :for="item.name" class="text-xs sm:text-sm">{{item.label}}</label>
           </div>
