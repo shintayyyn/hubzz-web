@@ -30,6 +30,7 @@
                 :label="'Create Job'"
                 @click="$store.commit('calendar/CREATE_JOB_MODAL', true)"
                 class="hidden md:block"
+                :inStyle="'padding-top: 0; padding-bottom: 0;'"
               />
               <button
                 @click="$store.commit('calendar/CREATE_JOB_MODAL', true)"
@@ -44,6 +45,7 @@
               :label="unreadMessages.length > 0 ? `Messages(${unreadMessages.length})` : 'Messages'"
               @click="$router.push('/messages')"
               class="hidden md:block"
+              :inStyle="'padding-top: 0; padding-bottom: 0;'"
             />
             <button
               v-if="$route.name != 'messages-slug' && $route.name != 'messages-new'"

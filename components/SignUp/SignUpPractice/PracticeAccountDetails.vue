@@ -176,22 +176,22 @@ export default {
     "form.title"(value) {
       this.CheckEmptyField(this.form.first_name, "first_name");
     },
-    "form.title"(value) {
+    "form.last_name"(value) {
       this.CheckEmptyField(this.form.last_name, "last_name");
     },
-    "form.title"(value) {
+    "form.practice_role"(value) {
       this.CheckEmptyField(this.form.practice_role, "practice_role");
     },
-    "form.title"(value) {
-      this.CheckEmptyField(this.form.practice_type_id, "practice_type_id");
+    "form.practice_list"(value) {
+      this.CheckEmptyField(this.form.practice_list, "practice_list");
     },
-    "form.title"(value) {
+    "form.email"(value) {
       this.CheckEmptyField(this.form.email, "email");
     },
-    "form.title"(value) {
+    "form.password"(value) {
       this.CheckEmptyField(this.form.password, "password");
     },
-    "form.title"(value) {
+    "form.password_confirmation"(value) {
       this.CheckEmptyField(
         this.form.password_confirmation,
         "password_confirmation"

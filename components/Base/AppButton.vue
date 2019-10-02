@@ -5,6 +5,7 @@
       :disabled="disabled"
       class="button rounded-lg py-2 px-4 font-bold text-lg focus:outline-none"
       :class="[disabled ? 'hover:text-gray-700 disabled-button' : 'hover:text-white', inClass]"
+      :style="inStyle"
     >{{label}}</button>
   </section>
 </template>
@@ -16,6 +17,9 @@ export default {
       default: "Save"
     },
     inClass: {
+      type: String
+    },
+    inStyle: {
       type: String
     },
     disabled: {
