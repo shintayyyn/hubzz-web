@@ -4,12 +4,12 @@
     <AppJobFilter @clear="clearFilters" @getJobs="getJobs(1, params)" :params="params" />
     <div
       class="mt-10 w-full text-center"
-      v-if="!loadingJobs && getLocumAvailableJobs.length === 0"
-    >There are no available jobs nearby and suited for you at this time</div>
-    <div v-if="getLocumAvailableJobs.length > 0" class="overflow-x-auto overflow-y-hidden">
-      <JobTable :columns="columns" :jobs="getLocumAvailableJobs" @sortBy="sortBy" @show="show" />
+      v-if="!loadingJobs && getPracticeAllocatedJobs.length === 0 "
+    >You do not have any allocated jobs</div>
+    <div v-if="getPracticeAllocatedJobs.length > 0" class="overflow-x-auto overflow-y-hidden">
+      <JobTable :columns="columns" :jobs="getPracticeAllocatedJobs" @sortBy="sortBy" @show="show" />
     </div>
-    <div class="w-full mt-4" v-if="getLocumAvailableJobs.length > 0 && totalPages > 1">
+    <div class="mt-4 w-full" v-if="getPracticeAllocatedJobs.length > 0 && totalPages > 1">
       <AppPagination
         :total="total"
         :totalPages="totalPages"
@@ -17,12 +17,12 @@
         @pagechanged="pagechanged"
       />
     </div>
-    <div class="shield" v-if="$route.name === 'jobs-available-id'"></div>
+    <div class="shield" v-if="$route.name === 'sessions-allocated-sessionId'"></div>
     <nuxt-child />
   </section>
 </template>
 <script>
-import JobTable from "@/components/Jobs/JobTable";
+import JobTable from "@/components/Sessions/JobTable";
 import AppPagination from "@/components/Base/AppPagination";
 import AppJobFilter from "@/components/Base/AppJobFilter";
 import AppLoading from "@/components/Base/AppLoading";
@@ -81,6 +81,10 @@ export default {
           label: "Created",
           dataIndex: "date_created",
           sortable: true
+        },
+        {
+          label: "Assigned",
+          dataIndex: "appointed_at"
         }
       ],
       // params
@@ -104,8 +108,8 @@ export default {
     };
   },
   computed: {
-    getLocumAvailableJobs() {
-      return this.$store.getters["jobs/getLocumAvailableJobs"];
+    getPracticeAllocatedJobs() {
+      return this.$store.getters["jobs/getPracticeAllocatedJobs"];
     },
     offset() {
       return this.perPage * (this.current_page - 1);
@@ -114,7 +118,7 @@ export default {
       return 10;
     },
     total() {
-      return this.$store.state.jobs.locum_available_jobs_count;
+      return this.$store.state.jobs.practice_allocated_jobs_count;
     },
     totalPages() {
       return Math.ceil(this.total / this.perPage);
@@ -133,13 +137,13 @@ export default {
     this.getJobsCount();
     this.getJobs(this.current_page, this.params);
     setTimeout(() => {
-      this.$store.commit("jobs/CLEAR_LOCUM_AVAILABLE_BADGE");
+      this.$store.commit("jobs/CLEAR_PRACTICE_ALLOCATED_BADGE");
     }, 1000);
   },
   methods: {
     getJobsCount() {
-      this.$store.dispatch("jobs/fetchLocumJobs", {
-        status: ["Available", "Matched"],
+      this.$store.dispatch("jobs/fetchPracticeJobs", {
+        status: "Current",
         countOnly: true
       });
     },
@@ -170,14 +174,11 @@ export default {
       this.getJobs(this.current_page, this.params);
     },
     clearFilters() {
-      this.params.shift_id = "";
-      this.params.rate = "";
-      this.params.locum_detail_rate_type_id = "";
-      this.params.near_post_code = "";
-      this.params.miles = "";
-      this.params.surgery_name = "";
-      this.params.order_by = "date_created:desc";
-      this.getJobs(this.current_page, this.params);
+      (this.params.shift_id = ""),
+        (this.params.rate = ""),
+        (this.params.locum_detail_rate_type_id = ""),
+        (this.params.order_by = "date_created:desc"),
+        this.getJobs(this.current_page, this.params);
     },
     getJobs(page, params) {
       this.$store.commit("jobs/TOGGLE_LOADING", true);
@@ -185,10 +186,10 @@ export default {
       let defaultParams = {
         offset: this.offset,
         limit: this.perPage,
-        status: ["Available", "Matched"]
+        status: "Current"
       };
       let jobParams = { ...params, ...defaultParams };
-      this.$store.dispatch("jobs/fetchLocumJobs", jobParams).finally(() => {
+      this.$store.dispatch("jobs/fetchPracticeJobs", jobParams).finally(() => {
         this.$store.commit("jobs/TOGGLE_LOADING", false);
       });
     },
@@ -197,7 +198,7 @@ export default {
       this.getJobs(this.current_page, this.params);
     },
     show(id) {
-      this.$router.push(`/jobs/available/${id}`);
+      this.$router.push(`/sessions/allocated/${id}`);
     }
   }
 };

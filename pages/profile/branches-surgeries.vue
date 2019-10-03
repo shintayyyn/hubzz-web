@@ -1,5 +1,13 @@
 <template>
   <section>
+    <div class="flex flex-col">
+      <div>
+        <nuxt-link
+        to="/profile/branches-surgeries/create"
+        class="inline-flex no-underline py-2 px-4 bg-yellow-500 text-sm font-semibold text-black hover:text-white rounded-lg shadow float-left"
+        >Add Surgery</nuxt-link>
+      </div>
+    </div>
     <div class="list-section flex flex-col mt-4 pb-32 overflow-x-auto" v-if="surgeries.length > 0">
       <table>
         <thead>
@@ -42,7 +50,18 @@
     <transition name="fade" mode="out-in">
       <div
         class="shield"
-        v-if="['profile-branches-surgeries-create', 'profile-branches-surgeries-id', 'profile-branches-surgeries-edit'].includes($route.name)"
+        v-if="['profile-branches-surgeries-create',
+          'profile-branches-surgeries-id-index',
+          'profile-branches-surgeries-id-index-surgery-billings',
+          'profile-branches-surgeries-id-index-surgery-sessions',
+          'profile-branches-surgeries-id-index-surgery-sessions-index-live',
+          'profile-branches-surgeries-id-index-surgery-sessions-index-applied',
+          'profile-branches-surgeries-id-index-surgery-sessions-index-allocated',
+          'profile-branches-surgeries-id-index-surgery-sessions-index-completed',
+          'profile-branches-surgeries-id-index-surgery-sessions-index-unfilled',
+          'profile-branches-surgeries-id-index-surgery-sessions-index-cancelled',
+          'profile-branches-surgeries-id-index-surgery-sessions-index-declined',
+          'profile-branches-surgeries-edit'].includes($route.name)"
       ></div>
     </transition>
     <nuxt-child />
@@ -58,7 +77,9 @@
 </template>
 <script>
 import AddSurgeryModal from "@/components/Profile/AddSurgeryModal";
+import RemoveSurgeryConfirmationModal from "@/components/Profile/RemoveSurgeryConfirmationModal"
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
+
 export default {
   transition: {
     name: "fade",
@@ -66,6 +87,7 @@ export default {
   },
   components: {
     AddSurgeryModal,
+    RemoveSurgeryConfirmationModal,
     AppConfirmationModal
   },
 

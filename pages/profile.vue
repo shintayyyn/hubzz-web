@@ -18,11 +18,6 @@
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
         :class="$route.name.includes('profile-practice-documents')  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >Practice Documents</nuxt-link>
-      <nuxt-link
-        v-if="$route.name === 'profile-branches-surgeries' || $route.name === 'profile-branches-surgeries-create'"
-        to="/profile/branches-surgeries/create"
-        class="md:mr-5 p-3 text-sm font-bold cursor-pointer hover:bg-yellow-500 rounded-lg whitespace-no-wrap"
-      >Create</nuxt-link>
     </div>
     <div class="mt-5">
       <nuxt-child />
