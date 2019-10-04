@@ -65,11 +65,13 @@
       ></div>
     </transition>
     <nuxt-child />
-    <AppConfirmationModal
+    <RemoveSurgeryConfirmationModal
       :label="'Are you sure you want to delete this surgery?'"
       :confirmLabel="'Yes'"
       :cancelLabel="'Cancel'"
       :modal="modal"
+      :terminationReason="''"
+      @setReason="setExpulsionReason"
       @confirm="remove"
       @cancel="modal = false"
     />
@@ -95,7 +97,8 @@ export default {
     return {
       current_page: 1,
       modal: false,
-      selectedSurgeryId: ""
+      selectedSurgeryId: "",
+      terminationReason: ""
     };
   },
   computed: {
@@ -149,6 +152,7 @@ export default {
       this.modal = true;
     },
     async remove() {
+      console.log('reason',this.terminationReason)
       if (this.practice.type === "Hub") {
         await this.$axios.$delete(
           `/api/v1/practice/me/practice-surgeries/${this.selectedSurgeryId}`
@@ -164,6 +168,9 @@ export default {
         status: "success",
         text: ["Practice Surgery Deleted Successfully"]
       });
+    },
+    setExpulsionReason(terminationReason){
+      this.terminationReason = terminationReason
     }
   }
 };

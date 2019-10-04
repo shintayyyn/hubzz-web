@@ -10,6 +10,16 @@
             <svgicon class="mr-1" :name="status" height="20" width="20" v-if="status" />
             <div class="text-sm md:text-base font-bold">{{label}}</div>
           </div>
+          <div class="justify-center">
+            <div class="text-sm font-semibold">Reason</div>
+            <AppInput
+                v-model="inputReason"
+                :type="'text'"
+                :name="'inputReason'"
+                :placeholder="'Reason of Expulsion'"
+
+              />
+          </div>
           <div class="flex justify-center my-2">
             <div class="mx-2">
               <button
@@ -32,11 +42,23 @@
   </div>
 </template>
 <script>
+import { mixin as clickaway } from "vue-clickaway";
+import AppInput from "@/components/Base/AppInput"
 export default {
-  props: {
+  //:error="formError.find(item => item.field === 'inputReason')"
+  //@blur="CheckEmptyField(inputReason, 'inputReason')"
+  mixins: [clickaway],
+  components:{
+    AppInput
+  },
+  props:{
     modal: {
       type: Boolean,
       default: false
+    },
+    terminationReason: {
+      type: String,
+      required: false
     },
     status: {
       type: String,
@@ -54,6 +76,21 @@ export default {
       type: String,
       required: true
     }
+  },
+  data(){
+    return {
+      formError: [],
+      inputReason : this.terminationReason
+    }
+  },
+  watch: {
+    validateReason(value){
+      this.CheckEmptyField(value, "terminationReason");
+    },
+    inputReason(terminationReason){
+      this.$emit('setReason', terminationReason)
+    }
+
   }
 };
 </script>

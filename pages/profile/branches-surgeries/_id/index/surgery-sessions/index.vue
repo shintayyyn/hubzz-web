@@ -98,6 +98,10 @@
 </template>
 <script>
 export default {
+  transition: {
+    name: "fade",
+    mode: "out-in"
+  },
   data(){
     return{
       spokeId: ''

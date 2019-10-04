@@ -5,13 +5,17 @@
 </template>
 <script>
 export default {
-    async asyncData({app, route}){
-      try{
-        console.log('route name', route.name)
-      }catch(err){
-        console.log('get surgery sessions error!!!', err)
-      }
+  transition: {
+    name: "fade",
+    mode: "out-in"
+  },
+  async asyncData({app, route}){
+    try{
+      console.log('route name', route.name)
+    }catch(err){
+      console.log('get surgery sessions error!!!', err)
     }
+  }
 }
 </script>
 <style scoped>

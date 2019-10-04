@@ -217,6 +217,10 @@
 import AppButton from "@/components/Base/AppButton";
 import AppInput from "@/components/Base/AppInput";
 export default {
+  transition: {
+    name: "fade",
+    mode: "out-in"
+  },
   components: {
     AppButton,
     AppInput
