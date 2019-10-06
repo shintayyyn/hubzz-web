@@ -1,11 +1,12 @@
 <template>
   <section>
-    <div class="flex overflow-x-auto whitespace-no-wrap">
-      <button
-        class="rounded-lg bg-yellow-500 p-2 cursor-pointer font-semibold text-xs sm:text-sm focus:outline-none"
-        @click="$router.push('/profile/branches-surgeries/create')"
-        v-if="authPermissions.includes('Create Profile Surgeries')"
-      >Add Surgeries</button>
+    <div class="flex flex-col">
+      <div>
+        <nuxt-link
+        to="/profile/branches-surgeries/create"
+        class="inline-flex no-underline py-2 px-4 bg-yellow-500 text-sm font-semibold text-black hover:text-white rounded-lg shadow float-left"
+        >Add Surgery</nuxt-link>
+      </div>
     </div>
     <div class="list-section flex flex-col mt-4 pb-32 overflow-x-auto" v-if="surgeries.length > 0">
       <table>
@@ -50,15 +51,33 @@
     <transition name="fade" mode="out-in">
       <div
         class="shield"
-        v-if="['profile-branches-surgeries-create', 'profile-branches-surgeries-id', 'profile-branches-surgeries-edit'].includes($route.name)"
+        v-if="['profile-branches-surgeries-create',
+          'profile-branches-surgeries-id-index',
+          'profile-branches-surgeries-id-index-surgery-billings',
+          'profile-branches-surgeries-id-index-surgery-sessions',
+          'profile-branches-surgeries-id-index-surgery-sessions-index-live',
+          'profile-branches-surgeries-id-index-surgery-sessions-index-applied',
+          'profile-branches-surgeries-id-index-surgery-sessions-index-allocated',
+          'profile-branches-surgeries-id-index-surgery-sessions-index-completed',
+          'profile-branches-surgeries-id-index-surgery-sessions-index-unfilled',
+          'profile-branches-surgeries-id-index-surgery-sessions-index-cancelled',
+          'profile-branches-surgeries-id-index-surgery-sessions-index-declined',
+          'profile-branches-surgeries-edit'].includes($route.name)"
       ></div>
     </transition>
+<<<<<<< HEAD
     <nuxt-child @addSurgery="surgeries.push($event)" @updateSurgery="updateSurgery" />
     <AppConfirmationModal
+=======
+    <nuxt-child />
+    <RemoveSurgeryConfirmationModal
+>>>>>>> 37a6aa1f695a4046c05c5ea07b5bc3cf236ca795
       :label="'Are you sure you want to delete this surgery?'"
       :confirmLabel="'Yes'"
       :cancelLabel="'Cancel'"
       :modal="modal"
+      :terminationReason="''"
+      @setReason="setExpulsionReason"
       @confirm="remove"
       @cancel="modal = false"
     />
@@ -66,7 +85,9 @@
 </template>
 <script>
 import AddSurgeryModal from "@/components/Profile/AddSurgeryModal";
+import RemoveSurgeryConfirmationModal from "@/components/Profile/RemoveSurgeryConfirmationModal"
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
+
 export default {
   transition: {
     name: "fade",
@@ -74,6 +95,7 @@ export default {
   },
   components: {
     AddSurgeryModal,
+    RemoveSurgeryConfirmationModal,
     AppConfirmationModal
   },
 
@@ -82,7 +104,11 @@ export default {
       current_page: 1,
       modal: false,
       selectedSurgeryId: "",
+<<<<<<< HEAD
       surgeries: []
+=======
+      terminationReason: ""
+>>>>>>> 37a6aa1f695a4046c05c5ea07b5bc3cf236ca795
     };
   },
   computed: {
@@ -140,6 +166,7 @@ export default {
       }
     },
     async remove() {
+      console.log('reason',this.terminationReason)
       if (this.practice.type === "Hub") {
         await this.$axios.$delete(
           `/api/v1/practice/me/practice-surgeries/${this.selectedSurgeryId}`
@@ -158,6 +185,7 @@ export default {
         text: ["Practice Surgery Deleted Successfully"]
       });
     },
+<<<<<<< HEAD
     updateSurgery(payload) {
       let index = this.surgeries.findIndex(
         surgery => surgery.id === payload.id
@@ -165,6 +193,10 @@ export default {
       if (index >= 0) {
         this.surgeries.splice(index, 1, payload);
       }
+=======
+    setExpulsionReason(terminationReason){
+      this.terminationReason = terminationReason
+>>>>>>> 37a6aa1f695a4046c05c5ea07b5bc3cf236ca795
     }
   }
 };
