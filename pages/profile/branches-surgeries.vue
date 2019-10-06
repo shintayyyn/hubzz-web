@@ -65,13 +65,8 @@
           'profile-branches-surgeries-edit'].includes($route.name)"
       ></div>
     </transition>
-<<<<<<< HEAD
-    <nuxt-child @addSurgery="surgeries.push($event)" @updateSurgery="updateSurgery" />
-    <AppConfirmationModal
-=======
     <nuxt-child />
     <RemoveSurgeryConfirmationModal
->>>>>>> 37a6aa1f695a4046c05c5ea07b5bc3cf236ca795
       :label="'Are you sure you want to delete this surgery?'"
       :confirmLabel="'Yes'"
       :cancelLabel="'Cancel'"
@@ -104,11 +99,8 @@ export default {
       current_page: 1,
       modal: false,
       selectedSurgeryId: "",
-<<<<<<< HEAD
-      surgeries: []
-=======
+      surgeries: [],
       terminationReason: ""
->>>>>>> 37a6aa1f695a4046c05c5ea07b5bc3cf236ca795
     };
   },
   computed: {
@@ -185,7 +177,6 @@ export default {
         text: ["Practice Surgery Deleted Successfully"]
       });
     },
-<<<<<<< HEAD
     updateSurgery(payload) {
       let index = this.surgeries.findIndex(
         surgery => surgery.id === payload.id
@@ -193,10 +184,9 @@ export default {
       if (index >= 0) {
         this.surgeries.splice(index, 1, payload);
       }
-=======
+    },
     setExpulsionReason(terminationReason){
       this.terminationReason = terminationReason
->>>>>>> 37a6aa1f695a4046c05c5ea07b5bc3cf236ca795
     }
   }
 };
