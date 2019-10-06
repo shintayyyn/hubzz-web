@@ -181,6 +181,7 @@ export default {
           status: "success",
           text: ["Confirmation e-mail sent"]
         });
+        this.loading = false;
       } catch (err) {
         console.log("Something went wrong! ", err);
         this.formError = err.response.data.error_messages;

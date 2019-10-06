@@ -7,45 +7,21 @@
         v-if="authPermissions.includes('Create Profile Surgeries')"
       >Add Surgeries</button>
     </div>
-    <div class="list-section flex flex-col mt-4 pb-32 overflow-x-auto" v-if="surgeries.length > 0">
-      <table>
-        <thead>
-          <tr>
-            <th class="text-xs sm:text-sm text-left px-1">Surgery</th>
-            <th class="text-xs sm:text-sm text-left px-1">Practice code</th>
-            <th class="text-xs sm:text-sm text-left px-1">Pay for surgery</th>
-            <th class="text-xs sm:text-sm text-left px-1">Verify job creation</th>
-            <th class="w-10"></th>
-          </tr>
-        </thead>
-        <tbody>
-          <template v-for="(item, index) in surgeries">
-            <tr
-              @click="show(item)"
-              class="__job-card rounded-lg shadow-lg p-4 mt-4 cursor-pointer"
-              :key="item.id"
-            >
-              <td class="text-xs sm:text-sm px-1 rounded-l-lg">{{item.surgery.name}}</td>
-              <td class="text-xs sm:text-sm px-1">{{item.surgery.code}}</td>
-              <td class="text-xs sm:text-sm px-1">{{item.pay_for_surgery ? 'Yes':'No'}}</td>
-              <td
-                class="text-xs sm:text-sm px-1"
-              >{{item.verify_job_creation ? 'Verified':'Not Verified'}}</td>
-              <td class="w-10 text-xs sm:text-sm px-1 rounded-r-lg text-center">
-                <div
-                  v-if="authPermissions.includes('Delete Profile Surgeries')"
-                  @click.stop.prevent="removeModal(item)"
-                  class="cursor-pointer font-bold text-xs sm:text-sm"
-                >X</div>
-              </td>
-            </tr>
-            <tr :key="`${item.id}-${index}`">
-              <td></td>
-            </tr>
-          </template>
-        </tbody>
-      </table>
-    </div>
+    <AppTable
+      v-if="surgeries.length > 0"
+      :total="totalSurgeries"
+      :items="surgeries"
+      :loading="loading"
+      :currentPage="current_page"
+      :perPage="params.limit"
+      :columns="columns"
+      :orderBy="params.order_by"
+      @show="show"
+      @remove="remove"
+      @pagechanged="pagechanged"
+      @limitchanged="limitchanged"
+      @sorted="sorted"
+    />
     <div v-else class="flex justify-center">no branches / surgeries</div>
     <transition name="fade" mode="out-in">
       <div
@@ -53,42 +29,82 @@
         v-if="['profile-branches-surgeries-create', 'profile-branches-surgeries-id', 'profile-branches-surgeries-edit'].includes($route.name)"
       ></div>
     </transition>
-    <nuxt-child @addSurgery="surgeries.push($event)" @updateSurgery="updateSurgery" />
-    <AppConfirmationModal
-      :label="'Are you sure you want to delete this surgery?'"
-      :confirmLabel="'Yes'"
-      :cancelLabel="'Cancel'"
-      :modal="modal"
-      @confirm="remove"
-      @cancel="modal = false"
-    />
+    <nuxt-child @addSurgery="addSurgery" @updateSurgery="updateSurgery" />
   </section>
 </template>
 <script>
-import AddSurgeryModal from "@/components/Profile/AddSurgeryModal";
-import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
+import AppTable from "@/components/Base/AppTable";
 export default {
   transition: {
     name: "fade",
     mode: "out-in"
   },
   components: {
-    AddSurgeryModal,
-    AppConfirmationModal
+    AppTable
   },
 
   data() {
     return {
+      totalSurgeries: 0,
+      surgeries: [],
+      loading: false,
       current_page: 1,
-      modal: false,
-      selectedSurgeryId: "",
-      surgeries: []
+      // app table filter
+      sampleFilter: [],
+      // app table params
+      params: {
+        offset: 0,
+        limit: 5,
+        order_by: []
+      },
+      // for app table component
+      columns: [
+        {
+          name: "Surgery",
+          dataIndex: "surgery.name",
+          class: "text-left",
+          sortable: true
+        },
+        {
+          name: "Practice Code",
+          dataIndex: "surgery.code",
+          class: "text-center"
+        },
+        {
+          name: "Pay for surgery",
+          dataIndex: "pay_for_surgery",
+          class: "text-center"
+        },
+        {
+          name: "Verify job creation",
+          dataIndex: "verify_job_creation",
+          class: "text-center"
+        }
+      ]
     };
   },
   computed: {
     authPermissions() {
       return this.$store.getters["auth/permissions"];
     }
+  },
+  mounted() {
+    this.$socket.on("Practice Notification Create Surgery", surgery => {
+      // if (!this.surgeries.map(item => item.id).includes(surgery.id)) {
+      //   this.surgeries.push(surgery);
+      // }
+      this.getSurgeriesCount(this.params);
+    });
+    this.$socket.on("Practice Notification Update Surgery", surgery => {
+      let index = this.surgeries.findIndex(item => item.id == surgery.id);
+      if (index >= 0) {
+        this.surgeries.splice(index, 1, surgery);
+      }
+    });
+    this.$socket.on("Practice Notification Delete Surgery", surgeryId => {
+      this.getSurgeriesCount(this.params);
+      // this.surgeries = this.surgeries.filter(item => item.id != surgeryId);
+    });
   },
   async asyncData({ app, store, error }) {
     try {
@@ -102,8 +118,26 @@ export default {
 
       let surgeries = [];
       let parent_surgery = null;
+      let totalSurgeries = 0;
       if (practice.type === "Hub") {
-        surgeries = practice.practice_surgeries;
+        const responseCount = await app.$axios.$get(
+          `/api/v1/practice/me/practice-surgeries/count`
+        );
+
+        totalSurgeries =
+          responseCount.data && responseCount.data.count
+            ? responseCount.data.count
+            : 0;
+
+        const response = await app.$axios.$get(
+          `/api/v1/practice/me/practice-surgeries?limit=5`
+        );
+
+        if (response.data && response.data.practice_surgeries) {
+          response.data.practice_surgeries.forEach(surgery => {
+            surgeries.push({ ...surgery, removable: true });
+          });
+        }
       } else if (practice.type === "Spoke") {
         if (practice.parent_surgery) {
           let surgery = {
@@ -117,46 +151,62 @@ export default {
       }
       return {
         practice,
+        totalSurgeries,
         surgeries
       };
     } catch (err) {
+      if (err.response && err.response.status === 401) {
+        error(err.response.data);
+        return;
+      }
       throw err;
     }
   },
   methods: {
-    show(item) {
-      if (this.authPermissions.includes("Show Profile Surgeries")) {
-        if (this.practice.type === "Hub") {
-          this.$router.push(`/profile/branches-surgeries/${item.id}`);
-        } else if (this.practice.type === "Spoke") {
-          this.$router.push(`/profile/branches-surgeries/edit`);
-        }
-      }
+    getSurgeriesCount(params) {
+      this.$axios
+        .$get(`/api/v1/practice/me/practice-surgeries/count`, { params })
+        .then(res => {
+          this.totalSurgeries = res.data.count;
+          this.getSurgeries(this.params);
+        });
     },
-    removeModal(item) {
-      if (this.authPermissions.includes("Delete Profile Surgeries")) {
-        this.selectedSurgeryId = item.id;
-        this.modal = true;
-      }
+    getSurgeries(params) {
+      this.loading = true;
+      this.$axios
+        .$get(`/api/v1/practice/me/practice-surgeries`, { params })
+        .then(res => {
+          this.loading = false;
+          this.surgeries = [];
+          res.data.practice_surgeries.forEach(surgery => {
+            this.surgeries.push({ ...surgery, removable: true });
+          });
+        })
+        .catch(err => {
+          console.log(err);
+        });
     },
-    async remove() {
-      if (this.practice.type === "Hub") {
-        await this.$axios.$delete(
-          `/api/v1/practice/me/practice-surgeries/${this.selectedSurgeryId}`
-        );
-      } else if (this.practice.type === "Spoke") {
-        await this.$axios.$delete(`/api/v1/practice/me/parent-surgery`);
+    sorted(order_by) {
+      this.current_page = 1;
+      this.params.offset = 0;
+      this.params.order_by = order_by;
+      this.getSurgeries(this.params);
+    },
+    pagechanged(page) {
+      this.current_page = page;
+      this.params.offset = this.params.limit * (page - 1);
+      this.getSurgeries(this.params);
+    },
+    limitchanged(limit) {
+      this.current_page = 1;
+      this.params.offset = 0;
+      this.params.limit = limit;
+      this.getSurgeries(this.params);
+    },
+    addSurgery(payload) {
+      if (!this.surgeries.map(item => item.id).includes(payload.id)) {
+        this.surgeries.push(payload);
       }
-      this.surgeries = this.surgeries.filter(
-        surgery => surgery.id !== this.selectedSurgeryId
-      );
-      this.modal = false;
-      this.selectedSurgeryId = "";
-      this.$store.commit("SET_NOTIFICATION", {
-        enabled: true,
-        status: "success",
-        text: ["Practice Surgery Deleted Successfully"]
-      });
     },
     updateSurgery(payload) {
       let index = this.surgeries.findIndex(
@@ -165,6 +215,41 @@ export default {
       if (index >= 0) {
         this.surgeries.splice(index, 1, payload);
       }
+    },
+    removeModal(item) {
+      if (this.authPermissions.includes("Delete Profile Surgeries")) {
+        this.selectedSurgeryId = item.id;
+        this.modal = true;
+      }
+    },
+    async remove(id) {
+      this.loading = true;
+      if (!this.authPermissions.includes("Delete Profile Surgeries")) {
+        return;
+      }
+      if (this.practice.type === "Hub") {
+        await this.$axios.$delete(
+          `/api/v1/practice/me/practice-surgeries/${id}`
+        );
+      } else if (this.practice.type === "Spoke") {
+        await this.$axios.$delete(`/api/v1/practice/me/parent-surgery`);
+      }
+      this.loading = false;
+      this.surgeries = this.surgeries.filter(surgery => surgery.id !== id);
+      this.$store.commit("SET_NOTIFICATION", {
+        enabled: true,
+        status: "success",
+        text: ["Practice Surgery Deleted Successfully"]
+      });
+    },
+    show(item) {
+      if (this.authPermissions.includes("Show Profile Surgeries")) {
+        if (this.practice.type === "Hub") {
+          this.$router.push(`/profile/branches-surgeries/${item.id}`);
+        } else if (this.practice.type === "Spoke") {
+          this.$router.push(`/profile/branches-surgeries/edit`);
+        }
+      }
     }
   }
 };
@@ -172,10 +257,6 @@ export default {
 <style scoped>
 .shield {
   z-index: 509;
-}
-.list-section {
-  position: relative;
-  min-height: 600px;
 }
 </style>
 

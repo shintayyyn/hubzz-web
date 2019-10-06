@@ -118,16 +118,6 @@ export default {
   },
   async asyncData({ app, error }) {
     try {
-      if (
-        !app.$auth.user.practice_detail.role.permissions
-          .map(item => item.name)
-          .includes("Create Profile Users")
-      ) {
-        error({
-          statusCode: 401,
-          message: "You're Not Authorized To View This Page"
-        });
-      }
       const response = await app.$axios.$get(`/api/v1/practice/practice-roles`);
       let responseRoles =
         response.data && response.data.roles ? response.data.roles : [];
@@ -142,6 +132,10 @@ export default {
         roles
       };
     } catch (err) {
+      if (err.response && err.response.status === 401) {
+        error(err.response.data);
+        return;
+      }
       throw err;
     }
   },

@@ -158,7 +158,6 @@ export default {
               text: [`${res.message}`]
             });
             this.$emit("updateRole", res.data.role);
-            // this.$emit("close");
           });
       }
     }

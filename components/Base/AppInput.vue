@@ -25,8 +25,9 @@
               :value="item.value"
               type="checkbox"
               @input="inputMultiCheck"
-              :checked="value.includes(item.value)"
+              :checked="Array.isArray(value) ? value.includes(item.value) : value"
             />
+
             <div class="mx-1"></div>
             <label :for="item.name" class="text-xs sm:text-sm">{{item.label}}</label>
           </div>

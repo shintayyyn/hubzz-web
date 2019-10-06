@@ -320,7 +320,6 @@
                 :name="'include_saturday'"
                 :label="'Include Saturday'"
                 :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
-                :placeholder="'Select..'"
               />
               <AppInput
                 :type="'select'"
@@ -328,15 +327,13 @@
                 :name="'include_sunday'"
                 :label="'Include Sunday'"
                 :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
-                :placeholder="'Select..'"
               />
               <AppInput
                 :type="'select'"
                 v-model="unpaid_breaks"
                 :name="'unpaid_breaks'"
                 :label="'Unpaid break'"
-                :items="[ {value: 15, label: '15'}, {value: 30, label: '30'}, {value: 60, label: '60'}, {value: 'other', label: 'Other'} ]"
-                :placeholder="'Select..'"
+                :items="[ {value: false, label: 'No'}, {value: 15, label: '15'}, {value: 30, label: '30'}, {value: 60, label: '60'}, {value: 'other', label: 'Other'} ]"
               />
 
               <AppInput
@@ -360,8 +357,20 @@
                 :error="formError.find(item => item.field === 'shift_id')"
                 @blur="CheckEmptyField(form.shift_id, 'shift_id')"
               />
-              <div class="flex flex-row flex-wrap justify-between">
-                <div>Auto -assign job to the first matching Favourite applicant?</div>
+
+              <AppInput
+                :type="'select'"
+                v-model="auto_assign_job"
+                :name="'auto_assign_job'"
+                :label="'Auto-assign this job?'"
+                :items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
+              />
+
+              <div
+                class="flex flex-row flex-wrap justify-between"
+                v-if="auto_assign_job === 'true'"
+              >
+                <div>Auto-assign job to the first matching Favourite applicant by this date</div>
                 <div class="px-1 w-full md:w-1/2">
                   <AppDate v-model="auto_assign_at.date" :name="'auto_assign_at'" :label="'Date'" />
                 </div>
@@ -371,11 +380,23 @@
                     :type="'time'"
                     :name="'time_end'"
                     :label="'Time'"
+                    :error="formError.find(item => item.field === 'auto_assign_at')"
                   />
                 </div>
               </div>
 
-              <div class="flex flex-row flex-wrap justify-between">
+              <AppInput
+                :type="'select'"
+                v-model="selection_notification"
+                :name="'selection_notification'"
+                :label="'Add a selection date?'"
+                :items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
+              />
+
+              <div
+                class="flex flex-row flex-wrap justify-between"
+                v-if="selection_notification === 'true'"
+              >
                 <div>Selection will be made and you will receive a notification by this date</div>
                 <div class="px-1 w-full md:w-1/2">
                   <AppDate v-model="selection_date.date" :name="'selection_date'" :label="'Date'" />
@@ -386,11 +407,23 @@
                     :type="'time'"
                     :name="'time_end'"
                     :label="'Time'"
+                    :error="formError.find(item => item.field === 'selection_date')"
                   />
                 </div>
               </div>
 
-              <div class="flex flex-row flex-wrap justify-between">
+              <AppInput
+                :type="'select'"
+                v-model="favorite_notification"
+                :name="'favorite_notification'"
+                :label="'Make this Job Private?'"
+                :items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
+              />
+
+              <div
+                class="flex flex-row flex-wrap justify-between"
+                v-if="favorite_notification === 'true'"
+              >
                 <div>Only favorite locum will be notified until this date</div>
                 <div class="px-1 w-full md:w-1/2">
                   <AppDate
@@ -405,6 +438,7 @@
                     :type="'time'"
                     :name="'time_end'"
                     :label="'Time'"
+                    :error="formError.find(item => item.field === 'favorite_only_until')"
                   />
                 </div>
               </div>
@@ -466,7 +500,10 @@ export default {
       },
       // qualifications: [],
       compliances: [],
-      unpaid_breaks: "",
+      unpaid_breaks: false,
+      auto_assign_job: false,
+      selection_notification: false,
+      favorite_notification: false,
       shifts: [],
 
       auto_assign_at: {
@@ -529,16 +566,16 @@ export default {
     }
   },
   watch: {
-    unpaid_breaks(value) {
-      if (["15", "30", "60"].includes(value)) {
-        let index = this.formError.findIndex(
-          item => item.field === "unpaid_breaks_in_minutes"
-        );
-        if (index >= 0) {
-          this.formError.splice(index, 1);
-        }
-      }
-    },
+    // unpaid_breaks(value) {
+    // if (["15", "30", "60"].includes(value)) {
+    //   let index = this.formError.findIndex(
+    //     item => item.field === "unpaid_breaks_in_minutes"
+    //   );
+    //   if (index >= 0) {
+    //     this.formError.splice(index, 1);
+    //   }
+    // }
+    // },
     "form.profession_id"(value) {
       this.CheckEmptyField(value, "profession_id");
       if (value) {
@@ -747,7 +784,7 @@ export default {
     publish() {
       this.formError = [];
 
-      this.Validate(this.form, [
+      let notRequired = [
         "extra_information",
         "is_another_doctor",
         "is_nurse_available",
@@ -756,15 +793,29 @@ export default {
         "session_requirements",
         "spoken_language_id",
         "ir35",
-        "unpaid_breaks_in_minutes",
         "mandatory_training_id",
         "include_saturday",
-        "include_sunday",
-        "auto_assign_at",
-        "selection_date",
-        "favorite_only_until"
-      ]);
+        "include_sunday"
+      ];
 
+      if (["15", "30", "60", "false"].includes(this.unpaid_breaks)) {
+        notRequired.push("unpaid_breaks_in_minutes");
+      }
+
+      if (this.auto_assign_job === "false") {
+        notRequired.push("auto_assign_at");
+      }
+
+      if (this.selection_notification === "false") {
+        notRequired.push("selection_date");
+      }
+
+      if (this.favorite_notification === "false") {
+        notRequired.push("favorite_only_until");
+      }
+
+      this.Validate(this.form, notRequired);
+      console.log(this.formError);
       if (!this.formError.length) {
         this.selectedClinicalSystem = [...this.form.clinical_system_id];
         this.form.clinical_system_id = this.form.clinical_system_id.map(
@@ -798,9 +849,13 @@ export default {
         this.form.session_requirements.length > 0
           ? (this.form.session_requirements = this.form.session_requirements.join())
           : (this.form.session_requirements = "");
-        this.unpaid_breaks !== "other"
-          ? (this.form.unpaid_breaks_in_minutes = this.unpaid_breaks)
-          : (this.form.unpaid_breaks_in_minutes = this.form.unpaid_breaks_in_minutes);
+
+        if (["15", "30", "60"].includes(this.unpaid_breaks)) {
+          this.form.unpaid_breaks_in_minutes = this.unpaid_breaks;
+        }
+        if (this.unpaid_breaks === "other") {
+          this.form.unpaid_breaks_in_minutes = this.form.unpaid_breaks_in_minutes;
+        }
 
         this.$axios
           .$post(`/api/v1/practice/jobs`, this.form)

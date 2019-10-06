@@ -88,7 +88,7 @@ export default {
       loading: false,
       search: "",
       total: 0,
-      loadMore: true,
+      hasMore: true,
       items: [],
       toggled: false,
       activeIndex: 0
@@ -109,9 +109,11 @@ export default {
       });
     },
     // for qualification
-    professionCategoryId(value) {
-      this.items = [];
-      this.getListsCount(this.search);
+    professionCategoryId(newValue, oldValue) {
+      if (newValue && oldValue) {
+        this.items = [];
+        this.getListsCount(this.search);
+      }
     },
     search(value) {
       this.items = [];
@@ -125,12 +127,13 @@ export default {
           this.$refs.filterSearchOptions.scrollTop >=
         this.$refs.filterSearchOptions.scrollHeight - 1
       ) {
-        if (this.loadMore === true && !this.loading) {
+        if (this.hasMore === true && !this.loading) {
           this.getLists(this.items.length, this.search);
         }
       }
     },
     getListsCount(search) {
+      this.items = [];
       let params = {};
       if (this.name === "qualification_id") {
         params = {
@@ -145,8 +148,10 @@ export default {
       });
     },
     getLists(offset, search) {
+      if (this.name === "qualification_id") {
+      }
       this.loading = true;
-      this.loadMore = true;
+      this.hasMore = true;
 
       let params = {};
       if (this.name === "qualification_id") {
@@ -159,7 +164,7 @@ export default {
       this.$axios.$get(`${this.url}`, { params }).then(res => {
         if (res.data.qualifications) {
           if (res.data.qualifications.length === 0) {
-            this.loadMore = false;
+            this.hasMore = false;
           } else {
             res.data.qualifications.forEach(item => {
               this.items.push({
@@ -168,14 +173,14 @@ export default {
               });
             });
             if (res.data.qualifications.length < 10) {
-              this.loadMore = false;
+              this.hasMore = false;
             }
           }
         }
 
         if (res.data.clinical_systems) {
           if (res.data.clinical_systems.length === 0) {
-            this.loadMore = false;
+            this.hasMore = false;
           } else {
             res.data.clinical_systems.forEach(item => {
               this.items.push({
@@ -184,14 +189,14 @@ export default {
               });
             });
             if (res.data.clinical_systems.length < 10) {
-              this.loadMore = false;
+              this.hasMore = false;
             }
           }
         }
 
         if (res.data.spoken_languages) {
           if (res.data.spoken_languages.length === 0) {
-            this.loadMore = false;
+            this.hasMore = false;
           } else {
             res.data.spoken_languages.forEach(item => {
               this.items.push({
@@ -200,7 +205,7 @@ export default {
               });
             });
             if (res.data.spoken_languages.length < 10) {
-              this.loadMore = false;
+              this.hasMore = false;
             }
           }
         }
@@ -211,6 +216,15 @@ export default {
       this.value.push(item);
       this.$refs.input.focus();
       this.$emit("add");
+      if (
+        this.$refs.filterSearchOptions.offsetHeight +
+          this.$refs.filterSearchOptions.scrollTop >=
+        this.$refs.filterSearchOptions.scrollHeight - 1
+      ) {
+        if (this.hasMore === true && !this.loading) {
+          this.getLists(this.items.length, this.search);
+        }
+      }
     },
     remove(index) {
       this.value.splice(index, 1);
@@ -258,7 +272,6 @@ export default {
       });
     }
   }
-  // && filterItem.label.includes(this.filterSearch)
 };
 </script>
 <style scoped>

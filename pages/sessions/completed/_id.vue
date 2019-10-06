@@ -11,16 +11,6 @@ export default {
   },
   async asyncData({ app, route, store, error }) {
     try {
-      if (
-        !app.$auth.user.practice_detail.role.permissions
-          .map(item => item.name)
-          .includes("Show Sessions Job")
-      ) {
-        error({
-          statusCode: 401,
-          message: "You're Not Authorized To View This Page"
-        });
-      }
       let response = await app.$axios.get(
         `/api/v1/practice/jobs/${route.params.id}`
       );
@@ -29,8 +19,12 @@ export default {
         job
       };
     } catch (err) {
-      if (err && err.response.status === 404) {
-        return error({ status: 404, message: "This page could not be found" });
+      if (
+        err.response &&
+        (err.response.status === 401 || err.response.status === 404)
+      ) {
+        error(err.response.data);
+        return;
       }
       throw err;
     }

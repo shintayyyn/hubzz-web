@@ -92,7 +92,7 @@ export default {
   },
   mounted() {
     this.getInit();
-    this.$socket.on("practiceNotificationUpdateProfile", user => {
+    this.$socket.on("Practice Notification Update Profile", user => {
       if (
         user.practice_detail &&
         user.practice_detail.role &&
@@ -107,7 +107,7 @@ export default {
         this.$store.commit("auth/SET_PERMISSIONS", []);
       }
     });
-    this.$socket.on("practiceNotificationDeleteProfile", () => {
+    this.$socket.on("Practice Notification Delete Profile", () => {
       this.confirmation_modal = true;
     });
   },
@@ -217,7 +217,7 @@ export default {
       }
     },
     isDisabled(routeName) {
-      return this.$route.path === routeName ? "" : "click";
+      return this.$route.path.includes(routeName) ? "" : "click";
     },
     close() {
       this.$store.commit("TOGGLE_SIDEBAR", false);
