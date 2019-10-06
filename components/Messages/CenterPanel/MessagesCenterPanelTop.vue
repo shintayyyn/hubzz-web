@@ -12,9 +12,9 @@
       <div class="font-bold md:text-lg">
         <span>{{ userDetail.name }}</span>
       </div>
-      <div class="flex flex-col md:flex-row md:items-center text-xs md:text-sm text-gray-600">
+      <div class="flex items-center text-xs md:text-sm text-gray-600">
         <span class>{{ userDetail.profession }}</span>
-        <span v-if="$route.name === 'messages-slug'" class="hidden md:block mx-1 text-lg">|</span>
+        <span v-if="$route.name === 'messages-slug'" class="mx-1 text-lg">|</span>
         <div class="flex items-center">
           <span
             v-if="$route.name === 'messages-slug'"

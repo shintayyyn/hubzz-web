@@ -4,7 +4,7 @@
     <template
       v-if="['text','time','email','password', 'select', 'textarea', 'multi-checkbox'].includes(type)"
     >
-      <div class="flex flex-col py-2 mb-6">
+      <div class="flex flex-col py-0 md:py-2 mb-2 md:mb-6">
         <div class="relative flex flex-row flex-no-wrap justify-between">
           <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
           <div class="flex">

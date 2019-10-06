@@ -5,7 +5,7 @@
   >
     <div class="flex flex-row flex-wrap justify-between" style="z-index: 600">
       <div class="w-1/3">
-        <button class="burger cursor-pointer py-2 focus:outline-none" @click="toggle">
+        <button class="burger cursor-pointer py-2 focus:outline-none h-full" @click="toggle">
           <div class="my-2 bg-yellow-500"></div>
           <div class="my-2 bg-yellow-500"></div>
         </button>
@@ -29,7 +29,7 @@
                 v-if="authPermissions.includes('Create Sessions Job')"
                 :label="'Create Job'"
                 @click="$store.commit('calendar/CREATE_JOB_MODAL', true)"
-                class="hidden md:block"
+                class="hidden md:block whitespace-no-wrap"
                 :inStyle="'padding-top: 0; padding-bottom: 0;'"
               />
               <button

@@ -19,13 +19,22 @@ Vue.mixin({
         this.formError.splice(index, 1)
       }
       if (!(inputField instanceof Array) && !inputField) {
-        this.formError.push({ field: fieldName, message: 'Required' })
+        this.formError.push({
+          field: fieldName,
+          message: 'Required'
+        })
       }
       if (inputField instanceof Array && !inputField.length) {
-        this.formError.push({ field: fieldName, message: 'Required' })
+        this.formError.push({
+          field: fieldName,
+          message: 'Required'
+        })
       }
       if (typeof inputField === 'boolean' && inputField === false) {
-        this.formError.push({ field: fieldName, message: 'Required' })
+        this.formError.push({
+          field: fieldName,
+          message: 'Required'
+        })
       }
     },
     Validate(form, lists) {
@@ -35,36 +44,51 @@ Vue.mixin({
         if (Array.isArray(value)) {
           if (value.length === 0) {
             if (!lists) {
-              this.formError.push(
-                { field: key, message: `${key} Is Required` }
-              )
+              this.formError.push({
+                field: key,
+                message: `${key} Is Required`
+              })
             }
             if (lists && !lists.includes(key)) {
-              this.formError.push(
-                { field: key, message: `${key} Is Required` }
-              )
+              this.formError.push({
+                field: key,
+                message: `${key} Is Required`
+              })
             }
           }
         } else {
           if (!value) {
             if (!lists) {
-              this.formError.push(
-                { field: key, message: `${key} Is Required` }
-              )
+              this.formError.push({
+                field: key,
+                message: `${key} Is Required`
+              })
             }
             if (lists && !lists.includes(key)) {
-              this.formError.push(
-                { field: key, message: `${key} Is required` }
-              )
+              this.formError.push({
+                field: key,
+                message: `${key} Is required`
+              })
             }
           }
+        }
+      }
+    },
+    ValidateSamePassword(password, password_confirmation) {
+      if (password && password_confirmation && password !== password_confirmation) {
+        return {
+          field: 'password_confirmation',
+          message: 'The Password must be the same'
         }
       }
     },
     ValidateEmail(email) {
       let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
       if (email && !re.test(String(email).toLowerCase())) {
-        return { field: 'email', message: 'This is not a valid email' }
+        return {
+          field: 'email',
+          message: 'This is not a valid email'
+        }
       }
     },
     CheckPermissions(permissions) {

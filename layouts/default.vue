@@ -6,7 +6,7 @@
     <div class="content">
       <AppNotification />
       <nuxt
-        :class="$route.name === 'messages-slug' || $route.name === 'messages-new' ? 'md:mt-20' : 'mt-20'"
+        :class="$route.name === 'messages-slug' || $route.name === 'messages-new' ? 'md:mt-20' : 'mt-16'"
       />
     </div>
   </section>

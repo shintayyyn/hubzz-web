@@ -65,6 +65,7 @@ export default {
           status: "danger",
           text: ["Invalid file format"]
         });
+        return
       }
       let file = e.target.files[0];
       const formData = new FormData();
