@@ -1,6 +1,28 @@
 <template>
   <div class="pagination flex flex-col">
-    <div class="flex justify-center">
+    <div class="flex flex-wrap justify-between">
+      <div class="w-full md:w-1/2">
+        <div>{{pageInfo(perPage, currentPage, total)}}</div>
+      </div>
+      <div class="w-full md:w-1/2 md:text-right">
+        <div>
+          List
+          <select
+            v-model="selectedLimit"
+            class="bg-white border-b-2 focus:border-yellow-400 focus:outline-none"
+          >
+            <option :value="5" v-if="total > 5">5</option>
+            <option :value="10" v-if="total > 10">10</option>
+            <option :value="15" v-if="total > 15">15</option>
+            <option :value="20" v-if="total > 20">20</option>
+            <option :value="total">All</option>
+          </select>
+          items
+        </div>
+      </div>
+    </div>
+
+    <div class="flex justify-center" v-if="totalPages > 0">
       <div class="pagination-item m-1 hidden md:block">
         <button
           type="button"
@@ -200,7 +222,11 @@
   </div>
 </template>
 <script>
+import AppInput from "@/components/Base/AppInput";
 export default {
+  components: {
+    AppInput
+  },
   props: {
     maxVisibleButtons: {
       type: Number,
@@ -215,10 +241,6 @@ export default {
       type: Number,
       required: true
     },
-    // perPage: {
-    //   type: Number,
-    //   required: true
-    // },
     currentPage: {
       type: Number,
       required: true
@@ -226,6 +248,10 @@ export default {
     loading: {
       type: Boolean,
       default: false
+    },
+    perPage: {
+      type: Number,
+      required: false
     }
   },
   computed: {
@@ -272,7 +298,30 @@ export default {
       return range;
     }
   },
+  mounted() {
+    this.selectedLimit = this.perPage;
+  },
+  watch: {
+    selectedLimit(newValue, oldValue) {
+      if ((newValue, oldValue)) {
+        this.$emit("limitchanged", newValue);
+      }
+    }
+  },
+  data() {
+    return {
+      selectedLimit: null
+    };
+  },
   methods: {
+    pageInfo(perPage, currentPage, total) {
+      return ` Showing ${perPage * currentPage + 1 - perPage} to
+      ${
+        Math.ceil(total / perPage) === currentPage
+          ? total
+          : currentPage * perPage
+      } of ${total} items`;
+    },
     onClickFirstPage() {
       this.$emit("pagechanged", 1);
     },
@@ -295,14 +344,6 @@ export default {
 };
 </script>
 <style scoped>
-.pagination {
-  /* list-style-type: none; */
-  /* padding: 0; */
-}
-.pagination-item {
-  /* display: inline-block; */
-  /* margin-right: 8px; */
-}
 .active {
   background-color: #4aae9b;
   color: #ffffff;

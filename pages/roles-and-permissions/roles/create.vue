@@ -73,7 +73,17 @@ export default {
       formError: []
     };
   },
-  created() {
+  async asyncData({ app, error }) {
+    try {
+    } catch (err) {
+      if (err.response && err.response.status === 401) {
+        error(err.response.data);
+        return;
+      }
+      throw err;
+    }
+  },
+  mounted() {
     this.getPermissions();
   },
   methods: {

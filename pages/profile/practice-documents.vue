@@ -65,17 +65,12 @@ export default {
   },
   async asyncData({ app, error }) {
     try {
-      if (
-        !app.$auth.user.practice_detail.role.permissions
-          .map(item => item.name)
-          .includes("View Profile Practice Document")
-      ) {
-        error({
-          statusCode: 401,
-          message: "You're Not Authorized To View This Page"
-        });
-      }
+      return;
     } catch (err) {
+      if (err.response && err.response.status === 401) {
+        error(err.response.data);
+        return;
+      }
       throw err;
     }
   },

@@ -65,7 +65,7 @@
           'profile-branches-surgeries-edit'].includes($route.name)"
       ></div>
     </transition>
-    <nuxt-child />
+    <nuxt-child @addSurgery="surgeries.push($event)" @updateSurgery="updateSurgery" />
     <RemoveSurgeryConfirmationModal
       :label="'Are you sure you want to delete this surgery?'"
       :confirmLabel="'Yes'"

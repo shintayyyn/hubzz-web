@@ -47,32 +47,20 @@
           </div>
         </div>
         <div class="m-2 flex flex-wrap justify-start">
-          <AppButton :label="'Delete'" @click="remove_modal = true" />
-          <div class="mx-1"></div>
           <AppButton :label="'Save'" @click="save" />
         </div>
       </div>
     </div>
-    <AppConfirmationModal
-      :label="'Proceed to delete this Role?'"
-      :confirmLabel="'Yes'"
-      :cancelLabel="'Cancel'"
-      :modal="remove_modal"
-      @confirm="remove"
-      @cancel="remove_modal = false"
-    />
   </section>
 </template>
 <script>
 import AppInput from "@/components/Base/AppInput";
 import AppButton from "@/components/Base/AppButton";
-import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
 export default {
   props: ["role"],
   components: {
     AppInput,
-    AppButton,
-    AppConfirmationModal
+    AppButton
   },
   data() {
     return {
@@ -170,22 +158,8 @@ export default {
               text: [`${res.message}`]
             });
             this.$emit("updateRole", res.data.role);
-            // this.$emit("close");
           });
       }
-    },
-    remove() {
-      this.$axios
-        .$delete(`/api/v1/practice/practice-roles/${this.$route.params.id}`)
-        .then(res => {
-          this.$emit("removeRole", this.$route.params.id);
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "success",
-            text: [`${res.message}`]
-          });
-          this.$emit("close");
-        });
     }
   }
 };

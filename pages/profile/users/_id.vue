@@ -21,7 +21,7 @@
         </div>
       </div>
       <div class="mt-5">
-        <nuxt-child :user="user" />
+        <nuxt-child :user="user" @updateUser="$emit('updateUser', $event)" />
       </div>
     </div>
   </div>
@@ -36,22 +36,14 @@ export default {
       const user =
         response.data && response.data.user ? response.data.user : null;
 
-      if (
-        !app.$auth.user.practice_detail.role.permissions
-          .map(item => item.name)
-          .includes("Show Profile Users")
-      ) {
-        error({
-          statusCode: 401,
-          message: "You're Not Authorized To View This Page"
-        });
-      }
-
-      console.log();
       return {
         user
       };
     } catch (err) {
+      if (err.response && err.response.status === 401) {
+        error(err.response.data);
+        return;
+      }
       throw err;
     }
   }

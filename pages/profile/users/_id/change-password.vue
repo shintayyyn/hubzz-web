@@ -84,6 +84,7 @@ export default {
             this.form
           )
           .then(res => {
+            console.log(res);
             this.loading = false;
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
@@ -95,9 +96,9 @@ export default {
             this.loading = false;
             this.formError = err.response.data.error_messages;
           });
-        this.form.old_password = "";
-        this.form.new_password = "";
-        this.form.new_password_confirmation = "";
+        // this.form.old_password = "";
+        // this.form.new_password = "";
+        // this.form.new_password_confirmation = "";
       }
     }
   }

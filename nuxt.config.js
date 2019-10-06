@@ -108,10 +108,10 @@ export default {
 
   auth: {
     localStorage: {
-      prefix: 'hubzz.auth.',
+      prefix: `${process.env.PORT}.hubzz.auth.`,
     },
     cookie: {
-      prefix: 'hubzz.auth.',
+      prefix: `${process.env.PORT}.hubzz.auth.`,
       options: {
         path: '/',
         expires: 1825,

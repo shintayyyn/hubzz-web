@@ -21,8 +21,13 @@
             v-for="(item, index) in lists"
             :key="index"
           >
-            <input :value="item.value" type="checkbox" @input="inputMultiCheck" />
-            <!-- :checked="value.includes(item.value)" -->
+            <input
+              :value="item.value"
+              type="checkbox"
+              @input="inputMultiCheck"
+              :checked="Array.isArray(value) ? value.includes(item.value) : value"
+            />
+
             <div class="mx-1"></div>
             <label :for="item.name" class="text-xs sm:text-sm">{{item.label}}</label>
           </div>
@@ -52,6 +57,7 @@
                 :style="inStyle"
                 @change="$emit('change', $event.target.value)"
                 @blur="$emit('blur')"
+                :disabled="disabled"
               >
                 <option value disabled selected v-if="placeholder">{{placeholder}}</option>
                 <option

@@ -590,6 +590,7 @@ export default {
       this.form.post_code = postal_code ? postal_code.long_name : "";
     },
     async save() {
+      console.log(this.form);
       try {
         this.formError = [];
         let notRequired = [

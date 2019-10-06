@@ -4,7 +4,6 @@
       :role="role"
       @close="$router.push(`/roles-and-permissions/roles`)"
       @updateRole="$emit('updateRole', $event)"
-      @removeRole="$emit('removeRole', $event)"
     />
   </div>
 </template>
@@ -15,16 +14,27 @@ export default {
     PracticeRoleDetail
   },
   async asyncData({ app, params, error }) {
-    const response = await app.$axios.$get(
-      `/api/v1/practice/practice-roles/${params.id}`
-    );
+    try {
+      const response = await app.$axios.$get(
+        `/api/v1/practice/practice-roles/${params.id}`
+      );
 
-    const role =
-      response.data && response.data.role ? response.data.role : null;
+      const role =
+        response.data && response.data.role ? response.data.role : null;
 
-    return {
-      role
-    };
+      return {
+        role
+      };
+    } catch (err) {
+      if (
+        err.response &&
+        (err.response.status === 401 || err.response.status === 404)
+      ) {
+        error(err.response.data);
+        return;
+      }
+      throw err;
+    }
   }
 };
 </script>

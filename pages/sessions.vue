@@ -133,15 +133,12 @@ export default {
     }
   },
   async asyncData({ app, error }) {
-    if (
-      !app.$auth.user.practice_detail.role.permissions
-        .map(item => item.name)
-        .includes("View Sessions Job")
-    ) {
-      error({
-        statusCode: 401,
-        message: "You're Not Authorized To View This Page"
-      });
+    try {
+    } catch (err) {
+      if (err.response && err.response.status === 401) {
+        error(err.response.data);
+        return;
+      }
     }
   },
   watch: {

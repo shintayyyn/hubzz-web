@@ -1,60 +1,58 @@
 <template>
-  <section class="relative list-section">
-    <button
-      class="rounded-lg bg-yellow-500 p-2 cursor-pointer font-semibold text-xs sm:text-sm focus:outline-none"
-      @click="$router.push('/profile/users/create')"
-      v-if="authPermissions.includes('Create Profile Users')"
-    >Add User</button>
-    <AppLoading :loading="loading" :message="'Loading'" />
-    <div
-      class="mt-10 w-full text-center"
-      v-if="!loading && users.length === 0"
-    >You do not have any other User on this Practice</div>
-    <div v-if="users.length > 0" class="overflow-x-auto overflow-y-hidden">
-      <table>
-        <thead>
-          <tr>
-            <th class="text-xs sm:text-sm text-left px-1">Name</th>
-            <th class="text-xs sm:text-sm text-left px-1">Email</th>
-            <th class="text-xs sm:text-sm text-left px-1">Role</th>
-            <th class="text-xs sm:text-sm text-left px-1">Created at</th>
-            <th class="w-10"></th>
-          </tr>
-        </thead>
-        <tbody>
-          <template v-for="(item, index) in users">
-            <tr
-              @click="show(item)"
-              class="__job-card rounded-lg shadow-md cursor-pointer text-xs text-left"
-              :key="item.id"
-            >
-              <td>{{item.personal_detail.first_name}} {{item.personal_detail.last_name}}</td>
-              <td>{{item.email}}</td>
-              <td>{{item.practice_detail.role ? item.practice_detail.role.name : `(none)`}}</td>
-              <td>{{item.created_at | localDate}}</td>
-              <td class="w-10 text-xs sm:text-sm px-1 rounded-r-lg text-center">
-                <div
-                  v-if="$auth.user.id != item.id && item.practice_detail.role.id != 1 && authPermissions.includes('Delete Profile Users')"
-                  @click.stop.prevent="removeModal(item)"
-                  class="rounded-lg bg-red-500 p-2 text-white cursor-pointer font-semibold text-xs sm:text-sm"
-                >Remove</div>
-              </td>
-            </tr>
-            <tr :key="`${item.id}-${index}`">
-              <td></td>
-            </tr>
-          </template>
-        </tbody>
-      </table>
+  <section class="relative">
+    <div class="flex overflow-x-auto whitespace-no-wrap">
+      <button
+        class="rounded-lg bg-yellow-500 p-2 cursor-pointer font-semibold text-xs sm:text-sm focus:outline-none"
+        @click="$router.push('/profile/users/create')"
+        v-if="authPermissions.includes('Create Profile Users')"
+      >Add User</button>
     </div>
-    <div class="absolute bottom-0 w-full" v-if="users.length > 0 && totalPages > 1">
-      <AppPagination
-        :total="total"
-        :totalPages="totalPages"
-        :currentPage="current_page"
-        @pagechanged="pagechanged"
+    <div class="flex justify-start items-center">
+      <AppInput
+        class="px-1"
+        v-model="params.search"
+        :type="'text'"
+        :name="'search'"
+        :label="'Email'"
+        :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem'"
+      />
+      <AppInput
+        class="px-1"
+        v-model="params.practice_role"
+        :type="'select'"
+        :name="'practice_role'"
+        :label="'Practice Role'"
+        :items="filterPracticeRoles"
+        :disabled="loading"
+        :inStyle="'background-color:white'"
+      />
+      <AppInput
+        class="px-1"
+        v-model="params.role_id"
+        :type="'select'"
+        :name="'role_id'"
+        :label="'User Role'"
+        :items="filterUserRoles"
+        :disabled="loading"
+        :inStyle="'background-color:white'"
       />
     </div>
+    <AppTable
+      v-if="users.length > 0"
+      :total="totalUsers"
+      :items="users"
+      :loading="loading"
+      :currentPage="current_page"
+      :perPage="params.limit"
+      :columns="columns"
+      :orderBy="params.order_by"
+      @show="show"
+      @remove="remove"
+      @pagechanged="pagechanged"
+      @limitchanged="limitchanged"
+      @sorted="sorted"
+    />
+    <div v-else class="flex justify-center">You do not have any other User on this Practice</div>
     <transition name="fade" mode="out-in">
       <div
         class="shield"
@@ -62,140 +60,261 @@
         @click="$router.push('/profile/users')"
       ></div>
     </transition>
-    <nuxt-child @addedUser="addUser" />
-    <AppConfirmationModal
-      :label="'Are you sure you want to delete this User?'"
-      :confirmLabel="'Yes'"
-      :cancelLabel="'Cancel'"
-      :modal="modal"
-      @confirm="remove"
-      @cancel="modal = false"
-    />
+    <nuxt-child @addedUser="addUser" @updateUser="updateUser" />
   </section>
 </template>
 <script>
-import AppButton from "@/components/Base/AppButton";
-import AddSurgeryModal from "@/components/Profile/AddSurgeryModal";
-import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
-import AppLoading from "@/components/Base/AppLoading";
-import AppPagination from "@/components/Base/AppPagination";
+import AppTable from "@/components/Base/AppTable";
+import AppInput from "@/components/Base/AppInput";
 export default {
   transition: {
     name: "fade",
     mode: "out-in"
   },
   components: {
-    AppButton,
-    AddSurgeryModal,
-    AppLoading,
-    AppPagination,
-    AppConfirmationModal
+    AppTable,
+    AppInput
   },
 
   data() {
     return {
+      totalUsers: 0,
       users: [],
-      total: 0,
-      current_page: 1,
       loading: false,
-      //
-      selectedUserId: null,
-      modal: false,
-      loading: false
+      current_page: 1,
+      // app table filter
+      filterUserRoles: [],
+      filterPracticeRoles: [
+        {
+          label: "All",
+          value: null
+        },
+        {
+          label: "Practice Staff",
+          value: "Practice Staff"
+        },
+        {
+          label: "Practice Manager",
+          value: "Practice Manager"
+        },
+        {
+          label: "Partner",
+          value: "Partner"
+        }
+      ],
+      // app table params
+      params: {
+        offset: 0,
+        limit: 5,
+        order_by: ["created_at:desc"],
+        search: "",
+        role_id: null,
+        practice_role: null
+      },
+      // app table column
+      columns: [
+        {
+          name: "Name",
+          dataIndex: "personal_detail.first_name",
+          class: "text-left",
+          sortable: true
+        },
+        {
+          name: "Email",
+          dataIndex: "email",
+          class: "text-center",
+          sortable: true
+        },
+        {
+          name: "Practice Role",
+          dataIndex: "practice_detail.practice_role",
+          class: "text-center"
+        },
+        {
+          name: "User Role",
+          dataIndex: "practice_detail.role.name",
+          class: "text-center"
+        },
+        {
+          name: "Created At",
+          dataIndex: "created_at",
+          class: "text-center localDate",
+          sortable: true
+        }
+      ]
     };
   },
   computed: {
-    offset() {
-      return this.perPage * (this.current_page - 1);
-    },
-    perPage() {
-      return 5;
-    },
-    totalPages() {
-      return Math.ceil(this.total / this.perPage);
-    },
     authPermissions() {
       return this.$store.getters["auth/permissions"];
     }
   },
+  watch: {
+    "params.search"(value) {
+      this.current_page = 1;
+      this.params.offset = 0;
+      this.params.search = value;
+      this.getUsersCount(this.params);
+    },
+    "params.role_id"(value) {
+      this.current_page = 1;
+      this.params.offset = 0;
+      this.params.role_id = value;
+      this.getUsersCount(this.params);
+    },
+    "params.practice_role"(value) {
+      this.current_page = 1;
+      this.params.offset = 0;
+      this.params.practice_role = value;
+      this.getUsersCount(this.params);
+    }
+  },
+  mounted() {
+    this.$socket.on("Practice Notification Create User", user => {
+      this.getUsersCount(this.params);
+    });
+    this.$socket.on("Practice Notification Delete User", userId => {
+      this.getUsersCount(this.params);
+    });
+    this.$socket.on("Practice Notification Update User", user => {
+      let index = this.users.findIndex(item => item.id == user.id);
+      if (index >= 0) {
+        this.users.splice(index, 1, user);
+      }
+    });
+    // get roles for filter
+    this.$axios.$get(`/api/v1/practice/practice-roles`).then(res => {
+      this.filterUserRoles.push({ label: "All", value: null });
+      res.data.roles.forEach(role => {
+        this.filterUserRoles.push({ label: role.name, value: role.id });
+      });
+    });
+  },
   async asyncData({ app, store, error }) {
     try {
-      if (
-        !app.$auth.user.practice_detail.role.permissions
-          .map(item => item.name)
-          .includes("View Profile Users")
-      ) {
-        error({
-          statusCode: 401,
-          message: "You're Not Authorized To View This Page"
-        });
-      }
       const responseCount = await app.$axios.$get(
         `/api/v1/practice/practice-users/count`
       );
-      const total =
+      const totalUsers =
         responseCount.data && responseCount.data.count
           ? responseCount.data.count
           : 0;
 
       const responseUsers = await app.$axios.$get(
-        `/api/v1/practice/practice-users?limit=5`
+        `/api/v1/practice/practice-users?limit=5&order_by=created_at:desc`
       );
-      let users =
-        responseUsers.data && responseUsers.data.users
-          ? responseUsers.data.users
-          : [];
+
+      let users = [];
+
+      if (responseUsers.data && responseUsers.data.users) {
+        responseUsers.data.users.forEach(user => {
+          if (
+            user.practice_detail.role &&
+            user.practice_detail.role.name == "Practice User Admin"
+          ) {
+            users.push(user);
+          } else {
+            users.push({ ...user, removable: true });
+          }
+        });
+      }
 
       return {
-        users,
-        total
+        totalUsers,
+        users
       };
     } catch (err) {
+      if (err.response && err.response.status === 401) {
+        error(err.response.data);
+        return;
+      }
       throw err;
     }
   },
   methods: {
-    getUsers() {
-      let params = {
-        offset: this.offset,
-        limit: this.perPage
-      };
+    getUsersCount(params) {
+      this.$axios
+        .$get(`/api/v1/practice/practice-users/count`, { params })
+        .then(res => {
+          this.totalUsers = res.data.count;
+          this.getUsers(this.params);
+        });
+    },
+    getUsers(params) {
       this.loading = true;
       this.$axios
         .$get(`/api/v1/practice/practice-users`, { params })
         .then(res => {
-          this.users = res.data.users;
+          this.loading = false;
+          this.users = [];
+          res.data.users.forEach(user => {
+            if (user.practice_detail.role_id == 1) {
+              this.users.push(user);
+            } else {
+              this.users.push({ ...user, removable: true });
+            }
+          });
+        })
+        .catch(err => {
+          console.log(err);
           this.loading = false;
         });
     },
+    sorted(order_by) {
+      this.current_page = 1;
+      this.params.offset = 0;
+      this.params.order_by = order_by;
+      this.getUsers(this.params);
+    },
+    pagechanged(page) {
+      this.current_page = page;
+      this.params.offset = this.params.limit * (page - 1);
+      this.getUsers(this.params);
+    },
+    limitchanged(limit) {
+      this.current_page = 1;
+      this.params.offset = 0;
+      this.params.limit = limit;
+      this.getUsers(this.params);
+    },
     addUser(user) {
-      this.users.push(user);
+      // this.users.push(user);
     },
-    removeModal(item) {
-      if (
-        this.$auth.user.id != item.id &&
-        item.practice_detail.role.id != 1 &&
-        this.authPermissions.includes("Delete Profile Users")
-      ) {
-        this.selectedUserId = item.id;
-        this.modal = true;
-      }
+    updateUser(user) {
+      // let index = this.users.findIndex(item => item.id == user.id);
+      // if (index >= 0) {
+      //   this.users.splice(index, 1, user);
+      // }
     },
-    remove() {
-      alert("User Remove");
+    remove(id) {
+      this.loading = true;
+      this.$axios
+        .$delete(`/api/v1/practice/practice-users/${id}`, this.form)
+        .then(res => {
+          this.loading = false;
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: [`${res.message}`]
+          });
+          let index = this.users.findIndex(item => item.id == id);
+          if (index >= 0) {
+            this.users.splice(index, 1);
+          }
+        })
+        .catch(err => {
+          this.loading = false;
+          this.modal = false;
+          this.formError = err.response.data.error_messages;
+        });
     },
     show(item) {
       if (
-        this.$auth.user.id != item.id &&
-        item.practice_detail.role.id != 1 &&
+        (!item.practice_detail.role || item.practice_detail.role.id != 1) &&
         this.authPermissions.includes("Show Profile Users")
       ) {
         this.$router.push(`/profile/users/${item.id}`);
       }
-    },
-    pagechanged(e) {
-      this.current_page = e;
-      this.getUsers();
     }
   }
 };
@@ -203,10 +322,6 @@ export default {
 <style scoped>
 .shield {
   z-index: 509;
-}
-.list-section {
-  position: relative;
-  min-height: 800px;
 }
 </style>
 

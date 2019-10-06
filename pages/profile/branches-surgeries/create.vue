@@ -21,6 +21,7 @@
           :name="'search'"
           :placeholder="'Surgery Name, Surgery Code, or keywords'"
           @submit="search"
+          :error="formError.find(item => item.field === 'surgery_id')"
         />
         <AppButton :label="'Search'" @click="search" :inStyle="'padding:5px 14px;'" />
       </div>
@@ -94,17 +95,6 @@ export default {
   },
   async asyncData({ app, error }) {
     try {
-      if (
-        !app.$auth.user.practice_detail.role.permissions
-          .map(item => item.name)
-          .includes("Create Profile Surgeries")
-      ) {
-        error({
-          statusCode: 401,
-          message: "You're Not Authorized To View This Page"
-        });
-      }
-
       const response = await app.$axios.$get(
         `/api/v1/practice/me/practice-type`
       );
@@ -117,6 +107,10 @@ export default {
         type
       };
     } catch (err) {
+      if (err.response && err.response.status === 401) {
+        error(err.response.data);
+        return;
+      }
       throw err;
     }
   },
