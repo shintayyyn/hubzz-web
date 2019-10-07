@@ -27,10 +27,11 @@
                 <div class="w-full flex flex-row items-center">
                   <input
                     type="checkbox"
+                    :id="role.permissions"
                     :checked="isChecked(role.permissions)"
                     @change="checkAll(index, $event.target.checked)"
                   />
-                  <div class="font-bold text-xl pl-1">{{role.category}} Management</div>
+                  <label class="font-bold text-xl pl-1" :for="role.permissions">{{role.category}} Management</label>
                 </div>
                 <div class="flex flex-col px-1">
                   <div
@@ -38,8 +39,8 @@
                     v-for="permission in role.permissions"
                     :key="permission.id"
                   >
-                    <input v-model="permission.done" type="checkbox" :checked="permission.done" />
-                    <div class="text-sm pl-1">{{permission.name}}</div>
+                    <input v-model="permission.done" :id="permission.id" type="checkbox" :checked="permission.done" />
+                    <label class="text-sm pl-1" :for="permission.id">{{permission.name}}</label>
                   </div>
                 </div>
               </div>

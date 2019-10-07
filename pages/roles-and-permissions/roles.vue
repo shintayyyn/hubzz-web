@@ -37,6 +37,7 @@
       <div
         class="shield"
         v-if="['roles-and-permissions-roles-id', 'roles-and-permissions-roles-create'].includes($route.name)"
+        @click="$router.go(-1)"
       ></div>
     </transition>
     <nuxt-child @addRole="roles.push($event)" @updateRole="updateRole" />
