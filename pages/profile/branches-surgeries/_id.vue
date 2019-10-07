@@ -39,7 +39,7 @@
           <AppButton
             :label="'Save'"
             @click="save"
-            :inStyle="'padding:5px'"
+            :inStyle="'padding:5px 10px'"
             v-if="authPermissions.includes('Update Profile Surgeries')"
           />
         </div>

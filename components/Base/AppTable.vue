@@ -2,9 +2,9 @@
   <section class="relative">
     <AppLoading :loading="loading" spinner />
     <div class="overflow-x-auto">
-      <table>
+      <table class="border-separate mx-auto" style="border-spacing: 0 20px">
         <thead>
-          <tr>
+          <tr class="text-sm md:text-base">
             <th v-for="(column, index) in columns" :key="index">
               <span
                 v-if="column.sortable"
@@ -41,16 +41,12 @@
                 >{{dataCell(item, column) | localDate}}</span>
                 <span v-else>{{dataCell(item, column)}}</span>
               </td>
-              <td class="flex justify-center">
+              <td class="flex justify-center"  v-if="item.removable">
                 <div
-                  v-if="item.removable"
                   class="font-semibold text-xs sm:text-sm text-center"
                   @click.stop.prevent="toggle(item)"
                 >X</div>
               </td>
-            </tr>
-            <tr :key="`${item}-${item.id}`">
-              <td></td>
             </tr>
           </template>
         </tbody>
@@ -180,6 +176,8 @@ export default {
       ) {
         str = item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]];
       }
+      if (str === false) return str = 'No'
+      if (str === true) return str = 'Yes'
       return str === null ? `(none)` : str;
     },
     toggle(item) {
@@ -199,9 +197,8 @@ export default {
 </script>
 <style scoped>
 table thead th {
-  padding: 15px;
+  padding: 10px;
 }
-
 table tbody td {
   padding: 15px;
 }

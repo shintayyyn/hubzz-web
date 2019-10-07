@@ -4,7 +4,7 @@
     <template
       v-if="['text','time','email','password', 'select', 'textarea', 'multi-checkbox'].includes(type)"
     >
-      <div class="flex flex-col py-0 md:py-2 mb-2 md:mb-6">
+      <div class="flex flex-col py-2 mb-6">
         <div class="relative flex flex-row flex-no-wrap justify-between">
           <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
           <div class="flex">
@@ -23,13 +23,12 @@
           >
             <input
               :value="item.value"
+              :id="`${name}-${index}`"
               type="checkbox"
               @input="inputMultiCheck"
               :checked="Array.isArray(value) ? value.includes(item.value) : value"
             />
-
-            <div class="mx-1"></div>
-            <label :for="item.name" class="text-xs sm:text-sm">{{item.label}}</label>
+            <label :for="`${name}-${index}`" class="text-xs sm:text-sm">{{item.label}}</label>
           </div>
         </template>
         <template v-else>
@@ -98,11 +97,11 @@
         <div class="flex flex-row flex-no-wrap justify-start items-center">
           <input
             type="checkbox"
+            :id="name"
             @change="$emit('input', $event.target.checked)"
             :checked="value"
             :disabled="disabled"
           />
-          <div class="mx-1"></div>
           <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
         </div>
       </div>
