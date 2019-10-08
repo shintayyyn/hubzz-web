@@ -205,7 +205,6 @@
             :type="'select'"
             :name="'employment_type'"
             :label="'Are you...?'"
-            :placeholder="'Select...'"
             :items="employmentTypes"
           />
           <template v-if="form.employment_type === 'Limited company'">
@@ -409,7 +408,7 @@ export default {
         referee_2_phone_number: "",
         referee_2_email: "",
         // billing
-        employment_type: "",
+        employment_type: "Self-employed",
         company_registration_number: "",
         utr_number: "",
         paid_under_payroll: "No",
@@ -580,6 +579,21 @@ export default {
         this.form.referee_2_email = referee.email;
       }
     });
+    // bank account
+    if (this.user.locum_detail.bank_account) {
+      this.form.paid_under_payroll = "Yes";
+      this.form.account_name = this.user.locum_detail.bank_account.account_name;
+      this.form.account_number = this.user.locum_detail.bank_account.account_number;
+      this.form.sort_code = this.user.locum_detail.bank_account.sort_code;
+      this.form.bank_name = this.user.locum_detail.bank_account.bank_name;
+    }
+    // invoice detail
+    if (this.user.locum_detail.invoice_detail) {
+      this.form.employment_type = this.user.locum_detail.invoice_detail.employment_type;
+      this.form.utr_number = this.user.locum_detail.invoice_detail.utr_number;
+      this.form.company_registration_number = this.user.locum_detail.invoice_detail.company_registration_number;
+      this.form.ir35 = this.user.locum_detail.invoice_detail.ir35;
+    }
   },
   methods: {
     onSelect(value) {

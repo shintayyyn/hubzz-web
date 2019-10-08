@@ -170,7 +170,7 @@ export default {
         this.form.mobile_number = this.form.mobile_number.toString();
         this.$store.commit("sign-up/SET_ACCOUNT_DETAILS", this.form);
         this.$store.commit(
-          "signUp/SET_ACTIVE_COMPONENT",
+          "sign-up/SET_ACTIVE_COMPONENT",
           "LocumAddressDetails"
         );
       } else {

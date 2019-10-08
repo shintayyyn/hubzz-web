@@ -4,6 +4,37 @@
       <div class="mx-4 flex flex-col p-8 m-1 rounded-lg shadow-lg" style="flex: 0 1 600px;">
         <form class="w-full">
           <AppInput
+            v-model="form.type"
+            :type="'select'"
+            :name="'type'"
+            :label="'Type'"
+            :placeholder="'Select...'"
+            :error="this.formError.find(item => item.field === 'type')"
+            :items="types"
+          />
+
+          <AppFilterSearch
+            v-if="form.type === 'Spoke'"
+            v-model="form.parent_surgery_id"
+            :name="'parent_surgery_id'"
+            :label="'Parent Surgery'"
+            :placeholder="'Select...'"
+            :error="formError.find(item => item.field === 'parent_surgery_id')"
+            :url="'/api/v1/surgeries'"
+            :limitItem="1"
+          />
+
+          <AppFilterSearch
+            v-if="form.type === 'Hub'"
+            v-model="form.children_surgery_id"
+            :name="'children_surgery_id'"
+            :label="'Children Surgery'"
+            :placeholder="'Select...'"
+            :error="formError.find(item => item.field === 'children_surgery_id')"
+            :url="'/api/v1/surgeries'"
+          />
+
+          <AppInput
             v-model="form.title"
             :type="'text'"
             :name="'title'"
@@ -42,13 +73,15 @@
             :placeholder="'Select...'"
             :items="practice_roles"
           />
-          <AppFilterSearch
-            v-model="form.practice_list"
+          <AppInput
+            v-model="form.practice_type_id"
+            :type="'multi-checkbox'"
+            @checked="checkPracticeType($event)"
+            @unchecked="uncheckPracticeType($event)"
             :name="'practice_type_id'"
             :label="'What type of Practice(s) do you do?'"
-            :placeholder="'Select...'"
             :error="formError.find(item => item.field === 'practice_type_id')"
-            :items="practice_list"
+            :lists="practiceTypes"
           />
           <AppInput
             v-model="form.email"
@@ -98,16 +131,16 @@
 import AppInput from "@/components/Base/AppInput";
 import AppButton from "@/components/Base/AppButton";
 import AppFilterSearch from "@/components/Base/AppFilterSearch";
+const types = [
+  { value: "Hub", label: "Hub" },
+  { value: "Spoke", label: "Spoke" },
+  { value: "Stand Alone", label: "Stand Alone" }
+];
 const practice_roles = [
   { value: "Partner", label: "Partner" },
   { value: "Practice Manager", label: "Practice Manager" },
   { value: "Practice Staff", label: "Practice Staff" }
 ];
-// const practice_list = [
-//   { value: "Partner", label: "Partner" },
-//   { value: "Practice Manager", label: "Practice Manager" },
-//   { value: "Practice Staff", label: "Practice Staff" }
-// ];
 export default {
   components: {
     AppInput,
@@ -116,16 +149,18 @@ export default {
   },
   data() {
     return {
-      // pratice_types: [],
+      types,
       practice_roles,
       form: {
-        practice_list: [],
+        type: "",
+        parent_surgery_id: [],
+        children_surgery_id: [],
         title: "",
         first_name: "",
         last_name: "",
         suffix: "",
         practice_role: "",
-        // practice_type_id: [],
+        practice_type_id: [],
         email: "",
         password: "",
         password_confirmation: "",
@@ -146,8 +181,6 @@ export default {
     }
   },
   created() {
-    this.practice_list = this.practiceTypes;
-    // this.pratice_types = this.practiceTypes;
     this.practiceAccountDetails.practice_type_id.forEach(id => {
       this.form.practice_type_id.push(
         this.practiceTypes.find(item => item.value === id)
@@ -155,6 +188,12 @@ export default {
     });
   },
   watch: {
+    // "form.type"(newValue, oldValue) {
+    //   if (newValue && oldValue) {
+    //     this.form.parent_surgery_id = [];
+    //     this.form.children_surgery_id = [];
+    //   }
+    // },
     practiceAccountFormError(value) {
       if (value.length > 0) {
         value.forEach(item => {
@@ -164,15 +203,18 @@ export default {
     }
   },
   mounted() {
-    this.form.title = this.practiceAccountDetails.title;
-    this.form.first_name = this.practiceAccountDetails.first_name;
-    this.form.last_name = this.practiceAccountDetails.last_name;
-    this.form.suffix = this.practiceAccountDetails.suffix;
-    this.form.practice_role = this.practiceAccountDetails.practice_role;
-    this.form.practice_type_id = this.practiceAccountDetails.practice_type_id;
-    this.form.email = this.practiceAccountDetails.email;
-    this.form.password = this.practiceAccountDetails.password;
-    this.form.password_confirmation = this.practiceAccountDetails.password_confirmation;
+    // this.form.type = this.practiceAccountDetails.type;
+    // this.form.parent_surgery_id = this.practiceAccountDetails.parent_surgery_id;
+    // this.form.children_surgery_id = this.practiceAccountDetails.children_surgery_id;
+    // this.form.title = this.practiceAccountDetails.title;
+    // this.form.first_name = this.practiceAccountDetails.first_name;
+    // this.form.last_name = this.practiceAccountDetails.last_name;
+    // this.form.suffix = this.practiceAccountDetails.suffix;
+    // this.form.practice_role = this.practiceAccountDetails.practice_role;
+    // this.form.practice_type_id = this.practiceAccountDetails.practice_type_id;
+    // this.form.email = this.practiceAccountDetails.email;
+    // this.form.password = this.practiceAccountDetails.password;
+    // this.form.password_confirmation = this.practiceAccountDetails.password_confirmation;
 
     if (this.practiceAccountFormError.length > 0) {
       this.practiceAccountFormError.forEach(item => {
@@ -181,32 +223,51 @@ export default {
     }
   },
   methods: {
-    // ! ask arvi unknown column 'normalized email'
     signUp() {
-      try {
-        this.formError = [];
-        // this.Validate(this.form, ['title', 'suffix'])
-        // this.ValidateSamePassword(this.form.password, this.form.password_confirmation)
-        if (!this.formError.length) {
-          if (this.form.practice_list < 1) {
-            this.formError.push({
-              field: "practice_type_id",
-              message: "Practice Type is Required"
-            });
-          }
-          this.form.practice_type_id = this.form.practice_list
-            ? this.form.practice_list.map(item => item.value)
-            : [];
-          this.$store.commit("sign-up/SET_PRACTICE_ACCOUNT_DETAILS", this.form);
-          setTimeout(() => {
-            this.$store.dispatch("sign-up/registeredPractice");
-          }, 1000);
-          // response here
-          // this.$router.push('/sign-up/success')
-        }
-      } catch (e) {
-        console.log(e);
+      this.formError = [];
+      let notRequired = ["title", "suffix"];
+      if (this.form.type === "Hub") {
+        notRequired.push("parent_surgery_id");
       }
+      if (this.form.type === "Spoke") {
+        notRequired.push("children_surgery_id");
+      }
+      if (this.form.type === "Stand Alone") {
+        notRequired.push("parent_surgery_id");
+        notRequired.push("children_surgery_id");
+      }
+      this.Validate(this.form, notRequired);
+      if (!this.formError.length) {
+        let submitForm = {};
+        submitForm = {
+          ...this.form,
+          children_surgery_id: this.form.children_surgery_id.map(
+            item => item.value
+          ),
+          parent_surgery_id: this.form.parent_surgery_id.map(
+            item => item.value
+          )[0]
+        };
+        console.log(this.form);
+        console.log(submitForm);
+        this.$store.commit("sign-up/SET_PRACTICE_ACCOUNT_DETAILS", submitForm);
+        setTimeout(() => {
+          this.$store.dispatch("sign-up/registeredPractice");
+        }, 1000);
+      }
+    },
+    checkPracticeType(value) {
+      let selectedArr = [];
+      selectedArr.push(value);
+      this.form.practice_type_id = [
+        ...this.form.practice_type_id,
+        ...selectedArr
+      ];
+    },
+    uncheckPracticeType(value) {
+      this.form.practice_type_id = this.form.practice_type_id.filter(
+        id => id != value
+      );
     }
   }
 };

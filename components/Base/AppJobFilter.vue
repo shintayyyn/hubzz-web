@@ -5,7 +5,7 @@
         <AppInput
           v-model="params.shift_id"
           :type="'select'"
-          :name="'shift'"
+          :name="'shift_id'"
           :label="'Shift'"
           :placeholder="'Select...'"
           :items="shifts"

@@ -26,6 +26,7 @@
         </div>
         <div>
           <input
+            v-show="show"
             v-model="search"
             type="text"
             placeholder="Select.."
@@ -38,7 +39,7 @@
         </div>
       </div>
       <!-- option -->
-      <div class="relative flex flex-col w-full z-10">
+      <div class="relative flex flex-col w-full z-10" v-show="show">
         <div
           ref="filterSearchOptions"
           class="absolute w-full option-list flex flex-col bg-white shadow-md overflow-y-auto"
@@ -71,13 +72,14 @@ export default {
     AppLoading
   },
   props: {
-    value: [Array, String],
+    value: [Array, String, Number],
     name: String,
     label: String,
     placeholder: String,
     error: Object,
     info: String,
     url: String,
+    limitItem: Number,
     // for qualification
     professionCategoryId: String,
     // for spoken-langauge
@@ -148,8 +150,6 @@ export default {
       });
     },
     getLists(offset, search) {
-      if (this.name === "qualification_id") {
-      }
       this.loading = true;
       this.hasMore = true;
 
@@ -209,10 +209,29 @@ export default {
             }
           }
         }
+
+        if (res.data.surgeries) {
+          if (res.data.surgeries.length === 0) {
+            this.hasMore = false;
+          } else {
+            res.data.surgeries.forEach(item => {
+              this.items.push({
+                label: item.name,
+                value: item.id
+              });
+            });
+            if (res.data.surgeries.length < 10) {
+              this.hasMore = false;
+            }
+          }
+        }
         this.loading = false;
       });
     },
     add(item) {
+      if (this.limitItem && this.limitItem == this.value.length) {
+        return;
+      }
       this.value.push(item);
       this.$refs.input.focus();
       this.$emit("add");
@@ -263,6 +282,12 @@ export default {
     }
   },
   computed: {
+    show() {
+      if (!this.limitItem || this.limitItem !== this.value.length) {
+        return true;
+      }
+      return false;
+    },
     filteredItems() {
       return this.items.filter(filterItem => {
         const index = this.value.findIndex(item => {

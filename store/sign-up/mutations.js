@@ -8,15 +8,19 @@ export default {
         state.search_results = payload.search_results
     },
     SET_PRACTICE_ACCOUNT_DETAILS(state, payload) {
-        (state.practice_account_details.title = payload.title),
-            (state.practice_account_details.first_name = payload.first_name),
-            (state.practice_account_details.last_name = payload.last_name),
-            (state.practice_account_details.suffix = payload.suffix),
-            (state.practice_account_details.practice_role = payload.practice_role),
-            (state.practice_account_details.practice_type_id = payload.practice_type_id),
-            (state.practice_account_details.email = payload.email),
-            (state.practice_account_details.password = payload.password),
-            (state.practice_account_details.password_confirmation = payload.password_confirmation)
+        state.practice_account_details.type = payload.type
+        state.practice_account_details.surgery_id = payload.surgery_id
+        state.practice_account_details.parent_surgery_id = payload.parent_surgery_id
+        state.practice_account_details.children_surgery_id = payload.children_surgery_id
+        state.practice_account_details.email = payload.email
+        state.practice_account_details.password = payload.password
+        state.practice_account_details.password_confirmation = payload.password_confirmation
+        state.practice_account_details.title = payload.title
+        state.practice_account_details.first_name = payload.first_name
+        state.practice_account_details.last_name = payload.last_name
+        state.practice_account_details.suffix = payload.suffix
+        state.practice_account_details.practice_role = payload.practice_role
+        state.practice_account_details.practice_type_id = payload.practice_type_id
     },
     CLEAR_FORM_PRACTICE_DETAILS(state) {
         state.practice_details.surgery_id = ''

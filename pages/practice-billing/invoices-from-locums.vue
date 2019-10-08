@@ -2,9 +2,9 @@
   <div>
     <transition name="fade" mode="out-in">
       <div
-        v-if="$route.path === '/locum-billing/invoices/create' 
-        || paymentModal || $route.name === 'locum-billing-invoices-id' 
-        || $route.name === 'locum-billing-invoices-id-edit'"
+        v-if="$route.path === '/practice-billing/invoices-from-locums/create' 
+        || paymentModal || $route.name === 'practice-billing-invoices-from-locums-id' 
+        || $route.name === 'practice-billing-invoices-from-locums-id-edit'"
         class="shield"
       ></div>
     </transition>
@@ -40,24 +40,28 @@
                 </tr>
               </template>
               <template v-else v-for="(invoice, index) in getPracticeInvoices">
-                <tr :key="invoice.id" class="__job-card shadow-md cursor-pointer text-xs text-left">
-                  <td @click="show(invoice)">{{invoice.practice}}</td>
-                  <td @click="show(invoice)">{{invoice.issued_at | localDate}}</td>
-                  <td @click="show(invoice)">{{invoice.locum}}</td>
-                  <td @click="show(invoice)">{{invoice.invoice_number}}</td>
-                  <td @click="show(invoice)">
-                    <div v-for="(item, index) in invoice.job_numbers" :key="index">{{item}}</div>
-                    <!-- <div
+                <tr
+                  @click="show(invoice)"
+                  :key="invoice.id"
+                  class="__job-card shadow-md cursor-pointer text-xs text-left"
+                >
+                  <td>{{invoice.surgery_name}}</td>
+                  <td>{{invoice.issued_at | localDate}}</td>
+                  <td>{{invoice.locum_detail.user.personal_detail.name}}</td>
+                  <td>{{invoice.invoice_number}}</td>
+                  <td>
+                    <!-- <div v-for="(item, index) in invoice.items" :key="index">{{item}}</div> -->
+                    <div
                       v-for="item in invoice.items.filter(item => item.type === 'Job Part' && item.job_part)"
                       :key="item.id"
-                    >{{item.job_part.job_part_number}}</div>-->
+                    >{{item.job_part.job_part_number}}</div>
                   </td>
-                  <td @click="show(invoice)">£ {{invoice.total_amount}}</td>
-                  <td @click="show(invoice)">£ {{invoice.status}}</td>
+                  <td>£ {{invoice.total_amount}}</td>
+                  <td>{{invoice.status}}</td>
                   <!-- <td
                     @click="show(invoice)"
                   >{{invoice.paid_at ? 'Paid' : invoice.issued_at ? 'Issued' : ''}}</td>-->
-                  <td @click="onClick(invoice, index)">
+                  <td @click.stop.prevent="onClick(invoice, index)">
                     <button
                       v-if="!invoice.paid_at"
                       v-text="'Mark as paid'"
@@ -137,7 +141,7 @@ export default {
       const responseCount = await app.$axios.get(
         "/api/v1/practice/locum-invoices/count"
       );
-      console.log(response);
+
       const count =
         responseCount.data &&
         response.data.data &&
@@ -240,7 +244,9 @@ export default {
     },
 
     show(item) {
-      this.$router.push(`/practice-billing/invoices-from-locums/${item.id}`);
+      if (item.file) {
+        this.$router.push(`/practice-billing/invoices-from-locums/${item.id}`);
+      }
     },
     onClick(invoice, index) {
       this.selectedInvoiceId = null;
