@@ -36,7 +36,7 @@
         >Select by clicking on the practice that you wish to add</div>
         <div
           class="border-t-2 p-4 cursor-pointer"
-          :class="selectedSurgery.id === item.id ? 'bg-yellow-500':'hover:bg-gray-200'"
+          :class="selectedSurgery.id === item.id ? 'bg-yellow-500':'hover:bg-gray-500'"
           v-for="(item) in surgeries"
           :key="item.id"
           @click="select(item)"
@@ -104,6 +104,7 @@ export default {
       this.modal = true;
     },
     add() {
+      console.log("qwe", this.selectedSurgery.id);
       this.$axios
         .$post(`/api/v1/practice/practice-children`, {
           surgery_id: this.selectedSurgery.id

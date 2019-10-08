@@ -9,7 +9,7 @@
       @cancel="confirmation_modal = false"
     />
 
-    <div>
+    <div class="modal-container shadow-lg" ref="modalContainer">
       <div class="p-8 max-w-3xl">
         <div @click="close" class="cursor-pointer">
           <svgicon name="left-arrow" height="32" width="32" />

@@ -14,6 +14,7 @@ export default {
   },
   async asyncData({ app, params, error }) {
     try {
+      console.log(params.practiceId, params.userId);
       const response = await app.$axios.$get(
         `/api/v1/locum/practices/${params.practiceId}/practice-users/${params.userId}`
       );

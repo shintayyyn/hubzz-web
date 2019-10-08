@@ -5,24 +5,28 @@
         <div class="border-solid rounded-lg shadow-md px-1 py-4 mb-5 mx-1 md:mx-0">
           <div class="flex flex-row flex-no-wrap justify-start text-xs sm:text-sm">
             <div class="w-1/3 px-4 py-1 text-left">Your GMC / NMC Number</div>
-            <div class="w-1/3 p-1 text-center">{{gmc_or_nmc_number.number}}</div>
+            <div
+              class="w-1/3 p-1 text-center"
+            >{{gmc_or_nmc_number ? gmc_or_nmc_number.number : 'No GMC or NMC Number registered'}}</div>
             <div class="w-1/3 p-1 text-center">
               <span
                 class="text-xs sm:text-sm text-center text-white font-bold rounded-full px-4 py-1"
-                :class="status(gmc_or_nmc_number.status)"
-              >{{ gmc_or_nmc_number.status }}</span>
+                :class="status(gmc_or_nmc_number ? gmc_or_nmc_number.status : 'No GMC or NMC Number registered')"
+              >{{ gmc_or_nmc_number ? gmc_or_nmc_number.status : '' }}</span>
             </div>
           </div>
         </div>
         <div class="border-solid rounded-lg shadow-md px-1 py-4 mb-5 mx-1 md:mx-0">
           <div class="flex flex-row flex-no-wrap justify-start items-center text-xs sm:text-sm">
             <div class="w-1/3 px-4 py-1 text-left">Your MPL / NPL Number</div>
-            <div class="w-1/3 p-1 text-center">{{mpl_or_npl_number.number}}</div>
+            <div
+              class="w-1/3 p-1 text-center"
+            >{{mpl_or_npl_number ? mpl_or_npl_number.number : 'No MPL or NPL Number registered'}}</div>
             <div class="w-1/3 p-1 text-center">
               <span
                 class="text-xs sm:text-sm text-center text-white font-bold rounded-full px-4 py-1"
-                :class="status(mpl_or_npl_number.status)"
-              >{{ mpl_or_npl_number.status }}</span>
+                :class="status(mpl_or_npl_number ? mpl_or_npl_number.status : '')"
+              >{{ mpl_or_npl_number ? mpl_or_npl_number.status : '' }}</span>
             </div>
           </div>
         </div>
@@ -71,7 +75,10 @@
               class="rounded-lg shadow-md text-xs sm:text-sm text-left"
               :class="item.info && item.info.file ? 'hover:bg-gray-300' : ''"
             >
-              <td class="cursor-pointer" @click="show(item, 'compliance')">{{item.name}}</td>
+              <td
+                :class="item.info && item.info.file ? 'cursor-pointer' : ''"
+                @click="show(item, 'compliance')"
+              >{{item.name}}</td>
               <td class="hover:underline" v-if="item.info && item.info.file">
                 <div class="flex flex-row flex-no-wrap items-center">
                   <svgicon name="cloud-download" height="24" width="24" />
@@ -101,7 +108,9 @@
               </td>
               <td v-else></td>
 
-              <td v-if="item.info">{{ item.info.note | StringMaxLength(15)}}</td>
+              <td
+                v-if="item && item.info && item.info.note"
+              >{{ item && item.info && item.info.note ? item.info.note : 'N/A' | StringMaxLength(15)}}</td>
               <td v-else></td>
               <td
                 class="hover:underline"
@@ -187,7 +196,11 @@
               class="rounded-lg shadow-md text-xs sm:text-sm text-left"
               :class="item.info && item.info.file ? 'hover:bg-gray-300' : ''"
             >
-              <td class="cursor-pointer w-1/3" @click="show(item, 'compliance')">{{item.name}}</td>
+              <td
+                :class="item.info && item.info.file ? 'cursor-pointer' : ''"
+                class="w-1/3"
+                @click="show(item, 'compliance')"
+              >{{item.name}}</td>
               <td class="hover:underline" v-if="item.info && item.info.file">
                 <div class="flex flex-row flex-no-wrap">
                   <svgicon name="cloud-download" height="24" width="24" />
@@ -290,7 +303,8 @@
               :class="item && item.file ? 'hover:bg-gray-300' : ''"
             >
               <td
-                class="cursor-pointer w-1/3"
+                :class="item.info && item.info.file ? 'cursor-pointer' : ''"
+                class="w-1/3"
                 @click="show(item, 'mandatory')"
               >{{item.mandatory_training.name}}</td>
               <td class="hover:underline" v-if="item.file">
@@ -358,6 +372,7 @@
     <div
       class="shield"
       v-if="['compliance-id','compliance-mandatory-training-id'].includes($route.name)"
+      @click="$router.push('/compliance')"
     ></div>
     <nuxt-child />
   </section>
@@ -531,11 +546,6 @@ export default {
         });
         return;
       }
-      this.$store.commit("SET_NOTIFICATION", {
-        enabled: true,
-        status: "uploading",
-        text: ["Uploading"]
-      });
       const formData = new FormData();
       formData.append("file", file);
       formData.append("compliance_document_id", id);
@@ -621,11 +631,6 @@ export default {
         });
         return;
       }
-      this.$store.commit("SET_NOTIFICATION", {
-        enabled: true,
-        status: "uploading",
-        text: ["Uploading"]
-      });
       this.loading = true;
       this.activeLoading.push(loadingId);
 

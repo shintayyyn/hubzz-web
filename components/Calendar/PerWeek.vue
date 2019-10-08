@@ -30,7 +30,7 @@
     </div>
 
     <div class="flex flex-no-wrap justify-between text-xs sm:text-sm mx-1 mt-3 md:mt-5">
-      <div class="w-full text-center text-gray-500 font-bold"></div>
+      <div class="w-full text-center text-gray-500 font-bold" style="min-width: 60px"></div>
       <div class="w-full text-center text-gray-500 font-bold">MON</div>
       <div class="w-full text-center text-gray-500 font-bold">TUE</div>
       <div class="w-full text-center text-gray-500 font-bold">WED</div>
@@ -41,14 +41,14 @@
     </div>
 
     <div class="flex flex-no-wrap justify-between text-xs sm:text-sm mx-1 mt-3 md:mt-5">
-      <div class="w-full text-center text-gray-600"></div>
+      <div class="w-full text-center text-gray-600" style="min-width: 60px"></div>
       <div
         class="w-full text-center text-gray-600 font-bold"
         v-for="(date, index) in daysInWeek"
         :key="index"
       >{{$moment(date).format('DD')}}</div>
     </div>
-
+    <!-- PRACTICE -->
     <template v-if="$auth.user.domain === 'Practice'">
       <div class="flex flex-no-wrap justify-between text-xs mx-1 mt-5" style="height:50px;">
         <div class="w-full text-left my-auto" style="min-width: 60px">AM</div>
@@ -248,9 +248,11 @@
         </template>
       </div>
     </template>
+
+    <!-- LOCUM -->
     <template v-if="$auth.user.domain === 'Locum'">
       <div class="flex flex-no-wrap justify-between text-xs mx-1 mt-5" style="height:50px;">
-        <div class="w-full text-left">AM</div>
+        <div class="w-full text-left my-auto" style="min-width: 60px">AM</div>
         <template v-for="(date, index) in daysInWeek">
           <div
             v-if="hasLocumPrivateJobs(date, 'AM')"
@@ -285,7 +287,7 @@
         </template>
       </div>
       <div class="flex flex-no-wrap justify-between text-xs mx-1" style="height:50px;">
-        <div class="w-full text-left">PM</div>
+        <div class="w-full text-left my-auto" style="min-width: 60px">PM</div>
         <template v-for="(date, index) in daysInWeek">
           <div
             v-if="hasLocumPrivateJobs(date, 'PM')"
@@ -320,7 +322,7 @@
         </template>
       </div>
       <div class="flex flex-no-wrap justify-between text-xs mx-1" style="height:50px;">
-        <div class="w-full text-left">OOH</div>
+        <div class="w-full text-left my-auto" style="min-width: 60px">OOH</div>
         <template v-for="(date, index) in daysInWeek">
           <div
             v-if="hasLocumPrivateJobs(date, 'OOH')"
@@ -355,7 +357,7 @@
         </template>
       </div>
       <div class="flex flex-no-wrap justify-between text-xs mx-1" style="height:50px;">
-        <div class="w-full text-left">Whole-day</div>
+        <div class="w-full text-left my-auto" style="min-width: 60px">Whole-day</div>
         <template v-for="(date, index) in daysInWeek">
           <div
             v-if="hasLocumPrivateJobs(date, 'Whole Day')"
@@ -390,7 +392,7 @@
         </template>
       </div>
       <div class="flex flex-no-wrap justify-between text-xs mx-1" style="height:50px;">
-        <div class="w-full text-left">Applied</div>
+        <div class="w-full text-left my-auto" style="min-width: 60px">Applied</div>
         <template v-for="(date, index) in daysInWeek">
           <div
             v-if="hasLocumAppliedJobs(date, 'Available')"

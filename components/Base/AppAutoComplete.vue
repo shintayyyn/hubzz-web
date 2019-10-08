@@ -129,9 +129,13 @@ export default {
             if (res.data.user) {
               this.$emit("newConversation", res.data.user);
             } else if (res.data.conversation) {
-              this.$router.push(
-                `/messages/${res.data.conversation.conversation_id}`
-              );
+              let id = res.data.conversation.conversation_id;
+              if (!this.conversations.find(item => item.id == id)) {
+                this.$store.dispatch("chat/fetchMoreConversation", {
+                  offset: this.conversations.length
+                });
+              }
+              this.$router.push(`/messages/${id}`);
             }
             // if res.data.user, emit newConversation
             // else if res.data.conversation, get conversation Id

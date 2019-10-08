@@ -2,10 +2,10 @@
   <section>
     <div class="sidebar" :class="{'toggled-left': $store.state.toggled_sidebar}">
       <div class="sidebar-nav pt-8 xl:pt-20">
-        <div
-          class="close-button cursor-pointer text-2xl font-bold text-yellow-500 px-4"
+        <button
+          class="close-button cursor-pointer focus:outline-none text-2xl font-bold text-yellow-500 px-4"
           @click="close"
-        >X</div>
+        >X</button>
         <div v-for="(item, index) in lists" :key="index" class="text-sm relative">
           <span
             class="absolute inset-y-0 left-0 border-solid bg-yellow-500 w-1 h-full"

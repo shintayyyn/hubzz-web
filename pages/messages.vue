@@ -1,5 +1,5 @@
 <template>
-  <section class="messages-section border">
+  <section class="messages-section fixed left-0 md:relative border">
     <MessagesLeftPanel />
     <nuxt-child />
   </section>
@@ -111,9 +111,17 @@ export default {
 .messages-section {
   overflow: hidden;
   display: flex;
-  min-height: 80vh;
-  max-height: 80vh;
+  min-height: 100%;
+  max-height: 100%;
   width: 100%;
+}
+
+@media screen and (min-width: 768px) {
+  .messages-section {
+    width: 80%;
+    min-height: 80vh;
+    max-height: 80vh;
+  }
 }
 
 @media screen and (min-width: 1200px) {

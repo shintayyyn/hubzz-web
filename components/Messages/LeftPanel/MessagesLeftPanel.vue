@@ -6,7 +6,8 @@
         :type="'search'"
         :name="'search_text'"
         :placeholder="'Search Messages'"
-        class="mx-4 my-1"
+        class="mx-4 my-1 md:mt-0 pt-3"
+        :class="$auth.user.domain === 'Locum' ? 'mt-10' : 'mt-12'"
         @keydown.enter="search"
       />
       <div class="relative flex flex-col justify-between h-full border-t">
@@ -20,7 +21,7 @@
               :class="[parseInt($route.params.slug) === item.id ? 'bg-gray-300' : 'hover:bg-gray-200', unreadMessages.find(conversation => conversation.conversation_id == item.id && $auth.user.id == conversation.user_id) ? 'font-bold bg-gray-100' : '']"
               v-for="item in conversations"
               :key="item.id"
-              @click="goTo(item.id ? item.id : item.id)"
+              @click.stop="goTo(item.id ? item.id : item.id)"
             >
               <div>
                 <AppAvatar
@@ -54,7 +55,7 @@
               :class="parseInt($route.params.slug) === item.id ? 'bg-gray-300' : 'hover:bg-gray-200'"
               v-for="item in messages"
               :key="item.id"
-              @click="goTo(item.id ? item.id : item.id)"
+              @click.stop="goTo(item.id ? item.id : item.id)"
             >
               <div>
                 <AppAvatar
@@ -140,26 +141,27 @@ export default {
       }
     },
     conversations(newValue) {
-      let conversation = newValue.find((conversation, index) => index === 0);
-      let conversations = newValue.find(item => item.id === conversation.id);
-      if (this.activeConversationId != conversation.id.toString()) {
-        this.$store.commit("chat/ADD_UNREAD_MESSAGE", conversation);
-      }
+      // let conversation = newValue.find((conversation, index) => index === 0);
+      // let conversations = newValue.find(item => item.id === conversation.id);
+      // if (this.activeConversationId != conversation.id.toString()) {
+      //   this.$store.commit("chat/ADD_UNREAD_MESSAGE", conversation);
+      // }
     }
   },
   methods: {
     goTo(id) {
       this.showResult = false;
+      this.search_text = "";
       this.messages = [];
       this.$store.dispatch("chat/setActiveConversation", id);
+      if (!this.conversations.find(item => item.id == id)) {
+        this.loadMoreConversation();
+      }
       if (window.innerWidth < 768) {
         this.$store.commit("IS_MOBILE", false);
       }
       if (this.unreadMessages.find(item => item.conversation_id == id)) {
         this.$store.commit("chat/DELETE_UNREAD_MESSAGE", id);
-      }
-      if (!this.conversations.find(item => item.id == id)) {
-        this.loadMoreConversation();
       }
       if (this.$route.params.slug != id) {
         this.$router.push(`/messages/${id}`);
@@ -215,8 +217,8 @@ export default {
   min-width: 100%;
   max-width: 100%;
   float: left;
-  min-height: 80vh;
-  max-height: 80vh;
+  min-height: 100%;
+  max-height: 1000%;
 }
 
 .chat-list::-webkit-scrollbar {
@@ -236,6 +238,8 @@ export default {
   .messages-left-panel {
     min-width: 35%;
     max-width: 35%;
+    min-height: 80vh;
+    max-height: 80vh;
   }
 }
 </style>

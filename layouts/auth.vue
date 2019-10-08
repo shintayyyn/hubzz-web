@@ -33,14 +33,17 @@
       :style="`z-index: ${showPrivacyNotice ? 100 : -100}; opacity: ${showPrivacyNotice ? 1 : 0};`"
     >
       <div style="flex: 0 0 80%;">
-        <h2>Your Privacy</h2>
+        <h2 class="font-bold">Your Privacy</h2>
         <div>
           <span>We use cookies to improve your experience on our site. To find out more, read our</span>
-          <nuxt-link to="/">privacy policy.</nuxt-link>
+          <nuxt-link to="/" class="underline hover:no-underline">privacy policy.</nuxt-link>
         </div>
       </div>
       <div style="flex: 0 0 20%;" class="flex justify-end items-center">
-        <button class="p-2 rounded-full shadow-lg hover:text-white" @click="acceptCookies">OK</button>
+        <button
+          class="py-2 px-4 md:mx-4 font-bold border rounded-lg shadow-lg hover:text-white"
+          @click="acceptCookies"
+        >OK</button>
       </div>
     </div>
   </div>

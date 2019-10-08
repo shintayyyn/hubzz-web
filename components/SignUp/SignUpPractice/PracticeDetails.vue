@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col items-center justify-center w-full">
     <div class="flex w-full justify-center xl:justify-start">
-      <div class="mx-4 flex flex-col p-8 m-1 rounded-lg shadow-lg" style="flex: 0 1 600px;">
+      <div class="mx-4 flex flex-col p-8 m-1 rounded-lg shadow-lg w-full">
         <div class="w-full">
           <AppInput
             v-model="search_text"
@@ -24,8 +24,7 @@
 
     <div class="flex w-full justify-center xl:justify-start">
       <div
-        class="rounded-lg shadow-lg mt-5 mx-4 m-1"
-        style="flex: 0 1 600px;"
+        class="rounded-lg shadow-lg mt-5 mx-4 m-1 w-full"
         v-if="showResult && surgeries.length > 0"
       >
         <div
@@ -62,8 +61,11 @@
       </div>
     </div>
 
-    <div class="mt-4" v-if="selectedSurgeryId">
-      <AppButton :label="'Next'" @click="next" />
+    <div
+      class="fixed bottom-0 right-0 m-4 md:static"
+      v-if="selectedSurgeryId && surgeries.length > 0"
+    >
+      <AppButton class="rounded-lg shadow-lg" :label="'Next'" @click="next" />
     </div>
   </div>
 </template>
@@ -94,6 +96,7 @@ export default {
     }
   },
   mounted() {
+    console.log(window.scrollY);
     if (this.search_results.length > 0 && this.surgeryId) {
       this.surgeries = this.search_results;
       this.selectedSurgeryId = this.surgeryId;

@@ -22,6 +22,7 @@
     <div
       class="shield"
       v-if="$route.name === 'my-banks-appointed-userId-related-jobs-applied-jobId'"
+      @click="$router.go(-1)"
     ></div>
     <nuxt-child />
   </section>

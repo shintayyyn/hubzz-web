@@ -30,7 +30,11 @@
     </div>
 
     <transition name="fade" mode="out-in">
-      <div class="shield" v-if="$route.name === 'profile-practice-documents-id'"></div>
+      <div
+        class="shield"
+        v-if="$route.name === 'profile-practice-documents-id'"
+        @click="$router.push(`/profile/practice-documents`)"
+      ></div>
     </transition>
     <nuxt-child />
   </section>

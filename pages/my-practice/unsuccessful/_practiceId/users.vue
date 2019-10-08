@@ -14,6 +14,7 @@
     <div
       class="shield"
       v-if="$route.name.includes('my-practice-unsuccessful-practiceId-users-userId')"
+      @click="$router.go(-1)"
     ></div>
     <nuxt-child />
   </section>

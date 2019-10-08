@@ -4,7 +4,7 @@
       <h1>Invoices</h1>
       <div class="overflow-x-auto">
         <div class="overflow-x-auto overflow-y-hidden">
-          <table>
+          <table class="border-separate" style="border-spacing: 0 10px">
             <thead>
               <tr class="text-xs sm:text-sm text-left">
                 <th>Locum</th>
@@ -12,6 +12,8 @@
                 <th>Job numbers</th>
                 <th>£ Paid</th>
                 <th>Date paid</th>
+                <th>Amount</th>
+                <th>Status</th>
               </tr>
             </thead>
             <tbody>
@@ -22,44 +24,37 @@
               </template>
               <template v-else v-for="(invoice, index) in getPracticeInvoices">
                 <tr :key="invoice.id" class="__job-card shadow-md cursor-pointer text-xs text-left">
-                  <td @click="show(invoice)">{{invoice.practice}}</td>
+                  <td @click="show(invoice)">{{invoice.locum_detail.user.personal_detail.name}}</td>
                   <td @click="show(invoice)">{{invoice.issued_at | localDate}}</td>
                   <td @click="show(invoice)">{{invoice.locum}}</td>
                   <td @click="show(invoice)">{{invoice.invoice_number}}</td>
                   <td @click="show(invoice)">
-                    <div v-for="(item, index) in invoice.job_numbers" :key="index">{{item}}</div>
+                    <div v-for="(item, index) in invoice.items" :key="index">{{item.job_part.job_part_number}}</div>
                     <!-- <div
                       v-for="item in invoice.items.filter(item => item.type === 'Job Part' && item.job_part)"
                       :key="item.id"
                     >{{item.job_part.job_part_number}}</div>-->
                   </td>
                   <td @click="show(invoice)">£ {{invoice.total_amount}}</td>
-                  <td @click="show(invoice)">£ {{invoice.status}}</td>
+                  <td @click="show(invoice)">{{invoice.status}}</td>
                   <!-- <td
                     @click="show(invoice)"
                   >{{invoice.paid_at ? 'Paid' : invoice.issued_at ? 'Issued' : ''}}</td>-->
-                  <td @click="onClick(invoice, index)">
+                  <td @click="onClick(invoice, index)" v-if="!invoice.paid_at">
                     <button
-                      v-if="!invoice.paid_at"
                       v-text="'Mark as paid'"
-                      class="px-2 py-3 text-white rounded-lg"
-                      :class="'bg-green-600'"
+                      class="px-2 py-3 text-white rounded-lg bg-green-600"
                     ></button>
                   </td>
-                </tr>
-                <tr :key="`${invoice.id}-${index}`">
-                  <td></td>
-                </tr>
-              </template>
-              <template v-if="getPracticeInvoices.length">
-                <tr class="__job-card shadow-md cursor-pointer text-xs text-left">
-                  <td class="font-bold text-left" colspan="3">Total</td>
-                  <td class="font-bold text-left" colspan="2">£ {{totalAmount}}</td>
                 </tr>
               </template>
             </tbody>
           </table>
+          
         </div>
+      </div>
+      <div class="my-2" v-if="getPracticeInvoices.length">
+        <span class="font-bold px-4">Total: £ {{ totalAmount | currency }}</span>
       </div>
     </div>
     <div class="bottom-0 w-full" v-if="getPracticeInvoices.length > 0 && totalPages > 1">
@@ -151,14 +146,20 @@ export default {
       if (!this.getPracticeInvoices.length) {
         return 0;
       }
+      console.log("qwe",this.getPracticeInvoices)
       return this.getPracticeInvoices
-        .map(invoice => invoice.amount)
+        .map(invoice => invoice.total_amount)
         .reduce((accumulator, currentValue) => accumulator + currentValue);
     }
   },
   mounted() {
     this.$store.commit("billing/SET_PRACTICE_INVOICES", this.invoices);
     this.$store.commit("billing/SET_PRACTICE_INVOICE_COUNT", this.count);
+  },
+  methods: {
+    show(item) {
+      this.$router.push(`/practice-billing/invoices-from-locums/${item.id}`);
+    },
   }
 };
 </script>

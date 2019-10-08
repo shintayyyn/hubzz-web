@@ -3,7 +3,7 @@
     <div class="relative flex flex-row flex-no-wrap justify-between">
       <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
       <div
-        class="absolute right-0 bg-red-500 p-1 text-xs sm:text-base text-white"
+        class="absolute right-0 bg-red-500 p-1 text-xs sm:text-sm text-white rounded-lg"
         v-if="error"
       >{{error.message}}</div>
     </div>
@@ -21,7 +21,7 @@
       />
     </div>
     <transition name="fade">
-      <div class="relative z-10" v-if="modal">
+      <div class="relative md:static z-10" v-if="modal">
         <div
           class="absolute border rounded-tr-lg rounded-bl-lg rounded-br-lg calendar bg-white shadow-md"
         >

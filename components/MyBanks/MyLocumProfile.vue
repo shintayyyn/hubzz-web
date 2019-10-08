@@ -56,7 +56,7 @@
         </div>
       </div>
       <div class="w-full pl-0 lg:pl-2 mt-8 lg:mt-0 lg:w-1/2">
-        <div class="rounded-lg shadow-lg p-8 mb-4">
+        <div class="rounded-lg shadow-lg p-4 mb-4">
           <div class="font-bold text-sm sm:text-md">Compliance documents</div>
           <div class="flex flex-col mb-8">
             <div

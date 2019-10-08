@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-row flex-wrap justify-start">
     <div
-      class="w-full md:w-1/3 lg:w-1/4 rounded-lg shadow-lg bg-gray-300 m-2 p-4 hover:bg-gray-500"
+      class="w-full md:w-1/3 lg:w-1/4 rounded-lg shadow-lg bg-gray-300 m-2 p-4 hover:bg-gray-400"
       v-for="user in users"
       :key="user.id"
     >
@@ -11,7 +11,7 @@
             name="on-star"
             height="32"
             width="32"
-            class="cursor-pointer"
+            class="cursor-pointer fill-current text-gray-700 hover:text-gray-800"
             @click="$emit('favorite', user.id)"
           />
         </template>
@@ -20,7 +20,7 @@
             name="off-star"
             height="32"
             width="32"
-            class="cursor-pointer"
+            class="cursor-pointer fill-current text-gray-700 hover:text-gray-800"
             @click="$emit('favorite', user.id)"
           />
         </template>
@@ -37,7 +37,7 @@
           class="w-full font-bold text-sm sm:text-lg my-4 leading-tight"
         >{{user.personal_detail.name}}</div>
         <div
-          class="w-full mb-4 font-bold text-gray-600 text-sm leading-tight"
+          class="w-full mb-4 font-bold text-gray-700 text-sm leading-tight"
         >{{user.locum_detail.profession.name}}</div>
       </div>
     </div>

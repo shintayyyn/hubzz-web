@@ -57,6 +57,7 @@
       <div
         class="shield"
         v-if="['profile-users-create', 'profile-users-edit'].includes($route.name) || $route.name.includes('profile-users-id')"
+        @click="$router.push('/profile/users')"
       ></div>
     </transition>
     <nuxt-child @addedUser="addUser" @updateUser="updateUser" />

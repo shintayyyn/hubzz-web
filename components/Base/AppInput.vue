@@ -23,13 +23,12 @@
           >
             <input
               :value="item.value"
+              :id="`${name}-${index}`"
               type="checkbox"
               @input="inputMultiCheck"
               :checked="Array.isArray(value) ? value.includes(item.value) : value"
             />
-
-            <div class="mx-1"></div>
-            <label :for="item.name" class="text-xs sm:text-sm">{{item.label}}</label>
+            <label :for="`${name}-${index}`" class="text-xs sm:text-sm">{{item.label}}</label>
           </div>
         </template>
         <template v-else>
@@ -98,11 +97,11 @@
         <div class="flex flex-row flex-no-wrap justify-start items-center">
           <input
             type="checkbox"
+            :id="name"
             @change="$emit('input', $event.target.checked)"
             :checked="value"
             :disabled="disabled"
           />
-          <div class="mx-1"></div>
           <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
         </div>
       </div>
@@ -137,7 +136,7 @@
     <!-- search -->
     <template v-if="type === 'search'">
       <div v-if="type === 'search'" class="flex flex-col">
-        <div class="relative flex flex-row flex-no-wrap justify-between">
+        <div v-if="label" class="relative flex flex-row flex-no-wrap justify-between">
           <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
           <div class="flex">
             <div class="bg-gray-300 rounded-lg px-4 py-1 text-xs sm:text-sm" v-if="info">{{info}}</div>

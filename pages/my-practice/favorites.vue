@@ -14,7 +14,11 @@
         @pagechanged="pagechanged"
       />
     </div>
-    <div class="shield" v-if="$route.name.includes('my-practice-favorites-practiceId')"></div>
+    <div
+      class="shield"
+      v-if="$route.name.includes('my-practice-favorites-practiceId')"
+      @click="$router.push('/my-practice/favorites')"
+    ></div>
     <nuxt-child />
   </section>
 </template>
@@ -44,7 +48,7 @@ export default {
       return this.perPage * (this.current_page - 1);
     },
     perPage() {
-      return 5;
+      return 8;
     },
     totalPages() {
       return Math.ceil(this.total / this.perPage);

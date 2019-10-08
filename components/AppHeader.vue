@@ -1,14 +1,17 @@
 <template>
-  <section class="header-section fixed bg-white z-50">
-    <div class="px-4 flex flex-row flex-wrap justify-between" style="z-index: 600">
-      <div class="lg:w-1/3">
-        <div class="burger cursor-pointer py-2" @click="toggle">
+  <section
+    class="header-section fixed bg-white z-50"
+    :class="$route.name === 'messages-slug' || $route.name === 'messages-new' ? 'border-b md:border-0' : ''"
+  >
+    <div class="flex flex-row flex-wrap justify-between" style="z-index: 600">
+      <div class="w-1/3">
+        <button class="burger cursor-pointer py-2 focus:outline-none h-full" @click="toggle">
           <div class="my-2 bg-yellow-500"></div>
           <div class="my-2 bg-yellow-500"></div>
-        </div>
+        </button>
       </div>
-      <div class="flex w-1/3 sm:w-1/3 py-2">
-        <button @click="$router.push('/')" class="mx-auto focus:outline-none">
+      <div class="w-1/3 flex justify-center">
+        <button @click="goHome()" class="focus:outline-none">
           <img src="/images/hubzz-icon-transparent.png" class="logo" />
         </button>
       </div>
@@ -26,11 +29,13 @@
                 v-if="authPermissions.includes('Create Sessions Job')"
                 :label="'Create Job'"
                 @click="$store.commit('calendar/CREATE_JOB_MODAL', true)"
-                class="hidden md:block"
+                class="hidden md:block whitespace-no-wrap"
+                :inStyle="'padding-top: 0; padding-bottom: 0;'"
               />
               <button
                 @click="$store.commit('calendar/CREATE_JOB_MODAL', true)"
-                class="block md:hidden button rounded-lg p-2 focus:outline-none cursor-pointer mx-2"
+                class="block md:hidden button rounded-lg p-2 focus:outline-none cursor-pointer"
+                :class="$route.name === 'messages-slug' || $route.name === 'messages-new' ? '' : 'mx-2'"
               >
                 <svgicon name="create-job" color="#444 #555" width="21" height="21"></svgicon>
               </button>
@@ -40,6 +45,7 @@
               :label="unreadMessages.length > 0 ? `Messages(${unreadMessages.length})` : 'Messages'"
               @click="$router.push('/messages')"
               class="hidden md:block"
+              :inStyle="'padding-top: 0; padding-bottom: 0;'"
             />
             <button
               v-if="$route.name != 'messages-slug' && $route.name != 'messages-new'"
@@ -50,13 +56,13 @@
             </button>
           </div>
           <div
-            class="text-xs xl:text-sm mr-2"
+            class="text-xs xl:text-sm mr-2 hidden md:block"
             v-if="$auth.user.domain === 'Locum'"
           >{{$auth.user.email}}</div>
         </div>
       </div>
     </div>
-    <div class="shield" v-if="create_job_modal"></div>
+    <div class="shield" v-if="create_job_modal" @click="close"></div>
     <transition name="slide" mode="out-in">
       <template v-if="create_job_modal">
         <CreateJobModal v-if="create_job_modal" />
@@ -76,9 +82,7 @@ export default {
     create_job_modal() {
       return this.$store.state.calendar.create_job_modal;
     },
-    conversations() {
-      return this.$store.getters["chat/getConversations"];
-    },
+
     unreadMessages() {
       return this.$store.getters["chat/getUnreadMessages"];
     },
@@ -93,44 +97,21 @@ export default {
       } else {
         document.body.style.overflow = "auto";
       }
-    },
-    conversations(newValue) {
-      // let conversation = newValue.find((conversation, index) => index === 0);
-      // if (
-      //   (this.$route.name && this.$route.name != "messages-slug") ||
-      //   (this.$route.name && this.$route.name != "messages-new")
-      // ) {
-      //   this.$store.commit("chat/ADD_UNREAD_MESSAGE", conversation);
-      //   // still working on this
-      //   if (
-      //     this.$route.name != "messages-slug" &&
-      //     this.$route.name != "messages-new" &&
-      //     this.unreadMessages.length > 0
-      //   ) {
-      //     let sender_name = `${conversation.latest_conversation_message.user.personal_detail.first_name} ${conversation.latest_conversation_message.user.personal_detail.last_name}`;
-      //     let isDeleted = conversation.latest_conversation_message.deleted_by_sender || conversation.
-      //     console.log("wae?", this.$route.name, conversation);
-      //     this.$store.commit("SET_NOTIFICATION", {
-      //       enabled: true,
-      //       closable: true,
-      //       status: "message",
-      //       text: [
-      //         {
-      //           title: `${sender_name}`,
-      //           message: `${sender_name}: ${conversation.latest_conversation_message.message}`,
-      //           time: `${conversation.latest_conversation_message.created_at}`
-      //         }
-      //       ]
-      //     });
-      //   }
-      // }
-    },
-    unreadMessages(value) {}
+    }
   },
   methods: {
     toggle() {
       this.$store.commit("TOGGLE_SIDEBAR", true);
       document.body.style.overflow = "hidden";
+    },
+    close() {
+      this.$store.commit("calendar/CREATE_JOB_MODAL", false);
+      document.body.style.overflow = "hidden";
+    },
+    goHome() {
+      if (this.$route.path != "/dashboard") {
+        this.$router.push("/dashboard");
+      }
     }
   }
 };
@@ -151,7 +132,9 @@ export default {
 .logo {
   width: 25px;
 }
-
+.header-section {
+  padding: 0 20px;
+}
 @media screen and (max-width: 1199px) {
   .header-section {
     width: 100%;
@@ -165,7 +148,12 @@ export default {
     max-width: 1466px;
     right: 0;
     left: 200px;
-    padding: 5px 30px;
+    /* padding: 5px 30px; */
+  }
+}
+@media screen and (min-width: 480px) {
+  .header-section {
+    padding: 0 40px;
   }
 }
 a {

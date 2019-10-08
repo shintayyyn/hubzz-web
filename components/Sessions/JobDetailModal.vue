@@ -60,7 +60,7 @@
         v-if="job.status === 'Current' && authPermissions.includes('Complete Sessions Job')"
       />
     </div>
-    <div class="shield" v-if="modal"></div>
+    <div class="shield" v-if="modal" @click="modal = false"></div>
     <transition name="slide" mode="out-in">
       <div class="modal-container shadow-lg" v-if="modal">
         <JobDetailModalShowCandidate @close="modal = false" :user="user" @appointed="close" />

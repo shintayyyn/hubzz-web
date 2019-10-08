@@ -1,5 +1,5 @@
 <template>
-  <section class="relative __jobs-section">
+  <section class="relative">
     <AppLoading :loading="loadingJobs" :message="'Loading'" />
     <AppJobFilter @clear="clearFilters" @getJobs="getJobs(1, params)" :params="params" />
     <div
@@ -9,10 +9,7 @@
     <div v-if="getPracticeAppliedJobs.length > 0" class="overflow-x-auto overflow-y-hidden">
       <JobTable :columns="columns" :jobs="getPracticeAppliedJobs" @sortBy="sortBy" @show="show" />
     </div>
-    <div
-      class="absolute bottom-0 w-full"
-      v-if="getPracticeAppliedJobs.length > 0 && totalPages > 1"
-    >
+    <div class="w-full mt-4" v-if="getPracticeAppliedJobs.length > 0 && totalPages > 1">
       <AppPagination
         :total="total"
         :totalPages="totalPages"
@@ -20,7 +17,11 @@
         @pagechanged="pagechanged"
       />
     </div>
-    <div class="shield" v-if="$route.name === 'sessions-applied-id'"></div>
+    <div
+      class="shield"
+      v-if="$route.name === 'sessions-applied-id'"
+      @click="$router.push(`/sessions/applied`)"
+    ></div>
     <nuxt-child />
   </section>
 </template>
@@ -67,7 +68,7 @@ export default {
           sortable: true
         },
         {
-          label: "per",
+          label: "Rate Type",
           dataIndex: "per"
         },
         {
@@ -80,11 +81,11 @@ export default {
           dataIndex: "date_end",
           sortable: true
         },
-        {
-          label: "Created",
-          dataIndex: "date_created",
-          sortable: true
-        },
+        // {
+        //   label: "Created",
+        //   dataIndex: "date_created",
+        //   sortable: true
+        // },
         {
           label: "Applied",
           dataIndex: "date_applied"

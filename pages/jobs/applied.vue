@@ -1,5 +1,5 @@
 <template>
-  <section class="relative __jobs-section">
+  <section class="relative">
     <AppLoading :loading="loadingJobs" :message="'Loading'" />
     <AppJobFilter @clear="clearFilters" @getJobs="getJobs(1, params)" :params="params" />
     <div
@@ -9,7 +9,7 @@
     <div v-if="getLocumAppliedJobs.length > 0" class="overflow-x-auto overflow-y-hidden">
       <JobTable :columns="columns" :jobs="getLocumAppliedJobs" @sortBy="sortBy" @show="show" />
     </div>
-    <div class="absolute bottom-0 w-full" v-if="getLocumAppliedJobs.length > 0 && totalPages > 1">
+    <div class="w-full mt-4" v-if="getLocumAppliedJobs.length > 0 && totalPages > 1">
       <AppPagination
         :total="total"
         :totalPages="totalPages"
@@ -17,7 +17,11 @@
         @pagechanged="pagechanged"
       />
     </div>
-    <div class="shield" v-if="$route.name === 'jobs-applied-id'"></div>
+    <div
+      class="shield"
+      v-if="$route.name === 'jobs-applied-id'"
+      @click="$router.push('/jobs/applied')"
+    ></div>
     <nuxt-child />
   </section>
 </template>

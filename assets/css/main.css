@@ -1,6 +1,31 @@
 * {
-  font-family: 'Nunito', sans-serif;
+  font-family: "Nunito", sans-serif;
   scroll-behavior: smooth;
+}
+
+input,
+textarea,
+button,
+select,
+a {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+a {
+  text-decoration: none;
+  color: black;
+}
+
+table {
+  width: 1366px;
+}
+
+table thead th {
+  padding: 15px;
+}
+
+table tbody td {
+  padding: 10px 15px;
 }
 
 .__jobs-section {
@@ -18,23 +43,6 @@
   transition: background-color 0.5s ease-in-out;
 }
 
-a {
-  text-decoration: none;
-  color: black;
-}
-
-table {
-  width: 1366px;
-}
-
-table thead th {
-  padding: 15px;
-}
-
-table tbody td {
-  padding: 15px;
-}
-
 .loader {
   background-color: #edf2f7;
   opacity: 0.5;
@@ -46,7 +54,6 @@ table tbody td {
 }
 
 @keyframes dots {
-
   0%,
   20% {
     color: rgba(0, 0, 0, 0);
@@ -101,7 +108,7 @@ table tbody td {
 /* modal */
 .slide-enter-active,
 .slide-leave-active {
-  transition: all .5s;
+  transition: all 0.5s;
 }
 
 .slide-enter,
@@ -113,7 +120,7 @@ table tbody td {
 /* confirmation */
 .drop-enter-active,
 .drop-leave-active {
-  transition: all .5s;
+  transition: all 0.5s;
 }
 
 .drop-enter,
@@ -125,7 +132,7 @@ table tbody td {
 /* toggle */
 .drop-down-enter-active,
 .drop-down-leave-active {
-  transition: all .5s;
+  transition: all 0.5s;
 }
 
 .drop-down-enter,
@@ -137,18 +144,18 @@ table tbody td {
 /* tabs */
 .fade-enter-active,
 .fade-leave-active {
-  transition: all .5s
+  transition: all 0.5s;
 }
 
 .fade-enter,
 .fade-leave-active {
-  opacity: 0
+  opacity: 0;
 }
 
 /* page */
 .page-enter-active,
 .page-leave-active {
-  transition: all .5s;
+  transition: all 0.5s;
 }
 
 .page-enter,
@@ -160,7 +167,7 @@ table tbody td {
 /* remove */
 .shield-enter-active,
 .shield-leave-active {
-  transition: all .5s;
+  transition: all 0.5s;
 }
 
 .shield-enter,
@@ -169,7 +176,6 @@ table tbody td {
 }
 
 @-webkit-keyframes sk-bouncedelay {
-
   0%,
   80%,
   100% {
@@ -182,7 +188,6 @@ table tbody td {
 }
 
 @keyframes sk-bouncedelay {
-
   0%,
   80%,
   100% {
@@ -194,4 +199,72 @@ table tbody td {
     -webkit-transform: scale(1);
     transform: scale(1);
   }
+}
+
+/* scrollbar */
+@media screen and (min-width: 768px) {
+  /* width */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #fff;
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-track:hover {
+    background: #eee;
+    border-radius: 3px;
+  }
+
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #ddd;
+    border-radius: 3px;
+  }
+
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #ccc;
+  }
+}
+/* Customized Checkbox */
+input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+}
+
+input[type="checkbox"] + label {
+  position: relative;
+  cursor: pointer;
+  padding: 0;
+}
+
+input[type="checkbox"] + label::before {
+  content: "";
+  margin-right: 10px;
+  display: inline-block;
+  vertical-align: text-top;
+  width: 18px;
+  height: 18px;
+  background: #eee;
+}
+
+input[type="checkbox"]:checked + label:before {
+  background: #e7bf2d;
+}
+
+input[type="checkbox"]:checked + label:after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 8px;
+  background: white;
+  width: 2px;
+  height: 2px;
+  box-shadow: 2px 0 0 white, 4px 0 0 white, 4px -2px 0 white, 4px -4px 0 white, 4px -6px 0 white, 4px -8px 0 white;
+  transform: rotate(45deg);
 }

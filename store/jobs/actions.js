@@ -187,7 +187,7 @@ export default {
             }  
             return commit('SET_LOCUM_ALLOCATED_JOBS', response.data.jobs)
         }
-        if (payload.status === "Available") {
+        if (payload.status[0] === "Available" && payload.status[1] === "Matched") {
             if (payload.countOnly) {
                 return commit('SET_LOCUM_AVAILABLE_JOBS_COUNT', response.data.count)
             }  

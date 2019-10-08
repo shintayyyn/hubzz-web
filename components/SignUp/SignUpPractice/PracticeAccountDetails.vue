@@ -1,7 +1,8 @@
 <template>
-  <div class="flex flex-col items-center justify-center w-full">
+  <div class="flex flex-col items-center justify-center w-full" ref="container">
+    <AppFormError class="w-full mb-4" :formError="formError" v-if="formError.length > 0" />
     <div class="flex w-full justify-center xl:justify-start">
-      <div class="mx-4 flex flex-col p-8 m-1 rounded-lg shadow-lg" style="flex: 0 1 600px;">
+      <div class="flex flex-col w-full xl:mx-4 p-8 m-1 rounded-lg shadow-lg">
         <form class="w-full">
           <AppInput
             v-model="form.type"
@@ -48,6 +49,7 @@
             :label="'First name'"
             :placeholder="'Your first name'"
             :error="this.formError.find(item => item.field === 'first_name')"
+            @blur="CheckEmptyField(form.first_name,'first_name')"
           />
           <AppInput
             v-model="form.last_name"
@@ -56,6 +58,7 @@
             :label="'Last name'"
             :placeholder="'Your last name'"
             :error="this.formError.find(item => item.field === 'last_name')"
+            @blur="CheckEmptyField(form.last_name,'last_name')"
           />
           <AppInput
             v-model="form.suffix"
@@ -70,6 +73,7 @@
             :name="'practice_role'"
             :label="'Role'"
             :error="formError.find(item => item.field === 'practice_role')"
+            @blur="CheckEmptyField(form.practice_role,'practice_role')"
             :placeholder="'Select...'"
             :items="practice_roles"
           />
@@ -90,6 +94,7 @@
             :label="'Email'"
             :placeholder="'Your email address'"
             :error="this.formError.find(item => item.field === 'email')"
+            @blur="CheckEmptyField(form.email,'email')"
           />
           <AppInput
             v-model="form.password"
@@ -98,6 +103,7 @@
             :label="'Password'"
             :placeholder="'Your password'"
             :error="this.formError.find(item => item.field === 'password')"
+            @blur="CheckEmptyField(form.password,'password')"
           />
           <AppInput
             v-model="form.password_confirmation"
@@ -107,6 +113,7 @@
             :placeholder="'Repeat password'"
             :password="form.password"
             :error="this.formError.find(item => item.field === 'password_confirmation')"
+            @blur="CheckEmptyField(form.password_confirmation,'password_confirmation')"
           />
           <AppInput
             v-model="form.privacy_policy"
@@ -115,6 +122,7 @@
             :label="'I agree with the Terms and Conditions and Privacy Policy of Hubzz'"
             :placeholder="''"
             :error="this.formError.find(item => item.field === 'privacy_policy')"
+            @blur="CheckEmptyField(form.privacy_policy,'privacy_policy')"
           />
         </form>
       </div>
@@ -131,6 +139,8 @@
 import AppInput from "@/components/Base/AppInput";
 import AppButton from "@/components/Base/AppButton";
 import AppFilterSearch from "@/components/Base/AppFilterSearch";
+import AppFormError from "@/components/Base/AppFormError";
+
 const types = [
   { value: "Hub", label: "Hub" },
   { value: "Spoke", label: "Spoke" },
@@ -145,7 +155,8 @@ export default {
   components: {
     AppInput,
     AppButton,
-    AppFilterSearch
+    AppFilterSearch,
+    AppFormError
   },
   data() {
     return {
@@ -200,6 +211,30 @@ export default {
           this.formError.push(item);
         });
       }
+    },
+    "form.title"(value) {
+      this.CheckEmptyField(this.form.first_name, "first_name");
+    },
+    "form.last_name"(value) {
+      this.CheckEmptyField(this.form.last_name, "last_name");
+    },
+    "form.practice_role"(value) {
+      this.CheckEmptyField(this.form.practice_role, "practice_role");
+    },
+    "form.practice_list"(value) {
+      this.CheckEmptyField(this.form.practice_list, "practice_list");
+    },
+    "form.email"(value) {
+      this.CheckEmptyField(this.form.email, "email");
+    },
+    "form.password"(value) {
+      this.CheckEmptyField(this.form.password, "password");
+    },
+    "form.password_confirmation"(value) {
+      this.CheckEmptyField(
+        this.form.password_confirmation,
+        "password_confirmation"
+      );
     }
   },
   mounted() {
