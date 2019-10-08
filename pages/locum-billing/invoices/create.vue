@@ -1,5 +1,5 @@
 <template>
-  <BillingInvoiceForm :selectedInvoice="null" />
+  <BillingInvoiceForm :selectedInvoice="null" @addInvoice="$emit('addInvoice', $event)" />
 </template>
 
 <script>

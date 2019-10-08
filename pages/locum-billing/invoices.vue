@@ -6,7 +6,7 @@
         class="shield"
       ></div>
     </transition>
-    <nuxt-child />
+    <nuxt-child @addInvoice="addInvoice" @updateInvoice="updateInvoice" />
 
     <div class="__jobs-section">
       <h1>Invoices</h1>
@@ -97,7 +97,7 @@
         isAfter
       />
       <div class="flex flex-row flex-no-wrap justify-center">
-        <AppButton :label="'Save'" @click="updateInvoice" :inStyle="'padding:5px'" />
+        <AppButton :label="'Save'" @click="confirmPayment" :inStyle="'padding:5px'" />
         <div class="mx-1"></div>
         <AppButton :label="'Cancel'" @click="paymentModal = false" :inStyle="'padding:5px'" />
       </div>
@@ -251,10 +251,9 @@ export default {
         .$get("/api/v1/locum/invoices", { params: invoiceParams })
         .then(res => {
           // this.$store.commit("billing/SET_LOCUM_INVOICES", res.data.invoices);
-          this.invoices = res.data.invoices
+          this.invoices = res.data.invoices;
         });
     },
-
     show(item) {
       if (
         item.status === "Issued" ||
@@ -281,7 +280,7 @@ export default {
     closePaymentModal() {
       this.paymentModal = false;
     },
-    updateInvoice() {
+    confirmPayment() {
       this.Validate(this.form);
       if (!this.formError.length) {
         this.form.paid_at = this.$moment(this.form.paid_at).format(
@@ -297,9 +296,11 @@ export default {
             //   "billing/UPDATE_LOCUM_INVOICE",
             //   res.data.invoice
             // );
-            let index = this.invoices.findIndex(invoice => invoice.id === res.data.invoice.id)
+            let index = this.invoices.findIndex(
+              invoice => invoice.id === res.data.invoice.id
+            );
             if (index >= 0) {
-              this.invoices.splice(index, 1, res.data.invoice)
+              this.invoices.splice(index, 1, res.data.invoice);
             }
 
             this.$store.commit("SET_NOTIFICATION", {
@@ -319,10 +320,23 @@ export default {
           //   "billing/REMOVE_LOCUM_INVOICE",
           //   this.selectedInvoiceId
           // );
-          this.invoices = this.invoices.filter(invoice => invoice.id !== this.selectedInvoiceId)
+          this.invoices = this.invoices.filter(
+            invoice => invoice.id !== this.selectedInvoiceId
+          );
           this.confirmation_modal = false;
           this.getInvoice(this.current_page, this.params);
         });
+    },
+    addInvoice(invoice) {
+      this.invoices.push(invoice);
+    },
+    updateInvoice(invoice) {
+      console.log("updating", invoice);
+      console.log("updating", this.invoices);
+      let index = this.invoices.findIndex(item => item.id == invoice.id);
+      if (index >= 0) {
+        this.invoices.splice(index, 1, invoice);
+      }
     }
   }
 };

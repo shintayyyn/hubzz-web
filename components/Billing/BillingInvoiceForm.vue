@@ -436,7 +436,8 @@ export default {
         );
         if (!this.$route.params.id) {
           this.$axios.$post(`/api/v1/locum/invoices`, this.form).then(res => {
-            this.$store.commit("billing/ADD_LOCUM_INVOICE", res.data.invoice);
+            // this.$store.commit("billing/ADD_LOCUM_INVOICE", res.data.invoice);
+            this.$emit("addInvoice", res.data.invoice);
             this.$router.push("/locum-billing/invoices");
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
@@ -448,10 +449,11 @@ export default {
           this.$axios
             .$put(`/api/v1/locum/invoices/${this.$route.params.id}`, this.form)
             .then(res => {
-              this.$store.commit(
-                "billing/UPDATE_LOCUM_INVOICE",
-                res.data.invoice
-              );
+              this.$emit("updateInvoice", res.data.invoice);
+              // this.$store.commit(
+              //   "billing/UPDATE_LOCUM_INVOICE",
+              //   res.data.invoice
+              // );
               this.$store.commit("SET_NOTIFICATION", {
                 enabled: true,
                 status: "success",
@@ -604,6 +606,7 @@ export default {
       }
     },
     removeSelectedJobPart(jobPart, index) {
+      console.log(this.filteredJobParts);
       this.selectedJobParts.splice(index, 1);
     },
     async fetchJobPartsCount() {
