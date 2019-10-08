@@ -34,7 +34,11 @@ export default {
     },
     registeredPractice({ state, commit }) {
         let form = {}
-        form = { ...state.practice_details, ...state.practice_account_details }
+        const surgeryId = state.practice_details.surgery_id
+        form = {
+            ...state.practice_account_details,
+            surgery_id: surgeryId,
+        }
         this.$axios
             .$post(`/api/v1/register/practice`, form)
             .then((res) => {

@@ -6,6 +6,9 @@ export default () => ({
         surgery_id: ''
     },
     practice_account_details: {
+        type: '',
+        parent_surgery_id: [],
+        children_surgery_id: [],
         title: '',
         first_name: '',
         last_name: '',

@@ -1,66 +1,69 @@
 <template>
   <div class="invoice-modal shadow-lg">
-    <section class="">
-      <div class="px-8 py-4 max-w-3xl h-screen">
-        <div class="flex flex-row flex-wrap justify-start">
-          <div @click="$router.go(-1)" class="cursor-pointer">
-            <svgicon name="left-arrow" height="32" width="32" />
-          </div>
+    <div class="px-8 py-4 max-w-3xl h-screen">
+      <div class="flex flex-row flex-wrap justify-start">
+        <div @click="$router.go(-1)" class="cursor-pointer">
+          <svgicon name="left-arrow" height="32" width="32" />
         </div>
-        <iframe :src="invoice.file.url" style="min-height: 90%;"  width="100%" class="my-4"></iframe>
       </div>
-    </section>
+      <iframe :src="invoice.file.url" style="min-height: 90%;"  width="100%" class="my-4"></iframe>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
   transition: {
-    name: 'slide',
-    mode: 'out-in'
+    name: "slide",
+    mode: "out-in"
   },
 
   async asyncData({ app, error, params }) {
     try {
       if (process.client) {
-        document.body.style.cursor = 'wait'
+        document.body.style.cursor = "wait";
       }
-      const response = await app.$axios.get(`/api/v1/practice/locum-invoices/${params.id}`)
-      const invoice = response.data && response.data.data && response.data.data.invoice ? response.data.data.invoice : null
+      const response = await app.$axios.get(
+        `/api/v1/practice/locum-invoices/${params.id}`
+      );
+      const invoice =
+        response.data && response.data.data && response.data.data.invoice
+          ? response.data.data.invoice
+          : null;
 
       if (process.client) {
-        document.body.style.cursor = 'auto'
+        document.body.style.cursor = "auto";
       }
 
+      console.log("invoice", invoice);
+
       return {
-        invoice,
-      }
+        invoice
+      };
     } catch (err) {
       if (err && err.response.status === 404) {
-        return error({ status: 404, message: 'This page could not be found' })
-      } else if (err & err.response.status === 500) {
-        return error({ status: 500, message: 'Something went wrong!' })
+        return error({ status: 404, message: "This page could not be found" });
+      } else if (err & (err.response.status === 500)) {
+        return error({ status: 500, message: "Something went wrong!" });
       }
-      throw err
+      throw err;
     }
   },
 
   data() {
     return {
-      invoice: null,
+      invoice: null
     };
   },
 
   mounted() {
-    document.body.style.overflow = 'hidden'
+    document.body.style.overflow = "hidden";
   },
 
   destroyed() {
-    document.body.style.overflow = 'auto'
-  },
-
-
-}
+    document.body.style.overflow = "auto";
+  }
+};
 </script>
 
 <style scoped>

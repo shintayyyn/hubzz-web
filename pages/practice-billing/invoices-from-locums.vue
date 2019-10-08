@@ -41,14 +41,14 @@
                     <!-- <div
                       v-for="item in invoice.items.filter(item => item.type === 'Job Part' && item.job_part)"
                       :key="item.id"
-                    >{{item.job_part.job_part_number}}</div>-->
-                  </td>
+                    >{{item.job_part.job_part_number}}</div>
+                  </td>-->
                   <td @click="show(invoice)">£ {{invoice.total_amount}}</td>
                   <td @click="show(invoice)">{{invoice.status}}</td>
                   <!-- <td
                     @click="show(invoice)"
                   >{{invoice.paid_at ? 'Paid' : invoice.issued_at ? 'Issued' : ''}}</td>-->
-                  <td @click="onClick(invoice, index)" class="text-center">
+                  <td @click.stop.prevent="onClick(invoice, index)" class="text-center">
                     <button
                       v-if="!invoice.paid_at"
                       v-text="'Mark as paid'"
@@ -90,7 +90,7 @@
       
     </div>
     
-    <div class="shield" v-if="$route.path != '/practice-billing/invoices-from-locums' || paymentModal" @click="$router.go(-1)"></div>
+    <div class="shield" v-if="$route.path != '/practice-billing/invoices-from-locums' || paymentModal" @click="paymentModal ? '' : $router.go(-1)"></div>
   </div>
 </template>
 
@@ -128,7 +128,7 @@ export default {
       const responseCount = await app.$axios.get(
         "/api/v1/practice/locum-invoices/count"
       );
-      console.log(response);
+
       const count =
         responseCount.data &&
         response.data.data &&
@@ -232,7 +232,9 @@ export default {
     },
 
     show(item) {
-      this.$router.push(`/practice-billing/invoices-from-locums/${item.id}`);
+      if (item.file) {
+        this.$router.push(`/practice-billing/invoices-from-locums/${item.id}`);
+      }
     },
     onClick(invoice, index) {
       this.selectedInvoiceId = null;
