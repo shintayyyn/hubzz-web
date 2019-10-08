@@ -1,39 +1,57 @@
 <template>
   <section class="profile-section">
-    <!-- <div class="flex overflow-x-auto whitespace-no-wrap"> -->
-    <div class="flex overflow-x-auto">
+    <div class="flex overflow-x-auto whitespace-no-wrap">
       <nuxt-link
         to="/profile/practice"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
         :class="['profile', 'profile-practice'].includes($route.name) ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        v-if="authPermissions.includes('View Profile Practice')"
       >Practice</nuxt-link>
       <nuxt-link
-        v-if="type !== 'Stand Alone'"
         to="/profile/branches-surgeries"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
         :class="$route.name.includes('profile-branches-surgeries') || $route.name === 'profile-branches-surgeries-create'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        v-if="type !== 'Stand Alone' && authPermissions.includes('View Profile Surgeries')"
       >Branches / Surgeries</nuxt-link>
+      <nuxt-link
+        to="/profile/users"
+        class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
+        :class="$route.name.includes('profile-users')  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        v-if="authPermissions.includes('View Profile Users')"
+      >Users</nuxt-link>
       <nuxt-link
         to="/profile/practice-documents"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
         :class="$route.name.includes('profile-practice-documents')  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        v-if="authPermissions.includes('View Profile Practice Document')"
       >Practice Documents</nuxt-link>
-      <nuxt-link
-        v-if="$route.name === 'profile-branches-surgeries' || $route.name === 'profile-branches-surgeries-create'"
-        to="/profile/branches-surgeries/create"
-        class="md:mr-5 p-3 text-sm font-bold cursor-pointer hover:bg-yellow-500 rounded-lg whitespace-no-wrap"
-      >Create</nuxt-link>
     </div>
     <div class="mt-5">
-      <nuxt-child />
+      <nuxt-child @changeType="type = $event" />
     </div>
+    <AppConfirmationModal
+      :label="'You\'ve been revoked to view this Page'"
+      :confirmLabel="'OK'"
+      :modal="confirmation_modal"
+      @confirm="goTo"
+    />
   </section>
 </template>
 <script>
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
 export default {
+  components: {
+    AppConfirmationModal
+  },
+  data() {
+    return {
+      confirmation_modal: false,
+      type: null
+    };
+  },
   computed: {
-    type() {
-      return this.$store.state.profile.practice_type;
+    authPermissions() {
+      return this.$store.getters["auth/permissions"];
     }
   },
   async asyncData({ app, store, error }) {
@@ -48,9 +66,44 @@ export default {
           ? responsePracticeType.data.practice.type
           : null;
 
-      store.commit("profile/SET_PRACTICE_TYPE", type);
+      return {
+        type
+      };
     } catch (err) {
       throw err;
+    }
+  },
+  watch: {
+    authPermissions(value) {
+      if (!this.CheckPermissions(value).hasPermission) {
+        this.confirmation_modal = true;
+      }
+    }
+  },
+  mounted() {
+    if (this.$route.name === "profile") {
+      if (this.authPermissions.includes("View Profile Practice")) {
+        this.$router.push("/profile/practice");
+      } else if (
+        this.authPermissions.includes("View Profile Surgeries") &&
+        this.type != "Stand Alone"
+      ) {
+        this.$router.push("/profile/branches-surgeries");
+      } else if (this.authPermissions.includes("View Profile Users")) {
+        this.$router.push("/profile/users");
+      } else if (
+        this.authPermissions.includes("View Profile Practice Document")
+      ) {
+        this.$router.push("/profile/practice-documents");
+      }
+    }
+  },
+  methods: {
+    goTo() {
+      this.confirmation_modal = false;
+      setTimeout(() => {
+        this.$router.push("/");
+      }, 500);
     }
   }
 };

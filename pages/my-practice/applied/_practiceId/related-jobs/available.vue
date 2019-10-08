@@ -19,6 +19,7 @@
     <div
       class="shield"
       v-if="$route.name === 'my-practice-applied-practiceId-related-jobs-available-jobId'"
+      @click="$router.go(-1)"
     ></div>
     <nuxt-child />
   </section>

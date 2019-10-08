@@ -164,7 +164,7 @@ export default {
   position: fixed;
   top: 0;
   left: 40%;
-  z-index: 500;
+  z-index: 700;
   display: flex;
   justify-content: center;
   margin-left: -40px;

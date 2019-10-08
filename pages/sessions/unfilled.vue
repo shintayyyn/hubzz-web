@@ -1,5 +1,5 @@
 <template>
-  <section class="relative __jobs-section">
+  <section class="relative">
     <AppLoading :loading="loadingJobs" :message="'Loading'" />
     <AppJobFilter @clear="clearFilters" @getJobs="getJobs(1, params)" :params="params" />
     <div
@@ -9,10 +9,7 @@
     <div v-if="getPracticeUnfilledJobs.length > 0" class="overflow-x-auto overflow-y-hidden">
       <JobTable :columns="columns" :jobs="getPracticeUnfilledJobs" @sortBy="sortBy" @show="show" />
     </div>
-    <div
-      class="absolute bottom-0 w-full"
-      v-if="getPracticeUnfilledJobs.length > 0 && totalPages > 1"
-    >
+    <div class="w-full mt-4" v-if="getPracticeUnfilledJobs.length > 0 && totalPages > 1">
       <AppPagination
         :total="total"
         :totalPages="totalPages"
@@ -20,7 +17,11 @@
         @pagechanged="pagechanged"
       />
     </div>
-    <div class="shield" v-if="$route.name === 'sessions-unfilled-id'"></div>
+    <div
+      class="shield"
+      v-if="$route.name === 'sessions-unfilled-id'"
+      @click="$router.push(`/sessions/unfilled`)"
+    ></div>
     <nuxt-child />
   </section>
 </template>
@@ -124,6 +125,9 @@ export default {
     },
     loadingJobs() {
       return this.$store.state.jobs.loading_jobs;
+    },
+    authPermissions() {
+      return this.$store.getters["auth/permissions"];
     }
   },
   beforeCreate() {
@@ -197,7 +201,9 @@ export default {
       this.getJobs(this.current_page, this.params);
     },
     show(id) {
-      this.$router.push(`/sessions/unfilled/${id}`);
+      if (this.authPermissions.includes("Show Sessions Job")) {
+        this.$router.push(`/sessions/unfilled/${id}`);
+      }
     }
   }
 };

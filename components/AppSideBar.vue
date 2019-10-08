@@ -2,10 +2,10 @@
   <section>
     <div class="sidebar" :class="{'toggled-left': $store.state.toggled_sidebar}">
       <div class="sidebar-nav pt-8 xl:pt-20">
-        <div
-          class="close-button cursor-pointer text-2xl font-bold text-yellow-500 px-4"
+        <button
+          class="close-button cursor-pointer focus:outline-none text-2xl font-bold text-yellow-500 px-4"
           @click="close"
-        >X</div>
+        >X</button>
         <div v-for="(item, index) in lists" :key="index" class="text-sm relative">
           <span
             class="absolute inset-y-0 left-0 border-solid bg-yellow-500 w-1 h-full"
@@ -16,6 +16,7 @@
             :event="isDisabled(item.route)"
             class="block no-underline p-4"
             :class="`/${$route.path.split('/')[1]}` == item.route ? 'text-yellow-500' : 'text-black hover:text-yellow-600'"
+            v-if="hasPermissions(item.permissions ? item.permissions : [])"
           >
             <span class="font-sans">
               {{item.name}}
@@ -57,6 +58,12 @@
       @confirm="logout"
       @cancel="signout_modal = false"
     />
+    <AppConfirmationModal
+      :label="'Your Profile Has Been Deleted, Contact Hubzz For More Info'"
+      :confirmLabel="'Yes'"
+      :modal="confirmation_modal"
+      @confirm="confirm"
+    />
   </section>
 </template>
 <script>
@@ -68,6 +75,7 @@ export default {
   data() {
     return {
       signout_modal: false,
+      confirmation_modal: false,
       lists: []
     };
   },
@@ -77,10 +85,47 @@ export default {
     },
     getPracticeJobsBadge() {
       return this.$store.getters["jobs/getPracticeJobsBadge"];
+    },
+    authPermissions() {
+      return this.$store.getters["auth/permissions"];
     }
   },
-  created() {
-    if (this.$auth.loggedIn) {
+  mounted() {
+    this.getInit();
+    this.$socket.on("Practice Notification Update Profile", user => {
+      if (
+        user.practice_detail &&
+        user.practice_detail.role &&
+        user.practice_detail.role.permissions &&
+        user.practice_detail.role.permissions.length > 0
+      ) {
+        this.$store.commit(
+          "auth/SET_PERMISSIONS",
+          user.practice_detail.role.permissions
+        );
+      } else {
+        this.$store.commit("auth/SET_PERMISSIONS", []);
+      }
+    });
+    this.$socket.on("Practice Notification Delete Profile", () => {
+      this.confirmation_modal = true;
+    });
+  },
+  methods: {
+    hasPermissions(permissions) {
+      if (permissions && permissions.length) {
+        let enable = false;
+        for (let i = 0; i < permissions.length; i++) {
+          if (this.authPermissions.includes(permissions[i])) {
+            enable = true;
+          }
+        }
+        return enable;
+      } else {
+        return true;
+      }
+    },
+    getInit() {
       let domain = this.$auth.user.domain;
       let accountStatus = this.$auth.user.status;
 
@@ -95,12 +140,32 @@ export default {
         { name: "Contact Us", route: "/contact-us" }
       ];
       if (domain === "Practice") {
-        addedLists = [{ name: "Profile", route: "/profile" }];
+        addedLists = [
+          {
+            name: "Profile",
+            route: "/profile",
+            permissions: [
+              "View Profile Practice",
+              "View Profile Surgeries",
+              "View Profile Users",
+              "View Profile Practice Document"
+            ]
+          }
+        ];
         if (["Active", "Dormant"].includes(accountStatus)) {
           addedLists.push({ name: "My Banks", route: "/my-banks" });
-          addedLists.push({ name: "Sessions", route: "/sessions" });
+          addedLists.push({
+            name: "Sessions",
+            route: "/sessions",
+            permissions: ["View Sessions Job"]
+          });
           addedLists.push({ name: "Billing", route: "/practice-billing" });
           addedLists.push({ name: "Invite", route: "/invite" });
+          addedLists.push({
+            name: "Roles and Permissions",
+            route: "/roles-and-permissions",
+            permissions: ["View Role"]
+          });
         }
       }
 
@@ -118,15 +183,18 @@ export default {
       }
 
       this.lists = [...defaultLists, ...addedLists, ...otherLists];
-    }
-  },
-  methods: {
+    },
     logout() {
       this.$axios
         .post("/api/v1/logout")
         .then(() => {
           console.log("Socket Logged Out");
           console.log("One Signal Logged Out");
+        })
+        .catch(err => {
+          console.log(err);
+        })
+        .finally(() => {
           return this.$auth.logout();
         })
         .then(() => {
@@ -134,10 +202,22 @@ export default {
           this.$store.commit("TOGGLE_SIDEBAR", false);
           this.$auth.$storage.setUniversal("_token.local", "");
           this.$router.push("/");
+        })
+        .catch(err => {
+          console.log(err);
         });
     },
+    async confirm() {
+      try {
+        await this.$auth.logout();
+        this.$auth.$storage.setUniversal("_token.local", "");
+        this.$router.push("/");
+      } catch (err) {
+        console.log(err);
+      }
+    },
     isDisabled(routeName) {
-      return this.$route.path === routeName ? "" : "click";
+      return this.$route.path.includes(routeName) ? "" : "click";
     },
     close() {
       this.$store.commit("TOGGLE_SIDEBAR", false);

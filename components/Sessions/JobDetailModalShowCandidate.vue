@@ -126,7 +126,11 @@
               <div class="text-xs sm:text-sm">(none)</div>
             </div>
           </div>
-          <AppButton :label="'Appoint to this job'" @click="confirmation_modal = true" />
+          <AppButton
+            :label="'Appoint to this job'"
+            @click="confirmation_modal = true"
+            v-if="authPermissions.includes('Appoint Sessions Job')"
+          />
         </div>
       </div>
     </div>
@@ -157,6 +161,11 @@ export default {
       mandatory: [],
       optional: []
     };
+  },
+  computed: {
+    authPermissions() {
+      return this.$store.getters["auth/permissions"];
+    }
   },
   created() {
     this.getProfessionCategory(

@@ -34,9 +34,9 @@
           <td>{{item.date_start}}</td>
           <td>{{item.date_end}}</td>
           <td
-            v-if="['Available','Applied','Current','Unfilled'].includes(item.status)"
+            v-if="['Available','Current','Unfilled'].includes(item.status)"
           >{{$moment(item.date_created).format('YYYY-MM-DD') }}</td>
-          <td v-if="item.status === 'Applied'">Date Applied</td>
+          <td v-if="item.status === 'Applied'">{{ $moment(item.date_created).format('YYYY-MM-DD') }}</td>
           <template v-if="item.status === 'Current'">
             <td v-if="item.type === 'Private'">N/A</td>
             <td v-else>{{item.platform_job.appointed_at | localDate}}</td>

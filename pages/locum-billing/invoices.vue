@@ -1,12 +1,12 @@
 <template>
-  <div>
+  <section>
     <transition name="fade" mode="out-in">
       <div
         v-if="['locum-billing-invoices-id', 'locum-billing-invoices-create', 'locum-billing-invoices-id-edit'].includes($route.name) || confirmation_modal || paymentModal"
-        class="invoice-shield"
+        class="shield"
       ></div>
     </transition>
-    <nuxt-child />
+    <nuxt-child @addInvoice="addInvoice" @updateInvoice="updateInvoice" />
 
     <div class="__jobs-section">
       <h1>Invoices</h1>
@@ -33,16 +33,16 @@
             </tr>
           </thead>
           <tbody>
-            <template v-if="getLocumInvoices.length === 0">
+            <template v-if="invoices.length === 0">
               <tr>
                 <td colspan="10" class="text-center">You haven't created any invoice/s yet</td>
               </tr>
             </template>
-            <template v-else v-for="(invoice, index) in getLocumInvoices">
+            <template v-else v-for="(invoice, index) in invoices">
               <tr
                 @click="show(invoice)"
                 :key="invoice.id"
-                class="__job-card shadow-md cursor-pointer text-xs text-left"
+                class="__job-card shadow-md cursor-pointer text-xs text-left rounded-lg"
               >
                 <td>{{invoice.type}}</td>
                 <td>{{invoice.surgery.name}}</td>
@@ -63,7 +63,7 @@
                     @click.stop.prevent="onClick(invoice, index)"
                     v-if="!invoice.paid_at"
                     v-text="invoice.issued_at ? 'Mark as paid' : 'Delete'"
-                    class="px-2 py-3 font-bold rounded-lg focus:outline-none"
+                    class="px-4 py-2 font-bold rounded-lg focus:outline-none"
                     :class="invoice.issued_at ? 'text-white bg-green-600' : 'bg-yellow-500'"
                   ></button>
                 </td>
@@ -76,7 +76,7 @@
         </table>
       </div>
     </div>
-    <div class="bottom-0 w-full" v-if="getLocumInvoices.length > 0 && totalPages > 1">
+    <div class="bottom-0 w-full" v-if="invoices.length > 0 && totalPages > 1">
       <AppPagination
         :total="total"
         :totalPages="totalPages"
@@ -97,7 +97,7 @@
         isAfter
       />
       <div class="flex flex-row flex-no-wrap justify-center">
-        <AppButton :label="'Save'" @click="updateInvoice" :inStyle="'padding:5px'" />
+        <AppButton :label="'Save'" @click="confirmPayment" :inStyle="'padding:5px'" />
         <div class="mx-1"></div>
         <AppButton :label="'Cancel'" @click="paymentModal = false" :inStyle="'padding:5px'" />
       </div>
@@ -111,7 +111,7 @@
       @confirm="deleteInvoice"
       @cancel="confirmation_modal = false"
     />
-  </div>
+  </section>
 </template>
 
 <script>
@@ -147,18 +147,18 @@ export default {
         response.data && response.data.data && response.data.data.invoices
           ? response.data.data.invoices
           : [];
-      const responseCount = await app.$axios.get(
+      const responseTotal = await app.$axios.get(
         "/api/v1/locum/invoices/count"
       );
-      const count =
-        responseCount.data &&
+      const total =
+        responseTotal.data &&
         response.data.data &&
-        responseCount.data.data.count
-          ? responseCount.data.data.count
+        responseTotal.data.data.count
+          ? responseTotal.data.data.count
           : 0;
       return {
         invoices,
-        count
+        total
       };
     } catch (err) {
       console.log("locum-billing index err", err.response || err);
@@ -180,7 +180,7 @@ export default {
       paid_at: true,
       date_created: false,
       //
-      count: 0,
+      total: 0,
       invoices: [],
       paymentModal: false,
       // deleteModal: false,
@@ -193,29 +193,29 @@ export default {
     };
   },
   computed: {
-    getLocumInvoices() {
-      return this.$store.getters["billing/getLocumInvoices"];
-    },
+    // getLocumInvoices() {
+    //   return this.$store.getters["billing/getLocumInvoices"];
+    // },
     offset() {
       return this.perPage * (this.current_page - 1);
     },
     perPage() {
       return 5;
     },
-    total() {
-      return this.$store.state.billing.locum_invoice_count;
-    },
+    // total() {
+    //   return this.$store.state.billing.locum_invoice_count;
+    // },
     totalPages() {
       return Math.ceil(this.total / this.perPage);
     }
   },
   mounted() {
-    this.$store.commit("billing/SET_LOCUM_INVOICES", this.invoices);
-    this.$store.commit("billing/SET_LOCUM_INVOICE_COUNT", this.count);
+    // this.$store.commit("billing/SET_LOCUM_INVOICES", this.invoices);
+    // this.$store.commit("billing/SET_LOCUM_INVOICE_COUNT", this.count);
   },
-  beforeDestroy() {
-    this.$store.commit("billing/CLEAR_INVOICES");
-  },
+  // beforeDestroy() {
+  //   this.$store.commit("billing/CLEAR_INVOICES");
+  // },
   methods: {
     pagechanged(e) {
       this.current_page = e;
@@ -250,10 +250,10 @@ export default {
       this.$axios
         .$get("/api/v1/locum/invoices", { params: invoiceParams })
         .then(res => {
-          this.$store.commit("billing/SET_LOCUM_INVOICES", res.data.invoices);
+          // this.$store.commit("billing/SET_LOCUM_INVOICES", res.data.invoices);
+          this.invoices = res.data.invoices;
         });
     },
-
     show(item) {
       if (
         item.status === "Issued" ||
@@ -280,7 +280,7 @@ export default {
     closePaymentModal() {
       this.paymentModal = false;
     },
-    updateInvoice() {
+    confirmPayment() {
       this.Validate(this.form);
       if (!this.formError.length) {
         this.form.paid_at = this.$moment(this.form.paid_at).format(
@@ -292,10 +292,17 @@ export default {
             this.form
           )
           .then(res => {
-            this.$store.commit(
-              "billing/UPDATE_LOCUM_INVOICE",
-              res.data.invoice
+            // this.$store.commit(
+            //   "billing/UPDATE_LOCUM_INVOICE",
+            //   res.data.invoice
+            // );
+            let index = this.invoices.findIndex(
+              invoice => invoice.id === res.data.invoice.id
             );
+            if (index >= 0) {
+              this.invoices.splice(index, 1, res.data.invoice);
+            }
+
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
@@ -309,13 +316,27 @@ export default {
       this.$axios
         .$delete(`/api/v1/locum/invoices/${this.selectedInvoiceId}`)
         .then(res => {
-          this.$store.commit(
-            "billing/REMOVE_LOCUM_INVOICE",
-            this.selectedInvoiceId
+          // this.$store.commit(
+          //   "billing/REMOVE_LOCUM_INVOICE",
+          //   this.selectedInvoiceId
+          // );
+          this.invoices = this.invoices.filter(
+            invoice => invoice.id !== this.selectedInvoiceId
           );
           this.confirmation_modal = false;
           this.getInvoice(this.current_page, this.params);
         });
+    },
+    addInvoice(invoice) {
+      this.invoices.push(invoice);
+    },
+    updateInvoice(invoice) {
+      console.log("updating", invoice);
+      console.log("updating", this.invoices);
+      let index = this.invoices.findIndex(item => item.id == invoice.id);
+      if (index >= 0) {
+        this.invoices.splice(index, 1, invoice);
+      }
     }
   }
 };
@@ -325,15 +346,6 @@ export default {
 .shield {
   z-index: 511;
 }
-/* .calendar {
-  min-width: 80px;
-  height: auto;
-}
-@media screen and (min-width: 468px) {
-  .calendar {
-    width: 160px;
-  }
-} */
 /* confirmation */
 .confirmation {
   z-index: 600;

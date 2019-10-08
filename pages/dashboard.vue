@@ -11,12 +11,12 @@
       <div class="text-sm sm:text-base font-bold">Quick Statistics</div>
       <Statistics />
     </div>
-    <!--<div v-if="!userIsAuthorized && $auth.user.domain === 'Practice'">
+    <div v-if="!userIsAuthorized && $auth.user.domain === 'Practice'">
       <div
         class="text-sm sm:text-base font-bold"
       >Please complete the Practice Verification Steps in order to have a complete access in the platform.</div>
     </div>
-     <div v-if="!userIsAuthorized && $auth.user.domain === 'Locum'">
+    <div v-if="!userIsAuthorized && $auth.user.domain === 'Locum'">
       <div
         v-if="!complianceDocs"
         class="text-sm sm:text-base font-bold"
@@ -26,7 +26,7 @@
         v-else-if="complianceDocs"
         class="text-sm sm:text-base font-bold"
       >Please wait for HUBZZ to verify your compliance requirements.</div>
-    </div>-->
+    </div>
   </section>
 </template>
 

@@ -30,7 +30,11 @@
     </div>
 
     <transition name="fade" mode="out-in">
-      <div class="shield" v-if="$route.name === 'profile-practice-documents-id'"></div>
+      <div
+        class="shield"
+        v-if="$route.name === 'profile-practice-documents-id'"
+        @click="$router.push(`/profile/practice-documents`)"
+      ></div>
     </transition>
     <nuxt-child />
   </section>
@@ -54,7 +58,22 @@ export default {
       disabled: "true"
     };
   },
-
+  computed: {
+    authPermissions() {
+      return this.$store.getters["auth/permissions"];
+    }
+  },
+  async asyncData({ app, error }) {
+    try {
+      return;
+    } catch (err) {
+      if (err.response && err.response.status === 401) {
+        error(err.response.data);
+        return;
+      }
+      throw err;
+    }
+  },
   created() {
     this.practiceDocuments = [];
     this.practiceDocumentTypes = [];
@@ -96,7 +115,9 @@ export default {
 
   methods: {
     show(id) {
-      this.$router.push(`/profile/practice-documents/${id}`);
+      if (this.authPermissions.includes("Show Profile Practice Document")) {
+        this.$router.push(`/profile/practice-documents/${id}`);
+      }
     }
   }
 };

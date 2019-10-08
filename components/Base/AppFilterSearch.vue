@@ -26,6 +26,7 @@
         </div>
         <div>
           <input
+            v-show="show"
             v-model="search"
             type="text"
             placeholder="Select.."
@@ -38,7 +39,7 @@
         </div>
       </div>
       <!-- option -->
-      <div class="relative flex flex-col w-full z-10">
+      <div class="relative flex flex-col w-full z-10" v-show="show">
         <div
           ref="filterSearchOptions"
           class="absolute w-full option-list flex flex-col bg-white shadow-md overflow-y-auto"
@@ -71,13 +72,14 @@ export default {
     AppLoading
   },
   props: {
-    value: [Array, String],
+    value: [Array, String, Number],
     name: String,
     label: String,
     placeholder: String,
     error: Object,
     info: String,
     url: String,
+    limitItem: Number,
     // for qualification
     professionCategoryId: String,
     // for spoken-langauge
@@ -88,7 +90,7 @@ export default {
       loading: false,
       search: "",
       total: 0,
-      loadMore: true,
+      hasMore: true,
       items: [],
       toggled: false,
       activeIndex: 0
@@ -109,9 +111,11 @@ export default {
       });
     },
     // for qualification
-    professionCategoryId(value) {
-      this.items = [];
-      this.getListsCount(this.search);
+    professionCategoryId(newValue, oldValue) {
+      if (newValue && oldValue) {
+        this.items = [];
+        this.getListsCount(this.search);
+      }
     },
     search(value) {
       this.items = [];
@@ -125,12 +129,13 @@ export default {
           this.$refs.filterSearchOptions.scrollTop >=
         this.$refs.filterSearchOptions.scrollHeight - 1
       ) {
-        if (this.loadMore === true && !this.loading) {
+        if (this.hasMore === true && !this.loading) {
           this.getLists(this.items.length, this.search);
         }
       }
     },
     getListsCount(search) {
+      this.items = [];
       let params = {};
       if (this.name === "qualification_id") {
         params = {
@@ -146,7 +151,7 @@ export default {
     },
     getLists(offset, search) {
       this.loading = true;
-      this.loadMore = true;
+      this.hasMore = true;
 
       let params = {};
       if (this.name === "qualification_id") {
@@ -157,9 +162,25 @@ export default {
       }
       params = { ...params, offset, limit: 10, search };
       this.$axios.$get(`${this.url}`, { params }).then(res => {
+        if (res.data.practice_types) {
+          if (res.data.practice_types.length === 0) {
+            this.loadMore = false;
+          } else {
+            res.data.practice_types.forEach(item => {
+              this.items.push({
+                label: item.name,
+                value: item.id
+              });
+            });
+            if (res.data.practice_types.length < 10) {
+              this.loadMore = false;
+            }
+          }
+        }
+
         if (res.data.qualifications) {
           if (res.data.qualifications.length === 0) {
-            this.loadMore = false;
+            this.hasMore = false;
           } else {
             res.data.qualifications.forEach(item => {
               this.items.push({
@@ -168,14 +189,14 @@ export default {
               });
             });
             if (res.data.qualifications.length < 10) {
-              this.loadMore = false;
+              this.hasMore = false;
             }
           }
         }
 
         if (res.data.clinical_systems) {
           if (res.data.clinical_systems.length === 0) {
-            this.loadMore = false;
+            this.hasMore = false;
           } else {
             res.data.clinical_systems.forEach(item => {
               this.items.push({
@@ -184,14 +205,14 @@ export default {
               });
             });
             if (res.data.clinical_systems.length < 10) {
-              this.loadMore = false;
+              this.hasMore = false;
             }
           }
         }
 
         if (res.data.spoken_languages) {
           if (res.data.spoken_languages.length === 0) {
-            this.loadMore = false;
+            this.hasMore = false;
           } else {
             res.data.spoken_languages.forEach(item => {
               this.items.push({
@@ -200,7 +221,23 @@ export default {
               });
             });
             if (res.data.spoken_languages.length < 10) {
-              this.loadMore = false;
+              this.hasMore = false;
+            }
+          }
+        }
+
+        if (res.data.surgeries) {
+          if (res.data.surgeries.length === 0) {
+            this.hasMore = false;
+          } else {
+            res.data.surgeries.forEach(item => {
+              this.items.push({
+                label: item.name,
+                value: item.id
+              });
+            });
+            if (res.data.surgeries.length < 10) {
+              this.hasMore = false;
             }
           }
         }
@@ -208,9 +245,21 @@ export default {
       });
     },
     add(item) {
+      if (this.limitItem && this.limitItem == this.value.length) {
+        return;
+      }
       this.value.push(item);
       this.$refs.input.focus();
       this.$emit("add");
+      if (
+        this.$refs.filterSearchOptions.offsetHeight +
+          this.$refs.filterSearchOptions.scrollTop >=
+        this.$refs.filterSearchOptions.scrollHeight - 1
+      ) {
+        if (this.hasMore === true && !this.loading) {
+          this.getLists(this.items.length, this.search);
+        }
+      }
     },
     remove(index) {
       this.value.splice(index, 1);
@@ -249,6 +298,12 @@ export default {
     }
   },
   computed: {
+    show() {
+      if (!this.limitItem || this.limitItem !== this.value.length) {
+        return true;
+      }
+      return false;
+    },
     filteredItems() {
       return this.items.filter(filterItem => {
         const index = this.value.findIndex(item => {
@@ -258,7 +313,6 @@ export default {
       });
     }
   }
-  // && filterItem.label.includes(this.filterSearch)
 };
 </script>
 <style scoped>

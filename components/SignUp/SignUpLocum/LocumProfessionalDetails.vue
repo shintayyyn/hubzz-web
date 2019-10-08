@@ -203,7 +203,7 @@
     <div class="flex justify-center mt-4">
       <AppButton
         :label="'<<'"
-        @click="$store.commit('signUp/SET_ACTIVE_COMPONENT', 'LocumAddressDetails')"
+        @click="$store.commit('sign-up/SET_ACTIVE_COMPONENT', 'LocumAddressDetails')"
       />
       <div class="mx-2"></div>
       <AppButton :label="'Next'" @click="next" />
@@ -249,31 +249,31 @@ export default {
   },
   computed: {
     professions() {
-      return this.$store.getters["signUp/getProfessions"];
+      return this.$store.getters["sign-up/getProfessions"];
     },
     gpQualifications() {
-      return this.$store.getters["signUp/getGpQualifications"];
+      return this.$store.getters["sign-up/getGpQualifications"];
     },
     othersQualifications() {
-      return this.$store.getters["signUp/getOthersQualifications"];
+      return this.$store.getters["sign-up/getOthersQualifications"];
     },
     clinicalSystems() {
-      return this.$store.getters["signUp/getClinicalSystems"];
+      return this.$store.getters["sign-up/getClinicalSystems"];
     },
     spokenLanguages() {
-      return this.$store.getters["signUp/getSpokenLanguages"];
+      return this.$store.getters["sign-up/getSpokenLanguages"];
     },
     practiceTypes() {
-      return this.$store.getters["signUp/getPracticeTypes"];
+      return this.$store.getters["sign-up/getPracticeTypes"];
     },
     mandatoryTrainings() {
-      return this.$store.getters["signUp/getMandatoryTrainings"];
+      return this.$store.getters["sign-up/getMandatoryTrainings"];
     },
     professionalDetails() {
-      return this.$store.state.signUp.professional_details;
+      return this.$store.getters["sign-up/professionalDetails"];
     },
     professionalFormError() {
-      return this.$store.state.signUp.professional_detail_form_error;
+      return this.$store.getters["sign-up/professionalFormError"];
     }
   },
   created() {
@@ -392,9 +392,9 @@ export default {
         this.form.spoken_language_id = this.form.spoken_language_id
           ? this.form.spoken_language_id.map(item => item.value)
           : [];
-        this.$store.commit("signUp/SET_PROFESSIONAL_DETAILS", this.form);
+        this.$store.commit("sign-up/SET_PROFESSIONAL_DETAILS", this.form);
         this.$store.commit(
-          "signUp/SET_ACTIVE_COMPONENT",
+          "sign-up/SET_ACTIVE_COMPONENT",
           "LocumCredentialDetails"
         );
       }

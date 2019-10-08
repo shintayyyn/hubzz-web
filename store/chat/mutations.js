@@ -31,24 +31,24 @@ export default {
     state.newMessageUser = payload
   },
   ADD_MESSAGE(state, payload) {
-    if (state.activeConversationId != null) {
-      if (state.activeConversationId === payload.id.toString()) {
-        state.messages.push(payload.latest_conversation_message);
-      }
-      let conversation = state.conversations.find(message => message.id == payload.id)
-      conversation.latest_conversation_message = payload.latest_conversation_message
-      state.conversations = state.conversations.sort((a, b) =>
-        new Date(b.latest_conversation_message.created_at) - new Date(a.latest_conversation_message.created_at)
-      );
+    if (state.activeConversationId === payload.id.toString()) {
+      state.messages.push(payload.latest_conversation_message);
     }
+    let conversation = state.conversations.find(message => message.id == payload.id)
+    conversation.latest_conversation_message = payload.latest_conversation_message
+    state.conversations = state.conversations.sort((a, b) =>
+      new Date(b.latest_conversation_message.created_at) - new Date(a.latest_conversation_message.created_at)
+    );
   },
   ADD_USER_ONLINE(state, payload) {
     let conversation = state.conversations.find(conversation => conversation.id == state.activeConversationId)
-    let user = conversation.conversation_member_users.find(member => member.user.id == payload)
-    if (user) {
-      user.user.is_online = true
-      conversation.conversation_member_users.splice(conversation.conversation_member_users.findIndex(item => item.user.id == payload), 1, user)
-      state.conversations.splice(state.conversations.findIndex(item => item.id == state.activeConversationId), 1, conversation)
+    if (conversation) {
+      let user = conversation.conversation_member_users.find(member => member.user.id == payload)
+      if (user) {
+        user.user.is_online = true
+        conversation.conversation_member_users.splice(conversation.conversation_member_users.findIndex(item => item.user.id == payload), 1, user)
+        state.conversations.splice(state.conversations.findIndex(item => item.id == state.activeConversationId), 1, conversation)
+      }
     }
 
   },
@@ -72,12 +72,15 @@ export default {
     //   state.usersOnline.splice(index, 1);
     // }
     let conversation = state.conversations.find(conversation => conversation.id == state.activeConversationId)
-    let user = conversation.conversation_member_users.find(member => member.user.id == payload)
-    if (user) {
-      user.user.is_online = false
-      conversation.conversation_member_users.splice(conversation.conversation_member_users.findIndex(item => item.user.id == payload), 1, user)
-      state.conversations.splice(state.conversations.findIndex(item => item.id == state.activeConversationId), 1, conversation)
+    if (conversation) {
+      let user = conversation.conversation_member_users.find(member => member.user.id == payload)
+      if (user) {
+        user.user.is_online = false
+        conversation.conversation_member_users.splice(conversation.conversation_member_users.findIndex(item => item.user.id == payload), 1, user)
+        state.conversations.splice(state.conversations.findIndex(item => item.id == state.activeConversationId), 1, conversation)
+      }
     }
+
   },
   DELETE_ACTIVE_CONVERSATION(state) {
     state.activeConversationId = null

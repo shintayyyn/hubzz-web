@@ -4,9 +4,9 @@
     ref="messagesContainer"
     @scroll="scrollHandler"
   >
+    <AppLoading :loading="loading" :message="'Loading'" />
     <div class="relative flex flex-col h-full">
       <!-- CHAT -->
-      <AppLoading :loading="loading" :message="'Loading'" />
       <transition name="drop" mode="in-out">
         <span class="relative w-full flex justify-center">
           <button
@@ -17,7 +17,7 @@
         </span>
       </transition>
       <transition name="drop" mode="in-out">
-        <span class="relative w-full flex justify-center">
+        <span class="w-full flex justify-center">
           <button
             v-if="newMessage"
             :class="loadMore ? 'my-20' : 'my-4'"
@@ -107,12 +107,6 @@
                   class="flex items-center"
                   :class="isReceiver(item) ? '': 'flex-row-reverse'"
                 >
-                  <!-- <a
-                    v-if="isLink.filter(link => link.id === item.id)"
-                    :href="getLink(item)"
-                    class="chat-message rounded-lg px-2 py-2 mx-2 whitespace-pre"
-                    :class="isReceiver(item) ? 'bg-gray-300' : 'bg-blue-500 text-right'"
-                  >{{ item.message }}</a>-->
                   <span
                     class="chat-message rounded-lg px-2 py-2 mx-2 whitespace-pre"
                     :class="isReceiver(item) ? 'bg-gray-300' : 'bg-blue-500 text-white text-right'"
@@ -334,19 +328,6 @@ export default {
         return item.avatar.file.url;
       }
     }
-    // getLink(item) {
-    //   let findLink = this.isLink.find(link => link.id === item.id);
-    //   return findLink.link;
-    // },
-    // convertTextToLink(item) {
-    //   let exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gi;
-    //   let convertedText = item.message.replace(exp, `<a href='$1'>$1</a>`);
-    //   var regex = /(http|https):\/\/(\w+:{0,1}\w*)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/;
-
-    //   if (regex.test(item.message)) {
-    //     this.isLink.push({ id: item.id, link: regex.exec(item.message)[0] });
-    //   }
-    // }
   }
 };
 </script>
@@ -380,23 +361,4 @@ export default {
   background: #ccc;
   border-radius: 50px;
 }
-
-/* @media screen and (min-width: 1200px) {
-  .chat-message {
-    max-width: 70%;
-    max-width: 20vw;
-  }
-} */
-/* 
-@media screen and (min-width: 768px) {
-  .chat-message {
-    max-width: 35vw;
-  }
-}
-
-@media screen and (min-width: 480px) {
-  .chat-message {
-    max-width: 35vw;
-  }
-} */
 </style>

@@ -36,7 +36,12 @@
           </div>
         </div>
         <div class="flex flex-row justify-start">
-          <AppButton :label="'Save'" @click="save" :inStyle="'padding:5px'" />
+          <AppButton
+            :label="'Save'"
+            @click="save"
+            :inStyle="'padding:5px 10px'"
+            v-if="authPermissions.includes('Update Profile Surgeries')"
+          />
         </div>
       </div>
     </div>
@@ -59,6 +64,11 @@ export default {
       formError: []
     };
   },
+  computed: {
+    authPermissions() {
+      return this.$store.getters["auth/permissions"];
+    }
+  },
   async asyncData({ app, store, params, error }) {
     try {
       const response = await app.$axios.$get(
@@ -68,10 +78,15 @@ export default {
         response.data && response.data.practice_surgery
           ? response.data.practice_surgery
           : null;
+
       return {
         practice_surgery
       };
     } catch (err) {
+      if (err.response && err.response.status === 401) {
+        error(err.response.data);
+        return;
+      }
       throw err;
     }
   },
@@ -87,10 +102,7 @@ export default {
           this.form
         )
         .then(res => {
-          this.$store.commit(
-            "profile/UPDATE_SURGERY",
-            res.data.practice_surgery
-          );
+          this.$emit("updateSurgery", res.data.practice_surgery);
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",

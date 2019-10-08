@@ -25,7 +25,7 @@
       class="absolute top-0 left-0 bg-red-500 p-1 text-xs sm:text-sm text-white"
       v-if="error"
     >{{error}}</div>
-    <AppLoading class="rounded-full" :loading="loading" :message="'Uploading'" />
+    <AppLoading :loading="loading" spinner />
   </div>
 </template>
 <script>
@@ -65,6 +65,7 @@ export default {
           status: "danger",
           text: ["Invalid file format"]
         });
+        return
       }
       let file = e.target.files[0];
       const formData = new FormData();
@@ -88,7 +89,7 @@ export default {
           if (err.response.data.status === 500) {
             this.error = "File size too large";
           }
-          console.log(err.response.data);
+          console.log("AppAvatar", err.response.data);
         });
     },
     getBase64(img, callback) {

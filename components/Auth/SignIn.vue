@@ -10,7 +10,7 @@
         :error="formError.find(item => item.field === 'email')"
         @submit="login"
       />
-      <AppInput
+      <!-- <AppInput
         v-model="form.password"
         :type="'password'"
         :name="'password'"
@@ -18,7 +18,39 @@
         :placeholder="''"
         :error="formError.find(item => item.field === 'password')"
         @submit="login"
-      />
+      />-->
+      <div class="flex flex-col mb-4">
+        <label class="text-sm">Password</label>
+        <div class="w-full relative">
+          <input
+            v-model="form.password"
+            :type="form.type"
+            :error="formError.find(item => item.field === 'password')"
+            @submit="login"
+            class="w-full py-4 border-b-2 focus:border-yellow-400 focus:outline-none"
+            :class="formError.length > 0 ? 'border-red-500' : ''"
+          />
+          <button
+            @click="form.type === 'password' ? form.type = 'text' : form.type = 'password'"
+            class="absolute top-0 right-0 mx-2 h-full focus:outline-none"
+          >
+            <svgicon
+              v-if="form.type === 'password'"
+              name="eye"
+              height="24"
+              width="24"
+              class="fill-current text-gray-500 hover:text-gray-600"
+            />
+            <svgicon
+              v-else
+              name="hide-eye"
+              height="24"
+              width="24"
+              class="fill-current text-gray-500 hover:text-gray-600"
+            />
+          </button>
+        </div>
+      </div>
     </div>
 
     <div class="flex justify-end mb-8">
@@ -45,7 +77,8 @@ export default {
     return {
       form: {
         email: "locum@nhs.net",
-        password: "qweqwe"
+        password: "qweqwe",
+        type: "password"
       },
       formError: []
     };

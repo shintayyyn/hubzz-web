@@ -20,12 +20,12 @@
 
 <script>
 export default {
-  layout: 'auth',
+  layout: "auth",
   mounted() {
     //   clean all forms from store
-    this.$store.commit('signUp/CLEAR_FORM_PRACTICE_DETAILS')
+    this.$store.commit("sign-up/CLEAR_FORM_PRACTICE_DETAILS");
   }
-}
+};
 </script>
 <style scoped>
 </style>

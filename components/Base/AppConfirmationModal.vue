@@ -18,7 +18,7 @@
                 @click.prevent="$emit('confirm')"
               >{{confirmLabel}}</button>
             </div>
-            <div class="mx-2">
+            <div class="mx-2" v-if="cancelLabel">
               <button
                 class="button border hover:text-white focus:outline-none text-black font-bold py-2 md:py-5 rounded-lg"
                 @click.prevent="$emit('cancel')"
@@ -47,12 +47,10 @@ export default {
       required: true
     },
     confirmLabel: {
-      type: String,
-      required: true
+      type: String
     },
     cancelLabel: {
-      type: String,
-      required: true
+      type: String
     }
   }
 };

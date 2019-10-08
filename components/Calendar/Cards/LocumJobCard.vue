@@ -16,8 +16,8 @@
         <div
           class="text-gray-500 my-3 text-xs xl:text-sm"
         >From {{dateStart(job.type)}} to {{dateEnd(job.type)}}</div>
-        <div class="text-gray-500 my-3 text-xs xl:text-sm">Shift {{shift(job.type)}}</div>
-        <div class="my-3 text-xs xl:text-sm">{{description(job.type)}}</div>
+        <div class="text-gray-500 my-3 text-xs xl:text-sm">Shift: {{shift(job.type)}}</div>
+        <div class="my-3 text-xs xl:text-sm break-words">{{description(job.type)}}</div>
       </div>
     </template>
     <template v-else>
@@ -38,59 +38,63 @@
 </template>
 <script>
 export default {
-  props: ['job'],
+  props: ["job"],
   methods: {
     select() {
       if (this.job.type) {
         this.$axios.$get(`/api/v1/locum/jobs/${this.job.id}`).then(res => {
-          this.$emit('viewLocumJob', res.data.job)
-        })
+          this.$emit("viewLocumJob", res.data.job);
+        });
       } else {
-        this.$router.push('/availability')
+        this.$router.push("/availability");
       }
     },
     title(type) {
-      return type === 'Private' ? 'Private appointment' : this.job.title
+      return type === "Private" ? "Private appointment" : this.job.title;
     },
     surgeryName(type) {
-      return this.job.surgery_name
+      return this.job.surgery_name;
     },
     surgeryCode(type) {
-      return type === 'Private' ? this.job.private_job.private_practice.surgery.code : this.job.platform_job.practice.surgery.code
+      return type === "Private"
+        ? this.job.private_job.private_practice.surgery.code
+        : this.job.platform_job.practice.surgery.code;
     },
     dateStart(type) {
-      return this.job.date_start
+      return this.job.date_start;
     },
     dateEnd(type) {
-      return this.job.date_end
+      return this.job.date_end;
     },
     shift(type) {
-      return this.job.shift.name
+      return this.job.shift.name;
     },
     description(type) {
-      return this.job.description
+      return this.job.description;
     },
     unavailableShift(shifts) {
-      if (this.$store.state.calendar.view_type === 'per_month') {
-        return shifts.map(shift => shift.name).join()
+      if (this.$store.state.calendar.view_type === "per_month") {
+        return shifts.map(shift => shift.name).join();
       }
-      return shifts.filter(job => job.name === this.$store.state.calendar.selected_date_shift.shift)[0].name
+      return shifts.filter(
+        job => job.name === this.$store.state.calendar.selected_date_shift.shift
+      )[0].name;
     },
     bgStatus(type, reminder) {
       switch (type) {
-        case 'Applied':
-          return 'bg-orange-400';
+        case "Applied":
+          return "bg-orange-400";
           break;
-        case 'Completed':
-          return 'bg-green-400';
+        case "Completed":
+          return "bg-green-400";
           break;
-        case 'Current':
-          return 'bg-green-400';
+        case "Current":
+          return "bg-green-400";
           break;
         default:
-          return 'bg-red-500'
+          return "bg-red-500";
       }
     }
   }
-}
+};
 </script>

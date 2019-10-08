@@ -19,7 +19,7 @@
         @pagechanged="pagechanged"
       />
     </div>
-    <div class="shield" v-if="$route.name === 'my-banks-applied-userId-related-jobs-applied-jobId'"></div>
+    <div class="shield" v-if="$route.name === 'my-banks-applied-userId-related-jobs-applied-jobId'" @click="$router.go(-1)"></div>
     <nuxt-child />
   </section>
 </template>

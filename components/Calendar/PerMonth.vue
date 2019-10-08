@@ -155,7 +155,7 @@
   </section>
 </template>
 <script>
-import PerMonthInfoDateCell from '@/components/Calendar/PerMonthInfoDateCell'
+import PerMonthInfoDateCell from "@/components/Calendar/PerMonthInfoDateCell";
 export default {
   components: {
     PerMonthInfoDateCell
@@ -166,29 +166,41 @@ export default {
       selectedYear: new Date().getFullYear(),
       daysInMonth: [],
       startOfMonth: null,
-      endOfMonth: null,
+      endOfMonth: null
+    };
+  },
+  computed: {
+    authPermissions() {
+      return this.$store.getters["auth/permissions"];
     }
   },
   watch: {
     selectedMonth(value) {
-      this.getDaysInMonth(value, this.selectedYear)
-    },
+      this.getDaysInMonth(value, this.selectedYear);
+    }
   },
   beforeDestroy() {
-    this.$store.commit('jobs/CLEAR_JOBS')
+    this.$store.commit("jobs/CLEAR_JOBS");
   },
   created() {
-    let selectedDate = this.$store.state.calendar.selected_date
-    this.startOfMonth = this.$moment(selectedDate).startOf('month').format('YYYY-MM-DD')
-    this.endOfMonth = this.$moment(selectedDate).endOf('month').format('YYYY-MM-DD')
-    let d = new Date(selectedDate)
-    this.selectedMonth = d.getMonth()
-    this.getDaysInMonth(this.selectedMonth, this.selectedYear)
-    this.getJobs()
+    let selectedDate = this.$store.state.calendar.selected_date;
+    this.startOfMonth = this.$moment(selectedDate)
+      .startOf("month")
+      .format("YYYY-MM-DD");
+    this.endOfMonth = this.$moment(selectedDate)
+      .endOf("month")
+      .format("YYYY-MM-DD");
+    let d = new Date(selectedDate);
+    this.selectedMonth = d.getMonth();
+    this.getDaysInMonth(this.selectedMonth, this.selectedYear);
+    this.getJobs();
   },
   methods: {
     getJobs() {
-      if (this.$auth.user.domain === 'Practice') {
+      if (
+        this.$auth.user.domain === "Practice" &&
+        this.authPermissions.includes("View Sessions Job")
+      ) {
         this.$store.dispatch("jobs/fetchPracticeJobs", {
           data_start: this.startOfMonth,
           date_end: this.endOfMonth,
@@ -225,7 +237,7 @@ export default {
           status: "Applied"
         });
       }
-      if (this.$auth.user.domain === 'Locum') {
+      if (this.$auth.user.domain === "Locum") {
         this.$store.dispatch("jobs/fetchLocumJobs", {
           date_start: this.startOfMonth,
           date_end: this.endOfMonth,
@@ -240,7 +252,7 @@ export default {
 
         this.$store.dispatch("jobs/fetchLocumUnavailabilities", {
           date_start: this.startOfMonth,
-          date_end: this.endOfMonth,
+          date_end: this.endOfMonth
         });
       }
     },
@@ -251,37 +263,52 @@ export default {
         days.push(new Date(date));
         date.setDate(date.getDate() + 1);
       }
-      let daysInMonth = []
+      let daysInMonth = [];
       days.forEach(day => {
         daysInMonth.push({
           day: day.getDay(),
           date: day.getDate(),
-          fullDate: this.$moment(day).format('YYYY-MM-DD')
-        })
-      })
-      this.daysInMonth = daysInMonth
+          fullDate: this.$moment(day).format("YYYY-MM-DD")
+        });
+      });
+      this.daysInMonth = daysInMonth;
     },
     adjustMonth(type) {
-      if (type === 'previous') {
+      if (type === "previous") {
         if (this.selectedMonth === 0) {
-          this.selectedMonth = 11
-          this.selectedYear--
+          this.selectedMonth = 11;
+          this.selectedYear--;
         } else {
-          this.selectedMonth--
+          this.selectedMonth--;
         }
       }
-      if (type === 'next') {
+      if (type === "next") {
         if (this.selectedMonth === 11) {
-          this.selectedMonth = 0
-          this.selectedYear++
+          this.selectedMonth = 0;
+          this.selectedYear++;
         } else {
-          this.selectedMonth++
+          this.selectedMonth++;
         }
       }
-      this.startOfMonth = this.$moment(`${this.selectedYear}-${this.selectedMonth + 1}`).startOf('month').format('YYYY-MM-DD')
-      this.endOfMonth = this.$moment(`${this.selectedYear}-${this.selectedMonth + 1}`).endOf('month').format('YYYY-MM-DD')
-      this.getJobs()
+      this.startOfMonth = this.$moment(
+        `${this.selectedYear}-${this.selectedMonth + 1}`
+      )
+        .startOf("month")
+        .format("YYYY-MM-DD");
+      this.endOfMonth = this.$moment(
+        `${this.selectedYear}-${this.selectedMonth + 1}`
+      )
+        .endOf("month")
+        .format("YYYY-MM-DD");
+
+      this.$store.commit(
+        "calendar/SELECT_DATE",
+        this.$moment(this.$store.state.calendar.selected_date)
+          .set("month", this.selectedMonth)
+          .format("YYYY-MM-DD")
+      );
+      this.getJobs();
     }
   }
-}
+};
 </script>

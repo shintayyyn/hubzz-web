@@ -1,5 +1,8 @@
 <template>
-  <div class="panel-top p-4 w-full flex items-center border-b leading-none">
+  <div
+    class="panel-top px-4 md:p-4 w-full flex items-center border-b leading-none"
+    :class="$auth.user.domain === 'Locum' ? 'py-3' : 'pb-4 pt-6'"
+  >
     <div class="pr-4 md:hidden">
       <button class="focus:outline-none" @click="goBack()">
         <svgicon name="left-arrow" height="20" width="20" />
@@ -9,29 +12,31 @@
       <div class="font-bold md:text-lg">
         <span>{{ userDetail.name }}</span>
       </div>
-      <div class="text-xs md:text-sm text-gray-600">
+      <div class="flex items-center text-xs md:text-sm text-gray-600">
         <span class>{{ userDetail.profession }}</span>
-        <span v-if="$route.name === 'messages-slug'" class="inline-block px-2 text-lg">|</span>
-        <span
-          v-if="$route.name === 'messages-slug'"
-          :class="userDetail.status ? 'bg-green-400' : 'bg-gray-300'"
-          class="inline-block rounded-full"
-          style="padding: 5px"
-        ></span>
-        <p
-          v-if="$route.name === 'messages-slug'"
-          class="inline-block"
-        >{{ userDetail.status ? 'Online' : 'Offline' }}</p>
+        <span v-if="$route.name === 'messages-slug'" class="mx-1 text-lg">|</span>
+        <div class="flex items-center">
+          <span
+            v-if="$route.name === 'messages-slug'"
+            :class="userDetail.status ? 'bg-green-400' : 'bg-gray-300'"
+            class="rounded-full mr-1"
+            style="padding: 5px"
+          ></span>
+          <p
+            v-if="$route.name === 'messages-slug'"
+            class="inline-block"
+          >{{ userDetail.status ? 'Online' : 'Offline' }}</p>
+        </div>
       </div>
     </div>
   </div>
 </template>
 <script>
+import { parse } from "cookie";
 export default {
   data() {
     return {
-      messages: [],
-      activeConversation: null
+      messages: []
     };
   },
   computed: {
@@ -39,7 +44,7 @@ export default {
       return this.$store.state.chat.activeConversationId;
     },
     conversations() {
-      return this.$store.state.chat.conversations;
+      return this.$store.getters["chat/getConversations"];
     },
     newUserMessage() {
       return this.$store.state.chat.newMessageUser;
@@ -47,43 +52,22 @@ export default {
     userDetail() {
       let detail = null;
       if (this.activeConversationId) {
-        this.$axios
-          .$get(`/api/v1/conversations/${this.activeConversationId}`)
-          .then(res => {
-            let active_conversation = res.data.conversations.find(
-              item => item.id == parseInt(this.activeConversationId)
-            );
-            let user = active_conversation.conversation_member_users.find(
-              member => member.user.id !== this.$auth.user.id
-            );
-            this.activeConversation = {
-              name: `${user.user.personal_detail.first_name} ${user.user.personal_detail.last_name}`,
-              profession: user.user.practice_detail
-                ? user.user.practice_detail.practice_role
-                : user.user.locum_detail.profession.name,
-              status: user.user.is_online
-            };
-          })
-          .catch(e => {
-            console.log(e);
-          });
-        return this.activeConversation;
-        // this.active_conversation = this.$store.state.chat.conversations.find(
-        //   conversation =>
-        //     conversation.id == this.$store.state.chat.activeConversationId
-        // );
-        // let user = active_conversation.conversation_member_users.find(
-        //   member => member.user.id !== this.$auth.user.id
-        // );
-        // let detail = {
-        //   name: `${user.user.personal_detail.first_name} ${user.user.personal_detail.last_name}`,
-        //   profession: user.user.practice_detail
-        //     ? user.user.practice_detail.practice_role
-        //     : user.user.locum_detail.profession.name,
-        //   status: user.user.is_online
-        // };
-        // console.log("detail", detail);
-        // return detail;
+        let active_conversation = this.conversations.find(
+          conversation => conversation.id == parseInt(this.activeConversationId)
+        );
+        if (active_conversation) {
+          let user = active_conversation.conversation_member_users.find(
+            member => member.user.id !== this.$auth.user.id
+          );
+          let detail = {
+            name: `${user.user.personal_detail.first_name} ${user.user.personal_detail.last_name}`,
+            profession: user.user.practice_detail
+              ? user.user.practice_detail.practice_role
+              : user.user.locum_detail.profession.name,
+            status: user.user.is_online
+          };
+          return detail;
+        }
       } else {
         let detail = {
           name: `${this.newUserMessage.personal_detail.first_name} ${this.newUserMessage.personal_detail.last_name}`,
@@ -105,7 +89,9 @@ export default {
 };
 </script>
 <style>
-.panel-top {
-  min-height: 77px;
+@media screen and (min-width: 768px) {
+  .panel-top {
+    min-height: 82px;
+  }
 }
 </style>

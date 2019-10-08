@@ -2,10 +2,10 @@
   <transition name="fade" mode="out-in">
     <div
       :class="inClass"
-      class="loading-shield flex flex-col items-center justify-center shadow-md"
+      class="loading-shield flex flex-col items-center justify-center"
       v-if="loading"
     >
-      <svgicon v-if="spinner" name="loader" width="60" height="60" />
+      <svgicon v-if="spinner" name="loader" width="60" height="60" :color="color" />
       <h1 class="loader-message" v-if="message">{{ message }}</h1>
     </div>
   </transition>
@@ -22,9 +22,15 @@ export default {
     },
     spinner: {
       type: Boolean,
-      default: true
+      default: false
     },
-    inClass: String
+    color: {
+      type: String,
+      default: "gray"
+    },
+    inClass: {
+      type: String
+    }
   }
 };
 </script>
@@ -36,19 +42,15 @@ export default {
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: 49;
-  background-color: #f5f6f9;
-  box-shadow: 10px 10px 0.1 10px #f5f6f9;
+  z-index: 500;
+  background-color: rgba(255, 255, 255, 0.7);
   opacity: 0.5;
 }
 .loader-message {
   position: -webkit-sticky;
   position: sticky;
-  /* top: 50%; */
   text-align: center;
-  z-index: 50;
-  /* left: 50%; */
-  /* transform: translate(-50%, -50%); */
+  z-index: 501;
 }
 .loader-message:after {
   content: " .";

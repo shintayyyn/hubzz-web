@@ -5,7 +5,9 @@
     <AppHeader />
     <div class="content">
       <AppNotification />
-      <nuxt class="mt-20" />
+      <nuxt
+        :class="$route.name === 'messages-slug' || $route.name === 'messages-new' ? 'md:mt-20' : 'mt-16'"
+      />
     </div>
   </section>
 </template>
@@ -27,24 +29,7 @@ export default {
     };
   },
   middleware: "isNotAuthenticated",
-  // computed: {
-  //   notify() {
-  //     return this.$store.state.notification.enabled;
-  //   }
-  // },
   watch: {
-    //   notify(value) {
-    //     if (!this.$store.state.notification.closable) {
-    //       setTimeout(() => {
-    //         this.$store.commit("SET_NOTIFICATION", {
-    //           enabled: false,
-    //           status: "",
-    //           text: "",
-    //           closable: false
-    //         });
-    //       }, 2000);
-    //     }
-    //   },
     $route(value) {
       if (value) {
         this.$store.commit("TOGGLE_SIDEBAR", false);
@@ -57,14 +42,6 @@ export default {
       this.$store.commit("TOGGLE_SIDEBAR", false);
       document.body.style.overflow = "auto";
     }
-  },
-  mounted() {
-    // this.$store.dispatch("signUp/getProfessions");
-    // this.$store.dispatch("signUp/getQualifications");
-    // this.$store.dispatch("signUp/getClinicalSystems");
-    // this.$store.dispatch("signUp/getSpokenLanguages");
-    // this.$store.dispatch("signUp/getPracticeTypes");
-    // this.$store.dispatch("signUp/getMandatoryTrainings");
   }
 };
 </script>
@@ -72,7 +49,7 @@ export default {
 .content {
   /* box-sizing: content-box; */
   max-width: 1466px;
-  padding: 5px 30px;
+  padding: 5px 20px;
   height: 100%;
   scroll-behavior: smooth;
 }
