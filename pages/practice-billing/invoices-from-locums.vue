@@ -1,25 +1,16 @@
 <template>
   <div>
-    <transition name="fade" mode="out-in">
-      <div
-        v-if="$route.path === '/locum-billing/invoices/create' 
-        || paymentModal || $route.name === 'locum-billing-invoices-id' 
-        || $route.name === 'locum-billing-invoices-id-edit'"
-        class="shield"
-      ></div>
-    </transition>
-
     <nuxt-child />
 
     <div class="__jobs-section">
       <h1>Invoices</h1>
       <div class="overflow-x-auto">
         <div class="overflow-x-auto overflow-y-hidden">
-          <table>
+          <table class="border-separate" style="border-spacing: 0 10px">
             <thead>
               <tr class="text-xs sm:text-sm text-left">
                 <th>Practice / Surgery</th>
-                <th @click="sortBy('issued_at')">
+                <th @click="sortBy('issued_at')" class="cursor-pointer">
                   Issued
                   <svgicon class="inline align-baseline" name="sort" height="12" width="12" />
                 </th>
@@ -34,40 +25,36 @@
               <template v-if="getPracticeInvoices.length === 0">
                 <tr>
                   <td
-                    colspan="10"
+                    colspan="8"
                     class="absolute inset-x-auto md:static md:text-center"
                   >You don't have any invoice/s yet</td>
                 </tr>
               </template>
               <template v-else v-for="(invoice, index) in getPracticeInvoices">
                 <tr :key="invoice.id" class="__job-card shadow-md cursor-pointer text-xs text-left">
-                  <td @click="show(invoice)">{{invoice.practice}}</td>
+                  <td @click="show(invoice)">{{invoice.surgery_name}}</td>
                   <td @click="show(invoice)">{{invoice.issued_at | localDate}}</td>
-                  <td @click="show(invoice)">{{invoice.locum}}</td>
+                  <td @click="show(invoice)">{{invoice.locum_detail.user.personal_detail.name}}</td>
                   <td @click="show(invoice)">{{invoice.invoice_number}}</td>
                   <td @click="show(invoice)">
-                    <div v-for="(item, index) in invoice.job_numbers" :key="index">{{item}}</div>
+                    <div v-for="(item, index) in invoice.items" :key="index">{{item.job_part.job_part_number}}</div>
                     <!-- <div
                       v-for="item in invoice.items.filter(item => item.type === 'Job Part' && item.job_part)"
                       :key="item.id"
                     >{{item.job_part.job_part_number}}</div>-->
                   </td>
                   <td @click="show(invoice)">£ {{invoice.total_amount}}</td>
-                  <td @click="show(invoice)">£ {{invoice.status}}</td>
+                  <td @click="show(invoice)">{{invoice.status}}</td>
                   <!-- <td
                     @click="show(invoice)"
                   >{{invoice.paid_at ? 'Paid' : invoice.issued_at ? 'Issued' : ''}}</td>-->
-                  <td @click="onClick(invoice, index)">
+                  <td @click="onClick(invoice, index)" class="text-center">
                     <button
                       v-if="!invoice.paid_at"
                       v-text="'Mark as paid'"
-                      class="px-2 py-3 text-white rounded-lg"
-                      :class="'bg-green-600'"
+                      class="px-2 py-3 text-white rounded-lg focus:outline-none bg-green-600 hover:bg-green-700"
                     ></button>
                   </td>
-                </tr>
-                <tr :key="`${invoice.id}-${index}`">
-                  <td></td>
                 </tr>
               </template>
             </tbody>
@@ -85,9 +72,10 @@
     </div>
     <div
       v-if="paymentModal"
-      class="rounded-lg shadow-md p-4 update-modal border"
+      class="p-2"
       v-on-clickaway="closePaymentModal"
     >
+    <div class="rounded-lg shadow-md px-4 py-8 md:px-8 update-modal border w-5/6 md:w-1/3">
       <AppDate
         v-model="form.paid_at"
         :name="'paid_at'"
@@ -95,11 +83,14 @@
         :error="formError.find(item => item.field === 'paid_at')"
       />
       <div class="flex flex-row flex-no-wrap justify-center">
-        <AppButton :label="'Save'" @click="updateInvoice" :inStyle="'padding:5px'" />
-        <div class="mx-1"></div>
-        <AppButton :label="'Cancel'" @click="paymentModal = false" :inStyle="'padding:5px'" />
+        <AppButton class="mx-1" :label="'Save'" @click="updateInvoice" :inStyle="'padding:5px 10px'" />
+        <AppButton class="mx-1" :label="'Cancel'" @click="paymentModal = false" :inStyle="'padding:5px 10px'" />
       </div>
     </div>
+      
+    </div>
+    
+    <div class="shield" v-if="$route.path != '/practice-billing/invoices-from-locums' || paymentModal" @click="$router.go(-1)"></div>
   </div>
 </template>
 
@@ -198,6 +189,7 @@ export default {
   mounted() {
     this.$store.commit("billing/SET_PRACTICE_INVOICES", this.invoices);
     this.$store.commit("billing/SET_PRACTICE_INVOICE_COUNT", this.count);
+    console.log("details", this.getPracticeInvoices)
   },
   beforeDestroy() {
     this.$store.commit("billing/CLEAR_INVOICES");
@@ -279,16 +271,10 @@ export default {
 .shield {
   z-index: 511;
 }
-/* .calendar {
-  min-width: 80px;
-  height: auto;
+
+table tr td {
+  padding: 10px 15px;
 }
-@media screen and (min-width: 468px) {
-  .calendar {
-    width: 160px;
-  }
-} */
-/* confirmation */
 .confirmation {
   z-index: 600;
 }

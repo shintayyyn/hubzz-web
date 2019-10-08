@@ -439,6 +439,7 @@ export default {
       this.form.items = this.selectedJobParts;
       this.form.total_amount = this.amount;
       this.form.final = final;
+      console.log("items", this.form)
       this.Validate(this.form, ["final"]);
       if (!this.formError.length) {
         this.form.date_start = this.$moment(this.form.date_start).format(
@@ -449,6 +450,7 @@ export default {
         );
         if (!this.$route.params.id) {
           this.$axios.$post(`/api/v1/locum/invoices`, this.form).then(res => {
+            console.log('res', res.data.invoice)
             this.$store.commit("billing/ADD_LOCUM_INVOICE", res.data.invoice);
             this.$router.push("/locum-billing/invoices");
             this.$store.commit("SET_NOTIFICATION", {

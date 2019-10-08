@@ -1,14 +1,13 @@
 <template>
   <div class="invoice-modal shadow-lg">
-    <section class="bg-gray-800">
-      <div class="p-8 max-w-3xl h-screen">
+    <section class="">
+      <div class="px-8 py-4 max-w-3xl h-screen">
         <div class="flex flex-row flex-wrap justify-start">
-          <nuxt-link to="/practice-billing/invoices-from-locums" class="cursor-pointer">
+          <div @click="$router.go(-1)" class="cursor-pointer">
             <svgicon name="left-arrow" height="32" width="32" />
-          </nuxt-link>
+          </div>
         </div>
-
-        <iframe :src="invoice.file.url" height="100%" width="100%"></iframe>
+        <iframe :src="invoice.file.url" style="min-height: 90%;"  width="100%" class="my-4"></iframe>
       </div>
     </section>
   </div>

@@ -1,9 +1,9 @@
 <template>
   <div class="flex flex-col py-2 mb-6 leading-normal" v-on-clickaway="toggledOff">
-    <div class="relative md:static flex flex-row flex-no-wrap justify-between">
+    <div class="relative flex flex-row flex-no-wrap justify-between">
       <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
       <div
-        class="absolute right-0 bg-red-500 p-1 text-xs sm:text-base text-white"
+        class="absolute right-0 bg-red-500 p-1 text-xs sm:text-sm text-white rounded-lg"
         v-if="error"
       >{{error.message}}</div>
     </div>

@@ -798,24 +798,23 @@ export default {
         "include_sunday"
       ];
 
-      if (["15", "30", "60", "false"].includes(this.unpaid_breaks)) {
+      if (["15", "30", "60", false].includes(this.unpaid_breaks)) {
         notRequired.push("unpaid_breaks_in_minutes");
       }
 
-      if (this.auto_assign_job === "false") {
+      if (this.auto_assign_job === false) {
         notRequired.push("auto_assign_at");
       }
 
-      if (this.selection_notification === "false") {
+      if (this.selection_notification === false) {
         notRequired.push("selection_date");
       }
 
-      if (this.favorite_notification === "false") {
+      if (this.favorite_notification === false) {
         notRequired.push("favorite_only_until");
       }
 
       this.Validate(this.form, notRequired);
-      console.log(this.formError);
       if (!this.formError.length) {
         this.selectedClinicalSystem = [...this.form.clinical_system_id];
         this.form.clinical_system_id = this.form.clinical_system_id.map(
@@ -836,15 +835,15 @@ export default {
           "YYYY-MM-DD"
         );
 
-        this.form.auto_assign_at = `${this.$moment(
+        this.form.auto_assign_at ? this.form.auto_assign_at = `${this.$moment(
           this.auto_assign_at.date
-        ).format("YYYY-MM-DD")} ${this.auto_assign_at.time}`;
-        this.form.selection_date = `${this.$moment(
+        ).format("YYYY-MM-DD")} ${this.auto_assign_at.time}` : '';
+        this.form.selection_date ? this.form.selection_date = `${this.$moment(
           this.selection_date.date
-        ).format("YYYY-MM-DD")} ${this.selection_date.time}`;
-        this.form.favorite_only_until = `${this.$moment(
+        ).format("YYYY-MM-DD")} ${this.selection_date.time}` : '';
+        this.form.favorite_only_until ? this.form.favorite_only_until = `${this.$moment(
           this.favorite_only_until.date
-        ).format("YYYY-MM-DD")} ${this.favorite_only_until.time}`;
+        ).format("YYYY-MM-DD")} ${this.favorite_only_until.time}` : '';
 
         this.form.session_requirements.length > 0
           ? (this.form.session_requirements = this.form.session_requirements.join())
