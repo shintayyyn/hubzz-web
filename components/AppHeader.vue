@@ -3,9 +3,9 @@
     class="header-section fixed bg-white z-50"
     :class="$route.name === 'messages-slug' || $route.name === 'messages-new' ? 'border-b md:border-0' : ''"
   >
-    <div class="px-4 flex flex-row flex-wrap justify-between" style="z-index: 600">
+    <div class="flex flex-row flex-wrap justify-between" style="z-index: 600">
       <div class="w-1/3">
-        <button class="burger cursor-pointer py-2 focus:outline-none" @click="toggle">
+        <button class="burger cursor-pointer py-2 focus:outline-none h-full" @click="toggle">
           <div class="my-2 bg-yellow-500"></div>
           <div class="my-2 bg-yellow-500"></div>
         </button>
@@ -21,12 +21,16 @@
           v-if="$auth.loggedIn"
         >
           <div class="flex justify-end">
-            <div v-if="$auth.user.domain === 'Practice' && $auth.user.status === 'Active'">
+            <div
+              v-if="$auth.user.domain === 'Practice' && $auth.user.status === 'Active'"
+              class="mx-1"
+            >
               <AppButton
+                v-if="authPermissions.includes('Create Sessions Job')"
                 :label="'Create Job'"
                 @click="$store.commit('calendar/CREATE_JOB_MODAL', true)"
-                :inStyle="'font-size: medium; padding:10px;'"
-                class="hidden md:block mb-2 md:mx-2 leading-none"
+                class="hidden md:block whitespace-no-wrap"
+                :inStyle="'padding-top: 0; padding-bottom: 0;'"
               />
               <button
                 @click="$store.commit('calendar/CREATE_JOB_MODAL', true)"
@@ -40,8 +44,8 @@
               v-if="$route.name != 'messages-slug' && $route.name != 'messages-new'"
               :label="unreadMessages.length > 0 ? `Messages(${unreadMessages.length})` : 'Messages'"
               @click="$router.push('/messages')"
-              :inStyle="'font-size: medium; padding:2px 14px;'"
               class="hidden md:block"
+              :inStyle="'padding-top: 0; padding-bottom: 0;'"
             />
             <button
               v-if="$route.name != 'messages-slug' && $route.name != 'messages-new'"
@@ -58,7 +62,7 @@
         </div>
       </div>
     </div>
-    <div class="shield" v-if="create_job_modal"></div>
+    <div class="shield" v-if="create_job_modal" @click="close"></div>
     <transition name="slide" mode="out-in">
       <template v-if="create_job_modal">
         <CreateJobModal v-if="create_job_modal" />
@@ -81,6 +85,9 @@ export default {
 
     unreadMessages() {
       return this.$store.getters["chat/getUnreadMessages"];
+    },
+    authPermissions() {
+      return this.$store.getters["auth/permissions"];
     }
   },
   watch: {
@@ -95,6 +102,10 @@ export default {
   methods: {
     toggle() {
       this.$store.commit("TOGGLE_SIDEBAR", true);
+      document.body.style.overflow = "hidden";
+    },
+    close() {
+      this.$store.commit("calendar/CREATE_JOB_MODAL", false);
       document.body.style.overflow = "hidden";
     },
     goHome() {
@@ -121,7 +132,9 @@ export default {
 .logo {
   width: 25px;
 }
-
+.header-section {
+  padding: 0 20px;
+}
 @media screen and (max-width: 1199px) {
   .header-section {
     width: 100%;
@@ -135,7 +148,12 @@ export default {
     max-width: 1466px;
     right: 0;
     left: 200px;
-    padding: 5px 30px;
+    /* padding: 5px 30px; */
+  }
+}
+@media screen and (min-width: 480px) {
+  .header-section {
+    padding: 0 40px;
   }
 }
 a {

@@ -1,7 +1,7 @@
 <template>
   <div
-    class="panel-top pb-2 px-4 md:p-4 w-full flex items-center border-b leading-none"
-    :class="$auth.user.domain === 'Locum' ? 'pt-2' : 'pt-4'"
+    class="panel-top px-4 md:p-4 w-full flex items-center border-b leading-none"
+    :class="$auth.user.domain === 'Locum' ? 'py-3' : 'pb-4 pt-6'"
   >
     <div class="pr-4 md:hidden">
       <button class="focus:outline-none" @click="goBack()">
@@ -12,9 +12,9 @@
       <div class="font-bold md:text-lg">
         <span>{{ userDetail.name }}</span>
       </div>
-      <div class="flex flex-col md:flex-row md:items-center text-xs md:text-sm text-gray-600">
+      <div class="flex items-center text-xs md:text-sm text-gray-600">
         <span class>{{ userDetail.profession }}</span>
-        <span v-if="$route.name === 'messages-slug'" class="hidden md:block mx-1 text-lg">|</span>
+        <span v-if="$route.name === 'messages-slug'" class="mx-1 text-lg">|</span>
         <div class="flex items-center">
           <span
             v-if="$route.name === 'messages-slug'"

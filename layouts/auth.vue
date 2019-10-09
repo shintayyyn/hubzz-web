@@ -87,12 +87,12 @@ export default {
 
   mounted() {
     this.showPrivacyNotice = !this.$cookies.get("cookies-accepted");
-    this.$store.dispatch("signUp/getProfessions");
-    this.$store.dispatch("signUp/getQualifications");
-    this.$store.dispatch("signUp/getClinicalSystems");
-    this.$store.dispatch("signUp/getSpokenLanguages");
-    this.$store.dispatch("signUp/getPracticeTypes");
-    this.$store.dispatch("signUp/getMandatoryTrainings");
+    this.$store.dispatch("sign-up/getProfessions");
+    this.$store.dispatch("sign-up/getQualifications");
+    this.$store.dispatch("sign-up/getClinicalSystems");
+    this.$store.dispatch("sign-up/getSpokenLanguages");
+    this.$store.dispatch("sign-up/getPracticeTypes");
+    this.$store.dispatch("sign-up/getMandatoryTrainings");
   }
 };
 </script>

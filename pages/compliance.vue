@@ -5,24 +5,28 @@
         <div class="border-solid rounded-lg shadow-md px-1 py-4 mb-5 mx-1 md:mx-0">
           <div class="flex flex-row flex-no-wrap justify-start text-xs sm:text-sm">
             <div class="w-1/3 px-4 py-1 text-left">Your GMC / NMC Number</div>
-            <div class="w-1/3 p-1 text-center">{{gmc_or_nmc_number.number}}</div>
+            <div
+              class="w-1/3 p-1 text-center"
+            >{{gmc_or_nmc_number ? gmc_or_nmc_number.number : 'No GMC or NMC Number registered'}}</div>
             <div class="w-1/3 p-1 text-center">
               <span
                 class="text-xs sm:text-sm text-center text-white font-bold rounded-full px-4 py-1"
-                :class="status(gmc_or_nmc_number.status)"
-              >{{ gmc_or_nmc_number.status }}</span>
+                :class="status(gmc_or_nmc_number ? gmc_or_nmc_number.status : 'No GMC or NMC Number registered')"
+              >{{ gmc_or_nmc_number ? gmc_or_nmc_number.status : '' }}</span>
             </div>
           </div>
         </div>
         <div class="border-solid rounded-lg shadow-md px-1 py-4 mb-5 mx-1 md:mx-0">
           <div class="flex flex-row flex-no-wrap justify-start items-center text-xs sm:text-sm">
             <div class="w-1/3 px-4 py-1 text-left">Your MPL / NPL Number</div>
-            <div class="w-1/3 p-1 text-center">{{mpl_or_npl_number.number}}</div>
+            <div
+              class="w-1/3 p-1 text-center"
+            >{{mpl_or_npl_number ? mpl_or_npl_number.number : 'No MPL or NPL Number registered'}}</div>
             <div class="w-1/3 p-1 text-center">
               <span
                 class="text-xs sm:text-sm text-center text-white font-bold rounded-full px-4 py-1"
-                :class="status(mpl_or_npl_number.status)"
-              >{{ mpl_or_npl_number.status }}</span>
+                :class="status(mpl_or_npl_number ? mpl_or_npl_number.status : '')"
+              >{{ mpl_or_npl_number ? mpl_or_npl_number.status : '' }}</span>
             </div>
           </div>
         </div>
@@ -104,7 +108,9 @@
               </td>
               <td v-else></td>
 
-              <td v-if="item && item.info && item.info.note">{{ item && item.info && item.info.note ? item.info.note : 'N/A' | StringMaxLength(15)}}</td>
+              <td
+                v-if="item && item.info && item.info.note"
+              >{{ item && item.info && item.info.note ? item.info.note : 'N/A' | StringMaxLength(15)}}</td>
               <td v-else></td>
               <td
                 class="hover:underline"
@@ -366,6 +372,7 @@
     <div
       class="shield"
       v-if="['compliance-id','compliance-mandatory-training-id'].includes($route.name)"
+      @click="$router.push('/compliance')"
     ></div>
     <nuxt-child />
   </section>

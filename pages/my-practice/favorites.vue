@@ -14,7 +14,11 @@
         @pagechanged="pagechanged"
       />
     </div>
-    <div class="shield" v-if="$route.name.includes('my-practice-favorites-practiceId')"></div>
+    <div
+      class="shield"
+      v-if="$route.name.includes('my-practice-favorites-practiceId')"
+      @click="$router.push('/my-practice/favorites')"
+    ></div>
     <nuxt-child />
   </section>
 </template>

@@ -27,10 +27,11 @@
                 <div class="w-full flex flex-row items-center">
                   <input
                     type="checkbox"
+                    :id="role.permissions"
                     :checked="isChecked(role.permissions)"
                     @change="checkAll(index, $event.target.checked)"
                   />
-                  <div class="font-bold text-xl pl-1">{{role.category}} Management</div>
+                  <label class="font-bold text-xl pl-1" :for="role.permissions">{{role.category}} Management</label>
                 </div>
                 <div class="flex flex-col px-1">
                   <div
@@ -38,8 +39,8 @@
                     v-for="permission in role.permissions"
                     :key="permission.id"
                   >
-                    <input v-model="permission.done" type="checkbox" :checked="permission.done" />
-                    <div class="text-sm pl-1">{{permission.name}}</div>
+                    <input v-model="permission.done" :id="permission.id" type="checkbox" :checked="permission.done" />
+                    <label class="text-sm pl-1" :for="permission.id">{{permission.name}}</label>
                   </div>
                 </div>
               </div>
@@ -47,32 +48,20 @@
           </div>
         </div>
         <div class="m-2 flex flex-wrap justify-start">
-          <AppButton :label="'Delete'" @click="remove_modal = true" />
-          <div class="mx-1"></div>
           <AppButton :label="'Save'" @click="save" />
         </div>
       </div>
     </div>
-    <AppConfirmationModal
-      :label="'Proceed to delete this Role?'"
-      :confirmLabel="'Yes'"
-      :cancelLabel="'Cancel'"
-      :modal="remove_modal"
-      @confirm="remove"
-      @cancel="remove_modal = false"
-    />
   </section>
 </template>
 <script>
 import AppInput from "@/components/Base/AppInput";
 import AppButton from "@/components/Base/AppButton";
-import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
 export default {
   props: ["role"],
   components: {
     AppInput,
-    AppButton,
-    AppConfirmationModal
+    AppButton
   },
   data() {
     return {
@@ -169,25 +158,9 @@ export default {
               status: "success",
               text: [`${res.message}`]
             });
-            this.$emit("close");
+            this.$emit("updateRole", res.data.role);
           });
       }
-    },
-    remove() {
-      this.$axios
-        .$delete(`/api/v1/practice/practice-roles/${this.$route.params.id}`)
-        .then(res => {
-          this.$store.commit(
-            "roles/REMOVE_PRACTICE_ROLE",
-            this.$route.params.id
-          );
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "success",
-            text: [`${res.message}`]
-          });
-          this.$emit("close");
-        });
     }
   }
 };

@@ -96,6 +96,12 @@
     <div class="mt-5">
       <nuxt-child />
     </div>
+    <AppConfirmationModal
+      :label="'You\'ve been revoked to view this Page'"
+      :confirmLabel="'OK'"
+      :modal="confirmation_modal"
+      @confirm="goTo"
+    />
   </section>
 </template>
 <script>
@@ -108,13 +114,32 @@ const tabs = [
   "sessions-cancelled-id",
   "sessions-declined-id"
 ];
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
 export default {
   middleware: "isVerified",
   scrollToTop: true,
+  components: {
+    AppConfirmationModal
+  },
   data() {
     return {
-      tabs
+      tabs,
+      confirmation_modal: false
     };
+  },
+  computed: {
+    authPermissions() {
+      return this.$store.getters["auth/permissions"];
+    }
+  },
+  async asyncData({ app, error }) {
+    try {
+    } catch (err) {
+      if (err.response && err.response.status === 401) {
+        error(err.response.data);
+        return;
+      }
+    }
   },
   watch: {
     $route(value) {
@@ -123,6 +148,20 @@ export default {
       } else {
         document.body.style.overflow = "auto";
       }
+    },
+    authPermissions(value) {
+      console.log("change permissions", value);
+      if (!this.CheckPermissions(value).hasPermission) {
+        this.confirmation_modal = true;
+      }
+    }
+  },
+  methods: {
+    goTo() {
+      this.confirmation_modal = false;
+      setTimeout(() => {
+        this.$router.push("/");
+      }, 500);
     }
   }
 };

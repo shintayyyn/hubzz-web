@@ -22,8 +22,12 @@ export default {
         job
       };
     } catch (err) {
-      if (err && err.response.status === 404) {
-        return error({ status: 404, message: "This page could not be found" });
+      if (
+        err.response &&
+        (err.response.status === 401 || err.response.status === 404)
+      ) {
+        error(err.response.data);
+        return;
       }
       throw err;
     }

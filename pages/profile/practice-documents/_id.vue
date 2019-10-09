@@ -6,6 +6,7 @@
           <svgicon name="left-arrow" height="32" />
         </div>
         <div
+          v-if="authPermissions.includes('Download Profile Practice Document')"
           class="ml-8 hover:text-black hover:bg-yellow-500 rounded-lg inline-flex p-2 cursor-pointer"
         >
           <a
@@ -62,6 +63,11 @@ export default {
     name: "slide",
     mode: "out-in"
   },
+  computed: {
+    authPermissions() {
+      return this.$store.getters["auth/permissions"];
+    }
+  },
   async asyncData({ app, params, error }) {
     try {
       const response = await app.$axios.$get(
@@ -71,10 +77,15 @@ export default {
         response.data && response.data.practice_document
           ? response.data.practice_document
           : null;
+
       return {
         practiceDocument
       };
     } catch (err) {
+      if (err.response && err.response.status === 401) {
+        error(err.response.data);
+        return;
+      }
       throw err;
     }
   },

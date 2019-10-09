@@ -3,7 +3,7 @@
     <div class="relative flex flex-row flex-no-wrap justify-between">
       <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
       <div
-        class="absolute right-0 bg-red-500 p-1 text-xs sm:text-base text-white"
+        class="absolute rounded-lg right-0 bg-red-500 p-1 text-xs sm:text-sm text-white"
         v-if="error"
       >{{error.message}}</div>
     </div>
@@ -58,26 +58,93 @@
 <script>
 import { mixin as clickaway } from "vue-clickaway";
 const hours = [
-  '01', '02', '03', '04', '05',
-  '06', '07', '08', '09', '10',
-  '11', '12', '13', '14', '15',
-  '16', '17', '18', '19', '20',
-  '21', '22', '23', '00'
-]
+  "01",
+  "02",
+  "03",
+  "04",
+  "05",
+  "06",
+  "07",
+  "08",
+  "09",
+  "10",
+  "11",
+  "12",
+  "13",
+  "14",
+  "15",
+  "16",
+  "17",
+  "18",
+  "19",
+  "20",
+  "21",
+  "22",
+  "23",
+  "00"
+];
 const minutes = [
-  '01', '02', '03', '04', '05',
-  '06', '07', '08', '09', '10',
-  '11', '12', '13', '14', '15',
-  '16', '17', '18', '19', '20',
-  '21', '22', '23', '24', '25',
-  '26', '27', '28', '29', '30',
-  '31', '32', '33', '34', '35',
-  '36', '37', '38', '39', '40',
-  '41', '44', '43', '44', '45',
-  '46', '47', '48', '49', '50',
-  '51', '52', '55', '54', '55',
-  '56', '57', '58', '59', '00',
-]
+  "01",
+  "02",
+  "03",
+  "04",
+  "05",
+  "06",
+  "07",
+  "08",
+  "09",
+  "10",
+  "11",
+  "12",
+  "13",
+  "14",
+  "15",
+  "16",
+  "17",
+  "18",
+  "19",
+  "20",
+  "21",
+  "22",
+  "23",
+  "24",
+  "25",
+  "26",
+  "27",
+  "28",
+  "29",
+  "30",
+  "31",
+  "32",
+  "33",
+  "34",
+  "35",
+  "36",
+  "37",
+  "38",
+  "39",
+  "40",
+  "41",
+  "44",
+  "43",
+  "44",
+  "45",
+  "46",
+  "47",
+  "48",
+  "49",
+  "50",
+  "51",
+  "52",
+  "55",
+  "54",
+  "55",
+  "56",
+  "57",
+  "58",
+  "59",
+  "00"
+];
 export default {
   mixins: [clickaway],
   props: {
@@ -85,52 +152,51 @@ export default {
     name: String,
     label: String,
     error: Object,
-    inStyle: String,
+    inStyle: String
   },
   data() {
     return {
       hours,
       minutes,
-      selectedHour: '00',
-      selectedMinute: '00',
-      activeView: 'hours',
+      selectedHour: "00",
+      selectedMinute: "00",
+      activeView: "hours",
       modal: false
-    }
+    };
   },
   watch: {
     selectedSecond(newValue, oldValue) {
       if (!oldValue) {
-        return
+        return;
       }
-      this.toggledOff()
-    },
+      this.toggledOff();
+    }
   },
   created() {
     if (this.value) {
-      this.selectedHour = this.value.split(':')[0]
-      this.selectedMinute = this.value.split(':')[1]
+      this.selectedHour = this.value.split(":")[0];
+      this.selectedMinute = this.value.split(":")[1];
     }
-    this.activeView = 'hours'
+    this.activeView = "hours";
   },
   methods: {
     selectTime(value, type) {
-      if (type === 'hour') {
-        this.selectedHour = value
-        this.activeView = 'minutes'
-
+      if (type === "hour") {
+        this.selectedHour = value;
+        this.activeView = "minutes";
       }
-      if (type === 'minute') {
-        this.selectedMinute = value
-        this.modal = false
+      if (type === "minute") {
+        this.selectedMinute = value;
+        this.modal = false;
       }
       this.$emit("input", `${this.selectedHour}:${this.selectedMinute}`);
     },
     toggledOff() {
-      this.activeView = 'hours'
+      this.activeView = "hours";
       this.modal = false;
-    },
+    }
   }
-}
+};
 </script>
 <style scoped>
 .input-container {

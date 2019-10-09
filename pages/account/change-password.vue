@@ -1,7 +1,8 @@
 <template>
-  <div class="border-solid rounded-lg shadow-lg p-8">
+  <div class="relative rounded-lg shadow-lg p-8">
+    <AppLoading :loading="loading" spinner />
+    <AppFormError :formError="formError" v-if="formError.length > 0" />
     <form class="w-full">
-      <AppFormError :formError="formError" v-if="formError.length > 0" />
       <AppInput
         v-model="form.old_password"
         :type="'password'"
@@ -40,6 +41,7 @@
 import AppFormError from "@/components/Base/AppFormError";
 import AppInput from "@/components/Base/AppInput";
 import AppButton from "@/components/Base/AppButton";
+import AppLoading from "@/components/Base/AppLoading";
 export default {
   transition: {
     name: "fade",
@@ -48,10 +50,12 @@ export default {
   components: {
     AppFormError,
     AppInput,
-    AppButton
+    AppButton,
+    AppLoading
   },
   data() {
     return {
+      loading: false,
       form: {
         old_password: "",
         new_password: "",
@@ -77,6 +81,7 @@ export default {
   methods: {
     async update() {
       try {
+        this.loading = true;
         this.formError = [];
         this.Validate(this.form);
         if (!this.formError.length) {
@@ -86,15 +91,18 @@ export default {
             status: "success",
             text: ["Password changed"]
           });
+          this.loading = false;
         } else {
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "danger",
             text: ["Please fill up all the forms"]
           });
+          this.loading = false;
           this.scrollToTop();
         }
       } catch (err) {
+        this.loading = false;
         this.formError = err.response.data.error_messages;
         this.scrollToTop();
       }

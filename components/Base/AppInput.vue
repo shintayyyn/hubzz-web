@@ -23,12 +23,12 @@
           >
             <input
               :value="item.value"
+              :id="`${name}-${index}`"
               type="checkbox"
               @input="inputMultiCheck"
-              :checked="value.includes(item.value)"
+              :checked="Array.isArray(value) ? value.includes(item.value) : value"
             />
-            <div class="mx-1"></div>
-            <label :for="item.name" class="text-xs sm:text-sm">{{item.label}}</label>
+            <label :for="`${name}-${index}`" class="text-xs sm:text-sm">{{item.label}}</label>
           </div>
         </template>
         <template v-else>
@@ -56,6 +56,7 @@
                 :style="inStyle"
                 @change="$emit('change', $event.target.value)"
                 @blur="$emit('blur')"
+                :disabled="disabled"
               >
                 <option value disabled selected v-if="placeholder">{{placeholder}}</option>
                 <option
@@ -94,8 +95,13 @@
           >{{error.message}}</div>
         </div>
         <div class="flex flex-row flex-no-wrap justify-start items-center">
-          <input type="checkbox" @change="$emit('input', $event.target.checked)" :checked="value" />
-          <div class="mx-1"></div>
+          <input
+            type="checkbox"
+            :id="name"
+            @change="$emit('input', $event.target.checked)"
+            :checked="value"
+            :disabled="disabled"
+          />
           <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
         </div>
       </div>
@@ -190,7 +196,12 @@ export default {
       type: Boolean
     },
     // for multicheckbox
-    lists: Array
+    lists: Array,
+    //
+    disabled: {
+      type: Boolean,
+      default: false
+    }
   },
   methods: {
     // for multi checkbox

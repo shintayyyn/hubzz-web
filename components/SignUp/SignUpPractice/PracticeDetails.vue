@@ -32,7 +32,7 @@
         >Select by clicking on the practice that you wish to add</div>
         <div
           class="border-t-2 p-4 cursor-pointer"
-          :class="selectedSurgeryId === item.id ? 'bg-yellow-500':'hover:bg-gray-400'"
+          :class="selectedSurgeryId === item.id ? 'bg-yellow-500':'hover:bg-gray-600'"
           v-for="(item) in surgeries"
           :key="item.id"
           @click="selectedSurgeryId = item.id"
@@ -89,10 +89,10 @@ export default {
   },
   computed: {
     surgeryId() {
-      return this.$store.state.signUp.practice_details.surgery_id;
+      return this.$store.getters["sign-up/surgeryId"];
     },
     search_results() {
-      return this.$store.state.signUp.search_results;
+      return this.$store.getters["sign-up/search_results"];
     }
   },
   mounted() {
@@ -147,7 +147,7 @@ export default {
         let item = this.surgeries.find(
           item => item.id === this.selectedSurgeryId
         );
-        this.$store.commit("signUp/SET_PRACTICE_DETAILS", {
+        this.$store.commit("sign-up/SET_PRACTICE_DETAILS", {
           surgery_id: item.id,
           search_results: this.surgeries
         });

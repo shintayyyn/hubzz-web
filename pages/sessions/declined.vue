@@ -17,7 +17,11 @@
         @pagechanged="pagechanged"
       />
     </div>
-    <div class="shield" v-if="$route.name === 'sessions-declined-id'"></div>
+    <div
+      class="shield"
+      v-if="$route.name === 'sessions-declined-id'"
+      @click="$router.push(`/sessions/declined`)"
+    ></div>
     <nuxt-child />
   </section>
 </template>
@@ -121,6 +125,9 @@ export default {
     },
     loadingJobs() {
       return this.$store.state.jobs.loading_jobs;
+    },
+    authPermissions() {
+      return this.$store.getters["auth/permissions"];
     }
   },
   beforeCreate() {
@@ -194,7 +201,9 @@ export default {
       this.getJobs(this.current_page, this.params);
     },
     show(id) {
-      this.$router.push(`/sessions/declined/${id}`);
+      if (this.authPermissions.includes("Show Sessions Job")) {
+        this.$router.push(`/sessions/declined/${id}`);
+      }
     }
   }
 };

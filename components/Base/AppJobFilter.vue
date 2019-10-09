@@ -5,7 +5,7 @@
         <AppInput
           v-model="params.shift_id"
           :type="'select'"
-          :name="'shift'"
+          :name="'shift_id'"
           :label="'Shift'"
           :placeholder="'Select...'"
           :items="shifts"
@@ -57,7 +57,7 @@
           :url="'/api/v1/locum/surgeries'"
         />
       </div>
-      <div class="w-full sm:w-1/4 flex flex-row">
+      <div class="w-full sm:w-1/4 flex flex-row justify-center items-center">
         <AppButton :label="'Clear'" @click="$emit('clear')" :inStyle="'padding:5px 14px'" />
         <div class="mx-1"></div>
         <AppButton :label="'Search'" @click="$emit('getJobs')" :inStyle="'padding:5px 14px'" />

@@ -24,7 +24,11 @@
     <div v-else class="flex flex-row flex-wrap justify-center">
       <div>There are no favourite locums connected to your practice yet.</div>
     </div>
-    <div class="shield" v-if="$route.name.includes('my-banks-favourites-userId')"></div>
+    <div
+      class="shield"
+      v-if="$route.name.includes('my-banks-favourites-userId')"
+      @click="$router.push(`/my-banks/favourites`)"
+    ></div>
     <nuxt-child />
   </section>
 </template>

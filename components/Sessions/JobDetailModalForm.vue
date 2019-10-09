@@ -126,16 +126,15 @@
   </div>
 </template>
 <script>
-import { gmapApi } from 'vue2-google-maps'
+import { gmapApi } from "vue2-google-maps";
 export default {
-  props: ['job'],
-  created() {
-  },
+  props: ["job"],
+  created() {},
   computed: {
     google: gmapApi,
     latLang() {
-      return this.job.platform_job.practice.surgery.address.coordinates
-    },
-  },
-}
+      return this.job.platform_job.practice.surgery.address.coordinates;
+    }
+  }
+};
 </script>

@@ -28,7 +28,7 @@ export default {
     };
   },
   mounted() {
-    this.$store.commit("signUp/SET_ACTIVE_COMPONENT", "LocumAccountDetails");
+    this.$store.commit("sign-up/SET_ACTIVE_COMPONENT", "LocumAccountDetails");
   }
 };
 </script>

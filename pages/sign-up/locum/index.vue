@@ -35,7 +35,7 @@ export default {
   },
   computed: {
     activeTab() {
-      return this.$store.state.signUp.activeComponent;
+      return this.$store.getters["sign-up/activeTab"];
     },
     percentage() {
       switch (this.activeTab) {

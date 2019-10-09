@@ -67,17 +67,19 @@
           </div>
           <div v-if="editSessionPolicies === false" class="m-2 mt-6">
             <div class="text-black font-semibold text-sm">Allow this surgery to create sessions?</div>
-            <div class="text-black m-2">{{practice_surgery.pay_for_surgery}}</div>
+            <div class="text-black m-2">{{practice_surgery.allow_surgery_create_sessions}}</div>
             <div class="text-black font-semibold text-sm">Allow this surgery to allocate applicant locums to sessions?</div>
-            <div class="text-black m-2">{{practice_surgery.verify_job_creation}}</div>
+            <div class="text-black m-2">{{practice_surgery.allow_surgery_appoint_locums}}</div>
             <div class="text-black font-semibold text-sm">Allow this surgery to amend sessions?</div>
-            <div class="text-black m-2">{{practice_surgery.pay_for_surgery}}</div>
+            <div class="text-black m-2">{{practice_surgery.allow_surgery_amend_sessions}}</div>
             <div class="text-black font-semibold text-sm">Allow this surgery to cancel sessions?</div>
-            <div class="text-black m-2">{{practice_surgery.verify_job_creation}}</div>
+            <div class="text-black m-2">{{practice_surgery.allow_surgery_cancel_sessions}}</div>
             <div class="text-black font-semibold text-sm">Allow this surgery to approve hours for invoicing?</div>
-            <div class="text-black m-2">{{practice_surgery.pay_for_surgery}}</div>
+            <div class="text-black m-2">{{practice_surgery.allow_surgery_approve_hours}}</div>
             <div class="text-black font-semibold text-sm">Allow this surgery to complete sessions?</div>
-            <div class="text-black m-2">{{practice_surgery.verify_job_creation}}</div>
+            <div class="text-black m-2">{{practice_surgery.allow_surgery_complete_sessions}}</div>
+            <div class="text-black font-semibold text-sm">Allow this surgery to share its banks to other surgeries?</div>
+            <div class="text-black m-2">{{practice_surgery.share_banks_to_other_surgeries}}</div>
           </div>
           <!-------------EDIT SESSION POLICIES-------------->
           <div v-if="editSessionPolicies === true" class="rounded-lg shadow-lg p-2">
@@ -94,6 +96,7 @@
                     { label: 'Only HUB can operate', value: false }]"
                 />
               </div>
+              dsadsadasdasdasd
               <div class="w-full p-1">
                 <AppInput
                   v-model="form.allow_surgery_appoint_locums"

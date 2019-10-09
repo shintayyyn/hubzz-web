@@ -21,6 +21,7 @@
           :name="'search'"
           :placeholder="'Surgery Name, Surgery Code, or keywords'"
           @submit="search"
+          :error="formError.find(item => item.field === 'surgery_id')"
         />
         <AppButton :label="'Search'" @click="search" :inStyle="'padding:5px 14px;'" />
       </div>
@@ -101,10 +102,15 @@ export default {
         response.data && response.data.practice && response.data.practice.type
           ? response.data.practice.type
           : null;
+
       return {
         type
       };
     } catch (err) {
+      if (err.response && err.response.status === 401) {
+        error(err.response.data);
+        return;
+      }
       throw err;
     }
   },
@@ -139,10 +145,7 @@ export default {
           })
           .then(res => {
             this.modal = false;
-            this.$store.commit(
-              "profile/ADD_SURGERY",
-              res.data.practice_surgery
-            );
+            this.$emit("addSurgery", res.data.practice_surgery);
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
@@ -168,6 +171,7 @@ export default {
               surgery: res.data.practice.parent_surgery
             };
             this.$store.commit("profile/ADD_SURGERY", surgery);
+            this.$emit("addSurgery", surgery);
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
@@ -186,7 +190,7 @@ export default {
 </script>
 <style scoped>
 .modal-container {
-  z-index: 512;
+  z-index: 510;
 }
 @media screen and (min-width: 1200px) {
   .modal-container {

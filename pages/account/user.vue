@@ -1,8 +1,8 @@
 <template>
-  <div class="border-solid rounded-lg shadow-lg p-8">
+  <div class="relative rounded-lg shadow-lg p-8">
+    <AppLoading :loading="loading" spinner />
     <AppFormError :formError="formError" v-if="formError.length > 0" />
     <form class="relative w-full">
-      <AppLoading :loading="loading" :message="'Loading'" />
       <AppInput
         v-model="form.email"
         :type="'email'"
@@ -12,12 +12,12 @@
         @submit="save"
         @blur="CheckEmptyField(form.email, 'email')"
       />
-      <div class="-mt-6 mb-4" v-if="email_isVerified === true ">
+      <div class="-mt-6 mb-4" v-if="email_verifiedAt">
         <span
           class="text-xs"
         >E-mail is Verified on {{$moment(email_verifiedAt).format('MMM DD, YYYY | hh:mm A')}}</span>
       </div>
-      <div class="-mt-6 mb-4" v-if="email_isVerified === false ">
+      <div class="-mt-6 mb-4" v-if="!email_verifiedAt">
         <span class="text-red-500 text-xs">E-mail is not yet verified.</span>
         <span
           class="p-1 bg-gray-800 rounded text-xs text-white cursor-pointer whitespace-no-wrap"
@@ -120,14 +120,13 @@ export default {
       throw err;
     }
   },
-  created() {
+  mounted() {
     this.form.email = this.user.email;
     this.form.title = this.user.personal_detail.title;
     this.form.first_name = this.user.personal_detail.first_name;
     this.form.last_name = this.user.personal_detail.last_name;
     this.form.suffix = this.user.personal_detail.suffix;
     this.form.practice_role = this.user.practice_detail.practice_role;
-    this.email_isVerified = this.user.is_email_verified;
     this.email_verifiedAt = this.user.email_verified_at;
   },
   watch: {
@@ -146,21 +145,17 @@ export default {
   },
   methods: {
     async save() {
-      this.loading = true;
       try {
         this.formError = [];
         this.Validate(this.form, ["title", "suffix"]);
         if (!this.formError.length) {
-          const response = await this.$axios.$put(
-            `/api/v1/practice/me/account`,
-            this.form
-          );
+          this.loading = true;
+          await this.$axios.$put(`/api/v1/practice/me/account`, this.form);
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
             text: ["Saved"]
           });
-          this.scrollToTop();
           this.loading = false;
         } else {
           this.$store.commit("SET_NOTIFICATION", {
@@ -168,25 +163,29 @@ export default {
             status: "danger",
             text: ["Please fill up all the forms"]
           });
-          this.scrollToTop();
           this.loading = false;
         }
+        this.scrollToTop();
       } catch (err) {
         this.formError = err.response.data.error_messages;
         this.loading = false;
+        this.scrollToTop();
       }
     },
     async resendEmailVerification() {
       try {
+        this.loading = true;
         await this.$axios.post(`/api/v1/email-verification/resend`);
-        // alert('Confirmation e-mail sent')
         this.$store.commit("SET_NOTIFICATION", {
           enabled: true,
           status: "success",
           text: ["Confirmation e-mail sent"]
         });
+        this.loading = false;
       } catch (err) {
         console.log("Something went wrong! ", err);
+        this.formError = err.response.data.error_messages;
+        this.loading = false;
       }
     }
   }

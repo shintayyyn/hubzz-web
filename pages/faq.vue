@@ -3,7 +3,7 @@
     <div class="lg:px-10">
       <div class="flex flex-no-wrap justify-start">
         <div
-          class="p-3 text-sm font-bold cursor-pointer border rounded-lg border-yellow-500 bg-yellow-500"
+          class="p-3 text-sm font-bold border rounded-lg border-yellow-500 bg-yellow-500"
         >Frequently asked questions</div>
       </div>
     </div>

@@ -28,10 +28,11 @@
                 <div class="w-full flex flex-row items-center">
                   <input
                     type="checkbox"
+                    :id="role.permissions"
                     :checked="isChecked(role.permissions)"
                     @change="checkAll(index, $event.target.checked)"
                   />
-                  <div class="font-bold text-xl pl-1">{{role.category}} Management</div>
+                  <label class="font-bold text-xl pl-1" :for="role.permissions">{{role.category}} Management</label>
                 </div>
                 <div class="flex flex-col px-1">
                   <div
@@ -39,15 +40,15 @@
                     v-for="permission in role.permissions"
                     :key="permission.id"
                   >
-                    <input v-model="permission.done" type="checkbox" :checked="permission.done" />
-                    <div class="text-sm pl-1">{{permission.name}}</div>
+                    <input v-model="permission.done" type="checkbox" :id="permission.id" :checked="permission.done" />
+                    <label :for="permission.id" class="text-sm pl-1">{{permission.name}}</label>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div class="m-2">
+        <div class="my-4">
           <AppButton :label="'Create'" @click="create" />
         </div>
       </div>
@@ -73,7 +74,17 @@ export default {
       formError: []
     };
   },
-  created() {
+  async asyncData({ app, error }) {
+    try {
+    } catch (err) {
+      if (err.response && err.response.status === 401) {
+        error(err.response.data);
+        return;
+      }
+      throw err;
+    }
+  },
+  mounted() {
     this.getPermissions();
   },
   methods: {
@@ -125,6 +136,7 @@ export default {
       });
     },
     create() {
+      this.formError = [];
       this.Validate(this.form, ["permission_id"]);
       if (!this.formError.length) {
         let ids = [];
@@ -139,7 +151,7 @@ export default {
         this.$axios
           .$post(`/api/v1/practice/practice-roles`, this.form)
           .then(res => {
-            this.$store.commit("roles/ADD_PRACTICE_ROLE", res.data.role);
+            this.$emit("addRole", res.data.role);
             this.$router.push(`/roles-and-permissions/roles`);
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
