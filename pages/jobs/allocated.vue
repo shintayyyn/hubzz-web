@@ -6,7 +6,7 @@
       class="mt-10 w-full text-center"
       v-if="!loadingJobs && getLocumAllocatedJobs.length === 0 "
     >You do not have any allocated jobs</div>
-    <div v-if="getLocumAllocatedJobs.length > 0" class="overflow-x-auto overflow-y-hidden">
+    <div v-if="getLocumAllocatedJobs.length > 0" class="overflow-x-auto overflow-y-hidden p-2">
       <JobTable :columns="columns" :jobs="getLocumAllocatedJobs" @sortBy="sortBy" @show="show" />
     </div>
     <div class="w-full mt-4" v-if="getLocumAllocatedJobs.length > 0 && totalPages > 1">

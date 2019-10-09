@@ -11,7 +11,7 @@
     <div class="__jobs-section">
       <h1>Invoices</h1>
       <div class="overflow-x-auto overflow-y-hidden">
-        <table>
+        <table class="border-separate" style="border-spacing: 0 10px">
           <thead>
             <tr class="text-xs sm:text-sm text-left">
               <th>Type</th>
@@ -67,9 +67,6 @@
                     :class="invoice.issued_at ? 'text-white bg-green-600' : 'bg-yellow-500'"
                   ></button>
                 </td>
-              </tr>
-              <tr :key="`${invoice.id}-${index}`">
-                <td></td>
               </tr>
             </template>
           </tbody>

@@ -2,7 +2,7 @@
   <section class="relative">
     <AppLoading :loading="loading" spinner />
     <div class="overflow-x-auto">
-      <table class="border-separate mx-auto" style="border-spacing: 0 20px">
+      <table class="mx-auto">
         <thead>
           <tr class="text-sm md:text-base">
             <th v-for="(column, index) in columns" :key="index">

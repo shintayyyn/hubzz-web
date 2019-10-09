@@ -3,9 +3,10 @@
     <div class="shield" v-if="$store.state.toggled_sidebar" @click="close"></div>
     <AppSideBar @modal="signout_modal = $event" />
     <AppHeader />
-    <div class="content">
+    <div :class="$route.name === 'messages-slug' || $route.name === 'messages-new' ? 'content-message' : 'content'">
       <AppNotification />
       <nuxt
+        class="mb-4"
         :class="$route.name === 'messages-slug' || $route.name === 'messages-new' ? 'md:mt-20' : 'mt-16'"
       />
     </div>
@@ -48,25 +49,30 @@ export default {
 <style>
 .content {
   /* box-sizing: content-box; */
-  max-width: 1466px;
-  padding: 5px 20px;
+  padding: 10px 20px;
   height: 100%;
   scroll-behavior: smooth;
 }
+
+.content-message{
+  padding: 0 20px;
+}
+
 .shield {
   z-index: 55;
 }
 @media screen and (min-width: 1200px) {
-  .content {
+  .content, .content-message {
     margin-left: 200px;
   }
 }
 
 @media screen and (min-width: 480px) {
-  .content {
-    padding: 5px 40px;
+  .content, .content-message {
+    padding: 1px 5% 0;
   }
 }
+
 </style>
 
 

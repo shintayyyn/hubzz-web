@@ -1,6 +1,6 @@
 <template>
   <section
-    class="header-section fixed bg-white z-50"
+    class="header-section w-full fixed bg-white z-50"
     :class="$route.name === 'messages-slug' || $route.name === 'messages-new' ? 'border-b md:border-0' : ''"
   >
     <div class="flex flex-row flex-wrap justify-between" style="z-index: 600">
@@ -135,25 +135,14 @@ export default {
 .header-section {
   padding: 0 20px;
 }
-@media screen and (max-width: 1199px) {
-  .header-section {
-    width: 100%;
-  }
-}
 @media screen and (min-width: 1200px) {
   .burger {
     display: none;
   }
-  .header-section {
-    max-width: 1466px;
-    right: 0;
-    left: 200px;
-    /* padding: 5px 30px; */
-  }
 }
 @media screen and (min-width: 480px) {
   .header-section {
-    padding: 0 40px;
+    padding: 0 5%;
   }
 }
 a {

@@ -48,24 +48,26 @@
               />
             </template>
             <template v-if="type === 'select'">
-              <select
-                :value="value"
-                class="border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full"
-                :class="error ? 'border-red-500':''"
-                @input="$emit('input', $event.target.value)"
-                :style="inStyle"
-                @change="$emit('change', $event.target.value)"
-                @blur="$emit('blur')"
-                :disabled="disabled"
-              >
-                <option value disabled selected v-if="placeholder">{{placeholder}}</option>
-                <option
-                  v-for="(item, index) in items"
-                  :key="index"
-                  :value="item.value"
-                  :selected="value === item.value"
-                >{{item.label}}</option>
-              </select>
+              <div class="w-full customized-select">
+                <select
+                  :value="value"
+                  class="border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full"
+                  :class="error ? 'border-red-500':''"
+                  @input="$emit('input', $event.target.value)"
+                  :style="inStyle"
+                  @change="$emit('change', $event.target.value)"
+                  @blur="$emit('blur')"
+                  :disabled="disabled"
+                >
+                  <option value disabled selected v-if="placeholder">{{placeholder}}</option>
+                  <option
+                    v-for="(item, index) in items"
+                    :key="index"
+                    :value="item.value"
+                    :selected="value === item.value"
+                  >{{item.label}}</option>
+                </select>
+              </div>
             </template>
             <template v-if="type === 'textarea'">
               <textarea

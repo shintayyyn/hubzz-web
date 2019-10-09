@@ -1,5 +1,5 @@
 <template>
-  <table>
+  <table class="border-separate" style="border-spacing: 0 10px">
     <thead>
       <tr class="text-xs sm:text-sm text-left">
         <th
@@ -51,9 +51,6 @@
             v-if="item.status === 'Declined' || item.locum_status === 'Declined'"
           >{{item.platform_job.declined_at | localDate}}</td>
           <td v-if="item.locum_status === 'Unsuccessful'">{{item.platform_job.rejected_at}}</td>
-        </tr>
-        <tr :key="`${item.id}-${index}`">
-          <td></td>
         </tr>
       </template>
     </tbody>

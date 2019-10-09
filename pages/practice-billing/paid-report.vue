@@ -3,8 +3,8 @@
     <div class="__jobs-section">
       <h1>Invoices</h1>
       <div class="overflow-x-auto">
-        <div class="overflow-x-auto overflow-y-hidden">
-          <table class="border-separate" style="border-spacing: 0 10px">
+        <div class="overflow-x-auto overflow-y-hidden p-2">
+          <table>
             <thead>
               <tr class="text-xs sm:text-sm text-left">
                 <th>Locum</th>
