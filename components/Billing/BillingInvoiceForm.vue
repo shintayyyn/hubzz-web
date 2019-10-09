@@ -439,7 +439,7 @@ export default {
       this.form.items = this.selectedJobParts;
       this.form.total_amount = this.amount;
       this.form.final = final;
-      console.log("items", this.form)
+      console.log("items", this.form);
       this.Validate(this.form, ["final"]);
       if (!this.formError.length) {
         this.form.date_start = this.$moment(this.form.date_start).format(
@@ -450,8 +450,8 @@ export default {
         );
         if (!this.$route.params.id) {
           this.$axios.$post(`/api/v1/locum/invoices`, this.form).then(res => {
-            console.log('res', res.data.invoice)
-            this.$store.commit("billing/ADD_LOCUM_INVOICE", res.data.invoice);
+            // this.$store.commit("billing/ADD_LOCUM_INVOICE", res.data.invoice);
+            this.$emit("addInvoice", res.data.invoice);
             this.$router.push("/locum-billing/invoices");
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
@@ -463,10 +463,11 @@ export default {
           this.$axios
             .$put(`/api/v1/locum/invoices/${this.$route.params.id}`, this.form)
             .then(res => {
-              this.$store.commit(
-                "billing/UPDATE_LOCUM_INVOICE",
-                res.data.invoice
-              );
+              this.$emit("updateInvoice", res.data.invoice);
+              // this.$store.commit(
+              //   "billing/UPDATE_LOCUM_INVOICE",
+              //   res.data.invoice
+              // );
               this.$store.commit("SET_NOTIFICATION", {
                 enabled: true,
                 status: "success",
@@ -622,6 +623,7 @@ export default {
       }
     },
     removeSelectedJobPart(jobPart, index) {
+      console.log(this.filteredJobParts);
       this.selectedJobParts.splice(index, 1);
     },
     async fetchJobPartsCount() {

@@ -365,11 +365,7 @@
                 :label="'Auto-assign this job?'"
                 :items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
               />
-
-              <div
-                class="flex flex-row flex-wrap justify-between"
-                v-if="auto_assign_job === 'true'"
-              >
+              <div class="flex flex-row flex-wrap justify-between" v-if="auto_assign_job === 'Yes'">
                 <div>Auto-assign job to the first matching Favourite applicant by this date</div>
                 <div class="px-1 w-full md:w-1/2">
                   <AppDate v-model="auto_assign_at.date" :name="'auto_assign_at'" :label="'Date'" />
@@ -395,7 +391,7 @@
 
               <div
                 class="flex flex-row flex-wrap justify-between"
-                v-if="selection_notification === 'true'"
+                v-if="selection_notification === 'Yes'"
               >
                 <div>Selection will be made and you will receive a notification by this date</div>
                 <div class="px-1 w-full md:w-1/2">
@@ -422,7 +418,7 @@
 
               <div
                 class="flex flex-row flex-wrap justify-between"
-                v-if="favorite_notification === 'true'"
+                v-if="favorite_notification === 'Yes'"
               >
                 <div>Only favorite locum will be notified until this date</div>
                 <div class="px-1 w-full md:w-1/2">
@@ -813,7 +809,7 @@ export default {
       if (this.favorite_notification === false) {
         notRequired.push("favorite_only_until");
       }
-
+      console.log(this.form);
       this.Validate(this.form, notRequired);
       if (!this.formError.length) {
         this.selectedClinicalSystem = [...this.form.clinical_system_id];
@@ -835,19 +831,30 @@ export default {
           "YYYY-MM-DD"
         );
 
-        this.form.auto_assign_at ? this.form.auto_assign_at = `${this.$moment(
-          this.auto_assign_at.date
-        ).format("YYYY-MM-DD")} ${this.auto_assign_at.time}` : '';
-        this.form.selection_date ? this.form.selection_date = `${this.$moment(
-          this.selection_date.date
-        ).format("YYYY-MM-DD")} ${this.selection_date.time}` : '';
-        this.form.favorite_only_until ? this.form.favorite_only_until = `${this.$moment(
-          this.favorite_only_until.date
-        ).format("YYYY-MM-DD")} ${this.favorite_only_until.time}` : '';
-
         this.form.session_requirements.length > 0
           ? (this.form.session_requirements = this.form.session_requirements.join())
           : (this.form.session_requirements = "");
+
+        this.form.auto_assign_at =
+          this.auto_assign_job === true
+            ? `${this.$moment(this.auto_assign_at.date).format("YYYY-MM-DD")} ${
+                this.auto_assign_at.time
+              }`
+            : null;
+
+        this.form.selection_date =
+          this.selection_notification === true
+            ? `${this.$moment(this.selection_date.date).format("YYYY-MM-DD")} ${
+                this.selection_date.time
+              }`
+            : null;
+
+        this.form.favorite_only_until =
+          this.favorite_notification === true
+            ? `${this.$moment(this.favorite_only_until.date).format(
+                "YYYY-MM-DD"
+              )} ${this.favorite_only_until.time}`
+            : null;
 
         if (["15", "30", "60"].includes(this.unpaid_breaks)) {
           this.form.unpaid_breaks_in_minutes = this.unpaid_breaks;

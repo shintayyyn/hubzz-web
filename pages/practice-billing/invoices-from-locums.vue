@@ -31,24 +31,24 @@
                 </tr>
               </template>
               <template v-else v-for="(invoice, index) in getPracticeInvoices">
-                <tr :key="invoice.id" class="__job-card shadow-md cursor-pointer text-xs text-left">
-                  <td @click="show(invoice)">{{invoice.surgery_name}}</td>
-                  <td @click="show(invoice)">{{invoice.issued_at | localDate}}</td>
-                  <td @click="show(invoice)">{{invoice.locum_detail.user.personal_detail.name}}</td>
-                  <td @click="show(invoice)">{{invoice.invoice_number}}</td>
-                  <td @click="show(invoice)">
-                    <div v-for="(item, index) in invoice.items" :key="index">{{item.job_part.job_part_number}}</div>
-                    <!-- <div
+                <tr
+                  @click="show(invoice)"
+                  :key="invoice.id"
+                  class="__job-card shadow-md cursor-pointer text-xs text-left"
+                >
+                  <td>{{invoice.surgery.name}}</td>
+                  <td>{{invoice.issued_at | localDate}}</td>
+                  <td>{{invoice.locum_detail.user.personal_detail.first_name}}</td>
+                  <td>{{invoice.invoice_number}}</td>
+                  <td>
+                    <div
                       v-for="item in invoice.items.filter(item => item.type === 'Job Part' && item.job_part)"
                       :key="item.id"
                     >{{item.job_part.job_part_number}}</div>
-                  </td>-->
-                  <td @click="show(invoice)">£ {{invoice.total_amount}}</td>
-                  <td @click="show(invoice)">{{invoice.status}}</td>
-                  <!-- <td
-                    @click="show(invoice)"
-                  >{{invoice.paid_at ? 'Paid' : invoice.issued_at ? 'Issued' : ''}}</td>-->
-                  <td @click.stop.prevent="onClick(invoice, index)" class="text-center">
+                  </td>
+                  <td>£ {{invoice.total_amount}}</td>
+                  <td>{{invoice.status}}</td>
+                  <td @click.stop.prevent="onClick(invoice, index)">
                     <button
                       v-if="!invoice.paid_at"
                       v-text="'Mark as paid'"
@@ -70,27 +70,36 @@
         @pagechanged="pagechanged"
       />
     </div>
-    <div
-      v-if="paymentModal"
-      class="p-2"
-      v-on-clickaway="closePaymentModal"
-    >
-    <div class="rounded-lg shadow-md px-4 py-8 md:px-8 update-modal border w-5/6 md:w-1/3">
-      <AppDate
-        v-model="form.paid_at"
-        :name="'paid_at'"
-        :label="'Receive payment on'"
-        :error="formError.find(item => item.field === 'paid_at')"
-      />
-      <div class="flex flex-row flex-no-wrap justify-center">
-        <AppButton class="mx-1" :label="'Save'" @click="updateInvoice" :inStyle="'padding:5px 10px'" />
-        <AppButton class="mx-1" :label="'Cancel'" @click="paymentModal = false" :inStyle="'padding:5px 10px'" />
+    <div v-if="paymentModal" class="p-2" v-on-clickaway="closePaymentModal">
+      <div class="rounded-lg shadow-md px-4 py-8 md:px-8 update-modal border w-5/6 md:w-1/3">
+        <AppDate
+          v-model="form.paid_at"
+          :name="'paid_at'"
+          :label="'Receive payment on'"
+          :error="formError.find(item => item.field === 'paid_at')"
+        />
+        <div class="flex flex-row flex-no-wrap justify-center">
+          <AppButton
+            class="mx-1"
+            :label="'Save'"
+            @click="updateInvoice"
+            :inStyle="'padding:5px 10px'"
+          />
+          <AppButton
+            class="mx-1"
+            :label="'Cancel'"
+            @click="paymentModal = false"
+            :inStyle="'padding:5px 10px'"
+          />
+        </div>
       </div>
     </div>
-      
-    </div>
-    
-    <div class="shield" v-if="$route.path != '/practice-billing/invoices-from-locums' || paymentModal" @click="paymentModal ? '' : $router.go(-1)"></div>
+
+    <div
+      class="shield"
+      v-if="$route.path != '/practice-billing/invoices-from-locums' || paymentModal"
+      @click="paymentModal ? '' : $router.go(-1)"
+    ></div>
   </div>
 </template>
 
@@ -189,7 +198,7 @@ export default {
   mounted() {
     this.$store.commit("billing/SET_PRACTICE_INVOICES", this.invoices);
     this.$store.commit("billing/SET_PRACTICE_INVOICE_COUNT", this.count);
-    console.log("details", this.getPracticeInvoices)
+    console.log("details", this.getPracticeInvoices);
   },
   beforeDestroy() {
     this.$store.commit("billing/CLEAR_INVOICES");
@@ -230,7 +239,6 @@ export default {
           );
         });
     },
-
     show(item) {
       if (item.file) {
         this.$router.push(`/practice-billing/invoices-from-locums/${item.id}`);
