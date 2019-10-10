@@ -2,8 +2,8 @@
   <section>
     <div class="flex flex-row flex-wrap justify-start">
       <div
-        class="px-2 my-2 sm:my-4 w-full sm:w-1/2"
-        :class="$auth.user.domain === 'Locum' ? 'lg:w-1/4' : 'lg:w-1/3'"
+        class="px-2 my-2 sm:my-4 w-full sm:w-1/2 lg:max-w-sm"
+        :class="$auth.user.domain === 'Locum' ? 'md:w-1/4' : 'md:w-1/3'"
         v-for="(item, index) in statistics"
         :key="index"
       >

@@ -102,7 +102,16 @@ export default {
         state.professional_details.max_rate_per_half_day_session = payload.max_rate_per_half_day_session
         state.professional_details.min_rate_per_whole_day_session = payload.min_rate_per_whole_day_session
         state.professional_details.max_rate_per_whole_day_session = payload.max_rate_per_whole_day_session
-        state.professional_details.ir35 = payload.ir35
+    },
+    SET_PAYROLL_DETAILS(state, payload) {
+        state.payroll_details.employment_type = payload.employment_type
+        state.payroll_details.utr_number = payload.utr_number
+        state.payroll_details.paid_under_payroll = payload.paid_under_payroll
+        state.payroll_details.payroll_detail_account_name = payload.payroll_detail_account_name
+        state.payroll_details.payroll_detail_bank_name = payload.payroll_detail_bank_name
+        state.payroll_details.payroll_detail_sort_code = payload.payroll_detail_sort_code
+        state.payroll_details.payroll_detail_account_number = payload.payroll_detail_account_number
+        state.payroll_details.ir35 = payload.ir35
     },
     SET_CREDENTIAL_DETAILS(state, payload) {
         state.credential_details.email = payload.email
@@ -150,6 +159,9 @@ export default {
     },
     SET_PROFESSIONAL_DETAIL_FORM_ERROR(state, payload) {
         state.professional_detail_form_error = payload
+    },
+    SET_PAYROLL_DETAIL_FORM_ERROR(state, payload) {
+        state.payroll_detail_form_error = payload
     },
     SET_CREDENTIAL_DETAIL_FORM_ERROR(state, payload) {
         state.credential_detail_form_error = payload

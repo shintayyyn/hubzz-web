@@ -24,6 +24,12 @@ export default {
     professionalFormError(state) {
         return state.professional_detail_form_error;
     },
+    payrollDetails(state) {
+        return state.payroll_details;
+    },
+    payrollFormError(state) {
+        return state.payroll_detail_form_error;
+    },
     practiceAccountDetails(state) {
         return state.practice_account_details;
     },

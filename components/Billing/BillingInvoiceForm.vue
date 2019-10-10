@@ -351,15 +351,6 @@ export default {
       }
     },
     filteredJobParts() {
-      console.log(
-        "job",
-        this.jobParts.filter(filterItem => {
-          const index = this.selectedJobParts.findIndex(item => {
-            return item.job_part_id === filterItem.id;
-          });
-          return index === -1 && filterItem;
-        })
-      );
       return this.jobParts.filter(filterItem => {
         const index = this.selectedJobParts.findIndex(item => {
           return item.job_part_id === filterItem.id;
@@ -439,7 +430,6 @@ export default {
       this.form.items = this.selectedJobParts;
       this.form.total_amount = this.amount;
       this.form.final = final;
-      console.log("items", this.form);
       this.Validate(this.form, ["final"]);
       if (!this.formError.length) {
         this.form.date_start = this.$moment(this.form.date_start).format(
@@ -623,7 +613,6 @@ export default {
       }
     },
     removeSelectedJobPart(jobPart, index) {
-      console.log(this.filteredJobParts);
       this.selectedJobParts.splice(index, 1);
     },
     async fetchJobPartsCount() {

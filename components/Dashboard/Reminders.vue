@@ -2,7 +2,7 @@
   <section>
     <div class="flex flex-row flex-wrap justify-start mb-2 md:mb-0">
       <div
-        class="pr-4 my-2 md:my-4 w-full sm:w-1/2 lg:w-1/4"
+        class="pr-4 my-2 md:my-4 w-full sm:w-1/2 lg:max-w-sm"
         v-for="(item, index) in reminders"
         :key="index"
       >
@@ -37,7 +37,7 @@ export default {
           });
         } else {
           // Email
-          if (!res.data.user.is_email_verified) {
+          if (!res.data.user.email_verified_at) {
             this.reminders.push({
               label: "Please check your email for verification",
               route: "/account"
