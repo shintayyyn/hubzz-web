@@ -19,7 +19,6 @@
               :name="'pay_for_surgery'"
               :label="'Pay for surgery'"
               :error="formError.find(item => item.field === 'pay_for_surgery')"
-              :placeholder="'Select...'"
               :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
             />
           </div>
@@ -30,7 +29,6 @@
               :name="'verify_job_creation'"
               :label="'Verify job creation'"
               :error="formError.find(item => item.field === 'verify_job_creation')"
-              :placeholder="'Select...'"
               :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
             />
           </div>

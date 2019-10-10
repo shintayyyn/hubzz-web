@@ -1,8 +1,11 @@
 <template>
   <section>
-    <div class="calendar border border-solid shadow-md my-4 rounded-lg">
+    <div class="calendar border border-solid shadow-md my-4 rounded-lg lg:max-w-6xl">
       <div class="flex flex-row flex-wrap w-full h-full">
-        <div class="relative w-full lg:w-2/3 p-2 sm:p-5" :class="authPermissions.includes('Create Sessions Job') ? 'pb-16 md:pb-20' : ''">
+        <div
+          class="relative w-full lg:w-2/3 p-2 sm:p-5"
+          :class="authPermissions.includes('Create Sessions Job') ? 'pb-16 md:pb-20' : ''"
+        >
           <PerMonth v-if="$store.state.calendar.view_type === 'per_month'" />
           <PerWeek v-if="$store.state.calendar.view_type === 'per_week'" />
           <div class="absolute bottom-0 right-0 mx-2 sm:mx-5 my-3 md:my-5">
@@ -138,7 +141,7 @@ export default {
 <style>
 .calendar {
   height: auto;
-  max-width: 1000px;
+  /* max-width: 1000px; */
 }
 @media screen and (min-width: 991px) {
   .calendar {

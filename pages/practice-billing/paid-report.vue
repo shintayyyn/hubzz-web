@@ -1,77 +1,96 @@
 <template>
   <div>
-    <div class="__jobs-section">
-      <h1>Invoices</h1>
-      <div class="overflow-x-auto">
-        <div class="overflow-x-auto overflow-y-hidden p-2">
-          <table>
-            <thead>
-              <tr class="text-xs sm:text-sm text-left">
-                <th>Locum</th>
-                <th>Invoice number</th>
-                <th>Job numbers</th>
-                <th>£ Paid</th>
-                <th>Date paid</th>
-                <th>Amount</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <template v-if="getPracticeInvoices.length === 0">
-                <tr>
-                  <td colspan="10" class="text-center">You didn't have any paid invoice/s yet</td>
-                </tr>
-              </template>
-              <template v-else v-for="(invoice, index) in getPracticeInvoices">
-                <tr :key="invoice.id" class="__job-card shadow-md cursor-pointer text-xs text-left">
-                  <td @click="show(invoice)">{{invoice.locum_detail.user.personal_detail.name}}</td>
-                  <td @click="show(invoice)">{{invoice.issued_at | localDate}}</td>
-                  <td @click="show(invoice)">{{invoice.locum}}</td>
-                  <td @click="show(invoice)">{{invoice.invoice_number}}</td>
-                  <td @click="show(invoice)">
-                    <div v-for="(item, index) in invoice.items" :key="index">{{item.job_part.job_part_number}}</div>
-                    <!-- <div
-                      v-for="item in invoice.items.filter(item => item.type === 'Job Part' && item.job_part)"
-                      :key="item.id"
-                    >{{item.job_part.job_part_number}}</div>-->
-                  </td>
-                  <td @click="show(invoice)">£ {{invoice.total_amount}}</td>
-                  <td @click="show(invoice)">{{invoice.status}}</td>
-                  <!-- <td
-                    @click="show(invoice)"
-                  >{{invoice.paid_at ? 'Paid' : invoice.issued_at ? 'Issued' : ''}}</td>-->
-                  <td @click="onClick(invoice, index)" v-if="!invoice.paid_at">
-                    <button
-                      v-text="'Mark as paid'"
-                      class="px-2 py-3 text-white rounded-lg bg-green-600"
-                    ></button>
-                  </td>
-                </tr>
-              </template>
-            </tbody>
-          </table>
-          
-        </div>
-      </div>
-      <div class="my-2" v-if="getPracticeInvoices.length">
-        <span class="font-bold px-4">Total: £ {{ totalAmount | currency }}</span>
-      </div>
-    </div>
-    <div class="bottom-0 w-full" v-if="getPracticeInvoices.length > 0 && totalPages > 1">
-      <AppPagination
-        :total="total"
-        :totalPages="totalPages"
-        :currentPage="current_page"
-        @pagechanged="pagechanged"
-      />
-    </div>
+    <AppTable
+      v-if="invoices.length > 0"
+      :total="totalInvoices"
+      :items="invoices"
+      :loading="loading"
+      :currentPage="current_page"
+      :perPage="params.limit"
+      :columns="columns"
+      :orderBy="params.order_by"
+      @show="show"
+      @pagechanged="pagechanged"
+      @limitchanged="limitchanged"
+      @sorted="sorted"
+    ></AppTable>
+    <div v-else class="flex justify-center">You do not have any paid invoices</div>
+    <transition name="fade" mode="out-in">
+      <div class="shield" v-if="$route.path != '/practice-billing/paid-report'"></div>
+    </transition>
+    <nuxt-child />
   </div>
 </template>
 <script>
+import AppTable from "@/components/Base/AppTable";
 export default {
   transition: {
     name: "fade",
     mode: "out-in"
+  },
+  components: {
+    AppTable
+  },
+  data() {
+    return {
+      totalInvoices: 0,
+      invoices: [],
+      loading: false,
+      current_page: 1,
+      //
+      params: {
+        offset: 0,
+        limit: 5,
+        status: "Paid",
+        order_by: ["date_created:desc"]
+      },
+      //
+      paymentModal: false,
+      selectedInvoiceId: null,
+
+      form: {
+        paid_at: null
+      },
+      formError: [],
+      //
+      columns: [
+        {
+          name: "Locum",
+          dataIndex: "locum_detail.user.personal_detail.first_name",
+          class: "text-center"
+        },
+        {
+          name: "Invoice Number",
+          dataIndex: "invoice_number",
+          class: "text-center"
+        },
+        {
+          name: "Job Numbers",
+          dataIndex: "items.job_part.job_part_number",
+          class: "text-center"
+        },
+        {
+          name: "£ Paid",
+          dataIndex: "total_amount",
+          class: "text-center"
+        },
+        {
+          name: "Date paid",
+          dataIndex: "paid_at",
+          class: "text-center"
+        },
+        {
+          name: "Amount",
+          dataIndex: "total_amount",
+          class: "text-center"
+        },
+        {
+          name: "Status",
+          dataIndex: "status",
+          class: "text-center"
+        }
+      ]
+    };
   },
   async asyncData({ app, error }) {
     try {
@@ -90,76 +109,71 @@ export default {
           ? response.data.invoices
           : [];
       const responseCount = await app.$axios.$get(
-        `/api/v1/practice/locum-invoices/count`,
-        { params }
+        `/api/v1/practice/locum-invoices/count`
       );
-      const count =
+      const totalInvoices =
         responseCount.data && responseCount.data.count
           ? responseCount.data.count
           : 0;
       return {
         invoices,
-        count
+        totalInvoices
       };
     } catch (err) {
       throw err;
     }
   },
-  data() {
-    return {
-      current_page: 1,
-      params: {
-        order_by: "date_paid:desc"
-      },
-      // sort
-      sortType: "",
-      date_paid: false,
-      //
-      count: 0,
-      invoices: [],
-      paymentModal: false,
-      deleteModal: false,
-      form: {
-        paid_at: null
-      },
-      formError: [],
-      selectedInvoiceId: null
-    };
-  },
+
   computed: {
-    getPracticeInvoices() {
-      return this.$store.getters["billing/getPracticeInvoices"];
-    },
-    offset() {
-      return this.perPage * (this.current_page - 1);
-    },
-    perPage() {
-      return 5;
-    },
-    total() {
-      return this.$store.state.billing.practice_invoice_count;
-    },
-    totalPages() {
-      return Math.ceil(this.total / this.perPage);
-    },
-    totalAmount() {
-      if (!this.getPracticeInvoices.length) {
-        return 0;
-      }
-      console.log("qwe",this.getPracticeInvoices)
-      return this.getPracticeInvoices
-        .map(invoice => invoice.total_amount)
-        .reduce((accumulator, currentValue) => accumulator + currentValue);
+    authPermissions() {
+      return this.$store.getters["auth/permissions"];
     }
   },
-  mounted() {
-    this.$store.commit("billing/SET_PRACTICE_INVOICES", this.invoices);
-    this.$store.commit("billing/SET_PRACTICE_INVOICE_COUNT", this.count);
-  },
   methods: {
-    show(item) {
-      this.$router.push(`/practice-billing/invoices-from-locums/${item.id}`);
+    getInvoicesCount(params) {
+      this.$axios
+        .$get(`/api/v1/practice/locum-invoices/count`, { params })
+        .then(res => {
+          this.totalInvoices = res.data.count;
+          this.getInvoices(this.params);
+        });
     },
+    getInvoices(params) {
+      this.loading = true;
+      this.$axios
+        .$get(`/api/v1/practice/locum-invoices`, { params })
+        .then(res => {
+          this.loading = false;
+          this.invoices = [];
+          res.data.invoices.forEach(invoice => {
+            this.invoices.push(invoice);
+          });
+        })
+        .catch(err => {
+          console.log(err);
+          this.loading = false;
+        });
+    },
+    sorted(order_by) {
+      this.current_page = 1;
+      this.params.offset = 0;
+      this.params.order_by = order_by;
+      this.getInvoices(this.params);
+    },
+    pagechanged(page) {
+      this.current_page = page;
+      this.params.offset = this.params.limit * (page - 1);
+      this.getInvoices(this.params);
+    },
+    limitchanged(limit) {
+      this.current_page = 1;
+      this.params.offset = 0;
+      this.params.limit = limit;
+      this.getInvoices(this.params);
+    },
+    show(item) {
+      this.$router.push(`/practice-billing/paid-report/${item.id}`);
+    }
   }
 };
 </script>

@@ -1,88 +1,45 @@
 <template>
-  <div>
-    <nuxt-child />
+  <section class="relative">
+    <AppTable
+      v-if="invoices.length > 0"
+      :total="totalInvoices"
+      :items="invoices"
+      :loading="loading"
+      :currentPage="current_page"
+      :perPage="params.limit"
+      :columns="columns"
+      :orderBy="params.order_by"
+      @show="show"
+      @pagechanged="pagechanged"
+      @limitchanged="limitchanged"
+      @sorted="sorted"
+    >
+      <template v-slot:actions="slotProps">
+        <td @click.stop.prevent="onClick(slotProps.item)">
+          <button
+            v-if="!slotProps.item.paid_at"
+            v-text="'Mark as paid'"
+            class="px-2 py-3 text-white rounded-lg focus:outline-none bg-green-600 hover:bg-green-700"
+          ></button>
+        </td>
+      </template>
+    </AppTable>
+    <div v-else class="flex justify-center">You do not have any invoices from Locums</div>
 
-    <div class="__jobs-section">
-      <h1>Invoices</h1>
-      <div class="overflow-x-auto">
-        <div class="overflow-x-auto overflow-y-hidden p-2">
-          <table>
-            <thead>
-              <tr class="text-xs sm:text-sm text-left">
-                <th>Practice / Surgery</th>
-                <th @click="sortBy('issued_at')" class="cursor-pointer">
-                  Issued
-                  <svgicon class="inline align-baseline" name="sort" height="12" width="12" />
-                </th>
-                <th>Locum</th>
-                <th>Invoice number</th>
-                <th>Job numbers</th>
-                <th>£ Amount</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <template v-if="getPracticeInvoices.length === 0">
-                <tr>
-                  <td
-                    colspan="8"
-                    class="absolute inset-x-auto md:static md:text-center"
-                  >You don't have any invoice/s yet</td>
-                </tr>
-              </template>
-              <template v-else v-for="(invoice, index) in getPracticeInvoices">
-                <tr
-                  @click="show(invoice)"
-                  :key="invoice.id"
-                  class="__job-card shadow-md cursor-pointer text-xs text-left"
-                >
-                  <td>{{invoice.surgery.name}}</td>
-                  <td>{{invoice.issued_at | localDate}}</td>
-                  <td>{{invoice.locum_detail.user.personal_detail.first_name}}</td>
-                  <td>{{invoice.invoice_number}}</td>
-                  <td>
-                    <div
-                      v-for="item in invoice.items.filter(item => item.type === 'Job Part' && item.job_part)"
-                      :key="item.id"
-                    >{{item.job_part.job_part_number}}</div>
-                  </td>
-                  <td>£ {{invoice.total_amount}}</td>
-                  <td>{{invoice.status}}</td>
-                  <td @click.stop.prevent="onClick(invoice, index)">
-                    <button
-                      v-if="!invoice.paid_at"
-                      v-text="'Mark as paid'"
-                      class="px-2 py-3 text-white rounded-lg focus:outline-none bg-green-600 hover:bg-green-700"
-                    ></button>
-                  </td>
-                </tr>
-              </template>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-    <div class="bottom-0 w-full" v-if="getPracticeInvoices.length > 0 && totalPages > 1">
-      <AppPagination
-        :total="total"
-        :totalPages="totalPages"
-        :currentPage="current_page"
-        @pagechanged="pagechanged"
-      />
-    </div>
     <div v-if="paymentModal" class="p-2" v-on-clickaway="closePaymentModal">
       <div class="rounded-lg shadow-md px-4 py-8 md:px-8 update-modal border w-5/6 md:w-1/3">
         <AppDate
           v-model="form.paid_at"
           :name="'paid_at'"
-          :label="'Receive payment on'"
+          :label="'Received payment on'"
           :error="formError.find(item => item.field === 'paid_at')"
+          isAfter
         />
         <div class="flex flex-row flex-no-wrap justify-center">
           <AppButton
             class="mx-1"
             :label="'Save'"
-            @click="updateInvoice"
+            @click="confirmPayment"
             :inStyle="'padding:5px 10px'"
           />
           <AppButton
@@ -94,59 +51,134 @@
         </div>
       </div>
     </div>
-
-    <div
-      class="shield"
-      v-if="$route.path != '/practice-billing/invoices-from-locums' || paymentModal"
-      @click="paymentModal ? '' : $router.go(-1)"
-    ></div>
-  </div>
+    <transition name="fade" mode="out-in">
+      <div
+        class="shield"
+        v-if="$route.path != '/practice-billing/invoices-from-locums' || paymentModal"
+      ></div>
+    </transition>
+    <nuxt-child />
+  </section>
 </template>
-
 <script>
+import AppTable from "@/components/Base/AppTable";
 import AppDate from "@/components/Base/AppDate";
 import AppButton from "@/components/Base/AppButton";
-import AppPagination from "@/components/Base/AppPagination";
 import { mixin as clickaway } from "vue-clickaway";
 export default {
   mixins: [clickaway],
-  components: {
-    AppDate,
-    AppButton,
-    AppPagination
-  },
   transition: {
     name: "fade",
     mode: "out-in"
   },
-
+  components: {
+    AppTable,
+    AppDate,
+    AppButton
+  },
+  data() {
+    return {
+      totalInvoices: 0,
+      invoices: [],
+      loading: false,
+      current_page: 1,
+      modal: false,
+      // payment
+      paymentModal: false,
+      selectedInvoiceId: null,
+      form: {
+        paid_at: null
+      },
+      formError: [],
+      // app table params
+      params: {
+        offset: 0,
+        limit: 5,
+        status: "Issued",
+        order_by: ["date_created:desc"]
+      },
+      // app table column
+      columns: [
+        {
+          name: "Practice / Surgery",
+          dataIndex: "surgery.name",
+          class: "text-left"
+        },
+        {
+          name: "Issued",
+          dataIndex: "issued_at",
+          class: "text-center localDate"
+        },
+        {
+          name: "Locum",
+          dataIndex: "locum_detail.user.personal_detail.first_name",
+          class: "text-center"
+        },
+        {
+          name: "Invoice Number",
+          dataIndex: "invoice_number",
+          class: "text-center"
+        },
+        {
+          name: "Job Numbers",
+          dataIndex: "items.job_part.job_part_number",
+          class: "text-center"
+        },
+        {
+          name: "£ Amount",
+          dataIndex: "total_amount",
+          class: "text-center"
+        },
+        {
+          name: "Status",
+          dataIndex: "status",
+          class: "text-center"
+        },
+        {
+          name: "Created At",
+          dataIndex: "date_created",
+          class: "text-center localDate"
+        }
+      ]
+    };
+  },
+  computed: {
+    authPermissions() {
+      return this.$store.getters["auth/permissions"];
+    }
+  },
   async asyncData({ app, error }) {
     try {
       const params = {
         offset: 0,
         limit: 5,
+        status: "Issued",
         order_by: "date_created:desc"
       };
-      const response = await app.$axios.get("/api/v1/practice/locum-invoices", {
-        params
-      });
-      const invoices =
-        response.data && response.data.data && response.data.data.invoices
-          ? response.data.data.invoices
-          : [];
+
       const responseCount = await app.$axios.get(
         "/api/v1/practice/locum-invoices/count"
       );
 
-      const count =
+      const totalInvoices =
         responseCount.data &&
-        response.data.data &&
+        responseCount.data.data &&
         responseCount.data.data.count
           ? responseCount.data.data.count
           : 0;
+
+      const response = await app.$axios.get("/api/v1/practice/locum-invoices", {
+        params
+      });
+
+      const invoices =
+        response.data && response.data.data && response.data.data.invoices
+          ? response.data.data.invoices
+          : [];
+
       return {
-        invoices,
-        count
+        totalInvoices,
+        invoices
       };
     } catch (err) {
       console.log("practice-billing index err", err.response || err);
@@ -156,93 +188,33 @@ export default {
       });
     }
   },
-  data() {
-    return {
-      current_page: 1,
-      params: {
-        order_by: "date_created:desc"
-      },
-      // sort
-      sortType: "",
-      issued_at: true,
-      date_created: false,
-      //
-      count: 0,
-      invoices: [],
-      paymentModal: false,
-      deleteModal: false,
-      form: {
-        paid_at: null
-      },
-      formError: [],
-      selectedInvoiceId: null
-    };
-  },
-  computed: {
-    getPracticeInvoices() {
-      return this.$store.getters["billing/getPracticeInvoices"];
-    },
-    offset() {
-      return this.perPage * (this.current_page - 1);
-    },
-    perPage() {
-      return 5;
-    },
-    total() {
-      return this.$store.state.billing.practice_invoice_count;
-    },
-    totalPages() {
-      return Math.ceil(this.total / this.perPage);
-    }
-  },
-  mounted() {
-    this.$store.commit("billing/SET_PRACTICE_INVOICES", this.invoices);
-    this.$store.commit("billing/SET_PRACTICE_INVOICE_COUNT", this.count);
-    console.log("details", this.getPracticeInvoices);
-  },
-  beforeDestroy() {
-    this.$store.commit("billing/CLEAR_INVOICES");
-  },
   methods: {
-    pagechanged(e) {
-      this.current_page = e;
-      this.getInvoice(this.current_page, this.params);
-    },
-    sortBy(sortedBy) {
-      switch (sortedBy) {
-        case "issued_at":
-          this.issued_at = !this.issued_at;
-          this.sortType = this.issued_at;
-          break;
-        case "date_created":
-          this.date_created = !this.date_created;
-          this.sortType = this.date_created;
-          break;
-      }
-      this.params.order_by = `${sortedBy}:${this.sortType ? "asc" : "desc"}`;
-      this.current_page = 1;
-      this.getInvoice(this.current_page, this.params);
-    },
-    getInvoice(page, params) {
-      this.current_page = page;
-      const defaultParams = {
-        offset: this.offset,
-        limit: this.perPage
-      };
-      let invoiceParams = { ...params, ...defaultParams };
+    getInvoicesCount(params) {
       this.$axios
-        .$get("/api/v1/practice/locum-invoices", { params: invoiceParams })
+        .$get(`/api/v1/practice/locum-invoices/count`, { params })
         .then(res => {
-          this.$store.commit(
-            "billing/SET_PRACTICE_INVOICES",
-            res.data.invoices
-          );
+          this.totalInvoices = res.data.count;
+          this.getInvoices(this.params);
         });
     },
-    show(item) {
-      if (item.file) {
-        this.$router.push(`/practice-billing/invoices-from-locums/${item.id}`);
-      }
+    getInvoices(params) {
+      this.loading = true;
+      this.$axios
+        .$get(`/api/v1/practice/locum-invoices`, { params })
+        .then(res => {
+          this.loading = false;
+          this.invoices = [];
+          res.data.invoices.forEach(invoice => {
+            this.invoices.push(invoice);
+          });
+        })
+        .catch(err => {
+          console.log(err);
+          this.loading = false;
+        });
+    },
+    closePaymentModal() {
+      this.paymentModal = false;
     },
     onClick(invoice, index) {
       this.selectedInvoiceId = null;
@@ -250,10 +222,7 @@ export default {
       this.paymentModal = true;
       this.selectedInvoiceId = invoice.id;
     },
-    closePaymentModal() {
-      this.paymentModal = false;
-    },
-    updateInvoice() {
+    confirmPayment() {
       this.Validate(this.form);
       if (!this.formError.length) {
         this.form.paid_at = this.$moment(this.form.paid_at).format(
@@ -265,31 +234,48 @@ export default {
             this.form
           )
           .then(res => {
-            this.$store.commit(
-              "billing/UPDATE_PRACTICE_INVOICE",
-              res.data.invoice
+            let index = this.invoices.findIndex(
+              invoice => invoice.id == res.data.invoice.id
             );
+            if (index >= 0) {
+              this.invoices.splice(index, 1);
+            }
+
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: [`${res.message}`]
+            });
             this.paymentModal = false;
           });
       }
+    },
+    sorted(order_by) {
+      this.current_page = 1;
+      this.params.offset = 0;
+      this.params.order_by = order_by;
+      this.getInvoices(this.params);
+    },
+    pagechanged(page) {
+      this.current_page = page;
+      this.params.offset = this.params.limit * (page - 1);
+      this.getInvoices(this.params);
+    },
+    limitchanged(limit) {
+      this.current_page = 1;
+      this.params.offset = 0;
+      this.params.limit = limit;
+      this.getInvoices(this.params);
+    },
+    show(item) {
+      this.$router.push(`/practice-billing/invoices-from-locums/${item.id}`);
     }
   }
 };
 </script>
-
 <style scoped>
 .shield {
   z-index: 511;
-}
-
-table tr td {
-  padding: 10px 15px;
-}
-.confirmation {
-  z-index: 600;
-}
-.confirmation-modal {
-  width: 100%;
 }
 .update-modal {
   position: fixed;
@@ -298,13 +284,5 @@ table tr td {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-}
-@media screen and (min-width: 991px) {
-  .confirmation-modal {
-    width: auto;
-  }
-}
-button:active {
-  transform: translate(2px, 2px);
 }
 </style>

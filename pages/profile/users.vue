@@ -47,11 +47,20 @@
       :columns="columns"
       :orderBy="params.order_by"
       @show="show"
-      @remove="remove"
       @pagechanged="pagechanged"
       @limitchanged="limitchanged"
       @sorted="sorted"
-    />
+    >
+      <template v-slot:actions="slotProps">
+        <td class="flex justify-center">
+          <div
+            v-if="slotProps.item.practice_detail.role.name !== 'Practice User Admin'"
+            class="font-semibold text-xs sm:text-sm text-center"
+            @click.stop.prevent="toggleRemoveConfirmationModal(slotProps.item.id)"
+          >X</div>
+        </td>
+      </template>
+    </AppTable>
     <div v-else class="flex justify-center">You do not have any other User on this Practice</div>
     <transition name="fade" mode="out-in">
       <div
@@ -61,23 +70,36 @@
       ></div>
     </transition>
     <nuxt-child @addedUser="addUser" @updateUser="updateUser" />
+    <AppConfirmationModal
+      :label="'Proceed to delete this user?'"
+      :confirmLabel="'Yes'"
+      :cancelLabel="'Cancel'"
+      :modal="modal"
+      @confirm="remove"
+      @cancel="modal = false"
+    />
   </section>
 </template>
 <script>
 import AppTable from "@/components/Base/AppTable";
 import AppInput from "@/components/Base/AppInput";
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
 export default {
   transition: {
     name: "fade",
     mode: "out-in"
   },
   components: {
+    AppConfirmationModal,
     AppTable,
     AppInput
   },
 
   data() {
     return {
+      selectedSurgeryId: null,
+      modal: false,
+      //
       totalUsers: 0,
       users: [],
       loading: false,
@@ -286,10 +308,17 @@ export default {
       //   this.users.splice(index, 1, user);
       // }
     },
-    remove(id) {
+    toggleRemoveConfirmationModal(id) {
+      this.selectedSurgeryId = id;
+      this.modal = true;
+    },
+    remove() {
       this.loading = true;
       this.$axios
-        .$delete(`/api/v1/practice/practice-users/${id}`, this.form)
+        .$delete(
+          `/api/v1/practice/practice-users/${this.selectedSurgeryId}`,
+          this.form
+        )
         .then(res => {
           this.loading = false;
           this.$store.commit("SET_NOTIFICATION", {
@@ -297,7 +326,9 @@ export default {
             status: "success",
             text: [`${res.message}`]
           });
-          let index = this.users.findIndex(item => item.id == id);
+          let index = this.users.findIndex(
+            item => item.id == this.selectedSurgeryId
+          );
           if (index >= 0) {
             this.users.splice(index, 1);
           }

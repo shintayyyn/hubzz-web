@@ -20,13 +20,14 @@ table {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0 20px;
-  /* width: 1366px; */
+  /* min-width: 1620px; */
+  /* max-width: 1620px; */
 }
 
 @media screen and (max-width: 1620px) {
-  table {
-    min-width: 1620px;
-    max-width: 1620px;
+  .table {
+    min-width: 72rem;
+    max-width: 72rem;
   }
 }
 
