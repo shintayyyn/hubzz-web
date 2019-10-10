@@ -794,19 +794,32 @@ export default {
         "include_sunday"
       ];
 
-      if (["15", "30", "60", false].includes(this.unpaid_breaks)) {
+      if (this.compliances.length) {
+        notRequired.push("compliance_document_id");
+      }
+      if (this.mandatory_training_lists.length) {
+        notRequired.push("mandatory_training_id");
+      }
+
+      if (["15", "30", "60", false, "false"].includes(this.unpaid_breaks)) {
         notRequired.push("unpaid_breaks_in_minutes");
       }
 
-      if (this.auto_assign_job === false) {
+      if (this.auto_assign_job == false || this.auto_assign_job == "false") {
         notRequired.push("auto_assign_at");
       }
 
-      if (this.selection_notification === false) {
+      if (
+        this.selection_notification == false ||
+        this.selection_notification == "false"
+      ) {
         notRequired.push("selection_date");
       }
 
-      if (this.favorite_notification === false) {
+      if (
+        this.favorite_notification == false ||
+        this.favorite_notification == "false"
+      ) {
         notRequired.push("favorite_only_until");
       }
       console.log(this.form);

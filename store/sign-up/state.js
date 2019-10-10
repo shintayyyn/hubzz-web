@@ -56,9 +56,19 @@ export default () => ({
         max_rate_per_half_day_session: 0,
         min_rate_per_whole_day_session: 0,
         max_rate_per_whole_day_session: 0,
-        ir35: null,
         practice_type_id: [],
         mandatory_training_id: [],
+    },
+    payroll_details: {
+        employment_type: "Self-employed",
+        company_registration_number: "",
+        utr_number: "",
+        paid_under_payroll: false,
+        payroll_detail_account_name: "",
+        payroll_detail_bank_name: "",
+        payroll_detail_sort_code: "",
+        payroll_detail_account_number: "",
+        ir35: false
     },
     credential_details: {
         email: '',
@@ -68,5 +78,6 @@ export default () => ({
     account_detail_form_error: [],
     address_detail_form_error: [],
     professional_detail_form_error: [],
+    payroll_detail_form_error: [],
     credential_detail_form_error: []
 })

@@ -17,7 +17,16 @@ a {
 }
 
 table {
-  width: 1366px;
+  width: 100%;
+  /* min-width: 1620px; */
+  /* max-width: 1620px; */
+}
+
+@media screen and (max-width: 1620px) {
+  .table {
+    min-width: 72rem;
+    max-width: 72rem;
+  }
 }
 
 table thead th {

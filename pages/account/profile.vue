@@ -207,21 +207,23 @@
             :label="'Are you...?'"
             :items="employmentTypes"
           />
-          <template v-if="form.employment_type === 'Limited company'">
+          <template v-if="form.employment_type === 'Limited Company'">
             <AppInput
               v-model="form.company_registration_number"
               :type="'text'"
               :name="'company_registration_number'"
               :label="'Company_registration_number'"
+              :error="formError.find(item => item.field === 'company_registration_number')"
               :placeholder="'The number of your company from Companies House'"
             />
           </template>
-          <template v-else>
+          <template v-if="form.employment_type === 'Self-Employed'">
             <AppInput
               v-model="form.utr_number"
               :type="'text'"
               :name="'utr_number'"
               :label="'UTR number'"
+              :error="formError.find(item => item.field === 'utr_number')"
               :placeholder="''"
             />
           </template>
@@ -230,36 +232,36 @@
             :type="'select'"
             :name="'paid_under_payroll'"
             :label="'Are you paid under payroll?'"
-            :items="[{ label: 'Yes', value: 'Yes' }, { label: 'No', value: 'No' }]"
+            :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
           />
-          <template v-if="form.paid_under_payroll === 'Yes'">
+          <template v-if="form.paid_under_payroll == true || form.paid_under_payroll == 'true'">
             <AppInput
-              v-model="form.account_name"
+              v-model="form.payroll_detail_account_name"
               :type="'text'"
-              :name="'account_name'"
+              :name="'payroll_detail_account_name'"
               :label="'Account name'"
-              :placeholder="''"
+              :error="formError.find(item => item.field === 'payroll_detail_account_name')"
             />
             <AppInput
-              v-model="form.bank_name"
+              v-model="form.payroll_detail_bank_name"
               :type="'text'"
-              :name="'bank_name'"
+              :name="'payroll_detail_bank_name'"
               :label="'Bank name'"
-              :placeholder="''"
+              :error="formError.find(item => item.field === 'payroll_detail_bank_name')"
             />
             <AppInput
-              v-model="form.sort_code"
+              v-model="form.payroll_detail_sort_code"
               :type="'text'"
-              :name="'sort_code'"
+              :name="'payroll_detail_sort_code'"
               :label="'Sort code'"
-              :placeholder="''"
+              :error="formError.find(item => item.field === 'payroll_detail_sort_code')"
             />
             <AppInput
-              v-model="form.account_number"
+              v-model="form.payroll_detail_account_number"
               :type="'text'"
-              :name="'account_number'"
+              :name="'payroll_detail_account_number'"
               :label="'Account number'"
-              :placeholder="''"
+              :error="formError.find(item => item.field === 'payroll_detail_account_number')"
             />
           </template>
           <AppInput
@@ -267,7 +269,6 @@
             :type="'single-checkbox'"
             :name="'ir35'"
             :label="'Are you willing to work for a role captured within IR35 rules, subject to deduction of Tax and N.I.?'"
-            :placeholder="''"
             :error="this.formError.find(item => item.field === 'ir35')"
           />
           <AppPostCode
@@ -353,8 +354,8 @@
 </template>
 <script>
 let employmentTypes = [
-  { label: "Self-employed", value: "Self-employed" },
-  { label: "Limited company", value: "Limited company" }
+  { label: "Self-Employed", value: "Self-Employed" },
+  { label: "Limited Company", value: "Limited Company" }
 ];
 import AppFormError from "@/components/Base/AppFormError";
 import AppLoading from "@/components/Base/AppLoading";
@@ -407,15 +408,14 @@ export default {
         referee_2_contact_name: "",
         referee_2_phone_number: "",
         referee_2_email: "",
-        // billing
-        employment_type: "Self-employed",
+        employment_type: "Self-Employed",
         company_registration_number: "",
         utr_number: "",
-        paid_under_payroll: "No",
-        account_name: "",
-        bank_name: "",
-        sort_code: "",
-        account_number: "",
+        paid_under_payroll: false,
+        payroll_detail_account_name: "",
+        payroll_detail_bank_name: "",
+        payroll_detail_sort_code: "",
+        payroll_detail_account_number: "",
         ir35: false
       },
       avatar: null,
@@ -579,20 +579,18 @@ export default {
         this.form.referee_2_email = referee.email;
       }
     });
-    // bank account
-    if (this.user.locum_detail.bank_account) {
-      this.form.paid_under_payroll = "Yes";
-      this.form.account_name = this.user.locum_detail.bank_account.account_name;
-      this.form.account_number = this.user.locum_detail.bank_account.account_number;
-      this.form.sort_code = this.user.locum_detail.bank_account.sort_code;
-      this.form.bank_name = this.user.locum_detail.bank_account.bank_name;
-    }
-    // invoice detail
     if (this.user.locum_detail.invoice_detail) {
       this.form.employment_type = this.user.locum_detail.invoice_detail.employment_type;
       this.form.utr_number = this.user.locum_detail.invoice_detail.utr_number;
       this.form.company_registration_number = this.user.locum_detail.invoice_detail.company_registration_number;
       this.form.ir35 = this.user.locum_detail.invoice_detail.ir35;
+      this.form.paid_under_payroll = this.user.locum_detail.invoice_detail.paid_under_payroll;
+    }
+    if (this.user.locum_detail.invoice_detail.payroll_detail) {
+      this.form.payroll_detail_account_name = this.user.locum_detail.invoice_detail.payroll_detail.account_name;
+      this.form.payroll_detail_account_number = this.user.locum_detail.invoice_detail.payroll_detail.account_number;
+      this.form.payroll_detail_sort_code = this.user.locum_detail.invoice_detail.payroll_detail.sort_code;
+      this.form.payroll_detail_bank_name = this.user.locum_detail.invoice_detail.payroll_detail.bank_name;
     }
   },
   methods: {
@@ -618,24 +616,27 @@ export default {
           "referee_1_email",
           "referee_2_contact_name",
           "referee_2_phone_number",
-          "referee_2_email"
+          "referee_2_email",
+          "paid_under_payroll"
         ];
-        // if (this.form.employment_type === "Self-employed") {
-        notRequired.push("employment_type");
-        notRequired.push("company_registration_number");
-        // } else if (this.form.employment_type) {
-        notRequired.push("ir35");
-        notRequired.push("utr_number");
-        // }
 
-        // if (this.form.paid_under_payroll === "No") {
-        notRequired.push(
-          "account_name",
-          "bank_name",
-          "sort_code",
-          "account_number"
-        );
-        // }
+        if (this.form.employment_type === "Self-Employed") {
+          notRequired.push("company_registration_number");
+        } else if (this.form.employment_type === "Limited Companyy") {
+          notRequired.push("utr_number");
+        }
+
+        if (
+          this.form.paid_under_payroll == false ||
+          this.form.paid_under_payroll == "false"
+        ) {
+          notRequired.push(
+            "payroll_detail_account_name",
+            "payroll_detail_bank_name",
+            "payroll_detail_sort_code",
+            "payroll_detail_account_number"
+          );
+        }
 
         this.Validate(this.form, notRequired);
 

@@ -821,14 +821,14 @@ export default {
   background-color: #ccc;
 }
 .number-status {
-  width: 920px;
+  /* width: 920px; */
 }
 a {
   text-decoration: none;
   color: black;
 }
 table {
-  width: 920px;
+  /* width: 920px; */
 }
 /* table thead th {
   padding: 10px 0;
