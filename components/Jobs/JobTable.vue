@@ -1,5 +1,5 @@
 <template>
-  <table class="border-separate" style="border-spacing: 0 10px">
+  <table>
     <thead>
       <tr class="text-xs sm:text-sm text-left">
         <th

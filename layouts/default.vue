@@ -1,8 +1,8 @@
 <template>
   <section>
     <div class="shield" v-if="$store.state.toggled_sidebar" @click="close"></div>
-    <AppSideBar @modal="signout_modal = $event" />
     <AppHeader />
+    <AppSideBar @modal="signout_modal = $event" />
     <div :class="$route.name === 'messages-slug' || $route.name === 'messages-new' ? 'content-message' : 'content'">
       <AppNotification />
       <nuxt

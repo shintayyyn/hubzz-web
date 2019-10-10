@@ -47,9 +47,6 @@
           <td v-if="item.status === 'Cancelled'">{{item.platform_job.cancelled_at | localDate}}</td>
           <td v-if="item.status === 'Declined'">{{item.platform_job.declined_at | localDate}}</td>
         </tr>
-        <tr :key="`${item.id}-${index}`">
-          <td></td>
-        </tr>
       </template>
     </tbody>
   </table>

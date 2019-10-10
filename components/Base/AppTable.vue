@@ -43,9 +43,9 @@
               </td>
               <td class="flex justify-center"  v-if="item.removable">
                 <div
-                  class="font-semibold text-xs sm:text-sm text-center"
+                  class="font-semibold text-xs sm:text-base text-center"
                   @click.stop.prevent="toggle(item)"
-                >X</div>
+                >x</div>
               </td>
             </tr>
           </template>

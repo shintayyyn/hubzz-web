@@ -2,15 +2,15 @@
   <section>
     <div class="flex flex-row flex-wrap justify-start mb-2 md:mb-0">
       <div
-        class="pr-4 my-2 md:my-4 w-full sm:w-1/2 lg:w-1/4"
+        class="md:pr-4 my-2 md:my-4 w-full sm:w-1/2 lg:w-1/4"
         v-for="(item, index) in reminders"
         :key="index"
       >
         <nuxt-link :to="item.route">
           <div
-            class="reminder-card h-full flex flex-col justify-center rounded-lg shadow-lg p-4 hover:bg-gray-100"
+            class="reminder-card h-full flex md:flex-col items-center md:justify-center rounded-lg shadow-lg p-4 hover:bg-gray-100 text-sm leading-none md:leading-tight"
           >
-            <span class="leading-tight">
+            <span class="mr-2">
               <svgicon name="alert" height="20" width="20" class="fill-current text-gray-800" />
             </span>
             <span>{{item.label}}</span>
@@ -197,8 +197,10 @@ a {
   text-decoration: none;
   color: black;
 }
-.reminder-card {
-  min-height: 130px;
+@media screen and (min-width: 768px){
+  .reminder-card {
+    min-height: 130px;
+  }
 }
 </style>
 
