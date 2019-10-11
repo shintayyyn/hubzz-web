@@ -8,7 +8,7 @@
         <svgicon name="left-arrow" height="20" width="20" />
       </button>
     </div>
-    <div class="flex flex-col justify-center" v-if="userDetail">
+    <div class="flex flex-col justify-center leading-tight" v-if="userDetail">
       <div class="font-bold md:text-lg">
         <span>{{ userDetail.name }}</span>
       </div>

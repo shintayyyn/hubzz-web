@@ -8,7 +8,7 @@
       @keyup.enter.exact="send"
       @keydown.enter.shift.exact="newline"
     ></textarea>
-    <button class="px-8 bg-blue-500 hover:bg-blue-600 text-white" @click="send">Send</button>
+    <button :disabled="trimmedMessage(message) == ''" :class="trimmedMessage(message) == '' ? 'cursor-not-allowed bg-gray-500' : 'bg-blue-500 hover:bg-blue-600 '" class="px-8 text-white focus:outline-none" @click="send">Send</button>
   </div>
 </template>
 <script>
@@ -18,12 +18,22 @@ export default {
       message: ""
     };
   },
+  watch:{
+    message(value){
+      value = this.trimmedMessage(value)
+    }
+  },
   methods: {
     newline() {
       this.message = `${this.message}`;
     },
+    trimmedMessage(message){
+      return message.replace(/^\s*/, '').replace(/\s*$/, '')
+    },
     send(e) {
       if (this.message) {
+        let wsRegex = /\S.*\S/;
+        this.message = this.message.match(wsRegex)[0]
         this.$store.dispatch("chat/sendMessage", {
           user_id: null,
           message: this.message,
