@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-5xl">
+  <div class="w-full">
     <div class="flex flex-row flex-no-wrap justify-start">
       <div class="font-bold text-md sm:text-lg">{{user.personal_detail.name}}</div>
     </div>

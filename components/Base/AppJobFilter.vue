@@ -1,7 +1,10 @@
 <template>
   <div>
-    <div class="flex flex-row flex-wrap" v-if="$auth.user.domain === 'Locum'">
-      <div class="w-full sm:w-1/3 p-1">
+    <span class="md:hidden bg-yellow-500 text-center py-1 px-4 text-sm rounded-lg cursor-pointer" @click="showFilter ? showFilter = false : showFilter = true">Filter</span>
+    <div class="absolute left-0 top-0 w-full bg-white rounded-lg p-4 text-sm -mt-32 mb-4 md:mt-0 md:mb-0 md:static md:text-base md:flex flex-row flex-wrap"
+     style="z-index: 56" v-if="$auth.user.domain === 'Locum' && showFilter">
+      <div class="md:hidden w-full text-right text-xl font-bold -mt-2 hover:text-gray-600"><span class="cursor-pointer" @click="showFilter = false">x</span></div>
+      <div class="w-full md:w-1/3 p-1">
         <AppInput
           v-model="params.shift_id"
           :type="'select'"
@@ -11,7 +14,7 @@
           :items="shifts"
         />
       </div>
-      <div class="w-full sm:w-1/3 p-1">
+      <div class="w-full md:w-1/3 p-1">
         <AppInput
           v-model="params.rate"
           :type="'text'"
@@ -20,7 +23,7 @@
           :placeholder="''"
         />
       </div>
-      <div class="w-full sm:w-1/3 p-1">
+      <div class="w-full md:w-1/3 p-1">
         <AppInput
           v-model="params.locum_detail_rate_type_id"
           :type="'select'"
@@ -30,7 +33,7 @@
           :items="rate_types"
         />
       </div>
-      <div class="w-full sm:w-1/4 p-1">
+      <div class="w-full md:w-1/4 p-1">
         <AppPostCode
           v-model="params.near_post_code"
           :name="'near_post_code'"
@@ -39,7 +42,7 @@
           :inStyle="'background-color:#dae1e7;border-color:white; padding: 1rem .5rem'"
         />
       </div>
-      <div class="w-full sm:w-1/4 p-1">
+      <div class="w-full md:w-1/4 p-1">
         <AppInput
           v-model="params.miles"
           :type="'text'"
@@ -49,7 +52,7 @@
           :inStyle="'text-align:right'"
         />
       </div>
-      <div class="w-full sm:w-1/4 p-1">
+      <div class="w-full md:w-1/4 p-1">
         <AppAutoComplete
           v-model="params.surgery_name"
           :name="'surgery_name'"
@@ -57,14 +60,14 @@
           :url="'/api/v1/locum/surgeries'"
         />
       </div>
-      <div class="w-full sm:w-1/4 flex flex-row justify-center items-center">
+      <div class="w-full md:w-1/4 flex flex-row justify-center items-center">
         <AppButton :label="'Clear'" @click="$emit('clear')" :inStyle="'padding:5px 14px'" />
         <div class="mx-1"></div>
         <AppButton :label="'Search'" @click="$emit('getJobs')" :inStyle="'padding:5px 14px'" />
       </div>
     </div>
-    <div class="flex flex-row flex-wrap" v-if="$auth.user.domain === 'Practice'">
-      <div class="w-full sm:w-1/3 p-1">
+    <div class="md:flex flex-row flex-wrap" v-if="$auth.user.domain === 'Practice' && showFilter">
+      <div class="w-full md:w-1/3 p-1">
         <AppInput
           v-model="params.shift_id"
           :type="'select'"
@@ -74,7 +77,7 @@
           :items="shifts"
         />
       </div>
-      <div class="w-full sm:w-1/3 p-1">
+      <div class="w-full md:w-1/3 p-1">
         <AppInput
           v-model="params.rate"
           :type="'text'"
@@ -83,7 +86,7 @@
           :placeholder="''"
         />
       </div>
-      <div class="w-full sm:w-1/3 p-1">
+      <div class="w-full md:w-1/3 p-1">
         <AppInput
           v-model="params.locum_detail_rate_type_id"
           :type="'select'"
@@ -93,12 +96,13 @@
           :items="rate_types"
         />
       </div>
-      <div class="w-full sm:w-1/4 flex flex-row">
+      <div class="w-full md:w-1/4 flex flex-row">
         <AppButton :label="'Clear'" @click="$emit('clear')" :inStyle="'padding:5px 14px'" />
         <div class="mx-1"></div>
         <AppButton :label="'Search'" @click="$emit('getJobs')" :inStyle="'padding:5px 14px'" />
       </div>
     </div>
+    <div class="shield md:hidden" v-if="showFilter" @click="showFilter = false"></div>
   </div>
 </template>
 <script>
@@ -117,12 +121,21 @@ export default {
   data() {
     return {
       shifts: [],
-      rate_types: []
+      rate_types: [],
+      showFilter: false
     };
+  },
+  mounted(){
+    if (window.innerWidth > 767){
+      this.showFilter = true
+    }
   },
   created() {
     this.getShifts();
     this.getRateType();
+    // if (window.innerWidth > 639){
+    //   this.showFilter = true
+    // }
   },
   methods: {
     onSelect(value) {

@@ -1,10 +1,12 @@
 <template>
   <section
-    class="header-section w-full fixed bg-white z-50"
+    class="fixed z-50 w-full"
     :class="$route.name === 'messages-slug' || $route.name === 'messages-new' ? 'border-b md:border-0' : ''"
   >
-    <div class="flex flex-row flex-wrap justify-between" style="z-index: 600">
-      <div class="w-1/3">
+    <div class="flex flex-row justify-between">
+      <div style="max-width: 200px; min-width: 200px" class="hidden xl:inline"></div>
+      <div class="header-section flex w-full justify-between bg-white">
+        <div class="w-1/3">
         <button class="burger cursor-pointer py-2 focus:outline-none h-full" @click="toggle">
           <div class="my-2 bg-yellow-500"></div>
           <div class="my-2 bg-yellow-500"></div>
@@ -61,6 +63,8 @@
           >{{$auth.user.email}}</div>
         </div>
       </div>
+      </div>
+      
     </div>
     <div class="shield" v-if="create_job_modal" @click="close"></div>
     <transition name="slide" mode="out-in">

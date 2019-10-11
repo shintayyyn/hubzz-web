@@ -4,7 +4,7 @@
       <div class="flex flex-row flex-wrap justify-between">
         <div class="w-full md:w-2/3 p-1">
           <div class="rounded-lg shadow-lg p-8 h-full flex">
-            <div class="flex flex-row flex-wrap">
+            <div class="flex flex-row flex-wrap w-full">
               <div class="flex flex-col w-full md:w-1/3 p-1">
                 <div class="text-xs sm:text-sm">Practice name</div>
                 <div class="text-xs font-bold py-2">{{surgery.name}}</div>

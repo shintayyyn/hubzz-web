@@ -1,6 +1,6 @@
 <template>
   <div
-    class="panel-top px-4 md:p-4 w-full flex items-center border-b leading-none"
+    class="relative panel-top px-4 md:p-4 w-full flex items-center border-b leading-none"
     :class="$auth.user.domain === 'Locum' ? 'py-3' : 'pb-4 pt-6'"
   >
     <div class="pr-4 md:hidden">
@@ -29,6 +29,7 @@
         </div>
       </div>
     </div>
+    <!-- <span class="font-mono absolute right-0 border-2 border-gray-400 text-gray-400 rounded-full w-6 h-6 mx-4 font-bold text-sm flex items-center justify-center cursor-pointer">i</span> -->
   </div>
 </template>
 <script>

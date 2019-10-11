@@ -249,7 +249,7 @@ export default {
 }
 @media screen and (min-width: 1200px) {
   .sidebar {
-    z-index: 50;
+    z-index: 49;
     margin-left: 0;
   }
   .close-button {

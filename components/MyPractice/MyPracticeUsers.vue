@@ -1,5 +1,5 @@
 <template>
-  <table>
+  <table class="overflow-x-auto p-2">
     <thead>
       <tr class="text-xs sm:text-sm text-left">
         <th>User</th>
@@ -32,8 +32,3 @@ export default {
   props: ["practice_users"]
 };
 </script>
-<style scoped>
-table {
-  width: 960px;
-}
-</style>

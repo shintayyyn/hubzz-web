@@ -51,7 +51,7 @@
                 </div>
                 <p class="mt-5 font-bold text-lg">Expiry date</p>
                 <AppDate v-model="expiry_date" :name="'expiry_date'" />
-                <AppButton :label="'Save'" @click="update" :inStyle="'padding:5px 10px'" />
+                <AppButton :label="'Save'" @click="update" :inStyle="'padding:5px 20px'" />
               </div>
               <div class="mt-5 lg:mt-0 w-full lg:w-3/4">
                 <embed

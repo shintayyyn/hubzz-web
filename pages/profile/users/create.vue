@@ -1,6 +1,6 @@
 <template>
   <div class="modal-container shadow-lg">
-    <div class="p-6 md:p-8 max-w-3xl">
+    <div class="p-6 md:p-8">
       <div @click="$router.push('/profile/users')" class="cursor-pointer">
         <svgicon name="left-arrow" height="32" width="32" />
       </div>
@@ -8,7 +8,7 @@
         <div class="font-bold text-lg">Create User</div>
         <div class="text-sm">Surgery: {{$auth.user.practice_detail.practice.surgery.name}}</div>
         <div class="flex w-full justify-center xl:justify-start">
-          <div class="flex flex-col p-8 my-2 rounded-lg shadow-lg" style="flex: 0 1 600px;">
+          <div class="flex flex-col p-8 my-2 rounded-lg shadow-lg w-full max-w-5xl">
             <form class="w-full">
               <AppInput
                 v-model="form.title"

@@ -68,7 +68,7 @@
             <tr
               v-else
               :key="item.id"
-              class="rounded-lg shadow-md text-xs sm:text-sm text-left"
+              class="rounded-lg shadow-md bg-white text-xs sm:text-sm text-left"
               :class="item.info && item.info.file ? 'hover:bg-gray-300' : ''"
             >
               <td
@@ -161,9 +161,6 @@
             <th>File</th>
             <th>Date uploaded</th>
             <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -177,7 +174,7 @@
           </template>
           <template v-for="(item, index) in optional">
             <tr
-              class="rounded-lg shadow-md text-xs sm:text-sm text-left bg-gray-200"
+              class="rounded-lg shadow-md bg-white text-xs sm:text-sm text-left bg-gray-200"
               v-if="activeLoading.includes(item.id)"
               :key="item.id"
             >
@@ -209,9 +206,6 @@
               <td v-else></td>
               <td v-if="item.info && item.info.file">{{item.info.file.created_at | localDate}}</td>
               <td v-else></td>
-              <td></td>
-              <td></td>
-              <td></td>
               <td
                 @click.stop="$refs[`${item.id}_file_optional_compliance`][0].click()"
                 class="hover:underline"
@@ -264,9 +258,6 @@
             <th>File</th>
             <th>Date uploaded</th>
             <th></th>
-            <th></th>
-            <th></th>
-            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -313,9 +304,6 @@
               <td v-else></td>
               <td v-if="item && item.file">{{item.file.created_at | localDate}}</td>
               <td v-else></td>
-              <td></td>
-              <td></td>
-              <td></td>
               <td
                 @click.stop="$refs[`${item.id}_file_mandatory_training`][0].click()"
                 class="hover:underline"

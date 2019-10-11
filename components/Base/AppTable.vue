@@ -1,11 +1,11 @@
 <template>
   <section class="relative">
     <AppLoading :loading="loading" spinner />
-    <div class="overflow-x-auto">
+    <div class="overflow-x-auto p-2">
       <table class="mx-auto">
         <thead>
           <tr class="text-sm md:text-base">
-            <th v-for="(column, index) in columns" :key="index">
+            <th v-for="(column, index) in columns" :key="index" :class="column.class && column.class.includes('text-left') && 'text-left'">
               <span
                 v-if="column.sortable"
                 @click="sort(column.dataIndex)"
@@ -33,11 +33,11 @@
               <td
                 v-for="(column, index) in columns"
                 :key="index"
-                :class="column.class"
+                :class="column.class ? column.class : ''"
                 id="data-cell"
               >
                 <div
-                  v-if="column.class.includes('localDate')"
+                  v-if="column.class && column.class.includes('localDate')"
                 >{{dataCell(item, column) | localDate}}</div>
                 <template v-else>
                   <div v-if="Array.isArray(dataCell(item, column))">
