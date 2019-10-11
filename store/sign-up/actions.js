@@ -73,7 +73,13 @@ export default {
     registeredLocum({ state, commit }) {
         commit('SET_CREDENTIAL_DETAIL_FORM_ERROR', [])
         let form = {}
-        form = { ...state.account_details, ...state.address_details, ...state.credential_details, ...state.professional_details }
+        form = {
+            ...state.account_details,
+            ...state.address_details,
+            ...state.credential_details,
+            ...state.payroll_details,
+            ...state.professional_details
+        }
         this.$axios
             .$post(`/api/v1/register/locum`, form)
             .then((res) => {
@@ -125,11 +131,24 @@ export default {
                             errorMessage.field === 'min_rate_per_whole_day_session' ||
                             errorMessage.field === 'max_rate_per_whole_day_session' ||
                             errorMessage.field === 'practice_type_id' ||
-                            errorMessage.field === 'mandatory_training_id' ||
-                            errorMessage.field === 'ir35'
+                            errorMessage.field === 'mandatory_training_id'
                         )
                     })
                     commit('SET_PROFESSIONAL_DETAIL_FORM_ERROR', professionalDetailError)
+                    const payrollDetailError = err.response.data.error_message.filter((errorMessage) => {
+                        return (
+                            errorMessage.field === 'employment_type' ||
+                            errorMessage.field === 'company_registration_number' ||
+                            errorMessage.field === 'utr_number' ||
+                            errorMessage.field === 'paid_under_payroll' ||
+                            errorMessage.field === 'payroll_detail_account_name' ||
+                            errorMessage.field === 'payroll_detail_bank_name' ||
+                            errorMessage.field === 'payroll_detail_sort_code' ||
+                            errorMessage.field === 'payroll_detail_account_number' ||
+                            errorMessage.field === 'ir35'
+                        )
+                    })
+                    commit('SET_PAYROLL_DETAIL_FORM_ERROR', payrollDetailError)
                     const credentialDetailError = err.response.data.error_messages.filter((errorMessage) => {
                         return (
                             errorMessage.field === 'email' ||

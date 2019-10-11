@@ -48,7 +48,7 @@ export default {
 <style>
 .content {
   /* box-sizing: content-box; */
-  max-width: 1466px;
+  /* max-width: 1466px; */
   padding: 5px 20px;
   height: 100%;
   scroll-behavior: smooth;

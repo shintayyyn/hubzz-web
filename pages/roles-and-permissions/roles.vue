@@ -7,7 +7,7 @@
         @click="$router.push('/roles-and-permissions/roles/create')"
       >Create Role</button>
     </div>
-    <div class="flex justify-start items-center">
+    <div class="flex justify-start items-center" v-if="roles.length">
       <AppInput
         class="px-1"
         v-model="params.search"

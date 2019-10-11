@@ -23,6 +23,7 @@ import ProgressBar from "~/components/SignUp/ProgressBar.vue";
 import LocumAccountDetails from "~/components/SignUp/SignUpLocum/LocumAccountDetails.vue";
 import LocumAddressDetails from "~/components/SignUp/SignUpLocum/LocumAddressDetails.vue";
 import LocumProfessionalDetails from "~/components/SignUp/SignUpLocum/LocumProfessionalDetails.vue";
+import LocumPayrollDetails from "~/components/SignUp/SignUpLocum/LocumPayrollDetails.vue";
 import LocumCredentialDetails from "~/components/SignUp/SignUpLocum/LocumCredentialDetails.vue";
 export default {
   layout: "auth",
@@ -31,6 +32,7 @@ export default {
     LocumAccountDetails,
     LocumAddressDetails,
     LocumProfessionalDetails,
+    LocumPayrollDetails,
     LocumCredentialDetails
   },
   computed: {
@@ -43,10 +45,13 @@ export default {
           return 25;
           break;
         case "LocumAddressDetails":
-          return 50;
+          return 45;
           break;
         case "LocumProfessionalDetails":
-          return 75;
+          return 65;
+          break;
+        case "LocumPayrollDetails":
+          return 85;
           break;
         case "LocumCredentialDetails":
           return 100;

@@ -2,7 +2,7 @@
   <section class="relative">
     <AppLoading :loading="loading" spinner />
     <div class="overflow-x-auto">
-      <table class="border-separate mx-auto" style="border-spacing: 0 20px">
+      <table class="border-separate" style="border-spacing: 0 20px">
         <thead>
           <tr class="text-sm md:text-base">
             <th v-for="(column, index) in columns" :key="index">
@@ -36,17 +36,20 @@
                 :class="column.class"
                 id="data-cell"
               >
-                <span
-                  v-if="column.class.includes('localDate')"
-                >{{dataCell(item, column) | localDate}}</span>
-                <span v-else>{{dataCell(item, column)}}</span>
-              </td>
-              <td class="flex justify-center"  v-if="item.removable">
                 <div
-                  class="font-semibold text-xs sm:text-sm text-center"
-                  @click.stop.prevent="toggle(item)"
-                >X</div>
+                  v-if="column.class.includes('localDate')"
+                >{{dataCell(item, column) | localDate}}</div>
+                <template v-else>
+                  <div v-if="Array.isArray(dataCell(item, column))">
+                    <div
+                      v-for="(item, index) in dataCell(item, column)"
+                      :key="`${item}-${index}`"
+                    >{{item}}</div>
+                  </div>
+                  <div v-else>{{dataCell(item, column)}}</div>
+                </template>
               </td>
+              <slot name="actions" v-bind:item="item"></slot>
             </tr>
           </template>
         </tbody>
@@ -63,18 +66,9 @@
         :perPage="perPage"
       />
     </div>
-    <AppConfirmationModal
-      :label="'Are you sure you want to delete this?'"
-      :confirmLabel="'Yes'"
-      :cancelLabel="'Cancel'"
-      :modal="modal"
-      @confirm="remove"
-      @cancel="cancel"
-    />
   </section>
 </template>
 <script>
-import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
 import AppPagination from "@/components/Base/AppPagination";
 import AppLoading from "@/components/Base/AppLoading";
 export default {
@@ -109,7 +103,6 @@ export default {
     }
   },
   components: {
-    AppConfirmationModal,
     AppLoading,
     AppPagination
   },
@@ -120,8 +113,6 @@ export default {
   },
   data() {
     return {
-      modal: false,
-      selectedItemId: null,
       params: []
     };
   },
@@ -165,32 +156,39 @@ export default {
     },
     dataCell(item, column) {
       var dataIndexArr = column.dataIndex.split(".");
-      let str = "";
-      if (dataIndexArr.length === 1) {
-        str = item[dataIndexArr[0]];
-      } else if (dataIndexArr.length === 2 && item[dataIndexArr[0]]) {
-        str = item[dataIndexArr[0]][dataIndexArr[1]];
-      } else if (
-        dataIndexArr.length === 3 &&
-        item[dataIndexArr[0]][dataIndexArr[1]]
-      ) {
-        str = item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]];
+      let str = null;
+
+      if (Array.isArray(item[dataIndexArr[0]])) {
+        str = [];
+        item[dataIndexArr[0]].forEach(item => {
+          str.push(item[dataIndexArr[1]][dataIndexArr[2]]);
+        });
+      } else {
+        str = "";
+        if (dataIndexArr.length === 1) {
+          str = item[dataIndexArr[0]];
+        } else if (dataIndexArr.length === 2 && item[dataIndexArr[0]]) {
+          str = item[dataIndexArr[0]][dataIndexArr[1]];
+        } else if (
+          dataIndexArr.length === 3 &&
+          item[dataIndexArr[0]][dataIndexArr[1]]
+        ) {
+          str = item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]];
+        } else if (
+          dataIndexArr.length === 4 &&
+          item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]]
+        ) {
+          str =
+            item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]][
+              dataIndexArr[3]
+            ];
+        }
       }
-      if (str === false) return str = 'No'
-      if (str === true) return str = 'Yes'
-      return str === null ? `(none)` : str;
-    },
-    toggle(item) {
-      this.selectedItemId = item.id;
-      this.modal = true;
-    },
-    cancel() {
-      this.selectedItemId = null;
-      this.modal = false;
-    },
-    remove() {
-      this.$emit("remove", this.selectedItemId);
-      this.modal = false;
+
+      if (str === false) return (str = "No");
+      if (str === true) return (str = "Yes");
+      // return str === null ? `(none)` : str;
+      return str;
     }
   }
 };

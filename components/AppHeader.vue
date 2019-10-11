@@ -145,7 +145,7 @@ export default {
     display: none;
   }
   .header-section {
-    max-width: 1466px;
+    /* max-width: 1466px; */
     right: 0;
     left: 200px;
     /* padding: 5px 30px; */

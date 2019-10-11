@@ -2,7 +2,7 @@
   <div class="flex flex-col items-center justify-center w-full">
     <div class="flex w-full justify-center xl:justify-start">
       <div class="flex m-4" style="flex: 0 1 600px;">
-        <h4>Your professional details</h4>
+        <h4>Your Professional details</h4>
       </div>
     </div>
 
@@ -184,18 +184,6 @@
             @checked="form.mandatory_training_id.push(parseInt($event)), CheckEmptyField(form.mandatory_training_id, 'mandatory_training_id')"
             @unchecked="form.mandatory_training_id = form.mandatory_training_id.filter(id => id !== parseInt($event)), CheckEmptyField(form.mandatory_training_id, 'mandatory_training_id')"
           />
-
-          <AppInput
-            v-model="form.ir35"
-            :type="'select'"
-            :name="'ir35'"
-            :label="'Are you OK to work with Practices that are inside of scope for IR35?'"
-            :placeholder="'Select...'"
-            :info="'Only apply if you are self-employed'"
-            :error="formError.find(item => item.field === 'ir35')"
-            @blur="CheckEmptyField(form.ir35, 'ir35')"
-            :items="[{value: false, label: 'No'},{value: true, label: 'Yes'}]"
-          />
         </form>
       </div>
     </div>
@@ -240,7 +228,7 @@ export default {
         max_rate_per_half_day_session: 0,
         min_rate_per_whole_day_session: 0,
         max_rate_per_whole_day_session: 0,
-        ir35: false,
+        // ir35: false,
         practice_type_id: [],
         mandatory_training_id: []
       },
@@ -395,7 +383,7 @@ export default {
         this.$store.commit("sign-up/SET_PROFESSIONAL_DETAILS", this.form);
         this.$store.commit(
           "sign-up/SET_ACTIVE_COMPONENT",
-          "LocumCredentialDetails"
+          "LocumPayrollDetails"
         );
       }
     }

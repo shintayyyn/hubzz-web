@@ -29,6 +29,13 @@
           :class="$route.name.includes('my-banks-withdrawn') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Withdrawn</nuxt-link>
       </div>
+      <div class="flex">
+        <nuxt-link
+          to="/invite/invite-locums"
+          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          :class="'border rounded-lg border-yellow-500 bg-yellow-500'"
+        >Invite Locum</nuxt-link>
+      </div>
     </div>
     <div class="mt-5">
       <nuxt-child />

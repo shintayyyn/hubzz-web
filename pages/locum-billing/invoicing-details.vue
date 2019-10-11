@@ -49,7 +49,7 @@
     </div>
 
     <div class="w-full md:w-1/2 p-2">
-      <p class="text-sm font-bold">Details</p>
+      <p class="text-sm font-bold">Payroll Details</p>
       <div class="border-solid rounded-lg shadow-lg mt-5 p-10">
         <div class="flex flex-col">
           <div class="w-full text-xs sm:text-base flex items-center">Your tax year end date</div>
@@ -103,7 +103,7 @@
             :error="formError.find(item => item.field === 'company_registration_number')"
           />
         </template>
-        <template v-else>
+        <template v-if="form.employment_type === 'Self-Employed'">
           <AppInput
             v-model="form.utr_number"
             :type="'text'"
@@ -113,6 +113,45 @@
             @submit="save"
             @blur="CheckEmptyField(form.utr_number, 'utr_number')"
             :error="formError.find(item => item.field === 'utr_number')"
+          />
+        </template>
+
+        <AppInput
+          v-model="form.paid_under_payroll"
+          :type="'select'"
+          :name="'paid_under_payroll'"
+          :label="'Are you paid under payroll?'"
+          :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
+        />
+
+        <template v-if="form.paid_under_payroll == true || form.paid_under_payroll == 'true'">
+          <AppInput
+            v-model="form.payroll_detail_account_name"
+            :type="'text'"
+            :name="'payroll_detail_account_name'"
+            :label="'Account name'"
+            :error="formError.find(item => item.field === 'payroll_detail_account_name')"
+          />
+          <AppInput
+            v-model="form.payroll_detail_bank_name"
+            :type="'text'"
+            :name="'payroll_detail_bank_name'"
+            :label="'Bank name'"
+            :error="formError.find(item => item.field === 'payroll_detail_bank_name')"
+          />
+          <AppInput
+            v-model="form.payroll_detail_sort_code"
+            :type="'text'"
+            :name="'payroll_detail_sort_code'"
+            :label="'Sort code'"
+            :error="formError.find(item => item.field === 'payroll_detail_sort_code')"
+          />
+          <AppInput
+            v-model="form.payroll_detail_account_number"
+            :type="'text'"
+            :name="'payroll_detail_account_number'"
+            :label="'Account number'"
+            :error="formError.find(item => item.field === 'payroll_detail_account_number')"
           />
         </template>
 
@@ -155,8 +194,8 @@ let months = [
   { label: "Dec", value: "12" }
 ];
 let employmentTypes = [
-  { label: "Self-employed", value: "Self-employed" },
-  { label: "Limited company", value: "Limited company" }
+  { label: "Self-Employed", value: "Self-Employed" },
+  { label: "Limited Company", value: "Limited Company" }
 ];
 export default {
   transition: {
@@ -167,6 +206,47 @@ export default {
     AppInput,
     AppButton,
     AppFormError
+  },
+  data() {
+    return {
+      months,
+      employmentTypes,
+      form: {
+        account_name: "",
+        bank_name: "",
+        sort_code: "",
+        account_number: "",
+        tax_year_end_month: "",
+        tax_year_end_date: "",
+        employment_type: "Self-Employed",
+        utr_number: "",
+        company_registration_number: "",
+        ir35: false,
+        paid_under_payroll: false,
+        payroll_detail_account_name: "",
+        payroll_detail_bank_name: "",
+        payroll_detail_sort_code: "",
+        payroll_detail_account_number: ""
+      },
+      formError: []
+    };
+  },
+  computed: {
+    days() {
+      let days = [];
+      let maxDays = 30;
+      if (
+        ["01", "03", "05", "07", "08", "10", "12"].includes(
+          this.form.tax_year_end_month
+        )
+      ) {
+        maxDays = 31;
+      }
+      for (let i = 1; i <= maxDays; i++) {
+        days.push({ value: i, label: i });
+      }
+      return days;
+    }
   },
   async asyncData({ app, error }) {
     try {
@@ -200,91 +280,28 @@ export default {
     }
   },
   mounted() {
-    this.form.tax_year_end_month =
-      this.user.locum_detail.invoice_detail &&
-      this.user.locum_detail.invoice_detail.tax_year_end_month
-        ? this.user.locum_detail.invoice_detail.tax_year_end_month
-        : null;
-    this.form.tax_year_end_date =
-      this.user.locum_detail.invoice_detail &&
-      this.user.locum_detail.invoice_detail.tax_year_end_date
-        ? this.user.locum_detail.invoice_detail.tax_year_end_date
-        : null;
-    this.form.utr_number =
-      this.user.locum_detail.invoice_detail &&
-      this.user.locum_detail.invoice_detail.utr_number
-        ? this.user.locum_detail.invoice_detail.utr_number
-        : null;
-    this.form.company_registration_number =
-      this.user.locum_detail.invoice_detail &&
-      this.user.locum_detail.invoice_detail.company_registration_number
-        ? this.user.locum_detail.invoice_detail.company_registration_number
-        : null;
-    this.form.employment_type =
-      this.user.locum_detail.invoice_detail &&
-      this.user.locum_detail.invoice_detail.employment_type
-        ? this.user.locum_detail.invoice_detail.employment_type
-        : null;
-    this.form.ir35 =
-      this.user.locum_detail.invoice_detail &&
-      this.user.locum_detail.invoice_detail.ir35
-        ? this.user.locum_detail.invoice_detail.ir35
-        : null;
-    this.form.account_name =
-      this.user.locum_detail.bank_account &&
-      this.user.locum_detail.bank_account.account_name
-        ? this.user.locum_detail.bank_account.account_name
-        : null;
-    this.form.bank_name =
-      this.user.locum_detail.bank_account &&
-      this.user.locum_detail.bank_account.bank_name
-        ? this.user.locum_detail.bank_account.bank_name
-        : null;
-    this.form.account_number =
-      this.user.locum_detail.bank_account &&
-      this.user.locum_detail.bank_account.account_number
-        ? this.user.locum_detail.bank_account.account_number
-        : null;
-    this.form.sort_code =
-      this.user.locum_detail.bank_account &&
-      this.user.locum_detail.bank_account.sort_code
-        ? this.user.locum_detail.bank_account.sort_code
-        : null;
-  },
-  data() {
-    return {
-      months,
-      employmentTypes,
-      form: {
-        account_name: "",
-        bank_name: "",
-        sort_code: "",
-        account_number: "",
-        tax_year_end_month: "",
-        tax_year_end_date: "",
-        employment_type: "Self-employed",
-        utr_number: "",
-        company_registration_number: "",
-        ir35: false
-      },
-      formError: []
-    };
-  },
-  computed: {
-    days() {
-      let days = [];
-      let maxDays = 30;
-      if (
-        ["01", "03", "05", "07", "08", "10", "12"].includes(
-          this.form.tax_year_end_month
-        )
-      ) {
-        maxDays = 31;
+    if (this.user.locum_detail.invoice_detail) {
+      if (this.user.locum_detail.invoice_detail.bank_account) {
+        (this.form.account_name = this.user.locum_detail.invoice_detail.bank_account.account_name),
+          (this.form.bank_name = this.user.locum_detail.invoice_detail.bank_account.bank_name),
+          (this.form.sort_code = this.user.locum_detail.invoice_detail.bank_account.sort_code),
+          (this.form.account_number = this.user.locum_detail.invoice_detail.bank_account.account_number);
       }
-      for (let i = 1; i <= maxDays; i++) {
-        days.push({ value: i, label: i });
+
+      (this.form.tax_year_end_month = this.user.locum_detail.invoice_detail.tax_year_end_month),
+        (this.form.tax_year_end_date = this.user.locum_detail.invoice_detail.tax_year_end_date),
+        (this.form.employment_type = this.user.locum_detail.invoice_detail.employment_type),
+        (this.form.utr_number = this.user.locum_detail.invoice_detail.utr_number),
+        (this.form.company_registration_number = this.user.locum_detail.invoice_detail.company_registration_number),
+        (this.form.ir35 = this.user.locum_detail.invoice_detail.ir35),
+        (this.form.paid_under_payroll = this.user.locum_detail.invoice_detail.paid_under_payroll);
+
+      if (this.user.locum_detail.invoice_detail.payroll_detail) {
+        (this.form.payroll_detail_account_name = this.user.locum_detail.invoice_detail.payroll_detail.account_name),
+          (this.form.payroll_detail_bank_name = this.user.locum_detail.invoice_detail.payroll_detail.bank_name),
+          (this.form.payroll_detail_sort_code = this.user.locum_detail.invoice_detail.payroll_detail.sort_code),
+          (this.form.payroll_detail_account_number = this.user.locum_detail.invoice_detail.payroll_detail.account_number);
       }
-      return days;
     }
   },
   watch: {
@@ -295,32 +312,67 @@ export default {
       this.CheckEmptyField(this.form.bank_name, "bank_name");
     },
     "form.sort_code"(value) {
-      this.CheckEmptyField(this.form.bank_name, "sort_code");
+      this.CheckEmptyField(this.form.sort_code, "sort_code");
     },
     "form.account_number"(value) {
-      this.CheckEmptyField(this.form.bank_name, "account_number");
+      this.CheckEmptyField(this.form.account_number, "account_number");
     },
     "form.tax_year_end_month"(value) {
-      this.CheckEmptyField(this.form.bank_name, "tax_year_end_month");
+      this.CheckEmptyField(this.form.tax_year_end_month, "tax_year_end_month");
     },
     "form.tax_year_end_date"(value) {
-      this.CheckEmptyField(this.form.bank_name, "tax_year_end_date");
-    },
-    "form.utr_number"(value) {
-      this.CheckEmptyField(this.form.bank_name, "utr_number");
+      this.CheckEmptyField(this.form.tax_year_end_date, "tax_year_end_date");
     },
     "form.ir35"(value) {
-      this.CheckEmptyField(this.form.bank_name, "ir35");
+      this.CheckEmptyField(this.form.ir35, "ir35");
+    },
+    "form.payroll_detail_account_name"(value) {
+      this.CheckEmptyField(
+        this.form.payroll_detail_account_name,
+        "payroll_detail_account_name"
+      );
+    },
+    "form.payroll_detail_bank_name"(value) {
+      this.CheckEmptyField(
+        this.form.payroll_detail_bank_name,
+        "payroll_detail_bank_name"
+      );
+    },
+    "form.payroll_detail_sort_code"(value) {
+      this.CheckEmptyField(
+        this.form.payroll_detail_sort_code,
+        "payroll_detail_sort_code"
+      );
+    },
+    "form.payroll_detail_account_number"(value) {
+      this.CheckEmptyField(
+        this.form.payroll_detail_account_number,
+        "payroll_detail_account_number"
+      );
     }
   },
   methods: {
     save() {
       let notRequired = [];
-      if (this.form.employment_type === "Self-employed") {
+
+      if (this.form.employment_type === "Self-Employed") {
         notRequired.push("company_registration_number");
-      } else {
+      } else if (this.form.employment_type === "Limited Companyy") {
         notRequired.push("utr_number");
       }
+
+      if (
+        this.form.paid_under_payroll == false ||
+        this.form.paid_under_payroll == "false"
+      ) {
+        notRequired.push(
+          "payroll_detail_account_name",
+          "payroll_detail_bank_name",
+          "payroll_detail_sort_code",
+          "payroll_detail_account_number"
+        );
+      }
+
       this.Validate(this.form, notRequired);
       if (!this.formError.length) {
         this.$axios

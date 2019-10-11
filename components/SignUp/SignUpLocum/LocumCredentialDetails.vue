@@ -44,7 +44,7 @@
             @blur="CheckEmptyField(form.password_confirmation, 'password_confirmation')"
           />
 
-          <div class="flex flex-col py-2 mb-6">
+          <!-- <div class="flex flex-col py-2 mb-6">
             <div class="flex justify-end">
               <div
                 class="rounded-lg bg-red-500 p-1 text-xs sm:text-sm text-white"
@@ -63,7 +63,13 @@
                 </label>
               </div>
             </div>
-          </div>
+          </div>-->
+          <AppInput
+            v-model="form.privacy_policy"
+            :type="'single-checkbox'"
+            :name="'privacy_policy'"
+            :label="'Terms and Conditions and Privacy Policy of Hubzz'"
+          />
         </form>
       </div>
     </div>
