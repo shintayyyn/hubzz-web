@@ -46,7 +46,7 @@ export default {
         state.practice_available_jobs_count = state.practice_available_jobs_count - 1
     },
     ADD_PRACTICE_AVAILABLE_BADGE(state) {
-        state.practice_new_available_jobs_count = state.practice_new_available_jobs_count + 1 
+        state.practice_new_available_jobs_count = state.practice_new_available_jobs_count + 1
     },
     CLEAR_PRACTICE_AVAILABLE_BADGE(state) {
         state.practice_new_available_jobs_count = 0
@@ -73,9 +73,9 @@ export default {
     ADD_PRACTICE_APPLIED_JOB(state, payload) {
         state.practice_applied_jobs.push(payload)
         state.practice_applied_jobs_count = state.practice_applied_jobs_count + 1
-    },  
+    },
     ADD_PRACTICE_APPLIED_BADGE(state) {
-        state.practice_new_applied_jobs_count = state.practice_new_applied_jobs_count + 1 
+        state.practice_new_applied_jobs_count = state.practice_new_applied_jobs_count + 1
     },
     CLEAR_PRACTICE_APPLIED_BADGE(state) {
         state.practice_new_applied_jobs_count = 0
@@ -99,7 +99,7 @@ export default {
         state.practice_allocated_jobs_count = state.practice_allocated_jobs_count - 1
     },
     ADD_PRACTICE_ALLOCATED_BADGE(state) {
-        state.practice_new_allocated_jobs_count = state.practice_new_allocated_jobs_count + 1 
+        state.practice_new_allocated_jobs_count = state.practice_new_allocated_jobs_count + 1
     },
     CLEAR_PRACTICE_ALLOCATED_BADGE(state) {
         state.practice_new_allocated_jobs_count = 0
@@ -118,7 +118,7 @@ export default {
         state.practice_completed_jobs_count = state.practice_completed_jobs_count - 1
     },
     ADD_PRACTICE_COMPLETED_BADGE(state) {
-        state.practice_new_completed_jobs_count = state.practice_new_completed_jobs_count + 1 
+        state.practice_new_completed_jobs_count = state.practice_new_completed_jobs_count + 1
     },
     CLEAR_PRACTICE_COMPLETED_BADGE(state) {
         state.practice_new_completed_jobs_count = 0
@@ -134,7 +134,7 @@ export default {
         state.practice_unfilled_jobs_count = state.practice_unfilled_jobs_count - 1
     },
     ADD_PRACTICE_UNFILLED_BADGE(state) {
-        state.practice_new_unfilled_jobs_count = state.practice_new_unfilled_jobs_count + 1 
+        state.practice_new_unfilled_jobs_count = state.practice_new_unfilled_jobs_count + 1
     },
     CLEAR_PRACTICE_UNFILLED_BADGE(state) {
         state.practice_new_unfilled_jobs_count = 0
@@ -153,7 +153,7 @@ export default {
         state.practice_cancelled_jobs_count = state.practice_cancelled_jobs_count - 1
     },
     ADD_PRACTICE_CANCELLED_BADGE(state) {
-        state.practice_new_cancelled_jobs_count = state.practice_new_cancelled_jobs_count + 1 
+        state.practice_new_cancelled_jobs_count = state.practice_new_cancelled_jobs_count + 1
     },
     CLEAR_PRACTICE_CANCELLED_BADGE(state) {
         state.practice_new_cancelled_jobs_count = 0
@@ -174,12 +174,25 @@ export default {
         }
     },
     ADD_PRACTICE_DECLINED_BADGE(state) {
-        state.practice_new_declined_jobs_count = state.practice_new_declined_jobs_count + 1 
+        state.practice_new_declined_jobs_count = state.practice_new_declined_jobs_count + 1
     },
     CLEAR_PRACTICE_DECLINED_BADGE(state) {
         state.practice_new_declined_jobs_count = 0
     },
     // LOCUM
+    SET_LOCUM_ONGOING_JOBS(state, payload) {
+        state.locum_ongoing_jobs = payload
+    },
+    SET_LOCUM_ONGOING_JOBS_COUNT(state, payload) {
+        state.locum_ongoing_jobs_count = payload
+    },
+    REMOVE_LOCUM_ONGOING_JOB(state, payload) {
+        // let ongoingJobCount = state.locum_ongoing_jobs.map
+        // if (state.locum_ongoing_jobs.find(ongoingJob => ongoingJob.job.id === payload)) {
+        //     state.locum_ongoing_jobs = state.locum_ongoing_jobs.filter(item => item.job.id !== payload)
+        //     state.locum_ongoing_jobs = state.locum_ongoing_jobs - 1
+        // }
+    },
     SET_LOCUM_ALLOCATED_JOBS(state, payload) {
         state.locum_allocated_jobs = payload
     },
@@ -201,7 +214,7 @@ export default {
         }
     },
     ADD_LOCUM_ALLOCATED_BADGE(state) {
-        state.locum_new_allocated_jobs_count = state.locum_new_allocated_jobs_count + 1 
+        state.locum_new_allocated_jobs_count = state.locum_new_allocated_jobs_count + 1
     },
     CLEAR_LOCUM_ALLOCATED_BADGE(state) {
         state.locum_new_allocated_jobs_count = 0
@@ -223,7 +236,7 @@ export default {
         }
     },
     ADD_LOCUM_AVAILABLE_BADGE(state) {
-        state.locum_new_available_jobs_count = state.locum_new_available_jobs_count + 1 
+        state.locum_new_available_jobs_count = state.locum_new_available_jobs_count + 1
     },
     CLEAR_LOCUM_AVAILABLE_BADGE(state) {
         state.locum_new_available_jobs_count = 0
@@ -245,7 +258,7 @@ export default {
         }
     },
     ADD_LOCUM_MATCHED_BADGE(state) {
-        state.locum_new_matched_jobs_count = state.locum_new_matched_jobs_count + 1 
+        state.locum_new_matched_jobs_count = state.locum_new_matched_jobs_count + 1
     },
     CLEAR_LOCUM_MATCHED_BADGE(state) {
         state.locum_new_matched_jobs_count = 0
@@ -267,7 +280,7 @@ export default {
         }
     },
     ADD_LOCUM_APPLIED_BADGE(state) {
-        state.locum_new_applied_jobs_count = state.locum_new_applied_jobs_count + 1 
+        state.locum_new_applied_jobs_count = state.locum_new_applied_jobs_count + 1
     },
     CLEAR_LOCUM_APPLIED_BADGE(state) {
         state.locum_new_applied_jobs_count = 0
@@ -289,7 +302,7 @@ export default {
         }
     },
     ADD_LOCUM_UNSUCCESSFUL_BADGE(state) {
-        state.locum_new_unsuccessful_jobs_count = state.locum_new_unsuccessful_jobs_count + 1 
+        state.locum_new_unsuccessful_jobs_count = state.locum_new_unsuccessful_jobs_count + 1
     },
     CLEAR_LOCUM_UNSUCCESSFUL_BADGE(state) {
         state.locum_new_unsuccessful_jobs_count = 0
@@ -313,7 +326,7 @@ export default {
         }
     },
     ADD_LOCUM_DECLINED_BADGE(state) {
-        state.locum_new_declined_jobs_count = state.locum_new_declined_jobs_count + 1 
+        state.locum_new_declined_jobs_count = state.locum_new_declined_jobs_count + 1
     },
     CLEAR_LOCUM_DECLINED_BADGE(state) {
         state.locum_new_declined_jobs_count = 0
@@ -335,7 +348,7 @@ export default {
         }
     },
     ADD_LOCUM_CANCELLED_BADGE(state) {
-        state.locum_new_cancelled_jobs_count = state.locum_new_cancelled_jobs_count + 1 
+        state.locum_new_cancelled_jobs_count = state.locum_new_cancelled_jobs_count + 1
     },
     CLEAR_LOCUM_CANCELLED_BADGE(state) {
         state.locum_new_cancelled_jobs_count = 0
@@ -357,7 +370,7 @@ export default {
         }
     },
     ADD_LOCUM_COMPLETED_BADGE(state) {
-        state.locum_new_completed_jobs_count = state.locum_new_completed_jobs_count + 1 
+        state.locum_new_completed_jobs_count = state.locum_new_completed_jobs_count + 1
     },
     CLEAR_LOCUM_COMPLETED_BADGE(state) {
         state.locum_new_completed_jobs_count = 0
@@ -372,12 +385,12 @@ export default {
         payload.forEach(data => {
             let hasUnavailable = state.locum_unavailabilities.find(item => item.id === data.id)
             if (hasUnavailable) {
-              hasUnavailable.shifts = data.shifts
+                hasUnavailable.shifts = data.shifts
             } else {
-              state.locum_unavailabilities.push(data)
-              state.locum_unavailabilities_count = state.locum_unavailabilities_count + 1
+                state.locum_unavailabilities.push(data)
+                state.locum_unavailabilities_count = state.locum_unavailabilities_count + 1
             }
-          })
+        })
     },
     UPDATE_LOCUM_UNAVAILABILITIES(state, payload) {
         let hasUnavailable = state.locum_unavailabilities.find(item => item.id === payload.id)

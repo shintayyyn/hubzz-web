@@ -1,27 +1,24 @@
 <template>
   <section class="relative">
-    <AppLoading :loading="loadingJobs" :message="'Loading'" />
-    <AppJobFilter @clear="clearFilters" @getJobs="getJobs(1, params)" :params="params" />
-    <div
-      class="mt-10 w-full text-center"
-      v-if="!loadingJobs && getLocumAppliedJobs.length === 0"
-    >You have not yet applied for a job</div>
-    <div v-if="getLocumAppliedJobs.length > 0" class="overflow-x-auto overflow-y-hidden">
-      <JobTable :columns="columns" :jobs="getLocumAppliedJobs" @sortBy="sortBy" @show="show" />
-    </div>
-    <div class="w-full mt-4" v-if="getLocumAppliedJobs.length > 0 && totalPages > 1">
-      <AppPagination
-        :total="total"
-        :totalPages="totalPages"
-        :currentPage="current_page"
-        @pagechanged="pagechanged"
-      />
-    </div>
-    <div
-      class="shield"
-      v-if="$route.name === 'jobs-applied-id'"
-      @click="$router.push('/jobs/applied')"
-    ></div>
+    <AppTable
+      v-if="getLocumOngoingJobs.length > 0"
+      :total="total"
+      :items="getLocumOngoingJobs"
+      :loading="loading"
+      :currentPage="current_page"
+      :perPage="params.limit"
+      :columns="columns"
+      :orderBy="params.order_by"
+      @show="show"
+    />
+    <div v-else class="flex justify-center">You do not have any ongoing jobs</div>
+    <transition name="fade">
+      <div
+        class="shield"
+        v-if="$route.name === 'jobs-ongoing-id'"
+        @click="$router.push('/jobs/ongoing')"
+      ></div>
+    </transition>
     <nuxt-child />
   </section>
 </template>
@@ -30,12 +27,14 @@ import JobTable from "@/components/Jobs/JobTable";
 import AppPagination from "@/components/Base/AppPagination";
 import AppJobFilter from "@/components/Base/AppJobFilter";
 import AppLoading from "@/components/Base/AppLoading";
+import AppTable from "@/components/Base/AppTable";
 export default {
   transition: {
     name: "fade",
     mode: "out-in"
   },
   components: {
+    AppTable,
     JobTable,
     AppPagination,
     AppJobFilter,
@@ -43,71 +42,79 @@ export default {
   },
   data() {
     return {
+      loading: false,
+      current_page: 1,
+      params: {
+        limit: 10,
+        order_by: []
+      },
       // table
       columns: [
         {
-          label: "Job number",
-          dataIndex: "job_number",
+          name: "Job part number",
+          dataIndex: "job_part_number",
           sortable: true
         },
         {
-          label: "Practice",
-          dataIndex: "practice"
+          name: "Practice",
+          dataIndex: "job.platform_job.practice.surgery.name"
         },
         {
-          label: "Title",
-          dataIndex: "title"
+          name: "Title",
+          dataIndex: "job.title"
         },
         {
-          label: "Shift",
-          dataIndex: "shift"
+          name: "Shift",
+          dataIndex: "job.shift.name"
         },
         {
-          label: "Rate",
-          dataIndex: "rate",
+          name: "Rate",
+          dataIndex: "job.rate",
           sortable: true
         },
         {
-          label: "per",
-          dataIndex: "per"
+          name: "per",
+          dataIndex: "job.locum_detail_rate_type.name"
         },
         {
-          label: "From",
+          name: "From",
           dataIndex: "date_start",
           sortable: true
         },
         {
-          label: "To",
+          name: "To",
           dataIndex: "date_end",
           sortable: true
         },
         {
-          label: "Applied",
-          dataIndex: "date_applied"
+          name: "Assigned",
+          dataIndex:
+            "job.platform_job.appointed_to_locum.user.personal_detail.name"
         }
       ],
       // params
       current_page: 1,
-      params: {
-        shift_id: "",
-        rate: "",
-        locum_detail_rate_type_id: "",
-        near_post_code: "",
-        miles: "",
-        surgery_name: "",
-        order_by: "date_start:desc"
-      },
+      //   params: {
+      //     shift_id: "",
+      //     rate: "",
+      //     locum_detail_rate_type_id: "",
+      //     near_post_code: "",
+      //     miles: "",
+      //     surgery_name: "",
+      //     order_by: "date_created:desc"
+      //   },
       // sort
       sortType: "",
       job_number: true,
       rate: true,
-      date_start: false,
-      date_end: true
+      date_start: true,
+      date_end: true,
+      date_created: false
     };
   },
   computed: {
-    getLocumAppliedJobs() {
-      return this.$store.getters["jobs/getLocumAppliedJobs"];
+    getLocumOngoingJobs() {
+      return this.$store.getters["jobs/getLocumOngoingJobs"];
     },
     offset() {
       return this.perPage * (this.current_page - 1);
@@ -116,7 +123,7 @@ export default {
       return 10;
     },
     total() {
-      return this.$store.state.jobs.locum_applied_jobs_count;
+      return this.$store.state.jobs.locum_ongoing_jobs_count;
     },
     totalPages() {
       return Math.ceil(this.total / this.perPage);
@@ -134,14 +141,15 @@ export default {
   created() {
     this.getJobsCount();
     this.getJobs(this.current_page, this.params);
-    setTimeout(() => {
-      this.$store.commit("jobs/CLEAR_LOCUM_APPLIED_BADGE");
-    }, 1000);
+    // setTimeout(() => {
+    //   this.$store.commit("jobs/CLEAR_LOCUM_ALLOCATED_BADGE");
+    // }, 1000);
   },
   methods: {
     getJobsCount() {
-      this.$store.dispatch("jobs/fetchLocumJobs", {
-        status: "Applied",
+      this.$store.dispatch("jobs/fetchLocumJobParts", {
+        locum_job_status: "Current",
+        date_start: [`${this.$moment("2019-11-10").format("YYYY-MM-DD")}:lte`],
         countOnly: true
       });
     },
@@ -187,10 +195,10 @@ export default {
       let defaultParams = {
         offset: this.offset,
         limit: this.perPage,
-        status: "Applied"
+        locum_job_status: "Ongoing"
       };
       let jobParams = { ...params, ...defaultParams };
-      this.$store.dispatch("jobs/fetchLocumJobs", jobParams).finally(() => {
+      this.$store.dispatch("jobs/fetchLocumJobParts", jobParams).finally(() => {
         this.$store.commit("jobs/TOGGLE_LOADING", false);
       });
     },
@@ -198,9 +206,9 @@ export default {
       this.current_page = e;
       this.getJobs(this.current_page, this.params);
     },
-    show(id) {
-      // this.$router.push(`/jobs/applied/${id}`);
-      this.$router.push(`/jobs/${id}`);
+    show(item) {
+      // this.$router.push(`/jobs/ongoing/${item.id}`);
+      this.$router.push(`/jobs/${item.id}?status=ongoing`);
     }
   }
 };

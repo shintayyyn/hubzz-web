@@ -199,7 +199,7 @@ export default {
       this.getJobs(this.current_page, this.params);
     },
     show(id) {
-      this.$router.push(`/jobs/completed/${id}`);
+      this.$router.push(`/jobs/${id}?status=completed`);
     }
   }
 };

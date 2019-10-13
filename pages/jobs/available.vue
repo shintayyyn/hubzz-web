@@ -201,7 +201,7 @@ export default {
       this.getJobs(this.current_page, this.params);
     },
     show(id) {
-      this.$router.push(`/jobs/available/${id}`);
+      this.$router.push(`/jobs/${id}`);
     }
   }
 };

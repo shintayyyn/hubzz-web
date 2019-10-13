@@ -1,15 +1,15 @@
 <template>
   <div class="modal-container shadow-lg">
     <JobDetailModalAppointment :job="job" v-if="job.type === 'Private'" />
-    <JobDetailModalLocum :job="job" v-else @close="$router.push(`/jobs/cancelled`)" />
+    <JobDetailModal :job="job" v-else @close="$router.push(`/jobs/cancelled`)" />
   </div>
 </template>
 <script>
-import JobDetailModalLocum from "@/components/Jobs/JobDetailModalLocum";
+import JobDetailModal from "@/components/Jobs/JobDetailModal";
 import JobDetailModalAppointment from "@/components/Jobs/JobDetailModalAppointment";
 export default {
   components: {
-    JobDetailModalLocum,
+    JobDetailModal,
     JobDetailModalAppointment
   },
   async asyncData({ app, route, store, error }) {
@@ -18,6 +18,8 @@ export default {
         `/api/v1/locum/jobs/${route.params.id}`
       );
       const job = response.data.data.job;
+
+      console.log("job", job);
       return {
         job
       };

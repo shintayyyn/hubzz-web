@@ -36,7 +36,7 @@
       </template>
       <template v-if="locum_modal">
         <div class="modal-container">
-          <JobDetailModalLocum @close="locum_modal = false" :job="locum_job" />
+          <JobDetailModal @close="locum_modal = false" :job="locum_job" />
         </div>
       </template>
       <!-- <div class="modal-container shadow-lg" v-if="create_job_modal">
@@ -44,7 +44,7 @@
       </div>-->
       <template v-if="practice_modal">
         <div class="modal-container">
-          <JobDetailModal @close="practice_modal = false" :job="practice_job" />
+          <!-- <JobDetailModal @close="practice_modal = false" :job="practice_job" /> -->
         </div>
       </template>
     </transition>
@@ -55,22 +55,22 @@ import PerMonth from "@/components/Calendar/PerMonth";
 import PerWeek from "@/components/Calendar/PerWeek";
 import Info from "@/components/Calendar/Info";
 // locums
-import JobDetailModalLocum from "@/components/Jobs/JobDetailModalLocum";
+import JobDetailModal from "@/components/Jobs/JobDetailModal";
 import JobDetailModalAppointment from "@/components/Jobs/JobDetailModalAppointment";
 
 // practice
 // import CreateJobModal from "@/components/CreateJobModal";
-import JobDetailModal from "@/components/Sessions/JobDetailModal";
+// import JobDetailModal from "@/components/Sessions/JobDetailModal";
 
 export default {
   components: {
     PerMonth,
     PerWeek,
     Info,
-    JobDetailModalLocum,
-    JobDetailModalAppointment,
+    JobDetailModal,
+    JobDetailModalAppointment
     // CreateJobModal,
-    JobDetailModal
+    // JobDetailModal
   },
   data() {
     return {

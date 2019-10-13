@@ -22,6 +22,15 @@ export function fetchPracticeJobsReminder(axios, payload) {
     return axios.$get(`/api/v1/practice/jobs`, { params: params })
 }
 
+export function fetchLocumJobParts(axios, payload) {
+    let params = {}
+    payload.offset ? params.offset = payload.offset : null
+    payload.limit ? params.limit = payload.limit : null
+    payload.locum_job_status ? params.locum_job_status = payload.locum_job_status : null
+    payload.date_start ? params.date_start = payload.date_start : null
+    return axios.$get(`/api/v1/locum/job-parts${payload.countOnly ? '/count' : ''}`, { params })
+}
+
 export function fetchLocumJobs(axios, payload) {
     let params = {}
     payload.practice_id ? params.practice_id = payload.practice_id : null

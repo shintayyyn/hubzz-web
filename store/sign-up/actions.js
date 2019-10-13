@@ -87,6 +87,7 @@ export default {
                 this.$router.push('/sign-up/success')
             })
             .catch((err) => {
+                console.log(err.response.data)
                 // set formError to store
                 if (
                     err.response &&
@@ -135,7 +136,7 @@ export default {
                         )
                     })
                     commit('SET_PROFESSIONAL_DETAIL_FORM_ERROR', professionalDetailError)
-                    const payrollDetailError = err.response.data.error_message.filter((errorMessage) => {
+                    const payrollDetailError = err.response.data.error_messages.filter((errorMessage) => {
                         return (
                             errorMessage.field === 'employment_type' ||
                             errorMessage.field === 'company_registration_number' ||

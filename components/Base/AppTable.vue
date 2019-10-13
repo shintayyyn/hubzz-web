@@ -10,8 +10,9 @@
                 v-if="column.sortable"
                 @click="sort(column.dataIndex)"
                 :class="column.sortable ? 'cursor-pointer':''"
+                class="flex justify-center items-center"
               >
-                <span>{{column.name}}</span>
+                <span class="block whitespace-no-wrap pr-1">{{column.name}}</span>
                 <svgicon
                   class="inline align-baseline"
                   :name="sortIcon(column.dataIndex)"
@@ -19,7 +20,7 @@
                   width="12"
                 />
               </span>
-              <span v-else>{{column.name}}</span>
+              <span v-if="!column.sortable" class="block whitespace-no-wrap">{{column.name}}</span>
             </th>
           </tr>
         </thead>
@@ -34,10 +35,11 @@
                 v-for="(column, index) in columns"
                 :key="index"
                 :class="column.class"
+                class="ellipsis"
                 id="data-cell"
               >
                 <div
-                  v-if="column.class.includes('localDate')"
+                  v-if="column.class && column.class.includes('localDate')"
                 >{{dataCell(item, column) | localDate}}</div>
                 <template v-else>
                   <div v-if="Array.isArray(dataCell(item, column))">
@@ -182,6 +184,26 @@ export default {
             item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]][
               dataIndexArr[3]
             ];
+        } else if (
+          dataIndexArr.length === 5 &&
+          item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]][
+            dataIndexArr[3]
+          ]
+        ) {
+          str =
+            item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]][
+              dataIndexArr[3]
+            ][dataIndexArr[4]];
+        } else if (
+          dataIndexArr.length === 6 &&
+          item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]][
+            dataIndexArr[3]
+          ][dataIndexArr[4]]
+        ) {
+          str =
+            item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]][
+              dataIndexArr[3]
+            ][dataIndexArr[4]][dataIndexArr[5]];
         }
       }
 
@@ -202,6 +224,21 @@ table tbody td {
 }
 #data-cell {
   max-width: 100px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ellipsis {
+  position: relative;
+}
+.ellipsis:before {
+  content: "&nbsp;";
+  visibility: hidden;
+}
+.ellipsis span {
+  position: absolute;
+  left: 0;
+  right: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
