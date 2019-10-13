@@ -118,16 +118,15 @@ export default {
 
 @media screen and (min-width: 768px) {
   .messages-section {
-    width: 80%;
     min-height: 80vh;
     max-height: 80vh;
   }
 }
-/* 
-@media screen and (min-width: 1200px) {
+
+@media screen and (min-width: 1620px) {
   .messages-section {
     width: 80%;
   }
-} */
+}
 </style>
 

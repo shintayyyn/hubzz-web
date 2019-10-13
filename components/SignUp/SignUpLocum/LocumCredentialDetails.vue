@@ -44,7 +44,7 @@
             @blur="CheckEmptyField(form.password_confirmation, 'password_confirmation')"
           />
 
-          <!-- <div class="flex flex-col py-2 mb-6">
+          <div class="flex flex-col py-2 mb-6">
             <div class="flex justify-end">
               <div
                 class="rounded-lg bg-red-500 p-1 text-xs sm:text-sm text-white"
@@ -52,24 +52,22 @@
               >{{formError.find(item => item.field === 'privacy_policy').message}}</div>
             </div>
             <div class="flex flex-row flex-no-wrap justify-between">
-              <div>
-                <input v-model="form.privacy_policy" type="checkbox" class="checkbox mt-1 mr-1" />
+                <input v-model="form.privacy_policy" id="privacy_policy" type="checkbox" class="checkbox mt-1 mr-1" />
                 <label for="privacy_policy" class="text-xs sm:text-sm py-1">
                   I agree with the
                   <span
-                    class="cursor-pointer hover:underline"
+                    class="cursor-pointer underline"
                     @click="modal = true"
                   >Terms and Conditions and Privacy Policy</span> of Hubzz
                 </label>
-              </div>
             </div>
-          </div>-->
-          <AppInput
+          </div>
+          <!-- <AppInput
             v-model="form.privacy_policy"
             :type="'single-checkbox'"
             :name="'privacy_policy'"
             :label="'Terms and Conditions and Privacy Policy of Hubzz'"
-          />
+          /> -->
         </form>
       </div>
     </div>
@@ -83,10 +81,10 @@
       <AppButton :label="'Next'" @click="next" />
     </div>
 
-    <div class="shield" v-if="modal"></div>
+    <div class="shield" v-if="modal" @click="modal=false"></div>
     <transition name="slide" mode="out-in">
       <div class="py-8 modal-container" v-if="modal">
-        <div @click="modal = false" class="cursor-pointer px-10 pb-4">
+        <div @click="modal = false" class="cursor-pointer px-4 lg:px-10 pb-4">
           <svgicon name="left-arrow" height="32" width="32" />
         </div>
         <TermsAndConditions />
