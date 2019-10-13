@@ -242,4 +242,13 @@ export default {
     max-height: 80vh;
   }
 }
+
+@media screen and (min-width: 1200px) {
+  .messages-left-panel {
+    min-width: 25%;
+    max-width: 25%;
+    min-height: 80vh;
+    max-height: 80vh;
+  }
+}
 </style>

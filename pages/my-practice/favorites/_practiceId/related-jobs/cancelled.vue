@@ -5,7 +5,7 @@
       class="mt-10 w-full text-center"
       v-if="!loadingJobs && getLocumCancelledJobs.length === 0"
     >You have not yet cancelled any job</div>
-    <div v-if="getLocumCancelledJobs.length > 0" class="overflow-x-auto overflow-y-hidden">
+    <div v-if="getLocumCancelledJobs.length > 0" class="overflow-x-auto overflow-y-hidden p-2">
       <JobTable :columns="columns" :jobs="getLocumCancelledJobs" @sortBy="sortBy" @show="show" />
     </div>
     <div class="absolute bottom-0 w-full" v-if="getLocumCancelledJobs.length > 0 && totalPages > 1">

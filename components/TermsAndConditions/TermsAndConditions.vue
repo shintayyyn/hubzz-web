@@ -1,5 +1,5 @@
 <template>
-  <div class="rounded-lg shadow-lg pt-10 px-5 pb-5 my-4 font-bold text-sm">
+  <div class="rounded-lg shadow-lg px-8 py-4 my-4 font-bold text-sm leading-relaxed">
     <div v-html="terms.terms_and_conditions"></div>
   </div>
 </template>

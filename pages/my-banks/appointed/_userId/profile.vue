@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-5xl">
+  <div>
     <MyLocumProfile :user="user" />
   </div>
 </template>

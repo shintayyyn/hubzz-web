@@ -1,10 +1,12 @@
 <template>
   <section
-    class="header-section fixed bg-white z-50"
+    class="fixed z-50 w-full"
     :class="$route.name === 'messages-slug' || $route.name === 'messages-new' ? 'border-b md:border-0' : ''"
   >
-    <div class="flex flex-row flex-wrap justify-between" style="z-index: 600">
-      <div class="w-1/3">
+    <div class="flex flex-row justify-between">
+      <div style="max-width: 200px; min-width: 200px" class="hidden xl:inline"></div>
+      <div class="header-section flex w-full justify-between bg-white">
+        <div class="w-1/3">
         <button class="burger cursor-pointer py-2 focus:outline-none h-full" @click="toggle">
           <div class="my-2 bg-yellow-500"></div>
           <div class="my-2 bg-yellow-500"></div>
@@ -61,6 +63,8 @@
           >{{$auth.user.email}}</div>
         </div>
       </div>
+      </div>
+      
     </div>
     <div class="shield" v-if="create_job_modal" @click="close"></div>
     <transition name="slide" mode="out-in">
@@ -135,25 +139,14 @@ export default {
 .header-section {
   padding: 0 20px;
 }
-@media screen and (max-width: 1199px) {
-  .header-section {
-    width: 100%;
-  }
-}
 @media screen and (min-width: 1200px) {
   .burger {
     display: none;
   }
-  .header-section {
-    /* max-width: 1466px; */
-    right: 0;
-    left: 200px;
-    /* padding: 5px 30px; */
-  }
 }
 @media screen and (min-width: 480px) {
   .header-section {
-    padding: 0 40px;
+    padding: 0 5%;
   }
 }
 a {

@@ -1,9 +1,9 @@
 <template>
-  <div class="p-8 max-w-5xl">
+  <div class="p-4 md:p-8">
     <div @click="close" class="cursor-pointer">
       <svgicon name="left-arrow" height="32" width="32" />
     </div>
-    <div class="flex flex-row justify-start mt-8">
+    <div class="flex flex-row justify-start mt-4">
       <div class="leading-loose font-bold text-md sm:text-lg">{{job.title}}</div>
       <div
         class="mx-2 text-sm sm:text-sm p-2"

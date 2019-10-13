@@ -1,5 +1,5 @@
 <template>
-  <div class="rounded-lg shadow-lg p-8">
+  <div class="rounded-lg shadow-lg p-4 md:p-8">
     <div class="font-bold text-xs sm:text-sm">Practice</div>
     <div class="font-bold text-sm sm:text-md">{{job.platform_job.practice.surgery.name}}</div>
     <div

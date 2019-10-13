@@ -13,7 +13,7 @@
       </div>
     </div>
     <div class="p-1 w-full sm:w-3/4 order-2 sm:order-1">
-      <div class="overflow-x-auto overflow-y-hidden">
+      <div class="overflow-x-auto overflow-y-hidden p-2">
         <table>
           <thead>
             <tr class="text-xs sm:text-sm text-left">
@@ -41,9 +41,6 @@
                 <td>£ {{invoice.expenses_charged}}</td>
                 <td>£ {{invoice.employers_superannuation}}</td>
                 <td>£ {{invoice.month_total}}</td>
-              </tr>
-              <tr :key="`${invoice.id}-${index}`">
-                <td></td>
               </tr>
             </template>
           </tbody>

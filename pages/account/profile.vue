@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-row flex-wrap justify-start">
     <div class="w-full p-0 lg:w-2/3 lg:pr-4 order-2 lg:order-1">
-      <div class="relative rounded-lg shadow-lg w-full p-8">
+      <div class="relative rounded-lg shadow-lg w-full p-4 md:p-8">
         <AppLoading :loading="loading" spinner />
         <AppFormError :formError="formError" v-if="formError.length > 0" />
         <form class="w-full">

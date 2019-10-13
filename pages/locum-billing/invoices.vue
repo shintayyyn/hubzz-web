@@ -15,7 +15,7 @@
       @sorted="sorted"
     >
       <template v-slot:actions="slotProps">
-        <td @click.stop.prevent="onClick(slotProps.item)">
+        <td @click.stop.prevent="onClick(slotProps.item)" class="text-center">
           <button
             v-if="!slotProps.item.paid_at"
             v-text="slotProps.item.issued_at ? 'Mark as paid' : 'Delete'"
@@ -110,7 +110,7 @@ export default {
         {
           name: "Practice / Surgery",
           dataIndex: "surgery.name",
-          class: "text-left"
+          class: "text-center"
         },
         {
           name: "Created At",
@@ -126,13 +126,13 @@ export default {
         {
           name: "Invoice Number",
           dataIndex: "invoice_number",
-          class: "text-center",
+          class: "text-left",
           sortable: true
         },
         {
           name: "Job Numbers",
           dataIndex: "items.job_part.job_part_number",
-          class: "text-center"
+          class: "text-left"
         },
         {
           name: "£ Amount",

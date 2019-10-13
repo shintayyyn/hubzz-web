@@ -48,7 +48,6 @@ export default {
 @media screen and (max-width: 1200px) {
   .sign-in-card {
     position: relative;
-    top: 20px;
   }
 }
 </style>

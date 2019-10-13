@@ -1,11 +1,15 @@
 <template>
   <section class="relative">
     <AppLoading :loading="loading" spinner />
-    <div class="overflow-x-auto">
-      <table class="border-separate" style="border-spacing: 0 20px">
+    <div class="overflow-x-auto p-2">
+      <table class="mx-auto">
         <thead>
           <tr class="text-sm md:text-base">
-            <th v-for="(column, index) in columns" :key="index">
+            <th
+              v-for="(column, index) in columns"
+              :key="index"
+              :class="column.class && column.class.includes('text-left') && 'text-left'"
+            >
               <span
                 v-if="column.sortable"
                 @click="sort(column.dataIndex)"
@@ -34,8 +38,8 @@
               <td
                 v-for="(column, index) in columns"
                 :key="index"
-                :class="column.class"
                 class="ellipsis"
+                :class="column.class ? column.class : ''"
                 id="data-cell"
               >
                 <div

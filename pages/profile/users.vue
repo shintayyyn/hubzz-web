@@ -14,7 +14,7 @@
         :type="'text'"
         :name="'search'"
         :label="'Email'"
-        :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem'"
+        :inStyle="'padding-top:0.5rem;padding-bottom:0.7rem'"
       />
       <AppInput
         class="px-1"

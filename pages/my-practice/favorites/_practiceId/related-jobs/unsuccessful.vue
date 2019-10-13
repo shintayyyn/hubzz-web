@@ -5,7 +5,7 @@
       class="mt-10 w-full text-center"
       v-if="!loadingJobs && getLocumUnsuccessfulJobs.length === 0"
     >You have not yet rejected for a job</div>
-    <div v-if="getLocumUnsuccessfulJobs.length > 0" class="overflow-x-auto overflow-y-hidden">
+    <div v-if="getLocumUnsuccessfulJobs.length > 0" class="overflow-x-auto overflow-y-hidden p-2">
       <JobTable :columns="columns" :jobs="getLocumUnsuccessfulJobs" @sortBy="sortBy" @show="show" />
     </div>
     <div

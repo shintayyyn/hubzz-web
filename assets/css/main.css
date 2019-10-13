@@ -19,6 +19,9 @@ a {
 table {
   width: 100%;
   min-width: 0;
+  border-collapse: separate;
+  border-spacing: 0 20px;
+  white-space: nowrap;
   /* min-width: 1620px; */
   /* max-width: 1620px; */
 }
@@ -35,12 +38,12 @@ table thead th {
 }
 
 table tbody td {
-  padding: 10px 15px;
+  padding: 15px;
 }
 
 .__jobs-section {
   position: relative;
-  min-height: 1180px;
+  /* min-height: 1180px; */
 }
 
 .__job-card:hover {
@@ -49,7 +52,7 @@ table tbody td {
 }
 
 .__job-card {
-  background-color: white;
+  background-color: #fff;
   transition: background-color 0.5s ease-in-out;
 }
 
@@ -277,4 +280,34 @@ input[type="checkbox"]:checked + label:after {
   height: 2px;
   box-shadow: 2px 0 0 white, 4px 0 0 white, 4px -2px 0 white, 4px -4px 0 white, 4px -6px 0 white, 4px -8px 0 white;
   transform: rotate(45deg);
+}
+
+.customized-select {
+  position: relative;
+}
+
+.customized-select::after {
+  content: "";
+  background-image: url("../../static/svg/arrow-up.svg");
+  background-size: 24px 24px;
+  background-repeat: no-repeat;
+  background-position: 50%;
+  position: absolute;
+  right: 0;
+  top: 0;
+  margin-right: 8px;
+  height: 100%;
+  width: 20px;
+  padding: 0 15px;
+  display: flex;
+  align-items: center;
+  transform: rotate(180deg);
+}
+
+.customized-select select {
+  appearance: none;
+  padding: 10px 15px;
+  background: #eee;
+  cursor: pointer;
+  padding-right: 40px;
 }

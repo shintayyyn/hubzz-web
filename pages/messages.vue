@@ -123,11 +123,11 @@ export default {
     max-height: 80vh;
   }
 }
-
+/* 
 @media screen and (min-width: 1200px) {
   .messages-section {
     width: 80%;
   }
-}
+} */
 </style>
 
