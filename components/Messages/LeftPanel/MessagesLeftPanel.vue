@@ -44,11 +44,12 @@
                 </div>
                 <span
                   class="absolute w-10 h-full flex items-center right-0 text-right text-xs text-gray-600 leading-none mx-2"
-                  :class="parseInt($route.params.slug) === item.id ? 'bg-gray-300 hover:bg-gray-300' : 'hover:bg-gray-200'"
+                  :class="[parseInt($route.params.slug) === item.id ? 'bg-gray-300 hover:bg-gray-300' : 'hover:bg-gray-200', unreadMessages.find(conversation => conversation.conversation_id == item.id && $auth.user.id == conversation.user_id) && 'mr-5']"
                 >{{ $moment(item.latest_conversation_message.created_at).fromNow() }}</span>
               </div>
             </div>
           </template>
+
           <template v-if="showResult && messages.length > 0">
             <div
               class="relative flex w-full items-center px-2 py-4 cursor-pointer border-b"
@@ -67,7 +68,7 @@
               </div>
 
               <div class="w-5/6 flex items-center justify-between">
-                <div class="w-5/6 px-2 leading-tight">
+                <div class="w-4/6 sm:w-5/6 md:w-4/6 lg:w-5/6 px-2 leading-tight">
                   <p
                     class="truncate"
                     :class="parseInt($route.params.slug) === item.id ? 'font-bold' : ''"
@@ -79,7 +80,7 @@
                 </div>
                 <span
                   class="absolute w-10 h-full flex items-center right-0 text-right text-xs text-gray-600 leading-none mx-2"
-                  :class="parseInt($route.params.slug) === item.id ? 'bg-gray-300 hover:bg-gray-300' : 'hover:bg-gray-200'"
+                  :class="[parseInt($route.params.slug) === item.id ? 'bg-gray-300 hover:bg-gray-300' : 'hover:bg-gray-200', unreadMessages.find(conversation => conversation.conversation_id == item.id && $auth.user.id == conversation.user_id) && 'mr-5']"
                 >{{ $moment(item.latest_conversation_message.created_at).fromNow() }}</span>
               </div>
             </div>

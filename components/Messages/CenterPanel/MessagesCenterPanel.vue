@@ -1,10 +1,8 @@
 <template>
   <div class="relative w-full flex flex-col" v-if="$route.name === 'messages-slug'">
     <MessagesCenterPanelTop v-if="$store.state.chat.activeConversationId" class="mt-10 md:mt-0" />
-    <div class="flex flex-col h-full justify-between">
       <MessagesCenterPanelChat />
       <MessagesCenterPanelForm />
-    </div>
   </div>
 </template>
 <script>
