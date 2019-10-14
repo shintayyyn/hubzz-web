@@ -1,6 +1,6 @@
 <template>
   <section class="relative">
-    <AppLoading :loading="loading" spinner />
+    <!-- <AppLoading :loading="loading" spinner /> -->
     <div class="overflow-x-auto p-2">
       <table class="mx-auto">
         <thead>
@@ -171,25 +171,37 @@ export default {
         });
       } else {
         str = "";
+        let itemArray = null;
+        let itemStr = null;
+        let dataIndex = null;
         if (dataIndexArr.length === 1) {
           str = item[dataIndexArr[0]];
-        } else if (dataIndexArr.length === 2 && item[dataIndexArr[0]]) {
+        }
+        if (dataIndexArr.length === 2 && item[dataIndexArr[0]]) {
           str = item[dataIndexArr[0]][dataIndexArr[1]];
-        } else if (
+        }
+        if (
           dataIndexArr.length === 3 &&
+          item[dataIndexArr[0]] &&
           item[dataIndexArr[0]][dataIndexArr[1]]
         ) {
           str = item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]];
-        } else if (
+        }
+        if (
           dataIndexArr.length === 4 &&
+          item[dataIndexArr[0]] &&
+          item[dataIndexArr[0]][dataIndexArr[1]] &&
           item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]]
         ) {
           str =
             item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]][
               dataIndexArr[3]
             ];
-        } else if (
+        }
+        if (
           dataIndexArr.length === 5 &&
+          item[dataIndexArr[0]] &&
+          item[dataIndexArr[0]][dataIndexArr[1]] &&
           item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]][
             dataIndexArr[3]
           ]
@@ -198,8 +210,14 @@ export default {
             item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]][
               dataIndexArr[3]
             ][dataIndexArr[4]];
-        } else if (
+        }
+        if (
           dataIndexArr.length === 6 &&
+          item[dataIndexArr[0]] &&
+          item[dataIndexArr[0]][dataIndexArr[1]] &&
+          item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]][
+            dataIndexArr[3]
+          ] &&
           item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]][
             dataIndexArr[3]
           ][dataIndexArr[4]]
@@ -210,10 +228,15 @@ export default {
             ][dataIndexArr[4]][dataIndexArr[5]];
         }
       }
-
-      if (str === false) return (str = "No");
-      if (str === true) return (str = "Yes");
-      // return str === null ? `(none)` : str;
+      if (str === false) {
+        str = "No";
+      }
+      if (str === true) {
+        str = "Yes";
+      }
+      if (str === null) {
+        str = "(none)";
+      }
       return str;
     }
   }

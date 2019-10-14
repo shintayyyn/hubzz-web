@@ -22,15 +22,14 @@ export default {
       }
 
       let response = await app.$axios.get(`${url}/${params.id}`);
-
+      console.log("test1", response);
       if (response.data.data.job) {
         let job = response.data.data.job;
-        if (job.locum_status.toLowerCase() === "current") {
-          return redirect(`/jobs/allocated/${params.id}`);
+        let status = job.locum_status.toLowerCase();
+        if (status === "current") {
+          redirect(`/jobs/allocated/${params.id}`);
         } else if (job) {
-          return redirect(
-            `/jobs/${job.locum_status.toLowerCase()}/${params.id}`
-          );
+          redirect(`/jobs/${status}/${params.id}`);
         } else {
           return error({
             status: 404,
@@ -41,17 +40,14 @@ export default {
 
       if (response.data.data.job_part) {
         let job_part = response.data.data.job_part;
+        let jobPartStatus = job_part.locum_status.toLowerCase();
         if (
-          job_part.locum_status.toLowerCase() === "current" ||
-          job_part.locum_status.toLowerCase() === query.status.toLowerCase()
+          jobPartStatus === "current" ||
+          jobPartStatus === query.status.toLowerCase()
         ) {
-          return redirect(`/jobs/ongoing/${params.id}`);
-        } else if (
-          job_part.locum_status.toLowerCase() === query.status.toLowerCase()
-        ) {
-          return redirect(
-            `/jobs/${job_part.locum_status.toLowerCase()}/${params.id}`
-          );
+          redirect(`/jobs/ongoing/${params.id}`);
+        } else if (jobPartStatus === query.status.toLowerCase()) {
+          redirect(`/jobs/${jobPartStatus}/${params.id}`);
         } else {
           return error({
             status: 404,
@@ -59,8 +55,8 @@ export default {
           });
         }
       }
-      return;
     } catch (err) {
+      console.log("asdsa");
       if (err && err.response.status === 404) {
         return error({ status: 404, message: "This page could not be found" });
       }

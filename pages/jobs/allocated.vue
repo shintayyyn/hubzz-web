@@ -1,6 +1,7 @@
 <template>
   <section class="relative">
-    <div class="flex flex-wrap justify-start items-center">
+    <AppLoading :loading="loadingJobs" spinner />
+    <div class="relative flex flex-wrap justify-start items-center">
       <AppInput
         class="px-1"
         v-model="params.shift_id"
@@ -52,27 +53,31 @@
         :url="'/api/v1/locum/surgeries'"
         :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem'"
       />
+      <AppButton
+        class="w-full"
+        :label="'Clear'"
+        @click="clearFilters"
+        :inStyle="'padding:5px 14px;margin-bottom:5px'"
+      />
     </div>
-    <AppButton
-      :label="'Clear'"
-      @click="clearFilters"
-      :inStyle="'padding:5px 14px;margin-bottom:5px'"
-    />
     <AppTable
       v-if="getLocumAllocatedJobs.length > 0"
       :total="total"
       :items="getLocumAllocatedJobs"
-      :loading="loadingJobs"
       :currentPage="current_page"
       :perPage="params.limit"
       :columns="columns"
       :orderBy="params.order_by"
+      :loading="loadingJobs"
       @show="show"
       @pagechanged="pagechanged"
       @limitchanged="limitchanged"
       @sorted="sorted"
     ></AppTable>
-    <div v-else class="flex justify-center">You do not have any allocated jobs</div>
+    <div
+      v-if="!getLocumAllocatedJobs.length && !loadingJobs"
+      class="flex justify-center"
+    >You do not have any allocated jobs</div>
     <transition name="fade" mode="out-in">
       <div
         class="shield"
@@ -89,6 +94,7 @@ import AppInput from "@/components/Base/AppInput";
 import AppPostCode from "@/components/Base/AppPostCode";
 import AppAutoComplete from "@/components/Base/AppAutoComplete";
 import AppButton from "@/components/Base/AppButton";
+import AppLoading from "@/components/Base/AppLoading";
 export default {
   transition: {
     name: "fade",
@@ -99,7 +105,8 @@ export default {
     AppInput,
     AppPostCode,
     AppAutoComplete,
-    AppButton
+    AppButton,
+    AppLoading
   },
   data() {
     return {
@@ -232,9 +239,6 @@ export default {
       this.getJobsCount(this.params);
     }
   },
-  beforeCreate() {
-    this.$store.commit("jobs/TOGGLE_LOADING", true);
-  },
   beforeDestroy() {
     this.$store.commit("jobs/CLEAR_JOBS");
   },
@@ -242,24 +246,24 @@ export default {
     this.getRateType();
     this.getShifts();
     this.getJobsCount();
-    this.getJobs(this.params);
     setTimeout(() => {
       this.$store.commit("jobs/CLEAR_LOCUM_ALLOCATED_BADGE");
     }, 1000);
   },
   methods: {
     getJobsCount(params) {
-      this.$store.dispatch("jobs/fetchLocumJobs", {
-        status: "Current",
-        countOnly: true,
-        ...params
-      });
-      setTimeout(() => {
-        this.getJobs(this.params);
-      }, 500);
+      this.$store.commit("jobs/TOGGLE_LOADING", true);
+      this.$store
+        .dispatch("jobs/fetchLocumJobs", {
+          status: "Current",
+          countOnly: true,
+          ...params
+        })
+        .finally(() => {
+          this.getJobs(this.params);
+        });
     },
     getJobs(params) {
-      this.$store.commit("jobs/TOGGLE_LOADING", true);
       this.$store
         .dispatch("jobs/fetchLocumJobs", { status: "Current", ...params })
         .finally(() => {

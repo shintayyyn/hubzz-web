@@ -365,7 +365,10 @@
                 :label="'Auto-assign this job?'"
                 :items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
               />
-              <div class="flex flex-row flex-wrap justify-between" v-if="auto_assign_job === 'Yes'">
+              <div
+                class="flex flex-row flex-wrap justify-between"
+                v-if="auto_assign_job === true || auto_assign_job === 'true'"
+              >
                 <div>Auto-assign job to the first matching Favourite applicant by this date</div>
                 <div class="px-1 w-full md:w-1/2">
                   <AppDate v-model="auto_assign_at.date" :name="'auto_assign_at'" :label="'Date'" />
@@ -391,7 +394,7 @@
 
               <div
                 class="flex flex-row flex-wrap justify-between"
-                v-if="selection_notification === 'Yes'"
+                v-if="selection_notification === true || selection_notification === 'true'"
               >
                 <div>Selection will be made and you will receive a notification by this date</div>
                 <div class="px-1 w-full md:w-1/2">
@@ -418,7 +421,7 @@
 
               <div
                 class="flex flex-row flex-wrap justify-between"
-                v-if="favorite_notification === 'Yes'"
+                v-if="favorite_notification === true || favorite_notification === 'true'"
               >
                 <div>Only favorite locum will be notified until this date</div>
                 <div class="px-1 w-full md:w-1/2">
@@ -483,10 +486,7 @@ export default {
       professions: [],
       session_requirements_lists,
       mandatory_training_lists: [],
-      // gp_qualification_lists: [],
-      // other_qualification_lists: [],
-      // clinical_system_lists: [],
-      // spoken_language_lists: [],
+
       gp_compliance_documents_lists: [],
       others_compliance_documents_lists: [],
 
@@ -494,7 +494,6 @@ export default {
       selectedProfession: {
         profession_category: {}
       },
-      // qualifications: [],
       compliances: [],
       unpaid_breaks: false,
       auto_assign_job: false,
@@ -562,29 +561,21 @@ export default {
     }
   },
   watch: {
-    // unpaid_breaks(value) {
-    // if (["15", "30", "60"].includes(value)) {
-    //   let index = this.formError.findIndex(
-    //     item => item.field === "unpaid_breaks_in_minutes"
-    //   );
-    //   if (index >= 0) {
-    //     this.formError.splice(index, 1);
-    //   }
-    // }
-    // },
-    "form.profession_id"(value) {
-      this.CheckEmptyField(value, "profession_id");
-      if (value) {
+    "form.profession_id"(newValue, oldValue) {
+      this.CheckEmptyField(newValue, "profession_id");
+      if (newValue) {
+        this.form.qualification_id = [];
+        this.form.clinical_system_id = [];
+        this.form.spoken_language_id = [];
+        this.form.compliance_document_id = [];
         this.selectedProfession = this.professions_categories.find(
-          item => item.id == value
+          item => item.id == newValue
         );
         if (this.selectedProfession.profession_category.id == 1) {
-          // this.qualifications = this.gp_qualification_lists;
           this.compliances = this.gp_compliance_documents_lists;
           return;
         }
         if (this.selectedProfession.profession_category.id == 2) {
-          // this.qualifications = this.other_qualification_lists;
           this.compliances = this.others_compliance_documents_lists;
           return;
         }
@@ -697,39 +688,6 @@ export default {
         this.professions_categories.push(item);
       });
     });
-    // this.$axios.$get(`/api/v1/profession-categories`).then(res => {
-    //   this.gp_qualification_lists = [];
-    //   res.data.profession_categories
-    //     .find(item => item.id === 1)
-    //     .qualifications.forEach(item => {
-    //       this.gp_qualification_lists.push({
-    //         label: item.name,
-    //         value: item.id
-    //       });
-    //     });
-
-    //   this.other_qualification_lists = [];
-    //   res.data.profession_categories
-    //     .find(item => item.id === 2)
-    //     .qualifications.forEach(item => {
-    //       this.other_qualification_lists.push({
-    //         label: item.name,
-    //         value: item.id
-    //       });
-    //     });
-    // });
-    // this.$axios.$get(`/api/v1/clinical-systems`).then(res => {
-    //   this.clinical_system_lists = [];
-    //   res.data.clinical_systems.forEach(item => {
-    //     this.clinical_system_lists.push({ label: item.name, value: item.id });
-    //   });
-    // });
-    // this.$axios.$get(`/api/v1/spoken-languages`).then(res => {
-    //   this.spoken_language_lists = [];
-    //   res.data.spoken_languages.forEach(item => {
-    //     this.spoken_language_lists.push({ label: item.name, value: item.id });
-    //   });
-    // });
     this.$axios.$get(`/api/v1/me`).then(res => {
       this.form.report_to = res.data.user.practice_detail.practice.report_to;
       this.form.email = res.data.user.practice_detail.practice.email;

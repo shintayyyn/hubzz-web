@@ -18,6 +18,7 @@ export default {
         `/api/v1/locum/jobs/${route.params.id}`
       );
       const job = response.data.data.job;
+      console.log("test2", job);
       return {
         job
       };
