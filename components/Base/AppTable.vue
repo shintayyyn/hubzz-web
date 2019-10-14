@@ -250,7 +250,7 @@ table tbody td {
   padding: 15px;
 }
 #data-cell {
-  max-width: 100px;
+  /* max-width: 100px; */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

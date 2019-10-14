@@ -3,9 +3,10 @@
     <thead>
       <tr class="text-xs sm:text-sm text-left">
         <th
-          v-for="item in columns"
+          v-for="(item, index) in columns"
           :key="item.dataIndex"
           @click="item.sortable ? $emit('sortBy', `${item.dataIndex}`) : null"
+          :class="index == 0 && 'sticky left-0 bg-white'"
         >
           {{item.label}}
           <svgicon
@@ -25,7 +26,7 @@
           class="__job-card shadow-md cursor-pointer text-xs text-left"
           @click="$emit('show', item.id)"
         >
-          <td>{{item.job_number}}</td>
+          <td class="sticky left-0 bg-white">{{item.job_number}}</td>
           <td>{{item.type === 'Private' ? item.private_job.private_practice.surgery.name : item.platform_job.practice.surgery.name}}</td>
           <td>{{item.type === 'Private' ? 'Private appointment' : item.title}}</td>
           <td>{{item.shift.name}}</td>

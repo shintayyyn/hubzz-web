@@ -34,7 +34,7 @@
         class="text-sm font-hairline italic"
       >(Note: Only file types .pdf, .jpeg, .msword, .tiff are acccepted)</div>
     </div>
-    <div class="mt-4 overflow-x-auto px-2 md:px-0">
+    <div class="mt-4 overflow-x-auto lg:px-2">
       <table>
         <thead>
           <tr class="text-xs sm:text-sm text-left">
@@ -153,7 +153,7 @@
       <div class="font-bold text-xs sm:text-base">Other documentation for reference to Practices</div>
     </div>
 
-    <div class="mt-4 overflow-x-auto px-2 md:px-0">
+    <div class="mt-4 overflow-x-auto lg:px-2">
       <table>
         <thead>
           <tr class="text-xs sm:text-sm text-left">
@@ -211,7 +211,7 @@
                 class="hover:underline"
                 v-if="!item.info"
               >
-                <div class="flex flex-row flex-no-wrap">
+                <div class="flex flex-row flex-no-wrap justify-center">
                   <input
                     type="file"
                     :ref="`${item.id}_file_optional_compliance`"
@@ -228,7 +228,7 @@
                 class="hover:underline"
                 v-else
               >
-                <div class="flex flex-row flex-no-wrap">
+                <div class="flex flex-row flex-no-wrap justify-center">
                   <input
                     type="file"
                     :ref="`${item.id}_file_optional_compliance`"
@@ -250,7 +250,7 @@
       <div class="font-bold text-xs sm:text-base">Mandatory Training</div>
     </div>
 
-    <div class="mt-4 overflow-x-auto px-2 md:px-0">
+    <div class="mt-4 overflow-x-auto lg:px-2">
       <table>
         <thead>
           <tr class="text-xs sm:text-sm text-left">
@@ -309,7 +309,7 @@
                 class="hover:underline"
                 v-if="!item.file"
               >
-                <div class="flex flex-row flex-no-wrap">
+                <div class="flex flex-row flex-no-wrap justify-center">
                   <input
                     type="file"
                     :ref="`${item.id}_file_mandatory_training`"
@@ -326,7 +326,7 @@
                 class="hover:underline"
                 v-else
               >
-                <div class="flex flex-row flex-no-wrap">
+                <div class="flex flex-row flex-no-wrap justify-center">
                   <input
                     type="file"
                     :ref="`${item.id}_file_mandatory_training`"
@@ -795,19 +795,27 @@ export default {
 .loading {
   background-color: #ccc;
 }
-.number-status {
-  /* width: 920px; */
-}
+/* .number-status {
+  width: 920px;
+} */
 a {
   text-decoration: none;
   color: black;
 }
-table {
-  /* width: 920px; */
+/*table {
+  width: 920px;
 }
-/* table thead th {
+ table thead th {
   padding: 10px 0;
 } */
+table tbody tr {
+  background-color: #fff;
+}
+table tbody td:last-child, table thead td:last-child {
+  position: sticky;
+  background-color: #fff;
+  right: 0;
+}
 table tbody td {
   padding: 15px 8px;
 }

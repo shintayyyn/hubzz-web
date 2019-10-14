@@ -94,7 +94,7 @@ export default {
   zoom: 0.75;
 }
 
-@media (min-width: 1200px) {
+@media (min-width: 1199px) {
   .__layout_index .__bg_logo {
     flex: 0 0 40%;
     background-size: 175%;
@@ -107,6 +107,14 @@ export default {
 
   .__logo {
     zoom: 1.25;
+  }
+}
+
+@media (max-width: 1199px) {
+  .__layout_index .__bg_logo {
+    flex: 0;
+    background-size: 175%;
+    background-position: top right;
   }
 }
 /* .fade-enter-active,
