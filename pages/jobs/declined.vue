@@ -6,7 +6,7 @@
       class="mt-10 w-full text-center"
       v-if="!loadingJobs && getLocumDeclinedJobs.length === 0"
     >You have not yet declined a job</div>
-    <div v-if="getLocumDeclinedJobs.length > 0" class="overflow-x-auto overflow-y-hidden p-2">
+    <div v-if="getLocumDeclinedJobs.length > 0" class="overflow-x-auto overflow-y-hidden p-0 md:p-2">
       <JobTable :columns="columns" :jobs="getLocumDeclinedJobs" @sortBy="sortBy" @show="show" />
     </div>
     <div class="w-full mt-4" v-if="getLocumDeclinedJobs.length > 0 && totalPages > 1">
