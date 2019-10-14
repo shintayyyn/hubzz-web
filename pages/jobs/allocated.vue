@@ -19,6 +19,7 @@
         :label="'Rate'"
         :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
       />
+
       <AppInput
         class="px-1"
         v-model="params.locum_detail_rate_type_id"
