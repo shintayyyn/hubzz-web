@@ -45,7 +45,7 @@
               <div
                 v-if="$auth.user.domain === 'Practice'"
                 :class="isReceiver(item) ? '' : 'hidden'"
-                class="w-10 h-10"
+                class="w-10 h-10 my-1"
               >
                 <AppAvatar
                   class="m-auto"
@@ -87,7 +87,7 @@
               <div
                 v-if="$auth.user.domain === 'Practice'"
                 :class="isReceiver(item) ? '' : 'hidden'"
-                class="w-10 h-10"
+                class="w-10 h-10 my-1"
               >
                 <AppAvatar
                   class="m-auto"
@@ -108,8 +108,8 @@
                   :class="isReceiver(item) ? '': 'flex-row-reverse'"
                 >
                   <span
-                    class="chat-message rounded-lg px-2 py-2 mx-2 whitespace-pre"
-                    :class="isReceiver(item) ? 'bg-gray-300' : 'bg-blue-500 text-white text-right'"
+                    class="chat-message rounded-lg p-2 mx-2 whitespace-pre-line"
+                    :class="isReceiver(item) ? 'bg-gray-300' : 'bg-blue-500 text-white'"
                   >{{ item.message }}</span>
 
                   <transition name="fade" mode="out-in">
@@ -341,6 +341,7 @@ export default {
   transition: background-color 0.5s ease-in-out;
 }
 .chat-message {
+  min-width: 50px;
   word-wrap: wrap;
   word-break: break-all;
 }
