@@ -48,11 +48,11 @@
               />
             </template>
             <template v-if="type === 'select'">
-              <div class="w-full customized-select">
+              <div class="w-full relative customized-select py-3">
                 <select
                   :value="value"
-                  class="border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full"
-                  :class="error ? 'border-red-500':''"
+                  class="absolute border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full z-20"
+                  :class="[error ? 'border-red-500':'']"
                   @input="$emit('input', $event.target.value)"
                   :style="inStyle"
                   @change="$emit('change', $event.target.value)"
@@ -67,6 +67,9 @@
                     :selected="value === item.value"
                   >{{item.label}}</option>
                 </select>
+                <span class="absolute right-0 z-10">
+                  <svgicon name="arrow-up" class="h-full w-10 p-2" style="transform: rotate(180deg)"/>
+                </span>
               </div>
             </template>
             <template v-if="type === 'textarea'">

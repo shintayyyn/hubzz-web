@@ -283,8 +283,9 @@ input[type="checkbox"]:checked + label:after {
 
 .customized-select {
   position: relative;
+  z-index: 50;
 }
-
+/* 
 .customized-select::after {
   content: "";
   background-image: url("../../static/svg/arrow-up.svg");
@@ -301,12 +302,13 @@ input[type="checkbox"]:checked + label:after {
   display: flex;
   align-items: center;
   transform: rotate(180deg);
-}
+  cursor: pointer;
+} */
 
 .customized-select select {
   appearance: none;
   padding: 10px 15px;
-  background: #eee;
+  background: transparent;
   cursor: pointer;
   padding-right: 40px;
 }
