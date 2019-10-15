@@ -16,7 +16,7 @@
           v-model="search_user"
           :name="'search_user'"
           :label="'Send message to'"
-          :placeholder="'Type the name of the person or group'"
+          :placeholder="`Search for ${$auth.user.domain === 'Practice' ? 'Locum' : 'Practice'}`"
           :keyword="'practices'"
           :url="'api/v1/conversations/search-users'"
           @newConversation="newConversation"

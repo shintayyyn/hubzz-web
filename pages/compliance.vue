@@ -284,7 +284,7 @@
               :class="item && item.file ? 'hover:bg-gray-300' : ''"
             >
               <td
-                :class="item.info && item.info.file ? 'cursor-pointer' : ''"
+                :class="item && item.file ? 'cursor-pointer' : ''"
                 class="w-1/3"
                 @click="show(item, 'mandatory')"
               >{{item.mandatory_training.name}}</td>

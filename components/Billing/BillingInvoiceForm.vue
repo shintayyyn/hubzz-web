@@ -18,13 +18,13 @@
       <div class="flex flex-row flex-wrap justify-start items-center my-4">
         <label class="mx-1 py-2 px-3">Type:</label>
         <button
-          :class="type === 'Private' ? 'bg-yellow-500 border-yellow-500' : ''"
+          :class="type === 'Private' ? 'bg-yellow-500 border-yellow-500' : 'hover:bg-gray-200'"
           class="text-xs sm:text-sm mx-1 py-2 px-3 border-2 rounded-lg font-bold flex items-center focus:outline-none"
           @click="type = 'Private'"
           :disabled="type === 'Private'"
         >Private</button>
         <button
-          :class="type === 'Platform' ? 'bg-yellow-500 border-yellow-500' : ''"
+          :class="type === 'Platform' ? 'bg-yellow-500 border-yellow-500' : 'hover:bg-gray-200'"
           class="text-xs sm:text-sm mx-1 py-2 px-3 border-2 rounded-lg font-bold flex items-center focus:outline-none"
           @click="type = 'Platform'"
           :disabled="type === 'Platform'"
@@ -720,10 +720,9 @@ export default {
   background-color: #ecc94b;
 }
 .save-button:hover {
-  color: #fff;
   /* background-color: rgb(80, 80, 80); */
-  background-color: #d1b244;
-  border-color: #d1b244;
+  background-color: #e2be3a;
+  border-color: #e2be3a;
   cursor: pointer;
 }
 .option-list {

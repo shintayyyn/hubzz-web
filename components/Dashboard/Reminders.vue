@@ -2,7 +2,7 @@
   <section>
     <div class="flex flex-row flex-wrap justify-start mb-2 md:mb-0 lg:max-w-6xl">
       <div
-        class="pr-4 my-2 md:my-4 w-full sm:w-1/2 lg:max-w-sm"
+        class="md:px-2 my-2 md:my-4 w-full sm:w-1/2 lg:max-w-sm"
         v-for="(item, index) in reminders"
         :key="index"
       >

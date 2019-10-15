@@ -31,9 +31,7 @@ export default {
       return message.replace(/^\s*/, '').replace(/\s*$/, '')
     },
     send(e) {
-      if (this.message) {
-        let wsRegex = /\S.*\S/;
-        this.message = this.message.match(wsRegex)[0]
+      if (this.trimmedMessage(this.message)) {
         this.$store.dispatch("chat/sendMessage", {
           user_id: null,
           message: this.message,
