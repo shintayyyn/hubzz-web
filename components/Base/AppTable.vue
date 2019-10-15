@@ -1,17 +1,22 @@
 <template>
   <section class="relative">
-    <AppLoading :loading="loading" spinner />
-    <div class="overflow-x-auto">
-      <table class="border-separate" style="border-spacing: 0 20px">
+    <!-- <AppLoading :loading="loading" spinner /> -->
+    <div class="overflow-x-auto p-2">
+      <table class="mx-auto">
         <thead>
           <tr class="text-sm md:text-base">
-            <th v-for="(column, index) in columns" :key="index">
+            <th
+              v-for="(column, index) in columns"
+              :key="index"
+              :class="column.class && column.class.includes('text-left') && 'text-left'"
+            >
               <span
                 v-if="column.sortable"
                 @click="sort(column.dataIndex)"
                 :class="column.sortable ? 'cursor-pointer':''"
+                class="flex justify-center items-center"
               >
-                <span>{{column.name}}</span>
+                <span class="block whitespace-no-wrap pr-1">{{column.name}}</span>
                 <svgicon
                   class="inline align-baseline"
                   :name="sortIcon(column.dataIndex)"
@@ -19,12 +24,12 @@
                   width="12"
                 />
               </span>
-              <span v-else>{{column.name}}</span>
+              <span v-if="!column.sortable" class="block whitespace-no-wrap">{{column.name}}</span>
             </th>
           </tr>
         </thead>
         <tbody>
-          <template v-for="item in items">
+          <template v-for="(item, index) in items">
             <tr
               @click="$emit('show', item)"
               :key="item.id"
@@ -33,11 +38,12 @@
               <td
                 v-for="(column, index) in columns"
                 :key="index"
-                :class="column.class"
+                class="ellipsis"
+                :class="column.class ? column.class : ''"
                 id="data-cell"
               >
                 <div
-                  v-if="column.class.includes('localDate')"
+                  v-if="column.class && column.class.includes('localDate')"
                 >{{dataCell(item, column) | localDate}}</div>
                 <template v-else>
                   <div v-if="Array.isArray(dataCell(item, column))">
@@ -50,6 +56,9 @@
                 </template>
               </td>
               <slot name="actions" v-bind:item="item"></slot>
+            </tr>
+            <tr :key="`${item.id}-${index}`">
+              <td></td>
             </tr>
           </template>
         </tbody>
@@ -165,17 +174,26 @@ export default {
         });
       } else {
         str = "";
+        let itemArray = null;
+        let itemStr = null;
+        let dataIndex = null;
         if (dataIndexArr.length === 1) {
           str = item[dataIndexArr[0]];
-        } else if (dataIndexArr.length === 2 && item[dataIndexArr[0]]) {
+        }
+        if (dataIndexArr.length === 2 && item[dataIndexArr[0]]) {
           str = item[dataIndexArr[0]][dataIndexArr[1]];
-        } else if (
+        }
+        if (
           dataIndexArr.length === 3 &&
+          item[dataIndexArr[0]] &&
           item[dataIndexArr[0]][dataIndexArr[1]]
         ) {
           str = item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]];
-        } else if (
+        }
+        if (
           dataIndexArr.length === 4 &&
+          item[dataIndexArr[0]] &&
+          item[dataIndexArr[0]][dataIndexArr[1]] &&
           item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]]
         ) {
           str =
@@ -183,25 +201,74 @@ export default {
               dataIndexArr[3]
             ];
         }
+        if (
+          dataIndexArr.length === 5 &&
+          item[dataIndexArr[0]] &&
+          item[dataIndexArr[0]][dataIndexArr[1]] &&
+          item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]][
+            dataIndexArr[3]
+          ]
+        ) {
+          str =
+            item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]][
+              dataIndexArr[3]
+            ][dataIndexArr[4]];
+        }
+        if (
+          dataIndexArr.length === 6 &&
+          item[dataIndexArr[0]] &&
+          item[dataIndexArr[0]][dataIndexArr[1]] &&
+          item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]][
+            dataIndexArr[3]
+          ] &&
+          item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]][
+            dataIndexArr[3]
+          ][dataIndexArr[4]]
+        ) {
+          str =
+            item[dataIndexArr[0]][dataIndexArr[1]][dataIndexArr[2]][
+              dataIndexArr[3]
+            ][dataIndexArr[4]][dataIndexArr[5]];
+        }
       }
-
-      if (str === false) return (str = "No");
-      if (str === true) return (str = "Yes");
-      // return str === null ? `(none)` : str;
+      if (str === false) {
+        str = "No";
+      }
+      if (str === true) {
+        str = "Yes";
+      }
+      if (str === null) {
+        str = "(none)";
+      }
       return str;
     }
   }
 };
 </script>
 <style scoped>
-table thead th {
+/* table thead th {
   padding: 10px;
 }
 table tbody td {
   padding: 15px;
-}
+} */
 #data-cell {
-  max-width: 100px;
+  /* max-width: 100px; */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ellipsis {
+  position: relative;
+}
+.ellipsis:before {
+  content: "&nbsp;";
+  visibility: hidden;
+}
+.ellipsis span {
+  position: absolute;
+  left: 0;
+  right: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

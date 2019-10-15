@@ -25,7 +25,7 @@
         </div>
       </div>
 
-      <div class="shadow-lg rounded-lg bg-gray-300 mt-5">
+      <div class="shadow-lg rounded-lg bg-gray-300 mt-5 max-w-5xl">
         <div class="flex flex-row flex-wrap justify-start p-8">
           <div class="flex flex-col w-full lg:w-1/4">
             <p class="mr-20 font-semibold">Title</p>

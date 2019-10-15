@@ -1,5 +1,5 @@
 <template>
-  <div class="relative rounded-lg shadow-lg p-8">
+  <div class="relative rounded-lg shadow-lg p-8 md:w-2/3">
     <AppLoading :loading="loading" spinner />
     <AppFormError :formError="formError" v-if="formError.length > 0" />
     <form class="w-full">

@@ -1,6 +1,6 @@
 <template>
-  <div class="flex flex-col w-full lg:w-2/3 p-0 lg:pr-4">
-    <div class="rounded-lg shadow-lg p-8 mt-4">
+  <div class="flex flex-col w-full">
+    <div class="rounded-lg shadow-lg p-4 md:p-8 mt-4">
       <div class="flex flex-row flex-wrap">
         <div class="flex flex-col w-full md:w-1/2 p-0 md:pr-4">
           <div class="font-bold text-sm sm:text-md">Job number</div>

@@ -1,6 +1,6 @@
 <template>
   <div class="modal shadow-lg" v-on-clickaway="close">
-    <div class="p-8 max-w-4xl">
+    <div class="p-4 md:p-8 max-w-4xl">
       <div class="flex flex-wrap justify-start items-center">
         <nuxt-link to="/locum-billing/invoices" class="cursor-pointer">
           <svgicon name="left-arrow" height="32" width="32" />
@@ -18,13 +18,13 @@
       <div class="flex flex-row flex-wrap justify-start items-center my-4">
         <label class="mx-1 py-2 px-3">Type:</label>
         <button
-          :class="type === 'Private' ? 'bg-yellow-500 border-yellow-500' : ''"
+          :class="type === 'Private' ? 'bg-yellow-500 border-yellow-500' : 'hover:bg-gray-200'"
           class="text-xs sm:text-sm mx-1 py-2 px-3 border-2 rounded-lg font-bold flex items-center focus:outline-none"
           @click="type = 'Private'"
           :disabled="type === 'Private'"
         >Private</button>
         <button
-          :class="type === 'Platform' ? 'bg-yellow-500 border-yellow-500' : ''"
+          :class="type === 'Platform' ? 'bg-yellow-500 border-yellow-500' : 'hover:bg-gray-200'"
           class="text-xs sm:text-sm mx-1 py-2 px-3 border-2 rounded-lg font-bold flex items-center focus:outline-none"
           @click="type = 'Platform'"
           :disabled="type === 'Platform'"
@@ -181,7 +181,7 @@
                     Total
                     <span
                       v-if="type === 'Private'"
-                      class="cursor-pointer w-8 h-8 rounded-full bg-white text-gray-900 font-semibold text-xl text-center flex justify-center"
+                      class="cursor-pointer w-8 h-8 rounded-full bg-white text-gray-900 font-semibold text-xl flex justify-center items-center hover:bg-gray-200"
                       @click="addItem"
                     >+</span>
                   </span>
@@ -190,40 +190,33 @@
             </thead>
             <tbody>
               <tr class="border-b" v-for="(item, index) in selectedJobParts" :key="item.id">
-                <td class="h-full p-2">
-                  <textarea
-                    v-model="item.description"
-                    rows="3"
-                    placeholder="Enter description"
-                    class="w-full text-xs sm:text-sm resize-none border-b-2 border-gray-300 focus:outline-none px-4"
-                  ></textarea>
-                </td>
-                <td class="h-full p-2">
-                  <div class="clearfix">
-                    <span
-                      class="border-b-2 border-gray-300 focus:border-yellow-300 m-2 py-4 w-full"
-                    >
+                <td colspan="2" class="h-full p-2">
+                  <div class="flex items-end">
+                    <textarea
+                      v-model="item.description"
+                      rows="3"
+                      placeholder="Enter description"
+                      class="w-1/2 m-1 text-xs sm:text-sm resize-none border-b-2 border-gray-300 focus:border-yellow-500 focus:outline-none px-4"
+                    ></textarea>
+                    <div class="w-1/2 m-1">
                       <input
                         type="text"
                         v-model="item.total"
                         placeholder="Enter value"
-                        class="focus:outline-none p-2 sm:text-sm text-right text-xs w-4/5"
+                        class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-4/5 focus:border-yellow-500 "
                       />
-                    </span>
                     <span
-                      class="bg-gray-900 cursor-pointer float-right font-semibold inline-block px-3 mt-2 rounded-full text-center text-white text-xl"
+                      class="bg-gray-900 hover:bg-black w-8 h-8 cursor-pointer float-right font-semibold inline-flex items-center justify-center px-3 mt-2 rounded-full text-white text-xl"
                       @click="removeSelectedJobPart(item, index)"
                     >-</span>
+                    </div>
                   </div>
+                  
                 </td>
               </tr>
               <tr>
-                <td></td>
-                <td></td>
-              </tr>
-              <tr>
                 <td colspan="2">
-                  <div class="flex flex-row flex-no-wrap justify-between">
+                  <div class="flex flex-row flex-wrap justify-between">
                     <div class="w-full pr-1">
                       <AppDate
                         v-model="form.date_start"
@@ -248,19 +241,25 @@
             </tbody>
             <tfoot>
               <tr>
-                <td>Total</td>
-                <td class="text-right">
-                  <div class="flex justify-end">
-                    <div
-                      class="rounded-lg bg-red-500 p-1 text-xs sm:text-sm text-white"
-                      v-if="formError.find(item => item.field === 'total_amount')"
-                    >{{formError.find(item => item.field === 'total_amount').message}}</div>
-                  </div>
-                  £ {{amount | currency}}
+                <td colspan="2">
+                 
                 </td>
               </tr>
             </tfoot>
           </table>
+        </div>
+
+        <div class="flex justify-between m-2">
+          <span class="font-bold">Total</span>
+          <div>
+            <div class="flex justify-end">
+            <div
+              class="rounded-lg bg-red-500 p-1 text-xs sm:text-sm text-white"
+              v-if="formError.find(item => item.field === 'total_amount')"
+            >{{formError.find(item => item.field === 'total_amount').message}}</div>
+          </div>
+          £ {{amount | currency}}
+          </div>
         </div>
 
         <div class="rounded-lg border-2 border-gray-300 mt-4 p-4">
@@ -696,6 +695,7 @@ export default {
 .items-table {
   width: 732px;
 }
+
 .modal {
   position: fixed;
   top: 0;
@@ -720,10 +720,9 @@ export default {
   background-color: #ecc94b;
 }
 .save-button:hover {
-  color: #fff;
   /* background-color: rgb(80, 80, 80); */
-  background-color: #d1b244;
-  border-color: #d1b244;
+  background-color: #e2be3a;
+  border-color: #e2be3a;
   cursor: pointer;
 }
 .option-list {

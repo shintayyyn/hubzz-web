@@ -22,13 +22,10 @@
     <transition name="fade">
       <div class="relative z-10" v-if="modal">
         <div
-          class="w-full absolute border rounded-tr-lg rounded-bl-lg rounded-br-lg calendar bg-white shadow-md"
+          class="w-full absolute border rounded-tr-lg rounded-bl-lg rounded-br-lg app-time bg-white shadow-md"
         >
           <div class="flex flex-row justify-center">
-            <div
-              class="input-container flex flex-col overflow-y-auto w-full"
-              v-if="activeView === 'hours'"
-            >
+            <div class="input-container flex flex-col overflow-y-auto w-full">
               <div
                 class="flex flex-row justify-center cursor-pointer"
                 :class="{'bg-gray-900 text-white': selectedHour === hour}"
@@ -37,10 +34,7 @@
                 @click="selectTime(hour, 'hour')"
               >{{hour}}</div>
             </div>
-            <div
-              class="input-container flex flex-col overflow-y-auto w-full"
-              v-if="activeView === 'minutes'"
-            >
+            <div class="input-container flex flex-col overflow-y-auto w-full">
               <div
                 class="flex flex-row justify-center cursor-pointer"
                 :class="{'bg-gray-900 text-white': selectedMinute === minute}"
@@ -160,39 +154,26 @@ export default {
       minutes,
       selectedHour: "00",
       selectedMinute: "00",
-      activeView: "hours",
       modal: false
     };
-  },
-  watch: {
-    selectedSecond(newValue, oldValue) {
-      if (!oldValue) {
-        return;
-      }
-      this.toggledOff();
-    }
   },
   created() {
     if (this.value) {
       this.selectedHour = this.value.split(":")[0];
       this.selectedMinute = this.value.split(":")[1];
     }
-    this.activeView = "hours";
   },
   methods: {
     selectTime(value, type) {
       if (type === "hour") {
         this.selectedHour = value;
-        this.activeView = "minutes";
       }
       if (type === "minute") {
         this.selectedMinute = value;
-        this.modal = false;
       }
       this.$emit("input", `${this.selectedHour}:${this.selectedMinute}`);
     },
     toggledOff() {
-      this.activeView = "hours";
       this.modal = false;
     }
   }
@@ -203,14 +184,14 @@ export default {
   min-height: 100px;
   max-height: 100px;
 }
-.calendar {
+.app-time {
   min-width: 100px;
   min-height: 100px;
   max-height: 100px;
 }
 @media screen and (min-width: 468px) {
-  .calendar {
-    width: 100px;
+  .app-time {
+    width: 200px;
   }
 }
 ::-webkit-scrollbar {

@@ -1,5 +1,5 @@
 <template>
-  <div class="p-8 max-w-5xl">
+  <div class="p-4 md:p-8">
     <div @click="close" class="cursor-pointer">
       <svgicon name="left-arrow" height="32" width="32" />
     </div>
@@ -42,12 +42,12 @@
           v-if="job.status === 'Applied'"
           @show="showLocum($event)"
         />
-        <JobDetailModalLocum
+        <!-- <JobDetailModalSessionSample
           :user="user"
           :mandatory="mandatory"
           :optional="optional"
           v-if="(job.status === 'Current' || job.status === 'Completed') && user"
-        />
+        />-->
       </div>
       <JobDetailModalCancelForm
         :job="job"
@@ -72,7 +72,7 @@
 import JobDetailModalForm from "@/components/Sessions/JobDetailModalForm";
 import JobDetailModalUpdateForm from "@/components/Sessions/JobDetailModalUpdateForm";
 import JobDetailModalCandidates from "@/components/Sessions/JobDetailModalCandidates";
-import JobDetailModalLocum from "@/components/Sessions/JobDetailModalLocum";
+// import JobDetailModalSessionSample from "@/components/Sessions/JobDetailModalSessionSample";
 import JobDetailModalCancelForm from "@/components/Sessions/JobDetailModalCancelForm";
 import JobDetailModalCompleteForm from "@/components/Sessions/JobDetailModalCompleteForm";
 import JobDetailModalShowCandidate from "@/components/Sessions/JobDetailModalShowCandidate";
@@ -82,7 +82,7 @@ export default {
     JobDetailModalForm,
     JobDetailModalUpdateForm,
     JobDetailModalCandidates,
-    JobDetailModalLocum,
+    // JobDetailModalSessionSample,
     JobDetailModalCompleteForm,
     JobDetailModalCancelForm,
     JobDetailModalShowCandidate

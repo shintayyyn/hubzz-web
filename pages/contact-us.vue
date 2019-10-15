@@ -1,6 +1,6 @@
 <template>
-  <div class="lg:px-10">
-    <div class="rounded-lg shadow-lg p-5" style="max-width:700px;">
+  <div class="">
+    <div class="rounded-lg shadow-lg p-5">
       <div class="flex flex-col md:flex-row flex-wrap justify-between mb-4">
         <div class="w-full md:w-1/2">
           <div class="text-sm my-2">Email address</div>

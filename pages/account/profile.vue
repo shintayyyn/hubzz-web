@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-row flex-wrap justify-start">
     <div class="w-full p-0 lg:w-2/3 lg:pr-4 order-2 lg:order-1">
-      <div class="relative rounded-lg shadow-lg w-full p-8">
+      <div class="relative rounded-lg shadow-lg w-full p-4 md:p-8">
         <AppLoading :loading="loading" spinner />
         <AppFormError :formError="formError" v-if="formError.length > 0" />
         <form class="w-full">
@@ -586,7 +586,7 @@ export default {
       this.form.ir35 = this.user.locum_detail.invoice_detail.ir35;
       this.form.paid_under_payroll = this.user.locum_detail.invoice_detail.paid_under_payroll;
     }
-    if (this.user.locum_detail.invoice_detail.payroll_detail) {
+    if (this.user.locum_detail.invoice_detail && this.user.locum_detail.invoice_detail.payroll_detail) {
       this.form.payroll_detail_account_name = this.user.locum_detail.invoice_detail.payroll_detail.account_name;
       this.form.payroll_detail_account_number = this.user.locum_detail.invoice_detail.payroll_detail.account_number;
       this.form.payroll_detail_sort_code = this.user.locum_detail.invoice_detail.payroll_detail.sort_code;

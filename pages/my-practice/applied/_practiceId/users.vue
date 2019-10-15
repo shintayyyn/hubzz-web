@@ -11,7 +11,11 @@
         @pagechanged="pagechanged"
       />
     </div>
-    <div class="shield" v-if="$route.name.includes('my-practice-applied-practiceId-users-userId')" @click="$router.go(-1)"></div>
+    <div
+      class="shield"
+      v-if="$route.name.includes('my-practice-applied-practiceId-users-userId')"
+      @click="$router.go(-1)"
+    ></div>
     <nuxt-child />
   </section>
 </template>

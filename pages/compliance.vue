@@ -1,14 +1,12 @@
 <template>
   <section class="compliance-section">
     <div class="overflow-x-auto">
-      <div class="number-status md:mt-10">
+      <div class="mt-5">
         <div class="border-solid rounded-lg shadow-md px-1 py-4 mb-5 mx-1 md:mx-0">
-          <div class="flex flex-row flex-no-wrap justify-start text-xs sm:text-sm">
-            <div class="w-1/3 px-4 py-1 text-left">Your GMC / NMC Number</div>
-            <div
-              class="w-1/3 p-1 text-center"
-            >{{gmc_or_nmc_number ? gmc_or_nmc_number.number : 'No GMC or NMC Number registered'}}</div>
-            <div class="w-1/3 p-1 text-center">
+          <div class="relative flex flex-row flex-wrap justify-start sm:items-center text-xs sm:text-sm px-4">
+            <div class="w-full sm:w-1/3 p-1 text-left">Your GMC / NMC Number</div>
+            <div class="w-full sm:w-1/3 p-1 md:text-center">{{gmc_or_nmc_number ? gmc_or_nmc_number.number : 'No GMC or NMC Number registered'}}</div>
+            <div class="absolute right-0 m-2 md:relative sm:m-0 sm:w-1/3 md:text-center">
               <span
                 class="text-xs sm:text-sm text-center text-white font-bold rounded-full px-4 py-1"
                 :class="status(gmc_or_nmc_number ? gmc_or_nmc_number.status : 'No GMC or NMC Number registered')"
@@ -17,12 +15,10 @@
           </div>
         </div>
         <div class="border-solid rounded-lg shadow-md px-1 py-4 mb-5 mx-1 md:mx-0">
-          <div class="flex flex-row flex-no-wrap justify-start items-center text-xs sm:text-sm">
-            <div class="w-1/3 px-4 py-1 text-left">Your MPL / NPL Number</div>
-            <div
-              class="w-1/3 p-1 text-center"
-            >{{mpl_or_npl_number ? mpl_or_npl_number.number : 'No MPL or NPL Number registered'}}</div>
-            <div class="w-1/3 p-1 text-center">
+          <div class="relative flex flex-row flex-wrap justify-start sm:items-center text-xs sm:text-sm px-4">
+            <div class="w-full sm:w-1/3 p-1 text-left">Your MPL / NPL Number</div>
+            <div class="w-full sm:w-1/3 p-1 md:text-center">{{mpl_or_npl_number ? mpl_or_npl_number.number : 'No MPL or NPL Number registered'}}</div>
+            <div class="absolute right-0 m-2 md:relative sm:m-0 sm:w-1/3 md:text-center">
               <span
                 class="text-xs sm:text-sm text-center text-white font-bold rounded-full px-4 py-1"
                 :class="status(mpl_or_npl_number ? mpl_or_npl_number.status : '')"
@@ -38,7 +34,7 @@
         class="text-sm font-hairline italic"
       >(Note: Only file types .pdf, .jpeg, .msword, .tiff are acccepted)</div>
     </div>
-    <div class="mt-4 overflow-x-auto px-2 md:px-0">
+    <div class="mt-4 overflow-x-auto lg:px-2">
       <table>
         <thead>
           <tr class="text-xs sm:text-sm text-left">
@@ -72,7 +68,7 @@
             <tr
               v-else
               :key="item.id"
-              class="rounded-lg shadow-md text-xs sm:text-sm text-left"
+              class="rounded-lg shadow-md bg-white text-xs sm:text-sm text-left"
               :class="item.info && item.info.file ? 'hover:bg-gray-300' : ''"
             >
               <td
@@ -147,9 +143,6 @@
                 </div>
               </td>
             </tr>
-            <tr :key="`${item.id}-${index}`">
-              <td></td>
-            </tr>
           </template>
           <!-------------------------FILE SHOULD SHOW ON CLICK------------------------------>
         </tbody>
@@ -160,16 +153,13 @@
       <div class="font-bold text-xs sm:text-base">Other documentation for reference to Practices</div>
     </div>
 
-    <div class="mt-4 overflow-x-auto px-2 md:px-0">
+    <div class="mt-4 overflow-x-auto lg:px-2">
       <table>
         <thead>
           <tr class="text-xs sm:text-sm text-left">
             <th>Type</th>
             <th>File</th>
             <th>Date uploaded</th>
-            <th></th>
-            <th></th>
-            <th></th>
             <th></th>
           </tr>
         </thead>
@@ -184,7 +174,7 @@
           </template>
           <template v-for="(item, index) in optional">
             <tr
-              class="rounded-lg shadow-md text-xs sm:text-sm text-left bg-gray-200"
+              class="rounded-lg shadow-md bg-white text-xs sm:text-sm text-left bg-gray-200"
               v-if="activeLoading.includes(item.id)"
               :key="item.id"
             >
@@ -216,15 +206,12 @@
               <td v-else></td>
               <td v-if="item.info && item.info.file">{{item.info.file.created_at | localDate}}</td>
               <td v-else></td>
-              <td></td>
-              <td></td>
-              <td></td>
               <td
                 @click.stop="$refs[`${item.id}_file_optional_compliance`][0].click()"
                 class="hover:underline"
                 v-if="!item.info"
               >
-                <div class="flex flex-row flex-no-wrap">
+                <div class="flex flex-row flex-no-wrap justify-center">
                   <input
                     type="file"
                     :ref="`${item.id}_file_optional_compliance`"
@@ -241,7 +228,7 @@
                 class="hover:underline"
                 v-else
               >
-                <div class="flex flex-row flex-no-wrap">
+                <div class="flex flex-row flex-no-wrap justify-center">
                   <input
                     type="file"
                     :ref="`${item.id}_file_optional_compliance`"
@@ -254,9 +241,6 @@
                 </div>
               </td>
             </tr>
-            <tr :key="`${item.id}-${index}-optional`">
-              <td></td>
-            </tr>
           </template>
         </tbody>
       </table>
@@ -266,16 +250,13 @@
       <div class="font-bold text-xs sm:text-base">Mandatory Training</div>
     </div>
 
-    <div class="mt-4 overflow-x-auto px-2 md:px-0">
+    <div class="mt-4 overflow-x-auto lg:px-2">
       <table>
         <thead>
           <tr class="text-xs sm:text-sm text-left">
             <th>Type</th>
             <th>File</th>
             <th>Date uploaded</th>
-            <th></th>
-            <th></th>
-            <th></th>
             <th></th>
           </tr>
         </thead>
@@ -303,7 +284,7 @@
               :class="item && item.file ? 'hover:bg-gray-300' : ''"
             >
               <td
-                :class="item.info && item.info.file ? 'cursor-pointer' : ''"
+                :class="item && item.file ? 'cursor-pointer' : ''"
                 class="w-1/3"
                 @click="show(item, 'mandatory')"
               >{{item.mandatory_training.name}}</td>
@@ -323,15 +304,12 @@
               <td v-else></td>
               <td v-if="item && item.file">{{item.file.created_at | localDate}}</td>
               <td v-else></td>
-              <td></td>
-              <td></td>
-              <td></td>
               <td
                 @click.stop="$refs[`${item.id}_file_mandatory_training`][0].click()"
                 class="hover:underline"
                 v-if="!item.file"
               >
-                <div class="flex flex-row flex-no-wrap">
+                <div class="flex flex-row flex-no-wrap justify-center">
                   <input
                     type="file"
                     :ref="`${item.id}_file_mandatory_training`"
@@ -348,7 +326,7 @@
                 class="hover:underline"
                 v-else
               >
-                <div class="flex flex-row flex-no-wrap">
+                <div class="flex flex-row flex-no-wrap justify-center">
                   <input
                     type="file"
                     :ref="`${item.id}_file_mandatory_training`"
@@ -360,9 +338,6 @@
                   <label class="leading-loose mx-2 cursor-pointer">Update</label>
                 </div>
               </td>
-            </tr>
-            <tr :key="`${item.id}-${index}-mandatory-training`">
-              <td></td>
             </tr>
           </template>
         </tbody>
@@ -820,19 +795,27 @@ export default {
 .loading {
   background-color: #ccc;
 }
-.number-status {
-  /* width: 920px; */
-}
+/* .number-status {
+  width: 920px;
+} */
 a {
   text-decoration: none;
   color: black;
 }
-table {
-  /* width: 920px; */
+/*table {
+  width: 920px;
 }
-/* table thead th {
+ table thead th {
   padding: 10px 0;
 } */
+table tbody tr {
+  background-color: #fff;
+}
+table tbody td:last-child, table thead td:last-child {
+  position: sticky;
+  background-color: #fff;
+  right: 0;
+}
 table tbody td {
   padding: 15px 8px;
 }

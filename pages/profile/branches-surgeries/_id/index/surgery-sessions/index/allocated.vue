@@ -5,7 +5,7 @@
     <div
       class="mt-10 w-full text-center"
       v-if="!loadingJobs && getPracticeAllocatedJobs.length === 0 "
-    >You do not have any allocated jobs</div>
+    >This spoke has no allocated jobs</div>
     <div v-if="getPracticeAllocatedJobs.length > 0" class="overflow-x-auto overflow-y-hidden">
       <JobTable :columns="columns" :jobs="getPracticeAllocatedJobs" @sortBy="sortBy" @show="show" />
     </div>
@@ -39,6 +39,7 @@ export default {
   },
   data() {
     return {
+      spokeSurgeryId: '',
       // table
       columns: [
         {
@@ -104,8 +105,21 @@ export default {
       rate: true,
       date_start: true,
       date_end: true,
-      date_created: false
+      date_created: false,
     };
+  },
+  async asyncData({app, route}){
+    try{
+      const response = await app.$axios.get(`/api/v1/practice/me/practice-surgeries/${route.params.id}`)
+      const spokeSurgeryId = response.data.data.practice_surgery.surgery.id
+     
+      return{
+        spokeSurgeryId
+      }
+    }catch(err){
+      console.log('get surgery error', err)
+    }
+    
   },
   computed: {
     getPracticeAllocatedJobs() {
@@ -139,10 +153,12 @@ export default {
     setTimeout(() => {
       this.$store.commit("jobs/CLEAR_PRACTICE_ALLOCATED_BADGE");
     }, 1000);
+
   },
   methods: {
     getJobsCount() {
       this.$store.dispatch("jobs/fetchPracticeJobs", {
+        surgery_id: this.spokeSurgeryId,
         status: "Current",
         countOnly: true
       });
@@ -175,15 +191,16 @@ export default {
     },
     clearFilters() {
       (this.params.shift_id = ""),
-        (this.params.rate = ""),
-        (this.params.locum_detail_rate_type_id = ""),
-        (this.params.order_by = "date_created:desc"),
-        this.getJobs(this.current_page, this.params);
+      (this.params.rate = ""),
+      (this.params.locum_detail_rate_type_id = ""),
+      (this.params.order_by = "date_created:desc"),
+      this.getJobs(this.current_page, this.params);
     },
     getJobs(page, params) {
       this.$store.commit("jobs/TOGGLE_LOADING", true);
       this.current_page = page;
       let defaultParams = {
+        surgery_id: this.spokeSurgeryId,
         offset: this.offset,
         limit: this.perPage,
         status: "Current"

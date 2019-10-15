@@ -1,10 +1,10 @@
 <template>
   <section>
-    <div class="p-8 max-w-5xl">
+    <div class="p-4 md:p-8">
       <div @click="$emit('close')" class="cursor-pointer">
         <svgicon name="left-arrow" height="32" width="32" />
       </div>
-      <div class="flex flex-col mt-8">
+      <div class="flex flex-col mt-4">
         <AppInput
           v-model="form.name"
           :type="'text'"
@@ -20,7 +20,7 @@
           :resize="false"
           :rows="3"
         />
-        <div class="rounded-lg shadow-md p-4">
+        <div class="rounded-lg shadow-md px-2 py-4 md:px-4">
           <div class="flex flex-wrap justify-start">
             <div class="w-full md:w-1/2 p-2" v-for="(role, index) in permissions" :key="index">
               <div class="flex flex-col">
@@ -47,7 +47,7 @@
             </div>
           </div>
         </div>
-        <div class="m-2 flex flex-wrap justify-start">
+        <div class="flex flex-wrap justify-start my-4">
           <AppButton :label="'Save'" @click="save" />
         </div>
       </div>

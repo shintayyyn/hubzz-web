@@ -56,18 +56,18 @@ export default {
       columns: [
         {
           name: "Locum",
-          dataIndex: "locum_detail.user.personal_detail.first_name",
-          class: "text-center"
+          dataIndex: "locum_detail.user.personal_detail.name",
+          class: "text-left"
         },
         {
           name: "Invoice Number",
           dataIndex: "invoice_number",
-          class: "text-center"
+          class: "text-left"
         },
         {
           name: "Job Numbers",
           dataIndex: "items.job_part.job_part_number",
-          class: "text-center"
+          class: "text-left"
         },
         {
           name: "£ Paid",
@@ -115,6 +115,7 @@ export default {
         responseCount.data && responseCount.data.count
           ? responseCount.data.count
           : 0;
+          console.log("invoices", invoices)
       return {
         invoices,
         totalInvoices

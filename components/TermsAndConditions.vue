@@ -1,9 +1,9 @@
 <template>
   <div>
-    <div class="lg:px-10">
+    <div class="px-4 lg:px-10">
       <TermsAndConditionsTabs :activeComponent="activeComponent" @goTo="activeComponent = $event" />
     </div>
-    <div class="lg:px-10 mt-5">
+    <div class="px-4 lg:px-10 mt-5">
       <transition name="fade" mode="out-in">
         <TermsAndConditions
           v-if="activeComponent === 'termsAndConditions' && terms"

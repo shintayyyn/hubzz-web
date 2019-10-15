@@ -60,7 +60,7 @@ export default () => ({
         mandatory_training_id: [],
     },
     payroll_details: {
-        employment_type: "Self-employed",
+        employment_type: "Self-Employed",
         company_registration_number: "",
         utr_number: "",
         paid_under_payroll: false,

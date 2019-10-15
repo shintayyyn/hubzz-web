@@ -19,7 +19,7 @@
           <button
             v-if="!slotProps.item.paid_at"
             v-text="'Mark as paid'"
-            class="px-2 py-3 text-white rounded-lg focus:outline-none bg-green-600 hover:bg-green-700"
+            class="p-2 text-white rounded-lg focus:outline-none bg-green-600 hover:bg-green-700"
           ></button>
         </td>
       </template>
@@ -111,18 +111,18 @@ export default {
         },
         {
           name: "Locum",
-          dataIndex: "locum_detail.user.personal_detail.first_name",
+          dataIndex: "locum_detail.user.personal_detail.name",
           class: "text-center"
         },
         {
           name: "Invoice Number",
           dataIndex: "invoice_number",
-          class: "text-center"
+          class: "text-left"
         },
         {
           name: "Job Numbers",
           dataIndex: "items.job_part.job_part_number",
-          class: "text-center"
+          class: "text-left"
         },
         {
           name: "£ Amount",

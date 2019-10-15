@@ -1,5 +1,5 @@
 <template>
-  <div class="rounded-lg shadow-lg p-8 mt-8">
+  <div class="rounded-lg shadow-lg p-4 md:p-8 mt-8">
     <div class="text-sm sm:text-base mb-4">You can cancel your application to this job</div>
     <AppButton :label="'Cancel'" @click="cancel" />
   </div>

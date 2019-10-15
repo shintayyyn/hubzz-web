@@ -22,6 +22,7 @@
         @keydown="handleKeyDownEvent"
       />
     </div>
+    <div v-if="results.length === 0 && search" class="text-sm py-2 text-gray-500">No results found</div>
     <transition name="fade">
       <div class="relative z-10" v-if="showResults">
         <div class="w-full absolute bg-white shadow-md">
@@ -108,6 +109,7 @@ export default {
         this.getSurgeries(value);
       } else {
         this.showResults = false;
+        this.$emit("input", "");
       }
     }
   },
@@ -117,12 +119,9 @@ export default {
       // this.results = [];
       this.showResults = false;
       if (this.keyword === "practices") {
-        // let fullName =
-        //   selectedSurgery.personal_detail.first_name +
-        //   " " +
-        //   selectedSurgery.personal_detail.last_name;
-        // this.$emit("input", fullName);
-        // this.$emit("selectUserId", selectedSurgery.id);
+        if (!selectedSurgery){
+          return
+        }
         this.$axios
           .$get(`/api/v1/conversations?user_id=${selectedSurgery.id}`)
           .then(res => {
@@ -137,19 +136,6 @@ export default {
               }
               this.$router.push(`/messages/${id}`);
             }
-            // if res.data.user, emit newConversation
-            // else if res.data.conversation, get conversation Id
-            // this.getConversation(res.dat.conversation.conversation_id)
-
-            // console.log("a", res);
-            // if (res.data.conversations) {
-            //   this.search = "";
-            //   this.$router.push(
-            //     `/messages/${res.data.conversation.conversation_id}`
-            //   );
-            // } else {
-            //   this.search = fullName;
-            // }
           });
       } else {
         this.$emit("input", selectedSurgery.name);
@@ -169,7 +155,7 @@ export default {
         }
         this.showResults = true;
       });
-    }, 250),
+    }, 500),
     toggledOn() {
       if (this.search.length) {
         this.showResults = true;

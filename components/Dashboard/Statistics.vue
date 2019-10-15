@@ -1,6 +1,6 @@
 <template>
   <section>
-    <div class="flex flex-row flex-wrap justify-start">
+    <div class="flex flex-row flex-wrap justify-start lg:max-w-6xl">
       <div
         class="px-2 my-2 sm:my-4 w-full sm:w-1/2 lg:max-w-sm"
         :class="$auth.user.domain === 'Locum' ? 'md:w-1/4' : 'md:w-1/3'"
@@ -45,22 +45,22 @@ export default {
         this.statistics.push({
           label: "Available jobs",
           value: responses[0].data.count,
-          route: "/jobs?job_status=available"
+          route: "/jobs/available"
         }),
           this.statistics.push({
             label: "Allocated jobs",
             value: responses[1].data.count,
-            route: "/jobs?job_status=allocated"
+            route: "/jobs/allocated"
           }),
           this.statistics.push({
             label: "Applied jobs",
             value: responses[2].data.count,
-            route: "/jobs?job_status=applied"
+            route: "/jobs/applied"
           }),
           this.statistics.push({
             label: "Completed jobs",
             value: responses[3].data.count,
-            route: "/jobs?job_status=completed"
+            route: "/jobs/completed"
           });
       });
     },

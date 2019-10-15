@@ -23,9 +23,9 @@
       </div>
 
       <div class="flex flex-col p-4">
-        <div class="shadow-lg rounded-lg bg-gray-300 mt-5">
+        <div class="shadow-lg rounded-lg bg-gray-300 mt-5 max-w-5xl">
           <div class="flex flex-row flex-wrap justify-start p-8">
-            <div class="flex flex-col w-full lg:w-1/4">
+            <div class="flex flex-col w-full lg:w-1/4 pr-4">
               <p class="font-bold text-lg">Title</p>
               <p
                 class="mt-2 text-sm md:text-base"
@@ -57,7 +57,6 @@
                 :class="compliance_document.file.type == 'image' ? 'image' : 'document h-full'"
                 :src="compliance_document.file.subtype === 'tiff' || compliance_document.file.subtype === 'msword' ? convertDoc(compliance_document.file.url) : compliance_document.file.url"
               />
-              <!-- :src="compliance_document.file.url" -->
             </div>
           </div>
         </div>
@@ -76,36 +75,6 @@ export default {
         response.data && response.data.locum_detail_compliance_document
           ? response.data.locum_detail_compliance_document
           : null;
-      if (
-        compliance_document.file.subtype === "tiff" ||
-        compliance_document.file.subtype === "msword"
-      ) {
-        // let getUrl = compliance_document.file.url.split(".");
-        // let getLastIndex = getUrl.length - 1;
-        // let url = getUrl.splice(0, getLastIndex).join(".");
-        // let extension;
-        // if (compliance_document.file.subtype === "tiff") {
-        //   extension = ".jpg";
-        // } else {
-        //   extension = ".pdf";
-        // }
-        // console.log("file", filepreview);
-        // filepreview.generateSync(
-        //   compliance_document.file.url,
-        //   url + extension,
-        //   function(error) {
-        //     console.log(error);
-        //   }
-        // );
-        // let newFile = filepreview.render(
-        //   compliance_document.file.url,
-        //   url + extension
-        // );
-        // // let newFile = `${url}${extension}`;
-        // console.log(newFile);
-        // compliance_document.file.url = newFile;
-      }
-
       return {
         compliance_document
       };
@@ -134,11 +103,7 @@ export default {
       });
     },
     convertDoc(document) {
-      if (this.compliance_document.file.subtype === "tiff") {
-        return document;
-      } else if (this.compliance_document.file.subtype === "msword") {
         return `https://docs.google.com/gview?url=${document}&embedded=true`;
-      }
     }
   }
 };

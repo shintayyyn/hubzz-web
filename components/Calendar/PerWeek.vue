@@ -527,57 +527,51 @@ export default {
     getJobs() {
       if (this.$auth.user.domain === "Practice") {
         this.$store.dispatch("jobs/fetchPracticeJobs", {
-          data_start: this.firstDayOfTheWeek,
-          date_end: this.lastDayOfTheWeek,
+          data_start: `${this.firstDayOfTheWeek}:gte`,
+          date_end: `${this.lastDayOfTheWeek}:lte`,
           status: "Current"
         });
 
         this.$store.dispatch("jobs/fetchPracticeJobs", {
-          data_start: this.firstDayOfTheWeek,
-          date_end: this.lastDayOfTheWeek,
+          data_start: `${this.firstDayOfTheWeek}:gte`,
+          date_end: `${this.lastDayOfTheWeek}:lte`,
           status: "Applied"
         });
 
         this.$store.dispatch("jobs/fetchPracticeJobs", {
-          data_start: this.firstDayOfTheWeek,
-          date_end: this.lastDayOfTheWeek,
+          data_start: `${this.firstDayOfTheWeek}:gte`,
+          date_end: `${this.lastDayOfTheWeek}:lte`,
           status: "Unfilled"
         });
 
         this.$store.dispatch("jobs/fetchPracticeJobs", {
-          data_start: this.firstDayOfTheWeek,
-          date_end: this.lastDayOfTheWeek,
+          data_start: `${this.firstDayOfTheWeek}:gte`,
+          date_end: `${this.lastDayOfTheWeek}:lte`,
           status: "Declined"
         });
 
         this.$store.dispatch("jobs/fetchPracticeJobsReminder", {
-          platform_selection_date_start: this.firstDayOfTheWeek,
-          platform_selection_date_end: this.lastDayOfTheWeek,
+          platform_selection_date_start: `${this.firstDayOfTheWeek}:gte`,
+          platform_selection_date_end: `${this.lastDayOfTheWeek}:lte`,
           status: "Available"
         });
-
-        // this.$store.dispatch("jobs/fetchPracticeJobsReminder", {
-        //   platform_selection_date_start: this.firstDayOfTheWeek,
-        //   platform_selection_date_end: this.lastDayOfTheWeek,
-        //   status: "Applied"
-        // });
       }
       if (this.$auth.user.domain === "Locum") {
         this.$store.dispatch("jobs/fetchLocumJobs", {
-          date_start: this.firstDayOfTheWeek,
-          date_end: this.lastDayOfTheWeek,
+          date_start: `${this.firstDayOfTheWeek}:gte`,
+          date_end: `${this.lastDayOfTheWeek}:lte`,
           status: "Current"
         });
 
         this.$store.dispatch("jobs/fetchLocumJobs", {
-          date_start: this.firstDayOfTheWeek,
-          date_end: this.lastDayOfTheWeek,
+          date_start: `${this.firstDayOfTheWeek}:gte`,
+          date_end: `${this.lastDayOfTheWeek}:lte`,
           status: "Applied"
         });
 
         this.$store.dispatch("jobs/fetchLocumUnavailabilities", {
-          date_start: this.firstDayOfTheWeek,
-          date_end: this.lastDayOfTheWeek
+          date_start: `${this.firstDayOfTheWeek}:gte`,
+          date_end: `${this.lastDayOfTheWeek}:lte`
         });
       }
     },

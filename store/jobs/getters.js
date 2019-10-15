@@ -29,13 +29,30 @@ export default {
     },
     getPracticeJobsBadge(state) {
         return [
-            state.practice_new_allocated_jobs_count, state.practice_new_available_jobs_count, state.practice_new_applied_jobs_count, 
-            state.practice_new_unfilled_jobs_count, state.practice_new_declined_jobs_count, 
+            state.practice_new_allocated_jobs_count, state.practice_new_available_jobs_count, state.practice_new_applied_jobs_count,
+            state.practice_new_unfilled_jobs_count, state.practice_new_declined_jobs_count,
             state.practice_new_cancelled_jobs_count, state.practice_new_completed_jobs_count
         ].reduce((accumulator, currentValue) => accumulator + currentValue)
     },
     // locum
+    getLocumOngoingJobs(state) {
+        return state.locum_ongoing_jobs
+    },
     getLocumAllocatedJobs(state) {
+        // let jobs = state.locum_allocated_jobs.map(job => {
+        //     if (job.type === 'Private') {
+        //         return {
+        //             ...job, job: job.private_job
+        //         }
+        //     }
+        //     if (job.type === 'Platform') {
+        //         return {
+        //             ...job, job: job.platform_job
+        //         }
+        //     }
+        // })
+        // console.log(jobs)
+        // return []
         return state.locum_allocated_jobs
     },
     getLocumAllocatedPrivateJobs(state) {
@@ -70,9 +87,9 @@ export default {
     },
     getLocumJobsBadge(state) {
         return [
-            state.locum_new_allocated_jobs_count, state.locum_new_available_jobs_count, 
-            state.locum_new_matched_jobs_count, state.locum_new_applied_jobs_count, 
-            state.locum_new_unsuccessful_jobs_count, state.locum_new_declined_jobs_count, 
+            state.locum_new_allocated_jobs_count, state.locum_new_available_jobs_count,
+            state.locum_new_matched_jobs_count, state.locum_new_applied_jobs_count,
+            state.locum_new_unsuccessful_jobs_count, state.locum_new_declined_jobs_count,
             state.locum_new_cancelled_jobs_count, state.locum_new_completed_jobs_count
         ].reduce((accumulator, currentValue) => accumulator + currentValue)
     }

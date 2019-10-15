@@ -16,6 +16,13 @@
       </div>
       <div class="relative">
         <nuxt-link
+          to="/jobs/ongoing"
+          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          :class="$route.name === 'jobs-ongoing' || $route.name === 'jobs-ongoing-id'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        >Ongoing</nuxt-link>
+      </div>
+      <div class="relative">
+        <nuxt-link
           to="/jobs/available"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
           :class="$route.name === 'jobs-available' || $route.name === 'jobs-available-id'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"

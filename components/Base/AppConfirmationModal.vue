@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="shield" v-if="modal"></div>
+    <div class="shield" v-if="modal" @click.prevent="$emit('cancel')"></div>
     <transition name="drop" mode="out-in">
       <div class="flex justify-center remove-confirmation-modal" v-if="modal">
         <div

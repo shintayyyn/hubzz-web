@@ -1,6 +1,6 @@
 <template>
   <div class="modal-container shadow-lg">
-    <div class="p-8 max-w-5xl">
+    <div class="p-8">
       <div @click="$router.push(`/my-banks/withdrawn`)" class="cursor-pointer">
         <svgicon name="left-arrow" height="32" width="32" />
       </div>
