@@ -283,7 +283,6 @@ input[type="checkbox"]:checked + label:after {
 
 .customized-select {
   position: relative;
-  z-index: 50;
 }
 /* 
 .customized-select::after {

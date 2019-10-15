@@ -2,7 +2,7 @@
   <div>
     <span class="md:hidden bg-yellow-500 text-center py-1 px-4 text-sm rounded-lg cursor-pointer" @click="showFilter ? showFilter = false : showFilter = true">Filter</span>
     <div class="absolute left-0 top-0 w-full bg-white rounded-lg p-4 text-sm -mt-32 mb-4 md:mt-0 md:mb-0 md:static md:text-base md:flex flex-row flex-wrap"
-     style="z-index: 56" v-if="$auth.user.domain === 'Locum' && showFilter">
+      v-if="$auth.user.domain === 'Locum' && showFilter">
       <div class="md:hidden w-full text-right text-xl font-bold -mt-2 hover:text-gray-600"><span class="cursor-pointer" @click="showFilter = false">x</span></div>
       <div class="w-full md:w-1/3 p-1">
         <AppInput

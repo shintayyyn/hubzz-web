@@ -6,7 +6,7 @@
         :type="'search'"
         :name="'search_text'"
         :placeholder="'Search Messages'"
-        class="mx-4 my-1 md:mt-0 pt-3"
+        class="mx-4 my-1 md:mt-0 pt-4"
         :class="$auth.user.domain === 'Locum' ? 'mt-10' : 'mt-12'"
         @keydown.enter="search"
       />
@@ -89,7 +89,7 @@
             v-if="(messages.length === 0 && showResult === true) || conversations.length === 0"
             class="flex flex-col h-full items-center pt-20 font-bold text-gray-500"
           >
-            <span v-if="showResult === true" class="text-center break-all px-4">
+            <span v-if="showResult === true" class="text-center break-words break-all px-4">
               No messages found for
               <br />
               "{{ search_text }}"
