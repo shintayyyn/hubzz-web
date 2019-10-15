@@ -181,10 +181,18 @@ export default {
     },
     async fetchLocumJobParts({ commit }, payload) {
         const response = await jobsApi.fetchLocumJobParts(this.$axios, payload)
-        if (payload.countOnly) {
-            return commit('SET_LOCUM_ONGOING_JOBS_COUNT', response.data.count)
+        if (payload.status === "Ongoing") {
+            if (payload.countOnly) {
+                return commit('SET_LOCUM_ONGOING_JOBS_COUNT', response.data.count)
+            }
+            return commit('SET_LOCUM_ONGOING_JOBS', response.data.job_parts)
         }
-        return commit('SET_LOCUM_ONGOING_JOBS', response.data.job_parts)
+        if (payload.status === "Completed") {
+            if (payload.countOnly) {
+                return commit('SET_LOCUM_COMPLETED_JOBS_COUNT', response.data.count)
+            }
+            return commit('SET_LOCUM_COMPLETED_JOBS', response.data.job_parts)
+        }
     },
     async fetchLocumJobs({ commit }, payload) {
         const response = await jobsApi.fetchLocumJobs(this.$axios, payload)
@@ -230,12 +238,12 @@ export default {
             }
             return commit('SET_LOCUM_CANCELLED_JOBS', response.data.jobs)
         }
-        if (payload.status === "Completed") {
-            if (payload.countOnly) {
-                return commit('SET_LOCUM_COMPLETED_JOBS_COUNT', response.data.count)
-            }
-            return commit('SET_LOCUM_COMPLETED_JOBS', response.data.jobs)
-        }
+        // if (payload.status === "Completed") {
+        //     if (payload.countOnly) {
+        //         return commit('SET_LOCUM_COMPLETED_JOBS_COUNT', response.data.count)
+        //     }
+        //     return commit('SET_LOCUM_COMPLETED_JOBS', response.data.jobs)
+        // }
     },
     async fetchLocumJob({ state, commit }, payload) {
         commit('TOGGLE_LOADING', true)

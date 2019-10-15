@@ -27,8 +27,9 @@ export function fetchLocumJobParts(axios, payload) {
     let params = {}
     payload.offset ? params.offset = payload.offset : null
     payload.limit ? params.limit = payload.limit : null
-    payload.locum_job_status ? params.locum_job_status = payload.locum_job_status : null
+    payload.status ? params.locum_status = payload.status : null
     payload.date_start ? params.date_start = payload.date_start : null
+    payload.date_end ? params.date_end = payload.date_end : null
     return axios.$get(`/api/v1/locum/job-parts${payload.countOnly ? '/count' : ''}`, { params })
 }
 

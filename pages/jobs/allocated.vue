@@ -2,58 +2,69 @@
   <section class="relative">
     <AppLoading :loading="loadingJobs" spinner />
     <div class="relative flex flex-wrap justify-start items-center">
-      <AppInput
-        class="px-1"
-        v-model="params.shift_id"
-        :type="'select'"
-        :name="'shift_id'"
-        :label="'Shift'"
-        :placeholder="'Select...'"
-        :items="shifts"
-      />
-      <AppInput
-        class="px-1"
-        v-model="params.rate"
-        :type="'text'"
-        :name="'rate'"
-        :label="'Rate'"
-        :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
-      />
-
-      <AppInput
-        class="px-1"
-        v-model="params.locum_detail_rate_type_id"
-        :type="'select'"
-        :name="'locum_detail_rate_type_id'"
-        :label="'per'"
-        :placeholder="'Select...'"
-        :items="rates"
-      />
-      <AppPostCode
-        class="px-1"
-        v-model="params.near_post_code"
-        :name="'near_post_code'"
-        :label="'Post code'"
-        @onSelect="onSelect"
-        :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;border-style:solid'"
-      />
-      <AppInput
-        class="px-1"
-        v-model="params.miles"
-        :type="'text'"
-        :name="'miles'"
-        :label="'Miles'"
-        :placeholder="''"
-        :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
-      />
-      <AppAutoComplete
-        class="px-1"
-        v-model="params.surgery_name"
-        :name="'surgery_name'"
-        :label="'Surgery'"
-        :url="'/api/v1/locum/surgeries'"
-        :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem'"
-      />
+      <div class="px-1 w-full md:w-1/3">
+        <AppInput
+          class="px-1"
+          v-model="params.shift_id"
+          :type="'select'"
+          :name="'shift_id'"
+          :label="'Shift'"
+          :placeholder="'Select...'"
+          :items="shifts"
+        />
+      </div>
+      <div class="px-1 w-full md:w-1/3">
+        <AppInput
+          class="px-1"
+          v-model="params.rate"
+          :type="'text'"
+          :name="'rate'"
+          :label="'Rate'"
+          :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
+        />
+      </div>
+      <div class="px-1 w-full md:w-1/3">
+        <AppInput
+          class="px-1"
+          v-model="params.locum_detail_rate_type_id"
+          :type="'select'"
+          :name="'locum_detail_rate_type_id'"
+          :label="'per'"
+          :placeholder="'Select...'"
+          :items="rates"
+        />
+      </div>
+      <div class="px-1 w-full md:w-1/3">
+        <AppPostCode
+          class="px-1"
+          v-model="params.near_post_code"
+          :name="'near_post_code'"
+          :label="'Post code'"
+          @onSelect="onSelect"
+          :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;border-style:solid'"
+        />
+      </div>
+      <div class="px-1 w-full md:w-1/3">
+        <AppInput
+          class="px-1"
+          v-model="params.miles"
+          :type="'text'"
+          :name="'miles'"
+          :label="'Miles'"
+          :placeholder="''"
+          :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
+        />
+      </div>
+      <div class="px-1 w-full md:w-1/3">
+        <AppAutoComplete
+          class="px-1"
+          v-model="params.surgery_name"
+          :name="'surgery_name'"
+          :label="'Surgery'"
+          :url="'/api/v1/locum/surgeries'"
+          :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem'"
+        />
+      </div>
       <AppButton
         class="w-full"
         :label="'Clear'"

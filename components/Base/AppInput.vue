@@ -1,6 +1,6 @@
 <template>
   <section>
-    <!-- text / email / password / date / time / select / textarea / multicheckbox -->
+    <!-- text / email / password / time / select / textarea / multicheckbox -->
     <template
       v-if="['text','time','email','password', 'select', 'textarea', 'multi-checkbox'].includes(type)"
     >
@@ -38,7 +38,7 @@
                 :value="value"
                 :type="type"
                 :placeholder="placeholder"
-                class="border-b-2 focus:border-yellow-400 focus:outline-none py-4 font-bold text-xs sm:text-sm w-full"
+                class="border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full"
                 :class="error ? 'border-red-500' : ''"
                 @input="$emit('input', $event.target.value)"
                 @keypress.enter="$emit('submit')"
@@ -48,7 +48,7 @@
               />
             </template>
             <template v-if="type === 'select'">
-              <div class="w-full relative customized-select py-3">
+              <div class="w-full relative customized-select py-8 flex items-center">
                 <select
                   ref="inputSelect"
                   :value="value"
@@ -69,7 +69,11 @@
                   >{{item.label}}</option>
                 </select>
                 <span class="absolute right-0 z-10">
-                  <svgicon name="arrow-up" class="h-full w-10 p-2" style="transform: rotate(180deg)"/>
+                  <svgicon
+                    name="arrow-up"
+                    class="h-full w-10 p-2"
+                    style="transform: rotate(180deg)"
+                  />
                 </span>
               </div>
             </template>

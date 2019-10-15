@@ -1,6 +1,6 @@
 <template>
   <section>
-    <div class="flex flex-row flex-wrap justify-start mb-2 md:mb-0">
+    <div class="flex flex-row flex-wrap justify-start mb-2 md:mb-0 lg:max-w-6xl">
       <div
         class="pr-4 my-2 md:my-4 w-full sm:w-1/2 lg:max-w-sm"
         v-for="(item, index) in reminders"
@@ -197,7 +197,7 @@ a {
   text-decoration: none;
   color: black;
 }
-@media screen and (min-width: 768px){
+@media screen and (min-width: 768px) {
   .reminder-card {
     min-height: 130px;
   }

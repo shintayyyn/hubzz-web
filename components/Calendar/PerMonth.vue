@@ -202,57 +202,57 @@ export default {
         this.authPermissions.includes("View Sessions Job")
       ) {
         this.$store.dispatch("jobs/fetchPracticeJobs", {
-          data_start: this.startOfMonth,
-          date_end: this.endOfMonth,
+          date_start: `${this.startOfMonth}:gte`,
+          date_end: `${this.endOfMonth}:lte`,
           status: "Current"
         });
 
         this.$store.dispatch("jobs/fetchPracticeJobs", {
-          data_start: this.startOfMonth,
-          date_end: this.endOfMonth,
+          date_start: `${this.startOfMonth}:gte`,
+          date_end: `${this.endOfMonth}:lte`,
           status: "Applied"
         });
 
         this.$store.dispatch("jobs/fetchPracticeJobs", {
-          data_start: this.startOfMonth,
-          date_end: this.endOfMonth,
+          date_start: `${this.startOfMonth}:gte`,
+          date_end: `${this.endOfMonth}:lte`,
           status: "Unfilled"
         });
 
         this.$store.dispatch("jobs/fetchPracticeJobs", {
-          data_start: this.startOfMonth,
-          date_end: this.endOfMonth,
+          date_start: `${this.startOfMonth}:gte`,
+          date_end: `${this.endOfMonth}:lte`,
           status: "Declined"
         });
 
         this.$store.dispatch("jobs/fetchPracticeJobsReminder", {
-          platform_selection_date_start: this.startOfMonth,
-          platform_selection_date_end: this.endOfMonth,
+          platform_selection_date_start: `${this.startOfMonth}:gte`,
+          platform_selection_date_end: `${this.endOfMonth}:lte`,
           status: "Available"
         });
 
         this.$store.dispatch("jobs/fetchPracticeJobsReminder", {
-          platform_selection_date_start: this.startOfMonth,
-          platform_selection_date_end: this.endOfMonth,
+          platform_selection_date_start: `${this.startOfMonth}:gte`,
+          platform_selection_date_end: `${this.endOfMonth}:lte`,
           status: "Applied"
         });
       }
       if (this.$auth.user.domain === "Locum") {
         this.$store.dispatch("jobs/fetchLocumJobs", {
-          date_start: this.startOfMonth,
-          date_end: this.endOfMonth,
-          status: "Current"
+          date_start: `${this.startOfMonth}:gte`,
+          date_end: `${this.endOfMonth}:lte`,
+          status: "Ongoing"
         });
 
         this.$store.dispatch("jobs/fetchLocumJobs", {
-          date_start: this.startOfMonth,
-          date_end: this.endOfMonth,
+          date_start: `${this.startOfMonth}:gte`,
+          date_end: `${this.endOfMonth}:lte`,
           status: "Applied"
         });
 
         this.$store.dispatch("jobs/fetchLocumUnavailabilities", {
-          date_start: this.startOfMonth,
-          date_end: this.endOfMonth
+          date_start: `${this.startOfMonth}:gte`,
+          date_end: `${this.endOfMonth}:lte`
         });
       }
     },

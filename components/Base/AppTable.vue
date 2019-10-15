@@ -29,7 +29,7 @@
           </tr>
         </thead>
         <tbody>
-          <template v-for="item in items">
+          <template v-for="(item, index) in items">
             <tr
               @click="$emit('show', item)"
               :key="item.id"
@@ -56,6 +56,9 @@
                 </template>
               </td>
               <slot name="actions" v-bind:item="item"></slot>
+            </tr>
+            <tr :key="`${item.id}-${index}`">
+              <td></td>
             </tr>
           </template>
         </tbody>
@@ -243,12 +246,12 @@ export default {
 };
 </script>
 <style scoped>
-table thead th {
+/* table thead th {
   padding: 10px;
 }
 table tbody td {
   padding: 15px;
-}
+} */
 #data-cell {
   /* max-width: 100px; */
   white-space: nowrap;

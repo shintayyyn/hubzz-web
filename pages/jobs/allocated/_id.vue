@@ -1,7 +1,11 @@
 <template>
   <div class="modal-container shadow-lg">
     <JobDetailModalAppointment :job="job" v-if="job.type === 'Private'" />
-    <JobDetailModal :job="job" v-else @close="$router.push(`/jobs/allocated`)" />
+    <JobDetailModal
+      :job="job"
+      v-if="job.type === 'Platform'"
+      @close="$router.push(`/jobs/allocated`)"
+    />
   </div>
 </template>
 <script>

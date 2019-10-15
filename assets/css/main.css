@@ -19,7 +19,7 @@ a {
 table {
   width: 100%;
   min-width: 0;
-  border-collapse: separate;
+  /* border-collapse: separate; */
   /* border-spacing: 0 20px; */
   white-space: nowrap;
   /* min-width: 1620px; */
@@ -33,13 +33,13 @@ table {
   }
 }
 
-/* table thead th {
+table thead th {
   padding: 15px;
 }
 
 table tbody td {
   padding: 15px;
-} */
+}
 
 .__jobs-section {
   position: relative;

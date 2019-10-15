@@ -24,15 +24,17 @@
           :placeholder="'Select...'"
           :items="practices"
         />
-        <AppButton :label="'Add'" @click="modal = true" :inStyle="'padding:5px 14px;'" />
-        <div class="flex flex-row flex-wrap justify-start mt-8">
-          <div class="px-1">
+        <div class="pt-4">
+          <AppButton :label="'Add'" @click="modal = true" :inStyle="'padding:5px 14px;'" />
+        </div>
+        <div class="flex flex-row flex-wrap justify-start mt-8 items-center max-w-2xl">
+          <div class="px-1 w-full sm:w-1/3">
             <AppDate v-model="form.date_start" :name="'date_start'" :label="'From'" />
           </div>
-          <div class="px-1">
+          <div class="px-1 w-full sm:w-1/3">
             <AppDate v-model="form.date_end" :name="'date_end'" :label="'To'" />
           </div>
-          <div class="px-1 leading-loose">
+          <div class="px-1 w-full sm:w-1/3">
             <AppInput
               v-model="form.shift_id"
               :type="'select'"
@@ -43,26 +45,29 @@
             />
           </div>
         </div>
-        <div class="flex flex-row flex-wrap justify-start mt-4">
-          <AppInput
-            v-model="form.rate"
-            :type="'text'"
-            :name="'rate'"
-            :label="'Rate £'"
-            :placeholder="''"
-            :inStyle="'text-align:right'"
-          />
-          <div class="mx-2"></div>
-          <AppInput
-            v-model="form.locum_detail_rate_type_id"
-            :type="'select'"
-            :name="'locum_detail_rate_type_id'"
-            :label="'per'"
-            :placeholder="'Select...'"
-            :items="rate_types"
-          />
+        <div class="flex flex-row flex-wrap justify-start items-center mt-4 max-w-lg">
+          <div class="px-1 w-full sm:w-1/2">
+            <AppInput
+              v-model="form.rate"
+              :type="'text'"
+              :name="'rate'"
+              :label="'Rate £'"
+              :placeholder="''"
+              :inStyle="'text-align:right'"
+            />
+          </div>
+          <div class="px-1 w-full sm:w-1/2">
+            <AppInput
+              v-model="form.locum_detail_rate_type_id"
+              :type="'select'"
+              :name="'locum_detail_rate_type_id'"
+              :label="'per'"
+              :placeholder="'Select...'"
+              :items="rate_types"
+            />
+          </div>
         </div>
-        <div class="flex flex-row flex-wrap justify-start mt-4">
+        <div class="flex flex-row flex-wrap justify-start items-center mt-4 max-w-md">
           <div class="flex flex-wrap items-center mt-2">
             <AppInput
               v-model="form.total_hours"
@@ -191,6 +196,7 @@ export default {
       this.form.total_hours = this.job.total_hours;
       this.form.description = this.job.description;
     }
+    console.log(this.form);
   },
   computed: {
     practices() {
@@ -271,9 +277,9 @@ export default {
           status: "danger",
           text: ["Please fill up all the forms"]
         });
-        this.$nextTick(() => {
-          this.$refs.modalContainer.scrollTop = 0;
-        });
+        // this.$nextTick(() => {
+        //   this.$refs.modalContainer.scrollTop = 0;
+        // });
       }
     },
     edit() {
@@ -310,9 +316,9 @@ export default {
               status: "danger",
               text: this.formError.map(error => error.message)
             });
-            this.$nextTick(() => {
-              this.$refs.modalContainer.scrollTop = 0;
-            });
+            // this.$nextTick(() => {
+            //   this.$refs.modalContainer.scrollTop = 0;
+            // });
           });
       } else {
         this.$store.commit("SET_NOTIFICATION", {
@@ -320,9 +326,9 @@ export default {
           status: "danger",
           text: ["Please fill up all the forms"]
         });
-        this.$nextTick(() => {
-          this.$refs.modalContainer.scrollTop = 0;
-        });
+        // this.$nextTick(() => {
+        //   this.$refs.modalContainer.scrollTop = 0;
+        // });
       }
     },
     remove() {

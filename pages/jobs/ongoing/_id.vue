@@ -1,12 +1,23 @@
 <template>
   <div class="modal-container shadow-lg">
-    <JobPartDetailModal :job_part="job_part" @close="$router.push('/jobs/ongoing')" />
+    <JobPartDetailModalAppointment
+      :job_part="job_part"
+      v-if="job_part.job.type === 'Private'"
+      @close="$router.push('/jobs/ongoing')"
+    />
+    <JobPartDetailModal
+      :job_part="job_part"
+      v-if="job_part.job.type === 'Platform'"
+      @close="$router.push('/jobs/ongoing')"
+    />
   </div>
 </template>
 <script>
+import JobPartDetailModalAppointment from "@/components/Jobs/JobPartDetailModalAppointment";
 import JobPartDetailModal from "@/components/Jobs/JobPartDetailModal";
 export default {
   components: {
+    JobPartDetailModalAppointment,
     JobPartDetailModal
   },
   async asyncData({ app, route, store, error }) {

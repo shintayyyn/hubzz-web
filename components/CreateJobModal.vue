@@ -11,7 +11,7 @@
         <div class="w-full md:w-1/2 pr-4 mb-4">
           <div class="flex flex-col">
             <h4 class="font-bold">Practice</h4>
-            <div class="rounded-lg shadow-lg px-8 pt-4 mt-4">
+            <div class="rounded-lg shadow-lg px-8 py-4 mt-4">
               <AppInput
                 v-model="form.practice_id"
                 :type="'select'"

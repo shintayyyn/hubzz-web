@@ -22,7 +22,7 @@ export default {
       }
 
       let response = await app.$axios.get(`${url}/${params.id}`);
-      console.log("test1", response);
+
       if (response.data.data.job) {
         let job = response.data.data.job;
         let status = job.locum_status.toLowerCase();
@@ -41,10 +41,8 @@ export default {
       if (response.data.data.job_part) {
         let job_part = response.data.data.job_part;
         let jobPartStatus = job_part.locum_status.toLowerCase();
-        if (
-          jobPartStatus === "current" ||
-          jobPartStatus === query.status.toLowerCase()
-        ) {
+
+        if (jobPartStatus === "current") {
           redirect(`/jobs/ongoing/${params.id}`);
         } else if (jobPartStatus === query.status.toLowerCase()) {
           redirect(`/jobs/${jobPartStatus}/${params.id}`);
@@ -56,7 +54,6 @@ export default {
         }
       }
     } catch (err) {
-      console.log("asdsa");
       if (err && err.response.status === 404) {
         return error({ status: 404, message: "This page could not be found" });
       }

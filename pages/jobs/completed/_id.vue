@@ -1,25 +1,29 @@
 <template>
   <div class="modal-container shadow-lg">
-    <JobDetailModalAppointment :job="job" v-if="job.type === 'Private'" />
-    <JobDetailModal :job="job" v-else @close="$router.push(`/jobs/completed`)" />
+    <JobDetailModalAppointment :job="job_part" v-if="job_part.job.type === 'Private'" />
+    <JobPartDetailModal
+      :job_part="job_part"
+      v-if="job_part.job.type === 'Platform'"
+      @close="$router.push('/jobs/completed')"
+    />
   </div>
 </template>
 <script>
-import JobDetailModal from "@/components/Jobs/JobDetailModal";
 import JobDetailModalAppointment from "@/components/Jobs/JobDetailModalAppointment";
+import JobPartDetailModal from "@/components/Jobs/JobPartDetailModal";
 export default {
   components: {
-    JobDetailModal,
-    JobDetailModalAppointment
+    JobDetailModalAppointment,
+    JobPartDetailModal
   },
   async asyncData({ app, route, store, error }) {
     try {
       let response = await app.$axios.get(
-        `/api/v1/locum/jobs/${route.params.id}`
+        `/api/v1/locum/job-parts/${route.params.id}`
       );
-      const job = response.data.data.job;
+      const job_part = response.data.data.job_part;
       return {
-        job
+        job_part
       };
     } catch (err) {
       if (err && err.response.status === 404) {

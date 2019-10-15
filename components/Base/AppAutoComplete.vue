@@ -170,7 +170,7 @@ export default {
         }
         this.showResults = true;
       });
-    }, 250),
+    }, 500),
     toggledOn() {
       if (this.search.length) {
         this.showResults = true;
