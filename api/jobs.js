@@ -1,6 +1,7 @@
 export function fetchPracticeJobs(axios, payload) {
     let params = {}
     payload.locum_detail_id ? params.locum_detail_id = payload.locum_detail_id : null
+    payload.surgery_id ? params.surgery_id = payload.surgery_id : null
     payload.offset ? params.offset = payload.offset : null
     payload.limit ? params.limit = payload.limit : null
     payload.status ? params.status = payload.status : null
@@ -20,6 +21,15 @@ export function fetchPracticeJobsReminder(axios, payload) {
     payload.platform_selection_date_start ? params.platform_selection_date_start = payload.platform_selection_date_start : null
     payload.platform_selection_date_end ? params.platform_selection_date_end = payload.platform_selection_date_end : null
     return axios.$get(`/api/v1/practice/jobs`, { params: params })
+}
+
+export function fetchLocumJobParts(axios, payload) {
+    let params = {}
+    payload.offset ? params.offset = payload.offset : null
+    payload.limit ? params.limit = payload.limit : null
+    payload.locum_job_status ? params.locum_job_status = payload.locum_job_status : null
+    payload.date_start ? params.date_start = payload.date_start : null
+    return axios.$get(`/api/v1/locum/job-parts${payload.countOnly ? '/count' : ''}`, { params })
 }
 
 export function fetchLocumJobs(axios, payload) {

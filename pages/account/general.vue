@@ -13,12 +13,12 @@
         @blur="CheckEmptyField(form.email, 'email')"
       />
       <div class="-mt-6 mb-4">
-        <template v-if="email_isVerified === true">
+        <template v-if="email_verifiedAt">
           <span
             class="text-xs"
           >E-mail is Verified on {{$moment(email_verifiedAt).format('MMM DD, YYYY | hh:mm A')}}</span>
         </template>
-        <template v-if="email_isVerified === false">
+        <template v-if="!email_verifiedAt">
           <span class="text-red-500 text-xs">E-mail is not yet verified.</span>
           <span
             class="p-1 bg-gray-800 rounded text-xs text-white cursor-pointer whitespace-no-wrap"
@@ -174,7 +174,6 @@ export default {
       },
       formError: [],
       loading: false,
-      email_isVerified: "",
       email_verifiedAt: ""
     };
   },
@@ -232,7 +231,6 @@ export default {
     this.form.address_line_2 = this.user.address_detail.address.line_2;
     this.form.address_line_3 = this.user.address_detail.address.line_3;
     this.form.post_code = this.user.address_detail.address.post_code;
-    this.email_isVerified = this.user.is_email_verified;
     this.email_verifiedAt = this.user.email_verified_at;
   },
   methods: {

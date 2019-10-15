@@ -25,6 +25,7 @@ export default () => ({
     practice_declined_jobs_count: 0,
     practice_new_declined_jobs_count: 0,
     // LOCUM
+    locum_ongoing_jobs: [],
     locum_allocated_jobs: [],
     locum_allocated_jobs_count: 0,
     locum_new_allocated_jobs_count: 0,

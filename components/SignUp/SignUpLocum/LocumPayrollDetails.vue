@@ -16,22 +16,23 @@
             :label="'Are you...?'"
             :items="employmentTypes"
           />
-          <template v-if="form.employment_type === 'Limited company'">
+          <template v-if="form.employment_type === 'Limited Company'">
             <AppInput
               v-model="form.company_registration_number"
               :type="'text'"
               :name="'company_registration_number'"
               :label="'Company_registration_number'"
               :placeholder="'The number of your company from Companies House'"
+              :error="formError.find(item => item.field === 'company_registration_number')"
             />
           </template>
-          <template v-else>
+          <template v-if="form.employment_type === 'Self-Employed'">
             <AppInput
               v-model="form.utr_number"
               :type="'text'"
               :name="'utr_number'"
               :label="'UTR number'"
-              :placeholder="''"
+              :error="formError.find(item => item.field === 'utr_number')"
             />
           </template>
           <AppInput
@@ -76,8 +77,7 @@
             :type="'single-checkbox'"
             :name="'ir35'"
             :label="'Are you willing to work for a role captured within IR35 rules, subject to deduction of Tax and N.I.?'"
-            :placeholder="''"
-            :error="this.formError.find(item => item.field === 'ir35')"
+            :error="formError.find(item => item.field === 'ir35')"
           />
         </form>
       </div>
@@ -86,7 +86,7 @@
     <div class="flex justify-center mt-4">
       <AppButton
         :label="'<<'"
-        @click="$store.commit('sign-up/SET_ACTIVE_COMPONENT', 'LocumCredentialDetails')"
+        @click="$store.commit('sign-up/SET_ACTIVE_COMPONENT', 'LocumProfessionalDetails')"
       />
       <div class="mx-2"></div>
       <AppButton :label="'Next'" @click="next" />
@@ -98,8 +98,8 @@ import AppInput from "@/components/Base/AppInput";
 import AppPostCode from "@/components/Base/AppPostCode";
 import AppButton from "@/components/Base/AppButton";
 let employmentTypes = [
-  { label: "Self-employed", value: "Self-employed" },
-  { label: "Limited company", value: "Limited company" }
+  { label: "Self-Employed", value: "Self-Employed" },
+  { label: "Limited Company", value: "Limited Company" }
 ];
 export default {
   components: {
@@ -111,7 +111,7 @@ export default {
     return {
       employmentTypes,
       form: {
-        employment_type: "Self-employed",
+        employment_type: "Self-Employed",
         company_registration_number: "",
         utr_number: "",
         paid_under_payroll: false,
@@ -151,7 +151,22 @@ export default {
   methods: {
     next() {
       this.formError = [];
-      // this.Validate(this.form, [""]);
+      let notRequired = [
+        "employment_type",
+        "paid_under_payroll",
+        "payroll_detail_account_name",
+        "payroll_detail_bank_name",
+        "payroll_detail_sort_code",
+        "payroll_detail_account_number",
+        "ir35"
+      ];
+      if (this.form.employment_type === "Self-Employed") {
+        notRequired.push("company_registration_number");
+      }
+      if (this.form.employment_type === "Limited Company") {
+        notRequired.push("utr_number");
+      }
+      // this.Validate(this.form, notRequired);
       if (!this.formError.length) {
         this.$store.commit("sign-up/SET_PAYROLL_DETAILS", this.form);
         this.$store.commit(

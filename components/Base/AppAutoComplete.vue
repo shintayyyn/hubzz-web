@@ -109,6 +109,7 @@ export default {
         this.getSurgeries(value);
       } else {
         this.showResults = false;
+        this.$emit("input", "");
       }
     }
   },

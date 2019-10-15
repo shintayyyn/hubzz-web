@@ -50,6 +50,7 @@
             <template v-if="type === 'select'">
               <div class="w-full relative customized-select mb-4 py-3">
                 <select
+                  ref="inputSelect"
                   :value="value"
                   class="absolute border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full z-10"
                   :class="[error ? 'border-red-500':'']"

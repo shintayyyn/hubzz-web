@@ -65,59 +65,71 @@
           >{{job.platform_job.ir35 ? 'INSIDE' : 'OUTSIDE'}}</span> of scope of
           <span class="font-bold text-sm sm:text-md">IR35</span>
         </div>
-        <div class="font-bold text-sm sm:text-md">Role</div>
-        <div class="text-xs sm:text-sm mb-8">{{job.platform_job.profession.name}}</div>
-        <div class="font-bold text-sm sm:text-md">Specialty</div>
-        <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
-          <div
-            class="rounded-lg bg-yellow-500 p-2 m-1"
-            v-for="item in job.platform_job.qualifications"
-            :key="item.id"
-          >{{item.name}}</div>
-        </div>
-        <div class="font-bold text-sm sm:text-md">Clinical systems</div>
-        <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
-          <div
-            class="rounded-lg bg-yellow-500 p-2 m-1"
-            v-for="item in job.platform_job.clinical_systems"
-            :key="item.id"
-          >{{item.name}}</div>
-        </div>
-        <div class="font-bold text-sm sm:text-md">Spoken languages</div>
-        <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
-          <div class="rounded-lg bg-yellow-500 p-2 m-1">English</div>
-          <div
-            class="rounded-lg bg-yellow-500 p-2 m-1"
-            v-for="item in job.platform_job.spoken_languages"
-            :key="item.id"
-          >{{item.name}}</div>
-        </div>
-        <div class="font-bold text-sm sm:text-md">Compliance requirements</div>
-        <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
-          <div class="mt-1" v-if="job.platform_job.compliance_documents.length === 0">(none)</div>
-          <div
-            v-else
-            class="rounded-lg bg-yellow-500 p-2 m-1"
-            v-for="item in job.platform_job.compliance_documents"
-            :key="item.id"
-          >{{item.name}}</div>
-        </div>
-        <div class="font-bold text-sm sm:text-md">Mandatory training</div>
-        <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
-          <div class="mt-1" v-if="job.platform_job.mandatory_trainings.length === 0">(none)</div>
-          <div
-            v-else
-            class="rounded-lg bg-yellow-500 p-2 m-1"
-            v-for="item in job.platform_job.mandatory_trainings"
-            :key="item.id"
-          >{{item.name}}</div>
-        </div>
+        <template v-if="job.platform_job.profession">
+          <div class="font-bold text-sm sm:text-md">Role</div>
+          <div class="text-xs sm:text-sm mb-8">{{job.platform_job.profession.name}}</div>
+        </template>
+        <template v-if="job.platform_job.qualifications">
+          <div class="font-bold text-sm sm:text-md">Specialty</div>
+          <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
+            <div
+              class="rounded-lg bg-yellow-500 p-2 m-1"
+              v-for="item in job.platform_job.qualifications"
+              :key="item.id"
+            >{{item.name}}</div>
+          </div>
+        </template>
+        <template v-if="job.platform_job.clinical_systems">
+          <div class="font-bold text-sm sm:text-md">Clinical systems</div>
+          <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
+            <div
+              class="rounded-lg bg-yellow-500 p-2 m-1"
+              v-for="item in job.platform_job.clinical_systems"
+              :key="item.id"
+            >{{item.name}}</div>
+          </div>
+        </template>
+        <template v-if="job.platform_job.spoken_languages">
+          <div class="font-bold text-sm sm:text-md">Spoken languages</div>
+          <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
+            <div class="rounded-lg bg-yellow-500 p-2 m-1">English</div>
+            <div
+              class="rounded-lg bg-yellow-500 p-2 m-1"
+              v-for="item in job.platform_job.spoken_languages"
+              :key="item.id"
+            >{{item.name}}</div>
+          </div>
+        </template>
+        <template v-if="job.platform_job.compliance_documents">
+          <div class="font-bold text-sm sm:text-md">Compliance requirements</div>
+          <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
+            <div class="mt-1" v-if="job.platform_job.compliance_documents.length === 0">(none)</div>
+            <div
+              v-else
+              class="rounded-lg bg-yellow-500 p-2 m-1"
+              v-for="item in job.platform_job.compliance_documents"
+              :key="item.id"
+            >{{item.name}}</div>
+          </div>
+        </template>
+        <template v-if="job.platform_job.mandatory_trainings">
+          <div class="font-bold text-sm sm:text-md">Mandatory training</div>
+          <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
+            <div class="mt-1" v-if="job.platform_job.mandatory_trainings.length === 0">(none)</div>
+            <div
+              v-else
+              class="rounded-lg bg-yellow-500 p-2 m-1"
+              v-for="item in job.platform_job.mandatory_trainings"
+              :key="item.id"
+            >{{item.name}}</div>
+          </div>
+        </template>
       </div>
     </div>
   </div>
 </template>
 <script>
 export default {
-  props: ['job'],
-}
+  props: ["job"]
+};
 </script>

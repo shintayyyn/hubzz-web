@@ -15,7 +15,7 @@
 
     <div class="flex flex-row flex-wrap justify-start mt-4">
       <div class="p-0 md:pr-4 w-full md:w-1/2">
-        <JobDetailModalForm :job="job" />
+        <JobDetailModalInfo :job="job" />
       </div>
       <div class="p-0 md:pl-4 mt-8 md:m-0 w-full md:w-1/2">
         <div class="flex flex-col">
@@ -42,7 +42,7 @@
   </div>
 </template>
 <script>
-import JobDetailModalForm from "@/components/Jobs/JobDetailModalForm";
+import JobDetailModalInfo from "@/components/Jobs/JobDetailModalInfo";
 import JobDetailModalMap from "@/components/Jobs/JobDetailModalMap";
 import JobDetailModalUnassignForm from "@/components/Jobs/JobDetailModalUnassignForm";
 import JobDetailModalApplyForm from "@/components/Jobs/JobDetailModalApplyForm";
@@ -50,7 +50,7 @@ import JobDetailModalCancelForm from "@/components/Jobs/JobDetailModalCancelForm
 export default {
   props: ["job"],
   components: {
-    JobDetailModalForm,
+    JobDetailModalInfo,
     JobDetailModalMap,
     JobDetailModalUnassignForm,
     JobDetailModalApplyForm,
@@ -59,42 +59,6 @@ export default {
   methods: {
     close() {
       this.$emit("close");
-      // if (this.$route.fullPath === "/dashboard") {
-      // this.$emit("close");
-      //   return;
-      // } else {
-      //   let status = this.job.locum_status;
-      //   switch (status) {
-      //     case "Current":
-      //       this.$router.push(`/jobs/allocated`);
-      //       break;
-      //     case "Available":
-      //       this.$router.push(`/jobs/available`);
-      //       break;
-      //     case "Matched":
-      //       this.$router.push(`/jobs/matched`);
-      //       break;
-      //     case "Applied":
-      //       this.$router.push(`/jobs/applied`);
-      //       break;
-      //     case "Unsuccessful":
-      //       this.$router.push(`/jobs/unsuccessful`);
-      //       break;
-      //     case "Declined":
-      //       this.$router.push(`/jobs/declined`);
-      //       break;
-      //     case "Cancelled":
-      //       this.$router.push(`/jobs/cancelled`);
-      //       break;
-      //     case "Completed":
-      //       this.$router.push(`/jobs/completed`);
-      //       break;
-      //   }
-      //   // const query = {
-      //   //   ...this.$route.query
-      //   // }
-      //   // this.$router.push({ path: `/jobs`, query })
-      // }
     },
     status(status) {
       if (status === "Available") {

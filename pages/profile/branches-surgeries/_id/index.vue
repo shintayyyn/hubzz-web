@@ -27,35 +27,15 @@
 </template>
 <script>
 import AppButton from "@/components/Base/AppButton";
-import AppInput from "@/components/Base/AppInput";
+
 export default {
   components: {
     AppButton,
-    AppInput
+
   },
   data() {
     return {
       practice_id: '',
-      editPayForSurgery: false,
-      editSessionPolicies: false,
-      editBillingPolicies: false,
-      form: {
-        pay_for_surgery: "",
-        verify_job_creation: ""
-      },
-      form2:{
-        create_sessions: "",
-        allocate_locums: "",
-        amend_sessions: "",
-        cancel_sessions: "",
-        approve_hours_for_invoice: "",
-        complete_sessions: ""
-      },
-      form3:{
-        own_billing_locum_invoice: "",
-        own_billing_hubzz_billing: "",
-      },
-      formError: []
     };
   },
   async asyncData({ app, route, store, params, error }) {
@@ -64,44 +44,13 @@ export default {
       const response = await app.$axios.$get(
         `/api/v1/practice/me/practice-surgeries/${params.id}`
       );
-      const practice_surgery =
-        response.data && response.data.practice_surgery
-          ? response.data.practice_surgery
-          : null;
       return {
-        practice_surgery,
         practice_id
       };
     } catch (err) {
       throw err;
     }
   },
-  created() {
-    console.log('route',this.$route.name)
-    this.form.pay_for_surgery = this.practice_surgery.pay_for_surgery;
-    this.form.verify_job_creation = this.practice_surgery.verify_job_creation;
-  },
-  methods: {
-    save() {
-      this.$axios
-        .$put(
-          `/api/v1/practice/me/practice-surgeries/${this.$route.params.id}`,
-          this.form
-        )
-        .then(res => {
-          this.$store.commit(
-            "profile/UPDATE_SURGERY",
-            res.data.practice_surgery
-          );
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "success",
-            text: ["Surgery Update Success"]
-          });
-          //this.$router.push("/profile/branches-surgeries");
-        });
-    }
-  }
 };
 </script>
 

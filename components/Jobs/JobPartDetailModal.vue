@@ -1,0 +1,86 @@
+<template>
+  <div class="p-8 max-w-5xl">
+    <div @click="close" class="cursor-pointer">
+      <svgicon name="left-arrow" height="32" width="32" />
+    </div>
+    <div class="flex flex-row justify-start mt-8">
+      <div class="leading-loose font-bold text-md sm:text-lg">{{job_part.job.title}}</div>
+      <div
+        class="mx-2 text-sm sm:text-sm p-2"
+        :class="bgStatus(job_part.locum_status)"
+      >{{status(job_part.locum_status)}}</div>
+    </div>
+    <div class="text-xs sm:text-sm">Posted {{$moment(job_part.date_created).format('DD/MM/YYYY')}}</div>
+    <div class="flex flex-col mt-4"></div>
+
+    <div class="flex flex-row flex-wrap justify-start mt-4">
+      <div class="p-0 md:pr-4 w-full md:w-1/2">
+        <JobDetailModalInfo :job="job_part.job" />
+      </div>
+      <div class="p-0 md:pl-4 mt-8 md:m-0 w-full md:w-1/2">
+        <div class="flex flex-col">
+          <JobDetailModalMap :job="job_part.job" />
+          <JobDetailModalUnassignForm
+            :job="job_part.job"
+            v-if="job_part.locum_status === 'Current'"
+            @close="close"
+            @removeJobPart="removeJobPart"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+import JobDetailModalInfo from "@/components/Jobs/JobDetailModalInfo";
+import JobDetailModalMap from "@/components/Jobs/JobDetailModalMap";
+import JobDetailModalUnassignForm from "@/components/Jobs/JobDetailModalUnassignForm";
+import JobDetailModalApplyForm from "@/components/Jobs/JobDetailModalApplyForm";
+import JobDetailModalCancelForm from "@/components/Jobs/JobDetailModalCancelForm";
+export default {
+  props: ["job_part"],
+  components: {
+    JobDetailModalInfo,
+    JobDetailModalMap,
+    JobDetailModalUnassignForm,
+    JobDetailModalApplyForm,
+    JobDetailModalCancelForm
+  },
+  methods: {
+    removeJobPart(id) {
+      this.$store.commit("jobs/REMOVE_LOCUM_ONGOING_JOB", id);
+    },
+    close() {
+      this.$emit("close");
+    },
+    status(status) {
+      if (status === "Available") {
+        return "LIVE";
+      }
+      if (status === "Current") {
+        return "ONGOING";
+      }
+      return status.toUpperCase();
+    },
+    bgStatus(status) {
+      switch (status) {
+        case "Available":
+          return "bg-yellow-500";
+          break;
+        case "Applied":
+          return "bg-orange-400 text-white";
+          break;
+        case "Completed":
+          return "bg-green-400";
+          break;
+        case "Current":
+          return "bg-green-400";
+          break;
+        default:
+          return "bg-red-500 text-white";
+      }
+    }
+  }
+};
+</script>
+

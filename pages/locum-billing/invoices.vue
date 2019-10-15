@@ -104,47 +104,45 @@ export default {
       columns: [
         {
           name: "Type",
-          dataIndex: "type",
-          class: "text-left"
+          dataIndex: "type"
         },
         {
           name: "Practice / Surgery",
-          dataIndex: "surgery.name",
-          class: "text-center"
+          dataIndex: "surgery.name"
         },
         {
           name: "Created At",
           dataIndex: "date_created",
-          class: "text-center localDate",
+          class: "localDate",
           sortable: true
         },
         {
           name: "Issued",
           dataIndex: "issued_at",
-          class: "text-center localDate"
+          class: "localDate"
         },
         {
           name: "Invoice Number",
           dataIndex: "invoice_number",
-          class: "text-left",
           sortable: true
         },
         {
           name: "Job Numbers",
-          dataIndex: "items.job_part.job_part_number",
-          class: "text-left"
+          dataIndex: "items.job_part.job_part_number"
         },
         {
           name: "£ Amount",
           dataIndex: "total_amount",
-          class: "text-center",
           sortable: true
         },
         {
           name: "Status",
           dataIndex: "status",
-          class: "text-center",
           sortable: true
+        },
+        {
+          name: "",
+          dataIndex: ""
         }
       ],
       // payment

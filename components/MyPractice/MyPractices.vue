@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-row flex-wrap justify-start">
     <div
-      class="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-2"
+      class="w-full sm:w-1/2 md:w-1/2 lg:w-1/3 xl:max-w-sm p-2"
       v-for="practice in practices"
       :key="practice.id"
     >

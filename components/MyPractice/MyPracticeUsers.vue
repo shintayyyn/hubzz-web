@@ -1,34 +1,57 @@
 <template>
-  <table class="overflow-x-auto p-2">
-    <thead>
-      <tr class="text-xs sm:text-sm text-left">
-        <th>User</th>
-        <th>Practice Role</th>
-        <th>Surgery</th>
-        <th>Email</th>
-      </tr>
-    </thead>
-    <tbody>
-      <template v-for="(user, index) in practice_users">
-        <tr
-          :key="user.id"
-          class="__job-card rounded-lg shadow-md cursor-pointer text-xs text-left"
-          @click="$emit('show', user.id)"
-        >
-          <td>{{user.personal_detail.name}}</td>
-          <td>{{user.practice_detail.practice_role}}</td>
-          <td>{{user.practice_detail.practice.surgery.name}}</td>
-          <td>{{user.email}}</td>
-        </tr>
-        <tr :key="`${user.id}-${index}`">
-          <td></td>
-        </tr>
-      </template>
-    </tbody>
-  </table>
+  <section class="relative">
+    <AppTable
+      v-if="practice_users.length > 0"
+      :total="practice_users.length"
+      :items="practice_users"
+      :columns="columns"
+      :orderBy="params.order_by"
+      @show="$emit('show', $event.id)"
+    ></AppTable>
+  </section>
 </template>
 <script>
+import AppTable from "@/components/Base/AppTable";
 export default {
-  props: ["practice_users"]
+  props: ["practice_users"],
+  components: {
+    AppTable
+  },
+  data() {
+    return {
+      // app table column
+      columns: [
+        {
+          name: "User",
+          dataIndex: "personal_detail.name",
+          class: "text-left"
+        },
+        {
+          name: "Practice Role",
+          dataIndex: "practice_detail.practice_role",
+          class: "text-center"
+        },
+        {
+          name: "Surgery",
+          dataIndex: "practice_detail.practice.surgery.name",
+          class: "text-center"
+        },
+        {
+          name: "Email",
+          dataIndex: "email",
+          class: "text-center"
+        },
+        {
+          name: "Created At",
+          dataIndex: "created_at",
+          class: "text-center localDate"
+        }
+      ],
+      // app table params
+      params: {
+        order_by: ["created_at:desc"]
+      }
+    };
+  }
 };
 </script>

@@ -320,9 +320,12 @@ export default {
     }
   },
   watch: {
-    // "form.profession_id"(value) {
-    //   this.CheckEmptyField(this.form.profession_id, "profession_id");
-    // },
+    "form.profession_id"(newValue, oldValue) {
+      if (newValue) {
+        this.form.qualification_id = [];
+      }
+      // this.CheckEmptyField(this.form.profession_id, "profession_id");
+    }
     // "form.gmc_or_nmc_number"(value) {
     //   this.CheckEmptyField(this.form.gmc_or_nmc_number, "gmc_or_nmc_number");
     // },

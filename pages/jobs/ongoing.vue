@@ -19,7 +19,6 @@
         :label="'Rate'"
         :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
       />
-
       <AppInput
         class="px-1"
         v-model="params.locum_detail_rate_type_id"
@@ -62,9 +61,9 @@
       />
     </div>
     <AppTable
-      v-if="getLocumAllocatedJobs.length > 0"
+      v-if="getLocumOngoingJobs.length > 0"
       :total="total"
-      :items="getLocumAllocatedJobs"
+      :items="getLocumOngoingJobs"
       :currentPage="current_page"
       :perPage="params.limit"
       :columns="columns"
@@ -74,16 +73,16 @@
       @pagechanged="pagechanged"
       @limitchanged="limitchanged"
       @sorted="sorted"
-    ></AppTable>
+    />
     <div
-      v-if="!getLocumAllocatedJobs.length && !loadingJobs"
+      v-if="!getLocumOngoingJobs.length && !loadingJobs"
       class="flex justify-center"
-    >You do not have any allocated jobs</div>
+    >You do not have any ongoing jobs</div>
     <transition name="fade" mode="out-in">
       <div
         class="shield"
-        v-if="$route.name === 'jobs-allocated-id'"
-        @click="$router.push('/jobs/allocated')"
+        v-if="$route.name === 'jobs-ongoing-id'"
+        @click="$router.push('/jobs/ongoing')"
       ></div>
     </transition>
     <nuxt-child />
@@ -127,71 +126,64 @@ export default {
         miles: "",
         surgery_name: ""
       },
-      // app table column
+      // app table
       columns: [
         {
-          name: "Job number",
-          dataIndex: "job_number",
-          class: "text-left"
+          name: "Job part number",
+          dataIndex: "job_part_number",
+          sortable: true
         },
         {
           name: "Practice",
-          dataIndex: "platform_job.practice.surgery.name",
-          class: "text-center"
+          dataIndex: "job.platform_job.practice.surgery.name"
         },
         {
           name: "Title",
-          dataIndex: "title",
-          class: "text-center"
+          dataIndex: "job.title"
         },
         {
           name: "Shift",
-          dataIndex: "shift.name",
-          class: "text-center"
+          dataIndex: "job.shift.name"
         },
         {
           name: "Rate",
-          dataIndex: "rate",
-          class: "text-center"
+          dataIndex: "job.rate",
+          sortable: true
         },
         {
           name: "per",
-          dataIndex: "locum_detail_rate_type.name",
-          class: "text-center"
+          dataIndex: "job.locum_detail_rate_type.name"
         },
         {
           name: "From",
           dataIndex: "date_start",
-          class: "text-center localDate",
           sortable: true
         },
         {
           name: "To",
           dataIndex: "date_end",
-          class: "text-center localDate",
           sortable: true
         },
         {
           name: "Created At",
-          dataIndex: "date_created",
+          dataIndex: "job.date_created",
           class: "text-center localDate",
           sortable: true
         },
         {
           name: "Assigned",
           dataIndex:
-            "platform_job.appointed_to_locum.user.personal_detail.name",
-          class: "text-center"
+            "job.platform_job.appointed_to_locum.user.personal_detail.name"
         }
       ]
     };
   },
   computed: {
-    getLocumAllocatedJobs() {
-      return this.$store.getters["jobs/getLocumAllocatedJobs"];
+    getLocumOngoingJobs() {
+      return this.$store.getters["jobs/getLocumOngoingJobs"];
     },
     total() {
-      return this.$store.state.jobs.locum_allocated_jobs_count;
+      return this.$store.state.jobs.locum_ongoing_jobs_count;
     },
     totalPages() {
       return Math.ceil(this.total / this.perPage);
@@ -256,7 +248,7 @@ export default {
       this.$store.commit("jobs/TOGGLE_LOADING", true);
       this.$store
         .dispatch("jobs/fetchLocumJobs", {
-          status: "Current",
+          status: "Ongoing",
           countOnly: true,
           ...params
         })
@@ -266,7 +258,7 @@ export default {
     },
     getJobs(params) {
       this.$store
-        .dispatch("jobs/fetchLocumJobs", { status: "Current", ...params })
+        .dispatch("jobs/fetchLocumJobs", { status: "Ongoing", ...params })
         .finally(() => {
           this.$store.commit("jobs/TOGGLE_LOADING", false);
         });

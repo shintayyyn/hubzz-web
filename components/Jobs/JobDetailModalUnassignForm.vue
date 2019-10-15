@@ -49,6 +49,8 @@ export default {
               "jobs/REMOVE_LOCUM_ALLOCATED_JOB",
               res.data.job.id
             );
+            // need to pass down job part id
+            this.$emit("removeJobPart");
             this.$store.commit("jobs/ADD_LOCUM_DECLINED_JOB", res.data.job);
             this.$emit("close");
           })

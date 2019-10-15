@@ -9,8 +9,8 @@
           <PerMonth v-if="$store.state.calendar.view_type === 'per_month'" />
           <PerWeek v-if="$store.state.calendar.view_type === 'per_week'" />
           <div class="absolute bottom-0 right-0 mx-2 sm:mx-5 my-3 md:my-5">
+            <!-- v-if="authPermissions.includes('Create Sessions Job')" -->
             <div
-              v-if="authPermissions.includes('Create Sessions Job')"
               class="rounded-full h-10 w-10 sm:h-12 sm:w-12 md:h-16 md:w-16 text-2xl sm:text-3xl md:text-4xl flex items-center focus:outline-none justify-center bg-yellow-500 font-semibold cursor-pointer shadow-md hover:text-white"
               @click="create"
             >+</div>
@@ -36,7 +36,7 @@
       </template>
       <template v-if="locum_modal">
         <div class="modal-container">
-          <JobDetailModalLocum @close="locum_modal = false" :job="locum_job" />
+          <JobDetailModal @close="locum_modal = false" :job="locum_job" />
         </div>
       </template>
       <!-- <div class="modal-container shadow-lg" v-if="create_job_modal">
@@ -44,7 +44,7 @@
       </div>-->
       <template v-if="practice_modal">
         <div class="modal-container">
-          <JobDetailModal @close="practice_modal = false" :job="practice_job" />
+          <!-- <JobDetailModal @close="practice_modal = false" :job="practice_job" /> -->
         </div>
       </template>
     </transition>
@@ -55,22 +55,22 @@ import PerMonth from "@/components/Calendar/PerMonth";
 import PerWeek from "@/components/Calendar/PerWeek";
 import Info from "@/components/Calendar/Info";
 // locums
-import JobDetailModalLocum from "@/components/Jobs/JobDetailModalLocum";
+import JobDetailModal from "@/components/Jobs/JobDetailModal";
 import JobDetailModalAppointment from "@/components/Jobs/JobDetailModalAppointment";
 
 // practice
 // import CreateJobModal from "@/components/CreateJobModal";
-import JobDetailModal from "@/components/Sessions/JobDetailModal";
+// import JobDetailModal from "@/components/Sessions/JobDetailModal";
 
 export default {
   components: {
     PerMonth,
     PerWeek,
     Info,
-    JobDetailModalLocum,
-    JobDetailModalAppointment,
+    JobDetailModal,
+    JobDetailModalAppointment
     // CreateJobModal,
-    JobDetailModal
+    // JobDetailModal
   },
   data() {
     return {

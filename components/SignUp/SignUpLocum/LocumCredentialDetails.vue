@@ -52,14 +52,19 @@
               >{{formError.find(item => item.field === 'privacy_policy').message}}</div>
             </div>
             <div class="flex flex-row flex-no-wrap justify-between">
-                <input v-model="form.privacy_policy" id="privacy_policy" type="checkbox" class="checkbox mt-1 mr-1" />
-                <label for="privacy_policy" class="text-xs sm:text-sm py-1">
-                  I agree with the
-                  <span
-                    class="cursor-pointer underline"
-                    @click="modal = true"
-                  >Terms and Conditions and Privacy Policy</span> of Hubzz
-                </label>
+              <input
+                v-model="form.privacy_policy"
+                id="privacy_policy"
+                type="checkbox"
+                class="checkbox mt-1 mr-1"
+              />
+              <label for="privacy_policy" class="text-xs sm:text-sm py-1">
+                I agree with the
+                <span
+                  class="cursor-pointer underline"
+                  @click="modal = true"
+                >Terms and Conditions and Privacy Policy</span> of Hubzz
+              </label>
             </div>
           </div>
           <!-- <AppInput
@@ -67,7 +72,9 @@
             :type="'single-checkbox'"
             :name="'privacy_policy'"
             :label="'Terms and Conditions and Privacy Policy of Hubzz'"
-          /> -->
+            :error="formError.find(item => item.field === 'privacy_policy')"
+          />
+          />-->
         </form>
       </div>
     </div>
@@ -75,7 +82,7 @@
     <div class="flex justify-center mt-4">
       <AppButton
         :label="'<<'"
-        @click="$store.commit('sign-up/SET_ACTIVE_COMPONENT', 'LocumProfessionalDetails')"
+        @click="$store.commit('sign-up/SET_ACTIVE_COMPONENT', 'LocumPayrollDetails')"
       />
       <div class="mx-2"></div>
       <AppButton :label="'Next'" @click="next" />

@@ -9,92 +9,90 @@
       @cancel="confirmation_modal = false"
     />
 
-    <div class="modal-container shadow-lg" ref="modalContainer">
-      <div class="p-4 md:p-8">
-        <div @click="close" class="cursor-pointer">
-          <svgicon name="left-arrow" height="32" width="32" />
-        </div>
-        <div class="flex justify-start font-bold text-sm sm:text-xl mt-8">Appointment</div>
-        <AppFormError :formError="formError" v-if="formError.length > 0" id="error" />
-        <div class="rounded-lg shadow-lg px-8 py-4 mt-4">
-          <AppInput
-            v-model="form.private_practice_id"
-            :type="'select'"
-            :name="'private_practice_id'"
-            :label="'Practice'"
-            :placeholder="'Select...'"
-            :items="practices"
-          />
-          <AppButton :label="'Add'" @click="modal = true" :inStyle="'padding:5px 14px;'" />
-          <div class="flex flex-row flex-wrap justify-start mt-8">
-            <div class="px-1">
-              <AppDate v-model="form.date_start" :name="'date_start'" :label="'From'" />
-            </div>
-            <div class="px-1">
-              <AppDate v-model="form.date_end" :name="'date_end'" :label="'To'" />
-            </div>
-            <div class="px-1 leading-loose">
-              <AppInput
-                v-model="form.shift_id"
-                :type="'select'"
-                :name="'shift_id'"
-                :label="'Shift'"
-                :placeholder="'Select...'"
-                :items="shifts"
-              />
-            </div>
+    <div class="p-4 md:p-8">
+      <div @click="close" class="cursor-pointer">
+        <svgicon name="left-arrow" height="32" width="32" />
+      </div>
+      <div class="flex justify-start font-bold text-sm sm:text-xl mt-8">Appointment</div>
+      <AppFormError :formError="formError" v-if="formError.length > 0" id="error" />
+      <div class="rounded-lg shadow-lg px-8 py-4 mt-4">
+        <AppInput
+          v-model="form.private_practice_id"
+          :type="'select'"
+          :name="'private_practice_id'"
+          :label="'Practice'"
+          :placeholder="'Select...'"
+          :items="practices"
+        />
+        <AppButton :label="'Add'" @click="modal = true" :inStyle="'padding:5px 14px;'" />
+        <div class="flex flex-row flex-wrap justify-start mt-8">
+          <div class="px-1">
+            <AppDate v-model="form.date_start" :name="'date_start'" :label="'From'" />
           </div>
-          <div class="flex flex-row flex-wrap justify-start mt-4">
+          <div class="px-1">
+            <AppDate v-model="form.date_end" :name="'date_end'" :label="'To'" />
+          </div>
+          <div class="px-1 leading-loose">
             <AppInput
-              v-model="form.rate"
+              v-model="form.shift_id"
+              :type="'select'"
+              :name="'shift_id'"
+              :label="'Shift'"
+              :placeholder="'Select...'"
+              :items="shifts"
+            />
+          </div>
+        </div>
+        <div class="flex flex-row flex-wrap justify-start mt-4">
+          <AppInput
+            v-model="form.rate"
+            :type="'text'"
+            :name="'rate'"
+            :label="'Rate £'"
+            :placeholder="''"
+            :inStyle="'text-align:right'"
+          />
+          <div class="mx-2"></div>
+          <AppInput
+            v-model="form.locum_detail_rate_type_id"
+            :type="'select'"
+            :name="'locum_detail_rate_type_id'"
+            :label="'per'"
+            :placeholder="'Select...'"
+            :items="rate_types"
+          />
+        </div>
+        <div class="flex flex-row flex-wrap justify-start mt-4">
+          <div class="flex flex-wrap items-center mt-2">
+            <AppInput
+              v-model="form.total_hours"
               :type="'text'"
-              :name="'rate'"
-              :label="'Rate £'"
+              :name="'total_hours'"
+              :label="'Total hours'"
               :placeholder="''"
               :inStyle="'text-align:right'"
             />
-            <div class="mx-2"></div>
-            <AppInput
-              v-model="form.locum_detail_rate_type_id"
-              :type="'select'"
-              :name="'locum_detail_rate_type_id'"
-              :label="'per'"
-              :placeholder="'Select...'"
-              :items="rate_types"
-            />
+            <div class="text-xs sm:text-sm mx-2">hours</div>
           </div>
-          <div class="flex flex-row flex-wrap justify-start mt-4">
-            <div class="flex flex-wrap items-center mt-2">
-              <AppInput
-                v-model="form.total_hours"
-                :type="'text'"
-                :name="'total_hours'"
-                :label="'Total hours'"
-                :placeholder="''"
-                :inStyle="'text-align:right'"
-              />
-              <div class="text-xs sm:text-sm mx-2">hours</div>
-            </div>
-          </div>
-          <div class="mt-4">
-            <AppInput
-              v-model="form.description"
-              :type="'textarea'"
-              :name="'description'"
-              :label="'Private notes'"
-              :resize="false"
-            />
-          </div>
-          <div class="flex flex-no-wrap justify-start">
-            <template v-if="!job">
-              <AppButton :label="'Save'" @click="save" />
-            </template>
-            <template v-else>
-              <AppButton :label="'Delete'" @click="confirmation_modal = true" />
-              <div class="mx-1"></div>
-              <AppButton :label="'Save'" @click="edit" />
-            </template>
-          </div>
+        </div>
+        <div class="mt-4">
+          <AppInput
+            v-model="form.description"
+            :type="'textarea'"
+            :name="'description'"
+            :label="'Private notes'"
+            :resize="false"
+          />
+        </div>
+        <div class="flex flex-no-wrap justify-start">
+          <template v-if="!job">
+            <AppButton :label="'Save'" @click="save" />
+          </template>
+          <template v-else>
+            <AppButton :label="'Delete'" @click="confirmation_modal = true" />
+            <div class="mx-1"></div>
+            <AppButton :label="'Save'" @click="edit" />
+          </template>
         </div>
       </div>
     </div>
