@@ -6,7 +6,7 @@
       class="mt-10 w-full text-center"
       v-if="!loadingJobs && getPracticeAllocatedJobs.length === 0 "
     >You do not have any allocated jobs</div>
-    <div v-if="getPracticeAllocatedJobs.length > 0" class="overflow-x-auto overflow-y-hidden p-2">
+    <div v-if="getPracticeAllocatedJobs.length > 0" class="overflow-x-auto overflow-y-hidden">
       <JobTable :columns="columns" :jobs="getPracticeAllocatedJobs" @sortBy="sortBy" @show="show" />
     </div>
     <div class="mt-4 w-full" v-if="getPracticeAllocatedJobs.length > 0 && totalPages > 1">
