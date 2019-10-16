@@ -41,9 +41,9 @@
           <JobDetailModal @close="locum_modal = false" :job="locum_job" />
         </div>
       </template>
-      <div class="modal-container shadow-lg" v-if="create_job_modal">
+      <!-- <div class="modal-container shadow-lg" v-if="create_job_modal">
         <CreateJobModal />
-      </div>
+      </div>-->
       <template v-if="practice_modal">
         <div class="modal-container">
           <JobDetailModal @close="practice_modal = false" :job="practice_job" />

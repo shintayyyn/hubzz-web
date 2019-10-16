@@ -64,7 +64,7 @@ export default {
       if (status === "Available") {
         return "LIVE";
       }
-      if (status === "Current") {
+      if (status === "Allocated") {
         return "ALLOCATED";
       }
       return status.toUpperCase();
@@ -80,7 +80,7 @@ export default {
         case "Completed":
           return "bg-green-400";
           break;
-        case "Current":
+        case "Allocated":
           return "bg-green-400";
           break;
         default:

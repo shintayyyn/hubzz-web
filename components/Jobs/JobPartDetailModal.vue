@@ -9,16 +9,21 @@
         class="mx-2 text-sm sm:text-sm p-2"
         :class="bgStatus(job_part.locum_status)"
       >{{status(job_part.locum_status)}}</div>
+      <div
+        class="mx-2 text-sm sm:text-sm p-2 bg-gray-400"
+        v-if="job_part.locum_status === 'Completed'"
+      >{{jobPartStatus}}</div>
     </div>
     <div class="text-xs sm:text-sm">Posted {{$moment(job_part.date_created).format('DD/MM/YYYY')}}</div>
     <div class="flex flex-col mt-4"></div>
 
     <div class="flex flex-row flex-wrap justify-start mt-4">
       <div class="p-0 md:pr-4 w-full md:w-1/2">
-        <JobDetailModalInfo :job="job_part.job" />
+        <JobPartDetailModalInfo :job_part="job_part" />
       </div>
       <div class="p-0 md:pl-4 mt-8 md:m-0 w-full md:w-1/2">
         <div class="flex flex-col">
+          <JobPartDetailModalParts :parts="job_part.job.job_parts" />
           <JobDetailModalMap :job="job_part.job" />
           <JobDetailModalUnassignForm
             :job="job_part.job"
@@ -32,6 +37,9 @@
   </div>
 </template>
 <script>
+import JobPartDetailModalInfo from "@/components/Jobs/JobPart/JobPartDetailModalInfo";
+import JobPartDetailModalParts from "@/components/Jobs/JobPart/JobPartDetailModalParts";
+//
 import JobDetailModalInfo from "@/components/Jobs/JobDetailModalInfo";
 import JobDetailModalMap from "@/components/Jobs/JobDetailModalMap";
 import JobDetailModalUnassignForm from "@/components/Jobs/JobDetailModalUnassignForm";
@@ -40,11 +48,29 @@ import JobDetailModalCancelForm from "@/components/Jobs/JobDetailModalCancelForm
 export default {
   props: ["job_part"],
   components: {
+    JobPartDetailModalInfo,
+    JobPartDetailModalParts,
+    //
     JobDetailModalInfo,
     JobDetailModalMap,
     JobDetailModalUnassignForm,
     JobDetailModalApplyForm,
     JobDetailModalCancelForm
+  },
+  mounted() {
+    console.log(this.job_part);
+  },
+  computed: {
+    jobPartStatus() {
+      let status = "TO BE INVOICED";
+      if (this.job_part.disputed) {
+        status = "DISPUTED";
+      }
+      if (this.job_part.invoiced && this.job_part.issued) {
+        status = "INVOICED";
+      }
+      return status;
+    }
   },
   methods: {
     removeJobPart(id) {
@@ -57,7 +83,7 @@ export default {
       if (status === "Available") {
         return "LIVE";
       }
-      if (status === "Current") {
+      if (status === "Ongoing") {
         return "ONGOING";
       }
       return status.toUpperCase();
@@ -73,7 +99,7 @@ export default {
         case "Completed":
           return "bg-green-400";
           break;
-        case "Current":
+        case "Allocated":
           return "bg-green-400";
           break;
         default:

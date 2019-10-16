@@ -27,14 +27,22 @@
         <div class="pt-4">
           <AppButton :label="'Add'" @click="modal = true" :inStyle="'padding:5px 14px;'" />
         </div>
-        <div class="flex flex-row flex-wrap justify-start mt-8 items-center max-w-2xl">
-          <div class="px-1 w-full sm:w-1/3">
+        <div class="flex flex-row flex-wrap justify-start mt-8 items-center max-w-4xl">
+          <div class="px-1 w-full sm:w-1/2 md:w-1/4">
             <AppDate v-model="form.date_start" :name="'date_start'" :label="'From'" />
           </div>
-          <div class="px-1 w-full sm:w-1/3">
+          <div class="px-1 w-full sm:w-1/2 md:w-1/4">
+            <AppTime v-model="form.time_start" :name="'time_start'" :label="'Start time'" />
+          </div>
+          <div class="px-1 w-full sm:w-1/2 md:w-1/4">
             <AppDate v-model="form.date_end" :name="'date_end'" :label="'To'" />
           </div>
-          <div class="px-1 w-full sm:w-1/3">
+          <div class="px-1 w-full sm:w-1/2 md:w-1/4">
+            <AppTime v-model="form.time_end" :name="'time_end'" :label="'End time'" />
+          </div>
+        </div>
+        <div class="flex flex-row flex-wrap justify-start items-center mt-4 max-w-2xl">
+          <div class="px-1 w-full sm:w-1/2 md:w-1/3">
             <AppInput
               v-model="form.shift_id"
               :type="'select'"
@@ -44,9 +52,7 @@
               :items="shifts"
             />
           </div>
-        </div>
-        <div class="flex flex-row flex-wrap justify-start items-center mt-4 max-w-lg">
-          <div class="px-1 w-full sm:w-1/2">
+          <div class="px-1 w-full sm:w-1/2 md:w-1/3">
             <AppInput
               v-model="form.rate"
               :type="'text'"
@@ -56,7 +62,7 @@
               :inStyle="'text-align:right'"
             />
           </div>
-          <div class="px-1 w-full sm:w-1/2">
+          <div class="px-1 w-full sm:w-1/2 md:w-1/3">
             <AppInput
               v-model="form.locum_detail_rate_type_id"
               :type="'select'"
@@ -113,6 +119,7 @@
 <script>
 import AppInput from "@/components/Base/AppInput";
 import AppDate from "@/components/Base/AppDate";
+import AppTime from "@/components/Base/AppTime";
 import AppButton from "@/components/Base/AppButton";
 import AddSurgeryModal from "@/components/AddSurgeryModal";
 import AppFormError from "@/components/Base/AppFormError";
@@ -122,6 +129,7 @@ export default {
   components: {
     AppInput,
     AppDate,
+    AppTime,
     AppButton,
     AddSurgeryModal,
     AppFormError,
@@ -136,7 +144,9 @@ export default {
       form: {
         private_practice_id: "",
         date_start: "",
+        time_start: "",
         date_end: "",
+        time_end: "",
         shift_id: "",
         locum_detail_rate_type_id: "",
         rate: "",
@@ -186,17 +196,17 @@ export default {
     this.getShifts();
     this.getRateType();
     if (this.job) {
-      console.log(this.job);
       this.form.private_practice_id = this.job.private_job.private_practice.id;
       this.form.date_start = this.job.date_start;
+      this.form.time_start = this.job.time_start;
       this.form.date_end = this.job.date_end;
+      this.form.time_end = this.job.time_end;
       this.form.shift_id = this.job.shift.id;
       this.form.locum_detail_rate_type_id = this.job.locum_detail_rate_type.id;
       this.form.rate = this.job.rate;
       this.form.total_hours = this.job.total_hours;
       this.form.description = this.job.description;
     }
-    console.log(this.form);
   },
   computed: {
     practices() {
@@ -237,6 +247,9 @@ export default {
         }
         if (this.$route.name === "jobs-allocated-id") {
           this.$router.push("/jobs/allocated");
+        }
+        if (this.$route.name === "jobs-ongoing-id") {
+          this.$router.push("/jobs/ongoing");
         }
       }
     },
@@ -289,7 +302,7 @@ export default {
         this.$axios
           .$put(`/api/v1/locum/jobs/${this.job.id}`, this.form)
           .then(res => {
-            if (res.data.job.locum_status === "Current") {
+            if (res.data.job.locum_status === "Allocated") {
               this.$store.commit(
                 "jobs/UPDATE_LOCUM_ALLOCATED_JOB",
                 res.data.job

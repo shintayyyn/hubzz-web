@@ -267,7 +267,7 @@ export default {
       this.$store.commit("jobs/TOGGLE_LOADING", true);
       this.$store
         .dispatch("jobs/fetchLocumJobs", {
-          status: "Current",
+          status: "Allocated",
           countOnly: true,
           ...params
         })
@@ -277,7 +277,7 @@ export default {
     },
     getJobs(params) {
       this.$store
-        .dispatch("jobs/fetchLocumJobs", { status: "Current", ...params })
+        .dispatch("jobs/fetchLocumJobs", { status: "Allocated", ...params })
         .finally(() => {
           this.$store.commit("jobs/TOGGLE_LOADING", false);
         });

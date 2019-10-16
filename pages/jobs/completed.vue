@@ -100,7 +100,7 @@
     <AppTable
       v-if="getLocumCompletedJobs.length > 0"
       :total="total"
-      :items="getLocumCompletedJobs"
+      :items="jobs"
       :currentPage="current_page"
       :perPage="params.limit"
       :columns="columns"
@@ -150,6 +150,7 @@ export default {
   },
   data() {
     return {
+      jobs: [],
       current_page: 1,
       // app table filter
       rates: [],
@@ -218,6 +219,10 @@ export default {
           name: "Assigned",
           dataIndex:
             "job.platform_job.appointed_to_locum.user.personal_detail.name"
+        },
+        {
+          name: "Status",
+          dataIndex: "invoiced_status"
         }
       ]
     };
@@ -272,6 +277,26 @@ export default {
     },
     "params.miles"(value) {
       this.filterOut({ field: "miles", value });
+    },
+    getLocumCompletedJobs(newValue, oldValue) {
+      if (newValue) {
+        this.jobs = [];
+        this.getLocumCompletedJobs.forEach(job => {
+          let invoiceStatus = "TO BE INVOICED";
+          if (job.disputed) {
+            invoiceStatus = "DISPUTED";
+          }
+          if (job.invoiced && job.issued) {
+            invoiceStatus = "INVOICED";
+          }
+          this.jobs.push({
+            ...job,
+            invoiced_status: invoiceStatus
+          });
+        });
+      }
+      console.log(newValue, oldValue);
+      console.log(this.jobs);
     }
   },
   beforeDestroy() {
@@ -285,6 +310,22 @@ export default {
       this.$store.commit("jobs/CLEAR_LOCUM_COMPLETED_BADGE");
     }, 1000);
   },
+  // mounted() {
+  //   this.jobs = [];
+  //   this.getLocumCompletedJobs.forEach(job => {
+  //     let invoiceStatus = "TO BE INVOICED";
+  //     if (job.disputed) {
+  //       invoiceStatus = "DISPUTED";
+  //     }
+  //     if (job.invoiced && job.issued) {
+  //       invoiceStatus = "INVOICED";
+  //     }
+  //     this.jobs.push({
+  //       ...job,
+  //       invoiced_status: invoiceStatus
+  //     });
+  //   });
+  // },
   methods: {
     filterOut: debounce(function({ field, value }) {
       this.current_page = 1;
@@ -295,7 +336,7 @@ export default {
     getJobsCount(params) {
       this.$store.commit("jobs/TOGGLE_LOADING", true);
       this.$store
-        .dispatch("jobs/fetchLocumJobParts", {
+        .dispatch("jobs/fetchLocumJobs", {
           status: "Completed",
           countOnly: true,
           ...params
@@ -306,7 +347,7 @@ export default {
     },
     getJobs(params) {
       this.$store
-        .dispatch("jobs/fetchLocumJobParts", { status: "Completed", ...params })
+        .dispatch("jobs/fetchLocumJobs", { status: "Completed", ...params })
         .finally(() => {
           this.$store.commit("jobs/TOGGLE_LOADING", false);
         });

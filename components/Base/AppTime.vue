@@ -12,7 +12,7 @@
         :value="value"
         type="input"
         placeholder="hh:mm"
-        class="border-b-2 focus:border-yellow-400 focus:outline-none py-4 font-bold text-xs sm:text-sm w-full text-center"
+        class="border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full text-center"
         :class="error? 'border-red-500':''"
         @click="modal = true"
         @input="$emit('input', $event.target.value)"

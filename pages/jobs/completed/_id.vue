@@ -1,6 +1,6 @@
 <template>
   <div class="modal-container shadow-lg">
-    <JobDetailModalAppointment :job="job_part" v-if="job_part.job.type === 'Private'" />
+    <JobDetailModalAppointment :job="job_part.job" v-if="job_part.job.type === 'Private'" />
     <JobPartDetailModal
       :job_part="job_part"
       v-if="job_part.job.type === 'Platform'"
