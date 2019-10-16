@@ -36,18 +36,31 @@ export default {
   props: ["propJob"],
   data() {
     return {
-      job: null
+      job: null,
+      isJobPart: false
     };
   },
+  mounted() {
+    console.log(this.propJob);
+    if (
+      this.propJob.locum_status &&
+      ["ongoing", "completed", "approved"].includes(
+        this.propJob.locum_status.toLowerCase()
+      )
+    ) {
+      this.isJobPart = true;
+    }
+  },
+  methods: {},
   computed: {
-    isJobPart() {
-      return (
-        this.propJob.locum_status &&
-        ["ongoing", "completed", "approved"].includes(
-          this.propJob.locum_status.toLowerCase()
-        )
-      );
-    },
+    // isJobPart() {
+    //   return (
+    //     this.propJob.locum_status &&
+    //     ["ongoing", "completed", "approved"].includes(
+    //       this.propJob.locum_status.toLowerCase()
+    //     )
+    //   );
+    // },
     isNotUnavailable() {
       if (this.isJobPart) {
         if (
@@ -67,7 +80,7 @@ export default {
           return false;
         }
       }
-      return this.isJobPart;
+      // return this.isJobPart;
     },
     bgStatus() {
       let job = this.isJobPart ? this.propJob.job : this.propJob;
