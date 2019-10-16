@@ -25,26 +25,14 @@ export default {
 
       if (response.data.data.job) {
         let job = response.data.data.job;
-        let status = job.locum_status.toLowerCase();
-        if (status === "current") {
-          redirect(`/jobs/allocated/${params.id}`);
-        } else if (job) {
-          redirect(`/jobs/${status}/${params.id}`);
-        } else {
-          return error({
-            status: 404,
-            message: "This job could not be found"
-          });
-        }
+        let jobStatus = job.locum_status.toLowerCase();
+        redirect(`/jobs/${jobStatus}/${params.id}`);
       }
 
       if (response.data.data.job_part) {
         let job_part = response.data.data.job_part;
         let jobPartStatus = job_part.locum_status.toLowerCase();
-
-        if (jobPartStatus === "current") {
-          redirect(`/jobs/ongoing/${params.id}`);
-        } else if (jobPartStatus === query.status.toLowerCase()) {
+        if (query.status && jobPartStatus === query.status.toLowerCase()) {
           redirect(`/jobs/${jobPartStatus}/${params.id}`);
         } else {
           return error({

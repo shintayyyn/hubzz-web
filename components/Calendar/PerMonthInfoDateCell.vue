@@ -122,50 +122,75 @@
     </div>
     <div
       class="flex flex-row flex-no-wrap absolute bottom-0 left-0 justify-start w-full"
-      v-if="getLocumAllocatedPrivateJobs.length > 0"
+      v-if="getLocumOngoingJobs.length > 0"
     >
       <span
-        v-if="hasLocumPrivateJobs(item.fullDate, 'AM')"
+        v-if="hasLocumOngoingJobs(item.fullDate, 'AM')"
         class="bg-green-400 text-green-400 w-full h-2 sm:h-3 lg:h-4 rounded-bl-lg"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
       <span
-        v-if="hasLocumPrivateJobs(item.fullDate, 'PM')"
+        v-if="hasLocumOngoingJobs(item.fullDate, 'PM')"
         class="bg-green-400 text-green-400 w-full h-2 sm:h-3 lg:h-4"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
       <span
-        v-if="hasLocumPrivateJobs(item.fullDate, 'Whole Day')"
+        v-if="hasLocumOngoingJobs(item.fullDate, 'Whole Day')"
         class="bg-green-400 text-green-400 w-full h-2 sm:h-3 lg:h-4"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
       <span
-        v-if="hasLocumPrivateJobs(item.fullDate, 'OOH')"
+        v-if="hasLocumOngoingJobs(item.fullDate, 'OOH')"
         class="bg-green-400 text-green-400 w-full h-2 sm:h-3 lg:h-4 rounded-br-lg"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
     </div>
     <div
       class="flex flex-row flex-no-wrap absolute bottom-0 left-0 justify-start w-full"
-      v-if="getLocumAllocatedCurrentJobs.length > 0"
+      v-if="getLocumAllocatedPrivateJobs.length > 0"
     >
       <span
-        v-if="hasLocumCurrentJobs(item.fullDate, 'AM')"
+        v-if="hasLocumAllocatedPrivateJobs(item.fullDate, 'AM')"
         class="bg-green-400 text-green-400 w-full h-2 sm:h-3 lg:h-4 rounded-bl-lg"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
       <span
-        v-if="hasLocumCurrentJobs(item.fullDate, 'PM')"
+        v-if="hasLocumAllocatedPrivateJobs(item.fullDate, 'PM')"
         class="bg-green-400 text-green-400 w-full h-2 sm:h-3 lg:h-4"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
       <span
-        v-if="hasLocumCurrentJobs(item.fullDate, 'Whole day')"
+        v-if="hasLocumAllocatedPrivateJobs(item.fullDate, 'Whole Day')"
         class="bg-green-400 text-green-400 w-full h-2 sm:h-3 lg:h-4"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
       <span
-        v-if="hasLocumCurrentJobs(item.fullDate, 'OOH')"
+        v-if="hasLocumAllocatedPrivateJobs(item.fullDate, 'OOH')"
+        class="bg-green-400 text-green-400 w-full h-2 sm:h-3 lg:h-4 rounded-br-lg"
+      >.</span>
+      <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
+    </div>
+    <div
+      class="flex flex-row flex-no-wrap absolute bottom-0 left-0 justify-start w-full"
+      v-if="getLocumAllocatedPlatformJobs.length > 0"
+    >
+      <span
+        v-if="hasLocumAllocatedPlatformJobs(item.fullDate, 'AM')"
+        class="bg-green-400 text-green-400 w-full h-2 sm:h-3 lg:h-4 rounded-bl-lg"
+      >.</span>
+      <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
+      <span
+        v-if="hasLocumAllocatedPlatformJobs(item.fullDate, 'PM')"
+        class="bg-green-400 text-green-400 w-full h-2 sm:h-3 lg:h-4"
+      >.</span>
+      <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
+      <span
+        v-if="hasLocumAllocatedPlatformJobs(item.fullDate, 'Whole day')"
+        class="bg-green-400 text-green-400 w-full h-2 sm:h-3 lg:h-4"
+      >.</span>
+      <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
+      <span
+        v-if="hasLocumAllocatedPlatformJobs(item.fullDate, 'OOH')"
         class="bg-green-400 text-green-400 w-full h-2 sm:h-3 lg:h-4 rounded-br-lg"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
@@ -224,76 +249,122 @@
 </template>
 <script>
 export default {
-  props: ['item'],
+  props: ["item"],
   computed: {
     // practice
     getPracticeAllocatedJobs() {
-      return this.$store.getters['jobs/getPracticeAllocatedJobs']
+      return this.$store.getters["jobs/getPracticeAllocatedJobs"];
     },
     getPracticeAppliedJobs() {
-      return this.$store.getters['jobs/getPracticeAppliedJobs']
+      return this.$store.getters["jobs/getPracticeAppliedJobs"];
     },
     getPracticeUnfilledJobs() {
-      return this.$store.getters['jobs/getPracticeUnfilledJobs']
+      return this.$store.getters["jobs/getPracticeUnfilledJobs"];
     },
     getPracticeDeclinedJobs() {
-      return this.$store.getters['jobs/getPracticeDeclinedJobs']
+      return this.$store.getters["jobs/getPracticeDeclinedJobs"];
     },
     getPracticeAvailableJobsReminder() {
-      return this.$store.getters['jobs/getPracticeAvailableJobsReminder']
+      return this.$store.getters["jobs/getPracticeAvailableJobsReminder"];
     },
     getPracticeAppliedJobsReminder() {
-      return this.$store.getters['jobs/getPracticeAppliedJobsReminder']
+      return this.$store.getters["jobs/getPracticeAppliedJobsReminder"];
     },
     // locum
-    getLocumAllocatedPrivateJobs() {
-      return this.$store.getters['jobs/getLocumAllocatedPrivateJobs']
+    getLocumOngoingJobs() {
+      return this.$store.getters["jobs/getLocumOngoingJobs"];
     },
-    getLocumAllocatedCurrentJobs() {
-      return this.$store.getters['jobs/getLocumAllocatedCurrentJobs']
+    getLocumAllocatedPrivateJobs() {
+      return this.$store.getters["jobs/getLocumAllocatedPrivateJobs"];
+    },
+    getLocumAllocatedPlatformJobs() {
+      return this.$store.getters["jobs/getLocumAllocatedPlatformJobs"];
     },
     getLocumAppliedJobs() {
-      return this.$store.getters['jobs/getLocumAppliedJobs']
+      return this.$store.getters["jobs/getLocumAppliedJobs"];
     },
     getLocumUnavailabilities() {
-      return this.$store.getters['jobs/getLocumUnavailabilities']
-    },
+      return this.$store.getters["jobs/getLocumUnavailabilities"];
+    }
   },
   methods: {
     // practice
     hasPracticeCurrentJobs(date, type) {
-      return this.getPracticeAllocatedJobs.find(job => this.getDateArray(job.date_start, job.date_end).includes(date) && job.shift.name === type)
+      return this.getPracticeAllocatedJobs.find(
+        job =>
+          this.getDateArray(job.date_start, job.date_end).includes(date) &&
+          job.shift.name === type
+      );
     },
     hasPracticeAppliedJobs(date, type) {
-      return this.getPracticeAppliedJobs.find(job => this.getDateArray(job.date_start, job.date_end).includes(date) && job.shift.name === type)
+      return this.getPracticeAppliedJobs.find(
+        job =>
+          this.getDateArray(job.date_start, job.date_end).includes(date) &&
+          job.shift.name === type
+      );
     },
     hasPracticeUnfilledJobs(date, type) {
-      return this.getPracticeUnfilledJobs.find(job => this.getDateArray(job.date_start, job.date_end).includes(date) && job.shift.name === type)
+      return this.getPracticeUnfilledJobs.find(
+        job =>
+          this.getDateArray(job.date_start, job.date_end).includes(date) &&
+          job.shift.name === type
+      );
     },
     hasPracticeDeclinedJobs(date, type) {
-      return this.getPracticeDeclinedJobs.find(job => this.getDateArray(job.date_start, job.date_end).includes(date) && job.shift.name === type)
+      return this.getPracticeDeclinedJobs.find(
+        job =>
+          this.getDateArray(job.date_start, job.date_end).includes(date) &&
+          job.shift.name === type
+      );
     },
     hasPracticeAppliedJobsReminder(date, type) {
-      return this.getPracticeAppliedJobsReminder.find(job => job.selection_date === date && type === 'Reminder')
+      return this.getPracticeAppliedJobsReminder.find(
+        job => job.selection_date === date && type === "Reminder"
+      );
     },
     hasPracticeAvailableJobsReminder(date, type) {
-      return this.getPracticeAvailableJobsReminder.find(job => job.selection_date === date && type === 'Reminder')
+      return this.getPracticeAvailableJobsReminder.find(
+        job => job.selection_date === date && type === "Reminder"
+      );
     },
     // locum
-    hasLocumPrivateJobs(date, type) {
-      return this.getLocumAllocatedPrivateJobs.find(job => this.getDateArray(job.date_start, job.date_end).includes(date) && job.shift.name === type)
+    hasLocumOngoingJobs(date, type) {
+      return this.getLocumOngoingJobs.find(
+        job_part =>
+          this.getDateArray(job_part.date_start, job_part.date_end).includes(
+            date
+          ) && job_part.job.shift.name === type
+      );
     },
-    hasLocumCurrentJobs(date, type) {
-      return this.getLocumAllocatedCurrentJobs.find(job => this.getDateArray(job.date_start, job.date_end).includes(date) && job.shift.name === type)
+    hasLocumAllocatedPrivateJobs(date, type) {
+      return this.getLocumAllocatedPrivateJobs.find(
+        job =>
+          this.getDateArray(job.date_start, job.date_end).includes(date) &&
+          job.shift.name === type
+      );
+    },
+    hasLocumAllocatedPlatformJobs(date, type) {
+      return this.getLocumAllocatedPlatformJobs.find(
+        job =>
+          this.getDateArray(job.date_start, job.date_end).includes(date) &&
+          job.shift.name === type
+      );
     },
     hasLocumAppliedJobs(date, type) {
-      return this.getLocumAppliedJobs.find(job => this.getDateArray(job.date_start, job.date_end).includes(date) && job.shift.name === type)
+      return this.getLocumAppliedJobs.find(
+        job =>
+          this.getDateArray(job.date_start, job.date_end).includes(date) &&
+          job.shift.name === type
+      );
     },
     hasLocumUnavailabilities(date, type) {
-      return this.getLocumUnavailabilities.find(job => job.date === date && job.shifts.find(shift => shift.name === type))
-    },
+      return this.getLocumUnavailabilities.find(
+        job =>
+          job.date === date && job.shifts.find(shift => shift.name === type)
+      );
+    }
   }
-}
+};
 </script>
 <style scoped>
 .info {

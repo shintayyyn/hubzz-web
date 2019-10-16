@@ -17,7 +17,7 @@
         </div>
         <div v-if="viewLocumJobs && !loading">
           <div v-for="job in foundLocumJobs" :key="job.id">
-            <LocumJobCard :job="job" @viewLocumJob="$emit('viewLocumJob', $event)" />
+            <LocumJobCard :propJob="job" @viewLocumJob="$emit('viewLocumJob', $event)" />
           </div>
         </div>
       </transition>
@@ -118,10 +118,13 @@ export default {
       this.findPerMonthPractice(this.selected_date);
     },
     // locum
+    getLocumOngoingJobs(value) {
+      this.findPerMonthLocum(this.selected_date);
+    },
     getLocumAllocatedPrivateJobs(value) {
       this.findPerMonthLocum(this.selected_date);
     },
-    getLocumAllocatedCurrentJobs(value) {
+    getLocumAllocatedPlatformJobs(value) {
       this.findPerMonthLocum(this.selected_date);
     },
     getLocumAppliedJobs(value) {
@@ -144,16 +147,6 @@ export default {
     selected_date_shift() {
       return this.$store.state.calendar.selected_date_shift;
     },
-    noJobsToDisplay() {
-      if (this.$auth.user.domain === "Locum") {
-        return (
-          !this.foundLocumPrivateJobs.length &&
-          !this.foundLocumCurrentJobs.length &&
-          !this.foundLocumAppliedJobs.length &&
-          !this.foundLocumUnavailabilities.length
-        );
-      }
-    },
     // practice
     getPracticeAllocatedJobs() {
       return this.$store.getters["jobs/getPracticeAllocatedJobs"];
@@ -174,11 +167,14 @@ export default {
       return this.$store.getters["jobs/getPracticeAppliedJobsReminder"];
     },
     // locums
+    getLocumOngoingJobs() {
+      return this.$store.getters["jobs/getLocumOngoingJobs"];
+    },
     getLocumAllocatedPrivateJobs() {
       return this.$store.getters["jobs/getLocumAllocatedPrivateJobs"];
     },
-    getLocumAllocatedCurrentJobs() {
-      return this.$store.getters["jobs/getLocumAllocatedCurrentJobs"];
+    getLocumAllocatedPlatformJobs() {
+      return this.$store.getters["jobs/getLocumAllocatedPlatformJobs"];
     },
     getLocumAppliedJobs() {
       return this.$store.getters["jobs/getLocumAppliedJobs"];
@@ -317,19 +313,32 @@ export default {
     findPerMonthLocum(date) {
       this.viewLocumJobs = false;
       this.loading = true;
-      let foundLocumPrivateJobs = [];
-      let foundLocumCurrentJobs = [];
+      let foundLocumOngoingJobs = [];
+      let foundLocumAllocatedPrivateJobs = [];
+      let foundLocumAllocatedPlatformJobs = [];
       let foundLocumAppliedJobs = [];
       let foundLocumUnavailabilities = [];
 
-      if (this.getLocumAllocatedPrivateJobs.length > 0) {
-        foundLocumPrivateJobs = this.getLocumAllocatedPrivateJobs.filter(job =>
-          this.getDateArray(job.date_start, job.date_end).includes(date)
+      if (this.getLocumOngoingJobs.length > 0) {
+        foundLocumOngoingJobs = this.getLocumOngoingJobs.filter(job_part =>
+          this.getDateArray(job_part.date_start, job_part.date_end).includes(
+            date
+          )
         );
       }
-      if (this.getLocumAllocatedCurrentJobs.length > 0) {
-        foundLocumCurrentJobs = this.getLocumAllocatedCurrentJobs.filter(job =>
-          this.getDateArray(job.date_start, job.date_end).includes(date)
+      if (this.getLocumAllocatedPrivateJobs.length > 0) {
+        foundLocumAllocatedPrivateJobs = this.getLocumAllocatedPrivateJobs.filter(
+          job => this.getDateArray(job.date_start, job.date_end).includes(date)
+        );
+      }
+      if (this.getLocumAllocatedPrivateJobs.length > 0) {
+        foundLocumAllocatedPrivateJobs = this.getLocumAllocatedPrivateJobs.filter(
+          job => this.getDateArray(job.date_start, job.date_end).includes(date)
+        );
+      }
+      if (this.getLocumAllocatedPlatformJobs.length > 0) {
+        foundLocumAllocatedPlatformJobs = this.getLocumAllocatedPlatformJobs.filter(
+          job => this.getDateArray(job.date_start, job.date_end).includes(date)
         );
       }
       if (this.getLocumAppliedJobs.length > 0) {
@@ -343,8 +352,9 @@ export default {
         );
       }
       this.foundLocumJobs = [
-        ...foundLocumPrivateJobs,
-        ...foundLocumCurrentJobs,
+        ...foundLocumOngoingJobs,
+        ...foundLocumAllocatedPrivateJobs,
+        ...foundLocumAllocatedPlatformJobs,
         ...foundLocumAppliedJobs,
         ...foundLocumUnavailabilities
       ];
@@ -360,20 +370,29 @@ export default {
     findPerWeekLocum({ date, shift }) {
       this.viewLocumJobs = false;
       this.loading = false;
-      let foundLocumPrivateJobs = [];
-      let foundLocumCurrentJobs = [];
+      let foundLocumOngoingJobs = [];
+      let foundLocumAllocatedPrivateJobs = [];
+      let foundLocumAllocatedPlatformJobs = [];
       let foundLocumAppliedJobs = [];
       let foundLocumUnavailabilities = [];
 
+      if (this.getLocumOngoingJobs.length > 0) {
+        foundLocumOngoingJobs = this.getLocumOngoingJobs.filter(
+          job_part =>
+            this.getDateArray(job_part.date_start, job_part.date_end).includes(
+              date
+            ) && job_part.job.shift.name === shift
+        );
+      }
       if (this.getLocumAllocatedPrivateJobs.length > 0) {
-        foundLocumPrivateJobs = this.getLocumAllocatedPrivateJobs.filter(
+        foundLocumAllocatedPrivateJobs = this.getLocumAllocatedPrivateJobs.filter(
           job =>
             this.getDateArray(job.date_start, job.date_end).includes(date) &&
             job.shift.name === shift
         );
       }
-      if (this.getLocumAllocatedCurrentJobs.length > 0) {
-        foundLocumCurrentJobs = this.getLocumAllocatedCurrentJobs.filter(
+      if (this.getLocumAllocatedPlatformJobs.length > 0) {
+        foundLocumAllocatedPlatformJobs = this.getLocumAllocatedPlatformJobs.filter(
           job =>
             this.getDateArray(job.date_start, job.date_end).includes(date) &&
             job.shift.name === shift
@@ -394,8 +413,9 @@ export default {
         );
       }
       this.foundLocumJobs = [
-        ...foundLocumPrivateJobs,
-        ...foundLocumCurrentJobs,
+        ...foundLocumOngoingJobs,
+        ...foundLocumAllocatedPrivateJobs,
+        ...foundLocumAllocatedPlatformJobs,
         ...foundLocumAppliedJobs,
         ...foundLocumUnavailabilities
       ];

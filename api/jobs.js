@@ -23,18 +23,19 @@ export function fetchPracticeJobsReminder(axios, payload) {
     return axios.$get(`/api/v1/practice/jobs`, { params: params })
 }
 
-export function fetchLocumJobParts(axios, payload) {
-    let params = {}
-    payload.offset ? params.offset = payload.offset : null
-    payload.limit ? params.limit = payload.limit : null
-    payload.status ? params.locum_status = payload.status : null
-    payload.date_start ? params.date_start = payload.date_start : null
-    payload.date_end ? params.date_end = payload.date_end : null
-    return axios.$get(`/api/v1/locum/job-parts${payload.countOnly ? '/count' : ''}`, { params })
-}
-
 export function fetchLocumJobs(axios, payload) {
     let params = {}
+    let url = '/api/v1/locum/jobs'
+
+    if (!Array.isArray(payload.status) && payload.status && ['ongoing', 'completed', 'approved'].includes(payload.status.toLowerCase())) {
+        url = '/api/v1/locum/job-parts'
+    }
+    if (!Array.isArray(payload.status) && payload.status && payload.status.toLowerCase() === 'unavailable') {
+        url = '/api/v1/locum/unavailabilities'
+    }
+    if (payload.id && payload.first) {
+        url = `/api/v1/locum/jobs/${payload.id}`
+    }
     payload.practice_id ? params.practice_id = payload.practice_id : null
     payload.offset ? params.offset = payload.offset : null
     payload.limit ? params.limit = payload.limit : null
@@ -48,20 +49,7 @@ export function fetchLocumJobs(axios, payload) {
     payload.miles ? params.miles = payload.miles : null
     payload.surgery_name ? params.surgery_name = payload.surgery_name : null
     payload.order_by ? params.order_by = payload.order_by : null
-    return axios.$get(`/api/v1/locum/jobs${payload.countOnly ? '/count' : ''}`, { params: params })
-}
-
-export function fetchLocumUnavailabilities(axios, payload) {
-    let params = {}
-    payload.offset ? params.offset = payload.offset : null
-    payload.limit ? params.limit = payload.limit : null
-    payload.date_start ? params.date_start = payload.date_start : null
-    payload.date_end ? params.date_end = payload.date_end : null
-    return axios.$get(`/api/v1/locum/unavailabilities${payload.countOnly ? '/count' : ''}`, { params: params })
-}
-
-export function fetchLocumJob(axios, payload) {
-    return axios.$get(`/api/v1/locum/jobs/${payload}`)
+    return axios.$get(`${url}${payload.countOnly ? '/count' : ''}`, { params: params })
 }
 
 export function fetchPracticeJob(axios, payload) {

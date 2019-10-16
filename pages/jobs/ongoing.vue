@@ -264,7 +264,7 @@ export default {
     getJobsCount(params) {
       this.$store.commit("jobs/TOGGLE_LOADING", true);
       this.$store
-        .dispatch("jobs/fetchLocumJobParts", {
+        .dispatch("jobs/fetchLocumJobs", {
           status: "Ongoing",
           countOnly: true,
           ...params
@@ -275,7 +275,7 @@ export default {
     },
     getJobs(params) {
       this.$store
-        .dispatch("jobs/fetchLocumJobParts", { status: "Ongoing", ...params })
+        .dispatch("jobs/fetchLocumJobs", { status: "Ongoing", ...params })
         .finally(() => {
           this.$store.commit("jobs/TOGGLE_LOADING", false);
         });
@@ -308,7 +308,6 @@ export default {
       this.getJobs(this.params);
     },
     show(item) {
-      console.log(item);
       this.$router.push(`/jobs/${item.id}?status=${item.locum_status}`);
     },
     getShifts() {
