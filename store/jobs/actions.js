@@ -174,12 +174,10 @@ export default {
     },
     async fetchLocumAllocatedJobParts({ commit }, payload) {
         const response = await jobsApi.fetchLocumAllocatedJobParts(this.$axios, payload)
-        console.log(response, payload)
         return commit('SET_LOCUM_ALLOCATED_PART_JOBS', response.data.job_parts)
     },
     async fetchLocumJobs({ state, commit }, payload) {
         const response = await jobsApi.fetchLocumJobs(this.$axios, payload)
-        console.log(response, payload)
         if (payload.id && payload.first) {
             if (response.data.job.locum_status === 'Current' && !state.locum_allocated_jobs.find(allocatedJob => allocatedJob.id === payload)) {
                 commit('ADD_LOCUM_ALLOCATED_BADGE')

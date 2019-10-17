@@ -263,7 +263,6 @@ export default {
       return this.form.shift_id.includes(id);
     },
     isDisabled(id) {
-      console.log(this.partDate);
       return (
         (this.allocatedDate &&
           this.allocatedDate.length &&
