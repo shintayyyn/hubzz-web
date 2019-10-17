@@ -1,26 +1,25 @@
 <template>
-  <div class="p-8 max-w-5xl">
+  <div class="p-4 md:p-8">
     <div @click="close" class="cursor-pointer">
       <svgicon name="left-arrow" height="32" width="32" />
     </div>
-    <div class="flex flex-row justify-start mt-8">
+    <div class="flex flex-row justify-start items-center mt-8">
       <div class="leading-loose font-bold text-md sm:text-lg">{{job_part.job.title}}</div>
       <div
-        class="mx-2 text-sm sm:text-sm p-2"
+        class="mx-2 text-sm sm:text-sm py-2 px-4 rounded font-semibold"
         :class="bgStatus(job_part.locum_status)"
       >{{status(job_part.locum_status)}}</div>
       <div
-        class="mx-2 text-sm sm:text-sm p-2 bg-gray-400"
+        class="mx-2 text-sm sm:text-sm py-2 px-4 rounded font-semibold"
+        :class="jobPartStatus === 'Completed' ? 'bg-green-500' : 'bg-gray-300'"
         v-if="job_part.locum_status === 'Completed'"
       >{{jobPartStatus}}</div>
     </div>
-    <div class="text-xs sm:text-sm">Posted {{$moment(job_part.date_created).format('DD/MM/YYYY')}}</div>
-    <div class="flex flex-col mt-4"></div>
-
-    <div class="flex flex-row flex-wrap justify-start mt-4">
-      <div class="p-0 md:pr-4 w-full md:w-1/2">
-        <JobPartDetailModalInfo :job_part="job_part" />
-      </div>
+    <div class="text-xs sm:text-sm py-2">Posted {{$moment(job_part.date_created).format('DD/MM/YYYY')}}</div>
+    <div class="flex flex-row flex-wrap justify-start">
+        <div class="p-0 md:pr-4 w-full md:w-1/2">
+          <JobPartDetailModalInfo :job_part="job_part" />
+        </div>
       <div class="p-0 md:pl-4 mt-8 md:m-0 w-full md:w-1/2">
         <div class="flex flex-col">
           <JobPartDetailModalParts :parts="job_part.job.job_parts" />
@@ -47,6 +46,7 @@ import JobDetailModalApplyForm from "@/components/Jobs/JobDetailModalApplyForm";
 import JobDetailModalCancelForm from "@/components/Jobs/JobDetailModalCancelForm";
 export default {
   props: ["job_part"],
+ 
   components: {
     JobPartDetailModalInfo,
     JobPartDetailModalParts,
@@ -58,8 +58,9 @@ export default {
     JobDetailModalCancelForm
   },
   mounted() {
-    console.log(this.job_part);
+    // console.log(this.job_part);
   },
+
   computed: {
     jobPartStatus() {
       let status = "TO BE INVOICED";
@@ -97,7 +98,7 @@ export default {
           return "bg-orange-400 text-white";
           break;
         case "Completed":
-          return "bg-green-400";
+          return "bg-green-400 text-white";
           break;
         case "Allocated":
           return "bg-green-400";

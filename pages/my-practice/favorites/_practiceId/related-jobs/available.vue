@@ -5,7 +5,7 @@
       class="mt-10 w-full text-center"
       v-if="!loadingJobs && getLocumAvailableJobs.length === 0"
     >There are no available jobs nearby and suited for you at this time</div>
-    <div v-if="getLocumAvailableJobs.length > 0" class="overflow-x-auto overflow-y-hidden p-2">
+    <div v-if="getLocumAvailableJobs.length > 0" class="overflow-x-auto overflow-y-hidden">
       <JobTable :columns="columns" :jobs="getLocumAvailableJobs" @sortBy="sortBy" @show="show" />
     </div>
     <div class="absolute bottom-0 w-full" v-if="getLocumAvailableJobs.length > 0 && totalPages > 1">

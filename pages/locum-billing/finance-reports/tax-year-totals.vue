@@ -13,7 +13,7 @@
       </div>
     </div>
     <div class="p-1 w-full sm:w-3/4 order-2 sm:order-1">
-      <div class="overflow-x-auto overflow-y-hidden p-2">
+      <div class="overflow-x-auto overflow-y-hidden">
         <table>
           <thead>
             <tr class="text-xs sm:text-sm text-left">
@@ -109,5 +109,26 @@ export default {
   }
 };
 </script>
-
+<style>
+table{
+  border-collapse: separate;
+  border-spacing: 0 10px;
+}
+table tbody tr {
+  background-color: #fff;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+table tbody tr:hover td{
+  background-color: #eee;
+}
+table tbody td:first-child, table thead th:first-child {
+  position: sticky;
+  background-color: #fff;
+  left: 0;
+}
+table tbody td, table thead th {
+  background-color: #fff;
+  padding: 15px 8px;
+}
+</style>
 

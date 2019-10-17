@@ -1,8 +1,14 @@
 <template>
   <section class="relative">
     <AppLoading :loading="loadingJobs" spinner />
-    <div class="relative flex flex-wrap justify-start items-center">
-      <div class="px-1 w-full lg:w-1/4 md:w-1/3 sm:w-1/2">
+    <AppButton
+      class="relative md:hidden"
+      :label="'Filter'"
+      @click="showFilter()"
+      :inStyle="'padding:5px 14px;margin-bottom:5px; font-size:14px;'"
+    />
+    <div class="md:relative md:flex flex-wrap justify-start items-center" :class="filterToggle ? 'z-10 absolute w-full bg-white shadow-md p-3' : 'hidden'">
+      <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
         <AppInput
           class="px-1"
           v-model="params.job_number"
@@ -11,7 +17,7 @@
           :label="'Job number'"
         />
       </div>
-      <div class="px-1 w-full lg:w-1/4 md:w-1/3 sm:w-1/2">
+      <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
         <AppAutoComplete
           class="px-1"
           v-model="params.surgery_name"
@@ -21,7 +27,7 @@
           :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem'"
         />
       </div>
-      <div class="px-1 w-full lg:w-1/4 md:w-1/3 sm:w-1/2">
+      <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
         <AppInput
           class="px-1"
           v-model="params.title"
@@ -30,7 +36,7 @@
           :label="'Title'"
         />
       </div>
-      <div class="px-1 w-full lg:w-1/4 md:w-1/3 sm:w-1/2">
+      <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
         <AppInput
           class="px-1"
           v-model="params.shift_id"
@@ -41,7 +47,7 @@
           :items="shifts"
         />
       </div>
-      <div class="px-1 w-full lg:w-1/4 md:w-1/3 sm:w-1/2">
+      <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
         <AppInput
           class="px-1"
           v-model="params.rate"
@@ -51,7 +57,7 @@
           :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
         />
       </div>
-      <div class="px-1 w-full lg:w-1/4 md:w-1/3 sm:w-1/2">
+      <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
         <AppInput
           class="px-1"
           v-model="params.locum_detail_rate_type_id"
@@ -62,13 +68,13 @@
           :items="rates"
         />
       </div>
-      <div class="px-1 w-full lg:w-1/4 md:w-1/3 sm:w-1/2">
+      <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
         <AppDate v-model="params.date_start" :name="'date_start'" :label="'From'" />
       </div>
-      <div class="px-1 w-full lg:w-1/4 md:w-1/3 sm:w-1/2">
+      <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
         <AppDate v-model="params.date_end" :name="'date_end'" :label="'To'" />
       </div>
-      <div class="px-1 w-full lg:w-1/4 md:w-1/3 sm:w-1/2">
+      <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
         <AppPostCode
           class="px-1"
           v-model="params.near_post_code"
@@ -78,7 +84,7 @@
           :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;border-style:solid'"
         />
       </div>
-      <div class="px-1 w-full lg:w-1/4 md:w-1/3 sm:w-1/2">
+      <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
         <AppInput
           class="px-1"
           v-model="params.miles"
@@ -89,10 +95,16 @@
           :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
         />
       </div>
-      <div class="px-1 w-full">
+      <div class="md:px-1 flex w-full">
         <AppButton
           :label="'Clear'"
           @click="clearFilters"
+          :inStyle="'padding:5px 14px;margin-bottom:5px'"
+        />
+        <AppButton
+          class="mx-2 md:hidden"
+          :label="'Close'"
+          @click="showFilter()"
           :inStyle="'padding:5px 14px;margin-bottom:5px'"
         />
       </div>
@@ -113,7 +125,7 @@
     ></AppTable>
     <div
       v-if="!getLocumCompletedJobs.length && !loadingJobs"
-      class="flex justify-center"
+      class="flex justify-center py-4"
     >You have not yet completed any job</div>
     <transition name="fade" mode="out-in">
       <div
@@ -174,40 +186,47 @@ export default {
       // app table column
       columns: [
         {
-          name: "Job part number",
+          name: "Job Part Number",
           dataIndex: "job_part_number",
           sortable: true
         },
         {
           name: "Practice",
-          dataIndex: "job.platform_job.practice.surgery.name"
+          dataIndex: "job.platform_job.practice.surgery.name",
+          class: "text-center"
         },
         {
           name: "Title",
-          dataIndex: "job.title"
+          dataIndex: "job.title",
+          class: "text-center"
         },
         {
           name: "Shift",
-          dataIndex: "job.shift.name"
+          dataIndex: "job.shift.name",
+          class: "text-center"
         },
         {
           name: "Rate",
           dataIndex: "job.rate",
-          sortable: true
+          sortable: true,
+          class: "text-center"
         },
         {
           name: "per",
-          dataIndex: "job.locum_detail_rate_type.name"
+          dataIndex: "job.locum_detail_rate_type.name",
+          class: "text-center"
         },
         {
           name: "From",
           dataIndex: "date_start",
-          sortable: true
+          sortable: true,
+          class: "text-center"
         },
         {
           name: "To",
           dataIndex: "date_end",
-          sortable: true
+          sortable: true,
+          class: "text-center"
         },
         {
           name: "Created At",
@@ -218,13 +237,16 @@ export default {
         {
           name: "Assigned",
           dataIndex:
-            "job.platform_job.appointed_to_locum.user.personal_detail.name"
+            "job.platform_job.appointed_to_locum.user.personal_detail.name",
+          class: "text-center"
         },
         {
           name: "Status",
-          dataIndex: "invoiced_status"
+          dataIndex: "invoiced_status",
+          class: "text-center"
         }
-      ]
+      ],
+      filterToggle: false
     };
   },
   computed: {
@@ -295,8 +317,8 @@ export default {
           });
         });
       }
-      console.log(newValue, oldValue);
-      console.log(this.jobs);
+      // console.log(newValue, oldValue);
+      // console.log(this.jobs);
     }
   },
   beforeDestroy() {
@@ -327,6 +349,9 @@ export default {
   //   });
   // },
   methods: {
+    showFilter(){
+      return this.filterToggle = !this.filterToggle 
+    },
     filterOut: debounce(function({ field, value }) {
       this.current_page = 1;
       this.params.offset = 0;

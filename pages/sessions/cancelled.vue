@@ -6,7 +6,7 @@
       class="mt-10 w-full text-center"
       v-if="!loadingJobs && getPracticeCancelledJobs.length === 0 "
     >You do not have any cancelled jobs</div>
-    <div v-if="getPracticeCancelledJobs.length > 0" class="overflow-x-auto overflow-y-hidden p-2">
+    <div v-if="getPracticeCancelledJobs.length > 0" class="overflow-x-auto overflow-y-hidden">
       <JobTable :columns="columns" :jobs="getPracticeCancelledJobs" @sortBy="sortBy" @show="show" />
     </div>
     <div class="w-full mt-4" v-if="getPracticeCancelledJobs.length > 0 && totalPages > 1">
