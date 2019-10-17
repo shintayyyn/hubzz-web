@@ -20,6 +20,7 @@ export default {
         state.locum_completed_jobs = []
         state.locum_private_jobs = []
         state.locum_unavailabilities = []
+        state.locum_ongoing_jobs = []
     },
     // PRACTICE
     SET_PRACTICE_AVAILABLE_JOBS(state, payload) {

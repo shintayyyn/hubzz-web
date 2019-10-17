@@ -43,13 +43,13 @@ export default {
             if (state.locum_applied_jobs.find(appliedJob => appliedJob.id === job.id)) {
                 commit('REMOVE_LOCUM_APPLIED_JOB', job.id)
             }
-            dispatch('fetchLocumJob', job.id)
+            dispatch('fetchLocumJobs', { id: job.id, first: true })
         })
         this.$socket.on('Locum Notification Job Unsuccessful', (job) => {
             if (state.locum_applied_jobs.find(appliedJob => appliedJob.id === job.id)) {
                 commit('REMOVE_LOCUM_APPLIED_JOB', job.id)
             }
-            dispatch('fetchLocumJob', job.id)
+            dispatch('fetchLocumJobs', { id: job.id, first: true })
         })
         this.$socket.on('Locum Notification Job Unavailable', (job) => {
             if (state.locum_available_jobs.find(availableJob => availableJob.id === job.id)) {
@@ -172,15 +172,23 @@ export default {
             }
         })
     },
-    async fetchLocumUnavailabilities({ commit }, payload) {
-        commit('TOGGLE_LOADING', true)
-        const response = await jobsApi.fetchLocumUnavailabilities(this.$axios, payload)
-        commit('TOGGLE_LOADING', false)
-        commit('SET_LOCUM_UNAVAILABILITIES', response.data.unavailabilities)
-        commit('SET_LOCUM_UNAVAILABILITIES_COUNT', response.data.count)
-    },
-    async fetchLocumJobParts({ commit }, payload) {
-        const response = await jobsApi.fetchLocumJobParts(this.$axios, payload)
+    async fetchLocumJobs({ commit }, payload) {
+        const response = await jobsApi.fetchLocumJobs(this.$axios, payload)
+        if (payload.id && payload.first) {
+            if (response.data.job.locum_status === 'Current' && !state.locum_allocated_jobs.find(allocatedJob => allocatedJob.id === payload)) {
+                commit('ADD_LOCUM_ALLOCATED_BADGE')
+                return commit('ADD_LOCUM_ALLOCATED_JOB', response.data.job)
+            }
+            if (response.data.job.locum_status === 'Current' && !state.locum_unsuccessful_jobs.find(unsuccessfulJob => unsuccessfulJob.id === payload)) {
+                commit('ADD_LOCUM_UNSUCCESSFUL_BADGE')
+                return commit('ADD_LOCUM_UNSUCCESSFUL_JOB', response.data.job)
+            }
+        }
+        // unavailable
+        if (payload.status === "Unavailable") {
+            return commit('SET_LOCUM_UNAVAILABILITIES', response.data.unavailabilities)
+        }
+        // job parts
         if (payload.status === "Ongoing") {
             if (payload.countOnly) {
                 return commit('SET_LOCUM_ONGOING_JOBS_COUNT', response.data.count)
@@ -193,10 +201,8 @@ export default {
             }
             return commit('SET_LOCUM_COMPLETED_JOBS', response.data.job_parts)
         }
-    },
-    async fetchLocumJobs({ commit }, payload) {
-        const response = await jobsApi.fetchLocumJobs(this.$axios, payload)
-        if (payload.status === "Current") {
+        // whole jobs
+        if (payload.status === "Allocated") {
             if (payload.countOnly) {
                 return commit('SET_LOCUM_ALLOCATED_JOBS_COUNT', response.data.count)
             }
@@ -238,26 +244,6 @@ export default {
             }
             return commit('SET_LOCUM_CANCELLED_JOBS', response.data.jobs)
         }
-        // if (payload.status === "Completed") {
-        //     if (payload.countOnly) {
-        //         return commit('SET_LOCUM_COMPLETED_JOBS_COUNT', response.data.count)
-        //     }
-        //     return commit('SET_LOCUM_COMPLETED_JOBS', response.data.jobs)
-        // }
-    },
-    async fetchLocumJob({ state, commit }, payload) {
-        commit('TOGGLE_LOADING', true)
-        const response = await jobsApi.fetchLocumJob(this.$axios, payload)
-        commit('TOGGLE_LOADING', false)
-
-        if (response.data.job.locum_status === 'Current' && !state.locum_allocated_jobs.find(allocatedJob => allocatedJob.id === payload)) {
-            commit('ADD_LOCUM_ALLOCATED_BADGE')
-            return commit('ADD_LOCUM_ALLOCATED_JOB', response.data.job)
-        }
-        if (response.data.job.locum_status === 'Current' && !state.locum_unsuccessful_jobs.find(unsuccessfulJob => unsuccessfulJob.id === payload)) {
-            commit('ADD_LOCUM_UNSUCCESSFUL_BADGE')
-            return commit('ADD_LOCUM_UNSUCCESSFUL_JOB', response.data.job)
-        }
     },
     async fetchPracticeJobs({ commit }, payload) {
         commit('TOGGLE_LOADING', true)
@@ -278,7 +264,7 @@ export default {
             }
             return commit('SET_PRACTICE_APPLIED_JOBS', response.data.jobs)
         }
-        if (payload.status === "Current") {
+        if (payload.status === "Allocated") {
             if (payload.countOnly) {
                 return commit('SET_PRACTICE_ALLOCATED_JOBS_COUNT', response.data.count)
             }

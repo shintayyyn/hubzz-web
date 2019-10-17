@@ -204,7 +204,7 @@ export default {
         this.$store.dispatch("jobs/fetchPracticeJobs", {
           date_start: `${this.startOfMonth}:gte`,
           date_end: `${this.endOfMonth}:lte`,
-          status: "Current"
+          status: "Allocated"
         });
 
         this.$store.dispatch("jobs/fetchPracticeJobs", {
@@ -241,6 +241,12 @@ export default {
         this.$store.dispatch("jobs/fetchLocumJobs", {
           date_start: `${this.startOfMonth}:gte`,
           date_end: `${this.endOfMonth}:lte`,
+          status: "Allocated"
+        });
+
+        this.$store.dispatch("jobs/fetchLocumJobs", {
+          date_start: `${this.startOfMonth}:gte`,
+          date_end: `${this.endOfMonth}:lte`,
           status: "Ongoing"
         });
 
@@ -250,9 +256,10 @@ export default {
           status: "Applied"
         });
 
-        this.$store.dispatch("jobs/fetchLocumUnavailabilities", {
+        this.$store.dispatch("jobs/fetchLocumJobs", {
           date_start: `${this.startOfMonth}:gte`,
-          date_end: `${this.endOfMonth}:lte`
+          date_end: `${this.endOfMonth}:lte`,
+          status: "Unavailable"
         });
       }
     },

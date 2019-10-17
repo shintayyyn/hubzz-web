@@ -1,8 +1,14 @@
 <template>
   <section class="relative">
     <AppLoading :loading="loadingJobs" spinner />
-    <div class="relative flex flex-wrap justify-start items-center">
-      <div class="px-1 w-full md:w-1/3">
+    <AppButton
+      class="relative md:hidden"
+      :label="'Filter'"
+      @click="showFilter()"
+      :inStyle="'padding:5px 14px;margin-bottom:5px; font-size:14px;'"
+    />
+    <div class="md:relative md:flex flex-wrap justify-start items-center" :class="filterToggle ? 'z-10 absolute w-full bg-white shadow-md p-3' : 'hidden'">
+      <div class="md:px-1 w-full md:w-1/3">
         <AppInput
           class="px-1"
           v-model="params.shift_id"
@@ -13,7 +19,7 @@
           :items="shifts"
         />
       </div>
-      <div class="px-1 w-full md:w-1/3">
+      <div class="md:px-1 w-full md:w-1/3">
         <AppInput
           class="px-1"
           v-model="params.rate"
@@ -23,7 +29,7 @@
           :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
         />
       </div>
-      <div class="px-1 w-full md:w-1/3">
+      <div class="md:px-1 w-full md:w-1/3">
         <AppInput
           class="px-1"
           v-model="params.locum_detail_rate_type_id"
@@ -34,7 +40,7 @@
           :items="rates"
         />
       </div>
-      <div class="px-1 w-full md:w-1/3">
+      <div class="md:px-1 w-full md:w-1/3">
         <AppPostCode
           class="px-1"
           v-model="params.near_post_code"
@@ -44,7 +50,7 @@
           :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;border-style:solid'"
         />
       </div>
-      <div class="px-1 w-full md:w-1/3">
+      <div class="md:px-1 w-full md:w-1/3">
         <AppInput
           class="px-1"
           v-model="params.miles"
@@ -55,7 +61,7 @@
           :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
         />
       </div>
-      <div class="px-1 w-full md:w-1/3">
+      <div class="md:px-1 w-full md:w-1/3">
         <AppAutoComplete
           class="px-1"
           v-model="params.surgery_name"
@@ -65,12 +71,19 @@
           :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem'"
         />
       </div>
-      <AppButton
-        class="w-full"
-        :label="'Clear'"
-        @click="clearFilters"
-        :inStyle="'padding:5px 14px;margin-bottom:5px'"
-      />
+      <div class="md:px-1 flex w-full">
+        <AppButton
+          :label="'Clear'"
+          @click="clearFilters"
+          :inStyle="'padding:5px 14px;margin-bottom:5px'"
+        />
+        <AppButton
+          class="mx-2 md:hidden"
+          :label="'Close'"
+          @click="showFilter()"
+          :inStyle="'padding:5px 14px;margin-bottom:5px'"
+        />
+      </div>
     </div>
     <AppTable
       v-if="getLocumMatchedJobs.length > 0"
@@ -88,7 +101,7 @@
     />
     <div
       v-if="!getLocumMatchedJobs.length && !loadingJobs"
-      class="flex justify-center"
+      class="flex justify-center py-4"
     >There are no matched jobs nearby and suited for you at this time</div>
     <transition name="fade" mode="out-in">
       <div
@@ -188,7 +201,8 @@ export default {
           class: "text-center localDate",
           sortable: true
         }
-      ]
+      ],
+      filterToggle: false
     };
   },
   computed: {
@@ -257,6 +271,9 @@ export default {
     }, 1000);
   },
   methods: {
+    showFilter(){
+      return this.filterToggle = !this.filterToggle 
+    },
     getJobsCount(params) {
       this.$store.commit("jobs/TOGGLE_LOADING", true);
       this.$store

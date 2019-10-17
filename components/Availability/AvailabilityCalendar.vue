@@ -144,7 +144,7 @@
   </section>
 </template>
 <script>
-import AvailabilityInfoDateCell from '@/components/Availability/AvailabilityInfoDateCell'
+import AvailabilityInfoDateCell from "@/components/Availability/AvailabilityInfoDateCell";
 export default {
   components: {
     AvailabilityInfoDateCell
@@ -155,31 +155,35 @@ export default {
       selectedYear: new Date().getFullYear(),
       daysInMonth: [],
       startOfMonth: null,
-      endOfMonth: null,
-    }
+      endOfMonth: null
+    };
   },
   computed: {
     getLocumAllocatedPrivateJobs() {
-      return this.$store.getters['jobs/getLocumAllocatedPrivateJobs']
+      return this.$store.getters["jobs/getLocumAllocatedPrivateJobs"];
     },
-    getLocumAllocatedCurrentJobs() {
-      return this.$store.getters['jobs/getLocumAllocatedCurrentJobs']
+    getLocumAllocatedPlatformJobs() {
+      return this.$store.getters["jobs/getLocumAllocatedPlatformJobs"];
     },
     getLocumUnavailabilities() {
-      return this.$store.getters['jobs/getLocumUnavailabilities']
-    },
+      return this.$store.getters["jobs/getLocumUnavailabilities"];
+    }
   },
   created() {
-    this.startOfMonth = this.$moment().startOf('month').format('YYYY-MM-DD')
-    this.endOfMonth = this.$moment().endOf('month').format('YYYY-MM-DD')
-    let d = new Date()
-    this.selectedMonth = d.getMonth()
-    this.getDaysInMonth(this.selectedMonth, this.selectedYear)
-    this.getJobs()
+    this.startOfMonth = this.$moment()
+      .startOf("month")
+      .format("YYYY-MM-DD");
+    this.endOfMonth = this.$moment()
+      .endOf("month")
+      .format("YYYY-MM-DD");
+    let d = new Date();
+    this.selectedMonth = d.getMonth();
+    this.getDaysInMonth(this.selectedMonth, this.selectedYear);
+    this.getJobs();
   },
   watch: {
     selectedMonth(value) {
-      this.getDaysInMonth(value, this.selectedYear)
+      this.getDaysInMonth(value, this.selectedYear);
     }
   },
   methods: {
@@ -187,12 +191,13 @@ export default {
       this.$store.dispatch("jobs/fetchLocumJobs", {
         date_start: this.startOfMonth,
         date_end: this.endOfMonth,
-        status: "Current"
+        status: "Allocated"
       });
 
-      this.$store.dispatch("jobs/fetchLocumUnavailabilities", {
+      this.$store.dispatch("jobs/fetchLocumJobs", {
         date_start: this.startOfMonth,
         date_end: this.endOfMonth,
+        status: "Unavailable"
       });
     },
     getDaysInMonth(month, selectedYear) {
@@ -202,71 +207,104 @@ export default {
         days.push(new Date(date));
         date.setDate(date.getDate() + 1);
       }
-      let daysInMonth = []
+      let daysInMonth = [];
       days.forEach(day => {
         daysInMonth.push({
           day: day.getDay(),
           date: day.getDate(),
-          fullDate: this.$moment(new Date(day.getFullYear(), day.getMonth(), day.getDate()).toDateString()).format('YYYY-MM-DD')
-        })
-      })
-      this.daysInMonth = daysInMonth
+          fullDate: this.$moment(
+            new Date(
+              day.getFullYear(),
+              day.getMonth(),
+              day.getDate()
+            ).toDateString()
+          ).format("YYYY-MM-DD")
+        });
+      });
+      this.daysInMonth = daysInMonth;
     },
     adjustMonth(type) {
-      if (type === 'previous') {
+      if (type === "previous") {
         if (this.selectedMonth === 0) {
-          this.selectedMonth = 11
-          this.selectedYear--
+          this.selectedMonth = 11;
+          this.selectedYear--;
         } else {
-          this.selectedMonth--
+          this.selectedMonth--;
         }
       }
-      if (type === 'next') {
+      if (type === "next") {
         if (this.selectedMonth === 11) {
-          this.selectedMonth = 0
-          this.selectedYear++
+          this.selectedMonth = 0;
+          this.selectedYear++;
         } else {
-          this.selectedMonth++
+          this.selectedMonth++;
         }
       }
-      this.startOfMonth = this.$moment(`${this.selectedYear}-${this.selectedMonth + 1}`).startOf('month').format('YYYY-MM-DD')
-      this.endOfMonth = this.$moment(`${this.selectedYear}-${this.selectedMonth + 1}`).endOf('month').format('YYYY-MM-DD')
-      this.getJobs()
+      this.startOfMonth = this.$moment(
+        `${this.selectedYear}-${this.selectedMonth + 1}`
+      )
+        .startOf("month")
+        .format("YYYY-MM-DD");
+      this.endOfMonth = this.$moment(
+        `${this.selectedYear}-${this.selectedMonth + 1}`
+      )
+        .endOf("month")
+        .format("YYYY-MM-DD");
+      this.getJobs();
     },
     selectDate(date) {
-      this.$store.commit('availability/SELECT_DATE', date)
-      let unavaibleDate
-      let appointmentDate
-      let allocatedDate
-      if (this.getLocumUnavailabilities && this.getLocumUnavailabilities.length > 0) {
-        let isUnavailable = this.getLocumUnavailabilities.find(unavailable => unavailable.date === date)
+      this.$store.commit("availability/SELECT_DATE", date);
+      let unavaibleDate;
+      let appointmentDate;
+      let allocatedDate;
+      if (
+        this.getLocumUnavailabilities &&
+        this.getLocumUnavailabilities.length > 0
+      ) {
+        let isUnavailable = this.getLocumUnavailabilities.find(
+          unavailable => unavailable.date === date
+        );
         if (isUnavailable) {
           unavaibleDate = {
             id: isUnavailable.id,
             shifts: isUnavailable.shifts
-          }
+          };
         }
       }
-      if (this.getLocumAllocatedPrivateJobs && this.getLocumAllocatedPrivateJobs.length > 0) {
-        let hasLocumPrivateJob = this.getLocumAllocatedPrivateJobs.find(appointment => this.getDateArray(appointment.date_start, appointment.date_end).includes(date))
+      if (
+        this.getLocumAllocatedPrivateJobs &&
+        this.getLocumAllocatedPrivateJobs.length > 0
+      ) {
+        let hasLocumPrivateJob = this.getLocumAllocatedPrivateJobs.find(
+          appointment =>
+            this.getDateArray(
+              appointment.date_start,
+              appointment.date_end
+            ).includes(date)
+        );
         if (hasLocumPrivateJob) {
           appointmentDate = {
             shift: hasLocumPrivateJob.shift
-          }
+          };
         }
       }
-      if (this.getLocumAllocatedCurrentJobs && this.getLocumAllocatedCurrentJobs.length > 0) {
-        let hasLocumCurrentJob = this.getLocumAllocatedCurrentJobs.filter(job => this.getDateArray(job.date_start, job.date_end).includes(date))
+      if (
+        this.getLocumAllocatedPlatformJobs &&
+        this.getLocumAllocatedPlatformJobs.length > 0
+      ) {
+        let hasLocumCurrentJob = this.getLocumAllocatedPlatformJobs.filter(
+          job => this.getDateArray(job.date_start, job.date_end).includes(date)
+        );
         if (hasLocumCurrentJob && hasLocumCurrentJob.length > 0) {
           allocatedDate = hasLocumCurrentJob.map(item => {
-            return item.shift
-          })
+            return item.shift;
+          });
         }
       }
-      this.$emit('open', unavaibleDate, appointmentDate, allocatedDate)
-    },
+      this.$emit("open", unavaibleDate, appointmentDate, allocatedDate);
+    }
   }
-}
+};
 </script>
 
 

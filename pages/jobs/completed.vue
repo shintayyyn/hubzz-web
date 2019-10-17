@@ -1,8 +1,14 @@
 <template>
   <section class="relative">
     <AppLoading :loading="loadingJobs" spinner />
-    <div class="relative flex flex-wrap justify-start items-center">
-      <div class="px-1 w-full lg:w-1/4 md:w-1/3 sm:w-1/2">
+    <AppButton
+      class="relative md:hidden"
+      :label="'Filter'"
+      @click="showFilter()"
+      :inStyle="'padding:5px 14px;margin-bottom:5px; font-size:14px;'"
+    />
+    <div class="md:relative md:flex flex-wrap justify-start items-center" :class="filterToggle ? 'z-10 absolute w-full bg-white shadow-md p-3' : 'hidden'">
+      <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
         <AppInput
           class="px-1"
           v-model="params.job_number"
@@ -11,7 +17,7 @@
           :label="'Job number'"
         />
       </div>
-      <div class="px-1 w-full lg:w-1/4 md:w-1/3 sm:w-1/2">
+      <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
         <AppAutoComplete
           class="px-1"
           v-model="params.surgery_name"
@@ -21,7 +27,7 @@
           :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem'"
         />
       </div>
-      <div class="px-1 w-full lg:w-1/4 md:w-1/3 sm:w-1/2">
+      <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
         <AppInput
           class="px-1"
           v-model="params.title"
@@ -30,7 +36,7 @@
           :label="'Title'"
         />
       </div>
-      <div class="px-1 w-full lg:w-1/4 md:w-1/3 sm:w-1/2">
+      <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
         <AppInput
           class="px-1"
           v-model="params.shift_id"
@@ -41,7 +47,7 @@
           :items="shifts"
         />
       </div>
-      <div class="px-1 w-full lg:w-1/4 md:w-1/3 sm:w-1/2">
+      <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
         <AppInput
           class="px-1"
           v-model="params.rate"
@@ -51,7 +57,7 @@
           :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
         />
       </div>
-      <div class="px-1 w-full lg:w-1/4 md:w-1/3 sm:w-1/2">
+      <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
         <AppInput
           class="px-1"
           v-model="params.locum_detail_rate_type_id"
@@ -62,13 +68,13 @@
           :items="rates"
         />
       </div>
-      <div class="px-1 w-full lg:w-1/4 md:w-1/3 sm:w-1/2">
+      <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
         <AppDate v-model="params.date_start" :name="'date_start'" :label="'From'" />
       </div>
-      <div class="px-1 w-full lg:w-1/4 md:w-1/3 sm:w-1/2">
+      <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
         <AppDate v-model="params.date_end" :name="'date_end'" :label="'To'" />
       </div>
-      <div class="px-1 w-full lg:w-1/4 md:w-1/3 sm:w-1/2">
+      <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
         <AppPostCode
           class="px-1"
           v-model="params.near_post_code"
@@ -78,7 +84,7 @@
           :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;border-style:solid'"
         />
       </div>
-      <div class="px-1 w-full lg:w-1/4 md:w-1/3 sm:w-1/2">
+      <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
         <AppInput
           class="px-1"
           v-model="params.miles"
@@ -89,10 +95,16 @@
           :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
         />
       </div>
-      <div class="px-1 w-full">
+      <div class="md:px-1 flex w-full">
         <AppButton
           :label="'Clear'"
           @click="clearFilters"
+          :inStyle="'padding:5px 14px;margin-bottom:5px'"
+        />
+        <AppButton
+          class="mx-2 md:hidden"
+          :label="'Close'"
+          @click="showFilter()"
           :inStyle="'padding:5px 14px;margin-bottom:5px'"
         />
       </div>
@@ -100,7 +112,7 @@
     <AppTable
       v-if="getLocumCompletedJobs.length > 0"
       :total="total"
-      :items="getLocumCompletedJobs"
+      :items="jobs"
       :currentPage="current_page"
       :perPage="params.limit"
       :columns="columns"
@@ -113,7 +125,7 @@
     ></AppTable>
     <div
       v-if="!getLocumCompletedJobs.length && !loadingJobs"
-      class="flex justify-center"
+      class="flex justify-center py-4"
     >You have not yet completed any job</div>
     <transition name="fade" mode="out-in">
       <div
@@ -150,6 +162,7 @@ export default {
   },
   data() {
     return {
+      jobs: [],
       current_page: 1,
       // app table filter
       rates: [],
@@ -218,8 +231,13 @@ export default {
           name: "Assigned",
           dataIndex:
             "job.platform_job.appointed_to_locum.user.personal_detail.name"
+        },
+        {
+          name: "Status",
+          dataIndex: "invoiced_status"
         }
-      ]
+      ],
+      filterToggle: false
     };
   },
   computed: {
@@ -272,6 +290,26 @@ export default {
     },
     "params.miles"(value) {
       this.filterOut({ field: "miles", value });
+    },
+    getLocumCompletedJobs(newValue, oldValue) {
+      if (newValue) {
+        this.jobs = [];
+        this.getLocumCompletedJobs.forEach(job => {
+          let invoiceStatus = "TO BE INVOICED";
+          if (job.disputed) {
+            invoiceStatus = "DISPUTED";
+          }
+          if (job.invoiced && job.issued) {
+            invoiceStatus = "INVOICED";
+          }
+          this.jobs.push({
+            ...job,
+            invoiced_status: invoiceStatus
+          });
+        });
+      }
+      // console.log(newValue, oldValue);
+      // console.log(this.jobs);
     }
   },
   beforeDestroy() {
@@ -285,7 +323,26 @@ export default {
       this.$store.commit("jobs/CLEAR_LOCUM_COMPLETED_BADGE");
     }, 1000);
   },
+  // mounted() {
+  //   this.jobs = [];
+  //   this.getLocumCompletedJobs.forEach(job => {
+  //     let invoiceStatus = "TO BE INVOICED";
+  //     if (job.disputed) {
+  //       invoiceStatus = "DISPUTED";
+  //     }
+  //     if (job.invoiced && job.issued) {
+  //       invoiceStatus = "INVOICED";
+  //     }
+  //     this.jobs.push({
+  //       ...job,
+  //       invoiced_status: invoiceStatus
+  //     });
+  //   });
+  // },
   methods: {
+    showFilter(){
+      return this.filterToggle = !this.filterToggle 
+    },
     filterOut: debounce(function({ field, value }) {
       this.current_page = 1;
       this.params.offset = 0;
@@ -295,7 +352,7 @@ export default {
     getJobsCount(params) {
       this.$store.commit("jobs/TOGGLE_LOADING", true);
       this.$store
-        .dispatch("jobs/fetchLocumJobParts", {
+        .dispatch("jobs/fetchLocumJobs", {
           status: "Completed",
           countOnly: true,
           ...params
@@ -306,7 +363,7 @@ export default {
     },
     getJobs(params) {
       this.$store
-        .dispatch("jobs/fetchLocumJobParts", { status: "Completed", ...params })
+        .dispatch("jobs/fetchLocumJobs", { status: "Completed", ...params })
         .finally(() => {
           this.$store.commit("jobs/TOGGLE_LOADING", false);
         });

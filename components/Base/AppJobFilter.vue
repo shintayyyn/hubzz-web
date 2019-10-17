@@ -1,9 +1,12 @@
 <template>
   <div>
-    <span class="md:hidden bg-yellow-500 text-center py-1 px-4 text-sm rounded-lg cursor-pointer" @click="showFilter ? showFilter = false : showFilter = true">Filter</span>
-    <div class="absolute left-0 top-0 w-full bg-white rounded-lg p-4 text-sm -mt-32 mb-4 md:mt-0 md:mb-0 md:static md:text-base md:flex flex-row flex-wrap"
-      v-if="$auth.user.domain === 'Locum' && showFilter">
-      <div class="md:hidden w-full text-right text-xl font-bold -mt-2 hover:text-gray-600"><span class="cursor-pointer" @click="showFilter = false">x</span></div>
+    <AppButton
+      class="relative md:hidden"
+      :label="'Filter'"
+      @click="showFilter()"
+      :inStyle="'padding:5px 14px;margin-bottom:5px; font-size:14px;'"
+    />
+    <div v-if="$auth.user.domain === 'Locum'" class="md:relative md:flex flex-wrap justify-start items-center" :class="filterToggle ? 'z-10 absolute w-full bg-white shadow-md p-3' : 'hidden'">
       <div class="w-full md:w-1/3 p-1">
         <AppInput
           v-model="params.shift_id"
@@ -66,7 +69,7 @@
         <AppButton :label="'Search'" @click="$emit('getJobs')" :inStyle="'padding:5px 14px'" />
       </div>
     </div>
-    <div class="md:flex flex-row flex-wrap" v-if="$auth.user.domain === 'Practice' && showFilter">
+    <div class="md:relative md:flex flex-wrap justify-start items-center" :class="filterToggle ? 'z-10 absolute w-full bg-white shadow-md p-3' : 'hidden'" v-if="$auth.user.domain === 'Practice'">
       <div class="w-full md:w-1/3 p-1">
         <AppInput
           v-model="params.shift_id"
@@ -98,11 +101,9 @@
       </div>
       <div class="w-full md:w-1/4 flex flex-row">
         <AppButton :label="'Clear'" @click="$emit('clear')" :inStyle="'padding:5px 14px'" />
-        <div class="mx-1"></div>
-        <AppButton :label="'Search'" @click="$emit('getJobs')" :inStyle="'padding:5px 14px'" />
+        <AppButton :label="'Search'" @click="[$emit('getJobs'), showFilter()]" class="mx-2" :inStyle="'padding:5px 14px'" />
       </div>
     </div>
-    <div class="shield md:hidden" v-if="showFilter" @click="showFilter = false"></div>
   </div>
 </template>
 <script>
@@ -122,22 +123,17 @@ export default {
     return {
       shifts: [],
       rate_types: [],
-      showFilter: false
+      filterToggle: false
     };
-  },
-  mounted(){
-    if (window.innerWidth > 767){
-      this.showFilter = true
-    }
   },
   created() {
     this.getShifts();
     this.getRateType();
-    // if (window.innerWidth > 639){
-    //   this.showFilter = true
-    // }
   },
   methods: {
+    showFilter(){
+      return this.filterToggle = !this.filterToggle 
+    },
     onSelect(value) {
       let address_components = value.details.result.address_components;
       let postal_code = address_components.find(component =>

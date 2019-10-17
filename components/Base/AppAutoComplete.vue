@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col py-2 mb-6" v-on-clickaway="toggledOff">
+  <div class="relative flex flex-col py-2 mb-6" v-on-clickaway="toggledOff">
     <div class="relative flex flex-row flex-no-wrap justify-between">
       <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
       <div class="flex">
@@ -22,8 +22,8 @@
         @keydown="handleKeyDownEvent"
       />
     </div>
-    <div v-if="results.length === 0 && search" class="text-sm py-2 text-gray-500">No results found</div>
     <transition name="fade">
+      <div v-if="results.length === 0 && search" class="absolute text-sm py-2 text-gray-500" style="bottom: -26px;">No results found</div>
       <div class="relative z-10" v-if="showResults">
         <div class="w-full absolute bg-white shadow-md">
           <div

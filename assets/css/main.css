@@ -311,4 +311,5 @@ input[type="checkbox"]:checked + label:after {
   background: transparent;
   cursor: pointer;
   padding-right: 40px;
+  z-index: 1;
 }

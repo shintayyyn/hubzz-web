@@ -39,26 +39,12 @@ export default {
         return state.locum_ongoing_jobs
     },
     getLocumAllocatedJobs(state) {
-        // let jobs = state.locum_allocated_jobs.map(job => {
-        //     if (job.type === 'Private') {
-        //         return {
-        //             ...job, job: job.private_job
-        //         }
-        //     }
-        //     if (job.type === 'Platform') {
-        //         return {
-        //             ...job, job: job.platform_job
-        //         }
-        //     }
-        // })
-        // console.log(jobs)
-        // return []
         return state.locum_allocated_jobs
     },
     getLocumAllocatedPrivateJobs(state) {
         return state.locum_allocated_jobs.filter(job => job.type === 'Private')
     },
-    getLocumAllocatedCurrentJobs(state) {
+    getLocumAllocatedPlatformJobs(state) {
         return state.locum_allocated_jobs.filter(job => job.type === 'Platform')
     },
     getLocumAvailableJobs(state) {
