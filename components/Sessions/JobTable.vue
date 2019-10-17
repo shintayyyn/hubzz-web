@@ -6,6 +6,7 @@
           v-for="item in columns"
           :key="item.dataIndex"
           @click="item.sortable ? $emit('sortBy', `${item.dataIndex}`) : null"
+          class="text-center"
         >
           {{item.label}}
           <svgicon
@@ -65,4 +66,25 @@ export default {
   }
 };
 </script>
-
+<style scoped>
+table{
+  border-collapse: separate;
+  border-spacing: 0 10px;
+}
+table tbody tr {
+  background-color: #fff;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+table tbody tr:hover td{
+  background-color: #eee;
+}
+table tbody td:first-child, table thead th:first-child {
+  position: sticky;
+  background-color: #fff;
+  left: 0;
+}
+table tbody td {
+  text-align: center;
+  padding: 15px 8px;
+}
+</style>

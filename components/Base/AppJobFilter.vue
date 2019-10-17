@@ -80,7 +80,7 @@
           :items="shifts"
         />
       </div>
-      <div class="w-full md:w-1/3 p-1">
+      <div class="w-full md:w-1/3 p-1 mt-1">
         <AppInput
           v-model="params.rate"
           :type="'text'"
@@ -101,7 +101,7 @@
       </div>
       <div class="w-full md:w-1/4 flex flex-row">
         <AppButton :label="'Clear'" @click="$emit('clear')" :inStyle="'padding:5px 14px'" />
-        <AppButton :label="'Search'" @click="[$emit('getJobs'), showFilter()]" class="mx-2" :inStyle="'padding:5px 14px'" />
+        <AppButton :label="'Search'" @click="[$emit('getJobs'), filterToggle = false]" class="mx-2" :inStyle="'padding:5px 14px'" />
       </div>
     </div>
   </div>

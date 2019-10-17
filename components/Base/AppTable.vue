@@ -255,10 +255,10 @@ table tbody tr {
 table tbody tr:hover td{
   background-color: #eee;
 }
-table tbody td:first-child, table thead td:first-child {
+table tbody td:first-child, table thead th:first-child {
   position: sticky;
   background-color: #fff;
-  right: 0;
+  left: 0;
 }
 table tbody td {
   padding: 15px 8px;
