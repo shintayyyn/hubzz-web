@@ -46,6 +46,50 @@
     </div>
     <div class="flex flex-row flex-no-wrap absolute justify-start bottom-0 left-0 w-full">
       <span
+        v-if="hasLocumOngoingJobs(item.fullDate, 'AM')"
+        class="bg-gray-300 text-gray-300 w-full h-2 sm:h-3 lg:h-4 rounded-bl-lg"
+      >.</span>
+      <span v-else class="w-full h-2 sm:h-3 lg:h-4 text-white"></span>
+      <span
+        v-if="hasLocumOngoingJobs(item.fullDate, 'PM')"
+        class="bg-gray-300 text-gray-300 w-full h-2 sm:h-3 lg:h-4"
+      >.</span>
+      <span v-else class="w-full h-2 sm:h-3 lg:h-4 text-white"></span>
+      <span
+        v-if="hasLocumOngoingJobs(item.fullDate, 'Whole Day')"
+        class="bg-gray-300 text-gray-300 w-full h-2 sm:h-3 lg:h-4"
+      >.</span>
+      <span v-else class="w-full h-2 sm:h-3 lg:h-4 text-white"></span>
+      <span
+        v-if="hasLocumOngoingJobs(item.fullDate, 'OOH')"
+        class="bg-gray-300 text-gray-300 w-full h-2 sm:h-3 lg:h-4 rounded-br-lg"
+      >.</span>
+      <span v-else class="w-full h-2 sm:h-3 lg:h-4 text-white"></span>
+    </div>
+    <div class="flex flex-row flex-no-wrap absolute justify-start bottom-0 left-0 w-full">
+      <span
+        v-if="hasLocumAllocatedPartJobs(item.fullDate, 'AM')"
+        class="bg-gray-300 text-gray-300 w-full h-2 sm:h-3 lg:h-4 rounded-bl-lg"
+      >.</span>
+      <span v-else class="w-full h-2 sm:h-3 lg:h-4 text-white"></span>
+      <span
+        v-if="hasLocumAllocatedPartJobs(item.fullDate, 'PM')"
+        class="bg-gray-300 text-gray-300 w-full h-2 sm:h-3 lg:h-4"
+      >.</span>
+      <span v-else class="w-full h-2 sm:h-3 lg:h-4 text-white"></span>
+      <span
+        v-if="hasLocumAllocatedPartJobs(item.fullDate, 'Whole Day')"
+        class="bg-gray-300 text-gray-300 w-full h-2 sm:h-3 lg:h-4"
+      >.</span>
+      <span v-else class="w-full h-2 sm:h-3 lg:h-4 text-white"></span>
+      <span
+        v-if="hasLocumAllocatedPartJobs(item.fullDate, 'OOH')"
+        class="bg-gray-300 text-gray-300 w-full h-2 sm:h-3 lg:h-4 rounded-br-lg"
+      >.</span>
+      <span v-else class="w-full h-2 sm:h-3 lg:h-4 text-white"></span>
+    </div>
+    <div class="flex flex-row flex-no-wrap absolute justify-start bottom-0 left-0 w-full">
+      <span
         v-if="hasLocumCurrentJobs(item.fullDate, 'AM')"
         class="bg-gray-300 text-gray-300 w-full h-2 sm:h-3 lg:h-4 rounded-bl-lg"
       >.</span>
@@ -72,6 +116,12 @@
 export default {
   props: ["item"],
   computed: {
+    getLocumOngoingJobs() {
+      return this.$store.getters["jobs/getLocumOngoingJobs"];
+    },
+    getLocumAllocatedPartJobs() {
+      return this.$store.getters["jobs/getLocumAllocatedPartJobs"];
+    },
     getLocumAllocatedPrivateJobs() {
       return this.$store.getters["jobs/getLocumAllocatedPrivateJobs"];
     },
@@ -87,6 +137,22 @@ export default {
       return this.getLocumUnavailabilities.find(
         item =>
           item.date === date && item.shifts.find(shift => shift.name === type)
+      );
+    },
+    hasLocumOngoingJobs(date, type) {
+      return this.getLocumOngoingJobs.find(
+        job_part =>
+          this.getDateArray(job_part.date_start, job_part.date_end).includes(
+            date
+          ) && job_part.job.shift.name === type
+      );
+    },
+    hasLocumAllocatedPartJobs(date, type) {
+      return this.getLocumAllocatedPartJobs.find(
+        job_part =>
+          this.getDateArray(job_part.date_start, job_part.date_end).includes(
+            date
+          ) && job_part.job.shift.name === type
       );
     },
     hasLocumPrivateJobs(date, type) {

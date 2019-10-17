@@ -172,8 +172,14 @@ export default {
             }
         })
     },
-    async fetchLocumJobs({ commit }, payload) {
+    async fetchLocumAllocatedJobParts({ commit }, payload) {
+        const response = await jobsApi.fetchLocumAllocatedJobParts(this.$axios, payload)
+        console.log(response, payload)
+        return commit('SET_LOCUM_ALLOCATED_PART_JOBS', response.data.job_parts)
+    },
+    async fetchLocumJobs({ state, commit }, payload) {
         const response = await jobsApi.fetchLocumJobs(this.$axios, payload)
+        console.log(response, payload)
         if (payload.id && payload.first) {
             if (response.data.job.locum_status === 'Current' && !state.locum_allocated_jobs.find(allocatedJob => allocatedJob.id === payload)) {
                 commit('ADD_LOCUM_ALLOCATED_BADGE')
@@ -189,11 +195,24 @@ export default {
             return commit('SET_LOCUM_UNAVAILABILITIES', response.data.unavailabilities)
         }
         // job parts
-        if (payload.status === "Ongoing") {
+        if (payload.status.includes("Ongoing")) {
             if (payload.countOnly) {
                 return commit('SET_LOCUM_ONGOING_JOBS_COUNT', response.data.count)
             }
-            return commit('SET_LOCUM_ONGOING_JOBS', response.data.job_parts)
+            // clear job parts when updating
+            if (payload.job_id) {
+                let removeOngoingJobId = state.locum_ongoing_jobs.map(ongoingJob => {
+                    return ongoingJob.job.id === payload.job_id ? ongoingJob.id : ''
+                })
+                removeOngoingJobId.forEach(id => {
+                    commit('REMOVE_LOCUM_ONGOING_JOB', id)
+                })
+            }
+            response.data.job_parts.forEach(jobPart => {
+                if (!state.locum_ongoing_jobs.map(ongoingJob => ongoingJob.id).includes(jobPart.id)) {
+                    commit('ADD_LOCUM_ONGOING_JOB', jobPart)
+                }
+            })
         }
         if (payload.status === "Completed") {
             if (payload.countOnly) {
@@ -201,8 +220,14 @@ export default {
             }
             return commit('SET_LOCUM_COMPLETED_JOBS', response.data.job_parts)
         }
+        if (payload.status === "Approved") {
+            if (payload.countOnly) {
+                return commit('SET_LOCUM_APPROVED_JOBS_COUNT', response.data.count)
+            }
+            return commit('SET_LOCUM_APPROVED_JOBS', response.data.job_parts)
+        }
         // whole jobs
-        if (payload.status === "Allocated") {
+        if (payload.status.includes("Allocated")) {
             if (payload.countOnly) {
                 return commit('SET_LOCUM_ALLOCATED_JOBS_COUNT', response.data.count)
             }
@@ -243,6 +268,12 @@ export default {
                 return commit('SET_LOCUM_CANCELLED_JOBS_COUNT', response.data.count)
             }
             return commit('SET_LOCUM_CANCELLED_JOBS', response.data.jobs)
+        }
+        if (payload.status === "Withdrawn") {
+            if (payload.countOnly) {
+                return commit('SET_LOCUM_WITHDRAWN_JOBS_COUNT', response.data.count)
+            }
+            return commit('SET_LOCUM_WITHDRAWN_JOBS', response.data.jobs)
         }
     },
     async fetchPracticeJobs({ commit }, payload) {

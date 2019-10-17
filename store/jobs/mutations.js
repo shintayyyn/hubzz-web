@@ -187,12 +187,27 @@ export default {
     SET_LOCUM_ONGOING_JOBS_COUNT(state, payload) {
         state.locum_ongoing_jobs_count = payload
     },
+    ADD_LOCUM_ONGOING_JOB(state, payload) {
+        let index = state.locum_ongoing_jobs.findIndex(jobPart => jobPart.id == payload.id)
+        if (index < 0) {
+            state.locum_ongoing_jobs.push(payload)
+            state.locum_ongoing_jobs_count = state.locum_ongoing_jobs_count + 1
+        }
+    },
     REMOVE_LOCUM_ONGOING_JOB(state, payload) {
-        // let ongoingJobCount = state.locum_ongoing_jobs.map
-        // if (state.locum_ongoing_jobs.find(ongoingJob => ongoingJob.job.id === payload)) {
-        //     state.locum_ongoing_jobs = state.locum_ongoing_jobs.filter(item => item.job.id !== payload)
-        //     state.locum_ongoing_jobs = state.locum_ongoing_jobs - 1
-        // }
+        if (state.locum_ongoing_jobs.find(ongoingJob => ongoingJob.id === payload)) {
+            state.locum_ongoing_jobs = state.locum_ongoing_jobs.filter(job => job.id !== payload)
+            state.locum_ongoing_jobs_count = state.locum_ongoing_jobs_count - 1
+        }
+    },
+    ADD_LOCUM_ONGOING_BADGE(state) {
+        state.locum_new_ongoing_jobs_count = state.locum_new_ongoing_jobs_count + 1
+    },
+    CLEAR_LOCUM_ONGOING_BADGE(state) {
+        state.locum_new_ongoing_jobs_count = 0
+    },
+    SET_LOCUM_ALLOCATED_PART_JOBS(state, payload) {
+        state.locum_allocated_part_jobs = payload
     },
     SET_LOCUM_ALLOCATED_JOBS(state, payload) {
         state.locum_allocated_jobs = payload
@@ -354,6 +369,18 @@ export default {
     CLEAR_LOCUM_CANCELLED_BADGE(state) {
         state.locum_new_cancelled_jobs_count = 0
     },
+    SET_LOCUM_WITHDRAWN_JOBS(state, payload) {
+        state.locum_withdrawn_jobs = payload
+    },
+    SET_LOCUM_WITHDRAWN_JOBS_COUNT(state, payload) {
+        state.locum_withdrawn_jobs_count = payload
+    },
+    ADD_LOCUM_WITHDRAWN_BADGE(state) {
+        state.locum_new_withdrawn_jobs_count = state.locum_new_withdrawn_jobs_count + 1
+    },
+    CLEAR_LOCUM_WITHDRAWN_BADGE(state) {
+        state.locum_new_withdrawn_jobs_count = 0
+    },
     SET_LOCUM_COMPLETED_JOBS(state, payload) {
         state.locum_completed_jobs = payload
     },
@@ -375,6 +402,18 @@ export default {
     },
     CLEAR_LOCUM_COMPLETED_BADGE(state) {
         state.locum_new_completed_jobs_count = 0
+    },
+    SET_LOCUM_APPROVED_JOBS(state, payload) {
+        state.locum_approved_jobs = payload
+    },
+    SET_LOCUM_APPROVED_JOBS_COUNT(state, payload) {
+        state.locum_approved_jobs_count = payload
+    },
+    ADD_LOCUM_APPROVED_BADGE(state) {
+        state.locum_new_approved_jobs_count = state.locum_new_approved_jobs_count + 1
+    },
+    CLEAR_LOCUM_APPROVED_BADGE(state) {
+        state.locum_new_approved_jobs_count = 0
     },
     SET_LOCUM_UNAVAILABILITIES(state, payload) {
         state.locum_unavailabilities = payload

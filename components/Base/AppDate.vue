@@ -44,7 +44,7 @@
                   name="arrow-left"
                   height="12"
                   width="12"
-                  :color="selectedYear === new Date().getFullYear() && selectedMonth === new Date().getMonth() ? 'gray' : ''"
+                  :color="selectedYear === $moment().format('YYYY') && selectedMonth === $moment().format('M') ? 'gray' : ''"
                 />
               </span>
               <span class="mx-4"></span>
@@ -214,18 +214,18 @@
 <script>
 import { mixin as clickaway } from "vue-clickaway";
 let months = [
-  { label: "Jan", value: 0 },
-  { label: "Feb", value: 1 },
-  { label: "Mar", value: 2 },
-  { label: "Apr", value: 3 },
-  { label: "May", value: 4 },
-  { label: "Jun", value: 5 },
-  { label: "Jul", value: 6 },
-  { label: "Aug", value: 7 },
-  { label: "Sep", value: 8 },
-  { label: "Oct", value: 9 },
-  { label: "Nov", value: 10 },
-  { label: "Dec", value: 11 }
+  { label: "Jan", value: "1" },
+  { label: "Feb", value: "2" },
+  { label: "Mar", value: "3" },
+  { label: "Apr", value: "4" },
+  { label: "May", value: "5" },
+  { label: "Jun", value: "6" },
+  { label: "Jul", value: "7" },
+  { label: "Aug", value: "8" },
+  { label: "Sep", value: "9" },
+  { label: "Oct", value: "10" },
+  { label: "Nov", value: "11" },
+  { label: "Dec", value: "12" }
 ];
 export default {
   mixins: [clickaway],
@@ -237,7 +237,11 @@ export default {
     inStyle: String,
     inClass: String,
     // disabled all dates past the current date
-    isAfter: Boolean
+    isAfter: Boolean,
+    format: {
+      type: String,
+      default: "YYYY-MM-DD"
+    }
   },
   data() {
     return {
@@ -245,19 +249,22 @@ export default {
       months,
       monthLists: [],
       yearLists: [],
-      selectedMonth: "",
-      selectedYear: new Date().getFullYear(),
+      selectedMonth: this.$moment.utc().format("M"),
+      selectedYear: this.$moment.utc().format("YYYY"),
       daysInMonth: []
     };
   },
   created() {
     // get current month and year
-    let d = new Date();
-    this.selectedMonth = d.getMonth();
+    if (this.value) {
+      this.selectedMonth = this.$moment(this.value, this.format).format("M");
+      this.selectedYear = this.$moment(this.value, this.format).format("YYYY");
+    }
     // get month list
     this.getMonthLists();
     // get year list
     this.getYearLists();
+    this.getDaysInMonth(this.selectedMonth, this.selectedYear);
   },
   watch: {
     selectedMonth(value) {
@@ -265,7 +272,7 @@ export default {
     },
     selectedYear(value) {
       // set selected month to this current month if selected year === current year
-      if (value === new Date().getFullYear()) {
+      if (value === this.$moment().format("YYYY")) {
         this.selectedMonth = this.filteredMonths[0].value;
       }
       this.getDaysInMonth(this.selectedMonth, value);
@@ -275,9 +282,9 @@ export default {
     filteredMonths() {
       // if selected year === current year, get only the current month up to last month,
       // if not, get all the months
-      if (this.selectedYear === new Date().getFullYear()) {
+      if (this.selectedYear === this.$moment().format("YYYY")) {
         return this.months.filter(
-          month => month.value >= new Date().getMonth()
+          month => parseInt(month.value) >= parseInt(this.$moment().format("M"))
         );
       }
       return this.months;
@@ -286,12 +293,16 @@ export default {
   methods: {
     getMonthLists() {
       for (let i = this.selectedMonth; i <= this.months.length; i++) {
-        this.monthLists.push(i);
+        this.monthLists.push(`${i}`);
       }
     },
     getYearLists() {
       for (let i = 0; i <= 10; i++) {
-        this.yearLists.push(this.selectedYear + i);
+        this.yearLists.push(
+          this.$moment(this.selectedYear, "YYYY")
+            .add(i, "years")
+            .format("YYYY")
+        );
       }
     },
     isSelectedDate(date) {
@@ -301,22 +312,27 @@ export default {
       return this.$moment(selectedDate).isSame(this.value);
     },
     isSame(date) {
-      let newDate = this.$moment(new Date()).format("MM-DD-YYYY");
+      let newDate = this.$moment().format("MM-DD-YYYY");
       return this.$moment(date).isSame(newDate);
     },
     isDisabled(date) {
-      let newDate = this.$moment(new Date()).format("MM-DD-YYYY");
-      if (this.isAfter) {
-        return this.$moment(date).isAfter(newDate);
-      }
-      return this.$moment(date).isBefore(newDate);
+      return false;
+      // let newDate = this.$moment.utc().format("MM-DD-YYYY");
+      // if (this.isAfter) {
+      //   return this.$moment(date, "MM-DD-YYYY").isAfter(
+      //     this.$moment(newDate, "MM-DD-YYYY")
+      //   );
+      // }
+      // return this.$moment(date, "MM-DD-YYYY").isBefore(
+      //   this.$moment(newDate, "MM-DD-YYYY")
+      // );
     },
     toggledOff() {
       // get to the selected date
       if (this.value) {
-        let month = this.$moment(this.value).format("MM");
+        let month = this.$moment(this.value).format("M");
         let year = this.$moment(this.value).format("YYYY");
-        this.selectedMonth = month - 1;
+        this.selectedMonth = month;
         this.selectedYear = year;
       }
       this.modal = false;
@@ -327,7 +343,10 @@ export default {
           month => month.value === this.selectedMonth
         );
         // return if selected month and year === current month and year
-        if (index === 0 && this.selectedYear === new Date().getFullYear()) {
+        if (
+          index === 0 &&
+          this.selectedYear === this.$moment().format("YYYY")
+        ) {
           return;
         }
         if (index === 0) {
@@ -347,20 +366,24 @@ export default {
       }
     },
     getDaysInMonth(month, selectedYear) {
-      let date = new Date(selectedYear, month, 1);
+      let date = this.$moment(`${selectedYear}-${month}-01`, "YYYY-M-DD");
       let days = [];
-      while (date.getMonth() === month) {
-        days.push(new Date(date));
-        date.setDate(date.getDate() + 1);
-      }
-      this.daysInMonth = [];
-      days.forEach(day => {
-        this.daysInMonth.push({
-          day: day.getDay(),
-          date: day.getDate(),
-          fullDate: this.$moment(day).format("MM-DD-YYYY")
+      while (date.format("M") === month) {
+        days.push({
+          day: parseInt(date.format("d")),
+          date: parseInt(date.format("D")),
+          fullDate: date.format("MM-DD-YYYY")
         });
-      });
+        date = date.add(1, "days");
+      }
+      this.daysInMonth = days;
+      // days.forEach(day => {
+      //   this.daysInMonth.push({
+      //     day: day.getDay(),
+      //     date: day.getDate(),
+      //     fullDate: this.$moment(day).format("MM-DD-YYYY")
+      //   });
+      // });
     },
     validateInput(e) {
       if ((e.key >= 0 && e.key <= 9) || e.key === "/") {
@@ -372,7 +395,7 @@ export default {
     select(date) {
       if (!this.isDisabled(date)) {
         this.modal = false;
-        this.$emit("input", this.$moment(date).format("MM/DD/YYYY"));
+        this.$emit("input", this.$moment(date).format(this.format));
       }
     }
   }

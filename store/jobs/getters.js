@@ -38,8 +38,8 @@ export default {
     getLocumOngoingJobs(state) {
         return state.locum_ongoing_jobs
     },
-    getLocumAllocatedJobs(state) {
-        return state.locum_allocated_jobs
+    getLocumAllocatedPartJobs(state) {
+        return state.locum_allocated_part_jobs
     },
     getLocumAllocatedPrivateJobs(state) {
         return state.locum_allocated_jobs.filter(job => job.type === 'Private')
@@ -65,8 +65,14 @@ export default {
     getLocumCancelledJobs(state) {
         return state.locum_cancelled_jobs
     },
+    getLocumWithdrawnJobs(state) {
+        return state.locum_withdrawn_jobs
+    },
     getLocumCompletedJobs(state) {
         return state.locum_completed_jobs
+    },
+    getLocumApprovedJobs(state) {
+        return state.locum_approved_jobs
     },
     getLocumUnavailabilities(state) {
         return state.locum_unavailabilities
@@ -76,7 +82,8 @@ export default {
             state.locum_new_allocated_jobs_count, state.locum_new_available_jobs_count,
             state.locum_new_matched_jobs_count, state.locum_new_applied_jobs_count,
             state.locum_new_unsuccessful_jobs_count, state.locum_new_declined_jobs_count,
-            state.locum_new_cancelled_jobs_count, state.locum_new_completed_jobs_count
+            state.locum_new_cancelled_jobs_count, state.locum_new_completed_jobs_count,
+            state.locum_new_ongoing_jobs_count, state.locum_new_approved_jobs_count,
         ].reduce((accumulator, currentValue) => accumulator + currentValue)
     }
 }   

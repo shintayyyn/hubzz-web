@@ -2,35 +2,7 @@
   <section class="relative">
     <AppLoading :loading="loadingJobs" spinner />
     <div class="relative flex flex-wrap justify-start items-center">
-      <div class="px-1 w-full lg:w-1/4 md:w-1/3 sm:w-1/2">
-        <AppInput
-          class="px-1"
-          v-model="params.job_number"
-          :type="'text'"
-          :name="'job_number'"
-          :label="'Job number'"
-        />
-      </div>
-      <div class="px-1 w-full lg:w-1/4 md:w-1/3 sm:w-1/2">
-        <AppAutoComplete
-          class="px-1"
-          v-model="params.surgery_name"
-          :name="'surgery_name'"
-          :label="'Surgery'"
-          :url="'/api/v1/locum/surgeries'"
-          :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem'"
-        />
-      </div>
-      <div class="px-1 w-full lg:w-1/4 md:w-1/3 sm:w-1/2">
-        <AppInput
-          class="px-1"
-          v-model="params.title"
-          :type="'text'"
-          :name="'title'"
-          :label="'Title'"
-        />
-      </div>
-      <div class="px-1 w-full lg:w-1/4 md:w-1/3 sm:w-1/2">
+      <div class="px-1 w-full md:w-1/3">
         <AppInput
           class="px-1"
           v-model="params.shift_id"
@@ -41,7 +13,7 @@
           :items="shifts"
         />
       </div>
-      <div class="px-1 w-full lg:w-1/4 md:w-1/3 sm:w-1/2">
+      <div class="px-1 w-full md:w-1/3">
         <AppInput
           class="px-1"
           v-model="params.rate"
@@ -51,7 +23,7 @@
           :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
         />
       </div>
-      <div class="px-1 w-full lg:w-1/4 md:w-1/3 sm:w-1/2">
+      <div class="px-1 w-full md:w-1/3">
         <AppInput
           class="px-1"
           v-model="params.locum_detail_rate_type_id"
@@ -62,13 +34,7 @@
           :items="rates"
         />
       </div>
-      <div class="px-1 w-full lg:w-1/4 md:w-1/3 sm:w-1/2">
-        <AppDate v-model="params.date_start" :name="'date_start'" :label="'From'" />
-      </div>
-      <div class="px-1 w-full lg:w-1/4 md:w-1/3 sm:w-1/2">
-        <AppDate v-model="params.date_end" :name="'date_end'" :label="'To'" />
-      </div>
-      <div class="px-1 w-full lg:w-1/4 md:w-1/3 sm:w-1/2">
+      <div class="px-1 w-full md:w-1/3">
         <AppPostCode
           class="px-1"
           v-model="params.near_post_code"
@@ -78,7 +44,7 @@
           :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;border-style:solid'"
         />
       </div>
-      <div class="px-1 w-full lg:w-1/4 md:w-1/3 sm:w-1/2">
+      <div class="px-1 w-full md:w-1/3">
         <AppInput
           class="px-1"
           v-model="params.miles"
@@ -89,18 +55,27 @@
           :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
         />
       </div>
-      <div class="px-1 w-full">
-        <AppButton
-          :label="'Clear'"
-          @click="clearFilters"
-          :inStyle="'padding:5px 14px;margin-bottom:5px'"
+      <div class="px-1 w-full md:w-1/3">
+        <AppAutoComplete
+          class="px-1"
+          v-model="params.surgery_name"
+          :name="'surgery_name'"
+          :label="'Surgery'"
+          :url="'/api/v1/locum/surgeries'"
+          :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem'"
         />
       </div>
+      <AppButton
+        class="w-full"
+        :label="'Clear'"
+        @click="clearFilters"
+        :inStyle="'padding:5px 14px;margin-bottom:5px'"
+      />
     </div>
     <AppTable
-      v-if="getLocumCompletedJobs.length > 0"
+      v-if="getLocumWithdrawnJobs.length > 0"
       :total="total"
-      :items="jobs"
+      :items="getLocumWithdrawnJobs"
       :currentPage="current_page"
       :perPage="params.limit"
       :columns="columns"
@@ -112,24 +87,22 @@
       @sorted="sorted"
     ></AppTable>
     <div
-      v-if="!getLocumCompletedJobs.length && !loadingJobs"
+      v-if="!getLocumWithdrawnJobs.length && !loadingJobs"
       class="flex justify-center"
-    >You have not yet completed any job</div>
+    >You do not have any withdrawn jobs</div>
     <transition name="fade" mode="out-in">
       <div
         class="shield"
-        v-if="$route.name === 'jobs-completed-id'"
-        @click="$router.push('/jobs/completed')"
+        v-if="$route.name === 'jobs-withdrawn-id'"
+        @click="$router.push('/jobs/withdrawn')"
       ></div>
     </transition>
     <nuxt-child />
   </section>
 </template>
 <script>
-import debounce from "lodash.debounce";
 import AppTable from "@/components/Base/AppTable";
 import AppInput from "@/components/Base/AppInput";
-import AppDate from "@/components/Base/AppDate";
 import AppPostCode from "@/components/Base/AppPostCode";
 import AppAutoComplete from "@/components/Base/AppAutoComplete";
 import AppButton from "@/components/Base/AppButton";
@@ -142,7 +115,6 @@ export default {
   components: {
     AppTable,
     AppInput,
-    AppDate,
     AppPostCode,
     AppAutoComplete,
     AppButton,
@@ -150,7 +122,6 @@ export default {
   },
   data() {
     return {
-      jobs: [],
       current_page: 1,
       // app table filter
       rates: [],
@@ -159,80 +130,79 @@ export default {
       params: {
         offset: 0,
         limit: 5,
-        order_by: ["date_end:desc"],
-        job_number: "",
-        surgery_name: "",
-        title: "",
+        order_by: ["date_created:desc"],
         shift_id: "",
         rate: "",
-        date_start: "",
-        date_end: "",
         locum_detail_rate_type_id: "",
         near_post_code: "",
-        miles: ""
+        miles: "",
+        surgery_name: ""
       },
       // app table column
       columns: [
         {
-          name: "Job part number",
-          dataIndex: "job_part_number",
-          sortable: true
+          name: "Job number",
+          dataIndex: "job_number",
+          class: "text-left"
         },
         {
           name: "Practice",
-          dataIndex: "job.platform_job.practice.surgery.name"
+          dataIndex: "platform_job.practice.surgery.name",
+          class: "text-center"
         },
         {
           name: "Title",
-          dataIndex: "job.title"
+          dataIndex: "title",
+          class: "text-center"
         },
         {
           name: "Shift",
-          dataIndex: "job.shift.name"
+          dataIndex: "shift.name",
+          class: "text-center"
         },
         {
           name: "Rate",
-          dataIndex: "job.rate",
-          sortable: true
+          dataIndex: "rate",
+          class: "text-center"
         },
         {
           name: "per",
-          dataIndex: "job.locum_detail_rate_type.name"
+          dataIndex: "locum_detail_rate_type.name",
+          class: "text-center"
         },
         {
           name: "From",
           dataIndex: "date_start",
+          class: "text-center localDate",
           sortable: true
         },
         {
           name: "To",
           dataIndex: "date_end",
-          sortable: true
-        },
-        {
-          name: "Created At",
-          dataIndex: "job.date_created",
           class: "text-center localDate",
           sortable: true
         },
         {
-          name: "Assigned",
-          dataIndex:
-            "job.platform_job.appointed_to_locum.user.personal_detail.name"
+          name: "Created At",
+          dataIndex: "date_created",
+          class: "text-center localDate",
+          sortable: true
         },
         {
-          name: "Status",
-          dataIndex: "invoiced_status"
+          name: "Withdrawn",
+          dataIndex: "platform_job.withdrawn_at",
+          class: "text-center localDate",
+          sortable: true
         }
       ]
     };
   },
   computed: {
-    getLocumCompletedJobs() {
-      return this.$store.getters["jobs/getLocumCompletedJobs"];
+    getLocumWithdrawnJobs() {
+      return this.$store.getters["jobs/getLocumWithdrawnJobs"];
     },
     total() {
-      return this.$store.state.jobs.locum_completed_jobs_count;
+      return this.$store.state.jobs.locum_withdrawn_jobs_count;
     },
     totalPages() {
       return Math.ceil(this.total / this.perPage);
@@ -242,61 +212,43 @@ export default {
     }
   },
   watch: {
-    "params.job_number"(value) {
-      this.filterOut({ field: "job_number", value });
-    },
-    "params.surgery_name"(value) {
-      this.filterOut({ field: "surgery_name", value });
-    },
-    "params.title"(value) {
-      this.filterOut({ field: "title", value });
-    },
     "params.shift_id"(value) {
-      this.filterOut({ field: "shift_id", value });
+      this.current_page = 1;
+      this.params.offset = 0;
+      this.params.shift_id = value;
+      this.getJobsCount(this.params);
     },
     "params.rate"(value) {
-      this.filterOut({ field: "rate", value });
+      this.current_page = 1;
+      this.params.offset = 0;
+      this.params.rate = value;
+      this.getJobsCount(this.params);
     },
     "params.locum_detail_rate_type_id"(value) {
-      this.filterOut({ field: "locum_detail_rate_type_id", value }).then(
-        res => {
-          this.getJobsCount(this.params);
-        }
-      );
-    },
-    "params.date_start"(value) {
-      this.filterOut({ field: "date_start", value });
-    },
-    "params.date_end"(value) {
-      this.filterOut({ field: "date_end", value });
+      this.current_page = 1;
+      this.params.offset = 0;
+      this.params.locum_detail_rate_type_id = value;
+      this.getJobsCount(this.params);
     },
     "params.near_post_code"(value) {
       if (value === "") {
-        this.filterOut({ field: "near_post_code", value });
+        this.current_page = 1;
+        this.params.offset = 0;
+        this.params.near_post_code = value;
+        this.getJobsCount(this.params);
       }
     },
     "params.miles"(value) {
-      this.filterOut({ field: "miles", value });
+      this.current_page = 1;
+      this.params.offset = 0;
+      this.params.miles = value;
+      this.getJobsCount(this.params);
     },
-    getLocumCompletedJobs(newValue, oldValue) {
-      if (newValue) {
-        this.jobs = [];
-        this.getLocumCompletedJobs.forEach(job => {
-          let invoiceStatus = "TO BE INVOICED";
-          if (job.disputed) {
-            invoiceStatus = "DISPUTED";
-          }
-          if (job.invoiced && job.issued) {
-            invoiceStatus = "INVOICED";
-          }
-          this.jobs.push({
-            ...job,
-            invoiced_status: invoiceStatus
-          });
-        });
-      }
-      console.log(newValue, oldValue);
-      console.log(this.jobs);
+    "params.surgery_name"(value) {
+      this.current_page = 1;
+      this.params.offset = 0;
+      this.params.surgery_name = value;
+      this.getJobsCount(this.params);
     }
   },
   beforeDestroy() {
@@ -307,37 +259,15 @@ export default {
     this.getShifts();
     this.getJobsCount();
     setTimeout(() => {
-      this.$store.commit("jobs/CLEAR_LOCUM_COMPLETED_BADGE");
+      this.$store.commit("jobs/CLEAR_LOCUM_WITHDRAWN_BADGE");
     }, 1000);
   },
-  // mounted() {
-  //   this.jobs = [];
-  //   this.getLocumCompletedJobs.forEach(job => {
-  //     let invoiceStatus = "TO BE INVOICED";
-  //     if (job.disputed) {
-  //       invoiceStatus = "DISPUTED";
-  //     }
-  //     if (job.invoiced && job.issued) {
-  //       invoiceStatus = "INVOICED";
-  //     }
-  //     this.jobs.push({
-  //       ...job,
-  //       invoiced_status: invoiceStatus
-  //     });
-  //   });
-  // },
   methods: {
-    filterOut: debounce(function({ field, value }) {
-      this.current_page = 1;
-      this.params.offset = 0;
-      this.params[field] = value;
-      this.getJobs(this.params);
-    }, 500),
     getJobsCount(params) {
       this.$store.commit("jobs/TOGGLE_LOADING", true);
       this.$store
         .dispatch("jobs/fetchLocumJobs", {
-          status: "Completed",
+          status: "Withdrawn",
           countOnly: true,
           ...params
         })
@@ -347,7 +277,7 @@ export default {
     },
     getJobs(params) {
       this.$store
-        .dispatch("jobs/fetchLocumJobs", { status: "Completed", ...params })
+        .dispatch("jobs/fetchLocumJobs", { status: "Withdrawn", ...params })
         .finally(() => {
           this.$store.commit("jobs/TOGGLE_LOADING", false);
         });
@@ -380,7 +310,7 @@ export default {
       this.getJobs(this.params);
     },
     show(item) {
-      this.$router.push(`/jobs/${item.id}?status=${item.locum_status}`);
+      this.$router.push(`/jobs/${item.id}`);
     },
     getShifts() {
       this.$axios.$get(`/api/v1/shifts`).then(res => {
