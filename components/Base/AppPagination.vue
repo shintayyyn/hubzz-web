@@ -1,10 +1,10 @@
 <template>
   <div class="pagination flex flex-col">
-    <div class="flex flex-wrap justify-between py-2 text-sm px-4">
-      <div class="w-full md:w-1/2 text-gray-500">
+    <div class="flex flex-wrap justify-between py-2 text-sm md:px-4">
+      <div class="text-gray-500">
         <div>{{pageInfo(perPage, currentPage, total)}}</div>
       </div>
-      <div class="w-full md:w-1/2 md:text-right">
+      <div class="pl-2">
         <div>
           List
           <select

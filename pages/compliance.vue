@@ -59,7 +59,7 @@
           </template>
           <template v-for="(item, index) in mandatory">
             <tr
-              class="rounded-lg shadow-md text-xs sm:text-sm text-left bg-gray-200"
+              class="text-xs sm:text-sm text-left bg-gray-200"
               v-if="activeLoading.includes(item.id)"
               :key="item.id"
             >
@@ -68,8 +68,7 @@
             <tr
               v-else
               :key="item.id"
-              class="rounded-lg shadow-md bg-white text-xs sm:text-sm text-left"
-              :class="item.info && item.info.file ? 'hover:bg-gray-300' : ''"
+              class="text-xs sm:text-sm text-left"
             >
               <td
                 :class="item.info && item.info.file ? 'cursor-pointer' : ''"
@@ -174,7 +173,7 @@
           </template>
           <template v-for="(item, index) in optional">
             <tr
-              class="rounded-lg shadow-md bg-white text-xs sm:text-sm text-left bg-gray-200"
+              class="text-xs sm:text-sm text-left bg-gray-200"
               v-if="activeLoading.includes(item.id)"
               :key="item.id"
             >
@@ -183,8 +182,7 @@
             <tr
               v-else
               :key="item.id"
-              class="rounded-lg shadow-md text-xs sm:text-sm text-left"
-              :class="item.info && item.info.file ? 'hover:bg-gray-300' : ''"
+              class="text-xs sm:text-sm text-left"
             >
               <td
                 :class="item.info && item.info.file ? 'cursor-pointer' : ''"
@@ -271,7 +269,7 @@
           </template>
           <template v-for="(item, index) in mandatory_trainings">
             <tr
-              class="rounded-lg shadow-md text-xs sm:text-sm text-left bg-gray-200"
+              class="text-xs sm:text-sm text-left bg-gray-200"
               v-if="activeLoading.includes(item.mandatory_training.id)"
               :key="item.id"
             >
@@ -280,7 +278,7 @@
             <tr
               v-else
               :key="item.id"
-              class="rounded-lg shadow-md text-xs sm:text-sm text-left"
+              class="text-xs sm:text-sm text-left"
               :class="item && item.file ? 'hover:bg-gray-300' : ''"
             >
               <td
@@ -808,8 +806,16 @@ a {
  table thead th {
   padding: 10px 0;
 } */
+table{
+  border-collapse: separate;
+  border-spacing: 0 10px;
+}
 table tbody tr {
   background-color: #fff;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+table tbody tr:hover td{
+  background-color: #eee;
 }
 table tbody td:last-child, table thead td:last-child {
   position: sticky;

@@ -596,21 +596,18 @@ export default {
         this.$store.dispatch("jobs/fetchLocumJobs", {
           date_start: `${this.firstDayOfTheWeek}:gte`,
           date_end: `${this.lastDayOfTheWeek}:lte`,
-          status: "Ongoing"
+          status: "Allocated"
         });
-
         this.$store.dispatch("jobs/fetchLocumJobs", {
           date_start: `${this.firstDayOfTheWeek}:gte`,
           date_end: `${this.lastDayOfTheWeek}:lte`,
-          status: "Allocated"
+          status: "Ongoing"
         });
-
         this.$store.dispatch("jobs/fetchLocumJobs", {
           date_start: `${this.firstDayOfTheWeek}:gte`,
           date_end: `${this.lastDayOfTheWeek}:lte`,
           status: "Applied"
         });
-
         this.$store.dispatch("jobs/fetchLocumJobs", {
           date_start: `${this.firstDayOfTheWeek}:gte`,
           date_end: `${this.lastDayOfTheWeek}:lte`,

@@ -1,10 +1,10 @@
 <template>
-  <div class="rounded-lg shadow-lg p-4 md:p-8">
+  <div class="relative rounded-lg shadow-lg p-4 md:p-8" :class="onChange && 'opacity-50'">
     <div class="flex flex-row flex-wrap justify-between">
       <div class="flex flex-col w-full md:w-1/2 p-0 md:pr-4">
         <div class="font-bold text-sm sm:text-md">Job number</div>
         <div
-          class="text-xs sm:text-sm mb-6"
+          class="text-xs sm:text-lg font-bold mb-6"
           v-text="job_part.job_part_number?job_part.job_part_number:`(none)`"
         ></div>
         <div class="font-bold text-sm sm:text-md">Rate</div>
@@ -146,7 +146,26 @@
   </div>
 </template>
 <script>
+import AppLoading from "@/components/Base/AppLoading";
 export default {
-  props: ["job_part"]
+  props: ["job_part"],
+   data(){
+    return({
+      onChange: false
+    })
+  },
+    watch: {
+    job_part(value){
+      setTimeout(() => {
+      this.onChange = false
+      }, 800)
+        this.onChange = true
+    }
+  },
 };
 </script>
+<style>
+.wrapper{
+  transition: all .4s ease;
+}
+</style>

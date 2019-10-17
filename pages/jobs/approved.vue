@@ -1,15 +1,8 @@
 <template>
   <section class="relative">
     <AppLoading :loading="loadingJobs" spinner />
-    <AppButton
-      
-      class="relative md:hidden"
-      :label="'Filter'"
-      @click="showFilter()"
-      :inStyle="'padding:5px 14px;margin-bottom:5px; font-size:14px;'"
-    />
-    <div class="md:relative md:flex flex-wrap justify-start items-center" :class="filterToggle ? 'z-10 absolute w-full bg-white shadow-md p-3' : 'hidden'">
-      <div class="md:px-1 w-full md:w-1/3">
+    <div class="relative flex flex-wrap justify-start items-center">
+      <div class="px-1 w-full md:w-1/3">
         <AppInput
           class="px-1"
           v-model="params.shift_id"
@@ -20,7 +13,7 @@
           :items="shifts"
         />
       </div>
-      <div class="md:px-1 w-full md:w-1/3">
+      <div class="px-1 w-full md:w-1/3">
         <AppInput
           class="px-1"
           v-model="params.rate"
@@ -30,7 +23,7 @@
           :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
         />
       </div>
-      <div class="md:px-1 w-full md:w-1/3">
+      <div class="px-1 w-full md:w-1/3">
         <AppInput
           class="px-1"
           v-model="params.locum_detail_rate_type_id"
@@ -41,7 +34,7 @@
           :items="rates"
         />
       </div>
-      <div class="md:px-1 w-full md:w-1/3">
+      <div class="px-1 w-full md:w-1/3">
         <AppPostCode
           class="px-1"
           v-model="params.near_post_code"
@@ -51,7 +44,7 @@
           :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;border-style:solid'"
         />
       </div>
-      <div class="md:px-1 w-full md:w-1/3">
+      <div class="px-1 w-full md:w-1/3">
         <AppInput
           class="px-1"
           v-model="params.miles"
@@ -62,7 +55,7 @@
           :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
         />
       </div>
-      <div class="md:px-1 w-full md:w-1/3">
+      <div class="px-1 w-full md:w-1/3">
         <AppAutoComplete
           class="px-1"
           v-model="params.surgery_name"
@@ -72,24 +65,17 @@
           :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem'"
         />
       </div>
-      <div class="md:px-1 flex w-full">
-        <AppButton
-          :label="'Clear'"
-          @click="clearFilters"
-          :inStyle="'padding:5px 14px;margin-bottom:5px'"
-        />
-        <AppButton
-          class="mx-2 md:hidden"
-          :label="'Close'"
-          @click="showFilter()"
-          :inStyle="'padding:5px 14px;margin-bottom:5px'"
-        />
-      </div>
+      <AppButton
+        class="w-full"
+        :label="'Clear'"
+        @click="clearFilters"
+        :inStyle="'padding:5px 14px;margin-bottom:5px'"
+      />
     </div>
     <AppTable
-      v-if="getLocumAvailableJobs.length > 0"
+      v-if="getLocumApprovedJobs.length > 0"
       :total="total"
-      :items="getLocumAvailableJobs"
+      :items="getLocumApprovedJobs"
       :currentPage="current_page"
       :perPage="params.limit"
       :columns="columns"
@@ -101,20 +87,21 @@
       @sorted="sorted"
     />
     <div
-      v-if="!getLocumAvailableJobs.length && !loadingJobs"
-      class="flex justify-center py-4"
-    >There are no available jobs nearby and suited for you at this time</div>
+      v-if="!getLocumApprovedJobs.length && !loadingJobs"
+      class="flex justify-center"
+    >You do not have any approved jobs</div>
     <transition name="fade" mode="out-in">
       <div
         class="shield"
-        v-if="$route.name === 'jobs-available-id'"
-        @click="$router.push('/jobs/available')"
+        v-if="$route.name === 'jobs-approved-id'"
+        @click="$router.push('/jobs/approved')"
       ></div>
     </transition>
     <nuxt-child />
   </section>
 </template>
 <script>
+import debounce from "lodash.debounce";
 import AppTable from "@/components/Base/AppTable";
 import AppInput from "@/components/Base/AppInput";
 import AppPostCode from "@/components/Base/AppPostCode";
@@ -155,63 +142,61 @@ export default {
       // app table
       columns: [
         {
-          name: "Job number",
-          dataIndex: "job_number",
-          class: "text-left"
+          name: "Job part number",
+          dataIndex: "job_part_number",
+          sortable: true
         },
         {
           name: "Practice",
-          dataIndex: "platform_job.practice.surgery.name",
-          class: "text-center"
+          dataIndex: "job.platform_job.practice.surgery.name"
         },
         {
           name: "Title",
-          dataIndex: "title",
-          class: "text-center"
+          dataIndex: "job.title"
         },
         {
           name: "Shift",
-          dataIndex: "shift.name",
-          class: "text-center"
+          dataIndex: "job.shift.name"
         },
         {
           name: "Rate",
-          dataIndex: "rate",
-          class: "text-center"
+          dataIndex: "job.rate",
+          sortable: true
         },
         {
           name: "per",
-          dataIndex: "locum_detail_rate_type.name",
-          class: "text-center"
+          dataIndex: "job.locum_detail_rate_type.name"
         },
         {
           name: "From",
           dataIndex: "date_start",
-          class: "text-center localDate",
           sortable: true
         },
         {
           name: "To",
           dataIndex: "date_end",
-          class: "text-center localDate",
           sortable: true
         },
         {
           name: "Created At",
-          dataIndex: "date_created",
+          dataIndex: "job.date_created",
           class: "text-center localDate",
           sortable: true
+        },
+        {
+          name: "Assigned",
+          dataIndex:
+            "job.platform_job.appointed_to_locum.user.personal_detail.name"
         }
-      ],
-      filterToggle: false
+      ]
     };
   },
   computed: {
-    getLocumAvailableJobs() {
-      return this.$store.getters["jobs/getLocumAvailableJobs"];
+    getLocumApprovedJobs() {
+      return this.$store.getters["jobs/getLocumApprovedJobs"];
     },
     total() {
-      return this.$store.state.jobs.locum_available_jobs_count;
+      return this.$store.state.jobs.locum_approved_jobs_count;
     },
     totalPages() {
       return Math.ceil(this.total / this.perPage);
@@ -221,43 +206,41 @@ export default {
     }
   },
   watch: {
+    "params.job_number"(value) {
+      this.filterOut({ field: "job_number", value });
+    },
+    "params.surgery_name"(value) {
+      this.filterOut({ field: "surgery_name", value });
+    },
+    "params.title"(value) {
+      this.filterOut({ field: "title", value });
+    },
     "params.shift_id"(value) {
-      this.current_page = 1;
-      this.params.offset = 0;
-      this.params.shift_id = value;
-      this.getJobsCount(this.params);
+      this.filterOut({ field: "shift_id", value });
     },
     "params.rate"(value) {
-      this.current_page = 1;
-      this.params.offset = 0;
-      this.params.rate = value;
-      this.getJobsCount(this.params);
+      this.filterOut({ field: "rate", value });
     },
     "params.locum_detail_rate_type_id"(value) {
-      this.current_page = 1;
-      this.params.offset = 0;
-      this.params.locum_detail_rate_type_id = value;
-      this.getJobsCount(this.params);
+      this.filterOut({ field: "locum_detail_rate_type_id", value }).then(
+        res => {
+          this.getJobsCount(this.params);
+        }
+      );
+    },
+    "params.date_start"(value) {
+      this.filterOut({ field: "date_start", value });
+    },
+    "params.date_end"(value) {
+      this.filterOut({ field: "date_end", value });
     },
     "params.near_post_code"(value) {
       if (value === "") {
-        this.current_page = 1;
-        this.params.offset = 0;
-        this.params.near_post_code = value;
-        this.getJobsCount(this.params);
+        this.filterOut({ field: "near_post_code", value });
       }
     },
     "params.miles"(value) {
-      this.current_page = 1;
-      this.params.offset = 0;
-      this.params.miles = value;
-      this.getJobsCount(this.params);
-    },
-    "params.surgery_name"(value) {
-      this.current_page = 1;
-      this.params.offset = 0;
-      this.params.surgery_name = value;
-      this.getJobsCount(this.params);
+      this.filterOut({ field: "miles", value });
     }
   },
   beforeDestroy() {
@@ -268,18 +251,21 @@ export default {
     this.getShifts();
     this.getJobsCount();
     setTimeout(() => {
-      this.$store.commit("jobs/CLEAR_LOCUM_AVAILABLE_BADGE");
+      this.$store.commit("jobs/CLEAR_LOCUM_APPROVED_BADGE");
     }, 1000);
   },
   methods: {
-    showFilter(){
-      return this.filterToggle = !this.filterToggle 
-    },
+    filterOut: debounce(function({ field, value }) {
+      this.current_page = 1;
+      this.params.offset = 0;
+      this.params[field] = value;
+      this.getJobs(this.params);
+    }, 500),
     getJobsCount(params) {
       this.$store.commit("jobs/TOGGLE_LOADING", true);
       this.$store
         .dispatch("jobs/fetchLocumJobs", {
-          status: ["Available", "Matched"],
+          status: "Approved",
           countOnly: true,
           ...params
         })
@@ -289,10 +275,7 @@ export default {
     },
     getJobs(params) {
       this.$store
-        .dispatch("jobs/fetchLocumJobs", {
-          status: ["Available, Matched"],
-          ...params
-        })
+        .dispatch("jobs/fetchLocumJobs", { status: "Approved", ...params })
         .finally(() => {
           this.$store.commit("jobs/TOGGLE_LOADING", false);
         });
@@ -325,7 +308,7 @@ export default {
       this.getJobs(this.params);
     },
     show(item) {
-      this.$router.push(`/jobs/${item.id}`);
+      this.$router.push(`/jobs/${item.id}?status=${item.locum_status}`);
     },
     getShifts() {
       this.$axios.$get(`/api/v1/shifts`).then(res => {

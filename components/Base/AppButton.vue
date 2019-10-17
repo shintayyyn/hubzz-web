@@ -4,9 +4,9 @@
       @click.prevent="$emit('click')"
       :disabled="disabled"
       class="button rounded-lg py-2 px-4 font-bold text-lg focus:outline-none"
-      :class="[disabled ? 'hover:text-gray-700 disabled-button' : 'hover:text-white', inClass]"
+      :class="[disabled ? 'hover:text-gray-700 disabled-button' : 'hover:text-white', (label.includes('Filter') || label.includes('Sort')) && 'flex items-center', inClass]"
       :style="inStyle"
-    >{{label}}</button>
+    >{{label}}<svgicon v-if="label.includes('Filter') || label.includes('Sort')" name="sort" class="h-full w-3 ml-2 fill-current"/></button>
   </section>
 </template>
 <script>

@@ -1,20 +1,20 @@
 <template>
   <section class="relative">
     <!-- <AppLoading :loading="loading" spinner /> -->
-    <div class="overflow-x-auto p-2">
+    <div class="overflow-x-auto">
       <table class="mx-auto">
         <thead>
           <tr class="text-sm md:text-base">
             <th
               v-for="(column, index) in columns"
               :key="index"
-              :class="column.class && column.class.includes('text-left') && 'text-left'"
+              :class="(column.class && column.class.includes('text-center')) ? 'text-center' : 'text-left'"
             >
               <span
                 v-if="column.sortable"
                 @click="sort(column.dataIndex)"
-                :class="column.sortable ? 'cursor-pointer':''"
-                class="flex justify-center items-center"
+                :class="(column.class && column.class.includes('text-center')) && 'justify-center'"
+                class="flex items-center w-full cursor-pointer"
               >
                 <span class="block whitespace-no-wrap pr-1">{{column.name}}</span>
                 <svgicon
@@ -33,12 +33,12 @@
             <tr
               @click="$emit('show', item)"
               :key="item.id"
-              class="__job-card shadow-md cursor-pointer text-xs"
+              class="cursor-pointer text-xs"
             >
               <td
                 v-for="(column, index) in columns"
                 :key="index"
-                class="ellipsis"
+                class="truncate"
                 :class="column.class ? column.class : ''"
                 id="data-cell"
               >
@@ -50,15 +50,13 @@
                     <div
                       v-for="(item, index) in dataCell(item, column)"
                       :key="`${item}-${index}`"
+                       class="truncate"
                     >{{item}}</div>
                   </div>
-                  <div v-else>{{dataCell(item, column)}}</div>
+                  <div class="truncate" v-else>{{dataCell(item, column)}}</div>
                 </template>
               </td>
               <slot name="actions" v-bind:item="item"></slot>
-            </tr>
-            <tr :key="`${item.id}-${index}`">
-              <td></td>
             </tr>
           </template>
         </tbody>
@@ -246,17 +244,36 @@ export default {
 };
 </script>
 <style scoped>
+table{
+  border-collapse: separate;
+  border-spacing: 0 10px;
+}
+table tbody tr {
+  background-color: #fff;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+table tbody tr:hover td{
+  background-color: #eee;
+}
+table tbody td:first-child, table thead th:first-child {
+  position: sticky;
+  background-color: #fff;
+  left: 0;
+}
+table tbody td, table thead th {
+  background-color: #fff;
+  padding: 15px 8px;
+}
 /* table thead th {
   padding: 10px;
 }
 table tbody td {
   padding: 15px;
-} */
-#data-cell {
-  /* max-width: 100px; */
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+} 
+ #data-cell {
+  white-space: nowrap; */
+  /* overflow: hidden; */
+  /* text-overflow: ellipsis;
 }
 .ellipsis {
   position: relative;
@@ -272,5 +289,5 @@ table tbody td {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
+} */
 </style>

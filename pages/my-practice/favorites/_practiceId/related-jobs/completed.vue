@@ -5,7 +5,7 @@
       class="mt-10 w-full text-center"
       v-if="!loadingJobs && getLocumCompletedJobs.length === 0"
     >You have not yet completed any job</div>
-    <div v-if="getLocumCompletedJobs.length > 0" class="overflow-x-auto overflow-y-hidden p-2">
+    <div v-if="getLocumCompletedJobs.length > 0" class="overflow-x-auto overflow-y-hidden">
       <JobTable :columns="columns" :jobs="getLocumCompletedJobs" @sortBy="sortBy" @show="show" />
     </div>
     <div class="absolute bottom-0 w-full" v-if="getLocumCompletedJobs.length > 0 && totalPages > 1">
