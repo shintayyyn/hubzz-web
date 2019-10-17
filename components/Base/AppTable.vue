@@ -8,13 +8,13 @@
             <th
               v-for="(column, index) in columns"
               :key="index"
-              :class="column.class && column.class.includes('text-left') && 'text-left'"
+              :class="(column.class && column.class.includes('text-center')) ? 'text-center' : 'text-left'"
             >
               <span
                 v-if="column.sortable"
                 @click="sort(column.dataIndex)"
-                :class="column.sortable ? 'cursor-pointer':''"
-                class="flex justify-center items-center"
+                :class="(column.class && column.class.includes('text-center')) && 'justify-center'"
+                class="flex items-center w-full cursor-pointer"
               >
                 <span class="block whitespace-no-wrap pr-1">{{column.name}}</span>
                 <svgicon
@@ -260,7 +260,8 @@ table tbody td:first-child, table thead th:first-child {
   background-color: #fff;
   left: 0;
 }
-table tbody td {
+table tbody td, table thead th {
+  background-color: #fff;
   padding: 15px 8px;
 }
 /* table thead th {

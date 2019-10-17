@@ -33,12 +33,11 @@ table {
   }
 }
 
-table thead th {
-  padding: 15px;
-}
-
+table thead th,
 table tbody td {
+  background: #fff;
   padding: 15px;
+  transition: 0.3s ease;
 }
 
 .__jobs-section {

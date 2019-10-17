@@ -186,40 +186,47 @@ export default {
       // app table column
       columns: [
         {
-          name: "Job part number",
+          name: "Job Part Number",
           dataIndex: "job_part_number",
           sortable: true
         },
         {
           name: "Practice",
-          dataIndex: "job.platform_job.practice.surgery.name"
+          dataIndex: "job.platform_job.practice.surgery.name",
+          class: "text-center"
         },
         {
           name: "Title",
-          dataIndex: "job.title"
+          dataIndex: "job.title",
+          class: "text-center"
         },
         {
           name: "Shift",
-          dataIndex: "job.shift.name"
+          dataIndex: "job.shift.name",
+          class: "text-center"
         },
         {
           name: "Rate",
           dataIndex: "job.rate",
-          sortable: true
+          sortable: true,
+          class: "text-center"
         },
         {
           name: "per",
-          dataIndex: "job.locum_detail_rate_type.name"
+          dataIndex: "job.locum_detail_rate_type.name",
+          class: "text-center"
         },
         {
           name: "From",
           dataIndex: "date_start",
-          sortable: true
+          sortable: true,
+          class: "text-center"
         },
         {
           name: "To",
           dataIndex: "date_end",
-          sortable: true
+          sortable: true,
+          class: "text-center"
         },
         {
           name: "Created At",
@@ -230,11 +237,13 @@ export default {
         {
           name: "Assigned",
           dataIndex:
-            "job.platform_job.appointed_to_locum.user.personal_detail.name"
+            "job.platform_job.appointed_to_locum.user.personal_detail.name",
+          class: "text-center"
         },
         {
           name: "Status",
-          dataIndex: "invoiced_status"
+          dataIndex: "invoiced_status",
+          class: "text-center"
         }
       ],
       filterToggle: false

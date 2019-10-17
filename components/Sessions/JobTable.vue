@@ -20,7 +20,7 @@
       </tr>
     </thead>
     <tbody>
-      <template v-for="(item, index) in jobs">
+      <template v-for="item in jobs">
         <tr
           :key="item.id"
           class="__job-card shadow-md cursor-pointer text-xs text-left"

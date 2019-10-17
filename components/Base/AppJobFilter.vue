@@ -83,10 +83,11 @@
       <div class="w-full md:w-1/3 p-1 mt-1">
         <AppInput
           v-model="params.rate"
-          :type="'text'"
+          :type="'number'"
           :name="'rate'"
           :label="'Rate'"
           :placeholder="''"
+          :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
         />
       </div>
       <div class="w-full md:w-1/3 p-1">
