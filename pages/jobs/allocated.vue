@@ -7,7 +7,10 @@
       @click="showFilter()"
       :inStyle="'padding:5px 14px;margin-bottom:5px; font-size:14px;'"
     />
-    <div class="md:relative md:flex flex-wrap justify-start items-center" :class="filterToggle ? 'z-10 absolute w-full bg-white shadow-md p-3' : 'hidden'">
+    <div
+      class="md:relative md:flex flex-wrap justify-start items-center"
+      :class="filterToggle ? 'z-10 absolute w-full bg-white shadow-md p-3' : 'hidden'"
+    >
       <div class="md:px-1 w-full md:w-1/3">
         <AppInput
           class="px-1"
@@ -218,9 +221,6 @@ export default {
     total() {
       return this.$store.state.jobs.locum_allocated_jobs_count;
     },
-    totalPages() {
-      return Math.ceil(this.total / this.perPage);
-    },
     loadingJobs() {
       return this.$store.state.jobs.loading_jobs;
     }
@@ -277,14 +277,14 @@ export default {
     }, 1000);
   },
   methods: {
-    showFilter(){
-      return this.filterToggle = !this.filterToggle 
+    showFilter() {
+      return (this.filterToggle = !this.filterToggle);
     },
     getJobsCount(params) {
       this.$store.commit("jobs/TOGGLE_LOADING", true);
       this.$store
         .dispatch("jobs/fetchLocumJobs", {
-          status: "Allocated",
+          status: ["Allocated"],
           countOnly: true,
           ...params
         })
@@ -294,7 +294,7 @@ export default {
     },
     getJobs(params) {
       this.$store
-        .dispatch("jobs/fetchLocumJobs", { status: "Allocated", ...params })
+        .dispatch("jobs/fetchLocumJobs", { status: ["Allocated"], ...params })
         .finally(() => {
           this.$store.commit("jobs/TOGGLE_LOADING", false);
         });

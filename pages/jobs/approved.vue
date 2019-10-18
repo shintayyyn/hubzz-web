@@ -1,8 +1,17 @@
 <template>
   <section class="relative">
     <AppLoading :loading="loadingJobs" spinner />
-    <div class="relative flex flex-wrap justify-start items-center">
-      <div class="px-1 w-full md:w-1/3">
+    <AppButton
+      class="relative md:hidden"
+      :label="'Filter'"
+      @click="showFilter()"
+      :inStyle="'padding:5px 14px;margin-bottom:5px; font-size:14px;'"
+    />
+    <div
+      class="md:relative md:flex flex-wrap justify-start items-center"
+      :class="filterToggle ? 'z-10 absolute w-full bg-white shadow-md p-3' : 'hidden'"
+    >
+      <div class="md:px-1 w-full md:w-1/3">
         <AppInput
           class="px-1"
           v-model="params.shift_id"
@@ -13,7 +22,7 @@
           :items="shifts"
         />
       </div>
-      <div class="px-1 w-full md:w-1/3">
+      <div class="md:px-1 w-full md:w-1/3">
         <AppInput
           class="px-1"
           v-model="params.rate"
@@ -23,7 +32,7 @@
           :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
         />
       </div>
-      <div class="px-1 w-full md:w-1/3">
+      <div class="md:px-1 w-full md:w-1/3">
         <AppInput
           class="px-1"
           v-model="params.locum_detail_rate_type_id"
@@ -34,7 +43,7 @@
           :items="rates"
         />
       </div>
-      <div class="px-1 w-full md:w-1/3">
+      <div class="md:px-1 w-full md:w-1/3">
         <AppPostCode
           class="px-1"
           v-model="params.near_post_code"
@@ -44,7 +53,7 @@
           :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;border-style:solid'"
         />
       </div>
-      <div class="px-1 w-full md:w-1/3">
+      <div class="md:px-1 w-full md:w-1/3">
         <AppInput
           class="px-1"
           v-model="params.miles"
@@ -55,7 +64,7 @@
           :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
         />
       </div>
-      <div class="px-1 w-full md:w-1/3">
+      <div class="md:px-1 w-full md:w-1/3">
         <AppAutoComplete
           class="px-1"
           v-model="params.surgery_name"
@@ -65,12 +74,19 @@
           :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem'"
         />
       </div>
-      <AppButton
-        class="w-full"
-        :label="'Clear'"
-        @click="clearFilters"
-        :inStyle="'padding:5px 14px;margin-bottom:5px'"
-      />
+      <div class="md:px-1 flex w-full">
+        <AppButton
+          :label="'Clear'"
+          @click="clearFilters"
+          :inStyle="'padding:5px 14px;margin-bottom:5px'"
+        />
+        <AppButton
+          class="mx-2 md:hidden"
+          :label="'Close'"
+          @click="showFilter()"
+          :inStyle="'padding:5px 14px;margin-bottom:5px'"
+        />
+      </div>
     </div>
     <AppTable
       v-if="getLocumApprovedJobs.length > 0"
@@ -88,7 +104,7 @@
     />
     <div
       v-if="!getLocumApprovedJobs.length && !loadingJobs"
-      class="flex justify-center"
+      class="flex justify-center py-4"
     >You do not have any approved jobs</div>
     <transition name="fade" mode="out-in">
       <div
@@ -188,7 +204,8 @@ export default {
           dataIndex:
             "job.platform_job.appointed_to_locum.user.personal_detail.name"
         }
-      ]
+      ],
+      filterToggle: false
     };
   },
   computed: {
@@ -196,10 +213,7 @@ export default {
       return this.$store.getters["jobs/getLocumApprovedJobs"];
     },
     total() {
-      return this.$store.state.jobs.locum_approved_jobs_count;
-    },
-    totalPages() {
-      return Math.ceil(this.total / this.perPage);
+      return this.$store.state.jobs.locum_approved_job_parts_count;
     },
     loadingJobs() {
       return this.$store.state.jobs.loading_jobs;
@@ -255,6 +269,9 @@ export default {
     }, 1000);
   },
   methods: {
+    showFilter() {
+      return (this.filterToggle = !this.filterToggle);
+    },
     filterOut: debounce(function({ field, value }) {
       this.current_page = 1;
       this.params.offset = 0;
@@ -264,8 +281,8 @@ export default {
     getJobsCount(params) {
       this.$store.commit("jobs/TOGGLE_LOADING", true);
       this.$store
-        .dispatch("jobs/fetchLocumJobs", {
-          status: "Approved",
+        .dispatch("jobs/fetchLocumJobParts", {
+          status: ["Approved"],
           countOnly: true,
           ...params
         })
@@ -275,7 +292,10 @@ export default {
     },
     getJobs(params) {
       this.$store
-        .dispatch("jobs/fetchLocumJobs", { status: "Approved", ...params })
+        .dispatch("jobs/fetchLocumJobParts", {
+          status: ["Approved"],
+          ...params
+        })
         .finally(() => {
           this.$store.commit("jobs/TOGGLE_LOADING", false);
         });

@@ -194,28 +194,28 @@ export default {
   },
   methods: {
     getJobs() {
-      this.$store.dispatch("jobs/fetchLocumAllocatedJobParts", {
-        calendar_date_start: this.startOfMonth,
-        calendar_date_end: this.endOfMonth,
-        status: "Allocated"
-      });
-
       this.$store.dispatch("jobs/fetchLocumJobs", {
         calendar_date_start: this.startOfMonth,
         calendar_date_end: this.endOfMonth,
-        status: "Ongoing"
+        status: ["Allocated"]
+      });
+
+      this.$store.dispatch("jobs/fetchLocumJobParts", {
+        calendar_date_start: this.startOfMonth,
+        calendar_date_end: this.endOfMonth,
+        status: ["Ongoing"]
       });
 
       // this.$store.dispatch("jobs/fetchLocumJobs", {
       //   calendar_date_start: this.startOfMonth,
       //   calendar_date_end: this.endOfMonth,
-      //   status: "Allocated"
+      //   status: ["Allocated"]
       // });
 
-      this.$store.dispatch("jobs/fetchLocumJobs", {
+      this.$store.dispatch("jobs/fetchLocumUnavailabilities", {
         calendar_date_start: this.startOfMonth,
         calendar_date_end: this.endOfMonth,
-        status: "Unavailable"
+        status: ["Unavailable"]
       });
     },
     getDaysInMonth(month, selectedYear) {

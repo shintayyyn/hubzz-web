@@ -147,7 +147,7 @@ export default {
   methods: {
     getJobsCount() {
       this.$store.dispatch("jobs/fetchPracticeJobs", {
-        status: "Applied",
+        status: ["Applied"],
         countOnly: true
       });
     },
@@ -190,7 +190,7 @@ export default {
       let defaultParams = {
         offset: this.offset,
         limit: this.perPage,
-        status: "Applied"
+        status: ["Applied"]
       };
       let jobParams = { ...params, ...defaultParams };
       this.$store.dispatch("jobs/fetchPracticeJobs", jobParams).finally(() => {

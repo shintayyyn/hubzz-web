@@ -261,7 +261,7 @@
             @click="selectDateShift(date, 'AM')"
           ></div>
           <div
-            v-if="hasLocumAllocatedPrivateJobs(date, 'AM')"
+            v-else-if="hasLocumAllocatedPrivateJobs(date, 'AM')"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-green-400 hover:bg-gray-300"
             :key="`${date}-${index}-${id}`"
             @click="selectDateShift(date, 'AM')"
@@ -302,7 +302,7 @@
             @click="selectDateShift(date, 'PM')"
           ></div>
           <div
-            v-if="hasLocumAllocatedPrivateJobs(date, 'PM')"
+            v-else-if="hasLocumAllocatedPrivateJobs(date, 'PM')"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-green-400 hover:bg-gray-300"
             :key="`${date}-${index}-${id}`"
             @click="selectDateShift(date, 'PM')"
@@ -343,7 +343,7 @@
             @click="selectDateShift(date, 'OOH')"
           ></div>
           <div
-            v-if="hasLocumAllocatedPrivateJobs(date, 'OOH')"
+            v-else-if="hasLocumAllocatedPrivateJobs(date, 'OOH')"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-green-400 hover:bg-gray-300"
             :key="`${date}-${index}-${id}`"
             @click="selectDateShift(date, 'OOH')"
@@ -384,7 +384,7 @@
             @click="selectDateShift(date, 'Whole Day')"
           ></div>
           <div
-            v-if="hasLocumAllocatedPrivateJobs(date, 'Whole Day')"
+            v-else-if="hasLocumAllocatedPrivateJobs(date, 'Whole Day')"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-green-400 hover:bg-gray-300"
             :key="`${date}-${index}-${id}`"
             @click="selectDateShift(date, 'Whole Day')"
@@ -565,13 +565,13 @@ export default {
         this.$store.dispatch("jobs/fetchPracticeJobs", {
           data_start: `${this.firstDayOfTheWeek}:gte`,
           date_end: `${this.lastDayOfTheWeek}:lte`,
-          status: "Allocated"
+          status: ["Allocated"]
         });
 
         this.$store.dispatch("jobs/fetchPracticeJobs", {
           data_start: `${this.firstDayOfTheWeek}:gte`,
           date_end: `${this.lastDayOfTheWeek}:lte`,
-          status: "Applied"
+          status: ["Applied"]
         });
 
         this.$store.dispatch("jobs/fetchPracticeJobs", {
@@ -583,35 +583,33 @@ export default {
         this.$store.dispatch("jobs/fetchPracticeJobs", {
           data_start: `${this.firstDayOfTheWeek}:gte`,
           date_end: `${this.lastDayOfTheWeek}:lte`,
-          status: "Declined"
+          status: ["Declined"]
         });
 
         this.$store.dispatch("jobs/fetchPracticeJobsReminder", {
           platform_selection_date_start: `${this.firstDayOfTheWeek}:gte`,
           platform_selection_date_end: `${this.lastDayOfTheWeek}:lte`,
-          status: "Available"
+          status: ["Available"]
         });
       }
       if (this.$auth.user.domain === "Locum") {
         this.$store.dispatch("jobs/fetchLocumJobs", {
-          date_start: `${this.firstDayOfTheWeek}:gte`,
-          date_end: `${this.lastDayOfTheWeek}:lte`,
-          status: "Allocated"
+          calendar_date_start: `${this.firstDayOfTheWeek}:gte`,
+          calendar_date_end: `${this.lastDayOfTheWeek}:lte`,
+          limit: 100000000,
+          status: ["Allocated", "Applied"]
         });
-        this.$store.dispatch("jobs/fetchLocumJobs", {
-          date_start: `${this.firstDayOfTheWeek}:gte`,
-          date_end: `${this.lastDayOfTheWeek}:lte`,
-          status: "Ongoing"
+        this.$store.dispatch("jobs/fetchLocumJobParts", {
+          calendar_date_start: `${this.firstDayOfTheWeek}:gte`,
+          calendar_date_end: `${this.lastDayOfTheWeek}:lte`,
+          limit: 100000000,
+          status: ["Ongoing"]
         });
-        this.$store.dispatch("jobs/fetchLocumJobs", {
-          date_start: `${this.firstDayOfTheWeek}:gte`,
-          date_end: `${this.lastDayOfTheWeek}:lte`,
-          status: "Applied"
-        });
-        this.$store.dispatch("jobs/fetchLocumJobs", {
-          date_start: `${this.firstDayOfTheWeek}:gte`,
-          date_end: `${this.lastDayOfTheWeek}:lte`,
-          status: "Unavailable"
+        this.$store.dispatch("jobs/fetchLocumUnavailabilities", {
+          calendar_date_start: `${this.firstDayOfTheWeek}:gte`,
+          calendar_date_end: `${this.lastDayOfTheWeek}:lte`,
+          limit: 100000000,
+          status: ["Unavailable"]
         });
       }
     },

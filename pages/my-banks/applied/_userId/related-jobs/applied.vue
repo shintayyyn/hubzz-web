@@ -19,7 +19,11 @@
         @pagechanged="pagechanged"
       />
     </div>
-    <div class="shield" v-if="$route.name === 'my-banks-applied-userId-related-jobs-applied-jobId'" @click="$router.go(-1)"></div>
+    <div
+      class="shield"
+      v-if="$route.name === 'my-banks-applied-userId-related-jobs-applied-jobId'"
+      @click="$router.go(-1)"
+    ></div>
     <nuxt-child />
   </section>
 </template>
@@ -149,7 +153,7 @@ export default {
     getJobsCount() {
       this.$store.dispatch("jobs/fetchPracticeJobs", {
         locum_detail_id: this.user.locum_detail.id,
-        status: "Applied",
+        status: ["Applied"],
         countOnly: true
       });
     },
@@ -160,7 +164,7 @@ export default {
         locum_detail_id: this.user.locum_detail.id,
         offset: this.offset,
         limit: this.perPage,
-        status: "Applied"
+        status: ["Applied"]
       };
       let jobParams = { ...params, ...defaultParams };
       this.$store.dispatch("jobs/fetchPracticeJobs", jobParams).finally(() => {

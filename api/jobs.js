@@ -28,18 +28,18 @@ export function fetchLocumAllocatedJobParts(axios, payload) {
 }
 
 export function fetchLocumJobs(axios, payload) {
+    // console.log(payload)
     let url = '/api/v1/locum/jobs'
 
-    if (!Array.isArray(payload.status) && payload.status && ['ongoing', 'completed', 'approved'].includes(payload.status.toLowerCase())) {
-        url = '/api/v1/locum/job-parts'
+    if (payload.status && payload.status.length > 0) {
+        payload.status.forEach(item => {
+            if (['ongoing', 'completed', 'approved'].includes(item.toLowerCase())) {
+                url = '/api/v1/locum/job-parts'
+            }
+        })
     }
-    if (!Array.isArray(payload.status) && payload.status && payload.status.toLowerCase() === 'unavailable') {
-        url = '/api/v1/locum/unavailabilities'
-    }
-    if (payload.id && payload.first) {
-        url = `/api/v1/locum/jobs/${payload.id}`
-    }
-    return axios.$get(`${url}${payload.countOnly ? '/count' : ''}`, { params: payload })
+
+    return axios.$get(`${url}${payload.id && payload.first ? `/${payload.id}` : ''}${payload.countOnly ? '/count' : ''}`, { params: payload })
 }
 
 export function fetchPracticeJob(axios, payload) {

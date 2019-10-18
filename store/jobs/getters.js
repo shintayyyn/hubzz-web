@@ -34,12 +34,24 @@ export default {
             state.practice_new_cancelled_jobs_count, state.practice_new_completed_jobs_count
         ].reduce((accumulator, currentValue) => accumulator + currentValue)
     },
+
     // locum
+    // PARTS
     getLocumOngoingJobs(state) {
-        return state.locum_ongoing_jobs
+        return state.locum_ongoing_job_parts
     },
+    getLocumCompletedJobs(state) {
+        return state.locum_completed_job_parts
+    },
+    getLocumApprovedJobs(state) {
+        return state.locum_approved_job_parts
+    },
+    // WHOLE
     getLocumAllocatedPartJobs(state) {
         return state.locum_allocated_part_jobs
+    },
+    getLocumAllocatedJobs(state) {
+        return state.locum_allocated_jobs
     },
     getLocumAllocatedPrivateJobs(state) {
         return state.locum_allocated_jobs.filter(job => job.type === 'Private')
@@ -67,12 +79,6 @@ export default {
     },
     getLocumWithdrawnJobs(state) {
         return state.locum_withdrawn_jobs
-    },
-    getLocumCompletedJobs(state) {
-        return state.locum_completed_jobs
-    },
-    getLocumApprovedJobs(state) {
-        return state.locum_approved_jobs
     },
     getLocumUnavailabilities(state) {
         return state.locum_unavailabilities

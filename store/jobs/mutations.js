@@ -181,31 +181,78 @@ export default {
         state.practice_new_declined_jobs_count = 0
     },
     // LOCUM
-    SET_LOCUM_ONGOING_JOBS(state, payload) {
-        state.locum_ongoing_jobs = payload
+    // JOB PARTS
+    SET_LOCUM_ONGOING_JOB_PARTS_COUNT(state, payload) {
+        state.locum_ongoing_job_parts_count = payload
     },
-    SET_LOCUM_ONGOING_JOBS_COUNT(state, payload) {
-        state.locum_ongoing_jobs_count = payload
+    SET_LOCUM_ONGOING_JOB_PARTS(state, payload) {
+        state.locum_ongoing_job_parts = payload
     },
-    ADD_LOCUM_ONGOING_JOB(state, payload) {
-        let index = state.locum_ongoing_jobs.findIndex(jobPart => jobPart.id == payload.id)
+    REMOVE_LOCUM_ONGOING_JOB_PART(state, payload) {
+        state.locum_ongoing_job_parts = state.locum_ongoing_job_parts.filter(job => job.id !== payload)
+        state.locum_ongoing_job_parts_count = state.locum_ongoing_job_parts_count - 1
+    },
+    UPDATE_LOCUM_ONGOING_JOB_PART(state, { payload, payloadIndex }) {
+        let index = state.locum_ongoing_job_parts.findIndex(jobPart => jobPart.id == payload.id)
         if (index < 0) {
-            state.locum_ongoing_jobs.push(payload)
-            state.locum_ongoing_jobs_count = state.locum_ongoing_jobs_count + 1
-        }
-    },
-    REMOVE_LOCUM_ONGOING_JOB(state, payload) {
-        if (state.locum_ongoing_jobs.find(ongoingJob => ongoingJob.id === payload)) {
-            state.locum_ongoing_jobs = state.locum_ongoing_jobs.filter(job => job.id !== payload)
-            state.locum_ongoing_jobs_count = state.locum_ongoing_jobs_count - 1
+            state.locum_ongoing_job_parts.splice(payloadIndex, 0, payload)
         }
     },
     ADD_LOCUM_ONGOING_BADGE(state) {
-        state.locum_new_ongoing_jobs_count = state.locum_new_ongoing_jobs_count + 1
+        state.locum_new_ongoing_job_parts_count = state.locum_new_ongoing_job_parts_count + 1
     },
     CLEAR_LOCUM_ONGOING_BADGE(state) {
-        state.locum_new_ongoing_jobs_count = 0
+        state.locum_new_ongoing_job_parts_count = 0
     },
+
+    SET_LOCUM_COMPLETED_JOB_PARTS_COUNT(state, payload) {
+        state.locum_completed_job_parts_count = payload
+    },
+    SET_LOCUM_COMPLETED_JOB_PARTS(state, payload) {
+        state.locum_completed_job_parts = payload
+    },
+    REMOVE_LOCUM_COMPLETED_JOB_PART(state, payload) {
+        state.locum_completed_job_parts = state.locum_completed_job_parts.filter(job => job.id !== payload)
+        state.locum_completed_job_parts_count = state.locum_completed_job_parts_count - 1
+    },
+    UPDATE_LOCUM_COMPLETED_JOB_PART(state, { payload, payloadIndex }) {
+        let index = state.locum_completed_job_parts.findIndex(jobPart => jobPart.id == payload.id)
+        if (index < 0) {
+            state.locum_completed_job_parts.splice(payloadIndex, 0, payload)
+        }
+    },
+    ADD_LOCUM_COMPLETED_BADGE(state) {
+        state.locum_new_completed_job_parts_count = state.locum_new_completed_job_parts_count + 1
+    },
+    CLEAR_LOCUM_COMPLETED_BADGE(state) {
+        state.locum_new_completed_job_parts_count = 0
+    },
+
+    SET_LOCUM_APPROVED_JOB_PARTS_COUNT(state, payload) {
+        state.locum_approved_job_parts_count = payload
+    },
+    SET_LOCUM_APPROVED_JOB_PARTS(state, payload) {
+        state.locum_approved_job_parts = payload
+    },
+    REMOVE_LOCUM_APPROVED_JOB_PART(state, payload) {
+        state.locum_approved_job_parts = state.locum_approved_job_parts.filter(job => job.id !== payload)
+        state.locum_approved_job_parts_count = state.locum_approved_job_parts_count - 1
+    },
+    UPDATE_LOCUM_APPROVED_JOB_PART(state, { payload, payloadIndex }) {
+        let index = state.locum_approved_job_parts.findIndex(jobPart => jobPart.id == payload.id)
+        if (index < 0) {
+            state.locum_approved_job_parts.splice(payloadIndex, 0, payload)
+        }
+    },
+    ADD_LOCUM_APPROVED_BADGE(state) {
+        state.locum_new_approved_job_parts_count = state.locum_new_approved_job_parts_count + 1
+    },
+    CLEAR_LOCUM_APPROVED_BADGE(state) {
+        state.locum_new_approved_job_parts_count = 0
+    },
+
+
+    // WHOLE JOBS
     SET_LOCUM_ALLOCATED_PART_JOBS(state, payload) {
         state.locum_allocated_part_jobs = payload
     },
