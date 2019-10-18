@@ -149,7 +149,7 @@ export default {
     getJobsCount() {
       this.$store.dispatch("jobs/fetchPracticeJobs", {
         locum_detail_id: this.user.locum_detail.id,
-        status: "Declined",
+        status: ["Declined"],
         countOnly: true
       });
     },
@@ -160,7 +160,7 @@ export default {
         locum_detail_id: this.user.locum_detail.id,
         offset: this.offset,
         limit: this.perPage,
-        status: "Declined"
+        status: ["Declined"]
       };
       let jobParams = { ...params, ...defaultParams };
       this.$store.dispatch("jobs/fetchPracticeJobs", jobParams).finally(() => {

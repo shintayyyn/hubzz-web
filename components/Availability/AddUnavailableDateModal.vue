@@ -83,7 +83,14 @@ import AppDate from "@/components/Base/AppDate";
 import AppButton from "@/components/Base/AppButton";
 import AppFormError from "@/components/Base/AppFormError";
 export default {
-  props: ["unavailableDate", "appointmentDate", "allocatedDate", "type"],
+  props: [
+    "unavailableDate",
+    "appointmentDate",
+    "allocatedDate",
+    "ongoingDate",
+    "partDate",
+    "type"
+  ],
   components: {
     AppFormError,
     AppInput,
@@ -121,6 +128,20 @@ export default {
         }
         if (this.allocatedDate && this.allocatedDate.length > 0) {
           this.allocatedDate.forEach(item => {
+            shifts = this.unavailableDate.shifts.filter(
+              shift => shift.id !== item.id
+            );
+          });
+        }
+        if (this.ongoingDate && this.ongoingDate.length > 0) {
+          this.ongoingDate.forEach(item => {
+            shifts = this.unavailableDate.shifts.filter(
+              shift => shift.id !== item.id
+            );
+          });
+        }
+        if (this.partDate && this.partDate.length > 0) {
+          this.partDate.forEach(item => {
             shifts = this.unavailableDate.shifts.filter(
               shift => shift.id !== item.id
             );
@@ -248,7 +269,13 @@ export default {
           this.allocatedDate.find(shift => shift.id === id)) ||
         (this.appointmentDate &&
           this.appointmentDate.shift &&
-          this.appointmentDate.shift.id === id)
+          this.appointmentDate.shift.id === id) ||
+        (this.ongoingDate &&
+          this.ongoingDate.length &&
+          this.ongoingDate.find(shift => shift.id === id)) ||
+        (this.partDate &&
+          this.partDate.length &&
+          this.partDate.find(shift => shift.id === id))
       );
     }
   }

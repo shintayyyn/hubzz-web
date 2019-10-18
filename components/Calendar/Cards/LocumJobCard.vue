@@ -97,9 +97,19 @@ export default {
       if (this.$store.state.calendar.view_type === "per_month") {
         return shifts.map(shift => shift.name).join();
       }
-      return shifts.filter(
-        job => job.name === this.$store.state.calendar.selected_date_shift.shift
-      )[0].name;
+
+      if (this.$store.state.calendar.view_type === "per_week") {
+        let filteredShifts = shifts.filter(
+          shift =>
+            shift.name === this.$store.state.calendar.selected_date_shift.shift
+        );
+
+        if (filteredShifts && filteredShifts.length > 0) {
+          return filteredShifts[0].name;
+        } else {
+          return this.propJob.shifts[0].name;
+        }
+      }
     },
     jobNumber() {
       return this.isJobPart

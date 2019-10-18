@@ -20,6 +20,12 @@
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
           :class="$route.name === 'jobs-ongoing' || $route.name === 'jobs-ongoing-id'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Ongoing</nuxt-link>
+        <transition name="fade">
+          <div
+            v-if="$store.state.jobs.locum_new_ongoing_jobs_count > 0"
+            class="rounded-lg bg-red-600 text-white text-xs font-bold py-1 px-2 absolute right-0 top-0"
+          >{{$store.state.jobs.locum_new_ongoing_jobs_count}}</div>
+        </transition>
       </div>
       <div class="relative">
         <nuxt-link
@@ -101,6 +107,19 @@
       </div>
       <div class="relative">
         <nuxt-link
+          to="/jobs/withdrawn"
+          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          :class="$route.name === 'jobs-withdrawn' || $route.name === 'jobs-withdrawn-id'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        >Withdrawn</nuxt-link>
+        <transition name="fade">
+          <div
+            v-if="$store.state.jobs.locum_new_withdrawn_jobs_count > 0"
+            class="rounded-lg bg-red-600 text-white text-xs font-bold py-1 px-2 absolute right-0 top-0"
+          >{{$store.state.jobs.locum_new_withdrawn_jobs_count}}</div>
+        </transition>
+      </div>
+      <div class="relative">
+        <nuxt-link
           to="/jobs/completed"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
           :class="$route.name === 'jobs-completed' || $route.name === 'jobs-completed-id'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
@@ -110,6 +129,19 @@
             v-if="$store.state.jobs.locum_new_completed_jobs_count > 0"
             class="rounded-lg bg-red-600 text-white text-xs font-bold py-1 px-2 absolute right-0 top-0"
           >{{$store.state.jobs.locum_new_completed_jobs_count}}</div>
+        </transition>
+      </div>
+      <div class="relative">
+        <nuxt-link
+          to="/jobs/approved"
+          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          :class="$route.name === 'jobs-approved' || $route.name === 'jobs-approved-id'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        >Approved</nuxt-link>
+        <transition name="fade">
+          <div
+            v-if="$store.state.jobs.locum_new_approved_jobs_count > 0"
+            class="rounded-lg bg-red-600 text-white text-xs font-bold py-1 px-2 absolute right-0 top-0"
+          >{{$store.state.jobs.locum_new_approved_jobs_count}}</div>
         </transition>
       </div>
     </div>

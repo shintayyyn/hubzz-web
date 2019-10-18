@@ -97,7 +97,7 @@
         </div>
         <div class="flex flex-no-wrap justify-start">
           <template v-if="!job">
-            <AppButton :label="'Save'" @click="save" />
+            <AppButton :label="'Save'" @click="create" />
           </template>
           <template v-else>
             <AppButton :label="'Delete'" @click="confirmation_modal = true" />
@@ -253,7 +253,7 @@ export default {
         }
       }
     },
-    save() {
+    create() {
       this.formError = [];
       this.Validate(this.form, ["description"]);
       if (!this.formError.length) {
@@ -266,52 +266,14 @@ export default {
         this.$axios
           .$post(`/api/v1/locum/jobs`, this.form)
           .then(res => {
-            this.$store.commit("jobs/ADD_LOCUM_ALLOCATED_JOB", res.data.job);
-            this.close();
-            this.$store.commit("SET_NOTIFICATION", {
-              enabled: true,
-              status: "success",
-              text: [`${res.message}`]
-            });
-          })
-          .catch(err => {
-            err.response.data.error_messages.forEach(error => {
-              this.formError.push(error);
-            });
-            this.$store.commit("SET_NOTIFICATION", {
-              enabled: true,
-              status: "danger",
-              text: this.formError.map(error => error.message)
-            });
-          });
-      } else {
-        this.$store.commit("SET_NOTIFICATION", {
-          enabled: true,
-          status: "danger",
-          text: ["Please fill up all the forms"]
-        });
-        // this.$nextTick(() => {
-        //   this.$refs.modalContainer.scrollTop = 0;
-        // });
-      }
-    },
-    edit() {
-      this.formError = [];
-      this.Validate(this.form, ["description"]);
-      if (!this.formError.length) {
-        this.$axios
-          .$put(`/api/v1/locum/jobs/${this.job.id}`, this.form)
-          .then(res => {
             if (res.data.job.locum_status === "Allocated") {
-              this.$store.commit(
-                "jobs/UPDATE_LOCUM_ALLOCATED_JOB",
-                res.data.job
-              );
-            } else if (res.data.job.locum_status === "Completed") {
-              this.$store.commit(
-                "jobs/REMOVE_LOCUM_ALLOCATED_JOB",
-                res.data.job.id
-              );
+              this.$store.commit("jobs/ADD_LOCUM_ALLOCATED_JOB", res.data.job);
+            }
+            if (res.data.job.locum_status === "Ongoing") {
+              this.$store.dispatch("jobs/fetchLocumJobParts", {
+                status: ["Ongoing"],
+                job_id: res.data.job.id
+              });
             }
             this.close();
             this.$store.commit("SET_NOTIFICATION", {
@@ -329,9 +291,141 @@ export default {
               status: "danger",
               text: this.formError.map(error => error.message)
             });
-            // this.$nextTick(() => {
-            //   this.$refs.modalContainer.scrollTop = 0;
+          });
+      } else {
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "danger",
+          text: ["Please fill up all the forms"]
+        });
+      }
+    },
+    edit() {
+      this.formError = [];
+      this.Validate(this.form, ["description"]);
+      if (!this.formError.length) {
+        this.$axios
+          .$put(`/api/v1/locum/jobs/${this.job.id}`, this.form)
+          .then(res => {
+            // let updatedJobPartIndex = [];
+            // res.data.job.job_parts.forEach(jobPart => {
+            //   // get jobpart status
+            //   if (jobPart.status.toLowerCase() === "completed") {
+            //     // remove from the completed job part with the same job id
+            //     this.$store.state.jobs.locum_completed_job_parts.forEach(
+            //       (oldJobPart, index) => {
+            //         if (oldJobPart.job.id === jobPart.id) {
+            //           // get the removed job index
+            //           updatedJobPartIndex.push(index);
+            //           this.$store.commit(
+            //             "jobs/REMOVE_LOCUM_COMPLETED_JOB_PART",
+            //             oldJobPart.id
+            //           );
+            //         }
+            //       }
+            //     );
+            //     this.$store.dispatch("jobs/fetchLocumJobParts", {
+            //       status: ["Completed"],
+            //       job_id: res.data.job.id,
+            //       updatedJobPartIndex
+            //     });
+            //   }
+            //   if (jobPart.status.toLowerCase() === "ongoing") {
+            //     // remove from the ongoing job part with the same job id
+            //     this.$store.state.jobs.locum_ongoing_job_parts.forEach(
+            //       (oldJobPart, index) => {
+            //         if (oldJobPart.job.id === jobPart.id) {
+            //           // get the removed job index
+            //           updatedJobPartIndex.push(index);
+            //           this.$store.commit(
+            //             "jobs/REMOVE_LOCUM_ONGOIN_JOB_PART",
+            //             oldJobPart.id
+            //           );
+            //         }
+            //       }
+            //     );
+            //   }
             // });
+            //
+            if (res.data.job.locum_status === "Allocated") {
+              this.$store.commit(
+                "jobs/UPDATE_LOCUM_ALLOCATED_JOB",
+                res.data.job
+              );
+            }
+            if (res.data.job.locum_status === "Ongoing") {
+              let updatedJobPartIndex = [];
+              this.$store.state.jobs.locum_ongoing_job_parts.forEach(
+                (oldJobPart, index) => {
+                  if (oldJobPart.job.id === res.data.job.id) {
+                    updatedJobPartIndex.push(index);
+                    this.$store.commit(
+                      "jobs/REMOVE_LOCUM_ONGOING_JOB_PART",
+                      oldJobPart.id
+                    );
+                  }
+                }
+              );
+              this.$store.dispatch("jobs/fetchLocumJobParts", {
+                status: ["Ongoing"],
+                job_id: res.data.job.id,
+                updatedJobPartIndex
+              });
+            }
+            if (res.data.job.locum_status === "Completed") {
+              let updatedJobPartIndex = [];
+              this.$store.state.jobs.locum_completed_job_parts.forEach(
+                (oldJobPart, index) => {
+                  if (oldJobPart.job.id === res.data.job.id) {
+                    updatedJobPartIndex.push(index);
+                    this.$store.commit(
+                      "jobs/REMOVE_LOCUM_COMPLETED_JOB_PART",
+                      oldJobPart.id
+                    );
+                  }
+                }
+              );
+              this.$store.dispatch("jobs/fetchLocumJobParts", {
+                status: ["Completed"],
+                job_id: res.data.job.id,
+                updatedJobPartIndex
+              });
+            }
+            if (res.data.job.locum_status === "Approved") {
+              let updatedJobPartIndex = [];
+              this.$store.state.jobs.locum_approved_job_parts.forEach(
+                (oldJobPart, index) => {
+                  if (oldJobPart.job.id === res.data.job.id) {
+                    updatedJobPartIndex.push(index);
+                    this.$store.commit(
+                      "jobs/REMOVE_LOCUM_APPROVED_JOB_PART",
+                      oldJobPart.id
+                    );
+                  }
+                }
+              );
+              this.$store.dispatch("jobs/fetchLocumJobParts", {
+                status: ["Approved"],
+                job_id: res.data.job.id,
+                updatedJobPartIndex
+              });
+            }
+            this.close();
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: [`${res.message}`]
+            });
+          })
+          .catch(err => {
+            err.response.data.error_messages.forEach(error => {
+              this.formError.push(error);
+            });
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "danger",
+              text: this.formError.map(error => error.message)
+            });
           });
       } else {
         this.$store.commit("SET_NOTIFICATION", {
@@ -346,7 +440,16 @@ export default {
     },
     remove() {
       this.$axios.$delete(`/api/v1/locum/jobs/${this.job.id}`).then(res => {
-        this.$store.commit("jobs/REMOVE_LOCUM_ALLOCATED_JOB", this.job.id);
+        if (this.job.locum_status === "Allocated") {
+          this.$store.commit("jobs/REMOVE_LOCUM_ALLOCATED_JOB", this.job.id);
+        }
+        if (this.job.locum_status === "Ongoing") {
+          this.job.job_parts
+            .map(jobPart => jobPart.id)
+            .forEach(id => {
+              this.$store.commit("jobs/REMOVE_LOCUM_ONGOING_JOB_PART", id);
+            });
+        }
         this.close();
         this.$store.commit("SET_NOTIFICATION", {
           enabled: true,

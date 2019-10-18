@@ -52,6 +52,7 @@
 <script>
 import { mixin as clickaway } from "vue-clickaway";
 const hours = [
+  "00",
   "01",
   "02",
   "03",
@@ -74,10 +75,10 @@ const hours = [
   "20",
   "21",
   "22",
-  "23",
-  "00"
+  "23"
 ];
 const minutes = [
+  "00",
   "01",
   "02",
   "03",
@@ -136,8 +137,7 @@ const minutes = [
   "56",
   "57",
   "58",
-  "59",
-  "00"
+  "59"
 ];
 export default {
   mixins: [clickaway],

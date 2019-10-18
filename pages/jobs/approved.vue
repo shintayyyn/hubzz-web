@@ -89,9 +89,9 @@
       </div>
     </div>
     <AppTable
-      v-if="getLocumMatchedJobs.length > 0"
+      v-if="getLocumApprovedJobs.length > 0"
       :total="total"
-      :items="getLocumMatchedJobs"
+      :items="getLocumApprovedJobs"
       :currentPage="current_page"
       :perPage="params.limit"
       :columns="columns"
@@ -103,20 +103,21 @@
       @sorted="sorted"
     />
     <div
-      v-if="!getLocumMatchedJobs.length && !loadingJobs"
+      v-if="!getLocumApprovedJobs.length && !loadingJobs"
       class="flex justify-center py-4"
-    >There are no matched jobs nearby and suited for you at this time</div>
+    >You do not have any approved jobs</div>
     <transition name="fade" mode="out-in">
       <div
         class="shield"
-        v-if="$route.name === 'jobs-matched-id'"
-        @click="$router.push('/jobs/matched')"
+        v-if="$route.name === 'jobs-approved-id'"
+        @click="$router.push('/jobs/approved')"
       ></div>
     </transition>
     <nuxt-child />
   </section>
 </template>
 <script>
+import debounce from "lodash.debounce";
 import AppTable from "@/components/Base/AppTable";
 import AppInput from "@/components/Base/AppInput";
 import AppPostCode from "@/components/Base/AppPostCode";
@@ -157,109 +158,103 @@ export default {
       // app table
       columns: [
         {
-          name: "Job number",
-          dataIndex: "job_number",
-          class: "text-left"
+          name: "Job part number",
+          dataIndex: "job_part_number",
+          sortable: true
         },
         {
           name: "Practice",
-          dataIndex: "platform_job.practice.surgery.name",
-          class: "text-center"
+          dataIndex: "job.platform_job.practice.surgery.name"
         },
         {
           name: "Title",
-          dataIndex: "title",
-          class: "text-center"
+          dataIndex: "job.title"
         },
         {
           name: "Shift",
-          dataIndex: "shift.name",
-          class: "text-center"
+          dataIndex: "job.shift.name"
         },
         {
           name: "Rate",
-          dataIndex: "rate",
-          class: "text-center"
+          dataIndex: "job.rate",
+          sortable: true
         },
         {
           name: "per",
-          dataIndex: "locum_detail_rate_type.name",
-          class: "text-center"
+          dataIndex: "job.locum_detail_rate_type.name"
         },
         {
           name: "From",
           dataIndex: "date_start",
-          class: "text-center localDate",
           sortable: true
         },
         {
           name: "To",
           dataIndex: "date_end",
-          class: "text-center localDate",
           sortable: true
         },
         {
           name: "Created At",
-          dataIndex: "date_created",
+          dataIndex: "job.date_created",
           class: "text-center localDate",
           sortable: true
+        },
+        {
+          name: "Assigned",
+          dataIndex:
+            "job.platform_job.appointed_to_locum.user.personal_detail.name"
         }
       ],
       filterToggle: false
     };
   },
   computed: {
-    getLocumMatchedJobs() {
-      return this.$store.getters["jobs/getLocumMatchedJobs"];
+    getLocumApprovedJobs() {
+      return this.$store.getters["jobs/getLocumApprovedJobs"];
     },
     total() {
-      return this.$store.state.jobs.locum_matched_jobs_count;
-    },
-    totalPages() {
-      return Math.ceil(this.total / this.perPage);
+      return this.$store.state.jobs.locum_approved_job_parts_count;
     },
     loadingJobs() {
       return this.$store.state.jobs.loading_jobs;
     }
   },
   watch: {
+    "params.job_number"(value) {
+      this.filterOut({ field: "job_number", value });
+    },
+    "params.surgery_name"(value) {
+      this.filterOut({ field: "surgery_name", value });
+    },
+    "params.title"(value) {
+      this.filterOut({ field: "title", value });
+    },
     "params.shift_id"(value) {
-      this.current_page = 1;
-      this.params.offset = 0;
-      this.params.shift_id = value;
-      this.getJobsCount(this.params);
+      this.filterOut({ field: "shift_id", value });
     },
     "params.rate"(value) {
-      this.current_page = 1;
-      this.params.offset = 0;
-      this.params.rate = value;
-      this.getJobsCount(this.params);
+      this.filterOut({ field: "rate", value });
     },
     "params.locum_detail_rate_type_id"(value) {
-      this.current_page = 1;
-      this.params.offset = 0;
-      this.params.locum_detail_rate_type_id = value;
-      this.getJobsCount(this.params);
+      this.filterOut({ field: "locum_detail_rate_type_id", value }).then(
+        res => {
+          this.getJobsCount(this.params);
+        }
+      );
+    },
+    "params.date_start"(value) {
+      this.filterOut({ field: "date_start", value });
+    },
+    "params.date_end"(value) {
+      this.filterOut({ field: "date_end", value });
     },
     "params.near_post_code"(value) {
       if (value === "") {
-        this.current_page = 1;
-        this.params.offset = 0;
-        this.params.near_post_code = value;
-        this.getJobsCount(this.params);
+        this.filterOut({ field: "near_post_code", value });
       }
     },
     "params.miles"(value) {
-      this.current_page = 1;
-      this.params.offset = 0;
-      this.params.miles = value;
-      this.getJobsCount(this.params);
-    },
-    "params.surgery_name"(value) {
-      this.current_page = 1;
-      this.params.offset = 0;
-      this.params.surgery_name = value;
-      this.getJobsCount(this.params);
+      this.filterOut({ field: "miles", value });
     }
   },
   beforeDestroy() {
@@ -270,18 +265,24 @@ export default {
     this.getShifts();
     this.getJobsCount();
     setTimeout(() => {
-      this.$store.commit("jobs/CLEAR_LOCUM_MATCHED_BADGE");
+      this.$store.commit("jobs/CLEAR_LOCUM_APPROVED_BADGE");
     }, 1000);
   },
   methods: {
     showFilter() {
       return (this.filterToggle = !this.filterToggle);
     },
+    filterOut: debounce(function({ field, value }) {
+      this.current_page = 1;
+      this.params.offset = 0;
+      this.params[field] = value;
+      this.getJobs(this.params);
+    }, 500),
     getJobsCount(params) {
       this.$store.commit("jobs/TOGGLE_LOADING", true);
       this.$store
-        .dispatch("jobs/fetchLocumJobs", {
-          status: ["Matched"],
+        .dispatch("jobs/fetchLocumJobParts", {
+          status: ["Approved"],
           countOnly: true,
           ...params
         })
@@ -291,8 +292,8 @@ export default {
     },
     getJobs(params) {
       this.$store
-        .dispatch("jobs/fetchLocumJobs", {
-          status: ["Matched"],
+        .dispatch("jobs/fetchLocumJobParts", {
+          status: ["Approved"],
           ...params
         })
         .finally(() => {
@@ -327,7 +328,7 @@ export default {
       this.getJobs(this.params);
     },
     show(item) {
-      this.$router.push(`/jobs/${item.id}`);
+      this.$router.push(`/jobs/${item.id}?status=${item.locum_status}`);
     },
     getShifts() {
       this.$axios.$get(`/api/v1/shifts`).then(res => {

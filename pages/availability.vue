@@ -32,6 +32,8 @@
             :unavailableDate="unavailableDate"
             :appointmentDate="appointmentDate"
             :allocatedDate="allocatedDate"
+            :ongoingDate="ongoingDate"
+            :partDate="partDate"
             :type="type"
           />
         </div>
@@ -56,7 +58,9 @@ export default {
       type: "",
       unavailableDate: null,
       appointmentDate: null,
-      allocatedDate: null
+      allocatedDate: null,
+      ongoingDate: null,
+      partDate: null
     };
   },
   created() {
@@ -72,10 +76,18 @@ export default {
       this.type = "range";
       this.modal = true;
     },
-    open(unavailableDate, appointmentDate, allocatedDate) {
+    open(
+      unavailableDate,
+      appointmentDate,
+      allocatedDate,
+      ongoingDate,
+      partDate
+    ) {
       this.unavailableDate = unavailableDate;
       this.appointmentDate = appointmentDate;
       this.allocatedDate = allocatedDate;
+      this.ongoingDate = ongoingDate;
+      this.partDate = partDate;
       document.body.style.overflow = "hidden";
       this.type = "solo";
       this.modal = true;
