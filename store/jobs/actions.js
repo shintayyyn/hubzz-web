@@ -1,5 +1,6 @@
 import * as jobsApi from '@/api/jobs'
 export default {
+
     async initializeJobListener({ state, commit, dispatch }) {
         this.$socket.on('Locum Notification Job Matched', (job) => {
             if (!state.locum_matched_jobs.find(matchedJobs => matchedJobs.id == job.id)) {
@@ -172,14 +173,15 @@ export default {
             }
         })
     },
+
     async fetchLocumAllocatedJobParts({ commit }, payload) {
         const response = await jobsApi.fetchLocumAllocatedJobParts(this.$axios, payload)
-        console.log(response, payload)
         return commit('SET_LOCUM_ALLOCATED_PART_JOBS', response.data.job_parts)
     },
+
     async fetchLocumJobs({ state, commit }, payload) {
         const response = await jobsApi.fetchLocumJobs(this.$axios, payload)
-        console.log(response, payload)
+        // console.log('response', response)
         if (payload.id && payload.first) {
             if (response.data.job.locum_status === 'Current' && !state.locum_allocated_jobs.find(allocatedJob => allocatedJob.id === payload)) {
                 commit('ADD_LOCUM_ALLOCATED_BADGE')
@@ -189,10 +191,6 @@ export default {
                 commit('ADD_LOCUM_UNSUCCESSFUL_BADGE')
                 return commit('ADD_LOCUM_UNSUCCESSFUL_JOB', response.data.job)
             }
-        }
-        // unavailable
-        if (payload.status === "Unavailable") {
-            return commit('SET_LOCUM_UNAVAILABILITIES', response.data.unavailabilities)
         }
         // job parts
         if (payload.status.includes("Ongoing")) {
@@ -276,6 +274,70 @@ export default {
             return commit('SET_LOCUM_WITHDRAWN_JOBS', response.data.jobs)
         }
     },
+
+    async fetchLocumJobParts({ commit }, payload) {
+        let url = `/api/v1/locum/job-parts`
+        let first = payload.id && payload.first ? `/${payload.id}` : ''
+        let count = payload.countOnly ? `/count` : ''
+        let updatedJobPartIndex = payload.updatedJobPartIndex ? payload.updatedJobPartIndex : []
+
+        const response = await this.$axios.$get(`${url}${first}${count}`, { params: payload })
+
+        if (response.data && response.data.count) {
+            payload.status.forEach(jobStatus => {
+                if (jobStatus.toLowerCase() === 'ongoing') {
+                    commit('SET_LOCUM_ONGOING_JOB_PARTS_COUNT', response.data.count)
+                }
+                if (jobStatus === 'completed') {
+                    commit('SET_LOCUM_COMPLETED_JOB_PARTS_COUNT', response.data.count)
+                }
+                if (jobStatus === 'approved') {
+                    commit('SET_LOCUM_APPROVED_JOB_PARTS_COUNT', response.data.count)
+                }
+            })
+        }
+
+        if (response.data && response.data.job_parts && response.data.job_parts.length > 0) {
+            payload.status.forEach(jobStatus => {
+                if (jobStatus.toLowerCase() === 'ongoing') {
+                    if (updatedJobPartIndex && updatedJobPartIndex.length === 0) {
+                        commit('SET_LOCUM_ONGOING_JOB_PARTS', response.data.job_parts)
+                    }
+                    if (updatedJobPartIndex && updatedJobPartIndex.length > 0) {
+                        response.data.job_parts.forEach((jobPart, index) => {
+                            commit('UPDATE_LOCUM_ONGOING_JOB_PART', { payload: jobPart, payloadIndex: updatedJobPartIndex[index] })
+                        })
+                    }
+                }
+                if (jobStatus.toLowerCase() === 'completed') {
+                    if (updatedJobPartIndex && updatedJobPartIndex.length === 0) {
+                        commit('SET_LOCUM_COMPLETED_JOB_PARTS', response.data.job_parts)
+                    }
+                    if (updatedJobPartIndex && updatedJobPartIndex.length > 0) {
+                        response.data.job_parts.forEach((jobPart, index) => {
+                            commit('UPDATE_LOCUM_COMPLETED_JOB_PART', { payload: jobPart, payloadIndex: updatedJobPartIndex[index] })
+                        })
+                    }
+                }
+                if (jobStatus.toLowerCase() === 'approved') {
+                    if (updatedJobPartIndex && updatedJobPartIndex.length === 0) {
+                        commit('SET_LOCUM_APPROVED_JOB_PARTS', response.data.job_parts)
+                    }
+                    if (updatedJobPartIndex && updatedJobPartIndex.length > 0) {
+                        response.data.job_parts.forEach((jobPart, index) => {
+                            commit('UPDATE_LOCUM_APPROVED_JOB_PART', { payload: jobPart, payloadIndex: updatedJobPartIndex[index] })
+                        })
+                    }
+                }
+            })
+        }
+    },
+
+    async fetchLocumUnavailabilities({ commit }, payload) {
+        const response = await this.$axios.$get(`/api/v1/locum/unavailabilities`, { params: payload })
+        commit('SET_LOCUM_UNAVAILABILITIES', response.data.unavailabilities)
+    },
+
     async fetchPracticeJobs({ commit }, payload) {
         commit('TOGGLE_LOADING', true)
         const response = await jobsApi.fetchPracticeJobs(this.$axios, payload)
@@ -326,6 +388,7 @@ export default {
             return commit('SET_PRACTICE_DECLINED_JOBS', response.data.jobs)
         }
     },
+
     async fetchPracticeJobsReminder({ commit }, payload) {
         commit('TOGGLE_LOADING', true)
         const response = await jobsApi.fetchPracticeJobsReminder(this.$axios, payload)
@@ -336,6 +399,7 @@ export default {
             return commit('SET_PRACTICE_APPLIED_JOBS_REMINDER', response.data.jobs)
         }
     },
+
     async fetchPracticeJob({ state, commit }, payload) {
         commit('TOGGLE_LOADING', true)
         const response = await jobsApi.fetchPracticeJob(this.$axios, payload)

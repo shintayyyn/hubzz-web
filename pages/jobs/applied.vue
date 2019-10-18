@@ -7,7 +7,10 @@
       @click="showFilter()"
       :inStyle="'padding:5px 14px;margin-bottom:5px; font-size:14px;'"
     />
-    <div class="md:relative md:flex flex-wrap justify-start items-center" :class="filterToggle ? 'z-10 absolute w-full bg-white shadow-md p-3' : 'hidden'">
+    <div
+      class="md:relative md:flex flex-wrap justify-start items-center"
+      :class="filterToggle ? 'z-10 absolute w-full bg-white shadow-md p-3' : 'hidden'"
+    >
       <div class="md:px-1 w-full md:w-1/3">
         <AppInput
           class="px-1"
@@ -263,14 +266,14 @@ export default {
     }, 1000);
   },
   methods: {
-    showFilter(){
-      return this.filterToggle = !this.filterToggle 
+    showFilter() {
+      return (this.filterToggle = !this.filterToggle);
     },
     getJobsCount(params) {
       this.$store.commit("jobs/TOGGLE_LOADING", true);
       this.$store
         .dispatch("jobs/fetchLocumJobs", {
-          status: "Applied",
+          status: ["Applied"],
           countOnly: true,
           ...params
         })
@@ -281,7 +284,7 @@ export default {
     getJobs(params) {
       this.$store
         .dispatch("jobs/fetchLocumJobs", {
-          status: "Applied",
+          status: ["Applied"],
           ...params
         })
         .finally(() => {

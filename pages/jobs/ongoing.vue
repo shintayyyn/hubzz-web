@@ -7,7 +7,10 @@
       @click="showFilter()"
       :inStyle="'padding:5px 14px;margin-bottom:5px; font-size:14px;'"
     />
-    <div class="md:relative md:flex flex-wrap justify-start items-center" :class="filterToggle ? 'z-10 absolute w-full bg-white shadow-md p-3' : 'hidden'">
+    <div
+      class="md:relative md:flex flex-wrap justify-start items-center"
+      :class="filterToggle ? 'z-10 absolute w-full bg-white shadow-md p-3' : 'hidden'"
+    >
       <div class="md:px-1 w-full md:w-1/3">
         <AppInput
           class="px-1"
@@ -210,10 +213,7 @@ export default {
       return this.$store.getters["jobs/getLocumOngoingJobs"];
     },
     total() {
-      return this.$store.state.jobs.locum_ongoing_jobs_count;
-    },
-    totalPages() {
-      return Math.ceil(this.total / this.perPage);
+      return this.$store.state.jobs.locum_ongoing_job_parts_count;
     },
     loadingJobs() {
       return this.$store.state.jobs.loading_jobs;
@@ -265,12 +265,12 @@ export default {
     this.getShifts();
     this.getJobsCount();
     setTimeout(() => {
-      this.$store.commit("jobs/CLEAR_LOCUM_ALLOCATED_BADGE");
+      this.$store.commit("jobs/CLEAR_LOCUM_ONGOING_BADGE");
     }, 1000);
   },
   methods: {
-    showFilter(){
-      return this.filterToggle = !this.filterToggle 
+    showFilter() {
+      return (this.filterToggle = !this.filterToggle);
     },
     filterOut: debounce(function({ field, value }) {
       this.current_page = 1;
@@ -281,8 +281,8 @@ export default {
     getJobsCount(params) {
       this.$store.commit("jobs/TOGGLE_LOADING", true);
       this.$store
-        .dispatch("jobs/fetchLocumJobs", {
-          status: "Ongoing",
+        .dispatch("jobs/fetchLocumJobParts", {
+          status: ["Ongoing"],
           countOnly: true,
           ...params
         })
@@ -292,7 +292,10 @@ export default {
     },
     getJobs(params) {
       this.$store
-        .dispatch("jobs/fetchLocumJobs", { status: "Ongoing", ...params })
+        .dispatch("jobs/fetchLocumJobParts", {
+          status: ["Ongoing"],
+          ...params
+        })
         .finally(() => {
           this.$store.commit("jobs/TOGGLE_LOADING", false);
         });

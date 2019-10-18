@@ -267,7 +267,7 @@ export default {
       this.$store.commit("jobs/TOGGLE_LOADING", true);
       this.$store
         .dispatch("jobs/fetchLocumJobs", {
-          status: "Withdrawn",
+          status: ["Withdrawn"],
           countOnly: true,
           ...params
         })
@@ -277,7 +277,7 @@ export default {
     },
     getJobs(params) {
       this.$store
-        .dispatch("jobs/fetchLocumJobs", { status: "Withdrawn", ...params })
+        .dispatch("jobs/fetchLocumJobs", { status: ["Withdrawn"], ...params })
         .finally(() => {
           this.$store.commit("jobs/TOGGLE_LOADING", false);
         });

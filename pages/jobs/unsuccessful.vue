@@ -7,7 +7,10 @@
       @click="showFilter()"
       :inStyle="'padding:5px 14px;margin-bottom:5px; font-size:14px;'"
     />
-    <div class="md:relative md:flex flex-wrap justify-start items-center" :class="filterToggle ? 'z-10 absolute w-full bg-white shadow-md p-3' : 'hidden'">
+    <div
+      class="md:relative md:flex flex-wrap justify-start items-center"
+      :class="filterToggle ? 'z-10 absolute w-full bg-white shadow-md p-3' : 'hidden'"
+    >
       <div class="md:px-1 w-full md:w-1/3">
         <AppInput
           class="px-1"
@@ -84,7 +87,6 @@
           :inStyle="'padding:5px 14px;margin-bottom:5px'"
         />
       </div>
-      
     </div>
     <AppTable
       v-if="getLocumUnsuccessfulJobs.length > 0"
@@ -272,14 +274,14 @@ export default {
     }, 1000);
   },
   methods: {
-    showFilter(){
-      return this.filterToggle = !this.filterToggle 
+    showFilter() {
+      return (this.filterToggle = !this.filterToggle);
     },
     getJobsCount(params) {
       this.$store.commit("jobs/TOGGLE_LOADING", true);
       this.$store
         .dispatch("jobs/fetchLocumJobs", {
-          status: "Unsuccessful",
+          status: ["Unsuccessful"],
           countOnly: true,
           ...params
         })
@@ -289,7 +291,10 @@ export default {
     },
     getJobs(params) {
       this.$store
-        .dispatch("jobs/fetchLocumJobs", { status: "Unsuccessful", ...params })
+        .dispatch("jobs/fetchLocumJobs", {
+          status: ["Unsuccessful"],
+          ...params
+        })
         .finally(() => {
           this.$store.commit("jobs/TOGGLE_LOADING", false);
         });
