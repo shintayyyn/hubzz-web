@@ -117,8 +117,8 @@
                     :error="formError.find(item => item.field === 'min_rate_per_hour')"
                     @submit="save"
                     @blur="CheckEmptyField(form.min_rate_per_hour, 'min_rate_per_hour')"
+                    class="w-1/2 px-1"
                   />
-                  <div class="mx-1"></div>
                   <AppInput
                     v-model="form.max_rate_per_hour"
                     :type="'text'"
@@ -127,6 +127,7 @@
                     :error="formError.find(item => item.field === 'max_rate_per_hour')"
                     @submit="save"
                     @blur="CheckEmptyField(form.max_rate_per_hour, 'max_rate_per_hour')"
+                    class="w-1/2 px-1"
                   />
                 </div>
               </div>

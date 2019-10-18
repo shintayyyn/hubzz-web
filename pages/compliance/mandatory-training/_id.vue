@@ -50,8 +50,8 @@
                   >{{mandatory_training && mandatory_training.note ? mandatory_training.note : null}}</p>
                 </div>
                 <p class="mt-5 font-bold text-lg">Expiry date</p>
-                <AppDate v-model="expiry_date" :name="'expiry_date'" />
-                <AppButton :label="'Save'" @click="update" :inStyle="'padding:5px 20px'" />
+                <AppDate v-model="expiry_date" :name="'expiry_date'" :format="'YYYY-MM-DD'" />
+                <AppButton :label="'Save'" @click="update()" :inStyle="'padding:5px 20px'" />
               </div>
               <div class="mt-5 lg:mt-0 w-full lg:w-3/4">
                 <embed
@@ -98,21 +98,22 @@ export default {
       throw err;
     }
   },
+  created(){
+    this.expiry_date = this.mandatory_training.expired_at
+  },
   methods: {
     async update() {
       try {
-        console.log(this.mandatory_training);
         const formData = new FormData();
-        formData.append("file", this.mandatory_training.file);
+        formData.append("file", {});
         formData.append(
-          "expired_at",
-          this.$moment(this.expiry_date).format("YYYY-MM-DD")
+          "expired_at", this.expiry_date
         );
         const response = await this.$axios.$put(
           `/api/v1/locum/locum-detail-mandatory-trainings/${this.$route.params.id}`,
           formData
         );
-        console.log(response);
+
       } catch (err) {
         throw err;
       }

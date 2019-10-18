@@ -149,6 +149,11 @@ export default {
     padding: 0 5%;
   }
 }
+@media screen and (min-width: 320px) {
+  .header-section {
+    padding: 0 2%;
+  }
+}
 a {
   text-decoration: none;
   color: black;

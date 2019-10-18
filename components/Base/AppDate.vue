@@ -11,13 +11,14 @@
       <input
         :value="value"
         type="input"
-        placeholder="mm/dd/yyyy"
+        :placeholder="format"
         class="border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full text-center"
         :class="{ inClass, 'border-red-500': error}"
         @click="modal = true"
         @keypress="validateInput($event)"
         @input="$emit('input', $event.target.value)"
         :style="inStyle"
+        :format="format"
       />
     </div>
     <transition name="fade">
@@ -236,6 +237,7 @@ export default {
     error: Object,
     inStyle: String,
     inClass: String,
+    format: String,
     // disabled all dates past the current date
     isAfter: Boolean
   },
@@ -372,7 +374,11 @@ export default {
     select(date) {
       if (!this.isDisabled(date)) {
         this.modal = false;
-        this.$emit("input", this.$moment(date).format("MM/DD/YYYY"));
+          if (this.format){
+            this.$emit("input", this.$moment(date).format(this.format));
+          }else{
+            this.$emit("input", this.$moment(date).format("MM/DD/YYYY"));
+          }
       }
     }
   }

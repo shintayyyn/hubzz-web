@@ -24,6 +24,7 @@ table {
   white-space: nowrap;
   /* min-width: 1620px; */
   /* max-width: 1620px; */
+  padding: 0 8px;
 }
 
 @media screen and (max-width: 1620px) {
@@ -33,11 +34,32 @@ table {
   }
 }
 
-table thead th,
+table tbody tr {
+  transition: background-color 0.5s ease-in-out;
+}
+
+table tbody tr:hover {
+  background-color: #dee1e5;
+  transition: background-color 0.5s ease-in-out;
+}
+
 table tbody td {
   background: #fff;
   padding: 15px;
+  border-top: 1px solid #eee;
+  border-bottom: 3px solid #eee;
   transition: 0.3s ease;
+}
+
+table tbody td:first-child {
+  border-top-left-radius: 10px;
+  border-left: 1px solid #eee;
+  border-bottom-left-radius: 10px;
+}
+table tbody td:last-child {
+  border-top-right-radius: 10px;
+  border-right: 3px solid #eee;
+  border-bottom-right-radius: 10px;
 }
 
 .__jobs-section {

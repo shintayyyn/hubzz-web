@@ -34,45 +34,43 @@ export default {
   }
 };
 </script>
-
 <style scoped>
-.loading-shield {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 500;
-  background-color: rgba(255, 255, 255, 0.7);
-  opacity: 0.5;
-}
-.loader-message {
-  position: -webkit-sticky;
-  position: sticky;
-  text-align: center;
-  z-index: 501;
-}
-.loader-message:after {
-  content: " .";
-  animation: dots 1s steps(5, end) infinite;
-}
-
-@keyframes dots {
-  0%,
-  20% {
-    color: rgba(0, 0, 0, 0);
-    text-shadow: 0.25em 0 0 rgba(0, 0, 0, 0), 0.5em 0 0 rgba(0, 0, 0, 0);
+  .loading-shield {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 500;
+    background-color: rgba(255, 255, 255, 0.7);
+    opacity: 0.5;
   }
-  40% {
-    color: #333;
-    text-shadow: 0.25em 0 0 rgba(0, 0, 0, 0), 0.5em 0 0 rgba(0, 0, 0, 0);
+  .loader-message {
+    position: -webkit-sticky;
+    position: sticky;
+    text-align: center;
+    z-index: 501;
   }
-  60% {
-    text-shadow: 0.25em 0 0 #333, 0.5em 0 0 rgba(0, 0, 0, 0);
+  .loader-message:after {
+    content: " .";
+    animation: dots 1s steps(5, end) infinite;
   }
-  80%,
-  100% {
-    text-shadow: 0.25em 0 0 #333, 0.5em 0 0 #333;
+  @keyframes dots {
+    0%,
+    20% {
+      color: rgba(0, 0, 0, 0);
+      text-shadow: 0.25em 0 0 rgba(0, 0, 0, 0), 0.5em 0 0 rgba(0, 0, 0, 0);
+    }
+    40% {
+      color: #333;
+      text-shadow: 0.25em 0 0 rgba(0, 0, 0, 0), 0.5em 0 0 rgba(0, 0, 0, 0);
+    }
+    60% {
+      text-shadow: 0.25em 0 0 #333, 0.5em 0 0 rgba(0, 0, 0, 0);
+    }
+    80%,
+    100% {
+      text-shadow: 0.25em 0 0 #333, 0.5em 0 0 #333;
+    }
   }
-}
 </style>
