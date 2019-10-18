@@ -270,7 +270,7 @@ export default {
               this.$store.commit("jobs/ADD_LOCUM_ALLOCATED_JOB", res.data.job);
             }
             if (res.data.job.locum_status === "Ongoing") {
-              this.$store.dispatch("jobs/fetchLocumJobs", {
+              this.$store.dispatch("jobs/fetchLocumJobParts", {
                 status: ["Ongoing"],
                 job_id: res.data.job.id
               });
@@ -447,7 +447,7 @@ export default {
           this.job.job_parts
             .map(jobPart => jobPart.id)
             .forEach(id => {
-              this.$store.commit("jobs/REMOVE_LOCUM_ONGOING_JOB", id);
+              this.$store.commit("jobs/REMOVE_LOCUM_ONGOING_JOB_PART", id);
             });
         }
         this.close();
