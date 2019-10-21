@@ -287,7 +287,7 @@ export default {
       this.$store.commit("jobs/TOGGLE_LOADING", true);
       this.$store
         .dispatch("jobs/fetchLocumJobs", {
-          status: ["Declined"],
+          locum_status: ["Declined"],
           countOnly: true,
           ...params
         })
@@ -297,7 +297,10 @@ export default {
     },
     getJobs(params) {
       this.$store
-        .dispatch("jobs/fetchLocumJobs", { status: ["Declined"], ...params })
+        .dispatch("jobs/fetchLocumJobs", {
+          locum_status: ["Declined"],
+          ...params
+        })
         .finally(() => {
           this.$store.commit("jobs/TOGGLE_LOADING", false);
         });

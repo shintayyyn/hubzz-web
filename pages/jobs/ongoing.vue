@@ -282,7 +282,7 @@ export default {
       this.$store.commit("jobs/TOGGLE_LOADING", true);
       this.$store
         .dispatch("jobs/fetchLocumJobParts", {
-          status: ["Ongoing"],
+          locum_status: ["Ongoing"],
           countOnly: true,
           ...params
         })
@@ -293,7 +293,7 @@ export default {
     getJobs(params) {
       this.$store
         .dispatch("jobs/fetchLocumJobParts", {
-          status: ["Ongoing"],
+          locum_status: ["Ongoing"],
           ...params
         })
         .finally(() => {

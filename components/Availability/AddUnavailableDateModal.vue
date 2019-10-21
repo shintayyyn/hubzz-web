@@ -263,6 +263,9 @@ export default {
       return this.form.shift_id.includes(id);
     },
     isDisabled(id) {
+      if (this.type === "range") {
+        return;
+      }
       return (
         (this.allocatedDate &&
           this.allocatedDate.length &&

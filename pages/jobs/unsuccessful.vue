@@ -281,7 +281,7 @@ export default {
       this.$store.commit("jobs/TOGGLE_LOADING", true);
       this.$store
         .dispatch("jobs/fetchLocumJobs", {
-          status: ["Unsuccessful"],
+          locum_status: ["Unsuccessful"],
           countOnly: true,
           ...params
         })
@@ -292,7 +292,7 @@ export default {
     getJobs(params) {
       this.$store
         .dispatch("jobs/fetchLocumJobs", {
-          status: ["Unsuccessful"],
+          locum_status: ["Unsuccessful"],
           ...params
         })
         .finally(() => {

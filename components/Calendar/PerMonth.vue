@@ -242,21 +242,20 @@ export default {
           calendar_date_start: `${this.startOfMonth}:gte`,
           calendar_date_end: `${this.endOfMonth}:lte`,
           limit: 100000000,
-          status: ["Allocated", "Applied"]
+          locum_status: ["Allocated", "Applied"]
         });
 
         this.$store.dispatch("jobs/fetchLocumJobParts", {
           calendar_date_start: `${this.startOfMonth}:gte`,
           calendar_date_end: `${this.endOfMonth}:lte`,
           limit: 100000000,
-          status: ["Ongoing"]
+          locum_status: ["Ongoing"]
         });
 
         this.$store.dispatch("jobs/fetchLocumUnavailabilities", {
-          calendar_date_start: `${this.startOfMonth}:gte`,
-          calendar_date_end: `${this.endOfMonth}:lte`,
-          limit: 100000000,
-          status: ["Unavailable"]
+          date_start: `${this.startOfMonth}:gte`,
+          date_end: `${this.endOfMonth}:lte`,
+          limit: 100000000
         });
       }
     },

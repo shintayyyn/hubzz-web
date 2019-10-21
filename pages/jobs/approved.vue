@@ -282,7 +282,7 @@ export default {
       this.$store.commit("jobs/TOGGLE_LOADING", true);
       this.$store
         .dispatch("jobs/fetchLocumJobParts", {
-          status: ["Approved"],
+          locum_status: ["Approved"],
           countOnly: true,
           ...params
         })
@@ -293,7 +293,7 @@ export default {
     getJobs(params) {
       this.$store
         .dispatch("jobs/fetchLocumJobParts", {
-          status: ["Approved"],
+          locum_status: ["Approved"],
           ...params
         })
         .finally(() => {
