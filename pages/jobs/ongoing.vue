@@ -82,7 +82,7 @@
         />
         <AppButton
           class="mx-2"
-          :label="'Close'"
+          :label="'Search'"
           @click="showFilter()"
           :inStyle="'padding:5px 14px;margin-bottom:5px'"
         />

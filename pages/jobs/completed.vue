@@ -106,7 +106,7 @@
         />
         <AppButton
           class="mx-2"
-          :label="'Close'"
+          :label="'Search'"
           @click="showFilter()"
           :inStyle="'padding:5px 14px;margin-bottom:5px'"
         />
@@ -404,14 +404,20 @@ export default {
       this.getJobs(this.params);
     },
     clearFilters() {
+      console.log("surgery", this.params.surgery_name)
+      this.params.job_number = "";
+      this.params.title = "";
       this.params.shift_id = "";
       this.params.rate = "";
+      this.params.date_start = "";
+      this.params.date_end = "";
       this.params.locum_detail_rate_type_id = "";
       this.params.near_post_code = "";
       this.params.miles = "";
       this.params.surgery_name = "";
       this.params.order_by = ["date_created:desc"];
       this.getJobs(this.params);
+      console.log("fields", this.params)
     },
     show(item) {
       this.$router.push(`/jobs/${item.id}?status=${item.locum_status}`);

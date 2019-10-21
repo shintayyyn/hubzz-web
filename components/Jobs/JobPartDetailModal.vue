@@ -58,10 +58,6 @@ export default {
     JobDetailModalApplyForm,
     JobDetailModalCancelForm
   },
-  mounted() {
-    // console.log("qweweqw",this.job_part);
-  },
-
   computed: {
     jobPartStatus() {
       let status = "TO BE INVOICED";

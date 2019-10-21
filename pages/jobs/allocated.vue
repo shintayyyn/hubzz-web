@@ -82,7 +82,7 @@
         />
         <AppButton
           class="mx-2"
-          :label="'Close'"
+          :label="'Search'"
           @click="showFilter()"
           :inStyle="'padding:5px 14px;margin-bottom:5px'"
         />
@@ -278,8 +278,6 @@ export default {
     setTimeout(() => {
       this.$store.commit("jobs/CLEAR_LOCUM_ALLOCATED_BADGE");
     }, 1000);
-
-    console.log("qwe", this.getLocumAllocatedJobs)
   },
   methods: {
     showFilter() {

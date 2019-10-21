@@ -142,7 +142,6 @@ export default {
 
   methods: {
     show(item) {
-      console.log("qwe", item)
       if (this.authPermissions.includes("Show Profile Practice Document")) {
         this.$router.push(`/profile/practice-documents/${item.existingPracticeComplianceDocument.id}`);
       }
