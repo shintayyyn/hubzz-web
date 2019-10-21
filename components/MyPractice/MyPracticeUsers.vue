@@ -6,6 +6,7 @@
       :items="practice_users"
       :columns="columns"
       :orderBy="params.order_by"
+      :sticky="'first'"
       @show="$emit('show', $event.id)"
     ></AppTable>
   </section>

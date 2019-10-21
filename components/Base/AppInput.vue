@@ -85,7 +85,7 @@
                 :rows="rows"
                 :value="value"
                 :placeholder="placeholder"
-                class="border-b-2 focus:border-yellow-400 focus:outline-none py-4 font-bold text-xs sm:text-sm w-full"
+                class="border-b-2 focus:border-yellow-400 focus:outline-none py-4 px-2 font-bold text-xs sm:text-sm w-full"
                 :class="[error ? 'border-red-500':'', resize ? '' : 'resize-none']"
                 @input="$emit('input', $event.target.value)"
                 @blur="$emit('blur', $event)"

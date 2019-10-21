@@ -25,13 +25,13 @@
       <template v-slot:actions="slotProps">
         <td class="flex justify-center">
           <div
-            class="font-semibold text-xs sm:text-sm text-center"
+            class="font-semibold text-xs sm:text-sm text-center px-2"
             @click.stop.prevent="toggleRemoveConfirmationModal(slotProps.item.id)"
           >X</div>
         </td>
       </template>
     </AppTable>
-    <div v-else class="flex justify-center">no branches / surgeries</div>
+    <div v-else class="flex justify-center py-4 text-gray-500">No Branches / Surgeries</div>
     <transition name="fade" mode="out-in">
       <div
         class="shield"

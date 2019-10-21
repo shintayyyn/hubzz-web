@@ -6,9 +6,9 @@
     <div class="flex flex-row justify-start items-center my-3">
       <div class="leading-loose font-bold text-md sm:text-lg">{{job_part.job.title}}</div>
       <div
-        class="mx-2 text-sm sm:text-sm py-2 px-4 rounded font-semibold"
+        class="mx-2 text-sm sm:text-sm py-2 px-4 rounded font-semibold uppercase"
         :class="bgStatus(job_part.locum_status)"
-      >{{status(job_part.locum_status)}}</div>
+      >{{job_part.locum_status}}</div>
       <div
         class="mx-2 text-sm sm:text-sm py-2 px-4 rounded font-semibold"
         :class="jobPartStatus === 'Completed' ? 'bg-green-500' : 'bg-gray-300'"
@@ -80,15 +80,6 @@ export default {
     },
     close() {
       this.$emit("close");
-    },
-    status(status) {
-      if (status === "Available") {
-        return "LIVE";
-      }
-      if (status === "Ongoing") {
-        return "ONGOING";
-      }
-      return status.toUpperCase();
     },
     bgStatus(status) {
       switch (status) {

@@ -1,12 +1,13 @@
 <template>
-  <div class="error-container">
+  <div class="error-container flex flex-col px-4">
     <h1 v-if="[401, 404].includes(error.statusCode)">
       <span v-if="error.message">{{error.message}}</span>
       <span v-if="!error.message">You are not authorized to view this page.</span>
     </h1>
-    <h1 v-else>Page not found.</h1>
+    <h1 v-else class="text-xl">Page not found.</h1>
     <!-- <h1 v-else>{{error.message}}</h1> -->
-    <nuxt-link to="/">Home page</nuxt-link>
+    <p>Go back to <span @click="$router.push('/')" class="font-bold cursor-pointer hover:underline">Home page</span>.</p>
+    <!-- <p>Go back to <nuxt-link to="/" class="font-bold cursor-pointer hover:underline">Home page</nuxt-link>.</p> -->
   </div>
 </template>
 
@@ -26,6 +27,5 @@ export default {
   margin: auto;
   max-width: 600px;
   height: 500px;
-  padding: 1px;
 }
 </style>

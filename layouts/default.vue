@@ -75,7 +75,7 @@ export default {
 
 @media screen and (min-width: 320px) {
   .content, .content-message {
-    padding: 1px 2% 0;
+    padding: 1px 3% 0;
   }
 }
 

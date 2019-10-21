@@ -9,12 +9,12 @@
       @cancel="modal = false"
     />
 
-    <div class="p-8 max-w-3xl">
+    <div class="p-4 md:p-8">
       <div @click="$router.push('/profile/branches-surgeries')" class="cursor-pointer">
         <svgicon name="left-arrow" height="32" width="32" />
       </div>
       <div class="flex justify-start font-bold text-sm sm:text-xl mt-8">Add Surgery</div>
-      <div class="relative rounded-lg shadow-lg p-8 mt-4">
+      <div class="relative bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4 max-w-5xl">
         <AppInput
           v-model="search_text"
           :type="'text'"
@@ -31,7 +31,7 @@
         >No practice matched that name. Try again with whole words, practice code or CCG.</div>
       </div>
       <div
-        class="rounded-lg shadow-lg overflow-auto mt-5"
+        class="rounded-lg shadow-lg overflow-auto mt-5 bg-white"
         v-if="showResult && surgeries.length > 0"
       >
         <div

@@ -275,6 +275,8 @@ export default {
     setTimeout(() => {
       this.$store.commit("jobs/CLEAR_LOCUM_ALLOCATED_BADGE");
     }, 1000);
+
+    console.log("qwe", this.getLocumAllocatedJobs)
   },
   methods: {
     showFilter() {

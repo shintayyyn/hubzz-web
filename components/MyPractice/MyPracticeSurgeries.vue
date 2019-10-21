@@ -1,25 +1,59 @@
 <template>
-  <div class="list-section flex flex-col mt-4 pb-32" v-if="surgeries.length > 0">
-    <div class="flex flex-row px-4 flex-no-wrap justify-between">
-      <div class="text-xs sm:text-sm w-full px-1">Surgery</div>
-      <div class="text-xs sm:text-sm w-full px-1">Practice code</div>
-      <div class="text-xs sm:text-sm w-full px-1">CCG</div>
-    </div>
-    <div
-      class="__job-card rounded-lg shadow-lg p-4 mt-4"
-      v-for="surgery in surgeries"
-      :key="surgery.id"
-    >
-      <div class="relative flex flex-row flex-no-wrap cursor-pointer">
-        <div class="text-xs sm:text-sm w-full px-1">{{surgery.name}}</div>
-        <div class="text-xs sm:text-sm w-full px-1">{{surgery.code}}</div>
-        <div class="text-xs sm:text-sm w-full px-1">{{surgery.clinical_commissioning_group.name}}</div>
-      </div>
-    </div>
-  </div>
+<div>
+  <AppTable
+    v-if="surgeries.length > 0"
+    :total="surgeries.length"
+    :items="surgeries"
+    :columns="columns"
+  ></AppTable>
+</div>
 </template>
 <script>
+import AppTable from "@/components/Base/AppTable";
 export default {
-  props: ["surgeries"]
+  props: ["surgeries"],
+  components: {
+    AppTable
+  },
+  data(){
+    return{
+      // app table
+      columns: [
+        {
+          name: "Surgery",
+          dataIndex: "name",
+          class: "text-left"
+        },
+        {
+          name: "Practice Code",
+          dataIndex: "code",
+          class: "text-center"
+        },
+        {
+          name: "CCG",
+          dataIndex: "clinical_commissioning_group.name",
+          class: "text-center"
+        },
+      ],
+    }
+  },
+  computed: {
+  totalPages() {
+    return Math.ceil(this.total / this.perPage);
+  },
+  pagechanged(page) {
+    return
+    this.current_page = page;
+    this.params.offset = this.params.limit * (page - 1);
+    // this.getJobParts(this.params);
+  },
+  limitchanged(limit) {
+    return
+    this.current_page = 1;
+    this.params.offset = 0;
+    this.params.limit = limit;
+    // this.getJobParts(this.params);
+  },
+},
 };
 </script>

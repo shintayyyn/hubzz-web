@@ -2,10 +2,10 @@
   <section class="compliance-section">
     <div class="overflow-x-auto">
       <div class="mt-5">
-        <div class="border-solid rounded-lg shadow-md px-1 py-4 mb-5 mx-1 md:mx-0">
-          <div class="relative flex flex-row flex-wrap justify-start sm:items-center text-xs sm:text-sm px-4">
-            <div class="w-full sm:w-1/3 p-1 text-left">Your GMC / NMC Number</div>
-            <div class="w-full sm:w-1/3 p-1 md:text-center">{{gmc_or_nmc_number ? gmc_or_nmc_number.number : 'No GMC or NMC Number registered'}}</div>
+        <div class="border border-r-2 border-b-2 border-gray-200 rounded-lg px-1 py-2 md:py-4 mb-5 mx-1 md:mx-0">
+          <div class="relative flex flex-row flex-wrap justify-start sm:items-center text-xs sm:text-sm md:px-4">
+            <div class="w-full sm:w-1/3 px-2 md:p-1 font-bold md:font-normal text-left">GMC / NMC Number</div>
+            <div class="w-full sm:w-1/3 px-2 md:p-1 md:text-center">{{gmc_or_nmc_number ? gmc_or_nmc_number.number : 'No GMC or NMC Number registered'}}</div>
             <div class="absolute right-0 m-2 md:relative sm:m-0 sm:w-1/3 md:text-center">
               <span
                 class="text-xs sm:text-sm text-center text-white font-bold rounded-full px-4 py-1"
@@ -14,10 +14,10 @@
             </div>
           </div>
         </div>
-        <div class="border-solid rounded-lg shadow-md px-1 py-4 mb-5 mx-1 md:mx-0">
-          <div class="relative flex flex-row flex-wrap justify-start sm:items-center text-xs sm:text-sm px-4">
-            <div class="w-full sm:w-1/3 p-1 text-left">Your MPL / NPL Number</div>
-            <div class="w-full sm:w-1/3 p-1 md:text-center">{{mpl_or_npl_number ? mpl_or_npl_number.number : 'No MPL or NPL Number registered'}}</div>
+        <div class="border border-r-2 border-b-2 border-gray-200 rounded-lg px-1 py-2 md:py-4 mb-5 mx-1 md:mx-0">
+          <div class="relative flex flex-row flex-wrap justify-start sm:items-center text-xs sm:text-sm md:px-4">
+            <div class="w-full sm:w-1/3 px-2 md:p-1 font-bold md:font-normal text-left">MPL / NPL Number</div>
+            <div class="w-full sm:w-1/3 px-2 md:p-1 md:text-center">{{mpl_or_npl_number ? mpl_or_npl_number.number : 'No MPL or NPL Number registered'}}</div>
             <div class="absolute right-0 m-2 md:relative sm:m-0 sm:w-1/3 md:text-center">
               <span
                 class="text-xs sm:text-sm text-center text-white font-bold rounded-full px-4 py-1"
@@ -816,7 +816,7 @@ table{
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 } */
 table tbody tr:hover td{
-  background-color: #eee;
+  background-color: #eff3f8;
 }
 table tbody td:last-child, table thead th:last-child {
   position: sticky;

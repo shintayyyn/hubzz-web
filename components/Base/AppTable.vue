@@ -8,7 +8,9 @@
             <th
               v-for="(column, index) in columns"
               :key="index"
-              :class="(column.class && column.class.includes('text-center')) ? 'text-center' : 'text-left'"
+              :class="[(column.class && column.class.includes('text-center')) ? 'text-center' : 'text-left', 
+              (sticky && (index === 0 && sticky === 'first')) && 'sticky left-0', 
+              (sticky && (index === columns.length && sticky === 'last')) && 'sticky right-0']"
             >
               <span
                 v-if="column.sortable"
@@ -39,7 +41,9 @@
                 v-for="(column, index) in columns"
                 :key="index"
                 class="truncate"
-                :class="column.class ? column.class : ''"
+                :class="[column.class ? column.class : '',
+                (sticky && (index === 0 && sticky === 'first')) && 'sticky left-0', 
+                (sticky && (index === columns.length && sticky === 'last')) && 'sticky right-0']"
                 id="data-cell"
               >
                 <div
@@ -51,9 +55,9 @@
                       v-for="(item, index) in dataCell(item, column)"
                       :key="`${item}-${index}`"
                        class="truncate"
-                    >{{item}}</div>
+                    >{{ item }}</div>
                   </div>
-                  <div class="truncate" v-else>{{dataCell(item, column)}}</div>
+                  <div class="truncate" v-else>{{ column.class.includes('file-size') ? (dataCell(item, column) / 1048576).toFixed(2) + 'Mb'  : dataCell(item, column)}}</div>
                 </template>
               </td>
               <slot name="actions" v-bind:item="item"></slot>
@@ -107,6 +111,10 @@ export default {
     orderBy: {
       type: Array,
       required: false
+    },
+    sticky: {
+      type: String,
+      default: ''
     }
   },
   components: {
@@ -248,10 +256,7 @@ table{
   border-collapse: separate;
   border-spacing: 0 10px;
 }
-table tbody tr {
-  /* background-color: #fff;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); */
-}
+
 table tbody tr:hover td{
   background-color: #eee;
 }
@@ -261,38 +266,15 @@ table tbody td, table thead th {
   padding: 15px 8px;
 }
 
-@media screen and (max-width: 480px){
-  table tbody td:first-child, table thead th:first-child {
+.table-sticky-first, .table-sticky-last{
   position: sticky;
   background-color: #fff;
+}
+
+.table-sticky-first table tbody td:first-child, .table-sticky-first table thead th:first-child{
   left: 0;
-  box-shadow: none;
 }
-}
-/* table thead th {
-  padding: 10px;
-}
-table tbody td {
-  padding: 15px;
-} 
- #data-cell {
-  white-space: nowrap; */
-  /* overflow: hidden; */
-  /* text-overflow: ellipsis;
-}
-.ellipsis {
-  position: relative;
-}
-.ellipsis:before {
-  content: "&nbsp;";
-  visibility: hidden;
-}
-.ellipsis span {
-  position: absolute;
-  left: 0;
+.table-sticky-last table tbody td:first-child, .table-sticky-last table thead th:first-child{
   right: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-} */
+}
 </style>

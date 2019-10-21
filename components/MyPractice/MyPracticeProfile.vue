@@ -16,7 +16,7 @@
           <div class="font-bold text-md md:text-lg">Practice Code</div>
           <div class="text-sm md:text-md m-2">{{practice.surgery.code}}</div>
           <div class="font-bold text-md md:text-lg">Practice Types</div>
-          <div v-if="practice.practice_types" class="flex flex-row flex-wrap justify-start m-4">
+          <div v-if="practice.practice_types" class="flex flex-row flex-wrap justify-start md:m-4">
             <div
               class="rounded-lg text-sm md:text-md bg-yellow-500 m-1 p-2"
               v-for="item in practice.practice_types"

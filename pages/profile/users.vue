@@ -1,15 +1,23 @@
 <template>
   <section class="relative">
     <div class="flex overflow-x-auto whitespace-no-wrap">
-      <button
-        class="rounded-lg bg-yellow-500 p-2 cursor-pointer font-semibold text-xs sm:text-sm focus:outline-none"
+      <AppButton
+        class="mr-2"
+        :label="'Add User'"
         @click="$router.push('/profile/users/create')"
-        v-if="authPermissions.includes('Create Profile Users')"
-      >Add User</button>
+        :inStyle="'padding:5px 14px;margin-bottom:5px; font-size:14px;'"
+      />
+      <AppButton
+        class="relative md:hidden"
+        :label="'Filter'"
+        @click="showFilter()"
+        :inStyle="'padding:5px 14px;margin-bottom:5px; font-size:14px;'"
+      />
     </div>
-    <div class="flex justify-start items-center">
+    <div class="md:relative md:flex flex-wrap justify-start items-center"
+      :class="filterToggle ? 'z-10 absolute w-full bg-white shadow-md p-3' : 'hidden'">
       <AppInput
-        class="px-1"
+        class="px-1 w-full md:w-1/3"
         v-model="params.search"
         :type="'text'"
         :name="'search'"
@@ -17,24 +25,22 @@
         :inStyle="'padding-top:0.5rem;padding-bottom:0.7rem'"
       />
       <AppInput
-        class="px-1"
+        class="px-1 w-full md:w-1/3"
         v-model="params.practice_role"
         :type="'select'"
         :name="'practice_role'"
         :label="'Practice Role'"
         :items="filterPracticeRoles"
         :disabled="loading"
-        :inStyle="'background-color:white'"
       />
       <AppInput
-        class="px-1"
+        class="px-1 w-full md:w-1/3"
         v-model="params.role_id"
         :type="'select'"
         :name="'role_id'"
         :label="'User Role'"
         :items="filterUserRoles"
         :disabled="loading"
-        :inStyle="'background-color:white'"
       />
     </div>
     <AppTable
@@ -52,10 +58,9 @@
       @sorted="sorted"
     >
       <template v-slot:actions="slotProps">
-        <td class="flex justify-center">
+        <td v-if="slotProps.item.practice_detail.role.name !== 'Practice User Admin'">
           <div
-            v-if="slotProps.item.practice_detail.role.name !== 'Practice User Admin'"
-            class="font-semibold text-xs sm:text-sm text-center"
+            class="text-black font-semibold text-xs sm:text-sm text-center"
             @click.stop.prevent="toggleRemoveConfirmationModal(slotProps.item.id)"
           >X</div>
         </td>
@@ -84,6 +89,7 @@
 import AppTable from "@/components/Base/AppTable";
 import AppInput from "@/components/Base/AppInput";
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
+import AppButton from "@/components/Base/AppButton";
 export default {
   transition: {
     name: "fade",
@@ -92,13 +98,15 @@ export default {
   components: {
     AppConfirmationModal,
     AppTable,
-    AppInput
+    AppInput,
+    AppButton
   },
 
   data() {
     return {
       selectedSurgeryId: null,
       modal: false,
+      filterToggle: false,
       //
       totalUsers: 0,
       users: [],
@@ -177,18 +185,21 @@ export default {
       this.params.offset = 0;
       this.params.search = value;
       this.getUsersCount(this.params);
+      this.showFilter()
     },
     "params.role_id"(value) {
       this.current_page = 1;
       this.params.offset = 0;
       this.params.role_id = value;
       this.getUsersCount(this.params);
+      this.showFilter()
     },
     "params.practice_role"(value) {
       this.current_page = 1;
       this.params.offset = 0;
       this.params.practice_role = value;
       this.getUsersCount(this.params);
+      this.showFilter()
     }
   },
   mounted() {
@@ -254,6 +265,9 @@ export default {
     }
   },
   methods: {
+    showFilter() {
+      return (this.filterToggle = !this.filterToggle);
+    },
     getUsersCount(params) {
       this.$axios
         .$get(`/api/v1/practice/practice-users/count`, { params })
