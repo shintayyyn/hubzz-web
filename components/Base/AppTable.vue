@@ -57,7 +57,7 @@
                        class="truncate"
                     >{{ item }}</div>
                   </div>
-                  <div class="truncate" v-else>{{ column.class.includes('file-size') ? (dataCell(item, column) / 1048576).toFixed(2) + 'Mb'  : dataCell(item, column)}}</div>
+                  <div class="truncate" v-else>{{ column.class && column.class.includes('file-size') ? (dataCell(item, column) / 1048576).toFixed(2) + 'Mb'  : dataCell(item, column)}}</div>
                 </template>
               </td>
               <slot name="actions" v-bind:item="item"></slot>
@@ -258,7 +258,7 @@ table{
 }
 
 table tbody tr:hover td{
-  background-color: #eee;
+  background-color: #eff3f8;
 }
 
 table tbody td, table thead th {

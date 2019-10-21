@@ -8,14 +8,13 @@
         :inStyle="'padding:5px 14px;margin-bottom:5px; font-size:14px;'"
       />
       <AppButton
-        class="relative md:hidden"
         :label="'Filter'"
         @click="showFilter()"
         :inStyle="'padding:5px 14px;margin-bottom:5px; font-size:14px;'"
       />
     </div>
-    <div class="md:relative md:flex flex-wrap justify-start items-center"
-      :class="filterToggle ? 'z-10 absolute w-full bg-white shadow-md p-3' : 'hidden'">
+    <div class="flex-wrap justify-start items-center z-10 absolute w-full bg-white shadow-xl p-3 rounded-lg"
+      :class="filterToggle ? 'flex' : 'hidden'">
       <AppInput
         class="px-1 w-full md:w-1/3"
         v-model="params.search"
@@ -66,7 +65,7 @@
         </td>
       </template>
     </AppTable>
-    <div v-else class="flex justify-center">You do not have any other User on this Practice</div>
+    <div v-else class="flex justify-center py-4 text-gray-600">You do not have any other User on this Practice</div>
     <transition name="fade" mode="out-in">
       <div
         class="shield"
@@ -185,7 +184,6 @@ export default {
       this.params.offset = 0;
       this.params.search = value;
       this.getUsersCount(this.params);
-      this.showFilter()
     },
     "params.role_id"(value) {
       this.current_page = 1;

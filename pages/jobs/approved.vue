@@ -2,14 +2,14 @@
   <section class="relative">
     <AppLoading :loading="loadingJobs" spinner />
     <AppButton
-      class="relative md:hidden"
+      v-if="getLocumApprovedJobs.length > 0"
       :label="'Filter'"
       @click="showFilter()"
       :inStyle="'padding:5px 14px;margin-bottom:5px; font-size:14px;'"
     />
     <div
-      class="md:relative md:flex flex-wrap justify-start items-center"
-      :class="filterToggle ? 'z-10 absolute w-full bg-white shadow-md p-3' : 'hidden'"
+      class="flex-wrap justify-start items-center z-10 absolute w-full bg-white shadow-lg p-3 rounded-lg"
+      :class="filterToggle ? 'flex' : 'hidden'"
     >
       <div class="md:px-1 w-full md:w-1/3">
         <AppInput
@@ -81,7 +81,7 @@
           :inStyle="'padding:5px 14px;margin-bottom:5px'"
         />
         <AppButton
-          class="mx-2 md:hidden"
+          class="mx-2"
           :label="'Close'"
           @click="showFilter()"
           :inStyle="'padding:5px 14px;margin-bottom:5px'"
@@ -97,6 +97,7 @@
       :columns="columns"
       :orderBy="params.order_by"
       :loading="loadingJobs"
+      :sticky="'first'"
       @show="show"
       @pagechanged="pagechanged"
       @limitchanged="limitchanged"
@@ -104,7 +105,7 @@
     />
     <div
       v-if="!getLocumApprovedJobs.length && !loadingJobs"
-      class="flex justify-center py-4"
+      class="flex justify-center py-4 text-gray-600"
     >You do not have any approved jobs</div>
     <transition name="fade" mode="out-in">
       <div
@@ -231,6 +232,7 @@ export default {
     },
     "params.shift_id"(value) {
       this.filterOut({ field: "shift_id", value });
+      this.showFilter();
     },
     "params.rate"(value) {
       this.filterOut({ field: "rate", value });
@@ -241,6 +243,7 @@ export default {
           this.getJobsCount(this.params);
         }
       );
+      this.showFilter();
     },
     "params.date_start"(value) {
       this.filterOut({ field: "date_start", value });
@@ -282,7 +285,7 @@ export default {
       this.$store.commit("jobs/TOGGLE_LOADING", true);
       this.$store
         .dispatch("jobs/fetchLocumJobParts", {
-          status: ["Approved"],
+          locum_status: ["Approved"],
           countOnly: true,
           ...params
         })
@@ -293,7 +296,7 @@ export default {
     getJobs(params) {
       this.$store
         .dispatch("jobs/fetchLocumJobParts", {
-          status: ["Approved"],
+          locum_status: ["Approved"],
           ...params
         })
         .finally(() => {

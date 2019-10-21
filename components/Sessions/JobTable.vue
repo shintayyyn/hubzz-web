@@ -76,7 +76,7 @@ table{
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 } */
 table tbody tr:hover td{
-  background-color: #eee;
+  background-color: #eff3f8;
 }
 table tbody td:first-child, table thead td:first-child {
   position: sticky;

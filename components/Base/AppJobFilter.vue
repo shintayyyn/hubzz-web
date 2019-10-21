@@ -1,7 +1,6 @@
 <template>
   <div>
     <AppButton
-      class="relative md:hidden"
       :label="'Filter'"
       @click="showFilter()"
       :inStyle="'padding:5px 14px;margin-bottom:5px; font-size:14px;'"
@@ -69,7 +68,7 @@
         <AppButton :label="'Search'" @click="$emit('getJobs')" :inStyle="'padding:5px 14px'" />
       </div>
     </div>
-    <div class="md:relative md:flex flex-wrap justify-start items-center" :class="filterToggle ? 'z-10 absolute w-full bg-white shadow-md p-3' : 'hidden'" v-if="$auth.user.domain === 'Practice'">
+    <div class="flex-wrap justify-start items-center z-10 absolute w-full bg-white shadow-md p-3" :class="filterToggle ? 'flex' : 'hidden'" v-if="$auth.user.domain === 'Practice'">
       <div class="w-full md:w-1/3 p-1">
         <AppInput
           v-model="params.shift_id"

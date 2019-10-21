@@ -2,13 +2,15 @@
   <section class="relative">
     <AppLoading :loading="loadingJobs" spinner />
     <AppButton
-      
-      class="relative md:hidden"
+      v-if="getLocumAvailableJobs.length > 0"
       :label="'Filter'"
       @click="showFilter()"
       :inStyle="'padding:5px 14px;margin-bottom:5px; font-size:14px;'"
     />
-    <div class="md:relative md:flex flex-wrap justify-start items-center" :class="filterToggle ? 'z-10 absolute w-full bg-white shadow-md p-3' : 'hidden'">
+    <div
+      class="flex-wrap justify-start items-center z-10 absolute w-full bg-white shadow-lg p-3 rounded-lg"
+      :class="filterToggle ? 'flex' : 'hidden'"
+    >
       <div class="md:px-1 w-full md:w-1/3">
         <AppInput
           class="px-1"
@@ -79,7 +81,7 @@
           :inStyle="'padding:5px 14px;margin-bottom:5px'"
         />
         <AppButton
-          class="mx-2 md:hidden"
+          class="mx-2"
           :label="'Close'"
           @click="showFilter()"
           :inStyle="'padding:5px 14px;margin-bottom:5px'"
@@ -95,6 +97,7 @@
       :columns="columns"
       :orderBy="params.order_by"
       :loading="loadingJobs"
+      :sticky="'first'"
       @show="show"
       @pagechanged="pagechanged"
       @limitchanged="limitchanged"
@@ -102,7 +105,7 @@
     />
     <div
       v-if="!getLocumAvailableJobs.length && !loadingJobs"
-      class="flex justify-center py-4"
+      class="flex justify-center py-4 text-gray-600"
     >There are no available jobs nearby and suited for you at this time</div>
     <transition name="fade" mode="out-in">
       <div
@@ -226,6 +229,7 @@ export default {
       this.params.offset = 0;
       this.params.shift_id = value;
       this.getJobsCount(this.params);
+      this.showFilter();
     },
     "params.rate"(value) {
       this.current_page = 1;
@@ -238,6 +242,7 @@ export default {
       this.params.offset = 0;
       this.params.locum_detail_rate_type_id = value;
       this.getJobsCount(this.params);
+      this.showFilter();
     },
     "params.near_post_code"(value) {
       if (value === "") {
@@ -272,14 +277,14 @@ export default {
     }, 1000);
   },
   methods: {
-    showFilter(){
-      return this.filterToggle = !this.filterToggle 
+    showFilter() {
+      return (this.filterToggle = !this.filterToggle);
     },
     getJobsCount(params) {
       this.$store.commit("jobs/TOGGLE_LOADING", true);
       this.$store
         .dispatch("jobs/fetchLocumJobs", {
-          status: ["Available", "Matched"],
+          locum_status: ["Available", "Matched"],
           countOnly: true,
           ...params
         })
@@ -290,7 +295,7 @@ export default {
     getJobs(params) {
       this.$store
         .dispatch("jobs/fetchLocumJobs", {
-          status: ["Available, Matched"],
+          locum_status: ["Available, Matched"],
           ...params
         })
         .finally(() => {

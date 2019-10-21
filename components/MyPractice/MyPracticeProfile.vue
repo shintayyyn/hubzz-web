@@ -9,7 +9,7 @@
     </div>
 
     <div class="flex flex-row flex-wrap justify-start">
-      <div class="w-full md:w-1/3 p-2">
+      <div class="w-full md:w-1/2 p-2">
         <div class="flex flex-col p-4 shadow-lg rounded-lg">
           <div class="font-bold text-md md:text-lg">Contact Number</div>
           <div class="text-sm md:text-md m-2">{{practice.phone_number}}</div>
@@ -35,7 +35,7 @@
           <div class="text-sm md:text-md m-2">{{practice.distance_in_miles_from_coordinates}} miles</div>
         </div>
       </div>
-      <div class="w-full md:w-2/3 p-2">
+      <div class="w-full md:w-1/2 p-2">
         <div class="flex flex-col p-4 shadow-lg rounded-lg">
           <div class="font-bold text-md md:text-lg mb-2">Location</div>
           <div class>

@@ -24,7 +24,7 @@ export default {
   props: ["job_id"],
   data(){
     return {
-      parts: null,
+      parts: [],
       current_page: 1,
       // app table params
       params: {

@@ -2,14 +2,14 @@
   <section class="relative">
     <AppLoading :loading="loadingJobs" spinner />
     <AppButton
-      class="relative md:hidden"
+      v-if="getLocumUnsuccessfulJobs.length > 0"
       :label="'Filter'"
       @click="showFilter()"
       :inStyle="'padding:5px 14px;margin-bottom:5px; font-size:14px;'"
     />
     <div
-      class="md:relative md:flex flex-wrap justify-start items-center"
-      :class="filterToggle ? 'z-10 absolute w-full bg-white shadow-md p-3' : 'hidden'"
+      class="flex-wrap justify-start items-center z-10 absolute w-full bg-white shadow-lg p-3 rounded-lg"
+      :class="filterToggle ? 'flex' : 'hidden'"
     >
       <div class="md:px-1 w-full md:w-1/3">
         <AppInput
@@ -81,7 +81,7 @@
           :inStyle="'padding:5px 14px;margin-bottom:5px'"
         />
         <AppButton
-          class="mx-2 md:hidden"
+          class="mx-2"
           :label="'Close'"
           @click="showFilter()"
           :inStyle="'padding:5px 14px;margin-bottom:5px'"
@@ -97,6 +97,7 @@
       :columns="columns"
       :orderBy="params.order_by"
       :loading="loadingJobs"
+      :sticky="'first'"
       @show="show"
       @pagechanged="pagechanged"
       @limitchanged="limitchanged"
@@ -104,7 +105,7 @@
     ></AppTable>
     <div
       v-if="!getLocumUnsuccessfulJobs.length && !loadingJobs"
-      class="flex justify-center"
+      class="flex justify-center text-gray-600"
     >You have not yet rejected for a job</div>
     <transition name="fade" mode="out-in">
       <div
@@ -200,7 +201,7 @@ export default {
         },
         {
           name: "Rejected",
-          dataIndex: "rejected_at",
+          dataIndex: "platform_job.appointed_at",
           class: "text-center localDate",
           sortable: true
         }
@@ -228,6 +229,7 @@ export default {
       this.params.offset = 0;
       this.params.shift_id = value;
       this.getJobsCount(this.params);
+      this.showFilter();
     },
     "params.rate"(value) {
       this.current_page = 1;
@@ -240,6 +242,7 @@ export default {
       this.params.offset = 0;
       this.params.locum_detail_rate_type_id = value;
       this.getJobsCount(this.params);
+      this.showFilter();
     },
     "params.near_post_code"(value) {
       if (value === "") {
@@ -272,6 +275,7 @@ export default {
     setTimeout(() => {
       this.$store.commit("jobs/CLEAR_LOCUM_UNSUCCESSFUL_BADGE");
     }, 1000);
+    console.log("items", this.getLocumUnsuccessfulJobs)
   },
   methods: {
     showFilter() {
@@ -281,7 +285,7 @@ export default {
       this.$store.commit("jobs/TOGGLE_LOADING", true);
       this.$store
         .dispatch("jobs/fetchLocumJobs", {
-          status: ["Unsuccessful"],
+          locum_status: ["Unsuccessful"],
           countOnly: true,
           ...params
         })
@@ -292,7 +296,7 @@ export default {
     getJobs(params) {
       this.$store
         .dispatch("jobs/fetchLocumJobs", {
-          status: ["Unsuccessful"],
+          locum_status: ["Unsuccessful"],
           ...params
         })
         .finally(() => {

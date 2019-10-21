@@ -34,7 +34,7 @@
         class="text-sm font-hairline italic"
       >(Note: Only file types .pdf, .jpeg, .msword, .tiff are acccepted)</div>
     </div>
-    <div class="mt-4 overflow-x-auto lg:px-2">
+    <div class="mt-4 overflow-x-auto">
       <table>
         <thead>
           <tr class="text-xs sm:text-sm text-left">
@@ -69,6 +69,7 @@
               v-else
               :key="item.id"
               class="text-xs sm:text-sm text-left"
+              :class="!item.info && 'text-gray-600'"
             >
               <td
                 :class="item.info && item.info.file ? 'cursor-pointer' : ''"
@@ -121,7 +122,7 @@
                     @click.stop
                   />
                   <svgicon name="cloud-upload" height="24" width="24" />
-                  <label class="leading-loose mx-2 cursor-pointer">Upload</label>
+                  <label class="leading-loose mx-2 cursor-pointer text-black">Upload</label>
                 </div>
               </td>
               <td
@@ -129,7 +130,7 @@
                 class="hover:underline"
                 v-else
               >
-                <div class="flex flex-row flex-no-wrap">
+                <div class="flex flex-row flex-no-wrap bg-yellow-500 p-2 rounded">
                   <input
                     type="file"
                     :ref="`${item.id}_file_mandatory_compliance`"
@@ -152,7 +153,7 @@
       <div class="font-bold text-xs sm:text-base">Other documentation for reference to Practices</div>
     </div>
 
-    <div class="mt-4 overflow-x-auto lg:px-2">
+    <div class="mt-4 overflow-x-auto">
       <table>
         <thead>
           <tr class="text-xs sm:text-sm text-left">
@@ -183,6 +184,7 @@
               v-else
               :key="item.id"
               class="text-xs sm:text-sm text-left"
+              :class="!item.info && 'text-gray-600'"
             >
               <td
                 :class="item.info && item.info.file ? 'cursor-pointer' : ''"
@@ -218,7 +220,7 @@
                     @click.stop
                   />
                   <svgicon name="cloud-upload" height="24" width="24" />
-                  <label class="leading-loose mx-2 cursor-pointer">Upload</label>
+                  <label class="leading-loose mx-2 cursor-pointer text-black">Upload</label>
                 </div>
               </td>
               <td
@@ -226,7 +228,7 @@
                 class="hover:underline"
                 v-else
               >
-                <div class="flex flex-row flex-no-wrap justify-center">
+                <div class="flex flex-row flex-no-wrap justify-center bg-yellow-500 p-2 rounded">
                   <input
                     type="file"
                     :ref="`${item.id}_file_optional_compliance`"
@@ -248,7 +250,7 @@
       <div class="font-bold text-xs sm:text-base">Mandatory Training</div>
     </div>
 
-    <div class="mt-4 overflow-x-auto lg:px-2">
+    <div class="mt-4 overflow-x-auto">
       <table>
         <thead>
           <tr class="text-xs sm:text-sm text-left">
@@ -279,7 +281,7 @@
               v-else
               :key="item.id"
               class="text-xs sm:text-sm text-left"
-              :class="item && item.file ? 'hover:bg-gray-300' : ''"
+              :class="!item.file && 'text-gray-600'"
             >
               <td
                 :class="item && item.file ? 'cursor-pointer' : ''"
@@ -316,7 +318,7 @@
                     @click.stop
                   />
                   <svgicon name="cloud-upload" height="24" width="24" />
-                  <label class="leading-loose mx-2 cursor-pointer">Upload</label>
+                  <label class="leading-loose mx-2 cursor-pointer text-black">Upload</label>
                 </div>
               </td>
               <td
@@ -324,7 +326,7 @@
                 class="hover:underline"
                 v-else
               >
-                <div class="flex flex-row flex-no-wrap justify-center">
+                <div class="flex flex-row flex-no-wrap justify-center bg-yellow-500 p-2 rounded">
                   <input
                     type="file"
                     :ref="`${item.id}_file_mandatory_training`"

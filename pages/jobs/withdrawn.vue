@@ -1,7 +1,15 @@
 <template>
   <section class="relative">
     <AppLoading :loading="loadingJobs" spinner />
-    <div class="relative flex flex-wrap justify-start items-center">
+    <AppButton
+      v-if="getLocumWithdrawnJobs.length > 0"
+      :label="'Filter'"
+      @click="showFilter()"
+      :inStyle="'padding:5px 14px;margin-bottom:5px; font-size:14px;'"
+    />
+    <div class="flex-wrap justify-start items-center z-10 absolute w-full bg-white shadow-lg p-3 rounded-lg"
+      :class="filterToggle ? 'flex' : 'hidden'"
+    >
       <div class="px-1 w-full md:w-1/3">
         <AppInput
           class="px-1"
@@ -65,12 +73,20 @@
           :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem'"
         />
       </div>
-      <AppButton
-        class="w-full"
-        :label="'Clear'"
-        @click="clearFilters"
-        :inStyle="'padding:5px 14px;margin-bottom:5px'"
-      />
+      <div class="md:px-1 flex w-full">
+        <AppButton
+          class="w-full"
+          :label="'Clear'"
+          @click="clearFilters"
+          :inStyle="'padding:5px 14px;margin-bottom:5px'"
+        />
+        <AppButton
+            class="mx-2"
+            :label="'Close'"
+            @click="showFilter()"
+            :inStyle="'padding:5px 14px;margin-bottom:5px'"
+          />
+      </div>
     </div>
     <AppTable
       v-if="getLocumWithdrawnJobs.length > 0"
@@ -81,6 +97,7 @@
       :columns="columns"
       :orderBy="params.order_by"
       :loading="loadingJobs"
+      :sticky="'first'"
       @show="show"
       @pagechanged="pagechanged"
       @limitchanged="limitchanged"
@@ -88,7 +105,7 @@
     ></AppTable>
     <div
       v-if="!getLocumWithdrawnJobs.length && !loadingJobs"
-      class="flex justify-center"
+      class="flex justify-center text-gray-600"
     >You do not have any withdrawn jobs</div>
     <transition name="fade" mode="out-in">
       <div
@@ -123,6 +140,7 @@ export default {
   data() {
     return {
       current_page: 1,
+      filterToggle: false,
       // app table filter
       rates: [],
       shifts: [],
@@ -217,6 +235,7 @@ export default {
       this.params.offset = 0;
       this.params.shift_id = value;
       this.getJobsCount(this.params);
+      this.showFilter();
     },
     "params.rate"(value) {
       this.current_page = 1;
@@ -229,6 +248,7 @@ export default {
       this.params.offset = 0;
       this.params.locum_detail_rate_type_id = value;
       this.getJobsCount(this.params);
+      this.showFilter();
     },
     "params.near_post_code"(value) {
       if (value === "") {
@@ -263,11 +283,14 @@ export default {
     }, 1000);
   },
   methods: {
+    showFilter() {
+      return (this.filterToggle = !this.filterToggle);
+    },
     getJobsCount(params) {
       this.$store.commit("jobs/TOGGLE_LOADING", true);
       this.$store
         .dispatch("jobs/fetchLocumJobs", {
-          status: ["Withdrawn"],
+          locum_status: ["Withdrawn"],
           countOnly: true,
           ...params
         })
@@ -277,7 +300,10 @@ export default {
     },
     getJobs(params) {
       this.$store
-        .dispatch("jobs/fetchLocumJobs", { status: ["Withdrawn"], ...params })
+        .dispatch("jobs/fetchLocumJobs", {
+          locum_status: ["Withdrawn"],
+          ...params
+        })
         .finally(() => {
           this.$store.commit("jobs/TOGGLE_LOADING", false);
         });

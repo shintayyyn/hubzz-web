@@ -24,7 +24,7 @@ table {
   white-space: nowrap;
   /* min-width: 1620px; */
   /* max-width: 1620px; */
-  padding: 0 8px;
+  /* padding: 0 8px; */
 }
 
 @media screen and (max-width: 1620px) {

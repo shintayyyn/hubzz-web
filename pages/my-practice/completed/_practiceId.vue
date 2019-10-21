@@ -22,3 +22,13 @@ export default {
   }
 };
 </script>
+<style scoped>
+.modal-container {
+  z-index: 510;
+}
+@media screen and (min-width: 1200px) {
+  .modal-container {
+    width: 80%;
+  }
+}
+</style>
