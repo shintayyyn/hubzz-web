@@ -191,7 +191,7 @@ export default {
             }
         }
 
-        if (response.data && response.data.count) {
+        if (payload.countOnly) {
             console.log('jobs count response', response)
             payload.locum_status.forEach(jobStatus => {
                 if (jobStatus.toLowerCase() === 'allocated') {
@@ -203,7 +203,7 @@ export default {
                 if (jobStatus.toLowerCase() === 'available') {
                     commit('SET_LOCUM_AVAILABLE_JOBS_COUNT', response.data.count)
                 }
-                if (jobStatus.toLowerCase() === 'matched' && !payload.locum_status.toLowerCase().includes('available')) {
+                if (jobStatus.toLowerCase() === 'matched' && !payload.locum_status.map(locumStatus => locumStatus.toLowerCase()).includes('available')) {
                     commit('SET_LOCUM_MATCHED_JOBS_COUNT', response.data.count)
                 }
                 if (jobStatus.toLowerCase() === 'unsuccessful') {
@@ -221,32 +221,40 @@ export default {
             })
         }
 
-        if (response.data && response.data.jobs && response.data.jobs.length > 0) {
+        if (!payload.countOnly) {
             console.log('jobs response', response)
             payload.locum_status.forEach(jobStatus => {
                 if (jobStatus.toLowerCase() === 'allocated') {
-                    commit('SET_LOCUM_ALLOCATED_JOBS', response.data.jobs.filter(jobPart => jobPart.locum_status.toLowerCase() === 'allocated'))
+                    commit('SET_LOCUM_ALLOCATED_JOBS', response.data.jobs && response.data.jobs.length > 0 ?
+                        response.data.jobs.filter(jobPart => jobPart.locum_status.toLowerCase() === 'allocated') : [])
                 }
                 if (jobStatus.toLowerCase() === 'applied') {
-                    commit('SET_LOCUM_APPLIED_JOBS', response.data.jobs.filter(jobPart => jobPart.locum_status.toLowerCase() === 'applied'))
+                    commit('SET_LOCUM_APPLIED_JOBS', response.data.jobs && response.data.jobs.length > 0 ?
+                        response.data.jobs.filter(jobPart => jobPart.locum_status.toLowerCase() === 'applied') : [])
                 }
                 if (jobStatus.toLowerCase() === 'available') {
-                    commit('SET_LOCUM_AVAILABLE_JOBS', response.data.jobs.filter(jobPart => ['available', 'matched'].includes(jobPart.locum_status.toLowerCase())))
+                    commit('SET_LOCUM_AVAILABLE_JOBS', response.data.jobs && response.data.jobs.length > 0 ?
+                        response.data.jobs.filter(jobPart => ['available', 'matched'].includes(jobPart.locum_status.toLowerCase())) : [])
                 }
                 if (jobStatus.toLowerCase() === 'matched') {
-                    commit('SET_LOCUM_MATCHED_JOBS', response.data.jobs.filter(jobPart => jobPart.locum_status.toLowerCase() === 'matched'))
+                    commit('SET_LOCUM_MATCHED_JOBS', response.data.jobs && response.data.jobs.length > 0 ?
+                        response.data.jobs.filter(jobPart => jobPart.locum_status.toLowerCase() === 'matched') : [])
                 }
                 if (jobStatus.toLowerCase() === 'unsuccessful') {
-                    commit('SET_LOCUM_UNSUCCESSFUL_JOBS', response.data.jobs.filter(jobPart => jobPart.locum_status.toLowerCase() === 'unsuccessful'))
+                    commit('SET_LOCUM_UNSUCCESSFUL_JOBS', response.data.jobs && response.data.jobs.length > 0 ?
+                        response.data.jobs.filter(jobPart => jobPart.locum_status.toLowerCase() === 'unsuccessful') : [])
                 }
                 if (jobStatus.toLowerCase() === 'declined') {
-                    commit('SET_LOCUM_DECLINED_JOBS', response.data.jobs.filter(jobPart => jobPart.locum_status.toLowerCase() === 'declined'))
+                    commit('SET_LOCUM_DECLINED_JOBS', response.data.jobs && response.data.jobs.length > 0 ?
+                        response.data.jobs.filter(jobPart => jobPart.locum_status.toLowerCase() === 'declined') : [])
                 }
                 if (jobStatus.toLowerCase() === 'cancelled') {
-                    commit('SET_LOCUM_CANCELLED_JOBS', response.data.jobs.filter(jobPart => jobPart.locum_status.toLowerCase() === 'cancelled'))
+                    commit('SET_LOCUM_CANCELLED_JOBS', response.data.jobs && response.data.jobs.length > 0 ?
+                        response.data.jobs.filter(jobPart => jobPart.locum_status.toLowerCase() === 'cancelled') : [])
                 }
                 if (jobStatus.toLowerCase() === 'withdrawn') {
-                    commit('SET_LOCUM_WITHDRAWN_JOBS', response.data.jobs.filter(jobPart => jobPart.locum_status.toLowerCase() === 'withdrawn'))
+                    commit('SET_LOCUM_WITHDRAWN_JOBS', response.data.jobs && response.data.jobs.length > 0 ?
+                        response.data.jobs.filter(jobPart => jobPart.locum_status.toLowerCase() === 'withdrawn') : [])
                 }
             })
         }

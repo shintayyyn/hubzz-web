@@ -1,5 +1,5 @@
 <template>
-  <section class="relative">
+  <section class="relative __jobs-section">
     <AppLoading :loading="loadingJobs" spinner />
     <AppButton
       class="relative md:hidden"
@@ -14,17 +14,27 @@
       <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
         <AppInput
           class="px-1"
-          v-model="params.job_number"
+          v-model="params.job_type"
+          :type="'select'"
+          :name="'job_type'"
+          :label="'Type'"
+          :items="practiceTypeList"
+        />
+      </div>
+      <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+        <AppInput
+          class="px-1"
+          v-model="params.job_part_number"
           :type="'text'"
-          :name="'job_number'"
-          :label="'Job number'"
+          :name="'job_part_number'"
+          :label="'Job part number'"
         />
       </div>
       <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
         <AppAutoComplete
           class="px-1"
-          v-model="params.surgery_name"
-          :name="'surgery_name'"
+          v-model="params.job_surgery_id"
+          :name="'job_surgery_id'"
           :label="'Surgery'"
           :url="'/api/v1/locum/surgeries'"
           :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem'"
@@ -33,29 +43,29 @@
       <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
         <AppInput
           class="px-1"
-          v-model="params.title"
+          v-model="params.job_title"
           :type="'text'"
-          :name="'title'"
-          :label="'Title'"
+          :name="'job_title'"
+          :label="'Job Title'"
         />
       </div>
       <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
         <AppInput
           class="px-1"
-          v-model="params.shift_id"
+          v-model="params.job_shift_id"
           :type="'select'"
-          :name="'shift_id'"
+          :name="'job_shift_id'"
           :label="'Shift'"
-          :placeholder="'Select...'"
           :items="shifts"
         />
       </div>
+
       <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
         <AppInput
           class="px-1"
-          v-model="params.rate"
+          v-model="params.job_rate"
           :type="'text'"
-          :name="'rate'"
+          :name="'job_rate'"
           :label="'Rate'"
           :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
         />
@@ -63,19 +73,12 @@
       <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
         <AppInput
           class="px-1"
-          v-model="params.locum_detail_rate_type_id"
+          v-model="params.job_rate_type_id"
           :type="'select'"
-          :name="'locum_detail_rate_type_id'"
+          :name="'job_rate_type_id'"
           :label="'per'"
-          :placeholder="'Select...'"
           :items="rates"
         />
-      </div>
-      <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-        <AppDate v-model="params.date_start" :name="'date_start'" :label="'From'" />
-      </div>
-      <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-        <AppDate v-model="params.date_end" :name="'date_end'" :label="'To'" />
       </div>
       <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
         <AppPostCode
@@ -84,7 +87,6 @@
           :name="'near_post_code'"
           :label="'Post code'"
           @onSelect="onSelect"
-          :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;border-style:solid'"
         />
       </div>
       <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
@@ -94,9 +96,39 @@
           :type="'text'"
           :name="'miles'"
           :label="'Miles'"
-          :placeholder="''"
-          :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
         />
+      </div>
+      <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+        <AppInput
+          class="px-1"
+          v-model="params.invoice_status"
+          :type="'select'"
+          :name="'invoice_status'"
+          :label="'Status'"
+          :items="invoiceStatusList"
+        />
+      </div>
+      <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+        <AppDate
+          v-model="params.calendar_date_start"
+          :name="'calendar_date_start'"
+          :label="'From'"
+          :format="'YYYY-MM-DD'"
+        />
+      </div>
+      <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+        <AppTime v-model="params.time_start" :name="'time_start'" :label="'Start Time'" />
+      </div>
+      <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+        <AppDate
+          v-model="params.calendar_date_end"
+          :name="'calendar_date_end'"
+          :label="'To'"
+          :format="'YYYY-MM-DD'"
+        />
+      </div>
+      <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+        <AppTime v-model="params.time_end" :name="'time_end'" :label="'End Time'" />
       </div>
       <div class="md:px-1 flex w-full">
         <AppButton
@@ -107,11 +139,11 @@
         <AppButton
           class="mx-2 md:hidden"
           :label="'Close'"
-          @click="showFilter()"
+          @click="showFilter"
           :inStyle="'padding:5px 14px;margin-bottom:5px'"
         />
       </div>
-    </div>--
+    </div>
     <AppTable
       v-if="getLocumCompletedJobs.length > 0"
       :total="total"
@@ -125,16 +157,16 @@
       @pagechanged="pagechanged"
       @limitchanged="limitchanged"
       @sorted="sorted"
-    />
+    ></AppTable>
     <div
       v-if="!getLocumCompletedJobs.length && !loadingJobs"
       class="flex justify-center py-4"
-    >You have not yet completed any job</div>
+    >You have not yet completed any jobs</div>
     <transition name="fade" mode="out-in">
       <div
         class="shield"
-        v-if="$route.name === 'jobs-completed-id'"
-        @click="$router.push('/jobs/completed')"
+        v-if="$route.name === 'my-practice-applied-practiceId-related-jobs-completed-jobId'"
+        @click="$router.push(`/my-practice/applied/${$route.params.practiceId}/related-jobs/completed`)"
       ></div>
     </transition>
     <nuxt-child />
@@ -145,11 +177,13 @@ import debounce from "lodash.debounce";
 import AppTable from "@/components/Base/AppTable";
 import AppInput from "@/components/Base/AppInput";
 import AppDate from "@/components/Base/AppDate";
+import AppTime from "@/components/Base/AppTime";
 import AppPostCode from "@/components/Base/AppPostCode";
 import AppAutoComplete from "@/components/Base/AppAutoComplete";
 import AppButton from "@/components/Base/AppButton";
 import AppLoading from "@/components/Base/AppLoading";
 export default {
+  props: ["shifts", "rates", "invoiceStatusList", "practiceTypeList"],
   transition: {
     name: "fade",
     mode: "out-in"
@@ -158,6 +192,7 @@ export default {
     AppTable,
     AppInput,
     AppDate,
+    AppTime,
     AppPostCode,
     AppAutoComplete,
     AppButton,
@@ -166,73 +201,85 @@ export default {
   data() {
     return {
       current_page: 1,
-      // app table filter
-      rates: [],
-      shifts: [],
       // app table params
       params: {
         offset: 0,
         limit: 5,
-        order_by: ["date_created:desc"],
-        job_number: "",
-        title: "",
-        shift_id: "",
-        rate: "",
-        locum_detail_rate_type_id: "",
+        order_by: ["job_date_created:desc"],
+        job_part_number: "",
+        job_title: "",
+        job_type: "",
+        job_surgery_id: "",
+        job_shift_id: "",
+        job_rate: "",
+        job_rate_type_id: "",
         near_post_code: "",
         miles: "",
-        surgery_name: "",
-        date_start: "",
-        date_end: ""
+        calendar_date_start: "",
+        calendar_date_end: "",
+        time_start: "",
+        time_end: "",
+        invoice_status: ""
       },
-      // app table
+      // app table column
       columns: [
         {
-          name: "Job part number",
+          name: "Job Part Number",
           dataIndex: "job_part_number",
           sortable: true
         },
         {
-          name: "Practice",
-          dataIndex: "job.platform_job.practice.surgery.name"
-        },
-        {
-          name: "Title",
-          dataIndex: "job.title"
-        },
-        {
-          name: "Shift",
-          dataIndex: "job.shift.name"
-        },
-        {
-          name: "Rate",
-          dataIndex: "job.rate",
+          name: "Surgery",
+          dataIndex: "job_surgery_name",
+          class: "text-center",
           sortable: true
         },
         {
+          name: "Title",
+          dataIndex: "job_title",
+          class: "text-center",
+          sortable: true
+        },
+        {
+          name: "Shift",
+          dataIndex: "job_shift",
+          class: "text-center",
+          sortable: true
+        },
+        {
+          name: "Rate",
+          dataIndex: "job_rate",
+          sortable: true,
+          class: "text-center"
+        },
+        {
           name: "per",
-          dataIndex: "job.locum_detail_rate_type.name"
+          dataIndex: "job_rate_type",
+          class: "text-center",
+          sortable: true
         },
         {
           name: "From",
           dataIndex: "date_start",
-          sortable: true
+          sortable: true,
+          class: "text-center"
         },
         {
           name: "To",
           dataIndex: "date_end",
-          sortable: true
+          sortable: true,
+          class: "text-center"
         },
         {
-          name: "Created At",
-          dataIndex: "job.date_created",
+          name: "Completed At",
+          dataIndex: "completed_at",
           class: "text-center localDate",
           sortable: true
         },
         {
-          name: "Assigned",
-          dataIndex:
-            "job.platform_job.appointed_to_locum.user.personal_detail.name"
+          name: "Status",
+          dataIndex: "invoice_status",
+          class: "text-center"
         }
       ],
       filterToggle: false
@@ -243,56 +290,62 @@ export default {
       return this.$store.getters["jobs/getLocumCompletedJobs"];
     },
     total() {
-      return this.$store.state.jobs.locum_completed_job_parts_count;
+      return this.$store.state.jobs.locum_completed_jobs_count;
     },
     loadingJobs() {
       return this.$store.state.jobs.loading_jobs;
     }
   },
   watch: {
-    "params.job_number"(value) {
-      this.filterOut({ field: "job_number", value });
+    "params.job_type"(value) {
+      this.filterOut({ field: "job_type", value });
     },
-    "params.surgery_name"(value) {
-      this.filterOut({ field: "surgery_name", value });
+    "params.job_part_number"(value) {
+      this.filterOut({ field: "job_part_number", value });
     },
-    "params.title"(value) {
-      this.filterOut({ field: "title", value });
+    "params.job_surgery_id"(value) {
+      this.filterOut({ field: "job_surgery_id", value });
     },
-    "params.shift_id"(value) {
-      this.filterOut({ field: "shift_id", value });
+    "params.job_title"(value) {
+      this.filterOut({ field: "job_title", value });
     },
-    "params.rate"(value) {
-      this.filterOut({ field: "rate", value });
+    "params.job_shift_id"(value) {
+      this.filterOut({ field: "job_shift_id", value });
     },
-    "params.locum_detail_rate_type_id"(value) {
-      this.filterOut({ field: "locum_detail_rate_type_id", value }).then(
-        res => {
-          this.getJobsCount(this.params);
-        }
-      );
+    "params.job_rate"(value) {
+      this.filterOut({ field: "job_rate", value });
     },
-    "params.date_start"(value) {
-      this.filterOut({ field: "date_start", value });
-    },
-    "params.date_end"(value) {
-      this.filterOut({ field: "date_end", value });
+    "params.job_rate_type_id"(value) {
+      this.filterOut({ field: "job_rate_type_id", value });
     },
     "params.near_post_code"(value) {
-      if (value === "") {
+      if (!value) {
         this.filterOut({ field: "near_post_code", value });
       }
     },
     "params.miles"(value) {
       this.filterOut({ field: "miles", value });
+    },
+    "params.invoice_status"(value) {
+      this.filterOut({ field: "invoice_status", value });
+    },
+    "params.calendar_date_start"(value) {
+      this.filterOut({ field: "calendar_date_start", value });
+    },
+    "params.time_start"(value) {
+      this.filterOut({ field: "time_start", value });
+    },
+    "params.calendar_date_end"(value) {
+      this.filterOut({ field: "calendar_date_end", value });
+    },
+    "params.time_end"(value) {
+      this.filterOut({ field: "time_end", value });
     }
   },
   beforeDestroy() {
     this.$store.commit("jobs/CLEAR_JOBS");
   },
   created() {
-    this.getRateType();
-    this.getShifts();
     this.getJobsCount();
     setTimeout(() => {
       this.$store.commit("jobs/CLEAR_LOCUM_COMPLETED_BADGE");
@@ -306,6 +359,8 @@ export default {
       this.current_page = 1;
       this.params.offset = 0;
       this.params[field] = value;
+      this.$store.commit("jobs/TOGGLE_LOADING", true);
+      this.$store.commit("jobs/SET_LOCUM_COMPLETED_JOB_PARTS", []);
       this.getJobs(this.params);
     }, 500),
     getJobsCount(params) {
@@ -314,7 +369,7 @@ export default {
         .dispatch("jobs/fetchLocumJobParts", {
           locum_status: ["Completed"],
           countOnly: true,
-          // job_practice_id: this.$route.params.practiceId,
+          job_practice_id: this.$route.params.practiceId,
           job_type: "Platform",
           ...params
         })
@@ -326,7 +381,7 @@ export default {
       this.$store
         .dispatch("jobs/fetchLocumJobParts", {
           locum_status: ["Completed"],
-          // job_practice_id: this.$route.params.practiceId,
+          job_practice_id: this.$route.params.practiceId,
           job_type: "Platform",
           ...params
         })
@@ -352,35 +407,23 @@ export default {
       this.getJobs(this.params);
     },
     clearFilters() {
+      this.params.type = "";
+      this.params.job_number = "";
+      this.params.surgery_id = "";
+      this.params.title = "";
       this.params.shift_id = "";
       this.params.rate = "";
-      this.params.locum_detail_rate_type_id = "";
-      this.params.near_post_code = "";
-      this.params.miles = "";
-      this.params.surgery_name = "";
-      this.params.order_by = ["date_created:desc"];
-      this.getJobs(this.params);
+      this.params.rate_type_id = "";
+      this.params.calendar_date_start = "";
+      this.params.calendar_date_end = "";
+      this.params.time_start = "";
+      this.params.time_end = "";
+      this.params.order_by = ["job_date_created:desc"];
     },
     show(item) {
       this.$router.push(
         `/my-practice/applied/${this.$route.params.practiceId}/related-jobs/completed/${item.id}`
       );
-    },
-    getShifts() {
-      this.$axios.$get(`/api/v1/shifts`).then(res => {
-        this.shifts = [];
-        res.data.shifts.forEach(item => {
-          this.shifts.push({ label: item.name, value: item.id });
-        });
-      });
-    },
-    getRateType() {
-      this.$axios.$get(`/api/v1/locum-detail-rate-types`).then(res => {
-        this.rates = [];
-        res.data.locum_detail_rate_types.forEach(item => {
-          this.rates.push({ label: item.name, value: item.id });
-        });
-      });
     },
     onSelect(value) {
       let address_components = value.details.result.address_components;

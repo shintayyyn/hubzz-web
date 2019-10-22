@@ -1,5 +1,5 @@
 <template>
-  <section class="relative">
+  <section class="relative __jobs-section">
     <AppLoading :loading="loadingJobs" spinner />
     <AppButton
       class="relative md:hidden"
@@ -155,8 +155,8 @@
     <transition name="fade" mode="out-in">
       <div
         class="shield"
-        v-if="$route.name === 'jobs-withdrawn-id'"
-        @click="$router.push('/jobs/withdrawn')"
+        v-if="$route.name === 'my-practice-applied-practiceId-related-jobs-withdrawn-jobId'"
+        @click="$router.push(`/my-practice/applied/${$route.params.practiceId}/related-jobs/withdrawn`)"
       ></div>
     </transition>
     <nuxt-child />
@@ -173,7 +173,7 @@ import AppAutoComplete from "@/components/Base/AppAutoComplete";
 import AppButton from "@/components/Base/AppButton";
 import AppLoading from "@/components/Base/AppLoading";
 export default {
-  props: ["invoiceStatusList", "practiceTypeList", "shifts", "rates"],
+  props: ["shifts", "rates", "invoiceStatusList", "practiceTypeList"],
   transition: {
     name: "fade",
     mode: "out-in"
@@ -349,6 +349,8 @@ export default {
         .dispatch("jobs/fetchLocumJobs", {
           locum_status: ["Withdrawn"],
           countOnly: true,
+          job_practice_id: this.$route.params.practiceId,
+          job_type: "Platform",
           ...params
         })
         .finally(() => {
@@ -359,6 +361,8 @@ export default {
       this.$store
         .dispatch("jobs/fetchLocumJobs", {
           locum_status: ["Withdrawn"],
+          job_practice_id: this.$route.params.practiceId,
+          job_type: "Platform",
           ...params
         })
         .finally(() => {
@@ -397,7 +401,9 @@ export default {
       this.params.order_by = ["date_created:desc"];
     },
     show(item) {
-      this.$router.push(`/jobs/${item.id}`);
+      this.$router.push(
+        `/my-practice/applied/${this.$route.params.practiceId}/related-jobs/withdrawn/${item.id}`
+      );
     },
     onSelect(value) {
       let address_components = value.details.result.address_components;

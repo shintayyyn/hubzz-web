@@ -33,11 +33,11 @@
         >
           <div class="w-full flex justify-center">
             <div class="relative flex justify-center">
-              <AppAvatar
+              <!-- <AppAvatar
                 :height="'150px'"
                 :width="'150px'"
                 :src="practice.user && practice.user.avatar && practice.user.avatar.file && practice.user.avatar.file.url ? practice.user.avatar.file.url : ''"
-              />
+              />-->
             </div>
           </div>
 

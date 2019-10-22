@@ -78,6 +78,7 @@ export default {
             let job_rate_type = ''
             let job_title = ''
             let job_shift = ''
+            let completed_at = ''
             job_surgery_name = jobPart.job.type === 'Platform' ? jobPart.job.platform_job.practice.surgery.name : jobPart.job.private_job.private_practice.surgery.name
             date_start = jobPart.time_start ? `${jobPart.date_start} | ${jobPart.time_start}` : jobPart.date_start
             date_end = jobPart.time_end ? `${jobPart.date_end} | ${jobPart.time_end}` : jobPart.date_end
@@ -85,11 +86,13 @@ export default {
             job_rate_type = jobPart.job.locum_detail_rate_type.name
             job_title = jobPart.job.title
             job_shift = jobPart.job.shift.name
+            completed_at = jobPart.job.type === 'Platform' ? jobPart.completed_at : jobPart.date_end
             jobs.push({
                 ...jobPart,
                 job_surgery_name,
                 date_start,
                 date_end,
+                completed_at,
                 job_rate,
                 job_rate_type,
                 job_title,
@@ -99,14 +102,71 @@ export default {
         return jobs
     },
     getLocumApprovedJobs(state) {
-        return state.locum_approved_job_parts
+        let jobs = []
+        state.locum_approved_job_parts.forEach(jobPart => {
+            let job_surgery_name = ''
+            let date_start = ''
+            let date_end = ''
+            let job_rate = ''
+            let job_rate_type = ''
+            let job_title = ''
+            let job_shift = ''
+            let completed_at = ''
+            job_surgery_name = jobPart.job.type === 'Platform' ? jobPart.job.platform_job.practice.surgery.name : jobPart.job.private_job.private_practice.surgery.name
+            date_start = jobPart.time_start ? `${jobPart.date_start} | ${jobPart.time_start}` : jobPart.date_start
+            date_end = jobPart.time_end ? `${jobPart.date_end} | ${jobPart.time_end}` : jobPart.date_end
+            job_rate = jobPart.job.rate
+            job_rate_type = jobPart.job.locum_detail_rate_type.name
+            job_title = jobPart.job.title
+            job_shift = jobPart.job.shift.name
+            completed_at = jobPart.job.type === 'Platform' ? jobPart.completed_at : jobPart.date_end
+            jobs.push({
+                ...jobPart,
+                job_surgery_name,
+                date_start,
+                date_end,
+                completed_at,
+                job_rate,
+                job_rate_type,
+                job_title,
+                job_shift
+            })
+        })
+        return jobs
     },
     // WHOLE
     getLocumAllocatedPartJobs(state) {
         return state.locum_allocated_part_jobs
     },
     getLocumAllocatedJobs(state) {
-        return state.locum_allocated_jobs
+        let jobs = []
+        state.locum_allocated_jobs.forEach(job => {
+            let surgery_name = ''
+            let date_start = ''
+            let date_end = ''
+            let rate_name = ''
+            let rate_type_name = ''
+            let shift_name = ''
+            let completed_at = ''
+            surgery_name = job.type === 'Platform' ? job.platform_job.practice.surgery.name : job.private_job.private_practice.surgery.name
+            date_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
+            date_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
+            rate_name = job.rate
+            rate_type_name = job.locum_detail_rate_type.name
+            shift_name = job.shift.name
+            completed_at = job.type === 'Platform' ? completed_at : date_end
+            jobs.push({
+                ...job,
+                surgery_name,
+                date_start,
+                date_end,
+                completed_at,
+                rate_name,
+                rate_type_name,
+                shift_name
+            })
+        })
+        return jobs
     },
     getLocumAllocatedPrivateJobs(state) {
         return state.locum_allocated_jobs.filter(job => job.type === 'Private')
@@ -115,25 +175,214 @@ export default {
         return state.locum_allocated_jobs.filter(job => job.type === 'Platform')
     },
     getLocumAvailableJobs(state) {
-        return state.locum_available_jobs
+        let jobs = []
+        state.locum_available_jobs.forEach(job => {
+            let surgery_name = ''
+            let date_start = ''
+            let date_end = ''
+            let rate_name = ''
+            let rate_type_name = ''
+            let shift_name = ''
+            let completed_at = ''
+            surgery_name = job.type === 'Platform' ? job.platform_job.practice.surgery.name : job.private_job.private_practice.surgery.name
+            date_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
+            date_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
+            rate_name = job.rate
+            rate_type_name = job.locum_detail_rate_type.name
+            shift_name = job.shift.name
+            completed_at = job.type === 'Platform' ? completed_at : date_end
+            jobs.push({
+                ...job,
+                surgery_name,
+                date_start,
+                date_end,
+                completed_at,
+                rate_name,
+                rate_type_name,
+                shift_name
+            })
+        })
+        return jobs
     },
     getLocumMatchedJobs(state) {
-        return state.locum_matched_jobs
+        let jobs = []
+        state.locum_matched_jobs.forEach(job => {
+            let surgery_name = ''
+            let date_start = ''
+            let date_end = ''
+            let rate_name = ''
+            let rate_type_name = ''
+            let shift_name = ''
+            let completed_at = ''
+            surgery_name = job.type === 'Platform' ? job.platform_job.practice.surgery.name : job.private_job.private_practice.surgery.name
+            date_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
+            date_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
+            rate_name = job.rate
+            rate_type_name = job.locum_detail_rate_type.name
+            shift_name = job.shift.name
+            completed_at = job.type === 'Platform' ? completed_at : date_end
+            jobs.push({
+                ...job,
+                surgery_name,
+                date_start,
+                date_end,
+                completed_at,
+                rate_name,
+                rate_type_name,
+                shift_name
+            })
+        })
+        return jobs
     },
     getLocumAppliedJobs(state) {
-        return state.locum_applied_jobs
+        let jobs = []
+        state.locum_applied_jobs.forEach(job => {
+            let surgery_name = ''
+            let date_start = ''
+            let date_end = ''
+            let rate_name = ''
+            let rate_type_name = ''
+            let shift_name = ''
+            let completed_at = ''
+            surgery_name = job.type === 'Platform' ? job.platform_job.practice.surgery.name : job.private_job.private_practice.surgery.name
+            date_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
+            date_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
+            rate_name = job.rate
+            rate_type_name = job.locum_detail_rate_type.name
+            shift_name = job.shift.name
+            completed_at = job.type === 'Platform' ? completed_at : date_end
+            jobs.push({
+                ...job,
+                surgery_name,
+                date_start,
+                date_end,
+                completed_at,
+                rate_name,
+                rate_type_name,
+                shift_name
+            })
+        })
+        return jobs
     },
     getLocumUnsuccessfulJobs(state) {
-        return state.locum_unsuccessful_jobs
+        let jobs = []
+        state.locum_unsuccessful_jobs.forEach(job => {
+            let surgery_name = ''
+            let date_start = ''
+            let date_end = ''
+            let rate_name = ''
+            let rate_type_name = ''
+            let shift_name = ''
+            let completed_at = ''
+            surgery_name = job.type === 'Platform' ? job.platform_job.practice.surgery.name : job.private_job.private_practice.surgery.name
+            date_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
+            date_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
+            rate_name = job.rate
+            rate_type_name = job.locum_detail_rate_type.name
+            shift_name = job.shift.name
+            completed_at = job.type === 'Platform' ? completed_at : date_end
+            jobs.push({
+                ...job,
+                surgery_name,
+                date_start,
+                date_end,
+                completed_at,
+                rate_name,
+                rate_type_name,
+                shift_name
+            })
+        })
+        return jobs
     },
     getLocumDeclinedJobs(state) {
-        return state.locum_declined_jobs
+        let jobs = []
+        state.locum_declined_jobs.forEach(job => {
+            let surgery_name = ''
+            let date_start = ''
+            let date_end = ''
+            let rate_name = ''
+            let rate_type_name = ''
+            let shift_name = ''
+            let completed_at = ''
+            surgery_name = job.type === 'Platform' ? job.platform_job.practice.surgery.name : job.private_job.private_practice.surgery.name
+            date_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
+            date_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
+            rate_name = job.rate
+            rate_type_name = job.locum_detail_rate_type.name
+            shift_name = job.shift.name
+            completed_at = job.type === 'Platform' ? completed_at : date_end
+            jobs.push({
+                ...job,
+                surgery_name,
+                date_start,
+                date_end,
+                completed_at,
+                rate_name,
+                rate_type_name,
+                shift_name
+            })
+        })
+        return jobs
     },
     getLocumCancelledJobs(state) {
-        return state.locum_cancelled_jobs
+        let jobs = []
+        state.locum_cancelled_jobs.forEach(job => {
+            let surgery_name = ''
+            let date_start = ''
+            let date_end = ''
+            let rate_name = ''
+            let rate_type_name = ''
+            let shift_name = ''
+            let completed_at = ''
+            surgery_name = job.type === 'Platform' ? job.platform_job.practice.surgery.name : job.private_job.private_practice.surgery.name
+            date_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
+            date_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
+            rate_name = job.rate
+            rate_type_name = job.locum_detail_rate_type.name
+            shift_name = job.shift.name
+            completed_at = job.type === 'Platform' ? completed_at : date_end
+            jobs.push({
+                ...job,
+                surgery_name,
+                date_start,
+                date_end,
+                completed_at,
+                rate_name,
+                rate_type_name,
+                shift_name
+            })
+        })
+        return jobs
     },
     getLocumWithdrawnJobs(state) {
-        return state.locum_withdrawn_jobs
+        let jobs = []
+        state.locum_withdrawn_jobs.forEach(job => {
+            let surgery_name = ''
+            let date_start = ''
+            let date_end = ''
+            let rate_name = ''
+            let rate_type_name = ''
+            let shift_name = ''
+            let completed_at = ''
+            surgery_name = job.type === 'Platform' ? job.platform_job.practice.surgery.name : job.private_job.private_practice.surgery.name
+            date_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
+            date_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
+            rate_name = job.rate
+            rate_type_name = job.locum_detail_rate_type.name
+            shift_name = job.shift.name
+            completed_at = job.type === 'Platform' ? completed_at : date_end
+            jobs.push({
+                ...job,
+                surgery_name,
+                date_start,
+                date_end,
+                completed_at,
+                rate_name,
+                rate_type_name,
+                shift_name
+            })
+        })
+        return jobs
     },
     getLocumUnavailabilities(state) {
         return state.locum_unavailabilities

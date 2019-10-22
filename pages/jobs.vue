@@ -146,7 +146,12 @@
       </div>
     </div>
     <div class="mt-5">
-      <nuxt-child />
+      <nuxt-child
+        :invoiceStatusList="invoiceStatusList"
+        :practiceTypeList="practiceTypeList"
+        :shifts="shifts"
+        :rates="rates"
+      />
     </div>
   </section>
 </template>
@@ -161,18 +166,49 @@ const tabs = [
   "jobs-cancelled-id",
   "jobs-completed-id"
 ];
+const invoiceStatusList = [
+  {
+    label: "All",
+    value: ""
+  },
+  {
+    label: "To Be Invoice",
+    value: "To Be Invoice"
+  },
+  {
+    label: "Disputed",
+    value: "Disputed"
+  },
+  {
+    label: "Invoiced",
+    value: "Invoiced"
+  }
+];
+const practiceTypeList = [
+  {
+    label: "All",
+    value: ""
+  },
+  {
+    label: "Platform",
+    value: "Platform"
+  },
+  {
+    label: "Private",
+    value: "Private"
+  }
+];
 export default {
   middleware: "isVerified",
   data() {
     return {
-      tabs
+      tabs,
+      invoiceStatusList,
+      practiceTypeList,
+      shifts: [],
+      rates: []
     };
   },
-  // computed: {
-  //   socketId() {
-  //     return this.$store.state.socket_id
-  //   },
-  // },
   watch: {
     $route(value) {
       if (this.tabs.includes(value.name)) {
@@ -181,30 +217,22 @@ export default {
         document.body.style.overflow = "auto";
       }
     }
-    // socketId(value) {
-    //   this.$store.dispatch('joinRoom', { socket_id: value, room_name: 'jobroom', })
-    // }
   },
-  beforeDestroy() {
-    this.$store.dispatch("leaveRoom", {
-      socket_id: this.$socket.id,
-      room_name: "jobroom"
+  created() {
+    this.$axios.$get(`/api/v1/shifts`).then(res => {
+      this.shifts = [];
+      this.shifts.push({ label: "All", value: "" });
+      res.data.shifts.forEach(item => {
+        this.shifts.push({ label: item.name, value: item.id });
+      });
     });
-  },
-  mounted() {
-    if (this.$socket.connected) {
-      this.$store.dispatch("joinRoom", {
-        socket_id: this.$socket.id,
-        room_name: "jobroom"
+    this.$axios.$get(`/api/v1/locum-detail-rate-types`).then(res => {
+      this.rates = [];
+      this.rates.push({ label: "All", value: "" });
+      res.data.locum_detail_rate_types.forEach(item => {
+        this.rates.push({ label: item.name, value: item.id });
       });
-    } else {
-      this.$socket.on("connect", () => {
-        this.$store.dispatch("joinRoom", {
-          socket_id: this.$socket.id,
-          room_name: "jobroom"
-        });
-      });
-    }
+    });
   }
 };
 </script>

@@ -81,13 +81,21 @@
         />
       </div>
       <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+        <AppPostCode
+          class="px-1"
+          v-model="params.near_post_code"
+          :name="'near_post_code'"
+          :label="'Post code'"
+          @onSelect="onSelect"
+        />
+      </div>
+      <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
         <AppInput
           class="px-1"
-          v-model="params.invoice_status"
-          :type="'select'"
-          :name="'invoice_status'"
-          :label="'Status'"
-          :items="invoiceStatusList"
+          v-model="params.miles"
+          :type="'text'"
+          :name="'miles'"
+          :label="'Miles'"
         />
       </div>
       <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
@@ -164,39 +172,8 @@ import AppPostCode from "@/components/Base/AppPostCode";
 import AppAutoComplete from "@/components/Base/AppAutoComplete";
 import AppButton from "@/components/Base/AppButton";
 import AppLoading from "@/components/Base/AppLoading";
-const invoiceStatusList = [
-  {
-    label: "All",
-    value: ""
-  },
-  {
-    label: "To Be Invoice",
-    value: "To Be Invoice"
-  },
-  {
-    label: "Disputed",
-    value: "Disputed"
-  },
-  {
-    label: "Invoiced",
-    value: "Invoiced"
-  }
-];
-const practiceTypeList = [
-  {
-    label: "All",
-    value: ""
-  },
-  {
-    label: "Platform",
-    value: "Platform"
-  },
-  {
-    label: "Private",
-    value: "Private"
-  }
-];
 export default {
+  props: ["invoiceStatusList", "practiceTypeList", "shifts", "rates"],
   transition: {
     name: "fade",
     mode: "out-in"
@@ -214,16 +191,11 @@ export default {
   data() {
     return {
       current_page: 1,
-      // app table filter
-      rates: [],
-      shifts: [],
-      invoiceStatusList,
-      practiceTypeList,
       // app table params
       params: {
         offset: 0,
         limit: 5,
-        order_by: ["date_created:desc"],
+        order_by: ["job_date_created:desc"],
         job_part_number: "",
         job_title: "",
         job_type: "",
@@ -231,6 +203,8 @@ export default {
         job_shift_id: "",
         job_rate: "",
         job_rate_type_id: "",
+        near_post_code: "",
+        miles: "",
         calendar_date_start: "",
         calendar_date_end: "",
         time_start: "",
@@ -285,12 +259,6 @@ export default {
           dataIndex: "date_end",
           sortable: true,
           class: "text-center"
-        },
-        {
-          name: "Created At",
-          dataIndex: "job_date_created",
-          class: "text-center",
-          sortable: true
         }
       ],
       filterToggle: false
@@ -329,8 +297,13 @@ export default {
     "params.job_rate_type_id"(value) {
       this.filterOut({ field: "job_rate_type_id", value });
     },
-    "params.invoice_status"(value) {
-      this.filterOut({ field: "invoice_status", value });
+    "params.near_post_code"(value) {
+      if (!value) {
+        this.filterOut({ field: "near_post_code", value });
+      }
+    },
+    "params.miles"(value) {
+      this.filterOut({ field: "miles", value });
     },
     "params.calendar_date_start"(value) {
       this.filterOut({ field: "calendar_date_start", value });
@@ -349,8 +322,6 @@ export default {
     this.$store.commit("jobs/CLEAR_JOBS");
   },
   created() {
-    this.getRateType();
-    this.getShifts();
     this.getJobsCount();
     setTimeout(() => {
       this.$store.commit("jobs/CLEAR_LOCUM_ONGOING_BADGE");
@@ -365,6 +336,7 @@ export default {
       this.params.offset = 0;
       this.params[field] = value;
       this.$store.commit("jobs/TOGGLE_LOADING", true);
+      this.$store.commit("jobs/SET_LOCUM_ONGOING_JOB_PARTS", []);
       this.getJobs(this.params);
     }, 500),
     getJobsCount(params) {
@@ -418,29 +390,10 @@ export default {
       this.params.calendar_date_end = "";
       this.params.time_start = "";
       this.params.time_end = "";
-      this.params.invoice_status = "";
-      this.params.order_by = ["date_created:desc"];
+      this.params.order_by = ["job_date_created:desc"];
     },
     show(item) {
       this.$router.push(`/jobs/${item.id}?status=${item.locum_status}`);
-    },
-    getShifts() {
-      this.$axios.$get(`/api/v1/shifts`).then(res => {
-        this.shifts = [];
-        this.shifts.push({ label: "All", value: "" });
-        res.data.shifts.forEach(item => {
-          this.shifts.push({ label: item.name, value: item.id });
-        });
-      });
-    },
-    getRateType() {
-      this.$axios.$get(`/api/v1/locum-detail-rate-types`).then(res => {
-        this.rates = [];
-        this.rates.push({ label: "All", value: "" });
-        res.data.locum_detail_rate_types.forEach(item => {
-          this.rates.push({ label: item.name, value: item.id });
-        });
-      });
     },
     onSelect(value) {
       let address_components = value.details.result.address_components;

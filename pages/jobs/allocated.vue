@@ -14,17 +14,27 @@
       <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
         <AppInput
           class="px-1"
+          v-model="params.type"
+          :type="'select'"
+          :name="'type'"
+          :label="'Type'"
+          :items="practiceTypeList"
+        />
+      </div>
+      <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+        <AppInput
+          class="px-1"
           v-model="params.job_number"
           :type="'text'"
           :name="'job_number'"
-          :label="'Job number'"
+          :label="'Job part number'"
         />
       </div>
       <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
         <AppAutoComplete
           class="px-1"
-          v-model="params.surgery_name"
-          :name="'surgery_name'"
+          v-model="params.surgery_id"
+          :name="'surgery_id'"
           :label="'Surgery'"
           :url="'/api/v1/locum/surgeries'"
           :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem'"
@@ -36,7 +46,7 @@
           v-model="params.title"
           :type="'text'"
           :name="'title'"
-          :label="'Title'"
+          :label="'Job Title'"
         />
       </div>
       <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
@@ -46,10 +56,10 @@
           :type="'select'"
           :name="'shift_id'"
           :label="'Shift'"
-          :placeholder="'Select...'"
           :items="shifts"
         />
       </div>
+
       <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
         <AppInput
           class="px-1"
@@ -63,19 +73,12 @@
       <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
         <AppInput
           class="px-1"
-          v-model="params.locum_detail_rate_type_id"
+          v-model="params.rate_type_id"
           :type="'select'"
-          :name="'locum_detail_rate_type_id'"
+          :name="'rate_type_id'"
           :label="'per'"
-          :placeholder="'Select...'"
           :items="rates"
         />
-      </div>
-      <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-        <AppDate v-model="params.date_start" :name="'date_start'" :label="'From'" />
-      </div>
-      <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-        <AppDate v-model="params.date_end" :name="'date_end'" :label="'To'" />
       </div>
       <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
         <AppPostCode
@@ -84,7 +87,6 @@
           :name="'near_post_code'"
           :label="'Post code'"
           @onSelect="onSelect"
-          :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;border-style:solid'"
         />
       </div>
       <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
@@ -94,9 +96,29 @@
           :type="'text'"
           :name="'miles'"
           :label="'Miles'"
-          :placeholder="''"
-          :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
         />
+      </div>
+      <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+        <AppDate
+          v-model="params.calendar_date_start"
+          :name="'calendar_date_start'"
+          :label="'From'"
+          :format="'YYYY-MM-DD'"
+        />
+      </div>
+      <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+        <AppTime v-model="params.time_start" :name="'time_start'" :label="'Start Time'" />
+      </div>
+      <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+        <AppDate
+          v-model="params.calendar_date_end"
+          :name="'calendar_date_end'"
+          :label="'To'"
+          :format="'YYYY-MM-DD'"
+        />
+      </div>
+      <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+        <AppTime v-model="params.time_end" :name="'time_end'" :label="'End Time'" />
       </div>
       <div class="md:px-1 flex w-full">
         <AppButton
@@ -107,7 +129,7 @@
         <AppButton
           class="mx-2 md:hidden"
           :label="'Close'"
-          @click="showFilter()"
+          @click="showFilter"
           :inStyle="'padding:5px 14px;margin-bottom:5px'"
         />
       </div>
@@ -145,11 +167,13 @@ import debounce from "lodash.debounce";
 import AppTable from "@/components/Base/AppTable";
 import AppInput from "@/components/Base/AppInput";
 import AppDate from "@/components/Base/AppDate";
+import AppTime from "@/components/Base/AppTime";
 import AppPostCode from "@/components/Base/AppPostCode";
 import AppAutoComplete from "@/components/Base/AppAutoComplete";
 import AppButton from "@/components/Base/AppButton";
 import AppLoading from "@/components/Base/AppLoading";
 export default {
+  props: ["invoiceStatusList", "practiceTypeList", "shifts", "rates"],
   transition: {
     name: "fade",
     mode: "out-in"
@@ -158,6 +182,7 @@ export default {
     AppTable,
     AppInput,
     AppDate,
+    AppTime,
     AppPostCode,
     AppAutoComplete,
     AppButton,
@@ -166,79 +191,72 @@ export default {
   data() {
     return {
       current_page: 1,
-      // app table filter
-      rates: [],
-      shifts: [],
       // app table params
       params: {
         offset: 0,
         limit: 5,
-        order_by: ["date_end:desc"],
+        order_by: ["date_created:desc"],
         job_number: "",
-        surgery_name: "",
         title: "",
+        type: "",
+        surgery_id: "",
         shift_id: "",
         rate: "",
-        date_start: "",
-        date_end: "",
-        locum_detail_rate_type_id: "",
+        rate_type_id: "",
         near_post_code: "",
-        miles: ""
+        miles: "",
+        calendar_date_start: "",
+        calendar_date_end: "",
+        time_start: "",
+        time_end: ""
       },
       // app table column
       columns: [
         {
-          name: "Job number",
+          name: "Job Part Number",
           dataIndex: "job_number",
-          class: "text-left"
+          sortable: true
         },
         {
-          name: "Practice",
-          dataIndex: "platform_job.practice.surgery.name",
-          class: "text-center"
+          name: "Surgery",
+          dataIndex: "surgery_name",
+          class: "text-center",
+          sortable: true
         },
         {
           name: "Title",
           dataIndex: "title",
-          class: "text-center"
+          class: "text-center",
+          sortable: true
         },
         {
           name: "Shift",
-          dataIndex: "shift.name",
-          class: "text-center"
+          dataIndex: "shift_name",
+          class: "text-center",
+          sortable: true
         },
         {
           name: "Rate",
-          dataIndex: "rate",
+          dataIndex: "rate_name",
+          sortable: true,
           class: "text-center"
         },
         {
           name: "per",
-          dataIndex: "locum_detail_rate_type.name",
-          class: "text-center"
+          dataIndex: "rate_type_name",
+          class: "text-center",
+          sortable: true
         },
         {
           name: "From",
           dataIndex: "date_start",
-          class: "text-center localDate",
-          sortable: true
+          sortable: true,
+          class: "text-center"
         },
         {
           name: "To",
           dataIndex: "date_end",
-          class: "text-center localDate",
-          sortable: true
-        },
-        {
-          name: "Created At",
-          dataIndex: "date_created",
-          class: "text-center localDate",
-          sortable: true
-        },
-        {
-          name: "Assigned",
-          dataIndex:
-            "platform_job.appointed_to_locum.user.personal_detail.name",
+          sortable: true,
           class: "text-center"
         }
       ],
@@ -257,11 +275,14 @@ export default {
     }
   },
   watch: {
+    "params.type"(value) {
+      this.filterOut({ field: "type", value });
+    },
     "params.job_number"(value) {
       this.filterOut({ field: "job_number", value });
     },
-    "params.surgery_name"(value) {
-      this.filterOut({ field: "surgery_name", value });
+    "params.surgery_id"(value) {
+      this.filterOut({ field: "surgery_id", value });
     },
     "params.title"(value) {
       this.filterOut({ field: "title", value });
@@ -272,34 +293,34 @@ export default {
     "params.rate"(value) {
       this.filterOut({ field: "rate", value });
     },
-    "params.locum_detail_rate_type_id"(value) {
-      this.filterOut({ field: "locum_detail_rate_type_id", value }).then(
-        res => {
-          this.getJobsCount(this.params);
-        }
-      );
-    },
-    "params.date_start"(value) {
-      this.filterOut({ field: "date_start", value });
-    },
-    "params.date_end"(value) {
-      this.filterOut({ field: "date_end", value });
+    "params.rate_type_id"(value) {
+      this.filterOut({ field: "rate_type_id", value });
     },
     "params.near_post_code"(value) {
-      if (value === "") {
+      if (!value) {
         this.filterOut({ field: "near_post_code", value });
       }
     },
     "params.miles"(value) {
       this.filterOut({ field: "miles", value });
+    },
+    "params.calendar_date_start"(value) {
+      this.filterOut({ field: "calendar_date_start", value });
+    },
+    "params.time_start"(value) {
+      this.filterOut({ field: "time_start", value });
+    },
+    "params.calendar_date_end"(value) {
+      this.filterOut({ field: "calendar_date_end", value });
+    },
+    "params.time_end"(value) {
+      this.filterOut({ field: "time_end", value });
     }
   },
   beforeDestroy() {
     this.$store.commit("jobs/CLEAR_JOBS");
   },
   created() {
-    this.getRateType();
-    this.getShifts();
     this.getJobsCount();
     setTimeout(() => {
       this.$store.commit("jobs/CLEAR_LOCUM_ALLOCATED_BADGE");
@@ -313,6 +334,8 @@ export default {
       this.current_page = 1;
       this.params.offset = 0;
       this.params[field] = value;
+      this.$store.commit("jobs/TOGGLE_LOADING", true);
+      this.$store.commit("jobs/SET_LOCUM_ALLOCATED_JOBS", []);
       this.getJobs(this.params);
     }, 500),
     getJobsCount(params) {
@@ -355,33 +378,21 @@ export default {
       this.getJobs(this.params);
     },
     clearFilters() {
+      this.params.type = "";
+      this.params.job_number = "";
+      this.params.surgery_id = "";
+      this.params.title = "";
       this.params.shift_id = "";
       this.params.rate = "";
-      this.params.locum_detail_rate_type_id = "";
-      this.params.near_post_code = "";
-      this.params.miles = "";
-      this.params.surgery_name = "";
+      this.params.rate_type_id = "";
+      this.params.calendar_date_start = "";
+      this.params.calendar_date_end = "";
+      this.params.time_start = "";
+      this.params.time_end = "";
       this.params.order_by = ["date_created:desc"];
-      this.getJobs(this.params);
     },
     show(item) {
       this.$router.push(`/jobs/${item.id}`);
-    },
-    getShifts() {
-      this.$axios.$get(`/api/v1/shifts`).then(res => {
-        this.shifts = [];
-        res.data.shifts.forEach(item => {
-          this.shifts.push({ label: item.name, value: item.id });
-        });
-      });
-    },
-    getRateType() {
-      this.$axios.$get(`/api/v1/locum-detail-rate-types`).then(res => {
-        this.rates = [];
-        res.data.locum_detail_rate_types.forEach(item => {
-          this.rates.push({ label: item.name, value: item.id });
-        });
-      });
     },
     onSelect(value) {
       let address_components = value.details.result.address_components;
