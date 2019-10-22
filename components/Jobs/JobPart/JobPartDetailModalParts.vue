@@ -12,7 +12,7 @@
       @pagechanged="pagechanged"
       @limitchanged="limitchanged"
     />
-  </div> 
+  </div>
 </template>
 <script>
 import AppTable from "@/components/Base/AppTable";
@@ -20,9 +20,9 @@ export default {
   components: {
     AppTable
   },
-  
+
   props: ["job_id"],
-  data(){
+  data() {
     return {
       parts: [],
       current_page: 1,
@@ -30,7 +30,7 @@ export default {
       params: {
         job_id: 0,
         offset: 0,
-        limit: 5,
+        limit: 5
       },
       total: 0,
       // app table
@@ -57,21 +57,22 @@ export default {
         }
       ],
       loading: false
-    }
+    };
   },
- 
+
   computed: {
     totalPages() {
       return Math.ceil(this.total / this.perPage);
-    },
+    }
   },
-  created(){
-    this.params.job_id = this.job_id
-    this.getJobParts(this.params)
-    this.$axios.$get(`/api/v1/locum/job-parts/count?job_id=${this.job_id}`)
-    .then(res => {
-      this.total = res.data.count
-    })
+  created() {
+    this.params.job_id = this.job_id;
+    this.getJobParts(this.params);
+    this.$axios
+      .$get(`/api/v1/locum/job-parts/count?job_id=${this.job_id}`)
+      .then(res => {
+        this.total = res.data.count;
+      });
   },
   methods: {
     show(jobPart) {
@@ -80,13 +81,12 @@ export default {
         this.$router.push(`/jobs/${jobPart.id}?status=${jobPart.status}`);
       }
     },
-    getJobParts(params){
+    getJobParts(params) {
       this.loading = true;
-      this.$axios.$get(`/api/v1/locum/job-parts`, { params })
-      .then(res => {
+      this.$axios.$get(`/api/v1/locum/job-parts`, { params }).then(res => {
         this.loading = false;
-        this.parts = res.data.job_parts
-      })
+        this.parts = res.data.job_parts;
+      });
     },
     pagechanged(page) {
       this.current_page = page;
@@ -98,7 +98,7 @@ export default {
       this.params.offset = 0;
       this.params.limit = limit;
       this.getJobParts(this.params);
-    },
+    }
   }
 };
 </script>
@@ -114,7 +114,7 @@ export default {
     width: 70%;
   }
 }
-.wrapper{
-  transition: all .3s linear;
+.wrapper {
+  transition: all 0.3s linear;
 }
 </style>

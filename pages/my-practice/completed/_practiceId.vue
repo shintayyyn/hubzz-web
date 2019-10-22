@@ -8,7 +8,7 @@
         <MyPracticeTabs :practiceType="'completed'" />
       </div>
       <div class="mt-5">
-        <nuxt-child />
+        <nuxt-child :practice="practice" />
       </div>
     </div>
   </div>
@@ -19,6 +19,28 @@ import MyPracticeTabs from "@/components/MyPractice/MyPracticeTabs";
 export default {
   components: {
     MyPracticeTabs
+  },
+  async asyncData({ app, params, error }) {
+    try {
+      const response = await app.$axios.$get(
+        `/api/v1/locum/practices/${params.practiceId}`
+      );
+
+      const practice =
+        response.data && response.data.practice ? response.data.practice : null;
+
+      return {
+        practice
+      };
+    } catch (err) {
+      if (err && err.response.status === 404) {
+        return error({
+          status: 404,
+          message: "This practice could not be found"
+        });
+      }
+      throw err;
+    }
   }
 };
 </script>

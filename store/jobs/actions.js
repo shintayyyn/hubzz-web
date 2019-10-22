@@ -260,8 +260,8 @@ export default {
 
         const response = await this.$axios.$get(`${url}${first}${count}`, { params: payload })
 
-        if (response.data && response.data.count) {
-            console.log('job parts count response', response)
+        if (payload.countOnly) {
+            console.log('job parts count response', response.data.count)
             payload.locum_status.forEach(jobStatus => {
                 if (jobStatus.toLowerCase() === 'ongoing') {
                     commit('SET_LOCUM_ONGOING_JOB_PARTS_COUNT', response.data.count)
@@ -275,37 +275,52 @@ export default {
             })
         }
 
-        if (response.data && response.data.job_parts && response.data.job_parts.length > 0) {
-            console.log('job parts response', response)
+        if (!payload.countOnly) {
+            console.log('job parts response', response.data.job_parts)
             payload.locum_status.forEach(jobStatus => {
                 if (jobStatus.toLowerCase() === 'ongoing') {
-                    if (updatedJobPartIndex && updatedJobPartIndex.length === 0) {
-                        commit('SET_LOCUM_ONGOING_JOB_PARTS', response.data.job_parts.filter(jobPart => jobPart.locum_status.toLowerCase() === 'ongoing'))
+                    if (response.data && response.data.job_parts && response.data.job_parts.length > 0) {
+                        if (updatedJobPartIndex && updatedJobPartIndex.length === 0) {
+                            commit('SET_LOCUM_ONGOING_JOB_PARTS', response.data.job_parts.filter(jobPart => jobPart.locum_status.toLowerCase() === 'ongoing'))
+                        }
+                        if (updatedJobPartIndex && updatedJobPartIndex.length > 0) {
+                            response.data.job_parts.filter(jobPart => jobPart.locum_status.toLowerCase() === 'ongoing').forEach((jobPart, index) => {
+                                commit('UPDATE_LOCUM_ONGOING_JOB_PART', { payload: jobPart, payloadIndex: updatedJobPartIndex[index] })
+                            })
+                        }
                     }
-                    if (updatedJobPartIndex && updatedJobPartIndex.length > 0) {
-                        response.data.job_parts.filter(jobPart => jobPart.locum_status.toLowerCase() === 'ongoing').forEach((jobPart, index) => {
-                            commit('UPDATE_LOCUM_ONGOING_JOB_PART', { payload: jobPart, payloadIndex: updatedJobPartIndex[index] })
-                        })
+                    if (response.data && response.data.job_parts.length === 0) {
+                        commit('SET_LOCUM_ONGOING_JOB_PARTS', [])
                     }
                 }
                 if (jobStatus.toLowerCase() === 'completed') {
-                    if (updatedJobPartIndex && updatedJobPartIndex.length === 0) {
-                        commit('SET_LOCUM_COMPLETED_JOB_PARTS', response.data.job_parts.filter(jobPart => jobPart.locum_status.toLowerCase() === 'completed'))
+                    if (response.data && response.data.job_parts && response.data.job_parts.length > 0) {
+                        if (updatedJobPartIndex && updatedJobPartIndex.length === 0) {
+                            commit('SET_LOCUM_COMPLETED_JOB_PARTS', response.data.job_parts.filter(jobPart => jobPart.locum_status.toLowerCase() === 'completed'))
+                        }
+                        if (updatedJobPartIndex && updatedJobPartIndex.length > 0) {
+                            response.data.job_parts.filter(jobPart => jobPart.locum_status.toLowerCase() === 'completed').forEach((jobPart, index) => {
+                                commit('UPDATE_LOCUM_COMPLETED_JOB_PART', { payload: jobPart, payloadIndex: updatedJobPartIndex[index] })
+                            })
+                        }
                     }
-                    if (updatedJobPartIndex && updatedJobPartIndex.length > 0) {
-                        response.data.job_parts.filter(jobPart => jobPart.locum_status.toLowerCase() === 'completed').forEach((jobPart, index) => {
-                            commit('UPDATE_LOCUM_COMPLETED_JOB_PART', { payload: jobPart, payloadIndex: updatedJobPartIndex[index] })
-                        })
+                    if (response.data && response.data.job_parts.length === 0) {
+                        commit('SET_LOCUM_COMPLETED_JOB_PARTS', [])
                     }
                 }
                 if (jobStatus.toLowerCase() === 'approved') {
-                    if (updatedJobPartIndex && updatedJobPartIndex.length === 0) {
-                        commit('SET_LOCUM_APPROVED_JOB_PARTS', response.data.job_parts.filter(jobPart => jobPart.locum_status.toLowerCase() === 'approved'))
+                    if (response.data && response.data.job_parts && response.data.job_parts.length > 0) {
+                        if (updatedJobPartIndex && updatedJobPartIndex.length === 0) {
+                            commit('SET_LOCUM_APPROVED_JOB_PARTS', response.data.job_parts.filter(jobPart => jobPart.locum_status.toLowerCase() === 'approved'))
+                        }
+                        if (updatedJobPartIndex && updatedJobPartIndex.length > 0) {
+                            response.data.job_parts.filter(jobPart => jobPart.locum_status.toLowerCase() === 'approved').forEach((jobPart, index) => {
+                                commit('UPDATE_LOCUM_APPROVED_JOB_PART', { payload: jobPart, payloadIndex: updatedJobPartIndex[index] })
+                            })
+                        }
                     }
-                    if (updatedJobPartIndex && updatedJobPartIndex.length > 0) {
-                        response.data.job_parts.filter(jobPart => jobPart.locum_status.toLowerCase() === 'approved').forEach((jobPart, index) => {
-                            commit('UPDATE_LOCUM_APPROVED_JOB_PART', { payload: jobPart, payloadIndex: updatedJobPartIndex[index] })
-                        })
+                    if (response.data && response.data.job_parts.length === 0) {
+                        commit('SET_LOCUM_APPROVED_JOB_PARTS', [])
                     }
                 }
             })

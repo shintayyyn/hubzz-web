@@ -31,12 +31,8 @@
           </tr>
         </thead>
         <tbody>
-          <template v-for="(item, index) in items">
-            <tr
-              @click="$emit('show', item)"
-              :key="item.id"
-              class="cursor-pointer text-xs"
-            >
+          <template v-for="(item) in items">
+            <tr @click="$emit('show', item)" :key="item.id" class="cursor-pointer text-xs">
               <td
                 v-for="(column, index) in columns"
                 :key="index"
@@ -136,6 +132,7 @@ export default {
   },
   methods: {
     sort(dataIndex) {
+      console.log(dataIndex);
       if (!this.params.some(item => item.includes(`${dataIndex}`))) {
         this.params.push(`${dataIndex}:desc`);
       } else {
@@ -252,7 +249,7 @@ export default {
 };
 </script>
 <style scoped>
-table{
+table {
   border-collapse: separate;
   border-spacing: 0 10px;
 }
@@ -261,7 +258,8 @@ table tbody tr:hover td{
   background-color: #eff3f8;
 }
 
-table tbody td, table thead th {
+table tbody td,
+table thead th {
   background-color: #fff;
   padding: 15px 8px;
 }

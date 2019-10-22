@@ -4,7 +4,7 @@
       <nuxt-link
         to="/my-practice/favorites"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-        :class="$route.name.includes('my-practice-favorites')  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name === 'my-practice' || $route.name.includes('my-practice-favorites')  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >Favorites</nuxt-link>
       <nuxt-link
         to="/my-practice/completed"

@@ -40,19 +40,19 @@ export const actions = {
     dispatch
   }, payload) {
     try {
-      await this.$axios.$post('api/v1/socket/join-room', {
-        socket_id: payload.socket_id,
-        room_name: payload.room_name
-      })
+      // await this.$axios.$post('api/v1/socket/join-room', {
+      //   socket_id: payload.socket_id,
+      //   room_name: payload.room_name
+      // })
     } catch (err) {
       console.log(err.response)
     }
   },
-  async leaveRoom({}, payload) {
-    await this.$axios.$post('api/v1/socket/leave-room', {
-      socket_id: payload.socket_id,
-      room_name: payload.room_name
-    })
+  async leaveRoom({ }, payload) {
+    // await this.$axios.$post('api/v1/socket/leave-room', {
+    //   socket_id: payload.socket_id,
+    //   room_name: payload.room_name
+    // })
   },
 }
 
