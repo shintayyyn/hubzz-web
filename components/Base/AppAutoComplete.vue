@@ -1,5 +1,5 @@
 <template>
-  <div class="relative flex flex-col py-2 mb-6" v-on-clickaway="toggledOff">
+  <div class="relative flex flex-col py-2 mb-3 md:mb-6" v-on-clickaway="toggledOff">
     <div class="relative flex flex-row flex-no-wrap justify-between">
       <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
       <div class="flex">

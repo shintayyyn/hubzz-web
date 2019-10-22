@@ -1,6 +1,6 @@
 <template>
   <div class="modal-container shadow-lg" ref="modalContainer">
-    <div class="p-8">
+    <div class="p-4 md:p-8">
       <div @click="close" class="cursor-pointer">
         <svgicon name="left-arrow" height="32" width="32" />
       </div>
@@ -11,7 +11,7 @@
         <div class="w-full md:w-1/2 pr-4 mb-4">
           <div class="flex flex-col">
             <h4 class="font-bold">Practice</h4>
-            <div class="bg-white rounded-lg shadow-lg px-8 py-4 mt-4">
+            <div class="bg-white rounded-lg shadow-lg px-4 md:px-8 py-4 mt-4">
               <AppInput
                 v-model="form.practice_id"
                 :type="'select'"
@@ -23,7 +23,7 @@
               />
             </div>
             <h4 class="font-bold mt-4">Overview</h4>
-            <div class="bg-white rounded-lg shadow-lg px-8 pt-4 mt-4">
+            <div class="bg-white rounded-lg shadow-lg px-4 md:px-8 pt-4 mt-4">
               <AppInput
                 v-model="form.title"
                 :type="'text'"
@@ -78,7 +78,7 @@
               />
               <AppInput
                 v-model="form.number_of_patients"
-                :type="'text'"
+                :type="'number'"
                 :name="'number_of_patients'"
                 :label="'Number of patients to be seen during the session?'"
                 :placeholder="''"
@@ -134,13 +134,13 @@
                 :placeholder="'For example, number of expected patients, nearby car park, etc.'"
                 :resize="false"
               />
-              <div class="flex flex-col py-2 mb-6">
+              <div class="flex flex-col py-2 mb-3 md:mb-6">
                 <div class="relative flex flex-row flex-wrap justify-start">
                   <div class="mt-2">
                     <label for="rate" class="text-xs sm:text-sm mt-2">Rate £</label>
                     <input
                       v-model="form.rate"
-                      type="text"
+                      type="number"
                       class="border-b-2 focus:border-yellow-400 focus:outline-none font-bold text-xs sm:text-sm mx-1 py-2"
                       :class="formError.find(item => item.field === 'rate')? 'border-red-500':''"
                       style="text-align:right;width:100px;"
@@ -151,7 +151,7 @@
                   </div>
                 </div>
               </div>
-              <div class="flex flex-col py-2 mb-6">
+              <div class="flex flex-col py-2 mb-3 md:mb-6">
                 <div class="relative flex flex-row flex-no-wrap justify-between">
                   <label for="total_hours" class="text-xs sm:text-sm py-1 mt-2">Total hours</label>
                   <div
@@ -162,7 +162,7 @@
                 <div class="flex flex-row flex-no-wrap justify-start mt-1">
                   <input
                     v-model="form.total_hours"
-                    type="text"
+                    type="number"
                     class="border-b-2 focus:border-yellow-400 focus:outline-none font-bold py-2 text-xs sm:text-sm mx-1"
                     :class="this.formError.find(item => item.field === 'total_hours')? 'border-red-500':''"
                     @blur="CheckEmptyField(form.total_hours,'total_hours')"
@@ -204,7 +204,7 @@
         <div class="w-full md:w-1/2 lg:pl-4 mb-4">
           <div class="flex flex-col">
             <h4 class="font-bold">Criteria</h4>
-            <div class="bg-white rounded-lg shadow-lg px-8 py-4 mt-4">
+            <div class="bg-white rounded-lg shadow-lg px-4 md:px-8 py-4 mt-4">
               <AppInput
                 v-model="form.profession_id"
                 :type="'select'"
@@ -273,7 +273,7 @@
           </div>
           <div class="flex flex-col">
             <h4 class="font-bold mt-4">Duration</h4>
-            <div class="bg-white rounded-lg shadow-lg px-8 py-4 mt-4">
+            <div class="bg-white rounded-lg shadow-lg px-4 md:px-8 py-4 mt-4">
               <div class="flex flex-row flex-wrap justify-between">
                 <div class="px-1 w-full md:w-1/2">
                   <AppDate

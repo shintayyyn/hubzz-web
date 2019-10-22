@@ -4,7 +4,7 @@
     <template
       v-if="['text','time','email','password', 'select', 'textarea', 'multi-checkbox', 'number'].includes(type)"
     >
-      <div class="flex flex-col py-2 mb-6">
+      <div class="flex flex-col py-2 mb-3 md:mb-6">
         <div class="relative flex flex-row flex-no-wrap justify-between">
           <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
           <div class="flex">
@@ -120,7 +120,7 @@
 
     <!-- multiemail -->
     <template v-if="type === 'multiemail'">
-      <div class="flex flex-col py-2 mb-6">
+      <div class="flex flex-col py-2 mb-3 md:mb-6">
         <div class="relative flex flex-row flex-no-wrap justify-between">
           <div class="flex flex-wrap justify-start">
             <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>

@@ -1,6 +1,6 @@
 <template>
   <div class="invoice-modal shadow-lg">
-    <div class="px-8 py-4 max-w-3xl h-screen">
+    <div class="px-4 md:px-8 py-4 max-w-5xl h-screen">
       <div class="flex flex-row flex-wrap justify-start">
         <div @click="$router.go(-1)" class="cursor-pointer">
           <svgicon name="left-arrow" height="32" width="32" />

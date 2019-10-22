@@ -8,7 +8,7 @@
       <div
         class="mx-2 text-sm sm:text-sm p-2 uppercase"
         :class="bgStatus(job.locum_status)"
-      >{{ job.locum_status }}</div>
+      >{{ $auth.user.domain === 'Locum' ? job.locum_status : job.status }}</div>
     </div>
     <div class="text-xs sm:text-sm py-3">Posted {{$moment(job.date_created).format('DD/MM/YYYY')}}</div>
     <div class="flex flex-row flex-wrap justify-start">

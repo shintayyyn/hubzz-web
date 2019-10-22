@@ -2,11 +2,11 @@
   <section class="compliance-section">
     <div class="overflow-x-auto">
       <div class="mt-5">
-        <div class="border border-r-2 border-b-2 border-gray-200 rounded-lg px-1 py-2 md:py-4 mb-5 mx-1 md:mx-0">
+        <div class="shadow-md rounded-lg bg-white px-1 py-2 md:py-4 mb-5 mx-1 md:mx-0">
           <div class="relative flex flex-row flex-wrap justify-start sm:items-center text-xs sm:text-sm md:px-4">
             <div class="w-full sm:w-1/3 px-2 md:p-1 font-bold md:font-normal text-left">GMC / NMC Number</div>
             <div class="w-full sm:w-1/3 px-2 md:p-1 md:text-center">{{gmc_or_nmc_number ? gmc_or_nmc_number.number : 'No GMC or NMC Number registered'}}</div>
-            <div class="absolute right-0 m-2 md:relative sm:m-0 sm:w-1/3 md:text-center">
+            <div class="absolute right-0 m-2 md:relative flex items-center justify-end sm:m-0 sm:w-1/3 md:text-center">
               <span
                 class="text-xs sm:text-sm text-center text-white font-bold rounded-full px-4 py-1"
                 :class="status(gmc_or_nmc_number ? gmc_or_nmc_number.status : 'No GMC or NMC Number registered')"
@@ -14,11 +14,11 @@
             </div>
           </div>
         </div>
-        <div class="border border-r-2 border-b-2 border-gray-200 rounded-lg px-1 py-2 md:py-4 mb-5 mx-1 md:mx-0">
+        <div class="shadow-md rounded-lg bg-white px-1 py-2 md:py-4 mb-5 mx-1 md:mx-0">
           <div class="relative flex flex-row flex-wrap justify-start sm:items-center text-xs sm:text-sm md:px-4">
             <div class="w-full sm:w-1/3 px-2 md:p-1 font-bold md:font-normal text-left">MPL / NPL Number</div>
             <div class="w-full sm:w-1/3 px-2 md:p-1 md:text-center">{{mpl_or_npl_number ? mpl_or_npl_number.number : 'No MPL or NPL Number registered'}}</div>
-            <div class="absolute right-0 m-2 md:relative sm:m-0 sm:w-1/3 md:text-center">
+            <div class="absolute right-0 m-2 md:relative flex items-center justify-end sm:m-0 sm:w-1/3 md:text-center">
               <span
                 class="text-xs sm:text-sm text-center text-white font-bold rounded-full px-4 py-1"
                 :class="status(mpl_or_npl_number ? mpl_or_npl_number.status : '')"
@@ -38,12 +38,12 @@
       <table>
         <thead>
           <tr class="text-xs sm:text-sm text-left">
-            <th>Type</th>
-            <th>File</th>
-            <th>Date uploaded</th>
-            <th>Expiry date</th>
-            <th>Status</th>
-            <th>Note from hubzz HQ</th>
+            <th class="pl-2">Type</th>
+            <th class="pl-2">File</th>
+            <th class="text-center">Date uploaded</th>
+            <th class="text-center">Expiry date</th>
+            <th class="text-center">Status</th>
+            <th class="text-center">Note from hubzz HQ</th>
             <th></th>
           </tr>
         </thead>
@@ -63,7 +63,7 @@
               v-if="activeLoading.includes(item.id)"
               :key="item.id"
             >
-              <td colspan="7" class="loader-message text-center text-gray-800">Uploading</td>
+              <td colspan="7" class="loader-message text-center text-gray-800 cursor-wait">Uploading</td>
             </tr>
             <tr
               v-else
@@ -92,9 +92,9 @@
               <td v-else></td>
               <td v-if="item.info && item.info.file">{{item.info.file.created_at | localDate}}</td>
               <td v-else></td>
-              <td v-if="item.info">{{item.info.expired_at | localDate}}</td>
-              <td v-else></td>
-              <td v-if="item.info">
+              <td v-if="item.info && item.info.expired_at">{{item.info.expired_at | localDate}}</td>
+              <td v-else class="text-gray-500 text-center text-sm">N/A</td>
+              <td v-if="item.info && item.info.status">
                 <div class="flex max-w-xs">
                   <div
                     class="text-xs sm:text-sm text-center text-white font-bold rounded-full px-4 py-1"
@@ -102,12 +102,11 @@
                   >{{item.info.status}}</div>
                 </div>
               </td>
-              <td v-else></td>
-
+              <td v-else class="text-gray-500 text-center  text-sm">N/A</td>
               <td
                 v-if="item && item.info && item.info.note"
-              >{{ item && item.info && item.info.note ? item.info.note : 'N/A' | StringMaxLength(15)}}</td>
-              <td v-else></td>
+              >{{ item.info.note | StringMaxLength(15)}}</td>
+              <td v-else class="text-gray-500 text-center  text-sm">N/A</td>
               <td
                 class="hover:underline"
                 v-if="!item.info"
@@ -130,7 +129,7 @@
                 class="hover:underline"
                 v-else
               >
-                <div class="flex flex-row flex-no-wrap bg-yellow-500 p-2 rounded">
+                <div class="flex flex-row flex-no-wrap justify-center bg-yellow-500 px-4 py-2 rounded cursor-pointer">
                   <input
                     type="file"
                     :ref="`${item.id}_file_mandatory_compliance`"
@@ -157,9 +156,9 @@
       <table>
         <thead>
           <tr class="text-xs sm:text-sm text-left">
-            <th>Type</th>
-            <th>File</th>
-            <th>Date uploaded</th>
+            <th class="pl-2">Type</th>
+            <th class="pl-2">File</th>
+            <th class="text-center">Date uploaded</th>
             <th></th>
           </tr>
         </thead>
@@ -178,7 +177,7 @@
               v-if="activeLoading.includes(item.id)"
               :key="item.id"
             >
-              <td colspan="7" class="loader-message text-center text-gray-800">Uploading</td>
+              <td colspan="7" class="loader-message text-center text-gray-800 cursor-wait">Uploading</td>
             </tr>
             <tr
               v-else
@@ -204,7 +203,7 @@
                 </div>
               </td>
               <td v-else></td>
-              <td v-if="item.info && item.info.file">{{item.info.file.created_at | localDate}}</td>
+              <td v-if="item.info && item.info.file" class="text-center">{{item.info.file.created_at | localDate}}</td>
               <td v-else></td>
               <td
                 @click.stop="$refs[`${item.id}_file_optional_compliance`][0].click()"
@@ -228,7 +227,7 @@
                 class="hover:underline"
                 v-else
               >
-                <div class="flex flex-row flex-no-wrap justify-center bg-yellow-500 p-2 rounded">
+                <div class="flex flex-row flex-no-wrap justify-center bg-yellow-500 lg:w-2/3 mx-auto p-2 rounded cursor-pointer">
                   <input
                     type="file"
                     :ref="`${item.id}_file_optional_compliance`"
@@ -254,9 +253,9 @@
       <table>
         <thead>
           <tr class="text-xs sm:text-sm text-left">
-            <th>Type</th>
-            <th>File</th>
-            <th>Date uploaded</th>
+            <th class="pl-2">Type</th>
+            <th class="pl-2">File</th>
+            <th class="text-center">Date uploaded</th>
             <th></th>
           </tr>
         </thead>
@@ -302,7 +301,7 @@
                 </div>
               </td>
               <td v-else></td>
-              <td v-if="item && item.file">{{item.file.created_at | localDate}}</td>
+              <td v-if="item && item.file" class="text-center">{{item.file.created_at | localDate}}</td>
               <td v-else></td>
               <td
                 @click.stop="$refs[`${item.id}_file_mandatory_training`][0].click()"
@@ -326,7 +325,7 @@
                 class="hover:underline"
                 v-else
               >
-                <div class="flex flex-row flex-no-wrap justify-center bg-yellow-500 p-2 rounded">
+                <div class="flex flex-row flex-no-wrap justify-center bg-yellow-500 lg:w-2/3 mx-auto p-2 rounded cursor-pointer">
                   <input
                     type="file"
                     :ref="`${item.id}_file_mandatory_training`"

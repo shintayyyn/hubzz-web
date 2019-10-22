@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col py-2 mb-6 leading-normal" v-on-clickaway="toggledOff">
+  <div class="flex flex-col py-2 mb-4 md:mb-6 leading-normal" v-on-clickaway="toggledOff">
     <div class="relative flex flex-row flex-no-wrap justify-between">
       <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
       <div
@@ -22,7 +22,7 @@
       />
     </div>
     <transition name="fade">
-      <div class="relative md:static z-10" v-if="modal">
+      <div class="relative md:static z-10 flex justify-center" v-if="modal">
         <div
           class="absolute border rounded-tr-lg rounded-bl-lg rounded-br-lg calendar bg-white shadow-md"
         >

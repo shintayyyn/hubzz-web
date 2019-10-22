@@ -55,6 +55,7 @@
       <div
         class="shield"
         v-if="$route.path != '/practice-billing/invoices-from-locums' || paymentModal"
+        @click="paymentModal ? paymentModal = false : $router.go(-1)"
       ></div>
     </transition>
     <nuxt-child />
@@ -107,11 +108,11 @@ export default {
         {
           name: "Issued",
           dataIndex: "issued_at",
-          class: "text-center localDate"
+          class: "text-center localDate",
         },
         {
           name: "Locum",
-          dataIndex: "locum_detail.user.personal_detail.name",
+          dataIndex: "locum_detail.user.personal_detail.first_name",
           class: "text-center"
         },
         {
@@ -175,7 +176,7 @@ export default {
         response.data && response.data.data && response.data.data.invoices
           ? response.data.data.invoices
           : [];
-
+      console.log("invoice", invoices)
       return {
         totalInvoices,
         invoices

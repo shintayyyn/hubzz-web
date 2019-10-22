@@ -108,7 +108,7 @@
           :name="'address_line_1'"
           :label="'Address line 1'"
           :error="formError.find(item => item.field === 'address_line_1')"
-          :inStyle="'background-color:#dae1e7;border-color:white'"
+          :inStyle="'background-color:#dae1e7;border-color:white;padding:16px 8px;'"
           @submit="save"
           @blur="CheckEmptyField(form.address_line_1, 'address_line_1')"
         />
@@ -117,7 +117,7 @@
           :type="'text'"
           :name="'address_line_2'"
           :label="'Address line 2 (optional)'"
-          :inStyle="'background-color:#dae1e7;border-color:white'"
+          :inStyle="'background-color:#dae1e7;border-color:white;padding:16px 8px;'"
           @submit="save"
         />
         <AppInput
@@ -126,7 +126,7 @@
           :name="'address_line_3'"
           :label="'City / Town / District'"
           :error="formError.find(item => item.field === 'address_line_3')"
-          :inStyle="'background-color:#dae1e7;border-color:white'"
+          :inStyle="'background-color:#dae1e7;border-color:white;padding:16px 8px;'"
           @submit="save"
           @blur="CheckEmptyField(form.address_line_3, 'address_line_3')"
         />

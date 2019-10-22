@@ -55,7 +55,7 @@
           <div class="px-1 w-full sm:w-1/2 md:w-1/3">
             <AppInput
               v-model="form.rate"
-              :type="'text'"
+              :type="'number'"
               :name="'rate'"
               :label="'Rate £'"
               :placeholder="''"
@@ -77,7 +77,7 @@
           <div class="flex flex-wrap items-center mt-2">
             <AppInput
               v-model="form.total_hours"
-              :type="'text'"
+              :type="'number'"
               :name="'total_hours'"
               :label="'Total hours'"
               :placeholder="''"
