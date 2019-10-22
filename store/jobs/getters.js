@@ -1,3 +1,4 @@
+import moment from 'moment';
 export default {
     // practice
     getPracticeAvailableJobs(state) {
@@ -38,10 +39,64 @@ export default {
     // locum
     // PARTS
     getLocumOngoingJobs(state) {
-        return state.locum_ongoing_job_parts
+        let jobs = []
+        state.locum_ongoing_job_parts.forEach(jobPart => {
+            let job_surgery_name = ''
+            let date_start = ''
+            let date_end = ''
+            let job_rate = ''
+            let job_rate_type = ''
+            let job_title = ''
+            let job_shift = ''
+            job_surgery_name = jobPart.job.type === 'Platform' ? jobPart.job.platform_job.practice.surgery.name : jobPart.job.private_job.private_practice.surgery.name
+            date_start = jobPart.time_start ? `${jobPart.date_start} | ${jobPart.time_start}` : jobPart.date_start
+            date_end = jobPart.time_end ? `${jobPart.date_end} | ${jobPart.time_end}` : jobPart.date_end
+            job_rate = jobPart.job.rate
+            job_rate_type = jobPart.job.locum_detail_rate_type.name
+            job_title = jobPart.job.title
+            job_shift = jobPart.job.shift.name
+            jobs.push({
+                ...jobPart,
+                job_surgery_name,
+                date_start,
+                date_end,
+                job_rate,
+                job_rate_type,
+                job_title,
+                job_shift
+            })
+        })
+        return jobs
     },
     getLocumCompletedJobs(state) {
-        return state.locum_completed_job_parts
+        let jobs = []
+        state.locum_completed_job_parts.forEach(jobPart => {
+            let job_surgery_name = ''
+            let date_start = ''
+            let date_end = ''
+            let job_rate = ''
+            let job_rate_type = ''
+            let job_title = ''
+            let job_shift = ''
+            job_surgery_name = jobPart.job.type === 'Platform' ? jobPart.job.platform_job.practice.surgery.name : jobPart.job.private_job.private_practice.surgery.name
+            date_start = jobPart.time_start ? `${jobPart.date_start} | ${jobPart.time_start}` : jobPart.date_start
+            date_end = jobPart.time_end ? `${jobPart.date_end} | ${jobPart.time_end}` : jobPart.date_end
+            job_rate = jobPart.job.rate
+            job_rate_type = jobPart.job.locum_detail_rate_type.name
+            job_title = jobPart.job.title
+            job_shift = jobPart.job.shift.name
+            jobs.push({
+                ...jobPart,
+                job_surgery_name,
+                date_start,
+                date_end,
+                job_rate,
+                job_rate_type,
+                job_title,
+                job_shift
+            })
+        })
+        return jobs
     },
     getLocumApprovedJobs(state) {
         return state.locum_approved_job_parts

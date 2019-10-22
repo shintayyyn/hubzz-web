@@ -630,14 +630,6 @@ export default {
       this.CheckEmptyField(value, "clinical_system_id");
     },
 
-    "form.spoken_language_id"(value) {
-      this.CheckEmptyField(value, "spoken_language_id");
-    },
-
-    "form.compliance_document_id"(value) {
-      this.CheckEmptyField(value, "compliance_document_id");
-    },
-
     "form.unpaid_breaks_in_minutes"(value) {
       this.CheckEmptyField(value, "unpaid_breaks_in_minutes");
     },
@@ -742,22 +734,16 @@ export default {
         "extra_information",
         "is_another_doctor",
         "is_nurse_available",
-        "duration_for_each_appointment",
+        // "duration_for_each_appointment",
         "opportunity_for_catch_up_slots",
-        "session_requirements",
+        // "session_requirements",
         "spoken_language_id",
         "ir35",
         "mandatory_training_id",
         "include_saturday",
-        "include_sunday"
+        "include_sunday",
+        "compliance_document_id"
       ];
-
-      if (this.compliances.length) {
-        notRequired.push("compliance_document_id");
-      }
-      if (this.mandatory_training_lists.length) {
-        notRequired.push("mandatory_training_id");
-      }
 
       if (["15", "30", "60", false, "false"].includes(this.unpaid_breaks)) {
         notRequired.push("unpaid_breaks_in_minutes");
@@ -780,8 +766,9 @@ export default {
       ) {
         notRequired.push("favorite_only_until");
       }
-      console.log(this.form);
+      // console.log(this.form);
       this.Validate(this.form, notRequired);
+      console.log(this.formError.map(item => item.field));
       if (!this.formError.length) {
         this.selectedClinicalSystem = [...this.form.clinical_system_id];
         this.form.clinical_system_id = this.form.clinical_system_id.map(

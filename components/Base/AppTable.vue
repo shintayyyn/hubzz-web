@@ -29,12 +29,8 @@
           </tr>
         </thead>
         <tbody>
-          <template v-for="(item, index) in items">
-            <tr
-              @click="$emit('show', item)"
-              :key="item.id"
-              class="cursor-pointer text-xs"
-            >
+          <template v-for="(item) in items">
+            <tr @click="$emit('show', item)" :key="item.id" class="cursor-pointer text-xs">
               <td
                 v-for="(column, index) in columns"
                 :key="index"
@@ -50,7 +46,7 @@
                     <div
                       v-for="(item, index) in dataCell(item, column)"
                       :key="`${item}-${index}`"
-                       class="truncate"
+                      class="truncate"
                     >{{item}}</div>
                   </div>
                   <div class="truncate" v-else>{{dataCell(item, column)}}</div>
@@ -128,6 +124,7 @@ export default {
   },
   methods: {
     sort(dataIndex) {
+      console.log(dataIndex);
       if (!this.params.some(item => item.includes(`${dataIndex}`))) {
         this.params.push(`${dataIndex}:desc`);
       } else {
@@ -244,7 +241,7 @@ export default {
 };
 </script>
 <style scoped>
-table{
+table {
   border-collapse: separate;
   border-spacing: 0 10px;
 }
@@ -252,22 +249,24 @@ table tbody tr {
   /* background-color: #fff;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); */
 }
-table tbody tr:hover td{
+table tbody tr:hover td {
   background-color: #eee;
 }
 
-table tbody td, table thead th {
+table tbody td,
+table thead th {
   background-color: #fff;
   padding: 15px 8px;
 }
 
-@media screen and (max-width: 480px){
-  table tbody td:first-child, table thead th:first-child {
-  position: sticky;
-  background-color: #fff;
-  left: 0;
-  box-shadow: none;
-}
+@media screen and (max-width: 480px) {
+  table tbody td:first-child,
+  table thead th:first-child {
+    position: sticky;
+    background-color: #fff;
+    left: 0;
+    box-shadow: none;
+  }
 }
 /* table thead th {
   padding: 10px;
@@ -277,8 +276,8 @@ table tbody td {
 } 
  #data-cell {
   white-space: nowrap; */
-  /* overflow: hidden; */
-  /* text-overflow: ellipsis;
+/* overflow: hidden; */
+/* text-overflow: ellipsis;
 }
 .ellipsis {
   position: relative;
