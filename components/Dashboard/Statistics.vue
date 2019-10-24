@@ -45,22 +45,22 @@ export default {
         this.statistics.push({
           label: "Available jobs",
           value: responses[0].data.count,
-          route: "/jobs/available"
+          route: "/jobs?status=Available"
         }),
           this.statistics.push({
             label: "Allocated jobs",
             value: responses[1].data.count,
-            route: "/jobs/allocated"
+            route: "/jobs?status=Allocated"
           }),
           this.statistics.push({
             label: "Applied jobs",
             value: responses[2].data.count,
-            route: "/jobs/applied"
+            route: "/jobs?status=Applied"
           }),
           this.statistics.push({
             label: "Completed jobs",
             value: responses[3].data.count,
-            route: "/jobs/completed"
+            route: "/jobs?status=Completed"
           });
       });
     },

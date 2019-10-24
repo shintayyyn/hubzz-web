@@ -286,6 +286,21 @@ export default {
         if (!payload.countOnly) {
             console.log('job parts response', response.data.job_parts)
             payload.locum_status.forEach(jobStatus => {
+                if (jobStatus.toLowerCase() === 'allocated') {
+                    if (response.data && response.data.job_parts && response.data.job_parts.length > 0) {
+                        if (updatedJobPartIndex && updatedJobPartIndex.length === 0) {
+                            commit('SET_LOCUM_ALLOCATED_JOB_PARTS', response.data.job_parts.filter(jobPart => jobPart.locum_status.toLowerCase() === 'allocated'))
+                        }
+                        // if (updatedJobPartIndex && updatedJobPartIndex.length > 0) {
+                        //     response.data.job_parts.filter(jobPart => jobPart.locum_status.toLowerCase() === 'allocated').forEach((jobPart, index) => {
+                        //         commit('UPDATE_LOCUM_ALLOCATED_JOB_PART', { payload: jobPart, payloadIndex: updatedJobPartIndex[index] })
+                        //     })
+                        // }
+                    }
+                    if (response.data && response.data.job_parts.length === 0) {
+                        commit('SET_LOCUM_ALLOCATED_JOB_PARTS', [])
+                    }
+                }
                 if (jobStatus.toLowerCase() === 'ongoing') {
                     if (response.data && response.data.job_parts && response.data.job_parts.length > 0) {
                         if (updatedJobPartIndex && updatedJobPartIndex.length === 0) {

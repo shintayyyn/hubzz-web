@@ -39,12 +39,14 @@ export default {
       job: null
     };
   },
-  methods: {},
+  mounted() {
+    console.log(this.propJob);
+  },
   computed: {
     isJobPart() {
       return (
         this.propJob.locum_status &&
-        ["ongoing", "completed", "approved"].includes(
+        ["ongoing", "completed", "approved", "allocated"].includes(
           this.propJob.locum_status.toLowerCase()
         )
       );
