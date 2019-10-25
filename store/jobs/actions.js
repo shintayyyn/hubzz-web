@@ -182,7 +182,6 @@ export default {
         const response = await this.$axios.$get(`${url}${first}${count}`, { params: payload })
 
         if (payload.id && payload.first && response.data && response.data.job) {
-            console.log('job response', response)
             if (response.data.job.locum_status.toLowerCase() === 'allocated') {
                 commit('ADD_LOCUM_ALLOCATED_JOB', response.data.job)
             }
@@ -192,7 +191,6 @@ export default {
         }
 
         if (payload.countOnly) {
-            console.log('jobs count response', response)
             payload.locum_status.forEach(jobStatus => {
                 if (jobStatus.toLowerCase() === 'allocated') {
                     commit('SET_LOCUM_ALLOCATED_JOBS_COUNT', response.data.count)
@@ -222,7 +220,6 @@ export default {
         }
 
         if (!payload.countOnly) {
-            console.log('jobs response', response)
             payload.locum_status.forEach(jobStatus => {
                 if (jobStatus.toLowerCase() === 'allocated') {
                     commit('SET_LOCUM_ALLOCATED_JOBS', response.data.jobs && response.data.jobs.length > 0 ?
@@ -269,7 +266,6 @@ export default {
         const response = await this.$axios.$get(`${url}${first}${count}`, { params: payload })
 
         if (payload.countOnly) {
-            console.log('job parts count response', response.data.count)
             payload.locum_status.forEach(jobStatus => {
                 if (jobStatus.toLowerCase() === 'ongoing') {
                     commit('SET_LOCUM_ONGOING_JOB_PARTS_COUNT', response.data.count)
@@ -284,7 +280,6 @@ export default {
         }
 
         if (!payload.countOnly) {
-            console.log('job parts response', response.data.job_parts)
             payload.locum_status.forEach(jobStatus => {
                 if (jobStatus.toLowerCase() === 'allocated') {
                     if (response.data && response.data.job_parts && response.data.job_parts.length > 0) {
@@ -352,7 +347,6 @@ export default {
 
     async fetchLocumUnavailabilities({ commit }, payload) {
         const response = await this.$axios.$get(`/api/v1/locum/unavailabilities`, { params: payload })
-        console.log('unavailabilities response', response)
         commit('SET_LOCUM_UNAVAILABILITIES', response.data.unavailabilities)
     },
 

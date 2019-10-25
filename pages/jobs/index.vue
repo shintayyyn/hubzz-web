@@ -720,7 +720,7 @@ export default {
       this.clearJobsBadge(
         this.$route.query.status ? this.$route.query.status : "Allocated"
       );
-    }, 1000);
+    }, 250);
   },
   methods: {
     clearJobsBadge(status) {
@@ -828,11 +828,10 @@ export default {
       this.jobPartParams.order_by = ["date_created:desc"];
     },
     show(item) {
-      this.$router.push(
-        `/jobs/${item.id}?status=${
-          this.$route.query.status ? this.$route.query.status : "Allocated"
-        }`
-      );
+      this.$router.push({
+        path: `/jobs/${item.id}`,
+        query: { ...this.$route.query }
+      });
     },
     onSelect(value) {
       let address_components = value.details.result.address_components;

@@ -82,10 +82,9 @@ export default {
   },
   methods: {
     close() {
-      this.$router.push({
-        path: `/jobs`,
-        query: { ...this.$route.query }
-      });
+      this.$router.push(
+        `/my-practice/applied/${this.$route.params.practiceId}/related-jobs?status=${this.jobStatus}`
+      );
     }
   }
 };
@@ -97,7 +96,7 @@ export default {
 
 @media screen and (min-width: 1200px) {
   .modal-container {
-    width: 80%;
+    width: 70%;
   }
 }
 </style>

@@ -1,6 +1,5 @@
 <template>
   <section class="relative">
-    <!-- <AppLoading :loading="loading" spinner /> -->
     <div class="overflow-x-auto">
       <table class="mx-auto">
         <thead>
@@ -245,10 +244,6 @@ table {
   border-collapse: separate;
   border-spacing: 0 10px;
 }
-table tbody tr {
-  /* background-color: #fff;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); */
-}
 table tbody tr:hover td {
   background-color: #eee;
 }
@@ -268,30 +263,4 @@ table thead th {
     box-shadow: none;
   }
 }
-/* table thead th {
-  padding: 10px;
-}
-table tbody td {
-  padding: 15px;
-} 
- #data-cell {
-  white-space: nowrap; */
-/* overflow: hidden; */
-/* text-overflow: ellipsis;
-}
-.ellipsis {
-  position: relative;
-}
-.ellipsis:before {
-  content: "&nbsp;";
-  visibility: hidden;
-}
-.ellipsis span {
-  position: absolute;
-  left: 0;
-  right: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-} */
 </style>

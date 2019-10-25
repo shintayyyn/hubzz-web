@@ -49,15 +49,15 @@ export default {
 
       if (
         query &&
-        query.status &&
+        query.job_status &&
         ["ongoing", "completed", "approved"].includes(
-          query.status.toLowerCase()
+          query.job_status.toLowerCase()
         )
       ) {
         url = `/api/v1/locum/job-parts`;
       }
 
-      let response = await app.$axios.get(`${url}/${params.id}`);
+      let response = await app.$axios.get(`${url}/${params.jobId}`);
 
       if (response.data.data.job) {
         let job = response.data.data.job;
@@ -83,7 +83,7 @@ export default {
   methods: {
     close() {
       this.$router.push({
-        path: `/jobs`,
+        path: `/my-practice/${this.$route.params.practiceId}/related-jobs`,
         query: { ...this.$route.query }
       });
     }
@@ -97,7 +97,7 @@ export default {
 
 @media screen and (min-width: 1200px) {
   .modal-container {
-    width: 80%;
+    width: 70%;
   }
 }
 </style>

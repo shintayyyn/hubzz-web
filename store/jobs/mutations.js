@@ -185,11 +185,9 @@ export default {
     // LOCUM
     // JOB PARTS
     SET_LOCUM_ALLOCATED_JOB_PARTS_COUNT(state, payload) {
-        console.log('allocated parts count', payload)
         state.locum_allocated_job_parts_count = payload
     },
     SET_LOCUM_ALLOCATED_JOB_PARTS(state, payload) {
-        console.log('allocated parts', payload)
         state.locum_allocated_job_parts = payload
     },
     REMOVE_LOCUM_ALLOCATED_JOB_PART(state, payload) {
@@ -206,16 +204,13 @@ export default {
         state.locum_new_allocated_job_parts_count = state.locum_new_allocated_job_parts_count + 1
     },
     CLEAR_LOCUM_ALLOCATED_BADGE(state) {
-        console.log('clear allocated parts badge')
         state.locum_new_allocated_job_parts_count = 0
     },
 
     SET_LOCUM_ONGOING_JOB_PARTS_COUNT(state, payload) {
-        console.log('ongoing count', payload)
         state.locum_ongoing_job_parts_count = payload
     },
     SET_LOCUM_ONGOING_JOB_PARTS(state, payload) {
-        console.log('ongoing', payload)
         state.locum_ongoing_job_parts = payload
     },
     REMOVE_LOCUM_ONGOING_JOB_PART(state, payload) {
@@ -232,16 +227,13 @@ export default {
         state.locum_new_ongoing_job_parts_count = state.locum_new_ongoing_job_parts_count + 1
     },
     CLEAR_LOCUM_ONGOING_BADGE(state) {
-        console.log('clear ongoing badge')
         state.locum_new_ongoing_job_parts_count = 0
     },
 
     SET_LOCUM_COMPLETED_JOB_PARTS_COUNT(state, payload) {
-        console.log('completed count', payload)
         state.locum_completed_job_parts_count = payload
     },
     SET_LOCUM_COMPLETED_JOB_PARTS(state, payload) {
-        console.log('completed', payload)
         state.locum_completed_job_parts = payload
     },
     REMOVE_LOCUM_COMPLETED_JOB_PART(state, payload) {
@@ -262,11 +254,9 @@ export default {
     },
 
     SET_LOCUM_APPROVED_JOB_PARTS_COUNT(state, payload) {
-        console.log('approved count', payload)
         state.locum_approved_job_parts_count = payload
     },
     SET_LOCUM_APPROVED_JOB_PARTS(state, payload) {
-        console.log('approved', payload)
         state.locum_approved_job_parts = payload
     },
     REMOVE_LOCUM_APPROVED_JOB_PART(state, payload) {
@@ -288,11 +278,9 @@ export default {
 
     // WHOLE JOBS
     SET_LOCUM_ALLOCATED_JOBS(state, payload) {
-        console.log('allocated', payload)
         state.locum_allocated_jobs = payload
     },
     SET_LOCUM_ALLOCATED_JOBS_COUNT(state, payload) {
-        console.log('allocated count', payload)
         state.locum_allocated_jobs_count = payload
     },
     ADD_LOCUM_ALLOCATED_JOB(state, payload) {
@@ -316,16 +304,13 @@ export default {
         state.locum_new_allocated_jobs_count = state.locum_new_allocated_jobs_count + 1
     },
     CLEAR_LOCUM_ALLOCATED_BADGE(state) {
-        console.log('clear allocated badge')
         state.locum_new_allocated_jobs_count = 0
     },
 
     SET_LOCUM_APPLIED_JOBS(state, payload) {
-        console.log('applied', payload)
         state.locum_applied_jobs = payload
     },
     SET_LOCUM_APPLIED_JOBS_COUNT(state, payload) {
-        console.log('applied count', payload)
         state.locum_applied_jobs_count = payload
     },
     ADD_LOCUM_APPLIED_JOB(state, payload) {
@@ -346,11 +331,9 @@ export default {
     },
 
     SET_LOCUM_AVAILABLE_JOBS(state, payload) {
-        console.log('available', payload)
         state.locum_available_jobs = payload
     },
     SET_LOCUM_AVAILABLE_JOBS_COUNT(state, payload) {
-        console.log('available count', payload)
         state.locum_available_jobs_count = payload
     },
     ADD_LOCUM_AVAILABLE_JOB(state, payload) {
@@ -371,11 +354,9 @@ export default {
     },
 
     SET_LOCUM_MATCHED_JOBS(state, payload) {
-        console.log('matched', payload)
         state.locum_matched_jobs = payload
     },
     SET_LOCUM_MATCHED_JOBS_COUNT(state, payload) {
-        console.log('matched count', payload)
         state.locum_matched_jobs_count = payload
     },
     ADD_LOCUM_MATCHED_JOB(state, payload) {
@@ -396,11 +377,9 @@ export default {
     },
 
     SET_LOCUM_UNSUCCESSFUL_JOBS(state, payload) {
-        console.log('unsuccessful', payload)
         state.locum_unsuccessful_jobs = payload
     },
     SET_LOCUM_UNSUCCESSFUL_JOBS_COUNT(state, payload) {
-        console.log('unsuccessful count', payload)
         state.locum_unsuccessful_jobs_count = payload
     },
     ADD_LOCUM_UNSUCCESSFUL_JOB(state, payload) {
@@ -421,11 +400,9 @@ export default {
     },
 
     SET_LOCUM_DECLINED_JOBS(state, payload) {
-        console.log('declined', payload)
         state.locum_declined_jobs = payload
     },
     SET_LOCUM_DECLINED_JOBS_COUNT(state, payload) {
-        console.log('declined count', payload)
         state.locum_declined_jobs_count = payload
     },
     ADD_LOCUM_DECLINED_JOB(state, payload) {
@@ -448,11 +425,9 @@ export default {
     },
 
     SET_LOCUM_CANCELLED_JOBS(state, payload) {
-        console.log('cancelled', payload)
         state.locum_cancelled_jobs = payload
     },
     SET_LOCUM_CANCELLED_JOBS_COUNT(state, payload) {
-        console.log('cancelled count', payload)
         state.locum_cancelled_jobs_count = payload
     },
     ADD_LOCUM_CANCELLED_JOB(state, payload) {
@@ -473,11 +448,9 @@ export default {
     },
 
     SET_LOCUM_WITHDRAWN_JOBS(state, payload) {
-        console.log('withdrawn', payload)
         state.locum_withdrawn_jobs = payload
     },
     SET_LOCUM_WITHDRAWN_JOBS_COUNT(state, payload) {
-        console.log('withdrawn count', payload)
         state.locum_withdrawn_jobs_count = payload
     },
     ADD_LOCUM_WITHDRAWN_BADGE(state) {
@@ -488,7 +461,6 @@ export default {
     },
 
     SET_LOCUM_UNAVAILABILITIES(state, payload) {
-        console.log('unavailabilities', payload)
         state.locum_unavailabilities = payload
     },
     SET_LOCUM_UNAVAILABILITIES_COUNT(state, payload) {
