@@ -182,7 +182,6 @@ export default {
         const response = await this.$axios.$get(`${url}${first}${count}`, { params: payload })
 
         if (payload.id && payload.first && response.data && response.data.job) {
-            console.log('job response', response)
             if (response.data.job.locum_status.toLowerCase() === 'allocated') {
                 commit('ADD_LOCUM_ALLOCATED_JOB', response.data.job)
             }
@@ -191,8 +190,7 @@ export default {
             }
         }
 
-        if (response.data && response.data.count) {
-            console.log('jobs count response', response)
+        if (payload.countOnly) {
             payload.locum_status.forEach(jobStatus => {
                 if (jobStatus.toLowerCase() === 'allocated') {
                     commit('SET_LOCUM_ALLOCATED_JOBS_COUNT', response.data.count)
@@ -203,7 +201,7 @@ export default {
                 if (jobStatus.toLowerCase() === 'available') {
                     commit('SET_LOCUM_AVAILABLE_JOBS_COUNT', response.data.count)
                 }
-                if (jobStatus.toLowerCase() === 'matched' && !payload.locum_status.toLowerCase().includes('available')) {
+                if (jobStatus.toLowerCase() === 'matched' && !payload.locum_status.map(locumStatus => locumStatus.toLowerCase()).includes('available')) {
                     commit('SET_LOCUM_MATCHED_JOBS_COUNT', response.data.count)
                 }
                 if (jobStatus.toLowerCase() === 'unsuccessful') {
@@ -221,32 +219,39 @@ export default {
             })
         }
 
-        if (response.data && response.data.jobs && response.data.jobs.length > 0) {
-            console.log('jobs response', response)
+        if (!payload.countOnly) {
             payload.locum_status.forEach(jobStatus => {
                 if (jobStatus.toLowerCase() === 'allocated') {
-                    commit('SET_LOCUM_ALLOCATED_JOBS', response.data.jobs.filter(jobPart => jobPart.locum_status.toLowerCase() === 'allocated'))
+                    commit('SET_LOCUM_ALLOCATED_JOBS', response.data.jobs && response.data.jobs.length > 0 ?
+                        response.data.jobs.filter(jobPart => jobPart.locum_status.toLowerCase() === 'allocated') : [])
                 }
                 if (jobStatus.toLowerCase() === 'applied') {
-                    commit('SET_LOCUM_APPLIED_JOBS', response.data.jobs.filter(jobPart => jobPart.locum_status.toLowerCase() === 'applied'))
+                    commit('SET_LOCUM_APPLIED_JOBS', response.data.jobs && response.data.jobs.length > 0 ?
+                        response.data.jobs.filter(jobPart => jobPart.locum_status.toLowerCase() === 'applied') : [])
                 }
                 if (jobStatus.toLowerCase() === 'available') {
-                    commit('SET_LOCUM_AVAILABLE_JOBS', response.data.jobs.filter(jobPart => ['available', 'matched'].includes(jobPart.locum_status.toLowerCase())))
+                    commit('SET_LOCUM_AVAILABLE_JOBS', response.data.jobs && response.data.jobs.length > 0 ?
+                        response.data.jobs.filter(jobPart => ['available', 'matched'].includes(jobPart.locum_status.toLowerCase())) : [])
                 }
                 if (jobStatus.toLowerCase() === 'matched') {
-                    commit('SET_LOCUM_MATCHED_JOBS', response.data.jobs.filter(jobPart => jobPart.locum_status.toLowerCase() === 'matched'))
+                    commit('SET_LOCUM_MATCHED_JOBS', response.data.jobs && response.data.jobs.length > 0 ?
+                        response.data.jobs.filter(jobPart => jobPart.locum_status.toLowerCase() === 'matched') : [])
                 }
                 if (jobStatus.toLowerCase() === 'unsuccessful') {
-                    commit('SET_LOCUM_UNSUCCESSFUL_JOBS', response.data.jobs.filter(jobPart => jobPart.locum_status.toLowerCase() === 'unsuccessful'))
+                    commit('SET_LOCUM_UNSUCCESSFUL_JOBS', response.data.jobs && response.data.jobs.length > 0 ?
+                        response.data.jobs.filter(jobPart => jobPart.locum_status.toLowerCase() === 'unsuccessful') : [])
                 }
                 if (jobStatus.toLowerCase() === 'declined') {
-                    commit('SET_LOCUM_DECLINED_JOBS', response.data.jobs.filter(jobPart => jobPart.locum_status.toLowerCase() === 'declined'))
+                    commit('SET_LOCUM_DECLINED_JOBS', response.data.jobs && response.data.jobs.length > 0 ?
+                        response.data.jobs.filter(jobPart => jobPart.locum_status.toLowerCase() === 'declined') : [])
                 }
                 if (jobStatus.toLowerCase() === 'cancelled') {
-                    commit('SET_LOCUM_CANCELLED_JOBS', response.data.jobs.filter(jobPart => jobPart.locum_status.toLowerCase() === 'cancelled'))
+                    commit('SET_LOCUM_CANCELLED_JOBS', response.data.jobs && response.data.jobs.length > 0 ?
+                        response.data.jobs.filter(jobPart => jobPart.locum_status.toLowerCase() === 'cancelled') : [])
                 }
                 if (jobStatus.toLowerCase() === 'withdrawn') {
-                    commit('SET_LOCUM_WITHDRAWN_JOBS', response.data.jobs.filter(jobPart => jobPart.locum_status.toLowerCase() === 'withdrawn'))
+                    commit('SET_LOCUM_WITHDRAWN_JOBS', response.data.jobs && response.data.jobs.length > 0 ?
+                        response.data.jobs.filter(jobPart => jobPart.locum_status.toLowerCase() === 'withdrawn') : [])
                 }
             })
         }
@@ -261,7 +266,6 @@ export default {
         const response = await this.$axios.$get(`${url}${first}${count}`, { params: payload })
 
         if (payload.countOnly) {
-            console.log('job parts count response', response.data.count)
             payload.locum_status.forEach(jobStatus => {
                 if (jobStatus.toLowerCase() === 'ongoing') {
                     commit('SET_LOCUM_ONGOING_JOB_PARTS_COUNT', response.data.count)
@@ -276,8 +280,22 @@ export default {
         }
 
         if (!payload.countOnly) {
-            console.log('job parts response', response.data.job_parts)
             payload.locum_status.forEach(jobStatus => {
+                if (jobStatus.toLowerCase() === 'allocated') {
+                    if (response.data && response.data.job_parts && response.data.job_parts.length > 0) {
+                        if (updatedJobPartIndex && updatedJobPartIndex.length === 0) {
+                            commit('SET_LOCUM_ALLOCATED_JOB_PARTS', response.data.job_parts.filter(jobPart => jobPart.locum_status.toLowerCase() === 'allocated'))
+                        }
+                        // if (updatedJobPartIndex && updatedJobPartIndex.length > 0) {
+                        //     response.data.job_parts.filter(jobPart => jobPart.locum_status.toLowerCase() === 'allocated').forEach((jobPart, index) => {
+                        //         commit('UPDATE_LOCUM_ALLOCATED_JOB_PART', { payload: jobPart, payloadIndex: updatedJobPartIndex[index] })
+                        //     })
+                        // }
+                    }
+                    if (response.data && response.data.job_parts.length === 0) {
+                        commit('SET_LOCUM_ALLOCATED_JOB_PARTS', [])
+                    }
+                }
                 if (jobStatus.toLowerCase() === 'ongoing') {
                     if (response.data && response.data.job_parts && response.data.job_parts.length > 0) {
                         if (updatedJobPartIndex && updatedJobPartIndex.length === 0) {
@@ -329,7 +347,6 @@ export default {
 
     async fetchLocumUnavailabilities({ commit }, payload) {
         const response = await this.$axios.$get(`/api/v1/locum/unavailabilities`, { params: payload })
-        console.log('unavailabilities response', response)
         commit('SET_LOCUM_UNAVAILABILITIES', response.data.unavailabilities)
     },
 

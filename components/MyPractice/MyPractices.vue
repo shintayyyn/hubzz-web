@@ -27,18 +27,12 @@
           </template>
         </div>
 
-        <div
+        <nuxt-link
           class="flex flex-wrap text-center mt-4 cursor-pointer"
-          @click="$emit('show', practice.id)"
+          :to="{ path: `/my-practice/${practice.id}`, query: {...$route.query}}"
         >
           <div class="w-full flex justify-center">
-            <div class="relative flex justify-center">
-              <AppAvatar
-                :height="'150px'"
-                :width="'150px'"
-                :src="practice.user && practice.user.avatar && practice.user.avatar.file && practice.user.avatar.file.url ? practice.user.avatar.file.url : ''"
-              />
-            </div>
+            <div class="relative flex justify-center"></div>
           </div>
 
           <div
@@ -47,7 +41,7 @@
           <div
             class="w-full mb-4 font-bold text-gray-700 text-xs leading-tight"
           >{{practice.surgery.address.line_1}} {{practice.surgery.address.line_2}} {{practice.surgery.address.line_3}} {{practice.surgery.address.post_code}}</div>
-        </div>
+        </nuxt-link>
       </div>
     </div>
   </div>

@@ -106,6 +106,19 @@
     </div>
     <div class="relative">
       <nuxt-link
+        :to="`/my-practice/${practiceType}/${$route.params.practiceId}/related-jobs/withdrawn`"
+        class="mr-5 p-3 text-sm font-bold cursor-pointer"
+        :class="$route.name.includes(`my-practice-${practiceType}-practiceId-related-jobs-withdrawn`) ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+      >Withdrawn</nuxt-link>
+      <transition name="fade">
+        <div
+          v-if="$store.state.jobs.practice_new_withdrawn_jobs_count > 0"
+          class="rounded-lg bg-red-600 text-white text-xs font-bold py-1 px-2 absolute right-0 top-0"
+        >{{$store.state.jobs.practice_new_withdrawn_jobs_count}}</div>
+      </transition>
+    </div>
+    <div class="relative">
+      <nuxt-link
         :to="`/my-practice/${practiceType}/${$route.params.practiceId}/related-jobs/completed`"
         class="mr-5 p-3 text-sm font-bold cursor-pointer"
         :class="$route.name.includes(`my-practice-${practiceType}-practiceId-related-jobs-completed`) ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"

@@ -308,8 +308,8 @@
         <transition name="fade" mode="out-in">
           <div
             class="shield"
-            v-if="$route.name === 'my-practice-applied-practiceId-related-jobs-index-id'"
-            @click="$router.push(`/my-practice/applied/${$route.params.practiceId}/related-jobs?status=${$route.query.status ? $route.query.status : 'Allocated'}`)"
+            v-if="$route.name === `my-practice-index-practiceId-index-related-jobs-index-jobId`"
+            @click="$router.push({ path: `/my-practice/${$route.params.practiceId}/related-jobs/`, query: {...$route.query}})"
           ></div>
         </transition>
         <div>
@@ -331,11 +331,7 @@ import AppButton from "@/components/Base/AppButton";
 import AppLoading from "@/components/Base/AppLoading";
 import { mapGetters } from "vuex";
 export default {
-  props: ["shifts", "rates", "invoiceStatusList", "practiceTypeList"],
-  transition: {
-    name: "fade",
-    mode: "out-in"
-  },
+  props: ["invoiceStatusList", "practiceTypeList", "shifts", "rates"],
   components: {
     AppTable,
     AppInput,
@@ -348,7 +344,7 @@ export default {
   },
   middleware({ query, redirect, error }) {
     if (
-      query.status &&
+      query.job_status &&
       ![
         "allocated",
         "ongoing",
@@ -361,7 +357,7 @@ export default {
         "withdrawn",
         "completed",
         "approved"
-      ].includes(query.status.toLowerCase())
+      ].includes(query.job_status.toLowerCase())
     ) {
       return error({ status: 404, message: "This Job Status is Invalid" });
     }
@@ -430,26 +426,26 @@ export default {
     }),
     isJobPart() {
       if (
-        !this.$route.query.status ||
-        (this.$route.query.status &&
+        !this.$route.query.job_status ||
+        (this.$route.query.job_status &&
           !["ongoing", "completed", "approved"].includes(
-            this.$route.query.status.toLowerCase()
+            this.$route.query.job_status.toLowerCase()
           ))
       ) {
         return false;
       }
       if (
-        this.$route.query.status &&
+        this.$route.query.job_status &&
         ["ongoing", "completed", "approved"].includes(
-          this.$route.query.status.toLowerCase()
+          this.$route.query.job_status.toLowerCase()
         )
       ) {
         return true;
       }
     },
     total() {
-      if (this.$route.query.status) {
-        switch (this.$route.query.status.toLowerCase()) {
+      if (this.$route.query.job_status) {
+        switch (this.$route.query.job_status.toLowerCase()) {
           // parts
           case "ongoing":
             return this.$store.state.jobs.locum_ongoing_job_parts_count;
@@ -482,8 +478,8 @@ export default {
       }
     },
     jobs() {
-      if (this.$route.query.status) {
-        switch (this.$route.query.status.toLowerCase()) {
+      if (this.$route.query.job_status) {
+        switch (this.$route.query.job_status.toLowerCase()) {
           // parts
           case "ongoing":
             return this.getLocumOngoingJobs;
@@ -514,22 +510,22 @@ export default {
       }
     },
     noJobsToDisplay() {
-      if (this.$route.query.status) {
-        switch (this.$route.query.status.toLowerCase()) {
+      if (this.$route.query.job_status) {
+        switch (this.$route.query.job_status.toLowerCase()) {
           case "allocated":
           case "ongoing":
           case "declined":
           case "cancelled":
           case "withdrawn":
           case "approved":
-            return `You do not have any ${this.$route.query.status.toLowerCase()} jobs`;
+            return `You do not have any ${this.$route.query.job_status.toLowerCase()} jobs`;
           case "available":
           case "matched":
-            return `There are no ${this.$route.query.status.toLowerCase()} jobs nearby and suited for you at this time`;
+            return `There are no ${this.$route.query.job_status.toLowerCase()} jobs nearby and suited for you at this time`;
           case "applied":
           case "unsuccessful":
             return `You have not yet ${
-              this.$route.query.status.toLowerCase() === "applied"
+              this.$route.query.job_status.toLowerCase() === "applied"
                 ? "applied"
                 : "rejected"
             } for a job`;
@@ -548,9 +544,9 @@ export default {
     dispatchUrl() {
       let url = "jobs/fetchLocumJobs";
       if (
-        this.$route.query.status &&
+        this.$route.query.job_status &&
         ["ongoing", "completed", "approved"].includes(
-          this.$route.query.status.toLowerCase()
+          this.$route.query.job_status.toLowerCase()
         )
       ) {
         url = "jobs/fetchLocumJobParts";
@@ -559,8 +555,8 @@ export default {
     },
     columns() {
       let columns = [];
-      let queryStatus = this.$route.query.status
-        ? this.$route.query.status.toLowerCase()
+      let queryStatus = this.$route.query.job_status
+        ? this.$route.query.job_status.toLowerCase()
         : "allocated";
       if (["ongoing", "completed", "approved"].includes(queryStatus)) {
         columns.push(
@@ -707,8 +703,7 @@ export default {
     }
   },
   watch: {
-    "$route.query"({ status: newStatus }, { status: oldStatus }) {
-      console.log("route changed child", newStatus);
+    "$route.query"({ job_status: newStatus }, { job_status: oldStatus }) {
       if (newStatus && newStatus !== null && newStatus !== oldStatus) {
         this.toggleTable = false;
         setTimeout(() => {
@@ -720,11 +715,12 @@ export default {
     }
   },
   created() {
-    console.log("created", this.$route.query);
     this.getJobsCount(this.isJobPart ? this.jobPartParams : this.params);
     setTimeout(() => {
       this.clearJobsBadge(
-        this.$route.query.status ? this.$route.query.status : "Allocated"
+        this.$route.query.job_status
+          ? this.$route.query.job_status
+          : "Allocated"
       );
     }, 250);
   },
@@ -741,8 +737,8 @@ export default {
       this.params.offset = 0;
       this.jobPartParams.offset = 0;
       this.$store.commit("jobs/TOGGLE_LOADING", true);
-      let jobStatus = this.$route.query.status
-        ? this.$route.query.status.toUpperCase()
+      let jobStatus = this.$route.query.job_status
+        ? this.$route.query.job_status.toUpperCase()
         : "ALLOCATED";
       if (["ONGOING", "COMPLETED", "APPROVED"].includes(jobStatus)) {
         this.$store.commit(`jobs/SET_LOCUM_${jobStatus}_JOB_PARTS`, []);
@@ -758,7 +754,9 @@ export default {
         .dispatch(`${this.dispatchUrl}`, {
           locum_status: [
             `${
-              this.$route.query.status ? this.$route.query.status : "Allocated"
+              this.$route.query.job_status
+                ? this.$route.query.job_status
+                : "Allocated"
             }`
           ],
           countOnly: true,
@@ -774,7 +772,9 @@ export default {
         .dispatch(`${this.dispatchUrl}`, {
           locum_status: [
             `${
-              this.$route.query.status ? this.$route.query.status : "Allocated"
+              this.$route.query.job_status
+                ? this.$route.query.job_status
+                : "Allocated"
             }`
           ],
           ...params
@@ -834,13 +834,10 @@ export default {
       this.jobPartParams.order_by = ["date_created:desc"];
     },
     show(item) {
-      this.$router.push(
-        `/my-practice/applied/${this.$route.params.practiceId}/related-jobs/${
-          item.id
-        }?status=${
-          this.$route.query.status ? this.$route.query.status : "Allocated"
-        }`
-      );
+      this.$router.push({
+        path: `/my-practice/${this.$route.params.practiceId}/related-jobs/${item.id}`,
+        query: { ...this.$route.query }
+      });
     },
     onSelect(value) {
       let address_components = value.details.result.address_components;
@@ -860,3 +857,4 @@ export default {
   }
 };
 </script>
+

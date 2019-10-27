@@ -1,6 +1,5 @@
 <template>
   <section class="relative">
-    <!-- <AppLoading :loading="loading" spinner /> -->
     <div class="overflow-x-auto">
       <table class="mx-auto">
         <thead>
@@ -132,8 +131,8 @@ export default {
   },
   methods: {
     sort(dataIndex) {
-      console.log(dataIndex);
       if (!this.params.some(item => item.includes(`${dataIndex}`))) {
+        this.params = [];
         this.params.push(`${dataIndex}:desc`);
       } else {
         let index = this.params.findIndex(item => item === `${dataIndex}:desc`);

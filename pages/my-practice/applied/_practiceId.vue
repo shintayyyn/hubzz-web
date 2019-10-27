@@ -1,9 +1,9 @@
 <template>
   <div class="modal-container shadow-lg">
     <div class="p-4 md:p-8">
-      <div @click="$router.push(`/my-practice/applied`)" class="cursor-pointer">
+      <nuxt-link to="/my-practice/applied" class="cursor-pointer">
         <svgicon name="left-arrow" height="32" width="32" />
-      </div>
+      </nuxt-link>
       <div class="flex flex-row justify-start mt-8">
         <MyPracticeTabs :practiceType="'applied'" />
       </div>
