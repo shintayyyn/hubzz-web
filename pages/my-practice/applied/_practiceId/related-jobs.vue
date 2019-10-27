@@ -1,8 +1,4 @@
 <template>
-<<<<<<< HEAD
-  <section>
-    <MyPracticeRelatedJobsTabs :practiceType="'applied'" />
-=======
   <section class="related-jobs-section">
     <div class="flex flex-row justify-start overflow-x-auto py-3">
       <div class="relative">
@@ -149,7 +145,6 @@
         </transition>
       </div>
     </div>
->>>>>>> bd3774760ffa885fc6b5a4e23900ad6e5923a21c
     <div class="mt-5">
       <nuxt-child
         :shifts="shifts"
