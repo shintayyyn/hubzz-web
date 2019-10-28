@@ -9,41 +9,29 @@
             v-for="practice in practices"
             :key="practice.id"
           >
-            <div class="h-full rounded-lg shadow-lg bg-gray-300 p-4 hover:bg-gray-400">
-              <div class="flex justify-end z-50">
-                <template v-if="practice.is_favorite">
-                  <svgicon
-                    name="on-star"
-                    height="32"
-                    width="32"
-                    class="cursor-pointer fill-current text-gray-700 hover:text-gray-800"
-                    @click="favorite(practice.id)"
-                  />
-                </template>
-                <template v-else>
-                  <svgicon
-                    name="off-star"
-                    height="32"
-                    width="32"
-                    class="cursor-pointer fill-current text-gray-700 hover:text-gray-800"
-                    @click="favorite(practice.id)"
-                  />
-                </template>
+            <div class="h-full rounded-lg shadow-lg bg-gray-300 p-4 hover:bg-gray-400" >
+              <div class="flex items-center z-50 mb-2">
+                 <nuxt-link
+                  class="w-full font-bold text-sm sm:text-lg leading-tight"
+                  :to="{ path: `/my-practice/${practice.id}`, query: {...$route.query}}"
+              >
+                {{practice.surgery.name}}
+              </nuxt-link>
+              <svgicon
+                v-model="is_favorite"
+                :name="practice.is_favorite ? 'on-star' : 'off-star'"
+                height="32"
+                width="32"
+                class="cursor-pointer fill-current text-gray-700 hover:text-gray-800"
+                @click="favorite(practice.id)"
+              />
               </div>
-
               <nuxt-link
-                class="flex flex-wrap text-center mt-4 cursor-pointer"
+                class="flex flex-wrap mt-2 cursor-pointer"
                 :to="{ path: `/my-practice/${practice.id}`, query: {...$route.query}}"
               >
-                <div class="w-full flex justify-center">
-                  <div class="relative flex justify-center"></div>
-                </div>
-
                 <div
-                  class="w-full font-bold text-sm sm:text-lg my-4 leading-tight"
-                >{{practice.surgery.name}}</div>
-                <div
-                  class="w-full mb-4 font-bold text-gray-700 text-xs leading-tight"
+                  class="w-full font-bold text-gray-700 text-xs leading-tight"
                 >{{practice.surgery.address.line_1}} {{practice.surgery.address.line_2}} {{practice.surgery.address.line_3}} {{practice.surgery.address.post_code}}</div>
               </nuxt-link>
             </div>
@@ -84,6 +72,7 @@ export default {
   },
   middleware({ query, redirect, error }) {
     if (!query.status) {
+      // api (Favorite only)
       redirect(`/my-practice?status=Favorites`);
     }
     if (
@@ -100,11 +89,12 @@ export default {
   },
   data() {
     return {
-      practice: [],
+      practices: [],
       total: 0,
       current_page: 1,
       loading: false,
-      toggleTable: false
+      toggleTable: false,
+      is_favorite: false
     };
   },
   computed: {
@@ -116,7 +106,7 @@ export default {
     },
     totalPages() {
       return Math.ceil(this.total / this.perPage);
-    }
+    },
   },
   watch: {
     "$route.query"({ status: newStatus }, { status: oldStatus }) {
@@ -124,7 +114,7 @@ export default {
         this.toggleTable = false;
         this.getPracticesCount();
       }
-    }
+    },
   },
   created() {
     this.getPracticesCount();
@@ -165,25 +155,26 @@ export default {
         this.$axios
           .$post(`/api/v1/locum/practices/${id}/favorite`)
           .then(res => {
-            practice.is_favorite = !practice.is_favorite;
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
               text: ["Added to favourites"]
             });
           });
+          this.is_favorite = true
       } else {
         this.$axios
           .$delete(`/api/v1/locum/practices/${id}/favorite`)
           .then(res => {
-            practice.is_favorite = !practice.is_favorite;
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
               text: ["Remove to favourites"]
             });
           });
+          this.is_favorite = false
       }
+      practice.is_favorite = !practice.is_favorite;
     },
     pagechanged(e) {
       this.current_page = e;

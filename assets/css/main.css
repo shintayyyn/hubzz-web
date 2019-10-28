@@ -60,6 +60,27 @@ table tbody td:last-child {
   border-bottom-right-radius: 10px;
 }
 
+table tbody td,
+table thead th {
+  background-color: #fff;
+  padding: 15px 8px;
+}
+
+.table-sticky-first,
+.table-sticky-last {
+  position: sticky;
+  background-color: #fff;
+}
+
+.table-sticky-first table tbody td:first-child,
+.table-sticky-first table thead th:first-child {
+  left: 0;
+}
+.table-sticky-last table tbody td:first-child,
+.table-sticky-last table thead th:first-child {
+  right: 0;
+}
+
 .__jobs-section {
   position: relative;
   /* min-height: 1180px; */

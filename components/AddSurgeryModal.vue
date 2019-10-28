@@ -12,7 +12,7 @@
         <svgicon name="left-arrow" height="32" width="32" />
       </div>
       <div class="flex justify-start font-bold text-sm sm:text-xl mt-8">Add Surgery</div>
-      <div class="rounded-lg shadow-lg px-8 py-4 mt-4">
+      <div class="rounded-lg shadow-lg px-4 md:px-8 py-4 mt-4">
         <AppInput
           v-model="search_text"
           :type="'text'"

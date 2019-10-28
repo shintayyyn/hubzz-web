@@ -21,6 +21,7 @@
         :perPage="params.limit"
         :columns="columns"
         :orderBy="params.order_by"
+        :sticky="'first'"
         @show="showTax"
       ></AppTable>
       <!-- <div class="overflow-x-auto overflow-y-hidden">
@@ -159,21 +160,3 @@ export default {
 };
 </script>
 <style>
-table{
-  border-collapse: separate;
-  border-spacing: 0 10px;
-}
-table tbody tr:hover td{
-  background-color: #eff3f8;
-}
-table tbody td:first-child, table thead th:first-child {
-  position: sticky;
-  background-color: #fff;
-  left: 0;
-}
-table tbody td, table thead th {
-  background-color: #fff;
-  padding: 15px 8px;
-}
-</style>
-

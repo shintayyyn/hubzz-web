@@ -173,9 +173,9 @@
         <div class="overflow-auto">
           <table class="items-table">
             <thead>
-              <tr class="bg-gray-900">
-                <th class="w-1/2 text-white text-left px-4 py-1">Description</th>
-                <th class="w-1/2 text-white text-left px-2 py-1" :colspan="type === 'Private' ? 1:2">
+              <tr>
+                <th class="bg-gray-900 w-1/2 text-white text-left px-4 py-1">Description</th>
+                <th class="bg-gray-900 w-1/2 text-white text-left px-2 py-1" :colspan="type === 'Private' ? 1:2">
                   <span class="flex justify-between items-center">
                     Total
                   </span>

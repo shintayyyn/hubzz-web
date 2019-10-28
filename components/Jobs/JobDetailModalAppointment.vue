@@ -15,7 +15,7 @@
       </div>
       <div class="flex justify-start font-bold text-sm sm:text-xl mt-8">Appointment</div>
       <AppFormError :formError="formError" v-if="formError.length > 0" id="error" />
-      <div class="rounded-lg shadow-lg px-8 py-4 mt-4">
+      <div class="rounded-lg shadow-lg px-4 md:px-8 py-4 mt-4">
         <AppInput
           v-model="form.private_practice_id"
           :type="'select'"

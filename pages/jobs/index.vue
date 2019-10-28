@@ -4,15 +4,14 @@
       <div v-if="toggleTable">
         <AppLoading :loading="loadingJobs" spinner />
         <AppButton
-          class="relative md:hidden"
           :label="'Filter'"
           @click="showFilter()"
-          :inStyle="'padding:5px 14px;margin-bottom:5px; font-size:14px;'"
+          :inStyle="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
         />
         <div
           v-if="!isJobPart"
-          class="md:relative md:flex flex-wrap justify-start items-center"
-          :class="filterToggle ? 'z-10 absolute w-full bg-white shadow-md p-3' : 'hidden'"
+          class="flex-wrap justify-start items-center z-10 absolute w-full bg-white shadow-lg p-3 rounded-lg"
+          :class="filterToggle ? 'flex' : 'hidden'"
         >
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
@@ -145,8 +144,8 @@
         </div>
         <div
           v-if="isJobPart"
-          class="md:relative md:flex flex-wrap justify-start items-center"
-          :class="filterToggle ? 'z-10 absolute w-full bg-white shadow-md p-3' : 'hidden'"
+          class="flex-wrap justify-start items-center z-10 absolute w-full bg-white shadow-lg p-3 rounded-lg"
+          :class="filterToggle ? 'flex' : 'hidden'"
         >
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
@@ -296,6 +295,7 @@
           :columns="columns"
           :orderBy="isJobPart ? jobPartParams.order_by :params.order_by"
           :loading="loadingJobs"
+          :sticky="'first'"
           @show="show"
           @pagechanged="pagechanged"
           @limitchanged="limitchanged"
@@ -706,6 +706,7 @@ export default {
     "$route.query"({ status: newStatus }, { status: oldStatus }) {
       if (newStatus && newStatus !== null && newStatus !== oldStatus) {
         this.toggleTable = false;
+        this.filterToggle = false;
         setTimeout(() => {
           this.clearJobsBadge(newStatus);
           this.clearFilters();
@@ -745,6 +746,7 @@ export default {
         this.$store.commit(`jobs/SET_LOCUM_${jobStatus}_JOBS`, []);
       }
       this.getJobs(this.isJobPart ? this.jobPartParams : this.params);
+      this.filterToggle = false;
     },
     getJobsCount(params) {
       this.$store.commit("jobs/TOGGLE_LOADING", true);
@@ -826,6 +828,7 @@ export default {
       this.jobPartParams.time_end = "";
       this.params.order_by = ["date_created:desc"];
       this.jobPartParams.order_by = ["date_created:desc"];
+      
     },
     show(item) {
       this.$router.push({

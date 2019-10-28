@@ -57,7 +57,8 @@ export default {
         },
         {
           label: "Title",
-          dataIndex: "title"
+          dataIndex: "title",
+          class: "text-center"
         },
         {
           label: "Shift",
