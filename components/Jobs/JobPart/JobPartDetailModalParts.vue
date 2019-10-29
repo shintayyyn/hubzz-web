@@ -38,7 +38,7 @@ export default {
         {
           name: "Job Part Number",
           dataIndex: "job_part_number",
-          class: "text-left"
+          class: "text-center"
         },
         {
           name: "Date End",
