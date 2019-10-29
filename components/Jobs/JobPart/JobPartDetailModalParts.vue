@@ -8,7 +8,7 @@
       :perPage="params.limit"
       :columns="columns"
       :loading="loading"
-      @show="show"
+      :routerLink="routerLink"
       @pagechanged="pagechanged"
       @limitchanged="limitchanged"
     />
@@ -63,24 +63,25 @@ export default {
   computed: {
     totalPages() {
       return Math.ceil(this.total / this.perPage);
+    },
+    routerLink() {
+      let url = "/jobs";
+      if (this.$route.path.includes("related-jobs")) {
+        url = `/my-practice/${this.$route.params.practiceId}/related-jobs`;
+      }
+      return url;
     }
   },
   created() {
     this.params.job_id = this.job_id;
-    this.getJobParts(this.params);
     this.$axios
       .$get(`/api/v1/locum/job-parts/count?job_id=${this.job_id}`)
       .then(res => {
         this.total = res.data.count;
+        this.getJobParts(this.params);
       });
   },
   methods: {
-    show(jobPart) {
-      let paramId = this.$route.params.id;
-      if (paramId != jobPart.id) {
-        this.$router.push(`/jobs/${jobPart.id}?status=${jobPart.status}`);
-      }
-    },
     getJobParts(params) {
       this.loading = true;
       this.$axios.$get(`/api/v1/locum/job-parts`, { params }).then(res => {
