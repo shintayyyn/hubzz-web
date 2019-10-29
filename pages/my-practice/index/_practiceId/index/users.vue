@@ -6,7 +6,7 @@
       :items="users"
       :columns="columns"
       :orderBy="params.order_by"
-      @show="show"
+      :routerLink="`/my-practice/${$route.params.practiceId}/users`"
     ></AppTable>
     <transition name="fade" mode="out-in">
       <nuxt-link
@@ -82,12 +82,12 @@ export default {
     }
   },
   methods: {
-    show(item) {
-      this.$router.push({
-        path: `/my-practice/${this.$route.params.practiceId}/users/${item.id}`,
-        query: { ...this.$route.query }
-      });
-    }
+    // show(item) {
+    //   this.$router.push({
+    //     path: `/my-practice/${this.$route.params.practiceId}/users/${item.id}`,
+    //     query: { ...this.$route.query }
+    //   });
+    // }
   }
 };
 </script>

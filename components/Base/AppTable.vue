@@ -1,7 +1,7 @@
 <template>
   <section class="relative">
-    <div class="overflow-x-auto">
-      <table class="mx-auto">
+    <!-- <div class="overflow-x-auto"> -->
+    <!-- <table class="mx-auto">
         <thead>
           <tr class="text-sm md:text-base">
             <th
@@ -35,7 +35,7 @@
                 :key="index"
                 class="truncate"
                 :class="column.class ? column.class : ''"
-                id="data-cell"
+                id="app-cell"
               >
                 <div
                   v-if="column.class && column.class.includes('localDate')"
@@ -55,7 +55,59 @@
             </tr>
           </template>
         </tbody>
-      </table>
+    </table>-->
+    <!-- </div> -->
+    <div class="overflow-x-auto mt-4">
+      <div class="apptable">
+        <div class="w-full flex flex-no-wrap justify-around">
+          <div
+            v-for="(column, index) in columns"
+            :key="`${column}-${index}`"
+            class="app-cell text-sm md:text-base md:font-bold"
+          >
+            <div
+              v-if="column.sortable"
+              @click="sort(column.dataIndex)"
+              class="flex items-center justify-center cursor-pointer"
+            >
+              <div class="block whitespace-no-wrap pr-1">{{column.name}}</div>
+              <svgicon class :name="sortIcon(column.dataIndex)" height="12" width="12" />
+            </div>
+            <div v-if="!column.sortable" class="block whitespace-no-wrap">{{column.name}}</div>
+          </div>
+        </div>
+        <div
+          class="w-full __job-card rounded-lg shadow-md py-4 my-2"
+          v-for="(item) in items"
+          :key="item.id"
+        >
+          <nuxt-link :to="{ path: `${routerLink}/${item.id}`, query: {...$route.query}}">
+            <div class="flex flex-no-wrap justify-around">
+              <div
+                v-for="(column, index) in columns"
+                :key="index"
+                class="app-cell truncate text-center"
+              >
+                <div v-if="column.dataIndex !== 'actions'">
+                  <div
+                    v-if="column.class && column.class.includes('localDate')"
+                  >{{dataCell(item, column) | localDate}}</div>
+                  <template v-else>
+                    <div v-if="Array.isArray(dataCell(item, column))">
+                      <div
+                        v-for="(item, index) in dataCell(item, column)"
+                        :key="`${item}-${index}`"
+                      >{{item}}</div>
+                    </div>
+                    <div v-else>{{dataCell(item, column)}}</div>
+                  </template>
+                </div>
+                <slot v-else name="actions" v-bind:item="item"></slot>
+              </div>
+            </div>
+          </nuxt-link>
+        </div>
+      </div>
     </div>
     <div class="bottom-0 w-full">
       <AppPagination
@@ -102,6 +154,9 @@ export default {
     orderBy: {
       type: Array,
       required: false
+    },
+    routerLink: {
+      type: String
     }
   },
   components: {
@@ -240,27 +295,23 @@ export default {
 };
 </script>
 <style scoped>
-table {
-  border-collapse: separate;
-  border-spacing: 0 10px;
-}
-table tbody tr:hover td {
-  background-color: #eee;
+.apptable {
+  min-width: 84rem;
+  max-width: 100%;
 }
 
-table tbody td,
-table thead th {
-  background-color: #fff;
-  padding: 15px 8px;
+.app-cell {
+  min-width: 150px;
+  max-width: 150px;
 }
 
-@media screen and (max-width: 480px) {
-  table tbody td:first-child,
-  table thead th:first-child {
-    position: sticky;
-    background-color: #fff;
-    left: 0;
-    box-shadow: none;
+@media screen and (min-width: 768px) {
+  .apptable {
+    min-width: 112rem;
+  }
+  .app-cell {
+    min-width: 200px;
+    max-width: 200px;
   }
 }
 </style>

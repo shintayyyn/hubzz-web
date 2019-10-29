@@ -104,7 +104,7 @@ export default {
       columns: [
         {
           name: "Type",
-          dataIndex: "type",
+          dataIndex: "type"
         },
         {
           name: "Practice / Surgery",
@@ -130,7 +130,7 @@ export default {
         },
         {
           name: "Job Numbers",
-          dataIndex: "items.job_part.job_part_number",
+          dataIndex: "items.job_part.job_part_number"
         },
         {
           name: "£ Amount",
@@ -144,6 +144,10 @@ export default {
           sortable: true,
           class: "text-center"
         },
+        {
+          name: "Actions",
+          dataIndex: "actions"
+        }
       ],
       // payment
       paymentModal: false,

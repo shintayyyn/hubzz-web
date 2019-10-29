@@ -55,16 +55,12 @@
 </template>
 <script>
 import { gmapApi } from "vue2-google-maps";
-import MyPracticeProfile from "@/components/MyPractice/MyPracticeProfile";
 export default {
   transition: {
     name: "fade",
     mode: "out-in"
   },
   props: ["practice"],
-  components: {
-    MyPracticeProfile
-  },
   computed: {
     google: gmapApi,
     latLang() {

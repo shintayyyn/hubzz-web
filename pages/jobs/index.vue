@@ -296,7 +296,7 @@
           :columns="columns"
           :orderBy="isJobPart ? jobPartParams.order_by :params.order_by"
           :loading="loadingJobs"
-          @show="show"
+          :routerLink="'/jobs'"
           @pagechanged="pagechanged"
           @limitchanged="limitchanged"
           @sorted="sorted"
@@ -306,11 +306,11 @@
           class="flex justify-center py-4"
         >{{noJobsToDisplay}}</div>
         <transition name="fade" mode="out-in">
-          <div
+          <nuxt-link
             class="shield"
             v-if="$route.name === 'jobs-index-id'"
-            @click="$router.push(`/jobs?status=${$route.query.status ? $route.query.status : 'Allocated'}`)"
-          ></div>
+            :to="{ path: `/jobs?status=${$route.query.status ? $route.query.status : 'Allocated'}`, query: {...$route.query}}"
+          ></nuxt-link>
         </transition>
         <div>
           <nuxt-child />
@@ -826,12 +826,6 @@ export default {
       this.jobPartParams.time_end = "";
       this.params.order_by = ["date_created:desc"];
       this.jobPartParams.order_by = ["date_created:desc"];
-    },
-    show(item) {
-      this.$router.push({
-        path: `/jobs/${item.id}`,
-        query: { ...this.$route.query }
-      });
     },
     onSelect(value) {
       let address_components = value.details.result.address_components;

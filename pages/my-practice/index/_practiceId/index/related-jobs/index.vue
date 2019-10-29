@@ -296,6 +296,7 @@
           :columns="columns"
           :orderBy="isJobPart ? jobPartParams.order_by :params.order_by"
           :loading="loadingJobs"
+          :routerLink="`/my-practice/${this.$route.params.practiceId}/related-jobs`"
           @show="show"
           @pagechanged="pagechanged"
           @limitchanged="limitchanged"
@@ -306,11 +307,11 @@
           class="flex justify-center py-4"
         >{{noJobsToDisplay}}</div>
         <transition name="fade" mode="out-in">
-          <div
+          <nuxt-link
             class="shield"
             v-if="$route.name === `my-practice-index-practiceId-index-related-jobs-index-jobId`"
-            @click="$router.push({ path: `/my-practice/${$route.params.practiceId}/related-jobs/`, query: {...$route.query}})"
-          ></div>
+            :to="{ path: `/my-practice/${$route.params.practiceId}/related-jobs`, query: {...$route.query}}"
+          ></nuxt-link>
         </transition>
         <div>
           <nuxt-child />
@@ -833,12 +834,12 @@ export default {
       this.params.order_by = ["date_created:desc"];
       this.jobPartParams.order_by = ["date_created:desc"];
     },
-    show(item) {
-      this.$router.push({
-        path: `/my-practice/${this.$route.params.practiceId}/related-jobs/${item.id}`,
-        query: { ...this.$route.query }
-      });
-    },
+    // show(item) {
+    //   this.$router.push({
+    //     path: `/my-practice/${this.$route.params.practiceId}/related-jobs/${item.id}`,
+    //     query: { ...this.$route.query }
+    //   });
+    // },
     onSelect(value) {
       let address_components = value.details.result.address_components;
       let postal_code = address_components.find(component =>
