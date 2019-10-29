@@ -283,7 +283,7 @@
               :label="'Close'"
               @click="showFilter"
               :inStyle="'padding:5px 14px;margin-bottom:5px'"
-            /> -->
+            />-->
           </div>
         </div>
         <AppTable
@@ -296,7 +296,6 @@
           :orderBy="isJobPart ? jobPartParams.order_by :params.order_by"
           :loading="loadingJobs"
           :routerLink="`/my-practice/${this.$route.params.practiceId}/related-jobs`"
-          @show="show"
           @pagechanged="pagechanged"
           @limitchanged="limitchanged"
           @sorted="sorted"
