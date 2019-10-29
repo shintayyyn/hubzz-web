@@ -8,7 +8,7 @@
       :perPage="params.limit"
       :columns="columns"
       :loading="loading"
-      @show="show"
+      :routerLink="routerLink"
       @pagechanged="pagechanged"
       @limitchanged="limitchanged"
     />
@@ -38,7 +38,7 @@ export default {
         {
           name: "Job Part Number",
           dataIndex: "job_part_number",
-          class: "text-left"
+          class: "text-center"
         },
         {
           name: "Date End",
@@ -63,6 +63,12 @@ export default {
   computed: {
     totalPages() {
       return Math.ceil(this.total / this.perPage);
+    },
+    routerLink() {
+      if (this.$route.path.includes('my-practice')) {
+        return `/my-practice/${this.$route.params.practiceId}/related-jobs`
+      }
+      return '/jobs'
     }
   },
   created() {
@@ -75,12 +81,6 @@ export default {
       });
   },
   methods: {
-    show(jobPart) {
-      let paramId = this.$route.params.id;
-      if (paramId != jobPart.id) {
-        this.$router.push(`/jobs/${jobPart.id}?status=${jobPart.status}`);
-      }
-    },
     getJobParts(params) {
       this.loading = true;
       this.$axios.$get(`/api/v1/locum/job-parts`, { params }).then(res => {
