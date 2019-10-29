@@ -146,6 +146,7 @@ export default {
   methods: {
     select() {
       let job = this.isJobPart ? this.propJob.job : this.propJob;
+      console.log(job, job.type)
       if (job.type) {
         this.$axios.$get(`/api/v1/locum/jobs/${job.id}`).then(res => {
           this.$emit("viewLocumJob", res.data.job);

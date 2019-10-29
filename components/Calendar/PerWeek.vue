@@ -6,7 +6,7 @@
           class="text-xs sm:text-sm"
         >{{$moment(daysInWeek[0].date).format('MMM')}} {{$moment(daysInWeek[0].date).format('YYYY')}} - {{$moment(daysInWeek[6].date).format('MMM')}} {{$moment(daysInWeek[6].date).format('YYYY')}}</div>
       </div>
-      <div class="w-1/3 py-1 flex flex-row flex-no-wrap justify-center">
+      <div class="w-1/3 py-1 px-2 flex flex-no-wrap justify-end md:justify-center items-center">
         <span class="cursor-pointer" @click="adjustWeek('previous')">
           <svgicon name="arrow-left" height="12" width="12" />
         </span>

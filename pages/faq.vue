@@ -8,7 +8,7 @@
       </div>
     </div>
     <div class="lg:px-10 mt-5">
-      <div class="rounded-lg shadow-lg pt-10 px-5 pb-5 mb-10">
+      <div class="bg-white rounded-lg shadow-lg pt-10 px-5 pb-5 mb-10">
         <div class="font-bold text-xl">FAQs</div>
         <div class="font-bold mt-4 mb-2">Locum</div>
 

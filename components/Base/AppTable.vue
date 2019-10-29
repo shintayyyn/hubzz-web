@@ -7,7 +7,9 @@
             <th
               v-for="(column, index) in columns"
               :key="index"
-              :class="(column.class && column.class.includes('text-center')) ? 'text-center' : 'text-left'"
+              :class="[(column.class && column.class.includes('text-center')) ? 'text-center' : 'text-left', 
+              (sticky && (index === 0 && sticky === 'first')) && 'sticky left-0', 
+              (sticky && (index === columns.length && sticky === 'last')) && 'sticky right-0']"
             >
               <span
                 v-if="column.sortable"
@@ -45,10 +47,10 @@
                     <div
                       v-for="(item, index) in dataCell(item, column)"
                       :key="`${item}-${index}`"
-                      class="truncate"
-                    >{{item}}</div>
+                       class="truncate"
+                    >{{ item }}</div>
                   </div>
-                  <div class="truncate" v-else>{{dataCell(item, column)}}</div>
+                  <div class="truncate" v-else>{{ column.class && column.class.includes('file-size') ? (dataCell(item, column) / 1048576).toFixed(2) + 'Mb'  : dataCell(item, column)}}</div>
                 </template>
               </td>
               <slot name="actions" v-bind:item="item"></slot>

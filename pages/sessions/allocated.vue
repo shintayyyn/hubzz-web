@@ -1,9 +1,9 @@
 <template>
   <section class="relative">
     <AppLoading :loading="loadingJobs" :message="'Loading'" />
-    <AppJobFilter @clear="clearFilters" @getJobs="getJobs(1, params)" :params="params" />
+    <AppJobFilter v-if="getPracticeAllocatedJobs.length > 0" @clear="clearFilters" @getJobs="getJobs(1, params)" :params="params" />
     <div
-      class="mt-10 w-full text-center"
+      class="mt-10 w-full text-center text-gray-500"
       v-if="!loadingJobs && getPracticeAllocatedJobs.length === 0 "
     >You do not have any allocated jobs</div>
     <div v-if="getPracticeAllocatedJobs.length > 0" class="overflow-x-auto overflow-y-hidden">

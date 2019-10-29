@@ -1,6 +1,6 @@
 <template>
   <section>
-    <div class="calendar border border-solid shadow-md my-4 rounded-lg lg:max-w-6xl">
+    <div class="calendar bg-white border border-solid shadow-md my-4 rounded-lg lg:max-w-6xl">
       <div class="flex flex-row flex-wrap w-full h-full">
         <div
           class="relative w-full lg:w-2/3 p-2 sm:p-5"

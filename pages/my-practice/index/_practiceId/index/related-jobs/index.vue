@@ -4,15 +4,14 @@
       <div v-if="toggleTable">
         <AppLoading :loading="loadingJobs" spinner />
         <AppButton
-          class="relative md:hidden"
           :label="'Filter'"
           @click="showFilter()"
-          :inStyle="'padding:5px 14px;margin-bottom:5px; font-size:14px;'"
+          :inStyle="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
         />
         <div
           v-if="!isJobPart"
-          class="md:relative md:flex flex-wrap justify-start items-center"
-          :class="filterToggle ? 'z-10 absolute w-full bg-white shadow-md p-3' : 'hidden'"
+          class="flex-wrap justify-start items-center z-10 absolute w-full bg-white shadow-lg p-3 rounded-lg"
+          :class="filterToggle ? 'flex' : 'hidden'"
         >
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
@@ -145,8 +144,8 @@
         </div>
         <div
           v-if="isJobPart"
-          class="md:relative md:flex flex-wrap justify-start items-center"
-          :class="filterToggle ? 'z-10 absolute w-full bg-white shadow-md p-3' : 'hidden'"
+          class="flex-wrap justify-start items-center z-10 absolute w-full bg-white shadow-lg p-3 rounded-lg"
+          :class="filterToggle ? 'flex' : 'hidden'"
         >
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
@@ -279,12 +278,12 @@
               @click="filterJob"
               :inStyle="'padding:5px 14px;margin-bottom:5px'"
             />
-            <AppButton
+            <!-- <AppButton
               class="mx-2 md:hidden"
               :label="'Close'"
               @click="showFilter"
               :inStyle="'padding:5px 14px;margin-bottom:5px'"
-            />
+            /> -->
           </div>
         </div>
         <AppTable
@@ -748,6 +747,7 @@ export default {
         this.$store.commit(`jobs/SET_LOCUM_${jobStatus}_JOBS`, []);
       }
       this.getJobs(this.isJobPart ? this.jobPartParams : this.params);
+      this.filterToggle = false;
     },
     getJobsCount(params) {
       this.$store.commit("jobs/TOGGLE_LOADING", true);

@@ -16,7 +16,7 @@
     ></AppTable>
     <div v-else class="flex justify-center">You do not have any paid invoices</div>
     <transition name="fade" mode="out-in">
-      <div class="shield" v-if="$route.path != '/practice-billing/paid-report'"></div>
+      <div class="shield" v-if="$route.path != '/practice-billing/paid-report'" @click="$router.go(-1)"></div>
     </transition>
     <nuxt-child />
   </div>
@@ -56,7 +56,7 @@ export default {
       columns: [
         {
           name: "Locum",
-          dataIndex: "locum_detail.user.personal_detail.name",
+          dataIndex: "locum_detail.user.personal_detail.first_name",
           class: "text-left"
         },
         {
@@ -80,7 +80,7 @@ export default {
           class: "text-center"
         },
         {
-          name: "Amount",
+          name: "£ Amount",
           dataIndex: "total_amount",
           class: "text-center"
         },
@@ -115,7 +115,6 @@ export default {
         responseCount.data && responseCount.data.count
           ? responseCount.data.count
           : 0;
-          console.log("invoices", invoices)
       return {
         invoices,
         totalInvoices

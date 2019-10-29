@@ -1,7 +1,7 @@
 <template>
   <section class="billing-section">
     <div class="flex flex-col md:flex-row lg:items-center justify-between">
-      <div class="flex flex-row justify-start overflow-x-auto py-3">
+      <div class="flex flex-row justify-start overflow-x-auto pb-3">
         <nuxt-link
           to="/locum-billing/invoices"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
@@ -37,7 +37,7 @@
         >+</div>
       </nuxt-link>
     </div>
-    <div class="mt-5">
+    <div class="">
       <nuxt-child />
     </div>
   </section>

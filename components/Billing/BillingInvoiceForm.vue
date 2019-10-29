@@ -47,7 +47,7 @@
               class="w-full sm:w-1/2 order-2 sm:order-1 text-xs sm:text-sm text-left rounded-lg border-2 border-gray-300 p-2 w-2/3"
             >
               <section>
-                <div class="relative flex flex-col py-2 mb-6" v-on-clickaway="toggledOffSurgeries">
+                <div class="relative flex flex-col py-2 mb-3 md:mb-6" v-on-clickaway="toggledOffSurgeries">
                   <div class="relative flex flex-row flex-no-wrap justify-between">
                     <label class="text-xs sm:text-sm py-1">To: Accounts Department</label>
                   </div>
@@ -90,7 +90,7 @@
                       <div class="relative" v-else>
                         <div
                           class="text-xs sm:text-sm text-center font-bold my-2"
-                        >No Practice / Surgeries Job Invoicable Yet</div>
+                        >No Practice / Surgeries Job Invoiceable Yet</div>
                       </div>
                     </div>
                   </div>
@@ -111,7 +111,7 @@
           <div v-if="selectedSurgery">
             <section>
               <div
-                class="relative flex flex-col py-2 mb-6 mt-2"
+                class="relative flex flex-col py-2 mb-3 md:mb-6 mt-2"
                 v-on-clickaway="toggledOffJobParts"
               >
                 <div class="relative flex flex-row flex-no-wrap justify-between">
@@ -170,93 +170,87 @@
             </section>
           </div>
         </div>
-
-        <div class="overflow-x-auto">
+        <div class="overflow-auto">
           <table class="items-table">
             <thead>
-              <tr class="text-center bg-gray-900">
-                <th class="text-white">Description</th>
-                <th class="text-white" :colspan="type === 'Private' ? 1:2">
+              <tr>
+                <th class="bg-gray-900 w-1/2 text-white text-left px-4 py-1">Description</th>
+                <th class="bg-gray-900 w-1/2 text-white text-left px-2 py-1" :colspan="type === 'Private' ? 1:2">
                   <span class="flex justify-between items-center">
                     Total
-                    <span
-                      v-if="type === 'Private'"
-                      class="cursor-pointer w-8 h-8 rounded-full bg-white text-gray-900 font-semibold text-xl flex justify-center items-center hover:bg-gray-200"
+                  </span>
+                </th>
+                <th v-if="type === 'Private'" class="sticky right-0 bg-gray-900">
+                  <span
+                      class="cursor-pointer w-6 h-6 my-2 mx-2 md:mx-4 rounded-full bg-white text-gray-900 font-semibold text-xl flex justify-center items-center hover:bg-gray-200"
                       @click="addItem"
                     >+</span>
-                  </span>
                 </th>
               </tr>
             </thead>
             <tbody>
               <tr class="border-b" v-for="(item, index) in selectedJobParts" :key="item.id">
-                <td colspan="2" class="h-full p-2">
-                  <div class="flex items-end">
-                    <textarea
+                <td>
+                  <textarea
                       v-model="item.description"
                       rows="3"
                       placeholder="Enter description"
-                      class="w-1/2 m-1 text-xs sm:text-sm resize-none border-b-2 border-gray-300 focus:border-yellow-500 focus:outline-none px-4"
+                      class="w-full text-xs sm:text-sm resize-none border-b-2 border-gray-300 focus:border-yellow-500 focus:outline-none px-4 my-2"
                     ></textarea>
-                    <div class="w-1/2 m-1">
-                      <input
-                        type="text"
-                        v-model="item.total"
-                        placeholder="Enter value"
-                        class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-4/5 focus:border-yellow-500 "
-                      />
+                </td>
+                <td class="align-end">
+                  <div class="my-1 py-1">
+                    <input
+                      type="number"
+                      min="0"
+                      v-model="item.total"
+                      placeholder="Enter value"
+                      class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full mt-1 md:mt-3 focus:border-yellow-500 "
+                    />
+                  </div>
+                </td>
+                <td class="align-middle sticky right-0">
+                  <div class="flex justify-center">
                     <span
-                      class="bg-gray-900 hover:bg-black w-8 h-8 cursor-pointer float-right font-semibold inline-flex items-center justify-center px-3 mt-2 rounded-full text-white text-xl"
+                      class="bg-gray-900 hover:bg-black w-6 h-6 cursor-pointer float-right font-semibold inline-flex items-center justify-center px-3 mt-2 rounded-full text-white text-xl mx-auto"
                       @click="removeSelectedJobPart(item, index)"
                     >-</span>
-                    </div>
                   </div>
-                  
-                </td>
-              </tr>
-              <tr>
-                <td colspan="2">
-                  <div class="flex flex-row flex-wrap justify-between">
-                    <div class="w-full pr-1">
-                      <AppDate
-                        v-model="form.date_start"
-                        :name="'date_start'"
-                        :label="'Days worked from'"
-                        :error="formError.find(item => item.field === 'date_start')"
-                        isAfter
-                      />
-                    </div>
-                    <div class="w-full pl-1">
-                      <AppDate
-                        v-model="form.date_end"
-                        :name="'date_end'"
-                        :label="'To'"
-                        :error="formError.find(item => item.field === 'date_end')"
-                        isAfter
-                      />
-                    </div>
-                  </div>
-                </td>
+                </td>  
               </tr>
             </tbody>
-            <tfoot>
-              <tr>
-                <td colspan="2">
-                 
-                </td>
-              </tr>
-            </tfoot>
           </table>
+        </div>
+
+        <div class="flex flex-row flex-wrap justify-between px-2">
+          <div class="w-full md:w-1/2 pr-1">
+            <AppDate
+              v-model="form.date_start"
+              :name="'date_start'"
+              :label="'Days worked from'"
+              :error="formError.find(item => item.field === 'date_start')"
+              isAfter
+            />
+          </div>
+          <div class="w-full md:w-1/2 pl-1">
+            <AppDate
+              v-model="form.date_end"
+              :name="'date_end'"
+              :label="'To'"
+              :error="formError.find(item => item.field === 'date_end')"
+              isAfter
+            />
+          </div>
         </div>
 
         <div class="flex justify-between m-2">
           <span class="font-bold">Total</span>
           <div>
             <div class="flex justify-end">
-            <div
-              class="rounded-lg bg-red-500 p-1 text-xs sm:text-sm text-white"
-              v-if="formError.find(item => item.field === 'total_amount')"
-            >{{formError.find(item => item.field === 'total_amount').message}}</div>
+              <div
+                class="rounded-lg bg-red-500 p-1 text-xs sm:text-sm text-white"
+                v-if="formError.find(item => item.field === 'total_amount')"
+              >{{formError.find(item => item.field === 'total_amount').message}}</div>
           </div>
           £ {{amount | currency}}
           </div>
@@ -343,7 +337,7 @@ export default {
         let amount = 0;
         this.selectedJobParts.forEach(item => {
           if (item.total) {
-            amount += parseInt(item.total);
+            amount += parseFloat(item.total);
           }
         });
         return amount;
@@ -691,11 +685,7 @@ export default {
   }
 };
 </script>
-<style scoped>
-.items-table {
-  width: 732px;
-}
-
+<style>
 .modal {
   position: fixed;
   top: 0;
@@ -744,5 +734,20 @@ export default {
   height: 100%;
   opacity: 0.5;
   color: #ccc;
+}
+.items-table tbody tr{
+  box-shadow: none;
+  border: none;
+  border-radius: 0;
+}
+.items-table{
+  width: 732px;
+}
+.items-table tbody {
+  border: 2px solid #eff3f8;
+  border-top-width: 0;
+}
+.items-table tbody td{
+  padding: 0 8px;
 }
 </style>

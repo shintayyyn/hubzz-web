@@ -1,6 +1,6 @@
 <template>
   <section class="profile-section">
-    <div class="flex overflow-x-auto whitespace-no-wrap">
+    <div class="flex items-center overflow-x-auto whitespace-no-wrap">
       <nuxt-link
         to="/profile/practice"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
@@ -26,7 +26,7 @@
         v-if="authPermissions.includes('View Profile Practice Document')"
       >Practice Documents</nuxt-link>
     </div>
-    <div class="mt-5">
+    <div class="mt-2">
       <nuxt-child @changeType="type = $event" />
     </div>
     <AppConfirmationModal

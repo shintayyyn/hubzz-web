@@ -10,7 +10,7 @@
             <div class="flex flex-row flex-wrap justify-between items-center">
               <div class="flex flex-col order-2 md:order-1 w-full md:w-1/2">
                 <div class="font-bold text-sm sm:text-md">Candidate</div>
-                <div class="text-xs sm:text-sm mb-8">{{user.locum_detail.profession.name}}</div>
+                <div class="text-sm mb-8">{{user.locum_detail.profession.name}}</div>
               </div>
               <AppAvatar
                 class="order-1 md:order-2 mb-4 md:mb-0"
@@ -20,15 +20,15 @@
               />
             </div>
             <div class="font-bold text-sm sm:text-md">Headline</div>
-            <div class="text-xs sm:text-sm mb-8">{{user.locum_detail.headline}}</div>
+            <div class="text-sm mb-8">{{user.locum_detail.headline}}</div>
             <div class="font-bold text-sm sm:text-md">Biography</div>
-            <div class="text-xs sm:text-sm mb-8">{{user.locum_detail.short_biography}}</div>
+            <div class="text-sm mb-8">{{user.locum_detail.short_biography}}</div>
             <div class="font-bold text-sm sm:text-md">GMC / NMC Number</div>
-            <div class="text-xs sm:text-sm mb-8">{{user.locum_detail.gmc_or_nmc_number.number}}</div>
+            <div class="text-sm mb-8">{{user.locum_detail.gmc_or_nmc_number.number}}</div>
             <div class="font-bold text-sm sm:text-md">MPL / NPL Number</div>
-            <div class="text-xs sm:text-sm mb-8">{{user.locum_detail.mpl_or_npl_number.number}}</div>
+            <div class="text-sm mb-8">{{user.locum_detail.mpl_or_npl_number.number}}</div>
             <div class="font-bold text-sm sm:text-md">Specialty</div>
-            <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
+            <div class="text-sm mb-8 flex flex-row flex-wrap">
               <div
                 class="rounded-lg bg-yellow-500 p-2 m-1"
                 v-for="item in user.locum_detail.qualifications"
@@ -36,7 +36,7 @@
               >{{item.name}}</div>
             </div>
             <div class="font-bold text-sm sm:text-md">Clinical systems</div>
-            <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
+            <div class="text-sm mb-8 flex flex-row flex-wrap">
               <div
                 class="rounded-lg bg-yellow-500 p-2 m-1"
                 v-for="item in user.locum_detail.clinical_systems"
@@ -44,7 +44,7 @@
               >{{item.name}}</div>
             </div>
             <div class="font-bold text-sm sm:text-md">Languages</div>
-            <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
+            <div class="text-sm mb-8 flex flex-row flex-wrap">
               <div class="rounded-lg bg-yellow-500 p-2 m-1">English</div>
               <div
                 class="rounded-lg bg-yellow-500 p-2 m-1"
@@ -100,7 +100,7 @@
               :key="item.id"
             >
               <div
-                class="text-xs sm:text-sm"
+                class="text-sm"
               >{{item.rate_type.name}}: £ {{item.min}} - £ {{item.max}}</div>
             </div>
           </div>
@@ -111,13 +111,13 @@
               v-for="item in user.locum_detail.referees"
               :key="item.id"
             >
-              <div class="text-xs sm:text-sm">Contact Name: {{item ? item.name:null}}</div>
-              <div class="text-xs sm:text-sm">Telephone No.: {{item ? item.phone_number:null}}</div>
-              <div class="text-xs sm:text-sm">Email Address: {{item ? item.email:null}}</div>
+              <div class="text-sm">Contact Name: {{item ? item.name:null}}</div>
+              <div class="text-sm">Telephone No.: {{item ? item.phone_number:null}}</div>
+              <div class="text-sm">Email Address: {{item ? item.email:null}}</div>
             </div>
           </div>
           <div v-else>
-            <div class="text-xs sm:text-sm">(none)</div>
+            <div class="text-sm">(none)</div>
           </div>
         </div>
       </div>

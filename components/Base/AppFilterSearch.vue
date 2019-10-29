@@ -1,7 +1,7 @@
 <template>
   <section>
     <!-- input select -->
-    <div class="relative flex flex-col py-2 mb-6" v-on-clickaway="toggledOff">
+    <div class="relative flex flex-col py-2 mb-3 md:mb-6" v-on-clickaway="toggledOff">
       <div class="relative flex flex-row flex-no-wrap justify-between">
         <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
         <div class="rounded-lg bg-gray-300 p-1 text-xs sm:text-sm" v-if="info">{{info}}</div>
@@ -17,12 +17,12 @@
           v-if="defaultItem"
         >{{defaultItem}}</div>
         <div
-          class="rounded-lg bg-yellow-500 py-2 px-3 m-1 text-xs sm:text-sm"
+          class="rounded-lg bg-yellow-500 py-2 px-3 m-1 text-xs sm:text-sm flex items-center justify-between"
           v-for="(item, index) in value"
           :key="`${item.value}-${index}`"
         >
           {{item.label}}
-          <span class="font-bold cursor-pointer text-base" @click="remove(index)">X</span>
+          <span class="font-bold cursor-pointer text-base pl-3" @click="remove(index)">x</span>
         </div>
         <div>
           <input

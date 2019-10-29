@@ -1,5 +1,5 @@
 <template>
-  <section class="related-jobs-section">
+  <section>
     <MyLocumRelatedJobsTabs :locumType="'rejected'" />
     <div class="mt-5">
       <nuxt-child />

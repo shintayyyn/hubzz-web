@@ -1,6 +1,13 @@
 <template>
   <section>
-    <div class="flex flex-col mt-4">
+    <AppTable
+      v-if="practiceComplianceDocuments.length > 0"
+      :total="practiceComplianceDocuments.length"
+      :items="practiceComplianceDocuments"
+      :columns="columns"
+      @show="show"
+    ></AppTable>
+    <!-- <div class="flex flex-col mt-4">
       <div class="flex flex-row px-4 flex-no-wrap justify-between">
         <div class="text-xs sm:text-sm w-full px-1">Title</div>
         <div class="text-xs sm:text-sm w-full px-1">File Size</div>
@@ -27,7 +34,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
 
     <transition name="fade" mode="out-in">
       <div
@@ -41,13 +48,15 @@
 </template>
 <script>
 import PracticeDocumentDetailModal from "@/components/Profile/PracticeDocumentDetailModal";
+import AppTable from "@/components/Base/AppTable";
 export default {
   transition: {
     name: "fade",
     mode: "out-in"
   },
   components: {
-    PracticeDocumentDetailModal
+    PracticeDocumentDetailModal,
+    AppTable
   },
   data() {
     return {
@@ -55,7 +64,25 @@ export default {
       practiceDocuments: [],
       practiceDocumentTypes: [],
       practiceComplianceDocuments: [],
-      disabled: "true"
+      disabled: "true",
+      // app table
+      columns: [
+        {
+          name: "Title",
+          dataIndex: "practiceDocumentType.name",
+          class: "text-left"
+        },
+        {
+          name: "File Size",
+          dataIndex: "existingPracticeComplianceDocument.file.size",
+          class: "text-center file-size"
+        },
+        {
+          name: "Last Upload Date",
+          dataIndex: "existingPracticeComplianceDocument.file.created_at",
+          class: "text-center localDate"
+        },
+      ],
     };
   },
   computed: {
@@ -114,9 +141,9 @@ export default {
   },
 
   methods: {
-    show(id) {
+    show(item) {
       if (this.authPermissions.includes("Show Profile Practice Document")) {
-        this.$router.push(`/profile/practice-documents/${id}`);
+        this.$router.push(`/profile/practice-documents/${item.existingPracticeComplianceDocument.id}`);
       }
     }
   }

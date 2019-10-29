@@ -151,7 +151,7 @@ export default {
 }
 @media screen and (min-width: 320px) {
   .header-section {
-    padding: 0 2%;
+    padding: 0 3%;
   }
 }
 a {

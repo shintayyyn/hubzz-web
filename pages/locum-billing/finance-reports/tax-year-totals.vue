@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-row flex-wrap justify-start">
-    <div class="p-1 w-full sm:w-1/4 order-1 sm:order-2">
+    <div class="pl-2 w-full sm:w-1/4 order-1 sm:order-2">
       <div class="rounded-lg shadow-md p-4 flex flex-col">
         <AppInput
           v-model="tax_year_end"
@@ -12,16 +12,27 @@
         />
       </div>
     </div>
-    <div class="p-1 w-full sm:w-3/4 order-2 sm:order-1">
-      <div class="overflow-x-auto overflow-y-hidden">
+    <div class="w-full sm:w-3/4 order-2 sm:order-1">
+      <AppTable
+        :total="lists.length"
+        :items="lists"
+        :loading="loading"
+        :currentPage="current_page"
+        :perPage="params.limit"
+        :columns="columns"
+        :orderBy="params.order_by"
+        :sticky="'first'"
+        @show="showTax"
+      ></AppTable>
+      <!-- <div class="overflow-x-auto overflow-y-hidden">
         <table>
           <thead>
             <tr class="text-xs sm:text-sm text-left">
               <th>Month / Year</th>
-              <th>Fees charged</th>
-              <th>Expenses Charged</th>
-              <th>Employers Superannuation</th>
-              <th>Month total</th>
+              <th class="text-center">Fees charged</th>
+              <th class="text-center">Expenses Charged</th>
+              <th class="text-center">Employers Superannuation</th>
+              <th class="text-center">Month total</th>
             </tr>
           </thead>
           <tbody>
@@ -33,19 +44,19 @@
             <template v-else v-for="(invoice, index) in lists">
               <tr
                 :key="invoice.id"
-                class="__job-card shadow-md cursor-pointer text-xs text-left"
+                class="cursor-pointer text-xs text-left"
                 @click="showTax(invoice.id)"
               >
                 <td>{{invoice.month_year}}</td>
-                <td>{{invoice.fees_charged}}</td>
-                <td>£ {{invoice.expenses_charged}}</td>
-                <td>£ {{invoice.employers_superannuation}}</td>
-                <td>£ {{invoice.month_total}}</td>
+                <td class="text-center">{{invoice.fees_charged}}</td>
+                <td class="text-center">£ {{invoice.expenses_charged}}</td>
+                <td class="text-center">£ {{invoice.employers_superannuation}}</td>
+                <td class="text-center">£ {{invoice.month_total}}</td>
               </tr>
             </template>
           </tbody>
         </table>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
@@ -91,15 +102,54 @@ const yearLists = [
   }
 ];
 import AppInput from "@/components/Base/AppInput";
+import AppTable from "@/components/Base/AppTable";
 export default {
   components: {
-    AppInput
+    AppInput,
+    AppTable
   },
   data() {
     return {
       lists,
       yearLists,
-      tax_year_end: ""
+      tax_year_end: "",
+      // table
+      totalInvoices: 0,
+      loading: false,
+      current_page: 1,
+      //
+      params: {
+        offset: 0,
+        limit: 5,
+        status: "Paid",
+        order_by: ["date_created:desc"]
+      },
+      columns: [
+        {
+          name: "Month / Year",
+          dataIndex: "month_year",
+        },
+        {
+          name: "Fees Charged",
+          dataIndex: "fees_charged",
+          class: "text-center",
+        },
+        {
+          name: "Expenses Charge",
+          dataIndex: "expenses_charged",
+          class: "text-center"
+        },
+        {
+          name: "Employers Superannuation",
+          dataIndex: "employers_superannuation",
+          class: "text-center"
+        },
+        {
+          name: "Month total",
+          dataIndex: "month_total",
+          class: "text-center"
+        }
+      ]
     };
   },
   methods: {
@@ -110,25 +160,3 @@ export default {
 };
 </script>
 <style>
-table{
-  border-collapse: separate;
-  border-spacing: 0 10px;
-}
-/* table tbody tr {
-  background-color: #fff;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-} */
-table tbody tr:hover td{
-  background-color: #eee;
-}
-table tbody td:first-child, table thead th:first-child {
-  position: sticky;
-  background-color: #fff;
-  left: 0;
-}
-table tbody td, table thead th {
-  background-color: #fff;
-  padding: 15px 8px;
-}
-</style>
-

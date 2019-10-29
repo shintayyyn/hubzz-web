@@ -21,9 +21,9 @@
           <span>Download</span>
         </a>
       </div>
-      <div class="flex flex-col p-4">
+      <div class="flex flex-col md:p-4">
         <div class="shadow-lg rounded-lg bg-gray-300 mt-5 max-w-5xl">
-          <div class="flex flex-row flex-wrap justify-start p-8">
+          <div class="flex flex-row flex-wrap justify-start p-4 md:p-8">
             <div class="flex flex-col w-full lg:w-1/4 pr-4">
               <p class="font-bold text-lg">Title</p>
               <p
@@ -63,13 +63,6 @@
                 <p class="mt-5 font-bold text-lg">Expiry date</p>
                 <AppDate v-model="expiry_date" :name="'expiry_date'" :format="'YYYY-MM-DD'" />
                 <AppButton :label="'Save'" @click="update()" :inStyle="'padding:5px 20px'" />
-              </div>
-              <div class="mt-5 lg:mt-0 w-full lg:w-3/4">
-                <embed
-                  class="object-contain object-top w-full"
-                  :class="mandatory_training.file.type == 'image' ? 'image' : 'document h-full'"
-                  :src="mandatory_training.file.subtype === 'tiff' || mandatory_training.file.subtype === 'msword' ? convertDoc(mandatory_training.file.url) : mandatory_training.file.url"
-                />
               </div>
               <p class="mt-5 font-bold text-lg">Expiry date</p>
               <AppDate v-model="expiry_date" :name="'expiry_date'" />

@@ -3,8 +3,8 @@
     <div class="flex flex-row p-2 flex-no-wrap justify-start items-center mt-8">
       <span class="font-bold text-md sm:text-lg">{{practice.surgery.name}}</span>
       <span
-        class="font-bold text-md sm:text-lg mx-4"
-        :class="practice.practice_parent ? 'bg-blue-500 p-2 rounded' : 'bg-red-400 p-2 rounded'"
+        class="font-bold text-md sm:text-lg mx-4 px-4 py-2 rounded"
+        :class="practice.practice_parent ? 'bg-blue-500' : 'bg-red-400'"
       >{{practice.practice_parent ? 'SPOKE': 'HUB'}}</span>
     </div>
 

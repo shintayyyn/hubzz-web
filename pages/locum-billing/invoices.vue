@@ -64,6 +64,7 @@
       <div
         v-if="['locum-billing-invoices-id', 'locum-billing-invoices-create', 'locum-billing-invoices-id-edit'].includes($route.name) || deleteModal || paymentModal"
         class="shield"
+        @click="clickaway"
       ></div>
     </transition>
     <nuxt-child @addInvoice="addInvoice" @updateInvoice="updateInvoice" />
@@ -104,7 +105,8 @@ export default {
       columns: [
         {
           name: "Type",
-          dataIndex: "type"
+          dataIndex: "type",
+          class: "text-center"
         },
         {
           name: "Practice / Surgery",
@@ -125,8 +127,7 @@ export default {
         {
           name: "Invoice Number",
           dataIndex: "invoice_number",
-          sortable: true,
-          class: "text-center"
+          sortable: true
         },
         {
           name: "Job Numbers",
@@ -200,6 +201,15 @@ export default {
     }
   },
   methods: {
+    clickaway() {
+      if (this.deleteModal) {
+        this.deleteModal = false;
+      } else if (this.paymentModal) {
+        this.paymentModal = false;
+      } else {
+        this.$router.go(-1);
+      }
+    },
     getInvoicesCount(params) {
       this.$axios.$get(`/api/v1/locum/invoices/count`, { params }).then(res => {
         this.totalInvoices = res.data.count;

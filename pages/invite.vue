@@ -12,7 +12,7 @@
         :class="$route.name === 'invite-invite-practices' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >Invite Practices</nuxt-link>
     </div>
-    <div class="mt-5">
+    <div class="mt-3">
       <nuxt-child />
     </div>
   </section>

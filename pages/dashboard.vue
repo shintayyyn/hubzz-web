@@ -4,7 +4,7 @@
       <Reminders />
     </div>
     <div v-if="userIsAuthorized" class="appointment-section">
-      <div class="text-xs sm:text-sm font-bold">Appointments</div>
+      <div class="text-sm sm:text-sm font-bold">Appointments</div>
       <Calendar />
     </div>
     <div v-if="userIsAuthorized" class="statistics-section">

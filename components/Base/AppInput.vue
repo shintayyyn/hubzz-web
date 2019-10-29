@@ -4,7 +4,7 @@
     <template
       v-if="['text','time','email','password', 'select', 'textarea', 'multi-checkbox', 'number'].includes(type)"
     >
-      <div class="flex flex-col py-2 mb-6">
+      <div class="flex flex-col py-2 mb-3 md:mb-6">
         <div class="relative flex flex-row flex-no-wrap justify-between">
           <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
           <div class="flex">
@@ -85,7 +85,7 @@
                 :rows="rows"
                 :value="value"
                 :placeholder="placeholder"
-                class="border-b-2 focus:border-yellow-400 focus:outline-none py-4 font-bold text-xs sm:text-sm w-full"
+                class="border-b-2 focus:border-yellow-400 focus:outline-none py-4 px-2 font-bold text-xs sm:text-sm w-full"
                 :class="[error ? 'border-red-500':'', resize ? '' : 'resize-none']"
                 @input="$emit('input', $event.target.value)"
                 @blur="$emit('blur', $event)"
@@ -120,7 +120,7 @@
 
     <!-- multiemail -->
     <template v-if="type === 'multiemail'">
-      <div class="flex flex-col py-2 mb-6">
+      <div class="flex flex-col py-2 mb-3 md:mb-6">
         <div class="relative flex flex-row flex-no-wrap justify-between">
           <div class="flex flex-wrap justify-start">
             <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
