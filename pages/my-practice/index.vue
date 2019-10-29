@@ -9,22 +9,20 @@
             v-for="practice in practices"
             :key="practice.id"
           >
-            <div class="h-full rounded-lg shadow-lg bg-gray-300 p-4 hover:bg-gray-400" >
+            <div class="h-full rounded-lg shadow-lg bg-gray-300 p-4 hover:bg-gray-400">
               <div class="flex items-center z-50 mb-2">
-                 <nuxt-link
+                <nuxt-link
                   class="w-full font-bold text-sm sm:text-lg leading-tight"
                   :to="{ path: `/my-practice/${practice.id}`, query: {...$route.query}}"
-              >
-                {{practice.surgery.name}}
-              </nuxt-link>
-              <svgicon
-                v-model="is_favorite"
-                :name="practice.is_favorite ? 'on-star' : 'off-star'"
-                height="32"
-                width="32"
-                class="cursor-pointer fill-current text-gray-700 hover:text-gray-800"
-                @click="favorite(practice.id)"
-              />
+                >{{practice.surgery.name}}</nuxt-link>
+                <svgicon
+                  v-model="is_favorite"
+                  :name="practice.is_favorite ? 'on-star' : 'off-star'"
+                  height="32"
+                  width="32"
+                  class="cursor-pointer fill-current text-gray-700 hover:text-gray-800"
+                  @click="favorite(practice.id)"
+                />
               </div>
               <nuxt-link
                 class="flex flex-wrap mt-2 cursor-pointer"
@@ -73,11 +71,11 @@ export default {
   middleware({ query, redirect, error }) {
     if (!query.status) {
       // api (Favorite only)
-      redirect(`/my-practice?status=Favorites`);
+      redirect(`/my-practice?status=Favorite`);
     }
     if (
       query.status &&
-      !["favorites", "completed", "applied", "unsuccessful"].includes(
+      !["favorite", "completed", "applied", "unsuccessful"].includes(
         query.status.toLowerCase()
       )
     ) {
@@ -106,7 +104,7 @@ export default {
     },
     totalPages() {
       return Math.ceil(this.total / this.perPage);
-    },
+    }
   },
   watch: {
     "$route.query"({ status: newStatus }, { status: oldStatus }) {
@@ -114,19 +112,21 @@ export default {
         this.toggleTable = false;
         this.getPracticesCount();
       }
-    },
+    }
   },
   created() {
     this.getPracticesCount();
   },
   methods: {
     getPracticesCount() {
+      console.log("get practices count");
       this.loading = true;
       this.$axios
         .$get(
           `/api/v1/locum/practices/count?locum_practice_type=${this.$route.query.status}`
         )
         .then(res => {
+          console.log(res);
           this.total = res.data.count;
           this.getPractices(this.current_page);
         })
@@ -135,12 +135,14 @@ export default {
         });
     },
     getPractices(page) {
+      console.log("get practices");
       this.current_page = page;
       this.$axios
         .$get(
           `/api/v1/locum/practices?locum_practice_type=${this.$route.query.status}&offset=${this.offset}&limit=${this.perPage}`
         )
         .then(res => {
+          console.log(res);
           this.practices = res.data.practices;
           this.toggleTable = true;
           this.loading = false;
@@ -161,7 +163,7 @@ export default {
               text: ["Added to favourites"]
             });
           });
-          this.is_favorite = true
+        this.is_favorite = true;
       } else {
         this.$axios
           .$delete(`/api/v1/locum/practices/${id}/favorite`)
@@ -172,7 +174,7 @@ export default {
               text: ["Remove to favourites"]
             });
           });
-          this.is_favorite = false
+        this.is_favorite = false;
       }
       practice.is_favorite = !practice.is_favorite;
     },

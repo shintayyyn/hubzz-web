@@ -2,10 +2,10 @@
   <section class="account-section">
     <div class="flex flex-row justify-start overflow-x-auto">
       <nuxt-link
-        to="/my-practice?status=Favorites"
-        :event="$route.query.status && $route.query.status === 'Favorites' ? '' : 'click'"
+        to="/my-practice?status=Favorite"
+        :event="$route.query.status && $route.query.status === 'Favorite' ? '' : 'click'"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-        :class="!$route.query.status || ($route.query.status && $route.query.status.toLowerCase() === 'favorites')  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="!$route.query.status || ($route.query.status && $route.query.status.toLowerCase() === 'favorite')  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >Favorites</nuxt-link>
       <nuxt-link
         to="/my-practice?status=Completed"
