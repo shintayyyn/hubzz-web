@@ -245,12 +245,12 @@ export default {
       this.formError = [];
       this.Validate(this.form, ["description"]);
       if (!this.formError.length) {
-        this.form.date_start = this.$moment(this.form.date_start).format(
-          "YYYY-MM-DD"
-        );
-        this.form.date_end = this.$moment(this.form.date_end).format(
-          "YYYY-MM-DD"
-        );
+        // this.form.date_start = this.$moment(this.form.date_start).format(
+        //   "YYYY-MM-DD"
+        // );
+        // this.form.date_end = this.$moment(this.form.date_end).format(
+        //   "YYYY-MM-DD"
+        // );
         this.$axios
           .$post(`/api/v1/locum/jobs`, this.form)
           .then(res => {
@@ -259,8 +259,9 @@ export default {
             }
             if (res.data.job.locum_status === "Ongoing") {
               this.$store.dispatch("jobs/fetchLocumJobParts", {
-                status: ["Ongoing"],
-                job_id: res.data.job.id
+                locum_status: ["Ongoing"],
+                job_id: res.data.job.id,
+                type: "ADD"
               });
             }
             this.close();

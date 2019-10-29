@@ -265,7 +265,7 @@ export default {
       if (this.type === "Private" || this.type === "Platform") {
         const params = {
           invoiceable: true,
-          type: this.type,
+          job_type: this.type,
           limit: 1000000,
           offset: 0
         };
@@ -294,7 +294,7 @@ export default {
       if (this.selectedSurgery) {
         const params = {
           locum_status: "Completed",
-          type: this.type,
+          job_type: this.type,
           surgery_id: this.selectedSurgery.id,
           limit: 5,
           offset: 0,
@@ -372,7 +372,7 @@ export default {
 
       const params = {
         invoiceable: true,
-        type,
+        job_type: type,
         limit: 1000000,
         offset: 0
       };
