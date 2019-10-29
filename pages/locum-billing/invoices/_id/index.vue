@@ -1,23 +1,39 @@
 <template>
-  <div class="invoice-modal shadow-lg">
+  <div class="modal-container shadow-lg">
     <div class="p-4 md:p-8 max-w-5xl h-screen">
       <div class="flex flex-row flex-wrap justify-start pb-4">
         <nuxt-link to="/locum-billing/invoices" class="cursor-pointer">
           <svgicon name="left-arrow" height="32" width="32" />
         </nuxt-link>
       </div>
-      <iframe :src="invoice.file.url" height="90%" width="100%"></iframe>
+      <template v-if="isEditable">
+        <BillingInvoiceForm
+          :selectedInvoice="invoice"
+          @updateInvoice="$emit('updateInvoice', $event)"
+        />
+      </template>
+      <template v-if="!isEditable">
+        <iframe :src="invoice.file.url" height="90%" width="100%"></iframe>
+      </template>
     </div>
   </div>
 </template>
 
 <script>
+import BillingInvoiceForm from "@/components/Billing/BillingInvoiceForm";
 export default {
   transition: {
     name: "slide",
     mode: "out-in"
   },
-
+  components: {
+    BillingInvoiceForm
+  },
+  computed: {
+    isEditable() {
+      return !this.invoice.file;
+    }
+  },
   async asyncData({ app, error, params }) {
     try {
       if (process.client) {
@@ -46,42 +62,17 @@ export default {
       }
       throw err;
     }
-  },
-
-  data() {
-    return {
-      invoice: null
-    };
-  },
-
-  mounted() {
-    document.body.style.overflow = "hidden";
-  },
-
-  destroyed() {
-    document.body.style.overflow = "auto";
   }
 };
 </script>
 
 <style scoped>
-.invoice-modal {
-  position: fixed;
-  top: 0;
-  right: 0;
-  margin-right: 0%;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  /* border-left: solid 2px #edf2f7; */
-  transition: all 0.3s ease-in-out;
-  /* background-color: rgb(80, 80, 80); */
-  background: #fff;
+.modal-container {
   z-index: 512;
 }
 @media screen and (min-width: 1200px) {
-  .invoice-modal {
-    width: 70%;
+  .modal-container {
+    width: 80%;
   }
 }
 .save-button {

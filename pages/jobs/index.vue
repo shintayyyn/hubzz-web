@@ -2,7 +2,6 @@
   <section class="relative">
     <transition name="fade" mode="out-in">
       <div v-if="toggleTable">
-        <AppLoading :loading="loadingJobs" spinner />
         <AppButton
           :label="'Filter'"
           @click="showFilter()"
@@ -296,7 +295,6 @@
           :orderBy="isJobPart ? jobPartParams.order_by :params.order_by"
           :loading="loadingJobs"
           :routerLink="'/jobs'"
-          :sticky="'first'"
           @pagechanged="pagechanged"
           @limitchanged="limitchanged"
           @sorted="sorted"
@@ -786,12 +784,14 @@ export default {
       this.params.order_by = order_by;
       this.jobPartParams.offset = 0;
       this.jobPartParams.order_by = order_by;
+      this.$store.commit("jobs/TOGGLE_LOADING", true);
       this.getJobs(this.isJobPart ? this.jobPartParams : this.params);
     },
     pagechanged(page) {
       this.current_page = page;
       this.params.offset = this.params.limit * (page - 1);
       this.jobPartParams.offset = this.jobPartParams.limit * (page - 1);
+      this.$store.commit("jobs/TOGGLE_LOADING", true);
       this.getJobs(this.isJobPart ? this.jobPartParams : this.params);
     },
     limitchanged(limit) {
@@ -800,6 +800,7 @@ export default {
       this.params.limit = limit;
       this.jobPartParams.offset = 0;
       this.jobPartParams.limit = limit;
+      this.$store.commit("jobs/TOGGLE_LOADING", true);
       this.getJobs(this.isJobPart ? this.jobPartParams : this.params);
     },
     clearFilters() {

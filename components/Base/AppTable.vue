@@ -1,5 +1,6 @@
 <template>
   <section class="relative">
+    <AppLoading :loading="loading" spinner />
     <div class="overflow-x-auto mt-4">
       <div class="apptable">
         <div class="w-full flex flex-no-wrap justify-around">
@@ -36,7 +37,7 @@
               >
                 <div v-if="column.dataIndex !== 'actions'">
                   <div
-                    v-if="column.class && column.class.includes('localDate')"
+                    v-if="column.class && column.class.includes('localDate') && dataCell(item,column) !== '(none)'"
                   >{{dataCell(item, column) | localDate}}</div>
                   <template v-else>
                     <div v-if="Array.isArray(dataCell(item, column))">

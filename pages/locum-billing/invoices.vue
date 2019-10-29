@@ -9,20 +9,20 @@
       :perPage="params.limit"
       :columns="columns"
       :orderBy="params.order_by"
-      @show="show"
+      :routerLink="'/locum-billing/invoices'"
       @pagechanged="pagechanged"
       @limitchanged="limitchanged"
       @sorted="sorted"
     >
       <template v-slot:actions="slotProps">
-        <td @click.stop.prevent="onClick(slotProps.item)" class="text-center">
+        <div @click.stop.prevent="onClick(slotProps.item)" class="flex justify-center">
           <button
             v-if="!slotProps.item.paid_at"
             v-text="slotProps.item.issued_at ? 'Mark as paid' : 'Delete'"
             class="px-4 py-2 font-bold rounded-lg focus:outline-none"
             :class="slotProps.item.issued_at ? 'text-white bg-green-600' : 'bg-yellow-500'"
           ></button>
-        </td>
+        </div>
       </template>
     </AppTable>
     <div v-else class="flex justify-center">You do not have any created invoice</div>
@@ -64,7 +64,7 @@
       <div
         v-if="['locum-billing-invoices-id', 'locum-billing-invoices-create', 'locum-billing-invoices-id-edit'].includes($route.name) || deleteModal || paymentModal"
         class="shield"
-        @click="clickaway"
+        @click="close"
       ></div>
     </transition>
     <nuxt-child @addInvoice="addInvoice" @updateInvoice="updateInvoice" />
@@ -76,9 +76,7 @@ import AppDate from "@/components/Base/AppDate";
 import AppButton from "@/components/Base/AppButton";
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
 import AppTable from "@/components/Base/AppTable";
-import { mixin as clickaway } from "vue-clickaway";
 export default {
-  mixins: [clickaway],
   components: {
     AppDate,
     AppButton,
@@ -201,13 +199,14 @@ export default {
     }
   },
   methods: {
-    clickaway() {
+    close() {
       if (this.deleteModal) {
         this.deleteModal = false;
       } else if (this.paymentModal) {
         this.paymentModal = false;
       } else {
-        this.$router.go(-1);
+        // this.$router.go(-1);
+        this.$router.push("/locum-billing/invoices");
       }
     },
     getInvoicesCount(params) {
@@ -313,17 +312,6 @@ export default {
       this.params.offset = 0;
       this.params.limit = limit;
       this.getInvoices(this.params);
-    },
-    show(item) {
-      if (
-        item.status === "Issued" ||
-        item.status === "Paid" ||
-        item.issued_at
-      ) {
-        this.$router.push(`/locum-billing/invoices/${item.id}`);
-      } else {
-        this.$router.push(`/locum-billing/invoices/${item.id}/edit`);
-      }
     }
   }
 };
