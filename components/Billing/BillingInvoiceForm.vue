@@ -621,7 +621,7 @@ export default {
         this.loadingJobParts = true;
         const params = {
           locum_status: "Completed",
-          type: this.type,
+          job_type: this.type,
           surgery_id: this.selectedSurgery.id,
           order_by: "created_at:desc",
           invoiced: false
@@ -648,7 +648,7 @@ export default {
       try {
         const params = {
           locum_status: "Completed",
-          type: this.type,
+          job_type: this.type,
           surgery_id: this.selectedSurgery.id,
           limit: 10,
           offset: this.jobParts.length,

@@ -20,7 +20,7 @@
           <JobDetailModalMap :job="job" />
           <JobDetailModalUnassignForm
             :job="job"
-            v-if="job.locum_status === 'Current'"
+            v-if="job.locum_status === 'Allocated'"
             @close="close"
           />
           <JobDetailModalApplyForm
