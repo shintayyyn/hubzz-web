@@ -1,64 +1,6 @@
 <template>
   <section class="relative">
-    <!-- <div class="overflow-x-auto"> -->
-    <!-- <table class="mx-auto">
-        <thead>
-          <tr class="text-sm md:text-base">
-            <th
-              v-for="(column, index) in columns"
-              :key="index"
-              :class="[(column.class && column.class.includes('text-center')) ? 'text-center' : 'text-left', 
-              (sticky && (index === 0 && sticky === 'first')) && 'sticky left-0', 
-              (sticky && (index === columns.length && sticky === 'last')) && 'sticky right-0']"
-            >
-              <span
-                v-if="column.sortable"
-                @click="sort(column.dataIndex)"
-                :class="(column.class && column.class.includes('text-center')) && 'justify-center'"
-                class="flex items-center w-full cursor-pointer"
-              >
-                <span class="block whitespace-no-wrap pr-1">{{column.name}}</span>
-                <svgicon
-                  class="inline align-baseline"
-                  :name="sortIcon(column.dataIndex)"
-                  height="12"
-                  width="12"
-                />
-              </span>
-              <span v-if="!column.sortable" class="block whitespace-no-wrap">{{column.name}}</span>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <template v-for="(item) in items">
-            <tr @click="$emit('show', item)" :key="item.id" class="cursor-pointer text-xs">
-              <td
-                v-for="(column, index) in columns"
-                :key="index"
-                class="truncate"
-                :class="column.class ? column.class : ''"
-                id="app-cell"
-              >
-                <div
-                  v-if="column.class && column.class.includes('localDate')"
-                >{{dataCell(item, column) | localDate}}</div>
-                <template v-else>
-                  <div v-if="Array.isArray(dataCell(item, column))">
-                    <div
-                      v-for="(item, index) in dataCell(item, column)"
-                      :key="`${item}-${index}`"
-                       class="truncate"
-                    >{{ item }}</div>
-                  </div>
-                  <div class="truncate" v-else>{{ column.class && column.class.includes('file-size') ? (dataCell(item, column) / 1048576).toFixed(2) + 'Mb'  : dataCell(item, column)}}</div>
-                </template>
-              </td>
-              <slot name="actions" v-bind:item="item"></slot>
-            </tr>
-          </template>
-        </tbody>
-    </table>-->
-    <!-- </div> -->
+    <AppLoading :loading="loading" spinner />
     <div class="overflow-x-auto mt-4">
       <div class="apptable">
         <div class="w-full flex flex-no-wrap justify-around">
@@ -75,7 +17,10 @@
               <div class="block whitespace-no-wrap pr-1">{{column.name}}</div>
               <svgicon class :name="sortIcon(column.dataIndex)" height="12" width="12" />
             </div>
-            <div v-if="!column.sortable" class="block whitespace-no-wrap">{{column.name}}</div>
+            <div
+              v-if="!column.sortable"
+              class="flex justify-center block whitespace-no-wrap"
+            >{{column.name}}</div>
           </div>
         </div>
         <div
@@ -92,7 +37,7 @@
               >
                 <div v-if="column.dataIndex !== 'actions'">
                   <div
-                    v-if="column.class && column.class.includes('localDate')"
+                    v-if="column.class && column.class.includes('localDate') && dataCell(item,column) !== '(none)'"
                   >{{dataCell(item, column) | localDate}}</div>
                   <template v-else>
                     <div v-if="Array.isArray(dataCell(item, column))">
@@ -298,7 +243,7 @@ export default {
 </script>
 <style scoped>
 .apptable {
-  min-width: 84rem;
+  min-width: 112rem;
   max-width: 100%;
 }
 
@@ -309,7 +254,7 @@ export default {
 
 @media screen and (min-width: 768px) {
   .apptable {
-    min-width: 112rem;
+    min-width: 124rem;
   }
   .app-cell {
     min-width: 200px;

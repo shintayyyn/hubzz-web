@@ -213,6 +213,9 @@ export default {
     SET_LOCUM_ONGOING_JOB_PARTS(state, payload) {
         state.locum_ongoing_job_parts = payload
     },
+    ADD_LOCUM_ONGOING_JOB(state, payload) {
+        state.locum_ongoing_job_parts.push(payload)
+    },
     REMOVE_LOCUM_ONGOING_JOB_PART(state, payload) {
         state.locum_ongoing_job_parts = state.locum_ongoing_job_parts.filter(job => job.id !== payload)
         state.locum_ongoing_job_parts_count = state.locum_ongoing_job_parts_count - 1
@@ -315,7 +318,7 @@ export default {
     },
     ADD_LOCUM_APPLIED_JOB(state, payload) {
         state.locum_applied_jobs.push(payload)
-        state.locum_applied_jobs_count = state.locum_applied_jobs_count + 1
+        state.locum_new_applied_jobs_count = state.locum_new_applied_jobs_count + 1
     },
     REMOVE_LOCUM_APPLIED_JOB(state, payload) {
         if (state.locum_applied_jobs.find(appliedJob => appliedJob.id === payload)) {

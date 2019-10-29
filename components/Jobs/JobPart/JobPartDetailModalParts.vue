@@ -65,19 +65,20 @@ export default {
       return Math.ceil(this.total / this.perPage);
     },
     routerLink() {
-      if (this.$route.path.includes('my-practice')) {
-        return `/my-practice/${this.$route.params.practiceId}/related-jobs`
+      let url = "/jobs";
+      if (this.$route.path.includes("related-jobs")) {
+        url = `/my-practice/${this.$route.params.practiceId}/related-jobs`;
       }
-      return '/jobs'
+      return url;
     }
   },
   created() {
     this.params.job_id = this.job_id;
-    this.getJobParts(this.params);
     this.$axios
       .$get(`/api/v1/locum/job-parts/count?job_id=${this.job_id}`)
       .then(res => {
         this.total = res.data.count;
+        this.getJobParts(this.params);
       });
   },
   methods: {

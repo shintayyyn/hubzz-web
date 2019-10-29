@@ -262,6 +262,7 @@ export default {
         let first = payload.id && payload.first ? `/${payload.id}` : ''
         let count = payload.countOnly ? `/count` : ''
         let updatedJobPartIndex = payload.updatedJobPartIndex ? payload.updatedJobPartIndex : []
+        let type = payload.type ? payload.type : 'SET'
 
         const response = await this.$axios.$get(`${url}${first}${count}`, { params: payload })
 
@@ -298,13 +299,20 @@ export default {
                 }
                 if (jobStatus.toLowerCase() === 'ongoing') {
                     if (response.data && response.data.job_parts && response.data.job_parts.length > 0) {
-                        if (updatedJobPartIndex && updatedJobPartIndex.length === 0) {
-                            commit('SET_LOCUM_ONGOING_JOB_PARTS', response.data.job_parts.filter(jobPart => jobPart.locum_status.toLowerCase() === 'ongoing'))
-                        }
-                        if (updatedJobPartIndex && updatedJobPartIndex.length > 0) {
-                            response.data.job_parts.filter(jobPart => jobPart.locum_status.toLowerCase() === 'ongoing').forEach((jobPart, index) => {
-                                commit('UPDATE_LOCUM_ONGOING_JOB_PART', { payload: jobPart, payloadIndex: updatedJobPartIndex[index] })
+                        if (type === 'ADD') {
+                            response.data.job_parts.filter(jobPart => jobPart.locum_status.toLowerCase() === 'ongoing').forEach(part => {
+                                commit('ADD_LOCUM_ONGOING_JOB', part)
                             })
+                        }
+                        if (type === 'SET') {
+                            if (updatedJobPartIndex && updatedJobPartIndex.length === 0) {
+                                commit('SET_LOCUM_ONGOING_JOB_PARTS', response.data.job_parts.filter(jobPart => jobPart.locum_status.toLowerCase() === 'ongoing'))
+                            }
+                            if (updatedJobPartIndex && updatedJobPartIndex.length > 0) {
+                                response.data.job_parts.filter(jobPart => jobPart.locum_status.toLowerCase() === 'ongoing').forEach((jobPart, index) => {
+                                    commit('UPDATE_LOCUM_ONGOING_JOB_PART', { payload: jobPart, payloadIndex: updatedJobPartIndex[index] })
+                                })
+                            }
                         }
                     }
                     if (response.data && response.data.job_parts.length === 0) {
