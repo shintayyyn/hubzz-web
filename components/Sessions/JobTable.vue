@@ -3,10 +3,11 @@
     <thead>
       <tr class="text-xs sm:text-sm text-left">
         <th
-          v-for="item in columns"
+          v-for="(item, index) in columns"
           :key="item.dataIndex"
           @click="item.sortable ? $emit('sortBy', `${item.dataIndex}`) : null"
           class="text-center"
+          :class="index === 0 && 'sticky left-0'"
         >
           {{item.label}}
           <svgicon
@@ -23,30 +24,30 @@
       <template v-for="item in jobs">
         <tr
           :key="item.id"
-          class="__job-card shadow-md cursor-pointer text-xs text-left"
+          class="cursor-pointer text-xs text-left"
           @click="$emit('show', item.id)"
         >
-          <td>{{item.job_number}}</td>
-          <td>{{item.type === 'Private' ? item.private_job.private_practice.surgery.name : item.platform_job.practice.surgery.name}}</td>
-          <td>{{item.type === 'Private' ? 'Private appointment' : item.title}}</td>
-          <td>{{item.shift.name}}</td>
-          <td>{{item.rate}}</td>
-          <td>{{item.locum_detail_rate_type.name}}</td>
-          <td>{{item.date_start}}</td>
-          <td>{{item.date_end}}</td>
-          <td
+          <td class="text-center sticky left-0">{{item.job_number}}</td>
+          <td class="text-center">{{item.type === 'Private' ? item.private_job.private_practice.surgery.name : item.platform_job.practice.surgery.name}}</td>
+          <td class="text-center">{{item.type === 'Private' ? 'Private appointment' : item.title}}</td>
+          <td class="text-center">{{item.shift.name}}</td>
+          <td class="text-center">{{item.rate}}</td>
+          <td class="text-center">{{item.locum_detail_rate_type.name}}</td>
+          <td class="text-center">{{item.date_start}}</td>
+          <td class="text-center">{{item.date_end}}</td>
+          <td class="text-center"
             v-if="['Available','Current','Unfilled'].includes(item.status)"
           >{{$moment(item.date_created).format('YYYY-MM-DD') }}</td>
-          <td v-if="item.status === 'Applied'">{{ $moment(item.date_created).format('YYYY-MM-DD') }}</td>
+          <td class="text-center" v-if="item.status === 'Applied'">{{ $moment(item.date_created).format('YYYY-MM-DD') }}</td>
           <template v-if="item.status === 'Current'">
-            <td v-if="item.type === 'Private'">N/A</td>
-            <td v-else>{{item.platform_job.appointed_at | localDate}}</td>
+            <td class="text-center" v-if="item.type === 'Private'">N/A</td>
+            <td class="text-center" v-else>{{item.platform_job.appointed_at | localDate}}</td>
           </template>
-          <td
+          <td class="text-center"
             v-if="item.status === 'Completed'"
           >{{item.job_parts[item.job_parts.length - 1].completed_at | localDate }}</td>
-          <td v-if="item.status === 'Cancelled'">{{item.platform_job.cancelled_at | localDate}}</td>
-          <td v-if="item.status === 'Declined'">{{item.platform_job.declined_at | localDate}}</td>
+          <td class="text-center" v-if="item.status === 'Cancelled'">{{item.platform_job.cancelled_at | localDate}}</td>
+          <td class="text-center" v-if="item.status === 'Declined'">{{item.platform_job.declined_at | localDate}}</td>
         </tr>
       </template>
     </tbody>
@@ -67,24 +68,30 @@ export default {
 };
 </script>
 <style scoped>
-table{
+table {
   border-collapse: separate;
   border-spacing: 0 10px;
 }
-table tbody tr {
-  background-color: #fff;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-}
+
 table tbody tr:hover td{
-  background-color: #eee;
+  background-color: #eff3f8;
 }
-table tbody td:first-child, table thead th:first-child {
+
+table tbody td,
+table thead th {
+  background-color: #fff;
+  padding: 15px 8px;
+}
+
+.table-sticky-first, .table-sticky-last{
   position: sticky;
   background-color: #fff;
+}
+
+.table-sticky-first table tbody td:first-child, .table-sticky-first table thead th:first-child{
   left: 0;
 }
-table tbody td {
-  text-align: center;
-  padding: 15px 8px;
+.table-sticky-last table tbody td:first-child, .table-sticky-last table thead th:first-child{
+  right: 0;
 }
 </style>

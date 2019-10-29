@@ -1,13 +1,12 @@
 <template>
   <div class="invoice-modal shadow-lg">
-    <div class="p-8 max-w-3xl h-screen">
-      <div class="flex flex-row flex-wrap justify-start">
+    <div class="p-4 md:p-8 max-w-5xl h-screen">
+      <div class="flex flex-row flex-wrap justify-start pb-4">
         <nuxt-link to="/locum-billing/invoices" class="cursor-pointer">
           <svgicon name="left-arrow" height="32" width="32" />
         </nuxt-link>
       </div>
-
-      <iframe :src="invoice.file.url" height="100%" width="100%"></iframe>
+      <iframe :src="invoice.file.url" height="90%" width="100%"></iframe>
     </div>
   </div>
 </template>

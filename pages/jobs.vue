@@ -3,9 +3,9 @@
     <div class="flex flex-row justify-start overflow-x-auto py-3">
       <div class="relative">
         <nuxt-link
-          to="/jobs/allocated"
+          to="/jobs?status=Allocated"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.name === 'jobs-allocated' || $route.name === 'jobs-allocated-id'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          :class="!$route.query.status || ($route.query.status && $route.query.status.toLowerCase() === 'allocated')? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Allocated</nuxt-link>
         <transition name="fade">
           <div
@@ -16,9 +16,9 @@
       </div>
       <div class="relative">
         <nuxt-link
-          to="/jobs/ongoing"
+          to="/jobs?status=Ongoing"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.name === 'jobs-ongoing' || $route.name === 'jobs-ongoing-id'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          :class="$route.query && $route.query.status && $route.query.status.toLowerCase() === 'ongoing'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Ongoing</nuxt-link>
         <transition name="fade">
           <div
@@ -29,9 +29,9 @@
       </div>
       <div class="relative">
         <nuxt-link
-          to="/jobs/available"
+          to="/jobs?status=Available"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.name === 'jobs-available' || $route.name === 'jobs-available-id'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          :class="$route.query && $route.query.status && $route.query.status.toLowerCase() === 'available'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Available</nuxt-link>
         <transition name="fade">
           <div
@@ -42,9 +42,9 @@
       </div>
       <div class="relative">
         <nuxt-link
-          to="/jobs/matched"
+          to="/jobs?status=Matched"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.name === 'jobs-matched' || $route.name === 'jobs-matched-id'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          :class="$route.query && $route.query.status && $route.query.status.toLowerCase() === 'matched'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Matched</nuxt-link>
         <transition name="fade">
           <div
@@ -55,9 +55,9 @@
       </div>
       <div class="relative">
         <nuxt-link
-          to="/jobs/applied"
+          to="/jobs?status=Applied"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.name === 'jobs-applied' || $route.name === 'jobs-applied-id'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          :class="$route.query && $route.query.status && $route.query.status.toLowerCase() === 'applied'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Applied</nuxt-link>
         <transition name="fade">
           <div
@@ -68,9 +68,9 @@
       </div>
       <div class="relative">
         <nuxt-link
-          to="/jobs/unsuccessful"
+          to="/jobs?status=Unsuccessful"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.name === 'jobs-unsuccessful' || $route.name === 'jobs-unsuccessful-id'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          :class="$route.query && $route.query.status && $route.query.status.toLowerCase() === 'unsuccessful'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Unsuccessful</nuxt-link>
         <transition name="fade">
           <div
@@ -81,9 +81,9 @@
       </div>
       <div class="relative">
         <nuxt-link
-          to="/jobs/declined"
+          to="/jobs?status=Declined"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.name === 'jobs-declined' || $route.name === 'jobs-declined-id'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          :class="$route.query && $route.query.status && $route.query.status.toLowerCase() === 'declined'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Declined</nuxt-link>
         <transition name="fade">
           <div
@@ -94,9 +94,9 @@
       </div>
       <div class="relative">
         <nuxt-link
-          to="/jobs/cancelled"
+          to="/jobs?status=Cancelled"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.name === 'jobs-cancelled' || $route.name === 'jobs-cancelled-id'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          :class="$route.query && $route.query.status && $route.query.status.toLowerCase() === 'cancelled'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Cancelled</nuxt-link>
         <transition name="fade">
           <div
@@ -107,9 +107,9 @@
       </div>
       <div class="relative">
         <nuxt-link
-          to="/jobs/withdrawn"
+          to="/jobs?status=Withdrawn"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.name === 'jobs-withdrawn' || $route.name === 'jobs-withdrawn-id'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          :class="$route.query && $route.query.status && $route.query.status.toLowerCase() === 'withdrawn'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Withdrawn</nuxt-link>
         <transition name="fade">
           <div
@@ -120,9 +120,9 @@
       </div>
       <div class="relative">
         <nuxt-link
-          to="/jobs/completed"
+          to="/jobs?status=Completed"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.name === 'jobs-completed' || $route.name === 'jobs-completed-id'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          :class="$route.query && $route.query.status && $route.query.status.toLowerCase() === 'completed'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Completed</nuxt-link>
         <transition name="fade">
           <div
@@ -133,9 +133,9 @@
       </div>
       <div class="relative">
         <nuxt-link
-          to="/jobs/approved"
+          to="/jobs?status=Approved"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.name === 'jobs-approved' || $route.name === 'jobs-approved-id'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          :class="$route.query && $route.query.status && $route.query.status.toLowerCase() === 'approved'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Approved</nuxt-link>
         <transition name="fade">
           <div
@@ -146,33 +146,69 @@
       </div>
     </div>
     <div class="mt-5">
-      <nuxt-child />
+      <nuxt-child
+        :invoiceStatusList="invoiceStatusList"
+        :practiceTypeList="practiceTypeList"
+        :shifts="shifts"
+        :rates="rates"
+      />
     </div>
   </section>
 </template>
 <script>
 const tabs = [
-  "jobs-allocated-id",
-  "jobs-available-id",
-  "jobs-matched-id",
-  "jobs-applied-id",
-  "jobs-unsuccessful-id",
-  "jobs-declined-id",
-  "jobs-cancelled-id",
-  "jobs-completed-id"
+  "jobs-index-id",
+  "jobs-index-id",
+  "jobs-index-id",
+  "jobs-index-id",
+  "jobs-index-id",
+  "jobs-index-id",
+  "jobs-index-id",
+  "jobs-index-id"
+];
+const invoiceStatusList = [
+  {
+    label: "All",
+    value: ""
+  },
+  {
+    label: "To Be Invoice",
+    value: "To Be Invoice"
+  },
+  {
+    label: "Disputed",
+    value: "Disputed"
+  },
+  {
+    label: "Invoiced",
+    value: "Invoiced"
+  }
+];
+const practiceTypeList = [
+  {
+    label: "All",
+    value: ""
+  },
+  {
+    label: "Platform",
+    value: "Platform"
+  },
+  {
+    label: "Private",
+    value: "Private"
+  }
 ];
 export default {
   middleware: "isVerified",
   data() {
     return {
-      tabs
+      tabs,
+      invoiceStatusList,
+      practiceTypeList,
+      shifts: [],
+      rates: []
     };
   },
-  // computed: {
-  //   socketId() {
-  //     return this.$store.state.socket_id
-  //   },
-  // },
   watch: {
     $route(value) {
       if (this.tabs.includes(value.name)) {
@@ -181,30 +217,22 @@ export default {
         document.body.style.overflow = "auto";
       }
     }
-    // socketId(value) {
-    //   this.$store.dispatch('joinRoom', { socket_id: value, room_name: 'jobroom', })
-    // }
   },
-  beforeDestroy() {
-    this.$store.dispatch("leaveRoom", {
-      socket_id: this.$socket.id,
-      room_name: "jobroom"
+  created() {
+    this.$axios.$get(`/api/v1/shifts`).then(res => {
+      this.shifts = [];
+      this.shifts.push({ label: "All", value: "" });
+      res.data.shifts.forEach(item => {
+        this.shifts.push({ label: item.name, value: item.id });
+      });
     });
-  },
-  mounted() {
-    if (this.$socket.connected) {
-      this.$store.dispatch("joinRoom", {
-        socket_id: this.$socket.id,
-        room_name: "jobroom"
+    this.$axios.$get(`/api/v1/locum-detail-rate-types`).then(res => {
+      this.rates = [];
+      this.rates.push({ label: "All", value: "" });
+      res.data.locum_detail_rate_types.forEach(item => {
+        this.rates.push({ label: item.name, value: item.id });
       });
-    } else {
-      this.$socket.on("connect", () => {
-        this.$store.dispatch("joinRoom", {
-          socket_id: this.$socket.id,
-          room_name: "jobroom"
-        });
-      });
-    }
+    });
   }
 };
 </script>

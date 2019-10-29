@@ -39,12 +39,14 @@ export default {
       job: null
     };
   },
-  methods: {},
+  mounted() {
+    console.log(this.propJob);
+  },
   computed: {
     isJobPart() {
       return (
         this.propJob.locum_status &&
-        ["ongoing", "completed", "approved"].includes(
+        ["ongoing", "completed", "approved", "allocated"].includes(
           this.propJob.locum_status.toLowerCase()
         )
       );
@@ -144,6 +146,7 @@ export default {
   methods: {
     select() {
       let job = this.isJobPart ? this.propJob.job : this.propJob;
+      console.log(job, job.type)
       if (job.type) {
         this.$axios.$get(`/api/v1/locum/jobs/${job.id}`).then(res => {
           this.$emit("viewLocumJob", res.data.job);

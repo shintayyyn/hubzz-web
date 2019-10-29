@@ -6,7 +6,7 @@
           class="text-xs sm:text-sm"
         >{{$store.state.calendar.months[selectedMonth]}} {{selectedYear}}</div>
       </div>
-      <div class="w-1/3 py-1 flex flex-no-wrap justify-center">
+      <div class="w-1/3 py-1 px-2 flex flex-no-wrap justify-end md:justify-center items-center">
         <span class="cursor-pointer" @click="adjustMonth('previous')">
           <svgicon name="arrow-left" height="12" width="12" />
         </span>
@@ -242,21 +242,20 @@ export default {
           calendar_date_start: `${this.startOfMonth}:gte`,
           calendar_date_end: `${this.endOfMonth}:lte`,
           limit: 100000000,
-          status: ["Allocated", "Applied"]
+          locum_status: ["Applied"]
         });
 
         this.$store.dispatch("jobs/fetchLocumJobParts", {
           calendar_date_start: `${this.startOfMonth}:gte`,
           calendar_date_end: `${this.endOfMonth}:lte`,
           limit: 100000000,
-          status: ["Ongoing"]
+          locum_status: ["Ongoing", "Allocated"]
         });
 
         this.$store.dispatch("jobs/fetchLocumUnavailabilities", {
-          calendar_date_start: `${this.startOfMonth}:gte`,
-          calendar_date_end: `${this.endOfMonth}:lte`,
-          limit: 100000000,
-          status: ["Unavailable"]
+          date_start: `${this.startOfMonth}:gte`,
+          date_end: `${this.endOfMonth}:lte`,
+          limit: 100000000
         });
       }
     },

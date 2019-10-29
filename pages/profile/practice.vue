@@ -3,7 +3,7 @@
     <div class="flex flex-col">
       <div class="flex flex-row flex-wrap justify-between">
         <div class="w-full md:w-2/3 p-1">
-          <div class="rounded-lg shadow-lg p-8 h-full flex">
+          <div class="bg-white rounded-lg shadow-lg p-4 md:p-8 h-full flex">
             <div class="flex flex-row flex-wrap w-full">
               <div class="flex flex-col w-full md:w-1/3 p-1">
                 <div class="text-xs sm:text-sm">Practice name</div>
@@ -28,7 +28,7 @@
         </div>
         <div class="w-full md:w-1/3 p-1">
           <div class="flex flex-col">
-            <div class="rounded-lg shadow-lg px-4">
+            <div class="bg-white rounded-lg shadow-lg px-4">
               <AppInput
                 v-model="practiceType"
                 :type="'select'"
@@ -40,7 +40,7 @@
                 @change="practiceTypeOnchange"
               />
             </div>
-            <div class="rounded-lg shadow-lg p-4 mt-4">
+            <div class="bg-white rounded-lg shadow-lg p-4 mt-4">
               <div class="flex flex-col">
                 <AppInput
                   v-model="form.use_variation_terms"
@@ -90,7 +90,7 @@
       </div>
 
       <div class="w-full p-2">
-        <div class="rounded-lg shadow-lg p-8">
+        <div class="bg-white rounded-lg shadow-lg p-4 md:p-8">
           <AppFormError :formError="formError" v-if="formError.length" />
           <div class="flex flex-row flex-wrap justify-between">
             <div class="flex flex-col w-full md:w-1/2 pr-1">

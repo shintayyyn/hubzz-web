@@ -15,7 +15,7 @@
       </div>
       <div class="flex justify-start font-bold text-sm sm:text-xl mt-8">Appointment</div>
       <AppFormError :formError="formError" v-if="formError.length > 0" id="error" />
-      <div class="rounded-lg shadow-lg px-8 py-4 mt-4">
+      <div class="rounded-lg shadow-lg px-4 md:px-8 py-4 mt-4">
         <AppInput
           v-model="form.private_practice_id"
           :type="'select'"
@@ -55,7 +55,7 @@
           <div class="px-1 w-full sm:w-1/2 md:w-1/3">
             <AppInput
               v-model="form.rate"
-              :type="'text'"
+              :type="'number'"
               :name="'rate'"
               :label="'Rate £'"
               :placeholder="''"
@@ -77,7 +77,7 @@
           <div class="flex flex-wrap items-center mt-2">
             <AppInput
               v-model="form.total_hours"
-              :type="'text'"
+              :type="'number'"
               :name="'total_hours'"
               :label="'Total hours'"
               :placeholder="''"
@@ -239,19 +239,7 @@ export default {
       });
     },
     close() {
-      if (this.$route.fullPath === "/dashboard") {
-        this.$emit("close");
-      } else {
-        if (this.$route.name === "jobs-completed-id") {
-          this.$router.push("/jobs/completed");
-        }
-        if (this.$route.name === "jobs-allocated-id") {
-          this.$router.push("/jobs/allocated");
-        }
-        if (this.$route.name === "jobs-ongoing-id") {
-          this.$router.push("/jobs/ongoing");
-        }
-      }
+      this.$emit("close");
     },
     create() {
       this.formError = [];
@@ -307,46 +295,6 @@ export default {
         this.$axios
           .$put(`/api/v1/locum/jobs/${this.job.id}`, this.form)
           .then(res => {
-            // let updatedJobPartIndex = [];
-            // res.data.job.job_parts.forEach(jobPart => {
-            //   // get jobpart status
-            //   if (jobPart.status.toLowerCase() === "completed") {
-            //     // remove from the completed job part with the same job id
-            //     this.$store.state.jobs.locum_completed_job_parts.forEach(
-            //       (oldJobPart, index) => {
-            //         if (oldJobPart.job.id === jobPart.id) {
-            //           // get the removed job index
-            //           updatedJobPartIndex.push(index);
-            //           this.$store.commit(
-            //             "jobs/REMOVE_LOCUM_COMPLETED_JOB_PART",
-            //             oldJobPart.id
-            //           );
-            //         }
-            //       }
-            //     );
-            //     this.$store.dispatch("jobs/fetchLocumJobParts", {
-            //       status: ["Completed"],
-            //       job_id: res.data.job.id,
-            //       updatedJobPartIndex
-            //     });
-            //   }
-            //   if (jobPart.status.toLowerCase() === "ongoing") {
-            //     // remove from the ongoing job part with the same job id
-            //     this.$store.state.jobs.locum_ongoing_job_parts.forEach(
-            //       (oldJobPart, index) => {
-            //         if (oldJobPart.job.id === jobPart.id) {
-            //           // get the removed job index
-            //           updatedJobPartIndex.push(index);
-            //           this.$store.commit(
-            //             "jobs/REMOVE_LOCUM_ONGOIN_JOB_PART",
-            //             oldJobPart.id
-            //           );
-            //         }
-            //       }
-            //     );
-            //   }
-            // });
-            //
             if (res.data.job.locum_status === "Allocated") {
               this.$store.commit(
                 "jobs/UPDATE_LOCUM_ALLOCATED_JOB",
@@ -367,7 +315,7 @@ export default {
                 }
               );
               this.$store.dispatch("jobs/fetchLocumJobParts", {
-                status: ["Ongoing"],
+                locum_status: ["Ongoing"],
                 job_id: res.data.job.id,
                 updatedJobPartIndex
               });
@@ -386,7 +334,7 @@ export default {
                 }
               );
               this.$store.dispatch("jobs/fetchLocumJobParts", {
-                status: ["Completed"],
+                locum_status: ["Completed"],
                 job_id: res.data.job.id,
                 updatedJobPartIndex
               });
@@ -405,7 +353,7 @@ export default {
                 }
               );
               this.$store.dispatch("jobs/fetchLocumJobParts", {
-                status: ["Approved"],
+                locum_status: ["Approved"],
                 job_id: res.data.job.id,
                 updatedJobPartIndex
               });

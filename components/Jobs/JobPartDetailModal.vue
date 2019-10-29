@@ -3,12 +3,12 @@
     <div @click="close" class="cursor-pointer">
       <svgicon name="left-arrow" height="32" width="32" />
     </div>
-    <div class="flex flex-row justify-start items-center mt-8">
+    <div class="flex flex-row justify-start items-center my-3">
       <div class="leading-loose font-bold text-md sm:text-lg">{{job_part.job.title}}</div>
       <div
-        class="mx-2 text-sm sm:text-sm py-2 px-4 rounded font-semibold"
+        class="mx-2 text-sm sm:text-sm py-2 px-4 rounded font-semibold uppercase"
         :class="bgStatus(job_part.locum_status)"
-      >{{status(job_part.locum_status)}}</div>
+      >{{job_part.locum_status}}</div>
       <div
         class="mx-2 text-sm sm:text-sm py-2 px-4 rounded font-semibold"
         :class="jobPartStatus === 'Completed' ? 'bg-green-500' : 'bg-gray-300'"
@@ -17,12 +17,13 @@
     </div>
     <div class="text-xs sm:text-sm py-2">Posted {{$moment(job_part.date_created).format('DD/MM/YYYY')}}</div>
     <div class="flex flex-row flex-wrap justify-start">
-        <div class="p-0 md:pr-4 w-full md:w-1/2">
-          <JobPartDetailModalInfo :job_part="job_part" />
-        </div>
-      <div class="p-0 md:pl-4 mt-8 md:m-0 w-full md:w-1/2">
+      <div class="p-0 md:pr-4 w-full md:w-1/2">
+        <JobPartDetailModalParts class="md:hidden" :parts="job_part.job.job_parts" :job_id="job_part.job.id" v-if="job_part.job.job_parts.length > 1"/>
+        <JobPartDetailModalInfo :job_part="job_part" />
+      </div>
+      <div class="p-0 md:pl-4 my-4 md:m-0 w-full md:w-1/2">
         <div class="flex flex-col">
-          <JobPartDetailModalParts :parts="job_part.job.job_parts" />
+          <JobPartDetailModalParts class="hidden md:block" :parts="job_part.job.job_parts" :job_id="job_part.job.id"  v-if="job_part.job.job_parts.length > 1"/>
           <JobDetailModalMap :job="job_part.job" />
           <JobDetailModalUnassignForm
             :job="job_part.job"
@@ -57,10 +58,6 @@ export default {
     JobDetailModalApplyForm,
     JobDetailModalCancelForm
   },
-  mounted() {
-    // console.log(this.job_part);
-  },
-
   computed: {
     jobPartStatus() {
       let status = "TO BE INVOICED";
@@ -79,15 +76,6 @@ export default {
     },
     close() {
       this.$emit("close");
-    },
-    status(status) {
-      if (status === "Available") {
-        return "LIVE";
-      }
-      if (status === "Ongoing") {
-        return "ONGOING";
-      }
-      return status.toUpperCase();
     },
     bgStatus(status) {
       switch (status) {

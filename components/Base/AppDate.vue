@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col py-2 mb-6 leading-normal" v-on-clickaway="toggledOff">
+  <div class="flex flex-col py-2 mb-4 md:mb-6 leading-normal" v-on-clickaway="toggledOff">
     <div class="relative flex flex-row flex-no-wrap justify-between">
       <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
       <div
@@ -11,17 +11,18 @@
       <input
         :value="value"
         type="input"
-        placeholder="mm/dd/yyyy"
+        :placeholder="format"
         class="border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full text-center"
         :class="{ inClass, 'border-red-500': error}"
         @click="modal = true"
         @keypress="validateInput($event)"
         @input="$emit('input', $event.target.value)"
         :style="inStyle"
+        :format="format"
       />
     </div>
     <transition name="fade">
-      <div class="relative md:static z-10" v-if="modal">
+      <div class="relative md:static z-10 flex justify-center" v-if="modal">
         <div
           class="absolute border rounded-tr-lg rounded-bl-lg rounded-br-lg calendar bg-white shadow-md"
         >
@@ -236,6 +237,7 @@ export default {
     error: Object,
     inStyle: String,
     inClass: String,
+    format: String,
     // disabled all dates past the current date
     isAfter: Boolean,
     format: {

@@ -117,8 +117,8 @@
                     :error="formError.find(item => item.field === 'min_rate_per_hour')"
                     @submit="save"
                     @blur="CheckEmptyField(form.min_rate_per_hour, 'min_rate_per_hour')"
+                    class="w-1/2 px-1"
                   />
-                  <div class="mx-1"></div>
                   <AppInput
                     v-model="form.max_rate_per_hour"
                     :type="'text'"
@@ -127,6 +127,7 @@
                     :error="formError.find(item => item.field === 'max_rate_per_hour')"
                     @submit="save"
                     @blur="CheckEmptyField(form.max_rate_per_hour, 'max_rate_per_hour')"
+                    class="w-1/2 px-1"
                   />
                 </div>
               </div>
@@ -586,7 +587,10 @@ export default {
       this.form.ir35 = this.user.locum_detail.invoice_detail.ir35;
       this.form.paid_under_payroll = this.user.locum_detail.invoice_detail.paid_under_payroll;
     }
-    if (this.user.locum_detail.invoice_detail && this.user.locum_detail.invoice_detail.payroll_detail) {
+    if (
+      this.user.locum_detail.invoice_detail &&
+      this.user.locum_detail.invoice_detail.payroll_detail
+    ) {
       this.form.payroll_detail_account_name = this.user.locum_detail.invoice_detail.payroll_detail.account_name;
       this.form.payroll_detail_account_number = this.user.locum_detail.invoice_detail.payroll_detail.account_number;
       this.form.payroll_detail_sort_code = this.user.locum_detail.invoice_detail.payroll_detail.sort_code;

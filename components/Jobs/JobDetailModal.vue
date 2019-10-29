@@ -3,21 +3,19 @@
     <div @click="close" class="cursor-pointer">
       <svgicon name="left-arrow" height="32" width="32" />
     </div>
-    <div class="flex flex-row justify-start mt-4">
+    <div class="flex items-center justify-start mt-4">
       <div class="leading-loose font-bold text-md sm:text-lg">{{job.title}}</div>
       <div
-        class="mx-2 text-sm sm:text-sm p-2"
+        class="mx-2 text-sm sm:text-sm p-2 uppercase"
         :class="bgStatus(job.locum_status)"
-      >{{status(job.locum_status)}}</div>
+      >{{ $auth.user.domain === 'Locum' ? job.locum_status : job.status }}</div>
     </div>
-    <div class="text-xs sm:text-sm">Posted {{$moment(job.date_created).format('DD/MM/YYYY')}}</div>
-    <div class="flex flex-col mt-4"></div>
-
-    <div class="flex flex-row flex-wrap justify-start mt-4">
+    <div class="text-xs sm:text-sm py-3">Posted {{$moment(job.date_created).format('DD/MM/YYYY')}}</div>
+    <div class="flex flex-row flex-wrap justify-start">
       <div class="p-0 md:pr-4 w-full md:w-1/2">
         <JobDetailModalInfo :job="job" />
       </div>
-      <div class="p-0 md:pl-4 mt-8 md:m-0 w-full md:w-1/2">
+      <div class="p-0 md:pl-4 mt-4 md:m-0 w-full md:w-1/2">
         <div class="flex flex-col">
           <JobDetailModalMap :job="job" />
           <JobDetailModalUnassignForm
@@ -59,15 +57,6 @@ export default {
   methods: {
     close() {
       this.$emit("close");
-    },
-    status(status) {
-      if (status === "Available") {
-        return "LIVE";
-      }
-      if (status === "Allocated") {
-        return "ALLOCATED";
-      }
-      return status.toUpperCase();
     },
     bgStatus(status) {
       switch (status) {

@@ -2,24 +2,28 @@
   <section class="account-section">
     <div class="flex flex-row justify-start overflow-x-auto">
       <nuxt-link
-        to="/my-practice/favorites"
+        to="/my-practice?status=Favorites"
+        :event="$route.query.status && $route.query.status === 'Favorites' ? '' : 'click'"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-        :class="$route.name.includes('my-practice-favorites')  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="!$route.query.status || ($route.query.status && $route.query.status.toLowerCase() === 'favorites')  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >Favorites</nuxt-link>
       <nuxt-link
-        to="/my-practice/completed"
+        to="/my-practice?status=Completed"
+        :event="$route.query.status && $route.query.status === 'Completed' ? '' : 'click'"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-        :class="$route.name.includes('my-practice-completed')  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.query.status && $route.query.status.toLowerCase() === 'completed'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >Completed</nuxt-link>
       <nuxt-link
-        to="/my-practice/applied"
+        to="/my-practice?status=Applied"
+        :event="$route.query.status && $route.query.status === 'Applied' ? '' : 'click'"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-        :class="$route.name.includes('my-practice-applied')  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.query.status && $route.query.status.toLowerCase() === 'applied'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >Applied</nuxt-link>
       <nuxt-link
-        to="/my-practice/Unsuccessful"
+        to="/my-practice?status=Unsuccessful"
+        :event="$route.query.status && $route.query.status === 'Unsuccessful' ? '' : 'click'"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-        :class="$route.name.includes('my-practice-unsuccessful')  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.query.status && $route.query.status.toLowerCase() === 'unsuccessful'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >Unsuccessful</nuxt-link>
     </div>
     <div class="mt-5">

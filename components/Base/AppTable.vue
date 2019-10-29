@@ -1,14 +1,15 @@
 <template>
   <section class="relative">
-    <!-- <AppLoading :loading="loading" spinner /> -->
-    <div class="overflow-x-auto">
-      <table class="mx-auto">
+    <!-- <div class="overflow-x-auto"> -->
+    <!-- <table class="mx-auto">
         <thead>
           <tr class="text-sm md:text-base">
             <th
               v-for="(column, index) in columns"
               :key="index"
-              :class="(column.class && column.class.includes('text-center')) ? 'text-center' : 'text-left'"
+              :class="[(column.class && column.class.includes('text-center')) ? 'text-center' : 'text-left', 
+              (sticky && (index === 0 && sticky === 'first')) && 'sticky left-0', 
+              (sticky && (index === columns.length && sticky === 'last')) && 'sticky right-0']"
             >
               <span
                 v-if="column.sortable"
@@ -29,18 +30,14 @@
           </tr>
         </thead>
         <tbody>
-          <template v-for="(item, index) in items">
-            <tr
-              @click="$emit('show', item)"
-              :key="item.id"
-              class="cursor-pointer text-xs"
-            >
+          <template v-for="(item) in items">
+            <tr @click="$emit('show', item)" :key="item.id" class="cursor-pointer text-xs">
               <td
                 v-for="(column, index) in columns"
                 :key="index"
                 class="truncate"
                 :class="column.class ? column.class : ''"
-                id="data-cell"
+                id="app-cell"
               >
                 <div
                   v-if="column.class && column.class.includes('localDate')"
@@ -51,16 +48,68 @@
                       v-for="(item, index) in dataCell(item, column)"
                       :key="`${item}-${index}`"
                        class="truncate"
-                    >{{item}}</div>
+                    >{{ item }}</div>
                   </div>
-                  <div class="truncate" v-else>{{dataCell(item, column)}}</div>
+                  <div class="truncate" v-else>{{ column.class && column.class.includes('file-size') ? (dataCell(item, column) / 1048576).toFixed(2) + 'Mb'  : dataCell(item, column)}}</div>
                 </template>
               </td>
               <slot name="actions" v-bind:item="item"></slot>
             </tr>
           </template>
         </tbody>
-      </table>
+    </table>-->
+    <!-- </div> -->
+    <div class="overflow-x-auto mt-4">
+      <div class="apptable">
+        <div class="w-full flex flex-no-wrap justify-around">
+          <div
+            v-for="(column, index) in columns"
+            :key="`${column}-${index}`"
+            class="app-cell text-sm md:text-base md:font-bold"
+          >
+            <div
+              v-if="column.sortable"
+              @click="sort(column.dataIndex)"
+              class="flex items-center justify-center cursor-pointer"
+            >
+              <div class="block whitespace-no-wrap pr-1">{{column.name}}</div>
+              <svgicon class :name="sortIcon(column.dataIndex)" height="12" width="12" />
+            </div>
+            <div v-if="!column.sortable" class="block whitespace-no-wrap">{{column.name}}</div>
+          </div>
+        </div>
+        <div
+          class="w-full __job-card rounded-lg shadow-md py-4 my-2"
+          v-for="(item) in items"
+          :key="item.id"
+        >
+          <nuxt-link :to="{ path: `${routerLink}/${item.id}`, query: {...$route.query}}">
+            <div class="flex flex-no-wrap justify-around">
+              <div
+                v-for="(column, index) in columns"
+                :key="index"
+                class="app-cell truncate text-center"
+              >
+                <div v-if="column.dataIndex !== 'actions'">
+                  <div
+                    v-if="column.class && column.class.includes('localDate')"
+                  >{{dataCell(item, column) | localDate}}</div>
+                  <template v-else>
+                    <div v-if="Array.isArray(dataCell(item, column))">
+                      <div
+                        v-for="(item, index) in dataCell(item, column)"
+                        :key="`${item}-${index}`"
+                      >{{item}}</div>
+                    </div>
+                    <div v-else>{{dataCell(item, column)}}</div>
+                  </template>
+                </div>
+                <slot v-else name="actions" v-bind:item="item"></slot>
+              </div>
+            </div>
+          </nuxt-link>
+        </div>
+      </div>
     </div>
     <div class="bottom-0 w-full">
       <AppPagination
@@ -107,6 +156,9 @@ export default {
     orderBy: {
       type: Array,
       required: false
+    },
+    routerLink: {
+      type: String
     }
   },
   components: {
@@ -129,6 +181,7 @@ export default {
   methods: {
     sort(dataIndex) {
       if (!this.params.some(item => item.includes(`${dataIndex}`))) {
+        this.params = [];
         this.params.push(`${dataIndex}:desc`);
       } else {
         let index = this.params.findIndex(item => item === `${dataIndex}:desc`);
@@ -244,50 +297,23 @@ export default {
 };
 </script>
 <style scoped>
-table{
-  border-collapse: separate;
-  border-spacing: 0 10px;
+.apptable {
+  min-width: 84rem;
+  max-width: 100%;
 }
-table tbody tr {
-  background-color: #fff;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+
+.app-cell {
+  min-width: 150px;
+  max-width: 150px;
 }
-table tbody tr:hover td{
-  background-color: #eee;
+
+@media screen and (min-width: 768px) {
+  .apptable {
+    min-width: 112rem;
+  }
+  .app-cell {
+    min-width: 200px;
+    max-width: 200px;
+  }
 }
-table tbody td:first-child, table thead th:first-child {
-  position: sticky;
-  background-color: #fff;
-  left: 0;
-}
-table tbody td, table thead th {
-  background-color: #fff;
-  padding: 15px 8px;
-}
-/* table thead th {
-  padding: 10px;
-}
-table tbody td {
-  padding: 15px;
-} 
- #data-cell {
-  white-space: nowrap; */
-  /* overflow: hidden; */
-  /* text-overflow: ellipsis;
-}
-.ellipsis {
-  position: relative;
-}
-.ellipsis:before {
-  content: "&nbsp;";
-  visibility: hidden;
-}
-.ellipsis span {
-  position: absolute;
-  left: 0;
-  right: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-} */
 </style>

@@ -26,6 +26,9 @@ export default () => ({
     practice_new_declined_jobs_count: 0,
     // LOCUM
     // parts
+    locum_allocated_job_parts: [],
+    locum_allocated_job_parts_count: 0,
+    locum_new_allocated_job_parts_count: 0,
     locum_ongoing_job_parts: [],
     locum_ongoing_job_parts_count: 0,
     locum_new_ongoing_job_parts_count: 0,
@@ -36,8 +39,6 @@ export default () => ({
     locum_approved_job_parts_count: 0,
     locum_new_approved_job_parts_count: 0,
     // whole
-    locum_allocated_part_jobs: [],
-    locum_allocated_part_jobs_count: 0,
     locum_allocated_jobs: [],
     locum_allocated_jobs_count: 0,
     locum_new_allocated_jobs_count: 0,
@@ -62,10 +63,6 @@ export default () => ({
     locum_withdrawn_jobs: [],
     locum_withdrawn_jobs_count: 0,
     locum_new_withdrawn_jobs_count: 0,
-    locum_completed_jobs: [],
-    locum_completed_jobs_count: 0,
-    locum_new_completed_jobs_count: 0,
-    locum_private_jobs: [],
     locum_unavailabilities: [],
     locum_unavailabilities_count: 0,
     locum_jobs_badge: 0

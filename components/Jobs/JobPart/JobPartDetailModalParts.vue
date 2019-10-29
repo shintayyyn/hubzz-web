@@ -1,31 +1,103 @@
 <template>
   <div class="relative flex flex-col w-full mb-3">
     <div class="text-xs sm:text-sm font-bold">Job Parts</div>
-    <div
-      v-for="job_part in parts"
-      :key="job_part.id"
-      @click.prevent="goTo(job_part)"
-      class="wrapper rounded-lg shadow-lg my-2 py-3 px-5"
-      :class="$route.params.id == job_part.id ? 'bg-gray-300':'bg-white hover:bg-gray-200 cursor-pointer'"
-    >
-      <div class="flex flex-row flex-no-wrap justify-between items-center">
-        <div class="text-xs sm:text-sm leading-loose" :class="$route.params.id == job_part.id && 'font-bold'">{{job_part.job_part_number}}</div>
-        <!-- <div class="flex">
-          <svgicon name="arrow-right" height="20" width="20" />
-        </div> -->
-      </div>
-    </div>
+    <AppTable
+      :total="total"
+      :items="parts"
+      :currentPage="current_page"
+      :perPage="params.limit"
+      :columns="columns"
+      :loading="loading"
+      @show="show"
+      @pagechanged="pagechanged"
+      @limitchanged="limitchanged"
+    />
   </div>
 </template>
 <script>
+import AppTable from "@/components/Base/AppTable";
 export default {
-  props: ["parts"],
+  components: {
+    AppTable
+  },
+
+  props: ["job_id"],
+  data() {
+    return {
+      parts: [],
+      current_page: 1,
+      // app table params
+      params: {
+        job_id: 0,
+        offset: 0,
+        limit: 5
+      },
+      total: 0,
+      // app table
+      columns: [
+        {
+          name: "Job Part Number",
+          dataIndex: "job_part_number",
+          class: "text-left"
+        },
+        {
+          name: "Date End",
+          dataIndex: "date_end",
+          class: "text-center"
+        },
+        {
+          name: "Date Start",
+          dataIndex: "date_start",
+          class: "text-center"
+        },
+        {
+          name: "Status",
+          dataIndex: "status",
+          class: "text-center"
+        }
+      ],
+      loading: false
+    };
+  },
+
+  computed: {
+    totalPages() {
+      return Math.ceil(this.total / this.perPage);
+    }
+  },
+  created() {
+    this.params.job_id = this.job_id;
+    this.getJobParts(this.params);
+    this.$axios
+      .$get(`/api/v1/locum/job-parts/count?job_id=${this.job_id}`)
+      .then(res => {
+        this.total = res.data.count;
+      });
+  },
   methods: {
-    goTo(jobPart) {
+    show(jobPart) {
       let paramId = this.$route.params.id;
       if (paramId != jobPart.id) {
         this.$router.push(`/jobs/${jobPart.id}?status=${jobPart.status}`);
       }
+    },
+    getJobParts(params) {
+      this.loading = true;
+      this.$axios.$get(`/api/v1/locum/job-parts`, { params }).then(res => {
+        this.loading = false;
+        this.parts = res.data.job_parts;
+      });
+    },
+    pagechanged(page) {
+      this.current_page = page;
+      this.params.offset = this.params.limit * (page - 1);
+      this.getJobParts(this.params);
+    },
+    limitchanged(limit) {
+      this.current_page = 1;
+      this.params.offset = 0;
+      this.params.limit = limit;
+      this.getJobParts(this.params);
     }
   }
 };
@@ -42,7 +114,7 @@ export default {
     width: 70%;
   }
 }
-.wrapper{
-  transition: all .3s linear;
+.wrapper {
+  transition: all 0.3s linear;
 }
 </style>

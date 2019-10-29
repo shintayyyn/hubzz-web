@@ -99,7 +99,7 @@
                 <div class="flex flex-row flex-no-wrap">
                   <AppInput
                     v-model="form.min_rate_per_hour"
-                    :type="'text'"
+                    :type="'number'"
                     :name="'min_rate_per_hour'"
                     :label="'From £'"
                     :error="formError.find(item => item.field === 'min_rate_per_hour')"
@@ -108,7 +108,7 @@
                   <div class="mx-1"></div>
                   <AppInput
                     v-model="form.max_rate_per_hour"
-                    :type="'text'"
+                    :type="'number'"
                     :name="'max_rate_per_hour'"
                     :label="'To £'"
                     :error="formError.find(item => item.field === 'max_rate_per_hour')"
@@ -121,7 +121,7 @@
                 <div class="flex flex-row flex-no-wrap">
                   <AppInput
                     v-model="form.min_rate_per_half_day_session"
-                    :type="'text'"
+                    :type="'number'"
                     :name="'min_rate_per_half_day_session'"
                     :label="'From £'"
                     :error="formError.find(item => item.field === 'min_rate_per_half_day_session')"
@@ -130,7 +130,7 @@
                   <div class="mx-1"></div>
                   <AppInput
                     v-model="form.max_rate_per_half_day_session"
-                    :type="'text'"
+                    :type="'number'"
                     :name="'max_rate_per_half_day_session'"
                     :label="'To £'"
                     :error="formError.find(item => item.field === 'max_rate_per_half_day_session')"
@@ -143,7 +143,7 @@
                 <div class="flex flex-row flex-no-wrap">
                   <AppInput
                     v-model="form.min_rate_per_whole_day_session"
-                    :type="'text'"
+                    :type="'number'"
                     :name="'min_rate_per_whole_day_session'"
                     :label="'From £'"
                     :error="formError.find(item => item.field === 'min_rate_per_whole_day_session')"
@@ -152,7 +152,7 @@
                   <div class="mx-1"></div>
                   <AppInput
                     v-model="form.max_rate_per_whole_day_session"
-                    :type="'text'"
+                    :type="'number'"
                     :name="'max_rate_per_whole_day_session'"
                     :label="'To £'"
                     :error="formError.find(item => item.field === 'max_rate_per_whole_day_session')"

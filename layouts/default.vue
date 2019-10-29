@@ -73,6 +73,12 @@ export default {
   }
 }
 
+@media screen and (min-width: 320px) {
+  .content, .content-message {
+    padding: 1px 3% 0;
+  }
+}
+
 </style>
 
 

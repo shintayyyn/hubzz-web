@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col py-2 mb-6" v-on-clickaway="toggledOff">
+  <div class="flex flex-col py-2 mb-3 md:mb-6" v-on-clickaway="toggledOff">
     <div class="relative flex flex-row flex-no-wrap justify-between">
       <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
       <div class="flex">
@@ -14,7 +14,7 @@
         v-model="search"
         ref="search"
         type="text"
-        class="border-b-2 focus:border-yellow-400 focus:outline-none py-4 font-bold text-xs sm:text-sm w-full"
+        class="border-b-2 focus:border-yellow-400 focus:outline-none py-4 px-2 font-bold text-xs sm:text-sm w-full"
         :class="error? 'border-red-500':''"
         :style="inStyle"
         @focus="toggledOn"

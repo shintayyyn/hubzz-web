@@ -6,7 +6,7 @@
           class="text-xs sm:text-sm"
         >{{$moment(daysInWeek[0].date).format('MMM')}} {{$moment(daysInWeek[0].date).format('YYYY')}} - {{$moment(daysInWeek[6].date).format('MMM')}} {{$moment(daysInWeek[6].date).format('YYYY')}}</div>
       </div>
-      <div class="w-1/3 py-1 flex flex-row flex-no-wrap justify-center">
+      <div class="w-1/3 py-1 px-2 flex flex-no-wrap justify-end md:justify-center items-center">
         <span class="cursor-pointer" @click="adjustWeek('previous')">
           <svgicon name="arrow-left" height="12" width="12" />
         </span>
@@ -261,13 +261,13 @@
             @click="selectDateShift(date, 'AM')"
           ></div>
           <div
-            v-else-if="hasLocumAllocatedPrivateJobs(date, 'AM')"
+            v-else-if="hasLocumAllocatedPrivatePartJobs(date, 'AM')"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-green-400 hover:bg-gray-300"
             :key="`${date}-${index}-${id}`"
             @click="selectDateShift(date, 'AM')"
           ></div>
           <div
-            v-else-if="hasLocumAllocatedPlatformJob(date, 'AM')"
+            v-else-if="hasLocumAllocatedPlatformPartJobs(date, 'AM')"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-green-400 hover:bg-gray-300"
             :key="`${date}-${index}-${id}`"
             @click="selectDateShift(date, 'AM')"
@@ -302,13 +302,13 @@
             @click="selectDateShift(date, 'PM')"
           ></div>
           <div
-            v-else-if="hasLocumAllocatedPrivateJobs(date, 'PM')"
+            v-else-if="hasLocumAllocatedPrivatePartJobs(date, 'PM')"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-green-400 hover:bg-gray-300"
             :key="`${date}-${index}-${id}`"
             @click="selectDateShift(date, 'PM')"
           ></div>
           <div
-            v-else-if="hasLocumAllocatedPlatformJob(date, 'PM')"
+            v-else-if="hasLocumAllocatedPlatformPartJobs(date, 'PM')"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-green-400 hover:bg-gray-300"
             :key="`${date}-${index}-${id}`"
             @click="selectDateShift(date, 'PM')"
@@ -343,13 +343,13 @@
             @click="selectDateShift(date, 'OOH')"
           ></div>
           <div
-            v-else-if="hasLocumAllocatedPrivateJobs(date, 'OOH')"
+            v-else-if="hasLocumAllocatedPrivatePartJobs(date, 'OOH')"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-green-400 hover:bg-gray-300"
             :key="`${date}-${index}-${id}`"
             @click="selectDateShift(date, 'OOH')"
           ></div>
           <div
-            v-else-if="hasLocumAllocatedPlatformJob(date, 'OOH')"
+            v-else-if="hasLocumAllocatedPlatformPartJobs(date, 'OOH')"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-green-400 hover:bg-gray-300"
             :key="`${date}-${index}-${id}`"
             @click="selectDateShift(date, 'OOH')"
@@ -384,13 +384,13 @@
             @click="selectDateShift(date, 'Whole Day')"
           ></div>
           <div
-            v-else-if="hasLocumAllocatedPrivateJobs(date, 'Whole Day')"
+            v-else-if="hasLocumAllocatedPrivatePartJobs(date, 'Whole Day')"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-green-400 hover:bg-gray-300"
             :key="`${date}-${index}-${id}`"
             @click="selectDateShift(date, 'Whole Day')"
           ></div>
           <div
-            v-else-if="hasLocumAllocatedPlatformJob(date, 'Whole Day')"
+            v-else-if="hasLocumAllocatedPlatformPartJobs(date, 'Whole Day')"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-green-400 hover:bg-gray-300"
             :key="`${date}-${index}-${id}`"
             @click="selectDateShift(date, 'Whole Day')"
@@ -483,16 +483,18 @@ export default {
     getPracticeAppliedJobsReminder() {
       return this.$store.getters["jobs/getPracticeAppliedJobsReminder"];
     },
-    // locum
+    // LOCUM
+    // parts
     getLocumOngoingJobs() {
       return this.$store.getters["jobs/getLocumOngoingJobs"];
     },
-    getLocumAllocatedPrivateJobs() {
-      return this.$store.getters["jobs/getLocumAllocatedPrivateJobs"];
+    getLocumAllocatedPrivatePartJobs() {
+      return this.$store.getters["jobs/getLocumAllocatedPrivatePartJobs"];
     },
-    getLocumAllocatedPlatformJobs() {
-      return this.$store.getters["jobs/getLocumAllocatedPlatformJobs"];
+    getLocumAllocatedPlatformPartJobs() {
+      return this.$store.getters["jobs/getLocumAllocatedPlatformPartJobs"];
     },
+    // whole
     getLocumAppliedJobs() {
       return this.$store.getters["jobs/getLocumAppliedJobs"];
     },
@@ -597,19 +599,18 @@ export default {
           calendar_date_start: `${this.firstDayOfTheWeek}:gte`,
           calendar_date_end: `${this.lastDayOfTheWeek}:lte`,
           limit: 100000000,
-          status: ["Allocated", "Applied"]
+          locum_status: ["Applied"]
         });
         this.$store.dispatch("jobs/fetchLocumJobParts", {
           calendar_date_start: `${this.firstDayOfTheWeek}:gte`,
           calendar_date_end: `${this.lastDayOfTheWeek}:lte`,
           limit: 100000000,
-          status: ["Ongoing"]
+          locum_status: ["Ongoing", "Allocated"]
         });
         this.$store.dispatch("jobs/fetchLocumUnavailabilities", {
-          calendar_date_start: `${this.firstDayOfTheWeek}:gte`,
-          calendar_date_end: `${this.lastDayOfTheWeek}:lte`,
-          limit: 100000000,
-          status: ["Unavailable"]
+          date_start: `${this.firstDayOfTheWeek}:gte`,
+          date_end: `${this.lastDayOfTheWeek}:lte`,
+          limit: 100000000
         });
       }
     },
@@ -682,7 +683,8 @@ export default {
         );
       }
     },
-    // locums
+    // LOCUM
+    // parts
     hasLocumOngoingJobs(date, type) {
       if (this.getLocumOngoingJobs && this.getLocumOngoingJobs.length > 0) {
         return this.getLocumOngoingJobs.find(
@@ -693,30 +695,33 @@ export default {
         );
       }
     },
-    hasLocumAllocatedPrivateJobs(date, type) {
+    hasLocumAllocatedPrivatePartJobs(date, type) {
       if (
-        this.getLocumAllocatedPrivateJobs &&
-        this.getLocumAllocatedPrivateJobs.length > 0
+        this.getLocumAllocatedPrivatePartJobs &&
+        this.getLocumAllocatedPrivatePartJobs.length > 0
       ) {
-        return this.getLocumAllocatedPrivateJobs.find(
-          job =>
-            this.getDateArray(job.date_start, job.date_end).includes(date) &&
-            job.shift.name === type
+        return this.getLocumAllocatedPrivatePartJobs.find(
+          job_part =>
+            this.getDateArray(job_part.date_start, job_part.date_end).includes(
+              date
+            ) && job_part.job.shift.name === type
         );
       }
     },
-    hasLocumAllocatedPlatformJob(date, type) {
+    hasLocumAllocatedPlatformPartJobs(date, type) {
       if (
-        this.getLocumAllocatedPlatformJobs &&
-        this.getLocumAllocatedPlatformJobs.length > 0
+        this.getLocumAllocatedPlatformPartJobs &&
+        this.getLocumAllocatedPlatformPartJobs.length > 0
       ) {
-        return this.getLocumAllocatedPlatformJobs.find(
-          job =>
-            this.getDateArray(job.date_start, job.date_end).includes(date) &&
-            job.shift.name === type
+        return this.getLocumAllocatedPlatformPartJobs.find(
+          job_part =>
+            this.getDateArray(job_part.date_start, job_part.date_end).includes(
+              date
+            ) && job_part.job.shift.name === type
         );
       }
     },
+    // whole
     hasLocumAppliedJobs(date, type) {
       return this.getLocumAppliedJobs.find(job =>
         this.getDateArray(job.date_start, job.date_end).includes(date)

@@ -1,7 +1,20 @@
 <template>
   <section class="sign-in-card">
     <div class="flex flex-col">
-      <AuthTabs @nextTab="activeComponent = $event" :activeComponent="activeComponent" />
+      <div class="flex flex-row flex-no-wrap justify-center md:mb-16">
+        <nuxt-link
+          :to="'?tabs=sign-in'"
+          :event="$route.query.tabs && $route.query.tabs === 'sign-in' ? '' : 'click'"
+          class="px-12 py-5 font-bold text-sm cursor-pointer focus:outline-none"
+          :class="!$route.query.tabs || ($route.query.tabs && $route.query.tabs === 'sign-in') ? 'rounded-full bg-yellow-500 text-black' : 'text-gray-600'"
+        >Sign In</nuxt-link>
+        <nuxt-link
+          :to="'?tabs=sign-up'"
+          :event="$route.query.tabs && $route.query.tabs === 'sign-up' ? '' : 'click'"
+          class="px-12 py-5 font-bold text-sm cursor-pointer focus:outline-none"
+          :class="$route.query.tabs && $route.query.tabs === 'sign-up' ? 'rounded-full bg-yellow-500 text-black' : 'text-gray-600'"
+        >Sign Up</nuxt-link>
+      </div>
       <div class="px-5 my-5">
         <transition name="fade" mode="out-in">
           <Component :is="activeComponent" />
@@ -12,20 +25,26 @@
 </template>
 
 <script>
-import AuthTabs from "@/components/Auth/AuthTabs";
 import SignIn from "@/components/Auth/SignIn";
 import SignUp from "@/components/Auth/SignUp";
 export default {
   layout: "auth",
   components: {
-    AuthTabs,
     SignIn,
     SignUp
   },
-  data() {
-    return {
-      activeComponent: "SignIn"
-    };
+  computed: {
+    activeComponent() {
+      if (
+        !this.$route.query.tabs ||
+        (this.$route.query.tabs && this.$route.query.tabs === "sign-in")
+      ) {
+        return "SignIn";
+      }
+      if (this.$route.query.tabs && this.$route.query.tabs === "sign-up") {
+        return "SignUp";
+      }
+    }
   },
   mounted() {
     this.$store.commit("sign-up/SET_ACTIVE_COMPONENT", "LocumAccountDetails");

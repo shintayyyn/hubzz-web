@@ -1,5 +1,5 @@
 <template>
-  <div class="relative rounded-lg shadow-lg w-full p-8 md:w-2/3">
+  <div class="relative bg-white rounded-lg shadow-lg w-full p-4 md:p-8 lg:w-2/3">
     <AppLoading :loading="loading" spinner />
     <AppFormError :formError="formError" v-if="formError.length > 0" />
     <form class="w-full">
@@ -108,7 +108,7 @@
           :name="'address_line_1'"
           :label="'Address line 1'"
           :error="formError.find(item => item.field === 'address_line_1')"
-          :inStyle="'background-color:#dae1e7;border-color:white'"
+          :inStyle="'background-color:#dae1e7;border-color:white;padding:16px 8px;'"
           @submit="save"
           @blur="CheckEmptyField(form.address_line_1, 'address_line_1')"
         />
@@ -117,7 +117,7 @@
           :type="'text'"
           :name="'address_line_2'"
           :label="'Address line 2 (optional)'"
-          :inStyle="'background-color:#dae1e7;border-color:white'"
+          :inStyle="'background-color:#dae1e7;border-color:white;padding:16px 8px;'"
           @submit="save"
         />
         <AppInput
@@ -126,7 +126,7 @@
           :name="'address_line_3'"
           :label="'City / Town / District'"
           :error="formError.find(item => item.field === 'address_line_3')"
-          :inStyle="'background-color:#dae1e7;border-color:white'"
+          :inStyle="'background-color:#dae1e7;border-color:white;padding:16px 8px;'"
           @submit="save"
           @blur="CheckEmptyField(form.address_line_3, 'address_line_3')"
         />

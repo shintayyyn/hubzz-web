@@ -104,7 +104,6 @@ export default {
       this.modal = true;
     },
     add() {
-      console.log("qwe", this.selectedSurgery.id);
       this.$axios
         .$post(`/api/v1/practice/practice-children`, {
           surgery_id: this.selectedSurgery.id

@@ -117,17 +117,22 @@ export default {
     getPracticeAppliedJobsReminder(value) {
       this.findPerMonthPractice(this.selected_date);
     },
-    // locum
+    // LOCUM
+    // parts
     getLocumOngoingJobs(value) {
       this.findPerMonthLocum(this.selected_date);
     },
-    getLocumAllocatedPrivateJobs(value) {
+    getLocumAllocatedPrivatePartJobs(value) {
       this.findPerMonthLocum(this.selected_date);
     },
-    getLocumAllocatedPlatformJobs(value) {
+    getLocumAllocatedPlatformPartJobs(value) {
       this.findPerMonthLocum(this.selected_date);
     },
+    // whole
     getLocumAppliedJobs(value) {
+      this.findPerMonthLocum(this.selected_date);
+    },
+    getLocumUnavailabilities(value) {
       this.findPerMonthLocum(this.selected_date);
     }
   },
@@ -166,16 +171,18 @@ export default {
     getPracticeAppliedJobsReminder() {
       return this.$store.getters["jobs/getPracticeAppliedJobsReminder"];
     },
-    // locums
+    // LOCUM
+    // parts
     getLocumOngoingJobs() {
       return this.$store.getters["jobs/getLocumOngoingJobs"];
     },
-    getLocumAllocatedPrivateJobs() {
-      return this.$store.getters["jobs/getLocumAllocatedPrivateJobs"];
+    getLocumAllocatedPrivatePartJobs() {
+      return this.$store.getters["jobs/getLocumAllocatedPrivatePartJobs"];
     },
-    getLocumAllocatedPlatformJobs() {
-      return this.$store.getters["jobs/getLocumAllocatedPlatformJobs"];
+    getLocumAllocatedPlatformPartJobs() {
+      return this.$store.getters["jobs/getLocumAllocatedPlatformPartJobs"];
     },
+    // whole
     getLocumAppliedJobs() {
       return this.$store.getters["jobs/getLocumAppliedJobs"];
     },
@@ -314,11 +321,11 @@ export default {
       this.viewLocumJobs = false;
       this.loading = true;
       let foundLocumOngoingJobs = [];
-      let foundLocumAllocatedPrivateJobs = [];
-      let foundLocumAllocatedPlatformJobs = [];
+      let foundLocumAllocatedPrivatePartJobs = [];
+      let foundLocumAllocatedPlatformPartJobs = [];
       let foundLocumAppliedJobs = [];
       let foundLocumUnavailabilities = [];
-
+      // parts
       if (this.getLocumOngoingJobs.length > 0) {
         foundLocumOngoingJobs = this.getLocumOngoingJobs.filter(job_part =>
           this.getDateArray(job_part.date_start, job_part.date_end).includes(
@@ -326,21 +333,17 @@ export default {
           )
         );
       }
-      if (this.getLocumAllocatedPrivateJobs.length > 0) {
-        foundLocumAllocatedPrivateJobs = this.getLocumAllocatedPrivateJobs.filter(
+      if (this.getLocumAllocatedPrivatePartJobs.length > 0) {
+        foundLocumAllocatedPrivatePartJobs = this.getLocumAllocatedPrivatePartJobs.filter(
           job => this.getDateArray(job.date_start, job.date_end).includes(date)
         );
       }
-      if (this.getLocumAllocatedPrivateJobs.length > 0) {
-        foundLocumAllocatedPrivateJobs = this.getLocumAllocatedPrivateJobs.filter(
+      if (this.getLocumAllocatedPlatformPartJobs.length > 0) {
+        foundLocumAllocatedPlatformPartJobs = this.getLocumAllocatedPlatformPartJobs.filter(
           job => this.getDateArray(job.date_start, job.date_end).includes(date)
         );
       }
-      if (this.getLocumAllocatedPlatformJobs.length > 0) {
-        foundLocumAllocatedPlatformJobs = this.getLocumAllocatedPlatformJobs.filter(
-          job => this.getDateArray(job.date_start, job.date_end).includes(date)
-        );
-      }
+      // whole
       if (this.getLocumAppliedJobs.length > 0) {
         foundLocumAppliedJobs = this.getLocumAppliedJobs.filter(job =>
           this.getDateArray(job.date_start, job.date_end).includes(date)
@@ -353,8 +356,8 @@ export default {
       }
       this.foundLocumJobs = [
         ...foundLocumOngoingJobs,
-        ...foundLocumAllocatedPrivateJobs,
-        ...foundLocumAllocatedPlatformJobs,
+        ...foundLocumAllocatedPrivatePartJobs,
+        ...foundLocumAllocatedPlatformPartJobs,
         ...foundLocumAppliedJobs,
         ...foundLocumUnavailabilities
       ];
@@ -371,11 +374,11 @@ export default {
       this.viewLocumJobs = false;
       this.loading = false;
       let foundLocumOngoingJobs = [];
-      let foundLocumAllocatedPrivateJobs = [];
-      let foundLocumAllocatedPlatformJobs = [];
+      let foundLocumAllocatedPrivatePartJobs = [];
+      let foundLocumAllocatedPlatformPartJobs = [];
       let foundLocumAppliedJobs = [];
       let foundLocumUnavailabilities = [];
-
+      // parts
       if (this.getLocumOngoingJobs.length > 0) {
         foundLocumOngoingJobs = this.getLocumOngoingJobs.filter(
           job_part =>
@@ -384,20 +387,23 @@ export default {
             ) && job_part.job.shift.name === shift
         );
       }
-      if (this.getLocumAllocatedPrivateJobs.length > 0) {
-        foundLocumAllocatedPrivateJobs = this.getLocumAllocatedPrivateJobs.filter(
-          job =>
-            this.getDateArray(job.date_start, job.date_end).includes(date) &&
-            job.shift.name === shift
+      if (this.getLocumAllocatedPrivatePartJobs.length > 0) {
+        foundLocumAllocatedPrivatePartJobs = this.getLocumAllocatedPrivatePartJobs.filter(
+          job_part =>
+            this.getDateArray(job_part.date_start, job_part.date_end).includes(
+              date
+            ) && job_part.job.shift.name === shift
         );
       }
-      if (this.getLocumAllocatedPlatformJobs.length > 0) {
-        foundLocumAllocatedPlatformJobs = this.getLocumAllocatedPlatformJobs.filter(
-          job =>
-            this.getDateArray(job.date_start, job.date_end).includes(date) &&
-            job.shift.name === shift
+      if (this.getLocumAllocatedPlatformPartJobs.length > 0) {
+        foundLocumAllocatedPlatformPartJobs = this.getLocumAllocatedPlatformPartJobs.filter(
+          job_part =>
+            this.getDateArray(job_part.date_start, job_part.date_end).includes(
+              date
+            ) && job_part.job.shift.name === shift
         );
       }
+      // whole
       if (this.getLocumAppliedJobs.length > 0) {
         foundLocumAppliedJobs = this.getLocumAppliedJobs.filter(
           job =>
@@ -414,8 +420,8 @@ export default {
       }
       this.foundLocumJobs = [
         ...foundLocumOngoingJobs,
-        ...foundLocumAllocatedPrivateJobs,
-        ...foundLocumAllocatedPlatformJobs,
+        ...foundLocumAllocatedPrivatePartJobs,
+        ...foundLocumAllocatedPlatformPartJobs,
         ...foundLocumAppliedJobs,
         ...foundLocumUnavailabilities
       ];
@@ -444,16 +450,17 @@ export default {
   }
 }
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: lightgrey;
+  background: #ccc;
+  border-radius: 10px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: #aaa;
 }
 </style>
 

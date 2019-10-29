@@ -1,7 +1,7 @@
 <template>
-  <section class="related-jobs-section">
+  <section>
     <MyLocumRelatedJobsTabs :locumType="'favourites'" />
-    <div class="mt-5">
+    <div class="mt-4">
       <nuxt-child />
     </div>
   </section>

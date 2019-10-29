@@ -43,7 +43,7 @@
           @show="showLocum($event)"
         />
         <!-- <JobDetailModalSessionSample
-          :user="user"
+          :user="user"            
           :mandatory="mandatory"
           :optional="optional"
           v-if="(job.status === 'Current' || job.status === 'Completed') && user"

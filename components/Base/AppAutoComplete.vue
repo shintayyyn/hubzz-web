@@ -1,5 +1,5 @@
 <template>
-  <div class="relative flex flex-col py-2 mb-6" v-on-clickaway="toggledOff">
+  <div class="relative flex flex-col py-2 mb-3 md:mb-6" v-on-clickaway="toggledOff">
     <div class="relative flex flex-row flex-no-wrap justify-between">
       <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
       <div class="flex">
@@ -23,9 +23,8 @@
       />
     </div>
     <transition name="fade">
-      <div v-if="results.length === 0 && search" class="absolute text-sm py-2 text-gray-500" style="bottom: -26px;">No results found</div>
       <div class="relative z-10" v-if="showResults">
-        <div class="w-full absolute bg-white shadow-md">
+        <div class="w-full absolute bg-white shadow-md" v-if="results.length > 0">
           <div
             v-for="(item, index) in results"
             :key="index"
@@ -64,6 +63,11 @@
             </template>
           </div>
         </div>
+        <div
+          class="absolute w-full text-sm p-2 bg-white shadow-md"
+          style="bottom: -26px;"
+          v-if="results.length === 0"
+        >No results found</div>
       </div>
     </transition>
   </div>
@@ -101,8 +105,10 @@ export default {
     };
   },
   watch: {
-    value(surgery) {
-      this.search = surgery;
+    value(newValue, oldValue) {
+      if (newValue && oldValue) {
+        this.search = newValue;
+      }
     },
     search(value) {
       if (value) {
@@ -113,15 +119,17 @@ export default {
       }
     }
   },
+  mounted() {
+    this.search = this.value;
+  },
   methods: {
     add() {
       let selectedSurgery = this.results[this.activeIndex];
-      // this.results = [];
+      if (!selectedSurgery) {
+        return;
+      }
       this.showResults = false;
       if (this.keyword === "practices") {
-        if (!selectedSurgery){
-          return
-        }
         this.$axios
           .$get(`/api/v1/conversations?user_id=${selectedSurgery.id}`)
           .then(res => {
@@ -138,9 +146,9 @@ export default {
             }
           });
       } else {
-        this.$emit("input", selectedSurgery.name);
+        this.$emit("input", selectedSurgery.id.toString());
+        this.search = selectedSurgery.name;
       }
-      this.search = "";
     },
     getSurgeries: debounce(function(input) {
       const params = {
@@ -157,7 +165,7 @@ export default {
       });
     }, 500),
     toggledOn() {
-      if (this.search.length) {
+      if (this.search && this.search.length) {
         this.showResults = true;
       }
     },

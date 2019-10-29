@@ -1,14 +1,14 @@
 <template>
-  <div class="modal-container shadow-lg">
-    <div class="p-6 md:p-8">
+  <div class="modal-container bg-white shadow-lg">
+    <div class="p-4 md:p-8">
       <div @click="$router.push('/profile/users')" class="cursor-pointer">
         <svgicon name="left-arrow" height="32" width="32" />
       </div>
-      <div class="flex flex-col mt-8">
+      <div class="flex flex-col mt-4">
         <div class="font-bold text-lg">Create User</div>
         <div class="text-sm">Surgery: {{$auth.user.practice_detail.practice.surgery.name}}</div>
-        <div class="flex w-full justify-center xl:justify-start">
-          <div class="flex flex-col p-8 my-2 rounded-lg shadow-lg w-full max-w-5xl">
+        <div class="w-full">
+          <div class="flex flex-col p-4 md:p-8 my-2 rounded-lg bg-white shadow-lg w-full max-w-3xl">
             <form class="w-full">
               <AppInput
                 v-model="form.title"

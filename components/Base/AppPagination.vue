@@ -27,7 +27,7 @@
         <div class="md:hidden pagination-item m-1" v-for="page in pages" :key="page.name">
           <button
             type="button"
-            class="rounded-lg py-2 px-3 md:px-4 font-bold text-xs md:text-sm focus:outline-none"
+            class="page-button rounded-lg py-2 px-3 md:px-4 font-bold text-xs md:text-sm focus:outline-none"
             @click="onClickPage(page.name)"
             :disabled="loading || page.isDisabled"
             :class="{ active: isPageActive(page.name) }"
@@ -39,7 +39,7 @@
         <div class="pagination-item m-1">
           <button
             type="button"
-            class="relative rounded-lg py-4 md:py-2 px-4 font-bold text-sm focus:outline-none"
+            class="relative page-button rounded-lg py-4 md:py-2 px-4 font-bold text-sm focus:outline-none"
             @click="onClickFirstPage"
             :class="{ 'text-gray-500 cursor-not-allowed': isInFirstPage }"
             :disabled="loading || isInFirstPage"
@@ -56,7 +56,7 @@
         <div class="pagination-item m-1">
           <button
             type="button"
-            class="relative rounded-lg py-4 md:py-2 px-4 font-bold text-sm focus:outline-none"
+            class="relative page-button rounded-lg py-4 md:py-2 px-4 font-bold text-sm focus:outline-none"
             @click="onClickPreviousPage"
             :class="{ 'text-gray-500 cursor-not-allowed': isInFirstPage }"
             :disabled="loading || isInFirstPage"
@@ -73,7 +73,7 @@
         <div class="hidden md:block pagination-item m-1" v-for="page in pages" :key="page.name">
           <button
             type="button"
-            class="rounded-lg py-2 px-3 md:px-4 font-bold text-xs md:text-sm focus:outline-none"
+            class="rounded-lg page-button py-2 px-3 md:px-4 font-bold text-xs md:text-sm focus:outline-none"
             @click="onClickPage(page.name)"
             :disabled="loading || page.isDisabled"
             :class="{ active: isPageActive(page.name) }"
@@ -83,7 +83,7 @@
         <div class="pagination-item next m-1">
           <button
             type="button"
-            class="relative rounded-lg py-4 md:py-2 px-4 font-bold text-sm focus:outline-none"
+            class="relative page-button rounded-lg py-4 md:py-2 px-4 font-bold text-sm focus:outline-none"
             :class="{ 'text-gray-500 cursor-not-allowed': isInLastPage }"
             @click="onClickNextPage"
             :disabled="loading || isInLastPage"
@@ -100,7 +100,7 @@
         <div class="pagination-item m-1">
           <button
             type="button"
-            class="relative rounded-lg py-4 md:py-2 px-4 font-bold text-sm focus:outline-none"
+            class="relative page-button rounded-lg py-4 md:py-2 px-4 font-bold text-sm focus:outline-none"
             @click="onClickLastPage"
             :class="{ 'text-gray-500 cursor-not-allowed': isInLastPage }"
             :disabled="loading || isInLastPage"
@@ -241,7 +241,7 @@ export default {
 };
 </script>
 <style scoped>
-.active {
+/* .active {
   background-color: #4aae9b;
   color: #ffffff;
 }
@@ -249,12 +249,34 @@ button {
   background: linear-gradient(to top, #f2d024, #efde86);
 }
 
+button:disabled svg {
+  fill: #aaa;
+} */
+
+.page-button {
+  background: linear-gradient(to top, #f2d024, #efde86);
+}
+.active {
+  background: linear-gradient(to top, #dbb013, #ecc94b);
+  color: #000;
+  box-shadow: 0 3px 5px #333;
+}
+
 button:active {
   transform: translate(2px, 2px);
 }
 
-button:disabled svg {
-  fill: #aaa;
+button:active :not(button:disabled){
+  transform: translate(2px, 2px);
+  box-shadow: 0 0 0 transparent;
+}
+
+button:disabled, button:disabled svg {
+  background: #e2e2e2;
+  color: #999999;
+  cursor: not-allowed;
+  fill: #999999;
+  box-shadow: 0 0 0 transparent;
 }
 </style>
 
