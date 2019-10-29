@@ -7,19 +7,21 @@
           <div
             v-for="(column, index) in columns"
             :key="`${column}-${index}`"
-            class="app-cell text-sm md:text-base md:font-bold"
+            class="app-cell text-sm md:text-base md:font-bold px-4"
           >
             <div
               v-if="column.sortable"
               @click="sort(column.dataIndex)"
-              class="flex items-center justify-center cursor-pointer"
+              class="flex items-center cursor-pointer"
+              :class="column.class && column.class.includes('text-center') && 'justify-center'"
             >
-              <div class="block whitespace-no-wrap pr-1">{{column.name}}</div>
+              <div class="block pr-1">{{column.name}}</div>
               <svgicon class :name="sortIcon(column.dataIndex)" height="12" width="12" />
             </div>
             <div
               v-if="!column.sortable"
-              class="flex justify-center block whitespace-no-wrap"
+              class="flex block"
+              :class="column.class && column.class.includes('text-center') && 'justify-center'"
             >{{column.name}}</div>
           </div>
         </div>
@@ -33,20 +35,21 @@
               <div
                 v-for="(column, index) in columns"
                 :key="index"
-                class="app-cell truncate text-center"
+                class="app-cell px-4"
+                :class="column.class && column.class.includes('text-center') && 'text-center'"
               >
                 <div v-if="column.dataIndex !== 'actions'">
-                  <div
+                  <div class="truncate"
                     v-if="column.class && column.class.includes('localDate') && dataCell(item,column) !== '(none)'"
                   >{{dataCell(item, column) | localDate}}</div>
                   <template v-else>
                     <div v-if="Array.isArray(dataCell(item, column))">
-                      <div
+                      <div class="truncate"
                         v-for="(item, index) in dataCell(item, column)"
                         :key="`${item}-${index}`"
                       >{{item}}</div>
                     </div>
-                    <div v-else>{{dataCell(item, column)}}</div>
+                    <div class="truncate" v-else>{{dataCell(item, column)}}</div>
                   </template>
                 </div>
                 <slot v-else name="actions" v-bind:item="item"></slot>
@@ -244,21 +247,21 @@ export default {
 <style scoped>
 .apptable {
   min-width: 112rem;
-  max-width: 100%;
+  /* max-width: 100%; */
 }
 
 .app-cell {
   min-width: 150px;
-  max-width: 150px;
+  /* max-width: 150px; */
 }
 
 @media screen and (min-width: 768px) {
   .apptable {
-    min-width: 124rem;
+    min-width: 1200px;
   }
   .app-cell {
     min-width: 200px;
-    max-width: 200px;
+    /* max-width: 200px; */
   }
 }
 </style>
