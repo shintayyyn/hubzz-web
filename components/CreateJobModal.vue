@@ -748,9 +748,12 @@ export default {
       if (["15", "30", "60", false, "false"].includes(this.unpaid_breaks)) {
         notRequired.push("unpaid_breaks_in_minutes");
       }
-
-      if (this.auto_assign_job == false || this.auto_assign_job == "false") {
-        notRequired.push("auto_assign_at");
+      console.log(this.auto_assign_job, typeof this.auto_assign_job);
+      if (this.auto_assign_job === true || this.auto_assign_job === "true") {
+        console.log("test");
+        if (!this.form.auto_assign_at) {
+          notRequired.push("auto_assign_at");
+        }
       }
 
       if (
