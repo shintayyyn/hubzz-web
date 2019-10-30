@@ -5,7 +5,6 @@
     </template>
     <template v-if="!job && job_part">
       <JobPartDetailModal :job_part="job_part" @close="close" />
-      <div>wait</div>
     </template>
   </div>
 </template>
