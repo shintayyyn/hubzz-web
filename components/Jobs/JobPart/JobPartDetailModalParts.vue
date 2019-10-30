@@ -9,6 +9,7 @@
       :columns="columns"
       :loading="loading"
       :routerLink="routerLink"
+      :customWidth="'600'"
       @pagechanged="pagechanged"
       @limitchanged="limitchanged"
     />
@@ -38,7 +39,6 @@ export default {
         {
           name: "Job Part Number",
           dataIndex: "job_part_number",
-          class: "text-center"
         },
         {
           name: "Date End",
