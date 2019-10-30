@@ -46,7 +46,7 @@
       </div>-->
       <template v-if="practice_modal">
         <div class="modal-container">
-          <JobDetailModal @close="practice_modal = false" :job="practice_job" />
+          <PracticeJobDetailModal @close="practice_modal = false" :job="practice_job" />
         </div>
       </template>
     </transition>
@@ -62,7 +62,7 @@ import JobDetailModalAppointment from "@/components/Jobs/JobDetailModalAppointme
 
 // practice
 // import CreateJobModal from "@/components/CreateJobModal";
-// import JobDetailModal from "@/components/Sessions/JobDetailModal";
+import PracticeJobDetailModal from "@/components/Sessions/JobDetailModal";
 
 export default {
   components: {
@@ -70,9 +70,9 @@ export default {
     PerWeek,
     Info,
     JobDetailModal,
-    JobDetailModalAppointment
+    JobDetailModalAppointment,
     // CreateJobModal,
-    // JobDetailModal
+    PracticeJobDetailModal
   },
   data() {
     return {
@@ -134,6 +134,7 @@ export default {
     },
     // practice
     viewPracticeJob(job) {
+      console.log("qwe", job);
       this.practice_modal = true;
       this.practice_job = job;
     }
