@@ -392,7 +392,7 @@ export default {
                 }
             })
         }
-
+        // qwe
         if (!payload.countOnly) {
             payload.status.forEach(jobStatus => {
                 if (jobStatus.toLowerCase() === 'allocated') {
