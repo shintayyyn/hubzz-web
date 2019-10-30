@@ -68,6 +68,9 @@ export default {
       return this.$store.getters["auth/permissions"];
     }
   },
+  mounted() {
+    console.log("qwewqe");
+  },
   async asyncData({ app, params, error }) {
     try {
       const response = await app.$axios.$get(
