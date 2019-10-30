@@ -103,8 +103,7 @@ export default {
       columns: [
         {
           name: "Type",
-          dataIndex: "type",
-          class: "text-center"
+          dataIndex: "type"
         },
         {
           name: "Practice / Surgery",
@@ -145,7 +144,8 @@ export default {
         },
         {
           name: "Actions",
-          dataIndex: "actions"
+          dataIndex: "actions",
+          class: "text-center"
         }
       ],
       // payment
