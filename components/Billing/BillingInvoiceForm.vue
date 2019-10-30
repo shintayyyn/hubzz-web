@@ -730,7 +730,7 @@ export default {
   border-radius: 0;
 }
 .items-table {
-  width: 732px;
+  width: 733px;
 }
 .items-table tbody {
   border: 2px solid #eff3f8;

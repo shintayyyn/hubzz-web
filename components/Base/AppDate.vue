@@ -24,32 +24,31 @@
     <transition name="fade">
       <div class="relative md:static z-10 flex justify-center" v-if="modal">
         <div
-          class="absolute border rounded-tr-lg rounded-bl-lg rounded-br-lg calendar bg-white shadow-md"
+          class="absolute border rounded-b-lg calendar bg-white shadow-md"
         >
-          <div class="p-2 flex flex-row flex-no-wrap justify-start border-b-2 border-yellow-500">
-            <div class="m-1 w-1/2 text-left">
-              <select v-model="selectedMonth" class="text-xs sm:text-sm">
+          <div class="p-2 flex flex-row flex-no-wrap justify-start items-center border-b-2 border-yellow-500">
+            <div class="m-1 w-1/2 flex flex-no-wrap">
+              <select v-model="selectedMonth" class="mr-1 text-xs sm:text-sm py-1 px-1 cursor-pointer bg-gray-200 hover:bg-gray-300 focus:outline-none">
                 <option
                   :value="month.value"
                   v-for="(month, index) in filteredMonths"
                   :key="index"
                 >{{month.label}}</option>
               </select>
-              <select v-model="selectedYear" class="text-xs sm:text-sm">
+              <select v-model="selectedYear" class="ml-1 text-xs sm:text-sm py-1 px-1 cursor-pointer bg-gray-200 hover:bg-gray-300 focus:outline-none">
                 <option :value="year" v-for="(year, index) in yearLists" :key="index">{{year}}</option>
               </select>
             </div>
             <div class="m-1 w-1/2 flex flex-no-wrap justify-end">
-              <span class="cursor-pointer" @click="adjustMonth('previous')">
+              <span class="cursor-pointer mr-1" @click="adjustMonth('previous')">
                 <svgicon
                   name="arrow-left"
                   height="12"
                   width="12"
-                  :color="selectedYear === $moment().format('YYYY') && selectedMonth === $moment().format('M') ? 'gray' : ''"
+                  :color="selectedYear.toString() === $moment().format('YYYY') && selectedMonth.toString() === $moment().format('M') ? 'gray' : ''"
                 />
               </span>
-              <span class="mx-4"></span>
-              <span class="cursor-pointer" @click="adjustMonth('next')">
+              <span class="cursor-pointer ml-1" @click="adjustMonth('next')">
                 <svgicon name="arrow-right" height="12" width="12" />
               </span>
             </div>
@@ -270,14 +269,14 @@ export default {
   },
   watch: {
     selectedMonth(value) {
-      this.getDaysInMonth(value, this.selectedYear);
+      this.getDaysInMonth(value.toString(), this.selectedYear.toString());
     },
     selectedYear(value) {
       // set selected month to this current month if selected year === current year
       if (value === this.$moment().format("YYYY")) {
         this.selectedMonth = this.filteredMonths[0].value;
       }
-      this.getDaysInMonth(this.selectedMonth, value);
+      this.getDaysInMonth(this.selectedMonth.toString(), value.toString());
     }
   },
   computed: {
@@ -346,22 +345,28 @@ export default {
         );
         // return if selected month and year === current month and year
         if (
-          index === 0 &&
-          this.selectedYear === this.$moment().format("YYYY")
+          this.selectedMonth.toString() === this.$moment().format("M") &&
+          this.selectedYear.toString() === this.$moment().format("YYYY")
         ) {
           return;
         }
+
         if (index === 0) {
-          this.selectedMonth = 11;
-          this.selectedYear--;
+          this.selectedMonth--
         } else {
-          this.selectedMonth--;
+          if(this.selectedMonth === 1){
+            this.selectedMonth = 12;
+            this.selectedMonth--;
+            this.selectedYear--;
+          }else{
+            this.selectedMonth--
+          }
         }
       }
       if (type === "next") {
-        if (this.selectedMonth === 11) {
+        if (this.selectedMonth === 12) {
           this.selectedYear++;
-          this.selectedMonth = 0;
+          this.selectedMonth = 1;
         } else {
           this.selectedMonth++;
         }

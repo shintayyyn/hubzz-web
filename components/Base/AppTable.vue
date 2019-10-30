@@ -2,7 +2,7 @@
   <section class="relative">
     <div class="relative flex flex-col overflow-x-auto w-full px-2 mt-4">
     <AppLoading :loading="loading" spinner />
-      <div class="cell flex justify-start font-bold leading-none text-sm">
+      <div :style="`min-width: ${customWidth}px`" class="row flex justify-start font-bold leading-none text-sm">
         <div class="flex-1 flex items-center px-2"
           v-for="(column, index) in columns"
           :key="`${column}-${index}`"
@@ -12,7 +12,7 @@
           <svgicon v-if="column.sortable" :name="sortIcon(column.dataIndex)" height="12" width="12" />
         </div>
       </div>
-      <div v-for="(item) in items" :key="item.id" class="cell py-2">
+      <div v-for="(item) in items" :key="item.id" :style="`min-width: ${customWidth}px`" class="row py-2">
         <nuxt-link :to="{ path: `${routerLink}/${item.id}`, query: {...$route.query}}" class="flex justify-start shadow-md hover:bg-gray-100 rounded-lg items-center py-3">
           <div 
             v-for="(column, index) in columns"
@@ -84,6 +84,9 @@ export default {
       required: false
     },
     routerLink: {
+      type: String
+    },
+    customWidth: {
       type: String
     }
   },
@@ -223,7 +226,7 @@ export default {
 };
 </script>
 <style scoped>
-.cell {
+.row {
   min-width: 1200px;
 }
 </style>
