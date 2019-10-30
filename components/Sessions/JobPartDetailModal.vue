@@ -9,52 +9,33 @@
         class="mx-2 text-sm sm:text-sm p-2"
         :class="bgStatus(job_part.job.status)"
       >{{status(job_part.job.status)}}</div>
-      <div v-if="authPermissions.includes('Update Sessions Job')">
-        <button
-          class="font-bold text-xs sm:text-sm no-underline px-2 py-2 rounded-lg bg-yellow-500 ml-4 focus:outline-none"
-          v-if="job_part.job.status === 'Current' && toEdit === false && jobOngoing === false || job_part.job.status === 'Applied' && toEdit === false || job_part.job.status === 'Available' && toEdit === false"
-          @click.prevent="editJob()"
-        >Edit this job</button>
-        <button
-          class="font-bold text-xs sm:text-sm no-underline px-2 py-2 rounded-lg bg-yellow-500 ml-4 focus:outline-none"
-          v-if="job_part.job.status === 'Current' && toEdit === true && jobOngoing === false || job_part.job.status === 'Applied' && toEdit === true || job_part.job.status === 'Available' && toEdit === true"
-          @click.prevent="cancelEdit()"
-        >Cancel Editing</button>
-      </div>
     </div>
 
     <div class="flex flex-col mt-4">
       <div class="flex flex-row flex-wrap justify-start">
-        <JobDetailModalForm
-          :job="job_part.job"
-          v-if="toEdit === false || 
-                toEdit === false  || 
-                toEdit === false || 
-                toEdit === false ||
-                toEdit === false || 
-                toEdit === false || 
-                toEdit === false "
-        />
-        <JobDetailModalUpdateForm
-          :job="job_part.job"
-          v-if="job_part.job.status === 'Current' && toEdit === true && jobOngoing === false  || job_part.job.status === 'Applied' && toEdit === true  || job_part.job.status === 'Available' && toEdit === true"
-        />
+        <JobDetailModalForm :job="job_part.job" v-if="toEdit === false" />
         <JobDetailModalCandidates
+          v-if="job_part.job.status === 'Applied'"
           class="order-first lg:order-none"
           :applicants="applicants"
-          v-if="job_part.job.status === 'Applied'"
           @show="showLocum($event)"
+        />
+        <JobDetailModalLocum
+          :user="user"
+          :mandatory="mandatory"
+          :optional="optional"
+          v-if="(job_part.job.status === 'Ongoing' || job_part.job.status === 'Completed') && user"
         />
       </div>
       <JobDetailModalCancelForm
         :job="job_part.job"
         @close="close"
-        v-if="(job_part.job.status === 'Current' || job_part.job.status === 'Applied' || job_part.job.status === 'Available') && authPermissions.includes('Cancel Sessions Job')"
+        v-if="(job_part.job.status === 'Allocated' || job_part.job.status === 'Ongoing' || job_part.job.status === 'Applied' || job_part.job.status === 'Available') && authPermissions.includes('Cancel Sessions Job')"
       />
       <JobDetailModalCompleteForm
         :job_parts="job_part.job.job_parts"
         @close="close"
-        v-if="job_part.job.status === 'Current' && authPermissions.includes('Complete Sessions Job')"
+        v-if="job_part.job.status === 'Ongoing' && authPermissions.includes('Complete Sessions Job')"
       />
     </div>
     <div class="shield" v-if="modal" @click="modal = false"></div>
@@ -73,6 +54,7 @@ import JobDetailModalCandidates from "@/components/Sessions/JobDetailModalCandid
 import JobDetailModalCancelForm from "@/components/Sessions/JobDetailModalCancelForm";
 import JobDetailModalCompleteForm from "@/components/Sessions/JobDetailModalCompleteForm";
 import JobDetailModalShowCandidate from "@/components/Sessions/JobDetailModalShowCandidate";
+import JobDetailModalLocum from "@/components/Sessions/JobDetailModalLocum";
 export default {
   props: ["job_part"],
   components: {
@@ -82,7 +64,8 @@ export default {
     // JobDetailModalSessionSample,
     JobDetailModalCompleteForm,
     JobDetailModalCancelForm,
-    JobDetailModalShowCandidate
+    JobDetailModalShowCandidate,
+    JobDetailModalLocum
   },
   data() {
     return {
@@ -101,7 +84,7 @@ export default {
     }
   },
   created() {
-    console.log("job", this.job_part.job);
+    console.log("job_part", this.job_part);
     if (this.job_part.job.status === "Applied") {
       this.getCandidates();
     }
@@ -137,6 +120,7 @@ export default {
         )
         .then(res => {
           this.user = res.data.user;
+          console.log(this.user);
           this.getProfessionCategory(
             res.data.user.locum_detail.profession.profession_category.id
           );

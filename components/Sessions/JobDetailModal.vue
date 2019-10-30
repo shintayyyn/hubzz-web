@@ -9,12 +9,12 @@
       <div v-if="authPermissions.includes('Update Sessions Job')">
         <button
           class="font-bold text-xs sm:text-sm no-underline px-2 py-2 rounded-lg bg-yellow-500 ml-4 focus:outline-none"
-          v-if="job.status === 'Current' && toEdit === false && jobOngoing === false || job.status === 'Applied' && toEdit === false || job.status === 'Available' && toEdit === false"
+          v-if="job.status === 'Allocated' && toEdit === false && jobOngoing === false || job.status === 'Applied' && toEdit === false || job.status === 'Available' && toEdit === false"
           @click.prevent="editJob()"
         >Edit this job</button>
         <button
           class="font-bold text-xs sm:text-sm no-underline px-2 py-2 rounded-lg bg-yellow-500 ml-4 focus:outline-none"
-          v-if="job.status === 'Current' && toEdit === true && jobOngoing === false || job.status === 'Applied' && toEdit === true || job.status === 'Available' && toEdit === true"
+          v-if="job.status === 'Allocated' && toEdit === true && jobOngoing === false || job.status === 'Applied' && toEdit === true || job.status === 'Available' && toEdit === true"
           @click.prevent="cancelEdit()"
         >Cancel Editing</button>
       </div>
@@ -22,19 +22,11 @@
 
     <div class="flex flex-col mt-4">
       <div class="flex flex-row flex-wrap justify-start">
-        <JobDetailModalForm
-          :job="job"
-          v-if="toEdit === false || 
-                toEdit === false  || 
-                toEdit === false || 
-                toEdit === false ||
-                toEdit === false || 
-                toEdit === false || 
-                toEdit === false "
-        />
+        <JobDetailModalForm :job="job" v-if="toEdit === false" />
         <JobDetailModalUpdateForm
           :job="job"
-          v-if="job.status === 'Current' && toEdit === true && jobOngoing === false  || job.status === 'Applied' && toEdit === true  || job.status === 'Available' && toEdit === true"
+          v-if="job.status === 'Allocated' && toEdit === true && jobOngoing === false  || job.status === 'Applied' && toEdit === true  || job.status === 'Available' && toEdit === true"
+          @close="toEdit = false"
         />
         <JobDetailModalCandidates
           class="order-first lg:order-none"
@@ -46,18 +38,18 @@
           :user="user"            
           :mandatory="mandatory"
           :optional="optional"
-          v-if="(job.status === 'Current' || job.status === 'Completed') && user"
+          v-if="(job.status === 'Allocated' || job.status === 'Completed') && user"
         />-->
       </div>
       <JobDetailModalCancelForm
         :job="job"
         @close="close"
-        v-if="(job.status === 'Current' || job.status === 'Applied' || job.status === 'Available') && authPermissions.includes('Cancel Sessions Job')"
+        v-if="(job.status === 'Allocated' || job.status === 'Ongoing' || job.status === 'Applied' || job.status === 'Available') && authPermissions.includes('Cancel Sessions Job')"
       />
       <JobDetailModalCompleteForm
         :job_parts="job.job_parts"
         @close="close"
-        v-if="job.status === 'Current' && authPermissions.includes('Complete Sessions Job')"
+        v-if="job.status === 'Ongoing' && authPermissions.includes('Complete Sessions Job')"
       />
     </div>
     <div class="shield" v-if="modal" @click="modal = false"></div>
@@ -191,7 +183,7 @@ export default {
     },
     bgStatus(status) {
       switch (status) {
-        case "Available":
+        case "Live":
           return "bg-yellow-500";
           break;
         case "Applied":

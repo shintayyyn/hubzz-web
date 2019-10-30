@@ -42,7 +42,6 @@
                 :error="formError.find(item => item.field === 'description')"
                 @blur="CheckEmptyField(form.description,'description')"
               />
-              <!-- report to -->
               <AppInput
                 v-model="form.report_to"
                 :type="'text'"
@@ -52,7 +51,6 @@
                 :error="formError.find(item => item.field === 'report_to')"
                 @blur="CheckEmptyField(form.report_to,'report_to')"
               />
-              <!-- email -->
               <AppInput
                 v-model="form.email"
                 :type="'text'"
@@ -71,9 +69,9 @@
               />
               <AppInput
                 :type="'select'"
-                v-model="form.is_another_doctor"
-                :name="'is_another_doctor'"
-                :label="'Is there another Dr on site?'"
+                v-model="form.is_nurse_available"
+                :name="'is_nurse_available'"
+                :label="'Is nurse support available?'"
                 :items="[ {value: true, label: 'YES'}, {value: false, label: 'NO'} ]"
               />
               <AppInput
@@ -227,7 +225,7 @@
                   :url="'/api/v1/qualifications'"
                   @add="CheckEmptyField(form.qualification_id, 'qualification_id')"
                   @remove="CheckEmptyField(form.qualification_id, 'qualification_id')"
-                  :professionCategoryId="form.profession_id"
+                  :professionCategoryId="form.profession_id.toString()"
                 />
 
                 <AppFilterSearch
@@ -391,7 +389,6 @@
                 :label="'Add a selection date?'"
                 :items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
               />
-
               <div
                 class="flex flex-row flex-wrap justify-between"
                 v-if="selection_notification === true || selection_notification === 'true'"
@@ -734,9 +731,7 @@ export default {
         "extra_information",
         "is_another_doctor",
         "is_nurse_available",
-        // "duration_for_each_appointment",
         "opportunity_for_catch_up_slots",
-        // "session_requirements",
         "spoken_language_id",
         "ir35",
         "mandatory_training_id",
