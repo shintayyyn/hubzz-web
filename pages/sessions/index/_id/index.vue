@@ -16,29 +16,29 @@ export default {
     JobDetailModal,
     JobPartDetailModal
   },
-  async asyncData({ app, route, store, error }) {
-    try {
-      let response = await app.$axios.get(
-        `/api/v1/practice/jobs/${route.params.id}`
-      );
-      const job =
-        response.data && response.data.data && response.data.data.job
-          ? response.data.data.job
-          : null;
-      return {
-        job
-      };
-    } catch (err) {
-      if (
-        err.response &&
-        (err.response.status === 401 || err.response.status === 404)
-      ) {
-        error(err.response.data);
-        return;
-      }
-      throw err;
-    }
-  },
+  // async asyncData({ app, route, store, error }) {
+  //   try {
+  //     let response = await app.$axios.get(
+  //       `/api/v1/practice/jobs/${route.params.id}`
+  //     );
+  //     const job =
+  //       response.data && response.data.data && response.data.data.job
+  //         ? response.data.data.job
+  //         : null;
+  //     return {
+  //       job
+  //     };
+  //   } catch (err) {
+  //     if (
+  //       err.response &&
+  //       (err.response.status === 401 || err.response.status === 404)
+  //     ) {
+  //       error(err.response.data);
+  //       return;
+  //     }
+  //     throw err;
+  //   }
+  // },
   async asyncData({ app, params, query, redirect, router, error }) {
     try {
       let url = `/api/v1/practice/jobs`;
