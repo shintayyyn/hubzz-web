@@ -197,46 +197,32 @@ export default {
   },
   methods: {
     getJobs() {
+      // PRACTICE
       if (
         this.$auth.user.domain === "Practice" &&
         this.authPermissions.includes("View Sessions Job")
       ) {
-        this.$store.dispatch("jobs/fetchPracticeJobs", {
-          date_start: `${this.startOfMonth}:gte`,
-          date_end: `${this.endOfMonth}:lte`,
-          status: ["Allocated"]
+        this.$store.dispatch("jobs/fetchPracticeJobParts", {
+          calendar_date_start: `${this.startOfMonth}:gte`,
+          calendar_date_end: `${this.endOfMonth}:lte`,
+          limit: 100000000,
+          status: ["Ongoing", "Allocated"],
+          type: "SET"
         });
 
         this.$store.dispatch("jobs/fetchPracticeJobs", {
-          date_start: `${this.startOfMonth}:gte`,
-          date_end: `${this.endOfMonth}:lte`,
-          status: ["Applied"]
-        });
-
-        this.$store.dispatch("jobs/fetchPracticeJobs", {
-          date_start: `${this.startOfMonth}:gte`,
-          date_end: `${this.endOfMonth}:lte`,
-          status: "Unfilled"
-        });
-
-        this.$store.dispatch("jobs/fetchPracticeJobs", {
-          date_start: `${this.startOfMonth}:gte`,
-          date_end: `${this.endOfMonth}:lte`,
-          status: ["Declined"]
+          calendar_date_start: `${this.startOfMonth}:gte`,
+          calendar_date_end: `${this.endOfMonth}:lte`,
+          status: ["Applied", "Unfilled", "Declined"]
         });
 
         this.$store.dispatch("jobs/fetchPracticeJobsReminder", {
           platform_selection_date_start: `${this.startOfMonth}:gte`,
           platform_selection_date_end: `${this.endOfMonth}:lte`,
-          status: ["Available"]
-        });
-
-        this.$store.dispatch("jobs/fetchPracticeJobsReminder", {
-          platform_selection_date_start: `${this.startOfMonth}:gte`,
-          platform_selection_date_end: `${this.endOfMonth}:lte`,
-          status: ["Applied"]
+          status: ["Available", "Applied"]
         });
       }
+      // LOCUM
       if (this.$auth.user.domain === "Locum") {
         this.$store.dispatch("jobs/fetchLocumJobs", {
           calendar_date_start: `${this.startOfMonth}:gte`,
@@ -249,7 +235,8 @@ export default {
           calendar_date_start: `${this.startOfMonth}:gte`,
           calendar_date_end: `${this.endOfMonth}:lte`,
           limit: 100000000,
-          locum_status: ["Ongoing", "Allocated"]
+          locum_status: ["Ongoing", "Allocated"],
+          type: "SET"
         });
 
         this.$store.dispatch("jobs/fetchLocumUnavailabilities", {

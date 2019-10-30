@@ -5,7 +5,7 @@
       :total="practiceComplianceDocuments.length"
       :items="practiceComplianceDocuments"
       :columns="columns"
-      @show="show"
+      :routerLink="'/profile/practice-documents'"
     ></AppTable>
     <!-- <div class="flex flex-col mt-4">
       <div class="flex flex-row px-4 flex-no-wrap justify-between">
@@ -34,7 +34,7 @@
           </div>
         </div>
       </div>
-    </div> -->
+    </div>-->
 
     <transition name="fade" mode="out-in">
       <div
@@ -81,8 +81,8 @@ export default {
           name: "Last Upload Date",
           dataIndex: "existingPracticeComplianceDocument.file.created_at",
           class: "text-center localDate"
-        },
-      ],
+        }
+      ]
     };
   },
   computed: {
@@ -142,8 +142,11 @@ export default {
 
   methods: {
     show(item) {
+      console.log(item);
       if (this.authPermissions.includes("Show Profile Practice Document")) {
-        this.$router.push(`/profile/practice-documents/${item.existingPracticeComplianceDocument.id}`);
+        this.$router.push(
+          `/profile/practice-documents/${item.existingPracticeComplianceDocument.id}`
+        );
       }
     }
   }
