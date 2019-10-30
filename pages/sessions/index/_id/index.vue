@@ -4,7 +4,8 @@
       <JobDetailModal :job="job" @close="close" />
     </template>
     <template v-if="!job && job_part">
-      <!-- <JobPartDetailModal :job_part="job_part" v-if="activeJobTypePlatform" @close="close" /> -->
+      <JobPartDetailModal :job_part="job_part" @close="close" />
+      <div>wait</div>
     </template>
   </div>
 </template>
@@ -12,33 +13,20 @@
 import JobDetailModal from "@/components/Sessions/JobDetailModal";
 import JobPartDetailModal from "@/components/Sessions/JobPartDetailModal";
 export default {
+  transition: {
+    name: "slide",
+    mode: "out-in"
+  },
   components: {
     JobDetailModal,
     JobPartDetailModal
   },
-  // async asyncData({ app, route, store, error }) {
-  //   try {
-  //     let response = await app.$axios.get(
-  //       `/api/v1/practice/jobs/${route.params.id}`
-  //     );
-  //     const job =
-  //       response.data && response.data.data && response.data.data.job
-  //         ? response.data.data.job
-  //         : null;
-  //     return {
-  //       job
-  //     };
-  //   } catch (err) {
-  //     if (
-  //       err.response &&
-  //       (err.response.status === 401 || err.response.status === 404)
-  //     ) {
-  //       error(err.response.data);
-  //       return;
-  //     }
-  //     throw err;
-  //   }
-  // },
+  data() {
+    return {
+      job: null,
+      job_part: null
+    };
+  },
   async asyncData({ app, params, query, redirect, router, error }) {
     try {
       let url = `/api/v1/practice/jobs`;
@@ -82,7 +70,7 @@ export default {
   methods: {
     close() {
       this.$router.push({
-        path: `/jobs`,
+        path: `/sessions`,
         query: { ...this.$route.query }
       });
     }
