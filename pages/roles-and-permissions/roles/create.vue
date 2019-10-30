@@ -25,14 +25,14 @@
           <div class="flex flex-wrap justify-start">
             <div class="w-full md:w-1/2 p-2" v-for="(role, index) in permissions" :key="index">
               <div class="flex flex-col">
-                <div class="w-full flex flex-row items-center">
+                <div class="w-full flex flex-row items-center pb-1">
                   <input
                     type="checkbox"
                     :id="role.permissions"
                     :checked="isChecked(role.permissions)"
                     @change="checkAll(index, $event.target.checked)"
                   />
-                  <label class="font-bold text-xl pl-1" :for="role.permissions">{{role.category}} Management</label>
+                  <label class="font-bold md:text-xl pl-1 leading-none" :for="role.permissions">{{role.category}} Management</label>
                 </div>
                 <div class="flex flex-col px-1">
                   <div
