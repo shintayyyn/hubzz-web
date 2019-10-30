@@ -359,53 +359,214 @@ export default {
     },
 
     async fetchPracticeJobs({ commit }, payload) {
-        commit('TOGGLE_LOADING', true)
-        const response = await jobsApi.fetchPracticeJobs(this.$axios, payload)
-        commit('TOGGLE_LOADING', false)
-        if (payload.status === 'Reminder') {
-            commit('SET_PRACTICE_APPLIED_REMINDERS', response)
+        let url = '/api/v1/practice/jobs'
+        let first = payload.id && payload.first ? `/${payload.id}` : ''
+        let count = payload.countOnly ? `/count` : ''
+
+        console.log('payload job', payload)
+        const response = await this.$axios.$get(`${url}${first}${count}`, { params: payload })
+        console.log('response job', response)
+
+        if (payload.countOnly) {
+            payload.status.forEach(jobStatus => {
+                if (jobStatus.toLowerCase() === 'allocated') {
+                    commit('SET_PRACTICE_ALLOCATED_JOBS_COUNT', response.data.count)
+                }
+                if (jobStatus.toLowerCase() === 'applied') {
+                    commit('SET_PRACTICE_APPLIED_JOBS_COUNT', response.data.count)
+                }
+                if (jobStatus.toLowerCase() === 'live') {
+                    commit('SET_PRACTICE_AVAILABLE_JOBS_COUNT', response.data.count)
+                }
+                if (jobStatus.toLowerCase() === 'unsuccessful') {
+                    commit('SET_PRACTICE_UNSUCCESSFUL_JOBS_COUNT', response.data.count)
+                }
+                if (jobStatus.toLowerCase() === 'declined') {
+                    commit('SET_PRACTICE_DECLINED_JOBS_COUNT', response.data.count)
+                }
+                if (jobStatus.toLowerCase() === 'cancelled') {
+                    commit('SET_PRACTICE_CANCELLED_JOBS_COUNT', response.data.count)
+                }
+                if (jobStatus.toLowerCase() === 'withdrawn') {
+                    commit('SET_PRACTICE_WITHDRAWN_JOBS_COUNT', response.data.count)
+                }
+            })
         }
-        if (payload.status === "Available") {
-            if (payload.countOnly) {
-                return commit('SET_PRACTICE_AVAILABLE_JOBS_COUNT', response.data.count)
-            }
-            return commit('SET_PRACTICE_AVAILABLE_JOBS', response.data.jobs)
+
+        if (!payload.countOnly) {
+            payload.status.forEach(jobStatus => {
+                if (jobStatus.toLowerCase() === 'allocated') {
+                    commit('SET_PRACTICE_ALLOCATED_JOBS', response.data.jobs && response.data.jobs.length > 0 ?
+                        response.data.jobs.filter(jobPart => jobPart.status.toLowerCase() === 'allocated') : [])
+                }
+                if (jobStatus.toLowerCase() === 'applied') {
+                    commit('SET_PRACTICE_APPLIED_JOBS', response.data.jobs && response.data.jobs.length > 0 ?
+                        response.data.jobs.filter(jobPart => jobPart.status.toLowerCase() === 'applied') : [])
+                }
+                if (jobStatus.toLowerCase() === 'live') {
+                    commit('SET_PRACTICE_AVAILABLE_JOBS', response.data.jobs && response.data.jobs.length > 0 ?
+                        response.data.jobs.filter(jobPart => jobPart.status.toLowerCase() === 'available') : [])
+                }
+                if (jobStatus.toLowerCase() === 'unsuccessful') {
+                    commit('SET_PRACTICE_UNSUCCESSFUL_JOBS', response.data.jobs && response.data.jobs.length > 0 ?
+                        response.data.jobs.filter(jobPart => jobPart.status.toLowerCase() === 'unsuccessful') : [])
+                }
+                if (jobStatus.toLowerCase() === 'declined') {
+                    commit('SET_PRACTICE_DECLINED_JOBS', response.data.jobs && response.data.jobs.length > 0 ?
+                        response.data.jobs.filter(jobPart => jobPart.status.toLowerCase() === 'declined') : [])
+                }
+                if (jobStatus.toLowerCase() === 'cancelled') {
+                    commit('SET_PRACTICE_CANCELLED_JOBS', response.data.jobs && response.data.jobs.length > 0 ?
+                        response.data.jobs.filter(jobPart => jobPart.status.toLowerCase() === 'cancelled') : [])
+                }
+                if (jobStatus.toLowerCase() === 'withdrawn') {
+                    commit('SET_PRACTICE_WITHDRAWN_JOBS', response.data.jobs && response.data.jobs.length > 0 ?
+                        response.data.jobs.filter(jobPart => jobPart.status.toLowerCase() === 'withdrawn') : [])
+                }
+            })
         }
-        if (payload.status === "Applied") {
-            if (payload.countOnly) {
-                return commit('SET_PRACTICE_APPLIED_JOBS_COUNT', response.data.count)
-            }
-            return commit('SET_PRACTICE_APPLIED_JOBS', response.data.jobs)
+        // if (payload.status === 'Reminder') {
+        //     commit('SET_PRACTICE_APPLIED_REMINDERS', response)
+        // }
+        // if (payload.status === "Available") {
+        //     if (payload.countOnly) {
+        //         return commit('SET_PRACTICE_AVAILABLE_JOBS_COUNT', response.data.count)
+        //     }
+        //     return commit('SET_PRACTICE_AVAILABLE_JOBS', response.data.jobs)
+        // }
+        // if (payload.status === "Applied") {
+        //     if (payload.countOnly) {
+        //         return commit('SET_PRACTICE_APPLIED_JOBS_COUNT', response.data.count)
+        //     }
+        //     return commit('SET_PRACTICE_APPLIED_JOBS', response.data.jobs)
+        // }
+        // if (payload.status === "Allocated") {
+        //     if (payload.countOnly) {
+        //         return commit('SET_PRACTICE_ALLOCATED_JOBS_COUNT', response.data.count)
+        //     }
+        //     return commit('SET_PRACTICE_ALLOCATED_JOBS', response.data.jobs)
+        // }
+        // if (payload.status === "Completed") {
+        //     if (payload.countOnly) {
+        //         return commit('SET_PRACTICE_COMPLETED_JOBS_COUNT', response.data.count)
+        //     }
+        //     return commit('SET_PRACTICE_COMPLETED_JOBS', response.data.jobs)
+        // }
+        // if (payload.status === "Unfilled") {
+        //     if (payload.countOnly) {
+        //         return commit('SET_PRACTICE_UNFILLED_JOBS_COUNT', response.data.count)
+        //     }
+        //     return commit('SET_PRACTICE_UNFILLED_JOBS', response.data.jobs)
+        // }
+        // if (payload.status === "Cancelled") {
+        //     if (payload.countOnly) {
+        //         return commit('SET_PRACTICE_CANCELLED_JOBS_COUNT', response.data.count)
+        //     }
+        //     return commit('SET_PRACTICE_CANCELLED_JOBS', response.data.jobs)
+        // }
+        // if (payload.status === "Declined") {
+        //     if (payload.countOnly) {
+        //         return commit('SET_PRACTICE_DECLINED_JOBS_COUNT', response.data.count)
+        //     }
+        //     return commit('SET_PRACTICE_DECLINED_JOBS', response.data.jobs)
+        // }
+    },
+
+    async fetchPracticeJobParts({ commit }, payload) {
+        let url = `/api/v1/practice/job-parts`
+        let first = payload.id && payload.first ? `/${payload.id}` : ''
+        let count = payload.countOnly ? `/count` : ''
+        let updatedJobPartIndex = payload.updatedJobPartIndex ? payload.updatedJobPartIndex : []
+        let type = payload.type ? payload.type : 'SET'
+
+        console.log('payload job parts', payload)
+        const response = await this.$axios.$get(`${url}${first}${count}`, { params: payload })
+        console.log('response job parts', response)
+
+        if (payload.countOnly) {
+            payload.status.forEach(jobStatus => {
+                if (jobStatus.toLowerCase() === 'ongoing') {
+                    commit('SET_PRACTICE_ONGOING_JOB_PARTS_COUNT', response.data.count)
+                }
+                if (jobStatus.toLowerCase() === 'completed') {
+                    commit('SET_PRACTICE_COMPLETED_JOB_PARTS_COUNT', response.data.count)
+                }
+                if (jobStatus.toLowerCase() === 'approved') {
+                    commit('SET_PRACTICE_APPROVED_JOB_PARTS_COUNT', response.data.count)
+                }
+            })
         }
-        if (payload.status === "Allocated") {
-            if (payload.countOnly) {
-                return commit('SET_PRACTICE_ALLOCATED_JOBS_COUNT', response.data.count)
-            }
-            return commit('SET_PRACTICE_ALLOCATED_JOBS', response.data.jobs)
-        }
-        if (payload.status === "Completed") {
-            if (payload.countOnly) {
-                return commit('SET_PRACTICE_COMPLETED_JOBS_COUNT', response.data.count)
-            }
-            return commit('SET_PRACTICE_COMPLETED_JOBS', response.data.jobs)
-        }
-        if (payload.status === "Unfilled") {
-            if (payload.countOnly) {
-                return commit('SET_PRACTICE_UNFILLED_JOBS_COUNT', response.data.count)
-            }
-            return commit('SET_PRACTICE_UNFILLED_JOBS', response.data.jobs)
-        }
-        if (payload.status === "Cancelled") {
-            if (payload.countOnly) {
-                return commit('SET_PRACTICE_CANCELLED_JOBS_COUNT', response.data.count)
-            }
-            return commit('SET_PRACTICE_CANCELLED_JOBS', response.data.jobs)
-        }
-        if (payload.status === "Declined") {
-            if (payload.countOnly) {
-                return commit('SET_PRACTICE_DECLINED_JOBS_COUNT', response.data.count)
-            }
-            return commit('SET_PRACTICE_DECLINED_JOBS', response.data.jobs)
+
+        if (!payload.countOnly) {
+            payload.status.forEach(jobStatus => {
+                if (jobStatus.toLowerCase() === 'allocated') {
+                    if (response.data && response.data.job_parts && response.data.job_parts.length > 0) {
+                        if (updatedJobPartIndex && updatedJobPartIndex.length === 0) {
+                            commit('SET_PRACTICE_ALLOCATED_JOB_PARTS', response.data.job_parts.filter(jobPart => jobPart.status.toLowerCase() === 'allocated'))
+                        }
+                        // if (updatedJobPartIndex && updatedJobPartIndex.length > 0) {
+                        //     response.data.job_parts.filter(jobPart => jobPart.locum_status.toLowerCase() === 'allocated').forEach((jobPart, index) => {
+                        //         commit('UPDATE_LOCUM_ALLOCATED_JOB_PART', { payload: jobPart, payloadIndex: updatedJobPartIndex[index] })
+                        //     })
+                        // }
+                    }
+                    if (response.data && response.data.job_parts.length === 0) {
+                        commit('SET_PRACTICE_ALLOCATED_JOB_PARTS', [])
+                    }
+                }
+                if (jobStatus.toLowerCase() === 'ongoing') {
+                    if (response.data && response.data.job_parts && response.data.job_parts.length > 0) {
+                        if (type === 'ADD') {
+                            response.data.job_parts.filter(jobPart => jobPart.status.toLowerCase() === 'ongoing').forEach(part => {
+                                commit('ADD_PRACTICE_ONGOING_JOB', part)
+                            })
+                        }
+                        if (type === 'SET') {
+                            if (updatedJobPartIndex && updatedJobPartIndex.length === 0) {
+                                commit('SET_PRACTICE_ONGOING_JOB_PARTS', response.data.job_parts.filter(jobPart => jobPart.status.toLowerCase() === 'ongoing'))
+                            }
+                            if (updatedJobPartIndex && updatedJobPartIndex.length > 0) {
+                                response.data.job_parts.filter(jobPart => jobPart.status.toLowerCase() === 'ongoing').forEach((jobPart, index) => {
+                                    commit('UPDATE_PRACTICE_ONGOING_JOB_PART', { payload: jobPart, payloadIndex: updatedJobPartIndex[index] })
+                                })
+                            }
+                        }
+                    }
+                    if (response.data && response.data.job_parts.length === 0) {
+                        commit('SET_PRACTICE_ONGOING_JOB_PARTS', [])
+                    }
+                }
+                if (jobStatus.toLowerCase() === 'completed') {
+                    if (response.data && response.data.job_parts && response.data.job_parts.length > 0) {
+                        if (updatedJobPartIndex && updatedJobPartIndex.length === 0) {
+                            commit('SET_PRACTICE_COMPLETED_JOB_PARTS', response.data.job_parts.filter(jobPart => jobPart.status.toLowerCase() === 'completed'))
+                        }
+                        if (updatedJobPartIndex && updatedJobPartIndex.length > 0) {
+                            response.data.job_parts.filter(jobPart => jobPart.status.toLowerCase() === 'completed').forEach((jobPart, index) => {
+                                commit('UPDATE_PRACTICE_COMPLETED_JOB_PART', { payload: jobPart, payloadIndex: updatedJobPartIndex[index] })
+                            })
+                        }
+                    }
+                    if (response.data && response.data.job_parts.length === 0) {
+                        commit('SET_PRACTICE_COMPLETED_JOB_PARTS', [])
+                    }
+                }
+                if (jobStatus.toLowerCase() === 'approved') {
+                    if (response.data && response.data.job_parts && response.data.job_parts.length > 0) {
+                        if (updatedJobPartIndex && updatedJobPartIndex.length === 0) {
+                            commit('SET_PRACTICE_APPROVED_JOB_PARTS', response.data.job_parts.filter(jobPart => jobPart.status.toLowerCase() === 'approved'))
+                        }
+                        if (updatedJobPartIndex && updatedJobPartIndex.length > 0) {
+                            response.data.job_parts.filter(jobPart => jobPart.status.toLowerCase() === 'approved').forEach((jobPart, index) => {
+                                commit('UPDATE_PRACTICE_APPROVED_JOB_PART', { payload: jobPart, payloadIndex: updatedJobPartIndex[index] })
+                            })
+                        }
+                    }
+                    if (response.data && response.data.job_parts.length === 0) {
+                        commit('SET_PRACTICE_APPROVED_JOB_PARTS', [])
+                    }
+                }
+            })
         }
     },
 

@@ -597,7 +597,7 @@ export default {
       } else if (!["ongoing", "completed", "approved"].includes(queryStatus)) {
         columns.push(
           {
-            name: "Job Part Number",
+            name: "Job Number",
             dataIndex: "job_number",
             sortable: true
           },

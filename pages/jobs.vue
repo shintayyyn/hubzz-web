@@ -156,16 +156,6 @@
   </section>
 </template>
 <script>
-const tabs = [
-  "jobs-index-id",
-  "jobs-index-id",
-  "jobs-index-id",
-  "jobs-index-id",
-  "jobs-index-id",
-  "jobs-index-id",
-  "jobs-index-id",
-  "jobs-index-id"
-];
 const invoiceStatusList = [
   {
     label: "All",
@@ -202,7 +192,6 @@ export default {
   middleware: "isVerified",
   data() {
     return {
-      tabs,
       invoiceStatusList,
       practiceTypeList,
       shifts: [],
@@ -211,7 +200,7 @@ export default {
   },
   watch: {
     $route(value) {
-      if (this.tabs.includes(value.name)) {
+      if (["jobs-index-id"].includes(value.name)) {
         document.body.style.overflow = "hidden";
       } else {
         document.body.style.overflow = "auto";

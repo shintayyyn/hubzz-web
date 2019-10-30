@@ -12,7 +12,7 @@
         >No jobs to display.</div>
         <div v-if="viewPracticeJobs && !loading">
           <div v-for="job in foundPracticeJobs" :key="job.id">
-            <PracticeJobCard :job="job" @viewPracticeJob="$emit('viewPracticeJob', $event)" />
+            <PracticeJobCard :propJob="job" @viewPracticeJob="$emit('viewPracticeJob', $event)" />
           </div>
         </div>
         <div v-if="viewLocumJobs && !loading">
@@ -152,10 +152,15 @@ export default {
     selected_date_shift() {
       return this.$store.state.calendar.selected_date_shift;
     },
-    // practice
-    getPracticeAllocatedJobs() {
-      return this.$store.getters["jobs/getPracticeAllocatedJobs"];
+    // PRACTICE
+    // parts
+    getPracticeOngoingJobs() {
+      return this.$store.getters["jobs/getPracticeOngoingJobs"];
     },
+    getPracticeAllocatedPartJobs() {
+      return this.$store.getters["jobs/getPracticeAllocatedPartJobs"];
+    },
+    // whole
     getPracticeAppliedJobs() {
       return this.$store.getters["jobs/getPracticeAppliedJobs"];
     },
@@ -195,16 +200,22 @@ export default {
     findPerMonthPractice(date) {
       this.loading = true;
       this.viewPracticeJobs = false;
-      let foundPracticeCurrentJobs = [];
+      let foundPracticeOngoingJobs = [];
+      let foundPracticeAllocatedJobs = [];
       let foundPracticeAppliedJobs = [];
       let foundPracticeUnfilledJobs = [];
       let foundPracticeDeclinedJobs = [];
       let foundPracticeAppliedJobsReminder = [];
       let foundPracticeAvailableJobsReminder = [];
 
-      if (this.getPracticeAllocatedJobs.length > 0) {
-        foundPracticeCurrentJobs = this.getPracticeAllocatedJobs.filter(job =>
+      if (this.getPracticeOngoingJobs.length > 0) {
+        foundPracticeOngoingJobs = this.getPracticeOngoingJobs.filter(job =>
           this.getDateArray(job.date_start, job.date_end).includes(date)
+        );
+      }
+      if (this.getPracticeAllocatedPartJobs.length > 0) {
+        foundPracticeAllocatedJobs = this.getPracticeAllocatedPartJobs.filter(
+          job => this.getDateArray(job.date_start, job.date_end).includes(date)
         );
       }
       if (this.getPracticeAppliedJobs.length > 0) {
@@ -234,7 +245,8 @@ export default {
         );
       }
       this.foundPracticeJobs = [
-        ...foundPracticeCurrentJobs,
+        ...foundPracticeOngoingJobs,
+        ...foundPracticeAllocatedJobs,
         ...foundPracticeAppliedJobs,
         ...foundPracticeUnfilledJobs,
         ...foundPracticeDeclinedJobs,

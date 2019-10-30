@@ -1,11 +1,38 @@
 <template>
-  <section class="sessions-tab">
+  <section class="sessions-section">
     <div class="flex flex-row justify-start overflow-x-auto py-3">
       <div class="relative">
         <nuxt-link
-          to="/sessions/live"
+          to="/sessions?status=Allocated"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.name === 'sessions-live' || $route.name === 'sessions-live-id' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          :class="!$route.query.status || ($route.query.status && $route.query.status.toLowerCase() === 'allocated') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        >Allocated</nuxt-link>
+        <transition name="fade">
+          <div
+            v-if="$store.state.jobs.practice_new_allocated_jobs_count > 0"
+            class="rounded-lg bg-red-600 text-white text-xs font-bold py-1 px-2 absolute right-0 top-0"
+          >{{$store.state.jobs.practice_new_allocated_jobs_count}}</div>
+        </transition>
+      </div>
+
+      <div class="relative">
+        <nuxt-link
+          to="/sessions?status=Ongoing"
+          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          :class="$route.query.status && $route.query.status.toLowerCase() === 'ongoing' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        >Ongoing</nuxt-link>
+        <transition name="fade">
+          <div
+            v-if="$store.state.jobs.practice_new_ongoing_jobs_count > 0"
+            class="rounded-lg bg-red-600 text-white text-xs font-bold py-1 px-2 absolute right-0 top-0"
+          >{{$store.state.jobs.practice_new_ongoing_jobs_count}}</div>
+        </transition>
+      </div>
+      <div class="relative">
+        <nuxt-link
+          to="/sessions?status=Live"
+          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          :class="$route.query.status && $route.query.status.toLowerCase() === 'live' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Live</nuxt-link>
         <transition name="fade">
           <div
@@ -16,9 +43,9 @@
       </div>
       <div class="relative">
         <nuxt-link
-          to="/sessions/applied"
+          to="/sessions?status=Applied"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.name === 'sessions-applied' || $route.name === 'sessions-applied-id' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          :class="$route.query.status && $route.query.status.toLowerCase() === 'applied' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Applied</nuxt-link>
         <transition name="fade">
           <div
@@ -29,35 +56,9 @@
       </div>
       <div class="relative">
         <nuxt-link
-          to="/sessions/allocated"
+          to="/sessions?status=Unfilled"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.name === 'sessions-allocated' || $route.name === 'sessions-allocated-id' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-        >Allocated</nuxt-link>
-        <transition name="fade">
-          <div
-            v-if="$store.state.jobs.practice_new_allocated_jobs_count > 0"
-            class="rounded-lg bg-red-600 text-white text-xs font-bold py-1 px-2 absolute right-0 top-0"
-          >{{$store.state.jobs.practice_new_allocated_jobs_count}}</div>
-        </transition>
-      </div>
-      <div class="relative">
-        <nuxt-link
-          to="/sessions/completed"
-          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.name === 'sessions-completed' || $route.name === 'sessions-completed-id' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-        >Completed</nuxt-link>
-        <transition name="fade">
-          <div
-            v-if="$store.state.jobs.practice_new_completed_jobs_count > 0"
-            class="rounded-lg bg-red-600 text-white text-xs font-bold py-1 px-2 absolute right-0 top-0"
-          >{{$store.state.jobs.practice_new_completed_jobs_count}}</div>
-        </transition>
-      </div>
-      <div class="relative">
-        <nuxt-link
-          to="/sessions/unfilled"
-          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.name === 'sessions-unfilled' || $route.name === 'sessions-unfilled-id' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          :class="$route.query.status && $route.query.status.toLowerCase() === 'unfilled' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Unfilled</nuxt-link>
         <transition name="fade">
           <div
@@ -68,9 +69,22 @@
       </div>
       <div class="relative">
         <nuxt-link
-          to="/sessions/cancelled"
+          to="/sessions?status=Declined"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.name === 'sessions-cancelled' || $route.name === 'sessions-cancelled-id' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          :class="$route.query.status && $route.query.status.toLowerCase() === 'declined' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        >Declined</nuxt-link>
+        <transition name="fade">
+          <div
+            v-if="$store.state.jobs.practice_new_declined_jobs_count > 0"
+            class="rounded-lg bg-red-600 text-white text-xs font-bold py-1 px-2 absolute right-0 top-0"
+          >{{$store.state.jobs.practice_new_declined_jobs_count}}</div>
+        </transition>
+      </div>
+      <div class="relative">
+        <nuxt-link
+          to="/sessions?status=Cancelled"
+          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          :class="$route.query.status && $route.query.status.toLowerCase() === 'cancelled' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Cancelled</nuxt-link>
         <transition name="fade">
           <div
@@ -81,20 +95,46 @@
       </div>
       <div class="relative">
         <nuxt-link
-          to="/sessions/declined"
+          to="/sessions?status=Withdrawn"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.name === 'sessions-declined' || $route.name === 'sessions-declined-id' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-        >Declined</nuxt-link>
+          :class="$route.query.status && $route.query.status.toLowerCase() === 'withdrawn' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        >Withdrawn</nuxt-link>
         <transition name="fade">
           <div
-            v-if="$store.state.jobs.practice_new_declined_jobs_count > 0"
+            v-if="$store.state.jobs.practice_new_withdrawn_jobs_count > 0"
             class="rounded-lg bg-red-600 text-white text-xs font-bold py-1 px-2 absolute right-0 top-0"
-          >{{$store.state.jobs.practice_new_declined_jobs_count}}</div>
+          >{{$store.state.jobs.practice_new_withdrawn_jobs_count}}</div>
+        </transition>
+      </div>
+      <div class="relative">
+        <nuxt-link
+          to="/sessions?status=Completed"
+          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          :class="$route.query.status && $route.query.status.toLowerCase() === 'completed' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        >Completed</nuxt-link>
+        <transition name="fade">
+          <div
+            v-if="$store.state.jobs.practice_new_completed_jobs_count > 0"
+            class="rounded-lg bg-red-600 text-white text-xs font-bold py-1 px-2 absolute right-0 top-0"
+          >{{$store.state.jobs.practice_new_completed_jobs_count}}</div>
+        </transition>
+      </div>
+      <div class="relative">
+        <nuxt-link
+          to="/sessions?status=Approved"
+          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          :class="$route.query.status && $route.query.status.toLowerCase() === 'approved' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        >Approved</nuxt-link>
+        <transition name="fade">
+          <div
+            v-if="$store.state.jobs.practice_new_approved_jobs_count > 0"
+            class="rounded-lg bg-red-600 text-white text-xs font-bold py-1 px-2 absolute right-0 top-0"
+          >{{$store.state.jobs.practice_new_approved_jobs_count}}</div>
         </transition>
       </div>
     </div>
-    <div class="mt-2">
-      <nuxt-child />
+    <div class="mt-5">
+      <nuxt-child :shifts="shifts" :rates="rates" />
     </div>
     <AppConfirmationModal
       :label="'You\'ve been revoked to view this Page'"
@@ -105,26 +145,27 @@
   </section>
 </template>
 <script>
-const tabs = [
-  "sessions-live-id",
-  "sessions-applied-id",
-  "sessions-allocated-id",
-  "sessions-completed-id",
-  "sessions-unfilled-id",
-  "sessions-cancelled-id",
-  "sessions-declined-id"
-];
+// const tabs = [
+//   "sessions-live-id",
+//   "sessions-applied-id",
+//   "sessions-allocated-id",
+//   "sessions-completed-id",
+//   "sessions-unfilled-id",
+//   "sessions-cancelled-id",
+//   "sessions-declined-id"
+// ];
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
 export default {
   middleware: "isVerified",
-  scrollToTop: true,
   components: {
     AppConfirmationModal
   },
   data() {
     return {
-      tabs,
-      confirmation_modal: false
+      // tabs,
+      confirmation_modal: false,
+      shifts: [],
+      rates: []
     };
   },
   computed: {
@@ -132,18 +173,25 @@ export default {
       return this.$store.getters["auth/permissions"];
     }
   },
-  async asyncData({ app, error }) {
-    try {
-    } catch (err) {
-      if (err.response && err.response.status === 401) {
-        error(err.response.data);
-        return;
-      }
-    }
+  created() {
+    this.$axios.$get(`/api/v1/shifts`).then(res => {
+      this.shifts = [];
+      this.shifts.push({ label: "All", value: "" });
+      res.data.shifts.forEach(item => {
+        this.shifts.push({ label: item.name, value: item.id });
+      });
+    });
+    this.$axios.$get(`/api/v1/locum-detail-rate-types`).then(res => {
+      this.rates = [];
+      this.rates.push({ label: "All", value: "" });
+      res.data.locum_detail_rate_types.forEach(item => {
+        this.rates.push({ label: item.name, value: item.id });
+      });
+    });
   },
   watch: {
     $route(value) {
-      if (this.tabs.includes(value.name)) {
+      if (["jobs-index-id"].includes(value.name)) {
         document.body.style.overflow = "hidden";
       } else {
         document.body.style.overflow = "auto";
