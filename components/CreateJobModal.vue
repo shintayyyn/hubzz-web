@@ -748,11 +748,14 @@ export default {
       if (["15", "30", "60", false, "false"].includes(this.unpaid_breaks)) {
         notRequired.push("unpaid_breaks_in_minutes");
       }
-      console.log(this.auto_assign_job, typeof this.auto_assign_job);
-      if (this.auto_assign_job === true || this.auto_assign_job === "true") {
-        console.log("test");
-        if (!this.form.auto_assign_at) {
-          notRequired.push("auto_assign_at");
+
+      if (this.auto_assign_job === false || this.auto_assign_job === "false") {
+        notRequired.push("auto_assign_at");
+      } else {
+        if (this.auto_assign_job === true || this.auto_assign_job === "true") {
+          if (this.auto_assign_at.date && this.auto_assign_at.time) {
+            notRequired.push("auto_assign_at");
+          }
         }
       }
 
@@ -761,6 +764,15 @@ export default {
         this.selection_notification == "false"
       ) {
         notRequired.push("selection_date");
+      } else {
+        if (
+          this.selection_notification === true ||
+          this.selection_notification === "true"
+        ) {
+          if (this.selection_date.date && this.selection_date.time) {
+            notRequired.push("selection_date");
+          }
+        }
       }
 
       if (
@@ -768,10 +780,19 @@ export default {
         this.favorite_notification == "false"
       ) {
         notRequired.push("favorite_only_until");
+      } else {
+        if (
+          this.favorite_notification === true ||
+          this.favorite_notification === "true"
+        ) {
+          if (this.favorite_only_until.date && this.favorite_only_until.time) {
+            notRequired.push("favorite_only_until");
+          }
+        }
       }
-      // console.log(this.form);
+      console.log("notRequired", notRequired);
       this.Validate(this.form, notRequired);
-      console.log(this.formError.map(item => item.field));
+      console.log("formError", this.formError.map(err => err.field));
       if (!this.formError.length) {
         this.selectedClinicalSystem = [...this.form.clinical_system_id];
         this.form.clinical_system_id = this.form.clinical_system_id.map(
