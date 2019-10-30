@@ -104,6 +104,7 @@ export default {
     }
   },
   created() {
+    console.log("job", this.job);
     if (this.job.status === "Applied") {
       this.getCandidates();
     }
@@ -200,7 +201,10 @@ export default {
           return "bg-green-400";
           break;
         case "Allocated":
-          return "bg-green-400";
+          return "bg-green-300";
+          break;
+        case "Ongoing":
+          return "bg-green-500";
           break;
         default:
           return "bg-red-500 text-white";

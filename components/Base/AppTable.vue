@@ -1,59 +1,40 @@
 <template>
   <section class="relative">
+    <div class="relative flex flex-col overflow-x-auto w-full px-2 mt-4">
     <AppLoading :loading="loading" spinner />
-    <div class="overflow-x-auto mt-4">
-      <div class="apptable">
-        <div class="w-full flex flex-no-wrap justify-around">
-          <div
+      <div :style="`min-width: ${customWidth}px`" class="row flex justify-start font-bold leading-none text-sm">
+        <div class="flex-1 flex items-center px-2"
+          v-for="(column, index) in columns"
+          :key="`${column}-${index}`"
+          :class="[column.class && column.class.includes('text-center') && 'justify-center', column.sortable && 'cursor-pointer']"
+          @click="column.sortable && sort(column.dataIndex)"
+        ><span class="pr-1">{{column.name}}</span>
+          <svgicon v-if="column.sortable" :name="sortIcon(column.dataIndex)" height="12" width="12" />
+        </div>
+      </div>
+      <div v-for="(item) in items" :key="item.id" :style="`min-width: ${customWidth}px`" class="row py-2">
+        <nuxt-link :to="{ path: `${routerLink}/${item.id}`, query: {...$route.query}}" class="flex justify-start shadow-md hover:bg-gray-100 rounded-lg items-center py-3">
+          <div 
             v-for="(column, index) in columns"
-            :key="`${column}-${index}`"
-            class="app-cell text-sm md:text-base md:font-bold"
+            :key="index"
+            class="flex-1 truncate px-2"
+            :class="column.class && column.class.includes('text-center') && 'text-center'"
           >
-            <div
-              v-if="column.sortable"
-              @click="sort(column.dataIndex)"
-              class="flex items-center justify-center cursor-pointer"
-            >
-              <div class="block whitespace-no-wrap pr-1">{{column.name}}</div>
-              <svgicon class :name="sortIcon(column.dataIndex)" height="12" width="12" />
-            </div>
-            <div
-              v-if="!column.sortable"
-              class="flex justify-center block whitespace-no-wrap"
-            >{{column.name}}</div>
+          <template v-if="Array.isArray(dataCell(item, column))">
+            <div v-for="(item, index) in dataCell(item, column)"
+              :key="`${item}-${index}`">{{item}}</div>
+          </template>
+          <template v-else>
+            <template v-if="column.dataIndex === 'actions'">
+              <slot name="actions" v-bind:item="item"></slot>
+            </template>
+            <template v-if="column.class && column.class.includes('localDate') && dataCell(item,column) !== '(none)'">
+              {{dataCell(item, column) | localDate}}
+            </template>
+            <template v-else>{{dataCell(item, column)}}</template>
+          </template>
           </div>
-        </div>
-        <div
-          class="w-full __job-card rounded-lg shadow-md py-4 my-2"
-          v-for="(item) in items"
-          :key="item.id"
-        >
-          <nuxt-link :to="{ path: `${routerLink}/${item.id}`, query: {...$route.query}}">
-            <div class="flex flex-no-wrap justify-around">
-              <div
-                v-for="(column, index) in columns"
-                :key="index"
-                class="app-cell truncate text-center"
-              >
-                <div v-if="column.dataIndex !== 'actions'">
-                  <div
-                    v-if="column.class && column.class.includes('localDate') && dataCell(item,column) !== '(none)'"
-                  >{{dataCell(item, column) | localDate}}</div>
-                  <template v-else>
-                    <div v-if="Array.isArray(dataCell(item, column))">
-                      <div
-                        v-for="(item, index) in dataCell(item, column)"
-                        :key="`${item}-${index}`"
-                      >{{item}}</div>
-                    </div>
-                    <div v-else>{{dataCell(item, column)}}</div>
-                  </template>
-                </div>
-                <slot v-else name="actions" v-bind:item="item"></slot>
-              </div>
-            </div>
-          </nuxt-link>
-        </div>
+        </nuxt-link>
       </div>
     </div>
     <div class="bottom-0 w-full">
@@ -103,6 +84,9 @@ export default {
       required: false
     },
     routerLink: {
+      type: String
+    },
+    customWidth: {
       type: String
     }
   },
@@ -242,23 +226,7 @@ export default {
 };
 </script>
 <style scoped>
-.apptable {
-  min-width: 112rem;
-  max-width: 100%;
-}
-
-.app-cell {
-  min-width: 150px;
-  max-width: 150px;
-}
-
-@media screen and (min-width: 768px) {
-  .apptable {
-    min-width: 124rem;
-  }
-  .app-cell {
-    min-width: 200px;
-    max-width: 200px;
-  }
+.row {
+  min-width: 1200px;
 }
 </style>

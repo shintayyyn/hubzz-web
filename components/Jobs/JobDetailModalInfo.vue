@@ -47,17 +47,26 @@
       </div>
       <div class="flex flex-col w-full md:w-1/2 p-0 md:pl-4">
         <div class="font-bold text-sm sm:text-md">Duration</div>
-        <div class="text-xs sm:text-sm">From {{job.date_start}}</div>
-        <div class="text-xs sm:text-sm my-2">To {{job.date_end}}</div>
-        <div class="text-xs sm:text-sm mb-8">Shift {{job.shift.name}}</div>
+        <div class="flex text-xs sm:text-sm mb-6">
+          <div>
+            <div>From</div>
+            <div>To</div>
+            <div>Shift</div>
+          </div>
+          <div class="pl-3">
+            <div>{{job.date_start}}</div>
+            <div>{{job.date_end}}</div>
+            <div>{{job.shift.name}}</div>
+          </div>
+        </div>
         <div
           class="font-bold text-sm sm:text-md"
         >Auto-assigns this job to the first, matching Favourite applicant</div>
         <div
-          class="text-xs sm:text-sm mb-8"
+          class="text-xs sm:text-sm mb-6"
           v-if="job.platform_job.auto_assign_at"
         >{{$moment(job.platform_job.auto_assign_at).format('YYYY-MM-DD')}}</div>
-        <div class="text-xs sm:text-sm mb-8" v-else>No</div>
+        <div class="text-xs sm:text-sm mb-6" v-else>No</div>
         <div class="text-xs sm:text-sm mb-4">
           This job is
           <span
@@ -67,11 +76,11 @@
         </div>
         <template v-if="job.platform_job.profession">
           <div class="font-bold text-sm sm:text-md">Role</div>
-          <div class="text-xs sm:text-sm mb-8">{{job.platform_job.profession.name}}</div>
+          <div class="text-xs sm:text-sm mb-6">{{job.platform_job.profession.name}}</div>
         </template>
         <template v-if="job.platform_job.qualifications">
           <div class="font-bold text-sm sm:text-md">Specialty</div>
-          <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
+          <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
             <div
               class="rounded-lg bg-yellow-500 p-2 m-1"
               v-for="item in job.platform_job.qualifications"
@@ -81,7 +90,7 @@
         </template>
         <template v-if="job.platform_job.clinical_systems">
           <div class="font-bold text-sm sm:text-md">Clinical systems</div>
-          <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
+          <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
             <div
               class="rounded-lg bg-yellow-500 p-2 m-1"
               v-for="item in job.platform_job.clinical_systems"
@@ -91,7 +100,7 @@
         </template>
         <template v-if="job.platform_job.spoken_languages">
           <div class="font-bold text-sm sm:text-md">Spoken languages</div>
-          <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
+          <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
             <div class="rounded-lg bg-yellow-500 p-2 m-1">English</div>
             <div
               class="rounded-lg bg-yellow-500 p-2 m-1"
@@ -102,7 +111,7 @@
         </template>
         <template v-if="job.platform_job.compliance_documents">
           <div class="font-bold text-sm sm:text-md">Compliance requirements</div>
-          <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
+          <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
             <div class="mt-1" v-if="job.platform_job.compliance_documents.length === 0">(none)</div>
             <div
               v-else
@@ -114,7 +123,7 @@
         </template>
         <template v-if="job.platform_job.mandatory_trainings">
           <div class="font-bold text-sm sm:text-md">Mandatory training</div>
-          <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
+          <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
             <div class="mt-1" v-if="job.platform_job.mandatory_trainings.length === 0">(none)</div>
             <div
               v-else
