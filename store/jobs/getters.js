@@ -184,6 +184,8 @@ export default {
                 shift_name,
             })
         })
+        console.log('jobs', jobs)
+        console.log('state jobs', state.practice_available_jobs)
         return jobs
     },
     getPracticeAppliedJobs(state) {
