@@ -225,7 +225,7 @@
                   :url="'/api/v1/qualifications'"
                   @add="CheckEmptyField(form.qualification_id, 'qualification_id')"
                   @remove="CheckEmptyField(form.qualification_id, 'qualification_id')"
-                  :professionCategoryId="form.profession_id.toString()"
+                  :professionCategoryId="selectedProfession.profession_category.id.toString()"
                 />
 
                 <AppFilterSearch
