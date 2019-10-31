@@ -133,7 +133,7 @@
       </div>
     </div>
     <div class="mt-5">
-      <nuxt-child :shifts="shifts" :rates="rates" />
+      <nuxt-child :invoiceStatusList="invoiceStatusList" :shifts="shifts" :rates="rates" />
     </div>
     <AppConfirmationModal
       :label="'You\'ve been revoked to view this Page'"
@@ -145,6 +145,24 @@
 </template>
 <script>
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
+const invoiceStatusList = [
+  {
+    label: "All",
+    value: ""
+  },
+  {
+    label: "To Be Invoice",
+    value: "To Be Invoice"
+  },
+  {
+    label: "Disputed",
+    value: "Disputed"
+  },
+  {
+    label: "Invoiced",
+    value: "Invoiced"
+  }
+];
 export default {
   middleware: "isVerified",
   components: {
@@ -153,6 +171,7 @@ export default {
   data() {
     return {
       confirmation_modal: false,
+      invoiceStatusList,
       shifts: [],
       rates: []
     };
