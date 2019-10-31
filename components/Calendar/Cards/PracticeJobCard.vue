@@ -56,6 +56,28 @@ export default {
       }
       // return this.isJobPart;
     },
+    //   bgStatus(status, reminder, job) {
+    //     if (reminder && status !== "Unfilled") {
+    //       return "bg-gray-900";
+    //     } else {
+    //       switch (status) {
+    //         case "Applied":
+    //           return "bg-orange-400";
+    //           break;
+    //         case "Completed":
+    //           return "bg-green-400";
+    //           break;
+    //         case "Allocated":
+    //           return "bg-green-600";
+    //           break;
+    //         case "Unfilled":
+    //           return "bg-red-500";
+    //           break;
+    //         default:
+    //           return "bg-red-500";
+    //       }
+    //     }
+    //   }
     bgStatus() {
       let job = this.isJobPart ? this.propJob.job : this.propJob;
       switch (job.status) {
@@ -67,6 +89,9 @@ export default {
           break;
         case "Ongoing":
           return "bg-green-500";
+          break;
+        case "Unfilled":
+          return "bg-red-500";
           break;
         default:
           return "bg-red-500";
@@ -130,44 +155,14 @@ export default {
   methods: {
     select() {
       let job = this.isJobPart ? this.propJob.job : this.propJob;
-      console.log(job, job.type);
       if (job.type) {
-        this.$axios.$get(`/api/v1/locum/jobs/${job.id}`).then(res => {
-          this.$emit("viewLocumJob", res.data.job);
+        this.$axios.$get(`/api/v1/practice/jobs/${job.id}`).then(res => {
+          this.$emit("viewPracticeJob", res.data.job);
         });
       } else {
         this.$router.push("/availability");
       }
     }
   }
-  // methods: {
-  //   select() {
-  //     this.$axios.$get(`/api/v1/practice/jobs/${this.job.id}`).then(res => {
-  //       this.$emit("viewPracticeJob", res.data.job);
-  //     });
-  //   },
-  //   bgStatus(status, reminder, job) {
-  //     if (reminder && status !== "Unfilled") {
-  //       return "bg-gray-900";
-  //     } else {
-  //       switch (status) {
-  //         case "Applied":
-  //           return "bg-orange-400";
-  //           break;
-  //         case "Completed":
-  //           return "bg-green-400";
-  //           break;
-  //         case "Allocated":
-  //           return "bg-green-600";
-  //           break;
-  //         case "Unfilled":
-  //           return "bg-red-500";
-  //           break;
-  //         default:
-  //           return "bg-red-500";
-  //       }
-  //     }
-  //   }
-  // }
 };
 </script>

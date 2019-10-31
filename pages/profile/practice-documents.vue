@@ -1,13 +1,13 @@
 <template>
   <section>
-    <AppTable
+    <!-- <AppTable
       v-if="practiceComplianceDocuments.length > 0"
       :total="practiceComplianceDocuments.length"
       :items="practiceComplianceDocuments"
       :columns="columns"
       :routerLink="'/profile/practice-documents'"
-    ></AppTable>
-    <!-- <div class="flex flex-col mt-4">
+    ></AppTable>-->
+    <div class="flex flex-col mt-4">
       <div class="flex flex-row px-4 flex-no-wrap justify-between">
         <div class="text-xs sm:text-sm w-full px-1">Title</div>
         <div class="text-xs sm:text-sm w-full px-1">File Size</div>
@@ -34,7 +34,7 @@
           </div>
         </div>
       </div>
-    </div>-->
+    </div>
 
     <transition name="fade" mode="out-in">
       <div
@@ -137,16 +137,27 @@ export default {
           };
         }
       );
+      console.log("test", this.practiceComplianceDocuments);
+      // // sample
+      // this.practiceComplianceDocuments.map(item => {
+      //   return {
+      //     ...item,
+      //     id: item.existingPracticeComplianceDocument.id,
+      //     test: "test"
+      //   };
+      // });
+      // console.log("test", this.practiceComplianceDocuments);
     });
   },
 
   methods: {
     show(item) {
-      console.log(item);
+      console.log("test", item);
       if (this.authPermissions.includes("Show Profile Practice Document")) {
-        this.$router.push(
-          `/profile/practice-documents/${item.existingPracticeComplianceDocument.id}`
-        );
+        this.$router.push(`/profile/practice-documents/${item}`);
+        // this.$router.push(
+        //   `/profile/practice-documents/${item.existingPracticeComplianceDocument.id}`
+        // );
       }
     }
   }

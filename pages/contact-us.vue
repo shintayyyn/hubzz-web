@@ -1,5 +1,5 @@
 <template>
-  <div class="">
+  <div class>
     <div class="rounded-lg shadow-lg p-5">
       <div class="flex flex-col md:flex-row flex-wrap justify-between mb-4">
         <div class="w-full md:w-1/2">

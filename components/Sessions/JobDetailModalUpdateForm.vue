@@ -15,7 +15,7 @@
             :placeholder="'Select...'"
             :items="practice_lists"
           />
-          <div class="text-xs sm:text-sm mt-2 mb-4 flex flex-row flex-wrap">
+          <div class="text-xs sm:text-sm mt-2 mb-4 flex flex-row flex-wrap items-center">
             <div class="w-full md:w-1/2 p-1">
               <AppInput
                 v-model="form.rate"
@@ -91,7 +91,7 @@
             v-model="form.is_another_doctor"
             :name="'is_another_doctor'"
             :label="'Is there another Dr on site?'"
-            :items="[ {value: 'true', label: 'YES'}, {value: 'false', label: 'NO'} ]"
+            :items="[ {value: true, label: 'YES'}, {value: false, label: 'NO'} ]"
             :error="formError.find(item => item.field === 'is_another_doctor')"
           />
           <AppInput
@@ -104,19 +104,18 @@
           />
           <AppInput
             v-model="form.number_of_patients"
-            :type="'text'"
+            :type="'number'"
             :name="'number_of_patients'"
             :label="'Number of patients to be seen during the session?'"
-            :placeholder="''"
             :inStyle="'text-align:right;'"
             :error="formError.find(item => item.field === 'number_of_patients')"
           />
+
           <AppInput
             v-model="form.duration_for_each_appointment"
             :type="'text'"
             :name="'duration_for_each_appointment'"
             :label="'Duration of each appointment?'"
-            :placeholder="''"
             :inStyle="'text-align:right;'"
             :error="formError.find(item => item.field === 'duration_for_each_appointment')"
           />
@@ -129,16 +128,16 @@
             :error="formError.find(item => item.field === 'opportunity_for_catch_up_slots')"
           />
           <AppInput
-            :type="'multi-checkbox'"
             v-model="form.session_requirements"
+            :type="'multi-checkbox'"
             @checked="form.session_requirements.push($event)"
             @unchecked="form.session_requirements.splice(form.session_requirements.findIndex(item => item === $event), 1)"
             :name="'session_requirements'"
             :label="'Session requirements'"
-            :placeholder="''"
             :lists="session_requirements_lists"
             :error="formError.find(item => item.field === 'session_requirements')"
           />
+
           <AppInput
             v-model="form.session_structure_information"
             :type="'textarea'"
@@ -148,6 +147,7 @@
             :error="formError.find(item => item.field === 'session_structure_information')"
             :resize="false"
           />
+
           <AppInput
             v-model="form.extra_information"
             :type="'textarea'"
@@ -183,6 +183,7 @@
                 :type="'time'"
                 :name="'time_start'"
                 :label="'Start Time'"
+                :error="formError.find(item => item.field === 'time_start')"
               />
             </div>
             <div class="px-1 w-full md:w-1/2">
@@ -199,22 +200,25 @@
                 :type="'time'"
                 :name="'time_end'"
                 :label="'End Time'"
+                :error="formError.find(item => item.field === 'time_end')"
               />
             </div>
-            <div>
+            <div class="w-full">
               <AppInput
                 v-if="show_saturday"
+                :type="'select'"
                 v-model="form.include_saturday"
-                :type="'single-checkbox'"
                 :name="'include_saturday'"
                 :label="'Include Saturday'"
+                :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
               />
               <AppInput
                 v-if="show_sunday"
+                :type="'select'"
                 v-model="form.include_sunday"
-                :type="'single-checkbox'"
                 :name="'include_sunday'"
                 :label="'Include Sunday'"
+                :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
               />
             </div>
           </div>
@@ -225,14 +229,14 @@
             :label="'Gender'"
             :placeholder="'Select...'"
             :items="shifts"
+            :error="formError.find(item => item.field === 'shift_id')"
           />
           <AppInput
-            v-model="form.unpaid_breaks"
+            v-model="unpaid_breaks"
             :type="'select'"
             :name="'unpaid_breaks '"
             :label="'Unpaid break'"
-            :items="[ {value: 15, label: '15'}, {value: 30, label: '30'}, {value: 60, label: '60'}, {value: 'other', label: 'Other'} ]"
-            :placeholder="'Select..'"
+            :items="[ {value: false, label: 'No'}, {value: 15, label: '15'}, {value: 30, label: '30'}, {value: 60, label: '60'}, {value: 'other', label: 'Other'} ]"
           />
           <AppInput
             v-if="unpaid_breaks === 'other'"
@@ -240,31 +244,116 @@
             :type="'text'"
             :name="'unpaid_breaks_in_minutes'"
             :label="'Other'"
-            :placeholder="''"
             :inStyle="'text-align:right;'"
+            :error="formError.find(item => item.field === 'unpaid_breaks_in_minutes')"
           />
-          <AppDate
+
+          <!-- <AppDate
             v-model="form.auto_assign_at"
             :name="'auto_assign_at'"
             :label="'Auto-assigns this job to the first, matching Favourite applicant'"
+          />-->
+          <AppInput
+            :type="'select'"
+            v-model="auto_assign_job"
+            :name="'auto_assign_job'"
+            :label="'Auto-assign this job?'"
+            :items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
           />
-          <AppDate
+          <div
+            class="flex flex-row flex-wrap justify-between"
+            v-if="auto_assign_job === true || auto_assign_job === 'true'"
+          >
+            <div>Auto-assign job to the first matching Favourite applicant by this date</div>
+            <div class="px-1 w-full md:w-1/2">
+              <AppDate v-model="auto_assign_at.date" :name="'auto_assign_at'" :label="'Date'" />
+            </div>
+            <div class="px-1 w-full md:w-1/2">
+              <AppTime
+                v-model="auto_assign_at.time"
+                :type="'time'"
+                :name="'time_end'"
+                :label="'Time'"
+                :error="formError.find(item => item.field === 'auto_assign_at')"
+              />
+            </div>
+          </div>
+
+          <!-- <AppDate
             v-model="form.selection_date"
             :name="'selection_date'"
             :label="'Selection will be made and you will receive a notification by this date'"
+          />-->
+          <AppInput
+            :type="'select'"
+            v-model="selection_notification"
+            :name="'selection_notification'"
+            :label="'Add a selection date?'"
+            :items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
           />
-          <AppDate
+          <div
+            class="flex flex-row flex-wrap justify-between"
+            v-if="selection_notification === true || selection_notification === 'true'"
+          >
+            <div>Selection will be made and you will receive a notification by this date</div>
+            <div class="px-1 w-full md:w-1/2">
+              <AppDate v-model="selection_date.date" :name="'selection_date'" :label="'Date'" />
+            </div>
+            <div class="px-1 w-full md:w-1/2">
+              <AppTime
+                v-model="selection_date.time"
+                :type="'time'"
+                :name="'time_end'"
+                :label="'Time'"
+                :error="formError.find(item => item.field === 'selection_date')"
+              />
+            </div>
+          </div>
+
+          <!-- <AppDate
             v-model="form.favorite_only_until"
             :name="'favorite_only_until'"
             :label="'Only Favorite locums can apply until'"
+          />-->
+          <AppInput
+            :type="'select'"
+            v-model="favorite_notification"
+            :name="'favorite_notification'"
+            :label="'Make this Job Private?'"
+            :items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
           />
+
+          <div
+            class="flex flex-row flex-wrap justify-between"
+            v-if="favorite_notification === true || favorite_notification === 'true'"
+          >
+            <div>Only favorite locum will be notified until this date</div>
+            <div class="px-1 w-full md:w-1/2">
+              <AppDate
+                v-model="favorite_only_until.date"
+                :name="'favorite_only_until'"
+                :label="'Date'"
+              />
+            </div>
+            <div class="px-1 w-full md:w-1/2">
+              <AppTime
+                v-model="favorite_only_until.time"
+                :type="'time'"
+                :name="'time_end'"
+                :label="'Time'"
+                :error="formError.find(item => item.field === 'favorite_only_until')"
+              />
+            </div>
+          </div>
+
           <AppInput
             v-model="form.ir35"
             :type="'select'"
             :name="'ir35'"
             :label="'IR35 - role inside or outside of scope'"
-            :items="[ {value: 'true', label: 'Inside of Scope'}, {value: 'false', label: 'Outside of Scope'} ]"
+            :items="[ {value: true, label: 'Inside of Scope'}, {value: false, label: 'Outside of Scope'} ]"
           />
+
           <AppInput
             v-model="form.profession_id"
             :type="'select'"
@@ -281,10 +370,11 @@
             :error="formError.find(item => item.field === 'qualification_id')"
             :info="'Choose at least one qualification'"
             :url="'/api/v1/qualifications'"
-            :professionCategoryId="professionCategoryId.toString()"
             @add="CheckEmptyField(form.qualification_id, 'qualification_id')"
             @remove="CheckEmptyField(form.qualification_id, 'qualification_id')"
+            :professionCategoryId="selectedProfession.profession_category.id.toString()"
           />
+          <!-- :professionCategoryId="professionCategoryId.toString()" -->
 
           <AppFilterSearch
             v-model="form.clinical_system_id"
@@ -397,10 +487,12 @@ export default {
       professions: [],
       session_requirements_lists,
       mandatory_training_lists: [],
-      gp_qualification_lists: [],
-      other_qualification_lists: [],
-      clinical_system_lists: [],
-      spoken_language_lists: [],
+
+      // gp_qualification_lists: [],
+      // other_qualification_lists: [],
+      // clinical_system_lists: [],
+      // spoken_language_lists: [],
+
       gp_compliance_documents_lists: [],
       others_compliance_documents_lists: [],
 
@@ -408,9 +500,12 @@ export default {
       selectedProfession: {
         profession_category: {}
       },
-      qualifications: [],
+      // qualifications: [],
       compliances: [],
-      unpaid_breaks: "",
+      unpaid_breaks: false,
+      auto_assign_job: false,
+      selection_notification: false,
+      favorite_notification: false,
       shifts: [],
 
       auto_assign_at: {
@@ -425,6 +520,10 @@ export default {
         date: null,
         time: null
       },
+
+      selectedQualification: [],
+      selectedClinicalSystem: [],
+      selectedSpokenLanguage: [],
 
       form: {
         practice_id: "",
@@ -473,14 +572,18 @@ export default {
         this.selectedProfession = this.professions_categories.find(
           item => item.id == value
         );
-        this.professionCategoryId = this.selectedProfession.profession_category.id;
+        // this.form.qualification_id = [];
+        // this.form.clinical_system_id = [];
+        // this.form.spoken_language_id = [];
+        // this.form.compliance_document_id = [];
+        // this.professionCategoryId = this.selectedProfession.profession_category.id;
         if (this.selectedProfession.profession_category.id == 1) {
-          this.qualifications = this.gp_qualification_lists;
+          // this.qualifications = this.gp_qualification_lists;
           this.compliances = this.gp_compliance_documents_lists;
           return;
         }
         if (this.selectedProfession.profession_category.id == 2) {
-          this.qualifications = this.other_qualification_lists;
+          // this.qualifications = this.other_qualification_lists;
           this.compliances = this.others_compliance_documents_lists;
           return;
         }
@@ -505,14 +608,15 @@ export default {
     }
   },
   computed: {
+    authPermissions() {
+      return this.$store.getters["auth/permissions"];
+    },
     google: gmapApi,
     latLang() {
       return this.job.platform_job.practice.surgery.address.coordinates;
     }
   },
   created() {
-    this.getInit();
-
     this.$axios.$get(`/api/v1/practice/me/practice-practices`).then(res => {
       this.practice_lists = [];
       res.data.practices.forEach(item => {
@@ -531,26 +635,26 @@ export default {
         this.shifts.push({ label: item.name, value: item.id });
       });
     });
-    this.$axios.$get(`/api/v1/profession-categories`).then(res => {
-      this.gp_qualification_lists = [];
-      res.data.profession_categories
-        .find(item => item.id === 1)
-        .qualifications.forEach(item => {
-          this.gp_qualification_lists.push({
-            label: item.name,
-            value: item.id
-          });
-        });
-      this.other_qualification_lists = [];
-      res.data.profession_categories
-        .find(item => item.id === 2)
-        .qualifications.forEach(item => {
-          this.other_qualification_lists.push({
-            label: item.name,
-            value: item.id
-          });
-        });
-    });
+    // this.$axios.$get(`/api/v1/profession-categories`).then(res => {
+    //   this.gp_qualification_lists = [];
+    //   res.data.profession_categories
+    //     .find(item => item.id === 1)
+    //     .qualifications.forEach(item => {
+    //       this.gp_qualification_lists.push({
+    //         label: item.name,
+    //         value: item.id
+    //       });
+    //     });
+    //   this.other_qualification_lists = [];
+    //   res.data.profession_categories
+    //     .find(item => item.id === 2)
+    //     .qualifications.forEach(item => {
+    //       this.other_qualification_lists.push({
+    //         label: item.name,
+    //         value: item.id
+    //       });
+    //     });
+    // });
     this.$axios.$get(`/api/v1/professions`).then(res => {
       this.professions = [];
       res.data.professions.forEach(item => {
@@ -648,8 +752,8 @@ export default {
     );
     this.form.date_start = this.job.date_start;
     this.form.date_end = this.job.date_end;
-    this.form.time_start = this.$moment(this.job.time_start).format("HH:mm");
-    this.form.time_end = this.$moment(this.job.time_end).format("HH:mm");
+    this.form.time_start = this.job.time_start;
+    this.form.time_end = this.job.time_end;
     this.form.shift_id = this.job.shift.id;
 
     this.form.include_saturday = this.job.include_saturday;
@@ -714,9 +818,10 @@ export default {
     });
 
     this.form.profession_id = this.job.platform_job.profession.id;
+    console.log("prop job", this.job);
+    console.log("update form", this.form);
   },
   methods: {
-    getInit() {},
     uncheckMandatory(value) {
       this.form.mandatory_training_id = this.form.mandatory_training_id.filter(
         id => id != value
@@ -724,15 +829,69 @@ export default {
     },
     save() {
       this.formError = [];
-      this.Validate(this.form, [
+
+      let notRequired = [
         "extra_information",
         "is_another_doctor",
         "is_nurse_available",
         "opportunity_for_catch_up_slots",
+        "spoken_language_id",
         "ir35",
+        "mandatory_training_id",
         "include_saturday",
-        "include_sunday"
-      ]);
+        "include_sunday",
+        "compliance_document_id"
+      ];
+
+      if (["15", "30", "60", false, "false"].includes(this.unpaid_breaks)) {
+        notRequired.push("unpaid_breaks_in_minutes");
+      }
+
+      if (this.auto_assign_job === false || this.auto_assign_job === "false") {
+        notRequired.push("auto_assign_at");
+      } else {
+        if (this.auto_assign_job === true || this.auto_assign_job === "true") {
+          if (this.auto_assign_at.date && this.auto_assign_at.time) {
+            notRequired.push("auto_assign_at");
+          }
+        }
+      }
+
+      if (
+        this.selection_notification == false ||
+        this.selection_notification == "false"
+      ) {
+        notRequired.push("selection_date");
+      } else {
+        if (
+          this.selection_notification === true ||
+          this.selection_notification === "true"
+        ) {
+          if (this.selection_date.date && this.selection_date.time) {
+            notRequired.push("selection_date");
+          }
+        }
+      }
+
+      if (
+        this.favorite_notification == false ||
+        this.favorite_notification == "false"
+      ) {
+        notRequired.push("favorite_only_until");
+      } else {
+        if (
+          this.favorite_notification === true ||
+          this.favorite_notification === "true"
+        ) {
+          if (this.favorite_only_until.date && this.favorite_only_until.time) {
+            notRequired.push("favorite_only_until");
+          }
+        }
+      }
+      console.log("notRequired", notRequired);
+      console.log("form", this.form);
+      this.Validate(this.form, notRequired);
+      console.log("formError", this.formError.map(err => err.field));
       if (this.formError.length == 0) {
         this.form.clinical_system_id = this.form.clinical_system_id.map(
           item => item.value
@@ -752,21 +911,39 @@ export default {
         this.form.date_end = this.$moment(this.form.date_end).format(
           "YYYY-MM-DD"
         );
-        this.form.selection_date = this.$moment(
-          this.form.selection_date
-        ).format("YYYY-MM-DD HH:mm:ss");
-        this.form.auto_assign_at = this.$moment(
-          this.form.auto_assign_at
-        ).format("YYYY-MM-DD HH:mm:ss");
-        this.form.favorite_only_until = this.$moment(
-          this.form.favorite_only_until
-        ).format("YYYY-MM-DD HH:mm:ss");
+
+        this.form.auto_assign_at =
+          this.auto_assign_job === true
+            ? `${this.$moment(this.auto_assign_at.date).format("YYYY-MM-DD")} ${
+                this.auto_assign_at.time
+              }`
+            : null;
+
+        this.form.selection_date =
+          this.selection_notification === true
+            ? `${this.$moment(this.selection_date.date).format("YYYY-MM-DD")} ${
+                this.selection_date.time
+              }`
+            : null;
+
+        this.form.favorite_only_until =
+          this.favorite_notification === true
+            ? `${this.$moment(this.favorite_only_until.date).format(
+                "YYYY-MM-DD"
+              )} ${this.favorite_only_until.time}`
+            : null;
+
         this.form.session_requirements.length > 0
           ? (this.form.session_requirements = this.form.session_requirements.join())
           : (this.form.session_requirements = "");
-        this.unpaid_breaks !== "other"
-          ? (this.form.unpaid_breaks_in_minutes = this.unpaid_breaks)
-          : (this.form.unpaid_breaks_in_minutes = this.form.unpaid_breaks_in_minutes);
+
+        if (["15", "30", "60"].includes(this.unpaid_breaks)) {
+          this.form.unpaid_breaks_in_minutes = this.unpaid_breaks;
+        }
+        if (this.unpaid_breaks === "other") {
+          this.form.unpaid_breaks_in_minutes = this.form.unpaid_breaks_in_minutes;
+        }
+
         this.$axios
           .$put(`/api/v1/practice/jobs/${this.job.id}`, this.form)
           .then(res => {
@@ -775,6 +952,7 @@ export default {
               status: "success",
               text: [res.message]
             });
+            this.$emit("close");
           });
       } else {
         this.$nextTick(() => {

@@ -392,7 +392,6 @@ export default {
                 }
             })
         }
-
         if (!payload.countOnly) {
             payload.status.forEach(jobStatus => {
                 if (jobStatus.toLowerCase() === 'allocated') {
@@ -405,7 +404,7 @@ export default {
                 }
                 if (jobStatus.toLowerCase() === 'live') {
                     commit('SET_PRACTICE_AVAILABLE_JOBS', response.data.jobs && response.data.jobs.length > 0 ?
-                        response.data.jobs.filter(jobPart => jobPart.status.toLowerCase() === 'available') : [])
+                        response.data.jobs.filter(jobPart => jobPart.status.toLowerCase() === 'live') : [])
                 }
                 if (jobStatus.toLowerCase() === 'unsuccessful') {
                     commit('SET_PRACTICE_UNSUCCESSFUL_JOBS', response.data.jobs && response.data.jobs.length > 0 ?

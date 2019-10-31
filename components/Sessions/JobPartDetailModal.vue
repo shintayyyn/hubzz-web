@@ -4,52 +4,38 @@
       <svgicon name="left-arrow" height="32" width="32" />
     </div>
     <div class="flex flex-row justify-start mt-8">
-      <div class="leading-loose font-bold text-md sm:text-lg">{{job.title}}</div>
-      <div class="mx-2 text-sm sm:text-sm p-2" :class="bgStatus(job.status)">{{status(job.status)}}</div>
-      <div v-if="authPermissions.includes('Update Sessions Job')">
-        <button
-          class="font-bold text-xs sm:text-sm no-underline px-2 py-2 rounded-lg bg-yellow-500 ml-4 focus:outline-none"
-          v-if="job.status === 'Allocated' && toEdit === false && jobOngoing === false || job.status === 'Applied' && toEdit === false || job.status === 'Available' && toEdit === false"
-          @click.prevent="editJob()"
-        >Edit this job</button>
-        <button
-          class="font-bold text-xs sm:text-sm no-underline px-2 py-2 rounded-lg bg-yellow-500 ml-4 focus:outline-none"
-          v-if="job.status === 'Allocated' && toEdit === true && jobOngoing === false || job.status === 'Applied' && toEdit === true || job.status === 'Available' && toEdit === true"
-          @click.prevent="cancelEdit()"
-        >Cancel Editing</button>
-      </div>
+      <div class="leading-loose font-bold text-md sm:text-lg">{{job_part.job.title}}</div>
+      <div
+        class="mx-2 text-sm sm:text-sm p-2"
+        :class="bgStatus(job_part.job.status)"
+      >{{status(job_part.job.status)}}</div>
     </div>
 
     <div class="flex flex-col mt-4">
       <div class="flex flex-row flex-wrap justify-start">
-        <JobDetailModalForm :job="job" v-if="toEdit === false" />
-        <JobDetailModalUpdateForm
-          :job="job"
-          v-if="job.status === 'Allocated' && toEdit === true && jobOngoing === false  || job.status === 'Applied' && toEdit === true  || job.status === 'Available' && toEdit === true"
-          @close="toEdit = false"
-        />
+        <JobDetailModalForm :job="job_part.job" v-if="toEdit === false" />
         <JobDetailModalCandidates
+          v-if="job_part.job.status === 'Applied'"
           class="order-first lg:order-none"
           :applicants="applicants"
-          v-if="job.status === 'Applied'"
           @show="showLocum($event)"
         />
-        <!-- <JobDetailModalSessionSample
-          :user="user"            
+        <JobDetailModalLocum
+          :user="user"
           :mandatory="mandatory"
           :optional="optional"
-          v-if="(job.status === 'Allocated' || job.status === 'Completed') && user"
-        />-->
+          v-if="(job_part.job.status === 'Ongoing' || job_part.job.status === 'Completed') && user"
+        />
       </div>
       <JobDetailModalCancelForm
-        :job="job"
+        :job="job_part.job"
         @close="close"
-        v-if="(job.status === 'Allocated' || job.status === 'Ongoing' || job.status === 'Applied' || job.status === 'Available') && authPermissions.includes('Cancel Sessions Job')"
+        v-if="(job_part.job.status === 'Allocated' || job_part.job.status === 'Ongoing' || job_part.job.status === 'Applied' || job_part.job.status === 'Available') && authPermissions.includes('Cancel Sessions Job')"
       />
       <JobDetailModalCompleteForm
-        :job_parts="job.job_parts"
+        :job_parts="job_part.job.job_parts"
         @close="close"
-        v-if="job.status === 'Ongoing' && authPermissions.includes('Complete Sessions Job')"
+        v-if="job_part.job.status === 'Ongoing' && authPermissions.includes('Complete Sessions Job')"
       />
     </div>
     <div class="shield" v-if="modal" @click="modal = false"></div>
@@ -68,8 +54,9 @@ import JobDetailModalCandidates from "@/components/Sessions/JobDetailModalCandid
 import JobDetailModalCancelForm from "@/components/Sessions/JobDetailModalCancelForm";
 import JobDetailModalCompleteForm from "@/components/Sessions/JobDetailModalCompleteForm";
 import JobDetailModalShowCandidate from "@/components/Sessions/JobDetailModalShowCandidate";
+import JobDetailModalLocum from "@/components/Sessions/JobDetailModalLocum";
 export default {
-  props: ["job"],
+  props: ["job_part"],
   components: {
     JobDetailModalForm,
     JobDetailModalUpdateForm,
@@ -77,7 +64,8 @@ export default {
     // JobDetailModalSessionSample,
     JobDetailModalCompleteForm,
     JobDetailModalCancelForm,
-    JobDetailModalShowCandidate
+    JobDetailModalShowCandidate,
+    JobDetailModalLocum
   },
   data() {
     return {
@@ -96,23 +84,23 @@ export default {
     }
   },
   created() {
-    console.log("job", this.job);
-    if (this.job.status === "Applied") {
+    console.log("job_part", this.job_part);
+    if (this.job_part.job.status === "Applied") {
       this.getCandidates();
     }
-    if (this.job.platform_job.appointed_to_locum !== null) {
+    if (this.job_part.job.platform_job.appointed_to_locum !== null) {
       this.getAppointedLocum();
     }
-    if (this.$moment().diff(this.job.date_start, "days") >= 0) {
+    if (this.$moment().diff(this.job_part.job.date_start, "days") >= 0) {
       console.log(
         "Job is either ongoing or unfilled. Cannot be edited",
-        this.$moment().diff(this.job.date_start, "days")
+        this.$moment().diff(this.job_part.job.date_start, "days")
       );
       this.jobOngoing = true;
     } else {
       console.log(
         "Job can still be edited",
-        this.$moment().diff(this.job.date_start, "days")
+        this.$moment().diff(this.job_part.job.date_start, "days")
       );
       this.jobOngoing = false;
     }
@@ -120,7 +108,7 @@ export default {
   methods: {
     getCandidates() {
       this.$axios
-        .$get(`/api/v1/practice/jobs/${this.job.id}/applicants`)
+        .$get(`/api/v1/practice/jobs/${this.job_part.job.id}/applicants`)
         .then(res => {
           this.applicants = res.data.users;
         });
@@ -128,10 +116,11 @@ export default {
     getAppointedLocum() {
       this.$axios
         .$get(
-          `/api/v1/practice/locums/${this.job.platform_job.appointed_to_locum.user.id}`
+          `/api/v1/practice/locums/${this.job_part.job.platform_job.appointed_to_locum.user.id}`
         )
         .then(res => {
           this.user = res.data.user;
+          console.log(this.user);
           this.getProfessionCategory(
             res.data.user.locum_detail.profession.profession_category.id
           );
@@ -183,7 +172,7 @@ export default {
     },
     bgStatus(status) {
       switch (status) {
-        case "Live":
+        case "Available":
           return "bg-yellow-500";
           break;
         case "Applied":
