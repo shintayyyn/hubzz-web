@@ -10,9 +10,9 @@
           <div class="flex">
             <div class="bg-gray-300 rounded-lg px-4 py-1 text-xs sm:text-sm" v-if="info">{{info}}</div>
             <div
-              class="absolute rounded-lg right-0 bg-red-500 p-1 text-xs sm:text-sm text-white"
+              class="absolute rounded-lg right-0 bg-red-500 px-2 py-1 text-xs sm:text-sm text-white"
               v-if="error"
-            >{{error.message}}</div>
+            >{{error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ")}}</div>
           </div>
         </div>
         <template v-if="type === 'multi-checkbox'">
@@ -101,9 +101,9 @@
       <div class="flex flex-col py-2 mb-2">
         <div class="flex justify-end">
           <div
-            class="rounded-lg bg-red-500 p-1 text-xs sm:text-sm text-white"
+            class="rounded-lg bg-red-500 px-2 py-1 text-xs sm:text-sm text-white"
             v-if="error"
-          >{{error.message}}</div>
+          >{{error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ")}}</div>
         </div>
         <div class="flex flex-row flex-no-wrap justify-start items-center">
           <input
@@ -127,9 +127,9 @@
             <span class="ml-2 bg-gray-300 rounded-lg px-4 py-1 text-xs">Seperate with commas</span>
           </div>
           <div
-            class="absolute right-0 bg-red-500 p-1 text-xs sm:text-sm text-white"
+            class="absolute right-0 bg-red-500 py-1 px-2 text-xs sm:text-sm text-white"
             v-if="error"
-          >{{error.message}}</div>
+          >{{error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ")}}</div>
         </div>
         <div class="flex flex-row justify-start mt-1">
           <input
@@ -152,9 +152,9 @@
           <div class="flex">
             <div class="bg-gray-300 rounded-lg px-4 py-1 text-xs sm:text-sm" v-if="info">{{info}}</div>
             <div
-              class="absolute right-0 bg-red-500 p-1 text-xs sm:text-sm text-white"
+              class="absolute right-0 bg-red-500 py-1 px-2 text-xs sm:text-sm text-white"
               v-if="error"
-            >{{error.message}}</div>
+            >{{error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ")}}</div>
           </div>
         </div>
         <div
