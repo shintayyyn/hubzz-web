@@ -17,7 +17,7 @@
       :perPage="params.limit"
       :columns="columns"
       :orderBy="params.order_by"
-      @show="show"
+      :routerLink="'/profile/branches-surgeries'"
       @pagechanged="pagechanged"
       @limitchanged="limitchanged"
       @sorted="sorted"
@@ -36,16 +36,10 @@
       <div
         class="shield"
         v-if="['profile-branches-surgeries-create',
-          'profile-branches-surgeries-id-index',
-          'profile-branches-surgeries-id-index-surgery-billings',
-          'profile-branches-surgeries-id-index-surgery-sessions',
-          'profile-branches-surgeries-id-index-surgery-sessions-index-live',
-          'profile-branches-surgeries-id-index-surgery-sessions-index-applied',
-          'profile-branches-surgeries-id-index-surgery-sessions-index-allocated',
-          'profile-branches-surgeries-id-index-surgery-sessions-index-completed',
-          'profile-branches-surgeries-id-index-surgery-sessions-index-unfilled',
-          'profile-branches-surgeries-id-index-surgery-sessions-index-cancelled',
-          'profile-branches-surgeries-id-index-surgery-sessions-index-declined',
+          'profile-branches-surgeries-id',
+          'profile-branches-surgeries-id-surgery-billings',
+          'profile-branches-surgeries-id-surgery-sessions-index',
+          'profile-branches-surgeries-id-surgery-sessions-index-sessionId',
           'profile-branches-surgeries-edit'].includes($route.name)"
         @click="$router.push('/profile/branches-surgeries')"
       ></div>
@@ -291,14 +285,6 @@ export default {
         } else if (this.practice.type === "Spoke") {
           this.$router.push(`/profile/branches-surgeries/edit`);
         }
-      }
-    },
-    updateSurgery(payload) {
-      let index = this.surgeries.findIndex(
-        surgery => surgery.id === payload.id
-      );
-      if (index >= 0) {
-        this.surgeries.splice(index, 1, payload);
       }
     },
     setExpulsionReason(terminationReason) {

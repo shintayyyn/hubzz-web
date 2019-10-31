@@ -1,8 +1,5 @@
 <template>
   <section class="relative">
-    {{this.total}}
-    {{params.limit}}
-    {{Math.ceil(this.total / params.limit)}}
     <transition name="fade" mode="out-in">
       <div v-if="toggleTable">
         <AppTable
@@ -14,7 +11,7 @@
           :columns="columns"
           :orderBy="isJobPart ? jobPartParams.order_by :params.order_by"
           :loading="loadingJobs"
-          :routerLink="'/sessions'"
+          :routerLink="`/profile/branches-surgeries/${$route.params.id}/surgery-sessions`"
           @pagechanged="pagechanged"
           @limitchanged="limitchanged"
           @sorted="sorted"
@@ -26,8 +23,8 @@
         <transition name="fade" mode="out-in">
           <nuxt-link
             class="shield"
-            v-if="$route.name === 'sessions-index-id'"
-            :to="{ path: `/sessions?status=${$route.query.status ? $route.query.status : 'Allocated'}`, query: {...$route.query}}"
+            v-if="$route.name === 'profile-branches-surgeries-id-surgery-sessions-index-sessionId'"
+            :to="{ path: `/profile/branches-surgeries/${$route.params.id}/surgery-sessions?status=${$route.query.status ? $route.query.status : 'Allocated'}`, query: {...$route.query}}"
           ></nuxt-link>
         </transition>
         <div>
@@ -81,6 +78,7 @@ export default {
   },
   data() {
     return {
+      spokeSurgeryId: null,
       current_page: 1,
       // app table params
       params: {
@@ -161,7 +159,6 @@ export default {
     },
     total() {
       if (this.$route.query.status) {
-        console.log("has status", this.$route.query.status);
         switch (this.$route.query.status.toLowerCase()) {
           // parts
           case "ongoing":
@@ -173,7 +170,7 @@ export default {
           // whole
           case "allocated":
             return this.$store.state.jobs.practice_allocated_jobs_count;
-          case "live":
+          case "available":
             return this.$store.state.jobs.practice_available_jobs_count;
           case "applied":
             return this.$store.state.jobs.practice_applied_jobs_count;
@@ -189,7 +186,6 @@ export default {
             return this.$store.state.jobs.practice_allocated_jobs_count;
         }
       } else {
-        console.log("no status");
         return this.$store.state.jobs.practice_allocated_jobs_count;
       }
     },
@@ -435,6 +431,28 @@ export default {
       }
     }
   },
+  async asyncData({ app, route }) {
+    try {
+      const response = await app.$axios.get(
+        `/api/v1/practice/me/practice-surgeries/${route.params.id}`
+      );
+      console.log("response", response);
+      const spokeSurgeryId =
+        response.data &&
+        response.data.data &&
+        response.data.data.practice_surgery &&
+        response.data.data.practice_surgery.surgery &&
+        response.data.data.practice_surgery.surgery.id
+          ? response.data.data.practice_surgery.surgery.id
+          : null;
+
+      return {
+        spokeSurgeryId
+      };
+    } catch (err) {
+      console.log("get surgery error", err);
+    }
+  },
   created() {
     this.getJobsCount(this.isJobPart ? this.jobPartParams : this.params);
     setTimeout(() => {
@@ -472,6 +490,7 @@ export default {
       this.$store.commit("jobs/TOGGLE_LOADING", true);
       this.$store
         .dispatch(`${this.dispatchUrl}`, {
+          surgery_id: this.spokeSurgeryId,
           status: [
             `${
               this.$route.query.status ? this.$route.query.status : "Allocated"
@@ -485,9 +504,10 @@ export default {
         });
     },
     getJobs(params) {
-      // this.$store.commit("jobs/CLEAR_JOBS");
+      this.$store.commit("jobs/CLEAR_JOBS");
       this.$store
         .dispatch(`${this.dispatchUrl}`, {
+          surgery_id: this.spokeSurgeryId,
           status: [
             `${
               this.$route.query.status ? this.$route.query.status : "Allocated"
