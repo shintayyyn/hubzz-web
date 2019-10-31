@@ -280,7 +280,7 @@ export default {
             })
         }
 
-        if (!payload.countOnly && payload.first) {
+        if (!payload.countOnly && !payload.first) {
             payload.locum_status.forEach(jobStatus => {
                 if (jobStatus.toLowerCase() === 'allocated') {
                     if (response.data && response.data.job_parts && response.data.job_parts.length > 0) {

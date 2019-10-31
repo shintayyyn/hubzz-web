@@ -176,9 +176,6 @@ export default {
       if (status === "Available") {
         return "LIVE";
       }
-      if (status === "Allocated") {
-        return "ALLOCATED";
-      }
       return status.toUpperCase();
     },
     bgStatus(status) {
