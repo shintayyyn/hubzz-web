@@ -431,7 +431,7 @@ export default {
         let index = state.locum_allocated_jobs.findIndex(job => job.id === payload.id)
         if (index < 0) {
             state.locum_allocated_jobs.push(payload)
-            state.locum_allocated_jobs_count = state.locum_allocated_jobs_count + 1
+            state.locum_new_allocated_jobs_count = state.locum_new_allocated_jobs_count + 1
         }
     },
     UPDATE_LOCUM_ALLOCATED_JOB(state, payload) {
@@ -441,7 +441,7 @@ export default {
     REMOVE_LOCUM_ALLOCATED_JOB(state, payload) {
         if (state.locum_allocated_jobs.find(allocatedJob => allocatedJob.id === payload)) {
             state.locum_allocated_jobs = state.locum_allocated_jobs.filter(job => job.id !== payload)
-            state.locum_allocated_jobs_count = state.locum_allocated_jobs_count - 1
+            state.locum_new_allocated_jobs_count = state.locum_new_allocated_jobs_count - 1
         }
     },
     ADD_LOCUM_ALLOCATED_BADGE(state) {

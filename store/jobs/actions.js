@@ -219,7 +219,7 @@ export default {
             })
         }
 
-        if (!payload.countOnly) {
+        if (!payload.countOnly && !payload.first) {
             payload.locum_status.forEach(jobStatus => {
                 if (jobStatus.toLowerCase() === 'allocated') {
                     commit('SET_LOCUM_ALLOCATED_JOBS', response.data.jobs && response.data.jobs.length > 0 ?
@@ -280,7 +280,7 @@ export default {
             })
         }
 
-        if (!payload.countOnly) {
+        if (!payload.countOnly && payload.first) {
             payload.locum_status.forEach(jobStatus => {
                 if (jobStatus.toLowerCase() === 'allocated') {
                     if (response.data && response.data.job_parts && response.data.job_parts.length > 0) {
@@ -363,9 +363,7 @@ export default {
         let first = payload.id && payload.first ? `/${payload.id}` : ''
         let count = payload.countOnly ? `/count` : ''
 
-        console.log('payload job', payload)
         const response = await this.$axios.$get(`${url}${first}${count}`, { params: payload })
-        console.log('response job', response)
 
         if (payload.countOnly) {
             payload.status.forEach(jobStatus => {

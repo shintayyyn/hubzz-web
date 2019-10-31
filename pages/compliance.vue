@@ -3,10 +3,18 @@
     <div class="overflow-x-auto">
       <div class="mt-5 px-1">
         <div class="shadow-md rounded-lg bg-white px-1 py-2 md:py-4 mb-5 mx-1 md:mx-0">
-          <div class="relative flex flex-row flex-wrap justify-between sm:items-center text-xs sm:text-sm md:px-4">
-            <div class="w-full sm:w-auto px-2 md:p-1 font-bold md:font-normal text-left">GMC / NMC Number</div>
-            <div class="w-full sm:w-2/3 px-2 md:p-1">{{gmc_or_nmc_number ? gmc_or_nmc_number.number : 'No GMC or NMC Number registered'}}</div>
-            <div class="absolute right-0 m-2 md:relative flex items-center justify-end sm:m-0 md:text-center">
+          <div
+            class="relative flex flex-row flex-wrap justify-between sm:items-center text-xs sm:text-sm md:px-4"
+          >
+            <div
+              class="w-full sm:w-auto px-2 md:p-1 font-bold md:font-normal text-left"
+            >GMC / NMC Number</div>
+            <div
+              class="w-full sm:w-2/3 px-2 md:p-1"
+            >{{gmc_or_nmc_number ? gmc_or_nmc_number.number : 'No GMC or NMC Number registered'}}</div>
+            <div
+              class="absolute right-0 m-2 md:relative flex items-center justify-end sm:m-0 md:text-center"
+            >
               <span
                 class="text-xs sm:text-sm text-center text-white font-bold rounded-full px-4 py-1"
                 :class="status(gmc_or_nmc_number ? gmc_or_nmc_number.status : 'No GMC or NMC Number registered')"
@@ -15,10 +23,18 @@
           </div>
         </div>
         <div class="shadow-md rounded-lg bg-white px-1 py-2 md:py-4 mb-5 mx-1 md:mx-0">
-          <div class="relative flex flex-row flex-wrap justify-between sm:items-center text-xs sm:text-sm md:px-4">
-            <div class="w-full sm:w-auto px-2 md:p-1 font-bold md:font-normal text-left">MPL / NPL Number</div>
-            <div class="w-full sm:w-2/3 px-2 md:p-1">{{mpl_or_npl_number ? mpl_or_npl_number.number : 'No MPL or NPL Number registered'}}</div>
-            <div class="lute right-0 m-2 md:relative flex items-center justify-end sm:m-0 md:text-center">
+          <div
+            class="relative flex flex-row flex-wrap justify-between sm:items-center text-xs sm:text-sm md:px-4"
+          >
+            <div
+              class="w-full sm:w-auto px-2 md:p-1 font-bold md:font-normal text-left"
+            >MPL / NPL Number</div>
+            <div
+              class="w-full sm:w-2/3 px-2 md:p-1"
+            >{{mpl_or_npl_number ? mpl_or_npl_number.number : 'No MPL or NPL Number registered'}}</div>
+            <div
+              class="lute right-0 m-2 md:relative flex items-center justify-end sm:m-0 md:text-center"
+            >
               <span
                 class="text-xs sm:text-sm text-center text-white font-bold rounded-full px-4 py-1"
                 :class="status(mpl_or_npl_number ? mpl_or_npl_number.status : '')"
@@ -36,10 +52,10 @@
     </div>
     <div class="mt-4 overflow-x-auto">
       <template v-if="!mandatory.length">
-          <span
-            class="text-center font-bold text-gray-500"
-            colspan="7"
-          >This section is empty. Update your profile to fill this area.</span>
+        <span
+          class="text-center font-bold text-gray-500"
+          colspan="7"
+        >This section is empty. Update your profile to fill this area.</span>
       </template>
       <table>
         <thead>
@@ -127,7 +143,9 @@
                 class="hover:underline"
                 v-else
               >
-                <div class="flex flex-row flex-no-wrap justify-center bg-yellow-500 px-4 py-2 rounded cursor-pointer">
+                <div
+                  class="flex flex-row flex-no-wrap justify-center bg-yellow-500 px-4 py-2 rounded cursor-pointer"
+                >
                   <input
                     type="file"
                     :ref="`${item.id}_file_mandatory_compliance`"
@@ -162,10 +180,10 @@
         </thead>
         <tbody>
           <template v-if="!optional.length">
-              <span
-                class="text-center font-bold text-gray-500"
-                colspan="7"
-              >This section is empty. Update your profile to fill this area.</span>
+            <span
+              class="text-center font-bold text-gray-500"
+              colspan="7"
+            >This section is empty. Update your profile to fill this area.</span>
           </template>
           <template v-for="(item, index) in optional">
             <tr
@@ -199,7 +217,10 @@
                 </div>
               </td>
               <td v-else></td>
-              <td v-if="item.info && item.info.file" class="text-center">{{item.info.file.created_at | localDate}}</td>
+              <td
+                v-if="item.info && item.info.file"
+                class="text-center"
+              >{{item.info.file.created_at | localDate}}</td>
               <td v-else></td>
               <td
                 @click.stop="$refs[`${item.id}_file_optional_compliance`][0].click()"
@@ -223,7 +244,9 @@
                 class="hover:underline"
                 v-else
               >
-                <div class="flex flex-row flex-no-wrap justify-center bg-yellow-500 lg:w-2/3 mx-auto p-2 rounded cursor-pointer">
+                <div
+                  class="flex flex-row flex-no-wrap justify-center bg-yellow-500 lg:w-2/3 mx-auto p-2 rounded cursor-pointer"
+                >
                   <input
                     type="file"
                     :ref="`${item.id}_file_optional_compliance`"
@@ -247,10 +270,10 @@
 
     <div class="mt-4 overflow-x-auto">
       <template v-if="!mandatory_trainings.length">
-          <span
-            class="text-center font-bold text-gray-500"
-            colspan="7"
-          >This section is empty. Update your profile to fill this area.</span>
+        <span
+          class="text-center font-bold text-gray-500"
+          colspan="7"
+        >This section is empty. Update your profile to fill this area.</span>
       </template>
       <template v-else>
         <table>
@@ -296,7 +319,10 @@
                   </div>
                 </td>
                 <td v-else></td>
-                <td v-if="item && item.file" class="text-center">{{item.file.created_at | localDate}}</td>
+                <td
+                  v-if="item && item.file"
+                  class="text-center"
+                >{{item.file.created_at | localDate}}</td>
                 <td v-else></td>
                 <td
                   @click.stop="$refs[`${item.id}_file_mandatory_training`][0].click()"
@@ -320,7 +346,9 @@
                   class="hover:underline"
                   v-else
                 >
-                  <div class="flex flex-row flex-no-wrap justify-center bg-yellow-500 lg:w-2/3 mx-auto p-2 rounded cursor-pointer">
+                  <div
+                    class="flex flex-row flex-no-wrap justify-center bg-yellow-500 lg:w-2/3 mx-auto p-2 rounded cursor-pointer"
+                  >
                     <input
                       type="file"
                       :ref="`${item.id}_file_mandatory_training`"
@@ -337,7 +365,6 @@
           </tbody>
         </table>
       </template>
-      
     </div>
     <div
       class="shield"
@@ -390,6 +417,21 @@ export default {
     });
     // get all mandatory training list
     this.setMandatoryTrainings();
+  },
+  mounted() {
+    this.$socket.on("Locum Notification Compliance Approved", file => {
+      let index = this.mandatory.findIndex(
+        item =>
+          item.info.compliance_document.name === file.compliance_document.name
+      );
+      let updatedFile = this.mandatory.find(
+        item =>
+          item.info.compliance_document.name === file.compliance_document.name
+      );
+      if (index >= 0) {
+        this.mandatory.splice(index, 1, { ...updatedFile, info: file });
+      }
+    });
   },
   watch: {
     $route(value) {
@@ -456,38 +498,14 @@ export default {
               }
             );
           }
-          // if (res.data.user.locum_detail.compliance_documents.length > 0) {
-          //   res.data.user.locum_detail.compliance_documents.forEach(
-          //     userComplianceDocument => {
-          //       this.profession.mandatory_compliance_documents.forEach(
-          //         mandatoryDocument => {
-          //           if (
-          //             userComplianceDocument.compliance_document.id ===
-          //             mandatoryDocument.id
-          //           ) {
-          //             mandatoryDocument.info = userComplianceDocument;
-          //           }
-          //         }
-          //       );
-          //       this.profession.optional_compliance_documents.forEach(
-          //         optionalDocument => {
-          //           if (
-          //             userComplianceDocument.compliance_document.id ===
-          //             optionalDocument.id
-          //           ) {
-          //             optionalDocument.info = userComplianceDocument;
-          //           }
-          //         }
-          //       );
-          //     }
-          //   );
-          // }
           this.mandatory = this.profession.mandatory_compliance_documents.sort(
             (a, b) => a.id - b.id
           );
           this.optional = this.profession.optional_compliance_documents.sort(
             (a, b) => a.id - b.id
           );
+          console.log(this.mandatory);
+          console.log(this.optional);
         });
     },
     status(status) {
@@ -794,15 +812,16 @@ a {
   text-decoration: none;
   color: black;
 }
-table{
+table {
   border-collapse: separate;
   border-spacing: 0 10px;
   padding: 0 5px;
 }
-table tbody tr:hover td{
+table tbody tr:hover td {
   background-color: #eff3f8;
 }
-table tbody td:last-child, table thead th:last-child {
+table tbody td:last-child,
+table thead th:last-child {
   position: sticky;
   background-color: #fff;
   right: 0;
