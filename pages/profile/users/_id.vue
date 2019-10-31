@@ -1,9 +1,9 @@
 <template>
   <div class="modal-container shadow-lg">
     <div class="p-8 max-w-3xl">
-      <div @click="$router.push('/profile/users')" class="cursor-pointer">
+      <nuxt-link :to="'/profile/users'" class="cursor-pointer">
         <svgicon name="left-arrow" height="32" width="32" />
-      </div>
+      </nuxt-link>
       <div class="flex justify-start overflow-x-auto py-3 mt-4">
         <div class="relative">
           <nuxt-link

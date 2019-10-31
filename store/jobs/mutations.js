@@ -379,6 +379,7 @@ export default {
     },
     SET_LOCUM_COMPLETED_JOB_PARTS(state, payload) {
         state.locum_completed_job_parts = payload
+
     },
     REMOVE_LOCUM_COMPLETED_JOB_PART(state, payload) {
         state.locum_completed_job_parts = state.locum_completed_job_parts.filter(job => job.id !== payload)

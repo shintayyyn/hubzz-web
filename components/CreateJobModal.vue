@@ -785,9 +785,13 @@ export default {
           }
         }
       }
-      console.log("notRequired", notRequired);
+      // console.log("notRequired", notRequired);
+      // console.log("form", this.form);
       this.Validate(this.form, notRequired);
-      console.log("formError", this.formError.map(err => err.field));
+      this.form.favorite_only_until = `${this.$moment(
+        this.favorite_only_until.date
+      ).format("YYYY-MM-DD")} ${this.favorite_only_until.time}`;
+      // console.log("formError", this.formError.map(err => err.field));
       if (!this.formError.length) {
         this.selectedClinicalSystem = [...this.form.clinical_system_id];
         this.form.clinical_system_id = this.form.clinical_system_id.map(
@@ -813,33 +817,32 @@ export default {
           : (this.form.session_requirements = "");
 
         this.form.auto_assign_at =
-          this.auto_assign_job === true
+          this.auto_assign_job === true || this.auto_assign_job === "true"
             ? `${this.$moment(this.auto_assign_at.date).format("YYYY-MM-DD")} ${
                 this.auto_assign_at.time
               }`
             : null;
 
         this.form.selection_date =
-          this.selection_notification === true
+          this.selection_notification === true ||
+          this.selection_notification === "true"
             ? `${this.$moment(this.selection_date.date).format("YYYY-MM-DD")} ${
                 this.selection_date.time
               }`
             : null;
-
         this.form.favorite_only_until =
-          this.favorite_notification === true
+          this.favorite_notification === true ||
+          this.favorite_notification === "true"
             ? `${this.$moment(this.favorite_only_until.date).format(
                 "YYYY-MM-DD"
               )} ${this.favorite_only_until.time}`
             : null;
-
         if (["15", "30", "60"].includes(this.unpaid_breaks)) {
           this.form.unpaid_breaks_in_minutes = this.unpaid_breaks;
         }
         if (this.unpaid_breaks === "other") {
           this.form.unpaid_breaks_in_minutes = this.form.unpaid_breaks_in_minutes;
         }
-
         this.$axios
           .$post(`/api/v1/practice/jobs`, this.form)
           .then(res => {

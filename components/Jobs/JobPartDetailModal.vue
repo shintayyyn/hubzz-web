@@ -7,8 +7,8 @@
       <div class="leading-loose font-bold text-md sm:text-lg mr-2">{{job_part.job.title}}</div>
       <div class="flex items-center text-xs md:text-sm">
         <div
-        class="mr-2 py-2 px-4 rounded font-semibold uppercase"
-        :class="bgStatus(job_part.locum_status)"
+          class="mr-2 py-2 px-4 rounded font-semibold uppercase"
+          :class="bgStatus(job_part.locum_status)"
         >{{job_part.locum_status}}</div>
         <div
           class="ml-2 py-2 px-4 rounded font-semibold"
@@ -16,26 +16,28 @@
           v-if="job_part.locum_status === 'Completed'"
         >{{jobPartStatus}}</div>
       </div>
-      </div>
-      
+    </div>
+
     <div
       class="text-xs sm:text-sm py-2"
     >Posted {{$moment(job_part.date_created).format('DD/MM/YYYY')}}</div>
     <div class="flex flex-row flex-wrap justify-start">
       <div class="p-0 md:pr-4 w-full md:w-1/2">
-        <JobPartDetailModalParts class="md:hidden"
+        <JobPartDetailModalParts
+          class="md:hidden"
           :parts="job_part.job.job_parts"
           :job_id="job_part.job.id"
-          v-if="job_part.job.job_parts.length > 1"
+          v-if="job_part.job.job_parts.length > 1 && $route.path !== '/dashboard'"
         />
         <JobPartDetailModalInfo :job_part="job_part" />
       </div>
       <div class="p-0 md:pl-4 my-4 md:m-0 w-full md:w-1/2">
         <div class="flex flex-col">
-          <JobPartDetailModalParts class="hidden md:block"
+          <JobPartDetailModalParts
+            class="hidden md:block"
             :parts="job_part.job.job_parts"
             :job_id="job_part.job.id"
-            v-if="job_part.job.job_parts.length > 1"
+            v-if="job_part.job.job_parts.length > 1 && $route.path !== '/dashboard'"
           />
           <JobDetailModalMap :job="job_part.job" />
           <JobDetailModalUnassignForm
@@ -102,7 +104,10 @@ export default {
           return "bg-green-400 text-white";
           break;
         case "Allocated":
-          return "bg-green-400";
+          return "bg-green-300";
+          break;
+        case "Ongoing":
+          return "bg-green-500 text-white";
           break;
         default:
           return "bg-red-500 text-white";

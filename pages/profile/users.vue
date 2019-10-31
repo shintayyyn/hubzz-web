@@ -13,8 +13,10 @@
         :inStyle="'padding:5px 14px;margin-bottom:5px; font-size:14px;'"
       />
     </div>
-    <div class="flex-wrap justify-start items-center z-10 absolute w-full bg-white shadow-xl p-3 rounded-lg"
-      :class="filterToggle ? 'flex' : 'hidden'">
+    <div
+      class="flex-wrap justify-start items-center z-10 absolute w-full bg-white shadow-xl p-3 rounded-lg"
+      :class="filterToggle ? 'flex' : 'hidden'"
+    >
       <AppInput
         class="px-1 w-full md:w-1/3"
         v-model="params.search"
@@ -51,7 +53,7 @@
       :perPage="params.limit"
       :columns="columns"
       :orderBy="params.order_by"
-      @show="show"
+      :routerLink="'/profile/users'"
       @pagechanged="pagechanged"
       @limitchanged="limitchanged"
       @sorted="sorted"
@@ -65,13 +67,16 @@
         </td>
       </template>
     </AppTable>
-    <div v-else class="flex justify-center py-4 text-gray-600">You do not have any other User on this Practice</div>
+    <div
+      v-else
+      class="flex justify-center py-4 text-gray-600"
+    >You do not have any other User on this Practice</div>
     <transition name="fade" mode="out-in">
-      <div
+      <nuxt-link
         class="shield"
         v-if="['profile-users-create', 'profile-users-edit'].includes($route.name) || $route.name.includes('profile-users-id')"
-        @click="$router.push('/profile/users')"
-      ></div>
+        :to="'/profile/users'"
+      ></nuxt-link>
     </transition>
     <nuxt-child @addedUser="addUser" @updateUser="updateUser" />
     <AppConfirmationModal
@@ -190,14 +195,14 @@ export default {
       this.params.offset = 0;
       this.params.role_id = value;
       this.getUsersCount(this.params);
-      this.showFilter()
+      this.showFilter();
     },
     "params.practice_role"(value) {
       this.current_page = 1;
       this.params.offset = 0;
       this.params.practice_role = value;
       this.getUsersCount(this.params);
-      this.showFilter()
+      this.showFilter();
     }
   },
   mounted() {
@@ -352,12 +357,12 @@ export default {
         });
     },
     show(item) {
-      if (
-        (!item.practice_detail.role || item.practice_detail.role.id != 1) &&
-        this.authPermissions.includes("Show Profile Users")
-      ) {
-        this.$router.push(`/profile/users/${item.id}`);
-      }
+      // if (
+      //   (!item.practice_detail.role || item.practice_detail.role.id != 1) &&
+      //   this.authPermissions.includes("Show Profile Users")
+      // ) {
+      //   this.$router.push(`/profile/users/${item.id}`);
+      // }
     }
   }
 };

@@ -1,5 +1,5 @@
 <template>
-  <section class="account-section">
+  <section class="my-practice-section">
     <div class="flex flex-row justify-start overflow-x-auto">
       <nuxt-link
         to="/my-practice?status=Favorite"

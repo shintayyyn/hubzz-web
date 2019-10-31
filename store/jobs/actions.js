@@ -68,7 +68,8 @@ export default {
                 return commit('REMOVE_LOCUM_APPLIED_JOB', job.id)
             }
             if (!state.locum_cancelled_jobs.find(cancelledJob => cancelledJob.id === job.id)) {
-                commit('ADD_LOCUM_CANCELLED_BADGE')
+                // commit('ADD_LOCUM_CANCELLED_BADGE')
+                // get job from socket id
                 return commit('ADD_LOCUM_CANCELLED_JOB', job)
             }
         })
@@ -280,7 +281,7 @@ export default {
             })
         }
 
-        if (!payload.countOnly && payload.first) {
+        if (!payload.countOnly && !payload.first) {
             payload.locum_status.forEach(jobStatus => {
                 if (jobStatus.toLowerCase() === 'allocated') {
                     if (response.data && response.data.job_parts && response.data.job_parts.length > 0) {

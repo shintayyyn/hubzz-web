@@ -8,7 +8,7 @@
       <div
         class="mx-2 text-sm sm:text-sm p-2 uppercase"
         :class="bgStatus(job.locum_status)"
-      >{{ $auth.user.domain === 'Locum' ? job.locum_status : job.status }}</div>
+      >{{job.locum_status}}</div>
     </div>
     <div class="text-xs sm:text-sm py-3">Posted {{$moment(job.date_created).format('DD/MM/YYYY')}}</div>
     <div class="flex flex-row flex-wrap justify-start">
@@ -67,10 +67,13 @@ export default {
           return "bg-orange-400 text-white";
           break;
         case "Completed":
-          return "bg-green-400";
+          return "bg-green-400 text-white";
           break;
         case "Allocated":
-          return "bg-green-400";
+          return "bg-green-300";
+          break;
+        case "Ongoing":
+          return "bg-green-500 text-white";
           break;
         default:
           return "bg-red-500 text-white";

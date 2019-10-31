@@ -39,9 +39,6 @@ export default {
       job: null
     };
   },
-  mounted() {
-    console.log(this.propJob);
-  },
   computed: {
     isJobPart() {
       return (
@@ -147,9 +144,24 @@ export default {
     select() {
       let job = this.isJobPart ? this.propJob.job : this.propJob;
       if (job.type) {
-        this.$axios.$get(`/api/v1/locum/jobs/${job.id}`).then(res => {
-          this.$emit("viewLocumJob", res.data.job);
-        });
+        let url = `/api/v1/locum/jobs`;
+        if (
+          ["ongoing", "completed", "approved", "allocated"].includes(
+            job.locum_status.toLowerCase()
+          )
+        ) {
+          url = `/api/v1/locum/job-parts`;
+        }
+        this.$axios
+          .$get(
+            `${url}/${this.isJobPart ? this.propJob.id : this.propJob.job.id}`
+          )
+          .then(res => {
+            this.$emit(
+              "viewLocumJob",
+              res.data && res.data.job ? res.data.job : res.data.job_part
+            );
+          });
       } else {
         this.$router.push("/availability");
       }

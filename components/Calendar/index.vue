@@ -21,11 +21,7 @@
         </div>
       </div>
     </div>
-    <div
-      class="shield"
-      v-if="toggleScroll"
-      @click="locum_modal ? locum_modal = false : practice_modal = false"
-    ></div>
+    <div class="shield" v-if="toggleScroll" @click="close"></div>
     <transition name="slide" mode="out-in">
       <template v-if="locum_appointment_modal">
         <div class="modal-container">
@@ -39,6 +35,11 @@
       <template v-if="locum_modal">
         <div class="modal-container">
           <JobDetailModal @close="locum_modal = false" :job="locum_job" />
+        </div>
+      </template>
+      <template v-if="locum_modal_part">
+        <div class="modal-container">
+          <JobPartDetailModal @close="locum_modal_part = false" :job_part="locum_job_part" />
         </div>
       </template>
       <!-- <div class="modal-container shadow-lg" v-if="create_job_modal">
@@ -58,6 +59,7 @@ import PerWeek from "@/components/Calendar/PerWeek";
 import Info from "@/components/Calendar/Info";
 // locums
 import JobDetailModal from "@/components/Jobs/JobDetailModal";
+import JobPartDetailModal from "@/components/Jobs/JobPartDetailModal";
 import JobDetailModalAppointment from "@/components/Jobs/JobDetailModalAppointment";
 
 // practice
@@ -70,18 +72,21 @@ export default {
     PerWeek,
     Info,
     JobDetailModal,
+    JobPartDetailModal,
     JobDetailModalAppointment,
     // CreateJobModal,
     PracticeJobDetailModal
   },
   data() {
     return {
-      practice_modal: false,
-      practice_job: null,
       locum_modal: false,
       locum_job: null,
+      locum_modal_part: false,
+      locum_job_part: null,
       locum_appointment_modal: false,
-      locum_appointment_job: null
+      locum_appointment_job: null,
+      practice_modal: false,
+      practice_job: null
     };
   },
   created() {
@@ -90,7 +95,10 @@ export default {
   computed: {
     toggleScroll() {
       return (
-        this.locum_appointment_modal || this.locum_modal || this.practice_modal
+        this.locum_modal_part ||
+        this.locum_appointment_modal ||
+        this.locum_modal ||
+        this.practice_modal
         // this.create_job_modal
       );
     },
@@ -124,19 +132,37 @@ export default {
       this.locum_appointment_job = null;
     },
     viewLocumJob(job) {
+      console.log("propjob", job);
       if (job.type === "Private") {
         this.locum_appointment_modal = true;
         this.locum_appointment_job = job;
         return;
       }
+      if (
+        ["ongoing", "completed", "approved", "allocated"].includes(
+          job.locum_status.toLowerCase()
+        )
+      ) {
+        // job part
+        this.locum_modal_part = true;
+        this.locum_job_part = job;
+        return;
+      }
+      // whole job
       this.locum_modal = true;
       this.locum_job = job;
     },
     // practice
     viewPracticeJob(job) {
-      console.log("qwe", job);
       this.practice_modal = true;
       this.practice_job = job;
+    },
+    // close modal thru shield
+    close() {
+      this.locum_modal = false;
+      this.locum_modal_part = false;
+      this.locum_appointment_modal = false;
+      this.practice_modal = false;
     }
   }
 };

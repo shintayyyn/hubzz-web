@@ -1,125 +1,64 @@
 <template>
   <div class="modal-container shadow-lg">
-    <div class="p-8 max-w-xl">
-      <div @click="$router.push('/profile/branches-surgeries')" class="cursor-pointer">
+    <div class="p-8 w-full">
+      <div @click="$router.push('/profile/branches-surgeries')" class="mb-2 cursor-pointer">
         <svgicon name="left-arrow" height="32" width="32" />
       </div>
-      <div class="flex flex-row justify-start mt-8">
-        <div class="leading-loose font-bold text-md sm:text-lg">{{practice_surgery.surgery.name}}</div>
-        <div
-          class="mx-2 text-sm sm:text-sm p-2 text-gray-700 font-bold"
-        >{{practice_surgery.surgery.code}}</div>
+      <div class="flex overflow-x-auto">
+        <nuxt-link
+          :to="`/profile/branches-surgeries/${practice_id}`"
+          class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
+          :class="$route.name === 'profile-branches-surgeries-id' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        >Profile</nuxt-link>
+        <nuxt-link
+          :to="`/profile/branches-surgeries/${practice_id}/surgery-sessions`"
+          class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
+          :class="$route.name.includes('profile-branches-surgeries-id-surgery-sessions') || $route.name === 'profile-branches-surgeries-create'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        >Surgery Sessions</nuxt-link>
+        <nuxt-link
+          :to="`/profile/branches-surgeries/${practice_id}/surgery-billings`"
+          class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
+          :class="$route.name.includes('profile-branches-surgeries-id-surgery-billings')  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        >Surgery Billing</nuxt-link>
       </div>
-      <div class="rounded-lg shadow-lg p-8">
-        <div class="flex flex-col flex-wrap justify-between">
-          <div class="w-full p-1">
-            <AppInput
-              v-model="form.pay_for_surgery"
-              :type="'select'"
-              :name="'pay_for_surgery'"
-              :label="'Pay for surgery'"
-              :error="formError.find(item => item.field === 'pay_for_surgery')"
-              :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
-            />
-          </div>
-          <div class="w-full p-1">
-            <AppInput
-              v-model="form.verify_job_creation"
-              :type="'select'"
-              :name="'verify_job_creation'"
-              :label="'Verify job creation'"
-              :error="formError.find(item => item.field === 'verify_job_creation')"
-              :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
-            />
-          </div>
-        </div>
-        <div class="flex flex-row justify-start">
-          <AppButton
-            :label="'Save'"
-            @click="save"
-            :inStyle="'padding:5px 10px'"
-            v-if="authPermissions.includes('Update Profile Surgeries')"
-          />
-        </div>
-      </div>
+      <nuxt-child />
     </div>
   </div>
 </template>
+
 <script>
 import AppButton from "@/components/Base/AppButton";
-import AppInput from "@/components/Base/AppInput";
 export default {
   components: {
-    AppButton,
-    AppInput
+    AppButton
   },
   data() {
     return {
-      form: {
-        pay_for_surgery: "",
-        verify_job_creation: ""
-      },
-      formError: []
+      practice_id: ""
     };
   },
-  computed: {
-    authPermissions() {
-      return this.$store.getters["auth/permissions"];
-    }
-  },
-  async asyncData({ app, store, params, error }) {
+  async asyncData({ app, route, store, params, error }) {
     try {
+      const practice_id = params.id;
       const response = await app.$axios.$get(
         `/api/v1/practice/me/practice-surgeries/${params.id}`
       );
-      const practice_surgery =
-        response.data && response.data.practice_surgery
-          ? response.data.practice_surgery
-          : null;
-
       return {
-        practice_surgery
+        practice_id
       };
     } catch (err) {
-      if (err.response && err.response.status === 401) {
-        error(err.response.data);
-        return;
-      }
       throw err;
-    }
-  },
-  created() {
-    this.form.pay_for_surgery = this.practice_surgery.pay_for_surgery;
-    this.form.verify_job_creation = this.practice_surgery.verify_job_creation;
-  },
-  methods: {
-    save() {
-      this.$axios
-        .$put(
-          `/api/v1/practice/me/practice-surgeries/${this.$route.params.id}`,
-          this.form
-        )
-        .then(res => {
-          this.$emit("updateSurgery", res.data.practice_surgery);
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "success",
-            text: ["Surgery Update Success"]
-          });
-          this.$router.push("/profile/branches-surgeries");
-        });
     }
   }
 };
 </script>
-
 <style scoped>
 .modal-container {
   z-index: 510;
 }
 @media screen and (min-width: 1200px) {
   .modal-container {
-    width: 70%;
+    width: 80%;
   }
 }
 </style>
