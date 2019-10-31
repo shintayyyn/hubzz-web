@@ -1,8 +1,5 @@
 <template>
   <section class="relative">
-    {{this.total}}
-    {{params.limit}}
-    {{Math.ceil(this.total / params.limit)}}
     <transition name="fade" mode="out-in">
       <div v-if="toggleTable">
         <AppTable

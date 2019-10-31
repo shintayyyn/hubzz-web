@@ -68,7 +68,8 @@ export default {
                 return commit('REMOVE_LOCUM_APPLIED_JOB', job.id)
             }
             if (!state.locum_cancelled_jobs.find(cancelledJob => cancelledJob.id === job.id)) {
-                commit('ADD_LOCUM_CANCELLED_BADGE')
+                // commit('ADD_LOCUM_CANCELLED_BADGE')
+                // get job from socket id
                 return commit('ADD_LOCUM_CANCELLED_JOB', job)
             }
         })

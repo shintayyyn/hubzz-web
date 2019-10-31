@@ -2,290 +2,6 @@
   <section class="relative">
     <transition name="fade" mode="out-in">
       <div v-if="toggleTable">
-        <AppLoading :loading="loadingJobs" spinner />
-        <AppButton
-          :label="'Filter'"
-          @click="showFilter()"
-          :inStyle="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
-        />
-        <div
-          v-if="!isJobPart"
-          class="flex-wrap justify-start items-center z-10 absolute w-full bg-white shadow-lg p-3 rounded-lg"
-          :class="filterToggle ? 'flex' : 'hidden'"
-        >
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppInput
-              class="px-1"
-              v-model="params.type"
-              :type="'select'"
-              :name="'type'"
-              :label="'Type'"
-              :items="practiceTypeList"
-            />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppInput
-              class="px-1"
-              v-model="params.job_number"
-              :type="'text'"
-              :name="'job_number'"
-              :label="'Job number'"
-            />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppAutoComplete
-              class="px-1"
-              v-model="params.surgery_id"
-              :name="'surgery_id'"
-              :label="'Surgery'"
-              :url="'/api/v1/locum/surgeries'"
-              :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem'"
-            />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppInput
-              class="px-1"
-              v-model="params.title"
-              :type="'text'"
-              :name="'title'"
-              :label="'Job Title'"
-            />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppInput
-              class="px-1"
-              v-model="params.shift_id"
-              :type="'select'"
-              :name="'shift_id'"
-              :label="'Shift'"
-              :items="shifts"
-            />
-          </div>
-
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppInput
-              class="px-1"
-              v-model="params.rate"
-              :type="'text'"
-              :name="'rate'"
-              :label="'Rate'"
-              :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
-            />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppInput
-              class="px-1"
-              v-model="params.rate_type_id"
-              :type="'select'"
-              :name="'rate_type_id'"
-              :label="'per'"
-              :items="rates"
-            />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppPostCode
-              class="px-1"
-              v-model="params.near_post_code"
-              :name="'near_post_code'"
-              :label="'Post code'"
-              @onSelect="onSelect"
-            />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppInput
-              class="px-1"
-              v-model="params.miles"
-              :type="'text'"
-              :name="'miles'"
-              :label="'Miles'"
-            />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppDate
-              v-model="params.calendar_date_start"
-              :name="'calendar_date_start'"
-              :label="'From'"
-              :format="'YYYY-MM-DD'"
-            />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppTime v-model="params.time_start" :name="'time_start'" :label="'Start Time'" />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppDate
-              v-model="params.calendar_date_end"
-              :name="'calendar_date_end'"
-              :label="'To'"
-              :format="'YYYY-MM-DD'"
-            />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppTime v-model="params.time_end" :name="'time_end'" :label="'End Time'" />
-          </div>
-          <div class="md:px-1 flex w-full">
-            <AppButton
-              :label="'Clear'"
-              @click="clearFilters"
-              :inStyle="'padding:5px 14px;margin-bottom:5px'"
-            />
-            <AppButton
-              class="mx-2"
-              :label="'Search'"
-              @click="filterJob"
-              :inStyle="'padding:5px 14px;margin-bottom:5px'"
-            />
-            <AppButton
-              class="mx-2 md:hidden"
-              :label="'Close'"
-              @click="showFilter"
-              :inStyle="'padding:5px 14px;margin-bottom:5px'"
-            />
-          </div>
-        </div>
-        <div
-          v-if="isJobPart"
-          class="flex-wrap justify-start items-center z-10 absolute w-full bg-white shadow-lg p-3 rounded-lg"
-          :class="filterToggle ? 'flex' : 'hidden'"
-        >
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppInput
-              class="px-1"
-              v-model="jobPartParams.job_type"
-              :type="'select'"
-              :name="'job_type'"
-              :label="'Type'"
-              :items="practiceTypeList"
-            />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppInput
-              class="px-1"
-              v-model="jobPartParams.job_part_number"
-              :type="'text'"
-              :name="'job_part_number'"
-              :label="'Job part number'"
-            />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppAutoComplete
-              class="px-1"
-              v-model="jobPartParams.job_surgery_id"
-              :name="'job_surgery_id'"
-              :label="'Surgery'"
-              :url="'/api/v1/locum/surgeries'"
-              :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem'"
-            />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppInput
-              class="px-1"
-              v-model="jobPartParams.job_title"
-              :type="'text'"
-              :name="'job_title'"
-              :label="'Job Title'"
-            />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppInput
-              class="px-1"
-              v-model="jobPartParams.job_shift_id"
-              :type="'select'"
-              :name="'job_shift_id'"
-              :label="'Shift'"
-              :items="shifts"
-            />
-          </div>
-
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppInput
-              class="px-1"
-              v-model="jobPartParams.job_rate"
-              :type="'text'"
-              :name="'job_rate'"
-              :label="'Rate'"
-              :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
-            />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppInput
-              class="px-1"
-              v-model="jobPartParams.job_rate_type_id"
-              :type="'select'"
-              :name="'job_rate_type_id'"
-              :label="'per'"
-              :items="rates"
-            />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppPostCode
-              class="px-1"
-              v-model="jobPartParams.near_post_code"
-              :name="'near_post_code'"
-              :label="'Post code'"
-              @onSelect="onSelect"
-            />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppInput
-              class="px-1"
-              v-model="jobPartParams.miles"
-              :type="'text'"
-              :name="'miles'"
-              :label="'Miles'"
-            />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppDate
-              v-model="jobPartParams.calendar_date_start"
-              :name="'calendar_date_start'"
-              :label="'From'"
-              :format="'YYYY-MM-DD'"
-            />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppTime v-model="jobPartParams.time_start" :name="'time_start'" :label="'Start Time'" />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppDate
-              v-model="jobPartParams.calendar_date_end"
-              :name="'calendar_date_end'"
-              :label="'To'"
-              :format="'YYYY-MM-DD'"
-            />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppTime v-model="jobPartParams.time_end" :name="'time_end'" :label="'End Time'" />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppInput
-              class="px-1"
-              v-model="jobPartParams.invoice_status"
-              :type="'select'"
-              :name="'invoice_status'"
-              :label="'Invoice Status'"
-              :items="invoiceStatusList"
-            />
-          </div>
-          <div class="md:px-1 flex w-full">
-            <AppButton
-              :label="'Clear'"
-              @click="clearFilters"
-              :inStyle="'padding:5px 14px;margin-bottom:5px'"
-            />
-            <AppButton
-              class="mx-2"
-              :label="'Search'"
-              @click="filterJob"
-              :inStyle="'padding:5px 14px;margin-bottom:5px'"
-            />
-            <!-- <AppButton
-              class="mx-2 md:hidden"
-              :label="'Close'"
-              @click="showFilter"
-              :inStyle="'padding:5px 14px;margin-bottom:5px'"
-            />-->
-          </div>
-        </div>
         <AppTable
           v-if="jobs.length > 0"
           :total="total"
@@ -295,7 +11,7 @@
           :columns="columns"
           :orderBy="isJobPart ? jobPartParams.order_by :params.order_by"
           :loading="loadingJobs"
-          :routerLink="`/my-practice/${$route.params.practiceId}/related-jobs`"
+          :routerLink="`/my-banks/${$route.params.locumId}/related-jobs`"
           @pagechanged="pagechanged"
           @limitchanged="limitchanged"
           @sorted="sorted"
@@ -307,8 +23,8 @@
         <transition name="fade" mode="out-in">
           <nuxt-link
             class="shield"
-            v-if="$route.name === `my-practice-index-practiceId-index-related-jobs-index-jobId`"
-            :to="{ path: `/my-practice/${$route.params.practiceId}/related-jobs`, query: {...$route.query}}"
+            v-if="$route.name === 'my-banks-index-locumId-index-related-jobs-index-jobId'"
+            :to="{ path: `/my-banks/${$route.params.locumId}/related-jobs?status=${$route.query.job_status ? $route.query.job_status : 'Allocated'}`, query: {...$route.query}}"
           ></nuxt-link>
         </transition>
         <div>
@@ -330,7 +46,7 @@ import AppButton from "@/components/Base/AppButton";
 import AppLoading from "@/components/Base/AppLoading";
 import { mapGetters } from "vuex";
 export default {
-  props: ["invoiceStatusList", "practiceTypeList", "shifts", "rates"],
+  props: ["shifts", "rates"],
   components: {
     AppTable,
     AppInput,
@@ -347,10 +63,9 @@ export default {
       ![
         "allocated",
         "ongoing",
-        "available",
-        "matched",
+        "live",
         "applied",
-        "unsuccessful",
+        "unfilled",
         "declined",
         "cancelled",
         "withdrawn",
@@ -358,7 +73,7 @@ export default {
         "approved"
       ].includes(query.job_status.toLowerCase())
     ) {
-      return error({ status: 404, message: "This Job Status is Invalid" });
+      return error({ status: 404, message: "This Session Status is Invalid" });
     }
   },
   data() {
@@ -410,18 +125,17 @@ export default {
   computed: {
     ...mapGetters({
       // parts
-      getLocumOngoingJobs: "jobs/getLocumOngoingJobs",
-      getLocumCompletedJobs: "jobs/getLocumCompletedJobs",
-      getLocumApprovedJobs: "jobs/getLocumApprovedJobs",
+      getPracticeOngoingJobs: "jobs/getPracticeOngoingJobs",
+      getPracticeCompletedJobs: "jobs/getPracticeCompletedJobs",
+      getPracticeApprovedJobs: "jobs/getPracticeApprovedJobs",
       // whole
-      getLocumAllocatedJobs: "jobs/getLocumAllocatedJobs",
-      getLocumAvailableJobs: "jobs/getLocumAvailableJobs",
-      getLocumMatchedJobs: "jobs/getLocumMatchedJobs",
-      getLocumAppliedJobs: "jobs/getLocumAppliedJobs",
-      getLocumUnsuccessfulJobs: "jobs/getLocumUnsuccessfulJobs",
-      getLocumDeclinedJobs: "jobs/getLocumDeclinedJobs",
-      getLocumCancelledJobs: "jobs/getLocumCancelledJobs",
-      getLocumWithdrawnJobs: "jobs/getLocumWithdrawnJobs"
+      getPracticeAllocatedJobs: "jobs/getPracticeAllocatedJobs",
+      getPracticeAvailableJobs: "jobs/getPracticeAvailableJobs",
+      getPracticeAppliedJobs: "jobs/getPracticeAppliedJobs",
+      getPracticeUnfilledJobs: "jobs/getPracticeUnfilledJobs",
+      getPracticeDeclinedJobs: "jobs/getPracticeDeclinedJobs",
+      getPracticeCancelledJobs: "jobs/getPracticeCancelledJobs",
+      getPracticeWithdrawnJobs: "jobs/getPracticeWithdrawnJobs"
     }),
     isJobPart() {
       if (
@@ -444,36 +158,36 @@ export default {
     },
     total() {
       if (this.$route.query.job_status) {
+        console.log("has status", this.$route.query.job_status);
         switch (this.$route.query.job_status.toLowerCase()) {
           // parts
           case "ongoing":
-            return this.$store.state.jobs.locum_ongoing_job_parts_count;
+            return this.$store.state.jobs.practice_ongoing_job_parts_count;
           case "completed":
-            return this.$store.state.jobs.locum_completed_job_parts_count;
+            return this.$store.state.jobs.practice_completed_job_parts_count;
           case "approved":
-            return this.$store.state.jobs.locum_approved_job_parts_count;
+            return this.$store.state.jobs.practice_approved_job_parts_count;
           // whole
           case "allocated":
-            return this.$store.state.jobs.locum_allocated_jobs_count;
-          case "available":
-            return this.$store.state.jobs.locum_available_jobs_count;
-          case "matched":
-            return this.$store.state.jobs.locum_matched_jobs_count;
+            return this.$store.state.jobs.practice_allocated_jobs_count;
+          case "live":
+            return this.$store.state.jobs.practice_available_jobs_count;
           case "applied":
-            return this.$store.state.jobs.locum_applied_jobs_count;
+            return this.$store.state.jobs.practice_applied_jobs_count;
           case "unsuccessful":
-            return this.$store.state.jobs.locum_unsuccessful_jobs_count;
+            return this.$store.state.jobs.practice_unsuccessful_jobs_count;
           case "declined":
-            return this.$store.state.jobs.locum_declined_jobs_count;
+            return this.$store.state.jobs.practice_declined_jobs_count;
           case "cancelled":
-            return this.$store.state.jobs.locum_cancelled_jobs_count;
+            return this.$store.state.jobs.practice_cancelled_jobs_count;
           case "withdrawn":
-            return this.$store.state.jobs.locum_withdrawn_jobs_count;
+            return this.$store.state.jobs.practice_withdrawn_jobs_count;
           default:
-            return this.$store.state.jobs.locum_allocated_jobs_count;
+            return this.$store.state.jobs.practice_allocated_jobs_count;
         }
       } else {
-        return this.$store.state.jobs.locum_allocated_jobs_count;
+        console.log("no status");
+        return this.$store.state.jobs.practice_allocated_jobs_count;
       }
     },
     jobs() {
@@ -481,31 +195,29 @@ export default {
         switch (this.$route.query.job_status.toLowerCase()) {
           // parts
           case "ongoing":
-            return this.getLocumOngoingJobs;
+            return this.getPracticeOngoingJobs;
           case "completed":
-            return this.getLocumCompletedJobs;
+            return this.getPracticeCompletedJobs;
           case "approved":
-            return this.getLocumApprovedJobs;
+            return this.getPracticeApprovedJobs;
           // whole
           case "allocated":
-            return this.getLocumAllocatedJobs;
-          case "available":
-            return this.getLocumAvailableJobs;
-          case "matched":
-            return this.getLocumMatchedJobs;
+            return this.getPracticeAllocatedJobs;
+          case "live":
+            return this.getPracticeAvailableJobs;
           case "applied":
-            return this.getLocumAppliedJobs;
-          case "unsuccessful":
-            return this.getLocumUnsuccessfulJobs;
+            return this.getPracticeAppliedJobs;
+          case "unfilled":
+            return this.getPracticeUnfilledJobs;
           case "declined":
-            return this.getLocumDeclinedJobs;
+            return this.getPracticeDeclinedJobs;
           case "cancelled":
-            return this.getLocumCancelledJobs;
+            return this.getPracticeCancelledJobs;
           case "withdrawn":
-            return this.getLocumWithdrawnJobs;
+            return this.getPracticeWithdrawnJobs;
         }
       } else {
-        return this.getLocumAllocatedJobs;
+        return this.getPracticeAllocatedJobs;
       }
     },
     noJobsToDisplay() {
@@ -518,11 +230,10 @@ export default {
           case "withdrawn":
           case "approved":
             return `You do not have any ${this.$route.query.job_status.toLowerCase()} jobs`;
-          case "available":
-          case "matched":
+          case "live":
             return `There are no ${this.$route.query.job_status.toLowerCase()} jobs nearby and suited for you at this time`;
           case "applied":
-          case "unsuccessful":
+          case "unfilled":
             return `You have not yet ${
               this.$route.query.job_status.toLowerCase() === "applied"
                 ? "applied"
@@ -541,14 +252,14 @@ export default {
       return this.$store.state.jobs.loading_jobs;
     },
     dispatchUrl() {
-      let url = "jobs/fetchLocumJobs";
+      let url = "jobs/fetchPracticeJobs";
       if (
         this.$route.query.job_status &&
         ["ongoing", "completed", "approved"].includes(
           this.$route.query.job_status.toLowerCase()
         )
       ) {
-        url = "jobs/fetchLocumJobParts";
+        url = "jobs/fetchPracticeJobParts";
       }
       return url;
     },
@@ -565,7 +276,7 @@ export default {
             sortable: true
           },
           {
-            name: "Surgery",
+            name: "Practice",
             dataIndex: "job_surgery_name",
             class: "text-center",
             sortable: true
@@ -598,12 +309,12 @@ export default {
       } else if (!["ongoing", "completed", "approved"].includes(queryStatus)) {
         columns.push(
           {
-            name: "Job Part Number",
+            name: "Job Number",
             dataIndex: "job_number",
             sortable: true
           },
           {
-            name: "Surgery",
+            name: "Practice",
             dataIndex: "surgery_name",
             class: "text-center",
             sortable: true
@@ -648,6 +359,13 @@ export default {
           class: "text-center"
         }
       );
+      if (queryStatus === "allocated") {
+        columns.push({
+          name: "Assigned",
+          dataIndex: "assigned_to",
+          class: "text-center"
+        });
+      }
       if (queryStatus === "applied") {
         columns.push({
           name: "Applicants",
@@ -655,7 +373,7 @@ export default {
           class: "text-center"
         });
       }
-      if (queryStatus === "unsuccessful") {
+      if (queryStatus === "unfilled") {
         columns.push({
           name: "Rejected At",
           dataIndex: "platform_job.appointed_at",
@@ -705,6 +423,7 @@ export default {
     "$route.query"({ job_status: newStatus }, { job_status: oldStatus }) {
       if (newStatus && newStatus !== null && newStatus !== oldStatus) {
         this.toggleTable = false;
+        this.filterToggle = false;
         setTimeout(() => {
           this.clearJobsBadge(newStatus);
           this.clearFilters();
@@ -726,7 +445,7 @@ export default {
   methods: {
     clearJobsBadge(status) {
       let jobStatus = status.toUpperCase();
-      return this.$store.commit(`jobs/CLEAR_LOCUM_${jobStatus}_BADGE`);
+      return this.$store.commit(`jobs/CLEAR_PRACTICE_${jobStatus}_BADGE`);
     },
     showFilter() {
       return (this.filterToggle = !this.filterToggle);
@@ -740,10 +459,10 @@ export default {
         ? this.$route.query.job_status.toUpperCase()
         : "ALLOCATED";
       if (["ONGOING", "COMPLETED", "APPROVED"].includes(jobStatus)) {
-        this.$store.commit(`jobs/SET_LOCUM_${jobStatus}_JOB_PARTS`, []);
+        this.$store.commit(`jobs/SET_PRACTICE_${jobStatus}_JOB_PARTS`, []);
       }
       if (!["ONGOING", "COMPLETED", "APPROVED"].includes(jobStatus)) {
-        this.$store.commit(`jobs/SET_LOCUM_${jobStatus}_JOBS`, []);
+        this.$store.commit(`jobs/SET_PRACTICE_${jobStatus}_JOBS`, []);
       }
       this.getJobs(this.isJobPart ? this.jobPartParams : this.params);
       this.filterToggle = false;
@@ -752,7 +471,7 @@ export default {
       this.$store.commit("jobs/TOGGLE_LOADING", true);
       this.$store
         .dispatch(`${this.dispatchUrl}`, {
-          locum_status: [
+          status: [
             `${
               this.$route.query.job_status
                 ? this.$route.query.job_status
@@ -767,10 +486,10 @@ export default {
         });
     },
     getJobs(params) {
-      this.$store.commit("jobs/CLEAR_JOBS");
+      // this.$store.commit("jobs/CLEAR_JOBS");
       this.$store
         .dispatch(`${this.dispatchUrl}`, {
-          locum_status: [
+          status: [
             `${
               this.$route.query.job_status
                 ? this.$route.query.job_status
@@ -790,12 +509,14 @@ export default {
       this.params.order_by = order_by;
       this.jobPartParams.offset = 0;
       this.jobPartParams.order_by = order_by;
+      this.$store.commit("jobs/TOGGLE_LOADING", true);
       this.getJobs(this.isJobPart ? this.jobPartParams : this.params);
     },
     pagechanged(page) {
       this.current_page = page;
       this.params.offset = this.params.limit * (page - 1);
       this.jobPartParams.offset = this.jobPartParams.limit * (page - 1);
+      this.$store.commit("jobs/TOGGLE_LOADING", true);
       this.getJobs(this.isJobPart ? this.jobPartParams : this.params);
     },
     limitchanged(limit) {
@@ -804,6 +525,7 @@ export default {
       this.params.limit = limit;
       this.jobPartParams.offset = 0;
       this.jobPartParams.limit = limit;
+      this.$store.commit("jobs/TOGGLE_LOADING", true);
       this.getJobs(this.isJobPart ? this.jobPartParams : this.params);
     },
     clearFilters() {
@@ -833,12 +555,6 @@ export default {
       this.params.order_by = ["date_created:desc"];
       this.jobPartParams.order_by = ["date_created:desc"];
     },
-    // show(item) {
-    //   this.$router.push({
-    //     path: `/my-practice/${this.$route.params.practiceId}/related-jobs/${item.id}`,
-    //     query: { ...this.$route.query }
-    //   });
-    // },
     onSelect(value) {
       let address_components = value.details.result.address_components;
       let postal_code = address_components.find(component =>

@@ -9,12 +9,12 @@
       <div v-if="authPermissions.includes('Update Sessions Job')">
         <button
           class="font-bold text-xs sm:text-sm no-underline px-2 py-2 rounded-lg bg-yellow-500 ml-4 focus:outline-none"
-          v-if="job.status === 'Allocated' && toEdit === false && jobOngoing === false || job.status === 'Applied' && toEdit === false || job.status === 'Available' && toEdit === false"
+          v-if="job.status === 'Allocated' && toEdit === false && jobOngoing === false || job.status === 'Applied' && toEdit === false || job.status === 'Live' && toEdit === false"
           @click.prevent="editJob()"
         >Edit this job</button>
         <button
           class="font-bold text-xs sm:text-sm no-underline px-2 py-2 rounded-lg bg-yellow-500 ml-4 focus:outline-none"
-          v-if="job.status === 'Allocated' && toEdit === true && jobOngoing === false || job.status === 'Applied' && toEdit === true || job.status === 'Available' && toEdit === true"
+          v-if="job.status === 'Allocated' && toEdit === true && jobOngoing === false || job.status === 'Applied' && toEdit === true || job.status === 'Live' && toEdit === true"
           @click.prevent="cancelEdit()"
         >Cancel Editing</button>
       </div>
@@ -25,7 +25,7 @@
         <JobDetailModalForm :job="job" v-if="toEdit === false" />
         <JobDetailModalUpdateForm
           :job="job"
-          v-if="job.status === 'Allocated' && toEdit === true && jobOngoing === false  || job.status === 'Applied' && toEdit === true  || job.status === 'Available' && toEdit === true"
+          v-if="job.status === 'Allocated' && toEdit === true && jobOngoing === false  || job.status === 'Applied' && toEdit === true  || job.status === 'Live' && toEdit === true"
           @close="toEdit = false"
         />
         <JobDetailModalCandidates

@@ -10,24 +10,21 @@
             :key="practice.id"
           >
             <div class="h-full rounded-lg shadow-lg bg-gray-300 p-4 hover:bg-gray-400">
-              <div class="flex items-center z-50 mb-2">
-                <nuxt-link
-                  class="w-full font-bold text-sm sm:text-lg leading-tight"
-                  :to="{ path: `/my-practice/${practice.id}`, query: {...$route.query}}"
-                >{{practice.surgery.name}}</nuxt-link>
-                <svgicon
-                  v-model="is_favorite"
-                  :name="practice.is_favorite ? 'on-star' : 'off-star'"
-                  height="32"
-                  width="32"
-                  class="cursor-pointer fill-current text-gray-700 hover:text-gray-800"
-                  @click="favorite(practice.id)"
-                />
-              </div>
               <nuxt-link
-                class="flex flex-wrap mt-2 cursor-pointer"
+                class="w-full font-bold text-sm sm:text-lg leading-tight"
                 :to="{ path: `/my-practice/${practice.id}`, query: {...$route.query}}"
               >
+                <div class="flex items-center z-50 mb-2">
+                  {{practice.surgery.name}}
+                  <svgicon
+                    v-model="is_favorite"
+                    :name="practice.is_favorite ? 'on-star' : 'off-star'"
+                    height="32"
+                    width="32"
+                    class="cursor-pointer fill-current text-gray-700 hover:text-gray-800"
+                    @click.prevent.stop="favorite(practice.id)"
+                  />
+                </div>
                 <div
                   class="w-full font-bold text-gray-700 text-xs leading-tight"
                 >{{practice.surgery.address.line_1}} {{practice.surgery.address.line_2}} {{practice.surgery.address.line_3}} {{practice.surgery.address.post_code}}</div>
@@ -163,7 +160,6 @@ export default {
               text: ["Added to favourites"]
             });
           });
-        this.is_favorite = true;
       } else {
         this.$axios
           .$delete(`/api/v1/locum/practices/${id}/favorite`)
@@ -174,7 +170,12 @@ export default {
               text: ["Remove to favourites"]
             });
           });
-        this.is_favorite = false;
+        if (this.$route.query.status.toLowerCase() === "favorite") {
+          this.practices.splice(
+            this.practices.findIndex(practice => practice.id === id),
+            1
+          );
+        }
       }
       practice.is_favorite = !practice.is_favorite;
     },
