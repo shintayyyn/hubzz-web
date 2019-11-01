@@ -22,7 +22,7 @@ export default {
     AppTable
   },
 
-  props: ["job_id"],
+  props: ["job_id", "disabledLink"],
   data() {
     return {
       parts: [],
@@ -38,7 +38,7 @@ export default {
       columns: [
         {
           name: "Job Part Number",
-          dataIndex: "job_part_number",
+          dataIndex: "job_part_number"
         },
         {
           name: "Date End",
@@ -65,9 +65,12 @@ export default {
       return Math.ceil(this.total / this.perPage);
     },
     routerLink() {
+      if (this.disabledLink) {
+        return null;
+      }
       let url = "/jobs";
       if (this.$route.path.includes("related-jobs")) {
-        url = `/my-practice/${this.$route.params.practiceId}/related-jobs`;
+        url = `/my-banks/${this.$route.params.practiceId}/related-jobs`;
       }
       return url;
     }

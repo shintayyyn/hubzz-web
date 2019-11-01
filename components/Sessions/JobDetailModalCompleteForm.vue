@@ -1,32 +1,30 @@
 <template>
   <section>
-    <div class="flex flex-col w-full lg:w-2/3 p-0 lg:pr-4">
-      <div class="rounded-lg shadow-lg flex flex-col p-8 mt-4">
-        <div
-          class="flex flex-row flex-no-wrap"
-          v-for="(jobPart, index) in job_parts"
-          :key="jobPart.id"
-        >
-          <div class="w-1/2 p-1 text-lg font-bold flex flex-col justify-center">
-            <div>From: {{jobPart.date_start | localDate('dateOnly')}}</div>
-            <div class="my-2"></div>
-            <div>To: {{jobPart.date_end | localDate('dateOnly')}}</div>
-          </div>
-          <div class="w-1/2 p-1">
-            <template v-if="jobPart.completed_at">
-              <AppButton
-                :disabled="Boolean(jobPart.completed_at) || isDisabled(index)"
-                :label="`Already Mark this as Completed`"
-              />
-            </template>
-            <template v-else>
-              <AppButton
-                :disabled="Boolean(jobPart.completed_at) || isDisabled(index)"
-                :label="`Mark this week as Complete`"
-                @click="markAsComplete(jobPart.id, index)"
-              />
-            </template>
-          </div>
+    <div class="rounded-lg shadow-lg flex flex-col p-8 mt-4">
+      <div
+        class="flex flex-row flex-no-wrap"
+        v-for="(jobPart, index) in job_parts"
+        :key="jobPart.id"
+      >
+        <div class="w-1/2 p-1 text-lg font-bold flex flex-col justify-center">
+          <div>From: {{jobPart.date_start | localDate('dateOnly')}}</div>
+          <div class="my-2"></div>
+          <div>To: {{jobPart.date_end | localDate('dateOnly')}}</div>
+        </div>
+        <div class="w-1/2 p-1">
+          <template v-if="jobPart.completed_at">
+            <AppButton
+              :disabled="Boolean(jobPart.completed_at) || isDisabled(index)"
+              :label="`Already Mark this as Completed`"
+            />
+          </template>
+          <template v-else>
+            <AppButton
+              :disabled="Boolean(jobPart.completed_at) || isDisabled(index)"
+              :label="`Mark this week as Complete`"
+              @click="markAsComplete(jobPart.id, index)"
+            />
+          </template>
         </div>
       </div>
     </div>

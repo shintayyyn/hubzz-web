@@ -22,7 +22,10 @@
           :key="`${item.value}-${index}`"
         >
           {{item.label}}
-          <span class="font-bold cursor-pointer text-base pl-3" @click="remove(index)">x</span>
+          <span
+            class="font-bold cursor-pointer text-base pl-3"
+            @click="remove(index)"
+          >x</span>
         </div>
         <div>
           <input
@@ -114,6 +117,7 @@ export default {
     professionCategoryId(newValue, oldValue) {
       if (newValue && oldValue) {
         this.items = [];
+        console.log("clear items", this.items);
         this.getListsCount(this.search);
       }
     },

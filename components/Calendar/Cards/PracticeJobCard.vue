@@ -23,9 +23,6 @@ export default {
       job: null
     };
   },
-  mounted() {
-    console.log(this.propJob);
-  },
   computed: {
     isJobPart() {
       return (

@@ -58,7 +58,7 @@
               :error="formError.find(item => item.field === 'qualification_id')"
               :info="'Choose at least one qualification'"
               :url="'/api/v1/qualifications'"
-              :professionCategoryId="form.profession_id.toString()"
+              :professionCategoryId="selectedProfession.profession_category.id.toString()"
               @add="CheckEmptyField(form.qualification_id, 'qualification_id')"
               @remove="CheckEmptyField(form.qualification_id, 'qualification_id')"
             />
@@ -213,6 +213,10 @@ export default {
   },
   data() {
     return {
+      selectedProfession: {
+        profession_category: {}
+      },
+      professions_categories: [],
       pratice_types: [],
       form: {
         gmc_or_nmc_number: "",
@@ -265,6 +269,11 @@ export default {
     }
   },
   created() {
+    this.$axios.$get(`/api/v1/professions`).then(res => {
+      res.data.professions.forEach(item => {
+        this.professions_categories.push(item);
+      });
+    });
     this.pratice_types = this.practiceTypes;
     this.form.gmc_or_nmc_number = this.professionalDetails.gmc_or_nmc_number;
     this.form.mpl_or_npl_number = this.professionalDetails.mpl_or_npl_number;
@@ -323,6 +332,9 @@ export default {
     "form.profession_id"(newValue, oldValue) {
       if (newValue) {
         this.form.qualification_id = [];
+        this.selectedProfession = this.professions_categories.find(
+          item => item.id == newValue
+        );
       }
       // this.CheckEmptyField(this.form.profession_id, "profession_id");
     }

@@ -6,6 +6,8 @@ export default {
             if (!state.locum_matched_jobs.find(matchedJobs => matchedJobs.id == job.id)) {
                 commit('ADD_LOCUM_MATCHED_JOB', job)
                 commit('ADD_LOCUM_MATCHED_BADGE')
+                commit('ADD_LOCUM_AVAILABLE_JOB', job)
+                commit('ADD_LOCUM_AVAILABLE_BADGE')
             }
         })
         this.$socket.on('Locum Notification Job Available', (job) => {
@@ -68,7 +70,8 @@ export default {
                 return commit('REMOVE_LOCUM_APPLIED_JOB', job.id)
             }
             if (!state.locum_cancelled_jobs.find(cancelledJob => cancelledJob.id === job.id)) {
-                commit('ADD_LOCUM_CANCELLED_BADGE')
+                // commit('ADD_LOCUM_CANCELLED_BADGE')
+                // get job from socket id
                 return commit('ADD_LOCUM_CANCELLED_JOB', job)
             }
         })
@@ -191,6 +194,7 @@ export default {
         }
 
         if (payload.countOnly) {
+            console.log('payload count', payload)
             payload.locum_status.forEach(jobStatus => {
                 if (jobStatus.toLowerCase() === 'allocated') {
                     commit('SET_LOCUM_ALLOCATED_JOBS_COUNT', response.data.count)
@@ -220,6 +224,7 @@ export default {
         }
 
         if (!payload.countOnly && !payload.first) {
+            console.log('payload jobs', payload)
             payload.locum_status.forEach(jobStatus => {
                 if (jobStatus.toLowerCase() === 'allocated') {
                     commit('SET_LOCUM_ALLOCATED_JOBS', response.data.jobs && response.data.jobs.length > 0 ?
@@ -280,7 +285,7 @@ export default {
             })
         }
 
-        if (!payload.countOnly && payload.first) {
+        if (!payload.countOnly && !payload.first) {
             payload.locum_status.forEach(jobStatus => {
                 if (jobStatus.toLowerCase() === 'allocated') {
                     if (response.data && response.data.job_parts && response.data.job_parts.length > 0) {
@@ -422,51 +427,6 @@ export default {
                 }
             })
         }
-        // if (payload.status === 'Reminder') {
-        //     commit('SET_PRACTICE_APPLIED_REMINDERS', response)
-        // }
-        // if (payload.status === "Available") {
-        //     if (payload.countOnly) {
-        //         return commit('SET_PRACTICE_AVAILABLE_JOBS_COUNT', response.data.count)
-        //     }
-        //     return commit('SET_PRACTICE_AVAILABLE_JOBS', response.data.jobs)
-        // }
-        // if (payload.status === "Applied") {
-        //     if (payload.countOnly) {
-        //         return commit('SET_PRACTICE_APPLIED_JOBS_COUNT', response.data.count)
-        //     }
-        //     return commit('SET_PRACTICE_APPLIED_JOBS', response.data.jobs)
-        // }
-        // if (payload.status === "Allocated") {
-        //     if (payload.countOnly) {
-        //         return commit('SET_PRACTICE_ALLOCATED_JOBS_COUNT', response.data.count)
-        //     }
-        //     return commit('SET_PRACTICE_ALLOCATED_JOBS', response.data.jobs)
-        // }
-        // if (payload.status === "Completed") {
-        //     if (payload.countOnly) {
-        //         return commit('SET_PRACTICE_COMPLETED_JOBS_COUNT', response.data.count)
-        //     }
-        //     return commit('SET_PRACTICE_COMPLETED_JOBS', response.data.jobs)
-        // }
-        // if (payload.status === "Unfilled") {
-        //     if (payload.countOnly) {
-        //         return commit('SET_PRACTICE_UNFILLED_JOBS_COUNT', response.data.count)
-        //     }
-        //     return commit('SET_PRACTICE_UNFILLED_JOBS', response.data.jobs)
-        // }
-        // if (payload.status === "Cancelled") {
-        //     if (payload.countOnly) {
-        //         return commit('SET_PRACTICE_CANCELLED_JOBS_COUNT', response.data.count)
-        //     }
-        //     return commit('SET_PRACTICE_CANCELLED_JOBS', response.data.jobs)
-        // }
-        // if (payload.status === "Declined") {
-        //     if (payload.countOnly) {
-        //         return commit('SET_PRACTICE_DECLINED_JOBS_COUNT', response.data.count)
-        //     }
-        //     return commit('SET_PRACTICE_DECLINED_JOBS', response.data.jobs)
-        // }
     },
 
     async fetchPracticeJobParts({ commit }, payload) {

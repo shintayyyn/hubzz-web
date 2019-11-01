@@ -2,7 +2,7 @@
   <div class="relative rounded-lg shadow-lg p-4 md:p-8" :class="onChange && 'opacity-50'">
     <div class="flex flex-row flex-wrap justify-between">
       <div class="flex flex-col w-full md:w-1/2 p-0 md:pr-4">
-        <div class="font-bold text-sm sm:text-md">Job number</div>
+        <div class="font-bold text-sm sm:text-md">Job part number</div>
         <div
           class="text-xs sm:text-lg font-bold mb-6"
           v-text="job_part.job_part_number?job_part.job_part_number:`(none)`"
@@ -65,9 +65,9 @@
             <div>Shift</div>
           </div>
           <div class="pl-3">
-            <div> {{job_part.date_start}}</div>
-            <div> {{job_part.date_end}}</div>
-            <div> {{job_part.job.shift.name}}</div>
+            <div>{{job_part.date_start}}</div>
+            <div>{{job_part.date_end}}</div>
+            <div>{{job_part.job.shift.name}}</div>
           </div>
         </div>
         <div
@@ -158,23 +158,23 @@
 import AppLoading from "@/components/Base/AppLoading";
 export default {
   props: ["job_part"],
-   data(){
-    return({
+  data() {
+    return {
       onChange: false
-    })
+    };
   },
-    watch: {
-    job_part(value){
+  watch: {
+    job_part(value) {
       setTimeout(() => {
-      this.onChange = false
-      }, 800)
-        this.onChange = true
+        this.onChange = false;
+      }, 800);
+      this.onChange = true;
     }
-  },
+  }
 };
 </script>
 <style>
-.wrapper{
-  transition: all .4s ease;
+.wrapper {
+  transition: all 0.4s ease;
 }
 </style>
