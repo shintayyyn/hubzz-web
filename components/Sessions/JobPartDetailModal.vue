@@ -21,16 +21,19 @@
               @close="close"
               v-if="(job_part.job.status === 'Allocated' || job_part.job.status === 'Ongoing' || job_part.job.status === 'Applied' || job_part.job.status === 'Available') && authPermissions.includes('Cancel Sessions Job')"
             />
-            <JobDetailModalCompleteForm
-              :job_parts="job_part.job.job_parts"
-              @close="close"
-              v-if="job_part.job.status === 'Ongoing' && authPermissions.includes('Complete Sessions Job')"
-            />
           </div>
         </div>
         <div class="p-0 md:pr-4 w-full md:w-1/2">
           <div class="flex flex-col">
-            <JobPartDetailModalParts :job_id="job.id" :disabledLink="$route.path === '/dashboard'" />
+            <JobDetailModalCompleteForm
+              :job="job_part"
+              @close="close"
+              v-if="job_part.job.status === 'Ongoing' && authPermissions.includes('Complete Sessions Job')"
+            />
+            <JobPartDetailModalParts
+              :job_id="job_part.job.id"
+              :disabledLink="$route.path === '/dashboard'"
+            />
             <JobDetailModalCandidates
               v-if="job_part.job.status === 'Applied'"
               class="order-first lg:order-none"

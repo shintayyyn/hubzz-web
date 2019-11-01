@@ -1,31 +1,34 @@
 <template>
   <section>
+    <div class="text-md font-bold">Form</div>
     <div class="rounded-lg shadow-lg flex flex-col p-8 mt-4">
-      <div
-        class="flex flex-row flex-no-wrap"
-        v-for="(jobPart, index) in job_parts"
-        :key="jobPart.id"
-      >
-        <div class="w-1/2 p-1 text-lg font-bold flex flex-col justify-center">
-          <div>From: {{jobPart.date_start | localDate('dateOnly')}}</div>
-          <div class="my-2"></div>
-          <div>To: {{jobPart.date_end | localDate('dateOnly')}}</div>
-        </div>
-        <div class="w-1/2 p-1">
-          <template v-if="jobPart.completed_at">
-            <AppButton
-              :disabled="Boolean(jobPart.completed_at) || isDisabled(index)"
-              :label="`Already Mark this as Completed`"
-            />
-          </template>
-          <template v-else>
-            <AppButton
-              :disabled="Boolean(jobPart.completed_at) || isDisabled(index)"
-              :label="`Mark this week as Complete`"
-              @click="markAsComplete(jobPart.id, index)"
-            />
-          </template>
-        </div>
+      <AppFormError :formError="formError" v-if="formError.length" />
+      <div class="flex flex-col">
+        <AppInput
+          v-model="form.absent_days"
+          :type="'number'"
+          :name="'absent_days'"
+          :label="'Days of Absent'"
+          :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
+          :error="formError.find(item => item.field === 'absent_days')"
+        />
+        <AppInput
+          v-model="form.final_hours"
+          :type="'number'"
+          :name="'final_hours'"
+          :label="'Final hours'"
+          :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
+          :error="formError.find(item => item.field === 'final_hours')"
+        />
+        <AppInput
+          v-model="form.late_hours"
+          :type="'number'"
+          :name="'late_hours'"
+          :label="'Hours of Late'"
+          :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
+          :error="formError.find(item => item.field === 'late_hours')"
+        />
+        <AppButton :label="`Mark this week as Complete`" @click="confirmation_modal = true" />
       </div>
     </div>
     <AppConfirmationModal
@@ -34,65 +37,64 @@
       :cancelLabel="'Cancel'"
       :modal="confirmation_modal"
       @confirm="complete"
-      @cancel="cancelMark"
+      @cancel="cancel"
     />
   </section>
 </template>
 <script>
 import AppButton from "@/components/Base/AppButton";
+import AppInput from "@/components/Base/AppInput";
+import AppFormError from "@/components/Base/AppFormError";
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
 export default {
-  props: ["job_parts"],
+  props: ["job"],
   components: {
     AppButton,
+    AppInput,
+    AppFormError,
     AppConfirmationModal
   },
   data() {
     return {
-      selectedId: null,
-      selectedIndex: null,
-      confirmation_modal: false
+      confirmation_modal: false,
+      form: {
+        absent_days: null,
+        final_hours: null,
+        late_hours: null
+      },
+      formError: []
     };
   },
   methods: {
-    markAsComplete(id, index) {
-      this.selectedId = id;
-      this.selectedIndex = index;
-      this.confirmation_modal = true;
-    },
-    cancelMark() {
-      this.selectedId = null;
-      this.selectedIndex = null;
+    cancel() {
+      this.form.late_hours = null;
+      this.form.final_hours = null;
+      this.form.absent_days = null;
       this.confirmation_modal = false;
     },
     complete() {
-      this.$axios
-        .$put(`/api/v1/practice/job-parts/${this.selectedId}/complete`)
-        .then(res => {
-          this.job_parts[this.selectedIndex].completed_at =
-            res.data.job_part.completed_at;
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "success",
-            text: ["Job Part completed"]
+      this.formError = [];
+      this.confirmation_modal = false;
+      this.Validate(this.form);
+      if (!this.formError.length) {
+        this.$axios
+          .$put(`/api/v1/practice/job-parts/${this.job.id}/complete`, this.form)
+          .then(res => {
+            console.log(res);
+          })
+          .catch(err => {
+            if (!err.response.data.error_messages) {
+              this.formError.push({ message: err.response.data.message });
+            } else {
+              err.response.data.error_messages.forEach(error => {
+                this.formError.push(error);
+              });
+            }
+          })
+          .finally(() => {
+            this.confirmation_modal = false;
           });
-          if (
-            this.job_parts.filter(jobPart => jobPart.completed_at === null)
-              .length === 0
-          ) {
-            this.$emit("close");
-          }
-        });
-    },
-    isDisabled(index) {
-      if (index == 0) {
-        return false;
-      } else {
-        if (this.job_parts[index - 1].completed_at) {
-          return false;
-        }
       }
-      return true;
     }
   }
 };

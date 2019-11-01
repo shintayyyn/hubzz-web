@@ -35,11 +35,6 @@
               @close="close"
               v-if="(job.status === 'Allocated' || job.status === 'Ongoing' || job.status === 'Applied' || job.status === 'Available') && authPermissions.includes('Cancel Sessions Job')"
             />
-            <JobDetailModalCompleteForm
-              :job_parts="job.job_parts"
-              @close="close"
-              v-if="job.status === 'Ongoing' && authPermissions.includes('Complete Sessions Job')"
-            />
           </div>
         </div>
         <div class="p-0 md:pl-4 w-full md:w-1/2 mt-4 md:m-0">
