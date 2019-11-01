@@ -98,10 +98,15 @@ export default {
         this.findPerWeekLocum(value);
       }
     },
-    // practice
-    getPracticeAllocatedJobs(value) {
+    // PRACTICE
+    // parts
+    getPracticeOngoingJobs(value) {
       this.findPerMonthPractice(this.selected_date);
     },
+    getPracticeAllocatedPartJobs(value) {
+      this.findPerMonthPractice(this.selected_date);
+    },
+    // whole
     getPracticeAppliedJobs(value) {
       this.findPerMonthPractice(this.selected_date);
     },
@@ -236,12 +241,12 @@ export default {
       }
       if (this.getPracticeAppliedJobsReminder.length > 0) {
         foundPracticeAppliedJobsReminder = this.getPracticeAppliedJobsReminder.filter(
-          job => job.selection_date === date
+          job => job.platform_job.selection_date === date
         );
       }
       if (this.getPracticeAvailableJobsReminder.length > 0) {
         foundPracticeAvailableJobsReminder = this.getPracticeAvailableJobsReminder.filter(
-          job => job.selection_date === date
+          job => job.platform_job.selection_date === date
         );
       }
       this.foundPracticeJobs = [
@@ -265,18 +270,28 @@ export default {
     findPerWeekPractice({ date, shift }) {
       this.loading = true;
       this.viewPracticeJobs = false;
-      let foundPracticeCurrentJobs = [];
+      let foundPracticeAllocatedPartJobs = [];
+      let foundPracticeOngoingJobs = [];
       let foundPracticeAppliedJobs = [];
       let foundPracticeUnfilledJobs = [];
       let foundPracticeDeclinedJobs = [];
       let foundPracticeAppliedJobsReminder = [];
       let foundPracticeAvailableJobsReminder = [];
 
-      if (this.getPracticeAllocatedJobs.length > 0) {
-        foundPracticeCurrentJobs = this.getPracticeAllocatedJobs.filter(
-          job =>
-            this.getDateArray(job.date_start, job.date_end).includes(date) &&
-            job.shift.name === shift
+      if (this.getPracticeAllocatedPartJobs.length > 0) {
+        foundPracticeAllocatedPartJobs = this.getPracticeAllocatedPartJobs.filter(
+          job_part =>
+            this.getDateArray(job_part.date_start, job_part.date_end).includes(
+              date
+            ) && job_part.job.shift.name === shift
+        );
+      }
+      if (this.getPracticeOngoingJobs.length > 0) {
+        foundPracticeOngoingJobs = this.getPracticeOngoingJobs.filter(
+          job_part =>
+            this.getDateArray(job_part.date_start, job_part.date_end).includes(
+              date
+            ) && job_part.job.shift.name === shift
         );
       }
       if (this.getPracticeAppliedJobs.length > 0) {
@@ -299,26 +314,26 @@ export default {
             this.getDateArray(job.date_start, job.date_end).includes(date) &&
             job.shift.name === shift
         );
-        // foundPracticeDeclinedJobs = this.getPracticeDeclinedJobs.filter(job => this.$moment(job.platform_job.declined_at).format('YYYY-MM-DD') && job.shift.name === shift)
       }
       if (this.getPracticeAvailableJobsReminder.length > 0) {
         foundPracticeAvailableJobsReminder = this.getPracticeAvailableJobsReminder.filter(
-          job => job.selection_date === date
+          job => job.platform_job.selection_date === date
         );
       }
       if (this.getPracticeAppliedJobsReminder.length > 0) {
         foundPracticeAppliedJobsReminder = this.getPracticeAppliedJobsReminder.filter(
-          job => job.selection_date === date
+          job => job.platform_job.selection_date === date
         );
       }
       this.foundPracticeJobs = [
-        ...foundPracticeCurrentJobs,
+        ...foundPracticeAllocatedPartJobs,
         ...foundPracticeAppliedJobs,
         ...foundPracticeUnfilledJobs,
         ...foundPracticeDeclinedJobs,
         ...foundPracticeAppliedJobsReminder,
         ...foundPracticeAvailableJobsReminder
       ];
+
       if (this.foundPracticeJobs.length > 0) {
         setTimeout(() => {
           this.viewPracticeJobs = true;

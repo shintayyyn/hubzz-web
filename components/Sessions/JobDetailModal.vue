@@ -46,6 +46,12 @@
               v-if="job.status === 'Applied'"
               @show="showLocum($event)"
             />
+            <JobDetailModalLocum
+              :user="user"
+              :mandatory="mandatory"
+              :optional="optional"
+              v-if="(job.status === 'Allocated' || job.status === 'Ongoing' || job.status === 'Completed') && user"
+            />
           </div>
         </div>
       </div>
@@ -63,6 +69,7 @@ import JobDetailModalForm from "@/components/Sessions/JobDetailModalForm";
 import JobPartDetailModalParts from "@/components/Sessions/JobPart/JobPartDetailModalParts";
 import JobDetailModalUpdateForm from "@/components/Sessions/JobDetailModalUpdateForm";
 import JobDetailModalCandidates from "@/components/Sessions/JobDetailModalCandidates";
+import JobDetailModalLocum from "@/components/Sessions/JobDetailModalLocum";
 // import JobDetailModalSessionSample from "@/components/Sessions/JobDetailModalSessionSample";
 import JobDetailModalCancelForm from "@/components/Sessions/JobDetailModalCancelForm";
 import JobDetailModalCompleteForm from "@/components/Sessions/JobDetailModalCompleteForm";
@@ -74,6 +81,7 @@ export default {
     JobPartDetailModalParts,
     JobDetailModalUpdateForm,
     JobDetailModalCandidates,
+    JobDetailModalLocum,
     // JobDetailModalSessionSample,
     JobDetailModalCompleteForm,
     JobDetailModalCancelForm,

@@ -217,9 +217,11 @@ export default {
         });
 
         this.$store.dispatch("jobs/fetchPracticeJobsReminder", {
-          platform_selection_date_start: `${this.startOfMonth}:gte`,
-          platform_selection_date_end: `${this.endOfMonth}:lte`,
-          status: ["Available", "Applied"]
+          platform_selection_date: [
+            `${this.startOfMonth}:gte`,
+            `${this.endOfMonth}:lte`
+          ],
+          status: ["Live", "Applied"]
         });
       }
       // LOCUM
