@@ -562,9 +562,6 @@ export default {
       this.CheckEmptyField(newValue, "profession_id");
       if (newValue) {
         this.form.qualification_id = [];
-        this.form.clinical_system_id = [];
-        this.form.spoken_language_id = [];
-        this.form.compliance_document_id = [];
         this.selectedProfession = this.professions_categories.find(
           item => item.id == newValue
         );
@@ -856,27 +853,11 @@ export default {
           .catch(err => {
             this.$refs.modalContainer.scrollTop = 0;
             this.form.clinical_system_id = this.selectedClinicalSystem;
-            // this.clinical_system_lists.forEach((clinicalSystem, index) => {
-            //   if (this.form.clinical_system_id.includes(clinicalSystem.value)) {
-            //     this.form.clinical_system_id.splice(index, 1, clinicalSystem);
-            //   }
-            // });
             this.form.qualification_id = this.selectedQualification;
-            // this.qualifications.forEach((qualification, index) => {
-            //   if (this.form.qualification_id.includes(qualification.value)) {
-            //     this.form.qualification_id.splice(index, 1, qualification);
-            //   }
-            // });
             this.form.spoken_language_id = this.selectedSpokenLanguage;
-            // this.spoken_language_lists.forEach((spokenLanguage, index) => {
-            //   if (this.form.spoken_language_id.includes(spokenLanguage.value)) {
-            //     this.form.spoken_language_id.splice(index, 1, spokenLanguage);
-            //   }
-            // });
             this.form.session_requirements = this.form.session_requirements.split(
               ","
             );
-
             this.formError = err.response.data.error_messages;
           });
       } else {

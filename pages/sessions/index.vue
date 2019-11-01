@@ -726,13 +726,23 @@ export default {
     },
     getJobsCount(params) {
       this.$store.commit("jobs/TOGGLE_LOADING", true);
+      let status = [];
+      if (!this.$route.query.status) {
+        status = ["Allocated"];
+      } else if (
+        this.$route.query.status &&
+        this.$route.query.status === "Available"
+      ) {
+        status = ["Available", "Matched"];
+      } else if (
+        this.$route.query.status &&
+        this.$route.query.status !== "Available"
+      ) {
+        status = [`${this.$route.query.status}`];
+      }
       this.$store
         .dispatch(`${this.dispatchUrl}`, {
-          status: [
-            `${
-              this.$route.query.status ? this.$route.query.status : "Allocated"
-            }`
-          ],
+          status,
           countOnly: true,
           ...params
         })
@@ -741,14 +751,24 @@ export default {
         });
     },
     getJobs(params) {
-      // this.$store.commit("jobs/CLEAR_JOBS");
+      this.$store.commit("jobs/CLEAR_JOBS");
+      let status = [];
+      if (!this.$route.query.status) {
+        status = ["Allocated"];
+      } else if (
+        this.$route.query.status &&
+        this.$route.query.status === "Available"
+      ) {
+        status = ["Available", "Matched"];
+      } else if (
+        this.$route.query.status &&
+        this.$route.query.status !== "Available"
+      ) {
+        status = [`${this.$route.query.status}`];
+      }
       this.$store
         .dispatch(`${this.dispatchUrl}`, {
-          status: [
-            `${
-              this.$route.query.status ? this.$route.query.status : "Allocated"
-            }`
-          ],
+          status,
           ...params
         })
         .finally(() => {

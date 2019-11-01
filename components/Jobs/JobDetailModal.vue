@@ -11,13 +11,10 @@
       >{{job.locum_status}}</div>
     </div>
     <div class="text-xs sm:text-sm py-3">Posted {{$moment(job.date_created).format('DD/MM/YYYY')}}</div>
-    <div class="flex flex-row flex-wrap justify-start">
+    <div class="flex flex-wrap justify-start">
       <div class="p-0 md:pr-4 w-full md:w-1/2">
-        <JobDetailModalInfo :job="job" />
-      </div>
-      <div class="p-0 md:pl-4 mt-4 md:m-0 w-full md:w-1/2">
         <div class="flex flex-col">
-          <JobDetailModalMap :job="job" />
+          <JobDetailModalInfo :job="job" />
           <JobDetailModalUnassignForm
             :job="job"
             v-if="job.locum_status === 'Allocated'"
@@ -36,11 +33,18 @@
           />
         </div>
       </div>
+      <div class="p-0 md:pl-4 w-full md:w-1/2 mt-4 md:m-0">
+        <div class="flex flex-col">
+          <JobPartDetailModalParts :job_id="job.id" :disabledLink="true" />
+          <JobDetailModalMap :job="job" />
+        </div>
+      </div>
     </div>
   </div>
 </template>
 <script>
 import JobDetailModalInfo from "@/components/Jobs/JobDetailModalInfo";
+import JobPartDetailModalParts from "@/components/Jobs/JobPart/JobPartDetailModalParts";
 import JobDetailModalMap from "@/components/Jobs/JobDetailModalMap";
 import JobDetailModalUnassignForm from "@/components/Jobs/JobDetailModalUnassignForm";
 import JobDetailModalApplyForm from "@/components/Jobs/JobDetailModalApplyForm";
@@ -49,6 +53,7 @@ export default {
   props: ["job"],
   components: {
     JobDetailModalInfo,
+    JobPartDetailModalParts,
     JobDetailModalMap,
     JobDetailModalUnassignForm,
     JobDetailModalApplyForm,
@@ -61,6 +66,7 @@ export default {
     bgStatus(status) {
       switch (status) {
         case "Available":
+        case "Matched":
           return "bg-yellow-500";
           break;
         case "Applied":
