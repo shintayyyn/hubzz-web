@@ -80,7 +80,12 @@ export default {
         this.$axios
           .$put(`/api/v1/practice/job-parts/${this.job.id}/complete`, this.form)
           .then(res => {
-            console.log(res);
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: ["Job completed"]
+            });
+            this.$emit("close");
           })
           .catch(err => {
             if (!err.response.data.error_messages) {
