@@ -21,36 +21,34 @@
     </div>
 
     <div class="flex flex-col mt-4">
-      <div class="flex flex-row flex-wrap justify-start">
-        <JobDetailModalForm :job="job" v-if="toEdit === false" />
-        <JobDetailModalUpdateForm
-          :job="job"
-          v-if="job.status === 'Allocated' && toEdit === true && jobOngoing === false  || job.status === 'Applied' && toEdit === true  || job.status === 'Live' && toEdit === true"
-          @close="toEdit = false"
-        />
-        <JobDetailModalCandidates
-          class="order-first lg:order-none"
-          :applicants="applicants"
-          v-if="job.status === 'Applied'"
-          @show="showLocum($event)"
-        />
-        <!-- <JobDetailModalSessionSample
-          :user="user"            
-          :mandatory="mandatory"
-          :optional="optional"
-          v-if="(job.status === 'Allocated' || job.status === 'Completed') && user"
-        />-->
+      <div class="flex flex-wrap justify-start">
+        <div class="p-0 md:pr-4 w-full md:w-1/2">
+          <div class="flex flex-col">
+            <JobDetailModalForm :job="job" v-if="toEdit === false" />
+            <JobDetailModalUpdateForm
+              :job="job"
+              v-if="job.status === 'Allocated' && toEdit === true && jobOngoing === false  || job.status === 'Applied' && toEdit === true  || job.status === 'Live' && toEdit === true"
+              @close="toEdit = false"
+            />
+            <JobDetailModalCancelForm
+              :job="job"
+              @close="close"
+              v-if="(job.status === 'Allocated' || job.status === 'Ongoing' || job.status === 'Applied' || job.status === 'Available') && authPermissions.includes('Cancel Sessions Job')"
+            />
+          </div>
+        </div>
+        <div class="p-0 md:pl-4 w-full md:w-1/2 mt-4 md:m-0">
+          <div class="flex flex-col">
+            <JobPartDetailModalParts :job_id="job.id" :disabledLink="true" />
+            <JobDetailModalCandidates
+              class="order-first lg:order-none"
+              :applicants="applicants"
+              v-if="job.status === 'Applied'"
+              @show="showLocum($event)"
+            />
+          </div>
+        </div>
       </div>
-      <JobDetailModalCancelForm
-        :job="job"
-        @close="close"
-        v-if="(job.status === 'Allocated' || job.status === 'Ongoing' || job.status === 'Applied' || job.status === 'Available') && authPermissions.includes('Cancel Sessions Job')"
-      />
-      <JobDetailModalCompleteForm
-        :job_parts="job.job_parts"
-        @close="close"
-        v-if="job.status === 'Ongoing' && authPermissions.includes('Complete Sessions Job')"
-      />
     </div>
     <div class="shield" v-if="modal" @click="modal = false"></div>
     <transition name="slide" mode="out-in">
@@ -62,6 +60,7 @@
 </template>
 <script>
 import JobDetailModalForm from "@/components/Sessions/JobDetailModalForm";
+import JobPartDetailModalParts from "@/components/Sessions/JobPart/JobPartDetailModalParts";
 import JobDetailModalUpdateForm from "@/components/Sessions/JobDetailModalUpdateForm";
 import JobDetailModalCandidates from "@/components/Sessions/JobDetailModalCandidates";
 // import JobDetailModalSessionSample from "@/components/Sessions/JobDetailModalSessionSample";
@@ -72,6 +71,7 @@ export default {
   props: ["job"],
   components: {
     JobDetailModalForm,
+    JobPartDetailModalParts,
     JobDetailModalUpdateForm,
     JobDetailModalCandidates,
     // JobDetailModalSessionSample,

@@ -21,31 +21,27 @@
     <div
       class="text-xs sm:text-sm py-2"
     >Posted {{$moment(job_part.date_created).format('DD/MM/YYYY')}}</div>
-    <div class="flex flex-row flex-wrap justify-start">
-      <div class="p-0 md:pr-4 w-full md:w-1/2">
-        <JobPartDetailModalParts
-          class="md:hidden"
-          :parts="job_part.job.job_parts"
-          :job_id="job_part.job.id"
-          v-if="job_part.job.job_parts.length > 1 && $route.path !== '/dashboard'"
-        />
-        <JobPartDetailModalInfo :job_part="job_part" />
-      </div>
-      <div class="p-0 md:pl-4 my-4 md:m-0 w-full md:w-1/2">
-        <div class="flex flex-col">
-          <JobPartDetailModalParts
-            class="hidden md:block"
-            :parts="job_part.job.job_parts"
-            :job_id="job_part.job.id"
-            v-if="job_part.job.job_parts.length > 1 && $route.path !== '/dashboard'"
-          />
-          <JobDetailModalMap :job="job_part.job" />
+
+    <div class="flex flex-col mt-4">
+      <div class="flex flex-wrap justify-start">
+        <div class="p-0 md:pr-4 w-full md:w-1/2">
+          <JobPartDetailModalInfo :job_part="job_part" />
           <JobDetailModalUnassignForm
             :job="job_part.job"
             v-if="job_part.locum_status === 'Current'"
             @close="close"
             @removeJobPart="removeJobPart"
           />
+        </div>
+        <div class="p-0 md:pl-4 w-full md:w-1/2 my-4 md:m-0">
+          <div class="flex flex-col">
+            <JobPartDetailModalParts
+              :job_id="job_part.job.id"
+              v-if="job_part.job.job_parts.length > 1"
+              :disabledLink="$route.path === '/dashboard'"
+            />
+            <JobDetailModalMap :job="job_part.job" />
+          </div>
         </div>
       </div>
     </div>

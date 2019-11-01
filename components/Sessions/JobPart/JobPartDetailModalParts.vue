@@ -1,6 +1,6 @@
 <template>
-  <div class="relative flex flex-col w-full mb-3">
-    <div class="text-xs sm:text-sm font-bold">Job Parts</div>
+  <div class="relative flex flex-col w-full my-5">
+    <div class="text-md font-bold">Job Parts</div>
     <AppTable
       :total="total"
       :items="parts"
@@ -21,7 +21,7 @@ export default {
     AppTable
   },
 
-  props: ["job_id"],
+  props: ["job_id", "disabledLink"],
   data() {
     return {
       parts: [],
@@ -65,7 +65,10 @@ export default {
       return Math.ceil(this.total / this.perPage);
     },
     routerLink() {
-      let url = "/jobs";
+      if (this.disabledLink) {
+        return null;
+      }
+      let url = "/sessions";
       if (this.$route.path.includes("related-jobs")) {
         url = `/my-practice/${this.$route.params.practiceId}/related-jobs`;
       }
@@ -75,7 +78,7 @@ export default {
   created() {
     this.params.job_id = this.job_id;
     this.$axios
-      .$get(`/api/v1/locum/job-parts/count?job_id=${this.job_id}`)
+      .$get(`/api/v1/practice/job-parts/count?job_id=${this.job_id}`)
       .then(res => {
         this.total = res.data.count;
         this.getJobParts(this.params);
@@ -84,7 +87,7 @@ export default {
   methods: {
     getJobParts(params) {
       this.loading = true;
-      this.$axios.$get(`/api/v1/locum/job-parts`, { params }).then(res => {
+      this.$axios.$get(`/api/v1/practice/job-parts`, { params }).then(res => {
         this.loading = false;
         this.parts = res.data.job_parts;
       });

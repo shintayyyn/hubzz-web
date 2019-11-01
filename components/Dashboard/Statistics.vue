@@ -78,32 +78,32 @@ export default {
         this.statistics.push({
           label: "My Banks",
           value: responses[0].data.count,
-          route: "/my-banks"
+          route: "/my-banks?status=Applied"
         }),
           this.statistics.push({
             label: "Applied jobs",
             value: responses[1].data.count,
-            route: "/sessions/applied"
+            route: "/sessions?status=Applied"
           }),
           this.statistics.push({
             label: "Assigned jobs",
             value: responses[2].data.count,
-            route: "/sessions/allocated"
+            route: "/sessions?status=Allocated"
           }),
           this.statistics.push({
             label: "Available jobs",
             value: responses[3].data.count,
-            route: "/sessions/live"
+            route: "/sessions?status=Live"
           });
         this.statistics.push({
           label: "Completed jobs",
           value: responses[4].data.count,
-          route: "/sessions/completed"
+          route: "/sessions?status=Completed"
         });
         this.statistics.push({
           label: "Unfilled jobs",
           value: responses[5].data.count,
-          route: "/sessions/unfilled"
+          route: "/sessions?status=Unfilled"
         });
       });
     }

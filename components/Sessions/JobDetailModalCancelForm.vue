@@ -1,19 +1,17 @@
 <template>
   <section>
-    <div class="flex flex-col w-full lg:w-2/3 p-0 lg:pr-4">
-      <div class="rounded-lg shadow-lg p-8 mt-4">
-        <div class="font-bold text-md sm:text-lg">Cancel this job</div>
-        <AppInput
-          v-model="form.cancelled_reason"
-          :type="'select'"
-          :name="'cancelled_reason'"
-          :label="'Please select your reason'"
-          :error="formError.find(item => item.field === 'cancelled_reason')"
-          :placeholder="'Select...'"
-          :items="reasons"
-        />
-        <AppButton :label="'Cancel job'" @click="cancelJob" />
-      </div>
+    <div class="rounded-lg shadow-lg p-8 mt-4">
+      <div class="font-bold text-md sm:text-lg">Cancel this job</div>
+      <AppInput
+        v-model="form.cancelled_reason"
+        :type="'select'"
+        :name="'cancelled_reason'"
+        :label="'Please select your reason'"
+        :error="formError.find(item => item.field === 'cancelled_reason')"
+        :placeholder="'Select...'"
+        :items="reasons"
+      />
+      <AppButton :label="'Cancel job'" @click="cancelJob" />
     </div>
     <AppConfirmationModal
       :label="'Cancel this Job?'"
