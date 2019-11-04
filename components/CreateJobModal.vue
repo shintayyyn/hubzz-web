@@ -8,7 +8,7 @@
       <AppFormError :formError="formError" v-if="formError.length" />
 
       <div class="flex flex-row flex-wrap justify-start mt-8">
-        <div class="w-full md:w-1/2 pr-4 mb-4">
+        <div class="w-full md:w-1/2 md:pr-4 mb-4">
           <div class="flex flex-col">
             <h4 class="font-bold">Practice</h4>
             <div class="bg-white rounded-lg shadow-lg px-4 md:px-8 py-4 mt-4">
@@ -189,11 +189,10 @@
                 :lists="mandatory_training_lists"
                 :info="'Check all that apply'"
               />
-              <div class="mb-6" v-if="mandatory_training_lists.length === 0">
+              <div class="mb-6 text-center md:text-left" v-if="mandatory_training_lists.length === 0">
                 <AppButton
                   :label="'Go to Profile to add items here'"
                   @click="addMandatory"
-                  :inStyle="'padding: 5px 14px;'"
                 />
               </div>
             </div>

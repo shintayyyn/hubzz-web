@@ -32,7 +32,7 @@
                     :checked="isChecked(role.permissions)"
                     @change="checkAll(index, $event.target.checked)"
                   />
-                  <label class="font-bold md:text-xl pl-1 leading-none" :for="role.permissions">{{role.category}} Management</label>
+                  <label class="font-bold md:text-xl pl-1 leading-none flex items-center" :for="role.permissions">{{role.category}} Management</label>
                 </div>
                 <div class="flex flex-col px-1">
                   <div

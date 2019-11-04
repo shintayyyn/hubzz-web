@@ -28,7 +28,7 @@
               @input="inputMultiCheck"
               :checked="Array.isArray(value) ? value.includes(item.value) : value"
             />
-            <label :for="`${name}-${index}`" class="text-xs sm:text-sm">{{item.label}}</label>
+            <label :for="`${name}-${index}`" class="text-xs sm:text-sm flex items-center">{{item.label}}</label>
           </div>
         </template>
         <template v-else>
@@ -54,7 +54,7 @@
                   ref="inputSelect"
                   :value="value"
                   class="absolute border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full"
-                  :class="[error ? 'border-red-500':'']"
+                  :class="[(error && !disabled) && 'border-red-500', disabled ? 'border-gray-400' : 'cursor-pointer']"
                   @input="$emit('input', $event.target.value)"
                   :style="inStyle"
                   @change="$emit('change', $event.target.value)"
@@ -72,7 +72,7 @@
                 <span class="absolute right-0">
                   <svgicon
                     name="arrow-up"
-                    class="h-full w-10 p-2"
+                    class="h-full w-10 p-2 fill-current"
                     style="transform: rotate(180deg)"
                   />
                 </span>
@@ -113,7 +113,7 @@
             :checked="value"
             :disabled="disabled"
           />
-          <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
+          <label :for="name" class="text-xs sm:text-sm py-1 flex items-center">{{label}}</label>
         </div>
       </div>
     </template>

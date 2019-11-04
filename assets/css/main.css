@@ -349,7 +349,7 @@ input[type="checkbox"]:checked + label:after {
   appearance: none;
   padding: 10px 15px;
   background: transparent;
-  cursor: pointer;
+  /* cursor: pointer; */
   padding-right: 40px;
   z-index: 1;
 }

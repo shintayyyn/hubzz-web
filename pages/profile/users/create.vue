@@ -51,7 +51,7 @@
 
               <span v-if="!roles.length">
                 You haven't created any role yet, create role
-                <nuxt-link class="underline" :to="'/roles-and-permissions/roles'">here</nuxt-link>
+                <nuxt-link class="underline" :to="'/roles-and-permissions/roles'">here</nuxt-link>.
               </span>
               <AppInput
                 v-model="form.practice_user_role_id"
@@ -62,6 +62,7 @@
                 :placeholder="'Select...'"
                 :items="roles"
                 :disabled="!roles.length"
+                :class="!roles.length && 'text-gray-500'"
               />
 
               <AppInput
