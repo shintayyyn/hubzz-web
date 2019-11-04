@@ -16,7 +16,7 @@
     </div>
     <transition name="slide" mode="out-in">
       <div
-        v-if="$store.state.notification.status === 'message'"
+        v-if="$store.state.notification.status === 'message' && !$route.path.includes('messages')"
         class="fixed bottom-0 right-0 m-4 px-6 py-4 flex items-center justify-between max-w-full w-64 cursor-pointer opacity-75 hover:opacity-100"
         :class="notificationStatus"
         @click="view"
