@@ -29,13 +29,13 @@
         </div>
         <div class="flex flex-row flex-wrap justify-start mt-8 items-center max-w-4xl">
           <div class="px-1 w-full sm:w-1/2 md:w-1/4">
-            <AppDate v-model="form.date_start" :name="'date_start'" :label="'From'" />
+            <AppDate v-model="form.date_start" :name="'date_start'" :label="'From'" isAfter/>
           </div>
           <div class="px-1 w-full sm:w-1/2 md:w-1/4">
-            <AppTime v-model="form.time_start" :name="'time_start'" :label="'Start time'" />
+            <AppTime v-model="form.time_start" :name="'time_start'" :label="'Start time'"/>
           </div>
           <div class="px-1 w-full sm:w-1/2 md:w-1/4">
-            <AppDate v-model="form.date_end" :name="'date_end'" :label="'To'" />
+            <AppDate v-model="form.date_end" :name="'date_end'" :label="'To'" isAfter/>
           </div>
           <div class="px-1 w-full sm:w-1/2 md:w-1/4">
             <AppTime v-model="form.time_end" :name="'time_end'" :label="'End time'" />

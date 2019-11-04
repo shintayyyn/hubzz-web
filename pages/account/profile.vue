@@ -342,13 +342,17 @@
         </form>
       </div>
     </div>
-    <div class="w-full p-0 mb-4 md:w-auto lg:mb-0 lg:w-1/3 lg:pr-4 order-1 lg:order-2">
-      <div class="rounded-lg shadow-lg w-full p-8">
+    <div class="w-full lg:w-auto mb-4 lg:mb-0 p-0 lg:pr-4 order-1 lg:order-2">
+      <div class="rounded-lg shadow-lg w-full py-8 px-12">
         <AppAvatar
           class="m-auto"
           :type="'update'"
-          :src="avatar && avatar.file.url ? avatar.file.url : ''"
+          :src="profile.avatar && profile.avatar.file.url ? profile.avatar.file.url : ''"
         />
+        <div class="leading-none text-center text-sm pt-4">
+          <p class="font-bold">{{ profile.name }}</p>
+          <p>{{ profile.email }}</p>
+        </div>
       </div>
     </div>
   </div>
@@ -419,7 +423,11 @@ export default {
         payroll_detail_account_number: "",
         ir35: false
       },
-      avatar: null,
+      profile: {
+        avatar: null,
+        name: '',
+        email: '',
+      },
       formError: [],
       loading: false
     };
@@ -504,7 +512,9 @@ export default {
     } catch (err) {}
   },
   mounted() {
-    this.avatar = this.user.avatar;
+    this.profile.avatar = this.user.avatar;
+    this.profile.name = this.user.personal_detail.name
+    this.profile.email = this.user.email
     this.form.gmc_or_nmc_number = this.user.locum_detail.gmc_or_nmc_number.number;
     this.form.mpl_or_npl_number = this.user.locum_detail.mpl_or_npl_number.number;
     if (this.user.locum_detail.gmc_or_nmc_number.status === "Rejected") {

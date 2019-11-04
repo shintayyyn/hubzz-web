@@ -14,19 +14,19 @@
                 class="w-full font-bold text-sm sm:text-lg leading-tight"
                 :to="{ path: `/my-practice/${practice.id}`, query: {...$route.query}}"
               >
-                <div class="flex items-center z-50 mb-2">
+                <div class="flex items-end justify-between z-50">
                   {{practice.surgery.name}}
                   <svgicon
                     v-model="is_favorite"
                     :name="practice.is_favorite ? 'on-star' : 'off-star'"
-                    height="32"
-                    width="32"
+                    height="28"
+                    width="28"
                     class="cursor-pointer fill-current text-gray-700 hover:text-gray-800"
                     @click.prevent.stop="favorite(practice.id)"
                   />
                 </div>
                 <div
-                  class="w-full font-bold text-gray-700 text-xs leading-tight"
+                  class="w-full font-bold text-gray-700 text-xs leading-tight pt-1"
                 >{{practice.surgery.address.line_1}} {{practice.surgery.address.line_2}} {{practice.surgery.address.line_3}} {{practice.surgery.address.post_code}}</div>
               </nuxt-link>
             </div>

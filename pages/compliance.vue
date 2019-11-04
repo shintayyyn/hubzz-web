@@ -4,7 +4,7 @@
       <div class="mt-5 px-1">
         <div class="shadow-md rounded-lg bg-white px-1 py-2 md:py-4 mb-5 mx-1 md:mx-0">
           <div
-            class="relative flex flex-row flex-wrap justify-between sm:items-center text-xs sm:text-sm md:px-4"
+            class="relative flex flex-row flex-wrap justify-between sm:items-center text-xs sm:text-sm"
           >
             <div
               class="w-full sm:w-auto px-2 md:p-1 font-bold md:font-normal text-left"
@@ -24,7 +24,7 @@
         </div>
         <div class="shadow-md rounded-lg bg-white px-1 py-2 md:py-4 mb-5 mx-1 md:mx-0">
           <div
-            class="relative flex flex-row flex-wrap justify-between sm:items-center text-xs sm:text-sm md:px-4"
+            class="relative flex flex-row flex-wrap justify-between sm:items-center text-xs sm:text-sm"
           >
             <div
               class="w-full sm:w-auto px-2 md:p-1 font-bold md:font-normal text-left"
@@ -33,7 +33,7 @@
               class="w-full sm:w-2/3 px-2 md:p-1"
             >{{mpl_or_npl_number ? mpl_or_npl_number.number : 'No MPL or NPL Number registered'}}</div>
             <div
-              class="lute right-0 m-2 md:relative flex items-center justify-end sm:m-0 md:text-center"
+              class="absolute right-0 m-2 md:relative flex items-center justify-end sm:m-0 md:text-center"
             >
               <span
                 class="text-xs sm:text-sm text-center text-white font-bold rounded-full px-4 py-1"
@@ -53,7 +53,7 @@
     <div class="mt-4 overflow-x-auto">
       <template v-if="!mandatory.length">
         <span
-          class="text-center font-bold text-gray-500"
+          class="text-center font-bold text-gray-500 text-xs md:text-sm"
           colspan="7"
         >This section is empty. Update your profile to fill this area.</span>
       </template>
@@ -181,7 +181,7 @@
         <tbody>
           <template v-if="!optional.length">
             <span
-              class="text-center font-bold text-gray-500"
+              class="text-center font-bold text-gray-500 text-xs md:text-sm"
               colspan="7"
             >This section is empty. Update your profile to fill this area.</span>
           </template>
@@ -271,7 +271,7 @@
     <div class="mt-4 overflow-x-auto">
       <template v-if="!mandatory_trainings.length">
         <span
-          class="text-center font-bold text-gray-500"
+          class="text-center font-bold text-gray-500 text-xs md:text-sm"
           colspan="7"
         >This section is empty. Update your profile to fill this area.</span>
       </template>
