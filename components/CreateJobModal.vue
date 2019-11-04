@@ -8,7 +8,7 @@
       <AppFormError :formError="formError" v-if="formError.length" />
 
       <div class="flex flex-row flex-wrap justify-start mt-8">
-        <div class="w-full md:w-1/2 pr-4 mb-4">
+        <div class="w-full md:w-1/2 md:pr-4 mb-4">
           <div class="flex flex-col">
             <h4 class="font-bold">Practice</h4>
             <div class="bg-white rounded-lg shadow-lg px-4 md:px-8 py-4 mt-4">
@@ -189,11 +189,10 @@
                 :lists="mandatory_training_lists"
                 :info="'Check all that apply'"
               />
-              <div class="mb-6" v-if="mandatory_training_lists.length === 0">
+              <div class="mb-6 text-center md:text-left" v-if="mandatory_training_lists.length === 0">
                 <AppButton
                   :label="'Go to Profile to add items here'"
                   @click="addMandatory"
-                  :inStyle="'padding: 5px 14px;'"
                 />
               </div>
             </div>
@@ -280,6 +279,7 @@
                     :label="'Start Date'"
                     :error="formError.find(item => item.field === 'date_start')"
                     @blur="CheckEmptyField(form.date_start,'date_start')"
+                    isAfter
                   />
                 </div>
                 <div class="px-1 w-full md:w-1/2">
@@ -299,6 +299,7 @@
                     :label="'End Date'"
                     :error="formError.find(item => item.field === 'date_end')"
                     @blur="CheckEmptyField(form.date_end,'date_end')"
+                    isAfter
                   />
                 </div>
                 <div class="px-1 w-full md:w-1/2">
@@ -369,7 +370,7 @@
               >
                 <div>Auto-assign job to the first matching Favourite applicant by this date</div>
                 <div class="px-1 w-full md:w-1/2">
-                  <AppDate v-model="auto_assign_at.date" :name="'auto_assign_at'" :label="'Date'" />
+                  <AppDate v-model="auto_assign_at.date" :name="'auto_assign_at'" :label="'Date'" isAfter/>
                 </div>
                 <div class="px-1 w-full md:w-1/2">
                   <AppTime
@@ -395,7 +396,7 @@
               >
                 <div>Selection will be made and you will receive a notification by this date</div>
                 <div class="px-1 w-full md:w-1/2">
-                  <AppDate v-model="selection_date.date" :name="'selection_date'" :label="'Date'" />
+                  <AppDate v-model="selection_date.date" :name="'selection_date'" :label="'Date'" isAfter/>
                 </div>
                 <div class="px-1 w-full md:w-1/2">
                   <AppTime
@@ -426,6 +427,7 @@
                     v-model="favorite_only_until.date"
                     :name="'favorite_only_until'"
                     :label="'Date'"
+                    isAfter
                   />
                 </div>
                 <div class="px-1 w-full md:w-1/2">

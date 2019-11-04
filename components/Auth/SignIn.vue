@@ -27,6 +27,7 @@
             :type="form.type"
             :error="formError.find(item => item.field === 'password')"
             @submit="login"
+            @keyup.enter="login"
             class="w-full py-4 border-b-2 focus:border-yellow-400 focus:outline-none"
             :class="formError.length > 0 ? 'border-red-500' : ''"
           />
@@ -76,8 +77,8 @@ export default {
   data() {
     return {
       form: {
-        email: "locum@nhs.net",
-        password: "qweqwe",
+        email: "",
+        password: "",
         type: "password"
       },
       formError: []

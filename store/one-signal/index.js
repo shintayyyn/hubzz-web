@@ -1,22 +1,34 @@
 export const state = () => ({
-
+  oneSignalId: null,
 })
 
 export const getters = {
 }
 
 export const mutations = {
+  setOneSignalId(state, oneSignalId) {
+    console.log('setOneSignalId')  
+    state.oneSignalId = oneSignalId
+  }
 }
 
 export const actions = {
-  async setOneSignalUser () {
-    const oneSignalId = await new Promise((resolve, reject) => {
-      this.$OneSignal.push(() => {
-        this.$OneSignal.getUserId().then(resolve).catch(reject)
-      })
-    })
+  async setOneSignalUser ({ state, commit }) {
+    let oneSignalId = state.oneSignalId
 
-    console.log('One Signal ID:', oneSignalId)
+    console.log("setOneSignalUser", oneSignalId)
+
+    if (!state.oneSignalId) {
+      oneSignalId = await new Promise((resolve, reject) => {
+        this.$OneSignal.push(() => {
+          this.$OneSignal.getUserId().then(resolve).catch(reject)
+        })
+      })
+
+      console.log('One Signal ID:', oneSignalId)
+
+      commit('setOneSignalId', oneSignalId)
+    }
 
     if (oneSignalId) {
       if (this.$auth.loggedIn) {

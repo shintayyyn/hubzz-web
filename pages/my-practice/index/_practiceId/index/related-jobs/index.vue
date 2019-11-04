@@ -705,6 +705,7 @@ export default {
     "$route.query"({ job_status: newStatus }, { job_status: oldStatus }) {
       if (newStatus && newStatus !== null && newStatus !== oldStatus) {
         this.toggleTable = false;
+        this.filterToggle = false;
         setTimeout(() => {
           this.clearJobsBadge(newStatus);
           this.clearFilters();

@@ -9,13 +9,14 @@
       <JobTable :columns="columns" :jobs="getPracticeCancelledJobs" @sortBy="sortBy" @show="show" />
     </div>
     <div
-      class="absolute bottom-0 w-full"
+      class="w-full"
       v-if="getPracticeCancelledJobs.length > 0 && totalPages > 1"
     >
       <AppPagination
         :total="total"
         :totalPages="totalPages"
         :currentPage="current_page"
+        :perPage="perPage"
         @pagechanged="pagechanged"
       />
     </div>
@@ -105,11 +106,11 @@ export default {
     getPracticeCancelledJobs() {
       return this.$store.getters["jobs/getPracticeCancelledJobs"];
     },
-    offset() {
-      return this.perPage * (this.current_page - 1);
-    },
     perPage() {
       return 5;
+    },
+    offset() {
+      return this.perPage * (this.current_page - 1);
     },
     total() {
       return this.$store.state.jobs.practice_cancelled_jobs_count;

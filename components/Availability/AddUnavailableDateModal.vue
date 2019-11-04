@@ -17,6 +17,7 @@
               v-model="form.date_start"
               :name="'date_start'"
               :label="'From'"
+              isAfter
               :error="formError.find(item => item.field === 'date_start')"
               @blur="CheckEmptyField(form.date_start,'date_start')"
             />
@@ -26,6 +27,7 @@
               v-model="form.date_end"
               :name="'date_end'"
               :label="'To'"
+              isAfter
               :error="formError.find(item => item.field === 'date_end')"
               @blur="CheckEmptyField(form.date_end,'date_end')"
             />
