@@ -15,22 +15,25 @@
       <div class="flex flex-wrap justify-start">
         <div class="p-0 md:pr-4 w-full md:w-1/2">
           <div class="flex flex-col">
-            <JobDetailModalForm :job="job_part.job" v-if="toEdit === false" />
+            <JobPartDetailModalForm :job_part="job_part" v-if="toEdit === false" />
             <JobDetailModalCancelForm
               :job="job_part.job"
               @close="close"
               v-if="(job_part.job.status === 'Allocated' || job_part.job.status === 'Ongoing' || job_part.job.status === 'Applied' || job_part.job.status === 'Available') && authPermissions.includes('Cancel Sessions Job')"
             />
-            <JobDetailModalCompleteForm
-              :job_parts="job_part.job.job_parts"
-              @close="close"
-              v-if="job_part.job.status === 'Ongoing' && authPermissions.includes('Complete Sessions Job')"
-            />
           </div>
         </div>
         <div class="p-0 md:pr-4 w-full md:w-1/2">
           <div class="flex flex-col">
-            <JobPartDetailModalParts :job_id="job.id" :disabledLink="$route.path === '/dashboard'" />
+            <JobDetailModalCompleteForm
+              :job="job_part"
+              @close="close"
+              v-if="job_part.status === 'Ongoing' && authPermissions.includes('Complete Sessions Job')"
+            />
+            <JobPartDetailModalParts
+              :job_id="job_part.job.id"
+              :disabledLink="$route.path === '/dashboard'"
+            />
             <JobDetailModalCandidates
               v-if="job_part.job.status === 'Applied'"
               class="order-first lg:order-none"
@@ -56,7 +59,7 @@
   </div>
 </template>
 <script>
-import JobDetailModalForm from "@/components/Sessions/JobDetailModalForm";
+import JobPartDetailModalForm from "@/components/Sessions/JobPart/JobPartDetailModalForm";
 import JobDetailModalUpdateForm from "@/components/Sessions/JobDetailModalUpdateForm";
 import JobPartDetailModalParts from "@/components/Sessions/JobPart/JobPartDetailModalParts";
 import JobDetailModalCandidates from "@/components/Sessions/JobDetailModalCandidates";
@@ -68,7 +71,7 @@ import JobDetailModalLocum from "@/components/Sessions/JobDetailModalLocum";
 export default {
   props: ["job_part"],
   components: {
-    JobDetailModalForm,
+    JobPartDetailModalForm,
     JobDetailModalUpdateForm,
     JobDetailModalCandidates,
     JobPartDetailModalParts,

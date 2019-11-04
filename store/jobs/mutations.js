@@ -64,6 +64,7 @@ export default {
     },
     SET_PRACTICE_ONGOING_JOB_PARTS(state, payload) {
         state.practice_ongoing_job_parts = payload
+        console.log(state.practice_ongoing_job_parts)
     },
     ADD_PRACTICE_ONGOING_JOB(state, payload) {
         state.practice_ongoing_job_parts.push(payload)
@@ -91,7 +92,7 @@ export default {
     SET_PRACTICE_COMPLETED_JOB_PARTS(state, payload) {
         state.practice_completed_job_parts = payload
     },
-    ADD_PRACTICE_COMPLETED_JOB(state, payload) {
+    ADD_PRACTICE_COMPLETED_JOB_PART(state, payload) {
         state.practice_completed_job_parts.push(payload)
     },
     REMOVE_PRACTICE_COMPLETED_JOB_PART(state, payload) {
@@ -353,6 +354,7 @@ export default {
     },
     SET_LOCUM_ONGOING_JOB_PARTS(state, payload) {
         state.locum_ongoing_job_parts = payload
+        console.log(state.locum_ongoing_job_parts)
     },
     ADD_LOCUM_ONGOING_JOB(state, payload) {
         state.locum_ongoing_job_parts.push(payload)
@@ -379,7 +381,9 @@ export default {
     },
     SET_LOCUM_COMPLETED_JOB_PARTS(state, payload) {
         state.locum_completed_job_parts = payload
-
+    },
+    ADD_LOCUM_COMPLETED_JOB_PART(state, payload) {
+        state.locum_completed_job_parts.push(payload)
     },
     REMOVE_LOCUM_COMPLETED_JOB_PART(state, payload) {
         state.locum_completed_job_parts = state.locum_completed_job_parts.filter(job => job.id !== payload)

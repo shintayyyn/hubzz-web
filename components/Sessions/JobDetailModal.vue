@@ -35,11 +35,6 @@
               @close="close"
               v-if="(job.status === 'Allocated' || job.status === 'Ongoing' || job.status === 'Applied' || job.status === 'Available') && authPermissions.includes('Cancel Sessions Job')"
             />
-            <JobDetailModalCompleteForm
-              :job_parts="job.job_parts"
-              @close="close"
-              v-if="job.status === 'Ongoing' && authPermissions.includes('Complete Sessions Job')"
-            />
           </div>
         </div>
         <div class="p-0 md:pl-4 w-full md:w-1/2 mt-4 md:m-0">
@@ -50,6 +45,12 @@
               :applicants="applicants"
               v-if="job.status === 'Applied'"
               @show="showLocum($event)"
+            />
+            <JobDetailModalLocum
+              :user="user"
+              :mandatory="mandatory"
+              :optional="optional"
+              v-if="(job.status === 'Allocated' || job.status === 'Ongoing' || job.status === 'Completed') && user"
             />
           </div>
         </div>
@@ -68,6 +69,7 @@ import JobDetailModalForm from "@/components/Sessions/JobDetailModalForm";
 import JobPartDetailModalParts from "@/components/Sessions/JobPart/JobPartDetailModalParts";
 import JobDetailModalUpdateForm from "@/components/Sessions/JobDetailModalUpdateForm";
 import JobDetailModalCandidates from "@/components/Sessions/JobDetailModalCandidates";
+import JobDetailModalLocum from "@/components/Sessions/JobDetailModalLocum";
 // import JobDetailModalSessionSample from "@/components/Sessions/JobDetailModalSessionSample";
 import JobDetailModalCancelForm from "@/components/Sessions/JobDetailModalCancelForm";
 import JobDetailModalCompleteForm from "@/components/Sessions/JobDetailModalCompleteForm";
@@ -79,6 +81,7 @@ export default {
     JobPartDetailModalParts,
     JobDetailModalUpdateForm,
     JobDetailModalCandidates,
+    JobDetailModalLocum,
     // JobDetailModalSessionSample,
     JobDetailModalCompleteForm,
     JobDetailModalCancelForm,

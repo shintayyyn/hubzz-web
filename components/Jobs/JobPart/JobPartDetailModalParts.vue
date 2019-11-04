@@ -1,6 +1,6 @@
 <template>
-  <div class="relative flex flex-col w-full mb-3">
-    <div class="text-xs sm:text-sm font-bold">Job Parts</div>
+  <div class="relative flex flex-col w-full my-5">
+    <div class="text-md font-bold">Job Parts</div>
     <AppTable
       :total="total"
       :items="parts"

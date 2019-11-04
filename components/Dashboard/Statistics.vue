@@ -70,8 +70,8 @@ export default {
           `/api/v1/practice/locums/count?practice_locum_type=Applied`
         ),
         this.$axios.$get(`/api/v1/practice/jobs/count?status=Applied`),
-        this.$axios.$get(`/api/v1/practice/jobs/count?status=Current`),
-        this.$axios.$get(`/api/v1/practice/jobs/count?status=Available`),
+        this.$axios.$get(`/api/v1/practice/jobs/count?status=Allocated`),
+        this.$axios.$get(`/api/v1/practice/jobs/count?status=Live`),
         this.$axios.$get(`/api/v1/practice/jobs/count?status=Completed`),
         this.$axios.$get(`/api/v1/practice/jobs/count?status=Unfilled`)
       ]).then(responses => {

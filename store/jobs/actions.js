@@ -75,8 +75,14 @@ export default {
                 return commit('ADD_LOCUM_CANCELLED_JOB', job)
             }
         })
-        this.$socket.on('Locum Notification Job Part Completed', (job) => {
-
+        this.$socket.on('Locum Notification Job Part Completed', (job_part) => {
+            if (state.locum_ongoing_job_parts.find(ongoingJob => ongoingJob.id === job_part.id)) {
+                commit('REMOVE_LOCUM_ONGOING_JOB_PART', job_part.id)
+            }
+            let locumIndex = state.locum_completed_job_parts.findIndex(completedJob => completedJob === job_part.id)
+            if (locumIndex < 1) {
+                commit('ADD_LOCUM_COMPLETED_JOB_PART', job_part)
+            }
         })
         this.$socket.on('Locum Notification Job Completed', (job) => {
             if (state.locum_allocated_jobs.find(allocatedJob => allocatedJob.id === job.id)) {
@@ -163,8 +169,14 @@ export default {
             commit('ADD_PRACTICE_CANCELLED_BADGE', job)
             commit('ADD_PRACTICE_CANCELLED_JOB', job)
         })
-        this.$socket.on('Practice Notification Job Part Completed', (jobPart) => {
-
+        this.$socket.on('Practice Notification Job Part Completed', (job_part) => {
+            if (state.practice_ongoing_job_parts.find(ongoingJob => ongoingJob.id === job_part.id)) {
+                commit('REMOVE_PRACTICE_ONGOING_JOB_PART', job_part.id)
+            }
+            let practiceIndex = state.practice_completed_job_parts.findIndex(completedJob => completedJob === job_part.id)
+            if (practiceIndex < 1) {
+                commit('ADD_PRACTICE_COMPLETED_JOB_PART', job_part)
+            }
         })
         this.$socket.on('Practice Notification Job Completed', (job) => {
             if (state.practice_allocated_jobs.find(allocatedJob => allocatedJob.id == job.id)) {
@@ -367,8 +379,9 @@ export default {
         let url = '/api/v1/practice/jobs'
         let first = payload.id && payload.first ? `/${payload.id}` : ''
         let count = payload.countOnly ? `/count` : ''
-
+        console.log('payload job', payload)
         const response = await this.$axios.$get(`${url}${first}${count}`, { params: payload })
+        console.log('response job', response)
 
         if (payload.countOnly) {
             payload.status.forEach(jobStatus => {
@@ -409,9 +422,9 @@ export default {
                     commit('SET_PRACTICE_AVAILABLE_JOBS', response.data.jobs && response.data.jobs.length > 0 ?
                         response.data.jobs.filter(jobPart => jobPart.status.toLowerCase() === 'live') : [])
                 }
-                if (jobStatus.toLowerCase() === 'unsuccessful') {
-                    commit('SET_PRACTICE_UNSUCCESSFUL_JOBS', response.data.jobs && response.data.jobs.length > 0 ?
-                        response.data.jobs.filter(jobPart => jobPart.status.toLowerCase() === 'unsuccessful') : [])
+                if (jobStatus.toLowerCase() === 'unfilled') {
+                    commit('SET_PRACTICE_UNFILLED_JOBS', response.data.jobs && response.data.jobs.length > 0 ?
+                        response.data.jobs.filter(jobPart => jobPart.status.toLowerCase() === 'unfilled') : [])
                 }
                 if (jobStatus.toLowerCase() === 'declined') {
                     commit('SET_PRACTICE_DECLINED_JOBS', response.data.jobs && response.data.jobs.length > 0 ?
@@ -528,14 +541,18 @@ export default {
     },
 
     async fetchPracticeJobsReminder({ commit }, payload) {
-        commit('TOGGLE_LOADING', true)
-        const response = await jobsApi.fetchPracticeJobsReminder(this.$axios, payload)
-        if (payload.status === "Available") {
-            return commit('SET_PRACTICE_AVAILABLE_JOBS_REMINDER', response.data.jobs)
-        }
-        if (payload.status === "Applied") {
-            return commit('SET_PRACTICE_APPLIED_JOBS_REMINDER', response.data.jobs)
-        }
+        let url = `/api/v1/practice/jobs`
+        console.log('payload job reminder', payload)
+        const response = await this.$axios.$get(`${url}`, { params: payload })
+        console.log('response job reminder', response)
+        payload.status.forEach(jobStatus => {
+            if (jobStatus.toLowerCase() === 'live') {
+                return commit('SET_PRACTICE_AVAILABLE_JOBS_REMINDER', response.data.jobs.filter(job => job.status.toLowerCase() === 'live'))
+            }
+            if (jobStatus.toLowerCase() === 'applied') {
+                return commit('SET_PRACTICE_APPLIED_JOBS_REMINDER', response.data.jobs.filter(job => job.status.toLowerCase() === 'applied'))
+            }
+        })
     },
 
     async fetchPracticeJob({ state, commit }, payload) {
