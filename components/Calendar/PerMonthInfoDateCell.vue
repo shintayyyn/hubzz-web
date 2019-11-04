@@ -134,7 +134,7 @@
     >
       <span
         v-if="hasPracticeAppliedJobsReminder(item.fullDate, 'Reminder')"
-        class="bg-gray-300 text-gray-300 w-1/4 h-2 sm:h-3 lg:h-4"
+        class="bg-gray-600 text-gray-600 w-1/4 h-2 sm:h-3 lg:h-4"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
     </div>
@@ -144,7 +144,7 @@
     >
       <span
         v-if="hasPracticeAvailableJobsReminder(item.fullDate, 'Reminder')"
-        class="bg-gray-300 text-gray-300 w-1/4 h-2 sm:h-3 lg:h-4"
+        class="bg-gray-600 text-gray-600 w-1/4 h-2 sm:h-3 lg:h-4"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
     </div>
@@ -346,13 +346,6 @@ export default {
       );
     },
     // whole
-    hasPracticeCurrentJobs(date, type) {
-      return this.getPracticeAllocatedJobs.find(
-        job =>
-          this.getDateArray(job.date_start, job.date_end).includes(date) &&
-          job.shift.name === type
-      );
-    },
     hasPracticeAppliedJobs(date, type) {
       return this.getPracticeAppliedJobs.find(
         job =>
@@ -376,12 +369,12 @@ export default {
     },
     hasPracticeAppliedJobsReminder(date, type) {
       return this.getPracticeAppliedJobsReminder.find(
-        job => job.selection_date === date && type === "Reminder"
+        job => job.platform_job.selection_date === date && type === "Reminder"
       );
     },
     hasPracticeAvailableJobsReminder(date, type) {
       return this.getPracticeAvailableJobsReminder.find(
-        job => job.selection_date === date && type === "Reminder"
+        job => job.platform_job.selection_date === date && type === "Reminder"
       );
     },
 

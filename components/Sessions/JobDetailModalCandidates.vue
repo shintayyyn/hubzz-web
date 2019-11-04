@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col w-full lg:w-1/3 p-0 lg:pl-4 mt-4 lg:m-0">
+  <div class="flex flex-col w-full">
     <div class="text-xs sm:text-sm font-bold">Candidates</div>
     <div
       class="rounded-lg shadow-lg m-0 my-4 py-3 px-5 cursor-pointer"

@@ -372,7 +372,7 @@
             :url="'/api/v1/qualifications'"
             @add="CheckEmptyField(form.qualification_id, 'qualification_id')"
             @remove="CheckEmptyField(form.qualification_id, 'qualification_id')"
-            :professionCategoryId="selectedProfession.profession_category.id.toString()"
+            :professionCategoryId="selectedProfessionCategoryId"
           />
           <!-- :professionCategoryId="professionCategoryId.toString()" -->
 
@@ -614,6 +614,13 @@ export default {
     google: gmapApi,
     latLang() {
       return this.job.platform_job.practice.surgery.address.coordinates;
+    },
+    selectedProfessionCategoryId() {
+      return this.selectedProfession &&
+        this.selectedProfession.profession_category &&
+        this.selectedProfession.profession_category.id
+        ? this.selectedProfession.profession_category.id.toString()
+        : null;
     }
   },
   created() {
@@ -818,8 +825,6 @@ export default {
     });
 
     this.form.profession_id = this.job.platform_job.profession.id;
-    console.log("prop job", this.job);
-    console.log("update form", this.form);
   },
   methods: {
     uncheckMandatory(value) {

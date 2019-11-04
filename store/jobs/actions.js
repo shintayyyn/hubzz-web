@@ -6,6 +6,8 @@ export default {
             if (!state.locum_matched_jobs.find(matchedJobs => matchedJobs.id == job.id)) {
                 commit('ADD_LOCUM_MATCHED_JOB', job)
                 commit('ADD_LOCUM_MATCHED_BADGE')
+                commit('ADD_LOCUM_AVAILABLE_JOB', job)
+                commit('ADD_LOCUM_AVAILABLE_BADGE')
             }
         })
         this.$socket.on('Locum Notification Job Available', (job) => {
@@ -68,12 +70,19 @@ export default {
                 return commit('REMOVE_LOCUM_APPLIED_JOB', job.id)
             }
             if (!state.locum_cancelled_jobs.find(cancelledJob => cancelledJob.id === job.id)) {
-                commit('ADD_LOCUM_CANCELLED_BADGE')
+                // commit('ADD_LOCUM_CANCELLED_BADGE')
+                // get job from socket id
                 return commit('ADD_LOCUM_CANCELLED_JOB', job)
             }
         })
-        this.$socket.on('Locum Notification Job Part Completed', (job) => {
-
+        this.$socket.on('Locum Notification Job Part Completed', (job_part) => {
+            if (state.locum_ongoing_job_parts.find(ongoingJob => ongoingJob.id === job_part.id)) {
+                commit('REMOVE_LOCUM_ONGOING_JOB_PART', job_part.id)
+            }
+            let locumIndex = state.locum_completed_job_parts.findIndex(completedJob => completedJob === job_part.id)
+            if (locumIndex < 1) {
+                commit('ADD_LOCUM_COMPLETED_JOB_PART', job_part)
+            }
         })
         this.$socket.on('Locum Notification Job Completed', (job) => {
             if (state.locum_allocated_jobs.find(allocatedJob => allocatedJob.id === job.id)) {
@@ -160,8 +169,14 @@ export default {
             commit('ADD_PRACTICE_CANCELLED_BADGE', job)
             commit('ADD_PRACTICE_CANCELLED_JOB', job)
         })
-        this.$socket.on('Practice Notification Job Part Completed', (jobPart) => {
-
+        this.$socket.on('Practice Notification Job Part Completed', (job_part) => {
+            if (state.practice_ongoing_job_parts.find(ongoingJob => ongoingJob.id === job_part.id)) {
+                commit('REMOVE_PRACTICE_ONGOING_JOB_PART', job_part.id)
+            }
+            let practiceIndex = state.practice_completed_job_parts.findIndex(completedJob => completedJob === job_part.id)
+            if (practiceIndex < 1) {
+                commit('ADD_PRACTICE_COMPLETED_JOB_PART', job_part)
+            }
         })
         this.$socket.on('Practice Notification Job Completed', (job) => {
             if (state.practice_allocated_jobs.find(allocatedJob => allocatedJob.id == job.id)) {
@@ -191,6 +206,7 @@ export default {
         }
 
         if (payload.countOnly) {
+            console.log('payload count', payload)
             payload.locum_status.forEach(jobStatus => {
                 if (jobStatus.toLowerCase() === 'allocated') {
                     commit('SET_LOCUM_ALLOCATED_JOBS_COUNT', response.data.count)
@@ -219,7 +235,8 @@ export default {
             })
         }
 
-        if (!payload.countOnly) {
+        if (!payload.countOnly && !payload.first) {
+            console.log('payload jobs', payload)
             payload.locum_status.forEach(jobStatus => {
                 if (jobStatus.toLowerCase() === 'allocated') {
                     commit('SET_LOCUM_ALLOCATED_JOBS', response.data.jobs && response.data.jobs.length > 0 ?
@@ -280,7 +297,7 @@ export default {
             })
         }
 
-        if (!payload.countOnly) {
+        if (!payload.countOnly && !payload.first) {
             payload.locum_status.forEach(jobStatus => {
                 if (jobStatus.toLowerCase() === 'allocated') {
                     if (response.data && response.data.job_parts && response.data.job_parts.length > 0) {
@@ -362,7 +379,6 @@ export default {
         let url = '/api/v1/practice/jobs'
         let first = payload.id && payload.first ? `/${payload.id}` : ''
         let count = payload.countOnly ? `/count` : ''
-
         console.log('payload job', payload)
         const response = await this.$axios.$get(`${url}${first}${count}`, { params: payload })
         console.log('response job', response)
@@ -406,9 +422,9 @@ export default {
                     commit('SET_PRACTICE_AVAILABLE_JOBS', response.data.jobs && response.data.jobs.length > 0 ?
                         response.data.jobs.filter(jobPart => jobPart.status.toLowerCase() === 'live') : [])
                 }
-                if (jobStatus.toLowerCase() === 'unsuccessful') {
-                    commit('SET_PRACTICE_UNSUCCESSFUL_JOBS', response.data.jobs && response.data.jobs.length > 0 ?
-                        response.data.jobs.filter(jobPart => jobPart.status.toLowerCase() === 'unsuccessful') : [])
+                if (jobStatus.toLowerCase() === 'unfilled') {
+                    commit('SET_PRACTICE_UNFILLED_JOBS', response.data.jobs && response.data.jobs.length > 0 ?
+                        response.data.jobs.filter(jobPart => jobPart.status.toLowerCase() === 'unfilled') : [])
                 }
                 if (jobStatus.toLowerCase() === 'declined') {
                     commit('SET_PRACTICE_DECLINED_JOBS', response.data.jobs && response.data.jobs.length > 0 ?
@@ -424,51 +440,6 @@ export default {
                 }
             })
         }
-        // if (payload.status === 'Reminder') {
-        //     commit('SET_PRACTICE_APPLIED_REMINDERS', response)
-        // }
-        // if (payload.status === "Available") {
-        //     if (payload.countOnly) {
-        //         return commit('SET_PRACTICE_AVAILABLE_JOBS_COUNT', response.data.count)
-        //     }
-        //     return commit('SET_PRACTICE_AVAILABLE_JOBS', response.data.jobs)
-        // }
-        // if (payload.status === "Applied") {
-        //     if (payload.countOnly) {
-        //         return commit('SET_PRACTICE_APPLIED_JOBS_COUNT', response.data.count)
-        //     }
-        //     return commit('SET_PRACTICE_APPLIED_JOBS', response.data.jobs)
-        // }
-        // if (payload.status === "Allocated") {
-        //     if (payload.countOnly) {
-        //         return commit('SET_PRACTICE_ALLOCATED_JOBS_COUNT', response.data.count)
-        //     }
-        //     return commit('SET_PRACTICE_ALLOCATED_JOBS', response.data.jobs)
-        // }
-        // if (payload.status === "Completed") {
-        //     if (payload.countOnly) {
-        //         return commit('SET_PRACTICE_COMPLETED_JOBS_COUNT', response.data.count)
-        //     }
-        //     return commit('SET_PRACTICE_COMPLETED_JOBS', response.data.jobs)
-        // }
-        // if (payload.status === "Unfilled") {
-        //     if (payload.countOnly) {
-        //         return commit('SET_PRACTICE_UNFILLED_JOBS_COUNT', response.data.count)
-        //     }
-        //     return commit('SET_PRACTICE_UNFILLED_JOBS', response.data.jobs)
-        // }
-        // if (payload.status === "Cancelled") {
-        //     if (payload.countOnly) {
-        //         return commit('SET_PRACTICE_CANCELLED_JOBS_COUNT', response.data.count)
-        //     }
-        //     return commit('SET_PRACTICE_CANCELLED_JOBS', response.data.jobs)
-        // }
-        // if (payload.status === "Declined") {
-        //     if (payload.countOnly) {
-        //         return commit('SET_PRACTICE_DECLINED_JOBS_COUNT', response.data.count)
-        //     }
-        //     return commit('SET_PRACTICE_DECLINED_JOBS', response.data.jobs)
-        // }
     },
 
     async fetchPracticeJobParts({ commit }, payload) {
@@ -570,14 +541,18 @@ export default {
     },
 
     async fetchPracticeJobsReminder({ commit }, payload) {
-        commit('TOGGLE_LOADING', true)
-        const response = await jobsApi.fetchPracticeJobsReminder(this.$axios, payload)
-        if (payload.status === "Available") {
-            return commit('SET_PRACTICE_AVAILABLE_JOBS_REMINDER', response.data.jobs)
-        }
-        if (payload.status === "Applied") {
-            return commit('SET_PRACTICE_APPLIED_JOBS_REMINDER', response.data.jobs)
-        }
+        let url = `/api/v1/practice/jobs`
+        console.log('payload job reminder', payload)
+        const response = await this.$axios.$get(`${url}`, { params: payload })
+        console.log('response job reminder', response)
+        payload.status.forEach(jobStatus => {
+            if (jobStatus.toLowerCase() === 'live') {
+                return commit('SET_PRACTICE_AVAILABLE_JOBS_REMINDER', response.data.jobs.filter(job => job.status.toLowerCase() === 'live'))
+            }
+            if (jobStatus.toLowerCase() === 'applied') {
+                return commit('SET_PRACTICE_APPLIED_JOBS_REMINDER', response.data.jobs.filter(job => job.status.toLowerCase() === 'applied'))
+            }
+        })
     },
 
     async fetchPracticeJob({ state, commit }, payload) {

@@ -748,13 +748,23 @@ export default {
     },
     getJobsCount(params) {
       this.$store.commit("jobs/TOGGLE_LOADING", true);
+      let locum_status = [];
+      if (!this.$route.query.status) {
+        locum_status = ["Allocated"];
+      } else if (
+        this.$route.query.status &&
+        this.$route.query.status === "Available"
+      ) {
+        locum_status = ["Available", "Matched"];
+      } else if (
+        this.$route.query.status &&
+        this.$route.query.status !== "Available"
+      ) {
+        locum_status = [`${this.$route.query.status}`];
+      }
       this.$store
         .dispatch(`${this.dispatchUrl}`, {
-          locum_status: [
-            `${
-              this.$route.query.status ? this.$route.query.status : "Allocated"
-            }`
-          ],
+          locum_status,
           countOnly: true,
           ...params
         })
@@ -764,13 +774,23 @@ export default {
     },
     getJobs(params) {
       this.$store.commit("jobs/CLEAR_JOBS");
+      let locum_status = [];
+      if (!this.$route.query.status) {
+        locum_status = ["Allocated"];
+      } else if (
+        this.$route.query.status &&
+        this.$route.query.status === "Available"
+      ) {
+        locum_status = ["Available", "Matched"];
+      } else if (
+        this.$route.query.status &&
+        this.$route.query.status !== "Available"
+      ) {
+        locum_status = [`${this.$route.query.status}`];
+      }
       this.$store
         .dispatch(`${this.dispatchUrl}`, {
-          locum_status: [
-            `${
-              this.$route.query.status ? this.$route.query.status : "Allocated"
-            }`
-          ],
+          locum_status,
           ...params
         })
         .finally(() => {

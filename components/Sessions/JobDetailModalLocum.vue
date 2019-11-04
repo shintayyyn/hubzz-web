@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col w-full lg:w-1/3 p-0 lg:pl-4 mt-4 lg:m-0">
+  <div class="flex flex-col w-full">
     <div class="text-xs sm:text-sm font-bold">Locum</div>
     <div class="rounded-lg shadow-lg p-8 mt-4">
       <div class="flex flex-col">

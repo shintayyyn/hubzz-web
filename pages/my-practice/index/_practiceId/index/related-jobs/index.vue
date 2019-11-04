@@ -295,7 +295,7 @@
           :columns="columns"
           :orderBy="isJobPart ? jobPartParams.order_by :params.order_by"
           :loading="loadingJobs"
-          :routerLink="`/my-practice/${this.$route.params.practiceId}/related-jobs`"
+          :routerLink="`/my-practice/${$route.params.practiceId}/related-jobs`"
           @pagechanged="pagechanged"
           @limitchanged="limitchanged"
           @sorted="sorted"
