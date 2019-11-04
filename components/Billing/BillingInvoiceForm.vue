@@ -182,7 +182,7 @@
               </th>
               <th v-if="type === 'Private'" class="sticky right-0 bg-gray-900">
                 <span
-                  class="cursor-pointer w-6 h-6 my-2 mx-2 md:mx-4 rounded-full bg-white text-gray-900 font-semibold text-xl flex justify-center items-center hover:bg-gray-200"
+                  class="cursor-pointer w-6 h-6 mx-2 md:mx-4 rounded-full bg-white text-gray-900 font-semibold text-xl flex justify-center items-center hover:bg-gray-200"
                   @click="addItem"
                 >+</span>
               </th>
@@ -229,7 +229,6 @@
             :name="'date_start'"
             :label="'Days worked from'"
             :error="formError.find(item => item.field === 'date_start')"
-            isAfter
           />
         </div>
         <div class="w-full md:w-1/2 pl-1">
@@ -238,7 +237,6 @@
             :name="'date_end'"
             :label="'To'"
             :error="formError.find(item => item.field === 'date_end')"
-            isAfter
           />
         </div>
       </div>

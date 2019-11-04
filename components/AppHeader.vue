@@ -1,8 +1,5 @@
 <template>
-  <section
-    class="fixed z-50 w-full"
-    :class="$route.name === 'messages-slug' || $route.name === 'messages-new' ? 'border-b md:border-0' : ''"
-  >
+  <section class="fixed z-50 w-full shadow lg:shadow-none">
     <div class="flex flex-row justify-between">
       <div style="max-width: 200px; min-width: 200px" class="hidden xl:inline"></div>
       <div class="header-section flex w-full justify-between bg-white">
@@ -52,9 +49,10 @@
             <button
               v-if="$route.name != 'messages-slug' && $route.name != 'messages-new'"
               @click="$router.push('/messages')"
-              class="block md:hidden button rounded-lg p-2 focus:outline-none cursor-pointer"
+              class="relative block md:hidden button rounded-lg p-2 focus:outline-none cursor-pointer"
             >
               <svgicon name="chat" color="#888 #555 #fff" width="21" height="21"></svgicon>
+              <span class="-m-2 absolute bg-yellow-500 block border bottom-0 flex h-5 w-5 text-xs p-1 items-center justify-center right-0 rounded-full" v-if="unreadMessages.length > 0">{{ unreadMessages.length }}</span>
             </button>
           </div>
           <div
@@ -86,7 +84,6 @@ export default {
     create_job_modal() {
       return this.$store.state.calendar.create_job_modal;
     },
-
     unreadMessages() {
       return this.$store.getters["chat/getUnreadMessages"];
     },
@@ -101,7 +98,16 @@ export default {
       } else {
         document.body.style.overflow = "auto";
       }
-    }
+    },
+    // unreadMessages(value){
+    //   console.log("new message",value, this.$route)
+    //   this.$store.commit("SET_NOTIFICATION", {
+    //     enabled: true,
+    //     status: "message",
+    //     text: [`qwe`],
+    //     closable: true
+    //   });
+    // }
   },
   methods: {
     toggle() {

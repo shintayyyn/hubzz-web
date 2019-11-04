@@ -3,8 +3,11 @@
     <div class="shield" v-if="$store.state.toggled_sidebar" @click="close"></div>
     <AppHeader />
     <AppSideBar @modal="signout_modal = $event" />
-    <div :class="$route.name === 'messages-slug' || $route.name === 'messages-new' ? 'content-message' : 'content'">
+    <div
+      :class="$route.name === 'messages-slug' || $route.name === 'messages-new' ? 'content-message' : 'content'"
+    >
       <AppNotification />
+      <JobNotification />
       <nuxt
         class="mb-4"
         :class="$route.name === 'messages-slug' || $route.name === 'messages-new' ? 'md:mt-20' : 'mt-16'"
@@ -15,6 +18,7 @@
 <script>
 import AppSideBar from "@/components/AppSideBar";
 import AppNotification from "@/components/AppNotification";
+import JobNotification from "@/components/JobNotification";
 import AppHeader from "@/components/AppHeader";
 
 export default {
@@ -22,6 +26,7 @@ export default {
   components: {
     AppSideBar,
     AppNotification,
+    JobNotification,
     AppHeader
   },
   data() {
@@ -54,7 +59,7 @@ export default {
   scroll-behavior: smooth;
 }
 
-.content-message{
+.content-message {
   padding: 0 20px;
 }
 
@@ -62,23 +67,25 @@ export default {
   z-index: 55;
 }
 @media screen and (min-width: 1200px) {
-  .content, .content-message {
+  .content,
+  .content-message {
     margin-left: 200px;
   }
 }
 
 @media screen and (min-width: 480px) {
-  .content, .content-message {
+  .content,
+  .content-message {
     padding: 1px 5% 0;
   }
 }
 
 @media screen and (min-width: 320px) {
-  .content, .content-message {
+  .content,
+  .content-message {
     padding: 1px 3% 0;
   }
 }
-
 </style>
 
 

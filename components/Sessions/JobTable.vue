@@ -7,7 +7,7 @@
           :key="item.dataIndex"
           @click="item.sortable ? $emit('sortBy', `${item.dataIndex}`) : null"
           class="text-center"
-          :class="index === 0 && 'sticky left-0'"
+          :class="[index === 0 && 'sticky left-0', item.sortable && 'cursor-pointer']"
         >
           {{item.label}}
           <svgicon

@@ -298,7 +298,7 @@ input[type="checkbox"] + label {
 
 input[type="checkbox"] + label::before {
   content: "";
-  margin-right: 10px;
+  margin: 0 10px auto auto;
   display: inline-block;
   vertical-align: text-top;
   width: 18px;
@@ -349,7 +349,7 @@ input[type="checkbox"]:checked + label:after {
   appearance: none;
   padding: 10px 15px;
   background: transparent;
-  cursor: pointer;
+  /* cursor: pointer; */
   padding-right: 40px;
   z-index: 1;
 }

@@ -702,14 +702,17 @@ export default {
   },
   watch: {
     "$route.query"({ status: newStatus }, { status: oldStatus }) {
+      // console.log(this.current_page);
+      // this.current_page = 1;
+      // console.log(this.current_page);
       if (newStatus && newStatus !== null && newStatus !== oldStatus) {
         this.toggleTable = false;
         this.filterToggle = false;
-        setTimeout(() => {
+        setTimeout(async () => {
           this.clearJobsBadge(newStatus);
-          this.clearFilters();
-        }, 1000);
-        this.getJobsCount(this.isJobPart ? this.jobPartParams : this.params);
+          await this.clearFilters();
+          this.getJobsCount(this.isJobPart ? this.jobPartParams : this.params);
+        }, 500);
       }
     }
   },
@@ -824,6 +827,8 @@ export default {
       this.getJobs(this.isJobPart ? this.jobPartParams : this.params);
     },
     clearFilters() {
+      this.params.offset = 0;
+      this.params.limit = 5;
       this.params.type = "";
       this.params.job_number = "";
       this.params.surgery_id = "";
@@ -831,7 +836,10 @@ export default {
       this.params.shift_id = "";
       this.params.rate = "";
       this.params.rate_type_id = "";
+      this.params.order_by = ["date_created:desc"];
 
+      this.jobPartParams.offset = 0;
+      this.jobPartParams.limit = 5;
       this.jobPartParams.job_type = "";
       this.jobPartParams.job_part_number = "";
       this.jobPartParams.job_surgery_id = "";
@@ -840,15 +848,15 @@ export default {
       this.jobPartParams.job_rate = "";
       this.jobPartParams.job_rate_type_id = "";
       this.jobPartParams.invoice_status = "";
-
       this.jobPartParams.near_post_code = "";
       this.jobPartParams.miles = "";
       this.jobPartParams.calendar_date_start = "";
       this.jobPartParams.calendar_date_end = "";
       this.jobPartParams.time_start = "";
       this.jobPartParams.time_end = "";
-      this.params.order_by = ["date_created:desc"];
       this.jobPartParams.order_by = ["date_created:desc"];
+
+      return;
     },
     onSelect(value) {
       let address_components = value.details.result.address_components;

@@ -1,6 +1,36 @@
-import moment from 'moment';
 export default {
     // practice
+    // NOTIF
+    getPracticeJobNotifications(state) {
+        let notifications = []
+        state.practice_job_notifications.forEach(notif => {
+            if (['completed', 'ongoing', 'approved'].includes(notif.status.toLowerCase())) {
+                notifications.push({
+                    id: notif.id,
+                    title: notif.job.title,
+                    status: notif.status,
+                    date_start: notif.job.date_start,
+                    date_end: notif.job.date_end,
+                    shift: notif.job.shift.name,
+                    rate: notif.job.rate,
+                    locum_detail_rate_type: notif.job.locum_detail_rate_type.name
+                })
+            } else if (!['completed', 'ongoing', 'approved'].includes(notif.status.toLowerCase())) {
+                notifications.push({
+                    id: notif.id,
+                    title: notif.title,
+                    status: notif.status,
+                    date_start: notif.date_start,
+                    date_end: notif.date_end,
+                    shift: notif.shift.name,
+                    rate: notif.rate,
+                    locum_detail_rate_type: notif.locum_detail_rate_type.name
+                })
+            }
+        })
+        console.log('practice job notifications', notifications)
+        return notifications
+    },
     // PARTS
     getPracticeOngoingJobs(state) {
         let jobs = []
@@ -184,8 +214,6 @@ export default {
                 shift_name,
             })
         })
-        console.log('jobs', jobs)
-        console.log('state jobs', state.practice_available_jobs)
         return jobs
     },
     getPracticeAppliedJobs(state) {
@@ -339,6 +367,52 @@ export default {
     },
 
     // locum
+    // NOTIF
+    getLocumJobNotifications(state) {
+        let notifications = []
+        state.locum_job_notifications.forEach(notif => {
+            if (['completed', 'ongoing', 'approved'].includes(notif.locum_status.toLowerCase())) {
+                notifications.push({
+                    id: notif.id,
+                    title: notif.job.title,
+                    locum_status: notif.locum_status,
+                    date_start: notif.job.date_start,
+                    date_end: notif.job.date_end,
+                    shift: notif.job.shift.name,
+                    rate: notif.job.rate,
+                    locum_detail_rate_type: notif.job.locum_detail_rate_type.name,
+                    reminder: notif.reminder ? notif.reminder : false
+                })
+            } else if (!['completed', 'ongoing', 'approved'].includes(notif.locum_status.toLowerCase())) {
+                notifications.push({
+                    id: notif.id,
+                    title: notif.title,
+                    locum_status: notif.locum_status,
+                    date_start: notif.date_start,
+                    date_end: notif.date_end,
+                    shift: notif.shift.name,
+                    rate: notif.rate,
+                    locum_detail_rate_type: notif.locum_detail_rate_type.name,
+                    reminder: notif.reminder ? notif.reminder : false
+                })
+            }
+            if (notif.reminder) {
+                let reminder_message = ''
+                if (job_reminded_in_1_hours === 1) {
+                    reminder_message = 'This Job will start in 1 hour'
+                } else if (job_reminded_in_3_hours) {
+                    reminder_message = 'This Job will start in 3 hours'
+                } else if (job_reminded_in_1_days === 1) {
+                    reminder_message = 'This Job will start tomorrow'
+                } else if (job_reminded_in_3_days === 1) {
+                    reminder_message = 'This Job will start in 3 days'
+                }
+                notifications.push({ reminder_message })
+            }
+        })
+        console.log('locum job notifications', notifications)
+        return notifications
+    },
     // PARTS
     getLocumAllocatedPartJobs(state) {
         let jobs = []

@@ -5,14 +5,14 @@
       v-if="['text','time','email','password', 'select', 'textarea', 'multi-checkbox', 'number'].includes(type)"
     >
       <div class="flex flex-col py-2 mb-3 md:mb-6">
-        <div class="relative flex flex-row flex-no-wrap justify-between">
+        <div class="relative flex flex-row flex-wrap justify-between">
           <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
           <div class="flex">
             <div class="bg-gray-300 rounded-lg px-4 py-1 text-xs sm:text-sm" v-if="info">{{info}}</div>
             <div
-              class="absolute rounded-lg right-0 bg-red-500 p-1 text-xs sm:text-sm text-white"
+              class="absolute rounded-lg right-0 bg-red-500 px-2 py-1 text-xs sm:text-sm text-white"
               v-if="error"
-            >{{error.message}}</div>
+            >{{error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ")}}</div>
           </div>
         </div>
         <template v-if="type === 'multi-checkbox'">
@@ -28,7 +28,7 @@
               @input="inputMultiCheck"
               :checked="Array.isArray(value) ? value.includes(item.value) : value"
             />
-            <label :for="`${name}-${index}`" class="text-xs sm:text-sm">{{item.label}}</label>
+            <label :for="`${name}-${index}`" class="text-xs sm:text-sm flex items-center">{{item.label}}</label>
           </div>
         </template>
         <template v-else>
@@ -54,7 +54,7 @@
                   ref="inputSelect"
                   :value="value"
                   class="absolute border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full"
-                  :class="[error ? 'border-red-500':'']"
+                  :class="[(error && !disabled) && 'border-red-500', disabled ? 'border-gray-400' : 'cursor-pointer']"
                   @input="$emit('input', $event.target.value)"
                   :style="inStyle"
                   @change="$emit('change', $event.target.value)"
@@ -72,7 +72,7 @@
                 <span class="absolute right-0">
                   <svgicon
                     name="arrow-up"
-                    class="h-full w-10 p-2"
+                    class="h-full w-10 p-2 fill-current"
                     style="transform: rotate(180deg)"
                   />
                 </span>
@@ -101,9 +101,9 @@
       <div class="flex flex-col py-2 mb-2">
         <div class="flex justify-end">
           <div
-            class="rounded-lg bg-red-500 p-1 text-xs sm:text-sm text-white"
+            class="rounded-lg bg-red-500 px-2 py-1 text-xs sm:text-sm text-white"
             v-if="error"
-          >{{error.message}}</div>
+          >{{error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ")}}</div>
         </div>
         <div class="flex flex-row flex-no-wrap justify-start items-center">
           <input
@@ -113,7 +113,7 @@
             :checked="value"
             :disabled="disabled"
           />
-          <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
+          <label :for="name" class="text-xs sm:text-sm py-1 flex items-center">{{label}}</label>
         </div>
       </div>
     </template>
@@ -121,15 +121,15 @@
     <!-- multiemail -->
     <template v-if="type === 'multiemail'">
       <div class="flex flex-col py-2 mb-3 md:mb-6">
-        <div class="relative flex flex-row flex-no-wrap justify-between">
+        <div class="relative flex flex-row flex-wrap justify-between">
           <div class="flex flex-wrap justify-start">
             <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
             <span class="ml-2 bg-gray-300 rounded-lg px-4 py-1 text-xs">Seperate with commas</span>
           </div>
           <div
-            class="absolute right-0 bg-red-500 p-1 text-xs sm:text-sm text-white"
+            class="absolute right-0 bg-red-500 py-1 px-2 text-xs sm:text-sm text-white"
             v-if="error"
-          >{{error.message}}</div>
+          >{{error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ")}}</div>
         </div>
         <div class="flex flex-row justify-start mt-1">
           <input
@@ -147,14 +147,14 @@
     <!-- search -->
     <template v-if="type === 'search'">
       <div v-if="type === 'search'" class="flex flex-col">
-        <div v-if="label" class="relative flex flex-row flex-no-wrap justify-between">
+        <div v-if="label" class="relative flex flex-row flex-wrap justify-between">
           <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
           <div class="flex">
             <div class="bg-gray-300 rounded-lg px-4 py-1 text-xs sm:text-sm" v-if="info">{{info}}</div>
             <div
-              class="absolute right-0 bg-red-500 p-1 text-xs sm:text-sm text-white"
+              class="absolute right-0 bg-red-500 py-1 px-2 text-xs sm:text-sm text-white"
               v-if="error"
-            >{{error.message}}</div>
+            >{{error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ")}}</div>
           </div>
         </div>
         <div

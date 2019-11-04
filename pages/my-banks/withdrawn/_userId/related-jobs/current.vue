@@ -9,13 +9,14 @@
       <JobTable :columns="columns" :jobs="getPracticeAllocatedJobs" @sortBy="sortBy" @show="show" />
     </div>
     <div
-      class="absolute bottom-0 w-full"
+      class="w-full"
       v-if="getPracticeAllocatedJobs.length > 0 && totalPages > 1"
     >
       <AppPagination
         :total="total"
         :totalPages="totalPages"
         :currentPage="current_page"
+        :perPage="perPage"
         @pagechanged="pagechanged"
       />
     </div>
