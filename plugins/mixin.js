@@ -57,7 +57,6 @@ Vue.mixin({
             }
           }
         } else {
-          console.log('value', value)
           if (!value || value.toString().trim().length === 0) {
             if (!lists) {
               this.formError.push({
