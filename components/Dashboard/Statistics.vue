@@ -8,10 +8,10 @@
         :key="index"
       >
         <nuxt-link :to="item.route">
-          <div class="statistics-card rounded-lg shadow-lg px-8 py-4 bg-white hover:bg-gray-300">
-            <div class="flex flex-col my-2">
+          <div class="statistics-card rounded-lg shadow-md px-4 md:px-8 py-4 bg-white hover:bg-gray-300">
+            <div class="flex flex-col">
               <div class="text-sm sm:text-md">{{item.label}}</div>
-              <div class="font-bold text-5xl mt-2">{{item.value}}</div>
+              <div class="font-bold text-5xl">{{item.value}}</div>
             </div>
           </div>
         </nuxt-link>
@@ -118,6 +118,8 @@ a {
 }
 .statistics-card {
   min-height: 130px;
+  display: flex;
+  align-items: center;
 }
 </style>
 

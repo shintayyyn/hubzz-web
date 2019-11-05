@@ -1,6 +1,6 @@
 <template>
   <div class="modal-container shadow-lg">
-    <div class="p-8 max-w-3xl">
+    <div class="p-4 md:p-8 max-w-3xl">
       <nuxt-link
         :to="{ path: `/my-practice/${$route.params.practiceId}/users`, query: {...$route.query}}"
         class="cursor-pointer"
@@ -9,17 +9,17 @@
       </nuxt-link>
       <div class="flex flex-col w-full mt-4">
         <div class="text-md md:text-lg font-bold">User</div>
-        <div class="rounded-lg shadow-lg p-8 mt-4">
+        <div class="rounded-lg shadow-lg p-4 md:p-8 mt-4">
           <div class="flex flex-col">
             <div class="body-info">
               <div
                 class="font-bold text-md md:text-lg"
               >{{user.personal_detail.first_name}} {{user.personal_detail.last_name}}</div>
-              <div class="text-sm sm:text-md mb-8">{{user.practice_detail.practice_role}}</div>
+              <div class="text-sm sm:text-md mb-4 md:mb-8">{{user.practice_detail.practice_role}}</div>
               <div class="font-bold text-md md:text-lg">Surgery</div>
-              <div class="text-sm sm:text-md mb-8">{{user.practice_detail.practice.surgery.name}}</div>
+              <div class="text-sm sm:text-md mb-4 md:mb-8">{{user.practice_detail.practice.surgery.name}}</div>
               <div class="font-bold text-md md:text-lg">Email</div>
-              <div class="text-sm sm:text-md mb-8" v-text="user.email ? user.email : `(none)`"></div>
+              <div class="text-sm sm:text-md" v-text="user.email ? user.email : `(none)`"></div>
               <!-- <div class="font-bold text-md md:text-lg">Phone number</div>
             <div
               class="text-sm sm:text-md mb-8"

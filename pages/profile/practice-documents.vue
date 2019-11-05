@@ -16,7 +16,7 @@
       <div>
         <div
           class="rounded-lg shadow-lg p-4 mt-4"
-          :class="{'practice-doc-card cursor-pointer' : item.existingPracticeComplianceDocument}"
+          :class="{'practice-doc-card cursor-pointer hover:bg-gray-200' : item.existingPracticeComplianceDocument}"
           v-for="item in practiceComplianceDocuments"
           :key="item.practiceDocumentType.id"
           @click="item.existingPracticeComplianceDocument ? show(item.existingPracticeComplianceDocument.id) : ''"
