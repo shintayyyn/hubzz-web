@@ -20,6 +20,7 @@
           @input="$emit('input', $event.target.value)"
           :style="inStyle"
           :format="format"
+          :disabled="disabled"
         />
         <div
           class="text-red-500 text-xs py-1 text-white rounded"
@@ -29,19 +30,25 @@
     </div>
     <transition name="fade">
       <div class="relative md:static z-10 flex justify-center" v-if="modal">
-        <div
-          class="absolute border rounded-b-lg calendar bg-white shadow-md"
-        >
-          <div class="p-2 flex flex-row flex-no-wrap justify-start items-center border-b-2 border-yellow-500">
+        <div class="absolute border rounded-b-lg calendar bg-white shadow-md">
+          <div
+            class="p-2 flex flex-row flex-no-wrap justify-start items-center border-b-2 border-yellow-500"
+          >
             <div class="m-1 w-1/2 flex flex-no-wrap">
-              <select v-model="selectedMonth" class="mr-1 text-xs sm:text-sm py-1 px-1 cursor-pointer bg-gray-200 hover:bg-gray-300 focus:outline-none">
+              <select
+                v-model="selectedMonth"
+                class="mr-1 text-xs sm:text-sm py-1 px-1 cursor-pointer bg-gray-200 hover:bg-gray-300 focus:outline-none"
+              >
                 <option
                   :value="month.value"
                   v-for="(month, index) in filteredMonths"
                   :key="index"
                 >{{month.label}}</option>
               </select>
-              <select v-model="selectedYear" class="ml-1 text-xs sm:text-sm py-1 px-1 cursor-pointer bg-gray-200 hover:bg-gray-300 focus:outline-none">
+              <select
+                v-model="selectedYear"
+                class="ml-1 text-xs sm:text-sm py-1 px-1 cursor-pointer bg-gray-200 hover:bg-gray-300 focus:outline-none"
+              >
                 <option :value="year" v-for="(year, index) in yearLists" :key="index">{{year}}</option>
               </select>
             </div>
@@ -248,7 +255,8 @@ export default {
     format: {
       type: String,
       default: "YYYY-MM-DD"
-    }
+    },
+    disabled: Boolean
   },
   data() {
     return {
@@ -304,13 +312,13 @@ export default {
       }
     },
     getYearLists() {
-      let yearsBefore = []
-      if (!this.isAfter){
+      let yearsBefore = [];
+      if (!this.isAfter) {
         for (let i = 0; i <= 2; i++) {
           this.yearLists.push(
-          this.$moment(this.selectedYear, "YYYY")
-            .subtract(i, "years")
-            .format("YYYY")
+            this.$moment(this.selectedYear, "YYYY")
+              .subtract(i, "years")
+              .format("YYYY")
           );
         }
       }
@@ -322,14 +330,12 @@ export default {
         );
       }
 
-      this.yearLists.sort(function(a, b){
-          return a - b;
+      this.yearLists.sort(function(a, b) {
+        return a - b;
       });
     },
     isSelectedDate(date) {
-      let selectedDate = this.$moment(
-        `${this.selectedMonth + 1}-${date}-${this.selectedYear}`
-      ).format("MM/DD/YYYY");
+      let selectedDate = `${this.selectedYear}-${this.selectedMonth}-${date}`
       return this.$moment(selectedDate).isSame(this.value);
     },
     isSame(date) {
@@ -365,13 +371,14 @@ export default {
         );
         // return if selected month and year === current month and year
         if (
-          (this.selectedMonth.toString() === this.$moment().format("M") &&
-          this.selectedYear.toString() === this.$moment().format("YYYY")) && this.isAfter
+          this.selectedMonth.toString() === this.$moment().format("M") &&
+          this.selectedYear.toString() === this.$moment().format("YYYY") &&
+          this.isAfter
         ) {
           return;
         }
 
-        this.selectedYear = parseInt(this.selectedYear)
+        this.selectedYear = parseInt(this.selectedYear);
 
         if (index === 0 || this.selectedMonth != 1) {
           this.selectedMonth--;

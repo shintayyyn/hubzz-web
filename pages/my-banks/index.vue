@@ -164,7 +164,8 @@ export default {
       this.current_page = page;
       this.$axios
         .$get(
-          `/api/v1/practice/locums?practice_locum_type=${this.$route.query.status}&offset=${this.offset}&limit=${this.perPage}`, { params: { detailed: true } }
+          `/api/v1/practice/locums?practice_locum_type=${this.$route.query.status}&offset=${this.offset}&limit=${this.perPage}`,
+          { params: { detailed: true } }
         )
         .then(res => {
           console.log(res);

@@ -7,8 +7,8 @@
       <div class="leading-loose font-bold text-md sm:text-lg">{{job_part.job.title}}</div>
       <div
         class="mx-2 text-sm sm:text-sm p-2"
-        :class="bgStatus(job_part.job.status)"
-      >{{status(job_part.job.status)}}</div>
+        :class="bgStatus(job_part.status)"
+      >{{status(job_part.status)}}</div>
     </div>
 
     <div class="flex flex-col mt-4">
@@ -134,7 +134,6 @@ export default {
         )
         .then(res => {
           this.user = res.data.user;
-          console.log(this.user);
           this.getProfessionCategory(
             res.data.user.locum_detail.profession.profession_category.id
           );
@@ -186,7 +185,7 @@ export default {
     },
     bgStatus(status) {
       switch (status) {
-        case "Available":
+        case "Live":
           return "bg-yellow-500";
           break;
         case "Applied":

@@ -158,7 +158,6 @@ export default {
     },
     total() {
       if (this.$route.query.job_status) {
-        console.log("has status", this.$route.query.job_status);
         switch (this.$route.query.job_status.toLowerCase()) {
           // parts
           case "ongoing":

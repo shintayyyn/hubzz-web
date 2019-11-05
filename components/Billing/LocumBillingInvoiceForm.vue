@@ -103,8 +103,8 @@
             </div>
           </div>
           <div class="w-full sm:w-1/2 order-1 sm:order-2 sm:text-right leading-normal">
-            <div class="font-bold text-sm sm:text-lg">INVOICE</div>
-            <div class="text-xs sm:text-sm">Not yet issued</div>
+            <div class="font-bold text-sm sm:text-lg">{{selectedInvoice.status.toUpperCase()}}</div>
+            <div class="text-xs sm:text-sm">{{issuedAt | localDate}}</div>
           </div>
         </div>
         <div v-if="selectedSurgery">
@@ -173,9 +173,9 @@
         <table class="items-table">
           <thead>
             <tr>
-              <th class="bg-gray-900 w-1/2 text-white text-left px-4 py-1">Description</th>
+              <th colspan="2" class="bg-gray-900 w-2/3 text-white text-left px-4 py-1">Description</th>
               <th
-                class="bg-gray-900 w-1/2 text-white text-left px-2 py-1"
+                class="bg-gray-900 w-1/3 text-white text-left px-2 py-1"
                 :colspan="type === 'Private' ? 1:2"
               >
                 <span class="flex justify-between items-center">Total</span>
@@ -189,35 +189,96 @@
             </tr>
           </thead>
           <tbody>
-            <tr class="border-b" v-for="(item, index) in selectedJobParts" :key="item.id">
-              <td>
-                <textarea
-                  v-model="item.description"
-                  rows="3"
-                  placeholder="Enter description"
-                  class="w-full text-xs sm:text-sm resize-none border-b-2 border-gray-300 focus:border-yellow-500 focus:outline-none px-4 my-2"
-                ></textarea>
-              </td>
-              <td class="align-end">
-                <div class="my-1 py-1">
+            <template v-for="(item, index) in selectedJobParts">
+              <tr class="border-b" :key="item.id">
+                <td colspan="2">
+                  <textarea
+                    v-model="item.description"
+                    rows="3"
+                    placeholder="Enter description"
+                    class="w-full text-xs sm:text-sm resize-none border-b-2 border-gray-300 focus:border-yellow-500 focus:outline-none px-4 my-2"
+                  ></textarea>
+                </td>
+                <td>
                   <input
                     type="number"
                     min="0"
                     v-model="item.total"
                     placeholder="Enter value"
-                    class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full mt-1 md:mt-3 focus:border-yellow-500"
+                    class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs mt-1 md:mt-3 w-full focus:border-yellow-500"
                   />
-                </div>
-              </td>
-              <td class="align-middle sticky right-0">
-                <div class="flex justify-center">
-                  <span
-                    class="bg-gray-900 hover:bg-black w-6 h-6 cursor-pointer float-right font-semibold inline-flex items-center justify-center px-3 mt-2 rounded-full text-white text-xl mx-auto"
-                    @click="removeSelectedJobPart(item, index)"
-                  >-</span>
-                </div>
-              </td>
-            </tr>
+                </td>
+                <td class="align-middle sticky right-0">
+                  <div class="flex justify-center">
+                    <span
+                      class="bg-gray-900 hover:bg-black w-6 h-6 cursor-pointer float-right font-semibold inline-flex items-center justify-center px-3 mt-2 rounded-full text-white text-xl mx-auto"
+                      @click="removeSelectedJobPart(item, index)"
+                    >-</span>
+                  </div>
+                  <AppInput
+                    v-model="item.dispute"
+                    :type="'single-checkbox'"
+                    :name="'disputed'"
+                    :label="'Dispute'"
+                  />
+                  <!-- <div class="flex flex-row flex-no-wrap justify-start items-center">
+                    <input v-model="item.dispute" id="disputed" type="checkbox" />
+                    <label for="disputed" class="text-xs sm:text-sm py-1 flex items-center">Disputed</label>
+                  </div>-->
+                </td>
+              </tr>
+              <tr class="border-b" :key="`${item.id}-${item.id}`" v-if="item.dispute">
+                <td>
+                  <div class="flex flex-col">
+                    <label for="absent_days">Days of absent</label>
+                    <input
+                      type="number"
+                      min="0"
+                      v-model="item.absent_days"
+                      name="absent_days"
+                      class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
+                    />
+                  </div>
+                </td>
+                <td>
+                  <div class="flex flex-col">
+                    <label for="late_hours">Hours of late</label>
+                  </div>
+                  <input
+                    type="number"
+                    min="0"
+                    v-model="item.late_hours"
+                    name="late_hours"
+                    class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
+                  />
+                </td>
+                <td>
+                  <div class="flex flex-col">
+                    <label for="final_hours">Final hours</label>
+                    <input
+                      type="number"
+                      min="0"
+                      v-model="item.final_hours"
+                      name="final_hours"
+                      class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
+                    />
+                  </div>
+                </td>
+              </tr>
+              <tr class="border-b" :key="`${item.id}-${item.id}-${item.id}`" v-if="item.dispute">
+                <td colspan="3">
+                  <div class="flex flex-col mt-1">
+                    <label for="remarks">Update remarks</label>
+                    <textarea
+                      v-model="item.remarks"
+                      rows="3"
+                      name="remarks"
+                      class="w-full text-xs sm:text-sm resize-none border-b-2 border-gray-300 focus:border-yellow-500 focus:outline-none px-4 my-2"
+                    ></textarea>
+                  </div>
+                </td>
+              </tr>
+            </template>
           </tbody>
         </table>
       </div>
@@ -347,6 +408,11 @@ export default {
         });
         return index === -1 && filterItem;
       });
+    },
+    issuedAt() {
+      return this.selectedInvoice && this.selectedInvoice.issued_at
+        ? this.selectedInvoice.issued_at
+        : "Not yet issued";
     }
   },
   watch: {
@@ -392,7 +458,12 @@ export default {
           type: item.type,
           job_part_id: item.job_part.id,
           description: item.description,
-          total: item.total.toString()
+          total: item.total.toString(),
+          dispute: item.disputed,
+          absent_days: item.absent_days,
+          final_hours: item.final_hours,
+          late_hours: item.late_hours,
+          remarks: item.remarks
         });
       });
     }
@@ -422,17 +493,10 @@ export default {
       this.form.final = final;
       this.Validate(this.form, ["final"]);
       if (!this.formError.length) {
-        // this.form.date_start = this.$moment(this.form.date_start,).format(
-        //   "YYYY-MM-DD"
-        // );
-        // this.form.date_end = this.$moment(this.form.date_end,).format(
-        //   "YYYY-MM-DD"
-        // );
         if (!this.$route.params.id) {
           this.$axios
-            .$post(`/api/v1/locum/invoices`, this.form)
+            .$post(`/api/v1/locum/locum-invoices`, this.form)
             .then(res => {
-              // this.$store.commit("billing/ADD_LOCUM_INVOICE", res.data.invoice);
               this.$emit("addInvoice", res.data.invoice);
               this.$router.push("/locum-billing/invoices");
               this.$store.commit("SET_NOTIFICATION", {
@@ -442,17 +506,19 @@ export default {
               });
             })
             .catch(err => {
-              console.log("err", err);
+              console.log("err", err.response.data);
+              err.response.data.error_messages.forEach(error => {
+                this.formError.push(error);
+              });
             });
         } else {
           this.$axios
-            .$put(`/api/v1/locum/invoices/${this.$route.params.id}`, this.form)
+            .$put(
+              `/api/v1/locum/locum-invoices/${this.$route.params.id}`,
+              this.form
+            )
             .then(res => {
-              this.$emit("updateInvoice", res.data.invoice);
-              // this.$store.commit(
-              //   "billing/UPDATE_LOCUM_INVOICE",
-              //   res.data.invoice
-              // );
+              this.$emit("updateInvoice", res.data.locum_invoice);
               this.$store.commit("SET_NOTIFICATION", {
                 enabled: true,
                 status: "success",
@@ -465,7 +531,6 @@ export default {
               err.response.data.error_messages.forEach(error => {
                 this.formError.push(error);
               });
-              console.log(this.formError);
             });
         }
       }
@@ -586,7 +651,7 @@ export default {
       }
       let invoiceObj = {};
       let total = null;
-      if (jobPart.job.locum_detail_rate_type.id === 1) {
+      if (jobPart.job.locum_detail_rate_type.name === "Per Hour") {
         total = parseInt(jobPart.job.rate) * parseInt(jobPart.job.total_hours);
       } else {
         let dividerTotal = this.$moment(jobPart.date_end, "YYYY-MM-DD").diff(
@@ -599,10 +664,14 @@ export default {
         type: "Job Part",
         job_part_id: jobPart.id,
         description: `Job number ${jobPart.job_part_number} ${jobPart.job.type} Job at £${jobPart.job.rate} per hour from ${jobPart.date_start} / OOH / Total hours at ${jobPart.job.total_hours}`,
-        total: total.toString()
+        total: total.toString(),
+        dispute: jobPart.disputed,
+        absent_days: jobPart.absent_days,
+        final_hours: jobPart.final_hours,
+        late_hours: jobPart.late_hours,
+        remarks: ""
       };
       this.selectedJobParts.push(invoiceObj);
-
       if (!this.filteredJobParts.length) {
         if (this.jobParts.length < this.totalJobParts) {
           this.fetchJobParts();

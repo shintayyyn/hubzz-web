@@ -25,7 +25,7 @@
       </div>
 
       <nuxt-link
-        v-if="$route.path === '/locum-billing/invoices' || $route.path === '/locum-billing/create'"
+        v-if="$route.path === '/locum-billing/invoices' || $route.path === '/locum-billing/invoices/create'"
         to="/locum-billing/invoices/create"
         class="flex flex-row items-center justify-end leading-loose whitespace-no-wrap"
       >
@@ -37,7 +37,7 @@
         >+</div>
       </nuxt-link>
     </div>
-    <div class="">
+    <div class>
       <nuxt-child />
     </div>
   </section>

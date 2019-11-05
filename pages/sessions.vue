@@ -113,9 +113,9 @@
         >Completed</nuxt-link>
         <transition name="fade">
           <div
-            v-if="$store.state.jobs.practice_new_completed_jobs_count > 0"
+            v-if="$store.state.jobs.practice_new_completed_job_parts_count > 0"
             class="rounded-lg bg-red-600 text-white text-xs font-bold py-1 px-2 absolute right-0 top-0"
-          >{{$store.state.jobs.practice_new_completed_jobs_count}}</div>
+          >{{$store.state.jobs.practice_new_completed_job_parts_count}}</div>
         </transition>
       </div>
       <div class="relative">

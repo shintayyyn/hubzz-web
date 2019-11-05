@@ -327,6 +327,7 @@ export default {
       }
       this.foundPracticeJobs = [
         ...foundPracticeAllocatedPartJobs,
+        ...foundPracticeOngoingJobs,
         ...foundPracticeAppliedJobs,
         ...foundPracticeUnfilledJobs,
         ...foundPracticeDeclinedJobs,

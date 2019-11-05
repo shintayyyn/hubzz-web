@@ -170,15 +170,15 @@ export default {
         limit: 5,
         order_by: "date_created:desc"
       };
-      const response = await app.$axios.get("/api/v1/locum/invoices", {
+      const response = await app.$axios.get("/api/v1/locum/locum-invoices", {
         params
       });
       const invoices =
-        response.data && response.data.data && response.data.data.invoices
-          ? response.data.data.invoices
+        response.data && response.data.data && response.data.data.locum_invoices
+          ? response.data.data.locum_invoices
           : [];
       const responseTotal = await app.$axios.get(
-        "/api/v1/locum/invoices/count"
+        "/api/v1/locum/locum-invoices/count"
       );
       const totalInvoices =
         responseTotal.data &&
@@ -274,7 +274,7 @@ export default {
     },
     deleteInvoice() {
       this.$axios
-        .$delete(`/api/v1/locum/invoices/${this.selectedInvoiceId}`)
+        .$delete(`/api/v1/locum/locum-invoices/${this.selectedInvoiceId}`)
         .then(res => {
           this.invoices = this.invoices.filter(
             invoice => invoice.id !== this.selectedInvoiceId

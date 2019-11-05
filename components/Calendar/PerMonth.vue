@@ -213,6 +213,7 @@ export default {
         this.$store.dispatch("jobs/fetchPracticeJobs", {
           calendar_date_start: `${this.startOfMonth}:gte`,
           calendar_date_end: `${this.endOfMonth}:lte`,
+          limit: 100000000,
           status: ["Applied", "Unfilled", "Declined"]
         });
 
@@ -221,6 +222,7 @@ export default {
             `${this.startOfMonth}:gte`,
             `${this.endOfMonth}:lte`
           ],
+          limit: 100000000,
           status: ["Live", "Applied"]
         });
       }

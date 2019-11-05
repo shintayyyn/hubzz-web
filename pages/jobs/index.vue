@@ -701,15 +701,115 @@ export default {
     }
   },
   watch: {
+    getLocumAllocatedJobs(newValue, oldValue) {
+      if (
+        this.params.limit < newValue.length &&
+        oldValue.length > 0 &&
+        this.$route.query.status === "Allocated"
+      ) {
+        this.getJobsCount(this.params);
+      }
+    },
+    getLocumOngoingJobs(newValue, oldValue) {
+      if (
+        this.jobPartParams.limit < newValue.length &&
+        oldValue.length > 0 &&
+        this.$route.query.status === "Ongoing"
+      ) {
+        this.getJobsCount(this.jobPartParams);
+      }
+    },
+    getLocumAvailableJobs(newValue, oldValue) {
+      if (
+        this.params.limit < newValue.length &&
+        oldValue.length > 0 &&
+        this.$route.query.status === "Live"
+      ) {
+        this.getJobsCount(this.params);
+      }
+    },
+    getLocumMatchedJobs(newValue, oldValue) {
+      if (
+        this.params.limit < newValue.length &&
+        oldValue.length > 0 &&
+        this.$route.query.status === "Matched"
+      ) {
+        this.getJobsCount(this.params);
+      }
+    },
+    getLocumAppliedJobs(newValue, oldValue) {
+      if (
+        this.params.limit < newValue.length &&
+        oldValue.length > 0 &&
+        this.$route.query.status === "Applied"
+      ) {
+        this.getJobsCount(this.params);
+      }
+    },
+    getLocumUnsuccessfulJobs(newValue, oldValue) {
+      if (
+        this.params.limit < newValue.length &&
+        oldValue.length > 0 &&
+        this.$route.query.status === "Unsuccessful"
+      ) {
+        this.getJobsCount(this.params);
+      }
+    },
+    getLocumDeclinedJobs(newValue, oldValue) {
+      if (
+        this.params.limit < newValue.length &&
+        oldValue.length > 0 &&
+        this.$route.query.status === "Declined"
+      ) {
+        this.getJobsCount(this.params);
+      }
+    },
+    getLocumCancelledJobs(newValue, oldValue) {
+      if (
+        this.params.limit < newValue.length &&
+        oldValue.length > 0 &&
+        this.$route.query.status === "Cancelled"
+      ) {
+        this.getJobsCount(this.params);
+      }
+    },
+    getLocumWithdrawnJobs(newValue, oldValue) {
+      if (
+        this.params.limit < newValue.length &&
+        oldValue.length > 0 &&
+        this.$route.query.status === "Withdrawn"
+      ) {
+        this.getJobsCount(this.params);
+      }
+    },
+    getLocumCompletedJobs(newValue, oldValue) {
+      if (
+        this.jobPartParams.limit < newValue.length &&
+        oldValue.length > 0 &&
+        this.$route.query.status === "Completed"
+      ) {
+        this.getJobsCount(this.jobPartParams);
+      }
+    },
+    getLocumApprovedJobs(newValue, oldValue) {
+      if (
+        this.jobPartParams.limit < newValue.length &&
+        oldValue.length > 0 &&
+        this.$route.query.status === "Approved"
+      ) {
+        this.getJobsCount(this.jobPartParams);
+      }
+    },
     "$route.query"({ status: newStatus }, { status: oldStatus }) {
       if (newStatus && newStatus !== null && newStatus !== oldStatus) {
+        this.current_page = 1;
         this.toggleTable = false;
         this.filterToggle = false;
-        setTimeout(() => {
+        setTimeout(async () => {
           this.clearJobsBadge(newStatus);
-          this.clearFilters();
-        }, 1000);
-        this.getJobsCount(this.isJobPart ? this.jobPartParams : this.params);
+          await this.clearFilters();
+          this.getJobsCount(this.isJobPart ? this.jobPartParams : this.params);
+        }, 500);
       }
     }
   },
@@ -824,6 +924,8 @@ export default {
       this.getJobs(this.isJobPart ? this.jobPartParams : this.params);
     },
     clearFilters() {
+      this.params.offset = 0;
+      this.params.limit = 5;
       this.params.type = "";
       this.params.job_number = "";
       this.params.surgery_id = "";
@@ -831,7 +933,10 @@ export default {
       this.params.shift_id = "";
       this.params.rate = "";
       this.params.rate_type_id = "";
+      this.params.order_by = ["date_created:desc"];
 
+      this.jobPartParams.offset = 0;
+      this.jobPartParams.limit = 5;
       this.jobPartParams.job_type = "";
       this.jobPartParams.job_part_number = "";
       this.jobPartParams.job_surgery_id = "";
@@ -840,15 +945,15 @@ export default {
       this.jobPartParams.job_rate = "";
       this.jobPartParams.job_rate_type_id = "";
       this.jobPartParams.invoice_status = "";
-
       this.jobPartParams.near_post_code = "";
       this.jobPartParams.miles = "";
       this.jobPartParams.calendar_date_start = "";
       this.jobPartParams.calendar_date_end = "";
       this.jobPartParams.time_start = "";
       this.jobPartParams.time_end = "";
-      this.params.order_by = ["date_created:desc"];
       this.jobPartParams.order_by = ["date_created:desc"];
+
+      return;
     },
     onSelect(value) {
       let address_components = value.details.result.address_components;
