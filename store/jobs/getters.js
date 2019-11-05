@@ -398,13 +398,13 @@ export default {
             }
             if (notif.reminder) {
                 let reminder_message = ''
-                if (job_reminded_in_1_hours === 1) {
+                if (notif.job_reminded_in_1_hours === 1) {
                     reminder_message = 'This Job will start in 1 hour'
-                } else if (job_reminded_in_3_hours) {
+                } else if (notif.job_reminded_in_3_hours) {
                     reminder_message = 'This Job will start in 3 hours'
-                } else if (job_reminded_in_1_days === 1) {
+                } else if (notif.job_reminded_in_1_days === 1) {
                     reminder_message = 'This Job will start tomorrow'
-                } else if (job_reminded_in_3_days === 1) {
+                } else if (notif.job_reminded_in_3_days === 1) {
                     reminder_message = 'This Job will start in 3 days'
                 }
                 notifications.push({ reminder_message })

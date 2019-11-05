@@ -1,5 +1,6 @@
 export default {
-    async initializeJobListener({ state, commit, dispatch }) {
+    async initializeJobListener({ state, commit, dispatch }, payload) {
+        console.log(payload)
         // LOCUM
         this.$socket.on('Locum Notification Job Reminder', (job) => {
             dispatch('fetchLocumJob', { jobId: job.id, notifyOnly: true })

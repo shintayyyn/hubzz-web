@@ -701,11 +701,108 @@ export default {
     }
   },
   watch: {
+    getLocumAllocatedJobs(newValue, oldValue) {
+      if (
+        this.params.limit < newValue.length &&
+        oldValue.length > 0 &&
+        this.$route.query.status === "Allocated"
+      ) {
+        this.getJobsCount(this.params);
+      }
+    },
+    getLocumOngoingJobs(newValue, oldValue) {
+      if (
+        this.jobPartParams.limit < newValue.length &&
+        oldValue.length > 0 &&
+        this.$route.query.status === "Ongoing"
+      ) {
+        this.getJobsCount(this.jobPartParams);
+      }
+    },
+    getLocumAvailableJobs(newValue, oldValue) {
+      if (
+        this.params.limit < newValue.length &&
+        oldValue.length > 0 &&
+        this.$route.query.status === "Live"
+      ) {
+        this.getJobsCount(this.params);
+      }
+    },
+    getLocumMatchedJobs(newValue, oldValue) {
+      if (
+        this.params.limit < newValue.length &&
+        oldValue.length > 0 &&
+        this.$route.query.status === "Matched"
+      ) {
+        this.getJobsCount(this.params);
+      }
+    },
+    getLocumAppliedJobs(newValue, oldValue) {
+      if (
+        this.params.limit < newValue.length &&
+        oldValue.length > 0 &&
+        this.$route.query.status === "Applied"
+      ) {
+        this.getJobsCount(this.params);
+      }
+    },
+    getLocumUnsuccessfulJobs(newValue, oldValue) {
+      if (
+        this.params.limit < newValue.length &&
+        oldValue.length > 0 &&
+        this.$route.query.status === "Unsuccessful"
+      ) {
+        this.getJobsCount(this.params);
+      }
+    },
+    getLocumDeclinedJobs(newValue, oldValue) {
+      if (
+        this.params.limit < newValue.length &&
+        oldValue.length > 0 &&
+        this.$route.query.status === "Declined"
+      ) {
+        this.getJobsCount(this.params);
+      }
+    },
+    getLocumCancelledJobs(newValue, oldValue) {
+      if (
+        this.params.limit < newValue.length &&
+        oldValue.length > 0 &&
+        this.$route.query.status === "Cancelled"
+      ) {
+        this.getJobsCount(this.params);
+      }
+    },
+    getLocumWithdrawnJobs(newValue, oldValue) {
+      if (
+        this.params.limit < newValue.length &&
+        oldValue.length > 0 &&
+        this.$route.query.status === "Withdrawn"
+      ) {
+        this.getJobsCount(this.params);
+      }
+    },
+    getLocumCompletedJobs(newValue, oldValue) {
+      if (
+        this.jobPartParams.limit < newValue.length &&
+        oldValue.length > 0 &&
+        this.$route.query.status === "Completed"
+      ) {
+        this.getJobsCount(this.jobPartParams);
+      }
+    },
+    getLocumApprovedJobs(newValue, oldValue) {
+      if (
+        this.jobPartParams.limit < newValue.length &&
+        oldValue.length > 0 &&
+        this.$route.query.status === "Approved"
+      ) {
+        this.getJobsCount(this.jobPartParams);
+      }
+    },
     "$route.query"({ status: newStatus }, { status: oldStatus }) {
-      // console.log(this.current_page);
-      // this.current_page = 1;
-      // console.log(this.current_page);
       if (newStatus && newStatus !== null && newStatus !== oldStatus) {
+        this.current_page = 1;
         this.toggleTable = false;
         this.filterToggle = false;
         setTimeout(async () => {
