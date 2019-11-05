@@ -5,13 +5,14 @@
         <AppLoading :loading="loading" spinner />
         <div class="flex flex-row flex-wrap justify-start">
           <div
-            class="w-full md:w-1/3 lg:w-1/4 rounded-lg shadow-lg bg-gray-300 m-2 p-4 hover:bg-gray-400"
+            class="w-full md:w-1/3 lg:w-1/4 p-2 "
             v-for="locum in locums"
             :key="locum.id"
           >
+          <div class="h-full rounded-lg shadow-lg bg-gray-300 hover:bg-gray-400 p-4">
             <nuxt-link :to="{ path: `/my-banks/${locum.id}`, query: {...$route.query}}">
               <div
-                class="flex justify-end z-50"
+                class="flex justify-end z-50 "
                 v-if="authPermissions.includes('Favorite MyBanks Locum')"
               >
                 <template v-if="locum.is_favorite">
@@ -50,12 +51,14 @@
               </div>
             </nuxt-link>
           </div>
+          </div>
         </div>
         <div class="mt-5 flex justify-center" v-if="locums.length > 0 && totalPages > 1">
           <AppPagination
             :total="total"
             :totalPages="totalPages"
             :currentPage="current_page"
+            :perPage="perPage"
             @pagechanged="pagechanged"
           />
         </div>
@@ -110,7 +113,8 @@ export default {
       current_page: 1,
       loading: false,
       toggleTable: false,
-      is_favorite: false
+      is_favorite: false,
+      detailed: true
     };
   },
   computed: {
@@ -118,7 +122,7 @@ export default {
       return this.perPage * (this.current_page - 1);
     },
     perPage() {
-      return 5;
+      return 8;
     },
     totalPages() {
       return Math.ceil(this.total / this.perPage);

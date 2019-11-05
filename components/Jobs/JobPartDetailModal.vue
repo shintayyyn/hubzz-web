@@ -1,6 +1,6 @@
 <template>
   <div class="p-4 md:p-8">
-    <div @click="close" class="cursor-pointer">
+    <div @click="close" class="cursor-pointer ">
       <svgicon name="left-arrow" height="32" width="32" />
     </div>
     <div class="flex flex-row flex-wrap justify-start items-center my-2">
@@ -19,12 +19,12 @@
     </div>
 
     <div
-      class="text-xs sm:text-sm py-2"
+      class="text-xs sm:text-sm py-2 border"
     >Posted {{$moment(job_part.date_created).format('DD/MM/YYYY')}}</div>
 
     <div class="flex flex-col mt-4">
       <div class="flex flex-wrap justify-start">
-        <div class="p-0 md:pr-4 w-full md:w-1/2">
+        <div class="p-0 md:pr-4 w-full md:w-1/2 border">
           <JobPartDetailModalInfo :job_part="job_part" />
           <JobDetailModalUnassignForm
             :job="job_part.job"

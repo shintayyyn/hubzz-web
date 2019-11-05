@@ -1,18 +1,18 @@
 <template>
   <section>
-    <div class="flex flex-wrap justify-start items-center">
+    <div class="flex flex-wrap items-center">
       <div
-        class="save-button text-xs sm:text-sm ml-4 mx-2 py-2 px-3 border-2 rounded-lg font-bold flex items-center"
+        class="save-button text-xs sm:text-sm px-4 py-2 border-2 rounded-lg font-bold flex items-center mr-1 md:mr-4"
         @click="save(false)"
       >Save changes</div>
       <div
-        class="save-button text-xs sm:text-sm my-2 mx-2 py-2 px-3 border-2 rounded-lg font-bold flex items-center"
+        class="save-button text-xs sm:text-sm px-4 py-2 border-2 rounded-lg font-bold flex items-center"
         @click="save(true)"
       >Save and archive as final</div>
     </div>
 
-    <div class="flex flex-row flex-wrap justify-start items-center my-4">
-      <label class="mx-1 py-2 px-3">Type:</label>
+    <div class="flex flex-row flex-wrap justify-start items-center my-2 md:my-4">
+      <label class="mx-1">Type:</label>
       <button
         :class="type === 'Private' ? 'bg-yellow-500 border-yellow-500' : 'hover:bg-gray-200'"
         class="text-xs sm:text-sm mx-1 py-2 px-3 border-2 rounded-lg font-bold flex items-center focus:outline-none"
@@ -27,7 +27,7 @@
       >Platform</button>
     </div>
 
-    <div class="max-w-3xl my-4 bg-white px-4 py-4 border shadow-md mb-32">
+    <div class="max-w-3xl mb-4 bg-white px-4 py-4 border shadow-md">
       <div class="flex flex-col">
         <div class="text-xs sm:text-sm sm:text-right leading-normal">
           <div>{{$auth.user.personal_detail.name}}</div>
@@ -283,8 +283,8 @@
         </table>
       </div>
 
-      <div class="flex flex-row flex-wrap justify-between px-2">
-        <div class="w-full md:w-1/2 pr-1">
+      <div class="flex flex-row flex-wrap justify-between md:px-2">
+        <div class="w-full md:w-1/2 md:pr-1">
           <AppDate
             v-model="form.date_start"
             :name="'date_start'"
@@ -292,7 +292,7 @@
             :error="formError.find(item => item.field === 'date_start')"
           />
         </div>
-        <div class="w-full md:w-1/2 pl-1">
+        <div class="w-full md:w-1/2 md:pl-1">
           <AppDate
             v-model="form.date_end"
             :name="'date_end'"
@@ -302,7 +302,7 @@
         </div>
       </div>
 
-      <div class="flex justify-between m-2">
+      <div class="flex justify-between md:m-2">
         <span class="font-bold">Total</span>
         <div>
           <div class="flex justify-end">

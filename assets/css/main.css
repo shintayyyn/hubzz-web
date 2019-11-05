@@ -303,6 +303,8 @@ input[type="checkbox"] + label::before {
   vertical-align: text-top;
   width: 18px;
   height: 18px;
+  min-width: 18px;
+  min-height: 18px;
   background: #eee;
 }
 
@@ -325,31 +327,27 @@ input[type="checkbox"]:checked + label:after {
 .customized-select {
   position: relative;
 }
-/* 
-.customized-select::after {
-  content: "";
-  background-image: url("../../static/svg/arrow-up.svg");
-  background-size: 24px 24px;
-  background-repeat: no-repeat;
-  background-position: 50%;
-  position: absolute;
-  right: 0;
-  top: 0;
-  margin-right: 8px;
-  height: 100%;
-  width: 20px;
-  padding: 0 15px;
-  display: flex;
-  align-items: center;
-  transform: rotate(180deg);
-  cursor: pointer;
-} */
 
 .customized-select select {
   appearance: none;
   padding: 10px 15px;
   background: transparent;
-  /* cursor: pointer; */
   padding-right: 40px;
   z-index: 1;
+}
+
+.error {
+  animation: background-fade 5s forwards;
+}
+
+@keyframes background-fade {
+  0% {
+    background: transparent;
+  }
+  50% {
+    background: #fed7d7;
+  }
+  100% {
+    background: transparent;
+  }
 }

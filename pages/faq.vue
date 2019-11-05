@@ -14,57 +14,43 @@
 
         <div v-for="item in locum_faqs" :key="item.id">
           <div
-            class="border border-white border-solid bg-gray-300 p-4 flex justify-between items-center cursor-pointer"
+            class="border border-white border-solid bg-gray-300 py-2 px-4 md:py-4 flex justify-between items-center cursor-pointer"
             @click="item.toggled = !item.toggled"
           >
             <div>{{item.question}}</div>
-            <div class="font-bold text-lg">
-              <svgicon name="arrow-right" height="15" width="15" v-if="!item.toggled" />
-              <svgicon name="arrow-up" height="25" width="25" color="black" v-else />
+            <div>
+              <svgicon name="arrow-right" height="15" width="15" :class="item.toggled ? 'rotate' : 'arrow'" />
             </div>
           </div>
-          <transition name="drop-down">
+          <transition name="drop-down" mode="out-in">
             <div
               class="flex justify-start item-answer font-bold text-sm overflow-hidden"
               v-if="item.toggled"
             >
-              <div v-html="item.answer" class="w-full px-4 py-2 h-auto"></div>
+              <div v-html="item.answer" class="w-full px-2 md:px-4 py-2 h-auto"></div>
             </div>
           </transition>
-          <!-- <div
-            class="flex justify-start item-answer font-bold text-sm overflow-hidden"
-            :class="{'toggled': item.toggled}"
-          >
-            <div v-html="item.answer" class="w-full px-4"></div>
-          </div>-->
         </div>
 
         <div class="font-bold mt-4 mb-2">Practice</div>
         <div v-for="item in practice_faqs" :key="item.id">
           <div
-            class="border border-white border-solid bg-gray-300 p-4 flex justify-between items-center cursor-pointer"
+            class="border border-white border-solid bg-gray-300 py-2 px-4 md:py-4 flex justify-between items-center cursor-pointer"
             @click="item.toggled = !item.toggled"
           >
             <div>{{item.question}}</div>
-            <div class="font-bold text-lg">
-              <svgicon name="arrow-right" height="15" width="15" v-if="!item.toggled" />
-              <svgicon name="arrow-up" height="25" width="25" color="black" v-else />
+            <div>
+              <svgicon name="arrow-right" height="15" width="15" :class="item.toggled ? 'rotate' : 'arrow'" />
             </div>
           </div>
-          <transition name="drop-down">
+          <transition name="drop-down" mode="out-in">
             <div
               class="flex justify-start item-answer font-bold text-sm overflow-hidden"
               v-if="item.toggled"
             >
-              <div v-html="item.answer" class="w-full px-4 py-2 h-auto"></div>
+              <div v-html="item.answer" class="w-full px-2 md:px-4 py-2 h-auto"></div>
             </div>
           </transition>
-          <!-- <div
-            class="flex justify-start item-answer font-bold text-sm overflow-hidden"
-            :class="{'toggled': item.toggled}"
-          >
-            <div v-html="item.answer" class="w-full h-auto px-4"></div>
-          </div>-->
         </div>
       </div>
     </div>
@@ -101,5 +87,14 @@ export default {
 }
 .toggled {
   height: auto;
+}
+.rotate {
+  transform: rotate(90deg);
+  transition: transform .3s ease-in-out;
+}
+
+.arrow{
+  transform: rotate(0deg);
+  transition: transform .3s ease-in-out;
 }
 </style>

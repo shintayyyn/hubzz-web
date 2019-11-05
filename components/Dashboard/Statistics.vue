@@ -8,10 +8,10 @@
         :key="index"
       >
         <nuxt-link :to="item.route">
-          <div class="statistics-card rounded-lg shadow-lg px-8 py-4 bg-white hover:bg-gray-300">
-            <div class="flex flex-col my-2">
+          <div class="statistics-card rounded-lg shadow-md px-4 md:px-8 py-4 bg-white hover:bg-gray-300">
+            <div class="flex flex-col">
               <div class="text-sm sm:text-md">{{item.label}}</div>
-              <div class="font-bold text-5xl mt-2">{{item.value}}</div>
+              <div class="font-bold text-5xl">{{item.value}}</div>
             </div>
           </div>
         </nuxt-link>
@@ -37,28 +37,30 @@ export default {
   methods: {
     getLocumStats() {
       Promise.all([
-        this.$axios.$get(`/api/v1/locum/jobs/count?locum_status=Available`),
-        this.$axios.$get(`/api/v1/locum/jobs/count?locum_status=Current`),
+        this.$axios.$get(
+          `/api/v1/locum/jobs/count?locum_status=Available&locum_status=Matched`
+        ),
+        this.$axios.$get(`/api/v1/locum/jobs/count?locum_status=Allocated`),
         this.$axios.$get(`/api/v1/locum/jobs/count?locum_status=Applied`),
-        this.$axios.$get(`/api/v1/locum/jobs/count?locum_status=Completed`)
+        this.$axios.$get(`/api/v1/locum/job-parts/count?locum_status=Completed`)
       ]).then(responses => {
         this.statistics.push({
-          label: "Available jobs",
+          label: "Available Jobs",
           value: responses[0].data.count,
           route: "/jobs?status=Available"
         }),
           this.statistics.push({
-            label: "Allocated jobs",
+            label: "Allocated Jobs",
             value: responses[1].data.count,
             route: "/jobs?status=Allocated"
           }),
           this.statistics.push({
-            label: "Applied jobs",
+            label: "Applied Jobs",
             value: responses[2].data.count,
             route: "/jobs?status=Applied"
           }),
           this.statistics.push({
-            label: "Completed jobs",
+            label: "Completed Job Parts",
             value: responses[3].data.count,
             route: "/jobs?status=Completed"
           });
@@ -72,7 +74,7 @@ export default {
         this.$axios.$get(`/api/v1/practice/jobs/count?status=Applied`),
         this.$axios.$get(`/api/v1/practice/jobs/count?status=Allocated`),
         this.$axios.$get(`/api/v1/practice/jobs/count?status=Live`),
-        this.$axios.$get(`/api/v1/practice/jobs/count?status=Completed`),
+        this.$axios.$get(`/api/v1/practice/job-parts/count?status=Completed`),
         this.$axios.$get(`/api/v1/practice/jobs/count?status=Unfilled`)
       ]).then(responses => {
         this.statistics.push({
@@ -81,27 +83,27 @@ export default {
           route: "/my-banks?status=Applied"
         }),
           this.statistics.push({
-            label: "Applied jobs",
+            label: "Applied Jobs",
             value: responses[1].data.count,
             route: "/sessions?status=Applied"
           }),
           this.statistics.push({
-            label: "Assigned jobs",
+            label: "Assigned Jobs",
             value: responses[2].data.count,
             route: "/sessions?status=Allocated"
           }),
           this.statistics.push({
-            label: "Available jobs",
+            label: "Available Jobs",
             value: responses[3].data.count,
             route: "/sessions?status=Live"
           });
         this.statistics.push({
-          label: "Completed jobs",
+          label: "Completed Job Parts",
           value: responses[4].data.count,
           route: "/sessions?status=Completed"
         });
         this.statistics.push({
-          label: "Unfilled jobs",
+          label: "Unfilled Jobs",
           value: responses[5].data.count,
           route: "/sessions?status=Unfilled"
         });
@@ -118,6 +120,8 @@ a {
 }
 .statistics-card {
   min-height: 130px;
+  display: flex;
+  align-items: center;
 }
 </style>
 

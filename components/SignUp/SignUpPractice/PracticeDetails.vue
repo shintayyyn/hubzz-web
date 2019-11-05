@@ -12,7 +12,7 @@
             :placeholder="'Practice code, name of practice'"
           />
         </div>
-        <AppButton :label="'Search'" @click="search" :inStyle="'padding:5px 14px;'" />
+        <AppButton :label="'Search'" @click="search" :inStyle="'padding:5px 14px;'" class="w-1/3" />
       </div>
     </div>
 
@@ -24,7 +24,7 @@
 
     <div class="flex w-full justify-center xl:justify-start">
       <div
-        class="rounded-lg shadow-lg mt-5 mx-4 m-1 w-full"
+        class="rounded-lg shadow-md mt-5 mx-4 m-1 w-full"
         v-if="showResult && surgeries.length > 0"
       >
         <div
@@ -32,7 +32,7 @@
         >Select by clicking on the practice that you wish to add</div>
         <div
           class="border-t-2 p-4 cursor-pointer"
-          :class="selectedSurgeryId === item.id ? 'bg-yellow-500':'hover:bg-gray-400'"
+          :class="selectedSurgeryId === item.id ? 'bg-yellow-500':'hover:bg-gray-200'"
           v-for="(item) in surgeries"
           :key="item.id"
           @click="selectedSurgeryId = item.id"
@@ -52,7 +52,7 @@
             </div>
           </div>
         </div>
-        <div class="border-t-2 p-4 text-xs xl:text-base">
+        <div class="border-t-2 px-4 py-2 text-xs xl:text-sm">
           <p class="font-bold">These are just top 10 matches from your search term.</p>
           <p
             class="font-bold"
