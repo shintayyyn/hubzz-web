@@ -36,9 +36,8 @@
               <div>Shift</div>
               <div>{{notification.shift}}</div>
             </div>
-            <div v-if="notification.reminder" class="flex justify-between items-center my-1 w-full">
-              <div>Reminder</div>
-              <div>{{notification.reminder_message}}</div>
+            <div v-if="notification.reminder">
+              <div class="font-semibold">{{notification.reminder_message}}</div>
             </div>
           </div>
         </div>
