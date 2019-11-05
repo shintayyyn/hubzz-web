@@ -6,33 +6,23 @@
           <svgicon name="left-arrow" height="32" width="32" />
         </nuxt-link>
       </div>
-      <template v-if="isEditable">
-        <BillingInvoiceForm
-          :selectedInvoice="invoice"
-          @updateInvoice="$emit('updateInvoice', $event)"
-        />
-      </template>
-      <template v-if="!isEditable">
-        <iframe :src="invoice.file.url" height="90%" width="100%"></iframe>
-      </template>
+      <LocumBillingInvoiceForm
+        :selectedInvoice="invoice"
+        @updateInvoice="$emit('updateInvoice', $event)"
+      />
     </div>
   </div>
 </template>
 
 <script>
-import BillingInvoiceForm from "@/components/Billing/BillingInvoiceForm";
+import LocumBillingInvoiceForm from "@/components/Billing/LocumBillingInvoiceForm";
 export default {
   transition: {
     name: "slide",
     mode: "out-in"
   },
   components: {
-    BillingInvoiceForm
-  },
-  computed: {
-    isEditable() {
-      return !this.invoice.file;
-    }
+    LocumBillingInvoiceForm
   },
   async asyncData({ app, error, params }) {
     try {
@@ -40,12 +30,14 @@ export default {
         document.body.style.cursor = "wait";
       }
       const response = await app.$axios.get(
-        `/api/v1/locum/invoices/${params.id}`
+        `/api/v1/locum/locum-invoices/${params.id}`
       );
       const invoice =
-        response.data && response.data.data && response.data.data.invoice
-          ? response.data.data.invoice
+        response.data && response.data.data && response.data.data.locum_invoice
+          ? response.data.data.locum_invoice
           : null;
+
+      console.log("invoice", invoice);
 
       if (process.client) {
         document.body.style.cursor = "auto";

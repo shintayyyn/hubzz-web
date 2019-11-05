@@ -9,7 +9,7 @@
       :perPage="params.limit"
       :columns="columns"
       :orderBy="params.order_by"
-      @show="show"
+      :routerLink="'/practice-billing/invoices-from-locums'"
       @pagechanged="pagechanged"
       @limitchanged="limitchanged"
       @sorted="sorted"
@@ -108,11 +108,11 @@ export default {
         {
           name: "Issued",
           dataIndex: "issued_at",
-          class: "text-center localDate",
+          class: "text-center localDate"
         },
         {
           name: "Locum",
-          dataIndex: "locum_detail.user.personal_detail.first_name",
+          dataIndex: "locum_user.name",
           class: "text-center"
         },
         {
@@ -173,10 +173,10 @@ export default {
       });
 
       const invoices =
-        response.data && response.data.data && response.data.data.invoices
-          ? response.data.data.invoices
+        response.data && response.data.data && response.data.data.locum_invoices
+          ? response.data.data.locum_invoices
           : [];
-      console.log("invoice", invoices)
+      console.log("invoice", invoices);
       return {
         totalInvoices,
         invoices
@@ -267,9 +267,6 @@ export default {
       this.params.offset = 0;
       this.params.limit = limit;
       this.getInvoices(this.params);
-    },
-    show(item) {
-      this.$router.push(`/practice-billing/invoices-from-locums/${item.id}`);
     }
   }
 };
