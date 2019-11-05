@@ -1,7 +1,7 @@
 <template>
   <div class="app-notification">
     <div
-      class="relative rounded-b-lg py-2 px-8 inline-block text-center"
+      class="relative rounded-b-lg py-2 px-4 md:px-8 flex text-center"
       :class="notificationStatus"
       v-if="$store.state.notification.enabled && $store.state.notification.status != 'message'"
     >
@@ -173,6 +173,7 @@ export default {
   .app-notification {
     width: 100%;
     left: 0;
+    margin-left: 0;
   }
 }
 </style>

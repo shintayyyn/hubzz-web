@@ -37,8 +37,8 @@
           <div class="text-sm sm:text-md">On this date</div>
           <div class="text-md sm:text-lg font-bold mt-2">{{$store.state.availability.selected_date}}</div>
         </div>
-        <div class="flex flex-row flex-wrap justify-start mt-4 relative">
-          <div class="text-sm sm:text-md leading-loose mr-2">On theses shifts</div>
+        <div class="flex flex-row flex-wrap items-center justify-between mt-4 relative">
+          <div class="text-sm sm:text-md leading-loose mr-4">On theses shifts</div>
           <div
             class="rounded-lg bg-gray-300 px-2 py-1 text-sm sm:text-md flex items-center"
             v-if="type === 'solo'"
@@ -48,12 +48,12 @@
             v-else
           >Select all that apply.</div>
           <div
-            class="absolute right-0 bg-red-500 p-1 text-xs sm:text-base text-white"
+            class="text-red-500 text-xs text-white"
             v-if="formError.find(item => item.field === 'shift_id') && formError.find(item => item.field === 'shift_id').message"
-          >{{formError.find(item => item.field === 'shift_id').message}}</div>
+          >{{formError.find(item => item.field === 'shift_id').message.charAt(0).toUpperCase() + formError.find(item => item.field === 'shift_id').message.slice(1).replace(/_/g, " ")}}</div>
         </div>
 
-        <div class="flex flex-row flex-wrap justify-around md:justify-between mt-4">
+        <div class="flex flex-row flex-wrap justify-around md:justify-between mt-4" :class="formError.find(item => item.field === 'shift_id') && 'error rounded-lg'">
           <button
             class="relative border border-solid rounded-lg p-5 my-2 md:m-1 text-center text-xs sm:text-sm focus:outline-none w-full sm:w-1/3 md:w-1/6"
             :class="{
@@ -286,4 +286,3 @@ export default {
   }
 };
 </script>
-
