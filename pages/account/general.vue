@@ -12,16 +12,16 @@
         @submit="save"
         @blur="CheckEmptyField(form.email, 'email')"
       />
-      <div class="-mt-6 mb-4">
+      <div class="-mt-4 mb-4">
         <template v-if="email_verifiedAt">
           <span
             class="text-xs"
           >E-mail is Verified on {{$moment(email_verifiedAt).format('MMM DD, YYYY | hh:mm A')}}</span>
         </template>
-        <template v-if="!email_verifiedAt">
+        <template v-else>
           <span class="text-red-500 text-xs">E-mail is not yet verified.</span>
           <span
-            class="p-1 bg-gray-800 rounded text-xs text-white cursor-pointer whitespace-no-wrap"
+            class="my-1 p-1 bg-gray-800 rounded text-xs text-white cursor-pointer whitespace-no-wrap"
             @click="resendEmailVerification()"
           >Click here to re-send</span>
         </template>
@@ -92,7 +92,7 @@
         :label="'Work Number'"
         @submit="save"
       />
-      <div class="rounded-lg bg-gray-400 p-8 my-2">
+      <div class="rounded-lg bg-gray-400 p-4 md:p-8 my-2">
         <AppPostCode
           v-model="form.post_code"
           :name="'post_code'"

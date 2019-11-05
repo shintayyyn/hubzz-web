@@ -1,6 +1,8 @@
 export default () => ({
     loading_jobs: true,
     // PRACTICE
+    // notification
+    practice_job_notifications: [],
     // parts
     practice_allocated_job_parts: [],
     practice_allocated_job_parts_count: 0,
@@ -42,6 +44,8 @@ export default () => ({
     // reminder
 
     // LOCUM
+    // notification
+    locum_job_notifications: [],
     // parts
     locum_allocated_job_parts: [],
     locum_allocated_job_parts_count: 0,

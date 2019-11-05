@@ -2,7 +2,7 @@
   <div class="availability-shift rounded-lg shadow-lg">
     <form class="w-full p-5">
       <div class="relative flex flex-col">
-        <div class="relative flex flex-row flex-wrap justify-start">
+        <div class="relative flex flex-row flex-wrap justify-between">
           <div
             v-if="shifts_error"
             class="absolute right-0 bg-red-500 p-1 text-xs sm:text-base text-white"

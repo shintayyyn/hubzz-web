@@ -102,10 +102,10 @@
         <div class="w-full text-left my-auto" style="min-width: 60px">PM</div>
         <template v-for="({id, date}, index) in daysInWeek">
           <div
-            v-if="hasPracticeOngoingJobs(date, 'AM')"
+            v-if="hasPracticeOngoingJobs(date, 'PM')"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-green-400 hover:bg-gray-300"
             :key="`${date}-${index}-${id}-${id}`"
-            @click="selectDateShift(date, 'AM')"
+            @click="selectDateShift(date, 'PM')"
           ></div>
           <div
             v-else-if="hasPracticeAllocatedPartJobs(date, 'PM')"
@@ -150,10 +150,10 @@
         <div class="w-full text-left my-auto" style="min-width: 60px">OOH</div>
         <template v-for="({id, date}, index) in daysInWeek">
           <div
-            v-if="hasPracticeOngoingJobs(date, 'AM')"
+            v-if="hasPracticeOngoingJobs(date, 'OOH')"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-green-400 hover:bg-gray-300"
             :key="`${date}-${index}-${id}-${id}`"
-            @click="selectDateShift(date, 'AM')"
+            @click="selectDateShift(date, 'OOH')"
           ></div>
           <div
             v-else-if="hasPracticeAllocatedPartJobs(date, 'OOH')"
@@ -198,10 +198,10 @@
         <div class="w-full text-left my-auto" style="min-width: 60px">Whole Day</div>
         <template v-for="({id, date}, index) in daysInWeek">
           <div
-            v-if="hasPracticeOngoingJobs(date, 'AM')"
+            v-if="hasPracticeOngoingJobs(date, 'Whole Day')"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-green-400 hover:bg-gray-300"
             :key="`${date}-${index}-${id}-${id}`"
-            @click="selectDateShift(date, 'AM')"
+            @click="selectDateShift(date, 'Whole Day')"
           ></div>
           <div
             v-else-if="hasPracticeAllocatedPartJobs(date, 'Whole Day')"
@@ -604,6 +604,7 @@ export default {
         this.$store.dispatch("jobs/fetchPracticeJobs", {
           calendar_date_start: `${this.firstDayOfTheWeek}:gte`,
           calendar_date_end: `${this.lastDayOfTheWeek}:lte`,
+          limit: 100000000,
           status: ["Applied", "Unfilled", "Declined"]
         });
 
@@ -612,6 +613,7 @@ export default {
             `${this.firstDayOfTheWeek}:gte`,
             `${this.lastDayOfTheWeek}:lte`
           ],
+          limit: 100000000,
           status: ["Live", "Applied"]
         });
       }

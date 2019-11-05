@@ -45,7 +45,7 @@
                   name="arrow-left"
                   height="12"
                   width="12"
-                  :color="selectedYear.toString() === $moment().format('YYYY') && selectedMonth.toString() === $moment().format('M') ? 'gray' : ''"
+                  :color="(selectedYear.toString() === $moment().format('YYYY') && selectedMonth.toString() === $moment().format('M')) && isAfter ? 'gray' : ''"
                 />
               </span>
               <span class="cursor-pointer ml-1" @click="adjustMonth('next')">
@@ -269,14 +269,14 @@ export default {
   },
   watch: {
     selectedMonth(value) {
-      this.getDaysInMonth(value.toString(), this.selectedYear.toString());
+      // this.getDaysInMonth(value, parseInt(this.selectedYear));
     },
     selectedYear(value) {
       // set selected month to this current month if selected year === current year
       if (value === this.$moment().format("YYYY")) {
         this.selectedMonth = this.filteredMonths[0].value;
       }
-      this.getDaysInMonth(this.selectedMonth.toString(), value.toString());
+      // this.getDaysInMonth(this.selectedMonth.toString(), value.toString());
     }
   },
   computed: {
@@ -298,6 +298,16 @@ export default {
       }
     },
     getYearLists() {
+      let yearsBefore = []
+      if (!this.isAfter){
+        for (let i = 0; i <= 2; i++) {
+          this.yearLists.push(
+          this.$moment(this.selectedYear, "YYYY")
+            .subtract(i, "years")
+            .format("YYYY")
+          );
+        }
+      }
       for (let i = 0; i <= 10; i++) {
         this.yearLists.push(
           this.$moment(this.selectedYear, "YYYY")
@@ -305,6 +315,10 @@ export default {
             .format("YYYY")
         );
       }
+
+      this.yearLists.sort(function(a, b){
+          return a - b;
+      });
     },
     isSelectedDate(date) {
       let selectedDate = this.$moment(
@@ -345,22 +359,20 @@ export default {
         );
         // return if selected month and year === current month and year
         if (
-          this.selectedMonth.toString() === this.$moment().format("M") &&
-          this.selectedYear.toString() === this.$moment().format("YYYY")
+          (this.selectedMonth.toString() === this.$moment().format("M") &&
+          this.selectedYear.toString() === this.$moment().format("YYYY")) && this.isAfter
         ) {
           return;
         }
 
-        if (index === 0) {
-          this.selectedMonth--
+        this.selectedYear = parseInt(this.selectedYear)
+
+        if (index === 0 || this.selectedMonth != 1) {
+          this.selectedMonth--;
         } else {
-          if(this.selectedMonth === 1){
-            this.selectedMonth = 12;
-            this.selectedMonth--;
-            this.selectedYear--;
-          }else{
-            this.selectedMonth--
-          }
+          this.selectedMonth = 12;
+          this.selectedMonth--;
+          this.selectedYear--;
         }
       }
       if (type === "next") {

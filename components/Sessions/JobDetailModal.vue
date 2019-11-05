@@ -33,7 +33,7 @@
             <JobDetailModalCancelForm
               :job="job"
               @close="close"
-              v-if="(job.status === 'Allocated' || job.status === 'Ongoing' || job.status === 'Applied' || job.status === 'Available') && authPermissions.includes('Cancel Sessions Job')"
+              v-if="(job.status === 'Allocated' || job.status === 'Ongoing' || job.status === 'Applied' || job.status === 'Live') && authPermissions.includes('Cancel Sessions Job')"
             />
           </div>
         </div>
@@ -181,9 +181,6 @@ export default {
       this.$emit("close");
     },
     status(status) {
-      if (status === "Available") {
-        return "LIVE";
-      }
       return status.toUpperCase();
     },
     bgStatus(status) {

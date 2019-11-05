@@ -1,8 +1,5 @@
 <template>
-  <section
-    class="fixed z-50 w-full"
-    :class="$route.name === 'messages-slug' || $route.name === 'messages-new' ? 'border-b md:border-0' : ''"
-  >
+  <section class="fixed z-50 w-full shadow lg:shadow-none">
     <div class="flex flex-row justify-between">
       <div style="max-width: 200px; min-width: 200px" class="hidden xl:inline"></div>
       <div class="header-section flex w-full justify-between bg-white">
