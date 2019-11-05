@@ -368,6 +368,7 @@ export default {
       params: {
         offset: 0,
         limit: 5,
+        viewing_practice_id: this.$route.params.practiceId,
         order_by: ["date_created:desc"],
         job_number: "",
         title: "",
@@ -386,6 +387,7 @@ export default {
       jobPartParams: {
         offset: 0,
         limit: 5,
+        viewing_practice_id: this.$route.params.practiceId,
         order_by: ["job_date_created:desc"],
         job_part_number: "",
         job_title: "",
