@@ -371,8 +371,9 @@ export default {
     getLocumJobNotifications(state) {
         let notifications = []
         state.locum_job_notifications.forEach(notif => {
+            let notifObj = null
             if (['completed', 'ongoing', 'approved'].includes(notif.locum_status.toLowerCase())) {
-                notifications.push({
+                notifObj = {
                     id: notif.id,
                     title: notif.job.title,
                     locum_status: notif.locum_status,
@@ -382,9 +383,9 @@ export default {
                     rate: notif.job.rate,
                     locum_detail_rate_type: notif.job.locum_detail_rate_type.name,
                     reminder: notif.reminder ? notif.reminder : false
-                })
+                }
             } else if (!['completed', 'ongoing', 'approved'].includes(notif.locum_status.toLowerCase())) {
-                notifications.push({
+                notifObj = {
                     id: notif.id,
                     title: notif.title,
                     locum_status: notif.locum_status,
@@ -394,7 +395,7 @@ export default {
                     rate: notif.rate,
                     locum_detail_rate_type: notif.locum_detail_rate_type.name,
                     reminder: notif.reminder ? notif.reminder : false
-                })
+                }
             }
             if (notif.reminder) {
                 let reminder_message = ''
@@ -407,8 +408,12 @@ export default {
                 } else if (notif.job_reminded_in_3_days === 1) {
                     reminder_message = 'This Job will start in 3 days'
                 }
-                notifications.push({ reminder_message })
+                notifObj = {
+                    ...notifObj,
+                    reminder_message
+                }
             }
+            notifications.push(notifObj)
         })
         console.log('locum job notifications', notifications)
         return notifications
