@@ -8,7 +8,7 @@
       >
         <nuxt-link :to="item.route">
           <div
-            class="reminder-card h-full flex md:flex-col items-center md:justify-center rounded-lg shadow-lg p-4 hover:bg-gray-100 text-sm leading-none md:leading-tight"
+            class="reminder-card h-full flex md:flex-col items-center md:justify-center rounded-lg shadow-lg p-4 bg-white hover:bg-gray-100 text-sm leading-none md:leading-tight"
           >
             <span class="mr-2">
               <svgicon name="alert" height="20" width="20" class="fill-current text-gray-800" />

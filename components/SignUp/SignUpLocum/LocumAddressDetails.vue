@@ -1,20 +1,20 @@
 <template>
   <div class="flex flex-col items-center justify-center w-full">
     <div class="flex w-full justify-center xl:justify-start">
-      <div class="flex mx-4" style="flex: 0 1 600px;">
+      <div class="flex md:mx-4" style="flex: 0 1 600px;">
         <h4>What's your address?</h4>
       </div>
     </div>
 
     <div class="flex w-full justify-center xl:justify-start mt-5">
-      <div class="mx-4 flex flex-col p-8 m-1 rounded-lg shadow-lg" style="flex: 0 1 600px;">
-        <form class="w-full rounded-lg bg-gray-300 px-8 pb-8">
+      <div class="md:mx-4 flex flex-col p-4 md:p-8 m-1 rounded-lg bg-gray-300 shadow-lg" style="flex: 0 1 600px;">
+        <form class="w-full">
           <AppPostCode
             v-model="form.post_code"
             :name="'post_code'"
             :label="'Post code'"
             :error="formError.find(error => error.field === 'post_code')"
-            :inStyle="'background-color:#dae1e7;border-color:white'"
+            :inStyle="'background-color:transparent;border-color:white'"
             @onSelect="onSelect"
             @blur="CheckEmptyField(form.post_code, 'post_code')"
           />
@@ -24,7 +24,7 @@
             :name="'address_line_1'"
             :label="'Address line 1'"
             :error="formError.find(error => error.field === 'address_line_1')"
-            :inStyle="'background-color:#dae1e7;border-color:white'"
+            :inStyle="'background-color:transparent;border-color:white'"
             @blur="CheckEmptyField(form.address_line_1, 'address_line_1')"
           />
 
@@ -34,7 +34,7 @@
             :name="'address_line_2'"
             :label="'Address line 2 (optional)'"
             :placeholder="''"
-            :inStyle="'background-color:#dae1e7;border-color:white'"
+            :inStyle="'background-color:transparent;border-color:white'"
           />
 
           <AppInput
@@ -43,7 +43,7 @@
             :name="'address_line_3'"
             :label="'City / Town / District'"
             :error="formError.find(error => error.field === 'address_line_3')"
-            :inStyle="'background-color:#dae1e7;border-color:white'"
+            :inStyle="'background-color:transparent;border-color:white'"
             @blur="CheckEmptyField(form.address_line_3, 'address_line_3')"
           />
         </form>
@@ -56,7 +56,7 @@
         @click="$store.commit('sign-up/SET_ACTIVE_COMPONENT', 'LocumAccountDetails')"
       />
       <div class="mx-2"></div>
-      <AppButton :label="'Next'" @click="next" />
+      <AppButton :label="'Next'" @click="next" :inStyle="'padding:6px 16px;'"/>
     </div>
   </div>
 </template>
