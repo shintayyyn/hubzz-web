@@ -132,7 +132,7 @@
                 :placeholder="'For example, number of expected patients, nearby car park, etc.'"
                 :resize="false"
               />
-              <div class="flex flex-col py-2 mb-3 md:mb-6">
+              <!-- <div class="flex flex-col py-2 mb-3 md:mb-6">
                 <div class="relative flex flex-row flex-wrap justify-start">
                   <div class="mt-2">
                     <label for="rate" class="text-xs sm:text-sm mt-2">Rate £</label>
@@ -147,6 +147,28 @@
                     />
                     <label for="rate" class="text-xs sm:text-sm mt-2">hours</label>
                   </div>
+                </div>
+              </div>-->
+              <div class="flex flex-row flex-wrap justify-start items-center mt-4 max-w-2xl">
+                <div class="px-1 w-full">
+                  <AppInput
+                    v-model="form.rate"
+                    :type="'number'"
+                    :name="'rate'"
+                    :label="'Rate £'"
+                    :error="formError.find(item => item.field === 'rate')"
+                    @blur="CheckEmptyField(form.rate,'rate')"
+                    :inStyle="'text-align:right'"
+                  />
+                </div>
+                <div class="px-1 w-full">
+                  <AppInput
+                    v-model="form.locum_detail_rate_type_id"
+                    :type="'select'"
+                    :name="'locum_detail_rate_type_id'"
+                    :label="'per'"
+                    :items="rate_lists"
+                  />
                 </div>
               </div>
               <div class="flex flex-col py-2 mb-3 md:mb-6">
@@ -189,11 +211,11 @@
                 :lists="mandatory_training_lists"
                 :info="'Check all that apply'"
               />
-              <div class="mb-6 text-center md:text-left" v-if="mandatory_training_lists.length === 0">
-                <AppButton
-                  :label="'Go to Profile to add items here'"
-                  @click="addMandatory"
-                />
+              <div
+                class="mb-6 text-center md:text-left"
+                v-if="mandatory_training_lists.length === 0"
+              >
+                <AppButton :label="'Go to Profile to add items here'" @click="addMandatory" />
               </div>
             </div>
           </div>
@@ -370,7 +392,12 @@
               >
                 <div>Auto-assign job to the first matching Favourite applicant by this date</div>
                 <div class="px-1 w-full md:w-1/2">
-                  <AppDate v-model="auto_assign_at.date" :name="'auto_assign_at'" :label="'Date'" isAfter/>
+                  <AppDate
+                    v-model="auto_assign_at.date"
+                    :name="'auto_assign_at'"
+                    :label="'Date'"
+                    isAfter
+                  />
                 </div>
                 <div class="px-1 w-full md:w-1/2">
                   <AppTime
@@ -396,7 +423,12 @@
               >
                 <div>Selection will be made and you will receive a notification by this date</div>
                 <div class="px-1 w-full md:w-1/2">
-                  <AppDate v-model="selection_date.date" :name="'selection_date'" :label="'Date'" isAfter/>
+                  <AppDate
+                    v-model="selection_date.date"
+                    :name="'selection_date'"
+                    :label="'Date'"
+                    isAfter
+                  />
                 </div>
                 <div class="px-1 w-full md:w-1/2">
                   <AppTime
