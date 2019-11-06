@@ -2,7 +2,7 @@
   <div class="flex flex-col items-center justify-center w-full">
     <div class="flex w-full justify-center xl:justify-start">
       <div class="flex mx-4" style="flex: 0 1 600px;">
-        <h3>Finally</h3>
+        <h3>Finally,</h3>
       </div>
     </div>
 

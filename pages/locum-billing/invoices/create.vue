@@ -6,20 +6,20 @@
           <svgicon name="left-arrow" height="32" width="32" />
         </nuxt-link>
       </div>
-      <BillingInvoiceForm :selectedInvoice="null" @addInvoice="$emit('addInvoice', $event)" />
+      <LocumBillingInvoiceForm :selectedInvoice="null" @addInvoice="$emit('addInvoice', $event)" />
     </div>
   </div>
 </template>
 
 <script>
-import BillingInvoiceForm from "@/components/Billing/BillingInvoiceForm";
+import LocumBillingInvoiceForm from "@/components/Billing/LocumBillingInvoiceForm";
 export default {
   transition: {
     name: "slide",
     mode: "out-in"
   },
   components: {
-    BillingInvoiceForm
+    LocumBillingInvoiceForm
   }
 };
 </script>

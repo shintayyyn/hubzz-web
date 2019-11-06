@@ -5,17 +5,17 @@
         <nuxt-link
           :to="'?tabs=sign-in'"
           :event="$route.query.tabs && $route.query.tabs === 'sign-in' ? '' : 'click'"
-          class="px-12 py-5 font-bold text-sm cursor-pointer focus:outline-none"
+          class="px-8 md:px-12 py-5 font-bold text-sm cursor-pointer focus:outline-none"
           :class="!$route.query.tabs || ($route.query.tabs && $route.query.tabs === 'sign-in') ? 'rounded-full bg-yellow-500 text-black' : 'text-gray-600'"
         >Sign In</nuxt-link>
         <nuxt-link
           :to="'?tabs=sign-up'"
           :event="$route.query.tabs && $route.query.tabs === 'sign-up' ? '' : 'click'"
-          class="px-12 py-5 font-bold text-sm cursor-pointer focus:outline-none"
+          class="px-8 md:px-12 py-5 font-bold text-sm cursor-pointer focus:outline-none"
           :class="$route.query.tabs && $route.query.tabs === 'sign-up' ? 'rounded-full bg-yellow-500 text-black' : 'text-gray-600'"
         >Sign Up</nuxt-link>
       </div>
-      <div class="px-5 my-5">
+      <div class="px-5 mt-5">
         <transition name="fade" mode="out-in">
           <Component :is="activeComponent" />
         </transition>

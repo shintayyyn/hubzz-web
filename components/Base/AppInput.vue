@@ -5,13 +5,13 @@
       v-if="['text','time','email','password', 'select', 'textarea', 'multi-checkbox', 'number'].includes(type)"
     >
       <div class="flex flex-col py-2 mb-3 md:mb-6">
-        <div class="relative flex flex-row flex-wrap justify-between">
+        <div class="relative flex flex-wrap leading-none" :class="info ? 'flex-wrap justify-between' : 'items-center'">
           <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
-          <div class="flex">
-            <div class="bg-gray-300 rounded-lg px-4 py-1 text-xs sm:text-sm" v-if="info">{{info}}</div>
+          <div class="flex " v-if="info || error">
+            <div class="bg-gray-300 rounded px-1 md:px-4 py-1 text-xs sm:text-sm" v-if="info">{{info}}</div>
             <div
-              class="absolute rounded-lg right-0 bg-red-500 px-2 py-1 text-xs sm:text-sm text-white"
-              v-if="error"
+              class="text-red-500 text-xs px-2"
+              v-if="error && (type === 'select' || type.includes('checkbox'))"
             >{{error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ")}}</div>
           </div>
         </div>
@@ -34,19 +34,24 @@
         <template v-else>
           <div class="flex flex-row justify-start mt-1">
             <template v-if="['text','time','email','password', 'number'].includes(type)">
-              <input
-                :value="value"
-                :type="type"
-                :placeholder="placeholder"
-                class="border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full"
-                :class="error ? 'border-red-500' : ''"
-                @input="$emit('input', $event.target.value)"
-                @keypress.enter="$emit('submit')"
-                @blur="$emit('blur')"
-                :style="inStyle"
-                :checked="value"
-                :min="type === 'number' && 0"
-              />
+              <div class="flex flex-col w-full">
+                <input
+                  :value="value"
+                  :type="type"
+                  :placeholder="placeholder"
+                  class="border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full"
+                  :class="error ? 'border-red-500' : ''"
+                  @input="$emit('input', $event.target.value)"
+                  @keypress.enter="$emit('submit')"
+                  @blur="$emit('blur')"
+                  :style="inStyle"
+                  :checked="value"
+                  :min="type === 'number' && 0"
+                />
+                <div v-if="error"
+                  class="text-red-500 py-1 text-xs text-white"
+                >{{error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ")}}</div>
+              </div>
             </template>
             <template v-if="type === 'select'">
               <div class="w-full relative customized-select py-8 flex items-center">
@@ -124,7 +129,7 @@
         <div class="relative flex flex-row flex-wrap justify-between">
           <div class="flex flex-wrap justify-start">
             <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
-            <span class="ml-2 bg-gray-300 rounded-lg px-4 py-1 text-xs">Seperate with commas</span>
+            <span class="ml-2 bg-gray-300 rounded px-4 py-1 text-xs">Seperate with commas</span>
           </div>
           <div
             class="absolute right-0 bg-red-500 py-1 px-2 text-xs sm:text-sm text-white"
@@ -150,7 +155,7 @@
         <div v-if="label" class="relative flex flex-row flex-wrap justify-between">
           <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
           <div class="flex">
-            <div class="bg-gray-300 rounded-lg px-4 py-1 text-xs sm:text-sm" v-if="info">{{info}}</div>
+            <div class="bg-gray-300 rounded px-4 py-1 text-xs sm:text-sm" v-if="info">{{info}}</div>
             <div
               class="absolute right-0 bg-red-500 py-1 px-2 text-xs sm:text-sm text-white"
               v-if="error"

@@ -168,8 +168,33 @@ export default {
       );
     },
     "form.date_end"(value) {
+      let a_year = this.$moment(this.form.date_start).get('year')
+      let a_month = this.$moment(this.form.date_start).get('month')
+      let a_date = this.$moment(this.form.date_start).get('date')
+      let b_year = this.$moment(value).get('year')
+      let b_month = this.$moment(value).get('month')
+      let b_date = this.$moment(value).get('date')
+
+      let range = this.$moment([b_year, b_month, b_date]).diff(this.$moment([a_year, a_month, a_date]), 'days')
+      if (range < 0){
+        this.formError.push({field: "form.date_end", message: "Invalid End Date"})
+      }else{
+        let index = this.formError.findIndex(item => item.field.includes("date_end"))
+        this.formError.splice(index, 1)
+      }
       this.formError = this.formError.filter(
-        error => error.field !== "date_end"
+          error => error.field !== "date_end"
+        );
+      
+    },
+    "form.time_start"(value) {
+      this.formError = this.formError.filter(
+        error => error.field !== "time_start"
+      );
+    },
+    "form.time_end"(value) {
+      this.formError = this.formError.filter(
+        error => error.field !== "time_end"
       );
     },
     "form.shift_id"(value) {
@@ -242,7 +267,7 @@ export default {
       this.$emit("close");
     },
     create() {
-      this.formError = [];
+      // this.formError = [];
       this.Validate(this.form, ["description"]);
       if (!this.formError.length) {
         // this.form.date_start = this.$moment(this.form.date_start).format(
@@ -285,7 +310,7 @@ export default {
         this.$store.commit("SET_NOTIFICATION", {
           enabled: true,
           status: "danger",
-          text: ["Please fill up all the forms"]
+          text: ["Make sure you fill up the form correct."]
         });
       }
     },

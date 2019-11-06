@@ -38,7 +38,8 @@ export default {
       columns: [
         {
           name: "Job Part Number",
-          dataIndex: "job_part_number"
+          dataIndex: "job_part_number",
+          class: "text-center"
         },
         {
           name: "Date End",

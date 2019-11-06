@@ -678,6 +678,96 @@ export default {
     }
   },
   watch: {
+    getPracticeAllocatedJobs(newValue, oldValue) {
+      if (
+        this.params.limit < newValue.length &&
+        oldValue.length > 0 &&
+        this.$route.query.status === "Allocated"
+      ) {
+        this.getJobsCount(this.params);
+      }
+    },
+    getPracticeOngoingJobs(newValue, oldValue) {
+      if (
+        this.jobPartParams.limit < newValue.length &&
+        oldValue.length > 0 &&
+        this.$route.query.status === "Ongoing"
+      ) {
+        this.getJobsCount(this.jobPartParams);
+      }
+    },
+    getPracticeAvailableJobs(newValue, oldValue) {
+      if (
+        this.params.limit < newValue.length &&
+        oldValue.length > 0 &&
+        this.$route.query.status === "Live"
+      ) {
+        this.getJobsCount(this.params);
+      }
+    },
+    getPracticeAppliedJobs(newValue, oldValue) {
+      if (
+        this.params.limit < newValue.length &&
+        oldValue.length > 0 &&
+        this.$route.query.status === "Applied"
+      ) {
+        this.getJobsCount(this.params);
+      }
+    },
+    getPracticeUnfilledJobs(newValue, oldValue) {
+      if (
+        this.params.limit < newValue.length &&
+        oldValue.length > 0 &&
+        this.$route.query.status === "Unfilled"
+      ) {
+        this.getJobsCount(this.params);
+      }
+    },
+    getPracticeDeclinedJobs(newValue, oldValue) {
+      if (
+        this.params.limit < newValue.length &&
+        oldValue.length > 0 &&
+        this.$route.query.status === "Declined"
+      ) {
+        this.getJobsCount(this.params);
+      }
+    },
+    getPracticeCancelledJobs(newValue, oldValue) {
+      if (
+        this.params.limit < newValue.length &&
+        oldValue.length > 0 &&
+        this.$route.query.status === "Cancelled"
+      ) {
+        this.getJobsCount(this.params);
+      }
+    },
+    getPracticeWithdrawnJobs(newValue, oldValue) {
+      if (
+        this.params.limit < newValue.length &&
+        oldValue.length > 0 &&
+        this.$route.query.status === "Withdrawn"
+      ) {
+        this.getJobsCount(this.params);
+      }
+    },
+    getPracticeCompletedJobs(newValue, oldValue) {
+      if (
+        this.jobPartParams.limit < newValue.length &&
+        oldValue.length > 0 &&
+        this.$route.query.status === "Completed"
+      ) {
+        this.getJobsCount(this.jobPartParams);
+      }
+    },
+    getPracticeApprovedJobs(newValue, oldValue) {
+      if (
+        this.jobPartParams.limit < newValue.length &&
+        oldValue.length > 0 &&
+        this.$route.query.status === "Approved"
+      ) {
+        this.getJobsCount(this.jobPartParams);
+      }
+    },
     "$route.query"({ status: newStatus }, { status: oldStatus }) {
       if (newStatus && newStatus !== null && newStatus !== oldStatus) {
         this.current_page = 1;

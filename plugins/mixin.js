@@ -1,44 +1,44 @@
-import Vue from 'vue'
+import Vue from "vue";
 Vue.mixin({
   methods: {
     scrollToTop() {
-      window.scrollTo(0, 0)
+      window.scrollTo(0, 0);
     },
     getDateArray(start, end) {
       let arr = new Array();
       let dt = new Date(start);
       while (dt <= new Date(end)) {
-        arr.push(this.$moment(new Date(dt)).format('YYYY-MM-DD'));
+        arr.push(this.$moment(new Date(dt)).format("YYYY-MM-DD"));
         dt.setDate(dt.getDate() + 1);
       }
       return arr;
     },
     CheckEmptyField(inputField, fieldName) {
-      let index = this.formError.findIndex(item => item.field === fieldName)
+      let index = this.formError.findIndex(item => item.field === fieldName);
       if (index >= 0) {
-        this.formError.splice(index, 1)
+        this.formError.splice(index, 1);
       }
       if (!(inputField instanceof Array) && !inputField) {
         this.formError.push({
           field: fieldName,
-          message: 'Required'
-        })
+          message: "Required"
+        });
       }
       if (inputField instanceof Array && !inputField.length) {
         this.formError.push({
           field: fieldName,
-          message: 'Required'
-        })
+          message: "Required"
+        });
       }
-      if (typeof inputField === 'boolean' && inputField === false) {
+      if (typeof inputField === "boolean" && inputField === false) {
         this.formError.push({
           field: fieldName,
-          message: 'Required'
-        })
+          message: "Required"
+        });
       }
     },
     Validate(form, lists) {
-      let items = Object.entries(form)
+      let items = Object.entries(form);
       for (const [key, value] of items) {
         // check if value is array
         if (Array.isArray(value)) {
@@ -46,14 +46,14 @@ Vue.mixin({
             if (!lists) {
               this.formError.push({
                 field: key,
-                message: `${key} Is Required`
-              })
+                message: `${key} is Required`
+              });
             }
             if (lists && !lists.includes(key)) {
               this.formError.push({
                 field: key,
-                message: `${key} Is Required`
-              })
+                message: `${key} is Required`
+              });
             }
           }
         } else {
@@ -61,14 +61,14 @@ Vue.mixin({
             if (!lists) {
               this.formError.push({
                 field: key,
-                message: `${key} Is Required`
-              })
+                message: `${key} is Required`
+              });
             }
             if (lists && !lists.includes(key)) {
               this.formError.push({
                 field: key,
-                message: `${key} Is required`
-              })
+                message: `${key} is required`
+              });
             }
           }
         }
@@ -77,18 +77,18 @@ Vue.mixin({
     ValidateSamePassword(password, password_confirmation) {
       if (password && password_confirmation && password !== password_confirmation) {
         return {
-          field: 'password_confirmation',
-          message: 'The Password must be the same'
-        }
+          field: "password_confirmation",
+          message: "The Password must be the same"
+        };
       }
     },
     ValidateEmail(email) {
       let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
       if (email && !re.test(String(email).toLowerCase())) {
         return {
-          field: 'email',
-          message: 'This is not a valid email'
-        }
+          field: "email",
+          message: "This is not a valid email"
+        };
       }
     },
     CheckPermissions(permissions) {
@@ -147,7 +147,7 @@ Vue.mixin({
         case "sessions-cancelled":
         case "sessions-declined":
           if (!permissions.includes("View Sessions Job")) {
-            hasPermission = false
+            hasPermission = false;
           }
           break;
         case "sessions-live-id":
@@ -158,13 +158,13 @@ Vue.mixin({
         case "sessions-cancelled-id":
         case "sessions-declined-id":
           if (!permissions.includes("Show Sessions Job")) {
-            hasPermission = false
+            hasPermission = false;
           }
           break;
       }
       return {
         hasPermission
       };
-    },
+    }
   }
-})
+});

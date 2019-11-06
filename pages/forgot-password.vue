@@ -1,13 +1,11 @@
 <template>
   <section class="forgot-password-section">
-    <div class="p-4 md:p-10">
+    <div class="p-4 md:p-8">
       <nuxt-link to="/" class="focus:outline-none text-black">
         <svgicon name="left-arrow" height="32" width="32" />
       </nuxt-link>
       <div class="flex flex-col items-center mt-4 lg:mt-32 p-2">
-        <div class="flex w-full md:w-3/4">
-          <div class="font-bold text-3xl w-full">Reset password</div>
-        </div>
+        <div class="font-bold text-lg md:text-3xl md:w-3/4 w-full">Reset password</div>
         <div class="flex justify-center w-full md:w-3/4">
           <div class="mt-2 md:mt-5 rounded-lg shadow-md p-4 md:py-10 md:px-8">
             <template v-if="success">
@@ -17,17 +15,17 @@
               </div>
             </template>
             <template v-else>
-              <div>
+              <div class="text-sm md:text-base leading-tight">
                 Please enter the email address of your account at Hubzz.
                 If your email address matches our records, you'll receive an email with further instruction to proceed.
               </div>
 
               <form class="w-full">
                 <div
-                  class="relative flex flex-col mt-0 md:mt-8 border-b-2 border-gray-300"
+                  class="relative flex flex-col mt-2 md:mt-8 border-b-2 border-gray-300"
                   :class="[setFocus === 'email' ? 'border-yellow-400':'', formError.find(item => item.field === 'email') ? 'border-red-500':'']"
                 >
-                  <label for="email" class="text-lg mb-4">Email address</label>
+                  <label for="email" class="md:text-lg mb-4">Email address</label>
                   <input
                     type="email"
                     name="email"
@@ -46,13 +44,10 @@
                   >{{formError.find(item => item.field === 'email').message}}</span>
                 </div>
               </form>
-
-              <div class="mt-5 flex justify-start">
-                <button
-                  class="rounded-lg bg-yellow-500 shadow-md py-4 px-8 md:p-8 font-bold text-xl focus:outline-none hover:text-white"
-                  @click="send"
-                >Send</button>
-              </div>
+              <button
+                class="rounded-lg bg-yellow-500 shadow-md py-2 px-4 md:p-8 mt-3 font-bold md:text-xl focus:outline-none hover:text-white"
+                @click="send"
+              >Send</button>
             </template>
           </div>
         </div>
@@ -110,7 +105,7 @@ export default {
 </script>
 <style scoped>
 button:active {
-  transform: translate(5px, 5px);
+  transform: translate(2px, 2px);
 }
 </style>
 

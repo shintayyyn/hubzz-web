@@ -2,40 +2,53 @@
   <div class="flex flex-col py-2 mb-4 md:mb-6 leading-normal" v-on-clickaway="toggledOff">
     <div class="relative flex flex-row flex-no-wrap justify-between">
       <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
-      <div
-        class="absolute right-0 bg-red-500 p-1 text-xs sm:text-sm text-white rounded-lg"
+      <!-- <div
+        class="absolute right-0 bg-red-500 p-1 text-xs sm:text-sm text-white rounded"
         v-if="error"
-      >{{error.message}}</div>
+      >{{error.message}}</div> -->
     </div>
     <div class="flex flex-row justify-start mt-1">
-      <input
-        :value="value"
-        type="input"
-        :placeholder="format"
-        class="border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full text-center"
-        :class="{ inClass, 'border-red-500': error}"
-        @click="modal = true"
-        @keypress="validateInput($event)"
-        @input="$emit('input', $event.target.value)"
-        :style="inStyle"
-        :format="format"
-      />
+      <div class="flex flex-col w-full">
+        <input
+          :value="value"
+          type="input"
+          :placeholder="format"
+          class="border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full text-center"
+          :class="{ inClass, 'border-red-500': error}"
+          @click="modal = true"
+          @keypress="validateInput($event)"
+          @input="$emit('input', $event.target.value)"
+          :style="inStyle"
+          :format="format"
+          :disabled="disabled"
+        />
+        <div
+          class="text-red-500 text-xs py-1 text-white rounded"
+          v-if="error"
+        >{{error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ")}}</div>
+      </div>
     </div>
     <transition name="fade">
       <div class="relative md:static z-10 flex justify-center" v-if="modal">
-        <div
-          class="absolute border rounded-b-lg calendar bg-white shadow-md"
-        >
-          <div class="p-2 flex flex-row flex-no-wrap justify-start items-center border-b-2 border-yellow-500">
+        <div class="absolute border rounded-b-lg calendar bg-white shadow-md">
+          <div
+            class="p-2 flex flex-row flex-no-wrap justify-start items-center border-b-2 border-yellow-500"
+          >
             <div class="m-1 w-1/2 flex flex-no-wrap">
-              <select v-model="selectedMonth" class="mr-1 text-xs sm:text-sm py-1 px-1 cursor-pointer bg-gray-200 hover:bg-gray-300 focus:outline-none">
+              <select
+                v-model="selectedMonth"
+                class="mr-1 text-xs sm:text-sm py-1 px-1 cursor-pointer bg-gray-200 hover:bg-gray-300 focus:outline-none"
+              >
                 <option
                   :value="month.value"
                   v-for="(month, index) in filteredMonths"
                   :key="index"
                 >{{month.label}}</option>
               </select>
-              <select v-model="selectedYear" class="ml-1 text-xs sm:text-sm py-1 px-1 cursor-pointer bg-gray-200 hover:bg-gray-300 focus:outline-none">
+              <select
+                v-model="selectedYear"
+                class="ml-1 text-xs sm:text-sm py-1 px-1 cursor-pointer bg-gray-200 hover:bg-gray-300 focus:outline-none"
+              >
                 <option :value="year" v-for="(year, index) in yearLists" :key="index">{{year}}</option>
               </select>
             </div>
@@ -77,7 +90,7 @@
                   'border-yellow-500 border-2': isSame(item.fullDate),
                   'text-gray-500': isDisabled(item.fullDate), 
                   'cursor-pointer hover:bg-gray-300': !isDisabled(item.fullDate),
-                  'bg-yellow-500 border-yellow-500 border-2': isSelectedDate(item.date)
+                  'bg-yellow-500 border-yellow-500 border-2': isSelectedDate(item.date, item)
                 }"
                   v-if="item.day === 1"
                 >
@@ -97,7 +110,7 @@
                   'border-yellow-500 border-2': isSame(item.fullDate),
                   'text-gray-500': isDisabled(item.fullDate), 
                   'cursor-pointer hover:bg-gray-300': !isDisabled(item.fullDate),
-                  'bg-yellow-500 border-yellow-500 border-2': isSelectedDate(item.date)
+                  'bg-yellow-500 border-yellow-500 border-2': isSelectedDate(item.date, item)
                 }"
                   v-if="item.day === 2"
                 >
@@ -242,7 +255,8 @@ export default {
     format: {
       type: String,
       default: "YYYY-MM-DD"
-    }
+    },
+    disabled: Boolean
   },
   data() {
     return {
@@ -269,14 +283,14 @@ export default {
   },
   watch: {
     selectedMonth(value) {
-      // this.getDaysInMonth(value, parseInt(this.selectedYear));
+      this.getDaysInMonth(value.toString(), this.selectedYear);
     },
     selectedYear(value) {
       // set selected month to this current month if selected year === current year
       if (value === this.$moment().format("YYYY")) {
         this.selectedMonth = this.filteredMonths[0].value;
       }
-      // this.getDaysInMonth(this.selectedMonth.toString(), value.toString());
+      this.getDaysInMonth(this.selectedMonth.toString(),value);
     }
   },
   computed: {
@@ -298,13 +312,13 @@ export default {
       }
     },
     getYearLists() {
-      let yearsBefore = []
-      if (!this.isAfter){
+      let yearsBefore = [];
+      if (!this.isAfter) {
         for (let i = 0; i <= 2; i++) {
           this.yearLists.push(
-          this.$moment(this.selectedYear, "YYYY")
-            .subtract(i, "years")
-            .format("YYYY")
+            this.$moment(this.selectedYear, "YYYY")
+              .subtract(i, "years")
+              .format("YYYY")
           );
         }
       }
@@ -316,14 +330,12 @@ export default {
         );
       }
 
-      this.yearLists.sort(function(a, b){
-          return a - b;
+      this.yearLists.sort(function(a, b) {
+        return a - b;
       });
     },
     isSelectedDate(date) {
-      let selectedDate = this.$moment(
-        `${this.selectedMonth + 1}-${date}-${this.selectedYear}`
-      ).format("MM/DD/YYYY");
+      let selectedDate = `${this.selectedYear}-${this.selectedMonth}-${date}`
       return this.$moment(selectedDate).isSame(this.value);
     },
     isSame(date) {
@@ -359,13 +371,14 @@ export default {
         );
         // return if selected month and year === current month and year
         if (
-          (this.selectedMonth.toString() === this.$moment().format("M") &&
-          this.selectedYear.toString() === this.$moment().format("YYYY")) && this.isAfter
+          this.selectedMonth.toString() === this.$moment().format("M") &&
+          this.selectedYear.toString() === this.$moment().format("YYYY") &&
+          this.isAfter
         ) {
           return;
         }
 
-        this.selectedYear = parseInt(this.selectedYear)
+        this.selectedYear = parseInt(this.selectedYear);
 
         if (index === 0 || this.selectedMonth != 1) {
           this.selectedMonth--;

@@ -6,18 +6,24 @@
           <svgicon name="left-arrow" height="32" width="32" />
         </div>
       </div>
-      <iframe :src="invoice.file.url" style="min-height: 90%;"  width="100%" class="my-4"></iframe>
+      <PracticeBillingInvoiceForm
+        :selectedInvoice="invoice"
+        @updateInvoice="$emit('updateInvoice', $event)"
+      />
     </div>
   </div>
 </template>
 
 <script>
+import PracticeBillingInvoiceForm from "@/components/Billing/PracticeBillingInvoiceForm";
 export default {
   transition: {
     name: "slide",
     mode: "out-in"
   },
-
+  components: {
+    PracticeBillingInvoiceForm
+  },
   async asyncData({ app, error, params }) {
     try {
       if (process.client) {
@@ -27,8 +33,8 @@ export default {
         `/api/v1/practice/locum-invoices/${params.id}`
       );
       const invoice =
-        response.data && response.data.data && response.data.data.invoice
-          ? response.data.data.invoice
+        response.data && response.data.data && response.data.data.locum_invoice
+          ? response.data.data.locum_invoice
           : null;
 
       if (process.client) {

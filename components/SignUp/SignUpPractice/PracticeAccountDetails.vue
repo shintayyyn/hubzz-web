@@ -1,8 +1,8 @@
 <template>
-  <div class="flex flex-col items-center justify-center w-full" ref="container">
+  <div class="flex flex-col items-center justify-center xl:mx-4 w-full" ref="container">
     <AppFormError class="w-full mb-4" :formError="formError" v-if="formError.length > 0" />
     <div class="flex w-full justify-center xl:justify-start">
-      <div class="flex flex-col w-full xl:mx-4 p-8 m-1 rounded-lg shadow-lg">
+      <div class="flex flex-col w-full p-8 m-1 rounded-lg shadow-lg">
         <form class="w-full">
           <AppInput
             v-model="form.type"

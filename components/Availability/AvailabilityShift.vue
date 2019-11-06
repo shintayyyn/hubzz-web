@@ -2,18 +2,20 @@
   <div class="availability-shift rounded-lg shadow-lg">
     <form class="w-full p-5">
       <div class="relative flex flex-col">
-        <div class="relative flex flex-row flex-wrap justify-between">
-          <div
-            v-if="shifts_error"
-            class="absolute right-0 bg-red-500 p-1 text-xs sm:text-base text-white"
-          >Select atleast one shift</div>
-          <div class="text-sm leading-loose mr-2">The shifts I am available for</div>
-          <div class="py-2 px-1 rounded-lg text-sm bg-gray-300 leading-tight">Select all that apply</div>
+        <div class="relative flex flex-row flex-wrap items-center justify-between">
+          <div class="flex flex-col leading-none">
+            <div class="text-sm mr-2">The shifts I am available for</div>
+            <div
+              v-if="shifts_error"
+              class="text-red-500 text-xs text-white md:py-0"
+            >Select atleast one shift</div>
+          </div>
+          <div class="py-2 px-3 my-1 md:my-0 rounded-lg text-sm bg-gray-300 leading-tight">Select all that apply</div>
         </div>
         <div class="flex flex-row flex-wrap justify-around md:justify-start mt-5">
           <div
             class="relative border border-solid rounded-lg p-5 m-2 w-full sm:w-1/4 md:w-1/6 text-sm md:text-base text-center cursor-pointer"
-            :class="selectedShifts.includes(item.id) ? 'bg-yellow-500': 'hover:bg-yellow-500'"
+            :class="selectedShifts.includes(item.id) ? 'bg-yellow-500 hover:bg-yellow-400': 'hover:bg-yellow-500'"
             style="box-sizing:content-box;"
             v-for="item in shifts"
             :key="item.id"

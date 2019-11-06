@@ -2,11 +2,11 @@
   <section>
     <!-- input select -->
     <div class="relative flex flex-col py-2 mb-3 md:mb-6" v-on-clickaway="toggledOff">
-      <div class="relative flex flex-row flex-no-wrap justify-between">
+      <div class="relative flex flex-row flex-wrap justify-between">
         <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
         <div class="rounded-lg bg-gray-300 p-1 text-xs sm:text-sm" v-if="info">{{info}}</div>
         <div
-          class="absolute rounded-lg right-0 bg-red-500 p-1 text-xs sm:text-sm text-white"
+          class="absolute rounded right-0 bg-red-500 p-1 text-xs sm:text-sm text-white"
           v-if="error"
         >{{error.message}}</div>
       </div>

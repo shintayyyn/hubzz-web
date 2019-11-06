@@ -1,5 +1,5 @@
 <template>
-  <div class="rounded-lg shadow-lg px-8 pb-8 pt-12">
+  <div class="rounded-lg shadow-lg p-4 md:p-8">
     <div class="w-full flex flex-col">
       <AppInput
         v-model="form.email"
@@ -19,7 +19,7 @@
         :error="formError.find(item => item.field === 'password')"
         @submit="login"
       />-->
-      <div class="flex flex-col mb-4">
+      <div class="flex flex-col">
         <label class="text-sm">Password</label>
         <div class="w-full relative">
           <input
@@ -34,6 +34,7 @@
           <button
             @click="form.type === 'password' ? form.type = 'text' : form.type = 'password'"
             class="absolute top-0 right-0 mx-2 h-full focus:outline-none"
+            v-if="form.password"
           >
             <svgicon
               v-if="form.type === 'password'"
@@ -54,9 +55,9 @@
       </div>
     </div>
 
-    <div class="flex justify-end mb-8">
+    <div class="flex justify-end mt-2 mb-8">
       <nuxt-link to="/forgot-password">
-        <span class="hover:underline cursor-pointer">Forgot password?</span>
+        <span class="hover:underline text-sm cursor-pointer">Forgot password?</span>
       </nuxt-link>
     </div>
     <div class="flex justify-center">
