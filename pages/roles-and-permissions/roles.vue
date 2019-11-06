@@ -7,13 +7,13 @@
         @click="$router.push('/roles-and-permissions/roles/create')"
       >Create Role</button>
     </div>
-    <div class="flex justify-start items-center" v-if="roles.length">
+    <div class="flex justify-start items-center">
       <AppInput
         class="px-1"
         v-model="params.search"
         :type="'text'"
         :name="'search'"
-        :label="'Role'"
+        :label="'Search Role'"
         :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem'"
       />
     </div>
@@ -32,6 +32,7 @@
       @limitchanged="limitchanged"
       @sorted="sorted"
     />
+    <div v-else-if="params.search && searchCount > 0">No results found for <span class="font-bold">{{ params.search }}</span>.</div>
     <div v-else class="flex justify-center">You do not have any other Roles on this Practice</div>
     <transition name="fade" mode="out-in">
       <div
@@ -59,6 +60,7 @@ export default {
     return {
       totalRoles: 0,
       roles: [],
+      searchCount: 0,
       loading: false,
       current_page: 1,
       // app table filter
@@ -98,6 +100,8 @@ export default {
       this.params.offset = 0;
       this.params.search = value;
       this.getRolesCount(this.params);
+      this.searchCount = this.roles.length
+      console.log("qwe", this.searchCount)
     }
   },
   mounted() {

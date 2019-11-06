@@ -57,7 +57,7 @@
           colspan="7"
         >This section is empty. Update your profile to fill this area.</span>
       </template>
-      <table>
+      <table v-else>
         <thead>
           <tr class="text-xs sm:text-sm text-left">
             <th class="pl-2">Type</th>
@@ -169,7 +169,13 @@
     </div>
 
     <div class="mt-4 overflow-x-auto">
-      <table>
+      <template v-if="!optional.length">
+        <span
+          class="text-center font-bold text-gray-500 text-xs md:text-sm"
+          colspan="7"
+        >This section is empty. Update your profile to fill this area.</span>
+      </template>
+      <table v-else>
         <thead>
           <tr class="text-xs sm:text-sm text-left">
             <th class="pl-2">Type</th>
@@ -179,12 +185,6 @@
           </tr>
         </thead>
         <tbody>
-          <template v-if="!optional.length">
-            <span
-              class="text-center font-bold text-gray-500 text-xs md:text-sm"
-              colspan="7"
-            >This section is empty. Update your profile to fill this area.</span>
-          </template>
           <template v-for="(item, index) in optional">
             <tr
               class="text-xs sm:text-sm text-left bg-gray-200"
