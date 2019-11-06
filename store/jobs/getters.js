@@ -382,7 +382,8 @@ export default {
                     shift: notif.job.shift.name,
                     rate: notif.job.rate,
                     locum_detail_rate_type: notif.job.locum_detail_rate_type.name,
-                    reminder: notif.reminder ? notif.reminder : false
+                    reminder: notif.reminder ? notif.reminder : false,
+                    // notificationType: notif.reminder ? 'Reminder' :  
                 }
             } else if (!['completed', 'ongoing', 'approved'].includes(notif.locum_status.toLowerCase())) {
                 notifObj = {

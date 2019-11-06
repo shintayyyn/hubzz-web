@@ -91,22 +91,38 @@
                   />
                 </td>
                 <td class="align-middle sticky right-0">
-                  <AppInput
-                    v-model="item.dispute"
-                    :type="'single-checkbox'"
-                    :name="'disputed'"
-                    :label="'Dispute'"
-                    :disabled="true"
-                  />
-                  <AppInput
-                    v-model="item.dispute"
-                    :type="'single-checkbox'"
-                    :name="'approve'"
-                    :label="'Approve'"
-                  />
+                  <div class="flex flex-row flex-no-wrap justify-start items-center">
+                    <input
+                      v-model="disputedInvoices"
+                      :id="`${item.job_part_id}-disputed`"
+                      type="checkbox"
+                      :value="item.job_part_id"
+                      disabled
+                    />
+                    <label
+                      :for="`${item.job_part_id}-disputed`"
+                      class="text-xs sm:text-sm py-1 flex items-center"
+                    >Disputed</label>
+                  </div>
+                  <div class="flex flex-row flex-no-wrap justify-start items-center">
+                    <input
+                      v-model="approvedInvoices"
+                      :id="`${item.job_part_id}-approved`"
+                      type="checkbox"
+                      :value="item.job_part_id"
+                    />
+                    <label
+                      :for="`${item.job_part_id}-approved`"
+                      class="text-xs sm:text-sm py-1 flex items-center"
+                    >Approved</label>
+                  </div>
                 </td>
               </tr>
-              <tr class="border-b" :key="`${item.id}-${item.id}`" v-if="item.dispute">
+              <tr
+                class="border-b"
+                :key="`${item.id}-${item.job_part_id}`"
+                v-if="disputedInvoices.includes(item.job_part_id)"
+              >
                 <td>
                   <div class="flex flex-col">
                     <label for="absent_days">Days of absent</label>
@@ -144,7 +160,11 @@
                   </div>
                 </td>
               </tr>
-              <tr class="border-b" :key="`${item.id}-${item.id}-${item.id}`" v-if="item.dispute">
+              <tr
+                class="border-b"
+                :key="`${item.id}-${item.job_part_id}-${item.job_part_id}`"
+                v-if="disputedInvoices.includes(item.job_part_id)"
+              >
                 <td colspan="3">
                   <div class="flex flex-col mt-1">
                     <label for="remarks">Update remarks</label>
@@ -227,6 +247,10 @@ export default {
   },
   data() {
     return {
+      disputedInvoices: [],
+      approvedInvoices: [],
+      defaultSelectedJobParts: [],
+
       type: null,
 
       practices: [],
@@ -286,6 +310,34 @@ export default {
         }
         this.invoice = null;
       }
+    },
+    approvedInvoices(newValue, oldValue) {
+      let selectedId = newValue
+        .filter(newId => !oldValue.includes(newId))
+        .concat(oldValue.filter(oldId => !newValue.includes(oldId)))[0];
+      if (!selectedId) {
+        return;
+      }
+      let defaultSelectedJobPart = this.defaultSelectedJobParts.find(
+        item => item.job_part_id === selectedId
+      );
+      let selectedJobPart = this.selectedJobParts.find(
+        item => item.job_part_id === selectedId
+      );
+      selectedJobPart = { ...defaultSelectedJobPart };
+      //
+      // let test = this.selectedInvoice.items.find(
+      //   item => item.job_part.id === selectedJobPart.job_part_id
+      // );
+      // defaultSelectedJobPart.description = `Job number ${test.job_part.job_part_number} ${test.job_part.job.type} Job at £${test.job.rate} ${test.job.locum_detail_rate_type.name} from ${test.date_start} to ${test.date_end} / ${test.job.shift.name} / Total hours of ${test.final_hours}`;
+      console.log(this.selectedInvoice);
+      this.selectedJobParts.splice(
+        this.selectedJobParts.findIndex(
+          item => item.job_part_id === selectedId
+        ),
+        1,
+        selectedJobPart
+      );
     }
   },
   created() {
@@ -302,22 +354,22 @@ export default {
         description: item.description,
         total: item.total.toString(),
         dispute: item.disputed,
+        approve: item.approved,
         absent_days: item.absent_days,
         final_hours: item.final_hours,
         late_hours: item.late_hours,
         remarks: item.remarks
       });
+      if (item.disputed === true) {
+        this.disputedInvoices.push(item.job_part.id);
+      }
+      if (item.approved === true) {
+        this.approvedInvoices.push(item.job_part.id);
+      }
     });
-    // get surgery name / id
-    // this.$axios.$get(`/api/v1/locum/private-practices`).then(res => {
-    //   this.practices = [];
-    //   res.data.private_practices.forEach(practice => {
-    //     this.practices.push({
-    //       label: practice.surgery.name,
-    //       value: practice.id
-    //     });
-    //   });
-    // });
+    this.defaultSelectedJobParts = JSON.parse(
+      JSON.stringify(this.selectedJobParts)
+    );
   },
   mounted() {
     document.body.style.overflow = "hidden";
@@ -330,9 +382,21 @@ export default {
       this.formError = [];
       this.form.type = this.type;
       this.form.surgery_id = this.form.surgery_id;
-      this.form.items = this.selectedJobParts;
       this.form.total_amount = this.amount;
       this.form.final = final;
+      this.form.items = [];
+      this.selectedJobParts.forEach(jobPart => {
+        this.form.items.push({
+          ...jobPart,
+          dispute: this.disputedInvoices.includes(jobPart.job_part_id)
+            ? true
+            : false,
+          approve: this.approvedInvoices.includes(jobPart.job_part_id)
+            ? true
+            : false
+        });
+      });
+      console.log(this.form.items);
       this.Validate(this.form, ["final"]);
       if (!this.formError.length) {
         if (!this.$route.params.id) {
@@ -340,7 +404,7 @@ export default {
             .$post(`/api/v1/practice/locum-invoices`, this.form)
             .then(res => {
               this.$emit("addInvoice", res.data.invoice);
-              this.$router.push("/locum-billing/invoices");
+              this.$router.push("/practice-billing/invoices-from-locums");
               this.$store.commit("SET_NOTIFICATION", {
                 enabled: true,
                 status: "success",
@@ -366,7 +430,7 @@ export default {
                 status: "success",
                 text: [`${res.message}`]
               });
-              this.$router.push("/locum-billing/invoices");
+              this.$router.push("/practice-billing/invoices-from-locums");
             })
             .catch(err => {
               console.log("err", err.response.data);
@@ -376,6 +440,9 @@ export default {
             });
         }
       }
+    },
+    jobPartTotalInvoice() {
+      // days, absent_days, late_hours, rate,
     },
     addItem() {},
     // surgeries
