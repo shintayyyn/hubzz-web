@@ -1,5 +1,6 @@
 <template>
   <section class="relative">
+    {{toggleTable}} {{loadingJobs}}
     <transition name="fade" mode="out-in">
       <div v-if="toggleTable">
         <AppButton
@@ -821,7 +822,68 @@ export default {
       );
     }, 250);
   },
+  mounted() {
+    this.$socket.on(
+      "Locum Notification Job Available",
+      // this.getJobsCount(this.params)
+      this.getJobsRealTime()
+    );
+    this.$socket.on(
+      "Locum Notification Job Matched",
+      // this.getJobsCount(this.params)
+      this.getJobsRealTime()
+    );
+    this.$socket.on(
+      "Locum Notification Job Unavailable",
+      // this.getJobsCount(this.params)
+      this.getJobsRealTime()
+    );
+    this.$socket.on(
+      "Locum Notification Job Cancelled",
+      // this.getJobsCount(this.params)
+      this.getJobsRealTime()
+    );
+    this.$socket.on(
+      "Locum Notification Job Current",
+      // this.getJobsCount(this.params)
+      this.getJobsRealTime()
+    );
+    this.$socket.on(
+      "Locum Notification Job Part Completed",
+      // this.getJobsCount(this.jobPartParams)
+      this.getJobPartsRealTime()
+    );
+    this.$socket.on(
+      "Locum Notification Job Unsuccessful",
+      // this.getJobsCount(this.params)
+      this.getJobsRealTime()
+    );
+    this.$socket.on(
+      "Locum Notification Job Ongoing",
+      // this.getJobsCount(this.params)
+      this.getJobsRealTime()
+    );
+    this.$socket.on(
+      "Locum Notification Job Updated",
+      // this.getJobsCount(this.params)
+      this.getJobsRealTime()
+    );
+  },
+  destroyed() {
+    this.$socket.removeListener(
+      "Locum Notification Job Available",
+      this.getJobsCount()
+    );
+  },
   methods: {
+    getJobsRealTime(job) {
+      console.log(job);
+      this.getJobsCount(this.params);
+    },
+    getJobPartsRealTime(job_part) {
+      console.log(job_part);
+      this.getJobsCount(this.jobPartParams);
+    },
     clearJobsBadge(status) {
       let jobStatus = status.toUpperCase();
       return this.$store.commit(`jobs/CLEAR_LOCUM_${jobStatus}_BADGE`);
@@ -847,6 +909,7 @@ export default {
       this.filterToggle = false;
     },
     getJobsCount(params) {
+      console.log("hi");
       this.$store.commit("jobs/TOGGLE_LOADING", true);
       let locum_status = [];
       if (!this.$route.query.status) {
@@ -873,7 +936,7 @@ export default {
         });
     },
     getJobs(params) {
-      this.$store.commit("jobs/CLEAR_JOBS");
+      // this.$store.commit("jobs/CLEAR_JOBS");
       let locum_status = [];
       if (!this.$route.query.status) {
         locum_status = ["Allocated"];

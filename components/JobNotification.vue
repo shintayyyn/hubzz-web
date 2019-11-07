@@ -30,7 +30,7 @@
             </div>
             <div class="flex justify-between items-center my-1 w-full">
               <div>Rate</div>
-              <div v-text="`$${notification.rate} ${notification.locum_detail_rate_type}`"></div>
+              <div v-text="`£ ${notification.rate} ${notification.locum_detail_rate_type}`"></div>
             </div>
             <div class="flex justify-between items-center my-1 w-full">
               <div>Shift</div>

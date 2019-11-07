@@ -1,26 +1,23 @@
 export default {
     async initializeJobListener({ state, commit, dispatch }) {
         // LOCUM
-        this.$socket.on('Locum Notification Job Reminder', (job) => {
-            dispatch('fetchLocumJob', { jobId: job.id, notifyOnly: true })
+        this.$socket.on('Locum Notification Job Reminder', async (job) => {
+            // dispatch('fetchLocumJob', { jobId: job.id, notifyOnly: true, notificationType: 'Locum Notification Job Reminder' })
         })
-        this.$socket.on('Locum Notification Job Available', (job) => {
-            console.log('locum socket available', job)
+        this.$socket.on('Locum Notification Job Available', async (job) => {
+            // await dispatch('fetchLocumJob', { jobId: job.id, notificationType: 'Locum Notification Job Available' })
             if (!state.locum_available_jobs.find(availableJobs => availableJobs.id === job.id)) {
                 commit('ADD_LOCUM_AVAILABLE_BADGE')
-                dispatch('fetchLocumJob', { jobId: job.id })
             }
         })
         this.$socket.on('Locum Notification Job Matched', (job) => {
-            console.log('locum socket matched', job)
             if (!state.locum_matched_jobs.find(matchedJobs => matchedJobs.id === job.id)) {
                 commit('ADD_LOCUM_MATCHED_BADGE')
                 commit('ADD_LOCUM_AVAILABLE_BADGE')
-                dispatch('fetchLocumJob', { jobId: job.id })
+                // dispatch('fetchLocumJob', { jobId: job.id })
             }
         })
         this.$socket.on('Locum Notification Job Unavailable', (job) => {
-            console.log('locum socket unavailable', job)
             if (state.locum_available_jobs.find(availableJob => availableJob.id === job.id)) {
                 commit('REMOVE_LOCUM_AVAILABLE_JOB', job.id)
                 commit('REMOVE_LOCUM_AVAILABLE_BADGE')
@@ -31,7 +28,6 @@ export default {
             }
         })
         this.$socket.on('Locum Notification Job Cancelled', (job) => {
-            console.log('locum socket cancelled', job)
             if (state.locum_allocated_jobs.find(allocatedJob => allocatedJob.id === job.id)) {
                 commit('REMOVE_LOCUM_ALLOCATED_JOB', job.id)
                 commit('REMOVE_LOCUM_ALLOCATED_BADGE')
@@ -42,40 +38,37 @@ export default {
             }
             if (!state.locum_cancelled_jobs.find(cancelledJob => cancelledJob.id === job.id)) {
                 commit('ADD_LOCUM_CANCELLED_BADGE')
-                dispatch('fetchLocumJob', { jobId: job.id })
+                // dispatch('fetchLocumJob', { jobId: job.id })
             }
         })
         this.$socket.on('Locum Notification Job Current', (job) => {
-            console.log('locum socket current', job)
             if (state.locum_applied_jobs.find(appliedJob => appliedJob.id === job.id)) {
                 commit('REMOVE_LOCUM_APPLIED_JOB', job.id)
                 commit('REMOVE_LOCUM_APPLIED_BADGE')
             }
             if (!state.locum_allocated_jobs.find(allocatedJob => allocatedJob.id === job.id)) {
                 commit('ADD_LOCUM_ALLOCATED_BADGE')
-                dispatch('fetchLocumJob', { jobId: job.id })
+                // dispatch('fetchLocumJob', { jobId: job.id })
             }
         })
         this.$socket.on('Locum Notification Job Part Completed', (job_part) => {
-            console.log('locum socket part completed', job_part)
             if (state.locum_ongoing_job_parts.find(ongoingJob => ongoingJob.id === job_part.id)) {
                 commit('REMOVE_LOCUM_ONGOING_JOB_PART', job_part.id)
                 commit('REMOVE_LOCUM_ONGOING_BADGE')
             }
             if (!state.locum_completed_job_parts.find(completedJob => completedJob.id === job_part.id)) {
                 commit('ADD_LOCUM_COMPLETED_BADGE')
-                dispatch('fetchLocumJob', { jobId: job_part.id, jobPart: true })
+                // dispatch('fetchLocumJob', { jobId: job_part.id, jobPart: true })
             }
         })
         this.$socket.on('Locum Notification Job Unsuccessful', (job) => {
-            console.log('locum socket unsuccessful', job)
             if (state.locum_applied_jobs.find(appliedJob => appliedJob.id === job.id)) {
                 commit('REMOVE_LOCUM_APPLIED_JOB', job.id)
                 commit('REMOVE_LOCUM_APPLIED_BADGE')
             }
             if (!state.locum_unsuccessful_jobs.find(unsuccessfulJob => unsuccessfulJob.id === job.id)) {
                 commit('ADD_LOCUM_UNSUCCESSFUL_BADGE')
-                dispatch('fetchLocumJob', { jobId: job.id })
+                // dispatch('fetchLocumJob', { jobId: job.id })
             }
         })
         this.$socket.on('Locum Notification Job Updated', (job) => {
@@ -102,6 +95,16 @@ export default {
             }
             if (state.locum_completed_jobs.find(completedJobs => completedJobs.id == job.job.id)) {
                 return commit('REMOVE_LOCUM_COMPLETED_JOB', job.job.id)
+            }
+        })
+        this.$socket.on('Locum Notification Job Ongoing', (job) => {
+            if (state.locum_allocated_jobs.find(allocatedJob => allocatedJob.id === job.id)) {
+                commit('REMOVE_LOCUM_ALLOCATED_JOB', job.id)
+                commit('REMOVE_LOCUM_ALLOCATED_BADGE')
+            }
+            if (!state.locum_ongoing_job_parts.find(ongoingJob => ongoingJob.id === job.id)) {
+                commit('ADD_LOCUM_ONGOING_BADGE')
+                dispatch('fetchLocumJob', { jobId: job.id, jobPart: true })
             }
         })
         // PRACTICE
@@ -296,73 +299,76 @@ export default {
         }
     },
 
-    async fetchLocumJob({ state, commit }, payload) {
-        let url = `/api/v1/locum/jobs`
-        if (payload.jobPart) {
-            url = `/api/v1/locum/job-parts`
-        }
-        const response = await this.$axios.$get(`${url}/${payload.jobId}`)
-        let job = response.data && response.data.job ? response.data.job : null
-        let job_part = response.data && response.data.job_part ? response.data.job_part : null
-        console.log('locum response job', response)
-        if (job || job_part) {
-            // remove existing notification or until 5
-            commit('REMOVE_LOCUM_JOB_NOTIFICATION', job ? job.id : job_part.id)
-            if (state.locum_job_notifications.length >= 5) {
-                commit('REMOVE_LOCUM_JOB_NOTIFICATION', state.locum_job_notifications[4].id)
-            }
+    // async fetchLocumJob({ state, commit }, payload) {
+    //     let url = `/api/v1/locum/jobs`
+    //     if (payload.jobPart) {
+    //         url = `/api/v1/locum/job-parts`
+    //     }
+    //     const response = await this.$axios.$get(`${url}/${payload.jobId}`)
+    //     let job = response.data && response.data.job ? response.data.job : null
+    //     let job_part = response.data && response.data.job_part ? response.data.job_part : null
+    //     console.log('locum response job', response)
+    //     if (job || job_part) {
+    //         // remove existing notification or until 5
+    //         commit('REMOVE_LOCUM_JOB_NOTIFICATION', job ? job.id : job_part.id)
+    //         if (state.locum_job_notifications.length >= 5) {
+    //             commit('REMOVE_LOCUM_JOB_NOTIFICATION', state.locum_job_notifications[4].id)
+    //         }
 
-            if (payload.notifyOnly) {
-                if (job) {
-                    job = {
-                        ...job,
-                        reminder: true
-                    }
-                }
-                if (job_part) {
-                    job_part = {
-                        ...job_part,
-                        reminder: true
-                    }
-                }
-                console.log(job, job_part)
-            }
-            commit('ADD_LOCUM_JOB_NOTIFICATION', job ? job : job_part)
+    //         if (payload.notifyOnly) {
+    //             if (job) {
+    //                 job = {
+    //                     ...job,
+    //                     reminder: true
+    //                 }
+    //             }
+    //             if (job_part) {
+    //                 job_part = {
+    //                     ...job_part,
+    //                     reminder: true
+    //                 }
+    //             }
+    //             console.log(job, job_part)
+    //         }
+    //         // commit('ADD_LOCUM_JOB_NOTIFICATION', job ? job : job_part)
+    //         return job ? job : job_part
 
-            if (!payload.notifyOnly) {
-                if (job) {
-                    switch (job.locum_status.toLowerCase()) {
-                        case 'available':
-                            commit('ADD_LOCUM_AVAILABLE_JOB', job)
-                            break
-                        case 'matched':
-                            commit('ADD_LOCUM_MATCHED_JOB', job)
-                            commit('ADD_LOCUM_AVAILABLE_JOB', job)
-                            break
-                        case 'applied':
-                            commit('ADD_LOCUM_APPLIED_JOB', job)
-                            break
-                        case 'cancelled':
-                            commit('ADD_LOCUM_CANCELLED_JOB', job)
-                            break
-                        case 'allocated':
-                            commit('ADD_LOCUM_ALLOCATED_JOB', job)
-                            break
-                        case 'unsuccessful':
-                            commit('ADD_LOCUM_UNSUCCESSFUL_JOB', job)
-                            break
-                    }
-                }
-                if (job_part) {
-                    switch (job_part.status.toLowerCase()) {
-                        case 'completed':
-                            commit('ADD_LOCUM_COMPLETED_JOB_PART', job_part)
-                            break
-                    }
-                }
-            }
-        }
-    },
+    //         // if (!payload.notifyOnly) {
+    //         //     if (job) {
+    //         //         switch (job.locum_status.toLowerCase()) {
+    //         //             case 'available':
+    //         //                 commit('ADD_LOCUM_AVAILABLE_JOB', job)
+    //         //                 break
+    //         //             case 'matched':
+    //         //                 commit('ADD_LOCUM_MATCHED_JOB', job)
+    //         //                 commit('ADD_LOCUM_AVAILABLE_JOB', job)
+    //         //                 break
+    //         //             case 'applied':
+    //         //                 commit('ADD_LOCUM_APPLIED_JOB', job)
+    //         //                 break
+    //         //             case 'cancelled':
+    //         //                 commit('ADD_LOCUM_CANCELLED_JOB', job)
+    //         //                 break
+    //         //             case 'allocated':
+    //         //                 commit('ADD_LOCUM_ALLOCATED_JOB', job)
+    //         //                 break
+    //         //             case 'unsuccessful':
+    //         //                 commit('ADD_LOCUM_UNSUCCESSFUL_JOB', job)
+    //         //                 break
+    //         //         }
+    //         //     }
+    //         //     if (job_part) {
+    //         //         switch (job_part.status.toLowerCase()) {
+    //         //             case 'ongoing':
+    //         //                 commit('ADD_LOCUM_ONGOING_JOB', job_part)
+    //         //             case 'completed':
+    //         //                 commit('ADD_LOCUM_COMPLETED_JOB_PART', job_part)
+    //         //                 break
+    //         //         }
+    //         //     }
+    //         // }
+    //     }
+    // },
 
     async fetchLocumJobParts({ commit }, payload) {
         let url = `/api/v1/locum/job-parts`
