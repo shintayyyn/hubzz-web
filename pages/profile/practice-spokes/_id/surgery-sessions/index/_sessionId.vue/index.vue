@@ -69,7 +69,7 @@ export default {
   methods: {
     close() {
       this.$router.push({
-        path: `/profile/branches-surgeries/${this.$route.params.id}/surgery-sessions`,
+        path: `/profile/practice-spokes/${this.$route.params.id}/surgery-sessions`,
         query: { ...this.$route.query }
       });
     }

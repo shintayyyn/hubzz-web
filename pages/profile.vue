@@ -8,11 +8,11 @@
         v-if="authPermissions.includes('View Profile Practice')"
       >Practice</nuxt-link>
       <nuxt-link
-        to="/profile/branches-surgeries"
+        to="/profile/practice-spokes"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('profile-branches-surgeries') || $route.name === 'profile-branches-surgeries-create'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name.includes('profile-practice-spokes') || $route.name === 'profile-practice-spokes-create'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         v-if="type !== 'Stand Alone' && authPermissions.includes('View Profile Surgeries')"
-      >Branches / Surgeries</nuxt-link>
+      >Practice Spokes</nuxt-link>
       <nuxt-link
         to="/profile/users"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
@@ -88,7 +88,7 @@ export default {
         this.authPermissions.includes("View Profile Surgeries") &&
         this.type != "Stand Alone"
       ) {
-        this.$router.push("/profile/branches-surgeries");
+        this.$router.push("/profile/practice-spokes");
       } else if (this.authPermissions.includes("View Profile Users")) {
         this.$router.push("/profile/users");
       } else if (
