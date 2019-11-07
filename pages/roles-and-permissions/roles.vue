@@ -18,7 +18,7 @@
       />
     </div>
     <AppTable
-      v-if="roles.length > 0"
+      v-if="totalRoles > 0"
       :total="totalRoles"
       :items="roles"
       :loading="loading"
