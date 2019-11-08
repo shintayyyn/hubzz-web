@@ -42,6 +42,9 @@ export default {
     REMOVE_PRACTICE_JOB_NOTIFICATION(state, payload) {
         state.practice_job_notifications = state.practice_job_notifications.filter(job => job.id !== payload)
     },
+    CLEAR_PRACTICE_JOB_NOTIFICATION() {
+        state.practice_job_notifications = []
+    },
     // JOB PARTS
     SET_PRACTICE_ONGOING_JOB_PARTS_COUNT(state, payload) {
         state.practice_ongoing_job_parts_count = payload
@@ -274,6 +277,9 @@ export default {
     },
     REMOVE_LOCUM_JOB_NOTIFICATION(state, payload) {
         state.locum_job_notifications = state.locum_job_notifications.filter(job => job.id !== payload)
+    },
+    CLEAR_LOCUM_JOB_NOTIFICATION() {
+        state.locum_job_notifications = []
     },
     // JOB PARTS
     SET_LOCUM_ALLOCATED_JOB_PARTS_COUNT(state, payload) {

@@ -736,9 +736,11 @@ export default {
     "$route.query"({ status: newStatus }, { status: oldStatus }) {
       if (newStatus && newStatus !== null && newStatus !== oldStatus) {
         this.$store.commit("jobs/TOGGLE_LOADING", true);
+        this.$store.commit("jobs/CLEAR_PRACTICE_JOB_NOTIFICATION");
         this.current_page = 1;
         this.showTable = false;
         this.filterModal = false;
+        this.showRefresh = false;
         setTimeout(async () => {
           await this.clearFilters();
           this.loading = true;
@@ -781,6 +783,8 @@ export default {
   },
   destroyed() {
     this.removeListener();
+    this.showRefresh = false;
+    this.$store.commit("jobs/CLEAR_PRACTICE_JOB_NOTIFICATION");
   },
   methods: {
     getJobsCount(params) {
