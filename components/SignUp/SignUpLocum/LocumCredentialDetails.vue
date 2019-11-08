@@ -1,19 +1,19 @@
 <template>
   <div class="flex flex-col items-center justify-center w-full">
     <div class="flex w-full justify-center xl:justify-start">
-      <div class="flex mx-4" style="flex: 0 1 600px;">
+      <div class="flex md:mx-4" style="flex: 0 1 600px;">
         <h3>Finally,</h3>
       </div>
     </div>
 
     <div class="flex w-full justify-center xl:justify-start">
-      <div class="flex m-4" style="flex: 0 1 600px;">
+      <div class="flex md:m-4" style="flex: 0 1 600px;">
         <span>For your sign-in credentials</span>
       </div>
     </div>
 
     <div class="flex w-full justify-center xl:justify-start">
-      <div class="mx-4 flex flex-col p-8 m-1 rounded-lg shadow-lg" style="flex: 0 1 600px;">
+      <div class="md:mx-4 flex flex-col p-4 md:p-8 m-1 rounded-lg shadow-lg" style="flex: 0 1 600px;">
         <form class="w-full">
           <AppInput
             v-model="form.email"
@@ -85,14 +85,14 @@
         @click="$store.commit('sign-up/SET_ACTIVE_COMPONENT', 'LocumPayrollDetails')"
       />
       <div class="mx-2"></div>
-      <AppButton :label="'Next'" @click="next" />
+      <AppButton :label="'Next'" @click="next" :inStyle="'padding:6px 16px;'"/>
     </div>
 
     <div class="shield" v-if="modal" @click="modal=false"></div>
     <transition name="slide" mode="out-in">
       <div class="py-8 modal-container" v-if="modal">
-        <div @click="modal = false" class="cursor-pointer px-4 lg:px-10 pb-4">
-          <svgicon name="left-arrow" height="32" width="32" />
+        <div class="px-4 lg:px-10 pb-4">
+          <svgicon name="left-arrow" height="32" width="32" @click="modal = false" class="cursor-pointer " />
         </div>
         <TermsAndConditions />
       </div>

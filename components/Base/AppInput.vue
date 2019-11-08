@@ -84,17 +84,22 @@
               </div>
             </template>
             <template v-if="type === 'textarea'">
-              <textarea
-                id
-                :cols="cols"
-                :rows="rows"
-                :value="value"
-                :placeholder="placeholder"
-                class="border-b-2 focus:border-yellow-400 focus:outline-none py-4 px-2 font-bold text-xs sm:text-sm w-full"
-                :class="[error ? 'border-red-500':'', resize ? '' : 'resize-none']"
-                @input="$emit('input', $event.target.value)"
-                @blur="$emit('blur', $event)"
-              ></textarea>
+              <div class="flex flex-col w-full">
+                <textarea
+                  id
+                  :cols="cols"
+                  :rows="rows"
+                  :value="value"
+                  :placeholder="placeholder"
+                  class="border-b-2 focus:border-yellow-400 focus:outline-none py-4 px-2 font-bold text-xs sm:text-sm w-full"
+                  :class="[error ? 'border-red-500':'', resize ? '' : 'resize-none']"
+                  @input="$emit('input', $event.target.value)"
+                  @blur="$emit('blur', $event)"
+                ></textarea>
+                <div v-if="error"
+                  class="text-red-500 py-1 text-xs text-white"
+                >{{error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ")}}</div>
+              </div>
             </template>
           </div>
         </template>
