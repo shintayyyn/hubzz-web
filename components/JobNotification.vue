@@ -4,7 +4,7 @@
       <template v-for="notification in notifications">
         <div
           @click="goTo(notification.id, notification.status ? notification.status : notification.locum_status)"
-          :key="notification.id"
+          :key="`${notification.id}-${notification.notification_type}`"
           class="relative m-1 p-3 flex flex-wrap bg-gray-100 rounded-lg shadow-lg"
         >
           <span
@@ -36,8 +36,8 @@
               <div>Shift</div>
               <div>{{notification.shift}}</div>
             </div>
-            <div v-if="notification.reminder">
-              <div class="font-semibold">{{notification.reminder_message}}</div>
+            <div>
+              <div class="font-semibold">{{notification.message}}</div>
             </div>
           </div>
         </div>

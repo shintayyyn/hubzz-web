@@ -166,5 +166,6 @@ Vue.mixin({
         hasPermission
       };
     }
+    // JOBS
   }
 });

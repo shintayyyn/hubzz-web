@@ -2,11 +2,8 @@
   <div class="relative rounded-lg shadow-lg p-4 md:p-8" :class="onChange && 'opacity-50'">
     <div class="flex flex-row flex-wrap justify-between">
       <div class="flex flex-col w-full md:w-1/2 p-0 md:pr-4">
-        <div class="font-bold text-sm sm:text-md">Job number</div>
-        <div
-          class="text-xs sm:text-lg font-bold mb-6"
-          v-text="job_part.job_part_number?job_part.job_part_number:`(none)`"
-        ></div>
+        <div class="font-bold text-sm sm:text-md">Job part number</div>
+        <div class="text-xs sm:text-lg font-bold mb-6" v-text="job_part.job_part_number"></div>
         <div class="font-bold text-sm sm:text-md">Rate</div>
         <div
           class="text-xs sm:text-sm mb-6"
@@ -42,7 +39,7 @@
           class="text-xs sm:text-sm mb-6"
           v-text="job_part.job.platform_job.email?job_part.job.platform_job.email:`(none)`"
         ></div>
-        <template v-if="job_part.job.status === 'Cancelled'">
+        <template v-if="job_part.status === 'Cancelled'">
           <div class="font-bold text-sm sm:text-md">Cancelled At</div>
           <div
             class="text-xs sm:text-sm mb-6"
