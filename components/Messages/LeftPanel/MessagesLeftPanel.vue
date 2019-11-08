@@ -16,6 +16,7 @@
           @scroll="scrollHandler"
         >
           <template v-if="showResult === false || $route.params.slug == '/messages'">
+          <transition-group name="slide" tag="p">
             <div
               class="relative flex w-full items-center px-2 py-4 cursor-pointer border-b"
               :class="[parseInt($route.params.slug) === item.id ? 'bg-gray-300' : 'hover:bg-gray-200', unreadMessages.find(conversation => conversation.conversation_id == item.id && $auth.user.id == conversation.user_id) ? 'font-bold bg-gray-100' : '']"
@@ -48,9 +49,11 @@
                 >{{ $moment(item.latest_conversation_message.created_at).fromNow() }}</span>
               </div>
             </div>
+          </transition-group>
           </template>
 
           <template v-if="showResult && messages.length > 0">
+          <transition-group name="slide" tag="p">
             <div
               class="relative flex w-full items-center px-2 py-4 cursor-pointer border-b"
               :class="parseInt($route.params.slug) === item.id ? 'bg-gray-300' : 'hover:bg-gray-200'"
@@ -84,6 +87,7 @@
                 >{{ $moment(item.latest_conversation_message.created_at).fromNow() }}</span>
               </div>
             </div>
+          </transition-group>
           </template>
           <div
             v-if="(messages.length === 0 && showResult === true) || conversations.length === 0"

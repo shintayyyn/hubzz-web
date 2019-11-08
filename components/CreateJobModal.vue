@@ -816,13 +816,10 @@ export default {
           }
         }
       }
-      // console.log("notRequired", notRequired);
-      // console.log("form", this.form);
       this.Validate(this.form, notRequired);
       this.form.favorite_only_until = `${this.$moment(
         this.favorite_only_until.date
       ).format("YYYY-MM-DD")} ${this.favorite_only_until.time}`;
-      // console.log("formError", this.formError.map(err => err.field));
       if (!this.formError.length) {
         this.selectedClinicalSystem = [...this.form.clinical_system_id];
         this.form.clinical_system_id = this.form.clinical_system_id.map(
@@ -877,6 +874,13 @@ export default {
         this.$axios
           .$post(`/api/v1/practice/jobs`, this.form)
           .then(res => {
+            // if in /sessions, push to store
+            if (this.$route.path.includes("/sessions")) {
+              this.$store.commit(
+                "jobs/ADD_PRACTICE_AVAILABLE_JOB",
+                res.data.job
+              );
+            }
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",

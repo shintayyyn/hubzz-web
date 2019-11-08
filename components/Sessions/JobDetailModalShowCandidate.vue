@@ -149,7 +149,7 @@ import AppButton from "@/components/Base/AppButton";
 import AppAvatar from "@/components/Base/AppAvatar";
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
 export default {
-  props: ["user"],
+  props: ["user", "job"],
   components: {
     AppButton,
     AppConfirmationModal,
@@ -196,20 +196,27 @@ export default {
       });
     },
     appoint() {
-      let jobId = this.$route.params.id
-        ? this.$route.params.id
-        : this.$route.params.jobId;
       this.$axios
         .$put(
-          `/api/v1/practice/jobs/${jobId}/applicants/${this.user.id}/appoint`
+          `/api/v1/practice/jobs/${this.job.id}/applicants/${this.user.id}/appoint`
         )
         .then(res => {
-          this.$emit("appointed");
+          if (
+            this.$route.path.includes("/dashboard") ||
+            this.$route.path.includes("/sessions")
+          ) {
+            this.$store.commit("jobs/REMOVE_PRACTICE_APPLIED_JOB", this.job.id);
+            this.$store.commit(
+              "jobs/REMOVE_PRACTICE_APPLIED_JOBS_REMINDER",
+              this.job.id
+            );
+          }
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
             text: ["Assign locum successfully"]
           });
+          this.$emit("appointed");
         });
     },
     downloadItem(fileUrl, fileName) {

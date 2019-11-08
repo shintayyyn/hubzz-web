@@ -43,32 +43,6 @@ export default {
         state.practice_job_notifications = state.practice_job_notifications.filter(job => job.id !== payload)
     },
     // JOB PARTS
-    SET_PRACTICE_ALLOCATED_JOB_PARTS_COUNT(state, payload) {
-        state.practice_allocated_job_parts_count = payload
-    },
-    SET_PRACTICE_ALLOCATED_JOB_PARTS(state, payload) {
-        state.practice_allocated_job_parts = payload
-    },
-    REMOVE_PRACTICE_ALLOCATED_JOB_PART(state, payload) {
-        state.practice_allocated_job_parts = state.practice_allocated_job_parts.filter(job => job.id !== payload)
-        state.practice_allocated_job_parts_count = state.practice_allocated_job_parts_count - 1
-    },
-    UPDATE_PRACTICE_ALLOCATED_JOB_PART(state, { payload, payloadIndex }) {
-        let index = state.practice_allocated_job_parts.findIndex(jobPart => jobPart.id == payload.id)
-        if (index < 0) {
-            state.practice_allocated_job_parts.splice(payloadIndex, 0, payload)
-        }
-    },
-    ADD_PRACTICE_ALLOCATED_JOB_PART_BADGE(state) {
-        state.practice_new_allocated_job_parts_count = state.practice_new_allocated_job_parts_count + 1
-    },
-    REMOVE_PRACTICE_ALLOCATED_JOB_PART_BADGE(state) {
-        state.practice_new_allocated_job_parts_count = state.practice_new_allocated_job_parts_count + 1
-    },
-    CLEAR_PRACTICE_ALLOCATED_JOB_PART_BADGE(state) {
-        state.practice_new_allocated_job_parts_count = 0
-    },
-
     SET_PRACTICE_ONGOING_JOB_PARTS_COUNT(state, payload) {
         state.practice_ongoing_job_parts_count = payload
     },
@@ -87,15 +61,6 @@ export default {
         if (index < 0) {
             state.practice_ongoing_job_parts.splice(payloadIndex, 0, payload)
         }
-    },
-    ADD_PRACTICE_ONGOING_BADGE(state) {
-        state.practice_new_ongoing_job_parts_count = state.practice_new_ongoing_job_parts_count + 1
-    },
-    REMOVE_PRACTICE_ONGOING_BADGE(state) {
-        state.practice_new_ongoing_job_parts_count = state.practice_new_ongoing_job_parts_count - 1
-    },
-    CLEAR_PRACTICE_ONGOING_BADGE(state) {
-        state.practice_new_ongoing_job_parts_count = 0
     },
 
     SET_PRACTICE_COMPLETED_JOB_PARTS(state, payload) {
@@ -118,15 +83,6 @@ export default {
             state.practice_completed_job_parts.splice(payloadIndex, 0, payload)
         }
     },
-    ADD_PRACTICE_COMPLETED_BADGE(state) {
-        state.practice_new_completed_job_parts_count = state.practice_new_completed_job_parts_count + 1
-    },
-    REMOVE_PRACTICE_COMPLETED_BADGE(state) {
-        state.practice_new_completed_job_parts_count = state.practice_new_completed_job_parts_count - 1
-    },
-    CLEAR_PRACTICE_COMPLETED_BADGE(state) {
-        state.practice_new_completed_job_parts_count = 0
-    },
 
     SET_PRACTICE_APPROVED_JOB_PARTS_COUNT(state, payload) {
         state.practice_approved_job_parts_count = payload
@@ -147,14 +103,22 @@ export default {
             state.practice_approved_job_parts.splice(payloadIndex, 0, payload)
         }
     },
-    ADD_PRACTICE_APPROVED_BADGE(state) {
-        state.practice_new_approved_job_parts_count = state.practice_new_approved_job_parts_count + 1
+
+    SET_PRACTICE_ALLOCATED_JOB_PARTS_COUNT(state, payload) {
+        state.practice_allocated_job_parts_count = payload
     },
-    REMOVE_PRACTICE_APPROVED_BADGE(state) {
-        state.practice_new_approved_job_parts_count = state.practice_new_approved_job_parts_count - 1
+    SET_PRACTICE_ALLOCATED_JOB_PARTS(state, payload) {
+        state.practice_allocated_job_parts = payload
     },
-    CLEAR_PRACTICE_APPROVED_BADGE(state) {
-        state.practice_new_approved_job_parts_count = 0
+    REMOVE_PRACTICE_ALLOCATED_JOB_PART(state, payload) {
+        state.practice_allocated_job_parts = state.practice_allocated_job_parts.filter(job => job.id !== payload)
+        state.practice_allocated_job_parts_count = state.practice_allocated_job_parts_count - 1
+    },
+    UPDATE_PRACTICE_ALLOCATED_JOB_PART(state, { payload, payloadIndex }) {
+        let index = state.practice_allocated_job_parts.findIndex(jobPart => jobPart.id == payload.id)
+        if (index < 0) {
+            state.practice_allocated_job_parts.splice(payloadIndex, 0, payload)
+        }
     },
 
     // WHOLE
@@ -167,12 +131,6 @@ export default {
     SET_PRACTICE_AVAILABLE_JOBS_REMINDER(state, payload) {
         state.practice_available_jobs_reminder = payload
     },
-    ADD_PRACTICE_AVAILABLE_JOBS_REMINDER(state, payload) {
-        state.practice_available_jobs_reminder.push(payload)
-    },
-    REMOVE_PRACTICE_AVAILABLE_JOBS_REMINDER(state, payload) {
-        state.practice_available_jobs_reminder = state.practice_available_jobs_reminder.filter(job => job.id !== payload)
-    },
     ADD_PRACTICE_AVAILABLE_JOB(state, payload) {
         state.practice_available_jobs.push(payload)
         state.practice_available_jobs_count = state.practice_available_jobs_count + 1
@@ -181,30 +139,12 @@ export default {
         state.practice_available_jobs = state.practice_available_jobs.filter(job => job.id !== payload)
         state.practice_available_jobs_count = state.practice_available_jobs_count - 1
     },
-    ADD_PRACTICE_AVAILABLE_BADGE(state) {
-        state.practice_new_available_jobs_count = state.practice_new_available_jobs_count + 1
-    },
-    REMOVE_PRACTICE_AVAILABLE_BADGE(state) {
-        state.practice_new_available_jobs_count = state.practice_new_available_jobs_count - 1
-    },
-    CLEAR_PRACTICE_LIVE_BADGE(state) {
-        state.practice_new_available_jobs_count = 0
-    },
 
     SET_PRACTICE_APPLIED_JOBS(state, payload) {
         state.practice_applied_jobs = payload
     },
     SET_PRACTICE_APPLIED_JOBS_COUNT(state, payload) {
         state.practice_applied_jobs_count = payload
-    },
-    SET_PRACTICE_APPLIED_JOBS_REMINDER(state, payload) {
-        state.practice_applied_jobs_reminder = payload
-    },
-    ADD_PRACTICE_APPLIED_JOBS_REMINDER(state, payload) {
-        state.practice_applied_jobs_reminder.push(payload)
-    },
-    REMOVE_PRACTICE_APPLIED_JOBS_REMINDER(state, payload) {
-        state.practice_applied_jobs_reminder = state.practice_applied_jobs_reminder.filter(job => job.id !== payload)
     },
     REMOVE_PRACTICE_APPLIED_JOB(state, payload) {
         state.practice_applied_jobs = state.practice_applied_jobs.filter(job => job.id !== payload)
@@ -213,15 +153,6 @@ export default {
     ADD_PRACTICE_APPLIED_JOB(state, payload) {
         state.practice_applied_jobs.push(payload)
         state.practice_applied_jobs_count = state.practice_applied_jobs_count + 1
-    },
-    ADD_PRACTICE_APPLIED_BADGE(state) {
-        state.practice_new_applied_jobs_count = state.practice_new_applied_jobs_count + 1
-    },
-    REMOVE_PRACTICE_APPLIED_BADGE(state) {
-        state.practice_new_applied_jobs_count = state.practice_new_applied_jobs_count - 1
-    },
-    CLEAR_PRACTICE_APPLIED_BADGE(state) {
-        state.practice_new_applied_jobs_count = 0
     },
 
     SET_PRACTICE_ALLOCATED_JOBS(state, payload) {
@@ -242,15 +173,6 @@ export default {
     REMOVE_PRACTICE_ALLOCATED_JOB(state, payload) {
         state.practice_allocated_jobs = state.practice_allocated_jobs.filter(job => job.id !== payload)
         state.practice_allocated_jobs_count = state.practice_allocated_jobs_count - 1
-    },
-    ADD_PRACTICE_ALLOCATED_BADGE(state) {
-        state.practice_new_allocated_jobs_count = state.practice_new_allocated_jobs_count + 1
-    },
-    REMOVE_PRACTICE_ALLOCATED_BADGE(state) {
-        state.practice_new_allocated_jobs_count = state.practice_new_allocated_jobs_count - 1
-    },
-    CLEAR_PRACTICE_ALLOCATED_BADGE(state) {
-        state.practice_new_allocated_jobs_count = 0
     },
 
     SET_PRACTICE_COMPLETED_JOBS(state, payload) {
@@ -278,15 +200,6 @@ export default {
         state.practice_unfilled_jobs = state.practice_unfilled_jobs.filter(job => job.id !== payload)
         state.practice_unfilled_jobs_count = state.practice_unfilled_jobs_count - 1
     },
-    ADD_PRACTICE_UNFILLED_BADGE(state) {
-        state.practice_new_unfilled_jobs_count = state.practice_new_unfilled_jobs_count + 1
-    },
-    REMOVE_PRACTICE_UNFILLED_BADGE(state) {
-        state.practice_new_unfilled_jobs_count = state.practice_new_unfilled_jobs_count - 1
-    },
-    CLEAR_PRACTICE_UNFILLED_BADGE(state) {
-        state.practice_new_unfilled_jobs_count = 0
-    },
 
     SET_PRACTICE_CANCELLED_JOBS(state, payload) {
         state.practice_cancelled_jobs = payload
@@ -301,15 +214,6 @@ export default {
     REMOVE_PRACTICE_CANCELLED_JOB(state, payload) {
         state.practice_cancelled_jobs = state.practice_cancelled_jobs.filter(job => job.id !== payload)
         state.practice_cancelled_jobs_count = state.practice_cancelled_jobs_count - 1
-    },
-    ADD_PRACTICE_CANCELLED_BADGE(state) {
-        state.practice_new_cancelled_jobs_count = state.practice_new_cancelled_jobs_count + 1
-    },
-    REMOVE_PRACTICE_CANCELLED_BADGE(state) {
-        state.practice_new_cancelled_jobs_count = state.practice_new_cancelled_jobs_count - 1
-    },
-    CLEAR_PRACTICE_CANCELLED_BADGE(state) {
-        state.practice_new_cancelled_jobs_count = 0
     },
 
     SET_PRACTICE_DECLINED_JOBS(state, payload) {
@@ -328,15 +232,6 @@ export default {
             state.practice_declined_jobs_count = state.practice_declined_jobs_count - 1
         }
     },
-    ADD_PRACTICE_DECLINED_BADGE(state) {
-        state.practice_new_declined_jobs_count = state.practice_new_declined_jobs_count + 1
-    },
-    REMOVE_PRACTICE_DECLINED_BADGE(state) {
-        state.practice_new_declined_jobs_count = state.practice_new_declined_jobs_count - 1
-    },
-    CLEAR_PRACTICE_DECLINED_BADGE(state) {
-        state.practice_new_declined_jobs_count = 0
-    },
 
     SET_PRACTICE_WITHDRAWN_JOBS(state, payload) {
         state.practice_withdrawn_jobs = payload
@@ -353,15 +248,24 @@ export default {
             state.practice_withdrawn_jobs_count = state.practice_withdrawn_jobs_count - 1
         }
     },
-    ADD_PRACTICE_WITHDRAWN_BADGE(state) {
-        state.practice_new_withdrawn_jobs_count = state.practice_new_withdrawn_jobs_count + 1
+
+    // REMINDER
+    ADD_PRACTICE_AVAILABLE_JOBS_REMINDER(state, payload) {
+        state.practice_available_jobs_reminder.push(payload)
     },
-    REMOVE_PRACTICE_WITHDRAWN_BADGE(state) {
-        state.practice_new_withdrawn_jobs_count = state.practice_new_withdrawn_jobs_count - 1
+    REMOVE_PRACTICE_AVAILABLE_JOBS_REMINDER(state, payload) {
+        state.practice_available_jobs_reminder = state.practice_available_jobs_reminder.filter(job => job.id !== payload)
     },
-    CLEAR_PRACTICE_WITHDRAWN_BADGE(state) {
-        state.practice_new_withdrawn_jobs_count = 0
+    SET_PRACTICE_APPLIED_JOBS_REMINDER(state, payload) {
+        state.practice_applied_jobs_reminder = payload
     },
+    ADD_PRACTICE_APPLIED_JOBS_REMINDER(state, payload) {
+        state.practice_applied_jobs_reminder.push(payload)
+    },
+    REMOVE_PRACTICE_APPLIED_JOBS_REMINDER(state, payload) {
+        state.practice_applied_jobs_reminder = state.practice_applied_jobs_reminder.filter(job => job.id !== payload)
+    },
+
 
     // LOCUM
     // JOB NOTIFICATION
@@ -378,6 +282,9 @@ export default {
     SET_LOCUM_ALLOCATED_JOB_PARTS(state, payload) {
         state.locum_allocated_job_parts = payload
     },
+    ADD_LOCUM_ALLOCATED_JOB_PART(state, payload) {
+        state.locum_allocated_job_parts.push(payload)
+    },
     REMOVE_LOCUM_ALLOCATED_JOB_PART(state, payload) {
         state.locum_allocated_job_parts = state.locum_allocated_job_parts.filter(job => job.id !== payload)
         state.locum_allocated_job_parts_count = state.locum_allocated_job_parts_count - 1
@@ -387,15 +294,6 @@ export default {
         if (index < 0) {
             state.locum_allocated_job_parts.splice(payloadIndex, 0, payload)
         }
-    },
-    ADD_LOCUM_ALLOCATED_BADGE(state) {
-        state.locum_new_allocated_job_parts_count = state.locum_new_allocated_job_parts_count + 1
-    },
-    REMOVE_LOCUM_ALLOCATED_BADGE(state) {
-        state.locum_new_allocated_job_parts_count = state.locum_new_allocated_job_parts_count - 1
-    },
-    CLEAR_LOCUM_ALLOCATED_BADGE(state) {
-        state.locum_new_allocated_job_parts_count = 0
     },
 
     SET_LOCUM_ONGOING_JOB_PARTS_COUNT(state, payload) {
@@ -416,15 +314,6 @@ export default {
         if (index < 0) {
             state.locum_ongoing_job_parts.splice(payloadIndex, 0, payload)
         }
-    },
-    ADD_LOCUM_ONGOING_BADGE(state) {
-        state.locum_new_ongoing_job_parts_count = state.locum_new_ongoing_job_parts_count + 1
-    },
-    REMOVE_LOCUM_ONGOING_BADGE(state) {
-        state.locum_new_ongoing_job_parts_count = state.locum_new_ongoing_job_parts_count - 1
-    },
-    CLEAR_LOCUM_ONGOING_BADGE(state) {
-        state.locum_new_ongoing_job_parts_count = 0
     },
 
     SET_LOCUM_COMPLETED_JOB_PARTS_COUNT(state, payload) {
@@ -447,15 +336,6 @@ export default {
             state.locum_completed_job_parts.splice(payloadIndex, 0, payload)
         }
     },
-    ADD_LOCUM_COMPLETED_BADGE(state) {
-        state.locum_new_completed_job_parts_count = state.locum_new_completed_job_parts_count + 1
-    },
-    REMOVE_LOCUM_COMPLETED_BADGE(state) {
-        state.locum_new_completed_job_parts_count = state.locum_new_completed_job_parts_count - 1
-    },
-    CLEAR_LOCUM_COMPLETED_BADGE(state) {
-        state.locum_new_completed_job_parts_count = 0
-    },
 
     SET_LOCUM_APPROVED_JOB_PARTS_COUNT(state, payload) {
         state.locum_approved_job_parts_count = payload
@@ -472,15 +352,6 @@ export default {
         if (index < 0) {
             state.locum_approved_job_parts.splice(payloadIndex, 0, payload)
         }
-    },
-    ADD_LOCUM_APPROVED_BADGE(state) {
-        state.locum_new_approved_job_parts_count = state.locum_new_approved_job_parts_count + 1
-    },
-    REMOVE_LOCUM_APPROVED_BADGE(state) {
-        state.locum_new_approved_job_parts_count = state.locum_new_approved_job_parts_count - 1
-    },
-    CLEAR_LOCUM_APPROVED_BADGE(state) {
-        state.locum_new_approved_job_parts_count = 0
     },
 
     // WHOLE JOBS
@@ -507,15 +378,6 @@ export default {
             state.locum_allocated_jobs_count = state.locum_allocated_jobs_count - 1
         }
     },
-    ADD_LOCUM_ALLOCATED_BADGE(state) {
-        state.locum_new_allocated_jobs_count = state.locum_new_allocated_jobs_count + 1
-    },
-    REMOVE_LOCUM_ALLOCATED_BADGE(state) {
-        state.locum_new_allocated_jobs_count = state.locum_new_allocated_jobs_count - 1
-    },
-    CLEAR_LOCUM_ALLOCATED_BADGE(state) {
-        state.locum_new_allocated_jobs_count = 0
-    },
 
     SET_LOCUM_APPLIED_JOBS(state, payload) {
         state.locum_applied_jobs = payload
@@ -532,15 +394,6 @@ export default {
             state.locum_applied_jobs = state.locum_applied_jobs.filter(job => job.id !== payload)
             state.locum_applied_jobs_count = state.locum_applied_jobs_count - 1
         }
-    },
-    ADD_LOCUM_APPLIED_BADGE(state) {
-        state.locum_new_applied_jobs_count = state.locum_new_applied_jobs_count + 1
-    },
-    REMOVE_LOCUM_APPLIED_BADGE(state) {
-        state.locum_new_applied_jobs_count = state.locum_new_applied_jobs_count - 1
-    },
-    CLEAR_LOCUM_APPLIED_BADGE(state) {
-        state.locum_new_applied_jobs_count = 0
     },
 
     SET_LOCUM_AVAILABLE_JOBS(state, payload) {
@@ -559,15 +412,6 @@ export default {
             state.locum_available_jobs_count = state.locum_available_jobs_count - 1
         }
     },
-    ADD_LOCUM_AVAILABLE_BADGE(state) {
-        state.locum_new_available_jobs_count = state.locum_new_available_jobs_count + 1
-    },
-    REMOVE_LOCUM_AVAILABLE_BADGE(state) {
-        state.locum_new_available_jobs_count = state.locum_new_available_jobs_count - 1
-    },
-    CLEAR_LOCUM_AVAILABLE_BADGE(state) {
-        state.locum_new_available_jobs_count = 0
-    },
 
     SET_LOCUM_MATCHED_JOBS(state, payload) {
         state.locum_matched_jobs = payload
@@ -585,15 +429,6 @@ export default {
             state.locum_matched_jobs_count = state.locum_matched_jobs_count - 1
         }
     },
-    ADD_LOCUM_MATCHED_BADGE(state) {
-        state.locum_new_matched_jobs_count = state.locum_new_matched_jobs_count + 1
-    },
-    REMOVE_LOCUM_MATCHED_BADGE(state) {
-        state.locum_new_matched_jobs_count = state.locum_new_matched_jobs_count - 1
-    },
-    CLEAR_LOCUM_MATCHED_BADGE(state) {
-        state.locum_new_matched_jobs_count = 0
-    },
 
     SET_LOCUM_UNSUCCESSFUL_JOBS(state, payload) {
         state.locum_unsuccessful_jobs = payload
@@ -610,15 +445,6 @@ export default {
             state.locum_unsuccessful_jobs = state.locum_unsuccessful_jobs.filter(job => job.id !== payload)
             state.locum_unsuccessful_jobs_count = state.locum_unsuccessful_jobs_count - 1
         }
-    },
-    ADD_LOCUM_UNSUCCESSFUL_BADGE(state) {
-        state.locum_new_unsuccessful_jobs_count = state.locum_new_unsuccessful_jobs_count + 1
-    },
-    REMOVE_LOCUM_UNSUCCESSFUL_BADGE(state) {
-        state.locum_new_unsuccessful_jobs_count = state.locum_new_unsuccessful_jobs_count - 1
-    },
-    CLEAR_LOCUM_UNSUCCESSFUL_BADGE(state) {
-        state.locum_new_unsuccessful_jobs_count = 0
     },
 
     SET_LOCUM_DECLINED_JOBS(state, payload) {
@@ -639,15 +465,6 @@ export default {
             state.locum_declined_jobs_count = state.locum_declined_jobs_count - 1
         }
     },
-    ADD_LOCUM_DECLINED_BADGE(state) {
-        state.locum_new_declined_jobs_count = state.locum_new_declined_jobs_count + 1
-    },
-    REMOVE_LOCUM_DECLINED_BADGE(state) {
-        state.locum_new_declined_jobs_count = state.locum_new_declined_jobs_count - 1
-    },
-    CLEAR_LOCUM_DECLINED_BADGE(state) {
-        state.locum_new_declined_jobs_count = 0
-    },
 
     SET_LOCUM_CANCELLED_JOBS(state, payload) {
         state.locum_cancelled_jobs = payload
@@ -665,30 +482,12 @@ export default {
             state.locum_cancelled_jobs_count = state.locum_cancelled_jobs_count - 1
         }
     },
-    ADD_LOCUM_CANCELLED_BADGE(state) {
-        state.locum_new_cancelled_jobs_count = state.locum_new_cancelled_jobs_count + 1
-    },
-    REMOVE_LOCUM_CANCELLED_BADGE(state) {
-        state.locum_new_cancelled_jobs_count = state.locum_new_cancelled_jobs_count - 1
-    },
-    CLEAR_LOCUM_CANCELLED_BADGE(state) {
-        state.locum_new_cancelled_jobs_count = 0
-    },
 
     SET_LOCUM_WITHDRAWN_JOBS(state, payload) {
         state.locum_withdrawn_jobs = payload
     },
     SET_LOCUM_WITHDRAWN_JOBS_COUNT(state, payload) {
         state.locum_withdrawn_jobs_count = payload
-    },
-    ADD_LOCUM_WITHDRAWN_BADGE(state) {
-        state.locum_new_withdrawn_jobs_count = state.locum_new_withdrawn_jobs_count + 1
-    },
-    REMOVE_LOCUM_WITHDRAWN_BADGE(state) {
-        state.locum_new_withdrawn_jobs_count = state.locum_new_withdrawn_jobs_count - 1
-    },
-    CLEAR_LOCUM_WITHDRAWN_BADGE(state) {
-        state.locum_new_withdrawn_jobs_count = 0
     },
 
     SET_LOCUM_UNAVAILABILITIES(state, payload) {

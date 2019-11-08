@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col items-center justify-center w-full">
     <div class="flex w-full justify-center xl:justify-start">
-      <div class="mx-4 flex flex-col p-8 m-1 rounded-lg shadow-lg w-full">
+      <div class="md:mx-4 flex flex-col p-4 md:p-8 m-1 rounded-lg shadow-lg w-full">
         <div class="w-full">
           <AppInput
             v-model="search_text"
@@ -16,7 +16,7 @@
       </div>
     </div>
 
-    <div v-if="showResult && surgeries.length === 0" class="mt-5 mx-4">
+    <div v-if="showResult && surgeries.length === 0" class="mt-5 md:mx-4">
       <div
         class="text-xs xl:text-base font-bold"
       >No practice matched that name. Try again with whole words, practice code or CCG.</div>
@@ -24,7 +24,7 @@
 
     <div class="flex w-full justify-center xl:justify-start">
       <div
-        class="rounded-lg shadow-md mt-5 mx-4 m-1 w-full"
+        class="rounded-lg shadow-md mt-5 md:mx-4 m-1 w-full"
         v-if="showResult && surgeries.length > 0"
       >
         <div

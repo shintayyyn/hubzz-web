@@ -1,6 +1,6 @@
 <template>
   <div class="p-4 md:p-8">
-    <div @click="close" class="cursor-pointer ">
+    <div @click="close" class="cursor-pointer">
       <svgicon name="left-arrow" height="32" width="32" />
     </div>
     <div class="flex flex-row flex-wrap justify-start items-center my-2">
@@ -28,9 +28,9 @@
           <JobPartDetailModalInfo :job_part="job_part" />
           <JobDetailModalUnassignForm
             :job="job_part.job"
-            v-if="job_part.locum_status === 'Current'"
+            v-if="job_part.locum_status === 'Allocated'"
             @close="close"
-            @removeJobPart="removeJobPart"
+            @removeJob="removeJobPart"
           />
         </div>
         <div class="p-0 md:pl-4 w-full md:w-1/2 my-4 md:m-0">
@@ -82,9 +82,6 @@ export default {
     }
   },
   methods: {
-    removeJobPart(id) {
-      this.$store.commit("jobs/REMOVE_LOCUM_ONGOING_JOB", id);
-    },
     close() {
       this.$emit("close");
     },
@@ -108,6 +105,12 @@ export default {
         default:
           return "bg-red-500 text-white";
       }
+    },
+    removeJobPart() {
+      this.$store.commit(
+        "jobs/REMOVE_LOCUM_ALLOCATED_JOB_PART",
+        this.job_part.id
+      );
     }
   }
 };
