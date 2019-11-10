@@ -3,9 +3,9 @@
     <div class="flex flex-col">
       <div>
         <nuxt-link
-          to="/profile/branches-surgeries/create"
+          to="/profile/practice-spokes/create"
           class="inline-flex no-underline py-2 px-4 bg-yellow-500 text-sm font-semibold text-black hover:text-white rounded-lg shadow float-left"
-        >Add Surgery</nuxt-link>
+        >Invite Spoke</nuxt-link>
       </div>
     </div>
     <AppTable
@@ -17,7 +17,7 @@
       :perPage="params.limit"
       :columns="columns"
       :orderBy="params.order_by"
-      :routerLink="'/profile/branches-surgeries'"
+      :routerLink="'/profile/practice-spokes'"
       @pagechanged="pagechanged"
       @limitchanged="limitchanged"
       @sorted="sorted"
@@ -35,13 +35,13 @@
     <transition name="fade" mode="out-in">
       <div
         class="shield"
-        v-if="['profile-branches-surgeries-create',
-          'profile-branches-surgeries-id',
-          'profile-branches-surgeries-id-surgery-billings',
-          'profile-branches-surgeries-id-surgery-sessions-index',
-          'profile-branches-surgeries-id-surgery-sessions-index-sessionId',
-          'profile-branches-surgeries-edit'].includes($route.name)"
-        @click="$router.push('/profile/branches-surgeries')"
+        v-if="['profile-practice-spokes-create',
+          'profile-practice-spokes-id',
+          'profile-practice-spokes-id-surgery-billings',
+          'profile-practice-spokes-id-surgery-sessions-index',
+          'profile-practice-spokes-id-surgery-sessions-index-sessionId',
+          'profile-practice-spokes-edit'].includes($route.name)"
+        @click="$router.push('/profile/practice-spokes')"
       ></div>
     </transition>
     <nuxt-child @addSurgery="surgeries.push($event)" @updateSurgery="updateSurgery" />
@@ -112,9 +112,8 @@ export default {
           class: "text-center"
         },
         {
-          name: "Verify job creation",
-          dataIndex: "verify_job_creation",
-          class: "text-center"
+          name: "Status",
+          dataIndex:""
         }
       ]
     };
@@ -281,9 +280,9 @@ export default {
     show(item) {
       if (this.authPermissions.includes("Show Profile Surgeries")) {
         if (this.practice.type === "Hub") {
-          this.$router.push(`/profile/branches-surgeries/${item.id}`);
+          this.$router.push(`/profile/practice-spokes/${item.id}`);
         } else if (this.practice.type === "Spoke") {
-          this.$router.push(`/profile/branches-surgeries/edit`);
+          this.$router.push(`/profile/practice-spokes/edit`);
         }
       }
     },
