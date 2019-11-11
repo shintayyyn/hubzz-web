@@ -8,29 +8,45 @@
       :routerLink="'/profile/practice-documents'"
     ></AppTable>-->
     <div class="flex flex-col mt-4">
-      <div class="flex flex-row px-4 flex-no-wrap justify-between">
-        <div class="text-xs sm:text-sm w-full px-1">Title</div>
-        <div class="text-xs sm:text-sm w-full px-1">File Size</div>
-        <div class="text-xs sm:text-sm w-full px-1">Last Upload Date</div>
+      <div class="flex flex-row px-4 flex-no-wrap justify-between font-bold">
+        <div class="text-xs sm:text-sm w-1/3 px-1">Title</div>
+        <div class="text-xs sm:text-sm w-1/3 text-center px-1">File Size</div>
+        <div class="text-xs sm:text-sm w-1/3 text-center px-1">Last Upload Date</div>
       </div>
       <div>
         <div
-          class="rounded-lg shadow-lg p-4 mt-4"
-          :class="{'practice-doc-card cursor-pointer hover:bg-gray-200' : item.existingPracticeComplianceDocument}"
+          class="relative rounded-lg shadow-lg p-4 mt-4"
+          :class="{ 'practice-doc-card cursor-pointer hover:bg-gray-200': item.existingPracticeComplianceDocument }"
           v-for="item in practiceComplianceDocuments"
           :key="item.practiceDocumentType.id"
           @click="item.existingPracticeComplianceDocument ? show(item.existingPracticeComplianceDocument.id) : ''"
         >
+          <div
+            v-if="!item.existingPracticeComplianceDocument"
+            class="absolute border w-2/3 h-full top-0 right-0 bg-gray-200 border border-gray-200 text-gray-700 flex justify-center items-center rounded-r-lg"
+          >
+            Please Wait for Admin's confirmation
+          </div>
           <div class="flex flex-row flex-no-wrap">
-            <div class="text-xs sm:text-sm w-full px-1">{{item.practiceDocumentType.name}}</div>
-            <div
-              class="text-xs sm:text-sm w-full px-1"
-            >{{ item.existingPracticeComplianceDocument ? (item.existingPracticeComplianceDocument.file.size / 1048576).toFixed(2) + 'Mb' : "Please Wait for Admin's confirmation" }}</div>
-            <div class="text-xs sm:text-sm w-full px-1">
-              {{ item.existingPracticeComplianceDocument && item.existingPracticeComplianceDocument.file &&
-              item.existingPracticeComplianceDocument.file.created_at ? $moment(item.existingPracticeComplianceDocument.file.created_at)
-              .format('DD/MM/YYYY HH:mm:ss') : null }}
-            </div>
+            <div class="text-xs sm:text-sm w-1/3 px-1">{{ item.practiceDocumentType.name }}</div>
+            <template>
+              <div class="text-xs sm:text-sm w-1/3 text-center px-1">
+                {{
+                  item.existingPracticeComplianceDocument
+                    ? (item.existingPracticeComplianceDocument.file.size / 1048576).toFixed(2) + "Mb"
+                    : null
+                }}
+              </div>
+              <div class="text-xs sm:text-sm w-1/3 text-center px-1">
+                {{
+                  item.existingPracticeComplianceDocument &&
+                  item.existingPracticeComplianceDocument.file &&
+                  item.existingPracticeComplianceDocument.file.created_at
+                    ? $moment(item.existingPracticeComplianceDocument.file.created_at).format("DD/MM/YYYY HH:mm:ss")
+                    : null
+                }}
+              </div>
+            </template>
           </div>
         </div>
       </div>
@@ -121,22 +137,15 @@ export default {
         });
       })
     ]).then(() => {
-      this.practiceComplianceDocuments = this.practiceDocumentTypes.map(
-        practiceDocumentType => {
-          const existingPracticeComplianceDocument = this.practiceDocuments.find(
-            existingPracticeDocument => {
-              return (
-                existingPracticeDocument.practice_document_type.id ===
-                practiceDocumentType.id
-              );
-            }
-          );
-          return {
-            practiceDocumentType,
-            existingPracticeComplianceDocument
-          };
-        }
-      );
+      this.practiceComplianceDocuments = this.practiceDocumentTypes.map(practiceDocumentType => {
+        const existingPracticeComplianceDocument = this.practiceDocuments.find(existingPracticeDocument => {
+          return existingPracticeDocument.practice_document_type.id === practiceDocumentType.id;
+        });
+        return {
+          practiceDocumentType,
+          existingPracticeComplianceDocument
+        };
+      });
       console.log("test", this.practiceComplianceDocuments);
       // // sample
       // this.practiceComplianceDocuments.map(item => {
@@ -172,4 +181,3 @@ export default {
 }
 /*  */
 </style>
-
