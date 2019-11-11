@@ -1,17 +1,28 @@
 <template>
   <section>
-    <div class="shield" v-if="$store.state.toggled_sidebar" @click="close"></div>
-    {{$route.path}}
+    <div
+      class="shield"
+      v-if="$store.state.toggled_sidebar"
+      @click="close"
+    ></div>
     <AppHeader />
     <AppSideBar @modal="signout_modal = $event" />
     <div
-      :class="$route.name === 'messages-slug' || $route.name === 'messages-new' ? 'content-message' : 'content'"
+      :class="
+        $route.name === 'messages-slug' || $route.name === 'messages-new'
+          ? 'content-message'
+          : 'content'
+      "
     >
       <AppNotification />
       <JobNotification />
       <nuxt
         class="mb-4"
-        :class="$route.name === 'messages-slug' || $route.name === 'messages-new' ? 'md:mt-20' : 'mt-16'"
+        :class="
+          $route.name === 'messages-slug' || $route.name === 'messages-new'
+            ? 'md:mt-20'
+            : 'mt-16'
+        "
       />
     </div>
   </section>
@@ -88,5 +99,3 @@ export default {
   }
 }
 </style>
-
-
