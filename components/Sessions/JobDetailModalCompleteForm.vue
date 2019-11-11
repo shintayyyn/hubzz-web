@@ -80,12 +80,21 @@ export default {
         this.$axios
           .$put(`/api/v1/practice/job-parts/${this.job.id}/complete`, this.form)
           .then(res => {
+            if (
+              this.$route.path.includes("/dashboard") ||
+              this.$route.path.includes("/sessions")
+            ) {
+              this.$store.commit(
+                "jobs/REMOVE_PRACTICE_ONGOING_JOB_PART",
+                res.data.job_part.id
+              );
+            }
+            this.$emit("close");
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
               text: ["Job completed"]
             });
-            this.$emit("close");
           })
           .catch(err => {
             if (!err.response.data.error_messages) {

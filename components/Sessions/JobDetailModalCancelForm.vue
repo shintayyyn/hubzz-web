@@ -70,6 +70,9 @@ export default {
       formError: []
     };
   },
+  mounted() {
+    console.log(this.job);
+  },
   watch: {
     "form.cancelled_reason"() {
       this.CheckEmptyField(this.form.cancelled_reason, "cancelled_reason");
@@ -84,10 +87,29 @@ export default {
       }
     },
     cancel() {
-      let jobId = this.$route.params.id || this.job.id;
       this.$axios
-        .$put(`/api/v1/practice/jobs/${jobId}/cancel`, this.form)
+        .$put(`/api/v1/practice/jobs/${this.job.id}/cancel`, this.form)
         .then(res => {
+          if (
+            this.$route.path.includes("/sessions") ||
+            this.$route.path.includes("/dashboard")
+          ) {
+            this.$store.commit(
+              "jobs/REMOVE_PRACTICE_ALLOCATED_JOB",
+              res.data.job.id
+            );
+            this.$store.commit(
+              "jobs/REMOVE_PRACTICE_AVAILABLE_JOB",
+              res.data.job.id
+            );
+            this.$store.commit(
+              "jobs/REMOVE_PRACTICE_APPLIED_JOB",
+              res.data.job.id
+            );
+            this.job.job_parts.forEach(({ id }) => {
+              this.$store.commit("jobs/REMOVE_PRACTICE_ONGOING_JOB_PART", id);
+            });
+          }
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",

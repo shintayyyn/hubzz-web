@@ -18,21 +18,7 @@
             :class="`/${$route.path.split('/')[1]}` == item.route ? 'text-yellow-500' : 'text-black hover:text-yellow-600'"
             v-if="hasPermissions(item.permissions ? item.permissions : [])"
           >
-            <span class="font-sans">
-              {{item.name}}
-              <transition name="fade">
-                <span
-                  v-if="getLocumJobsBadge > 0 && item.name === 'Jobs'"
-                  class="rounded-lg bg-red-600 text-white text-xs font-bold py-1 px-2"
-                >{{getLocumJobsBadge}}</span>
-              </transition>
-              <transition name="fade">
-                <span
-                  v-if="getPracticeJobsBadge > 0 && item.name === 'Sessions'"
-                  class="rounded-lg bg-red-600 text-white text-xs font-bold py-1 px-2"
-                >{{getPracticeJobsBadge}}</span>
-              </transition>
-            </span>
+            <span class="font-sans">{{item.name}}</span>
           </nuxt-link>
         </div>
         <div class="text-sm relative">
@@ -80,12 +66,6 @@ export default {
     };
   },
   computed: {
-    getLocumJobsBadge() {
-      return this.$store.getters["jobs/getLocumJobsBadge"];
-    },
-    getPracticeJobsBadge() {
-      return this.$store.getters["jobs/getPracticeJobsBadge"];
-    },
     authPermissions() {
       return this.$store.getters["auth/permissions"];
     }

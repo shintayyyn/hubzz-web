@@ -4,7 +4,7 @@
       <svgicon name="left-arrow" height="32" width="32" />
     </div>
     <div class="flex flex-row justify-start mt-8">
-      <div class="leading-loose font-bold text-md sm:text-lg">{{job_part.job.title}}</div>
+      <div class="leading-loose font-bold text-md sm:text-lg">{{job_part.title}}</div>
       <div
         class="mx-2 text-sm sm:text-sm p-2"
         :class="bgStatus(job_part.status)"
@@ -19,7 +19,7 @@
             <JobDetailModalCancelForm
               :job="job_part.job"
               @close="close"
-              v-if="(job_part.job.status === 'Allocated' || job_part.job.status === 'Ongoing' || job_part.job.status === 'Applied' || job_part.job.status === 'Available') && authPermissions.includes('Cancel Sessions Job')"
+              v-if="(job_part.status === 'Allocated' || job_part.status === 'Ongoing' || job_part.status === 'Applied' || job_part.status === 'Available') && authPermissions.includes('Cancel Sessions Job')"
             />
           </div>
         </div>
@@ -31,11 +31,12 @@
               v-if="job_part.status === 'Ongoing' && authPermissions.includes('Complete Sessions Job')"
             />
             <JobPartDetailModalParts
-              :job_id="job_part.job.id"
+              v-if="job_part.parts > 1"
+              :job_id="job_part.id"
               :disabledLink="$route.path === '/dashboard'"
             />
             <JobDetailModalCandidates
-              v-if="job_part.job.status === 'Applied'"
+              v-if="job_part.status === 'Applied'"
               class="order-first lg:order-none"
               :applicants="applicants"
               @show="showLocum($event)"
@@ -44,7 +45,7 @@
               :user="user"
               :mandatory="mandatory"
               :optional="optional"
-              v-if="(job_part.job.status === 'Ongoing' || job_part.job.status === 'Completed') && user"
+              v-if="(job_part.status === 'Ongoing' || job_part.status === 'Completed' || job_part.status === 'Allocated') && user"
             />
           </div>
         </div>
@@ -99,7 +100,7 @@ export default {
   },
   created() {
     console.log("job_part", this.job_part);
-    if (this.job_part.job.status === "Applied") {
+    if (this.job_part.status === "Applied") {
       this.getCandidates();
     }
     if (this.job_part.job.platform_job.appointed_to_locum !== null) {

@@ -24,7 +24,7 @@
           :placeholder="'Select...'"
           :items="practices"
         />
-        <div class="pt-4">
+        <div class="-mt-10 pt-4">
           <AppButton :label="'Add'" @click="modal = true" :inStyle="'padding:5px 14px;'" />
         </div>
         <div class="flex flex-row flex-wrap justify-start mt-8 items-center max-w-4xl">

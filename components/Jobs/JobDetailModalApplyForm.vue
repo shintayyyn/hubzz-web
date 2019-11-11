@@ -60,8 +60,10 @@ export default {
     },
     apply() {
       this.$axios.$post(`/api/v1/locum/jobs/${this.job.id}/apply`).then(res => {
-        this.$store.commit("jobs/REMOVE_LOCUM_AVAILABLE_JOB", res.data.job.id);
-        this.$store.commit("jobs/ADD_LOCUM_APPLIED_JOB", res.data.job);
+        if (this.$route.path.includes("/jobs")) {
+          this.$store.commit("jobs/REMOVE_LOCUM_AVAILABLE_JOB", this.job.id);
+          this.$store.commit("jobs/REMOVE_LOCUM_MATCHED_JOB", this.job.id);
+        }
         this.$store.commit("SET_NOTIFICATION", {
           enabled: true,
           status: "success",

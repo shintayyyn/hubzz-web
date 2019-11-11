@@ -1,13 +1,13 @@
 <template>
   <div class="flex flex-col items-center justify-center w-full">
     <div class="flex w-full justify-center xl:justify-start">
-      <div class="flex mx-4" style="flex: 0 1 600px;">
+      <div class="flex md:mx-4" style="flex: 0 1 600px;">
         <h4>Your Payroll details</h4>
       </div>
     </div>
 
     <div class="flex w-full justify-center xl:justify-start">
-      <div class="mx-4 flex flex-col p-8 m-1 rounded-lg shadow-lg" style="flex: 0 1 600px;">
+      <div class="md:mx-4 flex flex-col p-4 md:p-8 m-1 rounded-lg shadow-lg" style="flex: 0 1 600px;">
         <form class="w-full">
           <AppInput
             v-model="form.employment_type"
@@ -89,7 +89,7 @@
         @click="$store.commit('sign-up/SET_ACTIVE_COMPONENT', 'LocumProfessionalDetails')"
       />
       <div class="mx-2"></div>
-      <AppButton :label="'Next'" @click="next" />
+      <AppButton :label="'Next'" @click="next" :inStyle="'padding:6px 16px;'"/>
     </div>
   </div>
 </template>

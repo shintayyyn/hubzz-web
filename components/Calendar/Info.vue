@@ -1,8 +1,6 @@
 <template>
   <div class="info-section h-full rounded-b-lg lg:rounded-b-none lg:rounded-r-lg">
-    <div
-      class="text-white text-sm py-4 px-8"
-    >{{$moment(dateInfo).format('Do MMM, YYYY')}}</div>
+    <div class="text-white text-sm py-4 px-8">{{$moment(dateInfo).format('Do MMM, YYYY')}}</div>
     <div class="flex flex-col overflow-y-auto overflow-x-hidden px-8 h-full info-card">
       <transition name="slide" mode="out-in">
         <div
@@ -103,10 +101,13 @@ export default {
     getPracticeOngoingJobs(value) {
       this.findPerMonthPractice(this.selected_date);
     },
-    getPracticeAllocatedPartJobs(value) {
+    // getPracticeAllocatedPartJobs(value) {
+    //   this.findPerMonthPractice(this.selected_date);
+    // },
+    // whole
+    getPracticeAllocatedJobs(value) {
       this.findPerMonthPractice(this.selected_date);
     },
-    // whole
     getPracticeAppliedJobs(value) {
       this.findPerMonthPractice(this.selected_date);
     },
@@ -162,10 +163,13 @@ export default {
     getPracticeOngoingJobs() {
       return this.$store.getters["jobs/getPracticeOngoingJobs"];
     },
-    getPracticeAllocatedPartJobs() {
-      return this.$store.getters["jobs/getPracticeAllocatedPartJobs"];
-    },
+    // getPracticeAllocatedPartJobs() {
+    //   return this.$store.getters["jobs/getPracticeAllocatedPartJobs"];
+    // },
     // whole
+    getPracticeAllocatedJobs() {
+      return this.$store.getters["jobs/getPracticeAllocatedJobs"];
+    },
     getPracticeAppliedJobs() {
       return this.$store.getters["jobs/getPracticeAppliedJobs"];
     },
@@ -218,9 +222,14 @@ export default {
           this.getDateArray(job.date_start, job.date_end).includes(date)
         );
       }
-      if (this.getPracticeAllocatedPartJobs.length > 0) {
-        foundPracticeAllocatedJobs = this.getPracticeAllocatedPartJobs.filter(
-          job => this.getDateArray(job.date_start, job.date_end).includes(date)
+      // if (this.getPracticeAllocatedPartJobs.length > 0) {
+      //   foundPracticeAllocatedJobs = this.getPracticeAllocatedPartJobs.filter(
+      //     job => this.getDateArray(job.date_start, job.date_end).includes(date)
+      //   );
+      // }
+      if (this.getPracticeAllocatedJobs.length > 0) {
+        foundPracticeAllocatedJobs = this.getPracticeAllocatedJobs.filter(job =>
+          this.getDateArray(job.date_start, job.date_end).includes(date)
         );
       }
       if (this.getPracticeAppliedJobs.length > 0) {
@@ -270,24 +279,32 @@ export default {
     findPerWeekPractice({ date, shift }) {
       this.loading = true;
       this.viewPracticeJobs = false;
-      let foundPracticeAllocatedPartJobs = [];
       let foundPracticeOngoingJobs = [];
+      let foundPracticeAllocatedJobs = [];
       let foundPracticeAppliedJobs = [];
       let foundPracticeUnfilledJobs = [];
       let foundPracticeDeclinedJobs = [];
       let foundPracticeAppliedJobsReminder = [];
       let foundPracticeAvailableJobsReminder = [];
 
-      if (this.getPracticeAllocatedPartJobs.length > 0) {
-        foundPracticeAllocatedPartJobs = this.getPracticeAllocatedPartJobs.filter(
+      if (this.getPracticeOngoingJobs.length > 0) {
+        foundPracticeOngoingJobs = this.getPracticeOngoingJobs.filter(
           job_part =>
             this.getDateArray(job_part.date_start, job_part.date_end).includes(
               date
             ) && job_part.job.shift.name === shift
         );
       }
-      if (this.getPracticeOngoingJobs.length > 0) {
-        foundPracticeOngoingJobs = this.getPracticeOngoingJobs.filter(
+      // if (this.getPracticeAllocatedPartJobs.length > 0) {
+      //   foundPracticeAllocatedJobs = this.getPracticeAllocatedPartJobs.filter(
+      //     job_part =>
+      //       this.getDateArray(job_part.date_start, job_part.date_end).includes(
+      //         date
+      //       ) && job_part.job.shift.name === shift
+      //   );
+      // }
+      if (this.getPracticeAllocatedJobs.length > 0) {
+        foundPracticeAllocatedJobs = this.getPracticeAllocatedJobs.filter(
           job_part =>
             this.getDateArray(job_part.date_start, job_part.date_end).includes(
               date
@@ -326,8 +343,8 @@ export default {
         );
       }
       this.foundPracticeJobs = [
-        ...foundPracticeAllocatedPartJobs,
         ...foundPracticeOngoingJobs,
+        ...foundPracticeAllocatedJobs,
         ...foundPracticeAppliedJobs,
         ...foundPracticeUnfilledJobs,
         ...foundPracticeDeclinedJobs,

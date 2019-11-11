@@ -1,19 +1,19 @@
 <template>
   <div class="flex flex-col items-center justify-center w-full">
     <div class="flex w-full justify-center xl:justify-start">
-      <div class="flex mx-4" style="flex: 0 1 600px;">
+      <div class="flex md:mx-4" style="flex: 0 1 600px;">
         <h3>What's your account details?</h3>
       </div>
     </div>
 
     <div class="flex w-full justify-center xl:justify-start">
-      <div class="flex m-4" style="flex: 0 1 600px;">
+      <div class="flex my-2 md:m-4" style="flex: 0 1 600px;">
         <span>Basic details about yourself</span>
       </div>
     </div>
 
     <div class="flex w-full justify-center xl:justify-start">
-      <div class="mx-4 flex flex-col p-8 m-1 rounded-lg shadow-lg" style="flex: 0 1 600px;">
+      <div class="md:mx-4 flex flex-col p-4 md:p-8 m-1 rounded-lg shadow-lg" style="flex: 0 1 600px;">
         <form class="w-full">
           <AppInput
             v-model="form.title"
@@ -87,7 +87,7 @@
     </div>
 
     <div class="flex justify-center mt-4">
-      <AppButton :label="'Next'" @click="next" />
+      <AppButton :label="'Next'" @click="next" :inStyle="'padding:6px 16px;'" />
     </div>
   </div>
 </template>
