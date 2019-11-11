@@ -40,6 +40,7 @@
     <transition name="fade" mode="out-in">
       <div
         class="shield"
+<<<<<<< HEAD
         v-if="
           [
             'profile-practice-spokes-create',
@@ -50,6 +51,15 @@
             'profile-practice-spokes-edit'
           ].includes($route.name)
         "
+=======
+        v-if="['profile-practice-spokes-create',
+          'profile-practice-spokes-id',
+          'profile-practice-spokes-id-surgery-billings',
+          'profile-practice-spokes-id-surgery-sessions-index',
+          'profile-practice-spokes-id-surgery-sessions-index-sessionId',
+          'profile-practice-spokes-id-request-for-termination',
+          'profile-practice-spokes-edit'].includes($route.name)"
+>>>>>>> 7e675503da6d0d699719254e302e2789d537b749
         @click="$router.push('/profile/practice-spokes')"
       ></div>
     </transition>
