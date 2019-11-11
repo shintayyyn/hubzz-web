@@ -1,18 +1,13 @@
 <template>
   <section>
     <div class="shield" v-if="$store.state.toggled_sidebar" @click="close"></div>
-    {{$route.path}}
+    <!-- {{$route.path}} -->
     <AppHeader />
     <AppSideBar @modal="signout_modal = $event" />
-    <div
-      :class="$route.name === 'messages-slug' || $route.name === 'messages-new' ? 'content-message' : 'content'"
-    >
+    <div :class="$route.name === 'messages-slug' || $route.name === 'messages-new' ? 'content-message' : 'content'">
       <AppNotification />
       <JobNotification />
-      <nuxt
-        class="mb-4"
-        :class="$route.name === 'messages-slug' || $route.name === 'messages-new' ? 'md:mt-20' : 'mt-16'"
-      />
+      <nuxt class="mb-4" :class="$route.name === 'messages-slug' || $route.name === 'messages-new' ? 'md:mt-20' : 'mt-16'" />
     </div>
   </section>
 </template>
@@ -42,6 +37,7 @@ export default {
         this.$store.commit("TOGGLE_SIDEBAR", false);
         document.body.style.overflow = "auto";
       }
+      console.log("route:", value.name);
     }
   },
   methods: {
@@ -88,5 +84,3 @@ export default {
   }
 }
 </style>
-
-

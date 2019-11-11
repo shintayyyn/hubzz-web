@@ -29,18 +29,21 @@
         <td class="flex justify-center">
           <div
             class="font-semibold text-xs sm:text-sm text-center px-2"
-            @click.stop.prevent="toggleRemoveConfirmationModal(slotProps.item.id)"
+            @click.stop.prevent="
+              toggleRemoveConfirmationModal(slotProps.item.id)
+            "
           >
             X
           </div>
         </td>
       </template>
     </AppTable>
-    <div v-else class="flex justify-center py-4 text-gray-500">No Branches / Surgeries</div>
+    <div v-else class="flex justify-center py-4 text-gray-500">
+      No Branches / Surgeries
+    </div>
     <transition name="fade" mode="out-in">
       <div
         class="shield"
-<<<<<<< HEAD
         v-if="
           [
             'profile-practice-spokes-create',
@@ -48,22 +51,17 @@
             'profile-practice-spokes-id-surgery-billings',
             'profile-practice-spokes-id-surgery-sessions-index',
             'profile-practice-spokes-id-surgery-sessions-index-sessionId',
+            'profile-practice-spokes-id-request-for-termination',
             'profile-practice-spokes-edit'
           ].includes($route.name)
         "
-=======
-        v-if="['profile-practice-spokes-create',
-          'profile-practice-spokes-id',
-          'profile-practice-spokes-id-surgery-billings',
-          'profile-practice-spokes-id-surgery-sessions-index',
-          'profile-practice-spokes-id-surgery-sessions-index-sessionId',
-          'profile-practice-spokes-id-request-for-termination',
-          'profile-practice-spokes-edit'].includes($route.name)"
->>>>>>> 7e675503da6d0d699719254e302e2789d537b749
         @click="$router.push('/profile/practice-spokes')"
       ></div>
     </transition>
-    <nuxt-child @addSurgery="surgeries.push($event)" @updateSurgery="updateSurgery" />
+    <nuxt-child
+      @addSurgery="surgeries.push($event)"
+      @updateSurgery="updateSurgery"
+    />
     <RemoveSurgeryConfirmationModal
       :label="'Are you sure you want to delete this surgery?'"
       :confirmLabel="'Yes'"
@@ -159,19 +157,31 @@ export default {
   },
   async asyncData({ app, store, error }) {
     try {
-      const responsePracticeType = await app.$axios.$get(`/api/v1/practice/me/practice-type`);
-      let practice = responsePracticeType.data && responsePracticeType.data.practice ? responsePracticeType.data.practice : null;
+      const responsePracticeType = await app.$axios.$get(
+        `/api/v1/practice/me/practice-type`
+      );
+      let practice =
+        responsePracticeType.data && responsePracticeType.data.practice
+          ? responsePracticeType.data.practice
+          : null;
 
       let surgeries = [];
       let parent_surgery = null;
       let totalSurgeries = 0;
 
       if (practice.type === "Hub") {
-        const responseCount = await app.$axios.$get(`/api/v1/practice/me/practice-surgeries/count`);
+        const responseCount = await app.$axios.$get(
+          `/api/v1/practice/me/practice-surgeries/count`
+        );
 
-        totalSurgeries = responseCount.data && responseCount.data.count ? responseCount.data.count : 0;
+        totalSurgeries =
+          responseCount.data && responseCount.data.count
+            ? responseCount.data.count
+            : 0;
 
-        const response = await app.$axios.$get(`/api/v1/practice/me/practice-surgeries?limit=5`);
+        const response = await app.$axios.$get(
+          `/api/v1/practice/me/practice-surgeries?limit=5`
+        );
 
         if (response.data && response.data.practice_surgeries) {
           response.data.practice_surgeries.forEach(surgery => {
@@ -206,10 +216,12 @@ export default {
 
   methods: {
     getSurgeriesCount(params) {
-      this.$axios.$get(`/api/v1/practice/me/practice-surgeries/count`, { params }).then(res => {
-        this.totalSurgeries = res.data.count;
-        this.getSurgeries(this.params);
-      });
+      this.$axios
+        .$get(`/api/v1/practice/me/practice-surgeries/count`, { params })
+        .then(res => {
+          this.totalSurgeries = res.data.count;
+          this.getSurgeries(this.params);
+        });
     },
     getSurgeries(params) {
       this.loading = true;
@@ -250,7 +262,9 @@ export default {
       }
     },
     updateSurgery(payload) {
-      let index = this.surgeries.findIndex(surgery => surgery.id === payload.id);
+      let index = this.surgeries.findIndex(
+        surgery => surgery.id === payload.id
+      );
       if (index >= 0) {
         this.surgeries.splice(index, 1, payload);
       }
@@ -265,12 +279,16 @@ export default {
         return;
       }
       if (this.practice.type === "Hub") {
-        await this.$axios.$delete(`/api/v1/practice/me/practice-surgeries/${this.selectedSurgeryId}`);
+        await this.$axios.$delete(
+          `/api/v1/practice/me/practice-surgeries/${this.selectedSurgeryId}`
+        );
       } else if (this.practice.type === "Spoke") {
         await this.$axios.$delete(`/api/v1/practice/me/parent-surgery`);
       }
       this.loading = false;
-      this.surgeries = this.surgeries.filter(surgery => surgery.id !== this.selectedSurgeryId);
+      this.surgeries = this.surgeries.filter(
+        surgery => surgery.id !== this.selectedSurgeryId
+      );
       this.modal = false;
       this.$store.commit("SET_NOTIFICATION", {
         enabled: true,
@@ -293,14 +311,34 @@ export default {
     getStatus() {
       let status;
       this.surgeries.map(item => {
-        if (item.invitation_accepted_at) {
-          status = "Active";
-        }
-        if (item.invitation_rejected_at) {
-          status = "Rejected";
-        }
-        if (item.terminated_at || item.termination_requested_at) {
-          status = "Request for Temination";
+        if (this.practice.type === "Hub") {
+          if (item.invitation_accepted_at) {
+            status = "Active";
+          }
+          if (item.invitation_rejected_at) {
+            status = "Rejected";
+          }
+          if (item.termination_requested_at) {
+            status = "Request for Temination";
+          }
+          if (item.terminated_at) {
+            status = "Terminated";
+          }
+        } else {
+          item.surgery.practice.practice_surgeries.map(item => {
+            if (item.invitation_accepted_at) {
+              status = "Active";
+            }
+            if (item.invitation_rejected_at) {
+              status = "Rejected";
+            }
+            if (item.termination_requested_at) {
+              status = "Request for Temination";
+            }
+            if (item.terminated_at) {
+              status = "Terminated";
+            }
+          });
         }
       });
       return status;
@@ -316,6 +354,9 @@ export default {
           break;
         case "Request for Temination":
           return "bg-orange-500 text-white";
+          break;
+        case "Terminated":
+          return "bg-red-700 text-white";
           break;
         default:
           return "border";
