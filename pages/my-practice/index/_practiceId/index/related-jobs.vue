@@ -9,12 +9,6 @@
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
           :class="!$route.query.job_status || ($route.query.job_status && $route.query.job_status.toLowerCase() === 'allocated')? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Allocated</nuxt-link>
-        <transition name="fade">
-          <div
-            v-if="$store.state.jobs.locum_new_allocated_jobs_count > 0"
-            class="rounded-lg bg-red-600 text-white text-xs font-bold py-1 px-2 absolute right-0 top-0"
-          >{{$store.state.jobs.locum_new_allocated_jobs_count}}</div>
-        </transition>
       </div>
       <div class="relative">
         <nuxt-link
@@ -22,12 +16,6 @@
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
           :class="$route.query && $route.query.job_status && $route.query.job_status.toLowerCase() === 'ongoing'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Ongoing</nuxt-link>
-        <transition name="fade">
-          <div
-            v-if="$store.state.jobs.locum_new_ongoing_jobs_count > 0"
-            class="rounded-lg bg-red-600 text-white text-xs font-bold py-1 px-2 absolute right-0 top-0"
-          >{{$store.state.jobs.locum_new_ongoing_jobs_count}}</div>
-        </transition>
       </div>
       <div class="relative">
         <nuxt-link
@@ -35,12 +23,6 @@
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
           :class="$route.query && $route.query.job_status && $route.query.job_status.toLowerCase() === 'available'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Available</nuxt-link>
-        <transition name="fade">
-          <div
-            v-if="$store.state.jobs.locum_new_available_jobs_count > 0"
-            class="rounded-lg bg-red-600 text-white text-xs font-bold py-1 px-2 absolute right-0 top-0"
-          >{{$store.state.jobs.locum_new_available_jobs_count}}</div>
-        </transition>
       </div>
       <div class="relative">
         <nuxt-link
@@ -48,12 +30,6 @@
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
           :class="$route.query && $route.query.job_status && $route.query.job_status.toLowerCase() === 'matched'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Matched</nuxt-link>
-        <transition name="fade">
-          <div
-            v-if="$store.state.jobs.locum_new_matched_jobs_count > 0"
-            class="rounded-lg bg-red-600 text-white text-xs font-bold py-1 px-2 absolute right-0 top-0"
-          >{{$store.state.jobs.locum_new_matched_jobs_count}}</div>
-        </transition>
       </div>
       <div class="relative">
         <nuxt-link
@@ -61,12 +37,6 @@
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
           :class="$route.query && $route.query.job_status && $route.query.job_status.toLowerCase() === 'applied'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Applied</nuxt-link>
-        <transition name="fade">
-          <div
-            v-if="$store.state.jobs.locum_new_applied_jobs_count > 0"
-            class="rounded-lg bg-red-600 text-white text-xs font-bold py-1 px-2 absolute right-0 top-0"
-          >{{$store.state.jobs.locum_new_applied_jobs_count}}</div>
-        </transition>
       </div>
       <div class="relative">
         <nuxt-link
@@ -74,12 +44,6 @@
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
           :class="$route.query && $route.query.job_status && $route.query.job_status.toLowerCase() === 'unsuccessful'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Unsuccessful</nuxt-link>
-        <transition name="fade">
-          <div
-            v-if="$store.state.jobs.locum_new_unsuccessful_jobs_count > 0"
-            class="rounded-lg bg-red-600 text-white text-xs font-bold py-1 px-2 absolute right-0 top-0"
-          >{{$store.state.jobs.locum_new_unsuccessful_jobs_count}}</div>
-        </transition>
       </div>
       <div class="relative">
         <nuxt-link
@@ -87,12 +51,6 @@
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
           :class="$route.query && $route.query.job_status && $route.query.job_status.toLowerCase() === 'declined'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Declined</nuxt-link>
-        <transition name="fade">
-          <div
-            v-if="$store.state.jobs.locum_new_declined_jobs_count > 0"
-            class="rounded-lg bg-red-600 text-white text-xs font-bold py-1 px-2 absolute right-0 top-0"
-          >{{$store.state.jobs.locum_new_declined_jobs_count}}</div>
-        </transition>
       </div>
       <div class="relative">
         <nuxt-link
@@ -100,12 +58,6 @@
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
           :class="$route.query && $route.query.job_status && $route.query.job_status.toLowerCase() === 'cancelled'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Cancelled</nuxt-link>
-        <transition name="fade">
-          <div
-            v-if="$store.state.jobs.locum_new_cancelled_jobs_count > 0"
-            class="rounded-lg bg-red-600 text-white text-xs font-bold py-1 px-2 absolute right-0 top-0"
-          >{{$store.state.jobs.locum_new_cancelled_jobs_count}}</div>
-        </transition>
       </div>
       <div class="relative">
         <nuxt-link
@@ -113,12 +65,6 @@
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
           :class="$route.query && $route.query.job_status && $route.query.job_status.toLowerCase() === 'withdrawn'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Withdrawn</nuxt-link>
-        <transition name="fade">
-          <div
-            v-if="$store.state.jobs.locum_new_withdrawn_jobs_count > 0"
-            class="rounded-lg bg-red-600 text-white text-xs font-bold py-1 px-2 absolute right-0 top-0"
-          >{{$store.state.jobs.locum_new_withdrawn_jobs_count}}</div>
-        </transition>
       </div>
       <div class="relative">
         <nuxt-link
@@ -126,12 +72,6 @@
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
           :class="$route.query && $route.query.job_status && $route.query.job_status.toLowerCase() === 'completed'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Completed</nuxt-link>
-        <transition name="fade">
-          <div
-            v-if="$store.state.jobs.locum_new_completed_jobs_count > 0"
-            class="rounded-lg bg-red-600 text-white text-xs font-bold py-1 px-2 absolute right-0 top-0"
-          >{{$store.state.jobs.locum_new_completed_jobs_count}}</div>
-        </transition>
       </div>
       <div class="relative">
         <nuxt-link
@@ -139,12 +79,6 @@
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
           :class="$route.query && $route.query.job_status && $route.query.job_status.toLowerCase() === 'approved'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Approved</nuxt-link>
-        <transition name="fade">
-          <div
-            v-if="$store.state.jobs.locum_new_approved_jobs_count > 0"
-            class="rounded-lg bg-red-600 text-white text-xs font-bold py-1 px-2 absolute right-0 top-0"
-          >{{$store.state.jobs.locum_new_approved_jobs_count}}</div>
-        </transition>
       </div>
     </div>
     <div class="mt-5">

@@ -29,25 +29,25 @@
     </div>
     <div
       class="flex flex-row flex-no-wrap absolute bottom-0 left-0 justify-start w-full"
-      v-if="getPracticeAllocatedPartJobs.length > 0"
+      v-if="getPracticeAllocatedJobs.length > 0"
     >
       <span
-        v-if="hasPracticeAllocatedPartJobs(item.fullDate, 'AM')"
+        v-if="hasPracticeAllocatedJobs(item.fullDate, 'AM')"
         class="bg-green-300 text-green-300 w-full h-2 sm:h-3 lg:h-4 rounded-bl-lg"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
       <span
-        v-if="hasPracticeAllocatedPartJobs(item.fullDate, 'PM')"
+        v-if="hasPracticeAllocatedJobs(item.fullDate, 'PM')"
         class="bg-green-300 text-green-300 w-full h-2 sm:h-3 lg:h-4"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
       <span
-        v-if="hasPracticeAllocatedPartJobs(item.fullDate, 'Whole Day')"
+        v-if="hasPracticeAllocatedJobs(item.fullDate, 'Whole Day')"
         class="bg-green-300 text-green-300 w-full h-2 sm:h-3 lg:h-4"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
       <span
-        v-if="hasPracticeAllocatedPartJobs(item.fullDate, 'OOH')"
+        v-if="hasPracticeAllocatedJobs(item.fullDate, 'OOH')"
         class="bg-green-300 text-green-300 w-full h-2 sm:h-3 lg:h-4 rounded-br-lg"
       >.</span>
       <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
@@ -287,10 +287,13 @@ export default {
     getPracticeOngoingJobs() {
       return this.$store.getters["jobs/getPracticeOngoingJobs"];
     },
-    getPracticeAllocatedPartJobs() {
-      return this.$store.getters["jobs/getPracticeAllocatedPartJobs"];
-    },
+    // getPracticeAllocatedPartJobs() {
+    //   return this.$store.getters["jobs/getPracticeAllocatedPartJobs"];
+    // },
     // whole
+    getPracticeAllocatedJobs() {
+      return this.$store.getters["jobs/getPracticeAllocatedJobs"];
+    },
     getPracticeAppliedJobs() {
       return this.$store.getters["jobs/getPracticeAppliedJobs"];
     },
@@ -337,15 +340,14 @@ export default {
           ) && job_part.job.shift.name === type
       );
     },
-    hasPracticeAllocatedPartJobs(date, type) {
-      return this.getPracticeAllocatedPartJobs.find(
-        job_part =>
-          this.getDateArray(job_part.date_start, job_part.date_end).includes(
-            date
-          ) && job_part.job.shift.name === type
+    // whole
+    hasPracticeAllocatedJobs(date, type) {
+      return this.getPracticeAllocatedJobs.find(
+        job =>
+          this.getDateArray(job.date_start, job.date_end).includes(date) &&
+          job.shift.name === type
       );
     },
-    // whole
     hasPracticeAppliedJobs(date, type) {
       return this.getPracticeAppliedJobs.find(
         job =>

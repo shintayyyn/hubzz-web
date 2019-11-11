@@ -193,6 +193,7 @@ export default {
       throw err;
     }
   },
+
   methods: {
     getSurgeriesCount(params) {
       this.$axios.$get(`/api/v1/practice/me/practice-surgeries/count`, { params }).then(res => {

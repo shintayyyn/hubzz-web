@@ -9,9 +9,13 @@ export const state = () => ({
   selected_date: null,
   selected_date_shift: null,
   create_job_modal: false,
+  loading: false
 })
 
 export const mutations = {
+  TOGGLE_LOADING(state, payload) {
+    state.loading = payload
+  },
   SET_DATE_TODAY(state) {
     state.date_today = this.$moment(new Date()).format('YYYY-MM-DD')
     state.selected_date = this.$moment(new Date()).format('YYYY-MM-DD')

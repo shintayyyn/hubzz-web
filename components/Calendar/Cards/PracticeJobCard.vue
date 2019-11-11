@@ -27,7 +27,7 @@ export default {
     isJobPart() {
       return (
         this.propJob.status &&
-        ["ongoing", "completed", "approved", "allocated"].includes(
+        ["ongoing", "completed", "approved"].includes(
           this.propJob.status.toLowerCase()
         )
       );
@@ -51,30 +51,7 @@ export default {
           return false;
         }
       }
-      // return this.isJobPart;
     },
-    //   bgStatus(status, reminder, job) {
-    //     if (reminder && status !== "Unfilled") {
-    //       return "bg-gray-900";
-    //     } else {
-    //       switch (status) {
-    //         case "Applied":
-    //           return "bg-orange-400";
-    //           break;
-    //         case "Completed":
-    //           return "bg-green-400";
-    //           break;
-    //         case "Allocated":
-    //           return "bg-green-600";
-    //           break;
-    //         case "Unfilled":
-    //           return "bg-red-500";
-    //           break;
-    //         default:
-    //           return "bg-red-500";
-    //       }
-    //     }
-    //   }
     bgStatus() {
       let job = this.isJobPart ? this.propJob.job : this.propJob;
       switch (job.status) {
@@ -151,14 +128,20 @@ export default {
   },
   methods: {
     select() {
-      let job = this.isJobPart ? this.propJob.job : this.propJob;
-      if (job.type) {
-        this.$axios.$get(`/api/v1/practice/jobs/${job.id}`).then(res => {
-          this.$emit("viewPracticeJob", res.data.job);
-        });
-      } else {
-        this.$router.push("/availability");
+      let url = `/api/v1/practice/jobs`;
+      if (
+        ["ongoing", "completed", "approved"].includes(
+          this.propJob.status.toLowerCase()
+        )
+      ) {
+        url = `/api/v1/practice/job-parts`;
       }
+      this.$axios.$get(`${url}/${this.propJob.id}`).then(res => {
+        this.$emit(
+          "viewPracticeJob",
+          res.data && res.data.job ? res.data.job : res.data.job_part
+        );
+      });
     }
   }
 };

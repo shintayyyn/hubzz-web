@@ -59,7 +59,12 @@
     <div class="shield" v-if="modal" @click="modal = false"></div>
     <transition name="slide" mode="out-in">
       <div class="modal-container shadow-lg" v-if="modal">
-        <JobDetailModalShowCandidate @close="modal = false" :user="user" @appointed="close" />
+        <JobDetailModalShowCandidate
+          @close="modal = false"
+          :job="job"
+          :user="user"
+          @appointed="close"
+        />
       </div>
     </transition>
   </div>
