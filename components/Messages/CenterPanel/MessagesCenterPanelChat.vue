@@ -16,7 +16,7 @@
           >Load More Messages</button>
         </span>
       </transition>
-      <transition name="drop" mode="in-out">
+      <transition name="fade" mode="in-out">
         <span class="w-full flex justify-center">
           <button
             v-if="newMessage"
@@ -32,6 +32,7 @@
         </span>
       </transition>
       <div class="py-2 md:px-4">
+        <transition-group name="drop" mode="out-in">
         <div v-for="(item, index) in messages" :key="item.id">
           <div
             class="flex flex-col"
@@ -134,6 +135,7 @@
             </div>
           </div>
         </div>
+        </transition-group>
       </div>
     </div>
     <AppConfirmationModal

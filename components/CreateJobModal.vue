@@ -592,95 +592,95 @@ export default {
     }
   },
   watch: {
-    "form.profession_id"(newValue, oldValue) {
-      this.CheckEmptyField(newValue, "profession_id");
-      if (newValue) {
-        this.form.qualification_id = [];
-        this.selectedProfession = this.professions_categories.find(
-          item => item.id == newValue
-        );
-        if (this.selectedProfession.profession_category.id == 1) {
-          this.compliances = this.gp_compliance_documents_lists;
-          return;
-        }
-        if (this.selectedProfession.profession_category.id == 2) {
-          this.compliances = this.others_compliance_documents_lists;
-          return;
-        }
-      }
-    },
+    // "form.profession_id"(newValue, oldValue) {
+    //   this.CheckEmptyField(newValue, "profession_id");
+    //   if (newValue) {
+    //     this.form.qualification_id = [];
+    //     this.selectedProfession = this.professions_categories.find(
+    //       item => item.id == newValue
+    //     );
+    //     if (this.selectedProfession.profession_category.id == 1) {
+    //       this.compliances = this.gp_compliance_documents_lists;
+    //       return;
+    //     }
+    //     if (this.selectedProfession.profession_category.id == 2) {
+    //       this.compliances = this.others_compliance_documents_lists;
+    //       return;
+    //     }
+    //   }
+    // },
 
-    "form.practice_id"(value) {
-      this.CheckEmptyField(value, "practice_id");
-    },
+    // "form.practice_id"(value) {
+    //   this.CheckEmptyField(value, "practice_id");
+    // },
 
-    "form.title"(value) {
-      this.CheckEmptyField(value, "title");
-    },
+    // "form.title"(value) {
+    //   this.CheckEmptyField(value, "title");
+    // },
 
-    "form.description"(value) {
-      this.CheckEmptyField(value, "description");
-    },
+    // "form.description"(value) {
+    //   this.CheckEmptyField(value, "description");
+    // },
 
-    "form.report_to"(value) {
-      this.CheckEmptyField(value, "report_to");
-    },
+    // "form.report_to"(value) {
+    //   this.CheckEmptyField(value, "report_to");
+    // },
 
-    "form.rate"(value) {
-      this.CheckEmptyField(value, "rate");
-    },
+    // "form.rate"(value) {
+    //   this.CheckEmptyField(value, "rate");
+    // },
 
-    "form.date_start"(value) {
-      this.CheckEmptyField(value, "date_start");
-    },
+    // "form.date_start"(value) {
+    //   this.CheckEmptyField(value, "date_start");
+    // },
 
-    "form.date_end"(value) {
-      this.CheckEmptyField(value, "date_end");
-    },
+    // "form.date_end"(value) {
+    //   this.CheckEmptyField(value, "date_end");
+    // },
 
-    "form.time_start"(value) {
-      this.CheckEmptyField(value, "time_start");
-    },
+    // "form.time_start"(value) {
+    //   this.CheckEmptyField(value, "time_start");
+    // },
 
-    "form.time_end"(value) {
-      this.CheckEmptyField(value, "time_end");
-    },
+    // "form.time_end"(value) {
+    //   this.CheckEmptyField(value, "time_end");
+    // },
 
-    "form.total_hours"(value) {
-      this.CheckEmptyField(value, "total_hours");
-    },
+    // "form.total_hours"(value) {
+    //   this.CheckEmptyField(value, "total_hours");
+    // },
 
-    "form.qualification_id"(value) {
-      this.CheckEmptyField(value, "qualification_id");
-    },
+    // "form.qualification_id"(value) {
+    //   this.CheckEmptyField(value, "qualification_id");
+    // },
 
-    "form.clinical_system_id"(value) {
-      this.CheckEmptyField(value, "clinical_system_id");
-    },
+    // "form.clinical_system_id"(value) {
+    //   this.CheckEmptyField(value, "clinical_system_id");
+    // },
 
-    "form.unpaid_breaks_in_minutes"(value) {
-      this.CheckEmptyField(value, "unpaid_breaks_in_minutes");
-    },
+    // "form.unpaid_breaks_in_minutes"(value) {
+    //   this.CheckEmptyField(value, "unpaid_breaks_in_minutes");
+    // },
 
-    "form.shift_id"(value) {
-      this.CheckEmptyField(value, "shift_id");
-    },
+    // "form.shift_id"(value) {
+    //   this.CheckEmptyField(value, "shift_id");
+    // },
 
-    "form.email"(value) {
-      let index = this.formError.findIndex(item => item.field === "email");
-      if (index >= 0) {
-        this.formError.splice(index, 1);
-      }
+    // "form.email"(value) {
+    //   let index = this.formError.findIndex(item => item.field === "email");
+    //   if (index >= 0) {
+    //     this.formError.splice(index, 1);
+    //   }
 
-      if (!value) {
-        this.formError.push({ field: "email", message: "Required" });
-      } else {
-        const error = this.ValidateEmail(value);
-        if (error) {
-          this.formError.push(error);
-        }
-      }
-    }
+    //   if (!value) {
+    //     this.formError.push({ field: "email", message: "Required" });
+    //   } else {
+    //     const error = this.ValidateEmail(value);
+    //     if (error) {
+    //       this.formError.push(error);
+    //     }
+    //   }
+    // }
   },
   created() {
     this.$axios.$get(`/api/v1/practice/me/practice-practices`).then(res => {
