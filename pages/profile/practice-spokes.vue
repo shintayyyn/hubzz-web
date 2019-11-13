@@ -8,6 +8,7 @@
         >Invite Spoke</nuxt-link>
       </div>
     </div>
+    
     <AppTable
       v-if="surgeries.length > 0"
       :total="totalSurgeries"
@@ -31,6 +32,7 @@
         </td>
       </template>
     </AppTable>
+
     <div v-else class="flex justify-center py-4 text-gray-500">No Branches / Surgeries</div>
     <transition name="fade" mode="out-in">
       <div
