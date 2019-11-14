@@ -274,7 +274,7 @@ export default {
     },
     getPracticeApprovedJobs(state) {
         let jobs = []
-        state.locum_approved_job_parts.forEach(jobPart => {
+        state.practice_approved_job_parts.forEach(jobPart => {
             let job_surgery_name = ''
             let date_time_start = ''
             let date_time_end = ''

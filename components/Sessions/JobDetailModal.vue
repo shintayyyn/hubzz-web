@@ -28,7 +28,7 @@
             <JobDetailModalUpdateForm
               :job="job"
               v-if="job.status === 'Allocated' && toEdit === true && jobOngoing === false  || job.status === 'Applied' && toEdit === true  || job.status === 'Live' && toEdit === true"
-              @close="toEdit = false"
+              @updateJob="updateJob"
             />
             <JobDetailModalCancelForm
               :job="job"
@@ -178,6 +178,13 @@ export default {
     },
     editJob() {
       this.toEdit = true;
+    },
+    updateJob(id) {
+      this.toEdit = false;
+      this.$router.push({
+        path: `/sessions/${id}`,
+        query: { ...this.$route.query }
+      });
     },
     cancelEdit() {
       this.toEdit = false;

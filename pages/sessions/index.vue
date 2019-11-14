@@ -735,7 +735,7 @@ export default {
     },
     "$route.query"({ status: newStatus }, { status: oldStatus }) {
       if (newStatus && newStatus !== null && newStatus !== oldStatus) {
-        this.$store.commit("jobs/TOGGLE_LOADING", true);
+        // this.$store.commit("jobs/TOGGLE_LOADING", true);
         this.$store.commit("jobs/CLEAR_PRACTICE_JOB_NOTIFICATION");
         this.current_page = 1;
         this.showTable = false;
@@ -933,6 +933,7 @@ export default {
     },
     async refreshJobs() {
       this.loading = true;
+      this.$store.commit("jobs/CLEAR_PRACTICE_JOB_NOTIFICATION");
       await this.getJobsCount(
         this.isJobPart ? this.jobPartParams : this.params
       );

@@ -73,7 +73,7 @@ export default {
           return "bg-orange-400 text-white";
           break;
         case "Completed":
-          return "bg-green-400 text-white";
+          return "bg-green-600 text-white";
           break;
         case "Allocated":
           return "bg-green-300";

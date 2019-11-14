@@ -59,9 +59,10 @@
                     class="border-b-2 w-full focus:border-yellow-400 focus:outline-none py-3 font-bold text-xs sm:text-sm"
                     @focus="toggledSurgeries = true"
                     readonly
+                    :disabled="selectedInvoice !== null"
                   />
                 </div>
-                <div class="relative flex flex-col w-full z-10">
+                <div class="relative flex flex-col w-full z-10" v-if="selectedInvoice === null">
                   <div
                     ref="surgeryLists"
                     class="absolute z-10 w-full option-list flex flex-col bg-white shadow-md overflow-y-auto"
@@ -95,6 +96,7 @@
                 </div>
               </div>
             </section>
+            <!-- TEST ! only return id and name -->
             <div class="text-xs sm:text-sm" v-if="selectedSurgery && selectedSurgery.address">
               <div>{{selectedSurgery.address.line_1}}</div>
               <div>{{selectedSurgery.address.line_2}}</div>
@@ -110,7 +112,7 @@
             <div class="text-xs sm:text-sm">{{issuedAt | localDate}}</div>
           </div>
         </div>
-        <div v-if="selectedSurgery">
+        <div v-if="selectedSurgery && selectedInvoice === null">
           <section>
             <div
               class="relative flex flex-col py-2 mb-3 md:mb-6 mt-2"
@@ -196,6 +198,7 @@
               <tr class="border-b" :key="item.id">
                 <td colspan="2">
                   <textarea
+                    disabled
                     v-model="item.description"
                     rows="3"
                     placeholder="Enter description"
@@ -204,6 +207,7 @@
                 </td>
                 <td>
                   <input
+                    disabled
                     type="number"
                     min="0"
                     v-model="item.total"
@@ -212,7 +216,7 @@
                   />
                 </td>
                 <td class="align-middle sticky right-0">
-                  <div class="flex justify-center">
+                  <div class="flex justify-center" v-if="selectedInvoice === null">
                     <span
                       class="bg-gray-900 hover:bg-black w-6 h-6 cursor-pointer float-right font-semibold inline-flex items-center justify-center px-3 mt-2 rounded-full text-white text-xl mx-auto"
                       @click="removeSelectedJobPart(item, index)"
@@ -220,6 +224,7 @@
                   </div>
                   <div class="flex flex-row flex-no-wrap justify-start items-center">
                     <input
+                      :disabled="item.approve"
                       v-model="disputedInvoices"
                       :id="`${item.job_part_id}-disputed`"
                       type="checkbox"
@@ -254,6 +259,7 @@
                   <div class="flex flex-col">
                     <label for="absent_days">Days of absent</label>
                     <input
+                      :disabled="item.approve"
                       type="number"
                       min="0"
                       v-model="item.absent_days"
@@ -267,6 +273,7 @@
                     <label for="late_hours">Hours of late</label>
                   </div>
                   <input
+                    :disabled="item.approve"
                     type="number"
                     min="0"
                     v-model="item.late_hours"
@@ -278,6 +285,7 @@
                   <div class="flex flex-col">
                     <label for="final_hours">Final hours</label>
                     <input
+                      :disabled="item.approve"
                       type="number"
                       min="0"
                       v-model="item.final_hours"
@@ -296,6 +304,7 @@
                   <div class="flex flex-col mt-1">
                     <label for="remarks">Remarks</label>
                     <textarea
+                      :disabled="item.approve"
                       v-model="item.remarks"
                       rows="3"
                       name="remarks"

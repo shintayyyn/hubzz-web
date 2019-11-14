@@ -6,9 +6,14 @@
     <div class="flex flex-row justify-start mt-8">
       <div class="leading-loose font-bold text-md sm:text-lg">{{job_part.title}}</div>
       <div
-        class="mx-2 text-sm sm:text-sm p-2"
+        class="mr-2 py-2 px-4 rounded font-semibold uppercase"
         :class="bgStatus(job_part.status)"
       >{{status(job_part.status)}}</div>
+      <div
+        class="ml-2 py-2 px-4 rounded font-semibold"
+        :class="jobPartStatus === 'Completed' ? 'bg-green-500' : 'bg-gray-300'"
+        v-if="job_part.status === 'Completed'"
+      >{{jobPartStatus}}</div>
     </div>
 
     <div class="flex flex-col mt-4">
@@ -32,7 +37,7 @@
             />
             <JobPartDetailModalParts
               v-if="job_part.parts > 1"
-              :job_id="job_part.id"
+              :job_id="job_part.job.id"
               :disabledLink="$route.path === '/dashboard'"
             />
             <JobDetailModalCandidates
@@ -96,10 +101,19 @@ export default {
   computed: {
     authPermissions() {
       return this.$store.getters["auth/permissions"];
+    },
+    jobPartStatus() {
+      let status = "TO BE INVOICED";
+      if (this.job_part.disputed) {
+        status = "DISPUTED";
+      }
+      if (this.job_part.invoiced && this.job_part.issued) {
+        status = "INVOICED";
+      }
+      return status;
     }
   },
   created() {
-    console.log("job_part", this.job_part);
     if (this.job_part.status === "Applied") {
       this.getCandidates();
     }
@@ -179,9 +193,6 @@ export default {
       if (status === "Available") {
         return "LIVE";
       }
-      if (status === "Allocated") {
-        return "ALLOCATED";
-      }
       return status.toUpperCase();
     },
     bgStatus(status) {
@@ -190,16 +201,17 @@ export default {
           return "bg-yellow-500";
           break;
         case "Applied":
-          return "bg-orange-400 text-white";
+          return "bg-orange-600 text-white";
           break;
         case "Completed":
-          return "bg-green-400";
+        case "Approved":
+          return "bg-green-600 text-white";
           break;
         case "Allocated":
           return "bg-green-300";
           break;
         case "Ongoing":
-          return "bg-green-500";
+          return "bg-green-500 text-white";
           break;
         default:
           return "bg-red-500 text-white";

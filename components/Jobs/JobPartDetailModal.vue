@@ -91,10 +91,11 @@ export default {
           return "bg-yellow-500";
           break;
         case "Applied":
-          return "bg-orange-400 text-white";
+          return "bg-orange-600 text-white";
           break;
         case "Completed":
-          return "bg-green-400 text-white";
+        case "Approved":
+          return "bg-green-600 text-white";
           break;
         case "Allocated":
           return "bg-green-300";

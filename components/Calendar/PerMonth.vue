@@ -4,7 +4,7 @@
       <div class="flex flex-row flex-wrap justify-between mx-1" v-if="showRefresh">
         <AppButton
           :label="'Refresh'"
-          @click="getJobs"
+          @click="refreshJobs"
           :inStyle="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
         />
       </div>
@@ -270,6 +270,10 @@ export default {
       }
       console.log("job from socket", job);
       this.showRefresh = true;
+    },
+    async refreshJobs() {
+      this.$store.commit("jobs/CLEAR_PRACTICE_JOB_NOTIFICATION");
+      this.getJobs();
     },
     removeListener() {
       if (this.$auth.loggedIn && this.$auth.user.domain === "Locum") {

@@ -794,7 +794,7 @@ export default {
     "$route.query"({ status: newStatus }, { status: oldStatus }) {
       if (newStatus && newStatus !== null && newStatus !== oldStatus) {
         this.$store.commit("jobs/TOGGLE_LOADING", true);
-        this.$store.commit("jobs/CLEAR_LOCUM_JOB_NOTIFICATIONS");
+        this.$store.commit("jobs/CLEAR_LOCUM_JOB_NOTIFICATION");
         this.current_page = 1;
         this.showTable = false;
         this.filterModal = false;

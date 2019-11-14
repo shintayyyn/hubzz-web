@@ -14,7 +14,7 @@
       @limitchanged="limitchanged"
       @sorted="sorted"
     >
-      <template v-slot:actions="slotProps">
+      <!-- <template v-slot:actions="slotProps">
         <div @click.stop.prevent="onClick(slotProps.item)" class="flex justify-center">
           <button
             v-if="!slotProps.item.paid_at"
@@ -23,7 +23,7 @@
             :class="slotProps.item.issued_at ? 'text-white bg-green-600' : 'bg-yellow-500'"
           ></button>
         </div>
-      </template>
+      </template>-->
     </AppTable>
     <div v-else class="flex justify-center">You do not have any created invoice</div>
 
@@ -97,7 +97,7 @@ export default {
       params: {
         offset: 0,
         limit: 5,
-        order_by: ["date_created:desc"]
+        order_by: []
       },
       // columns
       columns: [
@@ -140,11 +140,6 @@ export default {
           name: "Status",
           dataIndex: "status",
           sortable: true,
-          class: "text-center"
-        },
-        {
-          name: "Actions",
-          dataIndex: "actions",
           class: "text-center"
         }
       ],
@@ -198,7 +193,54 @@ export default {
       });
     }
   },
+  mounted() {
+    this.$socket.on(
+      "Locum Notification Locum Invoice Paid",
+      this.getLocumInvoiceRealTime
+    );
+    this.$socket.on(
+      "Locum Notification Locum Invoice Updated",
+      this.getLocumInvoiceRealTime
+    );
+    console.log(this.invoices);
+  },
+  destroyed() {
+    this.removeListener();
+  },
   methods: {
+    updateInvoice(invoice) {
+      let index = this.invoices.findIndex(item => item.id == invoice.id);
+      if (index >= 0) {
+        this.invoices.splice(index, 1, invoice);
+      }
+    },
+    getLocumInvoiceRealTime({ id }) {
+      if (!id) {
+        return;
+      }
+      if (this.invoices.map(invoice => invoice.id).includes(id)) {
+        // update
+        this.$axios.$get(`/api/v1/locum/locum-invoices/${id}`).then(res => {
+          console.log("response", res);
+          let index = this.invoices.findIndex(
+            invoice => invoice.id == res.data.locum_invoice.id
+          );
+          if (index >= 0) {
+            this.invoices.splice(index, 1, res.data.locum_invoice);
+          }
+        });
+      }
+    },
+    removeListener() {
+      this.$socket.removeListener(
+        "Locum Notification Locum Invoice Paid",
+        this.getLocumInvoiceRealTime
+      );
+      this.$socket.removeListener(
+        "Locum Notification Locum Invoice Updated",
+        this.getLocumInvoiceRealTime
+      );
+    },
     close() {
       if (this.deleteModal) {
         this.deleteModal = false;
@@ -290,12 +332,7 @@ export default {
     addInvoice(invoice) {
       this.invoices.unshift(invoice);
     },
-    updateInvoice(invoice) {
-      let index = this.invoices.findIndex(item => item.id == invoice.id);
-      if (index >= 0) {
-        this.invoices.splice(index, 1, invoice);
-      }
-    },
+
     sorted(order_by) {
       this.current_page = 1;
       this.params.offset = 0;
