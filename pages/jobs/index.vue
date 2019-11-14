@@ -66,7 +66,6 @@
               :items="shifts"
             />
           </div>
-
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
               class="px-1"
