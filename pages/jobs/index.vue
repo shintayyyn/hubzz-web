@@ -1073,7 +1073,7 @@ export default {
       this.params.shift_id = "";
       this.params.rate = "";
       this.params.rate_type_id = "";
-      this.params.order_by = ["date_created:desc"];
+      this.params.order_by = [];
 
       this.jobPartParams.offset = 0;
       this.jobPartParams.limit = 5;
@@ -1091,7 +1091,7 @@ export default {
       this.jobPartParams.calendar_date_end = "";
       this.jobPartParams.time_start = "";
       this.jobPartParams.time_end = "";
-      this.jobPartParams.order_by = ["date_created:desc"];
+      this.jobPartParams.order_by = [];
 
       return;
     },

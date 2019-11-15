@@ -555,8 +555,8 @@ export default {
       this.jobPartParams.calendar_date_end = "";
       this.jobPartParams.time_start = "";
       this.jobPartParams.time_end = "";
-      this.params.order_by = ["date_created:desc"];
-      this.jobPartParams.order_by = ["date_created:desc"];
+      this.params.order_by = [];
+      this.jobPartParams.order_by = [];
     },
     onSelect(value) {
       let address_components = value.details.result.address_components;

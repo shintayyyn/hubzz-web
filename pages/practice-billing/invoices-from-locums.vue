@@ -158,8 +158,8 @@ export default {
       const params = {
         offset: 0,
         limit: 5,
-        status: ["Issued", "Disputed", "Paid"],
-        order_by: "date_created:desc"
+        status: ["Issued", "Disputed", "Paid"]
+        // order_by: ["date_created:desc"]
       };
 
       const responseCount = await app.$axios.get(
@@ -255,7 +255,7 @@ export default {
         .then(res => {
           this.loading = false;
           this.invoices = [];
-          res.data.invoices.forEach(invoice => {
+          res.data.locum_invoices.forEach(invoice => {
             this.invoices.push(invoice);
           });
         })

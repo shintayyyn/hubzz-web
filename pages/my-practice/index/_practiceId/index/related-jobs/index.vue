@@ -369,7 +369,7 @@ export default {
         offset: 0,
         limit: 5,
         viewing_practice_id: this.$route.params.practiceId,
-        order_by: ["date_created:desc"],
+        order_by: [],
         job_number: "",
         title: "",
         type: "",
@@ -388,7 +388,7 @@ export default {
         offset: 0,
         limit: 5,
         viewing_practice_id: this.$route.params.practiceId,
-        order_by: ["job_date_created:desc"],
+        order_by: [],
         job_part_number: "",
         job_title: "",
         job_type: "",
@@ -833,8 +833,8 @@ export default {
       this.jobPartParams.calendar_date_end = "";
       this.jobPartParams.time_start = "";
       this.jobPartParams.time_end = "";
-      this.params.order_by = ["date_created:desc"];
-      this.jobPartParams.order_by = ["date_created:desc"];
+      this.params.order_by = [];
+      this.jobPartParams.order_by = [];
     },
     // show(item) {
     //   this.$router.push({
