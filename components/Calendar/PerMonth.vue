@@ -55,7 +55,7 @@
             <div
               @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
               class="relative border border-solid rounded-lg m-1 cursor-pointer flex justify-center items-center h-8 sm:h-12 md:h-16 lg:h-20 w-auto"
-              :class="$store.state.calendar.date_today === item.fullDate ? 'border-yellow-500 text-lg font-bold':'hover:bg-gray-300'"
+              :class="[$store.state.calendar.date_today === item.fullDate ? 'border-yellow-500 text-lg font-bold':'hover:bg-gray-300', selectedDate === item.fullDate && 'bg-gray-200']"
               v-if="item.day === 1"
             >
               <div class="text-xs md:text-sm z-10">{{(item.date)}}</div>
@@ -71,7 +71,7 @@
             <div
               @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
               class="relative border border-solid rounded-lg m-1 cursor-pointer flex justify-center items-center h-8 sm:h-12 md:h-16 lg:h-20 w-auto"
-              :class="$store.state.calendar.date_today === item.fullDate ? 'border-yellow-500 text-lg font-bold':'hover:bg-gray-300'"
+              :class="[$store.state.calendar.date_today === item.fullDate ? 'border-yellow-500 bg-white text-lg font-bold':'hover:bg-gray-300', selectedDate === item.fullDate && 'bg-gray-200']"
               v-if="item.day === 2"
             >
               <div class="text-xs md:text-sm z-10">{{item.date}}</div>
@@ -87,7 +87,7 @@
             <div
               @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
               class="relative border border-solid rounded-lg m-1 cursor-pointer flex justify-center items-center h-8 sm:h-12 md:h-16 lg:h-20 w-auto"
-              :class="$store.state.calendar.date_today === item.fullDate ? 'border-yellow-500 text-lg font-bold':'hover:bg-gray-300'"
+              :class="[$store.state.calendar.date_today === item.fullDate ? 'border-yellow-500 bg-white text-lg font-bold':'hover:bg-gray-300', selectedDate === item.fullDate && 'bg-gray-200']"
               v-if="item.day === 3"
             >
               <div class="text-xs md:text-sm z-10">{{(item.date)}}</div>
@@ -103,7 +103,7 @@
             <div
               @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
               class="relative border border-solid rounded-lg m-1 cursor-pointer flex justify-center items-center h-8 sm:h-12 md:h-16 lg:h-20 w-auto"
-              :class="$store.state.calendar.date_today === item.fullDate ? 'border-yellow-500 text-lg font-bold':'hover:bg-gray-300'"
+              :class="[$store.state.calendar.date_today === item.fullDate ? 'border-yellow-500 bg-white text-lg font-bold':'hover:bg-gray-300', selectedDate === item.fullDate && 'bg-gray-200']"
               v-if="item.day === 4"
             >
               <div class="text-xs md:text-sm z-10">{{item.date}}</div>
@@ -119,7 +119,7 @@
             <div
               @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
               class="relative border border-solid rounded-lg m-1 cursor-pointer flex justify-center items-center h-8 sm:h-12 md:h-16 lg:h-20 w-auto"
-              :class="$store.state.calendar.date_today === item.fullDate ? 'border-yellow-500 text-lg font-bold':'hover:bg-gray-300'"
+              :class="[$store.state.calendar.date_today === item.fullDate ? 'border-yellow-500 text-lg font-bold':'hover:bg-gray-300', selectedDate === item.fullDate && 'bg-gray-200']"
               v-if="item.day === 5"
             >
               <div class="text-xs md:text-sm z-10">{{(item.date)}}</div>
@@ -135,7 +135,7 @@
             <div
               @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
               class="relative border border-solid rounded-lg m-1 cursor-pointer flex justify-center items-center h-8 sm:h-12 md:h-16 lg:h-20 w-auto"
-              :class="$store.state.calendar.date_today === item.fullDate ? 'border-yellow-500 text-lg font-bold':'hover:bg-gray-300'"
+              :class="[$store.state.calendar.date_today === item.fullDate ? 'border-yellow-500 text-lg font-bold':'hover:bg-gray-300', selectedDate === item.fullDate && 'bg-gray-200']"
               v-if="item.day === 6"
             >
               <div class="text-xs md:text-sm z-10">{{item.date}}</div>
@@ -151,7 +151,7 @@
             <div
               @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
               class="relative border border-solid rounded-lg m-1 cursor-pointer flex justify-center items-center h-8 sm:h-12 md:h-16 lg:h-20 w-auto"
-              :class="$store.state.calendar.date_today === item.fullDate ? 'border-yellow-500 text-lg font-bold':'hover:bg-gray-300'"
+              :class="[$store.state.calendar.date_today === item.fullDate ? 'border-yellow-500 text-lg font-bold':'hover:bg-gray-300', selectedDate === item.fullDate && 'bg-gray-200']"
               v-if="item.day === 0"
             >
               <div class="text-xs md:text-sm z-10">{{item.date}}</div>
@@ -187,6 +187,9 @@ export default {
   computed: {
     authPermissions() {
       return this.$store.getters["auth/permissions"];
+    },
+    selectedDate(){
+      return this.$store.state.calendar.selected_date;
     }
   },
   watch: {
