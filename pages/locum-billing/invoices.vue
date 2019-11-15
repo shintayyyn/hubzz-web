@@ -162,8 +162,8 @@ export default {
     try {
       const params = {
         offset: 0,
-        limit: 5,
-        order_by: "date_created:desc"
+        limit: 5
+        // order_by: "date_created:desc"
       };
       const response = await app.$axios.get("/api/v1/locum/locum-invoices", {
         params
@@ -264,7 +264,7 @@ export default {
         .then(res => {
           this.loading = false;
           this.invoices = [];
-          res.data.invoices.forEach(invoice => {
+          res.data.locum_invoices.forEach(invoice => {
             this.invoices.push(invoice);
           });
         })
