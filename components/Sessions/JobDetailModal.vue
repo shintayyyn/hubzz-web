@@ -3,18 +3,33 @@
     <div @click="close" class="cursor-pointer">
       <svgicon name="left-arrow" height="32" width="32" />
     </div>
-    <div class="flex flex-row justify-start mt-8">
-      <div class="leading-loose font-bold text-md sm:text-lg">{{job.title}}</div>
-      <div class="mx-2 text-sm sm:text-sm p-2" :class="bgStatus(job.status)">{{status(job.status)}}</div>
+    <div class="flex flex-row justify-start mt-4">
+      <div class="leading-loose font-bold text-md sm:text-lg">{{ job.title }}</div>
+      <div
+        class="mx-2 text-sm sm:text-sm p-2"
+        :class="bgStatus(job.status)"
+      >{{ status(job.status) }}</div>
       <div v-if="authPermissions.includes('Update Sessions Job')">
         <button
           class="font-bold text-xs sm:text-sm no-underline px-2 py-2 rounded-lg bg-yellow-500 ml-4 focus:outline-none"
-          v-if="job.status === 'Allocated' && toEdit === false && jobOngoing === false || job.status === 'Applied' && toEdit === false || job.status === 'Live' && toEdit === false"
+          v-if="
+						(job.status === 'Allocated' &&
+							toEdit === false &&
+							jobOngoing === false) ||
+							(job.status === 'Applied' && toEdit === false) ||
+							(job.status === 'Live' && toEdit === false)
+					"
           @click.prevent="editJob()"
         >Edit this job</button>
         <button
           class="font-bold text-xs sm:text-sm no-underline px-2 py-2 rounded-lg bg-yellow-500 ml-4 focus:outline-none"
-          v-if="job.status === 'Allocated' && toEdit === true && jobOngoing === false || job.status === 'Applied' && toEdit === true || job.status === 'Live' && toEdit === true"
+          v-if="
+						(job.status === 'Allocated' &&
+							toEdit === true &&
+							jobOngoing === false) ||
+							(job.status === 'Applied' && toEdit === true) ||
+							(job.status === 'Live' && toEdit === true)
+					"
           @click.prevent="cancelEdit()"
         >Cancel Editing</button>
       </div>
@@ -28,7 +43,7 @@
             <JobDetailModalUpdateForm
               :job="job"
               v-if="job.status === 'Allocated' && toEdit === true && jobOngoing === false  || job.status === 'Applied' && toEdit === true  || job.status === 'Live' && toEdit === true"
-              @close="toEdit = false"
+              @updateJob="updateJob"
             />
             <JobDetailModalCancelForm
               :job="job"
@@ -179,6 +194,13 @@ export default {
     editJob() {
       this.toEdit = true;
     },
+    updateJob(id) {
+      this.toEdit = false;
+      this.$router.push({
+        path: `/sessions/${id}`,
+        query: { ...this.$route.query }
+      });
+    },
     cancelEdit() {
       this.toEdit = false;
     },
@@ -225,4 +247,3 @@ export default {
   }
 }
 </style>
-

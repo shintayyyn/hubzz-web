@@ -15,13 +15,13 @@
       @sorted="sorted"
     >
       <template v-slot:actions="slotProps">
-        <td @click.stop.prevent="onClick(slotProps.item)">
+        <div @click.stop.prevent="onClick(slotProps.item)" class="flex justify-center">
           <button
-            v-if="!slotProps.item.paid_at"
-            v-text="'Mark as paid'"
-            class="p-2 text-white rounded-lg focus:outline-none bg-green-600 hover:bg-green-700"
+            v-text="`${slotProps.item.paid ? 'Already Paid' : slotProps.item.disputed_items_count > 0 ? 'Disputed' : 'Mark as paid'}`"
+            class="px-4 py-2 font-bold rounded-lg focus:outline-none"
+            :class="[slotProps.item.paid ? 'bg-green-600 text-white' : slotProps.item.disputed_items_count > 0 ? 'bg-gray-500 text-white' : 'bg-yellow-400']"
           ></button>
-        </td>
+        </div>
       </template>
     </AppTable>
     <div v-else class="flex justify-center">You do not have any invoices from Locums</div>
@@ -58,7 +58,7 @@
         @click="paymentModal ? paymentModal = false : $router.go(-1)"
       ></div>
     </transition>
-    <nuxt-child />
+    <nuxt-child @updateInvoice="updateInvoice" />
   </section>
 </template>
 <script>
@@ -95,8 +95,8 @@ export default {
       params: {
         offset: 0,
         limit: 5,
-        status: "Issued",
-        order_by: ["date_created:desc"]
+        status: ["Issued", "Disputed", "Paid"],
+        order_by: []
       },
       // app table column
       columns: [
@@ -139,6 +139,11 @@ export default {
           name: "Created At",
           dataIndex: "date_created",
           class: "text-center localDate"
+        },
+        {
+          name: "Actions",
+          dataIndex: "actions",
+          class: "text-center"
         }
       ]
     };
@@ -153,7 +158,7 @@ export default {
       const params = {
         offset: 0,
         limit: 5,
-        status: "Issued",
+        status: ["Issued", "Disputed", "Paid"],
         order_by: "date_created:desc"
       };
 
@@ -176,7 +181,6 @@ export default {
         response.data && response.data.data && response.data.data.locum_invoices
           ? response.data.data.locum_invoices
           : [];
-      console.log("invoice", invoices);
       return {
         totalInvoices,
         invoices
@@ -189,7 +193,53 @@ export default {
       });
     }
   },
+  mounted() {
+    this.$socket.on(
+      "Practice Notification Locum Invoice Paid",
+      this.getLocumInvoiceRealTime
+    );
+    this.$socket.on(
+      "Practice Notification Locum Invoice Updated",
+      this.getLocumInvoiceRealTime
+    );
+    console.log(this.invoices);
+  },
+  destroyed() {
+    this.removeListener();
+  },
   methods: {
+    updateInvoice(invoice) {
+      let index = this.invoices.findIndex(item => item.id == invoice.id);
+      if (index >= 0) {
+        this.invoices.splice(index, 1, invoice);
+      }
+    },
+    getLocumInvoiceRealTime({ id }) {
+      if (!id) {
+        return;
+      }
+      if (this.invoices.map(invoice => invoice.id).includes(id)) {
+        // update
+        this.$axios.$get(`/api/v1/practice/locum-invoices/${id}`).then(res => {
+          let index = this.invoices.findIndex(
+            invoice => invoice.id == res.data.locum_invoice.id
+          );
+          if (index >= 0) {
+            this.invoices.splice(index, 1, res.data.locum_invoice);
+          }
+        });
+      }
+    },
+    removeListener() {
+      this.$socket.removeListener(
+        "Practice Notification Locum Invoice Paid",
+        this.getLocumInvoiceRealTime
+      );
+      this.$socket.removeListener(
+        "Practice Notification Locum Invoice Updated",
+        this.getLocumInvoiceRealTime
+      );
+    },
     getInvoicesCount(params) {
       this.$axios
         .$get(`/api/v1/practice/locum-invoices/count`, { params })
@@ -218,6 +268,9 @@ export default {
       this.paymentModal = false;
     },
     onClick(invoice, index) {
+      if (invoice.paid || invoice.disputed_items_count > 0) {
+        return;
+      }
       this.selectedInvoiceId = null;
       this.form.paid_at = null;
       this.paymentModal = true;
@@ -226,20 +279,18 @@ export default {
     confirmPayment() {
       this.Validate(this.form);
       if (!this.formError.length) {
-        this.form.paid_at = this.$moment(this.form.paid_at).format(
-          "YYYY-MM-DD"
-        );
         this.$axios
           .$put(
             `/api/v1/practice/locum-invoices/${this.selectedInvoiceId}/paid`,
             this.form
           )
           .then(res => {
+            console.log(res);
             let index = this.invoices.findIndex(
-              invoice => invoice.id == res.data.invoice.id
+              invoice => invoice.id == res.data.locum_invoice.id
             );
             if (index >= 0) {
-              this.invoices.splice(index, 1);
+              this.invoices.splice(index, 1, res.data.locum_invoice);
             }
 
             this.$store.commit("SET_NOTIFICATION", {

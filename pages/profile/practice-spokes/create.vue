@@ -1,19 +1,19 @@
 <template>
   <div class="modal-container shadow-lg">
     <AppConfirmationModal
-      :label="'Proceed to add this surgery?'"
+      :label="'Proceed to invite this surgery?'"
       :confirmLabel="'Yes'"
       :cancelLabel="'Cancel'"
       :modal="modal"
-      @confirm="add"
+      @confirm="invite"
       @cancel="modal = false"
     />
 
     <div class="p-4 md:p-8">
-      <div @click="$router.push('/profile/branches-surgeries')" class="cursor-pointer">
+      <div @click="$router.push('/profile/practice-spokes')" class="cursor-pointer">
         <svgicon name="left-arrow" height="32" width="32" />
       </div>
-      <div class="flex justify-start font-bold text-sm sm:text-xl mt-8">Add Surgery</div>
+      <div class="flex justify-start font-bold text-sm sm:text-xl mt-8">Invite Spoke</div>
       <div class="relative bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4 max-w-5xl">
         <AppInput
           v-model="search_text"
@@ -25,37 +25,37 @@
         />
         <AppButton :label="'Search'" @click="search" :inStyle="'padding:5px 14px;'" />
       </div>
-      <div v-if="showResult && surgeries.length === 0" class="mt-5">
+      <div v-if="showResult && practiceSpokes.length === 0" class="mt-5">
         <div
           class="text-xs xl:text-base font-bold"
         >No practice matched that name. Try again with whole words, practice code or CCG.</div>
       </div>
       <div
         class="rounded-lg shadow-lg overflow-auto mt-5 bg-white"
-        v-if="showResult && surgeries.length > 0"
+        v-if="showResult && practiceSpokes.length > 0"
       >
         <div
           class="text-xs lg:text-base font-bold p-4"
         >Select by clicking on the practice that you wish to add</div>
         <div
           class="border-t-2 p-4 cursor-pointer"
-          :class="selectedSurgery.id === item.id ? 'bg-yellow-500':'hover:bg-gray-400'"
-          v-for="(item) in surgeries"
+          :class="selectedSpoke.id === item.id ? 'bg-yellow-500':'hover:bg-gray-400'"
+          v-for="(item) in practiceSpokes"
           :key="item.id"
           @click="select(item)"
         >
           <div class="flex flex-col justify-start text-xs xl:text-base">
-            <div class="font-bold">{{item.name}}</div>
-            <div
+            <div class="font-bold">{{item.surgery.name}}</div>
+            <!-- <div
               class="mt-4"
-            >{{item.address.line_1}}, {{item.address.line_2}}, {{item.address.line_3}}, {{item.address.post_code}}</div>
-            <div class="flex flex-row flex-no-wrap mt-1">
+            >{{item.address.line_1}}, {{item.address.line_2}}, {{item.address.line_3}}, {{item.address.post_code}}</div> -->
+            <!-- <div class="flex flex-row flex-no-wrap mt-1">
               <div class="rounded-lg bg-gray-300 py-1 px-2 mr-1">CCG</div>
               <div class="flex items-center">{{item.clinical_commissioning_group.name}}</div>
-            </div>
+            </div> -->
             <div class="flex flex-row flex-no-wrap mt-1">
               <div class="rounded-lg bg-gray-300 py-1 px-2 mr-1">Practice Code</div>
-              <div class="flex items-center">{{item.code}}</div>
+              <div class="flex items-center">{{item.surgery.code}}</div>
             </div>
           </div>
         </div>
@@ -86,8 +86,8 @@ export default {
   data() {
     return {
       search_text: "",
-      surgeries: [],
-      selectedSurgery: {},
+      practiceSpokes: [],
+      selectedSpoke: {},
       showResult: false,
       modal: false,
       formError: []
@@ -121,10 +121,10 @@ export default {
       } else {
         this.$axios
           .$get(
-            `/api/v1/surgeries?search=${this.search_text}&has_parent=false&is_parent=false&limit=10`
+            `/api/v1/practice/practice-spokes?search=${this.search_text}&limit=10`
           )
           .then(res => {
-            this.surgeries = res.data.surgeries;
+            this.practiceSpokes = res.data.practices;
             this.showResult = true;
           })
           .catch(err => {
@@ -134,57 +134,77 @@ export default {
     },
     select(item) {
       this.formError = [];
-      this.selectedSurgery = item;
+      this.selectedSpoke = item;
       this.modal = true;
     },
-    add() {
+    invite () {
       if (this.type === "Hub") {
-        this.$axios
-          .$post(`/api/v1/practice/me/practice-surgeries`, {
-            surgery_id: this.selectedSurgery.id
-          })
-          .then(res => {
-            this.modal = false;
-            this.$emit("addSurgery", res.data.practice_surgery);
-            this.$store.commit("SET_NOTIFICATION", {
-              enabled: true,
-              status: "success",
-              text: [`${res.message}`]
-            });
-            this.$router.push("/profile/branches-surgeries");
-          })
-          .catch(err => {
-            this.modal = false;
-            this.formError = err.response.data.error_messages;
-          });
-      } else if (this.type === "Spoke") {
-        this.$axios
-          .$post(`/api/v1/practice/me/parent-surgery`, {
-            surgery_id: this.selectedSurgery.id
-          })
-          .then(res => {
-            this.modal = false;
-            let surgery = {
-              id: res.data.practice.parent_surgery.id,
-              pay_for_surgery: res.data.practice.pay_for_surgery,
-              verify_job_creation: res.data.practice.verify_job_creation,
-              surgery: res.data.practice.parent_surgery
-            };
-            this.$store.commit("profile/ADD_SURGERY", surgery);
-            this.$emit("addSurgery", surgery);
-            this.$store.commit("SET_NOTIFICATION", {
-              enabled: true,
-              status: "success",
-              text: [`${res.message}`]
-            });
-            this.$router.push("/profile/branches-surgeries");
-          })
-          .catch(err => {
-            this.modal = false;
-            this.formError = err.response.data.error_messages;
-          });
-      }
+        this.$axios.$post(`/api/v1/practice/me/practice-surgeries/invite`, {
+          surgery_id: this.selectedSpoke.surgery.id
+        }).then(res => {
+          this.modal = false;
+          this.emit("addSurgery", res.data.practice_surgery)
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: [`${res.message}`]
+           })
+           this.$router.push("/profile/practice-spokes");
+        })
+        .catch(err => {
+          this.modal = false;
+          this.formError = err.response.data.error_messages;
+        })
+      } 
     }
+    // add() {
+    //   if (this.type === "Hub") {
+    //     this.$axios
+    //       .$post(`/api/v1/practice/me/practice-surgeries`, {
+    //         surgery_id: this.selectedSpoke.id
+    //       })
+    //       .then(res => {
+    //         this.modal = false;
+    //         this.$emit("addSurgery", res.data.practice_surgery);
+    //         this.$store.commit("SET_NOTIFICATION", {
+    //           enabled: true,
+    //           status: "success",
+    //           text: [`${res.message}`]
+    //         });
+    //         this.$router.push("/profile/practice-spokes");
+    //       })
+    //       .catch(err => {
+    //         this.modal = false;
+    //         this.formError = err.response.data.error_messages;
+    //       });
+    //   } else if (this.type === "Spoke") {
+    //     this.$axios
+    //       .$post(`/api/v1/practice/me/parent-surgery`, {
+    //         surgery_id: this.selectedSpoke.id
+    //       })
+    //       .then(res => {
+    //         this.modal = false;
+    //         let surgery = {
+    //           id: res.data.practice.parent_surgery.id,
+    //           pay_for_surgery: res.data.practice.pay_for_surgery,
+    //           verify_job_creation: res.data.practice.verify_job_creation,
+    //           surgery: res.data.practice.parent_surgery
+    //         };
+    //         this.$store.commit("profile/ADD_SURGERY", surgery);
+    //         this.$emit("addSurgery", surgery);
+    //         this.$store.commit("SET_NOTIFICATION", {
+    //           enabled: true,
+    //           status: "success",
+    //           text: [`${res.message}`]
+    //         });
+    //         this.$router.push("/profile/practice-spokes");
+    //       })
+    //       .catch(err => {
+    //         this.modal = false;
+    //         this.formError = err.response.data.error_messages;
+    //       });
+    //   }
+    // }
   }
 };
 </script>

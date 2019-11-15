@@ -4,15 +4,15 @@
       <svgicon name="left-arrow" height="32" width="32" />
     </div>
     <div class="flex items-center justify-start mt-4">
-      <div class="leading-loose font-bold text-md sm:text-lg">{{job.title}}</div>
+      <div class="leading-loose font-bold text-md sm:text-lg">{{ job.title }}</div>
       <div
         class="mx-2 text-sm sm:text-sm p-2 uppercase"
         :class="bgStatus(job.locum_status)"
-      >{{job.locum_status}}</div>
+      >{{ job.locum_status }}</div>
     </div>
-    <div class="text-xs sm:text-sm py-3">Posted {{$moment(job.date_created).format('DD/MM/YYYY')}}</div>
+    <div class="text-xs sm:text-sm py-3">Posted {{ $moment(job.date_created).format("DD/MM/YYYY") }}</div>
     <div class="flex flex-wrap justify-start">
-      <div class="p-0 md:pr-4 w-full md:w-1/2">
+      <div class="p-0 lg:pr-4 w-full lg:w-1/2">
         <div class="flex flex-col">
           <JobDetailModalInfo :job="job" />
           <JobDetailModalUnassignForm
@@ -22,8 +22,12 @@
           />
           <JobDetailModalApplyForm
             :job="job"
-            v-if="job.locum_status === 'Available' || job.locum_status === 'Matched'"
-            :compliances="job.platform_job.compliance_documents.map(item => item.id)"
+            v-if="
+							job.locum_status === 'Available' || job.locum_status === 'Matched'
+						"
+            :compliances="
+							job.platform_job.compliance_documents.map(item => item.id)
+						"
             @close="close"
           />
           <JobDetailModalCancelForm
@@ -33,7 +37,7 @@
           />
         </div>
       </div>
-      <div class="p-0 md:pl-4 w-full md:w-1/2 mt-4 md:m-0">
+      <div class="p-0 lg:pl-4 w-full lg:w-1/2 mt-4 lg:m-0 order-first lg:order-none">
         <div class="flex flex-col">
           <JobPartDetailModalParts :job_id="job.id" :disabledLink="true" />
           <JobDetailModalMap :job="job" />
@@ -73,7 +77,7 @@ export default {
           return "bg-orange-400 text-white";
           break;
         case "Completed":
-          return "bg-green-400 text-white";
+          return "bg-green-600 text-white";
           break;
         case "Allocated":
           return "bg-green-300";
@@ -88,4 +92,3 @@ export default {
   }
 };
 </script>
-

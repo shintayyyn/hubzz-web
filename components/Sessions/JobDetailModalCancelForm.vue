@@ -70,9 +70,6 @@ export default {
       formError: []
     };
   },
-  mounted() {
-    console.log(this.job);
-  },
   watch: {
     "form.cancelled_reason"() {
       this.CheckEmptyField(this.form.cancelled_reason, "cancelled_reason");

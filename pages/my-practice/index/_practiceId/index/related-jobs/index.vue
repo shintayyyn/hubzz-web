@@ -709,7 +709,7 @@ export default {
         this.toggleTable = false;
         this.filterToggle = false;
         setTimeout(() => {
-          this.clearJobsBadge(newStatus);
+          // this.clearJobsBadge(newStatus);
           this.clearFilters();
         }, 1000);
         this.getJobsCount(this.isJobPart ? this.jobPartParams : this.params);
@@ -718,19 +718,19 @@ export default {
   },
   created() {
     this.getJobsCount(this.isJobPart ? this.jobPartParams : this.params);
-    setTimeout(() => {
-      this.clearJobsBadge(
-        this.$route.query.job_status
-          ? this.$route.query.job_status
-          : "Allocated"
-      );
-    }, 250);
+    // setTimeout(() => {
+    //   this.clearJobsBadge(
+    //     this.$route.query.job_status
+    //       ? this.$route.query.job_status
+    //       : "Allocated"
+    //   );
+    // }, 250);
   },
   methods: {
-    clearJobsBadge(status) {
-      let jobStatus = status.toUpperCase();
-      return this.$store.commit(`jobs/CLEAR_LOCUM_${jobStatus}_BADGE`);
-    },
+    // clearJobsBadge(status) {
+    //   let jobStatus = status.toUpperCase();
+    //   return this.$store.commit(`jobs/CLEAR_LOCUM_${jobStatus}_BADGE`);
+    // },
     showFilter() {
       return (this.filterToggle = !this.filterToggle);
     },

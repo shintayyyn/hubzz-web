@@ -84,7 +84,7 @@ export default {
         offset: 0,
         limit: 5,
         viewing_locum_user_id: this.$route.params.locumId,
-        order_by: ["date_created:desc"],
+        order_by: [],
         job_number: "",
         title: "",
         type: "",
@@ -104,7 +104,7 @@ export default {
         offset: 0,
         limit: 5,
         viewing_locum_user_id: this.$route.params.locumId,
-        order_by: ["job_date_created:desc"],
+        order_by: [],
         job_part_number: "",
         job_title: "",
         job_type: "",
@@ -428,7 +428,7 @@ export default {
         this.toggleTable = false;
         this.filterToggle = false;
         setTimeout(() => {
-          this.clearJobsBadge(newStatus);
+          // this.clearJobsBadge(newStatus);
           this.clearFilters();
         }, 1000);
         this.getJobsCount(this.isJobPart ? this.jobPartParams : this.params);
@@ -437,19 +437,19 @@ export default {
   },
   created() {
     this.getJobsCount(this.isJobPart ? this.jobPartParams : this.params);
-    setTimeout(() => {
-      this.clearJobsBadge(
-        this.$route.query.job_status
-          ? this.$route.query.job_status
-          : "Allocated"
-      );
-    }, 250);
+    // setTimeout(() => {
+    //   this.clearJobsBadge(
+    //     this.$route.query.job_status
+    //       ? this.$route.query.job_status
+    //       : "Allocated"
+    //   );
+    // }, 250);
   },
   methods: {
-    clearJobsBadge(status) {
-      let jobStatus = status.toUpperCase();
-      return this.$store.commit(`jobs/CLEAR_PRACTICE_${jobStatus}_BADGE`);
-    },
+    // clearJobsBadge(status) {
+    //   let jobStatus = status.toUpperCase();
+    //   return this.$store.commit(`jobs/CLEAR_PRACTICE_${jobStatus}_BADGE`);
+    // },
     showFilter() {
       return (this.filterToggle = !this.filterToggle);
     },

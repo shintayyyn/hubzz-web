@@ -270,7 +270,6 @@
             :type="'single-checkbox'"
             :name="'ir35'"
             :label="'Are you willing to work for a role captured within IR35 rules, subject to deduction of Tax and N.I.?'"
-            :error="this.formError.find(item => item.field === 'ir35')"
           />
           <AppPostCode
             v-model="form.post_code"

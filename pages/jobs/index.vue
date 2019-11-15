@@ -66,7 +66,6 @@
               :items="shifts"
             />
           </div>
-
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
               class="px-1"
@@ -371,7 +370,7 @@ export default {
       params: {
         offset: 0,
         limit: 5,
-        order_by: ["date_created:desc"],
+        order_by: [],
         job_number: "",
         title: "",
         type: "",
@@ -389,7 +388,7 @@ export default {
       jobPartParams: {
         offset: 0,
         limit: 5,
-        order_by: ["job_date_created:desc"],
+        order_by: [],
         job_part_number: "",
         job_title: "",
         job_type: "",
@@ -794,7 +793,7 @@ export default {
     "$route.query"({ status: newStatus }, { status: oldStatus }) {
       if (newStatus && newStatus !== null && newStatus !== oldStatus) {
         this.$store.commit("jobs/TOGGLE_LOADING", true);
-        this.$store.commit("jobs/CLEAR_LOCUM_JOB_NOTIFICATIONS");
+        this.$store.commit("jobs/CLEAR_LOCUM_JOB_NOTIFICATION");
         this.current_page = 1;
         this.showTable = false;
         this.filterModal = false;
