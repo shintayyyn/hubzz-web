@@ -371,7 +371,7 @@ export default {
       params: {
         offset: 0,
         limit: 5,
-        order_by: ["date_created:desc"],
+        order_by: [],
         job_number: "",
         title: "",
         type: "",
@@ -389,7 +389,7 @@ export default {
       jobPartParams: {
         offset: 0,
         limit: 5,
-        order_by: ["job_date_created:desc"],
+        order_by: [],
         job_part_number: "",
         job_title: "",
         job_type: "",

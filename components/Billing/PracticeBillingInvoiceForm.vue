@@ -5,6 +5,10 @@
         class="save-button text-xs sm:text-sm ml-4 mx-2 py-2 px-3 border-2 rounded-lg font-bold flex items-center"
         @click="save(false)"
       >Save changes</div>
+      <div
+        class="save-button text-xs sm:text-sm ml-4 mx-2 py-2 px-3 border-2 rounded-lg font-bold flex items-center"
+        @click="exportToPdf()"
+      >Export to PDF</div>
     </div>
 
     <div class="flex flex-row flex-wrap justify-start items-center my-4">
@@ -17,7 +21,8 @@
       >Platform</button>
     </div>
 
-    <div class="max-w-3xl my-4 bg-white px-4 py-4 border shadow-md mb-32">
+    <!-- pdf form -->
+    <div id="htmlpdf" class="max-w-3xl my-4 bg-white px-4 py-4 border shadow-md mb-32">
       <div class="flex flex-col">
         <div class="text-xs sm:text-sm sm:text-right leading-normal">
           <div>{{locum_user.name}}</div>
@@ -69,7 +74,12 @@
             </div>
           </div>
           <!-- tbody -->
-          <div class="flex flex-col" v-for="(item) in selectedJobParts" :key="item.id">
+          <div
+            :id="`invoice-item-${index}`"
+            class="flex flex-col"
+            v-for="(item, index) in selectedJobParts"
+            :key="item.id"
+          >
             <div class="flex justify-start mt-2">
               <div
                 style="width:430px;min-height:80px;"
@@ -212,6 +222,7 @@
   </section>
 </template>
 <script>
+// import html2canvas from "html2canvas";
 import AppDate from "@/components/Base/AppDate";
 import AppInput from "@/components/Base/AppInput";
 import AppFilterSearch from "@/components/Base/AppFilterSearch";
@@ -522,23 +533,29 @@ export default {
       }
       return false;
     },
-    jobPartTotalInvoice() {
-      // days, absent_days, late_hours, rate,
-    },
-    addItem() {},
-    // surgeries
-    toggledOffSurgeries() {},
-    scrollHandlerSurgeries(e) {},
-    addSurgery(surgery) {},
-    async fetchSurgeriesCount() {},
-    async fetchSurgeries() {},
-    // job part
-    toggledOffJobParts() {},
-    scrollHandlerJobParts(e) {},
-    addJobPart(jobPart) {},
-    removeSelectedJobPart(jobPart, index) {},
-    async fetchJobPartsCount() {},
-    async fetchJobParts() {}
+    exportToPdf() {
+      this.$html2canvas(document.getElementById("htmlpdf")).then(canvas => {
+        var imgWidth = 210;
+        var pageHeight = 295;
+        var imgHeight = (canvas.height * imgWidth) / canvas.width;
+        var heightLeft = imgHeight;
+        var doc = this.$jspdf("p", "mm");
+        var position = 0;
+
+        var imgData = canvas.toDataURL("image/png");
+
+        doc.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+
+        while (heightLeft >= 0) {
+          position = heightLeft - imgHeight;
+          doc.addPage();
+          doc.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+          heightLeft -= pageHeight;
+        }
+        doc.save("practice-billing-invoice.pdf");
+      });
+    }
   }
 };
 </script>

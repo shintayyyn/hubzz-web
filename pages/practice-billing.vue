@@ -8,13 +8,13 @@
           :class="$route.name.includes('practice-billing-invoices-from-locums') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Invoices from Locums</nuxt-link>
       </div>
-      <div class="relative">
+      <!-- <div class="relative">
         <nuxt-link
           to="/practice-billing/paid-report"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
           :class="$route.name.includes('practice-billing-paid-report') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Paid report</nuxt-link>
-      </div>
+      </div>-->
       <div class="relative">
         <nuxt-link
           to="/practice-billing/pension-forms-from-locums"

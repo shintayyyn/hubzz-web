@@ -9,6 +9,11 @@
         class="save-button text-xs sm:text-sm px-4 py-2 border-2 rounded-lg font-bold flex items-center"
         @click="save(true)"
       >Save and archive as final</div>
+      <div
+        v-if="selectedInvoice"
+        class="save-button text-xs sm:text-sm ml-4 mx-2 py-2 px-3 border-2 rounded-lg font-bold flex items-center"
+        @click="exportToPdf()"
+      >Export to PDF</div>
     </div>
 
     <div class="flex flex-row flex-wrap justify-start items-center my-2 md:my-4">
@@ -27,7 +32,7 @@
       >Platform</button>
     </div>
 
-    <div class="max-w-3xl mb-4 bg-white px-4 py-4 border shadow-md">
+    <div id="htmlpdf" class="max-w-3xl mb-4 bg-white px-4 py-4 border shadow-md">
       <div class="flex flex-col">
         <div class="text-xs sm:text-sm sm:text-right leading-normal">
           <div>{{$auth.user.personal_detail.name}}</div>
@@ -529,6 +534,29 @@ export default {
     document.body.style.overflow = "auto";
   },
   methods: {
+    exportToPdf() {
+      this.$html2canvas(document.getElementById("htmlpdf")).then(canvas => {
+        var imgWidth = 210;
+        var pageHeight = 295;
+        var imgHeight = (canvas.height * imgWidth) / canvas.width;
+        var heightLeft = imgHeight;
+        var doc = this.$jspdf("p", "mm");
+        var position = 0;
+
+        var imgData = canvas.toDataURL("image/png");
+
+        doc.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+
+        while (heightLeft >= 0) {
+          position = heightLeft - imgHeight;
+          doc.addPage();
+          doc.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+          heightLeft -= pageHeight;
+        }
+        doc.save(`locum-billing-invoice.pdf`);
+      });
+    },
     save(final) {
       this.formError = [];
       this.form.type = this.type;
