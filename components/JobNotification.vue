@@ -42,6 +42,62 @@
           </div>
         </div>
       </template>
+      <template v-for="billingNotification in billingNotifications">
+        <nuxt-link
+          :to="billingNotification.url"
+          :key="`${billingNotification.id}-${billingNotification.notification_type}`"
+        >
+          <div class="relative m-1 p-3 flex flex-wrap bg-gray-100 rounded-lg shadow-lg">
+            <span
+              class="absolute top-0 right-0 cursor-pointer my-1 mx-2 font-bold"
+              @click.prevent.stop="close(billingNotification.id)"
+            >X</span>
+            <div class="flex flex-wrap mt-3 w-48 md:w-64">
+              <div class="flex justify-between items-center my-1 w-full">
+                <div class="font-bold text-lg">{{billingNotification.invoice_number}}</div>
+                <div class="mx-1"></div>
+                <div
+                  class="px-2 py-1 text-sm font-bold rounded-lg max-w-sm cursor-pointer"
+                  :class="bgStatus(billingNotification.status)"
+                >{{billingNotification.status.toUpperCase()}}</div>
+              </div>
+              <div class="flex justify-between items-center my-1 w-full">
+                <div>From</div>
+                <div class="text-right">{{billingNotification.date_start}}</div>
+              </div>
+              <div class="flex justify-between items-center my-1 w-full">
+                <div>To</div>
+                <div class="text-right">{{billingNotification.date_end}}</div>
+              </div>
+              <div class="flex justify-between items-center my-1 w-full">
+                <div>Issued At</div>
+                <div class="text-right">{{billingNotification.issued_at | localDate}}</div>
+              </div>
+              <div class="flex justify-between items-center my-1 w-full">
+                <div>Paid At</div>
+                <div class="text-right">{{billingNotification.paid_at | localDate}}</div>
+              </div>
+              <div
+                class="flex justify-between items-center my-1 w-full"
+                v-if="billingNotification.locum_user"
+              >
+                <div>Locum</div>
+                <div class="text-right">{{billingNotification.locum_user}}</div>
+              </div>
+              <div
+                class="flex justify-between items-center my-1 w-full"
+                v-if="billingNotification.practice"
+              >
+                <div>Practice</div>
+                <div class="text-right">{{billingNotification.practice}}</div>
+              </div>
+              <div>
+                <div class="font-semibold">{{billingNotification.message}}</div>
+              </div>
+            </div>
+          </div>
+        </nuxt-link>
+      </template>
     </transition-group>
   </div>
 </template>
@@ -53,6 +109,12 @@ export default {
         return this.$store.getters["jobs/getPracticeJobNotifications"];
       }
       return this.$store.getters["jobs/getLocumJobNotifications"];
+    },
+    billingNotifications() {
+      if (this.$auth.loggedIn && this.$auth.user.domain === "Practice") {
+        return this.$store.getters["billing/getPracticeBillingNotifications"];
+      }
+      return this.$store.getters["billing/getLocumBillingNotifications"];
     },
     url() {
       return this.$auth.user.domain === "Practice" ? "/sessions" : "/jobs";
@@ -102,24 +164,16 @@ export default {
     close(id) {
       this.$store.commit("jobs/REMOVE_PRACTICE_JOB_NOTIFICATION", id);
       this.$store.commit("jobs/REMOVE_LOCUM_JOB_NOTIFICATION", id);
+      this.$store.commit("billing/REMOVE_PRACTICE_BILLING_NOTIFICATION", id);
+      this.$store.commit("billing/REMOVE_LOCUM_BILLING_NOTIFICATION", id);
     },
     bgStatus(status) {
       switch (status) {
-        case "Live":
-        case "Matched":
+        case "Issued":
           return "bg-yellow-500";
           break;
-        case "Applied":
-          return "bg-orange-400 text-white";
-          break;
-        case "Completed":
-          return "bg-green-400";
-          break;
-        case "Allocated":
-          return "bg-green-300";
-          break;
-        case "Ongoing":
-          return "bg-green-500";
+        case "Paid":
+          return "bg-green-500 text-white";
           break;
         default:
           return "bg-red-500 text-white";

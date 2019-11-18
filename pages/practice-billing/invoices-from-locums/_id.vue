@@ -2,9 +2,11 @@
   <div class="invoice-modal shadow-lg">
     <div class="px-4 md:px-8 py-4 max-w-5xl h-screen">
       <div class="flex flex-row flex-wrap justify-start">
-        <div @click="$router.go(-1)" class="cursor-pointer">
+        <!-- <div @click="$router.go(-1)" class="cursor-pointer">
+        </div>-->
+        <nuxt-link :to="`/practice-billing/invoices-from-locums`">
           <svgicon name="left-arrow" height="32" width="32" />
-        </div>
+        </nuxt-link>
       </div>
       <PracticeBillingInvoiceForm
         :selectedInvoice="invoice"
@@ -62,12 +64,32 @@ export default {
     };
   },
 
+  watch: {
+    $route({ params }) {
+      if (params && params.id) {
+        this.removeNotification(parseInt(params.id));
+      }
+    }
+  },
+
   mounted() {
     document.body.style.overflow = "hidden";
+    this.removeNotification(parseInt(this.$route.params.id));
   },
 
   destroyed() {
     document.body.style.overflow = "auto";
+  },
+
+  methods: {
+    removeNotification(id) {
+      let index = this.$store.state.billing.practice_billing_notifications.findIndex(
+        billing => billing.id === id
+      );
+      if (index >= 0) {
+        this.$store.commit("billing/REMOVE_PRACTICE_BILLING_NOTIFICATION", id);
+      }
+    }
   }
 };
 </script>

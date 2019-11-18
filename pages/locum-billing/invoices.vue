@@ -252,15 +252,17 @@ export default {
       }
     },
     getInvoicesCount(params) {
-      this.$axios.$get(`/api/v1/locum/invoices/count`, { params }).then(res => {
-        this.totalInvoices = res.data.count;
-        this.getInvoices(this.params);
-      });
+      this.$axios
+        .$get(`/api/v1/locum/locum-invoices/count`, { params })
+        .then(res => {
+          this.totalInvoices = res.data.count;
+          this.getInvoices(this.params);
+        });
     },
     getInvoices(params) {
       this.loading = true;
       this.$axios
-        .$get(`/api/v1/locum/invoices`, { params })
+        .$get(`/api/v1/locum/locum-invoices`, { params })
         .then(res => {
           this.loading = false;
           this.invoices = [];

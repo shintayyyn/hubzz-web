@@ -31,13 +31,13 @@ export default {
                     }
                     break;
                 case 'Practice Notification Job Unfilled Warning':
-                    if (notif.unfilled_warned_in_1_hours === 1) {
+                    if (notif.job_unfilled_warned_in_1_hours === 1) {
                         message = 'This Job will be unfilled in 1 hour.'
-                    } else if (notif.unfilled_warned_in_3_hours) {
+                    } else if (notif.job_unfilled_warned_in_3_hours) {
                         message = 'This Job will be unfilled in 3 hours.'
-                    } else if (notif.unfilled_warned_in_1_days === 1) {
+                    } else if (notif.job_unfilled_warned_in_1_days === 1) {
                         message = 'This Job will be unfilled tomorrow.'
-                    } else if (notif.unfilled_warned_in_3_days === 1) {
+                    } else if (notif.job_unfilled_warned_in_3_days === 1) {
                         message = 'This Job will be unfilled in 3 days.'
                     }
                     notifObj = {

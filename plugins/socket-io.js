@@ -52,7 +52,8 @@ export default (ctx, inject) => {
   ctx.$socket = socket
   inject('socket', socket)
   ctx.store.dispatch('socket/init')
-  ctx.store.dispatch('jobs/initializeJobListener', ctx)
+  ctx.store.dispatch('jobs/initializeJobListener')
+  ctx.store.dispatch('billing/initializeBillingListener')
   ctx.store.dispatch('chat/initializeChatListener')
   ctx.store.dispatch('chat/initializeUsersOnline')
 }
