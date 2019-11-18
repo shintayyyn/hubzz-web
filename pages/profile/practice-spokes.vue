@@ -23,14 +23,14 @@
       @limitchanged="limitchanged"
       @sorted="sorted"
     >
-      <template v-slot:actions="slotProps">
+      <!-- <template v-slot:actions="slotProps">
         <td class="flex justify-center">
           <div
             class="font-semibold text-xs sm:text-sm text-center px-2"
             @click.stop.prevent="toggleRemoveConfirmationModal(slotProps.item.id)"
           >X</div>
         </td>
-      </template>
+      </template> -->
     </AppTable>
 
     <div v-else class="flex justify-center py-4 text-gray-500">No Branches / Surgeries</div>

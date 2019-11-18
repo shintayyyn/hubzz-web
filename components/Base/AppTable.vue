@@ -126,6 +126,9 @@ export default {
       params: []
     };
   },
+  created() {
+    console.log(this.items)
+  },
   mounted() {
     this.params = this.orderBy;
   },

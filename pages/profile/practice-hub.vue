@@ -1,6 +1,7 @@
 <template>
   <div class="shadow-lg m-6 rounded-lg">
-    <div class="m-4 my-6">
+
+    <div v-if="practiceHub" class="m-4 my-6">
       <p class="text-lg font-semibold">Practice Hub</p>
       <p class="mx-4">{{practiceHub.name}}</p>
       <p class="text-lg my-2 font-semibold">Permissions</p>
@@ -17,33 +18,127 @@
         </div>
       </div>
     </div>
+
+    <div v-if="!practiceHub">
+      <AppTable
+        :total="totalInvitations"
+        :items="hubInvitations"
+        :loading="loading"
+        :currentPage="current_page"
+        :perPage="params.limit"
+        :columns="columns"
+        :orderBy="params.order_by"
+        :routerLink="'/profile/practice-hub'"
+        @pagechanged="pagechanged"
+        @limitchanged="limitchanged"
+      />
+    </div>
+    
+    <div
+      class="shield"
+      v-if="['profile-practice-hub-invitationId',
+        ].includes($route.name)"
+      @click="$router.push('/profile/practice-hub')"
+    ></div>
+    <nuxt-child/>
   </div>
 </template>
 <script>
+import AppTable from '@/components/Base/AppTable'
 export default {
+  components:{
+    AppTable
+  },
   data(){
     return{
       practiceSpoke: '',
-      practiceHub: ''
+      practiceHub: '',
+      totalInvitations: 0,
+      hubInvitations: [],
+      // app table params (no filter for this one)
+      current_page:1,
+      loading: false,
+      params: {
+        offset: 0,
+        limit: 5,
+        order_by: []
+      },
+      columns:[
+        {
+          name:'Hub Surgery',
+          dataIndex: "practice.surgery.name",
+          class: "text-left",
+          sortable: false
+        },
+        {
+          name:'Phone Number',
+          dataIndex:"practice.phone_number",
+          class:"text-left",
+        }
+      ]
     }
   },
 
   async asyncData({ app, route, store }){
     try{
-      let response = await app.$axios.get(`/api/v1/practice/me/parent-surgery`)
-      const practiceSpoke = response.data.data.practice
-      const practiceHub = response.data.data.practice.parent_surgery
+      let response = await app.$axios.$get(`/api/v1/practice/me/parent-surgery`)
+      const practiceSpoke = response.data.practice
+      const practiceHub = response.data.practice.parent_surgery
+
+      response = await app.$axios.$get(`/api/v1/practice/me/parent-surgery/invitations-count`)
+      const totalInvitations = response.data.count
+      response = await app.$axios.$get(`/api/v1/practice/me/parent-surgery/invitations`)
+      const hubInvitations = response.data.practice_surgeries
+      // let hubInvitations = []
+      // if (response.data && response.data.practice_surgeries) {
+      //   response.data.practice_surgeries.forEach(invitation => {
+      //     hubInvitations.push(invitation)
+      //   })
+      // }
+      console.log('invitations', hubInvitations)
       return{
         practiceSpoke,
-        practiceHub
+        practiceHub,
+        totalInvitations,
+        hubInvitations,
+
       }
     }catch(err){
       throw err;
     }
   },
+  methods:{
+    getHubInvitations(params){
+      this.loading = true
+      this.$axios.$get(`/api/v1/practice/me/parent-surgery/invitations`, { params })
+        .then(res => {
+            this.loading = false,
+            this.hubInvitations = []
+            res.data.practice_surgeries.forEach(invitation => {
+            this.hubInvitations.push(invitation)
+          })
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    },
+    limitchanged(limit) {
+      this.current_page = 1;
+      this.params.offset = 0;
+      this.params.limit = limit;
+      this.getHubInvitations(this.params);
+    },  
+    pagechanged(page) {
+      this.current_page = page;
+      this.params.offset = this.params.limit * (page - 1);
+      this.getHubInvitations(this.params);
+    },
+  },
 }
 </script>
 
 <style>
-
+.shield {
+  z-index: 509;
+}
 </style>

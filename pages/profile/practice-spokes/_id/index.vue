@@ -31,7 +31,7 @@
             <div class="text-black font-semibold text-sm">Create Job Rates Limit</div>
             <div class="text-black m-2">{{practice_surgery.create_job_rate_limit}}</div>
           </div>
-          <!--------------EDIT PAY FOR SURGERY / VERIFY JOB CREATION------------------>
+          <!--------------EDIT PERMISSIONS----------------->
           <div v-if="editPayForSurgery === true" class="rounded-lg shadow-lg p-2">
             <div class="flex flex-col flex-wrap justify-between">
               <div class="w-full p-1">
