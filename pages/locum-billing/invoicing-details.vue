@@ -282,25 +282,25 @@ export default {
   mounted() {
     if (this.user.locum_detail.invoice_detail) {
       if (this.user.locum_detail.invoice_detail.bank_account) {
-        (this.form.account_name = this.user.locum_detail.invoice_detail.bank_account.account_name),
-          (this.form.bank_name = this.user.locum_detail.invoice_detail.bank_account.bank_name),
-          (this.form.sort_code = this.user.locum_detail.invoice_detail.bank_account.sort_code),
-          (this.form.account_number = this.user.locum_detail.invoice_detail.bank_account.account_number);
+        this.form.account_name = this.user.locum_detail.invoice_detail.bank_account.account_name;
+        this.form.bank_name = this.user.locum_detail.invoice_detail.bank_account.bank_name;
+        this.form.sort_code = this.user.locum_detail.invoice_detail.bank_account.sort_code;
+        this.form.account_number = this.user.locum_detail.invoice_detail.bank_account.account_number;
       }
 
-      (this.form.tax_year_end_month = this.user.locum_detail.invoice_detail.tax_year_end_month),
-        (this.form.tax_year_end_date = this.user.locum_detail.invoice_detail.tax_year_end_date),
-        (this.form.employment_type = this.user.locum_detail.invoice_detail.employment_type),
-        (this.form.utr_number = this.user.locum_detail.invoice_detail.utr_number),
-        (this.form.company_registration_number = this.user.locum_detail.invoice_detail.company_registration_number),
-        (this.form.ir35 = this.user.locum_detail.invoice_detail.ir35),
-        (this.form.paid_under_payroll = this.user.locum_detail.invoice_detail.paid_under_payroll);
+      this.form.tax_year_end_month = this.user.locum_detail.invoice_detail.tax_year_end_month;
+      this.form.tax_year_end_date = this.user.locum_detail.invoice_detail.tax_year_end_date;
+      this.form.employment_type = this.user.locum_detail.invoice_detail.employment_type;
+      this.form.utr_number = this.user.locum_detail.invoice_detail.utr_number;
+      this.form.company_registration_number = this.user.locum_detail.invoice_detail.company_registration_number;
+      this.form.ir35 = this.user.locum_detail.invoice_detail.ir35;
+      this.form.paid_under_payroll = this.user.locum_detail.invoice_detail.paid_under_payroll;
 
       if (this.user.locum_detail.invoice_detail.payroll_detail) {
-        (this.form.payroll_detail_account_name = this.user.locum_detail.invoice_detail.payroll_detail.account_name),
-          (this.form.payroll_detail_bank_name = this.user.locum_detail.invoice_detail.payroll_detail.bank_name),
-          (this.form.payroll_detail_sort_code = this.user.locum_detail.invoice_detail.payroll_detail.sort_code),
-          (this.form.payroll_detail_account_number = this.user.locum_detail.invoice_detail.payroll_detail.account_number);
+        this.form.payroll_detail_account_name = this.user.locum_detail.invoice_detail.payroll_detail.account_name;
+        this.form.payroll_detail_bank_name = this.user.locum_detail.invoice_detail.payroll_detail.bank_name;
+        this.form.payroll_detail_sort_code = this.user.locum_detail.invoice_detail.payroll_detail.sort_code;
+        this.form.payroll_detail_account_number = this.user.locum_detail.invoice_detail.payroll_detail.account_number;
       }
     }
   },

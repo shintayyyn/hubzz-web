@@ -77,7 +77,7 @@
               v-if="activeLoading.includes(item.id)"
               :key="item.id"
             >
-              <td colspan="7" class="loader-message text-center text-gray-800 cursor-wait">Uploading</td>
+              <td colspan="7" class="loader-message text-center text-gray-800 cursor-wait bg-gray-200">Uploading</td>
             </tr>
             <tr
               v-else
@@ -135,7 +135,7 @@
                     @click.stop
                   />
                   <svgicon name="cloud-upload" height="24" width="24" />
-                  <label class="leading-loose mx-2 cursor-pointer text-black">Upload</label>
+                  <label class="hidden md:block leading-loose mx-2 cursor-pointer text-black">Upload</label>
                 </div>
               </td>
               <td
@@ -154,7 +154,7 @@
                     @click.stop
                   />
                   <svgicon name="cloud-upload" height="24" width="24" />
-                  <label class="leading-loose mx-2 cursor-pointer">Update</label>
+                  <label class="hidden md:block leading-loose mx-2 cursor-pointer">Update</label>
                 </div>
               </td>
             </tr>
@@ -191,7 +191,7 @@
               v-if="activeLoading.includes(item.id)"
               :key="item.id"
             >
-              <td colspan="7" class="loader-message text-center text-gray-800 cursor-wait">Uploading</td>
+              <td colspan="7" class="loader-message text-center text-gray-800 cursor-wait bg-gray-200">Uploading</td>
             </tr>
             <tr
               v-else
@@ -227,7 +227,7 @@
                 class="hover:underline"
                 v-if="!item.info"
               >
-                <div class="flex flex-row flex-no-wrap justify-center">
+                <div class="flex flex-row flex-no-wrap justify-center float-right lg:w-2/3 mx-auto p-2 cursor-pointer">
                   <input
                     type="file"
                     :ref="`${item.id}_file_optional_compliance`"
@@ -236,7 +236,7 @@
                     @click.stop
                   />
                   <svgicon name="cloud-upload" height="24" width="24" />
-                  <label class="leading-loose mx-2 cursor-pointer text-black">Upload</label>
+                  <label class="hidden md:block leading-loose mx-2 cursor-pointer text-black">Upload</label>
                 </div>
               </td>
               <td
@@ -245,7 +245,7 @@
                 v-else
               >
                 <div
-                  class="flex flex-row flex-no-wrap justify-center bg-yellow-500 lg:w-2/3 mx-auto p-2 rounded cursor-pointer"
+                  class="flex flex-row flex-no-wrap justify-center float-right bg-yellow-500 lg:w-2/3 mx-auto p-2 rounded cursor-pointer"
                 >
                   <input
                     type="file"
@@ -255,7 +255,7 @@
                     @click.stop
                   />
                   <svgicon name="cloud-upload" height="24" width="24" />
-                  <label class="leading-loose mx-2 cursor-pointer">Update</label>
+                  <label class="hidden md:block leading-loose mx-2 cursor-pointer">Update</label>
                 </div>
               </td>
             </tr>
@@ -329,7 +329,7 @@
                   class="hover:underline"
                   v-if="!item.file"
                 >
-                  <div class="flex flex-row flex-no-wrap justify-center">
+                  <div class="flex flex-row flex-no-wrap justify-center float-right lg:w-2/3 mx-auto p-2 cursor-pointer">
                     <input
                       type="file"
                       :ref="`${item.id}_file_mandatory_training`"
@@ -338,7 +338,7 @@
                       @click.stop
                     />
                     <svgicon name="cloud-upload" height="24" width="24" />
-                    <label class="leading-loose mx-2 cursor-pointer text-black">Upload</label>
+                    <label class="hidden md:block leading-loose mx-2 cursor-pointer text-black">Upload</label>
                   </div>
                 </td>
                 <td
@@ -347,7 +347,7 @@
                   v-else
                 >
                   <div
-                    class="flex flex-row flex-no-wrap justify-center bg-yellow-500 lg:w-2/3 mx-auto p-2 rounded cursor-pointer"
+                    class="flex flex-row flex-no-wrap justify-center float-right bg-yellow-500 lg:w-2/3 mx-auto p-2 rounded cursor-pointer"
                   >
                     <input
                       type="file"
@@ -357,7 +357,7 @@
                       @click.stop
                     />
                     <svgicon name="cloud-upload" height="24" width="24" />
-                    <label class="leading-loose mx-2 cursor-pointer">Update</label>
+                    <label class="hidden md:block leading-loose mx-2 cursor-pointer">Update</label>
                   </div>
                 </td>
               </tr>

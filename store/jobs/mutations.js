@@ -278,7 +278,7 @@ export default {
     REMOVE_LOCUM_JOB_NOTIFICATION(state, payload) {
         state.locum_job_notifications = state.locum_job_notifications.filter(job => job.id !== payload)
     },
-    CLEAR_LOCUM_JOB_NOTIFICATION() {
+    CLEAR_LOCUM_JOB_NOTIFICATION(state) {
         state.locum_job_notifications = []
     },
     // JOB PARTS

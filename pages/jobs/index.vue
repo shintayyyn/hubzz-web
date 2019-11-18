@@ -370,7 +370,7 @@ export default {
       params: {
         offset: 0,
         limit: 5,
-        order_by: ["date_created:desc"],
+        order_by: [],
         job_number: "",
         title: "",
         type: "",
@@ -388,7 +388,7 @@ export default {
       jobPartParams: {
         offset: 0,
         limit: 5,
-        order_by: ["job_date_created:desc"],
+        order_by: [],
         job_part_number: "",
         job_title: "",
         job_type: "",
@@ -793,7 +793,7 @@ export default {
     "$route.query"({ status: newStatus }, { status: oldStatus }) {
       if (newStatus && newStatus !== null && newStatus !== oldStatus) {
         this.$store.commit("jobs/TOGGLE_LOADING", true);
-        this.$store.commit("jobs/CLEAR_LOCUM_JOB_NOTIFICATIONS");
+        this.$store.commit("jobs/CLEAR_LOCUM_JOB_NOTIFICATION");
         this.current_page = 1;
         this.showTable = false;
         this.filterModal = false;
@@ -1073,7 +1073,7 @@ export default {
       this.params.shift_id = "";
       this.params.rate = "";
       this.params.rate_type_id = "";
-      this.params.order_by = ["date_created:desc"];
+      this.params.order_by = [];
 
       this.jobPartParams.offset = 0;
       this.jobPartParams.limit = 5;
@@ -1091,7 +1091,7 @@ export default {
       this.jobPartParams.calendar_date_end = "";
       this.jobPartParams.time_start = "";
       this.jobPartParams.time_end = "";
-      this.jobPartParams.order_by = ["date_created:desc"];
+      this.jobPartParams.order_by = [];
 
       return;
     },

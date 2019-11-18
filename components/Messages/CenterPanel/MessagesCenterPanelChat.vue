@@ -32,108 +32,109 @@
         </span>
       </transition>
       <div class="py-2 md:px-4">
-        <div v-for="(item, index) in messages" :key="item.id">
-          <div
-            class="flex flex-col"
-            :id="`message-${index}`"
-            :class="isReceiver(item) ? 'items-start': 'items-end'"
-          >
+        <transition-group name="fade">
+          <div v-for="(item, index) in messages" :key="item.id">
             <div
-              v-if="isDeleted(item.user.id, item.deleted_by_sender, item.deleted_by_receiver)"
-              class="flex my-1"
+              class="flex flex-col"
+              :id="`message-${index}`"
+              :class="isReceiver(item) ? 'items-start': 'items-end'"
             >
               <div
-                v-if="$auth.user.domain === 'Practice'"
-                :class="isReceiver(item) ? '' : 'hidden'"
-                class="w-10 h-10 my-1 ml-4"
+                v-if="isDeleted(item.user.id, item.deleted_by_sender, item.deleted_by_receiver)"
+                class="flex my-1"
               >
-                <AppAvatar
-                  class="m-auto"
-                  :width="'40px'"
-                  :height="'40px'"
-                  :src="item.user.avatar ? item.user.avatar.file.url : ''"
-                />
+                <div
+                  v-if="$auth.user.domain === 'Practice'"
+                  :class="isReceiver(item) ? '' : 'hidden'"
+                  class="w-10 h-10 my-1 ml-4"
+                >
+                  <AppAvatar
+                    class="m-auto"
+                    :width="'40px'"
+                    :height="'40px'"
+                    :src="item.user.avatar ? item.user.avatar.file.url : ''"
+                  />
+                </div>
+                <div class="flex flex-col text-sm md:px-2">
+                  <span
+                    class="text-xs px-2 text-gray-600"
+                    :class="isReceiver(item) ? '': 'text-right'"
+                  >{{ isReceiver(item) ? userFullname(item) : 'You' }}</span>
+                  <div class="flex" :class="isReceiver(item) ? '': 'flex-row-reverse'">
+                    <div
+                      @mouseover="onHover(item.id)"
+                      @mouseleave="hoverId = ''"
+                      class="rounded-lg text-xs px-2 py-2 border text-gray-500 italic"
+                      :class="{'ml-2' : isReceiver(item)}"
+                    >This message has been removed.</div>
+                  </div>
+                  <transition name="drop-down" mode="out-in">
+                    <div
+                      v-if="item.id == hoverId"
+                      class="mx-2"
+                      :class="isReceiver(item) ? 'text-right ': ''"
+                    >
+                      <span class="text-xs text-gray-500">{{ $moment(item.created_at).fromNow() }}</span>
+                    </div>
+                  </transition>
+                </div>
               </div>
-              <div class="flex flex-col text-sm md:px-2">
-                <span
-                  class="text-xs px-2 text-gray-600"
-                  :class="isReceiver(item) ? '': 'text-right'"
-                >{{ isReceiver(item) ? userFullname(item) : 'You' }}</span>
-                <div class="flex" :class="isReceiver(item) ? '': 'flex-row-reverse'">
+              <div
+                v-else
+                class="flex my-1 md:max-w-sm lg:max-w-lg"
+                :class="isReceiver(item) ? '': 'flex-row-reverse'"
+              >
+                <div
+                  v-if="$auth.user.domain === 'Practice'"
+                  :class="isReceiver(item) ? '' : 'hidden'"
+                  class="w-10 h-10 my-1 ml-4"
+                >
+                  <AppAvatar
+                    class="m-auto"
+                    :height="'40px'"
+                    :width="'40px'"
+                    :src="item.user.avatar ? item.user.avatar.file.url : ''"
+                  />
+                </div>
+                <div class="flex flex-col text-sm px-2">
+                  <span
+                    class="text-xs px-2 text-gray-600"
+                    :class="isReceiver(item) ? '': 'text-right'"
+                  >{{ isReceiver(item) ? userFullname(item) : 'You' }}</span>
                   <div
                     @mouseover="onHover(item.id)"
                     @mouseleave="hoverId = ''"
-                    class="rounded-lg text-xs px-2 py-2 border text-gray-500 italic"
-                    :class="{'ml-2' : isReceiver(item)}"
-                  >This message has been removed.</div>
-                </div>
-                <transition name="drop-down" mode="out-in">
-                  <div
-                    v-if="item.id == hoverId"
-                    class="mx-2"
-                    :class="isReceiver(item) ? 'text-right ': ''"
+                    class="flex items-center"
+                    :class="isReceiver(item) ? '': 'flex-row-reverse'"
                   >
-                    <span class="text-xs text-gray-500">{{ $moment(item.created_at).fromNow() }}</span>
+                    <span
+                      class="chat-message rounded-lg p-2 mx-2 whitespace-pre-line"
+                      :class="isReceiver(item) ? 'bg-gray-300 chat-message-left' : 'chat-message-right bg-blue-500 text-white'"
+                    >{{ item.message }}</span>
+
+                    <transition name="fade" mode="out-in">
+                      <div
+                        v-if="!isReceiver(item) && item.id == hoverId"
+                        class="text-xs text-gray-500 hover:text-gray-700 font-bold cursor-pointer px-1"
+                        @click="deleteMessageModal(item.id)"
+                        title="Delete Message"
+                      >X</div>
+                    </transition>
                   </div>
-                </transition>
-              </div>
-            </div>
-
-            <div
-              v-else
-              class="flex my-1 md:max-w-sm lg:max-w-lg"
-              :class="isReceiver(item) ? '': 'flex-row-reverse'"
-            >
-              <div
-                v-if="$auth.user.domain === 'Practice'"
-                :class="isReceiver(item) ? '' : 'hidden'"
-                class="w-10 h-10 my-1 ml-4"
-              >
-                <AppAvatar
-                  class="m-auto"
-                  :height="'40px'"
-                  :width="'40px'"
-                  :src="item.user.avatar ? item.user.avatar.file.url : ''"
-                />
-              </div>
-              <div class="flex flex-col text-sm px-2">
-                <span
-                  class="text-xs px-2 text-gray-600"
-                  :class="isReceiver(item) ? '': 'text-right'"
-                >{{ isReceiver(item) ? userFullname(item) : 'You' }}</span>
-                <div
-                  @mouseover="onHover(item.id)"
-                  @mouseleave="hoverId = ''"
-                  class="flex items-center"
-                  :class="isReceiver(item) ? '': 'flex-row-reverse'"
-                >
-                  <span
-                    class="chat-message rounded-lg p-2 mx-2 whitespace-pre-line"
-                    :class="isReceiver(item) ? 'bg-gray-300 chat-message-left' : 'chat-message-right bg-blue-500 text-white'"
-                  >{{ item.message }}</span>
-
-                  <transition name="fade" mode="out-in">
+                  <transition name="drop-down" mode="out-in">
                     <div
-                      v-if="!isReceiver(item) && item.id == hoverId"
-                      class="text-xs text-gray-500 hover:text-gray-700 font-bold cursor-pointer px-1"
-                      @click="deleteMessageModal(item.id)"
-                      title="Delete Message"
-                    >X</div>
+                      v-if="item.id == hoverId"
+                      class="mx-2"
+                      :class="isReceiver(item) ? 'text-right ': 'ml-6'"
+                    >
+                      <span class="text-xs text-gray-500">{{ $moment(item.created_at).fromNow() }}</span>
+                    </div>
                   </transition>
                 </div>
-                <transition name="drop-down" mode="out-in">
-                  <div
-                    v-if="item.id == hoverId"
-                    class="mx-2"
-                    :class="isReceiver(item) ? 'text-right ': 'ml-6'"
-                  >
-                    <span class="text-xs text-gray-500">{{ $moment(item.created_at).fromNow() }}</span>
-                  </div>
-                </transition>
               </div>
             </div>
           </div>
-        </div>
+        </transition-group>
       </div>
     </div>
     <AppConfirmationModal

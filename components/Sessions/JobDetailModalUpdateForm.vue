@@ -729,7 +729,7 @@ export default {
     this.form.description = this.job.description;
     this.form.report_to = this.job.platform_job.report_to;
     this.form.email = this.job.platform_job.email;
-    this.form.phone_number = this.job.platform_job.phone_number;
+    this.form.phone_number = this.job.platform_job.practice.phone_number;
     this.form.extra_information = this.job.platform_job.extra_information;
     this.form.is_another_doctor = this.job.platform_job.is_another_doctor;
     this.form.is_nurse_available = this.job.platform_job.is_nurse_available;
@@ -740,8 +740,9 @@ export default {
     this.form.locum_detail_rate_type_id = this.job.locum_detail_rate_type.id;
     this.form.rate = this.job.rate;
     this.form.total_hours = this.job.total_hours;
-
-    if (
+    if (this.job.platform_job.unpaid_breaks_in_minutes === 0) {
+      this.unpaid_breaks = false;
+    } else if (
       ![15, 30, 60].includes(this.job.platform_job.unpaid_breaks_in_minutes)
     ) {
       this.unpaid_breaks = "other";
@@ -952,12 +953,14 @@ export default {
         this.$axios
           .$put(`/api/v1/practice/jobs/${this.job.id}`, this.form)
           .then(res => {
+            console.log("job update", res);
+            // this.$router.push(`/sessions/${res.data.new_job.id}`);
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
               text: [res.message]
             });
-            this.$emit("close");
+            this.$emit("updateJob", res.data.new_job.id);
           });
       } else {
         this.$nextTick(() => {
