@@ -170,10 +170,21 @@ export default {
     bgStatus(status) {
       switch (status) {
         case "Issued":
+        case "Live":
+        case "Matched":
           return "bg-yellow-500";
           break;
+        case "Applied":
+          return "bg-orange-400 text-white";
         case "Paid":
+        case "Completed":
           return "bg-green-500 text-white";
+          break;
+        case "Allocated":
+          return "bg-green-300";
+          break;
+        case "Ongoing":
+          return "bg-green-500";
           break;
         default:
           return "bg-red-500 text-white";
