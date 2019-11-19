@@ -109,15 +109,15 @@ export default {
           dataIndex: "surgery.code",
           class: "text-center"
         },
-        {
-          name: "Pay for surgery",
-          dataIndex: "pay_for_surgery",
-          class: "text-center"
-        },
+        // {
+        //   name: "Pay for surgery",
+        //   dataIndex: "pay_for_surgery",
+        //   class: "text-center"
+        // },
         {
           name: "Status",
-          dataIndex:""
-        }
+          dataIndex:"actions"
+        },
       ]
     };
   },
@@ -291,7 +291,44 @@ export default {
     },
     setExpulsionReason(terminationReason) {
       this.terminationReason = terminationReason;
-    }
+    },
+    statusStyle(status){
+			switch(status){
+				case 'Active':
+					return 'bg-green-500 text-white'
+					break;
+				case 'Rejected':
+					return 'bg-gray-500 text-gray-700'
+					break;
+				case 'Termination Requested':
+          return 'bg-orange-500 text-white'
+					break;
+				case 'Terminated':
+					return 'bg-red-800 text-red-400'
+					break;
+				default:
+					return 'bg-yellow-400 text-black'
+			}
+    },
+    checkStatus(invitation){
+      let result = 'Invited'
+      if(invitation.invitation_accepted_at){
+        result = 'Active'
+      }
+      
+      if(invitation.invitation_rejected_at){
+        result = 'Rejected'
+      }
+      
+      if(invitation.termination_requested_at){
+        result = 'Termination Requested'
+      }
+      
+      if(invitation.terminated_at){
+        result = 'Terminated'
+      }
+      return result
+    },
   }
 };
 </script>

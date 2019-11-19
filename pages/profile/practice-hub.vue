@@ -1,9 +1,22 @@
 <template>
   <div class="shadow-lg m-6 rounded-lg">
-
     <div v-if="practiceHub" class="m-4 my-6">
       <p class="text-lg font-semibold">Practice Hub</p>
-      <p class="mx-4">{{practiceHub.name}}</p>
+      <div class="mx-4">
+        <p class="font-semibold mt-2">Surgery Name</p>
+        <p class="mx-4">{{practiceHub.name}}</p>
+        
+        <p class="font-semibold mt-2">Contact Number</p>
+        <p class="mx-4">{{practiceHub.practice.phone_number ? practiceHub.practice.phone_number : 'N/A' }}</p>
+
+        <p class="font-semibold mt-2">E-Mail Address</p>
+        <p class="mx-4">{{practiceHub.practice.email ? practiceHub.practice.email : 'N/A'}}</p>
+
+        <p class="font-semibold mt-2">Report To</p>
+        <p class="mx-4">{{practiceHub.practice.report_to ? practiceHub.practice.report_to : 'N/A'}}</p>
+      </div>
+      
+
       <p class="text-lg my-2 font-semibold">Permissions</p>
       <div class="mx-4 m-2">
         <p class="font-semibold">Does Hub handle Billing Transactions?</p>
@@ -84,6 +97,8 @@ export default {
       let response = await app.$axios.$get(`/api/v1/practice/me/parent-surgery`)
       const practiceSpoke = response.data.practice
       const practiceHub = response.data.practice.parent_surgery
+      
+      console.log('practicehub', practiceHub)
 
       response = await app.$axios.$get(`/api/v1/practice/me/parent-surgery/invitations-count`)
       const totalInvitations = response.data.count
@@ -101,13 +116,17 @@ export default {
         practiceHub,
         totalInvitations,
         hubInvitations,
-
       }
     }catch(err){
       throw err;
     }
   },
   methods:{
+    // async getHub(){
+    //   await this.$axios.$get(`/api/v1/practice/me/parent-surgery`).then(res => {
+    //     this.practiceHub = 
+    //   })
+    // },
     getHubInvitations(params){
       this.loading = true
       this.$axios.$get(`/api/v1/practice/me/parent-surgery/invitations`, { params })

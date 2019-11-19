@@ -4,13 +4,17 @@
       <div class="m-8">
         <div class="flex flex-row justify-start">
           <div class="leading-loose font-bold text-md sm:text-lg">{{practice_surgery.surgery.name}}</div>
-          <div
-            class="mx-2 text-sm sm:text-sm p-2 text-gray-700 font-bold"
-          >{{practice_surgery.surgery.code}}</div>
+          <div class="mx-2 text-sm sm:text-sm p-2 text-gray-700 font-bold"
+            >{{practice_surgery.surgery.code}}
+          </div>
+          <div 
+            class="justify-center text-black text-sm font-semibold py-2 p-3 rounded-lg"
+            :class="statusStyle(checkStatus(practice_surgery))">
+            {{checkStatus(practice_surgery)}}
+          </div>
         </div>
 
         <div class="flex flex-col">
-          <!--------------PAY FOR SURGERY-------------->
           <div class="flex flex-row">
             <div
               class="text-lg text-black font-semibold m-2 mt-6"
@@ -83,7 +87,6 @@
               <AppButton :label="'Save'" @click="save" :inStyle="'padding:5px'" />
             </div>
           </div>
-
         </div>
       </div>
     </div>
@@ -169,8 +172,48 @@ export default {
           });
           //this.$router.push("/profile/practice-spokes");
         });
-    }
-  }
+    },
+    statusStyle(status){
+      console.log('status', status)
+      switch(status){
+        case 'Active':
+          return 'bg-green-500 text-white'
+          break;
+        case 'Rejected':
+          return 'bg-gray-500 text-gray-700'
+          break;
+        case 'Termination Requested':
+          return 'bg-orange-500 text-white'
+          break;
+        case 'Terminated':
+          return 'bg-red-800 text-red-400'
+          break;
+        default:
+          return 'bg-yellow-400 text-black'
+      }
+    },
+    checkStatus(invitation){
+      let result = 'Invited'
+      console.log('invitation', invitation)
+      if(invitation.invitation_accepted_at){
+        result = 'Active'
+      }
+      
+      if(invitation.invitation_rejected_at){
+        result = 'Rejected'
+      }
+      
+      if(invitation.termination_requested_at){
+        result = 'Termination Requested'
+      }
+      
+      if(invitation.terminated_at){
+        result = 'Terminated'
+      }
+      return result
+    },
+  },
+  
 };
 </script>
 
