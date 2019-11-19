@@ -70,8 +70,9 @@ export default {
       }
       let url = "/sessions";
       if (this.$route.path.includes("related-jobs")) {
-        url = `/my-practice/${this.$route.params.practiceId}/related-jobs`;
+        url = `/my-banks/${this.$route.params.locumId}/related-jobs`;
       }
+      console.log("url", url);
       return url;
     }
   },
