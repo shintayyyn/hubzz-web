@@ -55,7 +55,7 @@
       <div
         class="shield"
         v-if="$route.path != '/practice-billing/invoices-from-locums' || paymentModal"
-        @click="paymentModal ? paymentModal = false : $router.go(-1)"
+        @click="paymentModal ? paymentModal = false : $route.path != '/practice-billing/invoices-from-locums' ? $router.push('/practice-billing/invoices-from-locums'): null"
       ></div>
     </transition>
     <nuxt-child @updateInvoice="updateInvoice" />
@@ -202,7 +202,6 @@ export default {
       "Practice Notification Locum Invoice Updated",
       this.getLocumInvoiceRealTime
     );
-    console.log(this.invoices);
   },
   destroyed() {
     this.removeListener();

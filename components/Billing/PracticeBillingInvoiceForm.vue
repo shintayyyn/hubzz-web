@@ -1,5 +1,6 @@
 <template>
-  <section>
+  <section class="relative">
+    <AppLoading :loading="loading" spinner />
     <div class="flex flex-wrap justify-start items-center">
       <div
         class="save-button text-xs sm:text-sm ml-4 mx-2 py-2 px-3 border-2 rounded-lg font-bold flex items-center"
@@ -23,7 +24,8 @@
 
     <!-- pdf form -->
     <div id="htmlpdf" class="max-w-3xl my-4 bg-white px-4 py-4 border shadow-md mb-32">
-      <div class="flex flex-col">
+      <!-- pdf header -->
+      <div class="flex flex-col p-4" :ref="'pdf-header'">
         <div class="text-xs sm:text-sm sm:text-right leading-normal">
           <div>{{locum_user.name}}</div>
           <div>{{locum_user.email}}</div>
@@ -49,6 +51,15 @@
                 </div>
               </div>
             </section>
+            <div
+              class="text-xs sm:text-sm"
+              v-if="selectedInvoice && selectedInvoice.surgery && selectedInvoice.surgery.address"
+            >
+              <div>{{selectedInvoice.surgery.address.line_1}}</div>
+              <div>{{selectedInvoice.surgery.address.line_2}}</div>
+              <div>{{selectedInvoice.surgery.address.line_3}}</div>
+              <div>{{selectedInvoice.surgery.address.post_code}}</div>
+            </div>
           </div>
           <div class="w-full sm:w-1/2 order-1 sm:order-2 sm:text-right leading-normal">
             <div class="font-bold text-sm sm:text-lg">{{selectedInvoice.status.toUpperCase()}}</div>
@@ -56,16 +67,17 @@
           </div>
         </div>
       </div>
+
       <div class="overflow-auto">
         <div class="items-table">
-          <!-- thead -->
-          <div class="flex justify-start">
+          <!-- thead / items header -->
+          <div class="flex justify-start" :ref="'items-header'">
             <div
               style="width:430px"
               class="bg-gray-900 text-white px-4 py-1 font-semibold border-r-2 border-white"
             >Description</div>
             <div style="width:200px" class="bg-gray-900 text-white px-4 py-1 font-semibold">Total</div>
-            <div style="width:100px" class="bg-gray-900 flex items-center justify-center">
+            <div style="width:110px" class="bg-gray-900 flex items-center justify-center">
               <span
                 v-if="type === 'Private'"
                 class="cursor-pointer w-6 h-6 mx-2 md:mx-4 rounded-full bg-white text-gray-900 font-semibold text-xl flex justify-center items-center hover:bg-gray-200"
@@ -78,6 +90,7 @@
             :id="`invoice-item-${index}`"
             class="flex flex-col"
             v-for="(item, index) in selectedJobParts"
+            :ref="`item-${index}`"
             :key="item.id"
           >
             <div class="flex justify-start mt-2">
@@ -86,10 +99,14 @@
                 class="text-xs sm:text-sm border-b-2 border-gray-300 px-4 py-1"
               >{{modifiedDescription(item)}}</div>
               <div
-                style="width:200px;min-height:80px;"
+                style="min-height:80px;"
                 class="text-xs sm:text-sm border-b-2 border-gray-300 px-4 py-1 text-right"
+                :style="approvedInvoices.includes(item.job_part_id) ? 'width:310px':'width:200px'"
               >{{modifiedTotal(item)}}</div>
-              <div class="align-middle sticky right-0 bg-white">
+              <div
+                class="align-middle sticky right-0 bg-white"
+                v-if="!approvedInvoices.includes(item.job_part_id)"
+              >
                 <div class="flex flex-row flex-no-wrap justify-start items-center">
                   <input
                     v-model="disputedInvoices"
@@ -175,7 +192,7 @@
         </div>
       </div>
 
-      <div class="flex flex-row flex-wrap justify-between px-2">
+      <div :ref="'days-worked'" class="flex flex-row flex-wrap justify-between px-2">
         <div class="w-full md:w-1/2 pr-1">
           <AppDate
             v-model="form.date_start"
@@ -196,7 +213,7 @@
         </div>
       </div>
 
-      <div class="flex justify-between m-2">
+      <div :ref="'items-total'" class="flex justify-between m-2 px-2">
         <span class="font-bold">Total</span>
         <div>
           <div class="flex justify-end">
@@ -209,7 +226,7 @@
         </div>
       </div>
 
-      <div class="rounded-lg border-2 border-gray-300 mt-4 p-4">
+      <div :ref="'pdf-footer'" class="rounded-lg border-2 border-gray-300 mt-4 p-4">
         <div class="flex flex-col text-xs sm:text-sm">
           <div>Payment by BACS:</div>
           <div>Account name: Rick Sanchez</div>
@@ -223,6 +240,7 @@
 </template>
 <script>
 // import html2canvas from "html2canvas";
+import AppLoading from "@/components/Base/AppLoading";
 import AppDate from "@/components/Base/AppDate";
 import AppInput from "@/components/Base/AppInput";
 import AppFilterSearch from "@/components/Base/AppFilterSearch";
@@ -235,12 +253,15 @@ export default {
     mode: "out-in"
   },
   components: {
+    AppLoading,
     AppDate,
     AppInput,
     AppFilterSearch
   },
   data() {
     return {
+      loading: false,
+
       disputedInvoices: [],
       approvedInvoices: [],
       defaultSelectedJobParts: [],
@@ -533,28 +554,208 @@ export default {
       }
       return false;
     },
-    exportToPdf() {
-      this.$html2canvas(document.getElementById("htmlpdf")).then(canvas => {
-        var imgWidth = 210;
-        var pageHeight = 295;
-        var imgHeight = (canvas.height * imgWidth) / canvas.width;
-        var heightLeft = imgHeight;
-        var doc = this.$jspdf("p", "mm");
-        var position = 0;
+    async exportToPdf() {
+      this.loading = true;
+      if (process.client) {
+        document.body.style.cursor = "wait";
+      }
+      // this.$html2canvas(document.getElementById("htmlpdf")).then(canvas => {
+      //   var imgWidth = 210;
+      //   var pageHeight = 295;
+      //   var imgHeight = (canvas.height * imgWidth) / canvas.width;
+      //   var heightLeft = imgHeight;
+      //   var doc = this.$jspdf("p", "mm");
+      //   var position = 0;
 
-        var imgData = canvas.toDataURL("image/png");
+      //   var imgData = canvas.toDataURL("image/png");
 
-        doc.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
+      //   doc.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+      //   heightLeft -= pageHeight;
 
-        while (heightLeft >= 0) {
-          position = heightLeft - imgHeight;
+      //   while (heightLeft >= 0) {
+      //     position = heightLeft - imgHeight;
+      //     doc.addPage();
+      //     doc.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+      //     heightLeft -= pageHeight;
+      //   }
+      //   doc.save("practice-billing-invoice.pdf");
+      // });
+
+      let doc = this.$jspdf("p", "mm");
+      let pageHeight = 1020;
+      let yPosition = 0;
+
+      // PDF HEADER
+      const canvasPdfHeader = await this.$html2canvas(this.$refs["pdf-header"]);
+      const imgWidthPdfHeader = 210;
+      const imgHeightPdfHeader =
+        (canvasPdfHeader.height * imgWidthPdfHeader) / canvasPdfHeader.width;
+      const imgDataPdfHeader = canvasPdfHeader.toDataURL("image/png");
+
+      pageHeight = pageHeight - this.$refs["pdf-header"].offsetHeight;
+
+      doc.addImage(
+        imgDataPdfHeader,
+        "PNG",
+        0,
+        yPosition,
+        imgWidthPdfHeader,
+        imgHeightPdfHeader
+      );
+
+      yPosition = yPosition + imgHeightPdfHeader;
+
+      // ITEMS HEADER
+      const canvasItemsHeader = await this.$html2canvas(
+        this.$refs["items-header"]
+      );
+      const imgWidthItemsHeader = 210;
+      const imgHeightItemsHeader =
+        (canvasItemsHeader.height * imgWidthItemsHeader) /
+        canvasItemsHeader.width;
+      const imgDataItemsHeader = canvasItemsHeader.toDataURL("image/png");
+
+      pageHeight = pageHeight - this.$refs["items-header"].offsetHeight;
+
+      doc.addImage(
+        imgDataItemsHeader,
+        "PNG",
+        0,
+        yPosition,
+        imgWidthItemsHeader,
+        imgHeightItemsHeader
+      );
+
+      yPosition = yPosition + imgHeightItemsHeader;
+
+      // ITEMS
+      let totalSelectedJobParts = this.selectedJobParts.length;
+
+      for (let i = 0; i < totalSelectedJobParts; i++) {
+        // minus the current item invoice height to the pageHeight
+        pageHeight = pageHeight - this.$refs[`item-${i}`][0].offsetHeight;
+        // if all pageHeight is used, add page
+        if (pageHeight < 0) {
+          pageHeight = 1020;
+          yPosition = 0;
           doc.addPage();
-          doc.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-          heightLeft -= pageHeight;
+          // add header to every new page, also subtract its height to page height
+          doc.addImage(
+            imgDataItemsHeader,
+            "PNG",
+            0,
+            yPosition,
+            imgWidthItemsHeader,
+            imgHeightItemsHeader
+          );
+
+          yPosition = yPosition + imgHeightItemsHeader;
+
+          pageHeight = pageHeight - this.$refs["items-header"].offsetHeight;
+          pageHeight = pageHeight - this.$refs[`item-${i}`][0].offsetHeight;
         }
-        doc.save("practice-billing-invoice.pdf");
-      });
+
+        // draw canvas
+        let canvasItem = await this.$html2canvas(this.$refs[`item-${i}`][0]);
+        let imgWidthItem = 210;
+        let imgHeightItem =
+          (canvasItem.height * imgWidthItem) / canvasItem.width;
+        let imgDataItem = canvasItem.toDataURL("image/png");
+
+        // add image
+        doc.addImage(
+          imgDataItem,
+          "PNG",
+          0,
+          yPosition,
+          imgWidthItem,
+          imgHeightItem
+        );
+
+        yPosition = yPosition + imgHeightItem;
+      }
+
+      // sum up their offsetHeight
+      let daysWorkedOffsetHeight = this.$refs["days-worked"].offsetHeight;
+      let itemsTotalOffsetHeight = this.$refs["items-total"].offsetHeight;
+      let pdfFooterOffsetHeight = this.$refs["pdf-footer"].offsetHeight;
+
+      let totalOffsetHeight =
+        daysWorkedOffsetHeight + itemsTotalOffsetHeight + pdfFooterOffsetHeight;
+
+      pageHeight = pageHeight - totalOffsetHeight;
+
+      // DAYS WORKED
+      const canvasDaysWorked = await this.$html2canvas(
+        this.$refs["days-worked"]
+      );
+      const imgWidthDaysWorked = 210;
+      const imgHeightDaysWorked =
+        (canvasDaysWorked.height * imgWidthDaysWorked) / canvasDaysWorked.width;
+      const imgDataDaysWorked = canvasDaysWorked.toDataURL("image/png");
+
+      // ITEMS TOTAL
+      const canvasItemsTotal = await this.$html2canvas(
+        this.$refs["items-total"]
+      );
+      const imgWidthItemsTotal = 210;
+      const imgHeightItemsTotal =
+        (canvasItemsTotal.height * imgWidthItemsTotal) / canvasItemsTotal.width;
+      const imgDataItemsTotal = canvasItemsTotal.toDataURL("image/png");
+
+      // PDF FOOTER
+      const canvasPdfFooter = await this.$html2canvas(this.$refs["pdf-footer"]);
+      const imgWidthPdfFooter = 210;
+      const imgHeightPdfFooter =
+        (canvasPdfFooter.height * imgWidthPdfFooter) / canvasPdfFooter.width;
+      const imgDataPdfFooter = canvasPdfFooter.toDataURL("image/png");
+
+      if (pageHeight < 0) {
+        pageHeight = 1020;
+        doc.addPage();
+      }
+
+      yPosition =
+        295 - (imgHeightDaysWorked + imgHeightItemsTotal + imgHeightPdfFooter);
+
+      doc.addImage(
+        imgDataDaysWorked,
+        "PNG",
+        0,
+        yPosition,
+        imgWidthDaysWorked,
+        imgHeightDaysWorked
+      );
+
+      yPosition = yPosition + imgHeightDaysWorked;
+
+      doc.addImage(
+        imgDataItemsTotal,
+        "PNG",
+        0,
+        yPosition,
+        imgWidthItemsTotal,
+        imgHeightItemsTotal
+      );
+
+      yPosition = yPosition + imgHeightItemsTotal;
+
+      doc.addImage(
+        imgDataPdfFooter,
+        "PNG",
+        0,
+        yPosition,
+        imgWidthPdfFooter,
+        imgHeightPdfFooter
+      );
+
+      yPosition = yPosition + imgHeightPdfFooter;
+
+      doc.save("test.pdf");
+      this.loading = false;
+      if (process.client) {
+        document.body.style.cursor = "auto";
+      }
     }
   }
 };

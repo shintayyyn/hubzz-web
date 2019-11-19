@@ -24,6 +24,11 @@ export default {
   components: {
     LocumBillingInvoiceForm
   },
+  data() {
+    return {
+      invoice: null
+    };
+  },
   async asyncData({ app, error, params }) {
     try {
       if (process.client) {
@@ -53,6 +58,38 @@ export default {
         return error({ status: 500, message: "Something went wrong!" });
       }
       throw err;
+    }
+  },
+  watch: {
+    $route({ params }) {
+      if (params && params.id) {
+        this.removeNotification(parseInt(params.id));
+        this.getInvoice(params.id);
+      }
+    }
+  },
+  mounted() {
+    document.body.style.overflow = "hidden";
+    this.removeNotification(parseInt(this.$route.params.id));
+  },
+
+  destroyed() {
+    document.body.style.overflow = "auto";
+  },
+
+  methods: {
+    getInvoice(id) {
+      this.$axios.$get(`/api/v1/locum/locum-invoices/${id}`).then(res => {
+        this.invoice = res.data.locum_invoice;
+      });
+    },
+    removeNotification(id) {
+      let index = this.$store.state.billing.locum_billing_notifications.findIndex(
+        billing => billing.id === id
+      );
+      if (index >= 0) {
+        this.$store.commit("billing/REMOVE_LOCUM_BILLING_NOTIFICATION", id);
+      }
     }
   }
 };

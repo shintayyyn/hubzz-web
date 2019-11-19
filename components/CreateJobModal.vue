@@ -336,6 +336,7 @@
                 </div>
               </div>
               <AppInput
+                v-if="show_saturday"
                 :type="'select'"
                 v-model="form.include_saturday"
                 :name="'include_saturday'"
@@ -343,6 +344,7 @@
                 :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
               />
               <AppInput
+                v-if="show_sunday"
                 :type="'select'"
                 v-model="form.include_sunday"
                 :name="'include_sunday'"
@@ -511,6 +513,9 @@ export default {
   },
   data() {
     return {
+      show_saturday: false,
+      show_sunday: false,
+
       practice_lists: [],
       rate_lists: [],
       mandatory_training: [],
@@ -636,6 +641,22 @@ export default {
 
     "form.date_end"(value) {
       this.CheckEmptyField(value, "date_end");
+      //
+      let end = this.$moment(value);
+      let days = [];
+      let day = this.$moment(this.form.date_start);
+      while (day <= end) {
+        days.push(day.day());
+        day = day.clone().add(1, "d");
+      }
+      if (days.includes(6)) {
+        this.show_saturday = true;
+      } else if (days.includes(7)) {
+        this.show_sunday = true;
+      } else {
+        this.show_saturday = false;
+        this.show_sunday = false;
+      }
     },
 
     "form.time_start"(value) {
@@ -889,6 +910,7 @@ export default {
             this.$store.commit("calendar/CREATE_JOB_MODAL", false);
           })
           .catch(err => {
+            console.log("test", err.response);
             this.$refs.modalContainer.scrollTop = 0;
             this.form.clinical_system_id = this.selectedClinicalSystem;
             this.form.qualification_id = this.selectedQualification;
@@ -900,6 +922,15 @@ export default {
               this.formError.push({
                 field: err.response.statusText,
                 message: "Please check your inputs"
+              });
+            } else if (err.response.status === 400) {
+              this.formError.push({
+                field: "date_start",
+                message: err.response.data.message
+              });
+              this.formError.push({
+                field: "date_end",
+                message: err.response.data.message
               });
             } else {
               this.formError = err.response.data.error_messages;

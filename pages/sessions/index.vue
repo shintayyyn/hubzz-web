@@ -653,6 +653,7 @@ export default {
   },
   watch: {
     getPracticeAllocatedJobs(newValue, oldValue) {
+      console.log("test", newValue);
       if (
         this.params.limit < newValue.length &&
         oldValue.length > 0 &&

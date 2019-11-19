@@ -1,5 +1,6 @@
 <template>
-  <section>
+  <section class="relative">
+    <AppLoading :loading="loading" spinner />
     <div class="flex flex-wrap items-center">
       <div
         class="save-button text-xs sm:text-sm px-4 py-2 border-2 rounded-lg font-bold flex items-center mr-1 md:mr-4"
@@ -32,8 +33,8 @@
       >Platform</button>
     </div>
 
-    <div id="htmlpdf" class="max-w-3xl mb-4 bg-white px-4 py-4 border shadow-md">
-      <div class="flex flex-col">
+    <div id="htmlpdf" class="max-w-3xl mb-4 bg-white px-4 py-4 border shadow-md mb-32">
+      <div class="flex flex-col p-4" :ref="'pdf-header'">
         <div class="text-xs sm:text-sm sm:text-right leading-normal">
           <div>{{$auth.user.personal_detail.name}}</div>
           <div>{{$auth.user.address_detail.address.line_1}}</div>
@@ -101,7 +102,6 @@
                 </div>
               </div>
             </section>
-            <!-- TEST ! only return id and name -->
             <div class="text-xs sm:text-sm" v-if="selectedSurgery && selectedSurgery.address">
               <div>{{selectedSurgery.address.line_1}}</div>
               <div>{{selectedSurgery.address.line_2}}</div>
@@ -179,151 +179,161 @@
           </section>
         </div>
       </div>
+
       <div class="overflow-auto">
-        <table class="items-table">
-          <thead>
-            <tr>
-              <th colspan="2" class="bg-gray-900 w-2/3 text-white text-left px-4 py-1">Description</th>
-              <th
-                class="bg-gray-900 w-1/3 text-white text-left px-2 py-1"
-                :colspan="type === 'Private' ? 1:2"
-              >
-                <span class="flex justify-between items-center">Total</span>
-              </th>
-              <th v-if="type === 'Private'" class="sticky right-0 bg-gray-900">
-                <span
-                  class="cursor-pointer w-6 h-6 mx-2 md:mx-4 rounded-full bg-white text-gray-900 font-semibold text-xl flex justify-center items-center hover:bg-gray-200"
-                  @click="addItem"
-                >+</span>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <template v-for="(item, index) in selectedJobParts">
-              <tr class="border-b" :key="item.id">
-                <td colspan="2">
+        <div class="items-table">
+          <!-- thead / items header -->
+          <div class="flex justify-start" :ref="'items-header'">
+            <div
+              style="width:430px"
+              class="bg-gray-900 text-white px-4 py-1 font-semibold border-r-2 border-white"
+            >Description</div>
+            <div style="width:200px" class="bg-gray-900 text-white px-4 py-1 font-semibold">Total</div>
+            <div style="width:110px" class="bg-gray-900 flex items-center justify-center">
+              <span
+                v-if="type === 'Private'"
+                class="cursor-pointer w-6 h-6 mx-2 md:mx-4 rounded-full bg-white text-gray-900 font-semibold text-xl flex justify-center items-center hover:bg-gray-200"
+                @click="addItem"
+              >+</span>
+            </div>
+          </div>
+          <div
+            :id="`invoice-item-${index}`"
+            class="flex flex-col"
+            v-for="(item, index) in selectedJobParts"
+            :ref="`item-${index}`"
+            :key="item.id"
+          >
+            <div class="flex justify-start mt-2">
+              <template v-if="type === 'Private'">
+                <div style="width:430px;min-height:80px;">
                   <textarea
-                    disabled
                     v-model="item.description"
                     rows="3"
                     placeholder="Enter description"
                     class="w-full text-xs sm:text-sm resize-none border-b-2 border-gray-300 focus:border-yellow-500 focus:outline-none px-4 my-2"
                   ></textarea>
-                </td>
-                <td>
+                </div>
+                <div
+                  style="min-height:80px;"
+                  :style="approvedInvoices.includes(item.job_part_id) ? 'width:310px':'width:200px'"
+                >
                   <input
-                    disabled
                     type="number"
                     min="0"
                     v-model="item.total"
                     placeholder="Enter value"
-                    class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs mt-1 md:mt-3 w-full focus:border-yellow-500"
+                    class="w-full text-xs sm:text-sm text-right border-b-2 focus:border-yellow-500 focus:outline-none px-4 my-2"
                   />
-                </td>
-                <td class="align-middle sticky right-0">
-                  <div class="flex justify-center" v-if="selectedInvoice === null">
-                    <span
-                      class="bg-gray-900 hover:bg-black w-6 h-6 cursor-pointer float-right font-semibold inline-flex items-center justify-center px-3 mt-2 rounded-full text-white text-xl mx-auto"
-                      @click="removeSelectedJobPart(item, index)"
-                    >-</span>
-                  </div>
-                  <div class="flex flex-row flex-no-wrap justify-start items-center">
-                    <input
-                      :disabled="item.approve"
-                      v-model="disputedInvoices"
-                      :id="`${item.job_part_id}-disputed`"
-                      type="checkbox"
-                      :value="item.job_part_id"
-                    />
-                    <label
-                      :for="`${item.job_part_id}-disputed`"
-                      class="text-xs sm:text-sm py-1 flex items-center"
-                    >Disputed</label>
-                  </div>
-                  <div class="flex flex-row flex-no-wrap justify-start items-center">
-                    <input
-                      v-model="approvedInvoices"
-                      :id="`${item.job_part_id}-approved`"
-                      type="checkbox"
-                      :value="item.job_part_id"
-                      disabled
-                    />
-                    <label
-                      :for="`${item.job_part_id}-approved`"
-                      class="text-xs sm:text-sm py-1 flex items-center"
-                    >Approved</label>
-                  </div>
-                </td>
-              </tr>
-              <tr
-                class="border-b"
-                :key="`${item.id}-${item.job_part_id}`"
-                v-if="disputedInvoices.includes(item.job_part_id)"
+                </div>
+              </template>
+              <template v-if="type === 'Platform'">
+                <div
+                  style="width:430px;min-height:80px;"
+                  class="text-xs sm:text-sm border-b-2 border-gray-300 px-4 py-1"
+                >{{item.description}}</div>
+                <div
+                  style="min-height:80px;"
+                  class="text-xs sm:text-sm border-b-2 border-gray-300 px-4 py-1 text-right"
+                  :style="approvedInvoices.includes(item.job_part_id) ? 'width:310px':'width:200px'"
+                >{{item.total}}</div>
+              </template>
+              <div
+                class="align-middle sticky right-0 bg-white"
+                v-if="!approvedInvoices.includes(item.job_part_id)"
               >
-                <td>
-                  <div class="flex flex-col">
-                    <label for="absent_days">Days of absent</label>
-                    <input
-                      :disabled="item.approve"
-                      type="number"
-                      min="0"
-                      v-model="item.absent_days"
-                      name="absent_days"
-                      class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
-                    />
-                  </div>
-                </td>
-                <td>
-                  <div class="flex flex-col">
-                    <label for="late_hours">Hours of late</label>
-                  </div>
+                <div class="flex justify-center" v-if="selectedInvoice === null">
+                  <span
+                    class="bg-gray-900 hover:bg-black w-6 h-6 cursor-pointer float-right font-semibold inline-flex items-center justify-center px-3 mt-2 rounded-full text-white text-xl mx-auto"
+                    @click="removeSelectedJobPart(item, index)"
+                  >-</span>
+                </div>
+                <div class="flex flex-row flex-no-wrap justify-start items-center">
                   <input
                     :disabled="item.approve"
-                    type="number"
-                    min="0"
-                    v-model="item.late_hours"
-                    name="late_hours"
-                    class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
+                    v-model="disputedInvoices"
+                    :id="`${item.job_part_id}-disputed`"
+                    type="checkbox"
+                    :value="item.job_part_id"
                   />
-                </td>
-                <td>
-                  <div class="flex flex-col">
-                    <label for="final_hours">Final hours</label>
-                    <input
-                      :disabled="item.approve"
-                      type="number"
-                      min="0"
-                      v-model="item.final_hours"
-                      name="final_hours"
-                      class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
-                    />
-                  </div>
-                </td>
-              </tr>
-              <tr
-                class="border-b"
-                :key="`${item.id}-${item.job_part_id}-${item.job_part_id}`"
-                v-if="disputedInvoices.includes(item.job_part_id)"
-              >
-                <td colspan="3">
-                  <div class="flex flex-col mt-1">
-                    <label for="remarks">Remarks</label>
-                    <textarea
-                      :disabled="item.approve"
-                      v-model="item.remarks"
-                      rows="3"
-                      name="remarks"
-                      class="w-full text-xs sm:text-sm resize-none border-b-2 border-gray-300 focus:border-yellow-500 focus:outline-none px-4 my-2"
-                    ></textarea>
-                  </div>
-                </td>
-              </tr>
-            </template>
-          </tbody>
-        </table>
+                  <label
+                    :for="`${item.job_part_id}-disputed`"
+                    class="text-xs sm:text-sm py-1 flex items-center"
+                  >Disputed</label>
+                </div>
+                <div class="flex flex-row flex-no-wrap justify-start items-center">
+                  <input
+                    v-model="approvedInvoices"
+                    :id="`${item.job_part_id}-approved`"
+                    type="checkbox"
+                    :value="item.job_part_id"
+                    disabled
+                  />
+                  <label
+                    :for="`${item.job_part_id}-approved`"
+                    class="text-xs sm:text-sm py-1 flex items-center"
+                  >Approved</label>
+                </div>
+              </div>
+            </div>
+            <div
+              class="flex justyf-start mt-2"
+              v-if="disputedInvoices.includes(item.job_part_id)  && !approvedInvoices.includes(item.job_part_id)"
+            >
+              <div class="flex flex-col px-2" style="width:210px;">
+                <label for="absent_days">Days of absent</label>
+                <input
+                  :disabled="item.approve || approvedInvoices.includes(item.job_part_id)"
+                  type="number"
+                  min="0"
+                  v-model="item.absent_days"
+                  name="absent_days"
+                  class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
+                />
+              </div>
+              <div class="flex flex-col px-2" style="width:210px;">
+                <label for="late_hours">Hours of late</label>
+                <input
+                  :disabled="item.approve || approvedInvoices.includes(item.job_part_id)"
+                  type="number"
+                  min="0"
+                  v-model="item.late_hours"
+                  name="late_hours"
+                  class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
+                />
+              </div>
+              <div class="flex flex-col px-2" style="width:210px;">
+                <label for="final_hours">Final hours</label>
+                <input
+                  :disabled="item.approve || approvedInvoices.includes(item.job_part_id)"
+                  type="number"
+                  min="0"
+                  v-model="item.final_hours"
+                  name="final_hours"
+                  class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
+                />
+              </div>
+            </div>
+            <div
+              class="flex justyf-start mt-2"
+              v-if="disputedInvoices.includes(item.job_part_id)  && !approvedInvoices.includes(item.job_part_id)"
+            >
+              <div class="flex flex-col" style="width:630px;">
+                <label for="remarks">Update remarks</label>
+                <textarea
+                  :disabled="item.approve || approvedInvoices.includes(item.job_part_id)"
+                  v-model="item.remarks"
+                  rows="3"
+                  name="remarks"
+                  class="w-full text-xs sm:text-sm resize-none border-b-2 border-gray-300 focus:border-yellow-500 focus:outline-none px-4 my-2"
+                ></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div class="flex flex-row flex-wrap justify-between md:px-2">
+      <div :ref="'days-worked'" class="flex flex-row flex-wrap justify-between px-2">
         <div class="w-full md:w-1/2 md:pr-1">
           <AppDate
             v-model="form.date_start"
@@ -342,7 +352,7 @@
         </div>
       </div>
 
-      <div class="flex justify-between md:m-2">
+      <div :ref="'items-total'" class="flex justify-between m-2 px-2">
         <span class="font-bold">Total</span>
         <div>
           <div class="flex justify-end">
@@ -355,7 +365,7 @@
         </div>
       </div>
 
-      <div class="rounded-lg border-2 border-gray-300 mt-4 p-4">
+      <div :ref="'pdf-footer'" class="rounded-lg border-2 border-gray-300 mt-4 p-4">
         <div class="flex flex-col text-xs sm:text-sm">
           <div>Payment by BACS:</div>
           <div>Account name: Rick Sanchez</div>
@@ -368,6 +378,7 @@
   </section>
 </template>
 <script>
+import AppLoading from "@/components/Base/AppLoading";
 import AppDate from "@/components/Base/AppDate";
 import AppInput from "@/components/Base/AppInput";
 import AppFilterSearch from "@/components/Base/AppFilterSearch";
@@ -380,12 +391,15 @@ export default {
     mode: "out-in"
   },
   components: {
+    AppLoading,
     AppDate,
     AppInput,
     AppFilterSearch
   },
   data() {
     return {
+      loading: false,
+
       disputedInvoices: [],
       approvedInvoices: [],
 
@@ -534,28 +548,187 @@ export default {
     document.body.style.overflow = "auto";
   },
   methods: {
-    exportToPdf() {
-      this.$html2canvas(document.getElementById("htmlpdf")).then(canvas => {
-        var imgWidth = 210;
-        var pageHeight = 295;
-        var imgHeight = (canvas.height * imgWidth) / canvas.width;
-        var heightLeft = imgHeight;
-        var doc = this.$jspdf("p", "mm");
-        var position = 0;
+    async exportToPdf() {
+      this.loading = true;
+      if (process.client) {
+        document.body.style.cursor = "wait";
+      }
 
-        var imgData = canvas.toDataURL("image/png");
+      let doc = this.$jspdf("p", "mm");
+      let pageHeight = 1020;
+      let yPosition = 0;
 
-        doc.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
+      // PDF HEADER
+      const canvasPdfHeader = await this.$html2canvas(this.$refs["pdf-header"]);
+      const imgWidthPdfHeader = 210;
+      const imgHeightPdfHeader =
+        (canvasPdfHeader.height * imgWidthPdfHeader) / canvasPdfHeader.width;
+      const imgDataPdfHeader = canvasPdfHeader.toDataURL("image/png");
 
-        while (heightLeft >= 0) {
-          position = heightLeft - imgHeight;
+      pageHeight = pageHeight - this.$refs["pdf-header"].offsetHeight;
+
+      doc.addImage(
+        imgDataPdfHeader,
+        "PNG",
+        0,
+        yPosition,
+        imgWidthPdfHeader,
+        imgHeightPdfHeader
+      );
+
+      yPosition = yPosition + imgHeightPdfHeader;
+
+      // ITEMS HEADER
+      const canvasItemsHeader = await this.$html2canvas(
+        this.$refs["items-header"]
+      );
+      const imgWidthItemsHeader = 210;
+      const imgHeightItemsHeader =
+        (canvasItemsHeader.height * imgWidthItemsHeader) /
+        canvasItemsHeader.width;
+      const imgDataItemsHeader = canvasItemsHeader.toDataURL("image/png");
+
+      pageHeight = pageHeight - this.$refs["items-header"].offsetHeight;
+
+      doc.addImage(
+        imgDataItemsHeader,
+        "PNG",
+        0,
+        yPosition,
+        imgWidthItemsHeader,
+        imgHeightItemsHeader
+      );
+
+      yPosition = yPosition + imgHeightItemsHeader;
+
+      // ITEMS
+      let totalSelectedJobParts = this.selectedJobParts.length;
+
+      for (let i = 0; i < totalSelectedJobParts; i++) {
+        // minus the current item invoice height to the pageHeight
+        pageHeight = pageHeight - this.$refs[`item-${i}`][0].offsetHeight;
+        // if all pageHeight is used, add page
+        if (pageHeight < 0) {
+          pageHeight = 1020;
+          yPosition = 0;
           doc.addPage();
-          doc.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-          heightLeft -= pageHeight;
+          // add header to every new page, also subtract its height to page height
+          doc.addImage(
+            imgDataItemsHeader,
+            "PNG",
+            0,
+            yPosition,
+            imgWidthItemsHeader,
+            imgHeightItemsHeader
+          );
+
+          yPosition = yPosition + imgHeightItemsHeader;
+
+          pageHeight = pageHeight - this.$refs["items-header"].offsetHeight;
+          pageHeight = pageHeight - this.$refs[`item-${i}`][0].offsetHeight;
         }
-        doc.save(`locum-billing-invoice.pdf`);
-      });
+
+        // draw canvas
+        let canvasItem = await this.$html2canvas(this.$refs[`item-${i}`][0]);
+        let imgWidthItem = 210;
+        let imgHeightItem =
+          (canvasItem.height * imgWidthItem) / canvasItem.width;
+        let imgDataItem = canvasItem.toDataURL("image/png");
+
+        // add image
+        doc.addImage(
+          imgDataItem,
+          "PNG",
+          0,
+          yPosition,
+          imgWidthItem,
+          imgHeightItem
+        );
+
+        yPosition = yPosition + imgHeightItem;
+      }
+
+      // sum up their offsetHeight
+      let daysWorkedOffsetHeight = this.$refs["days-worked"].offsetHeight;
+      let itemsTotalOffsetHeight = this.$refs["items-total"].offsetHeight;
+      let pdfFooterOffsetHeight = this.$refs["pdf-footer"].offsetHeight;
+
+      let totalOffsetHeight =
+        daysWorkedOffsetHeight + itemsTotalOffsetHeight + pdfFooterOffsetHeight;
+
+      pageHeight = pageHeight - totalOffsetHeight;
+
+      // DAYS WORKED
+      const canvasDaysWorked = await this.$html2canvas(
+        this.$refs["days-worked"]
+      );
+      const imgWidthDaysWorked = 210;
+      const imgHeightDaysWorked =
+        (canvasDaysWorked.height * imgWidthDaysWorked) / canvasDaysWorked.width;
+      const imgDataDaysWorked = canvasDaysWorked.toDataURL("image/png");
+
+      // ITEMS TOTAL
+      const canvasItemsTotal = await this.$html2canvas(
+        this.$refs["items-total"]
+      );
+      const imgWidthItemsTotal = 210;
+      const imgHeightItemsTotal =
+        (canvasItemsTotal.height * imgWidthItemsTotal) / canvasItemsTotal.width;
+      const imgDataItemsTotal = canvasItemsTotal.toDataURL("image/png");
+
+      // PDF FOOTER
+      const canvasPdfFooter = await this.$html2canvas(this.$refs["pdf-footer"]);
+      const imgWidthPdfFooter = 210;
+      const imgHeightPdfFooter =
+        (canvasPdfFooter.height * imgWidthPdfFooter) / canvasPdfFooter.width;
+      const imgDataPdfFooter = canvasPdfFooter.toDataURL("image/png");
+
+      if (pageHeight < 0) {
+        pageHeight = 1020;
+        doc.addPage();
+      }
+
+      yPosition =
+        295 - (imgHeightDaysWorked + imgHeightItemsTotal + imgHeightPdfFooter);
+
+      doc.addImage(
+        imgDataDaysWorked,
+        "PNG",
+        0,
+        yPosition,
+        imgWidthDaysWorked,
+        imgHeightDaysWorked
+      );
+
+      yPosition = yPosition + imgHeightDaysWorked;
+
+      doc.addImage(
+        imgDataItemsTotal,
+        "PNG",
+        0,
+        yPosition,
+        imgWidthItemsTotal,
+        imgHeightItemsTotal
+      );
+
+      yPosition = yPosition + imgHeightItemsTotal;
+
+      doc.addImage(
+        imgDataPdfFooter,
+        "PNG",
+        0,
+        yPosition,
+        imgWidthPdfFooter,
+        imgHeightPdfFooter
+      );
+
+      yPosition = yPosition + imgHeightPdfFooter;
+
+      doc.save("test.pdf");
+      this.loading = false;
+      if (process.client) {
+        document.body.style.cursor = "auto";
+      }
     },
     save(final) {
       this.formError = [];
