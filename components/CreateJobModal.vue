@@ -648,13 +648,13 @@ export default {
         days.push(day.day());
         day = day.clone().add(1, "d");
       }
+      this.show_saturday = false;
+      this.show_sunday = false;
       if (days.includes(6)) {
         this.show_saturday = true;
-      } else if (days.includes(7)) {
+      }
+      if (days.includes(0)) {
         this.show_sunday = true;
-      } else {
-        this.show_saturday = false;
-        this.show_sunday = false;
       }
     },
 
