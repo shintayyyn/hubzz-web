@@ -641,10 +641,9 @@ export default {
 
     "form.date_end"(value) {
       this.CheckEmptyField(value, "date_end");
-      //
-      let end = this.$moment(value);
+      let end = this.$moment(value, "YYYY-MM-DD");
       let days = [];
-      let day = this.$moment(this.form.date_start);
+      let day = this.$moment(this.form.date_start, "YYYY-MM-DD");
       while (day <= end) {
         days.push(day.day());
         day = day.clone().add(1, "d");
@@ -854,12 +853,14 @@ export default {
         this.form.spoken_language_id = this.form.spoken_language_id.map(
           item => item.value
         );
-        this.form.date_start = this.$moment(this.form.date_start).format(
+        this.form.date_start = this.$moment(
+          this.form.date_start,
           "YYYY-MM-DD"
-        );
-        this.form.date_end = this.$moment(this.form.date_end).format(
+        ).format("YYYY-MM-DD");
+        this.form.date_end = this.$moment(
+          this.form.date_end,
           "YYYY-MM-DD"
-        );
+        ).format("YYYY-MM-DD");
 
         this.form.session_requirements.length > 0
           ? (this.form.session_requirements = this.form.session_requirements.join())
@@ -867,24 +868,25 @@ export default {
 
         this.form.auto_assign_at =
           this.auto_assign_job === true || this.auto_assign_job === "true"
-            ? `${this.$moment(this.auto_assign_at.date).format("YYYY-MM-DD")} ${
-                this.auto_assign_at.time
-              }`
+            ? `${this.$moment(this.auto_assign_at.date, "YYYY-MM-DD").format(
+                "YYYY-MM-DD"
+              )} ${this.auto_assign_at.time}`
             : null;
 
         this.form.selection_date =
           this.selection_notification === true ||
           this.selection_notification === "true"
-            ? `${this.$moment(this.selection_date.date).format("YYYY-MM-DD")} ${
-                this.selection_date.time
-              }`
+            ? `${this.$moment(this.selection_date.date, "YYYY-MM-DD").format(
+                "YYYY-MM-DD"
+              )} ${this.selection_date.time}`
             : null;
         this.form.favorite_only_until =
           this.favorite_notification === true ||
           this.favorite_notification === "true"
-            ? `${this.$moment(this.favorite_only_until.date).format(
+            ? `${this.$moment(
+                this.favorite_only_until.date,
                 "YYYY-MM-DD"
-              )} ${this.favorite_only_until.time}`
+              ).format("YYYY-MM-DD")} ${this.favorite_only_until.time}`
             : null;
         if (["15", "30", "60"].includes(this.unpaid_breaks)) {
           this.form.unpaid_breaks_in_minutes = this.unpaid_breaks;

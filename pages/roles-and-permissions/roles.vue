@@ -26,13 +26,16 @@
       :perPage="params.limit"
       :columns="columns"
       :orderBy="params.order_by"
-      @show="show"
       @remove="remove"
       @pagechanged="pagechanged"
       @limitchanged="limitchanged"
       @sorted="sorted"
+      :routerLink="'/roles-and-permissions/roles'"
     />
-    <div v-else-if="params.search && searchCount > 0">No results found for <span class="font-bold">{{ params.search }}</span>.</div>
+    <div v-else-if="params.search && searchCount > 0">
+      No results found for
+      <span class="font-bold">{{ params.search }}</span>.
+    </div>
     <div v-else class="flex justify-center">You do not have any other Roles on this Practice</div>
     <transition name="fade" mode="out-in">
       <div
@@ -100,8 +103,8 @@ export default {
       this.params.offset = 0;
       this.params.search = value;
       this.getRolesCount(this.params);
-      this.searchCount = this.roles.length
-      console.log("qwe", this.searchCount)
+      this.searchCount = this.roles.length;
+      console.log("qwe", this.searchCount);
     }
   },
   mounted() {
@@ -214,12 +217,12 @@ export default {
           });
           this.closeModal();
         });
-    },
-    show(item) {
-      if (this.authPermissions.includes("Show Role")) {
-        this.$router.push(`/roles-and-permissions/roles/${item.id}`);
-      }
     }
+    // show(item) {
+    //   if (this.authPermissions.includes("Show Role")) {
+    //     this.$router.push(`/roles-and-permissions/roles/${item.id}`);
+    //   }
+    // }
   }
 };
 </script>

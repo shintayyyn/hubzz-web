@@ -2,7 +2,7 @@
   <div class="relative rounded-lg shadow-lg w-full p-8">
     <AppFormError :formError="formError" v-if="formError.length > 0" />
     <form class="relative w-full">
-      <AppLoading :loading="loading" :message="'Loading'" />
+      <AppLoading :loading="loading" spinner />
       <AppInput
         v-model="form.old_password"
         :type="'password'"
