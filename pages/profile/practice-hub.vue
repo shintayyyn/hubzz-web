@@ -97,8 +97,6 @@ export default {
       let response = await app.$axios.$get(`/api/v1/practice/me/parent-surgery`)
       const practiceSpoke = response.data.practice
       const practiceHub = response.data.practice.parent_surgery
-      
-      console.log('practicehub', practiceHub)
 
       response = await app.$axios.$get(`/api/v1/practice/me/parent-surgery/invitations-count`)
       const totalInvitations = response.data.count
@@ -110,7 +108,7 @@ export default {
       //     hubInvitations.push(invitation)
       //   })
       // }
-      console.log('invitations', hubInvitations)
+
       return{
         practiceSpoke,
         practiceHub,
