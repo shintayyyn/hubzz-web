@@ -53,53 +53,53 @@
           </template>
 
           <template v-if="showResult && messages.length > 0">
-          <transition-group name="slide" tag="p">
-            <div
-              class="relative flex w-full items-center px-2 py-4 cursor-pointer border-b"
-              :class="parseInt($route.params.slug) === item.id ? 'bg-gray-300' : 'hover:bg-gray-200'"
-              v-for="item in messages"
-              :key="item.id"
-              @click.stop="goTo(item.id ? item.id : item.id)"
-            >
-              <div>
-                <AppAvatar
-                  v-if="$auth.user.domain === 'Practice'"
-                  :height="'50px'"
-                  :width="'50px'"
-                  :src="userAvatar(item)"
-                />
-              </div>
-
-              <div class="w-5/6 flex items-center justify-between">
-                <div class="w-4/6 sm:w-5/6 md:w-4/6 lg:w-5/6 px-2 leading-tight">
-                  <p
-                    class="truncate"
-                    :class="parseInt($route.params.slug) === item.id ? 'font-bold' : ''"
-                  >{{ userFullname(item) }}</p>
-                  <p
-                    class="text-sm truncate text-gray-700"
-                    :class="item.latest_conversation_message.deleted_by_receiver || item.latest_conversation_message.deleted_by_sender ? 'italic':''"
-                  >{{ item.latest_conversation_message.deleted_by_receiver || item.latest_conversation_message.deleted_by_sender ? `${senderFullname(item)} deleted a message.` : `${senderFullname(item)}: ${item.latest_conversation_message.message}` }}</p>
+            <transition-group name="slide" tag="p">
+              <div
+                class="relative flex w-full items-center px-2 py-4 cursor-pointer border-b"
+                :class="parseInt($route.params.slug) === item.id ? 'bg-gray-300' : 'hover:bg-gray-200'"
+                v-for="item in messages"
+                :key="item.id"
+                @click.stop="goTo(item.id ? item.id : item.id)"
+              >
+                <div>
+                  <AppAvatar
+                    v-if="$auth.user.domain === 'Practice'"
+                    :height="'50px'"
+                    :width="'50px'"
+                    :src="userAvatar(item)"
+                  />
                 </div>
-                <span
-                  class="absolute w-10 h-full flex items-center right-0 text-right text-xs text-gray-600 leading-none mx-2"
-                  :class="[parseInt($route.params.slug) === item.id ? 'bg-gray-300 hover:bg-gray-300' : 'hover:bg-gray-200', unreadMessages.find(conversation => conversation.conversation_id == item.id && $auth.user.id == conversation.user_id) && 'mr-5']"
-                >{{ $moment(item.latest_conversation_message.created_at).fromNow() }}</span>
+
+                <div class="w-5/6 flex items-center justify-between">
+                  <div class="w-4/6 sm:w-5/6 md:w-4/6 lg:w-5/6 px-2 leading-tight">
+                    <p
+                      class="truncate"
+                      :class="parseInt($route.params.slug) === item.id ? 'font-bold' : ''"
+                    >{{ userFullname(item) }}</p>
+                    <p
+                      class="text-sm truncate text-gray-700"
+                      :class="item.latest_conversation_message.deleted_by_receiver || item.latest_conversation_message.deleted_by_sender ? 'italic':''"
+                    >{{ item.latest_conversation_message.deleted_by_receiver || item.latest_conversation_message.deleted_by_sender ? `${senderFullname(item)} deleted a message.` : `${senderFullname(item)}: ${item.latest_conversation_message.message}` }}</p>
+                  </div>
+                  <span
+                    class="absolute w-10 h-full flex items-center right-0 text-right text-xs text-gray-600 leading-none mx-2"
+                    :class="[parseInt($route.params.slug) === item.id ? 'bg-gray-300 hover:bg-gray-300' : 'hover:bg-gray-200', unreadMessages.find(conversation => conversation.conversation_id == item.id && $auth.user.id == conversation.user_id) && 'mr-5']"
+                  >{{ $moment(item.latest_conversation_message.created_at).fromNow() }}</span>
+                </div>
               </div>
-            </div>
-          </transition-group>
+            </transition-group>
           </template>
-          <div
-            v-if="(messages.length === 0 && showResult === true) || conversations.length === 0"
-            class="flex flex-col h-full items-center pt-20 font-bold text-gray-500"
-          >
-            <span v-if="showResult === true" class="text-center break-words break-all px-4">
-              No messages found for
-              <br />
-              "{{ search_text }}"
-            </span>
-            <span v-else>No messages</span>
-          </div>
+          <template v-if="(messages.length === 0 && showResult === true) || conversations.length === 0">
+            <div class="flex flex-col h-full items-center pt-20 font-bold text-gray-500">
+              <span v-if="showResult === true" class="text-center break-words break-all px-4">
+                No messages found for
+                <br />
+                "{{ search_text }}"
+              </span>
+              <span v-else>No messages</span>
+            </div>
+          </template>
+
         </div>
       </div>
       <button
