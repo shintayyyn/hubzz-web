@@ -3,6 +3,11 @@
     <div class="flex items-center pb-4">
       <div class="font-bold leading-none text-md sm:text-lg mr-2">{{ practice_surgery.surgery.name }}</div>
       <div class="text-sm sm:text-sm text-gray-700 font-bold">{{ practice_surgery.surgery.code }}</div>
+       <div 
+            class="justify-center text-black text-sm font-semibold py-2 p-3 rounded-lg"
+            :class="statusStyle(checkStatus(practice_surgery))">
+            {{checkStatus(practice_surgery)}}
+          </div>
     </div>
     <div class="flex flex-col">
       <!--------------PAY FOR SURGERY-------------->
@@ -51,31 +56,58 @@
               :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
             />
           </div>
-          <div class="w-full p-1">
-            <AppInput
-              v-model="form.share_banks_to_other_surgeries"
-              :type="'select'"
-              :name="'share_banks_to_other_surgeries'"
-              :label="'Share Banks to Other Surgeries'"
-              :error="formError.find(item => item.field === 'share_banks_to_other_surgeries')"
-              :placeholder="'Select...'"
-              :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
-            />
+          <!--------------EDIT PERMISSIONS----------------->
+          <div v-if="editPayForSurgery === true" class="rounded-lg shadow-lg p-2">
+            <div class="flex flex-col flex-wrap justify-between">
+              <div class="w-full p-1">
+                <AppInput
+                  v-model="form.pay_for_surgery"
+                  :type="'select'"
+                  :name="'pay_for_surgery'"
+                  :label="'Pay for surgery'"
+                  :error="formError.find(item => item.field === 'pay_for_surgery')"
+                  :placeholder="'Select...'"
+                  :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
+                />
+              </div>
+              <div class="w-full p-1">
+                <AppInput
+                  v-model="form.verify_job_creation"
+                  :type="'select'"
+                  :name="'verify_job_creation'"
+                  :label="'Verify job creation'"
+                  :error="formError.find(item => item.field === 'verify_job_creation')"
+                  :placeholder="'Select...'"
+                  :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
+                />
+              </div>
+              <div class="w-full p-1">
+                <AppInput
+                  v-model="form.share_banks_to_other_surgeries"
+                  :type="'select'"
+                  :name="'share_banks_to_other_surgeries'"
+                  :label="'Share Banks to Other Surgeries'"
+                  :error="formError.find(item => item.field === 'share_banks_to_other_surgeries')"
+                  :placeholder="'Select...'"
+                  :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
+                />
+              </div>
+              <div class="w-full p-1">
+                <AppInput
+                    v-model="form.create_job_rate_limit"
+                    :type="'number'"
+                    :name="'create_job_rate_limit'"
+                    :label="'Job Rates Limit £'"
+                    :error="formError.find(item => item.field === 'create_job_rate_limit')"
+                    @blur="CheckEmptyField(form.create_job_rate_limit,'create_job_rate_limit')"
+                    :inStyle="'text-align:right'"
+                  />
+              </div>
+            </div>
+            <div class="flex flex-row justify-start">
+              <AppButton :label="'Save'" @click="save" :inStyle="'padding:5px'" />
+            </div>
           </div>
-          <div class="w-full p-1">
-            <AppInput
-              v-model="form.create_job_rate_limit"
-              :type="'number'"
-              :name="'create_job_rate_limit'"
-              :label="'Job Rates Limit £'"
-              :error="formError.find(item => item.field === 'create_job_rate_limit')"
-              @blur="CheckEmptyField(form.create_job_rate_limit, 'create_job_rate_limit')"
-              :inStyle="'text-align:right'"
-            />
-          </div>
-        </div>
-        <div class="flex flex-row justify-start">
-          <AppButton :label="'Save'" @click="save" :inStyle="'padding:5px 14px'" />
         </div>
       </div>
     </div>
@@ -151,7 +183,46 @@ export default {
         });
         //this.$router.push("/profile/practice-spokes");
       });
-    }
+    },
+     statusStyle(status){
+      console.log('status', status)
+      switch(status){
+        case 'Active':
+          return 'bg-green-500 text-white'
+          break;
+        case 'Rejected':
+          return 'bg-gray-500 text-gray-700'
+          break;
+        case 'Termination Requested':
+          return 'bg-orange-500 text-white'
+          break;
+        case 'Terminated':
+          return 'bg-red-800 text-red-400'
+          break;
+        default:
+          return 'bg-yellow-400 text-black'
+      }
+    },
+    checkStatus(invitation){
+      let result = 'Invited'
+      console.log('invitation', invitation)
+      if(invitation.invitation_accepted_at){
+        result = 'Active'
+      }
+      
+      if(invitation.invitation_rejected_at){
+        result = 'Rejected'
+      }
+      
+      if(invitation.termination_requested_at){
+        result = 'Termination Requested'
+      }
+      
+      if(invitation.terminated_at){
+        result = 'Terminated'
+      }
+      return result
+    },
   }
 };
 </script>

@@ -218,6 +218,13 @@ export default {
 		editJob() {
 			this.toEdit = true;
 		},
+		updateJob(id) {
+			this.toEdit = false;
+			this.$router.push({
+				path: `/sessions/${id}`,
+				query: { ...this.$route.query }
+			});
+		},
 		cancelEdit() {
 			this.toEdit = false;
 		},

@@ -244,10 +244,10 @@
                   :error="formError.find(item => item.field === 'qualification_id')"
                   :info="'Choose at least one qualification'"
                   :url="'/api/v1/qualifications'"
-                  @add="CheckEmptyField(form.qualification_id, 'qualification_id')"
-                  @remove="CheckEmptyField(form.qualification_id, 'qualification_id')"
                   :professionCategoryId="selectedProfession.profession_category.id.toString()"
                 />
+                <!-- @add="CheckEmptyField(form.qualification_id, 'qualification_id')"
+                @remove="CheckEmptyField(form.qualification_id, 'qualification_id')"-->
 
                 <AppFilterSearch
                   v-model="form.clinical_system_id"
@@ -257,9 +257,9 @@
                   :error="formError.find(item => item.field === 'clinical_system_id')"
                   :info="'Choose at least one IT system'"
                   :url="'/api/v1/clinical-systems'"
-                  @add="CheckEmptyField(form.clinical_system_id, 'clinical_system_id')"
-                  @remove="CheckEmptyField(form.clinical_system_id, 'clinical_system_id')"
                 />
+                <!-- @add="CheckEmptyField(form.clinical_system_id, 'clinical_system_id')"
+                @remove="CheckEmptyField(form.clinical_system_id, 'clinical_system_id')"-->
 
                 <AppFilterSearch
                   v-model="form.spoken_language_id"
@@ -896,7 +896,14 @@ export default {
             this.form.session_requirements = this.form.session_requirements.split(
               ","
             );
-            this.formError = err.response.data.error_messages;
+            if (err.response.status === 500) {
+              this.formError.push({
+                field: err.response.statusText,
+                message: "Please check your inputs"
+              });
+            } else {
+              this.formError = err.response.data.error_messages;
+            }
           });
       } else {
         this.$nextTick(() => {

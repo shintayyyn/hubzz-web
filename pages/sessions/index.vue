@@ -735,7 +735,7 @@ export default {
     },
     "$route.query"({ status: newStatus }, { status: oldStatus }) {
       if (newStatus && newStatus !== null && newStatus !== oldStatus) {
-        this.$store.commit("jobs/TOGGLE_LOADING", true);
+        // this.$store.commit("jobs/TOGGLE_LOADING", true);
         this.$store.commit("jobs/CLEAR_PRACTICE_JOB_NOTIFICATION");
         this.current_page = 1;
         this.showTable = false;
@@ -933,6 +933,7 @@ export default {
     },
     async refreshJobs() {
       this.loading = true;
+      this.$store.commit("jobs/CLEAR_PRACTICE_JOB_NOTIFICATION");
       await this.getJobsCount(
         this.isJobPart ? this.jobPartParams : this.params
       );
@@ -1041,7 +1042,7 @@ export default {
       this.params.shift_id = "";
       this.params.rate = "";
       this.params.rate_type_id = "";
-      this.params.order_by = ["date_created:desc"];
+      this.params.order_by = [];
 
       this.jobPartParams.offset = 0;
       this.jobPartParams.limit = 5;
@@ -1059,7 +1060,7 @@ export default {
       this.jobPartParams.calendar_date_end = "";
       this.jobPartParams.time_start = "";
       this.jobPartParams.time_end = "";
-      this.jobPartParams.order_by = ["date_created:desc"];
+      this.jobPartParams.order_by = [];
 
       return;
     },

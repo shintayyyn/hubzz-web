@@ -118,6 +118,9 @@ export default {
       params: []
     };
   },
+  created() {
+    console.log(this.items)
+  },
   mounted() {
     console.log("status class", status);
     this.params = this.orderBy;

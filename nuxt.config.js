@@ -79,6 +79,15 @@ export default {
     },
     {
       src: '@/plugins/vue2-google-maps.js',
+      mode: 'client'
+    },
+    {
+      src: '@/plugins/jspdf.js',
+      mode: 'client'
+    },
+    {
+      src: '@/plugins/html2canvas.js',
+      mode: 'client'
     },
   ],
 
