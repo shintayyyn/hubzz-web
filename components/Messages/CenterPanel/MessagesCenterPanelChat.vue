@@ -16,7 +16,7 @@
           >Load More Messages</button>
         </span>
       </transition>
-      <transition name="drop" mode="in-out">
+      <transition name="fade" mode="in-out">
         <span class="w-full flex justify-center">
           <button
             v-if="newMessage"

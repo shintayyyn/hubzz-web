@@ -30,12 +30,15 @@
         <td class="flex justify-center">
           <div
             class="font-semibold text-xs sm:text-sm text-center px-2"
-            @click.stop.prevent="toggleRemoveConfirmationModal(slotProps.item.id)"
-          >X</div>
+            @click.stop.prevent="
+              toggleRemoveConfirmationModal(slotProps.item.id)
+            "
+          >
+            X
+          </div>
         </td>
       </template> -->
 		</AppTable>
-
 		<div v-else class="flex justify-center py-4 text-gray-500">
 			No Branches / Surgeries
 		</div>
@@ -307,6 +310,10 @@ export default {
 		},
 		getStatus() {
 			let status = "Invited";
+<<<<<<< HEAD
+=======
+			console.log(this.practice.type);
+>>>>>>> 54bb7c796ba1bbc87802bb7803244b6de5748bed
 			this.surgeries.map(item => {
 				if (this.practice.type === "Hub") {
 					if (item.invitation_accepted_at) {
@@ -347,13 +354,13 @@ export default {
 					return "bg-green-500 text-white";
 					break;
 				case "Rejected":
-					return "bg-gray-500 text-gray-700";
+					return "bg-red-600 text-white";
 					break;
-				case "Termination Requested":
+				case "Request for Temination":
 					return "bg-orange-500 text-white";
 					break;
 				case "Terminated":
-					return "bg-red-800 text-red-400";
+					return "bg-red-700 text-white";
 					break;
 				default:
 					return "bg-yellow-400 text-black";
