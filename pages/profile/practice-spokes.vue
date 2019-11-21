@@ -310,10 +310,6 @@ export default {
 		},
 		getStatus() {
 			let status = "Invited";
-<<<<<<< HEAD
-=======
-			console.log(this.practice.type);
->>>>>>> 54bb7c796ba1bbc87802bb7803244b6de5748bed
 			this.surgeries.map(item => {
 				if (this.practice.type === "Hub") {
 					if (item.invitation_accepted_at) {
