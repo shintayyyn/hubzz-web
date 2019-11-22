@@ -197,12 +197,33 @@
             :resize="false"
           />
           <template v-if="job.status === 'Allocated'">
-            <AppTime
-              v-model="form.deadline"
+            <!-- <AppTime
+              v-model="form.update_accepted_until"
               :type="'time'"
-              :name="'deadline'"
+              :name="'update_accepted_until'"
               :label="'Set deadline for appointed Locum to accept these changes (Max 24 hrs)'"
-              :error="formError.find(item => item.field === 'deadline')"
+              :error="formError.find(item => item.field === 'update_accepted_until')"
+            />-->
+            <AppInput
+              v-model="form.update_accepted_until"
+              :type="'select'"
+              :name="'update_accepted_until'"
+              :label="'Set deadline for appointed Locum to accept these changes (per hour)'"
+              :items="[
+                { label: '12', value: 12 },
+                { label: '13', value: 13 },
+                { label: '14', value: 14 },
+                { label: '15', value: 15 },
+                { label: '16', value: 16 },
+                { label: '17', value: 17 },
+                { label: '18', value: 18 },
+                { label: '19', value: 19 },
+                { label: '20', value: 20 },
+                { label: '21', value: 21 },
+                { label: '22', value: 22 },
+                { label: '23', value: 23 },
+                { label: '24', value: 24 },
+              ]"
             />
           </template>
         </div>
@@ -593,7 +614,7 @@ export default {
         auto_assign_at: null,
         selection_date: null,
         favorite_only_until: null,
-        deadline: null
+        update_accepted_until: null
       },
       formError: [],
       show_saturday: false,
@@ -873,7 +894,7 @@ export default {
       ];
 
       if (this.job.status !== "Allocated") {
-        notRequired.push("deadline");
+        notRequired.push("update_accepted_until");
       }
 
       if (["15", "30", "60", false, "false"].includes(this.unpaid_breaks)) {
@@ -983,6 +1004,11 @@ export default {
           )
             .add(1, "days")
             .format("YYYY-MM-DD HH:mm")}`;
+        }
+
+        if (this.form.update_accepted_until) {
+          this.form.update_accepted_until =
+            this.form.update_accepted_until * 60;
         }
 
         this.form.session_requirements.length > 0

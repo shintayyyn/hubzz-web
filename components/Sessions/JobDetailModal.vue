@@ -1,6 +1,6 @@
 <template>
   <div class="p-4 md:p-8">
-    <div @click="close" class="cursor-pointer">
+    <div @click="$emit('close')" class="cursor-pointer">
       <svgicon name="left-arrow" height="32" width="32" />
     </div>
     <div class="flex flex-row justify-start mt-4">
@@ -19,7 +19,7 @@
 							(job.status === 'Applied' && toEdit === false) ||
 							(job.status === 'Live' && toEdit === false)
 					"
-          @click.prevent="editJob()"
+          @click.prevent="toEdit = true"
         >Edit this job</button>
         <button
           class="font-bold text-xs sm:text-sm no-underline px-2 py-2 rounded-lg bg-yellow-500 ml-4 focus:outline-none"
@@ -30,7 +30,7 @@
 							(job.status === 'Applied' && toEdit === true) ||
 							(job.status === 'Live' && toEdit === true)
 					"
-          @click.prevent="cancelEdit()"
+          @click.prevent="toEdit = false"
         >Cancel Editing</button>
       </div>
     </div>
@@ -47,7 +47,7 @@
             />
             <JobDetailModalCancelForm
               :job="job"
-              @close="close"
+              @close="$emit('close')"
               v-if="(job.status === 'Allocated' || job.status === 'Ongoing' || job.status === 'Applied' || job.status === 'Live') && authPermissions.includes('Cancel Sessions Job')"
             />
           </div>
@@ -65,6 +65,8 @@
               :user="user"
               :mandatory="mandatory"
               :optional="optional"
+              @favorite="favorite"
+              @unfavorite="unfavorite"
               v-if="(job.status === 'Allocated' || job.status === 'Ongoing' || job.status === 'Completed') && user"
             />
           </div>
@@ -78,10 +80,18 @@
           @close="modal = false"
           :job="job"
           :user="user"
-          @appointed="close"
+          @appointed="$emit('close')"
         />
       </div>
     </transition>
+    <AppConfirmationModal
+      :label="confirmation_text"
+      :confirmLabel="'Yes'"
+      :cancelLabel="'Cancel'"
+      :modal="confirmation_modal"
+      @confirm="confirm"
+      @cancel="confirmation_modal = false"
+    />
   </div>
 </template>
 <script>
@@ -90,10 +100,10 @@ import JobPartDetailModalParts from "@/components/Sessions/JobPart/JobPartDetail
 import JobDetailModalUpdateForm from "@/components/Sessions/JobDetailModalUpdateForm";
 import JobDetailModalCandidates from "@/components/Sessions/JobDetailModalCandidates";
 import JobDetailModalLocum from "@/components/Sessions/JobDetailModalLocum";
-// import JobDetailModalSessionSample from "@/components/Sessions/JobDetailModalSessionSample";
 import JobDetailModalCancelForm from "@/components/Sessions/JobDetailModalCancelForm";
 import JobDetailModalCompleteForm from "@/components/Sessions/JobDetailModalCompleteForm";
 import JobDetailModalShowCandidate from "@/components/Sessions/JobDetailModalShowCandidate";
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
 export default {
   props: ["job"],
   components: {
@@ -102,10 +112,10 @@ export default {
     JobDetailModalUpdateForm,
     JobDetailModalCandidates,
     JobDetailModalLocum,
-    // JobDetailModalSessionSample,
     JobDetailModalCompleteForm,
     JobDetailModalCancelForm,
-    JobDetailModalShowCandidate
+    JobDetailModalShowCandidate,
+    AppConfirmationModal
   },
   data() {
     return {
@@ -113,8 +123,9 @@ export default {
       mandatory: [],
       optional: [],
       modal: false,
-      toEdit: false
-      // canEdit: false
+      toEdit: false,
+      confirmation_text: "",
+      confirmation_modal: false
     };
   },
   computed: {
@@ -149,6 +160,41 @@ export default {
           );
         });
     },
+    favorite() {
+      this.confirmation_text = "Add this Locum to MyBanks?";
+      this.confirmation_modal = true;
+    },
+    unfavorite() {
+      this.confirmation_text = "Remove this Locum to MyBanks?";
+      this.confirmation_modal = true;
+    },
+    confirm() {
+      if (!this.user.is_favorite) {
+        this.$axios
+          .$post(`/api/v1/practice/locums/${this.user.id}/favorite`)
+          .then(res => {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: ["Added to favourites"]
+            });
+          });
+        this.user.is_favorite = true;
+        this.confirmation_modal = false;
+      } else if (this.user.is_favorite) {
+        this.$axios
+          .$delete(`/api/v1/practice/locums/${this.user.id}/favorite`)
+          .then(res => {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: ["Remove to favourites"]
+            });
+          });
+        this.user.is_favorite = false;
+        this.confirmation_modal = false;
+      }
+    },
     getProfessionCategory(id) {
       this.$axios.$get(`/api/v1/profession-categories/${id}`).then(res => {
         this.mandatory = this.user.locum_detail.compliance_documents.filter(
@@ -175,12 +221,9 @@ export default {
       this.user = user;
       this.modal = true;
     },
-    editJob() {
-      this.toEdit = true;
-    },
     updateJob({ newJob, oldJob }) {
       this.toEdit = false;
-      this.close();
+      this.$emit("close");
       setTimeout(() => {
         this.$router.push({
           path: `/sessions/${newJob.id}`,
@@ -191,12 +234,6 @@ export default {
           oldJob
         });
       }, 500);
-    },
-    cancelEdit() {
-      this.toEdit = false;
-    },
-    close() {
-      this.$emit("close");
     },
     status(status) {
       return status.toUpperCase();

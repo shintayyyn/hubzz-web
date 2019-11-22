@@ -67,6 +67,9 @@ export default {
         case "Unfilled":
           return "bg-red-500";
           break;
+        case "AppliedReminder":
+        case "AvailableReminder":
+          return "bg-gray-600";
         default:
           return "bg-red-500";
       }
