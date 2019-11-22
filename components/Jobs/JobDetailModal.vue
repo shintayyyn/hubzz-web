@@ -52,7 +52,7 @@
           />
         </div>
       </div>
-      <div class="p-0 lg:pl-4 w-full lg:w-1/2 mt-4 lg:m-0 order-first lg:order-none">
+      <div class="p-0 md:pl-4 w-full lg:w-1/2 mt-4 md:m-0 order-first lg:order-none">
         <div class="flex flex-col">
           <JobPartDetailModalParts :job_id="job.id" :disabledLink="true" />
           <JobDetailModalMap :job="job" />

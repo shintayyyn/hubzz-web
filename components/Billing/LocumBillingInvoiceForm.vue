@@ -3,16 +3,16 @@
     <AppLoading :loading="loading" spinner />
     <div class="flex flex-wrap items-center">
       <div
-        class="save-button text-xs sm:text-sm px-4 py-2 border-2 rounded-lg font-bold flex items-center mr-1 md:mr-4"
+        class="save-button text-xs sm:text-sm px-4 py-2 border-2 rounded-lg font-bold flex items-center my-1 md:my-0 mr-1 md:mr-2"
         @click="save(false)"
       >Save changes</div>
       <div
-        class="save-button text-xs sm:text-sm px-4 py-2 border-2 rounded-lg font-bold flex items-center"
+        class="save-button text-xs sm:text-sm px-4 py-2 border-2 rounded-lg font-bold flex items-center my-1 md:my-0 mr-1 md:mr-2"
         @click="save(true)"
       >Save and archive as final</div>
       <div
         v-if="selectedInvoice"
-        class="save-button text-xs sm:text-sm ml-4 mx-2 py-2 px-3 border-2 rounded-lg font-bold flex items-center"
+        class="save-button text-xs sm:text-sm px-4 py-2 border-2 rounded-lg font-bold flex items-center my-1 md:my-0"
         @click="exportToPdf()"
       >Export to PDF</div>
     </div>

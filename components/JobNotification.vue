@@ -205,6 +205,6 @@ export default {
   flex-direction: column;
   justify-content: center;
   margin-top: 50px;
-  margin-right: 40px;
+  /* margin-right: 40px; */
 }
 </style>

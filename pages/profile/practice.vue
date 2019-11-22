@@ -307,36 +307,36 @@ export default {
     practiceType(newValue, oldValue) {
       this.oldPracticeType = oldValue;
     },
-    "form.phone_number"(value) {
-      this.CheckEmptyField(this.form.phone_number, "phone_number");
-    },
-    "form.report_to"(value) {
-      this.CheckEmptyField(this.form.report_to, "report_to");
-    },
-    "form.email"(value) {
-      this.CheckEmptyField(this.form.email, "email");
-    },
-    "form.practice_type_id"(value) {
-      this.CheckEmptyField(this.form.practice_type_id, "practice_type_id");
-    },
-    "form.mandatory_training_id"(value) {
-      this.CheckEmptyField(
-        this.form.mandatory_training_id,
-        "mandatory_training_id"
-      );
-    },
-    "form.gp_compliance_document_id"(value) {
-      this.CheckEmptyField(
-        this.form.gp_compliance_document_id,
-        "gp_compliance_document_id"
-      );
-    },
-    "form.others_compliance_document_id"(value) {
-      this.CheckEmptyField(
-        this.form.others_compliance_document_id,
-        "others_compliance_document_id"
-      );
-    }
+    // "form.phone_number"(value) {
+    //   this.CheckEmptyField(this.form.phone_number, "phone_number");
+    // },
+    // "form.report_to"(value) {
+    //   this.CheckEmptyField(this.form.report_to, "report_to");
+    // },
+    // "form.email"(value) {
+    //   this.CheckEmptyField(this.form.email, "email");
+    // },
+    // "form.practice_type_id"(value) {
+    //   this.CheckEmptyField(this.form.practice_type_id, "practice_type_id");
+    // },
+    // "form.mandatory_training_id"(value) {
+    //   this.CheckEmptyField(
+    //     this.form.mandatory_training_id,
+    //     "mandatory_training_id"
+    //   );
+    // },
+    // "form.gp_compliance_document_id"(value) {
+    //   this.CheckEmptyField(
+    //     this.form.gp_compliance_document_id,
+    //     "gp_compliance_document_id"
+    //   );
+    // },
+    // "form.others_compliance_document_id"(value) {
+    //   this.CheckEmptyField(
+    //     this.form.others_compliance_document_id,
+    //     "others_compliance_document_id"
+    //   );
+    // }
   },
   async asyncData({ app, error }) {
     try {

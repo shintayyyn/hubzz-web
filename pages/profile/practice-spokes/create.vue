@@ -36,7 +36,8 @@
       >
         <div
           class="text-xs lg:text-base font-bold p-4"
-        >Select by clicking on the practice that you wish to add</div>
+          >Select by clicking on the practice that you wish to add</div>
+        
         <div
           class="border-t-2 p-4 cursor-pointer"
           :class="selectedSpoke.id === item.id ? 'bg-yellow-500':'hover:bg-gray-400'"
@@ -67,12 +68,20 @@
         </div>
       </div>
     </div>
+
+    <div class="spoke-shield" @click="toInvite = false" v-if="toInvite"></div>
+    <transition name="slide" mode="out-in">
+      <div class="spoke-permission-modal shadow-lg" v-if="toInvite">
+        <InviteSpokePermissions @close="toInvite = false" :spoke="selectedSpoke"/>
+      </div>
+    </transition>
   </div>
 </template>
 <script>
 import AppInput from "@/components/Base/AppInput";
 import AppButton from "@/components/Base/AppButton";
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
+import InviteSpokePermissions from "@/components/Practice/InviteSpokePermissions";
 export default {
   transition: {
     name: "slide",
@@ -81,16 +90,18 @@ export default {
   components: {
     AppInput,
     AppButton,
-    AppConfirmationModal
+    AppConfirmationModal,
+    InviteSpokePermissions
   },
   data() {
     return {
       search_text: "",
       practiceSpokes: [],
-      selectedSpoke: {},
+      selectedSpoke: '',
       showResult: false,
       modal: false,
-      formError: []
+      formError: [],
+      toInvite: false
     };
   },
   async asyncData({ app, error }) {
@@ -133,9 +144,10 @@ export default {
       }
     },
     select(item) {
+      console.log('wat')
       this.formError = [];
       this.selectedSpoke = item;
-      this.modal = true;
+      this.toInvite = true;
     },
     invite () {
       if (this.type === "Hub") {
@@ -149,7 +161,7 @@ export default {
             status: "success",
             text: [`${res.message}`]
            })
-           this.$router.push("/profile/practice-spokes");
+          this.$router.push("/profile/practice-spokes");
         })
         .catch(err => {
           this.modal = false;
@@ -209,11 +221,45 @@ export default {
 };
 </script>
 <style scoped>
+.shield {
+  z-index: 509;
+}
+
 .modal-container {
   z-index: 510;
 }
+
 @media screen and (min-width: 1200px) {
   .modal-container {
+    width: 80%;
+  }
+}
+.spoke-shield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #333;
+  opacity: 0.5;
+  z-index: 511;
+}
+.spoke-permission-modal {
+  position: fixed;
+  top: 0;
+  right: 0;
+  margin-right: 0%;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  border-left: solid 2px yellow;
+  transition: all 0.3s ease-in-out;
+  background-color:white;
+  z-index: 512;
+}
+
+@media screen and (min-width: 1200px) {
+  .spoke-permission-modal {
     width: 70%;
   }
 }

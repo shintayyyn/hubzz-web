@@ -195,7 +195,7 @@ export default {
   watch: {
     selectedMonth(value) {
       this.getDaysInMonth(value, this.selectedYear);
-    }
+    },
   },
   beforeDestroy() {
     this.$store.commit("jobs/CLEAR_JOBS");
