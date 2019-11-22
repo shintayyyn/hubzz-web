@@ -2,9 +2,26 @@
   <section class="relative">
     <transition name="fade" mode="out-in">
       <div v-if="showTable">
+        <div
+          class="flex flex-row justify-start overflow-x-auto pb-3"
+          v-if="$route.query.status && $route.query.status.toLowerCase() === 'applied'"
+        >
+          <nuxt-link
+            :event="$store.state.jobs.loading_jobs ? '' : 'click'"
+            :to="'/sessions?status=Applied&bank=false'"
+            class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+            :class="$route.query.status && $route.query.status.toLowerCase() === 'applied' && $route.query.bank && $route.query.bank === 'false' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          >Non-Bank</nuxt-link>
+          <nuxt-link
+            :event="$store.state.jobs.loading_jobs ? '' : 'click'"
+            :to="'/sessions?status=Applied&bank=true'"
+            class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+            :class="$route.query.status && $route.query.status.toLowerCase() === 'applied' && $route.query.bank && $route.query.bank === 'true' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          >My Bank</nuxt-link>
+        </div>
         <AppButton
           :label="'Filter'"
-          @click="showFilter"
+          @click="filterModal = true"
           :inStyle="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
         />
         <AppButton
@@ -132,7 +149,7 @@
             <AppButton
               class="mx-2 md:hidden"
               :label="'Close'"
-              @click="showFilter"
+              @click="filterModal = false"
               :inStyle="'padding:5px 14px;margin-bottom:5px'"
             />
           </div>
@@ -266,7 +283,7 @@
             <AppButton
               class="mx-2 md:hidden"
               :label="'Close'"
-              @click="showFilter"
+              @click="filterModal = false"
               :inStyle="'padding:5px 14px;margin-bottom:5px'"
             />
           </div>
@@ -362,7 +379,8 @@ export default {
         calendar_date_start: "",
         calendar_date_end: "",
         time_start: "",
-        time_end: ""
+        time_end: "",
+        viewing_locum_user_id: []
       },
       jobPartParams: {
         offset: 0,
@@ -652,97 +670,39 @@ export default {
     }
   },
   watch: {
-    getPracticeAllocatedJobs(newValue, oldValue) {
-      console.log("test", newValue);
+    "$route.query"(newValue, oldValue) {
+      let newStatus = newValue.status;
+      let oldStatus = oldValue.status;
+      let newBank = newValue.bank;
+      let oldBank = oldValue.bank;
       if (
-        this.params.limit < newValue.length &&
-        oldValue.length > 0 &&
-        this.$route.query.status === "Allocated"
+        (newStatus && newStatus !== null && newStatus !== oldStatus) ||
+        (newBank && newBank !== null && newBank !== oldBank)
       ) {
-        this.getJobsCount(this.params);
-      }
-    },
-    getPracticeOngoingJobs(newValue, oldValue) {
-      if (
-        this.jobPartParams.limit < newValue.length &&
-        oldValue.length > 0 &&
-        this.$route.query.status === "Ongoing"
-      ) {
-        this.getJobsCount(this.jobPartParams);
-      }
-    },
-    getPracticeAvailableJobs(newValue, oldValue) {
-      if (
-        this.params.limit < newValue.length &&
-        oldValue.length > 0 &&
-        this.$route.query.status === "Live"
-      ) {
-        this.getJobsCount(this.params);
-      }
-    },
-    getPracticeAppliedJobs(newValue, oldValue) {
-      if (
-        this.params.limit < newValue.length &&
-        oldValue.length > 0 &&
-        this.$route.query.status === "Applied"
-      ) {
-        this.getJobsCount(this.params);
-      }
-    },
-    getPracticeUnfilledJobs(newValue, oldValue) {
-      if (
-        this.params.limit < newValue.length &&
-        oldValue.length > 0 &&
-        this.$route.query.status === "Unfilled"
-      ) {
-        this.getJobsCount(this.params);
-      }
-    },
-    getPracticeDeclinedJobs(newValue, oldValue) {
-      if (
-        this.params.limit < newValue.length &&
-        oldValue.length > 0 &&
-        this.$route.query.status === "Declined"
-      ) {
-        this.getJobsCount(this.params);
-      }
-    },
-    getPracticeCancelledJobs(newValue, oldValue) {
-      if (
-        this.params.limit < newValue.length &&
-        oldValue.length > 0 &&
-        this.$route.query.status === "Cancelled"
-      ) {
-        this.getJobsCount(this.params);
-      }
-    },
-    getPracticeCompletedJobs(newValue, oldValue) {
-      if (
-        this.jobPartParams.limit < newValue.length &&
-        oldValue.length > 0 &&
-        this.$route.query.status === "Completed"
-      ) {
-        this.getJobsCount(this.jobPartParams);
-      }
-    },
-    getPracticeApprovedJobs(newValue, oldValue) {
-      if (
-        this.jobPartParams.limit < newValue.length &&
-        oldValue.length > 0 &&
-        this.$route.query.status === "Approved"
-      ) {
-        this.getJobsCount(this.jobPartParams);
-      }
-    },
-    "$route.query"({ status: newStatus }, { status: oldStatus }) {
-      if (newStatus && newStatus !== null && newStatus !== oldStatus) {
-        // this.$store.commit("jobs/TOGGLE_LOADING", true);
         this.$store.commit("jobs/CLEAR_PRACTICE_JOB_NOTIFICATION");
         this.current_page = 1;
         this.showTable = false;
         this.filterModal = false;
         this.showRefresh = false;
         setTimeout(async () => {
+          // if (newStatus === "Applied" && newBank === "true") {
+          //   const response = await this.getMyBanks();
+          //   if (
+          //     response.data &&
+          //     response.data.users &&
+          //     response.data.users.length > 0
+          //   ) {
+          //     this.params.viewing_locum_user_id = response.data.users.map(
+          //       users => users.id
+          //     );
+          //   }
+          // } else if (
+          //   newStatus !== "Applied" ||
+          //   !newBank ||
+          //   (newBank && newBank === "false")
+          // ) {
+          //   this.params.viewing_locum_user_id = [];
+          // }
           await this.clearFilters();
           this.loading = true;
           await this.getJobsCount(
@@ -761,26 +721,54 @@ export default {
     this.loading = false;
   },
   mounted() {
-    this.$socket.on("Practice Notification Job Current", this.getJobsRealTime);
     this.$socket.on(
       "Practice Notification Job Available",
-      this.getJobsRealTime
-    );
-    this.$socket.on("Practice Notification Job Applied", this.getJobsRealTime);
-    this.$socket.on("Practice Notification Job Declined", this.getJobsRealTime);
-    this.$socket.on(
-      "Practice Notification Job Cancelled",
-      this.getJobsRealTime
+      this.getAvailableJobsRealTime
     );
     this.$socket.on(
-      "Practice Notification Job Part Approved",
-      this.getJobsRealTime
+      "Practice Notification Job Applied",
+      this.getAppliedJobsRealTime
+    );
+    this.$socket.on(
+      "Practice Notification Job Current",
+      this.getCurrentJobsRealTime
+    );
+    this.$socket.on(
+      "Practice Notification Job Ongoing",
+      this.getOngoingJobsRealTime
     );
     this.$socket.on(
       "Practice Notification Job Part Completed",
-      this.getJobsRealTime
+      this.getCompletedJobsRealTime
     );
-    this.$socket.on("Practice Notification Job Updated", this.getJobsRealTime);
+    this.$socket.on(
+      "Practice Notification Job Completed",
+      this.getCompletedJobsRealTime
+    );
+    this.$socket.on(
+      "Practice Notification Job Part Approved",
+      this.getApprovedJobsRealTime
+    );
+    this.$socket.on(
+      "Practice Notification Job Declined",
+      this.getDeclinedJobsRealTime
+    );
+    this.$socket.on(
+      "Practice Notification Job Cancelled",
+      this.getCancelledJobsRealTime
+    );
+    this.$socket.on(
+      "Practice Notification Job Unfilled",
+      this.getUnfilledJobsRealTime
+    );
+    this.$socket.on(
+      "Practice Notification Job Amended",
+      this.getAmendedJobsRealTime
+    );
+    this.$socket.on(
+      "Practice Notification Locum Invoice Updated",
+      this.getUpdatedInvoiceRealTime
+    );
   },
   destroyed() {
     this.removeListener();
@@ -788,6 +776,11 @@ export default {
     this.$store.commit("jobs/CLEAR_PRACTICE_JOB_NOTIFICATION");
   },
   methods: {
+    getMyBanks() {
+      return this.$axios.$get(
+        `/api/v1/practice/locums?practice_locum_type=Favorite`
+      );
+    },
     getJobsCount(params) {
       let status = [];
       if (!this.$route.query.status) {
@@ -925,12 +918,147 @@ export default {
           return;
         });
     },
-    getJobsRealTime(job) {
+    async getAvailableJobsRealTime(job) {
       if (!job) {
         return;
       }
-      console.log("job from socket", job);
-      this.showRefresh = true;
+      if (
+        this.$route.path.includes("/sessions") &&
+        this.$route.query.status === "Live"
+      ) {
+        this.showRefresh = true;
+      }
+    },
+    async getAppliedJobsRealTime(job) {
+      if (!job) {
+        return;
+      }
+      if (
+        this.$route.path.includes("/sessions") &&
+        (this.$route.query.status === "Applied" ||
+          this.$route.query.status === "Live")
+      ) {
+        this.showRefresh = true;
+      }
+    },
+    async getCurrentJobsRealTime(job) {
+      if (!job) {
+        return;
+      }
+      if (
+        this.$route.path.includes("/sessions") &&
+        (this.$route.query.status === "Allocated" ||
+          this.$route.query.status === "Applied")
+      ) {
+        this.showRefresh = true;
+      }
+    },
+    async getOngoingJobsRealTime(job) {
+      if (!job) {
+        return;
+      }
+      if (
+        this.$route.path.includes("/sessions") &&
+        (this.$route.query.status === "Ongoing" ||
+          this.$route.query.status === "Allocated")
+      ) {
+        this.showRefresh = true;
+      }
+    },
+    async getCompletedJobsRealTime(job) {
+      if (!job) {
+        return;
+      }
+      if (
+        this.$route.path.includes("/sessions") &&
+        (this.$route.query.status === "Completed" ||
+          this.$route.query.status === "Ongoing")
+      ) {
+        this.showRefresh = true;
+      }
+    },
+    async getApprovedJobsRealTime(job) {
+      if (!job) {
+        return;
+      }
+      if (
+        this.$route.path.includes("/sessions") &&
+        (this.$route.query.status === "Approved" ||
+          this.$route.query.status === "Completed")
+      ) {
+        this.showRefresh = true;
+      }
+    },
+    async getDeclinedJobsRealTime(job) {
+      if (!job) {
+        return;
+      }
+      if (
+        this.$route.path.includes("/sessions") &&
+        (this.$route.query.status === "Declined" ||
+          this.$route.query.status === "Allocated" ||
+          this.$route.query.status === "Ongoing" ||
+          this.$route.query.status === "Live" ||
+          this.$route.query.status === "Applied")
+      ) {
+        this.showRefresh = true;
+      }
+    },
+    async getCancelledJobsRealTime(job) {
+      if (!job) {
+        return;
+      }
+      if (
+        this.$route.path.includes("/sessions") &&
+        (this.$route.query.status === "Cancelled" ||
+          this.$route.query.status === "Allocated" ||
+          this.$route.query.status === "Ongoing" ||
+          this.$route.query.status === "Live" ||
+          this.$route.query.status === "Applied")
+      ) {
+        this.showRefresh = true;
+      }
+    },
+    async getUnfilledJobsRealTime(job) {
+      if (!job) {
+        return;
+      }
+      if (
+        this.$route.path.includes("/sessions") &&
+        (this.$route.query.status === "Unfilled" ||
+          this.$route.query.status === "Allocated" ||
+          this.$route.query.status === "Ongoing" ||
+          this.$route.query.status === "Live" ||
+          this.$route.query.status === "Applied")
+      ) {
+        this.showRefresh = true;
+      }
+    },
+    async getAmendedJobsRealTime(job) {
+      if (!job) {
+        return;
+      }
+      if (
+        this.$route.path.includes("/sessions") &&
+        (this.$route.query.status === "Allocated" ||
+          this.$route.query.status === "Ongoing" ||
+          this.$route.query.status === "Live" ||
+          this.$route.query.status === "Applied")
+      ) {
+        this.showRefresh = true;
+      }
+    },
+    async getUpdatedInvoiceRealTime(job) {
+      if (!job) {
+        return;
+      }
+      if (
+        this.$route.path.includes("/sessions") &&
+        (this.$route.query.status === "Approved" ||
+          this.$route.query.status === "Completed")
+      ) {
+        this.showRefresh = true;
+      }
     },
     async refreshJobs() {
       this.loading = true;
@@ -944,40 +1072,53 @@ export default {
     },
     removeListener() {
       this.$socket.removeListener(
-        "Practice Notification Job Current",
-        this.getJobsRealTime
-      );
-      this.$socket.removeListener(
         "Practice Notification Job Available",
-        this.getJobsRealTime
+        this.getAvailableJobsRealTime
       );
       this.$socket.removeListener(
         "Practice Notification Job Applied",
-        this.getJobsRealTime
+        this.getAppliedJobsRealTime
       );
       this.$socket.removeListener(
-        "Practice Notification Job Declined",
-        this.getJobsRealTime
+        "Practice Notification Job Current",
+        this.getCurrentJobsRealTime
       );
       this.$socket.removeListener(
-        "Practice Notification Job Cancelled",
-        this.getJobsRealTime
-      );
-      this.$socket.removeListener(
-        "Practice Notification Job Part Approved",
-        this.getJobsRealTime
+        "Practice Notification Job Ongoing",
+        this.getOngoingJobsRealTime
       );
       this.$socket.removeListener(
         "Practice Notification Job Part Completed",
-        this.getJobsRealTime
+        this.getCompletedJobsRealTime
+      );
+      this.$socket.removeListener(
+        "Practice Notification Job Completed",
+        this.getCompletedJobsRealTime
+      );
+      this.$socket.removeListener(
+        "Practice Notification Job Part Approved",
+        this.getApprovedJobsRealTime
+      );
+      this.$socket.removeListener(
+        "Practice Notification Job Declined",
+        this.getDeclinedJobsRealTime
+      );
+      this.$socket.removeListener(
+        "Practice Notification Job Cancelled",
+        this.getCancelledJobsRealTime
+      );
+      this.$socket.removeListener(
+        "Practice Notification Job Unfilled",
+        this.getUnfilledJobsRealTime
       );
       this.$socket.removeListener(
         "Practice Notification Job Updated",
-        this.getJobsRealTime
+        this.getAmendedJobsRealTime
       );
-    },
-    showFilter() {
-      this.filterModal = !this.filterModal;
+      this.$socket.removeListener(
+        "Practice Notification Locum Invoice Updated",
+        this.getUpdatedInvoiceRealTime
+      );
     },
     async filterJob() {
       console.log("filter job");

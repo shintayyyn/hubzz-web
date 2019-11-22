@@ -15,6 +15,8 @@
             <option :value="10" v-if="total > 10">10</option>
             <option :value="15" v-if="total > 15">15</option>
             <option :value="20" v-if="total > 20">20</option>
+            <option :value="30" v-if="total > 30">30</option>
+            <option :value="50" v-if="total > 50">50</option>
             <option :value="total">All</option>
           </select>
           items
@@ -34,7 +36,7 @@
           >{{ page.name }}</button>
         </div>
       </div>
-      
+
       <div class="flex">
         <div class="pagination-item m-1">
           <button
@@ -44,12 +46,12 @@
             :class="{ 'text-gray-500 cursor-not-allowed': isInFirstPage }"
             :disabled="loading || isInFirstPage"
           >
-          <span class="hidden md:block">First</span>
-          <span class="md:hidden absolute mx-1 my-1 left-0 top-0">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18">
-              <path d="M18.41 16.59L13.82 12l4.59-4.59L17 6l-6 6 6 6zM6 6h2v12H6z" />
-            </svg>
-          </span>
+            <span class="hidden md:block">First</span>
+            <span class="md:hidden absolute mx-1 my-1 left-0 top-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18">
+                <path d="M18.41 16.59L13.82 12l4.59-4.59L17 6l-6 6 6 6zM6 6h2v12H6z" />
+              </svg>
+            </span>
           </button>
         </div>
 
@@ -113,7 +115,6 @@
             </span>
           </button>
         </div>
-
       </div>
     </div>
   </div>
@@ -266,12 +267,13 @@ button:active {
   transform: translate(2px, 2px);
 }
 
-button:active :not(button:disabled){
+button:active :not(button:disabled) {
   transform: translate(2px, 2px);
   box-shadow: 0 0 0 transparent;
 }
 
-button:disabled, button:disabled svg {
+button:disabled,
+button:disabled svg {
   background: #e2e2e2;
   color: #999999;
   cursor: not-allowed;

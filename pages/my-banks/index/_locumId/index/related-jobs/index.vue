@@ -43,7 +43,6 @@ import AppTime from "@/components/Base/AppTime";
 import AppPostCode from "@/components/Base/AppPostCode";
 import AppAutoComplete from "@/components/Base/AppAutoComplete";
 import AppButton from "@/components/Base/AppButton";
-import AppLoading from "@/components/Base/AppLoading";
 import { mapGetters } from "vuex";
 export default {
   props: ["shifts", "rates"],
@@ -54,8 +53,7 @@ export default {
     AppTime,
     AppPostCode,
     AppAutoComplete,
-    AppButton,
-    AppLoading
+    AppButton
   },
   middleware({ query, redirect, error }) {
     if (

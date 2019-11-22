@@ -44,6 +44,12 @@
           <div class="font-bold text-sm sm:text-md">Cancelled Reason</div>
           <div class="text-xs sm:text-sm mb-6" v-text="job.platform_job.cancelled_reason"></div>
         </template>
+        <!-- update -->
+        <div class="font-bold text-sm sm:text-md">Update Remarks</div>
+        <div
+          class="text-xs sm:text-sm mb-6"
+          v-text="job.update_remarks?job.update_remarks:`(none)`"
+        ></div>
       </div>
       <div class="flex flex-col w-full md:w-1/2 p-0 md:pl-4">
         <div class="font-bold text-sm sm:text-md">Duration</div>

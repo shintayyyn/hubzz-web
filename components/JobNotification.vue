@@ -139,27 +139,28 @@ export default {
   },
   methods: {
     goTo(id, status) {
-      if (
-        this.$route.path.includes(`${this.url}`) &&
-        this.$route.query.status &&
-        this.$route.query.status !== status
-      ) {
-        this.$router.push({
-          query: { ...this.$route.query, status }
-        });
+      this.$router.push({
+        path: `${this.url}/${id}`,
+        query: { ...this.$route.query, status }
+      });
+      // if (
+      //   this.$route.path.includes(`${this.url}`) &&
+      //   this.$route.query.status &&
+      //   this.$route.query.status !== status
+      // ) {
+      //   this.$router.push({
+      //     query: { ...this.$route.query, status }
+      //   });
 
-        setTimeout(() => {
-          this.$router.push({
-            path: `${this.url}/${id}`,
-            query: { ...this.$route.query }
-          });
-        }, 500);
-      } else {
-        this.$router.push({
-          path: `${this.url}/${id}`,
-          query: { ...this.$route.query }
-        });
-      }
+      //   setTimeout(() => {
+      //     this.$router.push({
+      //       path: `${this.url}/${id}`,
+      //       query: { ...this.$route.query }
+      //     });
+      //   }, 500);
+      // } else {
+      // }
+      this.close(id);
     },
     close(id) {
       this.$store.commit("jobs/REMOVE_PRACTICE_JOB_NOTIFICATION", id);
@@ -178,6 +179,7 @@ export default {
           return "bg-orange-400 text-white";
         case "Paid":
         case "Completed":
+        case "Approved":
           return "bg-green-500 text-white";
           break;
         case "Allocated":

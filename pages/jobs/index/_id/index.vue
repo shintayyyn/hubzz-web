@@ -56,7 +56,6 @@ export default {
       ) {
         url = `/api/v1/locum/job-parts`;
       }
-
       let response = await app.$axios.get(`${url}/${params.id}`);
 
       if (response.data.data.job) {
