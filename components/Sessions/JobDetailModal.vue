@@ -1,6 +1,6 @@
 <template>
   <div class="p-4 md:p-8">
-    <div @click="close" class="cursor-pointer">
+    <div @click="$emit('close')" class="cursor-pointer">
       <svgicon name="left-arrow" height="32" width="32" />
     </div>
     <div class="flex flex-row justify-start mt-4">
@@ -15,22 +15,22 @@
           v-if="
 						(job.status === 'Allocated' &&
 							toEdit === false &&
-							jobOngoing === false) ||
+							canEdit === true) ||
 							(job.status === 'Applied' && toEdit === false) ||
 							(job.status === 'Live' && toEdit === false)
 					"
-          @click.prevent="editJob()"
+          @click.prevent="toEdit = true"
         >Edit this job</button>
         <button
           class="font-bold text-xs sm:text-sm no-underline px-2 py-2 rounded-lg bg-yellow-500 ml-4 focus:outline-none"
           v-if="
 						(job.status === 'Allocated' &&
 							toEdit === true &&
-							jobOngoing === false) ||
+							canEdit === true) ||
 							(job.status === 'Applied' && toEdit === true) ||
 							(job.status === 'Live' && toEdit === true)
 					"
-          @click.prevent="cancelEdit()"
+          @click.prevent="toEdit = false"
         >Cancel Editing</button>
       </div>
     </div>
@@ -42,12 +42,12 @@
             <JobDetailModalForm :job="job" v-if="toEdit === false" />
             <JobDetailModalUpdateForm
               :job="job"
-              v-if="job.status === 'Allocated' && toEdit === true && jobOngoing === false  || job.status === 'Applied' && toEdit === true  || job.status === 'Live' && toEdit === true"
+              v-if="job.status === 'Allocated' && toEdit === true && canEdit === true  || job.status === 'Applied' && toEdit === true  || job.status === 'Live' && toEdit === true"
               @updateJob="updateJob"
             />
             <JobDetailModalCancelForm
               :job="job"
-              @close="close"
+              @close="$emit('close')"
               v-if="(job.status === 'Allocated' || job.status === 'Ongoing' || job.status === 'Applied' || job.status === 'Live') && authPermissions.includes('Cancel Sessions Job')"
             />
           </div>
@@ -57,14 +57,16 @@
             <JobPartDetailModalParts :job_id="job.id" :disabledLink="true" />
             <JobDetailModalCandidates
               class="order-first lg:order-none"
-              :applicants="applicants"
               v-if="job.status === 'Applied'"
+              :job="job"
               @show="showLocum($event)"
             />
             <JobDetailModalLocum
               :user="user"
               :mandatory="mandatory"
               :optional="optional"
+              @favorite="favorite"
+              @unfavorite="unfavorite"
               v-if="(job.status === 'Allocated' || job.status === 'Ongoing' || job.status === 'Completed') && user"
             />
           </div>
@@ -78,10 +80,18 @@
           @close="modal = false"
           :job="job"
           :user="user"
-          @appointed="close"
+          @appointed="$emit('close')"
         />
       </div>
     </transition>
+    <AppConfirmationModal
+      :label="confirmation_text"
+      :confirmLabel="'Yes'"
+      :cancelLabel="'Cancel'"
+      :modal="confirmation_modal"
+      @confirm="confirm"
+      @cancel="confirmation_modal = false"
+    />
   </div>
 </template>
 <script>
@@ -90,10 +100,10 @@ import JobPartDetailModalParts from "@/components/Sessions/JobPart/JobPartDetail
 import JobDetailModalUpdateForm from "@/components/Sessions/JobDetailModalUpdateForm";
 import JobDetailModalCandidates from "@/components/Sessions/JobDetailModalCandidates";
 import JobDetailModalLocum from "@/components/Sessions/JobDetailModalLocum";
-// import JobDetailModalSessionSample from "@/components/Sessions/JobDetailModalSessionSample";
 import JobDetailModalCancelForm from "@/components/Sessions/JobDetailModalCancelForm";
 import JobDetailModalCompleteForm from "@/components/Sessions/JobDetailModalCompleteForm";
 import JobDetailModalShowCandidate from "@/components/Sessions/JobDetailModalShowCandidate";
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
 export default {
   props: ["job"],
   components: {
@@ -102,57 +112,42 @@ export default {
     JobDetailModalUpdateForm,
     JobDetailModalCandidates,
     JobDetailModalLocum,
-    // JobDetailModalSessionSample,
     JobDetailModalCompleteForm,
     JobDetailModalCancelForm,
-    JobDetailModalShowCandidate
+    JobDetailModalShowCandidate,
+    AppConfirmationModal
   },
   data() {
     return {
       user: null,
       mandatory: [],
       optional: [],
-      applicants: [],
       modal: false,
       toEdit: false,
-      jobOngoing: false
+      confirmation_text: "",
+      confirmation_modal: false
     };
   },
   computed: {
     authPermissions() {
       return this.$store.getters["auth/permissions"];
+    },
+    canEdit() {
+      return (
+        this.$moment(
+          `${this.job.date_start} ${this.job.time_start}`,
+          "YYYY-MM-DD HH:mm"
+        ).diff(this.$moment(), "hours") >= 72
+      );
     }
   },
   created() {
     console.log("job", this.job);
-    if (this.job.status === "Applied") {
-      this.getCandidates();
-    }
     if (this.job.platform_job.appointed_to_locum !== null) {
       this.getAppointedLocum();
     }
-    if (this.$moment().diff(this.job.date_start, "days") >= 0) {
-      console.log(
-        "Job is either ongoing or unfilled. Cannot be edited",
-        this.$moment().diff(this.job.date_start, "days")
-      );
-      this.jobOngoing = true;
-    } else {
-      console.log(
-        "Job can still be edited",
-        this.$moment().diff(this.job.date_start, "days")
-      );
-      this.jobOngoing = false;
-    }
   },
   methods: {
-    getCandidates() {
-      this.$axios
-        .$get(`/api/v1/practice/jobs/${this.job.id}/applicants`)
-        .then(res => {
-          this.applicants = res.data.users;
-        });
-    },
     getAppointedLocum() {
       this.$axios
         .$get(
@@ -164,6 +159,41 @@ export default {
             res.data.user.locum_detail.profession.profession_category.id
           );
         });
+    },
+    favorite() {
+      this.confirmation_text = "Add this Locum to MyBanks?";
+      this.confirmation_modal = true;
+    },
+    unfavorite() {
+      this.confirmation_text = "Remove this Locum to MyBanks?";
+      this.confirmation_modal = true;
+    },
+    confirm() {
+      if (!this.user.is_favorite) {
+        this.$axios
+          .$post(`/api/v1/practice/locums/${this.user.id}/favorite`)
+          .then(res => {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: ["Added to favourites"]
+            });
+          });
+        this.user.is_favorite = true;
+        this.confirmation_modal = false;
+      } else if (this.user.is_favorite) {
+        this.$axios
+          .$delete(`/api/v1/practice/locums/${this.user.id}/favorite`)
+          .then(res => {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: ["Remove to favourites"]
+            });
+          });
+        this.user.is_favorite = false;
+        this.confirmation_modal = false;
+      }
     },
     getProfessionCategory(id) {
       this.$axios.$get(`/api/v1/profession-categories/${id}`).then(res => {
@@ -191,21 +221,19 @@ export default {
       this.user = user;
       this.modal = true;
     },
-    editJob() {
-      this.toEdit = true;
-    },
-    updateJob(id) {
+    updateJob({ newJob, oldJob }) {
       this.toEdit = false;
-      this.$router.push({
-        path: `/sessions/${id}`,
-        query: { ...this.$route.query }
-      });
-    },
-    cancelEdit() {
-      this.toEdit = false;
-    },
-    close() {
       this.$emit("close");
+      setTimeout(() => {
+        this.$router.push({
+          path: `/sessions/${newJob.id}`,
+          query: { ...this.$route.query }
+        });
+        this.$store.commit("jobs/UPDATE_PRACTICE_APPLIED_JOB", {
+          newJob,
+          oldJob
+        });
+      }, 500);
     },
     status(status) {
       return status.toUpperCase();

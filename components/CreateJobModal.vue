@@ -132,23 +132,7 @@
                 :placeholder="'For example, number of expected patients, nearby car park, etc.'"
                 :resize="false"
               />
-              <!-- <div class="flex flex-col py-2 mb-3 md:mb-6">
-                <div class="relative flex flex-row flex-wrap justify-start">
-                  <div class="mt-2">
-                    <label for="rate" class="text-xs sm:text-sm mt-2">Rate £</label>
-                    <input
-                      v-model="form.rate"
-                      type="number"
-                      class="border-b-2 focus:border-yellow-400 focus:outline-none font-bold text-xs sm:text-sm mx-1 py-2"
-                      :class="formError.find(item => item.field === 'rate')? 'border-red-500':''"
-                      style="text-align:right;width:100px;"
-                      :error="formError.find(item => item.field === 'rate')"
-                      @blur="CheckEmptyField(form.rate,'rate')"
-                    />
-                    <label for="rate" class="text-xs sm:text-sm mt-2">hours</label>
-                  </div>
-                </div>
-              </div>-->
+
               <div class="flex flex-row flex-wrap justify-start items-center mt-4 max-w-2xl">
                 <div class="px-1 w-full">
                   <AppInput
@@ -385,10 +369,10 @@
                 :type="'select'"
                 v-model="auto_assign_job"
                 :name="'auto_assign_job'"
-                :label="'Auto-assign this job?'"
+                :label="'Use AUTO-MATCH on this Job?'"
                 :items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
               />
-              <div
+              <!-- <div
                 class="flex flex-row flex-wrap justify-between"
                 v-if="auto_assign_job === true || auto_assign_job === 'true'"
               >
@@ -410,7 +394,7 @@
                     :error="formError.find(item => item.field === 'auto_assign_at')"
                   />
                 </div>
-              </div>
+              </div>-->
 
               <AppInput
                 :type="'select'"
@@ -444,10 +428,11 @@
               </div>
 
               <AppInput
+                v-if="bank_only === 'false' || bank_only === false"
                 :type="'select'"
                 v-model="favorite_notification"
                 :name="'favorite_notification'"
-                :label="'Make this Job Private?'"
+                :label="'Make this Job available for Bank First?'"
                 :items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
               />
 
@@ -474,6 +459,15 @@
                   />
                 </div>
               </div>
+
+              <AppInput
+                v-if="favorite_notification === 'false' || favorite_notification === false"
+                :type="'select'"
+                v-model="bank_only"
+                :name="'bank_only'"
+                :label="'Make this Job available for Bank Only?'"
+                :items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
+              />
             </div>
             <div class="mt-4">
               <AppButton
@@ -535,12 +529,9 @@ export default {
       auto_assign_job: false,
       selection_notification: false,
       favorite_notification: false,
+      bank_only: false,
       shifts: [],
 
-      auto_assign_at: {
-        date: null,
-        time: null
-      },
       selection_date: {
         date: null,
         time: null
@@ -788,22 +779,24 @@ export default {
         "mandatory_training_id",
         "include_saturday",
         "include_sunday",
-        "compliance_document_id"
+        "compliance_document_id",
+        "bank_only",
+        "auto_assign_at"
       ];
 
       if (["15", "30", "60", false, "false"].includes(this.unpaid_breaks)) {
         notRequired.push("unpaid_breaks_in_minutes");
       }
 
-      if (this.auto_assign_job === false || this.auto_assign_job === "false") {
-        notRequired.push("auto_assign_at");
-      } else {
-        if (this.auto_assign_job === true || this.auto_assign_job === "true") {
-          if (this.auto_assign_at.date && this.auto_assign_at.time) {
-            notRequired.push("auto_assign_at");
-          }
-        }
-      }
+      // if (this.auto_assign_job === false || this.auto_assign_job === "false") {
+      //   notRequired.push("auto_assign_at");
+      // } else {
+      //   if (this.auto_assign_job === true || this.auto_assign_job === "true") {
+      //     if (this.auto_assign_at.date && this.auto_assign_at.time) {
+      //       notRequired.push("auto_assign_at");
+      //     }
+      //   }
+      // }
 
       if (
         this.selection_notification == false ||
@@ -840,6 +833,7 @@ export default {
       this.form.favorite_only_until = `${this.$moment(
         this.favorite_only_until.date
       ).format("YYYY-MM-DD")} ${this.favorite_only_until.time}`;
+
       if (!this.formError.length) {
         this.selectedClinicalSystem = [...this.form.clinical_system_id];
         this.form.clinical_system_id = this.form.clinical_system_id.map(
@@ -866,11 +860,16 @@ export default {
           ? (this.form.session_requirements = this.form.session_requirements.join())
           : (this.form.session_requirements = "");
 
+        // this.form.auto_assign_at =
+        //   this.auto_assign_job === true || this.auto_assign_job === "true"
+        //     ? `${this.$moment(this.auto_assign_at.date, "YYYY-MM-DD").format(
+        //         "YYYY-MM-DD"
+        //       )} ${this.auto_assign_at.time}`
+        //     : null;
+
         this.form.auto_assign_at =
           this.auto_assign_job === true || this.auto_assign_job === "true"
-            ? `${this.$moment(this.auto_assign_at.date, "YYYY-MM-DD").format(
-                "YYYY-MM-DD"
-              )} ${this.auto_assign_at.time}`
+            ? this.$moment().format("YYYY-MM-DD")
             : null;
 
         this.form.selection_date =
@@ -880,14 +879,35 @@ export default {
                 "YYYY-MM-DD"
               )} ${this.selection_date.time}`
             : null;
-        this.form.favorite_only_until =
+
+        // this.form.favorite_only_until =
+        //   this.favorite_notification === true ||
+        //   this.favorite_notification === "true"
+        //     ? `${this.$moment(
+        //         this.favorite_only_until.date,
+        //         "YYYY-MM-DD"
+        //       ).format("YYYY-MM-DD")} ${this.favorite_only_until.time}`
+        //     : null;
+
+        if (
           this.favorite_notification === true ||
           this.favorite_notification === "true"
-            ? `${this.$moment(
-                this.favorite_only_until.date,
-                "YYYY-MM-DD"
-              ).format("YYYY-MM-DD")} ${this.favorite_only_until.time}`
-            : null;
+        ) {
+          this.form.favorite_only_until = `${this.$moment(
+            this.favorite_only_until.date,
+            "YYYY-MM-DD"
+          ).format("YYYY-MM-DD")} ${this.favorite_only_until.time}`;
+        }
+
+        if (this.bank_only === true || this.bank_only === "true") {
+          this.form.favorite_only_until = `${this.$moment(
+            this.form.date_end,
+            "YYYY-MM-DD"
+          )
+            .format("YYYY-MM-DD")
+            .add(1, "days")}`;
+        }
+
         if (["15", "30", "60"].includes(this.unpaid_breaks)) {
           this.form.unpaid_breaks_in_minutes = this.unpaid_breaks;
         }

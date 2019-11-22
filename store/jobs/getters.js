@@ -8,13 +8,16 @@ export default {
             let notifObj = null
             switch (notif.notificationType) {
                 case 'Practice Notification Job Reminder':
-                    if (notif.job_reminded_in_1_hours === 1) {
+                    if (notif.job_reminded_in_1_hours === true) {
                         message = 'This Job will start in 1 hour.'
-                    } else if (notif.job_reminded_in_3_hours) {
+                    }
+                    if (notif.job_reminded_in_3_hours === true) {
                         message = 'This Job will start in 3 hours.'
-                    } else if (notif.job_reminded_in_1_days === 1) {
+                    }
+                    if (notif.job_reminded_in_1_days === true) {
                         message = 'This Job will start tomorrow.'
-                    } else if (notif.job_reminded_in_3_days === 1) {
+                    }
+                    if (notif.job_reminded_in_3_days === true) {
                         message = 'This Job will start in 3 days.'
                     }
                     notifObj = {
@@ -31,13 +34,16 @@ export default {
                     }
                     break;
                 case 'Practice Notification Job Unfilled Warning':
-                    if (notif.job_unfilled_warned_in_1_hours === 1) {
+                    if (notif.job_unfilled_warned_in_1_hours === true) {
                         message = 'This Job will be unfilled in 1 hour.'
-                    } else if (notif.job_unfilled_warned_in_3_hours) {
+                    }
+                    if (notif.job_unfilled_warned_in_3_hours === true) {
                         message = 'This Job will be unfilled in 3 hours.'
-                    } else if (notif.job_unfilled_warned_in_1_days === 1) {
+                    }
+                    if (notif.job_unfilled_warned_in_1_days === true) {
                         message = 'This Job will be unfilled tomorrow.'
-                    } else if (notif.job_unfilled_warned_in_3_days === 1) {
+                    }
+                    if (notif.job_unfilled_warned_in_3_days === true) {
                         message = 'This Job will be unfilled in 3 days.'
                     }
                     notifObj = {
@@ -149,8 +155,8 @@ export default {
                         id: notif.id,
                         title: notif.job.title,
                         status: notif.status,
-                        date_start: notif.job.date_start,
-                        date_end: notif.job.date_end,
+                        date_start: notif.date_start,
+                        date_end: notif.date_end,
                         shift: notif.job.shift.name,
                         rate: notif.job.rate,
                         locum_detail_rate_type: notif.job.locum_detail_rate_type.name,
@@ -158,14 +164,14 @@ export default {
                         message
                     }
                     break;
-                case 'Practice Notification Job Part Approved':
+                case 'Practice Notification Locum Invoice Updated':
                     message = 'This part of your job has been approved'
                     notifObj = {
                         id: notif.id,
                         title: notif.job.title,
                         status: notif.status,
-                        date_start: notif.job.date_start,
-                        date_end: notif.job.date_end,
+                        date_start: notif.date_start,
+                        date_end: notif.date_end,
                         shift: notif.job.shift.name,
                         rate: notif.job.rate,
                         locum_detail_rate_type: notif.job.locum_detail_rate_type.name,
@@ -188,7 +194,7 @@ export default {
                         message
                     }
                     break;
-                case 'Practice Notification Job Updated':
+                case 'Practice Notification Job Amended':
                     message = 'This job has been updated by your practice'
                     notifObj = {
                         id: notif.id,
@@ -577,13 +583,13 @@ export default {
             let notifObj = null
             switch (notif.notificationType) {
                 case 'Locum Notification Job Reminder':
-                    if (notif.job_reminded_in_1_hours === 1) {
+                    if (notif.job_reminded_in_1_hours === true) {
                         message = 'This Job will start in 1 hour.'
-                    } else if (notif.job_reminded_in_3_hours) {
+                    } else if (notif.job_reminded_in_3_hours === true) {
                         message = 'This Job will start in 3 hours.'
-                    } else if (notif.job_reminded_in_1_days === 1) {
+                    } else if (notif.job_reminded_in_1_days === true) {
                         message = 'This Job will start tomorrow.'
-                    } else if (notif.job_reminded_in_3_days === 1) {
+                    } else if (notif.job_reminded_in_3_days === true) {
                         message = 'This Job will start in 3 days.'
                     }
                     notifObj = {
@@ -710,8 +716,8 @@ export default {
                         id: notif.id,
                         title: notif.job.title,
                         locum_status: notif.locum_status,
-                        date_start: notif.job.date_start,
-                        date_end: notif.job.date_end,
+                        date_start: notif.date_start,
+                        date_end: notif.date_end,
                         shift: notif.job.shift.name,
                         rate: notif.job.rate,
                         locum_detail_rate_type: notif.job.locum_detail_rate_type.name,
@@ -719,14 +725,14 @@ export default {
                         message
                     }
                     break;
-                case 'Locum Notification Job Part Approved':
+                case 'Locum Notification Locum Invoice Updated':
                     message = 'This part of your job has been approved'
                     notifObj = {
                         id: notif.id,
                         title: notif.job.title,
                         locum_status: notif.locum_status,
-                        date_start: notif.job.date_start,
-                        date_end: notif.job.date_end,
+                        date_start: notif.date_start,
+                        date_end: notif.date_end,
                         shift: notif.job.shift.name,
                         rate: notif.job.rate,
                         locum_detail_rate_type: notif.job.locum_detail_rate_type.name,
@@ -749,7 +755,7 @@ export default {
                         message
                     }
                     break;
-                case 'Locum Notification Job Updated':
+                case 'Locum Notification Job Amended':
                     message = 'This job has been updated by your practice'
                     notifObj = {
                         id: notif.id,

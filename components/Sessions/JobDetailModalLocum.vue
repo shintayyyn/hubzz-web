@@ -5,6 +5,26 @@
       <div class="flex flex-col">
         <div class="flex flex-row flex-wrap justify-between items-center">
           <div class="flex flex-col order-2 md:order-1 w-full md:w-1/2">
+            <div class="flex justify-start z-50">
+              <template v-if="user.is_favorite">
+                <svgicon
+                  name="on-star"
+                  height="32"
+                  width="32"
+                  class="cursor-pointer fill-current text-gray-700 hover:text-gray-800"
+                  @click="$emit('unfavorite')"
+                />
+              </template>
+              <template v-else-if="!user.is_favorite">
+                <svgicon
+                  name="off-star"
+                  height="32"
+                  width="32"
+                  class="cursor-pointer fill-current text-gray-700 hover:text-gray-800"
+                  @click="$emit('favorite')"
+                />
+              </template>
+            </div>
             <div class="font-bold mt-4 text-sm lg:text-lg">{{user.personal_detail.name}}</div>
             <div class="text-xs lg:text-sm">{{user.locum_detail.profession.name}}</div>
           </div>

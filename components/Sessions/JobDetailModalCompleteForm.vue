@@ -1,17 +1,60 @@
 <template>
   <section>
-    <div class="text-md font-bold">Form</div>
+    <div class="text-md font-bold">Complete Form</div>
     <div class="rounded-lg shadow-lg flex flex-col p-8 mt-4">
       <AppFormError :formError="formError" v-if="formError.length" />
       <div class="flex flex-col">
         <AppInput
-          v-model="form.absent_days"
-          :type="'number'"
-          :name="'absent_days'"
-          :label="'Days of Absent'"
-          :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
-          :error="formError.find(item => item.field === 'absent_days')"
+          v-model="has_absences"
+          :type="'select'"
+          :name="'has_absences'"
+          :label="'Was the locum has any absences?'"
+          :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
         />
+        <template v-if="has_absences === 'true' || has_absences === true">
+          <AppInput
+            v-model="form.absent_days"
+            :type="'number'"
+            :name="'absent_days'"
+            :label="'Days of Absent'"
+            :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
+            :error="formError.find(item => item.field === 'absent_days')"
+          />
+          <AppInput
+            v-model="form.absent_days_reason"
+            :type="'textarea'"
+            :name="'absent_days_reason'"
+            :label="'Withdrawal Status'"
+            :placeholder="'For e.g. No-show'"
+            :resize="false"
+          />
+        </template>
+
+        <AppInput
+          v-model="has_late"
+          :type="'select'"
+          :name="'has_late'"
+          :label="'Was the Locum late for this session?'"
+          :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
+        />
+        <template v-if="has_late === 'true' || has_late === true">
+          <AppInput
+            v-model="form.late_hours"
+            :type="'number'"
+            :name="'late_hours'"
+            :label="'Hours of Late'"
+            :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
+            :error="formError.find(item => item.field === 'late_hours')"
+          />
+          <AppInput
+            v-model="form.late_hours_reason"
+            :type="'textarea'"
+            :name="'late_hours_reason'"
+            :label="'Reason of late'"
+            :placeholder="'For e.g. Traffic'"
+            :resize="false"
+          />
+        </template>
         <AppInput
           v-model="form.final_hours"
           :type="'number'"
@@ -20,14 +63,7 @@
           :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
           :error="formError.find(item => item.field === 'final_hours')"
         />
-        <AppInput
-          v-model="form.late_hours"
-          :type="'number'"
-          :name="'late_hours'"
-          :label="'Hours of Late'"
-          :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
-          :error="formError.find(item => item.field === 'late_hours')"
-        />
+
         <AppButton
           :label="`Mark this week as Complete`"
           @click="confirmation_modal = true"
@@ -61,10 +97,14 @@ export default {
   data() {
     return {
       confirmation_modal: false,
+      has_absences: false,
+      has_late: false,
       form: {
-        absent_days: null,
-        final_hours: null,
-        late_hours: null
+        absent_days: 0,
+        absent_days_reason: "",
+        late_hours: 0,
+        late_hours_reason: "",
+        final_hours: 0
       },
       formError: []
     };
@@ -86,8 +126,19 @@ export default {
     },
     complete() {
       this.formError = [];
+      let notRequired = [];
       this.confirmation_modal = false;
-      this.Validate(this.form);
+      if (this.has_absences === "false" || this.has_absences === false) {
+        this.form.absent_days = 0;
+        notRequired.push("absent_days", "absent_days_reason");
+      }
+      if (this.has_late === "false" || this.has_late === false) {
+        this.form.late_hours = 0;
+        notRequired.push("late_hours", "late_hours_reason");
+      }
+      console.log(this.form, notRequired);
+      this.Validate(this.form, notRequired);
+      return;
       if (!this.formError.length) {
         this.$axios
           .$put(`/api/v1/practice/job-parts/${this.job.id}/complete`, this.form)
@@ -98,7 +149,7 @@ export default {
             ) {
               this.$store.commit(
                 "jobs/REMOVE_PRACTICE_ONGOING_JOB_PART",
-                res.data.job_part.id
+                this.job.id
               );
             }
             this.$emit("close");

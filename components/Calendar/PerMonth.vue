@@ -1,5 +1,5 @@
 <template>
-  <section class="relative per-month-section">
+  <section class="relative">
     <div>
       <div class="flex flex-row flex-wrap justify-between mx-1" v-if="showRefresh">
         <AppButton
@@ -195,7 +195,7 @@ export default {
   watch: {
     selectedMonth(value) {
       this.getDaysInMonth(value, this.selectedYear);
-    }
+    },
   },
   beforeDestroy() {
     this.$store.commit("jobs/CLEAR_JOBS");
