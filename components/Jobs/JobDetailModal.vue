@@ -3,7 +3,7 @@
 		<div @click="close" class="cursor-pointer">
 			<svgicon name="left-arrow" height="32" width="32" />
 		</div>
-		<div class="flex flex-wrap items-center justify-start mt-4 md:mt-8">
+		<div class="flex items-center justify-start mt-4">
 			<div class="leading-loose font-bold text-md sm:text-lg">
 				{{ job.title }}
 			</div>
@@ -17,8 +17,29 @@
 		<div class="text-xs sm:text-sm py-3">
 			Posted {{ $moment(job.date_created).format("DD/MM/YYYY") }}
 		</div>
+		<!-- UPDATE CHANGES -->
+		<template v-if="false">
+			<div class="text-md">
+				The Practice made changes on this Job, Accept these changes?
+			</div>
+			<div class="flex items-center justify-start mt-1">
+				<div
+					class="bg-red-600 text-white rounded-lg px-2 py-1 font-semibold focus:outline-none cursor-pointer"
+					@click="decline"
+				>
+					Decline
+				</div>
+				<div class="mx-1"></div>
+				<div
+					class="bg-yellow-500 rounded-lg px-2 py-1 font-semibold focus:outline-none cursor-pointer"
+					@click="accept"
+				>
+					Accept
+				</div>
+			</div>
+		</template>
 		<div class="flex flex-wrap justify-start">
-			<div class="p-0 md:pr-4 w-full lg:w-1/2">
+			<div class="p-0 lg:pr-4 w-full lg:w-1/2">
 				<div class="flex flex-col">
 					<JobDetailModalInfo :job="job" />
 					<JobDetailModalUnassignForm
@@ -61,6 +82,7 @@ import JobDetailModalMap from "@/components/Jobs/JobDetailModalMap";
 import JobDetailModalUnassignForm from "@/components/Jobs/JobDetailModalUnassignForm";
 import JobDetailModalApplyForm from "@/components/Jobs/JobDetailModalApplyForm";
 import JobDetailModalCancelForm from "@/components/Jobs/JobDetailModalCancelForm";
+import AppButton from "@/components/Base/AppButton";
 export default {
 	props: ["job"],
 	components: {
@@ -69,7 +91,13 @@ export default {
 		JobDetailModalMap,
 		JobDetailModalUnassignForm,
 		JobDetailModalApplyForm,
-		JobDetailModalCancelForm
+		JobDetailModalCancelForm,
+		AppButton
+	},
+	data() {
+		return {
+			accept_changes: false
+		};
 	},
 	methods: {
 		close() {
@@ -96,7 +124,9 @@ export default {
 				default:
 					return "bg-red-500 text-white";
 			}
-		}
+		},
+		decline() {},
+		accept() {}
 	}
 };
 </script>

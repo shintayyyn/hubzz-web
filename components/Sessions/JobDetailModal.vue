@@ -16,7 +16,7 @@
 					v-if="
 						(job.status === 'Allocated' &&
 							toEdit === false &&
-							jobOngoing === false) ||
+							canEdit === true) ||
 							(job.status === 'Applied' && toEdit === false) ||
 							(job.status === 'Live' && toEdit === false)
 					"
@@ -29,7 +29,7 @@
 					v-if="
 						(job.status === 'Allocated' &&
 							toEdit === true &&
-							jobOngoing === false) ||
+							canEdit === true) ||
 							(job.status === 'Applied' && toEdit === true) ||
 							(job.status === 'Live' && toEdit === true)
 					"
@@ -50,7 +50,7 @@
 							v-if="
 								(job.status === 'Allocated' &&
 									toEdit === true &&
-									jobOngoing === false) ||
+									canEdit === true) ||
 									(job.status === 'Applied' && toEdit === true) ||
 									(job.status === 'Live' && toEdit === true)
 							"
@@ -76,8 +76,8 @@
 						<JobPartDetailModalParts :job_id="job.id" :disabledLink="true" />
 						<JobDetailModalCandidates
 							class="order-first lg:order-none"
-							:applicants="applicants"
 							v-if="job.status === 'Applied'"
+							:job="job"
 							@show="showLocum($event)"
 						/>
 						<JobDetailModalLocum
@@ -136,47 +136,31 @@ export default {
 			user: null,
 			mandatory: [],
 			optional: [],
-			applicants: [],
 			modal: false,
-			toEdit: false,
-			jobOngoing: false
+			toEdit: false
+			// canEdit: false
 		};
 	},
 	computed: {
 		authPermissions() {
 			return this.$store.getters["auth/permissions"];
+		},
+		canEdit() {
+			return (
+				this.$moment(
+					`${this.job.date_start} ${this.job.time_start}`,
+					"YYYY-MM-DD HH:mm"
+				).diff(this.$moment(), "hours") >= 72
+			);
 		}
 	},
 	created() {
 		console.log("job", this.job);
-		if (this.job.status === "Applied") {
-			this.getCandidates();
-		}
 		if (this.job.platform_job.appointed_to_locum !== null) {
 			this.getAppointedLocum();
 		}
-		if (this.$moment().diff(this.job.date_start, "days") >= 0) {
-			console.log(
-				"Job is either ongoing or unfilled. Cannot be edited",
-				this.$moment().diff(this.job.date_start, "days")
-			);
-			this.jobOngoing = true;
-		} else {
-			console.log(
-				"Job can still be edited",
-				this.$moment().diff(this.job.date_start, "days")
-			);
-			this.jobOngoing = false;
-		}
 	},
 	methods: {
-		getCandidates() {
-			this.$axios
-				.$get(`/api/v1/practice/jobs/${this.job.id}/applicants`)
-				.then(res => {
-					this.applicants = res.data.users;
-				});
-		},
 		getAppointedLocum() {
 			this.$axios
 				.$get(
@@ -218,12 +202,19 @@ export default {
 		editJob() {
 			this.toEdit = true;
 		},
-		updateJob(id) {
+		updateJob({ newJob, oldJob }) {
 			this.toEdit = false;
-			this.$router.push({
-				path: `/sessions/${id}`,
-				query: { ...this.$route.query }
-			});
+			this.close();
+			setTimeout(() => {
+				this.$router.push({
+					path: `/sessions/${newJob.id}`,
+					query: { ...this.$route.query }
+				});
+				this.$store.commit("jobs/UPDATE_PRACTICE_APPLIED_JOB", {
+					newJob,
+					oldJob
+				});
+			}, 500);
 		},
 		cancelEdit() {
 			this.toEdit = false;

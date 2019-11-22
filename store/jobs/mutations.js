@@ -37,7 +37,10 @@ export default {
     // PRACTICE
     // JOB NOTIFICATION
     ADD_PRACTICE_JOB_NOTIFICATION(state, payload) {
-        state.practice_job_notifications.unshift(payload)
+        let index = state.practice_job_notifications.findIndex(jobNotif => jobNotif.id === payload.id)
+        if (index < 0) {
+            state.practice_job_notifications.unshift(payload)
+        }
     },
     REMOVE_PRACTICE_JOB_NOTIFICATION(state, payload) {
         state.practice_job_notifications = state.practice_job_notifications.filter(job => job.id !== payload)
@@ -157,6 +160,12 @@ export default {
         state.practice_applied_jobs.push(payload)
         state.practice_applied_jobs_count = state.practice_applied_jobs_count + 1
     },
+    UPDATE_PRACTICE_APPLIED_JOB(state, { newJob, oldJob }) {
+        let index = state.practice_applied_jobs.findIndex(appliedJob => appliedJob.id === oldJob.id)
+        if (index >= 0) {
+            state.practice_applied_jobs.splice(index, 1, newJob)
+        }
+    },
 
     SET_PRACTICE_ALLOCATED_JOBS(state, payload) {
         state.practice_allocated_jobs = payload
@@ -273,7 +282,10 @@ export default {
     // LOCUM
     // JOB NOTIFICATION
     ADD_LOCUM_JOB_NOTIFICATION(state, payload) {
-        state.locum_job_notifications.unshift(payload)
+        let index = state.locum_job_notifications.findIndex(jobNotif => jobNotif.id === payload.id)
+        if (index < 0) {
+            state.locum_job_notifications.unshift(payload)
+        }
     },
     REMOVE_LOCUM_JOB_NOTIFICATION(state, payload) {
         state.locum_job_notifications = state.locum_job_notifications.filter(job => job.id !== payload)

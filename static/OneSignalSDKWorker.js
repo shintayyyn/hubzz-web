@@ -1,4 +1,4 @@
 importScripts(
-	"/sw.js?1574321583027",
+	"/sw.js?1574372199682",
 	"https://cdn.onesignal.com/sdks/OneSignalSDK.js"
 );

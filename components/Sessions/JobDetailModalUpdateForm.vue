@@ -16,7 +16,7 @@
             :items="practice_lists"
           />
           <div class="text-xs sm:text-sm mt-2 mb-4 flex flex-row flex-wrap items-center">
-            <div class="w-full md:w-1/2 p-1">
+            <div class="w-full">
               <AppInput
                 v-model="form.rate"
                 :type="'text'"
@@ -26,7 +26,7 @@
                 :error="formError.find(item => item.field === 'rate')"
               />
             </div>
-            <div class="w-full md:w-1/2 p-1">
+            <div class="w-full">
               <AppInput
                 v-model="form.locum_detail_rate_type_id"
                 :type="'select'"
@@ -157,7 +157,38 @@
             :error="formError.find(item => item.field === 'extra_information')"
             :resize="false"
           />
+
           <AppInput
+            :type="'select'"
+            v-model="session_amendment"
+            :name="'session_amendment'"
+            :label="'Choose one reason for session amendment?'"
+            :items="[
+                {
+                  label: 'Change job rate',
+                  value: 'Change job rate',
+                },
+                {
+                  label: 'Change required compliance levels',
+                  value: 'Change required compliance levels',
+                },
+                {
+                  label: 'Change work hours',
+                  value: 'Change work hours',
+                },
+                {
+                  label: 'Change work shift',
+                  value: 'Change work shift',
+                },
+                {
+                  label: 'Other',
+                  value: 'other',
+                },
+              ]"
+            :error="formError.find(item => item.field === 'session_amendment')"
+          />
+          <AppInput
+            v-if="session_amendment === 'other'"
             v-model="form.update_remarks"
             :type="'textarea'"
             :name="'update_remarks'"
@@ -165,6 +196,15 @@
             :error="formError.find(item => item.field === 'update_remarks')"
             :resize="false"
           />
+          <template v-if="job.status === 'Allocated'">
+            <AppTime
+              v-model="form.deadline"
+              :type="'time'"
+              :name="'deadline'"
+              :label="'Set deadline for appointed Locum to accept these changes (Max 24 hrs)'"
+              :error="formError.find(item => item.field === 'deadline')"
+            />
+          </template>
         </div>
         <div class="flex flex-col w-full md:w-1/2 p-0 md:pl-4">
           <div class="font-bold text-sm sm:text-md">Duration</div>
@@ -248,19 +288,14 @@
             :error="formError.find(item => item.field === 'unpaid_breaks_in_minutes')"
           />
 
-          <!-- <AppDate
-            v-model="form.auto_assign_at"
-            :name="'auto_assign_at'"
-            :label="'Auto-assigns this job to the first, matching Favourite applicant'"
-          />-->
           <AppInput
             :type="'select'"
             v-model="auto_assign_job"
             :name="'auto_assign_job'"
-            :label="'Auto-assign this job?'"
+            :label="'Use AUTO-MATCH on this Job?'"
             :items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
           />
-          <div
+          <!-- <div
             class="flex flex-row flex-wrap justify-between"
             v-if="auto_assign_job === true || auto_assign_job === 'true'"
           >
@@ -277,13 +312,8 @@
                 :error="formError.find(item => item.field === 'auto_assign_at')"
               />
             </div>
-          </div>
+          </div>-->
 
-          <!-- <AppDate
-            v-model="form.selection_date"
-            :name="'selection_date'"
-            :label="'Selection will be made and you will receive a notification by this date'"
-          />-->
           <AppInput
             :type="'select'"
             v-model="selection_notification"
@@ -310,22 +340,18 @@
             </div>
           </div>
 
-          <!-- <AppDate
-            v-model="form.favorite_only_until"
-            :name="'favorite_only_until'"
-            :label="'Only Favorite locums can apply until'"
-          />-->
           <AppInput
+            v-if="bank_only === false || bank_only === 'false'"
             :type="'select'"
-            v-model="favorite_notification"
-            :name="'favorite_notification'"
-            :label="'Make this Job Private?'"
+            v-model="bank_first"
+            :name="'bank_first'"
+            :label="'Make this Job available for Bank First?'"
             :items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
           />
 
           <div
             class="flex flex-row flex-wrap justify-between"
-            v-if="favorite_notification === true || favorite_notification === 'true'"
+            v-if="bank_first === true || bank_first === 'true'"
           >
             <div>Only favorite locum will be notified until this date</div>
             <div class="px-1 w-full md:w-1/2">
@@ -345,6 +371,15 @@
               />
             </div>
           </div>
+
+          <AppInput
+            v-if="bank_first === false || bank_first === 'false'"
+            :type="'select'"
+            v-model="bank_only"
+            :name="'bank_only'"
+            :label="'Make this Job available for Bank Only?'"
+            :items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
+          />
 
           <AppInput
             v-model="form.ir35"
@@ -505,13 +540,11 @@ export default {
       unpaid_breaks: false,
       auto_assign_job: false,
       selection_notification: false,
-      favorite_notification: false,
       shifts: [],
+      session_amendment: "other",
+      bank_first: false,
+      bank_only: false,
 
-      auto_assign_at: {
-        date: null,
-        time: null
-      },
       selection_date: {
         date: null,
         time: null
@@ -559,7 +592,8 @@ export default {
         shift_id: "",
         auto_assign_at: null,
         selection_date: null,
-        favorite_only_until: null
+        favorite_only_until: null,
+        deadline: null
       },
       formError: [],
       show_saturday: false,
@@ -572,18 +606,12 @@ export default {
         this.selectedProfession = this.professions_categories.find(
           item => item.id == value
         );
-        // this.form.qualification_id = [];
-        // this.form.clinical_system_id = [];
-        // this.form.spoken_language_id = [];
-        // this.form.compliance_document_id = [];
-        // this.professionCategoryId = this.selectedProfession.profession_category.id;
+
         if (this.selectedProfession.profession_category.id == 1) {
-          // this.qualifications = this.gp_qualification_lists;
           this.compliances = this.gp_compliance_documents_lists;
           return;
         }
         if (this.selectedProfession.profession_category.id == 2) {
-          // this.qualifications = this.other_qualification_lists;
           this.compliances = this.others_compliance_documents_lists;
           return;
         }
@@ -597,13 +625,18 @@ export default {
         days.push(day.day());
         day = day.clone().add(1, "d");
       }
+      this.show_saturday = false;
+      this.show_sunday = false;
       if (days.includes(6)) {
         this.show_saturday = true;
-      } else if (days.includes(7)) {
+      }
+      if (days.includes(0)) {
         this.show_sunday = true;
-      } else {
-        this.show_saturday = false;
-        this.show_sunday = false;
+      }
+    },
+    session_amendment(value) {
+      if (value !== "other") {
+        this.form.update_remarks = value;
       }
     }
   },
@@ -642,62 +675,15 @@ export default {
         this.shifts.push({ label: item.name, value: item.id });
       });
     });
-    // this.$axios.$get(`/api/v1/profession-categories`).then(res => {
-    //   this.gp_qualification_lists = [];
-    //   res.data.profession_categories
-    //     .find(item => item.id === 1)
-    //     .qualifications.forEach(item => {
-    //       this.gp_qualification_lists.push({
-    //         label: item.name,
-    //         value: item.id
-    //       });
-    //     });
-    //   this.other_qualification_lists = [];
-    //   res.data.profession_categories
-    //     .find(item => item.id === 2)
-    //     .qualifications.forEach(item => {
-    //       this.other_qualification_lists.push({
-    //         label: item.name,
-    //         value: item.id
-    //       });
-    //     });
-    // });
+
     this.$axios.$get(`/api/v1/professions`).then(res => {
       this.professions = [];
       res.data.professions.forEach(item => {
         this.professions.push({ label: item.name, value: item.id });
         this.professions_categories.push(item);
       });
-      // this.selectedProfession = this.professions_categories.find(
-      //   item => item.id == this.form.profession_id
-      // );
-
-      // this.professionCategoryId = this.selectedProfession.profession_category.id;
-
-      // if (this.selectedProfession.profession_category.id == 1) {
-      //   this.qualifications = this.gp_qualification_lists;
-      //   this.compliances = this.gp_compliance_documents_lists;
-      //   return;
-      // }
-      // if (this.selectedProfession.profession_category.id == 2) {
-      //   this.qualifications = this.other_qualification_lists;
-      //   this.compliances = this.others_compliance_documents_lists;
-      //   return;
-      // }
     });
 
-    // this.$axios.$get(`/api/v1/clinical-systems`).then(res => {
-    //   this.clinical_system_lists = [];
-    //   res.data.clinical_systems.forEach(item => {
-    //     this.clinical_system_lists.push({ label: item.name, value: item.id });
-    //   });
-    // });
-    // this.$axios.$get(`/api/v1/spoken-languages`).then(res => {
-    //   this.spoken_language_lists = [];
-    //   res.data.spoken_languages.forEach(item => {
-    //     this.spoken_language_lists.push({ label: item.name, value: item.id });
-    //   });
-    // });
     this.$axios.$get(`/api/v1/me`).then(res => {
       res.data.user.practice_detail.practice.mandatory_trainings.forEach(
         item => {
@@ -767,13 +753,18 @@ export default {
     this.form.include_saturday = this.job.include_saturday;
     this.form.include_sunday = this.job.include_sunday;
 
-    if (this.job.platform_job.auto_assign_at) {
-      this.auto_assign_at.date = this.$moment(
-        this.job.platform_job.auto_assign_at
-      ).format("YYYY-MM-DD");
-      this.auto_assign_at.time = this.$moment(
-        this.job.platform_job.auto_assign_at
-      ).format("HH:mm");
+    // if (this.job.platform_job.auto_assign_at) {
+    //   this.auto_assign_at.date = this.$moment(
+    //     this.job.platform_job.auto_assign_at
+    //   ).format("YYYY-MM-DD");
+    //   this.auto_assign_at.time = this.$moment(
+    //     this.job.platform_job.auto_assign_at
+    //   ).format("HH:mm");
+    // }
+
+    this.form.auto_assign_at = this.job.platform_job.auto_assign_at;
+    if (this.form.auto_assign_at) {
+      this.auto_assign_job = true;
     }
 
     if (this.job.platform_job.selection_date) {
@@ -785,16 +776,46 @@ export default {
       ).format("HH:mm");
     }
 
-    if (this.job.platform_job.favorite_only_until) {
+    if (
+      this.$moment(this.job.date_start, "YYYY-MM-DD").diff(
+        this.job.platform_job.favorite_only_until,
+        "seconds"
+      ) > 0
+    ) {
+      this.bank_first = true;
       this.favorite_only_until.date = this.$moment(
-        this.job.platform_job.favorite_only_until
+        this.job.platform_job.favorite_only_until,
+        "YYYY-MM-DDTHH:mm:ss:sssZ"
       ).format("YYYY-MM-DD");
       this.favorite_only_until.time = this.$moment(
-        this.job.platform_job.favorite_only_until
+        this.job.platform_job.favorite_only_until,
+        "YYYY-MM-DDTHH:mm:ss:sssZ"
       ).format("HH:mm");
+    } else if (
+      this.$moment(this.job.date_start, "YYYY-MM-DD").diff(
+        this.job.platform_job.favorite_only_until,
+        "seconds"
+      ) <= 0
+    ) {
+      this.bank_only = true;
     }
 
+    // if (this.$moment(this.job.platform_job.favorite_only_until).diff(this.$moment(), 'seconds') > 0)
+
+    // if (this.job.platform_job.favorite_only_until) {
+    //   this.favorite_only_until.date = this.$moment(
+    //     this.job.platform_job.favorite_only_until
+    //   ).format("YYYY-MM-DD");
+    //   this.favorite_only_until.time = this.$moment(
+    //     this.job.platform_job.favorite_only_until
+    //   ).format("HH:mm");
+    // }
+    // this.bank_only = this.job.favorite_only;
+
     this.form.update_remarks = this.job.update_remarks;
+    this.session_amendment = this.job.update_remarks
+      ? this.job.update_remarks
+      : "other";
 
     if (this.job.platform_job.session_requirements === "") {
       this.form.session_requirements = [];
@@ -846,22 +867,28 @@ export default {
         "mandatory_training_id",
         "include_saturday",
         "include_sunday",
-        "compliance_document_id"
+        "compliance_document_id",
+        "bank_only",
+        "auto_assign_at"
       ];
+
+      if (this.job.status !== "Allocated") {
+        notRequired.push("deadline");
+      }
 
       if (["15", "30", "60", false, "false"].includes(this.unpaid_breaks)) {
         notRequired.push("unpaid_breaks_in_minutes");
       }
 
-      if (this.auto_assign_job === false || this.auto_assign_job === "false") {
-        notRequired.push("auto_assign_at");
-      } else {
-        if (this.auto_assign_job === true || this.auto_assign_job === "true") {
-          if (this.auto_assign_at.date && this.auto_assign_at.time) {
-            notRequired.push("auto_assign_at");
-          }
-        }
-      }
+      // if (this.auto_assign_job === false || this.auto_assign_job === "false") {
+      //   notRequired.push("auto_assign_at");
+      // } else {
+      //   if (this.auto_assign_job === true || this.auto_assign_job === "true") {
+      //     if (this.auto_assign_at.date && this.auto_assign_at.time) {
+      //       notRequired.push("auto_assign_at");
+      //     }
+      //   }
+      // }
 
       if (
         this.selection_notification == false ||
@@ -879,21 +906,16 @@ export default {
         }
       }
 
-      if (
-        this.favorite_notification == false ||
-        this.favorite_notification == "false"
-      ) {
+      if (this.bank_first == false || this.bank_first == "false") {
         notRequired.push("favorite_only_until");
       } else {
-        if (
-          this.favorite_notification === true ||
-          this.favorite_notification === "true"
-        ) {
+        if (this.bank_first === true || this.bank_first === "true") {
           if (this.favorite_only_until.date && this.favorite_only_until.time) {
             notRequired.push("favorite_only_until");
           }
         }
       }
+
       console.log("notRequired", notRequired);
       console.log("form", this.form);
       this.Validate(this.form, notRequired);
@@ -918,26 +940,50 @@ export default {
           "YYYY-MM-DD"
         );
 
+        // this.form.auto_assign_at =
+        //   this.auto_assign_job === true
+        //     ? `${this.$moment(this.auto_assign_at.date).format("YYYY-MM-DD")} ${
+        //         this.auto_assign_at.time
+        //       }`
+        //     : null;
+
         this.form.auto_assign_at =
-          this.auto_assign_job === true
-            ? `${this.$moment(this.auto_assign_at.date).format("YYYY-MM-DD")} ${
-                this.auto_assign_at.time
-              }`
+          this.auto_assign_job === true || this.auto_assign_job === "true"
+            ? `${this.$moment().format("YYYY-MM-DD")} ${this.$moment().format(
+                "HH:mm"
+              )}`
             : null;
 
         this.form.selection_date =
-          this.selection_notification === true
+          this.selection_notification === true ||
+          this.selection_notification === "true"
             ? `${this.$moment(this.selection_date.date).format("YYYY-MM-DD")} ${
                 this.selection_date.time
               }`
             : null;
 
-        this.form.favorite_only_until =
-          this.favorite_notification === true
-            ? `${this.$moment(this.favorite_only_until.date).format(
-                "YYYY-MM-DD"
-              )} ${this.favorite_only_until.time}`
-            : null;
+        // this.form.favorite_only_until =
+        //   this.bank_first === true || this.bank_first === 'true'
+        //     ? `${this.$moment(this.favorite_only_until.date).format(
+        //         "YYYY-MM-DD"
+        //       )} ${this.favorite_only_until.time}`
+        //     : null;
+
+        if (this.bank_first === true || this.bank_first === "true") {
+          this.form.favorite_only_until = `${this.$moment(
+            this.favorite_only_until.date,
+            "YYYY-MM-DD"
+          ).format("YYYY-MM-DD")} ${this.favorite_only_until.time}`;
+        }
+
+        if (this.bank_only === true || this.bank_only === "true") {
+          this.form.favorite_only_until = `${this.$moment(
+            this.form.date_start,
+            "YYYY-MM-DD"
+          )
+            .add(1, "days")
+            .format("YYYY-MM-DD HH:mm")}`;
+        }
 
         this.form.session_requirements.length > 0
           ? (this.form.session_requirements = this.form.session_requirements.join())
@@ -954,13 +1000,15 @@ export default {
           .$put(`/api/v1/practice/jobs/${this.job.id}`, this.form)
           .then(res => {
             console.log("job update", res);
-            // this.$router.push(`/sessions/${res.data.new_job.id}`);
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
               text: [res.message]
             });
-            this.$emit("updateJob", res.data.new_job.id);
+            this.$emit("updateJob", {
+              newJob: res.data.new_job,
+              oldJob: res.data.job
+            });
           });
       } else {
         this.$nextTick(() => {

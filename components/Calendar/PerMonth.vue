@@ -188,7 +188,7 @@ export default {
     authPermissions() {
       return this.$store.getters["auth/permissions"];
     },
-    selectedDate(){
+    selectedDate() {
       return this.$store.state.calendar.selected_date;
     }
   },
@@ -275,6 +275,7 @@ export default {
       this.showRefresh = true;
     },
     async refreshJobs() {
+      this.showRefresh = false;
       this.$store.commit("jobs/CLEAR_PRACTICE_JOB_NOTIFICATION");
       this.getJobs();
     },

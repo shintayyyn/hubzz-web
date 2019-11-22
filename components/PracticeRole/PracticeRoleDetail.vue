@@ -1,5 +1,6 @@
 <template>
-  <section>
+  <section class="relative">
+    <AppLoading :loading="loading" spinner />
     <div class="p-4 md:p-8">
       <div @click="$emit('close')" class="cursor-pointer">
         <svgicon name="left-arrow" height="32" width="32" />
@@ -31,7 +32,10 @@
                     :checked="isChecked(role.permissions)"
                     @change="checkAll(index, $event.target.checked)"
                   />
-                  <label class="font-bold text-xl pl-1" :for="role.permissions">{{role.category}} Management</label>
+                  <label
+                    class="font-bold text-xl pl-1"
+                    :for="role.permissions"
+                  >{{role.category}} Management</label>
                 </div>
                 <div class="flex flex-col px-1">
                   <div
@@ -39,7 +43,12 @@
                     v-for="permission in role.permissions"
                     :key="permission.id"
                   >
-                    <input v-model="permission.done" :id="permission.id" type="checkbox" :checked="permission.done" />
+                    <input
+                      v-model="permission.done"
+                      :id="permission.id"
+                      type="checkbox"
+                      :checked="permission.done"
+                    />
                     <label class="text-sm pl-1" :for="permission.id">{{permission.name}}</label>
                   </div>
                 </div>
@@ -57,14 +66,17 @@
 <script>
 import AppInput from "@/components/Base/AppInput";
 import AppButton from "@/components/Base/AppButton";
+import AppLoading from "@/components/Base/AppLoading";
 export default {
   props: ["role"],
   components: {
+    AppLoading,
     AppInput,
     AppButton
   },
   data() {
     return {
+      loading: false,
       remove_modal: false,
       permissions: [],
       form: {
@@ -138,6 +150,7 @@ export default {
     save() {
       this.Validate(this.form, ["permission_id"]);
       if (!this.formError.length) {
+        this.loading = true;
         let ids = [];
         this.permissions.forEach(item => {
           item.permissions.forEach(permission => {
@@ -158,6 +171,7 @@ export default {
               status: "success",
               text: [`${res.message}`]
             });
+            this.loading = false;
             this.$emit("updateRole", res.data.role);
           });
       }

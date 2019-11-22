@@ -19,26 +19,82 @@
         </div>
       </div>
     </div>
+    <div class="bottom-0 w-full">
+      <AppPagination
+        :total="total"
+        :totalPages="totalPages"
+        :currentPage="current_page"
+        @pagechanged="pagechanged"
+        @limitchanged="limitchanged"
+        :loading="loading"
+        :perPage="params.limit"
+      />
+    </div>
   </div>
 </template>
 <script>
 import AppAvatar from "~/components/Base/AppAvatar";
+import AppPagination from "@/components/Base/AppPagination";
 export default {
   components: {
-    AppAvatar
+    AppAvatar,
+    AppPagination
   },
-  props: ["applicants"],
+  props: ["job"],
+  data() {
+    return {
+      total: 0,
+      applicants: [],
+      current_page: 1,
+      loading: false,
+      params: {
+        offset: 0,
+        limit: 20
+      }
+    };
+  },
+  computed: {
+    totalPages() {
+      return Math.ceil(this.total / this.params.limit);
+    }
+  },
+  created() {
+    this.getApplicantsCount();
+  },
   methods: {
+    getApplicantsCount() {
+      this.$axios
+        .$get(`/api/v1/practice/jobs/${this.job.id}/applicants/count`)
+        .then(res => {
+          this.total = res.data.count;
+          this.getApplicants(this.params);
+        });
+    },
+    getApplicants(params) {
+      this.$axios
+        .$get(`/api/v1/practice/jobs/${this.job.id}/applicants`, {
+          params
+        })
+        .then(res => {
+          this.applicants = res.data.users;
+        });
+    },
+    pagechanged(page) {
+      this.current_page = page;
+      this.params.offset = this.params.limit * (page - 1);
+      this.getApplicants(this.params);
+    },
+    limitchanged(limit) {
+      this.current_page = 1;
+      this.params.offset = 0;
+      this.params.limit = limit;
+      this.getApplicants(this.params);
+    },
     show(id) {
       this.$axios.$get(`/api/v1/practice/locums/${id}`).then(res => {
         const user = res.data.user;
         this.$emit("show", user);
       });
-      // console.log(this.$route.query)
-      // const query = {
-      //   ...this.$route.query
-      // }
-      // this.$router.push({ path: `/sessions/${this.$route.params.id}/locum/${id}`, query })
     }
   }
 };

@@ -21,7 +21,7 @@
           v-for="(item, index) in value"
           :key="`${item.value}-${index}`"
         >
-          {{item.label}} {{item.value}}
+          {{item.label}}
           <span
             class="font-bold cursor-pointer text-base pl-3"
             @click="remove(index)"

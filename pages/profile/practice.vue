@@ -34,7 +34,6 @@
                 :type="'select'"
                 :name="'type'"
                 :label="'Practice Type'"
-                :error="formError.find(item => item.field === 'type')"
                 :placeholder="'Select...'"
                 :items="[{ value: 'Stand Alone', label: 'Stand Alone'},{ value: 'Hub', label: 'Hub'},{ value: 'Spoke', label: 'Spoke'}]"
                 @change="practiceTypeOnchange"
@@ -48,6 +47,7 @@
                   :name="'use_variation_terms'"
                   :label="'Use Standard Terms with Locum?'"
                   :disabled="!authPermissions.includes('Update Profile Practice')"
+                  :error="formError.find(item => item.field === 'use_variation_terms')"
                 />
                 <div class="flex flex-row flex-wrap justify-between items-center">
                   <div class="text-xs sm:text-sm">Your Practice's standard terms</div>
@@ -121,15 +121,15 @@
                 @submit="save"
                 @blur="CheckEmptyField(form.email, 'email')"
               />
-              <AppInput
+              <!-- <AppInput
                 v-model="form.use_variation_terms"
                 :type="'select'"
                 :name="'type'"
                 :label="'Use Variation Terms?'"
                 :error="formError.find(item => item.field === 'use_variation_terms')"
                 :placeholder="'Select...'"
-                :items="[{ value: true , label: 'Yes'},{ value: false, label: 'No'}]"
-              />
+                :items="[{ value: true , label: 'Yes'},{ value: 'false', label: 'No'}]"
+              />-->
             </div>
             <div class="flex flex-col w-full md:w-1/2 pl-1">
               <AppInput
@@ -286,7 +286,7 @@ export default {
         phone_number: "",
         report_to: "",
         email: "",
-        use_variation_terms: '',
+        // use_variation_terms: "",
         extra_information: "",
         practice_type_id: [],
         mandatory_training_id: [],
@@ -437,7 +437,6 @@ export default {
     this.form.phone_number = this.practice.phone_number;
     this.form.report_to = this.practice.report_to;
     this.form.email = this.practice.email;
-    this.form.use_variation_terms = this.practice.use_variation_terms
     this.form.extra_information = this.practice.extra_information;
     this.practice.practice_types.forEach(item => {
       this.form.practice_type_id.push(item.id);
@@ -457,6 +456,7 @@ export default {
       if (!e.target.files.length) {
         return;
       }
+      this.formError = [];
       let types = ["pdf", "jpeg", "msword", "tiff"];
       let file = e.target.files[0];
       let fileType = file.type.split("/")[1];
@@ -474,18 +474,35 @@ export default {
       this.$axios
         .$post(`/api/v1/practice/me/practice/variation-terms`, formData)
         .then(res => {
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "success",
-            text: [res.message]
-          });
-          this.loading = false;
+          // this.$store.commit("SET_NOTIFICATION", {
+          //   enabled: true,
+          //   status: "success",
+          //   text: [res.message]
+          // });
+          // this.loading = false;
           this.practice.variation_terms_file =
             res.data.practice.variation_terms_file;
+          this.save();
         })
         .catch(err => {
+          console.log("err", err.response);
+          if (err.response.status === 500) {
+            if (err.response.data.message.includes("File size")) {
+              this.formError.push({
+                field: "use_variation_terms",
+                message: err.response.data.message
+              });
+            } else {
+              this.formError.push({
+                field: "",
+                message: "Something went wrong"
+              });
+            }
+          }
+          // this.formError = err.response.data.error_messages;
+        })
+        .finally(() => {
           this.loading = false;
-          this.formError = err.response.data.error_messages;
         });
     },
     uncheckPractice(value) {
@@ -552,12 +569,14 @@ export default {
     async save() {
       try {
         this.formError = [];
-        this.Validate(this.form, [
-          "mandatory_training_id",
-          "extra_information",
-          "use_variation_terms"
-        ]);
+        let notRequired = ["mandatory_training_id", "extra_information"];
+        if (this.practice.variation_terms_file !== null) {
+          notRequired.push("use_variation_terms");
+        }
+        this.Validate(this.form, notRequired);
         if (!this.formError.length) {
+          this.loading = true;
+
           const res = await this.$axios.$put(
             `/api/v1/practice/me/practice`,
             this.form
@@ -567,6 +586,7 @@ export default {
             status: "success",
             text: [res.message]
           });
+          this.loading = false;
           this.scrollToTop();
         } else {
           this.$store.commit("SET_NOTIFICATION", {
@@ -578,6 +598,7 @@ export default {
         }
       } catch (err) {
         this.scrollToTop();
+        this.loading = false;
         this.formError = err.response.data.error_messages;
       }
     }

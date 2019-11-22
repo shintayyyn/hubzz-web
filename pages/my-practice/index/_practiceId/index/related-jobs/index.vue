@@ -2,7 +2,6 @@
   <section class="relative">
     <transition name="fade" mode="out-in">
       <div v-if="toggleTable">
-        <AppLoading :loading="loadingJobs" spinner />
         <AppButton
           :label="'Filter'"
           @click="showFilter()"
@@ -327,7 +326,6 @@ import AppTime from "@/components/Base/AppTime";
 import AppPostCode from "@/components/Base/AppPostCode";
 import AppAutoComplete from "@/components/Base/AppAutoComplete";
 import AppButton from "@/components/Base/AppButton";
-import AppLoading from "@/components/Base/AppLoading";
 import { mapGetters } from "vuex";
 export default {
   props: ["invoiceStatusList", "practiceTypeList", "shifts", "rates"],
@@ -338,8 +336,7 @@ export default {
     AppTime,
     AppPostCode,
     AppAutoComplete,
-    AppButton,
-    AppLoading
+    AppButton
   },
   middleware({ query, redirect, error }) {
     if (
@@ -770,7 +767,6 @@ export default {
         });
     },
     getJobs(params) {
-      this.$store.commit("jobs/CLEAR_JOBS");
       this.$store
         .dispatch(`${this.dispatchUrl}`, {
           locum_status: [
@@ -793,12 +789,14 @@ export default {
       this.params.order_by = order_by;
       this.jobPartParams.offset = 0;
       this.jobPartParams.order_by = order_by;
+      this.$store.commit("jobs/TOGGLE_LOADING", true);
       this.getJobs(this.isJobPart ? this.jobPartParams : this.params);
     },
     pagechanged(page) {
       this.current_page = page;
       this.params.offset = this.params.limit * (page - 1);
       this.jobPartParams.offset = this.jobPartParams.limit * (page - 1);
+      this.$store.commit("jobs/TOGGLE_LOADING", true);
       this.getJobs(this.isJobPart ? this.jobPartParams : this.params);
     },
     limitchanged(limit) {
@@ -807,6 +805,7 @@ export default {
       this.params.limit = limit;
       this.jobPartParams.offset = 0;
       this.jobPartParams.limit = limit;
+      this.$store.commit("jobs/TOGGLE_LOADING", true);
       this.getJobs(this.isJobPart ? this.jobPartParams : this.params);
     },
     clearFilters() {
