@@ -28,7 +28,11 @@
           :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
           :error="formError.find(item => item.field === 'late_hours')"
         />
-        <AppButton :label="`Mark this week as Complete`" @click="confirmation_modal = true" />
+        <AppButton
+          :label="`Mark this week as Complete`"
+          @click="confirmation_modal = true"
+          :disabled="!isCompletable"
+        />
       </div>
     </div>
     <AppConfirmationModal
@@ -64,6 +68,14 @@ export default {
       },
       formError: []
     };
+  },
+  computed: {
+    isCompletable() {
+      return !this.job.job.job_parts
+        .filter(jobPart => !jobPart.completed_at)
+        .map(jobPart => jobPart.part)
+        .includes(this.job.part - 1);
+    }
   },
   methods: {
     cancel() {

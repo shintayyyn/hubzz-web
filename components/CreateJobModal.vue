@@ -336,6 +336,7 @@
                 </div>
               </div>
               <AppInput
+                v-if="show_saturday"
                 :type="'select'"
                 v-model="form.include_saturday"
                 :name="'include_saturday'"
@@ -343,6 +344,7 @@
                 :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
               />
               <AppInput
+                v-if="show_sunday"
                 :type="'select'"
                 v-model="form.include_sunday"
                 :name="'include_sunday'"
@@ -511,6 +513,9 @@ export default {
   },
   data() {
     return {
+      show_saturday: false,
+      show_sunday: false,
+
       practice_lists: [],
       rate_lists: [],
       mandatory_training: [],
@@ -592,95 +597,110 @@ export default {
     }
   },
   watch: {
-    // "form.profession_id"(newValue, oldValue) {
-    //   this.CheckEmptyField(newValue, "profession_id");
-    //   if (newValue) {
-    //     this.form.qualification_id = [];
-    //     this.selectedProfession = this.professions_categories.find(
-    //       item => item.id == newValue
-    //     );
-    //     if (this.selectedProfession.profession_category.id == 1) {
-    //       this.compliances = this.gp_compliance_documents_lists;
-    //       return;
-    //     }
-    //     if (this.selectedProfession.profession_category.id == 2) {
-    //       this.compliances = this.others_compliance_documents_lists;
-    //       return;
-    //     }
-    //   }
-    // },
+    "form.profession_id"(newValue, oldValue) {
+      this.CheckEmptyField(newValue, "profession_id");
+      if (newValue) {
+        this.form.qualification_id = [];
+        this.selectedProfession = this.professions_categories.find(
+          item => item.id == newValue
+        );
+        if (this.selectedProfession.profession_category.id == 1) {
+          this.compliances = this.gp_compliance_documents_lists;
+          return;
+        }
+        if (this.selectedProfession.profession_category.id == 2) {
+          this.compliances = this.others_compliance_documents_lists;
+          return;
+        }
+      }
+    },
 
-    // "form.practice_id"(value) {
-    //   this.CheckEmptyField(value, "practice_id");
-    // },
+    "form.practice_id"(value) {
+      this.CheckEmptyField(value, "practice_id");
+    },
 
-    // "form.title"(value) {
-    //   this.CheckEmptyField(value, "title");
-    // },
+    "form.title"(value) {
+      this.CheckEmptyField(value, "title");
+    },
 
-    // "form.description"(value) {
-    //   this.CheckEmptyField(value, "description");
-    // },
+    "form.description"(value) {
+      this.CheckEmptyField(value, "description");
+    },
 
-    // "form.report_to"(value) {
-    //   this.CheckEmptyField(value, "report_to");
-    // },
+    "form.report_to"(value) {
+      this.CheckEmptyField(value, "report_to");
+    },
 
-    // "form.rate"(value) {
-    //   this.CheckEmptyField(value, "rate");
-    // },
+    "form.rate"(value) {
+      this.CheckEmptyField(value, "rate");
+    },
 
-    // "form.date_start"(value) {
-    //   this.CheckEmptyField(value, "date_start");
-    // },
+    "form.date_start"(value) {
+      this.CheckEmptyField(value, "date_start");
+    },
 
-    // "form.date_end"(value) {
-    //   this.CheckEmptyField(value, "date_end");
-    // },
+    "form.date_end"(value) {
+      this.CheckEmptyField(value, "date_end");
+      let end = this.$moment(value, "YYYY-MM-DD");
+      let days = [];
+      let day = this.$moment(this.form.date_start, "YYYY-MM-DD");
+      while (day <= end) {
+        days.push(day.day());
+        day = day.clone().add(1, "d");
+      }
+      this.show_saturday = false;
+      this.show_sunday = false;
+      if (days.includes(6)) {
+        this.show_saturday = true;
+      }
+      if (days.includes(0)) {
+        this.show_sunday = true;
+      }
+    },
 
-    // "form.time_start"(value) {
-    //   this.CheckEmptyField(value, "time_start");
-    // },
+    "form.time_start"(value) {
+      this.CheckEmptyField(value, "time_start");
+    },
 
-    // "form.time_end"(value) {
-    //   this.CheckEmptyField(value, "time_end");
-    // },
+    "form.time_end"(value) {
+      this.CheckEmptyField(value, "time_end");
+    },
 
-    // "form.total_hours"(value) {
-    //   this.CheckEmptyField(value, "total_hours");
-    // },
+    "form.total_hours"(value) {
+      this.CheckEmptyField(value, "total_hours");
+    },
 
-    // "form.qualification_id"(value) {
-    //   this.CheckEmptyField(value, "qualification_id");
-    // },
+    "form.qualification_id"(value) {
+      this.CheckEmptyField(value, "qualification_id");
+    },
 
-    // "form.clinical_system_id"(value) {
-    //   this.CheckEmptyField(value, "clinical_system_id");
-    // },
+    "form.clinical_system_id"(value) {
+      this.CheckEmptyField(value, "clinical_system_id");
+    },
 
-    // "form.unpaid_breaks_in_minutes"(value) {
-    //   this.CheckEmptyField(value, "unpaid_breaks_in_minutes");
-    // },
+    "form.unpaid_breaks_in_minutes"(value) {
+      this.CheckEmptyField(value, "unpaid_breaks_in_minutes");
+    },
 
-    // "form.shift_id"(value) {
-    //   this.CheckEmptyField(value, "shift_id");
-    // },
+    "form.shift_id"(value) {
+      this.CheckEmptyField(value, "shift_id");
+    },
 
-    // "form.email"(value) {
-    //   let index = this.formError.findIndex(item => item.field === "email");
-    //   if (index >= 0) {
-    //     this.formError.splice(index, 1);
-    //   }
+    "form.email"(value) {
+      let index = this.formError.findIndex(item => item.field === "email");
+      if (index >= 0) {
+        this.formError.splice(index, 1);
+      }
 
-    //   if (!value) {
-    //     this.formError.push({ field: "email", message: "Required" });
-    //   } else {
-    //     const error = this.ValidateEmail(value);
-    //     if (error) {
-    //       this.formError.push(error);
-    //     }
-    //   }
-    // }
+      if (!value) {
+        this.formError.push({ field: "email", message: "Required" });
+      } else {
+        const error = this.ValidateEmail(value);
+        if (error) {
+          this.formError.push(error);
+        }
+      }
+    }
   },
   created() {
     this.$axios.$get(`/api/v1/practice/me/practice-practices`).then(res => {
@@ -833,12 +853,14 @@ export default {
         this.form.spoken_language_id = this.form.spoken_language_id.map(
           item => item.value
         );
-        this.form.date_start = this.$moment(this.form.date_start).format(
+        this.form.date_start = this.$moment(
+          this.form.date_start,
           "YYYY-MM-DD"
-        );
-        this.form.date_end = this.$moment(this.form.date_end).format(
+        ).format("YYYY-MM-DD");
+        this.form.date_end = this.$moment(
+          this.form.date_end,
           "YYYY-MM-DD"
-        );
+        ).format("YYYY-MM-DD");
 
         this.form.session_requirements.length > 0
           ? (this.form.session_requirements = this.form.session_requirements.join())
@@ -846,24 +868,25 @@ export default {
 
         this.form.auto_assign_at =
           this.auto_assign_job === true || this.auto_assign_job === "true"
-            ? `${this.$moment(this.auto_assign_at.date).format("YYYY-MM-DD")} ${
-                this.auto_assign_at.time
-              }`
+            ? `${this.$moment(this.auto_assign_at.date, "YYYY-MM-DD").format(
+                "YYYY-MM-DD"
+              )} ${this.auto_assign_at.time}`
             : null;
 
         this.form.selection_date =
           this.selection_notification === true ||
           this.selection_notification === "true"
-            ? `${this.$moment(this.selection_date.date).format("YYYY-MM-DD")} ${
-                this.selection_date.time
-              }`
+            ? `${this.$moment(this.selection_date.date, "YYYY-MM-DD").format(
+                "YYYY-MM-DD"
+              )} ${this.selection_date.time}`
             : null;
         this.form.favorite_only_until =
           this.favorite_notification === true ||
           this.favorite_notification === "true"
-            ? `${this.$moment(this.favorite_only_until.date).format(
+            ? `${this.$moment(
+                this.favorite_only_until.date,
                 "YYYY-MM-DD"
-              )} ${this.favorite_only_until.time}`
+              ).format("YYYY-MM-DD")} ${this.favorite_only_until.time}`
             : null;
         if (["15", "30", "60"].includes(this.unpaid_breaks)) {
           this.form.unpaid_breaks_in_minutes = this.unpaid_breaks;
@@ -889,6 +912,7 @@ export default {
             this.$store.commit("calendar/CREATE_JOB_MODAL", false);
           })
           .catch(err => {
+            console.log("test", err.response);
             this.$refs.modalContainer.scrollTop = 0;
             this.form.clinical_system_id = this.selectedClinicalSystem;
             this.form.qualification_id = this.selectedQualification;
@@ -900,6 +924,15 @@ export default {
               this.formError.push({
                 field: err.response.statusText,
                 message: "Please check your inputs"
+              });
+            } else if (err.response.status === 400) {
+              this.formError.push({
+                field: "date_start",
+                message: err.response.data.message
+              });
+              this.formError.push({
+                field: "date_end",
+                message: err.response.data.message
               });
             } else {
               this.formError = err.response.data.error_messages;

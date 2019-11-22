@@ -5,7 +5,7 @@
       <!-- <div
         class="absolute right-0 bg-red-500 p-1 text-xs sm:text-sm text-white rounded"
         v-if="error"
-      >{{error.message}}</div> -->
+      >{{error.message}}</div>-->
     </div>
     <div class="flex flex-row justify-start mt-1">
       <div class="flex flex-col w-full">
@@ -290,7 +290,7 @@ export default {
       if (value === this.$moment().format("YYYY")) {
         this.selectedMonth = this.filteredMonths[0].value;
       }
-      this.getDaysInMonth(this.selectedMonth.toString(),value);
+      this.getDaysInMonth(this.selectedMonth.toString(), value);
     }
   },
   computed: {
@@ -335,12 +335,12 @@ export default {
       });
     },
     isSelectedDate(date) {
-      let selectedDate = `${this.selectedYear}-${this.selectedMonth}-${date}`
-      return this.$moment(selectedDate).isSame(this.value);
+      let selectedDate = `${this.selectedYear}-${this.selectedMonth}-${date}`;
+      return this.$moment(selectedDate, "YYYY-MM-D").isSame(this.value);
     },
     isSame(date) {
       let newDate = this.$moment().format("MM-DD-YYYY");
-      return this.$moment(date).isSame(newDate);
+      return this.$moment(date, "MM-DD-YYYY").isSame(newDate);
     },
     isDisabled(date) {
       return false;
@@ -357,8 +357,8 @@ export default {
     toggledOff() {
       // get to the selected date
       if (this.value) {
-        let month = this.$moment(this.value).format("M");
-        let year = this.$moment(this.value).format("YYYY");
+        let month = this.$moment(this.value, "YYYY-MM-DD").format("M");
+        let year = this.$moment(this.value, "YYYY-MM-DD").format("YYYY");
         this.selectedMonth = month;
         this.selectedYear = year;
       }
@@ -398,7 +398,7 @@ export default {
       }
     },
     getDaysInMonth(month, selectedYear) {
-      let date = this.$moment(`${selectedYear}-${month}-01`, "YYYY-M-DD");
+      let date = this.$moment(`${selectedYear}-${month}-01`, "YYYY-MM-DD");
       let days = [];
       while (date.format("M") === month) {
         days.push({
@@ -427,7 +427,10 @@ export default {
     select(date) {
       if (!this.isDisabled(date)) {
         this.modal = false;
-        this.$emit("input", this.$moment(date).format(this.format));
+        this.$emit(
+          "input",
+          this.$moment(date, "MM-DD-YYYY").format(this.format)
+        );
       }
     }
   }

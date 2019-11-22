@@ -2,7 +2,7 @@
   <div class="relative rounded-lg shadow-lg w-full p-8">
     <AppFormError :formError="formError" v-if="formError.length > 0" />
     <form class="relative w-full">
-      <AppLoading :loading="loading" :message="'Loading'" />
+      <AppLoading :loading="loading" spinner />
       <AppInput
         v-model="form.email"
         :type="'email'"
@@ -13,6 +13,7 @@
         @blur="CheckEmptyField(form.email, 'email')"
       />
       <AppInput
+        disabled
         v-model="form.title"
         :type="'text'"
         :name="'title'"
@@ -52,20 +53,22 @@
         :placeholder="'Select...'"
         :items="practice_roles"
       />
-      <span v-if="!roles.length">
-        You haven't created any role yet, create role
-        <nuxt-link class="underline" :to="'/roles-and-permissions/roles'">here</nuxt-link>
-      </span>
-      <AppInput
-        v-model="form.practice_user_role_id"
-        :type="'select'"
-        :name="'practice_user_role_id'"
-        :label="'Practice User Role'"
-        :error="formError.find(item => item.field === 'practice_user_role_id')"
-        :placeholder="'Select...'"
-        :items="roles"
-        :disabled="!roles.length"
-      />
+      <template v-if="user.practice_detail.role.name !== 'Practice User Admin'">
+        <span v-if="!roles.length">
+          You haven't created any role yet, create role
+          <nuxt-link class="underline" :to="'/roles-and-permissions/roles'">here</nuxt-link>
+        </span>
+        <AppInput
+          v-model="form.practice_user_role_id"
+          :type="'select'"
+          :name="'practice_user_role_id'"
+          :label="'Practice User Role'"
+          :error="formError.find(item => item.field === 'practice_user_role_id')"
+          :placeholder="'Select...'"
+          :items="roles"
+          :disabled="!roles.length"
+        />
+      </template>
       <AppInput
         v-model="form.status"
         :type="'select'"
@@ -74,7 +77,7 @@
         :error="formError.find(item => item.field === 'status')"
         :items="[{ label: 'Disabled', value: 'Disabled' }, { label: 'Active', value: 'Active' }]"
       />
-      <div class="text-left mt-5">
+      <div class="text-left mt-5" v-if="user.practice_detail.role.name !== 'Practice User Admin'">
         <AppButton
           :label="'Save changes'"
           @click="save"
