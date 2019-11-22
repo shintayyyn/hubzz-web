@@ -79,58 +79,106 @@
 					</div>
 					<div class="m-2 my-4">
 						<div class="font-semibold mt-2">
-							Will Hub pay for Hubzz billings?
+							Does Hub allow you to create jobs?
 						</div>
-						<div class="">
-							{{ specificInvitation.pay_for_surgery === true ? "Yes" : "No" }}
-						</div>
-
-						<div class="font-semibold mt-2">
-							Does Hub need to verify you job creation??
-						</div>
-						<div class="">
+						<div class="text-sm mx-6">
 							{{
-								specificInvitation.verify_job_creation === true ? "Yes" : "No"
+								specificInvitation.allow_surgery_create_sessions === true
+									? "Yes"
+									: "No"
 							}}
 						</div>
-
-						<div class="font-semibold mt-2">
-							Will Hub share your banks to other spokes?
+						<div
+							class="bg-gray-300 p-2 rounded-lg"
+							v-if="specificInvitation.allow_surgery_create_sessions === true"
+						>
+							<p class="font-semibold">
+								Rate Limits(Only effective when allowed to create jobs)
+							</p>
+							<div class="m-4">
+								<p class="font-semibold">Maximum Hourly Rate Limit</p>
+								<p class="text-sm mx-6">
+									{{
+										specificInvitation.max_hourly_rate_limit
+											? "£ " + specificInvitation.max_hourly_rate_limit
+											: "N/A"
+									}}
+								</p>
+								<p class="font-semibold">Maximum Half Day Rate Limit</p>
+								<p class="text-sm mx-6">
+									{{
+										specificInvitation.max_halfday_rate_limit
+											? "£ " + specificInvitation.max_halfday_rate_limit
+											: "N/A"
+									}}
+								</p>
+								<p class="font-semibold">Maximum Whole Day Rate Limit</p>
+								<p class="text-sm mx-6">
+									{{
+										specificInvitation.max_wholeday_rate_limit
+											? "£ " + specificInvitation.max_wholeday_rate_limit
+											: "N/A"
+									}}
+								</p>
+								<p class="font-semibold">Maximum Out-of-Hours Rate Limit</p>
+								<p class="text-sm mx-6">
+									{{
+										specificInvitation.max_ooh_rate_limit
+											? "£ " + specificInvitation.max_ooh_rate_limit
+											: "N/A"
+									}}
+								</p>
+								<p class="font-semibold">Maximum Excess Hours</p>
+								<p class="text-sm mx-6">
+									{{
+										specificInvitation.max_ooh_rate_limit
+											? "£ " + specificInvitation.max_ooh_rate_limit
+											: "N/A"
+									}}
+								</p>
+							</div>
 						</div>
-						<div class="">
+						<p class="font-semibold">Does Hub permit billing of Locums?</p>
+						<p class="text-sm mx-6">
+							{{
+								specificInvitation.allow_surgery_bill_locum === true
+									? "Yes"
+									: "No"
+							}}
+						</p>
+						<p class="font-semibold">Does Hub permit billing for Hubzz?</p>
+						<p class="text-sm mx-6">
+							{{
+								specificInvitation.allow_surgery_bill_hubzz === true
+									? "Yes"
+									: "No"
+							}}
+						</p>
+						<p class="font-semibold">Can other Spokes see your Banks?</p>
+						<p class="text-sm mx-6">
 							{{
 								specificInvitation.share_banks_to_other_surgeries === true
 									? "Yes"
 									: "No"
 							}}
-						</div>
-
-						<div class="font-semibold mt-2">
-							Your job rate limit set by Hub?
-						</div>
-						<div class="">{{ specificInvitation.create_job_rate_limit }}</div>
+						</p>
 					</div>
 				</div>
 			</div>
 		</div>
-
 		<!-- Buttons -->
-		<div class="flex my-6">
+		<div class="flex justify-around md:justify-start my-6">
 			<div
 				@click="acceptInvitation()"
-				class="flex mr-2 md:mr-4 py-4 px-8 cursor-pointer rounded-lg bg-green-500 hover:bg-green-600"
+				class="flex mr-2 md:mr-4 p-4 px-8 cursor-pointer rounded-lg bg-green-500 hover:bg-green-600 text-white font-semibold"
 			>
-				<div class="text-white font-semibold">
-					Accept
-				</div>
+				Accept
 			</div>
 			<div
 				@click="rejectInvitation()"
-				class="flex py-4 px-8 cursor-pointer rounded-lg bg-red-500 hover:bg-red-600"
+				class="flex p-4 px-8 cursor-pointer rounded-lg bg-red-500 hover:bg-red-600 text-white font-semibold"
 			>
-				<div class="text-white font-semibold">
-					Reject
-				</div>
+				Reject
 			</div>
 		</div>
 	</div>

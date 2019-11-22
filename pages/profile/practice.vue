@@ -292,7 +292,6 @@ export default {
         mandatory_training_id: [],
         gp_compliance_document_id: [],
         others_compliance_document_id: [],
-        use_variation_terms: false
       },
       name: "",
       formError: []
@@ -435,7 +434,6 @@ export default {
     }
   },
   created() {
-    this.form.use_variation_terms = this.practice.use_variation_terms;
     this.form.phone_number = this.practice.phone_number;
     this.form.report_to = this.practice.report_to;
     this.form.email = this.practice.email;

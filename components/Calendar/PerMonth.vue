@@ -1,5 +1,5 @@
 <template>
-  <section class="relative per-month-section">
+  <section class="relative">
     <div>
       <div class="flex flex-row flex-wrap justify-between mx-1" v-if="showRefresh">
         <AppButton

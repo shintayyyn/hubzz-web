@@ -19,7 +19,6 @@
 							}}
 						</p>
 					</div>
-
 					<div class="flex flex-col md:flex-row w-full mt-2">
 						<p class="md:w-1/2 font-semibold">E-Mail Address</p>
 						<p class="md:w-1/2 mx-4 md:mx-0">
@@ -28,17 +27,89 @@
 							}}
 						</p>
 					</div>
-
-					<div class="flex flex-col md:flex-row w-full mt-2">
-						<p class="md:w-1/2 font-semibold">Report To</p>
-						<p class="md:w-1/2 mx-4 md:mx-0">
+					<p class="font-semibold mt-2">Report To</p>
+					<p class="mx-4">
+						{{
+							practiceHub.practice.report_to
+								? practiceHub.practice.report_to
+								: "N/A"
+						}}
+					</p>
+				</div>
+				<p class="text-lg my-2 font-semibold">Permissions</p>
+				<div class="mx-4 m-2">
+					<p class="font-semibold">Does Hub allow creation of Jobs/Sessions?</p>
+					<p class="text-sm mx-6">
+						{{
+							practiceSpoke.allow_surgery_create_sessions === true
+								? "Yes"
+								: "No"
+						}}
+					</p>
+					<div
+						class="bg-gray-300 p-2 rounded-lg"
+						v-if="practiceSpoke.allow_surgery_create_sessions === true"
+					>
+						<p class="font-semibold">
+							Rate Limits(Only effective when allowed to create jobs)
+						</p>
+						<p class="font-semibold">Maximum Hourly Rate Limit</p>
+						<p class="text-sm mx-6">
 							{{
-								practiceHub.practice.report_to
-									? practiceHub.practice.report_to
+								practiceSpoke.max_hourly_rate_limit
+									? "£ " + practiceSpoke.max_hourly_rate_limit
+									: "N/A"
+							}}
+						</p>
+						<p class="font-semibold">Maximum Half Day Rate Limit</p>
+						<p class="text-sm mx-6">
+							{{
+								practiceSpoke.max_halfday_rate_limit
+									? "£ " + practiceSpoke.max_halfday_rate_limit
+									: "N/A"
+							}}
+						</p>
+						<p class="font-semibold">Maximum Whole Day Rate Limit</p>
+						<p class="text-sm mx-6">
+							{{
+								practiceSpoke.max_wholeday_rate_limit
+									? "£ " + practiceSpoke.max_wholeday_rate_limit
+									: "N/A"
+							}}
+						</p>
+						<p class="font-semibold">Maximum Out-of-Hours Rate Limit</p>
+						<p class="text-sm mx-6">
+							{{
+								practiceSpoke.max_ooh_rate_limit
+									? "£ " + practiceSpoke.max_ooh_rate_limit
+									: "N/A"
+							}}
+						</p>
+						<p class="font-semibold">Maximum Excess Hours</p>
+						<p class="text-sm mx-6">
+							{{
+								practiceSpoke.max_ooh_rate_limit
+									? "£ " + practiceSpoke.max_ooh_rate_limit
 									: "N/A"
 							}}
 						</p>
 					</div>
+					<p class="font-semibold">Does Hub permit billing of Locums?</p>
+					<p class="text-sm mx-6">
+						{{ practiceSpoke.allow_surgery_bill_locum === true ? "Yes" : "No" }}
+					</p>
+					<p class="font-semibold">Does Hub permit billing for HUbzz?</p>
+					<p class="text-sm mx-6">
+						{{ practiceSpoke.allow_surgery_bill_hubzz === true ? "Yes" : "No" }}
+					</p>
+					<p class="font-semibold">Can other Spokes see your Banks?</p>
+					<p class="text-sm mx-6">
+						{{
+							practiceSpoke.share_banks_to_other_surgeries === true
+								? "Yes"
+								: "No"
+						}}
+					</p>
 				</div>
 			</div>
 

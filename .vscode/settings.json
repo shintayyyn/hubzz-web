@@ -1,4 +1,7 @@
 {
   "editor.formatOnSave": true,
-  "prettier.printWidth": 130
+  "prettier.printWidth": 130,
+  "prettier.disableLanguages": [
+    "vue"
+  ]
 }
