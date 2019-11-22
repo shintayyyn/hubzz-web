@@ -19,8 +19,8 @@
       <div>Surgery: {{spoke.surgery.name}}</div>
     </div>
     <div class="rounded-lg shadow-lg p-2">
-      <div class="flex flex-col flex-wrap justify-between">
-        <div class="w-full p-1">
+			<div class="flex flex-col flex-wrap justify-between">
+				<div class="w-full p-1">
           <AppInput
             v-model="form.allow_surgery_create_sessions"
             :type="'select'"
@@ -120,8 +120,12 @@
         </div>
       </div>
       <div class="flex flex-row justify-start">
-        <AppButton :label="'Save'" @click="save" :inStyle="'padding:5px'" />
-      </div>
+				<AppButton
+					:label="'Save'"
+					@click="save"
+					:inStyle="'padding:5px 16px;'"
+				/>
+			</div>
     </div>
   </div>
 </template>
@@ -129,7 +133,7 @@
 <script>
 import AppButton from "@/components/Base/AppButton";
 import AppInput from "@/components/Base/AppInput";
-import AppConfirmationModal from "@/components/Base/AppConfirmationModal"
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
 export default {
   props:['spoke'],
   components:{
@@ -204,19 +208,19 @@ export default {
 
 <style>
 .modal-container {
-  z-index: 510;
+	z-index: 510;
 }
 @media screen and (min-width: 1200px) {
-  .modal-container {
-    width: 70%;
-  }
+	.modal-container {
+		width: 70%;
+	}
 }
 .add-surgery-confirmation-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: auto;
-  z-index: 514;
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: auto;
+	z-index: 514;
 }
 </style>

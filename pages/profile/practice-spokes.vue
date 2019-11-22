@@ -183,7 +183,6 @@ export default {
 				const response = await app.$axios.$get(
 					`/api/v1/practice/me/practice-surgeries?limit=5`
 				);
-
 				if (response.data && response.data.practice_surgeries) {
 					response.data.practice_surgeries.forEach(surgery => {
 						surgeries.push(surgery);
@@ -311,7 +310,6 @@ export default {
 		},
 		getStatus() {
 			let status = "Invited";
-			console.log(this.practice.type);
 			this.surgeries.map(item => {
 				if (this.practice.type === "Hub") {
 					if (item.invitation_accepted_at) {
