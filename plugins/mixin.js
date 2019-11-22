@@ -14,6 +14,9 @@ Vue.mixin({
       return arr;
     },
     CheckEmptyField(inputField, fieldName) {
+      if (!this.formError) {
+        return
+      }
       let index = this.formError.findIndex(item => item.field === fieldName);
       if (index >= 0) {
         this.formError.splice(index, 1);
@@ -166,5 +169,6 @@ Vue.mixin({
         hasPermission
       };
     }
+    // JOBS
   }
 });

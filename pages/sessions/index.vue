@@ -1,16 +1,22 @@
 <template>
   <section class="relative">
     <transition name="fade" mode="out-in">
-      <div v-if="toggleTable">
+      <div v-if="showTable">
         <AppButton
           :label="'Filter'"
-          @click="showFilter()"
+          @click="showFilter"
+          :inStyle="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
+        />
+        <AppButton
+          v-if="showRefresh"
+          :label="'Refresh'"
+          @click="refreshJobs"
           :inStyle="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
         />
         <div
           v-if="!isJobPart"
           class="flex-wrap justify-start items-center z-10 absolute w-full bg-white shadow-lg p-3 rounded-lg"
-          :class="filterToggle ? 'flex' : 'hidden'"
+          :class="filterModal ? 'flex' : 'hidden'"
         >
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
@@ -134,7 +140,7 @@
         <div
           v-if="isJobPart"
           class="flex-wrap justify-start items-center z-10 absolute w-full bg-white shadow-lg p-3 rounded-lg"
-          :class="filterToggle ? 'flex' : 'hidden'"
+          :class="filterModal ? 'flex' : 'hidden'"
         >
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
@@ -273,16 +279,13 @@
           :perPage="isJobPart ? jobPartParams.limit : params.limit"
           :columns="columns"
           :orderBy="isJobPart ? jobPartParams.order_by :params.order_by"
-          :loading="loadingJobs"
+          :loading="loading"
           :routerLink="'/sessions'"
           @pagechanged="pagechanged"
           @limitchanged="limitchanged"
           @sorted="sorted"
         ></AppTable>
-        <div
-          v-if="!jobs.length && !loadingJobs"
-          class="flex justify-center py-4"
-        >{{noJobsToDisplay}}</div>
+        <div v-if="!jobs.length && !loading" class="flex justify-center py-4">{{noJobsToDisplay}}</div>
         <transition name="fade" mode="out-in">
           <nuxt-link
             class="shield"
@@ -331,7 +334,6 @@ export default {
         "unfilled",
         "declined",
         "cancelled",
-        "withdrawn",
         "completed",
         "approved"
       ].includes(query.status.toLowerCase())
@@ -341,12 +343,13 @@ export default {
   },
   data() {
     return {
+      loading: false,
       current_page: 1,
       // app table params
       params: {
         offset: 0,
         limit: 5,
-        order_by: ["date_created:desc"],
+        order_by: [],
         job_number: "",
         title: "",
         type: "",
@@ -364,7 +367,7 @@ export default {
       jobPartParams: {
         offset: 0,
         limit: 5,
-        order_by: ["job_date_created:desc"],
+        order_by: [],
         job_part_number: "",
         job_title: "",
         job_type: "",
@@ -380,9 +383,9 @@ export default {
         time_end: "",
         invoice_status: ""
       },
-      // app table column
-      filterToggle: false,
-      toggleTable: false
+      filterModal: false,
+      showTable: false,
+      showRefresh: false
     };
   },
   computed: {
@@ -397,8 +400,7 @@ export default {
       getPracticeAppliedJobs: "jobs/getPracticeAppliedJobs",
       getPracticeUnfilledJobs: "jobs/getPracticeUnfilledJobs",
       getPracticeDeclinedJobs: "jobs/getPracticeDeclinedJobs",
-      getPracticeCancelledJobs: "jobs/getPracticeCancelledJobs",
-      getPracticeWithdrawnJobs: "jobs/getPracticeWithdrawnJobs"
+      getPracticeCancelledJobs: "jobs/getPracticeCancelledJobs"
     }),
     isJobPart() {
       if (
@@ -442,13 +444,10 @@ export default {
             return this.$store.state.jobs.practice_declined_jobs_count;
           case "cancelled":
             return this.$store.state.jobs.practice_cancelled_jobs_count;
-          case "withdrawn":
-            return this.$store.state.jobs.practice_withdrawn_jobs_count;
           default:
             return this.$store.state.jobs.practice_allocated_jobs_count;
         }
       } else {
-        console.log("no status");
         return this.$store.state.jobs.practice_allocated_jobs_count;
       }
     },
@@ -475,8 +474,6 @@ export default {
             return this.getPracticeDeclinedJobs;
           case "cancelled":
             return this.getPracticeCancelledJobs;
-          case "withdrawn":
-            return this.getPracticeWithdrawnJobs;
         }
       } else {
         return this.getPracticeAllocatedJobs;
@@ -488,7 +485,6 @@ export default {
           case "allocated":
           case "ongoing":
           case "declined":
-          case "withdrawn":
           case "approved":
           case "unfilled":
             return `You do not have any ${this.$route.query.status.toLowerCase()} jobs`;
@@ -505,21 +501,6 @@ export default {
       } else {
         return "You do not have any jobs";
       }
-    },
-    loadingJobs() {
-      return this.$store.state.jobs.loading_jobs;
-    },
-    dispatchUrl() {
-      let url = "jobs/fetchPracticeJobs";
-      if (
-        this.$route.query.status &&
-        ["ongoing", "completed", "approved"].includes(
-          this.$route.query.status.toLowerCase()
-        )
-      ) {
-        url = "jobs/fetchPracticeJobParts";
-      }
-      return url;
     },
     columns() {
       let columns = [];
@@ -652,13 +633,6 @@ export default {
           class: "text-center localDate"
         });
       }
-      if (queryStatus === "withdrawn") {
-        columns.push({
-          name: "Withdrawn At",
-          dataIndex: "platform_job.withdrawn_at",
-          class: "text-center localDate"
-        });
-      }
       if (["completed", "approved"].includes(queryStatus)) {
         columns.push(
           {
@@ -741,15 +715,6 @@ export default {
         this.getJobsCount(this.params);
       }
     },
-    getPracticeWithdrawnJobs(newValue, oldValue) {
-      if (
-        this.params.limit < newValue.length &&
-        oldValue.length > 0 &&
-        this.$route.query.status === "Withdrawn"
-      ) {
-        this.getJobsCount(this.params);
-      }
-    },
     getPracticeCompletedJobs(newValue, oldValue) {
       if (
         this.jobPartParams.limit < newValue.length &&
@@ -770,52 +735,59 @@ export default {
     },
     "$route.query"({ status: newStatus }, { status: oldStatus }) {
       if (newStatus && newStatus !== null && newStatus !== oldStatus) {
+        // this.$store.commit("jobs/TOGGLE_LOADING", true);
+        this.$store.commit("jobs/CLEAR_PRACTICE_JOB_NOTIFICATION");
         this.current_page = 1;
-        this.toggleTable = false;
-        this.filterToggle = false;
+        this.showTable = false;
+        this.filterModal = false;
+        this.showRefresh = false;
         setTimeout(async () => {
-          this.clearJobsBadge(newStatus);
           await this.clearFilters();
-          this.getJobsCount(this.isJobPart ? this.jobPartParams : this.params);
-        }, 1000);
+          this.loading = true;
+          await this.getJobsCount(
+            this.isJobPart ? this.jobPartParams : this.params
+          );
+          await this.getJobs(this.isJobPart ? this.jobPartParams : this.params);
+          this.loading = false;
+        }, 250);
       }
     }
   },
-  created() {
-    this.getJobsCount(this.isJobPart ? this.jobPartParams : this.params);
-    setTimeout(() => {
-      this.clearJobsBadge(
-        this.$route.query.status ? this.$route.query.status : "Allocated"
-      );
-    }, 250);
+  async created() {
+    this.loading = true;
+    await this.getJobsCount(this.isJobPart ? this.jobPartParams : this.params);
+    await this.getJobs(this.isJobPart ? this.jobPartParams : this.params);
+    this.loading = false;
+  },
+  mounted() {
+    this.$socket.on("Practice Notification Job Current", this.getJobsRealTime);
+    this.$socket.on(
+      "Practice Notification Job Available",
+      this.getJobsRealTime
+    );
+    this.$socket.on("Practice Notification Job Applied", this.getJobsRealTime);
+    this.$socket.on("Practice Notification Job Declined", this.getJobsRealTime);
+    this.$socket.on(
+      "Practice Notification Job Cancelled",
+      this.getJobsRealTime
+    );
+    this.$socket.on(
+      "Practice Notification Job Part Approved",
+      this.getJobsRealTime
+    );
+    this.$socket.on(
+      "Practice Notification Job Part Completed",
+      this.getJobsRealTime
+    );
+    this.$socket.on("Practice Notification Job Updated", this.getJobsRealTime);
+  },
+  destroyed() {
+    this.removeListener();
+    this.showRefresh = false;
+    this.$store.commit("jobs/CLEAR_PRACTICE_JOB_NOTIFICATION");
   },
   methods: {
-    clearJobsBadge(status) {
-      let jobStatus = status.toUpperCase();
-      return this.$store.commit(`jobs/CLEAR_PRACTICE_${jobStatus}_BADGE`);
-    },
-    showFilter() {
-      return (this.filterToggle = !this.filterToggle);
-    },
-    filterJob() {
-      this.current_page = 1;
-      this.params.offset = 0;
-      this.jobPartParams.offset = 0;
-      this.$store.commit("jobs/TOGGLE_LOADING", true);
-      let jobStatus = this.$route.query.status
-        ? this.$route.query.status.toUpperCase()
-        : "ALLOCATED";
-      if (["ONGOING", "COMPLETED", "APPROVED"].includes(jobStatus)) {
-        this.$store.commit(`jobs/SET_PRACTICE_${jobStatus}_JOB_PARTS`, []);
-      }
-      if (!["ONGOING", "COMPLETED", "APPROVED"].includes(jobStatus)) {
-        this.$store.commit(`jobs/SET_PRACTICE_${jobStatus}_JOBS`, []);
-      }
-      this.getJobs(this.isJobPart ? this.jobPartParams : this.params);
-      this.filterToggle = false;
-    },
     getJobsCount(params) {
-      this.$store.commit("jobs/TOGGLE_LOADING", true);
       let status = [];
       if (!this.$route.query.status) {
         status = ["Allocated"];
@@ -830,18 +802,61 @@ export default {
       ) {
         status = [`${this.$route.query.status}`];
       }
-      this.$store
-        .dispatch(`${this.dispatchUrl}`, {
-          status,
-          countOnly: true,
-          ...params
+      this.$axios
+        .$get(
+          `/api/v1/practice/${this.isJobPart ? "job-parts" : "jobs"}/count`,
+          {
+            params: {
+              status,
+              ...params
+            }
+          }
+        )
+        .then(res => {
+          console.log("count response", res.data.count);
+          if (
+            this.$route.query.status &&
+            ["ongoing", "completed", "approved"].includes(
+              this.$route.query.status.toLowerCase()
+            )
+          ) {
+            this.$store.commit(
+              `jobs/SET_PRACTICE_${this.$route.query.status.toUpperCase()}_JOB_PARTS_COUNT`,
+              res.data.count
+            );
+          } else if (
+            this.$route.query.status &&
+            this.$route.query.status.toLowerCase() === "live"
+          ) {
+            this.$store.commit(
+              `jobs/SET_PRACTICE_AVAILABLE_JOBS_COUNT`,
+              res.data.count
+            );
+          } else if (
+            this.$route.query.status &&
+            !["ongoing", "completed", "approved"].includes(
+              this.$route.query.status.toLowerCase()
+            )
+          ) {
+            this.$store.commit(
+              `jobs/SET_PRACTICE_${this.$route.query.status.toUpperCase()}_JOBS_COUNT`,
+              res.data.count
+            );
+          } else if (!this.$route.query.status) {
+            this.$store.commit(
+              "jobs/SET_PRACTICE_ALLOCATED_JOBS_COUNT",
+              res.data.count
+            );
+          }
+        })
+        .catch(err => {
+          console.log("err", err.response.data);
         })
         .finally(() => {
-          this.getJobs(params);
+          return;
         });
     },
     getJobs(params) {
-      this.$store.commit("jobs/CLEAR_JOBS");
       let status = [];
       if (!this.$route.query.status) {
         status = ["Allocated"];
@@ -856,42 +871,168 @@ export default {
       ) {
         status = [`${this.$route.query.status}`];
       }
-      this.$store
-        .dispatch(`${this.dispatchUrl}`, {
-          status,
-          ...params
+      this.$axios
+        .$get(`/api/v1/practice/${this.isJobPart ? "job-parts" : "jobs"}`, {
+          params: {
+            status,
+            ...params
+          }
+        })
+        .then(res => {
+          console.log("jobs response", res.data);
+          if (
+            this.$route.query.status &&
+            ["ongoing", "completed", "approved"].includes(
+              this.$route.query.status.toLowerCase()
+            )
+          ) {
+            this.$store.commit(
+              `jobs/SET_PRACTICE_${this.$route.query.status.toUpperCase()}_JOB_PARTS`,
+              res.data.job_parts
+            );
+          } else if (
+            this.$route.query.status &&
+            this.$route.query.status.toLowerCase() === "live"
+          ) {
+            this.$store.commit(
+              `jobs/SET_PRACTICE_AVAILABLE_JOBS`,
+              res.data.jobs
+            );
+          } else if (
+            this.$route.query.status &&
+            !["ongoing", "completed", "approved"].includes(
+              this.$route.query.status.toLowerCase()
+            )
+          ) {
+            this.$store.commit(
+              `jobs/SET_PRACTICE_${this.$route.query.status.toUpperCase()}_JOBS`,
+              res.data.jobs
+            );
+          } else if (!this.$route.query.status) {
+            this.$store.commit(
+              "jobs/SET_PRACTICE_ALLOCATED_JOBS",
+              res.data.jobs
+            );
+          }
+          this.showTable = true;
+        })
+        .catch(err => {
+          console.log("err", err);
         })
         .finally(() => {
           this.$store.commit("jobs/TOGGLE_LOADING", false);
-          this.toggleTable = true;
+          return;
         });
     },
-    sorted(order_by) {
+    getJobsRealTime(job) {
+      if (!job) {
+        return;
+      }
+      console.log("job from socket", job);
+      this.showRefresh = true;
+    },
+    async refreshJobs() {
+      this.loading = true;
+      this.$store.commit("jobs/CLEAR_PRACTICE_JOB_NOTIFICATION");
+      await this.getJobsCount(
+        this.isJobPart ? this.jobPartParams : this.params
+      );
+      await this.getJobs(this.isJobPart ? this.jobPartParams : this.params);
+      this.loading = false;
+      this.showRefresh = false;
+    },
+    removeListener() {
+      this.$socket.removeListener(
+        "Practice Notification Job Current",
+        this.getJobsRealTime
+      );
+      this.$socket.removeListener(
+        "Practice Notification Job Available",
+        this.getJobsRealTime
+      );
+      this.$socket.removeListener(
+        "Practice Notification Job Applied",
+        this.getJobsRealTime
+      );
+      this.$socket.removeListener(
+        "Practice Notification Job Declined",
+        this.getJobsRealTime
+      );
+      this.$socket.removeListener(
+        "Practice Notification Job Cancelled",
+        this.getJobsRealTime
+      );
+      this.$socket.removeListener(
+        "Practice Notification Job Part Approved",
+        this.getJobsRealTime
+      );
+      this.$socket.removeListener(
+        "Practice Notification Job Part Completed",
+        this.getJobsRealTime
+      );
+      this.$socket.removeListener(
+        "Practice Notification Job Updated",
+        this.getJobsRealTime
+      );
+    },
+    showFilter() {
+      this.filterModal = !this.filterModal;
+    },
+    async filterJob() {
+      console.log("filter job");
+      this.current_page = 1;
+      this.params.offset = 0;
+      this.jobPartParams.offset = 0;
+      this.loading = true;
+      this.filterModal = false;
+      await this.getJobsCount(
+        this.isJobPart ? this.jobPartParams : this.params
+      );
+      await this.getJobs(this.isJobPart ? this.jobPartParams : this.params);
+      this.loading = false;
+    },
+    async sorted(order_by) {
+      console.log("sort job");
+      // let orderBy = [...order_by];
+      // order_by.forEach((item, index) => {
+      //   if (item.includes("date_time_start")) {
+      //     orderBy.push(`date_start:${item.split(":")[1]}`);
+      //   } else {
+      //     orderBy.push(item);
+      //   }
+      // });
+      // console.log(orderBy);
       this.current_page = 1;
       this.params.offset = 0;
       this.params.order_by = order_by;
       this.jobPartParams.offset = 0;
       this.jobPartParams.order_by = order_by;
-      this.$store.commit("jobs/TOGGLE_LOADING", true);
-      this.getJobs(this.isJobPart ? this.jobPartParams : this.params);
+      this.loading = true;
+      await this.getJobs(this.isJobPart ? this.jobPartParams : this.params);
+      this.loading = false;
     },
-    pagechanged(page) {
+    async pagechanged(page) {
+      console.log("change page ");
       this.current_page = page;
       this.params.offset = this.params.limit * (page - 1);
       this.jobPartParams.offset = this.jobPartParams.limit * (page - 1);
-      this.$store.commit("jobs/TOGGLE_LOADING", true);
-      this.getJobs(this.isJobPart ? this.jobPartParams : this.params);
+      this.loading = true;
+      await this.getJobs(this.isJobPart ? this.jobPartParams : this.params);
+      this.loading = false;
     },
-    limitchanged(limit) {
+    async limitchanged(limit) {
+      console.log("change limit ");
       this.current_page = 1;
       this.params.offset = 0;
       this.params.limit = limit;
       this.jobPartParams.offset = 0;
       this.jobPartParams.limit = limit;
-      this.$store.commit("jobs/TOGGLE_LOADING", true);
-      this.getJobs(this.isJobPart ? this.jobPartParams : this.params);
+      this.loading = true;
+      await this.getJobs(this.isJobPart ? this.jobPartParams : this.params);
+      this.loading = false;
     },
     clearFilters() {
+      console.log("clear filter");
       this.params.offset = 0;
       this.params.limit = 5;
       this.params.type = "";
@@ -901,7 +1042,7 @@ export default {
       this.params.shift_id = "";
       this.params.rate = "";
       this.params.rate_type_id = "";
-      this.params.order_by = ["date_created:desc"];
+      this.params.order_by = [];
 
       this.jobPartParams.offset = 0;
       this.jobPartParams.limit = 5;
@@ -919,7 +1060,7 @@ export default {
       this.jobPartParams.calendar_date_end = "";
       this.jobPartParams.time_start = "";
       this.jobPartParams.time_end = "";
-      this.jobPartParams.order_by = ["date_created:desc"];
+      this.jobPartParams.order_by = [];
 
       return;
     },

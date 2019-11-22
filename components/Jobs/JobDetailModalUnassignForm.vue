@@ -45,13 +45,15 @@ export default {
               status: "success",
               text: ["Declined"]
             });
-            this.$store.commit(
-              "jobs/REMOVE_LOCUM_ALLOCATED_JOB",
-              res.data.job.id
-            );
-            // need to pass down job part id
-            this.$emit("removeJobPart");
-            this.$store.commit("jobs/ADD_LOCUM_DECLINED_JOB", res.data.job);
+            if (
+              this.$route.path.includes("/jobs") ||
+              this.$route.path.includes("/dashboard")
+            ) {
+              this.$store.commit(
+                "jobs/REMOVE_LOCUM_ALLOCATED_JOB",
+                res.data.job.id
+              );
+            }
             this.$emit("close");
           })
           .catch(err => {

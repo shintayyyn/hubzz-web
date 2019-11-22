@@ -4,31 +4,208 @@ export default {
     getPracticeJobNotifications(state) {
         let notifications = []
         state.practice_job_notifications.forEach(notif => {
-            if (['completed', 'ongoing', 'approved'].includes(notif.status.toLowerCase())) {
-                notifications.push({
-                    id: notif.id,
-                    title: notif.job.title,
-                    status: notif.status,
-                    date_start: notif.job.date_start,
-                    date_end: notif.job.date_end,
-                    shift: notif.job.shift.name,
-                    rate: notif.job.rate,
-                    locum_detail_rate_type: notif.job.locum_detail_rate_type.name
-                })
-            } else if (!['completed', 'ongoing', 'approved'].includes(notif.status.toLowerCase())) {
-                notifications.push({
-                    id: notif.id,
-                    title: notif.title,
-                    status: notif.status,
-                    date_start: notif.date_start,
-                    date_end: notif.date_end,
-                    shift: notif.shift.name,
-                    rate: notif.rate,
-                    locum_detail_rate_type: notif.locum_detail_rate_type.name
-                })
+            let message = ''
+            let notifObj = null
+            switch (notif.notificationType) {
+                case 'Practice Notification Job Reminder':
+                    if (notif.job_reminded_in_1_hours === 1) {
+                        message = 'This Job will start in 1 hour.'
+                    } else if (notif.job_reminded_in_3_hours) {
+                        message = 'This Job will start in 3 hours.'
+                    } else if (notif.job_reminded_in_1_days === 1) {
+                        message = 'This Job will start tomorrow.'
+                    } else if (notif.job_reminded_in_3_days === 1) {
+                        message = 'This Job will start in 3 days.'
+                    }
+                    notifObj = {
+                        id: notif.id,
+                        title: notif.title,
+                        status: notif.status,
+                        date_start: notif.date_start,
+                        date_end: notif.date_end,
+                        shift: notif.shift.name,
+                        rate: notif.rate,
+                        locum_detail_rate_type: notif.locum_detail_rate_type.name,
+                        notification_type: notif.notificationType,
+                        message
+                    }
+                    break;
+                case 'Practice Notification Job Unfilled Warning':
+                    if (notif.unfilled_warned_in_1_hours === 1) {
+                        message = 'This Job will be unfilled in 1 hour.'
+                    } else if (notif.unfilled_warned_in_3_hours) {
+                        message = 'This Job will be unfilled in 3 hours.'
+                    } else if (notif.unfilled_warned_in_1_days === 1) {
+                        message = 'This Job will be unfilled tomorrow.'
+                    } else if (notif.unfilled_warned_in_3_days === 1) {
+                        message = 'This Job will be unfilled in 3 days.'
+                    }
+                    notifObj = {
+                        id: notif.id,
+                        title: notif.title,
+                        status: notif.status,
+                        date_start: notif.date_start,
+                        date_end: notif.date_end,
+                        shift: notif.shift.name,
+                        rate: notif.rate,
+                        locum_detail_rate_type: notif.locum_detail_rate_type.name,
+                        notification_type: notif.notificationType,
+                        message
+                    }
+                    break;
+                case 'Practice Notification Job Current':
+                    message = 'A locum has been appointed to this job.'
+                    notifObj = {
+                        id: notif.id,
+                        title: notif.title,
+                        status: notif.status,
+                        date_start: notif.date_start,
+                        date_end: notif.date_end,
+                        shift: notif.shift.name,
+                        rate: notif.rate,
+                        locum_detail_rate_type: notif.locum_detail_rate_type.name,
+                        notification_type: notif.notificationType,
+                        message
+                    }
+                    break;
+                case 'Practice Notification Job Unfilled':
+                    message = 'This job is unfilled.'
+                    notifObj = {
+                        id: notif.id,
+                        title: notif.title,
+                        status: notif.status,
+                        date_start: notif.date_start,
+                        date_end: notif.date_end,
+                        shift: notif.shift.name,
+                        rate: notif.rate,
+                        locum_detail_rate_type: notif.locum_detail_rate_type.name,
+                        notification_type: notif.notificationType,
+                        message
+                    }
+                    break;
+                case 'Practice Notification Job Available':
+                    message = 'This job is now live.'
+                    notifObj = {
+                        id: notif.id,
+                        title: notif.title,
+                        status: notif.status,
+                        date_start: notif.date_start,
+                        date_end: notif.date_end,
+                        shift: notif.shift.name,
+                        rate: notif.rate,
+                        locum_detail_rate_type: notif.locum_detail_rate_type.name,
+                        notification_type: notif.notificationType,
+                        message
+                    }
+                    break;
+                case 'Practice Notification Job Applied':
+                    message = 'Someone applied to this job.'
+                    notifObj = {
+                        id: notif.id,
+                        title: notif.title,
+                        status: notif.status,
+                        date_start: notif.date_start,
+                        date_end: notif.date_end,
+                        shift: notif.shift.name,
+                        rate: notif.rate,
+                        locum_detail_rate_type: notif.locum_detail_rate_type.name,
+                        notification_type: notif.notificationType,
+                        message
+                    }
+                    break;
+                case 'Practice Notification Job Declined':
+                    message = 'The locum leave this job.'
+                    notifObj = {
+                        id: notif.id,
+                        title: notif.title,
+                        status: notif.status,
+                        date_start: notif.date_start,
+                        date_end: notif.date_end,
+                        shift: notif.shift.name,
+                        rate: notif.rate,
+                        locum_detail_rate_type: notif.locum_detail_rate_type.name,
+                        notification_type: notif.notificationType,
+                        message
+                    }
+                    break;
+                case 'Practice Notification Job Cancelled':
+                    message = 'This job has been cancelled.'
+                    notifObj = {
+                        id: notif.id,
+                        title: notif.title,
+                        status: notif.status,
+                        date_start: notif.date_start,
+                        date_end: notif.date_end,
+                        shift: notif.shift.name,
+                        rate: notif.rate,
+                        locum_detail_rate_type: notif.locum_detail_rate_type.name,
+                        notification_type: notif.notificationType,
+                        message
+                    }
+                    break;
+                case 'Practice Notification Job Part Completed':
+                    message = 'This part of your job has been completed'
+                    notifObj = {
+                        id: notif.id,
+                        title: notif.job.title,
+                        status: notif.status,
+                        date_start: notif.job.date_start,
+                        date_end: notif.job.date_end,
+                        shift: notif.job.shift.name,
+                        rate: notif.job.rate,
+                        locum_detail_rate_type: notif.job.locum_detail_rate_type.name,
+                        notification_type: notif.notificationType,
+                        message
+                    }
+                    break;
+                case 'Practice Notification Job Part Approved':
+                    message = 'This part of your job has been approved'
+                    notifObj = {
+                        id: notif.id,
+                        title: notif.job.title,
+                        status: notif.status,
+                        date_start: notif.job.date_start,
+                        date_end: notif.job.date_end,
+                        shift: notif.job.shift.name,
+                        rate: notif.job.rate,
+                        locum_detail_rate_type: notif.job.locum_detail_rate_type.name,
+                        notification_type: notif.notificationType,
+                        message
+                    }
+                    break;
+                case 'Practice Notification Job Completed':
+                    message = 'This job has been completed'
+                    notifObj = {
+                        id: notif.id,
+                        title: notif.title,
+                        status: notif.status,
+                        date_start: notif.date_start,
+                        date_end: notif.date_end,
+                        shift: notif.shift.name,
+                        rate: notif.rate,
+                        locum_detail_rate_type: notif.locum_detail_rate_type.name,
+                        notification_type: notif.notificationType,
+                        message
+                    }
+                    break;
+                case 'Practice Notification Job Updated':
+                    message = 'This job has been updated by your practice'
+                    notifObj = {
+                        id: notif.id,
+                        title: notif.title,
+                        status: notif.status,
+                        date_start: notif.date_start,
+                        date_end: notif.date_end,
+                        shift: notif.shift.name,
+                        rate: notif.rate,
+                        locum_detail_rate_type: notif.locum_detail_rate_type.name,
+                        notification_type: notif.notificationType,
+                        message
+                    }
+                    break;
             }
+            notifications.push(notifObj)
         })
-        console.log('practice job notifications', notifications)
         return notifications
     },
     // PARTS
@@ -97,7 +274,7 @@ export default {
     },
     getPracticeApprovedJobs(state) {
         let jobs = []
-        state.locum_approved_job_parts.forEach(jobPart => {
+        state.practice_approved_job_parts.forEach(jobPart => {
             let job_surgery_name = ''
             let date_time_start = ''
             let date_time_end = ''
@@ -358,65 +535,206 @@ export default {
     getPracticeAppliedJobsReminder(state) {
         return state.practice_applied_jobs_reminder
     },
-    getPracticeJobsBadge(state) {
-        return [
-            state.practice_new_allocated_jobs_count, state.practice_new_available_jobs_count, state.practice_new_applied_jobs_count,
-            state.practice_new_unfilled_jobs_count, state.practice_new_declined_jobs_count,
-            state.practice_new_cancelled_jobs_count, state.practice_new_completed_jobs_count
-        ].reduce((accumulator, currentValue) => accumulator + currentValue)
-    },
 
     // locum
     // NOTIF
     getLocumJobNotifications(state) {
         let notifications = []
         state.locum_job_notifications.forEach(notif => {
+            let message = ''
             let notifObj = null
-            if (['completed', 'ongoing', 'approved'].includes(notif.locum_status.toLowerCase())) {
-                notifObj = {
-                    id: notif.id,
-                    title: notif.job.title,
-                    locum_status: notif.locum_status,
-                    date_start: notif.job.date_start,
-                    date_end: notif.job.date_end,
-                    shift: notif.job.shift.name,
-                    rate: notif.job.rate,
-                    locum_detail_rate_type: notif.job.locum_detail_rate_type.name,
-                    reminder: notif.reminder ? notif.reminder : false,
-                    // notificationType: notif.reminder ? 'Reminder' :  
-                }
-            } else if (!['completed', 'ongoing', 'approved'].includes(notif.locum_status.toLowerCase())) {
-                notifObj = {
-                    id: notif.id,
-                    title: notif.title,
-                    locum_status: notif.locum_status,
-                    date_start: notif.date_start,
-                    date_end: notif.date_end,
-                    shift: notif.shift.name,
-                    rate: notif.rate,
-                    locum_detail_rate_type: notif.locum_detail_rate_type.name,
-                    reminder: notif.reminder ? notif.reminder : false
-                }
-            }
-            if (notif.reminder) {
-                let reminder_message = ''
-                if (notif.job_reminded_in_1_hours === 1) {
-                    reminder_message = 'This Job will start in 1 hour'
-                } else if (notif.job_reminded_in_3_hours) {
-                    reminder_message = 'This Job will start in 3 hours'
-                } else if (notif.job_reminded_in_1_days === 1) {
-                    reminder_message = 'This Job will start tomorrow'
-                } else if (notif.job_reminded_in_3_days === 1) {
-                    reminder_message = 'This Job will start in 3 days'
-                }
-                notifObj = {
-                    ...notifObj,
-                    reminder_message
-                }
+            switch (notif.notificationType) {
+                case 'Locum Notification Job Reminder':
+                    if (notif.job_reminded_in_1_hours === 1) {
+                        message = 'This Job will start in 1 hour.'
+                    } else if (notif.job_reminded_in_3_hours) {
+                        message = 'This Job will start in 3 hours.'
+                    } else if (notif.job_reminded_in_1_days === 1) {
+                        message = 'This Job will start tomorrow.'
+                    } else if (notif.job_reminded_in_3_days === 1) {
+                        message = 'This Job will start in 3 days.'
+                    }
+                    notifObj = {
+                        id: notif.id,
+                        title: notif.title,
+                        locum_status: notif.locum_status,
+                        date_start: notif.date_start,
+                        date_end: notif.date_end,
+                        shift: notif.shift.name,
+                        rate: notif.rate,
+                        locum_detail_rate_type: notif.locum_detail_rate_type.name,
+                        notification_type: notif.notificationType,
+                        message
+                    }
+                    break;
+                case 'Locum Notification Job Current':
+                    message = 'You have been appointed to this job.'
+                    notifObj = {
+                        id: notif.id,
+                        title: notif.title,
+                        locum_status: notif.locum_status,
+                        date_start: notif.date_start,
+                        date_end: notif.date_end,
+                        shift: notif.shift.name,
+                        rate: notif.rate,
+                        locum_detail_rate_type: notif.locum_detail_rate_type.name,
+                        notification_type: notif.notificationType,
+                        message
+                    }
+                    break;
+                case 'Locum Notification Job Ongoing':
+                    message = 'Your Job has started.'
+                    notifObj = {
+                        id: notif.id,
+                        title: notif.title,
+                        locum_status: notif.locum_status,
+                        date_start: notif.date_start,
+                        date_end: notif.date_end,
+                        shift: notif.shift.name,
+                        rate: notif.rate,
+                        locum_detail_rate_type: notif.locum_detail_rate_type.name,
+                        notification_type: notif.notificationType,
+                        message
+                    }
+                    break;
+                case 'Locum Notification Job Available':
+                    message = 'There is a new available job for you.'
+                    notifObj = {
+                        id: notif.id,
+                        title: notif.title,
+                        locum_status: notif.locum_status,
+                        date_start: notif.date_start,
+                        date_end: notif.date_end,
+                        shift: notif.shift.name,
+                        rate: notif.rate,
+                        locum_detail_rate_type: notif.locum_detail_rate_type.name,
+                        notification_type: notif.notificationType,
+                        message
+                    }
+                    break;
+                case 'Locum Notification Job Matched':
+                    message = 'There is a new job that matched your qualifications.'
+                    notifObj = {
+                        id: notif.id,
+                        title: notif.title,
+                        locum_status: notif.locum_status,
+                        date_start: notif.date_start,
+                        date_end: notif.date_end,
+                        shift: notif.shift.name,
+                        rate: notif.rate,
+                        locum_detail_rate_type: notif.locum_detail_rate_type.name,
+                        notification_type: notif.notificationType,
+                        message
+                    }
+                    break;
+                case 'Locum Notification Job Unsuccessful':
+                    message = 'Your application for this job has already been appointed to another locum.'
+                    notifObj = {
+                        id: notif.id,
+                        title: notif.title,
+                        locum_status: notif.locum_status,
+                        date_start: notif.date_start,
+                        date_end: notif.date_end,
+                        shift: notif.shift.name,
+                        rate: notif.rate,
+                        locum_detail_rate_type: notif.locum_detail_rate_type.name,
+                        notification_type: notif.notificationType,
+                        message
+                    }
+                    break;
+                case 'Locum Notification Job Unavailable':
+                    message = 'This job is now unavailable'
+                    notifObj = {
+                        id: notif.id,
+                        title: notif.title,
+                        locum_status: notif.locum_status,
+                        date_start: notif.date_start,
+                        date_end: notif.date_end,
+                        shift: notif.shift.name,
+                        rate: notif.rate,
+                        locum_detail_rate_type: notif.locum_detail_rate_type.name,
+                        notification_type: notif.notificationType,
+                        message
+                    }
+                    break;
+                case 'Locum Notification Job Cancelled':
+                    message = 'Your job has been cancelled by your practice'
+                    notifObj = {
+                        id: notif.id,
+                        title: notif.title,
+                        locum_status: notif.locum_status,
+                        date_start: notif.date_start,
+                        date_end: notif.date_end,
+                        shift: notif.shift.name,
+                        rate: notif.rate,
+                        locum_detail_rate_type: notif.locum_detail_rate_type.name,
+                        notification_type: notif.notificationType,
+                        message
+                    }
+                    break;
+                case 'Locum Notification Job Part Completed':
+                    message = 'This part of your job has been completed'
+                    notifObj = {
+                        id: notif.id,
+                        title: notif.job.title,
+                        locum_status: notif.locum_status,
+                        date_start: notif.job.date_start,
+                        date_end: notif.job.date_end,
+                        shift: notif.job.shift.name,
+                        rate: notif.job.rate,
+                        locum_detail_rate_type: notif.job.locum_detail_rate_type.name,
+                        notification_type: notif.notificationType,
+                        message
+                    }
+                    break;
+                case 'Locum Notification Job Part Approved':
+                    message = 'This part of your job has been approved'
+                    notifObj = {
+                        id: notif.id,
+                        title: notif.job.title,
+                        locum_status: notif.locum_status,
+                        date_start: notif.job.date_start,
+                        date_end: notif.job.date_end,
+                        shift: notif.job.shift.name,
+                        rate: notif.job.rate,
+                        locum_detail_rate_type: notif.job.locum_detail_rate_type.name,
+                        notification_type: notif.notificationType,
+                        message
+                    }
+                    break;
+                case 'Locum Notification Job Completed':
+                    message = 'This job has been completed'
+                    notifObj = {
+                        id: notif.id,
+                        title: notif.title,
+                        locum_status: notif.locum_status,
+                        date_start: notif.date_start,
+                        date_end: notif.date_end,
+                        shift: notif.shift.name,
+                        rate: notif.rate,
+                        locum_detail_rate_type: notif.locum_detail_rate_type.name,
+                        notification_type: notif.notificationType,
+                        message
+                    }
+                    break;
+                case 'Locum Notification Job Updated':
+                    message = 'This job has been updated by your practice'
+                    notifObj = {
+                        id: notif.id,
+                        title: notif.title,
+                        locum_status: notif.locum_status,
+                        date_start: notif.date_start,
+                        date_end: notif.date_end,
+                        shift: notif.shift.name,
+                        rate: notif.rate,
+                        locum_detail_rate_type: notif.locum_detail_rate_type.name,
+                        notification_type: notif.notificationType,
+                        message
+                    }
+                    break;
             }
             notifications.push(notifObj)
         })
-        console.log('locum job notifications', notifications)
         return notifications
     },
     // PARTS
@@ -856,13 +1174,4 @@ export default {
     getLocumUnavailabilities(state) {
         return state.locum_unavailabilities
     },
-    getLocumJobsBadge(state) {
-        return [
-            state.locum_new_allocated_jobs_count, state.locum_new_available_jobs_count,
-            state.locum_new_matched_jobs_count, state.locum_new_applied_jobs_count,
-            state.locum_new_unsuccessful_jobs_count, state.locum_new_declined_jobs_count,
-            state.locum_new_cancelled_jobs_count, state.locum_new_completed_jobs_count,
-            state.locum_new_ongoing_jobs_count, state.locum_new_approved_jobs_count,
-        ].reduce((accumulator, currentValue) => accumulator + currentValue)
-    }
 }   
