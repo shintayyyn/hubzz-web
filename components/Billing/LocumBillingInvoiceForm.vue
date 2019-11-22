@@ -1,91 +1,170 @@
 <template>
-  <section>
-    <div class="flex flex-wrap items-center">
-      <div
-        class="save-button text-xs sm:text-sm px-4 py-2 border-2 rounded-lg font-bold flex items-center my-1 md:my-0 mr-1 md:mr-2"
-        @click="save(false)"
-      >Save changes</div>
-      <div
-        class="save-button text-xs sm:text-sm px-4 py-2 border-2 rounded-lg font-bold flex items-center my-1 md:my-0 mr-1 md:mr-2"
-        @click="save(true)"
-      >Save and archive as final</div>
-      <div
-        v-if="selectedInvoice"
-        class="save-button text-xs sm:text-sm px-4 py-2 border-2 rounded-lg font-bold flex items-center my-1 md:my-0"
-        @click="exportToPdf()"
-      >Export to PDF</div>
+  <section class="max-w-3xl">
+    <div class="flex flex-col md:flex-row justify-between">
+      <div class="flex flex-wrap items-center">
+        <div
+          class="save-button text-xs sm:text-sm px-4 py-2 border-2 rounded-lg font-bold flex items-center my-1 md:my-0 mr-1 md:mr-2"
+          @click="save(false)"
+        >Save changes</div>
+        <div
+          class="save-button text-xs sm:text-sm px-4 py-2 border-2 rounded-lg font-bold flex items-center my-1 md:my-0 mr-1 md:mr-2"
+          @click="save(true)"
+        >Save and archive as final</div>
+        <div
+          v-if="selectedInvoice"
+          class="save-button text-xs sm:text-sm px-4 py-2 border-2 rounded-lg font-bold flex items-center my-1 md:my-0"
+          @click="exportToPdf()"
+        >Export to PDF</div>
+      </div>
+
+      <div class="flex flex-row flex-wrap justify-start items-center my-2 md:my-4">
+        <label class="mx-1">Type:</label>
+        <button
+          :class="type === 'Private' ? 'bg-yellow-500 border-yellow-500' : 'hover:bg-gray-200'"
+          class="text-xs sm:text-sm mx-1 py-2 px-3 border-2 rounded-lg font-bold flex items-center focus:outline-none"
+          @click="type = 'Private'"
+          :disabled="type === 'Private'"
+        >Private</button>
+        <button
+          :class="type === 'Platform' ? 'bg-yellow-500 border-yellow-500' : 'hover:bg-gray-200'"
+          class="text-xs sm:text-sm mx-1 py-2 px-3 border-2 rounded-lg font-bold flex items-center focus:outline-none"
+          @click="type = 'Platform'"
+          :disabled="type === 'Platform'"
+        >Platform</button>
+      </div>
     </div>
 
-    <div class="flex flex-row flex-wrap justify-start items-center my-2 md:my-4">
-      <label class="mx-1">Type:</label>
-      <button
-        :class="type === 'Private' ? 'bg-yellow-500 border-yellow-500' : 'hover:bg-gray-200'"
-        class="text-xs sm:text-sm mx-1 py-2 px-3 border-2 rounded-lg font-bold flex items-center focus:outline-none"
-        @click="type = 'Private'"
-        :disabled="type === 'Private'"
-      >Private</button>
-      <button
-        :class="type === 'Platform' ? 'bg-yellow-500 border-yellow-500' : 'hover:bg-gray-200'"
-        class="text-xs sm:text-sm mx-1 py-2 px-3 border-2 rounded-lg font-bold flex items-center focus:outline-none"
-        @click="type = 'Platform'"
-        :disabled="type === 'Platform'"
-      >Platform</button>
-    </div>
-
-    <div id="htmlpdf" class="max-w-3xl mb-4 bg-white px-4 py-4 border shadow-md">
-      <div class="flex flex-col">
-        <div class="text-xs sm:text-sm sm:text-right leading-normal">
-          <div>{{$auth.user.personal_detail.name}}</div>
-          <div>{{$auth.user.address_detail.address.line_1}}</div>
-          <div>{{$auth.user.address_detail.address.line_3}}</div>
-          <div>{{$auth.user.address_detail.address.post_code}}</div>
-          <div>Tel {{$auth.user.contact_detail.mobile_number}}</div>
-          <div>{{$auth.user.email}}</div>
-          <div>UTR {{$auth.user.locum_detail.invoice_detail && $auth.user.locum_detail.invoice_detail.utr_number ? $auth.user.locum_detail.invoice_detail.utr_number : null}}</div>
-        </div>
-        <div class="flex flex-wrap justify-between my-2">
-          <div
-            class="w-full sm:w-1/2 order-2 sm:order-1 text-xs sm:text-sm text-left rounded-lg border-2 border-gray-300 p-2 w-2/3"
-          >
+    <div id="htmlpdf" class="invoice max-w-3xl mb-4 bg-white px-4 py-4 shadow-md flex flex-col justify-between">
+      <div>
+        <div class="flex flex-col">
+          <div class="text-xs sm:text-sm sm:text-right leading-normal">
+            <div>{{$auth.user.personal_detail.name}}</div>
+            <div>{{$auth.user.address_detail.address.line_1}}</div>
+            <div>{{$auth.user.address_detail.address.line_3}}</div>
+            <div>{{$auth.user.address_detail.address.post_code}}</div>
+            <div>Tel {{$auth.user.contact_detail.mobile_number}}</div>
+            <div>{{$auth.user.email}}</div>
+            <div>UTR {{$auth.user.locum_detail.invoice_detail && $auth.user.locum_detail.invoice_detail.utr_number ? $auth.user.locum_detail.invoice_detail.utr_number : null}}</div>
+          </div>
+          <div class="flex flex-wrap justify-between my-2">
+            <div
+              class="w-full sm:w-1/2 order-2 sm:order-1 text-xs sm:text-sm text-left rounded-lg border-2 border-gray-300 p-2 w-2/3"
+            >
+              <section>
+                <div
+                  class="relative flex flex-col py-2"
+                  v-on-clickaway="toggledOffSurgeries"
+                >
+                  <div class="relative flex flex-row flex-no-wrap justify-between">
+                    <label class="text-xs sm:text-sm py-1">To: Accounts Department</label>
+                  </div>
+                  <div class="relative flex flex-row flex-wrap justify-start">
+                    <input
+                      v-model="searchSurgeries"
+                      type="text"
+                      placeholder="Select.."
+                      ref="input"
+                      class="border-b-2 w-full focus:border-yellow-400 focus:outline-none py-3 font-bold text-xs sm:text-sm"
+                      @focus="toggledSurgeries = true"
+                      readonly
+                      :disabled="selectedInvoice !== null"
+                    />
+                  </div>
+                  <div class="relative flex flex-col w-full z-10" v-if="selectedInvoice === null">
+                    <div
+                      ref="surgeryLists"
+                      class="absolute z-10 w-full option-list flex flex-col bg-white shadow-md overflow-y-auto"
+                      :class="{'slide-down': toggledSurgeries}"
+                      @scroll="scrollHandlerSurgeries"
+                    >
+                      <div class="relative" v-if="surgeries.length > 0">
+                        <div
+                          class="py-2 px-3 cursor-pointer text-xs sm:text-sm"
+                          :class="{'bg-gray-300': activeIndexSurgeries === index}"
+                          v-for="(item, index) in surgeries"
+                          :key="item.id"
+                          @mouseover="activeIndexSurgeries = index"
+                          @click="addSurgery(item)"
+                        >{{item.name}}</div>
+                        <div
+                          class="absolute bg-gray-300 w-full h-full top-0 bottom-0 left-0 right-0 opacity-50"
+                          v-if="loadingSurgeries"
+                        >
+                          <div
+                            class="absolute bottom-0 text-center w-full text-sm font-bold"
+                          >loading icon</div>
+                        </div>
+                      </div>
+                      <div class="relative" v-else>
+                        <div
+                          class="text-xs sm:text-sm text-center font-bold my-2"
+                        >No Practice / Surgeries Job Invoiceable Yet</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+              <!-- TEST ! only return id and name -->
+              <div class="text-xs sm:text-sm py-2" v-if="selectedSurgery && selectedSurgery.address">
+                <div>{{selectedSurgery.address.line_1}}</div>
+                <div>{{selectedSurgery.address.line_2}}</div>
+                <div>{{selectedSurgery.address.line_3}}</div>
+                <div>{{selectedSurgery.address.post_code}}</div>
+              </div>
+            </div>
+            <div
+              v-if="selectedInvoice"
+              class="w-full sm:w-1/2 order-1 sm:order-2 sm:text-right leading-normal"
+            >
+              <div class="font-bold text-sm sm:text-lg">{{selectedInvoice.status.toUpperCase()}}</div>
+              <div class="text-xs sm:text-sm">{{issuedAt | localDate}}</div>
+            </div>
+          </div>
+          <div v-if="selectedSurgery && selectedInvoice === null">
             <section>
               <div
-                class="relative flex flex-col py-2 mb-3 md:mb-6"
-                v-on-clickaway="toggledOffSurgeries"
+                class="relative flex flex-col py-2 mb-3 md:mb-6 mt-2"
+                v-on-clickaway="toggledOffJobParts"
               >
                 <div class="relative flex flex-row flex-no-wrap justify-between">
-                  <label class="text-xs sm:text-sm py-1">To: Accounts Department</label>
+                  <label class="text-xs sm:text-sm py-1">Select a job to add to this invoice</label>
+                  <div class="flex justify-end">
+                    <div
+                      class="rounded-lg bg-red-500 p-1 text-xs sm:text-sm text-white"
+                      v-if="formError.find(item => item.field === 'items')"
+                    >{{formError.find(item => item.field === 'items').message}}</div>
+                  </div>
                 </div>
                 <div class="relative flex flex-row flex-wrap justify-start">
                   <input
-                    v-model="searchSurgeries"
+                    v-model="searchJobParts"
                     type="text"
                     placeholder="Select.."
                     ref="input"
                     class="border-b-2 w-full focus:border-yellow-400 focus:outline-none py-3 font-bold text-xs sm:text-sm"
-                    @focus="toggledSurgeries = true"
+                    @focus="toggledJobParts = true"
                     readonly
-                    :disabled="selectedInvoice !== null"
                   />
                 </div>
-                <div class="relative flex flex-col w-full z-10" v-if="selectedInvoice === null">
+                <div class="relative flex flex-col w-full z-10 shadow-lg">
                   <div
-                    ref="surgeryLists"
-                    class="absolute z-10 w-full option-list flex flex-col bg-white shadow-md overflow-y-auto"
-                    :class="{'slide-down': toggledSurgeries}"
-                    @scroll="scrollHandlerSurgeries"
+                    ref="jobPartsLists"
+                    class="absolute z-0 w-full option-list flex flex-col bg-white shadow-md overflow-y-auto"
+                    :class="{'slide-down': toggledJobParts}"
+                    @scroll="scrollHandlerJobParts"
                   >
-                    <div class="relative" v-if="surgeries.length > 0">
+                    <div class="relative" v-if="jobParts.length > 0">
                       <div
                         class="py-2 px-3 cursor-pointer text-xs sm:text-sm"
-                        :class="{'bg-gray-300': activeIndexSurgeries === index}"
-                        v-for="(item, index) in surgeries"
+                        :class="{'bg-gray-300': activeIndexJobParts === index}"
+                        v-for="(item, index) in filteredJobParts"
                         :key="item.id"
-                        @mouseover="activeIndexSurgeries = index"
-                        @click="addSurgery(item)"
-                      >{{item.name}}</div>
+                        @mouseover="activeIndexJobParts = index"
+                        @click="addJobPart(item)"
+                      >{{item.job_part_number}}</div>
                       <div
                         class="absolute bg-gray-300 w-full h-full top-0 bottom-0 left-0 right-0 opacity-50"
-                        v-if="loadingSurgeries"
+                        v-if="loadingJobParts"
                       >
                         <div
                           class="absolute bottom-0 text-center w-full text-sm font-bold"
@@ -94,267 +173,194 @@
                     </div>
                     <div class="relative" v-else>
                       <div
-                        class="text-xs sm:text-sm text-center font-bold my-2"
-                      >No Practice / Surgeries Job Invoiceable Yet</div>
+                        class="text-xs sm:text-sm text-center font-bold my-3"
+                      >No Job Completed On This Surgery</div>
                     </div>
                   </div>
                 </div>
               </div>
             </section>
-            <!-- TEST ! only return id and name -->
-            <div class="text-xs sm:text-sm" v-if="selectedSurgery && selectedSurgery.address">
-              <div>{{selectedSurgery.address.line_1}}</div>
-              <div>{{selectedSurgery.address.line_2}}</div>
-              <div>{{selectedSurgery.address.line_3}}</div>
-              <div>{{selectedSurgery.address.post_code}}</div>
-            </div>
-          </div>
-          <div
-            v-if="selectedInvoice"
-            class="w-full sm:w-1/2 order-1 sm:order-2 sm:text-right leading-normal"
-          >
-            <div class="font-bold text-sm sm:text-lg">{{selectedInvoice.status.toUpperCase()}}</div>
-            <div class="text-xs sm:text-sm">{{issuedAt | localDate}}</div>
           </div>
         </div>
-        <div v-if="selectedSurgery && selectedInvoice === null">
-          <section>
-            <div
-              class="relative flex flex-col py-2 mb-3 md:mb-6 mt-2"
-              v-on-clickaway="toggledOffJobParts"
-            >
-              <div class="relative flex flex-row flex-no-wrap justify-between">
-                <label class="text-xs sm:text-sm py-1">Select a job to add to this invoice</label>
-                <div class="flex justify-end">
-                  <div
-                    class="rounded-lg bg-red-500 p-1 text-xs sm:text-sm text-white"
-                    v-if="formError.find(item => item.field === 'items')"
-                  >{{formError.find(item => item.field === 'items').message}}</div>
-                </div>
-              </div>
-              <div class="relative flex flex-row flex-wrap justify-start">
-                <input
-                  v-model="searchJobParts"
-                  type="text"
-                  placeholder="Select.."
-                  ref="input"
-                  class="border-b-2 w-full focus:border-yellow-400 focus:outline-none py-3 font-bold text-xs sm:text-sm"
-                  @focus="toggledJobParts = true"
-                  readonly
-                />
-              </div>
-              <div class="relative flex flex-col w-full z-10 shadow-lg">
-                <div
-                  ref="jobPartsLists"
-                  class="absolute z-0 w-full option-list flex flex-col bg-white shadow-md overflow-y-auto"
-                  :class="{'slide-down': toggledJobParts}"
-                  @scroll="scrollHandlerJobParts"
+        <div class="overflow-auto">
+          <table class="items-table">
+            <thead>
+              <tr>
+                <th colspan="2" class="bg-gray-900  w-2/3 text-white text-left px-4 py-1">Description</th>
+                <th
+                  class="bg-gray-900  text-white text-center px-2 py-1"
+                  :colspan="type === 'Private' ? 1:2"
                 >
-                  <div class="relative" v-if="jobParts.length > 0">
-                    <div
-                      class="py-2 px-3 cursor-pointer text-xs sm:text-sm"
-                      :class="{'bg-gray-300': activeIndexJobParts === index}"
-                      v-for="(item, index) in filteredJobParts"
-                      :key="item.id"
-                      @mouseover="activeIndexJobParts = index"
-                      @click="addJobPart(item)"
-                    >{{item.job_part_number}}</div>
-                    <div
-                      class="absolute bg-gray-300 w-full h-full top-0 bottom-0 left-0 right-0 opacity-50"
-                      v-if="loadingJobParts"
-                    >
-                      <div
-                        class="absolute bottom-0 text-center w-full text-sm font-bold"
-                      >loading icon</div>
-                    </div>
-                  </div>
-                  <div class="relative" v-else>
-                    <div
-                      class="text-xs sm:text-sm text-center font-bold my-3"
-                    >No Job Completed On This Surgery</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
-        </div>
-      </div>
-      <div class="overflow-auto">
-        <table class="items-table">
-          <thead>
-            <tr>
-              <th colspan="2" class="bg-gray-900 w-2/3 text-white text-left px-4 py-1">Description</th>
-              <th
-                class="bg-gray-900 w-1/3 text-white text-left px-2 py-1"
-                :colspan="type === 'Private' ? 1:2"
-              >
-                <span class="flex justify-between items-center">Total</span>
-              </th>
-              <th v-if="type === 'Private'" class="sticky right-0 bg-gray-900">
-                <span
-                  class="cursor-pointer w-6 h-6 mx-2 md:mx-4 rounded-full bg-white text-gray-900 font-semibold text-xl flex justify-center items-center hover:bg-gray-200"
-                  @click="addItem"
-                >+</span>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <template v-for="(item, index) in selectedJobParts">
-              <tr class="border-b" :key="item.id">
-                <td colspan="2">
-                  <textarea
-                    disabled
-                    v-model="item.description"
-                    rows="3"
-                    placeholder="Enter description"
-                    class="w-full text-xs sm:text-sm resize-none border-b-2 border-gray-300 focus:border-yellow-500 focus:outline-none px-4 my-2"
-                  ></textarea>
-                </td>
-                <td>
-                  <input
-                    disabled
-                    type="number"
-                    min="0"
-                    v-model="item.total"
-                    placeholder="Enter value"
-                    class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs mt-1 md:mt-3 w-full focus:border-yellow-500"
-                  />
-                </td>
-                <td class="align-middle sticky right-0">
-                  <div class="flex justify-center" v-if="selectedInvoice === null">
+                  Total
+                </th>
+                <th v-if="type === 'Private'" class="sticky right-0 bg-gray-900 ">
+                  <div class="flex items-center justify-end">
                     <span
-                      class="bg-gray-900 hover:bg-black w-6 h-6 cursor-pointer float-right font-semibold inline-flex items-center justify-center px-3 mt-2 rounded-full text-white text-xl mx-auto"
-                      @click="removeSelectedJobPart(item, index)"
-                    >-</span>
+                      class="cursor-pointer w-6 h-6 mx-2 md:mx-4 rounded-full bg-white text-gray-900 font-semibold text-xl flex justify-center items-center hover:bg-gray-200"
+                      @click="addItem"
+                    >+</span>
                   </div>
-                  <div class="flex flex-row flex-no-wrap justify-start items-center">
-                    <input
-                      :disabled="item.approve"
-                      v-model="disputedInvoices"
-                      :id="`${item.job_part_id}-disputed`"
-                      type="checkbox"
-                      :value="item.job_part_id"
-                    />
-                    <label
-                      :for="`${item.job_part_id}-disputed`"
-                      class="text-xs sm:text-sm py-1 flex items-center"
-                    >Disputed</label>
-                  </div>
-                  <div class="flex flex-row flex-no-wrap justify-start items-center">
-                    <input
-                      v-model="approvedInvoices"
-                      :id="`${item.job_part_id}-approved`"
-                      type="checkbox"
-                      :value="item.job_part_id"
-                      disabled
-                    />
-                    <label
-                      :for="`${item.job_part_id}-approved`"
-                      class="text-xs sm:text-sm py-1 flex items-center"
-                    >Approved</label>
-                  </div>
-                </td>
+                </th>
               </tr>
-              <tr
-                class="border-b"
-                :key="`${item.id}-${item.job_part_id}`"
-                v-if="disputedInvoices.includes(item.job_part_id)"
-              >
-                <td>
-                  <div class="flex flex-col">
-                    <label for="absent_days">Days of absent</label>
-                    <input
-                      :disabled="item.approve"
-                      type="number"
-                      min="0"
-                      v-model="item.absent_days"
-                      name="absent_days"
-                      class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
-                    />
-                  </div>
-                </td>
-                <td>
-                  <div class="flex flex-col">
-                    <label for="late_hours">Hours of late</label>
-                  </div>
-                  <input
-                    :disabled="item.approve"
-                    type="number"
-                    min="0"
-                    v-model="item.late_hours"
-                    name="late_hours"
-                    class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
-                  />
-                </td>
-                <td>
-                  <div class="flex flex-col">
-                    <label for="final_hours">Final hours</label>
-                    <input
-                      :disabled="item.approve"
-                      type="number"
-                      min="0"
-                      v-model="item.final_hours"
-                      name="final_hours"
-                      class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
-                    />
-                  </div>
-                </td>
-              </tr>
-              <tr
-                class="border-b"
-                :key="`${item.id}-${item.job_part_id}-${item.job_part_id}`"
-                v-if="disputedInvoices.includes(item.job_part_id)"
-              >
-                <td colspan="3">
-                  <div class="flex flex-col mt-1">
-                    <label for="remarks">Remarks</label>
+            </thead>
+            <tbody>
+              <template v-for="(item, index) in selectedJobParts">
+                <tr class="border-b" :key="item.id">
+                  <td colspan="2">
                     <textarea
-                      :disabled="item.approve"
-                      v-model="item.remarks"
+                      disabled
+                      v-model="item.description"
                       rows="3"
-                      name="remarks"
-                      class="w-full text-xs sm:text-sm resize-none border-b-2 border-gray-300 focus:border-yellow-500 focus:outline-none px-4 my-2"
+                      placeholder="Enter description"
+                      class="w-full text-xs sm:text-sm resize-none border-b-2 border-gray-300 focus:border-yellow-500 focus:outline-none px-4 pt-4 my-2"
                     ></textarea>
-                  </div>
-                </td>
-              </tr>
-            </template>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="flex flex-row flex-wrap justify-between md:px-2">
-        <div class="w-full md:w-1/2 md:pr-1">
-          <AppDate
-            v-model="form.date_start"
-            :name="'date_start'"
-            :label="'Days worked from'"
-            :error="formError.find(item => item.field === 'date_start')"
-          />
+                  </td>
+                  <td class="align-middle">
+                    <input
+                      disabled
+                      type="number"
+                      min="0"
+                      v-model="item.total"
+                      placeholder="Enter value"
+                      class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
+                    />
+                  </td>
+                  <td class="align-middle sticky right-0">
+                    <div class="flex justify-center" v-if="selectedInvoice === null">
+                      <span
+                        class="bg-gray-900 hover:bg-black w-6 h-6 cursor-pointer float-right font-semibold inline-flex items-center justify-center px-3 mt-2 rounded-full text-white text-xl mx-auto"
+                        @click="removeSelectedJobPart(item, index)"
+                      >-</span>
+                    </div>
+                    <div class="flex flex-row flex-no-wrap justify-start items-center py-1">
+                      <input
+                        :disabled="item.approve"
+                        v-model="disputedInvoices"
+                        :id="`${item.job_part_id}-disputed`"
+                        type="checkbox"
+                        :value="item.job_part_id"
+                      />
+                      <label
+                        :for="`${item.job_part_id}-disputed`"
+                        class="text-xs sm:text-sm py-1 flex items-center"
+                      >Disputed</label>
+                    </div>
+                    <div class="flex flex-row flex-no-wrap justify-start items-center py-1">
+                      <input
+                        v-model="approvedInvoices"
+                        :id="`${item.job_part_id}-approved`"
+                        type="checkbox"
+                        :value="item.job_part_id"
+                        disabled
+                      />
+                      <label
+                        :for="`${item.job_part_id}-approved`"
+                        class="text-xs sm:text-sm py-1 flex items-center"
+                      >Approved</label>
+                    </div>
+                  </td>
+                </tr>
+                <tr
+                  class="border-b"
+                  :key="`${item.id}-${item.job_part_id}`"
+                  v-if="disputedInvoices.includes(item.job_part_id)"
+                >
+                  <td>
+                    <div class="flex flex-col py-2">
+                      <label for="absent_days">Days of absent</label>
+                      <input
+                        :disabled="item.approve"
+                        type="number"
+                        min="0"
+                        v-model="item.absent_days"
+                        name="absent_days"
+                        class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
+                      />
+                    </div>
+                  </td>
+                  <td>
+                    <div class="flex flex-col py-2">
+                      <label for="late_hours">Hours of late</label>
+                      <input
+                        :disabled="item.approve"
+                        type="number"
+                        min="0"
+                        v-model="item.late_hours"
+                        name="late_hours"
+                        class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
+                      />
+                    </div>
+                  </td>
+                  <td>
+                    <div class="flex flex-col py-2">
+                      <label for="final_hours">Final hours</label>
+                      <input
+                        :disabled="item.approve"
+                        type="number"
+                        min="0"
+                        v-model="item.final_hours"
+                        name="final_hours"
+                        class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
+                      />
+                    </div>
+                  </td>
+                  <td></td>
+                </tr>
+                <tr
+                  class="border-b"
+                  :key="`${item.id}-${item.job_part_id}-${item.job_part_id}`"
+                  v-if="disputedInvoices.includes(item.job_part_id)"
+                >
+                  <td colspan="4">
+                    <div class="flex flex-col mt-1">
+                      <label for="remarks">Remarks</label>
+                      <textarea
+                        :disabled="item.approve"
+                        v-model="item.remarks"
+                        rows="3"
+                        name="remarks"
+                        class="w-full text-xs sm:text-sm resize-none border-b-2 border-gray-300 focus:border-yellow-500 focus:outline-none px-2 my-2"
+                      ></textarea>
+                    </div>
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
         </div>
-        <div class="w-full md:w-1/2 md:pl-1">
-          <AppDate
-            v-model="form.date_end"
-            :name="'date_end'"
-            :label="'To'"
-            :error="formError.find(item => item.field === 'date_end')"
-          />
-        </div>
-      </div>
 
-      <div class="flex justify-between md:m-2">
-        <span class="font-bold">Total</span>
-        <div>
-          <div class="flex justify-end">
-            <div
-              class="rounded-lg bg-red-500 p-1 text-xs sm:text-sm text-white"
-              v-if="formError.find(item => item.field === 'total_amount')"
-            >{{formError.find(item => item.field === 'total_amount').message}}</div>
+        <div class="flex flex-row flex-wrap justify-between md:px-2">
+          <div class="w-full md:w-1/2 md:pr-1">
+            <AppDate
+              v-model="form.date_start"
+              :name="'date_start'"
+              :label="'Days worked from'"
+              :error="formError.find(item => item.field === 'date_start')"
+            />
           </div>
-          £ {{amount | currency}}
+          <div class="w-full md:w-1/2 md:pl-1">
+            <AppDate
+              v-model="form.date_end"
+              :name="'date_end'"
+              :label="'To'"
+              :error="formError.find(item => item.field === 'date_end')"
+            />
+          </div>
+        </div>
+
+        <div class="flex justify-between md:m-2">
+          <span class="font-bold">Total</span>
+          <div>
+            <div class="flex justify-end">
+              <div
+                class="rounded-lg bg-red-500 p-1 text-xs sm:text-sm text-white"
+                v-if="formError.find(item => item.field === 'total_amount')"
+              >{{formError.find(item => item.field === 'total_amount').message}}</div>
+            </div>
+            £ {{amount | currency}}
+          </div>
         </div>
       </div>
-
       <div class="rounded-lg border-2 border-gray-300 mt-4 p-4">
         <div class="flex flex-col text-xs sm:text-sm">
           <div>Payment by BACS:</div>
@@ -887,9 +893,12 @@ export default {
   box-shadow: none;
   border: none;
   border-radius: 0;
+
+  border-bottom: 1px solid #ddd;
 }
 .items-table {
-  width: 733px;
+  /* min-width: 749px; */
+  width: 100%;
 }
 .items-table tbody {
   border: 2px solid #eff3f8;
@@ -897,5 +906,8 @@ export default {
 }
 .items-table tbody td {
   padding: 0 8px;
+}
+.invoice{
+  min-height: 1050px;
 }
 </style>

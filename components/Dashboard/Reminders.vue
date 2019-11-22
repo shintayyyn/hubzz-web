@@ -23,7 +23,7 @@
 							/>
 						</span>
 						<span
-							class="h-full w-4/5 flex flex-col justify-center px-4 bg-gray-100 rounded-r-lg"
+							class="h-full w-4/5 flex flex-col justify-center p-4 bg-gray-100 rounded-r-lg"
 						>
 							<p class="capitalize font-bold">
 								{{ item.route.slice(1).replace(/_/g, " ") }}
@@ -214,7 +214,7 @@ a {
 	color: black;
 }
 .reminder-card {
-	min-height: 50px;
+	min-height: 60px;
 }
 @media screen and (min-width: 768px) {
 	.reminder-card {

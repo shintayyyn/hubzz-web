@@ -128,7 +128,7 @@
                 :label="'Use Variation Terms?'"
                 :error="formError.find(item => item.field === 'use_variation_terms')"
                 :placeholder="'Select...'"
-                :items="[{ value: true , label: 'Yes'},{ value: 'false', label: 'No'}]"
+                :items="[{ value: true , label: 'Yes'},{ value: false, label: 'No'}]"
               />
             </div>
             <div class="flex flex-col w-full md:w-1/2 pl-1">
@@ -286,13 +286,12 @@ export default {
         phone_number: "",
         report_to: "",
         email: "",
-        use_variation_terms: "",
+        use_variation_terms: '',
         extra_information: "",
         practice_type_id: [],
         mandatory_training_id: [],
         gp_compliance_document_id: [],
         others_compliance_document_id: [],
-        use_variation_terms: false
       },
       name: "",
       formError: []
@@ -435,7 +434,6 @@ export default {
     }
   },
   created() {
-    this.form.use_variation_terms = this.practice.use_variation_terms;
     this.form.phone_number = this.practice.phone_number;
     this.form.report_to = this.practice.report_to;
     this.form.email = this.practice.email;
@@ -556,7 +554,8 @@ export default {
         this.formError = [];
         this.Validate(this.form, [
           "mandatory_training_id",
-          "extra_information"
+          "extra_information",
+          "use_variation_terms"
         ]);
         if (!this.formError.length) {
           const res = await this.$axios.$put(
