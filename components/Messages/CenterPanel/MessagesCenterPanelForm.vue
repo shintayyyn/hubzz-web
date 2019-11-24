@@ -74,11 +74,4 @@ export default {
 .message-box::-webkit-scrollbar-track {
   background: #eee;
 }
-.message-modal{
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 60;
-}
 </style>

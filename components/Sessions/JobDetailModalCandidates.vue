@@ -7,14 +7,14 @@
       v-for="user in applicants"
       :key="user.id"
     >
-        <SendMessageModal :show="sendMessage" :user="user" @close="sendMessage=false"/>
+      <SendMessageModal :show="sendMessage" :user="user" @close="sendMessage=false"/>
       <div class="flex flex-row flex-no-wrap justify-between items-center">
         <AppAvatar
           :height="'40px'"
           :width="'40px'"
           :src="user.avatar && user.avatar.file && user.avatar.file.url ? user.avatar.file.url : ''"
         />
-        <div class="text-xs sm:text-sm font-bold leading-loose">{{user.personal_detail.name}}</div>
+        <div class="text-sm font-bold leading-loose">{{user.personal_detail.name}}</div>
         
         <div class="flex items-center">
           <button class="bg-yellow-500 mx-2 rounded-lg hover:bg-yellow-400 focus:outline-none" @click="sendMessage = true">

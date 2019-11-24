@@ -1,6 +1,6 @@
 <template>
   <section>
-    <div class="rounded-lg shadow-lg p-8 mt-4">
+    <div class="rounded-lg shadow-lg p-4 md:p-8 mt-4">
       <div class="font-bold text-md sm:text-lg">Cancel this job</div>
       <AppInput
         v-model="form.cancelled_reason"

@@ -61,10 +61,15 @@ export default {
     padding: 10px;
 }
 .message-modal{
-    position: absolute;
+    position: fixed;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
     z-index: 60;
+}
+@media screen and (max-width: 767px){
+    .message-modal{
+        min-width: 85%;
+    }
 }
 </style>
