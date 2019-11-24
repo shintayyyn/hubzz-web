@@ -1,12 +1,13 @@
 <template>
   <div class="flex flex-col w-full">
+    
     <div class="text-xs sm:text-sm font-bold">Candidates</div>
     <div
-      class="rounded-lg shadow-lg m-0 my-4 py-3 px-5 cursor-pointer"
+      class="rounded-lg shadow-lg m-0 my-4 py-3 px-5 "
       v-for="user in applicants"
       :key="user.id"
-      @click="show(user.id)"
     >
+        <SendMessageModal :show="sendMessage" :user="user" @close="sendMessage=false"/>
       <div class="flex flex-row flex-no-wrap justify-between items-center">
         <AppAvatar
           :height="'40px'"
@@ -14,8 +15,14 @@
           :src="user.avatar && user.avatar.file && user.avatar.file.url ? user.avatar.file.url : ''"
         />
         <div class="text-xs sm:text-sm font-bold leading-loose">{{user.personal_detail.name}}</div>
-        <div class="flex">
-          <svgicon name="arrow-right" height="20" width="20" />
+        
+        <div class="flex items-center">
+          <button class="bg-yellow-500 mx-2 rounded-lg hover:bg-yellow-400 focus:outline-none" @click="sendMessage = true">
+            <svgicon name="chat" height="20" width="20" color="#888 #555 #fff" class="m-2"/>
+          </button>
+          <button class="hover:text-gray-600 focus:outline-none" @click.prevent="show(user.id)">
+            <svgicon name="arrow-right" height="20" width="20" class="fill-current m-2"/>
+          </button>
         </div>
       </div>
     </div>
@@ -35,10 +42,12 @@
 <script>
 import AppAvatar from "~/components/Base/AppAvatar";
 import AppPagination from "@/components/Base/AppPagination";
+import SendMessageModal from "@/components/Messages/SendMessageModal";
 export default {
   components: {
     AppAvatar,
-    AppPagination
+    AppPagination,
+    SendMessageModal
   },
   props: ["job"],
   data() {
@@ -50,7 +59,8 @@ export default {
       params: {
         offset: 0,
         limit: 20
-      }
+      },
+      sendMessage: false
     };
   },
   computed: {
