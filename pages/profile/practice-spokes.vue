@@ -49,9 +49,10 @@
 					[
 						'profile-practice-spokes-create',
 						'profile-practice-spokes-id',
-						'profile-practice-spokes-id-surgery-billings',
 						'profile-practice-spokes-id-surgery-sessions-index',
 						'profile-practice-spokes-id-surgery-sessions-index-sessionId',
+            'profile-practice-spokes-id-surgery-billings',
+            'profile-practice-spokes-id-surgery-banks',
 						'profile-practice-spokes-id-request-for-termination',
 						'profile-practice-spokes-edit'
 					].includes($route.name)

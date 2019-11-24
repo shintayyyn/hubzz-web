@@ -36,6 +36,7 @@
 								<AppButton
 									v-if="authPermissions.includes('Create Sessions Job')"
 									:label="'Create Job'"
+                  :disabled="notAllowed"
 									@click="$store.commit('calendar/CREATE_JOB_MODAL', true)"
 									class="hidden md:block whitespace-no-wrap"
 									:inStyle="'padding-top: 0; padding-bottom: 0;'"
@@ -118,7 +119,24 @@ export default {
 	components: {
 		AppButton,
 		CreateJobModal
-	},
+  },
+  data(){
+    return{
+      notAllowed: false
+    }
+  },  
+  async created(){
+    if(this.$auth.user.domain === 'Practice'){
+      let response = await this.$axios.$get(`/api/v1/practice/me/practice`)
+      const myPracticeDetail = response.data.practice
+      if(myPracticeDetail.type === 'Spoke'){
+        if(myPracticeDetail.allow_surgery_create_sessions == false){
+          this.notAllowed = true
+        }
+      }
+    }
+   
+  },
 	computed: {
 		create_job_modal() {
 			return this.$store.state.calendar.create_job_modal;

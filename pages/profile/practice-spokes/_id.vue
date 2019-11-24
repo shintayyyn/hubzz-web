@@ -16,8 +16,7 @@
 							? 'border rounded-lg border-yellow-500 bg-yellow-500'
 							: 'text-gray-600'
 					"
-					>Profile</nuxt-link
-				>
+					>Profile</nuxt-link>
 				<nuxt-link
 					v-if="relationshipIsActive == 'Active'"
 					:to="`/profile/practice-spokes/${practice_id}/surgery-sessions`"
@@ -29,8 +28,7 @@
 							? 'border rounded-lg border-yellow-500 bg-yellow-500'
 							: 'text-gray-600'
 					"
-					>Surgery Sessions</nuxt-link
-				>
+					>Surgery Sessions</nuxt-link>
 				<nuxt-link
 					v-if="relationshipIsActive == 'Active'"
 					:to="`/profile/practice-spokes/${practice_id}/surgery-billings`"
@@ -40,26 +38,28 @@
 							? 'border rounded-lg border-yellow-500 bg-yellow-500'
 							: 'text-gray-600'
 					"
-					>Surgery Billing</nuxt-link
-				>
-				<nuxt-link
-					:to="
-						`/profile/practice-spokes/${practice_id}/request-for-termination`
-					"
+					>Surgery Billing</nuxt-link>
+        <nuxt-link
+					v-if="relationshipIsActive == 'Active'"
+					:to="`/profile/practice-spokes/${practice_id}/surgery-banks`"
 					class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
 					:class="
-						$route.name.includes(
-							'profile-practice-spokes-id-request-for-termination'
-						)
+						$route.name.includes('profile-practice-spokes-id-surgery-banks')
 							? 'border rounded-lg border-yellow-500 bg-yellow-500'
 							: 'text-gray-600'
 					"
-					>{{
-						relationshipIsActive == "Active"
-							? "Request for Termination"
-							: "Cancel Invitation"
-					}}</nuxt-link
-				>
+					>Surgery Banks</nuxt-link>
+				<nuxt-link
+					:to="`/profile/practice-spokes/${practice_id}/request-for-termination`"
+					class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
+					:class="
+						$route.name.includes('profile-practice-spokes-id-request-for-termination')
+							? 'border rounded-lg border-yellow-500 bg-yellow-500'
+							: 'text-gray-600'
+					"
+					>{{relationshipIsActive == "Active"
+              ? "Request for Termination"
+              : "Cancel Invitation"}}</nuxt-link>
 			</div>
 			<nuxt-child />
 		</div>
