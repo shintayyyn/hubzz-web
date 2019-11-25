@@ -145,6 +145,12 @@ export default {
         state.practice_available_jobs = state.practice_available_jobs.filter(job => job.id !== payload)
         state.practice_available_jobs_count = state.practice_available_jobs_count - 1
     },
+    UPDATE_PRACTICE_AVAILABLE_JOB(state, { newJob, oldJob }) {
+        let index = state.practice_available_jobs.findIndex(availableJob => availableJob.id === oldJob.id)
+        if (index >= 0) {
+            state.practice_available_jobs.splice(index, 1, newJob)
+        }
+    },
 
     SET_PRACTICE_APPLIED_JOBS(state, payload) {
         state.practice_applied_jobs = payload
@@ -177,11 +183,12 @@ export default {
         state.practice_allocated_jobs.push(payload)
         state.practice_allocated_jobs_count = state.practice_allocated_jobs_count + 1
     },
-    // UPDATE_PRACTICE_ALLOCATED_JOB_PART(state, payload) {
-    //     let jobId = payload.job.id
-    //     let jobPartId = payload.id
-    //     state.practice_allocated_jobs.find(allocatedJob => allocatedJob.id == jobId).job_parts.find(jobPart => jobPart.id == jobPartId).completed_at === payload.completed_at
-    // },
+    UPDATE_PRACTICE_ALLOCATED_JOB(state, { newJob, oldJob }) {
+        let index = state.practice_allocated_jobs.findIndex(allocatedJob => allocatedJob.id === oldJob.id)
+        if (index >= 0) {
+            state.practice_allocated_jobs.splice(index, 1, newJob)
+        }
+    },
     REMOVE_PRACTICE_ALLOCATED_JOB(state, payload) {
         state.practice_allocated_jobs = state.practice_allocated_jobs.filter(job => job.id !== payload)
         state.practice_allocated_jobs_count = state.practice_allocated_jobs_count - 1

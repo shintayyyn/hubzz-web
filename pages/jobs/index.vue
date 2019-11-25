@@ -744,7 +744,7 @@ export default {
       this.getCompletedJobsRealTime
     );
     this.$socket.on(
-      "Locum Notification Job Part Approved",
+      "Locum Notification Locum Invoice Updated",
       this.getApprovedJobsRealTime
     );
     this.$socket.on(
@@ -756,8 +756,16 @@ export default {
       this.getAmendedJobsRealTime
     );
     this.$socket.on(
+      "Locum Notification Job Declined",
+      this.getDeclinedJobsRealTime
+    );
+    this.$socket.on(
       "Locum Notification Job Unavailable",
       this.getUnavailableJobsRealTime
+    );
+    this.$socket.on(
+      "Locum Notification Job Unqualified",
+      this.getUnqualifiedJobsRealTime
     );
   },
   destroyed() {
@@ -994,11 +1002,41 @@ export default {
         this.showRefresh = true;
       }
     },
+    async getDeclinedJobsRealTime(job) {
+      if (!job) {
+        return;
+      }
+      if (
+        this.$route.path.includes("/jobs") &&
+        (this.$route.query.status === "Declined" ||
+          this.$route.query.status === "Allocated" ||
+          this.$route.query.status === "Applied")
+      ) {
+        this.showRefresh = true;
+      }
+    },
     async getUnavailableJobsRealTime(job) {
       if (!job) {
         return;
       }
-      if (this.$route.path.includes("/jobs")) {
+      if (
+        this.$route.path.includes("/jobs") &&
+        this.$route.query.status === "Available"
+      ) {
+        this.showRefresh = true;
+      }
+    },
+    async getUnqualifiedJobsRealTime(job) {
+      if (!job) {
+        return;
+      }
+      if (
+        this.$route.path.includes("/jobs") &&
+        (this.$route.query.status === "Allocated" ||
+          this.$route.query.status === "Available" ||
+          this.$route.query.status === "Matched" ||
+          this.$route.query.status === "Applied")
+      ) {
         this.showRefresh = true;
       }
     },

@@ -139,27 +139,24 @@ export default {
   },
   methods: {
     goTo(id, status) {
-      this.$router.push({
-        path: `${this.url}/${id}`,
-        query: { ...this.$route.query, status }
-      });
-      // if (
-      //   this.$route.path.includes(`${this.url}`) &&
-      //   this.$route.query.status &&
-      //   this.$route.query.status !== status
-      // ) {
-      //   this.$router.push({
-      //     query: { ...this.$route.query, status }
-      //   });
-
-      //   setTimeout(() => {
-      //     this.$router.push({
-      //       path: `${this.url}/${id}`,
-      //       query: { ...this.$route.query }
-      //     });
-      //   }, 500);
-      // } else {
-      // }
+      let path = `${this.url}/${id}`;
+      if (this.$route.path === path) {
+        this.$router.push({
+          path: `${this.url}`,
+          query: { ...this.$route.query, status }
+        });
+        setTimeout(() => {
+          this.$router.push({
+            path: `${this.url}/${id}`,
+            query: { ...this.$route.query, status }
+          });
+        }, 500);
+      } else if (this.$route.path !== path) {
+        this.$router.push({
+          path: `${this.url}/${id}`,
+          query: { ...this.$route.query, status }
+        });
+      }
       this.close(id);
     },
     close(id) {
@@ -172,6 +169,7 @@ export default {
       switch (status) {
         case "Issued":
         case "Live":
+        case "Available":
         case "Matched":
           return "bg-yellow-500";
           break;

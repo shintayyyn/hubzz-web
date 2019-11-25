@@ -34,6 +34,8 @@
         >Cancel Editing</button>
       </div>
     </div>
+    <div class="mt-4">{{ongoingTimeLeft}}</div>
+    <div class="mt-4" v-if="job.update_accepted === false">Waiting for Locum's approval...</div>
 
     <div class="flex flex-col mt-4">
       <div class="flex flex-wrap justify-start">
@@ -139,10 +141,48 @@ export default {
           "YYYY-MM-DD HH:mm"
         ).diff(this.$moment(), "hours") >= 72
       );
+    },
+    ongoingTimeLeft() {
+      let days = this.$moment(
+        `${this.job.date_start} ${this.job.time_start}`,
+        "YYYY-MM-DD HH:mm"
+      ).diff(this.$moment(), "days");
+
+      let hours = this.$moment(
+        `${this.job.date_start} ${this.job.time_start}`,
+        "YYYY-MM-DD HH:mm"
+      ).diff(this.$moment(), "hours");
+
+      let minutes = this.$moment(
+        `${this.job.date_start} ${this.job.time_start}`,
+        "YYYY-MM-DD HH:mm"
+      ).diff(this.$moment(), "minutes");
+
+      let seconds = this.$moment(
+        `${this.job.date_start} ${this.job.time_start}`,
+        "YYYY-MM-DD HH:mm"
+      ).diff(this.$moment(), "seconds");
+
+      let timeLeft;
+      let type;
+      if (days > 0) {
+        timeLeft = days;
+        type = "days";
+      } else if (hours > 0) {
+        timeLeft = hours;
+        type = "hours";
+      } else if (minutes > 0) {
+        timeLeft = minutes;
+        type = "minutes";
+      } else if (seconds > 0) {
+        timeLeft = seconds;
+        type = "seconds";
+      }
+
+      return `This Job will start in ${timeLeft} ${type}`;
     }
   },
   created() {
-    console.log("job", this.job);
     if (this.job.platform_job.appointed_to_locum !== null) {
       this.getAppointedLocum();
     }
@@ -229,10 +269,35 @@ export default {
           path: `/sessions/${newJob.id}`,
           query: { ...this.$route.query }
         });
-        this.$store.commit("jobs/UPDATE_PRACTICE_APPLIED_JOB", {
-          newJob,
-          oldJob
-        });
+        if (
+          this.$route.path.includes("/sessions") &&
+          (!this.$route.query.status ||
+            (this.$route.query.status &&
+              this.$route.query.status === "Allocated"))
+        ) {
+          this.$store.commit("jobs/UPDATE_PRACTICE_ALLOCATED_JOB", {
+            newJob,
+            oldJob
+          });
+        } else if (
+          this.$route.path.includes("/sessions") &&
+          this.$route.query.status &&
+          this.$route.query.status === "Applied"
+        ) {
+          this.$store.commit("jobs/UPDATE_PRACTICE_APPLIED_JOB", {
+            newJob,
+            oldJob
+          });
+        } else if (
+          this.$route.path.includes("/sessions") &&
+          this.$route.query.status &&
+          this.$route.query.status === "Live"
+        ) {
+          this.$store.commit("jobs/UPDATE_PRACTICE_AVAILABLE_JOB", {
+            newJob,
+            oldJob
+          });
+        }
       }, 500);
     },
     status(status) {

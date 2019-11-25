@@ -10,7 +10,7 @@
             :event="$store.state.jobs.loading_jobs ? '' : 'click'"
             :to="'/sessions?status=Applied&bank=false'"
             class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-            :class="$route.query.status && $route.query.status.toLowerCase() === 'applied' && $route.query.bank && $route.query.bank === 'false' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+            :class="$route.query.status && $route.query.status.toLowerCase() === 'applied' && (!$route.query.bank || $route.query.bank && $route.query.bank === 'false') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
           >Non-Bank</nuxt-link>
           <nuxt-link
             :event="$store.state.jobs.loading_jobs ? '' : 'click'"
@@ -742,32 +742,28 @@ export default {
       this.getCompletedJobsRealTime
     );
     this.$socket.on(
-      "Practice Notification Job Completed",
-      this.getCompletedJobsRealTime
-    );
-    this.$socket.on(
-      "Practice Notification Job Part Approved",
+      "Practice Notification Locum Invoice Updated",
       this.getApprovedJobsRealTime
-    );
-    this.$socket.on(
-      "Practice Notification Job Declined",
-      this.getDeclinedJobsRealTime
     );
     this.$socket.on(
       "Practice Notification Job Cancelled",
       this.getCancelledJobsRealTime
     );
     this.$socket.on(
-      "Practice Notification Job Unfilled",
-      this.getUnfilledJobsRealTime
-    );
-    this.$socket.on(
       "Practice Notification Job Amended",
       this.getAmendedJobsRealTime
     );
     this.$socket.on(
-      "Practice Notification Locum Invoice Updated",
-      this.getUpdatedInvoiceRealTime
+      "Practice Notification Job Declined",
+      this.getDeclinedJobsRealTime
+    );
+    this.$socket.on(
+      "Practice Notification Job Update Accept",
+      this.getUpdateAcceptJobsRealTime
+    );
+    this.$socket.on(
+      "Practice Notification Job Unfilled",
+      this.getUnfilledJobsRealTime
     );
   },
   destroyed() {
@@ -807,7 +803,6 @@ export default {
           }
         )
         .then(res => {
-          console.log("count response", res.data.count);
           if (
             this.$route.query.status &&
             ["ongoing", "completed", "approved"].includes(
@@ -873,7 +868,6 @@ export default {
           }
         })
         .then(res => {
-          console.log("jobs response", res.data);
           if (
             this.$route.query.status &&
             ["ongoing", "completed", "approved"].includes(
@@ -924,7 +918,8 @@ export default {
       }
       if (
         this.$route.path.includes("/sessions") &&
-        this.$route.query.status === "Live"
+        (this.$route.query.status === "Live" ||
+          this.$route.query.status === "Applied")
       ) {
         this.showRefresh = true;
       }
@@ -989,21 +984,6 @@ export default {
         this.showRefresh = true;
       }
     },
-    async getDeclinedJobsRealTime(job) {
-      if (!job) {
-        return;
-      }
-      if (
-        this.$route.path.includes("/sessions") &&
-        (this.$route.query.status === "Declined" ||
-          this.$route.query.status === "Allocated" ||
-          this.$route.query.status === "Ongoing" ||
-          this.$route.query.status === "Live" ||
-          this.$route.query.status === "Applied")
-      ) {
-        this.showRefresh = true;
-      }
-    },
     async getCancelledJobsRealTime(job) {
       if (!job) {
         return;
@@ -1011,21 +991,6 @@ export default {
       if (
         this.$route.path.includes("/sessions") &&
         (this.$route.query.status === "Cancelled" ||
-          this.$route.query.status === "Allocated" ||
-          this.$route.query.status === "Ongoing" ||
-          this.$route.query.status === "Live" ||
-          this.$route.query.status === "Applied")
-      ) {
-        this.showRefresh = true;
-      }
-    },
-    async getUnfilledJobsRealTime(job) {
-      if (!job) {
-        return;
-      }
-      if (
-        this.$route.path.includes("/sessions") &&
-        (this.$route.query.status === "Unfilled" ||
           this.$route.query.status === "Allocated" ||
           this.$route.query.status === "Ongoing" ||
           this.$route.query.status === "Live" ||
@@ -1048,18 +1013,48 @@ export default {
         this.showRefresh = true;
       }
     },
-    async getUpdatedInvoiceRealTime(job) {
+    async getDeclinedJobsRealTime(job) {
       if (!job) {
         return;
       }
       if (
         this.$route.path.includes("/sessions") &&
-        (this.$route.query.status === "Approved" ||
-          this.$route.query.status === "Completed")
+        (this.$route.query.status === "Declined" ||
+          this.$route.query.status === "Allocated" ||
+          this.$route.query.status === "Ongoing" ||
+          this.$route.query.status === "Live" ||
+          this.$route.query.status === "Applied")
       ) {
         this.showRefresh = true;
       }
     },
+    async getUpdateAcceptJobsRealTime(job) {
+      if (!job) {
+        return;
+      }
+      if (
+        this.$route.path.includes("/sessions") &&
+        this.$route.query.status === "Allocated"
+      ) {
+        this.showRefresh = true;
+      }
+    },
+    async getUnfilledJobsRealTime(job) {
+      if (!job) {
+        return;
+      }
+      if (
+        this.$route.path.includes("/sessions") &&
+        (this.$route.query.status === "Unfilled" ||
+          this.$route.query.status === "Allocated" ||
+          this.$route.query.status === "Ongoing" ||
+          this.$route.query.status === "Live" ||
+          this.$route.query.status === "Applied")
+      ) {
+        this.showRefresh = true;
+      }
+    },
+
     async refreshJobs() {
       this.loading = true;
       this.$store.commit("jobs/CLEAR_PRACTICE_JOB_NOTIFICATION");
@@ -1092,36 +1087,31 @@ export default {
         this.getCompletedJobsRealTime
       );
       this.$socket.removeListener(
-        "Practice Notification Job Completed",
-        this.getCompletedJobsRealTime
-      );
-      this.$socket.removeListener(
-        "Practice Notification Job Part Approved",
+        "Practice Notification Locum Invoice Updated",
         this.getApprovedJobsRealTime
-      );
-      this.$socket.removeListener(
-        "Practice Notification Job Declined",
-        this.getDeclinedJobsRealTime
       );
       this.$socket.removeListener(
         "Practice Notification Job Cancelled",
         this.getCancelledJobsRealTime
       );
       this.$socket.removeListener(
-        "Practice Notification Job Unfilled",
-        this.getUnfilledJobsRealTime
-      );
-      this.$socket.removeListener(
-        "Practice Notification Job Updated",
+        "Practice Notification Job Amended",
         this.getAmendedJobsRealTime
       );
       this.$socket.removeListener(
-        "Practice Notification Locum Invoice Updated",
-        this.getUpdatedInvoiceRealTime
+        "Practice Notification Job Declined",
+        this.getDeclinedJobsRealTime
+      );
+      this.$socket.removeListener(
+        "Practice Notification Job Update Accept",
+        this.getUpdateAcceptJobsRealTime
+      );
+      this.$socket.removeListener(
+        "Practice Notification Job Unfilled",
+        this.getUnfilledJobsRealTime
       );
     },
     async filterJob() {
-      console.log("filter job");
       this.current_page = 1;
       this.params.offset = 0;
       this.jobPartParams.offset = 0;
@@ -1134,16 +1124,6 @@ export default {
       this.loading = false;
     },
     async sorted(order_by) {
-      console.log("sort job");
-      // let orderBy = [...order_by];
-      // order_by.forEach((item, index) => {
-      //   if (item.includes("date_time_start")) {
-      //     orderBy.push(`date_start:${item.split(":")[1]}`);
-      //   } else {
-      //     orderBy.push(item);
-      //   }
-      // });
-      // console.log(orderBy);
       this.current_page = 1;
       this.params.offset = 0;
       this.params.order_by = order_by;
@@ -1154,7 +1134,6 @@ export default {
       this.loading = false;
     },
     async pagechanged(page) {
-      console.log("change page ");
       this.current_page = page;
       this.params.offset = this.params.limit * (page - 1);
       this.jobPartParams.offset = this.jobPartParams.limit * (page - 1);
@@ -1163,7 +1142,6 @@ export default {
       this.loading = false;
     },
     async limitchanged(limit) {
-      console.log("change limit ");
       this.current_page = 1;
       this.params.offset = 0;
       this.params.limit = limit;
@@ -1174,7 +1152,6 @@ export default {
       this.loading = false;
     },
     clearFilters() {
-      console.log("clear filter");
       this.params.offset = 0;
       this.params.limit = 5;
       this.params.type = "";

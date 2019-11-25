@@ -12,8 +12,9 @@
     </div>
     <div class="text-xs sm:text-sm py-3">Posted {{ $moment(job.date_created).format("DD/MM/YYYY") }}</div>
     <!-- UPDATE CHANGES -->
-    <template v-if="false">
+    <template v-if="hasNewChanges">
       <div class="text-md">The Practice made changes on this Job, Accept these changes?</div>
+      <div class="text-sm">{{updateAcceptedUntil}}</div>
       <div class="flex items-center justify-start mt-1">
         <div
           class="bg-red-600 text-white rounded-lg px-2 py-1 font-semibold focus:outline-none cursor-pointer"
@@ -31,6 +32,7 @@
         <div class="flex flex-col">
           <JobDetailModalInfo :job="job" />
           <JobDetailModalUnassignForm
+            :ref="'unassignForm'"
             :job="job"
             v-if="job.locum_status === 'Allocated'"
             @close="close"
@@ -80,10 +82,23 @@ export default {
     JobDetailModalCancelForm,
     AppButton
   },
-  data() {
-    return {
-      accept_changes: false
-    };
+  computed: {
+    hasNewChanges() {
+      return (
+        this.job.locum_status === "Allocated" &&
+        this.job.update_accepted === false &&
+        this.job.original === false &&
+        this.job.update_accepted_until
+      );
+    },
+    updateAcceptedUntil() {
+      let hours = this.$moment(
+        this.job.update_accepted_until,
+        "YYYY-MM-DDTHH:mm:ss:SSSZ"
+      ).diff(this.$moment(), "hours");
+
+      return `You need to confirm within ${hours} hours`;
+    }
   },
   methods: {
     close() {
@@ -111,8 +126,38 @@ export default {
           return "bg-red-500 text-white";
       }
     },
-    decline() {},
-    accept() {}
+    decline() {
+      this.$store.commit("SET_NOTIFICATION", {
+        enabled: true,
+        status: "info",
+        text: [`test`]
+      });
+      this.$refs["unassignForm"].$refs["unassignTextArea"].$refs[
+        "textarea"
+      ].scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+        inline: "end"
+      });
+    },
+    accept() {
+      this.$axios
+        .$post(`/api/v1/locum/jobs/${this.job.id}/update-accept`)
+        .then(res => {
+          this.close();
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: [`${res.message}`]
+          });
+          setTimeout(() => {
+            this.$router.push({
+              path: `/jobs/${res.data.job.id}`,
+              query: { ...this.$route.query }
+            });
+          }, 500);
+        });
+    }
   }
 };
 </script>
