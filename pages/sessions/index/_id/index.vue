@@ -41,7 +41,6 @@ export default {
       }
 
       let response = await app.$axios.get(`${url}/${params.id}`);
-      console.log("response", response);
       if (response.data.data.job) {
         let job = response.data.data.job;
         return {

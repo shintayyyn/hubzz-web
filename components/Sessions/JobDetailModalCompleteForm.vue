@@ -136,9 +136,7 @@ export default {
         this.form.late_hours = 0;
         notRequired.push("late_hours", "late_hours_reason");
       }
-      console.log(this.form, notRequired);
       this.Validate(this.form, notRequired);
-      return;
       if (!this.formError.length) {
         this.$axios
           .$put(`/api/v1/practice/job-parts/${this.job.id}/complete`, this.form)

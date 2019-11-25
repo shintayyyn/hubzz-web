@@ -5,6 +5,7 @@
       class="text-sm text-gray-700"
     >Cancellation should be at least be 72 hours before the start of the job.</div>
     <AppInput
+      :ref="'unassignTextArea'"
       v-model="form.declined_reason"
       :type="'textarea'"
       :name="'declined_reason'"

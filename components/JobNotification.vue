@@ -5,16 +5,15 @@
         <div
           @click="goTo(notification.id, notification.status ? notification.status : notification.locum_status)"
           :key="`${notification.id}-${notification.notification_type}`"
-          class="relative m-1 p-3 flex flex-wrap bg-gray-100 rounded-lg shadow-lg"
+          class="relative mx-1 my-2 p-3 flex flex-wrap bg-gray-100 hover:bg-gray-200 rounded-lg shadow-md text-xs md:text-sm"
         >
           <span
-            class="absolute top-0 right-0 cursor-pointer my-1 mx-2 font-bold"
+            class="absolute top-0 right-0 cursor-pointer px-2 rounded-full text-lg font-bold"
             @click.prevent.stop="close(notification.id)"
-          >X</span>
+          >x</span>
           <div class="flex flex-wrap mt-3 w-48 md:w-64">
-            <div class="flex justify-between items-center my-1 w-full">
+            <div class="flex flex-wrap justify-between items-center my-1 w-full">
               <div class="font-bold text-lg">{{notification.title}}</div>
-              <div class="mx-1"></div>
               <div
                 class="px-2 py-1 text-sm font-bold rounded-lg max-w-sm cursor-pointer"
                 :class="bgStatus(notification.status ? notification.status : notification.locum_status)"
@@ -47,15 +46,14 @@
           :to="billingNotification.url"
           :key="`${billingNotification.id}-${billingNotification.notification_type}`"
         >
-          <div class="relative m-1 p-3 flex flex-wrap bg-gray-100 rounded-lg shadow-lg">
+          <div class="relative mx-1 my-2 p-3 flex flex-wrap bg-gray-100 hover:bg-gray-200 rounded-lg shadow-md">
             <span
-              class="absolute top-0 right-0 cursor-pointer my-1 mx-2 font-bold"
+              class="absolute top-0 right-0 cursor-pointer px-2 rounded-full text-lg font-bold"
               @click.prevent.stop="close(billingNotification.id)"
-            >X</span>
+            >x</span>
             <div class="flex flex-wrap mt-3 w-48 md:w-64">
-              <div class="flex justify-between items-center my-1 w-full">
+              <div class="flex flex-wrap justify-between items-center my-1 w-full">
                 <div class="font-bold text-lg">{{billingNotification.invoice_number}}</div>
-                <div class="mx-1"></div>
                 <div
                   class="px-2 py-1 text-sm font-bold rounded-lg max-w-sm cursor-pointer"
                   :class="bgStatus(billingNotification.status)"
@@ -139,27 +137,24 @@ export default {
   },
   methods: {
     goTo(id, status) {
-      this.$router.push({
-        path: `${this.url}/${id}`,
-        query: { ...this.$route.query, status }
-      });
-      // if (
-      //   this.$route.path.includes(`${this.url}`) &&
-      //   this.$route.query.status &&
-      //   this.$route.query.status !== status
-      // ) {
-      //   this.$router.push({
-      //     query: { ...this.$route.query, status }
-      //   });
-
-      //   setTimeout(() => {
-      //     this.$router.push({
-      //       path: `${this.url}/${id}`,
-      //       query: { ...this.$route.query }
-      //     });
-      //   }, 500);
-      // } else {
-      // }
+      let path = `${this.url}/${id}`;
+      if (this.$route.path === path) {
+        this.$router.push({
+          path: `${this.url}`,
+          query: { ...this.$route.query, status }
+        });
+        setTimeout(() => {
+          this.$router.push({
+            path: `${this.url}/${id}`,
+            query: { ...this.$route.query, status }
+          });
+        }, 500);
+      } else if (this.$route.path !== path) {
+        this.$router.push({
+          path: `${this.url}/${id}`,
+          query: { ...this.$route.query, status }
+        });
+      }
       this.close(id);
     },
     close(id) {
@@ -172,6 +167,7 @@ export default {
       switch (status) {
         case "Issued":
         case "Live":
+        case "Available":
         case "Matched":
           return "bg-yellow-500";
           break;
@@ -203,8 +199,18 @@ export default {
   z-index: 700;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   margin-top: 50px;
+  height: 95%;
+  overflow-y: auto;
+  padding: 0 4px 10px;
   /* margin-right: 40px; */
+}
+
+.job-notification:hover{
+  background: linear-gradient(to top right, rgba(0, 0, 0, 0),  rgba(0, 0, 0, 0.01), rgba(202, 202, 202, 0.5));
+}
+
+.job-notification::-webkit-scrollbar{
+  display: none;
 }
 </style>
