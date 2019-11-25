@@ -23,7 +23,7 @@
 							/>
 						</span>
 						<span
-							class="h-full w-4/5 flex flex-col justify-center p-4 bg-gray-100 rounded-r-lg"
+							class="h-full w-4/5 flex flex-col justify-center p-4 bg-gray-100 hover:bg-gray-200 transition-hover rounded-r-lg"
 						>
 							<p class="capitalize font-bold">
 								{{ item.route.slice(1).replace(/_/g, " ") }}

@@ -36,7 +36,7 @@
 								<AppButton
 									v-if="authPermissions.includes('Create Sessions Job')"
 									:label="'Create Job'"
-                  :disabled="notAllowed"
+                  					:disabled="notAllowed"
 									@click="$store.commit('calendar/CREATE_JOB_MODAL', true)"
 									class="hidden md:block whitespace-no-wrap"
 									:inStyle="'padding-top: 0; padding-bottom: 0;'"
@@ -59,20 +59,18 @@
 									></svgicon>
 								</button>
 							</div>
+							<div class="relative" v-if="$route.name != 'messages-slug' && $route.name != 'messages-new'">
 							<AppButton
-								v-if="
-									$route.name != 'messages-slug' &&
-										$route.name != 'messages-new'
-								"
-								:label="
-									unreadMessages.length > 0
-										? `Messages(${unreadMessages.length})`
-										: 'Messages'
-								"
+								:label="'Messages'"
 								@click="$router.push('/messages')"
 								class="hidden md:block"
 								:inStyle="'padding-top: 0; padding-bottom: 0;'"
 							/>
+							<span
+								class="-m-2 absolute bg-yellow-500 block border bottom-0 right-0 hidden md:flex h-6 w-6 font-bold text-xs p-1 items-center justify-center rounded-full"
+								v-if="unreadMessages.length > 0"
+								>{{ unreadMessages.length }}</span>
+							</div>
 							<button
 								v-if="
 									$route.name != 'messages-slug' &&

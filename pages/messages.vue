@@ -87,11 +87,11 @@ export default {
     if (!this.$auth.loggedIn) {
       return this.$router.push("/");
     }
-    this.$store.commit("chat/DELETE_UNREAD_MESSAGE", this.$route.params.slug);
     if (window.innerWidth > 768) {
       if (this.conversations.length === 0) {
         this.$router.push(`/messages/new`);
       } else {
+        this.$store.commit("chat/DELETE_UNREAD_MESSAGE", this.$route.params.slug);
         this.showLeftPanel = true
         this.goToFirstConversation();
       }
