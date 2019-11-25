@@ -1,6 +1,6 @@
 <template>
   <div class="modal-container shadow-lg">
-    <div class="p-4 md:p-8">
+    <div class="flex flex-col items-start p-4 md:p-8">
       <nuxt-link :to="{ path: `/my-banks`, query: { ...$route.query }}" class="cursor-pointer">
         <svgicon name="left-arrow" height="32" width="32" />
       </nuxt-link>

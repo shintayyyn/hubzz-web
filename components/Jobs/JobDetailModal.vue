@@ -1,7 +1,7 @@
 <template>
   <div class="p-4 md:p-8">
-    <div @click="close" class="cursor-pointer">
-      <svgicon name="left-arrow" height="32" width="32" />
+    <div>
+      <svgicon name="left-arrow" height="32" width="32" @click="close" class="cursor-pointer"/>
     </div>
     <div class="flex items-center justify-start mt-4">
       <div class="leading-loose font-bold text-md sm:text-lg">{{ job.title }}</div>

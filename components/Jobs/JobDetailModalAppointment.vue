@@ -10,8 +10,8 @@
     />
 
     <div class="p-4 md:p-8">
-      <div @click="close" class="cursor-pointer">
-        <svgicon name="left-arrow" height="32" width="32" />
+      <div>
+        <svgicon name="left-arrow" height="32" width="32" @click="close" class="cursor-pointer"/>
       </div>
       <div class="flex justify-start font-bold text-sm sm:text-xl mt-8">Appointment</div>
       <AppFormError :formError="formError" v-if="formError.length > 0" id="error" />

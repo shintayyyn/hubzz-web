@@ -129,17 +129,18 @@
             <!-- thead / items header -->
             <div class="flex justify-start" :ref="'items-header'">
               <div
-                style="width:430px"
-                class="bg-gray-900 text-white px-4 py-1 font-semibold border-r-2 border-white"
+                class="w-1/2 bg-gray-900 text-white px-4 py-1 font-semibold border-r-2 border-white"
               >Description</div>
-              <div style="width:200px" class="bg-gray-900 text-white px-4 py-1 font-semibold">Total</div>
-              <div style="width:110px" class="bg-gray-900 flex items-center justify-center">
-                <span
-                  v-if="type === 'Private'"
-                  class="cursor-pointer w-6 h-6 mx-2 md:mx-4 rounded-full bg-white text-gray-900 font-semibold text-xl flex justify-center items-center hover:bg-gray-200"
-                  @click="addItem"
-                >+</span>
-              </div>
+              <div class="w-1/2 bg-gray-900 text-white px-4 py-1 font-semibold flex justify-between">Total
+                <div class="bg-gray-900 flex items-center justify-end">
+                  <span
+                    v-if="type === 'Private'"
+                    class="cursor-pointer w-6 h-6 rounded-full bg-white text-gray-900 font-semibold text-xl flex justify-center items-center hover:bg-gray-200"
+                    @click="addItem"
+                  >+</span>
+                </div
+              ></div>
+              
             </div>
             <div
               :id="`invoice-item-${index}`"
@@ -148,9 +149,9 @@
               :ref="`item-${index}`"
               :key="item.id"
             >
-              <div class="flex justify-start mt-2">
+              <div class="relative flex justify-start mt-2">
                 <template v-if="type === 'Private'">
-                  <div style="width:430px;min-height:80px;">
+                  <div class="w-1/2 px-1">
                     <textarea
                       v-model="item.description"
                       rows="3"
@@ -159,27 +160,25 @@
                     ></textarea>
                   </div>
                   <div
-                    style="min-height:80px;"
-                    :style="approvedInvoices.includes(item.job_part_id) ? 'width:310px':'width:200px'"
+                    class="w-1/3 flex items-end px-1"
                   >
                     <input
                       type="number"
                       min="0"
                       v-model="item.total"
                       placeholder="Enter value"
-                      class="w-full text-xs sm:text-sm text-right border-b-2 focus:border-yellow-500 focus:outline-none px-4 my-2"
+                      class="w-full text-xs sm:text-sm text-right border-b-2 focus:border-yellow-500 focus:outline-none px-4 my-4"
                     />
                   </div>
                 </template>
                 <template v-if="type === 'Platform'">
                   <div
-                    style="width:430px;min-height:80px;"
-                    class="text-xs sm:text-sm border-b-2 border-gray-300 px-4 py-1"
-                  >{{item.description}}</div>
+                    class="w-1/2 text-xs sm:text-sm px-4 py-1 border-b-2 border-gray-300"
+                  >{{item.description}}
+                  </div>
                   <div
-                    style="min-height:80px;"
                     class="text-xs sm:text-sm border-b-2 border-gray-300 px-4 py-1 text-right"
-                    :style="approvedInvoices.includes(item.job_part_id) ? 'width:310px':'width:200px'"
+                    :class="approvedInvoices.includes(item.job_part_id) ? 'w-1/2':'w-1/3'"
                   >{{item.total}}</div>
                 </template>
                 <div

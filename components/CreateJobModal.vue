@@ -1,8 +1,8 @@
 <template>
   <div class="modal-container shadow-lg" ref="modalContainer">
     <div class="p-4 md:p-8">
-      <div @click="close" class="cursor-pointer">
-        <svgicon name="left-arrow" height="32" width="32" />
+      <div>
+        <svgicon name="left-arrow" height="32" width="32"  @click="close" class="cursor-pointer"/>
       </div>
       <div class="flex justify-start font-bold text-sm sm:text-xl mt-8">Create a new job</div>
       <AppFormError :formError="formError" v-if="formError.length" />
