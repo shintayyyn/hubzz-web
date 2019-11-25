@@ -1,6 +1,6 @@
 <template>
   <section class="messages-section fixed left-0 md:relative border">
-    <MessagesLeftPanel />
+    <MessagesLeftPanel v-if="showLeftPanel" />
     <nuxt-child />
   </section>
 </template>
@@ -10,6 +10,11 @@ import * as chatApi from "@/api/chat";
 export default {
   components: {
     MessagesLeftPanel
+  },
+  data(){
+    return{
+      showLeftPanel: true
+    }
   },
   async asyncData({ app, store, route, params, redirect }) {
     const response = await chatApi.fetchConversations(app.$axios, 0, 10);
@@ -34,15 +39,16 @@ export default {
     $route(to, from) {
       if (to.name === "messages-slug") {
         if (to.path === "/messages") {
+          this.showLeftPanel = true
           this.$store.commit("IS_MOBILE", true);
           if (this.$store.state.chat.activeConversationId) {
             this.$store.commit("chat/DELETE_ACTIVE_CONVERSATION");
           }
         } else {
+          this.showLeftPanel = true
           this.$store.dispatch("chat/setActiveConversation", to.params.slug);
         }
       }
-
       if (
         this.unreadMessages.find(item => {
           item.conversation_id.toString() === to.params.slug;
@@ -66,10 +72,10 @@ export default {
     this.$store.commit("chat/DELETE_ACTIVE_CONVERSATION");
   },
   created() {
+    if (this.$store.state.mobile === true && this.$route.params.slug){
+      this.showLeftPanel = false
+    }
     this.$store.dispatch("chat/setActiveConversation", this.$route.params.slug);
-    // this.$axios.$get(`/api/v1/messages/user-presence`).then(res => {
-    //   this.$store.commit("chat/SET_USERS_ONLINE", res.data.users);
-    // });
   },
   mounted() {
     if (this.socketId) {
@@ -86,6 +92,7 @@ export default {
       if (this.conversations.length === 0) {
         this.$router.push(`/messages/new`);
       } else {
+        this.showLeftPanel = true
         this.goToFirstConversation();
       }
     } else {
