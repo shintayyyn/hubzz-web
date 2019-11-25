@@ -106,6 +106,7 @@ export default {
 		} else {
 			console.log("Message Sent to Candidate!");
 			console.log(state.messageSent);
+			commit("MESSAGE_SENT_TIMEOUT", true);
 			setTimeout(() => {
 				commit("MESSAGE_SENT_TIMEOUT", false);
 			}, 2000);

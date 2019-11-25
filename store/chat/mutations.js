@@ -44,7 +44,6 @@ export default {
 				new Date(b.latest_conversation_message.created_at) -
 				new Date(a.latest_conversation_message.created_at)
 		);
-		state.messageSent = true;
 	},
 	ADD_USER_ONLINE(state, payload) {
 		let conversation = state.conversations.find(

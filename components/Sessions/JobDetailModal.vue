@@ -3,15 +3,15 @@
     <div @click="$emit('close')" class="cursor-pointer">
       <svgicon name="left-arrow" height="32" width="32" />
     </div>
-    <div class="flex flex-row justify-start mt-4">
-      <div class="leading-loose font-bold text-md sm:text-lg">{{ job.title }}</div>
+    <div class="flex mt-4 items-center">
+      <div class="leading-tight font-bold text-md sm:text-lg">{{ job.title }}</div>
       <div
         class="mx-2 text-sm sm:text-sm p-2"
         :class="bgStatus(job.status)"
       >{{ status(job.status) }}</div>
-      <div v-if="authPermissions.includes('Update Sessions Job')">
+      <div class="leading-tight" v-if="authPermissions.includes('Update Sessions Job')">
         <button
-          class="font-bold text-xs sm:text-sm no-underline px-2 py-2 rounded-lg bg-yellow-500 ml-4 focus:outline-none"
+          class="font-bold text-xs sm:text-sm no-underline px-2 py-2 rounded-lg bg-yellow-500 md:ml-4 focus:outline-none"
           v-if="
 						(job.status === 'Allocated' &&
 							toEdit === false &&
@@ -22,7 +22,7 @@
           @click.prevent="toEdit = true"
         >Edit this job</button>
         <button
-          class="font-bold text-xs sm:text-sm no-underline px-2 py-2 rounded-lg bg-yellow-500 ml-4 focus:outline-none"
+          class="font-bold text-xs sm:text-sm no-underline px-2 py-2 rounded-lg bg-yellow-500 md:ml-4 focus:outline-none"
           v-if="
 						(job.status === 'Allocated' &&
 							toEdit === true &&

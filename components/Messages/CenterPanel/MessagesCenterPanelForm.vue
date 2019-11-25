@@ -1,7 +1,7 @@
 <template>
   <div class="flex" :class="wrapperClass">
     <transition name="fade">
-        <div v-if="messageSent" class="message-modal bg-blue-500 text-white p-4 rounded-lg font-bold">Message Sent to {{ this.user.personal_detail.name }}</div>
+        <div v-if="messageSent && !$route.name.includes('messages')" class="message-modal bg-blue-500 text-white p-4 rounded-lg font-bold text-center">Message Sent to {{ this.user.personal_detail.name }}</div>
     </transition>
     <textarea
       v-model="message"
