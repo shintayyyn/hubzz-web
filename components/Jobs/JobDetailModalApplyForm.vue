@@ -1,5 +1,5 @@
 <template>
-  <div class="rounded-lg shadow-lg p-4 md:p-8 mt-8">
+  <div class="bg-white rounded-lg shadow-lg p-4 md:p-8 mt-8">
     <template v-if="isReadyToApply">
       <div class="text-sm sm:text-base mb-4">This job is still open</div>
       <AppButton :label="'Apply now'" @click="apply" />

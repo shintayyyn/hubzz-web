@@ -1,6 +1,6 @@
 <template>
   <section>
-    <div class="rounded-lg shadow-lg flex flex-col p-8 mt-4">
+    <div class="rounded-lg shadow-lg bg-white flex flex-col p-4 md:p-8 mt-4">
       <div class="font-bold text-md sm:text-lg">Complete Form</div>
       <AppFormError :formError="formError" v-if="formError.length" />
       <AppInput

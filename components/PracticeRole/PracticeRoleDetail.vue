@@ -2,8 +2,8 @@
   <section class="relative">
     <AppLoading :loading="loading" spinner />
     <div class="p-4 md:p-8">
-      <div @click="$emit('close')" class="cursor-pointer">
-        <svgicon name="left-arrow" height="32" width="32" />
+      <div>
+        <svgicon name="left-arrow" height="32" width="32" @click="$emit('close')" class="cursor-pointer"/>
       </div>
       <div class="flex flex-col mt-4">
         <AppInput

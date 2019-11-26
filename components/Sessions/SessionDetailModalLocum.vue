@@ -1,39 +1,41 @@
 <template>
   <div class="flex flex-col w-full">
     <div class="text-xs sm:text-sm font-bold">Locum</div>
-    <div class="rounded-lg shadow-lg p-8 mt-4" v-if="user">
+    <div class="relative rounded-lg shadow-lg bg-white p-4 md:p-8 mt-4" v-if="user">
       <div class="flex flex-col">
-        <div class="flex flex-row flex-wrap justify-between items-center">
-          <div class="flex flex-col order-2 md:order-1 w-full md:w-1/2">
-            <div class="flex justify-start z-50">
-              <template v-if="user.is_favorite">
-                <svgicon
-                  name="on-star"
-                  height="32"
-                  width="32"
-                  class="cursor-pointer fill-current text-gray-700 hover:text-gray-800"
-                  @click="unfavorite"
-                />
-              </template>
-              <template v-else-if="!user.is_favorite">
-                <svgicon
-                  name="off-star"
-                  height="32"
-                  width="32"
-                  class="cursor-pointer fill-current text-gray-700 hover:text-gray-800"
-                  @click="favorite"
-                />
-              </template>
+        <div class="flex flex-row justify-between">
+          <div class="flex flex-col w-full">
+            <AppAvatar
+              class="mb-4"
+              :height="'80px'"
+              :width="'80px'"
+              :src="user.avatar && user.avatar.file && user.avatar.file.url ? user.avatar.file.url : ''"
+            />
+            <div class="flex flex-col w-full">
+              <div class="font-bold text-sm lg:text-lg">{{user.personal_detail.name}}</div>
+              <div class="text-xs lg:text-sm">{{user.locum_detail.profession.name}}</div>
             </div>
-            <div class="font-bold mt-4 text-sm lg:text-lg">{{user.personal_detail.name}}</div>
-            <div class="text-xs lg:text-sm">{{user.locum_detail.profession.name}}</div>
           </div>
-          <AppAvatar
-            class="order-1 md:order-2"
-            :height="'80px'"
-            :width="'80px'"
-            :src="user.avatar && user.avatar.file && user.avatar.file.url ? user.avatar.file.url : ''"
-          />
+          <div class="flex justify-start z-50">
+            <template v-if="user.is_favorite">
+              <svgicon
+                name="on-star"
+                height="32"
+                width="32"
+                class="cursor-pointer fill-current text-gray-700 hover:text-gray-800"
+                @click="unfavorite"
+              />
+            </template>
+            <template v-else-if="!user.is_favorite">
+              <svgicon
+                name="off-star"
+                height="32"
+                width="32"
+                class="cursor-pointer fill-current text-gray-700 hover:text-gray-800"
+                @click="favorite"
+              />
+            </template>
+          </div>
         </div>
         <div class="body-info my-4">
           <div class="font-bold text-sm sm:text-md">Headline</div>

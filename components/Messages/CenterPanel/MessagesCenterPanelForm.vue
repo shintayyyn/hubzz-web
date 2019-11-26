@@ -1,8 +1,12 @@
 <template>
-  <div class="flex">
+  <div class="flex" :class="wrapperClass">
+    <transition name="fade">
+        <div v-if="messageSent && !$route.name.includes('messages')" class="message-modal bg-blue-500 text-white p-4 rounded-lg font-bold text-center">Message Sent to {{ this.user.personal_detail.name }}</div>
+    </transition>
     <textarea
       v-model="message"
       class="message-box resize-none w-full p-2 text-sm focus:outline-none border-t"
+      :class="inClass"
       placeholder="Type your message here"
       @keydown.enter.exact.prevent
       @keyup.enter.exact="send"
@@ -13,10 +17,20 @@
 </template>
 <script>
 export default {
+  props: {
+    inClass: '',
+    wrapperClass: '',
+    user: '',
+  },
   data() {
     return {
       message: ""
     };
+  },
+  computed:{
+    messageSent(){
+      return this.$store.state.chat.messageSent
+    }
   },
   watch:{
     message(value){
@@ -31,15 +45,20 @@ export default {
       return message.replace(/^\s*/, '').replace(/\s*$/, '')
     },
     send(e) {
-      if (this.trimmedMessage(this.message)) {
-        this.$store.dispatch("chat/sendMessage", {
-          user_id: null,
-          message: this.message,
-          type: this.$route.name
-        });
-        this.message = "";
-        e.preventDefault();
+      let user_id = null;
+      if(!this.$route.name.includes('messages') || !this.$route.name.includes('message')){
+        user_id = this.user.id
       }
+        if (this.trimmedMessage(this.message)) {
+          this.$store.dispatch("chat/sendMessage", {
+            user_id: user_id,
+            message: this.message,
+            type: this.$route.name
+          });
+          this.message = "";
+          e.preventDefault();
+        }
+      
     }
   }
 };

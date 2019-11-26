@@ -49,7 +49,7 @@
                   :type="type"
                   :placeholder="placeholder"
                   class="border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full"
-                  :class="error ? 'bordzzzzzer-red-500' : ''"
+                  :class="error ? 'border-red-500' : ''"
                   @input="$emit('input', $event.target.value)"
                   @keypress.enter="$emit('submit')"
                   @blur="$emit('blur')"

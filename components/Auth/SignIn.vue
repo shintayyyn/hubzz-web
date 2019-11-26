@@ -1,5 +1,5 @@
 <template>
-  <div class="rounded-lg shadow-lg p-4 md:p-8">
+  <div class="bg-white rounded-lg shadow-lg p-4 md:p-8">
     <div class="w-full flex flex-col">
       <AppInput
         v-model="form.email"

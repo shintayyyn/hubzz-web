@@ -30,6 +30,7 @@
                 <AppButton
                   v-if="authPermissions.includes('Create Sessions Job')"
                   :label="'Create Job'"
+                  :disabled="notAllowed"
                   @click="$store.commit('calendar/CREATE_JOB_MODAL', true)"
                   class="hidden md:block whitespace-no-wrap"
                   :inStyle="'padding-top: 0; padding-bottom: 0;'"
@@ -47,20 +48,21 @@
                   <svgicon name="create-job" color="#444 #555" width="21" height="21"></svgicon>
                 </button>
               </div>
-              <AppButton
-                v-if="
-									$route.name != 'messages-slug' &&
-										$route.name != 'messages-new'
-								"
-                :label="
-									unreadMessages.length > 0
-										? `Messages(${unreadMessages.length})`
-										: 'Messages'
-								"
-                @click="$router.push('/messages')"
-                class="hidden md:block"
-                :inStyle="'padding-top: 0; padding-bottom: 0;'"
-              />
+              <div
+                class="relative"
+                v-if="$route.name != 'messages-slug' && $route.name != 'messages-new'"
+              >
+                <AppButton
+                  :label="'Messages'"
+                  @click="$router.push('/messages')"
+                  class="hidden md:block"
+                  :inStyle="'padding-top: 0; padding-bottom: 0;'"
+                />
+                <span
+                  class="-m-2 absolute bg-yellow-500 block border bottom-0 right-0 hidden md:flex h-6 w-6 font-bold text-xs p-1 items-center justify-center rounded-full"
+                  v-if="unreadMessages.length > 0"
+                >{{ unreadMessages.length }}</span>
+              </div>
               <button
                 v-if="
 									$route.name != 'messages-slug' &&
@@ -100,6 +102,22 @@ export default {
     AppButton,
     CreateJobModal
   },
+  data() {
+    return {
+      notAllowed: false
+    };
+  },
+  async created() {
+    if (this.$auth.user.domain === "Practice") {
+      let response = await this.$axios.$get(`/api/v1/practice/me/practice`);
+      const myPracticeDetail = response.data.practice;
+      if (myPracticeDetail.type === "Spoke") {
+        if (myPracticeDetail.allow_surgery_create_sessions == false) {
+          this.notAllowed = true;
+        }
+      }
+    }
+  },
   computed: {
     create_job_modal() {
       return this.$store.state.calendar.create_job_modal;
@@ -109,9 +127,6 @@ export default {
     },
     authPermissions() {
       return this.$store.getters["auth/permissions"];
-    },
-    repost_job() {
-      return this.$store.state.calendar.repost_job;
     }
   },
   watch: {
@@ -122,6 +137,15 @@ export default {
         document.body.style.overflow = "auto";
       }
     }
+    // unreadMessages(value){
+    //   console.log("new message",value, this.$route)
+    //   this.$store.commit("SET_NOTIFICATION", {
+    //     enabled: true,
+    //     status: "message",
+    //     text: [`qwe`],
+    //     closable: true
+    //   });
+    // }
   },
   methods: {
     toggle() {

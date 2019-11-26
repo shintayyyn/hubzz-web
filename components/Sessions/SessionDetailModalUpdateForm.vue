@@ -1,9 +1,9 @@
 <template>
   <div class="flex flex-col w-full">
     <AppFormError :formError="formError" v-if="formError.length > 0" />
-    <div class="rounded-lg shadow-lg p-4 md:p-8 mt-4">
+    <div class="bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4">
       <div class="flex flex-row flex-wrap">
-        <div class="flex flex-col w-full md:w-1/2 p-0 md:pr-4">
+        <div class="flex flex-col w-full lg:w-1/2 p-0 md:pr-4">
           <div class="font-bold text-sm sm:text-md">Job number</div>
           <div class="text-xs sm:text-sm mb-4">{{job.job_number}}</div>
           <AppInput
@@ -200,7 +200,7 @@
             />
           </template>
         </div>
-        <div class="flex flex-col w-full md:w-1/2 p-0 md:pl-4">
+        <div class="flex flex-col w-full lg:w-1/2 p-0 md:pl-4">
           <div class="font-bold text-sm sm:text-md">Duration</div>
           <div class="flex flex-row flex-wrap justify-between">
             <div class="px-1 w-full md:w-1/2">

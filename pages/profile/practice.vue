@@ -28,7 +28,8 @@
         </div>
         <div class="w-full md:w-1/3 p-1">
           <div class="flex flex-col">
-            <div class="bg-white rounded-lg shadow-lg px-4">
+            <!-- Practice CANNOT CHANGE THEIR TYPE. (HUB, SPOKE, STAND ALONE) -->
+            <!-- <div class="bg-white rounded-lg shadow-lg px-4">
               <AppInput
                 v-model="practiceType"
                 :type="'select'"
@@ -38,7 +39,7 @@
                 :items="[{ value: 'Stand Alone', label: 'Stand Alone'},{ value: 'Hub', label: 'Hub'},{ value: 'Spoke', label: 'Spoke'}]"
                 @change="practiceTypeOnchange"
               />
-            </div>
+            </div> -->
             <div class="bg-white rounded-lg shadow-lg p-4 mt-4">
               <div class="flex flex-col">
                 <AppInput
