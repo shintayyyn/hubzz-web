@@ -5,7 +5,7 @@
         <div
           @click="goTo(notification.id, notification.status ? notification.status : notification.locum_status)"
           :key="`${notification.id}-${notification.notification_type}`"
-          class="relative mx-1 my-2 p-3 flex flex-wrap bg-gray-100 hover:bg-gray-200 rounded-lg shadow-md text-xs md:text-sm"
+          class="relative mx-1 my-2 p-3 flex flex-wrap bg-gray-100 hover:bg-gray-200 rounded-lg shadow-md text-xs md:text-sm opacity-75 hover:opacity-100"
         >
           <span
             class="absolute top-0 right-0 cursor-pointer px-2 rounded-full text-lg font-bold"
@@ -13,25 +13,25 @@
           >x</span>
           <div class="flex flex-wrap mt-3 w-48 md:w-64">
             <div class="flex flex-wrap justify-between items-center my-1 w-full">
-              <div class="font-bold text-lg">{{notification.title}}</div>
+              <div class="font-bold md:text-lg">{{notification.title}}</div>
               <div
-                class="px-2 py-1 text-sm font-bold rounded-lg max-w-sm cursor-pointer"
+                class="px-2 py-1 md:text-sm font-bold rounded-lg max-w-sm cursor-pointer"
                 :class="bgStatus(notification.status ? notification.status : notification.locum_status)"
               >{{notification.status ? notification.status.toUpperCase() : notification.locum_status.toUpperCase()}}</div>
             </div>
-            <div class="flex justify-between items-center my-1 w-full">
+            <div class="flex justify-between items-center md:my-1 w-full">
               <div>From</div>
               <div>{{notification.date_start}}</div>
             </div>
-            <div class="flex justify-between items-center my-1 w-full">
+            <div class="flex justify-between items-center md:my-1 w-full">
               <div>To</div>
               <div>{{notification.date_end}}</div>
             </div>
-            <div class="flex justify-between items-center my-1 w-full">
+            <div class="flex justify-between items-center md:my-1 w-full">
               <div>Rate</div>
               <div v-text="`£ ${notification.rate} ${notification.locum_detail_rate_type}`"></div>
             </div>
-            <div class="flex justify-between items-center my-1 w-full">
+            <div class="flex justify-between items-center md:my-1 w-full">
               <div>Shift</div>
               <div>{{notification.shift}}</div>
             </div>
@@ -116,7 +116,7 @@ export default {
     },
     url() {
       return this.$auth.user.domain === "Practice" ? "/sessions" : "/jobs";
-    }
+    },
   },
   watch: {
     notify(value) {
@@ -128,9 +128,10 @@ export default {
             text: "",
             closable: false
           });
+          
         }, 2000);
       }
-    }
+    },
   },
   mounted() {
     console.log("notifications", this.notifications);
@@ -200,7 +201,7 @@ export default {
   display: flex;
   flex-direction: column;
   margin-top: 50px;
-  height: 95%;
+  max-height: 95%;
   overflow-y: auto;
   padding: 0 4px 10px;
   /* margin-right: 40px; */

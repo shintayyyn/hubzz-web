@@ -3,7 +3,7 @@
     <ProgressBar :percentage="percentage" />
     <div class="w-full xl:max-w-2xl p-4 md:p-6">
       <div class="flex w-full justify-center xl:justify-start">
-        <div class="mb-6 mt-1 md:mx-4" style="flex: 0 1 600px;">
+        <div class="flex flex-col items-start mb-6 mt-1 md:mx-4" style="flex: 0 1 600px;">
           <nuxt-link to="/" class="text-black focus:outline-none">
             <svgicon name="left-arrow" height="32" width="32" />
           </nuxt-link>

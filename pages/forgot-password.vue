@@ -1,6 +1,6 @@
 <template>
 	<section class="forgot-password-section">
-		<div class="p-4 md:p-8">
+		<div class="flex flex-col items-start p-4 md:p-8">
 			<nuxt-link to="/" class="focus:outline-none text-black">
 				<svgicon name="left-arrow" height="32" width="32" />
 			</nuxt-link>
@@ -10,8 +10,7 @@
 					<div class="mt-2 md:mt-5 rounded-lg shadow-md p-4 md:py-10 md:px-8 w-full">
 						<template v-if="success">
 							<div>
-								Check your email inbox for further instructions
-								<strong>should your email address match our records.</strong>
+								Check your email inbox for further instructions <strong>should your email address match our records.</strong>
 							</div>
 						</template>
 						<template v-else>
@@ -28,28 +27,27 @@
 										formError.find(item => item.field === 'email') ? 'border-red-500' : ''
 									]"
 								>
-									<label for="email" class="md:text-lg mb-4">Email address</label>
+									<label for="email" class="mb-2">Email address</label>
 									<input
 										type="email"
 										name="email"
 										id="email"
 										ref="email"
-										class="focus:outline-none font-bold"
-										style="height:40px"
+										class="focus:outline-none font-bold py-3"
 										@focus="setFocus = 'email'"
 										@blur="setFocus = ''"
 										v-model="form.email"
 										@keyup.enter="send"
 									/>
-									<span
-										class="absolute right-0 bg-red-500 text-white p-1"
-										v-if="formError.find(item => item.field === 'email')"
-										>{{ formError.find(item => item.field === "email").message }}</span
-									>
 								</div>
+								<span
+									class="text-red-500 text-sm py-2"
+									v-if="formError.find(item => item.field === 'email')"
+									>{{ formError.find(item => item.field === "email").message.charAt(0).toUpperCase() + formError.find(item => item.field === "email").message.slice(1) }}</span
+								>
 							</form>
 							<button
-								class="rounded-lg bg-yellow-500 shadow-md py-2 px-4 md:p-8 mt-3 font-bold md:text-xl focus:outline-none hover:text-white"
+								class="rounded-lg bg-yellow-500 shadow-md py-2 px-4 mt-3 font-bold md:text-xl focus:outline-none hover:text-white transition-hover"
 								@click="send"
 							>
 								Send
@@ -87,6 +85,15 @@ export default {
 					field: "email",
 					message: "Email is Required"
 				});
+			}else{
+				setTimeout(() => {
+					let validEmail = this.ValidateEmail(value);
+					if (validEmail){
+						this.formError.push(validEmail)
+					}else{
+						this.formError.splice(index, 1);
+					}
+				}, 1000);
 			}
 		}
 	},
@@ -98,13 +105,26 @@ export default {
 		async send() {
 			try {
 				this.formError = [];
+				let validEmail = this.ValidateEmail(this.form.email);
+				if (validEmail){
+					this.formError.push(validEmail)
+				}
 				this.Validate(this.form);
 				if (!this.formError.length) {
 					this.$axios.$post(`/api/v1/forgot-password`, this.form).then(res => {
 						this.success = true;
+					}).catch(err => {
+						err.response.data.error_messages.forEach(error => {
+							if (error.message === 'Invalid Email'){
+								error.message = 'Email Address does not match our record'
+							}
+							this.formError.push(error);
+						});
 					});
 				}
-			} catch (e) {}
+			} catch (e) {
+				
+			}
 		}
 	}
 };

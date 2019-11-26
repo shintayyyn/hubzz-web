@@ -1,7 +1,7 @@
 <template>
   <div class="p-4 md:p-8 max-w-3xl">
-    <div @click="$emit('close')" class="cursor-pointer">
-      <svgicon name="left-arrow" height="32" width="32" />
+    <div>
+      <svgicon name="left-arrow" height="32" width="32" @click="$emit('close')" class="cursor-pointer" />
     </div>
     <div class="flex justify-start font-bold text-sm sm:text-xl mt-8 mb-2">Availability</div>
     <div class="mt-4">
