@@ -21,7 +21,7 @@
         </div>
         <AppButton
           :label="'Filter'"
-          @click="filterModal = true"
+          @click="filterModal = !filterModal"
           :inStyle="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
         />
         <AppButton

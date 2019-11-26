@@ -1,5 +1,5 @@
 <template>
-  <div class="relative rounded-lg shadow-lg p-4 md:p-8" :class="onChange && 'opacity-50'">
+  <div class="relative bg-white rounded-lg shadow-lg p-4 md:p-8" :class="onChange && 'opacity-50'">
     <div class="flex flex-row flex-wrap justify-between">
       <div class="flex flex-col w-full md:w-1/2 p-0 md:pr-4">
         <div class="font-bold text-sm sm:text-md">Job part number</div>

@@ -4,7 +4,7 @@
       <nuxt-link :to="{ path: `/my-banks`, query: { ...$route.query }}" class="cursor-pointer">
         <svgicon name="left-arrow" height="32" width="32" />
       </nuxt-link>
-      <div class="flex flex-row justify-start overflow-x-auto mt-4">
+      <div class="w-full flex flex-row justify-start overflow-x-auto mt-4">
         <nuxt-link
           :to="{ path: `/my-banks/${$route.params.locumId}`, query: { ...$route.query }}"
           :event="$route.name === 'my-banks-index-locumId-index' ? '':'click'"
@@ -18,7 +18,7 @@
           :class="$route.name.includes(`my-banks-index-locumId-index-related-jobs`) ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Related Jobs</nuxt-link>
       </div>
-      <div class="mt-5">
+      <div class="w-full mt-5">
         <nuxt-child />
       </div>
     </div>
@@ -30,3 +30,10 @@ export default {
 };
 </script>
 
+<style>
+@media screen and (min-width: 1200px) {
+  .modal-container{
+    width: 80%;
+  }
+}
+</style>

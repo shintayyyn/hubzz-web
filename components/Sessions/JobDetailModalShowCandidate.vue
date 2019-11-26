@@ -9,7 +9,7 @@
       </div>
       <div class="flex flex-row flex-wrap justify-between mt-4">
         <div class="w-full pr-0 lg:pr-2 lg:w-1/2">
-          <div class="rounded-lg shadow-lg p-4 md:p-8">
+          <div class="bg-white rounded-lg shadow-lg p-4 md:p-8">
             <div class="float-right">
               <AppAvatar
                 :height="'80px'"

@@ -1,7 +1,7 @@
 <template>
   <div class="p-4 md:p-8">
-    <div @click="close" class="cursor-pointer">
-      <svgicon name="left-arrow" height="32" width="32" />
+    <div>
+      <svgicon name="left-arrow" height="32" width="32" @click="close" class="cursor-pointer"/>
     </div>
     <div class="flex flex-row flex-wrap justify-start items-center my-2">
       <div class="leading-loose font-bold text-md sm:text-lg mr-2">{{ job_part.job.title }}</div>
@@ -21,12 +21,12 @@
     </div>
 
     <div
-      class="text-xs sm:text-sm py-2 border"
+      class="text-xs sm:text-sm py-2"
     >Posted {{ $moment(job_part.date_created).format("DD/MM/YYYY") }}</div>
 
     <div class="flex flex-col mt-4">
       <div class="flex flex-wrap justify-start">
-        <div class="p-0 md:pr-4 w-full md:w-1/2 border">
+        <div class="p-0 md:pr-4 w-full md:w-1/2">
           <JobPartDetailModalInfo :job_part="job_part" />
           <JobDetailModalUnassignForm
             :job="job_part.job"

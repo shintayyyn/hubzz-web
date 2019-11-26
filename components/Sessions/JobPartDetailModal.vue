@@ -18,7 +18,7 @@
 
     <div class="flex flex-col mt-4">
       <div class="flex flex-wrap justify-start">
-        <div class="p-0 md:pr-4 w-full md:w-1/2">
+        <div class="md:pr-4 w-full md:w-1/2">
           <div class="flex flex-col">
             <JobPartDetailModalForm :job_part="job_part" />
             <!-- // ! check if needed permission for termination -->
@@ -29,7 +29,7 @@
             />
           </div>
         </div>
-        <div class="p-0 md:pr-4 w-full md:w-1/2">
+        <div class="md:pr-4 w-full md:w-1/2">
           <div class="flex flex-col">
             <JobDetailModalCompleteForm
               :job="job_part"

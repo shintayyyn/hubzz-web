@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col w-full">
     <div class="text-xs sm:text-sm font-bold">Locum</div>
-    <div class="relative rounded-lg shadow-lg p-4 md:p-8 mt-4">
+    <div class="relative bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4">
       <div class="flex flex-col">
         <div class="flex flex-row justify-between">
           <div class="flex flex-col w-full">

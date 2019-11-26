@@ -1,6 +1,6 @@
 <template>
   <div class="modal-container shadow-lg">
-    <div class="flex flex-col items-start p-8 max-w-3xl">
+    <div class="flex flex-col items-start p-4 md:p-8 max-w-3xl">
       <nuxt-link :to="'/profile/users'" class="cursor-pointer">
         <svgicon name="left-arrow" height="32" width="32" />
       </nuxt-link>

@@ -3,7 +3,7 @@
     
     <div class="text-xs sm:text-sm font-bold">Candidates</div>
     <div
-      class="rounded-lg shadow-lg m-0 my-4 py-3 px-5 "
+      class="bg-white rounded-lg shadow-lg m-0 my-4 py-3 px-5 "
       v-for="user in applicants"
       :key="user.id"
     >

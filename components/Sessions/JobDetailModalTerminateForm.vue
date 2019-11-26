@@ -1,6 +1,6 @@
 <template>
   <section>
-    <div class="rounded-lg shadow-lg p-8 mt-4">
+    <div class="bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4">
       <div class="font-bold text-md sm:text-lg">Terminate this job</div>
       <!-- <AppInput
         v-model="form.terminate_reason"

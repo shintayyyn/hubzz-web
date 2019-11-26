@@ -1,7 +1,7 @@
 <template>
   <section>
     <div class="text-md font-bold">Complete Form</div>
-    <div class="rounded-lg shadow-lg flex flex-col p-8 mt-4">
+    <div class="bg-white rounded-lg shadow-lg flex flex-col p-4 md:p-8 mt-4">
       <AppFormError :formError="formError" v-if="formError.length" />
       <div class="flex flex-col">
         <AppInput

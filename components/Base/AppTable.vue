@@ -37,7 +37,7 @@
           :to="{ path: `${routerLink}/${item.id}`, query: { ...$route.query } }"
           :event="!routerLink ? '' : 'click'"
         >
-          <div class="flex justify-start shadow-md hover:bg-gray-100 rounded-lg items-center py-3">
+          <div class="flex justify-start shadow-md rounded-lg items-center py-3" :class="routerLink ? 'transition-hover hover:bg-gray-100' : 'cursor-default'">
             <div
               v-for="(column, index) in columns"
               :key="index"
