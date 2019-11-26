@@ -19,7 +19,7 @@ export default {
   components: {
     AppButton
   },
-  props: ["compliances", "job"],
+  props: ["job"],
   data() {
     return {
       userCompliance: [],
@@ -30,11 +30,13 @@ export default {
   computed: {
     isReadyToApply() {
       let isComplete = true;
-      this.compliances.forEach(id => {
-        if (!this.userCompliance.includes(id)) {
-          isComplete = false;
-        }
-      });
+      this.job.platform_job.compliance_documents
+        .map(item => item.id)
+        .forEach(id => {
+          if (!this.userCompliance.includes(id)) {
+            isComplete = false;
+          }
+        });
       if (
         this.gmc_or_nmc_number_status !== "Verified" ||
         this.mpl_or_npl_number_status !== "Verified"
@@ -69,7 +71,7 @@ export default {
           status: "success",
           text: [`${res.message}`]
         });
-        this.$emit("close");
+        this.$emit("applied");
       });
     }
   }

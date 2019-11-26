@@ -41,21 +41,19 @@ export default {
         this.$axios
           .$post(`/api/v1/locum/jobs/${this.job.id}/decline`, this.form)
           .then(res => {
+            this.$store.commit(
+              "jobs/REMOVE_LOCUM_ALLOCATED_JOB",
+              res.data.job.id
+            );
+            this.job.job_parts.forEach(({ id }) => {
+              this.$store.commit("jobs/REMOVE_LOCUM_ALLOCATED_JOB_PART", id);
+            });
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
               text: ["Declined"]
             });
-            if (
-              this.$route.path.includes("/jobs") ||
-              this.$route.path.includes("/dashboard")
-            ) {
-              this.$store.commit(
-                "jobs/REMOVE_LOCUM_ALLOCATED_JOB",
-                res.data.job.id
-              );
-            }
-            this.$emit("close");
+            this.$emit("unassign");
           })
           .catch(err => {
             err.response.data.error_messages.forEach(error => {

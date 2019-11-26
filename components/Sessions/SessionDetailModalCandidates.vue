@@ -30,15 +30,29 @@
         :perPage="params.limit"
       />
     </div>
+
+    <div class="shield" v-if="modal" @click="modal = false"></div>
+    <transition name="slide" mode="out-in">
+      <div class="modal-container shadow-lg" v-if="modal">
+        <SessionDetailModalShowCandidate
+          @close="modal = false"
+          :job="job"
+          :user="user"
+          @appointed="$emit('appointed')"
+        />
+      </div>
+    </transition>
   </div>
 </template>
 <script>
 import AppAvatar from "~/components/Base/AppAvatar";
 import AppPagination from "@/components/Base/AppPagination";
+import SessionDetailModalShowCandidate from "@/components/Sessions/SessionDetailModalShowCandidate";
 export default {
   components: {
     AppAvatar,
-    AppPagination
+    AppPagination,
+    SessionDetailModalShowCandidate
   },
   props: ["job"],
   data() {
@@ -50,7 +64,9 @@ export default {
       params: {
         offset: 0,
         limit: 20
-      }
+      },
+      user: null,
+      modal: false
     };
   },
   computed: {
@@ -92,8 +108,9 @@ export default {
     },
     show(id) {
       this.$axios.$get(`/api/v1/practice/locums/${id}`).then(res => {
-        const user = res.data.user;
-        this.$emit("show", user);
+        this.user = res.data.user;
+        this.modal = true;
+        // this.$emit("show", user);
       });
     }
   }
@@ -108,6 +125,17 @@ export default {
 }
 img {
   border-radius: 50%;
+}
+.shield {
+  z-index: 511;
+}
+.modal-container {
+  z-index: 512;
+}
+@media screen and (min-width: 1200px) {
+  .modal-container {
+    width: 60%;
+  }
 }
 </style>
 

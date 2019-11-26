@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col w-full">
     <div class="text-xs sm:text-sm font-bold">Locum</div>
-    <div class="rounded-lg shadow-lg p-8 mt-4">
+    <div class="rounded-lg shadow-lg p-8 mt-4" v-if="user">
       <div class="flex flex-col">
         <div class="flex flex-row flex-wrap justify-between items-center">
           <div class="flex flex-col order-2 md:order-1 w-full md:w-1/2">
@@ -12,7 +12,7 @@
                   height="32"
                   width="32"
                   class="cursor-pointer fill-current text-gray-700 hover:text-gray-800"
-                  @click="$emit('unfavorite')"
+                  @click="unfavorite"
                 />
               </template>
               <template v-else-if="!user.is_favorite">
@@ -21,7 +21,7 @@
                   height="32"
                   width="32"
                   class="cursor-pointer fill-current text-gray-700 hover:text-gray-800"
-                  @click="$emit('favorite')"
+                  @click="favorite"
                 />
               </template>
             </div>
@@ -126,15 +126,108 @@
         </div>
       </div>
     </div>
+    <AppConfirmationModal
+      :label="confirmation_text"
+      :confirmLabel="'Yes'"
+      :cancelLabel="'Cancel'"
+      :modal="confirmation_modal"
+      @confirm="confirm"
+      @cancel="confirmation_modal = false"
+    />
   </div>
 </template>
 <script>
 import AppAvatar from "~/components/Base/AppAvatar";
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
 export default {
   components: {
-    AppAvatar
+    AppAvatar,
+    AppConfirmationModal
   },
-  props: ["user", "mandatory", "optional"]
+  props: ["job"],
+  data() {
+    return {
+      user: null,
+      mandatory: [],
+      optional: [],
+      confirmation_text: "",
+      confirmation_modal: false
+    };
+  },
+  created() {
+    this.getAppointedLocum();
+  },
+  methods: {
+    getAppointedLocum() {
+      this.$axios
+        .$get(
+          `/api/v1/practice/locums/${this.job.platform_job.appointed_to_locum.user.id}`
+        )
+        .then(res => {
+          this.user = res.data.user;
+          this.getProfessionCategory(
+            res.data.user.locum_detail.profession.profession_category.id
+          );
+        });
+    },
+    getProfessionCategory(id) {
+      this.$axios.$get(`/api/v1/profession-categories/${id}`).then(res => {
+        this.mandatory = this.user.locum_detail.compliance_documents.filter(
+          compliance_document => {
+            return res.data.profession_category.mandatory_compliance_documents.some(
+              mandatory_compliance_document =>
+                mandatory_compliance_document.id ===
+                compliance_document.compliance_document.id
+            );
+          }
+        );
+        this.optional = this.user.locum_detail.compliance_documents.filter(
+          compliance_document => {
+            return res.data.profession_category.optional_compliance_documents.some(
+              optional_compliance_document =>
+                optional_compliance_document.id ===
+                compliance_document.compliance_document.id
+            );
+          }
+        );
+      });
+    },
+    favorite() {
+      this.confirmation_text = "Add this Locum to MyBanks?";
+      this.confirmation_modal = true;
+    },
+    unfavorite() {
+      this.confirmation_text = "Remove this Locum to MyBanks?";
+      this.confirmation_modal = true;
+    },
+    confirm() {
+      if (!this.user.is_favorite) {
+        this.$axios
+          .$post(`/api/v1/practice/locums/${this.user.id}/favorite`)
+          .then(res => {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: ["Added to favourites"]
+            });
+          });
+        this.user.is_favorite = true;
+        this.confirmation_modal = false;
+      } else if (this.user.is_favorite) {
+        this.$axios
+          .$delete(`/api/v1/practice/locums/${this.user.id}/favorite`)
+          .then(res => {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: ["Remove to favourites"]
+            });
+          });
+        this.user.is_favorite = false;
+        this.confirmation_modal = false;
+      }
+    }
+  }
 };
 </script>
 <style scoped>

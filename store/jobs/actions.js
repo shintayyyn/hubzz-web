@@ -80,10 +80,7 @@ export default {
         })
         // nsa live/match, may na appoint or kinancel ng practice ung job
         this.$socket.on('Locum Notification Job Unavailable', async (job) => {
-            // const response = await this.$axios.$get(`/api/v1/locum/jobs/${job.id}`)
-            // if (response.data && response.data.job) {
-            //     commit('ADD_LOCUM_JOB_NOTIFICATION', { ...response.data.job, notificationType: 'Locum Notification Job Unavailable' })
-            // }
+            // doesn't need to notify the locum
         })
         // nsa live/match/applied/allocated, inaupdate ni practice ung job at hindi ka na qualified
         this.$socket.on('Locum Notification Job Unqualified', async (job) => {

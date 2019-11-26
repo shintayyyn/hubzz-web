@@ -30,7 +30,7 @@ export default {
             status: "success",
             text: ["Cancelled"]
           });
-          this.$emit("close");
+          this.$emit("cancelled");
         });
     }
   }

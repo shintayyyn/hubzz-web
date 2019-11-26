@@ -11,13 +11,13 @@ export default {
                     if (notif.job_reminded_in_1_hours === true) {
                         message = 'This Job will start in 1 hour.'
                     }
-                    if (notif.job_reminded_in_3_hours === true) {
+                    else if (notif.job_reminded_in_3_hours === true) {
                         message = 'This Job will start in 3 hours.'
                     }
-                    if (notif.job_reminded_in_1_days === true) {
+                    else if (notif.job_reminded_in_1_days === true) {
                         message = 'This Job will start tomorrow.'
                     }
-                    if (notif.job_reminded_in_3_days === true) {
+                    else if (notif.job_reminded_in_3_days === true) {
                         message = 'This Job will start in 3 days.'
                     }
                     break;
@@ -55,13 +55,13 @@ export default {
                     if (notif.job_unfilled_warned_in_1_hours === true) {
                         message = 'This Job will be unfilled in 1 hour.'
                     }
-                    if (notif.job_unfilled_warned_in_3_hours === true) {
+                    else if (notif.job_unfilled_warned_in_3_hours === true) {
                         message = 'This Job will be unfilled in 3 hours.'
                     }
-                    if (notif.job_unfilled_warned_in_1_days === true) {
+                    else if (notif.job_unfilled_warned_in_1_days === true) {
                         message = 'This Job will be unfilled tomorrow.'
                     }
-                    if (notif.job_unfilled_warned_in_3_days === true) {
+                    else if (notif.job_unfilled_warned_in_3_days === true) {
                         message = 'This Job will be unfilled in 3 days.'
                     }
                     break;
@@ -71,13 +71,13 @@ export default {
             }
             notifObj = {
                 id: notif.id,
-                title: notif.title,
+                title: notif.title ? notif.title : notif.job.title,
                 status: notif.status,
                 date_start: notif.date_start,
                 date_end: notif.date_end,
-                shift: notif.shift.name,
-                rate: notif.rate,
-                locum_detail_rate_type: notif.locum_detail_rate_type.name,
+                shift: notif.shift ? notif.shift.name : notif.job.shift.name,
+                rate: notif.rate ? notif.rate : notif.job.rate,
+                locum_detail_rate_type: notif.locum_detail_rate_type ? notif.locum_detail_rate_type.name : notif.job.locum_detail_rate_type.name,
                 notification_type: notif.notificationType,
                 message
             }
@@ -500,13 +500,13 @@ export default {
             }
             notifObj = {
                 id: notif.id,
-                title: notif.title,
+                title: notif.title ? notif.title : notif.job.title,
                 locum_status: notif.locum_status,
                 date_start: notif.date_start,
                 date_end: notif.date_end,
-                shift: notif.shift.name,
-                rate: notif.rate,
-                locum_detail_rate_type: notif.locum_detail_rate_type.name,
+                shift: notif.shift ? notif.shift.name : notif.job.shift.name,
+                rate: notif.rate ? notif.rate : notif.job.rate,
+                locum_detail_rate_type: notif.locum_detail_rate_type ? notif.locum_detail_rate_type.name : notif.job.locum_detail_rate_type.name,
                 notification_type: notif.notificationType,
                 message
             }

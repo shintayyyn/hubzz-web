@@ -202,7 +202,6 @@ export default {
       "Locum Notification Locum Invoice Updated",
       this.getLocumInvoiceRealTime
     );
-    console.log(this.invoices);
   },
   destroyed() {
     this.removeListener();

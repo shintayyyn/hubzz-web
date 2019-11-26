@@ -21,7 +21,7 @@
         </div>
         <AppButton
           :label="'Filter'"
-          @click="filterModal = true"
+          @click="filterModal = !filterModal"
           :inStyle="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
         />
         <AppButton
@@ -505,9 +505,8 @@ export default {
           case "declined":
           case "approved":
           case "unfilled":
-            return `You do not have any ${this.$route.query.status.toLowerCase()} jobs`;
           case "live":
-            return `There are no ${this.$route.query.status.toLowerCase()} jobs nearby and suited for you at this time`;
+            return `You do not have any ${this.$route.query.status.toLowerCase()} jobs`;
           case "applied":
             return `There were no Locums who applied on your jobs yet`;
           case "completed":
