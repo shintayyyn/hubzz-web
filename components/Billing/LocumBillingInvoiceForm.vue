@@ -339,17 +339,17 @@
         </div>
 
         <div :ref="'items-total'" class="flex justify-between md:m-2">
-            <span class="font-bold">Total</span>
-            <div>
-              <div class="flex justify-end">
-                <div
-                  class="rounded-lg bg-red-500 p-1 text-xs sm:text-sm text-white"
-                  v-if="formError.find(item => item.field === 'total_amount')"
-                >{{formError.find(item => item.field === 'total_amount').message}}</div>
-              </div>
-              £ {{amount | currency}}
+          <span class="font-bold">Total</span>
+          <div>
+            <div class="flex justify-end">
+              <div
+                class="rounded-lg bg-red-500 p-1 text-xs sm:text-sm text-white"
+                v-if="formError.find(item => item.field === 'total_amount')"
+              >{{formError.find(item => item.field === 'total_amount').message}}</div>
             </div>
+            £ {{amount | currency}}
           </div>
+        </div>
 
         <div :ref="'days-worked'" class="flex flex-row flex-wrap justify-between px-2">
           <div class="w-full flex flex-row flex-wrap justify-between md:px-2">
@@ -888,7 +888,7 @@ export default {
             this.loadMoreSurgeries = false;
           }
         }
-
+        console.log("surgeries", surgeries);
         this.loadingSurgeries = false;
       } catch (err) {
         throw err;
@@ -1082,7 +1082,7 @@ export default {
 .items-table tbody td {
   padding: 0 8px;
 }
-.invoice{
+.invoice {
   min-height: 1050px;
 }
 </style>

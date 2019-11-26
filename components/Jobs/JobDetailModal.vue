@@ -1,17 +1,19 @@
 <template>
   <div class="p-4 md:p-8">
-    <div>
-      <svgicon name="left-arrow" height="32" width="32" @click="close" class="cursor-pointer"/>
+    <div @click="$emit('close')" class="cursor-pointer">
+      <svgicon name="left-arrow" height="32" width="32" />
     </div>
-    <div class="flex items-center justify-start mt-4">
+
+    <div class="flex flex-row justify-start mt-4">
       <div class="leading-loose font-bold text-md sm:text-lg">{{ job.title }}</div>
       <div
-        class="mx-2 text-sm sm:text-sm p-2 uppercase"
+        class="mx-2 py-2 px-4 rounded font-semibold"
         :class="bgStatus(job.locum_status)"
       >{{ job.locum_status }}</div>
     </div>
+
     <div class="text-xs sm:text-sm py-3">Posted {{ $moment(job.date_created).format("DD/MM/YYYY") }}</div>
-    <!-- UPDATE CHANGES -->
+
     <template v-if="hasNewChanges">
       <div class="text-md">The Practice made changes on this Job, Accept these changes?</div>
       <div class="text-sm">{{updateAcceptedUntil}}</div>
@@ -27,37 +29,37 @@
         >Accept</div>
       </div>
     </template>
-    <div class="flex flex-wrap justify-start">
-      <div class="p-0 lg:pr-4 w-full lg:w-1/2">
-        <div class="flex flex-col">
-          <JobDetailModalInfo :job="job" />
-          <JobDetailModalUnassignForm
-            :ref="'unassignForm'"
-            :job="job"
-            v-if="job.locum_status === 'Allocated'"
-            @close="close"
-          />
-          <JobDetailModalApplyForm
-            :job="job"
-            v-if="
-							job.locum_status === 'Available' || job.locum_status === 'Matched'
-						"
-            :compliances="
-							job.platform_job.compliance_documents.map(item => item.id)
-						"
-            @close="close"
-          />
-          <JobDetailModalCancelForm
-            :job="job"
-            v-if="job.locum_status === 'Applied'"
-            @close="close"
-          />
+
+    <div class="flex flex-col mt-4">
+      <div class="flex flex-wrap justify-start">
+        <div class="p-0 lg:pr-4 w-full lg:w-1/2">
+          <div class="flex flex-col">
+            <JobDetailModalInfo :job="job" />
+            <JobDetailModalUnassignForm
+              :ref="'unassignForm'"
+              :job="job"
+              @unassign="$emit('close')"
+              v-if="job.locum_status === 'Allocated'"
+            />
+            <JobDetailModalApplyForm
+              :job="job"
+              @applied="$emit('close')"
+              v-if="
+                job.locum_status === 'Available' || job.locum_status === 'Matched'
+              "
+            />
+            <JobDetailModalCancelForm
+              :job="job"
+              @cancelled="$emit('close')"
+              v-if="job.locum_status === 'Applied'"
+            />
+          </div>
         </div>
-      </div>
-      <div class="p-0 md:pl-4 w-full lg:w-1/2 mt-4 md:m-0 order-first lg:order-none">
-        <div class="flex flex-col">
-          <JobPartDetailModalParts :job_id="job.id" :disabledLink="true" />
-          <JobDetailModalMap :job="job" />
+        <div class="p-0 md:pl-4 w-full md:w-1/2 order-first md:order-none">
+          <div class="flex flex-col">
+            <JobPartDetailModalParts :job_id="job.id" :disabledLink="true" />
+            <JobDetailModalMap :job="job" />
+          </div>
         </div>
       </div>
     </div>
@@ -101,9 +103,6 @@ export default {
     }
   },
   methods: {
-    close() {
-      this.$emit("close");
-    },
     bgStatus(status) {
       switch (status) {
         case "Available":
@@ -111,16 +110,10 @@ export default {
           return "bg-yellow-500";
           break;
         case "Applied":
-          return "bg-orange-400 text-white";
-          break;
-        case "Completed":
-          return "bg-green-600 text-white";
+          return "bg-orange-500 text-white";
           break;
         case "Allocated":
-          return "bg-green-300";
-          break;
-        case "Ongoing":
-          return "bg-green-500 text-white";
+          return "bg-green-600 text-white";
           break;
         default:
           return "bg-red-500 text-white";
@@ -144,7 +137,7 @@ export default {
       this.$axios
         .$post(`/api/v1/locum/jobs/${this.job.id}/update-accept`)
         .then(res => {
-          this.close();
+          this.$emit("close");
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",

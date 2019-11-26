@@ -73,8 +73,6 @@
                   :download="item.file.filename"
                   target="_blank"
                 >{{item.compliance_document.name}}</a>
-
-                <!-- <div class="leading-normal mx-2 document-filename">{{item.file.filename}}</div> -->
               </div>
             </div>
             <div class="font-bold text-sm sm:text-md">Others documents</div>
@@ -94,7 +92,6 @@
                   :download="item.file.filename"
                   target="_blank"
                 >{{item.compliance_document.name}}</a>
-                <!-- <div class="leading-normal mx-2 document-filename">{{item.file.filename}}</div> -->
               </div>
             </div>
 

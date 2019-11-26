@@ -1,45 +1,45 @@
 <template>
   <div class="p-4 md:p-8">
-    <div>
-      <svgicon name="left-arrow" height="32" width="32" @click="close" class="cursor-pointer"/>
+    <div @click="$emit('close')" class="cursor-pointer">
+      <svgicon name="left-arrow" height="32" width="32" />
     </div>
-    <div class="flex flex-row flex-wrap justify-start items-center my-2">
-      <div class="leading-loose font-bold text-md sm:text-lg mr-2">{{ job_part.job.title }}</div>
-      <div class="flex items-center text-xs md:text-sm">
-        <div
-          class="mr-2 py-2 px-4 rounded font-semibold uppercase"
-          :class="bgStatus(job_part.locum_status)"
-        >{{ job_part.locum_status }}</div>
-        <div
-          class="ml-2 py-2 px-4 rounded font-semibold"
-          :class="
+
+    <div class="flex flex-row justify-start mt-4">
+      <div class="leading-loose font-bold text-md sm:text-lg">{{ job_part.job.title }}</div>
+      <div
+        class="mx-2 py-2 px-4 rounded font-semibold"
+        :class="bgStatus(job_part.locum_status)"
+      >{{ job_part.locum_status }}</div>
+      <div
+        class="py-2 px-4 rounded font-semibold"
+        :class="
 						jobPartStatus === 'Completed' ? 'bg-green-500' : 'bg-gray-300'
 					"
-          v-if="job_part.locum_status === 'Completed'"
-        >{{ jobPartStatus }}</div>
-      </div>
+        v-if="job_part.locum_status === 'Completed'"
+      >{{ jobPartStatus }}</div>
     </div>
 
     <div
-      class="text-xs sm:text-sm py-2"
+      class="text-xs sm:text-sm py-3"
     >Posted {{ $moment(job_part.date_created).format("DD/MM/YYYY") }}</div>
 
     <div class="flex flex-col mt-4">
       <div class="flex flex-wrap justify-start">
-        <div class="p-0 md:pr-4 w-full md:w-1/2">
-          <JobPartDetailModalInfo :job_part="job_part" />
-          <JobDetailModalUnassignForm
-            :job="job_part.job"
-            v-if="job_part.locum_status === 'Ongoing'"
-            @close="close"
-            @removeJob="removeJobPart"
-          />
+        <div class="p-0 lg:pr-4 w-full lg:w-1/2">
+          <div class="flex flex-col">
+            <JobPartDetailModalInfo :job_part="job_part" />
+            <JobDetailModalUnassignForm
+              :ref="'unassignForm'"
+              :job="job_part.job"
+              @unassign="$emit('close')"
+              v-if="job_part.locum_status === 'Ongoing'"
+            />
+          </div>
         </div>
-        <div class="p-0 md:pl-4 w-full md:w-1/2 my-4 md:m-0">
+        <div class="p-0 md:pl-4 w-full md:w-1/2 order-first md:order-none">
           <div class="flex flex-col">
             <JobPartDetailModalParts
               :job_id="job_part.job.id"
-              v-if="job_part.job.job_parts.length > 1"
               :disabledLink="$route.path === '/dashboard'"
             />
             <JobDetailModalMap :job="job_part.job" />
@@ -52,7 +52,6 @@
 <script>
 import JobPartDetailModalInfo from "@/components/Jobs/JobPart/JobPartDetailModalInfo";
 import JobPartDetailModalParts from "@/components/Jobs/JobPart/JobPartDetailModalParts";
-//
 import JobDetailModalInfo from "@/components/Jobs/JobDetailModalInfo";
 import JobDetailModalMap from "@/components/Jobs/JobDetailModalMap";
 import JobDetailModalUnassignForm from "@/components/Jobs/JobDetailModalUnassignForm";
@@ -64,7 +63,6 @@ export default {
   components: {
     JobPartDetailModalInfo,
     JobPartDetailModalParts,
-    //
     JobDetailModalInfo,
     JobDetailModalMap,
     JobDetailModalUnassignForm,
@@ -89,30 +87,14 @@ export default {
     },
     bgStatus(status) {
       switch (status) {
-        case "Available":
-          return "bg-yellow-500";
-          break;
-        case "Applied":
-          return "bg-orange-400 text-white";
-          break;
-        case "Completed":
-          return "bg-green-400 text-white";
-          break;
-        case "Allocated":
-          return "bg-green-300";
-          break;
         case "Ongoing":
-          return "bg-green-500 text-white";
+        case "Completed":
+        case "Approved":
+          return "bg-green-600 text-white";
           break;
         default:
           return "bg-red-500 text-white";
       }
-    },
-    removeJobPart() {
-      this.$store.commit(
-        "jobs/REMOVE_LOCUM_ALLOCATED_JOB_PART",
-        this.job_part.id
-      );
     }
   }
 };
