@@ -1,8 +1,8 @@
 <template>
 	<div class="modal-container shadow-lg p-4 md:p-8">
 		<div
-			
-			class="mb-2"
+			@click="$router.push('/surgery-management/practice-hub')"
+			class="mb-2 cursor-pointer"
 		>
 			<svgicon name="left-arrow" height="32" width="32" @click="$router.push('/profile/practice-hub')" class="cursor-pointer"/>
 		</div>
@@ -131,7 +131,10 @@ export default {
 			specificInvitation: "",
 			specificPracticeHub: ""
 		};
-	},
+  },
+  created(){
+    console.log(this.$route.name)
+  },
 	async asyncData({ app, route, store }) {
 		let response = await app.$axios.$get(
 			`/api/v1/practice/me/parent-surgery/invitations/${route.params.invitationId}`
@@ -159,7 +162,7 @@ export default {
 						status: "success",
 						text: ["Successfully Accepted Practice Spoke Invitation"]
 					});
-					this.$router.push(`/profile/practice-hub`);
+					this.$router.push(`/surgery-management/practice-hub`);
 				})
 				.catch(err => {
 					this.$store.commit("SET_NOTIFICATION", {
@@ -170,8 +173,26 @@ export default {
 					console.log("error", err);
 				});
 		},
-		rejectInvitation() {
-			console.log("haha");
+		async rejectInvitation() {
+      console.log("haha");
+      await this.$axios
+        .put(`/api/v1/practice/me/parent-surgery/reject`,{
+          practice_surgery_id: this.specificInvitation.id
+        }).then(res => {
+          this.$store.commit("SET_NOTIFICATION", {
+						enabled: true,
+						status: "success",
+						text: ["Successfully Rejected Practice Spoke Invitation"]
+					});
+					this.$router.push(`/surgery-management/practice-hub`);
+        }).catch(err => {
+					this.$store.commit("SET_NOTIFICATION", {
+						enabled: true,
+						status: "warning",
+						text: "Something went wrong!"
+					});
+					console.log("error", err);
+				});
 		}
 	}
 };

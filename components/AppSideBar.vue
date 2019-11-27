@@ -108,7 +108,6 @@ export default {
     getInit() {
       let domain = this.$auth.user.domain;
       let accountStatus = this.$auth.user.status;
-
       let addedLists = [];
       let defaultLists = [
         { name: "Dashboard", route: "/dashboard" },
@@ -119,6 +118,7 @@ export default {
         { name: "Terms and Conditions", route: "/terms-and-conditions" },
         { name: "Contact Us", route: "/contact-us" }
       ];
+
       if (domain === "Practice") {
         addedLists = [
           {
@@ -133,6 +133,7 @@ export default {
           }
         ];
         if (["Active", "Dormant"].includes(accountStatus)) {
+          addedLists.push({ name: "Surgery Management", route: "/surgery-management" });
           addedLists.push({ name: "My Banks", route: "/my-banks" });
           addedLists.push({
             name: "Sessions",

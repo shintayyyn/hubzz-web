@@ -161,7 +161,7 @@ export default {
             status: "success",
             text: [`${res.message}`]
            })
-          this.$router.push("/profile/practice-spokes");
+          this.$router.push("/surgery-management/practice-spokes");
         })
         .catch(err => {
           this.modal = false;
@@ -169,54 +169,6 @@ export default {
         })
       } 
     }
-    // add() {
-    //   if (this.type === "Hub") {
-    //     this.$axios
-    //       .$post(`/api/v1/practice/me/practice-surgeries`, {
-    //         surgery_id: this.selectedSpoke.id
-    //       })
-    //       .then(res => {
-    //         this.modal = false;
-    //         this.$emit("addSurgery", res.data.practice_surgery);
-    //         this.$store.commit("SET_NOTIFICATION", {
-    //           enabled: true,
-    //           status: "success",
-    //           text: [`${res.message}`]
-    //         });
-    //         this.$router.push("/profile/practice-spokes");
-    //       })
-    //       .catch(err => {
-    //         this.modal = false;
-    //         this.formError = err.response.data.error_messages;
-    //       });
-    //   } else if (this.type === "Spoke") {
-    //     this.$axios
-    //       .$post(`/api/v1/practice/me/parent-surgery`, {
-    //         surgery_id: this.selectedSpoke.id
-    //       })
-    //       .then(res => {
-    //         this.modal = false;
-    //         let surgery = {
-    //           id: res.data.practice.parent_surgery.id,
-    //           pay_for_surgery: res.data.practice.pay_for_surgery,
-    //           verify_job_creation: res.data.practice.verify_job_creation,
-    //           surgery: res.data.practice.parent_surgery
-    //         };
-    //         this.$store.commit("profile/ADD_SURGERY", surgery);
-    //         this.$emit("addSurgery", surgery);
-    //         this.$store.commit("SET_NOTIFICATION", {
-    //           enabled: true,
-    //           status: "success",
-    //           text: [`${res.message}`]
-    //         });
-    //         this.$router.push("/profile/practice-spokes");
-    //       })
-    //       .catch(err => {
-    //         this.modal = false;
-    //         this.formError = err.response.data.error_messages;
-    //       });
-    //   }
-    // }
   }
 };
 </script>

@@ -231,7 +231,7 @@ export default {
           status: "success",
           text: ["Surgery Update Success"]
         });
-        //this.$router.push("/profile/practice-spokes");
+        this.$router.push("/surgery-management/practice-spokes");
       });
     },
      statusStyle(status){
