@@ -69,11 +69,14 @@ export default {
       if (this.disabledLink) {
         return null;
       }
-      let url = "/sessions";
+      let url = "";
       if (this.$route.path.includes("related-jobs")) {
         url = `/my-banks/${this.$route.params.locumId}/related-jobs`;
+      } else if (this.$route.path.includes("/sessions")) {
+        url = "/sessions";
+      } else if (this.$route.path.includes("/dashboard")) {
+        url = "/dashboard";
       }
-      console.log("url", url);
       return url;
     }
   },

@@ -659,8 +659,13 @@ export default {
             sortable: true
           },
           {
-            name: "Status",
+            name: "Invoice status",
             dataIndex: "invoice_status",
+            class: "text-center"
+          },
+          {
+            name: "Tag",
+            dataIndex: "status",
             class: "text-center"
           }
         );
@@ -787,7 +792,13 @@ export default {
         status = ["Available", "Matched"];
       } else if (
         this.$route.query.status &&
-        this.$route.query.status !== "Available"
+        this.$route.query.status === "Completed"
+      ) {
+        status = ["Completed", "Terminated"];
+      } else if (
+        this.$route.query.status &&
+        this.$route.query.status !== "Available" &&
+        this.$route.query.status !== "Completed"
       ) {
         status = [`${this.$route.query.status}`];
       }
@@ -839,11 +850,11 @@ export default {
         })
         .catch(err => {
           console.log("err", err.response.data);
-           this.$store.commit("SET_NOTIFICATION", {
-              enabled: true,
-              status: "danger",
-              text: [err.response.data.message]
-            });
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "danger",
+            text: [err.response.data.message]
+          });
         })
         .finally(() => {
           return;
@@ -860,7 +871,13 @@ export default {
         status = ["Available", "Matched"];
       } else if (
         this.$route.query.status &&
-        this.$route.query.status !== "Available"
+        this.$route.query.status === "Completed"
+      ) {
+        status = ["Completed", "Terminated"];
+      } else if (
+        this.$route.query.status &&
+        this.$route.query.status !== "Available" &&
+        this.$route.query.status !== "Completed"
       ) {
         status = [`${this.$route.query.status}`];
       }

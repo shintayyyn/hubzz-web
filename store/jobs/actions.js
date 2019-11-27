@@ -32,9 +32,9 @@ export default {
             }
         })
         this.$socket.on('Locum Notification Job Ongoing', async (job) => {
-            const response = await this.$axios.$get(`/api/v1/locum/job-parts/${job.id}`)
-            if (response.data && response.data.job_part) {
-                commit('ADD_LOCUM_JOB_NOTIFICATION', { ...response.data.job_part, notificationType: 'Locum Notification Job Ongoing' })
+            const response = await this.$axios.$get(`/api/v1/locum/jobs/${job.id}`)
+            if (response.data && response.data.job) {
+                commit('ADD_LOCUM_JOB_NOTIFICATION', { ...response.data.job, notificationType: 'Locum Notification Job Ongoing' })
             }
         })
         this.$socket.on('Locum Notification Job Part Completed', async (job_part) => {
@@ -71,6 +71,10 @@ export default {
             if (response.data && response.data.job) {
                 commit('ADD_LOCUM_JOB_NOTIFICATION', { ...response.data.job, notificationType: 'Locum Notification Job Amended' })
             }
+        })
+        // nsa live/match, inupdate ung job
+        this.$socket.on('Locum Notification Job Updated', async (job) => {
+            // doesn't need to notify the locum
         })
         this.$socket.on('Locum Notification Job Declined', async (job) => {
             const response = await this.$axios.$get(`/api/v1/locum/jobs/${job.id}`)
@@ -118,9 +122,9 @@ export default {
             }
         })
         this.$socket.on('Practice Notification Job Ongoing', async (job) => {
-            const response = await this.$axios.$get(`/api/v1/PRACTICE/job-parts/${job.id}`)
-            if (response.data && response.data.job_part) {
-                commit('ADD_PRACTICE_JOB_NOTIFICATION', { ...response.data.job_part, notificationType: 'Practice Notification Job Ongoing' })
+            const response = await this.$axios.$get(`/api/v1/practice/jobs/${job.id}`)
+            if (response.data && response.data.job) {
+                commit('ADD_PRACTICE_JOB_NOTIFICATION', { ...response.data.job, notificationType: 'Practice Notification Job Ongoing' })
             }
         })
         this.$socket.on('Practice Notification Job Part Completed', async (job_part) => {

@@ -50,12 +50,9 @@
           <div
             class="w-full sm:w-1/2 order-2 sm:order-1 text-xs sm:text-sm text-left rounded-lg border-2 border-gray-300 p-2 w-2/3"
           >
-          <!-- TO ACCNTS -->
+            <!-- TO ACCNTS -->
             <section>
-              <div
-                class="relative flex flex-col py-2"
-                v-on-clickaway="toggledOffSurgeries"
-              >
+              <div class="relative flex flex-col py-2" v-on-clickaway="toggledOffSurgeries">
                 <div class="relative flex flex-row flex-no-wrap justify-between">
                   <label class="text-xs sm:text-sm py-1">To: Accounts Department</label>
                 </div>
@@ -105,7 +102,7 @@
                 </div>
               </div>
             </section>
-          <!-- END TO ACCNTS -->
+            <!-- END TO ACCNTS -->
             <div class="text-xs sm:text-sm" v-if="selectedSurgery && selectedSurgery.address">
               <div>{{selectedSurgery.address.line_1}}</div>
               <div>{{selectedSurgery.address.line_2}}</div>
@@ -122,67 +119,67 @@
           </div>
         </div>
         <!-- SELECT SURGERY/PRACTICE -->
-          <div v-if="selectedSurgery && selectedInvoice === null">
-            <section>
-              <div
-                class="relative flex flex-col py-2 mb-3 md:mb-6 mt-2"
-                v-on-clickaway="toggledOffJobParts"
-              >
-                <div class="relative flex flex-row flex-no-wrap justify-between">
-                  <label class="text-xs sm:text-sm py-1">Select a job to add to this invoice</label>
-                  <div class="flex justify-end">
-                    <div
-                      class="rounded-lg bg-red-500 p-1 text-xs sm:text-sm text-white"
-                      v-if="formError.find(item => item.field === 'items')"
-                    >{{formError.find(item => item.field === 'items').message}}</div>
-                  </div>
-                </div>
-                <div class="relative flex flex-row flex-wrap justify-start">
-                  <input
-                    v-model="searchJobParts"
-                    type="text"
-                    placeholder="Select.."
-                    ref="input"
-                    class="border-b-2 w-full focus:border-yellow-400 focus:outline-none py-3 font-bold text-xs sm:text-sm"
-                    @focus="toggledJobParts = true"
-                    readonly
-                  />
-                </div>
-                <div class="relative flex flex-col w-full z-10 shadow-lg">
+        <div v-if="selectedSurgery && selectedInvoice === null">
+          <section>
+            <div
+              class="relative flex flex-col py-2 mb-3 md:mb-6 mt-2"
+              v-on-clickaway="toggledOffJobParts"
+            >
+              <div class="relative flex flex-row flex-no-wrap justify-between">
+                <label class="text-xs sm:text-sm py-1">Select a job to add to this invoice</label>
+                <div class="flex justify-end">
                   <div
-                    ref="jobPartsLists"
-                    class="absolute z-0 w-full option-list flex flex-col bg-white shadow-md overflow-y-auto"
-                    :class="{'slide-down': toggledJobParts}"
-                    @scroll="scrollHandlerJobParts"
-                  >
-                    <div class="relative" v-if="jobParts.length > 0">
+                    class="rounded-lg bg-red-500 p-1 text-xs sm:text-sm text-white"
+                    v-if="formError.find(item => item.field === 'items')"
+                  >{{formError.find(item => item.field === 'items').message}}</div>
+                </div>
+              </div>
+              <div class="relative flex flex-row flex-wrap justify-start">
+                <input
+                  v-model="searchJobParts"
+                  type="text"
+                  placeholder="Select.."
+                  ref="input"
+                  class="border-b-2 w-full focus:border-yellow-400 focus:outline-none py-3 font-bold text-xs sm:text-sm"
+                  @focus="toggledJobParts = true"
+                  readonly
+                />
+              </div>
+              <div class="relative flex flex-col w-full z-10 shadow-lg">
+                <div
+                  ref="jobPartsLists"
+                  class="absolute z-0 w-full option-list flex flex-col bg-white shadow-md overflow-y-auto"
+                  :class="{'slide-down': toggledJobParts}"
+                  @scroll="scrollHandlerJobParts"
+                >
+                  <div class="relative" v-if="jobParts.length > 0">
+                    <div
+                      class="py-2 px-3 cursor-pointer text-xs sm:text-sm"
+                      :class="{'bg-gray-300': activeIndexJobParts === index}"
+                      v-for="(item, index) in filteredJobParts"
+                      :key="item.id"
+                      @mouseover="activeIndexJobParts = index"
+                      @click="addJobPart(item)"
+                    >{{item.job_part_number}}</div>
+                    <div
+                      class="absolute bg-gray-300 w-full h-full top-0 bottom-0 left-0 right-0 opacity-50"
+                      v-if="loadingJobParts"
+                    >
                       <div
-                        class="py-2 px-3 cursor-pointer text-xs sm:text-sm"
-                        :class="{'bg-gray-300': activeIndexJobParts === index}"
-                        v-for="(item, index) in filteredJobParts"
-                        :key="item.id"
-                        @mouseover="activeIndexJobParts = index"
-                        @click="addJobPart(item)"
-                      >{{item.job_part_number}}</div>
-                      <div
-                        class="absolute bg-gray-300 w-full h-full top-0 bottom-0 left-0 right-0 opacity-50"
-                        v-if="loadingJobParts"
-                      >
-                        <div
-                          class="absolute bottom-0 text-center w-full text-sm font-bold"
-                        >loading icon</div>
-                      </div>
+                        class="absolute bottom-0 text-center w-full text-sm font-bold"
+                      >loading icon</div>
                     </div>
-                    <div class="relative" v-else>
-                      <div
-                        class="text-xs sm:text-sm text-center font-bold my-3"
-                      >No Job Completed On This Surgery</div>
-                    </div>
+                  </div>
+                  <div class="relative" v-else>
+                    <div
+                      class="text-xs sm:text-sm text-center font-bold my-3"
+                    >No Job Completed On This Surgery</div>
                   </div>
                 </div>
               </div>
-            </section>
-          </div>
+            </div>
+          </section>
+        </div>
         <!-- END SELECT SURGERY/PRACTICE -->
         <div class="overflow-auto">
           <div class="items-table">
@@ -191,16 +188,18 @@
               <div
                 class="w-1/2 bg-gray-900 text-white px-4 py-1 font-semibold border-r-2 border-white"
               >Description</div>
-              <div class="w-1/2 bg-gray-900 text-white px-4 py-1 font-semibold flex justify-between">Total
+              <div
+                class="w-1/2 bg-gray-900 text-white px-4 py-1 font-semibold flex justify-between"
+              >
+                Total
                 <div class="bg-gray-900 flex items-center justify-end">
                   <span
                     v-if="type === 'Private'"
                     class="cursor-pointer w-6 h-6 rounded-full bg-white text-gray-900 font-semibold text-xl flex justify-center items-center hover:bg-gray-200"
                     @click="addItem"
                   >+</span>
-                </div
-              ></div>
-              
+                </div>
+              </div>
             </div>
             <div
               :id="`invoice-item-${index}`"
@@ -219,9 +218,7 @@
                       class="w-full text-xs sm:text-sm resize-none border-b-2 border-gray-300 focus:border-yellow-500 focus:outline-none px-4 my-2"
                     ></textarea>
                   </div>
-                  <div
-                    class="w-1/3 flex items-end px-1"
-                  >
+                  <div class="w-1/3 flex items-end px-1">
                     <input
                       type="number"
                       min="0"
@@ -234,8 +231,7 @@
                 <template v-if="type === 'Platform'">
                   <div
                     class="w-1/2 text-xs sm:text-sm px-4 py-1 border-b-2 border-gray-300"
-                  >{{item.description}}
-                  </div>
+                  >{{item.description}}</div>
                   <div
                     class="text-xs sm:text-sm border-b-2 border-gray-300 px-4 py-1 text-right"
                     :class="approvedInvoices.includes(item.job_part_id) ? 'w-1/2':'w-1/3'"
@@ -960,7 +956,7 @@ export default {
       try {
         this.loadingJobParts = true;
         const params = {
-          locum_status: "Completed",
+          locum_status: ["Completed", "Terminated"],
           job_type: this.type,
           surgery_id: this.selectedSurgery.id,
           order_by: "created_at:desc",
@@ -987,7 +983,7 @@ export default {
     async fetchJobParts() {
       try {
         const params = {
-          locum_status: "Completed",
+          locum_status: ["Completed", "Terminated"],
           job_type: this.type,
           surgery_id: this.selectedSurgery.id,
           limit: 10,

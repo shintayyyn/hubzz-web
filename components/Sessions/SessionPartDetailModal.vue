@@ -23,7 +23,7 @@
           <div class="flex flex-col">
             <SessionPartDetailModalInfo :job_part="job_part" />
             <SessionDetailModalCompleteForm
-              :job="job_part"
+              :job_part="job_part"
               @completed="$emit('close')"
               v-if="job_part.status === 'Ongoing' && authPermissions.includes('Complete Sessions Job')"
             />
@@ -36,10 +36,7 @@
         </div>
         <div class="p-0 md:pr-4 w-full md:w-1/2">
           <div class="flex flex-col">
-            <SessionPartDetailModalParts
-              :job_id="job_part.job.id"
-              :disabledLink="$route.path === '/dashboard'"
-            />
+            <SessionPartDetailModalParts :job_id="job_part.job.id" />
             <SessionDetailModalLocum
               :job="job_part.job"
               v-if="(job_part.status === 'Allocated' || job_part.status === 'Ongoing' || job_part.status === 'Completed')"

@@ -22,7 +22,7 @@
           </div>
         </div>
         <div class="w-full lg:w-1/3">
-          <Info @viewPracticeJob="viewPracticeJob" @viewLocumJob="viewLocumJob" />
+          <Info />
         </div>
       </div>
     </div>
@@ -37,29 +37,6 @@
           />
         </div>
       </template>
-      <template v-if="locum_modal">
-        <div class="modal-container">
-          <LocumJobDetailModal @close="locum_modal = false" :job="locum_job" />
-        </div>
-      </template>
-      <template v-if="locum_modal_part">
-        <div class="modal-container">
-          <LocumJobPartDetailModal @close="locum_modal_part = false" :job_part="locum_job_part" />
-        </div>
-      </template>
-      <template v-if="practice_modal">
-        <div class="modal-container">
-          <SessionDetailModal @close="practice_modal = false" :job="practice_job" />
-        </div>
-      </template>
-      <template v-if="practice_modal_part">
-        <div class="modal-container">
-          <SessionPartDetailModal
-            @close="practice_modal_part = false"
-            :job_part="practice_job_part"
-          />
-        </div>
-      </template>
     </transition>
   </section>
 </template>
@@ -68,36 +45,19 @@ import PerMonth from "@/components/Calendar/PerMonth";
 import PerWeek from "@/components/Calendar/PerWeek";
 import Info from "@/components/Calendar/Info";
 // locums
-import LocumJobDetailModal from "@/components/Jobs/JobDetailModal";
-import LocumJobPartDetailModal from "@/components/Jobs/JobPartDetailModal";
 import LocumJobDetailModalAppointment from "@/components/Jobs/JobDetailModalAppointment";
-// practice
-import SessionDetailModal from "@/components/Sessions/SessionDetailModal";
-import SessionPartDetailModal from "@/components/Sessions/SessionPartDetailModal";
 
 export default {
   components: {
     PerMonth,
     PerWeek,
     Info,
-    LocumJobDetailModal,
-    LocumJobPartDetailModal,
-    LocumJobDetailModalAppointment,
-    SessionDetailModal,
-    SessionPartDetailModal
+    LocumJobDetailModalAppointment
   },
   data() {
     return {
-      locum_modal: false,
-      locum_job: null,
-      locum_modal_part: false,
-      locum_job_part: null,
       locum_appointment_modal: false,
-      locum_appointment_job: null,
-      practice_modal: false,
-      practice_job: null,
-      practice_modal_part: false,
-      practice_job_part: null
+      locum_appointment_job: null
     };
   },
   created() {
@@ -111,9 +71,7 @@ export default {
       return (
         this.locum_modal_part ||
         this.locum_appointment_modal ||
-        this.locum_modal ||
-        this.practice_modal ||
-        this.practice_modal_part
+        this.locum_modal
       );
     },
     create_job_modal() {
@@ -145,47 +103,9 @@ export default {
       this.locum_appointment_modal = true;
       this.locum_appointment_job = null;
     },
-    viewLocumJob(job) {
-      if (job.type === "Private") {
-        this.locum_appointment_modal = true;
-        this.locum_appointment_job = job;
-      } else if (
-        ["ongoing", "completed", "approved", "allocated"].includes(
-          job.locum_status.toLowerCase()
-        )
-      ) {
-        this.locum_modal_part = true;
-        this.locum_job_part = job;
-      } else if (
-        !["ongoing", "completed", "approved", "allocated"].includes(
-          job.locum_status.toLowerCase()
-        )
-      ) {
-        this.locum_modal = true;
-        this.locum_job = job;
-      }
-    },
-    // practice
-    viewPracticeJob(job) {
-      if (
-        ["ongoing", "completed", "approved"].includes(job.status.toLowerCase())
-      ) {
-        this.practice_modal_part = true;
-        this.practice_job_part = job;
-      } else if (
-        !["ongoing", "completed", "approved"].includes(job.status.toLowerCase())
-      ) {
-        this.practice_modal = true;
-        this.practice_job = job;
-      }
-    },
     // close modal thru shield
     close() {
-      this.locum_modal = false;
-      this.locum_modal_part = false;
       this.locum_appointment_modal = false;
-      this.practice_modal = false;
-      this.practice_modal_part = false;
     }
   }
 };
@@ -193,7 +113,6 @@ export default {
 <style>
 .calendar {
   height: auto;
-  /* max-width: 1000px; */
 }
 @media screen and (min-width: 991px) {
   .calendar {
@@ -208,7 +127,4 @@ export default {
     width: 80%;
   }
 }
-/* .shield {
-  z-index: 509;
-} */
 </style>

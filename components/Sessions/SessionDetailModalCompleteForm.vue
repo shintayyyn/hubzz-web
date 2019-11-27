@@ -61,11 +61,7 @@
         :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
         :error="formError.find(item => item.field === 'final_hours')"
       />
-      <AppButton
-        :label="`Mark this week as Complete`"
-        @click="confirmation_modal = true"
-        :disabled="!isCompletable"
-      />
+      <AppButton :label="`Mark this week as Complete`" @click="checkIfCanComplete" />
     </div>
     <AppConfirmationModal
       :label="'Mark this week as Completed?'"
@@ -73,7 +69,13 @@
       :cancelLabel="'Cancel'"
       :modal="confirmation_modal"
       @confirm="complete"
-      @cancel="cancel"
+      @cancel="confirmation_modal = false"
+    />
+    <AppConfirmationModal
+      :label="ignore_modal_label"
+      :confirmLabel="'OK'"
+      :modal="ignore_modal"
+      @confirm="ignore_modal = false"
     />
   </section>
 </template>
@@ -83,7 +85,7 @@ import AppInput from "@/components/Base/AppInput";
 import AppFormError from "@/components/Base/AppFormError";
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
 export default {
-  props: ["job"],
+  props: ["job_part"],
   components: {
     AppButton,
     AppInput,
@@ -93,6 +95,8 @@ export default {
   data() {
     return {
       confirmation_modal: false,
+      ignore_modal: false,
+      ignore_modal_label: "",
       has_absences: false,
       has_late: false,
       form: {
@@ -106,19 +110,34 @@ export default {
     };
   },
   computed: {
-    isCompletable() {
-      return !this.job.job.job_parts
+    isPreviousJobPartComplete() {
+      return !this.job_part.job.job_parts
         .filter(jobPart => !jobPart.completed_at)
         .map(jobPart => jobPart.part)
-        .includes(this.job.part - 1);
+        .includes(this.job_part.part - 1);
+    },
+    isCurrentDatePastTheEndDate() {
+      return (
+        this.$moment(
+          `${this.job_part.date_end} ${this.job_part.time_end}`,
+          "YYYY-MM-DD HH:mm"
+        ).diff(this.$moment(), "minutes") < 0
+      );
     }
   },
   methods: {
-    cancel() {
-      this.form.late_hours = null;
-      this.form.final_hours = null;
-      this.form.absent_days = null;
-      this.confirmation_modal = false;
+    checkIfCanComplete() {
+      if (this.isPreviousJobPartComplete && this.isCurrentDatePastTheEndDate) {
+        this.confirmation_modal = true;
+      } else if (!this.isPreviousJobPartComplete) {
+        this.ignore_modal = true;
+        this.ignore_modal_label =
+          "You need to complete the previous week first";
+      } else if (!this.isCurrentDatePastTheEndDate) {
+        this.ignore_modal = true;
+        this.ignore_modal_label =
+          "You cannot complete a Job part that has not yet past the end date";
+      }
     },
     complete() {
       this.formError = [];
@@ -135,7 +154,10 @@ export default {
       this.Validate(this.form, notRequired);
       if (!this.formError.length) {
         this.$axios
-          .$put(`/api/v1/practice/job-parts/${this.job.id}/complete`, this.form)
+          .$put(
+            `/api/v1/practice/job-parts/${this.job_part.id}/complete`,
+            this.form
+          )
           .then(res => {
             if (
               this.$route.path.includes("/dashboard") ||
@@ -143,13 +165,13 @@ export default {
             ) {
               this.$store.commit(
                 "jobs/REMOVE_PRACTICE_ONGOING_JOB_PART",
-                this.job.id
+                this.job_part.id
               );
             }
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
-              text: ["Job completed"]
+              text: ["Job Part completed"]
             });
             this.$emit("completed");
           })

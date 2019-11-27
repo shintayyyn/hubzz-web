@@ -46,7 +46,9 @@
           :to="billingNotification.url"
           :key="`${billingNotification.id}-${billingNotification.notification_type}`"
         >
-          <div class="relative mx-1 my-2 p-3 flex flex-wrap bg-gray-100 hover:bg-gray-200 rounded-lg shadow-md">
+          <div
+            class="relative mx-1 my-2 p-3 flex flex-wrap bg-gray-100 hover:bg-gray-200 rounded-lg shadow-md"
+          >
             <span
               class="absolute top-0 right-0 cursor-pointer px-2 rounded-full text-lg font-bold"
               @click.prevent.stop="close(billingNotification.id)"
@@ -132,32 +134,64 @@ export default {
       }
     }
   },
-  mounted() {
-    console.log("notifications", this.notifications);
-  },
   methods: {
-    goTo(id, status) {
+    removeStatus() {
+      return this.$router.push({
+        path: this.$route.path
+      });
+    },
+    removeParams() {
+      return this.$router.push({
+        path: this.$route.matched[0].path
+      });
+    },
+    urlPush() {
+      return this.$router.push({
+        path: `/sessions`
+      });
+    },
+    show(id) {
+      return this.$router.push({
+        path: `${this.url}/${id}`
+      });
+    },
+    proceed(id, status) {
+      return this.$router.push({
+        path: `${this.url}/${id}`
+      });
+    },
+    async goTo(id, status) {
+      this.$store.commit("calendar/CREATE_JOB_MODAL", false);
       let path = `${this.url}/${id}`;
+      let routeStatus = status === "Terminated" ? "Completed" : status;
+
       if (this.$route.path === path) {
         this.$router.push({
           path: `${this.url}`,
-          query: { ...this.$route.query, status }
+          query: { ...this.$route.query, status: routeStatus }
         });
         setTimeout(() => {
           this.$router.push({
             path: `${this.url}/${id}`,
-            query: { ...this.$route.query, status }
+            query: { ...this.$route.query, status: routeStatus }
           });
         }, 500);
       } else if (this.$route.path !== path) {
         this.$router.push({
-          path: `${this.url}/${id}`,
-          query: { ...this.$route.query, status }
+          path: `${this.url}`,
+          query: { ...this.$route.query, status: routeStatus }
         });
+        setTimeout(() => {
+          this.$router.push({
+            path: `${this.url}/${id}`,
+            query: { ...this.$route.query, status: routeStatus }
+          });
+        }, 500);
       }
       this.close(id);
     },
     close(id) {
+      // this.$store.commit("calendar/CREATE_JOB_MODAL", false);
       this.$store.commit("jobs/REMOVE_PRACTICE_JOB_NOTIFICATION", id);
       this.$store.commit("jobs/REMOVE_LOCUM_JOB_NOTIFICATION", id);
       this.$store.commit("billing/REMOVE_PRACTICE_BILLING_NOTIFICATION", id);
@@ -206,11 +240,16 @@ export default {
   /* margin-right: 40px; */
 }
 
-.job-notification:hover{
-  background: linear-gradient(to top right, rgba(0, 0, 0, 0),  rgba(0, 0, 0, 0.01), rgba(202, 202, 202, 0.5));
+.job-notification:hover {
+  background: linear-gradient(
+    to top right,
+    rgba(0, 0, 0, 0),
+    rgba(0, 0, 0, 0.01),
+    rgba(202, 202, 202, 0.5)
+  );
 }
 
-.job-notification::-webkit-scrollbar{
+.job-notification::-webkit-scrollbar {
   display: none;
 }
 </style>
