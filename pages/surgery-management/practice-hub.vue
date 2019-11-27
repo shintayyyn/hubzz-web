@@ -13,15 +13,15 @@
     </nuxt-link>
     <nuxt-link
       v-if="myPractice.share_banks_to_other_surgeries === true"
-      :to="`/surgery-management/practice-hub/sibling-banks`"
+      :to="`/surgery-management/practice-hub/spoke-siblings`"
       class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
       :class="
         $route.name.includes(
           'surgery-management-practice-hub-id-surgery-sessions'
-        ) || $route.name === 'surgery-management-practice-hub-sibling-banks'
+        ) || $route.name === 'surgery-management-practice-hub-spoke-siblings'
           ? 'border rounded-lg border-yellow-500 bg-yellow-500'
           : 'text-gray-600'"
-      >Sibling Banks
+      >My Spoke Siblings
     </nuxt-link>
   </div>
   <nuxt-child/>
