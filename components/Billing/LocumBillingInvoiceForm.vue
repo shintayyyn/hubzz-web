@@ -50,50 +50,43 @@
           <div
             class="w-full sm:w-1/2 order-2 sm:order-1 text-xs sm:text-sm text-left rounded-lg border-2 border-gray-300 p-2 w-2/3"
           >
+            <!-- TO ACCNTS -->
             <section>
-              <div
-                class="relative flex flex-col py-2 mb-3 md:mb-6 mt-2"
-                v-on-clickaway="toggledOffJobParts"
-              >
+              <div class="relative flex flex-col py-2" v-on-clickaway="toggledOffSurgeries">
                 <div class="relative flex flex-row flex-no-wrap justify-between">
-                  <label class="text-xs sm:text-sm py-1">Select a job to add to this invoice</label>
-                  <div class="flex justify-end">
-                    <div
-                      class="rounded-lg bg-red-500 p-1 text-xs sm:text-sm text-white"
-                      v-if="formError.find(item => item.field === 'items')"
-                    >{{formError.find(item => item.field === 'items').message}}</div>
-                  </div>
+                  <label class="text-xs sm:text-sm py-1">To: Accounts Department</label>
                 </div>
                 <div class="relative flex flex-row flex-wrap justify-start">
                   <input
-                    v-model="searchJobParts"
+                    v-model="searchSurgeries"
                     type="text"
                     placeholder="Select.."
                     ref="input"
                     class="border-b-2 w-full focus:border-yellow-400 focus:outline-none py-3 font-bold text-xs sm:text-sm"
-                    @focus="toggledJobParts = true"
+                    @focus="toggledSurgeries = true"
                     readonly
+                    :disabled="selectedInvoice !== null"
                   />
                 </div>
-                <div class="relative flex flex-col w-full z-10 shadow-lg">
+                <div class="relative flex flex-col w-full z-10" v-if="selectedInvoice === null">
                   <div
-                    ref="jobPartsLists"
-                    class="absolute z-0 w-full option-list flex flex-col bg-white shadow-md overflow-y-auto"
-                    :class="{'slide-down': toggledJobParts}"
-                    @scroll="scrollHandlerJobParts"
+                    ref="surgeryLists"
+                    class="absolute z-10 w-full option-list flex flex-col bg-white shadow-md overflow-y-auto"
+                    :class="{'slide-down': toggledSurgeries}"
+                    @scroll="scrollHandlerSurgeries"
                   >
-                    <div class="relative" v-if="jobParts.length > 0">
+                    <div class="relative" v-if="surgeries.length > 0">
                       <div
                         class="py-2 px-3 cursor-pointer text-xs sm:text-sm"
-                        :class="{'bg-gray-300': activeIndexJobParts === index}"
-                        v-for="(item, index) in filteredJobParts"
+                        :class="{'bg-gray-300': activeIndexSurgeries === index}"
+                        v-for="(item, index) in surgeries"
                         :key="item.id"
-                        @mouseover="activeIndexJobParts = index"
-                        @click="addJobPart(item)"
-                      >{{item.job_part_number}}</div>
+                        @mouseover="activeIndexSurgeries = index"
+                        @click="addSurgery(item)"
+                      >{{item.name}}</div>
                       <div
                         class="absolute bg-gray-300 w-full h-full top-0 bottom-0 left-0 right-0 opacity-50"
-                        v-if="loadingJobParts"
+                        v-if="loadingSurgeries"
                       >
                         <div
                           class="absolute bottom-0 text-center w-full text-sm font-bold"
@@ -102,13 +95,14 @@
                     </div>
                     <div class="relative" v-else>
                       <div
-                        class="text-xs sm:text-sm text-center font-bold my-3"
-                      >No Job Completed On This Surgery</div>
+                        class="text-xs sm:text-sm text-center font-bold my-2"
+                      >No Practice / Surgeries Job Invoiceable Yet</div>
                     </div>
                   </div>
                 </div>
               </div>
             </section>
+            <!-- END TO ACCNTS -->
             <div class="text-xs sm:text-sm" v-if="selectedSurgery && selectedSurgery.address">
               <div>{{selectedSurgery.address.line_1}}</div>
               <div>{{selectedSurgery.address.line_2}}</div>
@@ -121,36 +115,102 @@
             class="w-full sm:w-1/2 order-1 sm:order-2 sm:text-right leading-normal"
           >
             <div class="font-bold text-sm sm:text-lg">{{selectedInvoice.status.toUpperCase()}}</div>
-            <div class="text-xs sm:text-sm">{{issuedAt | localDate}}</div>
+            <!-- <div class="text-xs sm:text-sm">{{issuedAt | localDate}}</div> -->
           </div>
         </div>
+        <!-- SELECT SURGERY/PRACTICE -->
+        <div v-if="selectedSurgery && selectedInvoice === null">
+          <section>
+            <div
+              class="relative flex flex-col py-2 mb-3 md:mb-6 mt-2"
+              v-on-clickaway="toggledOffJobParts"
+            >
+              <div class="relative flex flex-row flex-no-wrap justify-between">
+                <label class="text-xs sm:text-sm py-1">Select a job to add to this invoice</label>
+                <div class="flex justify-end">
+                  <div
+                    class="rounded-lg bg-red-500 p-1 text-xs sm:text-sm text-white"
+                    v-if="formError.find(item => item.field === 'items')"
+                  >{{formError.find(item => item.field === 'items').message}}</div>
+                </div>
+              </div>
+              <div class="relative flex flex-row flex-wrap justify-start">
+                <input
+                  v-model="searchJobParts"
+                  type="text"
+                  placeholder="Select.."
+                  ref="input"
+                  class="border-b-2 w-full focus:border-yellow-400 focus:outline-none py-3 font-bold text-xs sm:text-sm"
+                  @focus="toggledJobParts = true"
+                  readonly
+                />
+              </div>
+              <div class="relative flex flex-col w-full z-10 shadow-lg">
+                <div
+                  ref="jobPartsLists"
+                  class="absolute z-0 w-full option-list flex flex-col bg-white shadow-md overflow-y-auto"
+                  :class="{'slide-down': toggledJobParts}"
+                  @scroll="scrollHandlerJobParts"
+                >
+                  <div class="relative" v-if="jobParts.length > 0">
+                    <div
+                      class="py-2 px-3 cursor-pointer text-xs sm:text-sm"
+                      :class="{'bg-gray-300': activeIndexJobParts === index}"
+                      v-for="(item, index) in filteredJobParts"
+                      :key="item.id"
+                      @mouseover="activeIndexJobParts = index"
+                      @click="addJobPart(item)"
+                    >{{item.job_part_number}}</div>
+                    <div
+                      class="absolute bg-gray-300 w-full h-full top-0 bottom-0 left-0 right-0 opacity-50"
+                      v-if="loadingJobParts"
+                    >
+                      <div
+                        class="absolute bottom-0 text-center w-full text-sm font-bold"
+                      >loading icon</div>
+                    </div>
+                  </div>
+                  <div class="relative" v-else>
+                    <div
+                      class="text-xs sm:text-sm text-center font-bold my-3"
+                    >No Job Completed On This Surgery</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+        <!-- END SELECT SURGERY/PRACTICE -->
         <div class="overflow-auto">
           <div class="items-table">
             <!-- thead / items header -->
             <div class="flex justify-start" :ref="'items-header'">
               <div
-                style="width:430px"
-                class="bg-gray-900 text-white px-4 py-1 font-semibold border-r-2 border-white"
+                class="w-1/2 bg-gray-900 text-white px-4 py-1 font-semibold border-r-2 border-white"
               >Description</div>
-              <div style="width:200px" class="bg-gray-900 text-white px-4 py-1 font-semibold">Total</div>
-              <div style="width:110px" class="bg-gray-900 flex items-center justify-center">
-                <span
-                  v-if="type === 'Private'"
-                  class="cursor-pointer w-6 h-6 mx-2 md:mx-4 rounded-full bg-white text-gray-900 font-semibold text-xl flex justify-center items-center hover:bg-gray-200"
-                  @click="addItem"
-                >+</span>
+              <div
+                class="w-1/2 bg-gray-900 text-white px-4 py-1 font-semibold flex justify-between"
+              >
+                Total
+                <div class="bg-gray-900 flex items-center justify-end">
+                  <span
+                    v-if="type === 'Private'"
+                    class="cursor-pointer w-6 h-6 rounded-full bg-white text-gray-900 font-semibold text-xl flex justify-center items-center hover:bg-gray-200"
+                    @click="addItem"
+                  >+</span>
+                </div>
               </div>
             </div>
             <div
               :id="`invoice-item-${index}`"
-              class="flex flex-col"
+              class="flex flex-col border-b-2 pb-2"
               v-for="(item, index) in selectedJobParts"
               :ref="`item-${index}`"
               :key="item.id"
             >
-              <div class="flex justify-start mt-2">
+              <div class="relative flex justify-start mt-2">
                 <template v-if="type === 'Private'">
-                  <div style="width:430px;min-height:80px;">
+                  <div class="w-1/2 px-1">
                     <textarea
                       v-model="item.description"
                       rows="3"
@@ -158,65 +218,62 @@
                       class="w-full text-xs sm:text-sm resize-none border-b-2 border-gray-300 focus:border-yellow-500 focus:outline-none px-4 my-2"
                     ></textarea>
                   </div>
-                  <div
-                    style="min-height:80px;"
-                    :style="approvedInvoices.includes(item.job_part_id) ? 'width:310px':'width:200px'"
-                  >
+                  <div class="w-1/3 flex items-end px-1">
                     <input
                       type="number"
                       min="0"
                       v-model="item.total"
                       placeholder="Enter value"
-                      class="w-full text-xs sm:text-sm text-right border-b-2 focus:border-yellow-500 focus:outline-none px-4 my-2"
+                      class="w-full text-xs sm:text-sm text-right border-b-2 focus:border-yellow-500 focus:outline-none my-4"
                     />
                   </div>
                 </template>
                 <template v-if="type === 'Platform'">
                   <div
-                    style="width:430px;min-height:80px;"
-                    class="text-xs sm:text-sm border-b-2 border-gray-300 px-4 py-1"
+                    class="w-1/2 text-xs sm:text-sm px-4 py-1 border-b-2 border-gray-300"
                   >{{item.description}}</div>
                   <div
-                    style="min-height:80px;"
                     class="text-xs sm:text-sm border-b-2 border-gray-300 px-4 py-1 text-right"
-                    :style="approvedInvoices.includes(item.job_part_id) ? 'width:310px':'width:200px'"
+                    :class="approvedInvoices.includes(item.job_part_id) ? 'w-1/2':'w-1/3'"
                   >{{item.total}}</div>
                 </template>
                 <div
-                  class="align-middle sticky right-0 bg-white"
+                  class="flex items-center align-middle sticky right-0 bg-white"
                   v-if="!approvedInvoices.includes(item.job_part_id)"
                 >
+                  <div class="px-2">
+                    <div class="flex flex-row flex-no-wrap justify-start items-center">
+                      <input
+                        :disabled="item.approve"
+                        v-model="disputedInvoices"
+                        :id="`${item.job_part_id}-disputed`"
+                        type="checkbox"
+                        :value="item.job_part_id"
+                      />
+                      <label
+                        :for="`${item.job_part_id}-disputed`"
+                        class="text-xs sm:text-sm py-1 flex items-center"
+                      >Disputed</label>
+                    </div>
+                    <div class="flex flex-row flex-no-wrap justify-start items-center">
+                      <input
+                        v-model="approvedInvoices"
+                        :id="`${item.job_part_id}-approved`"
+                        type="checkbox"
+                        :value="item.job_part_id"
+                        disabled
+                      />
+                      <label
+                        :for="`${item.job_part_id}-approved`"
+                        class="text-xs sm:text-sm py-1 flex items-center"
+                      >Approved</label>
+                    </div>
+                  </div>
                   <div class="flex justify-center" v-if="selectedInvoice === null">
                     <span
                       class="bg-gray-900 hover:bg-black w-6 h-6 cursor-pointer float-right font-semibold inline-flex items-center justify-center px-3 mt-2 rounded-full text-white text-xl mx-auto"
                       @click="removeSelectedJobPart(item, index)"
                     >-</span>
-                  </div>
-                  <div class="flex flex-row flex-no-wrap justify-start items-center">
-                    <input
-                      :disabled="item.approve"
-                      v-model="disputedInvoices"
-                      :id="`${item.job_part_id}-disputed`"
-                      type="checkbox"
-                      :value="item.job_part_id"
-                    />
-                    <label
-                      :for="`${item.job_part_id}-disputed`"
-                      class="text-xs sm:text-sm py-1 flex items-center"
-                    >Disputed</label>
-                  </div>
-                  <div class="flex flex-row flex-no-wrap justify-start items-center">
-                    <input
-                      v-model="approvedInvoices"
-                      :id="`${item.job_part_id}-approved`"
-                      type="checkbox"
-                      :value="item.job_part_id"
-                      disabled
-                    />
-                    <label
-                      :for="`${item.job_part_id}-approved`"
-                      class="text-xs sm:text-sm py-1 flex items-center"
-                    >Approved</label>
                   </div>
                 </div>
               </div>
@@ -278,17 +335,17 @@
         </div>
 
         <div :ref="'items-total'" class="flex justify-between md:m-2">
-            <span class="font-bold">Total</span>
-            <div>
-              <div class="flex justify-end">
-                <div
-                  class="rounded-lg bg-red-500 p-1 text-xs sm:text-sm text-white"
-                  v-if="formError.find(item => item.field === 'total_amount')"
-                >{{formError.find(item => item.field === 'total_amount').message}}</div>
-              </div>
-              £ {{amount | currency}}
+          <span class="font-bold">Total</span>
+          <div>
+            <div class="flex justify-end">
+              <div
+                class="rounded-lg bg-red-500 p-1 text-xs sm:text-sm text-white"
+                v-if="formError.find(item => item.field === 'total_amount')"
+              >{{formError.find(item => item.field === 'total_amount').message}}</div>
             </div>
+            £ {{amount | currency}}
           </div>
+        </div>
 
         <div :ref="'days-worked'" class="flex flex-row flex-wrap justify-between px-2">
           <div class="w-full flex flex-row flex-wrap justify-between md:px-2">
@@ -416,7 +473,7 @@ export default {
     issuedAt() {
       return this.selectedInvoice && this.selectedInvoice.issued_at
         ? this.selectedInvoice.issued_at
-        : "Not yet issued";
+        : null;
     }
   },
   watch: {
@@ -827,7 +884,7 @@ export default {
             this.loadMoreSurgeries = false;
           }
         }
-
+        console.log("surgeries", surgeries);
         this.loadingSurgeries = false;
       } catch (err) {
         throw err;
@@ -899,7 +956,7 @@ export default {
       try {
         this.loadingJobParts = true;
         const params = {
-          locum_status: "Completed",
+          locum_status: ["Completed", "Terminated"],
           job_type: this.type,
           surgery_id: this.selectedSurgery.id,
           order_by: "created_at:desc",
@@ -926,7 +983,7 @@ export default {
     async fetchJobParts() {
       try {
         const params = {
-          locum_status: "Completed",
+          locum_status: ["Completed", "Terminated"],
           job_type: this.type,
           surgery_id: this.selectedSurgery.id,
           limit: 10,
@@ -1021,7 +1078,7 @@ export default {
 .items-table tbody td {
   padding: 0 8px;
 }
-.invoice{
+.invoice {
   min-height: 1050px;
 }
 </style>

@@ -19,7 +19,7 @@
           :label="'Description'"
           :error="formError.find(item => item.field === 'description')"
           :resize="false"
-          :rows="3"
+          :rows="2"
         />
         <div class="rounded-lg shadow-md p-2 md:p-4">
           <div class="flex flex-wrap justify-start">

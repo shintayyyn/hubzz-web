@@ -239,7 +239,7 @@ export default {
           }
         });
       }
-
+      console.log("users", users)
       return {
         totalUsers,
         users

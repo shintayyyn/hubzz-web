@@ -202,7 +202,6 @@ export default {
       "Locum Notification Locum Invoice Updated",
       this.getLocumInvoiceRealTime
     );
-    console.log(this.invoices);
   },
   destroyed() {
     this.removeListener();
@@ -221,7 +220,6 @@ export default {
       if (this.invoices.map(invoice => invoice.id).includes(id)) {
         // update
         this.$axios.$get(`/api/v1/locum/locum-invoices/${id}`).then(res => {
-          console.log("response", res);
           let index = this.invoices.findIndex(
             invoice => invoice.id == res.data.locum_invoice.id
           );

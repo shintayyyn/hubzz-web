@@ -1,15 +1,17 @@
 <template>
   <div class="shadow-lg max-w-xl p-4 md:p-8 my-4 md:my-8 rounded-lg">
-    <div class="flex items-start md:items-center justify-between md:justify-start mb-4">
-		<div class="flex flex-col md:flex-row">
-			<div class="font-bold leading-none text-md sm:text-lg mr-2">{{ practice_surgery.surgery.name }}</div>
-      		<div class="text-sm sm:text-sm text-gray-700 font-bold mr-2">{{ practice_surgery.surgery.code }}</div>
-		</div>
+    <div  class="flex justify-between md:justify-start items-center pb-4">
+      <div class="font-bold leading-none text-md sm:text-lg mr-2">
+        {{ practice_surgery.surgery.name }}
+      </div>
+      <div class="text-sm sm:text-sm text-gray-700 font-bold md:mr-2">
+        {{ practice_surgery.surgery.code }}
+      </div>
        <div 
-            class="justify-center text-black text-sm font-semibold py-2 p-3 rounded-lg"
-            :class="statusStyle(checkStatus(practice_surgery))">
-            {{checkStatus(practice_surgery)}}
-          </div>
+        class="justify-center text-black text-sm font-semibold py-2 p-3 rounded-lg"
+        :class="statusStyle(checkStatus(practice_surgery))">
+        {{checkStatus(practice_surgery)}}
+      </div>
     </div>
     <div class="flex flex-col">
       <!--------------PAY FOR SURGERY-------------->

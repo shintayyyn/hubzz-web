@@ -1,28 +1,24 @@
 <template>
-  <div
-    class="relative rounded-lg py-3 px-5 my-1 bg-white cursor-pointer hover:bg-gray-300"
-    @click="select"
-  >
-    <div class="absolute left-0 top-0 rounded-l-lg p-2 h-full" :class="bgStatus"></div>
-    <div class="ml-2">
-      <div class="text-gray-500 text-xs xl:text-sm">Job Number: {{jobNumber}}</div>
-      <div class="my-3 font-bold text-sm sm:text-md">{{jobTitle}}</div>
-      <div class="my-3 text-sm sm:text-md">{{jobSurgeryName}}</div>
-      <div class="my-3 text-sm sm:text-md">{{jobSurgeryCode}}</div>
-      <div class="text-gray-500 my-3 text-xs xl:text-sm">From {{dateStart}} to {{dateEnd}}</div>
-      <div class="text-gray-500 my-3 text-xs xl:text-sm">Shift: {{jobShift}}</div>
-      <div class="my-3 text-xs xl:text-sm break-words">{{jobDescription}}</div>
-    </div>
+  <div class="relative rounded-lg py-3 px-5 my-1 bg-white cursor-pointer hover:bg-gray-300">
+    <nuxt-link
+      :to="{ path: `/dashboard/${propJob.id}?status=${propJob.status}`, query: {...$route.query}}"
+    >
+      <div class="absolute left-0 top-0 rounded-l-lg p-2 h-full" :class="bgStatus"></div>
+      <div class="ml-2">
+        <div class="text-gray-500 text-xs xl:text-sm">Job Number: {{jobNumber}}</div>
+        <div class="my-3 font-bold text-sm sm:text-md">{{jobTitle}}</div>
+        <div class="my-3 text-sm sm:text-md">{{jobSurgeryName}}</div>
+        <div class="my-3 text-sm sm:text-md">{{jobSurgeryCode}}</div>
+        <div class="text-gray-500 my-3 text-xs xl:text-sm">From {{dateStart}} to {{dateEnd}}</div>
+        <div class="text-gray-500 my-3 text-xs xl:text-sm">Shift: {{jobShift}}</div>
+        <div class="my-3 text-xs xl:text-sm break-words">{{jobDescription}}</div>
+      </div>
+    </nuxt-link>
   </div>
 </template>
 <script>
 export default {
   props: ["propJob"],
-  data() {
-    return {
-      job: null
-    };
-  },
   computed: {
     isJobPart() {
       return (
@@ -127,24 +123,6 @@ export default {
     jobDescription() {
       let job = this.isJobPart ? this.propJob.job : this.propJob;
       return job.description;
-    }
-  },
-  methods: {
-    select() {
-      let url = `/api/v1/practice/jobs`;
-      if (
-        ["ongoing", "completed", "approved"].includes(
-          this.propJob.status.toLowerCase()
-        )
-      ) {
-        url = `/api/v1/practice/job-parts`;
-      }
-      this.$axios.$get(`${url}/${this.propJob.id}`).then(res => {
-        this.$emit(
-          "viewPracticeJob",
-          res.data && res.data.job ? res.data.job : res.data.job_part
-        );
-      });
     }
   }
 };

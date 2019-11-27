@@ -1,10 +1,10 @@
 <template>
   <div class="modal-container shadow-lg">
-    <div class="p-4 md:p-8">
+    <div class="flex flex-col items-start p-4 md:p-8">
       <nuxt-link :to="{ path: `/my-practice`, query: { ...$route.query }}" class="cursor-pointer">
         <svgicon name="left-arrow" height="32" width="32" />
       </nuxt-link>
-      <div class="flex flex-row justify-start overflow-x-auto mt-4">
+      <div class="w-full flex flex-row justify-start overflow-x-auto mt-4">
         <nuxt-link
           :to="{ path: `/my-practice/${$route.params.practiceId}`, query: { ...$route.query}}"
           :event="$route.name === 'my-practice-index-practiceId-index'? '' : 'click'"
@@ -35,7 +35,7 @@
           :class="$route.name.includes('my-practice-index-practiceId-index-related-jobs') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Related Jobs</nuxt-link>
       </div>
-      <div class="mt-5">
+      <div class="w-full mt-5">
         <nuxt-child :practice="practice" />
       </div>
     </div>

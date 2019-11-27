@@ -5,10 +5,16 @@
       v-if="['text','time','email','password', 'select', 'textarea', 'multi-checkbox', 'number'].includes(type)"
     >
       <div class="flex flex-col py-2 mb-3 md:mb-6">
-        <div class="relative flex flex-wrap leading-none" :class="info ? 'flex-wrap justify-between' : 'items-center'">
+        <div
+          class="relative flex flex-wrap leading-none"
+          :class="info ? 'flex-wrap justify-between' : 'items-center'"
+        >
           <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
-          <div class="flex " v-if="info || error">
-            <div class="bg-gray-300 rounded px-1 md:px-4 py-1 text-xs sm:text-sm" v-if="info">{{info}}</div>
+          <div class="flex" v-if="info || error">
+            <div
+              class="bg-gray-300 rounded px-1 md:px-4 py-1 text-xs sm:text-sm"
+              v-if="info"
+            >{{info}}</div>
             <div
               class="text-red-500 text-xs px-2"
               v-if="error && (type === 'select' || type.includes('checkbox'))"
@@ -28,7 +34,10 @@
               @input="inputMultiCheck"
               :checked="Array.isArray(value) ? value.includes(item.value) : value"
             />
-            <label :for="`${name}-${index}`" class="text-xs sm:text-sm flex items-center">{{item.label}}</label>
+            <label
+              :for="`${name}-${index}`"
+              class="text-xs sm:text-sm flex items-center"
+            >{{item.label}}</label>
           </div>
         </template>
         <template v-else>
@@ -40,7 +49,7 @@
                   :type="type"
                   :placeholder="placeholder"
                   class="border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full"
-                  :class="error ? 'bordzzzzzer-red-500' : ''"
+                  :class="error ? 'border-red-500' : ''"
                   @input="$emit('input', $event.target.value)"
                   @keypress.enter="$emit('submit')"
                   @blur="$emit('blur')"
@@ -48,7 +57,8 @@
                   :checked="value"
                   :min="type === 'number' && 0"
                 />
-                <div v-if="error"
+                <div
+                  v-if="error"
                   class="text-red-500 py-1 text-xs text-white"
                 >{{error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ")}}</div>
               </div>
@@ -86,6 +96,7 @@
             <template v-if="type === 'textarea'">
               <div class="flex flex-col w-full">
                 <textarea
+                  :ref="'textarea'"
                   id
                   :cols="cols"
                   :rows="rows"
@@ -96,7 +107,8 @@
                   @input="$emit('input', $event.target.value)"
                   @blur="$emit('blur', $event)"
                 ></textarea>
-                <div v-if="error"
+                <div
+                  v-if="error"
                   class="text-red-500 py-1 text-xs text-white"
                 >{{error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ")}}</div>
               </div>

@@ -60,8 +60,8 @@
             @click="selectDateShift(date, 'AM')"
           ></div>
           <div
-            v-else-if="hasPracticeAllocatedPartJobs(date, 'AM')"
-            class="w-full cursor-pointer border-t-2 border-gray-400 bg-green-400 hover:bg-gray-300"
+            v-else-if="hasPracticeAllocatedJobs(date, 'AM')"
+            class="w-full cursor-pointer border-t-2 border-gray-300 bg-green-300 hover:bg-gray-300"
             :key="`${date}-${index}-${id}-${id}`"
             @click="selectDateShift(date, 'AM')"
           ></div>
@@ -108,8 +108,8 @@
             @click="selectDateShift(date, 'PM')"
           ></div>
           <div
-            v-else-if="hasPracticeAllocatedPartJobs(date, 'PM')"
-            class="w-full cursor-pointer border-t-2 border-gray-400 bg-green-400 hover:bg-gray-300"
+            v-else-if="hasPracticeAllocatedJobs(date, 'PM')"
+            class="w-full cursor-pointer border-t-2 border-gray-300 bg-green-300 hover:bg-gray-300"
             :key="`${date}-${index}-${id}`"
             @click="selectDateShift(date, 'PM')"
           ></div>
@@ -156,8 +156,8 @@
             @click="selectDateShift(date, 'OOH')"
           ></div>
           <div
-            v-else-if="hasPracticeAllocatedPartJobs(date, 'OOH')"
-            class="w-full cursor-pointer border-t-2 border-gray-400 bg-green-400 hover:bg-gray-300"
+            v-else-if="hasPracticeAllocatedJobs(date, 'OOH')"
+            class="w-full cursor-pointer border-t-2 border-gray-300 bg-green-300 hover:bg-gray-300"
             :key="`${date}-${index}-${id}`"
             @click="selectDateShift(date, 'OOH')"
           ></div>
@@ -204,8 +204,8 @@
             @click="selectDateShift(date, 'Whole Day')"
           ></div>
           <div
-            v-else-if="hasPracticeAllocatedPartJobs(date, 'Whole Day')"
-            class="w-full cursor-pointer border-t-2 border-gray-400 bg-green-400 hover:bg-gray-300"
+            v-else-if="hasPracticeAllocatedJobs(date, 'Whole Day')"
+            class="w-full cursor-pointer border-t-2 border-gray-300 bg-green-300 hover:bg-gray-300"
             :key="`${date}-${index}-${id}`"
             @click="selectDateShift(date, 'Whole Day')"
           ></div>
@@ -285,14 +285,14 @@
             @click="selectDateShift(date, 'AM')"
           ></div>
           <div
-            v-else-if="hasLocumAllocatedPrivatePartJobs(date, 'AM')"
-            class="w-full cursor-pointer border-t-2 border-gray-400 bg-green-400 hover:bg-gray-300"
+            v-else-if="hasLocumAllocatedPrivateJobs(date, 'AM')"
+            class="w-full cursor-pointer border-t-2 border-gray-300 bg-green-300 hover:bg-gray-300"
             :key="`${date}-${index}-${id}`"
             @click="selectDateShift(date, 'AM')"
           ></div>
           <div
-            v-else-if="hasLocumAllocatedPlatformPartJobs(date, 'AM')"
-            class="w-full cursor-pointer border-t-2 border-gray-400 bg-green-400 hover:bg-gray-300"
+            v-else-if="hasLocumAllocatedPlatformJobs(date, 'AM')"
+            class="w-full cursor-pointer border-t-2 border-gray-300 bg-green-300 hover:bg-gray-300"
             :key="`${date}-${index}-${id}`"
             @click="selectDateShift(date, 'AM')"
           ></div>
@@ -326,14 +326,14 @@
             @click="selectDateShift(date, 'PM')"
           ></div>
           <div
-            v-else-if="hasLocumAllocatedPrivatePartJobs(date, 'PM')"
-            class="w-full cursor-pointer border-t-2 border-gray-400 bg-green-400 hover:bg-gray-300"
+            v-else-if="hasLocumAllocatedPrivateJobs(date, 'PM')"
+            class="w-full cursor-pointer border-t-2 border-gray-300 bg-green-300 hover:bg-gray-300"
             :key="`${date}-${index}-${id}`"
             @click="selectDateShift(date, 'PM')"
           ></div>
           <div
-            v-else-if="hasLocumAllocatedPlatformPartJobs(date, 'PM')"
-            class="w-full cursor-pointer border-t-2 border-gray-400 bg-green-400 hover:bg-gray-300"
+            v-else-if="hasLocumAllocatedPlatformJobs(date, 'PM')"
+            class="w-full cursor-pointer border-t-2 border-gray-300 bg-green-300 hover:bg-gray-300"
             :key="`${date}-${index}-${id}`"
             @click="selectDateShift(date, 'PM')"
           ></div>
@@ -367,14 +367,14 @@
             @click="selectDateShift(date, 'OOH')"
           ></div>
           <div
-            v-else-if="hasLocumAllocatedPrivatePartJobs(date, 'OOH')"
-            class="w-full cursor-pointer border-t-2 border-gray-400 bg-green-400 hover:bg-gray-300"
+            v-else-if="hasLocumAllocatedPrivateJobs(date, 'OOH')"
+            class="w-full cursor-pointer border-t-2 border-gray-300 bg-green-300 hover:bg-gray-300"
             :key="`${date}-${index}-${id}`"
             @click="selectDateShift(date, 'OOH')"
           ></div>
           <div
-            v-else-if="hasLocumAllocatedPlatformPartJobs(date, 'OOH')"
-            class="w-full cursor-pointer border-t-2 border-gray-400 bg-green-400 hover:bg-gray-300"
+            v-else-if="hasLocumAllocatedPlatformJobs(date, 'OOH')"
+            class="w-full cursor-pointer border-t-2 border-gray-300 bg-green-300 hover:bg-gray-300"
             :key="`${date}-${index}-${id}`"
             @click="selectDateShift(date, 'OOH')"
           ></div>
@@ -408,14 +408,14 @@
             @click="selectDateShift(date, 'Whole Day')"
           ></div>
           <div
-            v-else-if="hasLocumAllocatedPrivatePartJobs(date, 'Whole Day')"
-            class="w-full cursor-pointer border-t-2 border-gray-400 bg-green-400 hover:bg-gray-300"
+            v-else-if="hasLocumAllocatedPrivateJobs(date, 'Whole Day')"
+            class="w-full cursor-pointer border-t-2 border-gray-300 bg-green-300 hover:bg-gray-300"
             :key="`${date}-${index}-${id}`"
             @click="selectDateShift(date, 'Whole Day')"
           ></div>
           <div
-            v-else-if="hasLocumAllocatedPlatformPartJobs(date, 'Whole Day')"
-            class="w-full cursor-pointer border-t-2 border-gray-400 bg-green-400 hover:bg-gray-300"
+            v-else-if="hasLocumAllocatedPlatformJobs(date, 'Whole Day')"
+            class="w-full cursor-pointer border-t-2 border-gray-300 bg-green-300 hover:bg-gray-300"
             :key="`${date}-${index}-${id}`"
             @click="selectDateShift(date, 'Whole Day')"
           ></div>
@@ -493,10 +493,10 @@ export default {
     getPracticeOngoingJobs() {
       return this.$store.getters["jobs/getPracticeOngoingJobs"];
     },
-    getPracticeAllocatedPartJobs() {
-      return this.$store.getters["jobs/getPracticeAllocatedPartJobs"];
-    },
     // whole
+    getPracticeAllocatedJobs() {
+      return this.$store.getters["jobs/getPracticeAllocatedJobs"];
+    },
     getPracticeAppliedJobs() {
       return this.$store.getters["jobs/getPracticeAppliedJobs"];
     },
@@ -517,13 +517,13 @@ export default {
     getLocumOngoingJobs() {
       return this.$store.getters["jobs/getLocumOngoingJobs"];
     },
-    getLocumAllocatedPrivatePartJobs() {
-      return this.$store.getters["jobs/getLocumAllocatedPrivatePartJobs"];
-    },
-    getLocumAllocatedPlatformPartJobs() {
-      return this.$store.getters["jobs/getLocumAllocatedPlatformPartJobs"];
-    },
     // whole
+    getLocumAllocatedPrivateJobs() {
+      return this.$store.getters["jobs/getLocumAllocatedPrivateJobs"];
+    },
+    getLocumAllocatedPlatformJobs() {
+      return this.$store.getters["jobs/getLocumAllocatedPlatformJobs"];
+    },
     getLocumAppliedJobs() {
       return this.$store.getters["jobs/getLocumAppliedJobs"];
     },
@@ -533,11 +533,6 @@ export default {
     daysInWeek() {
       let weekLists = [];
       for (let i = 0; i < 7; i++) {
-        // weekLists.push(
-        //   this.$moment(this.firstDayOfTheWeek)
-        //     .add(i, "days")
-        //     .format("YYYY-MM-DD")
-        // );
         weekLists.push({
           id: weekLists.length,
           date: this.$moment(this.firstDayOfTheWeek)
@@ -597,7 +592,7 @@ export default {
           calendar_date_start: `${this.firstDayOfTheWeek}:gte`,
           calendar_date_end: `${this.lastDayOfTheWeek}:lte`,
           limit: 100000000,
-          status: ["Ongoing", "Allocated"],
+          status: ["Ongoing"],
           type: "SET"
         });
 
@@ -605,7 +600,7 @@ export default {
           calendar_date_start: `${this.firstDayOfTheWeek}:gte`,
           calendar_date_end: `${this.lastDayOfTheWeek}:lte`,
           limit: 100000000,
-          status: ["Applied", "Unfilled", "Declined"]
+          status: ["Allocated", "Applied", "Unfilled", "Declined"]
         });
 
         this.$store.dispatch("jobs/fetchPracticeJobsReminder", {
@@ -622,13 +617,13 @@ export default {
           calendar_date_start: `${this.firstDayOfTheWeek}:gte`,
           calendar_date_end: `${this.lastDayOfTheWeek}:lte`,
           limit: 100000000,
-          locum_status: ["Applied"]
+          locum_status: ["Allocated", "Applied"]
         });
         this.$store.dispatch("jobs/fetchLocumJobParts", {
           calendar_date_start: `${this.firstDayOfTheWeek}:gte`,
           calendar_date_end: `${this.lastDayOfTheWeek}:lte`,
           limit: 100000000,
-          locum_status: ["Ongoing", "Allocated"]
+          locum_status: ["Ongoing"]
         });
         this.$store.dispatch("jobs/fetchLocumUnavailabilities", {
           date_start: `${this.firstDayOfTheWeek}:gte`,
@@ -652,20 +647,19 @@ export default {
         );
       }
     },
-    hasPracticeAllocatedPartJobs(date, type) {
+    // whole
+    hasPracticeAllocatedJobs(date, type) {
       if (
-        this.getPracticeAllocatedPartJobs &&
-        this.getPracticeAllocatedPartJobs.length > 0
+        this.getPracticeAllocatedJobs &&
+        this.getPracticeAllocatedJobs.length > 0
       ) {
-        return this.getPracticeAllocatedPartJobs.find(
-          job_part =>
-            this.getDateArray(job_part.date_start, job_part.date_end).includes(
-              date
-            ) && job_part.job.shift.name === type
+        return this.getPracticeAllocatedJobs.find(
+          job =>
+            this.getDateArray(job.date_start, job.date_end).includes(date) &&
+            job.shift.name === type
         );
       }
     },
-    // whole
     hasPracticeAppliedJobs(date, type) {
       if (
         this.getPracticeAppliedJobs &&
@@ -734,33 +728,31 @@ export default {
         );
       }
     },
-    hasLocumAllocatedPrivatePartJobs(date, type) {
-      if (
-        this.getLocumAllocatedPrivatePartJobs &&
-        this.getLocumAllocatedPrivatePartJobs.length > 0
-      ) {
-        return this.getLocumAllocatedPrivatePartJobs.find(
-          job_part =>
-            this.getDateArray(job_part.date_start, job_part.date_end).includes(
-              date
-            ) && job_part.job.shift.name === type
-        );
-      }
-    },
-    hasLocumAllocatedPlatformPartJobs(date, type) {
-      if (
-        this.getLocumAllocatedPlatformPartJobs &&
-        this.getLocumAllocatedPlatformPartJobs.length > 0
-      ) {
-        return this.getLocumAllocatedPlatformPartJobs.find(
-          job_part =>
-            this.getDateArray(job_part.date_start, job_part.date_end).includes(
-              date
-            ) && job_part.job.shift.name === type
-        );
-      }
-    },
     // whole
+    hasLocumAllocatedPrivateJobs(date, type) {
+      if (
+        this.getLocumAllocatedPrivateJobs &&
+        this.getLocumAllocatedPrivateJobs.len3th > 0
+      ) {
+        return this.getLocumAllocatedPrivateJobs.find(
+          job =>
+            this.getDateArray(job.date_start, job.date_end).includes(date) &&
+            job.shift.name === type
+        );
+      }
+    },
+    hasLocumAllocatedPlatformJobs(date, type) {
+      if (
+        this.getLocumAllocatedPlatformJobs &&
+        this.getLocumAllocatedPlatformJobs.length > 0
+      ) {
+        return this.getLocumAllocatedPlatformJobs.find(
+          job =>
+            this.getDateArray(job.date_start, job.date_end).includes(date) &&
+            job.shift.name === type
+        );
+      }
+    },
     hasLocumAppliedJobs(date, type) {
       return this.getLocumAppliedJobs.find(job =>
         this.getDateArray(job.date_start, job.date_end).includes(date)
