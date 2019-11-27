@@ -36,7 +36,7 @@
     </div>
 
     <div id="htmlpdf" class="max-w-3xl mb-4 bg-white px-4 py-4 border shadow-md mb-32">
-      <div class="flex flex-col p-4" :ref="'pdf-header'">
+      <div class="flex flex-col" :ref="'pdf-header'">
         <div class="text-xs sm:text-sm sm:text-right leading-normal">
           <div>{{$auth.user.personal_detail.name}}</div>
           <div>{{$auth.user.address_detail.address.line_1}}</div>
@@ -47,10 +47,8 @@
           <div>UTR {{$auth.user.locum_detail.invoice_detail && $auth.user.locum_detail.invoice_detail.utr_number ? $auth.user.locum_detail.invoice_detail.utr_number : null}}</div>
         </div>
         <div class="flex flex-wrap justify-between my-2">
-          <div
-            class="w-full sm:w-1/2 order-2 sm:order-1 text-xs sm:text-sm text-left rounded-lg border-2 border-gray-300 p-2 w-2/3"
-          >
-          <!-- TO ACCNTS -->
+          <div class="w-full sm:w-1/2 order-2 sm:order-1 text-xs sm:text-sm text-left rounded-lg border-2 border-gray-300 p-2 w-2/3">
+            <!-- TO ACCNTS -->
             <section>
               <div
                 class="relative flex flex-col py-2"
@@ -105,7 +103,7 @@
                 </div>
               </div>
             </section>
-          <!-- END TO ACCNTS -->
+            <!-- END TO ACCNTS -->
             <div class="text-xs sm:text-sm" v-if="selectedSurgery && selectedSurgery.address">
               <div>{{selectedSurgery.address.line_1}}</div>
               <div>{{selectedSurgery.address.line_2}}</div>
@@ -184,202 +182,202 @@
             </section>
           </div>
         <!-- END SELECT SURGERY/PRACTICE -->
-        <div class="overflow-auto">
-          <div class="items-table">
-            <!-- thead / items header -->
-            <div class="flex justify-start" :ref="'items-header'">
-              <div
-                class="w-1/2 bg-gray-900 text-white px-4 py-1 font-semibold border-r-2 border-white"
-              >Description</div>
-              <div class="w-1/2 bg-gray-900 text-white px-4 py-1 font-semibold flex justify-between">Total
-                <div class="bg-gray-900 flex items-center justify-end">
-                  <span
-                    v-if="type === 'Private'"
-                    class="cursor-pointer w-6 h-6 rounded-full bg-white text-gray-900 font-semibold text-xl flex justify-center items-center hover:bg-gray-200"
-                    @click="addItem"
-                  >+</span>
-                </div
-              ></div>
-              
-            </div>
+      </div>
+      <div class="overflow-auto">
+        <div class="items-table">
+          <!-- thead / items header -->
+          <div class="flex justify-start" :ref="'items-header'">
             <div
-              :id="`invoice-item-${index}`"
-              class="flex flex-col border-b-2 pb-2"
-              v-for="(item, index) in selectedJobParts"
-              :ref="`item-${index}`"
-              :key="item.id"
-            >
-              <div class="relative flex justify-start mt-2">
-                <template v-if="type === 'Private'">
-                  <div class="w-1/2 px-1">
-                    <textarea
-                      v-model="item.description"
-                      rows="3"
-                      placeholder="Enter description"
-                      class="w-full text-xs sm:text-sm resize-none border-b-2 border-gray-300 focus:border-yellow-500 focus:outline-none px-4 my-2"
-                    ></textarea>
-                  </div>
-                  <div
-                    class="w-1/3 flex items-end px-1"
-                  >
-                    <input
-                      type="number"
-                      min="0"
-                      v-model="item.total"
-                      placeholder="Enter value"
-                      class="w-full text-xs sm:text-sm text-right border-b-2 focus:border-yellow-500 focus:outline-none my-4"
-                    />
-                  </div>
-                </template>
-                <template v-if="type === 'Platform'">
-                  <div
-                    class="w-1/2 text-xs sm:text-sm px-4 py-1 border-b-2 border-gray-300"
-                  >{{item.description}}
-                  </div>
-                  <div
-                    class="text-xs sm:text-sm border-b-2 border-gray-300 px-4 py-1 text-right"
-                    :class="approvedInvoices.includes(item.job_part_id) ? 'w-1/2':'w-1/3'"
-                  >{{item.total}}</div>
-                </template>
-                <div
-                  class="flex items-center align-middle sticky right-0 bg-white"
-                  v-if="!approvedInvoices.includes(item.job_part_id)"
-                >
-                  <div class="px-2">
-                    <div class="flex flex-row flex-no-wrap justify-start items-center">
-                      <input
-                        :disabled="item.approve"
-                        v-model="disputedInvoices"
-                        :id="`${item.job_part_id}-disputed`"
-                        type="checkbox"
-                        :value="item.job_part_id"
-                      />
-                      <label
-                        :for="`${item.job_part_id}-disputed`"
-                        class="text-xs sm:text-sm py-1 flex items-center"
-                      >Disputed</label>
-                    </div>
-                    <div class="flex flex-row flex-no-wrap justify-start items-center">
-                      <input
-                        v-model="approvedInvoices"
-                        :id="`${item.job_part_id}-approved`"
-                        type="checkbox"
-                        :value="item.job_part_id"
-                        disabled
-                      />
-                      <label
-                        :for="`${item.job_part_id}-approved`"
-                        class="text-xs sm:text-sm py-1 flex items-center"
-                      >Approved</label>
-                    </div>
-                  </div>
-                  <div class="flex justify-center" v-if="selectedInvoice === null">
-                    <span
-                      class="bg-gray-900 hover:bg-black w-6 h-6 cursor-pointer float-right font-semibold inline-flex items-center justify-center px-3 mt-2 rounded-full text-white text-xl mx-auto"
-                      @click="removeSelectedJobPart(item, index)"
-                    >-</span>
-                  </div>
-                </div>
-              </div>
-              <div
-                class="flex justify-start mt-2"
-                v-if="disputedInvoices.includes(item.job_part_id)  && !approvedInvoices.includes(item.job_part_id)"
-              >
-                <div class="w-1/3 flex flex-col px-2">
-                  <label for="absent_days">Days of absent</label>
-                  <input
-                    :disabled="item.approve || approvedInvoices.includes(item.job_part_id)"
-                    type="number"
-                    min="0"
-                    v-model="item.absent_days"
-                    name="absent_days"
-                    class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
-                  />
-                </div>
-                <div class="w-1/3 flex flex-col px-2">
-                  <label for="late_hours">Hours of late</label>
-                  <input
-                    :disabled="item.approve || approvedInvoices.includes(item.job_part_id)"
-                    type="number"
-                    min="0"
-                    v-model="item.late_hours"
-                    name="late_hours"
-                    class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
-                  />
-                </div>
-                <div class="w-1/3 flex flex-col px-2">
-                  <label for="final_hours">Final hours</label>
-                  <input
-                    :disabled="item.approve || approvedInvoices.includes(item.job_part_id)"
-                    type="number"
-                    min="0"
-                    v-model="item.final_hours"
-                    name="final_hours"
-                    class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
-                  />
-                </div>
-              </div>
-              <div
-                class="flex justify-start mt-2"
-                v-if="disputedInvoices.includes(item.job_part_id)  && !approvedInvoices.includes(item.job_part_id)"
-              >
-                <div class="flex flex-col w-full">
-                  <label for="remarks">Update remarks</label>
+              class="w-1/2 bg-gray-900 text-white px-4 py-1 font-semibold border-r-2 border-white"
+            >Description</div>
+            <div class="w-1/2 bg-gray-900 text-white px-4 py-1 font-semibold flex justify-between">Total
+              <div class="bg-gray-900 flex items-center justify-end">
+                <span
+                  v-if="type === 'Private' && hideToPrint"
+                  class="cursor-pointer w-6 h-6 rounded-full bg-white text-gray-900 font-semibold text-xl flex justify-center items-center hover:bg-gray-200"
+                  @click="addItem"
+                >+</span>
+              </div
+            ></div>
+            
+          </div>
+          <div
+            :id="`invoice-item-${index}`"
+            class="flex flex-col border-b-2 pb-2"
+            v-for="(item, index) in selectedJobParts"
+            :ref="`item-${index}`"
+            :key="item.id"
+          >
+            <div class="relative flex justify-start mt-2">
+              <template v-if="type === 'Private'">
+                <div class="w-1/2 px-1">
                   <textarea
-                    :disabled="item.approve || approvedInvoices.includes(item.job_part_id)"
-                    v-model="item.remarks"
+                    v-model="item.description"
                     rows="3"
-                    name="remarks"
+                    placeholder="Enter description"
                     class="w-full text-xs sm:text-sm resize-none border-b-2 border-gray-300 focus:border-yellow-500 focus:outline-none px-4 my-2"
                   ></textarea>
                 </div>
+                <div
+                  class="w-1/3 flex items-end px-1"
+                >
+                  <input
+                    type="number"
+                    min="0"
+                    v-model="item.total"
+                    placeholder="Enter value"
+                    class="w-full text-xs sm:text-sm text-right border-b-2 focus:border-yellow-500 focus:outline-none my-4"
+                  />
+                </div>
+              </template>
+              <template v-if="type === 'Platform'">
+                <div
+                  class="w-1/2 text-xs sm:text-sm px-4 py-1 border-b-2 border-gray-300"
+                >{{item.description}}
+                </div>
+                <div
+                  class="text-xs sm:text-sm border-b-2 border-gray-300 px-4 py-1 text-right"
+                  :class="approvedInvoices.includes(item.job_part_id) ? 'w-1/2':'w-1/3'"
+                >{{item.total}}</div>
+              </template>
+              <div
+                class="flex items-center align-middle sticky right-0 bg-white"
+                v-if="!approvedInvoices.includes(item.job_part_id)"
+              >
+                <div class="px-2">
+                  <div class="flex flex-row flex-no-wrap justify-start items-center">
+                    <input
+                      :disabled="item.approve"
+                      v-model="disputedInvoices"
+                      :id="`${item.job_part_id}-disputed`"
+                      type="checkbox"
+                      :value="item.job_part_id"
+                    />
+                    <label
+                      :for="`${item.job_part_id}-disputed`"
+                      class="text-xs sm:text-sm py-1 flex items-center"
+                    >Disputed</label>
+                  </div>
+                  <div class="flex flex-row flex-no-wrap justify-start items-center">
+                    <input
+                      v-model="approvedInvoices"
+                      :id="`${item.job_part_id}-approved`"
+                      type="checkbox"
+                      :value="item.job_part_id"
+                      disabled
+                    />
+                    <label
+                      :for="`${item.job_part_id}-approved`"
+                      class="text-xs sm:text-sm py-1 flex items-center"
+                    >Approved</label>
+                  </div>
+                </div>
+                <div class="flex justify-center" v-if="selectedInvoice === null  && hideToPrint">
+                  <span
+                    class="bg-gray-900 hover:bg-black w-6 h-6 cursor-pointer float-right font-semibold inline-flex items-center justify-center px-3 mt-2 rounded-full text-white text-xl mx-auto"
+                    @click="removeSelectedJobPart(item, index)"
+                  >-</span>
+                </div>
+              </div>
+            </div>
+            <div
+              class="flex justify-start mt-2"
+              v-if="disputedInvoices.includes(item.job_part_id)  && !approvedInvoices.includes(item.job_part_id)"
+            >
+              <div class="w-1/3 flex flex-col px-2">
+                <label for="absent_days">Days of absent</label>
+                <input
+                  :disabled="item.approve || approvedInvoices.includes(item.job_part_id)"
+                  type="number"
+                  min="0"
+                  v-model="item.absent_days"
+                  name="absent_days"
+                  class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
+                />
+              </div>
+              <div class="w-1/3 flex flex-col px-2">
+                <label for="late_hours">Hours of late</label>
+                <input
+                  :disabled="item.approve || approvedInvoices.includes(item.job_part_id)"
+                  type="number"
+                  min="0"
+                  v-model="item.late_hours"
+                  name="late_hours"
+                  class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
+                />
+              </div>
+              <div class="w-1/3 flex flex-col px-2">
+                <label for="final_hours">Final hours</label>
+                <input
+                  :disabled="item.approve || approvedInvoices.includes(item.job_part_id)"
+                  type="number"
+                  min="0"
+                  v-model="item.final_hours"
+                  name="final_hours"
+                  class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
+                />
+              </div>
+            </div>
+            <div
+              class="flex justify-start mt-2"
+              v-if="disputedInvoices.includes(item.job_part_id)  && !approvedInvoices.includes(item.job_part_id)"
+            >
+              <div class="flex flex-col w-full">
+                <label for="remarks">Update remarks</label>
+                <textarea
+                  :disabled="item.approve || approvedInvoices.includes(item.job_part_id)"
+                  v-model="item.remarks"
+                  rows="3"
+                  name="remarks"
+                  class="w-full text-xs sm:text-sm resize-none border-b-2 border-gray-300 focus:border-yellow-500 focus:outline-none px-4 my-2"
+                ></textarea>
               </div>
             </div>
           </div>
         </div>
+      </div>
 
-        <div :ref="'items-total'" class="flex justify-between md:m-2">
-          <span class="font-bold">Total</span>
-          <div>
-            <div class="flex justify-end">
-              <div
-                class="rounded-lg bg-red-500 p-1 text-xs sm:text-sm text-white"
-                v-if="formError.find(item => item.field === 'total_amount')"
-              >{{formError.find(item => item.field === 'total_amount').message}}</div>
-            </div>
-            £ {{amount | currency}}
+      <div :ref="'items-total'" class="flex justify-between md:m-2">
+        <span class="font-bold">Total</span>
+        <div>
+          <div class="flex justify-end">
+            <div
+              class="rounded-lg bg-red-500 p-1 text-xs sm:text-sm text-white"
+              v-if="formError.find(item => item.field === 'total_amount')"
+            >{{formError.find(item => item.field === 'total_amount').message}}</div>
+          </div>
+          £ {{amount | currency}}
+        </div>
+      </div>
+
+      <div :ref="'days-worked'" class="flex flex-row flex-wrap justify-between px-2">
+        <div class="w-full flex flex-row flex-wrap justify-between md:px-2">
+          <div class="w-full md:w-1/2 md:pr-1">
+            <AppDate
+              v-model="form.date_start"
+              :name="'date_start'"
+              :label="'Days worked from'"
+              :error="formError.find(item => item.field === 'date_start')"
+            />
+          </div>
+          <div class="w-full md:w-1/2 md:pl-1">
+            <AppDate
+              v-model="form.date_end"
+              :name="'date_end'"
+              :label="'To'"
+              :error="formError.find(item => item.field === 'date_end')"
+            />
           </div>
         </div>
+      </div>
 
-        <div :ref="'days-worked'" class="flex flex-row flex-wrap justify-between px-2">
-          <div class="w-full flex flex-row flex-wrap justify-between md:px-2">
-            <div class="w-full md:w-1/2 md:pr-1">
-              <AppDate
-                v-model="form.date_start"
-                :name="'date_start'"
-                :label="'Days worked from'"
-                :error="formError.find(item => item.field === 'date_start')"
-              />
-            </div>
-            <div class="w-full md:w-1/2 md:pl-1">
-              <AppDate
-                v-model="form.date_end"
-                :name="'date_end'"
-                :label="'To'"
-                :error="formError.find(item => item.field === 'date_end')"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div :ref="'pdf-footer'" class="rounded-lg border-2 border-gray-300 mt-4 p-4">
-          <div class="flex flex-col text-xs sm:text-sm">
-            <div>Payment by BACS:</div>
-            <div>Account name: Rick Sanchez</div>
-            <div>Bank: citadel of Ricks Mutiversal Bank</div>
-            <div>Sort code: 13</div>
-            <div>Account number: 7337#4*OR</div>
-          </div>
+      <div :ref="'pdf-footer'" class="rounded-lg border-2 border-gray-300 mt-4 p-4">
+        <div class="flex flex-col text-xs sm:text-sm">
+          <div>Payment by BACS:</div>
+          <div>Account name: Rick Sanchez</div>
+          <div>Bank: citadel of Ricks Mutiversal Bank</div>
+          <div>Sort code: 13</div>
+          <div>Account number: 7337#4*OR</div>
         </div>
       </div>
     </div>
@@ -407,6 +405,7 @@ export default {
   data() {
     return {
       loading: false,
+      hideToPrint: true,
 
       disputedInvoices: [],
       approvedInvoices: [],
@@ -557,6 +556,7 @@ export default {
   },
   methods: {
     async exportToPdf() {
+      this.hideToPrint = false
       this.loading = true;
       if (process.client) {
         document.body.style.cursor = "wait";
@@ -568,7 +568,7 @@ export default {
 
       // PDF HEADER
       const canvasPdfHeader = await this.$html2canvas(this.$refs["pdf-header"]);
-      const imgWidthPdfHeader = 210;
+      const imgWidthPdfHeader = 205;
       const imgHeightPdfHeader =
         (canvasPdfHeader.height * imgWidthPdfHeader) / canvasPdfHeader.width;
       const imgDataPdfHeader = canvasPdfHeader.toDataURL("image/png");
@@ -578,7 +578,7 @@ export default {
       doc.addImage(
         imgDataPdfHeader,
         "PNG",
-        0,
+        2.5,
         yPosition,
         imgWidthPdfHeader,
         imgHeightPdfHeader
@@ -590,7 +590,7 @@ export default {
       const canvasItemsHeader = await this.$html2canvas(
         this.$refs["items-header"]
       );
-      const imgWidthItemsHeader = 210;
+      const imgWidthItemsHeader = 205;
       const imgHeightItemsHeader =
         (canvasItemsHeader.height * imgWidthItemsHeader) /
         canvasItemsHeader.width;
@@ -601,7 +601,7 @@ export default {
       doc.addImage(
         imgDataItemsHeader,
         "PNG",
-        0,
+        2.5,
         yPosition,
         imgWidthItemsHeader,
         imgHeightItemsHeader
@@ -624,7 +624,7 @@ export default {
           doc.addImage(
             imgDataItemsHeader,
             "PNG",
-            0,
+            2.5,
             yPosition,
             imgWidthItemsHeader,
             imgHeightItemsHeader
@@ -638,7 +638,7 @@ export default {
 
         // draw canvas
         let canvasItem = await this.$html2canvas(this.$refs[`item-${i}`][0]);
-        let imgWidthItem = 210;
+        let imgWidthItem = 205;
         let imgHeightItem =
           (canvasItem.height * imgWidthItem) / canvasItem.width;
         let imgDataItem = canvasItem.toDataURL("image/png");
@@ -647,7 +647,7 @@ export default {
         doc.addImage(
           imgDataItem,
           "PNG",
-          0,
+          2.5,
           yPosition,
           imgWidthItem,
           imgHeightItem
@@ -670,7 +670,7 @@ export default {
       const canvasDaysWorked = await this.$html2canvas(
         this.$refs["days-worked"]
       );
-      const imgWidthDaysWorked = 210;
+      const imgWidthDaysWorked = 205;
       const imgHeightDaysWorked =
         (canvasDaysWorked.height * imgWidthDaysWorked) / canvasDaysWorked.width;
       const imgDataDaysWorked = canvasDaysWorked.toDataURL("image/png");
@@ -679,14 +679,14 @@ export default {
       const canvasItemsTotal = await this.$html2canvas(
         this.$refs["items-total"]
       );
-      const imgWidthItemsTotal = 210;
+      const imgWidthItemsTotal = 205;
       const imgHeightItemsTotal =
         (canvasItemsTotal.height * imgWidthItemsTotal) / canvasItemsTotal.width;
       const imgDataItemsTotal = canvasItemsTotal.toDataURL("image/png");
 
       // PDF FOOTER
       const canvasPdfFooter = await this.$html2canvas(this.$refs["pdf-footer"]);
-      const imgWidthPdfFooter = 210;
+      const imgWidthPdfFooter = 205;
       const imgHeightPdfFooter =
         (canvasPdfFooter.height * imgWidthPdfFooter) / canvasPdfFooter.width;
       const imgDataPdfFooter = canvasPdfFooter.toDataURL("image/png");
@@ -697,12 +697,12 @@ export default {
       }
 
       yPosition =
-        295 - (imgHeightDaysWorked + imgHeightItemsTotal + imgHeightPdfFooter);
+        290 - (imgHeightDaysWorked + imgHeightItemsTotal + imgHeightPdfFooter);
 
       doc.addImage(
         imgDataDaysWorked,
         "PNG",
-        0,
+        2.5,
         yPosition,
         imgWidthDaysWorked,
         imgHeightDaysWorked
@@ -713,7 +713,7 @@ export default {
       doc.addImage(
         imgDataItemsTotal,
         "PNG",
-        0,
+        2.5,
         yPosition,
         imgWidthItemsTotal,
         imgHeightItemsTotal
@@ -724,7 +724,7 @@ export default {
       doc.addImage(
         imgDataPdfFooter,
         "PNG",
-        0,
+        2.5,
         yPosition,
         imgWidthPdfFooter,
         imgHeightPdfFooter
@@ -733,7 +733,9 @@ export default {
       yPosition = yPosition + imgHeightPdfFooter;
 
       doc.save("test.pdf");
+      this.hideToPrint = true
       this.loading = false;
+
       if (process.client) {
         document.body.style.cursor = "auto";
       }
