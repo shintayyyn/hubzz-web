@@ -11,7 +11,7 @@
           :columns="columns"
           :orderBy="isJobPart ? jobPartParams.order_by :params.order_by"
           :loading="loadingJobs"
-          :routerLink="`/profile/branches-surgeries/${$route.params.id}/surgery-sessions`"
+          :routerLink="`/surgery-management/practice-spokes/${$route.params.id}/surgery-sessions`"
           @pagechanged="pagechanged"
           @limitchanged="limitchanged"
           @sorted="sorted"
@@ -23,8 +23,8 @@
         <transition name="fade" mode="out-in">
           <nuxt-link
             class="shield"
-            v-if="$route.name === 'profile-branches-surgeries-id-surgery-sessions-index-sessionId'"
-            :to="{ path: `/profile/branches-surgeries/${$route.params.id}/surgery-sessions?status=${$route.query.status ? $route.query.status : 'Allocated'}`, query: {...$route.query}}"
+            v-if="$route.name === 'surgery-management-practice-spokes-id-surgery-sessions-index-sessionId'"
+            :to="{ path: `/surgery-management/practice-spokes/${$route.params.id}/surgery-sessions?status=${$route.query.status ? $route.query.status : 'Allocated'}`, query: {...$route.query}}"
           ></nuxt-link>
         </transition>
         <div>

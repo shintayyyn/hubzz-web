@@ -46,9 +46,9 @@
           <p class="font-semibold">Can other Spokes see your Banks?</p>
           <p class="text-sm mx-6">{{practiceSpoke.share_banks_to_other_surgeries === true ? 'Yes':'No'}}</p>
         </div>
-    </div>
+      </div>
 		</div>
-
+    
 		<div v-if="!practiceHub">
 			<AppTable
 				v-if="totalInvitations > 0"
@@ -60,7 +60,7 @@
 				:columns="columns"
 				:orderBy="params.order_by"
 				:customWidth="700"
-				:routerLink="'/profile/practice-hub'"
+				:routerLink="'/surgery-management/practice-hub'"
 				@pagechanged="pagechanged"
 				@limitchanged="limitchanged"
 			/>
@@ -71,8 +71,8 @@
 
 		<div
 			class="shield"
-			v-if="['profile-practice-hub-invitationId'].includes($route.name)"
-			@click="$router.push('/profile/practice-hub')"
+			v-if="['surgery-management-practice-hub-invitationId',].includes($route.name)"
+			@click="$router.push('/surgery-management/practice-hub')"
 		></div>
 		<nuxt-child />
 	</div>
@@ -112,7 +112,7 @@ export default {
 			]
 		};
 	},
-
+  
 	async asyncData({ app, route, store }) {
 		try {
 			let response = await app.$axios.$get(
@@ -184,7 +184,7 @@ export default {
 </script>
 
 <style>
-/* .shield {
+.shield {
 	z-index: 509;
-} */
+}
 </style>
