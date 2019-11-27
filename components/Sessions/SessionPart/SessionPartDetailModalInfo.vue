@@ -39,6 +39,16 @@
           class="text-xs sm:text-sm mb-6"
           v-text="job_part.job.platform_job.email?job_part.job.platform_job.email:`(none)`"
         ></div>
+
+        <template v-if="job_part.status === 'Terminated'">
+          <div class="font-bold text-sm sm:text-md">Terminated</div>
+          <div
+            class="text-xs sm:text-sm mb-8"
+          >{{job_part.job.platform_job.cancelled_at | localDate}}</div>
+          <div class="font-bold text-sm sm:text-md">Reason for termination</div>
+          <div class="text-xs sm:text-sm mb-8">{{job_part.job.platform_job.cancelled_reason}}</div>
+        </template>
+
         <template v-if="job_part.status === 'Cancelled'">
           <div class="font-bold text-sm sm:text-md">Cancelled At</div>
           <div

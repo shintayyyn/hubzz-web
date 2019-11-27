@@ -186,10 +186,7 @@ export default {
       }
     },
     repost() {
-      this.$router.push({
-        path: "/sessions",
-        query: { ...this.$route.query }
-      });
+      this.$emit("close");
       setTimeout(() => {
         this.$store.commit("calendar/REPOST_JOB", this.job);
         this.$store.commit("calendar/CREATE_JOB_MODAL", true);

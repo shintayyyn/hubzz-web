@@ -10,7 +10,7 @@ export const state = () => ({
   selected_date_shift: null,
   create_job_modal: false,
   repost_job: null,
-  loading: false
+  loading: false,
 })
 
 export const mutations = {
@@ -45,7 +45,7 @@ export const mutations = {
   REPOST_JOB(state, payload) {
     state.repost_job = payload
   },
-  CLEAR_REPOST_JOB(state, payload) {
+  CLEAR_REPOST_JOB(state) {
     state.repost_job = null
-  }
+  },
 }

@@ -83,24 +83,20 @@
       />
       <AppButton
         :label="`${job.status === 'Ongoing' ? 'Terminate' : 'Cancel'} job`"
-        @click="terminateJob"
+        @click="confirmation_modal = true"
       />
     </div>
     <AppConfirmationModal
-      :label="'Cancel this Job?'"
+      :label="`${job.status === 'Ongoing' ? 'Terminate' : 'Cancel'} this job?`"
       :confirmLabel="'Yes'"
       :cancelLabel="'Cancel'"
       :modal="confirmation_modal"
       @confirm="cancel"
-      @cancel="cancelTerminate"
+      @cancel="confirmation_modal = false"
     />
   </section>
 </template>
 <script>
-// live -> cancel - reason cancellation
-// applied -> cancel - reason cancellation - alert all applicants
-// allocated -> cancel - reason cancellation - alert appointed locum
-// ongoing -> terminate - reason termination / total hours worked
 import AppButton from "@/components/Base/AppButton";
 import AppInput from "@/components/Base/AppInput";
 import AppFormError from "@/components/Base/AppFormError";
@@ -156,9 +152,8 @@ export default {
       formError: []
     };
   },
-  computed: {},
   methods: {
-    terminateJob() {
+    validateForm() {
       this.formError = [];
       let notRequired = [];
 
@@ -183,48 +178,62 @@ export default {
         this.confirmation_modal = true;
       }
     },
-    cancelTerminate() {
-      this.form.cancelled_reason = "";
-      this.form.absent_days = 0;
-      this.form.absent_days_reason = "";
-      this.form.late_hours = 0;
-      this.form.late_hours_reason = "";
-      this.form.final_hours = 0;
-      this.confirmation_modal = false;
-    },
     cancel() {
-      this.$axios
-        .$put(`/api/v1/practice/jobs/${this.job.id}/cancel`, this.form)
-        .then(res => {
-          console.log("res", res);
-          this.$store.commit(
-            "jobs/REMOVE_PRACTICE_ALLOCATED_JOB",
-            res.data.job.id
-          );
-          this.$store.commit(
-            "jobs/REMOVE_PRACTICE_AVAILABLE_JOB",
-            res.data.job.id
-          );
-          this.$store.commit(
-            "jobs/REMOVE_PRACTICE_APPLIED_JOB",
-            res.data.job.id
-          );
-          this.job.job_parts.forEach(({ id }) => {
-            this.$store.commit("jobs/REMOVE_PRACTICE_ONGOING_JOB_PART", id);
+      this.formError = [];
+      let notRequired = [];
+
+      if (this.job.status !== "Ongoing") {
+        notRequired.push(
+          "absent_days",
+          "absent_days_reason",
+          "late_hours",
+          "late_hours_reason",
+          "final_hours"
+        );
+      } else if (this.job.status === "Ongoing") {
+        if (this.has_absences === "false" || this.has_absences === false) {
+          notRequired.push("absent_days", "absent_days_reason");
+        }
+        if (this.has_late === "false" || this.has_late === false) {
+          notRequired.push("late_hours", "late_hours_reason");
+        }
+      }
+      this.Validate(this.form, notRequired);
+      if (!this.formError.length) {
+        this.$axios
+          .$put(`/api/v1/practice/jobs/${this.job.id}/cancel`, this.form)
+          .then(res => {
+            console.log(res);
+            this.$store.commit(
+              "jobs/REMOVE_PRACTICE_ALLOCATED_JOB",
+              res.data.job.id
+            );
+            this.$store.commit(
+              "jobs/REMOVE_PRACTICE_AVAILABLE_JOB",
+              res.data.job.id
+            );
+            this.$store.commit(
+              "jobs/REMOVE_PRACTICE_APPLIED_JOB",
+              res.data.job.id
+            );
+            this.job.job_parts.forEach(({ id }) => {
+              this.$store.commit("jobs/REMOVE_PRACTICE_ONGOING_JOB_PART", id);
+            });
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: [
+                `${
+                  this.job.status === "Ongoing"
+                    ? "Job terminated"
+                    : "Job cancelled"
+                }`
+              ]
+            });
+            this.$emit("cancelled");
           });
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "success",
-            text: [
-              `${
-                this.job.status === "Ongoing"
-                  ? "Job terminated"
-                  : "Job cancelled"
-              }`
-            ]
-          });
-          this.$emit("cancelled");
-        });
+      }
+      this.confirmation_modal = false;
     }
   }
 };

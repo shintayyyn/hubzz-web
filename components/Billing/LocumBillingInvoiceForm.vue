@@ -50,10 +50,7 @@
           <div class="w-full sm:w-1/2 order-2 sm:order-1 text-xs sm:text-sm text-left rounded-lg border-2 border-gray-300 p-2 w-2/3">
             <!-- TO ACCNTS -->
             <section>
-              <div
-                class="relative flex flex-col py-2"
-                v-on-clickaway="toggledOffSurgeries"
-              >
+              <div class="relative flex flex-col py-2" v-on-clickaway="toggledOffSurgeries">
                 <div class="relative flex flex-row flex-no-wrap justify-between">
                   <label class="text-xs sm:text-sm py-1">To: Accounts Department</label>
                 </div>
@@ -120,67 +117,67 @@
           </div>
         </div>
         <!-- SELECT SURGERY/PRACTICE -->
-          <div v-if="selectedSurgery && selectedInvoice === null">
-            <section>
-              <div
-                class="relative flex flex-col py-2 mb-3 md:mb-6 mt-2"
-                v-on-clickaway="toggledOffJobParts"
-              >
-                <div class="relative flex flex-row flex-no-wrap justify-between">
-                  <label class="text-xs sm:text-sm py-1">Select a job to add to this invoice</label>
-                  <div class="flex justify-end">
-                    <div
-                      class="rounded-lg bg-red-500 p-1 text-xs sm:text-sm text-white"
-                      v-if="formError.find(item => item.field === 'items')"
-                    >{{formError.find(item => item.field === 'items').message}}</div>
-                  </div>
-                </div>
-                <div class="relative flex flex-row flex-wrap justify-start">
-                  <input
-                    v-model="searchJobParts"
-                    type="text"
-                    placeholder="Select.."
-                    ref="input"
-                    class="border-b-2 w-full focus:border-yellow-400 focus:outline-none py-3 font-bold text-xs sm:text-sm"
-                    @focus="toggledJobParts = true"
-                    readonly
-                  />
-                </div>
-                <div class="relative flex flex-col w-full z-10 shadow-lg">
+        <div v-if="selectedSurgery && selectedInvoice === null">
+          <section>
+            <div
+              class="relative flex flex-col py-2 mb-3 md:mb-6 mt-2"
+              v-on-clickaway="toggledOffJobParts"
+            >
+              <div class="relative flex flex-row flex-no-wrap justify-between">
+                <label class="text-xs sm:text-sm py-1">Select a job to add to this invoice</label>
+                <div class="flex justify-end">
                   <div
-                    ref="jobPartsLists"
-                    class="absolute z-0 w-full option-list flex flex-col bg-white shadow-md overflow-y-auto"
-                    :class="{'slide-down': toggledJobParts}"
-                    @scroll="scrollHandlerJobParts"
-                  >
-                    <div class="relative" v-if="jobParts.length > 0">
+                    class="rounded-lg bg-red-500 p-1 text-xs sm:text-sm text-white"
+                    v-if="formError.find(item => item.field === 'items')"
+                  >{{formError.find(item => item.field === 'items').message}}</div>
+                </div>
+              </div>
+              <div class="relative flex flex-row flex-wrap justify-start">
+                <input
+                  v-model="searchJobParts"
+                  type="text"
+                  placeholder="Select.."
+                  ref="input"
+                  class="border-b-2 w-full focus:border-yellow-400 focus:outline-none py-3 font-bold text-xs sm:text-sm"
+                  @focus="toggledJobParts = true"
+                  readonly
+                />
+              </div>
+              <div class="relative flex flex-col w-full z-10 shadow-lg">
+                <div
+                  ref="jobPartsLists"
+                  class="absolute z-0 w-full option-list flex flex-col bg-white shadow-md overflow-y-auto"
+                  :class="{'slide-down': toggledJobParts}"
+                  @scroll="scrollHandlerJobParts"
+                >
+                  <div class="relative" v-if="jobParts.length > 0">
+                    <div
+                      class="py-2 px-3 cursor-pointer text-xs sm:text-sm"
+                      :class="{'bg-gray-300': activeIndexJobParts === index}"
+                      v-for="(item, index) in filteredJobParts"
+                      :key="item.id"
+                      @mouseover="activeIndexJobParts = index"
+                      @click="addJobPart(item)"
+                    >{{item.job_part_number}}</div>
+                    <div
+                      class="absolute bg-gray-300 w-full h-full top-0 bottom-0 left-0 right-0 opacity-50"
+                      v-if="loadingJobParts"
+                    >
                       <div
-                        class="py-2 px-3 cursor-pointer text-xs sm:text-sm"
-                        :class="{'bg-gray-300': activeIndexJobParts === index}"
-                        v-for="(item, index) in filteredJobParts"
-                        :key="item.id"
-                        @mouseover="activeIndexJobParts = index"
-                        @click="addJobPart(item)"
-                      >{{item.job_part_number}}</div>
-                      <div
-                        class="absolute bg-gray-300 w-full h-full top-0 bottom-0 left-0 right-0 opacity-50"
-                        v-if="loadingJobParts"
-                      >
-                        <div
-                          class="absolute bottom-0 text-center w-full text-sm font-bold"
-                        >loading icon</div>
-                      </div>
+                        class="absolute bottom-0 text-center w-full text-sm font-bold"
+                      >loading icon</div>
                     </div>
-                    <div class="relative" v-else>
-                      <div
-                        class="text-xs sm:text-sm text-center font-bold my-3"
-                      >No Job Completed On This Surgery</div>
-                    </div>
+                  </div>
+                  <div class="relative" v-else>
+                    <div
+                      class="text-xs sm:text-sm text-center font-bold my-3"
+                    >No Job Completed On This Surgery</div>
                   </div>
                 </div>
               </div>
-            </section>
-          </div>
+            </div>
+          </section>
+        </div>
         <!-- END SELECT SURGERY/PRACTICE -->
       </div>
       <div class="overflow-auto">
@@ -742,6 +739,10 @@ export default {
     },
     save(final) {
       this.formError = [];
+      if (!this.selectedSurgery){
+        this.formError.push({field: 'surgery_id', message: 'Select Surgery'})
+        return
+      }
       this.form.type = this.type;
       this.form.surgery_id = this.selectedSurgery.id;
       this.form.total_amount = this.amount;
@@ -962,7 +963,7 @@ export default {
       try {
         this.loadingJobParts = true;
         const params = {
-          locum_status: "Completed",
+          locum_status: ["Completed", "Terminated"],
           job_type: this.type,
           surgery_id: this.selectedSurgery.id,
           order_by: "created_at:desc",
@@ -989,7 +990,7 @@ export default {
     async fetchJobParts() {
       try {
         const params = {
-          locum_status: "Completed",
+          locum_status: ["Completed", "Terminated"],
           job_type: this.type,
           surgery_id: this.selectedSurgery.id,
           limit: 10,

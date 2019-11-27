@@ -38,10 +38,7 @@
         </div>
         <div class="p-0 md:pl-4 w-full md:w-1/2 order-first md:order-none">
           <div class="flex flex-col">
-            <JobPartDetailModalParts
-              :job_id="job_part.job.id"
-              :disabledLink="$route.path === '/dashboard'"
-            />
+            <JobPartDetailModalParts :job_id="job_part.job.id" />
             <JobDetailModalMap :job="job_part.job" />
           </div>
         </div>

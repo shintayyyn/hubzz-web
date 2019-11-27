@@ -10,7 +10,7 @@
           </button>
         </div>
         <div class="w-1/3 flex justify-center">
-          <button @click="goHome()" class="focus:outline-none">
+          <button @click="goHome" class="focus:outline-none">
             <img src="/images/hubzz-icon-transparent.png" class="logo" />
           </button>
         </div>
@@ -127,6 +127,9 @@ export default {
     },
     authPermissions() {
       return this.$store.getters["auth/permissions"];
+    },
+    repost_job() {
+      return this.$store.state.calendar.repost_job;
     }
   },
   watch: {

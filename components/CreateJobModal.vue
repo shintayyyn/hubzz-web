@@ -2,7 +2,7 @@
   <div class="modal-container shadow-lg" ref="modalContainer">
     <div class="p-4 md:p-8">
       <div>
-        <svgicon name="left-arrow" height="32" width="32"  @click="close" class="cursor-pointer"/>
+        <svgicon name="left-arrow" height="32" width="32" @click="close" class="cursor-pointer" />
       </div>
       <div class="flex justify-start font-bold text-sm sm:text-xl mt-8">Create a new job</div>
       <AppFormError :formError="formError" v-if="formError.length" />
@@ -725,9 +725,11 @@ export default {
   methods: {
     close() {
       this.$store.commit("calendar/CREATE_JOB_MODAL", false);
+      this.$store.commit("calendar/CLEAR_REPOST_JOB");
     },
     addMandatory() {
       this.$store.commit("calendar/CREATE_JOB_MODAL", false);
+      this.$store.commit("calendar/CLEAR_REPOST_JOB");
       this.$router.push("/profile/practice");
     },
     uncheckMandatory(value) {

@@ -195,7 +195,7 @@ export default {
   watch: {
     selectedMonth(value) {
       this.getDaysInMonth(value, this.selectedYear);
-    },
+    }
   },
   beforeDestroy() {
     this.$store.commit("jobs/CLEAR_JOBS");
@@ -271,7 +271,6 @@ export default {
       if (!job) {
         return;
       }
-      console.log("job from socket", job);
       this.showRefresh = true;
     },
     async refreshJobs() {
@@ -445,7 +444,7 @@ export default {
         Promise.all([
           this.$axios.$get("/api/v1/locum/jobs", {
             params: {
-              locum_status: ["Applied"],
+              locum_status: ["Allocated", "Applied"],
               calendar_date_start: `${this.startOfMonth}:gte`,
               calendar_date_end: `${this.endOfMonth}:lte`,
               limit: 100000000
@@ -453,7 +452,7 @@ export default {
           }),
           this.$axios.$get("/api/v1/locum/job-parts", {
             params: {
-              locum_status: ["Ongoing", "Allocated"],
+              locum_status: ["Ongoing"],
               calendar_date_start: `${this.startOfMonth}:gte`,
               calendar_date_end: `${this.endOfMonth}:lte`,
               limit: 100000000
@@ -467,21 +466,27 @@ export default {
             }
           })
         ]).then(
-          ([responseApplied, responseOngoing, responseUnavailabilities]) => {
+          ([
+            responseAllocatedAndApplied,
+            responseOngoing,
+            responseUnavailabilities
+          ]) => {
             this.$store.commit(
               "jobs/SET_LOCUM_APPLIED_JOBS",
-              responseApplied.data.jobs
+              responseAllocatedAndApplied.data.jobs.filter(
+                job => job.locum_status === "Applied"
+              )
+            );
+            this.$store.commit(
+              "jobs/SET_LOCUM_ALLOCATED_JOBS",
+              responseAllocatedAndApplied.data.jobs.filter(
+                job => job.locum_status === "Allocated"
+              )
             );
             this.$store.commit(
               "jobs/SET_LOCUM_ONGOING_JOB_PARTS",
               responseOngoing.data.job_parts.filter(
                 jobPart => jobPart.locum_status === "Ongoing"
-              )
-            );
-            this.$store.commit(
-              "jobs/SET_LOCUM_ALLOCATED_JOB_PARTS",
-              responseOngoing.data.job_parts.filter(
-                jobPart => jobPart.locum_status === "Allocated"
               )
             );
             this.$store.commit(
