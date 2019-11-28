@@ -2,7 +2,7 @@
   <section class="my-banks-section">
     <!-- <div class="mb-5 text-sm font-bold cursor-pointer">My Locums</div> -->
     <div class="relative flex flex-col md:flex-row justify-between items-end md:items-center">
-      <div class="flex justify-between md:justify-start w-full md:w-4/5 overflow-x-auto">
+      <div class="flex w-full md:w-4/5 overflow-x-auto">
         <nuxt-link
           to="/my-banks?status=Favorite"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"

@@ -20,6 +20,9 @@ export const mutations = {
   REMOVE_PRACTICE_BILLING_NOTIFICATION(state, payload) {
     state.practice_billing_notifications = state.practice_billing_notifications.filter(job => job.id !== payload)
   },
+  CLEAR_PRACTICE_BILLING_NOTIFICATION(state) {
+    state.practice_billing_notifications = []
+  },
   ADD_LOCUM_BILLING_NOTIFICATION(state, payload) {
     let index = state.locum_billing_notifications.findIndex(billing => billing.id === payload.id)
     if (index >= 0) {
@@ -36,10 +39,19 @@ export const mutations = {
   REMOVE_LOCUM_BILLING_NOTIFICATION(state, payload) {
     state.locum_billing_notifications = state.locum_billing_notifications.filter(job => job.id !== payload)
   },
+  CLEAR_LOCUM_BILLING_NOTIFICATION(state) {
+    state.locum_billing_notifications = []
+  }
 }
 export const actions = {
   async initializeBillingListener({ commit }) {
     // PRACTICE
+    this.$socket.on('Practice Notification Locum Invoice Created', async ({ id }) => {
+      const response = await this.$axios.$get(`/api/v1/practice/locum-invoices/${id}`)
+      if (response.data && response.data.locum_invoice) {
+        commit('ADD_PRACTICE_BILLING_NOTIFICATION', { ...response.data.locum_invoice, notificationType: 'Practice Notification Locum Invoice Created' })
+      }
+    })
     this.$socket.on('Practice Notification Locum Invoice Paid', async ({ id }) => {
       const response = await this.$axios.$get(`/api/v1/practice/locum-invoices/${id}`)
       if (response.data && response.data.locum_invoice) {
@@ -53,6 +65,12 @@ export const actions = {
       }
     })
     // LOCUM
+    this.$socket.on('Locum Notification Locum Invoice Created', async ({ id }) => {
+      const response = await this.$axios.$get(`/api/v1/locum/locum-invoices/${id}`)
+      if (response.data && response.data.locum_invoice) {
+        commit('ADD_LOCUM_BILLING_NOTIFICATION', { ...response.data.locum_invoice, notificationType: 'Locum Notification Locum Invoice Created' })
+      }
+    })
     this.$socket.on('Locum Notification Locum Invoice Paid', async ({ id }) => {
       const response = await this.$axios.$get(`/api/v1/locum/locum-invoices/${id}`)
       if (response.data && response.data.locum_invoice) {
@@ -72,7 +90,19 @@ export const getters = {
     let notifications = []
     state.practice_billing_notifications.forEach(notif => {
       let message = ''
-      let notifObj = {
+      let notifObj = null
+      switch (notif.notificationType) {
+        case 'Practice Notification Locum Invoice Created':
+          message = 'This invoice has been Created'
+          break;
+        case 'Practice Notification Locum Invoice Updated':
+          message = 'This invoice has been Updated'
+          break;
+        case 'Practice Notification Locum Invoice Paid':
+          message = 'This invoice has been Paid'
+          break;
+      }
+      notifObj = {
         id: notif.id,
         invoice_number: notif.invoice_number,
         status: notif.status,
@@ -82,23 +112,8 @@ export const getters = {
         paid_at: notif.paid_at,
         locum_user: notif.locum_user.name,
         notification_type: notif.notificationType,
-        url: `/practice-billing/invoices-from-locums/${notif.id}`,
-      }
-      switch (notif.notificationType) {
-        case 'Practice Notification Locum Invoice Updated':
-          message = 'This invoice has been Updated'
-          notifObj = {
-            ...notifObj,
-            message
-          }
-          break;
-        case 'Practice Notification Locum Invoice Paid':
-          message = 'This invoice has been Paid'
-          notifObj = {
-            ...notifObj,
-            message
-          }
-          break;
+        type: 'Billings',
+        message
       }
       notifications.push(notifObj)
     })
@@ -108,7 +123,19 @@ export const getters = {
     let notifications = []
     state.locum_billing_notifications.forEach(notif => {
       let message = ''
-      let notifObj = {
+      let notifObj = null
+      switch (notif.notificationType) {
+        case 'Locum Notification Locum Invoice Created':
+          message = 'This invoice has been Created'
+          break;
+        case 'Locum Notification Locum Invoice Updated':
+          message = 'This invoice has been Updated'
+          break;
+        case 'Locum Notification Locum Invoice Paid':
+          message = 'This invoice has been Paid'
+          break;
+      }
+      notifObj = {
         id: notif.id,
         invoice_number: notif.invoice_number,
         status: notif.status,
@@ -118,23 +145,8 @@ export const getters = {
         paid_at: notif.paid_at,
         practice: notif.surgery.name,
         notification_type: notif.notificationType,
-        url: `/locum-billing/invoices/${notif.id}`,
-      }
-      switch (notif.notificationType) {
-        case 'Locum Notification Locum Invoice Updated':
-          message = 'This invoice has been Updated'
-          notifObj = {
-            ...notifObj,
-            message
-          }
-          break;
-        case 'Locum Notification Locum Invoice Paid':
-          message = 'This invoice has been Paid'
-          notifObj = {
-            ...notifObj,
-            message
-          }
-          break;
+        type: 'Billings',
+        message
       }
       notifications.push(notifObj)
     })

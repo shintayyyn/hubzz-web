@@ -55,7 +55,7 @@
             <div
               @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
               class="relative border border-solid rounded-lg m-1 cursor-pointer flex justify-center items-center h-8 sm:h-12 md:h-16 lg:h-20 w-auto"
-              :class="[$store.state.calendar.date_today === item.fullDate ? 'border-yellow-500 text-lg font-bold':'hover:bg-gray-300', selectedDate === item.fullDate && 'bg-gray-200']"
+              :class="[$store.state.calendar.date_today === item.fullDate ? 'border-yellow-500 text-lg font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
               v-if="item.day === 1"
             >
               <div class="text-xs md:text-sm z-10">{{(item.date)}}</div>
@@ -71,7 +71,7 @@
             <div
               @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
               class="relative border border-solid rounded-lg m-1 cursor-pointer flex justify-center items-center h-8 sm:h-12 md:h-16 lg:h-20 w-auto"
-              :class="[$store.state.calendar.date_today === item.fullDate ? 'border-yellow-500 bg-white text-lg font-bold':'hover:bg-gray-300', selectedDate === item.fullDate && 'bg-gray-200']"
+              :class="[$store.state.calendar.date_today === item.fullDate ? 'border-yellow-500 bg-white text-lg font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
               v-if="item.day === 2"
             >
               <div class="text-xs md:text-sm z-10">{{item.date}}</div>
@@ -87,7 +87,7 @@
             <div
               @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
               class="relative border border-solid rounded-lg m-1 cursor-pointer flex justify-center items-center h-8 sm:h-12 md:h-16 lg:h-20 w-auto"
-              :class="[$store.state.calendar.date_today === item.fullDate ? 'border-yellow-500 bg-white text-lg font-bold':'hover:bg-gray-300', selectedDate === item.fullDate && 'bg-gray-200']"
+              :class="[$store.state.calendar.date_today === item.fullDate ? 'border-yellow-500 bg-white text-lg font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
               v-if="item.day === 3"
             >
               <div class="text-xs md:text-sm z-10">{{(item.date)}}</div>
@@ -103,7 +103,7 @@
             <div
               @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
               class="relative border border-solid rounded-lg m-1 cursor-pointer flex justify-center items-center h-8 sm:h-12 md:h-16 lg:h-20 w-auto"
-              :class="[$store.state.calendar.date_today === item.fullDate ? 'border-yellow-500 bg-white text-lg font-bold':'hover:bg-gray-300', selectedDate === item.fullDate && 'bg-gray-200']"
+              :class="[$store.state.calendar.date_today === item.fullDate ? 'border-yellow-500 bg-white text-lg font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
               v-if="item.day === 4"
             >
               <div class="text-xs md:text-sm z-10">{{item.date}}</div>
@@ -119,7 +119,7 @@
             <div
               @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
               class="relative border border-solid rounded-lg m-1 cursor-pointer flex justify-center items-center h-8 sm:h-12 md:h-16 lg:h-20 w-auto"
-              :class="[$store.state.calendar.date_today === item.fullDate ? 'border-yellow-500 text-lg font-bold':'hover:bg-gray-300', selectedDate === item.fullDate && 'bg-gray-200']"
+              :class="[$store.state.calendar.date_today === item.fullDate ? 'border-yellow-500 text-lg font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
               v-if="item.day === 5"
             >
               <div class="text-xs md:text-sm z-10">{{(item.date)}}</div>
@@ -135,7 +135,7 @@
             <div
               @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
               class="relative border border-solid rounded-lg m-1 cursor-pointer flex justify-center items-center h-8 sm:h-12 md:h-16 lg:h-20 w-auto"
-              :class="[$store.state.calendar.date_today === item.fullDate ? 'border-yellow-500 text-lg font-bold':'hover:bg-gray-300', selectedDate === item.fullDate && 'bg-gray-200']"
+              :class="[$store.state.calendar.date_today === item.fullDate ? 'border-yellow-500 text-lg font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
               v-if="item.day === 6"
             >
               <div class="text-xs md:text-sm z-10">{{item.date}}</div>
@@ -151,7 +151,7 @@
             <div
               @click="$store.commit('calendar/SELECT_DATE', item.fullDate)"
               class="relative border border-solid rounded-lg m-1 cursor-pointer flex justify-center items-center h-8 sm:h-12 md:h-16 lg:h-20 w-auto"
-              :class="[$store.state.calendar.date_today === item.fullDate ? 'border-yellow-500 text-lg font-bold':'hover:bg-gray-300', selectedDate === item.fullDate && 'bg-gray-200']"
+              :class="[$store.state.calendar.date_today === item.fullDate ? 'border-yellow-500 text-lg font-bold hover:bg-gray-200':'hover:bg-gray-300 transition-hover', selectedDate === item.fullDate && 'bg-gray-200']"
               v-if="item.day === 0"
             >
               <div class="text-xs md:text-sm z-10">{{item.date}}</div>
@@ -216,22 +216,42 @@ export default {
   mounted() {
     // locum
     if (this.$auth.loggedIn && this.$auth.user.domain === "Locum") {
+      this.$socket.on("Locum Notification Job Available", this.getJobsRealTime);
+      this.$socket.on("Locum Notification Job Matched", this.getJobsRealTime);
+      this.$socket.on(
+        "Locum Notification Job Unsuccessful",
+        this.getJobsRealTime
+      );
       this.$socket.on("Locum Notification Job Current", this.getJobsRealTime);
       this.$socket.on("Locum Notification Job Ongoing", this.getJobsRealTime);
-      this.$socket.on("Locum Notification Job Cancelled", this.getJobsRealTime);
       this.$socket.on(
         "Locum Notification Job Part Completed",
         this.getJobsRealTime
       );
+      this.$socket.on(
+        "Locum Notification Locum Invoice Updated",
+        this.getJobsRealTime
+      );
+      this.$socket.on("Locum Notification Job Cancelled", this.getJobsRealTime);
+
+      this.$socket.on("Locum Notification Job Amended", this.getJobsRealTime);
       this.$socket.on("Locum Notification Job Updated", this.getJobsRealTime);
-      this.$socket.on("Locum Notification Job Applied", this.getJobsRealTime);
+      this.$socket.on("Locum Notification Job Declined", this.getJobsRealTime);
+      this.$socket.on(
+        "Locum Notification Job Auto Declined",
+        this.getJobsRealTime
+      );
+      this.$socket.on(
+        "Locum Notification Job Unavailable",
+        this.getJobsRealTime
+      );
+      this.$socket.on(
+        "Locum Notification Job Unqualified",
+        this.getJobsRealTime
+      );
     }
     // practice
     if (this.$auth.loggedIn && this.$auth.user.domain === "Practice") {
-      this.$socket.on(
-        "Practice Notification Job Current",
-        this.getJobsRealTime
-      );
       this.$socket.on(
         "Practice Notification Job Available",
         this.getJobsRealTime
@@ -241,15 +261,11 @@ export default {
         this.getJobsRealTime
       );
       this.$socket.on(
-        "Practice Notification Job Declined",
+        "Practice Notification Job Current",
         this.getJobsRealTime
       );
       this.$socket.on(
-        "Practice Notification Job Cancelled",
-        this.getJobsRealTime
-      );
-      this.$socket.on(
-        "Practice Notification Job Part Approved",
+        "Practice Notification Job Ongoing",
         this.getJobsRealTime
       );
       this.$socket.on(
@@ -257,7 +273,31 @@ export default {
         this.getJobsRealTime
       );
       this.$socket.on(
-        "Practice Notification Job Updated",
+        "Practice Notification Locum Invoice Updated",
+        this.getJobsRealTime
+      );
+      this.$socket.on(
+        "Practice Notification Job Cancelled",
+        this.getJobsRealTime
+      );
+      this.$socket.on(
+        "Practice Notification Job Amended",
+        this.getJobsRealTime
+      );
+      this.$socket.on(
+        "Practice Notification Job Declined",
+        this.getJobsRealTime
+      );
+      this.$socket.on(
+        "Practice Notification Job Auto Declined",
+        this.getJobsRealTime
+      );
+      this.$socket.on(
+        "Practice Notification Job Update Accept",
+        this.getJobsRealTime
+      );
+      this.$socket.on(
+        "Practice Notification Job Unfilled",
         this.getJobsRealTime
       );
     }
@@ -281,7 +321,15 @@ export default {
     removeListener() {
       if (this.$auth.loggedIn && this.$auth.user.domain === "Locum") {
         this.$socket.removeListener(
-          "Locum Notification Job Ongoing",
+          "Locum Notification Job Available",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
+          "Locum Notification Job Matched",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
+          "Locum Notification Job Unsuccessful",
           this.getJobsRealTime
         );
         this.$socket.removeListener(
@@ -289,7 +337,7 @@ export default {
           this.getJobsRealTime
         );
         this.$socket.removeListener(
-          "Locum Notification Job Cancelled",
+          "Locum Notification Job Ongoing",
           this.getJobsRealTime
         );
         this.$socket.removeListener(
@@ -297,19 +345,39 @@ export default {
           this.getJobsRealTime
         );
         this.$socket.removeListener(
+          "Locum Notification Locum Invoice Updated",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
+          "Locum Notification Job Cancelled",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
+          "Locum Notification Job Amended",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
           "Locum Notification Job Updated",
           this.getJobsRealTime
         );
         this.$socket.removeListener(
-          "Locum Notification Job Applied",
+          "Locum Notification Job Declined",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
+          "Locum Notification Job Auto Declined",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
+          "Locum Notification Job Unavailable",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
+          "Locum Notification Job Unqualified",
           this.getJobsRealTime
         );
       }
       if (this.$auth.loggedIn && this.$auth.user.domain === "Practice") {
-        this.$socket.removeListener(
-          "Practice Notification Job Current",
-          this.getJobsRealTime
-        );
         this.$socket.removeListener(
           "Practice Notification Job Available",
           this.getJobsRealTime
@@ -319,15 +387,11 @@ export default {
           this.getJobsRealTime
         );
         this.$socket.removeListener(
-          "Practice Notification Job Declined",
+          "Practice Notification Job Current",
           this.getJobsRealTime
         );
         this.$socket.removeListener(
-          "Practice Notification Job Cancelled",
-          this.getJobsRealTime
-        );
-        this.$socket.removeListener(
-          "Practice Notification Job Part Approved",
+          "Practice Notification Job Ongoing",
           this.getJobsRealTime
         );
         this.$socket.removeListener(
@@ -335,11 +399,31 @@ export default {
           this.getJobsRealTime
         );
         this.$socket.removeListener(
-          "Practice Notification Job Completed",
+          "Practice Notification Locum Invoice Updated",
           this.getJobsRealTime
         );
         this.$socket.removeListener(
-          "Practice Notification Job Updated",
+          "Practice Notification Job Cancelled",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
+          "Practice Notification Job Amended",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
+          "Practice Notification Job Declined",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
+          "Practice Notification Job Auto Declined",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
+          "Practice Notification Job Update Accept",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
+          "Practice Notification Job Unfilled",
           this.getJobsRealTime
         );
       }

@@ -1,21 +1,21 @@
 <template>
   <section>
     <div class="flex flex-row flex-wrap justify-start lg:max-w-6xl">
-      <div
-        class="sm:px-2 my-2 sm:my-4 w-full sm:w-1/2 lg:max-w-sm"
-        :class="$auth.user.domain === 'Locum' ? 'md:w-1/4' : 'md:w-1/3'"
-        v-for="(item, index) in statistics"
-        :key="index"
-      >
-        <nuxt-link :to="item.route">
-          <div class="statistics-card rounded-lg shadow-md px-4 md:px-8 py-4 bg-white hover:bg-gray-300">
-            <div class="flex flex-col">
-              <div class="text-sm sm:text-md">{{item.label}}</div>
-              <div class="font-bold text-5xl">{{item.value}}</div>
+        <div
+          class="sm:px-2 my-2 sm:my-4 w-full sm:w-1/2 lg:max-w-sm"
+          :class="$auth.user.domain === 'Locum' ? 'md:w-1/4' : 'md:w-1/3'"
+          v-for="(item, index) in statistics"
+          :key="index"
+        >
+          <nuxt-link :to="item.route">
+            <div class="statistics-card rounded-lg shadow-md px-4 md:px-8 py-4 bg-white hover:bg-gray-300">
+              <div class="flex flex-col">
+                <div class="text-sm sm:text-md">{{item.label}}</div>
+                <div class="font-bold text-5xl">{{item.value}}</div>
+              </div>
             </div>
-          </div>
-        </nuxt-link>
-      </div>
+          </nuxt-link>
+        </div>
     </div>
   </section>
 </template>
@@ -64,6 +64,8 @@ export default {
             value: responses[3].data.count,
             route: "/jobs?status=Completed"
           });
+      }).catch(e => {
+        console.log("Statistics Error", e.response.data.message)
       });
     },
     getPracticeStats() {
@@ -107,6 +109,8 @@ export default {
           value: responses[5].data.count,
           route: "/sessions?status=Unfilled"
         });
+      }).catch(e => {
+        console.log("Statistics Error", e.response.data.message)
       });
     }
   }

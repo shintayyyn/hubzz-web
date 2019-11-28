@@ -3,6 +3,7 @@
     <transition name="fade">
         <div v-if="messageSent && !$route.name.includes('messages')" class="message-modal bg-blue-500 text-white p-4 rounded-lg font-bold text-center">Message Sent to {{ this.user.personal_detail.name }}</div>
     </transition>
+    <div class="bg-white h-full w-full absolute opacity-50" v-if="messageSent"></div>
     <textarea
       v-model="message"
       class="message-box resize-none w-full p-2 text-sm focus:outline-none border-t"
@@ -73,5 +74,17 @@ export default {
 }
 .message-box::-webkit-scrollbar-track {
   background: #eee;
+}
+.message-modal{
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 60;
+}
+@media screen and (max-width: 767px){
+    .message-modal{
+        min-width: 85%;
+    }
 }
 </style>

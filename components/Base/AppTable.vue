@@ -68,17 +68,6 @@
 											dataCell(item, column) !== '(none)'
 									"
                 >{{ dataCell(item, column) | localDate }}</template>
-                <template
-                  v-if="
-										column.class &&
-											column.class.includes('status') &&
-											dataCell(item, column) !== '(none)'
-									"
-                >
-                  <div class="flex items-center justify-center">
-                    <div class="rounded-full px-6 py-1" :class="statusClass">{{ status }}</div>
-                  </div>
-                </template>
                 <template v-else>{{ dataCell(item, column) }}</template>
               </template>
             </div>
@@ -138,12 +127,6 @@ export default {
     customWidth: {
       type: Number
     },
-    status: {
-      type: String
-    },
-    statusClass: {
-      type: String
-    }
   },
   components: {
     AppLoading,

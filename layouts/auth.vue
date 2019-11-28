@@ -43,7 +43,7 @@
       </div>
       <div style="flex: 0 0 20%;" class="flex justify-end items-center">
         <button
-          class="py-2 px-4 md:mx-4 font-bold border rounded-lg shadow-lg hover:text-white"
+          class="py-2 px-4 md:mx-4 font-bold border-2 border-white rounded-lg shadow-lg"
           @click="acceptCookies"
         >OK</button>
       </div>
@@ -58,7 +58,7 @@ export default {
     AppNotification
   },
   middleware: "isAuthenticated",
-  // transitions: 'fade',
+  transitions: 'fade',
   async asyncData({ app }) {
     console.log("layout index asyncData");
   },
