@@ -1,5 +1,11 @@
 <template>
   <section class="relative">
+    <AppButton
+      v-if="showRefresh"
+      :label="'Refresh'"
+      @click="refreshInvoices"
+      :inStyle="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
+    />
     <AppTable
       v-if="invoices.length > 0"
       :total="totalInvoices"
@@ -79,6 +85,8 @@ export default {
   },
   data() {
     return {
+      showRefresh: false,
+
       totalInvoices: 0,
       invoices: [],
       loading: false,
@@ -159,7 +167,6 @@ export default {
         offset: 0,
         limit: 5,
         status: ["Issued", "Disputed", "Paid"]
-        // order_by: ["date_created:desc"]
       };
 
       const responseCount = await app.$axios.get(
@@ -195,6 +202,10 @@ export default {
   },
   mounted() {
     this.$socket.on(
+      "Practice Notification Locum Invoice Created",
+      this.getLocumInvoiceRealTime
+    );
+    this.$socket.on(
       "Practice Notification Locum Invoice Paid",
       this.getLocumInvoiceRealTime
     );
@@ -207,6 +218,14 @@ export default {
     this.removeListener();
   },
   methods: {
+    async refreshInvoices() {
+      this.loading = true;
+      this.$store.commit("billing/CLEAR_PRACTICE_BILLING_NOTIFICATION");
+      await this.getInvoicesCount(this.params);
+      await this.getInvoices(this.params);
+      this.loading = false;
+      this.showRefresh = false;
+    },
     updateInvoice(invoice) {
       let index = this.invoices.findIndex(item => item.id == invoice.id);
       if (index >= 0) {
@@ -217,19 +236,24 @@ export default {
       if (!id) {
         return;
       }
-      if (this.invoices.map(invoice => invoice.id).includes(id)) {
-        // update
-        this.$axios.$get(`/api/v1/practice/locum-invoices/${id}`).then(res => {
-          let index = this.invoices.findIndex(
-            invoice => invoice.id == res.data.locum_invoice.id
-          );
-          if (index >= 0) {
-            this.invoices.splice(index, 1, res.data.locum_invoice);
-          }
-        });
-      }
+      this.showRefresh = true;
+      // if (this.invoices.map(invoice => invoice.id).includes(id)) {
+      //   // update
+      //   this.$axios.$get(`/api/v1/practice/locum-invoices/${id}`).then(res => {
+      //     let index = this.invoices.findIndex(
+      //       invoice => invoice.id == res.data.locum_invoice.id
+      //     );
+      //     if (index >= 0) {
+      //       this.invoices.splice(index, 1, res.data.locum_invoice);
+      //     }
+      //   });
+      // }
     },
     removeListener() {
+      this.$socket.removeListener(
+        "Practice Notification Locum Invoice Created",
+        this.getLocumInvoiceRealTime
+      );
       this.$socket.removeListener(
         "Practice Notification Locum Invoice Paid",
         this.getLocumInvoiceRealTime
@@ -240,15 +264,22 @@ export default {
       );
     },
     getInvoicesCount(params) {
+      this.loading = true;
       this.$axios
         .$get(`/api/v1/practice/locum-invoices/count`, { params })
         .then(res => {
           this.totalInvoices = res.data.count;
           this.getInvoices(this.params);
+        })
+        .catch(err => {
+          this.loading = false;
+          console.log(err);
+        })
+        .finally(() => {
+          return;
         });
     },
     getInvoices(params) {
-      this.loading = true;
       this.$axios
         .$get(`/api/v1/practice/locum-invoices`, { params })
         .then(res => {
@@ -260,11 +291,11 @@ export default {
         })
         .catch(err => {
           console.log(err);
+        })
+        .finally(() => {
           this.loading = false;
+          return;
         });
-    },
-    closePaymentModal() {
-      this.paymentModal = false;
     },
     onClick(invoice, index) {
       if (invoice.paid || invoice.disputed_items_count > 0) {
@@ -275,6 +306,9 @@ export default {
       this.paymentModal = true;
       this.selectedInvoiceId = invoice.id;
     },
+    closePaymentModal() {
+      this.paymentModal = false;
+    },
     confirmPayment() {
       this.Validate(this.form);
       if (!this.formError.length) {
@@ -284,7 +318,6 @@ export default {
             this.form
           )
           .then(res => {
-            console.log(res);
             let index = this.invoices.findIndex(
               invoice => invoice.id == res.data.locum_invoice.id
             );

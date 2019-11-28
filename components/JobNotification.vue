@@ -3,7 +3,7 @@
     <transition-group name="drop" mode="out-in">
       <template v-for="notification in notifications">
         <div
-          @click="goTo(notification.id, notification.status ? notification.status : notification.locum_status)"
+          @click="goTo(notification.type, notification.id, notification.status ? notification.status : notification.locum_status)"
           :key="`${notification.id}-${notification.notification_type}`"
           class="relative mx-1 my-2 p-3 flex flex-wrap bg-gray-100 hover:bg-gray-200 rounded-lg shadow-md text-xs md:text-sm"
         >
@@ -19,7 +19,7 @@
                 :class="bgStatus(notification.status ? notification.status : notification.locum_status)"
               >{{notification.status ? notification.status.toUpperCase() : notification.locum_status.toUpperCase()}}</div>
             </div>
-            <div class="flex justify-between items-center my-1 w-full">
+            <!-- <div class="flex justify-between items-center my-1 w-full">
               <div>From</div>
               <div>{{notification.date_start}}</div>
             </div>
@@ -34,7 +34,7 @@
             <div class="flex justify-between items-center my-1 w-full">
               <div>Shift</div>
               <div>{{notification.shift}}</div>
-            </div>
+            </div>-->
             <div>
               <div class="font-semibold">{{notification.message}}</div>
             </div>
@@ -42,61 +42,58 @@
         </div>
       </template>
       <template v-for="billingNotification in billingNotifications">
-        <nuxt-link
-          :to="billingNotification.url"
+        <div
+          @click="goTo(billingNotification.type, billingNotification.id)"
           :key="`${billingNotification.id}-${billingNotification.notification_type}`"
+          class="relative mx-1 my-2 p-3 flex flex-wrap bg-gray-100 hover:bg-gray-200 rounded-lg shadow-md"
         >
-          <div
-            class="relative mx-1 my-2 p-3 flex flex-wrap bg-gray-100 hover:bg-gray-200 rounded-lg shadow-md"
-          >
-            <span
-              class="absolute top-0 right-0 cursor-pointer px-2 rounded-full text-lg font-bold"
-              @click.prevent.stop="close(billingNotification.id)"
-            >x</span>
-            <div class="flex flex-wrap mt-3 w-48 md:w-64">
-              <div class="flex flex-wrap justify-between items-center my-1 w-full">
-                <div class="font-bold text-lg">{{billingNotification.invoice_number}}</div>
-                <div
-                  class="px-2 py-1 text-sm font-bold rounded-lg max-w-sm cursor-pointer"
-                  :class="bgStatus(billingNotification.status)"
-                >{{billingNotification.status.toUpperCase()}}</div>
-              </div>
-              <div class="flex justify-between items-center my-1 w-full">
-                <div>From</div>
-                <div class="text-right">{{billingNotification.date_start}}</div>
-              </div>
-              <div class="flex justify-between items-center my-1 w-full">
-                <div>To</div>
-                <div class="text-right">{{billingNotification.date_end}}</div>
-              </div>
-              <div class="flex justify-between items-center my-1 w-full">
-                <div>Issued At</div>
-                <div class="text-right">{{billingNotification.issued_at | localDate}}</div>
-              </div>
-              <div class="flex justify-between items-center my-1 w-full">
-                <div>Paid At</div>
-                <div class="text-right">{{billingNotification.paid_at | localDate}}</div>
-              </div>
+          <span
+            class="absolute top-0 right-0 cursor-pointer px-2 rounded-full text-lg font-bold"
+            @click.prevent.stop="close(billingNotification.id)"
+          >x</span>
+          <div class="flex flex-wrap mt-3 w-48 md:w-64">
+            <div class="flex flex-wrap justify-between items-center my-1 w-full">
+              <div class="font-bold text-lg">{{billingNotification.invoice_number}}</div>
               <div
-                class="flex justify-between items-center my-1 w-full"
-                v-if="billingNotification.locum_user"
-              >
-                <div>Locum</div>
-                <div class="text-right">{{billingNotification.locum_user}}</div>
-              </div>
-              <div
-                class="flex justify-between items-center my-1 w-full"
-                v-if="billingNotification.practice"
-              >
-                <div>Practice</div>
-                <div class="text-right">{{billingNotification.practice}}</div>
-              </div>
-              <div>
-                <div class="font-semibold">{{billingNotification.message}}</div>
-              </div>
+                class="px-2 py-1 text-sm font-bold rounded-lg max-w-sm cursor-pointer"
+                :class="bgStatus(billingNotification.status)"
+              >{{billingNotification.status.toUpperCase()}}</div>
+            </div>
+            <!-- <div class="flex justify-between items-center my-1 w-full">
+              <div>From</div>
+              <div class="text-right">{{billingNotification.date_start}}</div>
+            </div>
+            <div class="flex justify-between items-center my-1 w-full">
+              <div>To</div>
+              <div class="text-right">{{billingNotification.date_end}}</div>
+            </div>
+            <div class="flex justify-between items-center my-1 w-full">
+              <div>Issued At</div>
+              <div class="text-right">{{billingNotification.issued_at | localDate}}</div>
+            </div>
+            <div class="flex justify-between items-center my-1 w-full">
+              <div>Paid At</div>
+              <div class="text-right">{{billingNotification.paid_at | localDate}}</div>
+            </div>
+            <div
+              class="flex justify-between items-center my-1 w-full"
+              v-if="billingNotification.locum_user"
+            >
+              <div>Locum</div>
+              <div class="text-right">{{billingNotification.locum_user}}</div>
+            </div>
+            <div
+              class="flex justify-between items-center my-1 w-full"
+              v-if="billingNotification.practice"
+            >
+              <div>Practice</div>
+              <div class="text-right">{{billingNotification.practice}}</div>
+            </div>-->
+            <div>
+              <div class="font-semibold">{{billingNotification.message}}</div>
             </div>
           </div>
-        </nuxt-link>
+        </div>
       </template>
     </transition-group>
   </div>
@@ -145,11 +142,6 @@ export default {
         path: this.$route.matched[0].path
       });
     },
-    urlPush() {
-      return this.$router.push({
-        path: `/sessions`
-      });
-    },
     show(id) {
       return this.$router.push({
         path: `${this.url}/${id}`
@@ -160,34 +152,54 @@ export default {
         path: `${this.url}/${id}`
       });
     },
-    async goTo(id, status) {
+    async goTo(type, id, status) {
       this.$store.commit("calendar/CREATE_JOB_MODAL", false);
-      let path = `${this.url}/${id}`;
-      let routeStatus = status === "Terminated" ? "Completed" : status;
 
-      if (this.$route.path === path) {
+      let url = "";
+
+      if (type === "Jobs") {
+        url = this.$auth.user.domain === "Practice" ? "/sessions" : "/jobs";
+      } else if (type === "Billings") {
+        url =
+          this.$auth.user.domain === "Practice"
+            ? "/practice-billing/invoices-from-locums"
+            : "/locum-billing/invoices";
+      }
+
+      let path = `${url}/${id}`;
+
+      if (type === "Jobs") {
+        let routeStatus = "";
+
+        if (status === "Terminated") {
+          routeStatus = "Completed";
+        } else if (status === "Updated") {
+          routeStatus = null;
+        } else if (!["Terminated", "Updated"].includes(status)) {
+          routeStatus = status;
+        }
+
         this.$router.push({
-          path: `${this.url}`,
+          path: `${url}`,
           query: { ...this.$route.query, status: routeStatus }
         });
         setTimeout(() => {
           this.$router.push({
-            path: `${this.url}/${id}`,
+            path: `${url}/${id}`,
             query: { ...this.$route.query, status: routeStatus }
           });
         }, 500);
-      } else if (this.$route.path !== path) {
+      } else if (type === "Billings") {
         this.$router.push({
-          path: `${this.url}`,
-          query: { ...this.$route.query, status: routeStatus }
+          path: `${url}`
         });
         setTimeout(() => {
           this.$router.push({
-            path: `${this.url}/${id}`,
-            query: { ...this.$route.query, status: routeStatus }
+            path: `${url}/${id}`
           });
         }, 500);
       }
+
       this.close(id);
     },
     close(id) {
@@ -203,6 +215,7 @@ export default {
         case "Live":
         case "Available":
         case "Matched":
+        case "Draft":
           return "bg-yellow-500";
           break;
         case "Applied":

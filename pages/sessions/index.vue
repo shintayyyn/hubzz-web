@@ -762,6 +762,10 @@ export default {
       this.getDeclinedJobsRealTime
     );
     this.$socket.on(
+      "Practice Notification Job Auto Declined",
+      this.getAutoDeclinedJobsRealTime
+    );
+    this.$socket.on(
       "Practice Notification Job Update Accept",
       this.getUpdateAcceptJobsRealTime
     );
@@ -1049,6 +1053,18 @@ export default {
         this.showRefresh = true;
       }
     },
+    async getAutoDeclinedJobsRealTime(job) {
+      if (!job) {
+        return;
+      }
+      if (
+        this.$route.path.includes("/sessions") &&
+        (this.$route.query.status === "Declined" ||
+          this.$route.query.status === "Allocated")
+      ) {
+        this.showRefresh = true;
+      }
+    },
     async getUpdateAcceptJobsRealTime(job) {
       if (!job) {
         return;
@@ -1122,6 +1138,10 @@ export default {
       this.$socket.removeListener(
         "Practice Notification Job Declined",
         this.getDeclinedJobsRealTime
+      );
+      this.$socket.removeListener(
+        "Practice Notification Job Auto Declined",
+        this.getAutoDeclinedJobsRealTime
       );
       this.$socket.removeListener(
         "Practice Notification Job Update Accept",

@@ -4,10 +4,12 @@
     <div class="flex flex-col md:flex-row justify-between">
       <div class="flex flex-wrap items-center">
         <div
+          v-if="allApproved"
           class="save-button text-xs sm:text-sm px-4 py-2 border-2 rounded-lg font-bold flex items-center my-1 md:my-0 mr-1 md:mr-2"
           @click="save(false)"
         >Save changes</div>
         <div
+          v-if="allApproved"
           class="save-button text-xs sm:text-sm px-4 py-2 border-2 rounded-lg font-bold flex items-center my-1 md:my-0 mr-1 md:mr-2"
           @click="save(true)"
         >Save and archive as final</div>
@@ -474,6 +476,12 @@ export default {
       return this.selectedInvoice && this.selectedInvoice.issued_at
         ? this.selectedInvoice.issued_at
         : null;
+    },
+    allApproved() {
+      return (
+        this.selectedInvoice.items.filter(invoice => invoice.approved === false)
+          .length > 0
+      );
     }
   },
   watch: {

@@ -48,6 +48,9 @@ export default {
                 case 'Practice Notification Job Declined':
                     message = 'The locum leave this job.'
                     break;
+                case 'Practice Notification Job Auto Declined':
+                    message = 'The locum has been removed due to not accepting your latest changes on this job.'
+                    break;
                 case 'Practice Notification Job Update Accept':
                     message = 'The locum accepted your changes on this job.'
                     break;
@@ -80,6 +83,7 @@ export default {
                 rate: notif.rate ? notif.rate : notif.job.rate,
                 locum_detail_rate_type: notif.locum_detail_rate_type ? notif.locum_detail_rate_type.name : notif.job.locum_detail_rate_type.name,
                 notification_type: notif.notificationType,
+                type: 'Jobs',
                 message
             }
             notifications.push(notifObj)
@@ -495,6 +499,9 @@ export default {
                 case 'Locum Notification Job Declined':
                     message = 'You successfully leave this job.'
                     break;
+                case 'Locum Notification Job Auto Declined':
+                    message = 'You have been removed to this job due to not accepting the latest changes.'
+                    break;
                 case 'Locum Notification Job Unqualified':
                     message = 'You are not qualified anymore on this job.'
                     break;
@@ -509,6 +516,7 @@ export default {
                 rate: notif.rate ? notif.rate : notif.job.rate,
                 locum_detail_rate_type: notif.locum_detail_rate_type ? notif.locum_detail_rate_type.name : notif.job.locum_detail_rate_type.name,
                 notification_type: notif.notificationType,
+                type: 'Jobs',
                 message
             }
             notifications.push(notifObj)
