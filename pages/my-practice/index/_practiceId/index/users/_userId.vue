@@ -1,6 +1,6 @@
 <template>
   <div class="modal-container shadow-lg">
-    <div class="p-4 md:p-8 max-w-3xl">
+    <div class="flex flex-col items-start p-4 md:p-8 max-w-3xl">
       <nuxt-link
         :to="{ path: `/my-practice/${$route.params.practiceId}/users`, query: {...$route.query}}"
         class="cursor-pointer"

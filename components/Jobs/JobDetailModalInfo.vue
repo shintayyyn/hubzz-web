@@ -1,5 +1,5 @@
 <template>
-  <div class="rounded-lg shadow-lg p-4 md:p-8">
+  <div class="bg-white rounded-lg shadow-lg p-4 md:p-8">
     <div class="flex flex-row flex-wrap justify-between">
       <div class="flex flex-col w-full md:w-1/2 p-0 md:pr-4">
         <div class="font-bold text-sm sm:text-md">Job number</div>
@@ -33,7 +33,7 @@
           class="text-xs sm:text-sm mb-6"
           v-text="job.platform_job.email?job.platform_job.email:`(none)`"
         ></div>
-        <template v-if="job.status === 'Cancelled'">
+        <template v-if="job.locum_status === 'Cancelled'">
           <div class="font-bold text-sm sm:text-md">Cancelled At</div>
           <div class="text-xs sm:text-sm mb-6">{{job.platform_job.cancelled_at | localDate}}</div>
           <div class="font-bold text-sm sm:text-md">Cancelled By</div>

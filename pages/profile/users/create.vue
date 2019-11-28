@@ -1,8 +1,8 @@
 <template>
 	<div class="modal-container bg-white shadow-lg">
 		<div class="p-4 md:p-8">
-			<div @click="$router.push('/profile/users')" class="cursor-pointer">
-				<svgicon name="left-arrow" height="32" width="32" />
+			<div>
+				<svgicon name="left-arrow" height="32" width="32" @click="$router.push('/profile/users')" class="cursor-pointer"/>
 			</div>
 			<div class="flex flex-col mt-4">
 				<div class="font-bold text-lg">Create User</div>

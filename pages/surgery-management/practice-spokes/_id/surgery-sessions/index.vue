@@ -436,7 +436,6 @@ export default {
       const response = await app.$axios.get(
         `/api/v1/practice/me/practice-surgeries/${route.params.id}`
       );
-      console.log("response", response);
       const spokeSurgeryId =
         response.data &&
         response.data.data &&

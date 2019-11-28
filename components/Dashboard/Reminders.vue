@@ -23,7 +23,7 @@
 							/>
 						</span>
 						<span
-							class="h-full w-4/5 flex flex-col justify-center p-4 bg-gray-100 rounded-r-lg"
+							class="h-full w-4/5 flex flex-col justify-center p-4 bg-gray-100 hover:bg-gray-200 transition-hover rounded-r-lg"
 						>
 							<p class="capitalize font-bold">
 								{{ item.route.slice(1).replace(/_/g, " ") }}
@@ -52,6 +52,7 @@ export default {
 						route: "/contact-us"
 					});
 				} else {
+					
 					// Email
 					if (!res.data.user.email_verified_at) {
 						this.reminders.push({
@@ -193,9 +194,8 @@ export default {
 					}
 				}
 			}
-
 			if (res.data.user.domain === "Practice") {
-				if (res.data.user.status !== "Active") {
+				if (res.data.user.status !== 'Active' || res.data.user.practice_detail.practice.status !== "Active") {
 					this.reminders.push({
 						label:
 							"Please complete the Practice Verification Steps in order to have a complete access in the platform",

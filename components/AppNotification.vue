@@ -59,10 +59,8 @@ export default {
           return "bg-yellow-400";
           break;
         case "info":
-          return "bg-blue-500 text-white";
-          break;
         case "message":
-          return "bg-blue-500 text-white";
+          return "bg-blue-400 text-white";
           break;
         default:
           return "bg-white";

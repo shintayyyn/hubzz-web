@@ -1,10 +1,11 @@
 <template>
-  <div class="rounded-lg shadow-lg p-4 md:p-8 mt-8">
+  <div class="bg-white rounded-lg shadow-lg p-4 md:p-8 mt-8">
     <div class="text-base font-bold mb-4">You can unassign from this job</div>
     <div
       class="text-sm text-gray-700"
     >Cancellation should be at least be 72 hours before the start of the job.</div>
     <AppInput
+      :ref="'unassignTextArea'"
       v-model="form.declined_reason"
       :type="'textarea'"
       :name="'declined_reason'"
@@ -40,21 +41,19 @@ export default {
         this.$axios
           .$post(`/api/v1/locum/jobs/${this.job.id}/decline`, this.form)
           .then(res => {
+            this.$store.commit(
+              "jobs/REMOVE_LOCUM_ALLOCATED_JOB",
+              res.data.job.id
+            );
+            this.job.job_parts.forEach(({ id }) => {
+              this.$store.commit("jobs/REMOVE_LOCUM_ALLOCATED_JOB_PART", id);
+            });
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
               text: ["Declined"]
             });
-            if (
-              this.$route.path.includes("/jobs") ||
-              this.$route.path.includes("/dashboard")
-            ) {
-              this.$store.commit(
-                "jobs/REMOVE_LOCUM_ALLOCATED_JOB",
-                res.data.job.id
-              );
-            }
-            this.$emit("close");
+            this.$emit("unassign");
           })
           .catch(err => {
             err.response.data.error_messages.forEach(error => {

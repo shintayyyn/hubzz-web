@@ -4,7 +4,7 @@
 			@click="$router.push('/surgery-management/practice-hub')"
 			class="mb-2 cursor-pointer"
 		>
-			<svgicon name="left-arrow" height="32" width="32" />
+			<svgicon name="left-arrow" height="32" width="32" @click="$router.push('/profile/practice-hub')" class="cursor-pointer"/>
 		</div>
 		<div class="my-2">
 			<div class="text-lg font-semibold">
@@ -12,67 +12,67 @@
 			</div>
 		</div>
 
-		<div class="flex flex-col md:flex-row">
-			<!-- Practice Hub -->
-			<div class="w-full md:w-1/2 shadow-lg rounded-lg md:mr-4">
-				<div class="p-4">
-					<div class="font-semibold mt-2">Contact Number</div>
-					<div>
-						{{
-							specificPracticeHub.phone_number
-								? specificPracticeHub.phone_number
-								: "N/A"
-						}}
-					</div>
+	<div class="flex flex-col md:flex-row">
+		<!-- Practice Hub -->
+		<div class="w-full md:w-1/2 shadow-lg rounded-lg md:mr-4">
+			<div class="p-4">
+				<div class="font-semibold mt-2">Contact Number</div>
+				<div>
+					{{
+						specificPracticeHub.phone_number
+							? specificPracticeHub.phone_number
+							: "N/A"
+					}}
+				</div>
 
-					<div class="font-semibold mt-2">E-Mail Address</div>
-					<div>
-						{{ specificPracticeHub.email ? specificPracticeHub.email : "N/A" }}
-					</div>
+				<div class="font-semibold mt-2">E-Mail Address</div>
+				<div>
+					{{ specificPracticeHub.email ? specificPracticeHub.email : "N/A" }}
+				</div>
 
-					<div class="font-semibold mt-2">Report To</div>
-					<div>
-						{{
-							specificPracticeHub.report_to
-								? specificPracticeHub.report_to
-								: "N/A"
-						}}
-					</div>
+				<div class="font-semibold mt-2">Report To</div>
+				<div>
+					{{
+						specificPracticeHub.report_to
+							? specificPracticeHub.report_to
+							: "N/A"
+					}}
+				</div>
 
-					<div class="font-semibold mt-2">Address</div>
-					<div>
-						{{
-							specificPracticeHub.surgery.address.line_1
-								? specificPracticeHub.surgery.address.line_1
-								: "N/A"
-						}}
-					</div>
-					<div>
-						{{
-							specificPracticeHub.surgery.address.line_2
-								? specificPracticeHub.surgery.address.line_2
-								: "N/A"
-						}}
-					</div>
-					<div>
-						{{
-							specificPracticeHub.surgery.address.line_3
-								? specificPracticeHub.surgery.address.line_3
-								: "N/A"
-						}}
-					</div>
-					<div>
-						{{
-							specificPracticeHub.surgery.address.post_code
-								? specificPracticeHub.surgery.address.post_code
-								: "N/A"
-						}}
-					</div>
+				<div class="font-semibold mt-2">Address</div>
+				<div>
+					{{
+						specificPracticeHub.surgery.address.line_1
+							? specificPracticeHub.surgery.address.line_1
+							: "N/A"
+					}}
+				</div>
+				<div>
+					{{
+						specificPracticeHub.surgery.address.line_2
+							? specificPracticeHub.surgery.address.line_2
+							: "N/A"
+					}}
+				</div>
+				<div>
+					{{
+						specificPracticeHub.surgery.address.line_3
+							? specificPracticeHub.surgery.address.line_3
+							: "N/A"
+					}}
+				</div>
+				<div>
+					{{
+						specificPracticeHub.surgery.address.post_code
+							? specificPracticeHub.surgery.address.post_code
+							: "N/A"
+					}}
 				</div>
 			</div>
+		</div>
 
       <!-- Permissions -->
-      <div class="m-6 shadow-lg rounded-lg">
+      <div class="w-full md:w-1/2 shadow-lg rounded-lg">
         <div class="p-4">
           <div class="m-2 text-lg font-semibold">
             Permissions
@@ -105,22 +105,22 @@
           </div>
         </div>
       </div>
+    </div>
 
       <!-- Buttons -->
-      <div class="flex m-6">
-        <div @click="acceptInvitation()" class="flex mx-4 p-4 px-8 cursor-pointer rounded-lg bg-green-500">
+      <div class="flex my-6">
+        <div @click="acceptInvitation()" class="flex mr-2 p-4 px-8 cursor-pointer rounded-lg bg-green-500 hover:bg-green-600">
           <div class="text-white font-semibold">
             Accept
           </div>
           
         </div>
-        <div @click="rejectInvitation()" class="flex mx-4 p-4 px-8 cursor-pointer rounded-lg bg-red-500">
+        <div @click="rejectInvitation()" class="flex p-4 px-8 cursor-pointer rounded-lg bg-red-500 hover:bg-red-600">
           <div class="text-white font-semibold">
             Reject
           </div>
         </div>
       </div>
-    </div>
   </div>
 </template>
 
@@ -206,8 +206,5 @@ export default {
 	.modal-container {
 		width: 70%;
 	}
-}
-.shield {
-	z-index: 509;
 }
 </style>

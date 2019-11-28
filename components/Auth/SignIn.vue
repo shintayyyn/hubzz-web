@@ -1,5 +1,5 @@
 <template>
-  <div class="rounded-lg shadow-lg p-4 md:p-8">
+  <div class="bg-white rounded-lg shadow-lg p-4 md:p-8">
     <div class="w-full flex flex-col">
       <AppInput
         v-model="form.email"
@@ -10,17 +10,8 @@
         :error="formError.find(item => item.field === 'email')"
         @submit="login"
       />
-      <!-- <AppInput
-        v-model="form.password"
-        :type="'password'"
-        :name="'password'"
-        :label="'Password'"
-        :placeholder="''"
-        :error="formError.find(item => item.field === 'password')"
-        @submit="login"
-      />-->
       <div class="flex flex-col">
-        <label class="text-sm">Password</label>
+        <label class="text-xs md:text-sm">Password</label>
         <div class="w-full relative">
           <input
             v-model="form.password"
@@ -28,7 +19,7 @@
             :error="formError.find(item => item.field === 'password')"
             @submit="login"
             @keyup.enter="login"
-            class="w-full py-4 border-b-2 focus:border-yellow-400 focus:outline-none"
+            class="w-full py-3 border-b-2 focus:border-yellow-400 focus:outline-none text-xs md:text-sm"
             :class="formError.length > 0 ? 'border-red-500' : ''"
           />
           <button

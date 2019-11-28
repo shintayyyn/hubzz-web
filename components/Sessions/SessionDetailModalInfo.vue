@@ -1,5 +1,5 @@
 <template>
-  <div class="rounded-lg shadow-lg p-4 md:p-8 mt-4">
+  <div class="bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4">
     <div class="flex flex-row flex-wrap">
       <div class="flex flex-col w-full md:w-1/2 p-0 md:pr-4">
         <div class="font-bold text-sm sm:text-md">Job number</div>
@@ -36,8 +36,8 @@
       </div>
       <div class="flex flex-col w-full md:w-1/2 p-0 md:pl-4">
         <div class="font-bold text-sm sm:text-md">Duration</div>
-        <div class="text-xs sm:text-sm">From {{job.date_start}}</div>
-        <div class="text-xs sm:text-sm my-2">To {{job.date_end}}</div>
+        <div class="text-xs sm:text-sm" v-text="`From ${job.date_start} | ${job.time_start}`"></div>
+        <div class="text-xs sm:text-sm" v-text="`To ${job.date_end} | ${job.time_end}`"></div>
         <div class="text-xs sm:text-sm mb-4">Shift {{job.shift.name}}</div>
         <div class="font-bold text-sm sm:text-md">Total Hours</div>
         <div class="text-xs sm:text-sm mb-4">{{job.total_hours}}</div>
