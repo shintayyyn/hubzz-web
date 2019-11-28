@@ -1,5 +1,11 @@
 <template>
   <section class="relative">
+    <AppButton
+      v-if="showRefresh"
+      :label="'Refresh'"
+      @click="refreshInvoices"
+      :inStyle="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
+    />
     <AppTable
       v-if="invoices.length > 0"
       :total="totalInvoices"
@@ -89,6 +95,8 @@ export default {
   },
   data() {
     return {
+      showRefresh: false,
+
       totalInvoice: 0,
       invoices: [],
       loading: false,
@@ -163,7 +171,6 @@ export default {
       const params = {
         offset: 0,
         limit: 5
-        // order_by: "date_created:desc"
       };
       const response = await app.$axios.get("/api/v1/locum/locum-invoices", {
         params
@@ -195,6 +202,10 @@ export default {
   },
   mounted() {
     this.$socket.on(
+      "Locum Notification Locum Invoice Created",
+      this.getLocumInvoiceRealTime
+    );
+    this.$socket.on(
       "Locum Notification Locum Invoice Paid",
       this.getLocumInvoiceRealTime
     );
@@ -207,6 +218,14 @@ export default {
     this.removeListener();
   },
   methods: {
+    async refreshInvoices() {
+      this.loading = true;
+      this.$store.commit("billing/CLEAR_LOCUM_BILLING_NOTIFICATION");
+      await this.getInvoicesCount(this.params);
+      await this.getInvoices(this.params);
+      this.loading = false;
+      this.showRefresh = false;
+    },
     updateInvoice(invoice) {
       let index = this.invoices.findIndex(item => item.id == invoice.id);
       if (index >= 0) {
@@ -217,19 +236,13 @@ export default {
       if (!id) {
         return;
       }
-      if (this.invoices.map(invoice => invoice.id).includes(id)) {
-        // update
-        this.$axios.$get(`/api/v1/locum/locum-invoices/${id}`).then(res => {
-          let index = this.invoices.findIndex(
-            invoice => invoice.id == res.data.locum_invoice.id
-          );
-          if (index >= 0) {
-            this.invoices.splice(index, 1, res.data.locum_invoice);
-          }
-        });
-      }
+      this.showRefresh = true;
     },
     removeListener() {
+      this.$socket.removeListener(
+        "Locum Notification Locum Invoice Create",
+        this.getLocumInvoiceRealTime
+      );
       this.$socket.removeListener(
         "Locum Notification Locum Invoice Paid",
         this.getLocumInvoiceRealTime
@@ -245,20 +258,26 @@ export default {
       } else if (this.paymentModal) {
         this.paymentModal = false;
       } else {
-        // this.$router.go(-1);
         this.$router.push("/locum-billing/invoices");
       }
     },
     getInvoicesCount(params) {
+      this.loading = true;
       this.$axios
         .$get(`/api/v1/locum/locum-invoices/count`, { params })
         .then(res => {
           this.totalInvoices = res.data.count;
           this.getInvoices(this.params);
+        })
+        .catch(err => {
+          this.loading = false;
+          console.log(err);
+        })
+        .finally(() => {
+          return;
         });
     },
     getInvoices(params) {
-      this.loading = true;
       this.$axios
         .$get(`/api/v1/locum/locum-invoices`, { params })
         .then(res => {
@@ -270,8 +289,10 @@ export default {
         })
         .catch(err => {
           console.log(err);
-          this.selectedInvoiceId = null;
+        })
+        .finally(() => {
           this.loading = false;
+          return;
         });
     },
     onClick(invoice) {
@@ -332,7 +353,6 @@ export default {
     addInvoice(invoice) {
       this.invoices.unshift(invoice);
     },
-
     sorted(order_by) {
       this.current_page = 1;
       this.params.offset = 0;
@@ -358,13 +378,6 @@ export default {
 .shield {
   z-index: 511;
 }
-/* confirmation */
-.confirmation {
-  z-index: 600;
-}
-.confirmation-modal {
-  width: 100%;
-}
 .update-modal {
   position: fixed;
   background-color: white;
@@ -372,13 +385,5 @@ export default {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-}
-@media screen and (min-width: 991px) {
-  .confirmation-modal {
-    width: auto;
-  }
-}
-button:active {
-  transform: translate(2px, 2px);
 }
 </style>

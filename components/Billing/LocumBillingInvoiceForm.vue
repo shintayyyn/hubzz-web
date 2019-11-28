@@ -4,12 +4,13 @@
     <div class="flex flex-col md:flex-row justify-between">
       <div class="flex flex-wrap items-center">
         <div
-          class="text-xs sm:text-sm px-4 py-2 rounded-lg font-bold flex items-center my-1 md:my-0 mr-1 md:mr-2"
-          :class="!form ? 'bg-gray-400 text-gray-600':'save-button'"
+          v-if="allApproved"
+          class="save-button text-xs sm:text-sm px-4 py-2 border-2 rounded-lg font-bold flex items-center my-1 md:my-0 mr-1 md:mr-2"
           @click="save(false)"
         >Save changes</div>
         <div
-          class="save-button text-xs sm:text-sm px-4 py-2 rounded-lg font-bold flex items-center my-1 md:my-0 mr-1 md:mr-2"
+          v-if="allApproved"
+          class="save-button text-xs sm:text-sm px-4 py-2 border-2 rounded-lg font-bold flex items-center my-1 md:my-0 mr-1 md:mr-2"
           @click="save(true)"
         >Save and archive as final</div>
         <div
@@ -48,7 +49,9 @@
           <div>UTR {{$auth.user.locum_detail.invoice_detail && $auth.user.locum_detail.invoice_detail.utr_number ? $auth.user.locum_detail.invoice_detail.utr_number : null}}</div>
         </div>
         <div class="flex flex-wrap justify-between my-2">
-          <div class="w-full sm:w-1/2 order-2 sm:order-1 text-xs sm:text-sm text-left rounded-lg border-2 border-gray-300 p-2 w-2/3">
+          <div
+            class="w-full sm:w-1/2 order-2 sm:order-1 text-xs sm:text-sm text-left rounded-lg border-2 border-gray-300 p-2 w-2/3"
+          >
             <!-- TO ACCNTS -->
             <section>
               <div class="relative flex flex-col py-2" v-on-clickaway="toggledOffSurgeries">
@@ -188,16 +191,16 @@
             <div
               class="w-1/2 bg-gray-900 text-white px-4 py-1 font-semibold border-r-2 border-white"
             >Description</div>
-            <div class="w-1/2 bg-gray-900 text-white px-4 py-1 font-semibold flex justify-between">Total
+            <div class="w-1/2 bg-gray-900 text-white px-4 py-1 font-semibold flex justify-between">
+              Total
               <div class="bg-gray-900 flex items-center justify-end">
                 <span
                   v-if="type === 'Private' && hideToPrint"
                   class="cursor-pointer w-6 h-6 rounded-full bg-white text-gray-900 font-semibold text-xl flex justify-center items-center hover:bg-gray-200"
                   @click="addItem"
                 >+</span>
-              </div
-            ></div>
-            
+              </div>
+            </div>
           </div>
           <div
             :id="`invoice-item-${index}`"
@@ -216,9 +219,7 @@
                     class="w-full text-xs sm:text-sm resize-none border-b-2 border-gray-300 focus:border-yellow-500 focus:outline-none px-4 my-2"
                   ></textarea>
                 </div>
-                <div
-                  class="w-1/3 flex items-end px-1"
-                >
+                <div class="w-1/3 flex items-end px-1">
                   <input
                     type="number"
                     min="0"
@@ -231,8 +232,7 @@
               <template v-if="type === 'Platform'">
                 <div
                   class="w-1/2 text-xs sm:text-sm px-4 py-1 border-b-2 border-gray-300"
-                >{{item.description}}
-                </div>
+                >{{item.description}}</div>
                 <div
                   class="text-xs sm:text-sm border-b-2 border-gray-300 px-4 py-1 text-right"
                   :class="approvedInvoices.includes(item.job_part_id) ? 'w-1/2':'w-1/3'"
@@ -475,6 +475,12 @@ export default {
       return this.selectedInvoice && this.selectedInvoice.issued_at
         ? this.selectedInvoice.issued_at
         : null;
+    },
+    allApproved() {
+      return (
+        this.selectedInvoice.items.filter(invoice => invoice.approved === false)
+          .length > 0
+      );
     }
   },
   watch: {
@@ -554,7 +560,7 @@ export default {
   },
   methods: {
     async exportToPdf() {
-      this.hideToPrint = false
+      this.hideToPrint = false;
       this.loading = true;
       if (process.client) {
         document.body.style.cursor = "wait";
@@ -731,7 +737,7 @@ export default {
       yPosition = yPosition + imgHeightPdfFooter;
 
       doc.save("test.pdf");
-      this.hideToPrint = true
+      this.hideToPrint = true;
       this.loading = false;
 
       if (process.client) {
@@ -740,9 +746,9 @@ export default {
     },
     save(final) {
       this.formError = [];
-      if (!this.selectedSurgery){
-        this.formError.push({field: 'surgery_id', message: 'Select Surgery'})
-        return
+      if (!this.selectedSurgery) {
+        this.formError.push({ field: "surgery_id", message: "Select Surgery" });
+        return;
       }
       this.form.type = this.type;
       this.form.surgery_id = this.selectedSurgery.id;

@@ -33,7 +33,7 @@
       >Practice Documents</nuxt-link>
     </div>
     <div class="mt-2">
-      <nuxt-child @changeType="type = $event" />
+      <nuxt-child />
     </div>
     <AppConfirmationModal
       :label="'You\'ve been revoked to view this Page'"

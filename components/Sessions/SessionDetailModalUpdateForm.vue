@@ -441,7 +441,7 @@
         </div>
       </div>
       <div class="mb-8">
-        <AppButton :label="'Save changes'" :inStyle="'padding:8px'" @click="save" />
+        <AppButton :label="'Save changes'" :inStyle="'padding:8px'" @click="validateUpdate" />
       </div>
       <div class="flex flex-col">
         <div class="font-bold text-xs sm:text-sm">Practice</div>
@@ -461,6 +461,14 @@
         </div>
       </div>
     </div>
+    <AppConfirmationModal
+      :label="'You might lose some of your candidates that are not qualified to the changes you made'"
+      :confirmLabel="'Proceed'"
+      :cancelLabel="'Cancel'"
+      :modal="modal"
+      @confirm="save"
+      @cancel="modal = false"
+    />
   </div>
 </template>
 <script>
@@ -472,6 +480,7 @@ import AppTime from "@/components/Base/AppTime";
 import AppButton from "@/components/Base/AppButton";
 import AppFilterSearch from "@/components/Base/AppFilterSearch";
 import AppFormError from "@/components/Base/AppFormError";
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
 const session_requirements_lists = [
   { label: "Practice admin", value: "Practice admin" },
   { label: "Telephone triage", value: "Telephone triage" },
@@ -508,10 +517,13 @@ export default {
     AppTime,
     AppButton,
     AppFilterSearch,
-    AppFormError
+    AppFormError,
+    AppConfirmationModal
   },
   data() {
     return {
+      modal: false,
+
       professionCategoryId: "",
 
       practice_lists: [],
@@ -836,7 +848,16 @@ export default {
         id => id != value
       );
     },
+    validateUpdate() {
+      if (this.job.status === "Applied") {
+        this.modal = true;
+      } else if (this.job.status !== "Applied") {
+        this.save();
+      }
+    },
     save() {
+      this.modal = false;
+
       this.formError = [];
 
       let notRequired = [
