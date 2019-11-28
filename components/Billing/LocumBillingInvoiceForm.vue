@@ -4,16 +4,17 @@
     <div class="flex flex-col md:flex-row justify-between">
       <div class="flex flex-wrap items-center">
         <div
-          class="save-button text-xs sm:text-sm px-4 py-2 border-2 rounded-lg font-bold flex items-center my-1 md:my-0 mr-1 md:mr-2"
+          class="text-xs sm:text-sm px-4 py-2 rounded-lg font-bold flex items-center my-1 md:my-0 mr-1 md:mr-2"
+          :class="!form ? 'bg-gray-400 text-gray-600':'save-button'"
           @click="save(false)"
         >Save changes</div>
         <div
-          class="save-button text-xs sm:text-sm px-4 py-2 border-2 rounded-lg font-bold flex items-center my-1 md:my-0 mr-1 md:mr-2"
+          class="save-button text-xs sm:text-sm px-4 py-2 rounded-lg font-bold flex items-center my-1 md:my-0 mr-1 md:mr-2"
           @click="save(true)"
         >Save and archive as final</div>
         <div
           v-if="selectedInvoice"
-          class="save-button text-xs sm:text-sm px-4 py-2 border-2 rounded-lg font-bold flex items-center my-1 md:my-0"
+          class="save-button text-xs sm:text-sm px-4 py-2 rounded-lg font-bold flex items-center my-1 md:my-0"
           @click="exportToPdf()"
         >Export to PDF</div>
       </div>
@@ -759,14 +760,12 @@ export default {
             : false
         });
       });
-      console.log(this.form.items);
       this.Validate(this.form, ["final"]);
       if (!this.formError.length) {
         if (!this.$route.params.id) {
           this.$axios
             .$post(`/api/v1/locum/locum-invoices`, this.form)
             .then(res => {
-              console.log(res);
               this.$emit("addInvoice", res.data.invoice);
               this.$router.push("/locum-billing/invoices");
               this.$store.commit("SET_NOTIFICATION", {
@@ -776,7 +775,6 @@ export default {
               });
             })
             .catch(err => {
-              console.log("err", err.response.data);
               err.response.data.error_messages.forEach(error => {
                 this.formError.push(error);
               });
@@ -797,7 +795,6 @@ export default {
               this.$router.push("/locum-billing/invoices");
             })
             .catch(err => {
-              console.log("err", err.response.data);
               err.response.data.error_messages.forEach(error => {
                 this.formError.push(error);
               });

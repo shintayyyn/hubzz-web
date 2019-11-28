@@ -11,12 +11,17 @@
 			:columns="columns"
 			:orderBy="params.order_by"
 			:routerLink="'/surgery-management/practice-spokes'"
-			:statusClass="surgeryStatus()"
-			:status="getStatus()"
 			@pagechanged="pagechanged"
 			@limitchanged="limitchanged"
 			@sorted="sorted"
-		></AppTable> -->
+		></AppTable> 
+
+      <template v-slot:actions="slotProps">
+				<div class="flex items-center justify-center">
+          <div class="rounded-full px-6 py-1" :class="surgeryStatus()">{{ getStatus() }}</div>
+        </div>
+			</template>
+    -->
   </div>
 </template>
 

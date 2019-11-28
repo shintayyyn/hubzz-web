@@ -113,7 +113,7 @@
                 v-model="form.max_excess_hours"
                 :type="'number'"
                 :name="'max_excess_hours'"
-                :label="'Allow Spoke to Create Jobs/Sessions?'"
+                :label="'Set max excess hours rate limit for Spoke'"
                 :error="formError.find(item => item.field === 'max_excess_hours')"
                 :inStyle="'text-align:right'"
               />

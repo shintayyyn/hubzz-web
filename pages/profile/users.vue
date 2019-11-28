@@ -55,14 +55,14 @@
       @sorted="sorted"
     >
       <template v-slot:actions="slotProps">
-        <td v-if="slotProps.item.practice_detail.role.name !== 'Practice User Admin'">
+        <div v-if="slotProps.item.practice_detail.role.name !== 'Practice User Admin'">
           <div
             class="text-black font-semibold text-xs sm:text-sm text-center"
             @click.stop.prevent="toggleRemoveConfirmationModal(slotProps.item.id)"
           >
             X
           </div>
-        </td>
+        </div>
       </template>
     </AppTable>
     <div v-else class="flex justify-center py-4 text-gray-600">You do not have any other User on this Practice</div>

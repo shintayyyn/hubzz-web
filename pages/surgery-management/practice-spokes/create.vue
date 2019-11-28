@@ -10,8 +10,8 @@
     />
 
     <div class="p-4 md:p-8">
-      <div @click="$router.push('/profile/practice-spokes')" class="cursor-pointer">
-        <svgicon name="left-arrow" height="32" width="32" />
+      <div>
+        <svgicon name="left-arrow" height="32" width="32"  @click="$router.go(-1)" class="cursor-pointer"/>
       </div>
       <div class="flex justify-start font-bold text-sm sm:text-xl mt-8">Invite Spoke</div>
       <div class="relative bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4 max-w-5xl">
