@@ -12,7 +12,7 @@
           </div>
           <div class="py-2 px-3 my-1 md:my-0 rounded-lg text-sm bg-gray-300 leading-tight">Select all that apply</div>
         </div>
-        <div class="flex flex-row flex-wrap justify-around md:justify-between mt-5" :class="shifts_error && 'error'">
+        <div class="flex flex-row justify-around md:justify-between mt-5" :class="shifts_error && 'error'">
           <div
             class="relative border border-solid rounded-lg p-5 m-2 w-full sm:w-1/4 md:w-1/6 text-sm md:text-base text-center cursor-pointer"
             :class="selectedShifts.includes(item.id) ? 'bg-yellow-500 hover:bg-yellow-400': 'hover:bg-yellow-500'"

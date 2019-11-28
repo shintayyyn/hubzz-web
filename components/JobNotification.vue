@@ -57,7 +57,7 @@
                 :to="billingNotification.url"
                 :key="`${billingNotification.id}-${billingNotification.notification_type}`"
               >
-                <div class="relative mx-1 my-2 p-3 flex flex-wrap bg-gray-100 hover:bg-gray-200 rounded-lg shadow-md">
+                <div class="cards bg-blue-100 relative mx-1 my-2 p-3 flex flex-wrap bg-gray-100 hover:bg-gray-200 rounded-lg shadow-md text-xs md:text-sm opacity-75 hover:opacity-100 transition-hover cursor-pointer">
                   <span
                     class="absolute top-0 right-0 cursor-pointer py-2 px-4 rounded-full text-lg font-bold hover:text-gray-700"
                     @click.prevent.stop="close(billingNotification.id)"
@@ -65,7 +65,7 @@
                   <div class="flex flex-wrap w-48 md:w-64">
                     <div class="flex flex-col items-start my-1 w-full">
                       <div
-                        class="px-2 py-1 text-sm font-bold rounded-lg max-w-sm cursor-pointer"
+                        class="px-2 py-1 md:text-xs font-bold rounded-lg max-w-sm cursor-pointer"
                         :class="bgStatus(billingNotification.status)"
                       >{{billingNotification.status.toUpperCase()}}</div>
                       <div v-if="billingNotification.status !== 'Draft'" class="font-bold md:text-md leading-none mr-1 uppercase pt-4 truncate-title" style="-webkit-box-orient: vertical;">{{billingNotification.invoice_number}}</div>
@@ -139,6 +139,10 @@ export default {
     url() {
       return this.$auth.user.domain === "Practice" ? "/sessions" : "/jobs";
     },
+  },
+  created(){
+    console.log("notif", this.notifications)
+    console.log("billing notification", this.billingNotifications)
   },
   watch: {
     notify(value) {
