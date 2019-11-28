@@ -10,7 +10,7 @@
     />
 
     <div class="p-4 md:p-8">
-      <div @click="$router.push('/profile/practice-spokes')" class="cursor-pointer">
+      <div @click="$router.push('/surgery-management/practice-spokes')" class="cursor-pointer">
         <svgicon name="left-arrow" height="32" width="32" />
       </div>
       <div class="flex justify-start font-bold text-sm sm:text-xl mt-8">Invite Spoke</div>
@@ -46,14 +46,17 @@
           @click="select(item)"
         >
           <div class="flex flex-col justify-start text-xs xl:text-base">
-            <div class="font-bold">{{item.surgery.name}}</div>
-            <!-- <div
+            <div class="font-bold">
+              <span >{{item.surgery.name}}</span>
+              <span class="p-1 px-2 rounded-lg text-sm" :class="item.type == 'Spoke' ? 'bg-blue-400' : 'bg-purple-400'">{{item.type}}</span>
+            </div>
+            <div
               class="mt-4"
-            >{{item.address.line_1}}, {{item.address.line_2}}, {{item.address.line_3}}, {{item.address.post_code}}</div> -->
-            <!-- <div class="flex flex-row flex-no-wrap mt-1">
+            >{{item.surgery.address.line_1}}, {{item.surgery.address.line_2}}, {{item.surgery.address.line_3}}, {{item.surgery.address.post_code}}</div>
+            <div class="flex flex-row flex-no-wrap mt-1">
               <div class="rounded-lg bg-gray-300 py-1 px-2 mr-1">CCG</div>
-              <div class="flex items-center">{{item.clinical_commissioning_group.name}}</div>
-            </div> -->
+              <div class="flex items-center">{{item.surgery.clinical_commissioning_group ? item.surgery.clinical_commissioning_group.name : 'N/A'}}</div>
+            </div>
             <div class="flex flex-row flex-no-wrap mt-1">
               <div class="rounded-lg bg-gray-300 py-1 px-2 mr-1">Practice Code</div>
               <div class="flex items-center">{{item.surgery.code}}</div>
