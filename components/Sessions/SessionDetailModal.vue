@@ -4,10 +4,10 @@
       <svgicon name="left-arrow" height="32" width="32" />
     </div>
 
-    <div class="flex flex-row justify-start mt-4">
-      <div class="leading-loose font-bold text-md sm:text-lg">{{ job.title }}</div>
+    <div class="flex flex-wrap justify-start items-center mt-4">
+      <div class="leading-tight font-bold text-md sm:text-lg">{{ job.title }}</div>
       <div
-        class="mx-2 py-2 px-4 rounded font-semibold"
+        class="ml-2 py-2 px-4 rounded font-semibold"
         :class="bgStatus(job.status)"
       >{{ status(job.status) }}</div>
       <template v-if="authPermissions.includes('Update Sessions Job')">

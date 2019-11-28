@@ -32,109 +32,117 @@
         />
         <div
           v-if="!isJobPart"
-          class="flex-wrap justify-start items-center z-10 absolute w-full bg-white shadow-lg p-3 rounded-lg"
+          class="flex flex-col justify-start z-10 absolute w-full bg-white shadow-lg p-3 rounded-lg"
           :class="filterModal ? 'flex' : 'hidden'"
         >
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppInput
-              class="px-1"
-              v-model="params.job_number"
-              :type="'text'"
-              :name="'job_number'"
-              :label="'Job number'"
-            />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppAutoComplete
-              class="px-1"
-              v-model="params.surgery_id"
-              :name="'surgery_id'"
-              :label="'Surgery'"
-              :url="'/api/v1/locum/surgeries'"
-              :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem'"
-            />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppInput
-              class="px-1"
-              v-model="params.title"
-              :type="'text'"
-              :name="'title'"
-              :label="'Job Title'"
-            />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppInput
-              class="px-1"
-              v-model="params.shift_id"
-              :type="'select'"
-              :name="'shift_id'"
-              :label="'Shift'"
-              :items="shifts"
-            />
+          <div class="flex flex-col md:flex-row h-full w-full items-end">
+            <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
+              <AppInput
+                class="px-1"
+                v-model="params.job_number"
+                :type="'text'"
+                :name="'job_number'"
+                :label="'Job number'"
+              />
+            </div>
+            <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
+              <AppAutoComplete
+                class="px-1"
+                v-model="params.surgery_id"
+                :name="'surgery_id'"
+                :label="'Surgery'"
+                :url="'/api/v1/locum/surgeries'"
+                :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem'"
+              />
+            </div>
+            <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
+              <AppInput
+                class="px-1"
+                v-model="params.title"
+                :type="'text'"
+                :name="'title'"
+                :label="'Job Title'"
+              />
+            </div>
+            <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
+              <AppInput
+                class="px-1"
+                v-model="params.shift_id"
+                :type="'select'"
+                :name="'shift_id'"
+                :label="'Shift'"
+                :items="shifts"
+              />
+            </div>
           </div>
 
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppInput
-              class="px-1"
-              v-model="params.rate"
-              :type="'text'"
-              :name="'rate'"
-              :label="'Rate'"
-              :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
-            />
+          <div class="flex flex-col md:flex-row h-full w-full items-end">
+            <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
+              <AppInput
+                class="px-1"
+                v-model="params.rate"
+                :type="'text'"
+                :name="'rate'"
+                :label="'Rate'"
+                :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
+              />
+            </div>
+            <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
+              <AppInput
+                class="px-1"
+                v-model="params.rate_type_id"
+                :type="'select'"
+                :name="'rate_type_id'"
+                :label="'per'"
+                :items="rates"
+              />
+            </div>
+            <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
+              <AppPostCode
+                class="px-1"
+                v-model="params.near_post_code"
+                :name="'near_post_code'"
+                :label="'Post code'"
+                @onSelect="onSelect"
+              />
+            </div>
+            <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
+              <AppInput
+                class="px-1"
+                v-model="params.miles"
+                :type="'text'"
+                :name="'miles'"
+                :label="'Miles'"
+              />
+            </div>
           </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppInput
-              class="px-1"
-              v-model="params.rate_type_id"
-              :type="'select'"
-              :name="'rate_type_id'"
-              :label="'per'"
-              :items="rates"
-            />
+
+          <div class="flex flex-col md:flex-row h-full w-full items-end">
+            <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
+              <AppDate
+                v-model="params.calendar_date_start"
+                :name="'calendar_date_start'"
+                :label="'From'"
+                :format="'YYYY-MM-DD'"
+              />
+            </div>
+            <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
+              <AppTime v-model="params.time_start" :name="'time_start'" :label="'Start Time'" />
+            </div>
+            <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
+              <AppDate
+                v-model="params.calendar_date_end"
+                :name="'calendar_date_end'"
+                :label="'To'"
+                :format="'YYYY-MM-DD'"
+              />
+            </div>
+            <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
+              <AppTime v-model="params.time_end" :name="'time_end'" :label="'End Time'" />
+            </div>
           </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppPostCode
-              class="px-1"
-              v-model="params.near_post_code"
-              :name="'near_post_code'"
-              :label="'Post code'"
-              @onSelect="onSelect"
-            />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppInput
-              class="px-1"
-              v-model="params.miles"
-              :type="'text'"
-              :name="'miles'"
-              :label="'Miles'"
-            />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppDate
-              v-model="params.calendar_date_start"
-              :name="'calendar_date_start'"
-              :label="'From'"
-              :format="'YYYY-MM-DD'"
-            />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppTime v-model="params.time_start" :name="'time_start'" :label="'Start Time'" />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppDate
-              v-model="params.calendar_date_end"
-              :name="'calendar_date_end'"
-              :label="'To'"
-              :format="'YYYY-MM-DD'"
-            />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppTime v-model="params.time_end" :name="'time_end'" :label="'End Time'" />
-          </div>
-          <div class="md:px-1 flex w-full">
+
+          <div class="md:px-1 h-full flex w-full">
             <AppButton
               :label="'Clear'"
               @click="clearFilters"
@@ -156,9 +164,10 @@
         </div>
         <div
           v-if="isJobPart"
-          class="flex-wrap justify-start items-center z-10 absolute w-full bg-white shadow-lg p-3 rounded-lg"
+          class="flex flex-col justify-start z-10 absolute w-full bg-white shadow-lg p-3 rounded-lg"
           :class="filterModal ? 'flex' : 'hidden'"
         >
+        <div class="flex flex-col md:flex-row g-full items-end">
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
               class="px-1"
@@ -197,7 +206,9 @@
               :items="shifts"
             />
           </div>
+        </div>  
 
+        <div class="flex flex-col md:flex-row g-full items-end">
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
               class="px-1"
@@ -236,6 +247,9 @@
               :label="'Miles'"
             />
           </div>
+        </div>      
+          
+        <div class="flex flex-col md:flex-row g-full items-end">
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppDate
               v-model="jobPartParams.calendar_date_start"
@@ -258,6 +272,8 @@
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppTime v-model="jobPartParams.time_end" :name="'time_end'" :label="'End Time'" />
           </div>
+        </div>      
+          
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
               class="px-1"

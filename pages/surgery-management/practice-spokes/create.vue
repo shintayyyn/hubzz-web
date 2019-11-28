@@ -10,8 +10,8 @@
     />
 
     <div class="p-4 md:p-8">
-      <div @click="$router.push('/profile/practice-spokes')" class="cursor-pointer">
-        <svgicon name="left-arrow" height="32" width="32" />
+      <div>
+        <svgicon name="left-arrow" height="32" width="32"  @click="$router.go(-1)" class="cursor-pointer"/>
       </div>
       <div class="flex justify-start font-bold text-sm sm:text-xl mt-8">Invite Spoke</div>
       <div class="relative bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4 max-w-5xl">
@@ -161,7 +161,7 @@ export default {
             status: "success",
             text: [`${res.message}`]
            })
-          this.$router.push("/profile/practice-spokes");
+          this.$router.push("/surgery-management/practice-spokes");
         })
         .catch(err => {
           this.modal = false;
@@ -169,54 +169,6 @@ export default {
         })
       } 
     }
-    // add() {
-    //   if (this.type === "Hub") {
-    //     this.$axios
-    //       .$post(`/api/v1/practice/me/practice-surgeries`, {
-    //         surgery_id: this.selectedSpoke.id
-    //       })
-    //       .then(res => {
-    //         this.modal = false;
-    //         this.$emit("addSurgery", res.data.practice_surgery);
-    //         this.$store.commit("SET_NOTIFICATION", {
-    //           enabled: true,
-    //           status: "success",
-    //           text: [`${res.message}`]
-    //         });
-    //         this.$router.push("/profile/practice-spokes");
-    //       })
-    //       .catch(err => {
-    //         this.modal = false;
-    //         this.formError = err.response.data.error_messages;
-    //       });
-    //   } else if (this.type === "Spoke") {
-    //     this.$axios
-    //       .$post(`/api/v1/practice/me/parent-surgery`, {
-    //         surgery_id: this.selectedSpoke.id
-    //       })
-    //       .then(res => {
-    //         this.modal = false;
-    //         let surgery = {
-    //           id: res.data.practice.parent_surgery.id,
-    //           pay_for_surgery: res.data.practice.pay_for_surgery,
-    //           verify_job_creation: res.data.practice.verify_job_creation,
-    //           surgery: res.data.practice.parent_surgery
-    //         };
-    //         this.$store.commit("profile/ADD_SURGERY", surgery);
-    //         this.$emit("addSurgery", surgery);
-    //         this.$store.commit("SET_NOTIFICATION", {
-    //           enabled: true,
-    //           status: "success",
-    //           text: [`${res.message}`]
-    //         });
-    //         this.$router.push("/profile/practice-spokes");
-    //       })
-    //       .catch(err => {
-    //         this.modal = false;
-    //         this.formError = err.response.data.error_messages;
-    //       });
-    //   }
-    // }
   }
 };
 </script>

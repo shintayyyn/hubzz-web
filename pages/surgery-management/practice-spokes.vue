@@ -3,7 +3,7 @@
 		<div class="flex flex-col">
 			<div>
 				<nuxt-link
-					to="/profile/practice-spokes/create"
+					to="/surgery-management/practice-spokes/create"
 					class="inline-flex no-underline py-2 px-4 bg-yellow-500 text-sm font-semibold text-black hover:text-white rounded-lg shadow float-left"
 					>Invite Spoke</nuxt-link
 				>
@@ -19,25 +19,17 @@
 			:perPage="params.limit"
 			:columns="columns"
 			:orderBy="params.order_by"
-			:routerLink="'/profile/practice-spokes'"
-			:statusClass="surgeryStatus()"
-			:status="getStatus()"
+			:customWidth="700"
+			:routerLink="'/surgery-management/practice-spokes'"
 			@pagechanged="pagechanged"
 			@limitchanged="limitchanged"
 			@sorted="sorted"
 		>
-			<!-- <template v-slot:actions="slotProps">
-        <td class="flex justify-center">
-          <div
-            class="font-semibold text-xs sm:text-sm text-center px-2"
-            @click.stop.prevent="
-              toggleRemoveConfirmationModal(slotProps.item.id)
-            "
-          >
-            X
-          </div>
-        </td>
-      </template> -->
+			<template v-slot:actions="slotProps">
+				<div class="flex items-center justify-center">
+                    <div class="rounded-full px-6 py-1" :class="surgeryStatus()">{{ getStatus() }}</div>
+                  </div>
+			</template>
 		</AppTable>
 		<div v-else class="flex justify-center py-4 text-gray-500">
 			No Branches / Surgeries
@@ -47,17 +39,17 @@
 				class="shield"
 				v-if="
 					[
-						'profile-practice-spokes-create',
-						'profile-practice-spokes-id',
-						'profile-practice-spokes-id-surgery-sessions-index',
-						'profile-practice-spokes-id-surgery-sessions-index-sessionId',
-            'profile-practice-spokes-id-surgery-billings',
-            'profile-practice-spokes-id-surgery-banks',
-						'profile-practice-spokes-id-request-for-termination',
-						'profile-practice-spokes-edit'
+						'surgery-management-practice-spokes-create',
+						'surgery-management-practice-spokes-id',
+						'surgery-management-practice-spokes-id-surgery-sessions-index',
+						'surgery-management-practice-spokes-id-surgery-sessions-index-sessionId',
+            'surgery-management-practice-spokes-id-surgery-billings',
+            'surgery-management-practice-spokes-id-surgery-banks',
+						'surgery-management-practice-spokes-id-request-for-termination',
+						'surgery-management-practice-spokes-edit'
 					].includes($route.name)
 				"
-				@click="$router.push('/profile/practice-spokes')"
+				@click="$router.push('/surgery-management/practice-spokes')"
 			></div>
 		</transition>
 		<nuxt-child
@@ -132,7 +124,7 @@ export default {
 				// },
 				{
 					name: "Status",
-					dataIndex: "",
+          			dataIndex: "actions",
 					class: "status text-center"
 				}
 			]
@@ -238,7 +230,8 @@ export default {
 				})
 				.catch(err => {
 					console.log(err);
-				});
+        });
+      console.log('surgeries',this.surgeries)
 		},
 		sorted(order_by) {
 			this.current_page = 1;
@@ -312,6 +305,7 @@ export default {
 		getStatus() {
 			let status = "Invited";
 			this.surgeries.map(item => {
+        console.log('item', item)
 				if (this.practice.type === "Hub") {
 					if (item.invitation_accepted_at) {
 						status = "Active";
@@ -324,8 +318,8 @@ export default {
 					}
 					if (item.terminated_at) {
 						status = "Terminated";
-					}
-				} else {
+          }
+        } else {
 					item.surgery.practice.practice_surgeries.map(item => {
 						if (item.invitation_accepted_at) {
 							status = "Active";

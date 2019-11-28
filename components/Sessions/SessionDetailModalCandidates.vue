@@ -6,12 +6,6 @@
       v-for="user in applicants"
       :key="user.id"
     >
-      <SendMessageModal
-        :show="sendMessage"
-        :user="user"
-        @close="sendMessage=false"
-        @showProfile="show(user.id)"
-      />
       <div class="flex flex-row flex-no-wrap justify-between items-center hover:text-gray-600">
         <div @click.prevent="show(user.id)" class="cursor-pointer">
           <AppAvatar
@@ -28,7 +22,7 @@
         <div class="flex items-center">
           <button
             class="bg-yellow-500 mx-2 rounded-lg hover:bg-yellow-400 focus:outline-none"
-            @click="sendMessage = true"
+            @click.prevent="message(user.id)"
           >
             <svgicon name="chat" height="20" width="20" color="#888 #555 #fff" class="m-2" />
           </button>
@@ -51,6 +45,15 @@
     </div>
 
     <div class="shield" v-if="modal" @click="modal = false"></div>
+    <transition name="fade" mode="out-in">
+    <div class="message-modal md:w-2/3 lg:w-1/2 xl:w-1/3" v-if="sendMessage">
+      <SendMessageModal
+          :user="user"
+          @close="sendMessage=false"
+          @showProfile="show(user.id)"
+        />
+    </div>
+    </transition>
     <transition name="slide" mode="out-in">
       <div class="modal-container shadow-lg" v-if="modal">
         <SessionDetailModalShowCandidate
@@ -134,6 +137,13 @@ export default {
         this.modal = true;
         // this.$emit("show", user);
       });
+    },
+    message(id) {
+      this.$axios.$get(`/api/v1/practice/locums/${id}`).then(res => {
+        this.user = res.data.user;
+        this.sendMessage = true;
+        // this.$emit("show", user);
+      });
     }
   }
 };
@@ -158,6 +168,18 @@ img {
   .modal-container {
     width: 60%;
   }
+}
+.message-modal{
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 60;
+}
+@media screen and (max-width: 767px){
+    .message-modal{
+        min-width: 85%;
+    }
 }
 </style>
 

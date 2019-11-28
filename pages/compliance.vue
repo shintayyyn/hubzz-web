@@ -83,7 +83,7 @@
               v-else
               :key="item.id"
               class="text-xs sm:text-sm text-left"
-              :class="!item.info && 'text-gray-600'"
+              :class="!item.info ? 'text-gray-600' : 'hover'"
             >
               <td
                 :class="item.info && item.info.file ? 'cursor-pointer' : ''"
@@ -197,7 +197,7 @@
               v-else
               :key="item.id"
               class="text-xs sm:text-sm text-left"
-              :class="!item.info && 'text-gray-600 hover:bg-white'"
+              :class="!item.info ? 'text-gray-600' : 'hover'"
             >
               <td
                 :class="item.info && item.info.file ? 'cursor-pointer' : ''"
@@ -298,7 +298,7 @@
                 v-else
                 :key="item.id"
                 class="text-xs sm:text-sm text-left"
-                :class="!item.file && 'text-gray-600'"
+                :class="!item.info && 'text-gray-600 hover:bg-white'"
               >
                 <td
                   :class="item && item.file ? 'cursor-pointer' : ''"
@@ -817,7 +817,7 @@ table {
   border-spacing: 0 10px;
   padding: 0 5px;
 }
-table tbody tr:hover td {
+.hover:hover td {
   background-color: #eff3f8;
 }
 table tbody td:last-child,

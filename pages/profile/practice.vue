@@ -1,7 +1,7 @@
 <template>
   <section>
     <div class="flex flex-col">
-      <div class="flex flex-row flex-wrap justify-between">
+      <div class="h-full flex flex-row flex-wrap justify-between">
         <div class="w-full md:w-2/3 p-1">
           <div class="bg-white rounded-lg shadow-lg p-4 md:p-8 h-full">
             <div class="flex flex-row flex-wrap">
@@ -76,7 +76,7 @@
         </div>
       </div>
 
-      <div class="w-full p-2">
+      <div class="w-full p-1">
         <div class="bg-white rounded-lg shadow-lg p-4 md:p-8">
           <AppFormError :formError="formError" v-if="formError.length" />
           <div class="flex flex-row flex-wrap justify-between">

@@ -68,7 +68,7 @@
                 <select
                   ref="inputSelect"
                   :value="value"
-                  class="absolute border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full"
+                  class="absolute bottom-0 border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full"
                   :class="[(error && !disabled) && 'border-red-500', disabled ? 'border-gray-400' : 'cursor-pointer']"
                   @input="$emit('input', $event.target.value)"
                   :style="inStyle"
@@ -84,10 +84,10 @@
                     :selected="value === item.value"
                   >{{item.label}}</option>
                 </select>
-                <span class="absolute right-0">
+                <span class="absolute right-0 h-full">
                   <svgicon
                     name="arrow-up"
-                    class="h-full w-10 p-2 fill-current"
+                    class="h-full w-10 p-2 mt-2 fill-current"
                     style="transform: rotate(180deg)"
                   />
                 </span>
@@ -122,10 +122,10 @@
     <template v-if="type === 'single-checkbox'">
       <div class="flex flex-col py-2 mb-2">
         <div class="flex justify-end">
-          <div
+          <!-- <div
             class="rounded-lg bg-red-500 px-2 py-1 text-xs sm:text-sm text-white"
             v-if="error"
-          >{{error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ")}}</div>
+          >{{error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ")}}</div> -->
         </div>
         <div class="flex flex-row flex-no-wrap justify-start items-center">
           <input
@@ -137,6 +137,10 @@
           />
           <label :for="name" class="text-xs sm:text-sm py-1 flex items-center">{{label}}</label>
         </div>
+        <div
+            class="py-1 text-xs text-red-500"
+            v-if="error"
+          >{{error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ")}}</div>
       </div>
     </template>
 
