@@ -361,7 +361,7 @@ export default {
 </script>
 <style scoped>
 .shield {
-	z-index: 509;
+	/* z-index: 509; */
 }
 .list-section {
 	position: relative;

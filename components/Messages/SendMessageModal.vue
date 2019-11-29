@@ -5,7 +5,7 @@
         <div class="flex justify-between items-center pb-2">
           <div class="flex items-center">
             <svgicon name="chat" height="20" width="20" color="#888 #555 #fff" class="mr-2" />
-            <span class="font-bold">{{ this.user.personal_detail.name }}</span>
+            <!-- <span class="font-bold">{{ this.user.personal_detail.name }}</span> -->
           </div>
           <div class="flex items-center">
             <!-- <div class="px-2 font-bold text-lg hover:text-gray-500 cursor-pointer" @click="$emit('close')">x</div> -->
@@ -61,50 +61,9 @@ export default {
       default: false,
       type: Boolean
     },
-    props: {
-      user: {
-        type: Object
-      }
+    user: {
+      type: Object
     },
-    data() {
-      return {
-        conversation_id: "",
-        showDropDown: false
-      };
-    },
-    computed: {
-      messageSent() {
-        return this.$store.state.chat.messageSent;
-      }
-    },
-    created() {
-      this.showDropDown = false;
-      this.$axios
-        .$get(`/api/v1/conversations?user_id=${this.user.id}`)
-        .then(res => {
-          if (res.data.conversation) {
-            this.conversation_id = res.data.conversation.conversation_id;
-          } else {
-            this.conversation_id = null;
-          }
-        });
-    },
-    watch: {
-      messageSent(value) {
-        if (value === false) {
-          setTimeout(() => {
-            this.$emit("close");
-          }, 500);
-        }
-      }
-    },
-    methods: {
-      openConversation() {
-        if (this.conversation_id) {
-          this.$router.push(`/messages/${this.conversation_id}`);
-        }
-      }
-    }
   },
   data() {
     return {

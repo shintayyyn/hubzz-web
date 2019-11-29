@@ -1,11 +1,12 @@
 <template>
-  <div class="modal-container p-4">
-    <div class="m-4">
+  <div class="modal-container p-4 md:p-8">
+    <div >
       <div class="my-2">
         <nuxt-link :to="'/surgery-management/practice-hub/spoke-siblings'" class="cursor-pointer">
           <svgicon name="left-arrow" height="32" width="32" />
         </nuxt-link>
       </div>
+      <div class="font-bold text-lg px-2">Bank</div>
       <div v-if="practiceSibling.share_banks_to_other_surgeries == false">
         The Banks of this spokes are not shared.
       </div>
@@ -14,9 +15,9 @@
         <div v-if="locums.length < 1">
           This spoke has no banks.
         </div>
-        <div v-else class="w-full md:w-1/3 lg:w-1/4 p-2" v-for="locum in locums" :key="locum.id">
-          <div class="flex flex-row flex-wrap justify-start">
-            <div class="h-full rounded-lg shadow-lg bg-gray-300 hover:bg-gray-400 p-4">
+        <div v-else class="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-2" v-for="locum in locums" :key="locum.id">
+          <div class="h-full w-full flex flex-row flex-wrap justify-start">
+            <div class="h-full w-full rounded-lg shadow-lg bg-gray-300 hover:bg-gray-400 p-4">
               <nuxt-link :to="{ path: `/surgery-management/practice-hub/spoke-siblings/${$route.params.id}/sibling-bank/${locum.id}`, query: {...$route.query}}">
                 <div
                   class="flex justify-end z-50"
@@ -59,15 +60,15 @@
             </div>
           </div>
         </div>
-        <div class="mt-5 flex justify-center" v-if="locums.length > 0 && totalPages > 1">
-          <AppPagination
-            :total="total"
-            :totalPages="totalPages"
-            :currentPage="current_page"
-            :perPage="perPage"
-            @pagechanged="pagechanged"
-          />
-        </div>
+      </div>
+      <div class="mt-5 flex justify-center" v-if="locums.length > 0 && totalPages > 1">
+        <AppPagination
+          :total="total"
+          :totalPages="totalPages"
+          :currentPage="current_page"
+          :perPage="perPage"
+          @pagechanged="pagechanged"
+        />
       </div>
     </div>
     <nuxt-child/>

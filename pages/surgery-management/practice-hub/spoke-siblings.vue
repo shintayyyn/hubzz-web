@@ -15,16 +15,12 @@
 			:columns="columns"
 			:orderBy="params.order_by"
 			:routerLink="'/surgery-management/practice-hub/spoke-siblings'"
+      :customWidth="550"
 			@pagechanged="pagechanged"
 			@limitchanged="limitchanged"
 			@sorted="sorted"
-		> 
-      <template v-slot:actions="slotProps">
-				<div class="flex items-center justify-center">
-          <div class="rounded-full px-6 py-1" :class="surgeryStatus()">{{ getStatus() }}123</div>
-        </div>
-			</template>
-    </AppTable>
+		></AppTable>
+    <nuxt-child/>
   </div>
 </template>
 
@@ -58,7 +54,7 @@ export default {
         {
           name: "Practice Code",
           dataIndex: "surgery.address.post_code",
-          class:"text-left"
+          class:"text-center md:text-left"
         }
       ]
     }
