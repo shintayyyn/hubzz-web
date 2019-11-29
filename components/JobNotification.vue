@@ -1,135 +1,189 @@
 <template>
-  <div class="job-notification" v-if="notifications.length > 0 || billingNotifications.length > 0">
-    <div
-      class="my-2 mt-1 flex items-center"
-      :class="toggleNotification ? 'justify-between' : 'justify-end'"
-    >
-      <button
-        class="bg-yellow-500 px-4 py-1 rounded-lg hover:bg-yellow-400 transition-hover text-xs"
-        v-if="toggleNotification"
-      >Mark all as read</button>
-      <svgicon
-        name="job-notification"
-        class="w-8 h-8 cursor-pointer"
-        color="#A5DDFF #DFF3FF #FE6663 #000"
-        :class="toggleNotification ? 'opacity-100' : 'opacity-50 hover:opacity-100 transition-hover'"
-        @click="toggleNotification = !toggleNotification"
-      />
-    </div>
-    <transition name="slide">
-      <template v-if="toggleNotification">
-        <div class="notifications overflow-y-auto">
-          <transition-group name="drop" mode="out-in">
-            <template v-for="notification in notifications">
-              <div
-                @click="goTo(notification.type, notification.id, notification.status ? notification.status : notification.locum_status)"
-                :key="`${notification.id}-${notification.notification_type}`"
-                class="cards relative mx-1 my-2 p-3 flex flex-wrap bg-gray-100 hover:bg-gray-200 rounded-lg shadow-md text-xs md:text-sm opacity-75 hover:opacity-100 transition-hover cursor-pointer"
-              >
-                <span
-                  class="absolute top-0 right-0 cursor-pointer py-2 px-4 rounded-full text-lg font-bold hover:text-gray-700"
-                  @click.prevent.stop="close(notification.id)"
-                >x</span>
-                <div class="flex flex-wrap w-48 md:w-64">
-                  <div class="flex flex-col items-start my-1 w-full">
-                    <div
-                      class="px-2 py-1 md:text-xs font-bold rounded-lg max-w-sm cursor-pointer"
-                      :class="bgStatus(notification.status ? notification.status : notification.locum_status)"
-                    >{{notification.status ? notification.status.toUpperCase() : notification.locum_status.toUpperCase()}}</div>
-                    <div
-                      class="font-bold md:text-md leading-none mr-1 uppercase pt-4 truncate-title"
-                      style="-webkit-box-orient: vertical;"
-                    >{{notification.title}}</div>
-                  </div>
-                  <!-- <div class="py-2 flex flex-col w-full">
-                    <div class="flex justify-between items-center w-full">
-                      <div>From</div>
-                      <div>{{notification.date_start}}</div>
+  <transition name="slide">
+    <div class="job-notification" v-if="jobNotifications.length > 0 || billingNotifications.length > 0">
+      <div
+        class="my-2 mt-1 flex items-center"
+        :class="toggleNotification ? 'justify-between' : 'justify-end'"
+      >
+        <button
+          class="bg-yellow-500 px-4 py-1 rounded-lg hover:bg-yellow-400 transition-hover text-xs focus:outline-none"
+          v-if="toggleNotification"
+          @click="clearNotifications"
+        >Mark all as read</button>
+        <svgicon
+          name="job-notification"
+          class="w-8 h-8 cursor-pointer"
+          color="#A5DDFF #DFF3FF #FE6663 #000"
+          :class="toggleNotification ? 'opacity-100' : 'opacity-50 hover:opacity-100 transition-hover'"
+          @click="toggleNotification = !toggleNotification"
+        />
+      </div>
+      <transition name="slide">
+        <template v-if="toggleNotification">
+          <div class="notifications overflow-y-auto">
+            <transition-group name="drop" mode="out-in">
+              <!-- <template v-for="notification in jobNotifications">
+                <div
+                  @click="goTo(notification.type, notification.id, notification.status ? notification.status : notification.locum_status)"
+                  :key="`${notification.id}-${notification.notification_type}`"
+                  class="cards relative mx-1 my-2 p-3 flex flex-wrap bg-gray-100 hover:bg-gray-200 rounded-lg shadow-md text-xs md:text-sm opacity-75 hover:opacity-100 transition-hover cursor-pointer"
+                >
+                  <span
+                    class="absolute top-0 right-0 cursor-pointer py-2 px-4 rounded-full text-lg font-bold hover:text-gray-700"
+                    @click.prevent.stop="close(notification.id)"
+                  >x</span>
+                  <div class="flex flex-wrap w-48 md:w-64">
+                    <div class="flex flex-col items-start my-1 w-full">
+                      <div
+                        class="px-2 py-1 md:text-xs font-bold rounded-lg max-w-sm cursor-pointer"
+                        :class="bgStatus(notification.status ? notification.status : notification.locum_status)"
+                      >{{notification.status ? notification.status.toUpperCase() : notification.locum_status.toUpperCase()}}</div>
+                      <div
+                        class="font-bold md:text-md leading-none mr-1 uppercase pt-4 truncate-title"
+                        style="-webkit-box-orient: vertical;"
+                      >{{notification.title}}</div>
                     </div>
-                    <div class="flex justify-between items-center w-full">
-                      <div>To</div>
-                      <div>{{notification.date_end}}</div>
-                    </div>
-                    <div class="flex justify-between items-center w-full">
-                      <div>Rate</div>
-                      <div v-text="`£ ${notification.rate} ${notification.locum_detail_rate_type}`"></div>
-                    </div>
-                    <div class="flex justify-between items-center w-full">
-                      <div>Shift</div>
-                      <div>{{notification.shift}}</div>
-                    </div>
-                  </div>-->
-                  <div>
-                    <div class="leading-tight pt-1">{{notification.message}}</div>
-                  </div>
-                </div>
-              </div>
-            </template>
-            <template v-for="billingNotification in billingNotifications">
-              <div
-                @click="goTo(billingNotification.type, billingNotification.id)"
-                :key="`${billingNotification.id}-${billingNotification.notification_type}`"
-                class="relative mx-1 my-2 p-3 flex flex-wrap bg-gray-100 hover:bg-gray-200 rounded-lg shadow-md"
-              >
-                <span
-                  class="absolute top-0 right-0 cursor-pointer py-2 px-4 rounded-full text-lg font-bold hover:text-gray-700"
-                  @click.prevent.stop="close(billingNotification.id)"
-                >x</span>
-                <div class="flex flex-wrap w-48 md:w-64">
-                  <div class="flex flex-col items-start my-1 w-full">
-                    <div
-                      class="px-2 py-1 text-sm font-bold rounded-lg max-w-sm cursor-pointer"
-                      :class="bgStatus(billingNotification.status)"
-                    >{{billingNotification.status.toUpperCase()}}</div>
-                    <div
-                      v-if="billingNotification.status !== 'Draft'"
-                      class="font-bold md:text-md leading-none mr-1 uppercase pt-4 truncate-title"
-                      style="-webkit-box-orient: vertical;"
-                    >{{billingNotification.invoice_number}}</div>
-                  </div>
-                  <!-- <div class="py-2 flex flex-col w-full">
-                      <div class="flex justify-between items-center my-1 w-full">
+                    <div class="py-2 flex flex-col w-full">
+                      <div class="flex justify-between items-center w-full">
                         <div>From</div>
-                        <div class="text-right">{{billingNotification.date_start}}</div>
+                        <div>{{notification.date_start}}</div>
                       </div>
-                      <div class="flex justify-between items-center my-1 w-full">
+                      <div class="flex justify-between items-center w-full">
                         <div>To</div>
-                        <div class="text-right">{{billingNotification.date_end}}</div>
+                        <div>{{notification.date_end}}</div>
                       </div>
-                      <div class="flex justify-between items-center my-1 w-full">
-                        <div>Issued At</div>
-                        <div class="text-right">{{billingNotification.issued_at | localDate}}</div>
+                      <div class="flex justify-between items-center w-full">
+                        <div>Rate</div>
+                        <div v-text="`£ ${notification.rate} ${notification.locum_detail_rate_type}`"></div>
                       </div>
-                      <div class="flex justify-between items-center my-1 w-full">
-                        <div>Paid At</div>
-                        <div class="text-right">{{billingNotification.paid_at | localDate}}</div>
+                      <div class="flex justify-between items-center w-full">
+                        <div>Shift</div>
+                        <div>{{notification.shift}}</div>
                       </div>
-                  </div>-->
-                  <div
-                    class="flex flex-col my-1 w-full leading-none"
-                    v-if="billingNotification.locum_user"
-                  >
-                    <div class="text-sm uppercase">Locum</div>
-                    <div class="font-bold">{{billingNotification.locum_user}}</div>
-                  </div>
-                  <div
-                    class="flex flex-col my-1 w-full leading-none"
-                    v-if="billingNotification.practice"
-                  >
-                    <div class="text-sm uppercase">Practice</div>
-                    <div class="font-bold">{{billingNotification.practice}}</div>
-                  </div>
-                  <div>
-                    <div class="leading-tight pt-1">{{billingNotification.message}}</div>
+                    </div>
+                    <div>
+                      <div class="leading-tight pt-1">{{notification.message}}</div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </template>
-          </transition-group>
-        </div>
-      </template>
-    </transition>
-  </div>
+              </template>
+              <template v-for="billingNotification in billingNotifications">
+                  <div
+                  @click="goTo(billingNotification.type, billingNotification.id)"
+                  :key="`${billingNotification.id}-${billingNotification.notification_type}`" 
+                  class="cards bg-blue-100 relative mx-1 my-2 p-3 flex flex-wrap bg-gray-100 hover:bg-gray-200 rounded-lg shadow-md text-xs md:text-sm opacity-75 hover:opacity-100 transition-hover cursor-pointer">
+                    <span
+                      class="absolute top-0 right-0 cursor-pointer py-2 px-4 rounded-full text-lg font-bold hover:text-gray-700"
+                      @click.prevent.stop="close(billingNotification.id)"
+                    >x</span>
+                    <div class="flex flex-wrap w-48 md:w-64">
+                      <div class="flex flex-col items-start my-1 w-full">
+                        <div
+                          class="px-2 py-1 md:text-xs font-bold rounded-lg max-w-sm cursor-pointer"
+                          :class="bgStatus(billingNotification.status)"
+                        >{{billingNotification.status.toUpperCase()}}</div>
+                        <div
+                          v-if="billingNotification.status !== 'Draft'"
+                          class="font-bold md:text-md leading-none mr-1 uppercase pt-4 truncate-title"
+                          style="-webkit-box-orient: vertical;"
+                        >{{billingNotification.invoice_number}}</div>
+                      </div>
+                      <div class="py-2 flex flex-col w-full">
+                        <div class="flex justify-between items-center my-1 w-full">
+                          <div>From</div>
+                          <div class="text-right">{{billingNotification.date_start}}</div>
+                        </div>
+                        <div class="flex justify-between items-center my-1 w-full">
+                          <div>To</div>
+                          <div class="text-right">{{billingNotification.date_end}}</div>
+                        </div>
+                        <div class="flex justify-between items-center my-1 w-full">
+                          <div>Issued At</div>
+                          <div class="text-right">{{billingNotification.issued_at | localDate}}</div>
+                        </div>
+                        <div class="flex justify-between items-center my-1 w-full">
+                          <div>Paid At</div>
+                          <div class="text-right">{{billingNotification.paid_at | localDate}}</div>
+                        </div>
+                      </div>
+                      <div
+                        class="flex flex-col my-1 w-full leading-none"
+                        v-if="billingNotification.locum_user"
+                      >
+                        <div class="text-sm uppercase">Locum</div>
+                        <div class="font-bold">{{billingNotification.locum_user}}</div>
+                      </div>
+                      <div
+                        class="flex flex-col my-1 w-full leading-none"
+                        v-if="billingNotification.practice"
+                      >
+                        <div class="text-sm uppercase">Practice</div>
+                        <div class="font-bold">{{billingNotification.practice}}</div>
+                      </div>
+                      <div>
+                        <div class="leading-tight pt-1">{{billingNotification.message}}</div>
+                      </div>
+                    </div>
+                  </div>
+              </template> -->
+              <template v-for="notification in notifications">
+                <div
+                  @click="goTo(notification.type, notification.id, notification.status ? notification.status : notification.locum_status)"
+                  :key="`${notification.id}-${notification.notification_type}`"
+                  class="cards relative mx-1 my-2 p-3 flex flex-wrap bg-gray-100 hover:bg-gray-200 rounded-lg shadow-md text-xs md:text-sm opacity-75 hover:opacity-100 transition-hover cursor-pointer"
+                >
+                <span
+                    class="absolute top-0 right-0 cursor-pointer py-2 px-4 rounded-full text-lg font-bold hover:text-gray-700"
+                    @click.prevent.stop="close(notification.id)"
+                  >x</span>
+                  <div class="flex flex-wrap w-48 md:w-64">
+                    <div class="flex flex-col items-start my-1 w-full">
+                      <div
+                        class="px-2 py-1 md:text-xs font-bold rounded-lg max-w-sm cursor-pointer uppercase"
+                        :class="bgStatus(notification.status ? notification.status : notification.locum_status)"
+                      >{{notification.status ? notification.status : notification.locum_status}}</div>
+                      <div
+                          v-if="notification.status !== 'Draft' && notification.type === 'Billings'"
+                          class="font-bold md:text-md leading-none mr-1 uppercase pt-4 truncate-title"
+                          style="-webkit-box-orient: vertical;"
+                        >{{notification.invoice_number}}</div>
+                      <div
+                        v-else
+                        class="font-bold md:text-md leading-none mr-1 uppercase pt-4 truncate-title"
+                        style="-webkit-box-orient: vertical;"
+                      >{{notification.title}}</div>
+                    </div>
+                    <!-- <div class="py-2 flex flex-col w-full">
+                      <div class="flex justify-between items-center w-full">
+                        <div>From</div>
+                        <div>{{notification.date_start}}</div>
+                      </div>
+                      <div class="flex justify-between items-center w-full">
+                        <div>To</div>
+                        <div>{{notification.date_end}}</div>
+                      </div>
+                      <div class="flex justify-between items-center w-full">
+                        <div>Rate</div>
+                        <div v-text="`£ ${notification.rate} ${notification.locum_detail_rate_type}`"></div>
+                      </div>
+                      <div class="flex justify-between items-center w-full">
+                        <div>Shift</div>
+                        <div>{{notification.shift}}</div>
+                      </div>
+                    </div> -->
+                    <div class="w-full">
+                      <div class="leading-tight pt-1">{{notification.message}}</div>
+                      <div class="leading-tight text-xs pt-2 text-right text-gray-600">{{$moment(notification.updated_at).format('MM-DD-YYYY h:mm a')}}</div>
+                    </div>
+                  </div>
+                </div>
+              </template>
+            </transition-group>
+          </div>
+        </template>
+      </transition>
+    </div>
+  </transition>
 </template>
 <script>
 export default {
@@ -140,7 +194,7 @@ export default {
     };
   },
   computed: {
-    notifications() {
+    jobNotifications() {
       if (this.$auth.loggedIn && this.$auth.user.domain === "Practice") {
         return this.$store.getters["jobs/getPracticeJobNotifications"];
       }
@@ -154,6 +208,12 @@ export default {
     },
     url() {
       return this.$auth.user.domain === "Practice" ? "/sessions" : "/jobs";
+    },
+    notifications() {
+      return [
+        ...this.jobNotifications,
+        ...this.billingNotifications
+      ].sort((a,b) => new Date(b.updated_at) - new Date(a.updated_at))
     }
   },
   watch: {
@@ -170,12 +230,19 @@ export default {
       }
     },
     billingNotifications(value) {
-      console.log(value);
-      this.toggleNotification = true;
+      this.notifications.sort((a,b) => new Date(b.updated_at) - new Date(a.updated_at))
     },
-    notifications(value) {
-      this.toggleNotification = true;
-    }
+    jobNotifications(value) {
+      this.notifications.sort((a,b) => new Date(b.updated_at) - new Date(a.updated_at))
+    },
+    notifications(value){
+      value.forEach((item, index) => {
+        if (!item.updated_at){
+          item.updated_at = this.$moment().format('M/D/YYYY, h:mm:ss A')
+        }
+      });
+      this.notifications.sort((a,b) => new Date(b.updated_at) - new Date(a.updated_at))
+    },
   },
   methods: {
     removeStatus() {
@@ -203,7 +270,7 @@ export default {
 
       let url = "";
 
-      if (type === "Jobs") {
+       if (type === "Jobs") {
         url = this.$auth.user.domain === "Practice" ? "/sessions" : "/jobs";
       } else if (type === "Billings") {
         url =
@@ -213,6 +280,7 @@ export default {
       }
 
       let path = `${url}/${id}`;
+      console.log('type', type, path)
 
       if (type === "Jobs") {
         let routeStatus = "";
@@ -279,6 +347,12 @@ export default {
         default:
           return "bg-red-500 text-white";
       }
+    },
+    clearNotifications(){
+      this.$store.commit("billing/CLEAR_PRACTICE_BILLING_NOTIFICATION");
+      this.$store.commit("billing/CLEAR_LOCUM_BILLING_NOTIFICATION");
+      this.$store.commit("jobs/CLEAR_PRACTICE_JOB_NOTIFICATION");
+      this.$store.commit("jobs/CLEAR_LOCUM_JOB_NOTIFICATION");
     }
   }
 };

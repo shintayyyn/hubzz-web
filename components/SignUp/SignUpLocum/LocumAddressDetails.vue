@@ -90,15 +90,15 @@ export default {
     }
   },
   watch: {
-    // "form.post_code"(value) {
-    //   this.CheckEmptyField(this.form.post_code, "post_code");
-    // },
-    // "form.address_line_1"(value) {
-    //   this.CheckEmptyField(this.form.address_line_1, "address_line_1");
-    // },
-    // "form.address_line_3"(value) {
-    //   this.CheckEmptyField(this.form.address_line_3, "address_line_3");
-    // }
+    "form.post_code"(value) {
+      this.CheckEmptyField(this.form.post_code, "post_code");
+    },
+    "form.address_line_1"(value) {
+      this.CheckEmptyField(this.form.address_line_1, "address_line_1");
+    },
+    "form.address_line_3"(value) {
+      this.CheckEmptyField(this.form.address_line_3, "address_line_3");
+    }
   },
   mounted() {
     this.form.post_code = this.addressDetails.post_code;
@@ -130,7 +130,7 @@ export default {
     },
     next() {
       this.formError = [];
-      // this.Validate(this.form, ["address_line_2"]);
+      this.Validate(this.form, ["address_line_2"]);
       if (!this.formError.length) {
         this.$store.commit("sign-up/SET_ADDRESS_DETAILS", this.form);
         this.$store.commit(

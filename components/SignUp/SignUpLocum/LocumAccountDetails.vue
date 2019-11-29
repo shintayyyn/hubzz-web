@@ -159,13 +159,13 @@ export default {
   },
   methods: {
     next() {
+      this.formError = [];
       this.Validate(this.form, [
         "title",
         "suffix",
         "home_number",
         "work_number"
       ]);
-      this.formError = [];
       if (!this.formError.length) {
         this.form.mobile_number = this.form.mobile_number.toString();
         this.$store.commit("sign-up/SET_ACCOUNT_DETAILS", this.form);

@@ -9,7 +9,7 @@ export default {
   created(){
     if(this.$auth.user.practice_detail.practice.type === "Hub"){
       this.$router.push('/surgery-management/practice-spokes')
-    }else if(this.$auth.user.practice_detail.practice.type === "Spoke"){
+    }else if(this.$auth.user.practice_detail.practice.type !== "Hub"){
       this.$router.push('/surgery-management/practice-hub')
     }
   }

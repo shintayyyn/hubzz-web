@@ -24,14 +24,14 @@
       <div class="flex flex-row flex-wrap justify-start items-center my-2 md:my-4">
         <label class="mx-1">Type:</label>
         <button
-          v-if="!selectedInvoice || ((selectedInvoice && selectedInvoice.status === 'Draft') || (selectedInvoice && selectedInvoice.status === 'Issued' && type === 'Private'))"
+          v-if="!selectedInvoice || ((selectedInvoice && selectedInvoice.status === 'Draft') || (selectedInvoice && (selectedInvoice.status === 'Issued' || selectedInvoice.status === 'Disputed') && type === 'Private'))"
           :class="type === 'Private' ? 'bg-yellow-500 border-yellow-500' : 'hover:bg-gray-200'"
           class="text-xs sm:text-sm mx-1 py-2 px-3 border-2 rounded-lg font-bold flex items-center focus:outline-none"
           @click="type = 'Private'"
           :disabled="type === 'Private'"
         >Private</button>
         <button
-          v-if="!selectedInvoice || ((selectedInvoice && selectedInvoice.status === 'Draft') || (selectedInvoice && selectedInvoice.status === 'Issued' && type === 'Platform'))"
+          v-if="!selectedInvoice || ((selectedInvoice && selectedInvoice.status === 'Draft') || (selectedInvoice && (selectedInvoice.status === 'Issued' || selectedInvoice.status === 'Disputed') && type === 'Platform'))"
           :class="type === 'Platform' ? 'bg-yellow-500 border-yellow-500' : 'hover:bg-gray-200'"
           class="text-xs sm:text-sm mx-1 py-2 px-3 border-2 rounded-lg font-bold flex items-center focus:outline-none"
           @click="type = 'Platform'"
@@ -490,7 +490,7 @@ export default {
     },
     allApproved() {
       return (
-        this.selectedInvoice &&
+        this.selectedInvoice && 
         this.selectedInvoice.items.filter(invoice => invoice.approved === false)
           .length === 0
       );
