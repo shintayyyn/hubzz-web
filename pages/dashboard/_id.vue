@@ -93,7 +93,7 @@ export default {
         }
 
         let response = await app.$axios.get(`${url}/${params.id}`);
-
+        console.log(response);
         if (response.data.data.job) {
           if (response.data.data.job.type === "Platform") {
             let locum_job = response.data.data.job;
@@ -120,7 +120,7 @@ export default {
               locum_job_part,
               locum_modal_part
             };
-          } else if (response.data.data.job_part.type === "Private") {
+          } else if (response.data.data.job_part.job.type === "Private") {
             let locum_appointment_job = response.data.data.job_part.job;
             let locum_appointment_modal = true;
             return {

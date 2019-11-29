@@ -882,7 +882,6 @@ export default {
           }
         })
         .then(res => {
-          console.log("jobs/job-parts response", res.data);
           if (
             this.$route.query.status &&
             ["ongoing", "completed", "approved"].includes(
