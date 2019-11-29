@@ -10,6 +10,7 @@
             :label="'Search for a Practice'"
             :error="this.formError.find(item => item.field === 'search_text')"
             :placeholder="'Practice code, name of practice'"
+            @keyup.enter.native="search"
           />
         </div>
         <AppButton :label="'Search'" @click="search" :inStyle="'padding:5px 14px;'" class="w-1/3" />

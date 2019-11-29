@@ -305,7 +305,6 @@ export default {
 		getStatus() {
 			let status = "Invited";
 			this.surgeries.map(item => {
-        console.log('item', item)
 				if (this.practice.type === "Hub") {
 					if (item.invitation_accepted_at) {
 						status = "Active";

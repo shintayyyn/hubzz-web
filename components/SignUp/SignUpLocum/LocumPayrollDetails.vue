@@ -166,7 +166,7 @@ export default {
       if (this.form.employment_type === "Limited Company") {
         notRequired.push("utr_number");
       }
-      // this.Validate(this.form, notRequired);
+      this.Validate(this.form, notRequired);
       if (!this.formError.length) {
         this.$store.commit("sign-up/SET_PAYROLL_DETAILS", this.form);
         this.$store.commit(

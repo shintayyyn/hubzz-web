@@ -136,24 +136,24 @@ export default {
           this.formError.push(item);
         });
       }
+    },
+    "form.email"(value) {
+      this.CheckEmptyField(this.form.email, "email");
+    },
+
+    "form.password"(value) {
+      this.CheckEmptyField(this.form.password, "password");
+    },
+
+    "form.password_confirmation"(value) {
+      this.CheckEmptyField(
+        this.form.password_confirmation,
+        "password_confirmation"
+      );
+    },
+    "form.privacy_policy"(value) {
+      this.CheckEmptyField(this.form.privacy_policy, "privacy_policy");
     }
-    // "form.email"(value) {
-    //   this.CheckEmptyField(this.form.email, "email");
-    // },
-
-    // "form.password"(value) {
-    //   this.CheckEmptyField(this.form.password, "password");
-    // },
-
-    // "form.password_confirmation"(value) {
-    //   this.CheckEmptyField(
-    //     this.form.password_confirmation,
-    //     "password_confirmation"
-    //   );
-    // },
-    // "form.privacy_policy"(value) {
-    //   this.CheckEmptyField(this.form.privacy_policy, "privacy_policy");
-    // }
   },
   mounted() {
     this.form.email = this.credentialDetails.email;

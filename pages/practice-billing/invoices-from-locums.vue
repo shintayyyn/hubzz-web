@@ -21,12 +21,22 @@
       @sorted="sorted"
     >
       <template v-slot:actions="slotProps">
-        <div @click.stop.prevent="onClick(slotProps.item)" class="flex justify-center">
+        <div class="flex justify-center">
           <button
-            v-text="`${slotProps.item.paid ? 'Already Paid' : slotProps.item.disputed_items_count > 0 ? 'Disputed' : 'Mark as paid'}`"
-            class="px-4 py-2 font-bold rounded-lg focus:outline-none"
-            :class="[slotProps.item.paid ? 'bg-green-600 text-white' : slotProps.item.disputed_items_count > 0 ? 'bg-gray-500 text-white' : 'bg-yellow-400']"
-          ></button>
+            disabled
+            v-if="slotProps.item.paid"
+            class="px-4 py-2 font-bold rounded-lg focus:outline-none bg-green-600 text-white cursor-not-allowed"
+          >Already Paid</button>
+          <button
+            disabled
+            v-if="slotProps.item.items.filter(invoice => invoice.approved === false).length > 0 && slotProps.item.disputed_items_count === 0"
+            class="px-4 py-2 font-bold rounded-lg focus:outline-none bg-gray-500 text-white cursor-not-allowed"
+          >For Approval</button>
+          <button
+            @click.stop.prevent="onClick(slotProps.item)"
+            v-if="slotProps.item.items.filter(invoice => invoice.approved === false).length === 0"
+            class="px-4 py-2 font-bold rounded-lg focus:outline-none bg-yellow-400"
+          >Mark as Paid</button>
         </div>
       </template>
     </AppTable>
@@ -298,9 +308,6 @@ export default {
         });
     },
     onClick(invoice, index) {
-      if (invoice.paid || invoice.disputed_items_count > 0) {
-        return;
-      }
       this.selectedInvoiceId = null;
       this.form.paid_at = null;
       this.paymentModal = true;

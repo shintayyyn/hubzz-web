@@ -65,7 +65,6 @@
         :name="'gender'"
         :label="'Gender'"
         :error="formError.find(item => item.field === 'gender')"
-        :placeholder="'Select...'"
         :items="[{ label: 'Male', value: 'Male'}, { label: 'Female', value: 'Female' }]"
         @blur="CheckEmptyField(form.gender, 'gender')"
       />

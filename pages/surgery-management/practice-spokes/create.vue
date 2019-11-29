@@ -11,7 +11,7 @@
 
     <div class="p-4 md:p-8">
       <div>
-        <svgicon name="left-arrow" height="32" width="32"  @click="$router.go(-1)" class="cursor-pointer"/>
+        <svgicon name="left-arrow" height="32" width="32" @click="$router.push('/surgery-management/practice-spokes')" class="cursor-pointer"/>
       </div>
       <div class="flex justify-start font-bold text-sm sm:text-xl mt-8">Invite Spoke</div>
       <div class="relative bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4 max-w-5xl">
@@ -25,14 +25,14 @@
         />
         <AppButton :label="'Search'" @click="search" :inStyle="'padding:5px 14px;'" />
       </div>
-      <div v-if="showResult && practiceSpokes.length === 0" class="mt-5">
+      <div v-if="showResult && practiceSpokesResult.length === 0" class="mt-5">
         <div
           class="text-xs xl:text-base font-bold"
-        >No practice matched that name. Try again with whole words, practice code or CCG.</div>
+        >{{ resultNotice }}</div>
       </div>
       <div
         class="rounded-lg shadow-lg overflow-auto mt-5 bg-white"
-        v-if="showResult && practiceSpokes.length > 0"
+        v-if="showResult && practiceSpokesResult.length > 0"
       >
         <div
           class="text-xs lg:text-base font-bold p-4"
@@ -41,19 +41,22 @@
         <div
           class="border-t-2 p-4 cursor-pointer"
           :class="selectedSpoke.id === item.id ? 'bg-yellow-500':'hover:bg-gray-400'"
-          v-for="(item) in practiceSpokes"
+          v-for="(item) in practiceSpokesResult"
           :key="item.id"
           @click="select(item)"
         >
           <div class="flex flex-col justify-start text-xs xl:text-base">
-            <div class="font-bold">{{item.surgery.name}}</div>
+            <div class="font-bold">
+              <span >{{item.surgery.name}}</span>
+              <span class="p-1 px-4 rounded-lg text-sm mx-2 text-white" :class="item.type == 'Spoke' ? 'bg-blue-400' : 'bg-purple-400'">{{item.type}}</span>
+            </div>
             <!-- <div
               class="mt-4"
-            >{{item.address.line_1}}, {{item.address.line_2}}, {{item.address.line_3}}, {{item.address.post_code}}</div> -->
-            <!-- <div class="flex flex-row flex-no-wrap mt-1">
+            >{{item.surgery.address.line_1}}, {{item.surgery.address.line_2}}, {{item.surgery.address.line_3}}, {{item.surgery.address.post_code}}</div> -->
+            <div class="flex flex-row flex-no-wrap mt-1">
               <div class="rounded-lg bg-gray-300 py-1 px-2 mr-1">CCG</div>
-              <div class="flex items-center">{{item.clinical_commissioning_group.name}}</div>
-            </div> -->
+              <div class="flex items-center">{{item.surgery.clinical_commissioning_group ? item.surgery.clinical_commissioning_group.name : 'N/A'}}</div>
+            </div>
             <div class="flex flex-row flex-no-wrap mt-1">
               <div class="rounded-lg bg-gray-300 py-1 px-2 mr-1">Practice Code</div>
               <div class="flex items-center">{{item.surgery.code}}</div>
@@ -96,26 +99,40 @@ export default {
   data() {
     return {
       search_text: "",
-      practiceSpokes: [],
+      practiceSpokesResult: [],
+      surgeries: [],
       selectedSpoke: '',
       showResult: false,
       modal: false,
       formError: [],
-      toInvite: false
+      toInvite: false,
+      resultNotice: 'No practice matched that name. Try again with whole words, practice code or CCG.'
     };
   },
   async asyncData({ app, error }) {
     try {
-      const response = await app.$axios.$get(
+      const responsePracticeType = await app.$axios.$get(
         `/api/v1/practice/me/practice-type`
       );
       const type =
-        response.data && response.data.practice && response.data.practice.type
-          ? response.data.practice.type
+        responsePracticeType.data && responsePracticeType.data.practice && responsePracticeType.data.practice.type
+          ? responsePracticeType.data.practice.type
           : null;
 
+      const responsePracticeSurgeries = await app.$axios.$get(
+        `/api/v1/practice/me/practice-surgeries`
+      );
+      let surgeries = []
+      if (responsePracticeSurgeries.data && responsePracticeSurgeries.data.practice_surgeries) {
+					responsePracticeSurgeries.data.practice_surgeries.forEach(surgery => {
+						surgeries.push(surgery);
+						// surgeries.push({ ...surgery, removable: true });
+					});
+				}
+
       return {
-        type
+        type,
+        surgeries
       };
     } catch (err) {
       if (err.response && err.response.status === 401) {
@@ -125,21 +142,34 @@ export default {
       throw err;
     }
   },
+  created(){
+  },
   methods: {
     search() {
-      if (!this.search_text) {
-        return;
-      } else {
+      this.practiceSpokesResult = []
+      if (this.search_text) {
         this.$axios
           .$get(
             `/api/v1/practice/practice-spokes?search=${this.search_text}&limit=10`
           )
           .then(res => {
-            this.practiceSpokes = res.data.practices;
+            if (res.data && res.data.practices){
+              res.data.practices.forEach(item => {
+                let checkSurgery = this.surgeries.find(surgery => surgery.id == item.id)
+                  if (!checkSurgery){
+                    this.practiceSpokesResult.push(item)
+                  }else{
+                    if (checkSurgery.surgery.name === this.search_text.toUpperCase() || checkSurgery.surgery.code === this.search_text.toUpperCase()){
+                      this.resultNotice = "This surgery is already your spoke."
+                    }
+                  }
+                }
+              )
+            }
             this.showResult = true;
           })
           .catch(err => {
-            console.log(err.response);
+            console.log("errrs", err);
           });
       }
     },

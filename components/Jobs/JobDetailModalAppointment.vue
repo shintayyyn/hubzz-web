@@ -4,16 +4,19 @@
       :label="'Delete this appointment?'"
       :confirmLabel="'Yes'"
       :cancelLabel="'Cancel'"
-      :modal="confirmation_modal"
+      :modal="delete_modal"
       @confirm="remove"
-      @cancel="confirmation_modal = false"
+      @cancel="delete_modal = false"
     />
 
     <div class="p-4 md:p-8">
-      <div>
-        <svgicon name="left-arrow" height="32" width="32" @click="close" class="cursor-pointer"/>
-      </div>
-      <div class="flex justify-start font-bold text-sm sm:text-xl mt-8">Appointment</div>
+      <nuxt-link
+        :to="{ path: ['dashboard-create','dashboard-id'].includes($route.name)? '/dashboard' : '/jobs'}"
+        class="cursor-pointer"
+      >
+        <svgicon name="left-arrow" height="32" width="32" />
+      </nuxt-link>
+      <div class="flex flex-row justify-start font-bold mt-8">Appointment</div>
       <AppFormError :formError="formError" v-if="formError.length > 0" id="error" />
       <div class="bg-white rounded-lg shadow-lg px-4 md:px-8 py-4 mt-4">
         <AppInput
@@ -25,17 +28,17 @@
           :items="practices"
         />
         <div class="-mt-10 pt-4">
-          <AppButton :label="'Add'" @click="modal = true" :inStyle="'padding:5px 14px;'" />
+          <AppButton :label="'Add'" @click="surgery_modal = true" :inStyle="'padding:5px 14px;'" />
         </div>
         <div class="flex flex-row flex-wrap justify-start mt-8 items-center max-w-4xl">
           <div class="px-1 w-full sm:w-1/2 md:w-1/4">
-            <AppDate v-model="form.date_start" :name="'date_start'" :label="'From'" isAfter/>
+            <AppDate v-model="form.date_start" :name="'date_start'" :label="'From'" isAfter />
           </div>
           <div class="px-1 w-full sm:w-1/2 md:w-1/4">
-            <AppTime v-model="form.time_start" :name="'time_start'" :label="'Start time'"/>
+            <AppTime v-model="form.time_start" :name="'time_start'" :label="'Start time'" />
           </div>
           <div class="px-1 w-full sm:w-1/2 md:w-1/4">
-            <AppDate v-model="form.date_end" :name="'date_end'" :label="'To'" isAfter/>
+            <AppDate v-model="form.date_end" :name="'date_end'" :label="'To'" isAfter />
           </div>
           <div class="px-1 w-full sm:w-1/2 md:w-1/4">
             <AppTime v-model="form.time_end" :name="'time_end'" :label="'End time'" />
@@ -100,7 +103,7 @@
             <AppButton :label="'Save'" @click="create" />
           </template>
           <template v-else>
-            <AppButton :label="'Delete'" @click="confirmation_modal = true" />
+            <AppButton :label="'Delete'" @click="delete_modal = true" />
             <div class="mx-1"></div>
             <AppButton :label="'Save'" @click="edit" />
           </template>
@@ -108,10 +111,12 @@
       </div>
     </div>
 
-    <div class="shield" v-if="modal"></div>
+    <transition name="fade" mode="out-in">
+      <div class="shield" v-if="surgery_modal" @click="surgery_modal = false"></div>
+    </transition>
     <transition name="slide" mode="out-in">
-      <div class="add-surgery-modal shadow-lg" v-if="modal">
-        <AddSurgeryModal @close="modal = false" />
+      <div class="modal-container shadow-lg" v-if="surgery_modal">
+        <AddSurgeryModal @close="surgery_modal = false" />
       </div>
     </transition>
   </section>
@@ -137,8 +142,8 @@ export default {
   },
   data() {
     return {
-      confirmation_modal: false,
-      modal: false,
+      delete_modal: false,
+      surgery_modal: false,
       shifts: [],
       rate_types: [],
       form: {
@@ -168,24 +173,31 @@ export default {
       );
     },
     "form.date_end"(value) {
-      let a_year = this.$moment(this.form.date_start).get('year')
-      let a_month = this.$moment(this.form.date_start).get('month')
-      let a_date = this.$moment(this.form.date_start).get('date')
-      let b_year = this.$moment(value).get('year')
-      let b_month = this.$moment(value).get('month')
-      let b_date = this.$moment(value).get('date')
+      let a_year = this.$moment(this.form.date_start).get("year");
+      let a_month = this.$moment(this.form.date_start).get("month");
+      let a_date = this.$moment(this.form.date_start).get("date");
+      let b_year = this.$moment(value).get("year");
+      let b_month = this.$moment(value).get("month");
+      let b_date = this.$moment(value).get("date");
 
-      let range = this.$moment([b_year, b_month, b_date]).diff(this.$moment([a_year, a_month, a_date]), 'days')
-      if (range < 0){
-        this.formError.push({field: "form.date_end", message: "Invalid End Date"})
-      }else{
-        let index = this.formError.findIndex(item => item.field.includes("date_end"))
-        this.formError.splice(index, 1)
+      let range = this.$moment([b_year, b_month, b_date]).diff(
+        this.$moment([a_year, a_month, a_date]),
+        "days"
+      );
+      if (range < 0) {
+        this.formError.push({
+          field: "form.date_end",
+          message: "Invalid End Date"
+        });
+      } else {
+        let index = this.formError.findIndex(item =>
+          item.field.includes("date_end")
+        );
+        this.formError.splice(index, 1);
       }
       this.formError = this.formError.filter(
-          error => error.field !== "date_end"
-        );
-      
+        error => error.field !== "date_end"
+      );
     },
     "form.time_start"(value) {
       this.formError = this.formError.filter(
@@ -216,7 +228,7 @@ export default {
       );
     }
   },
-  created() {
+  mounted() {
     this.getPractices();
     this.getShifts();
     this.getRateType();
@@ -263,11 +275,8 @@ export default {
         });
       });
     },
-    close() {
-      this.$emit("close");
-    },
     create() {
-      // this.formError = [];
+      this.formError = [];
       this.Validate(this.form, ["description"]);
       if (!this.formError.length) {
         // this.form.date_start = this.$moment(this.form.date_start).format(
@@ -279,17 +288,18 @@ export default {
         this.$axios
           .$post(`/api/v1/locum/jobs`, this.form)
           .then(res => {
-            if (res.data.job.locum_status === "Allocated") {
-              this.$store.commit("jobs/ADD_LOCUM_ALLOCATED_JOB", res.data.job);
-            }
-            if (res.data.job.locum_status === "Ongoing") {
-              this.$store.dispatch("jobs/fetchLocumJobParts", {
-                locum_status: ["Ongoing"],
-                job_id: res.data.job.id,
-                type: "ADD"
-              });
-            }
-            this.close();
+            console.log(res);
+            // if (res.data.job.locum_status === "Allocated") {
+            //   this.$store.commit("jobs/ADD_LOCUM_ALLOCATED_JOB", res.data.job);
+            // }
+            // if (res.data.job.locum_status === "Ongoing") {
+            //   this.$store.dispatch("jobs/fetchLocumJobParts", {
+            //     locum_status: ["Ongoing"],
+            //     job_id: res.data.job.id,
+            //     type: "ADD"
+            //   });
+            // }
+            this.$emit("close");
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
@@ -436,26 +446,17 @@ export default {
 };
 </script>
 <style scoped>
-.shield {
-  z-index: 511;
-}
-.add-surgery-modal {
-  position: fixed;
-  top: 0;
-  right: 0;
-  margin-right: 0%;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  border-left: solid 2px #edf2f7;
-  transition: all 0.3s ease-in-out;
-  background-color: white;
+.modal-container {
   z-index: 512;
 }
 @media screen and (min-width: 1200px) {
-  .add-surgery-modal {
+  .modal-container {
     width: 70%;
   }
+}
+
+.shield {
+  z-index: 511;
 }
 </style>
 

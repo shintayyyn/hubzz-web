@@ -62,7 +62,6 @@
               :name="'allow_surgery_create_sessions'"
               :label="'Allow Spoke to Create Jobs/Sessions?'"
               :error="formError.find(item => item.field === 'allow_surgery_create_sessions')"
-              :placeholder="'Select...'"
               :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
             />
           </div>
@@ -127,7 +126,6 @@
               :name="'allow_surgery_bill_locum'"
               :label="'Allow Spoke to handle its own billing for Locum?'"
               :error="formError.find(item => item.field === 'allow_surgery_bill_locum')"
-              :placeholder="'Select...'"
               :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
             />
           </div>
@@ -138,7 +136,6 @@
               :name="'allow_surgery_bill_hubzz'"
               :label="'Allow Spoke to handle its own billing for HUBZZ?'"
               :error="formError.find(item => item.field === 'allow_surgery_bill_hubzz')"
-              :placeholder="'Select...'"
               :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
             />
           </div>
@@ -149,7 +146,6 @@
               :name="'share_banks_to_other_surgeries'"
               :label="'Share Banks to Other Surgeries'"
               :error="formError.find(item => item.field === 'share_banks_to_other_surgeries')"
-              :placeholder="'Select...'"
               :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
             />
           </div>

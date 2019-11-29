@@ -194,7 +194,7 @@ export default {
           status: "success",
           text: [`${res.data.message}`]
           })
-          this.$router.push("/profile/practice-spokes");
+          this.$router.push("/surgery-management/practice-spokes");
         console.log('it worked', res)
       }).catch(err => {
         console.log('err', err)

@@ -726,6 +726,7 @@ export default {
     close() {
       this.$store.commit("calendar/CREATE_JOB_MODAL", false);
       this.$store.commit("calendar/CLEAR_REPOST_JOB");
+      this.$emit("close");
     },
     addMandatory() {
       this.$store.commit("calendar/CREATE_JOB_MODAL", false);
