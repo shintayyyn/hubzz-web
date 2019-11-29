@@ -769,6 +769,10 @@ export default {
       this.getDeclinedJobsRealTime
     );
     this.$socket.on(
+      "Locum Notification Job Auto Declined",
+      this.getAutoDeclinedJobsRealTime
+    );
+    this.$socket.on(
       "Locum Notification Job Unavailable",
       this.getUnavailableJobsRealTime
     );
@@ -784,6 +788,7 @@ export default {
   },
   methods: {
     getJobsCount(params) {
+      this.loading = true;
       let locum_status = [];
       if (!this.$route.query.status) {
         locum_status = ["Allocated"];
@@ -841,6 +846,7 @@ export default {
           }
         })
         .catch(err => {
+          this.loading = false;
           console.log("err", err.response.data);
         })
         .finally(() => {
@@ -906,7 +912,7 @@ export default {
           console.log("err", err);
         })
         .finally(() => {
-          this.$store.commit("jobs/TOGGLE_LOADING", false);
+          this.loading = false;
           return;
         });
     },
@@ -1048,6 +1054,18 @@ export default {
         this.showRefresh = true;
       }
     },
+    async getAutoDeclinedJobsRealTime(job) {
+      if (!job) {
+        return;
+      }
+      if (
+        this.$route.path.includes("/jobs") &&
+        (this.$route.query.status === "Declined" ||
+          this.$route.query.status === "Allocated")
+      ) {
+        this.showRefresh = true;
+      }
+    },
     async getUnavailableJobsRealTime(job) {
       if (!job) {
         return;
@@ -1109,8 +1127,8 @@ export default {
         this.getCompletedJobsRealTime
       );
       this.$socket.removeListener(
-        "Locum Notification Job Part Approved",
-        this.getCompletedJobsRealTime
+        "Locum Notification Locum Invoice Updated",
+        this.getApprovedJobsRealTime
       );
       this.$socket.removeListener(
         "Locum Notification Job Cancelled",
@@ -1127,6 +1145,10 @@ export default {
       this.$socket.removeListener(
         "Locum Notification Job Declined",
         this.getDeclinedJobsRealTime
+      );
+      this.$socket.removeListener(
+        "Locum Notification Job Auto Declined",
+        this.getAutoDeclinedJobsRealTime
       );
       this.$socket.removeListener(
         "Locum Notification Job Unavailable",

@@ -105,11 +105,10 @@ export default {
 			}
 		} else {
 			console.log("Message Sent to Candidate!");
-			console.log(state.messageSent);
 			commit("MESSAGE_SENT_TIMEOUT", true);
 			setTimeout(() => {
 				commit("MESSAGE_SENT_TIMEOUT", false);
-			}, 2000);
+			}, 1000);
 		}
 		const response = await chatApi.sendMessage(this.$axios, payload);
 		commit("ADD_MESSAGE", response.data.conversation);

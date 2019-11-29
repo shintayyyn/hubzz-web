@@ -19,25 +19,17 @@
 			:perPage="params.limit"
 			:columns="columns"
 			:orderBy="params.order_by"
+			:customWidth="700"
 			:routerLink="'/surgery-management/practice-spokes'"
-			:statusClass="surgeryStatus()"
-			:status="getStatus()"
 			@pagechanged="pagechanged"
 			@limitchanged="limitchanged"
 			@sorted="sorted"
 		>
-			<!-- <template v-slot:actions="slotProps">
-        <td class="flex justify-center">
-          <div
-            class="font-semibold text-xs sm:text-sm text-center px-2"
-            @click.stop.prevent="
-              toggleRemoveConfirmationModal(slotProps.item.id)
-            "
-          >
-            X
-          </div>
-        </td>
-      </template> -->
+			<template v-slot:actions="slotProps">
+				<div class="flex items-center justify-center">
+                    <div class="rounded-full px-6 py-1" :class="surgeryStatus()">{{ getStatus() }}</div>
+                  </div>
+			</template>
 		</AppTable>
 		<div v-else class="flex justify-center py-4 text-gray-500">
 			No Branches / Surgeries
@@ -132,7 +124,7 @@ export default {
 				// },
 				{
 					name: "Status",
-					dataIndex: "",
+          			dataIndex: "actions",
 					class: "status text-center"
 				}
 			]

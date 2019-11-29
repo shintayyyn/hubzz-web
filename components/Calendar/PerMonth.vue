@@ -216,22 +216,42 @@ export default {
   mounted() {
     // locum
     if (this.$auth.loggedIn && this.$auth.user.domain === "Locum") {
+      this.$socket.on("Locum Notification Job Available", this.getJobsRealTime);
+      this.$socket.on("Locum Notification Job Matched", this.getJobsRealTime);
+      this.$socket.on(
+        "Locum Notification Job Unsuccessful",
+        this.getJobsRealTime
+      );
       this.$socket.on("Locum Notification Job Current", this.getJobsRealTime);
       this.$socket.on("Locum Notification Job Ongoing", this.getJobsRealTime);
-      this.$socket.on("Locum Notification Job Cancelled", this.getJobsRealTime);
       this.$socket.on(
         "Locum Notification Job Part Completed",
         this.getJobsRealTime
       );
+      this.$socket.on(
+        "Locum Notification Locum Invoice Updated",
+        this.getJobsRealTime
+      );
+      this.$socket.on("Locum Notification Job Cancelled", this.getJobsRealTime);
+
+      this.$socket.on("Locum Notification Job Amended", this.getJobsRealTime);
       this.$socket.on("Locum Notification Job Updated", this.getJobsRealTime);
-      this.$socket.on("Locum Notification Job Applied", this.getJobsRealTime);
+      this.$socket.on("Locum Notification Job Declined", this.getJobsRealTime);
+      this.$socket.on(
+        "Locum Notification Job Auto Declined",
+        this.getJobsRealTime
+      );
+      this.$socket.on(
+        "Locum Notification Job Unavailable",
+        this.getJobsRealTime
+      );
+      this.$socket.on(
+        "Locum Notification Job Unqualified",
+        this.getJobsRealTime
+      );
     }
     // practice
     if (this.$auth.loggedIn && this.$auth.user.domain === "Practice") {
-      this.$socket.on(
-        "Practice Notification Job Current",
-        this.getJobsRealTime
-      );
       this.$socket.on(
         "Practice Notification Job Available",
         this.getJobsRealTime
@@ -241,15 +261,11 @@ export default {
         this.getJobsRealTime
       );
       this.$socket.on(
-        "Practice Notification Job Declined",
+        "Practice Notification Job Current",
         this.getJobsRealTime
       );
       this.$socket.on(
-        "Practice Notification Job Cancelled",
-        this.getJobsRealTime
-      );
-      this.$socket.on(
-        "Practice Notification Job Part Approved",
+        "Practice Notification Job Ongoing",
         this.getJobsRealTime
       );
       this.$socket.on(
@@ -257,7 +273,31 @@ export default {
         this.getJobsRealTime
       );
       this.$socket.on(
-        "Practice Notification Job Updated",
+        "Practice Notification Locum Invoice Updated",
+        this.getJobsRealTime
+      );
+      this.$socket.on(
+        "Practice Notification Job Cancelled",
+        this.getJobsRealTime
+      );
+      this.$socket.on(
+        "Practice Notification Job Amended",
+        this.getJobsRealTime
+      );
+      this.$socket.on(
+        "Practice Notification Job Declined",
+        this.getJobsRealTime
+      );
+      this.$socket.on(
+        "Practice Notification Job Auto Declined",
+        this.getJobsRealTime
+      );
+      this.$socket.on(
+        "Practice Notification Job Update Accept",
+        this.getJobsRealTime
+      );
+      this.$socket.on(
+        "Practice Notification Job Unfilled",
         this.getJobsRealTime
       );
     }
@@ -281,7 +321,15 @@ export default {
     removeListener() {
       if (this.$auth.loggedIn && this.$auth.user.domain === "Locum") {
         this.$socket.removeListener(
-          "Locum Notification Job Ongoing",
+          "Locum Notification Job Available",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
+          "Locum Notification Job Matched",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
+          "Locum Notification Job Unsuccessful",
           this.getJobsRealTime
         );
         this.$socket.removeListener(
@@ -289,7 +337,7 @@ export default {
           this.getJobsRealTime
         );
         this.$socket.removeListener(
-          "Locum Notification Job Cancelled",
+          "Locum Notification Job Ongoing",
           this.getJobsRealTime
         );
         this.$socket.removeListener(
@@ -297,19 +345,39 @@ export default {
           this.getJobsRealTime
         );
         this.$socket.removeListener(
+          "Locum Notification Locum Invoice Updated",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
+          "Locum Notification Job Cancelled",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
+          "Locum Notification Job Amended",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
           "Locum Notification Job Updated",
           this.getJobsRealTime
         );
         this.$socket.removeListener(
-          "Locum Notification Job Applied",
+          "Locum Notification Job Declined",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
+          "Locum Notification Job Auto Declined",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
+          "Locum Notification Job Unavailable",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
+          "Locum Notification Job Unqualified",
           this.getJobsRealTime
         );
       }
       if (this.$auth.loggedIn && this.$auth.user.domain === "Practice") {
-        this.$socket.removeListener(
-          "Practice Notification Job Current",
-          this.getJobsRealTime
-        );
         this.$socket.removeListener(
           "Practice Notification Job Available",
           this.getJobsRealTime
@@ -319,15 +387,11 @@ export default {
           this.getJobsRealTime
         );
         this.$socket.removeListener(
-          "Practice Notification Job Declined",
+          "Practice Notification Job Current",
           this.getJobsRealTime
         );
         this.$socket.removeListener(
-          "Practice Notification Job Cancelled",
-          this.getJobsRealTime
-        );
-        this.$socket.removeListener(
-          "Practice Notification Job Part Approved",
+          "Practice Notification Job Ongoing",
           this.getJobsRealTime
         );
         this.$socket.removeListener(
@@ -335,11 +399,31 @@ export default {
           this.getJobsRealTime
         );
         this.$socket.removeListener(
-          "Practice Notification Job Completed",
+          "Practice Notification Locum Invoice Updated",
           this.getJobsRealTime
         );
         this.$socket.removeListener(
-          "Practice Notification Job Updated",
+          "Practice Notification Job Cancelled",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
+          "Practice Notification Job Amended",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
+          "Practice Notification Job Declined",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
+          "Practice Notification Job Auto Declined",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
+          "Practice Notification Job Update Accept",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
+          "Practice Notification Job Unfilled",
           this.getJobsRealTime
         );
       }

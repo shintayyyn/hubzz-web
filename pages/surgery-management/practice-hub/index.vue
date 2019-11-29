@@ -184,7 +184,7 @@ export default {
 </script>
 
 <style>
-.shield {
+/* .shield {
 	z-index: 509;
-}
+} */
 </style>
