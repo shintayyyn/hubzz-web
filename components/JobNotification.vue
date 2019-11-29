@@ -317,7 +317,6 @@ export default {
       this.close(id);
     },
     close(id) {
-      // this.$store.commit("calendar/CREATE_JOB_MODAL", false);
       this.$store.commit("jobs/REMOVE_PRACTICE_JOB_NOTIFICATION", id);
       this.$store.commit("jobs/REMOVE_LOCUM_JOB_NOTIFICATION", id);
       this.$store.commit("billing/REMOVE_PRACTICE_BILLING_NOTIFICATION", id);

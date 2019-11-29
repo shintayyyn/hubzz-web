@@ -35,7 +35,7 @@ export default {
             state.locum_unavailabilities = []
     },
     // PRACTICE
-    // JOB NOTIFICATION
+    // NOTIF
     ADD_PRACTICE_JOB_NOTIFICATION(state, payload) {
         let index = state.practice_job_notifications.findIndex(jobNotif => jobNotif.id === payload.id)
         if (index < 0) {
@@ -50,7 +50,7 @@ export default {
     CLEAR_PRACTICE_JOB_NOTIFICATION(state) {
         state.practice_job_notifications = []
     },
-    // JOB PARTS
+    // PARTS
     SET_PRACTICE_ONGOING_JOB_PARTS_COUNT(state, payload) {
         state.practice_ongoing_job_parts_count = payload
     },
@@ -270,7 +270,7 @@ export default {
         }
     },
 
-    // REMINDER
+    // REMINDERS
     ADD_PRACTICE_AVAILABLE_JOBS_REMINDER(state, payload) {
         state.practice_available_jobs_reminder.push(payload)
     },
@@ -289,7 +289,7 @@ export default {
 
 
     // LOCUM
-    // JOB NOTIFICATION
+    // NOTIF
     ADD_LOCUM_JOB_NOTIFICATION(state, payload) {
         let index = state.locum_job_notifications.findIndex(jobNotif => jobNotif.id === payload.id)
         if (index < 0) {
@@ -302,7 +302,7 @@ export default {
     CLEAR_LOCUM_JOB_NOTIFICATION(state) {
         state.locum_job_notifications = []
     },
-    // JOB PARTS
+    // PARTS
     SET_LOCUM_ALLOCATED_JOB_PARTS_COUNT(state, payload) {
         state.locum_allocated_job_parts_count = payload
     },
@@ -381,7 +381,7 @@ export default {
         }
     },
 
-    // WHOLE JOBS
+    // WHOLE
     SET_LOCUM_ALLOCATED_JOBS(state, payload) {
         state.locum_allocated_jobs = payload
     },
@@ -517,6 +517,7 @@ export default {
         state.locum_withdrawn_jobs_count = payload
     },
 
+    // UNAVAILABILITIES
     SET_LOCUM_UNAVAILABILITIES(state, payload) {
         state.locum_unavailabilities = payload
     },
@@ -543,5 +544,13 @@ export default {
             state.locum_unavailabilities = state.locum_unavailabilities.filter(item => item.id !== payload)
             state.locum_unavailabilities_count = state.locum_unavailabilities_count - 1
         }
+    },
+
+    // PRIVATE
+    SET_LOCUM_PRIVATE_JOBS(state, payload) {
+        state.locum_private_jobs = payload
+    },
+    SET_LOCUM_PRIVATE_JOBS_COUNT(state, payload) {
+        state.locum_private_jobs_count = payload
     },
 }
