@@ -68,7 +68,7 @@ export default {
   methods: {
     close() {
       this.$router.push({
-        path: `/profile/practice-spokes/${this.$route.params.id}/surgery-sessions`,
+        path: `/surgery-management/practice-spokes/${this.$route.params.id}/surgery-sessions`,
         query: { ...this.$route.query }
       });
     }

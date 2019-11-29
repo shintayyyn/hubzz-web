@@ -159,11 +159,8 @@
           :type="'select'"
           :name="'ir35'"
           :label="'IR35 - role inside or outside of scope'"
-          :placeholder="'Select...'"
           :items="[ {value: true, label: 'Inside of Scope'}, {value: false, label: 'Outside of Scope'} ]"
           @submit="save"
-          @blur="CheckEmptyField(form.ir35, 'ir35')"
-          :error="formError.find(item => item.field === 'ir35')"
         />
       </div>
 
@@ -380,6 +377,8 @@ export default {
           "payroll_detail_account_number"
         );
       }
+
+      console.log("notRequired", notRequired)
 
       this.Validate(this.form, notRequired);
       if (!this.formError.length) {
