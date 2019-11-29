@@ -64,6 +64,7 @@
         />
       </div>
     </transition>
+    <div class="shield" v-if="sendMessage"></div>
   </div>
 </template>
 <script>
@@ -158,9 +159,9 @@ export default {
 img {
   border-radius: 50%;
 }
-.shield {
+/* .shield {
   z-index: 511;
-}
+} */
 .modal-container {
   z-index: 512;
 }

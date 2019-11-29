@@ -68,6 +68,6 @@ export default {
 
 <style>
 .shield {
-	z-index: 509;
+	/* z-index: 509; */
 }
 </style>

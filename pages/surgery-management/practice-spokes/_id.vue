@@ -1,11 +1,13 @@
 <template>
 	<div class="modal-container shadow-lg">
 		<div class="p-4 md:p-8 w-full">
-			<div
-				@click="$router.push('/surgery-management/practice-spokes')"
-				class="mb-2 cursor-pointer"
-			>
-				<svgicon name="left-arrow" height="32" width="32" />
+			<div>
+				<svgicon 
+					name="left-arrow" 
+					height="32" 
+					width="32" 
+					@click="$router.push('/surgery-management/practice-spokes')"
+					class="mb-2 cursor-pointer" />
 			</div>
 			<div class="flex overflow-x-auto">
 				<nuxt-link

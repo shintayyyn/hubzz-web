@@ -3,7 +3,7 @@
     <AppLoading :loading="loading" spinner />
     <div class="flex flex-wrap justify-start items-center">
       <div
-        v-if="allApproved"
+        v-if="!allApproved"
         class="save-button text-xs sm:text-sm ml-4 mx-2 py-2 px-3 border-2 rounded-lg font-bold flex items-center"
         @click="save(false)"
       >Save changes</div>
@@ -98,12 +98,14 @@
               <div
                 style="width:430px;min-height:80px;"
                 class="text-xs sm:text-sm border-b-2 border-gray-300 px-4 py-1"
-              >{{modifiedDescription(item)}}</div>
+                v-text="modifiedDescription(item)"
+              ></div>
               <div
                 style="min-height:80px;"
                 class="text-xs sm:text-sm border-b-2 border-gray-300 px-4 py-1 text-right"
                 :style="approvedInvoices.includes(item.job_part_id) ? 'width:310px':'width:200px'"
-              >{{modifiedTotal(item)}}</div>
+                v-text="modifiedTotal(item)"
+              ></div>
               <div class="align-middle sticky right-0 bg-white">
                 <div class="flex flex-row flex-no-wrap justify-start items-center">
                   <input
@@ -312,7 +314,7 @@ export default {
     allApproved() {
       return (
         this.selectedInvoice.items.filter(invoice => invoice.approved === false)
-          .length > 0
+          .length === 0
       );
     },
     modifiedTotal() {
@@ -350,9 +352,7 @@ export default {
               (parseInt(selectedJobPart.final_hours) / 4) *
               parseInt(selectedItem.job_part.job.rate);
           }
-          console.log(total);
           total = !total ? "0.00" : total.toFixed(2).toString();
-          console.log(total);
           selectedJobPart.total = total;
           return selectedJobPart.total;
         }
@@ -537,11 +537,6 @@ export default {
               text: [`${res.message}`]
             });
             this.$router.push("/practice-billing/invoices-from-locums");
-            setTimeout(() => {
-              this.$router.push({
-                path: `/practice-billing/invoices-from-locums/${res.data.locum_invoice.id}`
-              });
-            }, 500);
           })
           .catch(err => {
             console.log("err", err.response.data);
@@ -566,27 +561,6 @@ export default {
       if (process.client) {
         document.body.style.cursor = "wait";
       }
-      // this.$html2canvas(document.getElementById("htmlpdf")).then(canvas => {
-      //   var imgWidth = 210;
-      //   var pageHeight = 295;
-      //   var imgHeight = (canvas.height * imgWidth) / canvas.width;
-      //   var heightLeft = imgHeight;
-      //   var doc = this.$jspdf("p", "mm");
-      //   var position = 0;
-
-      //   var imgData = canvas.toDataURL("image/png");
-
-      //   doc.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-      //   heightLeft -= pageHeight;
-
-      //   while (heightLeft >= 0) {
-      //     position = heightLeft - imgHeight;
-      //     doc.addPage();
-      //     doc.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-      //     heightLeft -= pageHeight;
-      //   }
-      //   doc.save("practice-billing-invoice.pdf");
-      // });
 
       let doc = this.$jspdf("p", "mm");
       let pageHeight = 1020;

@@ -11,14 +11,14 @@
           <PerMonth v-if="$store.state.calendar.view_type === 'per_month'" />
           <PerWeek v-if="$store.state.calendar.view_type === 'per_week'" />
           <div class="absolute md:mx-5 md:py-4 mx-2 right-0 mt-2 md:-mt-3">
-            <div
+            <nuxt-link
               v-if="
 								$auth.user.domain === 'Locum' ||
 									($auth.user.domain === 'Practice' && authPermissions.includes('Create Sessions Job'))
 							"
+              :to="{ path: '/dashboard/create' }"
               class="rounded-full h-10 w-10 sm:h-12 sm:w-12 md:h-16 md:w-16 text-2xl sm:text-3xl md:text-4xl flex items-center focus:outline-none justify-center bg-yellow-500 font-semibold cursor-pointer shadow-md hover:text-white"
-              @click="create"
-            >+</div>
+            >+</nuxt-link>
           </div>
         </div>
         <div class="w-full lg:w-1/3">
@@ -26,39 +26,18 @@
         </div>
       </div>
     </div>
-    <div class="shield" v-if="toggleScroll" @click="close"></div>
-    <transition name="slide" mode="out-in">
-      <template v-if="locum_appointment_modal">
-        <div class="modal-container">
-          <LocumJobDetailModalAppointment
-            v-if="locum_appointment_modal"
-            @close="locum_appointment_modal = false"
-            :job="locum_appointment_job"
-          />
-        </div>
-      </template>
-    </transition>
   </section>
 </template>
 <script>
 import PerMonth from "@/components/Calendar/PerMonth";
 import PerWeek from "@/components/Calendar/PerWeek";
 import Info from "@/components/Calendar/Info";
-// locums
-import LocumJobDetailModalAppointment from "@/components/Jobs/JobDetailModalAppointment";
 
 export default {
   components: {
     PerMonth,
     PerWeek,
-    Info,
-    LocumJobDetailModalAppointment
-  },
-  data() {
-    return {
-      locum_appointment_modal: false,
-      locum_appointment_job: null
-    };
+    Info
   },
   created() {
     this.$store.commit("calendar/SET_DATE_TODAY");
@@ -67,64 +46,22 @@ export default {
     loading() {
       return this.$store.state.calendar.loading;
     },
-    toggleScroll() {
-      return (
-        this.locum_modal_part ||
-        this.locum_appointment_modal ||
-        this.locum_modal
-      );
-    },
     create_job_modal() {
       return this.$store.state.calendar.create_job_modal;
     },
     authPermissions() {
       return this.$store.getters["auth/permissions"];
     }
-  },
-  watch: {
-    toggleScroll(value) {
-      if (value) {
-        document.body.style.overflow = "hidden";
-      } else {
-        document.body.style.overflow = "auto";
-      }
-    }
-  },
-  methods: {
-    create() {
-      if (this.$auth.user.domain === "Locum") {
-        this.createAppointmentJob();
-      } else {
-        this.$store.commit("calendar/CREATE_JOB_MODAL", true);
-      }
-    },
-    // locum
-    createAppointmentJob() {
-      this.locum_appointment_modal = true;
-      this.locum_appointment_job = null;
-    },
-    // close modal thru shield
-    close() {
-      this.locum_appointment_modal = false;
-    }
   }
 };
 </script>
-<style>
+<style scoped>
 .calendar {
   height: auto;
 }
 @media screen and (min-width: 991px) {
   .calendar {
     height: auto;
-  }
-}
-.modal-container {
-  z-index: 510;
-}
-@media screen and (min-width: 1200px) {
-  .modal-container {
-    width: 80%;
   }
 }
 </style>

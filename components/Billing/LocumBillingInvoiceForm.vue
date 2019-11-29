@@ -4,12 +4,12 @@
     <div class="flex flex-col md:flex-row justify-between">
       <div class="flex flex-wrap items-center">
         <div
-          v-if="allApproved"
+          v-if="!allApproved"
           class="save-button text-xs sm:text-sm px-4 py-2 border-2 rounded-lg font-bold flex items-center my-1 md:my-0 mr-1 md:mr-2"
           @click="save(false)"
         >Save changes</div>
         <div
-          v-if="allApproved"
+          v-if="!allApproved && (!selectedInvoice || (selectedInvoice && selectedInvoice.status === 'Draft'))"
           class="save-button text-xs sm:text-sm px-4 py-2 border-2 rounded-lg font-bold flex items-center my-1 md:my-0 mr-1 md:mr-2"
           @click="save(true)"
         >Save and archive as final</div>
@@ -20,15 +20,18 @@
         >Export to PDF</div>
       </div>
 
+      <!-- INVOICE TYPE -->
       <div class="flex flex-row flex-wrap justify-start items-center my-2 md:my-4">
         <label class="mx-1">Type:</label>
         <button
+          v-if="!selectedInvoice || ((selectedInvoice && selectedInvoice.status === 'Draft') || (selectedInvoice && (selectedInvoice.status === 'Issued' || selectedInvoice.status === 'Disputed') && type === 'Private'))"
           :class="type === 'Private' ? 'bg-yellow-500 border-yellow-500' : 'hover:bg-gray-200'"
           class="text-xs sm:text-sm mx-1 py-2 px-3 border-2 rounded-lg font-bold flex items-center focus:outline-none"
           @click="type = 'Private'"
           :disabled="type === 'Private'"
         >Private</button>
         <button
+          v-if="!selectedInvoice || ((selectedInvoice && selectedInvoice.status === 'Draft') || (selectedInvoice && (selectedInvoice.status === 'Issued' || selectedInvoice.status === 'Disputed') && type === 'Platform'))"
           :class="type === 'Platform' ? 'bg-yellow-500 border-yellow-500' : 'hover:bg-gray-200'"
           class="text-xs sm:text-sm mx-1 py-2 px-3 border-2 rounded-lg font-bold flex items-center focus:outline-none"
           @click="type = 'Platform'"
@@ -39,6 +42,7 @@
 
     <div id="htmlpdf" class="max-w-3xl mb-4 bg-white px-4 py-4 border shadow-md mb-32">
       <div class="flex flex-col" :ref="'pdf-header'">
+        <!-- LOCUM INFO -->
         <div class="text-xs sm:text-sm sm:text-right leading-normal">
           <div>{{$auth.user.personal_detail.name}}</div>
           <div>{{$auth.user.address_detail.address.line_1}}</div>
@@ -46,13 +50,13 @@
           <div>{{$auth.user.address_detail.address.post_code}}</div>
           <div>Tel {{$auth.user.contact_detail.mobile_number}}</div>
           <div>{{$auth.user.email}}</div>
-          <div>UTR {{$auth.user.locum_detail.invoice_detail && $auth.user.locum_detail.invoice_detail.utr_number ? $auth.user.locum_detail.invoice_detail.utr_number : null}}</div>
+          <div>{{$auth.user.locum_detail.invoice_detail && $auth.user.locum_detail.invoice_detail.utr_number ? `UTR ${$auth.user.locum_detail.invoice_detail.utr_number}` : null}}</div>
         </div>
         <div class="flex flex-wrap justify-between my-2">
           <div
             class="w-full sm:w-1/2 order-2 sm:order-1 text-xs sm:text-sm text-left rounded-lg border-2 border-gray-300 p-2 w-2/3"
           >
-            <!-- TO ACCNTS -->
+            <!-- LIST OF SURGERIES/PRACTICES -->
             <section>
               <div class="relative flex flex-col py-2" v-on-clickaway="toggledOffSurgeries">
                 <div class="relative flex flex-row flex-no-wrap justify-between">
@@ -104,7 +108,7 @@
                 </div>
               </div>
             </section>
-            <!-- END TO ACCNTS -->
+            <!-- SURGERY/PRACTICE ADDRESS -->
             <div class="text-xs sm:text-sm" v-if="selectedSurgery && selectedSurgery.address">
               <div>{{selectedSurgery.address.line_1}}</div>
               <div>{{selectedSurgery.address.line_2}}</div>
@@ -112,16 +116,25 @@
               <div>{{selectedSurgery.address.post_code}}</div>
             </div>
           </div>
+          <!-- INVOICE STATUS -->
           <div
             v-if="selectedInvoice"
             class="w-full sm:w-1/2 order-1 sm:order-2 sm:text-right leading-normal"
           >
             <div class="font-bold text-sm sm:text-lg">{{selectedInvoice.status.toUpperCase()}}</div>
-            <!-- <div class="text-xs sm:text-sm">{{issuedAt | localDate}}</div> -->
+            <div
+              class="text-xs sm:text-sm"
+              v-if="selectedInvoice.status === 'Issued'"
+            >{{selectedInvoice.issued_at | localDate}}</div>
+            <div
+              class="text-xs sm:text-sm"
+              v-if="selectedInvoice.status === 'Paid'"
+            >{{selectedInvoice.paid_at | localDate}}</div>
+            <div class="text-xs sm:text-sm" v-if="selectedInvoice.status === 'Draft'">Not yet issued</div>
           </div>
         </div>
-        <!-- SELECT SURGERY/PRACTICE -->
         <div v-if="selectedSurgery && selectedInvoice === null">
+          <!-- LIST OF JOB PARTS-->
           <section>
             <div
               class="relative flex flex-col py-2 mb-3 md:mb-6 mt-2"
@@ -182,11 +195,10 @@
             </div>
           </section>
         </div>
-        <!-- END SELECT SURGERY/PRACTICE -->
       </div>
       <div class="overflow-auto">
         <div class="items-table">
-          <!-- thead / items header -->
+          <!-- ITEMS HEADER -->
           <div class="flex justify-start" :ref="'items-header'">
             <div
               class="w-1/2 bg-gray-900 text-white px-4 py-1 font-semibold border-r-2 border-white"
@@ -202,6 +214,7 @@
               </div>
             </div>
           </div>
+          <!-- ITEMS -->
           <div
             :id="`invoice-item-${index}`"
             class="flex flex-col border-b-2 pb-2"
@@ -210,6 +223,7 @@
             :key="item.id"
           >
             <div class="relative flex justify-start mt-2">
+              <!-- FOR PRIVATE TYPE -->
               <template v-if="type === 'Private'">
                 <div class="w-1/2 px-1">
                   <textarea
@@ -229,6 +243,7 @@
                   />
                 </div>
               </template>
+              <!-- FOR PLATFORM TYPE -->
               <template v-if="type === 'Platform'">
                 <div
                   class="w-1/2 text-xs sm:text-sm px-4 py-1 border-b-2 border-gray-300"
@@ -334,7 +349,7 @@
           </div>
         </div>
       </div>
-
+      <!-- ITEMS TOTAL -->
       <div :ref="'items-total'" class="flex justify-between md:m-2">
         <span class="font-bold">Total</span>
         <div>
@@ -347,11 +362,12 @@
           £ {{amount | currency}}
         </div>
       </div>
-
+      <!-- ITEMS DAYS WORKED -->
       <div :ref="'days-worked'" class="flex flex-row flex-wrap justify-between px-2">
         <div class="w-full flex flex-row flex-wrap justify-between md:px-2">
           <div class="w-full md:w-1/2 md:pr-1">
             <AppDate
+              :disabled="selectedInvoice && selectedInvoice.status !== 'Draft'"
               v-model="form.date_start"
               :name="'date_start'"
               :label="'Days worked from'"
@@ -360,6 +376,7 @@
           </div>
           <div class="w-full md:w-1/2 md:pl-1">
             <AppDate
+              :disabled="selectedInvoice && selectedInvoice.status !== 'Draft'"
               v-model="form.date_end"
               :name="'date_end'"
               :label="'To'"
@@ -471,15 +488,11 @@ export default {
         return index === -1 && filterItem;
       });
     },
-    issuedAt() {
-      return this.selectedInvoice && this.selectedInvoice.issued_at
-        ? this.selectedInvoice.issued_at
-        : null;
-    },
     allApproved() {
       return (
+        this.selectedInvoice && 
         this.selectedInvoice.items.filter(invoice => invoice.approved === false)
-          .length > 0
+          .length === 0
       );
     }
   },

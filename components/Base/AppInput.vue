@@ -17,7 +17,7 @@
             >{{info}}</div>
             <div
               class="text-red-500 text-xs px-2"
-              v-if="error && (type === 'select' || type.includes('checkbox'))"
+              v-if="error && type.includes('checkbox')"
             >{{error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ")}}</div>
           </div>
         </div>
@@ -64,33 +64,39 @@
               </div>
             </template>
             <template v-if="type === 'select'">
-              <div class="w-full relative customized-select py-8 flex items-center">
-                <select
-                  ref="inputSelect"
-                  :value="value"
-                  class="absolute bottom-0 border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full"
-                  :class="[(error && !disabled) && 'border-red-500', disabled ? 'border-gray-400' : 'cursor-pointer']"
-                  @input="$emit('input', $event.target.value)"
-                  :style="inStyle"
-                  @change="$emit('change', $event.target.value)"
-                  @blur="$emit('blur')"
-                  :disabled="disabled"
-                >
-                  <option value disabled selected v-if="placeholder">{{placeholder}}</option>
-                  <option
-                    v-for="(item, index) in items"
-                    :key="index"
-                    :value="item.value"
-                    :selected="value === item.value"
-                  >{{item.label}}</option>
-                </select>
-                <span class="absolute right-0 h-full">
-                  <svgicon
-                    name="arrow-up"
-                    class="h-full w-10 p-2 mt-2 fill-current"
-                    style="transform: rotate(180deg)"
-                  />
-                </span>
+              <div class="w-full relative">
+                <div class="w-full customized-select py-8 flex items-center">
+                  <select
+                    ref="inputSelect"
+                    :value="value"
+                    class="absolute bottom-0 border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full"
+                    :class="[(error && !disabled) && 'border-red-500', disabled ? 'border-gray-400' : 'cursor-pointer']"
+                    @input="$emit('input', $event.target.value)"
+                    :style="inStyle"
+                    @change="$emit('change', $event.target.value)"
+                    @blur="$emit('blur')"
+                    :disabled="disabled"
+                  >
+                    <option value disabled selected v-if="placeholder">{{placeholder}}</option>
+                    <option
+                      v-for="(item, index) in items"
+                      :key="index"
+                      :value="item.value"
+                      :selected="value === item.value"
+                    >{{item.label}}</option>
+                  </select>
+                  <span class="absolute right-0 h-full">
+                    <svgicon
+                      name="arrow-up"
+                      class="h-full w-10 p-2 mt-2 fill-current"
+                      style="transform: rotate(180deg)"
+                    />
+                  </span>
+                </div>
+                <div
+                  v-if="error"
+                  class="text-red-500 py-1 text-xs text-white"
+                >{{error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ")}}</div>
               </div>
             </template>
             <template v-if="type === 'textarea'">
