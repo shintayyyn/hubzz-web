@@ -1,11 +1,13 @@
 <template>
   <section>
-    <div class="shield" v-if="modal"></div>
-    <transition name="drop" mode="out-in">
-      <div class="add-surgery-confirmation-modal flex justify-center" v-if="modal">
-        <AddSurgeryConfirmationModal @add="add" @close="modal = false" />
-      </div>
-    </transition>
+    <AppConfirmationModal
+      :label="'Proceed to add this surgery?'"
+      :confirmLabel="'Yes'"
+      :cancelLabel="'Cancel'"
+      :modal="add_modal"
+      @confirm="add"
+      @cancel="add_modal = false"
+    />
 
     <div class="p-4 md:p-8 max-w-5xl">
       <div @click="$emit('close')" class="cursor-pointer">
@@ -72,12 +74,12 @@
 <script>
 import AppInput from "@/components/Base/AppInput";
 import AppButton from "@/components/Base/AppButton";
-import AddSurgeryConfirmationModal from "@/components/AddSurgeryConfirmationModal";
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
 export default {
   components: {
     AppInput,
     AppButton,
-    AddSurgeryConfirmationModal
+    AppConfirmationModal
   },
   data() {
     return {
@@ -85,7 +87,7 @@ export default {
       surgeries: [],
       selectedSurgery: {},
       showResult: false,
-      modal: false,
+      add_modal: false,
       formError: [],
       selectedSurgeries: []
     };
@@ -137,7 +139,7 @@ export default {
     select(item) {
       if (!this.selectedSurgeries.includes(item.id)) {
         this.selectedSurgery = item;
-        this.modal = true;
+        this.add_modal = true;
       }
     },
     add() {
@@ -155,7 +157,7 @@ export default {
             status: "success",
             text: [`${res.message}`]
           });
-          this.modal = false;
+          this.add_modal = false;
           this.$emit("close");
         });
     }
@@ -164,15 +166,4 @@ export default {
 </script>
 
 <style scoped>
-.add-surgery-confirmation-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: auto;
-  z-index: 514;
-}
-.shield {
-  z-index: 513;
-}
 </style>

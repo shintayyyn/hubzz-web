@@ -29,7 +29,11 @@
     </div>
 
     <transition name="fade" mode="out-in">
-      <nuxt-link class="shield" v-if="$route.name === 'dashboard-id'" :to="'/dashboard'"></nuxt-link>
+      <nuxt-link
+        class="shield"
+        v-if="['dashboard-id','dashboard-create'].includes($route.name)"
+        :to="'/dashboard'"
+      ></nuxt-link>
     </transition>
     <div>
       <nuxt-child />
@@ -68,10 +72,22 @@ export default {
       }
       return false;
     }
+  },
+  watch: {
+    "$route.path"(value) {
+      if (value !== "/dashboard") {
+        document.body.style.overflow = "hidden";
+      } else if (value === "/dashboard") {
+        document.body.style.overflow = "auto";
+      }
+    }
   }
 };
 </script>
 <style scoped>
+.shield {
+  z-index: 509;
+}
 .dashboard-section {
   height: auto;
   width: 100%;

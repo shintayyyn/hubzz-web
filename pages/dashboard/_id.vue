@@ -9,6 +9,9 @@
     <template v-if="locum_modal">
       <LocumJobDetailModal @close="close" :job="locum_job" />
     </template>
+    <template v-if="locum_appointment_modal">
+      <LocumJobDetailModalAppointment @close="close" :job="locum_appointment_job" />
+    </template>
     <template v-if="locum_modal_part">
       <LocumJobPartDetailModal @close="close" :job_part="locum_job_part" />
     </template>
@@ -18,12 +21,14 @@
 import SessionDetailModal from "@/components/Sessions/SessionDetailModal";
 import SessionPartDetailModal from "@/components/Sessions/SessionPartDetailModal";
 import LocumJobDetailModal from "@/components/Jobs/JobDetailModal";
+import LocumJobDetailModalAppointment from "@/components/Jobs/JobDetailModalAppointment";
 import LocumJobPartDetailModal from "@/components/Jobs/JobPartDetailModal";
 export default {
   components: {
     SessionDetailModal,
     SessionPartDetailModal,
     LocumJobDetailModal,
+    LocumJobDetailModalAppointment,
     LocumJobPartDetailModal
   },
   data() {
@@ -35,7 +40,9 @@ export default {
       locum_modal: false,
       locum_job: null,
       locum_modal_part: false,
-      locum_job_part: null
+      locum_job_part: null,
+      locum_appointment_modal: false,
+      locum_appointment_job: null
     };
   },
   async asyncData({ app, params, query, redirect, router, error }) {
@@ -88,21 +95,39 @@ export default {
         let response = await app.$axios.get(`${url}/${params.id}`);
 
         if (response.data.data.job) {
-          let locum_job = response.data.data.job;
-          let locum_modal = true;
-          return {
-            locum_job,
-            locum_modal
-          };
+          if (response.data.data.job.type === "Platform") {
+            let locum_job = response.data.data.job;
+            let locum_modal = true;
+            return {
+              locum_job,
+              locum_modal
+            };
+          } else if (response.data.data.job.type === "Private") {
+            let locum_appointment_job = response.data.data.job;
+            let locum_appointment_modal = true;
+            return {
+              locum_appointment_job,
+              locum_appointment_modal
+            };
+          }
         }
 
         if (response.data.data.job_part) {
-          let locum_job_part = response.data.data.job_part;
-          let locum_modal_part = true;
-          return {
-            locum_job_part,
-            locum_modal_part
-          };
+          if (response.data.data.job_part.job.type === "Platform") {
+            let locum_job_part = response.data.data.job_part;
+            let locum_modal_part = true;
+            return {
+              locum_job_part,
+              locum_modal_part
+            };
+          } else if (response.data.data.job_part.type === "Private") {
+            let locum_appointment_job = response.data.data.job_part.job;
+            let locum_appointment_modal = true;
+            return {
+              locum_appointment_job,
+              locum_appointment_modal
+            };
+          }
         }
       }
     } catch (err) {

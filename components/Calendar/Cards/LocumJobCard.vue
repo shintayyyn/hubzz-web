@@ -91,6 +91,7 @@ export default {
       return this.propJob.date_end;
     },
     unavailableShift() {
+      // if (this.propJob.type === "Platform") {
       let shifts = this.propJob.shifts;
       if (this.$store.state.calendar.view_type === "per_month") {
         return shifts.map(shift => shift.name).join();
@@ -108,6 +109,9 @@ export default {
           return this.propJob.shifts[0].name;
         }
       }
+      // } else if (this.propJob.type === "Private") {
+      //   return this.propJob.shift.name;
+      // }
     },
     jobNumber() {
       return this.isJobPart

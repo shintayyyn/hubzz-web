@@ -22,7 +22,7 @@
           <transition-group name="drop" mode="out-in">
             <template v-for="notification in notifications">
               <div
-                @click="goTo(notification.id, notification.status ? notification.status : notification.locum_status)"
+                @click="goTo(notification.type, notification.id, notification.status ? notification.status : notification.locum_status)"
                 :key="`${notification.id}-${notification.notification_type}`"
                 class="cards relative mx-1 my-2 p-3 flex flex-wrap bg-gray-100 hover:bg-gray-200 rounded-lg shadow-md text-xs md:text-sm opacity-75 hover:opacity-100 transition-hover cursor-pointer"
               >
@@ -66,30 +66,28 @@
               </div>
             </template>
             <template v-for="billingNotification in billingNotifications">
-              <nuxt-link
-                :to="billingNotification.url"
+              <div
+                @click="goTo(billingNotification.type, billingNotification.id)"
                 :key="`${billingNotification.id}-${billingNotification.notification_type}`"
+                class="relative mx-1 my-2 p-3 flex flex-wrap bg-gray-100 hover:bg-gray-200 rounded-lg shadow-md"
               >
-                <div
-                  class="relative mx-1 my-2 p-3 flex flex-wrap bg-gray-100 hover:bg-gray-200 rounded-lg shadow-md"
-                >
-                  <span
-                    class="absolute top-0 right-0 cursor-pointer py-2 px-4 rounded-full text-lg font-bold hover:text-gray-700"
-                    @click.prevent.stop="close(billingNotification.id)"
-                  >x</span>
-                  <div class="flex flex-wrap w-48 md:w-64">
-                    <div class="flex flex-col items-start my-1 w-full">
-                      <div
-                        class="px-2 py-1 text-sm font-bold rounded-lg max-w-sm cursor-pointer"
-                        :class="bgStatus(billingNotification.status)"
-                      >{{billingNotification.status.toUpperCase()}}</div>
-                      <div
-                        v-if="billingNotification.status !== 'Draft'"
-                        class="font-bold md:text-md leading-none mr-1 uppercase pt-4 truncate-title"
-                        style="-webkit-box-orient: vertical;"
-                      >{{billingNotification.invoice_number}}</div>
-                    </div>
-                    <!-- <div class="py-2 flex flex-col w-full">
+                <span
+                  class="absolute top-0 right-0 cursor-pointer py-2 px-4 rounded-full text-lg font-bold hover:text-gray-700"
+                  @click.prevent.stop="close(billingNotification.id)"
+                >x</span>
+                <div class="flex flex-wrap w-48 md:w-64">
+                  <div class="flex flex-col items-start my-1 w-full">
+                    <div
+                      class="px-2 py-1 text-sm font-bold rounded-lg max-w-sm cursor-pointer"
+                      :class="bgStatus(billingNotification.status)"
+                    >{{billingNotification.status.toUpperCase()}}</div>
+                    <div
+                      v-if="billingNotification.status !== 'Draft'"
+                      class="font-bold md:text-md leading-none mr-1 uppercase pt-4 truncate-title"
+                      style="-webkit-box-orient: vertical;"
+                    >{{billingNotification.invoice_number}}</div>
+                  </div>
+                  <!-- <div class="py-2 flex flex-col w-full">
                       <div class="flex justify-between items-center my-1 w-full">
                         <div>From</div>
                         <div class="text-right">{{billingNotification.date_start}}</div>
@@ -106,27 +104,26 @@
                         <div>Paid At</div>
                         <div class="text-right">{{billingNotification.paid_at | localDate}}</div>
                       </div>
-                    </div>-->
-                    <div
-                      class="flex flex-col my-1 w-full leading-none"
-                      v-if="billingNotification.locum_user"
-                    >
-                      <div class="text-sm uppercase">Locum</div>
-                      <div class="font-bold">{{billingNotification.locum_user}}</div>
-                    </div>
-                    <div
-                      class="flex flex-col my-1 w-full leading-none"
-                      v-if="billingNotification.practice"
-                    >
-                      <div class="text-sm uppercase">Practice</div>
-                      <div class="font-bold">{{billingNotification.practice}}</div>
-                    </div>
-                    <div>
-                      <div class="leading-tight pt-1">{{billingNotification.message}}</div>
-                    </div>
+                  </div>-->
+                  <div
+                    class="flex flex-col my-1 w-full leading-none"
+                    v-if="billingNotification.locum_user"
+                  >
+                    <div class="text-sm uppercase">Locum</div>
+                    <div class="font-bold">{{billingNotification.locum_user}}</div>
+                  </div>
+                  <div
+                    class="flex flex-col my-1 w-full leading-none"
+                    v-if="billingNotification.practice"
+                  >
+                    <div class="text-sm uppercase">Practice</div>
+                    <div class="font-bold">{{billingNotification.practice}}</div>
+                  </div>
+                  <div>
+                    <div class="leading-tight pt-1">{{billingNotification.message}}</div>
                   </div>
                 </div>
-              </nuxt-link>
+              </div>
             </template>
           </transition-group>
         </div>
@@ -252,7 +249,6 @@ export default {
       this.close(id);
     },
     close(id) {
-      // this.$store.commit("calendar/CREATE_JOB_MODAL", false);
       this.$store.commit("jobs/REMOVE_PRACTICE_JOB_NOTIFICATION", id);
       this.$store.commit("jobs/REMOVE_LOCUM_JOB_NOTIFICATION", id);
       this.$store.commit("billing/REMOVE_PRACTICE_BILLING_NOTIFICATION", id);
