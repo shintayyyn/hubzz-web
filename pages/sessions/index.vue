@@ -10,7 +10,7 @@
             :event="$store.state.jobs.loading_jobs ? '' : 'click'"
             :to="'/sessions?status=Applied&bank=false'"
             class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-            :class="$route.query.status && $route.query.status.toLowerCase() === 'applied' && $route.query.bank && $route.query.bank === 'false' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+            :class="$route.query.status && $route.query.status.toLowerCase() === 'applied' && (!$route.query.bank || $route.query.bank && $route.query.bank === 'false') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
           >Non-Bank</nuxt-link>
           <nuxt-link
             :event="$store.state.jobs.loading_jobs ? '' : 'click'"
@@ -21,7 +21,7 @@
         </div>
         <AppButton
           :label="'Filter'"
-          @click="filterModal = true"
+          @click="filterModal = !filterModal"
           :inStyle="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
         />
         <AppButton
@@ -32,109 +32,117 @@
         />
         <div
           v-if="!isJobPart"
-          class="flex-wrap justify-start items-center z-10 absolute w-full bg-white shadow-lg p-3 rounded-lg"
+          class="flex flex-col justify-start z-10 absolute w-full bg-white shadow-lg p-3 rounded-lg"
           :class="filterModal ? 'flex' : 'hidden'"
         >
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppInput
-              class="px-1"
-              v-model="params.job_number"
-              :type="'text'"
-              :name="'job_number'"
-              :label="'Job number'"
-            />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppAutoComplete
-              class="px-1"
-              v-model="params.surgery_id"
-              :name="'surgery_id'"
-              :label="'Surgery'"
-              :url="'/api/v1/locum/surgeries'"
-              :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem'"
-            />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppInput
-              class="px-1"
-              v-model="params.title"
-              :type="'text'"
-              :name="'title'"
-              :label="'Job Title'"
-            />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppInput
-              class="px-1"
-              v-model="params.shift_id"
-              :type="'select'"
-              :name="'shift_id'"
-              :label="'Shift'"
-              :items="shifts"
-            />
+          <div class="flex flex-col md:flex-row h-full w-full items-end">
+            <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
+              <AppInput
+                class="px-1"
+                v-model="params.job_number"
+                :type="'text'"
+                :name="'job_number'"
+                :label="'Job number'"
+              />
+            </div>
+            <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
+              <AppAutoComplete
+                class="px-1"
+                v-model="params.surgery_id"
+                :name="'surgery_id'"
+                :label="'Surgery'"
+                :url="'/api/v1/locum/surgeries'"
+                :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem'"
+              />
+            </div>
+            <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
+              <AppInput
+                class="px-1"
+                v-model="params.title"
+                :type="'text'"
+                :name="'title'"
+                :label="'Job Title'"
+              />
+            </div>
+            <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
+              <AppInput
+                class="px-1"
+                v-model="params.shift_id"
+                :type="'select'"
+                :name="'shift_id'"
+                :label="'Shift'"
+                :items="shifts"
+              />
+            </div>
           </div>
 
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppInput
-              class="px-1"
-              v-model="params.rate"
-              :type="'text'"
-              :name="'rate'"
-              :label="'Rate'"
-              :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
-            />
+          <div class="flex flex-col md:flex-row h-full w-full items-end">
+            <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
+              <AppInput
+                class="px-1"
+                v-model="params.rate"
+                :type="'text'"
+                :name="'rate'"
+                :label="'Rate'"
+                :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
+              />
+            </div>
+            <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
+              <AppInput
+                class="px-1"
+                v-model="params.rate_type_id"
+                :type="'select'"
+                :name="'rate_type_id'"
+                :label="'per'"
+                :items="rates"
+              />
+            </div>
+            <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
+              <AppPostCode
+                class="px-1"
+                v-model="params.near_post_code"
+                :name="'near_post_code'"
+                :label="'Post code'"
+                @onSelect="onSelect"
+              />
+            </div>
+            <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
+              <AppInput
+                class="px-1"
+                v-model="params.miles"
+                :type="'text'"
+                :name="'miles'"
+                :label="'Miles'"
+              />
+            </div>
           </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppInput
-              class="px-1"
-              v-model="params.rate_type_id"
-              :type="'select'"
-              :name="'rate_type_id'"
-              :label="'per'"
-              :items="rates"
-            />
+
+          <div class="flex flex-col md:flex-row h-full w-full items-end">
+            <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
+              <AppDate
+                v-model="params.calendar_date_start"
+                :name="'calendar_date_start'"
+                :label="'From'"
+                :format="'YYYY-MM-DD'"
+              />
+            </div>
+            <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
+              <AppTime v-model="params.time_start" :name="'time_start'" :label="'Start Time'" />
+            </div>
+            <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
+              <AppDate
+                v-model="params.calendar_date_end"
+                :name="'calendar_date_end'"
+                :label="'To'"
+                :format="'YYYY-MM-DD'"
+              />
+            </div>
+            <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
+              <AppTime v-model="params.time_end" :name="'time_end'" :label="'End Time'" />
+            </div>
           </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppPostCode
-              class="px-1"
-              v-model="params.near_post_code"
-              :name="'near_post_code'"
-              :label="'Post code'"
-              @onSelect="onSelect"
-            />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppInput
-              class="px-1"
-              v-model="params.miles"
-              :type="'text'"
-              :name="'miles'"
-              :label="'Miles'"
-            />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppDate
-              v-model="params.calendar_date_start"
-              :name="'calendar_date_start'"
-              :label="'From'"
-              :format="'YYYY-MM-DD'"
-            />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppTime v-model="params.time_start" :name="'time_start'" :label="'Start Time'" />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppDate
-              v-model="params.calendar_date_end"
-              :name="'calendar_date_end'"
-              :label="'To'"
-              :format="'YYYY-MM-DD'"
-            />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppTime v-model="params.time_end" :name="'time_end'" :label="'End Time'" />
-          </div>
-          <div class="md:px-1 flex w-full">
+
+          <div class="md:px-1 h-full flex w-full">
             <AppButton
               :label="'Clear'"
               @click="clearFilters"
@@ -156,9 +164,10 @@
         </div>
         <div
           v-if="isJobPart"
-          class="flex-wrap justify-start items-center z-10 absolute w-full bg-white shadow-lg p-3 rounded-lg"
+          class="flex flex-col justify-start z-10 absolute w-full bg-white shadow-lg p-3 rounded-lg"
           :class="filterModal ? 'flex' : 'hidden'"
         >
+        <div class="flex flex-col md:flex-row g-full items-end">
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
               class="px-1"
@@ -197,7 +206,9 @@
               :items="shifts"
             />
           </div>
+        </div>  
 
+        <div class="flex flex-col md:flex-row g-full items-end">
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
               class="px-1"
@@ -236,6 +247,9 @@
               :label="'Miles'"
             />
           </div>
+        </div>      
+          
+        <div class="flex flex-col md:flex-row g-full items-end">
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppDate
               v-model="jobPartParams.calendar_date_start"
@@ -258,6 +272,8 @@
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppTime v-model="jobPartParams.time_end" :name="'time_end'" :label="'End Time'" />
           </div>
+        </div>      
+          
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
               class="px-1"
@@ -505,9 +521,8 @@ export default {
           case "declined":
           case "approved":
           case "unfilled":
-            return `You do not have any ${this.$route.query.status.toLowerCase()} jobs`;
           case "live":
-            return `There are no ${this.$route.query.status.toLowerCase()} jobs nearby and suited for you at this time`;
+            return `You do not have any ${this.$route.query.status.toLowerCase()} jobs`;
           case "applied":
             return `There were no Locums who applied on your jobs yet`;
           case "completed":
@@ -660,8 +675,13 @@ export default {
             sortable: true
           },
           {
-            name: "Status",
+            name: "Invoice status",
             dataIndex: "invoice_status",
+            class: "text-center"
+          },
+          {
+            name: "Tag",
+            dataIndex: "status",
             class: "text-center"
           }
         );
@@ -742,32 +762,32 @@ export default {
       this.getCompletedJobsRealTime
     );
     this.$socket.on(
-      "Practice Notification Job Completed",
-      this.getCompletedJobsRealTime
-    );
-    this.$socket.on(
-      "Practice Notification Job Part Approved",
+      "Practice Notification Locum Invoice Updated",
       this.getApprovedJobsRealTime
-    );
-    this.$socket.on(
-      "Practice Notification Job Declined",
-      this.getDeclinedJobsRealTime
     );
     this.$socket.on(
       "Practice Notification Job Cancelled",
       this.getCancelledJobsRealTime
     );
     this.$socket.on(
-      "Practice Notification Job Unfilled",
-      this.getUnfilledJobsRealTime
-    );
-    this.$socket.on(
       "Practice Notification Job Amended",
       this.getAmendedJobsRealTime
     );
     this.$socket.on(
-      "Practice Notification Locum Invoice Updated",
-      this.getUpdatedInvoiceRealTime
+      "Practice Notification Job Declined",
+      this.getDeclinedJobsRealTime
+    );
+    this.$socket.on(
+      "Practice Notification Job Auto Declined",
+      this.getAutoDeclinedJobsRealTime
+    );
+    this.$socket.on(
+      "Practice Notification Job Update Accept",
+      this.getUpdateAcceptJobsRealTime
+    );
+    this.$socket.on(
+      "Practice Notification Job Unfilled",
+      this.getUnfilledJobsRealTime
     );
   },
   destroyed() {
@@ -792,7 +812,13 @@ export default {
         status = ["Available", "Matched"];
       } else if (
         this.$route.query.status &&
-        this.$route.query.status !== "Available"
+        this.$route.query.status === "Completed"
+      ) {
+        status = ["Completed", "Terminated"];
+      } else if (
+        this.$route.query.status &&
+        this.$route.query.status !== "Available" &&
+        this.$route.query.status !== "Completed"
       ) {
         status = [`${this.$route.query.status}`];
       }
@@ -807,7 +833,6 @@ export default {
           }
         )
         .then(res => {
-          console.log("count response", res.data.count);
           if (
             this.$route.query.status &&
             ["ongoing", "completed", "approved"].includes(
@@ -845,6 +870,11 @@ export default {
         })
         .catch(err => {
           console.log("err", err.response.data);
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "danger",
+            text: [err.response.data.message]
+          });
         })
         .finally(() => {
           return;
@@ -861,7 +891,13 @@ export default {
         status = ["Available", "Matched"];
       } else if (
         this.$route.query.status &&
-        this.$route.query.status !== "Available"
+        this.$route.query.status === "Completed"
+      ) {
+        status = ["Completed", "Terminated"];
+      } else if (
+        this.$route.query.status &&
+        this.$route.query.status !== "Available" &&
+        this.$route.query.status !== "Completed"
       ) {
         status = [`${this.$route.query.status}`];
       }
@@ -873,7 +909,6 @@ export default {
           }
         })
         .then(res => {
-          console.log("jobs response", res.data);
           if (
             this.$route.query.status &&
             ["ongoing", "completed", "approved"].includes(
@@ -924,7 +959,8 @@ export default {
       }
       if (
         this.$route.path.includes("/sessions") &&
-        this.$route.query.status === "Live"
+        (this.$route.query.status === "Live" ||
+          this.$route.query.status === "Applied")
       ) {
         this.showRefresh = true;
       }
@@ -989,21 +1025,6 @@ export default {
         this.showRefresh = true;
       }
     },
-    async getDeclinedJobsRealTime(job) {
-      if (!job) {
-        return;
-      }
-      if (
-        this.$route.path.includes("/sessions") &&
-        (this.$route.query.status === "Declined" ||
-          this.$route.query.status === "Allocated" ||
-          this.$route.query.status === "Ongoing" ||
-          this.$route.query.status === "Live" ||
-          this.$route.query.status === "Applied")
-      ) {
-        this.showRefresh = true;
-      }
-    },
     async getCancelledJobsRealTime(job) {
       if (!job) {
         return;
@@ -1011,21 +1032,6 @@ export default {
       if (
         this.$route.path.includes("/sessions") &&
         (this.$route.query.status === "Cancelled" ||
-          this.$route.query.status === "Allocated" ||
-          this.$route.query.status === "Ongoing" ||
-          this.$route.query.status === "Live" ||
-          this.$route.query.status === "Applied")
-      ) {
-        this.showRefresh = true;
-      }
-    },
-    async getUnfilledJobsRealTime(job) {
-      if (!job) {
-        return;
-      }
-      if (
-        this.$route.path.includes("/sessions") &&
-        (this.$route.query.status === "Unfilled" ||
           this.$route.query.status === "Allocated" ||
           this.$route.query.status === "Ongoing" ||
           this.$route.query.status === "Live" ||
@@ -1048,18 +1054,60 @@ export default {
         this.showRefresh = true;
       }
     },
-    async getUpdatedInvoiceRealTime(job) {
+    async getDeclinedJobsRealTime(job) {
       if (!job) {
         return;
       }
       if (
         this.$route.path.includes("/sessions") &&
-        (this.$route.query.status === "Approved" ||
-          this.$route.query.status === "Completed")
+        (this.$route.query.status === "Declined" ||
+          this.$route.query.status === "Allocated" ||
+          this.$route.query.status === "Ongoing" ||
+          this.$route.query.status === "Live" ||
+          this.$route.query.status === "Applied")
       ) {
         this.showRefresh = true;
       }
     },
+    async getAutoDeclinedJobsRealTime(job) {
+      if (!job) {
+        return;
+      }
+      if (
+        this.$route.path.includes("/sessions") &&
+        (this.$route.query.status === "Declined" ||
+          this.$route.query.status === "Allocated")
+      ) {
+        this.showRefresh = true;
+      }
+    },
+    async getUpdateAcceptJobsRealTime(job) {
+      if (!job) {
+        return;
+      }
+      if (
+        this.$route.path.includes("/sessions") &&
+        this.$route.query.status === "Allocated"
+      ) {
+        this.showRefresh = true;
+      }
+    },
+    async getUnfilledJobsRealTime(job) {
+      if (!job) {
+        return;
+      }
+      if (
+        this.$route.path.includes("/sessions") &&
+        (this.$route.query.status === "Unfilled" ||
+          this.$route.query.status === "Allocated" ||
+          this.$route.query.status === "Ongoing" ||
+          this.$route.query.status === "Live" ||
+          this.$route.query.status === "Applied")
+      ) {
+        this.showRefresh = true;
+      }
+    },
+
     async refreshJobs() {
       this.loading = true;
       this.$store.commit("jobs/CLEAR_PRACTICE_JOB_NOTIFICATION");
@@ -1092,36 +1140,35 @@ export default {
         this.getCompletedJobsRealTime
       );
       this.$socket.removeListener(
-        "Practice Notification Job Completed",
-        this.getCompletedJobsRealTime
-      );
-      this.$socket.removeListener(
-        "Practice Notification Job Part Approved",
+        "Practice Notification Locum Invoice Updated",
         this.getApprovedJobsRealTime
-      );
-      this.$socket.removeListener(
-        "Practice Notification Job Declined",
-        this.getDeclinedJobsRealTime
       );
       this.$socket.removeListener(
         "Practice Notification Job Cancelled",
         this.getCancelledJobsRealTime
       );
       this.$socket.removeListener(
-        "Practice Notification Job Unfilled",
-        this.getUnfilledJobsRealTime
-      );
-      this.$socket.removeListener(
-        "Practice Notification Job Updated",
+        "Practice Notification Job Amended",
         this.getAmendedJobsRealTime
       );
       this.$socket.removeListener(
-        "Practice Notification Locum Invoice Updated",
-        this.getUpdatedInvoiceRealTime
+        "Practice Notification Job Declined",
+        this.getDeclinedJobsRealTime
+      );
+      this.$socket.removeListener(
+        "Practice Notification Job Auto Declined",
+        this.getAutoDeclinedJobsRealTime
+      );
+      this.$socket.removeListener(
+        "Practice Notification Job Update Accept",
+        this.getUpdateAcceptJobsRealTime
+      );
+      this.$socket.removeListener(
+        "Practice Notification Job Unfilled",
+        this.getUnfilledJobsRealTime
       );
     },
     async filterJob() {
-      console.log("filter job");
       this.current_page = 1;
       this.params.offset = 0;
       this.jobPartParams.offset = 0;
@@ -1134,16 +1181,6 @@ export default {
       this.loading = false;
     },
     async sorted(order_by) {
-      console.log("sort job");
-      // let orderBy = [...order_by];
-      // order_by.forEach((item, index) => {
-      //   if (item.includes("date_time_start")) {
-      //     orderBy.push(`date_start:${item.split(":")[1]}`);
-      //   } else {
-      //     orderBy.push(item);
-      //   }
-      // });
-      // console.log(orderBy);
       this.current_page = 1;
       this.params.offset = 0;
       this.params.order_by = order_by;
@@ -1154,7 +1191,6 @@ export default {
       this.loading = false;
     },
     async pagechanged(page) {
-      console.log("change page ");
       this.current_page = page;
       this.params.offset = this.params.limit * (page - 1);
       this.jobPartParams.offset = this.jobPartParams.limit * (page - 1);
@@ -1163,7 +1199,6 @@ export default {
       this.loading = false;
     },
     async limitchanged(limit) {
-      console.log("change limit ");
       this.current_page = 1;
       this.params.offset = 0;
       this.params.limit = limit;
@@ -1174,7 +1209,6 @@ export default {
       this.loading = false;
     },
     clearFilters() {
-      console.log("clear filter");
       this.params.offset = 0;
       this.params.limit = 5;
       this.params.type = "";

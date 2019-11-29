@@ -3,6 +3,7 @@
     <AppLoading :loading="loading" spinner />
     <div class="flex flex-wrap justify-start items-center">
       <div
+        v-if="!allApproved"
         class="save-button text-xs sm:text-sm ml-4 mx-2 py-2 px-3 border-2 rounded-lg font-bold flex items-center"
         @click="save(false)"
       >Save changes</div>
@@ -97,16 +98,15 @@
               <div
                 style="width:430px;min-height:80px;"
                 class="text-xs sm:text-sm border-b-2 border-gray-300 px-4 py-1"
-              >{{modifiedDescription(item)}}</div>
+                v-text="modifiedDescription(item)"
+              ></div>
               <div
                 style="min-height:80px;"
                 class="text-xs sm:text-sm border-b-2 border-gray-300 px-4 py-1 text-right"
                 :style="approvedInvoices.includes(item.job_part_id) ? 'width:310px':'width:200px'"
-              >{{modifiedTotal(item)}}</div>
-              <div
-                class="align-middle sticky right-0 bg-white"
-                v-if="!approvedInvoices.includes(item.job_part_id)"
-              >
+                v-text="modifiedTotal(item)"
+              ></div>
+              <div class="align-middle sticky right-0 bg-white">
                 <div class="flex flex-row flex-no-wrap justify-start items-center">
                   <input
                     v-model="disputedInvoices"
@@ -132,6 +132,9 @@
                     :for="`${item.job_part_id}-approved`"
                     class="text-xs sm:text-sm py-1 flex items-center"
                   >Approved</label>
+                </div>
+                <div class="flex" v-if="waitingForLocumReply(item)">
+                  <div>Waiting for Locum Reply</div>
                 </div>
               </div>
             </div>
@@ -308,6 +311,12 @@ export default {
         }
       };
     },
+    allApproved() {
+      return (
+        this.selectedInvoice.items.filter(invoice => invoice.approved === false)
+          .length === 0
+      );
+    },
     modifiedTotal() {
       return item => {
         let selectedItem = this.selectedInvoice.items.find(
@@ -319,6 +328,7 @@ export default {
           let selectedJobPart = this.selectedJobParts.find(
             jobPart => jobPart.job_part_id === item.job_part_id
           );
+
           let total = "";
           // compute total
           if (
@@ -342,7 +352,7 @@ export default {
               (parseInt(selectedJobPart.final_hours) / 4) *
               parseInt(selectedItem.job_part.job.rate);
           }
-          total = total.toFixed(2).toString();
+          total = !total ? "0.00" : total.toFixed(2).toString();
           selectedJobPart.total = total;
           return selectedJobPart.total;
         }
@@ -497,51 +507,43 @@ export default {
             : false,
           approve: this.approvedInvoices.includes(jobPart.job_part_id)
             ? true
-            : false
+            : false,
+          absent_days:
+            !jobPart.absent_days || jobPart.absent_days === ""
+              ? 0
+              : jobPart.absent_days,
+          late_hours:
+            !jobPart.late_hours || jobPart.late_hours === ""
+              ? 0
+              : jobPart.late_hours,
+          final_hours:
+            !jobPart.final_hours || jobPart.final_hours === ""
+              ? 0
+              : jobPart.final_hours
         });
       });
       this.Validate(this.form, ["final"]);
       if (!this.formError.length) {
-        if (!this.$route.params.id) {
-          this.$axios
-            .$post(`/api/v1/practice/locum-invoices`, this.form)
-            .then(res => {
-              this.$emit("addInvoice", res.data.invoice);
-              this.$router.push("/practice-billing/invoices-from-locums");
-              this.$store.commit("SET_NOTIFICATION", {
-                enabled: true,
-                status: "success",
-                text: [`${res.message}`]
-              });
-            })
-            .catch(err => {
-              console.log("err", err.response.data);
-              err.response.data.error_messages.forEach(error => {
-                this.formError.push(error);
-              });
+        this.$axios
+          .$put(
+            `/api/v1/practice/locum-invoices/${this.$route.params.id}`,
+            this.form
+          )
+          .then(res => {
+            this.$emit("updateInvoice", res.data.locum_invoice);
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: [`${res.message}`]
             });
-        } else if (this.$route.params.id) {
-          this.$axios
-            .$put(
-              `/api/v1/practice/locum-invoices/${this.$route.params.id}`,
-              this.form
-            )
-            .then(res => {
-              this.$emit("updateInvoice", res.data.locum_invoice);
-              this.$store.commit("SET_NOTIFICATION", {
-                enabled: true,
-                status: "success",
-                text: [`${res.message}`]
-              });
-              this.$router.push("/practice-billing/invoices-from-locums");
-            })
-            .catch(err => {
-              console.log("err", err.response.data);
-              err.response.data.error_messages.forEach(error => {
-                this.formError.push(error);
-              });
+            this.$router.push("/practice-billing/invoices-from-locums");
+          })
+          .catch(err => {
+            console.log("err", err.response.data);
+            err.response.data.error_messages.forEach(error => {
+              this.formError.push(error);
             });
-        }
+          });
       }
     },
     waitingForLocumReply(item) {
@@ -559,27 +561,6 @@ export default {
       if (process.client) {
         document.body.style.cursor = "wait";
       }
-      // this.$html2canvas(document.getElementById("htmlpdf")).then(canvas => {
-      //   var imgWidth = 210;
-      //   var pageHeight = 295;
-      //   var imgHeight = (canvas.height * imgWidth) / canvas.width;
-      //   var heightLeft = imgHeight;
-      //   var doc = this.$jspdf("p", "mm");
-      //   var position = 0;
-
-      //   var imgData = canvas.toDataURL("image/png");
-
-      //   doc.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-      //   heightLeft -= pageHeight;
-
-      //   while (heightLeft >= 0) {
-      //     position = heightLeft - imgHeight;
-      //     doc.addPage();
-      //     doc.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
-      //     heightLeft -= pageHeight;
-      //   }
-      //   doc.save("practice-billing-invoice.pdf");
-      // });
 
       let doc = this.$jspdf("p", "mm");
       let pageHeight = 1020;

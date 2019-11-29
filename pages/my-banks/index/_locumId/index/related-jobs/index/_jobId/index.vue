@@ -1,24 +1,24 @@
 <template>
   <div class="modal-container shadow-lg">
     <template v-if="job && !job_part">
-      <JobDetailModal :job="job" @close="close" />
+      <SessionDetailModal :job="job" @close="close" />
     </template>
     <template v-if="!job && job_part">
-      <JobPartDetailModal :job_part="job_part" @close="close" />
+      <SessionPartDetailModal :job_part="job_part" @close="close" />
     </template>
   </div>
 </template>
 <script>
-import JobDetailModal from "@/components/Sessions/JobDetailModal";
-import JobPartDetailModal from "@/components/Sessions/JobPartDetailModal";
+import SessionDetailModal from "@/components/Sessions/SessionDetailModal";
+import SessionPartDetailModal from "@/components/Sessions/SessionPartDetailModal";
 export default {
   transition: {
     name: "slide",
     mode: "out-in"
   },
   components: {
-    JobDetailModal,
-    JobPartDetailModal
+    SessionDetailModal,
+    SessionPartDetailModal
   },
   data() {
     return {
@@ -41,7 +41,6 @@ export default {
       }
 
       let response = await app.$axios.get(`${url}/${params.jobId}`);
-      console.log("response", response);
       if (response.data.data.job) {
         let job = response.data.data.job;
         return {

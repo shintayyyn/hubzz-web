@@ -14,7 +14,7 @@
 
         <div v-for="item in locum_faqs" :key="item.id">
           <div
-            class="border border-white border-solid bg-gray-300 py-2 px-4 md:py-4 flex justify-between items-center cursor-pointer"
+            class="border border-white border-solid bg-gray-300 hover:bg-gray-400 transition-hover py-2 px-4 md:py-4 flex justify-between items-center cursor-pointer"
             @click="item.toggled = !item.toggled"
           >
             <div>{{item.question}}</div>
@@ -35,7 +35,7 @@
         <div class="font-bold mt-4 mb-2">Practice</div>
         <div v-for="item in practice_faqs" :key="item.id">
           <div
-            class="border border-white border-solid bg-gray-300 py-2 px-4 md:py-4 flex justify-between items-center cursor-pointer"
+            class="border border-white border-solid bg-gray-300 hover:bg-gray-400 transition-hover py-2 px-4 md:py-4 flex justify-between items-center cursor-pointer"
             @click="item.toggled = !item.toggled"
           >
             <div>{{item.question}}</div>

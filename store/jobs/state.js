@@ -1,9 +1,9 @@
 export default () => ({
     loading_jobs: false,
     // PRACTICE
-    // notification
+    // NOTIF
     practice_job_notifications: [],
-    // parts
+    // PARTS
     practice_ongoing_job_parts: [],
     practice_ongoing_job_parts_count: 0,
 
@@ -15,7 +15,7 @@ export default () => ({
 
     practice_allocated_job_parts: [],
     practice_allocated_job_parts_count: 0,
-    // whole
+    // WHOLE
     practice_allocated_jobs: [],
     practice_allocated_jobs_count: 0,
 
@@ -36,15 +36,15 @@ export default () => ({
 
     practice_withdrawn_jobs: [],
     practice_withdrawn_jobs_count: 0,
-    // reminder
+    // REMINDERS
     practice_available_jobs_reminder: [],
     practice_applied_jobs_reminder: [],
 
 
     // LOCUM
-    // notification
+    // NOTIF
     locum_job_notifications: [],
-    // parts
+    // PARTS
     locum_allocated_job_parts: [],
     locum_allocated_job_parts_count: 0,
 
@@ -56,7 +56,7 @@ export default () => ({
 
     locum_approved_job_parts: [],
     locum_approved_job_parts_count: 0,
-    // whole
+    // WHOLE
     locum_allocated_jobs: [],
     locum_allocated_jobs_count: 0,
 
@@ -80,7 +80,10 @@ export default () => ({
 
     locum_withdrawn_jobs: [],
     locum_withdrawn_jobs_count: 0,
-    // unavailabilities
+    // UNAVAILABILITIES
     locum_unavailabilities: [],
     locum_unavailabilities_count: 0,
+    // PRIVATE
+    locum_private_jobs: [],
+    locum_private_jobs_count: 0,
 })

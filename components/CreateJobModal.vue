@@ -1,8 +1,8 @@
 <template>
   <div class="modal-container shadow-lg" ref="modalContainer">
     <div class="p-4 md:p-8">
-      <div @click="close" class="cursor-pointer">
-        <svgicon name="left-arrow" height="32" width="32" />
+      <div>
+        <svgicon name="left-arrow" height="32" width="32" @click="close" class="cursor-pointer" />
       </div>
       <div class="flex justify-start font-bold text-sm sm:text-xl mt-8">Create a new job</div>
       <AppFormError :formError="formError" v-if="formError.length" />
@@ -230,8 +230,6 @@
                   :url="'/api/v1/qualifications'"
                   :professionCategoryId="selectedProfession.profession_category.id.toString()"
                 />
-                <!-- @add="CheckEmptyField(form.qualification_id, 'qualification_id')"
-                @remove="CheckEmptyField(form.qualification_id, 'qualification_id')"-->
 
                 <AppFilterSearch
                   v-model="form.clinical_system_id"
@@ -242,8 +240,6 @@
                   :info="'Choose at least one IT system'"
                   :url="'/api/v1/clinical-systems'"
                 />
-                <!-- @add="CheckEmptyField(form.clinical_system_id, 'clinical_system_id')"
-                @remove="CheckEmptyField(form.clinical_system_id, 'clinical_system_id')"-->
 
                 <AppFilterSearch
                   v-model="form.spoken_language_id"
@@ -372,29 +368,6 @@
                 :label="'Use AUTO-MATCH on this Job?'"
                 :items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
               />
-              <!-- <div
-                class="flex flex-row flex-wrap justify-between"
-                v-if="auto_assign_job === true || auto_assign_job === 'true'"
-              >
-                <div>Auto-assign job to the first matching Favourite applicant by this date</div>
-                <div class="px-1 w-full md:w-1/2">
-                  <AppDate
-                    v-model="auto_assign_at.date"
-                    :name="'auto_assign_at'"
-                    :label="'Date'"
-                    isAfter
-                  />
-                </div>
-                <div class="px-1 w-full md:w-1/2">
-                  <AppTime
-                    v-model="auto_assign_at.time"
-                    :type="'time'"
-                    :name="'time_end'"
-                    :label="'Time'"
-                    :error="formError.find(item => item.field === 'auto_assign_at')"
-                  />
-                </div>
-              </div>-->
 
               <AppInput
                 :type="'select'"
@@ -430,15 +403,15 @@
               <AppInput
                 v-if="bank_only === 'false' || bank_only === false"
                 :type="'select'"
-                v-model="favorite_notification"
-                :name="'favorite_notification'"
+                v-model="bank_first"
+                :name="'bank_first'"
                 :label="'Make this Job available for Bank First?'"
                 :items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
               />
 
               <div
                 class="flex flex-row flex-wrap justify-between"
-                v-if="favorite_notification === true || favorite_notification === 'true'"
+                v-if="bank_first === true || bank_first === 'true'"
               >
                 <div>Only favorite locum will be notified until this date</div>
                 <div class="px-1 w-full md:w-1/2">
@@ -461,7 +434,7 @@
               </div>
 
               <AppInput
-                v-if="favorite_notification === 'false' || favorite_notification === false"
+                v-if="bank_first === 'false' || bank_first === false"
                 :type="'select'"
                 v-model="bank_only"
                 :name="'bank_only'"
@@ -528,7 +501,7 @@ export default {
       unpaid_breaks: false,
       auto_assign_job: false,
       selection_notification: false,
-      favorite_notification: false,
+      bank_first: false,
       bank_only: false,
       shifts: [],
 
@@ -752,9 +725,12 @@ export default {
   methods: {
     close() {
       this.$store.commit("calendar/CREATE_JOB_MODAL", false);
+      this.$store.commit("calendar/CLEAR_REPOST_JOB");
+      this.$emit("close");
     },
     addMandatory() {
       this.$store.commit("calendar/CREATE_JOB_MODAL", false);
+      this.$store.commit("calendar/CLEAR_REPOST_JOB");
       this.$router.push("/profile/practice");
     },
     uncheckMandatory(value) {
@@ -780,23 +756,12 @@ export default {
         "include_saturday",
         "include_sunday",
         "compliance_document_id",
-        "bank_only",
         "auto_assign_at"
       ];
 
       if (["15", "30", "60", false, "false"].includes(this.unpaid_breaks)) {
         notRequired.push("unpaid_breaks_in_minutes");
       }
-
-      // if (this.auto_assign_job === false || this.auto_assign_job === "false") {
-      //   notRequired.push("auto_assign_at");
-      // } else {
-      //   if (this.auto_assign_job === true || this.auto_assign_job === "true") {
-      //     if (this.auto_assign_at.date && this.auto_assign_at.time) {
-      //       notRequired.push("auto_assign_at");
-      //     }
-      //   }
-      // }
 
       if (
         this.selection_notification == false ||
@@ -814,25 +779,18 @@ export default {
         }
       }
 
-      if (
-        this.favorite_notification == false ||
-        this.favorite_notification == "false"
-      ) {
+      if (this.bank_first == false || this.bank_first == "false") {
         notRequired.push("favorite_only_until");
       } else {
-        if (
-          this.favorite_notification === true ||
-          this.favorite_notification === "true"
-        ) {
+        if (this.bank_first === true || this.bank_first === "true") {
           if (this.favorite_only_until.date && this.favorite_only_until.time) {
             notRequired.push("favorite_only_until");
           }
         }
       }
+      console.log("notRequired", notRequired);
       this.Validate(this.form, notRequired);
-      this.form.favorite_only_until = `${this.$moment(
-        this.favorite_only_until.date
-      ).format("YYYY-MM-DD")} ${this.favorite_only_until.time}`;
+      console.log("formError", this.formError.map(err => err.field));
 
       if (!this.formError.length) {
         this.selectedClinicalSystem = [...this.form.clinical_system_id];
@@ -860,13 +818,6 @@ export default {
           ? (this.form.session_requirements = this.form.session_requirements.join())
           : (this.form.session_requirements = "");
 
-        // this.form.auto_assign_at =
-        //   this.auto_assign_job === true || this.auto_assign_job === "true"
-        //     ? `${this.$moment(this.auto_assign_at.date, "YYYY-MM-DD").format(
-        //         "YYYY-MM-DD"
-        //       )} ${this.auto_assign_at.time}`
-        //     : null;
-
         this.form.auto_assign_at =
           this.auto_assign_job === true || this.auto_assign_job === "true"
             ? this.$moment().format("YYYY-MM-DD")
@@ -880,19 +831,7 @@ export default {
               )} ${this.selection_date.time}`
             : null;
 
-        // this.form.favorite_only_until =
-        //   this.favorite_notification === true ||
-        //   this.favorite_notification === "true"
-        //     ? `${this.$moment(
-        //         this.favorite_only_until.date,
-        //         "YYYY-MM-DD"
-        //       ).format("YYYY-MM-DD")} ${this.favorite_only_until.time}`
-        //     : null;
-
-        if (
-          this.favorite_notification === true ||
-          this.favorite_notification === "true"
-        ) {
+        if (this.bank_first === true || this.bank_first === "true") {
           this.form.favorite_only_until = `${this.$moment(
             this.favorite_only_until.date,
             "YYYY-MM-DD"
@@ -901,7 +840,7 @@ export default {
 
         if (this.bank_only === true || this.bank_only === "true") {
           this.form.favorite_only_until = `${this.$moment(
-            this.form.date_end,
+            this.form.date_start,
             "YYYY-MM-DD"
           )
             .format("YYYY-MM-DD")
@@ -914,6 +853,7 @@ export default {
         if (this.unpaid_breaks === "other") {
           this.form.unpaid_breaks_in_minutes = this.form.unpaid_breaks_in_minutes;
         }
+        console.log("form", this.form);
         this.$axios
           .$post(`/api/v1/practice/jobs`, this.form)
           .then(res => {

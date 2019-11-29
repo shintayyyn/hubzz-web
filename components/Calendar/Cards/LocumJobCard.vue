@@ -1,49 +1,48 @@
 <template>
-  <div
-    class="relative rounded-lg py-3 px-5 my-1 bg-white cursor-pointer hover:bg-gray-300"
-    @click="select"
-  >
-    <template v-if="isNotUnavailable">
-      <div class="absolute left-0 top-0 rounded-l-lg p-2 h-full" :class="bgStatus"></div>
-      <div class="ml-2">
-        <div class="text-gray-500 text-xs xl:text-sm">Job Number: {{jobNumber}}</div>
-        <div class="my-3 font-bold text-sm sm:text-md">{{jobTitle}}</div>
-        <div class="my-3 text-sm sm:text-md">{{jobSurgeryName}}</div>
-        <div class="my-3 text-sm sm:text-md">{{jobSurgeryCode}}</div>
-        <div class="text-gray-500 my-3 text-xs xl:text-sm">From {{dateStart}} to {{dateEnd}}</div>
-        <div class="text-gray-500 my-3 text-xs xl:text-sm">Shift: {{jobShift}}</div>
-        <div class="my-3 text-xs xl:text-sm break-words">{{jobDescription}}</div>
-      </div>
-    </template>
-    <template v-if="!isNotUnavailable">
-      <div class="bg-pink-500 absolute left-0 top-0 rounded-l-lg p-2 h-full"></div>
-      <div class="ml-2">
-        <div class="my-3 font-bold text-sm sm:text-md">Unavailable</div>
-        <div
-          class="my-3 text-xs xl:text-sm"
-          v-if="$store.state.calendar.view_type === 'per_month'"
-        >Shifts: {{unavailableShift}}</div>
-        <div
-          class="my-3 text-xs xl:text-sm"
-          v-if="$store.state.calendar.view_type === 'per_week'"
-        >Shift: {{unavailableShift}}</div>
-      </div>
-    </template>
+  <div class="relative rounded-lg py-3 px-5 my-1 bg-white cursor-pointer hover:bg-gray-300">
+    <nuxt-link
+      :to="{ path: job.type ? `/dashboard/${propJob.id}?status=${propJob.status}` : '/availability', query: {...$route.query}}"
+    >
+      <template v-if="isNotUnavailable">
+        <div class="absolute left-0 top-0 rounded-l-lg p-2 h-full" :class="bgStatus"></div>
+        <div class="ml-2">
+          <div class="text-gray-500 text-xs xl:text-sm">Job Number: {{jobNumber}}</div>
+          <div class="my-3 font-bold text-sm sm:text-md">{{jobTitle}}</div>
+          <div class="my-3 text-sm sm:text-md">{{jobSurgeryName}}</div>
+          <div class="my-3 text-sm sm:text-md">{{jobSurgeryCode}}</div>
+          <div class="text-gray-500 my-3 text-xs xl:text-sm">From {{dateStart}} to {{dateEnd}}</div>
+          <div class="text-gray-500 my-3 text-xs xl:text-sm">Shift: {{jobShift}}</div>
+          <div class="my-3 text-xs xl:text-sm break-words">{{jobDescription}}</div>
+        </div>
+      </template>
+      <template v-if="!isNotUnavailable">
+        <div class="bg-pink-500 absolute left-0 top-0 rounded-l-lg p-2 h-full"></div>
+        <div class="ml-2">
+          <div class="my-3 font-bold text-sm sm:text-md">Unavailable</div>
+          <div
+            class="my-3 text-xs xl:text-sm"
+            v-if="$store.state.calendar.view_type === 'per_month'"
+          >Shifts: {{unavailableShift}}</div>
+          <div
+            class="my-3 text-xs xl:text-sm"
+            v-if="$store.state.calendar.view_type === 'per_week'"
+          >Shift: {{unavailableShift}}</div>
+        </div>
+      </template>
+    </nuxt-link>
   </div>
 </template>
 <script>
 export default {
   props: ["propJob"],
-  data() {
-    return {
-      job: null
-    };
-  },
   computed: {
+    job() {
+      return this.isJobPart ? this.propJob.job : this.propJob;
+    },
     isJobPart() {
       return (
         this.propJob.locum_status &&
-        ["ongoing", "completed", "approved", "allocated"].includes(
+        ["ongoing", "completed", "approved"].includes(
           this.propJob.locum_status.toLowerCase()
         )
       );
@@ -92,6 +91,7 @@ export default {
       return this.propJob.date_end;
     },
     unavailableShift() {
+      // if (this.propJob.type === "Platform") {
       let shifts = this.propJob.shifts;
       if (this.$store.state.calendar.view_type === "per_month") {
         return shifts.map(shift => shift.name).join();
@@ -109,6 +109,9 @@ export default {
           return this.propJob.shifts[0].name;
         }
       }
+      // } else if (this.propJob.type === "Private") {
+      //   return this.propJob.shift.name;
+      // }
     },
     jobNumber() {
       return this.isJobPart
@@ -138,33 +141,6 @@ export default {
     jobDescription() {
       let job = this.isJobPart ? this.propJob.job : this.propJob;
       return job.description;
-    }
-  },
-  methods: {
-    select() {
-      let job = this.isJobPart ? this.propJob.job : this.propJob;
-      if (job.type) {
-        let url = `/api/v1/locum/jobs`;
-        if (
-          ["ongoing", "completed", "approved", "allocated"].includes(
-            job.locum_status.toLowerCase()
-          )
-        ) {
-          url = `/api/v1/locum/job-parts`;
-        }
-        this.$axios
-          .$get(
-            `${url}/${this.isJobPart ? this.propJob.id : this.propJob.job.id}`
-          )
-          .then(res => {
-            this.$emit(
-              "viewLocumJob",
-              res.data && res.data.job ? res.data.job : res.data.job_part
-            );
-          });
-      } else {
-        this.$router.push("/availability");
-      }
     }
   }
 };

@@ -9,7 +9,7 @@
       :columns="columns"
       :loading="loading"
       :routerLink="routerLink"
-      :customWidth="'600'"
+      :customWidth="600"
       @pagechanged="pagechanged"
       @limitchanged="limitchanged"
     />
@@ -69,9 +69,13 @@ export default {
       if (this.disabledLink) {
         return null;
       }
-      let url = "/jobs";
+      let url = "";
       if (this.$route.path.includes("related-jobs")) {
         url = `/my-practice/${this.$route.params.practiceId}/related-jobs`;
+      } else if (this.$route.path.includes("/jobs")) {
+        url = "/jobs";
+      } else if (this.$route.path.includes("/dashboard")) {
+        url = "/dashboard";
       }
       return url;
     }

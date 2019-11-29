@@ -337,54 +337,54 @@ export default {
         );
       }
       // this.CheckEmptyField(this.form.profession_id, "profession_id");
+    },
+    "form.gmc_or_nmc_number"(value) {
+      this.CheckEmptyField(this.form.gmc_or_nmc_number, "gmc_or_nmc_number");
+    },
+    "form.mpl_or_npl_number"(value) {
+      this.CheckEmptyField(this.form.mpl_or_npl_number, "mpl_or_npl_number");
+    },
+    "form.min_rate_per_hour"() {
+      this.CheckEmptyField(this.form.min_rate_per_hour, "min_rate_per_hour");
+    },
+    "form.max_rate_per_hour"() {
+      this.CheckEmptyField(this.form.max_rate_per_hour, "max_rate_per_hour");
+    },
+    "form.min_rate_per_half_day_session"() {
+      this.CheckEmptyField(
+        this.form.min_rate_per_half_day_session,
+        "min_rate_per_half_day_session"
+      );
+    },
+    "form.max_rate_per_half_day_session"() {
+      this.CheckEmptyField(
+        this.form.max_rate_per_half_day_session,
+        "max_rate_per_half_day_session"
+      );
+    },
+    "form.min_rate_per_whole_day_session"() {
+      this.CheckEmptyField(
+        this.form.min_rate_per_whole_day_session,
+        "min_rate_per_whole_day_session"
+      );
+    },
+    "form.max_rate_per_whole_day_session"() {
+      this.CheckEmptyField(
+        this.form.max_rate_per_whole_day_session,
+        "max_rate_per_whole_day_session"
+      );
+    },
+    "form.ir35"(value) {
+      this.CheckEmptyField(this.form.ir35, "ir35");
     }
-    // "form.gmc_or_nmc_number"(value) {
-    //   this.CheckEmptyField(this.form.gmc_or_nmc_number, "gmc_or_nmc_number");
-    // },
-    // "form.mpl_or_npl_number"(value) {
-    //   this.CheckEmptyField(this.form.mpl_or_npl_number, "mpl_or_npl_number");
-    // },
-    // "form.min_rate_per_hour"() {
-    //   this.CheckEmptyField(this.form.min_rate_per_hour, "min_rate_per_hour");
-    // },
-    // "form.max_rate_per_hour"() {
-    //   this.CheckEmptyField(this.form.max_rate_per_hour, "max_rate_per_hour");
-    // },
-    // "form.min_rate_per_half_day_session"() {
-    //   this.CheckEmptyField(
-    //     this.form.min_rate_per_half_day_session,
-    //     "min_rate_per_half_day_session"
-    //   );
-    // },
-    // "form.max_rate_per_half_day_session"() {
-    //   this.CheckEmptyField(
-    //     this.form.max_rate_per_half_day_session,
-    //     "max_rate_per_half_day_session"
-    //   );
-    // },
-    // "form.min_rate_per_whole_day_session"() {
-    //   this.CheckEmptyField(
-    //     this.form.min_rate_per_whole_day_session,
-    //     "min_rate_per_whole_day_session"
-    //   );
-    // },
-    // "form.max_rate_per_whole_day_session"() {
-    //   this.CheckEmptyField(
-    //     this.form.max_rate_per_whole_day_session,
-    //     "max_rate_per_whole_day_session"
-    //   );
-    // },
-    // "form.ir35"(value) {
-    //   this.CheckEmptyField(this.form.ir35, "ir35");
-    // }
   },
   methods: {
     next() {
-      // this.Validate(this.form, [
-      //   "nhs_smart_card_id_number",
-      //   "spoken_language_id"
-      // ]);
       this.formError = [];
+      this.Validate(this.form, [
+        "nhs_smart_card_id_number",
+        "spoken_language_id"
+      ]);
       if (!this.formError.length) {
         this.form.qualification_id = this.form.qualification_id.length
           ? this.form.qualification_id.map(item => item.value)

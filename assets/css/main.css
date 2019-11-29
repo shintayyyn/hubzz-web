@@ -328,6 +328,7 @@ input[type="checkbox"]:checked + label:after {
 
 input[type="checkbox"]:disabled + label {
 	color: #aaa;
+	cursor: not-allowed;
 }
 
 input[type="checkbox"]:disabled + label::before {
@@ -359,4 +360,8 @@ input[type="checkbox"]:disabled + label::before {
 	100% {
 		background: transparent;
 	}
+}
+
+.transition-hover {
+	transition: all 0.3s ease;
 }
