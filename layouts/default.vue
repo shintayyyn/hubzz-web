@@ -12,7 +12,7 @@
 			"
     >
       <AppNotification />
-      <JobNotification />
+        <JobNotification />
       <nuxt
         class="mb-4"
         :class="

@@ -59,7 +59,7 @@
                 v-model="form.tax_year_end_month"
                 :type="'select'"
                 :name="'tax_year_end_month'"
-                :placeholder="'Select...'"
+                :placeholder="'Month'"
                 :items="months"
                 @submit="save"
                 @blur="CheckEmptyField(form.tax_year_end_month, 'tax_year_end_month')"
@@ -71,7 +71,7 @@
                 v-model="form.tax_year_end_date"
                 :type="'select'"
                 :name="'tax_year_end_date'"
-                :placeholder="'Select...'"
+                :placeholder="'Day'"
                 :items="days"
                 @submit="save"
                 @blur="CheckEmptyField(form.tax_year_end_date, 'tax_year_end_date')"
@@ -288,8 +288,8 @@ export default {
         this.form.account_number = this.user.locum_detail.invoice_detail.bank_account.account_number;
       }
 
-      this.form.tax_year_end_month = this.user.locum_detail.invoice_detail.tax_year_end_month;
-      this.form.tax_year_end_date = this.user.locum_detail.invoice_detail.tax_year_end_date;
+      this.form.tax_year_end_month = null;
+      this.form.tax_year_end_date = null;
       this.form.employment_type = this.user.locum_detail.invoice_detail.employment_type;
       this.form.utr_number = this.user.locum_detail.invoice_detail.utr_number;
       this.form.company_registration_number = this.user.locum_detail.invoice_detail.company_registration_number;
@@ -317,15 +317,23 @@ export default {
     "form.account_number"(value) {
       this.CheckEmptyField(this.form.account_number, "account_number");
     },
-    "form.tax_year_end_month"(value) {
-      this.CheckEmptyField(this.form.tax_year_end_month, "tax_year_end_month");
+    // "form.tax_year_end_month"(value) {
+    //   this.CheckEmptyField(this.form.tax_year_end_month, "tax_year_end_month");
+    // },
+    // "form.tax_year_end_date"(value) {
+    //   this.CheckEmptyField(this.form.tax_year_end_date, "tax_year_end_date");
+    // },
+    "form.employment_type"(value){
+      if (value === 'Limited Company'){
+        let index = this.formError.findIndex(err => err.field === "utr_number")
+        if (index > 0){
+          this.formError.splice(index, 1)
+        }
+      }
     },
-    "form.tax_year_end_date"(value) {
-      this.CheckEmptyField(this.form.tax_year_end_date, "tax_year_end_date");
-    },
-    "form.ir35"(value) {
-      this.CheckEmptyField(this.form.ir35, "ir35");
-    },
+    // "form.ir35"(value) {
+    //   this.CheckEmptyField(this.form.ir35, "ir35");
+    // },
     "form.payroll_detail_account_name"(value) {
       this.CheckEmptyField(
         this.form.payroll_detail_account_name,
@@ -353,11 +361,12 @@ export default {
   },
   methods: {
     save() {
-      let notRequired = [];
+      this.formError = []
+      let notRequired = ["ir35"];
 
       if (this.form.employment_type === "Self-Employed") {
         notRequired.push("company_registration_number");
-      } else if (this.form.employment_type === "Limited Companyy") {
+      } else {
         notRequired.push("utr_number");
       }
 
