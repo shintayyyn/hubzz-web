@@ -43,35 +43,79 @@
               >{{locum.locum_detail.profession.name}}</div>
             </div>
           </nuxt-link>
+          
+          
         </div>
-      </div>
+
+        </div>
+        <div class="mt-5 flex justify-center" v-if="locums.length > 0 && totalPages > 1">
+          <AppPagination
+            :total="total"
+            :totalPages="totalPages"
+            :currentPage="current_page"
+            :perPage="perPage"
+            @pagechanged="pagechanged"
+          />
+        </div>
     </div>
   </div>
 </template>
 
 <script>
 import AppAvatar from "@/components/Base/AppAvatar";
+import AppPagination from "@/components/Base/AppPagination"
 export default {
   components:{
-    AppAvatar
+    AppAvatar,
+    AppPagination
   },
   data(){
     return{
       locums:[],
+      practiceSpoke: '',
+      params: {
+        favorite_by_practice_id: ''
+      },
+      // for pagination
+      total: 0,
+      current_page: 1,
+      loading: false,
+      toggleTable: false,
+      is_favorite: false,
+      detailed: true
     }
   },
+  created() {
+    this.getLocumsCount();
+  },
   computed: {
+    offset() {
+      return this.perPage * (this.current_page - 1);
+    },
+    perPage() {
+      return 8;
+    },
+    totalPages() {
+      return Math.ceil(this.total / this.perPage);
+    },
     authPermissions() {
       return this.$store.getters["auth/permissions"];
     }
   },
   async asyncData({app, route, store}) {
     try{
-      let response = await app.$axios.$get(`/api/v1/practice/locums`)
-      const locums = response.data.users
-      console.log(locums)
+      let response = await app.$axios.$get(`/api/v1/practice/me/practice-surgeries/${route.params.id}`)
+      const practiceSurgery = response.data.practice_surgery
+      let params = {
+        surgery_id : practiceSurgery.surgery_id
+      }
+      response = await app.$axios.$get(`/api/v1/practice/practice-spokes?surgery_id=1`)
+      console.log('response', response.data)
+      const practiceSpoke = response.data.practices[0]
       return{
-        locums
+        // total,
+        // locums,
+        practiceSpoke
       }
     }catch(err){
       console.log('get locum error!', err)
@@ -79,7 +123,53 @@ export default {
     
   },  
   methods:{
-    
+    getLocumsCount() {
+      console.log('spoke', this.practiceSpoke.id)
+      let params = {
+        favorite_by_practice_id : this.practiceSpoke.id
+      }
+      console.log("get locums count");
+      this.loading = true;
+      this.$axios
+        .$get(
+          `/api/v1/practice/locums/count`,{ params }
+        )
+        .then(res => {
+          console.log(res);
+          this.total = res.data.count;
+          this.getLocums(this.current_page);
+        })
+        .catch(err => {
+          console.log("err", err);
+        });
+    },
+    getLocums(page) {
+      console.log("get locums");
+      let params = {
+        limit: this.perPage,
+        offset: this.offset,
+        favorite_by_practice_id :  this.practiceSpoke.id,
+        detailed: true,
+      }
+      this.current_page = page;
+      this.$axios
+        .$get(
+          `/api/v1/practice/locums`,{ params }
+        )
+        .then(res => {
+          console.log(res);
+          this.locums = res.data.users;
+          this.toggleTable = true;
+          this.loading = false;
+        })
+        .catch(err => {
+          console.log("err", err);
+        });
+    },
+     pagechanged(e) {
+      this.current_page = e;
+      this.getLocums(this.current_page);
+    }
   }
 }
 </script>
