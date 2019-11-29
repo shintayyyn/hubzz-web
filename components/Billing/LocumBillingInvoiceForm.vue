@@ -478,6 +478,7 @@ export default {
     },
     allApproved() {
       return (
+        this.selectedInvoice && 
         this.selectedInvoice.items.filter(invoice => invoice.approved === false)
           .length > 0
       );

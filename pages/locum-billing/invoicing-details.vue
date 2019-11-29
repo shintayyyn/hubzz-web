@@ -85,7 +85,6 @@
           :type="'select'"
           :name="'employment_type'"
           :label="'Are you...?'"
-          :placeholder="'Select...'"
           :items="employmentTypes"
           @submit="save"
           @blur="CheckEmptyField(form.employment_type, 'employment_type')"
@@ -290,7 +289,7 @@ export default {
 
       this.form.tax_year_end_month = null;
       this.form.tax_year_end_date = null;
-      this.form.employment_type = this.user.locum_detail.invoice_detail.employment_type;
+      this.form.employment_type = this.user.locum_detail.invoice_detail.employment_type ? this.user.locum_detail.invoice_detail.employment_type : this.form.employment_type
       this.form.utr_number = this.user.locum_detail.invoice_detail.utr_number;
       this.form.company_registration_number = this.user.locum_detail.invoice_detail.company_registration_number;
       this.form.ir35 = this.user.locum_detail.invoice_detail.ir35;

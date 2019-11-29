@@ -25,14 +25,14 @@
         />
         <AppButton :label="'Search'" @click="search" :inStyle="'padding:5px 14px;'" />
       </div>
-      <div v-if="showResult && practiceSpokes.length === 0" class="mt-5">
+      <div v-if="showResult && practiceSpokesResult.length === 0" class="mt-5">
         <div
           class="text-xs xl:text-base font-bold"
-        >No practice matched that name. Try again with whole words, practice code or CCG.</div>
+        >{{ resultNotice }}</div>
       </div>
       <div
         class="rounded-lg shadow-lg overflow-auto mt-5 bg-white"
-        v-if="showResult && practiceSpokes.length > 0"
+        v-if="showResult && practiceSpokesResult.length > 0"
       >
         <div
           class="text-xs lg:text-base font-bold p-4"
@@ -41,7 +41,7 @@
         <div
           class="border-t-2 p-4 cursor-pointer"
           :class="selectedSpoke.id === item.id ? 'bg-yellow-500':'hover:bg-gray-400'"
-          v-for="(item) in practiceSpokes"
+          v-for="(item) in practiceSpokesResult"
           :key="item.id"
           @click="select(item)"
         >
@@ -99,26 +99,40 @@ export default {
   data() {
     return {
       search_text: "",
-      practiceSpokes: [],
+      practiceSpokesResult: [],
+      surgeries: [],
       selectedSpoke: '',
       showResult: false,
       modal: false,
       formError: [],
-      toInvite: false
+      toInvite: false,
+      resultNotice: 'No practice matched that name. Try again with whole words, practice code or CCG.'
     };
   },
   async asyncData({ app, error }) {
     try {
-      const response = await app.$axios.$get(
+      const responsePracticeType = await app.$axios.$get(
         `/api/v1/practice/me/practice-type`
       );
       const type =
-        response.data && response.data.practice && response.data.practice.type
-          ? response.data.practice.type
+        responsePracticeType.data && responsePracticeType.data.practice && responsePracticeType.data.practice.type
+          ? responsePracticeType.data.practice.type
           : null;
 
+      const responsePracticeSurgeries = await app.$axios.$get(
+        `/api/v1/practice/me/practice-surgeries`
+      );
+      let surgeries = []
+      if (responsePracticeSurgeries.data && responsePracticeSurgeries.data.practice_surgeries) {
+					responsePracticeSurgeries.data.practice_surgeries.forEach(surgery => {
+						surgeries.push(surgery);
+						// surgeries.push({ ...surgery, removable: true });
+					});
+				}
+
       return {
-        type
+        type,
+        surgeries
       };
     } catch (err) {
       if (err.response && err.response.status === 401) {
@@ -128,22 +142,34 @@ export default {
       throw err;
     }
   },
+  created(){
+  },
   methods: {
     search() {
-      if (!this.search_text) {
-        return;
-      } else {
+      this.practiceSpokesResult = []
+      if (this.search_text) {
         this.$axios
           .$get(
             `/api/v1/practice/practice-spokes?search=${this.search_text}&limit=10`
           )
           .then(res => {
-            console.log("practice spoke",res.data.practices)
-            this.practiceSpokes = res.data.practices;
+            if (res.data && res.data.practices){
+              res.data.practices.forEach(item => {
+                let checkSurgery = this.surgeries.find(surgery => surgery.id == item.id)
+                  if (!checkSurgery){
+                    this.practiceSpokesResult.push(item)
+                  }else{
+                    if (checkSurgery.surgery.name === this.search_text.toUpperCase() || checkSurgery.surgery.code === this.search_text.toUpperCase()){
+                      this.resultNotice = "This surgery is already your spoke."
+                    }
+                  }
+                }
+              )
+            }
             this.showResult = true;
           })
           .catch(err => {
-            console.log(err.response);
+            console.log("errrs", err);
           });
       }
     },

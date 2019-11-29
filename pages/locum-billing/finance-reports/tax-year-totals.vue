@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-row flex-wrap justify-start">
-    <div class="pl-2 w-full sm:w-1/4 order-1 sm:order-2">
+    <div class="pl-4 w-full sm:w-1/4 order-1 sm:order-2">
       <div class="rounded-lg shadow-md p-4 flex flex-col">
         <AppInput
           v-model="tax_year_end"
