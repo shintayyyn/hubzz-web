@@ -24,6 +24,18 @@
       >My Spoke Siblings
     </nuxt-link>
   </div>
+  <transition name="fade" mode="out-in">
+    <div
+      class="shield"
+      v-if="
+        [
+          'surgery-management-practice-hub-spoke-siblings-id',
+          'surgery-management-practice-hub-spoke-siblings-id-sibling-bank-locumId'
+        ].includes($route.name)
+      "
+      @click="$router.push('/surgery-management/practice-hub/spoke-siblings')"
+    ></div>
+  </transition>
   <nuxt-child/>
 </div>
 </template>
@@ -55,5 +67,7 @@ export default {
 </script>
 
 <style>
-
+.shield {
+	z-index: 509;
+}
 </style>
