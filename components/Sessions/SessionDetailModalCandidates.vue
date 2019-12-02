@@ -22,7 +22,7 @@
         <div class="flex items-center">
           <button
             class="bg-yellow-500 mx-2 rounded-lg hover:bg-yellow-400 focus:outline-none"
-            @click.prevent="message(user.id)"
+            @click.prevent="message(user)"
           >
             <svgicon name="chat" height="20" width="20" color="#888 #555 #fff" class="m-2" />
           </button>
@@ -44,27 +44,27 @@
       />
     </div>
 
-    <div class="shield" v-if="modal" @click="modal = false"></div>
     <transition name="fade" mode="out-in">
-    <div class="message-modal md:w-2/3 lg:w-1/2 xl:w-1/3" v-if="sendMessage">
-      <SendMessageModal
-          :user="user"
-          @close="sendMessage=false"
-          @showProfile="show(user.id)"
-        />
-    </div>
+      <div class="message-shield" v-if="messageModal"></div>
+    </transition>
+    <transition name="fade" mode="out-in">
+      <div class="message-modal-container md:w-2/3 lg:w-1/2 xl:w-1/3" v-if="messageModal">
+        <SendMessageModal :user="user" @close="messageModal=false" @showProfile="show(user.id)" />
+      </div>
+    </transition>
+    <transition name="fade" mode="out-in">
+      <div class="shield" v-if="candidateModal" @click="candidateModal = false"></div>
     </transition>
     <transition name="slide" mode="out-in">
-      <div class="modal-container shadow-lg" v-if="modal">
+      <div class="modal-container shadow-lg" v-if="candidateModal">
         <SessionDetailModalShowCandidate
-          @close="modal = false"
+          @close="candidateModal = false"
           :job="job"
           :user="user"
           @appointed="$emit('appointed')"
         />
       </div>
     </transition>
-    <div class="shield" v-if="sendMessage"></div>
   </div>
 </template>
 <script>
@@ -91,8 +91,8 @@ export default {
         limit: 20
       },
       user: null,
-      modal: false,
-      sendMessage: false
+      candidateModal: false,
+      messageModal: false
     };
   },
   computed: {
@@ -135,52 +135,62 @@ export default {
     show(id) {
       this.$axios.$get(`/api/v1/practice/locums/${id}`).then(res => {
         this.user = res.data.user;
-        this.modal = true;
-        // this.$emit("show", user);
+        this.candidateModal = true;
       });
     },
-    message(id) {
-      this.$axios.$get(`/api/v1/practice/locums/${id}`).then(res => {
-        this.user = res.data.user;
-        this.sendMessage = true;
-        // this.$emit("show", user);
-      });
+    message(user) {
+      this.user = user;
+      this.messageModal = true;
+      // this.$axios.$get(`/api/v1/practice/locums/${id}`).then(res => {
+      //   this.user = res.data.user;
+      //   this.messageModal = true;
+      // });
     }
   }
 };
 </script>
 <style scoped>
-.avatar {
+/* .avatar {
   max-width: 40px;
   max-height: 40px;
   min-width: 40px;
   min-height: 40px;
-}
-img {
-  border-radius: 50%;
-}
-/* .shield {
-  z-index: 511;
 } */
+/* img {
+  border-radius: 50%;
+} */
+.shield {
+  z-index: 511;
+}
 .modal-container {
   z-index: 512;
 }
 @media screen and (min-width: 1200px) {
   .modal-container {
-    width: 60%;
+    width: 70%;
   }
 }
-.message-modal{
-    position: fixed;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 60;
+.message-shield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #333;
+  opacity: 0.5;
+  z-index: 59;
 }
-@media screen and (max-width: 767px){
-    .message-modal{
-        min-width: 85%;
-    }
+.message-modal-container {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 60;
+}
+@media screen and (max-width: 767px) {
+  .message-modal-container {
+    min-width: 85%;
+  }
 }
 </style>
 
