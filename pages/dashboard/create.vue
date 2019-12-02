@@ -1,18 +1,24 @@
 <template>
-  <div class="modal-container shadow-lg" v-if="locumUser && !practiceUser">
-    <JobDetailModalAppointment :job="null" @close="$router.push({ path: '/dashboard' })" />
+  <div class="modal-container shadow-lg">
+    <JobDetailModalAppointment
+      :job="null"
+      @close="$router.push({ path: '/dashboard' })"
+      v-if="locumUser && !practiceUser"
+    />
+    <CreateJobModal
+      :job="null"
+      @close="$router.push('/dashboard')"
+      v-if="!locumUser && practiceUser"
+    />
   </div>
-  <!-- <template v-if="practiceUser && !locumUser">
-      <CreateJobModal :job="null" @close="$router.push('/dashboard')" />
-  </template>-->
 </template>
 <script>
 import JobDetailModalAppointment from "@/components/Jobs/JobDetailModalAppointment";
-// import CreateJobModal from "@/components/CreateJobModal";
+import CreateJobModal from "@/components/CreateJobModal";
 export default {
   components: {
-    JobDetailModalAppointment
-    // CreateJobModal
+    JobDetailModalAppointment,
+    CreateJobModal
   },
   data() {
     return {
