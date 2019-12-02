@@ -20,6 +20,18 @@
 			@limitchanged="limitchanged"
 			@sorted="sorted"
 		></AppTable>
+
+    <!-- :routerLink="'/surgery-management/practice-spokes'"
+			@pagechanged="pagechanged"
+			@limitchanged="limitchanged"
+			@sorted="sorted"
+		></AppTable>--> 
+
+      <!-- <template v-slot:actions="slotProps">
+				<div class="flex items-center justify-center">
+          <div class="rounded-full px-6 py-1" :class="surgeryStatus()">{{ getStatus() }}</div>
+        </div>
+			</template> -->
     <nuxt-child/>
   </div>
 </template>
