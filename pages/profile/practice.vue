@@ -55,10 +55,6 @@
                 </div>
               </div>
               <div class="relative mt-4 bg-gray-300 rounded-lg p-4">
-                <!-- <div
-                  v-if="form.use_variation_terms"
-                  class="absolute top-0 bottom-0 left-0 right-0 rounded-lg p-4 bg-gray-500 opacity-75"
-                ></div>-->
                 <AppLoading :spinner="false" :loading="loading" :message="'Uploading'" />
                 <div v-if="!loading" class="flex flex-no-wrap justify-between items-center">
                   <div
@@ -108,15 +104,6 @@
                 @submit="save"
                 @blur="CheckEmptyField(form.email, 'email')"
               />
-              <!-- <AppInput
-                v-model="form.use_variation_terms"
-                :type="'select'"
-                :name="'type'"
-                :label="'Use Variation Terms?'"
-                :error="formError.find(item => item.field === 'use_variation_terms')"
-                :placeholder="'Select...'"
-                :items="[{ value: true , label: 'Yes'},{ value: 'false', label: 'No'}]"
-              />-->
             </div>
             <div class="flex flex-col w-full md:w-1/2 pl-1">
               <AppInput
@@ -218,20 +205,6 @@
       @confirm="remove"
       @cancel="modal = false"
     />
-    <!-- <AppConfirmationModal
-      :label="'Are you sure you want to change your Practice type? All of your branches/surgeries will be remove.'"
-      :confirmLabel="'Yes'"
-      :cancelLabel="'Cancel'"
-      :modal="practiceTypeConfirmationModal"
-      @confirm="confirmPracticeType"
-      @cancel="cancelPracticeType"
-    />-->
-    <!-- <AppConfirmationModal
-      :label="'You do not have any Permission'"
-      :confirmLabel="'OK'"
-      :modal="permissionConfirmationModal"
-      @confirm="cancelPracticeType"
-    />-->
   </section>
 </template>
 <script>
@@ -262,11 +235,7 @@ export default {
       vat_registered: false,
       vat_number: "",
       modal: false,
-      // practiceTypeConfirmationModal: false,
-      // permissionConfirmationModal: false,
       loading: false,
-      // selectedPracticeType: "",
-      // oldPracticeType: "",
       form: {
         phone_number: "",
         report_to: "",
@@ -288,39 +257,6 @@ export default {
         ? (document.body.style.overflow = "hidden")
         : (document.body.style.overflow = "auto");
     }
-    // practiceType(newValue, oldValue) {
-    //   this.oldPracticeType = oldValue;
-    // }
-    // "form.phone_number"(value) {
-    //   this.CheckEmptyField(this.form.phone_number, "phone_number");
-    // },
-    // "form.report_to"(value) {
-    //   this.CheckEmptyField(this.form.report_to, "report_to");
-    // },
-    // "form.email"(value) {
-    //   this.CheckEmptyField(this.form.email, "email");
-    // },
-    // "form.practice_type_id"(value) {
-    //   this.CheckEmptyField(this.form.practice_type_id, "practice_type_id");
-    // },
-    // "form.mandatory_training_id"(value) {
-    //   this.CheckEmptyField(
-    //     this.form.mandatory_training_id,
-    //     "mandatory_training_id"
-    //   );
-    // },
-    // "form.gp_compliance_document_id"(value) {
-    //   this.CheckEmptyField(
-    //     this.form.gp_compliance_document_id,
-    //     "gp_compliance_document_id"
-    //   );
-    // },
-    // "form.others_compliance_document_id"(value) {
-    //   this.CheckEmptyField(
-    //     this.form.others_compliance_document_id,
-    //     "others_compliance_document_id"
-    //   );
-    // }
   },
   async asyncData({ app, error }) {
     try {
@@ -391,16 +327,6 @@ export default {
         })
       ];
 
-      // const responsePracticeType = await app.$axios.$get(
-      //   `/api/v1/practice/me/practice-type`
-      // );
-      // const practiceType =
-      //   responsePracticeType.data &&
-      //   responsePracticeType.data.practice &&
-      //   responsePracticeType.data.practice.type
-      //     ? responsePracticeType.data.practice.type
-      //     : null;
-
       return {
         surgery,
         practice,
@@ -408,7 +334,6 @@ export default {
         mandatory_trainings,
         gp_documents,
         others_documents
-        // practiceType
       };
     } catch (err) {
       if (err.response && err.response.status === 401) {
@@ -485,7 +410,6 @@ export default {
               });
             }
           }
-          // this.formError = err.response.data.error_messages;
         })
         .finally(() => {
           this.loading = false;
@@ -511,34 +435,6 @@ export default {
         id => id != value
       );
     },
-    // practiceTypeOnchange(value) {
-    //   if (this.authPermissions.includes("Update Profile Practice")) {
-    //     this.selectedPracticeType = value;
-    //     this.practiceTypeConfirmationModal = true;
-    //   } else {
-    //     this.permissionConfirmationModal = true;
-    //   }
-    // },
-    // cancelPracticeType() {
-    //   this.practiceType = this.oldPracticeType;
-    //   this.practiceTypeConfirmationModal = false;
-    //   this.permissionConfirmationModal = false;
-    // },
-    // confirmPracticeType() {
-    //   this.$axios
-    //     .$put(`/api/v1/practice/me/practice-type`, {
-    //       type: this.selectedPracticeType
-    //     })
-    //     .then(res => {
-    //       this.practiceTypeConfirmationModal = false;
-    //       this.$emit("changeType", res.data.practice.type);
-    //       this.$store.commit("SET_NOTIFICATION", {
-    //         enabled: true,
-    //         status: "success",
-    //         text: ["Practice Type Changed"]
-    //       });
-    //     });
-    // },
     remove() {
       this.$axios
         .$delete(`/api/v1/practice/me/practice/variation-terms`)
@@ -562,9 +458,6 @@ export default {
           "others_compliance_document_id",
           "use_variation_terms"
         ];
-        // if (this.practice.variation_terms_file !== null) {
-        //   notRequired.push("use_variation_terms");
-        // }
         this.Validate(this.form, notRequired);
         if (!this.formError.length) {
           this.loading = true;

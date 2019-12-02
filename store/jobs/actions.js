@@ -140,15 +140,33 @@ export default {
             if (invoiceResponse.data && invoiceResponse.data.locum_invoice) {
                 let approvedInvoices = invoiceResponse.data.locum_invoice.items.filter(item => item.status === 'Approved')
                 if (approvedInvoices && approvedInvoices.length > 0) {
-                    const jobPartsResponse = await this.$axios.$get(`/api/v1/practice/job-parts`, {
+                    const approvedJobPartsResponse = await this.$axios.$get(`/api/v1/practice/job-parts`, {
                         params: {
                             id: approvedInvoices.map(invoices => invoices.job_part.id),
                             detailed: true
                         }
                     })
-                    if (jobPartsResponse.data && jobPartsResponse.data.job_parts) {
-                        jobPartsResponse.data.job_parts.forEach(job_part => {
-                            commit('ADD_PRACTICE_JOB_NOTIFICATION', { ...job_part, notificationType: 'Practice Notification Locum Invoice Updated' })
+                    console.log('approvedInvoices', approvedInvoices)
+                    console.log('approvedJobPartsResponse', approvedJobPartsResponse)
+                    if (approvedJobPartsResponse.data && approvedJobPartsResponse.data.job_parts) {
+                        approvedJobPartsResponse.data.job_parts.forEach(job_part => {
+                            // commit('ADD_PRACTICE_JOB_NOTIFICATION', { ...job_part, notificationType: 'Practice Notification Job Approved' })
+                        })
+                    }
+                }
+                let disputedInvoices = invoiceResponse.data.locum_invoice.items.filter(item => item.status === 'Disputed')
+                if (disputedInvoices && disputedInvoices.length > 0) {
+                    const disputedJobPartsResponse = await this.$axios.$get(`/api/v1/practice/job-parts`, {
+                        params: {
+                            id: disputedInvoices.map(invoices => invoices.job_part.id),
+                            detailed: true
+                        }
+                    })
+                    console.log('disputedInvoices', disputedInvoices)
+                    console.log('disputedJobPartsResponse', disputedJobPartsResponse)
+                    if (disputedJobPartsResponse.data && disputedJobPartsResponse.data.job_parts) {
+                        disputedJobPartsResponse.data.job_parts.forEach(job_part => {
+                            commit('ADD_PRACTICE_JOB_NOTIFICATION', { ...job_part, notificationType: 'Practice Notification Job Disputed' })
                         })
                     }
                 }

@@ -69,10 +69,9 @@ export default {
   computed: {
     jobPartStatus() {
       let status = "TO BE INVOICED";
-      if (this.job_part.disputed) {
+      if (this.job_part.disputed && this.job_part.issued) {
         status = "DISPUTED";
-      }
-      if (this.job_part.invoiced && this.job_part.issued) {
+      } else if (this.job_part.invoiced && this.job_part.issued) {
         status = "INVOICED";
       }
       return status;

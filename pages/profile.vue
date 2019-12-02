@@ -18,7 +18,7 @@
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
         :class="$route.name.includes('profile-practice-spokes') || $route.name === 'profile-practice-spokes-create'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         v-if="type == 'Hub' && authPermissions.includes('View Profile Surgeries')"
-      >Practice Spokes</nuxt-link> -->
+      >Practice Spokes</nuxt-link>-->
       <nuxt-link
         to="/profile/users"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"

@@ -31,8 +31,11 @@ export default {
 </script>
 
 <style>
+.modal-container {
+  z-index: 512;
+}
 @media screen and (min-width: 1200px) {
-  .modal-container{
+  .modal-container {
     width: 80%;
   }
 }

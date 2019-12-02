@@ -5,7 +5,11 @@
         <AppLoading :loading="loading" spinner />
 
         <div class="flex flex-row flex-wrap justify-start">
-          <div class="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-2" v-for="locum in locums" :key="locum.id">
+          <div
+            class="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-2"
+            v-for="locum in locums"
+            :key="locum.id"
+          >
             <div class="h-full rounded-lg shadow-lg bg-gray-300 hover:bg-gray-400 p-4">
               <nuxt-link :to="{ path: `/my-banks/${locum.id}`, query: {...$route.query}}">
                 <div
@@ -50,7 +54,7 @@
             </div>
           </div>
         </div>
-        
+
         <div class="mt-5 flex justify-center" v-if="locums.length > 0 && totalPages > 1">
           <AppPagination
             :total="total"
@@ -147,14 +151,12 @@ export default {
   },
   methods: {
     getLocumsCount() {
-      console.log("get locums count");
       this.loading = true;
       this.$axios
         .$get(
           `/api/v1/practice/locums/count?practice_locum_type=${this.$route.query.status}`
         )
         .then(res => {
-          console.log(res);
           this.total = res.data.count;
           this.getLocums(this.current_page);
         })
@@ -163,7 +165,6 @@ export default {
         });
     },
     getLocums(page) {
-      console.log("get locums");
       this.current_page = page;
       this.$axios
         .$get(
@@ -171,7 +172,6 @@ export default {
           { params: { detailed: true } }
         )
         .then(res => {
-          console.log(res);
           this.locums = res.data.users;
           this.toggleTable = true;
           this.loading = false;
@@ -182,7 +182,6 @@ export default {
     },
     favorite(id) {
       let locum = this.locums.find(locum => locum.id === id);
-      console.log(locum);
       if (!locum.is_favorite) {
         this.$axios
           .$post(`/api/v1/practice/locums/${id}/favorite`)

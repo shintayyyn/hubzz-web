@@ -36,8 +36,11 @@ export default {
                 case 'Practice Notification Job Part Completed':
                     message = 'This part of your job has been completed'
                     break;
-                case 'Practice Notification Locum Invoice Updated':
+                case 'Practice Notification Job Approved':
                     message = 'This part of your job has been approved'
+                    break;
+                case 'Practice Notification Job Disputed':
+                    message = 'This part of your job has been dispute'
                     break;
                 case 'Practice Notification Job Cancelled':
                     message = 'This job has been cancelled.'
@@ -74,6 +77,7 @@ export default {
                 id,
                 title: notif.title ? notif.title : notif.job.title,
                 status: notif.status,
+                billingStatus: ['Practice Notification Job Approved', 'Practice Notification Job Disputed'].includes(notif.notificationType) ? notif.notificationType === 'Practice Notification Job Approved' ? 'Approved' : 'Disputed' : null,
                 date_start: notif.date_start,
                 date_end: notif.date_end,
                 shift: notif.shift ? notif.shift.name : notif.job.shift.name,
