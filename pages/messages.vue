@@ -33,10 +33,24 @@ export default {
     },
     unreadMessages() {
       return this.$store.getters["chat/getUnreadMessages"];
+    },
+    isMobile() {
+      return this.$store.state.mobile
     }
   },
   watch: {
     $route(to, from) {
+      if (window.innerWidth > 768) {
+        if (this.conversations.length === 0) {
+          this.$router.push(`/messages/new`);
+        } else {
+          this.$store.commit("IS_MOBILE", false);
+          this.showLeftPanel = true
+          if (to.path === "/messages"){
+            this.goToFirstConversation();
+          }
+        }
+      }
       if (to.name === "messages-slug") {
         if (to.path === "/messages") {
           this.showLeftPanel = true
@@ -45,8 +59,9 @@ export default {
             this.$store.commit("chat/DELETE_ACTIVE_CONVERSATION");
           }
         } else {
-          this.showLeftPanel = true
-          this.$store.dispatch("chat/setActiveConversation", to.params.slug);
+            this.showLeftPanel = true
+            this.$store.dispatch("chat/setActiveConversation", to.params.slug);
+            
         }
       }
       if (
@@ -72,7 +87,7 @@ export default {
     this.$store.commit("chat/DELETE_ACTIVE_CONVERSATION");
   },
   created() {
-    if (this.$store.state.mobile === true && this.$route.params.slug){
+    if (this.isMobile === true && this.$route.params.slug){
       this.showLeftPanel = false
     }
     this.$store.dispatch("chat/setActiveConversation", this.$route.params.slug);
@@ -91,6 +106,7 @@ export default {
       if (this.conversations.length === 0) {
         this.$router.push(`/messages/new`);
       } else {
+        this.$store.commit("IS_MOBILE", false);
         this.$store.commit("chat/DELETE_UNREAD_MESSAGE", this.$route.params.slug);
         this.showLeftPanel = true
         this.goToFirstConversation();
@@ -101,6 +117,8 @@ export default {
       }
       this.$store.commit("chat/DELETE_ACTIVE_CONVERSATION");
     }
+
+    console.log("isMobile", this.isMobile)
   },
   methods: {
     goToFirstConversation() {

@@ -18,7 +18,7 @@
       </nuxt-link>
       <div class="flex flex-row justify-start font-bold mt-8">Appointment</div>
       <AppFormError :formError="formError" v-if="formError.length > 0" id="error" />
-      <div class="bg-white rounded-lg shadow-lg px-4 md:px-8 py-4 mt-4">
+      <div class="bg-white rounded-lg shadow-lg px-4 md:px-8 py-4 mt-4 max-w-4xl">
         <AppInput
           v-model="form.private_practice_id"
           :type="'select'"
@@ -28,9 +28,9 @@
           :items="practices"
         />
         <div class="-mt-10 pt-4">
-          <AppButton :label="'Add'" @click="surgery_modal = true" :inStyle="'padding:5px 14px;'" />
+          <AppButton :label="'Add'" @click="surgery_modal = true" :inStyle="'padding:8px 16px;'" />
         </div>
-        <div class="flex flex-row flex-wrap justify-start mt-8 items-center max-w-4xl">
+        <div class="flex flex-row flex-wrap justify-start mt-8 items-center">
           <div class="px-1 w-full sm:w-1/2 md:w-1/4">
             <AppDate v-model="form.date_start" :name="'date_start'" :label="'From'" isAfter />
           </div>
@@ -44,8 +44,8 @@
             <AppTime v-model="form.time_end" :name="'time_end'" :label="'End time'" />
           </div>
         </div>
-        <div class="flex flex-row flex-wrap justify-start items-center mt-4 max-w-2xl">
-          <div class="px-1 w-full sm:w-1/2 md:w-1/3">
+        <div class="w-full flex flex-row flex-wrap justify-start items-end mt-4">
+          <div class="px-1 w-full sm:w-1/2 md:w-1/3 ">
             <AppInput
               v-model="form.shift_id"
               :type="'select'"
@@ -76,7 +76,7 @@
             />
           </div>
         </div>
-        <div class="flex flex-row flex-wrap justify-start items-center mt-4 max-w-md">
+        <div class="flex flex-row flex-wrap justify-start items-center mt-4">
           <div class="flex flex-wrap items-center mt-2">
             <AppInput
               v-model="form.total_hours"
