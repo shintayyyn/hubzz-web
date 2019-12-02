@@ -167,113 +167,117 @@
           class="flex flex-col justify-start z-10 absolute w-full bg-white shadow-lg p-3 rounded-lg"
           :class="filterModal ? 'flex' : 'hidden'"
         >
-        <div class="flex flex-col md:flex-row g-full items-end">
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppInput
-              class="px-1"
-              v-model="jobPartParams.job_part_number"
-              :type="'text'"
-              :name="'job_part_number'"
-              :label="'Job part number'"
-            />
+          <div class="flex flex-col md:flex-row g-full items-end">
+            <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+              <AppInput
+                class="px-1"
+                v-model="jobPartParams.job_part_number"
+                :type="'text'"
+                :name="'job_part_number'"
+                :label="'Job part number'"
+              />
+            </div>
+            <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+              <AppAutoComplete
+                class="px-1"
+                v-model="jobPartParams.job_surgery_id"
+                :name="'job_surgery_id'"
+                :label="'Surgery'"
+                :url="'/api/v1/locum/surgeries'"
+                :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem'"
+              />
+            </div>
+            <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+              <AppInput
+                class="px-1"
+                v-model="jobPartParams.job_title"
+                :type="'text'"
+                :name="'job_title'"
+                :label="'Job Title'"
+              />
+            </div>
+            <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+              <AppInput
+                class="px-1"
+                v-model="jobPartParams.job_shift_id"
+                :type="'select'"
+                :name="'job_shift_id'"
+                :label="'Shift'"
+                :items="shifts"
+              />
+            </div>
           </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppAutoComplete
-              class="px-1"
-              v-model="jobPartParams.job_surgery_id"
-              :name="'job_surgery_id'"
-              :label="'Surgery'"
-              :url="'/api/v1/locum/surgeries'"
-              :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem'"
-            />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppInput
-              class="px-1"
-              v-model="jobPartParams.job_title"
-              :type="'text'"
-              :name="'job_title'"
-              :label="'Job Title'"
-            />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppInput
-              class="px-1"
-              v-model="jobPartParams.job_shift_id"
-              :type="'select'"
-              :name="'job_shift_id'"
-              :label="'Shift'"
-              :items="shifts"
-            />
-          </div>
-        </div>  
 
-        <div class="flex flex-col md:flex-row g-full items-end">
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppInput
-              class="px-1"
-              v-model="jobPartParams.job_rate"
-              :type="'text'"
-              :name="'job_rate'"
-              :label="'Rate'"
-              :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
-            />
+          <div class="flex flex-col md:flex-row g-full items-end">
+            <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+              <AppInput
+                class="px-1"
+                v-model="jobPartParams.job_rate"
+                :type="'text'"
+                :name="'job_rate'"
+                :label="'Rate'"
+                :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
+              />
+            </div>
+            <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+              <AppInput
+                class="px-1"
+                v-model="jobPartParams.job_rate_type_id"
+                :type="'select'"
+                :name="'job_rate_type_id'"
+                :label="'per'"
+                :items="rates"
+              />
+            </div>
+            <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+              <AppPostCode
+                class="px-1"
+                v-model="jobPartParams.near_post_code"
+                :name="'near_post_code'"
+                :label="'Post code'"
+                @onSelect="onSelect"
+              />
+            </div>
+            <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+              <AppInput
+                class="px-1"
+                v-model="jobPartParams.miles"
+                :type="'text'"
+                :name="'miles'"
+                :label="'Miles'"
+              />
+            </div>
           </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppInput
-              class="px-1"
-              v-model="jobPartParams.job_rate_type_id"
-              :type="'select'"
-              :name="'job_rate_type_id'"
-              :label="'per'"
-              :items="rates"
-            />
+
+          <div class="flex flex-col md:flex-row g-full items-end">
+            <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+              <AppDate
+                v-model="jobPartParams.calendar_date_start"
+                :name="'calendar_date_start'"
+                :label="'From'"
+                :format="'YYYY-MM-DD'"
+              />
+            </div>
+            <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+              <AppTime
+                v-model="jobPartParams.time_start"
+                :name="'time_start'"
+                :label="'Start Time'"
+              />
+            </div>
+            <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+              <AppDate
+                v-model="jobPartParams.calendar_date_end"
+                :name="'calendar_date_end'"
+                :label="'To'"
+                :format="'YYYY-MM-DD'"
+              />
+            </div>
+            <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+              <AppTime v-model="jobPartParams.time_end" :name="'time_end'" :label="'End Time'" />
+            </div>
           </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppPostCode
-              class="px-1"
-              v-model="jobPartParams.near_post_code"
-              :name="'near_post_code'"
-              :label="'Post code'"
-              @onSelect="onSelect"
-            />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppInput
-              class="px-1"
-              v-model="jobPartParams.miles"
-              :type="'text'"
-              :name="'miles'"
-              :label="'Miles'"
-            />
-          </div>
-        </div>      
-          
-        <div class="flex flex-col md:flex-row g-full items-end">
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppDate
-              v-model="jobPartParams.calendar_date_start"
-              :name="'calendar_date_start'"
-              :label="'From'"
-              :format="'YYYY-MM-DD'"
-            />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppTime v-model="jobPartParams.time_start" :name="'time_start'" :label="'Start Time'" />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppDate
-              v-model="jobPartParams.calendar_date_end"
-              :name="'calendar_date_end'"
-              :label="'To'"
-              :format="'YYYY-MM-DD'"
-            />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppTime v-model="jobPartParams.time_end" :name="'time_end'" :label="'End Time'" />
-          </div>
-        </div>      
-          
+
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
               class="px-1"
@@ -1111,6 +1115,11 @@ export default {
     async refreshJobs() {
       this.loading = true;
       this.$store.commit("jobs/CLEAR_PRACTICE_JOB_NOTIFICATION");
+      this.current_page = 1;
+      this.params.offset = 0;
+      this.jobPartParams.offset = 0;
+      this.params.limit = 5;
+      this.jobPartParams.limit = 5;
       await this.getJobsCount(
         this.isJobPart ? this.jobPartParams : this.params
       );

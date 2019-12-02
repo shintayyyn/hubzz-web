@@ -490,7 +490,7 @@ export default {
     },
     allApproved() {
       return (
-        this.selectedInvoice && 
+        this.selectedInvoice &&
         this.selectedInvoice.items.filter(invoice => invoice.approved === false)
           .length === 0
       );
@@ -785,7 +785,7 @@ export default {
           this.$axios
             .$post(`/api/v1/locum/locum-invoices`, this.form)
             .then(res => {
-              this.$emit("addInvoice", res.data.invoice);
+              this.$emit("addInvoice", res.data.locum_invoice);
               this.$router.push("/locum-billing/invoices");
               this.$store.commit("SET_NOTIFICATION", {
                 enabled: true,

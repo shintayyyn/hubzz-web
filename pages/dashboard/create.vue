@@ -1,7 +1,15 @@
 <template>
-  <div class="modal-container shadow-lg" >
-    <JobDetailModalAppointment :job="null" @close="$router.push({ path: '/dashboard' })" v-if="locumUser && !practiceUser" />
-    <CreateJobModal :job="null" @close="$router.push('/dashboard')" v-if="!locumUser && practiceUser" />
+  <div class="modal-container shadow-lg">
+    <JobDetailModalAppointment
+      :job="null"
+      @close="$router.push({ path: '/dashboard' })"
+      v-if="locumUser && !practiceUser"
+    />
+    <CreateJobModal
+      :job="null"
+      @close="$router.push('/dashboard')"
+      v-if="!locumUser && practiceUser"
+    />
   </div>
 </template>
 <script>
