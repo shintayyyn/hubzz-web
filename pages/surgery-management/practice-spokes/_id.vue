@@ -115,7 +115,6 @@ export default {
 	methods: {
 		activeRelationship() {
 			let result = "";
-			console.log("isActive?", this.practice_surgery);
 			if (this.practice_surgery.invitation_accepted_at) {
 				result = "Active";
 			}

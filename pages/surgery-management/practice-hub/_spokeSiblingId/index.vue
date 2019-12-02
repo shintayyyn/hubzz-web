@@ -69,7 +69,6 @@ export default {
     try{
       let response = await app.$axios.$get(`/api/v1/practice/locums`)
       const locums = response.data.users
-      console.log("locums", locums)
       return{
         locums
       }

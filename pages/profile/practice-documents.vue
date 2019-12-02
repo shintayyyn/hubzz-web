@@ -169,7 +169,6 @@ export default {
 					};
 				}
 			);
-			console.log("test", this.practiceComplianceDocuments);
 			// // sample
 			// this.practiceComplianceDocuments.map(item => {
 			//   return {
@@ -184,7 +183,6 @@ export default {
 
 	methods: {
 		show(item) {
-			console.log("test", item);
 			if (this.authPermissions.includes("Show Profile Practice Document")) {
 				this.$router.push(`/profile/practice-documents/${item}`);
 				// this.$router.push(

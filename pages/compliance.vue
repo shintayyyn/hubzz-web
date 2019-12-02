@@ -773,7 +773,6 @@ export default {
           );
         })
         .catch(err => {
-          console.log(file);
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "danger",

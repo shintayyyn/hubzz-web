@@ -4,29 +4,31 @@
 			<div class="flex flex-col md:flex-row w-full pb-2 md:pb-0">
 				<div class="md:w-1/2">
 					<p class="text-lg font-semibold">Practice Hub</p>
-					<div class="flex flex-col mx-4">
-					<div class="flex flex-col md:flex-row w-full mt-2">
-						<p class="md:w-1/2 font-semibold">Surgery Name</p>
-						<p class="md:w-1/2 mx-4 md:mx-0">{{ practiceHub.name }}</p>
-					</div>
+					<div class="flex flex-col mx-2">
+						<div class="flex flex-col md:flex-row w-full mt-2">
+							<p class="md:w-1/2 font-semibold">Surgery Name</p>
+							<p class="md:w-1/2 mx-4 md:mx-0">{{ practiceHub.name }}</p>
+						</div>
 
-					<div class="flex flex-col md:flex-row w-full mt-2">
-						<p class="md:w-1/2 font-semibold">Contact Number</p>
-						<p class="md:w-1/2 mx-4 md:mx-0">
-						{{
-							practiceHub.practice.phone_number
-							? practiceHub.practice.phone_number
-							: "N/A"
-						}}
-						</p>
-					</div>
-					<p class="font-semibold mt-2">Report To</p>
-					<p class="mx-4">{{practiceHub.practice.report_to ? practiceHub.practice.report_to : 'N/A'}}</p>
+						<div class="flex flex-col md:flex-row w-full mt-2">
+							<p class="md:w-1/2 font-semibold">Contact Number</p>
+							<p class="md:w-1/2 mx-4 md:mx-0">
+							{{
+								practiceHub.practice.phone_number
+								? practiceHub.practice.phone_number
+								: "N/A"
+							}}
+							</p>
+						</div>
+						<div class="flex flex-col md:flex-row w-full mt-2">
+							<p class="md:w-1/2 font-semibold">Report To</p>
+							<p class="md:w-1/2 mx-4 md:mx-0">{{practiceHub.practice.report_to ? practiceHub.practice.report_to : 'N/A'}}</p>
+						</div>
 					</div>
 				</div>
 				<div class="md:w-1/2 mt-4 md:mt-0">
 					<p class="text-lg font-semibold">Permissions</p>
-					<div class="mx-4 m-2">
+					<div class="mx-2">
 					<p class="font-semibold">Does Hub allow creation of Jobs/Sessions?</p>
 					<p class="text-sm mx-6">{{practiceSpoke.allow_surgery_create_sessions === true ? 'Yes':'No'}}</p>
 					<div class="mt-2 mb-4 bg-gray-200 p-4 rounded-lg" v-if="practiceSpoke.allow_surgery_create_sessions === true">

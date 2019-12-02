@@ -169,12 +169,10 @@ export default {
             this.showResult = true;
           })
           .catch(err => {
-            console.log("errrs", err);
           });
       }
     },
     select(item) {
-      console.log('wat')
       this.formError = [];
       this.selectedSpoke = item;
       this.toInvite = true;

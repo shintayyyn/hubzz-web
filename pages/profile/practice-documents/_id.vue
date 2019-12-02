@@ -69,7 +69,7 @@ export default {
     }
   },
   mounted() {
-    console.log("qwewqe");
+    // console.log("qwewqe");
   },
   async asyncData({ app, params, error }) {
     try {

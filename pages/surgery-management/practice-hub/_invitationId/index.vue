@@ -133,7 +133,6 @@ export default {
 		};
   },
   created(){
-    console.log(this.$route.name)
   },
 	async asyncData({ app, route, store }) {
 		let response = await app.$axios.$get(
@@ -141,7 +140,6 @@ export default {
 		);
 		const specificInvitation = response.data.practice_surgery;
 		const specificPracticeHub = response.data.practice_hub;
-		console.log(specificInvitation);
 		return {
 			specificInvitation,
 			specificPracticeHub
@@ -149,13 +147,11 @@ export default {
 	},
 	methods: {
 		async acceptInvitation() {
-			console.log("haha");
 			await this.$axios
 				.post(`/api/v1/practice/me/parent-surgery/accept`, {
 					practice_surgery_id: this.specificInvitation.id
 				})
 				.then(res => {
-					console.log(res);
 					// this.$emit("updateSurgery", res.data.practice_surgery);
 					this.$store.commit("SET_NOTIFICATION", {
 						enabled: true,
@@ -174,7 +170,6 @@ export default {
 				});
 		},
 		async rejectInvitation() {
-      console.log("haha");
       await this.$axios
         .put(`/api/v1/practice/me/parent-surgery/reject`,{
           practice_surgery_id: this.specificInvitation.id

@@ -378,8 +378,6 @@ export default {
         );
       }
 
-      console.log("notRequired", notRequired)
-
       this.Validate(this.form, notRequired);
       if (!this.formError.length) {
         this.$axios

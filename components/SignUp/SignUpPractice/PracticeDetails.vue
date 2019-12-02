@@ -97,7 +97,6 @@ export default {
     }
   },
   mounted() {
-    console.log(window.scrollY);
     if (this.search_results.length > 0 && this.surgeryId) {
       this.surgeries = this.search_results;
       this.selectedSurgeryId = this.surgeryId;
