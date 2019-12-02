@@ -1,5 +1,5 @@
 <template>
-  <div class="modal-container shadow-lg" ref="modalContainer">
+  <div ref="modalContainer">
     <div class="p-4 md:p-8">
       <div>
         <svgicon name="left-arrow" height="32" width="32" @click="close" class="cursor-pointer" />
@@ -908,12 +908,5 @@ export default {
 };
 </script>
 <style scoped>
-.modal-container {
-  z-index: 510;
-}
-@media screen and (min-width: 1200px) {
-  .modal-container {
-    width: 80%;
-  }
-}
+
 </style>

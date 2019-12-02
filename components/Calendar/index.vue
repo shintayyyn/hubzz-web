@@ -5,12 +5,12 @@
     >
       <div class="relative flex flex-row flex-wrap w-full h-full">
         <div
-          class="relative w-full lg:w-2/3 px-2 pb-5 pt-2 md:p-5"
-          :class="authPermissions.includes('Create Sessions Job') ? 'pb-16 md:pb-20' : ''"
+          class="relative w-full lg:w-2/3 px-2 md:px-5 pb-12 md:pb-20 "
+          :class="authPermissions.includes('Create Sessions Job') ? 'pt-5' : 'pt-2'"
         >
           <PerMonth v-if="$store.state.calendar.view_type === 'per_month'" />
           <PerWeek v-if="$store.state.calendar.view_type === 'per_week'" />
-          <div class="absolute md:mx-5 md:py-4 mx-2 right-0 mt-2 md:-mt-3">
+          <div class="absolute right-0 bottom-0" :class="$auth.user.domain === 'Practice' ? 'm-2 md:m-5' : 'm-2 md:m-3'">
             <nuxt-link
               v-if="
 								$auth.user.domain === 'Locum' ||
