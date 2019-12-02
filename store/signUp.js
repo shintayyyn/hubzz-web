@@ -79,14 +79,14 @@ export const mutations = {
   },
   SET_PRACTICE_ACCOUNT_DETAILS(state, payload) {
     (state.practice_account_details.title = payload.title),
-    (state.practice_account_details.first_name = payload.first_name),
-    (state.practice_account_details.last_name = payload.last_name),
-    (state.practice_account_details.suffix = payload.suffix),
-    (state.practice_account_details.practice_role = payload.practice_role),
-    (state.practice_account_details.practice_type_id = payload.practice_type_id),
-    (state.practice_account_details.email = payload.email),
-    (state.practice_account_details.password = payload.password),
-    (state.practice_account_details.password_confirmation = payload.password_confirmation)
+      (state.practice_account_details.first_name = payload.first_name),
+      (state.practice_account_details.last_name = payload.last_name),
+      (state.practice_account_details.suffix = payload.suffix),
+      (state.practice_account_details.practice_role = payload.practice_role),
+      (state.practice_account_details.practice_type_id = payload.practice_type_id),
+      (state.practice_account_details.email = payload.email),
+      (state.practice_account_details.password = payload.password),
+      (state.practice_account_details.password_confirmation = payload.password_confirmation)
   },
   CLEAR_FORM_PRACTICE_DETAILS(state) {
     state.practice_details.surgery_id = ''
@@ -321,7 +321,7 @@ export const actions = {
       ...state.professional_details
     }
     this.$axios
-      .$post(`/api/v1/locum/register`, form)
+      .$post(`/api/v1/locum/register${this.$route.query.referral_code ? `?referral_code=${this.$route.query.referral_code}` : ''}`, form)
       .then((res) => {
         commit('CLEAR_FORM_DETAILS')
         this.$router.push('/sign-up/success')

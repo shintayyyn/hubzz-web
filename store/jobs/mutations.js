@@ -316,12 +316,12 @@ export default {
         state.locum_allocated_job_parts = state.locum_allocated_job_parts.filter(job => job.id !== payload)
         state.locum_allocated_job_parts_count = state.locum_allocated_job_parts_count - 1
     },
-    UPDATE_LOCUM_ALLOCATED_JOB_PART(state, { payload, payloadIndex }) {
-        let index = state.locum_allocated_job_parts.findIndex(jobPart => jobPart.id == payload.id)
-        if (index < 0) {
-            state.locum_allocated_job_parts.splice(payloadIndex, 0, payload)
-        }
-    },
+    // UPDATE_LOCUM_ALLOCATED_JOB_PART(state, { payload, payloadIndex }) {
+    //     let index = state.locum_allocated_job_parts.findIndex(jobPart => jobPart.id == payload.id)
+    //     if (index < 0) {
+    //         state.locum_allocated_job_parts.splice(payloadIndex, 0, payload)
+    //     }
+    // },
 
     SET_LOCUM_ONGOING_JOB_PARTS_COUNT(state, payload) {
         state.locum_ongoing_job_parts_count = payload
@@ -329,19 +329,18 @@ export default {
     SET_LOCUM_ONGOING_JOB_PARTS(state, payload) {
         state.locum_ongoing_job_parts = payload
     },
-    ADD_LOCUM_ONGOING_JOB(state, payload) {
+    ADD_LOCUM_ONGOING_JOB_PART(state, payload) {
         state.locum_ongoing_job_parts.push(payload)
     },
     REMOVE_LOCUM_ONGOING_JOB_PART(state, payload) {
         state.locum_ongoing_job_parts = state.locum_ongoing_job_parts.filter(job => job.id !== payload)
-        state.locum_ongoing_job_parts_count = state.locum_ongoing_job_parts_count - 1
     },
-    UPDATE_LOCUM_ONGOING_JOB_PART(state, { payload, payloadIndex }) {
-        let index = state.locum_ongoing_job_parts.findIndex(jobPart => jobPart.id == payload.id)
-        if (index < 0) {
-            state.locum_ongoing_job_parts.splice(payloadIndex, 0, payload)
-        }
-    },
+    // UPDATE_LOCUM_ONGOING_JOB_PART(state, payload) {
+    //     let index = state.locum_ongoing_job_parts.findIndex(jobPart => jobPart.id === payload.id)
+    //     if (index >= 0) {
+    //         state.locum_ongoing_job_parts.splice(index, 1, payload)
+    //     }
+    // },
 
     SET_LOCUM_COMPLETED_JOB_PARTS_COUNT(state, payload) {
         state.locum_completed_job_parts_count = payload
@@ -351,18 +350,16 @@ export default {
     },
     ADD_LOCUM_COMPLETED_JOB_PART(state, payload) {
         state.locum_completed_job_parts.push(payload)
-        state.locum_completed_job_parts_count = state.locum_completed_job_parts_count + 1
     },
     REMOVE_LOCUM_COMPLETED_JOB_PART(state, payload) {
         state.locum_completed_job_parts = state.locum_completed_job_parts.filter(job => job.id !== payload)
-        state.locum_completed_job_parts_count = state.locum_completed_job_parts_count - 1
     },
-    UPDATE_LOCUM_COMPLETED_JOB_PART(state, { payload, payloadIndex }) {
-        let index = state.locum_completed_job_parts.findIndex(jobPart => jobPart.id == payload.id)
-        if (index < 0) {
-            state.locum_completed_job_parts.splice(payloadIndex, 0, payload)
-        }
-    },
+    // UPDATE_LOCUM_COMPLETED_JOB_PART(state, payload) {
+    //     let index = state.locum_completed_job_parts.findIndex(jobPart => jobPart.id === payload.id)
+    //     if (index >= 0) {
+    //         state.locum_completed_job_parts = state.locum_completed_job_parts.splice(index, 1, payload)
+    //     }
+    // },
 
     SET_LOCUM_APPROVED_JOB_PARTS_COUNT(state, payload) {
         state.locum_approved_job_parts_count = payload
@@ -374,12 +371,12 @@ export default {
         state.locum_approved_job_parts = state.locum_approved_job_parts.filter(job => job.id !== payload)
         state.locum_approved_job_parts_count = state.locum_approved_job_parts_count - 1
     },
-    UPDATE_LOCUM_APPROVED_JOB_PART(state, { payload, payloadIndex }) {
-        let index = state.locum_approved_job_parts.findIndex(jobPart => jobPart.id == payload.id)
-        if (index < 0) {
-            state.locum_approved_job_parts.splice(payloadIndex, 0, payload)
-        }
-    },
+    // UPDATE_LOCUM_APPROVED_JOB_PART(state, { payload, payloadIndex }) {
+    //     let index = state.locum_approved_job_parts.findIndex(jobPart => jobPart.id == payload.id)
+    //     if (index < 0) {
+    //         state.locum_approved_job_parts.splice(payloadIndex, 0, payload)
+    //     }
+    // },
 
     // WHOLE
     SET_LOCUM_ALLOCATED_JOBS(state, payload) {
@@ -389,21 +386,16 @@ export default {
         state.locum_allocated_jobs_count = payload
     },
     ADD_LOCUM_ALLOCATED_JOB(state, payload) {
-        let index = state.locum_allocated_jobs.findIndex(job => job.id === payload.id)
-        if (index < 0) {
-            state.locum_allocated_jobs.push(payload)
-            state.locum_allocated_jobs_count = state.locum_allocated_jobs_count + 1
-        }
-    },
-    UPDATE_LOCUM_ALLOCATED_JOB(state, payload) {
-        state.locum_allocated_jobs = state.locum_allocated_jobs.filter(job => job.id !== payload.id)
         state.locum_allocated_jobs.push(payload)
     },
-    REMOVE_LOCUM_ALLOCATED_JOB(state, payload) {
-        if (state.locum_allocated_jobs.find(allocatedJob => allocatedJob.id === payload)) {
-            state.locum_allocated_jobs = state.locum_allocated_jobs.filter(job => job.id !== payload)
-            state.locum_allocated_jobs_count = state.locum_allocated_jobs_count - 1
+    UPDATE_LOCUM_ALLOCATED_JOB(state, payload) {
+        let index = state.locum_allocated_jobs.findIndex(allocatedJob => allocatedJob.id === payload.id)
+        if (index >= 0) {
+            state.locum_allocated_jobs.splice(index, 1, payload)
         }
+    },
+    REMOVE_LOCUM_ALLOCATED_JOB(state, payload) {
+        state.locum_allocated_jobs = state.locum_allocated_jobs.filter(job => job.id !== payload)
     },
 
     SET_LOCUM_APPLIED_JOBS(state, payload) {
@@ -521,18 +513,18 @@ export default {
     SET_LOCUM_UNAVAILABILITIES(state, payload) {
         state.locum_unavailabilities = payload
     },
-    SET_LOCUM_UNAVAILABILITIES_COUNT(state, payload) {
-        state.locum_unavailabilities_count = payload
-    },
+    // SET_LOCUM_UNAVAILABILITIES_COUNT(state, payload) {
+    //     state.locum_unavailabilities_count = payload
+    // },
     ADD_LOCUM_UNAVAILABILITIES(state, payload) {
-        payload.forEach(data => {
-            let hasUnavailable = state.locum_unavailabilities.find(item => item.id === data.id)
-            if (hasUnavailable) {
-                hasUnavailable.shifts = data.shifts
-            } else {
-                state.locum_unavailabilities.push(data)
-                state.locum_unavailabilities_count = state.locum_unavailabilities_count + 1
-            }
+        payload.forEach(unavailability => {
+            // let hasUnavailable = state.locum_unavailabilities.find(item => item.id === data.id)
+            // if (hasUnavailable) {
+            //     hasUnavailable.shifts = data.shifts
+            // } else {
+            state.locum_unavailabilities.push(unavailability)
+            // state.locum_unavailabilities_count = state.locum_unavailabilities_count + 1
+            // }
         })
     },
     UPDATE_LOCUM_UNAVAILABILITIES(state, payload) {
@@ -540,10 +532,10 @@ export default {
         hasUnavailable.shifts = payload.shifts
     },
     REMOVE_LOCUM_UNAVAILABILITIES(state, payload) {
-        if (state.locum_unavailabilities.find(declinedJob => declinedJob.id === payload)) {
-            state.locum_unavailabilities = state.locum_unavailabilities.filter(item => item.id !== payload)
-            state.locum_unavailabilities_count = state.locum_unavailabilities_count - 1
-        }
+        // if (state.locum_unavailabilities.find(declinedJob => declinedJob.id === payload)) {
+        state.locum_unavailabilities = state.locum_unavailabilities.filter(item => item.id !== payload)
+        // state.locum_unavailabilities_count = state.locum_unavailabilities_count - 1
+        // }
     },
 
     // PRIVATE

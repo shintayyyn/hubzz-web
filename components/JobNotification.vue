@@ -1,6 +1,9 @@
 <template>
   <transition name="slide">
-    <div class="job-notification" v-if="jobNotifications.length > 0 || billingNotifications.length > 0">
+    <div
+      class="job-notification"
+      v-if="jobNotifications.length > 0 || billingNotifications.length > 0"
+    >
       <div
         class="my-2 mt-1 flex items-center"
         :class="toggleNotification ? 'justify-between' : 'justify-end'"
@@ -125,14 +128,14 @@
                       </div>
                     </div>
                   </div>
-              </template> -->
+              </template>-->
               <template v-for="notification in notifications">
                 <div
                   @click="goTo(notification.type, notification.id, notification.status ? notification.status : notification.locum_status)"
                   :key="`${notification.id}-${notification.notification_type}`"
                   class="cards relative mx-1 my-2 p-3 flex flex-wrap bg-gray-100 hover:bg-gray-200 rounded-lg shadow-md text-xs md:text-sm opacity-75 hover:opacity-100 transition-hover cursor-pointer"
                 >
-                <span
+                  <span
                     class="absolute top-0 right-0 cursor-pointer py-2 px-4 rounded-full text-lg font-bold hover:text-gray-700"
                     @click.prevent.stop="close(notification.id)"
                   >x</span>
@@ -143,10 +146,10 @@
                         :class="bgStatus(notification.status ? notification.status : notification.locum_status)"
                       >{{notification.status ? notification.status : notification.locum_status}}</div>
                       <div
-                          v-if="notification.status !== 'Draft' && notification.type === 'Billings'"
-                          class="font-bold md:text-md leading-none mr-1 uppercase pt-4 truncate-title"
-                          style="-webkit-box-orient: vertical;"
-                        >{{notification.invoice_number}}</div>
+                        v-if="notification.status !== 'Draft' && notification.type === 'Billings'"
+                        class="font-bold md:text-md leading-none mr-1 uppercase pt-4 truncate-title"
+                        style="-webkit-box-orient: vertical;"
+                      >{{notification.invoice_number}}</div>
                       <div
                         v-else
                         class="font-bold md:text-md leading-none mr-1 uppercase pt-4 truncate-title"
@@ -170,10 +173,12 @@
                         <div>Shift</div>
                         <div>{{notification.shift}}</div>
                       </div>
-                    </div> -->
+                    </div>-->
                     <div class="w-full">
                       <div class="leading-tight pt-1">{{notification.message}}</div>
-                      <div class="leading-tight text-xs pt-2 text-right text-gray-600">{{$moment(notification.updated_at).format('MM-DD-YYYY h:mm a')}}</div>
+                      <div
+                        class="leading-tight text-xs pt-2 text-right text-gray-600"
+                      >{{notification.updated_at}}</div>
                     </div>
                   </div>
                 </div>
@@ -210,10 +215,9 @@ export default {
       return this.$auth.user.domain === "Practice" ? "/sessions" : "/jobs";
     },
     notifications() {
-      return [
-        ...this.jobNotifications,
-        ...this.billingNotifications
-      ].sort((a,b) => new Date(b.updated_at) - new Date(a.updated_at))
+      return [...this.jobNotifications, ...this.billingNotifications].sort(
+        (a, b) => new Date(b.updated_at) - new Date(a.updated_at)
+      );
     }
   },
   watch: {
@@ -230,19 +234,25 @@ export default {
       }
     },
     billingNotifications(value) {
-      this.notifications.sort((a,b) => new Date(b.updated_at) - new Date(a.updated_at))
+      this.notifications.sort(
+        (a, b) => new Date(b.updated_at) - new Date(a.updated_at)
+      );
     },
     jobNotifications(value) {
-      this.notifications.sort((a,b) => new Date(b.updated_at) - new Date(a.updated_at))
+      this.notifications.sort(
+        (a, b) => new Date(b.updated_at) - new Date(a.updated_at)
+      );
     },
-    notifications(value){
+    notifications(value) {
       value.forEach((item, index) => {
-        if (!item.updated_at){
-          item.updated_at = this.$moment().format('M/D/YYYY, h:mm:ss A')
+        if (!item.updated_at) {
+          item.updated_at = this.$moment().format("MM-DD-YYYY h:mm a");
         }
       });
-      this.notifications.sort((a,b) => new Date(b.updated_at) - new Date(a.updated_at))
-    },
+      this.notifications.sort(
+        (a, b) => new Date(b.updated_at) - new Date(a.updated_at)
+      );
+    }
   },
   methods: {
     removeStatus() {
@@ -270,8 +280,12 @@ export default {
 
       let url = "";
 
-       if (type === "Jobs") {
-        url = this.$auth.user.domain === "Practice" ? "/sessions" : "/jobs";
+      if (type === "Jobs") {
+        if (this.$route.name === "dashboard") {
+          url = "/dashboard";
+        } else if (this.$route.name === "sessions-index") {
+          url = this.$auth.user.domain === "Practice" ? "/sessions" : "/jobs";
+        }
       } else if (type === "Billings") {
         url =
           this.$auth.user.domain === "Practice"
@@ -280,7 +294,6 @@ export default {
       }
 
       let path = `${url}/${id}`;
-      console.log('type', type, path)
 
       if (type === "Jobs") {
         let routeStatus = "";
@@ -348,7 +361,7 @@ export default {
           return "bg-red-500 text-white";
       }
     },
-    clearNotifications(){
+    clearNotifications() {
       this.$store.commit("billing/CLEAR_PRACTICE_BILLING_NOTIFICATION");
       this.$store.commit("billing/CLEAR_LOCUM_BILLING_NOTIFICATION");
       this.$store.commit("jobs/CLEAR_PRACTICE_JOB_NOTIFICATION");

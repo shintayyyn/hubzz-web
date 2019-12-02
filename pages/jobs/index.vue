@@ -313,7 +313,7 @@
           ></nuxt-link>
         </transition>
         <div>
-          <nuxt-child />
+          <nuxt-child @appointmentUpdated="appointmentUpdated" />
         </div>
       </div>
     </transition>
@@ -1090,9 +1090,25 @@ export default {
         this.showRefresh = true;
       }
     },
+    async appointmentUpdated() {
+      this.loading = true;
+      this.$store.commit("jobs/CLEAR_LOCUM_JOB_NOTIFICATION");
+      await this.getJobsCount(
+        this.isJobPart ? this.jobPartParams : this.params
+      );
+      // console.log(this.current_page, this.total);
+      // return Math.ceil(this.total / this.perPage);
+      await this.getJobs(this.isJobPart ? this.jobPartParams : this.params);
+      this.loading = false;
+    },
     async refreshJobs() {
       this.loading = true;
       this.$store.commit("jobs/CLEAR_LOCUM_JOB_NOTIFICATION");
+      this.current_page = 1;
+      this.params.offset = 0;
+      this.jobPartParams.offset = 0;
+      this.params.limit = 5;
+      this.jobPartParams.limit = 5;
       await this.getJobsCount(
         this.isJobPart ? this.jobPartParams : this.params
       );

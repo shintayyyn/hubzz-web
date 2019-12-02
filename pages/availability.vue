@@ -30,12 +30,12 @@
           <AddUnavailableDateModal
             @close="close"
             :unavailableDate="unavailableDate"
-            :appointmentDate="appointmentDate"
             :allocatedDate="allocatedDate"
             :ongoingDate="ongoingDate"
-            :partDate="partDate"
             :type="type"
           />
+          <!-- :appointmentDate="appointmentDate"
+          :partDate="partDate"-->
         </div>
       </transition>
     </template>
@@ -57,10 +57,10 @@ export default {
       modal: false,
       type: "",
       unavailableDate: null,
-      appointmentDate: null,
+      // appointmentDate: null,
       allocatedDate: null,
-      ongoingDate: null,
-      partDate: null
+      ongoingDate: null
+      // partDate: null
     };
   },
   created() {
@@ -78,16 +78,16 @@ export default {
     },
     open(
       unavailableDate,
-      appointmentDate,
+      // appointmentDate,
       allocatedDate,
-      ongoingDate,
-      partDate
+      ongoingDate
+      // partDate
     ) {
       this.unavailableDate = unavailableDate;
-      this.appointmentDate = appointmentDate;
+      // this.appointmentDate = appointmentDate;
       this.allocatedDate = allocatedDate;
       this.ongoingDate = ongoingDate;
-      this.partDate = partDate;
+      // this.partDate = partDate;
       document.body.style.overflow = "hidden";
       this.type = "solo";
       this.modal = true;

@@ -129,40 +129,24 @@ export default {
   },
   methods: {
     updateJob({ newJob, oldJob }) {
-      this.toEdit = false;
       this.$emit("close");
       setTimeout(() => {
-        this.$router.push({
-          path: `/sessions/${newJob.id}`,
-          query: { ...this.$route.query }
+        this.$store.commit("jobs/UPDATE_PRACTICE_ALLOCATED_JOB", {
+          newJob,
+          oldJob
         });
-        if (
-          this.$route.path.includes("/sessions") &&
-          (!this.$route.query.status ||
-            (this.$route.query.status &&
-              this.$route.query.status === "Allocated"))
-        ) {
-          this.$store.commit("jobs/UPDATE_PRACTICE_ALLOCATED_JOB", {
-            newJob,
-            oldJob
-          });
-        } else if (
-          this.$route.path.includes("/sessions") &&
-          this.$route.query.status &&
-          this.$route.query.status === "Applied"
-        ) {
-          this.$store.commit("jobs/UPDATE_PRACTICE_APPLIED_JOB", {
-            newJob,
-            oldJob
-          });
-        } else if (
-          this.$route.path.includes("/sessions") &&
-          this.$route.query.status &&
-          this.$route.query.status === "Live"
-        ) {
-          this.$store.commit("jobs/UPDATE_PRACTICE_AVAILABLE_JOB", {
-            newJob,
-            oldJob
+        this.$store.commit("jobs/UPDATE_PRACTICE_APPLIED_JOB", {
+          newJob,
+          oldJob
+        });
+        this.$store.commit("jobs/UPDATE_PRACTICE_AVAILABLE_JOB", {
+          newJob,
+          oldJob
+        });
+        if (this.$route.name === "sessions-index-id") {
+          this.$router.push({
+            path: `/sessions/${newJob.id}`,
+            query: { ...this.$route.query }
           });
         }
       }, 500);

@@ -89,7 +89,9 @@
     <div class="shield" v-if="create_job_modal" @click="close"></div>
     <transition name="slide" mode="out-in">
       <template v-if="create_job_modal">
-        <CreateJobModal v-if="create_job_modal" :job="repost_job" />
+        <div class="modal-container shadow-lg">
+          <CreateJobModal v-if="create_job_modal" :job="repost_job" />
+        </div>
       </template>
     </transition>
   </section>
@@ -169,6 +171,14 @@ export default {
 </script>
 
 <style scoped>
+.modal-container {
+  z-index: 510;
+}
+@media screen and (min-width: 1200px) {
+  .modal-container {
+    width: 80%;
+  }
+}
 .burger {
   display: block;
 }

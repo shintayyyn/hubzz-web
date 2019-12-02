@@ -464,63 +464,61 @@ export default {
               status: ["Live", "Applied"]
             }
           })
-        ]).then(
-          ([
-            responseAllocatedandAppliedAndUnfilledAndDeclined,
-            responseOngoing,
-            responseReminders
-          ]) => {
-            this.$store.commit(
-              "jobs/SET_PRACTICE_ALLOCATED_JOBS",
-              responseAllocatedandAppliedAndUnfilledAndDeclined.data.jobs.filter(
-                job => job.status === "Allocated"
-              )
-            );
-            this.$store.commit(
-              "jobs/SET_PRACTICE_APPLIED_JOBS",
-              responseAllocatedandAppliedAndUnfilledAndDeclined.data.jobs.filter(
-                job => job.status === "Applied"
-              )
-            );
-            this.$store.commit(
-              "jobs/SET_PRACTICE_UNFILLED_JOBS",
-              responseAllocatedandAppliedAndUnfilledAndDeclined.data.jobs.filter(
-                job => job.status === "Unfilled"
-              )
-            );
-            this.$store.commit(
-              "jobs/SET_PRACTICE_DECLINED_JOBS",
-              responseAllocatedandAppliedAndUnfilledAndDeclined.data.jobs.filter(
-                job => job.status === "Declined"
-              )
-            );
-            this.$store.commit(
-              "jobs/SET_PRACTICE_ONGOING_JOB_PARTS",
-              responseOngoing.data.job_parts.filter(
-                jobPart => jobPart.status === "Ongoing"
-              )
-            );
-            this.$store.commit(
-              "jobs/SET_PRACTICE_ALLOCATED_JOB_PARTS",
-              responseOngoing.data.job_parts.filter(
-                jobPart => jobPart.status === "Allocated"
-              )
-            );
-            this.$store.commit(
-              "jobs/SET_PRACTICE_AVAILABLE_JOBS_REMINDER",
-              responseReminders.data.jobs.filter(
-                job => job.status === "Available"
-              )
-            );
-            this.$store.commit(
-              "jobs/SET_PRACTICE_APPLIED_JOBS_REMINDER",
-              responseReminders.data.jobs.filter(
-                job => job.status === "Applied"
-              )
-            );
+        ])
+          .then(
+            ([
+              responseAllocatedAndAppliedAndUnfilledAndDeclined,
+              responseOngoing,
+              responseReminders
+            ]) => {
+              this.$store.commit(
+                "jobs/SET_PRACTICE_ALLOCATED_JOBS",
+                responseAllocatedAndAppliedAndUnfilledAndDeclined.data.jobs.filter(
+                  job => job.status === "Allocated"
+                )
+              );
+              this.$store.commit(
+                "jobs/SET_PRACTICE_APPLIED_JOBS",
+                responseAllocatedAndAppliedAndUnfilledAndDeclined.data.jobs.filter(
+                  job => job.status === "Applied"
+                )
+              );
+              this.$store.commit(
+                "jobs/SET_PRACTICE_UNFILLED_JOBS",
+                responseAllocatedAndAppliedAndUnfilledAndDeclined.data.jobs.filter(
+                  job => job.status === "Unfilled"
+                )
+              );
+              this.$store.commit(
+                "jobs/SET_PRACTICE_DECLINED_JOBS",
+                responseAllocatedAndAppliedAndUnfilledAndDeclined.data.jobs.filter(
+                  job => job.status === "Declined"
+                )
+              );
+              this.$store.commit(
+                "jobs/SET_PRACTICE_ONGOING_JOB_PARTS",
+                responseOngoing.data.job_parts.filter(
+                  jobPart => jobPart.status === "Ongoing"
+                )
+              );
+              this.$store.commit(
+                "jobs/SET_PRACTICE_AVAILABLE_JOBS_REMINDER",
+                responseReminders.data.jobs.filter(
+                  job => job.status === "Available"
+                )
+              );
+              this.$store.commit(
+                "jobs/SET_PRACTICE_APPLIED_JOBS_REMINDER",
+                responseReminders.data.jobs.filter(
+                  job => job.status === "Applied"
+                )
+              );
+              this.$store.commit("calendar/TOGGLE_LOADING", false);
+            }
+          )
+          .finally(() => {
             this.$store.commit("calendar/TOGGLE_LOADING", false);
-          }
-        );
+          });
       }
       // LOCUM
       if (this.$auth.loggedIn && this.$auth.user.domain === "Locum") {
@@ -549,28 +547,13 @@ export default {
               limit: 100000000
             }
           })
-          // this.$axios.$get("/api/v1/locum/jobs", {
-          //   params: {
-          //     locum_status: ["Allocated", "Ongoing"],
-          //     calendar_date_start: `${this.startOfMonth}:gte`,
-          //     calendar_date_end: `${this.endOfMonth}:lte`,
-          //     type: "Private",
-          //     limit: 100000000
-          //   }
-          // })
         ])
           .then(
             ([
               responseAllocatedAndApplied,
               responseOngoing,
               responseUnavailabilities
-              // responsePrivate
             ]) => {
-              // console.log(
-              //   responseAllocatedAndApplied.data.jobs.filter(
-              //     job => job.locum_status === "Allocated"
-              //   )
-              // );
               this.$store.commit(
                 "jobs/SET_LOCUM_APPLIED_JOBS",
                 responseAllocatedAndApplied.data.jobs.filter(
@@ -593,10 +576,6 @@ export default {
                 "jobs/SET_LOCUM_UNAVAILABILITIES",
                 responseUnavailabilities.data.unavailabilities
               );
-              // this.$store.commit(
-              //   "jobs/SET_LOCUM_PRIVATE_JOBS",
-              //   responsePrivate.data.jobs.filter(job => job.type === "Private")
-              // );
             }
           )
           .finally(() => {
