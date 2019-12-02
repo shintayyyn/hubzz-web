@@ -159,18 +159,21 @@ export default {
     };
   },
   computed: {
-    getLocumAllocatedPartJobs() {
-      return this.$store.getters["jobs/getLocumAllocatedPartJobs"];
-    },
+    // getLocumAllocatedPartJobs() {
+    //   return this.$store.getters["jobs/getLocumAllocatedPartJobs"];
+    // },
     getLocumOngoingJobs() {
       return this.$store.getters["jobs/getLocumOngoingJobs"];
     },
-    getLocumAllocatedPrivateJobs() {
-      return this.$store.getters["jobs/getLocumAllocatedPrivateJobs"];
+    getLocumAllocatedJobs() {
+      return this.$store.getters["jobs/getLocumAllocatedJobs"];
     },
-    getLocumAllocatedPlatformJobs() {
-      return this.$store.getters["jobs/getLocumAllocatedPlatformJobs"];
-    },
+    // getLocumAllocatedPrivateJobs() {
+    //   return this.$store.getters["jobs/getLocumAllocatedPrivateJobs"];
+    // },
+    // getLocumAllocatedPlatformJobs() {
+    //   return this.$store.getters["jobs/getLocumAllocatedPlatformJobs"];
+    // },
     getLocumUnavailabilities() {
       return this.$store.getters["jobs/getLocumUnavailabilities"];
     }
@@ -205,12 +208,6 @@ export default {
         calendar_date_end: this.endOfMonth,
         locum_status: ["Ongoing"]
       });
-
-      // this.$store.dispatch("jobs/fetchLocumJobs", {
-      //   calendar_date_start: this.startOfMonth,
-      //   calendar_date_end: this.endOfMonth,
-      //   locum_status: ["Allocated"]
-      // });
 
       this.$store.dispatch("jobs/fetchLocumUnavailabilities", {
         calendar_date_start: this.startOfMonth,
@@ -272,11 +269,12 @@ export default {
     },
     selectDate(date) {
       this.$store.commit("availability/SELECT_DATE", date);
-      let unavaibleDate;
-      let privateDate;
-      let platformDate;
-      let ongoingDate;
-      let partDate;
+      let unavaibleDate = null;
+      // let privateDate = null;
+      // let platformDate = null;
+      let ongoingDate = null;
+      let allocatedDate = null;
+      // let partDate = null;
       if (
         this.getLocumUnavailabilities &&
         this.getLocumUnavailabilities.length > 0
@@ -291,32 +289,32 @@ export default {
           };
         }
       }
-      if (
-        this.getLocumAllocatedPrivateJobs &&
-        this.getLocumAllocatedPrivateJobs.length > 0
-      ) {
-        let hasLocumPrivateJob = this.getLocumAllocatedPrivateJobs.find(job =>
-          this.getDateArray(job.date_start, job.date_end).includes(date)
-        );
-        if (hasLocumPrivateJob) {
-          privateDate = {
-            shift: hasLocumPrivateJob.shift
-          };
-        }
-      }
-      if (
-        this.getLocumAllocatedPlatformJobs &&
-        this.getLocumAllocatedPlatformJobs.length > 0
-      ) {
-        let hasLocumCurrentJob = this.getLocumAllocatedPlatformJobs.filter(
-          job => this.getDateArray(job.date_start, job.date_end).includes(date)
-        );
-        if (hasLocumCurrentJob && hasLocumCurrentJob.length > 0) {
-          platformDate = hasLocumCurrentJob.map(item => {
-            return item.shift;
-          });
-        }
-      }
+      // if (
+      //   this.getLocumAllocatedPrivateJobs &&
+      //   this.getLocumAllocatedPrivateJobs.length > 0
+      // ) {
+      //   let hasLocumPrivateJob = this.getLocumAllocatedPrivateJobs.find(job =>
+      //     this.getDateArray(job.date_start, job.date_end).includes(date)
+      //   );
+      //   if (hasLocumPrivateJob) {
+      //     privateDate = {
+      //       shift: hasLocumPrivateJob.shift
+      //     };
+      //   }
+      // }
+      // if (
+      //   this.getLocumAllocatedPlatformJobs &&
+      //   this.getLocumAllocatedPlatformJobs.length > 0
+      // ) {
+      //   let hasLocumCurrentJob = this.getLocumAllocatedPlatformJobs.filter(
+      //     job => this.getDateArray(job.date_start, job.date_end).includes(date)
+      //   );
+      //   if (hasLocumCurrentJob && hasLocumCurrentJob.length > 0) {
+      //     platformDate = hasLocumCurrentJob.map(item => {
+      //       return item.shift;
+      //     });
+      //   }
+      // }
       if (this.getLocumOngoingJobs && this.getLocumOngoingJobs.length > 0) {
         let hasLocumOngoingJob = this.getLocumOngoingJobs.filter(job_part =>
           this.getDateArray(job_part.date_start, job_part.date_end).includes(
@@ -329,29 +327,40 @@ export default {
           });
         }
       }
-      if (
-        this.getLocumAllocatedPartJobs &&
-        this.getLocumAllocatedPartJobs.length > 0
-      ) {
-        let hasLocumAllocatedPartJob = this.getLocumAllocatedPartJobs.filter(
-          job_part =>
-            this.getDateArray(job_part.date_start, job_part.date_end).includes(
-              date
-            )
+      if (this.getLocumAllocatedJobs && this.getLocumAllocatedJobs.length > 0) {
+        let hasLocumAllocatedJob = this.getLocumAllocatedJobs.filter(job =>
+          this.getDateArray(job.date_start, job.date_end).includes(date)
         );
-        if (hasLocumAllocatedPartJob && hasLocumAllocatedPartJob.length > 0) {
-          partDate = hasLocumAllocatedPartJob.map(item => {
-            return item.job.shift;
+        if (hasLocumAllocatedJob && hasLocumAllocatedJob.length > 0) {
+          allocatedDate = hasLocumAllocatedJob.map(item => {
+            return item.shift;
           });
         }
       }
+      // if (
+      //   this.getLocumAllocatedPartJobs &&
+      //   this.getLocumAllocatedPartJobs.length > 0
+      // ) {
+      //   let hasLocumAllocatedPartJob = this.getLocumAllocatedPartJobs.filter(
+      //     job_part =>
+      //       this.getDateArray(job_part.date_start, job_part.date_end).includes(
+      //         date
+      //       )
+      //   );
+      //   if (hasLocumAllocatedPartJob && hasLocumAllocatedPartJob.length > 0) {
+      //     partDate = hasLocumAllocatedPartJob.map(item => {
+      //       return item.job.shift;
+      //     });
+      //   }
+      // }
       this.$emit(
         "open",
         unavaibleDate,
-        privateDate,
-        platformDate,
+        // privateDate,
+        // platformDate,
         ongoingDate,
-        partDate
+        // partDate
+        allocatedDate
       );
     }
   }

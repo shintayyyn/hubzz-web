@@ -1,11 +1,21 @@
 <template>
   <div class="modal-container shadow-lg">
     <template v-if="job && !job_part">
-      <JobDetailModalAppointment :job="job" v-if="!activeJobTypePlatform" @close="close" />
+      <JobDetailModalAppointment
+        :job="job"
+        v-if="!activeJobTypePlatform"
+        @close="close"
+        @appointmentUpdated="$emit('appointmentUpdated')"
+      />
       <JobDetailModal :job="job" v-if="activeJobTypePlatform" @close="close" />
     </template>
     <template v-if="!job && job_part">
-      <JobDetailModalAppointment :job="job_part.job" v-if="!activeJobTypePlatform" @close="close" />
+      <JobDetailModalAppointment
+        :job="job_part.job"
+        v-if="!activeJobTypePlatform"
+        @close="close"
+        @appointmentUpdated="$emit('appointmentUpdated')"
+      />
       <JobPartDetailModal :job_part="job_part" v-if="activeJobTypePlatform" @close="close" />
     </template>
   </div>
@@ -57,6 +67,7 @@ export default {
         url = `/api/v1/locum/job-parts`;
       }
       let response = await app.$axios.get(`${url}/${params.id}`);
+      console.log(response);
 
       if (response.data.data.job) {
         let job = response.data.data.job;

@@ -80,6 +80,7 @@ export default {
                 rate: notif.rate ? notif.rate : notif.job.rate,
                 locum_detail_rate_type: notif.locum_detail_rate_type ? notif.locum_detail_rate_type.name : notif.job.locum_detail_rate_type.name,
                 notification_type: notif.notificationType,
+                type: 'Jobs',
                 message
             }
             notifications.push(notifObj)
@@ -509,6 +510,7 @@ export default {
                 rate: notif.rate ? notif.rate : notif.job.rate,
                 locum_detail_rate_type: notif.locum_detail_rate_type ? notif.locum_detail_rate_type.name : notif.job.locum_detail_rate_type.name,
                 notification_type: notif.notificationType,
+                type: 'Jobs',
                 message
             }
             notifications.push(notifObj)
@@ -657,32 +659,34 @@ export default {
     // WHOLE
     getLocumAllocatedJobs(state) {
         let jobs = []
-        state.locum_allocated_jobs.forEach(job => {
-            let surgery_name = ''
-            let date_time_start = ''
-            let date_time_end = ''
-            let rate_name = ''
-            let rate_type_name = ''
-            let shift_name = ''
-            let completed_at = ''
-            surgery_name = job.type === 'Platform' ? job.platform_job.practice.surgery.name : job.private_job.private_practice.surgery.name
-            date_time_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
-            date_time_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
-            rate_name = job.rate
-            rate_type_name = job.locum_detail_rate_type.name
-            shift_name = job.shift.name
-            completed_at = job.type === 'Platform' ? job.completed_at : job.date_end
-            jobs.push({
-                ...job,
-                surgery_name,
-                date_time_start,
-                date_time_end,
-                completed_at,
-                rate_name,
-                rate_type_name,
-                shift_name
+        if (state.locum_allocated_jobs) {
+            state.locum_allocated_jobs.forEach(job => {
+                let surgery_name = ''
+                let date_time_start = ''
+                let date_time_end = ''
+                let rate_name = ''
+                let rate_type_name = ''
+                let shift_name = ''
+                let completed_at = ''
+                surgery_name = job.type === 'Platform' ? job.platform_job.practice.surgery.name : job.private_job.private_practice.surgery.name
+                date_time_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
+                date_time_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
+                rate_name = job.rate
+                rate_type_name = job.locum_detail_rate_type.name
+                shift_name = job.shift.name
+                completed_at = job.type === 'Platform' ? job.completed_at : job.date_end
+                jobs.push({
+                    ...job,
+                    surgery_name,
+                    date_time_start,
+                    date_time_end,
+                    completed_at,
+                    rate_name,
+                    rate_type_name,
+                    shift_name
+                })
             })
-        })
+        }
         return jobs
     },
     getLocumAllocatedPrivateJobs(state) {

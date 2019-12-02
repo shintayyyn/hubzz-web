@@ -122,8 +122,8 @@ export default {
     decline() {
       this.$store.commit("SET_NOTIFICATION", {
         enabled: true,
-        status: "info",
-        text: [`test`]
+        status: "danger",
+        text: [`You can unassign yourself from this job`]
       });
       this.$refs["unassignForm"].$refs["unassignTextArea"].$refs[
         "textarea"

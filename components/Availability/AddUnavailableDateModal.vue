@@ -1,7 +1,13 @@
 <template>
   <div class="p-4 md:p-8 max-w-3xl">
     <div>
-      <svgicon name="left-arrow" height="32" width="32" @click="$emit('close')" class="cursor-pointer" />
+      <svgicon
+        name="left-arrow"
+        height="32"
+        width="32"
+        @click="$emit('close')"
+        class="cursor-pointer"
+      />
     </div>
     <div class="flex justify-start font-bold text-sm sm:text-xl mt-8 mb-2">Availability</div>
     <div class="mt-4">
@@ -53,7 +59,10 @@
           >{{formError.find(item => item.field === 'shift_id').message.charAt(0).toUpperCase() + formError.find(item => item.field === 'shift_id').message.slice(1).replace(/_/g, " ")}}</div>
         </div>
 
-        <div class="flex flex-row flex-wrap justify-around md:justify-between mt-4" :class="formError.find(item => item.field === 'shift_id') && 'error rounded-lg'">
+        <div
+          class="flex flex-row flex-wrap justify-around md:justify-between mt-4"
+          :class="formError.find(item => item.field === 'shift_id') && 'error rounded-lg'"
+        >
           <button
             class="relative border border-solid rounded-lg p-5 my-2 md:m-1 text-center text-xs sm:text-sm focus:outline-none w-full sm:w-1/3 md:w-1/6"
             :class="{
@@ -87,10 +96,10 @@ import AppFormError from "@/components/Base/AppFormError";
 export default {
   props: [
     "unavailableDate",
-    "appointmentDate",
+    // "appointmentDate",
     "allocatedDate",
     "ongoingDate",
-    "partDate",
+    // "partDate",
     "type"
   ],
   components: {
@@ -102,6 +111,7 @@ export default {
   },
   data() {
     return {
+      shifts: [],
       form: {
         id: null,
         date_start: null,
@@ -112,22 +122,27 @@ export default {
     };
   },
   computed: {
-    shifts() {
-      return this.$store.state.availability.shifts;
-    },
+    // shifts() {
+    //   return this.$store.state.availability.shifts;
+    // },
     isRemove() {
       return !Boolean(this.form.shift_id.length);
     }
   },
   created() {
+    this.$axios.$get(`/api/v1/shifts`).then(res => {
+      this.shifts = res.data.shifts;
+    });
+  },
+  mounted() {
     if (this.type === "solo") {
       if (this.unavailableDate) {
         let shifts = this.unavailableDate.shifts;
-        if (this.appointmentDate) {
-          shifts = this.unavailableDate.shifts.filter(
-            shift => shift.id !== this.appointmentDate.shift.id
-          );
-        }
+        // if (this.appointmentDate) {
+        //   shifts = this.unavailableDate.shifts.filter(
+        //     shift => shift.id !== this.appointmentDate.shift.id
+        //   );
+        // }
         if (this.allocatedDate && this.allocatedDate.length > 0) {
           this.allocatedDate.forEach(item => {
             shifts = this.unavailableDate.shifts.filter(
@@ -142,13 +157,14 @@ export default {
             );
           });
         }
-        if (this.partDate && this.partDate.length > 0) {
-          this.partDate.forEach(item => {
-            shifts = this.unavailableDate.shifts.filter(
-              shift => shift.id !== item.id
-            );
-          });
-        }
+        // if (this.partDate && this.partDate.length > 0) {
+        //   this.partDate.forEach(item => {
+        //     shifts = this.unavailableDate.shifts.filter(
+        //       shift => shift.id !== item.id
+        //     );
+        //   });
+        // }
+        console.log("shifts", shifts);
         this.unavailableDate.shifts = shifts;
         this.form.id = this.unavailableDate.id;
         this.form.shift_id = this.unavailableDate.shifts.map(shift => shift.id);
@@ -183,12 +199,12 @@ export default {
       this.formError = [];
       this.Validate(this.form, ["id"]);
       if (!this.formError.length) {
-        this.form.date_start = this.$moment(this.form.date_start).format(
-          "YYYY-MM-DD"
-        );
-        this.form.date_end = this.$moment(this.form.date_end).format(
-          "YYYY-MM-DD"
-        );
+        // this.form.date_start = this.$moment(this.form.date_start).format(
+        //   "YYYY-MM-DD"
+        // );
+        // this.form.date_end = this.$moment(this.form.date_end).format(
+        //   "YYYY-MM-DD"
+        // );
         this.$axios
           .$post(`/api/v1/locum/unavailabilities`, this.form)
           .then(res => {
@@ -204,12 +220,6 @@ export default {
             this.$emit("close");
           })
           .catch(err => {
-            this.form.date_start = this.$moment(this.form.date_start).format(
-              "MM/DD/YYYY"
-            );
-            this.form.date_end = this.$moment(this.form.date_end).format(
-              "MM/DD/YYYY"
-            );
             err.response.data.error_messages.forEach(error => {
               this.formError.push(error);
             });
@@ -272,15 +282,15 @@ export default {
         (this.allocatedDate &&
           this.allocatedDate.length &&
           this.allocatedDate.find(shift => shift.id === id)) ||
-        (this.appointmentDate &&
-          this.appointmentDate.shift &&
-          this.appointmentDate.shift.id === id) ||
+        // (this.appointmentDate &&
+        //   this.appointmentDate.shift &&
+        //   this.appointmentDate.shift.id === id) ||
         (this.ongoingDate &&
           this.ongoingDate.length &&
-          this.ongoingDate.find(shift => shift.id === id)) ||
-        (this.partDate &&
-          this.partDate.length &&
-          this.partDate.find(shift => shift.id === id))
+          this.ongoingDate.find(shift => shift.id === id))
+        // (this.partDate &&
+        //   this.partDate.length &&
+        //   this.partDate.find(shift => shift.id === id))
       );
     }
   }

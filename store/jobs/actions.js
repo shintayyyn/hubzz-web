@@ -47,16 +47,18 @@ export default {
             const invoiceResponse = await this.$axios.$get(`/api/v1/locum/locum-invoices/${invoice.id}`)
             if (invoiceResponse.data && invoiceResponse.data.locum_invoice) {
                 let approvedInvoices = invoiceResponse.data.locum_invoice.items.filter(item => item.status === 'Approved')
-                const jobPartsResponse = await this.$axios.$get(`/api/v1/locum/job-parts`, {
-                    params: {
-                        id: approvedInvoices.map(invoices => invoices.job_part.id),
-                        detailed: true
-                    }
-                })
-                if (jobPartsResponse.data && jobPartsResponse.data.job_parts) {
-                    jobPartsResponse.data.job_parts.forEach(job_part => {
-                        commit('ADD_LOCUM_JOB_NOTIFICATION', { ...job_part, notificationType: 'Locum Notification Locum Invoice Updated' })
+                if (approvedInvoices && approvedInvoices.length > 0) {
+                    const jobPartsResponse = await this.$axios.$get(`/api/v1/locum/job-parts`, {
+                        params: {
+                            id: approvedInvoices.map(invoices => invoices.job_part.id),
+                            detailed: true
+                        }
                     })
+                    if (jobPartsResponse.data && jobPartsResponse.data.job_parts) {
+                        jobPartsResponse.data.job_parts.forEach(job_part => {
+                            commit('ADD_LOCUM_JOB_NOTIFICATION', { ...job_part, notificationType: 'Locum Notification Locum Invoice Updated' })
+                        })
+                    }
                 }
             }
         })
@@ -137,16 +139,18 @@ export default {
             const invoiceResponse = await this.$axios.$get(`/api/v1/practice/locum-invoices/${invoice.id}`)
             if (invoiceResponse.data && invoiceResponse.data.locum_invoice) {
                 let approvedInvoices = invoiceResponse.data.locum_invoice.items.filter(item => item.status === 'Approved')
-                const jobPartsResponse = await this.$axios.$get(`/api/v1/practice/job-parts`, {
-                    params: {
-                        id: approvedInvoices.map(invoices => invoices.job_part.id),
-                        detailed: true
-                    }
-                })
-                if (jobPartsResponse.data && jobPartsResponse.data.job_parts) {
-                    jobPartsResponse.data.job_parts.forEach(job_part => {
-                        commit('ADD_PRACTICE_JOB_NOTIFICATION', { ...job_part, notificationType: 'Practice Notification Locum Invoice Updated' })
+                if (approvedInvoices && approvedInvoices.length > 0) {
+                    const jobPartsResponse = await this.$axios.$get(`/api/v1/practice/job-parts`, {
+                        params: {
+                            id: approvedInvoices.map(invoices => invoices.job_part.id),
+                            detailed: true
+                        }
                     })
+                    if (jobPartsResponse.data && jobPartsResponse.data.job_parts) {
+                        jobPartsResponse.data.job_parts.forEach(job_part => {
+                            commit('ADD_PRACTICE_JOB_NOTIFICATION', { ...job_part, notificationType: 'Practice Notification Locum Invoice Updated' })
+                        })
+                    }
                 }
             }
         })
@@ -328,7 +332,7 @@ export default {
                     if (response.data && response.data.job_parts && response.data.job_parts.length > 0) {
                         if (type === 'ADD') {
                             response.data.job_parts.filter(jobPart => jobPart.locum_status.toLowerCase() === 'ongoing').forEach(part => {
-                                commit('ADD_LOCUM_ONGOING_JOB', part)
+                                commit('ADD_LOCUM_ONGOING_JOB_PART', part)
                             })
                         }
                         if (type === 'SET') {

@@ -82,7 +82,7 @@ export default () => ({
     locum_withdrawn_jobs_count: 0,
     // UNAVAILABILITIES
     locum_unavailabilities: [],
-    locum_unavailabilities_count: 0,
+    // locum_unavailabilities_count: 0,
     // PRIVATE
     locum_private_jobs: [],
     locum_private_jobs_count: 0,
