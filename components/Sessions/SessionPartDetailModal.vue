@@ -1,7 +1,13 @@
 <template>
   <div class="p-4 md:p-8">
     <div>
-      <svgicon name="left-arrow" height="32" width="32" @click="$emit('close')" class="cursor-pointer"/>
+      <svgicon
+        name="left-arrow"
+        height="32"
+        width="32"
+        @click="$emit('close')"
+        class="cursor-pointer"
+      />
     </div>
 
     <div class="flex flex-row justify-start items-center mt-4">
@@ -39,7 +45,7 @@
             <SessionPartDetailModalParts :job_id="job_part.job.id" />
             <SessionDetailModalLocum
               :job="job_part.job"
-              v-if="(job_part.status === 'Allocated' || job_part.status === 'Ongoing' || job_part.status === 'Completed')"
+              v-if="(job_part.status === 'Allocated' || job_part.status === 'Ongoing' || job_part.status === 'Completed' || job_part.status === 'Approved')"
             />
           </div>
         </div>
@@ -73,10 +79,9 @@ export default {
     },
     jobPartStatus() {
       let status = "TO BE INVOICED";
-      if (this.job_part.disputed) {
+      if (this.job_part.disputed && this.job_part.issued) {
         status = "DISPUTED";
-      }
-      if (this.job_part.invoiced && this.job_part.issued) {
+      } else if (this.job_part.invoiced && this.job_part.issued) {
         status = "INVOICED";
       }
       return status;

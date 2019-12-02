@@ -84,7 +84,6 @@ export default {
             this.form
           )
           .then(res => {
-            console.log(res);
             this.loading = false;
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,

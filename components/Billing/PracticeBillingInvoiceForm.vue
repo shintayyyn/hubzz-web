@@ -48,6 +48,7 @@
                     ref="input"
                     class="border-b-2 w-full focus:border-yellow-400 focus:outline-none py-3 font-bold text-xs sm:text-sm"
                     readonly
+                    disabled
                   />
                 </div>
               </div>

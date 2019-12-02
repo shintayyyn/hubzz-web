@@ -52,13 +52,6 @@
       </div>
       <div class="relative">
         <nuxt-link
-          :to="`/my-banks/${$route.params.locumId}/related-jobs?status=${$route.query.status}&job_status=Withdrawn`"
-          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.query && $route.query.job_status && $route.query.job_status.toLowerCase() === 'withdrawn'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-        >Withdrawn</nuxt-link>
-      </div>
-      <div class="relative">
-        <nuxt-link
           :to="`/my-banks/${$route.params.locumId}/related-jobs?status=${$route.query.status}&job_status=Completed`"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
           :class="$route.query && $route.query.job_status && $route.query.job_status.toLowerCase() === 'completed'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
