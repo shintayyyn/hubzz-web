@@ -21,10 +21,10 @@
 
         <div class="flex items-center">
           <button
-            class="bg-yellow-500 mx-2 rounded-lg hover:bg-yellow-400 focus:outline-none"
+            class="rounded-lg hover:bg-gray-300 focus:outline-none"
             @click.prevent="message(user)"
           >
-            <svgicon name="chat" height="20" width="20" color="#888 #555 #fff" class="m-2" />
+            <svgicon name="chat" height="24" width="24" color="#888 #555 #fff" class="m-2" />
           </button>
           <button class="focus:outline-none" @click.prevent="show(user.id)">
             <svgicon name="arrow-right" height="20" width="20" class="fill-current m-2" />
@@ -50,6 +50,7 @@
           :user="user"
           @close="sendMessageModal=false"
           @showProfile="show(user.id)"
+          :profileOption="true"
         />
     </div>
     </transition>
@@ -182,18 +183,6 @@ export default {
   background-color: #333;
   opacity: 0.5;
   z-index: 59;
-}
-.message-modal-container {
-  position: fixed;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 60;
-}
-@media screen and (max-width: 767px) {
-  .message-modal-container {
-    min-width: 85%;
-  }
 }
 </style>
 

@@ -1,6 +1,6 @@
 <template>
   <section class="relative">
-    <div class="relative flex flex-col overflow-x-auto w-full px-2 mt-4">
+    <div class="relative flex flex-col overflow-x-auto w-full px-2 mt-4" :style="totalPages > 1 && `min-height: ${minHeight}`">
       <AppLoading :loading="loading" spinner />
       <div
         :style="`min-width: ${customWidth}px`"
@@ -126,6 +126,9 @@ export default {
     },
     customWidth: {
       type: Number
+    },
+    minHeight: {
+      type: String
     },
   },
   components: {
