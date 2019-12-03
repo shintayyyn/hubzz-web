@@ -299,7 +299,7 @@
           :columns="columns"
           :orderBy="isJobPart ? jobPartParams.order_by :params.order_by"
           :loading="loading"
-          :routerLink="'/jobs'"
+          :routerLink="routerLink"
           @pagechanged="pagechanged"
           @limitchanged="limitchanged"
           @sorted="sorted"
@@ -693,6 +693,9 @@ export default {
         );
       }
       return columns;
+    },
+    routerLink() {
+      return `/jobs`;
     }
   },
   watch: {

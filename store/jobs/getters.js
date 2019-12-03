@@ -46,7 +46,7 @@ export default {
                     message = 'This job has been cancelled.'
                     break;
                 case 'Practice Notification Job Amended':
-                    message = 'This job has been updated by your practice'
+                    message = 'This job has been updated'
                     break;
                 case 'Practice Notification Job Declined':
                     message = 'The locum leave this job.'
