@@ -4,7 +4,7 @@
       <div class="w-full md:w-1/3 lg:w-1/4 p-2" v-for="locum in locums" :key="locum.id">
         <div class="h-full rounded-lg shadow-lg bg-gray-300 hover:bg-gray-400 p-4">
           <nuxt-link :to="{ path: `/surgery-management/practice-spokes/${$route.params.id}/surgery-banks/${locum.id}`, query: {...$route.query}}">
-            <div
+            <!-- <div
               class="flex justify-end z-50"
               v-if="authPermissions.includes('Favorite MyBanks Locum')"
             >
@@ -26,7 +26,7 @@
                   @click.prevent.stop="favorite(locum.id)"
                 />
               </template>
-            </div>
+            </div> -->
 
             <div class="flex flex-wrap text-center mt-4 cursor-pointer">
               <div class="w-full flex justify-center">
@@ -61,7 +61,7 @@
               'surgery-management-practice-spokes-id-surgery-banks-locumId',
             ].includes($route.name)
           "
-          @click="$router.push('/surgery-management/practice-spokes')"
+          @click="$router.push(`/surgery-management/practice-spokes/${$route.params.id}/surgery-banks`)"
         ></div>
       </transition>
     </div>
@@ -122,8 +122,6 @@ export default {
       console.log('response', response.data)
       const practiceSpoke = response.data.practices[0]
       return{
-        // total,
-        // locums,
         practiceSpoke
       }
     }catch(err){
