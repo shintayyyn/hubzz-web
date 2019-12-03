@@ -31,7 +31,7 @@
                 v-if="conversation_id"
               >Conversation</li>
               <li
-                v-if="!['Completed','Allocated','Ongoing'].includes($route.query.status)"
+                v-if="!['Completed','Allocated','Ongoing','Approved'].includes($route.query.status)"
                 class="hover:bg-yellow-500 cursor-pointer px-3 py-1"
                 @click="$emit('showProfile'), showDropDown = false"
               >Profile</li>
@@ -64,7 +64,8 @@ export default {
     },
     user: {
       type: Object
-    }
+    },
+    
   },
   data() {
     return {

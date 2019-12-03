@@ -1,14 +1,16 @@
 <template>
-  <section class="relative">
-    <div class="flex flex-wrap justify-between max-w-3xl pt-2">
+  <section class="relative max-w-3xl">
+    <div class="flex flex-wrap justify-between pt-2">
       <div class="flex justify-start items-center">
+        <template v-if="allowToBill">
+          <div
+            v-if="!allApproved"
+            class="save-button text-xs sm:text-sm mr-2 py-2 px-3 border-2 rounded-lg font-bold flex items-center"
+            @click="save(false)"
+          >Save changes</div>
+        </template>
         <div
-          v-if="!allApproved"
           class="save-button text-xs sm:text-sm py-2 px-3 border-2 rounded-lg font-bold flex items-center"
-          @click="save(false)"
-        >Save changes</div>
-        <div
-          class="save-button text-xs sm:text-sm ml-2 py-2 px-3 border-2 rounded-lg font-bold flex items-center"
           @click="exportToPdf()"
         >Export to PDF</div>
       </div>
@@ -22,7 +24,7 @@
         >Platform</button>
       </div>
     </div>
-
+    <AppFormError :formError="formError" v-if="formError.length > 0" />
     <!-- pdf form -->
     <div id="htmlpdf" class="relative max-w-3xl mb-2 md:mb-4 bg-white px-4 py-4 border shadow-md mb-32">
     <AppLoading :loading="loading" spinner :message="'Exporting'" />
@@ -249,6 +251,7 @@ import AppLoading from "@/components/Base/AppLoading";
 import AppDate from "@/components/Base/AppDate";
 import AppInput from "@/components/Base/AppInput";
 import AppFilterSearch from "@/components/Base/AppFilterSearch";
+import AppFormError from "@/components/Base/AppFormError";
 import { mixin as clickaway } from "vue-clickaway";
 export default {
   mixins: [clickaway],
@@ -261,7 +264,8 @@ export default {
     AppLoading,
     AppDate,
     AppInput,
-    AppFilterSearch
+    AppFilterSearch,
+    AppFormError
   },
   data() {
     return {
@@ -293,7 +297,9 @@ export default {
       // input select job
       searchJobParts: "",
       selectedJobParts: [],
-      locum_user: null
+      locum_user: null,
+
+      allowToBill: false
     };
   },
   computed: {
@@ -486,6 +492,10 @@ export default {
     this.defaultSelectedJobParts = JSON.parse(
       JSON.stringify(this.selectedJobParts)
     );
+    if (this.$auth.user.practice_detail && this.$auth.user.practice_detail.practice.type !== 'Spoke'){
+      this.allowToBill = true
+    }
+    console.log(this.$auth.user)
   },
   mounted() {
     document.body.style.overflow = "hidden";
@@ -542,9 +552,7 @@ export default {
           })
           .catch(err => {
             console.log("err", err.response.data);
-            err.response.data.error_messages.forEach(error => {
-              this.formError.push(error);
-            });
+            this.formError.push(err.response.data);
           });
       }
     },
