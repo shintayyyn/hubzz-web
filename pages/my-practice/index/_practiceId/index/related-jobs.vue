@@ -1,9 +1,7 @@
 <template>
   <section class="related-jobs-section">
-    <!-- change to path,query -->
     <div class="flex flex-row justify-start overflow-x-auto py-3">
       <div class="relative">
-        <!-- :to="{ name: 'my-practice-index-practiceId-index-related-jobs-index', params: { ...$route.params}, query: {...$route.query, job_status: 'Allocated'}}" -->
         <nuxt-link
           :to="`/my-practice/${$route.params.practiceId}/related-jobs?status=${$route.query.status}&job_status=Allocated`"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
