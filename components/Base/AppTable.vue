@@ -38,7 +38,7 @@
           :event="!routerLink ? '' : 'click'"
         >
           <div
-            class="flex justify-start shadow-md rounded-lg items-center py-3"
+            class="flex justify-start shadow-md rounded-lg items-center py-3 bg-white"
             :class="routerLink ? 'transition-hover hover:bg-gray-100' : 'cursor-default'"
           >
             <div

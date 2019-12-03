@@ -44,12 +44,11 @@
       />
     </div>
 
-    <div class="shield" v-if="modal" @click="modal = false"></div>
     <transition name="fade" mode="out-in">
-    <div class="message-modal md:w-2/3 lg:w-1/2 xl:w-1/3" v-if="sendMessage">
+    <div class="message-modal md:w-2/3 lg:w-1/2 xl:w-1/3" v-if="sendMessageModal">
       <SendMessageModal
           :user="user"
-          @close="sendMessage=false"
+          @close="sendMessageModal=false"
           @showProfile="show(user.id)"
         />
     </div>
@@ -64,7 +63,8 @@
         />
       </div>
     </transition>
-    <div class="shield" v-if="sendMessage"></div>
+    <div class="shield modal-shield" v-if="modal" @click="closeModal()"></div>
+    <div class="shield" v-if="sendMessageModal" @click="closeModal()"></div>
   </div>
 </template>
 <script>
@@ -92,7 +92,7 @@ export default {
       },
       user: null,
       modal: false,
-      sendMessage: false
+      sendMessageModal: false
     };
   },
   computed: {
@@ -142,9 +142,16 @@ export default {
     message(id) {
       this.$axios.$get(`/api/v1/practice/locums/${id}`).then(res => {
         this.user = res.data.user;
-        this.sendMessage = true;
+        this.sendMessageModal = true;
         // this.$emit("show", user);
       });
+    },
+    closeModal(){
+      if (this.modal){
+        this.modal = false
+      }else if(this.sendMessageModal){
+        this.sendMessageModal = false
+      }
     }
   }
 };
@@ -159,9 +166,9 @@ export default {
 img {
   border-radius: 50%;
 }
-/* .shield {
+.modal-shield {
   z-index: 511;
-} */
+}
 .modal-container {
   z-index: 512;
 }

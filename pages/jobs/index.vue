@@ -700,7 +700,7 @@ export default {
       let newStatus = newValue.status;
       let oldStatus = oldValue.status;
       if (newStatus && newStatus !== null && newStatus !== oldStatus) {
-        this.$store.commit("jobs/CLEAR_LOCUM_JOB_NOTIFICATION");
+        // this.$store.commit("jobs/CLEAR_LOCUM_JOB_NOTIFICATION");
         this.current_page = 1;
         this.showTable = false;
         this.filterModal = false;

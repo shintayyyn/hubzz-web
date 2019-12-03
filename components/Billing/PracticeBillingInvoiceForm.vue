@@ -1,30 +1,31 @@
 <template>
   <section class="relative">
-    <AppLoading :loading="loading" spinner />
-    <div class="flex flex-wrap justify-start items-center">
-      <div
-        v-if="!allApproved"
-        class="save-button text-xs sm:text-sm ml-4 mx-2 py-2 px-3 border-2 rounded-lg font-bold flex items-center"
-        @click="save(false)"
-      >Save changes</div>
-      <div
-        class="save-button text-xs sm:text-sm ml-4 mx-2 py-2 px-3 border-2 rounded-lg font-bold flex items-center"
-        @click="exportToPdf()"
-      >Export to PDF</div>
-    </div>
+    <div class="flex flex-wrap justify-between max-w-3xl pt-2">
+      <div class="flex justify-start items-center">
+        <div
+          v-if="!allApproved"
+          class="save-button text-xs sm:text-sm py-2 px-3 border-2 rounded-lg font-bold flex items-center"
+          @click="save(false)"
+        >Save changes</div>
+        <div
+          class="save-button text-xs sm:text-sm ml-2 py-2 px-3 border-2 rounded-lg font-bold flex items-center"
+          @click="exportToPdf()"
+        >Export to PDF</div>
+      </div>
 
-    <div class="flex flex-row flex-wrap justify-start items-center my-4">
-      <label class="mx-1 py-2 px-3">Type:</label>
-      <button
-        :class="type === 'Platform' ? 'bg-yellow-500 border-yellow-500' : 'hover:bg-gray-200'"
-        class="text-xs sm:text-sm mx-1 py-2 px-3 border-2 rounded-lg font-bold flex items-center focus:outline-none"
-        @click="type = 'Platform'"
-        :disabled="true"
-      >Platform</button>
+      <div class="flex flex-row flex-wrap justify-start items-center my-2 md:my-4">
+        <label class="mx-1 py-2 pr-2 md:px-3">Type:</label>
+        <button
+          :class="type === 'Platform' ? 'bg-yellow-500 border-yellow-500' : 'hover:bg-gray-200'"
+          class="text-xs sm:text-sm py-2 px-3 border-2 rounded-lg font-bold flex items-center focus:outline-none cursor-default"
+          :disabled="true"
+        >Platform</button>
+      </div>
     </div>
 
     <!-- pdf form -->
-    <div id="htmlpdf" class="max-w-3xl my-4 bg-white px-4 py-4 border shadow-md mb-32">
+    <div id="htmlpdf" class="relative max-w-3xl mb-2 md:mb-4 bg-white px-4 py-4 border shadow-md mb-32">
+    <AppLoading :loading="loading" spinner :message="'Exporting'" />
       <!-- pdf header -->
       <div class="flex flex-col p-4" :ref="'pdf-header'">
         <div class="text-xs sm:text-sm sm:text-right leading-normal">
