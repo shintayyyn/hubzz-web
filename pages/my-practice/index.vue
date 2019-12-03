@@ -67,7 +67,6 @@ export default {
   },
   middleware({ query, redirect, error }) {
     if (!query.status) {
-      // api (Favorite only)
       redirect(`/my-practice?status=Favorite`);
     }
     if (
@@ -116,14 +115,12 @@ export default {
   },
   methods: {
     getPracticesCount() {
-      console.log("get practices count");
       this.loading = true;
       this.$axios
         .$get(
           `/api/v1/locum/practices/count?locum_practice_type=${this.$route.query.status}`
         )
         .then(res => {
-          console.log(res);
           this.total = res.data.count;
           this.getPractices(this.current_page);
         })
@@ -132,14 +129,12 @@ export default {
         });
     },
     getPractices(page) {
-      console.log("get practices");
       this.current_page = page;
       this.$axios
         .$get(
           `/api/v1/locum/practices?locum_practice_type=${this.$route.query.status}&offset=${this.offset}&limit=${this.perPage}`
         )
         .then(res => {
-          console.log(res);
           this.practices = res.data.practices;
           this.toggleTable = true;
           this.loading = false;
