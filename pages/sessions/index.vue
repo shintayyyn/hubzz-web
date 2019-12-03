@@ -703,7 +703,7 @@ export default {
         (newStatus && newStatus !== null && newStatus !== oldStatus) ||
         (newBank && newBank !== null && newBank !== oldBank)
       ) {
-        this.$store.commit("jobs/CLEAR_PRACTICE_JOB_NOTIFICATION");
+        // this.$store.commit("jobs/CLEAR_PRACTICE_JOB_NOTIFICATION");
         this.current_page = 1;
         this.showTable = false;
         this.filterModal = false;
