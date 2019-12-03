@@ -64,7 +64,7 @@ export default {
     },
     user: {
       type: Object
-    },
+    }
   },
   data() {
     return {
@@ -82,7 +82,11 @@ export default {
     this.$axios
       .$get(`/api/v1/conversations?user_id=${this.user.id}`)
       .then(res => {
-        this.conversation_id = res.data.conversation.conversation_id;
+        if (res.data.conversation) {
+          this.conversation_id = res.data.conversation.conversation_id;
+        } else if (!res.data.conversation) {
+          this.conversation_id = null;
+        }
       });
   },
   watch: {

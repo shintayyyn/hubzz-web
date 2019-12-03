@@ -800,7 +800,7 @@ export default {
   destroyed() {
     this.removeListener();
     this.showRefresh = false;
-    this.$store.commit("jobs/CLEAR_PRACTICE_JOB_NOTIFICATION");
+    // this.$store.commit("jobs/CLEAR_PRACTICE_JOB_NOTIFICATION");
   },
   methods: {
     getMyBanks() {
@@ -1117,7 +1117,7 @@ export default {
 
     async refreshJobs() {
       this.loading = true;
-      this.$store.commit("jobs/CLEAR_PRACTICE_JOB_NOTIFICATION");
+      // this.$store.commit("jobs/CLEAR_PRACTICE_JOB_NOTIFICATION");
       this.current_page = 1;
       this.params.offset = 0;
       this.jobPartParams.offset = 0;

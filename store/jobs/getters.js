@@ -36,14 +36,17 @@ export default {
                 case 'Practice Notification Job Part Completed':
                     message = 'This part of your job has been completed'
                     break;
-                case 'Practice Notification Locum Invoice Updated':
+                case 'Practice Notification Job Approved':
                     message = 'This part of your job has been approved'
+                    break;
+                case 'Practice Notification Job Disputed':
+                    message = 'This part of your job has been dispute'
                     break;
                 case 'Practice Notification Job Cancelled':
                     message = 'This job has been cancelled.'
                     break;
                 case 'Practice Notification Job Amended':
-                    message = 'This job has been updated by your practice'
+                    message = 'This job has been updated'
                     break;
                 case 'Practice Notification Job Declined':
                     message = 'The locum leave this job.'
@@ -74,6 +77,7 @@ export default {
                 id,
                 title: notif.title ? notif.title : notif.job.title,
                 status: notif.status,
+                billingStatus: ['Practice Notification Job Approved', 'Practice Notification Job Disputed'].includes(notif.notificationType) ? notif.notificationType === 'Practice Notification Job Approved' ? 'Approved' : 'Disputed' : null,
                 date_start: notif.date_start,
                 date_end: notif.date_end,
                 shift: notif.shift ? notif.shift.name : notif.job.shift.name,
@@ -484,8 +488,11 @@ export default {
                 case 'Locum Notification Job Part Completed':
                     message = 'This part of your job has been completed'
                     break;
-                case 'Locum Notification Locum Invoice Updated':
+                case 'Locum Notification Job Approved':
                     message = 'This part of your job has been approved'
+                    break;
+                case 'Locum Notification Job Disputed':
+                    message = 'This part of your job has been disputed'
                     break;
                 case 'Locum Notification Job Cancelled':
                     message = 'Your job has been cancelled by your practice'
@@ -504,6 +511,7 @@ export default {
                 id: notif.notificationType === 'Locum Notification Job Ongoing' && notif.job_parts.length > 0 ? notif.job_parts[0].id : notif.id,
                 title: notif.title ? notif.title : notif.job.title,
                 locum_status: notif.locum_status,
+                billingStatus: ['Locum Notification Job Approved', 'Locum Notification Job Disputed'].includes(notif.notificationType) ? notif.notificationType === 'Locum Notification Job Approved' ? 'Approved' : 'Disputed' : null,
                 date_start: notif.date_start,
                 date_end: notif.date_end,
                 shift: notif.shift ? notif.shift.name : notif.job.shift.name,

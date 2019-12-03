@@ -92,27 +92,6 @@ export default {
       selectedSurgeries: []
     };
   },
-  watch: {
-    search_text(value) {
-      // splice from formerror
-      let index = this.formError.findIndex(
-        item => item.field === "search_text"
-      );
-      if (index >= 0) {
-        this.formError.splice(index, 1);
-      }
-      // validate
-      if (!value) {
-        // required
-        this.formError.push({ field: "search_text", message: "Required" });
-      } else {
-        const error = this.ValidateEmail(value);
-        if (error) {
-          this.formError.push(error);
-        }
-      }
-    }
-  },
   methods: {
     search() {
       if (!this.search_text) {

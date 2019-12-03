@@ -176,7 +176,8 @@ export default {
       const params = {
         offset: 0,
         limit: 5,
-        status: ["Issued", "Disputed", "Paid"]
+        status: ["Issued", "Disputed", "Paid"],
+        type: "Platform"
       };
 
       const responseCount = await app.$axios.get(

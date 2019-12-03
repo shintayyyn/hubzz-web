@@ -24,9 +24,11 @@
           </div>
         </div>
       </div>
-      <div class="shield" v-if="modal" @click="close"></div>
+      <transition name="fade" mode="out-in">
+        <div class="shield" v-if="modal" @click="close"></div>
+      </transition>
       <transition name="slide" mode="out-in">
-        <div class="add-unavailable-date-modal shadow-lg" v-if="modal">
+        <div class="modal-container shadow-lg" v-if="modal">
           <AddUnavailableDateModal
             @close="close"
             :unavailableDate="unavailableDate"
@@ -34,8 +36,6 @@
             :ongoingDate="ongoingDate"
             :type="type"
           />
-          <!-- :appointmentDate="appointmentDate"
-          :partDate="partDate"-->
         </div>
       </transition>
     </template>
@@ -57,10 +57,8 @@ export default {
       modal: false,
       type: "",
       unavailableDate: null,
-      // appointmentDate: null,
       allocatedDate: null,
       ongoingDate: null
-      // partDate: null
     };
   },
   created() {
@@ -76,18 +74,10 @@ export default {
       this.type = "range";
       this.modal = true;
     },
-    open(
-      unavailableDate,
-      // appointmentDate,
-      allocatedDate,
-      ongoingDate
-      // partDate
-    ) {
+    open(unavailableDate, allocatedDate, ongoingDate) {
       this.unavailableDate = unavailableDate;
-      // this.appointmentDate = appointmentDate;
       this.allocatedDate = allocatedDate;
       this.ongoingDate = ongoingDate;
-      // this.partDate = partDate;
       document.body.style.overflow = "hidden";
       this.type = "solo";
       this.modal = true;
@@ -117,21 +107,11 @@ export default {
 .shield {
   z-index: 509;
 }
-.add-unavailable-date-modal {
-  position: fixed;
-  top: 0;
-  right: 0;
-  margin-right: 0%;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  border-left: solid 2px #edf2f7;
-  transition: all 0.3s ease-in-out;
-  background-color: white;
+.modal-container {
   z-index: 510;
 }
 @media screen and (min-width: 1200px) {
-  .add-unavailable-date-modal {
+  .modal-container {
     width: 80%;
   }
 }

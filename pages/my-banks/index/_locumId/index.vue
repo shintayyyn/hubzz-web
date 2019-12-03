@@ -35,7 +35,7 @@ export default {
   z-index: 60;
 }
 @media screen and (min-width: 1200px) {
-  .modal-container{
+  .modal-container {
     width: 80%;
   }
 }

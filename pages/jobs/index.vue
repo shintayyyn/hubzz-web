@@ -299,7 +299,7 @@
           :columns="columns"
           :orderBy="isJobPart ? jobPartParams.order_by :params.order_by"
           :loading="loading"
-          :routerLink="'/jobs'"
+          :routerLink="routerLink"
           @pagechanged="pagechanged"
           @limitchanged="limitchanged"
           @sorted="sorted"
@@ -693,6 +693,9 @@ export default {
         );
       }
       return columns;
+    },
+    routerLink() {
+      return `/jobs`;
     }
   },
   watch: {
@@ -784,7 +787,7 @@ export default {
   destroyed() {
     this.removeListener();
     this.showRefresh = false;
-    this.$store.commit("jobs/CLEAR_LOCUM_JOB_NOTIFICATION");
+    // this.$store.commit("jobs/CLEAR_LOCUM_JOB_NOTIFICATION");
   },
   methods: {
     getJobsCount(params) {
@@ -1092,7 +1095,7 @@ export default {
     },
     async appointmentUpdated() {
       this.loading = true;
-      this.$store.commit("jobs/CLEAR_LOCUM_JOB_NOTIFICATION");
+      // this.$store.commit("jobs/CLEAR_LOCUM_JOB_NOTIFICATION");
       await this.getJobsCount(
         this.isJobPart ? this.jobPartParams : this.params
       );
@@ -1103,7 +1106,7 @@ export default {
     },
     async refreshJobs() {
       this.loading = true;
-      this.$store.commit("jobs/CLEAR_LOCUM_JOB_NOTIFICATION");
+      // this.$store.commit("jobs/CLEAR_LOCUM_JOB_NOTIFICATION");
       this.current_page = 1;
       this.params.offset = 0;
       this.jobPartParams.offset = 0;

@@ -142,24 +142,12 @@ Vue.mixin({
             hasPermission = false;
           }
           break;
-        case "sessions-live":
-        case "sessions-applied":
-        case "sessions-allocated":
-        case "sessions-completed":
-        case "sessions-unfilled":
-        case "sessions-cancelled":
-        case "sessions-declined":
+        case "sessions-index":
           if (!permissions.includes("View Sessions Job")) {
             hasPermission = false;
           }
           break;
-        case "sessions-live-id":
-        case "sessions-applied-id":
-        case "sessions-allocated-id":
-        case "sessions-completed-id":
-        case "sessions-unfilled-id":
-        case "sessions-cancelled-id":
-        case "sessions-declined-id":
+        case "sessions-index-id":
           if (!permissions.includes("Show Sessions Job")) {
             hasPermission = false;
           }

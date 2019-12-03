@@ -22,7 +22,7 @@
         <div class="flex items-center">
           <button
             class="bg-yellow-500 mx-2 rounded-lg hover:bg-yellow-400 focus:outline-none"
-            @click.prevent="message(user.id)"
+            @click.prevent="message(user)"
           >
             <svgicon name="chat" height="20" width="20" color="#888 #555 #fff" class="m-2" />
           </button>
@@ -136,15 +136,11 @@ export default {
       this.$axios.$get(`/api/v1/practice/locums/${id}`).then(res => {
         this.user = res.data.user;
         this.modal = true;
-        // this.$emit("show", user);
       });
     },
-    message(id) {
-      this.$axios.$get(`/api/v1/practice/locums/${id}`).then(res => {
-        this.user = res.data.user;
-        this.sendMessageModal = true;
-        // this.$emit("show", user);
-      });
+    message(user) {
+      this.user = user;
+      this.sendMessageModal = true;
     },
     closeModal(){
       if (this.modal){
@@ -157,15 +153,15 @@ export default {
 };
 </script>
 <style scoped>
-.avatar {
+/* .avatar {
   max-width: 40px;
   max-height: 40px;
   min-width: 40px;
   min-height: 40px;
-}
-img {
+} */
+/* img {
   border-radius: 50%;
-}
+} */
 .modal-shield {
   z-index: 511;
 }
@@ -174,20 +170,30 @@ img {
 }
 @media screen and (min-width: 1200px) {
   .modal-container {
-    width: 60%;
+    width: 70%;
   }
 }
-.message-modal{
-    position: fixed;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 60;
+.message-shield {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #333;
+  opacity: 0.5;
+  z-index: 59;
 }
-@media screen and (max-width: 767px){
-    .message-modal{
-        min-width: 85%;
-    }
+.message-modal-container {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 60;
+}
+@media screen and (max-width: 767px) {
+  .message-modal-container {
+    min-width: 85%;
+  }
 }
 </style>
 

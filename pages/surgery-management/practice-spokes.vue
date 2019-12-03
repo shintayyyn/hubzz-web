@@ -27,8 +27,8 @@
 		>
 			<template v-slot:actions="slotProps">
 				<div class="flex items-center justify-center">
-                    <div class="rounded-full px-6 py-1" :class="surgeryStatus()">{{ getStatus() }}</div>
-                  </div>
+          <div class="rounded-full px-6 py-1" :class="surgeryStatus()">{{ getStatus() }}</div>
+        </div>
 			</template>
 		</AppTable>
 		<div v-else class="flex justify-center py-4 text-gray-500">
@@ -46,7 +46,8 @@
             'surgery-management-practice-spokes-id-surgery-billings',
             'surgery-management-practice-spokes-id-surgery-banks',
 						'surgery-management-practice-spokes-id-request-for-termination',
-						'surgery-management-practice-spokes-edit'
+						'surgery-management-practice-spokes-edit',
+            'surgery-management-practice-spokes-id-surgery-banks-locumId',
 					].includes($route.name)
 				"
 				@click="$router.push('/surgery-management/practice-spokes')"
@@ -55,16 +56,6 @@
 		<nuxt-child
 			@addSurgery="surgeries.push($event)"
 			@updateSurgery="updateSurgery"
-		/>
-		<RemoveSurgeryConfirmationModal
-			:label="'Are you sure you want to delete this surgery?'"
-			:confirmLabel="'Yes'"
-			:cancelLabel="'Cancel'"
-			:modal="modal"
-			:terminationReason="''"
-			@setReason="setExpulsionReason"
-			@confirm="remove"
-			@cancel="modal = false"
 		/>
 	</section>
 </template>
