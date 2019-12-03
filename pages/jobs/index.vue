@@ -4,7 +4,7 @@
       <div v-if="showTable">
         <AppButton
           :label="'Filter'"
-          @click="filterModal = true"
+          @click="filterModal = !filterModal"
           :inStyle="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
         />
         <AppButton
@@ -320,7 +320,6 @@
   </section>
 </template>
 <script>
-import debounce from "lodash.debounce";
 import AppTable from "@/components/Base/AppTable";
 import AppInput from "@/components/Base/AppInput";
 import AppDate from "@/components/Base/AppDate";
@@ -703,7 +702,6 @@ export default {
       let newStatus = newValue.status;
       let oldStatus = oldValue.status;
       if (newStatus && newStatus !== null && newStatus !== oldStatus) {
-        // this.$store.commit("jobs/CLEAR_LOCUM_JOB_NOTIFICATION");
         this.current_page = 1;
         this.showTable = false;
         this.filterModal = false;
@@ -787,7 +785,6 @@ export default {
   destroyed() {
     this.removeListener();
     this.showRefresh = false;
-    this.$store.commit("jobs/CLEAR_LOCUM_JOB_NOTIFICATION");
   },
   methods: {
     getJobsCount(params) {
@@ -1022,7 +1019,8 @@ export default {
       }
       if (
         this.$route.path.includes("/jobs") &&
-        (this.$route.query.status === "Allocated" ||
+        (!this.$route.query.status ||
+          this.$route.query.status === "Allocated" ||
           this.$route.query.status === "Ongoing" ||
           this.$route.query.status === "Available" ||
           this.$route.query.status === "Matched" ||
@@ -1095,7 +1093,7 @@ export default {
     },
     async appointmentUpdated() {
       this.loading = true;
-      this.$store.commit("jobs/CLEAR_LOCUM_JOB_NOTIFICATION");
+      // this.$store.commit("jobs/CLEAR_LOCUM_JOB_NOTIFICATION");
       await this.getJobsCount(
         this.isJobPart ? this.jobPartParams : this.params
       );
@@ -1106,7 +1104,7 @@ export default {
     },
     async refreshJobs() {
       this.loading = true;
-      this.$store.commit("jobs/CLEAR_LOCUM_JOB_NOTIFICATION");
+      // this.$store.commit("jobs/CLEAR_LOCUM_JOB_NOTIFICATION");
       this.current_page = 1;
       this.params.offset = 0;
       this.jobPartParams.offset = 0;
@@ -1191,7 +1189,6 @@ export default {
       this.loading = false;
     },
     async sorted(order_by) {
-      console.log("sort job");
       this.current_page = 1;
       this.params.offset = 0;
       this.params.order_by = order_by;
@@ -1202,7 +1199,6 @@ export default {
       this.loading = false;
     },
     async pagechanged(page) {
-      console.log("change page ");
       this.current_page = page;
       this.params.offset = this.params.limit * (page - 1);
       this.jobPartParams.offset = this.jobPartParams.limit * (page - 1);
@@ -1211,7 +1207,6 @@ export default {
       this.loading = false;
     },
     async limitchanged(limit) {
-      console.log("change limit ");
       this.current_page = 1;
       this.params.offset = 0;
       this.params.limit = limit;

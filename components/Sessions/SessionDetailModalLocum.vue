@@ -16,7 +16,7 @@
               <div class="text-xs lg:text-sm">{{user.locum_detail.profession.name}}</div>
             </div>
           </div>
-          <div class="flex justify-start z-50">
+          <div class="flex justify-start items-start z-50">
             <template v-if="user.is_favorite">
               <svgicon
                 name="on-star"
@@ -35,7 +35,23 @@
                 @click="favorite"
               />
             </template>
+            <button
+              class="bg-yellow-500 mx-2 rounded-lg hover:bg-yellow-400 focus:outline-none"
+              @click.prevent="message(user.id)"
+            >
+              <svgicon name="chat" height="20" width="20" color="#888 #555 #fff" class="m-2" />
+            </button>
           </div>
+          <transition name="fade" mode="out-in">
+          <div class="message-modal md:w-2/3 lg:w-1/2 xl:w-1/3" v-if="sendMessageModal">
+            <SendMessageModal
+                :user="user"
+                @close="sendMessageModal=false"
+                @showProfile="show(user.id)"
+              />
+          </div>
+          </transition>      
+          <div class="shield" v-if="sendMessageModal" @click="sendMessageModal=false"></div>
         </div>
         <div class="body-info my-4">
           <div class="font-bold text-sm sm:text-md">Headline</div>
@@ -141,10 +157,12 @@
 <script>
 import AppAvatar from "~/components/Base/AppAvatar";
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
+import SendMessageModal from "@/components/Messages/SendMessageModal";
 export default {
   components: {
     AppAvatar,
-    AppConfirmationModal
+    AppConfirmationModal,
+    SendMessageModal
   },
   props: ["job"],
   data() {
@@ -153,13 +171,21 @@ export default {
       mandatory: [],
       optional: [],
       confirmation_text: "",
-      confirmation_modal: false
+      confirmation_modal: false,
+      sendMessageModal: false
     };
   },
   created() {
     this.getAppointedLocum();
   },
   methods: {
+    message(id) {
+      this.$axios.$get(`/api/v1/practice/locums/${id}`).then(res => {
+        this.user = res.data.user;
+        this.sendMessageModal = true;
+        // this.$emit("show", user);
+      });
+    },
     getAppointedLocum() {
       this.$axios
         .$get(

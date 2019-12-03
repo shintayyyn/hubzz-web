@@ -16,11 +16,15 @@
         class="mx-2 py-2 px-4 rounded font-semibold"
         :class="bgStatus(job_part.status)"
       >{{status(job_part.status)}}</div>
-      <div
-        class="py-2 px-4 rounded font-semibold"
-        :class="jobPartStatus === 'Completed' ? 'bg-green-500' : 'bg-gray-300'"
-        v-if="job_part.status === 'Completed'"
-      >{{jobPartStatus}}</div>
+      <template v-if="job_part.status === 'Completed'">
+        <div
+          class="py-2 px-4 rounded font-semibold"
+          :class="jobPartStatus === 'Completed' ? 'bg-green-500' : 'bg-gray-300'"
+        >{{jobPartStatus}}</div>
+      </template>
+      <template v-if="['Completed','Approved'].includes(job_part.status)">
+        <AppButton :label="'Repost Job'" @click="repost" :inStyle="'font-size:1em'" />
+      </template>
     </div>
 
     <div class="flex flex-col mt-4">
@@ -59,6 +63,7 @@ import SessionPartDetailModalParts from "@/components/Sessions/SessionPart/Sessi
 import SessionDetailModalCancelForm from "@/components/Sessions/SessionDetailModalCancelForm";
 import SessionDetailModalCompleteForm from "@/components/Sessions/SessionDetailModalCompleteForm";
 import SessionDetailModalLocum from "@/components/Sessions/SessionDetailModalLocum";
+import AppButton from "@/components/Base/AppButton";
 export default {
   props: ["job_part"],
   components: {
@@ -66,7 +71,8 @@ export default {
     SessionPartDetailModalParts,
     SessionDetailModalCompleteForm,
     SessionDetailModalCancelForm,
-    SessionDetailModalLocum
+    SessionDetailModalLocum,
+    AppButton
   },
   data() {
     return {
@@ -104,6 +110,13 @@ export default {
         default:
           return "bg-red-500 text-white";
       }
+    },
+    repost() {
+      this.$emit("close");
+      setTimeout(() => {
+        this.$store.commit("calendar/SET_REPOST_JOB", this.job_part.job);
+        this.$store.commit("calendar/CREATE_JOB_MODAL", true);
+      }, 500);
     }
   }
 };

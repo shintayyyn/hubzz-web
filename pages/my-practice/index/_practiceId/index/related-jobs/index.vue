@@ -1,16 +1,22 @@
 <template>
   <section class="relative">
     <transition name="fade" mode="out-in">
-      <div v-if="toggleTable">
+      <div v-if="showTable">
         <AppButton
           :label="'Filter'"
-          @click="showFilter()"
+          @click="filterModal = !filterModal"
+          :inStyle="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
+        />
+        <AppButton
+          v-if="showRefresh"
+          :label="'Refresh'"
+          @click="refreshJobs"
           :inStyle="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
         />
         <div
           v-if="!isJobPart"
           class="flex-wrap justify-start items-center z-10 absolute w-full bg-white shadow-lg p-3 rounded-lg"
-          :class="filterToggle ? 'flex' : 'hidden'"
+          :class="filterModal ? 'flex' : 'hidden'"
         >
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
@@ -136,7 +142,7 @@
             <AppButton
               class="mx-2 md:hidden"
               :label="'Close'"
-              @click="showFilter"
+              @click="filterModal = false"
               :inStyle="'padding:5px 14px;margin-bottom:5px'"
             />
           </div>
@@ -144,7 +150,7 @@
         <div
           v-if="isJobPart"
           class="flex-wrap justify-start items-center z-10 absolute w-full bg-white shadow-lg p-3 rounded-lg"
-          :class="filterToggle ? 'flex' : 'hidden'"
+          :class="filterModal ? 'flex' : 'hidden'"
         >
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
@@ -277,32 +283,29 @@
               @click="filterJob"
               :inStyle="'padding:5px 14px;margin-bottom:5px'"
             />
-            <!-- <AppButton
+            <AppButton
               class="mx-2 md:hidden"
               :label="'Close'"
-              @click="showFilter"
+              @click="filterModal = false"
               :inStyle="'padding:5px 14px;margin-bottom:5px'"
-            />-->
+            />
           </div>
         </div>
         <AppTable
-          v-if="jobs.length > 0"
+          v-if="jobs.length > 0 && !loading"
           :total="total"
           :items="jobs"
           :currentPage="current_page"
           :perPage="isJobPart ? jobPartParams.limit : params.limit"
           :columns="columns"
           :orderBy="isJobPart ? jobPartParams.order_by :params.order_by"
-          :loading="loadingJobs"
+          :loading="loading"
           :routerLink="`/my-practice/${$route.params.practiceId}/related-jobs`"
           @pagechanged="pagechanged"
           @limitchanged="limitchanged"
           @sorted="sorted"
         ></AppTable>
-        <div
-          v-if="!jobs.length && !loadingJobs"
-          class="flex justify-center py-4"
-        >{{noJobsToDisplay}}</div>
+        <div v-if="!jobs.length && !loading" class="flex justify-center py-4">{{noJobsToDisplay}}</div>
         <transition name="fade" mode="out-in">
           <nuxt-link
             class="shield"
@@ -318,7 +321,6 @@
   </section>
 </template>
 <script>
-import debounce from "lodash.debounce";
 import AppTable from "@/components/Base/AppTable";
 import AppInput from "@/components/Base/AppInput";
 import AppDate from "@/components/Base/AppDate";
@@ -360,6 +362,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       current_page: 1,
       // app table params
       params: {
@@ -402,8 +405,9 @@ export default {
         invoice_status: ""
       },
       // app table column
-      filterToggle: false,
-      toggleTable: false
+      filterModal: false,
+      showTable: false,
+      showRefresh: false
     };
   },
   computed: {
@@ -535,21 +539,6 @@ export default {
       } else {
         return "You do not have any jobs";
       }
-    },
-    loadingJobs() {
-      return this.$store.state.jobs.loading_jobs;
-    },
-    dispatchUrl() {
-      let url = "jobs/fetchLocumJobs";
-      if (
-        this.$route.query.job_status &&
-        ["ongoing", "completed", "approved"].includes(
-          this.$route.query.job_status.toLowerCase()
-        )
-      ) {
-        url = "jobs/fetchLocumJobParts";
-      }
-      return url;
     },
     columns() {
       let columns = [];
@@ -691,8 +680,13 @@ export default {
             sortable: true
           },
           {
-            name: "Status",
+            name: "Invoice status",
             dataIndex: "invoice_status",
+            class: "text-center"
+          },
+          {
+            name: "Tag",
+            dataIndex: "locum_status",
             class: "text-center"
           }
         );
@@ -701,114 +695,530 @@ export default {
     }
   },
   watch: {
-    "$route.query"({ job_status: newStatus }, { job_status: oldStatus }) {
+    "$route.query"(newValue, oldValue) {
+      let newStatus = newValue.status;
+      let oldStatus = oldValue.status;
       if (newStatus && newStatus !== null && newStatus !== oldStatus) {
-        this.toggleTable = false;
-        this.filterToggle = false;
-        setTimeout(() => {
-          // this.clearJobsBadge(newStatus);
-          this.clearFilters();
-        }, 1000);
-        this.getJobsCount(this.isJobPart ? this.jobPartParams : this.params);
+        this.current_page = 1;
+        this.showTable = false;
+        this.filterModal = false;
+        this.showRefresh = false;
+        setTimeout(async () => {
+          await this.clearFilters();
+          this.loading = true;
+          await this.getJobsCount(
+            this.isJobPart ? this.jobPartParams : this.params
+          );
+          await this.getJobs(this.isJobPart ? this.jobPartParams : this.params);
+          this.loading = false;
+        }, 250);
       }
     }
   },
-  created() {
-    this.getJobsCount(this.isJobPart ? this.jobPartParams : this.params);
-    // setTimeout(() => {
-    //   this.clearJobsBadge(
-    //     this.$route.query.job_status
-    //       ? this.$route.query.job_status
-    //       : "Allocated"
-    //   );
-    // }, 250);
+  async created() {
+    this.loading = true;
+    await this.getJobsCount(this.isJobPart ? this.jobPartParams : this.params);
+    await this.getJobs(this.isJobPart ? this.jobPartParams : this.params);
+    this.loading = false;
+  },
+  mounted() {
+    this.$socket.on(
+      "Locum Notification Job Available",
+      this.getAvailableJobsRealTime
+    );
+    this.$socket.on(
+      "Locum Notification Job Matched",
+      this.getMatchedJobsRealTime
+    );
+    this.$socket.on(
+      "Locum Notification Job Unsuccessful",
+      this.getUnsuccessfulJobsRealTime
+    );
+    this.$socket.on(
+      "Locum Notification Job Current",
+      this.getCurrentJobsRealTime
+    );
+    this.$socket.on(
+      "Locum Notification Job Ongoing",
+      this.getOngoingJobsRealTime
+    );
+    this.$socket.on(
+      "Locum Notification Job Part Completed",
+      this.getCompletedJobsRealTime
+    );
+    this.$socket.on(
+      "Locum Notification Locum Invoice Updated",
+      this.getApprovedJobsRealTime
+    );
+    this.$socket.on(
+      "Locum Notification Job Cancelled",
+      this.getCancelledJobsRealTime
+    );
+    this.$socket.on(
+      "Locum Notification Job Amended",
+      this.getAmendedJobsRealTime
+    );
+    this.$socket.on(
+      "Locum Notification Job Updated",
+      this.getUpdatedJobsRealTime
+    );
+    this.$socket.on(
+      "Locum Notification Job Declined",
+      this.getDeclinedJobsRealTime
+    );
+    this.$socket.on(
+      "Locum Notification Job Auto Declined",
+      this.getAutoDeclinedJobsRealTime
+    );
+    this.$socket.on(
+      "Locum Notification Job Unavailable",
+      this.getUnavailableJobsRealTime
+    );
+    this.$socket.on(
+      "Locum Notification Job Unqualified",
+      this.getUnqualifiedJobsRealTime
+    );
+  },
+  destroyed() {
+    this.removeListener();
+    this.showRefresh = false;
   },
   methods: {
-    // clearJobsBadge(status) {
-    //   let jobStatus = status.toUpperCase();
-    //   return this.$store.commit(`jobs/CLEAR_LOCUM_${jobStatus}_BADGE`);
-    // },
-    showFilter() {
-      return (this.filterToggle = !this.filterToggle);
-    },
-    filterJob() {
-      this.current_page = 1;
-      this.params.offset = 0;
-      this.jobPartParams.offset = 0;
-      this.$store.commit("jobs/TOGGLE_LOADING", true);
-      let jobStatus = this.$route.query.job_status
-        ? this.$route.query.job_status.toUpperCase()
-        : "ALLOCATED";
-      if (["ONGOING", "COMPLETED", "APPROVED"].includes(jobStatus)) {
-        this.$store.commit(`jobs/SET_LOCUM_${jobStatus}_JOB_PARTS`, []);
-      }
-      if (!["ONGOING", "COMPLETED", "APPROVED"].includes(jobStatus)) {
-        this.$store.commit(`jobs/SET_LOCUM_${jobStatus}_JOBS`, []);
-      }
-      this.getJobs(this.isJobPart ? this.jobPartParams : this.params);
-      this.filterToggle = false;
-    },
     getJobsCount(params) {
-      this.$store.commit("jobs/TOGGLE_LOADING", true);
-      this.$store
-        .dispatch(`${this.dispatchUrl}`, {
-          locum_status: [
-            `${
-              this.$route.query.job_status
-                ? this.$route.query.job_status
-                : "Allocated"
-            }`
-          ],
-          countOnly: true,
-          ...params
+      this.loading = true;
+      let locum_status = [];
+      if (!this.$route.query.job_status) {
+        locum_status = ["Allocated"];
+      } else if (
+        this.$route.query.job_status &&
+        this.$route.query.job_status === "Available"
+      ) {
+        locum_status = ["Available", "Matched"];
+      } else if (
+        this.$route.query.job_status &&
+        this.$route.query.job_status === "Completed"
+      ) {
+        locum_status = ["Completed", "Terminated"];
+      } else if (
+        this.$route.query.job_status &&
+        this.$route.query.job_status !== "Available" &&
+        this.$route.query.job_status !== "Completed"
+      ) {
+        locum_status = [`${this.$route.query.job_status}`];
+      }
+
+      this.$axios
+        .$get(`/api/v1/locum/${this.isJobPart ? "job-parts" : "jobs"}/count`, {
+          params: {
+            locum_status,
+            ...params
+          }
+        })
+        .then(res => {
+          console.log("count response", res.data.count);
+          if (
+            this.$route.query.job_status &&
+            ["ongoing", "completed", "approved"].includes(
+              this.$route.query.job_status.toLowerCase()
+            )
+          ) {
+            this.$store.commit(
+              `jobs/SET_LOCUM_${this.$route.query.job_status.toUpperCase()}_JOB_PARTS_COUNT`,
+              res.data.count
+            );
+          } else if (
+            this.$route.query.job_status &&
+            !["ongoing", "completed", "approved"].includes(
+              this.$route.query.job_status.toLowerCase()
+            )
+          ) {
+            this.$store.commit(
+              `jobs/SET_LOCUM_${this.$route.query.job_status.toUpperCase()}_JOBS_COUNT`,
+              res.data.count
+            );
+          } else if (!this.$route.query.job_status) {
+            this.$store.commit(
+              "jobs/SET_LOCUM_ALLOCATED_JOBS_COUNT",
+              res.data.count
+            );
+          }
+        })
+        .catch(err => {
+          this.loading = false;
+          console.log("err", err.response.data);
         })
         .finally(() => {
-          this.getJobs(params);
+          return;
         });
     },
     getJobs(params) {
-      this.$store
-        .dispatch(`${this.dispatchUrl}`, {
-          locum_status: [
-            `${
-              this.$route.query.job_status
-                ? this.$route.query.job_status
-                : "Allocated"
-            }`
-          ],
-          ...params
+      let locum_status = [];
+      if (!this.$route.query.job_status) {
+        locum_status = ["Allocated"];
+      } else if (
+        this.$route.query.job_status &&
+        this.$route.query.job_status === "Available"
+      ) {
+        locum_status = ["Available", "Matched"];
+      } else if (
+        this.$route.query.job_status &&
+        this.$route.query.job_status === "Completed"
+      ) {
+        locum_status = ["Completed", "Terminated"];
+      } else if (
+        this.$route.query.job_status &&
+        this.$route.query.job_status !== "Available" &&
+        this.$route.query.job_status !== "Completed"
+      ) {
+        locum_status = [`${this.$route.query.job_status}`];
+      }
+
+      this.$axios
+        .$get(`/api/v1/locum/${this.isJobPart ? "job-parts" : "jobs"}`, {
+          params: {
+            locum_status,
+            ...params
+          }
+        })
+        .then(res => {
+          if (
+            this.$route.query.job_status &&
+            ["ongoing", "completed", "approved"].includes(
+              this.$route.query.job_status.toLowerCase()
+            )
+          ) {
+            this.$store.commit(
+              `jobs/SET_LOCUM_${this.$route.query.job_status.toUpperCase()}_JOB_PARTS`,
+              res.data.job_parts
+            );
+          } else if (
+            this.$route.query.job_status &&
+            !["ongoing", "completed", "approved"].includes(
+              this.$route.query.job_status.toLowerCase()
+            )
+          ) {
+            this.$store.commit(
+              `jobs/SET_LOCUM_${this.$route.query.job_status.toUpperCase()}_JOBS`,
+              res.data.jobs
+            );
+          } else if (!this.$route.query.job_status) {
+            this.$store.commit("jobs/SET_LOCUM_ALLOCATED_JOBS", res.data.jobs);
+          }
+          this.showTable = true;
+        })
+        .catch(err => {
+          console.log("err", err);
         })
         .finally(() => {
-          this.$store.commit("jobs/TOGGLE_LOADING", false);
-          this.toggleTable = true;
+          this.loading = false;
+          return;
         });
     },
-    sorted(order_by) {
+    async getAvailableJobsRealTime(job) {
+      if (!job) {
+        return;
+      }
+      if (
+        this.$route.path.includes("/my-practice") &&
+        this.$route.query.job_status === "Available"
+      ) {
+        this.showRefresh = true;
+      }
+    },
+    async getMatchedJobsRealTime(job) {
+      if (!job) {
+        return;
+      }
+      if (
+        this.$route.path.includes("/my-practice") &&
+        (!this.$route.query.status ||
+          this.$route.query.job_status === "Matched")
+      ) {
+        this.showRefresh = true;
+      }
+    },
+    async getUnsuccessfulJobsRealTime(job) {
+      if (!job) {
+        return;
+      }
+      if (
+        this.$route.path.includes("/my-practice") &&
+        (this.$route.query.job_status === "Unsuccessful" ||
+          this.$route.query.job_status === "Applied")
+      ) {
+        this.showRefresh = true;
+      }
+    },
+    async getCurrentJobsRealTime(job) {
+      if (!job) {
+        return;
+      }
+      if (
+        this.$route.path.includes("/my-practice") &&
+        (this.$route.query.job_status === "Allocated" ||
+          this.$route.query.job_status === "Applied")
+      ) {
+        this.showRefresh = true;
+      }
+    },
+    async getOngoingJobsRealTime(job) {
+      if (!job) {
+        return;
+      }
+      if (
+        this.$route.path.includes("/my-practice") &&
+        (this.$route.query.job_status === "Ongoing" ||
+          this.$route.query.job_status === "Allocated")
+      ) {
+        this.showRefresh = true;
+      }
+    },
+    async getCompletedJobsRealTime(job) {
+      if (!job) {
+        return;
+      }
+      if (
+        this.$route.path.includes("/my-practice") &&
+        (this.$route.query.job_status === "Completed" ||
+          this.$route.query.job_status === "Ongoing")
+      ) {
+        this.showRefresh = true;
+      }
+    },
+    async getApprovedJobsRealTime(job) {
+      if (!job) {
+        return;
+      }
+      if (
+        this.$route.path.includes("/my-practice") &&
+        (this.$route.query.job_status === "Approved" ||
+          this.$route.query.job_status === "Completed")
+      ) {
+        this.showRefresh = true;
+      }
+    },
+    async getCancelledJobsRealTime(job) {
+      if (!job) {
+        return;
+      }
+      if (
+        this.$route.path.includes("/my-practice") &&
+        (this.$route.query.job_status === "Cancelled" ||
+          this.$route.query.job_status === "Allocated" ||
+          this.$route.query.job_status === "Ongoing" ||
+          this.$route.query.job_status === "Available" ||
+          this.$route.query.job_status === "Matched" ||
+          this.$route.query.job_status === "Applied")
+      ) {
+        this.showRefresh = true;
+      }
+    },
+    async getAmendedJobsRealTime(job) {
+      if (!job) {
+        return;
+      }
+      console.log("test", this.$route.path, this.$route.query);
+      if (
+        this.$route.path.includes("/my-practice") &&
+        (!this.$route.query.job_status ||
+          this.$route.query.job_status === "Allocated" ||
+          this.$route.query.job_status === "Ongoing" ||
+          this.$route.query.job_status === "Available" ||
+          this.$route.query.job_status === "Matched" ||
+          this.$route.query.job_status === "Applied")
+      ) {
+        this.showRefresh = true;
+      }
+    },
+    async getUpdatedJobsRealTime(job) {
+      if (!job) {
+        return;
+      }
+      if (
+        this.$route.path.includes("/my-practice") &&
+        (this.$route.query.job_status === "Available" ||
+          this.$route.query.job_status === "Matched")
+      ) {
+        this.showRefresh = true;
+      }
+    },
+    async getDeclinedJobsRealTime(job) {
+      if (!job) {
+        return;
+      }
+      if (
+        this.$route.path.includes("/my-practice") &&
+        (this.$route.query.job_status === "Declined" ||
+          this.$route.query.job_status === "Allocated" ||
+          this.$route.query.job_status === "Applied")
+      ) {
+        this.showRefresh = true;
+      }
+    },
+    async getAutoDeclinedJobsRealTime(job) {
+      if (!job) {
+        return;
+      }
+      if (
+        this.$route.path.includes("/my-practice") &&
+        (this.$route.query.job_status === "Declined" ||
+          this.$route.query.job_status === "Allocated")
+      ) {
+        this.showRefresh = true;
+      }
+    },
+    async getUnavailableJobsRealTime(job) {
+      if (!job) {
+        return;
+      }
+      if (
+        this.$route.path.includes("/my-practice") &&
+        this.$route.query.job_status === "Available"
+      ) {
+        this.showRefresh = true;
+      }
+    },
+    async getUnqualifiedJobsRealTime(job) {
+      if (!job) {
+        return;
+      }
+      if (
+        this.$route.path.includes("/my-practice") &&
+        (this.$route.query.job_status === "Allocated" ||
+          this.$route.query.job_status === "Available" ||
+          this.$route.query.job_status === "Matched" ||
+          this.$route.query.job_status === "Applied")
+      ) {
+        this.showRefresh = true;
+      }
+    },
+    async appointmentUpdated() {
+      this.loading = true;
+      // this.$store.commit("jobs/CLEAR_LOCUM_JOB_NOTIFICATION");
+      await this.getJobsCount(
+        this.isJobPart ? this.jobPartParams : this.params
+      );
+      // console.log(this.current_page, this.total);
+      // return Math.ceil(this.total / this.perPage);
+      await this.getJobs(this.isJobPart ? this.jobPartParams : this.params);
+      this.loading = false;
+    },
+    async refreshJobs() {
+      this.loading = true;
+      // this.$store.commit("jobs/CLEAR_LOCUM_JOB_NOTIFICATION");
+      this.current_page = 1;
+      this.params.offset = 0;
+      this.jobPartParams.offset = 0;
+      this.params.limit = 5;
+      this.jobPartParams.limit = 5;
+      await this.getJobsCount(
+        this.isJobPart ? this.jobPartParams : this.params
+      );
+      await this.getJobs(this.isJobPart ? this.jobPartParams : this.params);
+      this.loading = false;
+      this.showRefresh = false;
+    },
+    removeListener() {
+      this.$socket.removeListener(
+        "Locum Notification Job Available",
+        this.getAvailableJobsRealTime
+      );
+      this.$socket.removeListener(
+        "Locum Notification Job Matched",
+        this.getMatchedJobsRealTime
+      );
+      this.$socket.removeListener(
+        "Locum Notification Job Unsuccessful",
+        this.getUnsuccessfulJobsRealTime
+      );
+      this.$socket.removeListener(
+        "Locum Notification Job Current",
+        this.getCurrentJobsRealTime
+      );
+      this.$socket.removeListener(
+        "Locum Notification Job Ongoing",
+        this.getOngoingJobsRealTime
+      );
+      this.$socket.removeListener(
+        "Locum Notification Job Part Completed",
+        this.getCompletedJobsRealTime
+      );
+      this.$socket.removeListener(
+        "Locum Notification Locum Invoice Updated",
+        this.getApprovedJobsRealTime
+      );
+      this.$socket.removeListener(
+        "Locum Notification Job Cancelled",
+        this.getCancelledJobsRealTime
+      );
+      this.$socket.removeListener(
+        "Locum Notification Job Amended",
+        this.getAmendedJobsRealTime
+      );
+      this.$socket.removeListener(
+        "Locum Notification Job Updated",
+        this.getUpdatedJobsRealTime
+      );
+      this.$socket.removeListener(
+        "Locum Notification Job Declined",
+        this.getDeclinedJobsRealTime
+      );
+      this.$socket.removeListener(
+        "Locum Notification Job Auto Declined",
+        this.getAutoDeclinedJobsRealTime
+      );
+      this.$socket.removeListener(
+        "Locum Notification Job Unavailable",
+        this.getUnavailableJobsRealTime
+      );
+      this.$socket.removeListener(
+        "Locum Notification Job Unqualified",
+        this.getUnqualifiedJobsRealTime
+      );
+    },
+    async filterJob() {
+      this.current_page = 1;
+      this.params.offset = 0;
+      this.jobPartParams.offset = 0;
+      this.loading = true;
+      this.filterModal = false;
+      await this.getJobsCount(
+        this.isJobPart ? this.jobPartParams : this.params
+      );
+      await this.getJobs(this.isJobPart ? this.jobPartParams : this.params);
+      this.loading = false;
+    },
+    async sorted(order_by) {
       this.current_page = 1;
       this.params.offset = 0;
       this.params.order_by = order_by;
       this.jobPartParams.offset = 0;
       this.jobPartParams.order_by = order_by;
-      this.$store.commit("jobs/TOGGLE_LOADING", true);
-      this.getJobs(this.isJobPart ? this.jobPartParams : this.params);
+      this.loading = true;
+      await this.getJobs(this.isJobPart ? this.jobPartParams : this.params);
+      this.loading = false;
     },
-    pagechanged(page) {
+    async pagechanged(page) {
       this.current_page = page;
       this.params.offset = this.params.limit * (page - 1);
       this.jobPartParams.offset = this.jobPartParams.limit * (page - 1);
-      this.$store.commit("jobs/TOGGLE_LOADING", true);
-      this.getJobs(this.isJobPart ? this.jobPartParams : this.params);
+      this.loading = true;
+      await this.getJobs(this.isJobPart ? this.jobPartParams : this.params);
+      this.loading = false;
     },
-    limitchanged(limit) {
+    async limitchanged(limit) {
       this.current_page = 1;
       this.params.offset = 0;
       this.params.limit = limit;
       this.jobPartParams.offset = 0;
       this.jobPartParams.limit = limit;
-      this.$store.commit("jobs/TOGGLE_LOADING", true);
-      this.getJobs(this.isJobPart ? this.jobPartParams : this.params);
+      this.loading = true;
+      await this.getJobs(this.isJobPart ? this.jobPartParams : this.params);
+      this.loading = false;
     },
     clearFilters() {
+      this.params.offset = 0;
+      this.params.limit = 5;
       this.params.type = "";
       this.params.job_number = "";
       this.params.surgery_id = "";
@@ -816,7 +1226,10 @@ export default {
       this.params.shift_id = "";
       this.params.rate = "";
       this.params.rate_type_id = "";
+      this.params.order_by = [];
 
+      this.jobPartParams.offset = 0;
+      this.jobPartParams.limit = 5;
       this.jobPartParams.job_type = "";
       this.jobPartParams.job_part_number = "";
       this.jobPartParams.job_surgery_id = "";
@@ -825,22 +1238,16 @@ export default {
       this.jobPartParams.job_rate = "";
       this.jobPartParams.job_rate_type_id = "";
       this.jobPartParams.invoice_status = "";
-
       this.jobPartParams.near_post_code = "";
       this.jobPartParams.miles = "";
       this.jobPartParams.calendar_date_start = "";
       this.jobPartParams.calendar_date_end = "";
       this.jobPartParams.time_start = "";
       this.jobPartParams.time_end = "";
-      this.params.order_by = [];
       this.jobPartParams.order_by = [];
+
+      return;
     },
-    // show(item) {
-    //   this.$router.push({
-    //     path: `/my-practice/${this.$route.params.practiceId}/related-jobs/${item.id}`,
-    //     query: { ...this.$route.query }
-    //   });
-    // },
     onSelect(value) {
       let address_components = value.details.result.address_components;
       let postal_code = address_components.find(component =>

@@ -161,7 +161,7 @@
         </div>
       </div>
     </div>
-    <AppLoading :loading="$store.state.calendar.loading" />
+    <AppLoading :loading="$store.state.calendar.loading" spinner />
   </section>
 </template>
 <script>

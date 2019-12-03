@@ -23,25 +23,6 @@ export function fetchPracticeJobsReminder(axios, payload) {
     return axios.$get(`/api/v1/practice/jobs`, { params: params })
 }
 
-export function fetchLocumAllocatedJobParts(axios, payload) {
-    return axios.$get(`/api/v1/locum/job-parts`, { params: payload })
-}
-
-export function fetchLocumJobs(axios, payload) {
-    // console.log(payload)
-    let url = '/api/v1/locum/jobs'
-
-    if (payload.status && payload.status.length > 0) {
-        payload.status.forEach(item => {
-            if (['ongoing', 'completed', 'approved'].includes(item.toLowerCase())) {
-                url = '/api/v1/locum/job-parts'
-            }
-        })
-    }
-
-    return axios.$get(`${url}${payload.id && payload.first ? `/${payload.id}` : ''}${payload.countOnly ? '/count' : ''}`, { params: payload })
-}
-
 export function fetchPracticeJob(axios, payload) {
     return axios.$get(`/api/v1/practice/jobs/${payload}`)
 }

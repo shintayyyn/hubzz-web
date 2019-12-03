@@ -86,7 +86,9 @@
         </div>
       </div>
     </div>
-    <div class="shield" v-if="create_job_modal" @click="close"></div>
+    <transition name="fade" mode="out-in">
+      <div class="shield" v-if="create_job_modal" @click="close"></div>
+    </transition>
     <transition name="slide" mode="out-in">
       <template v-if="create_job_modal">
         <div class="modal-container shadow-lg">

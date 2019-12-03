@@ -5,7 +5,7 @@
         <div class="flex justify-between items-center pb-2">
           <div class="flex items-center">
             <svgicon name="chat" height="20" width="20" color="#888 #555 #fff" class="mr-2" />
-            <!-- <span class="font-bold">{{ this.user.personal_detail.name }}</span> -->
+            <span class="font-bold">{{ this.user.personal_detail.name }}</span>
           </div>
           <div class="flex items-center">
             <!-- <div class="px-2 font-bold text-lg hover:text-gray-500 cursor-pointer" @click="$emit('close')">x</div> -->
@@ -31,6 +31,7 @@
                 v-if="conversation_id"
               >Conversation</li>
               <li
+                v-if="!['Completed','Allocated','Ongoing'].includes($route.query.status)"
                 class="hover:bg-yellow-500 cursor-pointer px-3 py-1"
                 @click="$emit('showProfile'), showDropDown = false"
               >Profile</li>

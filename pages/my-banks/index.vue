@@ -12,8 +12,9 @@
           >
             <div class="h-full rounded-lg shadow-lg bg-gray-300 hover:bg-gray-400 p-4">
               <nuxt-link :to="{ path: `/my-banks/${locum.id}`, query: {...$route.query}}">
+              <div class="flex justify-end">
                 <div
-                  class="flex justify-end z-50"
+                  class="flex justify-end items-center z-50"
                   v-if="authPermissions.includes('Favorite MyBanks Locum')"
                 >
                   <template v-if="locum.is_favorite">
@@ -35,8 +36,15 @@
                     />
                   </template>
                 </div>
-
+                <button
+                    class="bg-yellow-500 ml-2 rounded-lg hover:bg-yellow-400 focus:outline-none"
+                    @click.prevent.stop="message(locum.id)"
+                  >
+                    <svgicon name="chat" height="20" width="20" color="#888 #555 #fff" class="m-2" />
+                  </button>
+                </div>
                 <div class="flex flex-wrap text-center mt-4 cursor-pointer">
+                
                   <div class="w-full flex justify-center">
                     <AppAvatar
                       :src="locum.avatar && locum.avatar.file && locum.avatar.file.url ? locum.avatar.file.url : ''"
@@ -55,6 +63,17 @@
           </div>
         </div>
 
+        <transition name="fade" mode="out-in">
+          <div class="message-modal md:w-2/3 lg:w-1/2 xl:w-1/3" v-if="sendMessageModal">
+            <SendMessageModal
+                :user="user"
+                @close="sendMessageModal=false"
+                @showProfile="$router.push({ path: `/my-banks/${selectedId}`, query: {...$route.query}})"
+              />
+          </div>
+        </transition>      
+        <div class="shield" v-if="sendMessageModal" @click="sendMessageModal=false"></div>
+        
         <div class="mt-5 flex justify-center" v-if="locums.length > 0 && totalPages > 1">
           <AppPagination
             :total="total"
@@ -69,8 +88,8 @@
         </div>
         <transition name="fade" mode="out-in">
           <nuxt-link
-            class="shield"
-            v-if="$route.name.includes('my-banks-index-locumId')"
+            class="shield border-red-500"
+            v-if="$route.name.includes('my-banks-index-locumId') && !sendMessageModal"
             :to="{ path: `/my-banks`, query: { ...$route.query}}"
           ></nuxt-link>
         </transition>
@@ -85,11 +104,13 @@
 import AppLoading from "@/components/Base/AppLoading";
 import AppAvatar from "@/components/Base/AppAvatar";
 import AppPagination from "@/components/Base/AppPagination";
+import SendMessageModal from "@/components/Messages/SendMessageModal";
 export default {
   components: {
     AppLoading,
     AppAvatar,
-    AppPagination
+    AppPagination,
+    SendMessageModal
   },
   middleware({ query, redirect, error }) {
     if (!query.status) {
@@ -121,7 +142,10 @@ export default {
       loading: false,
       toggleTable: false,
       is_favorite: false,
-      detailed: true
+      detailed: true,
+      sendMessageModal: false,
+      user: [],
+      selectedId: null
     };
   },
   computed: {
@@ -150,6 +174,14 @@ export default {
     this.getLocumsCount();
   },
   methods: {
+    message(id) {
+      this.selectedId = id
+      this.$axios.$get(`/api/v1/practice/locums/${id}`).then(res => {
+        this.user = res.data.user;
+        this.sendMessageModal = true;
+        // this.$emit("show", user);
+      });
+    },
     getLocumsCount() {
       this.loading = true;
       this.$axios

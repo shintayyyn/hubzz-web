@@ -19,7 +19,9 @@
             :class="$route.query.status && $route.query.status.toLowerCase() === 'applied' && $route.query.bank && $route.query.bank === 'true' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
           >My Bank</nuxt-link>
         </div>
+        <div class="flex">
         <AppButton
+          class="mr-2"
           :label="'Filter'"
           @click="filterModal = !filterModal"
           :inStyle="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
@@ -30,6 +32,7 @@
           @click="refreshJobs"
           :inStyle="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
         />
+        </div>
         <div
           v-if="!isJobPart"
           class="flex flex-col justify-start z-10 absolute w-full bg-white shadow-lg p-3 rounded-lg"
@@ -797,7 +800,7 @@ export default {
   destroyed() {
     this.removeListener();
     this.showRefresh = false;
-    this.$store.commit("jobs/CLEAR_PRACTICE_JOB_NOTIFICATION");
+    // this.$store.commit("jobs/CLEAR_PRACTICE_JOB_NOTIFICATION");
   },
   methods: {
     getMyBanks() {
@@ -1114,7 +1117,7 @@ export default {
 
     async refreshJobs() {
       this.loading = true;
-      this.$store.commit("jobs/CLEAR_PRACTICE_JOB_NOTIFICATION");
+      // this.$store.commit("jobs/CLEAR_PRACTICE_JOB_NOTIFICATION");
       this.current_page = 1;
       this.params.offset = 0;
       this.jobPartParams.offset = 0;
