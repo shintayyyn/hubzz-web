@@ -1,7 +1,13 @@
 <template>
   <div class="p-4 md:p-8">
     <div>
-      <svgicon name="left-arrow" height="32" width="32" @click="$emit('close')" class="cursor-pointer" />
+      <svgicon
+        name="left-arrow"
+        height="32"
+        width="32"
+        @click="$emit('close')"
+        class="cursor-pointer"
+      />
     </div>
 
     <div class="flex flex-wrap justify-start items-center mt-4">
@@ -34,9 +40,7 @@
           @click.prevent="toEdit = false"
         >Cancel Editing</button>
       </template>
-      <template
-        v-if="['Unfilled','Declined','Cancelled','Completed','Apprived'].includes(job.status)"
-      >
+      <template v-if="['Unfilled','Declined','Cancelled'].includes(job.status)">
         <AppButton :label="'Repost Job'" @click="repost" :inStyle="'font-size:1em'" />
       </template>
     </div>
@@ -73,7 +77,7 @@
             />
             <SessionDetailModalLocum
               :job="job"
-              v-if="(job.status === 'Allocated' || job.status === 'Ongoing' || job.status === 'Completed')"
+              v-if="(job.status === 'Allocated' || job.status === 'Ongoing' || job.status === 'Completed' || job.status === 'Declined')"
             />
           </div>
         </div>
@@ -172,7 +176,7 @@ export default {
     repost() {
       this.$emit("close");
       setTimeout(() => {
-        this.$store.commit("calendar/REPOST_JOB", this.job);
+        this.$store.commit("calendar/SET_REPOST_JOB", this.job);
         this.$store.commit("calendar/CREATE_JOB_MODAL", true);
       }, 500);
     }

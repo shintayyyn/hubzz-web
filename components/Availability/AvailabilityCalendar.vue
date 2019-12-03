@@ -1,5 +1,5 @@
 <template>
-  <section>
+  <section class="relative">
     <div class="flex flex-row flex-wrap mx-1">
       <div class="w-1/2 text-left">
         <div
@@ -141,13 +141,16 @@
         </div>
       </div>
     </div>
+    <AppLoading :loading="$store.state.calendar.loading" spinner />
   </section>
 </template>
 <script>
 import AvailabilityInfoDateCell from "@/components/Availability/AvailabilityInfoDateCell";
+import AppLoading from "@/components/Base/AppLoading";
 export default {
   components: {
-    AvailabilityInfoDateCell
+    AvailabilityInfoDateCell,
+    AppLoading
   },
   data() {
     return {
@@ -159,21 +162,12 @@ export default {
     };
   },
   computed: {
-    // getLocumAllocatedPartJobs() {
-    //   return this.$store.getters["jobs/getLocumAllocatedPartJobs"];
-    // },
     getLocumOngoingJobs() {
       return this.$store.getters["jobs/getLocumOngoingJobs"];
     },
     getLocumAllocatedJobs() {
       return this.$store.getters["jobs/getLocumAllocatedJobs"];
     },
-    // getLocumAllocatedPrivateJobs() {
-    //   return this.$store.getters["jobs/getLocumAllocatedPrivateJobs"];
-    // },
-    // getLocumAllocatedPlatformJobs() {
-    //   return this.$store.getters["jobs/getLocumAllocatedPlatformJobs"];
-    // },
     getLocumUnavailabilities() {
       return this.$store.getters["jobs/getLocumUnavailabilities"];
     }
@@ -197,23 +191,55 @@ export default {
   },
   methods: {
     getJobs() {
-      this.$store.dispatch("jobs/fetchLocumJobs", {
-        calendar_date_start: this.startOfMonth,
-        calendar_date_end: this.endOfMonth,
-        locum_status: ["Allocated"]
-      });
-
-      this.$store.dispatch("jobs/fetchLocumJobParts", {
-        calendar_date_start: this.startOfMonth,
-        calendar_date_end: this.endOfMonth,
-        locum_status: ["Ongoing"]
-      });
-
-      this.$store.dispatch("jobs/fetchLocumUnavailabilities", {
-        calendar_date_start: this.startOfMonth,
-        calendar_date_end: this.endOfMonth,
-        locum_status: ["Unavailable"]
-      });
+      this.$store.commit("calendar/TOGGLE_LOADING", true);
+      Promise.all([
+        this.$axios.$get("/api/v1/locum/jobs", {
+          params: {
+            locum_status: ["Allocated"],
+            calendar_date_start: `${this.startOfMonth}:gte`,
+            calendar_date_end: `${this.endOfMonth}:lte`,
+            limit: 100000000
+          }
+        }),
+        this.$axios.$get("/api/v1/locum/job-parts", {
+          params: {
+            locum_status: ["Ongoing"],
+            calendar_date_start: `${this.startOfMonth}:gte`,
+            calendar_date_end: `${this.endOfMonth}:lte`,
+            limit: 100000000
+          }
+        }),
+        this.$axios.$get("/api/v1/locum/unavailabilities", {
+          params: {
+            date_start: `${this.startOfMonth}:gte`,
+            date_end: `${this.endOfMonth}:lte`,
+            limit: 100000000
+          }
+        })
+      ])
+        .then(
+          ([responseAllocated, responseOngoing, responseUnavailabilities]) => {
+            this.$store.commit(
+              "jobs/SET_LOCUM_ALLOCATED_JOBS",
+              responseAllocated.data.jobs.filter(
+                job => job.locum_status === "Allocated"
+              )
+            );
+            this.$store.commit(
+              "jobs/SET_LOCUM_ONGOING_JOB_PARTS",
+              responseOngoing.data.job_parts.filter(
+                jobPart => jobPart.locum_status === "Ongoing"
+              )
+            );
+            this.$store.commit(
+              "jobs/SET_LOCUM_UNAVAILABILITIES",
+              responseUnavailabilities.data.unavailabilities
+            );
+          }
+        )
+        .finally(() => {
+          this.$store.commit("calendar/TOGGLE_LOADING", false);
+        });
     },
     getDaysInMonth(month, selectedYear) {
       let date = new Date(selectedYear, month, 1);
@@ -270,11 +296,8 @@ export default {
     selectDate(date) {
       this.$store.commit("availability/SELECT_DATE", date);
       let unavaibleDate = null;
-      // let privateDate = null;
-      // let platformDate = null;
       let ongoingDate = null;
       let allocatedDate = null;
-      // let partDate = null;
       if (
         this.getLocumUnavailabilities &&
         this.getLocumUnavailabilities.length > 0
@@ -289,32 +312,6 @@ export default {
           };
         }
       }
-      // if (
-      //   this.getLocumAllocatedPrivateJobs &&
-      //   this.getLocumAllocatedPrivateJobs.length > 0
-      // ) {
-      //   let hasLocumPrivateJob = this.getLocumAllocatedPrivateJobs.find(job =>
-      //     this.getDateArray(job.date_start, job.date_end).includes(date)
-      //   );
-      //   if (hasLocumPrivateJob) {
-      //     privateDate = {
-      //       shift: hasLocumPrivateJob.shift
-      //     };
-      //   }
-      // }
-      // if (
-      //   this.getLocumAllocatedPlatformJobs &&
-      //   this.getLocumAllocatedPlatformJobs.length > 0
-      // ) {
-      //   let hasLocumCurrentJob = this.getLocumAllocatedPlatformJobs.filter(
-      //     job => this.getDateArray(job.date_start, job.date_end).includes(date)
-      //   );
-      //   if (hasLocumCurrentJob && hasLocumCurrentJob.length > 0) {
-      //     platformDate = hasLocumCurrentJob.map(item => {
-      //       return item.shift;
-      //     });
-      //   }
-      // }
       if (this.getLocumOngoingJobs && this.getLocumOngoingJobs.length > 0) {
         let hasLocumOngoingJob = this.getLocumOngoingJobs.filter(job_part =>
           this.getDateArray(job_part.date_start, job_part.date_end).includes(
@@ -337,31 +334,7 @@ export default {
           });
         }
       }
-      // if (
-      //   this.getLocumAllocatedPartJobs &&
-      //   this.getLocumAllocatedPartJobs.length > 0
-      // ) {
-      //   let hasLocumAllocatedPartJob = this.getLocumAllocatedPartJobs.filter(
-      //     job_part =>
-      //       this.getDateArray(job_part.date_start, job_part.date_end).includes(
-      //         date
-      //       )
-      //   );
-      //   if (hasLocumAllocatedPartJob && hasLocumAllocatedPartJob.length > 0) {
-      //     partDate = hasLocumAllocatedPartJob.map(item => {
-      //       return item.job.shift;
-      //     });
-      //   }
-      // }
-      this.$emit(
-        "open",
-        unavaibleDate,
-        // privateDate,
-        // platformDate,
-        ongoingDate,
-        // partDate
-        allocatedDate
-      );
+      this.$emit("open", unavaibleDate, ongoingDate, allocatedDate);
     }
   }
 };

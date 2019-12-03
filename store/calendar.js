@@ -42,7 +42,7 @@ export const mutations = {
   CREATE_JOB_MODAL(state, payload) {
     state.create_job_modal = payload
   },
-  REPOST_JOB(state, payload) {
+  SET_REPOST_JOB(state, payload) {
     state.repost_job = payload
   },
   CLEAR_REPOST_JOB(state) {
