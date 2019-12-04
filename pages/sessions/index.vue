@@ -20,18 +20,18 @@
           >My Bank</nuxt-link>
         </div>
         <div class="flex">
-        <AppButton
-          class="mr-2"
-          :label="'Filter'"
-          @click="filterModal = !filterModal"
-          :inStyle="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
-        />
-        <AppButton
-          v-if="showRefresh"
-          :label="'Refresh'"
-          @click="refreshJobs"
-          :inStyle="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
-        />
+          <AppButton
+            class="mr-2"
+            :label="'Filter'"
+            @click="filterModal = !filterModal"
+            :inStyle="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
+          />
+          <AppButton
+            v-if="showRefresh"
+            :label="'Refresh'"
+            @click="refreshJobs"
+            :inStyle="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
+          />
         </div>
         <div
           v-if="!isJobPart"
@@ -321,6 +321,7 @@
           :orderBy="isJobPart ? jobPartParams.order_by :params.order_by"
           :loading="loading"
           :routerLink="'/sessions'"
+          :minHeight="'70vh'"
           @pagechanged="pagechanged"
           @limitchanged="limitchanged"
           @sorted="sorted"
@@ -388,7 +389,7 @@ export default {
       // app table params
       params: {
         offset: 0,
-        limit: 5,
+        limit: 10,
         order_by: [],
         job_number: "",
         title: "",
@@ -407,7 +408,7 @@ export default {
       },
       jobPartParams: {
         offset: 0,
-        limit: 5,
+        limit: 10,
         order_by: [],
         job_part_number: "",
         job_title: "",
@@ -1121,8 +1122,8 @@ export default {
       this.current_page = 1;
       this.params.offset = 0;
       this.jobPartParams.offset = 0;
-      this.params.limit = 5;
-      this.jobPartParams.limit = 5;
+      this.params.limit = 10;
+      this.jobPartParams.limit = 10;
       await this.getJobsCount(
         this.isJobPart ? this.jobPartParams : this.params
       );
@@ -1222,7 +1223,7 @@ export default {
     },
     clearFilters() {
       this.params.offset = 0;
-      this.params.limit = 5;
+      this.params.limit = 10;
       this.params.type = "";
       this.params.job_number = "";
       this.params.surgery_id = "";
@@ -1233,7 +1234,7 @@ export default {
       this.params.order_by = [];
 
       this.jobPartParams.offset = 0;
-      this.jobPartParams.limit = 5;
+      this.jobPartParams.limit = 10;
       this.jobPartParams.job_type = "";
       this.jobPartParams.job_part_number = "";
       this.jobPartParams.job_surgery_id = "";
