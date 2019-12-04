@@ -101,9 +101,7 @@
           <div class="flex flex-col my-8">
             <div class="relative flex flex-row flex-wrap justify-between">
               <label for="rates" class="text-xs sm:text-sm py-1">Your preferred rates £</label>
-              <div
-                class="rounded bg-gray-300 p-1 text-xs sm:text-sm"
-              >To match available jobs with</div>
+              <div class="rounded bg-gray-300 p-1 text-xs sm:text-sm">To match available jobs with</div>
             </div>
             <div class="flex flex-row flex-wrap justify-between">
               <div class="flex flex-col w-full sm:w-1/3 px-1">
@@ -213,7 +211,7 @@
               v-model="form.company_registration_number"
               :type="'text'"
               :name="'company_registration_number'"
-              :label="'Company_registration_number'"
+              :label="'Company Registration Number'"
               :error="formError.find(item => item.field === 'company_registration_number')"
               :placeholder="'The number of your company from Companies House'"
             />
@@ -424,8 +422,8 @@ export default {
       },
       profile: {
         avatar: null,
-        name: '',
-        email: '',
+        name: "",
+        email: ""
       },
       formError: [],
       loading: false
@@ -512,8 +510,8 @@ export default {
   },
   mounted() {
     this.profile.avatar = this.user.avatar;
-    this.profile.name = this.user.personal_detail.name
-    this.profile.email = this.user.email
+    this.profile.name = this.user.personal_detail.name;
+    this.profile.email = this.user.email;
     this.form.gmc_or_nmc_number = this.user.locum_detail.gmc_or_nmc_number.number;
     this.form.mpl_or_npl_number = this.user.locum_detail.mpl_or_npl_number.number;
     if (this.user.locum_detail.gmc_or_nmc_number.status === "Rejected") {
@@ -590,7 +588,10 @@ export default {
       }
     });
     if (this.user.locum_detail.invoice_detail) {
-      this.form.employment_type = this.user.locum_detail.invoice_detail.employment_type;
+      this.form.employment_type = this.user.locum_detail.invoice_detail
+        .employment_type
+        ? this.user.locum_detail.invoice_detail.employment_type
+        : "Self-Employed";
       this.form.utr_number = this.user.locum_detail.invoice_detail.utr_number;
       this.form.company_registration_number = this.user.locum_detail.invoice_detail.company_registration_number;
       this.form.ir35 = this.user.locum_detail.invoice_detail.ir35;
@@ -615,7 +616,6 @@ export default {
       this.form.post_code = postal_code ? postal_code.long_name : "";
     },
     async save() {
-      console.log(this.form);
       try {
         this.formError = [];
         let notRequired = [
@@ -630,12 +630,14 @@ export default {
           "referee_2_contact_name",
           "referee_2_phone_number",
           "referee_2_email",
-          "paid_under_payroll"
+          "paid_under_payroll",
+          "mandatory_training_id",
+          "ir35"
         ];
 
         if (this.form.employment_type === "Self-Employed") {
           notRequired.push("company_registration_number");
-        } else if (this.form.employment_type === "Limited Companyy") {
+        } else if (this.form.employment_type === "Limited Company") {
           notRequired.push("utr_number");
         }
 
@@ -665,6 +667,7 @@ export default {
           this.form.spoken_language_id = this.form.spoken_language_id
             ? this.form.spoken_language_id.map(item => item.value)
             : [];
+
           const response = await this.$axios.$put(
             `/api/v1/locum/me/profile`,
             this.form

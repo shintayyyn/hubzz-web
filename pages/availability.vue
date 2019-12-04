@@ -41,29 +41,16 @@
         :allocatedDate="allocatedDate"
         :ongoingDate="ongoingDate"
       />
-      <!-- <transition name="slide" mode="out-in">
-        <div class="modal-container shadow-lg" v-if="modal">
-          <AddUnavailableDateModal
-            @close="close"
-            :unavailableDate="unavailableDate"
-            :allocatedDate="allocatedDate"
-            :ongoingDate="ongoingDate"
-            :type="type"
-          />
-        </div>
-      </transition>-->
     </template>
   </section>
 </template>
 <script>
 import AvailabilityShift from "@/components/Availability/AvailabilityShift";
 import AvailabilityCalendar from "@/components/Availability/AvailabilityCalendar";
-import AddUnavailableDateModal from "@/components/Availability/AddUnavailableDateModal";
 export default {
   components: {
     AvailabilityShift,
-    AvailabilityCalendar,
-    AddUnavailableDateModal
+    AvailabilityCalendar
   },
   data() {
     return {
@@ -107,29 +94,7 @@ export default {
       this.$router.push({
         path: `/availability/${selectedDate}`
       });
-      // console.log(unavailableDate);
-      // if (unavailableDate && unavailableDate.id) {
-      //   // this.type === "solo";
-      //   this.$router.push({
-      //     path: `/availability/${unavailableDate.id}`
-      //   });
-      // } else if (unavailableDate === null) {
-      //   // this.type === "range";
-      //   this.$router.push({
-      //     path: `/availability/create`
-      //   });
-      // }
-      // this.unavailableDate = unavailableDate;
-      // this.allocatedDate = allocatedDate;
-      // this.ongoingDate = ongoingDate;
-      // document.body.style.overflow = "hidden";
-      // this.type = "solo";
-      // this.modal = true;
     }
-    // close() {
-    //   this.modal = false;
-    //   document.body.style.overflow = "auto";
-    // }
   }
 };
 </script>
