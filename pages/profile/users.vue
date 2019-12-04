@@ -10,7 +10,7 @@
       <AppButton :label="'Filter'" @click="showFilter()" :inStyle="'padding:5px 14px;margin-bottom:5px; font-size:14px;'" />
     </div>
     <div
-      class="flex-wrap justify-start items-center z-10 absolute w-full bg-white shadow-xl p-3 rounded-lg"
+      class="flex-wrap justify-start items-end z-10 absolute w-full bg-white shadow-xl p-3 rounded-lg"
       :class="filterToggle ? 'flex' : 'hidden'"
     >
       <AppInput

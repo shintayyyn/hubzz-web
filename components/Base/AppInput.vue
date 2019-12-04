@@ -43,7 +43,7 @@
         <template v-else>
           <div class="flex flex-row justify-start mt-1">
             <template v-if="['text','time','email','password', 'number'].includes(type)">
-              <div class="flex flex-col w-full">
+              <div class="flex flex-col w-full mt-1">
                 <input
                   :value="value"
                   :type="type"
@@ -67,7 +67,7 @@
             </template>
             <template v-if="type === 'select'">
               <div class="w-full relative">
-                <div class="w-full customized-select py-8 flex items-center">
+                <div class="w-full customized-select py-5 flex items-center">
                   <select
                     ref="inputSelect"
                     :value="value"
@@ -208,7 +208,7 @@
             :value="value"
             :type="type"
             :placeholder="placeholder"
-            class="focus:outline-none pl-4 pr-6 py-4 font-bold text-xs sm:text-sm w-full rounded-lg"
+            class="focus:outline-none pl-4 pr-6 py-3 font-bold text-xs sm:text-sm w-full rounded-lg"
             :class="error? 'border-red-500':''"
             @input="$emit('input', $event.target.value)"
             :style="inStyle"
