@@ -7,7 +7,7 @@
         class="row flex justify-start font-bold leading-none text-sm"
       >
         <div
-          class="flex-1 flex items-center px-2"
+          class="flex-1 flex items-center p-2"
           v-for="(column, index) in columns"
           :key="`${column}-${index}`"
           :class="[

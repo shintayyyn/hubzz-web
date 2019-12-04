@@ -37,10 +37,10 @@
                   </template>
                 </div>
                 <button
-                  class="ml-2 focus:outline-none"
+                  class="ml-2 focus:outline-none hover:bg-gray-300 rounded-lg"
                   @click.prevent.stop="message(locum)"
                 >
-                  <svgicon name="chat" height="32" width="32" color="#6b778b #4a5568 #fff"/>
+                  <svgicon name="chat" height="24" width="24" color="#6b778b #4a5568 #fff" class="m-2"/>
                 </button>
                 </div>
                 <div class="flex flex-wrap text-center mt-4 cursor-pointer">
@@ -248,3 +248,8 @@ export default {
   }
 };
 </script>
+<style>
+.chat-svg:hover{
+  color: #535c6d #3c4453 #fff;
+}
+</style>
