@@ -146,7 +146,6 @@ export default {
 
         this.unavailableDate.shifts = shifts;
 
-        // console.log("test", this.unavailableDate);
         this.form.id = this.unavailableDate.id;
         this.form.shift_id = this.unavailableDate.shifts.map(shift => shift.id);
       }

@@ -17,17 +17,31 @@
         <div class="availability-calendar relative rounded-lg shadow-lg p-5">
           <AvailabilityCalendar @open="open" />
           <div class="absolute bottom-0 right-0 -my-2 -mx-1 md:-m-2">
-            <div
-              class="rounded-full h-10 w-10 sm:h-12 sm:w-12 md:h-16 md:w-16 text-2xl sm:text-3xl md:text-4xl flex items-center focus:outline-none justify-center bg-yellow-500 font-semibold cursor-pointer shadow-md hover:text-white"
-              @click="add"
-            >+</div>
+            <nuxt-link :to="'/availability/create?type=range'">
+              <div
+                class="rounded-full h-10 w-10 sm:h-12 sm:w-12 md:h-16 md:w-16 text-2xl sm:text-3xl md:text-4xl flex items-center focus:outline-none justify-center bg-yellow-500 font-semibold cursor-pointer shadow-md hover:text-white"
+              >+</div>
+            </nuxt-link>
           </div>
         </div>
       </div>
       <transition name="fade" mode="out-in">
-        <div class="shield" v-if="modal" @click="close"></div>
+        <nuxt-link :to="'/availability'">
+          <transition name="fade" mode="out-in">
+            <div
+              class="shield"
+              v-if="['availability-id','availability-create'].includes($route.name)"
+            ></div>
+          </transition>
+        </nuxt-link>
       </transition>
-      <transition name="slide" mode="out-in">
+      <nuxt-child
+        :selectedDate="selectedDate"
+        :unavailableDate="unavailableDate"
+        :allocatedDate="allocatedDate"
+        :ongoingDate="ongoingDate"
+      />
+      <!-- <transition name="slide" mode="out-in">
         <div class="modal-container shadow-lg" v-if="modal">
           <AddUnavailableDateModal
             @close="close"
@@ -37,7 +51,7 @@
             :type="type"
           />
         </div>
-      </transition>
+      </transition>-->
     </template>
   </section>
 </template>
@@ -56,6 +70,7 @@ export default {
       shifts: [],
       modal: false,
       type: "",
+      selectedDate: null,
       unavailableDate: null,
       allocatedDate: null,
       ongoingDate: null
@@ -66,6 +81,15 @@ export default {
 
     this.$store.commit("availability/SET_DATE_TODAY");
   },
+  watch: {
+    "$route.name"(value) {
+      if (["availability-id", "availability-create"].includes(value)) {
+        document.body.style.overflow = "hidden";
+      } else if (!["availability-id", "availability-create"].includes(value)) {
+        document.body.style.overflow = "auto";
+      }
+    }
+  },
   methods: {
     add() {
       this.unavailableDate = null;
@@ -74,18 +98,38 @@ export default {
       this.type = "range";
       this.modal = true;
     },
-    open(unavailableDate, allocatedDate, ongoingDate) {
+    open({ selectedDate, unavailableDate, allocatedDate, ongoingDate }) {
+      this.selectedDate = selectedDate;
       this.unavailableDate = unavailableDate;
       this.allocatedDate = allocatedDate;
       this.ongoingDate = ongoingDate;
-      document.body.style.overflow = "hidden";
-      this.type = "solo";
-      this.modal = true;
-    },
-    close() {
-      this.modal = false;
-      document.body.style.overflow = "auto";
+
+      this.$router.push({
+        path: `/availability/${selectedDate}`
+      });
+      // console.log(unavailableDate);
+      // if (unavailableDate && unavailableDate.id) {
+      //   // this.type === "solo";
+      //   this.$router.push({
+      //     path: `/availability/${unavailableDate.id}`
+      //   });
+      // } else if (unavailableDate === null) {
+      //   // this.type === "range";
+      //   this.$router.push({
+      //     path: `/availability/create`
+      //   });
+      // }
+      // this.unavailableDate = unavailableDate;
+      // this.allocatedDate = allocatedDate;
+      // this.ongoingDate = ongoingDate;
+      // document.body.style.overflow = "hidden";
+      // this.type = "solo";
+      // this.modal = true;
     }
+    // close() {
+    //   this.modal = false;
+    //   document.body.style.overflow = "auto";
+    // }
   }
 };
 </script>
@@ -107,13 +151,13 @@ export default {
 .shield {
   z-index: 509;
 }
-.modal-container {
+/* .modal-container {
   z-index: 510;
 }
 @media screen and (min-width: 1200px) {
   .modal-container {
     width: 80%;
   }
-}
+} */
 </style>
 

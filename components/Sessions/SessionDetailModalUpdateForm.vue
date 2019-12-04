@@ -260,7 +260,7 @@
             v-model="form.shift_id"
             :type="'select'"
             :name="'shift_id'"
-            :label="'Gender'"
+            :label="'Shift'"
             :placeholder="'Select...'"
             :items="shifts"
             :error="formError.find(item => item.field === 'shift_id')"
