@@ -64,33 +64,33 @@ export default {
     };
   },
 
-  watch: {
-    $route({ params }) {
-      if (params && params.id) {
-        this.removeNotification(parseInt(params.id));
-      }
-    }
-  },
+  // watch: {
+  //   $route({ params }) {
+  //     if (params && params.id) {
+  //       this.removeNotification(parseInt(params.id));
+  //     }
+  //   }
+  // },
 
   mounted() {
     document.body.style.overflow = "hidden";
-    this.removeNotification(parseInt(this.$route.params.id));
+    // this.removeNotification(parseInt(this.$route.params.id));
   },
 
   destroyed() {
     document.body.style.overflow = "auto";
-  },
-
-  methods: {
-    removeNotification(id) {
-      let index = this.$store.state.billing.practice_billing_notifications.findIndex(
-        billing => billing.id === id
-      );
-      if (index >= 0) {
-        this.$store.commit("billing/REMOVE_PRACTICE_BILLING_NOTIFICATION", id);
-      }
-    }
   }
+
+  // methods: {
+  //   removeNotification(id) {
+  //     let index = this.$store.state.billing.practice_billing_notifications.findIndex(
+  //       billing => billing.id === id
+  //     );
+  //     if (index >= 0) {
+  //       this.$store.commit("billing/REMOVE_PRACTICE_BILLING_NOTIFICATION", id);
+  //     }
+  //   }
+  // }
 };
 </script>
 

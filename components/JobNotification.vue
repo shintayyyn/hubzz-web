@@ -27,7 +27,7 @@
             <transition-group name="drop" mode="out-in">
               <template v-for="notification in notifications">
                 <div
-                  @click="goTo(notification.type, notification.id, notification.status ? notification.status : notification.locum_status)"
+                  @click="goTo(notification)"
                   :key="`${notification.id}-${notification.notification_type}`"
                   class="cards relative mx-1 my-2 p-3 flex flex-wrap bg-gray-100 hover:bg-gray-200 rounded-lg shadow-md text-xs md:text-sm opacity-100 md:opacity-75 hover:opacity-100 transition-hover cursor-pointer"
                 >
@@ -158,7 +158,35 @@ export default {
         path: `${this.url}/${id}`
       });
     },
-    async goTo(type, id, status) {
+    async goTo(notification) {
+      let type = notification.type;
+      let id = notification.id;
+      let status = notification.status
+        ? notification.status
+        : notification.locum_status;
+      let dateStart = notification.date_start;
+      let dateEnd = notification.date_end;
+      let notificationType = notification.type;
+
+      if (this.$route.path.includes("/dashboard")) {
+        let selectedMonth =
+          this.$moment()
+            .month(dateStart)
+            .format("M") - 1;
+
+        let selectedYear = this.$moment()
+          .month(dateStart)
+          .format("YYYY");
+
+        this.$store.commit(
+          "calendar/SELECT_DATE",
+          this.$moment(dateStart, "YYYY-MM-DD")
+            .set("month", selectedMonth)
+            .set("year", selectedYear)
+            .format("YYYY-MM-DD")
+        );
+      }
+
       this.$store.commit("calendar/CREATE_JOB_MODAL", false);
 
       let url = "";
@@ -210,13 +238,17 @@ export default {
         }, 500);
       }
 
-      this.close(id);
+      this.close(id, notificationType);
     },
-    close(id) {
-      this.$store.commit("jobs/REMOVE_PRACTICE_JOB_NOTIFICATION", id);
-      this.$store.commit("jobs/REMOVE_LOCUM_JOB_NOTIFICATION", id);
-      this.$store.commit("billing/REMOVE_PRACTICE_BILLING_NOTIFICATION", id);
-      this.$store.commit("billing/REMOVE_LOCUM_BILLING_NOTIFICATION", id);
+    close(id, type) {
+      if (type === "Jobs") {
+        this.$store.commit("jobs/REMOVE_PRACTICE_JOB_NOTIFICATION", id);
+        this.$store.commit("jobs/REMOVE_LOCUM_JOB_NOTIFICATION", id);
+      }
+      if (type === "Billings") {
+        this.$store.commit("billing/REMOVE_PRACTICE_BILLING_NOTIFICATION", id);
+        this.$store.commit("billing/REMOVE_LOCUM_BILLING_NOTIFICATION", id);
+      }
     },
     bgStatus(status) {
       switch (status) {

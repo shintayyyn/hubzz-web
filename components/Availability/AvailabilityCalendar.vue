@@ -173,6 +173,7 @@ export default {
     }
   },
   created() {
+    console.log(this.getLocumUnavailabilities);
     this.startOfMonth = this.$moment()
       .startOf("month")
       .format("YYYY-MM-DD");
@@ -334,6 +335,10 @@ export default {
           });
         }
       }
+
+      // console.log("unavaibleDate", unavaibleDate);
+      // console.log("ongoingDate", ongoingDate);
+      // console.log("allocatedDate", allocatedDate);
       this.$emit("open", unavaibleDate, ongoingDate, allocatedDate);
     }
   }

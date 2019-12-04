@@ -65,31 +65,31 @@ export default {
       throw err;
     }
   },
-  watch: {
-    $route({ params }) {
-      if (params && params.id) {
-        this.removeNotification(parseInt(params.id));
-      }
-    }
-  },
-  mounted() {
-    this.removeNotification(parseInt(this.$route.params.id));
-  },
+  // watch: {
+  //   $route({ params }) {
+  //     if (params && params.id) {
+  //       this.removeNotification(parseInt(params.id));
+  //     }
+  //   }
+  // },
+  // mounted() {
+  //   this.removeNotification(parseInt(this.$route.params.id));
+  // },
   methods: {
     close() {
       this.$router.push({
         path: `/sessions`,
         query: { ...this.$route.query }
       });
-    },
-    removeNotification(id) {
-      let index = this.$store.state.jobs.practice_job_notifications.findIndex(
-        job => job.id === id
-      );
-      if (index >= 0) {
-        this.$store.commit("jobs/REMOVE_PRACTICE_JOB_NOTIFICATION", id);
-      }
     }
+    // removeNotification(id) {
+    //   let index = this.$store.state.jobs.practice_job_notifications.findIndex(
+    //     job => job.id === id
+    //   );
+    //   if (index >= 0) {
+    //     this.$store.commit("jobs/REMOVE_PRACTICE_JOB_NOTIFICATION", id);
+    //   }
+    // }
   }
 };
 </script>
