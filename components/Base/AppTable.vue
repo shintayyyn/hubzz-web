@@ -145,7 +145,9 @@ export default {
       params: []
     };
   },
-  created() {},
+  created() {
+    console.log(this.columns)
+  },
   mounted() {
     this.params = this.orderBy;
   },
@@ -188,7 +190,6 @@ export default {
     dataCell(item, column) {
       var dataIndexArr = column.dataIndex.split(".");
       let str = null;
-
       if (Array.isArray(item[dataIndexArr[0]])) {
         str = [];
         item[dataIndexArr[0]].forEach(item => {
