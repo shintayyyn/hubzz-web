@@ -25,11 +25,13 @@
 			@limitchanged="limitchanged"
 			@sorted="sorted"
 		>
-			<template v-slot:actions="slotProps">
-				<div class="flex items-center justify-center">
-          <div class="rounded-full px-6 py-1" :class="surgeryStatus()">{{ getStatus() }}</div>
-        </div>
-			</template>
+    
+    <!-- <template v-slot:actions="slotProps">
+      <div class="flex items-center justify-center">
+        <div class="rounded-full px-6 py-1" >{{ surgeries.status }}</div>
+      </div>
+    </template> -->
+
 		</AppTable>
 		<div v-else class="flex justify-center py-4 text-gray-500">
 			No Branches / Surgeries
@@ -108,15 +110,10 @@ export default {
 					dataIndex: "surgery.code",
 					class: "text-center"
 				},
-				// {
-				//   name: "Pay for surgery",
-				//   dataIndex: "pay_for_surgery",
-				//   class: "text-center"
-				// },
 				{
 					name: "Status",
-          			dataIndex: "actions",
-					class: "status text-center"
+          dataIndex: "status",
+					class: "text-center"
 				}
 			]
 		};
@@ -152,38 +149,27 @@ export default {
 
 			let surgeries = [];
 			let parent_surgery = null;
-			let totalSurgeries = 0;
+      let totalSurgeries = 0;
+      
+      const responseCount = await app.$axios.$get(
+        `/api/v1/practice/me/practice-surgeries/count`
+      );
 
-			if (practice.type === "Hub") {
-				const responseCount = await app.$axios.$get(
-					`/api/v1/practice/me/practice-surgeries/count`
-				);
+      totalSurgeries =
+        responseCount.data && responseCount.data.count
+          ? responseCount.data.count
+          : 0;
 
-				totalSurgeries =
-					responseCount.data && responseCount.data.count
-						? responseCount.data.count
-						: 0;
+      const response = await app.$axios.$get(
+        `/api/v1/practice/me/practice-surgeries?limit=5`
+      );
+      if (response.data && response.data.practice_surgeries) {
+        response.data.practice_surgeries.forEach(surgery => {
+          surgeries.push(surgery);
+          // surgeries.push({ ...surgery, removable: true });
+        });
+      }
 
-				const response = await app.$axios.$get(
-					`/api/v1/practice/me/practice-surgeries?limit=5`
-				);
-				if (response.data && response.data.practice_surgeries) {
-					response.data.practice_surgeries.forEach(surgery => {
-						surgeries.push(surgery);
-						// surgeries.push({ ...surgery, removable: true });
-					});
-				}
-			} else if (practice.type === "Spoke") {
-				if (practice.parent_surgery) {
-					let surgery = {
-						id: practice.parent_surgery.id,
-						pay_for_surgery: practice.pay_for_surgery,
-						verify_job_creation: practice.verify_job_creation,
-						surgery: practice.parent_surgery
-					};
-					surgeries.push(surgery);
-				}
-			}
 			return {
 				practice,
 				surgeries,
@@ -197,7 +183,11 @@ export default {
 			throw err;
 		}
 	},
-
+  async created(){
+    await this.surgeries.map(surgery => {
+      surgery.status = this.getStatus(surgery)
+    })
+  },
 	methods: {
 		getSurgeriesCount(params) {
 			this.$axios
@@ -215,6 +205,7 @@ export default {
 					this.loading = false;
 					this.surgeries = [];
 					res.data.practice_surgeries.forEach(surgery => {
+            surgery.status = this.getStatus(surgery)
 						this.surgeries.push(surgery);
 						// this.surgeries.push({ ...surgery, removable: true });
 					});
@@ -222,7 +213,6 @@ export default {
 				.catch(err => {
 					console.log(err);
         });
-      console.log('surgeries',this.surgeries)
 		},
 		sorted(order_by) {
 			this.current_page = 1;
@@ -293,41 +283,22 @@ export default {
 		setExpulsionReason(terminationReason) {
 			this.terminationReason = terminationReason;
 		},
-		getStatus() {
-			let status = "Invited";
-			this.surgeries.map(item => {
-				if (this.practice.type === "Hub") {
-					if (item.invitation_accepted_at) {
-						status = "Active";
-					}
-					if (item.invitation_rejected_at) {
-						status = "Rejected";
-					}
-					if (item.termination_requested_at) {
-						status = "Request for Temination";
-					}
-					if (item.terminated_at) {
-						status = "Terminated";
-          }
-        } else {
-					item.surgery.practice.practice_surgeries.map(item => {
-						if (item.invitation_accepted_at) {
-							status = "Active";
-						}
-						if (item.invitation_rejected_at) {
-							status = "Rejected";
-						}
-						if (item.termination_requested_at) {
-							status = "Request for Temination";
-						}
-						if (item.terminated_at) {
-							status = "Terminated";
-						}
-					});
-				}
-			});
-			return status;
-		},
+		getStatus(surgery) {
+      let status = "Invited";
+      if (surgery.terminated_at) {
+        status = "Terminated";
+      }
+      else if (surgery.termination_requested_at) {
+        status = "Termination Requested";
+      }
+      else if (surgery.invitation_rejected_at) {
+        status = "Rejected";
+      }
+      else if (surgery.invitation_accepted_at) {
+        status = "Active";
+      }
+      return status;
+    },
 		surgeryStatus() {
 			this.getStatus();
 			switch (this.getStatus()) {

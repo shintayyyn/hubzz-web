@@ -1,6 +1,5 @@
 <template>
   <section class="relative max-w-3xl">
-    <AppLoading :loading="loading" spinner />
     <div class="flex flex-col md:flex-row justify-between">
       <div class="flex flex-wrap items-center">
         <div
@@ -40,7 +39,8 @@
       </div>
     </div>
 
-    <div id="htmlpdf" class="max-w-3xl mb-4 bg-white px-4 py-4 border shadow-md mb-32">
+    <div id="htmlpdf" class="relative max-w-3xl mb-4 bg-white px-4 py-4 border shadow-md mb-32">
+      <AppLoading :loading="loading" spinner :message="'Exporting'" />
       <div class="flex flex-col" :ref="'pdf-header'">
         <!-- LOCUM INFO -->
         <div class="text-xs sm:text-sm sm:text-right leading-normal">

@@ -12,9 +12,9 @@
           >
             <div class="h-full rounded-lg shadow-lg bg-gray-300 hover:bg-gray-400 p-4">
               <nuxt-link :to="{ path: `/my-banks/${locum.id}`, query: {...$route.query}}">
-              <div class="flex justify-end">
+              <div class="flex justify-end items-center">
                 <div
-                  class="flex justify-end items-center z-50"
+                  class="flex justify-end items-center z-40"
                   v-if="authPermissions.includes('Favorite MyBanks Locum')"
                 >
                   <template v-if="locum.is_favorite">
@@ -37,11 +37,11 @@
                   </template>
                 </div>
                 <button
-                    class="bg-yellow-500 ml-2 rounded-lg hover:bg-yellow-400 focus:outline-none"
-                    @click.prevent.stop="message(locum.id)"
-                  >
-                    <svgicon name="chat" height="20" width="20" color="#888 #555 #fff" class="m-2" />
-                  </button>
+                  class="ml-2 focus:outline-none"
+                  @click.prevent.stop="message(locum)"
+                >
+                  <svgicon name="chat" height="32" width="32" color="#6b778b #4a5568 #fff"/>
+                </button>
                 </div>
                 <div class="flex flex-wrap text-center mt-4 cursor-pointer">
                 
@@ -69,6 +69,7 @@
                 :user="user"
                 @close="sendMessageModal=false"
                 @showProfile="$router.push({ path: `/my-banks/${selectedId}`, query: {...$route.query}})"
+                :profileOption="true"
               />
           </div>
         </transition>      
@@ -174,13 +175,10 @@ export default {
     this.getLocumsCount();
   },
   methods: {
-    message(id) {
-      this.selectedId = id
-      this.$axios.$get(`/api/v1/practice/locums/${id}`).then(res => {
-        this.user = res.data.user;
-        this.sendMessageModal = true;
-        // this.$emit("show", user);
-      });
+    message(user) {
+      this.selectedId = user.id
+      this.user = user;
+      this.sendMessageModal = true;
     },
     getLocumsCount() {
       this.loading = true;

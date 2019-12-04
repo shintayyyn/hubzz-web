@@ -2,9 +2,18 @@
   <section>
     <div class="flex flex-row flex-wrap mx-1">
       <div class="w-2/3 py-1 sm:w-1/3">
-        <div
-          class="text-xs sm:text-sm"
-        >{{$moment(daysInWeek[0].date).format('MMM')}} {{$moment(daysInWeek[0].date).format('YYYY')}} - {{$moment(daysInWeek[6].date).format('MMM')}} {{$moment(daysInWeek[6].date).format('YYYY')}}</div>
+        <div class="flex flex-col">
+          <div class="flex flex-row flex-wrap justify-between mt-1" v-if="showRefresh">
+            <AppButton
+              :label="'Refresh'"
+              @click="refreshJobs"
+              :inStyle="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
+            />
+          </div>
+          <div
+            class="text-xs sm:text-sm"
+          >{{$moment(daysInWeek[0].date).format('MMM')}} {{$moment(daysInWeek[0].date).format('YYYY')}} - {{$moment(daysInWeek[6].date).format('MMM')}} {{$moment(daysInWeek[6].date).format('YYYY')}}</div>
+        </div>
       </div>
       <div class="w-1/3 py-1 px-2 flex flex-no-wrap justify-end md:justify-center items-center">
         <span class="cursor-pointer" @click="adjustWeek('previous')">
@@ -290,18 +299,6 @@
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'AM')"
           ></div>
-          <!-- <div
-            v-else-if="hasLocumAllocatedPrivateJobs(date, 'AM')"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-green-300 hover:bg-gray-300"
-            :key="`${date}-${index}-${id}`"
-            @click="selectDateShift(date, 'AM')"
-          ></div>
-          <div
-            v-else-if="hasLocumAllocatedPlatformJobs(date, 'AM')"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-green-300 hover:bg-gray-300"
-            :key="`${date}-${index}-${id}`"
-            @click="selectDateShift(date, 'AM')"
-          ></div>-->
           <div
             v-else-if="hasLocumUnavailabilities(date, 'AM')"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-pink-500 hover:bg-gray-300"
@@ -492,29 +489,18 @@
 </template>
 <script>
 import AppLoading from "@/components/Base/AppLoading";
+import AppButton from "@/components/Base/AppButton";
 export default {
   components: {
-    AppLoading
+    AppLoading,
+    AppButton
   },
   data() {
     return {
+      showRefresh: false,
       firstDayOfTheWeek: null,
       lastDayOfTheWeek: null
     };
-  },
-  beforeDestroy() {
-    this.$store.commit("jobs/CLEAR_JOBS");
-  },
-  created() {
-    let selectedDate = this.$store.state.calendar.selected_date;
-    this.firstDayOfTheWeek = this.$moment(selectedDate)
-      .day("Monday")
-      .format("YYYY-MM-DD");
-    this.lastDayOfTheWeek = this.$moment(selectedDate)
-      .add(1, "week")
-      .day("sunday")
-      .format("YYYY-MM-DD");
-    this.getJobs();
   },
   computed: {
     // PRACTICE
@@ -580,6 +566,116 @@ export default {
       return this.$moment(this.firstDayOfTheWeek).format("YYYY");
     }
   },
+  beforeDestroy() {
+    this.$store.commit("jobs/CLEAR_JOBS");
+  },
+  created() {
+    let selectedDate = this.$store.state.calendar.selected_date;
+    console.log(selectedDate);
+
+    this.firstDayOfTheWeek = this.$moment(selectedDate, "YYYY-MM-DD")
+      .day("Monday")
+      .format("YYYY-MM-DD");
+    this.lastDayOfTheWeek = this.$moment(selectedDate, "YYYY-MM-DD")
+      .add(1, "week")
+      .day("sunday")
+      .format("YYYY-MM-DD");
+
+    this.getJobs();
+  },
+  mounted() {
+    // locum
+    if (this.$auth.loggedIn && this.$auth.user.domain === "Locum") {
+      this.$socket.on("Locum Notification Job Available", this.getJobsRealTime);
+      this.$socket.on("Locum Notification Job Matched", this.getJobsRealTime);
+      this.$socket.on(
+        "Locum Notification Job Unsuccessful",
+        this.getJobsRealTime
+      );
+      this.$socket.on("Locum Notification Job Current", this.getJobsRealTime);
+      this.$socket.on("Locum Notification Job Ongoing", this.getJobsRealTime);
+      this.$socket.on(
+        "Locum Notification Job Part Completed",
+        this.getJobsRealTime
+      );
+      this.$socket.on(
+        "Locum Notification Locum Invoice Updated",
+        this.getJobsRealTime
+      );
+      this.$socket.on("Locum Notification Job Cancelled", this.getJobsRealTime);
+
+      this.$socket.on("Locum Notification Job Amended", this.getJobsRealTime);
+      this.$socket.on("Locum Notification Job Updated", this.getJobsRealTime);
+      this.$socket.on("Locum Notification Job Declined", this.getJobsRealTime);
+      this.$socket.on(
+        "Locum Notification Job Auto Declined",
+        this.getJobsRealTime
+      );
+      this.$socket.on(
+        "Locum Notification Job Unavailable",
+        this.getJobsRealTime
+      );
+      this.$socket.on(
+        "Locum Notification Job Unqualified",
+        this.getJobsRealTime
+      );
+    }
+    // practice
+    if (this.$auth.loggedIn && this.$auth.user.domain === "Practice") {
+      this.$socket.on(
+        "Practice Notification Job Available",
+        this.getJobsRealTime
+      );
+      this.$socket.on(
+        "Practice Notification Job Applied",
+        this.getJobsRealTime
+      );
+      this.$socket.on(
+        "Practice Notification Job Current",
+        this.getJobsRealTime
+      );
+      this.$socket.on(
+        "Practice Notification Job Ongoing",
+        this.getJobsRealTime
+      );
+      this.$socket.on(
+        "Practice Notification Job Part Completed",
+        this.getJobsRealTime
+      );
+      this.$socket.on(
+        "Practice Notification Locum Invoice Updated",
+        this.getJobsRealTime
+      );
+      this.$socket.on(
+        "Practice Notification Job Cancelled",
+        this.getJobsRealTime
+      );
+      this.$socket.on(
+        "Practice Notification Job Amended",
+        this.getJobsRealTime
+      );
+      this.$socket.on(
+        "Practice Notification Job Declined",
+        this.getJobsRealTime
+      );
+      this.$socket.on(
+        "Practice Notification Job Auto Declined",
+        this.getJobsRealTime
+      );
+      this.$socket.on(
+        "Practice Notification Job Update Accept",
+        this.getJobsRealTime
+      );
+      this.$socket.on(
+        "Practice Notification Job Unfilled",
+        this.getJobsRealTime
+      );
+    }
+  },
+  destroyed() {
+    this.removeListener();
+  },
+
   methods: {
     selectDateShift(date, shift) {
       this.$store.commit("calendar/SELECT_DATE_SHIFT", {
@@ -606,7 +702,10 @@ export default {
       }
 
       this.$store.commit("calendar/SELECT_DATE_SHIFT", {
-        date: this.$moment(this.$store.state.calendar.selected_date_shift.date)
+        date: this.$moment(
+          this.$store.state.calendar.selected_date_shift.date,
+          "YYYY-MM-DD"
+        )
           .add(7, "days")
           .format("YYYY-MM-DD"),
         shift: "AM"
@@ -614,7 +713,7 @@ export default {
       this.getJobs();
     },
     currentDate(date) {
-      if (date === this.$moment(new Date()).format("YYYY-MM-DD")) {
+      if (date === this.$moment().format("YYYY-MM-DD")) {
         return true;
       } else {
         return false;
@@ -768,6 +867,127 @@ export default {
           });
       }
     },
+    async getJobsRealTime(job) {
+      if (!job) {
+        return;
+      }
+      this.showRefresh = true;
+    },
+    async refreshJobs() {
+      this.showRefresh = false;
+      this.$store.commit("jobs/CLEAR_PRACTICE_JOB_NOTIFICATION");
+      this.getJobs();
+    },
+    removeListener() {
+      if (this.$auth.loggedIn && this.$auth.user.domain === "Locum") {
+        this.$socket.removeListener(
+          "Locum Notification Job Available",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
+          "Locum Notification Job Matched",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
+          "Locum Notification Job Unsuccessful",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
+          "Locum Notification Job Current",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
+          "Locum Notification Job Ongoing",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
+          "Locum Notification Job Part Completed",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
+          "Locum Notification Locum Invoice Updated",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
+          "Locum Notification Job Cancelled",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
+          "Locum Notification Job Amended",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
+          "Locum Notification Job Updated",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
+          "Locum Notification Job Declined",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
+          "Locum Notification Job Auto Declined",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
+          "Locum Notification Job Unavailable",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
+          "Locum Notification Job Unqualified",
+          this.getJobsRealTime
+        );
+      }
+      if (this.$auth.loggedIn && this.$auth.user.domain === "Practice") {
+        this.$socket.removeListener(
+          "Practice Notification Job Available",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
+          "Practice Notification Job Applied",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
+          "Practice Notification Job Current",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
+          "Practice Notification Job Ongoing",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
+          "Practice Notification Job Part Completed",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
+          "Practice Notification Locum Invoice Updated",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
+          "Practice Notification Job Cancelled",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
+          "Practice Notification Job Amended",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
+          "Practice Notification Job Declined",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
+          "Practice Notification Job Auto Declined",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
+          "Practice Notification Job Update Accept",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
+          "Practice Notification Job Unfilled",
+          this.getJobsRealTime
+        );
+      }
+    },
     // PRACTICE
     // PARTS
     hasPracticeOngoingJobs(date, type) {
@@ -875,30 +1095,6 @@ export default {
         );
       }
     },
-    // hasLocumAllocatedPrivateJobs(date, type) {
-    //   if (
-    //     this.getLocumAllocatedPrivateJobs &&
-    //     this.getLocumAllocatedPrivateJobs.len3th > 0
-    //   ) {
-    //     return this.getLocumAllocatedPrivateJobs.find(
-    //       job =>
-    //         this.getDateArray(job.date_start, job.date_end).includes(date) &&
-    //         job.shift.name === type
-    //     );
-    //   }
-    // },
-    // hasLocumAllocatedPlatformJobs(date, type) {
-    //   if (
-    //     this.getLocumAllocatedPlatformJobs &&
-    //     this.getLocumAllocatedPlatformJobs.length > 0
-    //   ) {
-    //     return this.getLocumAllocatedPlatformJobs.find(
-    //       job =>
-    //         this.getDateArray(job.date_start, job.date_end).includes(date) &&
-    //         job.shift.name === type
-    //     );
-    //   }
-    // },
     hasLocumAppliedJobs(date, type) {
       return this.getLocumAppliedJobs.find(job =>
         this.getDateArray(job.date_start, job.date_end).includes(date)

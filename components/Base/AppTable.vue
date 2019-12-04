@@ -1,6 +1,6 @@
 <template>
   <section class="relative">
-    <div class="relative flex flex-col overflow-x-auto w-full px-2 mt-4">
+    <div class="relative flex flex-col overflow-x-auto w-full px-2 mt-4" :style="totalPages > 1 && `min-height: ${minHeight}`">
       <AppLoading :loading="loading" spinner />
       <div
         :style="`min-width: ${customWidth}px`"
@@ -127,6 +127,9 @@ export default {
     customWidth: {
       type: Number
     },
+    minHeight: {
+      type: String
+    },
   },
   components: {
     AppLoading,
@@ -142,7 +145,9 @@ export default {
       params: []
     };
   },
-  created() {},
+  created() {
+    console.log(this.columns)
+  },
   mounted() {
     this.params = this.orderBy;
   },
@@ -185,7 +190,6 @@ export default {
     dataCell(item, column) {
       var dataIndexArr = column.dataIndex.split(".");
       let str = null;
-
       if (Array.isArray(item[dataIndexArr[0]])) {
         str = [];
         item[dataIndexArr[0]].forEach(item => {

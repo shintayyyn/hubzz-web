@@ -1,8 +1,14 @@
 <template>
   <section>
     <div class="p-4 md:p-8 max-w-3xl">
-      <div>
+      <div class="flex items-center">
         <svgicon name="left-arrow" height="32" width="32" @click="$emit('close')" class="cursor-pointer"/>
+        <button
+          class="mx-4 focus:outline-none"
+          @click.prevent.stop="message(user)"
+        >
+          <svgicon name="chat" height="32" width="32" color="#888 #555 #fff"/>
+        </button>
       </div>
       <div class="flex flex-row flex-no-wrap justify-start mt-4 md:mt-8">
         <div class="font-bold text-md sm:text-lg">{{user.personal_detail.name}}</div>
@@ -131,6 +137,16 @@
         </div>
       </div>
     </div>
+    <transition name="fade" mode="out-in">
+      <div class="message-modal md:w-2/3 lg:w-1/2 xl:w-1/3" v-if="sendMessageModal">
+        <SendMessageModal
+            :user="user"
+            @close="sendMessageModal=false"
+            :profileOption="false"
+          />
+      </div>
+    </transition>      
+    <div class="shield" v-if="sendMessageModal" @click="sendMessageModal=false"></div>
     <AppConfirmationModal
       :label="'Appoint this Locum?'"
       :confirmLabel="'Yes'"
@@ -145,18 +161,21 @@
 import AppButton from "@/components/Base/AppButton";
 import AppAvatar from "@/components/Base/AppAvatar";
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
+import SendMessageModal from "@/components/Messages/SendMessageModal";
 export default {
   props: ["user", "job"],
   components: {
     AppButton,
     AppConfirmationModal,
-    AppAvatar
+    AppAvatar,
+    SendMessageModal
   },
   data() {
     return {
       confirmation_modal: false,
       mandatory: [],
-      optional: []
+      optional: [],
+      sendMessageModal: false,
     };
   },
   computed: {
@@ -170,6 +189,10 @@ export default {
     );
   },
   methods: {
+    message(user) {
+      this.user = user;
+      this.sendMessageModal = true;
+    },
     getProfessionCategory(id) {
       this.$axios.$get(`/api/v1/profession-categories/${id}`).then(res => {
         this.mandatory = this.user.locum_detail.compliance_documents.filter(
