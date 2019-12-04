@@ -193,22 +193,45 @@ export default {
   watch: {
     selectedMonth(value) {
       this.getDaysInMonth(value, this.selectedYear);
+    },
+    selectedDate(newValue, oldValue) {
+      if (newValue && oldValue) {
+        let newMonth = this.$moment(newValue, "YYYY-MM-DD").format("M");
+        let oldMonth = this.$moment(oldValue, "YYYY-MM-DD").format("M");
+
+        let newYear = this.$moment(newValue, "YYYY-MM-DD").format("YYYY");
+        let oldYear = this.$moment(oldValue, "YYYY-MM-DD").format("YYYY");
+
+        if (newMonth !== oldMonth || newYear !== oldYear) {
+          this.startOfMonth = this.$moment(newValue, "YYYY-MM-DD")
+            .startOf("month")
+            .format("YYYY-MM-DD");
+          this.endOfMonth = this.$moment(newValue, "YYYY-MM-DD")
+            .endOf("month")
+            .format("YYYY-MM-DD");
+
+          let d = new Date(newValue);
+          this.selectedMonth = d.getMonth();
+          this.selectedYear = d.getFullYear();
+
+          this.getDaysInMonth(this.selectedMonth, this.selectedYear);
+          this.getJobs();
+        }
+      }
     }
   },
   beforeDestroy() {
     this.$store.commit("jobs/CLEAR_JOBS");
   },
-  created() {
-    let selectedDate = this.$store.state.calendar.selected_date;
-
-    this.startOfMonth = this.$moment(selectedDate, "YYYY-MM-DD")
+  async created() {
+    this.startOfMonth = this.$moment(this.selectedDate, "YYYY-MM-DD")
       .startOf("month")
       .format("YYYY-MM-DD");
-    this.endOfMonth = this.$moment(selectedDate, "YYYY-MM-DD")
+    this.endOfMonth = this.$moment(this.selectedDate, "YYYY-MM-DD")
       .endOf("month")
       .format("YYYY-MM-DD");
 
-    let d = new Date(selectedDate);
+    let d = new Date(this.selectedDate);
     this.selectedMonth = d.getMonth();
     this.selectedYear = d.getFullYear();
 
@@ -640,7 +663,7 @@ export default {
           .set("year", this.selectedYear)
           .format("YYYY-MM-DD")
       );
-      this.getJobs();
+      // this.getJobs();
     }
   }
 };

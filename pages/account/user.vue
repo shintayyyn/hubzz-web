@@ -167,7 +167,8 @@ export default {
         }
         this.scrollToTop();
       } catch (err) {
-        this.formError = err.response.data.error_messages;
+        console.log("err", err.response.data);
+        // this.formError = err.response.data.error_messages;
         this.loading = false;
         this.scrollToTop();
       }
