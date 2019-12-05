@@ -6,12 +6,11 @@
       </nuxt-link>
       <div class="flex justify-start font-bold text-sm sm:text-xl mt-8 mb-2">Availability</div>
       <div class="mt-4">
-        <div class="bg-white rounded-lg shadow-lg p-4 md:p-8">
+        <div class="relative bg-white rounded-lg shadow-lg p-4 md:p-8">
+          <AppLoading :loading="loading" spinner />
+
           <AppFormError :formError="formError" v-if="formError.length > 0" />
-          <div class="font-bold text-sm sm:text-md mt-4">
-            I won't be available
-            <!-- <span v-if="$route.query.type === 'solo'">for</span>... -->
-          </div>
+          <div class="font-bold text-sm sm:text-md mt-4">I won't be available</div>
           <div class="flex flex-row flex-wrap justify-between">
             <div class="w-full p-0 sm:w-1/2 pr-2">
               <AppDate
@@ -34,18 +33,8 @@
               />
             </div>
           </div>
-          <!-- <div class="flex flex-col w-full my-6" v-if="$route.query.type === 'solo'">
-            <div class="text-sm sm:text-md">On this date</div>
-            <div
-              class="text-md sm:text-lg font-bold mt-2"
-            >{{$store.state.availability.selected_date}}</div>
-          </div>-->
           <div class="flex flex-row flex-wrap items-center justify-between mt-4 relative">
             <div class="text-sm sm:text-md leading-loose mr-4">On theses shifts</div>
-            <!-- <div
-              class="rounded-lg bg-gray-300 px-2 py-1 text-sm sm:text-md flex items-center"
-              v-if="$route.query.type === 'solo'"
-            >Select all that apply. Shifts that are already booked are greyed-out.</div>-->
             <div
               class="rounded-lg bg-gray-300 px-2 py-1 text-sm sm:text-md flex items-center"
             >Select all that apply.</div>
@@ -73,7 +62,7 @@
         </div>
       </div>
       <div class="mt-4">
-        <AppButton :label="'Add'" @click="add" />
+        <AppButton :label="'Add'" @click="add" :disabled="loading" />
       </div>
     </div>
   </div>
@@ -83,12 +72,14 @@ import AppInput from "@/components/Base/AppInput";
 import AppDate from "@/components/Base/AppDate";
 import AppButton from "@/components/Base/AppButton";
 import AppFormError from "@/components/Base/AppFormError";
+import AppLoading from "@/components/Base/AppLoading";
 import moment from "moment";
 export default {
   components: {
     AppInput,
     AppDate,
     AppButton,
+    AppLoading,
     AppFormError
   },
   data() {
