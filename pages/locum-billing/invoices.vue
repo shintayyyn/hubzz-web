@@ -20,44 +20,17 @@
       @limitchanged="limitchanged"
       @sorted="sorted"
     >
-      <!-- <template v-slot:actions="slotProps">
+      <template v-slot:actions="slotProps">
         <div @click.stop.prevent="onClick(slotProps.item)" class="flex justify-center">
           <button
-            v-if="!slotProps.item.paid_at"
-            v-text="slotProps.item.issued_at ? 'Mark as paid' : 'Delete'"
-            class="px-4 py-2 font-bold rounded-lg focus:outline-none"
-            :class="slotProps.item.issued_at ? 'text-white bg-green-600' : 'bg-yellow-500'"
-          ></button>
+            v-if="slotProps.item.status === 'Draft'"
+            class="px-4 py-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
+          >Delete</button>
         </div>
-      </template>-->
+      </template>
     </AppTable>
     <div v-else class="flex justify-center">You do not have any created invoice</div>
 
-    <div v-if="paymentModal" class="p-2">
-      <div class="rounded-lg shadow-md px-4 py-8 md:px-8 update-modal border w-5/6 md:w-1/3">
-        <AppDate
-          v-model="form.paid_at"
-          :name="'paid_at'"
-          :label="'Received payment on'"
-          :error="formError.find(item => item.field === 'paid_at')"
-          isAfter
-        />
-        <div class="flex flex-row flex-no-wrap justify-center">
-          <AppButton
-            class="mx-1"
-            :label="'Save'"
-            @click="confirmPayment"
-            :inStyle="'padding:5px 10px'"
-          />
-          <AppButton
-            class="mx-1"
-            :label="'Cancel'"
-            @click="paymentModal = false"
-            :inStyle="'padding:5px 10px'"
-          />
-        </div>
-      </div>
-    </div>
     <AppConfirmationModal
       :label="'Proceed to delete this invoice?'"
       :confirmLabel="'Yes'"
@@ -67,11 +40,11 @@
       @cancel="deleteModal = false"
     />
     <transition name="fade" mode="out-in">
-      <div
-        v-if="['locum-billing-invoices-id', 'locum-billing-invoices-create', 'locum-billing-invoices-id-edit'].includes($route.name) || deleteModal || paymentModal"
+      <nuxt-link
+        :to="'/locum-billing/invoices'"
+        v-if="['locum-billing-invoices-id', 'locum-billing-invoices-create', 'locum-billing-invoices-id-edit'].includes($route.name) || deleteModal"
         class="shield"
-        @click="close"
-      ></div>
+      ></nuxt-link>
     </transition>
     <nuxt-child @addInvoice="addInvoice" @updateInvoice="updateInvoice" />
   </section>
@@ -149,10 +122,14 @@ export default {
           dataIndex: "status",
           sortable: true,
           class: "text-center"
+        },
+        {
+          name: "Actions",
+          dataIndex: "actions",
+          class: "text-center"
         }
       ],
       // payment
-      paymentModal: false,
       deleteModal: false,
       selectedInvoiceId: null,
       form: {
@@ -252,15 +229,6 @@ export default {
         this.getLocumInvoiceRealTime
       );
     },
-    close() {
-      if (this.deleteModal) {
-        this.deleteModal = false;
-      } else if (this.paymentModal) {
-        this.paymentModal = false;
-      } else {
-        this.$router.push("/locum-billing/invoices");
-      }
-    },
     getInvoicesCount(params) {
       this.loading = true;
       this.$axios
@@ -296,44 +264,9 @@ export default {
         });
     },
     onClick(invoice) {
-      this.form.paid_at = null;
-      if (invoice.issued_at) {
-        this.paymentModal = true;
-      } else {
-        this.deleteModal = true;
-      }
+      this.selectedInvoiceId = null;
+      this.deleteModal = true;
       this.selectedInvoiceId = invoice.id;
-    },
-    closePaymentModal() {
-      this.paymentModal = false;
-    },
-    confirmPayment() {
-      this.Validate(this.form);
-      if (!this.formError.length) {
-        this.form.paid_at = this.$moment(this.form.paid_at).format(
-          "YYYY-MM-DD"
-        );
-        this.$axios
-          .$put(
-            `/api/v1/locum/invoices/${this.selectedInvoiceId}/paid`,
-            this.form
-          )
-          .then(res => {
-            let index = this.invoices.findIndex(
-              invoice => invoice.id == res.data.invoice.id
-            );
-            if (index >= 0) {
-              this.invoices.splice(index, 1, res.data.invoice);
-            }
-
-            this.$store.commit("SET_NOTIFICATION", {
-              enabled: true,
-              status: "success",
-              text: [`${res.message}`]
-            });
-            this.paymentModal = false;
-          });
-      }
     },
     deleteInvoice() {
       this.$axios
