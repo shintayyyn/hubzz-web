@@ -36,8 +36,17 @@
                       />
                     </template>
                   </div>
-                  <button class="ml-2 focus:outline-none" @click.prevent.stop="message(locum)">
-                    <svgicon name="chat" height="32" width="32" color="#6b778b #4a5568 #fff" />
+                  <button
+                    class="ml-2 focus:outline-none hover:bg-gray-300 rounded-lg"
+                    @click.prevent.stop="message(locum)"
+                  >
+                    <svgicon
+                      name="chat"
+                      height="24"
+                      width="24"
+                      color="#6b778b #4a5568 #fff"
+                      class="m-2"
+                    />
                   </button>
                 </div>
                 <div class="flex flex-wrap text-center mt-4 cursor-pointer">
@@ -220,6 +229,17 @@ export default {
               status: "success",
               text: ["Added to favourites"]
             });
+            locum.is_favorite = !locum.is_favorite;
+          })
+          .catch(err => {
+            if (err.response.data) {
+              this.$store.commit("SET_NOTIFICATION", {
+                enabled: true,
+                status: "danger",
+                text: [`${err.response.message}`]
+              });
+            } else if (err.response.data.error_messages) {
+            }
           });
       } else {
         this.$axios
@@ -230,6 +250,17 @@ export default {
               status: "success",
               text: ["Remove to favourites"]
             });
+            locum.is_favorite = !locum.is_favorite;
+          })
+          .catch(err => {
+            if (err.response.data) {
+              this.$store.commit("SET_NOTIFICATION", {
+                enabled: true,
+                status: "danger",
+                text: [`${err.response.message}`]
+              });
+            } else if (err.response.data.error_messages) {
+            }
           });
         if (queryStatus.toLowerCase() === "favorite") {
           this.locums.splice(
@@ -238,7 +269,6 @@ export default {
           );
         }
       }
-      locum.is_favorite = !locum.is_favorite;
     },
     pagechanged(e) {
       this.current_page = e;
@@ -247,3 +277,8 @@ export default {
   }
 };
 </script>
+<style>
+.chat-svg:hover {
+  color: #535c6d #3c4453 #fff;
+}
+</style>

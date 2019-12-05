@@ -15,9 +15,10 @@
       </div>
       <div class="px-0 md:px-10 my-4">
         <div class="availability-calendar relative rounded-lg shadow-lg p-5">
-          <AvailabilityCalendar @open="open" />
+          <AvailabilityCalendar />
+          <!-- @open="open"  -->
           <div class="absolute bottom-0 right-0 -my-2 -mx-1 md:-m-2">
-            <nuxt-link :to="'/availability/create?type=range'">
+            <nuxt-link :to="'/availability/create'">
               <div
                 class="rounded-full h-10 w-10 sm:h-12 sm:w-12 md:h-16 md:w-16 text-2xl sm:text-3xl md:text-4xl flex items-center focus:outline-none justify-center bg-yellow-500 font-semibold cursor-pointer shadow-md hover:text-white"
               >+</div>
@@ -78,23 +79,22 @@ export default {
     }
   },
   methods: {
-    add() {
-      this.unavailableDate = null;
-      this.appointmentDate = null;
-      document.body.style.overflow = "hidden";
-      this.type = "range";
-      this.modal = true;
-    },
-    open({ selectedDate, unavailableDate, allocatedDate, ongoingDate }) {
-      this.selectedDate = selectedDate;
-      this.unavailableDate = unavailableDate;
-      this.allocatedDate = allocatedDate;
-      this.ongoingDate = ongoingDate;
-
-      this.$router.push({
-        path: `/availability/${selectedDate}`
-      });
-    }
+    // add() {
+    //   this.unavailableDate = null;
+    //   this.appointmentDate = null;
+    //   document.body.style.overflow = "hidden";
+    //   this.type = "range";
+    //   this.modal = true;
+    // }
+    // open({ selectedDate, unavailableDate, allocatedDate, ongoingDate }) {
+    //   this.selectedDate = selectedDate;
+    //   this.unavailableDate = unavailableDate;
+    //   this.allocatedDate = allocatedDate;
+    //   this.ongoingDate = ongoingDate;
+    //   this.$router.push({
+    //     path: `/availability/${selectedDate}`
+    //   });
+    // }
   }
 };
 </script>

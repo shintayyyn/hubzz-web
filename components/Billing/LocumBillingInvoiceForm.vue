@@ -792,6 +792,7 @@ export default {
       this.Validate(this.form, ["final"]);
       if (!this.formError.length) {
         if (!this.$route.params.id) {
+          this.loading = true;
           this.$axios
             .$post(`/api/v1/locum/locum-invoices`, this.form)
             .then(res => {
@@ -804,11 +805,23 @@ export default {
               });
             })
             .catch(err => {
-              err.response.data.error_messages.forEach(error => {
-                this.formError.push(error);
-              });
+              if (err.response.data.message) {
+                this.$store.commit("SET_NOTIFICATION", {
+                  enabled: true,
+                  status: "danger",
+                  text: [`${err.response.data.message}`]
+                });
+              } else if (err.response.data.error_messages) {
+                err.response.data.error_messages.forEach(error => {
+                  this.formError.push(error);
+                });
+              }
+            })
+            .finally(() => {
+              this.loading = false;
             });
-        } else {
+        } else if (this.$route.params.id) {
+          this.loading = true;
           this.$axios
             .$put(
               `/api/v1/locum/locum-invoices/${this.$route.params.id}`,
@@ -824,9 +837,20 @@ export default {
               this.$router.push("/locum-billing/invoices");
             })
             .catch(err => {
-              err.response.data.error_messages.forEach(error => {
-                this.formError.push(error);
-              });
+              if (err.response.data.message) {
+                this.$store.commit("SET_NOTIFICATION", {
+                  enabled: true,
+                  status: "danger",
+                  text: [`${err.response.data.message}`]
+                });
+              } else if (err.response.data.error_messages) {
+                err.response.data.error_messages.forEach(error => {
+                  this.formError.push(error);
+                });
+              }
+            })
+            .finally(() => {
+              this.loading = false;
             });
         }
       }

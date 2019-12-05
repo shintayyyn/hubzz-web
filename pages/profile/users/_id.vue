@@ -14,6 +14,7 @@
         </div>
         <div class="relative">
           <nuxt-link
+            v-if="user.practice_detail.role.name !== 'Practice User Admin'"
             :to="`/profile/users/${$route.params.id}/change-password`"
             class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
             :class="$route.name === 'profile-users-id-change-password'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
@@ -35,6 +36,8 @@ export default {
       );
       const user =
         response.data && response.data.user ? response.data.user : null;
+
+        console.log("qweqwesada", user)
 
       return {
         user

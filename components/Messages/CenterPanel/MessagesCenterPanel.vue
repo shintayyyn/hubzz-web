@@ -1,8 +1,18 @@
 <template>
   <div class="relative w-full flex flex-col" v-if="$route.name === 'messages-slug'">
-    <MessagesCenterPanelTop v-if="$store.state.chat.activeConversationId" class="mt-10 md:mt-0" />
-      <MessagesCenterPanelChat />
-      <MessagesCenterPanelForm />
+    <div class="hidden md:flex flex-col justify-center items-center h-full" v-if="$route.path === '/messages'">
+      <span class="font-bold text-lg">You don’t have a message selected.</span>
+      <span>Choose one from your existing messages, or start a new one.</span>
+      <button
+        class="bg-yellow-500 hover:bg-yellow-400 border-yellow-500 text-sm px-6 py-2 my-2 md:text-lg rounded-full focus:outline-none"
+        @click="createMessage"
+      >Create Message</button>
+    </div>
+      <template v-if="$route.path !== '/messages'">
+        <MessagesCenterPanelTop v-if="$store.state.chat.activeConversationId" class="mt-10 md:mt-0" />
+        <MessagesCenterPanelChat />
+        <MessagesCenterPanelForm />
+      </template>
   </div>
 </template>
 <script>
@@ -14,6 +24,16 @@ export default {
     MessagesCenterPanelChat,
     MessagesCenterPanelForm,
     MessagesCenterPanelTop
+  },
+  methods: {
+     createMessage() {
+      if (window.innerWidth < 768) {
+        this.$store.commit("IS_MOBILE", false);
+      }
+      if (this.$route.name === "messages-slug") {
+        this.$router.push(`/messages/new`);
+      }
+    },
   }
 };
 </script>

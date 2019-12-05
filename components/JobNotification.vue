@@ -29,7 +29,7 @@
                 <div
                   @click="goTo(notification)"
                   :key="`${notification.id}-${notification.notification_type}`"
-                  class="cards relative mx-1 my-2 p-3 flex flex-wrap bg-gray-100 hover:bg-gray-200 rounded-lg shadow-md text-xs md:text-sm opacity-75 hover:opacity-100 transition-hover cursor-pointer"
+                  class="cards relative mx-1 my-2 p-3 flex flex-wrap bg-gray-100 hover:bg-gray-200 rounded-lg shadow-md text-xs md:text-sm opacity-100 md:opacity-75 hover:opacity-100 transition-hover cursor-pointer"
                 >
                   <span
                     class="absolute top-0 right-0 cursor-pointer py-2 px-4 rounded-full text-lg font-bold hover:text-gray-700"
@@ -297,18 +297,11 @@ export default {
   margin: 50px 20px 0;
   padding: 0 4px 10px;
 }
-
 .notifications:hover .cards {
-  opacity: 100%;
+  opacity: 1;
 }
-
 .notifications::-webkit-scrollbar {
   display: none;
-}
-@media screen and (max-width: 767px) {
-  .notifications .cards {
-    opacity: 100%;
-  }
 }
 
 @media screen and (min-width: 1200px) {

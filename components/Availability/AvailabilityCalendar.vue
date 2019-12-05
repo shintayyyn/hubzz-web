@@ -171,24 +171,51 @@ export default {
     },
     getLocumUnavailabilities() {
       return this.$store.getters["jobs/getLocumUnavailabilities"];
+    },
+    selectedDate() {
+      return this.$store.state.availability.selected_date;
     }
   },
   created() {
-    this.startOfMonth = this.$moment()
+    this.startOfMonth = this.$moment(this.selectedDate, "YYYY-MM-DD")
       .startOf("month")
       .format("YYYY-MM-DD");
-    this.endOfMonth = this.$moment()
+    this.endOfMonth = this.$moment(this.selectedDate, "YYYY-MM-DD")
       .endOf("month")
       .format("YYYY-MM-DD");
+
     let d = new Date();
     this.selectedMonth = d.getMonth();
     this.getDaysInMonth(this.selectedMonth, this.selectedYear);
     this.getJobs();
   },
   watch: {
-    selectedMonth(newValue, oldValue) {
+    selectedMonth(value) {
+      this.getDaysInMonth(value, this.selectedYear);
+    },
+    selectedDate(newValue, oldValue) {
       if (newValue && oldValue) {
-        this.getDaysInMonth(newValue, this.selectedYear);
+        let newMonth = this.$moment(newValue, "YYYY-MM-DD").format("M");
+        let oldMonth = this.$moment(oldValue, "YYYY-MM-DD").format("M");
+
+        let newYear = this.$moment(newValue, "YYYY-MM-DD").format("YYYY");
+        let oldYear = this.$moment(oldValue, "YYYY-MM-DD").format("YYYY");
+
+        if (newMonth !== oldMonth || newYear !== oldYear) {
+          this.startOfMonth = this.$moment(newValue, "YYYY-MM-DD")
+            .startOf("month")
+            .format("YYYY-MM-DD");
+          this.endOfMonth = this.$moment(newValue, "YYYY-MM-DD")
+            .endOf("month")
+            .format("YYYY-MM-DD");
+
+          let d = new Date(newValue);
+          this.selectedMonth = d.getMonth();
+          this.selectedYear = d.getFullYear();
+
+          this.getDaysInMonth(this.selectedMonth, this.selectedYear);
+          this.getJobs();
+        }
       }
     }
   },
@@ -285,82 +312,73 @@ export default {
           this.selectedMonth++;
         }
       }
+
       this.startOfMonth = this.$moment(
         `${this.selectedYear}-${this.selectedMonth + 1}`
       )
         .startOf("month")
         .format("YYYY-MM-DD");
+
       this.endOfMonth = this.$moment(
         `${this.selectedYear}-${this.selectedMonth + 1}`
       )
         .endOf("month")
         .format("YYYY-MM-DD");
+
       this.getJobs();
     },
     selectDate(date) {
-      // if (!date.unavailableId) {
-      //   this.$router.push({
-      //     path: `/availability/create`,
-      //     query: { ...this.$route.query, type: "solo" }
-      //   });
-      // } else if (date.unavailableId) {
-      //   this.$router.push({
-      //     path: `/availability/${date.fullDate}`,
-      //     query: { ...this.$route.query, type: "solo" }
-      //   });
-      // }
-      let selectedDate = date.fullDate;
-      let unavailableDate = null;
-      let allocatedDate = null;
-      let ongoingDate = null;
-
-      if (
-        this.getLocumUnavailabilities &&
-        this.getLocumUnavailabilities.length > 0
-      ) {
-        let isUnavailable = this.getLocumUnavailabilities.find(
-          unavailable => unavailable.date === selectedDate
-        );
-        if (isUnavailable) {
-          unavailableDate = {
-            id: isUnavailable.id,
-            shifts: isUnavailable.shifts
-          };
-        }
-      }
-      if (this.getLocumOngoingJobs && this.getLocumOngoingJobs.length > 0) {
-        let hasLocumOngoingJob = this.getLocumOngoingJobs.filter(job_part =>
-          this.getDateArray(job_part.date_start, job_part.date_end).includes(
-            selectedDate
-          )
-        );
-        if (hasLocumOngoingJob && hasLocumOngoingJob.length > 0) {
-          ongoingDate = hasLocumOngoingJob.map(item => {
-            return item.job.shift;
-          });
-        }
-      }
-      if (this.getLocumAllocatedJobs && this.getLocumAllocatedJobs.length > 0) {
-        let hasLocumAllocatedJob = this.getLocumAllocatedJobs.filter(job =>
-          this.getDateArray(job.date_start, job.date_end).includes(selectedDate)
-        );
-        if (hasLocumAllocatedJob && hasLocumAllocatedJob.length > 0) {
-          allocatedDate = hasLocumAllocatedJob.map(item => {
-            return item.shift;
-          });
-        }
-      }
-
-      // console.log("selectedDate", selectedDate);
-      // console.log("unavailableDate", unavailableDate);
-      // console.log("allocatedDate", allocatedDate);
-      // console.log("ongoingDate", ongoingDate);
-      this.$emit("open", {
-        selectedDate,
-        unavailableDate,
-        allocatedDate,
-        ongoingDate
+      this.$router.push({
+        path: `/availability/${date.fullDate}`
       });
+      // let selectedDate = date.fullDate;
+      // let unavailableDate = null;
+      // let allocatedDate = null;
+      // let ongoingDate = null;
+
+      // if (
+      //   this.getLocumUnavailabilities &&
+      //   this.getLocumUnavailabilities.length > 0
+      // ) {
+      //   let isUnavailable = this.getLocumUnavailabilities.find(
+      //     unavailable => unavailable.date === selectedDate
+      //   );
+      //   if (isUnavailable) {
+      //     unavailableDate = {
+      //       id: isUnavailable.id,
+      //       shifts: isUnavailable.shifts
+      //     };
+      //   }
+      // }
+      // if (this.getLocumOngoingJobs && this.getLocumOngoingJobs.length > 0) {
+      //   let hasLocumOngoingJob = this.getLocumOngoingJobs.filter(job_part =>
+      //     this.getDateArray(job_part.date_start, job_part.date_end).includes(
+      //       selectedDate
+      //     )
+      //   );
+      //   if (hasLocumOngoingJob && hasLocumOngoingJob.length > 0) {
+      //     ongoingDate = hasLocumOngoingJob.map(item => {
+      //       return item.job.shift;
+      //     });
+      //   }
+      // }
+      // if (this.getLocumAllocatedJobs && this.getLocumAllocatedJobs.length > 0) {
+      //   let hasLocumAllocatedJob = this.getLocumAllocatedJobs.filter(job =>
+      //     this.getDateArray(job.date_start, job.date_end).includes(selectedDate)
+      //   );
+      //   if (hasLocumAllocatedJob && hasLocumAllocatedJob.length > 0) {
+      //     allocatedDate = hasLocumAllocatedJob.map(item => {
+      //       return item.shift;
+      //     });
+      //   }
+      // }
+
+      // this.$emit("open", {
+      //   selectedDate,
+      //   unavailableDate,
+      //   allocatedDate,
+      //   ongoingDate
+      // });
     }
   }
 };
