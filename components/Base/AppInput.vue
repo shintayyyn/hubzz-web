@@ -57,10 +57,12 @@
                   :checked="value"
                   :min="type === 'number' && 0"
                 />
-                <div
-                  v-if="error"
-                  class="text-red-500 py-1 text-xs text-white"
-                >{{error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ")}}</div>
+                <transition name="drop-down">
+                  <div
+                    v-if="error"
+                    class="text-red-500 py-1 text-xs text-white"
+                  >{{error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ")}}</div>
+                </transition>
               </div>
             </template>
             <template v-if="type === 'select'">
@@ -93,10 +95,12 @@
                     />
                   </span>
                 </div>
-                <div
-                  v-if="error"
-                  class="text-red-500 py-1 text-xs text-white"
-                >{{error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ")}}</div>
+                <transition name="drop-down">
+                  <div
+                    v-if="error"
+                    class="text-red-500 py-1 text-xs text-white"
+                  >{{error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ")}}</div>
+               </transition>
               </div>
             </template>
             <template v-if="type === 'textarea'">
@@ -113,10 +117,12 @@
                   @input="$emit('input', $event.target.value)"
                   @blur="$emit('blur', $event)"
                 ></textarea>
-                <div
-                  v-if="error"
-                  class="text-red-500 py-1 text-xs text-white"
-                >{{error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ")}}</div>
+                <transition name="drop-down">
+                  <div
+                    v-if="error"
+                    class="text-red-500 py-1 text-xs text-white"
+                  >{{error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ")}}</div>
+               </transition>
               </div>
             </template>
           </div>
@@ -143,10 +149,12 @@
           />
           <label :for="name" class="text-xs sm:text-sm py-1 flex items-center">{{label}}</label>
         </div>
-        <div
+        <transition name="drop-down">
+          <div
             class="py-1 text-xs text-red-500"
             v-if="error"
           >{{error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ")}}</div>
+        </transition>
       </div>
     </template>
 
@@ -158,10 +166,12 @@
             <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
             <span class="ml-2 bg-gray-300 rounded px-4 py-1 text-xs">Seperate with commas</span>
           </div>
-          <div
-            class="absolute right-0 bg-red-500 py-1 px-2 text-xs sm:text-sm text-white"
-            v-if="error"
-          >{{error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ")}}</div>
+          <transition name="fade">
+            <div
+              class="absolute right-0 bg-red-500 py-1 px-2 text-xs sm:text-sm text-white"
+              v-if="error"
+            >{{error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ")}}</div>
+          </transition>
         </div>
         <div class="flex flex-row justify-start mt-1">
           <input
@@ -183,10 +193,12 @@
           <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
           <div class="flex">
             <div class="bg-gray-300 rounded px-4 py-1 text-xs sm:text-sm" v-if="info">{{info}}</div>
+          <transition name="fade">
             <div
               class="absolute right-0 bg-red-500 py-1 px-2 text-xs sm:text-sm text-white"
               v-if="error"
             >{{error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ")}}</div>
+          </transition>
           </div>
         </div>
         <div

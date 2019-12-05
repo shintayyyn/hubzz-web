@@ -8,8 +8,7 @@
       @confirm="remove"
       @cancel="delete_modal = false"
     />
-
-    <div class="p-4 md:p-8">
+    <div class="flex flex-col items-start p-4 md:p-8 w-full">
       <nuxt-link
         :to="{ path: ['dashboard-create','dashboard-id'].includes($route.name)? '/dashboard' : '/jobs', query: {...$route.query}}"
         class="cursor-pointer"

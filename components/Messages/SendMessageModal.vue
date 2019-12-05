@@ -10,12 +10,14 @@
           <div class="flex items-center">
             <!-- <div class="px-2 font-bold text-lg hover:text-gray-500 cursor-pointer" @click="$emit('close')">x</div> -->
             <svgicon
+              v-if="conversation_id || profileOption"
               @click="showDropDown = !showDropDown"
               name="menu"
               height="24"
               width="24"
               class="cursor-pointer fill-current p-1"
             />
+            <div class="font-bold text-lg px-2 cursor-pointer" v-if="!conversation_id && !profileOption"  @click="$emit('close')">x</div>
           </div>
         </div>
         <div class="relative">
