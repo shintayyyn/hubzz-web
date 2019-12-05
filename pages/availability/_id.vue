@@ -6,7 +6,8 @@
       </nuxt-link>
       <div class="flex justify-start font-bold text-sm sm:text-xl mt-8 mb-2">Availability</div>
       <div class="mt-4">
-        <div class="bg-white rounded-lg shadow-lg p-4 md:p-8">
+        <div class="relative bg-white rounded-lg shadow-lg p-4 md:p-8">
+          <AppLoading :loading="loading" spinner />
           <AppFormError :formError="formError" v-if="formError.length > 0" />
           <div class="font-bold text-sm sm:text-md mt-4">I won't be available</div>
           <div class="flex flex-col w-full my-6">
@@ -46,7 +47,7 @@
         </div>
       </div>
       <div class="mt-4">
-        <AppButton :label="'Save'" @click="save" />
+        <AppButton :label="'Save'" @click="save" :disabled="loading" />
       </div>
     </div>
   </div>
@@ -55,6 +56,7 @@
 import AppInput from "@/components/Base/AppInput";
 import AppDate from "@/components/Base/AppDate";
 import AppButton from "@/components/Base/AppButton";
+import AppLoading from "@/components/Base/AppLoading";
 import AppFormError from "@/components/Base/AppFormError";
 import moment from "moment";
 export default {
@@ -62,10 +64,12 @@ export default {
     AppInput,
     AppDate,
     AppButton,
+    AppLoading,
     AppFormError
   },
   data() {
     return {
+      loading: false,
       shifts: [],
       form: {
         date_start: null,
@@ -91,7 +95,11 @@ export default {
   },
   created() {
     this.$store.commit("availability/SELECT_DATE", this.$route.params.id);
-    this.getShifts();
+    this.loading = true;
+    this.$axios.$get(`/api/v1/shifts`).then(res => {
+      this.shifts = res.data.shifts;
+      this.loading = false;
+    });
   },
   mounted() {
     let unavailableDate = null;
@@ -161,11 +169,6 @@ export default {
     this.form.date_end = this.$store.state.availability.selected_date;
   },
   methods: {
-    getShifts() {
-      this.$axios.$get(`/api/v1/shifts`).then(res => {
-        this.shifts = res.data.shifts;
-      });
-    },
     select(id) {
       let index = this.form.shift_id.findIndex(item => item === id);
       if (index >= 0) {
@@ -191,6 +194,7 @@ export default {
       this.formError = [];
       this.Validate(this.form, ["shift_id"]);
       if (!this.formError.length) {
+        this.loading = true;
         this.$axios
           .$post(`/api/v1/locum/unavailabilities`, this.form)
           .then(res => {
@@ -216,6 +220,9 @@ export default {
               status: "danger",
               text: this.formError.map(error => error.message)
             });
+          })
+          .finally(() => {
+            this.loading = false;
           });
       } else {
         this.$store.commit("SET_NOTIFICATION", {

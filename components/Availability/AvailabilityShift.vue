@@ -1,6 +1,7 @@
 <template>
   <div class="availability-shift rounded-lg shadow-lg">
-    <form class="w-full p-5">
+    <form class="relative w-full p-5">
+      <AppLoading :loading="loading" spinner />
       <div class="relative flex flex-col">
         <div class="relative flex flex-row flex-wrap items-center justify-between">
           <div class="flex flex-col leading-none">
@@ -10,9 +11,14 @@
               class="text-red-500 text-xs text-white md:py-0"
             >Select atleast one shift</div>
           </div>
-          <div class="py-2 px-3 my-1 md:my-0 rounded-lg text-sm bg-gray-300 leading-tight">Select all that apply</div>
+          <div
+            class="py-2 px-3 my-1 md:my-0 rounded-lg text-sm bg-gray-300 leading-tight"
+          >Select all that apply</div>
         </div>
-        <div class="flex flex-row justify-around md:justify-between mt-5 rounded-lg" :class="shifts_error && 'error'">
+        <div
+          class="flex flex-row justify-around md:justify-between mt-5 rounded-lg"
+          :class="shifts_error && 'error'"
+        >
           <div
             class="relative border border-solid rounded-lg p-5 m-2 w-full sm:w-1/4 md:w-1/6 text-sm md:text-base text-center cursor-pointer"
             :class="selectedShifts.includes(item.id) ? 'bg-yellow-500 hover:bg-yellow-400': 'hover:bg-yellow-500'"
@@ -32,12 +38,15 @@
 </template>
 <script>
 import AppButton from "@/components/Base/AppButton";
+import AppLoading from "@/components/Base/AppLoading";
 export default {
   components: {
-    AppButton
+    AppButton,
+    AppLoading
   },
   data() {
     return {
+      loading: false,
       selectedShifts: [],
       shifts_error: false
     };
@@ -70,7 +79,8 @@ export default {
       if (this.selectedShifts.length === 0) {
         this.shifts_error = true;
       } else {
-      this.shifts_error = false;
+        this.loading = true;
+        this.shifts_error = false;
         this.$axios
           .$put(`/api/v1/locum/me/shifts`, { shift_id: this.selectedShifts })
           .then(res => {
@@ -79,6 +89,10 @@ export default {
               status: "success",
               text: ["Shift updated!"]
             });
+          })
+          .catch(err => {})
+          .finally(() => {
+            this.loading = false;
           });
       }
     }
