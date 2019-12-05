@@ -115,10 +115,11 @@ export default {
   },
   methods: {
     getPracticesCount() {
+      let queryStatus = this.$route.query.status;
       this.loading = true;
       this.$axios
         .$get(
-          `/api/v1/locum/practices/count?locum_practice_type=${this.$route.query.status}`
+          `/api/v1/locum/practices/count?locum_practice_type=${queryStatus}`
         )
         .then(res => {
           this.total = res.data.count;
@@ -129,10 +130,11 @@ export default {
         });
     },
     getPractices(page) {
+      let queryStatus = this.$route.query.status;
       this.current_page = page;
       this.$axios
         .$get(
-          `/api/v1/locum/practices?locum_practice_type=${this.$route.query.status}&offset=${this.offset}&limit=${this.perPage}`
+          `/api/v1/locum/practices?locum_practice_type=${queryStatus}&offset=${this.offset}&limit=${this.perPage}`
         )
         .then(res => {
           this.practices = res.data.practices;
@@ -144,6 +146,7 @@ export default {
         });
     },
     favorite(id) {
+      let queryStatus = this.$route.query.status;
       let practice = this.practices.find(practice => practice.id === id);
       if (!practice.is_favorite) {
         this.$axios
@@ -165,7 +168,7 @@ export default {
               text: ["Remove to favourites"]
             });
           });
-        if (this.$route.query.status.toLowerCase() === "favorite") {
+        if (queryStatus.toLowerCase() === "favorite") {
           this.practices.splice(
             this.practices.findIndex(practice => practice.id === id),
             1

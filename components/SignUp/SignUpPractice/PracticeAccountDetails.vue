@@ -30,7 +30,7 @@
             </div>
             <div v-if="form.hub_type === 'Type 2'" class="m-3 p-2 my-2">
               <p class="font-semibold text-lg">Hub - Healthboard</p>
-              <p>Hubs cannot create jobs for their own surgeries, and can only create jobs for their Spokes.</p>
+              <p>Healthboard Hubs cannot create jobs for their own surgeries, and can only create jobs for their Spokes.</p>
             </div>
           </div>
 
@@ -269,6 +269,9 @@ export default {
         });
       }
     },
+    "form.hub_type"(value) {
+      this.CheckEmptyField(this.form.hub_type, "hub_type");
+    },
     "form.title"(value) {
       this.CheckEmptyField(this.form.first_name, "first_name");
     },
@@ -321,9 +324,9 @@ export default {
       // if (this.form.type === "Hub") {
       //   notRequired.push("parent_surgery_id");
       // }
-      // if (this.form.type === "Spoke") {
-      //   notRequired.push("children_surgery_id");
-      // }
+      if (this.form.type === "Spoke") {
+        notRequired.push("hub_type");
+      }
       // if (this.form.type === "Stand Alone") {
       //   notRequired.push("parent_surgery_id");
       //   notRequired.push("children_surgery_id");

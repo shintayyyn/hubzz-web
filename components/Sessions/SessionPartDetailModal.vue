@@ -13,12 +13,12 @@
     <div class="flex flex-row justify-start items-center mt-4">
       <div class="leading-tight font-bold text-md sm:text-lg">{{job_part.job.title}}</div>
       <div
-        class="mx-2 py-2 px-4 rounded font-semibold"
+        class="ml-1 py-2 px-4 rounded font-semibold"
         :class="bgStatus(job_part.status)"
       >{{status(job_part.status)}}</div>
       <template v-if="job_part.status === 'Completed'">
         <div
-          class="py-2 px-4 rounded font-semibold"
+          class="py-2 px-4 mx-2 mx-rounded font-semibold"
           :class="jobPartStatus === 'Completed' ? 'bg-green-500' : 'bg-gray-300'"
         >{{jobPartStatus}}</div>
       </template>

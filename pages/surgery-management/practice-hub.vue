@@ -5,7 +5,7 @@
       :to="`/surgery-management/practice-hub`"
       class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
       :class="
-        $route.name === 'surgery-management-practice-hub'
+        $route.name.includes('surgery-management-practice-hub')
           ? 'border rounded-lg border-yellow-500 bg-yellow-500'
           : 'text-gray-600'
       "
@@ -30,10 +30,11 @@
       v-if="
         [
           'surgery-management-practice-hub-spoke-siblings-id',
+          'surgery-management-practice-hub-invitationId',
           'surgery-management-practice-hub-spoke-siblings-id-sibling-bank-locumId'
         ].includes($route.name)
       "
-      @click="$router.push('/surgery-management/practice-hub/spoke-siblings')"
+      @click="$router.go(-1)"
     ></div>
   </transition>
   <nuxt-child/>

@@ -108,6 +108,13 @@ export default {
     getInit() {
       let domain = this.$auth.user.domain;
       let accountStatus = this.$auth.user.status;
+      let hubType = ''
+      if(domain === 'Practice') {
+        if(this.$auth.user.practice_detail.practice.type === 'Hub'){
+          hubType = this.$auth.user.practice_detail.practice.hub_type
+          console.log('hub type', hubType)
+        }
+      }
       let addedLists = [];
       let defaultLists = [
         { name: "Dashboard", route: "/dashboard" },
@@ -134,13 +141,15 @@ export default {
         ];
         if (["Active", "Dormant"].includes(accountStatus)) {
           addedLists.push({ name: "Surgery Management", route: "/surgery-management" });
-          addedLists.push({ name: "My Banks", route: "/my-banks" });
-          addedLists.push({
-            name: "Sessions",
-            route: "/sessions",
-            permissions: ["View Sessions Job"]
-          });
-          addedLists.push({ name: "Billing", route: "/practice-billing" });
+          if(hubType !== 'Type 2') {
+            addedLists.push({ name: "My Banks", route: "/my-banks" });
+            addedLists.push({
+              name: "Sessions",
+              route: "/sessions",
+              permissions: ["View Sessions Job"]
+            });
+            addedLists.push({ name: "Billing", route: "/practice-billing" });
+          }
           addedLists.push({ name: "Invite", route: "/invite" });
           addedLists.push({
             name: "Roles and Permissions",
@@ -149,7 +158,6 @@ export default {
           });
         }
       }
-
       if (domain === "Locum") {
         addedLists = [
           { name: "Compliance", route: "/compliance" },

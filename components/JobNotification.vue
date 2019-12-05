@@ -42,7 +42,7 @@
                         :class="bgStatus(notification.status ? notification.status : notification.locum_status)"
                       >{{notification.status ? notification.status : notification.locum_status}}</div>
                       <div
-                        v-if="notification.type === 'Jobs' && (notification.status === 'Completed' || notification.locum_status === 'Completed')"
+                        v-if="notification.type === 'Jobs' && notification.billingStatus"
                         class="px-2 py-1 md:text-xs font-bold rounded-lg max-w-sm cursor-pointer uppercase mt-1"
                         :class="bgStatus(notification.billingStatus)"
                       >{{notification.billingStatus}}</div>

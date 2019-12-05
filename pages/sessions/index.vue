@@ -810,25 +810,20 @@ export default {
       );
     },
     getJobsCount(params) {
+      let queryStatus = this.$route.query.status;
       let status = [];
-      if (!this.$route.query.status) {
+      if (!queryStatus) {
         status = ["Allocated"];
-      } else if (
-        this.$route.query.status &&
-        this.$route.query.status === "Available"
-      ) {
+      } else if (queryStatus && queryStatus === "Available") {
         status = ["Available", "Matched"];
-      } else if (
-        this.$route.query.status &&
-        this.$route.query.status === "Completed"
-      ) {
+      } else if (queryStatus && queryStatus === "Completed") {
         status = ["Completed", "Terminated"];
       } else if (
-        this.$route.query.status &&
-        this.$route.query.status !== "Available" &&
-        this.$route.query.status !== "Completed"
+        queryStatus &&
+        queryStatus !== "Available" &&
+        queryStatus !== "Completed"
       ) {
-        status = [`${this.$route.query.status}`];
+        status = [`${queryStatus}`];
       }
       this.$axios
         .$get(
@@ -842,34 +837,31 @@ export default {
         )
         .then(res => {
           if (
-            this.$route.query.status &&
+            queryStatus &&
             ["ongoing", "completed", "approved"].includes(
-              this.$route.query.status.toLowerCase()
+              queryStatus.toLowerCase()
             )
           ) {
             this.$store.commit(
-              `jobs/SET_PRACTICE_${this.$route.query.status.toUpperCase()}_JOB_PARTS_COUNT`,
+              `jobs/SET_PRACTICE_${queryStatus.toUpperCase()}_JOB_PARTS_COUNT`,
               res.data.count
             );
-          } else if (
-            this.$route.query.status &&
-            this.$route.query.status.toLowerCase() === "live"
-          ) {
+          } else if (queryStatus && queryStatus.toLowerCase() === "live") {
             this.$store.commit(
               `jobs/SET_PRACTICE_AVAILABLE_JOBS_COUNT`,
               res.data.count
             );
           } else if (
-            this.$route.query.status &&
+            queryStatus &&
             !["ongoing", "completed", "approved"].includes(
-              this.$route.query.status.toLowerCase()
+              queryStatus.toLowerCase()
             )
           ) {
             this.$store.commit(
-              `jobs/SET_PRACTICE_${this.$route.query.status.toUpperCase()}_JOBS_COUNT`,
+              `jobs/SET_PRACTICE_${queryStatus.toUpperCase()}_JOBS_COUNT`,
               res.data.count
             );
-          } else if (!this.$route.query.status) {
+          } else if (!queryStatus) {
             this.$store.commit(
               "jobs/SET_PRACTICE_ALLOCATED_JOBS_COUNT",
               res.data.count
@@ -889,25 +881,20 @@ export default {
         });
     },
     getJobs(params) {
+      let queryStatus = this.$route.query.status;
       let status = [];
-      if (!this.$route.query.status) {
+      if (!queryStatus) {
         status = ["Allocated"];
-      } else if (
-        this.$route.query.status &&
-        this.$route.query.status === "Available"
-      ) {
+      } else if (queryStatus && queryStatus === "Available") {
         status = ["Available", "Matched"];
-      } else if (
-        this.$route.query.status &&
-        this.$route.query.status === "Completed"
-      ) {
+      } else if (queryStatus && queryStatus === "Completed") {
         status = ["Completed", "Terminated"];
       } else if (
-        this.$route.query.status &&
-        this.$route.query.status !== "Available" &&
-        this.$route.query.status !== "Completed"
+        queryStatus &&
+        queryStatus !== "Available" &&
+        queryStatus !== "Completed"
       ) {
-        status = [`${this.$route.query.status}`];
+        status = [`${queryStatus}`];
       }
       this.$axios
         .$get(`/api/v1/practice/${this.isJobPart ? "job-parts" : "jobs"}`, {
@@ -918,34 +905,31 @@ export default {
         })
         .then(res => {
           if (
-            this.$route.query.status &&
+            queryStatus &&
             ["ongoing", "completed", "approved"].includes(
-              this.$route.query.status.toLowerCase()
+              queryStatus.toLowerCase()
             )
           ) {
             this.$store.commit(
-              `jobs/SET_PRACTICE_${this.$route.query.status.toUpperCase()}_JOB_PARTS`,
+              `jobs/SET_PRACTICE_${queryStatus.toUpperCase()}_JOB_PARTS`,
               res.data.job_parts
             );
-          } else if (
-            this.$route.query.status &&
-            this.$route.query.status.toLowerCase() === "live"
-          ) {
+          } else if (queryStatus && queryStatus.toLowerCase() === "live") {
             this.$store.commit(
               `jobs/SET_PRACTICE_AVAILABLE_JOBS`,
               res.data.jobs
             );
           } else if (
-            this.$route.query.status &&
+            queryStatus &&
             !["ongoing", "completed", "approved"].includes(
-              this.$route.query.status.toLowerCase()
+              queryStatus.toLowerCase()
             )
           ) {
             this.$store.commit(
-              `jobs/SET_PRACTICE_${this.$route.query.status.toUpperCase()}_JOBS`,
+              `jobs/SET_PRACTICE_${queryStatus.toUpperCase()}_JOBS`,
               res.data.jobs
             );
-          } else if (!this.$route.query.status) {
+          } else if (!queryStatus) {
             this.$store.commit(
               "jobs/SET_PRACTICE_ALLOCATED_JOBS",
               res.data.jobs

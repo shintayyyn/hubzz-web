@@ -34,7 +34,7 @@
         </div>
         <div v-for="(item, index) in daysInMonth" :key="index">
           <div
-            @click="selectDate(item.fullDate)"
+            @click="selectDate(item)"
             class="relative border border-solid rounded-lg m-1 cursor-pointer flex justify-center items-center h-8 sm:h-12 md:h-16 lg:h-20 w-auto"
             :class="$store.state.availability.date_today === item.fullDate ? 'border-yellow-500 text-lg font-bold':'hover:bg-gray-300'"
             v-if="item.day === 1"
@@ -50,7 +50,7 @@
         </div>
         <div v-for="(item, index) in daysInMonth" :key="index">
           <div
-            @click="selectDate(item.fullDate)"
+            @click="selectDate(item)"
             class="relative border border-solid rounded-lg m-1 cursor-pointer flex justify-center items-center h-8 sm:h-12 md:h-16 lg:h-20 w-auto"
             :class="$store.state.availability.date_today === item.fullDate ? 'border-yellow-500 text-lg font-bold':'hover:bg-gray-300'"
             v-if="item.day === 2"
@@ -66,7 +66,7 @@
         </div>
         <div v-for="(item, index) in daysInMonth" :key="index">
           <div
-            @click="selectDate(item.fullDate)"
+            @click="selectDate(item)"
             class="relative border border-solid rounded-lg m-1 cursor-pointer flex justify-center items-center h-8 sm:h-12 md:h-16 lg:h-20 w-auto"
             :class="$store.state.availability.date_today === item.fullDate ? 'border-yellow-500 text-lg font-bold':'hover:bg-gray-300'"
             v-if="item.day === 3"
@@ -82,7 +82,7 @@
         </div>
         <div v-for="(item, index) in daysInMonth" :key="index">
           <div
-            @click="selectDate(item.fullDate)"
+            @click="selectDate(item)"
             class="relative border border-solid rounded-lg m-1 cursor-pointer flex justify-center items-center h-8 sm:h-12 md:h-16 lg:h-20 w-auto"
             :class="$store.state.availability.date_today === item.fullDate ? 'border-yellow-500 text-lg font-bold':'hover:bg-gray-300'"
             v-if="item.day === 4"
@@ -98,7 +98,7 @@
         </div>
         <div v-for="(item, index) in daysInMonth" :key="index">
           <div
-            @click="selectDate(item.fullDate)"
+            @click="selectDate(item)"
             class="relative border border-solid rounded-lg m-1 cursor-pointer flex justify-center items-center h-8 sm:h-12 md:h-16 lg:h-20 w-auto"
             :class="$store.state.availability.date_today === item.fullDate ? 'border-yellow-500 text-lg font-bold':'hover:bg-gray-300'"
             v-if="item.day === 5"
@@ -114,7 +114,7 @@
         </div>
         <div v-for="(item, index) in daysInMonth" :key="index">
           <div
-            @click="selectDate(item.fullDate)"
+            @click="selectDate(item)"
             class="relative border border-solid rounded-lg m-1 cursor-pointer flex justify-center items-center h-8 sm:h-12 md:h-16 lg:h-20 w-auto"
             :class="$store.state.availability.date_today === item.fullDate ? 'border-yellow-500 text-lg font-bold':'hover:bg-gray-300'"
             v-if="item.day === 6"
@@ -130,7 +130,7 @@
         </div>
         <div v-for="(item, index) in daysInMonth" :key="index">
           <div
-            @click="selectDate(item.fullDate)"
+            @click="selectDate(item)"
             class="relative border border-solid rounded-lg m-1 cursor-pointer flex justify-center items-center h-8 sm:h-12 md:h-16 lg:h-20 w-auto"
             :class="$store.state.availability.date_today === item.fullDate ? 'border-yellow-500 text-lg font-bold':'hover:bg-gray-300'"
             v-if="item.day === 0"
@@ -141,7 +141,7 @@
         </div>
       </div>
     </div>
-    <AppLoading :loading="$store.state.calendar.loading" spinner />
+    <AppLoading :loading="loading" spinner />
   </section>
 </template>
 <script>
@@ -154,6 +154,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       selectedMonth: 0,
       selectedYear: new Date().getFullYear(),
       daysInMonth: [],
@@ -173,7 +174,6 @@ export default {
     }
   },
   created() {
-    console.log(this.getLocumUnavailabilities);
     this.startOfMonth = this.$moment()
       .startOf("month")
       .format("YYYY-MM-DD");
@@ -186,13 +186,16 @@ export default {
     this.getJobs();
   },
   watch: {
-    selectedMonth(value) {
-      this.getDaysInMonth(value, this.selectedYear);
+    selectedMonth(newValue, oldValue) {
+      if (newValue && oldValue) {
+        this.getDaysInMonth(newValue, this.selectedYear);
+      }
     }
   },
   methods: {
     getJobs() {
-      this.$store.commit("calendar/TOGGLE_LOADING", true);
+      // this.$store.commit("calendar/TOGGLE_LOADING", true);
+      this.loading = true;
       Promise.all([
         this.$axios.$get("/api/v1/locum/jobs", {
           params: {
@@ -239,7 +242,8 @@ export default {
           }
         )
         .finally(() => {
-          this.$store.commit("calendar/TOGGLE_LOADING", false);
+          // this.$store.commit("calendar/TOGGLE_LOADING", false);
+          this.loading = false;
         });
     },
     getDaysInMonth(month, selectedYear) {
@@ -250,17 +254,16 @@ export default {
         date.setDate(date.getDate() + 1);
       }
       let daysInMonth = [];
+
       days.forEach(day => {
+        let date = day.getDate();
+        let fullDate = this.$moment(day, "ddd MMM DD YYYY HH:mm:ss zzZ").format(
+          "YYYY-MM-DD"
+        );
         daysInMonth.push({
           day: day.getDay(),
-          date: day.getDate(),
-          fullDate: this.$moment(
-            new Date(
-              day.getFullYear(),
-              day.getMonth(),
-              day.getDate()
-            ).toDateString()
-          ).format("YYYY-MM-DD")
+          date,
+          fullDate
         });
       });
       this.daysInMonth = daysInMonth;
@@ -295,19 +298,31 @@ export default {
       this.getJobs();
     },
     selectDate(date) {
-      this.$store.commit("availability/SELECT_DATE", date);
-      let unavaibleDate = null;
-      let ongoingDate = null;
+      // if (!date.unavailableId) {
+      //   this.$router.push({
+      //     path: `/availability/create`,
+      //     query: { ...this.$route.query, type: "solo" }
+      //   });
+      // } else if (date.unavailableId) {
+      //   this.$router.push({
+      //     path: `/availability/${date.fullDate}`,
+      //     query: { ...this.$route.query, type: "solo" }
+      //   });
+      // }
+      let selectedDate = date.fullDate;
+      let unavailableDate = null;
       let allocatedDate = null;
+      let ongoingDate = null;
+
       if (
         this.getLocumUnavailabilities &&
         this.getLocumUnavailabilities.length > 0
       ) {
         let isUnavailable = this.getLocumUnavailabilities.find(
-          unavailable => unavailable.date === date
+          unavailable => unavailable.date === selectedDate
         );
         if (isUnavailable) {
-          unavaibleDate = {
+          unavailableDate = {
             id: isUnavailable.id,
             shifts: isUnavailable.shifts
           };
@@ -316,7 +331,7 @@ export default {
       if (this.getLocumOngoingJobs && this.getLocumOngoingJobs.length > 0) {
         let hasLocumOngoingJob = this.getLocumOngoingJobs.filter(job_part =>
           this.getDateArray(job_part.date_start, job_part.date_end).includes(
-            date
+            selectedDate
           )
         );
         if (hasLocumOngoingJob && hasLocumOngoingJob.length > 0) {
@@ -327,7 +342,7 @@ export default {
       }
       if (this.getLocumAllocatedJobs && this.getLocumAllocatedJobs.length > 0) {
         let hasLocumAllocatedJob = this.getLocumAllocatedJobs.filter(job =>
-          this.getDateArray(job.date_start, job.date_end).includes(date)
+          this.getDateArray(job.date_start, job.date_end).includes(selectedDate)
         );
         if (hasLocumAllocatedJob && hasLocumAllocatedJob.length > 0) {
           allocatedDate = hasLocumAllocatedJob.map(item => {
@@ -336,10 +351,16 @@ export default {
         }
       }
 
-      // console.log("unavaibleDate", unavaibleDate);
-      // console.log("ongoingDate", ongoingDate);
+      // console.log("selectedDate", selectedDate);
+      // console.log("unavailableDate", unavailableDate);
       // console.log("allocatedDate", allocatedDate);
-      this.$emit("open", unavaibleDate, ongoingDate, allocatedDate);
+      // console.log("ongoingDate", ongoingDate);
+      this.$emit("open", {
+        selectedDate,
+        unavailableDate,
+        allocatedDate,
+        ongoingDate
+      });
     }
   }
 };
