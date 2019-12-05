@@ -26,8 +26,11 @@
     </div>
     <AppFormError :formError="formError" v-if="formError.length > 0" />
     <!-- pdf form -->
-    <div id="htmlpdf" class="relative max-w-3xl mb-2 md:mb-4 bg-white px-4 py-4 border shadow-md mb-32">
-    <AppLoading :loading="loading" spinner :message="'Exporting'" />
+    <div
+      id="htmlpdf"
+      class="relative max-w-3xl mb-2 md:mb-4 bg-white px-4 py-4 border shadow-md mb-32"
+    >
+      <AppLoading :loading="loading" spinner :message="'Exporting'" />
       <!-- pdf header -->
       <div class="flex flex-col p-4" :ref="'pdf-header'">
         <div class="text-xs sm:text-sm sm:text-right leading-normal">
@@ -492,10 +495,13 @@ export default {
     this.defaultSelectedJobParts = JSON.parse(
       JSON.stringify(this.selectedJobParts)
     );
-    if (this.$auth.user.practice_detail && this.$auth.user.practice_detail.practice.type !== 'Spoke'){
-      this.allowToBill = true
+    if (
+      this.$auth.user.practice_detail &&
+      this.$auth.user.practice_detail.practice.type !== "Spoke"
+    ) {
+      this.allowToBill = true;
     }
-    console.log(this.$auth.user)
+    console.log(this.$auth.user);
   },
   mounted() {
     document.body.style.overflow = "hidden";
@@ -536,6 +542,7 @@ export default {
       });
       this.Validate(this.form, ["final"]);
       if (!this.formError.length) {
+        this.loading = true;
         this.$axios
           .$put(
             `/api/v1/practice/locum-invoices/${this.$route.params.id}`,
@@ -551,8 +558,22 @@ export default {
             this.$router.push("/practice-billing/invoices-from-locums");
           })
           .catch(err => {
-            console.log("err", err.response.data);
-            this.formError.push(err.response.data);
+            if (err.response.data.message) {
+              this.$store.commit("SET_NOTIFICATION", {
+                enabled: true,
+                status: "success",
+                text: [`${err.response.data.message}`]
+              });
+            } else if (err.response.data.error_messages) {
+              err.response.data.error_messages.forEach(error => {
+                this.formError.push(error);
+              });
+            } else {
+              this.formError.push(err.response.data);
+            }
+          })
+          .finally(() => {
+            this.loading = false;
           });
       }
     },

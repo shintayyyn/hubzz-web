@@ -127,17 +127,18 @@ export default {
   },
   methods: {
     checkIfCanComplete() {
-      if (this.isPreviousJobPartComplete && this.isCurrentDatePastTheEndDate) {
-        this.confirmation_modal = true;
-      } else if (!this.isPreviousJobPartComplete) {
-        this.ignore_modal = true;
-        this.ignore_modal_label =
-          "You need to complete the previous week first";
-      } else if (!this.isCurrentDatePastTheEndDate) {
-        this.ignore_modal = true;
-        this.ignore_modal_label =
-          "You cannot complete a Job part that has not yet past the end date";
-      }
+      this.confirmation_modal = true;
+      // if (this.isPreviousJobPartComplete && this.isCurrentDatePastTheEndDate) {
+      //   this.confirmation_modal = true;
+      // } else if (!this.isPreviousJobPartComplete) {
+      //   this.ignore_modal = true;
+      //   this.ignore_modal_label =
+      //     "You need to complete the previous week first";
+      // } else if (!this.isCurrentDatePastTheEndDate) {
+      //   this.ignore_modal = true;
+      //   this.ignore_modal_label =
+      //     "You cannot complete a Job part that has not yet past the end date";
+      // }
     },
     complete() {
       this.formError = [];
@@ -174,6 +175,12 @@ export default {
               text: ["Job Part completed"]
             });
             this.$emit("completed");
+            setTimeout(() => {
+              this.$router.push({
+                path: `/sessions/${this.job_part.id}`,
+                query: { ...this.$route.query }
+              });
+            }, 500);
           })
           .catch(err => {
             if (!err.response.data.error_messages) {

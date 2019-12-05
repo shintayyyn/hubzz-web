@@ -17,7 +17,8 @@
       </nuxt-link>
       <div class="flex flex-row justify-start font-bold mt-8">Appointment</div>
       <AppFormError :formError="formError" v-if="formError.length > 0" id="error" />
-      <div class="bg-white rounded-lg shadow-lg px-4 md:px-8 py-4 mt-4 max-w-4xl">
+      <div class="relative bg-white rounded-lg shadow-lg px-4 md:px-8 py-4 mt-4 max-w-4xl">
+        <AppLoading :loading="loading" spinner />
         <AppInput
           v-model="form.private_practice_id"
           :type="'select'"
@@ -44,7 +45,7 @@
           </div>
         </div>
         <div class="w-full flex flex-row flex-wrap justify-start items-end mt-4">
-          <div class="px-1 w-full sm:w-1/2 md:w-1/3 ">
+          <div class="px-1 w-full sm:w-1/2 md:w-1/3">
             <AppInput
               v-model="form.shift_id"
               :type="'select'"
@@ -99,12 +100,12 @@
         </div>
         <div class="flex flex-no-wrap justify-start">
           <template v-if="!job">
-            <AppButton :label="'Save'" @click="create" />
+            <AppButton :label="'Save'" @click="create" :disabled="loading" />
           </template>
           <template v-else>
-            <AppButton :label="'Delete'" @click="delete_modal = true" />
+            <AppButton :label="'Delete'" @click="delete_modal = true" :disabled="loading" />
             <div class="mx-1"></div>
-            <AppButton :label="'Save'" @click="edit" />
+            <AppButton :label="'Save'" @click="edit" :disabled="loading" />
           </template>
         </div>
       </div>
@@ -127,6 +128,7 @@ import AppTime from "@/components/Base/AppTime";
 import AppButton from "@/components/Base/AppButton";
 import AddSurgeryModal from "@/components/AddSurgeryModal";
 import AppFormError from "@/components/Base/AppFormError";
+import AppLoading from "@/components/Base/AppLoading";
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
 export default {
   props: ["job"],
@@ -136,11 +138,13 @@ export default {
     AppTime,
     AppButton,
     AddSurgeryModal,
+    AppLoading,
     AppFormError,
     AppConfirmationModal
   },
   data() {
     return {
+      loading: false,
       delete_modal: false,
       surgery_modal: false,
       shifts: [],
@@ -227,10 +231,34 @@ export default {
       );
     }
   },
+  async created() {
+    this.loading = true;
+    Promise.all([
+      this.$axios.$get("/api/v1/locum/private-practices"),
+      this.$axios.$get("/api/v1/shifts"),
+      this.$axios.$get("/api/v1/locum-detail-rate-types")
+    ])
+      .then(([responsePrivatePractices, responseShifts, responseRateTypes]) => {
+        this.$store.commit(
+          "SET_LOCUM_PRIVATE_PRACTICES",
+          responsePrivatePractices.data.private_practices
+        );
+
+        this.shifts = [];
+        responseShifts.data.shifts.forEach(item => {
+          this.shifts.push({ label: item.name, value: item.id });
+        });
+
+        this.rate_types = [];
+        responseRateTypes.data.locum_detail_rate_types.forEach(item => {
+          this.rate_types.push({ label: item.name, value: item.id });
+        });
+      })
+      .finally(() => {
+        this.loading = false;
+      });
+  },
   mounted() {
-    this.getPractices();
-    this.getShifts();
-    this.getRateType();
     if (this.job) {
       this.form.private_practice_id = this.job.private_job.private_practice.id;
       this.form.date_start = this.job.date_start;
@@ -250,30 +278,6 @@ export default {
     }
   },
   methods: {
-    getPractices() {
-      this.$axios.$get(`/api/v1/locum/private-practices`).then(res => {
-        this.$store.commit(
-          "SET_LOCUM_PRIVATE_PRACTICES",
-          res.data.private_practices
-        );
-      });
-    },
-    getShifts() {
-      this.$axios.$get(`/api/v1/shifts`).then(res => {
-        this.shifts = [];
-        res.data.shifts.forEach(item => {
-          this.shifts.push({ label: item.name, value: item.id });
-        });
-      });
-    },
-    getRateType() {
-      this.$axios.$get(`/api/v1/locum-detail-rate-types`).then(res => {
-        this.rate_types = [];
-        res.data.locum_detail_rate_types.forEach(item => {
-          this.rate_types.push({ label: item.name, value: item.id });
-        });
-      });
-    },
     getJobParts(jobId) {
       return this.$axios.$get(`/api/v1/locum/job-parts?job_id=${jobId}`);
     },
@@ -282,6 +286,7 @@ export default {
       this.Validate(this.form, ["description"]);
       if (!this.formError.length) {
         try {
+          this.loading = true;
           const jobResponse = await this.$axios.$post(
             `/api/v1/locum/jobs`,
             this.form
@@ -335,15 +340,20 @@ export default {
             status: "success",
             text: [`${jobResponse.message}`]
           });
+          this.loading = false;
         } catch (err) {
-          err.response.data.error_messages.forEach(error => {
-            this.formError.push(error);
-          });
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "danger",
-            text: this.formError.map(error => error.message)
-          });
+          if (err.response.data.message) {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "danger",
+              text: this.formError.map(error => error.message)
+            });
+          } else if (err.response.data.error_messages) {
+            err.response.data.error_messages.forEach(error => {
+              this.formError.push(error);
+            });
+          }
+          this.loading = false;
         }
       } else {
         this.$store.commit("SET_NOTIFICATION", {

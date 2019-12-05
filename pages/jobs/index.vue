@@ -788,26 +788,21 @@ export default {
   },
   methods: {
     getJobsCount(params) {
+      let queryStatus = this.$route.query.status;
       this.loading = true;
       let locum_status = [];
-      if (!this.$route.query.status) {
+      if (!queryStatus) {
         locum_status = ["Allocated"];
-      } else if (
-        this.$route.query.status &&
-        this.$route.query.status === "Available"
-      ) {
+      } else if (queryStatus && queryStatus === "Available") {
         locum_status = ["Available", "Matched"];
-      } else if (
-        this.$route.query.status &&
-        this.$route.query.status === "Completed"
-      ) {
+      } else if (queryStatus && queryStatus === "Completed") {
         locum_status = ["Completed", "Terminated"];
       } else if (
-        this.$route.query.status &&
-        this.$route.query.status !== "Available" &&
-        this.$route.query.status !== "Completed"
+        queryStatus &&
+        queryStatus !== "Available" &&
+        queryStatus !== "Completed"
       ) {
-        locum_status = [`${this.$route.query.status}`];
+        locum_status = [`${queryStatus}`];
       }
       this.$axios
         .$get(`/api/v1/locum/${this.isJobPart ? "job-parts" : "jobs"}/count`, {
@@ -819,26 +814,26 @@ export default {
         .then(res => {
           console.log("count response", res.data.count);
           if (
-            this.$route.query.status &&
+            queryStatus &&
             ["ongoing", "completed", "approved"].includes(
-              this.$route.query.status.toLowerCase()
+              queryStatus.toLowerCase()
             )
           ) {
             this.$store.commit(
-              `jobs/SET_LOCUM_${this.$route.query.status.toUpperCase()}_JOB_PARTS_COUNT`,
+              `jobs/SET_LOCUM_${queryStatus.toUpperCase()}_JOB_PARTS_COUNT`,
               res.data.count
             );
           } else if (
-            this.$route.query.status &&
+            queryStatus &&
             !["ongoing", "completed", "approved"].includes(
-              this.$route.query.status.toLowerCase()
+              queryStatus.toLowerCase()
             )
           ) {
             this.$store.commit(
-              `jobs/SET_LOCUM_${this.$route.query.status.toUpperCase()}_JOBS_COUNT`,
+              `jobs/SET_LOCUM_${queryStatus.toUpperCase()}_JOBS_COUNT`,
               res.data.count
             );
-          } else if (!this.$route.query.status) {
+          } else if (!queryStatus) {
             this.$store.commit(
               "jobs/SET_LOCUM_ALLOCATED_JOBS_COUNT",
               res.data.count
@@ -854,25 +849,20 @@ export default {
         });
     },
     getJobs(params) {
+      let queryStatus = this.$route.query.status;
       let locum_status = [];
-      if (!this.$route.query.status) {
+      if (!queryStatus) {
         locum_status = ["Allocated"];
-      } else if (
-        this.$route.query.status &&
-        this.$route.query.status === "Available"
-      ) {
+      } else if (queryStatus && queryStatus === "Available") {
         locum_status = ["Available", "Matched"];
-      } else if (
-        this.$route.query.status &&
-        this.$route.query.status === "Completed"
-      ) {
+      } else if (queryStatus && queryStatus === "Completed") {
         locum_status = ["Completed", "Terminated"];
       } else if (
-        this.$route.query.status &&
-        this.$route.query.status !== "Available" &&
-        this.$route.query.status !== "Completed"
+        queryStatus &&
+        queryStatus !== "Available" &&
+        queryStatus !== "Completed"
       ) {
-        locum_status = [`${this.$route.query.status}`];
+        locum_status = [`${queryStatus}`];
       }
       this.$axios
         .$get(`/api/v1/locum/${this.isJobPart ? "job-parts" : "jobs"}`, {
@@ -883,26 +873,26 @@ export default {
         })
         .then(res => {
           if (
-            this.$route.query.status &&
+            queryStatus &&
             ["ongoing", "completed", "approved"].includes(
-              this.$route.query.status.toLowerCase()
+              queryStatus.toLowerCase()
             )
           ) {
             this.$store.commit(
-              `jobs/SET_LOCUM_${this.$route.query.status.toUpperCase()}_JOB_PARTS`,
+              `jobs/SET_LOCUM_${queryStatus.toUpperCase()}_JOB_PARTS`,
               res.data.job_parts
             );
           } else if (
-            this.$route.query.status &&
+            queryStatus &&
             !["ongoing", "completed", "approved"].includes(
-              this.$route.query.status.toLowerCase()
+              queryStatus.toLowerCase()
             )
           ) {
             this.$store.commit(
-              `jobs/SET_LOCUM_${this.$route.query.status.toUpperCase()}_JOBS`,
+              `jobs/SET_LOCUM_${queryStatus.toUpperCase()}_JOBS`,
               res.data.jobs
             );
-          } else if (!this.$route.query.status) {
+          } else if (!queryStatus) {
             this.$store.commit("jobs/SET_LOCUM_ALLOCATED_JOBS", res.data.jobs);
           }
           this.showTable = true;

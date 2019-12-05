@@ -1,11 +1,18 @@
 <template>
-    <button
-      @click.prevent="$emit('click')"
-      :disabled="disabled"
-      class="button rounded-lg p-2 md:px-4 font-bold md:text-lg focus:outline-none transition-hover"
-      :class="[disabled ? 'disabled-button' : '', (label.includes('Filter') || label.includes('Sort')) && 'flex items-center', inClass]"
-      :style="inStyle"
-    >{{label}}<svgicon v-if="label.includes('Filter') || label.includes('Sort')" name="sort" class="h-full w-3 ml-2 fill-current"/></button>
+  <button
+    @click.prevent="$emit('click')"
+    :disabled="disabled"
+    class="button rounded-lg p-2 md:px-4 font-bold md:text-lg focus:outline-none transition-hover"
+    :class="[disabled ? 'disabled-button' : '', (label.includes('Filter') || label.includes('Sort')) && 'flex items-center', inClass]"
+    :style="inStyle"
+  >
+    {{label}}
+    <svgicon
+      v-if="label.includes('Filter') || label.includes('Sort')"
+      name="sort"
+      class="h-full w-3 ml-2 fill-current"
+    />
+  </button>
 </template>
 <script>
 export default {
@@ -43,7 +50,7 @@ export default {
   cursor: not-allowed;
 }
 
-.disabled-button:hover{
+.disabled-button:hover {
   background: linear-gradient(to top, #bbbbbb, #cccccc);
 }
 </style>
