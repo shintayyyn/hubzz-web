@@ -91,14 +91,13 @@ export default {
   },
   created() {
     this.$store.commit("availability/SELECT_DATE", this.$route.params.id);
-
-    // this.getSelectedShifts();
     this.getShifts();
   },
   mounted() {
-    this.unavailableDate = null;
+    let unavailableDate = null;
     this.ongoingDate = null;
     this.allocatedDate = null;
+
     if (
       this.getLocumUnavailabilities &&
       this.getLocumUnavailabilities.length > 0
@@ -107,12 +106,13 @@ export default {
         unavailable => unavailable.date === this.selectedDate
       );
       if (isUnavailable) {
-        this.unavailableDate = {
+        unavailableDate = {
           id: isUnavailable.id,
           shifts: isUnavailable.shifts
         };
       }
     }
+
     if (this.getLocumOngoingJobs && this.getLocumOngoingJobs.length > 0) {
       let hasLocumOngoingJob = this.getLocumOngoingJobs.filter(job_part =>
         this.getDateArray(job_part.date_start, job_part.date_end).includes(
@@ -125,6 +125,7 @@ export default {
         });
       }
     }
+
     if (this.getLocumAllocatedJobs && this.getLocumAllocatedJobs.length > 0) {
       let hasLocumAllocatedJob = this.getLocumAllocatedJobs.filter(job =>
         this.getDateArray(job.date_start, job.date_end).includes(
@@ -137,25 +138,24 @@ export default {
         });
       }
     }
-    if (this.unavailableDate) {
-      let shifts = this.unavailableDate.shifts;
+
+    if (unavailableDate) {
+      let shifts = unavailableDate.shifts;
       if (this.allocatedDate && this.allocatedDate.length > 0) {
         this.allocatedDate.forEach(item => {
-          shifts = this.unavailableDate.shifts.filter(
-            shift => shift.id !== item.id
-          );
+          shifts = unavailableDate.shifts.filter(shift => shift.id !== item.id);
         });
       }
       if (this.ongoingDate && this.ongoingDate.length > 0) {
         this.ongoingDate.forEach(item => {
-          shifts = this.unavailableDate.shifts.filter(
-            shift => shift.id !== item.id
-          );
+          shifts = unavailableDate.shifts.filter(shift => shift.id !== item.id);
         });
       }
-      this.unavailableDate.shifts = shifts;
+
+      unavailableDate.shifts = shifts;
+
       this.form.shift_id = [];
-      this.form.shift_id = this.unavailableDate.shifts.map(shift => shift.id);
+      this.form.shift_id = unavailableDate.shifts.map(shift => shift.id);
     }
     this.form.date_start = this.$store.state.availability.selected_date;
     this.form.date_end = this.$store.state.availability.selected_date;

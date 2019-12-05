@@ -15,7 +15,8 @@
       </div>
       <div class="px-0 md:px-10 my-4">
         <div class="availability-calendar relative rounded-lg shadow-lg p-5">
-          <AvailabilityCalendar @open="open" />
+          <AvailabilityCalendar />
+          <!-- @open="open"  -->
           <div class="absolute bottom-0 right-0 -my-2 -mx-1 md:-m-2">
             <nuxt-link :to="'/availability/create?type=range'">
               <div
@@ -84,17 +85,17 @@ export default {
       document.body.style.overflow = "hidden";
       this.type = "range";
       this.modal = true;
-    },
-    open({ selectedDate, unavailableDate, allocatedDate, ongoingDate }) {
-      this.selectedDate = selectedDate;
-      this.unavailableDate = unavailableDate;
-      this.allocatedDate = allocatedDate;
-      this.ongoingDate = ongoingDate;
-
-      this.$router.push({
-        path: `/availability/${selectedDate}`
-      });
     }
+    // open({ selectedDate, unavailableDate, allocatedDate, ongoingDate }) {
+    //   this.selectedDate = selectedDate;
+    //   this.unavailableDate = unavailableDate;
+    //   this.allocatedDate = allocatedDate;
+    //   this.ongoingDate = ongoingDate;
+
+    //   this.$router.push({
+    //     path: `/availability/${selectedDate}`
+    //   });
+    // }
   }
 };
 </script>

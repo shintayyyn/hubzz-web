@@ -164,10 +164,6 @@ export default {
             });
           });
       } else {
-        this.$router.push({
-          path: `/availability`,
-          query: { ...this.$route.query }
-        });
         this.$store.commit("SET_NOTIFICATION", {
           enabled: true,
           status: "danger",

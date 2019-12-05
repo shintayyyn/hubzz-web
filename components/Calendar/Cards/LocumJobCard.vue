@@ -1,7 +1,7 @@
 <template>
   <div class="relative rounded-lg py-3 px-5 my-1 bg-white cursor-pointer hover:bg-gray-300">
     <nuxt-link
-      :to="{ path: job.type ? `/dashboard/${propJob.id}?status=${propJob.status}` : '/availability', query: {...$route.query}}"
+      :to="{ path: job.type ? `/dashboard/${propJob.id}?status=${propJob.status}` : `/availability/${job.date}`, query: {...$route.query}}"
     >
       <template v-if="isNotUnavailable">
         <div class="absolute left-0 top-0 rounded-l-lg p-2 h-full" :class="bgStatus"></div>
