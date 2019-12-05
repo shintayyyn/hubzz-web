@@ -205,13 +205,13 @@
             >Description</div>
             <div class="w-1/2 bg-gray-900 text-white px-4 py-1 font-semibold flex justify-between">
               Total
-              <div class="bg-gray-900 flex items-center justify-end">
+              <!-- <div class="bg-gray-900 flex items-center justify-end">
                 <span
                   v-if="type === 'Private' && hideToPrint"
                   class="cursor-pointer w-6 h-6 rounded-full bg-white text-gray-900 font-semibold text-xl flex justify-center items-center hover:bg-gray-200"
                   @click="addItem"
                 >+</span>
-              </div>
+              </div>-->
             </div>
           </div>
           <!-- ITEMS -->
@@ -233,14 +233,24 @@
                     class="w-full text-xs sm:text-sm resize-none border-b-2 border-gray-300 focus:border-yellow-500 focus:outline-none px-4 my-2"
                   ></textarea>
                 </div>
-                <div class="w-1/3 flex items-end px-1">
-                  <input
-                    type="number"
-                    min="0"
-                    v-model="item.total"
-                    placeholder="Enter value"
-                    class="w-full text-xs sm:text-sm text-right border-b-2 focus:border-yellow-500 focus:outline-none my-4"
-                  />
+                <div class="w-1/2 flex items-end px-1">
+                  <div :class="selectedInvoice ? 'w-full' : 'w-3/4'">
+                    <input
+                      type="number"
+                      min="0"
+                      v-model="item.total"
+                      placeholder="Enter value"
+                      class="w-full text-xs sm:text-sm text-right border-b-2 focus:border-yellow-500 focus:outline-none my-4"
+                    />
+                  </div>
+                  <div class="w-1/4 h-full" v-if="selectedInvoice === null && hideToPrint">
+                    <div class="flex justify-center items-center w-full h-full">
+                      <span
+                        class="bg-gray-900 hover:bg-black w-6 h-6 cursor-pointer float-right font-semibold inline-flex items-center justify-center px-3 mt-2 rounded-full text-white text-xl mx-auto"
+                        @click="removeSelectedJobPart(item, index)"
+                      >-</span>
+                    </div>
+                  </div>
                 </div>
               </template>
               <!-- FOR PLATFORM TYPE -->
@@ -252,46 +262,46 @@
                   class="text-xs sm:text-sm border-b-2 border-gray-300 px-4 py-1 text-right"
                   :class="approvedInvoices.includes(item.job_part_id) ? 'w-1/2':'w-1/3'"
                 >{{item.total}}</div>
+                <div
+                  class="flex items-center align-middle sticky right-0 bg-white"
+                  v-if="!approvedInvoices.includes(item.job_part_id)"
+                >
+                  <div class="px-2">
+                    <div class="flex flex-row flex-no-wrap justify-start items-center">
+                      <input
+                        :disabled="item.approve"
+                        v-model="disputedInvoices"
+                        :id="`${item.job_part_id}-disputed`"
+                        type="checkbox"
+                        :value="item.job_part_id"
+                      />
+                      <label
+                        :for="`${item.job_part_id}-disputed`"
+                        class="text-xs sm:text-sm py-1 flex items-center"
+                      >Disputed</label>
+                    </div>
+                    <div class="flex flex-row flex-no-wrap justify-start items-center">
+                      <input
+                        v-model="approvedInvoices"
+                        :id="`${item.job_part_id}-approved`"
+                        type="checkbox"
+                        :value="item.job_part_id"
+                        disabled
+                      />
+                      <label
+                        :for="`${item.job_part_id}-approved`"
+                        class="text-xs sm:text-sm py-1 flex items-center"
+                      >Approved</label>
+                    </div>
+                  </div>
+                  <div class="flex justify-center" v-if="selectedInvoice === null  && hideToPrint">
+                    <span
+                      class="bg-gray-900 hover:bg-black w-6 h-6 cursor-pointer float-right font-semibold inline-flex items-center justify-center px-3 mt-2 rounded-full text-white text-xl mx-auto"
+                      @click="removeSelectedJobPart(item, index)"
+                    >-</span>
+                  </div>
+                </div>
               </template>
-              <div
-                class="flex items-center align-middle sticky right-0 bg-white"
-                v-if="!approvedInvoices.includes(item.job_part_id)"
-              >
-                <div class="px-2">
-                  <div class="flex flex-row flex-no-wrap justify-start items-center">
-                    <input
-                      :disabled="item.approve"
-                      v-model="disputedInvoices"
-                      :id="`${item.job_part_id}-disputed`"
-                      type="checkbox"
-                      :value="item.job_part_id"
-                    />
-                    <label
-                      :for="`${item.job_part_id}-disputed`"
-                      class="text-xs sm:text-sm py-1 flex items-center"
-                    >Disputed</label>
-                  </div>
-                  <div class="flex flex-row flex-no-wrap justify-start items-center">
-                    <input
-                      v-model="approvedInvoices"
-                      :id="`${item.job_part_id}-approved`"
-                      type="checkbox"
-                      :value="item.job_part_id"
-                      disabled
-                    />
-                    <label
-                      :for="`${item.job_part_id}-approved`"
-                      class="text-xs sm:text-sm py-1 flex items-center"
-                    >Approved</label>
-                  </div>
-                </div>
-                <div class="flex justify-center" v-if="selectedInvoice === null  && hideToPrint">
-                  <span
-                    class="bg-gray-900 hover:bg-black w-6 h-6 cursor-pointer float-right font-semibold inline-flex items-center justify-center px-3 mt-2 rounded-full text-white text-xl mx-auto"
-                    @click="removeSelectedJobPart(item, index)"
-                  >-</span>
-                </div>
-              </div>
             </div>
             <div
               class="flex justify-start mt-2"
@@ -498,7 +508,7 @@ export default {
   },
   watch: {
     type(newValue, oldValue) {
-      if (oldValue) {
+      if (newValue && oldValue) {
         this.surgeries = [];
         this.selectedSurgery = null;
         this.searchSurgeries = "";
@@ -782,6 +792,7 @@ export default {
       this.Validate(this.form, ["final"]);
       if (!this.formError.length) {
         if (!this.$route.params.id) {
+          this.loading = true;
           this.$axios
             .$post(`/api/v1/locum/locum-invoices`, this.form)
             .then(res => {
@@ -794,11 +805,23 @@ export default {
               });
             })
             .catch(err => {
-              err.response.data.error_messages.forEach(error => {
-                this.formError.push(error);
-              });
+              if (err.response.data.message) {
+                this.$store.commit("SET_NOTIFICATION", {
+                  enabled: true,
+                  status: "danger",
+                  text: [`${err.response.data.message}`]
+                });
+              } else if (err.response.data.error_messages) {
+                err.response.data.error_messages.forEach(error => {
+                  this.formError.push(error);
+                });
+              }
+            })
+            .finally(() => {
+              this.loading = false;
             });
-        } else {
+        } else if (this.$route.params.id) {
+          this.loading = true;
           this.$axios
             .$put(
               `/api/v1/locum/locum-invoices/${this.$route.params.id}`,
@@ -814,9 +837,20 @@ export default {
               this.$router.push("/locum-billing/invoices");
             })
             .catch(err => {
-              err.response.data.error_messages.forEach(error => {
-                this.formError.push(error);
-              });
+              if (err.response.data.message) {
+                this.$store.commit("SET_NOTIFICATION", {
+                  enabled: true,
+                  status: "danger",
+                  text: [`${err.response.data.message}`]
+                });
+              } else if (err.response.data.error_messages) {
+                err.response.data.error_messages.forEach(error => {
+                  this.formError.push(error);
+                });
+              }
+            })
+            .finally(() => {
+              this.loading = false;
             });
         }
       }
@@ -897,7 +931,16 @@ export default {
           this.loadMoreSurgeries = false;
         } else {
           surgeries.forEach(surgery => {
-            this.surgeries.push(surgery);
+            if (this.surgeries.length === 0) {
+              this.surgeries.push(surgery);
+            } else if (this.surgeries.length > 0) {
+              let index = this.surgeries.findIndex(
+                item => item.id === surgery.id
+              );
+              if (index < 0) {
+                this.surgeries.push(surgery);
+              }
+            }
           });
           if (
             surgeries.length < 10 ||
@@ -907,7 +950,6 @@ export default {
             this.loadMoreSurgeries = false;
           }
         }
-        console.log("surgeries", surgeries);
         this.loadingSurgeries = false;
       } catch (err) {
         throw err;
@@ -929,7 +971,6 @@ export default {
       }
     },
     addJobPart(jobPart) {
-      console.log(jobPart);
       let hasJobPart = this.selectedJobParts.find(
         selectedJobPart => selectedJobPart.job_id === jobPart.id
       );
@@ -962,7 +1003,6 @@ export default {
         late_hours: jobPart.late_hours,
         remarks: ""
       };
-      console.log(invoiceObj);
       this.selectedJobParts.push(invoiceObj);
       if (!this.filteredJobParts.length) {
         if (this.jobParts.length < this.totalJobParts) {
@@ -1033,8 +1073,18 @@ export default {
           this.loadMoreJobParts = false;
         } else {
           jobParts.forEach(jobPart => {
-            this.jobParts.push(jobPart);
+            if (this.jobParts.length === 0) {
+              this.jobParts.push(jobPart);
+            } else if (this.jobParts.length > 0) {
+              let index = this.jobParts.findIndex(
+                item => item.id === jobPart.id
+              );
+              if (index < 0) {
+                this.jobParts.push(jobPart);
+              }
+            }
           });
+
           if (
             jobParts.length < 10 ||
             (jobParts.length === 10 &&

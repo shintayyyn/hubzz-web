@@ -815,7 +815,6 @@ export default {
           }
         })
         .then(res => {
-          console.log("count response", res.data.count);
           if (
             this.$route.query.job_status &&
             ["ongoing", "completed", "approved"].includes(

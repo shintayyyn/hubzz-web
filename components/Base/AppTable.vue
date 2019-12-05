@@ -1,13 +1,16 @@
 <template>
   <section class="relative">
-    <div class="relative flex flex-col overflow-x-auto w-full px-2 mt-4" :style="totalPages > 1 && `min-height: ${minHeight}`">
+    <div
+      class="relative flex flex-col overflow-x-auto w-full px-2 mt-4"
+      :style="totalPages > 1 && `min-height: ${minHeight}`"
+    >
       <AppLoading :loading="loading" spinner />
       <div
         :style="`min-width: ${customWidth}px`"
         class="row flex justify-start font-bold leading-none text-sm"
       >
         <div
-          class="flex-1 flex items-center px-2"
+          class="flex-1 flex items-center p-2"
           v-for="(column, index) in columns"
           :key="`${column}-${index}`"
           :class="[
@@ -129,7 +132,7 @@ export default {
     },
     minHeight: {
       type: String
-    },
+    }
   },
   components: {
     AppLoading,
@@ -144,9 +147,6 @@ export default {
     return {
       params: []
     };
-  },
-  created() {
-    console.log(this.columns)
   },
   mounted() {
     this.params = this.orderBy;

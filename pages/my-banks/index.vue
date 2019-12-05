@@ -12,39 +12,44 @@
           >
             <div class="h-full rounded-lg shadow-lg bg-gray-300 hover:bg-gray-400 p-4">
               <nuxt-link :to="{ path: `/my-banks/${locum.id}`, query: {...$route.query}}">
-              <div class="flex justify-end items-center">
-                <div
-                  class="flex justify-end items-center z-40"
-                  v-if="authPermissions.includes('Favorite MyBanks Locum')"
-                >
-                  <template v-if="locum.is_favorite">
+                <div class="flex justify-end items-center">
+                  <div
+                    class="flex justify-end items-center z-40"
+                    v-if="authPermissions.includes('Favorite MyBanks Locum')"
+                  >
+                    <template v-if="locum.is_favorite">
+                      <svgicon
+                        name="on-star"
+                        height="32"
+                        width="32"
+                        class="cursor-pointer fill-current text-gray-700 hover:text-gray-800"
+                        @click.prevent.stop="favorite(locum.id)"
+                      />
+                    </template>
+                    <template v-else>
+                      <svgicon
+                        name="off-star"
+                        height="32"
+                        width="32"
+                        class="cursor-pointer fill-current text-gray-700 hover:text-gray-800"
+                        @click.prevent.stop="favorite(locum.id)"
+                      />
+                    </template>
+                  </div>
+                  <button
+                    class="ml-2 focus:outline-none hover:bg-gray-300 rounded-lg"
+                    @click.prevent.stop="message(locum)"
+                  >
                     <svgicon
-                      name="on-star"
-                      height="32"
-                      width="32"
-                      class="cursor-pointer fill-current text-gray-700 hover:text-gray-800"
-                      @click.prevent.stop="favorite(locum.id)"
+                      name="chat"
+                      height="24"
+                      width="24"
+                      color="#6b778b #4a5568 #fff"
+                      class="m-2"
                     />
-                  </template>
-                  <template v-else>
-                    <svgicon
-                      name="off-star"
-                      height="32"
-                      width="32"
-                      class="cursor-pointer fill-current text-gray-700 hover:text-gray-800"
-                      @click.prevent.stop="favorite(locum.id)"
-                    />
-                  </template>
-                </div>
-                <button
-                  class="ml-2 focus:outline-none"
-                  @click.prevent.stop="message(locum)"
-                >
-                  <svgicon name="chat" height="32" width="32" color="#6b778b #4a5568 #fff"/>
-                </button>
+                  </button>
                 </div>
                 <div class="flex flex-wrap text-center mt-4 cursor-pointer">
-                
                   <div class="w-full flex justify-center">
                     <AppAvatar
                       :src="locum.avatar && locum.avatar.file && locum.avatar.file.url ? locum.avatar.file.url : ''"
@@ -66,15 +71,15 @@
         <transition name="fade" mode="out-in">
           <div class="message-modal md:w-2/3 lg:w-1/2 xl:w-1/3" v-if="sendMessageModal">
             <SendMessageModal
-                :user="user"
-                @close="sendMessageModal=false"
-                @showProfile="$router.push({ path: `/my-banks/${selectedId}`, query: {...$route.query}})"
-                :profileOption="true"
-              />
+              :user="user"
+              @close="sendMessageModal=false"
+              @showProfile="$router.push({ path: `/my-banks/${selectedId}`, query: {...$route.query}})"
+              :profileOption="true"
+            />
           </div>
-        </transition>      
+        </transition>
         <div class="shield" v-if="sendMessageModal" @click="sendMessageModal=false"></div>
-        
+
         <div class="mt-5 flex justify-center" v-if="locums.length > 0 && totalPages > 1">
           <AppPagination
             :total="total"
@@ -176,15 +181,16 @@ export default {
   },
   methods: {
     message(user) {
-      this.selectedId = user.id
+      this.selectedId = user.id;
       this.user = user;
       this.sendMessageModal = true;
     },
     getLocumsCount() {
+      let queryStatus = this.$route.query.status;
       this.loading = true;
       this.$axios
         .$get(
-          `/api/v1/practice/locums/count?practice_locum_type=${this.$route.query.status}`
+          `/api/v1/practice/locums/count?practice_locum_type=${queryStatus}`
         )
         .then(res => {
           this.total = res.data.count;
@@ -195,10 +201,11 @@ export default {
         });
     },
     getLocums(page) {
+      let queryStatus = this.$route.query.status;
       this.current_page = page;
       this.$axios
         .$get(
-          `/api/v1/practice/locums?practice_locum_type=${this.$route.query.status}&offset=${this.offset}&limit=${this.perPage}`,
+          `/api/v1/practice/locums?practice_locum_type=${queryStatus}&offset=${this.offset}&limit=${this.perPage}`,
           { params: { detailed: true } }
         )
         .then(res => {
@@ -211,6 +218,7 @@ export default {
         });
     },
     favorite(id) {
+      let queryStatus = this.$route.query.status;
       let locum = this.locums.find(locum => locum.id === id);
       if (!locum.is_favorite) {
         this.$axios
@@ -221,6 +229,17 @@ export default {
               status: "success",
               text: ["Added to favourites"]
             });
+            locum.is_favorite = !locum.is_favorite;
+          })
+          .catch(err => {
+            if (err.response.data) {
+              this.$store.commit("SET_NOTIFICATION", {
+                enabled: true,
+                status: "danger",
+                text: [`${err.response.message}`]
+              });
+            } else if (err.response.data.error_messages) {
+            }
           });
       } else {
         this.$axios
@@ -231,15 +250,25 @@ export default {
               status: "success",
               text: ["Remove to favourites"]
             });
+            locum.is_favorite = !locum.is_favorite;
+          })
+          .catch(err => {
+            if (err.response.data) {
+              this.$store.commit("SET_NOTIFICATION", {
+                enabled: true,
+                status: "danger",
+                text: [`${err.response.message}`]
+              });
+            } else if (err.response.data.error_messages) {
+            }
           });
-        if (this.$route.query.status.toLowerCase() === "favorite") {
+        if (queryStatus.toLowerCase() === "favorite") {
           this.locums.splice(
             this.locums.findIndex(locum => locum.id === id),
             1
           );
         }
       }
-      locum.is_favorite = !locum.is_favorite;
     },
     pagechanged(e) {
       this.current_page = e;
@@ -248,3 +277,8 @@ export default {
   }
 };
 </script>
+<style>
+.chat-svg:hover {
+  color: #535c6d #3c4453 #fff;
+}
+</style>

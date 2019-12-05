@@ -100,11 +100,22 @@ export default {
           message: "Search for surgery"
         });
       } else {
-        this.$axios.$get(`/api/v1/locum/private-practices`).then(res => {
-          res.data.private_practices.find(item => {
-            this.selectedSurgeries.push(item.surgery.id);
+        this.$axios
+          .$get(`/api/v1/locum/private-practices`)
+          .then(res => {
+            res.data.private_practices.find(item => {
+              this.selectedSurgeries.push(item.surgery.id);
+            });
+          })
+          .catch(err => {
+            if (err.response.data.message) {
+              this.$store.commit("SET_NOTIFICATION", {
+                enabled: true,
+                status: "danger",
+                text: [`${err.response.data.message}`]
+              });
+            }
           });
-        });
         this.$axios
           .$get(
             `/api/v1/surgeries?search=${this.search_text}&has_parent=false&is_parent=false&limit=10`

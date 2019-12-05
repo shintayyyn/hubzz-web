@@ -44,8 +44,8 @@ export default {
       type: String
     },
     src: {
-      type: String,
-      required: true
+      type: String
+      // required: true
     },
     type: String
   },

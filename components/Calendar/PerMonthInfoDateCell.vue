@@ -196,7 +196,7 @@
         >.</span>
         <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
         <span
-          v-if="hasLocumAllocatedJobs(item.fullDate, 'Whole day')"
+          v-if="hasLocumAllocatedJobs(item.fullDate, 'Whole Day')"
           class="bg-green-300 text-green-300 w-full h-2 sm:h-3 lg:h-4"
         >.</span>
         <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
@@ -271,7 +271,7 @@
         >.</span>
         <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
         <span
-          v-if="hasLocumAppliedJobs(item.fullDate, 'Whole day')"
+          v-if="hasLocumAppliedJobs(item.fullDate, 'Whole Day')"
           class="bg-orange-200 text-orange-200 w-full h-2 sm:h-3 lg:h-4"
         >.</span>
         <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>

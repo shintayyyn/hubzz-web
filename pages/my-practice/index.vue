@@ -83,6 +83,7 @@ export default {
   },
   data() {
     return {
+      formError: [],
       practices: [],
       total: 0,
       current_page: 1,
@@ -115,10 +116,11 @@ export default {
   },
   methods: {
     getPracticesCount() {
+      let queryStatus = this.$route.query.status;
       this.loading = true;
       this.$axios
         .$get(
-          `/api/v1/locum/practices/count?locum_practice_type=${this.$route.query.status}`
+          `/api/v1/locum/practices/count?locum_practice_type=${queryStatus}`
         )
         .then(res => {
           this.total = res.data.count;
@@ -129,10 +131,11 @@ export default {
         });
     },
     getPractices(page) {
+      let queryStatus = this.$route.query.status;
       this.current_page = page;
       this.$axios
         .$get(
-          `/api/v1/locum/practices?locum_practice_type=${this.$route.query.status}&offset=${this.offset}&limit=${this.perPage}`
+          `/api/v1/locum/practices?locum_practice_type=${queryStatus}&offset=${this.offset}&limit=${this.perPage}`
         )
         .then(res => {
           this.practices = res.data.practices;
@@ -144,6 +147,7 @@ export default {
         });
     },
     favorite(id) {
+      let queryStatus = this.$route.query.status;
       let practice = this.practices.find(practice => practice.id === id);
       if (!practice.is_favorite) {
         this.$axios
@@ -154,6 +158,17 @@ export default {
               status: "success",
               text: ["Added to favourites"]
             });
+            practice.is_favorite = !practice.is_favorite;
+          })
+          .catch(err => {
+            if (err.response.data) {
+              this.$store.commit("SET_NOTIFICATION", {
+                enabled: true,
+                status: "danger",
+                text: [`${err.response.message}`]
+              });
+            } else if (err.response.data.error_messages) {
+            }
           });
       } else {
         this.$axios
@@ -164,15 +179,25 @@ export default {
               status: "success",
               text: ["Remove to favourites"]
             });
+            practice.is_favorite = !practice.is_favorite;
+          })
+          .catch(err => {
+            if (err.response.data) {
+              this.$store.commit("SET_NOTIFICATION", {
+                enabled: true,
+                status: "danger",
+                text: [`${err.response.message}`]
+              });
+            } else if (err.response.data.error_messages) {
+            }
           });
-        if (this.$route.query.status.toLowerCase() === "favorite") {
+        if (queryStatus.toLowerCase() === "favorite") {
           this.practices.splice(
             this.practices.findIndex(practice => practice.id === id),
             1
           );
         }
       }
-      practice.is_favorite = !practice.is_favorite;
     },
     pagechanged(e) {
       this.current_page = e;

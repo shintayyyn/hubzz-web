@@ -1,15 +1,19 @@
 <template>
   <div class="messages-left-panel md:border-r" :class="$store.state.mobile ? '' : 'hidden md:flex'">
     <div class="flex flex-col h-full w-full">
-      <AppInput
-        v-model="search_text"
-        :type="'search'"
-        :name="'search_text'"
-        :placeholder="'Search Messages'"
-        class="mx-4 my-1 md:mt-0 pt-4"
-        :class="$auth.user.domain === 'Locum' ? 'mt-10' : 'mt-12'"
-        @keydown.enter="search"
-      />
+      <div class="flex w-full px-4 my-1 md:mt-0 pt-4" :class="$auth.user.domain === 'Locum' ? 'mt-10' : 'mt-12'">
+        <AppInput
+          v-model="search_text"
+          :type="'search'"
+          :name="'search_text'"
+          :placeholder="'Search Messages'"
+          class="w-full"
+          @keydown.enter="search"
+        />
+        <span class="ml-4 pb-2 flex items-center">
+          <svgicon name="create-message" class="fill-current text-gray-500 hover:text-gray-600 cursor-pointer" width="32"  @click="createMessage"/>
+        </span>
+      </div>
       <div class="relative flex flex-col justify-between h-full border-t">
         <div
           class="chat-list w-full h-full overflow-y-auto overflow-x-hidden"
@@ -102,10 +106,10 @@
 
         </div>
       </div>
-      <button
+      <!-- <button
         class="bg-yellow-500 border-yellow-500 text-sm p-4 md:text-lg focus:outline-none"
         @click="createMessage"
-      >Create Message</button>
+      >Create Message</button> -->
     </div>
   </div>
 </template>

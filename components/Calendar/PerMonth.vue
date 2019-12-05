@@ -221,7 +221,7 @@ export default {
     }
   },
   beforeDestroy() {
-    this.$store.commit("jobs/CLEAR_JOBS");
+    // this.$store.commit("jobs/CLEAR_JOBS");
   },
   async created() {
     this.startOfMonth = this.$moment(this.selectedDate, "YYYY-MM-DD")

@@ -4,7 +4,8 @@
 
     <div class="w-full md:w-1/2 py-2 md:px-2">
       <p class="text-sm font-bold">Bank account</p>
-      <div class="border-solid rounded-lg shadow-lg mt-5 p-4 md:p-8">
+      <div class="relative border-solid rounded-lg shadow-lg mt-5 p-4 md:p-8">
+        <AppLoading :loading="loading" spinner />
         <AppInput
           v-model="form.account_name"
           :type="'text'"
@@ -50,7 +51,8 @@
 
     <div class="w-full md:w-1/2 py-2 md:px-2">
       <p class="text-sm font-bold">Payroll Details</p>
-      <div class="border-solid rounded-lg shadow-lg mt-5 p-4 md:p-8">
+      <div class="relative border-solid rounded-lg shadow-lg mt-5 p-4 md:p-8">
+        <AppLoading :loading="loading" spinner />
         <div class="flex flex-col">
           <div class="w-full text-xs sm:text-base flex items-center">Your tax year end date</div>
           <div class="w-full flex flex-row flex-no-wrap">
@@ -165,7 +167,7 @@
       </div>
 
       <div class="mt-4">
-        <AppButton :label="'Save changes'" @click="save" />
+        <AppButton :label="'Save changes'" @click="save" :disabled="loading" />
       </div>
     </div>
   </div>
@@ -175,6 +177,7 @@
 import AppInput from "@/components/Base/AppInput";
 import AppButton from "@/components/Base/AppButton";
 import AppFormError from "@/components/Base/AppFormError";
+import AppLoading from "@/components/Base/AppLoading";
 let months = [
   { label: "Jan", value: "1" },
   { label: "Feb", value: "2" },
@@ -201,10 +204,12 @@ export default {
   components: {
     AppInput,
     AppButton,
+    AppLoading,
     AppFormError
   },
   data() {
     return {
+      loading: false,
       months,
       employmentTypes,
       form: {
@@ -256,6 +261,7 @@ export default {
         response.data && response.data.data && response.data.data.user
           ? response.data.data.user
           : null;
+
       if (process.client) {
         document.body.style.cursor = "auto";
       }
@@ -286,7 +292,10 @@ export default {
 
       this.form.tax_year_end_month = null;
       this.form.tax_year_end_date = null;
-      this.form.employment_type = this.user.locum_detail.invoice_detail.employment_type ? this.user.locum_detail.invoice_detail.employment_type : this.form.employment_type
+      this.form.employment_type = this.user.locum_detail.invoice_detail
+        .employment_type
+        ? this.user.locum_detail.invoice_detail.employment_type
+        : this.form.employment_type;
       this.form.utr_number = this.user.locum_detail.invoice_detail.utr_number;
       this.form.company_registration_number = this.user.locum_detail.invoice_detail.company_registration_number;
       this.form.ir35 = this.user.locum_detail.invoice_detail.ir35;
@@ -319,11 +328,11 @@ export default {
     // "form.tax_year_end_date"(value) {
     //   this.CheckEmptyField(this.form.tax_year_end_date, "tax_year_end_date");
     // },
-    "form.employment_type"(value){
-      if (value === 'Limited Company'){
-        let index = this.formError.findIndex(err => err.field === "utr_number")
-        if (index > 0){
-          this.formError.splice(index, 1)
+    "form.employment_type"(value) {
+      if (value === "Limited Company") {
+        let index = this.formError.findIndex(err => err.field === "utr_number");
+        if (index > 0) {
+          this.formError.splice(index, 1);
         }
       }
     },
@@ -357,7 +366,7 @@ export default {
   },
   methods: {
     save() {
-      this.formError = []
+      this.formError = [];
       let notRequired = ["ir35"];
 
       if (this.form.employment_type === "Self-Employed") {
@@ -380,6 +389,7 @@ export default {
 
       this.Validate(this.form, notRequired);
       if (!this.formError.length) {
+        this.loading = true;
         this.$axios
           .$put(`/api/v1/locum/me/billing_details`, this.form)
           .then(res => {
@@ -388,6 +398,18 @@ export default {
               status: "success",
               text: [res.message]
             });
+          })
+          .catch(err => {
+            if (err.response.data.message) {
+              this.$store.commit("SET_NOTIFICATION", {
+                enabled: true,
+                status: "danger",
+                text: [err.response.data.message]
+              });
+            }
+          })
+          .finally(() => {
+            this.loading = false;
           });
       }
     }

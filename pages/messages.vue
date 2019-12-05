@@ -49,6 +49,9 @@ export default {
           if (to.path === "/messages"){
             this.goToFirstConversation();
           }
+          if (to.path === "/messages/"){
+            this.$router.push(`/messages`);
+          }
         }
       }
       if (to.name === "messages-slug") {
@@ -109,7 +112,6 @@ export default {
         this.$store.commit("IS_MOBILE", false);
         this.$store.commit("chat/DELETE_UNREAD_MESSAGE", this.$route.params.slug);
         this.showLeftPanel = true
-        this.goToFirstConversation();
       }
     } else {
       if (this.$route.path === "/messages") {
@@ -117,8 +119,6 @@ export default {
       }
       this.$store.commit("chat/DELETE_ACTIVE_CONVERSATION");
     }
-
-    console.log("isMobile", this.isMobile)
   },
   methods: {
     goToFirstConversation() {

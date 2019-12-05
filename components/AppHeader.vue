@@ -86,14 +86,14 @@
         </div>
       </div>
     </div>
-    <transition name="fade" mode="out-in">
+    <transition name="shield" mode="out-in">
       <div class="shield" v-if="create_job_modal" @click="close"></div>
     </transition>
     <transition name="slide" mode="out-in">
       <template v-if="create_job_modal">
-        <div class="modal-container shadow-lg">
-          <CreateJobModal v-if="create_job_modal" :job="repost_job" />
-        </div>
+          <div class="modal-container shadow-lg">
+            <CreateJobModal :job="repost_job" />
+          </div>
       </template>
     </transition>
   </section>
