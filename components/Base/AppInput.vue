@@ -55,6 +55,7 @@
                   @blur="$emit('blur')"
                   :style="inStyle"
                   :checked="value"
+                  :readonly="disabled"
                   :min="type === 'number' && 0"
                 />
                 <transition name="drop-down">

@@ -1,7 +1,7 @@
 <template>
   <div class="relative bg-white rounded-lg shadow-lg p-4 md:p-8 md:w-2/3">
     <AppLoading :loading="loading" spinner />
-    <AppFormError :formError="formError" v-if="formError.length > 0" />
+    <!-- <AppFormError :formError="formError" v-if="formError.length > 0" /> -->
     <form class="relative w-full">
       <AppInput
         v-model="form.email"
@@ -154,7 +154,8 @@ export default {
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
-            text: ["Saved"]
+            text: ["Saved"],
+            duration: 5000
           });
           this.loading = false;
         } else {
@@ -168,7 +169,7 @@ export default {
         this.scrollToTop();
       } catch (err) {
         console.log("err", err.response.data);
-        // this.formError = err.response.data.error_messages;
+        this.formError = err.response.data.error_messages;
         this.loading = false;
         this.scrollToTop();
       }
