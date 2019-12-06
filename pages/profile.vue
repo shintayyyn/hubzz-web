@@ -2,7 +2,7 @@
   <section class="profile-section">
     <div class="flex items-center overflow-x-auto whitespace-no-wrap">
       <nuxt-link
-        to="/profile/practice"
+        to="/profile"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
         :class="['profile', 'profile-practice'].includes($route.name) ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         v-if="authPermissions.includes('View Profile Practice')"
@@ -87,22 +87,22 @@ export default {
     }
   },
   mounted() {
-    if (this.$route.name === "profile") {
-      if (this.authPermissions.includes("View Profile Practice")) {
-        this.$router.push("/profile/practice");
-      } else if (
-        this.authPermissions.includes("View Profile Surgeries") &&
-        this.type != "Stand Alone"
-      ) {
-        this.$router.push("/profile/practice-spokes");
-      } else if (this.authPermissions.includes("View Profile Users")) {
-        this.$router.push("/profile/users");
-      } else if (
-        this.authPermissions.includes("View Profile Practice Document")
-      ) {
-        this.$router.push("/profile/practice-documents");
-      }
-    }
+    // if (this.$route.name === "profile") {
+    //   if (this.authPermissions.includes("View Profile Practice")) {
+    //     this.$router.push("/profile/practice");
+    //   } else if (
+    //     this.authPermissions.includes("View Profile Surgeries") &&
+    //     this.type != "Stand Alone"
+    //   ) {
+    //     this.$router.push("/profile/practice-spokes");
+    //   } else if (this.authPermissions.includes("View Profile Users")) {
+    //     this.$router.push("/profile/users");
+    //   } else if (
+    //     this.authPermissions.includes("View Profile Practice Document")
+    //   ) {
+    //     this.$router.push("/profile/practice-documents");
+    //   }
+    // }
   },
   methods: {
     goTo() {
