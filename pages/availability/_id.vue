@@ -67,6 +67,11 @@ export default {
     AppLoading,
     AppFormError
   },
+  validate({ app, params }) {
+    return (
+      app.$moment(params.id, "YYYY-MM-DD").format("YYYY-MM-DD") === params.id
+    );
+  },
   data() {
     return {
       loading: false,
@@ -212,14 +217,18 @@ export default {
             });
           })
           .catch(err => {
-            err.response.data.error_messages.forEach(error => {
-              this.formError.push(error);
-            });
-            this.$store.commit("SET_NOTIFICATION", {
-              enabled: true,
-              status: "danger",
-              text: this.formError.map(error => error.message)
-            });
+            if (err.response.data.message) {
+              this.$store.commit("SET_NOTIFICATION", {
+                enabled: true,
+                status: "danger",
+                text: [`${err.response.data.message}`]
+              });
+            }
+            if (err.response.data.error_messages) {
+              err.response.data.error_messages.forEach(error => {
+                this.formError.push(error);
+              });
+            }
           })
           .finally(() => {
             this.loading = false;

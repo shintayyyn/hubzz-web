@@ -9,7 +9,6 @@
         <div class="relative bg-white rounded-lg shadow-lg p-4 md:p-8">
           <AppLoading :loading="loading" spinner />
 
-          <AppFormError :formError="formError" v-if="formError.length > 0" />
           <div class="font-bold text-sm sm:text-md mt-4">I won't be available</div>
           <div class="flex flex-row flex-wrap justify-between">
             <div class="w-full p-0 sm:w-1/2 pr-2">

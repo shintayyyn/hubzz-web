@@ -7,7 +7,11 @@
         @click="$router.push('/profile/users/create')"
         :inStyle="'padding:5px 14px;margin-bottom:5px; font-size:14px;'"
       />
-      <AppButton :label="'Filter'" @click="showFilter()" :inStyle="'padding:5px 14px;margin-bottom:5px; font-size:14px;'" />
+      <AppButton
+        :label="'Filter'"
+        @click="showFilter()"
+        :inStyle="'padding:5px 14px;margin-bottom:5px; font-size:14px;'"
+      />
     </div>
     <div
       class="flex-wrap justify-start items-center z-10 absolute w-full bg-white shadow-xl p-3 rounded-lg"
@@ -59,13 +63,14 @@
           <div
             class="text-black font-semibold text-xs sm:text-sm text-center"
             @click.stop.prevent="toggleRemoveConfirmationModal(slotProps.item.id)"
-          >
-            X
-          </div>
+          >X</div>
         </div>
       </template>
     </AppTable>
-    <div v-else class="flex justify-center py-4 text-gray-600">You do not have any other User on this Practice</div>
+    <div
+      v-else
+      class="flex justify-center py-4 text-gray-600"
+    >You do not have any other User on this Practice</div>
     <transition name="fade" mode="out-in">
       <nuxt-link
         class="shield"
@@ -221,34 +226,58 @@ export default {
       });
     });
   },
-  async asyncData({ app, store, error }) {
-    try {
-      const responseCount = await app.$axios.$get(`/api/v1/practice/practice-users/count`);
-      const totalUsers = responseCount.data && responseCount.data.count ? responseCount.data.count : 0;
+  async asyncData({ app, redirect, store, error }) {
+    if (app.$auth.user.domain === "Practice") {
+      let permissions = app.$auth.user.practice_detail.role.permissions.map(
+        permission => permission.name
+      );
 
-      const responseUsers = await app.$axios.$get(`/api/v1/practice/practice-users?limit=5&order_by=created_at:desc`);
+      if (permissions.includes("View Profile Users")) {
+        try {
+          const responseCount = await app.$axios.$get(
+            `/api/v1/practice/practice-users/count`
+          );
+          const totalUsers =
+            responseCount.data && responseCount.data.count
+              ? responseCount.data.count
+              : 0;
 
-      let users = [];
+          const responseUsers = await app.$axios.$get(
+            `/api/v1/practice/practice-users?limit=5&order_by=created_at:desc`
+          );
 
-      if (responseUsers.data && responseUsers.data.users) {
-        responseUsers.data.users.forEach(user => {
-          if (user.practice_detail.role && user.practice_detail.role.name == "Practice User Admin") {
-            users.push(user);
-          } else {
-            users.push({ ...user, removable: true });
+          let users = [];
+
+          if (responseUsers.data && responseUsers.data.users) {
+            responseUsers.data.users.forEach(user => {
+              if (
+                user.practice_detail.role &&
+                user.practice_detail.role.name == "Practice User Admin"
+              ) {
+                users.push(user);
+              } else {
+                users.push({ ...user, removable: true });
+              }
+            });
           }
-        });
+          return {
+            totalUsers,
+            users
+          };
+        } catch (err) {
+          if (err.response && err.response.status === 401) {
+            error(err.response.data);
+            return;
+          }
+          throw err;
+        }
+      } else if (permissions.includes("View Profile Practice")) {
+        redirect("/profile");
+      } else if (permissions.includes("View Profile Practice Document")) {
+        redirect(`/profile/practice-documents`);
+      } else {
+        error({ statusCode: 401, message: "Your Practice is Not Authorized" });
       }
-      return {
-        totalUsers,
-        users
-      };
-    } catch (err) {
-      if (err.response && err.response.status === 401) {
-        error(err.response.data);
-        return;
-      }
-      throw err;
     }
   },
   methods: {
@@ -256,10 +285,12 @@ export default {
       return (this.filterToggle = !this.filterToggle);
     },
     getUsersCount(params) {
-      this.$axios.$get(`/api/v1/practice/practice-users/count`, { params }).then(res => {
-        this.totalUsers = res.data.count;
-        this.getUsers(this.params);
-      });
+      this.$axios
+        .$get(`/api/v1/practice/practice-users/count`, { params })
+        .then(res => {
+          this.totalUsers = res.data.count;
+          this.getUsers(this.params);
+        });
     },
     getUsers(params) {
       this.loading = true;
@@ -314,7 +345,10 @@ export default {
     remove() {
       this.loading = true;
       this.$axios
-        .$delete(`/api/v1/practice/practice-users/${this.selectedSurgeryId}`, this.form)
+        .$delete(
+          `/api/v1/practice/practice-users/${this.selectedSurgeryId}`,
+          this.form
+        )
         .then(res => {
           this.loading = false;
           this.$store.commit("SET_NOTIFICATION", {
@@ -322,7 +356,9 @@ export default {
             status: "success",
             text: [`${res.message}`]
           });
-          let index = this.users.findIndex(item => item.id == this.selectedSurgeryId);
+          let index = this.users.findIndex(
+            item => item.id == this.selectedSurgeryId
+          );
           if (index >= 0) {
             this.users.splice(index, 1);
           }
