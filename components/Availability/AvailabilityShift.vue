@@ -57,11 +57,23 @@ export default {
     }
   },
   created() {
-    this.$axios.$get(`/api/v1/me`).then(res => {
-      this.selectedShifts = res.data.user.locum_detail.shifts.map(
-        shift => shift.id
-      );
-    });
+    this.$axios
+      .$get(`/api/v1/me`)
+      .then(res => {
+        this.selectedShifts = res.data.user.locum_detail.shifts.map(
+          shift => shift.id
+        );
+      })
+      .catch(err => {
+        console.log("err", err.response.data);
+        if (err.response.data.message) {
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "danger",
+            text: [`${err.response.data.message}`]
+          });
+        }
+      });
   },
   methods: {
     select(id) {
@@ -90,7 +102,16 @@ export default {
               text: ["Shift updated!"]
             });
           })
-          .catch(err => {})
+          .catch(err => {
+            console.log("err", err.response.data);
+            if (err.response.data.message) {
+              this.$store.commit("SET_NOTIFICATION", {
+                enabled: true,
+                status: "danger",
+                text: [`${err.response.data.message}`]
+              });
+            }
+          })
           .finally(() => {
             this.loading = false;
           });

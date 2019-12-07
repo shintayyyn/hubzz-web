@@ -232,6 +232,7 @@ export default {
   },
   data() {
     return {
+      surgery: null,
       vat_registered: false,
       vat_number: "",
       modal: false,
@@ -258,75 +259,107 @@ export default {
         : (document.body.style.overflow = "auto");
     }
   },
-  async asyncData({ app, error }) {
-    console.log("child");
+  async asyncData({ app, store, redirect, error }) {
     try {
-      const response = await app.$axios.$get(`/api/v1/practice/me/practice`);
-      const surgery =
-        response.data &&
-        response.data.practice &&
-        response.data.practice.surgery
-          ? response.data.practice.surgery
-          : null;
-      const practice =
-        response.data && response.data.practice ? response.data.practice : null;
+      const [
+        [surgery, practice],
+        practice_types,
+        mandatory_trainings,
+        gp_documents,
+        others_documents
+      ] = await Promise.all([
+        app.$axios
+          .$get("/api/v1/practice/me/practice")
+          .then(responsePractice => {
+            const surgery =
+              responsePractice.data &&
+              responsePractice.data.practice &&
+              responsePractice.data.practice.surgery
+                ? responsePractice.data.practice.surgery
+                : null;
+            const practice =
+              responsePractice.data && responsePractice.data.practice
+                ? responsePractice.data.practice
+                : null;
+            return [surgery, practice];
+          }),
 
-      const responsePracticeTypes = await app.$axios.$get(
-        `/api/v1/practice-types`
-      );
-      let practice_types =
-        responsePracticeTypes.data &&
-        responsePracticeTypes.data.practice_types &&
-        responsePracticeTypes.data.practice_types.length
-          ? responsePracticeTypes.data.practice_types
-          : [];
-      practice_types = practice_types.map(practiceType => {
-        return { label: practiceType.name, value: practiceType.id };
-      });
+        app.$axios
+          .$get("/api/v1/practice-types")
+          .then(responsePracticeTypes => {
+            let practice_types =
+              responsePracticeTypes.data &&
+              responsePracticeTypes.data.practice_types &&
+              responsePracticeTypes.data.practice_types.length
+                ? responsePracticeTypes.data.practice_types
+                : [];
+            practice_types = practice_types.map(practiceType => {
+              return { label: practiceType.name, value: practiceType.id };
+            });
+            return practice_types;
+          }),
 
-      const responseMandatoryTrainings = await app.$axios.$get(
-        `/api/v1/mandatory-trainings`
-      );
-      let mandatory_trainings =
-        responseMandatoryTrainings.data &&
-        responseMandatoryTrainings.data.mandatory_trainings &&
-        responseMandatoryTrainings.data.mandatory_trainings.length
-          ? responseMandatoryTrainings.data.mandatory_trainings
-          : [];
-      mandatory_trainings = mandatory_trainings.map(mandatoryTraining => {
-        return { label: mandatoryTraining.name, value: mandatoryTraining.id };
-      });
+        app.$axios
+          .$get("/api/v1/mandatory-trainings")
+          .then(responseMandatoryTrainings => {
+            let mandatory_trainings =
+              responseMandatoryTrainings.data &&
+              responseMandatoryTrainings.data.mandatory_trainings &&
+              responseMandatoryTrainings.data.mandatory_trainings.length
+                ? responseMandatoryTrainings.data.mandatory_trainings
+                : [];
+            mandatory_trainings = mandatory_trainings.map(mandatoryTraining => {
+              return {
+                label: mandatoryTraining.name,
+                value: mandatoryTraining.id
+              };
+            });
+            return mandatory_trainings;
+          }),
 
-      const responseProfessionCategories = await app.$axios.$get(
-        `/api/v1/profession-categories`
-      );
-      let profession_categories =
-        responseProfessionCategories.data &&
-        responseProfessionCategories.data.profession_categories &&
-        responseProfessionCategories.data.profession_categories.length
-          ? responseProfessionCategories.data.profession_categories
-          : [];
-      const gp = profession_categories.find(item => item.id === 1);
-      const others = profession_categories.find(item => item.id === 2);
-      const gp_documents = [
-        ...gp.mandatory_compliance_documents.map(gpMandatoryDoc => {
-          return { value: gpMandatoryDoc.id, label: gpMandatoryDoc.name };
-        }),
-        ...gp.optional_compliance_documents.map(gpOptionalDoc => {
-          return { value: gpOptionalDoc.id, label: gpOptionalDoc.name };
-        })
-      ];
-      const others_documents = [
-        ...others.mandatory_compliance_documents.map(othersMandatoryDoc => {
-          return {
-            value: othersMandatoryDoc.id,
-            label: othersMandatoryDoc.name
-          };
-        }),
-        ...others.optional_compliance_documents.map(othersOptionalDoc => {
-          return { value: othersOptionalDoc.id, label: othersOptionalDoc.name };
-        })
-      ];
+        app.$axios
+          .$get("/api/v1/profession-categories")
+          .then(responseProfessionCategories => {
+            let profession_categories =
+              responseProfessionCategories.data &&
+              responseProfessionCategories.data.profession_categories &&
+              responseProfessionCategories.data.profession_categories.length
+                ? responseProfessionCategories.data.profession_categories
+                : [];
+
+            const gp = profession_categories.find(item => item.id === 1);
+
+            const others = profession_categories.find(item => item.id === 2);
+
+            const gp_documents = [
+              ...gp.mandatory_compliance_documents.map(gpMandatoryDoc => {
+                return { value: gpMandatoryDoc.id, label: gpMandatoryDoc.name };
+              }),
+              ...gp.optional_compliance_documents.map(gpOptionalDoc => {
+                return { value: gpOptionalDoc.id, label: gpOptionalDoc.name };
+              })
+            ];
+
+            const others_documents = [
+              ...others.mandatory_compliance_documents.map(
+                othersMandatoryDoc => {
+                  return {
+                    value: othersMandatoryDoc.id,
+                    label: othersMandatoryDoc.name
+                  };
+                }
+              ),
+              ...others.optional_compliance_documents.map(othersOptionalDoc => {
+                return {
+                  value: othersOptionalDoc.id,
+                  label: othersOptionalDoc.name
+                };
+              })
+            ];
+
+            return [gp_documents, others_documents];
+          })
+      ]);
 
       return {
         surgery,
@@ -337,9 +370,13 @@ export default {
         others_documents
       };
     } catch (err) {
-      if (err.response && err.response.status === 401) {
-        error(err.response.data);
-        return;
+      console.log("err", err.response.data);
+      if (err.response.data.message) {
+        store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "danger",
+          text: [`${err.response.data.message}`]
+        });
       }
       throw err;
     }

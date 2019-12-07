@@ -1,13 +1,20 @@
 <template>
   <div class="error-container flex flex-col justify-center px-4">
-    <h1 v-if="[401, 404].includes(error.statusCode)">
-      <span v-if="error.message">{{error.message}}</span>
+    <h1 v-if="error.statusCode === 401">
+      <span v-if="error.message">{{error.response.data.message}}</span>
       <span v-if="!error.message">You are not authorized to view this page.</span>
     </h1>
-    <h1 v-else class="text-xl">Page not found.</h1>
-    <!-- <h1 v-else>{{error.message}}</h1> -->
-    <p>Go back to <span @click="$router.push('/')" class="font-bold cursor-pointer hover:underline">Home page</span>.</p>
-    <!-- <p>Go back to <nuxt-link to="/" class="font-bold cursor-pointer hover:underline">Home page</nuxt-link>.</p> -->
+    <h1 v-else-if="error.statusCode === 400">
+      <span v-if="error.message">{{error.response.data.message}}</span>
+    </h1>
+    <h1 v-else-if="error.statusCode === 404" class="text-xl">Page not found</h1>
+    <h1 v-else>
+      <span v-if="error.message">Something went wrong.</span>
+    </h1>
+    <p>
+      Go back to
+      <nuxt-link :to="'/'" class="font-bold cursor-pointer hover:underline">Home page</nuxt-link>.
+    </p>
   </div>
 </template>
 
