@@ -27,29 +27,76 @@
       </div>
       <div v-if="editPayForSurgery === false" class="">
           <div class="m-2 my-4">
-            <div class="font-semibold mt-2">Does Hub allow you to create jobs?</div>
-            <div class="text-sm mx-6">{{practice_surgery.allow_surgery_create_sessions === true ? 'Yes' : 'No'}}</div>
-            <div class="bg-gray-300 p-2 rounded-lg" v-if="practice_surgery.allow_surgery_create_sessions === true">
-              <p class="font-semibold">Rate Limits(Only effective when allowed to create jobs)</p>
-              <div class="m-4">
-                <p class="font-semibold">Maximum Hourly Rate Limit</p>
-                <p class="text-sm mx-6">{{practice_surgery.max_hourly_rate_limit ?'£ '+  practice_surgery.max_hourly_rate_limit : 'N/A'}}</p>
-                <p class="font-semibold">Maximum Half Day Rate Limit</p>
-                <p class="text-sm mx-6">{{practice_surgery.max_halfday_rate_limit ?'£ '+  practice_surgery.max_halfday_rate_limit : 'N/A'}}</p>
-                <p class="font-semibold">Maximum Whole Day Rate Limit</p>
-                <p class="text-sm mx-6">{{practice_surgery.max_wholeday_rate_limit ?'£ '+  practice_surgery.max_wholeday_rate_limit : 'N/A'}}</p>
-                <p class="font-semibold">Maximum Out-of-Hours Rate Limit</p>
-                <p class="text-sm mx-6">{{practice_surgery.max_ooh_rate_limit ?'£ '+  practice_surgery.max_ooh_rate_limit : 'N/A'}}</p>
-                <p class="font-semibold">Maximum Excess Hours</p>
-                <p class="text-sm mx-6">{{practice_surgery.max_ooh_rate_limit ?'£ '+ practice_surgery.max_ooh_rate_limit : 'N/A'}}</p>
+            <div class="flex items-center py-1">
+              <span class="mr-3 md:mx-2">
+                <svgicon :name="practice_surgery.allow_surgery_create_sessions === true ? 'success-checkmark' : 'times-solid'" 
+                  class="fill-current w-5 h-5"
+                  :class="practice_surgery.allow_surgery_create_sessions ? 'text-green-500' : 'text-red-500 border-2 border-red-500 rounded-full p-1'"/>
+              </span>
+              <div class="font-semibold">Does Hub allow you to create jobs?</div>
+            </div>
+            <div class="bg-gray-300 p-2 rounded-lg mb-2" v-if="practice_surgery.allow_surgery_create_sessions === true">
+              <p class="font-semibold pb-2 leading-tight px-4 py-2">Rate Limits(Only effective when allowed to create jobs)</p>
+              <div class="text-sm md:mx-4">
+                <div class="flex flex-col md:flex-row">
+                  <p class="font-semibold md:w-2/3">Maximum Hourly Rate Limit</p>
+                  <p class="text-sm mx-2 md:mx-0">{{practice_surgery.max_hourly_rate_limit ?'£ '+  practice_surgery.max_hourly_rate_limit : 'N/A'}}</p>
+                </div>
+
+                <div class="flex flex-col md:flex-row">
+                  <p class="font-semibold md:w-2/3">Maximum Half Day Rate Limit</p>
+                  <p class="text-sm mx-2 md:mx-0">{{practice_surgery.max_halfday_rate_limit ?'£ '+  practice_surgery.max_halfday_rate_limit : 'N/A'}}</p>
+                </div>
+
+                <div class="flex flex-col md:flex-row">
+                  <p class="font-semibold md:w-2/3">Maximum Whole Day Rate Limit</p>
+                  <p class="text-sm mx-2 md:mx-0">{{practice_surgery.max_wholeday_rate_limit ?'£ '+  practice_surgery.max_wholeday_rate_limit : 'N/A'}}</p>
+                </div>
+
+                <div class="flex flex-col md:flex-row">
+                  <p class="font-semibold md:w-2/3">Maximum Out-of-Hours Rate Limit</p>
+                  <p class="text-sm mx-2 md:mx-0">{{practice_surgery.max_ooh_rate_limit ?'£ '+  practice_surgery.max_ooh_rate_limit : 'N/A'}}</p>
+                </div>
+
+                <div class="flex flex-col md:flex-row">
+                  <p class="font-semibold md:w-2/3">Maximum Excess Hours</p>
+                  <p class="text-sm mx-2 md:mx-0">{{practice_surgery.max_ooh_rate_limit ?'£ '+ practice_surgery.max_ooh_rate_limit : 'N/A'}}</p>
+                </div>
+
+                
+                
+                
+                
+                
               </div>
             </div>
-            <p class="font-semibold">Does Hub permit billing of Locums?</p>
-            <p class="text-sm mx-6">{{practice_surgery.allow_surgery_bill_locum === true ? 'Yes':'No'}}</p>
-            <p class="font-semibold">Does Hub permit billing for Hubzz?</p>
-            <p class="text-sm mx-6">{{practice_surgery.allow_surgery_bill_hubzz === true ? 'Yes':'No'}}</p>
-            <p class="font-semibold">Can other Spokes see your Banks?</p>
-            <p class="text-sm mx-6">{{practice_surgery.share_banks_to_other_surgeries === true ? 'Yes':'No'}}</p>
+
+            <div class="flex items-center py-1">
+              <span class="mr-3 md:mx-2">
+                <svgicon :name="practice_surgery.allow_surgery_bill_locum === true ? 'success-checkmark' : 'times-solid'" 
+                  class="fill-current w-5 h-5"
+                  :class="practice_surgery.allow_surgery_bill_locum ? 'text-green-500' : 'text-red-500 border-2 border-red-500 rounded-full p-1'"/>
+              </span>
+              <p class="font-semibold">Does Hub permit billing of Locums?</p>
+            </div>
+
+            <div class="flex items-center py-1">
+              <span class="mr-3 md:mx-2">
+                <svgicon :name="practice_surgery.allow_surgery_bill_hubzz === true ? 'success-checkmark' : 'times-solid'" 
+                  class="fill-current w-5 h-5"
+                  :class="practice_surgery.allow_surgery_bill_hubzz ? 'text-green-500' : 'text-red-500 border-2 border-red-500 rounded-full p-1'"/>
+              </span>
+              <p class="font-semibold">Does Hub permit billing of HUBZZ?</p>
+            </div>
+
+             <div class="flex items-center py-1">
+              <span class="mr-3 md:mx-2">
+                <svgicon :name="practice_surgery.share_banks_to_other_surgeries === true ? 'success-checkmark' : 'times-solid'" 
+                  class="fill-current w-5 h-5"
+                  :class="practice_surgery.share_banks_to_other_surgeries ? 'text-green-500' : 'text-red-500 border-2 border-red-500 rounded-full p-1'"/>
+              </span>
+              <p class="font-semibold">Can other Spokes see your Banks?</p>
+            </div>
         </div>
       </div>
       <!--------------EDIT PERMISSIONS------------------>
