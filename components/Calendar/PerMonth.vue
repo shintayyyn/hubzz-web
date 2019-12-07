@@ -598,7 +598,10 @@ export default {
               );
               this.$store.commit(
                 "jobs/SET_LOCUM_UNAVAILABILITIES",
-                responseUnavailabilities.data.unavailabilities
+                responseUnavailabilities.data.unavailabilities.filter(
+                  unavailable =>
+                    unavailable.shifts && unavailable.shifts.length !== 0
+                )
               );
             }
           )

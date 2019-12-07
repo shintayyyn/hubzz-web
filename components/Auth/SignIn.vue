@@ -108,9 +108,19 @@ export default {
               // }
             })
             .catch(err => {
-              err.response.data.error_messages.forEach(error => {
-                this.formError.push(error);
-              });
+              console.log("err", err.response.data);
+              if (err.response.data.message) {
+                this.$store.commit("SET_NOTIFICATION", {
+                  enabled: true,
+                  status: "danger",
+                  text: [`${err.response.data.message}`]
+                });
+              }
+              if (err.response.date.error_messages) {
+                err.response.data.error_messages.forEach(error => {
+                  this.formError.push(error);
+                });
+              }
             });
         }
       } catch (e) {

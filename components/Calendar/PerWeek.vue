@@ -571,10 +571,9 @@ export default {
   },
   created() {
     let selectedDate = this.$store.state.calendar.selected_date;
-    console.log(selectedDate);
 
     this.firstDayOfTheWeek = this.$moment(selectedDate, "YYYY-MM-DD")
-      .day("Monday")
+      .day("Sunday")
       .format("YYYY-MM-DD");
     this.lastDayOfTheWeek = this.$moment(selectedDate, "YYYY-MM-DD")
       .add(1, "week")
@@ -691,6 +690,16 @@ export default {
         this.lastDayOfTheWeek = this.$moment(this.daysInWeek[6].date)
           .add(0, "days")
           .format("YYYY-MM-DD");
+
+        this.$store.commit("calendar/SELECT_DATE_SHIFT", {
+          date: this.$moment(
+            this.$store.state.calendar.selected_date_shift.date,
+            "YYYY-MM-DD"
+          )
+            .add(7, "days")
+            .format("YYYY-MM-DD"),
+          shift: "AM"
+        });
       }
       if (type === "previous") {
         this.firstDayOfTheWeek = this.$moment(this.daysInWeek[0].date)
@@ -699,17 +708,18 @@ export default {
         this.lastDayOfTheWeek = this.$moment(this.daysInWeek[0].date)
           .add(6, "days")
           .format("YYYY-MM-DD");
+
+        this.$store.commit("calendar/SELECT_DATE_SHIFT", {
+          date: this.$moment(
+            this.$store.state.calendar.selected_date_shift.date,
+            "YYYY-MM-DD"
+          )
+            .subtract(7, "days")
+            .format("YYYY-MM-DD"),
+          shift: "AM"
+        });
       }
 
-      this.$store.commit("calendar/SELECT_DATE_SHIFT", {
-        date: this.$moment(
-          this.$store.state.calendar.selected_date_shift.date,
-          "YYYY-MM-DD"
-        )
-          .add(7, "days")
-          .format("YYYY-MM-DD"),
-        shift: "AM"
-      });
       this.getJobs();
     },
     currentDate(date) {
@@ -858,7 +868,10 @@ export default {
               );
               this.$store.commit(
                 "jobs/SET_LOCUM_UNAVAILABILITIES",
-                responseUnavailabilities.data.unavailabilities
+                responseUnavailabilities.data.unavailabilities.filter(
+                  unavailable =>
+                    unavailable.shifts && unavailable.shifts.length !== 0
+                )
               );
             }
           )

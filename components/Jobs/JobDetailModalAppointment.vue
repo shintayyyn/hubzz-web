@@ -16,7 +16,6 @@
         <svgicon name="left-arrow" height="32" width="32" />
       </nuxt-link>
       <div class="flex flex-row justify-start font-bold mt-8">Appointment</div>
-      <AppFormError :formError="formError" v-if="formError.length > 0" id="error" />
       <div class="relative bg-white rounded-lg shadow-lg px-4 md:px-8 py-4 mt-4 max-w-4xl">
         <AppLoading :loading="loading" spinner />
         <AppInput

@@ -4,9 +4,9 @@
       <template v-if="$auth.user.domain === 'Locum'">
         <div class="relative">
           <nuxt-link
-            to="/account/general"
+            to="/account"
             class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-            :class="['account','account-general'].includes($route.name) ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+            :class="['account'].includes($route.name) ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
           >General</nuxt-link>
         </div>
         <div class="relative">
@@ -20,9 +20,9 @@
       <template v-else-if="$auth.user.domain === 'Practice'">
         <div class="relative">
           <nuxt-link
-            to="/account/user"
+            to="/account"
             class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-            :class="['account','account-user'].includes($route.name) ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+            :class="['account'].includes($route.name) ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
           >User</nuxt-link>
         </div>
       </template>
