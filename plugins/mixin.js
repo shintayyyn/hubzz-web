@@ -128,7 +128,7 @@ Vue.mixin({
             hasPermission = false;
           }
           break;
-        case "profile-users-id-general":
+        case "profile-users-id":
           if (!permissions.includes("Show Profile Users")) {
             hasPermission = false;
           }

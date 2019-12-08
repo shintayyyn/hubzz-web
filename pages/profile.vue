@@ -69,6 +69,7 @@ export default {
   // },
   watch: {
     authPermissions(value) {
+      console.log("watch permissions", value);
       if (!this.CheckPermissions(value).hasPermission) {
         this.modal = true;
       }

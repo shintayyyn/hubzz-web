@@ -1,8 +1,8 @@
 <template>
   <div class="error-container flex flex-col justify-center px-4">
     <h1 v-if="error.statusCode === 401">
-      <span v-if="error.message">{{error.response.data.message}}</span>
-      <span v-if="!error.message">You are not authorized to view this page.</span>
+      <span v-if="error.response.data.message">{{error.response.data.response.data.message}}</span>
+      <span v-if="!error.response.data.message">You are not authorized to view this page.</span>
     </h1>
     <h1 v-else-if="error.statusCode === 400">
       <span v-if="error.message">{{error.response.data.message}}</span>
