@@ -1,6 +1,6 @@
 <template>
   <div class="relative rounded-lg shadow-lg w-full p-4 md:p-8">
-    <AppFormError :formError="formError" v-if="formError.length > 0" />
+    <!-- <AppFormError :formError="formError" v-if="formError.length > 0" /> -->
     <form class="relative w-full">
       <AppLoading :loading="loading" spinner />
       <AppInput

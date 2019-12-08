@@ -111,7 +111,7 @@
         </span>
       </div>
       <div class="text-left mt-5">
-        <AppButton :label="'Update'" @click="update" />
+        <AppButton :label="'Update'" @click="update" :disabled="loading" />
       </div>
     </form>
   </div>
@@ -187,9 +187,18 @@ export default {
           this.scrollToTop();
         }
       } catch (err) {
-        this.loading = false;
-        this.formError = err.response.data.error_messages;
-        this.scrollToTop();
+        if (err.response.data.error_messages) {
+          console.log("qweds", err.response.data.error_messages)
+          this.formError = err.response.data.error_messages
+        } else if (!err.response.data.error_messages && err.response.data.message) {
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "danger",
+            text: err.response.data.message
+          });
+        }
+          this.loading = false;
+          this.scrollToTop();
       }
     }
   }

@@ -1,19 +1,22 @@
 <template>
   <div class="app-notification">
-    <div
-      class="relative rounded-b-lg py-2 px-4 md:px-8 flex text-center"
-      :class="notificationStatus"
-      v-if="$store.state.notification.enabled && $store.state.notification.status != 'message'"
-    >
-      <span class="mr-2 inline-block align-middle">
-        <svgicon :name="notificationIcon" height="20" width="20" :color="iconSvgColor" />
-      </span>
+    <transition name="drop">
       <div
-        class="font-bold text-sm leading-normal inline-block"
-        v-for="(message, index) in $store.state.notification.text"
-        :key="index"
-      >{{message}}</div>
-    </div>
+        class="relative rounded-lg py-2 px-4 my-2 flex justify-center text-center"
+        style="min-width: 200px"
+        :class="notificationStatus"
+        v-if="$store.state.notification.enabled && $store.state.notification.status != 'message'"
+      >
+        <span class="mr-2 inline-block align-middle">
+          <svgicon :name="notificationIcon" height="20" width="20" :color="iconSvgColor" />
+        </span>
+        <div
+          class="font-bold text-sm leading-normal inline-block"
+          v-for="(message, index) in $store.state.notification.text"
+          :key="index"
+        >{{message}}</div>
+      </div>
+    </transition>
     <transition name="slide" mode="out-in">
       <div
         v-if="$store.state.notification.status === 'message' && !$route.path.includes('messages')"
@@ -47,23 +50,25 @@ export default {
     notificationStatus() {
       switch (this.$store.state.notification.status) {
         case "success":
-          return "bg-green-400 text-white";
+          return "border border-green-500 bg-green-200 text-green-600";
           break;
         case "danger":
-          return "bg-red-500 text-white";
+          return "border border-red-500 bg-red-200 text-red-600";
           break;
         case "uploading":
-          return "bg-yellow-500 text-white";
+          return "border border-yellow-500 bg-yellow-200 text-yellow-600";
           break;
         case "alert":
-          return "bg-yellow-400";
+          return "border border-orange-500 bg-orange-200 text-orange-600";
           break;
         case "info":
+          return "border border-blue-500 bg-blue-100";
+          break;
         case "message":
-          return "bg-blue-400 text-white";
+          return "border border-blue-500 bg-blue-100";
           break;
         default:
-          return "bg-white";
+          return "border border-orange-500 bg-orange-200 text-orange-600";
       }
     },
     notificationIcon() {
@@ -93,19 +98,19 @@ export default {
     iconSvgColor() {
       switch (this.$store.state.notification.status) {
         case "success":
-          return "#fff";
+          return "#38a169";
           break;
         case "danger":
-          return "#fff";
+          return "#e53e3e";
           break;
         case "uploading":
-          return "#fff";
+          return "#d69e2e";
           break;
         case "info":
-          return "#dae1e7";
+          return "#3182ce";
           break;
         case "message":
-          return "#dae1e7";
+          return "#3182ce";
           break;
         default:
           return "#fff, #000";
@@ -129,9 +134,10 @@ export default {
             enabled: false,
             status: "",
             text: "",
-            closable: false
+            closable: false,
+            duration: ""
           });
-        }, 2000);
+        }, this.$store.state.notification.duration ? this.$store.state.notification.duration : 2000);
       }
     }
   },
