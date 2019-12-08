@@ -268,6 +268,16 @@ export default {
             );
           }
         )
+        .catch(err => {
+          console.log("err", err.response.data);
+          if (err.response.data.message) {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "danger",
+              text: [`${err.response.data.message}`]
+            });
+          }
+        })
         .finally(() => {
           // this.$store.commit("calendar/TOGGLE_LOADING", false);
           this.loading = false;

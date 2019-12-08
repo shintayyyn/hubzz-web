@@ -9,6 +9,7 @@
         :name="'email'"
         :label="'Email'"
         :error="formError.find(item => item.field === 'email')"
+        :disabled="user.practice_detail.role.name === 'Practice User Admin'"
         @submit="save"
         @blur="CheckEmptyField(form.email, 'email')"
       />
@@ -26,6 +27,7 @@
         :name="'first_name'"
         :label="'First name'"
         :error="formError.find(item => item.field === 'first_name')"
+        :disabled="user.practice_detail.role.name === 'Practice User Admin'"
         @submit="save"
         @blur="CheckEmptyField(form.first_name, 'first_name')"
       />
@@ -35,6 +37,7 @@
         :name="'last_name'"
         :label="'Last name'"
         :error="formError.find(item => item.field === 'last_name')"
+        :disabled="user.practice_detail.role.name === 'Practice User Admin'"
         @submit="save"
         @blur="CheckEmptyField(form.last_name, 'last_name')"
       />
@@ -43,6 +46,7 @@
         :type="'text'"
         :name="'suffix'"
         :label="'Suffix'"
+        :disabled="user.practice_detail.role.name === 'Practice User Admin'"
         @submit="save"
       />
       <AppInput
@@ -51,6 +55,7 @@
         :name="'practice_role'"
         :label="'Role'"
         :placeholder="'Select...'"
+        :disabled="user.practice_detail.role.name === 'Practice User Admin'"
         :items="practice_roles"
       />
       <template v-if="user.practice_detail.role.name !== 'Practice User Admin'">
@@ -74,6 +79,7 @@
         :type="'select'"
         :name="'status'"
         :label="'Status'"
+        :disabled="user.practice_detail.role.name === 'Practice User Admin'"
         :error="formError.find(item => item.field === 'status')"
         :items="[{ label: 'Disabled', value: 'Disabled' }, { label: 'Active', value: 'Active' }]"
       />

@@ -17,10 +17,13 @@ Vue.mixin({
       if (!this.formError) {
         return
       }
+
       let index = this.formError.findIndex(item => item.field === fieldName);
+
       if (index >= 0) {
         this.formError.splice(index, 1);
       }
+
       if (!(inputField instanceof Array) && !inputField) {
         this.formError.push({
           field: fieldName,
@@ -38,6 +41,26 @@ Vue.mixin({
           field: fieldName,
           message: "Required"
         });
+      }
+      if (inputField) {
+        if (fieldName === 'email') {
+          let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+          if (!re.test(String(inputField).toLowerCase())) {
+            this.formError.push({
+              field: fieldName,
+              message: "This is not a valid email"
+            });
+          }
+        }
+
+        // if (fieldName.includes('password')) {
+        //   if (inputField.length < 6) {
+        //     this.formError.push({
+        //       field: fieldName,
+        //       message: "Password Must Be Atleast 6 Characters"
+        //     });
+        //   }
+        // }
       }
     },
     Validate(form, lists) {
@@ -77,23 +100,6 @@ Vue.mixin({
         }
       }
     },
-    ValidateSamePassword(password, password_confirmation) {
-      if (password && password_confirmation && password !== password_confirmation) {
-        return {
-          field: "password_confirmation",
-          message: "The Password must be the same"
-        };
-      }
-    },
-    ValidateEmail(email) {
-      let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-      if (email && !re.test(String(email).toLowerCase())) {
-        return {
-          field: "email",
-          message: "This is not a valid email"
-        };
-      }
-    },
     CheckPermissions(permissions) {
       let hasPermission = true;
       switch (this.$route.name) {
@@ -122,7 +128,7 @@ Vue.mixin({
             hasPermission = false;
           }
           break;
-        case "profile-users-id-general":
+        case "profile-users-id":
           if (!permissions.includes("Show Profile Users")) {
             hasPermission = false;
           }
@@ -157,6 +163,5 @@ Vue.mixin({
         hasPermission
       };
     }
-    // JOBS
   }
 });

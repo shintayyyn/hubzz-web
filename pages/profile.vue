@@ -2,23 +2,11 @@
   <section class="profile-section">
     <div class="flex items-center overflow-x-auto whitespace-no-wrap">
       <nuxt-link
-        to="/profile/practice"
+        to="/profile"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
         :class="['profile', 'profile-practice'].includes($route.name) ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         v-if="authPermissions.includes('View Profile Practice')"
       >Practice</nuxt-link>
-      <!-- <nuxt-link
-        to="/profile/practice-hub"
-        class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('profile-practice-hub') || $route.name === 'profile-practice-spokes-create'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-        v-if="type != 'Hub' && authPermissions.includes('View Profile Surgeries')"
-      >Practice Hub</nuxt-link>
-      <nuxt-link
-        to="/profile/practice-spokes"
-        class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('profile-practice-spokes') || $route.name === 'profile-practice-spokes-create'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-        v-if="type == 'Hub' && authPermissions.includes('View Profile Surgeries')"
-      >Practice Spokes</nuxt-link>-->
       <nuxt-link
         to="/profile/users"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
@@ -38,7 +26,7 @@
     <AppConfirmationModal
       :label="'You\'ve been revoked to view this Page'"
       :confirmLabel="'OK'"
-      :modal="confirmation_modal"
+      :modal="modal"
       @confirm="goTo"
     />
   </section>
@@ -51,8 +39,8 @@ export default {
   },
   data() {
     return {
-      confirmation_modal: false,
-      type: null
+      modal: false
+      // type: null
     };
   },
   computed: {
@@ -60,53 +48,54 @@ export default {
       return this.$store.getters["auth/permissions"];
     }
   },
-  async asyncData({ app, store, error }) {
-    try {
-      const responsePracticeType = await app.$axios.$get(
-        `/api/v1/practice/me/practice-type`
-      );
-      let type =
-        responsePracticeType.data &&
-        responsePracticeType.data.practice &&
-        responsePracticeType.data.practice.type
-          ? responsePracticeType.data.practice.type
-          : null;
+  // async asyncData({ app, store, error }) {
+  //   try {
+  //     const responsePracticeType = await app.$axios.$get(
+  //       `/api/v1/practice/me/practice-type`
+  //     );
+  //     let type =
+  //       responsePracticeType.data &&
+  //       responsePracticeType.data.practice &&
+  //       responsePracticeType.data.practice.type
+  //         ? responsePracticeType.data.practice.type
+  //         : null;
 
-      return {
-        type
-      };
-    } catch (err) {
-      throw err;
-    }
-  },
+  //     return {
+  //       type
+  //     };
+  //   } catch (err) {
+  //     throw err;
+  //   }
+  // },
   watch: {
     authPermissions(value) {
+      console.log("watch permissions", value);
       if (!this.CheckPermissions(value).hasPermission) {
-        this.confirmation_modal = true;
+        this.modal = true;
       }
     }
   },
   mounted() {
-    if (this.$route.name === "profile") {
-      if (this.authPermissions.includes("View Profile Practice")) {
-        this.$router.push("/profile/practice");
-      } else if (
-        this.authPermissions.includes("View Profile Surgeries") &&
-        this.type != "Stand Alone"
-      ) {
-        this.$router.push("/profile/practice-spokes");
-      } else if (this.authPermissions.includes("View Profile Users")) {
-        this.$router.push("/profile/users");
-      } else if (
-        this.authPermissions.includes("View Profile Practice Document")
-      ) {
-        this.$router.push("/profile/practice-documents");
-      }
-    }
+    // if (this.$route.name === "profile") {
+    //   if (this.authPermissions.includes("View Profile Practice")) {
+    //     this.$router.push("/profile/practice");
+    //   } else if (
+    //     this.authPermissions.includes("View Profile Surgeries") &&
+    //     this.type != "Stand Alone"
+    //   ) {
+    //     this.$router.push("/profile/practice-spokes");
+    //   } else if (this.authPermissions.includes("View Profile Users")) {
+    //     this.$router.push("/profile/users");
+    //   } else if (
+    //     this.authPermissions.includes("View Profile Practice Document")
+    //   ) {
+    //     this.$router.push("/profile/practice-documents");
+    //   }
+    // }
   },
   methods: {
     goTo() {
-      this.confirmation_modal = false;
+      this.modal = false;
       setTimeout(() => {
         this.$router.push("/");
       }, 500);

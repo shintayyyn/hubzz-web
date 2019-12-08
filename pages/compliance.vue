@@ -77,7 +77,10 @@
               v-if="activeLoading.includes(item.id)"
               :key="item.id"
             >
-              <td colspan="7" class="loader-message text-center text-gray-800 cursor-wait bg-gray-200">Uploading</td>
+              <td
+                colspan="7"
+                class="loader-message text-center text-gray-800 cursor-wait bg-gray-200"
+              >Uploading</td>
             </tr>
             <tr
               v-else
@@ -191,7 +194,10 @@
               v-if="activeLoading.includes(item.id)"
               :key="item.id"
             >
-              <td colspan="7" class="loader-message text-center text-gray-800 cursor-wait bg-gray-200">Uploading</td>
+              <td
+                colspan="7"
+                class="loader-message text-center text-gray-800 cursor-wait bg-gray-200"
+              >Uploading</td>
             </tr>
             <tr
               v-else
@@ -227,7 +233,9 @@
                 class="hover:underline"
                 v-if="!item.info"
               >
-                <div class="flex flex-row flex-no-wrap justify-center float-right lg:w-2/3 mx-auto p-2 cursor-pointer">
+                <div
+                  class="flex flex-row flex-no-wrap justify-center float-right lg:w-2/3 mx-auto p-2 cursor-pointer"
+                >
                   <input
                     type="file"
                     :ref="`${item.id}_file_optional_compliance`"
@@ -329,7 +337,9 @@
                   class="hover:underline"
                   v-if="!item.file"
                 >
-                  <div class="flex flex-row flex-no-wrap justify-center float-right lg:w-2/3 mx-auto p-2 cursor-pointer">
+                  <div
+                    class="flex flex-row flex-no-wrap justify-center float-right lg:w-2/3 mx-auto p-2 cursor-pointer"
+                  >
                     <input
                       type="file"
                       :ref="`${item.id}_file_mandatory_training`"
@@ -338,7 +348,9 @@
                       @click.stop
                     />
                     <svgicon name="cloud-upload" height="24" width="24" />
-                    <label class="hidden md:block leading-loose mx-2 cursor-pointer text-black">Upload</label>
+                    <label
+                      class="hidden md:block leading-loose mx-2 cursor-pointer text-black"
+                    >Upload</label>
                   </div>
                 </td>
                 <td
@@ -400,7 +412,17 @@ export default {
       return {
         user
       };
-    } catch (err) {}
+    } catch (err) {
+      console.log("err", err.response.data);
+      if (err.response.data.message) {
+        store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "danger",
+          text: [`${err.response.data.message}`]
+        });
+      }
+      throw err;
+    }
   },
   created() {
     // get gmc, mpl status
@@ -504,19 +526,20 @@ export default {
           this.optional = this.profession.optional_compliance_documents.sort(
             (a, b) => a.id - b.id
           );
-          console.log(this.mandatory);
-          console.log(this.optional);
         });
     },
     status(status) {
-      if (status === "Pending" || status === "Expiring") {
-        return "bg-orange-500";
-      }
-      if (status === "Verified" || status === "Approved") {
-        return "bg-green-500";
-      }
-      if (status === "Rejected" || status === "Expired") {
-        return "bg-red-500";
+      switch (status) {
+        case "Pending":
+        case "Expiring":
+          return "bg-orange-500";
+          break;
+        case "Verified":
+        case "Approved":
+          return "bg-green-500";
+          break;
+        default:
+          return "bg-red-500";
       }
     },
     onFileInput(e, id, index) {

@@ -17,7 +17,7 @@
               width="24"
               class="cursor-pointer fill-current p-1"
             />
-            <div class="font-bold text-lg px-2 cursor-pointer" v-if="!conversation_id && !profileOption"  @click="$emit('close')">x</div>
+            <div class="font-bold text-lg px-2 cursor-pointer hover:text-yellow-500" v-if="!conversation_id && !profileOption"  @click="$emit('close')">x</div>
           </div>
         </div>
         <div class="relative">

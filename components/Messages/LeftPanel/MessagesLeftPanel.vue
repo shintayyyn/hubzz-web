@@ -11,7 +11,7 @@
           @keydown.enter="search"
         />
         <span class="ml-4 pb-2 flex items-center">
-          <svgicon name="create-message" class="fill-current text-gray-500 hover:text-gray-600 cursor-pointer" width="32"  @click="createMessage"/>
+          <svgicon name="create-message" class="fill-current text-gray-500 hover:text-gray-600 cursor-pointer" width="28"  @click="createMessage"/>
         </span>
       </div>
       <div class="relative flex flex-col justify-between h-full border-t">

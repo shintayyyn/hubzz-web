@@ -25,13 +25,11 @@
 			@limitchanged="limitchanged"
 			@sorted="sorted"
 		>
-    
-    <!-- <template v-slot:actions="slotProps">
-      <div class="flex items-center justify-center">
-        <div class="rounded-full px-6 py-1" >{{ surgeries.status }}</div>
-      </div>
-    </template> -->
-
+			<template v-slot:actions="slotProps">
+				<div class="flex items-center justify-center">
+					<div class="rounded-full px-6 py-1" :class="statusStyle(slotProps.item)">{{ getStatus(slotProps.item) }}</div>
+				</div>
+			</template>
 		</AppTable>
 		<div v-else class="flex justify-center py-4 text-gray-500">
 			No Branches / Surgeries
@@ -45,11 +43,11 @@
 						'surgery-management-practice-spokes-id',
 						'surgery-management-practice-spokes-id-surgery-sessions-index',
 						'surgery-management-practice-spokes-id-surgery-sessions-index-sessionId',
-            'surgery-management-practice-spokes-id-surgery-billings',
-            'surgery-management-practice-spokes-id-surgery-banks',
+						'surgery-management-practice-spokes-id-surgery-billings',
+						'surgery-management-practice-spokes-id-surgery-banks',
 						'surgery-management-practice-spokes-id-request-for-termination',
 						'surgery-management-practice-spokes-edit',
-            'surgery-management-practice-spokes-id-surgery-banks-locumId',
+            			'surgery-management-practice-spokes-id-surgery-banks-locumId',
 					].includes($route.name)
 				"
 				@click="$router.push('/surgery-management/practice-spokes')"
@@ -112,7 +110,7 @@ export default {
 				},
 				{
 					name: "Status",
-          dataIndex: "status",
+          			dataIndex: "actions",
 					class: "text-center"
 				}
 			]
@@ -284,31 +282,31 @@ export default {
 			this.terminationReason = terminationReason;
 		},
 		getStatus(surgery) {
-      let status = "Invited";
-      if (surgery.terminated_at) {
-        status = "Terminated";
-      }
-      else if (surgery.termination_requested_at) {
-        status = "Termination Requested";
-      }
-      else if (surgery.invitation_rejected_at) {
-        status = "Rejected";
-      }
-      else if (surgery.invitation_accepted_at) {
-        status = "Active";
-      }
-      return status;
-    },
-		surgeryStatus() {
-			this.getStatus();
-			switch (this.getStatus()) {
+			let status = "Invited";
+			if (surgery.terminated_at) {
+				status = "Terminated";
+			}
+			else if (surgery.termination_requested_at) {
+				status = "Termination Requested";
+			}
+			else if (surgery.invitation_rejected_at) {
+				status = "Rejected";
+			}
+			else if (surgery.invitation_accepted_at) {
+				status = "Active";
+			}
+			return status;
+		},
+		statusStyle(surgery) {
+			this.getStatus(surgery);
+			switch (this.getStatus(surgery)) {
 				case "Active":
 					return "bg-green-500 text-white";
 					break;
 				case "Rejected":
 					return "bg-red-600 text-white";
 					break;
-				case "Request for Temination":
+				case "Termination Requested":
 					return "bg-orange-500 text-white";
 					break;
 				case "Terminated":

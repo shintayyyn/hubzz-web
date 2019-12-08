@@ -108,6 +108,7 @@ export default {
             });
           })
           .catch(err => {
+            console.log("err", err.response.data);
             if (err.response.data.message) {
               this.$store.commit("SET_NOTIFICATION", {
                 enabled: true,
@@ -123,6 +124,16 @@ export default {
           .then(res => {
             this.surgeries = res.data.surgeries;
             this.showResult = true;
+          })
+          .catch(err => {
+            console.log("err", err.response.data);
+            if (err.response.data.message) {
+              this.$store.commit("SET_NOTIFICATION", {
+                enabled: true,
+                status: "danger",
+                text: [`${err.response.data.message}`]
+              });
+            }
           });
       }
     },
@@ -149,6 +160,16 @@ export default {
           });
           this.add_modal = false;
           this.$emit("close");
+        })
+        .catch(err => {
+          console.log("err", err.response.data);
+          if (err.response.data.message) {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "danger",
+              text: [`${err.response.data.message}`]
+            });
+          }
         });
     }
   }

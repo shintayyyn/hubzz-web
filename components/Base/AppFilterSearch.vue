@@ -148,10 +148,22 @@ export default {
         };
       }
       params = { ...params, search };
-      this.$axios.$get(`${this.url}/count`, { params }).then(res => {
-        this.total = res.data.count;
-        this.getLists(this.items.length, this.search);
-      });
+      this.$axios
+        .$get(`${this.url}/count`, { params })
+        .then(res => {
+          this.total = res.data.count;
+          this.getLists(this.items.length, this.search);
+        })
+        .catch(err => {
+          console.log("err", err.response.data);
+          if (err.response.data.message) {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "danger",
+              text: [`${err.response.data.message}`]
+            });
+          }
+        });
     },
     getLists(offset, search) {
       this.loading = true;
@@ -165,88 +177,100 @@ export default {
         };
       }
       params = { ...params, offset, limit: 10, search };
-      this.$axios.$get(`${this.url}`, { params }).then(res => {
-        if (res.data.practice_types) {
-          if (res.data.practice_types.length === 0) {
-            this.loadMore = false;
-          } else {
-            res.data.practice_types.forEach(item => {
-              this.items.push({
-                label: item.name,
-                value: item.id
-              });
-            });
-            if (res.data.practice_types.length < 10) {
+      this.$axios
+        .$get(`${this.url}`, { params })
+        .then(res => {
+          if (res.data.practice_types) {
+            if (res.data.practice_types.length === 0) {
               this.loadMore = false;
-            }
-          }
-        }
-
-        if (res.data.qualifications) {
-          if (res.data.qualifications.length === 0) {
-            this.hasMore = false;
-          } else {
-            res.data.qualifications.forEach(item => {
-              this.items.push({
-                label: item.name,
-                value: item.id
+            } else {
+              res.data.practice_types.forEach(item => {
+                this.items.push({
+                  label: item.name,
+                  value: item.id
+                });
               });
-            });
-            if (res.data.qualifications.length < 10) {
-              this.hasMore = false;
+              if (res.data.practice_types.length < 10) {
+                this.loadMore = false;
+              }
             }
           }
-        }
 
-        if (res.data.clinical_systems) {
-          if (res.data.clinical_systems.length === 0) {
-            this.hasMore = false;
-          } else {
-            res.data.clinical_systems.forEach(item => {
-              this.items.push({
-                label: item.name,
-                value: item.id
-              });
-            });
-            if (res.data.clinical_systems.length < 10) {
+          if (res.data.qualifications) {
+            if (res.data.qualifications.length === 0) {
               this.hasMore = false;
+            } else {
+              res.data.qualifications.forEach(item => {
+                this.items.push({
+                  label: item.name,
+                  value: item.id
+                });
+              });
+              if (res.data.qualifications.length < 10) {
+                this.hasMore = false;
+              }
             }
           }
-        }
 
-        if (res.data.spoken_languages) {
-          if (res.data.spoken_languages.length === 0) {
-            this.hasMore = false;
-          } else {
-            res.data.spoken_languages.forEach(item => {
-              this.items.push({
-                label: item.name,
-                value: item.id
-              });
-            });
-            if (res.data.spoken_languages.length < 10) {
+          if (res.data.clinical_systems) {
+            if (res.data.clinical_systems.length === 0) {
               this.hasMore = false;
+            } else {
+              res.data.clinical_systems.forEach(item => {
+                this.items.push({
+                  label: item.name,
+                  value: item.id
+                });
+              });
+              if (res.data.clinical_systems.length < 10) {
+                this.hasMore = false;
+              }
             }
           }
-        }
 
-        if (res.data.surgeries) {
-          if (res.data.surgeries.length === 0) {
-            this.hasMore = false;
-          } else {
-            res.data.surgeries.forEach(item => {
-              this.items.push({
-                label: item.name,
-                value: item.id
-              });
-            });
-            if (res.data.surgeries.length < 10) {
+          if (res.data.spoken_languages) {
+            if (res.data.spoken_languages.length === 0) {
               this.hasMore = false;
+            } else {
+              res.data.spoken_languages.forEach(item => {
+                this.items.push({
+                  label: item.name,
+                  value: item.id
+                });
+              });
+              if (res.data.spoken_languages.length < 10) {
+                this.hasMore = false;
+              }
             }
           }
-        }
-        this.loading = false;
-      });
+
+          if (res.data.surgeries) {
+            if (res.data.surgeries.length === 0) {
+              this.hasMore = false;
+            } else {
+              res.data.surgeries.forEach(item => {
+                this.items.push({
+                  label: item.name,
+                  value: item.id
+                });
+              });
+              if (res.data.surgeries.length < 10) {
+                this.hasMore = false;
+              }
+            }
+          }
+          this.loading = false;
+        })
+        .catch(err => {
+          console.log("err", err.response.data);
+          if (err.response.data.message) {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "danger",
+              text: [`${err.response.data.message}`]
+            });
+          }
+        });
     },
     add(item) {
       if (this.limitItem && this.limitItem == this.value.length) {

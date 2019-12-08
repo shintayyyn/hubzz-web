@@ -49,9 +49,6 @@ export default {
           if (to.path === "/messages"){
             this.goToFirstConversation();
           }
-          if (to.path === "/messages/"){
-            this.$router.push(`/messages`);
-          }
         }
       }
       if (to.name === "messages-slug") {

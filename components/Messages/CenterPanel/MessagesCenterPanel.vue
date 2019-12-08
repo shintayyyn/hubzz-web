@@ -1,6 +1,6 @@
 <template>
   <div class="relative w-full flex flex-col" v-if="$route.name === 'messages-slug'">
-    <div class="hidden md:flex flex-col justify-center items-center h-full" v-if="$route.path === '/messages'">
+    <div class="hidden md:flex flex-col justify-center items-center h-full" v-if="$route.path === '/messages' || $route.path === '/messages/'">
       <span class="font-bold text-lg">You don’t have a message selected.</span>
       <span>Choose one from your existing messages, or start a new one.</span>
       <button
@@ -8,7 +8,7 @@
         @click="createMessage"
       >Create Message</button>
     </div>
-      <template v-if="$route.path !== '/messages'">
+      <template v-if="show()">
         <MessagesCenterPanelTop v-if="$store.state.chat.activeConversationId" class="mt-10 md:mt-0" />
         <MessagesCenterPanelChat />
         <MessagesCenterPanelForm />
@@ -25,6 +25,11 @@ export default {
     MessagesCenterPanelForm,
     MessagesCenterPanelTop
   },
+  created(){
+    if (this.$route.path === '/messages/'){
+      this.$router.push(`/messages`)
+    }
+  },
   methods: {
      createMessage() {
       if (window.innerWidth < 768) {
@@ -34,6 +39,15 @@ export default {
         this.$router.push(`/messages/new`);
       }
     },
+    show(){
+      if (this.$route.path === '/messages'){
+        return false
+      }else if(this.$route.path === '/messages/'){
+        return false
+      } else{
+        return true
+      }
+    }
   }
 };
 </script>

@@ -7,38 +7,76 @@
         @click="$router.push('/profile/users/create')"
         :inStyle="'padding:5px 14px;margin-bottom:5px; font-size:14px;'"
       />
-      <AppButton :label="'Filter'" @click="showFilter()" :inStyle="'padding:5px 14px;margin-bottom:5px; font-size:14px;'" />
+      <AppButton
+        :label="'Filter'"
+        @click="filterModal = !filterModal"
+        :inStyle="'padding:5px 14px;margin-bottom:5px; font-size:14px;'"
+      />
+      <AppButton
+        v-if="showRefresh"
+        :label="'Refresh'"
+        @click="refreshUsers"
+        :inStyle="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
+      />
     </div>
     <div
       class="flex-wrap justify-start items-center z-10 absolute w-full bg-white shadow-xl p-3 rounded-lg"
-      :class="filterToggle ? 'flex' : 'hidden'"
+      :class="filterModal ? 'flex' : 'hidden'"
     >
-      <AppInput
-        class="px-1 w-full md:w-1/3"
-        v-model="params.search"
-        :type="'text'"
-        :name="'search'"
-        :label="'Email'"
-        :inStyle="'padding-top:0.5rem;padding-bottom:0.7rem'"
-      />
-      <AppInput
-        class="px-1 w-full md:w-1/3"
-        v-model="params.practice_role"
-        :type="'select'"
-        :name="'practice_role'"
-        :label="'Practice Role'"
-        :items="filterPracticeRoles"
-        :disabled="loading"
-      />
-      <AppInput
-        class="px-1 w-full md:w-1/3"
-        v-model="params.role_id"
-        :type="'select'"
-        :name="'role_id'"
-        :label="'User Role'"
-        :items="filterUserRoles"
-        :disabled="loading"
-      />
+      <div class="flex flex-col md:flex-row h-full w-full items-end">
+        <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
+          <AppInput
+            class="px-1"
+            v-model="params.search"
+            :type="'text'"
+            :name="'search'"
+            :label="'Email'"
+            :inStyle="'padding-top:0.5rem;padding-bottom:0.7rem'"
+          />
+        </div>
+        <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
+          <AppInput
+            class="px-1"
+            v-model="params.practice_role"
+            :type="'select'"
+            :name="'practice_role'"
+            :label="'Practice Role'"
+            :items="filterPracticeRoles"
+            :disabled="loading"
+          />
+        </div>
+        <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
+          <AppInput
+            class="px-1"
+            v-model="params.role_id"
+            :type="'select'"
+            :name="'role_id'"
+            :label="'User Role'"
+            :items="filterUserRoles"
+            :disabled="loading"
+          />
+        </div>
+      </div>
+
+      <div class="md:px-1 h-full flex w-full">
+        <AppButton
+          :label="'Clear'"
+          @click="clearFilters"
+          :inStyle="'padding:5px 14px;margin-bottom:5px'"
+        />
+        <AppButton
+          class="mx-2"
+          :label="'Search'"
+          @click="filterUsers"
+          :inStyle="'padding:5px 14px;margin-bottom:5px'"
+        />
+        <AppButton
+          class="mx-2 md:hidden"
+          :label="'Close'"
+          @click="filterModal = false"
+          :inStyle="'padding:5px 14px;margin-bottom:5px'"
+        />
+      </div>
     </div>
     <AppTable
       v-if="users.length > 0"
@@ -59,13 +97,14 @@
           <div
             class="text-black font-semibold text-xs sm:text-sm text-center"
             @click.stop.prevent="toggleRemoveConfirmationModal(slotProps.item.id)"
-          >
-            X
-          </div>
+          >X</div>
         </div>
       </template>
     </AppTable>
-    <div v-else class="flex justify-center py-4 text-gray-600">You do not have any other User on this Practice</div>
+    <div
+      v-else
+      class="flex justify-center py-4 text-gray-600"
+    >You do not have any other User on this Practice</div>
     <transition name="fade" mode="out-in">
       <nuxt-link
         class="shield"
@@ -105,7 +144,8 @@ export default {
     return {
       selectedSurgeryId: null,
       modal: false,
-      filterToggle: false,
+      showRefresh: false,
+      filterModal: false,
       //
       totalUsers: 0,
       users: [],
@@ -178,41 +218,10 @@ export default {
       return this.$store.getters["auth/permissions"];
     }
   },
-  watch: {
-    "params.search"(value) {
-      this.current_page = 1;
-      this.params.offset = 0;
-      this.params.search = value;
-      this.getUsersCount(this.params);
-    },
-    "params.role_id"(value) {
-      this.current_page = 1;
-      this.params.offset = 0;
-      this.params.role_id = value;
-      this.getUsersCount(this.params);
-      this.showFilter();
-    },
-    "params.practice_role"(value) {
-      this.current_page = 1;
-      this.params.offset = 0;
-      this.params.practice_role = value;
-      this.getUsersCount(this.params);
-      this.showFilter();
-    }
-  },
   mounted() {
-    this.$socket.on("Practice Notification Create User", user => {
-      this.getUsersCount(this.params);
-    });
-    this.$socket.on("Practice Notification Delete User", userId => {
-      this.getUsersCount(this.params);
-    });
-    this.$socket.on("Practice Notification Update User", user => {
-      let index = this.users.findIndex(item => item.id == user.id);
-      if (index >= 0) {
-        this.users.splice(index, 1, user);
-      }
-    });
+    this.$socket.on("Practice Notification Create User", this.getUsersRealTime);
+    this.$socket.on("Practice Notification Delete User", this.getUsersRealTime);
+    this.$socket.on("Practice Notification Update User", this.getUsersRealTime);
     // get roles for filter
     this.$axios.$get(`/api/v1/practice/practice-roles`).then(res => {
       this.filterUserRoles.push({ label: "All", value: null });
@@ -221,54 +230,109 @@ export default {
       });
     });
   },
-  async asyncData({ app, store, error }) {
-    try {
-      const responseCount = await app.$axios.$get(`/api/v1/practice/practice-users/count`);
-      const totalUsers = responseCount.data && responseCount.data.count ? responseCount.data.count : 0;
+  async asyncData({ app, redirect, store, error }) {
+    if (app.$auth.user.domain === "Practice") {
+      let permissions = app.$auth.user.practice_detail.role.permissions.map(
+        permission => permission.name
+      );
 
-      const responseUsers = await app.$axios.$get(`/api/v1/practice/practice-users?limit=5&order_by=created_at:desc`);
+      if (permissions.includes("View Profile Users")) {
+        try {
+          const responseCount = await app.$axios.$get(
+            `/api/v1/practice/practice-users/count`
+          );
+          const totalUsers =
+            responseCount.data && responseCount.data.count
+              ? responseCount.data.count
+              : 0;
 
-      let users = [];
+          const responseUsers = await app.$axios.$get(
+            `/api/v1/practice/practice-users?limit=5&order_by=created_at:desc`
+          );
 
-      if (responseUsers.data && responseUsers.data.users) {
-        responseUsers.data.users.forEach(user => {
-          if (user.practice_detail.role && user.practice_detail.role.name == "Practice User Admin") {
-            users.push(user);
-          } else {
-            users.push({ ...user, removable: true });
+          let users = [];
+
+          if (responseUsers.data && responseUsers.data.users) {
+            responseUsers.data.users.forEach(user => {
+              if (
+                user.practice_detail.role &&
+                user.practice_detail.role.name == "Practice User Admin"
+              ) {
+                users.push(user);
+              } else {
+                users.push({ ...user, removable: true });
+              }
+            });
           }
-        });
+          return {
+            totalUsers,
+            users
+          };
+        } catch (err) {
+          if (err.response && err.response.status === 401) {
+            error(err.response.data);
+            return;
+          }
+          throw err;
+        }
+      } else if (permissions.includes("View Profile Practice")) {
+        redirect("/profile");
+      } else if (permissions.includes("View Profile Practice Document")) {
+        redirect(`/profile/practice-documents`);
+      } else {
+        error({ statusCode: 401, message: "Your Practice is Not Authorized" });
       }
-      return {
-        totalUsers,
-        users
-      };
-    } catch (err) {
-      if (err.response && err.response.status === 401) {
-        error(err.response.data);
-        return;
-      }
-      throw err;
     }
   },
   methods: {
-    showFilter() {
-      return (this.filterToggle = !this.filterToggle);
+    async getUsersRealTime(user) {
+      if (!user) {
+        return;
+      }
+      this.showRefresh = true;
+    },
+    async refreshUsers() {
+      this.current_page = 1;
+      this.params.offset = 0;
+      this.params.limit = 10;
+      this.loading = true;
+      await this.getUsersCount(this.params);
+      await this.getUsers(this.params);
+      this.loading = false;
+      this.showRefresh = false;
+    },
+    async filterUsers() {
+      this.current_page = 1;
+      this.params.offset = 0;
+      this.loading = true;
+      await this.getUsersCount(this.params);
+      await this.getUsers(this.params);
+      this.loading = false;
+      this.filterModal = false;
     },
     getUsersCount(params) {
-      this.$axios.$get(`/api/v1/practice/practice-users/count`, { params }).then(res => {
-        this.totalUsers = res.data.count;
-        this.getUsers(this.params);
-      });
+      return this.$axios
+        .$get(`/api/v1/practice/practice-users/count`, { params })
+        .then(res => {
+          return (this.totalUsers = res.data.count);
+        })
+        .catch(err => {
+          console.log("err", err.response.data.message);
+          if (err.response.data.message) {
+            return this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "danger",
+              text: [err.response.data.message]
+            });
+          }
+        });
     },
     getUsers(params) {
-      this.loading = true;
-      this.$axios
+      return this.$axios
         .$get(`/api/v1/practice/practice-users`, { params })
         .then(res => {
-          this.loading = false;
           this.users = [];
-          res.data.users.forEach(user => {
+          return res.data.users.forEach(user => {
             if (user.practice_detail.role_id == 1) {
               this.users.push(user);
             } else {
@@ -277,26 +341,46 @@ export default {
           });
         })
         .catch(err => {
-          console.log(err);
-          this.loading = false;
+          console.log("err", err.response.data.message);
+          if (err.response.data.message) {
+            return this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "danger",
+              text: [err.response.data.message]
+            });
+          }
         });
     },
-    sorted(order_by) {
+    async sorted(order_by) {
       this.current_page = 1;
       this.params.offset = 0;
       this.params.order_by = order_by;
-      this.getUsers(this.params);
+      this.loading = true;
+      await this.getUsers(this.params);
+      this.loading = false;
     },
-    pagechanged(page) {
+    async pagechanged(page) {
       this.current_page = page;
       this.params.offset = this.params.limit * (page - 1);
-      this.getUsers(this.params);
+      this.loading = true;
+      await this.getUsers(this.params);
+      this.loading = false;
     },
-    limitchanged(limit) {
+    async limitchanged(limit) {
       this.current_page = 1;
       this.params.offset = 0;
       this.params.limit = limit;
-      this.getUsers(this.params);
+      this.loading = true;
+      await this.getUsers(this.params);
+      this.loading = false;
+    },
+    clearFilters() {
+      this.params.offset = 0;
+      this.params.limit = 5;
+      this.params.order_by = ["created_at:desc"];
+      this.params.search = "";
+      this.params.role_id = null;
+      this.params.practice_role = null;
     },
     addUser(user) {
       // this.users.push(user);
@@ -314,7 +398,10 @@ export default {
     remove() {
       this.loading = true;
       this.$axios
-        .$delete(`/api/v1/practice/practice-users/${this.selectedSurgeryId}`, this.form)
+        .$delete(
+          `/api/v1/practice/practice-users/${this.selectedSurgeryId}`,
+          this.form
+        )
         .then(res => {
           this.loading = false;
           this.$store.commit("SET_NOTIFICATION", {
@@ -322,7 +409,9 @@ export default {
             status: "success",
             text: [`${res.message}`]
           });
-          let index = this.users.findIndex(item => item.id == this.selectedSurgeryId);
+          let index = this.users.findIndex(
+            item => item.id == this.selectedSurgeryId
+          );
           if (index >= 0) {
             this.users.splice(index, 1);
           }

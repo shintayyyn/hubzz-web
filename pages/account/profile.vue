@@ -430,15 +430,15 @@ export default {
     };
   },
   computed: {
-    professions() {
-      return this.$store.getters["sign-up/getProfessions"];
-    },
-    practiceTypes() {
-      return this.$store.getters["sign-up/getPracticeTypes"];
-    },
-    mandatoryTrainings() {
-      return this.$store.getters["sign-up/getMandatoryTrainings"];
-    }
+    // professions() {
+    //   return this.$store.getters["sign-up/getProfessions"];
+    // },
+    // practiceTypes() {
+    //   return this.$store.getters["sign-up/getPracticeTypes"];
+    // },
+    // mandatoryTrainings() {
+    //   return this.$store.getters["sign-up/getMandatoryTrainings"];
+    // }
   },
   watch: {
     "form.profession_id"(value) {
@@ -497,16 +497,71 @@ export default {
   },
   async asyncData({ app, store, error }) {
     try {
-      store.dispatch("sign-up/getProfessions");
-      store.dispatch("sign-up/getPracticeTypes");
-      store.dispatch("sign-up/getMandatoryTrainings");
-      const response = await app.$axios.$get(`/api/v1/me`);
-      const user =
-        response.data && response.data.user ? response.data.user : null;
+      const [
+        professions,
+        practiceTypes,
+        mandatoryTrainings,
+        user
+      ] = await Promise.all([
+        app.$axios.$get(`/api/v1/professions`).then(responseProfessions => {
+          const professions = [];
+          responseProfessions.data.professions.forEach(profession => {
+            professions.push({ label: profession.name, value: profession.id });
+          });
+          return professions;
+        }),
+        app.$axios
+          .$get(`/api/v1/practice-types`)
+          .then(responsePracticeTypes => {
+            const practice_types = [];
+            responsePracticeTypes.data.practice_types.forEach(practiceType => {
+              practice_types.push({
+                label: practiceType.name,
+                value: practiceType.id
+              });
+            });
+            return practice_types;
+          }),
+        app.$axios
+          .$get(`/api/v1/mandatory-trainings`)
+          .then(responseMandatoryTrainings => {
+            const mandatory_trainings = [];
+            responseMandatoryTrainings.data.mandatory_trainings.forEach(
+              mandatoryTraining => {
+                mandatory_trainings.push({
+                  label: mandatoryTraining.name,
+                  value: mandatoryTraining.id
+                });
+              }
+            );
+            return mandatory_trainings;
+          }),
+        app.$axios.$get(`/api/v1/me`).then(responseMe => {
+          const user =
+            responseMe.data && responseMe.data.user
+              ? responseMe.data.user
+              : null;
+          return user;
+        })
+      ]);
+
       return {
+        professions,
+        practiceTypes,
+        mandatoryTrainings,
         user
       };
-    } catch (err) {}
+    } catch (err) {
+      console.log("err", err);
+      if (err.response.data.message) {
+        store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "danger",
+          text: [`${err.response.data.message}`]
+        });
+      }
+      throw err;
+    }
   },
   mounted() {
     this.profile.avatar = this.user.avatar;

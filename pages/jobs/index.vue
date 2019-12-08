@@ -15,7 +15,7 @@
         />
         <div
           v-if="!isJobPart"
-          class="flex-wrap justify-start items-center z-10 absolute w-full bg-white shadow-lg p-3 rounded-lg"
+          class="flex-wrap justify-start items-end z-10 absolute w-full bg-white shadow-lg p-3 rounded-lg"
           :class="filterModal ? 'flex' : 'hidden'"
         >
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
