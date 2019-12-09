@@ -86,11 +86,22 @@ export default {
         })
         .catch(err => {
           this.loading = false;
-          if (err.response.data.status === 500) {
-            this.error = "File size too large";
+          console.log("err", err.response.data);
+          if (err.response.data.message) {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "danger",
+              text: [`${err.response.data.message}`]
+            });
           }
-          console.log("AppAvatar", err.response.data);
         });
+      // .catch(err => {
+      //   this.loading = false;
+      //   if (err.response.data.status === 500) {
+      //     this.error = "File size too large";
+      //   }
+      //   console.log("AppAvatar", err.response.data);
+      // });
     },
     getBase64(img, callback) {
       const reader = new FileReader();

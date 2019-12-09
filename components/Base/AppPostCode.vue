@@ -9,12 +9,12 @@
         >{{error.message}}</div>
       </div>
     </div>
-    <div class="flex flex-row justify-start mt-1">
+    <div class="flex flex-row justify-start">
       <input
         v-model="search"
         ref="search"
         type="text"
-        class="border-b-2 focus:border-yellow-400 focus:outline-none py-4 px-2 font-bold text-xs sm:text-sm w-full"
+        class="border-b-2 focus:border-yellow-400 focus:outline-none p-2 font-bold text-xs sm:text-sm w-full"
         :class="error? 'border-red-500':''"
         :style="inStyle"
         @focus="toggledOn"

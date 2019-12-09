@@ -67,6 +67,11 @@ export default {
     AppLoading,
     AppFormError
   },
+  validate({ app, params }) {
+    return (
+      app.$moment(params.id, "YYYY-MM-DD").format("YYYY-MM-DD") === params.id
+    );
+  },
   data() {
     return {
       loading: false,
@@ -93,13 +98,15 @@ export default {
       return this.$store.state.availability.selected_date;
     }
   },
-  created() {
-    this.$store.commit("availability/SELECT_DATE", this.$route.params.id);
-    this.loading = true;
-    this.$axios.$get(`/api/v1/shifts`).then(res => {
-      this.shifts = res.data.shifts;
-      this.loading = false;
-    });
+  async asyncData({ app, store, params, error }) {
+    store.commit("availability/SELECT_DATE", params.id);
+
+    const response = await app.$axios.$get(`/api/v1/shifts`);
+    const shifts =
+      response.data && response.data.shifts ? response.data.shifts : [];
+    return {
+      shifts
+    };
   },
   mounted() {
     let unavailableDate = null;
@@ -212,14 +219,18 @@ export default {
             });
           })
           .catch(err => {
-            err.response.data.error_messages.forEach(error => {
-              this.formError.push(error);
-            });
-            this.$store.commit("SET_NOTIFICATION", {
-              enabled: true,
-              status: "danger",
-              text: this.formError.map(error => error.message)
-            });
+            if (err.response.data.message) {
+              this.$store.commit("SET_NOTIFICATION", {
+                enabled: true,
+                status: "danger",
+                text: [`${err.response.data.message}`]
+              });
+            }
+            if (err.response.data.error_messages) {
+              err.response.data.error_messages.forEach(error => {
+                this.formError.push(error);
+              });
+            }
           })
           .finally(() => {
             this.loading = false;

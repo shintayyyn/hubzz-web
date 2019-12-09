@@ -144,6 +144,16 @@ export default {
               }
               this.$router.push(`/messages/${id}`);
             }
+          })
+          .catch(err => {
+            console.log("err", err.response.data);
+            if (err.response.data.message) {
+              this.$store.commit("SET_NOTIFICATION", {
+                enabled: true,
+                status: "danger",
+                text: [`${err.response.data.message}`]
+              });
+            }
           });
       } else {
         this.$emit("input", selectedSurgery.id.toString());
@@ -155,14 +165,26 @@ export default {
         search: input,
         limit: 5
       };
-      this.$axios.$get(this.url, { params }).then(res => {
-        if (this.keyword && this.keyword === "practices") {
-          this.results = res.data.users;
-        } else {
-          this.results = res.data.surgeries;
-        }
-        this.showResults = true;
-      });
+      this.$axios
+        .$get(this.url, { params })
+        .then(res => {
+          if (this.keyword && this.keyword === "practices") {
+            this.results = res.data.users;
+          } else {
+            this.results = res.data.surgeries;
+          }
+          this.showResults = true;
+        })
+        .catch(err => {
+          console.log("err", err.response.data);
+          if (err.response.data.message) {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "danger",
+              text: [`${err.response.data.message}`]
+            });
+          }
+        });
     }, 500),
     toggledOn() {
       if (this.search && this.search.length) {

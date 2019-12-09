@@ -1,81 +1,83 @@
 <template>
   <section class="relative">
-    <div
-      class="relative flex flex-col overflow-x-auto w-full px-2 mt-4"
-      :style="totalPages > 1 && `min-height: ${minHeight}`"
-    >
-      <AppLoading :loading="loading" spinner />
+    <div class="relative">
+      <AppLoading :loading="loading" spinner/>
       <div
-        :style="`min-width: ${customWidth}px`"
-        class="row flex justify-start font-bold leading-none text-sm"
+        class="relative flex flex-col overflow-x-auto w-full px-2 mt-4"
+        :style="totalPages > 1 && `min-height: ${minHeight}`"
       >
         <div
-          class="flex-1 flex items-center p-2"
-          v-for="(column, index) in columns"
-          :key="`${column}-${index}`"
-          :class="[
-						column.class &&
-							column.class.includes('text-center') &&
-							'justify-center',
-						column.sortable && 'cursor-pointer'
-					]"
-          @click="column.sortable && sort(column.dataIndex)"
-        >
-          <span class="pr-1">{{ column.name }}</span>
-          <svgicon
-            v-if="column.sortable"
-            :name="sortIcon(column.dataIndex)"
-            height="12"
-            width="12"
-          />
-        </div>
-      </div>
-      <div
-        v-for="item in items"
-        :key="item.id"
-        :style="`min-width: ${customWidth}px`"
-        class="row py-2"
-      >
-        <nuxt-link
-          :to="{ path: `${routerLink}/${item.id}`, query: { ...$route.query } }"
-          :event="!routerLink ? '' : 'click'"
+          :style="`min-width: ${customWidth}px`"
+          class="row flex justify-start font-bold leading-none text-sm"
         >
           <div
-            class="flex justify-start shadow-md rounded-lg items-center py-3 bg-white"
-            :class="routerLink ? 'transition-hover hover:bg-gray-100' : 'cursor-default'"
+            class="flex-1 flex items-center p-2"
+            v-for="(column, index) in columns"
+            :key="`${column}-${index}`"
+            :class="[
+              column.class &&
+                column.class.includes('text-center') &&
+                'justify-center',
+              column.sortable && 'cursor-pointer'
+            ]"
+            @click="column.sortable && sort(column.dataIndex)"
+          >
+            <span class="pr-1">{{ column.name }}</span>
+            <svgicon
+              v-if="column.sortable"
+              :name="sortIcon(column.dataIndex)"
+              height="12"
+              width="12"
+            />
+          </div>
+        </div>
+        <div
+          v-for="item in items"
+          :key="item.id"
+          :style="`min-width: ${customWidth}px`"
+          class="row py-2"
+        >
+          <nuxt-link
+            :to="{ path: `${routerLink}/${item.id}`, query: { ...$route.query } }"
+            :event="!routerLink ? '' : 'click'"
           >
             <div
-              v-for="(column, index) in columns"
-              :key="index"
-              class="flex-1 truncate px-2"
-              :class="
-								column.class &&
-									column.class.includes('text-center') &&
-									'text-center'
-							"
+              class="flex justify-start shadow-md rounded-lg items-center py-3 bg-white"
+              :class="routerLink ? 'transition-hover hover:bg-gray-100' : 'cursor-default'"
             >
-              <template v-if="Array.isArray(dataCell(item, column))">
-                <div
-                  v-for="(item, index) in dataCell(item, column)"
-                  :key="`${item}-${index}`"
-                >{{ item }}</div>
-              </template>
-              <template v-else>
-                <template v-if="column.dataIndex === 'actions'">
-                  <slot name="actions" v-bind:item="item"></slot>
+              <div
+                v-for="(column, index) in columns"
+                :key="index"
+                class="flex-1 truncate px-2"
+                :class="
+                  column.class &&
+                    column.class.includes('text-center') &&
+                    'text-center'
+                "
+              >
+                <template v-if="Array.isArray(dataCell(item, column))">
+                  <div
+                    v-for="(item, index) in dataCell(item, column)"
+                    :key="`${item}-${index}`"
+                  >{{ item }}</div>
                 </template>
-                <template
-                  v-if="
-										column.class &&
-											column.class.includes('localDate') &&
-											dataCell(item, column) !== '(none)'
-									"
-                >{{ dataCell(item, column) | localDate }}</template>
-                <template v-else>{{ dataCell(item, column) }}</template>
-              </template>
+                <template v-else>
+                  <template v-if="column.dataIndex === 'actions'">
+                    <slot name="actions" v-bind:item="item"></slot>
+                  </template>
+                  <template
+                    v-if="
+                      column.class &&
+                        column.class.includes('localDate') &&
+                        dataCell(item, column) !== '(none)'
+                    "
+                  >{{ dataCell(item, column) | localDate }}</template>
+                  <template v-else>{{ dataCell(item, column) }}</template>
+                </template>
+              </div>
             </div>
-          </div>
-        </nuxt-link>
+          </nuxt-link>
+        </div>
       </div>
     </div>
     <div class="bottom-0 w-full">

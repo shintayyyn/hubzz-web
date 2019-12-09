@@ -181,7 +181,14 @@ export default {
           console.log("One Signal Logged Out");
         })
         .catch(err => {
-          console.log(err);
+          console.log("err", err.response.data);
+          if (err.response.data.message) {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "danger",
+              text: [`${err.response.data.message}`]
+            });
+          }
         })
         .finally(() => {
           return this.$auth.logout();
@@ -193,7 +200,14 @@ export default {
           this.$router.push("/");
         })
         .catch(err => {
-          console.log(err);
+          console.log("err", err.response.data);
+          if (err.response.data.message) {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "danger",
+              text: [`${err.response.data.message}`]
+            });
+          }
         });
     },
     async confirm() {

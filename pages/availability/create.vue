@@ -9,7 +9,6 @@
         <div class="relative bg-white rounded-lg shadow-lg p-4 md:p-8">
           <AppLoading :loading="loading" spinner />
 
-          <AppFormError :formError="formError" v-if="formError.length > 0" />
           <div class="font-bold text-sm sm:text-md mt-4">I won't be available</div>
           <div class="flex flex-row flex-wrap justify-between">
             <div class="w-full p-0 sm:w-1/2 pr-2">
@@ -95,12 +94,13 @@ export default {
       formError: []
     };
   },
-  created() {
-    this.loading = true;
-    this.$axios.$get(`/api/v1/shifts`).then(res => {
-      this.shifts = res.data.shifts;
-      this.loading = false;
-    });
+  async asyncData({ app, params, error }) {
+    const response = await app.$axios.$get(`/api/v1/shifts`);
+    const shifts =
+      response.data && response.data.shifts ? response.data.shifts : [];
+    return {
+      shifts
+    };
   },
   methods: {
     select(id) {

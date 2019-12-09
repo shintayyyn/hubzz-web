@@ -76,42 +76,6 @@ export default {
       formError: []
     };
   },
-  watch: {
-    "form.email"(value) {
-      // splice from formerror
-      let index = this.formError.findIndex(item => item.field === "email");
-      if (index >= 0) {
-        this.formError.splice(index, 1);
-      }
-      // validate
-      if (!value) {
-        // required
-        this.formError.push({ field: "email", message: "Required" });
-      } else {
-        const error = this.ValidateEmail(value);
-        if (error) {
-          this.formError.push(error);
-        }
-      }
-    },
-    "form.password"(value) {
-      // splice from formerror
-      let index = this.formError.findIndex(item => item.field === "password");
-      if (index >= 0) {
-        this.formError.splice(index, 1);
-      }
-      // validate
-      if (!value) {
-        // required
-        this.formError.push({ field: "password", message: "Required" });
-      } else if (value && value.length < 6) {
-        this.formError.push({
-          field: "password",
-          message: "Password Must Be Atleast 6 Characters"
-        });
-      }
-    }
-  },
   methods: {
     async login() {
       try {
@@ -144,9 +108,19 @@ export default {
               // }
             })
             .catch(err => {
-              err.response.data.error_messages.forEach(error => {
-                this.formError.push(error);
-              });
+              console.log("err", err.response.data);
+              if (err.response.data.message) {
+                this.$store.commit("SET_NOTIFICATION", {
+                  enabled: true,
+                  status: "danger",
+                  text: [`${err.response.data.message}`]
+                });
+              }
+              if (err.response.date.error_messages) {
+                err.response.data.error_messages.forEach(error => {
+                  this.formError.push(error);
+                });
+              }
             });
         }
       } catch (e) {

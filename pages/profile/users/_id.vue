@@ -1,5 +1,5 @@
 <template>
-  <div class="modal-container shadow-lg">
+  <div class="modal-container bg-white shadow-lg">
     <div class="flex flex-col items-start p-4 md:p-8 max-w-3xl">
       <nuxt-link :to="'/profile/users'" class="cursor-pointer">
         <svgicon name="left-arrow" height="32" width="32" />
@@ -7,14 +7,13 @@
       <div class="w-full flex justify-start overflow-x-auto py-3 mt-4">
         <div class="relative">
           <nuxt-link
-            :to="`/profile/users/${$route.params.id}/general`"
+            :to="`/profile/users/${$route.params.id}`"
             class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
             :class="['profile-users-id-general', 'profile-users-id'].includes($route.name) ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
           >General</nuxt-link>
         </div>
         <div class="relative">
           <nuxt-link
-            v-if="user.practice_detail.role.name !== 'Practice User Admin'"
             :to="`/profile/users/${$route.params.id}/change-password`"
             class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
             :class="$route.name === 'profile-users-id-change-password'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
@@ -22,36 +21,11 @@
         </div>
       </div>
       <div class="w-full mt-5">
-        <nuxt-child :user="user" @updateUser="$emit('updateUser', $event)" />
+        <nuxt-child @updateUser="$emit('updateUser')" />
       </div>
     </div>
   </div>
 </template>
-<script>
-export default {
-  async asyncData({ app, params, error }) {
-    try {
-      const response = await app.$axios.$get(
-        `/api/v1/practice/practice-users/${params.id}`
-      );
-      const user =
-        response.data && response.data.user ? response.data.user : null;
-
-        console.log("qweqwesada", user)
-
-      return {
-        user
-      };
-    } catch (err) {
-      if (err.response && err.response.status === 401) {
-        error(err.response.data);
-        return;
-      }
-      throw err;
-    }
-  }
-};
-</script>
 <style scoped>
 .modal-container {
   z-index: 510;

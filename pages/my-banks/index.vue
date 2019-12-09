@@ -37,7 +37,7 @@
                     </template>
                   </div>
                   <button
-                    class="ml-2 focus:outline-none hover:bg-gray-300 rounded-lg"
+                    class="ml-2 p-2 focus:outline-none hover:bg-gray-300 rounded-lg"
                     @click.prevent.stop="message(locum)"
                   >
                     <svgicon
@@ -45,7 +45,6 @@
                       height="24"
                       width="24"
                       color="#6b778b #4a5568 #fff"
-                      class="m-2"
                     />
                   </button>
                 </div>

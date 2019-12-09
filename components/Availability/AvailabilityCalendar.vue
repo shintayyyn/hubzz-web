@@ -221,7 +221,6 @@ export default {
   },
   methods: {
     getJobs() {
-      // this.$store.commit("calendar/TOGGLE_LOADING", true);
       this.loading = true;
       Promise.all([
         this.$axios.$get("/api/v1/locum/jobs", {
@@ -268,8 +267,17 @@ export default {
             );
           }
         )
+        .catch(err => {
+          console.log("err", err.response.data);
+          if (err.response.data.message) {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "danger",
+              text: [`${err.response.data.message}`]
+            });
+          }
+        })
         .finally(() => {
-          // this.$store.commit("calendar/TOGGLE_LOADING", false);
           this.loading = false;
         });
     },
@@ -331,54 +339,6 @@ export default {
       this.$router.push({
         path: `/availability/${date.fullDate}`
       });
-      // let selectedDate = date.fullDate;
-      // let unavailableDate = null;
-      // let allocatedDate = null;
-      // let ongoingDate = null;
-
-      // if (
-      //   this.getLocumUnavailabilities &&
-      //   this.getLocumUnavailabilities.length > 0
-      // ) {
-      //   let isUnavailable = this.getLocumUnavailabilities.find(
-      //     unavailable => unavailable.date === selectedDate
-      //   );
-      //   if (isUnavailable) {
-      //     unavailableDate = {
-      //       id: isUnavailable.id,
-      //       shifts: isUnavailable.shifts
-      //     };
-      //   }
-      // }
-      // if (this.getLocumOngoingJobs && this.getLocumOngoingJobs.length > 0) {
-      //   let hasLocumOngoingJob = this.getLocumOngoingJobs.filter(job_part =>
-      //     this.getDateArray(job_part.date_start, job_part.date_end).includes(
-      //       selectedDate
-      //     )
-      //   );
-      //   if (hasLocumOngoingJob && hasLocumOngoingJob.length > 0) {
-      //     ongoingDate = hasLocumOngoingJob.map(item => {
-      //       return item.job.shift;
-      //     });
-      //   }
-      // }
-      // if (this.getLocumAllocatedJobs && this.getLocumAllocatedJobs.length > 0) {
-      //   let hasLocumAllocatedJob = this.getLocumAllocatedJobs.filter(job =>
-      //     this.getDateArray(job.date_start, job.date_end).includes(selectedDate)
-      //   );
-      //   if (hasLocumAllocatedJob && hasLocumAllocatedJob.length > 0) {
-      //     allocatedDate = hasLocumAllocatedJob.map(item => {
-      //       return item.shift;
-      //     });
-      //   }
-      // }
-
-      // this.$emit("open", {
-      //   selectedDate,
-      //   unavailableDate,
-      //   allocatedDate,
-      //   ongoingDate
-      // });
     }
   }
 };

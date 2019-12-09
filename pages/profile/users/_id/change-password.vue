@@ -1,6 +1,6 @@
 <template>
   <div class="relative rounded-lg shadow-lg w-full p-4 md:p-8">
-    <AppFormError :formError="formError" v-if="formError.length > 0" />
+    <!-- <AppFormError :formError="formError" v-if="formError.length > 0" /> -->
     <form class="relative w-full">
       <AppLoading :loading="loading" spinner />
       <AppInput
@@ -34,6 +34,7 @@
         <AppButton
           :label="'Update'"
           @click="update"
+          :disabled="loading"
           v-if="authPermissions.includes('Update Profile Users')"
         />
       </div>
@@ -56,7 +57,6 @@ export default {
     name: "fade",
     mode: "out-in"
   },
-  props: ["user"],
   data() {
     return {
       form: {
@@ -84,20 +84,30 @@ export default {
             this.form
           )
           .then(res => {
-            this.loading = false;
+            this.form.old_password = "";
+            this.form.new_password = "";
+            this.form.new_password_confirmation = "";
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
-              text: ["Success"]
+              text: ["Password changed"]
             });
           })
           .catch(err => {
+            if ((err.response.data, error_messages)) {
+              this.formError = err.response.data.error_messages;
+            }
+            if (err.response.data.message) {
+              this.$store.commit("SET_NOTIFICATION", {
+                enabled: true,
+                status: "danger",
+                text: [`${err.response.data.message}`]
+              });
+            }
+          })
+          .finally(() => {
             this.loading = false;
-            this.formError = err.response.data.error_messages;
           });
-        // this.form.old_password = "";
-        // this.form.new_password = "";
-        // this.form.new_password_confirmation = "";
       }
     }
   }

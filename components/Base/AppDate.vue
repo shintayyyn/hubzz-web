@@ -371,28 +371,26 @@ export default {
         );
         // return if selected month and year === current month and year
         if (
-          this.selectedMonth.toString() === this.$moment().format("M") &&
-          this.selectedYear.toString() === this.$moment().format("YYYY") &&
+          (this.selectedMonth.toString() === this.$moment().format("M") &&
+          this.selectedYear.toString() === this.$moment().format("YYYY")) &&
           this.isAfter
         ) {
           return;
         }
-
         this.selectedYear = parseInt(this.selectedYear);
-
         if (index === 0 || this.selectedMonth != 1) {
           this.selectedMonth--;
         } else {
           this.selectedMonth = 12;
-          this.selectedMonth--;
           this.selectedYear--;
         }
       }
       if (type === "next") {
-        if (this.selectedMonth === 12) {
+        if (this.selectedMonth === 12 || this.selectedMonth === '12') {
           this.selectedYear++;
           this.selectedMonth = 1;
         } else {
+          this.selectedMonth = parseInt(this.selectedMonth)
           this.selectedMonth++;
         }
       }

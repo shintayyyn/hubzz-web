@@ -158,23 +158,22 @@
               <div class="flex flex-col py-2 mb-3 md:mb-6">
                 <div class="relative flex flex-row flex-no-wrap justify-between">
                   <label for="total_hours" class="text-xs sm:text-sm py-1 mt-2">Total hours</label>
-                  
                 </div>
                 <div class="flex flex-row flex-no-wrap justify-start mt-1">
                   <div class="flex flex-col">
-                  <input
-                    v-model="form.total_hours"
-                    type="number"
-                    class="border-b-2 focus:border-yellow-400 focus:outline-none font-bold py-2 text-xs sm:text-sm mx-1"
-                    :class="this.formError.find(item => item.field === 'total_hours')? 'border-red-500':''"
-                    @blur="CheckEmptyField(form.total_hours,'total_hours')"
-                    style="text-align:right;'"
-                    :error="formError.find(item => item.field === 'total_hours')"
-                  />
-                  <div
-                    class="text-red-500 p-1 text-xs"
-                    v-if="this.formError.find(item => item.field === 'total_hours')"
-                  >{{this.formError.find(item => item.field === 'total_hours').message.charAt(0).toUpperCase() + this.formError.find(item => item.field === 'total_hours').message.slice(1).replace(/_/g, " ")}}</div>
+                    <input
+                      v-model="form.total_hours"
+                      type="number"
+                      class="border-b-2 focus:border-yellow-400 focus:outline-none font-bold py-2 text-xs sm:text-sm mx-1"
+                      :class="this.formError.find(item => item.field === 'total_hours')? 'border-red-500':''"
+                      @blur="CheckEmptyField(form.total_hours,'total_hours')"
+                      style="text-align:right;'"
+                      :error="formError.find(item => item.field === 'total_hours')"
+                    />
+                    <div
+                      class="text-red-500 p-1 text-xs"
+                      v-if="this.formError.find(item => item.field === 'total_hours')"
+                    >{{this.formError.find(item => item.field === 'total_hours').message.charAt(0).toUpperCase() + this.formError.find(item => item.field === 'total_hours').message.slice(1).replace(/_/g, " ")}}</div>
                   </div>
                   <label for="total_hours" class="text-xs sm:text-sm mt-2">hours</label>
                 </div>
@@ -198,7 +197,10 @@
                 :lists="mandatory_training_lists"
                 :info="'Check all that apply'"
               />
-              <div class="mb-6 text-center md:text-left" v-if="mandatory_training_lists.length === 0">
+              <div
+                class="mb-6 text-center md:text-left"
+                v-if="mandatory_training_lists.length === 0"
+              >
                 <AppButton :label="'Go to Profile to add items here'" @click="addMandatory" />
               </div>
             </div>
@@ -701,7 +703,7 @@ export default {
             this.form.mandatory_training_id = this.repostJob.platform_job.mandatory_trainings.map(
               item => item.id
             );
-            this.form.mandatory_training_id = this.repostJob.platform_job.ir35;
+            this.form.ir35 = this.repostJob.platform_job.ir35;
             this.form.profession_id = this.repostJob.platform_job.profession.id;
 
             this.repostJob.platform_job.qualifications.forEach(
@@ -832,7 +834,11 @@ export default {
         "auto_assign_at"
       ];
 
-      if (["15", "30", "60", false, "false"].includes(this.unpaid_breaks)) {
+      if (
+        [15, "15", 30, "30", 60, "60", false, "false"].includes(
+          this.unpaid_breaks
+        )
+      ) {
         notRequired.push("unpaid_breaks_in_minutes");
       }
 
@@ -978,12 +984,12 @@ export default {
 </script>
 
 <style>
-.wrapper{
+.wrapper {
   position: relative;
-	width: 100%;
-	height: 100%;
-	overflow: auto;
-	transition: all 0.3s ease-in-out;
-	scroll-behavior: smooth;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  transition: all 0.3s ease-in-out;
+  scroll-behavior: smooth;
 }
 </style>
