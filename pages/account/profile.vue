@@ -429,17 +429,6 @@ export default {
       loading: false
     };
   },
-  computed: {
-    // professions() {
-    //   return this.$store.getters["sign-up/getProfessions"];
-    // },
-    // practiceTypes() {
-    //   return this.$store.getters["sign-up/getPracticeTypes"];
-    // },
-    // mandatoryTrainings() {
-    //   return this.$store.getters["sign-up/getMandatoryTrainings"];
-    // }
-  },
   watch: {
     "form.profession_id"(value) {
       let profession = this.professions.find(item => item.value == value);
@@ -448,51 +437,6 @@ export default {
       } else if (profession.label !== "GP") {
         this.professionCategoryId = 2;
       }
-    },
-    "form.min_rate_per_hour"() {
-      this.CheckEmptyField(this.form.min_rate_per_hour, "min_rate_per_hour");
-    },
-    "form.max_rate_per_hour"() {
-      this.CheckEmptyField(this.form.max_rate_per_hour, "max_rate_per_hour");
-    },
-    "form.min_rate_per_half_day_session"() {
-      this.CheckEmptyField(
-        this.form.min_rate_per_half_day_session,
-        "min_rate_per_half_day_session"
-      );
-    },
-    "form.max_rate_per_half_day_session"() {
-      this.CheckEmptyField(
-        this.form.max_rate_per_half_day_session,
-        "max_rate_per_half_day_session"
-      );
-    },
-    "form.min_rate_per_whole_day_session"() {
-      this.CheckEmptyField(
-        this.form.min_rate_per_whole_day_session,
-        "min_rate_per_whole_day_session"
-      );
-    },
-    "form.max_rate_per_whole_day_session"() {
-      this.CheckEmptyField(
-        this.form.max_rate_per_whole_day_session,
-        "max_rate_per_whole_day_session"
-      );
-    },
-    "form.practice_type_id"() {
-      this.CheckEmptyField(this.form.practice_type_id, "practice_type_id");
-    },
-    "form.mandatory_training_id"() {
-      this.CheckEmptyField(
-        this.form.mandatory_training_id,
-        "mandatory_training_id"
-      );
-    },
-    "form.post_code"() {
-      this.CheckEmptyField(this.form.post_code, "post_code");
-    },
-    "form.miles"() {
-      this.CheckEmptyField(this.form.miles, "miles");
     }
   },
   async asyncData({ app, store, error }) {
@@ -826,7 +770,19 @@ export default {
             return { label: spokenLanguage.name, value: spokenLanguage.id };
           }
         );
-        this.formError = err.response.data.error_messages;
+        console.log("err", err.response.data);
+        if (err.response.data.message) {
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "danger",
+            text: [`${err.response.data.message}`]
+          });
+        }
+        if (err.response.data.error_messages) {
+          err.response.data.error_messages.forEach(error => {
+            this.formError.push(error);
+          });
+        }
         this.scrollToTop();
         this.loading = false;
       }

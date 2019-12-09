@@ -146,27 +146,13 @@ export default {
       formError: []
     };
   },
-  watch: {
-    // "form.old_password"() {
-    //   this.CheckEmptyField(this.form.old_password, "old_password");
-    // },
-    // "form.new_password"() {
-    //   this.CheckEmptyField(this.form.new_password, "new_password");
-    // },
-    // "form.new_password_confirmation"() {
-    //   this.CheckEmptyField(
-    //     this.form.new_password_confirmation,
-    //     "new_password_confirmation"
-    //   );
-    // }
-  },
   methods: {
     async update() {
       try {
-        this.loading = true;
         this.formError = [];
         this.Validate(this.form);
         if (!this.formError.length) {
+          this.loading = true;
           await this.$axios.$put(`/api/v1/me/change-password`, this.form);
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
@@ -187,18 +173,21 @@ export default {
           this.scrollToTop();
         }
       } catch (err) {
-        if (err.response.data.error_messages) {
-          console.log("qweds", err.response.data.error_messages)
-          this.formError = err.response.data.error_messages
-        } else if (!err.response.data.error_messages && err.response.data.message) {
+        console.log("err", err.response.data);
+        if (err.response.data.message) {
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "danger",
-            text: err.response.data.message
+            text: [`${err.response.data.message}`]
           });
         }
-          this.loading = false;
-          this.scrollToTop();
+        if (err.response.data.error_messages) {
+          err.response.data.error_messages.forEach(error => {
+            this.formError.push(error);
+          });
+        }
+        this.loading = false;
+        this.scrollToTop();
       }
     }
   }

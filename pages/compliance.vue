@@ -247,13 +247,14 @@
                   <label class="hidden md:block leading-loose mx-2 cursor-pointer text-black">Upload</label>
                 </div>
               </td>
+
               <td
                 @click.stop="$refs[`${item.id}_file_optional_compliance`][0].click()"
                 class="hover:underline"
                 v-else
               >
                 <div
-                  class="flex flex-row flex-no-wrap justify-center float-right bg-yellow-500 lg:w-2/3 mx-auto p-2 rounded cursor-pointer"
+                  class="flex flex-row flex-no-wrap justify-center float-right bg-yellow-500 mx-auto p-2 rounded cursor-pointer"
                 >
                   <input
                     type="file"
@@ -359,7 +360,7 @@
                   v-else
                 >
                   <div
-                    class="flex flex-row flex-no-wrap justify-center float-right bg-yellow-500 lg:w-2/3 mx-auto p-2 rounded cursor-pointer"
+                    class="flex flex-row flex-no-wrap justify-center float-right bg-yellow-500 mx-auto p-2 rounded cursor-pointer"
                   >
                     <input
                       type="file"
@@ -406,11 +407,79 @@ export default {
   },
   async asyncData({ app, error }) {
     try {
-      const response = await app.$axios.$get(`/api/v1/me`);
+      const responseUser = await app.$axios.$get(`/api/v1/me`);
       const user =
-        response.data && response.data.user ? response.data.user : null;
+        responseUser.data && responseUser.data.user
+          ? responseUser.data.user
+          : null;
+      const gmc_or_nmc_number = user.locum_detail.gmc_or_nmc_number;
+      const mpl_or_npl_number = user.locum_detail.mpl_or_npl_number;
+
+      const responseProfession = await app.$axios.$get(
+        `/api/v1/profession-categories`
+      );
+      const profession = responseProfession.data.profession_categories.find(
+        professionCategory =>
+          professionCategory.id ===
+          user.locum_detail.profession.profession_category.id
+      );
+
+      const responseComplianceDocuments = await app.$axios.$get(
+        `/api/v1/locum/locum-detail-compliance-documents`
+      );
+      if (
+        responseComplianceDocuments.data &&
+        responseComplianceDocuments.data.locum_detail_compliance_documents &&
+        responseComplianceDocuments.data.locum_detail_compliance_documents
+          .length > 0
+      ) {
+        responseComplianceDocuments.data.locum_detail_compliance_documents.forEach(
+          userComplianceDocument => {
+            profession.mandatory_compliance_documents.forEach(
+              mandatoryDocument => {
+                if (
+                  userComplianceDocument.compliance_document.id ===
+                  mandatoryDocument.id
+                ) {
+                  mandatoryDocument.info = userComplianceDocument;
+                }
+              }
+            );
+            profession.optional_compliance_documents.forEach(
+              optionalDocument => {
+                if (
+                  userComplianceDocument.compliance_document.id ===
+                  optionalDocument.id
+                ) {
+                  optionalDocument.info = userComplianceDocument;
+                }
+              }
+            );
+          }
+        );
+      }
+      const mandatory = profession.mandatory_compliance_documents.sort(
+        (a, b) => a.id - b.id
+      );
+      const optional = profession.optional_compliance_documents.sort(
+        (a, b) => a.id - b.id
+      );
+
+      const responseMandatoryTrainings = await app.$axios.$get(
+        `/api/v1/locum/locum-detail-mandatory-trainings`
+      );
+      const mandatory_trainings = responseMandatoryTrainings.data.locum_detail_mandatory_trainings.sort(
+        (a, b) => a.id - b.id
+      );
+
       return {
-        user
+        user,
+        gmc_or_nmc_number,
+        mpl_or_npl_number,
+        profession,
+        mandatory,
+        optional,
+        mandatory_trainings
       };
     } catch (err) {
       console.log("err", err.response.data);
@@ -423,22 +492,6 @@ export default {
       }
       throw err;
     }
-  },
-  created() {
-    // get gmc, mpl status
-    this.gmc_or_nmc_number = this.user.locum_detail.gmc_or_nmc_number;
-    this.mpl_or_npl_number = this.user.locum_detail.mpl_or_npl_number;
-    // get all compliance documents list based on profession category
-    this.$axios.$get(`/api/v1/profession-categories`).then(res => {
-      this.profession = res.data.profession_categories.find(
-        profession =>
-          profession.id ===
-          this.user.locum_detail.profession.profession_category.id
-      );
-      this.setComplianceDocuments();
-    });
-    // get all mandatory training list
-    this.setMandatoryTrainings();
   },
   mounted() {
     this.$socket.on("Locum Notification Compliance Approved", file => {
@@ -477,56 +530,6 @@ export default {
         if (type === "mandatory")
           this.$router.push(`/compliance/mandatory-training/${item.id}`);
       }
-    },
-    // set mandatory training
-    setMandatoryTrainings() {
-      this.$axios
-        .$get(`/api/v1/locum/locum-detail-mandatory-trainings`)
-        .then(res => {
-          this.mandatory_trainings = res.data.locum_detail_mandatory_trainings;
-          this.mandatory_trainings = this.mandatory_trainings.sort(
-            (a, b) => a.id - b.id
-          );
-        });
-    },
-    // set mandatory and optional compliance
-    setComplianceDocuments() {
-      this.$axios
-        .$get(`/api/v1/locum/locum-detail-compliance-documents`)
-        .then(res => {
-          if (res.data.locum_detail_compliance_documents.length > 0) {
-            res.data.locum_detail_compliance_documents.forEach(
-              userComplianceDocument => {
-                this.profession.mandatory_compliance_documents.forEach(
-                  mandatoryDocument => {
-                    if (
-                      userComplianceDocument.compliance_document.id ===
-                      mandatoryDocument.id
-                    ) {
-                      mandatoryDocument.info = userComplianceDocument;
-                    }
-                  }
-                );
-                this.profession.optional_compliance_documents.forEach(
-                  optionalDocument => {
-                    if (
-                      userComplianceDocument.compliance_document.id ===
-                      optionalDocument.id
-                    ) {
-                      optionalDocument.info = userComplianceDocument;
-                    }
-                  }
-                );
-              }
-            );
-          }
-          this.mandatory = this.profession.mandatory_compliance_documents.sort(
-            (a, b) => a.id - b.id
-          );
-          this.optional = this.profession.optional_compliance_documents.sort(
-            (a, b) => a.id - b.id
-          );
-        });
     },
     status(status) {
       switch (status) {
