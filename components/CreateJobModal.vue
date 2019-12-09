@@ -703,7 +703,7 @@ export default {
             this.form.mandatory_training_id = this.repostJob.platform_job.mandatory_trainings.map(
               item => item.id
             );
-            this.form.mandatory_training_id = this.repostJob.platform_job.ir35;
+            this.form.ir35 = this.repostJob.platform_job.ir35;
             this.form.profession_id = this.repostJob.platform_job.profession.id;
 
             this.repostJob.platform_job.qualifications.forEach(
