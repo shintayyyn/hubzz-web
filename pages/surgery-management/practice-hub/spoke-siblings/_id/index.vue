@@ -6,7 +6,7 @@
           <svgicon name="left-arrow" height="32" width="32" />
         </nuxt-link>
       </div>
-      <div class="font-bold text-lg px-2">Bank</div>
+      <div class="font-bold text-lg px-2">Banks</div>
       <div v-if="practiceSibling.share_banks_to_other_surgeries == false">
         The Banks of this spokes are not shared.
       </div>

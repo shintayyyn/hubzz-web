@@ -5,7 +5,7 @@
       :to="`/surgery-management/practice-hub`"
       class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
       :class="
-        $route.name.includes('surgery-management-practice-hub')
+        $route.name === 'surgery-management-practice-hub'
           ? 'border rounded-lg border-yellow-500 bg-yellow-500'
           : 'text-gray-600'
       "

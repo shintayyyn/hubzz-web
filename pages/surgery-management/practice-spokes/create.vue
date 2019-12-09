@@ -153,6 +153,7 @@ export default {
             `/api/v1/practice/practice-spokes?search=${this.search_text}&limit=10`
           )
           .then(res => {
+            console.log(res.data.practices)
             if (res.data && res.data.practices){
               res.data.practices.forEach(item => {
                 let checkSurgery = this.surgeries.find(surgery => surgery.id == item.id)

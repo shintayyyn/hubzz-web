@@ -7,22 +7,22 @@
 					<div class="flex flex-col mx-2">
 						<div class="flex flex-col md:flex-row w-full leading-tight">
 							<p class="md:w-1/3 font-semibold">Surgery Name</p>
-							<p class="md:w-2/3 mx-2 md:mx-0">{{ practiceHub.name }}</p>
+							<p class="md:w-2/3 mx-2 md:mx-0">{{ practiceHub.surgery.name }}</p>
 						</div>
 
 						<div class="flex flex-col md:flex-row w-full mt-2 leading-tight">
 							<p class="md:w-1/3 font-semibold">Contact Number</p>
 							<p class="md:w-2/3 mx-2 md:mx-0">
 							{{
-								practiceHub.practice.phone_number
-								? practiceHub.practice.phone_number
+								practiceHub.phone_number
+								? practiceHub.phone_number
 								: "N/A"
 							}}
 							</p>
 						</div>
 						<div class="flex flex-col md:flex-row w-full mt-2 leading-tight">
 							<p class="md:w-1/3 font-semibold">Report To</p>
-							<p class="md:w-2/3 mx-2 md:mx-0">{{practiceHub.practice.report_to ? practiceHub.practice.report_to : 'N/A'}}</p>
+							<p class="md:w-2/3 mx-2 md:mx-0">{{practiceHub.report_to ? practiceHub.report_to : 'N/A'}}</p>
 						</div>
 					</div>
 				</div>
@@ -35,7 +35,7 @@
 								class="fill-current w-5 h-5"
 								:class="practiceSpoke.allow_surgery_create_sessions ? 'text-green-500' : 'w-5 h-5 text-red-500 border-2 border-red-500 rounded-full p-1'"/>
 						</span>
-						<p class="font-semibold leading-tight">Does Hub allow creation of Jobs/Sessions?</p>
+						<p class="font-semibold leading-tight">Job Creation</p>
 					</div>
 					<div class="mt-2 mb-4 bg-gray-200 p-4 rounded-lg" v-if="practiceSpoke.allow_surgery_create_sessions === true">
 						<p class="font-semibold pb-2">Rate Limits (Only effective when allowed to create jobs)</p>
@@ -66,7 +66,7 @@
 								class="fill-current w-5 h-5"
 								:class="practiceSpoke.allow_surgery_bill_locum ? 'text-green-500' : 'text-red-500 border-2 border-red-500 rounded-full p-1'"/>
 						</span>
-						<p class="font-semibold leading-tight">Does Hub permit billing of Locums?</p>
+						<p class="font-semibold leading-tight">Billing for Locums</p>
 					</div>
 					<div class="flex items-center py-1">
 						<span class="mr-3 md:mx-2">
@@ -74,7 +74,7 @@
 								class="fill-current w-5 h-5"
 								:class="practiceSpoke.allow_surgery_bill_hubzz ? 'text-green-500' : 'text-red-500 border-2 border-red-500 rounded-full p-1'"/>
 						</span>
-						<p class="font-semibold leading-tight">Does Hub permit billing for Hubzz?</p>
+						<p class="font-semibold leading-tight">Billing for HUBZZ</p>
 					</div>
 					<div class="flex items-center py-1">
 						<span class="mr-3 md:mx-2">
@@ -82,7 +82,7 @@
 							class="fill-current w-5 h-5"
 							:class="practiceSpoke.share_banks_to_other_surgeries ? 'text-green-500' : 'text-red-500 border-2 border-red-500 rounded-full p-1'"/>
 						</span>
-						<p class="font-semibold leading-tight">Can other Spokes see your Banks?</p>
+						<p class="font-semibold leading-tight">Bank Sharing</p>
 					</div>
 					
 					
@@ -154,15 +154,17 @@ export default {
 				}
 			]
 		};
-	},
-  
+  },
+  created(){
+    console.log('my hub', this.practiceHub)
+  },
 	async asyncData({ app, route, store }) {
 		try {
 			let response = await app.$axios.$get(
 				`/api/v1/practice/me/parent-surgery`
 			);
 			const practiceSpoke = response.data.practice;
-			const practiceHub = response.data.practice.parent_surgery;
+			const practiceHub = response.data.practice.parent_practice;
 
 			response = await app.$axios.$get(
 				`/api/v1/practice/me/parent-surgery/invitations-count`
