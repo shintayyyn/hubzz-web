@@ -1,27 +1,34 @@
 <template>
-  <div class="bg-white rounded-lg shadow-lg p-4 md:p-8 mt-8">
+  <div class="relative bg-white rounded-lg shadow-lg p-4 md:p-8 mt-8">
     <template v-if="isReadyToApply">
       <div class="text-sm sm:text-base mb-4">This job is still open</div>
-      <AppButton :label="'Apply now'" @click="apply" />
+      <AppButton :label="'Apply now'" @click="apply" :disabled="loading" />
     </template>
-    <template v-else>
+    <template v-if="!isReadyToApply">
       <div class="text-sm sm:text-base mb-4">
         Please complete your
         <strong>compliance</strong> requirements to be eligible to apply for this job
       </div>
-      <AppButton :label="'Go to Compliance'" @click="goTo" />
+      <nuxt-link
+        :to="{ path: '/compliance' }"
+        class="button rounded-lg p-2 md:px-4 font-bold md:text-lg focus:outline-none transition-hover"
+      >Go to Compliance</nuxt-link>
     </template>
+    <AppLoading :loading="loading" spinner />
   </div>
 </template>
 <script>
+import AppLoading from "@/components/Base/AppLoading";
 import AppButton from "@/components/Base/AppButton";
 export default {
   components: {
-    AppButton
+    AppButton,
+    AppLoading
   },
   props: ["job"],
   data() {
     return {
+      loading: false,
       userCompliance: [],
       gmc_or_nmc_number_status: null,
       mpl_or_npl_number_status: null
@@ -46,7 +53,7 @@ export default {
       return isComplete;
     }
   },
-  created() {
+  mounted() {
     this.$auth.user.locum_detail.compliance_documents.forEach(item => {
       if (item.status === "Approved") {
         this.userCompliance.push(item.compliance_document.id);
@@ -56,23 +63,33 @@ export default {
     this.mpl_or_npl_number_status = this.$auth.user.locum_detail.mpl_or_npl_number.status;
   },
   methods: {
-    goTo() {
-      document.body.style.overflow = "auto";
-      this.$router.push("/compliance");
-    },
     apply() {
-      this.$axios.$post(`/api/v1/locum/jobs/${this.job.id}/apply`).then(res => {
-        if (this.$route.path.includes("/jobs")) {
+      this.loading = true;
+      this.$axios
+        .$post(`/api/v1/locum/jobs/${this.job.id}/apply`)
+        .then(res => {
           this.$store.commit("jobs/REMOVE_LOCUM_AVAILABLE_JOB", this.job.id);
           this.$store.commit("jobs/REMOVE_LOCUM_MATCHED_JOB", this.job.id);
-        }
-        this.$store.commit("SET_NOTIFICATION", {
-          enabled: true,
-          status: "success",
-          text: [`${res.message}`]
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: [`${res.message}`]
+          });
+          this.$emit("applied");
+        })
+        .catch(err => {
+          console.log("err", err.response.data);
+          if (err.response.data.message) {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "danger",
+              text: [`${err.response.data.message}`]
+            });
+          }
+        })
+        .finally(() => {
+          this.loading = false;
         });
-        this.$emit("applied");
-      });
     }
   }
 };

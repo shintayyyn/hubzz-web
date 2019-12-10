@@ -426,10 +426,9 @@ export default {
         state.locum_available_jobs_count = state.locum_available_jobs_count + 1
     },
     REMOVE_LOCUM_AVAILABLE_JOB(state, payload) {
-        if (state.locum_available_jobs.find(availableJob => availableJob.id === payload)) {
-            state.locum_available_jobs = state.locum_available_jobs.filter(job => job.id !== payload)
-            state.locum_available_jobs_count = state.locum_available_jobs_count - 1
-        }
+        state.locum_available_jobs = state.locum_available_jobs.filter(job => job.id !== payload)
+        console.log(payload)
+        console.log(state.locum_available_jobs)
     },
 
     SET_LOCUM_MATCHED_JOBS(state, payload) {
@@ -443,10 +442,9 @@ export default {
         state.locum_matched_jobs_count = state.locum_matched_jobs_count + 1
     },
     REMOVE_LOCUM_MATCHED_JOB(state, payload) {
-        if (state.locum_matched_jobs.find(matchedJob => matchedJob.id === payload)) {
-            state.locum_matched_jobs = state.locum_matched_jobs.filter(job => job.id !== payload)
-            state.locum_matched_jobs_count = state.locum_matched_jobs_count - 1
-        }
+        state.locum_matched_jobs = state.locum_matched_jobs.filter(job => job.id !== payload)
+        console.log(payload)
+        console.log(state.locum_matched_jobs)
     },
 
     SET_LOCUM_UNSUCCESSFUL_JOBS(state, payload) {

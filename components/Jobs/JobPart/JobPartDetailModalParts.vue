@@ -1,7 +1,11 @@
 <template>
   <div class="relative flex flex-col w-full my-5">
     <div class="text-md font-bold">Job Parts</div>
+    <div class="relative flex w-full" v-if="parts.length === 0 && loading" style="min-height:80px">
+      <AppLoading :loading="loading" spinner />
+    </div>
     <AppTable
+      v-if="parts.length > 0"
       :total="total"
       :items="parts"
       :currentPage="current_page"
@@ -16,24 +20,27 @@
   </div>
 </template>
 <script>
+import AppLoading from "@/components/Base/AppLoading";
 import AppTable from "@/components/Base/AppTable";
 export default {
   components: {
-    AppTable
+    AppTable,
+    AppLoading
   },
 
   props: ["job_id", "disabledLink"],
   data() {
     return {
+      loading: false,
+      total: 0,
       parts: [],
       current_page: 1,
       // app table params
       params: {
-        job_id: 0,
+        job_id: null,
         offset: 0,
         limit: 5
       },
-      total: 0,
       // app table
       columns: [
         {
@@ -56,8 +63,7 @@ export default {
           dataIndex: "status",
           class: "text-center"
         }
-      ],
-      loading: false
+      ]
     };
   },
 
@@ -80,14 +86,35 @@ export default {
       return url;
     }
   },
-  created() {
+  async mounted() {
+    this.loading = true;
     this.params.job_id = this.job_id;
-    this.$axios
-      .$get(`/api/v1/locum/job-parts/count?job_id=${this.job_id}`)
-      .then(res => {
-        this.total = res.data.count;
-        this.getJobParts(this.params);
-      });
+    try {
+      Promise.all([
+        this.$axios.$get(`/api/v1/locum/job-parts/count`, {
+          params: this.params
+        }),
+        this.$axios.$get(`/api/v1/locum/job-parts`, { params: this.params })
+      ])
+        .then(([responseCount, responseJobParts]) => {
+          this.total = responseCount.data.count;
+          this.parts = responseJobParts.data.job_parts;
+        })
+        .finally(() => {
+          this.loading = false;
+        });
+    } catch (err) {
+      console.log("err", err.response.data);
+      if (err.response.data.message) {
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "danger",
+          text: [`${err.response.data.message}`]
+        });
+      }
+      this.loading = false;
+      throw err;
+    }
   },
   methods: {
     getJobParts(params) {
@@ -111,19 +138,3 @@ export default {
   }
 };
 </script>
-<style scoped>
-.shield {
-  z-index: 511;
-}
-.modal-container {
-  z-index: 512;
-}
-@media screen and (min-width: 1200px) {
-  .modal-container {
-    width: 70%;
-  }
-}
-.wrapper {
-  transition: all 0.3s linear;
-}
-</style>

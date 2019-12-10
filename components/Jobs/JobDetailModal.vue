@@ -58,7 +58,7 @@
         <div class="p-0 md:pl-4 w-full md:w-1/2 order-first md:order-none">
           <div class="flex flex-col">
             <JobPartDetailModalParts :job_id="job.id" :disabledLink="true" />
-            <JobDetailModalMap :job="job" />
+            <JobDetailModalMap :job="job" v-if="showMap" />
           </div>
         </div>
       </div>
@@ -101,6 +101,16 @@ export default {
 
       return `You need to confirm within ${hours} hours`;
     }
+  },
+  data() {
+    return {
+      showMap: false
+    };
+  },
+  mounted() {
+    setTimeout(() => {
+      this.showMap = true;
+    }, 1);
   },
   methods: {
     bgStatus(status) {
