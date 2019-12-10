@@ -11,8 +11,6 @@
           :type="'text'"
           :name="'account_name'"
           :label="'Account name'"
-          :placeholder="''"
-          @submit="save"
           @blur="CheckEmptyField(form.account_name, 'account_name')"
           :error="formError.find(item => item.field === 'account_name')"
         />
@@ -21,8 +19,6 @@
           :type="'text'"
           :name="'bank_name'"
           :label="'Bank name'"
-          :placeholder="''"
-          @submit="save"
           @blur="CheckEmptyField(form.bank_name, 'bank_name')"
           :error="formError.find(item => item.field === 'bank_name')"
         />
@@ -31,8 +27,6 @@
           :type="'text'"
           :name="'sort_code'"
           :label="'Sort code'"
-          :placeholder="''"
-          @submit="save"
           @blur="CheckEmptyField(form.sort_code, 'sort_code')"
           :error="formError.find(item => item.field === 'sort_code')"
         />
@@ -41,8 +35,6 @@
           :type="'text'"
           :name="'account_number'"
           :label="'Account number'"
-          :placeholder="''"
-          @submit="save"
           @blur="CheckEmptyField(form.account_number, 'account_number')"
           :error="formError.find(item => item.field === 'account_number')"
         />
@@ -63,7 +55,6 @@
                 :name="'tax_year_end_month'"
                 :placeholder="'Month'"
                 :items="months"
-                @submit="save"
                 @blur="CheckEmptyField(form.tax_year_end_month, 'tax_year_end_month')"
                 :error="formError.find(item => item.field === 'tax_year_end_month')"
               />
@@ -75,7 +66,6 @@
                 :name="'tax_year_end_date'"
                 :placeholder="'Day'"
                 :items="days"
-                @submit="save"
                 @blur="CheckEmptyField(form.tax_year_end_date, 'tax_year_end_date')"
                 :error="formError.find(item => item.field === 'tax_year_end_date')"
               />
@@ -88,7 +78,6 @@
           :name="'employment_type'"
           :label="'Are you...?'"
           :items="employmentTypes"
-          @submit="save"
           @blur="CheckEmptyField(form.employment_type, 'employment_type')"
           :error="formError.find(item => item.field === 'employment_type')"
         />
@@ -99,7 +88,6 @@
             :name="'Company registration number'"
             :label="'Company_registration_number'"
             :placeholder="'The number of your company from Companies House'"
-            @submit="save"
             @blur="CheckEmptyField(form.company_registration_number, 'company_registration_number')"
             :error="formError.find(item => item.field === 'company_registration_number')"
           />
@@ -110,8 +98,6 @@
             :type="'text'"
             :name="'utr_number'"
             :label="'UTR number'"
-            :placeholder="''"
-            @submit="save"
             @blur="CheckEmptyField(form.utr_number, 'utr_number')"
             :error="formError.find(item => item.field === 'utr_number')"
           />
@@ -162,7 +148,6 @@
           :name="'ir35'"
           :label="'IR35 - role inside or outside of scope'"
           :items="[ {value: true, label: 'Inside of Scope'}, {value: false, label: 'Outside of Scope'} ]"
-          @submit="save"
         />
       </div>
 
@@ -309,61 +294,6 @@ export default {
       }
     }
   },
-  watch: {
-    "form.account_name"(value) {
-      this.CheckEmptyField(this.form.account_name, "account_name");
-    },
-    "form.bank_name"(value) {
-      this.CheckEmptyField(this.form.bank_name, "bank_name");
-    },
-    "form.sort_code"(value) {
-      this.CheckEmptyField(this.form.sort_code, "sort_code");
-    },
-    "form.account_number"(value) {
-      this.CheckEmptyField(this.form.account_number, "account_number");
-    },
-    // "form.tax_year_end_month"(value) {
-    //   this.CheckEmptyField(this.form.tax_year_end_month, "tax_year_end_month");
-    // },
-    // "form.tax_year_end_date"(value) {
-    //   this.CheckEmptyField(this.form.tax_year_end_date, "tax_year_end_date");
-    // },
-    "form.employment_type"(value) {
-      if (value === "Limited Company") {
-        let index = this.formError.findIndex(err => err.field === "utr_number");
-        if (index > 0) {
-          this.formError.splice(index, 1);
-        }
-      }
-    },
-    // "form.ir35"(value) {
-    //   this.CheckEmptyField(this.form.ir35, "ir35");
-    // },
-    "form.payroll_detail_account_name"(value) {
-      this.CheckEmptyField(
-        this.form.payroll_detail_account_name,
-        "payroll_detail_account_name"
-      );
-    },
-    "form.payroll_detail_bank_name"(value) {
-      this.CheckEmptyField(
-        this.form.payroll_detail_bank_name,
-        "payroll_detail_bank_name"
-      );
-    },
-    "form.payroll_detail_sort_code"(value) {
-      this.CheckEmptyField(
-        this.form.payroll_detail_sort_code,
-        "payroll_detail_sort_code"
-      );
-    },
-    "form.payroll_detail_account_number"(value) {
-      this.CheckEmptyField(
-        this.form.payroll_detail_account_number,
-        "payroll_detail_account_number"
-      );
-    }
-  },
   methods: {
     save() {
       this.formError = [];
@@ -388,6 +318,8 @@ export default {
       }
 
       this.Validate(this.form, notRequired);
+      console.log(this.form, notRequired);
+      return;
       if (!this.formError.length) {
         this.loading = true;
         this.$axios

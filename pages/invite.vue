@@ -2,9 +2,9 @@
   <section>
     <div class="flex flex-no-wrap justify-start">
       <nuxt-link
-        :to="'/invite/invite-locums'"
+        :to="'/invite'"
         class="mr-5 p-3 text-sm font-bold cursor-pointer"
-        :class="$route.name === 'invite-invite-locums' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name === 'invite' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >Invite Locums</nuxt-link>
       <nuxt-link
         :to="'/invite/invite-practices'"

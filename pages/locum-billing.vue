@@ -3,9 +3,9 @@
     <div class="flex flex-col md:flex-row lg:items-center justify-between">
       <div class="flex flex-row justify-start overflow-x-auto pb-3">
         <nuxt-link
-          to="/locum-billing/invoices"
+          to="/locum-billing"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-          :class="['locum-billing-invoices-create', 'locum-billing-invoices'].includes($route.name) || $route.name.includes('locum-billing-invoices-id') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          :class="['locum-billing-index-create', 'locum-billing-index'].includes($route.name) || $route.name.includes('locum-billing-id') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Invoices</nuxt-link>
         <nuxt-link
           to="/locum-billing/invoicing-details"
@@ -25,8 +25,8 @@
       </div>
 
       <nuxt-link
-        v-if="$route.path.includes('/locum-billing/invoices')"
-        to="/locum-billing/invoices/create"
+        v-if="$route.path.includes('/locum-billing')"
+        to="/locum-billing/create"
         class="flex flex-row items-center justify-end leading-loose whitespace-no-wrap"
       >
         <span
@@ -50,28 +50,6 @@ export default {
 </script>
 
 <style scoped>
-.shield {
-  z-index: 511;
-}
-.invoice-modal {
-  position: fixed;
-  top: 0;
-  right: 0;
-  margin-right: 0%;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  /* border-left: solid 2px #edf2f7; */
-  transition: all 0.3s ease-in-out;
-  /* background-color: rgb(80, 80, 80); */
-  background: #fff;
-  z-index: 512;
-}
-@media screen and (min-width: 1200px) {
-  .invoice-modal {
-    width: 70%;
-  }
-}
 .transition {
   transition: all 0.2s ease-in-out;
 }
