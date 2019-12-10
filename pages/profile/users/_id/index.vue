@@ -160,7 +160,7 @@ export default {
           return (this.user = res.data.user);
         })
         .catch(err => {
-          console.log("err", err.response.data);
+          console.log("err", err.response || err);
           if (err.response.data.message) {
             return this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
@@ -179,7 +179,7 @@ export default {
           });
         })
         .catch(err => {
-          console.log("err", err.response.data);
+          console.log("err", err.response || err);
           if (err.response.data.message) {
             return this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
@@ -207,7 +207,7 @@ export default {
             this.$emit("updateUser");
           })
           .catch(err => {
-            console.log("err", err.response.data);
+            console.log("err", err.response || err);
             if (err.response.data.message) {
               this.$store.commit("SET_NOTIFICATION", {
                 enabled: true,

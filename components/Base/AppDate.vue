@@ -22,10 +22,16 @@
           :format="format"
           :disabled="disabled"
         />
-        <div
+        <transition name="drop-down">
+          <div
+            v-if="error"
+            class="text-red-500 py-1 text-xs text-white"
+          >{{error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ")}}</div>
+        </transition>
+        <!-- <div
           class="text-red-500 text-xs py-1 text-white rounded"
           v-if="error"
-        >{{error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ")}}</div>
+        >{{error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ")}}</div>-->
       </div>
     </div>
     <transition name="fade">
@@ -371,8 +377,8 @@ export default {
         );
         // return if selected month and year === current month and year
         if (
-          (this.selectedMonth.toString() === this.$moment().format("M") &&
-          this.selectedYear.toString() === this.$moment().format("YYYY")) &&
+          this.selectedMonth.toString() === this.$moment().format("M") &&
+          this.selectedYear.toString() === this.$moment().format("YYYY") &&
           this.isAfter
         ) {
           return;
@@ -386,11 +392,11 @@ export default {
         }
       }
       if (type === "next") {
-        if (this.selectedMonth === 12 || this.selectedMonth === '12') {
+        if (this.selectedMonth === 12 || this.selectedMonth === "12") {
           this.selectedYear++;
           this.selectedMonth = 1;
         } else {
-          this.selectedMonth = parseInt(this.selectedMonth)
+          this.selectedMonth = parseInt(this.selectedMonth);
           this.selectedMonth++;
         }
       }

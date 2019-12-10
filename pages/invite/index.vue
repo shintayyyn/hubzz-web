@@ -91,7 +91,7 @@ export default {
             this.success = true;
           })
           .catch(err => {
-            console.log("err", err.response.data);
+            console.log("err", err.response || err);
             if (err.response.data.message) {
               this.$store.commit("SET_NOTIFICATION", {
                 enabled: true,

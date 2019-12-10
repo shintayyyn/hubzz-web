@@ -2,21 +2,29 @@
   <section class="relative max-w-3xl">
     <div class="flex flex-col md:flex-row justify-between">
       <div class="flex flex-wrap items-center">
-        <div
+        <AppButton
+          class="m-1"
           v-if="!allApproved"
-          class="save-button text-xs sm:text-sm px-4 py-2 border-2 rounded-lg font-bold flex items-center my-1 md:my-0 mr-1 md:mr-2"
+          :label="'Save changes'"
           @click="save(false)"
-        >Save changes</div>
-        <div
+          :inStyle="'padding:5px 14px;font-size:1em'"
+          :disabled="saveLoading || exportLoading"
+        />
+        <AppButton
+          class="m-1"
           v-if="!allApproved && (!selectedInvoice || (selectedInvoice && selectedInvoice.status === 'Draft'))"
-          class="save-button text-xs sm:text-sm px-4 py-2 border-2 rounded-lg font-bold flex items-center my-1 md:my-0 mr-1 md:mr-2"
+          :label="'Save and archive as final'"
           @click="save(true)"
-        >Save and archive as final</div>
-        <div
-          v-if="selectedInvoice"
-          class="save-button text-xs sm:text-sm px-4 py-2 rounded-lg font-bold flex items-center my-1 md:my-0"
+          :inStyle="'padding:5px 14px;font-size:1em'"
+          :disabled="saveLoading || exportLoading"
+        />
+        <AppButton
+          class="m-1"
+          :label="'Export to PDF'"
           @click="exportToPdf()"
-        >Export to PDF</div>
+          :inStyle="'padding:5px 14px;font-size:1em'"
+          :disabled="saveLoading || exportLoading"
+        />
       </div>
 
       <!-- INVOICE TYPE -->
@@ -40,7 +48,8 @@
     </div>
 
     <div id="htmlpdf" class="relative max-w-3xl mb-4 bg-white px-4 py-4 border shadow-md mb-32">
-      <AppLoading :loading="loading" spinner :message="'Exporting'" />
+      <AppLoading :loading="exportLoading" spinner :message="'Exporting'" />
+      <AppLoading :loading="saveLoading" spinner />
       <div class="flex flex-col" :ref="'pdf-header'">
         <!-- LOCUM INFO -->
         <div class="text-xs sm:text-sm sm:text-right leading-normal">
@@ -69,10 +78,17 @@
                     placeholder="Select.."
                     ref="input"
                     class="border-b-2 w-full focus:border-yellow-400 focus:outline-none py-3 font-bold text-xs sm:text-sm"
+                    :class="formError.find(err => err.field === 'surgery_id') ? 'border-red-500' : ''"
                     @focus="toggledSurgeries = true"
                     readonly
                     :disabled="selectedInvoice !== null"
                   />
+                  <transition name="drop-down">
+                    <div
+                      v-if="formError.find(err => err.field === 'surgery_id')"
+                      class="text-red-500 py-1 text-xs text-white"
+                    >Select a Surgery</div>
+                  </transition>
                 </div>
                 <div class="relative flex flex-col w-full z-10" v-if="selectedInvoice === null">
                   <div
@@ -94,15 +110,17 @@
                         class="absolute bg-gray-300 w-full h-full top-0 bottom-0 left-0 right-0 opacity-50"
                         v-if="loadingSurgeries"
                       >
-                        <div
-                          class="absolute bottom-0 text-center w-full text-sm font-bold"
-                        >loading icon</div>
+                        <AppLoading :loading="loadingSurgeries" spinner />
                       </div>
                     </div>
-                    <div class="relative" v-else>
+                    <div class="relative" v-if="surgeries.length === 0">
                       <div
+                        v-if="!loadingSurgeries"
                         class="text-xs sm:text-sm text-center font-bold my-2"
                       >No Practice / Surgeries Job Invoiceable Yet</div>
+                      <div class="mt-20" v-if="loadingSurgeries">
+                        <AppLoading :loading="loadingSurgeries" spinner />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -142,12 +160,12 @@
             >
               <div class="relative flex flex-row flex-no-wrap justify-between">
                 <label class="text-xs sm:text-sm py-1">Select a job to add to this invoice</label>
-                <div class="flex justify-end">
+                <!-- <div class="flex justify-end">
                   <div
                     class="rounded-lg bg-red-500 p-1 text-xs sm:text-sm text-white"
                     v-if="formError.find(item => item.field === 'items')"
                   >{{formError.find(item => item.field === 'items').message}}</div>
-                </div>
+                </div>-->
               </div>
               <div class="relative flex flex-row flex-wrap justify-start">
                 <input
@@ -156,9 +174,16 @@
                   placeholder="Select.."
                   ref="input"
                   class="border-b-2 w-full focus:border-yellow-400 focus:outline-none py-3 font-bold text-xs sm:text-sm"
+                  :class="formError.find(err => err.field === 'items') ? 'border-red-500' : ''"
                   @focus="toggledJobParts = true"
                   readonly
                 />
+                <transition name="drop-down">
+                  <div
+                    v-if="formError.find(err => err.field === 'items')"
+                    class="text-red-500 py-1 text-xs text-white"
+                  >Select one of the completed job parts</div>
+                </transition>
               </div>
               <div class="relative flex flex-col w-full z-10 shadow-lg">
                 <div
@@ -180,15 +205,18 @@
                       class="absolute bg-gray-300 w-full h-full top-0 bottom-0 left-0 right-0 opacity-50"
                       v-if="loadingJobParts"
                     >
-                      <div
-                        class="absolute bottom-0 text-center w-full text-sm font-bold"
-                      >loading icon</div>
+                      <AppLoading :loading="loadingJobParts" spinner />
                     </div>
                   </div>
-                  <div class="relative" v-else>
+
+                  <div class="relative" v-if="jobParts.length === 0">
                     <div
-                      class="text-xs sm:text-sm text-center font-bold my-3"
+                      v-if="!loadingJobParts"
+                      class="text-xs sm:text-sm text-center font-bold my-2"
                     >No Job Completed On This Surgery</div>
+                    <div class="mt-20" v-if="loadingJobParts">
+                      <AppLoading :loading="loadingJobParts" spinner />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -362,13 +390,13 @@
       <!-- ITEMS TOTAL -->
       <div :ref="'items-total'" class="flex justify-between md:m-2">
         <span class="font-bold">Total</span>
-        <div>
-          <div class="flex justify-end">
+        <div class="relative">
+          <!-- <div class="flex justify-end">
             <div
               class="rounded-lg bg-red-500 p-1 text-xs sm:text-sm text-white"
               v-if="formError.find(item => item.field === 'total_amount')"
             >{{formError.find(item => item.field === 'total_amount').message}}</div>
-          </div>
+          </div>-->
           £ {{amount | currency}}
         </div>
       </div>
@@ -382,6 +410,7 @@
               :name="'date_start'"
               :label="'Days worked from'"
               :error="formError.find(item => item.field === 'date_start')"
+              @input="CheckEmptyField(form.date_start, 'date_start')"
             />
           </div>
           <div class="w-full md:w-1/2 md:pl-1">
@@ -391,6 +420,7 @@
               :name="'date_end'"
               :label="'To'"
               :error="formError.find(item => item.field === 'date_end')"
+              @input="CheckEmptyField(form.date_end, 'date_end')"
             />
           </div>
         </div>
@@ -410,6 +440,7 @@
 </template>
 <script>
 import AppLoading from "@/components/Base/AppLoading";
+import AppButton from "@/components/Base/AppButton";
 import AppDate from "@/components/Base/AppDate";
 import AppInput from "@/components/Base/AppInput";
 import AppFilterSearch from "@/components/Base/AppFilterSearch";
@@ -423,19 +454,22 @@ export default {
   },
   components: {
     AppLoading,
+    AppButton,
     AppDate,
     AppInput,
     AppFilterSearch
   },
   data() {
     return {
-      loading: false,
+      // loading: false,
+      exportLoading: false,
+      saveLoading: false,
       hideToPrint: true,
 
       disputedInvoices: [],
       approvedInvoices: [],
 
-      type: null,
+      type: "Platform",
 
       practices: [],
       practice_id: "",
@@ -507,23 +541,28 @@ export default {
     }
   },
   watch: {
-    type(newValue, oldValue) {
+    async type(newValue, oldValue) {
       if (newValue && oldValue) {
         this.surgeries = [];
         this.selectedSurgery = null;
         this.searchSurgeries = "";
         this.jobParts = [];
         this.selectedJobParts = [];
+        this.formError = [];
       }
-      this.fetchSurgeriesCount();
+      this.loadingSurgeries = true;
+      await this.getSurgeriesPromiseAll();
+      this.loadingSurgeries = false;
     },
-    selectedSurgery(newValue, oldValue) {
+    async selectedSurgery(newValue, oldValue) {
       if (newValue && oldValue) {
         this.jobParts = [];
         this.selectedJobParts = [];
       }
       if (newValue) {
-        this.fetchJobPartsCount();
+        this.loadingJobParts = true;
+        await this.getJobPartsPromiseAll();
+        this.loadingJobParts = false;
       }
     },
     invoice(value) {
@@ -535,8 +574,38 @@ export default {
       }
     }
   },
-  created() {
-    this.type = "Platform";
+  async created() {
+    console.log(this.$auth.user);
+    this.loadingSurgeries = true;
+    await this.getSurgeriesPromiseAll();
+    this.loadingSurgeries = false;
+  },
+  mounted() {
+    // this.loading = true;
+    // this.$axios
+    //   .$get(`/api/v1/locum/private-practices`)
+    //   .then(res => {
+    //     this.practices = [];
+    //     res.data.private_practices.forEach(practice => {
+    //       this.practices.push({
+    //         label: practice.surgery.name,
+    //         value: practice.id
+    //       });
+    //     });
+    //   })
+    //   .catch(err => {
+    //     console.log("err", err.response || err);
+    //     if (err.response.data.message) {
+    //       this.$store.commit("SET_NOTIFICATION", {
+    //         enabled: true,
+    //         status: "danger",
+    //         text: [`${err.response.data.message}`]
+    //       });
+    //     }
+    //   })
+    //   .finally(() => {
+    //     this.loading = false;
+    //   });
     if (this.selectedInvoice) {
       this.type = this.selectedInvoice.type;
       this.selectedSurgery = this.selectedInvoice.surgery;
@@ -565,26 +634,414 @@ export default {
         }
       });
     }
-    this.$axios.$get(`/api/v1/locum/private-practices`).then(res => {
-      this.practices = [];
-      res.data.private_practices.forEach(practice => {
-        this.practices.push({
-          label: practice.surgery.name,
-          value: practice.id
-        });
-      });
-    });
-  },
-  mounted() {
-    document.body.style.overflow = "hidden";
-  },
-  destroyed() {
-    document.body.style.overflow = "auto";
   },
   methods: {
+    // SURGERIES
+    getSurgeriesPromiseAll() {
+      let countParams = {
+        invoiceable: true,
+        type: this.type
+      };
+      let surgeriesParams = {
+        invoiceable: true,
+        type: this.type,
+        limit: 10,
+        offset: 0
+      };
+      return Promise.all([
+        this.$axios.$get(`/api/v1/locum/surgeries/count`, {
+          params: countParams
+        }),
+        this.$axios.$get(`/api/v1/locum/surgeries`, { params: surgeriesParams })
+      ])
+        .then(([responseCount, responseSurgeries]) => {
+          this.totalSurgeries = responseCount.data.count;
+          let surgeries = responseSurgeries.data.surgeries;
+
+          this.loadMoreSurgeries = true;
+
+          if (!surgeries.length) {
+            this.loadMoreSurgeries = false;
+          } else {
+            surgeries.forEach(surgery => {
+              if (this.surgeries.length === 0) {
+                this.surgeries.push(surgery);
+              } else if (this.surgeries.length > 0) {
+                let index = this.surgeries.findIndex(
+                  item => item.id === surgery.id
+                );
+                if (index < 0) {
+                  this.surgeries.push(surgery);
+                }
+              }
+            });
+            if (
+              surgeries.length < 10 ||
+              (surgeries.length === 10 &&
+                this.surgeries.length === this.totalSurgeries)
+            ) {
+              this.loadMoreSurgeries = false;
+            }
+          }
+        })
+        .catch(([errCount, errSurgeries]) => {
+          console.log("err", errCount.response || errCount);
+          if (errCount.response.data.message) {
+            return this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "danger",
+              text: [`${errCount.response.data.message}`]
+            });
+          }
+          console.log("err", errSurgeries.response || errSurgeries);
+          if (errSurgeries.response.data.message) {
+            return this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "danger",
+              text: [`${errSurgeries.response.data.message}`]
+            });
+          }
+        });
+    },
+    // for scrolling
+    scrollHandlerSurgeries(e) {
+      if (
+        this.$refs.surgeryLists.offsetHeight +
+          this.$refs.surgeryLists.scrollTop >=
+        this.$refs.surgeryLists.scrollHeight - 1
+      ) {
+        if (this.loadMoreSurgeries && !this.loadingSurgeries) {
+          this.fetchSurgeriesCount();
+        }
+      }
+    },
+    async fetchSurgeriesCount() {
+      try {
+        this.loadingSurgeries = true;
+        let params = {
+          invoiceable: true,
+          type: this.type
+        };
+
+        const responseCount = await this.$axios.$get(
+          `/api/v1/locum/surgeries/count`,
+          { params }
+        );
+
+        this.totalSurgeries =
+          responseCount.data && responseCount.data.count
+            ? responseCount.data.count
+            : 0;
+
+        this.fetchSurgeries();
+      } catch (err) {
+        console.log("err", err.response || err);
+        if (err.response.data.message) {
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "danger",
+            text: [`${err.response.data.message}`]
+          });
+        }
+        throw err;
+      }
+    },
+    async fetchSurgeries() {
+      try {
+        const params = {
+          invoiceable: true,
+          type: this.type,
+          limit: 10,
+          offset: this.surgeries.length
+        };
+
+        const responseSurgeries = await this.$axios.$get(
+          `/api/v1/locum/surgeries`,
+          {
+            params
+          }
+        );
+
+        let surgeries =
+          responseSurgeries.data && responseSurgeries.data.surgeries
+            ? responseSurgeries.data.surgeries
+            : [];
+
+        this.loadMoreSurgeries = true;
+
+        if (!surgeries.length) {
+          this.loadMoreSurgeries = false;
+        } else {
+          surgeries.forEach(surgery => {
+            if (this.surgeries.length === 0) {
+              this.surgeries.push(surgery);
+            } else if (this.surgeries.length > 0) {
+              let index = this.surgeries.findIndex(
+                item => item.id === surgery.id
+              );
+              if (index < 0) {
+                this.surgeries.push(surgery);
+              }
+            }
+          });
+          if (
+            surgeries.length < 10 ||
+            (surgeries.length === 10 &&
+              this.surgeries.length === this.totalSurgeries)
+          ) {
+            this.loadMoreSurgeries = false;
+          }
+        }
+        this.loadingSurgeries = false;
+      } catch (err) {
+        console.log("err", err.response || err);
+        if (err.response.data.message) {
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "danger",
+            text: [`${err.response.data.message}`]
+          });
+        }
+        throw err;
+      }
+    },
+    toggledOffSurgeries() {
+      this.toggledSurgeries = false;
+    },
+    addSurgery(surgery) {
+      let index = this.formError.findIndex(err => err.field === "surgery_id");
+      if (index >= 0) {
+        this.formError.splice(index, 1);
+      }
+      this.selectedSurgery = surgery;
+      this.searchSurgeries = surgery.name;
+      this.toggledSurgeries = false;
+    },
+    // JOB PARTS
+    getJobPartsPromiseAll() {
+      let countParams = {
+        locum_status: ["Completed", "Terminated"],
+        job_type: this.type,
+        surgery_id: this.selectedSurgery.id,
+        order_by: "created_at:desc",
+        invoiced: false
+      };
+
+      let jobPartsParams = {
+        locum_status: ["Completed", "Terminated"],
+        job_type: this.type,
+        surgery_id: this.selectedSurgery.id,
+        limit: 10,
+        offset: 0,
+        order_by: "created_at:desc",
+        invoiced: false
+      };
+
+      return Promise.all([
+        this.$axios.$get(`/api/v1/locum/job-parts/count`, {
+          params: countParams
+        }),
+        this.$axios.$get(`/api/v1/locum/job-parts`, {
+          params: jobPartsParams
+        })
+      ]).then(([responseCount, responseJobParts]) => {
+        this.totalJobParts = responseCount.data.count;
+        let jobParts = responseJobParts.data.job_parts;
+
+        this.loadMoreJobParts = true;
+
+        if (!jobParts.length) {
+          this.loadMoreJobParts = false;
+        } else {
+          jobParts.forEach(jobPart => {
+            if (this.jobParts.length === 0) {
+              this.jobParts.push(jobPart);
+            } else if (this.jobParts.length > 0) {
+              let index = this.jobParts.findIndex(
+                item => item.id === jobPart.id
+              );
+              if (index < 0) {
+                this.jobParts.push(jobPart);
+              }
+            }
+          });
+
+          if (
+            jobParts.length < 10 ||
+            (jobParts.length === 10 &&
+              this.jobParts.length === this.totalJobParts)
+          ) {
+            this.loadMoreJobParts = false;
+          }
+        }
+
+        this.loadingJobParts = false;
+      });
+    },
+    // for scrolling
+    scrollHandlerJobParts(e) {
+      if (
+        this.$refs.jobPartsLists.offsetHeight +
+          this.$refs.jobPartsLists.scrollTop >=
+        this.$refs.jobPartsLists.scrollHeight - 1
+      ) {
+        if (this.loadMoreJobParts && !this.loadingJobParts) {
+          this.fetchJobPartsCount();
+        }
+      }
+    },
+    async fetchJobPartsCount() {
+      try {
+        this.loadingJobParts = true;
+        const params = {
+          locum_status: ["Completed", "Terminated"],
+          job_type: this.type,
+          surgery_id: this.selectedSurgery.id,
+          order_by: "created_at:desc",
+          invoiced: false
+        };
+
+        const responseCount = await this.$axios.get(
+          `/api/v1/locum/job-parts/count`,
+          { params }
+        );
+
+        this.totalJobParts =
+          responseCount.data &&
+          responseCount.data.data &&
+          responseCount.data.data.count
+            ? responseCount.data.data.count
+            : 0;
+
+        this.fetchJobParts();
+      } catch (err) {
+        console.log("err", err.response || err);
+        if (err.response.data.message) {
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "danger",
+            text: [`${err.response.data.message}`]
+          });
+        }
+        throw err;
+      }
+    },
+    async fetchJobParts() {
+      try {
+        const params = {
+          locum_status: ["Completed", "Terminated"],
+          job_type: this.type,
+          surgery_id: this.selectedSurgery.id,
+          limit: 10,
+          offset: this.jobParts.length,
+          order_by: "created_at:desc",
+          invoiced: false
+        };
+
+        const responseJobParts = await this.$axios.$get(
+          `/api/v1/locum/job-parts`,
+          {
+            params
+          }
+        );
+
+        let jobParts =
+          responseJobParts.data && responseJobParts.data.job_parts
+            ? responseJobParts.data.job_parts
+            : [];
+
+        this.loadMoreJobParts = true;
+
+        if (!jobParts.length) {
+          this.loadMoreJobParts = false;
+        } else {
+          jobParts.forEach(jobPart => {
+            if (this.jobParts.length === 0) {
+              this.jobParts.push(jobPart);
+            } else if (this.jobParts.length > 0) {
+              let index = this.jobParts.findIndex(
+                item => item.id === jobPart.id
+              );
+              if (index < 0) {
+                this.jobParts.push(jobPart);
+              }
+            }
+          });
+
+          if (
+            jobParts.length < 10 ||
+            (jobParts.length === 10 &&
+              this.jobParts.length === this.totalJobParts)
+          ) {
+            this.loadMoreJobParts = false;
+          }
+        }
+
+        this.loadingJobParts = false;
+      } catch (err) {
+        console.log("err", err.response || err);
+        if (err.response.data.message) {
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "danger",
+            text: [`${err.response.data.message}`]
+          });
+        }
+        throw err;
+      }
+    },
+    toggledOffJobParts() {
+      this.toggledJobParts = false;
+    },
+    addJobPart(jobPart) {
+      let hasJobPart = this.selectedJobParts.find(
+        selectedJobPart => selectedJobPart.job_id === jobPart.id
+      );
+      if (hasJobPart) {
+        return;
+      }
+      let invoiceObj = {};
+      let total = null;
+      if (jobPart.job.locum_detail_rate_type.name === "Per Hour") {
+        total = parseInt(jobPart.job.rate) * parseInt(jobPart.final_hours);
+      } else if (
+        jobPart.job.locum_detail_rate_type.name === "Per Whole Day Session"
+      ) {
+        total =
+          (parseInt(jobPart.final_hours) / 8) * parseInt(jobPart.job.rate);
+      } else if (
+        jobPart.job.locum_detail_rate_type.name === "Per Half Day Session"
+      ) {
+        total =
+          (parseInt(jobPart.final_hours) / 4) * parseInt(jobPart.job.rate);
+      }
+      invoiceObj = {
+        type: "Job Part",
+        job_part_id: jobPart.id,
+        description: `Job number ${jobPart.job_part_number} ${jobPart.job.type} Job at £${jobPart.job.rate} ${jobPart.job.locum_detail_rate_type.name} from ${jobPart.date_start} to ${jobPart.date_end} / ${jobPart.job.shift.name} / Total hours of ${jobPart.final_hours}`,
+        total: total.toFixed(2).toString(),
+        dispute: jobPart.disputed,
+        absent_days: jobPart.absent_days,
+        final_hours: jobPart.final_hours,
+        late_hours: jobPart.late_hours,
+        remarks: ""
+      };
+      this.selectedJobParts.push(invoiceObj);
+      if (!this.filteredJobParts.length) {
+        if (this.jobParts.length < this.totalJobParts) {
+          this.fetchJobParts();
+        } else {
+          this.toggledJobParts = false;
+        }
+      }
+    },
+    removeSelectedJobPart(jobPart, index) {
+      this.selectedJobParts.splice(index, 1);
+    },
+    //
     async exportToPdf() {
       this.hideToPrint = false;
-      this.loading = true;
+      this.exportLoading = true;
       if (process.client) {
         document.body.style.cursor = "wait";
       }
@@ -761,7 +1218,7 @@ export default {
 
       doc.save("test.pdf");
       this.hideToPrint = true;
-      this.loading = false;
+      this.exportLoading = false;
 
       if (process.client) {
         document.body.style.cursor = "auto";
@@ -789,10 +1246,15 @@ export default {
             : false
         });
       });
-      this.Validate(this.form, ["final"]);
+      this.Validate(this.form, ["final", "total_amount"]);
       if (!this.formError.length) {
         if (!this.$route.params.id) {
-          this.loading = true;
+          this.saveLoading = true;
+          setTimeout(() => {
+            this.saveLoading = false;
+          }, 2000);
+          return;
+          this.saveLoading = true;
           this.$axios
             .$post(`/api/v1/locum/locum-invoices`, this.form)
             .then(res => {
@@ -805,6 +1267,7 @@ export default {
               });
             })
             .catch(err => {
+              console.log("err", err.response || err);
               if (err.response.data.message) {
                 this.$store.commit("SET_NOTIFICATION", {
                   enabled: true,
@@ -818,10 +1281,10 @@ export default {
               }
             })
             .finally(() => {
-              this.loading = false;
+              this.saveLoading = false;
             });
         } else if (this.$route.params.id) {
-          this.loading = true;
+          this.saveLoading = true;
           this.$axios
             .$put(
               `/api/v1/locum/locum-invoices/${this.$route.params.id}`,
@@ -837,6 +1300,7 @@ export default {
               this.$router.push("/locum-billing/invoices");
             })
             .catch(err => {
+              console.log("err", err.response || err);
               if (err.response.data.message) {
                 this.$store.commit("SET_NOTIFICATION", {
                   enabled: true,
@@ -850,7 +1314,7 @@ export default {
               }
             })
             .finally(() => {
-              this.loading = false;
+              this.saveLoading = false;
             });
         }
       }
@@ -860,244 +1324,6 @@ export default {
         description: "",
         total: ""
       });
-    },
-    // surgeries
-    toggledOffSurgeries() {
-      this.toggledSurgeries = false;
-    },
-    scrollHandlerSurgeries(e) {
-      if (
-        this.$refs.surgeryLists.offsetHeight +
-          this.$refs.surgeryLists.scrollTop >=
-        this.$refs.surgeryLists.scrollHeight - 1
-      ) {
-        if (this.loadMoreSurgeries && !this.loadingSurgeries) {
-          this.fetchSurgeriesCount();
-        }
-      }
-    },
-    addSurgery(surgery) {
-      this.selectedSurgery = surgery;
-      this.searchSurgeries = surgery.name;
-      this.toggledSurgeries = false;
-    },
-    async fetchSurgeriesCount() {
-      try {
-        this.loadingSurgeries = true;
-        let params = {
-          invoiceable: true,
-          type: this.type
-        };
-
-        const responseCount = await this.$axios.$get(
-          `/api/v1/locum/surgeries/count`,
-          { params }
-        );
-
-        this.totalSurgeries =
-          responseCount.data && responseCount.data.count
-            ? responseCount.data.count
-            : 0;
-
-        this.fetchSurgeries();
-      } catch (err) {
-        throw err;
-      }
-    },
-    async fetchSurgeries() {
-      try {
-        const params = {
-          invoiceable: true,
-          type: this.type,
-          limit: 10,
-          offset: this.surgeries.length
-        };
-
-        const responseSurgeries = await this.$axios.$get(
-          `/api/v1/locum/surgeries`,
-          {
-            params
-          }
-        );
-
-        let surgeries =
-          responseSurgeries.data && responseSurgeries.data.surgeries
-            ? responseSurgeries.data.surgeries
-            : [];
-
-        this.loadMoreSurgeries = true;
-
-        if (!surgeries.length) {
-          this.loadMoreSurgeries = false;
-        } else {
-          surgeries.forEach(surgery => {
-            if (this.surgeries.length === 0) {
-              this.surgeries.push(surgery);
-            } else if (this.surgeries.length > 0) {
-              let index = this.surgeries.findIndex(
-                item => item.id === surgery.id
-              );
-              if (index < 0) {
-                this.surgeries.push(surgery);
-              }
-            }
-          });
-          if (
-            surgeries.length < 10 ||
-            (surgeries.length === 10 &&
-              this.surgeries.length === this.totalSurgeries)
-          ) {
-            this.loadMoreSurgeries = false;
-          }
-        }
-        this.loadingSurgeries = false;
-      } catch (err) {
-        throw err;
-      }
-    },
-    // job part
-    toggledOffJobParts() {
-      this.toggledJobParts = false;
-    },
-    scrollHandlerJobParts(e) {
-      if (
-        this.$refs.jobPartsLists.offsetHeight +
-          this.$refs.jobPartsLists.scrollTop >=
-        this.$refs.jobPartsLists.scrollHeight - 1
-      ) {
-        if (this.loadMoreJobParts && !this.loadingJobParts) {
-          this.fetchJobPartsCount();
-        }
-      }
-    },
-    addJobPart(jobPart) {
-      let hasJobPart = this.selectedJobParts.find(
-        selectedJobPart => selectedJobPart.job_id === jobPart.id
-      );
-      if (hasJobPart) {
-        return;
-      }
-      let invoiceObj = {};
-      let total = null;
-      if (jobPart.job.locum_detail_rate_type.name === "Per Hour") {
-        total = parseInt(jobPart.job.rate) * parseInt(jobPart.final_hours);
-      } else if (
-        jobPart.job.locum_detail_rate_type.name === "Per Whole Day Session"
-      ) {
-        total =
-          (parseInt(jobPart.final_hours) / 8) * parseInt(jobPart.job.rate);
-      } else if (
-        jobPart.job.locum_detail_rate_type.name === "Per Half Day Session"
-      ) {
-        total =
-          (parseInt(jobPart.final_hours) / 4) * parseInt(jobPart.job.rate);
-      }
-      invoiceObj = {
-        type: "Job Part",
-        job_part_id: jobPart.id,
-        description: `Job number ${jobPart.job_part_number} ${jobPart.job.type} Job at £${jobPart.job.rate} ${jobPart.job.locum_detail_rate_type.name} from ${jobPart.date_start} to ${jobPart.date_end} / ${jobPart.job.shift.name} / Total hours of ${jobPart.final_hours}`,
-        total: total.toFixed(2).toString(),
-        dispute: jobPart.disputed,
-        absent_days: jobPart.absent_days,
-        final_hours: jobPart.final_hours,
-        late_hours: jobPart.late_hours,
-        remarks: ""
-      };
-      this.selectedJobParts.push(invoiceObj);
-      if (!this.filteredJobParts.length) {
-        if (this.jobParts.length < this.totalJobParts) {
-          this.fetchJobParts();
-        } else {
-          this.toggledJobParts = false;
-        }
-      }
-    },
-    removeSelectedJobPart(jobPart, index) {
-      this.selectedJobParts.splice(index, 1);
-    },
-    async fetchJobPartsCount() {
-      try {
-        this.loadingJobParts = true;
-        const params = {
-          locum_status: ["Completed", "Terminated"],
-          job_type: this.type,
-          surgery_id: this.selectedSurgery.id,
-          order_by: "created_at:desc",
-          invoiced: false
-        };
-
-        const responseCount = await this.$axios.get(
-          `/api/v1/locum/job-parts/count`,
-          { params }
-        );
-
-        this.totalJobParts =
-          responseCount.data &&
-          responseCount.data.data &&
-          responseCount.data.data.count
-            ? responseCount.data.data.count
-            : 0;
-
-        this.fetchJobParts();
-      } catch (err) {
-        throw err;
-      }
-    },
-    async fetchJobParts() {
-      try {
-        const params = {
-          locum_status: ["Completed", "Terminated"],
-          job_type: this.type,
-          surgery_id: this.selectedSurgery.id,
-          limit: 10,
-          offset: this.jobParts.length,
-          order_by: "created_at:desc",
-          invoiced: false
-        };
-
-        const responseJobParts = await this.$axios.$get(
-          `/api/v1/locum/job-parts`,
-          {
-            params
-          }
-        );
-
-        let jobParts =
-          responseJobParts.data && responseJobParts.data.job_parts
-            ? responseJobParts.data.job_parts
-            : [];
-
-        this.loadMoreJobParts = true;
-
-        if (!jobParts.length) {
-          this.loadMoreJobParts = false;
-        } else {
-          jobParts.forEach(jobPart => {
-            if (this.jobParts.length === 0) {
-              this.jobParts.push(jobPart);
-            } else if (this.jobParts.length > 0) {
-              let index = this.jobParts.findIndex(
-                item => item.id === jobPart.id
-              );
-              if (index < 0) {
-                this.jobParts.push(jobPart);
-              }
-            }
-          });
-
-          if (
-            jobParts.length < 10 ||
-            (jobParts.length === 10 &&
-              this.jobParts.length === this.totalJobParts)
-          ) {
-            this.loadMoreJobParts = false;
-          }
-        }
-
-        this.loadingJobParts = false;
-      } catch (err) {
-        throw err;
-      }
     }
   }
 };

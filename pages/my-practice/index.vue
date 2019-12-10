@@ -175,7 +175,7 @@ export default {
           return (this.practices = res.data.practices);
         })
         .catch(err => {
-          console.log("err", err.response.data);
+          console.log("err", err.response || err);
           if (err.response.data.message) {
             return this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
@@ -201,7 +201,7 @@ export default {
             practice.is_favorite = !practice.is_favorite;
           })
           .catch(err => {
-            console.log("err", err.response.data);
+            console.log("err", err.response || err);
             if (err.response.data.message) {
               this.$store.commit("SET_NOTIFICATION", {
                 enabled: true,

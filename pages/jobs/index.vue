@@ -1109,7 +1109,7 @@ export default {
           }
         })
         .catch(err => {
-          console.log("err", err.response.data);
+          console.log("err", err.response || err);
           if (err.response.data.message) {
             return store.commit("SET_NOTIFICATION", {
               enabled: true,
@@ -1177,7 +1177,7 @@ export default {
           }
         })
         .catch(err => {
-          console.log("err", err.response.data);
+          console.log("err", err.response || err);
           if (err.response.data.message) {
             return store.commit("SET_NOTIFICATION", {
               enabled: true,
