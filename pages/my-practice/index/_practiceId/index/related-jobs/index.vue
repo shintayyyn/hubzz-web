@@ -414,6 +414,8 @@ export default {
         invoice_status: ""
       },
       // app table column
+      shifts: [],
+      rates: [],
       filterModal: false,
       showTable: false,
       showRefresh: false
@@ -794,7 +796,7 @@ export default {
         };
       }
 
-      const [shifts, rates, count] = await Promise.all([
+      const [shifts, rates] = await Promise.all([
         app.$axios.$get(`/api/v1/shifts`).then(res => {
           let shifts = [];
           shifts.push({ label: "All", value: "" });
@@ -984,7 +986,6 @@ export default {
         locum_status = [`${this.$route.query.job_status}`];
       }
 
-      // let queryStatus = this.$route.query.job_status;
       return Promise.all([
         this.$axios.$get(
           `/api/v1/locum/${this.isJobPart ? "job-parts" : "jobs"}/count`,
@@ -1120,7 +1121,7 @@ export default {
         .catch(err => {
           console.log("err", err.response.data);
           if (err.response.data.message) {
-            store.commit("SET_NOTIFICATION", {
+            return store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "danger",
               text: [`${err.response.data.message}`]
@@ -1188,7 +1189,7 @@ export default {
         .catch(err => {
           console.log("err", err.response.data);
           if (err.response.data.message) {
-            store.commit("SET_NOTIFICATION", {
+            return store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "danger",
               text: [`${err.response.data.message}`]

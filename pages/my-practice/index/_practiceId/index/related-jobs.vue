@@ -81,8 +81,6 @@
     </div>
     <div class="mt-5">
       <nuxt-child :invoiceStatusList="invoiceStatusList" :practiceTypeList="practiceTypeList" />
-      <!-- :shifts="shifts"
-      :rates="rates"-->
     </div>
   </section>
 </template>
@@ -129,25 +127,7 @@ export default {
     return {
       invoiceStatusList,
       practiceTypeList
-      // shifts: [],
-      // rates: []
     };
   }
-  // created() {
-  //   this.$axios.$get(`/api/v1/shifts`).then(res => {
-  //     this.shifts = [];
-  //     this.shifts.push({ label: "All", value: "" });
-  //     res.data.shifts.forEach(item => {
-  //       this.shifts.push({ label: item.name, value: item.id });
-  //     });
-  //   });
-  //   this.$axios.$get(`/api/v1/locum-detail-rate-types`).then(res => {
-  //     this.rates = [];
-  //     this.rates.push({ label: "All", value: "" });
-  //     res.data.locum_detail_rate_types.forEach(item => {
-  //       this.rates.push({ label: item.name, value: item.id });
-  //     });
-  //   });
-  // }
 };
 </script>
