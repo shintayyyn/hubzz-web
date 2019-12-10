@@ -1,6 +1,6 @@
 <template>
   <div class>
-    <div class="rounded-lg shadow-lg p-5">
+    <div class="relative rounded-lg shadow-lg p-5">
       <div class="flex flex-col md:flex-row flex-wrap justify-between mb-4">
         <div class="w-full md:w-1/2">
           <div class="text-sm my-2">Email address</div>
@@ -24,20 +24,24 @@
         :resize="false"
         :error="formError.find(item => item.field === 'message')"
       />
-      <AppButton :label="'Send'" @click="send" />
+      <AppButton :label="'Send'" @click="send" :disabled="loading" />
+      <AppLoading :loading="loading" spinner />
     </div>
   </div>
 </template>
 <script>
 import AppButton from "@/components/Base/AppButton";
 import AppInput from "@/components/Base/AppInput";
+import AppLoading from "@/components/Base/AppLoading";
 export default {
   components: {
     AppButton,
+    AppLoading,
     AppInput
   },
   data() {
     return {
+      loading: false,
       form: {
         message: ""
       },
@@ -74,15 +78,33 @@ export default {
       this.formError = [];
       this.Validate(this.form);
       if (!this.formError.length) {
-        this.$axios.$post(`/api/v1/contact-us`, this.form).then(res => {
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "success",
-            text: [`${res.message}`]
+        this.loading = true;
+        this.$axios
+          .$post(`/api/v1/contact-us`, this.form)
+          .then(res => {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: [`${res.message}`]
+            });
+            this.form.message = "";
+          })
+          .catch(err => {
+            console.log("err", err.response.data);
+            if (err.response.data.message) {
+              this.$store.commit("SET_NOTIFICATION", {
+                enabled: true,
+                status: "success",
+                text: [`${err.response.data.message}`]
+              });
+            }
+            if (err.response.data.error_messages) {
+              this.formError = err.response.data.error_messages;
+            }
+          })
+          .finally(() => {
+            this.loading = false;
           });
-          this.form.message = "";
-          this.formError = [];
-        });
       }
     }
   }

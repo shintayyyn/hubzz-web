@@ -12,7 +12,7 @@
         </div>
       </div>
     </div>
-    <div v-else class="rounded-lg shadow-lg md:pt-10 p-4 md:px-8 md:pb-8">
+    <div v-else class="relative rounded-lg shadow-lg md:pt-10 p-4 md:px-8 md:pb-8">
       <AppInput
         v-model="form.email"
         :type="'multiemail'"
@@ -41,23 +41,27 @@
       <div class="flex justify-start mt-5">
         <AppButton :label="'Send'" @click="send" />
       </div>
+      <AppLoading :loading="loading" spinner />
     </div>
   </section>
 </template>
 <script>
 import AppInput from "@/components/Base/AppInput";
 import AppButton from "@/components/Base/AppButton";
+import AppLoading from "@/components/Base/AppLoading";
 export default {
   transition: {
     name: "fade",
     mode: "out-in"
   },
   components: {
+    AppLoading,
     AppInput,
     AppButton
   },
   data() {
     return {
+      loading: false,
       form: {
         email: ""
       },
@@ -75,6 +79,7 @@ export default {
       this.formError = [];
       this.Validate(this.form);
       if (!this.formError.length) {
+        this.loading = true;
         this.$axios
           .$post(`api/v1/invite`, {
             emails: this.form.email.split(","),
@@ -85,7 +90,20 @@ export default {
             this.success = true;
           })
           .catch(err => {
-            this.formError = err.response.data.error_messages;
+            console.log("err", err.response.data);
+            if (err.response.data.message) {
+              this.$store.commit("SET_NOTIFICATION", {
+                enabled: true,
+                status: "danger",
+                text: [`${err.response.data.message}`]
+              });
+            }
+            if (err.response.data.error_messages) {
+              this.formError = err.response.data.error_messages;
+            }
+          })
+          .finally(() => {
+            this.loading = false;
           });
       } else {
         this.$store.commit("SET_NOTIFICATION", {
@@ -98,10 +116,5 @@ export default {
   }
 };
 </script>
-<style scoped>
-textarea {
-  resize: none;
-}
-</style>
 
 
