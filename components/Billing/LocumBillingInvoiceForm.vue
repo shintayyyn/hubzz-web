@@ -1253,9 +1253,9 @@ export default {
           setTimeout(() => {
             this.saveLoading = false;
           }, 2000);
-          return;
+          // return;
           this.saveLoading = true;
-          this.$axios
+           this.$axios
             .$post(`/api/v1/locum/locum-invoices`, this.form)
             .then(res => {
               this.$emit("addInvoice", res.data.locum_invoice);

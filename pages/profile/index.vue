@@ -18,6 +18,8 @@
                 <div class="text-xs font-bold py-2">{{surgery.phone_number}}</div>
               </div>
               <div class="flex flex-col w-full md:w-1/3 p-1">
+              <div class="text-xs sm:text-sm">Type</div>
+                <div class="text-xs font-bold py-2">{{  !practice.hub_type || practice.hub_type !== 'Type 2' ? practice.type : 'Hub - Health Board'}}</div>
                 <div class="text-xs sm:text-sm">Address</div>
                 <div
                   class="text-xs font-bold py-2"
