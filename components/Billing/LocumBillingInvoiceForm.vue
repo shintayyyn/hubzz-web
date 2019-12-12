@@ -1250,11 +1250,6 @@ export default {
       if (!this.formError.length) {
         if (!this.$route.params.id) {
           this.saveLoading = true;
-          setTimeout(() => {
-            this.saveLoading = false;
-          }, 2000);
-          return;
-          this.saveLoading = true;
           this.$axios
             .$post(`/api/v1/locum/locum-invoices`, this.form)
             .then(res => {

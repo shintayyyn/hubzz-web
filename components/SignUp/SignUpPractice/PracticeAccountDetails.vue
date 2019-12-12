@@ -123,7 +123,7 @@
             :placeholder="''"
             :error="this.formError.find(item => item.field === 'privacy_policy')"
             @blur="CheckEmptyField(form.privacy_policy,'privacy_policy')"
-          /> -->
+          />-->
           <div class="flex flex-col py-2 mb-6">
             <div class="flex justify-end">
               <div
@@ -132,14 +132,19 @@
               >{{formError.find(item => item.field === 'privacy_policy').message}}</div>
             </div>
             <div class="flex flex-row flex-no-wrap justify-between">
-                <input v-model="form.privacy_policy" id="privacy_policy" type="checkbox" class="checkbox mt-1 mr-1" />
-                <label for="privacy_policy" class="text-xs sm:text-sm py-1">
-                  I agree with the
-                  <span
-                    class="cursor-pointer underline"
-                    @click="modal = true"
-                  >Terms and Conditions and Privacy Policy</span> of Hubzz
-                </label>
+              <input
+                v-model="form.privacy_policy"
+                id="privacy_policy"
+                type="checkbox"
+                class="checkbox mt-1 mr-1"
+              />
+              <label for="privacy_policy" class="text-xs sm:text-sm py-1">
+                I agree with the
+                <span
+                  class="cursor-pointer underline"
+                  @click="modal = true"
+                >Terms and Conditions and Privacy Policy</span> of Hubzz
+              </label>
             </div>
           </div>
         </form>
@@ -147,7 +152,7 @@
     </div>
 
     <div class="flex justify-center mt-4">
-      <AppButton :label="'<<'" @click="$emit('nextTab', 'PracticeDetails')" />
+      <AppButton :label="'<<'" @click="$emit('nextTab', 'PracticeSurgeryDetails')" />
       <div class="mx-2"></div>
       <AppButton :label="'Next'" @click="signUp" />
     </div>
@@ -156,7 +161,13 @@
     <transition name="slide" mode="out-in">
       <div class="py-8 modal-container" v-if="modal">
         <div class="px-4 lg:px-10 pb-4">
-          <svgicon name="left-arrow" height="32" width="32" @click="modal = false" class="cursor-pointer " />
+          <svgicon
+            name="left-arrow"
+            height="32"
+            width="32"
+            @click="modal = false"
+            class="cursor-pointer"
+          />
         </div>
         <TermsAndConditions />
       </div>

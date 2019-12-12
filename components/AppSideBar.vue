@@ -72,12 +72,28 @@ export default {
   },
   mounted() {
     this.getInit();
-    this.$socket.on("Practice Notification Update Profile", user => {
+    this.$socket.on(
+      "Practice Notification Update Profile",
+      this.updatePermissions
+    );
+    this.$socket.on(
+      "Practice Notification Delete Profile",
+      this.toggleConfirmationModal
+    );
+  },
+  destroyed() {
+    this.removeListener();
+  },
+  methods: {
+    toggleConfirmationModal() {
+      this.confirmation_modal = true;
+    },
+    updatePermissions(user) {
       if (
+        user &&
         user.practice_detail &&
-        user.practice_detail.role &&
-        user.practice_detail.role.permissions &&
-        user.practice_detail.role.permissions.length > 0
+        user.practice_detail.permissions &&
+        user.practice_detail.permissions.length > 0
       ) {
         this.$store.commit(
           "auth/SET_PERMISSIONS",
@@ -86,12 +102,17 @@ export default {
       } else {
         this.$store.commit("auth/SET_PERMISSIONS", []);
       }
-    });
-    this.$socket.on("Practice Notification Delete Profile", () => {
-      this.confirmation_modal = true;
-    });
-  },
-  methods: {
+    },
+    removeListener() {
+      this.$socket.removeListener(
+        "Locum Notification Update Profile",
+        this.updatePermissions
+      );
+      this.$socket.removeListener(
+        "Locum Notification Delete Profile",
+        this.toggleConfirmationModal
+      );
+    },
     hasPermissions(permissions) {
       if (permissions && permissions.length) {
         let enable = false;

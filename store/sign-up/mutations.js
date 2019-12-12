@@ -4,8 +4,29 @@ export default {
     },
     // REGISTER PRACTICE
     SET_PRACTICE_DETAILS(state, payload) {
-        state.practice_details.surgery_id = payload.surgery_id
         state.search_results = payload.search_results
+        state.practice_details.name = payload.name
+        state.practice_details.phone_number = payload.phone_number
+        state.practice_details.code = payload.code
+        state.practice_details.clinical_commissioning_group_name = payload.clinical_commissioning_group_name
+        state.practice_details.address_line_1 = payload.address_line_1
+        state.practice_details.address_line_2 = payload.address_line_2
+        state.practice_details.address_line_3 = payload.address_line_3
+        state.practice_details.address_post_code = payload.address_post_code
+        state.practice_details.coordinates_x = payload.coordinates_x
+        state.practice_details.coordinates_y = payload.coordinates_y
+    },
+    SET_PRACTICE_SURGERY_DETAILS(state, payload) {
+        state.practice_surgery_details.name = payload.name
+        state.practice_surgery_details.phone_number = payload.phone_number
+        state.practice_surgery_details.code = payload.code
+        state.practice_surgery_details.clinical_commissioning_group_name = payload.clinical_commissioning_group_name
+        state.practice_surgery_details.address_line_1 = payload.address_line_1
+        state.practice_surgery_details.address_line_2 = payload.address_line_2
+        state.practice_surgery_details.address_line_3 = payload.address_line_3
+        state.practice_surgery_details.address_post_code = payload.address_post_code
+        state.practice_surgery_details.coordinates_x = payload.coordinates_x
+        state.practice_surgery_details.coordinates_y = payload.coordinates_y
     },
     SET_PRACTICE_ACCOUNT_DETAILS(state, payload) {
         state.practice_account_details.type = payload.type
@@ -23,8 +44,31 @@ export default {
         state.practice_account_details.practice_type_id = payload.practice_type_id
     },
     CLEAR_FORM_PRACTICE_DETAILS(state) {
-        state.practice_details.surgery_id = ''
         state.search_results = []
+        state.practice_details.name = ''
+        state.practice_details.phone_number = ''
+        state.practice_details.code = ''
+        state.practice_details.clinical_commissioning_group_name = ''
+        state.practice_details.address_line_1 = ''
+        state.practice_details.address_line_2 = ''
+        state.practice_details.address_line_3 = ''
+        state.practice_details.address_post_code = ''
+        state.practice_details.coordinates_x = ''
+        state.practice_details.coordinates_y = ''
+    },
+    CLEAR_FORM_PRACTICE_SURGERY(state) {
+        state.practice_surgery_details.name = ''
+        state.practice_surgery_details.phone_number = ''
+        state.practice_surgery_details.code = ''
+        state.practice_surgery_details.clinical_commissioning_group_name = ''
+        state.practice_surgery_details.address_line_1 = ''
+        state.practice_surgery_details.address_line_2 = ''
+        state.practice_surgery_details.address_line_3 = ''
+        state.practice_surgery_details.address_post_code = ''
+        state.practice_surgery_details.coordinates_x = ''
+        state.practice_surgery_details.coordinates_y = ''
+    },
+    CLEAR_FORM_PRACTICE_ACCOUNT(state) {
         state.practice_account_details.title = ''
         state.practice_account_details.first_name = ''
         state.practice_account_details.last_name = ''
@@ -34,6 +78,12 @@ export default {
         state.practice_account_details.email = ''
         state.practice_account_details.password = ''
         state.practice_account_details.password_confirmation = ''
+    },
+    SET_PRACTICE_DETAIL_FORM_ERROR(state, payload) {
+        state.practice_detail_form_error = payload
+    },
+    SET_PRACTICE_SURGERY_FORM_ERROR(state, payload) {
+        state.practice_surgery_detail_form_error = payload
     },
     SET_PRACTICE_ACCOUNT_DETAIL_FORM_ERROR(state, payload) {
         state.practice_account_detail_form_error = payload
