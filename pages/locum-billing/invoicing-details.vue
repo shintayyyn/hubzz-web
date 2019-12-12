@@ -236,10 +236,6 @@ export default {
   },
   async asyncData({ app, error }) {
     try {
-      if (process.client) {
-        document.body.style.cursor = "wait";
-      }
-
       const response = await app.$axios.get("/api/v1/me");
 
       const user =
@@ -247,19 +243,13 @@ export default {
           ? response.data.data.user
           : null;
 
-      if (process.client) {
-        document.body.style.cursor = "auto";
-      }
+      console.log("invoicing details");
 
       return {
         user
       };
     } catch (err) {
-      console.log("invoicing-details create err", err.response || err);
-      console.log("invoicing-details create error", {
-        statusCode: err.status || 500,
-        message: err.message || "Something went wrong!"
-      });
+      console.log("err", err.response || err);
       error({
         statusCode: err.status || 500,
         message: err.message || "Something went wrong!"
@@ -274,7 +264,6 @@ export default {
         this.form.sort_code = this.user.locum_detail.invoice_detail.bank_account.sort_code;
         this.form.account_number = this.user.locum_detail.invoice_detail.bank_account.account_number;
       }
-
       this.form.tax_year_end_month = null;
       this.form.tax_year_end_date = null;
       this.form.employment_type = this.user.locum_detail.invoice_detail
@@ -285,7 +274,6 @@ export default {
       this.form.company_registration_number = this.user.locum_detail.invoice_detail.company_registration_number;
       this.form.ir35 = this.user.locum_detail.invoice_detail.ir35;
       this.form.paid_under_payroll = this.user.locum_detail.invoice_detail.paid_under_payroll;
-
       if (this.user.locum_detail.invoice_detail.payroll_detail) {
         this.form.payroll_detail_account_name = this.user.locum_detail.invoice_detail.payroll_detail.account_name;
         this.form.payroll_detail_bank_name = this.user.locum_detail.invoice_detail.payroll_detail.bank_name;

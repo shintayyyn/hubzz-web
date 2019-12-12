@@ -3,16 +3,35 @@
     <div class="flex flex-wrap justify-between pt-2">
       <div class="flex justify-start items-center">
         <template v-if="allowToBill">
-          <div
+          <!-- <div
             v-if="!allApproved"
             class="save-button text-xs sm:text-sm mr-2 py-2 px-3 border-2 rounded-lg font-bold flex items-center"
             @click="save(false)"
-          >Save changes</div>
+            :disabled="saveLoading || exportLoading"
+          >Save changes</div>-->
+
+          <AppButton
+            class="m-1"
+            :label="'Save changes'"
+            @click="save(false)"
+            :inStyle="'padding:5px 14px;font-size:1em'"
+            :disabled="saveLoading || exportLoading"
+          />
         </template>
-        <div
+
+        <AppButton
+          class="m-1"
+          :label="'Export to PDF'"
+          @click="exportToPdf()"
+          :inStyle="'padding:5px 14px;font-size:1em'"
+          :disabled="saveLoading || exportLoading"
+        />
+
+        <!-- <div
           class="save-button text-xs sm:text-sm py-2 px-3 border-2 rounded-lg font-bold flex items-center"
           @click="exportToPdf()"
-        >Export to PDF</div>
+          :disabled="saveLoading || exportLoading"
+        >Export to PDF</div>-->
       </div>
 
       <div class="flex flex-row flex-wrap justify-start items-center my-2 md:my-4">
@@ -30,7 +49,8 @@
       id="htmlpdf"
       class="relative max-w-3xl mb-2 md:mb-4 bg-white px-4 py-4 border shadow-md mb-32"
     >
-      <AppLoading :loading="loading" spinner :message="'Exporting'" />
+      <AppLoading :loading="exportLoading" spinner :message="'Exporting'" />
+      <AppLoading :loading="saveLoading" spinner />
       <!-- pdf header -->
       <div class="flex flex-col p-4" :ref="'pdf-header'">
         <div class="text-xs sm:text-sm sm:text-right leading-normal">
@@ -251,6 +271,7 @@
 <script>
 // import html2canvas from "html2canvas";
 import AppLoading from "@/components/Base/AppLoading";
+import AppButton from "@/components/Base/AppButton";
 import AppDate from "@/components/Base/AppDate";
 import AppInput from "@/components/Base/AppInput";
 import AppFilterSearch from "@/components/Base/AppFilterSearch";
@@ -265,6 +286,7 @@ export default {
   },
   components: {
     AppLoading,
+    AppButton,
     AppDate,
     AppInput,
     AppFilterSearch,
@@ -272,7 +294,9 @@ export default {
   },
   data() {
     return {
-      loading: false,
+      // loading: false,
+      exportLoading: false,
+      saveLoading: false,
 
       disputedInvoices: [],
       approvedInvoices: [],
@@ -463,51 +487,45 @@ export default {
     }
   },
   created() {
-    this.locum_user = this.selectedInvoice.locum_user;
-    this.type = this.selectedInvoice.type;
-    this.surgery_name = this.selectedInvoice.surgery.name;
-    this.form.surgery_id = this.selectedInvoice.surgery.id;
-    this.form.date_start = this.selectedInvoice.date_start;
-    this.form.date_end = this.selectedInvoice.date_end;
-    this.selectedInvoice.items.forEach(item => {
-      this.selectedJobParts.push({
-        type: item.type,
-        job_part_id: item.job_part.id,
-        description: item.description,
-        // description: `Job number ${item.job_part.job_part_number} ${item.job_part.job.type} Job at £${item.job_part.job.rate} ${item.job_part.job.locum_detail_rate_type.name} from ${item.job_part.date_start} to ${item.job_part.date_end} / ${item.job_part.job.shift.name} / Total hours of ${item.job_part.final_hours}`,
-        total: item.total.toString(),
-        dispute: item.disputed,
-        approve: item.approved,
-        absent_days: item.absent_days,
-        final_hours: item.final_hours,
-        late_hours: item.late_hours,
-        remarks: item.remarks,
-        disputed_by_locum_at: item.disputed_by_locum_at,
-        disputed_by_practice_at: item.disputed_by_practice_at
+    if (this.selectedInvoice) {
+      this.locum_user = this.selectedInvoice.locum_user;
+      this.type = this.selectedInvoice.type;
+      this.surgery_name = this.selectedInvoice.surgery.name;
+      this.form.surgery_id = this.selectedInvoice.surgery.id;
+      this.form.date_start = this.selectedInvoice.date_start;
+      this.form.date_end = this.selectedInvoice.date_end;
+      this.selectedInvoice.items.forEach(item => {
+        this.selectedJobParts.push({
+          type: item.type,
+          job_part_id: item.job_part.id,
+          description: item.description,
+          total: item.total.toString(),
+          dispute: item.disputed,
+          approve: item.approved,
+          absent_days: item.absent_days,
+          final_hours: item.final_hours,
+          late_hours: item.late_hours,
+          remarks: item.remarks,
+          disputed_by_locum_at: item.disputed_by_locum_at,
+          disputed_by_practice_at: item.disputed_by_practice_at
+        });
+        if (item.disputed === true) {
+          this.disputedInvoices.push(item.job_part.id);
+        }
+        if (item.approved === true) {
+          this.approvedInvoices.push(item.job_part.id);
+        }
       });
-      if (item.disputed === true) {
-        this.disputedInvoices.push(item.job_part.id);
+      this.defaultSelectedJobParts = JSON.parse(
+        JSON.stringify(this.selectedJobParts)
+      );
+      if (
+        this.$auth.user.practice_detail &&
+        this.$auth.user.practice_detail.practice.type !== "Spoke"
+      ) {
+        this.allowToBill = true;
       }
-      if (item.approved === true) {
-        this.approvedInvoices.push(item.job_part.id);
-      }
-    });
-    this.defaultSelectedJobParts = JSON.parse(
-      JSON.stringify(this.selectedJobParts)
-    );
-    if (
-      this.$auth.user.practice_detail &&
-      this.$auth.user.practice_detail.practice.type !== "Spoke"
-    ) {
-      this.allowToBill = true;
     }
-    console.log(this.$auth.user);
-  },
-  mounted() {
-    document.body.style.overflow = "hidden";
-  },
-  destroyed() {
-    document.body.style.overflow = "auto";
   },
   methods: {
     save(final) {
@@ -542,7 +560,7 @@ export default {
       });
       this.Validate(this.form, ["final"]);
       if (!this.formError.length) {
-        this.loading = true;
+        this.saveLoading = true;
         this.$axios
           .$put(
             `/api/v1/practice/locum-invoices/${this.$route.params.id}`,
@@ -555,7 +573,7 @@ export default {
               status: "success",
               text: [`${res.message}`]
             });
-            this.$router.push("/practice-billing/invoices-from-locums");
+            this.$router.push("/practice-billing");
           })
           .catch(err => {
             if (err.response.data.message) {
@@ -573,7 +591,7 @@ export default {
             }
           })
           .finally(() => {
-            this.loading = false;
+            this.saveLoading = false;
           });
       }
     },
@@ -588,7 +606,7 @@ export default {
       return false;
     },
     async exportToPdf() {
-      this.loading = true;
+      this.exportLoading = true;
       if (process.client) {
         document.body.style.cursor = "wait";
       }
@@ -764,7 +782,7 @@ export default {
       yPosition = yPosition + imgHeightPdfFooter;
 
       doc.save("test.pdf");
-      this.loading = false;
+      this.exportLoading = false;
       if (process.client) {
         document.body.style.cursor = "auto";
       }

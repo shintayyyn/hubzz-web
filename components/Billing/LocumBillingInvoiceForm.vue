@@ -151,7 +151,7 @@
             <div class="text-xs sm:text-sm" v-if="selectedInvoice.status === 'Draft'">Not yet issued</div>
           </div>
         </div>
-        <div v-if="selectedSurgery && selectedInvoice === null">
+        <div v-if="selectedSurgery && selectedInvoice === null && selectedJobParts.length < 1">
           <!-- LIST OF JOB PARTS-->
           <section>
             <div
@@ -559,7 +559,7 @@ export default {
         this.jobParts = [];
         this.selectedJobParts = [];
       }
-      if (newValue) {
+      if (newValue && !this.selectedInvoice) {
         this.loadingJobParts = true;
         await this.getJobPartsPromiseAll();
         this.loadingJobParts = false;
@@ -575,37 +575,13 @@ export default {
     }
   },
   async created() {
-    console.log(this.$auth.user);
     this.loadingSurgeries = true;
-    await this.getSurgeriesPromiseAll();
+    if (!this.selectedInvoice) {
+      await this.getSurgeriesPromiseAll();
+    }
     this.loadingSurgeries = false;
   },
   mounted() {
-    // this.loading = true;
-    // this.$axios
-    //   .$get(`/api/v1/locum/private-practices`)
-    //   .then(res => {
-    //     this.practices = [];
-    //     res.data.private_practices.forEach(practice => {
-    //       this.practices.push({
-    //         label: practice.surgery.name,
-    //         value: practice.id
-    //       });
-    //     });
-    //   })
-    //   .catch(err => {
-    //     console.log("err", err.response || err);
-    //     if (err.response.data.message) {
-    //       this.$store.commit("SET_NOTIFICATION", {
-    //         enabled: true,
-    //         status: "danger",
-    //         text: [`${err.response.data.message}`]
-    //       });
-    //     }
-    //   })
-    //   .finally(() => {
-    //     this.loading = false;
-    //   });
     if (this.selectedInvoice) {
       this.type = this.selectedInvoice.type;
       this.selectedSurgery = this.selectedInvoice.surgery;
@@ -638,25 +614,30 @@ export default {
   methods: {
     // SURGERIES
     getSurgeriesPromiseAll() {
+      let url =
+        this.type === "Platform"
+          ? `/api/v1/locum/practices`
+          : `/api/v1/locum/private-practices`;
+
       let countParams = {
-        invoiceable: true,
-        type: this.type
+        invoiceable: true
       };
       let surgeriesParams = {
         invoiceable: true,
-        type: this.type,
         limit: 10,
         offset: 0
       };
       return Promise.all([
-        this.$axios.$get(`/api/v1/locum/surgeries/count`, {
+        this.$axios.$get(`${url}/count`, {
           params: countParams
         }),
-        this.$axios.$get(`/api/v1/locum/surgeries`, { params: surgeriesParams })
+        this.$axios.$get(`${url}`, { params: surgeriesParams })
       ])
         .then(([responseCount, responseSurgeries]) => {
           this.totalSurgeries = responseCount.data.count;
-          let surgeries = responseSurgeries.data.surgeries;
+          let surgeries = responseSurgeries.data.practices
+            ? responseSurgeries.data.practices
+            : responseSurgeries.data.private_practices;
 
           this.loadMoreSurgeries = true;
 
@@ -665,13 +646,13 @@ export default {
           } else {
             surgeries.forEach(surgery => {
               if (this.surgeries.length === 0) {
-                this.surgeries.push(surgery);
+                this.surgeries.push(surgery.surgery);
               } else if (this.surgeries.length > 0) {
                 let index = this.surgeries.findIndex(
                   item => item.id === surgery.id
                 );
                 if (index < 0) {
-                  this.surgeries.push(surgery);
+                  this.surgeries.push(surgery.surgery);
                 }
               }
             });
@@ -822,7 +803,7 @@ export default {
       let countParams = {
         locum_status: ["Completed", "Terminated"],
         job_type: this.type,
-        surgery_id: this.selectedSurgery.id,
+        job_surgery_id: [this.selectedSurgery.id],
         order_by: "created_at:desc",
         invoiced: false
       };
@@ -830,7 +811,7 @@ export default {
       let jobPartsParams = {
         locum_status: ["Completed", "Terminated"],
         job_type: this.type,
-        surgery_id: this.selectedSurgery.id,
+        job_surgery_id: [this.selectedSurgery.id],
         limit: 10,
         offset: 0,
         order_by: "created_at:desc",
@@ -1254,7 +1235,7 @@ export default {
             .$post(`/api/v1/locum/locum-invoices`, this.form)
             .then(res => {
               this.$emit("addInvoice", res.data.locum_invoice);
-              this.$router.push("/locum-billing/invoices");
+              this.$router.push("/locum-billing");
               this.$store.commit("SET_NOTIFICATION", {
                 enabled: true,
                 status: "success",
@@ -1292,7 +1273,7 @@ export default {
                 status: "success",
                 text: [`${res.message}`]
               });
-              this.$router.push("/locum-billing/invoices");
+              this.$router.push("/locum-billing");
             })
             .catch(err => {
               console.log("err", err.response || err);

@@ -1,34 +1,45 @@
 <template>
   <div class="invoice-modal shadow-lg">
-    <div class="px-8 py-4 max-w-3xl h-screen">
+    <div class="px-4 md:px-8 py-4 max-w-5xl h-screen">
       <div class="flex flex-row flex-wrap justify-start">
-        <div @click="$router.go(-1)" class="cursor-pointer">
+        <nuxt-link :to="`/practice-billing`">
           <svgicon name="left-arrow" height="32" width="32" />
-        </div>
+        </nuxt-link>
       </div>
-      <iframe :src="invoice.file.url" style="min-height: 90%;" width="100%" class="my-4"></iframe>
+      <PracticeBillingInvoiceForm
+        :selectedInvoice="invoice"
+        @updateInvoice="$emit('updateInvoice', $event)"
+      />
     </div>
   </div>
 </template>
 
 <script>
+import PracticeBillingInvoiceForm from "@/components/Billing/PracticeBillingInvoiceForm";
 export default {
   transition: {
     name: "slide",
     mode: "out-in"
   },
-
+  components: {
+    PracticeBillingInvoiceForm
+  },
   async asyncData({ app, error, params }) {
     try {
+      if (process.client) {
+        document.body.style.cursor = "wait";
+      }
       const response = await app.$axios.get(
         `/api/v1/practice/locum-invoices/${params.id}`
       );
       const invoice =
-        response.data && response.data.data && response.data.data.invoice
-          ? response.data.data.invoice
+        response.data && response.data.data && response.data.data.locum_invoice
+          ? response.data.data.locum_invoice
           : null;
 
-      console.log("invoice", invoice);
+      if (process.client) {
+        document.body.style.cursor = "auto";
+      }
 
       return {
         invoice
@@ -49,13 +60,33 @@ export default {
     };
   },
 
+  // watch: {
+  //   $route({ params }) {
+  //     if (params && params.id) {
+  //       this.removeNotification(parseInt(params.id));
+  //     }
+  //   }
+  // },
+
   mounted() {
     document.body.style.overflow = "hidden";
+    // this.removeNotification(parseInt(this.$route.params.id));
   },
 
   destroyed() {
     document.body.style.overflow = "auto";
   }
+
+  // methods: {
+  //   removeNotification(id) {
+  //     let index = this.$store.state.billing.practice_billing_notifications.findIndex(
+  //       billing => billing.id === id
+  //     );
+  //     if (index >= 0) {
+  //       this.$store.commit("billing/REMOVE_PRACTICE_BILLING_NOTIFICATION", id);
+  //     }
+  //   }
+  // }
 };
 </script>
 

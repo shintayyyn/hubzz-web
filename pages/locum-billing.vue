@@ -5,10 +5,10 @@
         <nuxt-link
           to="/locum-billing"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-          :class="['locum-billing-index-create', 'locum-billing-index'].includes($route.name) || $route.name.includes('locum-billing-id') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          :class="['locum-billing-index-create', 'locum-billing-index', 'locum-billing-index-id'].includes($route.name) || $route.name.includes('locum-billing-id') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Invoices</nuxt-link>
         <nuxt-link
-          to="/locum-billing/invoicing-details"
+          :to="{ path: '/locum-billing/invoicing-details'}"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
           :class="$route.path === '/locum-billing/invoicing-details' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Invoicing details</nuxt-link>

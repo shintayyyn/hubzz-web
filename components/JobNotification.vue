@@ -228,6 +228,8 @@ export default {
           });
         }, 500);
       } else if (type === "Billings") {
+        console.log(`${url}/${id}`);
+
         this.$router.push({
           path: `${url}`
         });

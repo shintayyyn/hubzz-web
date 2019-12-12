@@ -1,8 +1,418 @@
-<template></template>
+<template>
+  <section class="relative">
+    <AppButton
+      v-if="showRefresh"
+      :label="'Refresh'"
+      @click="refreshInvoices"
+      :inStyle="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
+    />
+    <AppTable
+      v-if="invoices.length > 0"
+      :total="total"
+      :items="invoices"
+      :loading="loading"
+      :currentPage="current_page"
+      :perPage="params.limit"
+      :columns="columns"
+      :orderBy="params.order_by"
+      :routerLink="'/practice-billing/invoices-from-locums'"
+      @pagechanged="pagechanged"
+      @limitchanged="limitchanged"
+      @sorted="sorted"
+    >
+      <template v-slot:actions="slotProps">
+        <div class="flex justify-center">
+          <button
+            disabled
+            v-if="slotProps.item.paid"
+            class="px-4 py-2 font-bold rounded-lg focus:outline-none bg-green-600 text-white cursor-not-allowed"
+          >Already Paid</button>
+          <button
+            disabled
+            v-if="slotProps.item.items.filter(invoice => invoice.approved === false).length > 0 && slotProps.item.disputed_items_count === 0"
+            class="px-4 py-2 font-bold rounded-lg focus:outline-none bg-gray-500 text-white cursor-not-allowed"
+          >For Approval</button>
+          <button
+            @click.stop.prevent="onClick(slotProps.item)"
+            v-if="slotProps.item.items.filter(invoice => invoice.approved === false).length === 0"
+            class="px-4 py-2 font-bold rounded-lg focus:outline-none bg-yellow-400"
+          >Mark as Paid</button>
+        </div>
+      </template>
+    </AppTable>
+    <div v-else class="flex justify-center">You do not have any invoices from Locums</div>
+
+    <div v-if="paymentModal" class="p-2" v-on-clickaway="closePaymentModal">
+      <div class="rounded-lg shadow-md px-4 py-8 md:px-8 update-modal border w-5/6 md:w-1/3">
+        <AppDate
+          v-model="form.paid_at"
+          :name="'paid_at'"
+          :label="'Received payment on'"
+          :error="formError.find(item => item.field === 'paid_at')"
+          isAfter
+        />
+        <div class="flex flex-row flex-no-wrap justify-center">
+          <AppButton
+            class="mx-1"
+            :label="'Save'"
+            @click="confirmPayment"
+            :inStyle="'padding:5px 10px'"
+          />
+          <AppButton
+            class="mx-1"
+            :label="'Cancel'"
+            @click="paymentModal = false"
+            :inStyle="'padding:5px 10px'"
+          />
+        </div>
+      </div>
+    </div>
+    <transition name="fade" mode="out-in">
+      <nuxt-link
+        :to="'/practice-billing'"
+        v-if="['practice-billing-index-invoices-from-locums-id'].includes($route.name) || paymentModal"
+        class="shield"
+      ></nuxt-link>
+
+      <!-- <div
+        class="shield"
+        v-if="$route.path != '/practice-billing/invoices-from-locums' || paymentModal"
+        @click="paymentModal ? paymentModal = false : $route.path != '/practice-billing/invoices-from-locums' ? $router.push('/practice-billing/invoices-from-locums'): null"
+      ></div>-->
+    </transition>
+    <nuxt-child @updateInvoice="updateInvoice" />
+  </section>
+</template>
 <script>
+import AppTable from "@/components/Base/AppTable";
+import AppDate from "@/components/Base/AppDate";
+import AppButton from "@/components/Base/AppButton";
+import { mixin as clickaway } from "vue-clickaway";
 export default {
-  created() {
-    this.$router.push('/practice-billing/invoices-from-locums')
+  mixins: [clickaway],
+  transition: {
+    name: "fade",
+    mode: "out-in"
+  },
+  components: {
+    AppTable,
+    AppDate,
+    AppButton
+  },
+  data() {
+    return {
+      showRefresh: false,
+
+      total: 0,
+      invoices: [],
+      loading: false,
+      current_page: 1,
+      modal: false,
+      // payment
+      paymentModal: false,
+      selectedInvoiceId: null,
+      form: {
+        paid_at: null
+      },
+      formError: [],
+      // app table params
+      params: {
+        offset: 0,
+        limit: 5,
+        status: ["Issued", "Disputed", "Paid"],
+        order_by: []
+      },
+      // app table column
+      columns: [
+        {
+          name: "Practice / Surgery",
+          dataIndex: "surgery.name",
+          class: "text-left"
+        },
+        {
+          name: "Issued",
+          dataIndex: "issued_at",
+          class: "text-center localDate"
+        },
+        {
+          name: "Locum",
+          dataIndex: "locum_user.name",
+          class: "text-center"
+        },
+        {
+          name: "Invoice Number",
+          dataIndex: "invoice_number",
+          class: "text-left"
+        },
+        {
+          name: "Job Numbers",
+          dataIndex: "items.job_part.job_part_number",
+          class: "text-left"
+        },
+        {
+          name: "£ Amount",
+          dataIndex: "total_amount",
+          class: "text-center",
+          sortable: true
+        },
+        {
+          name: "Status",
+          dataIndex: "status",
+          class: "text-center"
+        },
+        {
+          name: "Created At",
+          dataIndex: "date_created",
+          class: "text-center localDate"
+        },
+        {
+          name: "Actions",
+          dataIndex: "actions",
+          class: "text-center"
+        }
+      ]
+    };
+  },
+  computed: {
+    authPermissions() {
+      return this.$store.getters["auth/permissions"];
+    }
+  },
+  async asyncData({ app, error }) {
+    try {
+      const params = {
+        offset: 0,
+        limit: 5,
+        status: ["Issued", "Disputed", "Paid"],
+        type: "Platform"
+      };
+
+      const [total, invoices] = await Promise.all([
+        app.$axios.$get(`/api/v1/practice/locum-invoices/count`).then(res => {
+          const total = res.data.count;
+          return total;
+        }),
+        app.$axios
+          .$get(`/api/v1/practice/locum-invoices`, { params })
+          .then(res => {
+            const invoices = res.data.locum_invoices;
+            return invoices;
+          })
+      ]);
+
+      console.log("invoices from locums");
+
+      return {
+        total,
+        invoices
+      };
+
+      // const responseCount = await app.$axios.get(
+      //   "/api/v1/practice/locum-invoices/count"
+      // );
+
+      // const total =
+      //   responseCount.data &&
+      //   responseCount.data.data &&
+      //   responseCount.data.data.count
+      //     ? responseCount.data.data.count
+      //     : 0;
+
+      // const response = await app.$axios.get("/api/v1/practice/locum-invoices", {
+      //   params
+      // });
+
+      // const invoices =
+      //   response.data && response.data.data && response.data.data.locum_invoices
+      //     ? response.data.data.locum_invoices
+      //     : [];
+      // return {
+      //   total,
+      //   invoices
+      // };
+    } catch (err) {
+      console.log("practice-billing index err", err.response || err);
+      error({
+        statusCode: err.status || 500,
+        message: err.message || "Something went wrong!"
+      });
+    }
+  },
+  mounted() {
+    this.$socket.on(
+      "Practice Notification Locum Invoice Created",
+      this.getLocumInvoiceRealTime
+    );
+    this.$socket.on(
+      "Practice Notification Locum Invoice Paid",
+      this.getLocumInvoiceRealTime
+    );
+    this.$socket.on(
+      "Practice Notification Locum Invoice Updated",
+      this.getLocumInvoiceRealTime
+    );
+  },
+  destroyed() {
+    this.removeListener();
+  },
+  methods: {
+    async refreshInvoices() {
+      this.$store.commit("billing/CLEAR_PRACTICE_BILLING_NOTIFICATION");
+      this.loading = true;
+      // await this.getInvoicesCount(this.params);
+      // await this.getInvoices(this.params);
+      await this.getInvoicesPromiseAll();
+      this.loading = false;
+      this.showRefresh = false;
+    },
+    updateInvoice(invoice) {
+      let index = this.invoices.findIndex(item => item.id == invoice.id);
+      if (index >= 0) {
+        this.invoices.splice(index, 1, invoice);
+      }
+    },
+    getLocumInvoiceRealTime({ id }) {
+      if (!id) {
+        return;
+      }
+      this.showRefresh = true;
+    },
+    removeListener() {
+      this.$socket.removeListener(
+        "Practice Notification Locum Invoice Created",
+        this.getLocumInvoiceRealTime
+      );
+      this.$socket.removeListener(
+        "Practice Notification Locum Invoice Paid",
+        this.getLocumInvoiceRealTime
+      );
+      this.$socket.removeListener(
+        "Practice Notification Locum Invoice Updated",
+        this.getLocumInvoiceRealTime
+      );
+    },
+    getInvoicesPromiseAll() {
+      let params = {
+        offset: 0,
+        limit: 5
+      };
+
+      return Promise.all([
+        this.$axios.$get(`/api/v1/practice/locum-invoices/count`),
+        this.$axios.$get(`/api/v1/practice/locum-invoices`, { params })
+      ])
+        .then(([responseTotal, responseInvoices]) => {
+          this.total = responseTotal.data.count;
+          this.invoices = responseInvoices.data.locum_invoices;
+        })
+        .catch(([errTotal, errInvoices]) => {
+          console.log(
+            "err",
+            errTotal.response || errTotal || errInvoices.response || errInvoices
+          );
+          if (errTotal.response.data.message) {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "danger",
+              text: [`${errTotal.response.data.message}`]
+            });
+          }
+          if (errInvoices.response.data.message) {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "danger",
+              text: [`${errInvoices.response.data.message}`]
+            });
+          }
+        });
+    },
+    getInvoices() {
+      return this.$axios
+        .$get(`/api/v1/practice/locum-invoices`, { params: this.params })
+        .then(res => {
+          this.invoices = res.data.locum_invoices;
+        })
+        .catch(err => {
+          console.log("err", err.response || err);
+          if (err.response.data.message) {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "danger",
+              text: [`${err.response.data.message}`]
+            });
+          }
+        });
+    },
+    onClick(invoice, index) {
+      this.selectedInvoiceId = null;
+      this.form.paid_at = null;
+      this.paymentModal = true;
+      this.selectedInvoiceId = invoice.id;
+    },
+    closePaymentModal() {
+      this.paymentModal = false;
+    },
+    confirmPayment() {
+      this.Validate(this.form);
+      if (!this.formError.length) {
+        this.$axios
+          .$put(
+            `/api/v1/practice/locum-invoices/${this.selectedInvoiceId}/paid`,
+            this.form
+          )
+          .then(res => {
+            let index = this.invoices.findIndex(
+              invoice => invoice.id == res.data.locum_invoice.id
+            );
+            if (index >= 0) {
+              this.invoices.splice(index, 1, res.data.locum_invoice);
+            }
+
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: [`${res.message}`]
+            });
+            this.paymentModal = false;
+          });
+      }
+    },
+    async sorted(order_by) {
+      this.current_page = 1;
+      this.params.offset = 0;
+      this.params.order_by = order_by;
+      this.loading = true;
+      await this.getInvoices();
+      this.loading = false;
+    },
+    async pagechanged(page) {
+      this.current_page = page;
+      this.params.offset = this.params.limit * (page - 1);
+      this.loading = true;
+      await this.getInvoices();
+      this.loading = false;
+    },
+    async limitchanged(limit) {
+      this.current_page = 1;
+      this.params.offset = 0;
+      this.params.limit = limit;
+      this.loading = true;
+      await this.getInvoices();
+      this.loading = false;
+    }
   }
-}
+};
 </script>
+<style scoped>
+.shield {
+  z-index: 511;
+}
+.update-modal {
+  position: fixed;
+  background-color: white;
+  z-index: 512;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+</style>

@@ -22,10 +22,8 @@
     >
       <template v-slot:actions="slotProps">
         <div @click.stop.prevent="onClick(slotProps.item)" class="flex justify-center">
-          <button
-            v-if="slotProps.item.status === 'Draft'"
-            class="px-4 py-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
-          >Delete</button>
+          <!-- v-if="slotProps.item.status === 'Draft'" -->
+          <button class="px-4 py-2 bg-yellow-500 font-bold rounded-lg focus:outline-none">Delete</button>
         </div>
       </template>
     </AppTable>
@@ -42,7 +40,7 @@
     <transition name="fade" mode="out-in">
       <nuxt-link
         :to="'/locum-billing'"
-        v-if="['locum-billing-index-id', 'locum-billing-index-create', 'locum-billing-index-id-edit'].includes($route.name) || deleteModal"
+        v-if="['locum-billing-index-create', 'locum-billing-index-invoices-id'].includes($route.name) || deleteModal"
         class="shield"
       ></nuxt-link>
     </transition>
@@ -150,12 +148,10 @@ export default {
       };
 
       const [total, invoices] = await Promise.all([
-        app.$axios
-          .$get(`/api/v1/locum/locum-invoices/count`, { params })
-          .then(res => {
-            const total = res.data.count;
-            return total;
-          }),
+        app.$axios.$get(`/api/v1/locum/locum-invoices/count`).then(res => {
+          const total = res.data.count;
+          return total;
+        }),
         app.$axios
           .$get(`/api/v1/locum/locum-invoices`, { params })
           .then(res => {
@@ -163,6 +159,8 @@ export default {
             return invoices;
           })
       ]);
+
+      console.log("invoices");
 
       return {
         total,
@@ -201,10 +199,9 @@ export default {
   },
   methods: {
     async refreshInvoices() {
-      this.loading = true;
       this.$store.commit("billing/CLEAR_LOCUM_BILLING_NOTIFICATION");
-      await this.getInvoicesCount(this.params);
-      await this.getInvoices(this.params);
+      this.loading = true;
+      await this.getInvoicesPromiseAll();
       this.loading = false;
       this.showRefresh = false;
     },
@@ -234,38 +231,56 @@ export default {
         this.getLocumInvoiceRealTime
       );
     },
-    getInvoicesCount(params) {
-      this.loading = true;
-      this.$axios
-        .$get(`/api/v1/locum/locum-invoices/count`, { params })
-        .then(res => {
-          this.total = res.data.count;
-          this.getInvoices(this.params);
+    getInvoicesPromiseAll() {
+      let params = {
+        offset: 0,
+        limit: 5
+      };
+      return Promise.all([
+        this.$axios.$get(`/api/v1/locum/locum-invoices/count`),
+        this.$axios.$get(`/api/v1/locum/locum-invoices`, { params })
+      ])
+        .then(([responseTotal, responseInvoices]) => {
+          this.total = responseTotal.data.count;
+          this.invoices = responseInvoices.data.locum_invoices;
         })
-        .catch(err => {
-          this.loading = false;
-          console.log(err);
+        .catch(([errTotal, errInvoices]) => {
+          console.log("err", errTotal.response || errTotal);
+          console.log("err", errInvoices.response || errInvoices);
+          if (errTotal.response.data.message) {
+            if (errTotal.response.data.message) {
+              this.$store.commit("SET_NOTIFICATION", {
+                enabled: true,
+                status: "danger",
+                text: [`${errTotal.response.data.message}`]
+              });
+            }
+            if (errInvoices.response.data.message) {
+              this.$store.commit("SET_NOTIFICATION", {
+                enabled: true,
+                status: "danger",
+                text: [`${errInvoices.response.data.message}`]
+              });
+            }
+          }
         })
-        .finally(() => {
-          return;
-        });
+        .finally(() => {});
     },
     getInvoices(params) {
-      this.$axios
+      return this.$axios
         .$get(`/api/v1/locum/locum-invoices`, { params })
         .then(res => {
-          this.loading = false;
-          this.invoices = [];
-          res.data.locum_invoices.forEach(invoice => {
-            this.invoices.push(invoice);
-          });
+          this.invoices = res.data.locum_invoices;
         })
         .catch(err => {
-          console.log(err);
-        })
-        .finally(() => {
-          this.loading = false;
-          return;
+          console.log("err", err.response || err);
+          if (err.response.data.message) {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "danger",
+              text: [`${err.response.data.message}`]
+            });
+          }
         });
     },
     onClick(invoice) {
@@ -291,22 +306,28 @@ export default {
     addInvoice(invoice) {
       this.invoices.unshift(invoice);
     },
-    sorted(order_by) {
+    async sorted(order_by) {
       this.current_page = 1;
       this.params.offset = 0;
       this.params.order_by = order_by;
-      this.getInvoices(this.params);
+      this.loading = true;
+      await this.getInvoices();
+      this.loading = false;
     },
-    pagechanged(page) {
+    async pagechanged(page) {
       this.current_page = page;
       this.params.offset = this.params.limit * (page - 1);
-      this.getInvoices(this.params);
+      this.loading = true;
+      await this.getInvoices();
+      this.loading = false;
     },
-    limitchanged(limit) {
+    async limitchanged(limit) {
       this.current_page = 1;
       this.params.offset = 0;
       this.params.limit = limit;
-      this.getInvoices(this.params);
+      this.loading = true;
+      await this.getInvoices();
+      this.loading = false;
     }
   }
 };
