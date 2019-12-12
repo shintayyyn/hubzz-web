@@ -524,6 +524,17 @@ export default {
         this.$auth.user.practice_detail.practice.type !== "Spoke"
       ) {
         this.allowToBill = true;
+      } else if (
+        this.$auth.user.practice_detail.practice.type === "Spoke" &&
+        !this.$auth.user.practice_detail.practice.parent_practice_id
+      ) {
+        this.allowToBill = true;
+      } else if (
+        this.$auth.user.practice_detail.practice.parent_practice_id &&
+        this.$auth.user.practice_detail.practice.allow_surgery_bill_locum ===
+          true
+      ) {
+        this.allowToBill = true;
       }
     }
   },

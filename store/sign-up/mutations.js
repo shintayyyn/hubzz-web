@@ -30,9 +30,10 @@ export default {
     },
     SET_PRACTICE_ACCOUNT_DETAILS(state, payload) {
         state.practice_account_details.type = payload.type
+        state.practice_account_details.hub_type = payload.hub_type
         state.practice_account_details.surgery_id = payload.surgery_id
-        state.practice_account_details.parent_surgery_id = payload.parent_surgery_id
-        state.practice_account_details.children_surgery_id = payload.children_surgery_id
+        // state.practice_account_details.parent_surgery_id = payload.parent_surgery_id
+        // state.practice_account_details.children_surgery_id = payload.children_surgery_id
         state.practice_account_details.email = payload.email
         state.practice_account_details.password = payload.password
         state.practice_account_details.password_confirmation = payload.password_confirmation

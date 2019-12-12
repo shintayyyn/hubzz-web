@@ -2,10 +2,10 @@
   <div class="shadow-lg max-w-xl p-4 md:p-8 my-4 md:my-8 rounded-lg">
     <div  class="flex justify-between md:justify-start items-center pb-4">
       <div class="font-bold leading-none text-md sm:text-lg mr-2">
-        {{ practice_surgery.surgery.name }}
+        {{ practice_surgery.child_practice.surgery.name }}
       </div>
       <div class="text-sm sm:text-sm text-gray-700 font-bold md:mr-2">
-        {{ practice_surgery.surgery.code }}
+        {{ practice_surgery.child_practice.surgery.code }}
       </div>
        <div 
         class="justify-center text-black text-sm font-semibold py-2 p-3 rounded-lg"
@@ -33,7 +33,7 @@
                   class="fill-current w-5 h-5"
                   :class="practice_surgery.allow_surgery_create_sessions ? 'text-green-500' : 'text-red-500 border-2 border-red-500 rounded-full p-1'"/>
               </span>
-              <div class="font-semibold">Does Hub allow you to create jobs?</div>
+              <div class="font-semibold">Is this Spoke allowed to Create Jobs?</div>
             </div>
             <div class="bg-gray-300 p-2 rounded-lg mb-2" v-if="practice_surgery.allow_surgery_create_sessions === true">
               <p class="font-semibold pb-2 leading-tight px-4 py-2">Rate Limits(Only effective when allowed to create jobs)</p>
@@ -62,12 +62,6 @@
                   <p class="font-semibold md:w-2/3">Maximum Excess Hours</p>
                   <p class="text-sm mx-2 md:mx-0">{{practice_surgery.max_ooh_rate_limit ?'£ '+ practice_surgery.max_ooh_rate_limit : 'N/A'}}</p>
                 </div>
-
-                
-                
-                
-                
-                
               </div>
             </div>
 
@@ -77,7 +71,7 @@
                   class="fill-current w-5 h-5"
                   :class="practice_surgery.allow_surgery_bill_locum ? 'text-green-500' : 'text-red-500 border-2 border-red-500 rounded-full p-1'"/>
               </span>
-              <p class="font-semibold">Does Hub permit billing of Locums?</p>
+              <p class="font-semibold">Is this Spoke allowed to bill of Locums?</p>
             </div>
 
             <div class="flex items-center py-1">
@@ -86,7 +80,7 @@
                   class="fill-current w-5 h-5"
                   :class="practice_surgery.allow_surgery_bill_hubzz ? 'text-green-500' : 'text-red-500 border-2 border-red-500 rounded-full p-1'"/>
               </span>
-              <p class="font-semibold">Does Hub permit billing of HUBZZ?</p>
+              <p class="font-semibold">Is this Spoke allowed to bill of HUBZZ?</p>
             </div>
 
              <div class="flex items-center py-1">
@@ -95,7 +89,7 @@
                   class="fill-current w-5 h-5"
                   :class="practice_surgery.share_banks_to_other_surgeries ? 'text-green-500' : 'text-red-500 border-2 border-red-500 rounded-full p-1'"/>
               </span>
-              <p class="font-semibold">Can other Spokes see your Banks?</p>
+              <p class="font-semibold">Is this Spoke's Banks shared to other Spokes?</p>
             </div>
         </div>
       </div>

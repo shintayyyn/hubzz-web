@@ -99,18 +99,18 @@ export default {
 			columns: [
 				{
 					name: "Surgery",
-					dataIndex: "surgery.name",
+					dataIndex: "child_practice.surgery.name",
 					class: "text-left",
 					sortable: true
 				},
 				{
 					name: "Practice Code",
-					dataIndex: "surgery.code",
+					dataIndex: "child_practice.surgery.code",
 					class: "text-center"
 				},
 				{
 					name: "Status",
-          			dataIndex: "actions",
+          dataIndex: "actions",
 					class: "text-center"
 				}
 			]
@@ -161,6 +161,7 @@ export default {
       const response = await app.$axios.$get(
         `/api/v1/practice/me/practice-surgeries?limit=5`
       );
+      console.log('practice surgeries', response.data.practice_surgeries)
       if (response.data && response.data.practice_surgeries) {
         response.data.practice_surgeries.forEach(surgery => {
           surgeries.push(surgery);

@@ -76,6 +76,8 @@ export default {
         url = "/sessions";
       } else if (this.$route.path.includes("/dashboard")) {
         url = "/dashboard";
+      } else if (this.$route.path.includes("/surgery-management")) {
+        url =  "/surgery-management/practice-spokes"
       }
       return url;
     }

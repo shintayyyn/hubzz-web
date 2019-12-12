@@ -30,10 +30,11 @@
       v-if="
         [
           'surgery-management-practice-hub-spoke-siblings-id',
+          'surgery-management-practice-hub-invitationId',
           'surgery-management-practice-hub-spoke-siblings-id-sibling-bank-locumId'
         ].includes($route.name)
       "
-      @click="$router.push('/surgery-management/practice-hub/spoke-siblings')"
+      @click="$router.go(-1)"
     ></div>
   </transition>
   <nuxt-child/>

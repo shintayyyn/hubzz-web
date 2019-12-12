@@ -13,8 +13,28 @@
             :error="this.formError.find(item => item.field === 'type')"
             :items="types"
           />
+          <AppInput
+            v-if="form.type === 'Hub'"
+            v-model="form.hub_type"
+            :type="'select'"
+            :name="'hub_type'"
+            :label="'Hub Type'"
+            :placeholder="'Select...'"
+            :error="this.formError.find(item => item.field === 'hub_type')"
+            :items="hub_types"
+          />
+          <div class="m-2 bg-gray-300 rounded-lg">
+            <div v-if="form.hub_type === 'Type 1'" class="m-3 p-2 my-2">
+              <p class="font-semibold text-lg">Hub</p>
+              <p>Hubs can create jobs for their own surgeries, and can invite Spokes, and create jobs for them.</p>
+            </div>
+            <div v-if="form.hub_type === 'Type 2'" class="m-3 p-2 my-2">
+              <p class="font-semibold text-lg">Hub - Healthboard</p>
+              <p>Healthboard Hubs cannot create jobs for their own surgeries, and can only create jobs for their Spokes.</p>
+            </div>
+          </div>
 
-          <AppFilterSearch
+          <!-- <AppFilterSearch
             v-if="form.type === 'Spoke'"
             v-model="form.parent_surgery_id"
             :name="'parent_surgery_id'"
@@ -23,9 +43,9 @@
             :error="formError.find(item => item.field === 'parent_surgery_id')"
             :url="'/api/v1/surgeries'"
             :limitItem="1"
-          />
+          /> -->
 
-          <AppFilterSearch
+          <!-- <AppFilterSearch
             v-if="form.type === 'Hub'"
             v-model="form.children_surgery_id"
             :name="'children_surgery_id'"
@@ -33,7 +53,7 @@
             :placeholder="'Select...'"
             :error="formError.find(item => item.field === 'children_surgery_id')"
             :url="'/api/v1/surgeries'"
-          />
+          /> -->
 
           <AppInput
             v-model="form.title"
@@ -186,6 +206,10 @@ const types = [
   { value: "Spoke", label: "Spoke" },
   { value: "Stand Alone", label: "Stand Alone" }
 ];
+const hub_types = [
+  { value: "Type 1", label:"Type 1" },
+  { value: "Type 2", label:"Type 2" },
+];
 const practice_roles = [
   { value: "Partner", label: "Partner" },
   { value: "Practice Manager", label: "Practice Manager" },
@@ -202,11 +226,13 @@ export default {
   data() {
     return {
       types,
+      hub_types,
       practice_roles,
       form: {
         type: "",
-        parent_surgery_id: [],
-        children_surgery_id: [],
+        hub_type: "",
+        // parent_surgery_id: [],
+        // children_surgery_id: [],
         title: "",
         first_name: "",
         last_name: "",
@@ -253,6 +279,9 @@ export default {
           this.formError.push(item);
         });
       }
+    },
+    "form.hub_type"(value) {
+      this.CheckEmptyField(this.form.hub_type, "hub_type");
     },
     "form.title"(value) {
       this.CheckEmptyField(this.form.first_name, "first_name");
@@ -303,27 +332,27 @@ export default {
     signUp() {
       this.formError = [];
       let notRequired = ["title", "suffix"];
-      if (this.form.type === "Hub") {
-        notRequired.push("parent_surgery_id");
-      }
+      // if (this.form.type === "Hub") {
+      //   notRequired.push("parent_surgery_id");
+      // }
       if (this.form.type === "Spoke") {
-        notRequired.push("children_surgery_id");
+        notRequired.push("hub_type");
       }
-      if (this.form.type === "Stand Alone") {
-        notRequired.push("parent_surgery_id");
-        notRequired.push("children_surgery_id");
-      }
+      // if (this.form.type === "Stand Alone") {
+      //   notRequired.push("parent_surgery_id");
+      //   notRequired.push("children_surgery_id");
+      // }
       this.Validate(this.form, notRequired);
       if (!this.formError.length) {
         let submitForm = {};
         submitForm = {
           ...this.form,
-          children_surgery_id: this.form.children_surgery_id.map(
-            item => item.value
-          ),
-          parent_surgery_id: this.form.parent_surgery_id.map(
-            item => item.value
-          )[0]
+          // children_surgery_id: this.form.children_surgery_id.map(
+          //   item => item.value
+          // ),
+          // parent_surgery_id: this.form.parent_surgery_id.map(
+          //   item => item.value
+          // )[0]
         };
         console.log(this.form);
         console.log(submitForm);
