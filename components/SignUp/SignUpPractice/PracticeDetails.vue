@@ -17,10 +17,15 @@
       </div>
     </div>
 
-    <div v-if="showResult && surgeries.length === 0" class="mt-5 md:mx-4">
+    <div v-if="showResult && surgeries.length === 0" class="flex flex-col mt-5 md:mx-4">
       <div
         class="text-xs xl:text-base font-bold"
       >No practice matched that name. Try again with whole words, practice code or CCG.</div>
+      <AppButton
+        class="rounded-lg shadow-lg mt-5"
+        :label="'Input manually'"
+        @click="$emit('nextTab', 'PracticeSurgeryDetails')"
+      />
     </div>
 
     <div class="flex w-full justify-center xl:justify-start">
@@ -143,16 +148,29 @@ export default {
       }
     },
     next() {
-      try {
-        let item = this.surgeries.find(
-          item => item.id === this.selectedSurgeryId
-        );
-        this.$store.commit("sign-up/SET_PRACTICE_DETAILS", {
-          surgery_id: item.id,
-          search_results: this.surgeries
-        });
-        this.$emit("nextTab", "PracticeAccountDetails");
-      } catch (e) {}
+      let item = this.surgeries.find(
+        item => item.id === this.selectedSurgeryId
+      );
+      this.$store.commit("sign-up/SET_PRACTICE_DETAILS", {
+        // surgery_id: item.id,
+        name: item.name,
+        phone_number: item.phone_number,
+        code: item.code,
+        clinical_commissioning_group_name:
+          item.clinical_commissioning_group.name,
+        address_line_1: item.address.line_1,
+        address_line_2: item.address.line_2,
+        address_line_3: item.address.line_3,
+        address_post_code: item.address.post_code,
+        coordinates_x: item.address.coordinates
+          ? item.address.coordinates.x
+          : null,
+        coordinates_y: item.address.coordinates
+          ? item.address.coordinates.y
+          : null,
+        search_results: this.surgeries
+      });
+      this.$emit("nextTab", "PracticeSurgeryDetails");
     }
   }
 };

@@ -21,7 +21,10 @@
 <script>
 export default {
   props: ["error"],
-  layout: "auth"
+  layout: "auth",
+  mounted() {
+    console.log(this.error);
+  }
 };
 </script>
 <style scoped>

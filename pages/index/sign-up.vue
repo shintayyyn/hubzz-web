@@ -20,9 +20,16 @@
 
 <script>
 export default {
+  transition: {
+    name: "fade",
+    mode: "out-in"
+  },
   layout: "auth",
   mounted() {
+    this.$store.commit("sign-up/SET_ACTIVE_COMPONENT", "LocumAccountDetails");
     this.$store.commit("sign-up/CLEAR_FORM_PRACTICE_DETAILS");
+    this.$store.commit("sign-up/CLEAR_FORM_PRACTICE_SURGERY");
+    this.$store.commit("sign-up/CLEAR_FORM_PRACTICE_ACCOUNT");
   }
 };
 </script>

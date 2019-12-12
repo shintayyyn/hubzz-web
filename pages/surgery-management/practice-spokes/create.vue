@@ -153,6 +153,7 @@ export default {
             `/api/v1/practice/practice-spokes?search=${this.search_text}&limit=10`
           )
           .then(res => {
+            console.log(res.data.practices)
             if (res.data && res.data.practices){
               res.data.practices.forEach(item => {
                 let checkSurgery = this.surgeries.find(surgery => surgery.id == item.id)
@@ -232,7 +233,7 @@ export default {
   width: 100%;
   height: 100%;
   overflow: auto;
-  border-left: solid 2px yellow;
+  border-left: solid 2px #FFC72C;
   transition: all 0.3s ease-in-out;
   background-color:white;
   z-index: 512;

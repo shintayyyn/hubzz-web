@@ -26,6 +26,13 @@ export default {
   transition: {
     name: "fade",
     mode: "out-in"
+  },
+  async asyncData({ app, error }) {
+    try {
+      console.log("finance reports");
+    } catch (err) {
+      console.log("err", err.response || err);
+    }
   }
 };
 </script>

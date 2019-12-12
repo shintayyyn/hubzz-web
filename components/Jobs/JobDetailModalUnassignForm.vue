@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white rounded-lg shadow-lg p-4 md:p-8 mt-8">
+  <div class="relative bg-white rounded-lg shadow-lg p-4 md:p-8 mt-8">
     <div class="text-base font-bold mb-4">You can unassign from this job</div>
     <div
       class="text-sm text-gray-700"
@@ -13,20 +13,24 @@
       :error="this.formError.find(item => item.field === 'declined_reason')"
       :resize="false"
     />
-    <AppButton :label="'Unassign from this job'" @click="unassign" />
+    <AppButton :label="'Unassign from this job'" @click="unassign" :disabled="loading" />
+    <AppLoading :loading="loading" spinner />
   </div>
 </template>
 <script>
+import AppLoading from "@/components/Base/AppLoading";
 import AppButton from "@/components/Base/AppButton";
 import AppInput from "@/components/Base/AppInput";
 export default {
   props: ["job"],
   components: {
+    AppLoading,
     AppButton,
     AppInput
   },
   data() {
     return {
+      loading: false,
       form: {
         declined_reason: ""
       },
@@ -38,6 +42,7 @@ export default {
       this.formError = [];
       this.Validate(this.form);
       if (!this.formError.length) {
+        this.loading = true;
         this.$axios
           .$post(`/api/v1/locum/jobs/${this.job.id}/decline`, this.form)
           .then(res => {
@@ -56,14 +61,22 @@ export default {
             this.$emit("unassign");
           })
           .catch(err => {
-            err.response.data.error_messages.forEach(error => {
-              this.formError.push(error);
-            });
-            this.$store.commit("SET_NOTIFICATION", {
-              enabled: true,
-              status: "danger",
-              text: this.formError.map(error => error.message)
-            });
+            console.log("err", err.response || err);
+            if (err.response.data.message) {
+              this.$store.commit("SET_NOTIFICATION", {
+                enabled: true,
+                status: "danger",
+                text: [`${err.response.data.message}`]
+              });
+            }
+            if (err.response.data.error_messages) {
+              err.response.data.error_messages.forEach(error => {
+                this.formError.push(error);
+              });
+            }
+          })
+          .finally(() => {
+            this.loading = false;
           });
       } else {
         this.$store.commit("SET_NOTIFICATION", {

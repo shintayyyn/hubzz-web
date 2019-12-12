@@ -1,14 +1,12 @@
 <template>
-  <div class="invoice-modal shadow-lg">
-    <div class="px-4 md:px-8 py-4 max-w-5xl h-screen">
-      <div class="flex flex-row flex-wrap justify-start">
-        <!-- <div @click="$router.go(-1)" class="cursor-pointer">
-        </div>-->
-        <nuxt-link :to="`/practice-billing/invoices-from-locums`">
+  <div class="modal-container shadow-lg">
+    <div class="p-4 md:p-8 max-w-5xl h-screen">
+      <div class="flex flex-row flex-wrap justify-start pb-4">
+        <nuxt-link to="/locum-billing" class="cursor-pointer">
           <svgicon name="left-arrow" height="32" width="32" />
         </nuxt-link>
       </div>
-      <PracticeBillingInvoiceForm
+      <LocumBillingInvoiceForm
         :selectedInvoice="invoice"
         @updateInvoice="$emit('updateInvoice', $event)"
       />
@@ -17,14 +15,19 @@
 </template>
 
 <script>
-import PracticeBillingInvoiceForm from "@/components/Billing/PracticeBillingInvoiceForm";
+import LocumBillingInvoiceForm from "@/components/Billing/LocumBillingInvoiceForm";
 export default {
   transition: {
     name: "slide",
     mode: "out-in"
   },
   components: {
-    PracticeBillingInvoiceForm
+    LocumBillingInvoiceForm
+  },
+  data() {
+    return {
+      invoice: null
+    };
   },
   async asyncData({ app, error, params }) {
     try {
@@ -32,7 +35,7 @@ export default {
         document.body.style.cursor = "wait";
       }
       const response = await app.$axios.get(
-        `/api/v1/practice/locum-invoices/${params.id}`
+        `/api/v1/locum/locum-invoices/${params.id}`
       );
       const invoice =
         response.data && response.data.data && response.data.data.locum_invoice
@@ -42,8 +45,6 @@ export default {
       if (process.client) {
         document.body.style.cursor = "auto";
       }
-
-      console.log("invoice", invoice);
 
       return {
         invoice
@@ -57,21 +58,14 @@ export default {
       throw err;
     }
   },
-
-  data() {
-    return {
-      invoice: null
-    };
-  },
-
   // watch: {
   //   $route({ params }) {
   //     if (params && params.id) {
   //       this.removeNotification(parseInt(params.id));
+  //       this.getInvoice(params.id);
   //     }
   //   }
   // },
-
   mounted() {
     document.body.style.overflow = "hidden";
     // this.removeNotification(parseInt(this.$route.params.id));
@@ -79,39 +73,33 @@ export default {
 
   destroyed() {
     document.body.style.overflow = "auto";
-  }
+  },
 
-  // methods: {
-  //   removeNotification(id) {
-  //     let index = this.$store.state.billing.practice_billing_notifications.findIndex(
-  //       billing => billing.id === id
-  //     );
-  //     if (index >= 0) {
-  //       this.$store.commit("billing/REMOVE_PRACTICE_BILLING_NOTIFICATION", id);
-  //     }
-  //   }
-  // }
+  methods: {
+    getInvoice(id) {
+      this.$axios.$get(`/api/v1/locum/locum-invoices/${id}`).then(res => {
+        this.invoice = res.data.locum_invoice;
+      });
+    }
+    // removeNotification(id) {
+    //   let index = this.$store.state.billing.locum_billing_notifications.findIndex(
+    //     billing => billing.id === id
+    //   );
+    //   if (index >= 0) {
+    //     this.$store.commit("billing/REMOVE_LOCUM_BILLING_NOTIFICATION", id);
+    //   }
+    // }
+  }
 };
 </script>
 
 <style scoped>
-.invoice-modal {
-  position: fixed;
-  top: 0;
-  right: 0;
-  margin-right: 0%;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  /* border-left: solid 2px #edf2f7; */
-  transition: all 0.3s ease-in-out;
-  /* background-color: rgb(80, 80, 80); */
-  background: #fff;
+.modal-container {
   z-index: 512;
 }
 @media screen and (min-width: 1200px) {
-  .invoice-modal {
-    width: 70%;
+  .modal-container {
+    width: 80%;
   }
 }
 .save-button {

@@ -72,12 +72,28 @@ export default {
   },
   mounted() {
     this.getInit();
-    this.$socket.on("Practice Notification Update Profile", user => {
+    this.$socket.on(
+      "Practice Notification Update Profile",
+      this.updatePermissions
+    );
+    this.$socket.on(
+      "Practice Notification Delete Profile",
+      this.toggleConfirmationModal
+    );
+  },
+  destroyed() {
+    this.removeListener();
+  },
+  methods: {
+    toggleConfirmationModal() {
+      this.confirmation_modal = true;
+    },
+    updatePermissions(user) {
       if (
+        user &&
         user.practice_detail &&
-        user.practice_detail.role &&
-        user.practice_detail.role.permissions &&
-        user.practice_detail.role.permissions.length > 0
+        user.practice_detail.permissions &&
+        user.practice_detail.permissions.length > 0
       ) {
         this.$store.commit(
           "auth/SET_PERMISSIONS",
@@ -86,12 +102,17 @@ export default {
       } else {
         this.$store.commit("auth/SET_PERMISSIONS", []);
       }
-    });
-    this.$socket.on("Practice Notification Delete Profile", () => {
-      this.confirmation_modal = true;
-    });
-  },
-  methods: {
+    },
+    removeListener() {
+      this.$socket.removeListener(
+        "Locum Notification Update Profile",
+        this.updatePermissions
+      );
+      this.$socket.removeListener(
+        "Locum Notification Delete Profile",
+        this.toggleConfirmationModal
+      );
+    },
     hasPermissions(permissions) {
       if (permissions && permissions.length) {
         let enable = false;
@@ -108,6 +129,13 @@ export default {
     getInit() {
       let domain = this.$auth.user.domain;
       let accountStatus = this.$auth.user.status;
+      let hubType = ''
+      if(domain === 'Practice') {
+        if(this.$auth.user.practice_detail.practice.type === 'Hub'){
+          hubType = this.$auth.user.practice_detail.practice.hub_type
+          console.log('hub type', hubType)
+        }
+      }
       let addedLists = [];
       let defaultLists = [
         { name: "Dashboard", route: "/dashboard" },
@@ -133,17 +161,16 @@ export default {
           }
         ];
         if (["Active", "Dormant"].includes(accountStatus)) {
-          addedLists.push({
-            name: "Surgery Management",
-            route: "/surgery-management"
-          });
-          addedLists.push({ name: "My Banks", route: "/my-banks" });
-          addedLists.push({
-            name: "Sessions",
-            route: "/sessions",
-            permissions: ["View Sessions Job"]
-          });
-          addedLists.push({ name: "Billing", route: "/practice-billing" });
+          addedLists.push({ name: "Surgery Management", route: "/surgery-management" });
+          if(hubType !== 'Type 2') {
+            addedLists.push({ name: "My Banks", route: "/my-banks" });
+            addedLists.push({
+              name: "Sessions",
+              route: "/sessions",
+              permissions: ["View Sessions Job"]
+            });
+            addedLists.push({ name: "Billing", route: "/practice-billing" });
+          }
           addedLists.push({ name: "Invite", route: "/invite" });
           addedLists.push({
             name: "Roles and Permissions",
@@ -152,7 +179,6 @@ export default {
           });
         }
       }
-
       if (domain === "Locum") {
         addedLists = [
           { name: "Compliance", route: "/compliance" },
@@ -176,7 +202,7 @@ export default {
           console.log("One Signal Logged Out");
         })
         .catch(err => {
-          console.log("err", err.response.data);
+          console.log("err", err.response || err);
           if (err.response.data.message) {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
@@ -195,7 +221,7 @@ export default {
           this.$router.push("/");
         })
         .catch(err => {
-          console.log("err", err.response.data);
+          console.log("err", err.response || err);
           if (err.response.data.message) {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,

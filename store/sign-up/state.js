@@ -3,7 +3,29 @@ export default () => ({
     // register practice
     search_results: [],
     practice_details: {
-        surgery_id: ''
+        // surgery_id: ''
+        name: '',
+        phone_number: '',
+        code: '',
+        clinical_commissioning_group_name: '',
+        address_line_1: '',
+        address_line_2: '',
+        address_line_3: '',
+        address_post_code: '',
+        coordinates_x: '',
+        coordinates_y: '',
+    },
+    practice_surgery_details: {
+        name: '',
+        phone_number: '',
+        code: '',
+        clinical_commissioning_group_name: '',
+        address_line_1: '',
+        address_line_2: '',
+        address_line_3: '',
+        address_post_code: '',
+        coordinates_x: '',
+        coordinates_y: '',
     },
     practice_account_details: {
         type: '',
@@ -19,6 +41,8 @@ export default () => ({
         password: '',
         password_confirmation: ''
     },
+    practice_detail_form_error: [],
+    practice_surgery_detail_form_error: [],
     practice_account_detail_form_error: [],
     //  register locum
     professions: [],

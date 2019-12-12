@@ -871,7 +871,7 @@ export default {
           }
         })
         .catch(err => {
-          console.log("err", err.response.data);
+          console.log("err", err.response || err);
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "danger",

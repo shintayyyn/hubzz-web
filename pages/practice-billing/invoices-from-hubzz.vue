@@ -171,6 +171,9 @@ export default {
         response.data.data.practice_invoices
           ? response.data.data.practice_invoices
           : [];
+
+      console.log("invoices from hubzz");
+
       return {
         totalInvoices,
         invoices

@@ -13,8 +13,28 @@
             :error="this.formError.find(item => item.field === 'type')"
             :items="types"
           />
+          <AppInput
+            v-if="form.type === 'Hub'"
+            v-model="form.hub_type"
+            :type="'select'"
+            :name="'hub_type'"
+            :label="'Hub Type'"
+            :placeholder="'Select...'"
+            :error="this.formError.find(item => item.field === 'hub_type')"
+            :items="hub_types"
+          />
+          <div class="m-2 bg-gray-300 rounded-lg">
+            <div v-if="form.hub_type === 'Type 1'" class="m-3 p-2 my-2">
+              <p class="font-semibold text-lg">Hub</p>
+              <p>Hubs can create jobs for their own surgeries, and can invite Spokes, and create jobs for them.</p>
+            </div>
+            <div v-if="form.hub_type === 'Type 2'" class="m-3 p-2 my-2">
+              <p class="font-semibold text-lg">Hub - Healthboard</p>
+              <p>Healthboard Hubs cannot create jobs for their own surgeries, and can only create jobs for their Spokes.</p>
+            </div>
+          </div>
 
-          <AppFilterSearch
+          <!-- <AppFilterSearch
             v-if="form.type === 'Spoke'"
             v-model="form.parent_surgery_id"
             :name="'parent_surgery_id'"
@@ -23,9 +43,9 @@
             :error="formError.find(item => item.field === 'parent_surgery_id')"
             :url="'/api/v1/surgeries'"
             :limitItem="1"
-          />
+          /> -->
 
-          <AppFilterSearch
+          <!-- <AppFilterSearch
             v-if="form.type === 'Hub'"
             v-model="form.children_surgery_id"
             :name="'children_surgery_id'"
@@ -33,7 +53,7 @@
             :placeholder="'Select...'"
             :error="formError.find(item => item.field === 'children_surgery_id')"
             :url="'/api/v1/surgeries'"
-          />
+          /> -->
 
           <AppInput
             v-model="form.title"
@@ -123,7 +143,7 @@
             :placeholder="''"
             :error="this.formError.find(item => item.field === 'privacy_policy')"
             @blur="CheckEmptyField(form.privacy_policy,'privacy_policy')"
-          /> -->
+          />-->
           <div class="flex flex-col py-2 mb-6">
             <div class="flex justify-end">
               <div
@@ -132,14 +152,19 @@
               >{{formError.find(item => item.field === 'privacy_policy').message}}</div>
             </div>
             <div class="flex flex-row flex-no-wrap justify-between">
-                <input v-model="form.privacy_policy" id="privacy_policy" type="checkbox" class="checkbox mt-1 mr-1" />
-                <label for="privacy_policy" class="text-xs sm:text-sm py-1">
-                  I agree with the
-                  <span
-                    class="cursor-pointer underline"
-                    @click="modal = true"
-                  >Terms and Conditions and Privacy Policy</span> of Hubzz
-                </label>
+              <input
+                v-model="form.privacy_policy"
+                id="privacy_policy"
+                type="checkbox"
+                class="checkbox mt-1 mr-1"
+              />
+              <label for="privacy_policy" class="text-xs sm:text-sm py-1">
+                I agree with the
+                <span
+                  class="cursor-pointer underline"
+                  @click="modal = true"
+                >Terms and Conditions and Privacy Policy</span> of Hubzz
+              </label>
             </div>
           </div>
         </form>
@@ -147,7 +172,7 @@
     </div>
 
     <div class="flex justify-center mt-4">
-      <AppButton :label="'<<'" @click="$emit('nextTab', 'PracticeDetails')" />
+      <AppButton :label="'<<'" @click="$emit('nextTab', 'PracticeSurgeryDetails')" />
       <div class="mx-2"></div>
       <AppButton :label="'Next'" @click="signUp" />
     </div>
@@ -156,7 +181,13 @@
     <transition name="slide" mode="out-in">
       <div class="py-8 modal-container" v-if="modal">
         <div class="px-4 lg:px-10 pb-4">
-          <svgicon name="left-arrow" height="32" width="32" @click="modal = false" class="cursor-pointer " />
+          <svgicon
+            name="left-arrow"
+            height="32"
+            width="32"
+            @click="modal = false"
+            class="cursor-pointer"
+          />
         </div>
         <TermsAndConditions />
       </div>
@@ -175,6 +206,10 @@ const types = [
   { value: "Spoke", label: "Spoke" },
   { value: "Stand Alone", label: "Stand Alone" }
 ];
+const hub_types = [
+  { value: "Type 1", label:"Type 1" },
+  { value: "Type 2", label:"Type 2" },
+];
 const practice_roles = [
   { value: "Partner", label: "Partner" },
   { value: "Practice Manager", label: "Practice Manager" },
@@ -191,11 +226,13 @@ export default {
   data() {
     return {
       types,
+      hub_types,
       practice_roles,
       form: {
         type: "",
-        parent_surgery_id: [],
-        children_surgery_id: [],
+        hub_type: "",
+        // parent_surgery_id: [],
+        // children_surgery_id: [],
         title: "",
         first_name: "",
         last_name: "",
@@ -242,6 +279,9 @@ export default {
           this.formError.push(item);
         });
       }
+    },
+    "form.hub_type"(value) {
+      this.CheckEmptyField(this.form.hub_type, "hub_type");
     },
     "form.title"(value) {
       this.CheckEmptyField(this.form.first_name, "first_name");
@@ -292,27 +332,27 @@ export default {
     signUp() {
       this.formError = [];
       let notRequired = ["title", "suffix"];
-      if (this.form.type === "Hub") {
-        notRequired.push("parent_surgery_id");
-      }
+      // if (this.form.type === "Hub") {
+      //   notRequired.push("parent_surgery_id");
+      // }
       if (this.form.type === "Spoke") {
-        notRequired.push("children_surgery_id");
+        notRequired.push("hub_type");
       }
-      if (this.form.type === "Stand Alone") {
-        notRequired.push("parent_surgery_id");
-        notRequired.push("children_surgery_id");
-      }
+      // if (this.form.type === "Stand Alone") {
+      //   notRequired.push("parent_surgery_id");
+      //   notRequired.push("children_surgery_id");
+      // }
       this.Validate(this.form, notRequired);
       if (!this.formError.length) {
         let submitForm = {};
         submitForm = {
           ...this.form,
-          children_surgery_id: this.form.children_surgery_id.map(
-            item => item.value
-          ),
-          parent_surgery_id: this.form.parent_surgery_id.map(
-            item => item.value
-          )[0]
+          // children_surgery_id: this.form.children_surgery_id.map(
+          //   item => item.value
+          // ),
+          // parent_surgery_id: this.form.parent_surgery_id.map(
+          //   item => item.value
+          // )[0]
         };
         console.log(this.form);
         console.log(submitForm);

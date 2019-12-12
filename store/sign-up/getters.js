@@ -1,5 +1,5 @@
 export default {
-    // 
+    // LOCUMS
     accountDetails(state) {
         return state.account_details;
     },
@@ -29,6 +29,19 @@ export default {
     },
     payrollFormError(state) {
         return state.payroll_detail_form_error;
+    },
+    // PRACTICE
+    practiceDetails(state) {
+        return state.practice_details
+    },
+    practiceFormError(state) {
+        return state.practice_detail_form_error
+    },
+    practiceSurgeryDetails(state) {
+        return state.practice_surgery_details
+    },
+    practiceSurgeryFormError(state) {
+        return state.practice_surgery_detail_form_error
     },
     practiceAccountDetails(state) {
         return state.practice_account_details;

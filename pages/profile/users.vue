@@ -317,7 +317,7 @@ export default {
           return (this.totalUsers = res.data.count);
         })
         .catch(err => {
-          console.log("err", err.response.data.message);
+          console.log("err", err.response || err.message);
           if (err.response.data.message) {
             return this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
@@ -341,7 +341,7 @@ export default {
           });
         })
         .catch(err => {
-          console.log("err", err.response.data.message);
+          console.log("err", err.response || err.message);
           if (err.response.data.message) {
             return this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
