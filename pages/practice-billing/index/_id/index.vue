@@ -2,13 +2,14 @@
   <div class="invoice-modal shadow-lg">
     <div class="px-4 md:px-8 py-4 max-w-5xl h-screen">
       <div class="flex flex-row flex-wrap justify-start">
-        <nuxt-link :to="`/practice-billing`">
+        <nuxt-link :to="{ path: `/practice-billing`, query: {...$route.query }}">
           <svgicon name="left-arrow" height="32" width="32" />
         </nuxt-link>
       </div>
       <PracticeBillingInvoiceForm
         :selectedInvoice="invoice"
         @updateInvoice="$emit('updateInvoice', $event)"
+        @close="$router.push({ path: '/practice-billing', query: {...$route.query }})"
       />
     </div>
   </div>
@@ -32,6 +33,7 @@ export default {
       const response = await app.$axios.get(
         `/api/v1/practice/locum-invoices/${params.id}`
       );
+      console.log(response);
       const invoice =
         response.data && response.data.data && response.data.data.locum_invoice
           ? response.data.data.locum_invoice

@@ -5,6 +5,8 @@ export default {
     // REGISTER PRACTICE
     SET_PRACTICE_DETAILS(state, payload) {
         state.search_results = payload.search_results
+        state.practice_details.surgery_id = payload.surgery_id
+        console.log(state.practice_details.surgery_id)
         state.practice_details.name = payload.name
         state.practice_details.phone_number = payload.phone_number
         state.practice_details.code = payload.code
@@ -12,9 +14,9 @@ export default {
         state.practice_details.address_line_1 = payload.address_line_1
         state.practice_details.address_line_2 = payload.address_line_2
         state.practice_details.address_line_3 = payload.address_line_3
-        state.practice_details.address_post_code = payload.address_post_code
-        state.practice_details.coordinates_x = payload.coordinates_x
-        state.practice_details.coordinates_y = payload.coordinates_y
+        state.practice_details.postcode = payload.postcode
+        state.practice_details.coordinate_x = payload.coordinate_x
+        state.practice_details.coordinate_y = payload.coordinate_y
     },
     SET_PRACTICE_SURGERY_DETAILS(state, payload) {
         state.practice_surgery_details.name = payload.name
@@ -24,9 +26,9 @@ export default {
         state.practice_surgery_details.address_line_1 = payload.address_line_1
         state.practice_surgery_details.address_line_2 = payload.address_line_2
         state.practice_surgery_details.address_line_3 = payload.address_line_3
-        state.practice_surgery_details.address_post_code = payload.address_post_code
-        state.practice_surgery_details.coordinates_x = payload.coordinates_x
-        state.practice_surgery_details.coordinates_y = payload.coordinates_y
+        state.practice_surgery_details.postcode = payload.postcode
+        state.practice_surgery_details.coordinate_x = payload.coordinate_x
+        state.practice_surgery_details.coordinate_y = payload.coordinate_y
     },
     SET_PRACTICE_ACCOUNT_DETAILS(state, payload) {
         state.practice_account_details.type = payload.type
@@ -53,9 +55,9 @@ export default {
         state.practice_details.address_line_1 = ''
         state.practice_details.address_line_2 = ''
         state.practice_details.address_line_3 = ''
-        state.practice_details.address_post_code = ''
-        state.practice_details.coordinates_x = ''
-        state.practice_details.coordinates_y = ''
+        state.practice_details.postcode = ''
+        state.practice_details.coordinate_x = ''
+        state.practice_details.coordinate_y = ''
     },
     CLEAR_FORM_PRACTICE_SURGERY(state) {
         state.practice_surgery_details.name = ''
@@ -65,9 +67,9 @@ export default {
         state.practice_surgery_details.address_line_1 = ''
         state.practice_surgery_details.address_line_2 = ''
         state.practice_surgery_details.address_line_3 = ''
-        state.practice_surgery_details.address_post_code = ''
-        state.practice_surgery_details.coordinates_x = ''
-        state.practice_surgery_details.coordinates_y = ''
+        state.practice_surgery_details.postcode = ''
+        state.practice_surgery_details.coordinate_x = ''
+        state.practice_surgery_details.coordinate_y = ''
     },
     CLEAR_FORM_PRACTICE_ACCOUNT(state) {
         state.practice_account_details.title = ''
@@ -83,7 +85,7 @@ export default {
     SET_PRACTICE_DETAIL_FORM_ERROR(state, payload) {
         state.practice_detail_form_error = payload
     },
-    SET_PRACTICE_SURGERY_FORM_ERROR(state, payload) {
+    SET_PRACTICE_SURGERY_DETAIL_FORM_ERROR(state, payload) {
         state.practice_surgery_detail_form_error = payload
     },
     SET_PRACTICE_ACCOUNT_DETAIL_FORM_ERROR(state, payload) {

@@ -159,6 +159,7 @@ export default {
       });
     },
     async goTo(notification) {
+      console.log(notification);
       let type = notification.type;
       let id = notification.id;
       let status = notification.status
@@ -198,13 +199,17 @@ export default {
           url = this.$auth.user.domain === "Practice" ? "/sessions" : "/jobs";
         }
       } else if (type === "Billings") {
+        this.$route.query.status;
         url =
           this.$auth.user.domain === "Practice"
-            ? "/practice-billing/invoices-from-locums"
-            : "/locum-billing/invoices";
+            ? "/practice-billing"
+            : "/locum-billing";
       }
 
       let path = `${url}/${id}`;
+
+      console.log(url, id);
+      // return;
 
       if (type === "Jobs") {
         let routeStatus = "";
@@ -228,14 +233,18 @@ export default {
           });
         }, 500);
       } else if (type === "Billings") {
-        console.log(`${url}/${id}`);
-
-        this.$router.push({
-          path: `${url}`
-        });
+        if (id !== this.$route.params.id) {
+          this.$router.push({
+            path: `${url}`,
+            query: { ...this.$route.query, status: notification.status }
+          });
+        }
         setTimeout(() => {
           this.$router.push({
-            path: `${url}/${id}`
+            path: `${url}/${
+              this.$auth.user.domain === "Practice" ? "" : "invoices/"
+            }${id}`,
+            query: { ...this.$route.query, status: notification.status }
           });
         }, 500);
       }

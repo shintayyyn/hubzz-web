@@ -125,14 +125,14 @@ export default {
     jobSurgeryName() {
       let job = this.isJobPart ? this.propJob.job : this.propJob;
       return job.type === "Private"
-        ? job.private_job.private_practice.surgery.name
-        : job.platform_job.practice.surgery.name;
+        ? job.private_job.private_practice.name
+        : job.platform_job.practice.name;
     },
     jobSurgeryCode() {
       let job = this.isJobPart ? this.propJob.job : this.propJob;
       return job.type === "Private"
-        ? job.private_job.private_practice.surgery.code
-        : job.platform_job.practice.surgery.code;
+        ? job.private_job.private_practice.code
+        : job.platform_job.practice.code;
     },
     jobShift() {
       let job = this.isJobPart ? this.propJob.job : this.propJob;

@@ -74,7 +74,7 @@
           <template v-for="(item, index) in mandatory">
             <tr
               class="text-xs sm:text-sm text-left bg-gray-200"
-              v-if="activeLoading.includes(item.id)"
+              v-if="activeLoading.includes(item.info.id)"
               :key="item.id"
             >
               <td
@@ -153,7 +153,7 @@
                     type="file"
                     :ref="`${item.id}_file_mandatory_compliance`"
                     class="inputfile hidden"
-                    @input="onFileUpdate($event, item.info.id, index)"
+                    @input="onFileUpdate($event, item.info.id, index, item.info.id)"
                     @click.stop
                   />
                   <svgicon name="cloud-upload" height="24" width="24" />
@@ -405,7 +405,7 @@ export default {
       mandatoryTrainingModal: false
     };
   },
-  async asyncData({ app, error }) {
+  async asyncData({ app, store, error }) {
     try {
       const responseUser = await app.$axios.$get(`/api/v1/me`);
       const user =
@@ -494,19 +494,41 @@ export default {
     }
   },
   mounted() {
-    this.$socket.on("Locum Notification Compliance Approved", file => {
-      let index = this.mandatory.findIndex(
-        item =>
-          item.info.compliance_document.name === file.compliance_document.name
-      );
-      let updatedFile = this.mandatory.find(
-        item =>
-          item.info.compliance_document.name === file.compliance_document.name
-      );
-      if (index >= 0) {
-        this.mandatory.splice(index, 1, { ...updatedFile, info: file });
-      }
-    });
+    this.$socket.on(
+      "Locum Notification Number Pending",
+      this.getNumberceRealTime
+    );
+    this.$socket.on(
+      "Locum Notification Number Rejected",
+      this.getNumberceRealTime
+    );
+    this.$socket.on(
+      "Locum Notification Number Verified",
+      this.getNumberceRealTime
+    );
+    this.$socket.on(
+      "Locum Notification Compliance Approved",
+      this.getComplianceRealTime
+    );
+    this.$socket.on(
+      "Locum Notification Compliance Rejected",
+      this.getComplianceRealTime
+    );
+    this.$socket.on(
+      "Locum Notification Compliance Pending",
+      this.getComplianceRealTime
+    );
+    this.$socket.on(
+      "Locum Notification Compliance Expiring",
+      this.getComplianceRealTime
+    );
+    this.$socket.on(
+      "Locum Notification Compliance Expired",
+      this.getComplianceRealTime
+    );
+  },
+  destroyed() {
+    this.removeListener();
   },
   watch: {
     $route(value) {
@@ -522,6 +544,74 @@ export default {
     }
   },
   methods: {
+    async getNumberceRealTime(file) {
+      if (!file) {
+        return;
+      }
+      this.CheckUserVerification();
+      // let index = this.mandatory.findIndex(
+      //   item =>
+      //     item.info.compliance_document.name === file.compliance_document.name
+      // );
+      // let updatedFile = this.mandatory.find(
+      //   item =>
+      //     item.info.compliance_document.name === file.compliance_document.name
+      // );
+      // if (index >= 0) {
+      //   this.mandatory.splice(index, 1, { ...updatedFile, info: file });
+      // }
+    },
+    async getComplianceRealTime(file) {
+      if (!file) {
+        return;
+      }
+      this.CheckUserVerification();
+      let index = this.mandatory.findIndex(
+        item =>
+          item.info.compliance_document.name === file.compliance_document.name
+      );
+      let updatedFile = this.mandatory.find(
+        item =>
+          item.info.compliance_document.name === file.compliance_document.name
+      );
+      if (index >= 0) {
+        this.mandatory.splice(index, 1, { ...updatedFile, info: file });
+      }
+    },
+    removeListener() {
+      this.$socket.removeListener(
+        "Locum Notification Number Pending",
+        this.getNumberceRealTime
+      );
+      this.$socket.removeListener(
+        "Locum Notification Number Rejected",
+        this.getNumberceRealTime
+      );
+      this.$socket.removeListener(
+        "Locum Notification Number Verified",
+        this.getNumberceRealTime
+      );
+      this.$socket.removeListener(
+        "Locum Notification Compliance Approved",
+        this.getComplianceRealTime
+      );
+      this.$socket.removeListener(
+        "Locum Notification Compliance Pending",
+        this.getComplianceRealTime
+      );
+      this.$socket.removeListener(
+        "Locum Notification Compliance Rejected",
+        this.getComplianceRealTime
+      );
+      this.$socket.removeListener(
+        "Locum Notification Compliance Expiring",
+        this.getComplianceRealTime
+      );
+      this.$socket.removeListener(
+        "Locum Notification Compliance Expired",
+        this.getComplianceRealTime
+      );
+    },
     show(item, type) {
       if ((item.info && item.info.file) || item.file) {
         if (type === "compliance") {

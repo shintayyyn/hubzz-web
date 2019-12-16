@@ -13,6 +13,12 @@
     >
       <AppNotification />
       <JobNotification />
+      <AppConfirmationModal
+        :label="`User account ${user_verification.status ? user_verification.status : ''}`"
+        :confirmLabel="'OK'"
+        :modal="user_verification.modal"
+        @confirm="refresh"
+      />
       <nuxt
         class="mb-4"
         :class="
@@ -26,6 +32,7 @@
 </template>
 <script>
 import AppSideBar from "@/components/AppSideBar";
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
 import AppNotification from "@/components/AppNotification";
 import JobNotification from "@/components/JobNotification";
 import AppHeader from "@/components/AppHeader";
@@ -34,6 +41,7 @@ export default {
   transitions: "page",
   components: {
     AppSideBar,
+    AppConfirmationModal,
     AppNotification,
     JobNotification,
     AppHeader
@@ -42,6 +50,11 @@ export default {
     return {
       signout_modal: false
     };
+  },
+  computed: {
+    user_verification() {
+      return this.$store.state.user_verification;
+    }
   },
   middleware: "isNotAuthenticated",
   watch: {
@@ -56,6 +69,9 @@ export default {
     close() {
       this.$store.commit("TOGGLE_SIDEBAR", false);
       document.body.style.overflow = "auto";
+    },
+    refresh() {
+      window.location.reload();
     }
   }
 };

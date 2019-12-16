@@ -584,7 +584,7 @@ export default {
               status: "success",
               text: [`${res.message}`]
             });
-            this.$router.push("/practice-billing");
+            this.$emit("close");
           })
           .catch(err => {
             if (err.response.data.message) {
