@@ -809,7 +809,7 @@ export default {
     addMandatory() {
       this.$store.commit("calendar/CREATE_JOB_MODAL", false);
       this.$store.commit("calendar/CLEAR_REPOST_JOB");
-      this.$router.push("/profile/practice");
+      this.$router.push("/profile");
     },
     uncheckMandatory(value) {
       this.form.mandatory_training_id = this.form.mandatory_training_id.filter(
