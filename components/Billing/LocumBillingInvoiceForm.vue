@@ -575,13 +575,14 @@ export default {
     }
   },
   async created() {
-    this.loadingSurgeries = true;
     if (!this.selectedInvoice) {
+      this.loadingSurgeries = true;
       await this.getSurgeriesPromiseAll();
+      this.loadingSurgeries = false;
     }
-    this.loadingSurgeries = false;
   },
   mounted() {
+    console.log(this.$route);
     if (this.selectedInvoice) {
       this.type = this.selectedInvoice.type;
       this.selectedSurgery = this.selectedInvoice.surgery;
@@ -1216,6 +1217,7 @@ export default {
       this.form.total_amount = this.amount;
       this.form.final = final;
       this.form.items = [];
+
       this.selectedJobParts.forEach(jobPart => {
         this.form.items.push({
           ...jobPart,
@@ -1227,6 +1229,10 @@ export default {
             : false
         });
       });
+      console.log(this.selectedJobParts);
+      console.log(this.form.items);
+      console.log(this.disputedInvoices);
+      return;
       this.Validate(this.form, ["final", "total_amount"]);
       if (!this.formError.length) {
         if (!this.$route.params.id) {
@@ -1235,7 +1241,7 @@ export default {
             .$post(`/api/v1/locum/locum-invoices`, this.form)
             .then(res => {
               this.$emit("addInvoice", res.data.locum_invoice);
-              this.$router.push("/locum-billing");
+              // this.$router.push("/locum-billing");
               this.$store.commit("SET_NOTIFICATION", {
                 enabled: true,
                 status: "success",
@@ -1273,7 +1279,7 @@ export default {
                 status: "success",
                 text: [`${res.message}`]
               });
-              this.$router.push("/locum-billing");
+              // this.$router.push("/locum-billing");
             })
             .catch(err => {
               console.log("err", err.response || err);

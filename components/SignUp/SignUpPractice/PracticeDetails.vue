@@ -152,7 +152,7 @@ export default {
         item => item.id === this.selectedSurgeryId
       );
       this.$store.commit("sign-up/SET_PRACTICE_DETAILS", {
-        // surgery_id: item.id,
+        surgery_id: item.id,
         name: item.name,
         phone_number: item.phone_number,
         code: item.code,
@@ -161,7 +161,7 @@ export default {
         address_line_1: item.address.line_1,
         address_line_2: item.address.line_2,
         address_line_3: item.address.line_3,
-        address_post_code: item.address.post_code,
+        postcode: item.address.post_code,
         coordinates_x: item.address.coordinates
           ? item.address.coordinates.x
           : null,

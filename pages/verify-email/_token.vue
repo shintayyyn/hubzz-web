@@ -10,28 +10,36 @@
   </section>
 </template>
 <script>
-import AppButton from '@/components/Base/AppButton'
+import AppButton from "@/components/Base/AppButton";
 export default {
-  layout: 'verification',
+  layout: "verification",
   components: {
     AppButton
   },
   async asyncData({ app, params }) {
     try {
-      let response = await app.$axios.$get(`/api/v1/email-verification/${params.token}`)
-      const email_verification_token = response.data.email_verification_token
+      let response = await app.$axios.$get(
+        `/api/v1/email-verification/${params.token}`
+      );
+      const email_verification_token = response.data.email_verification_token;
 
       return {
         email_verification_token
-      }
+      };
     } catch (err) {
-      throw err
+      throw err;
     }
   },
-  created() {
-    this.$axios.$post(`/api/v1/email-verification/${this.email_verification_token.token}`).then(res => {
-
-    })
+  mounted() {
+    this.$axios
+      .$post(
+        `/api/v1/email-verification/${this.email_verification_token.token}`
+      )
+      .then(res => {
+        if (this.$auth.loggedIn) {
+          this.$auth.fetchUser();
+        }
+      });
   }
-}
+};
 </script>

@@ -58,37 +58,12 @@ export default {
       throw err;
     }
   },
-  // watch: {
-  //   $route({ params }) {
-  //     if (params && params.id) {
-  //       this.removeNotification(parseInt(params.id));
-  //       this.getInvoice(params.id);
-  //     }
-  //   }
-  // },
-  mounted() {
-    document.body.style.overflow = "hidden";
-    // this.removeNotification(parseInt(this.$route.params.id));
-  },
-
-  destroyed() {
-    document.body.style.overflow = "auto";
-  },
-
   methods: {
     getInvoice(id) {
       this.$axios.$get(`/api/v1/locum/locum-invoices/${id}`).then(res => {
         this.invoice = res.data.locum_invoice;
       });
     }
-    // removeNotification(id) {
-    //   let index = this.$store.state.billing.locum_billing_notifications.findIndex(
-    //     billing => billing.id === id
-    //   );
-    //   if (index >= 0) {
-    //     this.$store.commit("billing/REMOVE_LOCUM_BILLING_NOTIFICATION", id);
-    //   }
-    // }
   }
 };
 </script>
@@ -102,36 +77,4 @@ export default {
     width: 80%;
   }
 }
-.save-button {
-  border-color: #ecc94b;
-  background-color: #ecc94b;
-}
-.save-button:hover {
-  color: #fff;
-  /* background-color: rgb(80, 80, 80); */
-  background-color: #d1b244;
-  border-color: #d1b244;
-  cursor: pointer;
-}
-.option-list {
-  transition: all 0.3s ease-in-out;
-  height: 0;
-}
-.slide-down {
-  transition: all 0.3s ease-in-out;
-  height: 200px;
-}
-/* surgery */
-.loader-surgery {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0.5;
-  color: #ccc;
-}
-/* absolute bg-gray-300 w-full h-full top-0 bottom-0 left-0 right-0 */
 </style>

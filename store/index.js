@@ -9,7 +9,11 @@ export const state = () => ({
 	},
 	toggled_sidebar: false,
 	mobile: false,
-	locum_private_practices: []
+	locum_private_practices: [],
+	user_verification: {
+		modal: false,
+		status: ''
+	}
 });
 
 export const mutations = {
@@ -34,6 +38,9 @@ export const mutations = {
 	},
 	IS_MOBILE(state, payload) {
 		state.mobile = payload;
+	},
+	SET_USER_VERIFICATION_MODAL(state, payload) {
+		state.user_verification = payload
 	}
 };
 
@@ -48,7 +55,7 @@ export const actions = {
 			console.log(err.response);
 		}
 	},
-	async leaveRoom({}, payload) {
+	async leaveRoom({ }, payload) {
 		// await this.$axios.$post('api/v1/socket/leave-room', {
 		//   socket_id: payload.socket_id,
 		//   room_name: payload.room_name

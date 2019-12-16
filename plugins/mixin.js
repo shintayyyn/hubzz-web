@@ -1,6 +1,14 @@
 import Vue from "vue";
 Vue.mixin({
   methods: {
+    async CheckUserVerification() {
+      let oldStatus = this.$auth.user.status
+      const response = await this.$axios.$get(`/api/v1/me`)
+      let newStatus = response.data.user.status
+      if (newStatus !== oldStatus) {
+        this.$store.commit('SET_USER_VERIFICATION_MODAL', { modal: true, status: newStatus === 'Active' ? 'verified' : 'not verified' })
+      }
+    },
     scrollToTop() {
       window.scrollTo(0, 0);
     },

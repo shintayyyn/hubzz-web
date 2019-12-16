@@ -298,9 +298,57 @@ export default {
       this.locumForm.address_line_3 = this.user.address_detail.address.line_3;
       this.locumForm.post_code = this.user.address_detail.address.post_code;
       this.email_verifiedAt = this.user.email_verified_at;
+
+      this.$socket.on(
+        "User Notification Email Pending",
+        this.getEmailVerificationRealTime
+      );
+      this.$socket.on(
+        "User Notification Email Verified",
+        this.getEmailVerificationRealTime
+      );
     }
   },
   methods: {
+    async getEmailVerificationRealTime(file) {
+      if (!file) {
+        return;
+      }
+      this.CheckUserVerification();
+      // let index = this.mandatory.findIndex(
+      //   item =>
+      //     item.info.compliance_document.name === file.compliance_document.name
+      // );
+      // let updatedFile = this.mandatory.find(
+      //   item =>
+      //     item.info.compliance_document.name === file.compliance_document.name
+      // );
+      // if (index >= 0) {
+      //   this.mandatory.splice(index, 1, { ...updatedFile, info: file });
+      // }
+    },
+    resendEmailVerification() {
+      this.$axios
+        .$post(`/api/v1/email-verification/resend`)
+        .then(res => {
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: [`${res.message}`]
+          });
+        })
+        .catch(err => {
+          console.log("err", err.response || err);
+          if (err.response.data.message) {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "danger",
+              text: [`${err.response.data.message}`]
+            });
+            throw err;
+          }
+        });
+    },
     onSelect(value) {
       let address_components = value.details.result.address_components;
       let postal_code = address_components.find(component =>
@@ -379,6 +427,7 @@ export default {
                 status: "success",
                 text: ["Saved"]
               });
+              this.CheckUserVerification();
             })
             .catch(err => {
               console.log("err", err.response || err);

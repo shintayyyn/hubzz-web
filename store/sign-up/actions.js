@@ -34,10 +34,9 @@ export default {
     },
     registeredPractice({ state, commit }) {
         let form = {}
-        const surgeryId = state.practice_details.surgery_id
         form = {
+            ...state.practice_surgery_details,
             ...state.practice_account_details,
-            surgery_id: surgeryId,
         }
         this.$axios
             .$post(`/api/v1/register/practice`, form)
@@ -52,8 +51,26 @@ export default {
                     err.response.data.error_messages &&
                     err.response.data.error_messages.length > 0
                 ) {
+                    const practiceSurgeryDetailError = err.response.data.error_messages.filter((errorMessage) => {
+                        return (
+                            errorMessage.field === 'name' ||
+                            errorMessage.field === 'phone_number' ||
+                            errorMessage.field === 'clinical_commissioning_group_name' ||
+                            errorMessage.field === 'code' ||
+                            errorMessage.field === 'address_line_1' ||
+                            errorMessage.field === 'address_line_2' ||
+                            errorMessage.field === 'address_line_3' ||
+                            errorMessage.field === 'postcode' ||
+                            errorMessage.field === 'coordinates_x' ||
+                            errorMessage.field === 'coordinates_y'
+                        )
+                    })
+                    commit('SET_PRACTICE_SURGERY_DETAIL_FORM_ERROR', practiceSurgeryDetailError)
+
                     const practiceAccountDetailError = err.response.data.error_messages.filter((errorMessage) => {
                         return (
+                            errorMessage.field === 'type' ||
+                            errorMessage.field === 'hub_type' ||
                             errorMessage.field === 'title' ||
                             errorMessage.field === 'first_name' ||
                             errorMessage.field === 'last_name' ||
@@ -62,8 +79,7 @@ export default {
                             errorMessage.field === 'practice_type_id' ||
                             errorMessage.field === 'email' ||
                             errorMessage.field === 'password' ||
-                            errorMessage.field === 'password_confirmation' ||
-                            errorMessage.field === 'surgery_id'
+                            errorMessage.field === 'password_confirmation'
                         )
                     })
                     commit('SET_PRACTICE_ACCOUNT_DETAIL_FORM_ERROR', practiceAccountDetailError)

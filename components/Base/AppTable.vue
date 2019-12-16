@@ -1,7 +1,7 @@
 <template>
   <section class="relative">
     <div class="relative">
-      <AppLoading :loading="loading" spinner/>
+      <AppLoading :loading="loading" spinner />
       <div
         class="relative flex flex-col overflow-x-auto w-full px-2 mt-4"
         :style="totalPages > 1 && `min-height: ${minHeight}`"
@@ -38,7 +38,7 @@
           class="row py-2"
         >
           <nuxt-link
-            :to="{ path: `${routerLink}/${item.id}`, query: { ...$route.query } }"
+            :to="{ path: `${routerLink}/${routerId ? item[routerId] : item.id}`, query: { ...$route.query } }"
             :event="!routerLink ? '' : 'click'"
           >
             <div
@@ -127,6 +127,9 @@ export default {
       required: false
     },
     routerLink: {
+      type: String
+    },
+    routerId: {
       type: String
     },
     customWidth: {
