@@ -42,7 +42,7 @@
               :key="item.id"
               :disabled="isDisabled(item.id)"
               @click="select(item.id)"
-            >{{item.name}}</button>
+            >{{item.name}} {{isDisabled(item.id)}}</button>
           </div>
         </div>
       </div>
@@ -85,93 +85,158 @@ export default {
     };
   },
   computed: {
-    getLocumOngoingJobs() {
-      return this.$store.getters["jobs/getLocumOngoingJobs"];
-    },
-    getLocumAllocatedJobs() {
-      return this.$store.getters["jobs/getLocumAllocatedJobs"];
-    },
-    getLocumUnavailabilities() {
-      return this.$store.getters["jobs/getLocumUnavailabilities"];
-    },
+    // getLocumOngoingJobs() {
+    //   return this.$store.getters["jobs/getLocumOngoingJobs"];
+    // },
+    // getLocumAllocatedJobs() {
+    //   return this.$store.getters["jobs/getLocumAllocatedJobs"];
+    // },
+    // getLocumUnavailabilities() {
+    //   return this.$store.getters["jobs/getLocumUnavailabilities"];
+    // },
     selectedDate() {
       return this.$store.state.availability.selected_date;
     }
   },
   async asyncData({ app, store, params, error }) {
     store.commit("availability/SELECT_DATE", params.id);
+    try {
+      const [
+        shifts,
+        allocatedDate,
+        ongoingDate,
+        unavailableDate
+      ] = await Promise.all([
+        app.$axios.$get(`/api/v1/shifts`).then(res => {
+          const shifts = res.data.shifts;
+          return shifts;
+        }),
+        app.$axios
+          .$get(`/api/v1/locum/jobs`, {
+            params: {
+              locum_status: ["Allocated"],
+              calendar_date_start: `${params.id}:gte`,
+              calendar_date_end: `${params.id}:lte`,
+              limit: 100000000
+            }
+          })
+          .then(res => {
+            const allocatedDate = res.data.jobs.map(item => {
+              return item.shift;
+            });
+            return allocatedDate;
+          }),
+        app.$axios
+          .$get("/api/v1/locum/job-parts", {
+            params: {
+              locum_status: ["Ongoing"],
+              calendar_date_start: `${params.id}:gte`,
+              calendar_date_end: `${params.id}:lte`,
+              limit: 100000000
+            }
+          })
+          .then(res => {
+            const ongoingDate = res.data.job_parts.map(item => {
+              return item.job.shift;
+            });
+            return ongoingDate;
+          }),
+        app.$axios
+          .$get("/api/v1/locum/unavailabilities", {
+            params: {
+              date_start: `${params.id}:gte`,
+              date_end: `${params.id}:lte`,
+              limit: 100000000
+            }
+          })
+          .then(res => {
+            let isUnavailable = res.data.unavailabilities[0];
+            if (isUnavailable) {
+              const unavailableDate = {
+                id: isUnavailable.id,
+                shifts: isUnavailable.shifts
+              };
+              return unavailableDate;
+            }
+          })
+      ]);
 
-    const response = await app.$axios.$get(`/api/v1/shifts`);
-    const shifts =
-      response.data && response.data.shifts ? response.data.shifts : [];
-    return {
-      shifts
-    };
+      return {
+        shifts,
+        allocatedDate,
+        ongoingDate,
+        unavailableDate
+      };
+    } catch (err) {
+      console.log("err", err.response || err);
+      throw err;
+    }
   },
   mounted() {
-    let unavailableDate = null;
-    this.ongoingDate = null;
-    this.allocatedDate = null;
-
-    if (
-      this.getLocumUnavailabilities &&
-      this.getLocumUnavailabilities.length > 0
-    ) {
-      let isUnavailable = this.getLocumUnavailabilities.find(
-        unavailable => unavailable.date === this.selectedDate
-      );
-      if (isUnavailable) {
-        unavailableDate = {
-          id: isUnavailable.id,
-          shifts: isUnavailable.shifts
-        };
-      }
-    }
-
-    if (this.getLocumOngoingJobs && this.getLocumOngoingJobs.length > 0) {
-      let hasLocumOngoingJob = this.getLocumOngoingJobs.filter(job_part =>
-        this.getDateArray(job_part.date_start, job_part.date_end).includes(
-          this.selectedDate
-        )
-      );
-      if (hasLocumOngoingJob && hasLocumOngoingJob.length > 0) {
-        this.ongoingDate = hasLocumOngoingJob.map(item => {
-          return item.job.shift;
-        });
-      }
-    }
-
-    if (this.getLocumAllocatedJobs && this.getLocumAllocatedJobs.length > 0) {
-      let hasLocumAllocatedJob = this.getLocumAllocatedJobs.filter(job =>
-        this.getDateArray(job.date_start, job.date_end).includes(
-          this.selectedDate
-        )
-      );
-      if (hasLocumAllocatedJob && hasLocumAllocatedJob.length > 0) {
-        this.allocatedDate = hasLocumAllocatedJob.map(item => {
-          return item.shift;
-        });
-      }
-    }
-
-    if (unavailableDate) {
-      let shifts = unavailableDate.shifts;
-      if (this.allocatedDate && this.allocatedDate.length > 0) {
-        this.allocatedDate.forEach(item => {
-          shifts = unavailableDate.shifts.filter(shift => shift.id !== item.id);
-        });
-      }
-      if (this.ongoingDate && this.ongoingDate.length > 0) {
-        this.ongoingDate.forEach(item => {
-          shifts = unavailableDate.shifts.filter(shift => shift.id !== item.id);
-        });
-      }
-
-      unavailableDate.shifts = shifts;
-
-      this.form.shift_id = [];
-      this.form.shift_id = unavailableDate.shifts.map(shift => shift.id);
-    }
+    // let unavailableDate = null;
+    // this.ongoingDate = null;
+    // this.allocatedDate = null;
+    // if (
+    //   this.getLocumUnavailabilities &&
+    //   this.getLocumUnavailabilities.length > 0
+    // ) {
+    // let isUnavailable = this.getLocumUnavailabilities.find(
+    //   unavailable => unavailable.date === this.selectedDate
+    // );
+    // if (isUnavailable) {
+    //   unavailableDate = {
+    //     id: isUnavailable.id,
+    //     shifts: isUnavailable.shifts
+    //   };
+    // }
+    // }
+    // if (this.getLocumOngoingJobs && this.getLocumOngoingJobs.length > 0) {
+    //   let hasLocumOngoingJob = this.getLocumOngoingJobs.filter(job_part =>
+    //     this.getDateArray(job_part.date_start, job_part.date_end).includes(
+    //       this.selectedDate
+    //     )
+    //   );
+    //   if (hasLocumOngoingJob && hasLocumOngoingJob.length > 0) {
+    //     this.ongoingDate = hasLocumOngoingJob.map(item => {
+    //       return item.job.shift;
+    //     });
+    //   }
+    // }
+    // if (this.getLocumAllocatedJobs && this.getLocumAllocatedJobs.length > 0) {
+    //   let hasLocumAllocatedJob = this.getLocumAllocatedJobs.filter(job =>
+    //     this.getDateArray(job.date_start, job.date_end).includes(
+    //       this.selectedDate
+    //     )
+    //   );
+    //   if (hasLocumAllocatedJob && hasLocumAllocatedJob.length > 0) {
+    //     this.allocatedDate = hasLocumAllocatedJob.map(item => {
+    //       return item.shift;
+    //     });
+    //   }
+    // }
+    // if (this.unavailableDate) {
+    //   let shifts = this.unavailableDate.shifts;
+    //   if (this.allocatedDate && this.allocatedDate.length > 0) {
+    //     this.allocatedDate.forEach(item => {
+    //       shifts = this.unavailableDate.shifts.filter(
+    //         shift => shift.id !== item.id
+    //       );
+    //     });
+    //   }
+    //   if (this.ongoingDate && this.ongoingDate.length > 0) {
+    //     this.ongoingDate.forEach(item => {
+    //       shifts = this.unavailableDate.shifts.filter(
+    //         shift => shift.id !== item.id
+    //       );
+    //     });
+    //   }
+    //   this.unavailableDate.shifts = shifts;
+    //   this.form.shift_id = [];
+    //   this.form.shift_id = this.unavailableDate.shifts.map(shift => shift.id);
+    // }
+    this.form.shift_id = this.unavailableDate
+      ? this.unavailableDate.shifts.map(shift => shift.id)
+      : [];
     this.form.date_start = this.$store.state.availability.selected_date;
     this.form.date_end = this.$store.state.availability.selected_date;
   },
@@ -188,13 +253,13 @@ export default {
       return this.form.shift_id.includes(id);
     },
     isDisabled(id) {
-      return (
+      return Boolean(
         (this.allocatedDate &&
           this.allocatedDate.length &&
           this.allocatedDate.find(shift => shift.id === id)) ||
-        (this.ongoingDate &&
-          this.ongoingDate.length &&
-          this.ongoingDate.find(shift => shift.id === id))
+          (this.ongoingDate &&
+            this.ongoingDate.length &&
+            this.ongoingDate.find(shift => shift.id === id))
       );
     },
     save() {
