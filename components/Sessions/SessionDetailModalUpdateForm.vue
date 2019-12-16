@@ -879,7 +879,13 @@ export default {
         notRequired.push("update_accepted_until");
       }
 
-      if (["15", "30", "60", false, "false"].includes(this.unpaid_breaks)) {
+      console.log(this.unpaid_breaks);
+
+      if (
+        ["15", 15, "30", 30, "60", 60, false, "false"].includes(
+          this.unpaid_breaks
+        )
+      ) {
         notRequired.push("unpaid_breaks_in_minutes");
       }
 
@@ -932,9 +938,7 @@ export default {
 
         this.form.auto_assign_at =
           this.auto_assign_job === true || this.auto_assign_job === "true"
-            ? `${this.$moment().format("YYYY-MM-DD")} ${this.$moment().format(
-                "HH:mm"
-              )}`
+            ? "1970-01-01 00:00"
             : null;
 
         this.form.selection_date =
