@@ -31,12 +31,12 @@
             @blur="CheckEmptyField(form.code,'code')"
           />
           <AppPostCode
-            v-model="form.address_post_code"
-            :name="'address_post_code'"
+            v-model="form.postcode"
+            :name="'postcode'"
             :label="'Post code'"
-            :error="formError.find(item => item.field === 'address_post_code')"
+            :error="formError.find(item => item.field === 'postcode')"
             :inStyle="'background-color:#dae1e7;border-color:white'"
-            @blur="CheckEmptyField(form.address_post_code, 'address_post_code')"
+            @blur="CheckEmptyField(form.postcode, 'postcode')"
           />
           <AppInput
             v-model="form.address_line_1"
@@ -95,9 +95,9 @@ export default {
         address_line_1: "",
         address_line_2: "",
         address_line_3: "",
-        address_post_code: "",
-        coordinates_x: "",
-        coordinates_y: ""
+        postcode: "",
+        coordinate_x: "",
+        coordinate_y: ""
       },
       formError: []
     };
@@ -122,7 +122,7 @@ export default {
       }
     }
   },
-  mounted() {
+  async mounted() {
     this.form.name = this.practiceDetails.name;
     this.form.phone_number = this.practiceDetails.phone_number;
     this.form.code = this.practiceDetails.code;
@@ -130,9 +130,7 @@ export default {
     this.form.address_line_1 = this.practiceDetails.address_line_1;
     this.form.address_line_2 = this.practiceDetails.address_line_2;
     this.form.address_line_3 = this.practiceDetails.address_line_3;
-    this.form.address_post_code = this.practiceDetails.address_post_code;
-    this.form.coordinates_x = this.practiceDetails.coordinates_x;
-    this.form.coordinates_y = this.practiceDetails.coordinates_y;
+    this.form.postcode = this.practiceDetails.postcode;
 
     if (this.practiceSurgeryFormError.length > 0) {
       this.practiceSurgeryFormError.forEach(item => {
@@ -141,14 +139,40 @@ export default {
     }
   },
   methods: {
-    signUp() {
+    checkCoordinates(postcode) {
+      return this.$axios
+        .$post("/api/v1/postcode-to-coordinates", { postcode })
+        .then(res => {
+          if (res.data && res.data.postcode_coordinate) {
+            this.form.coordinate_x = res.data.postcode_coordinate.coordinate_x;
+            this.form.coordinate_y = res.data.postcode_coordinate.coordinate_y;
+          }
+        })
+        .catch(err => {
+          console.log("err", err.response || err);
+          if (
+            err.response.data.status === 404 &&
+            err.response.data.message === "Postcode Coordinate Not Found"
+          ) {
+            this.formError.push({
+              field: "postcode",
+              message: "Invalid post code"
+            });
+          }
+        });
+    },
+    async signUp() {
       this.formError = [];
-      // input coordinate here manually
-      this.form.coordinates_x = "";
-      this.form.coordinates_y = "";
-      this.Validate(this.form, []);
+      await this.checkCoordinates(this.form.postcode);
+      this.Validate(this.form, [
+        "coordinate_x",
+        "coordinate_y",
+        "address_line_2",
+        "address_line_4",
+        "address_line_5"
+      ]);
       if (!this.formError.length) {
-        this.$store.commit("sign-up/SET_PRACTICE_SURGERY_DETAILS", submitForm);
+        this.$store.commit("sign-up/SET_PRACTICE_SURGERY_DETAILS", this.form);
         this.$emit("nextTab", "PracticeAccountDetails");
       }
     }

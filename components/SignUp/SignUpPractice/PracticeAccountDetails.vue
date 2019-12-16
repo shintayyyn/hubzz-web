@@ -34,27 +34,6 @@
             </div>
           </div>
 
-          <!-- <AppFilterSearch
-            v-if="form.type === 'Spoke'"
-            v-model="form.parent_surgery_id"
-            :name="'parent_surgery_id'"
-            :label="'Parent Surgery'"
-            :placeholder="'Select...'"
-            :error="formError.find(item => item.field === 'parent_surgery_id')"
-            :url="'/api/v1/surgeries'"
-            :limitItem="1"
-          /> -->
-
-          <!-- <AppFilterSearch
-            v-if="form.type === 'Hub'"
-            v-model="form.children_surgery_id"
-            :name="'children_surgery_id'"
-            :label="'Children Surgery'"
-            :placeholder="'Select...'"
-            :error="formError.find(item => item.field === 'children_surgery_id')"
-            :url="'/api/v1/surgeries'"
-          /> -->
-
           <AppInput
             v-model="form.title"
             :type="'text'"
@@ -135,15 +114,7 @@
             :error="this.formError.find(item => item.field === 'password_confirmation')"
             @blur="CheckEmptyField(form.password_confirmation,'password_confirmation')"
           />
-          <!-- <AppInput
-            v-model="form.privacy_policy"
-            :type="'single-checkbox'"
-            :name="'privacy_policy'"
-            :label="'I agree with the Terms and Conditions and Privacy Policy of Hubzz'"
-            :placeholder="''"
-            :error="this.formError.find(item => item.field === 'privacy_policy')"
-            @blur="CheckEmptyField(form.privacy_policy,'privacy_policy')"
-          />-->
+
           <div class="flex flex-col py-2 mb-6">
             <div class="flex justify-end">
               <div
@@ -207,8 +178,8 @@ const types = [
   { value: "Stand Alone", label: "Stand Alone" }
 ];
 const hub_types = [
-  { value: "Type 1", label:"Type 1" },
-  { value: "Type 2", label:"Type 2" },
+  { value: "Type 1", label: "Type 1" },
+  { value: "Type 2", label: "Type 2" }
 ];
 const practice_roles = [
   { value: "Partner", label: "Partner" },
@@ -231,8 +202,6 @@ export default {
       form: {
         type: "",
         hub_type: "",
-        // parent_surgery_id: [],
-        // children_surgery_id: [],
         title: "",
         first_name: "",
         last_name: "",
@@ -267,12 +236,6 @@ export default {
     });
   },
   watch: {
-    // "form.type"(newValue, oldValue) {
-    //   if (newValue && oldValue) {
-    //     this.form.parent_surgery_id = [];
-    //     this.form.children_surgery_id = [];
-    //   }
-    // },
     practiceAccountFormError(value) {
       if (value.length > 0) {
         value.forEach(item => {
@@ -346,7 +309,7 @@ export default {
       if (!this.formError.length) {
         let submitForm = {};
         submitForm = {
-          ...this.form,
+          ...this.form
           // children_surgery_id: this.form.children_surgery_id.map(
           //   item => item.value
           // ),
@@ -354,8 +317,6 @@ export default {
           //   item => item.value
           // )[0]
         };
-        console.log(this.form);
-        console.log(submitForm);
         this.$store.commit("sign-up/SET_PRACTICE_ACCOUNT_DETAILS", submitForm);
         setTimeout(() => {
           this.$store.dispatch("sign-up/registeredPractice");

@@ -3,7 +3,7 @@ export default () => ({
     // register practice
     search_results: [],
     practice_details: {
-        // surgery_id: ''
+        surgery_id: '',
         name: '',
         phone_number: '',
         code: '',
@@ -11,9 +11,9 @@ export default () => ({
         address_line_1: '',
         address_line_2: '',
         address_line_3: '',
-        address_post_code: '',
-        coordinates_x: '',
-        coordinates_y: '',
+        postcode: '',
+        coordinate_x: '',
+        coordinate_y: '',
     },
     practice_surgery_details: {
         name: '',
@@ -23,14 +23,13 @@ export default () => ({
         address_line_1: '',
         address_line_2: '',
         address_line_3: '',
-        address_post_code: '',
-        coordinates_x: '',
-        coordinates_y: '',
+        postcode: '',
+        coordinate_x: '',
+        coordinate_y: '',
     },
     practice_account_details: {
         type: '',
-        parent_surgery_id: [],
-        children_surgery_id: [],
+        hub_type: '',
         title: '',
         first_name: '',
         last_name: '',

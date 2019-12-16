@@ -105,7 +105,6 @@ export default {
       this.predictions = [];
       this.showLists = false;
       // this.$emit("onSelect", selectedPostCode);
-      console.log(selectedPostCode.postcode);
       this.$emit("input", selectedPostCode.postcode);
     },
     getPredictions: debounce(function(input) {
