@@ -64,7 +64,60 @@ export default {
       }
     }
   },
+  mounted() {
+    this.$socket.on(
+      "Practice Notification Document Created",
+      this.getPracticeVerification
+    );
+    this.$socket.on(
+      "Practice Notification Document Updated",
+      this.getPracticeVerification
+    );
+    this.$socket.on(
+      "Practice Notification Rates Update",
+      this.getPracticeVerification
+    );
+    this.$socket.on(
+      "Practice Notification User Update",
+      this.getPracticeVerification
+    );
+    this.$socket.on(
+      "Practice Notification Practice Update",
+      this.getPracticeVerification
+    );
+  },
+  destroyed() {
+    this.removeListener();
+  },
   methods: {
+    getPracticeVerification(payload) {
+      if (!payload) {
+        return;
+      }
+      this.CheckUserVerification();
+    },
+    removeListener() {
+      this.$socket.removeListener(
+        "Practice Notification Document Created",
+        this.getPracticeVerification
+      );
+      this.$socket.removeListener(
+        "Practice Notification Document Updated",
+        this.getPracticeVerification
+      );
+      this.$socket.removeListener(
+        "Practice Notification Rates Update",
+        this.getPracticeVerification
+      );
+      this.$socket.removeListener(
+        "Practice Notification User Update",
+        this.getPracticeVerification
+      );
+      this.$socket.removeListener(
+        "Practice Notification Practice Update",
+        this.getPracticeVerification
+      );
+    },
     close() {
       this.$store.commit("TOGGLE_SIDEBAR", false);
       document.body.style.overflow = "auto";
