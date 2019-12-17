@@ -86,7 +86,7 @@
               />
               <AppInput
                 v-model="form.duration_for_each_appointment"
-                :type="'text'"
+                :type="'number'"
                 :name="'duration_for_each_appointment'"
                 :label="'Duration of each appointment?'"
                 :placeholder="''"
@@ -809,7 +809,7 @@ export default {
     addMandatory() {
       this.$store.commit("calendar/CREATE_JOB_MODAL", false);
       this.$store.commit("calendar/CLEAR_REPOST_JOB");
-      this.$router.push("/profile/practice");
+      this.$router.push("/profile");
     },
     uncheckMandatory(value) {
       this.form.mandatory_training_id = this.form.mandatory_training_id.filter(
@@ -896,7 +896,7 @@ export default {
 
         this.form.auto_assign_at =
           this.auto_assign_job === true || this.auto_assign_job === "true"
-            ? this.$moment().format("YYYY-MM-DD")
+            ? "1970-01-01 00:00"
             : null;
 
         this.form.selection_date =
@@ -923,7 +923,7 @@ export default {
             .add(1, "days")}`;
         }
 
-        if (["15", "30", "60"].includes(this.unpaid_breaks)) {
+        if (["15", 15, "30", 30, "60", 60].includes(this.unpaid_breaks)) {
           this.form.unpaid_breaks_in_minutes = this.unpaid_breaks;
         }
         if (this.unpaid_breaks === "other") {

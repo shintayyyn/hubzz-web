@@ -2,12 +2,6 @@
   <div class="flex flex-col py-2 mb-3 md:mb-6" v-on-clickaway="toggledOff">
     <div class="relative flex flex-row flex-no-wrap justify-between">
       <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
-      <!-- <div class="flex">
-        <div
-          class="absolute rounded-lg right-0 bg-red-500 p-1 text-xs sm:text-sm text-white"
-          v-if="error"
-        >{{error.message}}</div>
-      </div>-->
     </div>
     <div class="flex flex-col justify-start">
       <input
@@ -40,19 +34,7 @@
             @mouseover="activeIndex = index"
             @click="add()"
           >
-            <div>{{item.postcode}}</div>
-            <!-- <div class="icon">
-              <img :src="item.details.result.icon" />
-            </div>
-            <div class="leading-normal mx-2">
-              <span
-                v-html="mainTextFormat(item.structured_formatting.main_text, item.structured_formatting.main_text_matched_substrings[0].length)"
-              ></span>
-              <span
-                class="text-gray-500"
-                v-html="subTextFormat(item.structured_formatting.secondary_text, item.structured_formatting.secondary_text_matched_substrings ? item.structured_formatting.secondary_text_matched_substrings[0].length : 0)"
-              ></span>
-            </div>-->
+            <div>{{item.label}}</div>
           </div>
         </div>
       </div>
@@ -72,6 +54,8 @@ export default {
     value: [String, Object],
     name: String,
     label: String,
+    urlIndex: String,
+    dataIndex: String,
     error: Object,
     inStyle: String
   },
@@ -96,6 +80,14 @@ export default {
       }
     }
   },
+  computed: {
+    url() {
+      return this.urlIndex ? this.urlIndex : "/api/v1/postcodes";
+    },
+    filteredItems() {
+      return this.predictions;
+    }
+  },
   created() {
     this.search = this.value;
   },
@@ -104,7 +96,6 @@ export default {
       let selectedPostCode = this.predictions[this.activeIndex];
       this.predictions = [];
       this.showLists = false;
-      // this.$emit("onSelect", selectedPostCode);
       this.$emit("input", selectedPostCode.postcode);
     },
     getPredictions: debounce(function(input) {
@@ -113,22 +104,34 @@ export default {
         offset: 0,
         limit: 5
       };
-      // this.$axios.$get(`/api/v1/predictions`, { params }).then(res => {
-      //   if (res.predictions.length > 0) {
-      //     this.predictions = res.predictions;
-      //     this.showLists = true;
-      //   } else {
-      //     this.predictions = [];
-      //     this.showLists = false;
-      //   }
-      // });
-      this.$axios.$get(`/api/v1/postcodes`, { params }).then(res => {
-        if (res.data.postcodes.length > 0) {
-          this.predictions = res.data.postcodes;
-          this.showLists = true;
-        } else {
-          this.predictions = [];
-          this.showLists = false;
+      this.predictions = [];
+      this.$axios.$get(this.url, { params }).then(res => {
+        if (this.dataIndex) {
+          if (res.data[this.dataIndex].length > 0) {
+            res.data[this.dataIndex].forEach(item => {
+              this.predictions.push({
+                label: item.name,
+                value: item.id
+              });
+            });
+            this.showLists = true;
+          } else {
+            this.predictions = [];
+            this.showLists = false;
+          }
+        } else if (!this.dataIndex) {
+          if (res.data.postcodes.length > 0) {
+            res.data.postcodes.forEach(postCode => {
+              this.predictions.push({
+                label: postCode.postcode,
+                value: postCode.id
+              });
+            });
+            this.showLists = true;
+          } else {
+            this.predictions = [];
+            this.showLists = false;
+          }
         }
       });
     }, 250),
@@ -140,18 +143,6 @@ export default {
     toggledOff() {
       this.showLists = false;
     },
-    // mainTextFormat(str, matchLength) {
-    //   return `<strong>${str.slice(0, matchLength)}</strong>${str.slice(
-    //     matchLength,
-    //     str.length
-    //   )}`;
-    // },
-    // subTextFormat(str, matchLength) {
-    //   return `<strong>${str.slice(0, matchLength)}</strong>${str.slice(
-    //     matchLength,
-    //     str.length
-    //   )}`;
-    // },
     handleKeyDownEvent(e) {
       if (!this.showLists) {
         return;

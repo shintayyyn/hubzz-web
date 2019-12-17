@@ -298,7 +298,7 @@ export default {
       // if (this.form.type === "Hub") {
       //   notRequired.push("parent_surgery_id");
       // }
-      if (this.form.type === "Spoke") {
+      if (["Spoke", "Stand Alone"].includes(this.form.type)) {
         notRequired.push("hub_type");
       }
       // if (this.form.type === "Stand Alone") {
