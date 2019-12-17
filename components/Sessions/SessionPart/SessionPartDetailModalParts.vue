@@ -1,7 +1,11 @@
 <template>
   <div class="relative flex flex-col w-full my-5">
     <div class="text-md font-bold">Job Parts</div>
+    <div class="relative flex w-full" v-if="parts.length === 0 && loading" style="min-height:80px">
+      <AppLoading :loading="loading" spinner />
+    </div>
     <AppTable
+      v-if="parts.length > 0"
       :total="total"
       :items="parts"
       :currentPage="current_page"
@@ -17,23 +21,23 @@
 </template>
 <script>
 import AppTable from "@/components/Base/AppTable";
+import AppLoading from "@/components/Base/AppLoading";
 export default {
   components: {
-    AppTable
+    AppTable,
+    AppLoading
   },
-
   props: ["job_id", "disabledLink"],
   data() {
     return {
+      loading: false,
+      total: 0,
       parts: [],
       current_page: 1,
       // app table params
       params: {
-        job_id: 0,
-        offset: 0,
-        limit: 5
+        job_id: null
       },
-      total: 0,
       // app table
       columns: [
         {
@@ -56,8 +60,7 @@ export default {
           dataIndex: "status",
           class: "text-center"
         }
-      ],
-      loading: false
+      ]
     };
   },
 
@@ -77,9 +80,41 @@ export default {
       } else if (this.$route.path.includes("/dashboard")) {
         url = "/dashboard";
       } else if (this.$route.path.includes("/surgery-management")) {
-        url =  "/surgery-management/practice-spokes"
+        url = "/surgery-management/practice-spokes";
       }
       return url;
+    }
+  },
+  async mounted() {
+    this.loading = true;
+    this.params.job_id = this.job_id;
+    try {
+      Promise.all([
+        this.$axios.$get(`/api/v1/practice/job-parts/count`, {
+          params: this.params
+        }),
+        this.$axios.$get(`/api/v1/practice/job-parts?offset=0&limit=5`, {
+          params: this.params
+        })
+      ])
+        .then(([responseCount, responseJobParts]) => {
+          this.total = responseCount.data.count;
+          this.parts = responseJobParts.data.job_parts;
+        })
+        .finally(() => {
+          this.loading = false;
+        });
+    } catch (err) {
+      console.log("err", err.response || err);
+      if (err.response.data.message) {
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "danger",
+          text: [`${err.response.data.message}`]
+        });
+      }
+      this.loading = false;
+      throw err;
     }
   },
   created() {

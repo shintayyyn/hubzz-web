@@ -96,7 +96,7 @@ export default {
       let selectedPostCode = this.predictions[this.activeIndex];
       this.predictions = [];
       this.showLists = false;
-      this.$emit("input", selectedPostCode.postcode);
+      this.$emit("input", selectedPostCode.label);
     },
     getPredictions: debounce(function(input) {
       const params = {
