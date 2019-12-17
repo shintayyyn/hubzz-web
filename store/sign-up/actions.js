@@ -41,10 +41,12 @@ export default {
         this.$axios
             .$post(`/api/v1/register/practice`, form)
             .then((res) => {
-                commit('CLEAR_FORM_PRACTICE_DETAILS')
+                commit('CLEAR_REGISTER_PRACTICE_FORM')
+                commit('CLEAR_PRACTICE_FORM_ERROR')
                 this.$router.push('/sign-up/success')
             })
             .catch((err) => {
+                console.log('err', err.response || err)
                 if (
                     err.response &&
                     err.response.data &&
@@ -83,6 +85,11 @@ export default {
                         )
                     })
                     commit('SET_PRACTICE_ACCOUNT_DETAIL_FORM_ERROR', practiceAccountDetailError)
+                    if (practiceSurgeryDetailError.length > 0) {
+                        // commit('SET_ACTIVE_COMPONENT', 'LocumAccountDetails')
+                    } else if (practiceAccountDetailError.length > 0) {
+                        // commit('SET_ACTIVE_COMPONENT', 'LocumAddressDetails')
+                    }
                 }
             })
     },
@@ -102,8 +109,7 @@ export default {
                 this.$router.push('/sign-up/success')
             })
             .catch((err) => {
-                console.log(err.response.data)
-                // set formError to store
+                console.log('err', err.response || err)
                 if (
                     err.response &&
                     err.response.data &&
@@ -177,18 +183,13 @@ export default {
                     if (accountDetailError.length > 0) {
                         commit('SET_ACTIVE_COMPONENT', 'LocumAccountDetails')
                     } else if (addressDetailError.length > 0) {
-                        //   commit('SET_ACTIVE_TAB', 'address_details')
                         commit('SET_ACTIVE_COMPONENT', 'LocumAddressDetails')
                     } else if (professionalDetailError.length > 0) {
-                        //   commit('SET_ACTIVE_TAB', 'professional_details')
                         commit('SET_ACTIVE_COMPONENT', 'LocumProfessionalDetails')
                     } else if (credentialDetailError.length > 0) {
-                        // this.$router.push('/sign-up/locum')
-                        //   commit('SET_ACTIVE_TAB', 'credential_details')
                         commit('SET_ACTIVE_COMPONENT', 'LocumCredentialDetails')
                     }
                 }
             })
-        //response
     }
 }

@@ -129,7 +129,11 @@ export default {
     getInit() {
       let domain = this.$auth.user.domain;
       let accountStatus = this.$auth.user.status;
-      let practiceStatus = this.$auth.user.practice_detail.practice.status;
+      let practiceStatus =
+        this.$auth.user.domain === "Practice" &&
+        this.$auth.user.practice_detail.practice.status
+          ? this.$auth.user.practice_detail.practice.status
+          : null;
       let hubType = "";
       if (domain === "Practice") {
         if (this.$auth.user.practice_detail.practice.type === "Hub") {
@@ -173,7 +177,7 @@ export default {
               route: "/sessions",
               permissions: ["View Sessions Job"]
             });
-            if (practiceStatus === "Active") {
+            if (practiceStatus && practiceStatus === "Active") {
               addedLists.push({ name: "Billing", route: "/practice-billing" });
             }
           }
