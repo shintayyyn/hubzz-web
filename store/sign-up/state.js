@@ -1,5 +1,4 @@
 export default () => ({
-    activeComponent: 'LocumAccountDetails',
     // register practice
     search_results: [],
     practice_details: {
@@ -44,6 +43,7 @@ export default () => ({
     practice_surgery_detail_form_error: [],
     practice_account_detail_form_error: [],
     //  register locum
+    activeComponent: 'LocumAccountDetails',
     professions: [],
     gp_qualifications: [],
     others_qualifications: [],

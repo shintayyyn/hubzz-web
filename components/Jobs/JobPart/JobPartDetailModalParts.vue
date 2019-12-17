@@ -37,9 +37,7 @@ export default {
       current_page: 1,
       // app table params
       params: {
-        job_id: null,
-        offset: 0,
-        limit: 5
+        job_id: null
       },
       // app table
       columns: [
@@ -94,7 +92,9 @@ export default {
         this.$axios.$get(`/api/v1/locum/job-parts/count`, {
           params: this.params
         }),
-        this.$axios.$get(`/api/v1/locum/job-parts`, { params: this.params })
+        this.$axios.$get(`/api/v1/locum/job-parts?offset=0&limit=5`, {
+          params: this.params
+        })
       ])
         .then(([responseCount, responseJobParts]) => {
           this.total = responseCount.data.count;

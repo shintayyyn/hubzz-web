@@ -12,6 +12,7 @@
             :placeholder="'Select...'"
             :error="this.formError.find(item => item.field === 'type')"
             :items="types"
+            @blur="CheckEmptyField(form.type, 'type')"
           />
           <AppInput
             v-if="form.type === 'Hub'"
@@ -23,7 +24,7 @@
             :error="this.formError.find(item => item.field === 'hub_type')"
             :items="hub_types"
           />
-          <div class="m-2 bg-gray-300 rounded-lg">
+          <div class="m-2 bg-gray-300 rounded-lg" v-if="form.type === 'Hub'">
             <div v-if="form.hub_type === 'Type 1'" class="m-3 p-2 my-2">
               <p class="font-semibold text-lg">Hub</p>
               <p>Hubs can create jobs for their own surgeries, and can invite Spokes, and create jobs for them.</p>
@@ -242,49 +243,9 @@ export default {
           this.formError.push(item);
         });
       }
-    },
-    "form.hub_type"(value) {
-      this.CheckEmptyField(this.form.hub_type, "hub_type");
-    },
-    "form.title"(value) {
-      this.CheckEmptyField(this.form.first_name, "first_name");
-    },
-    "form.last_name"(value) {
-      this.CheckEmptyField(this.form.last_name, "last_name");
-    },
-    "form.practice_role"(value) {
-      this.CheckEmptyField(this.form.practice_role, "practice_role");
-    },
-    "form.practice_list"(value) {
-      this.CheckEmptyField(this.form.practice_list, "practice_list");
-    },
-    "form.email"(value) {
-      this.CheckEmptyField(this.form.email, "email");
-    },
-    "form.password"(value) {
-      this.CheckEmptyField(this.form.password, "password");
-    },
-    "form.password_confirmation"(value) {
-      this.CheckEmptyField(
-        this.form.password_confirmation,
-        "password_confirmation"
-      );
     }
   },
   mounted() {
-    // this.form.type = this.practiceAccountDetails.type;
-    // this.form.parent_surgery_id = this.practiceAccountDetails.parent_surgery_id;
-    // this.form.children_surgery_id = this.practiceAccountDetails.children_surgery_id;
-    // this.form.title = this.practiceAccountDetails.title;
-    // this.form.first_name = this.practiceAccountDetails.first_name;
-    // this.form.last_name = this.practiceAccountDetails.last_name;
-    // this.form.suffix = this.practiceAccountDetails.suffix;
-    // this.form.practice_role = this.practiceAccountDetails.practice_role;
-    // this.form.practice_type_id = this.practiceAccountDetails.practice_type_id;
-    // this.form.email = this.practiceAccountDetails.email;
-    // this.form.password = this.practiceAccountDetails.password;
-    // this.form.password_confirmation = this.practiceAccountDetails.password_confirmation;
-
     if (this.practiceAccountFormError.length > 0) {
       this.practiceAccountFormError.forEach(item => {
         this.formError.push(item);
@@ -295,27 +256,14 @@ export default {
     signUp() {
       this.formError = [];
       let notRequired = ["title", "suffix"];
-      // if (this.form.type === "Hub") {
-      //   notRequired.push("parent_surgery_id");
-      // }
       if (["Spoke", "Stand Alone"].includes(this.form.type)) {
         notRequired.push("hub_type");
       }
-      // if (this.form.type === "Stand Alone") {
-      //   notRequired.push("parent_surgery_id");
-      //   notRequired.push("children_surgery_id");
-      // }
       this.Validate(this.form, notRequired);
       if (!this.formError.length) {
         let submitForm = {};
         submitForm = {
           ...this.form
-          // children_surgery_id: this.form.children_surgery_id.map(
-          //   item => item.value
-          // ),
-          // parent_surgery_id: this.form.parent_surgery_id.map(
-          //   item => item.value
-          // )[0]
         };
         this.$store.commit("sign-up/SET_PRACTICE_ACCOUNT_DETAILS", submitForm);
         setTimeout(() => {

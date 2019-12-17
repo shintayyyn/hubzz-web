@@ -6,7 +6,6 @@ export default {
     SET_PRACTICE_DETAILS(state, payload) {
         state.search_results = payload.search_results
         state.practice_details.surgery_id = payload.surgery_id
-        console.log(state.practice_details.surgery_id)
         state.practice_details.name = payload.name
         state.practice_details.phone_number = payload.phone_number
         state.practice_details.code = payload.code
@@ -46,8 +45,9 @@ export default {
         state.practice_account_details.practice_role = payload.practice_role
         state.practice_account_details.practice_type_id = payload.practice_type_id
     },
-    CLEAR_FORM_PRACTICE_DETAILS(state) {
+    CLEAR_REGISTER_PRACTICE_FORM(state) {
         state.search_results = []
+        state.practice_details.surgery_id = ''
         state.practice_details.name = ''
         state.practice_details.phone_number = ''
         state.practice_details.code = ''
@@ -58,8 +58,6 @@ export default {
         state.practice_details.postcode = ''
         state.practice_details.coordinate_x = ''
         state.practice_details.coordinate_y = ''
-    },
-    CLEAR_FORM_PRACTICE_SURGERY(state) {
         state.practice_surgery_details.name = ''
         state.practice_surgery_details.phone_number = ''
         state.practice_surgery_details.code = ''
@@ -70,8 +68,8 @@ export default {
         state.practice_surgery_details.postcode = ''
         state.practice_surgery_details.coordinate_x = ''
         state.practice_surgery_details.coordinate_y = ''
-    },
-    CLEAR_FORM_PRACTICE_ACCOUNT(state) {
+        state.practice_account_details.type = ''
+        state.practice_account_details.hub_type = ''
         state.practice_account_details.title = ''
         state.practice_account_details.first_name = ''
         state.practice_account_details.last_name = ''
@@ -90,6 +88,11 @@ export default {
     },
     SET_PRACTICE_ACCOUNT_DETAIL_FORM_ERROR(state, payload) {
         state.practice_account_detail_form_error = payload
+    },
+    CLEAR_PRACTICE_FORM_ERROR(state) {
+        state.practice_detail_form_error = []
+        state.practice_surgery_detail_form_error = []
+        state.practice_account_detail_form_error = []
     },
     // REGISTER LOCUM
     SET_PROFESSIONS(state, payload) {
@@ -159,6 +162,7 @@ export default {
     SET_PAYROLL_DETAILS(state, payload) {
         state.payroll_details.employment_type = payload.employment_type
         state.payroll_details.utr_number = payload.utr_number
+        state.payroll_details.company_registration_number = payload.company_registration_number
         state.payroll_details.paid_under_payroll = payload.paid_under_payroll
         state.payroll_details.payroll_detail_account_name = payload.payroll_detail_account_name
         state.payroll_details.payroll_detail_bank_name = payload.payroll_detail_bank_name
@@ -171,38 +175,12 @@ export default {
         state.credential_details.password = payload.password
         state.credential_details.password_confirmation = payload.password_confirmation
     },
-    CLEAR_FORM_DETAILS(state) {
-        state.account_details.title = ''
-        state.account_details.first_name = ''
-        state.account_details.last_name = ''
-        state.account_details.suffix = ''
-        state.account_details.gender = ''
-        state.account_details.mobile_number = ''
-        state.account_details.home_number = ''
-        state.account_details.work_number = ''
-        state.address_details.post_code = ''
-        state.address_details.address_line_1 = ''
-        state.address_details.address_line_2 = ''
-        state.address_details.address_line_3 = ''
-        state.professional_details.gmc_or_nmc_number = ''
-        state.professional_details.mpl_or_npl_number = ''
-        state.professional_details.nhs_smart_card_id_number = ''
-        state.professional_details.profession_id = ''
-        state.professional_details.qualification_id = []
-        state.professional_details.clinical_system_id = []
-        state.professional_details.spoken_language_id = []
-        state.professional_details.min_rate_per_hour = ''
-        state.professional_details.max_rate_per_hour = ''
-        state.professional_details.min_rate_per_half_day_session = ''
-        state.professional_details.max_rate_per_half_day_session = ''
-        state.professional_details.min_rate_per_whole_day_session = ''
-        state.professional_details.max_rate_per_whole_day_session = ''
-        state.professional_details.ir35 = false
-        state.professional_details.practice_type_id = []
-        state.credential_details.email = ''
-        state.credential_details.password = ''
-        state.credential_details.password_confirmation = ''
-        state.credential_details.privacy_policy = false
+    CLEAR_FORM_ERROR_DETAILS(state) {
+        state.account_detail_form_error = []
+        state.address_detail_form_error = []
+        state.professional_detail_form_error = []
+        state.payroll_detail_form_error = []
+        state.credential_detail_form_error = []
     },
     SET_ACCOUNT_DETAIL_FORM_ERROR(state, payload) {
         state.account_detail_form_error = payload
@@ -218,5 +196,5 @@ export default {
     },
     SET_CREDENTIAL_DETAIL_FORM_ERROR(state, payload) {
         state.credential_detail_form_error = payload
-    }
+    },
 }

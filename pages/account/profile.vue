@@ -274,7 +274,6 @@
             :name="'post_code'"
             :label="'The post code where I will be available at'"
             :error="formError.find(item => item.field === 'post_code')"
-            @onSelect="onSelect"
             @blur="CheckEmptyField(form.post_code, 'post_code')"
           />
           <AppInput
@@ -607,13 +606,6 @@ export default {
     }
   },
   methods: {
-    onSelect(value) {
-      let address_components = value.details.result.address_components;
-      let postal_code = address_components.find(component =>
-        component.types.includes("postal_code")
-      );
-      this.form.post_code = postal_code ? postal_code.long_name : "";
-    },
     async save() {
       try {
         this.formError = [];

@@ -7,7 +7,10 @@
     </div>
 
     <div class="flex w-full justify-center xl:justify-start mt-5">
-      <div class="md:mx-4 flex flex-col p-4 md:p-8 m-1 rounded-lg bg-gray-300 shadow-lg" style="flex: 0 1 600px;">
+      <div
+        class="md:mx-4 flex flex-col p-4 md:p-8 m-1 rounded-lg bg-gray-300 shadow-lg"
+        style="flex: 0 1 600px;"
+      >
         <form class="w-full">
           <AppPostCode
             v-model="form.post_code"
@@ -15,7 +18,6 @@
             :label="'Post code'"
             :error="formError.find(error => error.field === 'post_code')"
             :inStyle="'background-color:transparent;border-color:white'"
-            @onSelect="onSelect"
             @blur="CheckEmptyField(form.post_code, 'post_code')"
           />
           <AppInput
@@ -56,7 +58,7 @@
         @click="$store.commit('sign-up/SET_ACTIVE_COMPONENT', 'LocumAccountDetails')"
       />
       <div class="mx-2"></div>
-      <AppButton :label="'Next'" @click="next" :inStyle="'padding:6px 16px;'"/>
+      <AppButton :label="'Next'" @click="next" :inStyle="'padding:6px 16px;'" />
     </div>
   </div>
 </template>
@@ -89,17 +91,6 @@ export default {
       return this.$store.getters["sign-up/addressFormError"];
     }
   },
-  watch: {
-    "form.post_code"(value) {
-      this.CheckEmptyField(this.form.post_code, "post_code");
-    },
-    "form.address_line_1"(value) {
-      this.CheckEmptyField(this.form.address_line_1, "address_line_1");
-    },
-    "form.address_line_3"(value) {
-      this.CheckEmptyField(this.form.address_line_3, "address_line_3");
-    }
-  },
   mounted() {
     this.form.post_code = this.addressDetails.post_code;
     this.form.address_line_1 = this.addressDetails.address_line_1;
@@ -113,26 +104,12 @@ export default {
     }
   },
   methods: {
-    onSelect(value) {
-      let address_components = value.details.result.address_components;
-      let postal_code = address_components.find(component =>
-        component.types.includes("postal_code")
-      );
-      let route = address_components.find(component =>
-        component.types.includes("route")
-      );
-      let postal_town = address_components.find(component =>
-        component.types.includes("postal_town")
-      );
-      this.form.post_code = postal_code ? postal_code.long_name : "";
-      this.form.address_line_1 = route ? route.long_name : "";
-      this.form.address_line_3 = postal_town ? postal_town.long_name : "";
-    },
     next() {
       this.formError = [];
       this.Validate(this.form, ["address_line_2"]);
       if (!this.formError.length) {
         this.$store.commit("sign-up/SET_ADDRESS_DETAILS", this.form);
+        this.$store.commit("sign-up/SET_ADDRESS_DETAIL_FORM_ERROR", []);
         this.$store.commit(
           "sign-up/SET_ACTIVE_COMPONENT",
           "LocumProfessionalDetails"

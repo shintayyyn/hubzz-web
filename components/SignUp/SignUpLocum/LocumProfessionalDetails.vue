@@ -7,7 +7,10 @@
     </div>
 
     <div class="flex w-full justify-center xl:justify-start">
-      <div class="md:mx-4 flex flex-col p-4 md:p-8 m-1 rounded-lg shadow-lg" style="flex: 0 1 600px;">
+      <div
+        class="md:mx-4 flex flex-col p-4 md:p-8 m-1 rounded-lg shadow-lg"
+        style="flex: 0 1 600px;"
+      >
         <form class="w-full">
           <AppInput
             v-model="form.gmc_or_nmc_number"
@@ -58,7 +61,7 @@
               :error="formError.find(item => item.field === 'qualification_id')"
               :info="'Choose at least one qualification'"
               :url="'/api/v1/qualifications'"
-              :professionCategoryId="selectedProfession.profession_category.id.toString()"
+              :professionCategoryId="selectedProfession ? selectedProfession.profession_category.id.toString() : null"
               @add="CheckEmptyField(form.qualification_id, 'qualification_id')"
               @remove="CheckEmptyField(form.qualification_id, 'qualification_id')"
             />
@@ -194,7 +197,7 @@
         @click="$store.commit('sign-up/SET_ACTIVE_COMPONENT', 'LocumAddressDetails')"
       />
       <div class="mx-2"></div>
-      <AppButton :label="'Next'" @click="next" :inStyle="'padding:6px 16px;'"/>
+      <AppButton :label="'Next'" @click="next" :inStyle="'padding:6px 16px;'" />
     </div>
   </div>
 </template>
@@ -213,9 +216,7 @@ export default {
   },
   data() {
     return {
-      selectedProfession: {
-        profession_category: {}
-      },
+      selectedProfession: null,
       professions_categories: [],
       pratice_types: [],
       form: {
@@ -268,12 +269,12 @@ export default {
       return this.$store.getters["sign-up/professionalFormError"];
     }
   },
-  created() {
-    this.$axios.$get(`/api/v1/professions`).then(res => {
-      res.data.professions.forEach(item => {
-        this.professions_categories.push(item);
-      });
+  async created() {
+    const response = await this.$axios.$get(`/api/v1/professions`);
+    response.data.professions.forEach(profession => {
+      this.professions_categories.push(profession);
     });
+
     this.pratice_types = this.practiceTypes;
     this.form.gmc_or_nmc_number = this.professionalDetails.gmc_or_nmc_number;
     this.form.mpl_or_npl_number = this.professionalDetails.mpl_or_npl_number;
@@ -321,7 +322,6 @@ export default {
     this.professionalDetails.mandatory_training_id.forEach(id => {
       this.form.mandatory_training_id.push(id);
     });
-
     if (this.professionalFormError.length > 0) {
       this.professionalFormError.forEach(item => {
         this.formError.push(item);
@@ -331,51 +331,18 @@ export default {
   watch: {
     "form.profession_id"(newValue, oldValue) {
       if (newValue) {
-        this.form.qualification_id = [];
-        this.selectedProfession = this.professions_categories.find(
-          item => item.id == newValue
-        );
+        if (newValue && oldValue) {
+          this.form.qualification_id = [];
+        }
+        if (
+          this.professions_categories &&
+          this.professions_categories.length > 0
+        ) {
+          this.selectedProfession = this.professions_categories.find(
+            item => item.id == newValue
+          );
+        }
       }
-      // this.CheckEmptyField(this.form.profession_id, "profession_id");
-    },
-    "form.gmc_or_nmc_number"(value) {
-      this.CheckEmptyField(this.form.gmc_or_nmc_number, "gmc_or_nmc_number");
-    },
-    "form.mpl_or_npl_number"(value) {
-      this.CheckEmptyField(this.form.mpl_or_npl_number, "mpl_or_npl_number");
-    },
-    "form.min_rate_per_hour"() {
-      this.CheckEmptyField(this.form.min_rate_per_hour, "min_rate_per_hour");
-    },
-    "form.max_rate_per_hour"() {
-      this.CheckEmptyField(this.form.max_rate_per_hour, "max_rate_per_hour");
-    },
-    "form.min_rate_per_half_day_session"() {
-      this.CheckEmptyField(
-        this.form.min_rate_per_half_day_session,
-        "min_rate_per_half_day_session"
-      );
-    },
-    "form.max_rate_per_half_day_session"() {
-      this.CheckEmptyField(
-        this.form.max_rate_per_half_day_session,
-        "max_rate_per_half_day_session"
-      );
-    },
-    "form.min_rate_per_whole_day_session"() {
-      this.CheckEmptyField(
-        this.form.min_rate_per_whole_day_session,
-        "min_rate_per_whole_day_session"
-      );
-    },
-    "form.max_rate_per_whole_day_session"() {
-      this.CheckEmptyField(
-        this.form.max_rate_per_whole_day_session,
-        "max_rate_per_whole_day_session"
-      );
-    },
-    "form.ir35"(value) {
-      this.CheckEmptyField(this.form.ir35, "ir35");
     }
   },
   methods: {
@@ -396,6 +363,8 @@ export default {
           ? this.form.spoken_language_id.map(item => item.value)
           : [];
         this.$store.commit("sign-up/SET_PROFESSIONAL_DETAILS", this.form);
+        this.$store.commit("sign-up/SET_PROFESSIONAL_DETAIL_FORM_ERROR", []);
+
         this.$store.commit(
           "sign-up/SET_ACTIVE_COMPONENT",
           "LocumPayrollDetails"

@@ -75,7 +75,7 @@
       </div>
     </div>
     <div class="mt-5">
-      <nuxt-child :invoiceStatusList="invoiceStatusList" :shifts="shifts" :rates="rates" />
+      <nuxt-child :invoiceStatusList="invoiceStatusList" />
     </div>
     <AppConfirmationModal
       :label="'You\'ve been revoked to view this Page'"
@@ -113,9 +113,7 @@ export default {
   data() {
     return {
       confirmation_modal: false,
-      invoiceStatusList,
-      shifts: [],
-      rates: []
+      invoiceStatusList
     };
   },
   computed: {
@@ -123,30 +121,7 @@ export default {
       return this.$store.getters["auth/permissions"];
     }
   },
-  created() {
-    this.$axios.$get(`/api/v1/shifts`).then(res => {
-      this.shifts = [];
-      this.shifts.push({ label: "All", value: "" });
-      res.data.shifts.forEach(item => {
-        this.shifts.push({ label: item.name, value: item.id });
-      });
-    });
-    this.$axios.$get(`/api/v1/locum-detail-rate-types`).then(res => {
-      this.rates = [];
-      this.rates.push({ label: "All", value: "" });
-      res.data.locum_detail_rate_types.forEach(item => {
-        this.rates.push({ label: item.name, value: item.id });
-      });
-    });
-  },
   watch: {
-    $route(value) {
-      if (["jobs-index-id"].includes(value.name)) {
-        document.body.style.overflow = "hidden";
-      } else {
-        document.body.style.overflow = "auto";
-      }
-    },
     authPermissions(value) {
       if (!this.CheckPermissions(value).hasPermission) {
         this.confirmation_modal = true;

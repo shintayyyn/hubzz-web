@@ -40,7 +40,6 @@ import AppTable from "@/components/Base/AppTable";
 import AppInput from "@/components/Base/AppInput";
 import AppDate from "@/components/Base/AppDate";
 import AppTime from "@/components/Base/AppTime";
-import AppPostCode from "@/components/Base/AppPostCode";
 import AppAutoComplete from "@/components/Base/AppAutoComplete";
 import AppButton from "@/components/Base/AppButton";
 import AppLoading from "@/components/Base/AppLoading";
@@ -52,7 +51,6 @@ export default {
     AppInput,
     AppDate,
     AppTime,
-    AppPostCode,
     AppAutoComplete,
     AppButton,
     AppLoading

@@ -164,7 +164,6 @@
           :label="'Post code'"
           :error="formError.find(item => item.field === 'post_code')"
           :inStyle="'background-color:#dae1e7;border-color:white'"
-          @onSelect="onSelect"
           @blur="CheckEmptyField(locumForm.post_code, 'post_code')"
         />
         <AppInput
@@ -348,21 +347,6 @@ export default {
             throw err;
           }
         });
-    },
-    onSelect(value) {
-      let address_components = value.details.result.address_components;
-      let postal_code = address_components.find(component =>
-        component.types.includes("postal_code")
-      );
-      let route = address_components.find(component =>
-        component.types.includes("route")
-      );
-      let postal_town = address_components.find(component =>
-        component.types.includes("postal_town")
-      );
-      this.locumForm.post_code = postal_code ? postal_code.long_name : "";
-      this.locumForm.address_line_1 = route ? route.long_name : "";
-      this.locumForm.address_line_3 = postal_town ? postal_town.long_name : "";
     },
     save(domain) {
       if (domain === "practice") {
