@@ -13,7 +13,10 @@
     </div>
 
     <div class="flex w-full justify-center xl:justify-start">
-      <div class="md:mx-4 flex flex-col p-4 md:p-8 m-1 rounded-lg shadow-lg" style="flex: 0 1 600px;">
+      <div
+        class="md:mx-4 flex flex-col p-4 md:p-8 m-1 rounded-lg shadow-lg"
+        style="flex: 0 1 600px;"
+      >
         <form class="w-full">
           <AppInput
             v-model="form.email"
@@ -45,12 +48,12 @@
           />
 
           <div class="flex flex-col py-2 mb-6">
-            <div class="flex justify-end">
+            <!-- <div class="flex justify-end">
               <div
                 class="rounded-lg bg-red-500 p-1 text-xs sm:text-sm text-white"
                 v-if="formError.find(item => item.field === 'privacy_policy')"
               >{{formError.find(item => item.field === 'privacy_policy').message}}</div>
-            </div>
+            </div>-->
             <div class="flex flex-row flex-no-wrap justify-between">
               <input
                 v-model="form.privacy_policy"
@@ -66,6 +69,12 @@
                 >Terms and Conditions and Privacy Policy</span> of Hubzz
               </label>
             </div>
+            <transition name="drop-down">
+              <div
+                class="py-1 text-xs text-red-500"
+                v-if="formError.find(item => item.field === 'privacy_policy')"
+              >{{formError.find(item => item.field === 'privacy_policy').message.charAt(0).toUpperCase() + formError.find(item => item.field === 'privacy_policy').message.slice(1).replace(/_/g, " ")}}</div>
+            </transition>
           </div>
           <!-- <AppInput
             v-model="form.privacy_policy"
@@ -85,14 +94,20 @@
         @click="$store.commit('sign-up/SET_ACTIVE_COMPONENT', 'LocumPayrollDetails')"
       />
       <div class="mx-2"></div>
-      <AppButton :label="'Next'" @click="next" :inStyle="'padding:6px 16px;'"/>
+      <AppButton :label="'Next'" @click="next" :inStyle="'padding:6px 16px;'" />
     </div>
 
     <div class="shield" v-if="modal" @click="modal=false"></div>
     <transition name="slide" mode="out-in">
       <div class="py-8 modal-container" v-if="modal">
         <div class="px-4 lg:px-10 pb-4">
-          <svgicon name="left-arrow" height="32" width="32" @click="modal = false" class="cursor-pointer " />
+          <svgicon
+            name="left-arrow"
+            height="32"
+            width="32"
+            @click="modal = false"
+            class="cursor-pointer"
+          />
         </div>
         <TermsAndConditions />
       </div>
@@ -172,6 +187,7 @@ export default {
       this.Validate(this.form);
       if (!this.formError.length) {
         this.$store.commit("sign-up/SET_CREDENTIAL_DETAILS", this.form);
+        this.$store.commit("sign-up/SET_CREDENTIAL_DETAIL_FORM_ERROR", []);
         setTimeout(() => {
           this.$store.dispatch("sign-up/registeredLocum");
         }, 1000);
