@@ -64,8 +64,9 @@ export default {
   computed: {
     google: gmapApi,
     latLang() {
-      return this.practice.surgery.address.coordinates;
+      return { x: this.practice.coordinate_x, y: this.practice.coordinate_y };
     }
   }
+  // get coordinates based on postcode
 };
 </script>

@@ -7,7 +7,10 @@
     </div>
 
     <div class="flex w-full justify-center xl:justify-start">
-      <div class="md:mx-4 flex flex-col p-4 md:p-8 m-1 rounded-lg shadow-lg" style="flex: 0 1 600px;">
+      <div
+        class="md:mx-4 flex flex-col p-4 md:p-8 m-1 rounded-lg shadow-lg"
+        style="flex: 0 1 600px;"
+      >
         <form class="w-full">
           <AppInput
             v-model="form.employment_type"
@@ -21,7 +24,7 @@
               v-model="form.company_registration_number"
               :type="'text'"
               :name="'company_registration_number'"
-              :label="'Company_registration_number'"
+              :label="'Company registration number'"
               :placeholder="'The number of your company from Companies House'"
               :error="formError.find(item => item.field === 'company_registration_number')"
             />
@@ -89,7 +92,7 @@
         @click="$store.commit('sign-up/SET_ACTIVE_COMPONENT', 'LocumProfessionalDetails')"
       />
       <div class="mx-2"></div>
-      <AppButton :label="'Next'" @click="next" :inStyle="'padding:6px 16px;'"/>
+      <AppButton :label="'Next'" @click="next" :inStyle="'padding:6px 16px;'" />
     </div>
   </div>
 </template>
@@ -161,14 +164,18 @@ export default {
         "ir35"
       ];
       if (this.form.employment_type === "Self-Employed") {
+        this.form.company_registration_number = "";
         notRequired.push("company_registration_number");
       }
       if (this.form.employment_type === "Limited Company") {
+        this.form.utr_number = "";
         notRequired.push("utr_number");
       }
       this.Validate(this.form, notRequired);
       if (!this.formError.length) {
         this.$store.commit("sign-up/SET_PAYROLL_DETAILS", this.form);
+        this.$store.commit("sign-up/SET_PAYROLL_DETAIL_FORM_ERROR", []);
+
         this.$store.commit(
           "sign-up/SET_ACTIVE_COMPONENT",
           "LocumCredentialDetails"

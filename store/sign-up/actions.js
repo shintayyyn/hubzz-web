@@ -87,7 +87,6 @@ export default {
             })
     },
     registeredLocum({ state, commit }) {
-        commit('SET_CREDENTIAL_DETAIL_FORM_ERROR', [])
         let form = {}
         form = {
             ...state.account_details,
@@ -99,7 +98,7 @@ export default {
         this.$axios
             .$post(`/api/v1/register/locum`, form)
             .then((res) => {
-                commit('CLEAR_FORM_DETAILS')
+                commit('CLEAR_FORM_ERROR_DETAILS')
                 this.$router.push('/sign-up/success')
             })
             .catch((err) => {
