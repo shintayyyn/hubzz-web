@@ -711,11 +711,24 @@ export default {
           this.activeLoading = this.activeLoading.filter(item => item !== id);
         })
         .catch(err => {
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "danger",
-            text: [`${err.response.data.message}`]
-          });
+          console.log("err", err.response || err);
+          if (
+            err.response.data.message &&
+            err.response.data.message.includes("File size too large") &&
+            err.response.data.status === 500
+          ) {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "danger",
+              text: ["The maximum file size is 10mb only"]
+            });
+          } else {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "danger",
+              text: [`${err.response.data.message}`]
+            });
+          }
           this.loading = false;
           this.activeLoading = this.activeLoading.filter(item => item !== id);
         });
@@ -791,11 +804,24 @@ export default {
           );
         })
         .catch(err => {
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "danger",
-            text: [`${err.response.data.message}`]
-          });
+          console.log("err", err.response || err);
+          if (
+            err.response.data.message &&
+            err.response.data.message.includes("File size too large") &&
+            err.response.data.status === 500
+          ) {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "danger",
+              text: ["The maximum file size is 10mb only"]
+            });
+          } else {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "danger",
+              text: [`${err.response.data.message}`]
+            });
+          }
           this.loading = false;
           this.activeLoading = this.activeLoading.filter(item => item !== id);
         });

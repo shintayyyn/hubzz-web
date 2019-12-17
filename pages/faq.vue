@@ -19,15 +19,24 @@
           >
             <div>{{item.question}}</div>
             <div>
-              <svgicon name="arrow-right" height="15" width="15" :class="item.toggled ? 'rotate' : 'arrow'" />
+              <svgicon
+                name="arrow-right"
+                height="15"
+                width="15"
+                :class="item.toggled ? 'rotate' : 'arrow'"
+              />
             </div>
           </div>
           <transition name="drop-down" mode="out-in">
-            <div
-              class="flex justify-start item-answer font-bold text-sm overflow-hidden"
-              v-if="item.toggled"
-            >
-              <div v-html="item.answer" class="w-full px-2 md:px-4 py-2 h-auto"></div>
+            <div v-if="item.toggled">
+              <no-ssr>
+                <quill-editor
+                  class="border-none"
+                  :options="options"
+                  :content="item.answer"
+                  disabled
+                ></quill-editor>
+              </no-ssr>
             </div>
           </transition>
         </div>
@@ -40,15 +49,24 @@
           >
             <div>{{item.question}}</div>
             <div>
-              <svgicon name="arrow-right" height="15" width="15" :class="item.toggled ? 'rotate' : 'arrow'" />
+              <svgicon
+                name="arrow-right"
+                height="15"
+                width="15"
+                :class="item.toggled ? 'rotate' : 'arrow'"
+              />
             </div>
           </div>
           <transition name="drop-down" mode="out-in">
-            <div
-              class="flex justify-start item-answer font-bold text-sm overflow-hidden"
-              v-if="item.toggled"
-            >
-              <div v-html="item.answer" class="w-full px-2 md:px-4 py-2 h-auto"></div>
+            <div v-if="item.toggled">
+              <no-ssr>
+                <quill-editor
+                  class="border-none"
+                  :options="options"
+                  :content="item.answer"
+                  disabled
+                ></quill-editor>
+              </no-ssr>
             </div>
           </transition>
         </div>
@@ -58,6 +76,17 @@
 </template>
 <script>
 export default {
+  data() {
+    return {
+      locum_faqs: [],
+      practice_faqs: [],
+      options: {
+        modules: {
+          toolbar: null
+        }
+      }
+    };
+  },
   async asyncData({ app, route, store, error }) {
     const response = await app.$axios.$get(`/api/v1/faqs`);
     let faqs =
@@ -90,11 +119,11 @@ export default {
 }
 .rotate {
   transform: rotate(90deg);
-  transition: transform .3s ease-in-out;
+  transition: transform 0.3s ease-in-out;
 }
 
-.arrow{
+.arrow {
   transform: rotate(0deg);
-  transition: transform .3s ease-in-out;
+  transition: transform 0.3s ease-in-out;
 }
 </style>

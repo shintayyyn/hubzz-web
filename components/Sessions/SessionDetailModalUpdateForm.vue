@@ -113,12 +113,13 @@
 
           <AppInput
             v-model="form.duration_for_each_appointment"
-            :type="'text'"
+            :type="'number'"
             :name="'duration_for_each_appointment'"
             :label="'Duration of each appointment?'"
             :inStyle="'text-align:right;'"
             :error="formError.find(item => item.field === 'duration_for_each_appointment')"
           />
+
           <AppInput
             :type="'select'"
             v-model="form.opportunity_for_catch_up_slots"
@@ -879,8 +880,6 @@ export default {
         notRequired.push("update_accepted_until");
       }
 
-      console.log(this.unpaid_breaks);
-
       if (
         ["15", 15, "30", 30, "60", 60, false, "false"].includes(
           this.unpaid_breaks
@@ -974,11 +973,14 @@ export default {
           ? (this.form.session_requirements = this.form.session_requirements.join())
           : (this.form.session_requirements = "");
 
-        if (["15", "30", "60"].includes(this.unpaid_breaks)) {
+        if (["15", 15, "30", 30, "60", 60].includes(this.unpaid_breaks)) {
           this.form.unpaid_breaks_in_minutes = this.unpaid_breaks;
         }
         if (this.unpaid_breaks === "other") {
           this.form.unpaid_breaks_in_minutes = this.form.unpaid_breaks_in_minutes;
+        }
+        if (["false", false].includes(this.unpaid_breaks)) {
+          this.form.unpaid_breaks_in_minutes = "";
         }
 
         this.$axios

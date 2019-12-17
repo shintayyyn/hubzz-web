@@ -1189,7 +1189,8 @@ export default {
       }
       if (
         this.$route.path.includes("/jobs") &&
-        (!this.$route.query.status || this.$route.query.status === "Matched")
+        (this.$route.query.status === "Available" ||
+          this.$route.query.status === "Matched")
       ) {
         this.showRefresh = true;
       }
