@@ -971,6 +971,7 @@ export default {
             } else {
               this.formError = err.response.data.error_messages;
             }
+            throw err;
           });
       } else {
         this.$nextTick(() => {

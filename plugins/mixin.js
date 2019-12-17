@@ -2,11 +2,31 @@ import Vue from "vue";
 Vue.mixin({
   methods: {
     async CheckUserVerification() {
-      let oldStatus = this.$auth.user.status
-      const response = await this.$axios.$get(`/api/v1/me`)
-      let newStatus = response.data.user.status
-      if (newStatus !== oldStatus) {
-        this.$store.commit('SET_USER_VERIFICATION_MODAL', { modal: true, status: newStatus === 'Active' ? 'verified' : 'not verified' })
+      if (this.$auth.user.domain === 'Locum') {
+        let oldStatus = this.$auth.user.status
+        const response = await this.$axios.$get(`/api/v1/me`)
+        let newStatus = response.data.user.status
+        if (newStatus !== oldStatus) {
+          this.$store.commit('SET_USER_VERIFICATION_MODAL', { modal: true, status: newStatus === 'Active' ? 'verified' : 'not verified' })
+        }
+      } else if (this.$auth.user.domain === 'Practice') {
+        let oldPracticeUserStatus = this.$auth.user.status
+        let oldPracticeUserVerified = oldPracticeUserStatus === 'Disabled' ? 'false' : 'true'
+        let oldPracticeStatus = this.$auth.user.practice_detail.practice.status
+        let oldPracticeVerified = ['Inactive', 'Suspended', 'Deactivated'].includes(oldPracticeStatus) ? 'false' : 'true'
+        let oldVerified = [oldPracticeUserStatus, oldPracticeUserVerified, oldPracticeStatus, oldPracticeVerified].includes('false') ? 'false' : 'true'
+
+        const response = await this.$axios.$get(`/api/v1/me`)
+
+        let newPracticeUserStatus = response.data.user.status
+        let newPracticeUserVerified = newPracticeUserStatus === 'Disabled' ? 'false' : 'true'
+        let newPracticeStatus = response.data.user.practice_detail.practice.status
+        let newPracticeVerified = ['Inactive', 'Suspended', 'Deactivated'].includes(newPracticeStatus) ? 'false' : 'true'
+        let newVerified = [newPracticeUserStatus, newPracticeUserVerified, newPracticeStatus, newPracticeVerified].includes('false') ? 'false' : 'true'
+
+        if (oldVerified !== newVerified) {
+          this.$store.commit('SET_USER_VERIFICATION_MODAL', { modal: true, status: newVerified === 'true' ? 'verified' : 'not verified' })
+        }
       }
     },
     scrollToTop() {

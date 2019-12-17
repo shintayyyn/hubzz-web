@@ -74,7 +74,7 @@
           <template v-for="(item, index) in mandatory">
             <tr
               class="text-xs sm:text-sm text-left bg-gray-200"
-              v-if="activeLoading.includes(item.info.id)"
+              v-if="activeLoading.includes(item.info && item.info.id ? item.info.id : item.id)"
               :key="item.id"
             >
               <td
@@ -443,6 +443,9 @@ export default {
                 ) {
                   mandatoryDocument.info = userComplianceDocument;
                 }
+                // else {
+                //   mandatoryDocument.info = null;
+                // }
               }
             );
             profession.optional_compliance_documents.forEach(
@@ -453,6 +456,9 @@ export default {
                 ) {
                   optionalDocument.info = userComplianceDocument;
                 }
+                // else {
+                //   optionalDocument.info = null;
+                // }
               }
             );
           }
@@ -549,17 +555,21 @@ export default {
         return;
       }
       this.CheckUserVerification();
-      // let index = this.mandatory.findIndex(
-      //   item =>
-      //     item.info.compliance_document.name === file.compliance_document.name
-      // );
-      // let updatedFile = this.mandatory.find(
-      //   item =>
-      //     item.info.compliance_document.name === file.compliance_document.name
-      // );
-      // if (index >= 0) {
-      //   this.mandatory.splice(index, 1, { ...updatedFile, info: file });
-      // }
+      let index = this.mandatory.findIndex(
+        item =>
+          item.info.compliance_document.name ===
+            file.compliance_document.name ||
+          item.name === file.compliance_document.name
+      );
+      let updatedFile = this.mandatory.find(
+        item =>
+          item.info.compliance_document.name ===
+            file.compliance_document.name ||
+          item.name === file.compliance_document.name
+      );
+      if (index >= 0) {
+        this.mandatory.splice(index, 1, { ...updatedFile, info: file });
+      }
     },
     async getComplianceRealTime(file) {
       if (!file) {
@@ -568,11 +578,15 @@ export default {
       this.CheckUserVerification();
       let index = this.mandatory.findIndex(
         item =>
-          item.info.compliance_document.name === file.compliance_document.name
+          item.info.compliance_document.name ===
+            file.compliance_document.name ||
+          item.name === file.compliance_document.name
       );
       let updatedFile = this.mandatory.find(
         item =>
-          item.info.compliance_document.name === file.compliance_document.name
+          item.info.compliance_document.name ===
+            file.compliance_document.name ||
+          item.name === file.compliance_document.name
       );
       if (index >= 0) {
         this.mandatory.splice(index, 1, { ...updatedFile, info: file });

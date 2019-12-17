@@ -6,14 +6,17 @@
       </div>
     </div>
 
-    <div class="flex w-full justify-center xl:justify-start">
+    <!-- <div class="flex w-full justify-center xl:justify-start">
       <div class="flex my-2 md:m-4" style="flex: 0 1 600px;">
         <span>Basic details about yourself</span>
       </div>
-    </div>
+    </div>-->
 
     <div class="flex w-full justify-center xl:justify-start">
-      <div class="md:mx-4 flex flex-col p-4 md:p-8 m-1 rounded-lg shadow-lg" style="flex: 0 1 600px;">
+      <div
+        class="md:mx-4 flex flex-col p-4 md:p-8 m-1 rounded-lg shadow-lg"
+        style="flex: 0 1 600px;"
+      >
         <form class="w-full">
           <AppInput
             v-model="form.title"
@@ -128,18 +131,18 @@ export default {
     }
   },
   watch: {
-    "form.first_name"(value) {
-      this.CheckEmptyField(this.form.first_name, "first_name");
-    },
-    "form.last_name"(value) {
-      this.CheckEmptyField(this.form.last_name, "last_name");
-    },
-    "form.gender"(value) {
-      this.CheckEmptyField(this.form.gender, "gender");
-    },
-    "form.mobile_number"(value) {
-      this.CheckEmptyField(this.form.mobile_number, "mobile_number");
-    }
+    // "form.first_name"(value) {
+    //   this.CheckEmptyField(this.form.first_name, "first_name");
+    // },
+    // "form.last_name"(value) {
+    //   this.CheckEmptyField(this.form.last_name, "last_name");
+    // },
+    // "form.gender"(value) {
+    //   this.CheckEmptyField(this.form.gender, "gender");
+    // },
+    // "form.mobile_number"(value) {
+    //   this.CheckEmptyField(this.form.mobile_number, "mobile_number");
+    // }
   },
   mounted() {
     this.form.title = this.accountDetails.title;
@@ -169,6 +172,7 @@ export default {
       if (!this.formError.length) {
         this.form.mobile_number = this.form.mobile_number.toString();
         this.$store.commit("sign-up/SET_ACCOUNT_DETAILS", this.form);
+        this.$store.commit("sign-up/SET_ACCOUNT_DETAIL_FORM_ERROR", []);
         this.$store.commit(
           "sign-up/SET_ACTIVE_COMPONENT",
           "LocumAddressDetails"

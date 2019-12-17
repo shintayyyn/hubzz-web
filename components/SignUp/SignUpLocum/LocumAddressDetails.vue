@@ -91,17 +91,6 @@ export default {
       return this.$store.getters["sign-up/addressFormError"];
     }
   },
-  watch: {
-    "form.post_code"(value) {
-      this.CheckEmptyField(this.form.post_code, "post_code");
-    },
-    "form.address_line_1"(value) {
-      this.CheckEmptyField(this.form.address_line_1, "address_line_1");
-    },
-    "form.address_line_3"(value) {
-      this.CheckEmptyField(this.form.address_line_3, "address_line_3");
-    }
-  },
   mounted() {
     this.form.post_code = this.addressDetails.post_code;
     this.form.address_line_1 = this.addressDetails.address_line_1;
@@ -120,6 +109,7 @@ export default {
       this.Validate(this.form, ["address_line_2"]);
       if (!this.formError.length) {
         this.$store.commit("sign-up/SET_ADDRESS_DETAILS", this.form);
+        this.$store.commit("sign-up/SET_ADDRESS_DETAIL_FORM_ERROR", []);
         this.$store.commit(
           "sign-up/SET_ACTIVE_COMPONENT",
           "LocumProfessionalDetails"
