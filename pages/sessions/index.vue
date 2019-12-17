@@ -106,7 +106,6 @@
                 v-model="params.near_post_code"
                 :name="'near_post_code'"
                 :label="'Post code'"
-                @onSelect="onSelect"
               />
             </div>
             <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
@@ -238,7 +237,6 @@
                 v-model="jobPartParams.near_post_code"
                 :name="'near_post_code'"
                 :label="'Post code'"
-                @onSelect="onSelect"
               />
             </div>
             <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
@@ -353,7 +351,7 @@ import AppButton from "@/components/Base/AppButton";
 import AppLoading from "@/components/Base/AppLoading";
 import { mapGetters } from "vuex";
 export default {
-  props: ["invoiceStatusList", "shifts", "rates"],
+  props: ["invoiceStatusList"],
   components: {
     AppTable,
     AppInput,
@@ -709,11 +707,11 @@ export default {
         (newStatus && newStatus !== null && newStatus !== oldStatus) ||
         (newBank && newBank !== null && newBank !== oldBank)
       ) {
-        // this.$store.commit("jobs/CLEAR_PRACTICE_JOB_NOTIFICATION");
         this.current_page = 1;
         this.showTable = false;
         this.filterModal = false;
         this.showRefresh = false;
+        this.clearFilters();
         setTimeout(async () => {
           // if (newStatus === "Applied" && newBank === "true") {
           //   const response = await this.getMyBanks();
@@ -733,22 +731,184 @@ export default {
           // ) {
           //   this.params.viewing_locum_user_id = [];
           // }
-          await this.clearFilters();
-          this.loading = true;
-          await this.getJobsCount(
-            this.isJobPart ? this.jobPartParams : this.params
-          );
-          await this.getJobs(this.isJobPart ? this.jobPartParams : this.params);
-          this.loading = false;
+          this.$nuxt.$loading.start();
+          await this.getJobsPromiseAll();
+          this.$nuxt.$loading.finish();
+          this.showTable = true;
         }, 250);
       }
     }
   },
-  async created() {
-    this.loading = true;
-    await this.getJobsCount(this.isJobPart ? this.jobPartParams : this.params);
-    await this.getJobs(this.isJobPart ? this.jobPartParams : this.params);
-    this.loading = false;
+  async asyncData({ app, params, query, store, error }) {
+    try {
+      // status
+      let queryStatus = query.status;
+      let status = [];
+      if (!queryStatus) {
+        status = ["Allocated"];
+      } else if (queryStatus && queryStatus === "Available") {
+        status = ["Available", "Matched"];
+      } else if (queryStatus && queryStatus === "Completed") {
+        status = ["Completed", "Terminated"];
+      } else if (
+        queryStatus &&
+        queryStatus !== "Available" &&
+        queryStatus !== "Completed"
+      ) {
+        status = [`${queryStatus}`];
+      }
+
+      // job part
+      let isJobPart = false;
+      if (
+        queryStatus &&
+        ["ongoing", "completed", "approved"].includes(queryStatus.toLowerCase())
+      ) {
+        isJobPart = true;
+      }
+
+      let jobParams = {
+        order_by: [],
+        job_number: "",
+        title: "",
+        type: "",
+        practice_id: app.$auth.user.practice_detail.practice.id,
+        shift_id: "",
+        rate: "",
+        rate_type_id: "",
+        near_post_code: "",
+        miles: "",
+        calendar_date_start: "",
+        calendar_date_end: "",
+        time_start: "",
+        time_end: ""
+      };
+
+      if (isJobPart) {
+        jobParams = {
+          order_by: [],
+          job_part_number: "",
+          job_title: "",
+          job_type: "",
+          job_practice_id: app.$auth.user.practice_detail.practice.id,
+          job_shift_id: "",
+          job_rate: "",
+          job_rate_type_id: "",
+          near_post_code: "",
+          miles: "",
+          calendar_date_start: "",
+          calendar_date_end: "",
+          time_start: "",
+          time_end: "",
+          invoice_status: ""
+        };
+      }
+
+      const [shifts, rates] = await Promise.all([
+        app.$axios.$get(`/api/v1/shifts`).then(res => {
+          const shifts = [];
+          shifts.push({ label: "All", value: "" });
+          res.data.shifts.forEach(item => {
+            shifts.push({ label: item.name, value: item.id });
+          });
+          return shifts;
+        }),
+        app.$axios.$get(`/api/v1/locum-detail-rate-types`).then(res => {
+          const rates = [];
+          rates.push({ label: "All", value: "" });
+          res.data.locum_detail_rate_types.forEach(item => {
+            rates.push({ label: item.name, value: item.id });
+          });
+          return rates;
+        }),
+        app.$axios
+          .$get(`/api/v1/practice/${isJobPart ? "job-parts" : "jobs"}/count`, {
+            params: {
+              status,
+              ...jobParams
+            }
+          })
+          .then(res => {
+            if (
+              queryStatus &&
+              ["ongoing", "completed", "approved"].includes(
+                queryStatus.toLowerCase()
+              )
+            ) {
+              store.commit(
+                `jobs/SET_PRACTICE_${queryStatus.toUpperCase()}_JOB_PARTS_COUNT`,
+                res.data.count
+              );
+            } else if (queryStatus && queryStatus.toLowerCase() === "live") {
+              store.commit(
+                `jobs/SET_PRACTICE_AVAILABLE_JOBS_COUNT`,
+                res.data.count
+              );
+            } else if (
+              queryStatus &&
+              !["ongoing", "completed", "approved"].includes(
+                queryStatus.toLowerCase()
+              )
+            ) {
+              store.commit(
+                `jobs/SET_PRACTICE_${queryStatus.toUpperCase()}_JOBS_COUNT`,
+                res.data.count
+              );
+            } else if (!queryStatus) {
+              store.commit(
+                "jobs/SET_PRACTICE_ALLOCATED_JOBS_COUNT",
+                res.data.count
+              );
+            }
+          }),
+        app.$axios
+          .$get(`/api/v1/practice/${isJobPart ? "job-parts" : "jobs"}`, {
+            params: {
+              status,
+              ...jobParams,
+              offset: 0,
+              limit: 5
+            }
+          })
+          .then(res => {
+            if (
+              queryStatus &&
+              ["ongoing", "completed", "approved"].includes(
+                queryStatus.toLowerCase()
+              )
+            ) {
+              store.commit(
+                `jobs/SET_PRACTICE_${queryStatus.toUpperCase()}_JOB_PARTS`,
+                res.data.job_parts
+              );
+            } else if (queryStatus && queryStatus.toLowerCase() === "live") {
+              store.commit(`jobs/SET_PRACTICE_AVAILABLE_JOBS`, res.data.jobs);
+            } else if (
+              queryStatus &&
+              !["ongoing", "completed", "approved"].includes(
+                queryStatus.toLowerCase()
+              )
+            ) {
+              store.commit(
+                `jobs/SET_PRACTICE_${queryStatus.toUpperCase()}_JOBS`,
+                res.data.jobs
+              );
+            } else if (!queryStatus) {
+              store.commit("jobs/SET_PRACTICE_ALLOCATED_JOBS", res.data.jobs);
+            }
+          })
+      ]);
+
+      const showTable = true;
+
+      return {
+        shifts,
+        rates,
+        showTable
+      };
+    } catch (err) {
+      throw err;
+    }
   },
   mounted() {
     this.$socket.on(
@@ -803,13 +963,109 @@ export default {
   destroyed() {
     this.removeListener();
     this.showRefresh = false;
-    // this.$store.commit("jobs/CLEAR_PRACTICE_JOB_NOTIFICATION");
   },
   methods: {
-    getMyBanks() {
-      return this.$axios.$get(
-        `/api/v1/practice/locums?practice_locum_type=Favorite`
-      );
+    getJobsPromiseAll() {
+      let queryStatus = this.$route.query.status;
+      let status = [];
+      if (!queryStatus) {
+        status = ["Allocated"];
+      } else if (queryStatus && queryStatus === "Available") {
+        status = ["Available", "Matched"];
+      } else if (queryStatus && queryStatus === "Completed") {
+        status = ["Completed", "Terminated"];
+      } else if (
+        queryStatus &&
+        queryStatus !== "Available" &&
+        queryStatus !== "Completed"
+      ) {
+        status = [`${queryStatus}`];
+      }
+
+      return Promise.all([
+        this.$axios.$get(
+          `/api/v1/practice/${this.isJobPart ? "job-parts" : "jobs"}/count`,
+          {
+            params: {
+              status,
+              ...(this.isJobPart ? this.jobPartParams : this.params)
+            }
+          }
+        ),
+        this.$axios.$get(
+          `/api/v1/practice/${this.isJobPart ? "job-parts" : "jobs"}`,
+          {
+            params: {
+              status,
+              ...(this.isJobPart ? this.jobPartParams : this.params)
+            }
+          }
+        )
+      ]).then(([responseCount, responseJobs]) => {
+        if (
+          queryStatus &&
+          ["ongoing", "completed", "approved"].includes(
+            queryStatus.toLowerCase()
+          )
+        ) {
+          this.$store.commit(
+            `jobs/SET_PRACTICE_${queryStatus.toUpperCase()}_JOB_PARTS_COUNT`,
+            responseCount.data.count
+          );
+        } else if (queryStatus && queryStatus.toLowerCase() === "live") {
+          this.$store.commit(
+            `jobs/SET_PRACTICE_AVAILABLE_JOBS_COUNT`,
+            responseCount.data.count
+          );
+        } else if (
+          queryStatus &&
+          !["ongoing", "completed", "approved"].includes(
+            queryStatus.toLowerCase()
+          )
+        ) {
+          this.$store.commit(
+            `jobs/SET_PRACTICE_${queryStatus.toUpperCase()}_JOBS_COUNT`,
+            responseCount.data.count
+          );
+        } else if (!queryStatus) {
+          this.$store.commit(
+            "jobs/SET_PRACTICE_ALLOCATED_JOBS_COUNT",
+            responseCount.data.count
+          );
+        }
+
+        if (
+          queryStatus &&
+          ["ongoing", "completed", "approved"].includes(
+            queryStatus.toLowerCase()
+          )
+        ) {
+          return this.$store.commit(
+            `jobs/SET_PRACTICE_${queryStatus.toUpperCase()}_JOB_PARTS`,
+            responseJobs.data.job_parts
+          );
+        } else if (queryStatus && queryStatus.toLowerCase() === "live") {
+          return this.$store.commit(
+            `jobs/SET_PRACTICE_AVAILABLE_JOBS`,
+            responseJobs.data.jobs
+          );
+        } else if (
+          queryStatus &&
+          !["ongoing", "completed", "approved"].includes(
+            queryStatus.toLowerCase()
+          )
+        ) {
+          return this.$store.commit(
+            `jobs/SET_PRACTICE_${queryStatus.toUpperCase()}_JOBS`,
+            responseJobs.data.jobs
+          );
+        } else if (!queryStatus) {
+          return this.$store.commit(
+            "jobs/SET_PRACTICE_ALLOCATED_JOBS",
+            responseJobs.data.jobs
+          );
+        }
+      });
     },
     getJobsCount(params) {
       let queryStatus = this.$route.query.status;
@@ -827,7 +1083,7 @@ export default {
       ) {
         status = [`${queryStatus}`];
       }
-      this.$axios
+      return this.$axios
         .$get(
           `/api/v1/practice/${this.isJobPart ? "job-parts" : "jobs"}/count`,
           {
@@ -844,12 +1100,12 @@ export default {
               queryStatus.toLowerCase()
             )
           ) {
-            this.$store.commit(
+            return this.$store.commit(
               `jobs/SET_PRACTICE_${queryStatus.toUpperCase()}_JOB_PARTS_COUNT`,
               res.data.count
             );
           } else if (queryStatus && queryStatus.toLowerCase() === "live") {
-            this.$store.commit(
+            return this.$store.commit(
               `jobs/SET_PRACTICE_AVAILABLE_JOBS_COUNT`,
               res.data.count
             );
@@ -859,12 +1115,12 @@ export default {
               queryStatus.toLowerCase()
             )
           ) {
-            this.$store.commit(
+            return this.$store.commit(
               `jobs/SET_PRACTICE_${queryStatus.toUpperCase()}_JOBS_COUNT`,
               res.data.count
             );
           } else if (!queryStatus) {
-            this.$store.commit(
+            return this.$store.commit(
               "jobs/SET_PRACTICE_ALLOCATED_JOBS_COUNT",
               res.data.count
             );
@@ -898,7 +1154,7 @@ export default {
       ) {
         status = [`${queryStatus}`];
       }
-      this.$axios
+      return this.$axios
         .$get(`/api/v1/practice/${this.isJobPart ? "job-parts" : "jobs"}`, {
           params: {
             status,
@@ -912,12 +1168,12 @@ export default {
               queryStatus.toLowerCase()
             )
           ) {
-            this.$store.commit(
+            return this.$store.commit(
               `jobs/SET_PRACTICE_${queryStatus.toUpperCase()}_JOB_PARTS`,
               res.data.job_parts
             );
           } else if (queryStatus && queryStatus.toLowerCase() === "live") {
-            this.$store.commit(
+            return this.$store.commit(
               `jobs/SET_PRACTICE_AVAILABLE_JOBS`,
               res.data.jobs
             );
@@ -927,12 +1183,12 @@ export default {
               queryStatus.toLowerCase()
             )
           ) {
-            this.$store.commit(
+            return this.$store.commit(
               `jobs/SET_PRACTICE_${queryStatus.toUpperCase()}_JOBS`,
               res.data.jobs
             );
           } else if (!queryStatus) {
-            this.$store.commit(
+            return this.$store.commit(
               "jobs/SET_PRACTICE_ALLOCATED_JOBS",
               res.data.jobs
             );
@@ -1173,10 +1429,7 @@ export default {
       this.jobPartParams.offset = 0;
       this.loading = true;
       this.filterModal = false;
-      await this.getJobsCount(
-        this.isJobPart ? this.jobPartParams : this.params
-      );
-      await this.getJobs(this.isJobPart ? this.jobPartParams : this.params);
+      await this.getJobsPromiseAll();
       this.loading = false;
     },
     async sorted(order_by) {
@@ -1212,7 +1465,7 @@ export default {
       this.params.limit = 10;
       this.params.type = "";
       this.params.job_number = "";
-      this.params.surgery_id = "";
+      this.params.practice_id = "";
       this.params.title = "";
       this.params.shift_id = "";
       this.params.rate = "";
@@ -1223,7 +1476,7 @@ export default {
       this.jobPartParams.limit = 10;
       this.jobPartParams.job_type = "";
       this.jobPartParams.job_part_number = "";
-      this.jobPartParams.job_surgery_id = "";
+      this.jobPartParams.job_practice_id = "";
       this.jobPartParams.job_title = "";
       this.jobPartParams.job_shift_id = "";
       this.jobPartParams.job_rate = "";
@@ -1236,23 +1489,6 @@ export default {
       this.jobPartParams.time_start = "";
       this.jobPartParams.time_end = "";
       this.jobPartParams.order_by = [];
-
-      return;
-    },
-    onSelect(value) {
-      let address_components = value.details.result.address_components;
-      let postal_code = address_components.find(component =>
-        component.types.includes("postal_code")
-      );
-      if (!postal_code) {
-        this.params.near_post_code = "";
-        this.jobPartParams.near_post_code = "";
-
-        return;
-      }
-      this.params.near_post_code = postal_code.long_name;
-      this.jobPartParams.near_post_code = postal_code.long_name;
-      this.getJobsCount(this.isJobPart ? this.jobPartParams : this.params);
     }
   }
 };

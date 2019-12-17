@@ -30,7 +30,7 @@
       </div>
       <div class="flex mt-2 md:mt-0">
         <nuxt-link
-          to="/invite/invite-locums"
+          to="/invite"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
           :class="'border rounded-lg border-yellow-500 bg-yellow-500'"
         >Invite Locum</nuxt-link>

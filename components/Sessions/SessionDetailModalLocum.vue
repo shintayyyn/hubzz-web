@@ -1,7 +1,10 @@
 <template>
   <div class="flex flex-col w-full">
     <div class="text-xs sm:text-sm font-bold">Locum</div>
-    <div class="relative rounded-lg shadow-lg bg-white p-4 md:p-8 mt-4" v-if="user">
+    <div class="relative flex w-full" v-if="!user && loading" style="min-height:80px">
+      <AppLoading :loading="loading" spinner />
+    </div>
+    <div class="relative rounded-lg shadow-lg bg-white p-4 md:p-8 mt-4" v-if="user && !loading">
       <div class="flex flex-col">
         <div class="flex flex-row justify-between">
           <div class="flex flex-col w-full">
@@ -43,14 +46,14 @@
             </button>
           </div>
           <transition name="fade" mode="out-in">
-          <div class="message-modal md:w-2/3 lg:w-1/2 xl:w-1/3" v-if="sendMessageModal">
-            <SendMessageModal
+            <div class="message-modal md:w-2/3 lg:w-1/2 xl:w-1/3" v-if="sendMessageModal">
+              <SendMessageModal
                 :user="user"
                 @close="sendMessageModal=false"
                 @showProfile="show(user.id)"
               />
-          </div>
-          </transition>      
+            </div>
+          </transition>
           <div class="shield" v-if="sendMessageModal" @click="sendMessageModal=false"></div>
         </div>
         <div class="body-info my-4">
@@ -156,17 +159,20 @@
 </template>
 <script>
 import AppAvatar from "~/components/Base/AppAvatar";
+import AppLoading from "~/components/Base/AppLoading";
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
 import SendMessageModal from "@/components/Messages/SendMessageModal";
 export default {
   components: {
     AppAvatar,
+    AppLoading,
     AppConfirmationModal,
     SendMessageModal
   },
   props: ["job"],
   data() {
     return {
+      loading: false,
       user: null,
       mandatory: [],
       optional: [],
@@ -187,6 +193,7 @@ export default {
       });
     },
     getAppointedLocum() {
+      this.loading = true;
       this.$axios
         .$get(
           `/api/v1/practice/locums/${this.job.platform_job.appointed_to_locum.user.id}`
@@ -196,6 +203,12 @@ export default {
           this.getProfessionCategory(
             res.data.user.locum_detail.profession.profession_category.id
           );
+        })
+        .catch(err => {
+          console.log("err", err.response || err);
+        })
+        .finally(() => {
+          this.loading = false;
         });
     },
     getProfessionCategory(id) {

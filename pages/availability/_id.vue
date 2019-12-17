@@ -42,7 +42,7 @@
               :key="item.id"
               :disabled="isDisabled(item.id)"
               @click="select(item.id)"
-            >{{item.name}} {{isDisabled(item.id)}}</button>
+            >{{item.name}}</button>
           </div>
         </div>
       </div>
@@ -115,8 +115,8 @@ export default {
           .$get(`/api/v1/locum/jobs`, {
             params: {
               locum_status: ["Allocated"],
-              calendar_date_start: `${params.id}:gte`,
-              calendar_date_end: `${params.id}:lte`,
+              calendar_date_start: `${params.id}`,
+              calendar_date_end: `${params.id}`,
               limit: 100000000
             }
           })
@@ -130,8 +130,8 @@ export default {
           .$get("/api/v1/locum/job-parts", {
             params: {
               locum_status: ["Ongoing"],
-              calendar_date_start: `${params.id}:gte`,
-              calendar_date_end: `${params.id}:lte`,
+              calendar_date_start: `${params.id}`,
+              calendar_date_end: `${params.id}`,
               limit: 100000000
             }
           })
@@ -144,8 +144,8 @@ export default {
         app.$axios
           .$get("/api/v1/locum/unavailabilities", {
             params: {
-              date_start: `${params.id}:gte`,
-              date_end: `${params.id}:lte`,
+              date_start: `${params.id}`,
+              date_end: `${params.id}`,
               limit: 100000000
             }
           })

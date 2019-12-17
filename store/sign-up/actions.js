@@ -184,7 +184,7 @@ export default {
                         //   commit('SET_ACTIVE_TAB', 'professional_details')
                         commit('SET_ACTIVE_COMPONENT', 'LocumProfessionalDetails')
                     } else if (credentialDetailError.length > 0) {
-                        this.$router.push('/sign-up/locum')
+                        // this.$router.push('/sign-up/locum')
                         //   commit('SET_ACTIVE_TAB', 'credential_details')
                         commit('SET_ACTIVE_COMPONENT', 'LocumCredentialDetails')
                     }

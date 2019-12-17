@@ -93,7 +93,6 @@
               v-model="params.near_post_code"
               :name="'near_post_code'"
               :label="'Post code'"
-              @onSelect="onSelect"
             />
           </div>
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
@@ -227,7 +226,6 @@
               v-model="jobPartParams.near_post_code"
               :name="'near_post_code'"
               :label="'Post code'"
-              @onSelect="onSelect"
             />
           </div>
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
@@ -1526,21 +1524,6 @@ export default {
       this.jobPartParams.time_start = "";
       this.jobPartParams.time_end = "";
       this.jobPartParams.order_by = [];
-    },
-    onSelect(value) {
-      let address_components = value.details.result.address_components;
-      let postal_code = address_components.find(component =>
-        component.types.includes("postal_code")
-      );
-      if (!postal_code) {
-        this.params.near_post_code = "";
-        this.jobPartParams.near_post_code = "";
-
-        return;
-      }
-      this.params.near_post_code = postal_code.long_name;
-      this.jobPartParams.near_post_code = postal_code.long_name;
-      this.getJobsCount(this.isJobPart ? this.jobPartParams : this.params);
     }
   }
 };
