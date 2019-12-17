@@ -145,7 +145,7 @@ export default {
     return{
       modal:false,
       form: {
-        surgery_id: this.spoke.surgery.id,
+        child_practice_id: this.spoke.id,
         allow_surgery_create_sessions: "",
         max_hourly_rate_limit: "",
         max_halfday_rate_limit: "",
@@ -164,7 +164,7 @@ export default {
   },
   computed:{
     surgeryCreateSessions: function () {
-      console.log('helo',this.form.allow_surgery_create_sessions)
+      // console.log('helo',this.form.allow_surgery_create_sessions)
       return this.form.allow_surgery_create_sessions
     }
   },
@@ -174,7 +174,7 @@ export default {
     },
     async invite(){
       await this.$axios.post(`/api/v1/practice/me/practice-surgeries/invite`,{
-        surgery_id: this.form.surgery_id,
+        child_practice_id: this.form.child_practice_id,
         allow_surgery_create_sessions:this.form.allow_surgery_create_sessions,
         max_hourly_rate_limit:this.form.max_hourly_rate_limit,
         max_halfday_rate_limit:this.form.max_halfday_rate_limit,
