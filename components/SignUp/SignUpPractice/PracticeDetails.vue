@@ -108,25 +108,6 @@ export default {
       this.showResult = true;
     }
   },
-  watch: {
-    "form.search_text"(value) {
-      // splice from formerror
-      let index = this.formError.findIndex(
-        item => item.field === "search_text"
-      );
-      if (index >= 0) {
-        this.formError.splice(index, 1);
-      }
-      // validate
-      if (!value) {
-        // required
-        this.formError.push({
-          field: "search_text",
-          message: "Try with whole words, practice code or CCG."
-        });
-      }
-    }
-  },
   methods: {
     search() {
       this.formError = [];
@@ -175,16 +156,3 @@ export default {
   }
 };
 </script>
-<style scoped>
-/* .add-surgery-confirmation-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: auto;
-  z-index: 514;
-}
-.shield {
-  z-index: 513;
-} */
-</style>

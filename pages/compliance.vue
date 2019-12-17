@@ -478,8 +478,6 @@ export default {
         (a, b) => a.id - b.id
       );
 
-      console.log(mandatory);
-
       return {
         user,
         gmc_or_nmc_number,

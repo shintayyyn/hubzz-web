@@ -45,8 +45,9 @@ export default {
         state.practice_account_details.practice_role = payload.practice_role
         state.practice_account_details.practice_type_id = payload.practice_type_id
     },
-    CLEAR_FORM_PRACTICE_DETAILS(state) {
+    CLEAR_REGISTER_PRACTICE_FORM(state) {
         state.search_results = []
+        state.practice_details.surgery_id = ''
         state.practice_details.name = ''
         state.practice_details.phone_number = ''
         state.practice_details.code = ''
@@ -57,8 +58,6 @@ export default {
         state.practice_details.postcode = ''
         state.practice_details.coordinate_x = ''
         state.practice_details.coordinate_y = ''
-    },
-    CLEAR_FORM_PRACTICE_SURGERY(state) {
         state.practice_surgery_details.name = ''
         state.practice_surgery_details.phone_number = ''
         state.practice_surgery_details.code = ''
@@ -69,8 +68,8 @@ export default {
         state.practice_surgery_details.postcode = ''
         state.practice_surgery_details.coordinate_x = ''
         state.practice_surgery_details.coordinate_y = ''
-    },
-    CLEAR_FORM_PRACTICE_ACCOUNT(state) {
+        state.practice_account_details.type = ''
+        state.practice_account_details.hub_type = ''
         state.practice_account_details.title = ''
         state.practice_account_details.first_name = ''
         state.practice_account_details.last_name = ''
@@ -89,6 +88,11 @@ export default {
     },
     SET_PRACTICE_ACCOUNT_DETAIL_FORM_ERROR(state, payload) {
         state.practice_account_detail_form_error = payload
+    },
+    CLEAR_PRACTICE_FORM_ERROR(state) {
+        state.practice_detail_form_error = []
+        state.practice_surgery_detail_form_error = []
+        state.practice_account_detail_form_error = []
     },
     // REGISTER LOCUM
     SET_PROFESSIONS(state, payload) {

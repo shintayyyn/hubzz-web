@@ -24,14 +24,6 @@
             :inStyle="'background-color:#dae1e7;border-color:white'"
             @blur="CheckEmptyField(form.clinical_commissioning_group_name, 'clinical_commissioning_group_name')"
           />
-          <!-- <AppInput
-            v-model="form.clinical_commissioning_group_name"
-            :type="'text'"
-            :name="'clinical_commissioning_group_name'"
-            :label="'Clinical Commissioning Group name'"
-            :error="this.formError.find(item => item.field === 'clinical_commissioning_group_name')"
-            @blur="CheckEmptyField(form.clinical_commissioning_group_name,'clinical_commissioning_group_name')"
-          />-->
           <AppInput
             v-model="form.code"
             :type="'text'"

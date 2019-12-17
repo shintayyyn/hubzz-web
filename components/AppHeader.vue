@@ -91,9 +91,9 @@
     </transition>
     <transition name="slide" mode="out-in">
       <template v-if="create_job_modal">
-          <div class="modal-container shadow-lg">
-            <CreateJobModal :job="repost_job" />
-          </div>
+        <div class="modal-container shadow-lg">
+          <CreateJobModal :job="repost_job" />
+        </div>
       </template>
     </transition>
   </section>
@@ -113,10 +113,11 @@ export default {
   },
   async created() {
     if (this.$auth.user.domain === "Practice") {
-      let response = await this.$axios.$get(`/api/v1/practice/me/practice`);
-      const myPracticeDetail = response.data.practice;
-      if (myPracticeDetail.type === "Spoke") {
-        if (myPracticeDetail.allow_surgery_create_sessions == false) {
+      if (this.$auth.user.practice_detail.practice.type === "Spoke") {
+        if (
+          this.$auth.user.practice_detail.practice
+            .allow_surgery_create_sessions == false
+        ) {
           this.notAllowed = true;
         }
       }

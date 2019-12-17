@@ -90,13 +90,15 @@
                   :error="this.formError.find(item => item.field === 'phone_number')"
                   @blur="CheckEmptyField(form.phone_number,'phone_number')"
                 />
-                <AppInput
+                <AppPostCode
+                  :urlIndex="'/api/v1/clinical-commissioning-groups'"
+                  :dataIndex="'clinical_commissioning_groups'"
                   v-model="form.clinical_commissioning_group_name"
-                  :type="'text'"
                   :name="'clinical_commissioning_group_name'"
                   :label="'Clinical Commissioning Group name'"
-                  :error="this.formError.find(item => item.field === 'clinical_commissioning_group_name')"
-                  @blur="CheckEmptyField(form.clinical_commissioning_group_name,'clinical_commissioning_group_name')"
+                  :error="formError.find(item => item.field === 'clinical_commissioning_group_name')"
+                  :inStyle="'background-color:#dae1e7;border-color:white'"
+                  @blur="CheckEmptyField(form.clinical_commissioning_group_name, 'clinical_commissioning_group_name')"
                 />
                 <AppInput
                   v-model="form.code"
