@@ -582,7 +582,6 @@ export default {
     }
   },
   mounted() {
-    console.log(this.$route);
     if (this.selectedInvoice) {
       this.type = this.selectedInvoice.type;
       this.selectedSurgery = this.selectedInvoice.surgery;
@@ -621,10 +620,10 @@ export default {
           : `/api/v1/locum/private-practices`;
 
       let countParams = {
-        invoiceable: true
+        locum_invoiceable: true
       };
       let surgeriesParams = {
-        invoiceable: true,
+        locum_invoiceable: true,
         limit: 10,
         offset: 0
       };
