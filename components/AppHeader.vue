@@ -23,7 +23,8 @@
               <div
                 v-if="
 									$auth.user.domain === 'Practice' &&
-										$auth.user.status === 'Active'
+										$auth.user.status === 'Active' &&
+                    $auth.user.practice_detail.practice.status === 'Active'
 								"
                 class="mx-1"
               >
@@ -81,7 +82,7 @@
             <div
               class="text-xs xl:text-sm mr-2 hidden md:block"
               v-if="$auth.user.domain === 'Locum'"
-            >{{ $auth.user.email }}</div>
+            >Hi {{$auth.user.personal_detail.first_name}} {{ $auth.user.email }}</div>
           </div>
         </div>
       </div>

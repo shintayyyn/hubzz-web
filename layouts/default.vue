@@ -65,6 +65,49 @@ export default {
     }
   },
   mounted() {
+    // LOCUM
+    this.$socket.on(
+      "User Notification Email Verified",
+      this.getLocumVerification
+    );
+    this.$socket.on(
+      "User Notification Email Pending",
+      this.getLocumVerification
+    );
+    this.$socket.on(
+      "Locum Notification Number Pending",
+      this.getLocumVerification
+    );
+    this.$socket.on(
+      "Locum Notification Number Rejected",
+      this.getLocumVerification
+    );
+    this.$socket.on(
+      "Locum Notification Number Verified",
+      this.getLocumVerification
+    );
+    this.$socket.on(
+      "Locum Notification Compliance Approved",
+      this.getLocumVerification
+    );
+    this.$socket.on(
+      "Locum Notification Compliance Rejected",
+      this.getLocumVerification
+    );
+    this.$socket.on(
+      "Locum Notification Compliance Pending",
+      this.getLocumVerification
+    );
+    this.$socket.on(
+      "Locum Notification Compliance Expiring",
+      this.getLocumVerification
+    );
+    this.$socket.on(
+      "Locum Notification Compliance Expired",
+      this.getLocumVerification
+    );
+
+    // PRACTICE
     this.$socket.on(
       "Practice Notification Document Created",
       this.getPracticeVerification
@@ -91,12 +134,55 @@ export default {
   },
   methods: {
     getPracticeVerification(payload) {
-      if (!payload) {
-        return;
-      }
+      this.CheckUserVerification();
+    },
+    getLocumVerification(payload) {
       this.CheckUserVerification();
     },
     removeListener() {
+      // LOCUM
+      this.$socket.removeListener(
+        "User Notification Email Verified",
+        this.getLocumVerification
+      );
+      this.$socket.removeListener(
+        "User Notification Email Pending",
+        this.getLocumVerification
+      );
+      this.$socket.removeListener(
+        "Locum Notification Number Pending",
+        this.getLocumVerification
+      );
+      this.$socket.removeListener(
+        "Locum Notification Number Rejected",
+        this.getLocumVerification
+      );
+      this.$socket.removeListener(
+        "Locum Notification Number Verified",
+        this.getLocumVerification
+      );
+      this.$socket.removeListener(
+        "Locum Notification Compliance Approved",
+        this.getLocumVerification
+      );
+      this.$socket.removeListener(
+        "Locum Notification Compliance Rejected",
+        this.getLocumVerification
+      );
+      this.$socket.removeListener(
+        "Locum Notification Compliance Pending",
+        this.getLocumVerification
+      );
+      this.$socket.removeListener(
+        "Locum Notification Compliance Expiring",
+        this.getLocumVerification
+      );
+      this.$socket.removeListener(
+        "Locum Notification Compliance Expired",
+        this.getLocumVerification
+      );
+
+      // PRACTICE
       this.$socket.removeListener(
         "Practice Notification Document Created",
         this.getPracticeVerification

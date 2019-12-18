@@ -64,7 +64,7 @@
           />
 
           <AppInput
-            v-model.number="form.mobile_number"
+            v-model="form.mobile_number"
             :type="'text'"
             :name="'mobile_number'"
             :label="'Mobile'"
