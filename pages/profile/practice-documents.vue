@@ -187,8 +187,39 @@ export default {
       // console.log("test", this.practiceComplianceDocuments);
     });
   },
+  mounted() {
+    this.$socket.on(
+      "Practice Notification Document Created",
+      this.getDocumentRealTime
+    );
+    this.$socket.on(
+      "Practice Notification Document Updated",
+      this.getDocumentRealTime
+    );
+  },
+  destroyed() {
+    this.removeListener();
+  },
 
   methods: {
+    getDocumentRealTime(file) {
+      let updatedDocument = this.practiceComplianceDocuments.find(
+        item =>
+          item.practiceDocumentType.name === file.practice_document_type.name
+      );
+      updatedDocument.existingPracticeComplianceDocument = file;
+      console.log(this.practiceComplianceDocuments);
+    },
+    removeListener() {
+      this.$socket.removeListener(
+        "Practice Notification Document Created",
+        this.getDocumentRealTime
+      );
+      this.$socket.removeListener(
+        "Practice Notification Document Updated",
+        this.getDocumentRealTime
+      );
+    },
     show(item) {
       if (this.authPermissions.includes("Show Profile Practice Document")) {
         this.$router.push(`/profile/practice-documents/${item}`);
