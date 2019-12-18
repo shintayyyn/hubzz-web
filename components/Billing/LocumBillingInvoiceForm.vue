@@ -485,7 +485,8 @@ export default {
       description: "",
       total: "",
       form: {
-        surgery_id: null,
+        practice_id: null,
+        private_practice_id: null,
         date_start: null,
         date_end: null,
         items: [],
@@ -586,7 +587,8 @@ export default {
       this.type = this.selectedInvoice.type;
       this.selectedSurgery = this.selectedInvoice.surgery;
       this.searchSurgeries = this.selectedInvoice.surgery.name;
-      this.form.surgery_id = this.selectedInvoice.surgery.id;
+      this.form.practice_id = this.selectedInvoice.surgery.id;
+      this.form.private_practice_id = this.selectedInvoice.surgery.id;
       this.form.date_start = this.selectedInvoice.date_start;
       this.form.date_end = this.selectedInvoice.date_end;
       this.selectedInvoice.items.forEach(item => {
@@ -646,13 +648,33 @@ export default {
           } else {
             surgeries.forEach(surgery => {
               if (this.surgeries.length === 0) {
-                this.surgeries.push(surgery.surgery);
+                if (this.type === "Platform") {
+                  this.surgeries.push({
+                    ...surgery.surgery,
+                    practice_id: surgery.id
+                  });
+                } else if (this.type === "Private") {
+                  this.surgeries.push({
+                    ...surgery.surgery,
+                    private_practice_id: surgery.id
+                  });
+                }
               } else if (this.surgeries.length > 0) {
                 let index = this.surgeries.findIndex(
                   item => item.id === surgery.id
                 );
                 if (index < 0) {
-                  this.surgeries.push(surgery.surgery);
+                  if (this.type === "Platform") {
+                    this.surgeries.push({
+                      ...surgery.surgery,
+                      practice_id: surgery.id
+                    });
+                  } else if (this.type === "Private") {
+                    this.surgeries.push({
+                      ...surgery.surgery,
+                      private_practice_id: surgery.id
+                    });
+                  }
                 }
               }
             });
@@ -698,16 +720,20 @@ export default {
     },
     async fetchSurgeriesCount() {
       try {
+        let url =
+          this.type === "Platform"
+            ? `/api/v1/locum/practices`
+            : `/api/v1/locum/private-practices`;
+
         this.loadingSurgeries = true;
         let params = {
-          invoiceable: true,
+          locum_invoiceable: true,
           type: this.type
         };
 
-        const responseCount = await this.$axios.$get(
-          `/api/v1/locum/surgeries/count`,
-          { params }
-        );
+        const responseCount = await this.$axios.$get(`${url}/count`, {
+          params
+        });
 
         this.totalSurgeries =
           responseCount.data && responseCount.data.count
@@ -729,24 +755,25 @@ export default {
     },
     async fetchSurgeries() {
       try {
+        let url =
+          this.type === "Platform"
+            ? `/api/v1/locum/practices`
+            : `/api/v1/locum/private-practices`;
+
         const params = {
-          invoiceable: true,
+          locum_invoiceable: true,
           type: this.type,
           limit: 10,
           offset: this.surgeries.length
         };
 
-        const responseSurgeries = await this.$axios.$get(
-          `/api/v1/locum/surgeries`,
-          {
-            params
-          }
-        );
+        const responseSurgeries = await this.$axios.$get(url, {
+          params
+        });
 
-        let surgeries =
-          responseSurgeries.data && responseSurgeries.data.surgeries
-            ? responseSurgeries.data.surgeries
-            : [];
+        let surgeries = responseSurgeries.data.practices
+          ? responseSurgeries.data.practices
+          : responseSurgeries.data.private_practices;
 
         this.loadMoreSurgeries = true;
 
@@ -755,13 +782,33 @@ export default {
         } else {
           surgeries.forEach(surgery => {
             if (this.surgeries.length === 0) {
-              this.surgeries.push(surgery);
+              if (this.type === "Platform") {
+                this.surgeries.push({
+                  ...surgery.surgery,
+                  practice_id: surgery.id
+                });
+              } else if (this.type === "Private") {
+                this.surgeries.push({
+                  ...surgery.surgery,
+                  private_practice_id: surgery.id
+                });
+              }
             } else if (this.surgeries.length > 0) {
               let index = this.surgeries.findIndex(
                 item => item.id === surgery.id
               );
               if (index < 0) {
-                this.surgeries.push(surgery);
+                if (this.type === "Platform") {
+                  this.surgeries.push({
+                    ...surgery.surgery,
+                    practice_id: surgery.id
+                  });
+                } else if (this.type === "Private") {
+                  this.surgeries.push({
+                    ...surgery.surgery,
+                    private_practice_id: surgery.id
+                  });
+                }
               }
             }
           });
@@ -1211,14 +1258,32 @@ export default {
         this.formError.push({ field: "surgery_id", message: "Select Surgery" });
         return;
       }
-      this.form.type = this.type;
-      this.form.surgery_id = this.selectedSurgery.id;
-      this.form.total_amount = this.amount;
-      this.form.final = final;
-      this.form.items = [];
+
+      let form = {};
+      if (this.type === "Platform") {
+        form = {
+          type: this.type,
+          practice_id: this.selectedSurgery.practice_id,
+          total_amount: this.amount,
+          final: final,
+          items: [],
+          date_start: this.form.date_start,
+          date_end: this.form.date_end
+        };
+      } else if (this.type === "Private") {
+        form = {
+          type: this.type,
+          private_practice_id: this.selectedSurgery.private_practice_id,
+          total_amount: this.amount,
+          final: final,
+          items: [],
+          date_start: this.form.date_start,
+          date_end: this.form.date_end
+        };
+      }
 
       this.selectedJobParts.forEach(jobPart => {
-        this.form.items.push({
+        form.items.push({
           ...jobPart,
           dispute: this.disputedInvoices.includes(jobPart.job_part_id)
             ? true
@@ -1228,16 +1293,13 @@ export default {
             : false
         });
       });
-      console.log(this.selectedJobParts);
-      console.log(this.form.items);
-      console.log(this.disputedInvoices);
-      return;
-      this.Validate(this.form, ["final", "total_amount"]);
+
+      this.Validate(form, ["final", "total_amount"]);
       if (!this.formError.length) {
         if (!this.$route.params.id) {
           this.saveLoading = true;
           this.$axios
-            .$post(`/api/v1/locum/locum-invoices`, this.form)
+            .$post(`/api/v1/locum/locum-invoices`, form)
             .then(res => {
               this.$emit("addInvoice", res.data.locum_invoice);
               // this.$router.push("/locum-billing");
@@ -1267,10 +1329,7 @@ export default {
         } else if (this.$route.params.id) {
           this.saveLoading = true;
           this.$axios
-            .$put(
-              `/api/v1/locum/locum-invoices/${this.$route.params.id}`,
-              this.form
-            )
+            .$put(`/api/v1/locum/locum-invoices/${this.$route.params.id}`, form)
             .then(res => {
               this.$emit("updateInvoice", res.data.locum_invoice);
               this.$store.commit("SET_NOTIFICATION", {

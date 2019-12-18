@@ -117,7 +117,6 @@ export default {
     professionCategoryId(newValue, oldValue) {
       if (newValue && oldValue) {
         this.items = [];
-        console.log("clear items", this.items);
         this.getListsCount(this.search);
       }
     },

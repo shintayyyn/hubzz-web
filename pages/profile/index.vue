@@ -18,8 +18,10 @@
                 <div class="text-xs font-bold py-2">{{surgery.phone_number}}</div>
               </div>
               <div class="flex flex-col w-full md:w-1/3 p-1">
-              <div class="text-xs sm:text-sm">Type</div>
-                <div class="text-xs font-bold py-2">{{  !practice.hub_type || practice.hub_type !== 'Type 2' ? practice.type : 'Hub - Health Board'}}</div>
+                <div class="text-xs sm:text-sm">Type</div>
+                <div
+                  class="text-xs font-bold py-2"
+                >{{ !practice.hub_type || practice.hub_type !== 'Type 2' ? practice.type : 'Hub - Health Board'}}</div>
                 <div class="text-xs sm:text-sm">Address</div>
                 <div
                   class="text-xs font-bold py-2"
@@ -272,8 +274,7 @@ export default {
             [surgery, practice],
             practice_types,
             mandatory_trainings,
-            gp_documents,
-            others_documents
+            [gp_documents, others_documents]
           ] = await Promise.all([
             app.$axios
               .$get("/api/v1/practice/me/practice")

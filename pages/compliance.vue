@@ -571,7 +571,7 @@ export default {
       if (file && file.type === "GMC/NMC") {
         this.gmc_or_nmc_number.status = "Verified";
       } else if (file && file.type === "MPL/NPL") {
-        this.mpl_or_npl_number = "Verified";
+        this.mpl_or_npl_number.status = "Verified";
       }
     },
     async getComplianceRealTime(file) {

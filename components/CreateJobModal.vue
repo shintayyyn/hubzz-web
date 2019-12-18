@@ -201,7 +201,7 @@
                 class="mb-6 text-center md:text-left"
                 v-if="mandatory_training_lists.length === 0"
               >
-                <AppButton :label="'Go to Profile to add items here'" @click="addMandatory" />
+                <AppButton :label="'Go to Profile to add items here'" @click="goToProfile" />
               </div>
             </div>
           </div>
@@ -255,9 +255,10 @@
 
                 <template v-if="form.profession_id">
                   <div class="relative flex flex-col pt-2">
-                    <div class="text-xs sm:text-sm py-1">Compliance documents</div>
+                    <div class>Compliance documents</div>
                   </div>
                   <AppInput
+                    v-if="compliances.length > 0"
                     v-model="form.compliance_document_id"
                     :type="'multi-checkbox'"
                     :error="formError.find(item => item.field === 'compliance_document_id')"
@@ -268,6 +269,9 @@
                     :placeholder="''"
                     :lists="compliances"
                   />
+                  <div class="mb-6 text-center md:text-left mt-2" v-if="compliances.length === 0">
+                    <AppButton :label="'Go to Profile to add items here'" @click="goToProfile" />
+                  </div>
                 </template>
               </template>
             </div>
@@ -808,7 +812,7 @@ export default {
       this.$store.commit("calendar/CLEAR_REPOST_JOB");
       this.$emit("close");
     },
-    addMandatory() {
+    goToProfile() {
       this.$store.commit("calendar/CREATE_JOB_MODAL", false);
       this.$store.commit("calendar/CLEAR_REPOST_JOB");
       this.$router.push("/profile");
