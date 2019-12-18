@@ -56,4 +56,5 @@ export default (ctx, inject) => {
   ctx.store.dispatch('billing/initializeBillingListener')
   ctx.store.dispatch('chat/initializeChatListener')
   ctx.store.dispatch('chat/initializeUsersOnline')
+  // ctx.store.dispatch('compliance/initializeComplianceListener')
 }

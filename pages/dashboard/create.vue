@@ -16,6 +16,7 @@
 import JobDetailModalAppointment from "@/components/Jobs/JobDetailModalAppointment";
 import CreateJobModal from "@/components/CreateJobModal";
 export default {
+  middleware: "isVerified",
   components: {
     JobDetailModalAppointment,
     CreateJobModal

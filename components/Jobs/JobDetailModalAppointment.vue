@@ -291,8 +291,6 @@ export default {
             this.form
           );
 
-          console.log(jobResponse);
-
           const job =
             jobResponse.data && jobResponse.data.job
               ? jobResponse.data.job
@@ -343,11 +341,12 @@ export default {
           });
           this.loading = false;
         } catch (err) {
+          console.log("err", err.response || err);
           if (err.response.data.message) {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "danger",
-              text: this.formError.map(error => error.message)
+              text: [`${err.response.data.message}`]
             });
           } else if (err.response.data.error_messages) {
             err.response.data.error_messages.forEach(error => {

@@ -33,7 +33,7 @@
                 >
                   <span
                     class="absolute top-0 right-0 cursor-pointer py-2 px-4 rounded-full text-lg font-bold hover:text-gray-700"
-                    @click.prevent.stop="close(notification.id)"
+                    @click.prevent.stop="close(notification.id, notification.type)"
                   >x</span>
                   <div class="flex flex-wrap w-48 md:w-64">
                     <div class="flex flex-col items-start my-1 w-full">
@@ -252,6 +252,7 @@ export default {
       this.close(id, notificationType);
     },
     close(id, type) {
+      console.log(id, type);
       if (type === "Jobs") {
         this.$store.commit("jobs/REMOVE_PRACTICE_JOB_NOTIFICATION", id);
         this.$store.commit("jobs/REMOVE_LOCUM_JOB_NOTIFICATION", id);
