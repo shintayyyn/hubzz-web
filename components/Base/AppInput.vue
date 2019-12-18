@@ -101,7 +101,7 @@
                     v-if="error"
                     class="text-red-500 py-1 text-xs text-white"
                   >{{error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ")}}</div>
-               </transition>
+                </transition>
               </div>
             </template>
             <template v-if="type === 'textarea'">
@@ -123,7 +123,7 @@
                     v-if="error"
                     class="text-red-500 py-1 text-xs text-white"
                   >{{error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ")}}</div>
-               </transition>
+                </transition>
               </div>
             </template>
           </div>
@@ -138,7 +138,7 @@
           <!-- <div
             class="rounded-lg bg-red-500 px-2 py-1 text-xs sm:text-sm text-white"
             v-if="error"
-          >{{error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ")}}</div> -->
+          >{{error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ")}}</div>-->
         </div>
         <div class="flex flex-row flex-no-wrap justify-start items-center">
           <input
@@ -194,12 +194,12 @@
           <label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
           <div class="flex">
             <div class="bg-gray-300 rounded px-4 py-1 text-xs sm:text-sm" v-if="info">{{info}}</div>
-          <transition name="fade">
-            <div
-              class="absolute right-0 bg-red-500 py-1 px-2 text-xs sm:text-sm text-white"
-              v-if="error"
-            >{{error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ")}}</div>
-          </transition>
+            <transition name="fade">
+              <div
+                class="absolute right-0 bg-red-500 py-1 px-2 text-xs sm:text-sm text-white"
+                v-if="error"
+              >{{error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ")}}</div>
+            </transition>
           </div>
         </div>
         <div

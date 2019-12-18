@@ -134,6 +134,7 @@ export default {
         this.$auth.user.practice_detail.practice.status
           ? this.$auth.user.practice_detail.practice.status
           : null;
+
       let hubType = "";
       if (domain === "Practice") {
         if (this.$auth.user.practice_detail.practice.type === "Hub") {
@@ -141,6 +142,7 @@ export default {
           console.log("hub type", hubType);
         }
       }
+
       let addedLists = [];
       let defaultLists = [
         { name: "Dashboard", route: "/dashboard" },
@@ -165,7 +167,10 @@ export default {
             ]
           }
         ];
-        if (["Active", "Dormant"].includes(accountStatus)) {
+        if (
+          ["Active", "Dormant"].includes(accountStatus) &&
+          (practiceStatus && practiceStatus === "Active")
+        ) {
           addedLists.push({
             name: "Surgery Management",
             route: "/surgery-management"
@@ -177,9 +182,7 @@ export default {
               route: "/sessions",
               permissions: ["View Sessions Job"]
             });
-            if (practiceStatus && practiceStatus === "Active") {
-              addedLists.push({ name: "Billing", route: "/practice-billing" });
-            }
+            addedLists.push({ name: "Billing", route: "/practice-billing" });
           }
           addedLists.push({ name: "Invite", route: "/invite" });
           addedLists.push({

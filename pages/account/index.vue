@@ -297,34 +297,34 @@ export default {
       this.locumForm.address_line_3 = this.user.address_detail.address.line_3;
       this.locumForm.post_code = this.user.address_detail.address.post_code;
       this.email_verifiedAt = this.user.email_verified_at;
+    }
 
-      this.$socket.on(
+    this.$socket.on(
+      "User Notification Email Pending",
+      this.getEmailVerificationRealTime
+    );
+    this.$socket.on(
+      "User Notification Email Verified",
+      this.getEmailVerificationRealTime
+    );
+  },
+  destroyed() {
+    this.removeListener();
+  },
+  methods: {
+    async getEmailVerificationRealTime() {
+      await this.$auth.fetchUser();
+      this.email_verifiedAt = this.$auth.user.email_verified_at;
+    },
+    removeListener() {
+      this.$socket.removeListener(
         "User Notification Email Pending",
         this.getEmailVerificationRealTime
       );
-      this.$socket.on(
+      this.$socket.removeListener(
         "User Notification Email Verified",
         this.getEmailVerificationRealTime
       );
-    }
-  },
-  methods: {
-    async getEmailVerificationRealTime(file) {
-      if (!file) {
-        return;
-      }
-      this.CheckUserVerification();
-      // let index = this.mandatory.findIndex(
-      //   item =>
-      //     item.info.compliance_document.name === file.compliance_document.name
-      // );
-      // let updatedFile = this.mandatory.find(
-      //   item =>
-      //     item.info.compliance_document.name === file.compliance_document.name
-      // );
-      // if (index >= 0) {
-      //   this.mandatory.splice(index, 1, { ...updatedFile, info: file });
-      // }
     },
     resendEmailVerification() {
       this.$axios

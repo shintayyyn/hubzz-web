@@ -570,6 +570,9 @@ export default {
     }
   },
   watch: {
+    "$auth.user"(value) {
+      console.log("watch auth user");
+    },
     "form.profession_id"(newValue, oldValue) {
       this.CheckEmptyField(newValue, "profession_id");
       if (newValue && oldValue) {
@@ -589,7 +592,6 @@ export default {
         }
       }
     },
-
     "form.date_end"(value) {
       let end = this.$moment(value, "YYYY-MM-DD");
       let days = [];

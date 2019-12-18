@@ -443,9 +443,6 @@ export default {
                 ) {
                   mandatoryDocument.info = userComplianceDocument;
                 }
-                // else {
-                //   mandatoryDocument.info = null;
-                // }
               }
             );
             profession.optional_compliance_documents.forEach(
@@ -456,9 +453,6 @@ export default {
                 ) {
                   optionalDocument.info = userComplianceDocument;
                 }
-                // else {
-                //   optionalDocument.info = null;
-                // }
               }
             );
           }
@@ -502,15 +496,15 @@ export default {
   mounted() {
     this.$socket.on(
       "Locum Notification Number Pending",
-      this.getNumberceRealTime
+      this.getNumberPendingRealTime
     );
     this.$socket.on(
       "Locum Notification Number Rejected",
-      this.getNumberceRealTime
+      this.getNumberRejectedRealTime
     );
     this.$socket.on(
       "Locum Notification Number Verified",
-      this.getNumberceRealTime
+      this.getNumberVerifiedRealTime
     );
     this.$socket.on(
       "Locum Notification Compliance Approved",
@@ -550,32 +544,40 @@ export default {
     }
   },
   methods: {
-    async getNumberceRealTime(file) {
+    async getNumberPendingRealTime(file) {
       if (!file) {
         return;
       }
-      this.CheckUserVerification();
-      let index = this.mandatory.findIndex(
-        item =>
-          item.info.compliance_document.name ===
-            file.compliance_document.name ||
-          item.name === file.compliance_document.name
-      );
-      let updatedFile = this.mandatory.find(
-        item =>
-          item.info.compliance_document.name ===
-            file.compliance_document.name ||
-          item.name === file.compliance_document.name
-      );
-      if (index >= 0) {
-        this.mandatory.splice(index, 1, { ...updatedFile, info: file });
+      if (file && file.type === "GMC/NMC") {
+        this.gmc_or_nmc_number.status = "Pending";
+      } else if (file && file.type === "MPL/NPL") {
+        this.mpl_or_npl_number = "Pending";
+      }
+    },
+    async getNumberRejectedRealTime(file) {
+      if (!file) {
+        return;
+      }
+      if (file && file.type === "GMC/NMC") {
+        this.gmc_or_nmc_number.status = "Rejected";
+      } else if (file && file.type === "MPL/NPL") {
+        this.mpl_or_npl_number = "Rejected";
+      }
+    },
+    async getNumberVerifiedRealTime(file) {
+      if (!file) {
+        return;
+      }
+      if (file && file.type === "GMC/NMC") {
+        this.gmc_or_nmc_number.status = "Verified";
+      } else if (file && file.type === "MPL/NPL") {
+        this.mpl_or_npl_number = "Verified";
       }
     },
     async getComplianceRealTime(file) {
       if (!file) {
         return;
       }
-      this.CheckUserVerification();
       let index = this.mandatory.findIndex(
         item =>
           item.info.compliance_document.name ===
@@ -595,15 +597,15 @@ export default {
     removeListener() {
       this.$socket.removeListener(
         "Locum Notification Number Pending",
-        this.getNumberceRealTime
+        this.getNumberPendingRealTime
       );
       this.$socket.removeListener(
         "Locum Notification Number Rejected",
-        this.getNumberceRealTime
+        this.getNumberRejectedRealTime
       );
       this.$socket.removeListener(
         "Locum Notification Number Verified",
-        this.getNumberceRealTime
+        this.getNumberVerifiedRealTime
       );
       this.$socket.removeListener(
         "Locum Notification Compliance Approved",
