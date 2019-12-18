@@ -306,7 +306,7 @@ input[type="checkbox"] + label::before {
 	height: 18px;
 	min-width: 18px;
 	min-height: 18px;
-	background: #eee;
+	background: #ccc;
 }
 
 input[type="checkbox"]:checked + label:before {

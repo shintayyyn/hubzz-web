@@ -123,8 +123,10 @@ export default {
                             errorMessage.field === 'last_name' ||
                             errorMessage.field === 'suffix' ||
                             errorMessage.field === 'gender' ||
+                            errorMessage.field === 'date_of_birth' ||
                             errorMessage.field === 'mobile_number' ||
-                            errorMessage.field === 'home_number'
+                            errorMessage.field === 'home_number' ||
+                            errorMessage.field === 'work_number'
                         )
                     })
                     commit('SET_ACCOUNT_DETAIL_FORM_ERROR', accountDetailError)

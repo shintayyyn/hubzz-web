@@ -190,6 +190,17 @@ Vue.mixin({
       return {
         hasPermission
       };
+    },
+    changeDateFormat(form, dates, oldFormat, newFormat) {
+      let submitForm = { ...form }
+      let items = Object.entries(form);
+      for (const [key, value] of items) {
+        if (dates.includes(key)) {
+          let newValueFormat = this.$moment(value, oldFormat).format(newFormat)
+          submitForm[key] = newValueFormat
+        }
+      }
+      return submitForm
     }
   }
 });

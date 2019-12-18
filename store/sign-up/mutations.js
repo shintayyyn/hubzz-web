@@ -134,7 +134,10 @@ export default {
         state.account_details.last_name = payload.last_name
         state.account_details.suffix = payload.suffix
         state.account_details.gender = payload.gender
+        state.account_details.date_of_birth = payload.date_of_birth
         state.account_details.mobile_number = payload.mobile_number
+        state.account_details.home_number = payload.home_number
+        state.account_details.work_number = payload.work_number
     },
     SET_ADDRESS_DETAILS(state, payload) {
         state.address_details.post_code = payload.post_code

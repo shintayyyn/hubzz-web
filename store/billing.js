@@ -196,7 +196,7 @@ export const getters = {
 				date_end: notif.date_end,
 				issued_at: notif.issued_at,
 				paid_at: notif.paid_at,
-				practice: notif.surgery.name,
+				practice: notif.practice.name,
 				notification_type: notif.notificationType,
 				type: "Billings",
 				message

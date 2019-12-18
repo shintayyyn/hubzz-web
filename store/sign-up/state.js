@@ -57,7 +57,10 @@ export default () => ({
         last_name: '',
         suffix: '',
         gender: '',
-        mobile_number: ''
+        date_of_birth: null,
+        mobile_number: '',
+        home_number: '',
+        work_number: ''
     },
     address_details: {
         post_code: '',

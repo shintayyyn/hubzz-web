@@ -120,7 +120,7 @@ export default {
                   text: [`${err.response.data.message}`]
                 });
               }
-              if (err.response.date.error_messages) {
+              if (err.response.data.error_messages) {
                 err.response.data.error_messages.forEach(error => {
                   this.formError.push(error);
                 });

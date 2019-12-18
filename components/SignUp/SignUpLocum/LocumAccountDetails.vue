@@ -62,7 +62,13 @@
             @blur="CheckEmptyField(form.gender, 'gender')"
             :items="genders"
           />
-
+          <AppDate
+            v-model="form.date_of_birth"
+            :name="'date_of_birth'"
+            :label="'Date of Birth'"
+            :error="formError.find(item => item.field === 'date_of_birth')"
+            @blur="CheckEmptyField(form.date_of_birth, 'date_of_birth')"
+          />
           <AppInput
             v-model="form.mobile_number"
             :type="'text'"
@@ -97,6 +103,7 @@
 <script>
 import AppInput from "@/components/Base/AppInput";
 import AppButton from "@/components/Base/AppButton";
+import AppDate from "@/components/Base/AppDate";
 const genders = [
   { value: "Male", label: "Male" },
   { value: "Female", label: "Female" }
@@ -104,7 +111,8 @@ const genders = [
 export default {
   components: {
     AppInput,
-    AppButton
+    AppButton,
+    AppDate
   },
   data() {
     return {
@@ -117,7 +125,8 @@ export default {
         gender: "",
         mobile_number: "",
         home_number: "",
-        work_number: ""
+        work_number: "",
+        date_of_birth: ""
       },
       formError: []
     };
@@ -150,6 +159,7 @@ export default {
     this.form.last_name = this.accountDetails.last_name;
     this.form.suffix = this.accountDetails.suffix;
     this.form.gender = this.accountDetails.gender;
+    this.form.date_of_birth = this.accountDetails.date_of_birth;
     this.form.mobile_number = this.accountDetails.mobile_number;
     this.form.home_number = this.accountDetails.home_number;
     this.form.work_number = this.accountDetails.work_number;

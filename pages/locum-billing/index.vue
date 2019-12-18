@@ -85,7 +85,7 @@ export default {
         },
         {
           name: "Practice / Surgery",
-          dataIndex: "surgery.name",
+          dataIndex: "practice.name",
           class: "text-center"
         },
         {
