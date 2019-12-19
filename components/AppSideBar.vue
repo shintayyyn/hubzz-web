@@ -15,10 +15,10 @@
             :to="item.route"
             :event="isDisabled(item.route)"
             class="block no-underline p-4"
-            :class="`/${$route.path.split('/')[1]}` == item.route ? 'text-yellow-500' : 'text-black hover:text-yellow-600'"
+            :class="`/${$route.path.split('/')[1]}` == item.route ? 'text-yellow-600' : 'text-black hover:text-yellow-600'"
             v-if="hasPermissions(item.permissions ? item.permissions : [])"
           >
-            <span class="font-sans">{{item.name}}</span>
+            <span class="font-sans text-base font-bold">{{item.name}}</span>
           </nuxt-link>
         </div>
         <div class="text-sm relative">
@@ -29,9 +29,9 @@
           <button
             @click.prevent="signout_modal = true"
             class="block no-underline p-4 focus:outline-none"
-            :class="`/${$route.path.split('/')[1]}` == '/sign-out' ? 'text-yellow-500' : 'text-black hover:text-yellow-600'"
+            :class="`/${$route.path.split('/')[1]}` == '/sign-out' ? 'text-yellow-600' : 'text-black hover:text-yellow-600'"
           >
-            <span class="font-sans">Sign Out</span>
+            <span class="font-sans text-base font-bold">Sign Out</span>
           </button>
         </div>
       </div>
@@ -273,7 +273,7 @@ export default {
   width: 200px;
   height: 100%;
   overflow: auto;
-  border-right: solid 1px #edf2f7;
+  border-right: solid 2px #ccc;
   transition: all 0.3s ease-in-out;
   background-color: white;
   z-index: 55;
