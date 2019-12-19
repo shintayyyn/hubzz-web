@@ -8,7 +8,7 @@
 		</div>
 		<div class="my-2">
 			<div class="text-lg font-semibold">
-				{{ specificPracticeHub.surgery.name }}
+				{{ specificPracticeHub.name }}
 			</div>
 		</div>
 
@@ -39,7 +39,7 @@
 					}}
 				</div>
 
-				<div class="font-semibold mt-2">Address</div>
+				<!-- <div class="font-semibold mt-2">Address</div>
 				<div>
 					{{
 						specificPracticeHub.surgery.address.line_1
@@ -67,7 +67,7 @@
 							? specificPracticeHub.surgery.address.post_code
 							: "N/A"
 					}}
-				</div>
+				</div> -->
 			</div>
 		</div>
 
@@ -133,13 +133,15 @@ export default {
 		};
   },
   created(){
+    console.log('specific invitation', this.specificInvitation)
+    console.log('specific hub', this.specificPracticeHub)
   },
 	async asyncData({ app, route, store }) {
 		let response = await app.$axios.$get(
 			`/api/v1/practice/me/parent-surgery/invitations/${route.params.invitationId}`
 		);
 		const specificInvitation = response.data.practice_surgery;
-		const specificPracticeHub = response.data.practice_hub;
+		const specificPracticeHub = response.data.practice_surgery.practice;
 		return {
 			specificInvitation,
 			specificPracticeHub
