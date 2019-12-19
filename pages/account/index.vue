@@ -264,41 +264,53 @@ export default {
         response.data && response.data && response.data.user
           ? response.data.user
           : null;
-      return {
-        user
-      };
+
+      let practiceForm = {};
+      let locumForm = {};
+      let email_verifiedAt = "";
+
+      if (user.domain === "Practice") {
+        practiceForm.email = user.email;
+        practiceForm.title = user.personal_detail.title;
+        practiceForm.first_name = user.personal_detail.first_name;
+        practiceForm.last_name = user.personal_detail.last_name;
+        practiceForm.suffix = user.personal_detail.suffix;
+        practiceForm.practice_role = user.practice_detail.practice_role;
+        email_verifiedAt = user.email_verified_at;
+
+        return {
+          user,
+          practiceForm,
+          email_verifiedAt
+        };
+      }
+      if (user.domain === "Locum") {
+        locumForm.email = user.email;
+        locumForm.title = user.personal_detail.title;
+        locumForm.first_name = user.personal_detail.first_name;
+        locumForm.last_name = user.personal_detail.last_name;
+        locumForm.suffix = user.personal_detail.suffix;
+        locumForm.gender = user.personal_detail.gender;
+        locumForm.mobile_number = user.contact_detail.mobile_number;
+        locumForm.home_number = user.contact_detail.home_number;
+        locumForm.work_number = user.contact_detail.work_number;
+        locumForm.address_line_1 = user.address_detail.address.line_1;
+        locumForm.address_line_2 = user.address_detail.address.line_2;
+        locumForm.address_line_3 = user.address_detail.address.line_3;
+        locumForm.post_code = user.address_detail.address.post_code;
+        email_verifiedAt = user.email_verified_at;
+
+        return {
+          user,
+          locumForm,
+          email_verifiedAt
+        };
+      }
     } catch (err) {
       throw err;
     }
   },
   mounted() {
-    if (this.$auth.user.domain === "Practice") {
-      this.practiceForm.email = this.user.email;
-      this.practiceForm.title = this.user.personal_detail.title;
-      this.practiceForm.first_name = this.user.personal_detail.first_name;
-      this.practiceForm.last_name = this.user.personal_detail.last_name;
-      this.practiceForm.suffix = this.user.personal_detail.suffix;
-      this.practiceForm.practice_role = this.user.practice_detail.practice_role;
-      this.email_verifiedAt = this.user.email_verified_at;
-    }
-
-    if (this.$auth.user.domain === "Locum") {
-      this.locumForm.email = this.user.email;
-      this.locumForm.title = this.user.personal_detail.title;
-      this.locumForm.first_name = this.user.personal_detail.first_name;
-      this.locumForm.last_name = this.user.personal_detail.last_name;
-      this.locumForm.suffix = this.user.personal_detail.suffix;
-      this.locumForm.gender = this.user.personal_detail.gender;
-      this.locumForm.mobile_number = this.user.contact_detail.mobile_number;
-      this.locumForm.home_number = this.user.contact_detail.home_number;
-      this.locumForm.work_number = this.user.contact_detail.work_number;
-      this.locumForm.address_line_1 = this.user.address_detail.address.line_1;
-      this.locumForm.address_line_2 = this.user.address_detail.address.line_2;
-      this.locumForm.address_line_3 = this.user.address_detail.address.line_3;
-      this.locumForm.post_code = this.user.address_detail.address.post_code;
-      this.email_verifiedAt = this.user.email_verified_at;
-    }
-
     this.$socket.on(
       "User Notification Email Pending",
       this.getEmailVerificationRealTime

@@ -1,73 +1,19 @@
 <template>
   <section>
-    <!-- <AppTable
-      v-if="practiceComplianceDocuments.length > 0"
-      :total="practiceComplianceDocuments.length"
-      :items="practiceComplianceDocuments"
+    <AppTable
+      v-if="practice_compliance_documents.length > 0"
+      :total="practice_compliance_documents.length"
+      :items="practice_compliance_documents"
       :columns="columns"
       :routerLink="'/profile/practice-documents'"
-    ></AppTable>-->
-    <div class="flex flex-col mt-4">
-      <div class="flex flex-row px-4 flex-no-wrap justify-between font-bold">
-        <div class="text-xs sm:text-sm w-1/3 px-1">Title</div>
-        <div class="text-xs sm:text-sm w-1/3 text-center px-1">File Size</div>
-        <div class="text-xs sm:text-sm w-1/3 text-center px-1">Last Upload Date</div>
-      </div>
-      <div>
-        <div
-          class="relative rounded-lg shadow-lg p-4 mt-4"
-          :class="{
-						'practice-doc-card cursor-pointer hover:bg-gray-200':
-							item.existingPracticeComplianceDocument
-					}"
-          v-for="item in practiceComplianceDocuments"
-          :key="item.practiceDocumentType.id"
-          @click="
-						item.existingPracticeComplianceDocument
-							? show(item.existingPracticeComplianceDocument.id)
-							: ''
-					"
-        >
-          <div
-            v-if="!item.existingPracticeComplianceDocument"
-            class="absolute w-2/3 h-full top-0 right-0 text-gray-600 bg-gray-100 flex justify-center items-center rounded-r-lg"
-          >Please Wait for Admin's confirmation</div>
-          <div class="flex flex-row flex-no-wrap">
-            <div class="text-xs sm:text-sm w-1/3 px-1">{{ item.practiceDocumentType.name }}</div>
-            <template>
-              <div class="text-xs sm:text-sm w-1/3 text-center px-1">
-                {{
-                item.existingPracticeComplianceDocument
-                ? (
-                item.existingPracticeComplianceDocument.file.size /
-                1048576
-                ).toFixed(2) + "Mb"
-                : null
-                }}
-              </div>
-              <div class="text-xs sm:text-sm w-1/3 text-center px-1">
-                {{
-                item.existingPracticeComplianceDocument &&
-                item.existingPracticeComplianceDocument.file &&
-                item.existingPracticeComplianceDocument.file.created_at
-                ? $moment(
-                item.existingPracticeComplianceDocument.file.created_at
-                ).format("DD/MM/YYYY HH:mm:ss")
-                : null
-                }}
-              </div>
-            </template>
-          </div>
-        </div>
-      </div>
-    </div>
-
+      :routerId="'fileId'"
+    ></AppTable>
     <transition name="fade" mode="out-in">
-      <div
+      <nuxt-link
         class="shield"
         v-if="$route.name === 'profile-practice-documents-id'"
-        @click="$router.push(`/profile/practice-documents`)"
-      ></div>
+        :to="'/profile/practice-documents'"
+      ></nuxt-link>
     </transition>
     <nuxt-child />
   </section>
@@ -86,26 +32,22 @@ export default {
   },
   data() {
     return {
-      modal: false,
-      practiceDocuments: [],
-      practiceDocumentTypes: [],
-      practiceComplianceDocuments: [],
-      disabled: "true",
+      practice_compliance_documents: [],
       // app table
       columns: [
         {
           name: "Title",
-          dataIndex: "practiceDocumentType.name",
+          dataIndex: "name",
           class: "text-left"
         },
         {
           name: "File Size",
-          dataIndex: "existingPracticeComplianceDocument.file.size",
-          class: "text-center file-size"
+          dataIndex: "info.file.size",
+          class: "text-center fileSize*MB qweq"
         },
         {
           name: "Last Upload Date",
-          dataIndex: "existingPracticeComplianceDocument.file.created_at",
+          dataIndex: "info.created_at",
           class: "text-center localDate"
         }
       ]
@@ -123,7 +65,53 @@ export default {
       );
       if (permissions.includes("View Profile Practice Document")) {
         try {
-          return;
+          const [
+            practice_documents,
+            practice_document_types
+          ] = await Promise.all([
+            app.$axios.$get(`/api/v1/practice/practice-documents`).then(res => {
+              const practice_documents =
+                res.data &&
+                res.data.practice_documents &&
+                res.data.practice_documents.length > 0
+                  ? res.data.practice_documents
+                  : [];
+              return practice_documents;
+            }),
+            app.$axios.$get(`/api/v1/practice-document-types`).then(res => {
+              const practice_document_types =
+                res.data &&
+                res.data.practice_document_types &&
+                res.data.practice_document_types.length > 0
+                  ? res.data.practice_document_types
+                  : [];
+              return practice_document_types;
+            })
+          ]);
+
+          const practice_compliance_documents = [];
+
+          practice_document_types.forEach(practiceDocumentType => {
+            let hasDocument = practice_documents.find(
+              practiceDocument =>
+                practiceDocument.practice_document_type.name ===
+                practiceDocumentType.name
+            );
+            practice_compliance_documents.push({
+              ...practiceDocumentType,
+              info: hasDocument ? hasDocument : null,
+              fileId: hasDocument ? hasDocument.id : null
+            });
+          });
+
+          console.log(
+            "practice_compliance_documents",
+            practice_compliance_documents
+          );
+
+          return {
+            practice_compliance_documents
+          };
         } catch (err) {
           if (err.response && err.response.status === 401) {
             error(err.response.data);
@@ -139,53 +127,6 @@ export default {
         error({ statusCode: 401, message: "Your Practice is Not Authorized" });
       }
     }
-  },
-  created() {
-    this.practiceDocuments = [];
-    this.practiceDocumentTypes = [];
-    this.practiceComplianceDocuments = [];
-
-    Promise.all([
-      //------------------EXISTING PRACTICE DOCUMENTS----------------------2
-      this.$axios.$get(`/api/v1/practice/practice-documents`).then(res => {
-        res.data.practice_documents.forEach(item => {
-          this.practiceDocuments.push(item);
-        });
-      }),
-
-      //---------------PRACTICE DOCUMENT TYPES-----------------
-      this.$axios.$get(`/api/v1/practice-document-types`).then(res => {
-        res.data.practice_document_types.forEach(item => {
-          this.practiceDocumentTypes.push(item);
-        });
-      })
-    ]).then(() => {
-      this.practiceComplianceDocuments = this.practiceDocumentTypes.map(
-        practiceDocumentType => {
-          const existingPracticeComplianceDocument = this.practiceDocuments.find(
-            existingPracticeDocument => {
-              return (
-                existingPracticeDocument.practice_document_type.id ===
-                practiceDocumentType.id
-              );
-            }
-          );
-          return {
-            practiceDocumentType,
-            existingPracticeComplianceDocument
-          };
-        }
-      );
-      // // sample
-      // this.practiceComplianceDocuments.map(item => {
-      //   return {
-      //     ...item,
-      //     id: item.existingPracticeComplianceDocument.id,
-      //     test: "test"
-      //   };
-      // });
-      // console.log("test", this.practiceComplianceDocuments);
-    });
   },
   mounted() {
     this.$socket.on(
@@ -203,12 +144,18 @@ export default {
 
   methods: {
     getDocumentRealTime(file) {
-      let updatedDocument = this.practiceComplianceDocuments.find(
-        item =>
-          item.practiceDocumentType.name === file.practice_document_type.name
+      let updatedDocument = this.practice_compliance_documents.find(
+        item => item.fileId === file.id
       );
-      updatedDocument.existingPracticeComplianceDocument = file;
-      console.log(this.practiceComplianceDocuments);
+      let storeDocument = this.practice_compliance_documents.find(
+        item => item.name === file.practice_document_type.name
+      );
+
+      if (updatedDocument) {
+        updatedDocument.info = file;
+      } else if (!updatedDocument && storeDocument) {
+        storeDocument.info = file;
+      }
     },
     removeListener() {
       this.$socket.removeListener(
@@ -219,24 +166,12 @@ export default {
         "Practice Notification Document Updated",
         this.getDocumentRealTime
       );
-    },
-    show(item) {
-      if (this.authPermissions.includes("Show Profile Practice Document")) {
-        this.$router.push(`/profile/practice-documents/${item}`);
-        // this.$router.push(
-        //   `/profile/practice-documents/${item.existingPracticeComplianceDocument.id}`
-        // );
-      }
     }
   }
 };
 </script>
 <style scoped>
-.practice-doc-card {
-  transition: background-color 0.5s ease-in-out;
-}
 .shield {
   z-index: 509;
 }
-/*  */
 </style>
