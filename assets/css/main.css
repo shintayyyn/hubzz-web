@@ -365,3 +365,10 @@ input[type="checkbox"]:disabled + label::before {
 .transition-hover {
 	transition: all 0.3s ease;
 }
+
+
+/* Quill Editor */
+
+.ql-container.ql-snow {
+	border: 0 !important;
+}
