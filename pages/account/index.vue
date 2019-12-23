@@ -17,12 +17,13 @@
 					class="text-xs"
 				>E-mail is Verified on {{$moment(email_verifiedAt).format('MMM DD, YYYY | hh:mm A')}}</span>
 			</div>
-			<div class="-mt-6 mb-4" v-if="!email_verifiedAt">
+			<div class="-mt-4 mb-4" v-if="!email_verifiedAt">
 				<span class="text-red-500 text-xs">E-mail is not yet verified.</span>
 				<span
-					class="p-1 bg-gray-800 rounded text-xs text-white cursor-pointer whitespace-no-wrap"
+					class="p-1 rounded text-xs text-white whitespace-no-wrap"
+					:class="sendingRequest ? 'bg-gray-500 cursor-wait' : 'bg-gray-800 cursor-pointer'"
 					@click="resendEmailVerification()"
-				>Click here to re-send</span>
+				>{{ sendingRequest ? 'Sending...' : 'Click here to re-send' }}</span>
 			</div>
 			<AppInput
 				v-model="practiceForm.title"
@@ -89,7 +90,7 @@
 					<span
 						class="my-1 p-1 bg-gray-800 rounded text-xs text-white cursor-pointer whitespace-no-wrap"
 						@click="resendEmailVerification()"
-					>Click here to re-send</span>
+					>{{ sendingRequest ? 'Resending' : 'Click here to re-send' }}</span>
 				</template>
 			</div>
 			<AppInput
@@ -230,6 +231,7 @@ export default {
 			formError: [],
 			email_verifiedAt: "",
 			roles,
+			sendingRequest: false,
 
 			practiceForm: {
 				email: "",
@@ -327,26 +329,32 @@ export default {
 			);
 		},
 		resendEmailVerification() {
-			this.$axios
-				.$post(`/api/v1/email-verification/resend`)
-				.then(res => {
-					this.$store.commit("SET_NOTIFICATION", {
-						enabled: true,
-						status: "success",
-						text: [`${res.message}`]
-					});
-				})
-				.catch(err => {
-					console.log("err", err.response || err);
-					if (err.response.data.message) {
+			if (!this.sendingRequest) {
+				this.sendingRequest = true;
+				this.$axios
+					.$post(`/api/v1/email-verification/resend`)
+					.then(res => {
+						console.log("sendingRequest", this.sendingRequest);
 						this.$store.commit("SET_NOTIFICATION", {
 							enabled: true,
-							status: "danger",
-							text: [`${err.response.data.message}`]
+							status: "success",
+							text: [`${res.message}`]
 						});
-						throw err;
-					}
-				});
+						this.sendingRequest = false;
+						console.log("sendingRequest", this.sendingRequest);
+					})
+					.catch(err => {
+						console.log("err", err.response || err);
+						if (err.response.data.message) {
+							this.$store.commit("SET_NOTIFICATION", {
+								enabled: true,
+								status: "danger",
+								text: [`${err.response.data.message}`]
+							});
+							throw err;
+						}
+					});
+			}
 		},
 		save(domain) {
 			if (domain === "practice") {
