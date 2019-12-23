@@ -11,6 +11,7 @@
 				:error="formError.find(item => item.field === 'email')"
 				@submit="save"
 				@blur="CheckEmptyField(practiceForm.email, 'email')"
+				required
 			/>
 			<div class="-mt-6 mb-4" v-if="email_verifiedAt">
 				<span
@@ -40,15 +41,17 @@
 				:error="formError.find(item => item.field === 'first_name')"
 				@submit="save"
 				@blur="CheckEmptyField(practiceForm.first_name, 'first_name')"
+				required
 			/>
 			<AppInput
 				v-model="practiceForm.last_name"
 				:type="'text'"
 				:name="'last_name'"
 				:label="'Last name'"
-				:error="formError.find(item => item.field === 'last_name')"
 				@submit="save"
 				@blur="CheckEmptyField(practiceForm.last_name, 'last_name')"
+				:error="formError.find(item => item.field === 'last_name')"
+				required
 			/>
 			<AppInput
 				v-model="practiceForm.suffix"
@@ -64,6 +67,9 @@
 				:label="'Role'"
 				:placeholder="'Role...'"
 				:items="roles"
+				@blur="CheckEmptyField(practiceForm.practice_role, 'practice_role')"
+				:error="formError.find(item => item.field === 'practice_role')"
+				required
 			/>
 			<div class="text-left mt-5">
 				<AppButton :label="'Save changes'" @click="save('practice')" />
@@ -78,6 +84,7 @@
 				:error="formError.find(item => item.field === 'email')"
 				@submit="save"
 				@blur="CheckEmptyField(locumForm.email, 'email')"
+				required
 			/>
 			<div class="-mt-4 mb-4">
 				<template v-if="email_verifiedAt">
@@ -109,6 +116,7 @@
 				:error="formError.find(item => item.field === 'first_name')"
 				@submit="save"
 				@blur="CheckEmptyField(locumForm.first_name, 'first_name')"
+				required
 			/>
 			<AppInput
 				v-model="locumForm.last_name"
@@ -118,6 +126,7 @@
 				:error="formError.find(item => item.field === 'last_name')"
 				@submit="save"
 				@blur="CheckEmptyField(locumForm.last_name, 'last_name')"
+				required
 			/>
 			<AppInput
 				v-model="locumForm.suffix"
@@ -134,6 +143,7 @@
 				:error="formError.find(item => item.field === 'gender')"
 				:items="[{ label: 'Male', value: 'Male'}, { label: 'Female', value: 'Female' }]"
 				@blur="CheckEmptyField(locumForm.gender, 'gender')"
+				required
 			/>
 			<AppInput
 				v-model="locumForm.mobile_number"
@@ -143,6 +153,7 @@
 				:error="formError.find(item => item.field === 'mobile_number')"
 				@submit="save"
 				@blur="CheckEmptyField(locumForm.mobile_number, 'mobile_number')"
+				required
 			/>
 			<AppInput
 				v-model="locumForm.home_number"
@@ -166,6 +177,7 @@
 					:error="formError.find(item => item.field === 'post_code')"
 					:inStyle="'background-color:#dae1e7;border-color:white'"
 					@blur="CheckEmptyField(locumForm.post_code, 'post_code')"
+					required
 				/>
 				<AppInput
 					v-model="locumForm.address_line_1"
@@ -176,6 +188,7 @@
 					:inStyle="'background-color:#dae1e7;border-color:white;padding:16px 8px;'"
 					@submit="save"
 					@blur="CheckEmptyField(locumForm.address_line_1, 'address_line_1')"
+					required
 				/>
 				<AppInput
 					v-model="locumForm.address_line_2"
@@ -194,6 +207,7 @@
 					:inStyle="'background-color:#dae1e7;border-color:white;padding:16px 8px;'"
 					@submit="save"
 					@blur="CheckEmptyField(locumForm.address_line_3, 'address_line_3')"
+					required
 				/>
 			</div>
 			<div class="text-left mt-5">

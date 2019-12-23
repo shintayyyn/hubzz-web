@@ -14,6 +14,7 @@
             :info="'For compliance; to be verified by the hubzz team'"
             @submit="save"
             @blur="CheckEmptyField(form.gmc_or_nmc_number, 'gmc_or_nmc_number')"
+            required
           />
           <AppInput
             v-model="form.mpl_or_npl_number"
@@ -24,6 +25,7 @@
             :info="'For compliance; to be verified by the hubzz team'"
             @submit="save"
             @blur="CheckEmptyField(form.mpl_or_npl_number, 'mpl_or_npl_number')"
+            required
           />
           <AppInput
             v-model="form.nhs_smart_card_id_number"
@@ -65,6 +67,7 @@
             :label="'Profession'"
             :placeholder="'Select...'"
             :items="professions"
+            required
           />
           <AppFilterSearch
             v-model="form.qualification_id"
@@ -77,6 +80,7 @@
             :professionCategoryId="professionCategoryId.toString()"
             @add="CheckEmptyField(form.qualification_id, 'qualification_id')"
             @remove="CheckEmptyField(form.qualification_id, 'qualification_id')"
+            required
           />
           <AppFilterSearch
             v-model="form.clinical_system_id"
@@ -88,6 +92,7 @@
             :url="'/api/v1/clinical-systems'"
             @add="CheckEmptyField(form.clinical_system_id, 'clinical_system_id')"
             @remove="CheckEmptyField(form.clinical_system_id, 'clinical_system_id')"
+            required
           />
           <AppFilterSearch
             v-model="form.spoken_language_id"
@@ -116,6 +121,7 @@
                     @submit="save"
                     @blur="CheckEmptyField(form.min_rate_per_hour, 'min_rate_per_hour')"
                     class="w-1/2 px-1"
+            required
                   />
                   <AppInput
                     v-model="form.max_rate_per_hour"
@@ -126,6 +132,7 @@
                     @submit="save"
                     @blur="CheckEmptyField(form.max_rate_per_hour, 'max_rate_per_hour')"
                     class="w-1/2 px-1"
+            required
                   />
                 </div>
               </div>
@@ -140,6 +147,7 @@
                     :error="formError.find(item => item.field === 'min_rate_per_half_day_session')"
                     @submit="save"
                     @blur="CheckEmptyField(form.min_rate_per_half_day_session, 'min_rate_per_half_day_session')"
+            required
                   />
                   <div class="mx-1"></div>
                   <AppInput
@@ -150,6 +158,7 @@
                     :error="formError.find(item => item.field === 'max_rate_per_half_day_session')"
                     @submit="save"
                     @blur="CheckEmptyField(form.max_rate_per_half_day_session, 'max_rate_per_half_day_session')"
+            required
                   />
                 </div>
               </div>
@@ -164,6 +173,7 @@
                     :error="formError.find(item => item.field === 'min_rate_per_whole_day_session')"
                     @submit="save"
                     @blur="CheckEmptyField(form.min_rate_per_whole_day_session, 'min_rate_per_whole_day_session')"
+            required
                   />
                   <div class="mx-1"></div>
                   <AppInput
@@ -174,6 +184,7 @@
                     :error="formError.find(item => item.field === 'max_rate_per_whole_day_session')"
                     @submit="save"
                     @blur="CheckEmptyField(form.max_rate_per_whole_day_session, 'max_rate_per_whole_day_session')"
+            required
                   />
                 </div>
               </div>
@@ -198,6 +209,7 @@
             :lists="practiceTypes"
             @checked="form.practice_type_id.push(parseInt($event)), CheckEmptyField(form.practice_type_id, 'practice_type_id')"
             @unchecked="form.practice_type_id = form.practice_type_id.filter(id => id !== parseInt($event)), CheckEmptyField(form.practice_type_id, 'practice_type_id')"
+            required
           />
           <AppInput
             v-model="form.employment_type"
@@ -205,6 +217,7 @@
             :name="'employment_type'"
             :label="'Are you...?'"
             :items="employmentTypes"
+            required
           />
           <template v-if="form.employment_type === 'Limited Company'">
             <AppInput
@@ -214,6 +227,7 @@
               :label="'Company Registration Number'"
               :error="formError.find(item => item.field === 'company_registration_number')"
               :placeholder="'The number of your company from Companies House'"
+            required
             />
           </template>
           <template v-if="form.employment_type === 'Self-Employed'">
@@ -224,6 +238,7 @@
               :label="'UTR number'"
               :error="formError.find(item => item.field === 'utr_number')"
               :placeholder="''"
+            required
             />
           </template>
           <AppInput
@@ -232,6 +247,7 @@
             :name="'paid_under_payroll'"
             :label="'Are you paid under payroll?'"
             :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
+            required
           />
           <template v-if="form.paid_under_payroll == true || form.paid_under_payroll == 'true'">
             <AppInput
@@ -240,6 +256,7 @@
               :name="'payroll_detail_account_name'"
               :label="'Account name'"
               :error="formError.find(item => item.field === 'payroll_detail_account_name')"
+            required
             />
             <AppInput
               v-model="form.payroll_detail_bank_name"
@@ -247,6 +264,7 @@
               :name="'payroll_detail_bank_name'"
               :label="'Bank name'"
               :error="formError.find(item => item.field === 'payroll_detail_bank_name')"
+            required
             />
             <AppInput
               v-model="form.payroll_detail_sort_code"
@@ -254,6 +272,7 @@
               :name="'payroll_detail_sort_code'"
               :label="'Sort code'"
               :error="formError.find(item => item.field === 'payroll_detail_sort_code')"
+            required
             />
             <AppInput
               v-model="form.payroll_detail_account_number"
@@ -261,6 +280,7 @@
               :name="'payroll_detail_account_number'"
               :label="'Account number'"
               :error="formError.find(item => item.field === 'payroll_detail_account_number')"
+            required
             />
           </template>
           <AppInput
@@ -275,6 +295,7 @@
             :label="'The post code where I will be available at'"
             :error="formError.find(item => item.field === 'post_code')"
             @blur="CheckEmptyField(form.post_code, 'post_code')"
+            required
           />
           <AppInput
             v-model="form.miles"
@@ -284,6 +305,7 @@
             :error="formError.find(item => item.field === 'miles')"
             :inStyle="'text-align:right;'"
             @blur="CheckEmptyField(form.miles, 'miles')"
+            required
           />
           <div class="text-xs sm:text-sm">Referees</div>
           <div class="rounded-lg bg-gray-400 p-8 my-2">

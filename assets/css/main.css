@@ -356,10 +356,12 @@ input[type="checkbox"]:disabled + label::before {
 	}
 	50% {
 		background: #fed7d7;
-	}
+		color: #f56565;
+}
 	100% {
 		background: transparent;
-	}
+		color: #000;
+}
 }
 
 .transition-hover {

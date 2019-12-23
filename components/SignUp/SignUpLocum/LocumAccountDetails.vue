@@ -31,6 +31,7 @@
 						:placeholder="'Your first name'"
 						:error="formError.find(error => error.field === 'first_name')"
 						@blur="CheckEmptyField(form.first_name, 'first_name')"
+						required
 					/>
 
 					<AppInput
@@ -41,6 +42,7 @@
 						:placeholder="'Your last name'"
 						:error="formError.find(error => error.field === 'last_name')"
 						@blur="CheckEmptyField(form.last_name, 'last_name')"
+						required
 					/>
 					<AppInput
 						v-model="form.suffix"
@@ -58,6 +60,7 @@
 						:error="formError.find(item => item.field === 'gender')"
 						@blur="CheckEmptyField(form.gender, 'gender')"
 						:items="genders"
+						required
 					/>
 					<AppDate
 						v-model="form.date_of_birth"
@@ -67,6 +70,7 @@
 						@blur="CheckEmptyField(form.date_of_birth, 'date_of_birth')"
 						:isAfter="false"
 						:limitYear="50"
+						required
 					/>
 					<AppInput
 						v-model="form.mobile_number"
@@ -76,6 +80,7 @@
 						:error="formError.find(error => error.field === 'mobile_number')"
 						@blur="CheckEmptyField(form.mobile_number, 'mobile_number')"
 						:info="'In case of emergency'"
+						required
 					/>
 
 					<AppInput

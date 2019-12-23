@@ -18,6 +18,7 @@
 						:error="formError.find(item => item.field === 'gmc_or_nmc_number')"
 						:info="'For compliance; to be verified by the hubzz team'"
 						@blur="CheckEmptyField(form.gmc_or_nmc_number, 'gmc_or_nmc_number')"
+						required
 					/>
 
 					<AppInput
@@ -29,6 +30,7 @@
 						:error="formError.find(item => item.field === 'mpl_or_npl_number')"
 						:info="'For compliance; to be verified by the hubzz team'"
 						@blur="CheckEmptyField(form.mpl_or_npl_number, 'mpl_or_npl_number')"
+						required
 					/>
 
 					<AppInput
@@ -47,6 +49,7 @@
 						:error="formError.find(item => item.field === 'profession_id')"
 						@blur="CheckEmptyField(form.profession_id, 'profession_id')"
 						:items="professions"
+						required
 					/>
 
 					<template v-if="form.profession_id">
@@ -61,6 +64,7 @@
 							:professionCategoryId="selectedProfession ? selectedProfession.profession_category.id.toString() : null"
 							@add="CheckEmptyField(form.qualification_id, 'qualification_id')"
 							@remove="CheckEmptyField(form.qualification_id, 'qualification_id')"
+							required
 						/>
 					</template>
 
@@ -74,6 +78,7 @@
 						:url="'/api/v1/clinical-systems'"
 						@add="CheckEmptyField(form.clinical_system_id, 'clinical_system_id')"
 						@remove="CheckEmptyField(form.clinical_system_id, 'clinical_system_id')"
+						required
 					/>
 
 					<AppFilterSearch
@@ -102,6 +107,7 @@
 										:label="'From £'"
 										:error="formError.find(item => item.field === 'min_rate_per_hour')"
 										@blur="CheckEmptyField(form.min_rate_per_hour, 'min_rate_per_hour')"
+										required
 									/>
 									<div class="mx-1"></div>
 									<AppInput
@@ -111,6 +117,7 @@
 										:label="'To £'"
 										:error="formError.find(item => item.field === 'max_rate_per_hour')"
 										@blur="CheckEmptyField(form.max_rate_per_hour, 'max_rate_per_hour')"
+										required
 									/>
 								</div>
 							</div>
@@ -124,6 +131,7 @@
 										:label="'From £'"
 										:error="formError.find(item => item.field === 'min_rate_per_half_day_session')"
 										@blur="CheckEmptyField(form.min_rate_per_half_day_session, 'min_rate_per_half_day_session')"
+										required
 									/>
 									<div class="mx-1"></div>
 									<AppInput
@@ -133,6 +141,7 @@
 										:label="'To £'"
 										:error="formError.find(item => item.field === 'max_rate_per_half_day_session')"
 										@blur="CheckEmptyField(form.max_rate_per_half_day_session, 'max_rate_per_half_day_session')"
+										required
 									/>
 								</div>
 							</div>
@@ -146,6 +155,7 @@
 										:label="'From £'"
 										:error="formError.find(item => item.field === 'min_rate_per_whole_day_session')"
 										@blur="CheckEmptyField(form.min_rate_per_whole_day_session, 'min_rate_per_whole_day_session')"
+										required
 									/>
 									<div class="mx-1"></div>
 									<AppInput
@@ -155,6 +165,7 @@
 										:label="'To £'"
 										:error="formError.find(item => item.field === 'max_rate_per_whole_day_session')"
 										@blur="CheckEmptyField(form.max_rate_per_whole_day_session, 'max_rate_per_whole_day_session')"
+										required
 									/>
 								</div>
 							</div>
@@ -170,6 +181,7 @@
 						:lists="practiceTypes"
 						@checked="form.practice_type_id.push(parseInt($event)), CheckEmptyField(form.practice_type_id, 'practice_type_id')"
 						@unchecked="form.practice_type_id = form.practice_type_id.filter(id => id !== parseInt($event)), CheckEmptyField(form.practice_type_id, 'practice_type_id')"
+						required
 					/>
 
 					<AppInput
@@ -181,6 +193,7 @@
 						:lists="mandatoryTrainings"
 						@checked="form.mandatory_training_id.push(parseInt($event)), CheckEmptyField(form.mandatory_training_id, 'mandatory_training_id')"
 						@unchecked="form.mandatory_training_id = form.mandatory_training_id.filter(id => id !== parseInt($event)), CheckEmptyField(form.mandatory_training_id, 'mandatory_training_id')"
+						required
 					/>
 				</form>
 			</div>

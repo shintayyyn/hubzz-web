@@ -1,7 +1,10 @@
 <template>
 	<div class="flex flex-col py-2 mb-4 md:mb-6 leading-normal" v-on-clickaway="toggledOff">
 		<div class="relative flex flex-row flex-no-wrap justify-between">
-			<label :for="name" class="text-xs sm:text-sm py-1">{{label}}</label>
+			<label :for="name" class="text-xs sm:text-sm py-1">
+				{{label}}
+				<span v-if="required" class="text-red-500">*</span>
+			</label>
 			<!-- <div
         class="absolute right-0 bg-red-500 p-1 text-xs sm:text-sm text-white rounded"
         v-if="error"
@@ -257,6 +260,10 @@ export default {
 		inClass: String,
 		format: String,
 		limitYear: Number,
+		required: {
+			type: Boolean,
+			default: false
+		},
 		// disabled all dates past the current date
 		isAfter: Boolean,
 		format: {

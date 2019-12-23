@@ -21,6 +21,7 @@
 					:error="formError.find(item => item.field === 'old_password')"
 					@submit="update"
 					@blur="CheckEmptyField(form.old_password, 'old_password')"
+					required
 				/>
 				<AppInput
 					v-if="toggleShowCurrentPass"
@@ -31,6 +32,7 @@
 					:error="formError.find(item => item.field === 'old_password')"
 					@submit="update"
 					@blur="CheckEmptyField(form.old_password, 'old_password')"
+					required
 				/>
 				<span
 					class="absolute top-0 right-0 h-full flex items-center"
@@ -54,6 +56,7 @@
 					:error="formError.find(item => item.field === 'new_password')"
 					@submit="update"
 					@blur="CheckEmptyField(form.new_password, 'new_password')"
+					required
 				/>
 				<AppInput
 					v-if="toggleShowNewPass"
@@ -64,6 +67,7 @@
 					:error="formError.find(item => item.field === 'new_password')"
 					@submit="update"
 					@blur="CheckEmptyField(form.new_password, 'new_password')"
+					required
 				/>
 				<span
 					class="absolute top-0 right-0 h-full flex items-center"
@@ -87,6 +91,7 @@
 					:error="formError.find(item => item.field === 'new_password_confirmation')"
 					@submit="update"
 					@blur="CheckEmptyField(form.new_password_confirmation, 'new_password_confirmation')"
+					required
 				/>
 				<AppInput
 					v-if="toggleShowNewPass2"
@@ -97,6 +102,7 @@
 					:error="formError.find(item => item.field === 'new_password_confirmation')"
 					@submit="update"
 					@blur="CheckEmptyField(form.new_password_confirmation, 'new_password_confirmation')"
+					required
 				/>
 				<span
 					class="absolute top-0 right-0 h-full flex items-center"

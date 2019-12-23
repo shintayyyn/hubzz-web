@@ -89,6 +89,7 @@
                 :error="formError.find(item => item.field === 'phone_number')"
                 @submit="save"
                 @blur="CheckEmptyField(form.phone_number, 'phone_number')"
+                required
               />
               <AppInput
                 v-model="form.report_to"
@@ -98,6 +99,7 @@
                 :error="formError.find(item => item.field === 'report_to')"
                 @submit="save"
                 @blur="CheckEmptyField(form.report_to, 'report_to')"
+                required
               />
               <AppInput
                 v-model="form.email"
@@ -107,6 +109,7 @@
                 :error="formError.find(item => item.field === 'email')"
                 @submit="save"
                 @blur="CheckEmptyField(form.email, 'email')"
+                required
               />
             </div>
             <div class="flex flex-col w-full md:w-1/2 pl-1">
@@ -119,6 +122,7 @@
                 :name="'practice_type_id'"
                 :label="'What type of Practice are you?'"
                 :lists="practice_types"
+                required
               />
             </div>
           </div>
