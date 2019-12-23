@@ -1,14 +1,6 @@
 <template>
   <div class="__layout_index w-screen h-screen flex flex-col xl:flex-row">
     <div class="__bg_logo flex justify-center items-center pt-5 pb-8">
-      <div class="absolute top-0 left-0 p-1 m-1">
-        <button class="bg-white text-black p-1 m-1" @click="toggle">Toggle</button>
-        <a
-          class="bg-white text-black p-1 m-1"
-          href="https://wa.me/?text=Have+you+heard+the+buzz+about+hubzz%3F%0D%0A%0D%0AJoin+hubzz+at+locum.ml"
-          target="_blank"
-        >Share</a>
-      </div>
       <nuxt-link to="/" class="__logo">
         <img src="~/assets/images/hubzz-logo.png" />
       </nuxt-link>

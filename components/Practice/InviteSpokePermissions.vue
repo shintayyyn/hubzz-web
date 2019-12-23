@@ -121,7 +121,7 @@
         </div>
       </div>
       <div class="flex flex-row justify-start">
-        <AppButton :label="'Save'" @click="save" :inStyle="'padding:5px 16px;'" />
+        <AppButton :label="'Save'" @click="publish" :inStyle="'padding:5px 16px;'" />
       </div>
     </div>
   </div>
@@ -165,16 +165,30 @@ export default {
       return this.form.allow_surgery_create_sessions;
     }
   },
+  
   methods: {
     save() {
       this.modal = true;
+    },
+    publish(){
+      this.formError = [];
+      let notRequired = [
+        "max_hourly_rate_limit",
+        "max_halfday_rate_limit",
+        "max_wholeday_rate_limit",
+        "max_ooh_rate_limit",
+        "max_excess_hours",
+      ];
+      this.Validate(this.form, notRequired);
+      if(!this.formError.length) {
+        this.invite();
+      }
     },
     async invite() {
       await this.$axios
         .post(`/api/v1/practice/me/practice-surgeries/invite`, {
           child_practice_id: this.form.child_practice_id,
-          allow_surgery_create_sessions: this.form
-            .allow_surgery_create_sessions,
+          allow_surgery_create_sessions: this.form.allow_surgery_create_sessions,
           max_hourly_rate_limit: this.form.max_hourly_rate_limit,
           max_halfday_rate_limit: this.form.max_halfday_rate_limit,
           max_wholeday_rate_limit: this.form.max_wholeday_rate_limit,
@@ -182,8 +196,7 @@ export default {
           max_excess_hours: this.form.max_excess_hours,
           allow_surgery_bill_locum: this.form.allow_surgery_bill_locum,
           allow_surgery_bill_hubzz: this.form.allow_surgery_bill_hubzz,
-          share_banks_to_other_surgeries: this.form
-            .share_banks_to_other_surgeries
+          share_banks_to_other_surgeries: this.form.share_banks_to_other_surgeries
         })
         .then(res => {
           console.log("res", res);
@@ -199,7 +212,7 @@ export default {
           console.log("it worked", res);
         })
         .catch(err => {
-          console.log("err", err);
+          console.log("err", err.response.data.error_messages);
           // this.formError = err.response.data.error_messages;
         });
     }

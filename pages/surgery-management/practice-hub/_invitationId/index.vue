@@ -39,35 +39,35 @@
 					}}
 				</div>
 
-				<!-- <div class="font-semibold mt-2">Address</div>
+				<div class="font-semibold mt-2">Address</div>
 				<div>
 					{{
-						specificPracticeHub.surgery.address.line_1
-							? specificPracticeHub.surgery.address.line_1
+						specificPracticeHub.address_line_1
+							? specificPracticeHub.address_line_1
 							: "N/A"
 					}}
 				</div>
 				<div>
 					{{
-						specificPracticeHub.surgery.address.line_2
-							? specificPracticeHub.surgery.address.line_2
+						specificPracticeHub.address_line_2
+							? specificPracticeHub.address_line_2
 							: "N/A"
 					}}
 				</div>
 				<div>
 					{{
-						specificPracticeHub.surgery.address.line_3
-							? specificPracticeHub.surgery.address.line_3
+						specificPracticeHub.address_line_3
+							? specificPracticeHub.address_line_3
 							: "N/A"
 					}}
 				</div>
 				<div>
 					{{
-						specificPracticeHub.surgery.address.post_code
-							? specificPracticeHub.surgery.address.post_code
+						specificPracticeHub.postcode
+							? specificPracticeHub.postcode
 							: "N/A"
 					}}
-				</div> -->
+				</div>
 			</div>
 		</div>
 

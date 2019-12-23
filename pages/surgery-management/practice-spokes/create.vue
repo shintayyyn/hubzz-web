@@ -100,7 +100,6 @@ export default {
     return {
       search_text: "",
       practiceSpokesResult: [],
-      surgeries: [],
       selectedSpoke: '',
       showResult: false,
       modal: false,
@@ -119,20 +118,20 @@ export default {
           ? responsePracticeType.data.practice.type
           : null;
 
-      const responsePracticeSurgeries = await app.$axios.$get(
-        `/api/v1/practice/me/practice-surgeries`
+      
+      const responsePracticeSpokes = await app.$axios.$get(
+        `/api/v1/practice/practice-spokes`
       );
-      let surgeries = []
-      if (responsePracticeSurgeries.data && responsePracticeSurgeries.data.practice_surgeries) {
-					responsePracticeSurgeries.data.practice_surgeries.forEach(surgery => {
-						surgeries.push(surgery);
-						// surgeries.push({ ...surgery, removable: true });
+      let practiceSpokesResult = []
+      if (responsePracticeSpokes.data && responsePracticeSpokes.data.practices) {
+					responsePracticeSpokes.data.practices.forEach(spokes => {
+						practiceSpokesResult.push(spokes);
 					});
 				}
 
       return {
         type,
-        surgeries
+        practiceSpokesResult
       };
     } catch (err) {
       if (err.response && err.response.status === 401) {
@@ -156,12 +155,12 @@ export default {
             console.log(res.data.practices)
             if (res.data && res.data.practices){
               res.data.practices.forEach(item => {
-                let checkSurgery = this.surgeries.find(surgery => surgery.id == item.id)
-                  if (!checkSurgery){
+                let checkSpoke = this.practiceSpokesResult.find(spoke => spoke.id == item.id)
+                  if (!checkSpoke){
                     this.practiceSpokesResult.push(item)
                   }else{
-                    if (checkSurgery.surgery.name === this.search_text.toUpperCase() || checkSurgery.surgery.code === this.search_text.toUpperCase()){
-                      this.resultNotice = "This surgery is already your spoke."
+                    if (checkSpoke.surgery.name === this.search_text.toUpperCase() || checkSpoke.surgery.code === this.search_text.toUpperCase()){
+                      this.resultNotice = "This practice is already your spoke."
                     }
                   }
                 }
