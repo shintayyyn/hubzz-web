@@ -121,7 +121,7 @@
               </td>
               <td v-else></td>
               <td
-                v-if="item && item.info && item.info.note"
+                v-if="item && item.info && item.info.note" class="text-center"
               >{{ item.info.note | StringMaxLength(15)}}</td>
               <td v-else></td>
               <td
