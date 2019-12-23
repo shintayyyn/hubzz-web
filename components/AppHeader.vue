@@ -115,11 +115,10 @@ export default {
   async created() {
     if (this.$auth.user.domain === "Practice") {
       if (this.$auth.user.practice_detail.practice.type === "Spoke") {
-        if (
-          this.$auth.user.practice_detail.practice
-            .allow_surgery_create_sessions == false
-        ) {
-          this.notAllowed = true;
+        if (this.$auth.user.practice_detail.practice.parent_practice_id) {
+          if (this.$auth.user.practice_detail.practice.allow_surgery_create_sessions == false) {
+            this.notAllowed = true;
+          }
         }
       }
     }
