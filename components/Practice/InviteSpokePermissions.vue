@@ -171,16 +171,17 @@ export default {
       this.modal = true;
     },
     publish(){
+      this.formError = [];
       let notRequired = [
         "max_hourly_rate_limit",
         "max_halfday_rate_limit",
         "max_wholeday_rate_limit",
         "max_ooh_rate_limit",
         "max_excess_hours",
-      ]
-      this.Validate(this.form, notRequired)
+      ];
+      this.Validate(this.form, notRequired);
       if(!this.formError.length) {
-        this.invite()
+        this.invite();
       }
     },
     async invite() {
