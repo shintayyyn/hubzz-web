@@ -349,16 +349,16 @@ export default {
       return this.$moment(date, "MM-DD-YYYY").isSame(newDate);
     },
     isDisabled(date) {
-      // return false;
-      let newDate = this.$moment.utc().format("MM-DD-YYYY");
-      if (this.isBefore) {
-        return this.$moment(date, "MM-DD-YYYY").isAfter(
-          this.$moment(newDate, "MM-DD-YYYY")
-        );
-      }
-      return this.$moment(date, "MM-DD-YYYY").isBefore(
-        this.$moment(newDate, "MM-DD-YYYY")
-      );
+      return false;
+      // let newDate = this.$moment.utc().format("MM-DD-YYYY");
+      // if (this.isBefore) {
+      //   return this.$moment(date, "MM-DD-YYYY").isAfter(
+      //     this.$moment(newDate, "MM-DD-YYYY")
+      //   );
+      // }
+      // return this.$moment(date, "MM-DD-YYYY").isBefore(
+      //   this.$moment(newDate, "MM-DD-YYYY")
+      // );
     },
     toggledOff() {
       // get to the selected date
