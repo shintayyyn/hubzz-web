@@ -1,5 +1,5 @@
 <template>
-  <div class="relative bg-white rounded-lg shadow-lg p-4 md:p-8">
+  <div class="relative bg-white rounded-lg shadow-lg p-4 md:p-8 max-w-3xl">
     <AppLoading :loading="loading" spinner />
     <AppFormError :formError="formError" v-if="formError.length > 0" />
     <template v-if="$auth.user.domain === 'Practice'">
