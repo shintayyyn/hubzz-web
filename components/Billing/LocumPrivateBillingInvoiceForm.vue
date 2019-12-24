@@ -19,6 +19,7 @@
           :disabled="saveLoading || exportLoading"
         />
         <AppButton
+          v-if="selectedInvoice && !selectedJobPart"
           class="m-1"
           :label="'Export to PDF'"
           @click="exportToPdf()"
@@ -31,18 +32,18 @@
       <div class="flex flex-row flex-wrap justify-start items-center my-2 md:my-4">
         <label class="mx-1">Type:</label>
         <button
-          v-if="!selectedInvoice || ((selectedInvoice && selectedInvoice.status === 'Draft') || (selectedInvoice && (selectedInvoice.status === 'Issued' || selectedInvoice.status === 'Disputed') && type === 'Private'))"
-          :class="type === 'Private' ? 'bg-yellow-500 border-yellow-500' : 'hover:bg-gray-200'"
+          v-if="invoiceType === 'Private'"
+          :class="invoiceType === 'Private' ? 'bg-yellow-500 border-yellow-500' : 'hover:bg-gray-200'"
           class="text-xs sm:text-sm mx-1 py-2 px-3 border-2 rounded-lg font-bold flex items-center focus:outline-none"
           @click="type = 'Private'"
-          :disabled="type === 'Private'"
+          :disabled="invoiceType === 'Private'"
         >Private</button>
         <button
-          v-if="!selectedInvoice || ((selectedInvoice && selectedInvoice.status === 'Draft') || (selectedInvoice && (selectedInvoice.status === 'Issued' || selectedInvoice.status === 'Disputed') && type === 'Platform'))"
-          :class="type === 'Platform' ? 'bg-yellow-500 border-yellow-500' : 'hover:bg-gray-200'"
+          v-if="invoiceType === 'Platform'"
+          :class="invoiceType === 'Platform' ? 'bg-yellow-500 border-yellow-500' : 'hover:bg-gray-200'"
           class="text-xs sm:text-sm mx-1 py-2 px-3 border-2 rounded-lg font-bold flex items-center focus:outline-none"
           @click="type = 'Platform'"
-          :disabled="type === 'Platform'"
+          :disabled="invoiceType === 'Platform'"
         >Platform</button>
       </div>
     </div>
@@ -224,6 +225,7 @@
           </section>
         </div>
       </div>
+
       <div class="overflow-auto">
         <div class="items-table">
           <!-- ITEMS HEADER -->
@@ -447,7 +449,7 @@ import AppFilterSearch from "@/components/Base/AppFilterSearch";
 import { mixin as clickaway } from "vue-clickaway";
 export default {
   mixins: [clickaway],
-  props: ["selectedInvoice"],
+  props: ["selectedInvoice", "selectedJobPart"],
   transition: {
     name: "slide",
     mode: "out-in"
@@ -514,6 +516,11 @@ export default {
     };
   },
   computed: {
+    invoiceType() {
+      return this.$route.name === "locum-billing-index-edit-invoice_id"
+        ? "Platform"
+        : "Private";
+    },
     amount() {
       if (this.selectedJobParts && this.selectedJobParts.length > 0) {
         let amount = 0;
@@ -584,11 +591,11 @@ export default {
   },
   mounted() {
     if (this.selectedInvoice) {
-      this.type = this.selectedInvoice.type;
-      this.selectedSurgery = this.selectedInvoice.surgery;
-      this.searchSurgeries = this.selectedInvoice.surgery.name;
-      this.form.practice_id = this.selectedInvoice.surgery.id;
-      this.form.private_practice_id = this.selectedInvoice.surgery.id;
+      // this.type = this.selectedInvoice.type;
+      this.selectedSurgery = this.selectedInvoice.practice;
+      this.searchSurgeries = this.selectedInvoice.practice.name;
+      this.form.practice_id = this.selectedInvoice.practice.id;
+      this.form.private_practice_id = this.selectedInvoice.practice.id;
       this.form.date_start = this.selectedInvoice.date_start;
       this.form.date_end = this.selectedInvoice.date_end;
       this.selectedInvoice.items.forEach(item => {
@@ -617,7 +624,7 @@ export default {
     // SURGERIES
     getSurgeriesPromiseAll() {
       let url =
-        this.type === "Platform"
+        this.invoiceType === "Platform"
           ? `/api/v1/locum/practices`
           : `/api/v1/locum/private-practices`;
 
@@ -648,12 +655,12 @@ export default {
           } else {
             surgeries.forEach(surgery => {
               if (this.surgeries.length === 0) {
-                if (this.type === "Platform") {
+                if (this.invoiceType === "Platform") {
                   this.surgeries.push({
                     ...surgery.surgery,
                     practice_id: surgery.id
                   });
-                } else if (this.type === "Private") {
+                } else if (this.invoiceType === "Private") {
                   this.surgeries.push({
                     ...surgery.surgery,
                     private_practice_id: surgery.id
@@ -664,12 +671,12 @@ export default {
                   item => item.id === surgery.id
                 );
                 if (index < 0) {
-                  if (this.type === "Platform") {
+                  if (this.invoiceType === "Platform") {
                     this.surgeries.push({
                       ...surgery.surgery,
                       practice_id: surgery.id
                     });
-                  } else if (this.type === "Private") {
+                  } else if (this.invoiceType === "Private") {
                     this.surgeries.push({
                       ...surgery.surgery,
                       private_practice_id: surgery.id
@@ -721,14 +728,14 @@ export default {
     async fetchSurgeriesCount() {
       try {
         let url =
-          this.type === "Platform"
+          this.invoiceType === "Platform"
             ? `/api/v1/locum/practices`
             : `/api/v1/locum/private-practices`;
 
         this.loadingSurgeries = true;
         let params = {
           locum_invoiceable: true,
-          type: this.type
+          type: this.invoiceType
         };
 
         const responseCount = await this.$axios.$get(`${url}/count`, {
@@ -756,13 +763,13 @@ export default {
     async fetchSurgeries() {
       try {
         let url =
-          this.type === "Platform"
+          this.invoiceType === "Platform"
             ? `/api/v1/locum/practices`
             : `/api/v1/locum/private-practices`;
 
         const params = {
           locum_invoiceable: true,
-          type: this.type,
+          type: this.invoiceType,
           limit: 10,
           offset: this.surgeries.length
         };
@@ -782,12 +789,12 @@ export default {
         } else {
           surgeries.forEach(surgery => {
             if (this.surgeries.length === 0) {
-              if (this.type === "Platform") {
+              if (this.invoiceType === "Platform") {
                 this.surgeries.push({
                   ...surgery.surgery,
                   practice_id: surgery.id
                 });
-              } else if (this.type === "Private") {
+              } else if (this.invoiceType === "Private") {
                 this.surgeries.push({
                   ...surgery.surgery,
                   private_practice_id: surgery.id
@@ -798,12 +805,12 @@ export default {
                 item => item.id === surgery.id
               );
               if (index < 0) {
-                if (this.type === "Platform") {
+                if (this.invoiceType === "Platform") {
                   this.surgeries.push({
                     ...surgery.surgery,
                     practice_id: surgery.id
                   });
-                } else if (this.type === "Private") {
+                } else if (this.invoiceType === "Private") {
                   this.surgeries.push({
                     ...surgery.surgery,
                     private_practice_id: surgery.id
@@ -1254,26 +1261,26 @@ export default {
     },
     save(final) {
       this.formError = [];
-      if (!this.selectedSurgery) {
+      if (!this.selectedInvoice) {
         this.formError.push({ field: "surgery_id", message: "Select Surgery" });
         return;
       }
 
       let form = {};
-      if (this.type === "Platform") {
+      if (this.invoiceType === "Platform") {
         form = {
-          type: this.type,
-          practice_id: this.selectedSurgery.practice_id,
+          type: this.invoiceType,
+          practice_id: this.selectedInvoice.id,
           total_amount: this.amount,
           final: final,
           items: [],
           date_start: this.form.date_start,
           date_end: this.form.date_end
         };
-      } else if (this.type === "Private") {
+      } else if (this.invoiceType === "Private") {
         form = {
-          type: this.type,
-          private_practice_id: this.selectedSurgery.private_practice_id,
+          type: this.invoiceType,
+          private_practice_id: this.selectedInvoice.id,
           total_amount: this.amount,
           final: final,
           items: [],
@@ -1296,12 +1303,13 @@ export default {
 
       this.Validate(form, ["final", "total_amount"]);
       if (!this.formError.length) {
-        if (!this.$route.params.id) {
+        if (this.$route.name === "locum-billing-index-create-job_part_id") {
           this.saveLoading = true;
           this.$axios
             .$post(`/api/v1/locum/locum-invoices`, form)
             .then(res => {
-              this.$emit("addInvoice", res.data.locum_invoice);
+              console.log(res);
+              // this.$emit("addInvoice", res.data.locum_invoice);
               // this.$router.push("/locum-billing");
               this.$store.commit("SET_NOTIFICATION", {
                 enabled: true,
@@ -1326,12 +1334,12 @@ export default {
             .finally(() => {
               this.saveLoading = false;
             });
-        } else if (this.$route.params.id) {
+        } else if (this.$route.name === "locum-billing-index-edit-invoice_id") {
           this.saveLoading = true;
           this.$axios
             .$put(`/api/v1/locum/locum-invoices/${this.$route.params.id}`, form)
             .then(res => {
-              this.$emit("updateInvoice", res.data.locum_invoice);
+              // this.$emit("updateInvoice", res.data.locum_invoice);
               this.$store.commit("SET_NOTIFICATION", {
                 enabled: true,
                 status: "success",

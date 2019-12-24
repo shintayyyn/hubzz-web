@@ -2,24 +2,24 @@
   <section class="relative">
     <div class="flex flex-row justify-start overflow-x-auto pb-3">
       <nuxt-link
-        :to="{ path: '/locum-billing', query: { ...$route.query, status: 'to-be-invoiced' } }"
+        :to="{ path: '/locum-billing/private-invoices', query: { ...$route.query, status: 'to-be-invoiced' } }"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('locum-billing-index') && (!$route.query.status || $route.query.status === 'to-be-invoiced') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name.includes('locum-billing-private-invoices') && (!$route.query.status || $route.query.status === 'to-be-invoiced') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >To be invoiced</nuxt-link>
       <nuxt-link
-        :to="{ path: '/locum-billing', query: { ...$route.query, status: 'disputed' } }"
+        :to="{ path: '/locum-billing/private-invoices', query: { ...$route.query, status: 'disputed' } }"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name === 'locum-billing-index' && $route.query.status === 'disputed' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name === 'locum-billing-private-invoices' && $route.query.status === 'disputed' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >Disputed Invoices</nuxt-link>
       <nuxt-link
-        :to="{ path: '/locum-billing', query: { ...$route.query, status: 'issued' } }"
+        :to="{ path: '/locum-billing/private-invoices', query: { ...$route.query, status: 'issued' } }"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name === 'locum-billing-index' && $route.query.status === 'issued' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name === 'locum-billing-private-invoices' && $route.query.status === 'issued' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >Invoiced</nuxt-link>
       <nuxt-link
-        :to="{ path: '/locum-billing', query: { ...$route.query, status: 'approved' } }"
+        :to="{ path: '/locum-billing/private-invoices', query: { ...$route.query, status: 'approved' } }"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-        :class=" $route.name === 'locum-billing-index' && $route.query.status === 'approved' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class=" $route.name === 'locum-billing-private-invoices' && $route.query.status === 'approved' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >Approved Invoices</nuxt-link>
     </div>
     <transition name="fade" mode="out-in">
@@ -31,9 +31,9 @@
           :inStyle="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
         />
         <AppTable
-          v-if="job_parts.length > 0"
+          v-if="billing_job_parts.length > 0"
           :total="total"
-          :items="job_parts"
+          :items="billing_job_parts"
           :currentPage="current_page"
           :perPage="params.limit"
           :columns="columns"
@@ -44,21 +44,21 @@
         >
           <template v-slot:actions="slotProps">
             <div class="flex justify-center">
-              <div
-                @click="$router.push({ path: `/locum-billing/edit/${slotProps.item.locum_invoice_id}` })"
+              <nuxt-link
+                :to="`/locum-billing/invoices/${slotProps.item.locum_invoice_id}`"
                 v-if="slotProps.item.locum_invoice_id"
                 class="mx-1 px-4 py-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
-              >Edit</div>
+              >Edit</nuxt-link>
               <button
-                @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id)"
+                @click.stop.prevent="onClick(slotProps.item.locum_invoice_id)"
                 v-if="slotProps.item.locum_invoice_id"
                 class="mx-1 px-4 py-2 bg-red-700 text-white font-bold rounded-lg focus:outline-none"
               >Delete</button>
-              <div
-                @click="$router.push({ path: `/locum-billing/create/${slotProps.item.id}` })"
+              <nuxt-link
+                :to="{ path: `/locum-billing/private-invoices/create/${slotProps.item.id}` }"
                 v-if="!slotProps.item.locum_invoice_id"
                 class="mx-1 px-4 py-2 bg-green-700 text-white font-bold rounded-lg focus:outline-none"
-              >Generate Invoice</div>
+              >Generate Invoice</nuxt-link>
             </div>
           </template>
         </AppTable>
@@ -66,23 +66,22 @@
       </div>
     </transition>
 
-    <AppConfirmationModal
-      :label="'Proceed to delete this draft?'"
+    <!--   <AppConfirmationModal
+      :label="'Proceed to delete this invoice?'"
       :confirmLabel="'Yes'"
       :cancelLabel="'Cancel'"
-      :modal="delete_modal"
-      @confirm="confirm_delete"
-      @cancel="delete_modal = false"
-    />
-
+      :modal="deleteModal"
+      @confirm="deleteInvoice"
+      @cancel="deleteModal = false"
+    />-->
     <transition name="fade" mode="out-in">
       <nuxt-link
-        :to="'/locum-billing'"
-        v-if="['locum-billing-index-create-job_part_id', 'locum-billing-index-edit-invoice_id'].includes($route.name) || delete_modal"
+        :to="'/locum-billing/private-invoices'"
+        v-if="['locum-billing-private-invoices-edit-invoice_id', 'locum-billing-private-invoices-create-job_part_id'].includes($route.name) || deleteModal"
         class="shield"
       ></nuxt-link>
     </transition>
-    <nuxt-child @createInvoice="createInvoice" @updateInvoice="updateInvoice" />
+    <nuxt-child @addInvoice="addInvoice" @updateInvoice="updateInvoice" />
   </section>
 </template>
 
@@ -106,7 +105,7 @@ export default {
     return {
       showTable: false,
       total: 0,
-      job_parts: [],
+      billing_job_parts: [],
 
       showRefresh: false,
       loading: false,
@@ -125,9 +124,15 @@ export default {
         },
         {
           name: "Practice / Surgery",
-          dataIndex: "practice_name",
+          dataIndex: "practice.name",
           class: "text-center"
         },
+        // {
+        //   name: "Created At",
+        //   dataIndex: "date_created",
+        //   class: "text-center localDate",
+        //   sortable: true
+        // },
         {
           name: "Issued",
           dataIndex: "issued_at",
@@ -144,13 +149,13 @@ export default {
         },
         {
           name: "£ Amount",
-          dataIndex: "total_amount",
+          dataIndex: "amount",
           sortable: true,
           class: "text-center"
         },
         {
           name: "Status",
-          dataIndex: "invoice_status",
+          dataIndex: "status",
           sortable: true,
           class: "text-center"
         },
@@ -161,8 +166,8 @@ export default {
         }
       ],
       // payment
-      delete_modal: false,
-      invoice_id: null,
+      deleteModal: false,
+      selectedInvoiceId: null,
       form: {
         paid_at: null
       },
@@ -243,62 +248,47 @@ export default {
       const params = {
         locum_status,
         invoice_status,
-        job_type: "Platform"
+        job_type: "Private"
       };
 
-      let [total, job_parts] = await Promise.all([
+      const [total, job_parts] = await Promise.all([
         app.$axios
           .$get(`/api/v1/locum/job-parts/count`, { params })
           .then(res => {
-            let total = res.data.count;
+            const total = res.data.count;
             return total;
           }),
         app.$axios
           .$get(`/api/v1/locum/job-parts?offset=0&limit=5`, { params })
           .then(res => {
-            let job_parts = res.data.job_parts;
+            const job_parts = res.data.job_parts;
             return job_parts;
           })
       ]);
 
-      job_parts = job_parts.map(jobPart => {
-        return {
+      const billing_job_parts = [];
+      job_parts.forEach(jobPart => {
+        billing_job_parts.push({
           ...jobPart,
-          practice_name:
+          practice:
             jobPart.job.type === "Platform"
-              ? jobPart.job.platform_job.practice.name
-              : jobPart.job.private_job.private_practice.name,
-          issued_at: jobPart.locum_invoice_id
-            ? jobPart.locum_invoice_item.locum_invoice.issued_at
-            : null,
-          invoice_number: jobPart.locum_invoice_id
-            ? jobPart.locum_invoice_item.locum_invoice.invoice_number
-            : null,
-          total_amount:
-            (jobPart.job.total_hours /
-              `${
-                jobPart.job.locum_detail_rate_type.name === "Per Hour"
-                  ? 1
-                  : jobPart.job.locum_detail_rate_type.name ===
-                    "Per Whole Day Session"
-                  ? 8
-                  : jobPart.job.locum_detail_rate_type.name ===
-                    "Per Half Day Session"
-                  ? 4
-                  : 1
-              }`) *
-            jobPart.job.rate
-        };
+              ? jobPart.job.platform_job.practice
+              : jobPart.job.private_job.private_practice,
+          date_created: jobPart.issued ? "date created" : "",
+          issued_at: jobPart.issued ? "issued date" : "",
+          invoice_number: jobPart.issued ? "invoiced number" : "",
+          job_part_number: jobPart.job_part_number,
+          amount: "amount",
+          status: "status"
+        });
       });
-
-      console.log("job_parts", job_parts);
 
       const showTable = true;
 
       return {
         showTable,
         total,
-        job_parts
+        billing_job_parts
       };
     } catch (err) {
       console.log("err", err.response || err);
@@ -361,7 +351,7 @@ export default {
       const params = {
         locum_status,
         invoice_status,
-        job_type: "Platform"
+        job_type: "Private"
       };
 
       return Promise.all([
@@ -374,34 +364,21 @@ export default {
           this.total = responseTotal.data.count;
           let job_parts = responseJobParts.data.job_parts;
 
-          this.job_parts = job_parts.map(jobPart => {
-            return {
+          this.billing_job_parts = [];
+          job_parts.forEach(jobPart => {
+            this.billing_job_parts.push({
               ...jobPart,
-              practice_name:
+              practice:
                 jobPart.job.type === "Platform"
-                  ? jobPart.job.platform_job.practice.name
-                  : jobPart.job.private_job.private_practice.name,
-              issued_at: jobPart.locum_invoice_id
-                ? jobPart.locum_invoice_item.locum_invoice.issued_at
-                : null,
-              invoice_number: jobPart.locum_invoice_id
-                ? jobPart.locum_invoice_item.locum_invoice.invoice_number
-                : null,
-              total_amount:
-                (jobPart.job.total_hours /
-                  `${
-                    jobPart.job.locum_detail_rate_type.name === "Per Hour"
-                      ? 1
-                      : jobPart.job.locum_detail_rate_type.name ===
-                        "Per Whole Day Session"
-                      ? 8
-                      : jobPart.job.locum_detail_rate_type.name ===
-                        "Per Half Day Session"
-                      ? 4
-                      : 1
-                  }`) *
-                jobPart.job.rate
-            };
+                  ? jobPart.job.platform_job.practice
+                  : jobPart.job.private_job.private_practice,
+              date_created: jobPart.issued ? "date created" : "",
+              issued_at: jobPart.issued ? "issued date" : "",
+              invoice_number: jobPart.issued ? "invoiced number" : "",
+              job_part_number: jobPart.job_part_number,
+              amount: "amount",
+              status: "status"
+            });
           });
         })
         .catch(([errTotal, errJobParts]) => {
@@ -425,13 +402,18 @@ export default {
           }
         });
     },
-    getJobParts() {},
     async refreshInvoices() {
       this.$store.commit("billing/CLEAR_LOCUM_BILLING_NOTIFICATION");
       this.loading = true;
-      await this.getJobPartsPromiseAll();
+      await this.getInvoicesPromiseAll();
       this.loading = false;
       this.showRefresh = false;
+    },
+    updateInvoice(invoice) {
+      let index = this.invoices.findIndex(item => item.id == invoice.id);
+      if (index >= 0) {
+        this.invoices.splice(index, 1, invoice);
+      }
     },
     getLocumInvoiceRealTime({ id }) {
       if (!id) {
@@ -453,99 +435,94 @@ export default {
         this.getLocumInvoiceRealTime
       );
     },
-    select_invoice(id) {
-      this.delete_modal = true;
-      this.invoice_id = id;
-    },
-    confirm_delete() {
-      this.$axios
-        .$delete(`/api/v1/locum/locum-invoices/${this.invoice_id}`)
-        .then(res => {
-          this.job_parts = this.job_parts.filter(
-            item => item.locum_invoice_id !== this.invoice_id
-          );
-          let index = this.job_parts.findIndex(
-            item => item.locum_invoice_id === this.invoice_id
-          );
-          if (index >= 0) {
-            this.job_parts.splice(index, 1);
+    getInvoicesPromiseAll() {
+      let params = {
+        offset: 0,
+        limit: 5
+      };
+      return Promise.all([
+        this.$axios.$get(`/api/v1/locum/locum-invoices/count`),
+        this.$axios.$get(`/api/v1/locum/locum-invoices`, { params })
+      ])
+        .then(([responseTotal, responseInvoices]) => {
+          this.total = responseTotal.data.count;
+          this.invoices = responseInvoices.data.locum_invoices;
+        })
+        .catch(([errTotal, errInvoices]) => {
+          console.log("err", errTotal.response || errTotal);
+          console.log("err", errInvoices.response || errInvoices);
+          if (errTotal.response.data.message) {
+            if (errTotal.response.data.message) {
+              this.$store.commit("SET_NOTIFICATION", {
+                enabled: true,
+                status: "danger",
+                text: [`${errTotal.response.data.message}`]
+              });
+            }
+            if (errInvoices.response.data.message) {
+              this.$store.commit("SET_NOTIFICATION", {
+                enabled: true,
+                status: "danger",
+                text: [`${errInvoices.response.data.message}`]
+              });
+            }
           }
-          console.log(res);
-          console.log(this.job_parts);
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "success",
-            text: [`${res.message}`]
-          });
-          this.delete_modal = false;
+        })
+        .finally(() => {});
+    },
+    getInvoices(params) {
+      return this.$axios
+        .$get(`/api/v1/locum/locum-invoices`, { params })
+        .then(res => {
+          this.invoices = res.data.locum_invoices;
         })
         .catch(err => {
           console.log("err", err.response || err);
           if (err.response.data.message) {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
-              status: "success",
-              text: [`${res.date.message}`]
+              status: "danger",
+              text: [`${err.response.data.message}`]
             });
           }
-          throw err;
         });
     },
-    createInvoice(invoice) {
-      let index = this.job_parts.findIndex(
-        item => item.job_part_id === invoice.id
-      );
-      if (index >= 0) {
-        this.job_parts.splice(index, 1, {
-          type: invoice.type,
-          practice: invoice.practice,
-          issued: invoice.issued_at,
-          invoice_number: invoice.invoice_number,
-          job_number:
-            invoice.items.length > 0
-              ? invoice.items[0].job_part.job_part_number
-              : null,
-          amount: invoice.total_amount,
-          status: invoice.status,
-          locum_invoice_id: invoice.id,
-          locum_invoice_item: invoice
-        });
-      }
+    onClick(id) {
+      this.selectedInvoiceId = null;
+      this.deleteModal = true;
+      this.selectedInvoiceId = id;
     },
-    updateInvoice(invoice) {
-      let index = this.job_parts.findIndex(
-        item => item.locum_invoice_id === invoice.id
-      );
-      if (index >= 0) {
-        this.job_parts.splice(index, 1, {
-          type: invoice.type,
-          practice: invoice.practice,
-          issued: invoice.issued_at,
-          invoice_number: invoice.invoice_number,
-          job_number:
-            invoice.items.length > 0
-              ? invoice.items[0].job_part.job_part_number
-              : null,
-          amount: invoice.total_amount,
-          status: invoice.status,
-          locum_invoice_id: invoice.id,
-          locum_invoice_item: invoice
+    deleteInvoice() {
+      this.$axios
+        .$delete(`/api/v1/locum/locum-invoices/${this.selectedInvoiceId}`)
+        .then(res => {
+          this.invoices = this.invoices.filter(
+            invoice => invoice.id !== this.selectedInvoiceId
+          );
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: [`${res.message}`]
+          });
+          this.deleteModal = false;
         });
-      }
+    },
+    addInvoice(invoice) {
+      this.invoices.unshift(invoice);
     },
     async sorted(order_by) {
       this.current_page = 1;
       this.params.offset = 0;
       this.params.order_by = order_by;
       this.loading = true;
-      await this.getJobParts();
+      await this.getInvoices();
       this.loading = false;
     },
     async pagechanged(page) {
       this.current_page = page;
       this.params.offset = this.params.limit * (page - 1);
       this.loading = true;
-      await this.getJobParts();
+      await this.getInvoices();
       this.loading = false;
     },
     async limitchanged(limit) {
@@ -553,7 +530,7 @@ export default {
       this.params.offset = 0;
       this.params.limit = limit;
       this.loading = true;
-      await this.getJobParts();
+      await this.getInvoices();
       this.loading = false;
     }
   }

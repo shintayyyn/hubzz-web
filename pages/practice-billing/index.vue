@@ -387,8 +387,8 @@ export default {
           params
         })
       ])
-        .then(([responeTotal, responseJobParts]) => {
-          this.total = responeTotal.data.count;
+        .then(([responseTotal, responseJobParts]) => {
+          this.total = responseTotal.data.count;
           this.job_parts = responseJobParts.data.job_parts;
         })
         .catch(([errTotal, errJobParts]) => {

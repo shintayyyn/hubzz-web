@@ -23,4 +23,26 @@ Vue.filter('StringMaxLength', function (str, numLength) {
   }
 })
 
+Vue.filter('fileSize', function (fileSize, sizeType) {
+  let sizeDivider = 0
+
+  switch (sizeType) {
+    case 'KB':
+      sizeDivider = 1024
+      break;
+    case 'MB':
+      sizeDivider = 1048576
+      break;
+    case 'GB':
+      sizeDivider = 1073741824
+      break;
+    default:
+      sizeDivider = 1048576
+  }
+
+  if (fileSize) {
+    return `${(fileSize / sizeDivider).toFixed(2)} ${sizeType ? sizeType : 'MB'}`
+  }
+})
+
 
