@@ -34,7 +34,7 @@
         <div
           v-for="item in items"
           :key="item.id"
-          :style="`min-width: ${customWidth}px`"
+          :style="`${customWidth ? `min-width: ${customWidth}px` : ''}`"
           class="row py-2"
         >
           <nuxt-link

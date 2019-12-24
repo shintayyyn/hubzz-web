@@ -1,6 +1,7 @@
 <template>
   <section>
     <div class="shield" v-if="$store.state.toggled_sidebar" @click="close"></div>
+    {{$route.name}}
     <AppHeader />
     <AppSideBar @modal="signout_modal = $event" />
     <div

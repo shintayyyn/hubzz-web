@@ -896,9 +896,19 @@ export default {
           "YYYY-MM-DD"
         ).format("YYYY-MM-DD");
 
-        this.form.session_requirements.length > 0
-          ? (this.form.session_requirements = this.form.session_requirements.join())
-          : (this.form.session_requirements = "");
+        if (Array.isArray(this.form.session_requirements)) {
+          if (this.form.session_requirements.length === 1) {
+            this.form.session_requirements = this.form.session_requirements[0];
+          } else if (this.form.session_requirements.length > 0) {
+            this.form.session_requirements = this.form.session_requirements.join();
+          } else if (this.form.session_requirements.length === 0) {
+            this.form.session_requirements = "";
+          }
+        }
+
+        // this.form.session_requirements.length > 0 && Array.isArray(this.form.session_requirements)
+        //   ? (this.form.session_requirements = this.form.session_requirements.join())
+        //   : (this.form.session_requirements = "");
 
         this.form.auto_assign_at =
           this.auto_assign_job === true || this.auto_assign_job === "true"
@@ -935,6 +945,10 @@ export default {
         if (this.unpaid_breaks === "other") {
           this.form.unpaid_breaks_in_minutes = this.form.unpaid_breaks_in_minutes;
         }
+        this.form.session_requirements = this.form.session_requirements.split(
+          ","
+        );
+
         this.$axios
           .$post(`/api/v1/practice/jobs`, this.form)
           .then(res => {
@@ -953,10 +967,23 @@ export default {
             this.$store.commit("calendar/CREATE_JOB_MODAL", false);
           })
           .catch(err => {
+            console.log("err", err.response || err);
             this.$refs.modalContainer.scrollTop = 0;
             this.form.clinical_system_id = this.selectedClinicalSystem;
             this.form.qualification_id = this.selectedQualification;
             this.form.spoken_language_id = this.selectedSpokenLanguage;
+
+            // if (typeof this.form.session_requirements === String) {
+            //   if (this.form.session_requirements.includes(",")) {
+            //     this.form.session_requirements = this.form.session_requirements.split(
+            //       ","
+            //     );
+            //   } else if (!this.form.session_requirements.includes(",")) {
+            //     this.form.session_requirements = [
+            //       this.form.session_requirements
+            //     ];
+            //   }
+            // }
             this.form.session_requirements = this.form.session_requirements.split(
               ","
             );
