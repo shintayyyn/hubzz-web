@@ -73,18 +73,11 @@ export default {
 		}
 	},
 	ADD_UNREAD_MESSAGE(state, payload) {
-		if (
-			!state.unreadMessages.find(
-				item =>
-					item.user_id === this.$auth.user.id &&
-					item.conversation_id === payload.id
-			)
-		) {
-			state.unreadMessages.push({
-				user_id: this.$auth.user.id,
-				conversation_id: payload.id
-			});
-		}
+		console.log("unread", payload)
+		state.unreadMessages.push({
+			user_id: this.$auth.user.id,
+			conversation_id: payload.id
+		});
 	},
 	MESSAGE_SENT_TIMEOUT(state, payload) {
 		state.messageSent = payload;

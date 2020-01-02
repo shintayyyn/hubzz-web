@@ -20,8 +20,8 @@
 							<div
 								v-if="
 									$auth.user.domain === 'Practice' &&
-										$auth.user.status === 'Active' &&
-                    $auth.user.practice_detail.practice.status === 'Active'
+									$auth.user.status === 'Active' &&
+                    				$auth.user.practice_detail.practice.status === 'Active'
 								"
 								class="mx-1"
 							>
@@ -61,7 +61,7 @@
 							<button
 								v-if="
 									$route.name != 'messages-slug' &&
-										$route.name != 'messages-new'
+									$route.name != 'messages-new'
 								"
 								@click="$router.push('/messages')"
 								class="relative block md:hidden button rounded-lg p-2 focus:outline-none cursor-pointer"
@@ -108,15 +108,18 @@ export default {
 		};
 	},
 	async created() {
-	  if (this.$auth.user.domain === "Practice") {
-      if (this.$auth.user.practice_detail.practice.type === "Spoke") {
-        if (this.$auth.user.practice_detail.practice.parent_practice_id) {
-          if (this.$auth.user.practice_detail.practice.allow_surgery_create_sessions == false) {
-            this.notAllowed = true;
-          }
-        }
-      }
-    }
+		if (this.$auth.user.domain === "Practice") {
+			if (this.$auth.user.practice_detail.practice.type === "Spoke") {
+				if (this.$auth.user.practice_detail.practice.parent_practice_id) {
+					if (
+						this.$auth.user.practice_detail.practice
+							.allow_surgery_create_sessions == false
+					) {
+						this.notAllowed = true;
+					}
+				}
+			}
+		}
 	},
 	computed: {
 		create_job_modal() {
@@ -139,16 +142,10 @@ export default {
 			} else {
 				document.body.style.overflow = "auto";
 			}
+		},
+		unreadMessages(value) {
+			console.log("new message", value);
 		}
-		// unreadMessages(value){
-		//   console.log("new message",value, this.$route)
-		//   this.$store.commit("SET_NOTIFICATION", {
-		//     enabled: true,
-		//     status: "message",
-		//     text: [`qwe`],
-		//     closable: true
-		//   });
-		// }
 	},
 	methods: {
 		toggle() {
@@ -172,7 +169,7 @@ export default {
 .modal-container {
 	z-index: 510;
 }
-@media screen and (min-width: 1200px) {
+@media (min-width: 1280px) {
 	.modal-container {
 		width: 80%;
 	}
@@ -195,17 +192,17 @@ export default {
 	padding: 0 20px;
 	min-height: 50px;
 }
-@media screen and (min-width: 1200px) {
+@media (min-width: 1280px) {
 	.burger {
 		display: none;
 	}
 }
-@media screen and (min-width: 480px) {
+@media (min-width: 480px) {
 	.header-section {
 		padding: 0 5%;
 	}
 }
-@media screen and (min-width: 320px) {
+@media (min-width: 320px) {
 	.header-section {
 		padding: 0 3%;
 	}
