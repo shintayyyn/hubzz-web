@@ -5,6 +5,7 @@ export default {
 			let findMessage = state.messages.find(
 				item => item.id == message.latest_conversation_message.id
 			);
+			console.log("find!", findMessage)
 			let findConversation = state.conversations.find(
 				item => item.id == message.id
 			);
@@ -16,6 +17,7 @@ export default {
 					this.$router.push(`/messages/${message.id}`);
 					commit("SET_ACTIVE_CONVERSATION", message.id);
 				}
+				commit("ADD_UNREAD_MESSAGE", message);
 			} else {
 				if (!user) {
 					if (!findMessage) {

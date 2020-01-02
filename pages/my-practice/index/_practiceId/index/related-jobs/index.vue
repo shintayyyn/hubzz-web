@@ -71,7 +71,7 @@
             <AppInput
               class="px-1"
               v-model="params.rate"
-              :type="'text'"
+              :type="'number'"
               :name="'rate'"
               :label="'Rate'"
               :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
@@ -204,7 +204,7 @@
             <AppInput
               class="px-1"
               v-model="jobPartParams.job_rate"
-              :type="'text'"
+              :type="'number'"
               :name="'job_rate'"
               :label="'Rate'"
               :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"

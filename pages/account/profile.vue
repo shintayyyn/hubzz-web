@@ -114,25 +114,25 @@
                 <div class="flex flex-row flex-no-wrap">
                   <AppInput
                     v-model="form.min_rate_per_hour"
-                    :type="'text'"
+                    :type="'number'"
                     :name="'min_rate_per_hour'"
                     :label="'From £'"
                     :error="formError.find(item => item.field === 'min_rate_per_hour')"
                     @submit="save"
                     @blur="CheckEmptyField(form.min_rate_per_hour, 'min_rate_per_hour')"
                     class="w-1/2 px-1"
-            required
+                    required
                   />
                   <AppInput
                     v-model="form.max_rate_per_hour"
-                    :type="'text'"
+                    :type="'number'"
                     :name="'max_rate_per_hour'"
                     :label="'To £'"
                     :error="formError.find(item => item.field === 'max_rate_per_hour')"
                     @submit="save"
                     @blur="CheckEmptyField(form.max_rate_per_hour, 'max_rate_per_hour')"
                     class="w-1/2 px-1"
-            required
+                    required
                   />
                 </div>
               </div>
@@ -141,24 +141,24 @@
                 <div class="flex flex-row flex-no-wrap">
                   <AppInput
                     v-model="form.min_rate_per_half_day_session"
-                    :type="'text'"
+                    :type="'number'"
                     :name="'min_rate_per_half_day_session'"
                     :label="'From £'"
                     :error="formError.find(item => item.field === 'min_rate_per_half_day_session')"
                     @submit="save"
                     @blur="CheckEmptyField(form.min_rate_per_half_day_session, 'min_rate_per_half_day_session')"
-            required
+                    required
                   />
                   <div class="mx-1"></div>
                   <AppInput
                     v-model="form.max_rate_per_half_day_session"
-                    :type="'text'"
+                    :type="'number'"
                     :name="'max_rate_per_half_day_session'"
                     :label="'To £'"
                     :error="formError.find(item => item.field === 'max_rate_per_half_day_session')"
                     @submit="save"
                     @blur="CheckEmptyField(form.max_rate_per_half_day_session, 'max_rate_per_half_day_session')"
-            required
+                    required
                   />
                 </div>
               </div>
@@ -167,24 +167,24 @@
                 <div class="flex flex-row flex-no-wrap">
                   <AppInput
                     v-model="form.min_rate_per_whole_day_session"
-                    :type="'text'"
+                    :type="'number'"
                     :name="'min_rate_per_whole_day_session'"
                     :label="'From £'"
                     :error="formError.find(item => item.field === 'min_rate_per_whole_day_session')"
                     @submit="save"
                     @blur="CheckEmptyField(form.min_rate_per_whole_day_session, 'min_rate_per_whole_day_session')"
-            required
+                    required
                   />
                   <div class="mx-1"></div>
                   <AppInput
                     v-model="form.max_rate_per_whole_day_session"
-                    :type="'text'"
+                    :type="'number'"
                     :name="'max_rate_per_whole_day_session'"
                     :label="'To £'"
                     :error="formError.find(item => item.field === 'max_rate_per_whole_day_session')"
                     @submit="save"
                     @blur="CheckEmptyField(form.max_rate_per_whole_day_session, 'max_rate_per_whole_day_session')"
-            required
+                    required
                   />
                 </div>
               </div>
@@ -256,7 +256,7 @@
               :name="'payroll_detail_account_name'"
               :label="'Account name'"
               :error="formError.find(item => item.field === 'payroll_detail_account_name')"
-            required
+              required
             />
             <AppInput
               v-model="form.payroll_detail_bank_name"
@@ -264,7 +264,7 @@
               :name="'payroll_detail_bank_name'"
               :label="'Bank name'"
               :error="formError.find(item => item.field === 'payroll_detail_bank_name')"
-            required
+              required
             />
             <AppInput
               v-model="form.payroll_detail_sort_code"
@@ -272,7 +272,7 @@
               :name="'payroll_detail_sort_code'"
               :label="'Sort code'"
               :error="formError.find(item => item.field === 'payroll_detail_sort_code')"
-            required
+              required
             />
             <AppInput
               v-model="form.payroll_detail_account_number"
@@ -280,7 +280,7 @@
               :name="'payroll_detail_account_number'"
               :label="'Account number'"
               :error="formError.find(item => item.field === 'payroll_detail_account_number')"
-            required
+              required
             />
           </template>
           <AppInput
