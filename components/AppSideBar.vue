@@ -284,7 +284,7 @@ export default {
 .close-button {
 	display: block;
 }
-@media screen and (min-width: 1280px) {
+@media screen and (min-width: 1200px) {
 	.sidebar {
 		z-index: 49;
 		margin-left: 0;
