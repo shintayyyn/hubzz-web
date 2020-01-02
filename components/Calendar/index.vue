@@ -10,7 +10,9 @@
         >
           <PerMonth v-if="$store.state.calendar.view_type === 'per_month'" />
           <PerWeek v-if="$store.state.calendar.view_type === 'per_week'" />
-          <div class="absolute right-0 bottom-0" :class="$auth.user.domain === 'Practice' ? 'm-2 md:m-5' : 'm-2 md:m-3'">
+          <div
+            v-if="$auth.user.practice_detail.practice.type !== 'Spoke' || $auth.user.practice_detail.practice.allow_surgery_create_sessions" 
+            class="absolute right-0 bottom-0" :class="$auth.user.domain === 'Practice' ? 'm-2 md:m-5' : 'm-2 md:m-3'">
             <nuxt-link
               v-if="
 								$auth.user.domain === 'Locum' ||
@@ -41,6 +43,7 @@ export default {
   },
   created() {
     this.$store.commit("calendar/SET_DATE_TODAY");
+    
   },
   computed: {
     loading() {

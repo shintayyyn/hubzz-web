@@ -945,9 +945,9 @@ export default {
         if (this.unpaid_breaks === "other") {
           this.form.unpaid_breaks_in_minutes = this.form.unpaid_breaks_in_minutes;
         }
-        this.form.session_requirements = this.form.session_requirements.split(
-          ","
-        );
+        // this.form.session_requirements = this.form.session_requirements.split(
+        //   ","
+        // );
 
         this.$axios
           .$post(`/api/v1/practice/jobs`, this.form)
