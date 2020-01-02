@@ -288,7 +288,12 @@ export default {
 				status = "Terminated";
 			}
 			else if (surgery.termination_requested_at) {
-				status = "Termination Requested";
+        if (surgery.invitation_accepted_at) {
+          status = "Termination Requested";
+        } else {
+          status = "Cancellation Requested";
+        }
+				
 			}
 			else if (surgery.invitation_rejected_at) {
 				status = "Rejected";
