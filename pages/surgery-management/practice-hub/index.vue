@@ -5,24 +5,40 @@
 				<div class="md:w-1/2">
 					<p class="text-lg font-semibold">Practice Hub</p>
 					<div class="flex flex-col mx-2">
-						<div class="flex flex-col md:flex-row w-full leading-tight">
-							<p class="md:w-1/3 font-semibold">Surgery Name</p>
+						<div class="flex flex-col mt-4 md:flex-row w-full leading-tight">
+							<p class="md:w-1/3 font-semibold">Practice Name</p>
 							<p class="md:w-2/3 mx-2 md:mx-0">{{ practiceHub.surgery.name }}</p>
 						</div>
-
-						<div class="flex flex-col md:flex-row w-full mt-2 leading-tight">
-							<p class="md:w-1/3 font-semibold">Contact Number</p>
-							<p class="md:w-2/3 mx-2 md:mx-0">
-							{{
-								practiceHub.phone_number
-								? practiceHub.phone_number
-								: "N/A"
-							}}
-							</p>
+            <div class="flex flex-col mt-4 md:flex-row w-full leading-tight">
+							<p class="md:w-1/3 font-semibold">Practice Code</p>
+							<p class="md:w-2/3 mx-2 md:mx-0">{{ practiceHub.code }}</p>
 						</div>
+            <div class="flex flex-col mt-4 md:flex-row w-full leading-tight">
+							<p class="md:w-1/3 font-semibold">CCG</p>
+							<p class="md:w-2/3 mx-2 md:mx-0">{{ practiceHub.clinical_commissioning_group_name }}</p>
+						</div>
+            <div class="flex flex-col mt-4 md:flex-row w-full leading-tight">
+							<p class="md:w-1/3 font-semibold">Contact Number</p>
+							<p class="md:w-2/3 mx-2 md:mx-0">{{ practiceHub.phone_number }}</p>
+						</div>
+            <div class="flex flex-col mt-4 md:flex-row w-full leading-tight">
+							<div class="md:w-1/3 font-semibold">Address</div>
+              <div class="md:w-2/3 ">
+                <div class="md:mx-0">{{ practiceHub.address_line_1 }}</div>
+                <div class="md:mx-0">{{ practiceHub.address_line_2 }}</div>
+                <div class="md:mx-0">{{ practiceHub.address_line_3 }}</div>
+                <div class="md:mx-0">{{ practiceHub.address_line_4 }}</div>
+              </div>
+		
+						</div>
+						
 						<div class="flex flex-col md:flex-row w-full mt-2 leading-tight">
 							<p class="md:w-1/3 font-semibold">Report To</p>
 							<p class="md:w-2/3 mx-2 md:mx-0">{{practiceHub.report_to ? practiceHub.report_to : 'N/A'}}</p>
+						</div>
+            <div class="flex flex-col md:flex-row w-full mt-2 leading-tight">
+							<p class="md:w-1/3 font-semibold">Email Address</p>
+							<p class="md:w-2/3 mx-2 md:mx-0">{{practiceHub.email ? practiceHub.email : 'N/A'}}</p>
 						</div>
 					</div>
 				</div>
@@ -57,7 +73,7 @@
 						</div>
 						<div class="flex flex-col md:flex-row">
 							<p class="text-sm font-semibold md:w-2/3">Maximum Excess Hours</p>
-							<p class="text-sm text-sm mx-2 md:mx-0">{{practiceSpoke.max_ooh_rate_limit ?'£ '+ practiceSpoke.max_ooh_rate_limit : 'N/A'}}</p>
+							<p class="text-sm text-sm mx-2 md:mx-0">{{practiceSpoke.max_excess_hours ?'£ '+ practiceSpoke.max_excess_hours : 'N/A'}}</p>
 						</div>
 					</div>
 					<div class="flex items-center py-1">

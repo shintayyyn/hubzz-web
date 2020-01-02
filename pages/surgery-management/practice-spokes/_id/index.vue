@@ -60,7 +60,7 @@
 
                 <div class="flex flex-col md:flex-row">
                   <p class="font-semibold md:w-2/3">Maximum Excess Hours</p>
-                  <p class="text-sm mx-2 md:mx-0">{{practice_surgery.max_ooh_rate_limit ?'£ '+ practice_surgery.max_ooh_rate_limit : 'N/A'}}</p>
+                  <p class="text-sm mx-2 md:mx-0">{{practice_surgery.max_excess_hours ?'£ '+ practice_surgery.max_excess_hours : 'N/A'}}</p>
                 </div>
               </div>
             </div>

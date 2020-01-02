@@ -213,7 +213,11 @@ export default {
         })
         .catch(err => {
           console.log("err", err.response.data.error_messages);
-          // this.formError = err.response.data.error_messages;
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "danger",
+            text: [err.response.data.error_messages[0].message]
+          })
         });
     }
   }

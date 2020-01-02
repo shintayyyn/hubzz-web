@@ -71,9 +71,9 @@ export default {
 		mode: "out-in"
 	},
 	components: {
-		AddSurgeryModal,
-		RemoveSurgeryConfirmationModal,
-		AppConfirmationModal,
+		// AddSurgeryModal,
+		// RemoveSurgeryConfirmationModal,
+		// AppConfirmationModal,
 		AppTable
 	},
 

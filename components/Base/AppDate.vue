@@ -354,113 +354,108 @@ export default {
 				);
 			}
 
-			this.yearLists.sort(function(a, b) {
-				return a - b;
-			});
-		},
-		isSelectedDate(date) {
-			let selectedDate = `${this.selectedYear}-${this.selectedMonth}-${date}`;
-			return this.$moment(selectedDate, "YYYY-MM-D").isSame(this.value);
-		},
-		isSame(date) {
-			let newDate = this.$moment().format("MM-DD-YYYY");
-			return this.$moment(date, "MM-DD-YYYY").isSame(newDate);
-		},
-		isDisabled(date) {
-			// return false;
-			if (this.isAfter) {
-				let newDate = this.$moment.utc().format("MM-DD-YYYY");
-				if (this.isBefore) {
-					return this.$moment(date, "MM-DD-YYYY").isAfter(
-						this.$moment(newDate, "MM-DD-YYYY")
-					);
-				}
-
-				return this.$moment(date, "MM-DD-YYYY").isBefore(
-					this.$moment(newDate, "MM-DD-YYYY")
-				);
-			} else {
-				return false;
-			}
-		},
-		toggledOff() {
-			// get to the selected date
-			if (this.value) {
-				let month = this.$moment(this.value, "YYYY-MM-DD").format("M");
-				let year = this.$moment(this.value, "YYYY-MM-DD").format("YYYY");
-				this.selectedMonth = month;
-				this.selectedYear = year;
-			}
-			this.modal = false;
-		},
-		adjustMonth(type) {
-			if (type === "previous") {
-				let index = this.filteredMonths.findIndex(
-					month => month.value === this.selectedMonth
-				);
-				// return if selected month and year === current month and year
-				if (
-					this.selectedMonth.toString() === this.$moment().format("M") &&
-					this.selectedYear.toString() === this.$moment().format("YYYY") &&
-					this.isAfter
-				) {
-					return;
-				}
-				this.selectedYear = parseInt(this.selectedYear);
-				if (index === 0 || this.selectedMonth != 1) {
-					this.selectedMonth--;
-				} else {
-					this.selectedMonth = 12;
-					this.selectedYear--;
-				}
-			}
-			if (type === "next") {
-				if (this.selectedMonth === 12 || this.selectedMonth === "12") {
-					this.selectedYear++;
-					this.selectedMonth = 1;
-				} else {
-					this.selectedMonth = parseInt(this.selectedMonth);
-					this.selectedMonth++;
-				}
-			}
-		},
-		getDaysInMonth(month, selectedYear) {
-			let date = this.$moment(`${selectedYear}-${month}-01`, "YYYY-MM-DD");
-			let days = [];
-			while (date.format("M") === month) {
-				days.push({
-					day: parseInt(date.format("d")),
-					date: parseInt(date.format("D")),
-					fullDate: date.format("MM-DD-YYYY")
-				});
-				date = date.add(1, "days");
-			}
-			this.daysInMonth = days;
-			// days.forEach(day => {
-			//   this.daysInMonth.push({
-			//     day: day.getDay(),
-			//     date: day.getDate(),
-			//     fullDate: this.$moment(day).format("MM-DD-YYYY")
-			//   });
-			// });
-		},
-		validateInput(e) {
-			if ((e.key >= 0 && e.key <= 9) || e.key === "/") {
-				return;
-			} else {
-				e.preventDefault();
-			}
-		},
-		select(date) {
-			if (!this.isDisabled(date)) {
-				this.modal = false;
-				this.$emit(
-					"input",
-					this.$moment(date, "MM-DD-YYYY").format(this.format)
-				);
-			}
-		}
-	}
+      this.yearLists.sort(function(a, b) {
+        return a - b;
+      });
+    },
+    isSelectedDate(date) {
+      let selectedDate = `${this.selectedYear}-${this.selectedMonth}-${date}`;
+      return this.$moment(selectedDate, "YYYY-MM-D").isSame(this.value);
+    },
+    isSame(date) {
+      let newDate = this.$moment().format("MM-DD-YYYY");
+      return this.$moment(date, "MM-DD-YYYY").isSame(newDate);
+    },
+    isDisabled(date) {
+      return false;
+      // let newDate = this.$moment.utc().format("MM-DD-YYYY");
+      // if (this.isBefore) {
+      //   return this.$moment(date, "MM-DD-YYYY").isAfter(
+      //     this.$moment(newDate, "MM-DD-YYYY")
+      //   );
+      // }
+      // return this.$moment(date, "MM-DD-YYYY").isBefore(
+      //   this.$moment(newDate, "MM-DD-YYYY")
+      // );
+    },
+    toggledOff() {
+      // get to the selected date
+      if (this.value) {
+        let month = this.$moment(this.value, "YYYY-MM-DD").format("M");
+        let year = this.$moment(this.value, "YYYY-MM-DD").format("YYYY");
+        this.selectedMonth = month;
+        this.selectedYear = year;
+      }
+      this.modal = false;
+    },
+    adjustMonth(type) {
+      if (type === "previous") {
+        let index = this.filteredMonths.findIndex(
+          month => month.value === this.selectedMonth
+        );
+        // return if selected month and year === current month and year
+        if (
+          this.selectedMonth.toString() === this.$moment().format("M") &&
+          this.selectedYear.toString() === this.$moment().format("YYYY") &&
+          this.isAfter
+        ) {
+          return;
+        }
+        this.selectedYear = parseInt(this.selectedYear);
+        if (index === 0 || this.selectedMonth != 1) {
+          this.selectedMonth--;
+        } else {
+          this.selectedMonth = 12;
+          this.selectedYear--;
+        }
+      }
+      if (type === "next") {
+        if (this.selectedMonth === 12 || this.selectedMonth === "12") {
+          this.selectedYear++;
+          this.selectedMonth = 1;
+        } else {
+          this.selectedMonth = parseInt(this.selectedMonth);
+          this.selectedMonth++;
+        }
+      }
+    },
+    getDaysInMonth(month, selectedYear) {
+      let date = this.$moment(`${selectedYear}-${month}-01`, "YYYY-MM-DD");
+      let days = [];
+      while (date.format("M") === month) {
+        days.push({
+          day: parseInt(date.format("d")),
+          date: parseInt(date.format("D")),
+          fullDate: date.format("MM-DD-YYYY")
+        });
+        date = date.add(1, "days");
+      }
+      this.daysInMonth = days;
+      // days.forEach(day => {
+      //   this.daysInMonth.push({
+      //     day: day.getDay(),
+      //     date: day.getDate(),
+      //     fullDate: this.$moment(day).format("MM-DD-YYYY")
+      //   });
+      // });
+    },
+    validateInput(e) {
+      if ((e.key >= 0 && e.key <= 9) || e.key === "/") {
+        return;
+      } else {
+        e.preventDefault();
+      }
+    },
+    select(date) {
+      if (!this.isDisabled(date)) {
+        this.modal = false;
+        this.$emit(
+          "input",
+          this.$moment(date, "MM-DD-YYYY").format(this.format)
+        );
+      }
+    }
+  }
 };
 </script>
 <style scoped>

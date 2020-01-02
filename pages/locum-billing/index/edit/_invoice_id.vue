@@ -6,23 +6,24 @@
           <svgicon name="left-arrow" height="32" width="32" />
         </nuxt-link>
       </div>
-      <LocumBillingInvoiceForm
-        :selectedInvoice="invoice"
-        @updateInvoice="$emit('updateInvoice', $event)"
+      <LocumPlatformBillingInvoiceForm
+        :propInvoice="invoice"
+        :propJobPart="null"
+        @updateInvoice="$emit('updateInvoice', $event), $router.push({ path: '/locum-billing' })"
       />
     </div>
   </div>
 </template>
 
 <script>
-import LocumBillingInvoiceForm from "@/components/Billing/LocumBillingInvoiceForm";
+import LocumPlatformBillingInvoiceForm from "@/components/Billing/LocumPlatformBillingInvoiceForm";
 export default {
   transition: {
     name: "slide",
     mode: "out-in"
   },
   components: {
-    LocumBillingInvoiceForm
+    LocumPlatformBillingInvoiceForm
   },
   data() {
     return {
@@ -35,12 +36,14 @@ export default {
         document.body.style.cursor = "wait";
       }
       const response = await app.$axios.get(
-        `/api/v1/locum/locum-invoices/${params.id}`
+        `/api/v1/locum/locum-invoices/${params.invoice_id}`
       );
       const invoice =
         response.data && response.data.data && response.data.data.locum_invoice
           ? response.data.data.locum_invoice
           : null;
+
+      console.log("invoice", invoice);
 
       if (process.client) {
         document.body.style.cursor = "auto";

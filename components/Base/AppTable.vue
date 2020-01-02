@@ -34,12 +34,12 @@
         <div
           v-for="item in items"
           :key="item.id"
-          :style="`min-width: ${customWidth}px`"
+          :style="`${customWidth ? `min-width: ${customWidth}px` : ''}`"
           class="row py-2"
         >
           <nuxt-link
             :to="{ path: `${routerLink}/${routerId ? item[routerId] : item.id}`, query: { ...$route.query } }"
-            :event="!routerLink ? '' : 'click'"
+            :event="!routerLink || (routerId && item[routerId] === null) ? '' : 'click'"
           >
             <div
               class="flex justify-start shadow-md rounded-lg items-center py-3 bg-white"
@@ -72,6 +72,13 @@
                         dataCell(item, column) !== '(none)'
                     "
                   >{{ dataCell(item, column) | localDate }}</template>
+                  <template
+                    v-else-if="
+                      column.class &&
+                        column.class.includes('fileSize') &&
+                        dataCell(item, column) !== '(none)'
+                    "
+                  >{{ dataCell(item, column) | fileSize }}</template>
                   <template v-else>{{ dataCell(item, column) }}</template>
                 </template>
               </div>
