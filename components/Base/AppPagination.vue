@@ -23,7 +23,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="flex flex-col justify-center items-center py-2">
+		<div class="flex flex-col justify-center items-center py-2" v-if="totalPages > 1">
 			<div class="flex">
 				<div class="md:hidden pagination-item m-1" v-for="page in pages" :key="page.name">
 					<button

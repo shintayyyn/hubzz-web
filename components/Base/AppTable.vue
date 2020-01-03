@@ -15,11 +15,11 @@
 						v-for="(column, index) in columns"
 						:key="`${column}-${index}`"
 						:class="[
-              column.class &&
-                column.class.includes('text-center') &&
-                'justify-center',
-              column.sortable && 'cursor-pointer'
-            ]"
+							column.class &&
+							column.class.includes('text-center') &&
+							'justify-center',
+							column.sortable && 'cursor-pointer'
+						]"
 						@click="column.sortable && sort(column.dataIndex)"
 					>
 						<span class="pr-1">{{ column.name }}</span>
@@ -33,7 +33,7 @@
 					class="row py-2"
 				>
 					<nuxt-link
-						:to="{ path: `${routerLink}/${routerId ? item[routerId] : item.id}`, query: { ...$route.query } }"
+						:to="{ path: `${routerLink}/${routerId ? item[routerId] : item.id}`, query: { ...$route.query }, query: { params} }"
 						:event="!routerLink || (routerId && item[routerId] === null) ? '' : 'click'"
 					>
 						<div
@@ -45,10 +45,10 @@
 								:key="index"
 								class="flex-1 truncate px-2"
 								:class="
-                  column.class &&
-                    column.class.includes('text-center') &&
-                    'text-center'
-                "
+									column.class &&
+									column.class.includes('text-center') &&
+									'text-center'
+								"
 							>
 								<template v-if="Array.isArray(dataCell(item, column))">
 									<div v-for="(item, index) in dataCell(item, column)" :key="`${item}-${index}`">{{ item }}</div>
@@ -59,17 +59,17 @@
 									</template>
 									<template
 										v-if="
-                      column.class &&
-                        column.class.includes('localDate') &&
-                        dataCell(item, column) !== '(none)'
-                    "
+											column.class &&
+											column.class.includes('localDate') &&
+											dataCell(item, column) !== '(none)'
+										"
 									>{{ dataCell(item, column) | localDate }}</template>
 									<template
 										v-else-if="
-                      column.class &&
-                        column.class.includes('fileSize') &&
-                        dataCell(item, column) !== '(none)'
-                    "
+											column.class &&
+											column.class.includes('fileSize') &&
+											dataCell(item, column) !== '(none)'
+										"
 									>{{ dataCell(item, column) | fileSize }}</template>
 									<template v-else>{{ dataCell(item, column) }}</template>
 								</template>
