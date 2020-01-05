@@ -5,18 +5,20 @@
     >
       <div class="relative flex flex-row flex-wrap w-full h-full">
         <div
-          class="relative w-full lg:w-2/3 px-2 md:px-5 pb-12 md:pb-20 "
+          class="relative w-full lg:w-2/3 px-2 md:px-5 pb-12 md:pb-20"
           :class="authPermissions.includes('Create Sessions Job') ? 'pt-5' : 'pt-2'"
         >
           <PerMonth v-if="$store.state.calendar.view_type === 'per_month'" />
           <PerWeek v-if="$store.state.calendar.view_type === 'per_week'" />
           <div
-            v-if="$auth.user.practice_detail.practice.type !== 'Spoke' || $auth.user.practice_detail.practice.allow_surgery_create_sessions" 
-            class="absolute right-0 bottom-0" :class="$auth.user.domain === 'Practice' ? 'm-2 md:m-5' : 'm-2 md:m-3'">
+            class="absolute right-0 bottom-0"
+            :class="$auth.user.domain === 'Practice' ? 'm-2 md:m-5' : 'm-2 md:m-3'"
+          >
             <nuxt-link
               v-if="
 								$auth.user.domain === 'Locum' ||
-									($auth.user.domain === 'Practice' && authPermissions.includes('Create Sessions Job'))
+									($auth.user.domain === 'Practice' && authPermissions.includes('Create Sessions Job')) ||
+                  ($auth.user.domain === 'Practice' && ($auth.user.practice_detail.practice.type !== 'Spoke' || $auth.user.practice_detail.practice.allow_surgery_create_sessions))
 							"
               :to="{ path: '/dashboard/create' }"
               class="rounded-full h-10 w-10 sm:h-12 sm:w-12 md:h-16 md:w-16 text-2xl sm:text-3xl md:text-4xl flex items-center focus:outline-none justify-center bg-yellow-500 font-semibold cursor-pointer shadow-md hover:text-white"
@@ -43,7 +45,6 @@ export default {
   },
   created() {
     this.$store.commit("calendar/SET_DATE_TODAY");
-    
   },
   computed: {
     loading() {

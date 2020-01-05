@@ -169,7 +169,7 @@ export default {
 .modal-container {
 	z-index: 510;
 }
-@media (min-width: 1280px) {
+@media (min-width: 1200px) {
 	.modal-container {
 		width: 80%;
 	}
@@ -192,7 +192,7 @@ export default {
 	padding: 0 20px;
 	min-height: 50px;
 }
-@media (min-width: 1280px) {
+@media (min-width: 1200px) {
 	.burger {
 		display: none;
 	}
