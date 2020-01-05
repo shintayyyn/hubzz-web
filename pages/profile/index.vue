@@ -47,7 +47,7 @@
                 :error="formError.find(item => item.field === 'use_standard_terms')"
               />
               <div class="relative">
-                <div class="absolute h-full w-full bg-white opacity-50 z-50" v-if="!form.use_standard_terms"></div>
+                <div class="absolute h-full w-full bg-white opacity-50 z-50" v-if="form.use_standard_terms"></div>
                 <AppInput
                   v-model="form.variation_to_standard_terms"
                   :type="'single-checkbox'"
