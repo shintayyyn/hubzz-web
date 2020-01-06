@@ -1,11 +1,11 @@
 <template>
 	<div class="modal-container shadow-lg p-4 md:p-8">
-		<div
-			@click="$router.push('/surgery-management/practice-hub')"
+		<nuxt-link
+			:to="`/surgery-management/practice-hub`"
 			class="mb-2 cursor-pointer"
 		>
 			<svgicon name="left-arrow" height="32" width="32" @click="$router.push('/profile/practice-hub')" class="cursor-pointer"/>
-		</div>
+		</nuxt-link>
 		<div class="my-2">
 			<div class="text-lg font-semibold">
 				{{ specificPracticeHub.name }}

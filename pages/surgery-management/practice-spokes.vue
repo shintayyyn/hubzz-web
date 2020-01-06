@@ -10,6 +10,15 @@
 			</div>
 		</div>
 
+    <AppConfirmationModal
+			:label="'Are you sure you want to cancel your invitation?'"
+			:confirmLabel="'Yes'"
+			:cancelLabel="'Cancel'"
+			:modal="modal"
+			@confirm="remove"
+			@cancel="modal = false"
+		/>
+
 		<AppTable
 			v-if="surgeries.length > 0"
 			:total="totalSurgeries"
@@ -25,21 +34,33 @@
 			@limitchanged="limitchanged"
 			@sorted="sorted"
 		>
-			<template v-slot:actions="slotProps">
+			<template v-slot:status_slot="slotProps">
 				<div class="flex items-center justify-center">
 					<div class="rounded-full px-6 py-1" :class="statusStyle(slotProps.item)">{{ getStatus(slotProps.item) }}</div>
 				</div>
 			</template>
       
-      <!-- <template v-slot:actions="toCancel">
-				<div class="flex items-center justify-center">
-					<svgicon
-            name="cancel"
-            height="15"
-            width="15"
-          />
+      <template 
+        v-slot:actions="slotProps"
+        >
+				<div 
+          @click.stop.prevent="toCancelInvitation(slotProps.item.id)"
+          v-if="getStatus(slotProps.item) === 'Invited' || getStatus(slotProps.item) === 'Rejected'" 
+          class="flex items-center justify-center">
+          <div class="flex flex-row text-white bg-red-600 rounded-lg p-2 px-4">
+            <div class="m-1">
+              <!-- <svgicon
+                name="cancel"
+                height="15"
+                width="15"
+                color="white"
+              /> -->
+            </div>
+            <div>Cancel Invitation</div> 
+          </div>
 				</div>
-			</template> -->
+			</template>
+      
 		</AppTable>
 		<div v-else class="flex justify-center py-4 text-gray-500">
 			No Branches / Surgeries
@@ -83,14 +104,14 @@ export default {
 	components: {
 		// AddSurgeryModal,
 		// RemoveSurgeryConfirmationModal,
-		// AppConfirmationModal,
+		AppConfirmationModal,
 		AppTable
 	},
 
 	data() {
 		return {
 			modal: false,
-			selectedSurgeryId: null,
+			selectedSurgeryId: '',
 			//
 			current_page: 1,
 			surgeries: [],
@@ -119,12 +140,14 @@ export default {
 					class: "text-center"
 				},
 				{
-					name: "Status",
-          dataIndex: "actions",
+          name: "Status",
+          slot: true,
+          slotName: "status_slot",
+          dataIndex: "",
 					class: "text-center"
         },
         {
-          name: '',
+          name: 'Actions',
           dataIndex: "actions",
           class: "text-center"
         }
@@ -258,7 +281,7 @@ export default {
 				this.surgeries.splice(index, 1, payload);
 			}
 		},
-		toggleRemoveConfirmationModal(id) {
+		toCancelInvitation(id) {
 			this.selectedSurgeryId = id;
 			this.modal = true;
 		},
@@ -271,8 +294,6 @@ export default {
 				await this.$axios.$delete(
 					`/api/v1/practice/me/practice-surgeries/${this.selectedSurgeryId}`
 				);
-			} else if (this.practice.type === "Spoke") {
-				await this.$axios.$delete(`/api/v1/practice/me/parent-surgery`);
 			}
 			this.loading = false;
 			this.surgeries = this.surgeries.filter(
@@ -282,7 +303,7 @@ export default {
 			this.$store.commit("SET_NOTIFICATION", {
 				enabled: true,
 				status: "success",
-				text: ["Practice Surgery Deleted Successfully"]
+				text: ["Invitation Successfully Deleted"]
 			});
 		},
 		show(item) {
@@ -308,7 +329,6 @@ export default {
         } else {
           status = "Cancellation Requested";
         }
-				
 			}
 			else if (surgery.invitation_rejected_at) {
 				status = "Rejected";
@@ -341,9 +361,6 @@ export default {
 };
 </script>
 <style scoped>
-.shield {
-	/* z-index: 509; */
-}
 .list-section {
 	position: relative;
 	min-height: 600px;
