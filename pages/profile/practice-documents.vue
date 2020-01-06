@@ -9,6 +9,19 @@
 			:routerId="'fileId'"
 			:customWidth="480"
 		></AppTable>
+		<!-- <template v-if="terms.length > 0"> -->
+		<p>
+			<strong>Variation to Standard Terms</strong>
+		</p>
+		<AppTable
+			:total="terms.length"
+			:items="terms"
+			:columns="terms_columns"
+			:routerLink="'/profile/practice-documents'"
+			:customWidth="480"
+		></AppTable>
+		<!-- </template> -->
+
 		<transition name="fade" mode="out-in">
 			<nuxt-link
 				class="shield"
@@ -34,7 +47,7 @@ export default {
 	data() {
 		return {
 			practice_compliance_documents: [],
-			variation_terms: [],
+			terms: [],
 			// app table
 			columns: [
 				{
@@ -50,6 +63,23 @@ export default {
 				{
 					name: "Last Upload Date",
 					dataIndex: "info.created_at",
+					class: "text-center localDate"
+				}
+			],
+			terms_columns: [
+				{
+					name: "File Name",
+					dataIndex: "filename",
+					class: ""
+				},
+				{
+					name: "File Size",
+					dataIndex: "size",
+					class: "text-center fileSize*MB qweq"
+				},
+				{
+					name: "Last Upload Date",
+					dataIndex: "created_at",
 					class: "text-center localDate"
 				}
 			]
@@ -83,17 +113,13 @@ export default {
 							return practice_documents;
 						}),
 						app.$axios.$get(`/api/v1/practice/me/practice`).then(res => {
-							const variation_terms = {
-								fileId: res.data.practice.variation_terms_file.id,
-								name: "Standard Terms",
-								info: {
-									file: {
-										size: res.data.practice.variation_terms_file.size
-									},
-									created_at: res.data.practice.variation_terms_file.created_at
-								}
-							};
-							console.log("variation", res.data.practice);
+							const variation_terms =
+								res.data &&
+								res.data.practice &&
+								res.data.practice.variation_terms_file
+									? res.data.practice.variation_terms_file
+									: [];
+							console.log("variation", res.data.practice.variation_terms_file);
 							return variation_terms;
 						}),
 						app.$axios.$get(`/api/v1/practice-document-types`).then(res => {
@@ -106,6 +132,9 @@ export default {
 							return practice_document_types;
 						})
 					]);
+
+					const terms = [];
+					terms.push(variation_terms);
 
 					const practice_compliance_documents = [];
 					practice_document_types.forEach(practiceDocumentType => {
@@ -121,16 +150,15 @@ export default {
 						});
 					});
 
-					// Add variation terms
-					// practice_compliance_documents.push(variation_terms);
-
 					console.log(
 						"practice_compliance_documents",
-						practice_compliance_documents
+						practice_compliance_documents,
+						terms
 					);
 
 					return {
-						practice_compliance_documents
+						practice_compliance_documents,
+						terms
 					};
 				} catch (err) {
 					if (err.response && err.response.status === 401) {
@@ -165,6 +193,17 @@ export default {
 		console.log("vaaar", this.variation_terms);
 	},
 	methods: {
+		routerLink(practice_document) {
+			if (practice_document) {
+				return "/profile/practice-documents";
+			} else {
+				const query = {
+					...this.$route.query,
+					standard_terms: true
+				};
+				return;
+			}
+		},
 		getDocumentRealTime(file) {
 			let updatedDocument = this.practice_compliance_documents.find(
 				item => item.fileId === file.id
