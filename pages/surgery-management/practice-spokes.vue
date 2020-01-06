@@ -30,6 +30,16 @@
 					<div class="rounded-full px-6 py-1" :class="statusStyle(slotProps.item)">{{ getStatus(slotProps.item) }}</div>
 				</div>
 			</template>
+      
+      <!-- <template v-slot:actions="toCancel">
+				<div class="flex items-center justify-center">
+					<svgicon
+            name="cancel"
+            height="15"
+            width="15"
+          />
+				</div>
+			</template> -->
 		</AppTable>
 		<div v-else class="flex justify-center py-4 text-gray-500">
 			No Branches / Surgeries
@@ -112,7 +122,12 @@ export default {
 					name: "Status",
           dataIndex: "actions",
 					class: "text-center"
-				}
+        },
+        {
+          name: '',
+          dataIndex: "actions",
+          class: "text-center"
+        }
 			]
 		};
 	},
