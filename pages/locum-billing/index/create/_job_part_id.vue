@@ -2,7 +2,7 @@
   <div class="modal-container shadow-lg">
     <div class="p-4 md:p-8 max-w-5xl h-screen">
       <div class="flex flex-row flex-wrap justify-start pb-4">
-        <nuxt-link to="/locum-billing" class="cursor-pointer">
+        <nuxt-link :to="{ path: '/locum-billing', query: {...$route.query}}" class="cursor-pointer">
           <svgicon name="left-arrow" height="32" width="32" />
         </nuxt-link>
       </div>
@@ -32,7 +32,7 @@ export default {
       const job_part =
         response.data && response.data.job_part ? response.data.job_part : null;
 
-      let type = "Platform";
+      let type = job_part.job.type;
       let practice = null;
       if (job_part.job.type === "Platform") {
         practice = job_part.job.platform_job.practice;
@@ -59,10 +59,10 @@ export default {
         job_part_id: job_part.id,
         description: `Job number ${job_part.job_part_number} ${job_part.job.type} Job at £${job_part.job.rate} ${job_part.job.locum_detail_rate_type.name} from ${job_part.date_start} to ${job_part.date_end} / ${job_part.job.shift.name} / Total hours of ${job_part.job.total_hours}`,
         total: (job_part.job.total_hours / divider) * job_part.job.rate,
-        dispute: false,
-        absent_days: 0,
-        final_hours: job_part.job.total_hours,
-        late_hours: 0,
+        dispute: job_part.disputed,
+        absent_days: job_part.absent_days,
+        final_hours: job_part.final_hours,
+        late_hours: job_part.late_hours,
         remarks: ""
       });
 
