@@ -2,73 +2,88 @@
   <section>
     <div class="flex flex-col">
       <div class="h-full flex flex-row flex-wrap justify-between">
-        <div class="w-full md:w-2/3 p-1">
+        <div class="w-full lg:w-3/5 p-1">
           <div class="bg-white rounded-lg shadow-lg p-4 md:p-8 h-full">
             <div class="flex flex-row flex-wrap">
-              <div class="flex flex-col w-full md:w-1/3 p-1">
+              <div class="flex flex-col w-full lg:w-1/2 xl:w-2/5 p-1">
                 <div class="text-xs sm:text-sm">Practice name</div>
                 <div class="text-xs font-bold py-2">{{surgery.name}}</div>
                 <div class="text-xs sm:text-sm mt-4">CCG</div>
                 <div class="text-xs font-bold py-2">{{surgery.clinical_commissioning_group.name}}</div>
               </div>
-              <div class="flex flex-col w-full md:w-1/3 p-1">
+              <div class="flex flex-col w-full lg:w-1/2 xl:w-1/5 p-1">
                 <div class="text-xs sm:text-sm" mt-4>Practice code</div>
                 <div class="text-xs font-bold py-2">{{surgery.code}}</div>
                 <div class="text-xs sm:text-sm mt-4">Phone number</div>
                 <div class="text-xs font-bold py-2">{{surgery.phone_number}}</div>
               </div>
-              <div class="flex flex-col w-full md:w-1/3 p-1">
-                <div class="text-xs sm:text-sm">Type</div>
-                <div
-                  class="text-xs font-bold py-2"
-                >{{ !practice.hub_type || practice.hub_type !== 'Type 2' ? practice.type : 'Hub - Health Board'}}</div>
-                <div class="text-xs sm:text-sm">Address</div>
-                <div
-                  class="text-xs font-bold py-2"
-                >{{surgery.address.line_1}} {{surgery.address.line_2}} {{surgery.address.line_3}} {{surgery.address.post_code}}</div>
+              <div class="flex xl:flex-col w-full xl:w-2/5 p-1">
+                <div class="flex flex-col lg:w-1/2 xl:w-full">
+                  <div class="text-xs sm:text-sm">Type</div>
+                  <div
+                    class="text-xs font-bold py-2"
+                  >{{ !practice.hub_type || practice.hub_type !== 'Type 2' ? practice.type : 'Hub - Health Board'}}</div>
+                </div>
+                <div class="flex flex-col lg:w-1/2 xl:w-full">
+                  <div class="text-xs sm:text-sm">Address</div>
+                  <div
+                    class="text-xs font-bold py-2"
+                  >{{surgery.address.line_1}} {{surgery.address.line_2}} {{surgery.address.line_3}} {{surgery.address.post_code}}</div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-        <div class="w-full md:w-1/3 p-1">
-          <div class="bg-white rounded-lg shadow-lg p-4 md:p-8 h-full">
+        <div class="w-full lg:w-2/5 p-1">
+          <div class="relative bg-white rounded-lg shadow-lg p-4 lg:p-8 h-full">
+            <AppLoading :spinner="false" :loading="loading" :message="'Uploading'" />
             <div class="flex flex-col">
               <AppInput
-                v-model="form.use_variation_terms"
+                v-model="form.use_standard_terms"
                 :type="'single-checkbox'"
-                :name="'use_variation_terms'"
+                :name="'use_standard_terms'"
                 :label="'Use Standard Terms with Locum?'"
                 :disabled="!authPermissions.includes('Update Profile Practice')"
-                :error="formError.find(item => item.field === 'use_variation_terms')"
+                :error="formError.find(item => item.field === 'use_standard_terms')"
               />
-              <div class="flex flex-row flex-wrap justify-between items-center">
-                <div class="text-xs sm:text-sm">Your Practice's standard terms</div>
-                <div
-                  v-if="authPermissions.includes('Update Profile Practice')"
-                  class="relative flex justify-start items-center"
-                >
-                  <label v-if="loading == false" for="file-upload">
-                    <div class="flex flex-row flex-no-wrap cursor-pointer hover:underline">
-                      <svgicon name="cloud-upload" height="24" width="24" />
-                      <div
-                        class="ml-2 text-xs sm:text-sm leading-loose"
-                      >{{ practice.variation_terms_file ? 'Update' : 'Upload' }}</div>
-                    </div>
-                  </label>
-                  <input type="file" id="file-upload" class="hidden" @input="onFileInput($event)" />
+              <div class="relative">
+                <div class="absolute h-full w-full bg-white opacity-50 z-50" v-if="!form.use_standard_terms"></div>
+                <AppInput
+                  v-model="form.variation_to_standard_terms"
+                  :type="'single-checkbox'"
+                  :name="'variation_to_standard_terms'"
+                  :label="'Use Variation to Standard Terms'"
+                  :disabled="!authPermissions.includes('Update Profile Practice')"
+                  :error="formError.find(item => item.field === 'variation_to_standard_terms')"
+                />
+                <div class="flex flex-row flex-wrap justify-between items-center">
+                  <div class="text-xs sm:text-sm">Your Practice's standard terms</div>
+                  <div
+                    v-if="authPermissions.includes('Update Profile Practice')"
+                    class="relative flex justify-start items-center"
+                  >
+                    <label v-if="loading == false" for="file-upload">
+                      <div class="flex flex-row flex-no-wrap cursor-pointer hover:underline">
+                        <svgicon name="cloud-upload" height="24" width="24" />
+                        <div
+                          class="ml-2 text-xs sm:text-sm leading-loose"
+                        >{{ practice.variation_terms_file ? 'Update' : 'Upload' }}</div>
+                      </div>
+                    </label>
+                    <input type="file" id="file-upload" class="hidden" @input="onFileInput($event)" />
+                  </div>
                 </div>
-              </div>
-              <div class="relative mt-4 bg-gray-300 rounded-lg p-4">
-                <AppLoading :spinner="false" :loading="loading" :message="'Uploading'" />
-                <div v-if="!loading" class="flex flex-no-wrap justify-between items-center">
-                  <div
-                    class="text-xs sm:text-sm document-filename"
-                  >{{ practice.variation_terms_file && practice.variation_terms_file.filename ? practice.variation_terms_file.filename : '' }}</div>
-                  <div
-                    class="font-bold text-md sm:text-lg hover:null cursor-pointer text-gray-600 hover:text-black"
-                    @click="modal = true"
-                    v-if="practice.variation_terms_file"
-                  >x</div>
+                <div class="bg-gray-300 rounded-lg px-4 py-2" v-if="practice.variation_terms_file">
+                  <div v-if="!loading" class="flex flex-no-wrap justify-between items-center">
+                    <div
+                      class="text-xs sm:text-sm document-filename"
+                    >{{ practice.variation_terms_file && practice.variation_terms_file.filename ? practice.variation_terms_file.filename : '' }}</div>
+                    <div
+                      class="font-bold text-md sm:text-lg hover:null cursor-pointer text-gray-600 hover:text-black"
+                      @click="modal = true"
+                      v-if="practice.variation_terms_file"
+                    >x</div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -77,10 +92,10 @@
       </div>
 
       <div class="w-full p-1">
-        <div class="bg-white rounded-lg shadow-lg p-4 md:p-8">
+        <div class="bg-white rounded-lg shadow-lg p-2 md:p-6">
           <AppFormError :formError="formError" v-if="formError.length" />
           <div class="flex flex-row flex-wrap justify-between">
-            <div class="flex flex-col w-full md:w-1/2 pr-1">
+            <div class="flex flex-col w-full md:w-1/2 px-2">
               <AppInput
                 v-model="form.phone_number"
                 :type="'text'"
@@ -112,7 +127,7 @@
                 required
               />
             </div>
-            <div class="flex flex-col w-full md:w-1/2 pl-1">
+            <div class="flex flex-col w-full md:w-1/2 px-2">
               <AppInput
                 v-model="form.practice_type_id"
                 :type="'multi-checkbox'"
@@ -127,9 +142,9 @@
             </div>
           </div>
           <div class="flex flex-col">
-            <div class="text-xs sm:text-sm mt-3">Compliance Documents</div>
+            <div class="text-xs sm:text-sm mt-3 px-2">Compliance Documents</div>
             <div class="flex flex-row flex-wrap justify-between">
-              <div class="flex flex-col w-full md:w-1/2 pr-1">
+              <div class="flex flex-col w-full md:w-1/2 px-2">
                 <AppInput
                   v-model="form.gp_compliance_document_id"
                   :type="'multi-checkbox'"
@@ -141,7 +156,7 @@
                   :lists="gp_documents"
                 />
               </div>
-              <div class="flex flex-col w-full md:w-1/2 pl-1">
+              <div class="flex flex-col w-full md:w-1/2 px-2">
                 <AppInput
                   v-model="form.others_compliance_document_id"
                   :type="'multi-checkbox'"
@@ -156,7 +171,7 @@
             </div>
           </div>
           <div class="flex flex-row flex-wrap justify-between">
-            <div class="flex flex-col w-full md:w-1/2 pr-1">
+            <div class="flex flex-col w-full md:w-1/2 px-2">
               <AppInput
                 v-model="form.mandatory_training_id"
                 :type="'multi-checkbox'"
@@ -168,7 +183,7 @@
                 :lists="mandatory_trainings"
               />
             </div>
-            <div class="flex flex-col w-full md:w-1/2 pl-1">
+            <div class="flex flex-col w-full md:w-1/2 px-2">
               <AppInput
                 v-model="vat_registered"
                 :type="'single-checkbox'"
@@ -185,7 +200,7 @@
               </template>
             </div>
           </div>
-          <div class="flex flex-row flex-wrap justify-between">
+          <div class="flex flex-row flex-wrap justify-between px-2">
             <AppInput
               v-model="form.extra_information"
               :type="'textarea'"
@@ -194,7 +209,7 @@
               :resize="false"
             />
           </div>
-          <div class="mt-8">
+          <div class="p-2">
             <AppButton
               :label="'Save changes'"
               @click="save"
@@ -254,7 +269,8 @@ export default {
         mandatory_training_id: [],
         gp_compliance_document_id: [],
         others_compliance_document_id: [],
-        use_variation_terms: false
+        use_standard_terms: false,
+        variation_to_standard_terms: false,
       },
       name: "",
       formError: []
@@ -418,7 +434,7 @@ export default {
     this.form.report_to = this.practice.report_to;
     this.form.email = this.practice.email;
     this.form.extra_information = this.practice.extra_information;
-    this.form.use_variation_terms = this.practice.use_variation_terms;
+    this.form.use_standard_terms = this.practice.use_standard_terms;
     this.practice.practice_types.forEach(item => {
       this.form.practice_type_id.push(item.id);
     });
@@ -461,16 +477,15 @@ export default {
             text: [res.message]
           });
           this.loading = false;
-          this.practice.variation_terms_file =
-            res.data.practice.variation_terms_file;
-          // this.save();
+          this.practice.variation_terms_file = file;
+          this.practice.variation_terms_file.filename = file.name
         })
         .catch(err => {
           console.log("err", err.response);
           if (err.response.status === 500) {
             if (err.response.data.message.includes("File size")) {
               this.formError.push({
-                field: "use_variation_terms",
+                field: "use_standard_terms",
                 message: err.response.data.message
               });
             } else {
@@ -481,9 +496,6 @@ export default {
             }
           }
         })
-        .finally(() => {
-          this.loading = false;
-        });
     },
     uncheckPractice(value) {
       this.form.practice_type_id = this.form.practice_type_id.filter(
@@ -526,7 +538,7 @@ export default {
           "extra_information",
           "gp_compliance_document_id",
           "others_compliance_document_id",
-          "use_variation_terms"
+          "use_standard_terms"
         ];
         this.Validate(this.form, notRequired);
         if (!this.formError.length) {

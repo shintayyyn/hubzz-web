@@ -15,11 +15,11 @@
             v-for="(column, index) in columns"
             :key="`${column}-${index}`"
             :class="[
-              column.class &&
-                column.class.includes('text-center') &&
-                'justify-center',
-              column.sortable && 'cursor-pointer'
-            ]"
+							column.class &&
+							column.class.includes('text-center') &&
+							'justify-center',
+							column.sortable && 'cursor-pointer'
+						]"
             @click="column.sortable && sort(column.dataIndex)"
           >
             <span class="pr-1">{{ column.name }}</span>
@@ -50,10 +50,10 @@
                 :key="index"
                 class="flex-1 truncate px-2"
                 :class="
-                  column.class &&
-                    column.class.includes('text-center') &&
-                    'text-center'
-                "
+									column.class &&
+									column.class.includes('text-center') &&
+									'text-center'
+								"
               >
                 <template v-if="Array.isArray(dataCell(item, column))">
                   <div
@@ -67,17 +67,17 @@
                   </template>
                   <template
                     v-if="
-                      column.class &&
-                        column.class.includes('localDate') &&
-                        dataCell(item, column) !== '(none)'
-                    "
+											column.class &&
+											column.class.includes('localDate') &&
+											dataCell(item, column) !== '(none)'
+										"
                   >{{ dataCell(item, column) | localDate }}</template>
                   <template
                     v-else-if="
-                      column.class &&
-                        column.class.includes('fileSize') &&
-                        dataCell(item, column) !== '(none)'
-                    "
+											column.class &&
+											column.class.includes('fileSize') &&
+											dataCell(item, column) !== '(none)'
+										"
                   >{{ dataCell(item, column) | fileSize }}</template>
                   <template v-else>{{ dataCell(item, column) }}</template>
                 </template>
@@ -150,18 +150,20 @@ export default {
     AppLoading,
     AppPagination
   },
-  computed: {
-    totalPages() {
-      return Math.ceil(this.total / this.perPage);
-    }
-  },
+  // computed: {
+  // 	totalPages() {
+  // 		return Math.ceil(this.total / this.perPage);
+  // 	}
+  // },
   data() {
     return {
-      params: []
+      params: [],
+      totalPages: 0
     };
   },
   mounted() {
     this.params = this.orderBy;
+    this.totalPages = Math.ceil(this.total / this.perPage);
   },
   methods: {
     sort(dataIndex) {
