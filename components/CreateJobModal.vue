@@ -839,6 +839,17 @@ export default {
         "auto_assign_at"
       ];
 
+      if (this.$moment(this.form.date_end).isSameOrBefore(this.form.date_start)){
+        this.formError.push({
+          field: "date_end",
+          message: "Invalid End Date"
+        });
+        this.formError.push({
+          field: "date_start",
+          message: "Invalid Start Date"
+        });
+      }
+
       if (
         [15, "15", 30, "30", 60, "60", false, "false"].includes(
           this.unpaid_breaks
@@ -1007,6 +1018,7 @@ export default {
             throw err;
           });
       } else {
+        console.log(this.formError)
         this.$nextTick(() => {
           this.$refs.modalContainer.scrollTop = 0;
         });
