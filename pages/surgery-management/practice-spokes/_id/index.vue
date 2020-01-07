@@ -301,9 +301,14 @@ export default {
         result = 'Rejected'
       }
       
-      if(invitation.termination_requested_at){
-        result = 'Termination Requested'
-      }
+      if (invitation.termination_requested_at) {
+        if (invitation.invitation_accepted_at) {
+          result = "Termination Requested";
+        } else {
+          result = "Cancellation Requested";
+        }
+				
+			}
       
       if(invitation.terminated_at){
         result = 'Terminated'

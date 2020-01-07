@@ -52,6 +52,7 @@
 					"
 					>Surgery Banks</nuxt-link>
 				<nuxt-link
+          v-if="relationshipIsActive == 'Active'"
 					:to="`/surgery-management/practice-spokes/${practice_id}/request-for-termination`"
 					class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
 					:class="
@@ -59,9 +60,7 @@
 							? 'border rounded-lg border-yellow-500 bg-yellow-500'
 							: 'text-gray-600'
 					"
-					>{{relationshipIsActive == "Active"
-              ? "Request for Termination"
-              : "Cancel Invitation"}}</nuxt-link>
+					>Request For Termination</nuxt-link>
 			</div>
 			<nuxt-child />
 		</div>
@@ -69,11 +68,7 @@
 </template>
 
 <script>
-import AppButton from "@/components/Base/AppButton";
 export default {
-	components: {
-		AppButton
-	},
 	data() {
 		return {
 			practice_id: "",

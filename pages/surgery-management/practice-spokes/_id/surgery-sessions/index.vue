@@ -37,23 +37,10 @@
 <script>
 import debounce from "lodash.debounce";
 import AppTable from "@/components/Base/AppTable";
-import AppInput from "@/components/Base/AppInput";
-import AppDate from "@/components/Base/AppDate";
-import AppTime from "@/components/Base/AppTime";
-import AppAutoComplete from "@/components/Base/AppAutoComplete";
-import AppButton from "@/components/Base/AppButton";
-import AppLoading from "@/components/Base/AppLoading";
 import { mapGetters } from "vuex";
 export default {
-  props: ["shifts", "rates"],
   components: {
     AppTable,
-    AppInput,
-    AppDate,
-    AppTime,
-    AppAutoComplete,
-    AppButton,
-    AppLoading
   },
   middleware({ query, redirect, error }) {
     if (
