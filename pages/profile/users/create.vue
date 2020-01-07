@@ -243,8 +243,21 @@ export default {
               status: "success",
               text: [`${res.message}`]
             });
-            this.$emit("addedUser", res.data.user);
+            this.$emit("addUser", res.data.user);
             this.$router.push("/profile/users");
+          })
+          .catch(err => {
+            console.log("err", err.response || err);
+            if (err.response.data.error_messages) {
+              this.formError = err.response.data.error_messages;
+            }
+            if (err.response.data) {
+              this.$store.commit("SET_NOTIFICATION", {
+                enabled: true,
+                status: "danger",
+                text: [`${err.response.message}`]
+              });
+            }
           });
       }
     }
