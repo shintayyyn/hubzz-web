@@ -336,6 +336,7 @@ input[type="checkbox"]:disabled + label::before {
 }
 .customized-select {
 	position: relative;
+	padding: 21.5px 0;
 }
 
 .customized-select select {
