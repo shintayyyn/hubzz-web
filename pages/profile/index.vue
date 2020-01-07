@@ -73,11 +73,11 @@
                       <input type="file" id="file-upload" class="hidden" @input="onFileInput($event)" />
                     </div>
                   </div>
-                  <div class="bg-gray-300 rounded-lg px-4 py-2">
+                  <div class="bg-gray-300 rounded-lg px-4 py-2" v-if="practice.variation_terms_file">
                     <div v-if="!loading" class="flex flex-no-wrap justify-between items-center">
                       <div
                         class="text-xs sm:text-sm document-filename"
-                      >{{ practice.variation_terms_file && practice.variation_terms_file.filename ? practice.variation_terms_file.filename : 'asd' }}</div>
+                      >{{ practice.variation_terms_file && practice.variation_terms_file.filename ? practice.variation_terms_file.filename : '' }}</div>
                       <div
                         class="font-bold text-md sm:text-lg hover:null cursor-pointer text-gray-600 hover:text-black"
                         @click="modal = true"
@@ -483,7 +483,6 @@ export default {
       // }
       const formData = new FormData();
       formData.append("file", file);
-      console.log(standard_terms)
       this.loading = true;
       this.$axios
         .$post(`/api/v1/practice/me/practice/variation-terms`, formData)
@@ -493,6 +492,14 @@ export default {
             status: "success",
             text: [res.message]
           });
+          console.log(this.practice, this.form.use_variation_terms)
+          // this.$axios.$put(`/api/v1/practice/me/practice`,
+          // {
+          //   use_variation_terms: this.form.use_variation_terms,
+          //   practice_type_id: this.practice.practice_types
+          // }).catch(err => {
+
+          // })
           this.loading = false;
         })
         .catch(err => {
@@ -553,7 +560,8 @@ export default {
           "extra_information",
           "gp_compliance_document_id",
           "others_compliance_document_id",
-          "use_standard_terms"
+          "use_standard_terms",
+          "use_variation_terms"
         ];
         this.Validate(this.form, notRequired);
         if (!this.formError.length) {
