@@ -16,7 +16,13 @@
 
 		<template v-if="hasNewChanges">
 			<div class="text-md">The Practice made changes on this Job, Accept these changes?</div>
-			<div class="text-sm">{{updateAcceptedUntil}}</div>
+			<!-- <div class="text-sm">{{updateAcceptedUntil}}</div> -->
+			<div class="text-sm" v-if="deadline.hours > 1">
+				You need to confirm within {{ deadline.hours }} hour{{ deadline.hours > 1 ? 's' : ''}}
+				<span
+					v-if="deadline.minutes > 0"
+				>and {{ deadline.minutes }} minute{{ deadline.minutes > 1 ? 's' : ''}}</span>
+			</div>
 			<div class="flex items-center justify-start mt-1">
 				<div
 					class="bg-red-600 text-white rounded-lg px-2 py-1 font-semibold focus:outline-none cursor-pointer"
@@ -92,31 +98,49 @@ export default {
 			);
 		},
 		updateAcceptedUntil() {
-			let hours = this.$moment(
-				this.job.update_accepted_until,
-				"YYYY-MM-DDTHH:mm:ss:SSSZ"
-			).diff(this.$moment(), "hours");
+			// let hours = this.$moment(
+			// 	this.job.update_accepted_until,
+			// 	"YYYY-MM-DDTHH:mm:ss:SSSZ"
+			// ).diff(this.$moment(), "hours");
 
-			console.log(
-				this.job.update_accepted_until,
-				this.$moment(this.job.update_accepted_until).format(
-					"YYYY-MM-DD HH:mm:ss"
-				)
+			let deadline = this.$moment.duration(
+				this.$moment(
+					this.job.update_accepted_until,
+					"YYYY-MM-DDTHH:mm:ss:SSSZ"
+				).diff(this.$moment())
 			);
-			console.log(this.$moment().format("YYYY-MM-DD HH:mm:ss"));
 
+			let hours = deadline._data.hours;
+			let minutes = deadline._data.minutes;
+
+			console.log("deadline", deadline);
+			if (minutes > 0) {
+				return `You need to confirm within ${hours} hours and ${minutes} minutes`;
+			}
 			return `You need to confirm within ${hours} hours`;
 		}
 	},
 	data() {
 		return {
-			showMap: false
+			showMap: false,
+			deadline: {
+				hours: 0,
+				minutes: 0
+			}
 		};
 	},
 	mounted() {
 		setTimeout(() => {
 			this.showMap = true;
 		}, 1);
+		let data = this.$moment.duration(
+			this.$moment(
+				this.job.update_accepted_until,
+				"YYYY-MM-DDTHH:mm:ss:SSSZ"
+			).diff(this.$moment())
+		);
+		this.deadline.hours = data._data.hours;
+		this.deadline.minutes = data._data.minutes;
 	},
 	methods: {
 		bgStatus(status) {
