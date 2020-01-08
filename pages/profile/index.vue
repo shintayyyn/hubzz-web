@@ -38,14 +38,18 @@
           <div class="relative bg-white rounded-lg shadow-lg p-4 lg:p-8 h-full">
             <AppLoading spinner :loading="input_file_loading" />
             <div class="flex flex-col">
-              <label for="use_standard_terms">
-                <input type="radio" v-model="form.use_variation_terms" :value="false" />
-                Use Standard Terms with Locum ?
-              </label>
-              <label for="variation_terms_file">
-                <input type="radio" v-model="form.use_variation_terms" :value="true" />
-                Use Variation to Standard Terms
-              </label>
+              <div class="pb-2">
+                <input type="radio" name="standard_terms" id="use_standard_terms" v-model="form.use_variation_terms" :value="false" />
+                <label for="use_standard_terms">
+                  Use Standard Terms with Locum
+                </label>
+              </div>
+              <div class="pb-2">
+                <input type="radio" name="standard_terms" id="variation_terms_file" v-model="form.use_variation_terms" :value="true" />
+                <label for="variation_terms_file">
+                  Use Variation to Standard Terms
+                </label>
+              </div>
               <!-- <AppInput
                 v-model="form.use_standard_terms"
                 :type="'single-checkbox'"
@@ -86,9 +90,8 @@
                       />
                     </div>
                   </div>
-                  <div class="bg-gray-300 rounded-lg px-4 py-2">
+                  <div class="bg-gray-300 rounded-lg px-4 py-2" v-if="!input_file_loading">
                     <div
-                      v-if="!input_file_loading"
                       class="flex flex-no-wrap justify-between items-center"
                     >
                       <div
