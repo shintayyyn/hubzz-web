@@ -9,17 +9,17 @@
       <nuxt-link
         :to="{ path: '/locum-billing', query: { ...$route.query, status: 'disputed' } }"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name === 'locum-billing-index' && $route.query.status === 'disputed' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name.includes('locum-billing-index') && $route.query.status === 'disputed' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >Disputed Invoices</nuxt-link>
       <nuxt-link
         :to="{ path: '/locum-billing', query: { ...$route.query, status: 'issued' } }"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name === 'locum-billing-index' && $route.query.status === 'issued' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name.includes('locum-billing-index') && $route.query.status === 'issued' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >Invoiced</nuxt-link>
       <nuxt-link
         :to="{ path: '/locum-billing', query: { ...$route.query, status: 'approved' } }"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-        :class=" $route.name === 'locum-billing-index' && $route.query.status === 'approved' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class=" $route.name.includes('locum-billing-index') && $route.query.status === 'approved' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >Approved Invoices</nuxt-link>
     </div>
     <transition name="fade" mode="out-in">
@@ -45,7 +45,7 @@
           <template v-slot:actions="slotProps">
             <div class="flex justify-center">
               <div
-                @click="$router.push({ path: `/locum-billing/edit/${slotProps.item.locum_invoice_id}` })"
+                @click="$router.push({ path: `/locum-billing/edit/${slotProps.item.locum_invoice_id}`, query: {...$route.query} })"
                 v-if="slotProps.item.locum_invoice_id"
                 class="mx-1 px-4 py-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
               >Edit</div>
@@ -71,13 +71,13 @@
       :confirmLabel="'Yes'"
       :cancelLabel="'Cancel'"
       :modal="delete_modal"
-      @confirm="confirm_delete"
+      @confirm="deleteInvoice"
       @cancel="delete_modal = false"
     />
 
     <transition name="fade" mode="out-in">
       <nuxt-link
-        :to="'/locum-billing'"
+        :to="{ path: '/locum-billing', query: {...$route.query}}"
         v-if="['locum-billing-index-create-job_part_id', 'locum-billing-index-edit-invoice_id'].includes($route.name) || delete_modal"
         class="shield"
       ></nuxt-link>
@@ -145,12 +145,6 @@ export default {
         {
           name: "£ Amount",
           dataIndex: "total_amount",
-          sortable: true,
-          class: "text-center"
-        },
-        {
-          name: "Status",
-          dataIndex: "invoice_status",
           sortable: true,
           class: "text-center"
         },
@@ -290,8 +284,6 @@ export default {
             jobPart.job.rate
         };
       });
-
-      console.log("job_parts", job_parts);
 
       const showTable = true;
 
@@ -457,21 +449,16 @@ export default {
       this.delete_modal = true;
       this.invoice_id = id;
     },
-    confirm_delete() {
+    deleteInvoice() {
       this.$axios
         .$delete(`/api/v1/locum/locum-invoices/${this.invoice_id}`)
         .then(res => {
-          this.job_parts = this.job_parts.filter(
-            item => item.locum_invoice_id !== this.invoice_id
-          );
-          let index = this.job_parts.findIndex(
-            item => item.locum_invoice_id === this.invoice_id
-          );
-          if (index >= 0) {
-            this.job_parts.splice(index, 1);
-          }
-          console.log(res);
-          console.log(this.job_parts);
+          let job_part = this.job_parts.find(item => {
+            return item.locum_invoice_id === this.invoice_id;
+          });
+
+          job_part.locum_invoice_id = null;
+
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
@@ -492,46 +479,45 @@ export default {
         });
     },
     createInvoice(invoice) {
-      let index = this.job_parts.findIndex(
-        item => item.job_part_id === invoice.id
+      let job_part = this.job_parts.find(
+        item => item.id === invoice.items[0].job_part.id
       );
+      job_part.locum_invoice_id = invoice.id;
+
+      let index = this.job_parts.findIndex(item => item.id === job_part.id);
       if (index >= 0) {
-        this.job_parts.splice(index, 1, {
-          type: invoice.type,
-          practice: invoice.practice,
-          issued: invoice.issued_at,
-          invoice_number: invoice.invoice_number,
-          job_number:
-            invoice.items.length > 0
-              ? invoice.items[0].job_part.job_part_number
-              : null,
-          amount: invoice.total_amount,
-          status: invoice.status,
-          locum_invoice_id: invoice.id,
-          locum_invoice_item: invoice
-        });
+        this.job_parts.splice(index, 1, job_part);
       }
     },
     updateInvoice(invoice) {
-      let index = this.job_parts.findIndex(
-        item => item.locum_invoice_id === invoice.id
+      let job_part = this.job_parts.find(
+        item => item.id === invoice.items[0].job_part.id
       );
+      job_part.locum_invoice_id = invoice.id;
+
+      let index = this.job_parts.findIndex(item => item.id === job_part.id);
       if (index >= 0) {
-        this.job_parts.splice(index, 1, {
-          type: invoice.type,
-          practice: invoice.practice,
-          issued: invoice.issued_at,
-          invoice_number: invoice.invoice_number,
-          job_number:
-            invoice.items.length > 0
-              ? invoice.items[0].job_part.job_part_number
-              : null,
-          amount: invoice.total_amount,
-          status: invoice.status,
-          locum_invoice_id: invoice.id,
-          locum_invoice_item: invoice
-        });
+        this.job_parts.splice(index, 1, job_part);
       }
+      // let index = this.job_parts.findIndex(
+      //   item => item.locum_invoice_id === invoice.id
+      // );
+      // if (index >= 0) {
+      //   this.job_parts.splice(index, 1, {
+      //     type: invoice.type,
+      //     practice: invoice.practice,
+      //     issued: invoice.issued_at,
+      //     invoice_number: invoice.invoice_number,
+      //     job_number:
+      //       invoice.items.length > 0
+      //         ? invoice.items[0].job_part.job_part_number
+      //         : null,
+      //     amount: invoice.total_amount,
+      //     status: invoice.status,
+      //     locum_invoice_id: invoice.id,
+      //     locum_invoice_item: invoice
+      //   });
+      // }
     },
     async sorted(order_by) {
       this.current_page = 1;

@@ -16,7 +16,7 @@
       <nuxt-link
         to="/profile/practice-documents"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('profile-practice-documents')  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="['profile-practice-documents', 'profile-standard-terms-id'].includes($route.name) ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         v-if="authPermissions.includes('View Profile Practice Document')"
       >Practice Documents</nuxt-link>
     </div>
@@ -69,7 +69,6 @@ export default {
   // },
   watch: {
     authPermissions(value) {
-      console.log("watch permissions", value);
       if (!this.CheckPermissions(value).hasPermission) {
         this.modal = true;
       }

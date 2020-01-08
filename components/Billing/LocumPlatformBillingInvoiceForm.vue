@@ -11,6 +11,7 @@
           :disabled="saveLoading"
         />
         <AppButton
+          v-if="propInvoice.issued === false"
           class="m-1"
           :label="'Save and archive as final'"
           @click="save(true)"
@@ -86,19 +87,23 @@
           </div>
 
           <!-- items / selected invoice -->
-          <div :id="`invoice-item`" class="flex flex-col border-b-2 pb-2" v-if="selectedInvoice">
+          <div
+            :id="`invoice-item`"
+            class="flex flex-col border-b-2 pb-2"
+            v-if="form.items && form.items.length > 0"
+          >
             <!-- item description / total / dispute checkbox -->
             <div class="relative flex justify-start mt-2">
               <div
                 class="w-1/2 text-xs sm:text-sm px-4 py-1 border-gray-300"
-              >{{selectedInvoice.description}}</div>
+              >{{form.items[0].description}}</div>
               <div
                 class="text-xs sm:text-sm border-gray-300 px-4 py-1 text-right w-1/2"
-              >{{selectedInvoice.total}}</div>
+              >{{form.items[0].total}}</div>
               <div class="flex items-center align-middle sticky right-0 bg-white">
                 <div class="px-2 flex-col">
                   <AppInput
-                    v-model="selectedInvoice.disputed"
+                    v-model="form.items[0].dispute"
                     :type="'single-checkbox'"
                     :name="'disputed'"
                     :label="'Disputed'"
@@ -107,13 +112,13 @@
               </div>
             </div>
             <!-- dispute invoice attendance forms -->
-            <div class="flex justify-start mt-2 px-2" v-if="selectedInvoice.disputed">
+            <div class="flex justify-start mt-2 px-2" v-if="form.items[0].dispute">
               <div class="w-1/3 flex flex-col px-2">
                 <label for="absent_days">Days of absent</label>
                 <input
                   type="number"
                   min="0"
-                  v-model="selectedInvoice.absent_days"
+                  v-model="form.items[0].absent_days"
                   name="absent_days"
                   class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
                 />
@@ -123,7 +128,7 @@
                 <input
                   type="number"
                   min="0"
-                  v-model="selectedInvoice.late_hours"
+                  v-model="form.items[0].late_hours"
                   name="late_hours"
                   class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
                 />
@@ -133,18 +138,18 @@
                 <input
                   type="number"
                   min="0"
-                  v-model="selectedInvoice.final_hours"
+                  v-model="form.items[0].final_hours"
                   name="final_hours"
                   class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
                 />
               </div>
             </div>
             <!-- disputed invoice update form -->
-            <div class="flex justify-start mt-2 px-2" v-if="selectedInvoice.disputed">
+            <div class="flex justify-start mt-2 px-2" v-if="form.items[0].dispute">
               <div class="flex flex-col w-full px-2">
                 <label for="remarks">Update remarks</label>
                 <textarea
-                  v-model="selectedInvoice.remarks"
+                  v-model="form.items[0].remarks"
                   rows="3"
                   name="remarks"
                   class="w-full text-xs sm:text-sm resize-none border-b-2 border-gray-300 focus:border-yellow-500 focus:outline-none px-4 my-2"
@@ -239,6 +244,7 @@
           <div class="w-full md:w-1/2 md:pr-1">
             <AppDate
               v-model="updateForm.date_start"
+              :disabled="propInvoice.issued === true"
               :name="'date_start'"
               :label="'Days worked from'"
               :error="formError.find(item => item.field === 'date_start')"
@@ -248,6 +254,7 @@
           <div class="w-full md:w-1/2 md:pl-1">
             <AppDate
               v-model="updateForm.date_end"
+              :disabled="propInvoice.issued === true"
               :name="'date_end'"
               :label="'To'"
               :error="formError.find(item => item.field === 'date_end')"
@@ -325,6 +332,17 @@ export default {
         final: false,
         ir35: false
       },
+      form: {
+        type: "",
+        // practice_id: "",
+        // private_practice_id: "",
+        date_start: null,
+        date_end: null,
+        items: [],
+        total_amount: 0,
+        final: false,
+        ir35: false
+      },
       isDisputed: false,
       formError: []
     };
@@ -372,77 +390,125 @@ export default {
     }
   },
   mounted() {
-    if (this.isInvoice) {
-      this.updateForm.locum_invoice_id = this.propInvoice.id;
-      this.updateForm.date_start = this.propInvoice.date_start;
-      this.updateForm.date_end = this.propInvoice.date_end;
-      this.updateForm.items = this.propInvoice.items;
-      this.updateForm.total_amount = this.propInvoice.total_amount;
-      this.updateForm.final = false;
-      this.updateForm.ir35 = false;
-    } else if (this.propJobPart && !this.propInvoice) {
-      this.createForm.type = this.propJobPart.job.type;
-      this.createForm.practice_id = this.practice.id;
-      this.createForm.date_start = this.propJobPart.date_start;
-      this.createForm.date_end = this.propJobPart.date_end;
-      // this.createForm.items = [
-      //   {
-      //     type: "Job Part",
-      //     job_part_id: this.propJobPart.id,
-      //     description: `Job number ${this.propJobPart.job_part_number} ${this.propJobPart.job.type} Job at £${this.propJobPart.job.rate} ${this.propJobPart.job.locum_detail_rate_type.name} from ${this.propJobPart.date_start} to ${this.propJobPart.date_end} / ${this.propJobPart.job.shift.name} / Total hours of ${this.propJobPart.job.total_hours}`,
-      //     total: this.propJobPart.job.total_hours * this.propJobPart.job.rate,
-      //     dispute: false,
-      //     absent_days: 0,
-      //     final_hours: this.propJobPart.job.total_hours,
-      //     late_hours: 0,
-      //     remarks: ""
-      //   }
-      // ];
-      this.createForm.items = JSON.parse(JSON.stringify(this.propItems));
-      this.createForm.total_amount =
-        this.propJobPart.job.total_hours * this.propJobPart.job.rate;
-      this.createForm.final = false;
-      this.createForm.ir35 = false;
+    if (this.propInvoice && !this.propJobPart) {
+      this.form.type = this.propInvoice.type;
+      if (this.propInvoice.type === "Platform") {
+        this.form.practice_id = this.propInvoice.practice.id;
+      } else if (this.propInvoice.type === "Private") {
+        this.form.private_practice_id = this.propInvoice.practice.id;
+      }
+      this.form.date_start = this.propInvoice.date_start;
+      this.form.date_end = this.propInvoice.date_end;
+
+      this.form.items = this.propInvoice.items;
+
+      this.form.items = [
+        {
+          type: "Job Part",
+          job_part_id: this.propInvoice.items[0].job_part.id,
+          description: this.propInvoice.items[0].description,
+          total: this.propInvoice.items[0].total,
+          dispute: this.propInvoice.items[0].disputed,
+          absent_days: this.propInvoice.items[0].absent_days,
+          final_hours: this.propInvoice.items[0].final_hours,
+          late_hours: this.propInvoice.items[0].late_hours,
+          remarks: this.propInvoice.items[0].remarks
+        }
+      ];
+
+      this.form.total_amount = this.propInvoice.total_amount;
+      this.form.final = false;
+      this.form.ir35 = this.propInvoice.ir35;
+    }
+
+    if (this.propJobPart && !this.propInvoice) {
+      this.form.type = this.propJobPart.job.type;
+      if (this.propJobPart.job.type === "Platform") {
+        this.form.practice_id = this.propJobPart.job.platform_job.practice_id;
+      } else if (this.propJobPart.job.type === "Private") {
+        this.form.private_practice_id = this.propJobPart.job.private_job.private_practice_id;
+      }
+      this.form.date_start = this.propJobPart.date_start;
+      this.form.date_end = this.propJobPart.date_end;
+
+      let divider = 1;
+      switch (this.propJobPart.job.locum_detail_rate_type.name) {
+        case "Per Whole Day Session":
+          divider = 8;
+          break;
+        case "Per Half Day Session":
+          divider = 4;
+          break;
+        case "Per Hour":
+          divider = 1;
+          break;
+        default:
+          divider = 1;
+      }
+
+      this.form.items = [
+        {
+          type: "Job Part",
+          job_part_id: this.propJobPart.id,
+          description: `Job number ${this.propJobPart.job_part_number} ${this.propJobPart.job.type} Job at £${this.propJobPart.job.rate} ${this.propJobPart.job.locum_detail_rate_type.name} from ${this.propJobPart.date_start} to ${this.propJobPart.date_end} / ${this.propJobPart.job.shift.name} / Total hours of ${this.propJobPart.job.total_hours}`,
+          total:
+            (this.propJobPart.job.total_hours / divider) *
+            this.propJobPart.job.rate,
+          dispute: this.propJobPart.disputed,
+          absent_days: this.propJobPart.absent_days,
+          final_hours: this.propJobPart.final_hours,
+          late_hours: this.propJobPart.late_hours,
+          remarks: ""
+        }
+      ];
+
+      let total = null;
+      if (this.propJobPart.job.locum_detail_rate_type.name === "Per Hour") {
+        total =
+          parseInt(this.propJobPart.job.rate) *
+          parseInt(this.propJobPart.final_hours);
+      } else if (
+        this.propJobPart.job.locum_detail_rate_type.name ===
+        "Per Whole Day Session"
+      ) {
+        total =
+          (parseInt(this.propJobPart.final_hours) / 8) *
+          parseInt(this.propJobPart.job.rate);
+      } else if (
+        this.propJobPart.job.locum_detail_rate_type.name ===
+        "Per Half Day Session"
+      ) {
+        total =
+          (parseInt(this.propJobPart.final_hours) / 4) *
+          parseInt(this.propJobPart.job.rate);
+      }
+      this.form.total_amount = total;
+      this.form.final = false;
+      this.form.ir35 = false;
     }
   },
   methods: {
     save(final) {
       this.formError = [];
-      let form = {};
-      if (!this.selectedInvoice) {
-        form = {
-          ...this.createForm
-        };
-      } else if (this.selectedInvoice) {
-        form = {
-          ...this.updateForm,
-          items: this.updateForm.items.map(item => {
-            return {
-              type: item.type,
-              job_part_id: item.job_part.id,
-              description: item.description,
-              total: item.total,
-              dispute: item.disputed,
-              absent_days: item.absent_days,
-              final_hours: item.final_hours,
-              late_hours: item.late_hours,
-              remarks: item.remarks
-            };
-          }),
-          final
-        };
-      }
-      console.log(this.propItems);
-      console.log(form);
-      return;
-      this.Validate(form, ["final", "ir35"]);
+      this.Validate(this.form, ["final", "ir35"]);
       if (!this.formError.length) {
         this.saveLoading = true;
-        if (this.selectedInvoice) {
+        if (this.propInvoice && !this.propJobPart) {
+          if (
+            this.form.items &&
+            this.form.items.length > 0 &&
+            this.form.items[0].dispute === false
+          ) {
+            this.form.items[0].absent_days = this.propItems[0].absent_days;
+            this.form.items[0].late_hours = this.propItems[0].late_hours;
+            this.form.items[0].final_hours = this.propItems[0].final_hours;
+            this.form.items[0].remarks = "";
+          }
+          this.form.final = final;
           this.$axios
             .$put(
               `/api/v1/locum/locum-invoices/${this.$route.params.invoice_id}`,
-              form
+              this.form
             )
             .then(res => {
               this.$store.commit("SET_NOTIFICATION", {
@@ -450,7 +516,12 @@ export default {
                 status: "success",
                 text: [`${res.message}`]
               });
-              this.$emit("updateInvoice", res.data.locum_invoice);
+
+              if (res.data.status === "Draft") {
+                this.$emit("updateInvoice", res.data.locum_invoice);
+              } else if (["Issued", "Disputed"].includes(res.data.status)) {
+                this.$emit("invoiced", res.data.locum_invoice);
+              }
             })
             .catch(err => {
               console.log("err", err.response || err);
@@ -472,16 +543,32 @@ export default {
             .finally(() => {
               this.saveLoading = false;
             });
-        } else if (!this.selectedInvoice) {
+        } else if (this.propJobPart && !this.propInvoice) {
+          if (
+            this.form.items &&
+            this.form.items.length > 0 &&
+            this.form.items[0].dispute === false
+          ) {
+            this.form.items[0].absent_days = this.propItems[0].absent_days;
+            this.form.items[0].late_hours = this.propItems[0].late_hours;
+            this.form.items[0].final_hours = this.propItems[0].final_hours;
+            this.form.items[0].remarks = "";
+          }
+          this.form.final = final;
           this.$axios
-            .$post(`/api/v1/locum/locum-invoices`, form)
+            .$post(`/api/v1/locum/locum-invoices`, this.form)
             .then(res => {
               this.$store.commit("SET_NOTIFICATION", {
                 enabled: true,
                 status: "success",
                 text: [`${res.message}`]
               });
-              this.$emit("createInvoice", res.data.locum_invoice);
+
+              if (res.data.status === "Draft") {
+                this.$emit("createInvoice", res.data.locum_invoice);
+              } else if (["Issued", "Disputed"].includes(res.data.status)) {
+                this.$emit("invoiced", res.data.locum_invoice);
+              }
             })
             .catch(err => {
               console.log("err", err.response || err);

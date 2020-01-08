@@ -12,16 +12,16 @@
             :class="['profile-users-id-general', 'profile-users-id'].includes($route.name) ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
           >General</nuxt-link>
         </div>
-        <div class="relative">
+        <!-- <div class="relative">
           <nuxt-link
             :to="`/profile/users/${$route.params.id}/change-password`"
             class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
             :class="$route.name === 'profile-users-id-change-password'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
           >Change Password</nuxt-link>
-        </div>
+        </div>-->
       </div>
       <div class="w-full mt-5">
-        <nuxt-child @updateUser="$emit('updateUser')" />
+        <nuxt-child @updateUser="$emit('updateUser', $event)" />
       </div>
     </div>
   </div>
