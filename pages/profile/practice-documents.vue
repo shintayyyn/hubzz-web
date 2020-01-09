@@ -83,6 +83,9 @@ export default {
 							return practice_documents;
 						}),
 						app.$axios.$get(`/api/v1/practice/me/practice`).then(res => {
+							if (!res.data.practice.variation_terms_file) {
+								return null
+							}
 							const variation_terms = {
 								fileId: res.data.practice.variation_terms_file.id,
 								name: "Standard Terms",
