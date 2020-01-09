@@ -62,6 +62,9 @@
                   >{{ item }}</div>
                 </template>
                 <template v-else>
+                  <template v-if="column.slotName">
+										<slot :name="column.slotName" v-bind:item="item" @click="$emit(column.eventName, item)"></slot>
+									</template>
                   <template v-if="column.dataIndex === 'actions'">
                     <slot name="actions" v-bind:item="item"></slot>
                   </template>

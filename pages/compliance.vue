@@ -655,6 +655,7 @@ export default {
       if (!e.target.files.length) {
         return;
       }
+      // vnd.openxmlformats-officedocument.wordprocessingml.document - docx type
       let types = ["pdf", "jpeg", "msword", "tiff"];
       let file = e.target.files[0];
       let fileType = file.type.split("/")[1];
