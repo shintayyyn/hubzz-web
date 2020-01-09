@@ -448,7 +448,7 @@ export default {
       if (
         !this.$route.query.status ||
         (this.$route.query.status &&
-          !["ongoing", "completed", "approved"].includes(
+          !["pending","ongoing", "completed", "approved"].includes(
             this.$route.query.status.toLowerCase()
           ))
       ) {

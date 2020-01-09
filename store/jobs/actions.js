@@ -250,6 +250,7 @@ export default {
                 if (jobStatus.toLowerCase() === 'withdrawn') {
                     commit('SET_PRACTICE_WITHDRAWN_JOBS_COUNT', response.data.count)
                 }
+                // FETCH PENDING PRACTICE
             })
         }
         if (!payload.countOnly) {
@@ -282,6 +283,7 @@ export default {
                     commit('SET_PRACTICE_WITHDRAWN_JOBS', response.data.jobs && response.data.jobs.length > 0 ?
                         response.data.jobs.filter(jobPart => jobPart.status.toLowerCase() === 'withdrawn') : [])
                 }
+                // FETCH PENDING PRACTICE
             })
         }
     },
