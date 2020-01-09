@@ -6,33 +6,34 @@ export default {
         // PRACTICE
         // parts
         state.practice_allocated_job_parts = [],
-            state.practice_ongoing_job_parts = [],
-            state.practice_completed_job_parts = [],
-            state.practice_approved_job_parts = [],
-            // whole
-            state.practice_allocated_jobs = [],
-            state.practice_available_jobs = [],
-            state.practice_applied_jobs = [],
-            state.practice_unfilled_jobs = [],
-            state.practice_declined_jobs = [],
-            state.practice_cancelled_jobs = [],
-            state.practice_withdrawn_jobs = [],
-            // LOCUM
-            // parts
-            state.locum_allocated_job_parts = [],
-            state.locum_ongoing_job_parts = [],
-            state.locum_completed_job_parts = [],
-            state.locum_approved_job_parts = [],
-            // whole
-            state.locum_allocated_jobs = [],
-            state.locum_available_jobs = [],
-            state.locum_matched_jobs = [],
-            state.locum_applied_jobs = [],
-            state.locum_unsuccessful_jobs = [],
-            state.locum_declined_jobs = [],
-            state.locum_cancelled_jobs = [],
-            state.locum_withdrawn_jobs = [],
-            state.locum_unavailabilities = []
+        state.practice_ongoing_job_parts = [],
+        state.practice_completed_job_parts = [],
+        state.practice_approved_job_parts = [],
+        // whole
+        state.practice_pending_jobs = [],
+        state.practice_allocated_jobs = [],
+        state.practice_available_jobs = [],
+        state.practice_applied_jobs = [],
+        state.practice_unfilled_jobs = [],
+        state.practice_declined_jobs = [],
+        state.practice_cancelled_jobs = [],
+        state.practice_withdrawn_jobs = [],
+        // LOCUM
+        // parts
+        state.locum_allocated_job_parts = [],
+        state.locum_ongoing_job_parts = [],
+        state.locum_completed_job_parts = [],
+        state.locum_approved_job_parts = [],
+        // whole
+        state.locum_allocated_jobs = [],
+        state.locum_available_jobs = [],
+        state.locum_matched_jobs = [],
+        state.locum_applied_jobs = [],
+        state.locum_unsuccessful_jobs = [],
+        state.locum_declined_jobs = [],
+        state.locum_cancelled_jobs = [],
+        state.locum_withdrawn_jobs = [],
+        state.locum_unavailabilities = []
     },
     // PRACTICE
     // NOTIF
@@ -130,6 +131,30 @@ export default {
     },
 
     // WHOLE
+    SET_PRACTICE_PENDING_JOBS(state, payload) {
+        state.practice_pending_jobs = payload
+    },
+    SET_PRACTICE_PENDING_JOBS_COUNT(state, payload) {
+        state.practice_pending_jobs_count = payload
+    },
+    SET_PRACTICE_PENDING_JOBS_REMINDER(state, payload) {
+        state.practice_pending_jobs_reminder = payload
+    },
+    ADD_PRACTICE_PENDING_JOB(state, payload) {
+        state.practice_pending_jobs.push(payload)
+        state.practice_pending_jobs_count = state.practice_pending_jobs_count + 1
+    },
+    REMOVE_PRACTICE_PENDING_JOB(state, payload) {
+        state.practice_pending_jobs = state.practice_pending_jobs.filter(job => job.id !== payload)
+        state.practice_pending_jobs_count = state.practice_pending_jobs_count - 1
+    },
+    UPDATE_PRACTICE_PENDING_JOB(state, { newJob, oldJob }) {
+        let index = state.practice_pending_jobs.findIndex(pendingJob => pendingJob.id === oldJob.id)
+        if (index >= 0) {
+            state.practice_pending_jobs.splice(index, 1, newJob)
+        }
+    },
+
     SET_PRACTICE_AVAILABLE_JOBS(state, payload) {
         state.practice_available_jobs = payload
     },
