@@ -120,19 +120,19 @@ export default {
     },
     jobTitle() {
       let job = this.isJobPart ? this.propJob.job : this.propJob;
-      return job.type === "Private" ? "Private appointment" : job.title;
+      return job.type === "Platform" ? job.title : "Private appointment";
     },
     jobSurgeryName() {
       let job = this.isJobPart ? this.propJob.job : this.propJob;
-      return job.type === "Private"
-        ? job.private_job.private_practice.name
-        : job.platform_job.practice.name;
+      return job.type === "Platform"
+        ? job.platform_job.practice.name
+        : job.private_job.private_practice.name;
     },
     jobSurgeryCode() {
       let job = this.isJobPart ? this.propJob.job : this.propJob;
-      return job.type === "Private"
-        ? job.private_job.private_practice.code
-        : job.platform_job.practice.code;
+      return job.type === "Platform"
+        ? job.platform_job.practice.code
+        : job.private_job.private_practice.code;
     },
     jobShift() {
       let job = this.isJobPart ? this.propJob.job : this.propJob;

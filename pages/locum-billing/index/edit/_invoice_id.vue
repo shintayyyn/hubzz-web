@@ -9,15 +9,11 @@
       <LocumPlatformBillingInvoiceForm
         :propInvoice="invoice"
         :propJobPart="null"
-        :propType="type"
-        :propPractice="practice"
-        :propItems="items"
-        @updateInvoice="$emit('updateInvoice', $event), $router.push({ path: '/locum-billing' })"
+        @updateInvoice="$emit('updateInvoice', $event), $router.push({ path: '/locum-billing', query: {...$route.query} })"
       />
     </div>
   </div>
 </template>
-
 <script>
 import LocumPlatformBillingInvoiceForm from "@/components/Billing/LocumPlatformBillingInvoiceForm";
 export default {
@@ -28,16 +24,8 @@ export default {
   components: {
     LocumPlatformBillingInvoiceForm
   },
-  data() {
-    return {
-      invoice: null
-    };
-  },
   async asyncData({ app, error, params }) {
     try {
-      if (process.client) {
-        document.body.style.cursor = "wait";
-      }
       const response = await app.$axios.get(
         `/api/v1/locum/locum-invoices/${params.invoice_id}`
       );
@@ -46,31 +34,8 @@ export default {
           ? response.data.data.locum_invoice
           : null;
 
-      let type = invoice.type;
-      let practice = invoice.practice;
-
-      let items = [];
-      items.push({
-        type: "Job Part",
-        job_part_id: invoice.items[0].job_part.id,
-        description: invoice.items[0].description,
-        total: invoice.items[0].total,
-        dispute: invoice.items[0].disputed,
-        absent_days: invoice.items[0].job_part.absent_days,
-        final_hours: invoice.items[0].job_part.final_hours,
-        late_hours: invoice.items[0].job_part.late_hours,
-        remarks: invoice.items[0].remarks
-      });
-
-      if (process.client) {
-        document.body.style.cursor = "auto";
-      }
-      console.log(invoice);
       return {
-        invoice,
-        type,
-        practice,
-        items
+        invoice
       };
     } catch (err) {
       if (err && err.response.status === 404) {
@@ -79,13 +44,6 @@ export default {
         return error({ status: 500, message: "Something went wrong!" });
       }
       throw err;
-    }
-  },
-  methods: {
-    getInvoice(id) {
-      this.$axios.$get(`/api/v1/locum/locum-invoices/${id}`).then(res => {
-        this.invoice = res.data.locum_invoice;
-      });
     }
   }
 };

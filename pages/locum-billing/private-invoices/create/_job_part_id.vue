@@ -6,7 +6,11 @@
           <svgicon name="left-arrow" height="32" width="32" />
         </nuxt-link>
       </div>
-      <LocumPrivateBillingInvoiceForm :selectedInvoice="null" :selectedJobPart="job_part" />
+      <LocumPrivateBillingInvoiceForm
+        :propInvoice="null"
+        :propJobPart="job_part"
+        @createInvoice="$emit('createInvoice', $event), $router.push({ path: '/locum-billing/private-invoices', query: {...$route.query} })"
+      />
     </div>
   </div>
 </template>

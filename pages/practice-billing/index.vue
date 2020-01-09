@@ -27,7 +27,7 @@
         <AppButton
           v-if="showRefresh"
           :label="'Refresh'"
-          @click="refreshJobParts"
+          @click="refreshInvoices"
           :inStyle="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
         />
         <AppTable
@@ -39,42 +39,76 @@
           :perPage="params.limit"
           :columns="columns"
           :orderBy="params.order_by"
-          :routerLink="!$route.query.status || ($route.query.status && $route.query.status === 'to-be-invoiced') ? '' : '/practice-billing'"
-          :routerId="$route.query.status && $route.query.status !== 'to-be-invoiced' ? 'locum_invoice_id' : null"
           @pagechanged="pagechanged"
           @limitchanged="limitchanged"
           @sorted="sorted"
         >
-          <!-- <template v-slot:actions="slotProps">
+          <template v-slot:actions="slotProps">
             <div class="flex justify-center">
+              <div
+                @click="$router.push({ path: `/practice-billing/edit/${slotProps.item.locum_invoice_id}`, query: {...$route.query} })"
+                v-if="slotProps.item.locum_invoice_id && slotProps.item.invoice_status !== 'To Be Invoice' && slotProps.item.status !== 'Approved'"
+                class="mx-1 px-4 py-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
+              >Edit</div>
+              <div
+                @click="$router.push({ path: `/practice-billing/${slotProps.item.locum_invoice_id}`, query: {...$route.query} })"
+                v-if="slotProps.item.status === 'Approved'"
+                class="mx-1 px-2 py-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
+              >View</div>
               <button
-                disabled
-                v-if="slotProps.item.paid"
-                class="px-4 py-2 font-bold rounded-lg focus:outline-none bg-green-600 text-white cursor-not-allowed"
-              >Already Paid</button>
-              <button
-                disabled
-                v-if="slotProps.item.items.filter(invoice => invoice.approved === false).length > 0 && slotProps.item.disputed_items_count === 0"
-                class="px-4 py-2 font-bold rounded-lg focus:outline-none bg-gray-500 text-white cursor-not-allowed"
-              >For Approval</button>
-              <button
-                @click.stop.prevent="onClick(slotProps.item)"
-                v-if="slotProps.item.items.filter(invoice => invoice.approved === false).length === 0"
-                class="px-4 py-2 font-bold rounded-lg focus:outline-none bg-yellow-400"
+                @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id)"
+                v-if="slotProps.item.status === 'Approved' && !slotProps.item.locum_invoice_item.locum_invoice.paid_at"
+                class="px-2 py-2 font-bold rounded-lg focus:outline-none bg-yellow-400"
               >Mark as Paid</button>
+              <div
+                v-if="slotProps.item.status === 'Approved' && slotProps.item.locum_invoice_item.locum_invoice.paid_at"
+                class="px-2 py-2 font-bold rounded-lg focus:outline-none bg-yellow-400"
+              >Already Paid</div>
             </div>
-          </template>-->
+          </template>
         </AppTable>
         <div v-else class="flex justify-center">{{noJobPartsToDisplay}}</div>
 
-        <div v-if="paymentModal" class="p-2" v-on-clickaway="closePaymentModal">
-          <div class="rounded-lg shadow-md px-4 py-8 md:px-8 update-modal border w-5/6 md:w-1/3">
+        <div v-if="payment_modal" class="p-2">
+          <div class="rounded-lg shadow-md px-4 py-8 md:px-8 payment-modal border w-5/6 md:w-1/3">
             <AppDate
               v-model="form.paid_at"
               :name="'paid_at'"
               :label="'Received payment on'"
               :error="formError.find(item => item.field === 'paid_at')"
               isAfter
+            />
+            <AppInput
+              v-model="form.ni"
+              :type="'select'"
+              :name="'ni'"
+              :label="'Ni'"
+              :items="[{ label: 'false', value: false }, { label: 'true', value: true }]"
+            />
+            <AppInput
+              v-if="[true, 'true'].includes(form.ni)"
+              v-model="form.ni_amount"
+              :type="'number'"
+              :name="'ni_amount'"
+              :label="'Ni Amount'"
+              :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
+              :error="formError.find(item => item.field === 'ni_amount')"
+            />
+            <AppInput
+              v-model="form.paye"
+              :type="'select'"
+              :name="'paye'"
+              :label="'Paye'"
+              :items="[{ label: 'false', value: false }, { label: 'true', value: true }]"
+            />
+            <AppInput
+              v-if="[true, 'true'].includes(form.paye)"
+              v-model="form.paye_amount"
+              :type="'number'"
+              :name="'paye_amount'"
+              :label="'Paye Amount'"
+              :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
+              :error="formError.find(item => item.field === 'paye_amount')"
             />
             <div class="flex flex-row flex-no-wrap justify-center">
               <AppButton
@@ -86,16 +120,17 @@
               <AppButton
                 class="mx-1"
                 :label="'Cancel'"
-                @click="paymentModal = false"
+                @click="payment_modal = false"
                 :inStyle="'padding:5px 10px'"
               />
             </div>
           </div>
         </div>
+
         <transition name="fade" mode="out-in">
           <nuxt-link
             :to="{ path: '/practice-billing', query: {...$route.query}}"
-            v-if="['practice-billing-index-id'].includes($route.name) || paymentModal"
+            v-if="['practice-billing-index-edit-invoice_id', 'practice-billing-index-id'].includes($route.name) || payment_modal"
             class="shield"
           ></nuxt-link>
         </transition>
@@ -108,9 +143,8 @@
 import AppTable from "@/components/Base/AppTable";
 import AppDate from "@/components/Base/AppDate";
 import AppButton from "@/components/Base/AppButton";
-import { mixin as clickaway } from "vue-clickaway";
+import AppInput from "@/components/Base/AppInput";
 export default {
-  mixins: [clickaway],
   transition: {
     name: "fade",
     mode: "out-in"
@@ -118,96 +152,52 @@ export default {
   components: {
     AppTable,
     AppDate,
-    AppButton
+    AppButton,
+    AppInput
   },
   data() {
     return {
-      showRefresh: false,
-
+      showTable: false,
       total: 0,
       job_parts: [],
+
+      showRefresh: false,
       loading: false,
       current_page: 1,
-      modal: false,
-      // payment
-      paymentModal: false,
-      selectedInvoiceId: null,
-      form: {
-        paid_at: null
-      },
-      formError: [],
-      // app table params
+
       params: {
         offset: 0,
         limit: 5,
-        status: ["Issued", "Disputed", "Paid"],
         order_by: []
       },
-      // app table column
+
       columns: [
         {
-          name: "Job Part Number",
-          dataIndex: "job_part_number",
-          sortable: true,
-          class: "text-center"
+          name: "Type",
+          dataIndex: "job.type"
         },
         {
           name: "Practice / Surgery",
-          dataIndex: "job.platform_job.practice.surgery.name",
-          sortable: true,
+          dataIndex: "practice_name",
           class: "text-center"
         },
         {
-          name: "Title",
-          dataIndex: "job.title",
-          sortable: true,
-          class: "text-center"
+          name: "Issued",
+          dataIndex: "issued_at",
+          class: "text-center localDate"
         },
         {
-          name: "Shift",
-          dataIndex: "job.shift.name",
-          sortable: true,
-          class: "text-center"
-        },
-        {
-          name: "Rate",
-          dataIndex: "job.rate",
-          sortable: true,
-          class: "text-center"
-        },
-        {
-          name: "per",
-          dataIndex: "job.locum_detail_rate_type.name",
-          class: "text-center",
+          name: "Invoice Number",
+          dataIndex: "invoice_number",
           sortable: true
         },
         {
-          name: "From",
-          dataIndex: "job.date_start",
-          sortable: true,
-          class: "text-center"
+          name: "Job Number",
+          dataIndex: "job_part_number"
         },
         {
-          name: "To",
-          dataIndex: "job.date_end",
-          sortable: true,
-          class: "text-center"
-        },
-        {
-          name: "Completed At",
-          dataIndex: "completed_at",
-          sortable: true,
-          class: "text-center"
-        },
-        {
-          name: "Invoice status",
-          dataIndex: "invoice_status",
-          sortable: true,
-          class: "text-center"
-        },
-        {
-          name: "Tag",
-          dataIndex: "status",
+          name: "£ Amount",
+          dataIndex: "total_amount",
           sortable: true,
           class: "text-center"
         },
@@ -217,7 +207,17 @@ export default {
           class: "text-center"
         }
       ],
-      showTable: false
+
+      payment_modal: false,
+      invoice_id: null,
+      form: {
+        paid_at: null,
+        ni: false,
+        ni_amount: null,
+        paye: false,
+        paye_amount: null
+      },
+      formError: []
     };
   },
   computed: {
@@ -262,13 +262,24 @@ export default {
           this.showTable = true;
         }, 200);
       }
+    },
+    "form.ni"(value) {
+      if ([false, "false"].includes(value)) {
+        this.form.ni_amount = 0;
+      }
+    },
+    "form.paye"(value) {
+      if ([false, "false"].includes(value)) {
+        this.form.paye_amount = 0;
+      }
     }
   },
   async asyncData({ app, query, error }) {
     try {
       let status = [];
       let invoice_status = [];
-      switch (query.status) {
+      let queryStatus = query.status;
+      switch (queryStatus && queryStatus.toLowerCase()) {
         case "to-be-invoiced":
           status = ["Completed", "Terminated"];
           invoice_status = ["To Be Invoice"];
@@ -277,7 +288,7 @@ export default {
           status = ["Completed", "Terminated"];
           invoice_status = ["Disputed"];
           break;
-        case "invoiced":
+        case "issued":
           status = ["Completed", "Terminated"];
           invoice_status = ["Invoiced"];
           break;
@@ -291,14 +302,12 @@ export default {
       }
 
       const params = {
-        // offset: 0,
-        // limit: 5,
         status,
         invoice_status,
         type: "Platform"
       };
 
-      const [total, job_parts] = await Promise.all([
+      let [total, job_parts] = await Promise.all([
         app.$axios
           .$get(`/api/v1/practice/job-parts/count`, { params })
           .then(res => {
@@ -313,6 +322,26 @@ export default {
           })
       ]);
 
+      job_parts = job_parts.map(jobPart => {
+        return {
+          ...jobPart,
+          practice_name:
+            jobPart.job.type === "Platform"
+              ? jobPart.job.platform_job.practice.name
+              : jobPart.job.private_job.private_practice.name,
+          issued_at: jobPart.locum_invoice_id
+            ? jobPart.locum_invoice_item.locum_invoice.issued_at
+            : null,
+          invoice_number: jobPart.locum_invoice_id
+            ? jobPart.locum_invoice_item.locum_invoice.invoice_number
+            : null,
+          total_amount:
+            jobPart.job.locum_detail_rate_type.name === "Per Hour"
+              ? jobPart.final_hours * jobPart.job.rate
+              : jobPart.job.rate
+        };
+      });
+
       const showTable = true;
 
       return {
@@ -321,7 +350,7 @@ export default {
         showTable
       };
     } catch (err) {
-      console.log("practice-billing index err", err.response || err);
+      console.log("err", err.response || err);
       error({
         statusCode: err.status || 500,
         message: err.message || "Something went wrong!"
@@ -349,9 +378,8 @@ export default {
     getJobPartsPromiseAll() {
       let status = [];
       let invoice_status = [];
-      switch (
-        this.$route.query.status && this.$route.query.status.toLowerCase()
-      ) {
+      let queryStatus = this.$route.query.status;
+      switch (queryStatus && queryStatus.toLowerCase()) {
         case "to-be-invoiced":
           status = ["Completed", "Terminated"];
           invoice_status = ["To Be Invoice"];
@@ -374,8 +402,6 @@ export default {
       }
 
       const params = {
-        // offset: 0,
-        // limit: 5,
         status,
         invoice_status,
         type: "Platform"
@@ -389,42 +415,44 @@ export default {
       ])
         .then(([responseTotal, responseJobParts]) => {
           this.total = responseTotal.data.count;
-          this.job_parts = responseJobParts.data.job_parts;
+          let job_parts = responseJobParts.data.job_parts;
+
+          this.job_parts = job_parts.map(jobPart => {
+            return {
+              ...jobPart,
+              practice_name:
+                jobPart.job.type === "Platform"
+                  ? jobPart.job.platform_job.practice.name
+                  : jobPart.job.private_job.private_practice.name,
+              issued_at: jobPart.locum_invoice_id
+                ? jobPart.locum_invoice_item.locum_invoice.issued_at
+                : null,
+              invoice_number: jobPart.locum_invoice_id
+                ? jobPart.locum_invoice_item.locum_invoice.invoice_number
+                : null,
+              total_amount:
+                jobPart.job.locum_detail_rate_type.name === "Per Hour"
+                  ? jobPart.final_hours * jobPart.job.rate
+                  : jobPart.job.rate
+            };
+          });
         })
         .catch(([errTotal, errJobParts]) => {
           console.log(
             "err",
             errTotal.response || errTotal || errJobParts.response || errJobParts
           );
-          if (errTotal.response.data.message) {
-            this.$store.commit("SET_NOTIFICATION", {
-              enabled: true,
-              status: "danger",
-              text: [`${errTotal.response.data.message}`]
-            });
-          }
-          if (errJobParts.response.data.message) {
-            this.$store.commit("SET_NOTIFICATION", {
-              enabled: true,
-              status: "danger",
-              text: [`${errJobParts.response.data.message}`]
-            });
-          }
+          error({
+            statusCode: err.status || 500,
+            message: err.message || "Something went wrong!"
+          });
         });
-    },
-    async refreshJobParts() {
-      this.$store.commit("billing/CLEAR_PRACTICE_BILLING_NOTIFICATION");
-      this.loading = true;
-      await this.getJobPartsPromiseAll();
-      this.loading = false;
-      this.showRefresh = false;
     },
     getJobParts() {
       let status = [];
       let invoice_status = [];
-      switch (
-        this.$route.query.status && this.$route.query.status.toLowerCase()
-      ) {
+      let queryStatus = this.$route.query.status;
+      switch (queryStatus && queryStatus.toLowerCase()) {
         case "to-be-invoiced":
           status = ["Completed", "Terminated"];
           invoice_status = ["To Be Invoice"];
@@ -433,7 +461,7 @@ export default {
           status = ["Completed", "Terminated"];
           invoice_status = ["Disputed"];
           break;
-        case "invoiced":
+        case "issued":
           status = ["Completed", "Terminated"];
           invoice_status = ["Invoiced"];
           break;
@@ -447,35 +475,51 @@ export default {
       }
 
       const params = {
-        // offset: 0,
-        // limit: 5,
         status,
         invoice_status,
         type: "Platform",
-        order_by: this.params.order_by
+        ...this.params
       };
 
       return this.$axios
         .$get(`/api/v1/practice/job-parts`, { params })
         .then(res => {
-          this.job_parts = res.data.job_parts;
+          let job_parts = res.data.job_parts;
+
+          this.job_parts = job_parts.map(jobPart => {
+            return {
+              ...jobPart,
+              practice_name:
+                jobPart.job.type === "Platform"
+                  ? jobPart.job.platform_job.practice.name
+                  : jobPart.job.private_job.private_practice.name,
+              issued_at: jobPart.locum_invoice_id
+                ? jobPart.locum_invoice_item.locum_invoice.issued_at
+                : null,
+              invoice_number: jobPart.locum_invoice_id
+                ? jobPart.locum_invoice_item.locum_invoice.invoice_number
+                : null,
+              total_amount:
+                jobPart.job.locum_detail_rate_type.name === "Per Hour"
+                  ? jobPart.final_hours * jobPart.job.rate
+                  : jobPart.job.rate
+            };
+          });
         })
         .catch(err => {
           console.log("err", err.response || err);
-          if (err.response.data.message) {
-            this.$store.commit("SET_NOTIFICATION", {
-              enabled: true,
-              status: "danger",
-              text: [`${err.response.data.message}`]
-            });
-          }
+          error({
+            statusCode: err.status || 500,
+            message: err.message || "Something went wrong!"
+          });
         });
     },
-    updateInvoice(invoice) {
-      let index = this.job_parts.findIndex(item => item.id == invoice.id);
-      if (index >= 0) {
-        this.job_parts.splice(index, 1, invoice);
-      }
+    async refreshInvoices() {
+      this.$store.commit("billing/CLEAR_PRACTICE_BILLING_NOTIFICATION");
+      this.loading = true;
+      await this.getJobPartsPromiseAll();
+      this.loading = false;
+      this.showRefresh = false;
     },
     getLocumInvoiceRealTime({ id }) {
       if (!id) {
@@ -497,29 +541,77 @@ export default {
         this.getLocumInvoiceRealTime
       );
     },
-    onClick(invoice, index) {
-      this.selectedInvoiceId = null;
-      this.form.paid_at = null;
-      this.paymentModal = true;
-      this.selectedInvoiceId = invoice.id;
+    select_invoice(id) {
+      this.payment_modal = true;
+      this.invoice_id = id;
     },
-    closePaymentModal() {
-      this.paymentModal = false;
+    updateInvoice(invoice) {
+      let queryStatus = this.$route.query.status;
+
+      let job_part = this.job_parts.find(
+        item => item.id === invoice.items[0].job_part.id
+      );
+      job_part.locum_invoice_id = invoice.id;
+
+      let index = this.job_parts.findIndex(item => item.id === job_part.id);
+      if (index >= 0) {
+        if (
+          ((!queryStatus ||
+            (queryStatus && queryStatus === "to-be-invoiced")) &&
+            invoice.status === "Draft") ||
+          (queryStatus &&
+            queryStatus === "issued" &&
+            invoice.status === "Issued") ||
+          (queryStatus &&
+            queryStatus === "disputed" &&
+            invoice.status === "Disputed") ||
+          (queryStatus &&
+            queryStatus === "approved" &&
+            invoice.status === "Approved")
+        ) {
+          this.job_parts.splice(index, 1, job_part);
+        } else {
+          this.job_parts.splice(index, 1);
+        }
+      }
     },
     confirmPayment() {
-      this.Validate(this.form);
+      let notRequired = ["ni", "paye"];
+      if ([false, "false"].includes(this.form.ni)) {
+        notRequired.push("ni_amount");
+      }
+      if ([false, "false"].includes(this.form.paye)) {
+        notRequired.push("paye_amount");
+      }
+      this.formError = [];
+      this.Validate(this.form, notRequired);
       if (!this.formError.length) {
         this.$axios
           .$put(
-            `/api/v1/practice/locum-invoices/${this.selectedInvoiceId}/paid`,
+            `/api/v1/practice/locum-invoices/${this.invoice_id}/paid`,
             this.form
           )
           .then(res => {
-            let index = this.invoices.findIndex(
-              invoice => invoice.id == res.data.locum_invoice.id
+            let job_part = this.job_parts.find(
+              item => item.id === res.data.locum_invoice.items[0].job_part.id
             );
+
+            let index = this.job_parts.findIndex(
+              item => item.id === job_part.id
+            );
+
             if (index >= 0) {
-              this.invoices.splice(index, 1, res.data.locum_invoice);
+              job_part.locum_invoice_item.locum_invoice.paid_at =
+                res.data.locum_invoice.paid_at;
+              job_part.locum_invoice_item.locum_invoice.ni =
+                res.data.locum_invoice.ni;
+              job_part.locum_invoice_item.locum_invoice.ni_amount =
+                res.data.locum_invoice.ni_amount;
+              job_part.locum_invoice_item.locum_invoice.paye =
+                res.data.locum_invoice.paye;
+              job_part.locum_invoice_item.locum_invoice.paye_amount =
+                res.data.locum_invoice.paye_amount;
+              this.job_parts.splice(index, 1, job_part);
             }
 
             this.$store.commit("SET_NOTIFICATION", {
@@ -527,7 +619,16 @@ export default {
               status: "success",
               text: [`${res.message}`]
             });
-            this.paymentModal = false;
+
+            this.payment_modal = false;
+            this.form.ni = false;
+            this.form.ni_amount = null;
+            this.form.paye = false;
+            this.form.paye_amount = null;
+          })
+          .catch(err => {
+            console.log("err", err.response || err);
+            throw err;
           });
       }
     },
@@ -561,7 +662,7 @@ export default {
 .shield {
   z-index: 511;
 }
-.update-modal {
+.payment-modal {
   position: fixed;
   background-color: white;
   z-index: 512;

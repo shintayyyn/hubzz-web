@@ -480,8 +480,8 @@ export default {
             return this.$store.state.jobs.practice_available_jobs_count;
           case "applied":
             return this.$store.state.jobs.practice_applied_jobs_count;
-          case "unsuccessful":
-            return this.$store.state.jobs.practice_unsuccessful_jobs_count;
+          case "unfilled":
+            return this.$store.state.jobs.practice_unfilled_jobs_count;
           case "declined":
             return this.$store.state.jobs.practice_declined_jobs_count;
           case "cancelled":
@@ -1002,6 +1002,8 @@ export default {
           }
         )
       ]).then(([responseCount, responseJobs]) => {
+        console.log(responseCount);
+        console.log(queryStatus);
         if (
           queryStatus &&
           ["ongoing", "completed", "approved"].includes(

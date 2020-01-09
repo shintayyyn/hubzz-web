@@ -1,16 +1,18 @@
 <template>
   <div class="modal-container shadow-lg">
-    <div class="px-4 md:px-8 py-4 max-w-5xl h-screen">
-      <div class="flex flex-row flex-wrap justify-start">
+    <div class="p-4 md:p-8 max-w-5xl h-screen">
+      <div class="flex flex-row flex-wrap justify-start pb-4">
         <nuxt-link :to="{ path: `/practice-billing`, query: {...$route.query }}">
           <svgicon name="left-arrow" height="32" width="32" />
         </nuxt-link>
       </div>
-      <PracticeBillingInvoiceForm :propInvoice="invoice" />
+      <PracticeBillingInvoiceForm
+        :propInvoice="invoice"
+        @updateInvoice="$emit('updateInvoice', $event), $router.push({ path: '/practice-billing', query: {...$route.query} })"
+      />
     </div>
   </div>
 </template>
-
 <script>
 import PracticeBillingInvoiceForm from "@/components/Billing/PracticeBillingInvoiceForm";
 export default {
@@ -24,12 +26,13 @@ export default {
   async asyncData({ app, error, params }) {
     try {
       const response = await app.$axios.get(
-        `/api/v1/practice/locum-invoices/${params.id}`
+        `/api/v1/practice/locum-invoices/${params.invoice_id}`
       );
       const invoice =
         response.data && response.data.data && response.data.data.locum_invoice
           ? response.data.data.locum_invoice
           : null;
+
       return {
         invoice
       };

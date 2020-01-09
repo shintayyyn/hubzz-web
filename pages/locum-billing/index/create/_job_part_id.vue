@@ -9,10 +9,7 @@
       <LocumPlatformBillingInvoiceForm
         :propInvoice="null"
         :propJobPart="job_part"
-        :propType="type"
-        :propPractice="practice"
-        :propItems="items"
-        @createInvoice="$emit('createInvoice', $event), $router.push({ path: '/locum-billing' })"
+        @createInvoice="$emit('createInvoice', $event), $router.push({ path: '/locum-billing', query: {...$route.query} })"
       />
     </div>
   </div>
@@ -32,45 +29,8 @@ export default {
       const job_part =
         response.data && response.data.job_part ? response.data.job_part : null;
 
-      let type = job_part.job.type;
-      let practice = null;
-      if (job_part.job.type === "Platform") {
-        practice = job_part.job.platform_job.practice;
-      } else if (job_part.job.type === "Private") {
-        practice = job_part.job.private_job.private_practice;
-      }
-      let items = [];
-      let divider = 1;
-      switch (job_part.job.locum_detail_rate_type.name) {
-        case "Per Whole Day Session":
-          divider = 8;
-          break;
-        case "Per Half Day Session":
-          divider = 4;
-          break;
-        case "Per Hour":
-          divider = 1;
-          break;
-        default:
-          divider = 1;
-      }
-      items.push({
-        type: "Job Part",
-        job_part_id: job_part.id,
-        description: `Job number ${job_part.job_part_number} ${job_part.job.type} Job at £${job_part.job.rate} ${job_part.job.locum_detail_rate_type.name} from ${job_part.date_start} to ${job_part.date_end} / ${job_part.job.shift.name} / Total hours of ${job_part.job.total_hours}`,
-        total: (job_part.job.total_hours / divider) * job_part.job.rate,
-        dispute: job_part.disputed,
-        absent_days: job_part.absent_days,
-        final_hours: job_part.final_hours,
-        late_hours: job_part.late_hours,
-        remarks: ""
-      });
-
       return {
-        job_part,
-        type,
-        practice,
-        items
+        job_part
       };
     } catch (err) {
       console.log("err", err.response || err);

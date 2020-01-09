@@ -46,19 +46,29 @@
             <div class="flex justify-center">
               <div
                 @click="$router.push({ path: `/locum-billing/edit/${slotProps.item.locum_invoice_id}`, query: {...$route.query} })"
-                v-if="slotProps.item.locum_invoice_id"
+                v-if="slotProps.item.locum_invoice_id && slotProps.item.locum_status !== 'Approved'"
                 class="mx-1 px-4 py-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
               >Edit</div>
               <button
                 @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id)"
-                v-if="slotProps.item.locum_invoice_id"
+                v-if="slotProps.item.locum_invoice_id && slotProps.item.locum_status !== 'Approved'"
                 class="mx-1 px-4 py-2 bg-red-700 text-white font-bold rounded-lg focus:outline-none"
               >Delete</button>
               <div
-                @click="$router.push({ path: `/locum-billing/create/${slotProps.item.id}` })"
+                @click="$router.push({ path: `/locum-billing/create/${slotProps.item.id}`, query: {...$route.query} })"
                 v-if="!slotProps.item.locum_invoice_id"
                 class="mx-1 px-4 py-2 bg-green-700 text-white font-bold rounded-lg focus:outline-none"
               >Generate Invoice</div>
+              <div
+                @click="$router.push({ path: `/locum-billing/create/${slotProps.item.id}`, query: {...$route.query} })"
+                v-if="slotProps.item.locum_invoice_id && slotProps.item.locum_status === 'Approved' && slotProps.item.locum_invoice_item && !slotProps.item.locum_invoice_item.locum_invoice.paid_at"
+                class="mx-1 px-4 py-2 bg-yellow-400 font-bold rounded-lg focus:outline-none"
+              >Waiting for Payment</div>
+              <div
+                @click="$router.push({ path: `/locum-billing/create/${slotProps.item.id}`, query: {...$route.query} })"
+                v-if="slotProps.item.locum_invoice_id && slotProps.item.locum_status === 'Approved' && slotProps.item.locum_invoice_item && slotProps.item.locum_invoice_item.locum_invoice.paid_at"
+                class="mx-1 px-4 py-2 bg-yellow-400 font-bold rounded-lg focus:outline-none"
+              >Already Paid</div>
             </div>
           </template>
         </AppTable>
@@ -92,15 +102,15 @@ import AppButton from "@/components/Base/AppButton";
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
 import AppTable from "@/components/Base/AppTable";
 export default {
+  transition: {
+    name: "fade",
+    mode: "out-in"
+  },
   components: {
     AppDate,
     AppButton,
     AppConfirmationModal,
     AppTable
-  },
-  transition: {
-    name: "fade",
-    mode: "out-in"
   },
   data() {
     return {
@@ -111,13 +121,13 @@ export default {
       showRefresh: false,
       loading: false,
       current_page: 1,
-      // params
+
       params: {
         offset: 0,
         limit: 5,
         order_by: []
       },
-      // columns
+
       columns: [
         {
           name: "Type",
@@ -154,13 +164,9 @@ export default {
           class: "text-center"
         }
       ],
-      // payment
+
       delete_modal: false,
-      invoice_id: null,
-      form: {
-        paid_at: null
-      },
-      formError: []
+      invoice_id: null
     };
   },
   computed: {
@@ -269,19 +275,9 @@ export default {
             ? jobPart.locum_invoice_item.locum_invoice.invoice_number
             : null,
           total_amount:
-            (jobPart.job.total_hours /
-              `${
-                jobPart.job.locum_detail_rate_type.name === "Per Hour"
-                  ? 1
-                  : jobPart.job.locum_detail_rate_type.name ===
-                    "Per Whole Day Session"
-                  ? 8
-                  : jobPart.job.locum_detail_rate_type.name ===
-                    "Per Half Day Session"
-                  ? 4
-                  : 1
-              }`) *
-            jobPart.job.rate
+            jobPart.job.locum_detail_rate_type.name === "Per Hour"
+              ? jobPart.final_hours * jobPart.job.rate
+              : jobPart.job.rate
         };
       });
 
@@ -294,16 +290,10 @@ export default {
       };
     } catch (err) {
       console.log("err", err.response || err);
-      if (err.response.data.message) {
-        if (err.response.data.message) {
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "danger",
-            text: [`${err.response.data.message}`]
-          });
-        }
-      }
-      throw err;
+      error({
+        statusCode: err.status || 500,
+        message: err.message || "Something went wrong!"
+      });
     }
   },
   mounted() {
@@ -380,19 +370,9 @@ export default {
                 ? jobPart.locum_invoice_item.locum_invoice.invoice_number
                 : null,
               total_amount:
-                (jobPart.job.total_hours /
-                  `${
-                    jobPart.job.locum_detail_rate_type.name === "Per Hour"
-                      ? 1
-                      : jobPart.job.locum_detail_rate_type.name ===
-                        "Per Whole Day Session"
-                      ? 8
-                      : jobPart.job.locum_detail_rate_type.name ===
-                        "Per Half Day Session"
-                      ? 4
-                      : 1
-                  }`) *
-                jobPart.job.rate
+                jobPart.job.locum_detail_rate_type.name === "Per Hour"
+                  ? jobPart.final_hours * jobPart.job.rate
+                  : jobPart.job.rate
             };
           });
         })
@@ -401,23 +381,75 @@ export default {
             "err",
             errTotal.response || errTotal || errJobParts.response || errJobParts
           );
-          if (errTotal.response.data.message) {
-            this.$store.commit("SET_NOTIFICATION", {
-              enabled: true,
-              status: "danger",
-              text: [`${errTotal.response.data.message}`]
-            });
-          }
-          if (errJobParts.response.data.message) {
-            this.$store.commit("SET_NOTIFICATION", {
-              enabled: true,
-              status: "danger",
-              text: [`${errJobParts.response.data.message}`]
-            });
-          }
+          throw err;
         });
     },
-    getJobParts() {},
+    getJobParts() {
+      let locum_status = [];
+      let invoice_status = [];
+      let queryStatus = this.$route.query.status;
+      switch (queryStatus && queryStatus.toLowerCase()) {
+        case "to-be-invoiced":
+          locum_status = ["Completed", "Terminated"];
+          invoice_status = ["To Be Invoice"];
+          break;
+        case "disputed":
+          locum_status = ["Completed", "Terminated"];
+          invoice_status = ["Disputed"];
+          break;
+        case "issued":
+          locum_status = ["Completed", "Terminated"];
+          invoice_status = ["Invoiced"];
+          break;
+        case "approved":
+          locum_status = ["Approved"];
+          invoice_status = [];
+          break;
+        default:
+          locum_status = ["Completed", "Terminated"];
+          invoice_status = ["To Be Invoice"];
+      }
+
+      const params = {
+        locum_status,
+        invoice_status,
+        job_type: "Platform",
+        ...this.params
+      };
+
+      return this.$axios
+        .$get(`/api/v1/locum/job-parts`, { params })
+        .then(res => {
+          let job_parts = res.data.job_parts;
+
+          this.job_parts = job_parts.map(jobPart => {
+            return {
+              ...jobPart,
+              practice_name:
+                jobPart.job.type === "Platform"
+                  ? jobPart.job.platform_job.practice.name
+                  : jobPart.job.private_job.private_practice.name,
+              issued_at: jobPart.locum_invoice_id
+                ? jobPart.locum_invoice_item.locum_invoice.issued_at
+                : null,
+              invoice_number: jobPart.locum_invoice_id
+                ? jobPart.locum_invoice_item.locum_invoice.invoice_number
+                : null,
+              total_amount:
+                jobPart.job.locum_detail_rate_type.name === "Per Hour"
+                  ? jobPart.final_hours * jobPart.job.rate
+                  : jobPart.job.rate
+            };
+          });
+        })
+        .catch(err => {
+          console.log("err", err.response || err);
+          error({
+            statusCode: err.status || 500,
+            message: err.message || "Something went wrong!"
+          });
+        });
+    },
     async refreshInvoices() {
       this.$store.commit("billing/CLEAR_LOCUM_BILLING_NOTIFICATION");
       this.loading = true;
@@ -479,6 +511,8 @@ export default {
         });
     },
     createInvoice(invoice) {
+      let queryStatus = this.$route.query.status;
+
       let job_part = this.job_parts.find(
         item => item.id === invoice.items[0].job_part.id
       );
@@ -486,10 +520,19 @@ export default {
 
       let index = this.job_parts.findIndex(item => item.id === job_part.id);
       if (index >= 0) {
-        this.job_parts.splice(index, 1, job_part);
+        if (
+          !queryStatus ||
+          (queryStatus === "to-be-invoiced" && invoice.status === "Draft")
+        ) {
+          this.job_parts.splice(index, 1, job_part);
+        } else if (invoice.status !== "Draft") {
+          this.job_parts.splice(index, 1);
+        }
       }
     },
     updateInvoice(invoice) {
+      let queryStatus = this.$route.query.status;
+
       let job_part = this.job_parts.find(
         item => item.id === invoice.items[0].job_part.id
       );
@@ -497,27 +540,25 @@ export default {
 
       let index = this.job_parts.findIndex(item => item.id === job_part.id);
       if (index >= 0) {
-        this.job_parts.splice(index, 1, job_part);
+        if (
+          ((!queryStatus ||
+            (queryStatus && queryStatus === "to-be-invoiced")) &&
+            invoice.status === "Draft") ||
+          (queryStatus &&
+            queryStatus === "issued" &&
+            invoice.status === "Issued") ||
+          (queryStatus &&
+            queryStatus === "disputed" &&
+            invoice.status === "Disputed") ||
+          (queryStatus &&
+            queryStatus === "approved" &&
+            invoice.status === "Approved")
+        ) {
+          this.job_parts.splice(index, 1, job_part);
+        } else {
+          this.job_parts.splice(index, 1);
+        }
       }
-      // let index = this.job_parts.findIndex(
-      //   item => item.locum_invoice_id === invoice.id
-      // );
-      // if (index >= 0) {
-      //   this.job_parts.splice(index, 1, {
-      //     type: invoice.type,
-      //     practice: invoice.practice,
-      //     issued: invoice.issued_at,
-      //     invoice_number: invoice.invoice_number,
-      //     job_number:
-      //       invoice.items.length > 0
-      //         ? invoice.items[0].job_part.job_part_number
-      //         : null,
-      //     amount: invoice.total_amount,
-      //     status: invoice.status,
-      //     locum_invoice_id: invoice.id,
-      //     locum_invoice_item: invoice
-      //   });
-      // }
     },
     async sorted(order_by) {
       this.current_page = 1;
@@ -549,13 +590,5 @@ export default {
 <style scoped>
 .shield {
   z-index: 511;
-}
-.update-modal {
-  position: fixed;
-  background-color: white;
-  z-index: 512;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
 }
 </style>
