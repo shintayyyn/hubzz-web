@@ -935,8 +935,8 @@ export default {
             this.form.date_start,
             "YYYY-MM-DD"
           )
-            .format("YYYY-MM-DD")
-            .add(1, "days")}`;
+            .add(1, "days")
+            .format("YYYY-MM-DD HH:mm")}`;
         }
 
         if (["15", 15, "30", 30, "60", 60].includes(this.unpaid_breaks)) {
