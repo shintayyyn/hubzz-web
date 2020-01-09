@@ -7,7 +7,7 @@
 <script>
 export default {
   middleware: "isVerified",
-  created() {
+  mounted() {
     if (this.$auth.user.practice_detail.practice.type === "Hub") {
       this.$router.push("/surgery-management/practice-spokes");
     } else if (this.$auth.user.practice_detail.practice.type !== "Hub") {

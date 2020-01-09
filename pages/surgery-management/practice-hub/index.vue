@@ -45,64 +45,61 @@
 				<div class="md:w-1/2 mt-4 md:mt-0">
 					<p class="text-lg font-semibold">Permissions</p>
 					<div class="mx-2">
-					<div class="flex items-center py-1">
-						<span class="mr-3 md:mx-2">
-							<svgicon :name="practiceSpoke.allow_surgery_create_sessions === true ? 'success-checkmark' : 'times-solid'"
-								class="fill-current w-5 h-5"
-								:class="practiceSpoke.allow_surgery_create_sessions ? 'text-green-500' : 'w-5 h-5 text-red-500 border-2 border-red-500 rounded-full p-1'"/>
-						</span>
-						<p class="font-semibold leading-tight">Job Creation</p>
-					</div>
-					<div class="mt-2 mb-4 bg-gray-200 p-4 rounded-lg" v-if="practiceSpoke.allow_surgery_create_sessions === true">
-						<p class="font-semibold pb-2">Rate Limits (Only effective when allowed to create jobs)</p>
-						<div class="flex flex-col md:flex-row">
-							<p class="text-sm font-semibold md:w-2/3">Maximum Hourly Rate Limit</p>
-							<p class="text-sm text-sm mx-2 md:mx-0">{{practiceSpoke.max_hourly_rate_limit ?'£ '+  practiceSpoke.max_hourly_rate_limit : 'N/A'}}</p>
-						</div>
-						<div class="flex flex-col md:flex-row">
-							<p class="text-sm font-semibold md:w-2/3">Maximum Half Day Rate Limit</p>
-							<p class="text-sm text-sm mx-2 md:mx-0">{{practiceSpoke.max_halfday_rate_limit ?'£ '+  practiceSpoke.max_halfday_rate_limit : 'N/A'}}</p>
-						</div>
-						<div class="flex flex-col md:flex-row">
-							<p class="text-sm font-semibold md:w-2/3">Maximum Whole Day Rate Limit</p>
-							<p class="text-sm text-sm mx-2 md:mx-0">{{practiceSpoke.max_wholeday_rate_limit ?'£ '+  practiceSpoke.max_wholeday_rate_limit : 'N/A'}}</p>
-						</div>
-						<div class="flex flex-col md:flex-row">
-							<p class="text-sm font-semibold md:w-2/3">Maximum Out-of-Hours Rate Limit</p>
-							<p class="text-sm text-sm mx-2 md:mx-0">{{practiceSpoke.max_ooh_rate_limit ?'£ '+  practiceSpoke.max_ooh_rate_limit : 'N/A'}}</p>
-						</div>
-						<div class="flex flex-col md:flex-row">
-							<p class="text-sm font-semibold md:w-2/3">Maximum Excess Hours</p>
-							<p class="text-sm text-sm mx-2 md:mx-0">{{practiceSpoke.max_excess_hours ?'£ '+ practiceSpoke.max_excess_hours : 'N/A'}}</p>
-						</div>
-					</div>
-					<div class="flex items-center py-1">
-						<span class="mr-3 md:mx-2">
-							<svgicon :name="practiceSpoke.allow_surgery_bill_locum === true ? 'success-checkmark' : 'times-solid'" 
-								class="fill-current w-5 h-5"
-								:class="practiceSpoke.allow_surgery_bill_locum ? 'text-green-500' : 'text-red-500 border-2 border-red-500 rounded-full p-1'"/>
-						</span>
-						<p class="font-semibold leading-tight">Billing for Locums</p>
-					</div>
-					<div class="flex items-center py-1">
-						<span class="mr-3 md:mx-2">
-							<svgicon :name="practiceSpoke.allow_surgery_bill_hubzz === true ? 'success-checkmark' : 'times-solid'" 
-								class="fill-current w-5 h-5"
-								:class="practiceSpoke.allow_surgery_bill_hubzz ? 'text-green-500' : 'text-red-500 border-2 border-red-500 rounded-full p-1'"/>
-						</span>
-						<p class="font-semibold leading-tight">Billing for HUBZZ</p>
-					</div>
-					<div class="flex items-center py-1">
-						<span class="mr-3 md:mx-2">
-							<svgicon :name="practiceSpoke.share_banks_to_other_surgeries === true ? 'success-checkmark' : 'times-solid'" 
-							class="fill-current w-5 h-5"
-							:class="practiceSpoke.share_banks_to_other_surgeries ? 'text-green-500' : 'text-red-500 border-2 border-red-500 rounded-full p-1'"/>
-						</span>
-						<p class="font-semibold leading-tight">Bank Sharing</p>
-					</div>
-					
-					
-					
+            <div class="flex items-center py-1">
+              <span class="mr-3 md:mx-2">
+                <svgicon :name="practiceSpoke.allow_surgery_create_sessions === true ? 'success-checkmark' : 'times-solid'"
+                  class="fill-current w-5 h-5"
+                  :class="practiceSpoke.allow_surgery_create_sessions ? 'text-green-500' : 'w-5 h-5 text-red-500 border-2 border-red-500 rounded-full p-1'"/>
+              </span>
+              <p class="font-semibold leading-tight">Job Creation</p>
+            </div>
+            <div class="mt-2 mb-4 bg-gray-200 p-4 rounded-lg" v-if="practiceSpoke.allow_surgery_create_sessions === true">
+              <p class="font-semibold pb-2">Rate Limits (Only effective when allowed to create jobs)</p>
+              <div class="flex flex-col md:flex-row">
+                <p class="text-sm font-semibold md:w-2/3">Maximum Hourly Rate Limit</p>
+                <p class="text-sm text-sm mx-2 md:mx-0">{{practiceSpoke.max_hourly_rate_limit ?'£ '+  practiceSpoke.max_hourly_rate_limit : 'N/A'}}</p>
+              </div>
+              <div class="flex flex-col md:flex-row">
+                <p class="text-sm font-semibold md:w-2/3">Maximum Half Day Rate Limit</p>
+                <p class="text-sm text-sm mx-2 md:mx-0">{{practiceSpoke.max_halfday_rate_limit ?'£ '+  practiceSpoke.max_halfday_rate_limit : 'N/A'}}</p>
+              </div>
+              <div class="flex flex-col md:flex-row">
+                <p class="text-sm font-semibold md:w-2/3">Maximum Whole Day Rate Limit</p>
+                <p class="text-sm text-sm mx-2 md:mx-0">{{practiceSpoke.max_wholeday_rate_limit ?'£ '+  practiceSpoke.max_wholeday_rate_limit : 'N/A'}}</p>
+              </div>
+              <div class="flex flex-col md:flex-row">
+                <p class="text-sm font-semibold md:w-2/3">Maximum Out-of-Hours Rate Limit</p>
+                <p class="text-sm text-sm mx-2 md:mx-0">{{practiceSpoke.max_ooh_rate_limit ?'£ '+  practiceSpoke.max_ooh_rate_limit : 'N/A'}}</p>
+              </div>
+              <div class="flex flex-col md:flex-row">
+                <p class="text-sm font-semibold md:w-2/3">Maximum Excess Hours</p>
+                <p class="text-sm text-sm mx-2 md:mx-0">{{practiceSpoke.max_excess_hours ?'£ '+ practiceSpoke.max_excess_hours : 'N/A'}}</p>
+              </div>
+            </div>
+            <div class="flex items-center py-1">
+              <span class="mr-3 md:mx-2">
+                <svgicon :name="practiceSpoke.allow_surgery_bill_locum === true ? 'success-checkmark' : 'times-solid'" 
+                  class="fill-current w-5 h-5"
+                  :class="practiceSpoke.allow_surgery_bill_locum ? 'text-green-500' : 'text-red-500 border-2 border-red-500 rounded-full p-1'"/>
+              </span>
+              <p class="font-semibold leading-tight">Billing for Locums</p>
+            </div>
+            <div class="flex items-center py-1">
+              <span class="mr-3 md:mx-2">
+                <svgicon :name="practiceSpoke.allow_surgery_bill_hubzz === true ? 'success-checkmark' : 'times-solid'" 
+                  class="fill-current w-5 h-5"
+                  :class="practiceSpoke.allow_surgery_bill_hubzz ? 'text-green-500' : 'text-red-500 border-2 border-red-500 rounded-full p-1'"/>
+              </span>
+              <p class="font-semibold leading-tight">Billing for HUBZZ</p>
+            </div>
+            <div class="flex items-center py-1">
+              <span class="mr-3 md:mx-2">
+                <svgicon :name="practiceSpoke.share_banks_to_other_surgeries === true ? 'success-checkmark' : 'times-solid'" 
+                class="fill-current w-5 h-5"
+                :class="practiceSpoke.share_banks_to_other_surgeries ? 'text-green-500' : 'text-red-500 border-2 border-red-500 rounded-full p-1'"/>
+              </span>
+              <p class="font-semibold leading-tight">Bank Sharing</p>
+            </div>
 					</div>
 				</div>
 			</div>
@@ -170,9 +167,6 @@ export default {
 				}
 			]
 		};
-  },
-  created(){
-    console.log('my hub', this.practiceHub)
   },
 	async asyncData({ app, route, store }) {
 		try {
