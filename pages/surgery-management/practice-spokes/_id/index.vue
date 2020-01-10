@@ -325,7 +325,7 @@ export default {
 						status: "success",
 						text: ["Surgery Update Success"]
 					});
-					this.$router.push("/surgery-management/practice-spokes");
+					this.$router.push(`/surgery-management/practice-spokes/${this.$route.params.id}`);
 				});
 		},
 		statusStyle(status) {

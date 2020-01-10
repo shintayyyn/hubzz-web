@@ -257,6 +257,7 @@ export default {
                   shift_name,
               })
           })
+          console.log("pending",jobs)
           return jobs
       }
       return []

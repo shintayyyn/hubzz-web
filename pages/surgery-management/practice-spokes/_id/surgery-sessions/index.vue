@@ -75,7 +75,6 @@ export default {
         title: "",
         type: "",
         practice_id: "",
-        practice_id: "",
         shift_id: "",
         rate: "",
         rate_type_id: "",
@@ -109,9 +108,6 @@ export default {
       filterToggle: false,
       toggleTable: false
     };
-  },
-  created(){
-
   },
   computed: {
     ...mapGetters({
@@ -224,23 +220,16 @@ export default {
           case "cancelled":
           case "withdrawn":
           case "approved":
-            return `You do not have any ${this.$route.query.status.toLowerCase()} jobs`;
           case "live":
-            return `There are no ${this.$route.query.status.toLowerCase()} jobs nearby and suited for you at this time`;
           case "applied":
           case "unfilled":
-            return `You have not yet ${
-              this.$route.query.status.toLowerCase() === "applied"
-                ? "applied"
-                : "rejected"
-            } for a job`;
           case "completed":
-            return "You have not yet completed any job";
+            return `This spoke does not have ${this.$route.query.status.toLowerCase()} jobs`;
           default:
             return "You do not have any allocated jobs";
         }
       } else {
-        return "You do not have any jobs";
+        return "This spoke does not have any jobs";
       }
     },
     loadingJobs() {
@@ -421,7 +410,7 @@ export default {
         this.filterToggle = false;
         setTimeout(() => {
           this.clearJobsBadge(newStatus);
-          this.clearFilters();
+          // this.clearFilters();
         }, 1000);
         this.getJobsCount(this.isJobPart ? this.jobPartParams : this.params);
       }
@@ -448,6 +437,9 @@ export default {
     }
   },
   created() {
+    console.log('params', this.jobPartParams, this.params)
+    this.jobPartParams.job_practice_id = this.spokePracticeId
+    this.params.practice_id = this.spokePracticeId
     this.getJobsCount(this.isJobPart ? this.jobPartParams : this.params);
     setTimeout(() => {
       this.clearJobsBadge(
@@ -484,7 +476,7 @@ export default {
       this.$store.commit("jobs/TOGGLE_LOADING", true);
       this.$store
         .dispatch(`${this.dispatchUrl}`, {
-          practice_id: this.spokePracticeId,
+          
           status: [
             `${
               this.$route.query.status ? this.$route.query.status : "Allocated"
@@ -494,14 +486,15 @@ export default {
           ...params
         })
         .finally(() => {
+          console.log(this.total)
           this.getJobs(params);
         });
     },
     getJobs(params) {
       this.$store.commit("jobs/CLEAR_JOBS");
+       console.log('dispatch url',this.dispatchUrl)
       this.$store
         .dispatch(`${this.dispatchUrl}`, {
-          practice_id: this.spokePracticeId,
           status: [
             `${
               this.$route.query.status ? this.$route.query.status : "Allocated"
@@ -510,6 +503,7 @@ export default {
           ...params
         })
         .finally(() => {
+          console.log(this.jobs)
           this.$store.commit("jobs/TOGGLE_LOADING", false);
           this.toggleTable = true;
         });

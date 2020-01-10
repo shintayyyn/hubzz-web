@@ -82,6 +82,9 @@ export default {
       loading: false,
       current_page: 1,
       modal: false,
+
+      practiceSurgery: "",
+      
       // payment
       paymentModal: false,
       selectedInvoiceId: null,
@@ -135,17 +138,21 @@ export default {
       ]
     };
   },
-  async asyncData({ app, error }) {
+  async asyncData({ app, route, error }) {
     try {
+      
+      let response = await app.$axios.$get(`/api/v1/practice/me/practice-surgeries/${route.params.id}`)
+      const practiceSurgery = response.data.practice_surgery
       const params = {
         offset: 0,
-        limit: 5
+        limit: 5,
+        practice_id: practiceSurgery.child_practice_id,
       };
 
       const responseCount = await app.$axios.get(
         "/api/v1/practice/practice-invoices/count"
       );
-
+      
       const totalInvoices =
         responseCount.data &&
         responseCount.data.data &&
@@ -153,13 +160,14 @@ export default {
           ? responseCount.data.data.count
           : 0;
 
-      const response = await app.$axios.get(
+      response = await app.$axios.get(
         "/api/v1/practice/practice-invoices",
         {
           params
         }
       );
 
+      
       const invoices =
         response.data &&
         response.data.data &&

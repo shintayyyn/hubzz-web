@@ -17,12 +17,21 @@
         :class="bgStatus(job.status)"
       >{{ status(job.status) }}</div>
       <template v-if="authPermissions.includes('Update Sessions Job')">
+        <button 
+          class="font-bold text-xs sm:text-sm no-underline px-2 py-2 rounded-lg bg-green-400 hover:bg-green-500 text-white ml-4 focus:outline-none"
+          v-if="job.status === 'Pending' &&
+            practice.type == 'Hub' &&
+            toEdit === false"
+          @click="approveJob()">
+          Approve this Job
+        </button>
         <button
-          class="font-bold text-xs sm:text-sm no-underline px-2 py-2 rounded-lg bg-yellow-500 ml-4 focus:outline-none"
+          class="font-bold text-xs sm:text-sm no-underline px-2 py-2 rounded-lg bg-yellow-400 hover:bg-yellow-500 ml-4 focus:outline-none"
           v-if="
-						(job.status === 'Allocated' &&
+						((job.status === 'Allocated' || job.status === 'Pending' ) &&
 							toEdit === false &&
 							canEdit === true) ||
+              (job.status === 'Pending' && toEdit === false) ||
 							(job.status === 'Applied' && toEdit === false) ||
 							(job.status === 'Live' && toEdit === false)
 					"
@@ -31,9 +40,10 @@
         <button
           class="font-bold text-xs sm:text-sm no-underline px-2 py-2 rounded-lg bg-yellow-500 ml-4 focus:outline-none"
           v-if="
-						(job.status === 'Allocated' &&
+						((job.status === 'Allocated' || job.status === 'Pending' ) &&
 							toEdit === true &&
 							canEdit === true) ||
+              (job.status === 'Pending' && toEdit === true) ||
 							(job.status === 'Applied' && toEdit === true) ||
 							(job.status === 'Live' && toEdit === true)
 					"
@@ -57,12 +67,19 @@
             <SessionDetailModalUpdateForm
               :job="job"
               @updateJob="updateJob"
-              v-if="job.status === 'Allocated' && toEdit === true && canEdit === true  || job.status === 'Applied' && toEdit === true  || job.status === 'Live' && toEdit === true"
+              v-if="job.status === 'Allocated' && toEdit === true && canEdit === true  || 
+              job.status === 'Applied' && toEdit === true  || 
+              job.status === 'Live' && toEdit === true ||
+              job.status === 'Pending' && toEdit === true"
             />
             <SessionDetailModalCancelForm
               :job="job"
               @cancelled="$emit('close')"
-              v-if="(job.status === 'Allocated' || job.status === 'Ongoing' || job.status === 'Applied' || job.status === 'Live') && authPermissions.includes('Cancel Sessions Job')"
+              v-if="(job.status === 'Allocated' ||
+              job.status === 'Ongoing' || 
+              job.status === 'Applied' || 
+              job.status === 'Live' ||
+              job.status === 'Pending') && authPermissions.includes('Cancel Sessions Job')"
             />
           </div>
         </div>
@@ -107,8 +124,12 @@ export default {
   data() {
     return {
       user: null,
-      toEdit: false
+      toEdit: false,
+      practice: ''
     };
+  },
+  created (){
+    this.practice = this.$auth.user.practice_detail.practice
   },
   computed: {
     authPermissions() {
@@ -135,6 +156,10 @@ export default {
     updateJob({ newJob, oldJob }) {
       this.$emit("close");
       setTimeout(() => {
+        this.$store.commit("jobs/UPDATE_PRACTICE_PENDING_JOB",{
+          newJob,
+          oldJob
+        });
         this.$store.commit("jobs/UPDATE_PRACTICE_ALLOCATED_JOB", {
           newJob,
           oldJob
@@ -154,6 +179,11 @@ export default {
           });
         }
       }, 500);
+    },
+    approveJob(){
+      this.$axios.$put(`/api/v1/practice/jobs/${this.job.id}/approve`).then(res => {
+        console.log('it worked')
+      })  
     },
     status(status) {
       return status.toUpperCase();
