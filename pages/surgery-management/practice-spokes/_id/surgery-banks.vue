@@ -73,7 +73,7 @@ export default {
     }
   },
   created() {
-    this.getLocumsCount();
+    // this.getLocumsCount();
   },
   computed: {
     offset() {
@@ -101,7 +101,7 @@ export default {
       console.log('response', response.data)
       const practiceSpoke = response.data.practices[0]
       return{
-        practiceSpoke
+        // practiceSpoke
       }
     }catch(err){
       console.log('get locum error!', err)
@@ -110,7 +110,7 @@ export default {
   },  
   methods:{
     getLocumsCount() {
-      console.log('spoke', this.practiceSpoke.id)
+      console.log('spoke', this.practiceSpoke)
       let params = {
         favorite_by_practice_id : this.practiceSpoke.id
       }

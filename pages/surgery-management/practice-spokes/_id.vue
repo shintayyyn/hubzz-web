@@ -32,9 +32,7 @@
 					"
 					>Surgery Sessions</nuxt-link>
 				<nuxt-link
-					v-if="relationshipIsActive == 'Active' && 
-            (practice_surgery.allow_surgery_bill_locum === false || 
-            practice_surgery.allow_surgery_bill_hubzz === false)"
+					v-if="relationshipIsActive == 'Active'"
 					:to="`/surgery-management/practice-spokes/${practice_surgery_id}/surgery-billings`"
 					class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
 					:class="

@@ -123,7 +123,6 @@ export default {
   data() {
     return {
       showRefresh: false,
-
       total: 0,
       job_parts: [],
       loading: false,
@@ -230,19 +229,19 @@ export default {
         this.$route.query.status && this.$route.query.status.toLowerCase()
       ) {
         case "to-be-invoiced":
-          str = "You do not have any completed job parts from Locums";
+          str = "This spoke do not have any completed job parts from Locums";
           break;
         case "disputed":
-          str = "You do not have any disputed job parts from Locums";
+          str = "This spoke do not have any disputed job parts from Locums";
           break;
         case "invoiced":
-          str = "You do not have any invoiced job parts from Locums";
+          str = "This spoke do not have any invoiced job parts from Locums";
           break;
         case "approved":
-          str = "You do not have any approved job parts from Locums";
+          str = "This spoke do not have any approved job parts from Locums";
           break;
         default:
-          str = "You do not have any completed job parts from Locums";
+          str = "This spoke do not have any completed job parts from Locums";
       }
       return str;
     }
