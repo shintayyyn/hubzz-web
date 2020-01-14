@@ -104,7 +104,8 @@
           <!-- items / selected invoice -->
           <div
             :id="`invoice-item`"
-            class="flex flex-col border-b-2 pb-2"
+            :ref="'invoice-item'"
+            class="flex flex-col pb-2"
             v-if="form.items && form.items.length > 0"
           >
             <!-- item description / total / dispute checkbox -->
@@ -353,6 +354,208 @@ export default {
               this.saveLoading = false;
             });
         }
+      }
+    },
+    async exportToPdf() {
+      this.exportLoading = true;
+      if (process.client) {
+        document.body.style.cursor = "wait";
+      }
+
+      let doc = this.$jspdf("p", "mm");
+      let pageHeight = 1020;
+      let yPosition = 0;
+
+      // PDF HEADER
+      const canvasPdfHeader = await this.$html2canvas(this.$refs["pdf-header"]);
+      const imgWidthPdfHeader = 210;
+      const imgHeightPdfHeader =
+        (canvasPdfHeader.height * imgWidthPdfHeader) / canvasPdfHeader.width;
+      const imgDataPdfHeader = canvasPdfHeader.toDataURL("image/png");
+
+      pageHeight = pageHeight - this.$refs["pdf-header"].offsetHeight;
+
+      doc.addImage(
+        imgDataPdfHeader,
+        "PNG",
+        0,
+        yPosition,
+        imgWidthPdfHeader,
+        imgHeightPdfHeader
+      );
+
+      yPosition = yPosition + imgHeightPdfHeader;
+
+      // ITEMS HEADER
+      const canvasItemsHeader = await this.$html2canvas(
+        this.$refs["items-header"]
+      );
+      const imgWidthItemsHeader = 210;
+      const imgHeightItemsHeader =
+        (canvasItemsHeader.height * imgWidthItemsHeader) /
+        canvasItemsHeader.width;
+      const imgDataItemsHeader = canvasItemsHeader.toDataURL("image/png");
+
+      pageHeight = pageHeight - this.$refs["items-header"].offsetHeight;
+
+      doc.addImage(
+        imgDataItemsHeader,
+        "PNG",
+        0,
+        yPosition,
+        imgWidthItemsHeader,
+        imgHeightItemsHeader
+      );
+
+      yPosition = yPosition + imgHeightItemsHeader;
+
+      // ITEMS
+      const canvasItems = await this.$html2canvas(this.$refs["invoice-item"]);
+
+      const imgWidthItems = 210;
+      const imgHeightItems =
+        (canvasItems.height * imgWidthItems) / canvasItems.width;
+      const imgDataItems = canvasItems.toDataURL("image/png");
+
+      pageHeight = pageHeight - this.$refs["invoice-item"].offsetHeight;
+
+      doc.addImage(
+        imgDataItems,
+        "PNG",
+        0,
+        yPosition,
+        imgWidthItems,
+        imgHeightItems
+      );
+
+      yPosition = yPosition + imgHeightItems;
+
+      // let totalSelectedJobParts = this.selectedJobParts.length;
+
+      // for (let i = 0; i < totalSelectedJobParts; i++) {
+      //   // minus the current item invoice height to the pageHeight
+      //   pageHeight = pageHeight - this.$refs[`item-${i}`][0].offsetHeight;
+      //   // if all pageHeight is used, add page
+      //   if (pageHeight < 0) {
+      //     pageHeight = 1020;
+      //     yPosition = 0;
+      //     doc.addPage();
+      //     // add header to every new page, also subtract its height to page height
+      //     doc.addImage(
+      //       imgDataItemsHeader,
+      //       "PNG",
+      //       0,
+      //       yPosition,
+      //       imgWidthItemsHeader,
+      //       imgHeightItemsHeader
+      //     );
+
+      //     yPosition = yPosition + imgHeightItemsHeader;
+
+      //     pageHeight = pageHeight - this.$refs["items-header"].offsetHeight;
+      //     pageHeight = pageHeight - this.$refs[`item-${i}`][0].offsetHeight;
+      //   }
+
+      //   // draw canvas
+      //   let canvasItem = await this.$html2canvas(this.$refs[`item-${i}`][0]);
+      //   let imgWidthItem = 210;
+      //   let imgHeightItem =
+      //     (canvasItem.height * imgWidthItem) / canvasItem.width;
+      //   let imgDataItem = canvasItem.toDataURL("image/png");
+
+      //   // add image
+      //   doc.addImage(
+      //     imgDataItem,
+      //     "PNG",
+      //     0,
+      //     yPosition,
+      //     imgWidthItem,
+      //     imgHeightItem
+      //   );
+
+      //   yPosition = yPosition + imgHeightItem;
+      // }
+
+      // sum up their offsetHeight
+      let daysWorkedOffsetHeight = this.$refs["days-worked"].offsetHeight;
+      let itemsTotalOffsetHeight = this.$refs["items-total"].offsetHeight;
+      let pdfFooterOffsetHeight = this.$refs["pdf-footer"].offsetHeight;
+
+      let totalOffsetHeight =
+        daysWorkedOffsetHeight + itemsTotalOffsetHeight + pdfFooterOffsetHeight;
+
+      pageHeight = pageHeight - totalOffsetHeight;
+
+      // DAYS WORKED
+      const canvasDaysWorked = await this.$html2canvas(
+        this.$refs["days-worked"]
+      );
+      const imgWidthDaysWorked = 210;
+      const imgHeightDaysWorked =
+        (canvasDaysWorked.height * imgWidthDaysWorked) / canvasDaysWorked.width;
+      const imgDataDaysWorked = canvasDaysWorked.toDataURL("image/png");
+
+      // ITEMS TOTAL
+      const canvasItemsTotal = await this.$html2canvas(
+        this.$refs["items-total"]
+      );
+      const imgWidthItemsTotal = 210;
+      const imgHeightItemsTotal =
+        (canvasItemsTotal.height * imgWidthItemsTotal) / canvasItemsTotal.width;
+      const imgDataItemsTotal = canvasItemsTotal.toDataURL("image/png");
+
+      // PDF FOOTER
+      const canvasPdfFooter = await this.$html2canvas(this.$refs["pdf-footer"]);
+      const imgWidthPdfFooter = 210;
+      const imgHeightPdfFooter =
+        (canvasPdfFooter.height * imgWidthPdfFooter) / canvasPdfFooter.width;
+      const imgDataPdfFooter = canvasPdfFooter.toDataURL("image/png");
+
+      if (pageHeight < 0) {
+        pageHeight = 1020;
+        doc.addPage();
+      }
+
+      yPosition =
+        295 - (imgHeightDaysWorked + imgHeightItemsTotal + imgHeightPdfFooter);
+
+      doc.addImage(
+        imgDataDaysWorked,
+        "PNG",
+        0,
+        yPosition,
+        imgWidthDaysWorked,
+        imgHeightDaysWorked
+      );
+
+      yPosition = yPosition + imgHeightDaysWorked;
+
+      doc.addImage(
+        imgDataItemsTotal,
+        "PNG",
+        0,
+        yPosition,
+        imgWidthItemsTotal,
+        imgHeightItemsTotal
+      );
+
+      yPosition = yPosition + imgHeightItemsTotal;
+
+      doc.addImage(
+        imgDataPdfFooter,
+        "PNG",
+        0,
+        yPosition,
+        imgWidthPdfFooter,
+        imgHeightPdfFooter
+      );
+
+      yPosition = yPosition + imgHeightPdfFooter;
+
+      doc.save("test.pdf");
+      this.exportLoading = false;
+      if (process.client) {
+        document.body.style.cursor = "auto";
       }
     }
   }

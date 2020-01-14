@@ -4,6 +4,7 @@
       <!-- save buttons -->
       <div class="flex flex-wrap items-center">
         <AppButton
+          v-if="propJobPart || (propInvoice && propInvoice.status !== 'Approved')"
           class="m-1"
           :label="'Save changes'"
           @click="save(false)"
@@ -19,10 +20,10 @@
           :disabled="saveLoading"
         />
         <AppButton
-          v-if="propInvoice && !propJobPart"
+          v-if="propInvoice && !propJobPart && propInvoice.status !== 'Draft'"
           class="m-1"
-          :label="'Export to PDF'"
-          @click="exportToPdf()"
+          :label="'View as PDF'"
+          @click="viewAsPdf(propInvoice.id)"
           :inStyle="'padding:5px 14px;font-size:1em'"
         />
       </div>
@@ -107,6 +108,7 @@
           <!-- items / selected invoice -->
           <div
             :id="`invoice-item`"
+            :ref="`invoice-item`"
             class="flex flex-col border-b-2 pb-2"
             v-if="form.items && form.items.length > 0"
           >
@@ -118,11 +120,14 @@
               <div
                 class="text-xs sm:text-sm border-gray-300 px-4 py-1 text-right w-1/2"
               >{{form.items[0].total}}</div>
-              <div class="flex items-center align-middle sticky right-0 bg-white">
+              <div
+                class="flex items-center align-middle sticky right-0 bg-white shadow-md"
+                v-if="(propJobPart || (propInvoice && propInvoice.status !== 'Approved'))"
+              >
                 <div class="px-2 flex-col">
                   <AppInput
                     v-model="form.items[0].dispute"
-                    :disabled="propInvoice && propInvoice.items[0].approved"
+                    :disabled="(propInvoice && propInvoice.items[0].approved) || (propInvoice && waitingForPracticeReply(propInvoice.items[0]))"
                     :type="'single-checkbox'"
                     :name="'disputed'"
                     :label="'Disputed'"
@@ -135,11 +140,17 @@
                     :name="'approved'"
                     :label="'Approved'"
                   />
+                  <div v-if="(propInvoice && waitingForPracticeReply(propInvoice.items[0]))">
+                    <div>Waiting for Practice Reply</div>
+                  </div>
                 </div>
               </div>
             </div>
             <!-- dispute invoice attendance forms -->
-            <div class="flex justify-start mt-2 px-2" v-if="form.items[0].dispute">
+            <div
+              class="flex justify-start mt-2 px-2"
+              v-if="form.items[0].dispute || (propInvoice && propInvoice.items[0].approved === false && propInvoice.items[0].status === 'Approved')"
+            >
               <div class="w-1/3 flex flex-col px-2">
                 <label for="absent_days">Days of absent</label>
                 <input
@@ -172,7 +183,10 @@
               </div>
             </div>
             <!-- disputed invoice update form -->
-            <div class="flex justify-start mt-2 px-2" v-if="form.items[0].dispute">
+            <div
+              class="flex justify-start mt-2 px-2"
+              v-if="form.items[0].dispute || (propInvoice && propInvoice.items[0].approved === false && propInvoice.items[0].status === 'Approved')"
+            >
               <div class="flex flex-col w-full px-2">
                 <label for="remarks">Update remarks</label>
                 <textarea
@@ -190,7 +204,7 @@
       <!-- items total -->
       <div :ref="'items-total'" class="flex justify-between md:m-2">
         <span class="font-bold">Total</span>
-        <div class="relative">£ {{form.total_amount | currency}}</div>
+        <div class="relative">£ {{form.total_amount}}</div>
       </div>
 
       <!-- items days worked -->
@@ -199,7 +213,7 @@
           <div class="w-full md:w-1/2 md:pr-1">
             <AppDate
               v-model="form.date_start"
-              :disabled="propInvoice && propInvoice.issued === true"
+              disabled
               :name="'date_start'"
               :label="'Days worked from'"
               :error="formError.find(item => item.field === 'date_start')"
@@ -209,7 +223,7 @@
           <div class="w-full md:w-1/2 md:pl-1">
             <AppDate
               v-model="form.date_end"
-              :disabled="propInvoice && propInvoice.issued === true"
+              disabled
               :name="'date_end'"
               :label="'To'"
               :error="formError.find(item => item.field === 'date_end')"
@@ -221,12 +235,32 @@
 
       <!-- PDF FOOTER -->
       <div :ref="'pdf-footer'" class="rounded-lg border-2 border-gray-300 mt-4 p-4">
+        <div
+          class="flex flex-col text-xs sm:text-sm"
+          v-if="propInvoiceDetail.paid_under_payroll && propInvoiceDetail.payroll_detail"
+        >
+          <div>Payment by BACS: xxxxx</div>
+          <div>Account name: {{propInvoiceDetail.payroll_detail.account_name ? propInvoiceDetail.payroll_detail.account_name : 'xxxxx'}}</div>
+          <div>Bank: {{propInvoiceDetail.payroll_detail.bank_name ? propInvoiceDetail.payroll_detail.bank_name : 'xxxxx'}}</div>
+          <div>Sort code: {{propInvoiceDetail.payroll_detail.sort_code ? propInvoiceDetail.payroll_detail.sort_code : 'xxxxx'}}</div>
+          <div>Account number: {{propInvoiceDetail.payroll_detail.account_number ? propInvoiceDetail.payroll_detail.account_number : 'xxxxx*OR'}}</div>
+        </div>
+        <div
+          class="flex flex-col text-xs sm:text-sm"
+          v-if="!propInvoiceDetail.paid_under_payroll && propInvoiceDetail.bank_account"
+        >
+          <div>Payment by BACS: xxxxx</div>
+          <div>Account name: {{propInvoiceDetail.bank_account.account_name ? propInvoiceDetail.bank_account.account_name : 'xxxxx'}}</div>
+          <div>Bank: {{propInvoiceDetail.bank_account.bank_name ? propInvoiceDetail.bank_account.bank_name : 'xxxxx'}}</div>
+          <div>Sort code: {{propInvoiceDetail.bank_account.sort_code ? propInvoiceDetail.bank_account.sort_code : 'xxxxx'}}</div>
+          <div>Account number: {{propInvoiceDetail.bank_account.account_number ? propInvoiceDetail.bank_account.account_number : 'xxxxx*OR'}}</div>
+        </div>
         <div class="flex flex-col text-xs sm:text-sm">
-          <div>Payment by BACS:</div>
-          <div>Account name: Rick Sanchez</div>
-          <div>Bank: citadel of Ricks Mutiversal Bank</div>
-          <div>Sort code: 13</div>
-          <div>Account number: 7337#4*OR</div>
+          <div>Payment by BACS: xxxxx</div>
+          <div>Account name: xxxx</div>
+          <div>Bank: xxxx</div>
+          <div>Sort code: xxxx</div>
+          <div>Account number: xxx</div>
         </div>
       </div>
     </div>
@@ -245,6 +279,9 @@ export default {
     AppDate
   },
   props: {
+    propInvoiceDetail: {
+      type: Object
+    },
     propInvoice: {
       type: Object
     },
@@ -271,30 +308,38 @@ export default {
     if (this.propJobPart && !this.propInvoice) {
       this.form.type = this.propJobPart.job.type;
       this.form.practice_id = this.propJobPart.job.practice_id;
-      this.form.date_start = null;
-      this.form.date_end = null;
+      this.form.date_start = this.propJobPart.date_start;
+      this.form.date_end = this.propJobPart.date_end;
+
+      let total =
+        this.propJobPart.job.locum_detail_rate_type.name === "Per Hour"
+          ? this.propJobPart.job.rate * this.propJobPart.final_hours
+          : (this.propJobPart.job.rate / this.propJobPart.job.total_hours) *
+            this.propJobPart.final_hours;
 
       this.form.items = [
         {
           type: "Job Part",
           job_part_id: this.propJobPart.id,
-          description: `Job number ${this.propJobPart.job_part_number} ${this.propJobPart.job.type} Job at £${this.propJobPart.job.rate} ${this.propJobPart.job.locum_detail_rate_type.name} from ${this.propJobPart.date_start} to ${this.propJobPart.date_end} / ${this.propJobPart.job.shift.name} / Total hours of ${this.propJobPart.final_hours}`,
-          total:
-            this.propJobPart.job.locum_detail_rate_type.name === "Per Hour"
-              ? this.propJobPart.final_hours * this.propJobPart.job.rate
-              : this.propJobPart.job.rate,
+          description: `Job number ${this.propJobPart.job_part_number} ${
+            this.propJobPart.job.type
+          } Job at £${this.propJobPart.job.rate} ${
+            this.propJobPart.job.locum_detail_rate_type.name
+          } from ${this.propJobPart.date_start} to ${
+            this.propJobPart.date_end
+          } / ${
+            this.propJobPart.job.shift.name
+          } / Total hours of ${this.propJobPart.final_hours.toFixed(2)}`,
+          total: total.toFixed(2),
           dispute: this.propJobPart.disputed,
           absent_days: this.propJobPart.absent_days,
-          final_hours: this.propJobPart.final_hours,
+          final_hours: this.propJobPart.final_hours.toFixed(2),
           late_hours: this.propJobPart.late_hours,
           remarks: ""
         }
       ];
 
-      this.form.total_amount =
-        this.propJobPart.job.locum_detail_rate_type.name === "Per Hour"
-          ? this.propJobPart.final_hours * this.propJobPart.job.rate
-          : this.propJobPart.job.rate;
+      this.form.total_amount = total.toFixed(2);
       this.form.final = false;
       this.form.ir35 = false;
     }
@@ -309,12 +354,14 @@ export default {
           type: "Job Part",
           job_part_id: this.propInvoice.items[0].job_part.id,
           description: this.propInvoice.items[0].description,
-          total:
-            this.propInvoice.items[0].job_part.job.locum_detail_rate_type
-              .name === "Per Hour"
-              ? this.propInvoice.items[0].job_part.final_hours *
-                this.propInvoice.items[0].job_part.job.rate
-              : this.propInvoice.items[0].job_part.job.rate,
+          total: this.propInvoice.items[0].total.toFixed(2),
+          // this.propInvoice.items[0].job_part.job.locum_detail_rate_type
+          //   .name === "Per Hour"
+          //   ? this.propInvoice.items[0].job_part.job.rate *
+          //     this.propInvoice.items[0].job_part.final_hours
+          //   : (this.propInvoice.items[0].job_part.job.rate /
+          //       this.propInvoice.items[0].job_part.job.total_hours) *
+          //     this.propInvoice.items[0].job_part.final_hours,
           dispute: this.propInvoice.items[0].disputed,
           absent_days: this.propInvoice.items[0].absent_days,
           final_hours: this.propInvoice.items[0].final_hours,
@@ -322,12 +369,14 @@ export default {
           remarks: this.propInvoice.items[0].remarks
         }
       ];
-      this.form.total_amount =
-        this.propInvoice.items[0].job_part.job.locum_detail_rate_type.name ===
-        "Per Hour"
-          ? this.propInvoice.items[0].job_part.final_hours *
-            this.propInvoice.items[0].job_part.job.rate
-          : this.propInvoice.items[0].job_part.job.rate;
+      this.form.total_amount = this.propInvoice.total_amount.toFixed(2);
+      // this.propInvoice.items[0].job_part.job.locum_detail_rate_type.name ===
+      // "Per Hour"
+      //   ? this.propInvoice.items[0].job_part.job.rate *
+      //     this.propInvoice.items[0].job_part.final_hours
+      //   : (this.propInvoice.items[0].job_part.job.rate /
+      //       this.propInvoice.items[0].job_part.job.total_hours) *
+      //     this.propInvoice.items[0].job_part.final_hours;
       this.form.final = false;
       this.form.ir35 = this.propInvoice.ir35;
     }
@@ -337,9 +386,22 @@ export default {
       this.formError = [];
       this.Validate(this.form, ["final", "ir35"]);
       if (!this.formError.length) {
-        this.saveLoading = true;
+        // this.saveLoading = true;
         if (this.propJobPart && !this.propInvoice) {
+          if (
+            this.form.items &&
+            this.form.items.length > 0 &&
+            this.form.items[0].dispute === false
+          ) {
+            this.form.items[0].absent_days = this.propJobPart.absent_days;
+            this.form.items[0].late_hours = this.propJobPart.late_hours;
+            this.form.items[0].final_hours = this.propJobPart.final_hours.toFixed(
+              2
+            );
+            this.form.items[0].remarks = "";
+          }
           this.form.final = final;
+          console.log(this.form);
           this.$axios
             .$post(`/api/v1/locum/locum-invoices`, this.form)
             .then(res => {
@@ -376,15 +438,33 @@ export default {
             this.form.items.length > 0 &&
             this.form.items[0].dispute === false
           ) {
-            this.form.items[0].absent_days = this.propInvoice.items[0].job_part.absent_days;
-            this.form.items[0].late_hours = this.propInvoice.items[0].job_part.late_hours;
-            this.form.items[0].final_hours = this.propInvoice.items[0].job_part.final_hours;
+            // let lastDisputeByPractice = this.$moment(
+            //   this.propInvoice.items[0].disputed_by_locum_at
+            // ).diff(
+            //   this.propInvoice.items[0].disputed_by_practice_at,
+            //   "seconds"
+            // );
+            // console.log(lastDisputeByPractice);
+            // if (lastDisputeByPractice < 0) {
+            // console.log("a");
+            this.form.items[0].absent_days = this.propInvoice.items[0].absent_days;
+            this.form.items[0].late_hours = this.propInvoice.items[0].late_hours;
+            this.form.items[0].final_hours = this.propInvoice.items[0].final_hours;
             this.form.items[0].remarks = "";
+            // } else {
+            //   console.log("b");
+            //   this.form.items[0].absent_days = this.propInvoice.items[0].absent_days;
+            //   this.form.items[0].late_hours = this.propInvoice.items[0].late_hours;
+            //   this.form.items[0].final_hours = this.propInvoice.items[0].final_hours;
+            //   this.form.items[0].remarks = "";
+            // }
           }
           this.form.final = final;
+          console.log(this.form);
+          // return;
           this.$axios
             .$put(
-              `/api/v1/locum/locum-invoices/${this.$route.params.invoice_id}`,
+              `/api/v1/locum/locum-invoices/${this.$route.params.id}`,
               this.form
             )
             .then(res => {
@@ -416,6 +496,237 @@ export default {
               this.saveLoading = false;
             });
         }
+      }
+    },
+    waitingForPracticeReply(item) {
+      let count = this.$moment(item.disputed_by_practice_at).diff(
+        item.disputed_by_locum_at,
+        "seconds"
+      );
+      if (count < 0) {
+        return true;
+      }
+      return false;
+    },
+    viewAsPdf(invoiceId) {
+      // this.$axios
+      //   .$post(`/api/v1/locum/locum-invoice-forms`, {
+      //     locum_invoice_id: invoiceId
+      //   })
+      //   .then(res => {
+      //     console.log(res);
+      //   });
+      window.open(
+        `${process.env.API_URL}/api/v1/locum-invoices/${invoiceId}/pdf`
+      );
+    },
+    async exportToPdf() {
+      console.log(this.propInvoice);
+      // this.$router.push(
+      //   `${process.env.API_URL}/api/v1/locum-invoices/${this.propInvoice.id}/html`
+      // );
+      // this.$axios.$get(`/api/v1/locum-invoices/${this.propInvoice.id}/html`);
+      return;
+
+      this.exportLoading = true;
+      if (process.client) {
+        document.body.style.cursor = "wait";
+      }
+
+      let doc = this.$jspdf("p", "mm");
+      let pageHeight = 1020;
+      let yPosition = 0;
+
+      // PDF HEADER
+      const canvasPdfHeader = await this.$html2canvas(this.$refs["pdf-header"]);
+      const imgWidthPdfHeader = 210;
+      const imgHeightPdfHeader =
+        (canvasPdfHeader.height * imgWidthPdfHeader) / canvasPdfHeader.width;
+      const imgDataPdfHeader = canvasPdfHeader.toDataURL("image/png");
+
+      pageHeight = pageHeight - this.$refs["pdf-header"].offsetHeight;
+
+      doc.addImage(
+        imgDataPdfHeader,
+        "PNG",
+        0,
+        yPosition,
+        imgWidthPdfHeader,
+        imgHeightPdfHeader
+      );
+
+      yPosition = yPosition + imgHeightPdfHeader;
+
+      // ITEMS HEADER
+      const canvasItemsHeader = await this.$html2canvas(
+        this.$refs["items-header"]
+      );
+      const imgWidthItemsHeader = 210;
+      const imgHeightItemsHeader =
+        (canvasItemsHeader.height * imgWidthItemsHeader) /
+        canvasItemsHeader.width;
+      const imgDataItemsHeader = canvasItemsHeader.toDataURL("image/png");
+
+      pageHeight = pageHeight - this.$refs["items-header"].offsetHeight;
+
+      doc.addImage(
+        imgDataItemsHeader,
+        "PNG",
+        0,
+        yPosition,
+        imgWidthItemsHeader,
+        imgHeightItemsHeader
+      );
+
+      yPosition = yPosition + imgHeightItemsHeader;
+
+      // ITEMS
+      const canvasItems = await this.$html2canvas(this.$refs["invoice-item"]);
+
+      const imgWidthItems = 210;
+      const imgHeightItems =
+        (canvasItems.height * imgWidthItems) / canvasItems.width;
+      const imgDataItems = canvasItems.toDataURL("image/png");
+
+      pageHeight = pageHeight - this.$refs["invoice-item"].offsetHeight;
+
+      doc.addImage(
+        imgDataItems,
+        "PNG",
+        0,
+        yPosition,
+        imgWidthItems,
+        imgHeightItems
+      );
+
+      yPosition = yPosition + imgHeightItems;
+
+      // let totalSelectedJobParts = this.selectedJobParts.length;
+
+      // for (let i = 0; i < totalSelectedJobParts; i++) {
+      //   // minus the current item invoice height to the pageHeight
+      //   pageHeight = pageHeight - this.$refs[`item-${i}`][0].offsetHeight;
+      //   // if all pageHeight is used, add page
+      //   if (pageHeight < 0) {
+      //     pageHeight = 1020;
+      //     yPosition = 0;
+      //     doc.addPage();
+      //     // add header to every new page, also subtract its height to page height
+      //     doc.addImage(
+      //       imgDataItemsHeader,
+      //       "PNG",
+      //       0,
+      //       yPosition,
+      //       imgWidthItemsHeader,
+      //       imgHeightItemsHeader
+      //     );
+
+      //     yPosition = yPosition + imgHeightItemsHeader;
+
+      //     pageHeight = pageHeight - this.$refs["items-header"].offsetHeight;
+      //     pageHeight = pageHeight - this.$refs[`item-${i}`][0].offsetHeight;
+      //   }
+
+      //   // draw canvas
+      //   let canvasItem = await this.$html2canvas(this.$refs[`item-${i}`][0]);
+      //   let imgWidthItem = 210;
+      //   let imgHeightItem =
+      //     (canvasItem.height * imgWidthItem) / canvasItem.width;
+      //   let imgDataItem = canvasItem.toDataURL("image/png");
+
+      //   // add image
+      //   doc.addImage(
+      //     imgDataItem,
+      //     "PNG",
+      //     0,
+      //     yPosition,
+      //     imgWidthItem,
+      //     imgHeightItem
+      //   );
+
+      //   yPosition = yPosition + imgHeightItem;
+      // }
+
+      // sum up their offsetHeight
+      let daysWorkedOffsetHeight = this.$refs["days-worked"].offsetHeight;
+      let itemsTotalOffsetHeight = this.$refs["items-total"].offsetHeight;
+      let pdfFooterOffsetHeight = this.$refs["pdf-footer"].offsetHeight;
+
+      let totalOffsetHeight =
+        daysWorkedOffsetHeight + itemsTotalOffsetHeight + pdfFooterOffsetHeight;
+
+      pageHeight = pageHeight - totalOffsetHeight;
+
+      // DAYS WORKED
+      const canvasDaysWorked = await this.$html2canvas(
+        this.$refs["days-worked"]
+      );
+      const imgWidthDaysWorked = 210;
+      const imgHeightDaysWorked =
+        (canvasDaysWorked.height * imgWidthDaysWorked) / canvasDaysWorked.width;
+      const imgDataDaysWorked = canvasDaysWorked.toDataURL("image/png");
+
+      // ITEMS TOTAL
+      const canvasItemsTotal = await this.$html2canvas(
+        this.$refs["items-total"]
+      );
+      const imgWidthItemsTotal = 210;
+      const imgHeightItemsTotal =
+        (canvasItemsTotal.height * imgWidthItemsTotal) / canvasItemsTotal.width;
+      const imgDataItemsTotal = canvasItemsTotal.toDataURL("image/png");
+
+      // PDF FOOTER
+      const canvasPdfFooter = await this.$html2canvas(this.$refs["pdf-footer"]);
+      const imgWidthPdfFooter = 210;
+      const imgHeightPdfFooter =
+        (canvasPdfFooter.height * imgWidthPdfFooter) / canvasPdfFooter.width;
+      const imgDataPdfFooter = canvasPdfFooter.toDataURL("image/png");
+
+      if (pageHeight < 0) {
+        pageHeight = 1020;
+        doc.addPage();
+      }
+
+      yPosition =
+        295 - (imgHeightDaysWorked + imgHeightItemsTotal + imgHeightPdfFooter);
+
+      doc.addImage(
+        imgDataDaysWorked,
+        "PNG",
+        0,
+        yPosition,
+        imgWidthDaysWorked,
+        imgHeightDaysWorked
+      );
+
+      yPosition = yPosition + imgHeightDaysWorked;
+
+      doc.addImage(
+        imgDataItemsTotal,
+        "PNG",
+        0,
+        yPosition,
+        imgWidthItemsTotal,
+        imgHeightItemsTotal
+      );
+
+      yPosition = yPosition + imgHeightItemsTotal;
+
+      doc.addImage(
+        imgDataPdfFooter,
+        "PNG",
+        0,
+        yPosition,
+        imgWidthPdfFooter,
+        imgHeightPdfFooter
+      );
+
+      yPosition = yPosition + imgHeightPdfFooter;
+
+      doc.save("test.pdf");
+      this.exportLoading = false;
+      if (process.client) {
+        document.body.style.cursor = "auto";
       }
     }
   }

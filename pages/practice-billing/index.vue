@@ -46,20 +46,25 @@
           <template v-slot:actions="slotProps">
             <div class="flex justify-center">
               <div
-                @click="$router.push({ path: `/practice-billing/edit/${slotProps.item.locum_invoice_id}`, query: {...$route.query} })"
+                @click="$router.push({ path: `/practice-billing/${slotProps.item.locum_invoice_id}/edit`, query: {...$route.query} })"
                 v-if="slotProps.item.locum_invoice_id && slotProps.item.invoice_status !== 'To Be Invoice' && slotProps.item.status !== 'Approved'"
                 class="mx-1 px-4 py-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
               >Edit</div>
               <div
+                v-if="slotProps.item.locum_invoice_id && slotProps.item.status === 'Approved'"
+                @click="$router.push({ path: `/practice-billing/${slotProps.item.locum_invoice_id}`, query: {...$route.query} })"
+                class="mx-1 px-4 py-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
+              >View</div>
+              <!-- <div
                 @click="$router.push({ path: `/practice-billing/${slotProps.item.locum_invoice_id}`, query: {...$route.query} })"
                 v-if="slotProps.item.status === 'Approved'"
                 class="mx-1 px-2 py-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
-              >View</div>
-              <button
+              >View</div>-->
+              <!-- <button
                 @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id)"
                 v-if="slotProps.item.status === 'Approved' && !slotProps.item.locum_invoice_item.locum_invoice.paid_at"
                 class="px-2 py-2 font-bold rounded-lg focus:outline-none bg-yellow-400"
-              >Mark as Paid</button>
+              >Mark as Paid</button>-->
               <div
                 v-if="slotProps.item.status === 'Approved' && slotProps.item.locum_invoice_item.locum_invoice.paid_at"
                 class="px-2 py-2 font-bold rounded-lg focus:outline-none bg-yellow-400"
@@ -129,8 +134,8 @@
 
         <transition name="fade" mode="out-in">
           <nuxt-link
-            :to="{ path: '/practice-billing', query: {...$route.query}}"
-            v-if="['practice-billing-index-edit-invoice_id', 'practice-billing-index-id'].includes($route.name) || payment_modal"
+            :to="{ name: 'practice-billing-index', query: {...$route.query}}"
+            v-if="['practice-billing-index-id', 'practice-billing-index-id-edit'].includes($route.name) || payment_modal"
             class="shield"
           ></nuxt-link>
         </transition>
@@ -335,10 +340,11 @@ export default {
           invoice_number: jobPart.locum_invoice_id
             ? jobPart.locum_invoice_item.locum_invoice.invoice_number
             : null,
-          total_amount:
-            jobPart.job.locum_detail_rate_type.name === "Per Hour"
-              ? jobPart.final_hours * jobPart.job.rate
-              : jobPart.job.rate
+          total_amount: jobPart.locum_invoice_id
+            ? jobPart.locum_invoice_item.total
+            : jobPart.job.locum_detail_rate_type.name === "Per Hour"
+            ? jobPart.job.rate * jobPart.final_hours
+            : (jobPart.job.rate / jobPart.job.total_hours) * jobPart.final_hours
         };
       });
 
@@ -430,10 +436,12 @@ export default {
               invoice_number: jobPart.locum_invoice_id
                 ? jobPart.locum_invoice_item.locum_invoice.invoice_number
                 : null,
-              total_amount:
-                jobPart.job.locum_detail_rate_type.name === "Per Hour"
-                  ? jobPart.final_hours * jobPart.job.rate
-                  : jobPart.job.rate
+              total_amount: jobPart.locum_invoice_id
+                ? jobPart.locum_invoice_item.total
+                : jobPart.job.locum_detail_rate_type.name === "Per Hour"
+                ? jobPart.job.rate * jobPart.final_hours
+                : (jobPart.job.rate / jobPart.job.total_hours) *
+                  jobPart.final_hours
             };
           });
         })
@@ -499,10 +507,12 @@ export default {
               invoice_number: jobPart.locum_invoice_id
                 ? jobPart.locum_invoice_item.locum_invoice.invoice_number
                 : null,
-              total_amount:
-                jobPart.job.locum_detail_rate_type.name === "Per Hour"
-                  ? jobPart.final_hours * jobPart.job.rate
-                  : jobPart.job.rate
+              total_amount: jobPart.locum_invoice_id
+                ? jobPart.locum_invoice_item.total
+                : jobPart.job.locum_detail_rate_type.name === "Per Hour"
+                ? jobPart.job.rate * jobPart.final_hours
+                : (jobPart.job.rate / jobPart.job.total_hours) *
+                  jobPart.final_hours
             };
           });
         })
@@ -552,6 +562,7 @@ export default {
         item => item.id === invoice.items[0].job_part.id
       );
       job_part.locum_invoice_id = invoice.id;
+      job_part.total_amount = invoice.total_amount;
 
       let index = this.job_parts.findIndex(item => item.id === job_part.id);
       if (index >= 0) {

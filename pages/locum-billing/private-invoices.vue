@@ -2,12 +2,12 @@
   <section class="relative">
     <div class="flex flex-row justify-start overflow-x-auto pb-3">
       <nuxt-link
-        :to="{ path: '/locum-billing/private-invoices', query: { ...$route.query, status: 'to-be-invoiced' } }"
+        :to="{ name: 'locum-billing-private-invoices', query: { ...$route.query, status: 'to-be-invoiced' } }"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
         :class="$route.name.includes('locum-billing-private-invoices') && (!$route.query.status || $route.query.status === 'to-be-invoiced') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >To be invoiced</nuxt-link>
       <nuxt-link
-        :to="{ path: '/locum-billing/private-invoices', query: { ...$route.query, status: 'issued' } }"
+        :to="{ name: 'locum-billing-private-invoices', query: { ...$route.query, status: 'issued' } }"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
         :class="$route.name === 'locum-billing-private-invoices' && $route.query.status === 'issued' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >Invoiced</nuxt-link>
@@ -35,7 +35,7 @@
           <template v-slot:actions="slotProps">
             <div class="flex justify-center">
               <div
-                @click="$router.push({ path: `/locum-billing/private-invoices/edit/${slotProps.item.locum_invoice_id}`, query: {...$route.query }})"
+                @click="$router.push({ path: `/locum-billing/private-invoices/${slotProps.item.locum_invoice_id}/edit`, query: {...$route.query }})"
                 v-if="slotProps.item.locum_invoice_id"
                 class="mx-1 px-4 py-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
               >Edit</div>
@@ -45,7 +45,7 @@
                 class="mx-1 px-4 py-2 bg-red-700 text-white font-bold rounded-lg focus:outline-none"
               >Delete</button>
               <div
-                @click="$router.push({ path: `/locum-billing/private-invoices/create/${slotProps.item.id}`, query: {...$route.query }})"
+                @click="$router.push({ path: `/locum-billing/private-invoices/${slotProps.item.id}/create`, query: {...$route.query }})"
                 v-if="!slotProps.item.locum_invoice_id"
                 class="mx-1 px-4 py-2 bg-green-700 text-white font-bold rounded-lg focus:outline-none"
               >Generate Invoice</div>
@@ -66,8 +66,8 @@
     />
     <transition name="fade" mode="out-in">
       <nuxt-link
-        :to="'/locum-billing/private-invoices'"
-        v-if="['locum-billing-private-invoices-edit-invoice_id', 'locum-billing-private-invoices-create-job_part_id'].includes($route.name) || delete_modal"
+        :to="{ name: 'locum-billing-private-invoices', route: {...$route.query }}"
+        v-if="['locum-billing-private-invoices-id-edit', 'locum-billing-private-invoices-id-create'].includes($route.name) || delete_modal"
         class="shield"
       ></nuxt-link>
     </transition>

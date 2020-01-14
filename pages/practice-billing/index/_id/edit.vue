@@ -2,32 +2,31 @@
   <div class="modal-container shadow-lg">
     <div class="p-4 md:p-8 max-w-5xl h-screen">
       <div class="flex flex-row flex-wrap justify-start pb-4">
-        <nuxt-link :to="{ path: '/locum-billing', query: {...$route.query}}" class="cursor-pointer">
+        <nuxt-link :to="{ name: `practice-billing-index`, query: {...$route.query }}">
           <svgicon name="left-arrow" height="32" width="32" />
         </nuxt-link>
       </div>
-      <LocumPlatformBillingInvoiceForm
+      <PracticeBillingInvoiceForm
         :propInvoice="invoice"
-        :propJobPart="null"
-        @updateInvoice="$emit('updateInvoice', $event), $router.push({ path: '/locum-billing', query: {...$route.query} })"
+        @updateInvoice="$emit('updateInvoice', $event), $router.push({ name: 'practice-billing-index', query: {...$route.query} })"
       />
     </div>
   </div>
 </template>
 <script>
-import LocumPlatformBillingInvoiceForm from "@/components/Billing/LocumPlatformBillingInvoiceForm";
+import PracticeBillingInvoiceForm from "@/components/Billing/PracticeBillingInvoiceForm";
 export default {
   transition: {
     name: "slide",
     mode: "out-in"
   },
   components: {
-    LocumPlatformBillingInvoiceForm
+    PracticeBillingInvoiceForm
   },
   async asyncData({ app, error, params }) {
     try {
       const response = await app.$axios.get(
-        `/api/v1/locum/locum-invoices/${params.invoice_id}`
+        `/api/v1/practice/locum-invoices/${params.id}`
       );
       const invoice =
         response.data && response.data.data && response.data.data.locum_invoice

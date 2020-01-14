@@ -2,38 +2,50 @@
   <div class="modal-container shadow-lg">
     <div class="p-4 md:p-8 max-w-5xl h-screen">
       <div class="flex flex-row flex-wrap justify-start pb-4">
-        <nuxt-link :to="{ name: `practice-billing-index`, query: {...$route.query }}">
+        <nuxt-link
+          :to="{ name: 'locum-billing-index', query: {...$route.query}}"
+          class="cursor-pointer"
+        >
           <svgicon name="left-arrow" height="32" width="32" />
         </nuxt-link>
       </div>
-      <PracticeBillingInvoiceForm
-        :propInvoice="invoice"
-        @updateInvoice="$emit('updateInvoice', $event), $router.push({ name: 'practice-billing-index', query: {...$route.query} })"
-      />
+      <LocumPlatformBillingInvoiceForm :propInvoiceDetail="invoice_detail" :propInvoice="invoice" />
     </div>
   </div>
 </template>
 <script>
-import PracticeBillingInvoiceForm from "@/components/Billing/PracticeBillingInvoiceForm";
+import LocumPlatformBillingInvoiceForm from "@/components/Billing/LocumPlatformBillingInvoiceForm";
 export default {
   transition: {
     name: "slide",
     mode: "out-in"
   },
   components: {
-    PracticeBillingInvoiceForm
+    LocumPlatformBillingInvoiceForm
   },
   async asyncData({ app, error, params }) {
     try {
+      const responseMe = await app.$axios.$get(`/api/v1/me`);
+
+      const invoice_detail =
+        responseMe.data &&
+        responseMe.data.user &&
+        responseMe.data.user.locum_detail &&
+        responseMe.data.user.locum_detail.invoice_detail
+          ? responseMe.data.user.locum_detail.invoice_detail
+          : null;
+
       const response = await app.$axios.get(
-        `/api/v1/practice/locum-invoices/${params.id}`
+        `/api/v1/locum/locum-invoices/${params.id}`
       );
+
       const invoice =
         response.data && response.data.data && response.data.data.locum_invoice
           ? response.data.data.locum_invoice
           : null;
 
       return {
+        invoice_detail,
         invoice
       };
     } catch (err) {

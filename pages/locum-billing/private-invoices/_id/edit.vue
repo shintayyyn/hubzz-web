@@ -2,16 +2,16 @@
   <div class="modal-container shadow-lg">
     <div class="p-4 md:p-8 max-w-5xl h-screen">
       <div class="flex flex-row flex-wrap justify-start pb-4">
-        <nuxt-link to="/locum-billing/private-invoices" class="cursor-pointer">
+        <nuxt-link
+          :to="{ name: 'locum-billing-private-invoices', query: {...$route.query}}"
+          class="cursor-pointer"
+        >
           <svgicon name="left-arrow" height="32" width="32" />
         </nuxt-link>
       </div>
       <LocumPrivateBillingInvoiceForm
         :propInvoice="invoice"
         :propJobPart="null"
-        :propType="type"
-        :propPractice="practice"
-        :propItems="items"
         @updateInvoice="$emit('updateInvoice', $event), $router.push({ path: '/locum-billing/private-invoices', query: {...$route.query} })"
       />
     </div>
@@ -56,10 +56,7 @@ export default {
         document.body.style.cursor = "auto";
       }
       return {
-        invoice,
-        type,
-        practice,
-        items
+        invoice
       };
     } catch (err) {
       console.log("err", err.response || err);
