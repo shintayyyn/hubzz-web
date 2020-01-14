@@ -3,6 +3,15 @@
     <div class="flex flex-row justify-start overflow-x-auto py-3">
       <div class="relative">
         <nuxt-link
+          v-if="practice.type === 'Spoke'"
+          :event="$store.state.jobs.loading_jobs ? '' : 'click'"
+          to="/sessions?status=Pending"
+          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          :class="$route.query.status && $route.query.status.toLowerCase() === 'pending' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        >Pending</nuxt-link>
+      </div>
+      <div class="relative">
+        <nuxt-link
           :event="$store.state.jobs.loading_jobs ? '' : 'click'"
           to="/sessions?status=Allocated"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
@@ -113,8 +122,13 @@ export default {
   data() {
     return {
       confirmation_modal: false,
-      invoiceStatusList
+      invoiceStatusList,
+      practice: ''
     };
+  },
+  created(){
+    console.log(this.$auth.user)
+    this.practice = this.$auth.user.practice_detail.practice
   },
   computed: {
     authPermissions() {

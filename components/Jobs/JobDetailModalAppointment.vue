@@ -25,25 +25,47 @@
           :label="'Practice'"
           :placeholder="'Select...'"
           :items="practices"
+          :error="this.formError.find(item => item.field === 'private_practice_id')"
         />
         <div class="-mt-10 pt-4">
           <AppButton :label="'Add'" @click="surgery_modal = true" :inStyle="'padding:8px 16px;'" />
         </div>
-        <div class="flex flex-row flex-wrap justify-start mt-8 items-center">
+        <div class="flex flex-row flex-wrap justify-start mt-8">
           <div class="px-1 w-full sm:w-1/2 md:w-1/4">
-            <AppDate v-model="form.date_start" :name="'date_start'" :label="'From'" isAfter />
+            <AppDate 
+              v-model="form.date_start" 
+              :name="'date_start'" 
+              :label="'From'" 
+              isAfter  
+              :error="this.formError.find(item => item.field === 'date_start')"
+            />
           </div>
           <div class="px-1 w-full sm:w-1/2 md:w-1/4">
-            <AppTime v-model="form.time_start" :name="'time_start'" :label="'Start time'" />
+            <AppTime 
+              v-model="form.time_start" 
+              :name="'time_start'" 
+              :label="'Start time'"
+              :error="this.formError.find(item => item.field === 'time_start')"
+            />
           </div>
           <div class="px-1 w-full sm:w-1/2 md:w-1/4">
-            <AppDate v-model="form.date_end" :name="'date_end'" :label="'To'" isAfter />
+            <AppDate 
+              v-model="form.date_end" 
+              :name="'date_end'" 
+              :label="'To'" isAfter
+              :error="this.formError.find(item => item.field === 'date_end')"
+            />
           </div>
           <div class="px-1 w-full sm:w-1/2 md:w-1/4">
-            <AppTime v-model="form.time_end" :name="'time_end'" :label="'End time'" />
+            <AppTime 
+              v-model="form.time_end" 
+              :name="'time_end'" 
+              :label="'End time'"
+              :error="this.formError.find(item => item.field === 'time_end')"
+            />
           </div>
         </div>
-        <div class="w-full flex flex-row flex-wrap justify-start items-end mt-4">
+        <div class="w-full flex flex-row flex-wrap justify-start mt-4">
           <div class="px-1 w-full sm:w-1/2 md:w-1/3">
             <AppInput
               v-model="form.shift_id"
@@ -52,6 +74,7 @@
               :label="'Shift'"
               :placeholder="'Select...'"
               :items="shifts"
+              :error="this.formError.find(item => item.field === 'shift_id')"
             />
           </div>
           <div class="px-1 w-full sm:w-1/2 md:w-1/3">
@@ -62,6 +85,7 @@
               :label="'Rate £'"
               :placeholder="''"
               :inStyle="'text-align:right'"
+              :error="this.formError.find(item => item.field === 'rate')"
             />
           </div>
           <div class="px-1 w-full sm:w-1/2 md:w-1/3">
@@ -72,10 +96,11 @@
               :label="'per'"
               :placeholder="'Select...'"
               :items="rate_types"
+              :error="this.formError.find(item => item.field === 'locum_detail_rate_type_id')"
             />
           </div>
         </div>
-        <div class="flex flex-row flex-wrap justify-start items-center mt-4">
+        <div class="flex flex-row flex-wrap justify-start mt-4">
           <div class="flex flex-wrap items-center mt-2">
             <AppInput
               v-model="form.total_hours"
@@ -84,6 +109,7 @@
               :label="'Total hours'"
               :placeholder="''"
               :inStyle="'text-align:right'"
+              :error="this.formError.find(item => item.field === 'total_hours')"
             />
             <div class="text-xs sm:text-sm mx-2">hours</div>
           </div>
@@ -259,7 +285,8 @@ export default {
   },
   mounted() {
     if (this.job) {
-      this.form.private_practice_id = this.job.private_job.private_practice.id;
+      // ! get private practice id
+      this.form.private_practice_id = "";
       this.form.date_start = this.job.date_start;
       this.form.time_start = this.job.time_start;
       this.form.date_end = this.job.date_end;
@@ -282,6 +309,16 @@ export default {
     },
     async create() {
       this.formError = [];
+      if (this.$moment(this.form.date_end).isSameOrBefore(this.form.date_start)){
+        this.formError.push({
+          field: "date_end",
+          message: "Invalid End Date"
+        });
+        this.formError.push({
+          field: "date_start",
+          message: "Invalid Start Date"
+        });
+      }
       this.Validate(this.form, ["description"]);
       if (!this.formError.length) {
         try {

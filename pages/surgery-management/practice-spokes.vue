@@ -74,11 +74,13 @@
 						'surgery-management-practice-spokes-id',
 						'surgery-management-practice-spokes-id-surgery-sessions-index',
 						'surgery-management-practice-spokes-id-surgery-sessions-index-sessionId',
-						'surgery-management-practice-spokes-id-surgery-billings',
+						'surgery-management-practice-spokes-id-surgery-billings-index',
+            'surgery-management-practice-spokes-id-surgery-billings-pension-forms-from-locums',
+            'surgery-management-practice-spokes-id-surgery-billings-invoices-from-hubzz',
 						'surgery-management-practice-spokes-id-surgery-banks',
 						'surgery-management-practice-spokes-id-request-for-termination',
 						'surgery-management-practice-spokes-edit',
-            			'surgery-management-practice-spokes-id-surgery-banks-locumId',
+            'surgery-management-practice-spokes-id-surgery-banks-locumId',
 					].includes($route.name)
 				"
 				@click="$router.push('/surgery-management/practice-spokes')"
@@ -274,12 +276,13 @@ export default {
 			}
 		},
 		updateSurgery(payload) {
-			let index = this.surgeries.findIndex(
-				surgery => surgery.id === payload.id
-			);
-			if (index >= 0) {
-				this.surgeries.splice(index, 1, payload);
-			}
+      this.getSurgeriesCount(this.params)
+			// let index = this.surgeries.findIndex(
+			// 	surgery => surgery.id === payload.id
+			// );
+			// if (index >= 0) {
+			// 	this.surgeries.splice(index, 1, payload);
+			// }
 		},
 		toCancelInvitation(id) {
 			this.selectedSurgeryId = id;

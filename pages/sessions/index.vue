@@ -366,6 +366,7 @@ export default {
     if (
       query.status &&
       ![
+        "pending",
         "allocated",
         "ongoing",
         "live",
@@ -437,6 +438,7 @@ export default {
       getPracticeCompletedJobs: "jobs/getPracticeCompletedJobs",
       getPracticeApprovedJobs: "jobs/getPracticeApprovedJobs",
       // whole
+      getPracticePendingJobs: "jobs/getPracticePendingJobs",
       getPracticeAllocatedJobs: "jobs/getPracticeAllocatedJobs",
       getPracticeAvailableJobs: "jobs/getPracticeAvailableJobs",
       getPracticeAppliedJobs: "jobs/getPracticeAppliedJobs",
@@ -448,7 +450,7 @@ export default {
       if (
         !this.$route.query.status ||
         (this.$route.query.status &&
-          !["ongoing", "completed", "approved"].includes(
+          !["pending","ongoing", "completed", "approved"].includes(
             this.$route.query.status.toLowerCase()
           ))
       ) {
@@ -480,8 +482,8 @@ export default {
             return this.$store.state.jobs.practice_available_jobs_count;
           case "applied":
             return this.$store.state.jobs.practice_applied_jobs_count;
-          case "unsuccessful":
-            return this.$store.state.jobs.practice_unsuccessful_jobs_count;
+          case "unfilled":
+            return this.$store.state.jobs.practice_unfilled_jobs_count;
           case "declined":
             return this.$store.state.jobs.practice_declined_jobs_count;
           case "cancelled":
@@ -504,6 +506,8 @@ export default {
           case "approved":
             return this.getPracticeApprovedJobs;
           // whole
+          case "pending":
+            return this.getPracticePendingJobs;
           case "allocated":
             return this.getPracticeAllocatedJobs;
           case "live":
@@ -524,6 +528,7 @@ export default {
     noJobsToDisplay() {
       if (this.$route.query.status) {
         switch (this.$route.query.status.toLowerCase()) {
+          case "pending":
           case "allocated":
           case "ongoing":
           case "declined":
@@ -1002,6 +1007,8 @@ export default {
           }
         )
       ]).then(([responseCount, responseJobs]) => {
+        console.log(responseCount);
+        console.log(queryStatus);
         if (
           queryStatus &&
           ["ongoing", "completed", "approved"].includes(

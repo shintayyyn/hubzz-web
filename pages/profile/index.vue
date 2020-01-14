@@ -36,53 +36,73 @@
         </div>
         <div class="w-full lg:w-2/5 p-1">
           <div class="relative bg-white rounded-lg shadow-lg p-4 lg:p-8 h-full">
-            <AppLoading :spinner="false" :loading="loading" :message="'Uploading'" />
+            <AppLoading spinner :loading="input_file_loading" />
             <div class="flex flex-col">
-              <AppInput
+              <div class="pb-2">
+                <input type="radio" name="standard_terms" id="use_standard_terms" v-model="form.use_variation_terms" :value="false" />
+                <label for="use_standard_terms">
+                  Use Standard Terms with Locum
+                </label>
+              </div>
+              <div class="pb-2">
+                <input type="radio" name="standard_terms" id="variation_terms_file" v-model="form.use_variation_terms" :value="true" />
+                <label for="variation_terms_file">
+                  Use Variation to Standard Terms
+                </label>
+              </div>
+              <!-- <AppInput
                 v-model="form.use_standard_terms"
                 :type="'single-checkbox'"
                 :name="'use_standard_terms'"
                 :label="'Use Standard Terms with Locum?'"
                 :disabled="!authPermissions.includes('Update Profile Practice')"
                 :error="formError.find(item => item.field === 'use_standard_terms')"
-              />
+              />-->
               <div class="relative">
-                <div class="absolute h-full w-full bg-white opacity-50 z-50" v-if="!form.use_standard_terms"></div>
-                <AppInput
-                  v-model="form.variation_to_standard_terms"
+                <!-- <AppInput
+                  v-model="form.use_variation_terms"
                   :type="'single-checkbox'"
-                  :name="'variation_to_standard_terms'"
+                  :name="'use_variation_terms'"
                   :label="'Use Variation to Standard Terms'"
                   :disabled="!authPermissions.includes('Update Profile Practice')"
-                  :error="formError.find(item => item.field === 'variation_to_standard_terms')"
-                />
-                <div class="flex flex-row flex-wrap justify-between items-center">
-                  <div class="text-xs sm:text-sm">Your Practice's standard terms</div>
-                  <div
-                    v-if="authPermissions.includes('Update Profile Practice')"
-                    class="relative flex justify-start items-center"
-                  >
-                    <label v-if="loading == false" for="file-upload">
-                      <div class="flex flex-row flex-no-wrap cursor-pointer hover:underline">
-                        <svgicon name="cloud-upload" height="24" width="24" />
-                        <div
-                          class="ml-2 text-xs sm:text-sm leading-loose"
-                        >{{ practice.variation_terms_file ? 'Update' : 'Upload' }}</div>
-                      </div>
-                    </label>
-                    <input type="file" id="file-upload" class="hidden" @input="onFileInput($event)" />
+                  :error="formError.find(item => item.field === 'use_variation_terms')"
+                />-->
+                <div class="relative" v-if="form.use_variation_terms">
+                  <div class="flex flex-row flex-wrap justify-between items-center">
+                    <div class="text-xs sm:text-sm">Your Practice's standard terms</div>
+                    <div
+                      v-if="authPermissions.includes('Update Profile Practice')"
+                      class="flex justify-start items-center"
+                    >
+                      <label v-if="input_file_loading === false" for="file-upload">
+                        <div class="flex flex-row flex-no-wrap cursor-pointer hover:underline">
+                          <svgicon name="cloud-upload" height="24" width="24" />
+                          <div
+                            class="ml-2 text-xs sm:text-sm leading-loose"
+                          >{{ practice.variation_terms_file ? 'Update' : 'Upload' }}</div>
+                        </div>
+                      </label>
+                      <input
+                        type="file"
+                        id="file-upload"
+                        class="hidden"
+                        @input="onFileInput($event)"
+                      />
+                    </div>
                   </div>
-                </div>
-                <div class="bg-gray-300 rounded-lg px-4 py-2" v-if="practice.variation_terms_file">
-                  <div v-if="!loading" class="flex flex-no-wrap justify-between items-center">
+                  <div class="bg-gray-300 rounded-lg px-4 py-2" v-if="!input_file_loading">
                     <div
-                      class="text-xs sm:text-sm document-filename"
-                    >{{ practice.variation_terms_file && practice.variation_terms_file.filename ? practice.variation_terms_file.filename : '' }}</div>
-                    <div
-                      class="font-bold text-md sm:text-lg hover:null cursor-pointer text-gray-600 hover:text-black"
-                      @click="modal = true"
-                      v-if="practice.variation_terms_file"
-                    >x</div>
+                      class="flex flex-no-wrap justify-between items-center"
+                    >
+                      <div
+                        class="text-xs sm:text-sm document-filename"
+                      >{{ practice.variation_terms_file && practice.variation_terms_file.filename ? practice.variation_terms_file.filename : 'Upload File' }}</div>
+                      <div
+                        class="font-bold text-md sm:text-lg hover:null cursor-pointer text-gray-600 hover:text-black"
+                        @click="modal = true"
+                        v-if="practice.variation_terms_file"
+                      >x</div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -92,7 +112,8 @@
       </div>
 
       <div class="w-full p-1">
-        <div class="bg-white rounded-lg shadow-lg p-2 md:p-6">
+        <div class="relative bg-white rounded-lg shadow-lg p-2 md:p-6">
+          <AppLoading :loading="loading" spinner />
           <AppFormError :formError="formError" v-if="formError.length" />
           <div class="flex flex-row flex-wrap justify-between">
             <div class="flex flex-col w-full md:w-1/2 px-2">
@@ -212,6 +233,7 @@
           <div class="p-2">
             <AppButton
               :label="'Save changes'"
+              :disabled="loading"
               @click="save"
               v-if="authPermissions.includes('Update Profile Practice')"
             />
@@ -260,6 +282,8 @@ export default {
       vat_number: "",
       modal: false,
       loading: false,
+      input_file_loading: false,
+      terms: [],
       form: {
         phone_number: "",
         report_to: "",
@@ -269,8 +293,7 @@ export default {
         mandatory_training_id: [],
         gp_compliance_document_id: [],
         others_compliance_document_id: [],
-        use_standard_terms: false,
-        variation_to_standard_terms: false,
+        use_variation_terms: false
       },
       name: "",
       formError: []
@@ -309,6 +332,7 @@ export default {
                   responsePractice.data && responsePractice.data.practice
                     ? responsePractice.data.practice
                     : null;
+                console.log("practice", practice);
                 return [surgery, practice];
               }),
 
@@ -434,7 +458,6 @@ export default {
     this.form.report_to = this.practice.report_to;
     this.form.email = this.practice.email;
     this.form.extra_information = this.practice.extra_information;
-    this.form.use_standard_terms = this.practice.use_standard_terms;
     this.practice.practice_types.forEach(item => {
       this.form.practice_type_id.push(item.id);
     });
@@ -447,14 +470,16 @@ export default {
     this.practice.others_compliance_documents.forEach(item => {
       this.form.others_compliance_document_id.push(item.id);
     });
+    this.form.use_variation_terms = this.practice.use_variation_terms;
   },
   methods: {
     onFileInput(e) {
       if (!e.target.files.length) {
         return;
       }
+      console.log(e);
       this.formError = [];
-      let types = ["pdf", "jpeg", "msword", "tiff"];
+      let types = ["pdf", "jpeg", "msword", "tiff", "docx"];
       let file = e.target.files[0];
       let fileType = file.type.split("/")[1];
       if (!types.includes(fileType)) {
@@ -465,20 +490,24 @@ export default {
         });
         return;
       }
+      let variation_terms_file = {
+        filename: file.name,
+        size: file.size,
+        subtype: file.type.split("/")[1],
+        type: file.type.split("/")[0]
+      };
       const formData = new FormData();
       formData.append("file", file);
-      this.loading = true;
+      this.input_file_loading = true;
       this.$axios
         .$post(`/api/v1/practice/me/practice/variation-terms`, formData)
         .then(res => {
+          this.practice.variation_terms_file = variation_terms_file;
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
             text: [res.message]
           });
-          this.loading = false;
-          this.practice.variation_terms_file = file;
-          this.practice.variation_terms_file.filename = file.name
         })
         .catch(err => {
           console.log("err", err.response);
@@ -496,6 +525,9 @@ export default {
             }
           }
         })
+        .finally(() => {
+          this.input_file_loading = false;
+        });
     },
     uncheckPractice(value) {
       this.form.practice_type_id = this.form.practice_type_id.filter(
@@ -518,16 +550,31 @@ export default {
       );
     },
     remove() {
+      this.input_file_loading = true;
+      this.modal = false;
       this.$axios
         .$delete(`/api/v1/practice/me/practice/variation-terms`)
         .then(res => {
-          this.modal = false;
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
             status: "success",
             text: [res.message]
           });
           this.practice.variation_terms_file = null;
+          document.getElementById("file-upload").value = "";
+        })
+        .catch(err => {
+          console.log("err", err.response || err);
+          if (err.response.data) {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "danger",
+              text: [err.response.data.message]
+            });
+          }
+        })
+        .finally(() => {
+          this.input_file_loading = false;
         });
     },
     async save() {
@@ -537,9 +584,23 @@ export default {
           "mandatory_training_id",
           "extra_information",
           "gp_compliance_document_id",
-          "others_compliance_document_id",
-          "use_standard_terms"
+          "others_compliance_document_id"
         ];
+        if (
+          this.form.use_variation_terms === false ||
+          (this.form.use_variation_terms === true &&
+            this.practice.variation_terms_file !== null)
+        ) {
+          notRequired.push("use_variation_terms");
+        } else if (
+          this.form.use_variation_terms === true &&
+          this.practice.variation_terms_file === null
+        ) {
+          this.formError.push({
+            field: "use_variation_terms",
+            message: "use_variation_terms file is required"
+          });
+        }
         this.Validate(this.form, notRequired);
         if (!this.formError.length) {
           this.loading = true;

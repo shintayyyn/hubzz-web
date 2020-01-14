@@ -65,7 +65,7 @@
 						</template>
 						<template v-if="type === 'select'">
 							<div class="w-full relative">
-								<div class="w-full customized-select py-5 flex items-center">
+								<div class="w-full customized-select flex items-center">
 									<select
 										ref="inputSelect"
 										:value="value"

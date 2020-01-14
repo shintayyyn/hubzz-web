@@ -2,48 +2,37 @@
   <section class="relative max-w-3xl">
     <div class="flex flex-wrap justify-between pt-2">
       <div class="flex justify-start items-center">
-        <template v-if="allowToBill">
-          <!-- <div
-            v-if="!allApproved"
-            class="save-button text-xs sm:text-sm mr-2 py-2 px-3 border-2 rounded-lg font-bold flex items-center"
-            @click="save(false)"
-            :disabled="saveLoading || exportLoading"
-          >Save changes</div>-->
-
-          <AppButton
-            class="m-1"
-            :label="'Save changes'"
-            @click="save(false)"
-            :inStyle="'padding:5px 14px;font-size:1em'"
-            :disabled="saveLoading || exportLoading"
-          />
-        </template>
-
         <AppButton
+          v-if="propInvoice.status !== 'Approved' && allowToBill"
+          class="m-1"
+          :label="'Save changes'"
+          @click="save(false)"
+          :inStyle="'padding:5px 14px;font-size:1em'"
+          :disabled="saveLoading || exportLoading"
+        />
+        <!-- <AppButton
           class="m-1"
           :label="'Export to PDF'"
           @click="exportToPdf()"
           :inStyle="'padding:5px 14px;font-size:1em'"
           :disabled="saveLoading || exportLoading"
+        />-->
+        <AppButton
+          v-if="propInvoice && propInvoice.status !== 'Draft'"
+          class="m-1"
+          :label="'View as PDF'"
+          @click="viewAsPdf(propInvoice.id)"
+          :inStyle="'padding:5px 14px;font-size:1em'"
         />
-
-        <!-- <div
-          class="save-button text-xs sm:text-sm py-2 px-3 border-2 rounded-lg font-bold flex items-center"
-          @click="exportToPdf()"
-          :disabled="saveLoading || exportLoading"
-        >Export to PDF</div>-->
       </div>
 
       <div class="flex flex-row flex-wrap justify-start items-center my-2 md:my-4">
-        <label class="mx-1 py-2 pr-2 md:px-3">Type:</label>
-        <button
-          :class="type === 'Platform' ? 'bg-yellow-500 border-yellow-500' : 'hover:bg-gray-200'"
-          class="text-xs sm:text-sm py-2 px-3 border-2 rounded-lg font-bold flex items-center focus:outline-none cursor-default"
-          :disabled="true"
-        >Platform</button>
+        <label class="mx-1">Type:</label>
+        <div
+          class="text-xs sm:text-sm mx-1 py-2 px-3 border-2 rounded-lg font-bold flex items-center focus:outline-none bg-yellow-500 border-yellow-500"
+        >Platform</div>
       </div>
     </div>
-    <AppFormError :formError="formError" v-if="formError.length > 0" />
     <!-- pdf form -->
     <div
       id="htmlpdf"
@@ -54,44 +43,27 @@
       <!-- pdf header -->
       <div class="flex flex-col p-4" :ref="'pdf-header'">
         <div class="text-xs sm:text-sm sm:text-right leading-normal">
-          <div>{{locum_user.name}}</div>
-          <div>{{locum_user.email}}</div>
+          <div>{{propInvoice.locum_user.name}}</div>
+          <div>{{propInvoice.locum_user.email}}</div>
         </div>
         <div class="flex flex-wrap justify-between my-2">
           <div
             class="w-full sm:w-1/2 order-2 sm:order-1 text-xs sm:text-sm text-left rounded-lg border-2 border-gray-300 p-2 w-2/3"
           >
             <section>
-              <div class="relative flex flex-col py-2 mb-3 md:mb-6">
+              <div class="relative flex flex-col py-2">
                 <div class="relative flex flex-row flex-no-wrap justify-between">
-                  <label class="text-xs sm:text-sm py-1">To: Accounts Department</label>
+                  <label class="text-base py-1">To: Accounts Department</label>
                 </div>
-                <div class="relative flex flex-row flex-wrap justify-start">
-                  <input
-                    v-model="surgery_name"
-                    type="text"
-                    placeholder="Select.."
-                    ref="input"
-                    class="border-b-2 w-full focus:border-yellow-400 focus:outline-none py-3 font-bold text-xs sm:text-sm"
-                    readonly
-                    disabled
-                  />
-                </div>
+                <div class="font-bold text-lg mt-2">{{propInvoice.practice.name}}</div>
               </div>
             </section>
-            <div
-              class="text-xs sm:text-sm"
-              v-if="selectedInvoice && selectedInvoice.surgery && selectedInvoice.surgery.address"
-            >
-              <div>{{selectedInvoice.surgery.address.line_1}}</div>
-              <div>{{selectedInvoice.surgery.address.line_2}}</div>
-              <div>{{selectedInvoice.surgery.address.line_3}}</div>
-              <div>{{selectedInvoice.surgery.address.post_code}}</div>
+            <div class="text-xs sm:text-sm">
+              <div>{{propInvoice.practice.address_line_1}}</div>
+              <div>{{propInvoice.practice.address_line_2}}</div>
+              <div>{{propInvoice.practice.address_line_3}}</div>
+              <div>{{propInvoice.practice.address_postcode}}</div>
             </div>
-          </div>
-          <div class="w-full sm:w-1/2 order-1 sm:order-2 sm:text-right leading-normal">
-            <div class="font-bold text-sm sm:text-lg">{{selectedInvoice.status.toUpperCase()}}</div>
-            <div class="text-xs sm:text-sm">{{issuedAt | localDate}}</div>
           </div>
         </div>
       </div>
@@ -101,117 +73,100 @@
           <!-- thead / items header -->
           <div class="flex justify-start" :ref="'items-header'">
             <div
-              style="width:430px"
-              class="bg-gray-900 text-white px-4 py-1 font-semibold border-r-2 border-white"
+              class="w-1/2 bg-gray-900 text-white px-4 py-1 font-semibold border-r-2 border-white"
             >Description</div>
-            <div style="width:200px" class="bg-gray-900 text-white px-4 py-1 font-semibold">Total</div>
-            <div style="width:110px" class="bg-gray-900 flex items-center justify-center">
-              <span
-                v-if="type === 'Private'"
-                class="cursor-pointer w-6 h-6 mx-2 md:mx-4 rounded-full bg-white text-gray-900 font-semibold text-xl flex justify-center items-center hover:bg-gray-200"
-                @click="addItem"
-              >+</span>
-            </div>
+            <div
+              class="w-1/2 bg-gray-900 text-white px-4 py-1 font-semibold flex justify-between"
+            >Total</div>
           </div>
-          <!-- tbody -->
+          <!-- items / selected invoice -->
           <div
-            :id="`invoice-item-${index}`"
-            class="flex flex-col"
-            v-for="(item, index) in selectedJobParts"
-            :ref="`item-${index}`"
-            :key="item.id"
+            :id="`invoice-item`"
+            :ref="`invoice-item`"
+            class="flex flex-col border-b-2 pb-2"
+            v-if="form.items && form.items.length > 0"
           >
-            <div class="flex justify-start mt-2">
+            <!-- item description / total / dispute checkbox -->
+            <div class="relative flex justify-start mt-2">
+              <!-- <div
+                class="w-1/2 text-xs sm:text-sm px-4 py-1 border-gray-300"
+              >{{form.items[0].description}}</div>-->
+              <div class="w-1/2 text-xs sm:text-sm px-4 py-1 border-gray-300">{{description}}</div>
+              <!-- <div
+                class="text-xs sm:text-sm border-gray-300 px-4 py-1 text-right w-1/2"
+              >{{form.items[0].total}}</div>-->
+              <div class="text-xs sm:text-sm border-gray-300 px-4 py-1 text-right w-1/2">{{total}}</div>
               <div
-                style="width:430px;min-height:80px;"
-                class="text-xs sm:text-sm border-b-2 border-gray-300 px-4 py-1"
-                v-text="modifiedDescription(item)"
-              ></div>
-              <div
-                style="min-height:80px;"
-                class="text-xs sm:text-sm border-b-2 border-gray-300 px-4 py-1 text-right"
-                :style="approvedInvoices.includes(item.job_part_id) ? 'width:310px':'width:200px'"
-                v-text="modifiedTotal(item)"
-              ></div>
-              <div class="align-middle sticky right-0 bg-white">
-                <div class="flex flex-row flex-no-wrap justify-start items-center">
-                  <input
-                    v-model="disputedInvoices"
-                    :id="`${item.job_part_id}-disputed`"
-                    type="checkbox"
-                    :value="item.job_part_id"
+                class="flex items-center align-middle sticky right-0 bg-white shadow-md"
+                v-if="(propInvoice && propInvoice.status !== 'Approved')"
+              >
+                <div class="px-2 flex-col">
+                  <AppInput
+                    v-if="propInvoice.items[0].disputed"
+                    v-model="form.items[0].dispute"
                     disabled
+                    :type="'single-checkbox'"
+                    :name="'disputed'"
+                    :label="'Disputed'"
                   />
-                  <label
-                    :for="`${item.job_part_id}-disputed`"
-                    class="text-xs sm:text-sm py-1 flex items-center"
-                  >Disputed</label>
-                </div>
-                <div class="flex flex-row flex-no-wrap justify-start items-center">
-                  <input
-                    :disabled="item.approve || waitingForLocumReply(item)"
-                    v-model="approvedInvoices"
-                    :id="`${item.job_part_id}-approved`"
-                    type="checkbox"
-                    :value="item.job_part_id"
+                  <AppInput
+                    :disabled="propInvoice.items[0].approved || waitingForLocumReply(propInvoice.items[0])"
+                    v-model="isApproved"
+                    :type="'single-checkbox'"
+                    :name="'approved'"
+                    :label="'Approved'"
                   />
-                  <label
-                    :for="`${item.job_part_id}-approved`"
-                    class="text-xs sm:text-sm py-1 flex items-center"
-                  >Approved</label>
-                </div>
-                <div class="flex" v-if="waitingForLocumReply(item)">
-                  <div>Waiting for Locum Reply</div>
+                  <div v-if="waitingForLocumReply(propInvoice.items[0])">
+                    <div>Waiting for Locum Reply</div>
+                  </div>
                 </div>
               </div>
             </div>
+            <!-- dispute invoice attendance forms -->
             <div
-              class="flex justify-start mt-2"
-              v-if="disputedInvoices.includes(item.job_part_id) && !approvedInvoices.includes(item.job_part_id)"
+              class="flex justify-start mt-2 px-2"
+              v-if="form.items[0].dispute && isApproved === false"
             >
-              <div class="flex flex-col px-2" style="width:210px;">
+              <div class="w-1/3 flex flex-col px-2">
                 <label for="absent_days">Days of absent</label>
                 <input
-                  :disabled="item.approve || approvedInvoices.includes(item.job_part_id)"
                   type="number"
                   min="0"
-                  v-model="item.absent_days"
+                  v-model="form.items[0].absent_days"
                   name="absent_days"
                   class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
                 />
               </div>
-              <div class="flex flex-col px-2" style="width:210px;">
+              <div class="w-1/3 flex flex-col px-2">
                 <label for="late_hours">Hours of late</label>
                 <input
-                  :disabled="item.approve || approvedInvoices.includes(item.job_part_id)"
                   type="number"
                   min="0"
-                  v-model="item.late_hours"
+                  v-model="form.items[0].late_hours"
                   name="late_hours"
                   class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
                 />
               </div>
-              <div class="flex flex-col px-2" style="width:210px;">
+              <div class="w-1/3 flex flex-col px-2">
                 <label for="final_hours">Final hours</label>
                 <input
-                  :disabled="item.approve || approvedInvoices.includes(item.job_part_id)"
                   type="number"
                   min="0"
-                  v-model="item.final_hours"
+                  v-model="form.items[0].final_hours"
                   name="final_hours"
                   class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
                 />
               </div>
             </div>
+            <!-- disputed invoice update form -->
             <div
-              class="flex justify-start mt-2"
-              v-if="disputedInvoices.includes(item.job_part_id) && !approvedInvoices.includes(item.job_part_id)"
+              class="flex justify-start mt-2 px-2"
+              v-if="form.items[0].dispute && isApproved === false"
             >
-              <div class="flex flex-col" style="width:630px;">
+              <div class="flex flex-col w-full px-2">
                 <label for="remarks">Update remarks</label>
                 <textarea
-                  :disabled="item.approve || approvedInvoices.includes(item.job_part_id)"
-                  v-model="item.remarks"
+                  v-model="form.items[0].remarks"
                   rows="3"
                   name="remarks"
                   class="w-full text-xs sm:text-sm resize-none border-b-2 border-gray-300 focus:border-yellow-500 focus:outline-none px-4 my-2"
@@ -252,7 +207,8 @@
               v-if="formError.find(item => item.field === 'total_amount')"
             >{{formError.find(item => item.field === 'total_amount').message}}</div>
           </div>
-          £ {{amount | currency}}
+          <!-- £ {{form.total_amount | currency}} -->
+          £ {{total_amount}}
         </div>
       </div>
 
@@ -269,7 +225,6 @@
   </section>
 </template>
 <script>
-// import html2canvas from "html2canvas";
 import AppLoading from "@/components/Base/AppLoading";
 import AppButton from "@/components/Base/AppButton";
 import AppDate from "@/components/Base/AppDate";
@@ -279,11 +234,6 @@ import AppFormError from "@/components/Base/AppFormError";
 import { mixin as clickaway } from "vue-clickaway";
 export default {
   mixins: [clickaway],
-  props: ["selectedInvoice"],
-  transition: {
-    name: "slide",
-    mode: "out-in"
-  },
   components: {
     AppLoading,
     AppButton,
@@ -292,233 +242,123 @@ export default {
     AppFilterSearch,
     AppFormError
   },
+  props: {
+    propInvoice: {
+      type: Object
+    }
+  },
   data() {
     return {
-      // loading: false,
       exportLoading: false,
       saveLoading: false,
-
-      disputedInvoices: [],
-      approvedInvoices: [],
-      defaultSelectedJobParts: [],
-
-      type: null,
-
-      practices: [],
-      practice_id: "",
-      jobs: [],
-      invoice: "",
-      rowData: [],
-      description: "",
-      total: "",
       form: {
-        surgery_id: null,
-        date_start: null,
-        date_end: null,
         items: [],
-        final: null
+        total_amount: 0,
+        date_start: null,
+        date_end: null
       },
       formError: [],
-      // input select surgeries
-      surgery_name: "",
-      // input select job
-      searchJobParts: "",
-      selectedJobParts: [],
-      locum_user: null,
 
+      isApproved: false,
       allowToBill: false
     };
   },
   computed: {
-    modifiedDescription() {
-      return item => {
-        let selectedItem = this.selectedInvoice.items.find(
-          invoice => invoice.job_part.id === item.job_part_id
-        );
-        if (parseInt(item.final_hours) === selectedItem.final_hours) {
-          return item.description;
-        } else {
-          let selectedJobPart = this.selectedJobParts.find(
-            jobPart => jobPart.job_part_id === item.job_part_id
-          );
-          selectedJobPart.description = `Job number ${selectedItem.job_part.job_part_number} ${selectedItem.job_part.job.type} Job at £${selectedItem.job_part.job.rate} ${selectedItem.job_part.job.locum_detail_rate_type.name} from ${selectedItem.job_part.date_start} to ${selectedItem.job_part.date_end} / ${selectedItem.job_part.job.shift.name} / Total hours of ${item.final_hours}`;
-          return selectedJobPart.description;
-        }
-      };
-    },
-    allApproved() {
-      return (
-        this.selectedInvoice.items.filter(invoice => invoice.approved === false)
-          .length === 0
-      );
-    },
-    modifiedTotal() {
-      return item => {
-        let selectedItem = this.selectedInvoice.items.find(
-          invoice => invoice.job_part.id === item.job_part_id
-        );
-        if (parseInt(item.final_hours) === selectedItem.final_hours) {
-          return item.total;
-        } else {
-          let selectedJobPart = this.selectedJobParts.find(
-            jobPart => jobPart.job_part_id === item.job_part_id
-          );
+    total_amount() {
+      let hours =
+        this.form.items.length > 0 ? this.form.items[0].final_hours : 0;
 
-          let total = "";
-          // compute total
-          if (
-            selectedItem.job_part.job.locum_detail_rate_type.name === "Per Hour"
-          ) {
-            total =
-              parseInt(selectedItem.job_part.job.rate) *
-              parseInt(selectedJobPart.final_hours);
-          } else if (
-            selectedItem.job_part.job.locum_detail_rate_type.name ===
-            "Per Whole Day Session"
-          ) {
-            total =
-              (parseInt(selectedJobPart.final_hours) / 8) *
-              parseInt(selectedItem.job_part.job.rate);
-          } else if (
-            selectedItem.job_part.job.locum_detail_rate_type.name ===
-            "Per Half Day Session"
-          ) {
-            total =
-              (parseInt(selectedJobPart.final_hours) / 4) *
-              parseInt(selectedItem.job_part.job.rate);
-          }
-          total = !total ? "0.00" : total.toFixed(2).toString();
-          selectedJobPart.total = total;
-          return selectedJobPart.total;
-        }
-      };
-    },
-    amount() {
-      if (this.selectedJobParts && this.selectedJobParts.length > 0) {
-        let amount = 0;
-        this.selectedJobParts.forEach(item => {
-          if (item.total) {
-            amount += parseFloat(item.total);
-          }
-        });
-        return amount;
+      let type = this.propInvoice.items[0].job_part.job.locum_detail_rate_type
+        .name;
+      let total = 0;
+      switch (type) {
+        case "Per Hour":
+          total = this.propInvoice.items[0].job_part.job.rate * hours;
+          break;
+        case "Per Half Day Session":
+        case "Per Whole Day Session":
+          total =
+            (this.propInvoice.items[0].job_part.job.rate /
+              this.propInvoice.items[0].job_part.job.total_hours) *
+            hours;
+          break;
       }
+      return total.toFixed(2);
     },
-    filteredJobParts() {
-      return this.jobParts.filter(filterItem => {
-        const index = this.selectedJobParts.findIndex(item => {
-          return item.job_part_id === filterItem.id;
-        });
-        return index === -1 && filterItem;
-      });
+    description() {
+      return `Job number ${
+        this.propInvoice.items[0].job_part.job_part_number
+      } ${this.propInvoice.items[0].job_part.job.type}
+        Job at £${this.propInvoice.items[0].job_part.job.rate} ${
+        this.propInvoice.items[0].job_part.job.locum_detail_rate_type.name
+      }
+        from ${this.propInvoice.date_start} to ${this.propInvoice.date_end}
+        / ${
+          this.propInvoice.items[0].job_part.job.shift.name
+        } / Total hours of ${
+        this.form.items.length > 0 ? this.form.items[0].final_hours : 0
+      }`;
     },
-    issuedAt() {
-      return this.selectedInvoice.issued_at
-        ? this.selectedInvoice.issued_at
-        : "Not yet issued";
+    total() {
+      let hours =
+        this.form.items.length > 0 ? this.form.items[0].final_hours : 0;
+
+      let type = this.propInvoice.items[0].job_part.job.locum_detail_rate_type
+        .name;
+      let total = 0;
+      switch (type) {
+        case "Per Hour":
+          total = this.propInvoice.items[0].job_part.job.rate * hours;
+          break;
+        case "Per Half Day Session":
+        case "Per Whole Day Session":
+          total =
+            (this.propInvoice.items[0].job_part.job.rate /
+              this.propInvoice.items[0].job_part.job.total_hours) *
+            hours;
+          break;
+      }
+      return total.toFixed(2);
     }
   },
-  watch: {
-    invoice(value) {
-      if (value) {
-        if (value) {
-          this.rowData.push({ description: value, total: 5 });
+  mounted() {
+    if (this.propInvoice) {
+      this.form.date_start = this.propInvoice.date_start;
+      this.form.date_end = this.propInvoice.date_end;
+
+      this.form.items = [
+        {
+          type: "Job Part",
+          job_part_id: this.propInvoice.items[0].job_part.id,
+          description: this.propInvoice.items[0].description,
+          total:
+            this.propInvoice.items[0].job_part.job.locum_detail_rate_type
+              .name === "Per Hour"
+              ? this.propInvoice.items[0].job_part.job.rate *
+                this.propInvoice.items[0].job_part.final_hours
+              : (this.propInvoice.items[0].job_part.job.rate /
+                  this.propInvoice.items[0].job_part.job.total_hours) *
+                this.propInvoice.items[0].job_part.final_hours,
+          dispute: this.propInvoice.items[0].disputed,
+          approve: this.propInvoice.items[0].approved,
+          absent_days: this.propInvoice.items[0].absent_days,
+          final_hours: this.propInvoice.items[0].final_hours,
+          late_hours: this.propInvoice.items[0].late_hours,
+          remarks: this.propInvoice.items[0].remarks
         }
-        this.invoice = null;
-      }
-    },
-    approvedInvoices(newValue, oldValue) {
-      let selectedId = newValue
-        .filter(newId => !oldValue.includes(newId))
-        .concat(oldValue.filter(oldId => !newValue.includes(oldId)))[0];
-      if (!selectedId) {
-        return;
-      }
-      let defaultSelectedJobPart = this.defaultSelectedJobParts.find(
-        item => item.job_part_id === selectedId
-      );
+      ];
 
-      let selectedJobPart = this.selectedJobParts.find(
-        item => item.job_part_id === selectedId
-      );
-      let test = this.selectedInvoice.items.find(
-        item => item.job_part.id === selectedJobPart.job_part_id
-      );
+      this.form.total_amount =
+        this.propInvoice.items[0].job_part.job.locum_detail_rate_type.name ===
+        "Per Hour"
+          ? this.propInvoice.items[0].job_part.job.rate *
+            this.propInvoice.items[0].job_part.final_hours
+          : (this.propInvoice.items[0].job_part.job.rate /
+              this.propInvoice.items[0].job_part.job.total_hours) *
+            this.propInvoice.items[0].job_part.final_hours;
 
-      let total = null;
+      this.isApproved = this.propInvoice.items[0].approved;
 
-      if (newValue.includes(selectedId)) {
-        defaultSelectedJobPart.description = `Job number ${test.job_part.job_part_number} ${test.job_part.job.type} Job at £${test.job_part.job.rate} ${test.job_part.job.locum_detail_rate_type.name} from ${test.job_part.job.date_start} to ${test.job_part.job.date_end} / ${test.job_part.job.shift.name} / Total hours of ${test.final_hours}`;
-        // compute total
-        if (test.job_part.job.locum_detail_rate_type.name === "Per Hour") {
-          total =
-            parseInt(test.job_part.job.rate) *
-            parseInt(defaultSelectedJobPart.final_hours);
-        } else if (
-          test.job_part.job.locum_detail_rate_type.name ===
-          "Per Whole Day Session"
-        ) {
-          total =
-            (parseInt(defaultSelectedJobPart.final_hours) / 8) *
-            parseInt(test.job_part.job.rate);
-        } else if (
-          test.job_part.job.locum_detail_rate_type.name ===
-          "Per Half Day Session"
-        ) {
-          total =
-            (parseInt(defaultSelectedJobPart.final_hours) / 4) *
-            parseInt(test.job_part.job.rate);
-        }
-        total = total.toFixed(2).toString();
-      } else if (!newValue.includes(selectedId)) {
-        defaultSelectedJobPart.description = test.description;
-        total = test.total;
-      }
-
-      selectedJobPart = { ...defaultSelectedJobPart, total };
-
-      this.selectedJobParts.splice(
-        this.selectedJobParts.findIndex(
-          item => item.job_part_id === selectedId
-        ),
-        1,
-        selectedJobPart
-      );
-    }
-  },
-  created() {
-    if (this.selectedInvoice) {
-      this.locum_user = this.selectedInvoice.locum_user;
-      this.type = this.selectedInvoice.type;
-      this.surgery_name = this.selectedInvoice.surgery.name;
-      this.form.surgery_id = this.selectedInvoice.surgery.id;
-      this.form.date_start = this.selectedInvoice.date_start;
-      this.form.date_end = this.selectedInvoice.date_end;
-      this.selectedInvoice.items.forEach(item => {
-        this.selectedJobParts.push({
-          type: item.type,
-          job_part_id: item.job_part.id,
-          description: item.description,
-          total: item.total.toString(),
-          dispute: item.disputed,
-          approve: item.approved,
-          absent_days: item.absent_days,
-          final_hours: item.final_hours,
-          late_hours: item.late_hours,
-          remarks: item.remarks,
-          disputed_by_locum_at: item.disputed_by_locum_at,
-          disputed_by_practice_at: item.disputed_by_practice_at
-        });
-        if (item.disputed === true) {
-          this.disputedInvoices.push(item.job_part.id);
-        }
-        if (item.approved === true) {
-          this.approvedInvoices.push(item.job_part.id);
-        }
-      });
-      this.defaultSelectedJobParts = JSON.parse(
-        JSON.stringify(this.selectedJobParts)
-      );
       if (
         this.$auth.user.practice_detail &&
         this.$auth.user.practice_detail.practice.type !== "Spoke"
@@ -538,39 +378,47 @@ export default {
       }
     }
   },
+  watch: {
+    isApproved(value) {
+      if (value) {
+        this.form.items[0].description = `Job number ${this.propInvoice.items[0].job_part.job_part_number} ${this.propInvoice.items[0].job_part.job.type} Job at £${this.propInvoice.items[0].job_part.job.rate} ${this.propInvoice.items[0].job_part.job.locum_detail_rate_type.name} from ${this.propInvoice.items[0].job_part.date_start} to ${this.propInvoice.items[0].job_part.date_end} / ${this.propInvoice.items[0].job_part.job.shift.name} / Total hours of ${this.propInvoice.items[0].final_hours}`;
+        this.form.items[0].absent_days = this.propInvoice.items[0].absent_days;
+        this.form.items[0].late_hours = this.propInvoice.items[0].late_hours;
+        this.form.items[0].final_hours = this.propInvoice.items[0].final_hours;
+        this.form.items[0].remarks = this.propInvoice.items[0].remarks;
+        this.form.items[0].total =
+          this.propInvoice.items[0].job_part.job.locum_detail_rate_type.name ===
+          "Per Hour"
+            ? this.propInvoice.items[0].job_part.job.rate *
+              this.propInvoice.items[0].final_hours
+            : this.propInvoice.items[0].job_part.job.rate;
+        this.form.total_amount =
+          this.propInvoice.items[0].job_part.job.locum_detail_rate_type.name ===
+          "Per Hour"
+            ? this.propInvoice.items[0].job_part.job.rate *
+              this.propInvoice.items[0].final_hours
+            : this.propInvoice.items[0].job_part.job.rate;
+      } else if (value === false) {
+        this.form.items[0].description = this.propInvoice.items[0].description;
+        this.form.items[0].absent_days = this.propInvoice.items[0].absent_days;
+        this.form.items[0].late_hours = this.propInvoice.items[0].late_hours;
+        this.form.items[0].final_hours = this.propInvoice.items[0].final_hours;
+        this.form.items[0].remarks = this.propInvoice.items[0].remarks;
+        this.form.items[0].total = this.propInvoice.items[0].total;
+      }
+      this.form.items[0].approve = value;
+    }
+  },
   methods: {
     save(final) {
       this.formError = [];
-      this.form.type = this.type;
-      this.form.surgery_id = this.form.surgery_id;
-      this.form.total_amount = this.amount;
-      this.form.final = final;
-      this.form.items = [];
-      this.selectedJobParts.forEach(jobPart => {
-        this.form.items.push({
-          ...jobPart,
-          dispute: this.disputedInvoices.includes(jobPart.job_part_id)
-            ? true
-            : false,
-          approve: this.approvedInvoices.includes(jobPart.job_part_id)
-            ? true
-            : false,
-          absent_days:
-            !jobPart.absent_days || jobPart.absent_days === ""
-              ? 0
-              : jobPart.absent_days,
-          late_hours:
-            !jobPart.late_hours || jobPart.late_hours === ""
-              ? 0
-              : jobPart.late_hours,
-          final_hours:
-            !jobPart.final_hours || jobPart.final_hours === ""
-              ? 0
-              : jobPart.final_hours
-        });
-      });
-      this.Validate(this.form, ["final"]);
+      this.Validate(this.form);
       if (!this.formError.length) {
+        this.form.items[0].description = this.description;
+        this.form.items[0].total = this.total;
+        this.form.total_amount = this.total_amount;
+        console.log(this.form);
+        // return;
         this.saveLoading = true;
         this.$axios
           .$put(
@@ -578,15 +426,15 @@ export default {
             this.form
           )
           .then(res => {
-            this.$emit("updateInvoice", res.data.locum_invoice);
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
               text: [`${res.message}`]
             });
-            this.$emit("close");
+            this.$emit("updateInvoice", res.data.locum_invoice);
           })
           .catch(err => {
+            console.log("err", err.response || err);
             if (err.response.data.message) {
               this.$store.commit("SET_NOTIFICATION", {
                 enabled: true,
@@ -615,6 +463,18 @@ export default {
         return true;
       }
       return false;
+    },
+    viewAsPdf(invoiceId) {
+      // this.$axios
+      //   .$post(`/api/v1/locum/locum-invoice-forms`, {
+      //     locum_invoice_id: invoiceId
+      //   })
+      //   .then(res => {
+      //     console.log(res);
+      //   });
+      window.open(
+        `${process.env.API_URL}/api/v1/locum-invoices/${invoiceId}/pdf`
+      );
     },
     async exportToPdf() {
       this.exportLoading = true;
@@ -670,51 +530,71 @@ export default {
       yPosition = yPosition + imgHeightItemsHeader;
 
       // ITEMS
-      let totalSelectedJobParts = this.selectedJobParts.length;
+      const canvasItems = await this.$html2canvas(this.$refs["invoice-item"]);
 
-      for (let i = 0; i < totalSelectedJobParts; i++) {
-        // minus the current item invoice height to the pageHeight
-        pageHeight = pageHeight - this.$refs[`item-${i}`][0].offsetHeight;
-        // if all pageHeight is used, add page
-        if (pageHeight < 0) {
-          pageHeight = 1020;
-          yPosition = 0;
-          doc.addPage();
-          // add header to every new page, also subtract its height to page height
-          doc.addImage(
-            imgDataItemsHeader,
-            "PNG",
-            0,
-            yPosition,
-            imgWidthItemsHeader,
-            imgHeightItemsHeader
-          );
+      const imgWidthItems = 210;
+      const imgHeightItems =
+        (canvasItems.height * imgWidthItems) / canvasItems.width;
+      const imgDataItems = canvasItems.toDataURL("image/png");
 
-          yPosition = yPosition + imgHeightItemsHeader;
+      pageHeight = pageHeight - this.$refs["invoice-item"].offsetHeight;
 
-          pageHeight = pageHeight - this.$refs["items-header"].offsetHeight;
-          pageHeight = pageHeight - this.$refs[`item-${i}`][0].offsetHeight;
-        }
+      doc.addImage(
+        imgDataItems,
+        "PNG",
+        0,
+        yPosition,
+        imgWidthItems,
+        imgHeightItems
+      );
 
-        // draw canvas
-        let canvasItem = await this.$html2canvas(this.$refs[`item-${i}`][0]);
-        let imgWidthItem = 210;
-        let imgHeightItem =
-          (canvasItem.height * imgWidthItem) / canvasItem.width;
-        let imgDataItem = canvasItem.toDataURL("image/png");
+      yPosition = yPosition + imgHeightItems;
 
-        // add image
-        doc.addImage(
-          imgDataItem,
-          "PNG",
-          0,
-          yPosition,
-          imgWidthItem,
-          imgHeightItem
-        );
+      // let totalSelectedJobParts = this.selectedJobParts.length;
 
-        yPosition = yPosition + imgHeightItem;
-      }
+      // for (let i = 0; i < totalSelectedJobParts; i++) {
+      //   // minus the current item invoice height to the pageHeight
+      //   pageHeight = pageHeight - this.$refs[`item-${i}`][0].offsetHeight;
+      //   // if all pageHeight is used, add page
+      //   if (pageHeight < 0) {
+      //     pageHeight = 1020;
+      //     yPosition = 0;
+      //     doc.addPage();
+      //     // add header to every new page, also subtract its height to page height
+      //     doc.addImage(
+      //       imgDataItemsHeader,
+      //       "PNG",
+      //       0,
+      //       yPosition,
+      //       imgWidthItemsHeader,
+      //       imgHeightItemsHeader
+      //     );
+
+      //     yPosition = yPosition + imgHeightItemsHeader;
+
+      //     pageHeight = pageHeight - this.$refs["items-header"].offsetHeight;
+      //     pageHeight = pageHeight - this.$refs[`item-${i}`][0].offsetHeight;
+      //   }
+
+      //   // draw canvas
+      //   let canvasItem = await this.$html2canvas(this.$refs[`item-${i}`][0]);
+      //   let imgWidthItem = 210;
+      //   let imgHeightItem =
+      //     (canvasItem.height * imgWidthItem) / canvasItem.width;
+      //   let imgDataItem = canvasItem.toDataURL("image/png");
+
+      //   // add image
+      //   doc.addImage(
+      //     imgDataItem,
+      //     "PNG",
+      //     0,
+      //     yPosition,
+      //     imgWidthItem,
+      //     imgHeightItem
+      //   );
+
+      //   yPosition = yPosition + imgHeightItem;
+      // }
 
       // sum up their offsetHeight
       let daysWorkedOffsetHeight = this.$refs["days-worked"].offsetHeight;
@@ -801,50 +681,8 @@ export default {
   }
 };
 </script>
-<style>
-.save-button {
-  border-color: #ecc94b;
-  background-color: #ecc94b;
-}
-.save-button:hover {
-  /* background-color: rgb(80, 80, 80); */
-  background-color: #e2be3a;
-  border-color: #e2be3a;
-  cursor: pointer;
-}
-.option-list {
-  transition: all 0.3s ease-in-out;
-  height: 0;
-}
-.slide-down {
-  transition: all 0.3s ease-in-out;
-  height: auto;
-}
-/* surgery */
-.loader-surgery {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0.5;
-  color: #ccc;
-}
-.items-table tbody tr {
-  box-shadow: none;
-  border: none;
-  border-radius: 0;
-}
+<style scoped>
 .items-table {
   width: 733px;
-}
-.items-table tbody {
-  border: 2px solid #eff3f8;
-  border-top-width: 0;
-}
-.items-table tbody td {
-  padding: 0 8px;
 }
 </style>

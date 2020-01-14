@@ -51,24 +51,16 @@
       :placeholder="'Select...'"
       :items="practice_roles"
     />
-    <template
-      v-if="user && user.practice_detail && user.practice_detail.role && user.practice_detail.role.name !== 'Practice User Admin'"
-    >
-      <span v-if="!user_roles.length">
-        You haven't created any role yet, create role
-        <nuxt-link class="underline" :to="'/roles-and-permissions/roles'">here</nuxt-link>
-      </span>
-      <AppInput
-        v-model="form.practice_user_role_id"
-        :type="'select'"
-        :name="'practice_user_role_id'"
-        :label="'Practice User Role'"
-        :error="formError.find(item => item.field === 'practice_user_role_id')"
-        :placeholder="'Select...'"
-        :items="user_roles"
-        :disabled="!user_roles.length"
-      />
-    </template>
+    <AppInput
+      v-model="form.practice_user_role_id"
+      :type="'select'"
+      :name="'practice_user_role_id'"
+      :label="'Practice User Role'"
+      :error="formError.find(item => item.field === 'practice_user_role_id')"
+      :placeholder="'Select...'"
+      :items="user_roles"
+      :disabled="!user_roles.length"
+    />
     <AppInput
       v-model="form.status"
       :type="'select'"
@@ -79,7 +71,7 @@
     />
     <div
       class="text-left mt-5"
-      v-if="user && user.practice_detail && user.practice_detail.role && user.practice_detail.role.name !== 'Practice User Admin'"
+      v-if="user && user.practice_detail && user.practice_detail.practice_role !== 'Practice User Admin'"
     >
       <AppButton
         :label="'Save changes'"
@@ -149,7 +141,6 @@ export default {
       ? this.user.practice_detail.role.id
       : null;
     this.form.status = this.user.status;
-
     this.loading = false;
   },
   methods: {
@@ -172,7 +163,7 @@ export default {
     },
     getUserRoles() {
       return this.$axios
-        .$get(`/api/v1/practice/practice-roles`)
+        .$get(`/api/v1/practice/practice-roles?include_all`)
         .then(res => {
           return res.data.roles.forEach(role => {
             this.user_roles.push({ label: role.name, value: role.id });
@@ -204,7 +195,8 @@ export default {
               status: "success",
               text: [`${res.message}`]
             });
-            this.$emit("updateUser");
+            this.$emit("updateUser", res.data.user);
+            this.$router.push("/profile/users");
           })
           .catch(err => {
             console.log("err", err.response || err);

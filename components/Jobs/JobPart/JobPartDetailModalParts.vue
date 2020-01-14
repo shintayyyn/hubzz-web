@@ -49,13 +49,13 @@ export default {
 					class: "text-center"
 				},
 				{
-					name: "Date End",
-					dataIndex: "date_end",
+					name: "Date Start",
+					dataIndex: "date_start",
 					class: "text-center"
 				},
 				{
-					name: "Date Start",
-					dataIndex: "date_start",
+					name: "Date End",
+					dataIndex: "date_end",
 					class: "text-center"
 				},
 				{

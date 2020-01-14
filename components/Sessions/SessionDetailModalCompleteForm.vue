@@ -109,6 +109,9 @@ export default {
       formError: []
     };
   },
+  mounted() {
+    this.form.final_hours = this.job_part.final_hours.toFixed(2);
+  },
   computed: {
     isPreviousJobPartComplete() {
       return !this.job_part.job.job_parts
