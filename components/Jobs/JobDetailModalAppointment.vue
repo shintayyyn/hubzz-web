@@ -285,7 +285,8 @@ export default {
   },
   mounted() {
     if (this.job) {
-      this.form.private_practice_id = this.job.private_job.private_practice.id;
+      // ! get private practice id
+      this.form.private_practice_id = "";
       this.form.date_start = this.job.date_start;
       this.form.time_start = this.job.time_start;
       this.form.date_end = this.job.date_end;

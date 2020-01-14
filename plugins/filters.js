@@ -12,7 +12,7 @@ Vue.filter('localDate', function (date, dateOnly) {
 
 Vue.filter('currency', function (number) {
   if (number) {
-    return number.toFixed(2);
+    return parseInt(number).toFixed(2);
   }
   return '0.00'
 })
