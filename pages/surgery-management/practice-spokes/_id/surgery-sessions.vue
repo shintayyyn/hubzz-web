@@ -3,6 +3,13 @@
     <div class="flex flex-row justify-start overflow-x-auto py-3">
       <div class="relative">
         <nuxt-link
+          :to="`/surgery-management/practice-spokes/${$route.params.id}/surgery-sessions?status=Pending`"
+          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          :class="$route.query.status && $route.query.status.toLowerCase() === 'pending' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        >Pending</nuxt-link>
+      </div>
+      <div class="relative">
+        <nuxt-link
           :to="`/surgery-management/practice-spokes/${$route.params.id}/surgery-sessions?status=Allocated`"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
           :class="!$route.query.status || ($route.query.status && $route.query.status.toLowerCase() === 'allocated') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"

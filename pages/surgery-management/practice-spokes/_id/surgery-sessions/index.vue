@@ -46,6 +46,7 @@ export default {
     if (
       query.status &&
       ![
+        "pending",
         "allocated",
         "ongoing",
         "live",
@@ -63,7 +64,7 @@ export default {
   },
   data() {
     return {
-      spokeSurgeryId: null,
+      spokePracticeId: null,
       current_page: 1,
       // app table params
       params: {
@@ -73,7 +74,7 @@ export default {
         job_number: "",
         title: "",
         type: "",
-        surgery_id: "",
+        practice_id: "",
         shift_id: "",
         rate: "",
         rate_type_id: "",
@@ -91,7 +92,7 @@ export default {
         job_part_number: "",
         job_title: "",
         job_type: "",
-        job_surgery_id: "",
+        job_practice_id: "",
         job_shift_id: "",
         job_rate: "",
         job_rate_type_id: "",
@@ -115,6 +116,7 @@ export default {
       getPracticeCompletedJobs: "jobs/getPracticeCompletedJobs",
       getPracticeApprovedJobs: "jobs/getPracticeApprovedJobs",
       // whole
+      getPracticePendingJobs: "jobs/getPracticePendingJobs",
       getPracticeAllocatedJobs: "jobs/getPracticeAllocatedJobs",
       getPracticeAvailableJobs: "jobs/getPracticeAvailableJobs",
       getPracticeAppliedJobs: "jobs/getPracticeAppliedJobs",
@@ -135,7 +137,7 @@ export default {
       }
       if (
         this.$route.query.status &&
-        ["ongoing", "completed", "approved"].includes(
+        ["pending","ongoing", "completed", "approved"].includes(
           this.$route.query.status.toLowerCase()
         )
       ) {
@@ -153,6 +155,8 @@ export default {
           case "approved":
             return this.$store.state.jobs.practice_approved_job_parts_count;
           // whole
+          case "pending":
+            return this.$store.state.jobs.practice_pending_jobs_count;
           case "allocated":
             return this.$store.state.jobs.practice_allocated_jobs_count;
           case "available":
@@ -185,6 +189,8 @@ export default {
           case "approved":
             return this.getPracticeApprovedJobs;
           // whole
+          case "pending":
+            return this.getPracticePendingJobs;
           case "allocated":
             return this.getPracticeAllocatedJobs;
           case "live":
@@ -207,29 +213,23 @@ export default {
     noJobsToDisplay() {
       if (this.$route.query.status) {
         switch (this.$route.query.status.toLowerCase()) {
+          case "pending":
           case "allocated":
           case "ongoing":
           case "declined":
           case "cancelled":
           case "withdrawn":
           case "approved":
-            return `You do not have any ${this.$route.query.status.toLowerCase()} jobs`;
           case "live":
-            return `There are no ${this.$route.query.status.toLowerCase()} jobs nearby and suited for you at this time`;
           case "applied":
           case "unfilled":
-            return `You have not yet ${
-              this.$route.query.status.toLowerCase() === "applied"
-                ? "applied"
-                : "rejected"
-            } for a job`;
           case "completed":
-            return "You have not yet completed any job";
+            return `This spoke does not have ${this.$route.query.status.toLowerCase()} jobs`;
           default:
             return "You do not have any allocated jobs";
         }
       } else {
-        return "You do not have any jobs";
+        return "This spoke does not have any jobs";
       }
     },
     loadingJobs() {
@@ -410,7 +410,7 @@ export default {
         this.filterToggle = false;
         setTimeout(() => {
           this.clearJobsBadge(newStatus);
-          this.clearFilters();
+          // this.clearFilters();
         }, 1000);
         this.getJobsCount(this.isJobPart ? this.jobPartParams : this.params);
       }
@@ -421,23 +421,25 @@ export default {
       const response = await app.$axios.get(
         `/api/v1/practice/me/practice-surgeries/${route.params.id}`
       );
-      const spokeSurgeryId =
+      const spokePracticeId =
         response.data &&
         response.data.data &&
         response.data.data.practice_surgery &&
-        response.data.data.practice_surgery.surgery &&
-        response.data.data.practice_surgery.surgery.id
-          ? response.data.data.practice_surgery.surgery.id
+        response.data.data.practice_surgery.child_practice_id 
+          ? response.data.data.practice_surgery.child_practice_id
           : null;
-
+      console.log('spoke practice id', spokePracticeId)
       return {
-        spokeSurgeryId
+        spokePracticeId
       };
     } catch (err) {
       console.log("get surgery error", err);
     }
   },
   created() {
+    console.log('params', this.jobPartParams, this.params)
+    this.jobPartParams.job_practice_id = this.spokePracticeId
+    this.params.practice_id = this.spokePracticeId
     this.getJobsCount(this.isJobPart ? this.jobPartParams : this.params);
     setTimeout(() => {
       this.clearJobsBadge(
@@ -474,7 +476,7 @@ export default {
       this.$store.commit("jobs/TOGGLE_LOADING", true);
       this.$store
         .dispatch(`${this.dispatchUrl}`, {
-          surgery_id: this.spokeSurgeryId,
+          
           status: [
             `${
               this.$route.query.status ? this.$route.query.status : "Allocated"
@@ -484,14 +486,15 @@ export default {
           ...params
         })
         .finally(() => {
+          console.log(this.total)
           this.getJobs(params);
         });
     },
     getJobs(params) {
       this.$store.commit("jobs/CLEAR_JOBS");
+       console.log('dispatch url',this.dispatchUrl)
       this.$store
         .dispatch(`${this.dispatchUrl}`, {
-          surgery_id: this.spokeSurgeryId,
           status: [
             `${
               this.$route.query.status ? this.$route.query.status : "Allocated"
@@ -500,6 +503,7 @@ export default {
           ...params
         })
         .finally(() => {
+          console.log(this.jobs)
           this.$store.commit("jobs/TOGGLE_LOADING", false);
           this.toggleTable = true;
         });
@@ -532,7 +536,7 @@ export default {
     clearFilters() {
       this.params.type = "";
       this.params.job_number = "";
-      this.params.surgery_id = "";
+      this.params.practice_id = "";
       this.params.title = "";
       this.params.shift_id = "";
       this.params.rate = "";
@@ -540,7 +544,7 @@ export default {
 
       this.jobPartParams.job_type = "";
       this.jobPartParams.job_part_number = "";
-      this.jobPartParams.job_surgery_id = "";
+      this.jobPartParams.job_practice_id = "";
       this.jobPartParams.job_title = "";
       this.jobPartParams.job_shift_id = "";
       this.jobPartParams.job_rate = "";

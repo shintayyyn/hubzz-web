@@ -11,7 +11,7 @@
 			</div>
 			<div class="flex overflow-x-auto">
 				<nuxt-link
-					:to="`/surgery-management/practice-spokes/${practice_id}`"
+					:to="`/surgery-management/practice-spokes/${practice_surgery_id}`"
 					class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
 					:class="
 						$route.name === 'surgery-management-practice-spokes-id'
@@ -21,7 +21,7 @@
 					>Surgery Profile</nuxt-link>
 				<nuxt-link
 					v-if="relationshipIsActive == 'Active'"
-					:to="`/surgery-management/practice-spokes/${practice_id}/surgery-sessions`"
+					:to="`/surgery-management/practice-spokes/${practice_surgery_id}/surgery-sessions`"
 					class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
 					:class="
 						$route.name.includes(
@@ -32,8 +32,10 @@
 					"
 					>Surgery Sessions</nuxt-link>
 				<nuxt-link
-					v-if="relationshipIsActive == 'Active'"
-					:to="`/surgery-management/practice-spokes/${practice_id}/surgery-billings`"
+					v-if="relationshipIsActive == 'Active' && 
+            (practice_surgery.allow_surgery_bill_locum === false || 
+            practice_surgery.allow_surgery_bill_hubzz === false)"
+					:to="`/surgery-management/practice-spokes/${practice_surgery_id}/surgery-billings`"
 					class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
 					:class="
 						$route.name.includes('surgery-management-practice-spokes-id-surgery-billings')
@@ -43,7 +45,7 @@
 					>Surgery Billing</nuxt-link>
         <nuxt-link
 					v-if="relationshipIsActive == 'Active'"
-					:to="`/surgery-management/practice-spokes/${practice_id}/surgery-banks`"
+					:to="`/surgery-management/practice-spokes/${practice_surgery_id}/surgery-banks`"
 					class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
 					:class="
 						$route.name.includes('surgery-management-practice-spokes-id-surgery-banks')
@@ -53,7 +55,7 @@
 					>Surgery Banks</nuxt-link>
 				<nuxt-link
           v-if="relationshipIsActive == 'Active'"
-					:to="`/surgery-management/practice-spokes/${practice_id}/request-for-termination`"
+					:to="`/surgery-management/practice-spokes/${practice_surgery_id}/request-for-termination`"
 					class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
 					:class="
 						$route.name.includes('surgery-management-practice-spokes-id-request-for-termination')
@@ -71,19 +73,20 @@
 export default {
 	data() {
 		return {
-			practice_id: "",
+			practice_surgery_id: "",
 			practice_surgery: ""
 		};
 	},
 	async asyncData({ app, route, store, params, error }) {
 		try {
-			const practice_id = params.id;
+			const practice_surgery_id = params.id;
 			const response = await app.$axios.$get(
 				`/api/v1/practice/me/practice-surgeries/${params.id}`
 			);
-			const practice_surgery = response.data.practice_surgery;
+      const practice_surgery = response.data.practice_surgery;
+      console.log('practice surgery', practice_surgery)
 			return {
-				practice_id,
+				practice_surgery_id,
 				practice_surgery
 			};
 		} catch (err) {

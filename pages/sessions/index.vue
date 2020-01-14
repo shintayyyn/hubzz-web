@@ -366,6 +366,7 @@ export default {
     if (
       query.status &&
       ![
+        "pending",
         "allocated",
         "ongoing",
         "live",
@@ -437,6 +438,7 @@ export default {
       getPracticeCompletedJobs: "jobs/getPracticeCompletedJobs",
       getPracticeApprovedJobs: "jobs/getPracticeApprovedJobs",
       // whole
+      getPracticePendingJobs: "jobs/getPracticePendingJobs",
       getPracticeAllocatedJobs: "jobs/getPracticeAllocatedJobs",
       getPracticeAvailableJobs: "jobs/getPracticeAvailableJobs",
       getPracticeAppliedJobs: "jobs/getPracticeAppliedJobs",
@@ -504,6 +506,8 @@ export default {
           case "approved":
             return this.getPracticeApprovedJobs;
           // whole
+          case "pending":
+            return this.getPracticePendingJobs;
           case "allocated":
             return this.getPracticeAllocatedJobs;
           case "live":
@@ -524,6 +528,7 @@ export default {
     noJobsToDisplay() {
       if (this.$route.query.status) {
         switch (this.$route.query.status.toLowerCase()) {
+          case "pending":
           case "allocated":
           case "ongoing":
           case "declined":

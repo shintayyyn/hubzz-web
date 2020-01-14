@@ -16,6 +16,9 @@ export default () => ({
     practice_allocated_job_parts: [],
     practice_allocated_job_parts_count: 0,
     // WHOLE
+    practice_pending_jobs: [],
+    practice_pending_jobs_count: 0,
+    
     practice_allocated_jobs: [],
     practice_allocated_jobs_count: 0,
 
