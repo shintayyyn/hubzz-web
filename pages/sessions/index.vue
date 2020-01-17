@@ -1,24 +1,24 @@
 <template>
   <section class="relative">
+    <div
+      class="flex flex-row justify-start overflow-x-auto pb-3"
+      v-if="$route.query.status && $route.query.status.toLowerCase() === 'applied'"
+    >
+      <nuxt-link
+        :event="$store.state.jobs.loading_jobs ? '' : 'click'"
+        :to="'/sessions?status=Applied&bank=false'"
+        class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+        :class="$route.query.status && $route.query.status.toLowerCase() === 'applied' && (!$route.query.bank || $route.query.bank && $route.query.bank === 'false') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+      >Non-Bank</nuxt-link>
+      <nuxt-link
+        :event="$store.state.jobs.loading_jobs ? '' : 'click'"
+        :to="'/sessions?status=Applied&bank=true'"
+        class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+        :class="$route.query.status && $route.query.status.toLowerCase() === 'applied' && $route.query.bank && $route.query.bank === 'true' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+      >My Bank</nuxt-link>
+    </div>
     <transition name="fade" mode="out-in">
       <div v-if="showTable">
-        <div
-          class="flex flex-row justify-start overflow-x-auto pb-3"
-          v-if="$route.query.status && $route.query.status.toLowerCase() === 'applied'"
-        >
-          <nuxt-link
-            :event="$store.state.jobs.loading_jobs ? '' : 'click'"
-            :to="'/sessions?status=Applied&bank=false'"
-            class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-            :class="$route.query.status && $route.query.status.toLowerCase() === 'applied' && (!$route.query.bank || $route.query.bank && $route.query.bank === 'false') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-          >Non-Bank</nuxt-link>
-          <nuxt-link
-            :event="$store.state.jobs.loading_jobs ? '' : 'click'"
-            :to="'/sessions?status=Applied&bank=true'"
-            class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-            :class="$route.query.status && $route.query.status.toLowerCase() === 'applied' && $route.query.bank && $route.query.bank === 'true' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-          >My Bank</nuxt-link>
-        </div>
         <div class="flex">
           <AppButton
             class="mr-2"
@@ -450,7 +450,7 @@ export default {
       if (
         !this.$route.query.status ||
         (this.$route.query.status &&
-          !["pending","ongoing", "completed", "approved"].includes(
+          !["pending", "ongoing", "completed", "approved"].includes(
             this.$route.query.status.toLowerCase()
           ))
       ) {
@@ -972,6 +972,8 @@ export default {
   methods: {
     getJobsPromiseAll() {
       let queryStatus = this.$route.query.status;
+      let bankStatus = this.$route.query.bank;
+      let has_favorite_applicants = false;
       let status = [];
       if (!queryStatus) {
         status = ["Allocated"];
@@ -979,6 +981,13 @@ export default {
         status = ["Available", "Matched"];
       } else if (queryStatus && queryStatus === "Completed") {
         status = ["Completed", "Terminated"];
+      } else if (
+        queryStatus &&
+        queryStatus === "Applied" &&
+        bankStatus === "true"
+      ) {
+        has_favorite_applicants = true;
+        status = ["Applied"];
       } else if (
         queryStatus &&
         queryStatus !== "Available" &&
@@ -993,7 +1002,8 @@ export default {
           {
             params: {
               status,
-              ...(this.isJobPart ? this.jobPartParams : this.params)
+              ...(this.isJobPart ? this.jobPartParams : this.params),
+              has_favorite_applicants
             }
           }
         ),
@@ -1002,13 +1012,12 @@ export default {
           {
             params: {
               status,
-              ...(this.isJobPart ? this.jobPartParams : this.params)
+              ...(this.isJobPart ? this.jobPartParams : this.params),
+              has_favorite_applicants
             }
           }
         )
       ]).then(([responseCount, responseJobs]) => {
-        console.log(responseCount);
-        console.log(queryStatus);
         if (
           queryStatus &&
           ["ongoing", "completed", "approved"].includes(

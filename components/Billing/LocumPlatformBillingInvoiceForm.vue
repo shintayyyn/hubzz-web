@@ -355,13 +355,6 @@ export default {
           job_part_id: this.propInvoice.items[0].job_part.id,
           description: this.propInvoice.items[0].description,
           total: this.propInvoice.items[0].total.toFixed(2),
-          // this.propInvoice.items[0].job_part.job.locum_detail_rate_type
-          //   .name === "Per Hour"
-          //   ? this.propInvoice.items[0].job_part.job.rate *
-          //     this.propInvoice.items[0].job_part.final_hours
-          //   : (this.propInvoice.items[0].job_part.job.rate /
-          //       this.propInvoice.items[0].job_part.job.total_hours) *
-          //     this.propInvoice.items[0].job_part.final_hours,
           dispute: this.propInvoice.items[0].disputed,
           absent_days: this.propInvoice.items[0].absent_days,
           final_hours: this.propInvoice.items[0].final_hours,
@@ -370,13 +363,6 @@ export default {
         }
       ];
       this.form.total_amount = this.propInvoice.total_amount.toFixed(2);
-      // this.propInvoice.items[0].job_part.job.locum_detail_rate_type.name ===
-      // "Per Hour"
-      //   ? this.propInvoice.items[0].job_part.job.rate *
-      //     this.propInvoice.items[0].job_part.final_hours
-      //   : (this.propInvoice.items[0].job_part.job.rate /
-      //       this.propInvoice.items[0].job_part.job.total_hours) *
-      //     this.propInvoice.items[0].job_part.final_hours;
       this.form.final = false;
       this.form.ir35 = this.propInvoice.ir35;
     }
@@ -386,7 +372,7 @@ export default {
       this.formError = [];
       this.Validate(this.form, ["final", "ir35"]);
       if (!this.formError.length) {
-        // this.saveLoading = true;
+        this.saveLoading = true;
         if (this.propJobPart && !this.propInvoice) {
           if (
             this.form.items &&
@@ -401,7 +387,6 @@ export default {
             this.form.items[0].remarks = "";
           }
           this.form.final = final;
-          console.log(this.form);
           this.$axios
             .$post(`/api/v1/locum/locum-invoices`, this.form)
             .then(res => {
@@ -438,26 +423,10 @@ export default {
             this.form.items.length > 0 &&
             this.form.items[0].dispute === false
           ) {
-            // let lastDisputeByPractice = this.$moment(
-            //   this.propInvoice.items[0].disputed_by_locum_at
-            // ).diff(
-            //   this.propInvoice.items[0].disputed_by_practice_at,
-            //   "seconds"
-            // );
-            // console.log(lastDisputeByPractice);
-            // if (lastDisputeByPractice < 0) {
-            // console.log("a");
             this.form.items[0].absent_days = this.propInvoice.items[0].absent_days;
             this.form.items[0].late_hours = this.propInvoice.items[0].late_hours;
             this.form.items[0].final_hours = this.propInvoice.items[0].final_hours;
             this.form.items[0].remarks = "";
-            // } else {
-            //   console.log("b");
-            //   this.form.items[0].absent_days = this.propInvoice.items[0].absent_days;
-            //   this.form.items[0].late_hours = this.propInvoice.items[0].late_hours;
-            //   this.form.items[0].final_hours = this.propInvoice.items[0].final_hours;
-            //   this.form.items[0].remarks = "";
-            // }
           }
           this.form.final = final;
           console.log(this.form);
@@ -509,13 +478,6 @@ export default {
       return false;
     },
     viewAsPdf(invoiceId) {
-      // this.$axios
-      //   .$post(`/api/v1/locum/locum-invoice-forms`, {
-      //     locum_invoice_id: invoiceId
-      //   })
-      //   .then(res => {
-      //     console.log(res);
-      //   });
       window.open(
         `${process.env.API_URL}/api/v1/locum-invoices/${invoiceId}/pdf`
       );

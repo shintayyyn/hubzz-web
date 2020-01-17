@@ -39,16 +39,24 @@
             <AppLoading spinner :loading="input_file_loading" />
             <div class="flex flex-col">
               <div class="pb-2">
-                <input type="radio" name="standard_terms" id="use_standard_terms" v-model="form.use_variation_terms" :value="false" />
-                <label for="use_standard_terms">
-                  Use Standard Terms with Locum
-                </label>
+                <input
+                  type="radio"
+                  name="standard_terms"
+                  id="use_standard_terms"
+                  v-model="form.use_variation_terms"
+                  :value="false"
+                />
+                <label for="use_standard_terms">Use Standard Terms with Locum</label>
               </div>
               <div class="pb-2">
-                <input type="radio" name="standard_terms" id="variation_terms_file" v-model="form.use_variation_terms" :value="true" />
-                <label for="variation_terms_file">
-                  Use Variation to Standard Terms
-                </label>
+                <input
+                  type="radio"
+                  name="standard_terms"
+                  id="variation_terms_file"
+                  v-model="form.use_variation_terms"
+                  :value="true"
+                />
+                <label for="variation_terms_file">Use Variation to Standard Terms</label>
               </div>
               <!-- <AppInput
                 v-model="form.use_standard_terms"
@@ -91,9 +99,7 @@
                     </div>
                   </div>
                   <div class="bg-gray-300 rounded-lg px-4 py-2" v-if="!input_file_loading">
-                    <div
-                      class="flex flex-no-wrap justify-between items-center"
-                    >
+                    <div class="flex flex-no-wrap justify-between items-center">
                       <div
                         class="text-xs sm:text-sm document-filename"
                       >{{ practice.variation_terms_file && practice.variation_terms_file.filename ? practice.variation_terms_file.filename : 'Upload File' }}</div>
@@ -206,14 +212,14 @@
             </div>
             <div class="flex flex-col w-full md:w-1/2 px-2">
               <AppInput
-                v-model="vat_registered"
+                v-model="form.vat_registered"
                 :type="'single-checkbox'"
                 :name="'vat_registered'"
                 :label="'Are you a VAT registered?'"
               />
-              <template v-if="vat_registered">
+              <template v-if="form.vat_registered">
                 <AppInput
-                  v-model="vat_number"
+                  v-model="form.vat_number"
                   :type="'text'"
                   :name="'vat_number'"
                   :label="'VAT Number'"
@@ -293,7 +299,9 @@ export default {
         mandatory_training_id: [],
         gp_compliance_document_id: [],
         others_compliance_document_id: [],
-        use_variation_terms: false
+        use_variation_terms: false,
+        vat_registered: false,
+        vat_number: null
       },
       name: "",
       formError: []
