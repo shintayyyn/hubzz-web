@@ -2,19 +2,16 @@
   <section class="billing-section">
     <div class="flex flex-row justify-start overflow-x-auto py-3">
       <nuxt-link
-        v-if="practice_surgery.allow_surgery_bill_locum === false"
         :to="{ path: `/surgery-management/practice-spokes/${$route.params.id}/surgery-billings` }"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
         :class="$route.name === 'surgery-management-practice-spokes-id-surgery-billings-index' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >Invoices from Locums</nuxt-link>
       <nuxt-link
-        v-if="practice_surgery.allow_surgery_bill_locum === false"
         :to="{ path: `/surgery-management/practice-spokes/${$route.params.id}/surgery-billings/pension-forms-from-locums` }"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
         :class="$route.name.includes('surgery-management-practice-spokes-id-surgery-billings-pension-forms-from-locums') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >Pension forms from Locums</nuxt-link>
       <nuxt-link
-        v-if="practice_surgery.allow_surgery_bill_hubzz === false"
         :to="{ path: `/surgery-management/practice-spokes/${$route.params.id}/surgery-billings/invoices-from-hubzz` }"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
         :class="$route.name.includes('surgery-management-practice-spokes-id-surgery-billings-invoices-from-hubzz') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
