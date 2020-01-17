@@ -39,54 +39,83 @@
           @click="refreshInvoices"
           :inStyle="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
         />
-        <AppTable
-          v-if="job_parts.length > 0"
-          :total="total"
-          :items="job_parts"
-          :currentPage="current_page"
-          :perPage="params.limit"
-          :columns="columns"
-          :orderBy="params.order_by"
-          @pagechanged="pagechanged"
-          @limitchanged="limitchanged"
-          @sorted="sorted"
+
+        <template
+          v-if="(!$route.query.status || ($route.query.status && $route.query.status !== 'pension-form-b'))"
         >
-          <template v-slot:actions="slotProps">
-            <div class="flex flex-row flex-wrap">
-              <div
-                @click="$router.push({ path: `/locum-billing/private-invoices/${slotProps.item.id}/create`, query: {...$route.query }})"
-                v-if="!slotProps.item.locum_invoice_id"
-                class="m-1 px-4 py-2 bg-green-700 text-white font-bold rounded-lg focus:outline-none"
-              >Generate Invoice</div>
-              <div
-                @click="$router.push({ name: `locum-billing-private-invoices-id-edit`, params: { id: slotProps.item.locum_invoice_id }, query: {...$route.query }})"
-                v-if="slotProps.item.locum_invoice_id && !slotProps.item.locum_form_a_id"
-                class="m-1 px-4 py-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
-              >Edit</div>
-              <button
-                @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id, 'deleteInvoice')"
-                v-if="slotProps.item.locum_invoice_id && !slotProps.item.locum_form_a_id"
-                class="m-1 px-4 py-2 bg-red-700 text-white font-bold rounded-lg focus:outline-none"
-              >Delete</button>
-              <div
-                v-if="slotProps.item.locum_invoice_id && slotProps.item.status === 'Completed' && !slotProps.item.locum_form_a_id"
-                @click="select_invoice(slotProps.item.locum_invoice_id, 'generateFormA')"
-                class="m-1 px-4 py-2 bg-yellow-400 font-bold rounded-lg focus:outline-none"
-              >Generate Form A</div>
-              <div
-                @click="viewAsPdf(slotProps.item.locum_form_a_id, 'form-a')"
-                v-if="slotProps.item.locum_invoice_id && slotProps.item.status === 'Completed' && slotProps.item.locum_form_a_id"
-                class="m-1 px-4 py-2 bg-yellow-400 font-bold rounded-lg focus:outline-none"
-              >View NHS Form A</div>
-              <button
-                @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id, 'markAsPaid')"
-                v-if="slotProps.item.status === 'Completed' && slotProps.item.locum_invoice_id && !slotProps.item.locum_invoice_item.locum_invoice.paid_at"
-                class="m-1 px-4 py-2 bg-yellow-400 font-bold rounded-lg focus:outline-none w-full"
-              >Mark as Paid</button>
-            </div>
-          </template>
-        </AppTable>
-        <div v-else class="flex justify-center">{{noJobPartsToDisplay}}</div>
+          <AppTable
+            v-if="job_parts.length > 0"
+            :total="total"
+            :items="job_parts"
+            :currentPage="current_page"
+            :perPage="params.limit"
+            :columns="columns"
+            :orderBy="params.order_by"
+            @pagechanged="pagechanged"
+            @limitchanged="limitchanged"
+            @sorted="sorted"
+          >
+            <template v-slot:actions="slotProps">
+              <div class="flex flex-row flex-wrap">
+                <div
+                  @click="$router.push({ path: `/locum-billing/private-invoices/${slotProps.item.id}/create`, query: {...$route.query }})"
+                  v-if="!slotProps.item.locum_invoice_id"
+                  class="m-1 px-4 py-2 bg-green-700 text-white font-bold rounded-lg focus:outline-none"
+                >Generate Invoice</div>
+                <div
+                  @click="$router.push({ name: `locum-billing-private-invoices-id-edit`, params: { id: slotProps.item.locum_invoice_id }, query: {...$route.query }})"
+                  v-if="slotProps.item.locum_invoice_id && !slotProps.item.locum_form_a_id"
+                  class="m-1 px-4 py-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
+                >Edit</div>
+                <button
+                  @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id, 'deleteInvoice')"
+                  v-if="slotProps.item.locum_invoice_id && !slotProps.item.locum_form_a_id"
+                  class="m-1 px-4 py-2 bg-red-700 text-white font-bold rounded-lg focus:outline-none"
+                >Delete</button>
+                <div
+                  v-if="slotProps.item.locum_invoice_id && slotProps.item.status === 'Completed' && !slotProps.item.locum_form_a_id"
+                  @click="select_invoice(slotProps.item.locum_invoice_id, 'generateFormA')"
+                  class="m-1 px-4 py-2 bg-yellow-400 font-bold rounded-lg focus:outline-none"
+                >Generate Form A</div>
+                <div
+                  @click="viewAsPdf(slotProps.item.locum_form_a_id, 'form-a')"
+                  v-if="slotProps.item.locum_invoice_id && slotProps.item.status === 'Completed' && slotProps.item.locum_form_a_id"
+                  class="m-1 px-4 py-2 bg-yellow-400 font-bold rounded-lg focus:outline-none"
+                >View NHS Form A</div>
+                <button
+                  @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id, 'markAsPaid')"
+                  v-if="slotProps.item.status === 'Completed' && slotProps.item.locum_invoice_id && !slotProps.item.locum_invoice_item.locum_invoice.paid_at"
+                  class="m-1 px-4 py-2 bg-yellow-400 font-bold rounded-lg focus:outline-none w-full"
+                >Mark as Paid</button>
+              </div>
+            </template>
+          </AppTable>
+          <div v-else class="flex justify-center">{{noJobPartsToDisplay}}</div>
+        </template>
+        <template v-if="($route.query.status && $route.query.status === 'pension-form-b')">
+          <AppTable
+            v-if="locum_form_bs.length > 0"
+            :total="total"
+            :items="locum_form_bs"
+            :currentPage="current_page"
+            :perPage="params.limit"
+            :columns="form_bs_columns"
+            :orderBy="params.order_by"
+            @pagechanged="pagechanged"
+            @limitchanged="limitchanged"
+            @sorted="sorted"
+          >
+            <template v-slot:actions="slotProps">
+              <div class="flex justify-center">
+                <div
+                  @click="viewAsPdf(slotProps.item.id, 'form-b')"
+                  class="mx-1 px-4 py-2 bg-yellow-400 font-bold rounded-lg focus:outline-none"
+                >View NHS Form B</div>
+              </div>
+            </template>
+          </AppTable>
+          <div v-if="locum_form_bs.length === 0" class="flex justify-center">{{noJobPartsToDisplay}}</div>
+        </template>
       </div>
     </transition>
 
@@ -340,38 +369,48 @@ export default {
   },
   async asyncData({ app, query, error }) {
     try {
-      let locum_status = [];
-      let invoice_status = [];
+      let url = `/api/v1/locum/job-parts`;
+      let params = null;
       let queryStatus = query.status;
 
       switch (queryStatus && queryStatus.toLowerCase()) {
         case "to-be-invoiced":
-          locum_status = ["Completed", "Terminated"];
-          invoice_status = ["To Be Invoice"];
-          break;
-        case "disputed":
-          locum_status = ["Completed", "Terminated"];
-          invoice_status = ["Disputed"];
+          params = {
+            locum_status: ["Completed", "Terminated"],
+            invoice_status: ["To Be Invoice"],
+            job_type: "Private"
+          };
           break;
         case "issued":
-          locum_status = ["Completed", "Terminated"];
-          invoice_status = ["Invoiced"];
+          params = {
+            locum_status: ["Approved"],
+            invoice_status: ["Invoiced"],
+            job_type: "Private"
+          };
           break;
-        case "approved":
-          locum_status = ["Approved"];
-          invoice_status = [];
+        case "pension-form-a":
+          params = {
+            locum_status: ["Approved"],
+            invoice_status: [],
+            // can_generate_form_b: true,
+            job_type: "Private"
+          };
+          break;
+        case "pension-form-b":
+          params = {
+            type: "Private"
+          };
+          url = `/api/v1/locum/locum-invoices-form-b`;
           break;
         default:
-          locum_status = ["Completed", "Terminated"];
-          invoice_status = ["To Be Invoice"];
+          params = {
+            locum_status: ["Completed", "Terminated"],
+            invoice_status: ["To Be Invoice"],
+            job_type: "Private"
+          };
       }
 
-      const params = {
-        locum_status,
-        invoice_status,
-        job_type: "Private"
-      };
-
+      let locum_form_bs = [];
       let [total, job_parts] = await Promise.all([
         app.$axios
           .$get(`/api/v1/locum/job-parts/count`, { params })
@@ -382,38 +421,53 @@ export default {
         app.$axios
           .$get(`/api/v1/locum/job-parts?offset=0&limit=5`, { params })
           .then(res => {
-            const job_parts = res.data.job_parts;
-            return job_parts;
+            let job_parts = null;
+            let locum_form_bs = null;
+            if (res.data && res.data.job_parts) {
+              return res.data.job_parts;
+            } else if (res.data && res.data.locum_form_bs) {
+              return res.data.locum_form_bs;
+            }
+            // const job_parts = res.data.job_parts;
+            // return job_parts;
           })
       ]);
 
-      job_parts = job_parts.map(jobPart => {
-        return {
-          ...jobPart,
-          practice_name:
-            jobPart.job.type === "Platform"
-              ? jobPart.job.platform_job.practice.name
-              : jobPart.job.private_job.private_practice.name,
-          issued_at: jobPart.locum_invoice_id
-            ? jobPart.locum_invoice_item.locum_invoice.issued_at
-            : null,
-          invoice_number: jobPart.locum_invoice_id
-            ? jobPart.locum_invoice_item.locum_invoice.invoice_number
-            : null,
-          total_amount: jobPart.locum_invoice_item
-            ? jobPart.locum_invoice_item.total
-            : jobPart.job.locum_detail_rate_type.name === "Per Hour"
-            ? jobPart.final_hours * jobPart.job.rate
-            : jobPart.job.rate
-        };
-      });
+      // ! for the meantime
+      if (url === `/api/v1/locum/job-parts`) {
+        job_parts = job_parts.map(jobPart => {
+          return {
+            ...jobPart,
+            practice_name:
+              jobPart.job.type === "Platform"
+                ? jobPart.job.platform_job.practice.name
+                : jobPart.job.private_job.private_practice.name,
+            issued_at: jobPart.locum_invoice_id
+              ? jobPart.locum_invoice_item.locum_invoice.issued_at
+              : null,
+            invoice_number: jobPart.locum_invoice_id
+              ? jobPart.locum_invoice_item.locum_invoice.invoice_number
+              : null,
+            total_amount: jobPart.locum_invoice_item
+              ? jobPart.locum_invoice_item.total
+              : jobPart.job.locum_detail_rate_type.name === "Per Hour"
+              ? jobPart.final_hours * jobPart.job.rate
+              : jobPart.job.rate
+          };
+        });
+      } else if (url === `/api/v1/locum/locum-invoices-form-b`) {
+        job_parts.forEach(item => {
+          locum_form_bs.push(item);
+        });
+      }
 
       const showTable = true;
 
       return {
         showTable,
         total,
-        job_parts
+        job_parts,
+        locum_form_bs
       };
     } catch (err) {
       console.log("err", err.response || err);

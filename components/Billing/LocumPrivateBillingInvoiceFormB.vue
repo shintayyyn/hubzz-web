@@ -202,7 +202,7 @@ export default {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
-              text: [`${err.response.data.message}`]
+              text: [`${res.data.message}`]
             });
             this.$emit("createFormB", res.data.locum_invoice_form_b);
           })
@@ -310,7 +310,7 @@ export default {
     },
     getJobParts() {
       const params = {
-        locum_status: ["Completed"],
+        locum_status: ["Approved"],
         can_generate_form_b: true,
         job_type: "Private",
         job_private_practice_id: [this.practice.value]
