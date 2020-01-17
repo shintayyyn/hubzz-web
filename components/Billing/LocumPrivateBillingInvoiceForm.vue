@@ -3,6 +3,7 @@
     <div class="flex flex-col md:flex-row justify-between">
       <div class="flex flex-wrap items-center">
         <AppButton
+          v-if="propJobPart || (propInvoice && propInvoice.status !== 'Approved')"
           class="m-1"
           :label="'Save changes'"
           @click="save(false)"
@@ -10,6 +11,7 @@
           :disabled="saveLoading || exportLoading"
         />
         <AppButton
+          v-if="propJobPart || (propInvoice && propInvoice.issued === false)"
           class="m-1"
           :label="'Save and archive as final'"
           @click="save(true)"
@@ -17,11 +19,11 @@
           :disabled="saveLoading || exportLoading"
         />
         <AppButton
+          v-if="propInvoice && !propJobPart && propInvoice.status !== 'Draft'"
           class="m-1"
-          :label="'Export to PDF'"
-          @click="exportToPdf()"
+          :label="'View as PDF'"
+          @click="viewAsPdf(propInvoice.id)"
           :inStyle="'padding:5px 14px;font-size:1em'"
-          :disabled="saveLoading || exportLoading"
         />
       </div>
 
@@ -163,12 +165,32 @@
       </div>
 
       <div :ref="'pdf-footer'" class="rounded-lg border-2 border-gray-300 mt-4 p-4">
+        <div
+          class="flex flex-col text-xs sm:text-sm"
+          v-if="propInvoiceDetail.paid_under_payroll && propInvoiceDetail.payroll_detail"
+        >
+          <div>Payment by BACS: xxxxx</div>
+          <div>Account name: {{propInvoiceDetail.payroll_detail.account_name ? propInvoiceDetail.payroll_detail.account_name : 'xxxxx'}}</div>
+          <div>Bank: {{propInvoiceDetail.payroll_detail.bank_name ? propInvoiceDetail.payroll_detail.bank_name : 'xxxxx'}}</div>
+          <div>Sort code: {{propInvoiceDetail.payroll_detail.sort_code ? propInvoiceDetail.payroll_detail.sort_code : 'xxxxx'}}</div>
+          <div>Account number: {{propInvoiceDetail.payroll_detail.account_number ? propInvoiceDetail.payroll_detail.account_number : 'xxxxx*OR'}}</div>
+        </div>
+        <div
+          class="flex flex-col text-xs sm:text-sm"
+          v-if="!propInvoiceDetail.paid_under_payroll && propInvoiceDetail.bank_account"
+        >
+          <div>Payment by BACS: xxxxx</div>
+          <div>Account name: {{propInvoiceDetail.bank_account.account_name ? propInvoiceDetail.bank_account.account_name : 'xxxxx'}}</div>
+          <div>Bank: {{propInvoiceDetail.bank_account.bank_name ? propInvoiceDetail.bank_account.bank_name : 'xxxxx'}}</div>
+          <div>Sort code: {{propInvoiceDetail.bank_account.sort_code ? propInvoiceDetail.bank_account.sort_code : 'xxxxx'}}</div>
+          <div>Account number: {{propInvoiceDetail.bank_account.account_number ? propInvoiceDetail.bank_account.account_number : 'xxxxx*OR'}}</div>
+        </div>
         <div class="flex flex-col text-xs sm:text-sm">
-          <div>Payment by BACS:</div>
-          <div>Account name: Rick Sanchez</div>
-          <div>Bank: citadel of Ricks Mutiversal Bank</div>
-          <div>Sort code: 13</div>
-          <div>Account number: 7337#4*OR</div>
+          <div>Payment by BACS: xxxxx</div>
+          <div>Account name: xxxx</div>
+          <div>Bank: xxxx</div>
+          <div>Sort code: xxxx</div>
+          <div>Account number: xxx</div>
         </div>
       </div>
     </div>
@@ -179,18 +201,17 @@ import AppLoading from "@/components/Base/AppLoading";
 import AppButton from "@/components/Base/AppButton";
 import AppDate from "@/components/Base/AppDate";
 import AppInput from "@/components/Base/AppInput";
-import AppFilterSearch from "@/components/Base/AppFilterSearch";
-// import { mixin as clickaway } from "vue-clickaway";
 export default {
-  // mixins: [clickaway],
   components: {
     AppLoading,
     AppButton,
     AppDate,
-    AppInput,
-    AppFilterSearch
+    AppInput
   },
   props: {
+    propInvoiceDetail: {
+      type: Object
+    },
     propInvoice: {
       type: Object
     },
@@ -214,34 +235,58 @@ export default {
       formError: []
     };
   },
+  computed: {
+    description() {
+      if (this.propJobPart && !this.propInvoice) {
+        return `Job number ${this.propJobPart.job_part_number} ${
+          this.propJobPart.job.type
+        }
+          Job at £${this.propJobPart.job.rate} ${
+          this.propJobPart.job.locum_detail_rate_type.name
+        }
+          from ${this.propJobPart.date_start} to ${this.propJobPart.date_end}
+          / ${this.propJobPart.job.shift.name} / Total hours of ${
+          this.form.items.length > 0 ? this.form.items[0].final_hours : 0
+        }`;
+      }
+    }
+  },
   mounted() {
     if (this.propJobPart && !this.propInvoice) {
       this.form.type = this.propJobPart.job.type;
       this.form.private_practice_id = this.propJobPart.job.private_practice_id;
-      this.form.date_start = null;
-      this.form.date_end = null;
+      this.form.date_start = this.propJobPart.date_start;
+      this.form.date_end = this.propJobPart.date_end;
+
+      let total =
+        this.propJobPart.job.locum_detail_rate_type.name === "Per Hour"
+          ? this.propJobPart.job.rate * this.propJobPart.final_hours
+          : (this.propJobPart.job.rate / this.propJobPart.job.total_hours) *
+            this.propJobPart.final_hours;
 
       this.form.items = [
         {
           type: "Job Part",
           job_part_id: this.propJobPart.id,
-          description: `Job number ${this.propJobPart.job_part_number} ${this.propJobPart.job.type} Job at £${this.propJobPart.job.rate} ${this.propJobPart.job.locum_detail_rate_type.name} from ${this.propJobPart.date_start} to ${this.propJobPart.date_end} / ${this.propJobPart.job.shift.name} / Total hours of ${this.propJobPart.final_hours}`,
-          total:
-            this.propJobPart.job.locum_detail_rate_type.name === "Per Hour"
-              ? this.propJobPart.final_hours * this.propJobPart.job.rate
-              : this.propJobPart.job.rate,
+          description: `Job number ${this.propJobPart.job_part_number} ${
+            this.propJobPart.job.type
+          } Job at £${this.propJobPart.job.rate} ${
+            this.propJobPart.job.locum_detail_rate_type.name
+          } from ${this.propJobPart.date_start} to ${
+            this.propJobPart.date_end
+          } / ${
+            this.propJobPart.job.shift.name
+          } / Total hours of ${this.propJobPart.final_hours.toFixed(2)}`,
+          total: total.toFixed(2),
           dispute: this.propJobPart.disputed,
           absent_days: this.propJobPart.absent_days,
-          final_hours: this.propJobPart.final_hours,
+          final_hours: this.propJobPart.final_hours.toFixed(2),
           late_hours: this.propJobPart.late_hours,
           remarks: ""
         }
       ];
 
-      this.form.total_amount =
-        this.propJobPart.job.locum_detail_rate_type.name === "Per Hour"
-          ? this.propJobPart.final_hours * this.propJobPart.job.rate
-          : this.propJobPart.job.rate;
+      this.form.total_amount = total.toFixed(2);
       this.form.final = false;
       this.form.ir35 = false;
     }
@@ -256,7 +301,7 @@ export default {
           type: "Job Part",
           job_part_id: this.propInvoice.items[0].job_part.id,
           description: this.propInvoice.items[0].description,
-          total: this.propInvoice.items[0].total,
+          total: this.propInvoice.items[0].total.toFixed(2),
           dispute: this.propInvoice.items[0].disputed,
           absent_days: this.propInvoice.items[0].absent_days,
           final_hours: this.propInvoice.items[0].final_hours,
@@ -264,7 +309,7 @@ export default {
           remarks: this.propInvoice.items[0].remarks
         }
       ];
-      this.form.total_amount = this.propInvoice.total_amount;
+      this.form.total_amount = this.propInvoice.total_amount.toFixed(2);
       this.form.final = false;
       this.form.ir35 = this.propInvoice.ir35;
     }
@@ -309,20 +354,10 @@ export default {
               this.saveLoading = false;
             });
         } else if (this.propInvoice && !this.propJobPart) {
-          if (
-            this.form.items &&
-            this.form.items.length > 0 &&
-            this.form.items[0].dispute === false
-          ) {
-            this.form.items[0].absent_days = this.propInvoice.items[0].job_part.absent_days;
-            this.form.items[0].late_hours = this.propInvoice.items[0].job_part.late_hours;
-            this.form.items[0].final_hours = this.propInvoice.items[0].job_part.final_hours;
-            this.form.items[0].remarks = "";
-          }
           this.form.final = final;
           this.$axios
             .$put(
-              `/api/v1/locum/locum-invoices/${this.$route.params.invoice_id}`,
+              `/api/v1/locum/locum-invoices/${this.$route.params.id}`,
               this.form
             )
             .then(res => {
@@ -355,6 +390,11 @@ export default {
             });
         }
       }
+    },
+    viewAsPdf(invoiceId) {
+      window.open(
+        `${process.env.API_URL}/api/v1/locum-invoices/${invoiceId}/pdf`
+      );
     },
     async exportToPdf() {
       this.exportLoading = true;

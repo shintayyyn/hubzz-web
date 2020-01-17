@@ -50,21 +50,21 @@
                 v-if="slotProps.item.locum_invoice_id && slotProps.item.invoice_status !== 'To Be Invoice' && slotProps.item.status !== 'Approved'"
                 class="mx-1 px-4 py-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
               >Edit</div>
-              <div
+              <!-- <div
                 v-if="slotProps.item.locum_invoice_id && slotProps.item.status === 'Approved'"
                 @click="$router.push({ path: `/practice-billing/${slotProps.item.locum_invoice_id}`, query: {...$route.query} })"
                 class="mx-1 px-4 py-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
-              >View</div>
+              >View</div>-->
               <!-- <div
                 @click="$router.push({ path: `/practice-billing/${slotProps.item.locum_invoice_id}`, query: {...$route.query} })"
                 v-if="slotProps.item.status === 'Approved'"
                 class="mx-1 px-2 py-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
               >View</div>-->
-              <!-- <button
+              <button
                 @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id)"
                 v-if="slotProps.item.status === 'Approved' && !slotProps.item.locum_invoice_item.locum_invoice.paid_at"
                 class="px-2 py-2 font-bold rounded-lg focus:outline-none bg-yellow-400"
-              >Mark as Paid</button>-->
+              >Mark as Paid</button>
               <div
                 v-if="slotProps.item.status === 'Approved' && slotProps.item.locum_invoice_item.locum_invoice.paid_at"
                 class="px-2 py-2 font-bold rounded-lg focus:outline-none bg-yellow-400"
@@ -232,7 +232,8 @@ export default {
     noJobPartsToDisplay() {
       let str = "";
       switch (
-        this.$route.query.status && this.$route.query.status.toLowerCase()
+        this.$route.query.status &&
+        this.$route.query.status.toLowerCase()
       ) {
         case "to-be-invoiced":
           str = "You do not have any completed job parts from Locums";
@@ -328,6 +329,12 @@ export default {
       ]);
 
       job_parts = job_parts.map(jobPart => {
+        let total = jobPart.locum_invoice_id
+          ? jobPart.locum_invoice_item.total
+          : jobPart.job.locum_detail_rate_type.name === "Per Hour"
+          ? jobPart.job.rate * jobPart.final_hours
+          : (jobPart.job.rate / jobPart.job.total_hours) * jobPart.final_hours;
+
         return {
           ...jobPart,
           practice_name:
@@ -340,11 +347,7 @@ export default {
           invoice_number: jobPart.locum_invoice_id
             ? jobPart.locum_invoice_item.locum_invoice.invoice_number
             : null,
-          total_amount: jobPart.locum_invoice_id
-            ? jobPart.locum_invoice_item.total
-            : jobPart.job.locum_detail_rate_type.name === "Per Hour"
-            ? jobPart.job.rate * jobPart.final_hours
-            : (jobPart.job.rate / jobPart.job.total_hours) * jobPart.final_hours
+          total_amount: total.toFixed(2)
         };
       });
 
@@ -424,6 +427,13 @@ export default {
           let job_parts = responseJobParts.data.job_parts;
 
           this.job_parts = job_parts.map(jobPart => {
+            let total = jobPart.locum_invoice_id
+              ? jobPart.locum_invoice_item.total
+              : jobPart.job.locum_detail_rate_type.name === "Per Hour"
+              ? jobPart.job.rate * jobPart.final_hours
+              : (jobPart.job.rate / jobPart.job.total_hours) *
+                jobPart.final_hours;
+
             return {
               ...jobPart,
               practice_name:
@@ -436,12 +446,7 @@ export default {
               invoice_number: jobPart.locum_invoice_id
                 ? jobPart.locum_invoice_item.locum_invoice.invoice_number
                 : null,
-              total_amount: jobPart.locum_invoice_id
-                ? jobPart.locum_invoice_item.total
-                : jobPart.job.locum_detail_rate_type.name === "Per Hour"
-                ? jobPart.job.rate * jobPart.final_hours
-                : (jobPart.job.rate / jobPart.job.total_hours) *
-                  jobPart.final_hours
+              total_amount: total.toFixed(2)
             };
           });
         })

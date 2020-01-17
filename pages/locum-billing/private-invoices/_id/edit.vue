@@ -10,9 +10,10 @@
         </nuxt-link>
       </div>
       <LocumPrivateBillingInvoiceForm
+        :propInvoiceDetail="invoice_detail"
         :propInvoice="invoice"
         :propJobPart="null"
-        @updateInvoice="$emit('updateInvoice', $event), $router.push({ path: '/locum-billing/private-invoices', query: {...$route.query} })"
+        @updateInvoice="$emit('updateInvoice', $event), $router.push({ name: 'locum-billing-private-invoices', query: {...$route.query} })"
       />
     </div>
   </div>
@@ -25,37 +26,27 @@ export default {
   },
   async asyncData({ app, params, error }) {
     try {
-      const response = await app.$axios.$get(
-        `/api/v1/locum/locum-invoices/${params.invoice_id}`
-      );
+      const responseMe = await app.$axios.$get(`/api/v1/me`);
 
-      console.log(response);
+      const invoice_detail =
+        responseMe.data &&
+        responseMe.data.user &&
+        responseMe.data.user.locum_detail &&
+        responseMe.data.user.locum_detail.invoice_detail
+          ? responseMe.data.user.locum_detail.invoice_detail
+          : null;
+
+      const response = await app.$axios.$get(
+        `/api/v1/locum/locum-invoices/${params.id}`
+      );
 
       const invoice =
         response.data && response.data.locum_invoice
           ? response.data.locum_invoice
           : null;
 
-      let type = invoice.type;
-      let practice = invoice.private_practice;
-
-      let items = [];
-      items.push({
-        type: "Job Part",
-        job_part_id: invoice.items[0].job_part.id,
-        description: invoice.items[0].description,
-        total: invoice.items[0].total,
-        dispute: invoice.items[0].disputed,
-        absent_days: invoice.items[0].job_part.absent_days,
-        final_hours: invoice.items[0].job_part.final_hours,
-        late_hours: invoice.items[0].job_part.late_hours,
-        remarks: invoice.items[0].remarks
-      });
-
-      if (process.client) {
-        document.body.style.cursor = "auto";
-      }
       return {
+        invoice_detail,
         invoice
       };
     } catch (err) {
