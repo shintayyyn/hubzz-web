@@ -10,9 +10,10 @@
         </nuxt-link>
       </div>
       <LocumPrivateBillingInvoiceForm
+        :propInvoiceDetail="invoice_detail"
         :propInvoice="null"
         :propJobPart="job_part"
-        @createInvoice="$emit('createInvoice', $event), $router.push({ path: '/locum-billing/private-invoices', query: {...$route.query} })"
+        @createInvoice="$emit('createInvoice', $event), $router.push({ name: 'locum-billing-private-invoices', query: {...$route.query} })"
       />
     </div>
   </div>
@@ -25,6 +26,16 @@ export default {
   },
   async asyncData({ app, params, error }) {
     try {
+      const responseMe = await app.$axios.$get(`/api/v1/me`);
+
+      const invoice_detail =
+        responseMe.data &&
+        responseMe.data.user &&
+        responseMe.data.user.locum_detail &&
+        responseMe.data.user.locum_detail.invoice_detail
+          ? responseMe.data.user.locum_detail.invoice_detail
+          : null;
+
       const response = await app.$axios.$get(
         `/api/v1/locum/job-parts/${params.id}`
       );
@@ -33,6 +44,7 @@ export default {
         response.data && response.data.job_part ? response.data.job_part : null;
 
       return {
+        invoice_detail,
         job_part
       };
     } catch (err) {

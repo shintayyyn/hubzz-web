@@ -176,7 +176,7 @@
             :error="formError.find(item => item.field === 'update_remarks')"
             :resize="false"
           />
-          <template v-if="job.status === 'Allocated'">
+          <template v-if="['Allocated','Applied'].includes(job.status)">
             <AppInput
               v-model="form.update_accepted_until"
               :type="'select'"
@@ -876,7 +876,7 @@ export default {
         "auto_assign_at"
       ];
 
-      if (this.job.status !== "Allocated") {
+      if (!["Allocated", "Applied"].includes(this.job.status)) {
         notRequired.push("update_accepted_until");
       }
 
