@@ -11,8 +11,12 @@
           class="text-xs sm:text-sm mb-6"
           v-text="job.rate?`£ ${job.rate} ${job.locum_detail_rate_type.name}`:`(none)`"
         ></div>
+        <div class="font-bold text-sm sm:text-md">Total Hours</div>
+        <div class="text-xs sm:text-sm mb-4">{{job.total_hours}}</div>
         <div class="font-bold text-sm sm:text-md">Extra information</div>
-        <div class="text-xs sm:text-sm mb-8">{{job.platform_job.extra_information}}</div>
+        <div
+          class="text-xs sm:text-sm mb-8"
+        >{{job.platform_job.extra_information ? job.platform_job.extra_information : '(none)'}}</div>
         <div class="font-bold text-sm sm:text-md">Report to</div>
         <div class="text-xs sm:text-sm mb-8">{{job.platform_job.report_to}}</div>
         <div class="font-bold text-sm sm:text-md">Telephone number</div>
@@ -33,6 +37,42 @@
             class="text-xs sm:text-sm mb-8"
           >{{job.platform_job.appointed_to_locum.user.personal_detail.name}}</div>
         </template>
+        <!--  -->
+        <div class="font-bold text-sm sm:text-md">Is there another Dr on site?</div>
+        <div class="text-xs sm:text-sm mb-8">{{job.platform_job.is_another_doctor ? 'Yes' : 'No'}}</div>
+        <div class="font-bold text-sm sm:text-md">Is nurse support available?</div>
+        <div class="text-xs sm:text-sm mb-8">{{job.platform_job.is_nurse_available ? 'Yes' : 'No'}}</div>
+        <div class="font-bold text-sm sm:text-md">Number of patients to be seen during the session?</div>
+        <div class="text-xs sm:text-sm mb-8">{{job.platform_job.number_of_patients}}</div>
+        <div class="font-bold text-sm sm:text-md">Duration of eact appointment?</div>
+        <div class="text-xs sm:text-sm mb-8">{{job.platform_job.duration_for_each_appointment}}</div>
+        <div class="font-bold text-sm sm:text-md">Opportunity for catch up slots?</div>
+        <div
+          class="text-xs sm:text-sm mb-8"
+        >{{job.platform_job.opportunity_for_catch_up_slots ? 'Yes' : 'No'}}</div>
+        <div class="font-bold text-sm sm:text-md">Session requirements:</div>
+        <div
+          class="flex flex-col"
+          v-for="(item, index) in session_requirements"
+          :key="`${item}-${index}`"
+        >
+          <div class="text-xs sm:text-sm w-full">{{item}}</div>
+        </div>
+        <div class="text-xs sm:text-sm mb-8"></div>
+        <div class="font-bold text-sm sm:text-md">Session structure information</div>
+        <div class="text-xs sm:text-sm mb-8">{{job.platform_job.session_structure_information}}</div>
+        <div class="font-bold text-sm sm:text-md">Include Saturday</div>
+        <div class="text-xs sm:text-sm mb-8">{{job.include_saturday ? 'Yest' : 'No'}}</div>
+        <div class="font-bold text-sm sm:text-md">Include Sunday</div>
+        <div class="text-xs sm:text-sm mb-8">{{job.include_sunday ? 'Yest' : 'No'}}</div>
+        <div class="font-bold text-sm sm:text-md">Unpaid break</div>
+        <div class="text-xs sm:text-sm mb-8">{{job.platform_job.unpaid_breaks_in_minutes}}</div>
+        <div class="font-bold text-sm sm:text-md">Update Remarks</div>
+        <div
+          class="text-xs sm:text-sm mb-6"
+          v-text="job.update_remarks?job.update_remarks:`(none)`"
+        ></div>
+        <!--  -->
       </div>
       <div class="flex flex-col w-full md:w-1/2 p-0 md:pl-4">
         <div class="font-bold text-sm sm:text-md">Duration</div>
@@ -43,17 +83,21 @@
             <p>Shift</p>
           </div>
           <div class="px-1">
-            <p>{{job.date_start}} | {{job.time_start}}</p>
-            <p>{{job.date_end}} | {{job.time_end}}</p>
+            <p>{{$moment(job.date_start, 'YYYY-MM-DD').format('DD-MM-YYYY')}} | {{job.time_start}}</p>
+            <p>{{$moment(job.date_end, 'YYYY-MM-DD').format('DD-MM-YYYY')}} | {{job.time_end}}</p>
             <p>{{job.shift.name}}</p>
           </div>
         </div>
-        <div class="font-bold text-sm sm:text-md">Total Hours</div>
-        <div class="text-xs sm:text-sm mb-4">{{job.total_hours}}</div>
+
+        <div class="font-bold text-sm sm:text-md" v-if="job.selection_date">Selection Date</div>
+        <div
+          v-if="job.selection_date"
+          class="text-xs sm:text-sm mb-4"
+        >{{$moment(job.selection_date, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('DD-MM-YYYY')}} | {{$moment(job.selection_date, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('HH:mm')}}</div>
 
         <div
           class="font-bold text-sm sm:text-md"
-        >Auto-assigns this job to the first, matching Favourite applicant</div>
+        >Auto-assigns this job to the first matching applicant</div>
         <div
           class="text-xs sm:text-sm mb-8"
           v-if="job.platform_job.auto_assign_at"
@@ -115,36 +159,19 @@
         </div>
       </div>
     </div>
-    <!-- <div class="flex flex-col">
-			<div class="font-bold text-xs sm:text-sm">Practice</div>
-			<div
-				class="font-bold text-sm sm:text-md"
-			>{{job.platform_job ? job.platform_job.practice.surgery.name :null}}</div>
-			<div
-				class="text-sm sm:text-md"
-			>{{job.platform_job.practice.surgery.address.line_1}} {{job.platform_job.practice.surgery.address.line_2}} {{job.platform_job.practice.surgery.address.line_3}} {{job.platform_job.practice.surgery.address.post_code}}</div>
-			<div class="mt-4">
-				<GmapMap
-					:center="{lat:latLang.y, lng:latLang.x}"
-					:zoom="15"
-					map-type-id="terrain"
-					style="width: 100%; height:300px"
-				>
-					<GmapMarker :position="google && new google.maps.LatLng(latLang.y, latLang.x)" />
-				</GmapMap>
-			</div>
-    </div>-->
   </div>
 </template>
 <script>
 import { gmapApi } from "vue2-google-maps";
 export default {
   props: ["job"],
-  created() {},
   computed: {
     google: gmapApi,
     latLang() {
       return this.job.platform_job.practice.surgery.address.coordinates;
+    },
+    session_requirements() {
+      return this.job.platform_job.session_requirements.split(",");
     }
   }
 };

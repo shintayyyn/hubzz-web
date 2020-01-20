@@ -932,6 +932,10 @@ export default {
       this.getDeclinedJobsRealTime
     );
     this.$socket.on(
+      "Locum Notification Job Terminated",
+      this.getTerminatedJobsRealTime
+    );
+    this.$socket.on(
       "Locum Notification Job Auto Declined",
       this.getAutoDeclinedJobsRealTime
     );
@@ -1312,6 +1316,17 @@ export default {
         this.showRefresh = true;
       }
     },
+    async getTerminatedJobsRealTime(job) {
+      if (!job) {
+        return;
+      }
+      if (
+        this.$route.path.includes("/jobs") &&
+        this.$route.query.status === "Ongoing"
+      ) {
+        this.showRefresh = true;
+      }
+    },
     async getAutoDeclinedJobsRealTime(job) {
       if (!job) {
         return;
@@ -1415,6 +1430,10 @@ export default {
       this.$socket.removeListener(
         "Locum Notification Job Declined",
         this.getDeclinedJobsRealTime
+      );
+      this.$socket.removeListener(
+        "Locum Notification Job Terminated",
+        this.getTerminatedJobsRealTime
       );
       this.$socket.removeListener(
         "Locum Notification Job Auto Declined",

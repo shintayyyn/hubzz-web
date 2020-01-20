@@ -282,7 +282,7 @@ export default {
         this.getJobsRealTime
       );
       this.$socket.on(
-        "Practice Notification Job Applied",
+        "Practice Notification Job Application",
         this.getJobsRealTime
       );
       this.$socket.on(
@@ -407,7 +407,7 @@ export default {
           this.getJobsRealTime
         );
         this.$socket.removeListener(
-          "Practice Notification Job Applied",
+          "Practice Notification Job Application",
           this.getJobsRealTime
         );
         this.$socket.removeListener(

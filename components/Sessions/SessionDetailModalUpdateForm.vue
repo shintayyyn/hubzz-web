@@ -583,7 +583,7 @@ export default {
         locum_detail_rate_type_id: 1,
         ir35: false,
         mandatory_training_id: [],
-        profession_id: "",
+        profession_id: null,
         qualification_id: [],
         clinical_system_id: [],
         spoken_language_id: [],
@@ -607,20 +607,21 @@ export default {
     };
   },
   watch: {
-    "form.profession_id"(value) {
-      if (value && this.professions_categories.length > 0) {
+    "form.profession_id"(newValue, oldValue) {
+      if (newValue && this.professions_categories.length > 0) {
         this.selectedProfession = this.professions_categories.find(
-          item => item.id == value
+          item => item.id == newValue
         );
 
         if (this.selectedProfession.profession_category.id == 1) {
           this.compliances = this.gp_compliance_documents_lists;
-          return;
-        }
-        if (this.selectedProfession.profession_category.id == 2) {
+        } else if (this.selectedProfession.profession_category.id == 2) {
           this.compliances = this.others_compliance_documents_lists;
-          return;
         }
+      }
+      if (newValue && oldValue) {
+        this.form.compliance_document_id = [];
+        console.log(this.form.compliance_document_id);
       }
     },
     "form.date_end"(value) {
@@ -764,13 +765,16 @@ export default {
       this.auto_assign_job = true;
     }
 
-    if (this.job.platform_job.selection_date) {
+    if (this.job.selection_date) {
       this.selection_date.date = this.$moment(
-        this.job.platform_job.selection_date
+        this.job.selection_date,
+        "YYYY-MM-DDTHH:mm:ss.SSSZ"
       ).format("YYYY-MM-DD");
       this.selection_date.time = this.$moment(
-        this.job.platform_job.selection_date
+        this.job.selection_date,
+        "YYYY-MM-DDTHH:mm:ss.SSSZ"
       ).format("HH:mm");
+      this.selection_notification = true;
     }
 
     if (
@@ -842,6 +846,22 @@ export default {
     });
 
     this.form.profession_id = this.job.platform_job.profession.id;
+    if (this.job.type === "Platform") {
+      if (this.job.platform_job.profession.name === "GP") {
+        this.compliances = this.gp_compliance_documents_lists;
+      }
+      if (this.job.platform_job.profession.name !== "GP") {
+        this.compliances = this.others_compliance_documents_lists;
+      }
+    }
+    if (this.job.type === "Private") {
+      if (this.job.private_job.profession.name === "GP") {
+        this.compliances = this.gp_compliance_documents_lists;
+      }
+      if (this.job.private_job.profession.name !== "GP") {
+        this.compliances = this.others_compliance_documents_lists;
+      }
+    }
   },
   methods: {
     uncheckMandatory(value) {
@@ -857,6 +877,7 @@ export default {
       }
     },
     save() {
+      console.log(this.form);
       this.modal = false;
 
       this.formError = [];
@@ -928,9 +949,9 @@ export default {
         this.form.spoken_language_id = this.form.spoken_language_id.map(
           item => item.value
         );
-        this.form.mandatory_training_id = this.form.mandatory_training_id.map(
-          item => item.value
-        );
+        // this.form.mandatory_training_id = this.form.mandatory_training_id.map(
+        //   item => item.value
+        // );
         this.form.date_start = this.$moment(this.form.date_start).format(
           "YYYY-MM-DD"
         );
