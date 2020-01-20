@@ -123,7 +123,6 @@ export default {
       let hours = deadline._data.hours;
       let minutes = deadline._data.minutes;
 
-      console.log("deadline", deadline);
       if (minutes > 0) {
         return `You need to confirm within ${hours} hours and ${minutes} minutes`;
       }

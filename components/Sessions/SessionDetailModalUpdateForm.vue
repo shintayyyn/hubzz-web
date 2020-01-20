@@ -916,12 +916,15 @@ export default {
 
       this.Validate(this.form, notRequired);
       if (!this.formError.length) {
+        this.selectedClinicalSystem = [...this.form.clinical_system_id];
         this.form.clinical_system_id = this.form.clinical_system_id.map(
           item => item.value
         );
+        this.selectedQualification = [...this.form.qualification_id];
         this.form.qualification_id = this.form.qualification_id.map(
           item => item.value
         );
+        this.selectedSpokenLanguage = [...this.form.spoken_language_id];
         this.form.spoken_language_id = this.form.spoken_language_id.map(
           item => item.value
         );
@@ -964,14 +967,19 @@ export default {
             .format("YYYY-MM-DD HH:mm")}`;
         }
 
-        // if (this.form.update_accepted_until) {
-        //   this.form.update_accepted_until =
-        //     this.form.update_accepted_until * 60;
-        // }
+        // this.form.session_requirements.length > 0
+        //   ? (this.form.session_requirements = this.form.session_requirements.join())
+        //   : (this.form.session_requirements = "");
 
-        this.form.session_requirements.length > 0
-          ? (this.form.session_requirements = this.form.session_requirements.join())
-          : (this.form.session_requirements = "");
+        if (Array.isArray(this.form.session_requirements)) {
+          if (this.form.session_requirements.length === 1) {
+            this.form.session_requirements = this.form.session_requirements[0];
+          } else if (this.form.session_requirements.length > 0) {
+            this.form.session_requirements = this.form.session_requirements.join();
+          } else if (this.form.session_requirements.length === 0) {
+            this.form.session_requirements = "";
+          }
+        }
 
         if (["15", 15, "30", 30, "60", 60].includes(this.unpaid_breaks)) {
           this.form.unpaid_breaks_in_minutes = this.unpaid_breaks;
@@ -995,6 +1003,35 @@ export default {
               newJob: res.data.new_job,
               oldJob: res.data.job
             });
+          })
+          .catch(err => {
+            console.log("err", err.response || err);
+            this.form.clinical_system_id = this.selectedClinicalSystem;
+            this.form.qualification_id = this.selectedQualification;
+            this.form.spoken_language_id = this.selectedSpokenLanguage;
+
+            this.form.session_requirements = this.form.session_requirements.split(
+              ","
+            );
+
+            if (err.response.status === 500) {
+              this.formError.push({
+                field: err.response.statusText,
+                message: "Please check your inputs"
+              });
+            } else if (err.response.status === 400) {
+              this.formError.push({
+                field: "date_start",
+                message: err.response.data.message
+              });
+              this.formError.push({
+                field: "date_end",
+                message: err.response.data.message
+              });
+            } else {
+              this.formError = err.response.data.error_messages;
+            }
+            throw err;
           });
       } else {
         this.$nextTick(() => {

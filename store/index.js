@@ -13,7 +13,8 @@ export const state = () => ({
 	user_verification: {
 		modal: false,
 		status: ''
-	}
+	},
+	user_deactivated_modal: false
 });
 
 export const mutations = {
@@ -41,6 +42,9 @@ export const mutations = {
 	},
 	SET_USER_VERIFICATION_MODAL(state, payload) {
 		state.user_verification = payload
+	},
+	SET_USER_DEACTIVATED(state, payload) {
+		state.user_deactivated_modal = payload
 	}
 };
 

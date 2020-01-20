@@ -592,7 +592,8 @@ export default {
           "mandatory_training_id",
           "extra_information",
           "gp_compliance_document_id",
-          "others_compliance_document_id"
+          "others_compliance_document_id",
+          "vat_registered"
         ];
         if (
           this.form.use_variation_terms === false ||
@@ -608,6 +609,9 @@ export default {
             field: "use_variation_terms",
             message: "use_variation_terms file is required"
           });
+        }
+        if (["false", false].includes(this.vat_registered)) {
+          notRequired.push("vat_number");
         }
         this.Validate(this.form, notRequired);
         if (!this.formError.length) {

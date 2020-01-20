@@ -306,8 +306,6 @@ export default {
       }
 
       this.Validate(this.form, notRequired);
-      console.log(this.form, notRequired);
-      return;
       if (!this.formError.length) {
         this.loading = true;
         this.$axios

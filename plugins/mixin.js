@@ -1,6 +1,14 @@
 import Vue from "vue";
 Vue.mixin({
   methods: {
+    async CheckIfUserIsDeactivated() {
+      if (this.$auth.loggedIn) {
+        await this.$auth.fetchUser()
+        if (this.$auth.user.status === 'Deactivated') {
+          this.$store.commit('SET_USER_DEACTIVATED')
+        }
+      }
+    },
     async CheckUserVerification() {
       if (this.$auth.user.domain === 'Locum') {
         let oldStatus = this.$auth.user.status
