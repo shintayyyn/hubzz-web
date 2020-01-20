@@ -417,7 +417,6 @@ export default {
         this.form.items[0].description = this.description;
         this.form.items[0].total = this.total;
         this.form.total_amount = this.total_amount;
-        console.log(this.form);
         // return;
         this.saveLoading = true;
         this.$axios

@@ -17,14 +17,13 @@
         :class="bgStatus(job.status)"
       >{{ status(job.status) }}</div>
       <template v-if="authPermissions.includes('Update Sessions Job')">
-        <button 
+        <button
           class="font-bold text-xs sm:text-sm no-underline px-2 py-2 rounded-lg bg-green-400 hover:bg-green-500 text-white ml-4 focus:outline-none"
           v-if="job.status === 'Pending' &&
             practice.type == 'Hub' &&
             toEdit === false"
-          @click="approveJob()">
-          Approve this Job
-        </button>
+          @click="approveJob()"
+        >Approve this Job</button>
         <button
           class="font-bold text-xs sm:text-sm no-underline px-2 py-2 rounded-lg bg-yellow-400 hover:bg-yellow-500 ml-4 focus:outline-none"
           v-if="
@@ -72,6 +71,7 @@
               job.status === 'Live' && toEdit === true ||
               job.status === 'Pending' && toEdit === true"
             />
+            <SessionDetailModalMap :job="job" v-if="showMap" />
             <SessionDetailModalCancelForm
               :job="job"
               @cancelled="$emit('close')"
@@ -98,6 +98,9 @@
             />
           </div>
         </div>
+        <div class="p-0 md:pl-4 w-full md:w-1/2 order-first md:order-none">
+          <div class="flex flex-col"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -109,6 +112,7 @@ import SessionDetailModalUpdateForm from "@/components/Sessions/SessionDetailMod
 import SessionDetailModalCandidates from "@/components/Sessions/SessionDetailModalCandidates";
 import SessionDetailModalLocum from "@/components/Sessions/SessionDetailModalLocum";
 import SessionDetailModalCancelForm from "@/components/Sessions/SessionDetailModalCancelForm";
+import SessionDetailModalMap from "@/components/Sessions/SessionDetailModalMap";
 import AppButton from "@/components/Base/AppButton";
 export default {
   props: ["job"],
@@ -119,17 +123,24 @@ export default {
     SessionDetailModalCandidates,
     SessionDetailModalLocum,
     SessionDetailModalCancelForm,
+    SessionDetailModalMap,
     AppButton
   },
   data() {
     return {
       user: null,
       toEdit: false,
-      practice: ''
+      practice: "",
+      showMap: false
     };
   },
-  created (){
-    this.practice = this.$auth.user.practice_detail.practice
+  created() {
+    this.practice = this.$auth.user.practice_detail.practice;
+  },
+  mounted() {
+    setTimeout(() => {
+      this.showMap = true;
+    }, 1);
   },
   computed: {
     authPermissions() {
@@ -156,7 +167,7 @@ export default {
     updateJob({ newJob, oldJob }) {
       this.$emit("close");
       setTimeout(() => {
-        this.$store.commit("jobs/UPDATE_PRACTICE_PENDING_JOB",{
+        this.$store.commit("jobs/UPDATE_PRACTICE_PENDING_JOB", {
           newJob,
           oldJob
         });
@@ -180,10 +191,12 @@ export default {
         }
       }, 500);
     },
-    approveJob(){
-      this.$axios.$put(`/api/v1/practice/jobs/${this.job.id}/approve`).then(res => {
-        console.log('it worked')
-      })  
+    approveJob() {
+      this.$axios
+        .$put(`/api/v1/practice/jobs/${this.job.id}/approve`)
+        .then(res => {
+          console.log("it worked");
+        });
     },
     status(status) {
       return status.toUpperCase();

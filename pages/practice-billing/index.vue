@@ -387,7 +387,7 @@ export default {
     getJobPartsPromiseAll() {
       let status = [];
       let invoice_status = [];
-      let queryStatus = this.$route.query.status;
+      let queryStatus = this.$route.query.status.toLowerCase();
       switch (queryStatus && queryStatus.toLowerCase()) {
         case "to-be-invoiced":
           status = ["Completed", "Terminated"];
@@ -464,7 +464,7 @@ export default {
     getJobParts() {
       let status = [];
       let invoice_status = [];
-      let queryStatus = this.$route.query.status;
+      let queryStatus = this.$route.query.status.toLowerCase();
       switch (queryStatus && queryStatus.toLowerCase()) {
         case "to-be-invoiced":
           status = ["Completed", "Terminated"];
@@ -561,7 +561,7 @@ export default {
       this.invoice_id = id;
     },
     updateInvoice(invoice) {
-      let queryStatus = this.$route.query.status;
+      let queryStatus = this.$route.query.status.toLowerCase();
 
       let job_part = this.job_parts.find(
         item => item.id === invoice.items[0].job_part.id

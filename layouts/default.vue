@@ -19,6 +19,12 @@
         :modal="user_verification.modal"
         @confirm="refresh"
       />
+      <AppConfirmationModal
+        :label="`Your account has been deactivated`"
+        :confirmLabel="'OK'"
+        :modal="user_deactivated_modal"
+        @confirm="logout"
+      />
       <nuxt
         class="mb-4"
         :class="
@@ -54,6 +60,9 @@ export default {
   computed: {
     user_verification() {
       return this.$store.state.user_verification;
+    },
+    user_deactivated_modal() {
+      return this.$store.state.user_deactivated_modal;
     }
   },
   middleware: "isNotAuthenticated",
@@ -66,6 +75,15 @@ export default {
     }
   },
   mounted() {
+    // EMAIL DEACTIVATED
+    this.$socket.on(
+      "Locum Notification Account Deactivated",
+      this.userDeactivated
+    );
+    this.$socket.on(
+      "Practice Notification Account Deactivated",
+      this.userDeactivated
+    );
     // LOCUM
     this.$socket.on(
       "User Notification Email Verified",
@@ -134,6 +152,14 @@ export default {
     this.removeListener();
   },
   methods: {
+    async logout() {
+      await this.$auth.logout();
+      this.$auth.$storage.setUniversal("_token.local", "");
+      this.$router.push("/");
+    },
+    userDeactivated(payload) {
+      this.CheckIfUserIsDeactivated();
+    },
     getPracticeVerification(payload) {
       this.CheckUserVerification();
     },
@@ -141,6 +167,15 @@ export default {
       this.CheckUserVerification();
     },
     removeListener() {
+      // EMAIL DEACTIVATED
+      this.$socket.removeListener(
+        "Locum Notification Account Deactivated",
+        this.userDeactivated
+      );
+      this.$socket.removeListener(
+        "Practice Notification Account Deactivated",
+        this.userDeactivated
+      );
       // LOCUM
       this.$socket.removeListener(
         "User Notification Email Verified",

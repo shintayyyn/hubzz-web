@@ -123,12 +123,11 @@ export default {
     return {
       confirmation_modal: false,
       invoiceStatusList,
-      practice: ''
+      practice: ""
     };
   },
-  created(){
-    console.log(this.$auth.user)
-    this.practice = this.$auth.user.practice_detail.practice
+  created() {
+    this.practice = this.$auth.user.practice_detail.practice;
   },
   computed: {
     authPermissions() {

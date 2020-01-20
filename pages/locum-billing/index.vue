@@ -4,37 +4,37 @@
       <nuxt-link
         :to="{ path: '/locum-billing', query: { ...$route.query, status: 'to-be-invoiced' } }"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('locum-billing-index') && (!$route.query.status || $route.query.status === 'to-be-invoiced') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name.includes('locum-billing-index') && (!$route.query.status || $route.query.status.toLowerCase() === 'to-be-invoiced') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >To be invoiced</nuxt-link>
       <nuxt-link
         :to="{ path: '/locum-billing', query: { ...$route.query, status: 'disputed' } }"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('locum-billing-index') && $route.query.status === 'disputed' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name.includes('locum-billing-index') && $route.query.status.toLowerCase() === 'disputed' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >Disputed Invoices</nuxt-link>
       <nuxt-link
         :to="{ path: '/locum-billing', query: { ...$route.query, status: 'issued' } }"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('locum-billing-index') && $route.query.status === 'issued' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name.includes('locum-billing-index') && $route.query.status.toLowerCase() === 'issued' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >Invoiced</nuxt-link>
       <nuxt-link
         :to="{ path: '/locum-billing', query: { ...$route.query, status: 'approved' } }"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-        :class=" $route.name.includes('locum-billing-index') && $route.query.status === 'approved' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class=" $route.name.includes('locum-billing-index') && $route.query.status.toLowerCase() === 'approved' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >Approved Invoices</nuxt-link>
       <nuxt-link
         :to="{ path: '/locum-billing', query: { ...$route.query, status: 'pension-form-a' } }"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-        :class=" $route.name.includes('locum-billing-index') && $route.query.status === 'pension-form-a' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class=" $route.name.includes('locum-billing-index') && $route.query.status.toLowerCase() === 'pension-form-a' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >NHS Pensions Form A</nuxt-link>
       <nuxt-link
         :to="{ path: '/locum-billing', query: { ...$route.query, status: 'pension-form-b' } }"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('locum-billing-index') && $route.query.status === 'pension-form-b' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name.includes('locum-billing-index') && $route.query.status.toLowerCase() === 'pension-form-b' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >NHS Pensions Form B</nuxt-link>
     </div>
     <div
       class="flex flex-row justify-start overflow-x-auto pb-3"
-      v-if="$route.name.includes('locum-billing-index') && $route.query.status === 'pension-form-b'"
+      v-if="$route.name.includes('locum-billing-index') && $route.query.status.toLowerCase() === 'pension-form-b'"
     >
       <nuxt-link
         :to="{ name: 'locum-billing-index-form-b-create', query: { ...$route.query, status: 'pension-form-b' } }"
@@ -493,7 +493,7 @@ export default {
     getJobPartsPromiseAll() {
       let url = `/api/v1/locum/job-parts`;
       let params = null;
-      let queryStatus = this.$route.query.status;
+      let queryStatus = this.$route.query.status.toLowerCase();
 
       switch (queryStatus && queryStatus.toLowerCase()) {
         case "to-be-invoiced":
@@ -594,7 +594,7 @@ export default {
     getJobParts() {
       let url = `/api/v1/locum/job-parts`;
       let params = null;
-      let queryStatus = this.$route.query.status;
+      let queryStatus = this.$route.query.status.toLowerCase();
 
       switch (queryStatus && queryStatus.toLowerCase()) {
         case "to-be-invoiced":
@@ -734,7 +734,7 @@ export default {
           let index = this.job_parts.findIndex(item => {
             return item.locum_invoice_id === this.invoice_id;
           });
-          let queryStatus = this.$route.query.status;
+          let queryStatus = this.$route.query.status.toLowerCase();
 
           if (
             !queryStatus ||
@@ -773,7 +773,7 @@ export default {
       this.locum_form_bs.push(invoice);
     },
     createInvoice(invoice) {
-      let queryStatus = this.$route.query.status;
+      let queryStatus = this.$route.query.status.toLowerCase();
 
       let job_part = this.job_parts.find(
         item => item.id === invoice.items[0].job_part.id
@@ -793,7 +793,7 @@ export default {
       }
     },
     updateInvoice(invoice) {
-      let queryStatus = this.$route.query.status;
+      let queryStatus = this.$route.query.status.toLowerCase();
 
       let job_part = this.job_parts.find(
         item => item.id === invoice.items[0].job_part.id
@@ -816,8 +816,12 @@ export default {
             queryStatus === "approved" &&
             invoice.status === "Approved")
         ) {
+          console.log("qwe");
           this.job_parts.splice(index, 1, job_part);
         } else {
+          console.log("asd");
+          console.log(queryStatus);
+          console.log(invoice.status);
           this.job_parts.splice(index, 1);
         }
       }

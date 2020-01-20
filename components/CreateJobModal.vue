@@ -839,7 +839,9 @@ export default {
         "auto_assign_at"
       ];
 
-      if (this.$moment(this.form.date_end).isSameOrBefore(this.form.date_start)){
+      if (
+        this.$moment(this.form.date_end).isSameOrBefore(this.form.date_start)
+      ) {
         this.formError.push({
           field: "date_end",
           message: "Invalid End Date"
@@ -917,10 +919,6 @@ export default {
           }
         }
 
-        // this.form.session_requirements.length > 0 && Array.isArray(this.form.session_requirements)
-        //   ? (this.form.session_requirements = this.form.session_requirements.join())
-        //   : (this.form.session_requirements = "");
-
         this.form.auto_assign_at =
           this.auto_assign_job === true || this.auto_assign_job === "true"
             ? "1970-01-01 00:00"
@@ -956,10 +954,9 @@ export default {
         if (this.unpaid_breaks === "other") {
           this.form.unpaid_breaks_in_minutes = this.form.unpaid_breaks_in_minutes;
         }
-        // this.form.session_requirements = this.form.session_requirements.split(
-        //   ","
-        // );
-
+        if (["false", false].includes(this.unpaid_breaks)) {
+          this.form.unpaid_breaks_in_minutes = "";
+        }
         this.$axios
           .$post(`/api/v1/practice/jobs`, this.form)
           .then(res => {
@@ -984,17 +981,6 @@ export default {
             this.form.qualification_id = this.selectedQualification;
             this.form.spoken_language_id = this.selectedSpokenLanguage;
 
-            // if (typeof this.form.session_requirements === String) {
-            //   if (this.form.session_requirements.includes(",")) {
-            //     this.form.session_requirements = this.form.session_requirements.split(
-            //       ","
-            //     );
-            //   } else if (!this.form.session_requirements.includes(",")) {
-            //     this.form.session_requirements = [
-            //       this.form.session_requirements
-            //     ];
-            //   }
-            // }
             this.form.session_requirements = this.form.session_requirements.split(
               ","
             );
@@ -1018,7 +1004,6 @@ export default {
             throw err;
           });
       } else {
-        console.log(this.formError)
         this.$nextTick(() => {
           this.$refs.modalContainer.scrollTop = 0;
         });

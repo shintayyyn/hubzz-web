@@ -159,7 +159,6 @@ export default {
       });
     },
     async goTo(notification) {
-      console.log(notification);
       let type = notification.type;
       let id = notification.id;
       let status = notification.status
@@ -208,7 +207,7 @@ export default {
 
       let path = `${url}/${id}`;
 
-      console.log(url, id);
+      console.log(url, this.$auth.user.domain, id);
       // return;
 
       if (type === "Jobs") {
@@ -241,9 +240,7 @@ export default {
         }
         setTimeout(() => {
           this.$router.push({
-            path: `${url}/${
-              this.$auth.user.domain === "Practice" ? "" : "invoices/"
-            }${id}`,
+            path: `${url}/${id}/edit`,
             query: { ...this.$route.query, status: notification.status }
           });
         }, 500);
@@ -252,7 +249,6 @@ export default {
       this.close(id, notificationType);
     },
     close(id, type) {
-      console.log(id, type);
       if (type === "Jobs") {
         this.$store.commit("jobs/REMOVE_PRACTICE_JOB_NOTIFICATION", id);
         this.$store.commit("jobs/REMOVE_LOCUM_JOB_NOTIFICATION", id);
