@@ -477,7 +477,7 @@ export default {
         })
         .catch(err => {
           console.log("err", err.response || err);
-          if (err.response.data.message) {
+          if (err.response && err.response.data && err.response.data.message) {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
@@ -654,7 +654,7 @@ export default {
       return this.$axios
         .$get(`${url}`, { params })
         .then(res => {
-          if (response.data && response.data.job_parts) {
+          if (res.data && res.data.job_parts) {
             let job_parts = res.data.job_parts;
             this.job_parts = job_parts.map(jobPart => {
               return {
@@ -677,8 +677,8 @@ export default {
                     jobPart.final_hours
               };
             });
-          } else if (response.data && response.data.locum_form_bs) {
-            this.locum_form_bs = response.data.locum_form_bs.map(item => item);
+          } else if (res.data && res.data.locum_form_bs) {
+            this.locum_form_bs = res.data.locum_form_bs.map(item => item);
           }
         })
         .catch(err => {
