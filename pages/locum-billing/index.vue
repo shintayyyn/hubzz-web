@@ -272,10 +272,8 @@ export default {
     },
     noJobPartsToDisplay() {
       let str = "";
-      switch (
-        this.$route.query.status &&
-        this.$route.query.status.toLowerCase()
-      ) {
+      let queryStatus = this.$route.query.status;
+      switch (queryStatus && queryStatus.toLowerCase()) {
         case "to-be-invoiced":
           str = "You do not have any completed job parts.";
           break;
@@ -779,7 +777,7 @@ export default {
       this.locum_form_bs.push(invoice);
     },
     createInvoice(invoice) {
-      let queryStatus = this.$route.query.status.toLowerCase();
+      let queryStatus = this.$route.query.status;
 
       let job_part = this.job_parts.find(
         item => item.id === invoice.items[0].job_part.id
@@ -790,7 +788,9 @@ export default {
       if (index >= 0) {
         if (
           !queryStatus ||
-          (queryStatus === "to-be-invoiced" && invoice.status === "Draft")
+          (queryStatus &&
+            queryStatus.toLowerCase() === "to-be-invoiced" &&
+            invoice.status === "Draft")
         ) {
           this.job_parts.splice(index, 1, job_part);
         } else if (invoice.status !== "Draft") {
@@ -799,7 +799,7 @@ export default {
       }
     },
     updateInvoice(invoice) {
-      let queryStatus = this.$route.query.status.toLowerCase();
+      let queryStatus = this.$route.query.status;
 
       let job_part = this.job_parts.find(
         item => item.id === invoice.items[0].job_part.id
@@ -810,16 +810,16 @@ export default {
       if (index >= 0) {
         if (
           ((!queryStatus ||
-            (queryStatus && queryStatus === "to-be-invoiced")) &&
+            (queryStatus && queryStatus.toLowerCase() === "to-be-invoiced")) &&
             invoice.status === "Draft") ||
           (queryStatus &&
-            queryStatus === "issued" &&
+            queryStatus.toLowerCase() === "issued" &&
             invoice.status === "Issued") ||
           (queryStatus &&
-            queryStatus === "disputed" &&
+            queryStatus.toLowerCase() === "disputed" &&
             invoice.status === "Disputed") ||
           (queryStatus &&
-            queryStatus === "approved" &&
+            queryStatus.toLowerCase() === "approved" &&
             invoice.status === "Approved")
         ) {
           this.job_parts.splice(index, 1, job_part);
