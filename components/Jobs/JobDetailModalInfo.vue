@@ -37,21 +37,21 @@
         <template v-if="job.locum_status === 'Cancelled'">
           <div class="font-bold text-sm sm:text-md">Cancelled At</div>
           <div class="text-xs sm:text-sm mb-6">{{job.platform_job.cancelled_at | localDate}}</div>
-          <div class="font-bold text-sm sm:text-md">Cancelled By</div>
-          <div
+          <!--<div class="font-bold text-sm sm:text-md">Cancelled By</div>
+           <div
             class="text-xs sm:text-sm mb-6"
             v-text="job.platform_job.cancelled_by.personal_detail.name"
-          ></div>
+          ></div>-->
           <div class="font-bold text-sm sm:text-md">Cancelled Reason</div>
           <div class="text-xs sm:text-sm mb-6" v-text="job.platform_job.cancelled_reason"></div>
         </template>
         <template v-if="job.status === 'Declined'">
           <div class="font-bold text-sm sm:text-md">Declined</div>
           <div class="text-xs sm:text-sm mb-8">{{job.platform_job.declined_at | localDate}}</div>
-          <div class="font-bold text-sm sm:text-md">Appointed Locum</div>
+          <!-- <div class="font-bold text-sm sm:text-md">Appointed Locum</div>
           <div
             class="text-xs sm:text-sm mb-8"
-          >{{job.platform_job.appointed_to_locum.user.personal_detail.name}}</div>
+          >{{job.platform_job.appointed_to_locum.user.personal_detail.name}}</div>-->
         </template>
         <!--  -->
         <div class="font-bold text-sm sm:text-md">Is there another Dr on site?</div>
