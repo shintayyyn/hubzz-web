@@ -603,32 +603,36 @@ export default {
           params = {
             locum_status: ["Completed", "Terminated"],
             invoice_status: ["To Be Invoice"],
-            job_type: "Platform"
-            // ...this.params
+            job_type: "Platform",
+            offset: this.params.offset,
+            limit: this.params.limit
           };
           break;
         case "disputed":
           params = {
             locum_status: ["Completed", "Terminated"],
             invoice_status: ["Disputed"],
-            job_type: "Platform"
-            // ...this.params
+            job_type: "Platform",
+            offset: this.params.offset,
+            limit: this.params.limit
           };
           break;
         case "issued":
           params = {
             locum_status: ["Completed", "Terminated"],
             invoice_status: ["Invoiced"],
-            job_type: "Platform"
-            // ...this.params
+            job_type: "Platform",
+            offset: this.params.offset,
+            limit: this.params.limit
           };
           break;
         case "approved":
           params = {
             locum_status: ["Approved"],
             invoice_status: [],
-            job_type: "Platform"
-            // ...this.params
+            job_type: "Platform",
+            offset: this.params.offset,
+            limit: this.params.limit
           };
           break;
         case "pension-form-a":
@@ -649,10 +653,10 @@ export default {
           params = {
             locum_status: ["Completed", "Terminated"],
             invoice_status: ["To Be Invoice"],
-            job_type: "Platform"
+            job_type: "Platform",
+            ...this.params
           };
       }
-      console.log(params);
       return this.$axios
         .$get(`${url}`, { params })
         .then(res => {
@@ -818,12 +822,8 @@ export default {
             queryStatus === "approved" &&
             invoice.status === "Approved")
         ) {
-          console.log("qwe");
           this.job_parts.splice(index, 1, job_part);
         } else {
-          console.log("asd");
-          console.log(queryStatus);
-          console.log(invoice.status);
           this.job_parts.splice(index, 1);
         }
       }
