@@ -112,6 +112,9 @@ export default {
     getPracticeDeclinedJobs(value) {
       this.findPerMonthPractice(this.selected_date);
     },
+    getPracticeAvailableJobs(value) {
+      this.findPerMonthPractice(this.selected_date);
+    },
     // REMINDERS
     getPracticeAvailableJobsReminder(value) {
       this.findPerMonthPractice(this.selected_date);
@@ -173,6 +176,9 @@ export default {
     getPracticeDeclinedJobs() {
       return this.$store.getters["jobs/getPracticeDeclinedJobs"];
     },
+    getPracticeAvailableJobs() {
+      return this.$store.getters["jobs/getPracticeAvailableJobs"];
+    },
     // REMINDERS
     getPracticeAvailableJobsReminder() {
       return this.$store.getters["jobs/getPracticeAvailableJobsReminder"];
@@ -217,6 +223,7 @@ export default {
       let foundPracticeAppliedJobs = [];
       let foundPracticeUnfilledJobs = [];
       let foundPracticeDeclinedJobs = [];
+      let foundPracticeAvailableJobs = [];
       let foundPracticeAppliedJobsReminder = [];
       let foundPracticeAvailableJobsReminder = [];
       // PARTS
@@ -243,6 +250,11 @@ export default {
       }
       if (this.getPracticeDeclinedJobs.length > 0) {
         foundPracticeDeclinedJobs = this.getPracticeDeclinedJobs.filter(job =>
+          this.getDateArray(job.date_start, job.date_end).includes(date)
+        );
+      }
+      if (this.getPracticeAvailableJobs.length > 0) {
+        foundPracticeAvailableJobs = this.getPracticeAvailableJobs.filter(job =>
           this.getDateArray(job.date_start, job.date_end).includes(date)
         );
       }
@@ -280,6 +292,7 @@ export default {
         ...foundPracticeAppliedJobs,
         ...foundPracticeUnfilledJobs,
         ...foundPracticeDeclinedJobs,
+        ...foundPracticeAvailableJobs,
         ...foundPracticeAppliedJobsReminder,
         ...foundPracticeAvailableJobsReminder
       ];
@@ -301,6 +314,7 @@ export default {
       let foundPracticeAppliedJobs = [];
       let foundPracticeUnfilledJobs = [];
       let foundPracticeDeclinedJobs = [];
+      let foundPracticeAvailableJobs = [];
       let foundPracticeAppliedJobsReminder = [];
       let foundPracticeAvailableJobsReminder = [];
       // PARTS
@@ -341,15 +355,38 @@ export default {
             job.shift.name === shift
         );
       }
+      if (this.getPracticeAvailableJobs.length > 0) {
+        foundPracticeAvailableJobs = this.getPracticeAvailableJobs.filter(
+          job =>
+            this.getDateArray(job.date_start, job.date_end).includes(date) &&
+            job.shift.name === shift
+        );
+      }
       // REMINDERS
       if (this.getPracticeAvailableJobsReminder.length > 0) {
         foundPracticeAvailableJobsReminder = this.getPracticeAvailableJobsReminder.filter(
           job => job.platform_job.selection_date === date
         );
+        foundPracticeAvailableJobsReminder = foundPracticeAvailableJobsReminder.map(
+          item => {
+            return {
+              ...item,
+              status: "AppliedReminder"
+            };
+          }
+        );
       }
       if (this.getPracticeAppliedJobsReminder.length > 0) {
         foundPracticeAppliedJobsReminder = this.getPracticeAppliedJobsReminder.filter(
           job => job.platform_job.selection_date === date
+        );
+        foundPracticeAppliedJobsReminder = foundPracticeAppliedJobsReminder.map(
+          item => {
+            return {
+              ...item,
+              status: "AvailableReminder"
+            };
+          }
         );
       }
       this.foundPracticeJobs = [
@@ -358,6 +395,7 @@ export default {
         ...foundPracticeAppliedJobs,
         ...foundPracticeUnfilledJobs,
         ...foundPracticeDeclinedJobs,
+        ...foundPracticeAvailableJobs,
         ...foundPracticeAppliedJobsReminder,
         ...foundPracticeAvailableJobsReminder
       ];

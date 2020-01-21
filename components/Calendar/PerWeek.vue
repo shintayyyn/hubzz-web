@@ -61,34 +61,40 @@
     <template v-if="$auth.user.domain === 'Practice'">
       <div class="flex flex-no-wrap justify-between text-xs mx-1 mt-5" style="height:50px;">
         <div class="w-full text-left my-auto" style="min-width: 60px">AM</div>
-        <template v-for="({id, date}, index) in daysInWeek">
+        <template v-for="({id, date, day}, index) in daysInWeek">
           <div
-            v-if="hasPracticeOngoingJobs(date, 'AM')"
+            v-if="hasPracticeOngoingJobs(date, 'AM', day)"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-green-400 hover:bg-gray-300"
             :key="`${date}-${index}-${id}-${id}`"
             @click="selectDateShift(date, 'AM')"
           ></div>
           <div
-            v-else-if="hasPracticeAllocatedJobs(date, 'AM')"
+            v-else-if="hasPracticeAllocatedJobs(date, 'AM', day)"
             class="w-full cursor-pointer border-t-2 border-gray-300 bg-green-300 hover:bg-gray-300"
             :key="`${date}-${index}-${id}-${id}`"
             @click="selectDateShift(date, 'AM')"
           ></div>
           <div
-            v-else-if="hasPracticeAppliedJobs(date, 'AM')"
+            v-else-if="hasPracticeAppliedJobs(date, 'AM', day)"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-orange-200 hover:bg-gray-300"
             :key="`${date}-${index}-${id}-${id}`"
             @click="selectDateShift(date, 'AM')"
           ></div>
           <div
-            v-else-if="hasPracticeUnfilledJobs(date, 'AM')"
+            v-else-if="hasPracticeUnfilledJobs(date, 'AM', day)"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-red-500 hover:bg-gray-300"
             :key="`${date}-${index}-${id}-${id}`"
             @click="selectDateShift(date, 'AM')"
           ></div>
           <div
-            v-else-if="hasPracticeDeclinedJobs(date, 'AM')"
+            v-else-if="hasPracticeDeclinedJobs(date, 'AM', day)"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-red-500 hover:bg-gray-300"
+            :key="`${date}-${index}-${id}-${id}`"
+            @click="selectDateShift(date, 'AM')"
+          ></div>
+          <div
+            v-else-if="hasPracticeAvailableJobs(date, 'AM', day)"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-yellow-500 hover:bg-gray-300"
             :key="`${date}-${index}-${id}-${id}`"
             @click="selectDateShift(date, 'AM')"
           ></div>
@@ -109,35 +115,41 @@
 
       <div class="flex flex-no-wrap justify-between text-xs mx-1" style="height:50px;">
         <div class="w-full text-left my-auto" style="min-width: 60px">PM</div>
-        <template v-for="({id, date}, index) in daysInWeek">
+        <template v-for="({id, date, day}, index) in daysInWeek">
           <div
-            v-if="hasPracticeOngoingJobs(date, 'PM')"
+            v-if="hasPracticeOngoingJobs(date, 'PM', day)"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-green-400 hover:bg-gray-300"
             :key="`${date}-${index}-${id}-${id}`"
             @click="selectDateShift(date, 'PM')"
           ></div>
           <div
-            v-else-if="hasPracticeAllocatedJobs(date, 'PM')"
+            v-else-if="hasPracticeAllocatedJobs(date, 'PM', day)"
             class="w-full cursor-pointer border-t-2 border-gray-300 bg-green-300 hover:bg-gray-300"
             :key="`${date}-${index}-${id}`"
             @click="selectDateShift(date, 'PM')"
           ></div>
           <div
-            v-else-if="hasPracticeAppliedJobs(date, 'PM')"
+            v-else-if="hasPracticeAppliedJobs(date, 'PM', day)"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-orange-200 hover:bg-gray-300"
             :key="`${date}-${index}-${id}`"
             @click="selectDateShift(date, 'PM')"
           ></div>
           <div
-            v-else-if="hasPracticeUnfilledJobs(date, 'PM')"
+            v-else-if="hasPracticeUnfilledJobs(date, 'PM', day)"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-red-500 hover:bg-gray-300"
             :key="`${date}-${index}-${id}`"
             @click="selectDateShift(date, 'PM')"
           ></div>
           <div
-            v-else-if="hasPracticeDeclinedJobs(date, 'PM')"
+            v-else-if="hasPracticeDeclinedJobs(date, 'PM', day)"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-red-500 hover:bg-gray-300"
             :key="`${date}-${index}-${id}`"
+            @click="selectDateShift(date, 'PM')"
+          ></div>
+          <div
+            v-else-if="hasPracticeAvailableJobs(date, 'PM', day)"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-yellow-500 hover:bg-gray-300"
+            :key="`${date}-${index}-${id}-${id}`"
             @click="selectDateShift(date, 'PM')"
           ></div>
           <div
@@ -157,35 +169,41 @@
 
       <div class="flex flex-no-wrap justify-between text-xs mx-1" style="height:50px;">
         <div class="w-full text-left my-auto" style="min-width: 60px">OOH</div>
-        <template v-for="({id, date}, index) in daysInWeek">
+        <template v-for="({id, date, day}, index) in daysInWeek">
           <div
-            v-if="hasPracticeOngoingJobs(date, 'OOH')"
+            v-if="hasPracticeOngoingJobs(date, 'OOH', day)"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-green-400 hover:bg-gray-300"
             :key="`${date}-${index}-${id}-${id}`"
             @click="selectDateShift(date, 'OOH')"
           ></div>
           <div
-            v-else-if="hasPracticeAllocatedJobs(date, 'OOH')"
+            v-else-if="hasPracticeAllocatedJobs(date, 'OOH', day)"
             class="w-full cursor-pointer border-t-2 border-gray-300 bg-green-300 hover:bg-gray-300"
             :key="`${date}-${index}-${id}`"
             @click="selectDateShift(date, 'OOH')"
           ></div>
           <div
-            v-else-if="hasPracticeAppliedJobs(date, 'OOH')"
+            v-else-if="hasPracticeAppliedJobs(date, 'OOH', day)"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-orange-200 hover:bg-gray-300"
             :key="`${date}-${index}-${id}`"
             @click="selectDateShift(date, 'OOH')"
           ></div>
           <div
-            v-else-if="hasPracticeUnfilledJobs(date, 'OOH')"
+            v-else-if="hasPracticeUnfilledJobs(date, 'OOH', day)"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-red-500 hover:bg-gray-300"
             :key="`${date}-${index}-${id}`"
             @click="selectDateShift(date, 'OOH')"
           ></div>
           <div
-            v-else-if="hasPracticeDeclinedJobs(date, 'OOH')"
+            v-else-if="hasPracticeDeclinedJobs(date, 'OOH', day)"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-red-500 hover:bg-gray-300"
             :key="`${date}-${index}-${id}`"
+            @click="selectDateShift(date, 'OOH')"
+          ></div>
+          <div
+            v-else-if="hasPracticeAvailableJobs(date, 'OOH', day)"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-yellow-500 hover:bg-gray-300"
+            :key="`${date}-${index}-${id}-${id}`"
             @click="selectDateShift(date, 'OOH')"
           ></div>
           <div
@@ -205,35 +223,41 @@
 
       <div class="flex flex-no-wrap justify-between text-xs mx-1" style="height:50px;">
         <div class="w-full text-left my-auto" style="min-width: 60px">Whole Day</div>
-        <template v-for="({id, date}, index) in daysInWeek">
+        <template v-for="({id, date, day}, index) in daysInWeek">
           <div
-            v-if="hasPracticeOngoingJobs(date, 'Whole Day')"
+            v-if="hasPracticeOngoingJobs(date, 'Whole Day', day)"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-green-400 hover:bg-gray-300"
             :key="`${date}-${index}-${id}-${id}`"
             @click="selectDateShift(date, 'Whole Day')"
           ></div>
           <div
-            v-else-if="hasPracticeAllocatedJobs(date, 'Whole Day')"
+            v-else-if="hasPracticeAllocatedJobs(date, 'Whole Day', day)"
             class="w-full cursor-pointer border-t-2 border-gray-300 bg-green-300 hover:bg-gray-300"
             :key="`${date}-${index}-${id}`"
             @click="selectDateShift(date, 'Whole Day')"
           ></div>
           <div
-            v-else-if="hasPracticeAppliedJobs(date, 'Whole Day')"
+            v-else-if="hasPracticeAppliedJobs(date, 'Whole Day', day)"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-orange-200 hover:bg-gray-300"
             :key="`${date}-${index}-${id}`"
             @click="selectDateShift(date, 'Whole Day')"
           ></div>
           <div
-            v-else-if="hasPracticeUnfilledJobs(date, 'Whole Day')"
+            v-else-if="hasPracticeUnfilledJobs(date, 'Whole Day', day)"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-red-500 hover:bg-gray-300"
             :key="`${date}-${index}-${id}`"
             @click="selectDateShift(date, 'Whole Day')"
           ></div>
           <div
-            v-else-if="hasPracticeDeclinedJobs(date, 'Whole Day')"
+            v-else-if="hasPracticeDeclinedJobs(date, 'Whole Day', day)"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-red-500 hover:bg-gray-300"
             :key="`${date}-${index}-${id}`"
+            @click="selectDateShift(date, 'Whole Day')"
+          ></div>
+          <div
+            v-else-if="hasPracticeAvailableJobs(date, 'Whole Day', day)"
+            class="w-full cursor-pointer border-t-2 border-gray-400 bg-yellow-500 hover:bg-gray-300"
+            :key="`${date}-${index}-${id}-${id}`"
             @click="selectDateShift(date, 'Whole Day')"
           ></div>
           <div
@@ -521,6 +545,9 @@ export default {
     getPracticeDeclinedJobs() {
       return this.$store.getters["jobs/getPracticeDeclinedJobs"];
     },
+    getPracticeAvailableJobs() {
+      return this.$store.getters["jobs/getPracticeAvailableJobs"];
+    },
     // REMINDERS
     getPracticeAvailableJobsReminder() {
       return this.$store.getters["jobs/getPracticeAvailableJobsReminder"];
@@ -553,13 +580,20 @@ export default {
     daysInWeek() {
       let weekLists = [];
       for (let i = 0; i < 7; i++) {
+        // let day = this.$moment(this.firstDayOfTheWeek).format(
+        //   "YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"
+        // );
         weekLists.push({
           id: weekLists.length,
           date: this.$moment(this.firstDayOfTheWeek)
             .add(i, "days")
-            .format("YYYY-MM-DD")
+            .format("YYYY-MM-DD"),
+          day: this.$moment(this.firstDayOfTheWeek)
+            .add(i, "days")
+            .weekday()
         });
       }
+      console.log(weekLists);
       return weekLists;
     },
     selectedYear() {
@@ -626,7 +660,7 @@ export default {
         this.getJobsRealTime
       );
       this.$socket.on(
-        "Practice Notification Job Applied",
+        "Practice Notification Job Application",
         this.getJobsRealTime
       );
       this.$socket.on(
@@ -735,8 +769,13 @@ export default {
         Promise.all([
           this.$axios.$get("/api/v1/practice/jobs", {
             params: {
-              status: ["Allocated", "Applied", "Unfilled", "Declined"],
-              calendar_date_start: `${this.firstDayOfTheWeek}:gte`,
+              status: ["Allocated", "Applied", "Unfilled", "Declined", "Live"],
+              calendar_date_start: `${this.$moment(
+                this.firstDayOfTheWeek,
+                "YYYY-MM-DD"
+              )
+                .subtract(1, "days")
+                .format("YYYY-MM-DD")}:gte`,
               calendar_date_end: `${this.lastDayOfTheWeek}:lte`,
               limit: 100000000
             }
@@ -744,7 +783,12 @@ export default {
           this.$axios.$get("/api/v1/practice/job-parts", {
             params: {
               status: ["Ongoing"],
-              calendar_date_start: `${this.firstDayOfTheWeek}:gte`,
+              calendar_date_start: `${this.$moment(
+                this.firstDayOfTheWeek,
+                "YYYY-MM-DD"
+              )
+                .subtract(1, "days")
+                .format("YYYY-MM-DD")}:gte`,
               calendar_date_end: `${this.lastDayOfTheWeek}:lte`,
               limit: 100000000
             }
@@ -753,7 +797,9 @@ export default {
             params: {
               status: ["Live", "Applied"],
               platform_selection_date: [
-                `${this.firstDayOfTheWeek}:gte`,
+                `${this.$moment(this.firstDayOfTheWeek, "YYYY-MM-DD")
+                  .subtract(1, "days")
+                  .format("YYYY-MM-DD")}:gte`,
                 `${this.lastDayOfTheWeek}:lte`
               ],
               limit: 100000000
@@ -762,32 +808,38 @@ export default {
         ])
           .then(
             ([
-              responseAllocatedAndAppliedAndUnfilledAndDeclined,
+              responseAllocatedAndAppliedAndUnfilledAndDeclinedAndLive,
               responseOngoing,
               responseReminders
             ]) => {
               this.$store.commit(
                 "jobs/SET_PRACTICE_ALLOCATED_JOBS",
-                responseAllocatedAndAppliedAndUnfilledAndDeclined.data.jobs.filter(
+                responseAllocatedAndAppliedAndUnfilledAndDeclinedAndLive.data.jobs.filter(
                   job => job.status === "Allocated"
                 )
               );
               this.$store.commit(
                 "jobs/SET_PRACTICE_APPLIED_JOBS",
-                responseAllocatedAndAppliedAndUnfilledAndDeclined.data.jobs.filter(
+                responseAllocatedAndAppliedAndUnfilledAndDeclinedAndLive.data.jobs.filter(
                   job => job.status === "Applied"
                 )
               );
               this.$store.commit(
                 "jobs/SET_PRACTICE_UNFILLED_JOBS",
-                responseAllocatedAndAppliedAndUnfilledAndDeclined.data.jobs.filter(
+                responseAllocatedAndAppliedAndUnfilledAndDeclinedAndLive.data.jobs.filter(
                   job => job.status === "Unfilled"
                 )
               );
               this.$store.commit(
                 "jobs/SET_PRACTICE_DECLINED_JOBS",
-                responseAllocatedAndAppliedAndUnfilledAndDeclined.data.jobs.filter(
+                responseAllocatedAndAppliedAndUnfilledAndDeclinedAndLive.data.jobs.filter(
                   job => job.status === "Declined"
+                )
+              );
+              this.$store.commit(
+                "jobs/SET_PRACTICE_AVAILABLE_JOBS",
+                responseAllocatedAndAppliedAndUnfilledAndDeclinedAndLive.data.jobs.filter(
+                  job => job.status === "Live"
                 )
               );
               this.$store.commit(
@@ -798,9 +850,7 @@ export default {
               );
               this.$store.commit(
                 "jobs/SET_PRACTICE_AVAILABLE_JOBS_REMINDER",
-                responseReminders.data.jobs.filter(
-                  job => job.status === "Available"
-                )
+                responseReminders.data.jobs.filter(job => job.status === "Live")
               );
               this.$store.commit(
                 "jobs/SET_PRACTICE_APPLIED_JOBS_REMINDER",
@@ -956,7 +1006,7 @@ export default {
           this.getJobsRealTime
         );
         this.$socket.removeListener(
-          "Practice Notification Job Applied",
+          "Practice Notification Job Application",
           this.getJobsRealTime
         );
         this.$socket.removeListener(
@@ -1003,7 +1053,7 @@ export default {
     },
     // PRACTICE
     // PARTS
-    hasPracticeOngoingJobs(date, type) {
+    hasPracticeOngoingJobs(date, type, day) {
       if (
         this.getPracticeOngoingJobs &&
         this.getPracticeOngoingJobs.length > 0
@@ -1012,12 +1062,17 @@ export default {
           job_part =>
             this.getDateArray(job_part.date_start, job_part.date_end).includes(
               date
-            ) && job_part.job.shift.name === type
+            ) &&
+            job_part.job.shift.name === type &&
+            ((job_part.job.include_saturday === false && day !== 6) ||
+              job_part.job.include_saturday === true) &&
+            ((job_part.job.include_sunday === false && day !== 0) ||
+              job_part.job.include_sunday === true)
         );
       }
     },
     // WHOLE
-    hasPracticeAllocatedJobs(date, type) {
+    hasPracticeAllocatedJobs(date, type, day) {
       if (
         this.getPracticeAllocatedJobs &&
         this.getPracticeAllocatedJobs.length > 0
@@ -1025,11 +1080,15 @@ export default {
         return this.getPracticeAllocatedJobs.find(
           job =>
             this.getDateArray(job.date_start, job.date_end).includes(date) &&
-            job.shift.name === type
+            job.shift.name === type &&
+            ((job.include_saturday === false && day !== 6) ||
+              job.include_saturday === true) &&
+            ((job.include_sunday === false && day !== 0) ||
+              job.include_sunday === true)
         );
       }
     },
-    hasPracticeAppliedJobs(date, type) {
+    hasPracticeAppliedJobs(date, type, day) {
       if (
         this.getPracticeAppliedJobs &&
         this.getPracticeAppliedJobs.length > 0
@@ -1037,11 +1096,15 @@ export default {
         return this.getPracticeAppliedJobs.find(
           job =>
             this.getDateArray(job.date_start, job.date_end).includes(date) &&
-            job.shift.name === type
+            job.shift.name === type &&
+            ((job.include_saturday === false && day !== 6) ||
+              job.include_saturday === true) &&
+            ((job.include_sunday === false && day !== 0) ||
+              job.include_sunday === true)
         );
       }
     },
-    hasPracticeUnfilledJobs(date, type) {
+    hasPracticeUnfilledJobs(date, type, day) {
       if (
         this.getPracticeUnfilledJobs &&
         this.getPracticeUnfilledJobs.length > 0
@@ -1049,11 +1112,15 @@ export default {
         return this.getPracticeUnfilledJobs.find(
           job =>
             this.getDateArray(job.date_start, job.date_end).includes(date) &&
-            job.shift.name === type
+            job.shift.name === type &&
+            ((job.include_saturday === false && day !== 6) ||
+              job.include_saturday === true) &&
+            ((job.include_sunday === false && day !== 0) ||
+              job.include_sunday === true)
         );
       }
     },
-    hasPracticeDeclinedJobs(date, type) {
+    hasPracticeDeclinedJobs(date, type, day) {
       if (
         this.getPracticeDeclinedJobs &&
         this.getPracticeDeclinedJobs.length > 0
@@ -1061,7 +1128,28 @@ export default {
         return this.getPracticeDeclinedJobs.find(
           job =>
             this.$moment(job.platform_job.declined_at).format("YYYY-MM-DD") ===
-              date && job.shift.name === type
+              date &&
+            job.shift.name === type &&
+            ((job.include_saturday === false && day !== 6) ||
+              job.include_saturday === true) &&
+            ((job.include_sunday === false && day !== 0) ||
+              job.include_sunday === true)
+        );
+      }
+    },
+    hasPracticeAvailableJobs(date, type, day) {
+      if (
+        this.getPracticeAvailableJobs &&
+        this.getPracticeAvailableJobs.length > 0
+      ) {
+        return this.getPracticeAvailableJobs.find(
+          job =>
+            this.getDateArray(job.date_start, job.date_end).includes(date) &&
+            job.shift.name === type &&
+            ((job.include_saturday === false && day !== 6) ||
+              job.include_saturday === true) &&
+            ((job.include_sunday === false && day !== 0) ||
+              job.include_sunday === true)
         );
       }
     },

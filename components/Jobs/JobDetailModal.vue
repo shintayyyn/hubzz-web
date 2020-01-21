@@ -103,8 +103,10 @@ export default {
     hasNewChanges() {
       return (
         ["Allocated", "Applied"].includes(this.job.locum_status) &&
-        this.job.update_accepted === false &&
-        this.job.update_accepted_until
+        ((this.job.applied_update_accepted === false &&
+          this.job.applied_update_accepted_until) ||
+          (this.job.update_accepted === false &&
+            this.job.update_accepted_until))
       );
     },
     updateAcceptedUntil() {
