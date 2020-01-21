@@ -157,20 +157,20 @@ export default {
     AppLoading,
     AppPagination
   },
-  // computed: {
-  // 	totalPages() {
-  // 		return Math.ceil(this.total / this.perPage);
-  // 	}
-  // },
+  computed: {
+    totalPages() {
+      return Math.ceil(this.total / this.perPage);
+    }
+  },
   data() {
     return {
-      params: [],
-      totalPages: 0
+      params: []
+      // totalPages: 0
     };
   },
   mounted() {
     this.params = this.orderBy;
-    this.totalPages = Math.ceil(this.total / this.perPage);
+    // this.totalPages = Math.ceil(this.total / this.perPage);
   },
   methods: {
     sort(dataIndex) {

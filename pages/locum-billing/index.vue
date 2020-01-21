@@ -650,7 +650,7 @@ export default {
             job_type: "Platform"
           };
       }
-
+      console.log(params);
       return this.$axios
         .$get(`${url}`, { params })
         .then(res => {

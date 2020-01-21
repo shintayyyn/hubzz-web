@@ -580,9 +580,6 @@ export default {
     daysInWeek() {
       let weekLists = [];
       for (let i = 0; i < 7; i++) {
-        // let day = this.$moment(this.firstDayOfTheWeek).format(
-        //   "YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"
-        // );
         weekLists.push({
           id: weekLists.length,
           date: this.$moment(this.firstDayOfTheWeek)
@@ -593,7 +590,6 @@ export default {
             .weekday()
         });
       }
-      console.log(weekLists);
       return weekLists;
     },
     selectedYear() {
@@ -607,11 +603,11 @@ export default {
     let selectedDate = this.$store.state.calendar.selected_date;
 
     this.firstDayOfTheWeek = this.$moment(selectedDate, "YYYY-MM-DD")
-      .day("Sunday")
+      .day("Monday")
       .format("YYYY-MM-DD");
     this.lastDayOfTheWeek = this.$moment(selectedDate, "YYYY-MM-DD")
       .add(1, "week")
-      .day("sunday")
+      .day("Monday")
       .format("YYYY-MM-DD");
 
     this.getJobs();
