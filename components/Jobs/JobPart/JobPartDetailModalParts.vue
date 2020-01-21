@@ -38,7 +38,7 @@ export default {
       // app table params
       params: {
         job_id: null,
-        limit: 3,
+        limit: 5,
         offset: 0
       },
       // app table
