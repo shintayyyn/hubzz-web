@@ -300,6 +300,8 @@ export default {
       let oldStatus = oldValue.status;
       if (newStatus && newStatus !== null && newStatus !== oldStatus) {
         this.current_page = 1;
+        this.params.offset = 0;
+        this.params.limit = 5;
         this.showTable = false;
         this.showRefresh = false;
         setTimeout(async () => {
@@ -601,32 +603,32 @@ export default {
           params = {
             locum_status: ["Completed", "Terminated"],
             invoice_status: ["To Be Invoice"],
-            job_type: "Platform",
-            ...this.params
+            job_type: "Platform"
+            // ...this.params
           };
           break;
         case "disputed":
           params = {
             locum_status: ["Completed", "Terminated"],
             invoice_status: ["Disputed"],
-            job_type: "Platform",
-            ...this.params
+            job_type: "Platform"
+            // ...this.params
           };
           break;
         case "issued":
           params = {
             locum_status: ["Completed", "Terminated"],
             invoice_status: ["Invoiced"],
-            job_type: "Platform",
-            ...this.params
+            job_type: "Platform"
+            // ...this.params
           };
           break;
         case "approved":
           params = {
             locum_status: ["Approved"],
             invoice_status: [],
-            job_type: "Platform",
-            ...this.params
+            job_type: "Platform"
+            // ...this.params
           };
           break;
         case "pension-form-a":
