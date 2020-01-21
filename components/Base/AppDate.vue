@@ -31,10 +31,6 @@
             class="text-red-500 py-1 text-xs text-white"
           >{{error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ")}}</div>
         </transition>
-        <!-- <div
-          class="text-red-500 text-xs py-1 text-white rounded"
-          v-if="error"
-        >{{error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ")}}</div>-->
       </div>
     </div>
     <transition name="fade">

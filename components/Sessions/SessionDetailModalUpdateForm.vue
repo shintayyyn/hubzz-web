@@ -317,46 +317,46 @@
             </div>
           </div>
 
-          <AppInput
-            v-if="bank_only === false || bank_only === 'false'"
-            :type="'select'"
-            v-model="bank_first"
-            :name="'bank_first'"
-            :label="'Make this Job available for Bank First?'"
-            :items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
-          />
-
-          <div
-            class="flex flex-row flex-wrap justify-between"
-            v-if="bank_first === true || bank_first === 'true'"
-          >
-            <div>Only favorite locum will be notified until this date</div>
-            <div class="px-1 w-full md:w-1/2">
-              <AppDate
-                v-model="favorite_only_until.date"
-                :name="'favorite_only_until'"
-                :label="'Date'"
-              />
+          <template v-if="['false', false].includes(auto_assign_job)">
+            <AppInput
+              v-if="bank_only === false || bank_only === 'false'"
+              :type="'select'"
+              v-model="bank_first"
+              :name="'bank_first'"
+              :label="'Make this Job available for Bank First?'"
+              :items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
+            />
+            <div
+              class="flex flex-row flex-wrap justify-between"
+              v-if="bank_first === true || bank_first === 'true'"
+            >
+              <div>Only favorite locum will be notified until this date</div>
+              <div class="px-1 w-full md:w-1/2">
+                <AppDate
+                  v-model="favorite_only_until.date"
+                  :name="'favorite_only_until'"
+                  :label="'Date'"
+                />
+              </div>
+              <div class="px-1 w-full md:w-1/2">
+                <AppTime
+                  v-model="favorite_only_until.time"
+                  :type="'time'"
+                  :name="'time_end'"
+                  :label="'Time'"
+                  :error="formError.find(item => item.field === 'favorite_only_until')"
+                />
+              </div>
             </div>
-            <div class="px-1 w-full md:w-1/2">
-              <AppTime
-                v-model="favorite_only_until.time"
-                :type="'time'"
-                :name="'time_end'"
-                :label="'Time'"
-                :error="formError.find(item => item.field === 'favorite_only_until')"
-              />
-            </div>
-          </div>
-
-          <AppInput
-            v-if="bank_first === false || bank_first === 'false'"
-            :type="'select'"
-            v-model="bank_only"
-            :name="'bank_only'"
-            :label="'Make this Job available for Bank Only?'"
-            :items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
-          />
+            <AppInput
+              v-if="bank_first === false || bank_first === 'false'"
+              :type="'select'"
+              v-model="bank_only"
+              :name="'bank_only'"
+              :label="'Make this Job available for Bank Only?'"
+              :items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
+            />
+          </template>
 
           <AppInput
             v-model="form.ir35"
@@ -768,11 +768,11 @@ export default {
     if (this.job.selection_date) {
       this.selection_date.date = this.$moment(
         this.job.selection_date,
-        "YYYY-MM-DDTHH:mm:ss.SSSZ"
+        "YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"
       ).format("YYYY-MM-DD");
       this.selection_date.time = this.$moment(
         this.job.selection_date,
-        "YYYY-MM-DDTHH:mm:ss.SSSZ"
+        "YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"
       ).format("HH:mm");
       this.selection_notification = true;
     }
@@ -786,11 +786,11 @@ export default {
       this.bank_first = true;
       this.favorite_only_until.date = this.$moment(
         this.job.platform_job.favorite_only_until,
-        "YYYY-MM-DDTHH:mm:ss:sssZ"
+        "YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"
       ).format("YYYY-MM-DD");
       this.favorite_only_until.time = this.$moment(
         this.job.platform_job.favorite_only_until,
-        "YYYY-MM-DDTHH:mm:ss:sssZ"
+        "YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"
       ).format("HH:mm");
     } else if (
       this.$moment(this.job.date_start, "YYYY-MM-DD").diff(
@@ -902,6 +902,19 @@ export default {
       }
 
       if (
+        this.$moment(this.form.date_end).isSameOrBefore(this.form.date_start)
+      ) {
+        this.formError.push({
+          field: "date_end",
+          message: "Invalid End Date"
+        });
+        this.formError.push({
+          field: "date_start",
+          message: "Invalid Start Date"
+        });
+      }
+
+      if (
         ["15", 15, "30", 30, "60", 60, false, "false"].includes(
           this.unpaid_breaks
         )
@@ -909,33 +922,28 @@ export default {
         notRequired.push("unpaid_breaks_in_minutes");
       }
 
-      if (
-        this.selection_notification == false ||
-        this.selection_notification == "false"
+      if (["false", false].includes(this.selection_notification)) {
+        notRequired.push("selection_date");
+      } else if (
+        ["true", true].includes(this.selection_notification) &&
+        this.selection_date.date &&
+        this.selection_date.time
       ) {
         notRequired.push("selection_date");
-      } else {
-        if (
-          this.selection_notification === true ||
-          this.selection_notification === "true"
-        ) {
-          if (this.selection_date.date && this.selection_date.time) {
-            notRequired.push("selection_date");
-          }
-        }
       }
 
-      if (this.bank_first == false || this.bank_first == "false") {
+      if (["false", false].includes(this.bank_first)) {
         notRequired.push("favorite_only_until");
-      } else {
-        if (this.bank_first === true || this.bank_first === "true") {
-          if (this.favorite_only_until.date && this.favorite_only_until.time) {
-            notRequired.push("favorite_only_until");
-          }
-        }
+      } else if (
+        ["true", true].includes(this.bank_first) &&
+        this.favorite_only_until.date &&
+        this.favorite_only_until.time
+      ) {
+        notRequired.push("favorite_only_until");
       }
 
       this.Validate(this.form, notRequired);
+
       if (!this.formError.length) {
         this.selectedClinicalSystem = [...this.form.clinical_system_id];
         this.form.clinical_system_id = this.form.clinical_system_id.map(
@@ -949,48 +957,15 @@ export default {
         this.form.spoken_language_id = this.form.spoken_language_id.map(
           item => item.value
         );
-        // this.form.mandatory_training_id = this.form.mandatory_training_id.map(
-        //   item => item.value
-        // );
-        this.form.date_start = this.$moment(this.form.date_start).format(
+
+        this.form.date_start = this.$moment(
+          this.form.date_start,
           "YYYY-MM-DD"
-        );
-        this.form.date_end = this.$moment(this.form.date_end).format(
+        ).format("YYYY-MM-DD");
+        this.form.date_end = this.$moment(
+          this.form.date_end,
           "YYYY-MM-DD"
-        );
-
-        this.form.auto_assign_at =
-          this.auto_assign_job === true || this.auto_assign_job === "true"
-            ? "1970-01-01 00:00"
-            : null;
-
-        this.form.selection_date =
-          this.selection_notification === true ||
-          this.selection_notification === "true"
-            ? `${this.$moment(this.selection_date.date).format("YYYY-MM-DD")} ${
-                this.selection_date.time
-              }`
-            : null;
-
-        if (this.bank_first === true || this.bank_first === "true") {
-          this.form.favorite_only_until = `${this.$moment(
-            this.favorite_only_until.date,
-            "YYYY-MM-DD"
-          ).format("YYYY-MM-DD")} ${this.favorite_only_until.time}`;
-        }
-
-        if (this.bank_only === true || this.bank_only === "true") {
-          this.form.favorite_only_until = `${this.$moment(
-            this.form.date_start,
-            "YYYY-MM-DD"
-          )
-            .add(1, "days")
-            .format("YYYY-MM-DD HH:mm")}`;
-        }
-
-        // this.form.session_requirements.length > 0
-        //   ? (this.form.session_requirements = this.form.session_requirements.join())
-        //   : (this.form.session_requirements = "");
+        ).format("YYYY-MM-DD");
 
         if (Array.isArray(this.form.session_requirements)) {
           if (this.form.session_requirements.length === 1) {
@@ -999,6 +974,37 @@ export default {
             this.form.session_requirements = this.form.session_requirements.join();
           } else if (this.form.session_requirements.length === 0) {
             this.form.session_requirements = "";
+          }
+        }
+
+        this.form.auto_assign_at = null;
+        if (["true", true].includes(this.auto_assign_job)) {
+          this.form.auto_assign_at = "1970-01-01 00:00";
+        }
+
+        this.form.selection_date = null;
+        if (["true", true].includes(this.selection_notification)) {
+          this.form.selection_date = `${this.$moment(
+            this.selection_date.date,
+            "YYYY-MM-DD"
+          ).format("YYYY-MM-DD")} ${this.selection_date.time}`;
+        }
+
+        this.form.favorite_only_until = null;
+        if (["false", false].includes(this.auto_assign_job)) {
+          if (["true", true].includes(this.bank_first)) {
+            this.form.favorite_only_until = `${this.$moment(
+              this.favorite_only_until.date,
+              "YYYY-MM-DD"
+            ).format("YYYY-MM-DD")} ${this.favorite_only_until.time}`;
+          }
+          if (["true", true].includes(this.bank_only)) {
+            this.form.favorite_only_until = `${this.$moment(
+              this.form.date_start,
+              "YYYY-MM-DD"
+            )
+              .add(1, "days")
+              .format("YYYY-MM-DD HH:mm")}`;
           }
         }
 
@@ -1018,7 +1024,7 @@ export default {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
-              text: [res.message]
+              text: ["Successfully updated job"]
             });
             this.$emit("updateJob", {
               newJob: res.data.new_job,

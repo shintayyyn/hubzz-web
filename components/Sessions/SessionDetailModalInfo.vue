@@ -62,9 +62,9 @@
         <div class="font-bold text-sm sm:text-md">Session structure information</div>
         <div class="text-xs sm:text-sm mb-8">{{job.platform_job.session_structure_information}}</div>
         <div class="font-bold text-sm sm:text-md">Include Saturday</div>
-        <div class="text-xs sm:text-sm mb-8">{{job.include_saturday ? 'Yest' : 'No'}}</div>
+        <div class="text-xs sm:text-sm mb-8">{{job.include_saturday ? 'Yes' : 'No'}}</div>
         <div class="font-bold text-sm sm:text-md">Include Sunday</div>
-        <div class="text-xs sm:text-sm mb-8">{{job.include_sunday ? 'Yest' : 'No'}}</div>
+        <div class="text-xs sm:text-sm mb-8">{{job.include_sunday ? 'Yes' : 'No'}}</div>
         <div class="font-bold text-sm sm:text-md">Unpaid break</div>
         <div class="text-xs sm:text-sm mb-8">{{job.platform_job.unpaid_breaks_in_minutes}}</div>
         <div class="font-bold text-sm sm:text-md">Update Remarks</div>
@@ -89,20 +89,34 @@
           </div>
         </div>
 
-        <div class="font-bold text-sm sm:text-md" v-if="job.selection_date">Selection Date</div>
+        <div
+          class="font-bold text-sm sm:text-md"
+          v-if="job.selection_date"
+        >Selection will be made and you will receive a notification by this date</div>
         <div
           v-if="job.selection_date"
           class="text-xs sm:text-sm mb-4"
         >{{$moment(job.selection_date, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('DD-MM-YYYY')}} | {{$moment(job.selection_date, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('HH:mm')}}</div>
 
         <div
-          class="font-bold text-sm sm:text-md"
-        >Auto-assigns this job to the first matching applicant</div>
-        <div
-          class="text-xs sm:text-sm mb-8"
           v-if="job.platform_job.auto_assign_at"
-        >{{job.platform_job.auto_assign_at | localDate}}</div>
-        <div class="text-xs sm:text-sm mb-8" v-else>No</div>
+          class="font-bold text-sm sm:text-md mb-4"
+        >Auto-assigns this job to the first matching applicant</div>
+
+        <div
+          v-if="job.favorite_first && job.favorite_only"
+          class="font-bold text-sm sm:text-md"
+        >This Job is available for Favorite Bank only by this date</div>
+        <div
+          v-if="job.favorite_first && job.favorite_only"
+          class="text-xs sm:text-sm mb-4"
+        >{{$moment(job.favorite_only_until, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('DD-MM-YYYY')}} | {{$moment(job.favorite_only_until, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('HH:mm')}}</div>
+
+        <div
+          v-if="!job.favorite_first && job.favorite_only"
+          class="font-bold text-sm sm:text-md mb-4"
+        >This Job is available for Favorite Bank only</div>
+
         <div class="text-xs sm:text-sm mb-4">
           This job is
           <span
