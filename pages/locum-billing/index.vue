@@ -425,10 +425,10 @@ export default {
       };
     } catch (err) {
       console.log("err", err.response || err);
-      error({
-        statusCode: err.status || 500,
-        message: err.message || "Something went wrong!"
-      });
+      // error({
+      //   statusCode: err.status || 500,
+      //   message: err.message || "Something went wrong!"
+      // });
     }
   },
   mounted() {
@@ -493,7 +493,7 @@ export default {
     getJobPartsPromiseAll() {
       let url = `/api/v1/locum/job-parts`;
       let params = null;
-      let queryStatus = this.$route.query.status.toLowerCase();
+      let queryStatus = this.$route.query.status;
 
       switch (queryStatus && queryStatus.toLowerCase()) {
         case "to-be-invoiced":
@@ -594,7 +594,7 @@ export default {
     getJobParts() {
       let url = `/api/v1/locum/job-parts`;
       let params = null;
-      let queryStatus = this.$route.query.status.toLowerCase();
+      let queryStatus = this.$route.query.status;
 
       switch (queryStatus && queryStatus.toLowerCase()) {
         case "to-be-invoiced":
@@ -683,10 +683,10 @@ export default {
         })
         .catch(err => {
           console.log("err", err.response || err);
-          error({
-            statusCode: err.status || 500,
-            message: err.message || "Something went wrong!"
-          });
+          // error({
+          //   statusCode: err.status || 500,
+          //   message: err.message || "Something went wrong!"
+          // });
         });
     },
     async refreshInvoices() {
