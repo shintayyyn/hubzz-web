@@ -300,6 +300,8 @@ export default {
       let oldStatus = oldValue.status;
       if (newStatus && newStatus !== null && newStatus !== oldStatus) {
         this.current_page = 1;
+        this.params.offset = 0;
+        this.params.limit = 5;
         this.showTable = false;
         this.showRefresh = false;
         setTimeout(async () => {
@@ -602,7 +604,8 @@ export default {
             locum_status: ["Completed", "Terminated"],
             invoice_status: ["To Be Invoice"],
             job_type: "Platform",
-            ...this.params
+            offset: this.params.offset,
+            limit: this.params.limit
           };
           break;
         case "disputed":
@@ -610,7 +613,8 @@ export default {
             locum_status: ["Completed", "Terminated"],
             invoice_status: ["Disputed"],
             job_type: "Platform",
-            ...this.params
+            offset: this.params.offset,
+            limit: this.params.limit
           };
           break;
         case "issued":
@@ -618,7 +622,8 @@ export default {
             locum_status: ["Completed", "Terminated"],
             invoice_status: ["Invoiced"],
             job_type: "Platform",
-            ...this.params
+            offset: this.params.offset,
+            limit: this.params.limit
           };
           break;
         case "approved":
@@ -626,7 +631,8 @@ export default {
             locum_status: ["Approved"],
             invoice_status: [],
             job_type: "Platform",
-            ...this.params
+            offset: this.params.offset,
+            limit: this.params.limit
           };
           break;
         case "pension-form-a":
@@ -647,10 +653,10 @@ export default {
           params = {
             locum_status: ["Completed", "Terminated"],
             invoice_status: ["To Be Invoice"],
-            job_type: "Platform"
+            job_type: "Platform",
+            ...this.params
           };
       }
-      console.log(params);
       return this.$axios
         .$get(`${url}`, { params })
         .then(res => {
@@ -816,12 +822,8 @@ export default {
             queryStatus === "approved" &&
             invoice.status === "Approved")
         ) {
-          console.log("qwe");
           this.job_parts.splice(index, 1, job_part);
         } else {
-          console.log("asd");
-          console.log(queryStatus);
-          console.log(invoice.status);
           this.job_parts.splice(index, 1);
         }
       }
