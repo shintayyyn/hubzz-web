@@ -477,12 +477,12 @@ export default {
       return false;
     },
     viewAsPdf(invoiceId) {
-      // window.open(
-      //   `${process.env.API_URL}/api/v1/locum-invoices/${invoiceId}/pdf`
-      // );
-      this.$axios
-        .$get(`/api/v1/locum-invoices/${invoiceId}/html`)
-        .then(res => console.log(res));
+      window.open(
+        `${process.env.API_URL}/api/v1/locum-invoices/${invoiceId}/pdf`
+      );
+      // this.$axios
+      //   .$get(`/api/v1/locum-invoices/${invoiceId}/html`)
+      //   .then(res => console.log(res));
     },
     async exportToPdf() {
       console.log(this.propInvoice);

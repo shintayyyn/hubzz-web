@@ -215,11 +215,10 @@ export default {
         this.$axios
           .$post(`/api/v1/locum/locum-invoices-form-b`, this.form)
           .then(res => {
-            console.log(res);
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
-              text: [`${res.data.message}`]
+              text: [`${res.message}`]
             });
             this.$emit("createFormB", res.data.locum_invoice_form_b);
           })

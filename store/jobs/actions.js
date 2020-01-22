@@ -98,6 +98,12 @@ export default {
                 commit('ADD_LOCUM_JOB_NOTIFICATION', { ...response.data.job, notificationType: 'Locum Notification Job Declined' })
             }
         })
+        this.$socket.on('Locum Notification Job Terminated', async (job) => {
+            const response = await this.$axios.$get(`/api/v1/locum/jobs/${job.id}`)
+            if (response.data && response.data.job) {
+                commit('ADD_LOCUM_JOB_NOTIFICATION', { ...response.data.job, notificationType: 'Locum Notification Job Terminated' })
+            }
+        })
         // nsa live/match, may na appoint or kinancel ng practice ung job
         this.$socket.on('Locum Notification Job Unavailable', async (job) => {
             // doesn't need to notify the locum
@@ -125,10 +131,10 @@ export default {
                 commit('ADD_PRACTICE_JOB_NOTIFICATION', { ...response.data.job, notificationType: 'Practice Notification Job Available' })
             }
         })
-        this.$socket.on('Practice Notification Job Applied', async (job) => {
-            const response = await this.$axios.$get(`/api/v1/practice/jobs/${job.id}`)
+        this.$socket.on('Practice Notification Job Application', async (job) => {
+            const response = await this.$axios.$get(`/api/v1/practice/jobs/${job.job_id}`)
             if (response.data && response.data.job) {
-                commit('ADD_PRACTICE_JOB_NOTIFICATION', { ...response.data.job, notificationType: 'Practice Notification Job Applied' })
+                commit('ADD_PRACTICE_JOB_NOTIFICATION', { ...response.data.job, notificationType: 'Practice Notification Job Application' })
             }
         })
         this.$socket.on('Practice Notification Job Current', async (job) => {
@@ -287,7 +293,7 @@ export default {
                         response.data.jobs.filter(jobPart => jobPart.status.toLowerCase() === 'withdrawn') : [])
                 }
                 if (jobStatus.toLowerCase() === 'pending') {
-                    commit('SET_PRACTICE_PENDING_JOBS', response.data.jobs && response.data.jobs.length > 0 ? 
+                    commit('SET_PRACTICE_PENDING_JOBS', response.data.jobs && response.data.jobs.length > 0 ?
                         response.data.jobs.filter(jobPart => jobPart.status.toLowerCase() === 'pending') : [])
                 }
                 // FETCH PENDING PRACTICE

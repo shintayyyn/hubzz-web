@@ -227,7 +227,7 @@
               :label="'Company Registration Number'"
               :error="formError.find(item => item.field === 'company_registration_number')"
               :placeholder="'The number of your company from Companies House'"
-            required
+              required
             />
           </template>
           <template v-if="form.employment_type === 'Self-Employed'">
@@ -238,7 +238,7 @@
               :label="'UTR number'"
               :error="formError.find(item => item.field === 'utr_number')"
               :placeholder="''"
-            required
+              required
             />
           </template>
           <AppInput
@@ -405,6 +405,9 @@ export default {
     return {
       employmentTypes,
       professionCategoryId: "",
+      selectedQualification: [],
+      selectedClinicalSystem: [],
+      selectedSpokenLanguage: [],
       form: {
         gmc_or_nmc_number: "",
         mpl_or_npl_number: "",
@@ -628,177 +631,109 @@ export default {
     }
   },
   methods: {
-    async save() {
-      try {
-        this.formError = [];
-        let notRequired = [
-          "nhs_smart_card_id_number",
-          "headline",
-          "short_biography",
-          "special_requirements",
-          "spoken_language_id",
-          "referee_1_contact_name",
-          "referee_1_phone_number",
-          "referee_1_email",
-          "referee_2_contact_name",
-          "referee_2_phone_number",
-          "referee_2_email",
-          "paid_under_payroll",
-          "mandatory_training_id",
-          "ir35"
-        ];
+    save() {
+      let notRequired = [
+        "nhs_smart_card_id_number",
+        "headline",
+        "short_biography",
+        "special_requirements",
+        "spoken_language_id",
+        "referee_1_contact_name",
+        "referee_1_phone_number",
+        "referee_1_email",
+        "referee_2_contact_name",
+        "referee_2_phone_number",
+        "referee_2_email",
+        "paid_under_payroll",
+        "mandatory_training_id",
+        "ir35"
+      ];
 
-        if (this.form.employment_type === "Self-Employed") {
-          notRequired.push("company_registration_number");
-        } else if (this.form.employment_type === "Limited Company") {
-          notRequired.push("utr_number");
-        }
+      if (this.form.employment_type === "Self-Employed") {
+        notRequired.push("company_registration_number");
+      } else if (this.form.employment_type === "Limited Company") {
+        notRequired.push("utr_number");
+      }
 
-        if (
-          this.form.paid_under_payroll == false ||
-          this.form.paid_under_payroll == "false"
-        ) {
-          notRequired.push(
-            "payroll_detail_account_name",
-            "payroll_detail_bank_name",
-            "payroll_detail_sort_code",
-            "payroll_detail_account_number"
-          );
-        }
-
-        this.Validate(this.form, notRequired);
-
-        if (!this.formError.length) {
-          this.loading = true;
-          this.form.profession_id = this.form.profession_id.toString();
-          this.form.qualification_id = this.form.qualification_id.length
-            ? this.form.qualification_id.map(item => item.value)
-            : [];
-          this.form.clinical_system_id = this.form.clinical_system_id
-            ? this.form.clinical_system_id.map(item => item.value)
-            : [];
-          this.form.spoken_language_id = this.form.spoken_language_id
-            ? this.form.spoken_language_id.map(item => item.value)
-            : [];
-
-          const response = await this.$axios.$put(
-            `/api/v1/locum/me/profile`,
-            this.form
-          );
-          this.form.gmc_or_nmc_number =
-            response.data.user.locum_detail.gmc_or_nmc_number.number;
-          this.form.mpl_or_npl_number =
-            response.data.user.locum_detail.mpl_or_npl_number.number;
-          this.form.nhs_smart_card_id_number =
-            response.data.user.locum_detail.nhs_smart_card_id_number;
-          this.form.headline = response.data.user.locum_detail.headline;
-          this.form.short_biography =
-            response.data.user.locum_detail.short_biography;
-          this.form.special_requirements =
-            response.data.user.locum_detail.special_requirements;
-          this.form.profession_id =
-            response.data.user.locum_detail.profession.id;
-          this.form.qualification_id = response.data.user.locum_detail.qualifications.map(
-            qualification => {
-              return { label: qualification.name, value: qualification.id };
-            }
-          );
-          this.form.clinical_system_id = response.data.user.locum_detail.clinical_systems.map(
-            clinicalSystem => {
-              return { label: clinicalSystem.name, value: clinicalSystem.id };
-            }
-          );
-          this.form.spoken_language_id = response.data.user.locum_detail.spoken_languages.map(
-            spokenLanguage => {
-              return { label: spokenLanguage.name, value: spokenLanguage.id };
-            }
-          );
-          this.form.min_rate_per_hour = response.data.user.locum_detail.rates.find(
-            rate => rate.rate_type.id === 1
-          ).min;
-          this.form.max_rate_per_hour = response.data.user.locum_detail.rates.find(
-            rate => rate.rate_type.id === 1
-          ).max;
-          this.form.min_rate_per_half_day_session = response.data.user.locum_detail.rates.find(
-            rate => rate.rate_type.id === 2
-          ).min;
-          this.form.max_rate_per_half_day_session = response.data.user.locum_detail.rates.find(
-            rate => rate.rate_type.id === 2
-          ).max;
-          this.form.min_rate_per_whole_day_session = response.data.user.locum_detail.rates.find(
-            rate => rate.rate_type.id === 3
-          ).min;
-          this.form.max_rate_per_whole_day_session = response.data.user.locum_detail.rates.find(
-            rate => rate.rate_type.id === 3
-          ).max;
-          this.form.practice_type_id = response.data.user.locum_detail.practice_types.map(
-            practiceType => practiceType.id
-          );
-          this.form.mandatory_training_id = response.data.user.locum_detail.mandatory_trainings.map(
-            mandatoryTraining => mandatoryTraining.mandatory_training.id
-          );
-          this.form.post_code = response.data.user.locum_detail.post_code;
-          this.form.miles = response.data.user.locum_detail.miles;
-
-          response.data.user.locum_detail.referees.forEach((referee, index) => {
-            if (index == 0) {
-              this.form.referee_1_contact_name = referee.name;
-              this.form.referee_1_phone_number = referee.phone_number;
-              this.form.referee_1_email = referee.email;
-            }
-            if (index == 1) {
-              this.form.referee_2_contact_name = referee.name;
-              this.form.referee_2_phone_number = referee.phone_number;
-              this.form.referee_2_email = referee.email;
-            }
-          });
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "success",
-            text: ["Saved !"]
-          });
-          this.loading = false;
-          this.scrollToTop();
-        } else {
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "danger",
-            text: ["Please fill up all the forms"]
-          });
-          this.loading = false;
-          this.scrollToTop();
-        }
-      } catch (err) {
-        this.form.qualification_id = this.user.locum_detail.qualifications.map(
-          qualification => {
-            return { label: qualification.name, value: qualification.id };
-          }
+      if (["false", false].includes(this.form.paid_under_payroll)) {
+        notRequired.push(
+          "payroll_detail_account_name",
+          "payroll_detail_bank_name",
+          "payroll_detail_sort_code",
+          "payroll_detail_account_number"
         );
-        this.form.clinical_system_id = this.user.locum_detail.clinical_systems.map(
-          clinicalSystem => {
-            return { label: clinicalSystem.name, value: clinicalSystem.id };
-          }
-        );
-        this.form.spoken_language_id = this.user.locum_detail.spoken_languages.map(
-          spokenLanguage => {
-            return { label: spokenLanguage.name, value: spokenLanguage.id };
-          }
-        );
-        console.log("err", err.response || err);
-        if (err.response.data.message) {
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "danger",
-            text: [`${err.response.data.message}`]
+      }
+
+      this.formError = [];
+
+      this.Validate(this.form, notRequired);
+
+      if (!this.formError.length) {
+        this.loading = true;
+        this.selectedClinicalSystem = [...this.form.clinical_system_id];
+        this.form.clinical_system_id = this.form.clinical_system_id.length
+          ? this.form.clinical_system_id.map(item => item.value)
+          : [];
+        this.selectedQualification = [...this.form.qualification_id];
+        this.form.qualification_id = this.form.qualification_id.length
+          ? this.form.qualification_id.map(item => item.value)
+          : [];
+        this.selectedSpokenLanguage = [...this.form.spoken_language_id];
+        this.form.spoken_language_id = this.form.spoken_language_id.length
+          ? this.form.spoken_language_id.map(item => item.value)
+          : [];
+        this.form.profession_id = this.form.profession_id.toString();
+
+        this.$axios
+          .$put(`/api/v1/locum/me/profile`, this.form)
+          .then(res => {
+            this.form.clinical_system_id = this.selectedClinicalSystem;
+            this.form.qualification_id = this.selectedQualification;
+            this.form.spoken_language_id = this.selectedSpokenLanguage;
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: [`${res.message}`]
+            });
+          })
+          .catch(err => {
+            console.log("err", err.response || err);
+            this.form.clinical_system_id = this.selectedClinicalSystem;
+            this.form.qualification_id = this.selectedQualification;
+            this.form.spoken_language_id = this.selectedSpokenLanguage;
+            if (
+              err.response &&
+              err.response.data &&
+              err.response.data.message
+            ) {
+              this.$store.commit("SET_NOTIFICATION", {
+                enabled: true,
+                status: "danger",
+                text: [`${err.response.data.message}`]
+              });
+            }
+            if (
+              err.response &&
+              err.response.data &&
+              err.response.data.error_messages
+            ) {
+              err.response.data.error_messages.forEach(error => {
+                this.formError.push(error);
+              });
+            }
+            throw err;
+          })
+          .finally(() => {
+            this.loading = false;
+            this.scrollToTop();
           });
-        }
-        if (err.response.data.error_messages) {
-          err.response.data.error_messages.forEach(error => {
-            this.formError.push(error);
-          });
-        }
+      } else {
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "danger",
+          text: ["Please fill up all the forms"]
+        });
         this.scrollToTop();
-        this.loading = false;
       }
     }
   }
