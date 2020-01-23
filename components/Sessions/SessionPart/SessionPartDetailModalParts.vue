@@ -36,7 +36,9 @@ export default {
       current_page: 1,
       // app table params
       params: {
-        job_id: null
+        job_id: null,
+        limit: 5,
+        offset: 0
       },
       // app table
       columns: [

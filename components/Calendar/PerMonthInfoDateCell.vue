@@ -185,22 +185,22 @@
         v-if="getLocumOngoingJobs.length > 0"
       >
         <span
-          v-if="hasLocumOngoingJobs(item.fullDate, 'AM')"
+          v-if="hasLocumOngoingJobs(item.fullDate, 'AM', item.day)"
           class="bg-green-500 text-green-500 w-full h-2 sm:h-3 lg:h-4 rounded-bl-lg"
         >.</span>
         <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
         <span
-          v-if="hasLocumOngoingJobs(item.fullDate, 'PM')"
+          v-if="hasLocumOngoingJobs(item.fullDate, 'PM', item.day)"
           class="bg-green-500 text-green-500 w-full h-2 sm:h-3 lg:h-4"
         >.</span>
         <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
         <span
-          v-if="hasLocumOngoingJobs(item.fullDate, 'Whole Day')"
+          v-if="hasLocumOngoingJobs(item.fullDate, 'Whole Day', item.day)"
           class="bg-green-500 text-green-500 w-full h-2 sm:h-3 lg:h-4"
         >.</span>
         <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
         <span
-          v-if="hasLocumOngoingJobs(item.fullDate, 'OOH')"
+          v-if="hasLocumOngoingJobs(item.fullDate, 'OOH', item.day)"
           class="bg-green-500 text-green-500 w-full h-2 sm:h-3 lg:h-4 rounded-br-lg"
         >.</span>
         <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
@@ -211,97 +211,47 @@
         v-if="getLocumAllocatedJobs.length > 0"
       >
         <span
-          v-if="hasLocumAllocatedJobs(item.fullDate, 'AM')"
+          v-if="hasLocumAllocatedJobs(item.fullDate, 'AM', item.day)"
           class="bg-green-300 text-green-300 w-full h-2 sm:h-3 lg:h-4 rounded-bl-lg"
         >.</span>
         <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
         <span
-          v-if="hasLocumAllocatedJobs(item.fullDate, 'PM')"
+          v-if="hasLocumAllocatedJobs(item.fullDate, 'PM', item.day)"
           class="bg-green-300 text-green-300 w-full h-2 sm:h-3 lg:h-4"
         >.</span>
         <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
         <span
-          v-if="hasLocumAllocatedJobs(item.fullDate, 'Whole Day')"
+          v-if="hasLocumAllocatedJobs(item.fullDate, 'Whole Day', item.day)"
           class="bg-green-300 text-green-300 w-full h-2 sm:h-3 lg:h-4"
         >.</span>
         <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
         <span
-          v-if="hasLocumAllocatedJobs(item.fullDate, 'OOH')"
+          v-if="hasLocumAllocatedJobs(item.fullDate, 'OOH', item.day)"
           class="bg-green-300 text-green-300 w-full h-2 sm:h-3 lg:h-4 rounded-br-lg"
         >.</span>
         <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
       </div>
-      <!-- <div
-        class="flex flex-row flex-no-wrap absolute bottom-0 left-0 justify-start w-full"
-        v-if="getLocumAllocatedPrivateJobs.length > 0"
-      >
-        <span
-          v-if="hasLocumAllocatedPrivateJobs(item.fullDate, 'AM')"
-          class="bg-green-300 text-green-300 w-full h-2 sm:h-3 lg:h-4 rounded-bl-lg"
-        >.</span>
-        <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
-        <span
-          v-if="hasLocumAllocatedPrivateJobs(item.fullDate, 'PM')"
-          class="bg-green-300 text-green-300 w-full h-2 sm:h-3 lg:h-4"
-        >.</span>
-        <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
-        <span
-          v-if="hasLocumAllocatedPrivateJobs(item.fullDate, 'Whole Day')"
-          class="bg-green-300 text-green-300 w-full h-2 sm:h-3 lg:h-4"
-        >.</span>
-        <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
-        <span
-          v-if="hasLocumAllocatedPrivateJobs(item.fullDate, 'OOH')"
-          class="bg-green-300 text-green-300 w-full h-2 sm:h-3 lg:h-4 rounded-br-lg"
-        >.</span>
-        <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
-      </div>
-      <div
-        class="flex flex-row flex-no-wrap absolute bottom-0 left-0 justify-start w-full"
-        v-if="getLocumAllocatedPlatformJobs.length > 0"
-      >
-        <span
-          v-if="hasLocumAllocatedPlatformJobs(item.fullDate, 'AM')"
-          class="bg-green-300 text-green-300 w-full h-2 sm:h-3 lg:h-4 rounded-bl-lg"
-        >.</span>
-        <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
-        <span
-          v-if="hasLocumAllocatedPlatformJobs(item.fullDate, 'PM')"
-          class="bg-green-300 text-green-300 w-full h-2 sm:h-3 lg:h-4"
-        >.</span>
-        <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
-        <span
-          v-if="hasLocumAllocatedPlatformJobs(item.fullDate, 'Whole Day')"
-          class="bg-green-300 text-green-300 w-full h-2 sm:h-3 lg:h-4"
-        >.</span>
-        <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
-        <span
-          v-if="hasLocumAllocatedPlatformJobs(item.fullDate, 'OOH')"
-          class="bg-green-300 text-green-300 w-full h-2 sm:h-3 lg:h-4 rounded-br-lg"
-        >.</span>
-        <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
-      </div>-->
       <div
         class="flex flex-row flex-no-wrap absolute bottom-0 left-0 justify-start w-full"
         v-if="getLocumAppliedJobs.length > 0"
       >
         <span
-          v-if="hasLocumAppliedJobs(item.fullDate, 'AM')"
+          v-if="hasLocumAppliedJobs(item.fullDate, 'AM', item.day)"
           class="bg-orange-200 text-orange-200 w-full h-2 sm:h-3 lg:h-4 rounded-bl-lg"
         >.</span>
         <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
         <span
-          v-if="hasLocumAppliedJobs(item.fullDate, 'PM')"
+          v-if="hasLocumAppliedJobs(item.fullDate, 'PM', item.day)"
           class="bg-orange-200 text-orange-200 w-full h-2 sm:h-3 lg:h-4"
         >.</span>
         <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
         <span
-          v-if="hasLocumAppliedJobs(item.fullDate, 'Whole Day')"
+          v-if="hasLocumAppliedJobs(item.fullDate, 'Whole Day', item.day)"
           class="bg-orange-200 text-orange-200 w-full h-2 sm:h-3 lg:h-4"
         >.</span>
         <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
         <span
-          v-if="hasLocumAppliedJobs(item.fullDate, 'OOH')"
+          v-if="hasLocumAppliedJobs(item.fullDate, 'OOH', item.day)"
           class="bg-orange-200 text-orange-200 w-full h-2 sm:h-3 lg:h-4 rounded-br-lg"
         >.</span>
         <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
@@ -477,41 +427,40 @@ export default {
 
     // LOCUM
     // PARTS
-    hasLocumOngoingJobs(date, type) {
+    hasLocumOngoingJobs(date, type, day) {
       return this.getLocumOngoingJobs.find(
         job_part =>
           this.getDateArray(job_part.date_start, job_part.date_end).includes(
             date
-          ) && job_part.job.shift.name === type
+          ) &&
+          job_part.job.shift.name === type &&
+          ((job_part.job.include_saturday === false && day !== 6) ||
+            job_part.job.include_saturday === true) &&
+          ((job_part.job.include_sunday === false && day !== 0) ||
+            job_part.job.include_sunday === true)
       );
     },
     // WHOLE
-    hasLocumAllocatedJobs(date, type) {
+    hasLocumAllocatedJobs(date, type, day) {
       return this.getLocumAllocatedJobs.find(
         job =>
           this.getDateArray(job.date_start, job.date_end).includes(date) &&
-          job.shift.name === type
+          job.shift.name === type &&
+          ((job.include_saturday === false && day !== 6) ||
+            job.include_saturday === true) &&
+          ((job.include_sunday === false && day !== 0) ||
+            job.include_sunday === true)
       );
     },
-    // hasLocumAllocatedPrivateJobs(date, type) {
-    //   return this.getLocumAllocatedPrivateJobs.find(
-    //     job =>
-    //       this.getDateArray(job.date_start, job.date_end).includes(date) &&
-    //       job.shift.name === type
-    //   );
-    // },
-    // hasLocumAllocatedPlatformJobs(date, type) {
-    //   return this.getLocumAllocatedPlatformJobs.find(
-    //     job =>
-    //       this.getDateArray(job.date_start, job.date_end).includes(date) &&
-    //       job.shift.name === type
-    //   );
-    // },
     hasLocumAppliedJobs(date, type) {
       return this.getLocumAppliedJobs.find(
         job =>
           this.getDateArray(job.date_start, job.date_end).includes(date) &&
-          job.shift.name === type
+          job.shift.name === type &&
+          ((job.include_saturday === false && day !== 6) ||
+            job.include_saturday === true) &&
+          ((job.include_sunday === false && day !== 0) ||
+            job.include_sunday === true)
       );
     },
     // UNAVAILABILITIES

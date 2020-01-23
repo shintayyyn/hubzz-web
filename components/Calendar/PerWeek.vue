@@ -310,15 +310,15 @@
     <template v-if="$auth.user.domain === 'Locum'">
       <div class="flex flex-no-wrap justify-between text-xs mx-1 mt-5" style="height:50px;">
         <div class="w-full text-left my-auto" style="min-width: 60px">AM</div>
-        <template v-for="({id, date}, index) in daysInWeek">
+        <template v-for="({id, date, day}, index) in daysInWeek">
           <div
-            v-if="hasLocumOngoingJobs(date, 'AM')"
+            v-if="hasLocumOngoingJobs(date, 'AM', day)"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-green-400 hover:bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'AM')"
           ></div>
           <div
-            v-else-if="hasLocumAllocatedJobs(date, 'AM')"
+            v-else-if="hasLocumAllocatedJobs(date, 'AM', day)"
             class="w-full cursor-pointer border-t-2 border-gray-300 bg-green-300 hover:bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'AM')"
@@ -345,27 +345,15 @@
       </div>
       <div class="flex flex-no-wrap justify-between text-xs mx-1" style="height:50px;">
         <div class="w-full text-left my-auto" style="min-width: 60px">PM</div>
-        <template v-for="({id, date}, index) in daysInWeek">
+        <template v-for="({id, date, day}, index) in daysInWeek">
           <div
-            v-if="hasLocumOngoingJobs(date, 'PM')"
+            v-if="hasLocumOngoingJobs(date, 'PM', day)"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-green-400 hover:bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'PM')"
           ></div>
-          <!-- <div
-            v-else-if="hasLocumAllocatedPrivateJobs(date, 'PM')"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-green-300 hover:bg-gray-300"
-            :key="`${date}-${index}-${id}`"
-            @click="selectDateShift(date, 'PM')"
-          ></div>
           <div
-            v-else-if="hasLocumAllocatedPlatformJobs(date, 'PM')"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-green-300 hover:bg-gray-300"
-            :key="`${date}-${index}-${id}`"
-            @click="selectDateShift(date, 'PM')"
-          ></div>-->
-          <div
-            v-else-if="hasLocumAllocatedJobs(date, 'PM')"
+            v-else-if="hasLocumAllocatedJobs(date, 'PM', day)"
             class="w-full cursor-pointer border-t-2 border-gray-300 bg-green-300 hover:bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'PM')"
@@ -392,27 +380,15 @@
       </div>
       <div class="flex flex-no-wrap justify-between text-xs mx-1" style="height:50px;">
         <div class="w-full text-left my-auto" style="min-width: 60px">OOH</div>
-        <template v-for="({id, date}, index) in daysInWeek">
+        <template v-for="({id, date, day}, index) in daysInWeek">
           <div
-            v-if="hasLocumOngoingJobs(date, 'OOH')"
+            v-if="hasLocumOngoingJobs(date, 'OOH', day)"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-green-400 hover:bg-gray-300"
             :key="`${date}-${index}-${id}`"
             @click="selectDateShift(date, 'OOH')"
           ></div>
-          <!-- <div
-            v-else-if="hasLocumAllocatedPrivateJobs(date, 'OOH')"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-green-300 hover:bg-gray-300"
-            :key="`${date}-${index}-${id}`"
-            @click="selectDateShift(date, 'OOH')"
-          ></div>
           <div
-            v-else-if="hasLocumAllocatedPlatformJobs(date, 'OOH')"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-green-300 hover:bg-gray-300"
-            :key="`${date}-${index}-${id}`"
-            @click="selectDateShift(date, 'OOH')"
-          ></div>-->
-          <div
-            v-else-if="hasLocumAllocatedJobs(date, 'OOH')"
+            v-else-if="hasLocumAllocatedJobs(date, 'OOH', day)"
             class="w-full cursor-pointer border-t-2 border-gray-300 bg-green-300 hover:bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'OOH')"
@@ -439,31 +415,19 @@
       </div>
       <div class="flex flex-no-wrap justify-between text-xs mx-1" style="height:50px;">
         <div class="w-full text-left my-auto" style="min-width: 60px">Whole-day</div>
-        <template v-for="({id, date}, index) in daysInWeek">
+        <template v-for="({id, date, day}, index) in daysInWeek">
           <div
-            v-if="hasLocumOngoingJobs(date, 'Whole Day')"
+            v-if="hasLocumOngoingJobs(date, 'Whole Day', day)"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-green-400 hover:bg-gray-300"
             :key="`${date}-${index}-${id}`"
             @click="selectDateShift(date, 'Whole Day')"
           ></div>
           <div
-            v-else-if="hasLocumAllocatedJobs(date, 'Whole Day')"
+            v-else-if="hasLocumAllocatedJobs(date, 'Whole Day', day)"
             class="w-full cursor-pointer border-t-2 border-gray-300 bg-green-300 hover:bg-gray-300"
             :key="`${date}-${index}`"
             @click="selectDateShift(date, 'Whole Day')"
           ></div>
-          <!-- <div
-            v-else-if="hasLocumAllocatedPrivateJobs(date, 'Whole Day')"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-green-300 hover:bg-gray-300"
-            :key="`${date}-${index}-${id}`"
-            @click="selectDateShift(date, 'Whole Day')"
-          ></div>
-          <div
-            v-else-if="hasLocumAllocatedPlatformJobs(date, 'Whole Day')"
-            class="w-full cursor-pointer border-t-2 border-gray-300 bg-green-300 hover:bg-gray-300"
-            :key="`${date}-${index}-${id}`"
-            @click="selectDateShift(date, 'Whole Day')"
-          ></div>-->
           <div
             v-else-if="hasLocumUnavailabilities(date, 'Whole Day')"
             class="w-full cursor-pointer border-t-2 border-gray-400 bg-pink-500 hover:bg-gray-300"
@@ -564,12 +528,6 @@ export default {
     getLocumAllocatedJobs() {
       return this.$store.getters["jobs/getLocumAllocatedJobs"];
     },
-    // getLocumAllocatedPrivateJobs() {
-    //   return this.$store.getters["jobs/getLocumAllocatedPrivateJobs"];
-    // },
-    // getLocumAllocatedPlatformJobs() {
-    //   return this.$store.getters["jobs/getLocumAllocatedPlatformJobs"];
-    // },
     getLocumAppliedJobs() {
       return this.$store.getters["jobs/getLocumAppliedJobs"];
     },
@@ -867,7 +825,12 @@ export default {
           this.$axios.$get("/api/v1/locum/jobs", {
             params: {
               locum_status: ["Allocated", "Applied"],
-              calendar_date_start: `${this.firstDayOfTheWeek}:gte`,
+              calendar_date_start: `${this.$moment(
+                this.firstDayOfTheWeek,
+                "YYYY-MM-DD"
+              )
+                .subtract(1, "days")
+                .format("YYYY-MM-DD")}:gte`,
               calendar_date_end: `${this.lastDayOfTheWeek}:lte`,
               limit: 100000000
             }
@@ -875,14 +838,21 @@ export default {
           this.$axios.$get("/api/v1/locum/job-parts", {
             params: {
               locum_status: ["Ongoing"],
-              calendar_date_start: `${this.firstDayOfTheWeek}:gte`,
+              calendar_date_start: `${this.$moment(
+                this.firstDayOfTheWeek,
+                "YYYY-MM-DD"
+              )
+                .subtract(1, "days")
+                .format("YYYY-MM-DD")}:gte`,
               calendar_date_end: `${this.lastDayOfTheWeek}:lte`,
               limit: 100000000
             }
           }),
           this.$axios.$get("/api/v1/locum/unavailabilities", {
             params: {
-              date_start: `${this.firstDayOfTheWeek}:gte`,
+              date_start: `${this.$moment(this.firstDayOfTheWeek, "YYYY-MM-DD")
+                .subtract(1, "days")
+                .format("YYYY-MM-DD")}:gte`,
               date_end: `${this.lastDayOfTheWeek}:lte`,
               limit: 100000000
             }
@@ -1172,23 +1142,32 @@ export default {
     },
     // LOCUM
     // PARTS
-    hasLocumOngoingJobs(date, type) {
+    hasLocumOngoingJobs(date, type, day) {
       if (this.getLocumOngoingJobs && this.getLocumOngoingJobs.length > 0) {
         return this.getLocumOngoingJobs.find(
           job_part =>
             this.getDateArray(job_part.date_start, job_part.date_end).includes(
               date
-            ) && job_part.job.shift.name === type
+            ) &&
+            job_part.job.shift.name === type &&
+            ((job_part.job.include_saturday === false && day !== 6) ||
+              job_part.job.include_saturday === true) &&
+            ((job_part.job.include_sunday === false && day !== 0) ||
+              job_part.job.include_sunday === true)
         );
       }
     },
     // WHOLE
-    hasLocumAllocatedJobs(date, type) {
+    hasLocumAllocatedJobs(date, type, day) {
       if (this.getLocumAllocatedJobs && this.getLocumAllocatedJobs.length > 0) {
         return this.getLocumAllocatedJobs.find(
           job =>
             this.getDateArray(job.date_start, job.date_end).includes(date) &&
-            job.shift.name === type
+            job.shift.name === type &&
+            ((job.include_saturday === false && day !== 6) ||
+              job.include_saturday === true) &&
+            ((job.include_sunday === false && day !== 0) ||
+              job.include_sunday === true)
         );
       }
     },
