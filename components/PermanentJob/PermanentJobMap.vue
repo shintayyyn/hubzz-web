@@ -7,8 +7,9 @@
 			<div class="font-bold text-xs sm:text-sm">Practice</div>
 			<div
 				class="font-bold text-sm sm:text-md"
-			>{{job.platform_job ? job.platform_job.practice.surgery.name :null}}</div>
+			>{{job && job.platform_job ? job.platform_job.practice.surgery.name : 'Static Surgery Name'}}</div>
 			<div
+				v-if="job"
 				class="text-sm sm:text-md"
 			>{{job.platform_job.practice.surgery.address.line_1}} {{job.platform_job.practice.surgery.address.line_2}} {{job.platform_job.practice.surgery.address.line_3}} {{job.platform_job.practice.surgery.address.post_code}}</div>
 			<div class="mt-4">
@@ -41,28 +42,32 @@ export default {
 		};
 	},
 	mounted() {
-		this.loading = true;
-		this.$axios
-			.$get(
-				`/api/v1/postcode-coordinates?postcode=${this.job.platform_job.practice.postcode}`
-			)
-			.then(res => {
-				this.coordinates =
-					res.data.postcode_coordinates &&
-					res.data.postcode_coordinates.length > 0
-						? res.data.postcode_coordinates[0]
-						: null;
-				console.log("coordinates", this.coordinates);
-			})
-			.catch(err => {
-				console.log("err", err.response || err);
-				throw err;
-			})
-			.finally(() => {
-				this.loading = false;
-			});
-		console.log(this.coordinates);
-		console.log(this.job);
+		// this.loading = true;
+		//static
+		this.coordinates = {
+			coordinate_x: -1.3190309,
+			coordinate_y: 54.5616352,
+			id: 6398,
+			post_code: "TS18 1HU"
+		};
+		// this.$axios
+		// 	.$get(
+		// 		`/api/v1/postcode-coordinates?postcode=${this.job.platform_job.practice.postcode}`
+		// 	)
+		// 	.then(res => {
+		// 		this.coordinates =
+		// 			res.data.postcode_coordinates &&
+		// 			res.data.postcode_coordinates.length > 0
+		// 				? res.data.postcode_coordinates[0]
+		// 				: null;
+		// 	})
+		// 	.catch(err => {
+		// 		console.log("err", err.response || err);
+		// 		throw err;
+		// 	})
+		// 	.finally(() => {
+		// 		this.loading = false;
+		// 	});
 	},
 	computed: {
 		google: gmapApi,

@@ -1,16 +1,5 @@
 <template>
-	<section>
-		<transition name="shield" mode="out-in">
-			<div class="shield" @click="$router.go(-1)"></div>
-		</transition>
-		<transition name="slide" mode="out-in">
-			<template>
-				<div class="modal-container shadow-lg">
-					<CreatePermanentJobModal />
-				</div>
-			</template>
-		</transition>
-	</section>
+	<CreatePermanentJobModal />
 </template>
 
 <script>
@@ -18,7 +7,7 @@ import AppInput from "@/components/Base/AppInput";
 import AppButton from "@/components/Base/AppButton";
 import AppFilterSearch from "@/components/Base/AppFilterSearch";
 import AppDate from "@/components/Base/AppDate";
-import CreatePermanentJobModal from "@/components/CreatePermanentJobModal";
+import CreatePermanentJobModal from "@/components/PermanentJob/CreatePermanentJobModal";
 
 export default {
 	components: {

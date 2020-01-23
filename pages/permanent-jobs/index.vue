@@ -1,6 +1,11 @@
 <template>
 	<section class="flex flex-col items-start">
-		<AppButton :label="'Create'" class="ml-auto" @click="$router.push('/permanent-jobs/create')" />
+		<AppButton
+			v-if="$auth.user.domain === 'Practice'"
+			:label="'Create'"
+			class="ml-auto"
+			@click="$router.push('/permanent-jobs/create')"
+		/>
 		<AppTable
 			class="w-full"
 			v-if="permanent_jobs.length > 0"
@@ -12,6 +17,12 @@
 			:loading="loading"
 			:routerLink="'/permanent-jobs'"
 		></AppTable>
+		<div
+			class="shield"
+			v-if="['permanent-jobs-index-id','permanent-jobs-index-create'].includes($route.name)"
+			@click="$router.go(-1)"
+		></div>
+		<nuxt-child />
 	</section>
 </template>
 <script>
