@@ -12,8 +12,12 @@
 				<button class="mx-4 focus:outline-none" @click.prevent.stop="message(user)">
 					<svgicon name="chat" height="32" width="32" color="#888 #555 #fff" />
 				</button>
-				<button class="px-4 py-2 rounded-lg mx-1 bg-yellow-400 hover:bg-yellow-500">Accept</button>
-				<button class="px-4 py-2 rounded-lg mx-1 bg-red-500 hover:bg-red-600 text-white">Reject</button>
+				<AppButton :label="'Accept'" class="mx-1" />
+				<AppButton
+					class="mx-1"
+					:label="'Reject'"
+					:customTheme="'bg-red-500 hover:bg-red-600 text-white'"
+				/>
 			</div>
 			<div class="flex flex-row flex-no-wrap justify-start mt-4 md:mt-8">
 				<div class="font-bold text-md sm:text-lg">NAME</div>
