@@ -62,6 +62,8 @@ export default {
                             errorMessage.field === 'address_line_1' ||
                             errorMessage.field === 'address_line_2' ||
                             errorMessage.field === 'address_line_3' ||
+                            errorMessage.field === 'address_line_4' ||
+                            errorMessage.field === 'address_line_5' ||
                             errorMessage.field === 'postcode' ||
                             errorMessage.field === 'coordinates_x' ||
                             errorMessage.field === 'coordinates_y'
@@ -135,7 +137,9 @@ export default {
                             errorMessage.field === 'post_code' ||
                             errorMessage.field === 'address_line_1' ||
                             errorMessage.field === 'address_line_2' ||
-                            errorMessage.field === 'address_line_3'
+                            errorMessage.field === 'address_line_3' ||
+                            errorMessage.field === 'address_line_4' ||
+                            errorMessage.field === 'address_line_5'
                         )
                     })
                     commit('SET_ADDRESS_DETAIL_FORM_ERROR', addressDetailError)
@@ -169,6 +173,10 @@ export default {
                             errorMessage.field === 'payroll_detail_bank_name' ||
                             errorMessage.field === 'payroll_detail_sort_code' ||
                             errorMessage.field === 'payroll_detail_account_number' ||
+                            errorMessage.field === 'bank_account_account_name' ||
+                            errorMessage.field === 'bank_account_bank_name' ||
+                            errorMessage.field === 'bank_account_sort_code' ||
+                            errorMessage.field === 'bank_account_account_number' ||
                             errorMessage.field === 'ir35'
                         )
                     })

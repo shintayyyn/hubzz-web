@@ -158,7 +158,6 @@ export default {
     this.$axios
       .$get(`/api/v1/locum/private-practices`, { params })
       .then(res => {
-        console.log(res);
         if (res.data.private_practices.length === 0) {
           this.hasMore = false;
         } else {
@@ -209,8 +208,8 @@ export default {
             console.log("err", err.response || err);
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
-              status: "success",
-              text: [`${err.response.data.message}`]
+              status: "danger",
+              text: [`${err.response.message}`]
             });
             throw err;
           })

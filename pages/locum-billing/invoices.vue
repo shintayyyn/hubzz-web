@@ -2,42 +2,42 @@
   <section class="relative">
     <div class="flex flex-row justify-start overflow-x-auto pb-3">
       <nuxt-link
-        :to="{ path: '/locum-billing', query: { ...$route.query, status: 'to-be-invoiced' } }"
+        :to="{ path: '/locum-billing/invoices', query: { ...$route.query, status: 'to-be-invoiced' } }"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('locum-billing-index') && (!$route.query.status || ($route.query.status && $route.query.status.toLowerCase() === 'to-be-invoiced')) ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name.includes('locum-billing-invoices') && (!$route.query.status || ($route.query.status && $route.query.status.toLowerCase() === 'to-be-invoiced')) ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >To be invoiced</nuxt-link>
       <nuxt-link
-        :to="{ path: '/locum-billing', query: { ...$route.query, status: 'disputed' } }"
+        :to="{ path: '/locum-billing/invoices', query: { ...$route.query, status: 'disputed' } }"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('locum-billing-index') && ($route.query.status && $route.query.status.toLowerCase() === 'disputed') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name.includes('locum-billing-invoices') && ($route.query.status && $route.query.status.toLowerCase() === 'disputed') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >Disputed Invoices</nuxt-link>
       <nuxt-link
-        :to="{ path: '/locum-billing', query: { ...$route.query, status: 'issued' } }"
+        :to="{ path: '/locum-billing/invoices', query: { ...$route.query, status: 'issued' } }"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('locum-billing-index') && ($route.query.status && $route.query.status.toLowerCase() === 'issued') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name.includes('locum-billing-invoices') && ($route.query.status && $route.query.status.toLowerCase() === 'issued') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >Invoiced</nuxt-link>
       <nuxt-link
-        :to="{ path: '/locum-billing', query: { ...$route.query, status: 'approved' } }"
+        :to="{ path: '/locum-billing/invoices', query: { ...$route.query, status: 'approved' } }"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-        :class=" $route.name.includes('locum-billing-index') && ($route.query.status && $route.query.status.toLowerCase() === 'approved') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class=" $route.name.includes('locum-billing-invoices') && ($route.query.status && $route.query.status.toLowerCase() === 'approved') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >Approved Invoices</nuxt-link>
       <nuxt-link
-        :to="{ path: '/locum-billing', query: { ...$route.query, status: 'pension-form-a' } }"
+        :to="{ path: '/locum-billing/invoices', query: { ...$route.query, status: 'pension-form-a' } }"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-        :class=" $route.name.includes('locum-billing-index') && ($route.query.status && $route.query.status.toLowerCase() === 'pension-form-a') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class=" $route.name.includes('locum-billing-invoices') && ($route.query.status && $route.query.status.toLowerCase() === 'pension-form-a') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >NHS Pensions Form A</nuxt-link>
       <nuxt-link
-        :to="{ path: '/locum-billing', query: { ...$route.query, status: 'pension-form-b' } }"
+        :to="{ path: '/locum-billing/invoices', query: { ...$route.query, status: 'pension-form-b' } }"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('locum-billing-index') && ($route.query.status && $route.query.status.toLowerCase() === 'pension-form-b') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name.includes('locum-billing-invoices') && ($route.query.status && $route.query.status.toLowerCase() === 'pension-form-b') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >NHS Pensions Form B</nuxt-link>
     </div>
     <div
       class="flex flex-row justify-start overflow-x-auto pb-3"
-      v-if="$route.name.includes('locum-billing-index') && ($route.query.status && $route.query.status.toLowerCase() === 'pension-form-b')"
+      v-if="$route.name.includes('locum-billing-invoices') && ($route.query.status && $route.query.status.toLowerCase() === 'pension-form-b')"
     >
       <nuxt-link
-        :to="{ name: 'locum-billing-index-form-b-create', query: { ...$route.query, status: 'pension-form-b' } }"
+        :to="{ name: 'locum-billing-invoices-form-b-create', query: { ...$route.query, status: 'pension-form-b' } }"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap shadow-md border-2 rounded-lg text-gray-800"
       >Generate NHS Form B</nuxt-link>
     </div>
@@ -68,7 +68,7 @@
             <template v-slot:actions="slotProps">
               <div class="flex justify-center">
                 <div
-                  @click="$router.push({ path: `/locum-billing/${slotProps.item.locum_invoice_id}/edit`, query: {...$route.query} })"
+                  @click="$router.push({ path: `/locum-billing/invoices/${slotProps.item.locum_invoice_id}/edit`, query: {...$route.query} })"
                   v-if="slotProps.item.locum_invoice_id && slotProps.item.locum_status !== 'Approved'"
                   class="mx-1 px-4 py-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
                 >Edit</div>
@@ -79,7 +79,7 @@
                   class="mx-1 px-4 py-2 bg-red-700 text-white font-bold rounded-lg focus:outline-none"
                 >Delete</button>
                 <div
-                  @click="$router.push({ path: `/locum-billing/${slotProps.item.id}/create`, query: {...$route.query} })"
+                  @click="$router.push({ path: `/locum-billing/invoices/${slotProps.item.id}/create`, query: {...$route.query} })"
                   v-if="!slotProps.item.locum_invoice_id"
                   class="mx-1 px-4 py-2 bg-green-700 text-white font-bold rounded-lg focus:outline-none"
                 >Generate Invoice</div>
@@ -90,7 +90,7 @@
                 >View Pdf</div>-->
                 <!-- <div
                   v-if="slotProps.item.locum_invoice_id && slotProps.item.status === 'Approved'"
-                  @click="$router.push({ path: `/locum-billing/${slotProps.item.locum_invoice_id}`, query: {...$route.query} })"
+                  @click="$router.push({ path: `/locum-billing/invoices/${slotProps.item.locum_invoice_id}`, query: {...$route.query} })"
                   class="mx-1 px-4 py-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
                 >View</div>-->
                 <div
@@ -160,8 +160,8 @@
 
     <transition name="fade" mode="out-in">
       <nuxt-link
-        :to="{ name: 'locum-billing-index', query: {...$route.query}}"
-        v-if="['locum-billing-index-id', 'locum-billing-index-id-create', 'locum-billing-index-id-edit', 'locum-billing-index-form-b-create'].includes($route.name) || delete_invoice_modal"
+        :to="{ name: 'locum-billing-invoices', query: {...$route.query}}"
+        v-if="['locum-billing-invoices-id', 'locum-billing-invoices-id-create', 'locum-billing-invoices-id-edit', 'locum-billing-invoices-form-b-create'].includes($route.name) || delete_invoice_modal"
         class="shield"
       ></nuxt-link>
     </transition>
@@ -268,7 +268,7 @@ export default {
   },
   computed: {
     authPermissions() {
-      return this.$store.getters["auth/permissions"];
+      return this.$store.getters["permissions"];
     },
     noJobPartsToDisplay() {
       let str = "";
@@ -342,14 +342,14 @@ export default {
         case "approved":
           params = {
             locum_status: ["Approved"],
-            invoice_status: [],
+            invoice_status: ["Invoiced"],
             job_type: "Platform"
           };
           break;
         case "pension-form-a":
           params = {
             locum_status: ["Approved"],
-            invoice_status: [],
+            invoice_status: ["Invoiced"],
             // can_generate_form_b: true,
             job_type: "Platform"
           };
@@ -520,14 +520,14 @@ export default {
         case "approved":
           params = {
             locum_status: ["Approved"],
-            invoice_status: [],
+            invoice_status: ["Invoiced"],
             job_type: "Platform"
           };
           break;
         case "pension-form-a":
           params = {
             locum_status: ["Approved"],
-            invoice_status: [],
+            invoice_status: ["Invoiced"],
             // can_generate_form_b: true,
             job_type: "Platform"
           };
@@ -627,7 +627,7 @@ export default {
         case "approved":
           params = {
             locum_status: ["Approved"],
-            invoice_status: [],
+            invoice_status: ["Invoiced"],
             job_type: "Platform",
             offset: this.params.offset,
             limit: this.params.limit
@@ -636,14 +636,18 @@ export default {
         case "pension-form-a":
           params = {
             locum_status: ["Approved"],
-            invoice_status: [],
-            can_generate_form_b: true,
-            job_type: "Platform"
+            invoice_status: ["Invoiced"],
+            // can_generate_form_b: true,
+            job_type: "Platform",
+            offset: this.params.offset,
+            limit: this.params.limit
           };
           break;
         case "pension-form-b":
           params = {
-            type: "Platform"
+            type: "Platform",
+            offset: this.params.offset,
+            limit: this.params.limit
           };
           url = `/api/v1/locum/locum-invoices-form-b`;
           break;

@@ -80,14 +80,6 @@
             <p>{{job_part.job.shift.name}}</p>
           </div>
         </div>
-        <div
-          class="font-bold text-sm sm:text-md"
-        >Auto-assigns this job to the first, matching Favourite applicant</div>
-        <div
-          class="text-xs sm:text-sm mb-6"
-          v-if="job_part.job.platform_job.auto_assign_at"
-        >{{$moment(job_part.job.platform_job.auto_assign_at).format('YYYY-MM-DD')}}</div>
-        <div class="text-xs sm:text-sm mb-6" v-else>No</div>
         <div class="text-xs sm:text-sm mb-6">
           This job is
           <span

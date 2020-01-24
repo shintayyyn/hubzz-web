@@ -104,6 +104,7 @@
                   @blur="CheckEmptyField(form.code,'code')"
                 />
                 <AppPostCode
+                  :urlIndex="'/api/v1/postcode-coordinates'"
                   v-model="form.postcode"
                   :name="'postcode'"
                   :label="'Post code'"
@@ -135,6 +136,22 @@
                   :error="this.formError.find(item => item.field === 'address_line_3')"
                   @blur="CheckEmptyField(form.address_line_3,'address_line_3')"
                 />
+                <AppInput
+                  v-model="form.address_line_4"
+                  :type="'text'"
+                  :name="'address_line_4'"
+                  :label="'address_line_4'"
+                  :error="this.formError.find(item => item.field === 'address_line_4')"
+                  @blur="CheckEmptyField(form.address_line_4,'address_line_4')"
+                />
+                <AppInput
+                  v-model="form.address_line_5"
+                  :type="'text'"
+                  :name="'address_line_5'"
+                  :label="'address_line_5'"
+                  :error="this.formError.find(item => item.field === 'address_line_5')"
+                  @blur="CheckEmptyField(form.address_line_5,'address_line_5')"
+                />
               </form>
             </div>
           </div>
@@ -142,7 +159,7 @@
           <div class="flex justify-center mt-4">
             <AppButton :label="'<<'" @click="closeInputDetails" />
             <div class="mx-2"></div>
-            <AppButton :label="'Add'" @click="add" />
+            <AppButton :label="'Add'" @click="add" :disabled="adding_surgery_loading" />
           </div>
         </div>
       </template>
@@ -172,6 +189,7 @@ export default {
       confirmation_add_modal: false,
       selectedSurgeries: [],
       input_details: false,
+      adding_surgery_loading: false,
       //
       form: {
         name: "",
@@ -181,6 +199,8 @@ export default {
         address_line_1: "",
         address_line_2: "",
         address_line_3: "",
+        address_line_4: "",
+        address_line_5: "",
         postcode: "",
         coordinate_x: "",
         coordinate_y: ""
@@ -278,7 +298,9 @@ export default {
         "address_line_4",
         "address_line_5"
       ]);
+      this.adding_surgery_loading = true;
       await this.checkCoordinates(this.form.postcode);
+      this.adding_surgery_loading = false;
       if (!this.formError.length) {
         this.$axios
           .$post(`/api/v1/locum/private-practices`, this.form)
@@ -316,6 +338,8 @@ export default {
       this.form.address_line_1 = "";
       this.form.address_line_2 = "";
       this.form.address_line_3 = "";
+      this.form.address_line_4 = "";
+      this.form.address_line_5 = "";
       this.form.postcode = "";
       this.form.coordinate_x = "";
       this.form.coordinate_y = "";

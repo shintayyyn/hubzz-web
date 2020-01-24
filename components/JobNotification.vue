@@ -38,6 +38,7 @@
                   <div class="flex flex-wrap w-48 md:w-64">
                     <div class="flex flex-col items-start my-1 w-full">
                       <div
+                        v-if="!notification.billingStatus"
                         class="px-2 py-1 md:text-xs font-bold rounded-lg max-w-sm cursor-pointer uppercase"
                         :class="bgStatus(notification.status ? notification.status : notification.locum_status)"
                       >{{notification.status ? notification.status : notification.locum_status}}</div>

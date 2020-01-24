@@ -12,7 +12,7 @@
         />
       </div>
       <!-- invoice type -->
-      <div class="flex flex-row flex-wrap justify-start items-center my-2 md:my-4">
+      <!-- <div class="flex flex-row flex-wrap justify-start items-center my-2 md:my-4">
         <label class="mx-1">Type:</label>
         <div
           class="text-xs sm:text-sm mx-1 py-2 px-3 border-2 rounded-lg font-bold flex items-center focus:outline-none"
@@ -24,6 +24,12 @@
           :class="form.type === 'Private' ? 'bg-yellow-500 border-yellow-500' : ''"
           @click="form.type = 'Private'"
         >Private</div>
+      </div>-->
+      <div class="flex flex-row flex-wrap justify-start items-center my-2 md:my-4">
+        <label class="mx-1">Type:</label>
+        <div
+          class="text-xs sm:text-sm mx-1 py-2 px-3 border-2 rounded-lg font-bold flex items-center focus:outline-none bg-yellow-500 border-yellow-500"
+        >Platform</div>
       </div>
     </div>
 
@@ -136,25 +142,25 @@ export default {
     };
   },
   watch: {
-    "form.type"(newValue, oldValue) {
-      if (newValue && oldValue) {
-        this.practice.label = "";
-        this.practice.value = null;
-        this.form = {
-          locum_user_id: this.$auth.user.id,
-          type: newValue,
-          items: []
-        };
-        this.getLists(this.items.length);
-      }
-    }
+    // "form.type"(newValue, oldValue) {
+    //   if (newValue && oldValue) {
+    //     this.practice.label = "";
+    //     this.practice.value = null;
+    //     this.form = {
+    //       locum_user_id: this.$auth.user.id,
+    //       type: newValue,
+    //       items: []
+    //     };
+    //     this.getLists(this.items.length);
+    //   }
+    // }
   },
   computed: {
-    url() {
-      return this.form.type === "Platform"
-        ? "/api/v1/locum/practices"
-        : "/api/v1/locum/private-practices";
-    }
+    // url() {
+    //   return this.form.type === "Platform"
+    //     ? "/api/v1/locum/practices"
+    //     : "/api/v1/locum/private-practices";
+    // }
   },
   mounted() {
     this.form.locum_user_id = this.$auth.user.id;
@@ -167,14 +173,7 @@ export default {
 
     this.loading = true;
     this.$axios
-      .$get(
-        `${
-          this.form.type === "Platform"
-            ? "/api/v1/locum/practices"
-            : "/api/v1/locum/private-practices"
-        }`,
-        { params }
-      )
+      .$get(`/api/v1/locum/practices`, { params })
       .then(res => {
         if (res.data.practices.length === 0) {
           this.hasMore = false;
@@ -277,21 +276,21 @@ export default {
             }
           }
 
-          if (res.data.private_practices) {
-            if (res.data.private_practices.length === 0) {
-              this.hasMore = false;
-            } else {
-              res.data.private_practices.forEach(item => {
-                this.items.push({
-                  label: item.name,
-                  value: item.id
-                });
-              });
-              if (res.data.private_practices.length < 10) {
-                this.hasMore = false;
-              }
-            }
-          }
+          // if (res.data.private_practices) {
+          //   if (res.data.private_practices.length === 0) {
+          //     this.hasMore = false;
+          //   } else {
+          //     res.data.private_practices.forEach(item => {
+          //       this.items.push({
+          //         label: item.name,
+          //         value: item.id
+          //       });
+          //     });
+          //     if (res.data.private_practices.length < 10) {
+          //       this.hasMore = false;
+          //     }
+          //   }
+          // }
         })
         .catch(err => {
           console.log("err", err.response || err);

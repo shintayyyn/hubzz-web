@@ -54,7 +54,7 @@ export default {
       return this.$store.state.calendar.create_job_modal;
     },
     authPermissions() {
-      return this.$store.getters["auth/permissions"];
+      return this.$store.getters["permissions"];
     }
   }
 };

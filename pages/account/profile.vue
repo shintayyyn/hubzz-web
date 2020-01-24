@@ -250,6 +250,7 @@
             required
           />
           <template v-if="form.paid_under_payroll == true || form.paid_under_payroll == 'true'">
+            <div class="font-bold text-sm my-4">Payroll Details</div>
             <AppInput
               v-model="form.payroll_detail_account_name"
               :type="'text'"
@@ -283,6 +284,41 @@
               required
             />
           </template>
+          <template v-if="form.paid_under_payroll == false || form.paid_under_payroll == 'false'">
+            <div class="font-bold text-sm my-4">Bank Details</div>
+            <AppInput
+              v-model="form.bank_account_account_name"
+              :type="'text'"
+              :name="'bank_account_account_name'"
+              :label="'Account name'"
+              :error="formError.find(item => item.field === 'bank_account_account_name')"
+              required
+            />
+            <AppInput
+              v-model="form.bank_account_bank_name"
+              :type="'text'"
+              :name="'bank_account_bank_name'"
+              :label="'Bank name'"
+              :error="formError.find(item => item.field === 'bank_account_bank_name')"
+              required
+            />
+            <AppInput
+              v-model="form.bank_account_sort_code"
+              :type="'text'"
+              :name="'bank_account_sort_code'"
+              :label="'Sort code'"
+              :error="formError.find(item => item.field === 'bank_account_sort_code')"
+              required
+            />
+            <AppInput
+              v-model="form.bank_account_account_number"
+              :type="'text'"
+              :name="'bank_account_account_number'"
+              :label="'Account number'"
+              :error="formError.find(item => item.field === 'bank_account_account_number')"
+              required
+            />
+          </template>
           <AppInput
             v-model="form.ir35"
             :type="'single-checkbox'"
@@ -290,6 +326,7 @@
             :label="'Are you willing to work for a role captured within IR35 rules, subject to deduction of Tax and N.I.?'"
           />
           <AppPostCode
+            :urlIndex="'/api/v1/postcode-coordinates'"
             v-model="form.post_code"
             :name="'post_code'"
             :label="'The post code where I will be available at'"
@@ -442,6 +479,10 @@ export default {
         payroll_detail_bank_name: "",
         payroll_detail_sort_code: "",
         payroll_detail_account_number: "",
+        bank_account_account_name: "",
+        bank_account_bank_name: "",
+        bank_account_sort_code: "",
+        bank_account_account_number: "",
         ir35: false
       },
       profile: {
@@ -629,6 +670,15 @@ export default {
       this.form.payroll_detail_sort_code = this.user.locum_detail.invoice_detail.payroll_detail.sort_code;
       this.form.payroll_detail_bank_name = this.user.locum_detail.invoice_detail.payroll_detail.bank_name;
     }
+    if (
+      this.user.locum_detail.invoice_detail &&
+      this.user.locum_detail.invoice_detail.bank_account
+    ) {
+      this.form.bank_account_account_name = this.user.locum_detail.invoice_detail.bank_account.account_name;
+      this.form.bank_account_account_number = this.user.locum_detail.invoice_detail.bank_account.account_number;
+      this.form.bank_account_sort_code = this.user.locum_detail.invoice_detail.bank_account.sort_code;
+      this.form.bank_account_bank_name = this.user.locum_detail.invoice_detail.bank_account.bank_name;
+    }
   },
   methods: {
     save() {
@@ -656,11 +706,28 @@ export default {
       }
 
       if (["false", false].includes(this.form.paid_under_payroll)) {
+        this.form.payroll_detail_account_name = "";
+        this.form.payroll_detail_account_number = "";
+        this.form.payroll_detail_sort_code = "";
+        this.form.payroll_detail_bank_name = "";
         notRequired.push(
           "payroll_detail_account_name",
           "payroll_detail_bank_name",
           "payroll_detail_sort_code",
           "payroll_detail_account_number"
+        );
+      }
+
+      if (["true", true].includes(this.form.paid_under_payroll)) {
+        this.form.bank_account_account_name = "";
+        this.form.bank_account_account_number = "";
+        this.form.bank_account_sort_code = "";
+        this.form.bank_account_bank_name = "";
+        notRequired.push(
+          "bank_account_account_name",
+          "bank_account_bank_name",
+          "bank_account_sort_code",
+          "bank_account_account_number"
         );
       }
 
