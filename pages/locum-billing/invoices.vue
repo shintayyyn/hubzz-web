@@ -787,14 +787,12 @@ export default {
         item => item.id === invoice.items[0].job_part.id
       );
       job_part.locum_invoice_id = invoice.id;
-
       let index = this.job_parts.findIndex(item => item.id === job_part.id);
       if (index >= 0) {
         if (
-          !queryStatus ||
-          (queryStatus &&
-            queryStatus.toLowerCase() === "to-be-invoiced" &&
-            invoice.status === "Draft")
+          queryStatus &&
+          queryStatus.toLowerCase() === "to-be-invoiced" &&
+          invoice.status === "Draft"
         ) {
           this.job_parts.splice(index, 1, job_part);
         } else if (invoice.status !== "Draft") {

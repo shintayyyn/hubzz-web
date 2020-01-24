@@ -893,7 +893,7 @@ export default {
 
       this.Validate(this.form, notRequired);
 
-      if (this.formError.length) {
+      if (!this.formError.length) {
         this.selectedClinicalSystem = [...this.form.clinical_system_id];
         this.form.clinical_system_id = this.form.clinical_system_id.map(
           item => item.value
@@ -966,9 +966,7 @@ export default {
           this.form.unpaid_breaks_in_minutes = "";
         }
 
-        console.log(this.form);
         // console.log(notRequired);
-        return;
         this.$axios
           .$post(`/api/v1/practice/jobs`, this.form)
           .then(res => {
