@@ -45,7 +45,10 @@
       </div>
     </div>
     <div class="mt-10">
-      <div class="font-bold text-xs sm:text-base">Documents you need to be approved by Hubzz HQ <span class="text-red-500">*</span></div>
+      <div class="font-bold text-xs sm:text-base">
+        Documents you need to be approved by Hubzz HQ
+        <span class="text-red-500">*</span>
+      </div>
       <div
         class="text-sm font-hairline italic"
       >(Note: Only file types .pdf, .jpeg, .msword, .tiff are acccepted)</div>
@@ -121,7 +124,8 @@
               </td>
               <td v-else></td>
               <td
-                v-if="item && item.info && item.info.note" class="text-center"
+                v-if="item && item.info && item.info.note"
+                class="text-center"
               >{{ item.info.note | StringMaxLength(15)}}</td>
               <td v-else></td>
               <td
@@ -656,7 +660,16 @@ export default {
         return;
       }
       // vnd.openxmlformats-officedocument.wordprocessingml.document - docx type
-      let types = ["pdf", "jpeg", "msword", "tiff"];
+      let types = [
+        "pdf",
+        "jpeg",
+        "msword",
+        "tiff",
+        "vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "vnd.openxmlformats-officedocument.wordprocessingml.template",
+        "vnd.ms-word.document.macroEnabled.12",
+        "vnd.ms-word.template.macroEnabled.12"
+      ];
       let file = e.target.files[0];
       let fileType = file.type.split("/")[1];
       if (!types.includes(fileType)) {
@@ -754,7 +767,16 @@ export default {
       if (!e.target.files.length) {
         return;
       }
-      let types = ["pdf", "jpeg", "msword", "tiff"];
+      let types = [
+        "pdf",
+        "jpeg",
+        "msword",
+        "tiff",
+        "vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "vnd.openxmlformats-officedocument.wordprocessingml.template",
+        "vnd.ms-word.document.macroEnabled.12",
+        "vnd.ms-word.template.macroEnabled.12"
+      ];
       let file = e.target.files[0];
       let fileType = file.type.split("/")[1];
       if (!types.includes(fileType)) {
@@ -844,7 +866,16 @@ export default {
         });
     },
     onMandatoryFileInput(e, id, index) {
-      let types = ["pdf", "jpeg", "msword", "tiff"];
+      let types = [
+        "pdf",
+        "jpeg",
+        "msword",
+        "tiff",
+        "vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "vnd.openxmlformats-officedocument.wordprocessingml.template",
+        "vnd.ms-word.document.macroEnabled.12",
+        "vnd.ms-word.template.macroEnabled.12"
+      ];
       let file = e.target.files[0];
       let fileType = file.type.split("/")[1];
       if (!types.includes(fileType)) {
@@ -894,7 +925,16 @@ export default {
       if (!e.target.files.length) {
         return;
       }
-      let types = ["pdf", "jpeg", "msword", "tiff"];
+      let types = [
+        "pdf",
+        "jpeg",
+        "msword",
+        "tiff",
+        "vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "vnd.openxmlformats-officedocument.wordprocessingml.template",
+        "vnd.ms-word.document.macroEnabled.12",
+        "vnd.ms-word.template.macroEnabled.12"
+      ];
       let file = e.target.files[0];
       let fileType = file.type.split("/")[1];
       if (!types.includes(fileType)) {

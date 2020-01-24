@@ -131,7 +131,7 @@ export default {
   },
   computed: {
     authPermissions() {
-      return this.$store.getters["auth/permissions"];
+      return this.$store.getters["permissions"];
     }
   },
   watch: {

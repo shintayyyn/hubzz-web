@@ -106,7 +106,7 @@
         <div
           v-if="job.favorite_first && job.favorite_only"
           class="font-bold text-sm sm:text-md"
-        >This Job is available for Favorite Bank only by this date</div>
+        >Only Favorite Locum will be notified until this date</div>
         <div
           v-if="job.favorite_first && job.favorite_only"
           class="text-xs sm:text-sm mb-4"
@@ -115,7 +115,7 @@
         <div
           v-if="!job.favorite_first && job.favorite_only"
           class="font-bold text-sm sm:text-md mb-4"
-        >This Job is available for Favorite Bank only</div>
+        >This Job is available for Favorite Locum only</div>
 
         <div class="text-xs sm:text-sm mb-4">
           This job is

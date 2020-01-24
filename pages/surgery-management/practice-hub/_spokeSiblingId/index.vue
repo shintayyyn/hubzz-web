@@ -52,37 +52,33 @@
 <script>
 import AppAvatar from "@/components/Base/AppAvatar";
 export default {
-  components:{
+  components: {
     AppAvatar
   },
-  data(){
-    return{
-      locums:[],
-    }
+  data() {
+    return {
+      locums: []
+    };
   },
   computed: {
     authPermissions() {
-      return this.$store.getters["auth/permissions"];
+      return this.$store.getters["permissions"];
     }
   },
-  async asyncData({app, route, store}) {
-    try{
-      let response = await app.$axios.$get(`/api/v1/practice/locums`)
-      const locums = response.data.users
-      return{
+  async asyncData({ app, route, store }) {
+    try {
+      let response = await app.$axios.$get(`/api/v1/practice/locums`);
+      const locums = response.data.users;
+      return {
         locums
-      }
-    }catch(err){
-      console.log('get locum error!', err)
+      };
+    } catch (err) {
+      console.log("get locum error!", err);
     }
-    
-  },  
-  methods:{
-    
-  }
-}
+  },
+  methods: {}
+};
 </script>
 
 <style>
-
 </style>

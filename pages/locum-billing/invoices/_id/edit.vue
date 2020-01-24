@@ -3,13 +3,18 @@
     <div class="p-4 md:p-8 max-w-5xl h-screen">
       <div class="flex flex-row flex-wrap justify-start pb-4">
         <nuxt-link
-          :to="{ name: 'locum-billing-index', query: {...$route.query}}"
+          :to="{ name: 'locum-billing-invoices', query: {...$route.query}}"
           class="cursor-pointer"
         >
           <svgicon name="left-arrow" height="32" width="32" />
         </nuxt-link>
       </div>
-      <LocumPlatformBillingInvoiceForm :propInvoiceDetail="invoice_detail" :propInvoice="invoice" />
+      <LocumPlatformBillingInvoiceForm
+        :propInvoiceDetail="invoice_detail"
+        :propInvoice="invoice"
+        :propJobPart="null"
+        @updateInvoice="$emit('updateInvoice', $event), $router.push({ name: 'locum-billing-invoices', query: {...$route.query} })"
+      />
     </div>
   </div>
 </template>
