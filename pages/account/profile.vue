@@ -252,70 +252,70 @@
           <template v-if="form.paid_under_payroll == true || form.paid_under_payroll == 'true'">
             <div class="font-bold text-sm my-4">Payroll Details</div>
             <AppInput
-              v-model="form.payroll_detail_account_name"
+              v-model="form.payroll_account_name"
               :type="'text'"
-              :name="'payroll_detail_account_name'"
+              :name="'payroll_account_name'"
               :label="'Account name'"
-              :error="formError.find(item => item.field === 'payroll_detail_account_name')"
+              :error="formError.find(item => item.field === 'payroll_account_name')"
               required
             />
             <AppInput
-              v-model="form.payroll_detail_bank_name"
+              v-model="form.payroll_bank_name"
               :type="'text'"
-              :name="'payroll_detail_bank_name'"
+              :name="'payroll_bank_name'"
               :label="'Bank name'"
-              :error="formError.find(item => item.field === 'payroll_detail_bank_name')"
+              :error="formError.find(item => item.field === 'payroll_bank_name')"
               required
             />
             <AppInput
-              v-model="form.payroll_detail_sort_code"
+              v-model="form.payroll_sort_code"
               :type="'text'"
-              :name="'payroll_detail_sort_code'"
+              :name="'payroll_sort_code'"
               :label="'Sort code'"
-              :error="formError.find(item => item.field === 'payroll_detail_sort_code')"
+              :error="formError.find(item => item.field === 'payroll_sort_code')"
               required
             />
             <AppInput
-              v-model="form.payroll_detail_account_number"
+              v-model="form.payroll_account_number"
               :type="'text'"
-              :name="'payroll_detail_account_number'"
+              :name="'payroll_account_number'"
               :label="'Account number'"
-              :error="formError.find(item => item.field === 'payroll_detail_account_number')"
+              :error="formError.find(item => item.field === 'payroll_account_number')"
               required
             />
           </template>
           <template v-if="form.paid_under_payroll == false || form.paid_under_payroll == 'false'">
             <div class="font-bold text-sm my-4">Bank Details</div>
             <AppInput
-              v-model="form.bank_account_account_name"
+              v-model="form.account_name"
               :type="'text'"
-              :name="'bank_account_account_name'"
+              :name="'account_name'"
               :label="'Account name'"
-              :error="formError.find(item => item.field === 'bank_account_account_name')"
+              :error="formError.find(item => item.field === 'account_name')"
               required
             />
             <AppInput
-              v-model="form.bank_account_bank_name"
+              v-model="form.bank_name"
               :type="'text'"
-              :name="'bank_account_bank_name'"
+              :name="'bank_name'"
               :label="'Bank name'"
-              :error="formError.find(item => item.field === 'bank_account_bank_name')"
+              :error="formError.find(item => item.field === 'bank_name')"
               required
             />
             <AppInput
-              v-model="form.bank_account_sort_code"
+              v-model="form.sort_code"
               :type="'text'"
-              :name="'bank_account_sort_code'"
+              :name="'sort_code'"
               :label="'Sort code'"
-              :error="formError.find(item => item.field === 'bank_account_sort_code')"
+              :error="formError.find(item => item.field === 'sort_code')"
               required
             />
             <AppInput
-              v-model="form.bank_account_account_number"
+              v-model="form.account_number"
               :type="'text'"
-              :name="'bank_account_account_number'"
+              :name="'account_number'"
               :label="'Account number'"
-              :error="formError.find(item => item.field === 'bank_account_account_number')"
+              :error="formError.find(item => item.field === 'account_number')"
               required
             />
           </template>
@@ -475,14 +475,14 @@ export default {
         company_registration_number: "",
         utr_number: "",
         paid_under_payroll: false,
-        payroll_detail_account_name: "",
-        payroll_detail_bank_name: "",
-        payroll_detail_sort_code: "",
-        payroll_detail_account_number: "",
-        bank_account_account_name: "",
-        bank_account_bank_name: "",
-        bank_account_sort_code: "",
-        bank_account_account_number: "",
+        payroll_account_name: "",
+        payroll_bank_name: "",
+        payroll_sort_code: "",
+        payroll_account_number: "",
+        account_name: "",
+        bank_name: "",
+        sort_code: "",
+        account_number: "",
         ir35: false
       },
       profile: {
@@ -665,19 +665,19 @@ export default {
       this.user.locum_detail.invoice_detail &&
       this.user.locum_detail.invoice_detail.payroll_detail
     ) {
-      this.form.payroll_detail_account_name = this.user.locum_detail.invoice_detail.payroll_detail.account_name;
-      this.form.payroll_detail_account_number = this.user.locum_detail.invoice_detail.payroll_detail.account_number;
-      this.form.payroll_detail_sort_code = this.user.locum_detail.invoice_detail.payroll_detail.sort_code;
-      this.form.payroll_detail_bank_name = this.user.locum_detail.invoice_detail.payroll_detail.bank_name;
+      this.form.payroll_account_name = this.user.locum_detail.invoice_detail.payroll_detail.account_name;
+      this.form.payroll_account_number = this.user.locum_detail.invoice_detail.payroll_detail.account_number;
+      this.form.payroll_sort_code = this.user.locum_detail.invoice_detail.payroll_detail.sort_code;
+      this.form.payroll_bank_name = this.user.locum_detail.invoice_detail.payroll_detail.bank_name;
     }
     if (
       this.user.locum_detail.invoice_detail &&
       this.user.locum_detail.invoice_detail.bank_account
     ) {
-      this.form.bank_account_account_name = this.user.locum_detail.invoice_detail.bank_account.account_name;
-      this.form.bank_account_account_number = this.user.locum_detail.invoice_detail.bank_account.account_number;
-      this.form.bank_account_sort_code = this.user.locum_detail.invoice_detail.bank_account.sort_code;
-      this.form.bank_account_bank_name = this.user.locum_detail.invoice_detail.bank_account.bank_name;
+      this.form.account_name = this.user.locum_detail.invoice_detail.bank_account.account_name;
+      this.form.account_number = this.user.locum_detail.invoice_detail.bank_account.account_number;
+      this.form.sort_code = this.user.locum_detail.invoice_detail.bank_account.sort_code;
+      this.form.bank_name = this.user.locum_detail.invoice_detail.bank_account.bank_name;
     }
   },
   methods: {
@@ -706,28 +706,28 @@ export default {
       }
 
       if (["false", false].includes(this.form.paid_under_payroll)) {
-        this.form.payroll_detail_account_name = "";
-        this.form.payroll_detail_account_number = "";
-        this.form.payroll_detail_sort_code = "";
-        this.form.payroll_detail_bank_name = "";
+        this.form.payroll_account_name = "";
+        this.form.payroll_account_number = "";
+        this.form.payroll_sort_code = "";
+        this.form.payroll_bank_name = "";
         notRequired.push(
-          "payroll_detail_account_name",
-          "payroll_detail_bank_name",
-          "payroll_detail_sort_code",
-          "payroll_detail_account_number"
+          "payroll_account_name",
+          "payroll_bank_name",
+          "payroll_sort_code",
+          "payroll_account_number"
         );
       }
 
       if (["true", true].includes(this.form.paid_under_payroll)) {
-        this.form.bank_account_account_name = "";
-        this.form.bank_account_account_number = "";
-        this.form.bank_account_sort_code = "";
-        this.form.bank_account_bank_name = "";
+        this.form.account_name = "";
+        this.form.account_number = "";
+        this.form.sort_code = "";
+        this.form.bank_name = "";
         notRequired.push(
-          "bank_account_account_name",
-          "bank_account_bank_name",
-          "bank_account_sort_code",
-          "bank_account_account_number"
+          "account_name",
+          "bank_name",
+          "sort_code",
+          "account_number"
         );
       }
 

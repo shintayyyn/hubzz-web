@@ -9,7 +9,6 @@
             <div class="my-2 bg-yellow-500"></div>
           </button>
         </div>
-        <div @click="CheckIfUserIsDeactivated">test</div>
         <div class="w-1/3 flex justify-center">
           <button @click="goHome" class="focus:outline-none">
             <img src="/images/hubzz-icon-transparent.png" class="logo" />
