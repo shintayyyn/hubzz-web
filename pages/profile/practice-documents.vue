@@ -24,9 +24,13 @@
           <div
             class="px-2 mx-2 flex justify-start shadow-md rounded-lg items-center py-3 bg-white transition-hover hover:bg-gray-100"
           >
-            <div class="flex-1">{{item.filename}}</div>
-            <div class="flex-1 text-center">{{item.filename}}</div>
-            <div class="flex-1 text-center">{{item.filename}}</div>
+            <div class="flex-1">{{item.name}}</div>
+            <div
+              class="flex-1 text-center"
+            >{{item.info && item.info.file && item.info.file.size ? `${(item.info.file.size / 1000).toFixed(2)} Kb` : ''}}</div>
+            <div
+              class="flex-1 text-center"
+            >{{item.info && item.info.created_at ? `${$moment(item.info.created_at, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('YYYY-MM-DD | HH:mm')}` : ''}}</div>
           </div>
         </nuxt-link>
       </div>
@@ -119,7 +123,6 @@ export default {
                   created_at: res.data.practice.variation_terms_file.created_at
                 }
               };
-              console.log("variation", res.data.practice);
               return variation_terms;
             }),
             app.$axios.$get(`/api/v1/practice-document-types`).then(res => {
@@ -168,6 +171,7 @@ export default {
           if (variation_terms !== null) {
             terms.push(variation_terms);
           }
+          console.log(terms);
           return {
             practice_compliance_documents,
             terms
