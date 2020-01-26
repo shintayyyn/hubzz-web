@@ -237,30 +237,23 @@
       <div :ref="'pdf-footer'" class="rounded-lg border-2 border-gray-300 mt-4 p-4">
         <div
           class="flex flex-col text-xs sm:text-sm"
-          v-if="propInvoiceDetail.paid_under_payroll && propInvoiceDetail.payroll_detail"
+          v-if="propInvoice && propInvoice.paid_under_payroll"
         >
           <div>Payment by BACS: xxxxx</div>
-          <div>Account name: {{propInvoiceDetail.payroll_detail.account_name ? propInvoiceDetail.payroll_detail.account_name : 'xxxxx'}}</div>
-          <div>Bank: {{propInvoiceDetail.payroll_detail.bank_name ? propInvoiceDetail.payroll_detail.bank_name : 'xxxxx'}}</div>
-          <div>Sort code: {{propInvoiceDetail.payroll_detail.sort_code ? propInvoiceDetail.payroll_detail.sort_code : 'xxxxx'}}</div>
-          <div>Account number: {{propInvoiceDetail.payroll_detail.account_number ? propInvoiceDetail.payroll_detail.account_number : 'xxxxx*OR'}}</div>
+          <div>Account name: {{propInvoice.payroll_account_name ? propInvoice.payroll_account_name : 'xxxxx'}}</div>
+          <div>Bank: {{propInvoice.payroll_bank_name ? propInvoice.payroll_bank_name : 'xxxxx'}}</div>
+          <div>Sort code: {{propInvoice.payroll_sort_code ? propInvoice.payroll_sort_code : 'xxxxx'}}</div>
+          <div>Account number: {{propInvoice.payroll_account_number ? propInvoice.payroll_account_number : 'xxxxx*OR'}}</div>
         </div>
         <div
           class="flex flex-col text-xs sm:text-sm"
-          v-if="!propInvoiceDetail.paid_under_payroll && propInvoiceDetail.bank_account"
+          v-if="propInvoice && !propInvoice.paid_under_payroll"
         >
           <div>Payment by BACS: xxxxx</div>
-          <div>Account name: {{propInvoiceDetail.bank_account.account_name ? propInvoiceDetail.bank_account.account_name : 'xxxxx'}}</div>
-          <div>Bank: {{propInvoiceDetail.bank_account.bank_name ? propInvoiceDetail.bank_account.bank_name : 'xxxxx'}}</div>
-          <div>Sort code: {{propInvoiceDetail.bank_account.sort_code ? propInvoiceDetail.bank_account.sort_code : 'xxxxx'}}</div>
-          <div>Account number: {{propInvoiceDetail.bank_account.account_number ? propInvoiceDetail.bank_account.account_number : 'xxxxx*OR'}}</div>
-        </div>
-        <div class="flex flex-col text-xs sm:text-sm">
-          <div>Payment by BACS: xxxxx</div>
-          <div>Account name: xxxx</div>
-          <div>Bank: xxxx</div>
-          <div>Sort code: xxxx</div>
-          <div>Account number: xxx</div>
+          <div>Account name: {{propInvoice.account_name ? propInvoice.account_name : 'xxxxx'}}</div>
+          <div>Bank: {{propInvoice.bank_name ? propInvoice.bank_name : 'xxxxx'}}</div>
+          <div>Sort code: {{propInvoice.sort_code ? propInvoice.sort_code : 'xxxxx'}}</div>
+          <div>Account number: {{propInvoice.account_number ? propInvoice.account_number : 'xxxxx*OR'}}</div>
         </div>
       </div>
     </div>
@@ -279,9 +272,9 @@ export default {
     AppDate
   },
   props: {
-    propInvoiceDetail: {
-      type: Object
-    },
+    // propInvoice: {
+    //   type: Object
+    // },
     propInvoice: {
       type: Object
     },
@@ -477,12 +470,12 @@ export default {
       return false;
     },
     viewAsPdf(invoiceId) {
-      // window.open(
-      //   `${process.env.API_URL}/api/v1/locum-invoices/${invoiceId}/pdf`
-      // );
-      this.$axios
-        .$get(`/api/v1/locum-invoices/${invoiceId}/html`)
-        .then(res => console.log(res));
+      window.open(
+        `${process.env.API_URL}/api/v1/locum-invoices/${invoiceId}/pdf`
+      );
+      // this.$axios
+      //   .$get(`/api/v1/locum-invoices/${invoiceId}/html`)
+      //   .then(res => console.log(res));
     },
     async exportToPdf() {
       console.log(this.propInvoice);

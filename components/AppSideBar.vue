@@ -67,7 +67,7 @@ export default {
   },
   computed: {
     authPermissions() {
-      return this.$store.getters["auth/permissions"];
+      return this.$store.getters["permissions"];
     }
   },
   mounted() {
@@ -96,11 +96,11 @@ export default {
         user.practice_detail.permissions.length > 0
       ) {
         this.$store.commit(
-          "auth/SET_PERMISSIONS",
+          "SET_PERMISSIONS",
           user.practice_detail.role.permissions
         );
       } else {
-        this.$store.commit("auth/SET_PERMISSIONS", []);
+        this.$store.commit("SET_PERMISSIONS", []);
       }
     },
     removeListener() {
@@ -169,7 +169,8 @@ export default {
         ];
         if (
           ["Active", "Dormant"].includes(accountStatus) &&
-          practiceStatus && practiceStatus === "Active"
+          practiceStatus &&
+          practiceStatus === "Active"
         ) {
           addedLists.push({
             name: "Surgery Management",

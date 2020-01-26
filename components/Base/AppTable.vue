@@ -34,7 +34,7 @@
         <div
           v-for="item in items"
           :key="item.id"
-          :style="`${customWidth ? `min-width: ${customWidth}px` : ''}`"
+          :style="`${customWidth ? `min-width: ${customWidth}px` : ``}`"
           class="row py-2"
         >
           <nuxt-link
@@ -48,7 +48,7 @@
               <div
                 v-for="(column, index) in columns"
                 :key="index"
-                class="flex-1 truncate px-2"
+                class="flex-1 px-2"
                 :class="
 									column.class &&
 									column.class.includes('text-center') &&
@@ -63,8 +63,12 @@
                 </template>
                 <template v-else>
                   <template v-if="column.slotName">
-										<slot :name="column.slotName" v-bind:item="item" @click="$emit(column.eventName, item)"></slot>
-									</template>
+                    <slot
+                      :name="column.slotName"
+                      v-bind:item="item"
+                      @click="$emit(column.eventName, item)"
+                    ></slot>
+                  </template>
                   <template v-if="column.dataIndex === 'actions'">
                     <slot name="actions" v-bind:item="item"></slot>
                   </template>
@@ -153,20 +157,20 @@ export default {
     AppLoading,
     AppPagination
   },
-  // computed: {
-  // 	totalPages() {
-  // 		return Math.ceil(this.total / this.perPage);
-  // 	}
-  // },
+  computed: {
+    totalPages() {
+      return Math.ceil(this.total / this.perPage);
+    }
+  },
   data() {
     return {
-      params: [],
-      totalPages: 0
+      params: []
+      // totalPages: 0
     };
   },
   mounted() {
     this.params = this.orderBy;
-    this.totalPages = Math.ceil(this.total / this.perPage);
+    // this.totalPages = Math.ceil(this.total / this.perPage);
   },
   methods: {
     sort(dataIndex) {

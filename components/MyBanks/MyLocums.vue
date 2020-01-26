@@ -24,16 +24,16 @@
             @click="$emit('favorite', user.id)"
           />
         </template>
-         <transition name="fade" mode="out-in">
+        <transition name="fade" mode="out-in">
           <div class="message-modal md:w-2/3 lg:w-1/2 xl:w-1/3" v-if="sendMessageModal">
             <SendMessageModal
-                :user="user"
-                @close="sendMessageModal=false"
-                @showProfile="show(user.id)"
-              />
+              :user="user"
+              @close="sendMessageModal=false"
+              @showProfile="show(user.id)"
+            />
           </div>
-          </transition>      
-          <div class="shield" v-if="sendMessageModal" @click="sendMessageModal=false"></div>
+        </transition>
+        <div class="shield" v-if="sendMessageModal" @click="sendMessageModal=false"></div>
       </div>
 
       <div class="flex flex-wrap text-center mt-4 cursor-pointer" @click="$emit('show', user.id)">
@@ -62,14 +62,14 @@ export default {
     AppAvatar,
     SendMessageModal
   },
-  data(){
-    return{
+  data() {
+    return {
       sendMessageModal: false
-    }
+    };
   },
   computed: {
     authPermissions() {
-      return this.$store.getters["auth/permissions"];
+      return this.$store.getters["permissions"];
     }
   }
 };

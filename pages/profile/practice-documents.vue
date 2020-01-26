@@ -24,9 +24,13 @@
           <div
             class="px-2 mx-2 flex justify-start shadow-md rounded-lg items-center py-3 bg-white transition-hover hover:bg-gray-100"
           >
-            <div class="flex-1">{{item.filename}}</div>
-            <div class="flex-1 text-center">{{item.filename}}</div>
-            <div class="flex-1 text-center">{{item.filename}}</div>
+            <div class="flex-1">{{item.name}}</div>
+            <div
+              class="flex-1 text-center"
+            >{{item.info && item.info.file && item.info.file.size ? `${(item.info.file.size / 1000).toFixed(2)} Kb` : ''}}</div>
+            <div
+              class="flex-1 text-center"
+            >{{item.info && item.info.created_at ? `${$moment(item.info.created_at, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('YYYY-MM-DD | HH:mm')}` : ''}}</div>
           </div>
         </nuxt-link>
       </div>
@@ -46,109 +50,108 @@
 import PracticeDocumentDetailModal from "@/components/Profile/PracticeDocumentDetailModal";
 import AppTable from "@/components/Base/AppTable";
 export default {
-	transition: {
-		name: "fade",
-		mode: "out-in"
-	},
-	components: {
-		PracticeDocumentDetailModal,
-		AppTable
-	},
-	data() {
-		return {
-			practice_compliance_documents: [],
-			variation_terms: [],
-			// app table
-			columns: [
-				{
-					name: "Title",
-					dataIndex: "name",
-					class: "text-left"
-				},
-				{
-					name: "File Size",
-					dataIndex: "info.file.size",
-					class: "text-center fileSize*MB qweq"
-				},
-				{
-					name: "Last Upload Date",
-					dataIndex: "info.created_at",
-					class: "text-center localDate"
-				}
-			]
-		};
-	},
-	computed: {
-		authPermissions() {
-			return this.$store.getters["auth/permissions"];
-		}
-	},
-	async asyncData({ app, redirect, error }) {
-		// const variation_response =
-		if (app.$auth.user.domain === "Practice") {
-			let permissions = app.$auth.user.practice_detail.role.permissions.map(
-				permission => permission.name
-			);
-			if (permissions.includes("View Profile Practice Document")) {
-				try {
-					const [
-						practice_documents,
-						variation_terms,
-						practice_document_types
-					] = await Promise.all([
-						app.$axios.$get(`/api/v1/practice/practice-documents`).then(res => {
-							const practice_documents =
-								res.data &&
-								res.data.practice_documents &&
-								res.data.practice_documents.length > 0
-									? res.data.practice_documents
-									: [];
-							return practice_documents;
-						}),
-						app.$axios.$get(`/api/v1/practice/me/practice`).then(res => {
-							if (!res.data.practice.variation_terms_file) {
-								return null
-							}
-							const variation_terms = {
-								fileId: res.data.practice.variation_terms_file.id,
-								name: "Standard Terms",
-								info: {
-									file: {
-										size: res.data.practice.variation_terms_file.size
-									},
-									created_at: res.data.practice.variation_terms_file.created_at
-								}
-							};
-							console.log("variation", res.data.practice);
-							return variation_terms;
-						}),
-						app.$axios.$get(`/api/v1/practice-document-types`).then(res => {
-							const practice_document_types =
-								res.data &&
-								res.data.practice_document_types &&
-								res.data.practice_document_types.length > 0
-									? res.data.practice_document_types
-									: [];
-							return practice_document_types;
-						})
-					]);
+  transition: {
+    name: "fade",
+    mode: "out-in"
+  },
+  components: {
+    PracticeDocumentDetailModal,
+    AppTable
+  },
+  data() {
+    return {
+      practice_compliance_documents: [],
+      variation_terms: [],
+      // app table
+      columns: [
+        {
+          name: "Title",
+          dataIndex: "name",
+          class: "text-left"
+        },
+        {
+          name: "File Size",
+          dataIndex: "info.file.size",
+          class: "text-center fileSize*MB qweq"
+        },
+        {
+          name: "Last Upload Date",
+          dataIndex: "info.created_at",
+          class: "text-center localDate"
+        }
+      ]
+    };
+  },
+  computed: {
+    authPermissions() {
+      return this.$store.getters["permissions"];
+    }
+  },
+  async asyncData({ app, redirect, error }) {
+    // const variation_response =
+    if (app.$auth.user.domain === "Practice") {
+      let permissions = app.$auth.user.practice_detail.role.permissions.map(
+        permission => permission.name
+      );
+      if (permissions.includes("View Profile Practice Document")) {
+        try {
+          const [
+            practice_documents,
+            variation_terms,
+            practice_document_types
+          ] = await Promise.all([
+            app.$axios.$get(`/api/v1/practice/practice-documents`).then(res => {
+              const practice_documents =
+                res.data &&
+                res.data.practice_documents &&
+                res.data.practice_documents.length > 0
+                  ? res.data.practice_documents
+                  : [];
+              return practice_documents;
+            }),
+            app.$axios.$get(`/api/v1/practice/me/practice`).then(res => {
+              if (!res.data.practice.variation_terms_file) {
+                return null;
+              }
+              const variation_terms = {
+                fileId: res.data.practice.variation_terms_file.id,
+                name: "Standard Terms",
+                info: {
+                  file: {
+                    size: res.data.practice.variation_terms_file.size
+                  },
+                  created_at: res.data.practice.variation_terms_file.created_at
+                }
+              };
+              return variation_terms;
+            }),
+            app.$axios.$get(`/api/v1/practice-document-types`).then(res => {
+              const practice_document_types =
+                res.data &&
+                res.data.practice_document_types &&
+                res.data.practice_document_types.length > 0
+                  ? res.data.practice_document_types
+                  : [];
+              return practice_document_types;
+            })
+          ]);
 
-					const practice_compliance_documents = [];
-					practice_document_types.forEach(practiceDocumentType => {
-						let hasDocument = practice_documents.find(
-							practiceDocument =>
-								practiceDocument.practice_document_type.name ===
-								practiceDocumentType.name
-						);
-						practice_compliance_documents.push({
-							...practiceDocumentType,
-							info: hasDocument ? hasDocument : null,
-							fileId: hasDocument ? hasDocument.id : null
-						});
-					});
+          const practice_compliance_documents = [];
+          practice_document_types.forEach(practiceDocumentType => {
+            let hasDocument = practice_documents.find(
+              practiceDocument =>
+                practiceDocument.practice_document_type.name ===
+                practiceDocumentType.name
+            );
+            practice_compliance_documents.push({
+              ...practiceDocumentType,
+              info: hasDocument ? hasDocument : null,
+              fileId: hasDocument ? hasDocument.id : null
+            });
+          });
 
-					// Add variation terms
-					// practice_compliance_documents.push(variation_terms);
+          // Add variation terms
+          // practice_compliance_documents.push(variation_terms);
 
           // const practice_compliance_documents = [];
           // practice_document_types.forEach(practiceDocumentType => {
@@ -168,6 +171,7 @@ export default {
           if (variation_terms !== null) {
             terms.push(variation_terms);
           }
+          console.log(terms);
           return {
             practice_compliance_documents,
             terms

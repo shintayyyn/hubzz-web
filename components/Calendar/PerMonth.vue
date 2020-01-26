@@ -184,7 +184,7 @@ export default {
   },
   computed: {
     authPermissions() {
-      return this.$store.getters["auth/permissions"];
+      return this.$store.getters["permissions"];
     },
     selectedDate() {
       return this.$store.state.calendar.selected_date;
@@ -282,7 +282,7 @@ export default {
         this.getJobsRealTime
       );
       this.$socket.on(
-        "Practice Notification Job Applied",
+        "Practice Notification Job Application",
         this.getJobsRealTime
       );
       this.$socket.on(
@@ -407,7 +407,7 @@ export default {
           this.getJobsRealTime
         );
         this.$socket.removeListener(
-          "Practice Notification Job Applied",
+          "Practice Notification Job Application",
           this.getJobsRealTime
         );
         this.$socket.removeListener(
@@ -464,7 +464,7 @@ export default {
         Promise.all([
           this.$axios.$get("/api/v1/practice/jobs", {
             params: {
-              status: ["Allocated", "Applied", "Unfilled", "Declined"],
+              status: ["Allocated", "Applied", "Unfilled", "Declined", "Live"],
               calendar_date_start: `${this.startOfMonth}:gte`,
               calendar_date_end: `${this.endOfMonth}:lte`,
               limit: 100000000
@@ -491,32 +491,38 @@ export default {
         ])
           .then(
             ([
-              responseAllocatedAndAppliedAndUnfilledAndDeclined,
+              responseAllocatedAndAppliedAndUnfilledAndDeclinedAndLive,
               responseOngoing,
               responseReminders
             ]) => {
               this.$store.commit(
                 "jobs/SET_PRACTICE_ALLOCATED_JOBS",
-                responseAllocatedAndAppliedAndUnfilledAndDeclined.data.jobs.filter(
+                responseAllocatedAndAppliedAndUnfilledAndDeclinedAndLive.data.jobs.filter(
                   job => job.status === "Allocated"
                 )
               );
               this.$store.commit(
                 "jobs/SET_PRACTICE_APPLIED_JOBS",
-                responseAllocatedAndAppliedAndUnfilledAndDeclined.data.jobs.filter(
+                responseAllocatedAndAppliedAndUnfilledAndDeclinedAndLive.data.jobs.filter(
                   job => job.status === "Applied"
                 )
               );
               this.$store.commit(
                 "jobs/SET_PRACTICE_UNFILLED_JOBS",
-                responseAllocatedAndAppliedAndUnfilledAndDeclined.data.jobs.filter(
+                responseAllocatedAndAppliedAndUnfilledAndDeclinedAndLive.data.jobs.filter(
                   job => job.status === "Unfilled"
                 )
               );
               this.$store.commit(
                 "jobs/SET_PRACTICE_DECLINED_JOBS",
-                responseAllocatedAndAppliedAndUnfilledAndDeclined.data.jobs.filter(
+                responseAllocatedAndAppliedAndUnfilledAndDeclinedAndLive.data.jobs.filter(
                   job => job.status === "Declined"
+                )
+              );
+              this.$store.commit(
+                "jobs/SET_PRACTICE_AVAILABLE_JOBS",
+                responseAllocatedAndAppliedAndUnfilledAndDeclinedAndLive.data.jobs.filter(
+                  job => job.status === "Live"
                 )
               );
               this.$store.commit(
@@ -527,9 +533,7 @@ export default {
               );
               this.$store.commit(
                 "jobs/SET_PRACTICE_AVAILABLE_JOBS_REMINDER",
-                responseReminders.data.jobs.filter(
-                  job => job.status === "Available"
-                )
+                responseReminders.data.jobs.filter(job => job.status === "Live")
               );
               this.$store.commit(
                 "jobs/SET_PRACTICE_APPLIED_JOBS_REMINDER",

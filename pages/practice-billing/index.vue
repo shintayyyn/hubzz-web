@@ -4,22 +4,22 @@
       <nuxt-link
         :to="{ path: '/practice-billing', query: { ...$route.query, status: 'to-be-invoiced' } }"
         class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('practice-billing-index') && (!$route.query.status || $route.query.status.toLowerCase() === 'to-be-invoiced') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name.includes('practice-billing-index') && (!$route.query.status || ($route.query.status  && $route.query.status.toLowerCase() === 'to-be-invoiced')) ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >To be Invoiced</nuxt-link>
       <nuxt-link
         :to="{ path: '/practice-billing', query: { ...$route.query, status: 'disputed' } }"
         class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('practice-billing-index') && $route.query.status && $route.query.status.toLowerCase() === 'disputed' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name.includes('practice-billing-index') && ($route.query.status && $route.query.status.toLowerCase() === 'disputed') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >Disputed Invoices</nuxt-link>
       <nuxt-link
         :to="{ path: '/practice-billing', query: { ...$route.query, status: 'issued' } }"
         class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('practice-billing-index') && $route.query.status && $route.query.status.toLowerCase() === 'issued' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name.includes('practice-billing-index') && ($route.query.status && $route.query.status.toLowerCase() === 'issued') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >Invoiced</nuxt-link>
       <nuxt-link
         :to="{ path: '/practice-billing', query: { ...$route.query, status: 'approved' } }"
         class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('practice-billing-index') && $route.query.status && $route.query.status.toLowerCase() === 'approved' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name.includes('practice-billing-index') && ($route.query.status && $route.query.status.toLowerCase() === 'approved') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >Approved Invoices</nuxt-link>
     </div>
     <transition name="fade" mode="out-in">
@@ -62,11 +62,11 @@
               >View</div>-->
               <button
                 @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id)"
-                v-if="slotProps.item.status === 'Approved' && !slotProps.item.locum_invoice_item.locum_invoice.paid_at"
+                v-if="slotProps.item.status === 'Approved' && slotProps.item.locum_invoice_item && !slotProps.item.locum_invoice_item.locum_invoice.paid_at"
                 class="px-2 py-2 font-bold rounded-lg focus:outline-none bg-yellow-400"
               >Mark as Paid</button>
               <div
-                v-if="slotProps.item.status === 'Approved' && slotProps.item.locum_invoice_item.locum_invoice.paid_at"
+                v-if="slotProps.item.status === 'Approved' && slotProps.item.locum_invoice_item && slotProps.item.locum_invoice_item.locum_invoice.paid_at"
                 class="px-2 py-2 font-bold rounded-lg focus:outline-none bg-yellow-400"
               >Already Paid</div>
             </div>
@@ -227,7 +227,7 @@ export default {
   },
   computed: {
     authPermissions() {
-      return this.$store.getters["auth/permissions"];
+      return this.$store.getters["permissions"];
     },
     noJobPartsToDisplay() {
       let str = "";
@@ -300,7 +300,7 @@ export default {
           break;
         case "approved":
           status = ["Approved"];
-          invoice_status = [];
+          invoice_status = ["Invoiced"];
           break;
         default:
           status = ["Completed", "Terminated"];
@@ -387,7 +387,7 @@ export default {
     getJobPartsPromiseAll() {
       let status = [];
       let invoice_status = [];
-      let queryStatus = this.$route.query.status.toLowerCase();
+      let queryStatus = this.$route.query.status;
       switch (queryStatus && queryStatus.toLowerCase()) {
         case "to-be-invoiced":
           status = ["Completed", "Terminated"];
@@ -403,7 +403,7 @@ export default {
           break;
         case "approved":
           status = ["Approved"];
-          invoice_status = [];
+          invoice_status = ["Invoiced"];
           break;
         default:
           status = ["Completed", "Terminated"];
@@ -464,7 +464,7 @@ export default {
     getJobParts() {
       let status = [];
       let invoice_status = [];
-      let queryStatus = this.$route.query.status.toLowerCase();
+      let queryStatus = this.$route.query.status;
       switch (queryStatus && queryStatus.toLowerCase()) {
         case "to-be-invoiced":
           status = ["Completed", "Terminated"];
@@ -480,7 +480,7 @@ export default {
           break;
         case "approved":
           status = ["Approved"];
-          invoice_status = [];
+          invoice_status = ["Invoiced"];
           break;
         default:
           status = ["Completed", "Terminated"];

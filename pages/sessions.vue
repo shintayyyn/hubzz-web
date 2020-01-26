@@ -56,7 +56,7 @@
           to="/sessions?status=Declined"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
           :class="$route.query.status && $route.query.status.toLowerCase() === 'declined' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-        >Declined</nuxt-link>
+        >Withdrawn</nuxt-link>
       </div>
       <div class="relative">
         <nuxt-link
@@ -131,7 +131,7 @@ export default {
   },
   computed: {
     authPermissions() {
-      return this.$store.getters["auth/permissions"];
+      return this.$store.getters["permissions"];
     }
   },
   watch: {

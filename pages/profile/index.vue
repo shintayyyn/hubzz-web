@@ -278,7 +278,7 @@ export default {
   },
   computed: {
     authPermissions() {
-      return this.$store.getters["auth/permissions"];
+      return this.$store.getters["permissions"];
     }
   },
   data() {
@@ -340,7 +340,6 @@ export default {
                   responsePractice.data && responsePractice.data.practice
                     ? responsePractice.data.practice
                     : null;
-                console.log("practice", practice);
                 return [surgery, practice];
               }),
 

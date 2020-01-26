@@ -24,7 +24,7 @@ export default {
                 case 'Practice Notification Job Available':
                     message = 'This job is now live.'
                     break;
-                case 'Practice Notification Job Applied':
+                case 'Practice Notification Job Application':
                     message = 'Someone applied to this job.'
                     break;
                 case 'Practice Notification Job Current':
@@ -56,7 +56,7 @@ export default {
                     break;
                 case 'Practice Notification Job Unfilled Warning':
                     if (notif.job_unfilled_warned_in_1_hours === true) {
-                        message = 'This Job will be unfilled in 1 hour.'
+                        message = 'This Job will be unfilled soon.'
                     }
                     else if (notif.job_unfilled_warned_in_3_hours === true) {
                         message = 'This Job will be unfilled in 3 hours.'
@@ -232,36 +232,36 @@ export default {
     },
     // WHOLE
     getPracticePendingJobs(state) {
-      let jobs = []
-      if (state.practice_pending_jobs) {
-          state.practice_pending_jobs.forEach(job => {
-              let surgery_name = ''
-              let date_time_start = ''
-              let date_time_end = ''
-              let rate_name = ''
-              let rate_type_name = ''
-              let shift_name = ''
-              surgery_name = job.type === 'Platform' ? job.platform_job.practice.name : job.private_job.private_practice.name
-              date_time_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
-              date_time_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
-              rate_name = job.rate
-              rate_type_name = job.locum_detail_rate_type.name
-              shift_name = job.shift.name
-              jobs.push({
-                  ...job,
-                  surgery_name,
-                  date_time_start,
-                  date_time_end,
-                  rate_name,
-                  rate_type_name,
-                  shift_name,
-              })
-          })
-          console.log("pending",jobs)
-          return jobs
-      }
-      return []
-  },
+        let jobs = []
+        if (state.practice_pending_jobs) {
+            state.practice_pending_jobs.forEach(job => {
+                let surgery_name = ''
+                let date_time_start = ''
+                let date_time_end = ''
+                let rate_name = ''
+                let rate_type_name = ''
+                let shift_name = ''
+                surgery_name = job.type === 'Platform' ? job.platform_job.practice.name : job.private_job.private_practice.name
+                date_time_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
+                date_time_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
+                rate_name = job.rate
+                rate_type_name = job.locum_detail_rate_type.name
+                shift_name = job.shift.name
+                jobs.push({
+                    ...job,
+                    surgery_name,
+                    date_time_start,
+                    date_time_end,
+                    rate_name,
+                    rate_type_name,
+                    shift_name,
+                })
+            })
+            console.log("pending", jobs)
+            return jobs
+        }
+        return []
+    },
     getPracticeAllocatedJobs(state) {
         let jobs = []
         if (state.practice_allocated_jobs) {
@@ -508,7 +508,7 @@ export default {
                     message = 'There is a new job that matched your qualifications.'
                     break;
                 case 'Locum Notification Job Unsuccessful':
-                    message = 'Your application for this job has already been appointed to another locum.'
+                    message = 'Your application for this job is unsuccessful'
                     break;
                 case 'Locum Notification Job Current':
                     message = 'You have been appointed to this job.'
@@ -533,6 +533,9 @@ export default {
                     break;
                 case 'Locum Notification Job Declined':
                     message = 'You successfully leave this job.'
+                    break;
+                case 'Locum Notification Job Terminated':
+                    message = 'This Job has been terminated.'
                     break;
                 case 'Locum Notification Job Unqualified':
                     message = 'You are not qualified anymore on this job.'

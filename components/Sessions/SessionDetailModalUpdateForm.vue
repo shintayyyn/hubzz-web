@@ -291,72 +291,73 @@
             :items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
           />
 
-          <AppInput
-            :type="'select'"
-            v-model="selection_notification"
-            :name="'selection_notification'"
-            :label="'Add a selection date?'"
-            :items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
-          />
-          <div
-            class="flex flex-row flex-wrap justify-between"
-            v-if="selection_notification === true || selection_notification === 'true'"
-          >
-            <div>Selection will be made and you will receive a notification by this date</div>
-            <div class="px-1 w-full md:w-1/2">
-              <AppDate v-model="selection_date.date" :name="'selection_date'" :label="'Date'" />
+          <template v-if="['false', false].includes(auto_assign_job)">
+            <AppInput
+              :type="'select'"
+              v-model="selection_notification"
+              :name="'selection_notification'"
+              :label="'Add a selection date?'"
+              :items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
+            />
+            <div
+              class="flex flex-row flex-wrap justify-between"
+              v-if="selection_notification === true || selection_notification === 'true'"
+            >
+              <div>Selection will be made and you will receive a notification by this date</div>
+              <div class="px-1 w-full md:w-1/2">
+                <AppDate v-model="selection_date.date" :name="'selection_date'" :label="'Date'" />
+              </div>
+              <div class="px-1 w-full md:w-1/2">
+                <AppTime
+                  v-model="selection_date.time"
+                  :type="'time'"
+                  :name="'time_end'"
+                  :label="'Time'"
+                  :error="formError.find(item => item.field === 'selection_date')"
+                />
+              </div>
             </div>
-            <div class="px-1 w-full md:w-1/2">
-              <AppTime
-                v-model="selection_date.time"
-                :type="'time'"
-                :name="'time_end'"
-                :label="'Time'"
-                :error="formError.find(item => item.field === 'selection_date')"
-              />
-            </div>
-          </div>
+          </template>
 
           <AppInput
-            v-if="bank_only === false || bank_only === 'false'"
-            :type="'select'"
-            v-model="bank_first"
-            :name="'bank_first'"
-            :label="'Make this Job available for Bank First?'"
-            :items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
-          />
-
-          <div
-            class="flex flex-row flex-wrap justify-between"
-            v-if="bank_first === true || bank_first === 'true'"
-          >
-            <div>Only favorite locum will be notified until this date</div>
-            <div class="px-1 w-full md:w-1/2">
-              <AppDate
-                v-model="favorite_only_until.date"
-                :name="'favorite_only_until'"
-                :label="'Date'"
-              />
-            </div>
-            <div class="px-1 w-full md:w-1/2">
-              <AppTime
-                v-model="favorite_only_until.time"
-                :type="'time'"
-                :name="'time_end'"
-                :label="'Time'"
-                :error="formError.find(item => item.field === 'favorite_only_until')"
-              />
-            </div>
-          </div>
-
-          <AppInput
-            v-if="bank_first === false || bank_first === 'false'"
             :type="'select'"
             v-model="bank_only"
             :name="'bank_only'"
             :label="'Make this Job available for Bank Only?'"
             :items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
           />
+
+          <template v-if="['false', false].includes(bank_only)">
+            <AppInput
+              :type="'select'"
+              v-model="bank_first"
+              :name="'bank_first'"
+              :label="'Make this Job available for Bank First?'"
+              :items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
+            />
+            <div
+              class="flex flex-row flex-wrap justify-between"
+              v-if="bank_first === true || bank_first === 'true'"
+            >
+              <div>Only favorite locum will be notified until this date</div>
+              <div class="px-1 w-full md:w-1/2">
+                <AppDate
+                  v-model="favorite_only_until.date"
+                  :name="'favorite_only_until'"
+                  :label="'Date'"
+                />
+              </div>
+              <div class="px-1 w-full md:w-1/2">
+                <AppTime
+                  v-model="favorite_only_until.time"
+                  :type="'time'"
+                  :name="'time_end'"
+                  :label="'Time'"
+                  :error="formError.find(item => item.field === 'favorite_only_until')"
+                />
+              </div>
+            </div>
+          </template>
 
           <AppInput
             v-model="form.ir35"
@@ -583,7 +584,7 @@ export default {
         locum_detail_rate_type_id: 1,
         ir35: false,
         mandatory_training_id: [],
-        profession_id: "",
+        profession_id: null,
         qualification_id: [],
         clinical_system_id: [],
         spoken_language_id: [],
@@ -607,20 +608,21 @@ export default {
     };
   },
   watch: {
-    "form.profession_id"(value) {
-      if (value && this.professions_categories.length > 0) {
+    "form.profession_id"(newValue, oldValue) {
+      if (newValue && this.professions_categories.length > 0) {
         this.selectedProfession = this.professions_categories.find(
-          item => item.id == value
+          item => item.id == newValue
         );
 
         if (this.selectedProfession.profession_category.id == 1) {
           this.compliances = this.gp_compliance_documents_lists;
-          return;
-        }
-        if (this.selectedProfession.profession_category.id == 2) {
+        } else if (this.selectedProfession.profession_category.id == 2) {
           this.compliances = this.others_compliance_documents_lists;
-          return;
         }
+      }
+      if (newValue && oldValue) {
+        this.form.compliance_document_id = [];
+        console.log(this.form.compliance_document_id);
       }
     },
     "form.date_end"(value) {
@@ -648,7 +650,7 @@ export default {
   },
   computed: {
     authPermissions() {
-      return this.$store.getters["auth/permissions"];
+      return this.$store.getters["permissions"];
     },
     google: gmapApi,
     latLang() {
@@ -764,13 +766,16 @@ export default {
       this.auto_assign_job = true;
     }
 
-    if (this.job.platform_job.selection_date) {
+    if (this.job.selection_date) {
       this.selection_date.date = this.$moment(
-        this.job.platform_job.selection_date
+        this.job.selection_date,
+        "YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"
       ).format("YYYY-MM-DD");
       this.selection_date.time = this.$moment(
-        this.job.platform_job.selection_date
+        this.job.selection_date,
+        "YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"
       ).format("HH:mm");
+      this.selection_notification = true;
     }
 
     if (
@@ -782,11 +787,11 @@ export default {
       this.bank_first = true;
       this.favorite_only_until.date = this.$moment(
         this.job.platform_job.favorite_only_until,
-        "YYYY-MM-DDTHH:mm:ss:sssZ"
+        "YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"
       ).format("YYYY-MM-DD");
       this.favorite_only_until.time = this.$moment(
         this.job.platform_job.favorite_only_until,
-        "YYYY-MM-DDTHH:mm:ss:sssZ"
+        "YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"
       ).format("HH:mm");
     } else if (
       this.$moment(this.job.date_start, "YYYY-MM-DD").diff(
@@ -842,6 +847,22 @@ export default {
     });
 
     this.form.profession_id = this.job.platform_job.profession.id;
+    if (this.job.type === "Platform") {
+      if (this.job.platform_job.profession.name === "GP") {
+        this.compliances = this.gp_compliance_documents_lists;
+      }
+      if (this.job.platform_job.profession.name !== "GP") {
+        this.compliances = this.others_compliance_documents_lists;
+      }
+    }
+    if (this.job.type === "Private") {
+      if (this.job.private_job.profession.name === "GP") {
+        this.compliances = this.gp_compliance_documents_lists;
+      }
+      if (this.job.private_job.profession.name !== "GP") {
+        this.compliances = this.others_compliance_documents_lists;
+      }
+    }
   },
   methods: {
     uncheckMandatory(value) {
@@ -881,6 +902,19 @@ export default {
       }
 
       if (
+        this.$moment(this.form.date_end).isSameOrBefore(this.form.date_start)
+      ) {
+        this.formError.push({
+          field: "date_end",
+          message: "Invalid End Date"
+        });
+        this.formError.push({
+          field: "date_start",
+          message: "Invalid Start Date"
+        });
+      }
+
+      if (
         ["15", 15, "30", 30, "60", 60, false, "false"].includes(
           this.unpaid_breaks
         )
@@ -888,33 +922,36 @@ export default {
         notRequired.push("unpaid_breaks_in_minutes");
       }
 
-      if (
-        this.selection_notification == false ||
-        this.selection_notification == "false"
-      ) {
-        notRequired.push("selection_date");
-      } else {
-        if (
-          this.selection_notification === true ||
-          this.selection_notification === "true"
-        ) {
-          if (this.selection_date.date && this.selection_date.time) {
-            notRequired.push("selection_date");
-          }
-        }
+      if (["true", true].includes(this.auto_assign_job)) {
+        this.selection_notification = false;
       }
 
-      if (this.bank_first == false || this.bank_first == "false") {
+      if (["false", false].includes(this.selection_notification)) {
+        notRequired.push("selection_date");
+      } else if (
+        ["true", true].includes(this.selection_notification) &&
+        this.selection_date.date &&
+        this.selection_date.time
+      ) {
+        notRequired.push("selection_date");
+      }
+
+      if (["true", true].includes(this.bank_only)) {
+        this.bank_first = false;
+      }
+
+      if (["false", false].includes(this.bank_first)) {
         notRequired.push("favorite_only_until");
-      } else {
-        if (this.bank_first === true || this.bank_first === "true") {
-          if (this.favorite_only_until.date && this.favorite_only_until.time) {
-            notRequired.push("favorite_only_until");
-          }
-        }
+      } else if (
+        ["true", true].includes(this.bank_first) &&
+        this.favorite_only_until.date &&
+        this.favorite_only_until.time
+      ) {
+        notRequired.push("favorite_only_until");
       }
 
       this.Validate(this.form, notRequired);
+
       if (!this.formError.length) {
         this.selectedClinicalSystem = [...this.form.clinical_system_id];
         this.form.clinical_system_id = this.form.clinical_system_id.map(
@@ -928,48 +965,15 @@ export default {
         this.form.spoken_language_id = this.form.spoken_language_id.map(
           item => item.value
         );
-        this.form.mandatory_training_id = this.form.mandatory_training_id.map(
-          item => item.value
-        );
-        this.form.date_start = this.$moment(this.form.date_start).format(
+
+        this.form.date_start = this.$moment(
+          this.form.date_start,
           "YYYY-MM-DD"
-        );
-        this.form.date_end = this.$moment(this.form.date_end).format(
+        ).format("YYYY-MM-DD");
+        this.form.date_end = this.$moment(
+          this.form.date_end,
           "YYYY-MM-DD"
-        );
-
-        this.form.auto_assign_at =
-          this.auto_assign_job === true || this.auto_assign_job === "true"
-            ? "1970-01-01 00:00"
-            : null;
-
-        this.form.selection_date =
-          this.selection_notification === true ||
-          this.selection_notification === "true"
-            ? `${this.$moment(this.selection_date.date).format("YYYY-MM-DD")} ${
-                this.selection_date.time
-              }`
-            : null;
-
-        if (this.bank_first === true || this.bank_first === "true") {
-          this.form.favorite_only_until = `${this.$moment(
-            this.favorite_only_until.date,
-            "YYYY-MM-DD"
-          ).format("YYYY-MM-DD")} ${this.favorite_only_until.time}`;
-        }
-
-        if (this.bank_only === true || this.bank_only === "true") {
-          this.form.favorite_only_until = `${this.$moment(
-            this.form.date_start,
-            "YYYY-MM-DD"
-          )
-            .add(1, "days")
-            .format("YYYY-MM-DD HH:mm")}`;
-        }
-
-        // this.form.session_requirements.length > 0
-        //   ? (this.form.session_requirements = this.form.session_requirements.join())
-        //   : (this.form.session_requirements = "");
+        ).format("YYYY-MM-DD");
 
         if (Array.isArray(this.form.session_requirements)) {
           if (this.form.session_requirements.length === 1) {
@@ -979,6 +983,37 @@ export default {
           } else if (this.form.session_requirements.length === 0) {
             this.form.session_requirements = "";
           }
+        }
+
+        this.form.auto_assign_at = null;
+        if (["true", true].includes(this.auto_assign_job)) {
+          this.form.auto_assign_at = "1970-01-01 00:00";
+        }
+
+        this.form.selection_date = null;
+        if (["false", false].includes(this.auto_assign_job)) {
+          if (["true", true].includes(this.selection_notification)) {
+            this.form.selection_date = `${this.$moment(
+              this.selection_date.date,
+              "YYYY-MM-DD"
+            ).format("YYYY-MM-DD")} ${this.selection_date.time}`;
+          }
+        }
+
+        this.form.favorite_only_until = null;
+        if (["true", true].includes(this.bank_first)) {
+          this.form.favorite_only_until = `${this.$moment(
+            this.favorite_only_until.date,
+            "YYYY-MM-DD"
+          ).format("YYYY-MM-DD")} ${this.favorite_only_until.time}`;
+        }
+        if (["true", true].includes(this.bank_only)) {
+          this.form.favorite_only_until = `${this.$moment(
+            this.form.date_start,
+            "YYYY-MM-DD"
+          )
+            .add(1, "days")
+            .format("YYYY-MM-DD HH:mm")}`;
         }
 
         if (["15", 15, "30", 30, "60", 60].includes(this.unpaid_breaks)) {
@@ -997,7 +1032,7 @@ export default {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
-              text: [res.message]
+              text: ["Successfully updated job"]
             });
             this.$emit("updateJob", {
               newJob: res.data.new_job,

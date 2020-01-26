@@ -2,12 +2,15 @@
   <section>
     <div class="p-4 md:p-8 max-w-3xl">
       <div class="flex items-center">
-        <svgicon name="left-arrow" height="32" width="32" @click="$emit('close')" class="cursor-pointer"/>
-        <button
-          class="mx-4 focus:outline-none"
-          @click.prevent.stop="message(user)"
-        >
-          <svgicon name="chat" height="32" width="32" color="#888 #555 #fff"/>
+        <svgicon
+          name="left-arrow"
+          height="32"
+          width="32"
+          @click="$emit('close')"
+          class="cursor-pointer"
+        />
+        <button class="mx-4 focus:outline-none" @click.prevent.stop="message(user)">
+          <svgicon name="chat" height="32" width="32" color="#888 #555 #fff" />
         </button>
       </div>
       <div class="flex flex-row flex-no-wrap justify-start mt-4 md:mt-8">
@@ -30,9 +33,13 @@
             <div class="font-bold text-sm sm:text-md">Biography</div>
             <div class="text-xs sm:text-sm mb-4 md:mb-8">{{user.locum_detail.short_biography}}</div>
             <div class="font-bold text-sm sm:text-md">GMC / NMC Number</div>
-            <div class="text-xs sm:text-sm mb-4 md:mb-8">{{user.locum_detail.gmc_or_nmc_number.number}}</div>
+            <div
+              class="text-xs sm:text-sm mb-4 md:mb-8"
+            >{{user.locum_detail.gmc_or_nmc_number.number}}</div>
             <div class="font-bold text-sm sm:text-md">MPL / NPL Number</div>
-            <div class="text-xs sm:text-sm mb-4 md:mb-8">{{user.locum_detail.mpl_or_npl_number.number}}</div>
+            <div
+              class="text-xs sm:text-sm mb-4 md:mb-8"
+            >{{user.locum_detail.mpl_or_npl_number.number}}</div>
             <div class="font-bold text-sm sm:text-md">Specialty</div>
             <div class="text-xs sm:text-sm mb-4 md:mb-8 flex flex-row flex-wrap">
               <div
@@ -139,13 +146,9 @@
     </div>
     <transition name="fade" mode="out-in">
       <div class="message-modal md:w-2/3 lg:w-1/2 xl:w-1/3" v-if="sendMessageModal">
-        <SendMessageModal
-            :user="user"
-            @close="sendMessageModal=false"
-            :profileOption="false"
-          />
+        <SendMessageModal :user="user" @close="sendMessageModal=false" :profileOption="false" />
       </div>
-    </transition>      
+    </transition>
     <div class="shield" v-if="sendMessageModal" @click="sendMessageModal=false"></div>
     <AppConfirmationModal
       :label="'Appoint this Locum?'"
@@ -175,12 +178,12 @@ export default {
       confirmation_modal: false,
       mandatory: [],
       optional: [],
-      sendMessageModal: false,
+      sendMessageModal: false
     };
   },
   computed: {
     authPermissions() {
-      return this.$store.getters["auth/permissions"];
+      return this.$store.getters["permissions"];
     }
   },
   created() {
@@ -236,7 +239,17 @@ export default {
             status: "success",
             text: ["Assign locum successfully"]
           });
-          this.$emit("appointed");
+        })
+        .catch(err => {
+          console.log("err", err.reponse | err);
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "danget",
+            text: [`${err.response.data.message}`]
+          });
+        })
+        .finally(() => {
+          this.confirmation_modal = false;
         });
     },
     downloadItem(fileUrl, fileName) {

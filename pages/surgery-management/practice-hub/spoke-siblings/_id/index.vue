@@ -1,24 +1,32 @@
 <template>
   <div class="modal-container p-4 md:p-8">
-    <div >
+    <div>
       <div class="my-2">
         <nuxt-link :to="'/surgery-management/practice-hub/spoke-siblings'" class="cursor-pointer">
           <svgicon name="left-arrow" height="32" width="32" />
         </nuxt-link>
       </div>
       <div class="font-bold text-lg px-2">Banks</div>
-      <div v-if="practiceSibling.share_banks_to_other_surgeries == false">
-        The Banks of this spokes are not shared.
-      </div>
-     
-      <div v-if="practiceSibling.share_banks_to_other_surgeries == true" class="flex flex-row flex-wrap justify-start">
-        <div v-if="locums.length < 1">
-          This spoke has no banks.
-        </div>
-        <div v-else class="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-2" v-for="locum in locums" :key="locum.id">
+      <div
+        v-if="practiceSibling.share_banks_to_other_surgeries == false"
+      >The Banks of this spokes are not shared.</div>
+
+      <div
+        v-if="practiceSibling.share_banks_to_other_surgeries == true"
+        class="flex flex-row flex-wrap justify-start"
+      >
+        <div v-if="locums.length < 1">This spoke has no banks.</div>
+        <div
+          v-else
+          class="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-2"
+          v-for="locum in locums"
+          :key="locum.id"
+        >
           <div class="h-full w-full flex flex-row flex-wrap justify-start">
             <div class="h-full w-full rounded-lg shadow-lg bg-gray-300 hover:bg-gray-400 p-4">
-              <nuxt-link :to="{ path: `/surgery-management/practice-hub/spoke-siblings/${$route.params.id}/sibling-bank/${locum.id}`, query: {...$route.query}}">
+              <nuxt-link
+                :to="{ path: `/surgery-management/practice-hub/spoke-siblings/${$route.params.id}/sibling-bank/${locum.id}`, query: {...$route.query}}"
+              >
                 <div
                   class="flex justify-end z-50"
                   v-if="authPermissions.includes('Favorite MyBanks Locum')"
@@ -71,23 +79,23 @@
         />
       </div>
     </div>
-    <nuxt-child/>
+    <nuxt-child />
   </div>
 </template>
 <script>
 import AppAvatar from "@/components/Base/AppAvatar";
-import AppPagination from "@/components/Base/AppPagination"
+import AppPagination from "@/components/Base/AppPagination";
 export default {
-  components:{
+  components: {
     AppAvatar,
     AppPagination
   },
-  data(){
-    return{
-      locums:[],
-      practiceSibling: '',
+  data() {
+    return {
+      locums: [],
+      practiceSibling: "",
       params: {
-        favorite_by_practice_id: ''
+        favorite_by_practice_id: ""
       },
       // for pagination
       total: 0,
@@ -96,7 +104,7 @@ export default {
       toggleTable: false,
       is_favorite: false,
       detailed: true
-    }
+    };
   },
   created() {
     this.getLocumsCount();
@@ -112,11 +120,11 @@ export default {
       return Math.ceil(this.total / this.perPage);
     },
     authPermissions() {
-      return this.$store.getters["auth/permissions"];
+      return this.$store.getters["permissions"];
     }
   },
-  async asyncData({app, route, store}) {
-    try{
+  async asyncData({ app, route, store }) {
+    try {
       // let params = {
       //   favorite_by_practice_id : route.params.id
       // }
@@ -128,31 +136,32 @@ export default {
       // response = await app.$axios.$get(`/api/v1/practice/locums`,{ params })
       // const locums = response.data.users
       let params = {
-        id : route.params.id
-      }
-      let response = await app.$axios.$get(`/api/v1/practice/me/parent-surgery/practice-siblings`, { params })
-      const practiceSibling = response.data.practice_siblings
-      return{
+        id: route.params.id
+      };
+      let response = await app.$axios.$get(
+        `/api/v1/practice/me/parent-surgery/practice-siblings`,
+        { params }
+      );
+      const practiceSibling = response.data.practice_siblings;
+      return {
         // total,
         // locums,
         practiceSibling
-      }
-    }catch(err){
-      console.log('get locum error!', err)
+      };
+    } catch (err) {
+      console.log("get locum error!", err);
     }
-  },  
-  methods:{
+  },
+  methods: {
     getLocumsCount() {
-      console.log('route', this.$route.params.id)
+      console.log("route", this.$route.params.id);
       let params = {
-        favorite_by_practice_id : this.$route.params.id
-      }
+        favorite_by_practice_id: this.$route.params.id
+      };
       console.log("get locums count");
       this.loading = true;
       this.$axios
-        .$get(
-          `/api/v1/practice/locums/count`,{ params }
-        )
+        .$get(`/api/v1/practice/locums/count`, { params })
         .then(res => {
           console.log(res);
           this.total = res.data.count;
@@ -167,14 +176,12 @@ export default {
       let params = {
         limit: this.perPage,
         offset: this.offset,
-        favorite_by_practice_id : this.$route.params.id,
-        detailed: true,
-      }
+        favorite_by_practice_id: this.$route.params.id,
+        detailed: true
+      };
       this.current_page = page;
       this.$axios
-        .$get(
-          `/api/v1/practice/locums`,{ params }
-        )
+        .$get(`/api/v1/practice/locums`, { params })
         .then(res => {
           console.log(res);
           this.locums = res.data.users;
@@ -185,21 +192,21 @@ export default {
           console.log("err", err);
         });
     },
-     pagechanged(e) {
+    pagechanged(e) {
       this.current_page = e;
       this.getLocums(this.current_page);
     }
   }
-}
+};
 </script>
 
 <style>
 .modal-container {
-	z-index: 510;
+  z-index: 510;
 }
 @media screen and (min-width: 1200px) {
-	.modal-container {
-		width: 80%;
-	}
+  .modal-container {
+    width: 80%;
+  }
 }
 </style>

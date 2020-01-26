@@ -84,7 +84,7 @@
                 >View NHS Form A</div>
                 <button
                   @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id, 'markAsPaid')"
-                  v-if="slotProps.item.status === 'Completed' && slotProps.item.locum_invoice_id && !slotProps.item.locum_invoice_item.locum_invoice.paid_at"
+                  v-if="slotProps.item.status === 'Completed' && slotProps.item.locum_invoice_id && (slotProps.item.locum_invoice_item && !slotProps.item.locum_invoice_item.locum_invoice.paid_at)"
                   class="m-1 px-4 py-2 bg-yellow-400 font-bold rounded-lg focus:outline-none w-full"
                 >Mark as Paid</button>
               </div>
@@ -314,7 +314,7 @@ export default {
   },
   computed: {
     authPermissions() {
-      return this.$store.getters["auth/permissions"];
+      return this.$store.getters["permissions"];
     },
     noJobPartsToDisplay() {
       let str = "";
@@ -383,15 +383,15 @@ export default {
           break;
         case "issued":
           params = {
-            locum_status: ["Approved"],
+            // locum_status: ["Approved"],
             invoice_status: ["Invoiced"],
             job_type: "Private"
           };
           break;
         case "pension-form-a":
           params = {
-            locum_status: ["Approved"],
-            invoice_status: [],
+            locum_status: ["Completed"],
+            // invoice_status: ["Invoiced"],
             // can_generate_form_b: true,
             job_type: "Private"
           };
@@ -412,25 +412,21 @@ export default {
 
       let locum_form_bs = [];
       let [total, job_parts] = await Promise.all([
-        app.$axios
-          .$get(`/api/v1/locum/job-parts/count`, { params })
-          .then(res => {
-            const total = res.data.count;
-            return total;
-          }),
-        app.$axios
-          .$get(`/api/v1/locum/job-parts?offset=0&limit=5`, { params })
-          .then(res => {
-            let job_parts = null;
-            let locum_form_bs = null;
-            if (res.data && res.data.job_parts) {
-              return res.data.job_parts;
-            } else if (res.data && res.data.locum_form_bs) {
-              return res.data.locum_form_bs;
-            }
-            // const job_parts = res.data.job_parts;
-            // return job_parts;
-          })
+        app.$axios.$get(`${url}/count`, { params }).then(res => {
+          const total = res.data.count;
+          return total;
+        }),
+        app.$axios.$get(`${url}?offset=0&limit=5`, { params }).then(res => {
+          let job_parts = null;
+          let locum_form_bs = null;
+          if (res.data && res.data.job_parts) {
+            return res.data.job_parts;
+          } else if (res.data && res.data.locum_form_bs) {
+            return res.data.locum_form_bs;
+          }
+          // const job_parts = res.data.job_parts;
+          // return job_parts;
+        })
       ]);
 
       // ! for the meantime
@@ -515,15 +511,15 @@ export default {
           break;
         case "issued":
           params = {
-            locum_status: ["Approved"],
+            // locum_status: ["Approved"],
             invoice_status: ["Invoiced"],
             job_type: "Private"
           };
           break;
         case "pension-form-a":
           params = {
-            locum_status: ["Approved"],
-            invoice_status: [],
+            locum_status: ["Completed"],
+            invoice_status: ["Invoiced"],
             // can_generate_form_b: true,
             job_type: "Private"
           };
@@ -612,8 +608,8 @@ export default {
           break;
         case "pension-form-a":
           params = {
-            locum_status: ["Approved"],
-            invoice_status: [],
+            locum_status: ["Completed"],
+            invoice_status: ["Invoiced"],
             // can_generate_form_b: true,
             job_type: "Private"
           };
@@ -634,7 +630,7 @@ export default {
       }
 
       return this.$axios
-        .$get(`/api/v1/locum/job-parts`, { params })
+        .$get(`${url}`, { params })
         .then(res => {
           if (response.data && response.data.job_parts) {
             let job_parts = res.data.job_parts;
@@ -835,8 +831,8 @@ export default {
           if (err.response.data.message) {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
-              status: "success",
-              text: [`${res.date.message}`]
+              status: "danger",
+              text: [`${err.response.data.message}`]
             });
           }
           throw err;
