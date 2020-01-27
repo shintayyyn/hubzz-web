@@ -1,21 +1,15 @@
 <template>
 	<section class="flex flex-col items-start">
-		<AppButton
-			v-if="$auth.user.domain === 'Practice'"
-			:label="'Create'"
-			class="ml-auto"
-			@click="$router.push('/permanent-jobs/create')"
-		/>
 		<AppTable
 			class="w-full"
-			v-if="permanent_job_count > 0"
+			v-if="applications_count > 0"
 			:total="total"
-			:items="permanent_jobs"
+			:items="permanent_job_applications"
 			:currentPage="current_page"
 			:perPage="params.limit"
 			:columns="columns"
 			:loading="loading"
-			:routerLink="'/permanent-jobs'"
+			:routerLink="'/permanent-jobs/my-applications'"
 		></AppTable>
 		<div
 			class="shield"
@@ -30,10 +24,9 @@ import AppButton from "@/components/Base/AppButton";
 import AppTable from "@/components/Base/AppTable";
 export default {
 	components: {
-		AppButton,
+		// AppButton,
 		AppTable
-  },
-  
+	},
 	data() {
 		return {
 			total: 0,
@@ -47,22 +40,22 @@ export default {
 			loading: false,
 			columns: [
 				{
-					name: "Title",
-					dataIndex: "title"
+					name: "Permanent Job Id",
+					dataIndex: "permanent_job_id"
 				},
 				{
-					name: "Salary",
-					dataIndex: "salary_amount",
+					name: "Application Status",
+					dataIndex: "application_status",
 					class: "text-center"
 				},
 				{
 					name: "Posted",
-					dataIndex: "date_posted",
+					dataIndex: "permanent_job.date_posted",
 					class: "text-center localDate"
 				},
 				{
 					name: "Closes",
-					dataIndex: "date_closing",
+					dataIndex: "permanent_job.date_closing",
 					class: "text-center localDate"
 				},
 				// {
@@ -72,47 +65,38 @@ export default {
 				// },
 				{
 					name: "Work Hours",
-					dataIndex: "work_hours",
+					dataIndex: "permanent_job.work_hours",
 					class: "text-center"
 				},
 				{
 					name: "Industry",
-					dataIndex: "industry_type",
+					dataIndex: "permanent_job.industry_type",
 					class: "text-center"
 				}
 			],
-      permanent_jobs: [],
-      permanent_job_count: 0,
+      permanent_job_applications: [],
+      applications_count: 0,
 		};
   },
-  created(){
-    
-  },
+ 
   async asyncData({ app, route, store, auth }) {
     try {
       console.log('auth', app.$auth.user.domain)
-      let permanent_job_count = ''
-      let permanent_jobs = ''
+      let applications_count = ''
+      let permanent_job_applications = ''
+      
       if (app.$auth.user.domain === 'Locum') {
-        let response = await app.$axios.$get(`/api/v1/locum/permanent-jobs/count`)
-        permanent_job_count = response.data && response.data.count ? response.data.count : null
+        let response = await app.$axios.$get(`/api/v1/locum/permanent-job-applications/count`)
+        applications_count = response.data && response.data.count ? response.data.count : null
 
-        response = await app.$axios.$get(`/api/v1/locum/permanent-jobs`)
-        permanent_jobs = response.data && response.data.permanent_jobs ? response.data.permanent_jobs : null
+        response = await app.$axios.$get(`/api/v1/locum/permanent-job-applications`)
+        permanent_job_applications = response.data && response.data.permanent_job_applications ? response.data.permanent_job_applications : null
 
-      } else if (app.$auth.user.domain === 'Practice') {
-        let response = await app.$axios.$get('/api/v1/practice/permanent-jobs/count')
-        permanent_job_count = response.data && response.data.count 
-          ? response.data.count : null
-
-        response = await app.$axios.$get(`/api/v1/practice/permanent-jobs`)
-        permanent_jobs = response.data && response.data.permanent_jobs 
-          ? response.data.permanent_jobs : null
       }
     
       return {
-        permanent_job_count,
-        permanent_jobs,
+        applications_count,
+        permanent_job_applications,
       }
     } catch (err) {
       if (err.response && err.response.status === 401) {

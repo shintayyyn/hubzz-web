@@ -90,7 +90,7 @@
 						</template>-->
 					</div>
 					<div class="bg-white rounded-lg shadow-lg px-4 py-4 mt-4">
-						<AppInput
+						<!-- <AppInput
 							v-model="form.parent_practice_id"
 							:type="'select'"
 							:name="'parent_practice_id'"
@@ -99,23 +99,23 @@
 							:error="formError.find(item => item.field === 'parent_practice_id')"
 							:items="practice_lists"
 							@blur="CheckEmptyField(form.parent_practice_id, 'parent_practice_id')"
-						/>
-						<AppInput
+						/> -->
+						<!-- <AppInput
 							v-model="form.appointed_to_locum"
 							:type="'text'"
 							:name="'appointed_to_locum'"
 							:label="'Appointed to Locum'"
 							:error="formError.find(item => item.field === 'appointed_to_locum')"
 							@blur="CheckEmptyField(form.appointed_to_locum, 'appointed_to_locum')"
-						/>
+						/> -->
 						<AppDate v-model="form.date_posted" :name="'date_posted'" :label="'Date Posted'" isAfter />
-						<AppDate v-model="form.date_closing" :name="'date_closing'" :label="'Date Posted'" isAfter />
+						<AppDate v-model="form.date_closing" :name="'date_closing'" :label="'Date Closing'" isAfter />
 					</div>
 				</div>
 				<div class="md:w-1/2 px-2">
 					<h4 class="font-bold pt-4">Overview</h4>
 					<div class="bg-white rounded-lg shadow-lg px-4 py-4">
-						<AppInput
+						<!-- <AppInput
 							v-model="form.parent_practice_id"
 							:type="'select'"
 							:name="'parent_practice_id'"
@@ -124,7 +124,7 @@
 							:error="formError.find(item => item.field === 'parent_practice_id')"
 							:items="practice_lists"
 							@blur="CheckEmptyField(form.parent_practice_id, 'parent_practice_id')"
-						/>
+						/> -->
 						<AppInput
 							v-model="form.title"
 							:type="'text'"
@@ -132,14 +132,6 @@
 							:label="'Title'"
 							:error="formError.find(item => item.field === 'title')"
 						/>
-						<!-- <AppInput
-							v-model="form.description"
-							:type="'textarea'"
-							:name="'description'"
-							:label="'Descrition'"
-							:placeholder="'quill editor'"
-							:error="formError.find(item => item.field === 'description')"
-						/>-->
 						<p class="text-sm">Description</p>
 						<no-ssr placeholder="Loading...">
 							<quill-editor
@@ -186,7 +178,7 @@
 							:items="work_hours_type"
 							@blur="CheckEmptyField(form.practice_id, 'work_hours')"
 						/>
-						<div class="flex items-center z-50 relative justify-between">
+						<!-- <div class="flex items-center z-50 relative justify-between">
 							<p class="text-sm py-2 mb-2">{{ salary_range ? 'Salary Range' : 'Salary' }}</p>
 							<AppInput
 								v-model="salary_range"
@@ -194,23 +186,24 @@
 								:name="'salary_amount'"
 								:label="'Range'"
 							/>
-						</div>
+						</div> -->
 						<div class="flex flex-wrap -mt-8">
 							<AppInput
 								:class="salary_range ? 'w-full md:w-1/2 pr-1' : 'w-full'"
 								v-model="form.salary_amount"
 								:type="'number'"
 								:name="'salary_amount'"
+                :label="'Salary Amount'"
 								:error="formError.find(item => item.field === 'salary_amount')"
 							/>
-							<AppInput
+							<!-- <AppInput
 								v-if="salary_range"
 								class="w-full md:w-1/2 pl-1"
 								v-model="form.salary_amount"
 								:type="'number'"
 								:name="'salary_amount'"
 								:error="salary_range && formError.find(item => item.field === 'salary_amount')"
-							/>
+							/> -->
 						</div>
 						<div class="flex flex-wrap">
 							<AppInput
@@ -236,18 +229,18 @@
 								@blur="CheckEmptyField(form.salary_description_2, 'salary_description_2')"
 							/>
 						</div>
-						<AppInput
+						<!-- <AppInput
 							v-model="form.practice_rate"
 							:type="'number'"
 							:name="'practice_rate'"
 							:label="'Practice Rate'"
 							:error="formError.find(item => item.field === 'practice_rate')"
-						/>
+						/> -->
 					</div>
 				</div>
 			</div>
 			<div class="flex">
-				<AppButton :label="'Create'" class="ml-auto mr-2" @click="$router.push('/permanent-jobs/id')" />
+				<AppButton :label="'Create'" class="ml-auto mr-2" @click="createPermanentJob()" />
 			</div>
 		</div>
 	</section>
@@ -267,7 +260,10 @@ export default {
 	},
 	data() {
 		return {
+      practice: '',
 			form: {
+        practice_id: "",
+        parent_practice_id: "",
 				title: "",
 				description: "",
 				date_posted: "",
@@ -279,17 +275,16 @@ export default {
 				salary_description_1: "",
 				salary_description_2: "",
 				work_hours: 0,
-				practice_id: "",
-				parent_practice_id: "",
-				appointed_to_locum: "",
+				// appointed_to_locum: "",
 				profession_id: "",
-				practice_rate: 0,
+				// practice_rate: 0,
 				approved_at: "",
 
 				qualification_id: "",
 				clinical_system_id: "",
 				spoken_language_id: ""
-			},
+      },
+      
 			salary_range: false,
 			practice_lists: [],
 			professions: [],
@@ -365,45 +360,47 @@ export default {
 	created() {
 		this.loading = true;
 		Promise.all([
-			this.$axios.$get("/api/v1/practice/me/practice-practices"),
+			this.$axios.$get("/api/v1/practice/me/practice-job-practices"),
 			this.$axios.$get("/api/v1/locum-detail-rate-types"),
 			this.$axios.$get("/api/v1/shifts"),
 			this.$axios.$get("/api/v1/professions"),
-			this.$axios.$get("/api/v1/me")
+      this.$axios.$get("/api/v1/me"),
+      this.practice = this.$auth.user.practice_detail.practice,
 		])
-			.then(
-				([
-					responsePracticeLists,
-					responseRateLists,
-					responseShifts,
-					responseProfessions,
-					responseMe
-				]) => {
-					this.practice_lists = [];
-					responsePracticeLists.data.practices.forEach(item => {
-						this.practice_lists.push({
-							label: item.surgery.name,
-							value: item.id
-						});
-					});
-					this.rate_lists = [];
-					responseRateLists.data.locum_detail_rate_types.forEach(item => {
-						this.rate_lists.push({ label: item.name, value: item.id });
-					});
-					this.shifts = [];
-					responseShifts.data.shifts.forEach(item => {
-						this.shifts.push({ label: item.name, value: item.id });
-					});
-					this.professions = [];
-					responseProfessions.data.professions.forEach(item => {
-						this.professions.push({ label: item.name, value: item.id });
-						this.professions_categories.push(item);
-					});
-				}
-			)
-			.finally(() => {
-				this.loading = false;
-			});
+    .then(
+      ([
+        responsePracticeLists,
+        responseRateLists,
+        responseShifts,
+        responseProfessions,
+        responseMe
+      ]) => {
+        this.practice_lists = [];
+        responsePracticeLists.data.practices.forEach(item => {
+          this.practice_lists.push({
+            label: item.surgery.name,
+            value: item.id
+          });
+        });
+        this.rate_lists = [];
+        responseRateLists.data.locum_detail_rate_types.forEach(item => {
+          this.rate_lists.push({ label: item.name, value: item.id });
+        });
+        this.shifts = [];
+        responseShifts.data.shifts.forEach(item => {
+          this.shifts.push({ label: item.name, value: item.id });
+        });
+        this.professions = [];
+        responseProfessions.data.professions.forEach(item => {
+          this.professions.push({ label: item.name, value: item.id });
+          this.professions_categories.push(item);
+        });
+      }
+    )
+    .finally(() => {
+      console.log('practice lists', this.practice_lists)
+      this.loading = false;
+    });
 	},
 	watch: {
 		"form.profession_id"(newValue, oldValue) {
@@ -435,7 +432,17 @@ export default {
 		},
 		onEditorReady(editor) {
 			console.log("editor ready!", editor);
-		}
+		},
+    async createPermanentJob(){
+      console.log('form', this.form)
+      await this.$axios.post(`/api/v1/practice/permanent-jobs`,this.form).then(res => {
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "success",
+          text: ["Successfully Created Permanent Job"]
+        });
+      })
+    },
 	}
 };
 </script>

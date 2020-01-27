@@ -3,27 +3,27 @@
 		<div class="text-xs sm:text-sm font-bold">Candidates</div>
 		<div
 			class="bg-white rounded-lg shadow-lg m-0 my-4 py-3 px-5"
-			v-for="user in applicants"
-			:key="user.id"
+			v-for="application in permanent_job_applications"
+			:key="application.id"
 		>
 			<div class="flex flex-row flex-no-wrap justify-between items-center hover:text-gray-600">
-				<div @click.prevent="show(user.id)" class="cursor-pointer">
-					<AppAvatar
+				<div @click.prevent="show(application.id)" class="cursor-pointer">
+					<!-- <AppAvatar
 						:height="'40px'"
 						:width="'40px'"
 						:src="user.avatar && user.avatar.file && user.avatar.file.url ? user.avatar.file.url : ''"
-					/>
+					/> -->
 				</div>
 				<div
 					class="text-sm font-bold leading-loose w-full px-2 md:text-center cursor-pointer"
-					@click.prevent="show(user.id)"
-				>{{user.personal_detail.name}}</div>
+					@click.prevent="show(application.id)"
+				>{{application.locum_user.first_name +' '+application.locum_user.last_name}}</div>
 
 				<div class="flex items-center">
 					<button class="rounded-lg hover:bg-gray-300 focus:outline-none" @click.prevent="message(user)">
 						<svgicon name="chat" height="24" width="24" color="#888 #555 #fff" class="m-2" />
 					</button>
-					<button class="focus:outline-none" @click.prevent="show(user.id)">
+					<button class="focus:outline-none" @click.prevent="show(application.id)">
 						<svgicon name="arrow-right" height="20" width="20" class="fill-current m-2" />
 					</button>
 				</div>
@@ -53,7 +53,10 @@
 		</transition>
 		<transition name="slide" mode="out-in">
 			<div class="modal-container shadow-lg" v-if="modal">
-				<PermanentJobShowCandidates @close="modal=false" />
+				<PermanentJobShowCandidates 
+          @close="modal=false"
+          :permanent_job_application="permanent_job_application"
+          :user="user" />
 			</div>
 		</transition>
 		<div class="shield modal-shield" v-if="modal" @click="closeModal()"></div>
@@ -72,11 +75,12 @@ export default {
 		PermanentJobShowCandidates,
 		SendMessageModal
 	},
-	props: ["job"],
+	props: ["permanent_job"],
 	data() {
 		return {
 			total: 0,
-			applicants: [],
+      permanent_job_applications: [],
+      permanent_job_application: '',
 			current_page: 1,
 			loading: false,
 			params: {
@@ -85,7 +89,8 @@ export default {
 			},
 			user: null,
 			modal: false,
-			sendMessageModal: false
+      sendMessageModal: false,
+      
 		};
 	},
 	computed: {
@@ -94,39 +99,39 @@ export default {
 		}
 	},
 	created() {
-		// this.getApplicantsCount();
-		this.applicants = [
-			{
-				id: 1,
-				avatar: {
-					file: {
-						url: "https://via.placeholder.com/150"
-					}
-				},
-				personal_detail: {
-					name: "Jane Doe"
-				}
-			}
-		];
+    this.getApplicantsCount();
+		// this.applicants = [
+		// 	{
+		// 		id: 1,
+		// 		avatar: {
+		// 			file: {
+		// 				url: "https://via.placeholder.com/150"
+		// 			}
+		// 		},
+		// 		personal_detail: {
+		// 			name: "Jane Doe"
+		// 		}
+		// 	}
+    // ];
 	},
 	methods: {
-		// getApplicantsCount() {
-		//   this.$axios
-		//     .$get(`/api/v1/practice/jobs/${this.job.id}/applicants/count`)
-		//     .then(res => {
-		//       this.total = res.data.count;
-		//       this.getApplicants(this.params);
-		//     });
-		// },
-		// getApplicants(params) {
-		//   this.$axios
-		//     .$get(`/api/v1/practice/jobs/${this.job.id}/applicants`, {
-		//       params
-		//     })
-		//     .then(res => {
-		//       this.applicants = res.data.users;
-		//     });
-		// },
+		getApplicantsCount() {
+      this.$axios.$get(`/api/v1/practice/permanent-job-applications/count?permanent_job_id=${this.permanent_job.id}`).then(res => {
+        this.total = res.data.count;
+		    this.getApplicants(this.params);
+      })
+		},
+		getApplicants() {
+		  this.$axios
+		    .$get(`/api/v1/practice/permanent-job-applications`,{
+          ...this.params,
+          permanent_job_id: this.permanent_job_id
+        })
+		    .then(res => {
+          this.permanent_job_applications = res.data.permanent_job_applications;
+        });
+    
+		},
 		pagechanged(page) {
 			this.current_page = page;
 			this.params.offset = this.params.limit * (page - 1);
@@ -138,8 +143,28 @@ export default {
 			this.params.limit = limit;
 			this.getApplicants(this.params);
 		},
-		show(id) {
-			this.modal = true;
+		async show(id) {
+      
+      await this.$axios.$get(`/api/v1/practice/permanent-job-applications/${id}`)
+        .then(res => {
+          this.permanent_job_application = res.data.permanent_job_application
+        })
+
+      await this.$axios.$get(`/api/v1/practice/locums/${this.permanent_job_application.locum_user.id}`).then(res => {
+        this.user = res.data.user
+        this.modal = true;
+      })
+      console.log('permanent job app', this.permanent_job_application)
+
+      // this.$axios.$put(`/api/v1/practice/permanent-job-applications/${id}/process-application`)
+      //   .then(res => {
+      //     this.$store.commit("SET_NOTIFICATION", {
+      //       enabled: true,
+      //       status: "success",
+      //       text: ["This application is now being processed"]
+      //     })
+      //   });
+
 			// this.$axios.$get(`/api/v1/practice/locums/${id}`).then(res => {
 			// 	this.user = res.data.user;
 			// 	this.modal = true;

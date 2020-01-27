@@ -20,7 +20,7 @@
 				/>
 			</div>
 			<div class="flex flex-row flex-no-wrap justify-start mt-4 md:mt-8">
-				<div class="font-bold text-md sm:text-lg">NAME</div>
+				<div class="font-bold text-md sm:text-lg">{{user.name}}</div>
 			</div>
 			<div class="flex flex-row flex-wrap justify-between mt-4">
 				<div class="w-full pr-0 lg:pr-2 lg:w-1/2">
@@ -33,39 +33,43 @@
 							/>-->
 						</div>
 						<div class="font-bold text-sm sm:text-md">Candidate</div>
-						<div class="text-xs sm:text-sm mb-4 md:mb-8">Jane Doe</div>
+						<div class="text-xs sm:text-sm mb-4 md:mb-8">{{user.name}}</div>
 						<div class="font-bold text-sm sm:text-md">Headline</div>
-						<div class="text-xs sm:text-sm mb-4 md:mb-8">Lorem ipsum</div>
+						<div class="text-xs sm:text-sm mb-4 md:mb-8">{{user.locum_detail.headline}}</div>
 						<div class="font-bold text-sm sm:text-md">Biography</div>
-						<div class="text-xs sm:text-sm mb-4 md:mb-8">Lorem ipsum dolor ip set</div>
+						<div class="text-xs sm:text-sm mb-4 md:mb-8">{{user.locum_detail.short_biography}}</div>
 						<div class="font-bold text-sm sm:text-md">GMC / NMC Number</div>
-						<div class="text-xs sm:text-sm mb-4 md:mb-8">123</div>
+						<div class="text-xs sm:text-sm mb-4 md:mb-8">{{user.locum_detail.gmc_or_nmc_number.number}}</div>
 						<div class="font-bold text-sm sm:text-md">MPL / NPL Number</div>
-						<div class="text-xs sm:text-sm mb-4 md:mb-8">123</div>
+						<div class="text-xs sm:text-sm mb-4 md:mb-8">{{user.locum_detail.mpl_or_npl_number.number}}</div>
 						<div class="font-bold text-sm sm:text-md">Specialty</div>
 						<div class="text-xs sm:text-sm mb-4 md:mb-8 flex flex-row flex-wrap">
-							<!-- v-for="item in user.locum_detail.qualifications" -->
-							<!-- :key="item.id" -->
-							<div class="rounded-lg bg-yellow-500 p-2 m-1">lorem</div>
+							<div
+                class="rounded-lg bg-yellow-500 p-2 m-1"
+                v-for="item in user.locum_detail.qualifications"
+                :key="item.id"
+              >{{item.name}}</div>
 						</div>
 						<div class="font-bold text-sm sm:text-md">Clinical systems</div>
 						<div class="text-xs sm:text-sm mb-4 md:mb-8 flex flex-row flex-wrap">
-							<!-- v-for="item in user.locum_detail.clinical_systems" -->
-							<!-- :key="item.id" -->
-							<div class="rounded-lg bg-yellow-500 p-2 m-1">qwerty</div>
+							<div
+                class="rounded-lg bg-yellow-500 p-2 m-1"
+                v-for="item in user.locum_detail.clinical_systems"
+                :key="item.id"
+              >{{item.name}}</div>
 						</div>
 						<div class="font-bold text-sm sm:text-md">Languages</div>
 						<div class="text-xs sm:text-sm mb-4 md:mb-8 flex flex-row flex-wrap">
 							<div class="rounded-lg bg-yellow-500 p-2 m-1">English</div>
-							<!-- <div
-								class="rounded-lg bg-yellow-500 p-2 m-1"
-								v-for="item in user.locum_detail.spoken_languages"
-								:key="item.id"
-							>{{item.name}}</div>-->
+							<div
+                class="rounded-lg bg-yellow-500 p-2 m-1"
+                v-for="item in user.locum_detail.spoken_languages"
+                :key="item.id"
+              >{{item.name}}</div>
 						</div>
 					</div>
 				</div>
-				<!-- <div class="w-full pl-0 lg:pl-2 mt-8 lg:mt-0 lg:w-1/2">
+				<div class="w-full pl-0 lg:pl-2 mt-8 lg:mt-0 lg:w-1/2">
 					<div class="rounded-lg shadow-lg p-4 md:p-8 mb-4">
 						<div class="font-bold text-sm sm:text-md">Compliance documents</div>
 						<div class="flex flex-col mb-4 md:mb-8">
@@ -137,7 +141,7 @@
 						@click="confirmation_modal = true"
 						v-if="authPermissions.includes('Appoint Sessions Job')"
 					/>
-				</div>-->
+				</div>
 			</div>
 		</div>
 		<transition name="fade" mode="out-in">
@@ -162,7 +166,7 @@ import AppAvatar from "@/components/Base/AppAvatar";
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
 import SendMessageModal from "@/components/Messages/SendMessageModal";
 export default {
-	props: ["user", "job"],
+	props: ["user", "job", "permanent_job_application"],
 	components: {
 		AppButton,
 		AppConfirmationModal,
@@ -174,19 +178,22 @@ export default {
 			confirmation_modal: false,
 			mandatory: [],
 			optional: [],
-			sendMessageModal: false
+      sendMessageModal: false,
 		};
 	},
 	computed: {
 		authPermissions() {
 			return this.$store.getters["auth/permissions"];
 		}
-	},
+  },
+  
 	created() {
-		// this.getProfessionCategory(
-		// 	this.user.locum_detail.profession.profession_category.id
-		// );
-	},
+    console.log(this.user)
+    this.getProfessionCategory(
+      this.user.locum_detail.profession.profession_category.id
+    );
+  },
+  
 	methods: {
 		message(user) {
 			this.user = user;

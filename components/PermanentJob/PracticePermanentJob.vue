@@ -9,7 +9,7 @@
 				class="cursor-pointer"
 			/>
 			<div class="flex items-center flex-wrap">
-				<h4 class="text-lg md:text-xl font-bold">Salaried GP / Locum GP</h4>
+				<h4 class="text-lg md:text-xl font-bold">{{permanent_job.title}}</h4>
 				<AppButton class="ml-4" :label="edit ? 'Cancel Editing' : 'Edit Job'" @click="edit = !edit" />
 			</div>
 			<div class="flex flex-col md:flex-row">
@@ -20,35 +20,35 @@
 							<div class="w-full flex flex-col md:flex-row">
 								<div class="w-full md:flex-w-1/2">
 									<p class="font-bold">Practice</p>
-									<p class="pl-2 pb-3">NHS Greater Huddersfield</p>
+									<p class="pl-2 pb-3">{{permanent_job.practice.name}}</p>
 
 									<p class="font-bold">Salary</p>
-									<p class="pl-2 pb-3">{{`${job.salary_1}, ${job.salary_2}`}}</p>
+									<p class="pl-2 pb-3">{{permanent_job.salary_amount}}</p>
 
 									<p class="font-bold">Posted</p>
-									<p class="pl-2 pb-3">06 Jan 2020</p>
+									<p class="pl-2 pb-3">{{$moment(permanent_job.date_posted).format('YYYY-MM-DD')}}</p>
 
 									<p class="font-bold">Closes</p>
-									<p class="pl-2 pb-3">06 Feb 2020</p>
+									<p class="pl-2 pb-3">{{$moment(permanent_job.date_closing).format('YYYY-MM-DD')}}</p>
 								</div>
 
 								<div class="w-full md:flex-w-1/2">
 									<p class="font-bold">Report to</p>
-									<p class="pl-2 pb-3">Jacqui Yates</p>
+									<p class="pl-2 pb-3">{{permanent_job.report_to}}</p>
 
 									<p class="font-bold">Role</p>
-									<p class="pl-2 pb-3">Locum / Sessional GP, Salaried GP</p>
+									<p class="pl-2 pb-3">{{}}</p>
 
 									<p class="font-bold">Hours</p>
-									<p class="pl-2 pb-3">Part Time</p>
+									<p class="pl-2 pb-3">{{permanent_job.work_hours}}</p>
 
 									<p class="font-bold">Industry</p>
-									<p class="pl-2 pb-3">NHS</p>
+									<p class="pl-2 pb-3">{{permanent_job.industry_type}}</p>
 								</div>
 							</div>
 
 							<p class="font-bold">Description</p>
-							<span v-html="job.description"></span>
+							<span v-html="permanent_job.description"></span>
 						</template>
 						<template v-else>
 							<div class="w-full flex flex-col md:flex-row">
@@ -170,20 +170,20 @@
 								:label="'Set deadline for appointed Locum to accept these changes (per hour)'"
 								:error="formError.find(item => item.field === 'update_accepted_until')"
 								:items="[
-                                        { label: '12', value: 12 * 60 },
-                                        { label: '13', value: 13 * 60 },
-                                        { label: '14', value: 14 * 60 },
-                                        { label: '15', value: 15 * 60 },
-                                        { label: '16', value: 16 * 60 },
-                                        { label: '17', value: 17 * 60 },
-                                        { label: '18', value: 18 * 60 },
-                                        { label: '19', value: 19 * 60 },
-                                        { label: '20', value: 20 * 60 },
-                                        { label: '21', value: 21 * 60 },
-                                        { label: '22', value: 22 * 60 },
-                                        { label: '23', value: 23 * 60 },
-                                        { label: '24', value: 24 * 60 },
-                                    ]"
+                  { label: '12', value: 12 * 60 },
+                  { label: '13', value: 13 * 60 },
+                  { label: '14', value: 14 * 60 },
+                  { label: '15', value: 15 * 60 },
+                  { label: '16', value: 16 * 60 },
+                  { label: '17', value: 17 * 60 },
+                  { label: '18', value: 18 * 60 },
+                  { label: '19', value: 19 * 60 },
+                  { label: '20', value: 20 * 60 },
+                  { label: '21', value: 21 * 60 },
+                  { label: '22', value: 22 * 60 },
+                  { label: '23', value: 23 * 60 },
+                  { label: '24', value: 24 * 60 },
+                ]"
 							/>
 							<AppButton :label="'Save Changes'" />
 						</template>
@@ -191,8 +191,8 @@
 				</div>
 
 				<div class="mx-2 w-full md:w-2/5 lg:w-1/3">
-					<PermanentJobDetailCandidates />
-					<PermanentJobMap />
+					<PermanentJobDetailCandidates :permanent_job="permanent_job"/>
+					<PermanentJobMap :permanent_job="permanent_job" />
 				</div>
 			</div>
 		</div>
@@ -207,6 +207,7 @@ import PermanentJobShowCandidates from "@/components/PermanentJob/PermanentJobSh
 import PermanentJobDetailCandidates from "@/components/PermanentJob/PermanentJobDetailCandidates";
 import PermanentJobMap from "@/components/PermanentJob/PermanentJobMap";
 export default {
+  props:["permanent_job", "permanent_job_applications"],
 	components: {
 		AppInput,
 		AppButton,
@@ -229,8 +230,6 @@ export default {
 				report_to: "",
 				industry_type: "",
 				salary_amount: 0,
-				salary_description_1: "",
-				salary_description_2: "",
 				work_hours: 0,
 				practice_id: "",
 				parent_practice_id: "",
@@ -243,8 +242,7 @@ export default {
 			job: {
 				practice: "",
 				location: "",
-				salary_1: "Attractive",
-				salary_2: "Negotiable",
+        salary_amount: 0,
 				date_posted: "01/20/2020",
 				date_closing: "02/02/2020",
 				report_to: "",
@@ -256,7 +254,7 @@ export default {
 					"<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Suspendisse interdum consectetur libero id faucibus nisl tincidunt eget nullam. Libero justo laoreet sit amet cursus sit. In vitae turpis massa sed elementum tempus egestas sed sed. Proin nibh nisl condimentum id venenatis a condimentum. Morbi tempus iaculis urna id volutpat. Et netus et malesuada fames ac turpis. Scelerisque purus semper eget duis. Libero justo laoreet sit amet. Tempor nec feugiat nisl pretium fusce id velit ut. Ac feugiat sed lectus vestibulum mattis ullamcorper velit sed ullamcorper. Mattis aliquam faucibus purus in massa tempor nec feugiat nisl. Vestibulum rhoncus est pellentesque elit ullamcorper. Duis at consectetur lorem donec. In egestas erat imperdiet sed euismod nisi. Semper feugiat nibh sed pulvinar proin.</p>",
 				update_remarks: "",
 				updated_accepted_until: ""
-			},
+      },
 			salary_range: false,
 			practice_lists: [],
 			work_hours_type: [],
@@ -302,7 +300,7 @@ export default {
 			this.$axios.$get("/api/v1/locum-detail-rate-types"),
 			this.$axios.$get("/api/v1/shifts"),
 			this.$axios.$get("/api/v1/professions"),
-			this.$axios.$get("/api/v1/me")
+      this.$axios.$get("/api/v1/me"),
 		])
 			.then(
 				([
@@ -310,7 +308,7 @@ export default {
 					responseRateLists,
 					responseShifts,
 					responseProfessions,
-					responseMe
+          responseMe,
 				]) => {
 					this.practice_lists = [];
 					responsePracticeLists.data.practices.forEach(item => {
@@ -331,13 +329,12 @@ export default {
 					responseProfessions.data.professions.forEach(item => {
 						this.professions.push({ label: item.name, value: item.id });
 						this.professions_categories.push(item);
-					});
+          });
 				}
 			)
 			.finally(() => {
-				this.loading = false;
+        this.loading = false;
 			});
-
 		this.form.practice_id = this.job.practice;
 		this.form.salary_description_1 = this.job.salary_1;
 		this.form.salary_description_2 = this.job.salary_2;

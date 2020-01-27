@@ -1,6 +1,11 @@
 <template>
-	<PermanentJob v-if="$auth.user.domain === 'Locum'" />
-	<PracticePermanentJob v-else />
+	<PermanentJob v-if="$auth.user.domain === 'Locum'"
+    :permanent_job="permanent_job" 
+  />
+	<PracticePermanentJob v-else 
+    :permanent_job="permanent_job" 
+    :permanent_job_applications="permanent_job_applications" 
+    />
 </template>
 <script>
 import AppButton from "@/components/Base/AppButton";
@@ -8,10 +13,44 @@ import PermanentJob from "@/components/PermanentJob/PermanentJobModal";
 import PracticePermanentJob from "@/components/PermanentJob/PracticePermanentJob";
 export default {
 	components: {
-		AppButton,
+		// AppButton,
 		PermanentJob,
 		PracticePermanentJob
-	}
+  },
+  data (){
+    return {
+      permanent_job: '',
+    }
+  },
+  async asyncData({ app, route, store }) {
+    try {
+      let permanent_job = ''
+      let permanent_job_applications = ''
+
+      if(app.$auth.user.domain === 'Locum') {
+        
+        let response = await app.$axios.$get(`/api/v1/locum/permanent-jobs/${route.params.id}`)
+        permanent_job = response.data.permanent_job
+        console.log('permanent job', permanent_job)
+
+      } else if (app.$auth.user.domain === 'Practice') {
+        let response = await app.$axios.$get(`/api/v1/practice/permanent-jobs/${route.params.id}`)
+        permanent_job = response.data.permanent_job
+        response = await app.$axios.$get(`/api/v1/practice/permanent-job-applications?permanent_job_id=${route.params.id}`)
+        permanent_job_applications = response.data.permanent_job_applications
+      }
+      
+      return{
+        permanent_job,
+        permanent_job_applications,
+      }
+    } catch (err) {
+      if (err.response && err.response.status === 401) {
+				error(err.response.data);
+				return;
+			}
+    }
+  }
 };
 </script>
 

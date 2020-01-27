@@ -7,11 +7,11 @@
 			<div class="font-bold text-xs sm:text-sm">Practice</div>
 			<div
 				class="font-bold text-sm sm:text-md"
-			>{{job && job.platform_job ? job.platform_job.practice.surgery.name : 'Static Surgery Name'}}</div>
+			>{{permanent_job ? permanent_job.practice.name : 'Static Surgery Name'}}</div>
 			<div
-				v-if="job"
+				v-if="permanent_job"
 				class="text-sm sm:text-md"
-			>{{job.platform_job.practice.surgery.address.line_1}} {{job.platform_job.practice.surgery.address.line_2}} {{job.platform_job.practice.surgery.address.line_3}} {{job.platform_job.practice.surgery.address.post_code}}</div>
+			>{{permanent_job.practice.address_line_1}} {{permanent_job.practice.address_line_2}} {{permanent_job.practice.address_line_3}} {{permanent_job.practice.postcode}}</div>
 			<div class="mt-4">
 				<GmapMap
 					:center="{lat:latLang.coordinate_y, lng:latLang.coordinate_x}"
@@ -31,7 +31,7 @@
 import AppLoading from "@/components/Base/AppLoading";
 import { gmapApi } from "vue2-google-maps";
 export default {
-	props: ["job"],
+	props: ["permanent_job"],
 	components: {
 		AppLoading
 	},
@@ -43,31 +43,32 @@ export default {
 	},
 	mounted() {
 		// this.loading = true;
-		//static
-		this.coordinates = {
-			coordinate_x: -1.3190309,
-			coordinate_y: 54.5616352,
-			id: 6398,
-			post_code: "TS18 1HU"
-		};
-		// this.$axios
-		// 	.$get(
-		// 		`/api/v1/postcode-coordinates?postcode=${this.job.platform_job.practice.postcode}`
-		// 	)
-		// 	.then(res => {
-		// 		this.coordinates =
-		// 			res.data.postcode_coordinates &&
-		// 			res.data.postcode_coordinates.length > 0
-		// 				? res.data.postcode_coordinates[0]
-		// 				: null;
-		// 	})
-		// 	.catch(err => {
-		// 		console.log("err", err.response || err);
-		// 		throw err;
-		// 	})
-		// 	.finally(() => {
-		// 		this.loading = false;
-		// 	});
+    //static
+    console.log('permanent job', this.permanent_job)
+		// this.coordinates = {
+		// 	coordinate_x: -1.3190309,
+		// 	coordinate_y: 54.5616352,
+		// 	id: 6398,
+		// 	post_code: "TS18 1HU"
+		// };
+		this.$axios
+			.$get(
+				`/api/v1/postcode-coordinates?postcode=${this.permanent_job.practice.postcode}`
+			)
+			.then(res => {
+				this.coordinates =
+					res.data.postcode_coordinates &&
+					res.data.postcode_coordinates.length > 0
+						? res.data.postcode_coordinates[0]
+						: null;
+			})
+			.catch(err => {
+				console.log("err", err.response || err);
+				throw err;
+			})
+			.finally(() => {
+				this.loading = false;
+			});
 	},
 	computed: {
 		google: gmapApi,
