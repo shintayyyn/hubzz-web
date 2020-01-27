@@ -208,7 +208,6 @@ export default {
 
       let path = `${url}/${id}`;
 
-      console.log(url, this.$auth.user.domain, id);
       // return;
 
       if (type === "Jobs") {

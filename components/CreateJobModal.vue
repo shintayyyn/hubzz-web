@@ -976,12 +976,7 @@ export default {
               this.$store.commit("calendar/CREATE_JOB_MODAL", false);
             }
 
-            if (this.$route.path.includes("/sessions")) {
-              this.$store.commit(
-                "jobs/ADD_PRACTICE_AVAILABLE_JOB",
-                res.data.job
-              );
-            }
+            this.$store.commit("jobs/ADD_PRACTICE_AVAILABLE_JOB", res.data.job);
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
