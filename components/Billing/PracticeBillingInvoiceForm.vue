@@ -3,7 +3,7 @@
     <div class="flex flex-wrap justify-between pt-2">
       <div class="flex justify-start items-center">
         <AppButton
-          v-if="propInvoice.status !== 'Approved' && allowToBill"
+          v-if="!['Approved', 'Paid'].includes(propInvoice.status) && allowToBill"
           class="m-1"
           :label="'Save changes'"
           @click="save(false)"

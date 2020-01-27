@@ -50,11 +50,11 @@
                 v-if="slotProps.item.locum_invoice_id && slotProps.item.invoice_status !== 'To Be Invoice' && slotProps.item.status !== 'Approved'"
                 class="mx-1 px-4 py-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
               >Edit</div>
-              <!-- <div
+              <div
                 v-if="slotProps.item.locum_invoice_id && slotProps.item.status === 'Approved'"
                 @click="$router.push({ path: `/practice-billing/${slotProps.item.locum_invoice_id}`, query: {...$route.query} })"
                 class="mx-1 px-4 py-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
-              >View</div>-->
+              >View</div>
               <!-- <div
                 @click="$router.push({ path: `/practice-billing/${slotProps.item.locum_invoice_id}`, query: {...$route.query} })"
                 v-if="slotProps.item.status === 'Approved'"
@@ -67,7 +67,7 @@
               >Mark as Paid</button>
               <div
                 v-if="slotProps.item.status === 'Approved' && slotProps.item.locum_invoice_item && slotProps.item.locum_invoice_item.locum_invoice.paid_at"
-                class="px-2 py-2 font-bold rounded-lg focus:outline-none bg-yellow-400"
+                class="mx-1 px-4 py-2 bg-yellow-400 font-bold rounded-lg focus:outline-none"
               >Already Paid</div>
             </div>
           </template>
