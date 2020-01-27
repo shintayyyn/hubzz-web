@@ -21,7 +21,7 @@
         <div class="font-bold text-sm sm:text-md">Telephone number</div>
         <div
           class="text-xs sm:text-sm mb-6"
-        >{{ob_part.job.platform_job.practice.phone_number?job_part.job.platform_job.practice.phone_number:`(none)`}}</div>
+        >{{job_part.job.platform_job.practice.phone_number?job_part.job.platform_job.practice.phone_number:`(none)`}}</div>
         <div class="font-bold text-sm sm:text-md">Email address</div>
         <div class="text-xs sm:text-sm mb-6">{{job_part.job.platform_job.email}}</div>
         <template v-if="job_part.status === 'Terminated'">

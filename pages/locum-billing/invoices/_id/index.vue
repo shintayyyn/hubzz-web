@@ -9,7 +9,7 @@
           <svgicon name="left-arrow" height="32" width="32" />
         </nuxt-link>
       </div>
-      <LocumPlatformBillingInvoiceForm :propInvoiceDetail="invoice_detail" :propInvoice="invoice" />
+      <LocumPlatformBillingInvoiceForm :propInvoice="invoice" />
     </div>
   </div>
 </template>
@@ -25,16 +25,6 @@ export default {
   },
   async asyncData({ app, error, params }) {
     try {
-      const responseMe = await app.$axios.$get(`/api/v1/me`);
-
-      const invoice_detail =
-        responseMe.data &&
-        responseMe.data.user &&
-        responseMe.data.user.locum_detail &&
-        responseMe.data.user.locum_detail.invoice_detail
-          ? responseMe.data.user.locum_detail.invoice_detail
-          : null;
-
       const response = await app.$axios.get(
         `/api/v1/locum/locum-invoices/${params.id}`
       );
@@ -45,7 +35,6 @@ export default {
           : null;
 
       return {
-        invoice_detail,
         invoice
       };
     } catch (err) {
