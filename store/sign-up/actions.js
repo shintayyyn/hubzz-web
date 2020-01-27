@@ -169,14 +169,14 @@ export default {
                             errorMessage.field === 'company_registration_number' ||
                             errorMessage.field === 'utr_number' ||
                             errorMessage.field === 'paid_under_payroll' ||
-                            errorMessage.field === 'payroll_detail_account_name' ||
-                            errorMessage.field === 'payroll_detail_bank_name' ||
-                            errorMessage.field === 'payroll_detail_sort_code' ||
-                            errorMessage.field === 'payroll_detail_account_number' ||
-                            errorMessage.field === 'bank_account_account_name' ||
-                            errorMessage.field === 'bank_account_bank_name' ||
-                            errorMessage.field === 'bank_account_sort_code' ||
-                            errorMessage.field === 'bank_account_account_number' ||
+                            errorMessage.field === 'payroll_account_name' ||
+                            errorMessage.field === 'payroll_bank_name' ||
+                            errorMessage.field === 'payroll_sort_code' ||
+                            errorMessage.field === 'payroll_account_number' ||
+                            errorMessage.field === 'account_name' ||
+                            errorMessage.field === 'bank_name' ||
+                            errorMessage.field === 'sort_code' ||
+                            errorMessage.field === 'account_number' ||
                             errorMessage.field === 'ir35'
                         )
                     })
