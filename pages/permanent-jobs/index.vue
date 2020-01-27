@@ -1,11 +1,5 @@
 <template>
 	<section class="flex flex-col items-start">
-		<AppButton
-			v-if="$auth.user.domain === 'Practice'"
-			:label="'Create'"
-			class="ml-auto"
-			@click="$router.push('/permanent-jobs/create')"
-		/>
     <div v-if="$auth.user.domain === 'Locum'" class="flex overflow-x-auto">
       <nuxt-link
         :to="`/permanent-jobs`"

@@ -176,6 +176,7 @@ export default {
             name: "Surgery Management",
             route: "/surgery-management"
           });
+          addedLists.push({ name: "Permanent Jobs", route: "/permanent-jobs"})
           if (hubType !== "Type 2") {
             addedLists.push({ name: "My Banks", route: "/my-banks" });
             addedLists.push({
@@ -201,6 +202,7 @@ export default {
         if (["Active", "Dormant"].includes(accountStatus)) {
           addedLists.push({ name: "My Practice", route: "/my-practice" });
           addedLists.push({ name: "Jobs", route: "/jobs" });
+          addedLists.push({ name: "Permanent Jobs", route: "/permanent-jobs"})
           addedLists.push({ name: "Billing", route: "/locum-billing" });
           addedLists.push({ name: "Invite", route: "/invite" });
         }
