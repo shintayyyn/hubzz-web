@@ -16,7 +16,6 @@
 
     <template v-if="hasNewChanges">
       <div class="text-md">The Practice made changes on this Job, Accept these changes?</div>
-      <!-- <div class="text-sm">{{updateAcceptedUntil}}</div> -->
       <div class="text-sm" v-if="deadline.hours > 1">
         You need to confirm within {{ deadline.hours }} hour{{ deadline.hours > 1 ? 's' : ''}}
         <span
@@ -38,7 +37,7 @@
 
     <div class="flex flex-col mt-4">
       <div class="flex flex-wrap justify-start">
-        <div class="p-0 lg:pr-4 w-full lg:w-1/2">
+        <div class="p-0 md:pr-4 w-full md:w-1/2">
           <div class="flex flex-col">
             <JobDetailModalInfo :job="job" />
             <JobDetailModalUnassignForm

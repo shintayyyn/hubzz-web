@@ -48,7 +48,7 @@
                 :label="'Job number'"
               />
             </div>
-            <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
+            <!-- <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
               <AppAutoComplete
                 class="px-1"
                 v-model="params.surgery_id"
@@ -57,7 +57,7 @@
                 :url="'/api/v1/locum/surgeries'"
                 :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem'"
               />
-            </div>
+            </div>-->
             <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
               <AppInput
                 class="px-1"
@@ -179,7 +179,7 @@
                 :label="'Job part number'"
               />
             </div>
-            <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+            <!-- <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
               <AppAutoComplete
                 class="px-1"
                 v-model="jobPartParams.job_surgery_id"
@@ -188,7 +188,7 @@
                 :url="'/api/v1/locum/surgeries'"
                 :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem'"
               />
-            </div>
+            </div>-->
             <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
               <AppInput
                 class="px-1"
@@ -925,6 +925,10 @@ export default {
       this.getAppliedJobsRealTime
     );
     this.$socket.on(
+      "Practice Notification Job Application Cancelled",
+      this.getAppliedCancelledJobsRealTime
+    );
+    this.$socket.on(
       "Practice Notification Job Current",
       this.getCurrentJobsRealTime
     );
@@ -1243,6 +1247,18 @@ export default {
         this.showRefresh = true;
       }
     },
+    async getAppliedCancelledJobsRealTime(job) {
+      if (!job) {
+        return;
+      }
+      if (
+        this.$route.path.includes("/sessions") &&
+        (this.$route.query.status === "Applied" ||
+          this.$route.query.status === "Live")
+      ) {
+        this.showRefresh = true;
+      }
+    },
     async getCurrentJobsRealTime(job) {
       if (!job) {
         return;
@@ -1397,6 +1413,10 @@ export default {
       this.$socket.removeListener(
         "Practice Notification Job Application",
         this.getAppliedJobsRealTime
+      );
+      this.$socket.removeListener(
+        "Practice Notification Job Application Cancelled",
+        this.getAppliedCancelledJobsRealTime
       );
       this.$socket.removeListener(
         "Practice Notification Job Current",

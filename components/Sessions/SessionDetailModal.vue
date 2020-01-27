@@ -83,11 +83,10 @@
             />
           </div>
         </div>
-        <div class="p-0 md:pl-4 w-full md:w-1/2">
+        <div class="p-0 md:pl-4 w-full md:w-1/2 order-first md:order-none">
           <div class="flex flex-col">
             <SessionPartDetailModalParts :job_id="job.id" :disabledLink="true" />
             <SessionDetailModalCandidates
-              class="order-first lg:order-none"
               v-if="job.status === 'Applied'"
               :job="job"
               @appointed="$emit('close')"
@@ -97,9 +96,6 @@
               v-if="(job.status === 'Allocated' || job.status === 'Ongoing' || job.status === 'Completed' || job.status === 'Declined')"
             />
           </div>
-        </div>
-        <div class="p-0 md:pl-4 w-full md:w-1/2 order-first md:order-none">
-          <div class="flex flex-col"></div>
         </div>
       </div>
     </div>

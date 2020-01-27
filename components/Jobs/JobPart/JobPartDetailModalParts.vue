@@ -69,7 +69,7 @@ export default {
 
   computed: {
     totalPages() {
-      return Math.ceil(this.total / this.perPage);
+      return Math.ceil(this.total / this.params.limit);
     },
     routerLink() {
       if (this.disabledLink) {
@@ -100,7 +100,19 @@ export default {
       ])
         .then(([responseCount, responseJobParts]) => {
           this.total = responseCount.data.count;
-          this.parts = responseJobParts.data.job_parts;
+          let parts = responseJobParts.data.job_parts;
+          parts = parts.map(part => {
+            return {
+              ...part,
+              date_start: this.$moment(part.date_start, "YYYY-MM-DD").format(
+                "DD-MM-YYYY"
+              ),
+              date_end: this.$moment(part.date_end, "YYYY-MM-DD").format(
+                "DD-MM-YYYY"
+              )
+            };
+          });
+          this.parts = parts;
         })
         .finally(() => {
           this.loading = false;

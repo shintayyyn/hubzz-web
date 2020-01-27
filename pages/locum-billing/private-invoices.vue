@@ -512,15 +512,16 @@ export default {
         case "issued":
           params = {
             // locum_status: ["Approved"],
+            // locum_status: ["Completed", "Terminated"],
             invoice_status: ["Invoiced"],
             job_type: "Private"
           };
           break;
         case "pension-form-a":
           params = {
-            locum_status: ["Completed"],
+            // locum_status: ["Approved"],
             invoice_status: ["Invoiced"],
-            // can_generate_form_b: true,
+            can_generate_form_b: true,
             job_type: "Private"
           };
           break;

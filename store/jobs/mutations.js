@@ -6,34 +6,34 @@ export default {
         // PRACTICE
         // parts
         state.practice_allocated_job_parts = [],
-        state.practice_ongoing_job_parts = [],
-        state.practice_completed_job_parts = [],
-        state.practice_approved_job_parts = [],
-        // whole
-        state.practice_pending_jobs = [],
-        state.practice_allocated_jobs = [],
-        state.practice_available_jobs = [],
-        state.practice_applied_jobs = [],
-        state.practice_unfilled_jobs = [],
-        state.practice_declined_jobs = [],
-        state.practice_cancelled_jobs = [],
-        state.practice_withdrawn_jobs = [],
-        // LOCUM
-        // parts
-        state.locum_allocated_job_parts = [],
-        state.locum_ongoing_job_parts = [],
-        state.locum_completed_job_parts = [],
-        state.locum_approved_job_parts = [],
-        // whole
-        state.locum_allocated_jobs = [],
-        state.locum_available_jobs = [],
-        state.locum_matched_jobs = [],
-        state.locum_applied_jobs = [],
-        state.locum_unsuccessful_jobs = [],
-        state.locum_declined_jobs = [],
-        state.locum_cancelled_jobs = [],
-        state.locum_withdrawn_jobs = [],
-        state.locum_unavailabilities = []
+            state.practice_ongoing_job_parts = [],
+            state.practice_completed_job_parts = [],
+            state.practice_approved_job_parts = [],
+            // whole
+            state.practice_pending_jobs = [],
+            state.practice_allocated_jobs = [],
+            state.practice_available_jobs = [],
+            state.practice_applied_jobs = [],
+            state.practice_unfilled_jobs = [],
+            state.practice_declined_jobs = [],
+            state.practice_cancelled_jobs = [],
+            state.practice_withdrawn_jobs = [],
+            // LOCUM
+            // parts
+            state.locum_allocated_job_parts = [],
+            state.locum_ongoing_job_parts = [],
+            state.locum_completed_job_parts = [],
+            state.locum_approved_job_parts = [],
+            // whole
+            state.locum_allocated_jobs = [],
+            state.locum_available_jobs = [],
+            state.locum_matched_jobs = [],
+            state.locum_applied_jobs = [],
+            state.locum_unsuccessful_jobs = [],
+            state.locum_declined_jobs = [],
+            state.locum_cancelled_jobs = [],
+            state.locum_withdrawn_jobs = [],
+            state.locum_unavailabilities = []
     },
     // PRACTICE
     // NOTIF
