@@ -239,6 +239,7 @@ export default {
             status: "success",
             text: ["Assign locum successfully"]
           });
+          this.$emit("appointed");
         })
         .catch(err => {
           console.log("err", err.reponse | err);

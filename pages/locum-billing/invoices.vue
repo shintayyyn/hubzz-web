@@ -66,46 +66,46 @@
             @sorted="sorted"
           >
             <template v-slot:actions="slotProps">
-              <div class="flex justify-center">
+              <div class="flex flex-wrap justify-center">
                 <div
                   @click="$router.push({ path: `/locum-billing/invoices/${slotProps.item.locum_invoice_id}/edit`, query: {...$route.query} })"
                   v-if="slotProps.item.locum_invoice_id && slotProps.item.locum_status !== 'Approved'"
-                  class="mx-1 px-4 py-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
+                  class="my-1 p-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
                 >Edit</div>
                 <!-- && slotProps.item.invoice_status === 'To Be Invoice' -->
                 <button
                   v-if="slotProps.item.locum_invoice_id && slotProps.item.locum_status !== 'Approved'"
                   @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id, 'deleteInvoice')"
-                  class="mx-1 px-4 py-2 bg-red-700 text-white font-bold rounded-lg focus:outline-none"
+                  class="my-1 p-2 bg-red-700 text-white font-bold rounded-lg focus:outline-none w-full"
                 >Delete</button>
                 <div
                   @click="$router.push({ path: `/locum-billing/invoices/${slotProps.item.id}/create`, query: {...$route.query} })"
                   v-if="!slotProps.item.locum_invoice_id"
-                  class="mx-1 px-4 py-2 bg-green-700 text-white font-bold rounded-lg focus:outline-none"
+                  class="my-1 p-2 bg-green-700 text-white font-bold rounded-lg focus:outline-none"
                 >Generate Invoice</div>
                 <!-- <div
                   v-if="slotProps.item.locum_invoice_id && slotProps.item.status === 'Approved'"
                   @click="viewPdf(slotProps.item.locum_invoice_id)"
-                  class="mx-1 px-4 py-2 bg-yellow-400 font-bold rounded-lg focus:outline-none"
+                  class="my-1 p-2 bg-yellow-400 font-bold rounded-lg focus:outline-none"
                 >View Pdf</div>-->
-                <!-- <div
+                <div
                   v-if="slotProps.item.locum_invoice_id && slotProps.item.status === 'Approved'"
                   @click="$router.push({ path: `/locum-billing/invoices/${slotProps.item.locum_invoice_id}`, query: {...$route.query} })"
-                  class="mx-1 px-4 py-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
-                >View</div>-->
+                  class="my-1 p-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
+                >View</div>
                 <div
                   v-if="slotProps.item.locum_invoice_id && slotProps.item.status === 'Approved' && !slotProps.item.locum_form_a_id && slotProps.item.profession.name === 'GP' "
                   @click="select_invoice(slotProps.item.locum_invoice_id, 'generateFormA')"
-                  class="mx-1 px-4 py-2 bg-yellow-400 font-bold rounded-lg focus:outline-none"
+                  class="my-1 p-2 bg-yellow-400 font-bold rounded-lg focus:outline-none w-full"
                 >Generate Form A</div>
                 <div
                   @click="viewAsPdf(slotProps.item.locum_form_a_id, 'form-a')"
                   v-if="slotProps.item.locum_invoice_id && slotProps.item.status === 'Approved' && slotProps.item.locum_form_a_id && slotProps.item.profession.name === 'GP' "
-                  class="mx-1 px-4 py-2 bg-yellow-400 font-bold rounded-lg focus:outline-none"
+                  class="my-1 p-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
                 >View NHS Form A</div>
                 <!-- <div
                   v-if="slotProps.item.locum_invoice_id && slotProps.item.status === 'Approved' && !slotProps.item.locum_form_a_id && !slotProps.item.locum_invoice_item.locum_invoice.paid_at"
-                  class="mx-1 px-4 py-2 bg-yellow-400 font-bold rounded-lg focus:outline-none"
+                  class="my-1 p-2 bg-yellow-400 font-bold rounded-lg focus:outline-none"
                 >Waiting For Payment</div>-->
               </div>
             </template>
