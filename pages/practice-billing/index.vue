@@ -44,30 +44,30 @@
           @sorted="sorted"
         >
           <template v-slot:actions="slotProps">
-            <div class="flex justify-center">
+            <div class="flex flex-wrap justify-center">
               <div
-                @click="$router.push({ path: `/practice-billing/${slotProps.item.locum_invoice_id}/edit`, query: {...$route.query} })"
                 v-if="slotProps.item.locum_invoice_id && slotProps.item.invoice_status !== 'To Be Invoice' && slotProps.item.status !== 'Approved'"
-                class="mx-1 px-4 py-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
+                @click="$router.push({ path: `/practice-billing/${slotProps.item.locum_invoice_id}/edit`, query: {...$route.query} })"
+                class="my-1 p-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
               >Edit</div>
-              <div
+              <!-- <div
                 v-if="slotProps.item.locum_invoice_id && slotProps.item.status === 'Approved'"
                 @click="$router.push({ path: `/practice-billing/${slotProps.item.locum_invoice_id}`, query: {...$route.query} })"
-                class="mx-1 px-4 py-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
-              >View</div>
-              <!-- <div
-                @click="$router.push({ path: `/practice-billing/${slotProps.item.locum_invoice_id}`, query: {...$route.query} })"
-                v-if="slotProps.item.status === 'Approved'"
-                class="mx-1 px-2 py-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
+                class="my-1 py-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
               >View</div>-->
+              <div
+                v-if="slotProps.item.status === 'Approved' && slotProps.item.locum_invoice_item"
+                @click="$router.push({ path: `/practice-billing/${slotProps.item.locum_invoice_id}`, query: {...$route.query} })"
+                class="mx-1 p-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
+              >View</div>
               <button
-                @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id)"
                 v-if="slotProps.item.status === 'Approved' && slotProps.item.locum_invoice_item && !slotProps.item.locum_invoice_item.locum_invoice.paid_at"
-                class="px-2 py-2 font-bold rounded-lg focus:outline-none bg-yellow-400"
+                @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id)"
+                class="my-1 p-2 font-bold rounded-lg focus:outline-none bg-yellow-400"
               >Mark as Paid</button>
               <div
                 v-if="slotProps.item.status === 'Approved' && slotProps.item.locum_invoice_item && slotProps.item.locum_invoice_item.locum_invoice.paid_at"
-                class="mx-1 px-4 py-2 bg-yellow-400 font-bold rounded-lg focus:outline-none"
+                class="my-1 p-2 bg-yellow-400 font-bold rounded-lg focus:outline-none"
               >Already Paid</div>
             </div>
           </template>
@@ -530,8 +530,10 @@ export default {
         });
     },
     async refreshInvoices() {
-      this.$store.commit("billing/CLEAR_PRACTICE_BILLING_NOTIFICATION");
       this.loading = true;
+      this.current_page = 1;
+      this.params.offset = 0;
+      this.params.limit = 5;
       await this.getJobPartsPromiseAll();
       this.loading = false;
       this.showRefresh = false;

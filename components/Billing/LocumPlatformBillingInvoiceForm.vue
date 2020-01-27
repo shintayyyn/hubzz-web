@@ -255,6 +255,26 @@
           <div>Sort code: {{propInvoice.sort_code ? propInvoice.sort_code : 'xxxxx'}}</div>
           <div>Account number: {{propInvoice.account_number ? propInvoice.account_number : 'xxxxx*OR'}}</div>
         </div>
+        <div
+          class="flex flex-col text-xs sm:text-sm"
+          v-if="propJobPart && !propInvoice && propInvoiceDetail && propInvoiceDetail.paid_under_payroll"
+        >
+          <div>Payment by BACS: xxxxx</div>
+          <div>Account name: {{propInvoiceDetail.payroll_detail.account_name ? propInvoiceDetail.payroll_detail.account_name : 'xxxxx'}}</div>
+          <div>Bank: {{propInvoiceDetail.payroll_detail.bank_name ? propInvoiceDetail.payroll_detail.bank_name : 'xxxxx'}}</div>
+          <div>Sort code: {{propInvoiceDetail.payroll_detail.sort_code ? propInvoiceDetail.payroll_detail.sort_code : 'xxxxx'}}</div>
+          <div>Account number: {{propInvoiceDetail.payroll_detail.account_number ? propInvoiceDetail.payroll_detail.account_number : 'xxxxx*OR'}}</div>
+        </div>
+        <div
+          class="flex flex-col text-xs sm:text-sm"
+          v-if="propJobPart && !propInvoice && propInvoiceDetail && !propInvoiceDetail.paid_under_payroll"
+        >
+          <div>Payment by BACS: xxxxx</div>
+          <div>Account name: {{propInvoiceDetail.bank_account.account_name ? propInvoiceDetail.bank_account.account_name : 'xxxxx'}}</div>
+          <div>Bank: {{propInvoiceDetail.bank_account.bank_name ? propInvoiceDetail.bank_account.bank_name : 'xxxxx'}}</div>
+          <div>Sort code: {{propInvoiceDetail.bank_account.sort_code ? propInvoiceDetail.bank_account.sort_code : 'xxxxx'}}</div>
+          <div>Account number: {{propInvoiceDetail.bank_account.account_number ? propInvoiceDetail.bank_account.account_number : 'xxxxx*OR'}}</div>
+        </div>
       </div>
     </div>
   </section>
@@ -272,9 +292,9 @@ export default {
     AppDate
   },
   props: {
-    // propInvoice: {
-    //   type: Object
-    // },
+    propInvoiceDetail: {
+      type: Object
+    },
     propInvoice: {
       type: Object
     },
