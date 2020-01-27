@@ -171,14 +171,14 @@ export default {
         state.payroll_details.utr_number = payload.utr_number
         state.payroll_details.company_registration_number = payload.company_registration_number
         state.payroll_details.paid_under_payroll = payload.paid_under_payroll
-        state.payroll_details.payroll_detail_account_name = payload.payroll_detail_account_name
-        state.payroll_details.payroll_detail_bank_name = payload.payroll_detail_bank_name
-        state.payroll_details.payroll_detail_sort_code = payload.payroll_detail_sort_code
-        state.payroll_details.payroll_detail_account_number = payload.payroll_detail_account_number
-        state.payroll_details.bank_account_account_name = payload.bank_account_account_name
-        state.payroll_details.bank_account_bank_name = payload.bank_account_bank_name
-        state.payroll_details.bank_account_sort_code = payload.bank_account_sort_code
-        state.payroll_details.bank_account_account_number = payload.bank_account_account_number
+        state.payroll_details.payroll_account_name = payload.payroll_account_name
+        state.payroll_details.payroll_bank_name = payload.payroll_bank_name
+        state.payroll_details.payroll_sort_code = payload.payroll_sort_code
+        state.payroll_details.payroll_account_number = payload.payroll_account_number
+        state.payroll_details.account_name = payload.account_name
+        state.payroll_details.bank_name = payload.bank_name
+        state.payroll_details.sort_code = payload.sort_code
+        state.payroll_details.account_number = payload.account_number
         state.payroll_details.ir35 = payload.ir35
     },
     SET_CREDENTIAL_DETAILS(state, payload) {
