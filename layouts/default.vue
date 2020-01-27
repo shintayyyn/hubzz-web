@@ -1,11 +1,10 @@
 <template>
-	<section>
-		<div class="shield" v-if="$store.state.toggled_sidebar" @click="close"></div>
-		<span>{{$route.name}}</span>
-		<AppHeader />
-		<AppSideBar @modal="signout_modal = $event" />
-		<div
-			:class="
+  <section>
+    <div class="shield" v-if="$store.state.toggled_sidebar" @click="close"></div>
+    <AppHeader />
+    <AppSideBar @modal="signout_modal = $event" />
+    <div
+      :class="
 				$route.name === 'messages-slug' || $route.name === 'messages-new'
 					? 'content-message'
 					: 'content'

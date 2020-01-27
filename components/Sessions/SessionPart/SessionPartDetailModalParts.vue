@@ -68,7 +68,7 @@ export default {
 
   computed: {
     totalPages() {
-      return Math.ceil(this.total / this.perPage);
+      return Math.ceil(this.total / this.params.limit);
     },
     routerLink() {
       if (this.disabledLink) {

@@ -183,7 +183,7 @@ export default {
   },
   computed: {
     authPermissions() {
-      return this.$store.getters["auth/permissions"];
+      return this.$store.getters["permissions"];
     }
   },
   created() {
@@ -239,6 +239,7 @@ export default {
             status: "success",
             text: ["Assign locum successfully"]
           });
+          this.$emit("appointed");
         })
         .catch(err => {
           console.log("err", err.reponse | err);

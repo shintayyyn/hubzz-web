@@ -20,10 +20,11 @@
         :style="inStyle"
         @focus="toggledOn"
         @keydown="handleKeyDownEvent"
+        @input="$emit('input', $event.target.value)"
       />
     </div>
     <transition name="fade">
-      <div class="relative z-10" v-if="showResults">
+      <div class="relative z-10" v-if="showLists">
         <div class="w-full absolute bg-white shadow-md" v-if="results.length > 0">
           <div
             v-for="(item, index) in results"
@@ -87,6 +88,7 @@ export default {
     label: String,
     placeholder: String,
     url: String,
+    data: String,
     keyword: String,
     error: Object,
     inStyle: String
@@ -99,22 +101,20 @@ export default {
   data() {
     return {
       search: "",
-      showResults: false,
+      showLists: false,
       results: [],
       activeIndex: 0
     };
   },
   watch: {
-    value(newValue, oldValue) {
-      if (newValue && oldValue) {
-        this.search = newValue;
-      }
+    value(value) {
+      // this.search = value;
     },
     search(value) {
       if (value) {
         this.getSurgeries(value);
       } else {
-        this.showResults = false;
+        this.showLists = false;
         this.$emit("input", "");
       }
     }
@@ -128,7 +128,8 @@ export default {
       if (!selectedSurgery) {
         return;
       }
-      this.showResults = false;
+      console.log(selectedSurgery);
+      this.showLists = false;
       if (this.keyword === "practices") {
         this.$axios
           .$get(`/api/v1/conversations?user_id=${selectedSurgery.id}`)
@@ -173,7 +174,7 @@ export default {
           } else {
             this.results = res.data.surgeries;
           }
-          this.showResults = true;
+          this.showLists = true;
         })
         .catch(err => {
           console.log("err", err.response || err);
@@ -188,14 +189,14 @@ export default {
     }, 500),
     toggledOn() {
       if (this.search && this.search.length) {
-        this.showResults = true;
+        this.showLists = true;
       }
     },
     toggledOff() {
-      this.showResults = false;
+      this.showLists = false;
     },
     handleKeyDownEvent(e) {
-      if (!this.showResults) {
+      if (!this.showLists) {
         return;
       }
       if (event.key === "ArrowUp") {

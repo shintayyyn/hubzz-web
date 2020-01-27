@@ -184,7 +184,7 @@ export default {
   },
   computed: {
     authPermissions() {
-      return this.$store.getters["auth/permissions"];
+      return this.$store.getters["permissions"];
     },
     selectedDate() {
       return this.$store.state.calendar.selected_date;
@@ -283,6 +283,10 @@ export default {
       );
       this.$socket.on(
         "Practice Notification Job Application",
+        this.getJobsRealTime
+      );
+      this.$socket.on(
+        "Practice Notification Job Application Cancelled",
         this.getJobsRealTime
       );
       this.$socket.on(
@@ -408,6 +412,10 @@ export default {
         );
         this.$socket.removeListener(
           "Practice Notification Job Application",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
+          "Practice Notification Job Application Cancelled",
           this.getJobsRealTime
         );
         this.$socket.removeListener(

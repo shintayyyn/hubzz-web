@@ -425,52 +425,52 @@ export default {
 			);
 		},
 
-		// LOCUM
-		// PARTS
-		hasLocumOngoingJobs(date, type, day) {
-			return this.getLocumOngoingJobs.find(
-				job_part =>
-					this.getDateArray(job_part.date_start, job_part.date_end).includes(
-						date
-					) &&
-					job_part.job.shift.name === type &&
-					((job_part.job.include_saturday === false && day !== 6) ||
-						job_part.job.include_saturday === true) &&
-					((job_part.job.include_sunday === false && day !== 0) ||
-						job_part.job.include_sunday === true)
-			);
-		},
-		// WHOLE
-		hasLocumAllocatedJobs(date, type, day) {
-			return this.getLocumAllocatedJobs.find(
-				job =>
-					this.getDateArray(job.date_start, job.date_end).includes(date) &&
-					job.shift.name === type &&
-					((job.include_saturday === false && day !== 6) ||
-						job.include_saturday === true) &&
-					((job.include_sunday === false && day !== 0) ||
-						job.include_sunday === true)
-			);
-		},
-		hasLocumAppliedJobs(date, type) {
-			return this.getLocumAppliedJobs.find(
-				job =>
-					this.getDateArray(job.date_start, job.date_end).includes(date) &&
-					job.shift.name === type &&
-					((job.include_saturday === false && day !== 6) ||
-						job.include_saturday === true) &&
-					((job.include_sunday === false && day !== 0) ||
-						job.include_sunday === true)
-			);
-		},
-		// UNAVAILABILITIES
-		hasLocumUnavailabilities(date, type) {
-			return this.getLocumUnavailabilities.find(
-				job =>
-					job.date === date && job.shifts.find(shift => shift.name === type)
-			);
-		}
-	}
+    // LOCUM
+    // PARTS
+    hasLocumOngoingJobs(date, type, day) {
+      return this.getLocumOngoingJobs.find(
+        job_part =>
+          this.getDateArray(job_part.date_start, job_part.date_end).includes(
+            date
+          ) &&
+          job_part.job.shift.name === type &&
+          ((job_part.job.include_saturday === false && day !== 6) ||
+            job_part.job.include_saturday === true) &&
+          ((job_part.job.include_sunday === false && day !== 0) ||
+            job_part.job.include_sunday === true)
+      );
+    },
+    // WHOLE
+    hasLocumAllocatedJobs(date, type, day) {
+      return this.getLocumAllocatedJobs.find(
+        job =>
+          this.getDateArray(job.date_start, job.date_end).includes(date) &&
+          job.shift.name === type &&
+          ((job.include_saturday === false && day !== 6) ||
+            job.include_saturday === true) &&
+          ((job.include_sunday === false && day !== 0) ||
+            job.include_sunday === true)
+      );
+    },
+    hasLocumAppliedJobs(date, type, day) {
+      return this.getLocumAppliedJobs.find(
+        job =>
+          this.getDateArray(job.date_start, job.date_end).includes(date) &&
+          job.shift.name === type &&
+          ((job.include_saturday === false && day !== 6) ||
+            job.include_saturday === true) &&
+          ((job.include_sunday === false && day !== 0) ||
+            job.include_sunday === true)
+      );
+    },
+    // UNAVAILABILITIES
+    hasLocumUnavailabilities(date, type) {
+      return this.getLocumUnavailabilities.find(
+        job =>
+          job.date === date && job.shifts.find(shift => shift.name === type)
+      );
+    }
+  }
 };
 </script>
 <style scoped>

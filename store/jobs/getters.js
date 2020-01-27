@@ -27,6 +27,9 @@ export default {
                 case 'Practice Notification Job Application':
                     message = 'Someone applied to this job.'
                     break;
+                case 'Practice Notification Job Application Cancelled':
+                    message = 'Someone cancelled his/her application to this job.'
+                    break;
                 case 'Practice Notification Job Current':
                     message = 'A locum has been appointed to this job.'
                     break;
@@ -56,7 +59,7 @@ export default {
                     break;
                 case 'Practice Notification Job Unfilled Warning':
                     if (notif.job_unfilled_warned_in_1_hours === true) {
-                        message = 'This Job will be unfilled in 1 hour.'
+                        message = 'This Job will be unfilled soon.'
                     }
                     else if (notif.job_unfilled_warned_in_3_hours === true) {
                         message = 'This Job will be unfilled in 3 hours.'
@@ -508,7 +511,7 @@ export default {
                     message = 'There is a new job that matched your qualifications.'
                     break;
                 case 'Locum Notification Job Unsuccessful':
-                    message = 'Your application for this job has already been appointed to another locum.'
+                    message = 'Your application for this job is unsuccessful'
                     break;
                 case 'Locum Notification Job Current':
                     message = 'You have been appointed to this job.'

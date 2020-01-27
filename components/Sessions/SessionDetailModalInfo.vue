@@ -3,16 +3,13 @@
     <div class="flex flex-row flex-wrap">
       <div class="flex flex-col w-full md:w-1/2 p-0 md:pr-4">
         <div class="font-bold text-sm sm:text-md">Job number</div>
-        <div class="text-xs sm:text-sm mb-4">{{job.job_number}}</div>
+        <div class="text-xs sm:text-sm mb-8">{{job.job_number}}</div>
         <div class="font-bold text-sm sm:text-md">Job description</div>
         <div class="text-xs sm:text-sm mb-8">{{job.description}}</div>
         <div class="font-bold text-sm sm:text-md">Rate</div>
-        <div
-          class="text-xs sm:text-sm mb-6"
-          v-text="job.rate?`£ ${job.rate} ${job.locum_detail_rate_type.name}`:`(none)`"
-        ></div>
+        <div class="text-xs sm:text-sm mb-8">{{`£ ${job.rate} ${job.locum_detail_rate_type.name}`}}</div>
         <div class="font-bold text-sm sm:text-md">Total Hours</div>
-        <div class="text-xs sm:text-sm mb-4">{{job.total_hours}}</div>
+        <div class="text-xs sm:text-sm mb-8">{{job.total_hours}}</div>
         <div class="font-bold text-sm sm:text-md">Extra information</div>
         <div
           class="text-xs sm:text-sm mb-8"
@@ -20,7 +17,9 @@
         <div class="font-bold text-sm sm:text-md">Report to</div>
         <div class="text-xs sm:text-sm mb-8">{{job.platform_job.report_to}}</div>
         <div class="font-bold text-sm sm:text-md">Telephone number</div>
-        <div class="text-xs sm:text-sm mb-8">{{job.platform_job.practice.phone_number}}</div>
+        <div
+          class="text-xs sm:text-sm mb-8"
+        >{{job.platform_job.practice.phone_number ? job.platform_job.practice.phone_number : '(none)'}}</div>
         <div class="font-bold text-sm sm:text-md">Email address</div>
         <div class="text-xs sm:text-sm mb-8">{{job.platform_job.email}}</div>
         <template v-if="job.status === 'Cancelled'">
@@ -32,12 +31,7 @@
         <template v-if="job.status === 'Declined'">
           <div class="font-bold text-sm sm:text-md">Declined</div>
           <div class="text-xs sm:text-sm mb-8">{{job.platform_job.declined_at | localDate}}</div>
-          <div class="font-bold text-sm sm:text-md">Appointed Locum</div>
-          <div
-            class="text-xs sm:text-sm mb-8"
-          >{{job.platform_job.appointed_to_locum.user.personal_detail.name}}</div>
         </template>
-        <!--  -->
         <div class="font-bold text-sm sm:text-md">Is there another Dr on site?</div>
         <div class="text-xs sm:text-sm mb-8">{{job.platform_job.is_another_doctor ? 'Yes' : 'No'}}</div>
         <div class="font-bold text-sm sm:text-md">Is nurse support available?</div>
@@ -61,22 +55,15 @@
         <div class="text-xs sm:text-sm mb-8"></div>
         <div class="font-bold text-sm sm:text-md">Session structure information</div>
         <div class="text-xs sm:text-sm mb-8">{{job.platform_job.session_structure_information}}</div>
-        <div class="font-bold text-sm sm:text-md">Include Saturday</div>
-        <div class="text-xs sm:text-sm mb-8">{{job.include_saturday ? 'Yes' : 'No'}}</div>
-        <div class="font-bold text-sm sm:text-md">Include Sunday</div>
-        <div class="text-xs sm:text-sm mb-8">{{job.include_sunday ? 'Yes' : 'No'}}</div>
-        <div class="font-bold text-sm sm:text-md">Unpaid break</div>
-        <div class="text-xs sm:text-sm mb-8">{{job.platform_job.unpaid_breaks_in_minutes}}</div>
         <div class="font-bold text-sm sm:text-md">Update Remarks</div>
         <div
-          class="text-xs sm:text-sm mb-6"
+          class="text-xs sm:text-sm mb-8"
           v-text="job.update_remarks?job.update_remarks:`(none)`"
         ></div>
-        <!--  -->
       </div>
       <div class="flex flex-col w-full md:w-1/2 p-0 md:pl-4">
         <div class="font-bold text-sm sm:text-md">Duration</div>
-        <div class="flex text-xs sm:text-sm mb-6">
+        <div class="flex text-xs sm:text-sm mb-8">
           <div class="px-1">
             <p>From</p>
             <p>To</p>
@@ -88,48 +75,59 @@
             <p>{{job.shift.name}}</p>
           </div>
         </div>
+        <div class="font-bold text-sm sm:text-md">Include Saturday</div>
+        <div class="text-xs sm:text-sm mb-8">{{job.include_saturday ? 'Yes' : 'No'}}</div>
+        <div class="font-bold text-sm sm:text-md">Include Sunday</div>
+        <div class="text-xs sm:text-sm mb-8">{{job.include_sunday ? 'Yes' : 'No'}}</div>
+        <div class="font-bold text-sm sm:text-md">Unpaid break</div>
+        <div class="text-xs sm:text-sm mb-8">{{job.platform_job.unpaid_breaks_in_minutes}}</div>
 
-        <div
-          class="font-bold text-sm sm:text-md"
-          v-if="job.selection_date"
-        >Selection will be made and you will receive a notification by this date</div>
-        <div
-          v-if="job.selection_date"
-          class="text-xs sm:text-sm mb-4"
-        >{{$moment(job.selection_date, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('DD-MM-YYYY')}} | {{$moment(job.selection_date, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('HH:mm')}}</div>
+        <template v-if="job.selection_date">
+          <div
+            class="font-bold text-sm sm:text-md"
+          >Selection will be made and you will receive a notification by this date</div>
+          <div
+            class="text-xs sm:text-sm mb-8"
+          >{{$moment(job.selection_date, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('DD-MM-YYYY')}} | {{$moment(job.selection_date, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('HH:mm')}}</div>
+        </template>
 
-        <div
-          v-if="job.platform_job.auto_assign_at"
-          class="font-bold text-sm sm:text-md mb-4"
-        >Auto-assigns this job to the first matching applicant</div>
+        <template v-if="job.platform_job.auto_assign_at">
+          <div
+            class="font-bold text-sm sm:text-md mb-8"
+          >Auto-assigns this job to the first matching applicant</div>
+        </template>
 
-        <div
-          v-if="job.favorite_first && job.favorite_only"
-          class="font-bold text-sm sm:text-md"
-        >This Job is available for Favorite Bank only by this date</div>
-        <div
-          v-if="job.favorite_first && job.favorite_only"
-          class="text-xs sm:text-sm mb-4"
-        >{{$moment(job.favorite_only_until, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('DD-MM-YYYY')}} | {{$moment(job.favorite_only_until, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('HH:mm')}}</div>
+        <template v-if="job.favorite_first && job.favorite_only">
+          <div
+            class="font-bold text-sm sm:text-md"
+          >Only Favorite Locum will be notified until this date</div>
+          <div
+            v-if="job.favorite_first && job.favorite_only"
+            class="text-xs sm:text-sm mb-8"
+          >{{$moment(job.favorite_only_until, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('DD-MM-YYYY')}} | {{$moment(job.favorite_only_until, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('HH:mm')}}</div>
+        </template>
 
-        <div
-          v-if="!job.favorite_first && job.favorite_only"
-          class="font-bold text-sm sm:text-md mb-4"
-        >This Job is available for Favorite Bank only</div>
+        <template v-if="!job.favorite_first && job.favorite_only">
+          <div
+            class="font-bold text-sm sm:text-md mb-8"
+          >This Job is available for Favorite Locum only</div>
+        </template>
 
-        <div class="text-xs sm:text-sm mb-4">
+        <div class="text-xs sm:text-sm mb-8">
           This job is
           <span
             class="font-bold text-sm sm:text-md"
           >{{job.platform_job.ir35 ? 'INSIDE' : 'OUTSIDE'}}</span> of scope of
           <span class="font-bold text-sm sm:text-md">IR35</span>
         </div>
+
         <div class="font-bold text-sm sm:text-md">Role</div>
         <div class="text-xs sm:text-sm mb-8">{{job.platform_job.profession.name}}</div>
+
         <div class="font-bold text-sm sm:text-md">Specialty</div>
         <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
           <div
-            class="rounded-lg bg-yellow-500 p-2 m-1"
+            class="rounded-lg bg-yellow-500 p-1 m-1"
             v-for="item in job.platform_job.qualifications"
             :key="item.id"
           >{{item.name}}</div>
@@ -137,16 +135,16 @@
         <div class="font-bold text-sm sm:text-md">Clinical systems</div>
         <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
           <div
-            class="rounded-lg bg-yellow-500 p-2 m-1"
+            class="rounded-lg bg-yellow-500 p-1 m-1"
             v-for="item in job.platform_job.clinical_systems"
             :key="item.id"
           >{{item.name}}</div>
         </div>
         <div class="font-bold text-sm sm:text-md">Spoken languages</div>
         <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
-          <div class="rounded-lg bg-yellow-500 p-2 m-1">English</div>
+          <div class="rounded-lg bg-yellow-500 p-1 m-1">English</div>
           <div
-            class="rounded-lg bg-yellow-500 p-2 m-1"
+            class="rounded-lg bg-yellow-500 p-1 m-1"
             v-for="item in job.platform_job.spoken_languages"
             :key="item.id"
           >{{item.name}}</div>
@@ -156,29 +154,56 @@
           <div class="mt-1" v-if="job.platform_job.compliance_documents.length === 0">(none)</div>
           <div
             v-else
-            class="rounded-lg bg-yellow-500 p-2 m-1"
+            class="rounded-lg bg-yellow-500 p-1 m-1"
             v-for="item in job.platform_job.compliance_documents"
             :key="item.id"
           >{{item.name}}</div>
         </div>
-        <div class="font-bold text-sm sm:text-md">Required Mandatory Trainings</div>
+        <div class="font-bold text-sm sm:text-md">Mandatory Trainings</div>
         <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
           <div class="mt-1" v-if="job.platform_job.mandatory_trainings.length === 0">(none)</div>
           <div
             v-else
-            class="rounded-lg bg-yellow-500 p-2 m-1"
+            class="rounded-lg bg-yellow-500 p-1 m-1"
             v-for="item in job.platform_job.mandatory_trainings"
             :key="item.id"
           >{{item.name}}</div>
         </div>
+
+        <div class="font-bold text-sm sm:text-md">Variation Terms</div>
+        <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
+          <div class="mt-1 cursor-pointer" @click="modal = true">View file</div>
+          <transition name="slide" mode="out-in">
+            <div v-if="modal" class="modal-container shadow-lg">
+              <div class="h-full w-full">
+                <div class="p-4 md:p-8 cursor-pointer">
+                  <svgicon name="left-arrow" height="32" @click="modal = false" />
+                </div>
+                <embed
+                  class="object-contain object-top w-full"
+                  :class="job.variation_terms_file.type == 'image' ? 'image' : 'document h-full '"
+                  :src="job.variation_terms_file.subtype === 'tiff' || job.variation_terms_file.subtype === 'msword' ? convertDoc(job.variation_terms_file.url) : job.variation_terms_file.url"
+                />
+              </div>
+            </div>
+          </transition>
+        </div>
       </div>
     </div>
+    <transition name="fade" mode="out-in">
+      <div class="shield" v-if="modal" @click="modal = false"></div>
+    </transition>
   </div>
 </template>
 <script>
 import { gmapApi } from "vue2-google-maps";
 export default {
   props: ["job"],
+  data() {
+    return {
+      modal: false
+    };
+  },
   computed: {
     google: gmapApi,
     latLang() {
@@ -187,6 +212,22 @@ export default {
     session_requirements() {
       return this.job.platform_job.session_requirements.split(",");
     }
+  },
+  methods: {
+    convertDoc(document) {
+      return `https://docs.google.com/gview?url=${document}&embedded=true`;
+    }
   }
 };
 </script>
+<style scoped>
+.modal-container {
+  z-index: 510;
+}
+
+@media screen and (min-width: 1200px) {
+  .modal-container {
+    width: 70%;
+  }
+}
+</style>

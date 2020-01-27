@@ -3,17 +3,17 @@
     <div class="p-4 md:p-8 max-w-5xl h-screen">
       <div class="flex flex-row flex-wrap justify-start pb-4">
         <nuxt-link
-          :to="{ name: 'locum-billing-index', query: {...$route.query}}"
+          :to="{ name: 'locum-billing-invoices', query: {...$route.query}}"
           class="cursor-pointer"
         >
           <svgicon name="left-arrow" height="32" width="32" />
         </nuxt-link>
       </div>
+      <!-- :propInvoiceDetail="invoice_detail" -->
       <LocumPlatformBillingInvoiceForm
-        :propInvoiceDetail="invoice_detail"
         :propInvoice="invoice"
         :propJobPart="null"
-        @updateInvoice="$emit('updateInvoice', $event), $router.push({ name: 'locum-billing-index', query: {...$route.query} })"
+        @updateInvoice="$emit('updateInvoice', $event), $router.push({ name: 'locum-billing-invoices', query: {...$route.query} })"
       />
     </div>
   </div>
@@ -30,15 +30,15 @@ export default {
   },
   async asyncData({ app, error, params }) {
     try {
-      const responseMe = await app.$axios.$get(`/api/v1/me`);
+      // const responseMe = await app.$axios.$get(`/api/v1/me`);
 
-      const invoice_detail =
-        responseMe.data &&
-        responseMe.data.user &&
-        responseMe.data.user.locum_detail &&
-        responseMe.data.user.locum_detail.invoice_detail
-          ? responseMe.data.user.locum_detail.invoice_detail
-          : null;
+      // const invoice_detail =
+      //   responseMe.data &&
+      //   responseMe.data.user &&
+      //   responseMe.data.user.locum_detail &&
+      //   responseMe.data.user.locum_detail.invoice_detail
+      //     ? responseMe.data.user.locum_detail.invoice_detail
+      //     : null;
 
       const response = await app.$axios.get(
         `/api/v1/locum/locum-invoices/${params.id}`
@@ -50,7 +50,7 @@ export default {
           : null;
 
       return {
-        invoice_detail,
+        // invoice_detail,
         invoice
       };
     } catch (err) {

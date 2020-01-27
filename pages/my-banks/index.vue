@@ -40,12 +40,7 @@
                     class="ml-2 p-2 focus:outline-none hover:bg-gray-300 rounded-lg"
                     @click.prevent.stop="message(locum)"
                   >
-                    <svgicon
-                      name="chat"
-                      height="24"
-                      width="24"
-                      color="#6b778b #4a5568 #fff"
-                    />
+                    <svgicon name="chat" height="24" width="24" color="#6b778b #4a5568 #fff" />
                   </button>
                 </div>
                 <div class="flex flex-wrap text-center mt-4 cursor-pointer">
@@ -164,7 +159,7 @@ export default {
       return Math.ceil(this.total / this.perPage);
     },
     authPermissions() {
-      return this.$store.getters["auth/permissions"];
+      return this.$store.getters["permissions"];
     }
   },
   watch: {

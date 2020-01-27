@@ -137,6 +137,12 @@ export default {
                 commit('ADD_PRACTICE_JOB_NOTIFICATION', { ...response.data.job, notificationType: 'Practice Notification Job Application' })
             }
         })
+        this.$socket.on('Practice Notification Job Application Cancelled', async (job) => {
+            const response = await this.$axios.$get(`/api/v1/practice/jobs/${job.job_id}`)
+            if (response.data && response.data.job) {
+                commit('ADD_PRACTICE_JOB_NOTIFICATION', { ...response.data.job, notificationType: 'Practice Notification Job Application Cancelled' })
+            }
+        })
         this.$socket.on('Practice Notification Job Current', async (job) => {
             const response = await this.$axios.$get(`/api/v1/practice/jobs/${job.id}`)
             if (response.data && response.data.job) {

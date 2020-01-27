@@ -40,10 +40,22 @@
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppAutoComplete
               class="px-1"
-              v-model="params.surgery_id"
-              :name="'surgery_id'"
+              v-model="params.practice_id"
+              :name="'practice_id'"
               :label="'Surgery'"
               :url="'/api/v1/locum/surgeries'"
+              :data="'surgeries'"
+              :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem'"
+            />
+          </div>
+          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+            <AppAutoComplete
+              class="px-1"
+              v-model="params.private_practice_id"
+              :name="'practice_id'"
+              :label="'Private Surgery'"
+              :url="'/api/v1/locum/surgeries'"
+              :data="'surgeries'"
               :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem'"
             />
           </div>
@@ -87,23 +99,6 @@
             />
           </div>
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppPostCode
-              class="px-1"
-              v-model="params.near_post_code"
-              :name="'near_post_code'"
-              :label="'Post code'"
-            />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppInput
-              class="px-1"
-              v-model="params.miles"
-              :type="'text'"
-              :name="'miles'"
-              :label="'Miles'"
-            />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppDate
               v-model="params.calendar_date_start"
               :name="'calendar_date_start'"
@@ -124,6 +119,23 @@
           </div>
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppTime v-model="params.time_end" :name="'time_end'" :label="'End Time'" />
+          </div>
+          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+            <AppPostCode
+              class="px-1"
+              v-model="params.near_post_code"
+              :name="'near_post_code'"
+              :label="'Post code'"
+            />
+          </div>
+          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+            <AppInput
+              class="px-1"
+              v-model="params.miles"
+              :type="'text'"
+              :name="'miles'"
+              :label="'Miles'"
+            />
           </div>
           <div class="md:px-1 flex w-full">
             <AppButton
@@ -172,9 +184,19 @@
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppAutoComplete
               class="px-1"
-              v-model="jobPartParams.job_surgery_id"
-              :name="'job_surgery_id'"
+              v-model="jobPartParams.job_practice_id"
+              :name="'job_practice_id'"
               :label="'Surgery'"
+              :url="'/api/v1/locum/surgeries'"
+              :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem'"
+            />
+          </div>
+          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+            <AppAutoComplete
+              class="px-1"
+              v-model="jobPartParams.job_private_practice_id"
+              :name="'job_practice_id'"
+              :label="'Private Surgery'"
               :url="'/api/v1/locum/surgeries'"
               :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem'"
             />
@@ -219,23 +241,7 @@
               :items="rates"
             />
           </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppPostCode
-              class="px-1"
-              v-model="jobPartParams.near_post_code"
-              :name="'near_post_code'"
-              :label="'Post code'"
-            />
-          </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppInput
-              class="px-1"
-              v-model="jobPartParams.miles"
-              :type="'text'"
-              :name="'miles'"
-              :label="'Miles'"
-            />
-          </div>
+
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppDate
               v-model="jobPartParams.calendar_date_start"
@@ -257,6 +263,23 @@
           </div>
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppTime v-model="jobPartParams.time_end" :name="'time_end'" :label="'End Time'" />
+          </div>
+          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+            <AppPostCode
+              class="px-1"
+              v-model="jobPartParams.near_post_code"
+              :name="'near_post_code'"
+              :label="'Post code'"
+            />
+          </div>
+          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+            <AppInput
+              class="px-1"
+              v-model="jobPartParams.miles"
+              :type="'text'"
+              :name="'miles'"
+              :label="'Miles'"
+            />
           </div>
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
@@ -378,7 +401,8 @@ export default {
         job_number: "",
         title: "",
         type: "",
-        surgery_id: "",
+        practice_id: "",
+        private_practice_id: "",
         shift_id: "",
         rate: "",
         rate_type_id: "",
@@ -396,7 +420,8 @@ export default {
         job_part_number: "",
         job_title: "",
         job_type: "",
-        job_surgery_id: "",
+        job_practice_id: "",
+        job_private_practice_id: "",
         job_shift_id: "",
         job_rate: "",
         job_rate_type_id: "",
@@ -754,7 +779,7 @@ export default {
         job_number: "",
         title: "",
         type: "",
-        surgery_id: "",
+        practice_id: "",
         shift_id: "",
         rate: "",
         rate_type_id: "",
@@ -773,7 +798,7 @@ export default {
           job_part_number: "",
           job_title: "",
           job_type: "",
-          job_surgery_id: "",
+          job_practice_id: "",
           job_shift_id: "",
           job_rate: "",
           job_rate_type_id: "",
@@ -1493,7 +1518,7 @@ export default {
       this.params.limit = 5;
       this.params.type = "";
       this.params.job_number = "";
-      this.params.surgery_id = "";
+      this.params.practice_id = "";
       this.params.title = "";
       this.params.shift_id = "";
       this.params.rate = "";
@@ -1504,7 +1529,7 @@ export default {
       this.jobPartParams.limit = 5;
       this.jobPartParams.job_type = "";
       this.jobPartParams.job_part_number = "";
-      this.jobPartParams.job_surgery_id = "";
+      this.jobPartParams.job_practice_id = "";
       this.jobPartParams.job_title = "";
       this.jobPartParams.job_shift_id = "";
       this.jobPartParams.job_rate = "";

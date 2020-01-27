@@ -50,11 +50,11 @@
                 v-if="slotProps.item.locum_invoice_id && slotProps.item.invoice_status !== 'To Be Invoice' && slotProps.item.status !== 'Approved'"
                 class="mx-1 px-4 py-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
               >Edit</div>
-              <!-- <div
+              <div
                 v-if="slotProps.item.locum_invoice_id && slotProps.item.status === 'Approved'"
                 @click="$router.push({ path: `/practice-billing/${slotProps.item.locum_invoice_id}`, query: {...$route.query} })"
                 class="mx-1 px-4 py-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
-              >View</div>-->
+              >View</div>
               <!-- <div
                 @click="$router.push({ path: `/practice-billing/${slotProps.item.locum_invoice_id}`, query: {...$route.query} })"
                 v-if="slotProps.item.status === 'Approved'"
@@ -62,12 +62,12 @@
               >View</div>-->
               <button
                 @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id)"
-                v-if="slotProps.item.status === 'Approved' && !slotProps.item.locum_invoice_item.locum_invoice.paid_at"
+                v-if="slotProps.item.status === 'Approved' && slotProps.item.locum_invoice_item && !slotProps.item.locum_invoice_item.locum_invoice.paid_at"
                 class="px-2 py-2 font-bold rounded-lg focus:outline-none bg-yellow-400"
               >Mark as Paid</button>
               <div
-                v-if="slotProps.item.status === 'Approved' && slotProps.item.locum_invoice_item.locum_invoice.paid_at"
-                class="px-2 py-2 font-bold rounded-lg focus:outline-none bg-yellow-400"
+                v-if="slotProps.item.status === 'Approved' && slotProps.item.locum_invoice_item && slotProps.item.locum_invoice_item.locum_invoice.paid_at"
+                class="mx-1 px-4 py-2 bg-yellow-400 font-bold rounded-lg focus:outline-none"
               >Already Paid</div>
             </div>
           </template>
@@ -227,7 +227,7 @@ export default {
   },
   computed: {
     authPermissions() {
-      return this.$store.getters["auth/permissions"];
+      return this.$store.getters["permissions"];
     },
     noJobPartsToDisplay() {
       let str = "";
@@ -300,7 +300,7 @@ export default {
           break;
         case "approved":
           status = ["Approved"];
-          invoice_status = [];
+          invoice_status = ["Invoiced"];
           break;
         default:
           status = ["Completed", "Terminated"];
@@ -403,7 +403,7 @@ export default {
           break;
         case "approved":
           status = ["Approved"];
-          invoice_status = [];
+          invoice_status = ["Invoiced"];
           break;
         default:
           status = ["Completed", "Terminated"];
@@ -480,7 +480,7 @@ export default {
           break;
         case "approved":
           status = ["Approved"];
-          invoice_status = [];
+          invoice_status = ["Invoiced"];
           break;
         default:
           status = ["Completed", "Terminated"];

@@ -55,85 +55,85 @@
 <script>
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
 export default {
-	components: {
-		AppConfirmationModal
-	},
-	data() {
-		return {
-			signout_modal: false,
-			confirmation_modal: false,
-			lists: []
-		};
-	},
-	computed: {
-		authPermissions() {
-			return this.$store.getters["auth/permissions"];
-		}
-	},
-	mounted() {
-		this.getInit();
-		this.$socket.on(
-			"Practice Notification Update Profile",
-			this.updatePermissions
-		);
-		this.$socket.on(
-			"Practice Notification Delete Profile",
-			this.toggleConfirmationModal
-		);
-	},
-	destroyed() {
-		this.removeListener();
-	},
-	methods: {
-		toggleConfirmationModal() {
-			this.confirmation_modal = true;
-		},
-		updatePermissions(user) {
-			if (
-				user &&
-				user.practice_detail &&
-				user.practice_detail.permissions &&
-				user.practice_detail.permissions.length > 0
-			) {
-				this.$store.commit(
-					"auth/SET_PERMISSIONS",
-					user.practice_detail.role.permissions
-				);
-			} else {
-				this.$store.commit("auth/SET_PERMISSIONS", []);
-			}
-		},
-		removeListener() {
-			this.$socket.removeListener(
-				"Locum Notification Update Profile",
-				this.updatePermissions
-			);
-			this.$socket.removeListener(
-				"Locum Notification Delete Profile",
-				this.toggleConfirmationModal
-			);
-		},
-		hasPermissions(permissions) {
-			if (permissions && permissions.length) {
-				let enable = false;
-				for (let i = 0; i < permissions.length; i++) {
-					if (this.authPermissions.includes(permissions[i])) {
-						enable = true;
-					}
-				}
-				return enable;
-			} else {
-				return true;
-			}
-		},
-		getInit() {
-			let domain = this.$auth.user.domain;
-			let accountStatus = this.$auth.user.status;
-			let practiceStatus =
-				this.$auth.user.domain === "Practice" &&
-				this.$auth.user.practice_detail.practice.status
-					? this.$auth.user.practice_detail.practice.status
-					: null;
+  components: {
+    AppConfirmationModal
+  },
+  data() {
+    return {
+      signout_modal: false,
+      confirmation_modal: false,
+      lists: []
+    };
+  },
+  computed: {
+    authPermissions() {
+      return this.$store.getters["permissions"];
+    }
+  },
+  mounted() {
+    this.getInit();
+    this.$socket.on(
+      "Practice Notification Update Profile",
+      this.updatePermissions
+    );
+    this.$socket.on(
+      "Practice Notification Delete Profile",
+      this.toggleConfirmationModal
+    );
+  },
+  destroyed() {
+    this.removeListener();
+  },
+  methods: {
+    toggleConfirmationModal() {
+      this.confirmation_modal = true;
+    },
+    updatePermissions(user) {
+      if (
+        user &&
+        user.practice_detail &&
+        user.practice_detail.permissions &&
+        user.practice_detail.permissions.length > 0
+      ) {
+        this.$store.commit(
+          "SET_PERMISSIONS",
+          user.practice_detail.role.permissions
+        );
+      } else {
+        this.$store.commit("SET_PERMISSIONS", []);
+      }
+    },
+    removeListener() {
+      this.$socket.removeListener(
+        "Locum Notification Update Profile",
+        this.updatePermissions
+      );
+      this.$socket.removeListener(
+        "Locum Notification Delete Profile",
+        this.toggleConfirmationModal
+      );
+    },
+    hasPermissions(permissions) {
+      if (permissions && permissions.length) {
+        let enable = false;
+        for (let i = 0; i < permissions.length; i++) {
+          if (this.authPermissions.includes(permissions[i])) {
+            enable = true;
+          }
+        }
+        return enable;
+      } else {
+        return true;
+      }
+    },
+    getInit() {
+      let domain = this.$auth.user.domain;
+      let accountStatus = this.$auth.user.status;
+      let practiceStatus =
+        this.$auth.user.domain === "Practice" &&
+        this.$auth.user.practice_detail.practice.status
+          ? this.$auth.user.practice_detail.practice.status
+          : null;
 
 			let hubType = "";
 			if (domain === "Practice") {
@@ -154,61 +154,57 @@ export default {
 				{ name: "Contact Us", route: "/contact-us" }
 			];
 
-			if (domain === "Practice") {
-				addedLists = [
-					{
-						name: "Profile",
-						route: "/profile",
-						permissions: [
-							"View Profile Practice",
-							"View Profile Surgeries",
-							"View Profile Users",
-							"View Profile Practice Document"
-						]
-					}
-				];
-				if (
-					["Active", "Dormant"].includes(accountStatus) &&
-					practiceStatus &&
-					practiceStatus === "Active"
-				) {
-					addedLists.push({
-						name: "Surgery Management",
-						route: "/surgery-management"
-					});
-					if (hubType !== "Type 2") {
-						addedLists.push({ name: "My Banks", route: "/my-banks" });
-						addedLists.push({
-							name: "Sessions",
-							route: "/sessions",
-							permissions: ["View Sessions Job"]
-						});
-						addedLists.push(
-							{ name: "Permanent Jobs", route: "/permanent-jobs" },
-							{ name: "Billing", route: "/practice-billing" }
-						);
-					}
-					addedLists.push({ name: "Invite", route: "/invite" });
-					addedLists.push({
-						name: "Roles and Permissions",
-						route: "/roles-and-permissions",
-						permissions: ["View Role"]
-					});
-				}
-			}
-			if (domain === "Locum") {
-				addedLists = [
-					{ name: "Compliance", route: "/compliance" },
-					{ name: "Availability", route: "/availability" }
-				];
-				if (["Active", "Dormant"].includes(accountStatus)) {
-					addedLists.push({ name: "My Practice", route: "/my-practice" });
-					addedLists.push({ name: "Jobs", route: "/jobs" });
-					addedLists.push({ name: "Permanent Jobs", route: "/permanent-jobs" });
-					addedLists.push({ name: "Billing", route: "/locum-billing" });
-					addedLists.push({ name: "Invite", route: "/invite" });
-				}
-			}
+      if (domain === "Practice") {
+        addedLists = [
+          {
+            name: "Profile",
+            route: "/profile",
+            permissions: [
+              "View Profile Practice",
+              "View Profile Surgeries",
+              "View Profile Users",
+              "View Profile Practice Document"
+            ]
+          }
+        ];
+        if (
+          ["Active", "Dormant"].includes(accountStatus) &&
+          practiceStatus &&
+          practiceStatus === "Active"
+        ) {
+          addedLists.push({
+            name: "Surgery Management",
+            route: "/surgery-management"
+          });
+          if (hubType !== "Type 2") {
+            addedLists.push({ name: "My Banks", route: "/my-banks" });
+            addedLists.push({
+              name: "Sessions",
+              route: "/sessions",
+              permissions: ["View Sessions Job"]
+            });
+            addedLists.push({ name: "Billing", route: "/practice-billing" });
+          }
+          addedLists.push({ name: "Invite", route: "/invite" });
+          addedLists.push({
+            name: "Roles and Permissions",
+            route: "/roles-and-permissions",
+            permissions: ["View Role"]
+          });
+        }
+      }
+      if (domain === "Locum") {
+        addedLists = [
+          { name: "Compliance", route: "/compliance" },
+          { name: "Availability", route: "/availability" }
+        ];
+        if (["Active", "Dormant"].includes(accountStatus)) {
+          addedLists.push({ name: "My Practice", route: "/my-practice" });
+          addedLists.push({ name: "Jobs", route: "/jobs" });
+          addedLists.push({ name: "Billing", route: "/locum-billing" });
+          addedLists.push({ name: "Invite", route: "/invite" });
+        }
+      }
 
 			this.lists = [...defaultLists, ...addedLists, ...otherLists];
 		},
