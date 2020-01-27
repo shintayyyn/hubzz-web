@@ -27,6 +27,9 @@ export default {
                 case 'Practice Notification Job Application':
                     message = 'Someone applied to this job.'
                     break;
+                case 'Practice Notification Job Application Cancelled':
+                    message = 'Someone cancelled his/her application to this job.'
+                    break;
                 case 'Practice Notification Job Current':
                     message = 'A locum has been appointed to this job.'
                     break;

@@ -84,7 +84,7 @@
                 >View NHS Form A</div>
                 <button
                   @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id, 'markAsPaid')"
-                  v-if="slotProps.item.status === 'Completed' && slotProps.item.locum_invoice_id && !slotProps.item.locum_invoice_item.locum_invoice.paid_at"
+                  v-if="slotProps.item.status === 'Completed' && slotProps.item.locum_invoice_id && (slotProps.item.locum_invoice_item && !slotProps.item.locum_invoice_item.locum_invoice.paid_at)"
                   class="m-1 px-4 py-2 bg-yellow-400 font-bold rounded-lg focus:outline-none w-full"
                 >Mark as Paid</button>
               </div>
@@ -383,15 +383,15 @@ export default {
           break;
         case "issued":
           params = {
-            locum_status: ["Approved"],
+            // locum_status: ["Approved"],
             invoice_status: ["Invoiced"],
             job_type: "Private"
           };
           break;
         case "pension-form-a":
           params = {
-            locum_status: ["Approved"],
-            invoice_status: ["Invoiced"],
+            locum_status: ["Completed"],
+            // invoice_status: ["Invoiced"],
             // can_generate_form_b: true,
             job_type: "Private"
           };
@@ -511,16 +511,17 @@ export default {
           break;
         case "issued":
           params = {
-            locum_status: ["Approved"],
+            // locum_status: ["Approved"],
+            // locum_status: ["Completed", "Terminated"],
             invoice_status: ["Invoiced"],
             job_type: "Private"
           };
           break;
         case "pension-form-a":
           params = {
-            locum_status: ["Approved"],
+            // locum_status: ["Approved"],
             invoice_status: ["Invoiced"],
-            // can_generate_form_b: true,
+            can_generate_form_b: true,
             job_type: "Private"
           };
           break;
@@ -608,7 +609,7 @@ export default {
           break;
         case "pension-form-a":
           params = {
-            locum_status: ["Approved"],
+            locum_status: ["Completed"],
             invoice_status: ["Invoiced"],
             // can_generate_form_b: true,
             job_type: "Private"

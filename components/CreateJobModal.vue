@@ -893,7 +893,7 @@ export default {
 
       this.Validate(this.form, notRequired);
 
-      if (this.formError.length) {
+      if (!this.formError.length) {
         this.selectedClinicalSystem = [...this.form.clinical_system_id];
         this.form.clinical_system_id = this.form.clinical_system_id.map(
           item => item.value
@@ -966,9 +966,7 @@ export default {
           this.form.unpaid_breaks_in_minutes = "";
         }
 
-        console.log(this.form);
         // console.log(notRequired);
-        return;
         this.$axios
           .$post(`/api/v1/practice/jobs`, this.form)
           .then(res => {
@@ -978,12 +976,7 @@ export default {
               this.$store.commit("calendar/CREATE_JOB_MODAL", false);
             }
 
-            if (this.$route.path.includes("/sessions")) {
-              this.$store.commit(
-                "jobs/ADD_PRACTICE_AVAILABLE_JOB",
-                res.data.job
-              );
-            }
+            this.$store.commit("jobs/ADD_PRACTICE_AVAILABLE_JOB", res.data.job);
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",

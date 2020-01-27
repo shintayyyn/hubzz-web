@@ -452,7 +452,7 @@ export default {
             job.include_sunday === true)
       );
     },
-    hasLocumAppliedJobs(date, type) {
+    hasLocumAppliedJobs(date, type, day) {
       return this.getLocumAppliedJobs.find(
         job =>
           this.getDateArray(job.date_start, job.date_end).includes(date) &&

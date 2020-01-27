@@ -286,6 +286,10 @@ export default {
         this.getJobsRealTime
       );
       this.$socket.on(
+        "Practice Notification Job Application Cancelled",
+        this.getJobsRealTime
+      );
+      this.$socket.on(
         "Practice Notification Job Current",
         this.getJobsRealTime
       );
@@ -408,6 +412,10 @@ export default {
         );
         this.$socket.removeListener(
           "Practice Notification Job Application",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
+          "Practice Notification Job Application Cancelled",
           this.getJobsRealTime
         );
         this.$socket.removeListener(
