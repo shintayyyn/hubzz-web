@@ -79,6 +79,10 @@
 						'surgery-management-practice-spokes-id-request-for-termination',
 						'surgery-management-practice-spokes-edit',
             'surgery-management-practice-spokes-id-surgery-banks-locumId',
+            'surgery-management-practice-spokes-id-surgery-billings-index-id',
+            'surgery-management-practice-spokes-id-surgery-sessions-index',
+            'surgery-management-practice-spokes-id-surgery-billings',
+            'surgery-management-practice-spokes-id-surgery-billings-index-invoiceId'
 					].includes($route.name)
 				"
         @click="$router.push('/surgery-management/practice-spokes')"

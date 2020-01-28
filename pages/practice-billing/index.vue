@@ -310,7 +310,8 @@ export default {
       const params = {
         status,
         invoice_status,
-        type: "Platform"
+        type: "Platform",
+        job_practice_id: [app.$auth.user.practice_id]
       };
 
       let [total, job_parts] = await Promise.all([
@@ -413,7 +414,8 @@ export default {
       const params = {
         status,
         invoice_status,
-        type: "Platform"
+        type: "Platform",
+        job_practice_id: [this.$auth.user.practice_id]
       };
 
       return Promise.all([
@@ -491,6 +493,7 @@ export default {
         status,
         invoice_status,
         type: "Platform",
+        job_practice_id: [this.$auth.user.practice_id],
         ...this.params
       };
 

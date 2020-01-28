@@ -842,9 +842,16 @@ export default {
         "auto_assign_at"
       ];
 
-      if (
-        this.$moment(this.form.date_end).isSameOrBefore(this.form.date_start)
-      ) {
+      let startDateTime = this.$moment(
+        `${this.form.date_start} ${this.form.time_start}`,
+        "YYYY-MM-DD HH:mm"
+      ).format("YYYY-MM-DD HH:mm");
+      let endDateTime = this.$moment(
+        `${this.form.date_end} ${this.form.time_end}`,
+        "YYYY-MM-DD HH:mm"
+      ).format("YYYY-MM-DD HH:mm");
+
+      if (this.$moment(startDateTime).isSameOrAfter(endDateTime)) {
         this.formError.push({
           field: "date_end",
           message: "Invalid End Date"
@@ -966,7 +973,6 @@ export default {
           this.form.unpaid_breaks_in_minutes = "";
         }
 
-        // console.log(notRequired);
         this.$axios
           .$post(`/api/v1/practice/jobs`, this.form)
           .then(res => {
@@ -998,6 +1004,14 @@ export default {
                 field: err.response.statusText,
                 message: "Please check your inputs"
               });
+              return;
+            } else if (err.response.status === 401) {
+              this.$store.commit("SET_NOTIFICATION", {
+                enabled: true,
+                status: "danger",
+                text: [`${err.response.data.message}`]
+              });
+              return;
             } else if (err.response.status === 400) {
               this.formError.push({
                 field: "date_start",
@@ -1007,6 +1021,7 @@ export default {
                 field: "date_end",
                 message: err.response.data.message
               });
+              return;
             } else {
               this.formError = err.response.data.error_messages;
             }

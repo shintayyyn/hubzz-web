@@ -170,7 +170,7 @@
           >{{item.name}}</div>
         </div>
 
-        <div class="font-bold text-sm sm:text-md">Variation Terms</div>
+        <div class="font-bold text-sm sm:text-md" v-if="job.variation_terms_file_id">Variation Terms</div>
         <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
           <div class="mt-1 cursor-pointer" @click="modal = true">View file</div>
           <transition name="slide" mode="out-in">
