@@ -71,7 +71,7 @@
             :label="'Date of Birth'"
             :error="formError.find(item => item.field === 'date_of_birth')"
             @blur="CheckEmptyField(form.date_of_birth, 'date_of_birth')"
-            :isAfter="false"
+            isBefore
             :limitYear="50"
             :maxYearBefore="10"
             required
