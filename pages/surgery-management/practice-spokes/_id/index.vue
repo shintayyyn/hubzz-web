@@ -29,7 +29,7 @@
               <svgicon
                 :name="practice_surgery.allow_surgery_create_sessions === true ? 'success-checkmark' : 'times-solid'"
                 class="fill-current w-5 h-5"
-                :class="practice_surgery.allow_surgery_create_sessions ? 'text-green-500' : 'text-red-500 border-2 border-red-500 rounded-full p-1'"
+                :class="practice_surgery.allow_surgery_create_sessions === true ? 'text-green-500' : 'text-red-500 border-2 border-red-500 rounded-full p-1'"
               />
             </span>
             <div class="font-semibold">Is this Spoke allowed to Create Jobs?</div>
@@ -251,33 +251,37 @@ export default {
         allow_surgery_bill_hubzz: "",
         share_banks_to_other_surgeries: ""
       },
-      formError: []
+      formError: [],
+      practice_id: "",
+      practice_surgery: []
     };
   },
-  // computed: {
-  // 	surgeryCreateSessions: function() {
-  // 		return this.form.allow_surgery_create_sessions;
+  computed: {
+    // surgeryCreateSessions: function() {
+    // 	return this.form.allow_surgery_create_sessions;
+    // }
+  },
+  // async asyncData({ app, route, store, params, error }) {
+  // 	try {
+  // 		const practice_id = params.id;
+  // 		const response = await app.$axios.$get(
+  // 			`/api/v1/practice/me/practice-surgeries/${params.id}`
+  // 		);
+  // 		const practice_surgery =
+  // 			response.data && response.data.practice_surgery
+  // 				? response.data.practice_surgery
+  // 				: null;
+  // 		return {
+  // 			practice_surgery,
+  // 			practice_id
+  // 		};
+  // 	} catch (err) {
+  // 		throw err;
   // 	}
   // },
-  async asyncData({ app, route, store, params, error }) {
-    try {
-      const practice_id = params.id;
-      const response = await app.$axios.$get(
-        `/api/v1/practice/me/practice-surgeries/${params.id}`
-      );
-      const practice_surgery =
-        response.data && response.data.practice_surgery
-          ? response.data.practice_surgery
-          : null;
-      return {
-        practice_surgery,
-        practice_id
-      };
-    } catch (err) {
-      throw err;
-    }
-  },
   created() {
+    this.practice_id = this.$route.params.id;
+    this.getSurgery();
     this.form.allow_surgery_create_sessions = this.practice_surgery.allow_surgery_create_sessions;
     this.form.max_hourly_rate_limit = this.practice_surgery.max_hourly_rate_limit;
     this.form.max_halfday_rate_limit = this.practice_surgery.max_halfday_rate_limit;
@@ -292,15 +296,42 @@ export default {
   watch: {
     "form.allow_surgery_create_sessions"(value) {
       this.surgeryCreateSessions = value;
+      console.log(
+        "allow_surgery_create_sessions?",
+        this.surgeryCreateSessions,
+        value
+      );
     },
-    editPayForSurgery(value) {}
+    editPayForSurgery(value) {
+      console.log(
+        "allow_surgery_create_sessions?",
+        this.practice_surgery.allow_surgery_create_sessions
+      );
+    }
   },
   methods: {
     togglePermissions() {
       this.editPayForSurgery = !this.editPayForSurgery;
       if (this.editPayForSurgery) {
         this.form.allow_surgery_create_sessions = this.practice_surgery.allow_surgery_create_sessions;
+        this.form.max_hourly_rate_limit = this.practice_surgery.max_hourly_rate_limit;
+        this.form.max_halfday_rate_limit = this.practice_surgery.max_halfday_rate_limit;
+        this.form.max_wholeday_rate_limit = this.practice_surgery.max_wholeday_rate_limit;
+        this.form.max_ooh_rate_limit = this.practice_surgery.max_ooh_rate_limit;
+        this.form.max_excess_hours = this.practice_surgery.max_excess_hours;
+        this.form.allow_surgery_bill_locum = this.practice_surgery.allow_surgery_bill_locum;
+        this.form.allow_surgery_bill_hubzz = this.practice_surgery.allow_surgery_bill_hubzz;
+        this.form.share_banks_to_other_surgeries = this.practice_surgery.share_banks_to_other_surgeries;
+        this.surgeryCreateSessions = this.practice_surgery.allow_surgery_create_sessions;
       }
+    },
+    getSurgery() {
+      this.$axios
+        .get(`/api/v1/practice/me/practice-surgeries/${this.practice_id}`)
+        .then(res => {
+          console.log("practice_surgery asdsd", res.data.data.practice_surgery);
+          this.practice_surgery = res.data.data.practice_surgery;
+        });
     },
     save() {
       this.$axios
@@ -318,6 +349,8 @@ export default {
           this.$router.push(
             `/surgery-management/practice-spokes/${this.$route.params.id}`
           );
+          this.getSurgery();
+          this.editPayForSurgery = false;
         });
     },
     statusStyle(status) {
