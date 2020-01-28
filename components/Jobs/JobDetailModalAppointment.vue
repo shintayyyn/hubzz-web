@@ -310,9 +310,17 @@ export default {
     },
     async create() {
       this.formError = [];
-      if (
-        this.$moment(this.form.date_end).isSameOrBefore(this.form.date_start)
-      ) {
+
+      let startDateTime = this.$moment(
+        `${this.form.date_start} ${this.form.time_start}`,
+        "YYYY-MM-DD HH:mm"
+      ).format("YYYY-MM-DD HH:mm");
+      let endDateTime = this.$moment(
+        `${this.form.date_end} ${this.form.time_end}`,
+        "YYYY-MM-DD HH:mm"
+      ).format("YYYY-MM-DD HH:mm");
+
+      if (this.$moment(this.startDateTime).isSameOrAfter(this.endDateTime)) {
         this.formError.push({
           field: "date_end",
           message: "Invalid End Date"

@@ -52,6 +52,10 @@
 import AppAvatar from "@/components/Base/AppAvatar";
 import AppPagination from "@/components/Base/AppPagination";
 export default {
+  transition: {
+    name: "fade",
+    mode: "out-in"
+  },
   components: {
     AppAvatar,
     AppPagination
@@ -101,7 +105,6 @@ export default {
       response = await app.$axios.$get(`/api/v1/practice/practice-spokes`, {
         params
       });
-      console.log("response", response.data);
       const practiceSpoke = response.data.practices[0];
       return {
         practiceSpoke
@@ -112,16 +115,13 @@ export default {
   },
   methods: {
     getLocumsCount() {
-      console.log("spoke", this.practiceSpoke.id);
       let params = {
         favorite_by_practice_id: this.practiceSpoke.id
       };
-      console.log("get locums count");
       this.loading = true;
       this.$axios
         .$get(`/api/v1/practice/locums/count`, { params })
         .then(res => {
-          console.log(res);
           this.total = res.data.count;
           this.getLocums(this.current_page);
         })
@@ -130,7 +130,6 @@ export default {
         });
     },
     getLocums(page) {
-      console.log("get locums");
       let params = {
         limit: this.perPage,
         offset: this.offset,
@@ -141,7 +140,6 @@ export default {
       this.$axios
         .$get(`/api/v1/practice/locums`, { params })
         .then(res => {
-          console.log(res);
           this.locums = res.data.users;
           this.toggleTable = true;
           this.loading = false;

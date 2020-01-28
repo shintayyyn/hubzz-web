@@ -3,79 +3,79 @@
     <div class="flex flex-row justify-start overflow-x-auto py-3">
       <div class="relative">
         <nuxt-link
-          :to="`/surgery-management/practice-spokes/${$route.params.id}/surgery-sessions?status=Pending`"
+          :to="`/surgery-management/practice-spokes/${$route.params.id}/surgery-sessions?jobStatus=Pending`"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.query.status && $route.query.status.toLowerCase() === 'pending' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          :class="$route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'pending' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Pending</nuxt-link>
       </div>
       <div class="relative">
         <nuxt-link
-          :to="`/surgery-management/practice-spokes/${$route.params.id}/surgery-sessions?status=Allocated`"
+          :to="`/surgery-management/practice-spokes/${$route.params.id}/surgery-sessions?jobStatus=Allocated`"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="!$route.query.status || ($route.query.status && $route.query.status.toLowerCase() === 'allocated') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          :class="!$route.query.jobStatus || ($route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'allocated') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Allocated</nuxt-link>
       </div>
       <div class="relative">
         <nuxt-link
-          :to="`/surgery-management/practice-spokes/${$route.params.id}/surgery-sessions?status=Ongoing`"
+          :to="`/surgery-management/practice-spokes/${$route.params.id}/surgery-sessions?jobStatus=Ongoing`"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.query.status && $route.query.status.toLowerCase() === 'ongoing' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          :class="$route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'ongoing' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Ongoing</nuxt-link>
       </div>
       <div class="relative">
         <nuxt-link
-          :to="`/surgery-management/practice-spokes/${$route.params.id}/surgery-sessions?status=Live`"
+          :to="`/surgery-management/practice-spokes/${$route.params.id}/surgery-sessions?jobStatus=Live`"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.query.status && $route.query.status.toLowerCase() === 'live' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          :class="$route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'live' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Live</nuxt-link>
       </div>
       <div class="relative">
         <nuxt-link
-          :to="`/surgery-management/practice-spokes/${$route.params.id}/surgery-sessions?status=Applied`"
+          :to="`/surgery-management/practice-spokes/${$route.params.id}/surgery-sessions?jobStatus=Applied`"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.query.status && $route.query.status.toLowerCase() === 'applied' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          :class="$route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'applied' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Applied</nuxt-link>
       </div>
       <div class="relative">
         <nuxt-link
-          :to="`/surgery-management/practice-spokes/${$route.params.id}/surgery-sessions?status=Unfilled`"
+          :to="`/surgery-management/practice-spokes/${$route.params.id}/surgery-sessions?jobStatus=Unfilled`"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.query.status && $route.query.status.toLowerCase() === 'unfilled' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          :class="$route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'unfilled' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Unfilled</nuxt-link>
       </div>
       <div class="relative">
         <nuxt-link
-          :to="`/surgery-management/practice-spokes/${$route.params.id}/surgery-sessions?status=Declined`"
+          :to="`/surgery-management/practice-spokes/${$route.params.id}/surgery-sessions?jobStatus=Declined`"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.query.status && $route.query.status.toLowerCase() === 'declined' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          :class="$route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'declined' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Declined</nuxt-link>
       </div>
       <div class="relative">
         <nuxt-link
-          :to="`/surgery-management/practice-spokes/${$route.params.id}/surgery-sessions?status=Cancelled`"
+          :to="`/surgery-management/practice-spokes/${$route.params.id}/surgery-sessions?jobStatus=Cancelled`"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.query.status && $route.query.status.toLowerCase() === 'cancelled' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          :class="$route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'cancelled' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Cancelled</nuxt-link>
       </div>
       <div class="relative">
         <nuxt-link
-          :to="`/surgery-management/practice-spokes/${$route.params.id}/surgery-sessions?status=Withdrawn`"
+          :to="`/surgery-management/practice-spokes/${$route.params.id}/surgery-sessions?jobStatus=Withdrawn`"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.query.status && $route.query.status.toLowerCase() === 'withdrawn' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          :class="$route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'withdrawn' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Withdrawn</nuxt-link>
       </div>
       <div class="relative">
         <nuxt-link
-          :to="`/surgery-management/practice-spokes/${$route.params.id}/surgery-sessions?status=Completed`"
+          :to="`/surgery-management/practice-spokes/${$route.params.id}/surgery-sessions?jobStatus=Completed`"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.query.status && $route.query.status.toLowerCase() === 'completed' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          :class="$route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'completed' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Completed</nuxt-link>
       </div>
       <div class="relative">
         <nuxt-link
-          :to="`/surgery-management/practice-spokes/${$route.params.id}/surgery-sessions?status=Approved`"
+          :to="`/surgery-management/practice-spokes/${$route.params.id}/surgery-sessions?jobStatus=Approved`"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.query.status && $route.query.status.toLowerCase() === 'approved' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          :class="$route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'approved' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Approved</nuxt-link>
       </div>
     </div>

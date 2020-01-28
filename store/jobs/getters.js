@@ -260,7 +260,6 @@ export default {
                     shift_name,
                 })
             })
-            console.log("pending", jobs)
             return jobs
         }
         return []
@@ -547,7 +546,7 @@ export default {
             notifObj = {
                 id: notif.notificationType === 'Locum Notification Job Ongoing' && notif.job_parts.length > 0 ? notif.job_parts[0].id : notif.id,
                 title: notif.title ? notif.title : notif.job.title,
-                locum_status: notif.locum_status,
+                locum_status: notif.locum_status === 'Declined' ? 'Withdrawn' : notif.locum_status,
                 billingStatus: ['Locum Notification Job Approved', 'Locum Notification Job Disputed'].includes(notif.notificationType) ? notif.notificationType === 'Locum Notification Job Approved' ? 'Approved' : 'Disputed' : null,
                 date_start: notif.date_start,
                 date_end: notif.date_end,

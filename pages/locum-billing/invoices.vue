@@ -68,45 +68,42 @@
             <template v-slot:actions="slotProps">
               <div class="flex flex-wrap justify-center">
                 <div
-                  @click="$router.push({ path: `/locum-billing/invoices/${slotProps.item.locum_invoice_id}/edit`, query: {...$route.query} })"
-                  v-if="slotProps.item.locum_invoice_id && slotProps.item.locum_status !== 'Approved'"
-                  class="my-1 p-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
-                >Edit</div>
-                <!-- && slotProps.item.invoice_status === 'To Be Invoice' -->
-                <button
-                  v-if="slotProps.item.locum_invoice_id && slotProps.item.locum_status !== 'Approved'"
-                  @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id, 'deleteInvoice')"
-                  class="my-1 p-2 bg-red-700 text-white font-bold rounded-lg focus:outline-none w-full"
-                >Delete</button>
-                <div
-                  @click="$router.push({ path: `/locum-billing/invoices/${slotProps.item.id}/create`, query: {...$route.query} })"
                   v-if="!slotProps.item.locum_invoice_id"
+                  @click="$router.push({ path: `/locum-billing/invoices/${slotProps.item.id}/create`, query: {...$route.query} })"
                   class="my-1 p-2 bg-green-700 text-white font-bold rounded-lg focus:outline-none"
                 >Generate Invoice</div>
-                <!-- <div
-                  v-if="slotProps.item.locum_invoice_id && slotProps.item.status === 'Approved'"
-                  @click="viewPdf(slotProps.item.locum_invoice_id)"
-                  class="my-1 p-2 bg-yellow-400 font-bold rounded-lg focus:outline-none"
-                >View Pdf</div>-->
+                <div
+                  class="flex justify-between my-1"
+                  v-if="slotProps.item.locum_invoice_id && slotProps.item.locum_status !== 'Approved'"
+                >
+                  <div
+                    @click="$router.push({ path: `/locum-billing/invoices/${slotProps.item.locum_invoice_id}/edit`, query: {...$route.query} })"
+                    class="mx-1 p-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
+                  >Edit</div>
+                  <button
+                    @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id, 'deleteInvoice')"
+                    class="mx-1 p-2 bg-red-700 text-white font-bold rounded-lg focus:outline-none w-full"
+                  >Delete</button>
+                </div>
                 <div
                   v-if="slotProps.item.locum_invoice_id && slotProps.item.status === 'Approved'"
                   @click="$router.push({ path: `/locum-billing/invoices/${slotProps.item.locum_invoice_id}`, query: {...$route.query} })"
                   class="my-1 p-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
                 >View</div>
                 <div
-                  v-if="slotProps.item.locum_invoice_id && slotProps.item.status === 'Approved' && !slotProps.item.locum_form_a_id && slotProps.item.profession.name === 'GP' "
+                  v-if="slotProps.item.locum_invoice_id && slotProps.item.status === 'Approved' && !slotProps.item.locum_form_a_id && !slotProps.item.locum_invoice_item.locum_invoice.paid_at"
+                  class="my-1 p-2 bg-yellow-400 font-bold rounded-lg focus:outline-none"
+                >Waiting For Payment</div>
+                <div
+                  v-if="slotProps.item.locum_invoice_id && slotProps.item.status === 'Approved' && !slotProps.item.locum_form_a_id && slotProps.item.profession.name === 'GP' && slotProps.item.locum_invoice_item.locum_invoice.paid_at"
                   @click="select_invoice(slotProps.item.locum_invoice_id, 'generateFormA')"
-                  class="my-1 p-2 bg-yellow-400 font-bold rounded-lg focus:outline-none w-full"
+                  class="my-1 p-2 bg-green-700 text-white font-bold rounded-lg focus:outline-none w-full"
                 >Generate Form A</div>
                 <div
                   @click="viewAsPdf(slotProps.item.locum_form_a_id, 'form-a')"
                   v-if="slotProps.item.locum_invoice_id && slotProps.item.status === 'Approved' && slotProps.item.locum_form_a_id && slotProps.item.profession.name === 'GP' "
                   class="my-1 p-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
                 >View NHS Form A</div>
-                <!-- <div
-                  v-if="slotProps.item.locum_invoice_id && slotProps.item.status === 'Approved' && !slotProps.item.locum_form_a_id && !slotProps.item.locum_invoice_item.locum_invoice.paid_at"
-                  class="my-1 p-2 bg-yellow-400 font-bold rounded-lg focus:outline-none"
-                >Waiting For Payment</div>-->
               </div>
             </template>
           </AppTable>
@@ -698,8 +695,10 @@ export default {
         });
     },
     async refreshInvoices() {
-      this.$store.commit("billing/CLEAR_LOCUM_BILLING_NOTIFICATION");
       this.loading = true;
+      this.current_page = 1;
+      this.params.offset = 0;
+      this.params.limit = 5;
       await this.getJobPartsPromiseAll();
       this.loading = false;
       this.showRefresh = false;

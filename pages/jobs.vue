@@ -55,7 +55,7 @@
           to="/jobs?status=Declined"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
           :class="$route.query && $route.query.status && $route.query.status.toLowerCase() === 'declined'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-        >Declined</nuxt-link>
+        >Withdrawn</nuxt-link>
       </div>
       <div class="relative">
         <nuxt-link
@@ -65,14 +65,14 @@
           :class="$route.query && $route.query.status && $route.query.status.toLowerCase() === 'cancelled'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Cancelled</nuxt-link>
       </div>
-      <div class="relative">
+      <!-- <div class="relative">
         <nuxt-link
           :event="$store.state.jobs.loading_jobs ? '' : 'click'"
           to="/jobs?status=Withdrawn"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
           :class="$route.query && $route.query.status && $route.query.status.toLowerCase() === 'withdrawn'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Withdrawn</nuxt-link>
-      </div>
+      </div>-->
       <div class="relative">
         <nuxt-link
           :event="$store.state.jobs.loading_jobs ? '' : 'click'"

@@ -445,23 +445,6 @@
       <div class="mb-8">
         <AppButton :label="'Save changes'" :inStyle="'padding:8px'" @click="validateUpdate" />
       </div>
-      <div class="flex flex-col">
-        <div class="font-bold text-xs sm:text-sm">Practice</div>
-        <div class="font-bold text-sm sm:text-md">{{job.platform_job.practice.surgery.name}}</div>
-        <div
-          class="text-sm sm:text-md"
-        >{{job.platform_job.practice.surgery.address.line_1}} {{job.platform_job.practice.surgery.address.line_2}} {{job.platform_job.practice.surgery.address.line_3}} {{job.platform_job.practice.surgery.address.post_code}}</div>
-        <div class="mt-4">
-          <GmapMap
-            :center="{lat:latLang.y, lng:latLang.x}"
-            :zoom="15"
-            map-type-id="terrain"
-            style="width: 100%; height:300px"
-          >
-            <GmapMarker :position="google && new google.maps.LatLng(latLang.y, latLang.x)" />
-          </GmapMap>
-        </div>
-      </div>
     </div>
     <AppConfirmationModal
       :label="'You might lose some of your candidates that are not qualified to the changes you made'"
@@ -901,9 +884,16 @@ export default {
         notRequired.push("update_accepted_until");
       }
 
-      if (
-        this.$moment(this.form.date_end).isSameOrBefore(this.form.date_start)
-      ) {
+      let startDateTime = this.$moment(
+        `${this.form.date_start} ${this.form.time_start}`,
+        "YYYY-MM-DD HH:mm"
+      ).format("YYYY-MM-DD HH:mm");
+      let endDateTime = this.$moment(
+        `${this.form.date_end} ${this.form.time_end}`,
+        "YYYY-MM-DD HH:mm"
+      ).format("YYYY-MM-DD HH:mm");
+
+      if (this.$moment(this.startDateTime).isSameOrAfter(this.endDateTime)) {
         this.formError.push({
           field: "date_end",
           message: "Invalid End Date"

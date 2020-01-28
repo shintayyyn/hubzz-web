@@ -393,8 +393,7 @@ export default {
         job_number: "",
         title: "",
         type: "",
-        practice_id: this.$auth.user.practice_detail.practice.id,
-        surgery_id: "",
+        practice_id: "",
         shift_id: "",
         rate: "",
         rate_type_id: "",
@@ -413,8 +412,7 @@ export default {
         job_part_number: "",
         job_title: "",
         job_type: "",
-        job_practice_id: this.$auth.user.practice_detail.practice.id,
-        job_surgery_id: "",
+        job_practice_id: "",
         job_shift_id: "",
         job_rate: "",
         job_rate_type_id: "",
@@ -916,6 +914,7 @@ export default {
     }
   },
   mounted() {
+    console.log(this.params);
     this.$socket.on(
       "Practice Notification Job Available",
       this.getAvailableJobsRealTime
@@ -977,7 +976,7 @@ export default {
     getJobsPromiseAll() {
       let queryStatus = this.$route.query.status;
       let bankStatus = this.$route.query.bank;
-      let has_favorite_applicants = false;
+      let has_favorite_applicants = "";
       let status = [];
       if (!queryStatus) {
         status = ["Allocated"];
@@ -985,12 +984,8 @@ export default {
         status = ["Available", "Matched"];
       } else if (queryStatus && queryStatus === "Completed") {
         status = ["Completed", "Terminated"];
-      } else if (
-        queryStatus &&
-        queryStatus === "Applied" &&
-        bankStatus === "true"
-      ) {
-        has_favorite_applicants = true;
+      } else if (queryStatus && queryStatus === "Applied") {
+        has_favorite_applicants = bankStatus === "true" ? true : false;
         status = ["Applied"];
       } else if (
         queryStatus &&
@@ -1007,6 +1002,12 @@ export default {
             params: {
               status,
               ...(this.isJobPart ? this.jobPartParams : this.params),
+              practice_id: this.isJobPart
+                ? ""
+                : this.$auth.user.practice_detail.practice.id,
+              job_practice_id: this.isJobPart
+                ? this.$auth.user.practice_detail.practice.id
+                : "",
               has_favorite_applicants
             }
           }
@@ -1017,6 +1018,12 @@ export default {
             params: {
               status,
               ...(this.isJobPart ? this.jobPartParams : this.params),
+              practice_id: this.isJobPart
+                ? ""
+                : this.$auth.user.practice_detail.practice.id,
+              job_practice_id: this.isJobPart
+                ? this.$auth.user.practice_detail.practice.id
+                : "",
               has_favorite_applicants
             }
           }
@@ -1088,7 +1095,10 @@ export default {
       });
     },
     getJobsCount(params) {
+      console.log(params);
       let queryStatus = this.$route.query.status;
+      let bankStatus = this.$route.query.bank;
+      let has_favorite_applicants = "";
       let status = [];
       if (!queryStatus) {
         status = ["Allocated"];
@@ -1096,6 +1106,9 @@ export default {
         status = ["Available", "Matched"];
       } else if (queryStatus && queryStatus === "Completed") {
         status = ["Completed", "Terminated"];
+      } else if (queryStatus && queryStatus === "Applied") {
+        has_favorite_applicants = bankStatus === "true" ? true : false;
+        status = ["Applied"];
       } else if (
         queryStatus &&
         queryStatus !== "Available" &&
@@ -1109,7 +1122,14 @@ export default {
           {
             params: {
               status,
-              ...params
+              ...(this.isJobPart ? this.jobPartParams : this.params),
+              practice_id: this.isJobPart
+                ? ""
+                : this.$auth.user.practice_detail.practice.id,
+              job_practice_id: this.isJobPart
+                ? this.$auth.user.practice_detail.practice.id
+                : "",
+              has_favorite_applicants
             }
           }
         )
@@ -1159,7 +1179,10 @@ export default {
         });
     },
     getJobs(params) {
+      console.log(params);
       let queryStatus = this.$route.query.status;
+      let bankStatus = this.$route.query.bank;
+      let has_favorite_applicants = "";
       let status = [];
       if (!queryStatus) {
         status = ["Allocated"];
@@ -1167,6 +1190,9 @@ export default {
         status = ["Available", "Matched"];
       } else if (queryStatus && queryStatus === "Completed") {
         status = ["Completed", "Terminated"];
+      } else if (queryStatus && queryStatus === "Applied") {
+        has_favorite_applicants = bankStatus === "true" ? true : false;
+        status = ["Applied"];
       } else if (
         queryStatus &&
         queryStatus !== "Available" &&
@@ -1178,7 +1204,14 @@ export default {
         .$get(`/api/v1/practice/${this.isJobPart ? "job-parts" : "jobs"}`, {
           params: {
             status,
-            ...params
+            ...(this.isJobPart ? this.jobPartParams : this.params),
+            practice_id: this.isJobPart
+              ? ""
+              : this.$auth.user.practice_detail.practice.id,
+            job_practice_id: this.isJobPart
+              ? this.$auth.user.practice_detail.practice.id
+              : "",
+            has_favorite_applicants
           }
         })
         .then(res => {
@@ -1398,10 +1431,8 @@ export default {
       this.jobPartParams.offset = 0;
       this.params.limit = 10;
       this.jobPartParams.limit = 10;
-      await this.getJobsCount(
-        this.isJobPart ? this.jobPartParams : this.params
-      );
-      await this.getJobs(this.isJobPart ? this.jobPartParams : this.params);
+      await this.getJobsCount();
+      await this.getJobs();
       this.loading = false;
       this.showRefresh = false;
     },
