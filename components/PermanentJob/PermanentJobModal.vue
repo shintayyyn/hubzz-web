@@ -8,50 +8,60 @@
 				@click="$router.go(-1)"
 				class="cursor-pointer"
 			/>
+
 			<div class="flex justify-between items-center flex-wrap mb-4">
 				<h4 class="text-lg md:text-xl font-bold flex items-center">
-					Salaried GP / Locum GP
+          <span class="mx-2">
+            {{ permanent_job.title }}
+          </span>
+          <span 
+            class="px-4 py-1 rounded-full w-32 text-center mx-auto"
+            :class="statusStyle(permanent_job.status)">
+            {{ permanent_job.status }}
+          </span>
 					<span
 						v-if="job.applied"
 						class="text-sm bg-green-500 px-4 py-2 ml-4 rounded-lg text-white"
 					>Applied</span>
 				</h4>
-				<AppButton class="ml-2" :label="'Apply'" @click="apply()" v-if="!job.applied" />
+				<AppButton class="ml-2" :label="'Apply'" @click="apply()" v-if="permanent_job.status == 'Available'" />
 			</div>
+      
 			<div class="flex flex-col md:flex-row">
 				<div class="w-full md:w-3/5 lg:w-2/3 pr-2">
 					<div class="bg-white rounded-lg shadow-lg p-4">
 						<p class="w-1/3 font-bold">Practice</p>
-						<p>{{permanent_job.practice.name}}</p>
+						<p>{{permanent_job ? permanent_job.practice.name : null}}</p>
 						<div class="my-4">
-							<span v-html="permanent_job.description"></span>
+							<span v-html="permanent_job ? permanent_job.description : null"></span>
 						</div>
 					</div>
 				</div>
 				<div class="w-full md:w-2/5 lg:w-1/3 md:pl-2">
 					<div class="bg-white rounded-lg shadow-lg p-4 my-2 md:my-0">
 						<p class="w-1/3 font-bold">Salary</p>
-						<p class="pl-2 pb-3">{{permanent_job.salary_amount}}</p>
+						<p class="pl-2 pb-3">{{permanent_job ? permanent_job.salary_amount : null}}</p>
 
 						<p class="w-1/3 font-bold">Posted</p>
-						<p class="pl-2 pb-3">{{$moment(permanent_job.date_posted).format('YYYY-MM-DD')}}</p>
+						<p class="pl-2 pb-3">{{permanent_job ? $moment(permanent_job.date_posted).format('YYYY-MM-DD') : null}}</p>
 
 						<p class="w-1/3 font-bold">Closes</p>
-						<p class="pl-2 pb-3">{{$moment(permanent_job.date_closing).format('YYYY-MM-DD')}}</p>
+						<p class="pl-2 pb-3">{{permanent_job ? $moment(permanent_job.date_closing).format('YYYY-MM-DD') : null}}</p>
 
 						<p class="w-1/3 font-bold">Report to</p>
-						<p class="pl-2 pb-3">{{permanent_job.report_to}}</p>
+						<p class="pl-2 pb-3">{{permanent_job ? permanent_job.report_to : null}}</p>
 
 						<p class="w-1/3 font-bold">Role</p>
 						<p class="pl-2 pb-3">Locum / Sessional GP, Salaried GP</p>
 
 						<p class="w-1/3 font-bold">Hours</p>
-						<p class="pl-2 pb-3">{{permanent_job.work_hours}}</p>
+						<p class="pl-2 pb-3">{{permanent_job ? permanent_job.work_hours : null}}</p>
 
 						<p class="w-1/3 font-bold">Industry</p>
-						<p class="pl-2 pb-3">{{permanent_job.industry_type}}</p>
+						<p class="pl-2 pb-3">{{permanent_job ? permanent_job.industry_type : null}}</p>
 					</div>
-					<PermanentJobMap :permanent_job="permanent_job" />
+          
+					<PermanentJobMap v-if="permanent_job" :permanent_job="permanent_job" />
 				</div>
 			</div>
 		</div>
@@ -61,7 +71,6 @@
 import AppButton from "@/components/Base/AppButton";
 import PermanentJobMap from "@/components/PermanentJob/PermanentJobMap";
 export default {
-  props:["permanent_job"],
 	components: {
 		AppButton,
 		PermanentJobMap
@@ -71,11 +80,45 @@ export default {
 			job: {
 				description: "",
 				applied: false
-			}
+      },
+      permanent_job: '',
+      permanent_job_applications: '',
+      permanent_job_application: '',
 		};
 	},
-	created() {
-    console.log('user', this.$auth.user)
+	async created() {
+      let permanent_job = ''
+      let permanent_job_applications = ''
+      let permanent_job_application = ''
+
+      await this.$axios.$get(`/api/v1/locum/permanent-jobs/${this.$route.params.id}`).then(res => {
+        permanent_job = res.data.permanent_job
+      })
+      
+      await this.$axios.$get(`/api/v1/locum/permanent-job-applications`).then(res => {
+        permanent_job_applications = res.data.permanent_job_applications
+      })
+      
+      permanent_job_application = permanent_job_applications.find(item => 
+        item.permanent_job_id === permanent_job.id
+      )
+      this.permanent_job_application = permanent_job_application
+
+      if (this.permanent_job_application) {
+        console.log('app', this.permanent_job_application)
+        permanent_job.status = this.permanent_job_application.application_status
+        this.permanent_job = permanent_job
+      } else if (this.$moment(permanent_job.date_closing).format() <= this.$moment().format()) {
+        console.log('haha')
+        permanent_job.status = 'Closed'
+        this.permanent_job = permanent_job
+      } else {
+        console.log('hoho')
+        permanent_job.status = 'Available'
+        this.permanent_job = permanent_job
+      }
+      
+    
 		this.job.description =
 			"<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Suspendisse interdum consectetur libero id faucibus nisl tincidunt eget nullam. Libero justo laoreet sit amet cursus sit. In vitae turpis massa sed elementum tempus egestas sed sed. Proin nibh nisl condimentum id venenatis a condimentum. Morbi tempus iaculis urna id volutpat. Et netus et malesuada fames ac turpis. Scelerisque purus semper eget duis. Libero justo laoreet sit amet. Tempor nec feugiat nisl pretium fusce id velit ut. Ac feugiat sed lectus vestibulum mattis ullamcorper velit sed ullamcorper. Mattis aliquam faucibus purus in massa tempor nec feugiat nisl. Vestibulum rhoncus est pellentesque elit ullamcorper. Duis at consectetur lorem donec. In egestas erat imperdiet sed euismod nisi. Semper feugiat nibh sed pulvinar proin.</p>";
 	},
@@ -91,8 +134,31 @@ export default {
           text: "Applied"
         });
       })
-			
-		}
+    },
+    statusStyle(jobStatus) {
+      switch (jobStatus) {
+        case "Available":
+          return "bg-green-500 text-white";
+          break;
+        case "Applied":
+          return "bg-yellow-600 text-white";
+          break;
+        case "For Interview":
+          return "bg-green-600 text-white";
+          break;
+        case "Accepted":
+          return "bg-green-700 text-white";
+          break;
+        case "Rejected":
+          return "bg-red-700 text-white";
+          break;
+        case "Closed":
+          return "bg-gray-700 text-white";
+          break;
+        default:
+          return "bg-yellow-400 text-black";
+      }
+    }
 	}
 };
 </script>
