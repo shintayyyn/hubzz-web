@@ -42,20 +42,22 @@
                   :name="'qualification_id'"
                   :label="'Specialty'"
                   :placeholder="'Select...'"
-                  :error="formError.find(item => item.field === 'qualification_id')"
                   :info="'Choose at least one qualification'"
                   :url="'/api/v1/qualifications'"
                   :professionCategoryId="selectedProfession.profession_category.id.toString()"
+                  :error="formError.find(item => item.field === 'qualification_id')"
+                  @blur="CheckEmptyField(form.qualification_id,'qualification_id')"
                 />
 
-                <AppFilterSearch
+                <AppFilterSearch  
                   v-model="form.clinical_system_id"
                   :name="'clinical_system_id'"
                   :label="'Clinical systems'"
                   :placeholder="'Select...'"
-                  :error="formError.find(item => item.field === 'clinical_system_id')"
                   :info="'Choose at least one IT system'"
                   :url="'/api/v1/clinical-systems'"
+                  :error="formError.find(item => item.field === 'clinical_system_id')"
+                  @blur="CheckEmptyField(form.clinical_system_id,'clinical_system_id')"
                 />
 
                 <AppFilterSearch
