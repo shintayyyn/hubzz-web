@@ -61,6 +61,7 @@ export default {
           return "bg-green-300";
           break;
         case "Ongoing":
+        case "Completed":
           return "bg-green-500";
           break;
         case "Unfilled":

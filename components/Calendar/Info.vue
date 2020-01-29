@@ -99,6 +99,9 @@ export default {
     getPracticeOngoingJobs(value) {
       this.findPerMonthPractice(this.selected_date);
     },
+    getPracticeCompletedJobs(value) {
+      this.findPerMonthPractice(this.selected_date);
+    },
     // WHOLE
     getPracticeAllocatedJobs(value) {
       this.findPerMonthPractice(this.selected_date);
@@ -127,6 +130,9 @@ export default {
     getLocumOngoingJobs(value) {
       this.findPerMonthLocum(this.selected_date);
     },
+    getLocumCompletedJobs(value) {
+      this.findPerMonthLocum(this.selected_date);
+    },
     // WHOLE
     getLocumAllocatedPlatformJobs(value) {
       this.findPerMonthLocum(this.selected_date);
@@ -135,6 +141,9 @@ export default {
       this.findPerMonthLocum(this.selected_date);
     },
     getLocumAppliedJobs(value) {
+      this.findPerMonthLocum(this.selected_date);
+    },
+    getLocumAvailableJobs(value) {
       this.findPerMonthLocum(this.selected_date);
     },
     // UNAVAILABILITIES
@@ -162,6 +171,9 @@ export default {
     // PARTS
     getPracticeOngoingJobs() {
       return this.$store.getters["jobs/getPracticeOngoingJobs"];
+    },
+    getPracticeCompletedJobs() {
+      return this.$store.getters["jobs/getPracticeCompletedJobs"];
     },
     // WHOLE
     getPracticeAllocatedJobs() {
@@ -191,9 +203,15 @@ export default {
     getLocumOngoingJobs() {
       return this.$store.getters["jobs/getLocumOngoingJobs"];
     },
+    getLocumCompletedJobs() {
+      return this.$store.getters["jobs/getLocumCompletedJobs"];
+    },
     // WHOLE
     getLocumAppliedJobs() {
       return this.$store.getters["jobs/getLocumAppliedJobs"];
+    },
+    getLocumAvailableJobs() {
+      return this.$store.getters["jobs/getLocumAvailableJobs"];
     },
     getLocumAllocatedPlatformJobs() {
       return this.$store.getters["jobs/getLocumAllocatedPlatformJobs"];
@@ -219,6 +237,7 @@ export default {
       this.loading = true;
       this.viewPracticeJobs = false;
       let foundPracticeOngoingJobs = [];
+      let foundPracticeCompletedJobs = [];
       let foundPracticeAllocatedJobs = [];
       let foundPracticeAppliedJobs = [];
       let foundPracticeUnfilledJobs = [];
@@ -229,6 +248,11 @@ export default {
       // PARTS
       if (this.getPracticeOngoingJobs.length > 0) {
         foundPracticeOngoingJobs = this.getPracticeOngoingJobs.filter(job =>
+          this.getDateArray(job.date_start, job.date_end).includes(date)
+        );
+      }
+      if (this.getPracticeCompletedJobs.length > 0) {
+        foundPracticeCompletedJobs = this.getPracticeCompletedJobs.filter(job =>
           this.getDateArray(job.date_start, job.date_end).includes(date)
         );
       }
@@ -288,6 +312,7 @@ export default {
       }
       this.foundPracticeJobs = [
         ...foundPracticeOngoingJobs,
+        ...foundPracticeCompletedJobs,
         ...foundPracticeAllocatedJobs,
         ...foundPracticeAppliedJobs,
         ...foundPracticeUnfilledJobs,
@@ -310,6 +335,7 @@ export default {
       this.loading = true;
       this.viewPracticeJobs = false;
       let foundPracticeOngoingJobs = [];
+      let foundPracticeCompletedJobs = [];
       let foundPracticeAllocatedJobs = [];
       let foundPracticeAppliedJobs = [];
       let foundPracticeUnfilledJobs = [];
@@ -320,6 +346,14 @@ export default {
       // PARTS
       if (this.getPracticeOngoingJobs.length > 0) {
         foundPracticeOngoingJobs = this.getPracticeOngoingJobs.filter(
+          job_part =>
+            this.getDateArray(job_part.date_start, job_part.date_end).includes(
+              date
+            ) && job_part.job.shift.name === shift
+        );
+      }
+      if (this.getPracticeCompletedJobs.length > 0) {
+        foundPracticeCompletedJobs = this.getPracticeCompletedJobs.filter(
           job_part =>
             this.getDateArray(job_part.date_start, job_part.date_end).includes(
               date
@@ -391,6 +425,7 @@ export default {
       }
       this.foundPracticeJobs = [
         ...foundPracticeOngoingJobs,
+        ...foundPracticeCompletedJobs,
         ...foundPracticeAllocatedJobs,
         ...foundPracticeAppliedJobs,
         ...foundPracticeUnfilledJobs,
@@ -414,12 +449,13 @@ export default {
       this.viewLocumJobs = false;
       this.loading = true;
       let foundLocumOngoingJobs = [];
+      let foundLocumCompletedJobs = [];
       let foundLocumAllocatedPrivateJobs = [];
       let foundLocumAllocatedPlatformJobs = [];
       let foundLocumAppliedJobs = [];
+      let foundLocumAvailableJobs = [];
       let foundLocumUnavailabilities = [];
       let foundLocumPrivateJobs = [];
-      // let foundLocumAllocatedPlatformJobs = [];
       // PARTS
       if (this.getLocumOngoingJobs.length > 0) {
         foundLocumOngoingJobs = this.getLocumOngoingJobs.filter(job_part =>
@@ -428,9 +464,21 @@ export default {
           )
         );
       }
+      if (this.getLocumCompletedJobs.length > 0) {
+        foundLocumCompletedJobs = this.getLocumCompletedJobs.filter(job_part =>
+          this.getDateArray(job_part.date_start, job_part.date_end).includes(
+            date
+          )
+        );
+      }
       // WHOLE
       if (this.getLocumAppliedJobs.length > 0) {
         foundLocumAppliedJobs = this.getLocumAppliedJobs.filter(job =>
+          this.getDateArray(job.date_start, job.date_end).includes(date)
+        );
+      }
+      if (this.getLocumAvailableJobs.length > 0) {
+        foundLocumAvailableJobs = this.getLocumAvailableJobs.filter(job =>
           this.getDateArray(job.date_start, job.date_end).includes(date)
         );
       }
@@ -459,11 +507,12 @@ export default {
 
       this.foundLocumJobs = [
         ...foundLocumOngoingJobs,
+        ...foundLocumCompletedJobs,
         ...foundLocumAppliedJobs,
+        ...foundLocumAvailableJobs,
         ...foundLocumAllocatedPlatformJobs,
         ...foundLocumAllocatedPrivateJobs,
         ...foundLocumUnavailabilities
-        // ...foundLocumPrivateJobs
       ];
       if (this.foundLocumJobs.length > 0) {
         setTimeout(() => {
@@ -478,7 +527,9 @@ export default {
       this.viewLocumJobs = false;
       this.loading = false;
       let foundLocumOngoingJobs = [];
+      let foundLocumCompletedJobs = [];
       let foundLocumAppliedJobs = [];
+      let foundLocumAvailableJobs = [];
       let foundLocumAllocatedPlatformJobs = [];
       let foundLocumAllocatedPrivateJobs = [];
       let foundLocumUnavailabilities = [];
@@ -492,12 +543,27 @@ export default {
             ) && job_part.job.shift.name === shift
         );
       }
+      if (this.getLocumCompletedJobs.length > 0) {
+        foundLocumCompletedJobs = this.getLocumCompletedJobs.filter(
+          job_part =>
+            this.getDateArray(job_part.date_start, job_part.date_end).includes(
+              date
+            ) && job_part.job.shift.name === shift
+        );
+      }
       // WHOLE
       if (this.getLocumAppliedJobs.length > 0) {
         foundLocumAppliedJobs = this.getLocumAppliedJobs.filter(
           job =>
             this.getDateArray(job.date_start, job.date_end).includes(date) &&
             shift === "Available"
+        );
+      }
+      if (this.getLocumAvailableJobs.length > 0) {
+        foundLocumAvailableJobs = this.getLocumAvailableJobs.filter(
+          job =>
+            this.getDateArray(job.date_start, job.date_end).includes(date) &&
+            job.shift.name === shift
         );
       }
       if (this.getLocumAllocatedPlatformJobs.length > 0) {
@@ -522,17 +588,11 @@ export default {
             job.shifts.map(shift => shift.name).includes(shift)
         );
       }
-
-      // if (this.getLocumAllocatedPlatformJobs.length > 0) {
-      //   foundLocumAllocatedPlatformJobs = this.getLocumAllocatedPlatformJobs.filter(
-      //     job =>
-      //       this.getDateArray(job.date_start, job.date_end).includes(date) &&
-      //       job.shift.name === shift
-      //   );
-      // }
       this.foundLocumJobs = [
         ...foundLocumOngoingJobs,
+        ...foundLocumCompletedJobs,
         ...foundLocumAppliedJobs,
+        ...foundLocumAvailableJobs,
         ...foundLocumAllocatedPrivateJobs,
         ...foundLocumAllocatedPlatformJobs,
         ...foundLocumUnavailabilities

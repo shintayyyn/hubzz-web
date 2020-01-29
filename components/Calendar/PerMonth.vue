@@ -480,7 +480,7 @@ export default {
           }),
           this.$axios.$get("/api/v1/practice/job-parts", {
             params: {
-              status: ["Ongoing"],
+              status: ["Ongoing", "Completed"],
               calendar_date_start: `${this.startOfMonth}:gte`,
               calendar_date_end: `${this.endOfMonth}:lte`,
               limit: 100000000
@@ -500,7 +500,7 @@ export default {
           .then(
             ([
               responseAllocatedAndAppliedAndUnfilledAndDeclinedAndLive,
-              responseOngoing,
+              responseOngoingAndCompleted,
               responseReminders
             ]) => {
               this.$store.commit(
@@ -535,8 +535,14 @@ export default {
               );
               this.$store.commit(
                 "jobs/SET_PRACTICE_ONGOING_JOB_PARTS",
-                responseOngoing.data.job_parts.filter(
+                responseOngoingAndCompleted.data.job_parts.filter(
                   jobPart => jobPart.status === "Ongoing"
+                )
+              );
+              this.$store.commit(
+                "jobs/SET_PRACTICE_COMPLETED_JOB_PARTS",
+                responseOngoingAndCompleted.data.job_parts.filter(
+                  jobPart => jobPart.status === "Completed"
                 )
               );
               this.$store.commit(
@@ -562,7 +568,7 @@ export default {
         Promise.all([
           this.$axios.$get("/api/v1/locum/jobs", {
             params: {
-              locum_status: ["Allocated", "Applied"],
+              locum_status: ["Allocated", "Applied", "Available"],
               calendar_date_start: `${this.startOfMonth}:gte`,
               calendar_date_end: `${this.endOfMonth}:lte`,
               limit: 100000000
@@ -570,7 +576,7 @@ export default {
           }),
           this.$axios.$get("/api/v1/locum/job-parts", {
             params: {
-              locum_status: ["Ongoing"],
+              locum_status: ["Ongoing", "Completed"],
               calendar_date_start: `${this.startOfMonth}:gte`,
               calendar_date_end: `${this.endOfMonth}:lte`,
               limit: 100000000
@@ -586,26 +592,38 @@ export default {
         ])
           .then(
             ([
-              responseAllocatedAndApplied,
-              responseOngoing,
+              responseAllocatedAndAppliedAndAvailable,
+              responseOngoingAndCompleted,
               responseUnavailabilities
             ]) => {
               this.$store.commit(
                 "jobs/SET_LOCUM_APPLIED_JOBS",
-                responseAllocatedAndApplied.data.jobs.filter(
+                responseAllocatedAndAppliedAndAvailable.data.jobs.filter(
                   job => job.locum_status === "Applied"
                 )
               );
               this.$store.commit(
                 "jobs/SET_LOCUM_ALLOCATED_JOBS",
-                responseAllocatedAndApplied.data.jobs.filter(
+                responseAllocatedAndAppliedAndAvailable.data.jobs.filter(
                   job => job.locum_status === "Allocated"
                 )
               );
               this.$store.commit(
+                "jobs/SET_LOCUM_AVAILABLE_JOBS",
+                responseAllocatedAndAppliedAndAvailable.data.jobs.filter(
+                  job => job.locum_status === "Available"
+                )
+              );
+              this.$store.commit(
                 "jobs/SET_LOCUM_ONGOING_JOB_PARTS",
-                responseOngoing.data.job_parts.filter(
+                responseOngoingAndCompleted.data.job_parts.filter(
                   jobPart => jobPart.locum_status === "Ongoing"
+                )
+              );
+              this.$store.commit(
+                "jobs/SET_LOCUM_COMPLETED_JOB_PARTS",
+                responseOngoingAndCompleted.data.job_parts.filter(
+                  jobPart => jobPart.locum_status === "Completed"
                 )
               );
               this.$store.commit(
