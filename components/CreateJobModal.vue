@@ -601,6 +601,11 @@ export default {
         }
       }
     },
+    "form.date_start"(to, from) {
+      if (!from) {
+        this.form.date_end = to
+      }
+    },
     "form.date_end"(value) {
       let end = this.$moment(value, "YYYY-MM-DD");
       let days = [];
