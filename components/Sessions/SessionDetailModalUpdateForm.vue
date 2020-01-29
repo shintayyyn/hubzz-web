@@ -227,6 +227,8 @@
                 :name="'date_end'"
                 :label="'End Date'"
                 :error="formError.find(item => item.field === 'date_end')"
+                :startDate="form.date_start"
+                isAfter
               />
             </div>
             <div class="px-1 w-full md:w-1/2">
@@ -608,11 +610,6 @@ export default {
         console.log(this.form.compliance_document_id);
       }
     },
-    "form.date_start"(to, from) {
-      if (!from) {
-        this.form.date_end = to
-      }
-    },
     "form.date_end"(value) {
       let end = this.$moment(value);
       let days = [];
@@ -946,7 +943,8 @@ export default {
       }
 
       this.Validate(this.form, notRequired);
-
+      console.log(this.form);
+      console.log(this.formError);
       if (!this.formError.length) {
         this.selectedClinicalSystem = [...this.form.clinical_system_id];
         this.form.clinical_system_id = this.form.clinical_system_id.map(

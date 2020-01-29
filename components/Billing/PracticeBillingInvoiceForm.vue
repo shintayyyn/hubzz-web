@@ -251,7 +251,8 @@ export default {
   props: {
     propInvoice: {
       type: Object
-    }
+    },
+    propId: null
   },
   data() {
     return {
@@ -427,7 +428,9 @@ export default {
         this.saveLoading = true;
         this.$axios
           .$put(
-            `/api/v1/practice/locum-invoices/${this.$route.params.id}`,
+            `/api/v1/practice/locum-invoices/${
+              this.propId ? this.propId : this.$route.params.id
+            }`,
             this.form
           )
           .then(res => {
