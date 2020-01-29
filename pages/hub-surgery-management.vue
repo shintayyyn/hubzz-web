@@ -57,11 +57,11 @@
     </AppTable>
     <div v-else class="flex justify-center py-4 text-gray-500">No Branches / Surgeries</div>
     <transition name="fade" mode="out-in">
-      <div
+      <nuxt-link
+        :to="`/hub-surgery-management`"
         class="shield"
         v-if="$route.name === 'hub-surgery-management-create' || $route.name.includes('hub-surgery-management-id')"
-        @click="$router.push('/hub-surgery-management')"
-      ></div>
+      ></nuxt-link>
     </transition>
     <nuxt-child @addSurgery="surgeries.push($event)" @updateSurgery="updateSurgery" />
   </section>
