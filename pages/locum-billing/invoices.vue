@@ -88,21 +88,21 @@
                 <div
                   v-if="slotProps.item.locum_invoice_id && slotProps.item.status === 'Approved'"
                   @click="$router.push({ path: `/locum-billing/invoices/${slotProps.item.locum_invoice_id}`, query: {...$route.query} })"
-                  class="my-1 p-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
+                  class="my-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none"
                 >View</div>
                 <div
                   v-if="slotProps.item.locum_invoice_id && slotProps.item.status === 'Approved' && !slotProps.item.locum_form_a_id && !slotProps.item.locum_invoice_item.locum_invoice.paid_at"
-                  class="my-1 p-2 bg-yellow-400 font-bold rounded-lg focus:outline-none"
+                  class="my-1 p-2 font-bold"
                 >Waiting For Payment</div>
                 <div
                   v-if="slotProps.item.locum_invoice_id && slotProps.item.status === 'Approved' && !slotProps.item.locum_form_a_id && slotProps.item.profession.name === 'GP' && slotProps.item.locum_invoice_item.locum_invoice.paid_at"
                   @click="select_invoice(slotProps.item.locum_invoice_id, 'generateFormA')"
-                  class="my-1 p-2 bg-green-700 text-white font-bold rounded-lg focus:outline-none w-full"
+                  class="my-1 p-2 bg-green-500 hover:bg-green-600 text-white font-bold rounded-lg focus:outline-none w-full"
                 >Generate Form A</div>
                 <div
                   @click="viewAsPdf(slotProps.item.locum_form_a_id, 'form-a')"
                   v-if="slotProps.item.locum_invoice_id && slotProps.item.status === 'Approved' && slotProps.item.locum_form_a_id && slotProps.item.profession.name === 'GP' "
-                  class="my-1 p-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
+                  class="my-1 p-2 bg-yellow-400 hover:bg-yellow-500 font-bold rounded-lg focus:outline-none"
                 >View NHS Form A</div>
               </div>
             </template>

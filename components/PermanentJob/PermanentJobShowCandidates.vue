@@ -12,28 +12,27 @@
 				<button class="mx-4 focus:outline-none" @click.prevent.stop="message(user)">
 					<svgicon name="chat" height="32" width="32" color="#888 #555 #fff" />
 				</button>
-				<AppButton 
-        :label="'Accept'" class="mx-1" @click="accepted=!accepted" />
+				<AppButton :label="'Accept'" class="mx-1" @click="accepted=!accepted" />
 				<AppButton
 					class="mx-1"
-          @click="rejectLocum()"
+					@click="rejectLocum()"
 					:label="'Reject'"
 					:customTheme="'bg-red-500 hover:bg-red-600 text-white'"
 				/>
 			</div>
-      <div v-if="accepted">
-        <AppDate
-          v-model="form.invitation_schedule" 
-          :name="'invitation_schedule'" 
-          :label="'Invitation Schedule'"  
-        />
-        <AppButton
-        @click="inviteLocum()"
-        class="mx-1"
-        :label="'Invite This Locum'"
-        :customTheme="'bg-green-500 hover:bg-red-600 text-white'"
-        />
-      </div>
+			<div v-if="accepted">
+				<AppDate
+					v-model="form.invitation_schedule"
+					:name="'invitation_schedule'"
+					:label="'Invitation Schedule'"
+				/>
+				<AppButton
+					@click="inviteLocum()"
+					class="mx-1"
+					:label="'Invite This Locum'"
+					:customTheme="'bg-green-500 hover:bg-red-600 text-white'"
+				/>
+			</div>
 			<div class="flex flex-row flex-no-wrap justify-start mt-4 md:mt-8">
 				<div class="font-bold text-md sm:text-lg">{{user.name}}</div>
 			</div>
@@ -60,27 +59,27 @@
 						<div class="font-bold text-sm sm:text-md">Specialty</div>
 						<div class="text-xs sm:text-sm mb-4 md:mb-8 flex flex-row flex-wrap">
 							<div
-                class="rounded-lg bg-yellow-500 p-2 m-1"
-                v-for="item in user.locum_detail.qualifications"
-                :key="item.id"
-              >{{item.name}}</div>
+								class="rounded-lg bg-yellow-500 p-2 m-1"
+								v-for="item in user.locum_detail.qualifications"
+								:key="item.id"
+							>{{item.name}}</div>
 						</div>
 						<div class="font-bold text-sm sm:text-md">Clinical systems</div>
 						<div class="text-xs sm:text-sm mb-4 md:mb-8 flex flex-row flex-wrap">
 							<div
-                class="rounded-lg bg-yellow-500 p-2 m-1"
-                v-for="item in user.locum_detail.clinical_systems"
-                :key="item.id"
-              >{{item.name}}</div>
+								class="rounded-lg bg-yellow-500 p-2 m-1"
+								v-for="item in user.locum_detail.clinical_systems"
+								:key="item.id"
+							>{{item.name}}</div>
 						</div>
 						<div class="font-bold text-sm sm:text-md">Languages</div>
 						<div class="text-xs sm:text-sm mb-4 md:mb-8 flex flex-row flex-wrap">
 							<div class="rounded-lg bg-yellow-500 p-2 m-1">English</div>
 							<div
-                class="rounded-lg bg-yellow-500 p-2 m-1"
-                v-for="item in user.locum_detail.spoken_languages"
-                :key="item.id"
-              >{{item.name}}</div>
+								class="rounded-lg bg-yellow-500 p-2 m-1"
+								v-for="item in user.locum_detail.spoken_languages"
+								:key="item.id"
+							>{{item.name}}</div>
 						</div>
 					</div>
 				</div>
@@ -155,7 +154,7 @@
 						:label="'Appoint to this job'"
 						@click="confirmation_modal = true"
 						v-if="authPermissions.includes('Appoint Sessions Job')"
-					/> -->
+					/>-->
 				</div>
 			</div>
 		</div>
@@ -187,34 +186,34 @@ export default {
 	components: {
 		AppButton,
 		AppConfirmationModal,
-    SendMessageModal,
-    AppDate,
+		SendMessageModal,
+		AppDate
 	},
 	data() {
 		return {
 			confirmation_modal: false,
 			mandatory: [],
 			optional: [],
-      sendMessageModal: false,
-      form:{
-        invitation_schedule: ''
-      },
-      accepted: false
+			sendMessageModal: false,
+			form: {
+				invitation_schedule: ""
+			},
+			accepted: false
 		};
 	},
 	computed: {
 		authPermissions() {
-			return this.$store.getters["auth/permissions"];
+			return this.$store.getters["permissions"];
 		}
-  },
-  
+	},
+
 	created() {
-    console.log(this.user)
-    this.getProfessionCategory(
-      this.user.locum_detail.profession.profession_category.id
-    );
-  },
-  
+		console.log(this.user);
+		this.getProfessionCategory(
+			this.user.locum_detail.profession.profession_category.id
+		);
+	},
+
 	methods: {
 		message(user) {
 			this.user = user;
@@ -241,38 +240,50 @@ export default {
 					}
 				);
 			});
-    },
-    inviteLocum(){
-      this.$axios.$put(`/api/v1/practice/permanent-job-applications/${this.permanent_job_application.id}/schedule-locum`,this.form).then(res => {
-        this.$store.commit("SET_NOTIFICATION", {
-          enabled: true,
-          status: "success",
-          text: ["Successfully Invited Locum"]
-        });
-      }).catch(err => {
-        console.log("err", err.reponse | err);
+		},
+		inviteLocum() {
+			this.$axios
+				.$put(
+					`/api/v1/practice/permanent-job-applications/${this.permanent_job_application.id}/schedule-locum`,
+					this.form
+				)
+				.then(res => {
+					this.$store.commit("SET_NOTIFICATION", {
+						enabled: true,
+						status: "success",
+						text: ["Successfully Invited Locum"]
+					});
+				})
+				.catch(err => {
+					console.log("err", err.reponse | err);
 					this.$store.commit("SET_NOTIFICATION", {
 						enabled: true,
 						status: "danger",
 						text: [`${err.response.data.message}`]
 					});
-      })
-    },
-    rejectLocum(){
-      this.$axios.$put(`/api/v1/practice/permanent-job-applications/${this.permanent_job_application.id}/reject-application`).then(res => {
-        this.$store.commit("SET_NOTIFICATION", {
-          enabled: true,
-          status: "success",
-          text: ["Successfully Rejected Locum"]
-        }).catch(err => {
-          this.$store.commit("SET_NOTIFICATION", {
-						enabled: true,
-						status: "danger",
-						text: [`${err.response.data.message}`]
-					});
-        });
-      })
-    },
+				});
+		},
+		rejectLocum() {
+			this.$axios
+				.$put(
+					`/api/v1/practice/permanent-job-applications/${this.permanent_job_application.id}/reject-application`
+				)
+				.then(res => {
+					this.$store
+						.commit("SET_NOTIFICATION", {
+							enabled: true,
+							status: "success",
+							text: ["Successfully Rejected Locum"]
+						})
+						.catch(err => {
+							this.$store.commit("SET_NOTIFICATION", {
+								enabled: true,
+								status: "danger",
+								text: [`${err.response.data.message}`]
+							});
+						});
+				});
+		},
 		appoint() {
 			this.$axios
 				.$put(
