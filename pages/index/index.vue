@@ -52,7 +52,7 @@
       </nuxt-link>
     </div>
     <div class="flex justify-center">
-      <AppButton :label="'Sign In'" @click="login" :disabled="logginIn" />
+      <AppButton :label="'Sign In'" @click="login" :disabled="loggingIn" />
     </div>
   </div>
 </template>
@@ -79,13 +79,13 @@ export default {
         type: "password"
       },
       formError: [],
-      logginIn: false,
+      loggingIn: false,
     };
   },
   methods: {
     login: debounce(function () {
       try {
-        if (this.logginIn) {
+        if (this.loggingIn || this.$auth.loggedIn) {
           return
         }
 
@@ -93,7 +93,7 @@ export default {
         this.Validate(this.form);
 
         if (!this.formError.length) {
-          this.logginIn = true
+          this.loggingIn = true
           this.$axios
             .$post("/api/v1/login", this.form)
             .then(async res => {
@@ -134,7 +134,7 @@ export default {
               }
             })
             .finally(() => {
-              this.logginIn = false
+              this.loggingIn = false
             });
         }
       } catch (e) {
