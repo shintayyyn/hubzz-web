@@ -943,7 +943,8 @@ export default {
       }
 
       this.Validate(this.form, notRequired);
-
+      console.log(this.form);
+      console.log(this.formError);
       if (!this.formError.length) {
         this.selectedClinicalSystem = [...this.form.clinical_system_id];
         this.form.clinical_system_id = this.form.clinical_system_id.map(
