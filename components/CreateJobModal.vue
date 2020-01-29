@@ -124,6 +124,7 @@
                     @blur="CheckEmptyField(form.date_end,'date_end')"
                     isAfter
                   />
+                    <!-- :startDate="form.date_start" -->
                 </div>
                 <div class="px-1 w-full md:w-1/2">
                   <AppTime
@@ -559,8 +560,8 @@ export default {
         time_start: null,
         date_end: null,
         time_end: null,
-        include_saturday: false,
-        include_sunday: false,
+        include_saturday: true,
+        include_sunday: true,
         unpaid_breaks_in_minutes: "",
         shift_id: "",
         auto_assign_at: null,
@@ -599,6 +600,11 @@ export default {
           this.compliances = this.others_compliance_documents_lists;
           return;
         }
+      }
+    },
+    "form.date_start"(to, from) {
+      if (!from) {
+        this.form.date_end = to
       }
     },
     "form.date_end"(value) {
@@ -844,25 +850,25 @@ export default {
         "auto_assign_at"
       ];
 
-      let startDateTime = this.$moment(
-        `${this.form.date_start} ${this.form.time_start}`,
-        "YYYY-MM-DD HH:mm"
-      ).format("YYYY-MM-DD HH:mm");
-      let endDateTime = this.$moment(
-        `${this.form.date_end} ${this.form.time_end}`,
-        "YYYY-MM-DD HH:mm"
-      ).format("YYYY-MM-DD HH:mm");
+      // let startDateTime = this.$moment(
+      //   `${this.form.date_start} ${this.form.time_start}`,
+      //   "YYYY-MM-DD HH:mm"
+      // ).format("YYYY-MM-DD HH:mm");
+      // let endDateTime = this.$moment(
+      //   `${this.form.date_end} ${this.form.time_end}`,
+      //   "YYYY-MM-DD HH:mm"
+      // ).format("YYYY-MM-DD HH:mm");
 
-      if (this.$moment(startDateTime).isSameOrAfter(endDateTime)) {
-        this.formError.push({
-          field: "date_end",
-          message: "Invalid End Date"
-        });
-        this.formError.push({
-          field: "date_start",
-          message: "Invalid Start Date"
-        });
-      }
+      // if (this.$moment(startDateTime).isSameOrAfter(endDateTime)) {
+      //   this.formError.push({
+      //     field: "date_end",
+      //     message: "Invalid End Date"
+      //   });
+      //   this.formError.push({
+      //     field: "date_start",
+      //     message: "Invalid Start Date"
+      //   });
+      // }
 
       if (
         [15, "15", 30, "30", 60, "60", false, "false"].includes(
