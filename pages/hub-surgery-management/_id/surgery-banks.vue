@@ -5,7 +5,7 @@
       <div class="w-full md:w-1/3 lg:w-1/4 p-2" v-for="locum in locums" :key="locum.id">
         <div class="h-full rounded-lg shadow-lg bg-gray-300 hover:bg-gray-400 p-4">
           <nuxt-link
-            :to="{ path: `/surgery-management/practice-spokes/${$route.params.id}/surgery-banks/${locum.id}`, query: {...$route.query}}"
+            :to="{ path: `/hub-surgery-management/${$route.params.id}/surgery-banks/${locum.id}`, query: {...$route.query}}"
           >
             <div class="flex flex-wrap text-center mt-4 cursor-pointer">
               <div class="w-full flex justify-center">
@@ -33,15 +33,15 @@
         />
       </div>
       <transition name="fade" mode="out-in">
-        <div
+        <nuxt-link
           class="shield"
+          :to="`/hub-surgery-management/${$route.params.id}/surgery-banks`"
           v-if="
             [
-              'surgery-management-practice-spokes-id-surgery-banks-locumId',
+              'hub-surgery-management-id-surgery-banks-locumId',
             ].includes($route.name)
           "
-          @click="$router.push(`/surgery-management/practice-spokes/${$route.params.id}/surgery-banks`)"
-        ></div>
+        ></nuxt-link>
       </transition>
     </div>
     <nuxt-child />
@@ -60,10 +60,11 @@ export default {
     AppAvatar,
     AppPagination
   },
+  props: ["practiceSurgery"],
   data() {
     return {
       locums: [],
-      practiceSpoke: "",
+      // practiceSpoke: "",
       params: {
         favorite_by_practice_id: ""
       },
@@ -93,30 +94,10 @@ export default {
       return this.$store.getters["permissions"];
     }
   },
-  async asyncData({ app, route, store }) {
-    try {
-      let response = await app.$axios.$get(
-        `/api/v1/practice/me/practice-surgeries/${route.params.id}`
-      );
-      const practiceSurgery = response.data.practice_surgery;
-      let params = {
-        surgery_id: practiceSurgery.surgery_id
-      };
-      response = await app.$axios.$get(`/api/v1/practice/practice-spokes`, {
-        params
-      });
-      const practiceSpoke = response.data.practices[0];
-      return {
-        practiceSpoke
-      };
-    } catch (err) {
-      console.log("get locum error!", err);
-    }
-  },
   methods: {
     getLocumsCount() {
       let params = {
-        favorite_by_practice_id: this.practiceSpoke.id
+        favorite_by_practice_id: this.practiceSurgery.child_practice_id
       };
       this.loading = true;
       this.$axios
@@ -133,7 +114,7 @@ export default {
       let params = {
         limit: this.perPage,
         offset: this.offset,
-        favorite_by_practice_id: this.practiceSpoke.id,
+        favorite_by_practice_id: this.practiceSurgery.child_practice_id,
         detailed: true
       };
       this.current_page = page;

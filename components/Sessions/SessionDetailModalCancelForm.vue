@@ -155,15 +155,14 @@ export default {
   methods: {
     validateForm() {
       this.formError = [];
-      let notRequired = [];
+      let notRequired = ["final_hours"];
 
       if (this.job.status !== "Ongoing") {
         notRequired.push(
           "absent_days",
           "absent_days_reason",
           "late_hours",
-          "late_hours_reason",
-          "final_hours"
+          "late_hours_reason"
         );
       } else if (this.job.status === "Ongoing") {
         if (this.has_absences === "false" || this.has_absences === false) {
@@ -180,15 +179,14 @@ export default {
     },
     cancel() {
       this.formError = [];
-      let notRequired = [];
+      let notRequired = ["final_hours"];
 
       if (this.job.status !== "Ongoing") {
         notRequired.push(
           "absent_days",
           "absent_days_reason",
           "late_hours",
-          "late_hours_reason",
-          "final_hours"
+          "late_hours_reason"
         );
       } else if (this.job.status === "Ongoing") {
         if (this.has_absences === "false" || this.has_absences === false) {
