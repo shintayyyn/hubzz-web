@@ -46,7 +46,7 @@ export default {
             text: ["Termination Request Successfully Sent"]
           });
         });
-      this.$router.push("/surgery-management/practice-spokes");
+      this.$router.push(`/hub-surgery-management`);
     }
   }
 };
