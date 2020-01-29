@@ -52,7 +52,7 @@
       </nuxt-link>
     </div>
     <div class="flex justify-center">
-      <AppButton :label="'Sign In'" @click="login" />
+      <AppButton :label="'Sign In'" @click="login" :disabled="logginIn" />
     </div>
   </div>
 </template>
@@ -60,6 +60,7 @@
 <script>
 import AppInput from "@/components/Base/AppInput";
 import AppButton from "@/components/Base/AppButton";
+import debounce from 'lodash.debounce'
 export default {
   transition: {
     name: "fade",
@@ -77,16 +78,22 @@ export default {
         password: "",
         type: "password"
       },
-      formError: []
+      formError: [],
+      logginIn: false,
     };
   },
   methods: {
-    async login() {
+    login: debounce(function () {
       try {
+        if (this.logginIn) {
+          return
+        }
+
         this.formError = [];
         this.Validate(this.form);
 
         if (!this.formError.length) {
+          this.logginIn = true
           this.$axios
             .$post("/api/v1/login", this.form)
             .then(async res => {
@@ -125,12 +132,15 @@ export default {
                   this.formError.push(error);
                 });
               }
+            })
+            .finally(() => {
+              this.logginIn = false
             });
         }
       } catch (e) {
         console.log(e);
       }
-    }
+    }, 10),
   }
 };
 </script>
