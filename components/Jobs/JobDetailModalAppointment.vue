@@ -311,26 +311,27 @@ export default {
     async create() {
       this.formError = [];
 
-      let startDateTime = this.$moment(
-        `${this.form.date_start} ${this.form.time_start}`,
-        "YYYY-MM-DD HH:mm"
-      ).format("YYYY-MM-DD HH:mm");
-      let endDateTime = this.$moment(
-        `${this.form.date_end} ${this.form.time_end}`,
-        "YYYY-MM-DD HH:mm"
-      ).format("YYYY-MM-DD HH:mm");
+      // let startDateTime = this.$moment(
+      //   `${this.form.date_start} ${this.form.time_start}`,
+      //   "YYYY-MM-DD HH:mm"
+      // ).format("YYYY-MM-DD HH:mm");
+      // let endDateTime = this.$moment(
+      //   `${this.form.date_end} ${this.form.time_end}`,
+      //   "YYYY-MM-DD HH:mm"
+      // ).format("YYYY-MM-DD HH:mm");
 
-      if (this.$moment(this.startDateTime).isSameOrAfter(this.endDateTime)) {
-        this.formError.push({
-          field: "date_end",
-          message: "Invalid End Date"
-        });
-        this.formError.push({
-          field: "date_start",
-          message: "Invalid Start Date"
-        });
-      }
+      // if (this.$moment(this.startDateTime).isSameOrAfter(this.endDateTime)) {
+      //   this.formError.push({
+      //     field: "date_end",
+      //     message: "Invalid End Date"
+      //   });
+      //   this.formError.push({
+      //     field: "date_start",
+      //     message: "Invalid Start Date"
+      //   });
+      // }
       this.Validate(this.form, ["description"]);
+      console.log(this.formError);
       if (!this.formError.length) {
         try {
           this.loading = true;
