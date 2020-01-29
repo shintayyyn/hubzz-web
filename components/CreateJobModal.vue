@@ -122,9 +122,9 @@
                     :label="'End Date'"
                     :error="formError.find(item => item.field === 'date_end')"
                     @blur="CheckEmptyField(form.date_end,'date_end')"
+                    :startDate="form.date_start"
                     isAfter
                   />
-                    <!-- :startDate="form.date_start" -->
                 </div>
                 <div class="px-1 w-full md:w-1/2">
                   <AppTime
@@ -600,11 +600,6 @@ export default {
           this.compliances = this.others_compliance_documents_lists;
           return;
         }
-      }
-    },
-    "form.date_start"(to, from) {
-      if (!from) {
-        this.form.date_end = to
       }
     },
     "form.date_end"(value) {

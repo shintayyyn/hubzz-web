@@ -310,17 +310,10 @@ export default {
 			this.getDaysInMonth(this.selectedMonth.toString(), value);
 		},
 		startDate(value) {
-			// if (value) {
-			// 	console.log("set selected date");
-			// 	console.log(this.$moment(value).format("MM-DD-YYYY"));
-			// 	console.log(this.$moment(value).format("YYYY"));
-			// 	console.log(this.$moment(value).format("DD"));
-			// 	console.log(this.$moment(value).format("MM"));
-			// 	// this.selectedDate = this.$moment(value).format("MM-DD-YYYY");
-			// 	this.selectedMonth =
-			// 	this.selectedYear = this.$moment(value).format("DD")
-			// 	this.selectedDate =
-			// }
+			if (value) {
+				this.selectedMonth = this.$moment(value).format("M");
+				this.selectedYear = this.$moment(value).format("YYYY");
+			}
 		}
 	},
 	computed: {
@@ -381,17 +374,26 @@ export default {
 		},
 		isSame(date) {
 			let newDate = this.$moment().format("MM-DD-YYYY");
+			if (this.startDate) {
+				this.isDisabled(this.startDate);
+				return this.$moment(date, "MM-DD-YYYY").isSame(this.startDate);
+			}
 			return this.$moment(date, "MM-DD-YYYY").isSame(newDate);
 		},
 		isDisabled(date) {
-			// return false;
 			let newDate = this.$moment.utc().format("MM-DD-YYYY");
 			if (this.isBefore) {
+				if (this.startDate) {
+					return this.$moment(date).isAfter(this.startDate);
+				}
 				return this.$moment(date, "MM-DD-YYYY").isAfter(
 					this.$moment(newDate, "MM-DD-YYYY")
 				);
 			}
 			if (this.isAfter) {
+				if (this.startDate) {
+					return this.$moment(date).isBefore(this.startDate);
+				}
 				return this.$moment(date, "MM-DD-YYYY").isBefore(
 					this.$moment(newDate, "MM-DD-YYYY")
 				);
@@ -450,7 +452,6 @@ export default {
 				date = date.add(1, "days");
 			}
 			this.daysInMonth = days;
-			console.log({ days });
 			// days.forEach(day => {
 			//   this.daysInMonth.push({
 			//     day: day.getDay(),
