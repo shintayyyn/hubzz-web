@@ -92,11 +92,11 @@
 									@click="select(item.fullDate)"
 									class="rounded-full relative p-1 flex justify-center items-center date-cell"
 									:class="{
-                  'border-yellow-500 border-2': isSame(item.fullDate),
-                  'text-gray-500': isDisabled(item.fullDate), 
-                  'cursor-pointer hover:bg-gray-300': !isDisabled(item.fullDate),
-                  'bg-yellow-500 border-yellow-500 border-2': isSelectedDate(item.date, item)
-                }"
+									'border-yellow-500 border-2': isSame(item.fullDate),
+									'text-gray-500': isDisabled(item.fullDate), 
+									'cursor-pointer hover:bg-gray-300': !isDisabled(item.fullDate),
+									'bg-yellow-500 border-yellow-500 border-2': isSelectedDate(item.date, item)
+									}"
 									v-if="item.day === 1"
 								>
 									<div class="text-xs md:text-sm z-10">{{(item.date)}}</div>
@@ -112,11 +112,11 @@
 									@click="select(item.fullDate)"
 									class="rounded-full relative p-1 flex justify-center items-center date-cell"
 									:class="{
-                  'border-yellow-500 border-2': isSame(item.fullDate),
-                  'text-gray-500': isDisabled(item.fullDate), 
-                  'cursor-pointer hover:bg-gray-300': !isDisabled(item.fullDate),
-                  'bg-yellow-500 border-yellow-500 border-2': isSelectedDate(item.date, item)
-                }"
+										'border-yellow-500 border-2': isSame(item.fullDate),
+										'text-gray-500': isDisabled(item.fullDate), 
+										'cursor-pointer hover:bg-gray-300': !isDisabled(item.fullDate),
+										'bg-yellow-500 border-yellow-500 border-2': isSelectedDate(item.date, item)
+									}"
 									v-if="item.day === 2"
 								>
 									<div class="text-xs md:text-sm z-10">{{item.date}}</div>
@@ -132,11 +132,11 @@
 									@click="select(item.fullDate)"
 									class="rounded-full relative p-1 flex justify-center items-center date-cell"
 									:class="{
-                  'border-yellow-500 border-2': isSame(item.fullDate),
-                  'text-gray-500': isDisabled(item.fullDate), 
-                  'cursor-pointer hover:bg-gray-300': !isDisabled(item.fullDate),
-                  'bg-yellow-500 border-yellow-500 border-2': isSelectedDate(item.date)
-                }"
+									'border-yellow-500 border-2': isSame(item.fullDate),
+									'text-gray-500': isDisabled(item.fullDate), 
+									'cursor-pointer hover:bg-gray-300': !isDisabled(item.fullDate),
+									'bg-yellow-500 border-yellow-500 border-2': isSelectedDate(item.date)
+									}"
 									v-if="item.day === 3"
 								>
 									<div class="text-xs md:text-sm z-10">{{(item.date)}}</div>
@@ -152,11 +152,11 @@
 									@click="select(item.fullDate)"
 									class="rounded-full relative p-1 flex justify-center items-center date-cell"
 									:class="{
-                  'border-yellow-500 border-2': isSame(item.fullDate),
-                  'text-gray-500': isDisabled(item.fullDate), 
-                  'cursor-pointer hover:bg-gray-300': !isDisabled(item.fullDate),
-                  'bg-yellow-500 border-yellow-500 border-2': isSelectedDate(item.date)
-                }"
+									'border-yellow-500 border-2': isSame(item.fullDate),
+									'text-gray-500': isDisabled(item.fullDate), 
+									'cursor-pointer hover:bg-gray-300': !isDisabled(item.fullDate),
+									'bg-yellow-500 border-yellow-500 border-2': isSelectedDate(item.date)
+									}"
 									v-if="item.day === 4"
 								>
 									<div class="text-xs md:text-sm z-10">{{item.date}}</div>
@@ -172,11 +172,11 @@
 									@click="select(item.fullDate)"
 									class="rounded-full relative p-1 flex justify-center items-center date-cell"
 									:class="{
-                  'border-yellow-500 border-2': isSame(item.fullDate),
-                  'text-gray-500': isDisabled(item.fullDate), 
-                  'cursor-pointer hover:bg-gray-300': !isDisabled(item.fullDate),
-                  'bg-yellow-500 border-yellow-500 border-2': isSelectedDate(item.date)
-                }"
+									'border-yellow-500 border-2': isSame(item.fullDate),
+									'text-gray-500': isDisabled(item.fullDate), 
+									'cursor-pointer hover:bg-gray-300': !isDisabled(item.fullDate),
+									'bg-yellow-500 border-yellow-500 border-2': isSelectedDate(item.date)
+									}"
 									v-if="item.day === 5"
 								>
 									<div class="text-xs md:text-sm z-10">{{(item.date)}}</div>
@@ -192,11 +192,11 @@
 									@click="select(item.fullDate)"
 									class="rounded-full relative p-1 flex justify-center items-center date-cell"
 									:class="{
-                  'border-yellow-500 border-2': isSame(item.fullDate),
-                  'text-gray-500': isDisabled(item.fullDate), 
-                  'cursor-pointer hover:bg-gray-300': !isDisabled(item.fullDate),
-                  'bg-yellow-500 border-yellow-500 border-2': isSelectedDate(item.date)
-                }"
+									'border-yellow-500 border-2': isSame(item.fullDate),
+									'text-gray-500': isDisabled(item.fullDate), 
+									'cursor-pointer hover:bg-gray-300': !isDisabled(item.fullDate),
+									'bg-yellow-500 border-yellow-500 border-2': isSelectedDate(item.date)
+									}"
 									v-if="item.day === 6"
 								>
 									<div class="text-xs md:text-sm z-10">{{item.date}}</div>
@@ -212,11 +212,11 @@
 									@click="select(item.fullDate)"
 									class="rounded-full relative p-1 flex justify-center items-center date-cell"
 									:class="{
-                  'border-yellow-500 border-2': isSame(item.fullDate),
-                  'text-gray-500': isDisabled(item.fullDate), 
-                  'cursor-pointer hover:bg-gray-300': !isDisabled(item.fullDate),
-                  'bg-yellow-500 border-yellow-500 border-2': isSelectedDate(item.date)
-                }"
+									'border-yellow-500 border-2': isSame(item.fullDate),
+									'text-gray-500': isDisabled(item.fullDate), 
+									'cursor-pointer hover:bg-gray-300': !isDisabled(item.fullDate),
+									'bg-yellow-500 border-yellow-500 border-2': isSelectedDate(item.date)
+									}"
 									v-if="item.day === 0"
 								>
 									<div class="text-xs md:text-sm z-10">{{item.date}}</div>
@@ -268,7 +268,8 @@ export default {
 			default: "YYYY-MM-DD"
 		},
 		disabled: Boolean,
-		startYear: String
+		startYear: String,
+		startDate: String
 	},
 	data() {
 		return {
@@ -307,6 +308,19 @@ export default {
 				this.selectedMonth = this.filteredMonths[0].value;
 			}
 			this.getDaysInMonth(this.selectedMonth.toString(), value);
+		},
+		startDate(value) {
+			// if (value) {
+			// 	console.log("set selected date");
+			// 	console.log(this.$moment(value).format("MM-DD-YYYY"));
+			// 	console.log(this.$moment(value).format("YYYY"));
+			// 	console.log(this.$moment(value).format("DD"));
+			// 	console.log(this.$moment(value).format("MM"));
+			// 	// this.selectedDate = this.$moment(value).format("MM-DD-YYYY");
+			// 	this.selectedMonth =
+			// 	this.selectedYear = this.$moment(value).format("DD")
+			// 	this.selectedDate =
+			// }
 		}
 	},
 	computed: {
@@ -329,7 +343,6 @@ export default {
 		},
 		getYearLists() {
 			let yearsBefore = [];
-			console.log(this.isAfter, this.limitYear);
 			if (!this.isAfter) {
 				if (this.limitYear) {
 					for (let i = 1; i <= this.limitYear; i++) {
@@ -361,8 +374,6 @@ export default {
 			this.yearLists.sort(function(a, b) {
 				return a - b;
 			});
-
-			console.log("yearrrr", this.yearLists.length);
 		},
 		isSelectedDate(date) {
 			let selectedDate = `${this.selectedYear}-${this.selectedMonth}-${date}`;
@@ -373,16 +384,18 @@ export default {
 			return this.$moment(date, "MM-DD-YYYY").isSame(newDate);
 		},
 		isDisabled(date) {
-			return false;
-			// let newDate = this.$moment.utc().format("MM-DD-YYYY");
-			// if (this.isBefore) {
-			//   return this.$moment(date, "MM-DD-YYYY").isAfter(
-			//     this.$moment(newDate, "MM-DD-YYYY")
-			//   );
-			// }
-			// return this.$moment(date, "MM-DD-YYYY").isBefore(
-			//   this.$moment(newDate, "MM-DD-YYYY")
-			// );
+			// return false;
+			let newDate = this.$moment.utc().format("MM-DD-YYYY");
+			if (this.isBefore) {
+				return this.$moment(date, "MM-DD-YYYY").isAfter(
+					this.$moment(newDate, "MM-DD-YYYY")
+				);
+			}
+			if (this.isAfter) {
+				return this.$moment(date, "MM-DD-YYYY").isBefore(
+					this.$moment(newDate, "MM-DD-YYYY")
+				);
+			}
 		},
 		toggledOff() {
 			// get to the selected date
@@ -437,6 +450,7 @@ export default {
 				date = date.add(1, "days");
 			}
 			this.daysInMonth = days;
+			console.log({ days });
 			// days.forEach(day => {
 			//   this.daysInMonth.push({
 			//     day: day.getDay(),
