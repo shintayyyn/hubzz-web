@@ -349,9 +349,7 @@ export default {
             status: "success",
             text: ["Surgery Update Success"]
           });
-          this.$router.push(
-            `/surgery-management/practice-spokes/${this.$route.params.id}`
-          );
+          //   this.$router.push(`/hub-surgery-management/${this.$route.params.id}`);
           this.getSurgery();
           this.editPayForSurgery = false;
         });

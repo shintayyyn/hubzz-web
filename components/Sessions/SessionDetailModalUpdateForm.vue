@@ -884,25 +884,28 @@ export default {
         notRequired.push("update_accepted_until");
       }
 
-      let startDateTime = this.$moment(
-        `${this.form.date_start} ${this.form.time_start}`,
-        "YYYY-MM-DD HH:mm"
-      ).format("YYYY-MM-DD HH:mm");
-      let endDateTime = this.$moment(
-        `${this.form.date_end} ${this.form.time_end}`,
-        "YYYY-MM-DD HH:mm"
-      ).format("YYYY-MM-DD HH:mm");
+      // let startDateTime = this.$moment(
+      //   `${this.form.date_start} ${this.form.time_start}`,
+      //   "YYYY-MM-DD HH:mm"
+      // ).format("YYYY-MM-DD HH:mm");
+      // let endDateTime = this.$moment(
+      //   `${this.form.date_end} ${this.form.time_end}`,
+      //   "YYYY-MM-DD HH:mm"
+      // ).format("YYYY-MM-DD HH:mm");
 
-      if (this.$moment(this.startDateTime).isSameOrAfter(this.endDateTime)) {
-        this.formError.push({
-          field: "date_end",
-          message: "Invalid End Date"
-        });
-        this.formError.push({
-          field: "date_start",
-          message: "Invalid Start Date"
-        });
-      }
+      // console.log(startDateTime);
+      // console.log(endDateTime);
+
+      // if (this.$moment(this.startDateTime).isSameOrAfter(this.endDateTime)) {
+      //   this.formError.push({
+      //     field: "date_end",
+      //     message: "Invalid End Date"
+      //   });
+      //   this.formError.push({
+      //     field: "date_start",
+      //     message: "Invalid Start Date"
+      //   });
+      // }
 
       if (
         ["15", 15, "30", 30, "60", 60, false, "false"].includes(
@@ -941,7 +944,8 @@ export default {
       }
 
       this.Validate(this.form, notRequired);
-
+      console.log(this.form);
+      console.log(this.formError);
       if (!this.formError.length) {
         this.selectedClinicalSystem = [...this.form.clinical_system_id];
         this.form.clinical_system_id = this.form.clinical_system_id.map(
