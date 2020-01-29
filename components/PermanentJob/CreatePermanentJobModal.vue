@@ -255,7 +255,6 @@ export default {
 	components: {
 		AppInput,
 		AppButton,
-		AppFilterSearch,
 		AppDate
 	},
 	data() {

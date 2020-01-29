@@ -58,23 +58,7 @@
                 />
                 <label for="variation_terms_file">Use Variation to Standard Terms</label>
               </div>
-              <!-- <AppInput
-                v-model="form.use_standard_terms"
-                :type="'single-checkbox'"
-                :name="'use_standard_terms'"
-                :label="'Use Standard Terms with Locum?'"
-                :disabled="!authPermissions.includes('Update Profile Practice')"
-                :error="formError.find(item => item.field === 'use_standard_terms')"
-              />-->
               <div class="relative">
-                <!-- <AppInput
-                  v-model="form.use_variation_terms"
-                  :type="'single-checkbox'"
-                  :name="'use_variation_terms'"
-                  :label="'Use Variation to Standard Terms'"
-                  :disabled="!authPermissions.includes('Update Profile Practice')"
-                  :error="formError.find(item => item.field === 'use_variation_terms')"
-                />-->
                 <div class="relative" v-if="form.use_variation_terms">
                   <div class="flex flex-row flex-wrap justify-between items-center">
                     <div class="text-xs sm:text-sm">Your Practice's standard terms</div>
@@ -480,11 +464,10 @@ export default {
     this.form.use_variation_terms = this.practice.use_variation_terms;
   },
   methods: {
-    onFileInput(e) {
+    async onFileInput(e) {
       if (!e.target.files.length) {
         return;
       }
-      console.log(e);
       this.formError = [];
       let types = ["pdf", "jpeg", "msword", "tiff", "docx"];
       let file = e.target.files[0];
@@ -506,9 +489,11 @@ export default {
       const formData = new FormData();
       formData.append("file", file);
       this.input_file_loading = true;
+      await this.save();
       this.$axios
         .$post(`/api/v1/practice/me/practice/variation-terms`, formData)
         .then(res => {
+          console.log(res);
           this.practice.variation_terms_file = variation_terms_file;
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,
@@ -584,61 +569,70 @@ export default {
           this.input_file_loading = false;
         });
     },
-    async save() {
-      try {
-        this.formError = [];
-        let notRequired = [
-          "mandatory_training_id",
-          "extra_information",
-          "gp_compliance_document_id",
-          "others_compliance_document_id",
-          "vat_registered"
-        ];
-        if (
-          this.form.use_variation_terms === false ||
-          (this.form.use_variation_terms === true &&
-            this.practice.variation_terms_file !== null)
-        ) {
-          notRequired.push("use_variation_terms");
-        } else if (
-          this.form.use_variation_terms === true &&
-          this.practice.variation_terms_file === null
-        ) {
-          this.formError.push({
-            field: "use_variation_terms",
-            message: "use_variation_terms file is required"
-          });
-        }
-        if (["false", false].includes(this.vat_registered)) {
-          notRequired.push("vat_number");
-        }
-        this.Validate(this.form, notRequired);
-        if (!this.formError.length) {
-          this.loading = true;
+    save() {
+      this.formError = [];
+      let notRequired = [
+        "mandatory_training_id",
+        "extra_information",
+        "gp_compliance_document_id",
+        "others_compliance_document_id",
+        "vat_registered"
+      ];
 
-          const res = await this.$axios.$put(
-            `/api/v1/practice/me/practice`,
-            this.form
-          );
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "success",
-            text: [res.message]
+      if (
+        this.form.use_variation_terms === false ||
+        (this.form.use_variation_terms === true &&
+          this.practice.variation_terms_file !== null)
+      ) {
+        notRequired.push("use_variation_terms");
+      }
+      //  else if (
+      //   this.form.use_variation_terms === true &&
+      //   this.practice.variation_terms_file === null
+      // ) {
+      //   this.formError.push({
+      //     field: "use_variation_terms",
+      //     message: "Your Variation Standard Terms file is required"
+      //   });
+      // }
+      if (["false", false].includes(this.vat_registered)) {
+        notRequired.push("vat_number");
+      }
+      this.Validate(this.form, notRequired);
+      if (!this.formError.length) {
+        this.loading = true;
+
+        return this.$axios
+          .$put(`/api/v1/practice/me/practice`, this.form)
+          .then(res => {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: [res.message]
+            });
+          })
+          .catch(err => {
+            console.log("err", err.response || err);
+            if (
+              err.response &&
+              err.response.data &&
+              err.response.data.error_messages
+            ) {
+              this.formError = err.response.data.error_messages;
+            }
+            throw err;
+          })
+          .finally(() => {
+            this.scrollToTop();
+            this.loading = false;
           });
-          this.loading = false;
-          this.scrollToTop();
-        } else {
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "danger",
-            text: ["Please fill up all the forms"]
-          });
-          this.scrollToTop();
-        }
-      } catch (err) {
+      } else {
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "danger",
+          text: ["Please fill up all the forms"]
+        });
         this.scrollToTop();
-        this.loading = false;
-        this.formError = err.response.data.error_messages;
       }
     }
   }

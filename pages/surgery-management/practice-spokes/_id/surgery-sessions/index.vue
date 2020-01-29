@@ -24,7 +24,7 @@
           <nuxt-link
             class="shield"
             v-if="$route.name === 'surgery-management-practice-spokes-id-surgery-sessions-index-sessionId'"
-            :to="{ path: `/surgery-management/practice-spokes/${$route.params.id}/surgery-sessions?status=${$route.query.status ? $route.query.status : 'Allocated'}`, query: {...$route.query}}"
+            :to="{ path: `/surgery-management/practice-spokes/${$route.params.id}/surgery-sessions?status=${$route.query.jobStatus ? $route.query.jobStatus : 'Allocated'}`, query: {...$route.query}}"
           ></nuxt-link>
         </transition>
         <div>
@@ -40,11 +40,11 @@ import AppTable from "@/components/Base/AppTable";
 import { mapGetters } from "vuex";
 export default {
   components: {
-    AppTable,
+    AppTable
   },
   middleware({ query, redirect, error }) {
     if (
-      query.status &&
+      query.jobStatus &&
       ![
         "pending",
         "allocated",
@@ -57,7 +57,7 @@ export default {
         "withdrawn",
         "completed",
         "approved"
-      ].includes(query.status.toLowerCase())
+      ].includes(query.jobStatus.toLowerCase())
     ) {
       return error({ status: 404, message: "This Session Status is Invalid" });
     }
@@ -127,26 +127,26 @@ export default {
     }),
     isJobPart() {
       if (
-        !this.$route.query.status ||
-        (this.$route.query.status &&
+        !this.$route.query.jobStatus ||
+        (this.$route.query.jobStatus &&
           !["ongoing", "completed", "approved"].includes(
-            this.$route.query.status.toLowerCase()
+            this.$route.query.jobStatus.toLowerCase()
           ))
       ) {
         return false;
       }
       if (
-        this.$route.query.status &&
-        ["pending","ongoing", "completed", "approved"].includes(
-          this.$route.query.status.toLowerCase()
+        this.$route.query.jobStatus &&
+        ["pending", "ongoing", "completed", "approved"].includes(
+          this.$route.query.jobStatus.toLowerCase()
         )
       ) {
         return true;
       }
     },
     total() {
-      if (this.$route.query.status) {
-        switch (this.$route.query.status.toLowerCase()) {
+      if (this.$route.query.jobStatus) {
+        switch (this.$route.query.jobStatus.toLowerCase()) {
           // parts
           case "ongoing":
             return this.$store.state.jobs.practice_ongoing_job_parts_count;
@@ -179,8 +179,8 @@ export default {
       }
     },
     jobs() {
-      if (this.$route.query.status) {
-        switch (this.$route.query.status.toLowerCase()) {
+      if (this.$route.query.jobStatus) {
+        switch (this.$route.query.jobStatus.toLowerCase()) {
           // parts
           case "ongoing":
             return this.getPracticeOngoingJobs;
@@ -211,8 +211,8 @@ export default {
       }
     },
     noJobsToDisplay() {
-      if (this.$route.query.status) {
-        switch (this.$route.query.status.toLowerCase()) {
+      if (this.$route.query.jobStatus) {
+        switch (this.$route.query.jobStatus.toLowerCase()) {
           case "pending":
           case "allocated":
           case "ongoing":
@@ -224,7 +224,7 @@ export default {
           case "applied":
           case "unfilled":
           case "completed":
-            return `This spoke does not have ${this.$route.query.status.toLowerCase()} jobs`;
+            return `This spoke does not have ${this.$route.query.jobStatus.toLowerCase()} jobs`;
           default:
             return "You do not have any allocated jobs";
         }
@@ -238,9 +238,9 @@ export default {
     dispatchUrl() {
       let url = "jobs/fetchPracticeJobs";
       if (
-        this.$route.query.status &&
+        this.$route.query.jobStatus &&
         ["ongoing", "completed", "approved"].includes(
-          this.$route.query.status.toLowerCase()
+          this.$route.query.jobStatus.toLowerCase()
         )
       ) {
         url = "jobs/fetchPracticeJobParts";
@@ -249,8 +249,8 @@ export default {
     },
     columns() {
       let columns = [];
-      let queryStatus = this.$route.query.status
-        ? this.$route.query.status.toLowerCase()
+      let queryStatus = this.$route.query.jobStatus
+        ? this.$route.query.jobStatus.toLowerCase()
         : "allocated";
       if (["ongoing", "completed", "approved"].includes(queryStatus)) {
         columns.push(
@@ -404,7 +404,7 @@ export default {
     }
   },
   watch: {
-    "$route.query"({ status: newStatus }, { status: oldStatus }) {
+    "$route.query"({ jobStatus: newStatus }, { jobStatus: oldStatus }) {
       if (newStatus && newStatus !== null && newStatus !== oldStatus) {
         this.toggleTable = false;
         this.filterToggle = false;
@@ -425,10 +425,9 @@ export default {
         response.data &&
         response.data.data &&
         response.data.data.practice_surgery &&
-        response.data.data.practice_surgery.child_practice_id 
+        response.data.data.practice_surgery.child_practice_id
           ? response.data.data.practice_surgery.child_practice_id
           : null;
-      console.log('spoke practice id', spokePracticeId)
       return {
         spokePracticeId
       };
@@ -437,20 +436,19 @@ export default {
     }
   },
   created() {
-    console.log('params', this.jobPartParams, this.params)
-    this.jobPartParams.job_practice_id = this.spokePracticeId
-    this.params.practice_id = this.spokePracticeId
+    this.jobPartParams.job_practice_id = this.spokePracticeId;
+    this.params.practice_id = this.spokePracticeId;
     this.getJobsCount(this.isJobPart ? this.jobPartParams : this.params);
     setTimeout(() => {
       this.clearJobsBadge(
-        this.$route.query.status ? this.$route.query.status : "Allocated"
+        this.$route.query.jobStatus ? this.$route.query.jobStatus : "Allocated"
       );
     }, 250);
   },
   methods: {
     clearJobsBadge(status) {
       let jobStatus = status.toUpperCase();
-      return this.$store.commit(`jobs/CLEAR_PRACTICE_${jobStatus}_BADGE`);
+      // return this.$store.commit(`jobs/CLEAR_PRACTICE_${jobStatus}_BADGE`);
     },
     showFilter() {
       return (this.filterToggle = !this.filterToggle);
@@ -460,8 +458,8 @@ export default {
       this.params.offset = 0;
       this.jobPartParams.offset = 0;
       this.$store.commit("jobs/TOGGLE_LOADING", true);
-      let jobStatus = this.$route.query.status
-        ? this.$route.query.status.toUpperCase()
+      let jobStatus = this.$route.query.jobStatus
+        ? this.$route.query.jobStatus.toUpperCase()
         : "ALLOCATED";
       if (["ONGOING", "COMPLETED", "APPROVED"].includes(jobStatus)) {
         this.$store.commit(`jobs/SET_PRACTICE_${jobStatus}_JOB_PARTS`, []);
@@ -476,34 +474,34 @@ export default {
       this.$store.commit("jobs/TOGGLE_LOADING", true);
       this.$store
         .dispatch(`${this.dispatchUrl}`, {
-          
           status: [
             `${
-              this.$route.query.status ? this.$route.query.status : "Allocated"
+              this.$route.query.jobStatus
+                ? this.$route.query.jobStatus
+                : "Allocated"
             }`
           ],
           countOnly: true,
           ...params
         })
         .finally(() => {
-          console.log(this.total)
           this.getJobs(params);
         });
     },
     getJobs(params) {
       this.$store.commit("jobs/CLEAR_JOBS");
-       console.log('dispatch url',this.dispatchUrl)
       this.$store
         .dispatch(`${this.dispatchUrl}`, {
           status: [
             `${
-              this.$route.query.status ? this.$route.query.status : "Allocated"
+              this.$route.query.jobStatus
+                ? this.$route.query.jobStatus
+                : "Allocated"
             }`
           ],
           ...params
         })
         .finally(() => {
-          console.log(this.jobs)
           this.$store.commit("jobs/TOGGLE_LOADING", false);
           this.toggleTable = true;
         });

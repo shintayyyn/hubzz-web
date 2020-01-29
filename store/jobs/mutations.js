@@ -452,8 +452,6 @@ export default {
     },
     REMOVE_LOCUM_AVAILABLE_JOB(state, payload) {
         state.locum_available_jobs = state.locum_available_jobs.filter(job => job.id !== payload)
-        console.log(payload)
-        console.log(state.locum_available_jobs)
     },
 
     SET_LOCUM_MATCHED_JOBS(state, payload) {
@@ -468,8 +466,6 @@ export default {
     },
     REMOVE_LOCUM_MATCHED_JOB(state, payload) {
         state.locum_matched_jobs = state.locum_matched_jobs.filter(job => job.id !== payload)
-        console.log(payload)
-        console.log(state.locum_matched_jobs)
     },
 
     SET_LOCUM_UNSUCCESSFUL_JOBS(state, payload) {

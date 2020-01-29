@@ -311,7 +311,7 @@
                 v-else
                 :key="item.id"
                 class="text-xs sm:text-sm text-left"
-                :class="!item.info && 'text-gray-600 hover:bg-white'"
+                :class="!item.info ? 'text-gray-600' : 'hover:bg-white'"
               >
                 <td
                   :class="item && item.file ? 'cursor-pointer' : ''"
@@ -374,7 +374,9 @@
                       @click.stop
                     />
                     <svgicon name="cloud-upload" height="24" width="24" />
-                    <label class="hidden md:block leading-loose mx-2 cursor-pointer">Update</label>
+                    <label
+                      class="hidden md:block text-black leading-loose mx-2 cursor-pointer"
+                    >Update</label>
                   </div>
                 </td>
               </tr>

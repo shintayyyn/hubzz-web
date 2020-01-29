@@ -29,7 +29,7 @@
                 class="mx-1"
               >
                 <AppButton
-                  v-if="authPermissions.includes('Create Sessions Job')"
+                  v-if="authPermissions.includes('Create Sessions Job') || !notAllowed"
                   :label="'Create Job'"
                   :disabled="notAllowed"
                   @click="$store.commit('calendar/CREATE_JOB_MODAL', true)"

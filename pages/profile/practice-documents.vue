@@ -18,9 +18,8 @@
         <div class="flex-1 flex items-center p-2 justify-center">File Size</div>
         <div class="flex-1 flex items-center p-2 justify-center">Last Upload Date</div>
       </div>
-
       <div v-for="item in terms" :key="item.id" class="row py-2">
-        <nuxt-link :to="`/profile/practice-documents/${item.id}/standard-terms`">
+        <nuxt-link :to="`/profile/practice-documents/standard-terms`">
           <div
             class="px-2 mx-2 flex justify-start shadow-md rounded-lg items-center py-3 bg-white transition-hover hover:bg-gray-100"
           >
@@ -39,7 +38,7 @@
     <transition name="fade" mode="out-in">
       <nuxt-link
         class="shield"
-        v-if="$route.name.includes('profile-practice-documents-id')"
+        v-if="['profile-practice-documents-id', 'profile-practice-documents-standard-terms'].includes($route.name)"
         :to="'/profile/practice-documents'"
       ></nuxt-link>
     </transition>
