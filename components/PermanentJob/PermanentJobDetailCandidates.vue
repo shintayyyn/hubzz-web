@@ -70,7 +70,6 @@ import PermanentJobShowCandidates from "@/components/PermanentJob/PermanentJobSh
 import SendMessageModal from "@/components/Messages/SendMessageModal";
 export default {
 	components: {
-		AppAvatar,
 		AppPagination,
 		PermanentJobShowCandidates,
 		SendMessageModal
@@ -100,6 +99,7 @@ export default {
 	},
 	created() {
     this.getApplicantsCount();
+    console.log('permanent job canditates', this.permanent_job)
 		// this.applicants = [
 		// 	{
 		// 		id: 1,
@@ -121,11 +121,10 @@ export default {
 		    this.getApplicants(this.params);
       })
 		},
-		getApplicants() {
+		getApplicants(params) {
 		  this.$axios
-		    .$get(`/api/v1/practice/permanent-job-applications`,{
-          ...this.params,
-          permanent_job_id: this.permanent_job_id
+        .$get(`/api/v1/practice/permanent-job-applications?permanent_job_id=${this.permanent_job.id}`,{
+          ...params,
         })
 		    .then(res => {
           this.permanent_job_applications = res.data.permanent_job_applications;

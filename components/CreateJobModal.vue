@@ -555,8 +555,8 @@ export default {
         time_start: null,
         date_end: null,
         time_end: null,
-        include_saturday: false,
-        include_sunday: false,
+        include_saturday: true,
+        include_sunday: true,
         unpaid_breaks_in_minutes: "",
         shift_id: "",
         auto_assign_at: null,
@@ -595,6 +595,11 @@ export default {
           this.compliances = this.others_compliance_documents_lists;
           return;
         }
+      }
+    },
+    "form.date_start"(to, from) {
+      if (!from) {
+        this.form.date_end = to;
       }
     },
     "form.date_end"(value) {

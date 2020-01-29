@@ -12,13 +12,28 @@
 				<button class="mx-4 focus:outline-none" @click.prevent.stop="message(user)">
 					<svgicon name="chat" height="32" width="32" color="#888 #555 #fff" />
 				</button>
-				<AppButton :label="'Accept'" class="mx-1" />
+				<AppButton 
+        :label="'Accept'" class="mx-1" @click="accepted=!accepted" />
 				<AppButton
 					class="mx-1"
+          @click="rejectLocum()"
 					:label="'Reject'"
 					:customTheme="'bg-red-500 hover:bg-red-600 text-white'"
 				/>
 			</div>
+      <div v-if="accepted">
+        <AppDate
+          v-model="form.invitation_schedule" 
+          :name="'invitation_schedule'" 
+          :label="'Invitation Schedule'"  
+        />
+        <AppButton
+        @click="inviteLocum()"
+        class="mx-1"
+        :label="'Invite This Locum'"
+        :customTheme="'bg-green-500 hover:bg-red-600 text-white'"
+        />
+      </div>
 			<div class="flex flex-row flex-no-wrap justify-start mt-4 md:mt-8">
 				<div class="font-bold text-md sm:text-lg">{{user.name}}</div>
 			</div>
@@ -136,11 +151,11 @@
 							<div class="text-xs sm:text-sm">(none)</div>
 						</div>
 					</div>
-					<AppButton
+					<!-- <AppButton
 						:label="'Appoint to this job'"
 						@click="confirmation_modal = true"
 						v-if="authPermissions.includes('Appoint Sessions Job')"
-					/>
+					/> -->
 				</div>
 			</div>
 		</div>
@@ -165,13 +180,15 @@ import AppButton from "@/components/Base/AppButton";
 import AppAvatar from "@/components/Base/AppAvatar";
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
 import SendMessageModal from "@/components/Messages/SendMessageModal";
+import AppDate from "@/components/Base/AppDate";
+
 export default {
 	props: ["user", "job", "permanent_job_application"],
 	components: {
 		AppButton,
 		AppConfirmationModal,
-		AppAvatar,
-		SendMessageModal
+    SendMessageModal,
+    AppDate,
 	},
 	data() {
 		return {
@@ -179,6 +196,10 @@ export default {
 			mandatory: [],
 			optional: [],
       sendMessageModal: false,
+      form:{
+        invitation_schedule: ''
+      },
+      accepted: false
 		};
 	},
 	computed: {
@@ -220,7 +241,38 @@ export default {
 					}
 				);
 			});
-		},
+    },
+    inviteLocum(){
+      this.$axios.$put(`/api/v1/practice/permanent-job-applications/${this.permanent_job_application.id}/schedule-locum`,this.form).then(res => {
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "success",
+          text: ["Successfully Invited Locum"]
+        });
+      }).catch(err => {
+        console.log("err", err.reponse | err);
+					this.$store.commit("SET_NOTIFICATION", {
+						enabled: true,
+						status: "danger",
+						text: [`${err.response.data.message}`]
+					});
+      })
+    },
+    rejectLocum(){
+      this.$axios.$put(`/api/v1/practice/permanent-job-applications/${this.permanent_job_application.id}/reject-application`).then(res => {
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "success",
+          text: ["Successfully Rejected Locum"]
+        }).catch(err => {
+          this.$store.commit("SET_NOTIFICATION", {
+						enabled: true,
+						status: "danger",
+						text: [`${err.response.data.message}`]
+					});
+        });
+      })
+    },
 		appoint() {
 			this.$axios
 				.$put(
@@ -247,7 +299,7 @@ export default {
 					console.log("err", err.reponse | err);
 					this.$store.commit("SET_NOTIFICATION", {
 						enabled: true,
-						status: "danget",
+						status: "danger",
 						text: [`${err.response.data.message}`]
 					});
 				})

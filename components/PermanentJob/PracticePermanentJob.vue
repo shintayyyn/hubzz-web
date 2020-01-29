@@ -20,35 +20,35 @@
 							<div class="w-full flex flex-col md:flex-row">
 								<div class="w-full md:flex-w-1/2">
 									<p class="font-bold">Practice</p>
-									<p class="pl-2 pb-3">{{permanent_job.practice.name}}</p>
+									<p class="pl-2 pb-3">{{permanent_job ? permanent_job.practice.name : ''}}</p>
 
 									<p class="font-bold">Salary</p>
-									<p class="pl-2 pb-3">{{permanent_job.salary_amount}}</p>
+									<p class="pl-2 pb-3">{{permanent_job ? permanent_job.salary_amount : ''}}</p>
 
 									<p class="font-bold">Posted</p>
-									<p class="pl-2 pb-3">{{$moment(permanent_job.date_posted).format('YYYY-MM-DD')}}</p>
+									<p class="pl-2 pb-3">{{permanent_job ? $moment(permanent_job.date_posted).format('YYYY-MM-DD') : ''}}</p>
 
 									<p class="font-bold">Closes</p>
-									<p class="pl-2 pb-3">{{$moment(permanent_job.date_closing).format('YYYY-MM-DD')}}</p>
+									<p class="pl-2 pb-3">{{permanent_job ? $moment(permanent_job.date_closing).format('YYYY-MM-DD') : ''}}</p>
 								</div>
 
 								<div class="w-full md:flex-w-1/2">
 									<p class="font-bold">Report to</p>
-									<p class="pl-2 pb-3">{{permanent_job.report_to}}</p>
+									<p class="pl-2 pb-3">{{permanent_job ? permanent_job.report_to : ''}}</p>
 
 									<p class="font-bold">Role</p>
 									<p class="pl-2 pb-3">{{}}</p>
 
 									<p class="font-bold">Hours</p>
-									<p class="pl-2 pb-3">{{permanent_job.work_hours}}</p>
+									<p class="pl-2 pb-3">{{ permanent_job ? permanent_job.work_hours : ''}}</p>
 
 									<p class="font-bold">Industry</p>
-									<p class="pl-2 pb-3">{{permanent_job.industry_type}}</p>
+									<p class="pl-2 pb-3">{{ permanent_job ? permanent_job.industry_type : ''}}</p>
 								</div>
 							</div>
 
 							<p class="font-bold">Description</p>
-							<span v-html="permanent_job.description"></span>
+							<span v-html="permanent_job ? permanent_job.description : ''"></span>
 						</template>
 						<template v-else>
 							<div class="w-full flex flex-col md:flex-row">
@@ -91,16 +91,16 @@
 									</div>
 
 									<p class="font-bold">Posted</p>
-									<AppDate v-model="job.date_posted" :name="'date_posted'" :label="'Date Posted'" isAfter />
+									<AppDate v-model="form.date_posted" :name="'date_posted'" :label="'Date Posted'" isAfter />
 
 									<p class="font-bold">Closes</p>
-									<AppDate v-model="job.date_closing" :name="'date_closing'" :label="'Date Posted'" isAfter />
+									<AppDate v-model="form.date_closing" :name="'date_closing'" :label="'Date Posted'" isAfter />
 								</div>
 
 								<div class="w-full md:flex-w-1/2 pl-2">
 									<p class="font-bold">Report to</p>
 									<AppInput
-										v-model="job.report_to"
+										v-model="form.report_to"
 										:type="'text'"
 										:name="'report_to'"
 										:error="formError.find(item => item.field === 'report_to')"
@@ -119,7 +119,7 @@
 
 									<p class="font-bold">Hours</p>
 									<AppInput
-										v-model="job.work_hours"
+										v-model="form.work_hours"
 										:type="'select'"
 										:name="'work_hours'"
 										:placeholder="'Select...'"
@@ -131,7 +131,7 @@
 
 									<p class="font-bold">Industry</p>
 									<AppInput
-										v-model="job.industry_type"
+										v-model="form.industry_type"
 										:type="'select'"
 										:name="'industry_type'"
 										:placeholder="'Select...'"
@@ -185,12 +185,12 @@
                   { label: '24', value: 24 * 60 },
                 ]"
 							/>
-							<AppButton :label="'Save Changes'" />
+							<AppButton @click="editPermanentJob()" :label="'Save Changes'" />
 						</template>
 					</div>
 				</div>
 
-				<div class="mx-2 w-full md:w-2/5 lg:w-1/3">
+				<div v-if="permanent_job" class="mx-2 w-full md:w-2/5 lg:w-1/3">
 					<PermanentJobDetailCandidates :permanent_job="permanent_job"/>
 					<PermanentJobMap :permanent_job="permanent_job" />
 				</div>
@@ -207,20 +207,18 @@ import PermanentJobShowCandidates from "@/components/PermanentJob/PermanentJobSh
 import PermanentJobDetailCandidates from "@/components/PermanentJob/PermanentJobDetailCandidates";
 import PermanentJobMap from "@/components/PermanentJob/PermanentJobMap";
 export default {
-  props:["permanent_job", "permanent_job_applications"],
 	components: {
 		AppInput,
 		AppButton,
-		AppFilterSearch,
 		AppDate,
-		PermanentJobShowCandidates,
 		PermanentJobDetailCandidates,
 		PermanentJobMap
 	},
 	data() {
 		return {
 			edit: false,
-			modal: false,
+      modal: false,
+      permanent_job: '',
 			form: {
 				title: "",
 				description: "",
@@ -229,11 +227,11 @@ export default {
 				email: "",
 				report_to: "",
 				industry_type: "",
-				salary_amount: 0,
+        salary_amount: 0,
+        salary_description_1: "",
+        salary_description_2: "",
 				work_hours: 0,
 				practice_id: "",
-				parent_practice_id: "",
-				appointed_to_locum: "",
 				profession_id: "",
 				practice_rate: 0,
 				approved_at: ""
@@ -294,13 +292,18 @@ export default {
 		};
 	},
 	created() {
-		this.loading = true;
+    this.loading = true;
+    this.$axios.$get(`/api/v1/practice/permanent-jobs/${this.$route.params.id}`).then(res => {
+      this.permanent_job = res.data.permanent_job
+      console.log(this.permanent_job)
+    })
 		Promise.all([
 			this.$axios.$get("/api/v1/practice/me/practice-practices"),
 			this.$axios.$get("/api/v1/locum-detail-rate-types"),
 			this.$axios.$get("/api/v1/shifts"),
 			this.$axios.$get("/api/v1/professions"),
       this.$axios.$get("/api/v1/me"),
+      
 		])
 			.then(
 				([
@@ -334,11 +337,15 @@ export default {
 			)
 			.finally(() => {
         this.loading = false;
-			});
-		this.form.practice_id = this.job.practice;
-		this.form.salary_description_1 = this.job.salary_1;
-		this.form.salary_description_2 = this.job.salary_2;
-		this.form.description = this.job.description;
+      });
+      
+    this.form.date_posted = this.permanent_job.date_posted;
+    this.form.date_closing = this.permanent_job.date_closing;
+		this.form.practice_id = this.permanent_job.practice_id;
+		this.form.salary_description_1 = this.permanent_job.salary_description_1;
+		this.form.salary_description_2 = this.permanent_job.salary_description_2;
+    this.form.description = this.permanent_job.description;
+    this.form.report_to = this.permanent_job.report_to
 
 		this.work_hours_type = [
 			{
@@ -390,7 +397,16 @@ export default {
 		},
 		onEditorReady(editor) {
 			console.log("editor ready!", editor);
-		}
+    },
+    editPermanentJob(){
+      this.$axios.$put(`/api/v1/practice/permanent-job/${this.permanent_job.id}`, this.form).then(res => {
+         this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "success",
+          text: ["Successfully Rejected Locum"]
+        });
+      })
+    }
 	}
 };
 </script>

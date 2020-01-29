@@ -576,8 +576,8 @@ export default {
         time_start: null,
         date_end: null,
         time_end: null,
-        include_saturday: false,
-        include_sunday: false,
+        include_saturday: true,
+        include_sunday: true,
         unpaid_breaks_in_minutes: "",
         shift_id: "",
         auto_assign_at: null,
@@ -606,6 +606,11 @@ export default {
       if (newValue && oldValue) {
         this.form.compliance_document_id = [];
         console.log(this.form.compliance_document_id);
+      }
+    },
+    "form.date_start"(to, from) {
+      if (!from) {
+        this.form.date_end = to;
       }
     },
     "form.date_end"(value) {
@@ -892,9 +897,6 @@ export default {
       //   `${this.form.date_end} ${this.form.time_end}`,
       //   "YYYY-MM-DD HH:mm"
       // ).format("YYYY-MM-DD HH:mm");
-
-      // console.log(startDateTime);
-      // console.log(endDateTime);
 
       // if (this.$moment(this.startDateTime).isSameOrAfter(this.endDateTime)) {
       //   this.formError.push({
