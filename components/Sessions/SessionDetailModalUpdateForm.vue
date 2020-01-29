@@ -227,6 +227,8 @@
                 :name="'date_end'"
                 :label="'End Date'"
                 :error="formError.find(item => item.field === 'date_end')"
+                :startDate="form.date_start"
+                isAfter
               />
             </div>
             <div class="px-1 w-full md:w-1/2">
@@ -606,11 +608,6 @@ export default {
       if (newValue && oldValue) {
         this.form.compliance_document_id = [];
         console.log(this.form.compliance_document_id);
-      }
-    },
-    "form.date_start"(to, from) {
-      if (!from) {
-        this.form.date_end = to;
       }
     },
     "form.date_end"(value) {
