@@ -72,6 +72,9 @@
                   <template v-if="column.dataIndex === 'actions'">
                     <slot name="actions" v-bind:item="item"></slot>
                   </template>
+                  <template v-if="column.dataIndex === 'actions-button'">
+                    <slot name="actions-button" v-bind:item="item"></slot>
+                  </template>
                   <template
                     v-if="
 											column.class &&

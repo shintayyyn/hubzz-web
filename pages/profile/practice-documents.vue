@@ -14,31 +14,36 @@
           v-if="slotProps.item.info"
         >{{(slotProps.item.info.updated_at ? slotProps.item.info.updated_at : slotProps.item.info.created_at) | localDate}}</div>
       </template>
+      <template v-slot:actions-button="slotProps">
+        <div
+          @click="$router.push({ path: `/profile/practice-documents/${slotProps.item.fileId}` })"
+          class="mx-1 p-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
+        >View</div>
+      </template>
     </AppTable>
     <template v-if="terms.length > 0">
       <p class="mt-4">
         <strong>Variation to Standard Terms</strong>
       </p>
-      <div class="row flex justify-start font-bold leading-none text-sm">
-        <div class="flex-1 flex items-center p-2">Filename</div>
-        <div class="flex-1 flex items-center p-2 justify-center">File Size</div>
-        <div class="flex-1 flex items-center p-2 justify-center">Last Upload Date</div>
-      </div>
-      <div v-for="item in terms" :key="item.id" class="row py-2">
-        <nuxt-link :to="`/profile/practice-documents/standard-terms`">
+      <AppTable
+        v-if="terms.length > 0"
+        :total="terms.length"
+        :items="terms"
+        :columns="variation_columns"
+        :customWidth="480"
+      >
+        <template v-slot:actions="slotProps">
           <div
-            class="px-2 mx-2 flex justify-start shadow-md rounded-lg items-center py-3 bg-white transition-hover hover:bg-gray-100"
-          >
-            <div class="flex-1">{{item.name}}</div>
-            <div
-              class="flex-1 text-center"
-            >{{item.info && item.info.file && item.info.file.size ? `${(item.info.file.size / 1000).toFixed(2)} Kb` : ''}}</div>
-            <div
-              class="flex-1 text-center"
-            >{{item.info && item.info.created_at ? `${$moment(item.info.created_at, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('YYYY-MM-DD | HH:mm')}` : ''}}</div>
-          </div>
-        </nuxt-link>
-      </div>
+            v-if="slotProps.item.info"
+          >{{(slotProps.item.info.updated_at ? slotProps.item.info.updated_at : slotProps.item.info.created_at) | localDate}}</div>
+        </template>
+        <template v-slot:actions-button>
+          <div
+            @click="$router.push({ path: `/profile/practice-documents/standard-terms` })"
+            class="mx-1 p-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
+          >View</div>
+        </template>
+      </AppTable>
     </template>
 
     <transition name="fade" mode="out-in">
@@ -68,6 +73,28 @@ export default {
       practice_compliance_documents: [],
       variation_terms: [],
       // app table
+      variation_columns: [
+        {
+          name: "Filename",
+          dataIndex: "name",
+          class: "text-left"
+        },
+        {
+          name: "File Size",
+          dataIndex: "info.file.size",
+          class: "text-center fileSize*MB"
+        },
+        {
+          name: "Last Upload Date",
+          dataIndex: "actions",
+          class: "text-center"
+        },
+        {
+          name: "Actions",
+          dataIndex: "actions-button",
+          class: "text-center"
+        }
+      ],
       columns: [
         {
           name: "Title",
@@ -77,16 +104,16 @@ export default {
         {
           name: "File Size",
           dataIndex: "info.file.size",
-          class: "text-center fileSize*MB qweq"
+          class: "text-center fileSize*MB"
         },
-        // {
-        //   name: "Last Upload Date",
-        //   dataIndex: "info.updated_at",
-        //   class: "text-center localDate"
-        // },
         {
           name: "Last Upload Date",
           dataIndex: "actions",
+          class: "text-center"
+        },
+        {
+          name: "Actions",
+          dataIndex: "actions-button",
           class: "text-center"
         }
       ]
@@ -160,28 +187,10 @@ export default {
             });
           });
 
-          // Add variation terms
-          // practice_compliance_documents.push(variation_terms);
-
-          // const practice_compliance_documents = [];
-          // practice_document_types.forEach(practiceDocumentType => {
-          //   let hasDocument = practice_documents.find(
-          //     practiceDocument =>
-          //       practiceDocument.practice_document_type.name ===
-          //       practiceDocumentType.name
-          //   );
-          //   practice_compliance_documents.push({
-          //     ...practiceDocumentType,
-          //     info: hasDocument ? hasDocument : null,
-          //     fileId: hasDocument ? hasDocument.id : null
-          //   });
-          // });
-
           const terms = [];
           if (variation_terms !== null) {
             terms.push(variation_terms);
           }
-          console.log(practice_compliance_documents);
           return {
             practice_compliance_documents,
             terms

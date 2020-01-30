@@ -500,7 +500,16 @@ export default {
         return;
       }
       this.formError = [];
-      let types = ["pdf", "jpeg", "msword", "tiff", "docx"];
+      let types = [
+        "pdf",
+        "jpeg",
+        "msword",
+        "tiff",
+        "vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "vnd.openxmlformats-officedocument.wordprocessingml.template",
+        "vnd.ms-word.document.macroEnabled.12",
+        "vnd.ms-word.template.macroEnabled.12"
+      ];
       let file = e.target.files[0];
       let fileType = file.type.split("/")[1];
       if (!types.includes(fileType)) {
