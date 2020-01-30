@@ -331,7 +331,6 @@ export default {
       //   });
       // }
       this.Validate(this.form, ["description"]);
-      console.log(this.formError);
       if (!this.formError.length) {
         try {
           this.loading = true;
