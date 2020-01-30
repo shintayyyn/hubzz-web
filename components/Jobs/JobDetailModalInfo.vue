@@ -13,22 +13,20 @@
         <div class="font-bold text-sm sm:text-md">Extra information</div>
         <div
           class="text-xs sm:text-sm mb-8"
-          v-text="job.platform_job.extra_information?job.platform_job.extra_information:`(none)`"
-        ></div>
+        >{{job.platform_job.extra_information?job.platform_job.extra_information:`(none)`}}</div>
         <div class="font-bold text-sm sm:text-md">Report to</div>
         <div class="text-xs sm:text-sm mb-8">{{job.platform_job.report_to}}</div>
         <div class="font-bold text-sm sm:text-md">Telephone number</div>
         <div
           class="text-xs sm:text-sm mb-8"
-          v-text="job.platform_job.practice.phone_number?job.platform_job.practice.phone_number:`(none)`"
-        ></div>
+        >{{job.platform_job.practice.phone_number?job.platform_job.practice.phone_number:`(none)`}}</div>
         <div class="font-bold text-sm sm:text-md">Email address</div>
         <div class="text-xs sm:text-sm mb-8">{{job.platform_job.email}}</div>
         <template v-if="job.locum_status === 'Cancelled'">
           <div class="font-bold text-sm sm:text-md">Cancelled At</div>
           <div class="text-xs sm:text-sm mb-8">{{job.platform_job.cancelled_at | localDate}}</div>
           <div class="font-bold text-sm sm:text-md">Cancelled Reason</div>
-          <div class="text-xs sm:text-sm mb-8" v-text="job.platform_job.cancelled_reason"></div>
+          <div class="text-xs sm:text-sm mb-8">{{job.platform_job.cancelled_reason}}</div>
         </template>
         <template v-if="job.status === 'Declined'">
           <div class="font-bold text-sm sm:text-md">Declined</div>
@@ -58,10 +56,7 @@
         <div class="font-bold text-sm sm:text-md">Session structure information</div>
         <div class="text-xs sm:text-sm mb-8">{{job.platform_job.session_structure_information}}</div>
         <div class="font-bold text-sm sm:text-md">Update Remarks</div>
-        <div
-          class="text-xs sm:text-sm mb-8"
-          v-text="job.update_remarks?job.update_remarks:`(none)`"
-        ></div>
+        <div class="text-xs sm:text-sm mb-8">{{job.update_remarks?job.update_remarks:`(none)`}}</div>
       </div>
       <div class="flex flex-col w-full md:w-1/2 p-0 md:pl-4">
         <div class="font-bold text-sm sm:text-md">Duration</div>
@@ -146,9 +141,9 @@
         </div>
 
         <template v-if="job.variation_terms_file_id">
-          <div class="font-bold text-sm sm:text-md">Variation Terms</div>
+          <div class="font-bold text-sm sm:text-md">Terms & Condition</div>
           <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
-            <div class="mt-1 cursor-pointer" @click="modal = true">View file</div>
+            <div class="mt-1 cursor-pointer" @click="modal = true">View</div>
             <transition name="slide" mode="out-in">
               <div v-if="modal" class="modal-container shadow-lg">
                 <div class="h-full w-full">
