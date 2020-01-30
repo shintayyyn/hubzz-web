@@ -2,14 +2,34 @@
 	<section class="flex flex-col items-start">
     <div class="flex overflow-x-auto">
       <nuxt-link
-        :to="`/permanent-jobs`"
+        to="/permanent-jobs?status=Live"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
         :class="
-          $route.name === 'permanent-jobs-index'
+          !$route.query.status || ($route.query.status && $route.query.status.toLowerCase() === 'live')
             ? 'border rounded-lg border-yellow-500 bg-yellow-500'
             : 'text-gray-600'
         "
-        >Permanent Jobs
+        >Live
+      </nuxt-link>
+      <nuxt-link
+        to="/permanent-jobs?status=Filled"
+        class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
+        :class="
+          !$route.query.status || ($route.query.status && $route.query.status.toLowerCase() === 'filled')
+            ? 'border rounded-lg border-yellow-500 bg-yellow-500'
+            : 'text-gray-600'
+        "
+        >Filled
+      </nuxt-link>
+      <nuxt-link
+        to="/permanent-jobs?status=Unfilled"
+        class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
+        :class="
+          !$route.query.status || ($route.query.status && $route.query.status.toLowerCase() === 'unfilled')
+            ? 'border rounded-lg border-yellow-500 bg-yellow-500'
+            : 'text-gray-600'
+        "
+        >Unfilled
       </nuxt-link>
     </div>
 		<div
@@ -31,6 +51,7 @@ export default {
   created(){
     
   },
+
   async asyncData({ app, route, store, auth }) {
     try {
     } catch (err) {

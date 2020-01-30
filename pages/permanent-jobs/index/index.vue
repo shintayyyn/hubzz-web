@@ -56,7 +56,19 @@ export default {
 		AppButton,
 		AppTable
   },
-  
+  middleware({ query, redirect, error }) {
+    if (
+      query.status &&
+      ![
+        "live",
+        "filled",
+        "unfilled",
+      ].includes(query.status.toLowerCase())
+    ) {
+      return error({ status: 404, message: "This Permanent Job Status is Invalid" });
+    }
+  },
+
 	data() {
 		return {
 			total: 0,
@@ -159,6 +171,7 @@ export default {
       permanent_jobs_for_locum: [],
 		};
   },
+
   created(){
     
   },
