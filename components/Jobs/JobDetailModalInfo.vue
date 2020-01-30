@@ -78,9 +78,9 @@
           </div>
         </div>
         <div class="font-bold text-sm sm:text-md">Include Saturday</div>
-        <div class="text-xs sm:text-sm mb-8">{{job.include_saturday ? 'Yest' : 'No'}}</div>
+        <div class="text-xs sm:text-sm mb-8">{{job.include_saturday ? 'Yes' : 'No'}}</div>
         <div class="font-bold text-sm sm:text-md">Include Sunday</div>
-        <div class="text-xs sm:text-sm mb-8">{{job.include_sunday ? 'Yest' : 'No'}}</div>
+        <div class="text-xs sm:text-sm mb-8">{{job.include_sunday ? 'Yes' : 'No'}}</div>
         <div class="font-bold text-sm sm:text-md">Unpaid break</div>
         <div class="text-xs sm:text-sm mb-8">{{job.platform_job.unpaid_breaks_in_minutes}}</div>
 

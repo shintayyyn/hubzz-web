@@ -29,8 +29,26 @@
           >{{user.personal_detail.name}}</div>
 
           <div class="flex items-center">
+            <template v-if="user.is_favorite">
+              <svgicon
+                name="on-star"
+                height="25"
+                width="25"
+                class="cursor-pointer fill-current text-gray-700 hover:text-gray-800"
+                @click="unfavorite(user)"
+              />
+            </template>
+            <template v-else>
+              <svgicon
+                name="off-star"
+                height="25"
+                width="25"
+                class="cursor-pointer fill-current text-gray-700 hover:text-gray-800"
+                @click="favorite(user)"
+              />
+            </template>
             <button
-              class="rounded-lg hover:bg-gray-300 focus:outline-none"
+              class="rounded-lg hover:bg-gray-300 focus:outline-none ml-2"
               @click.prevent="message(user)"
             >
               <svgicon name="chat" height="24" width="24" color="#888 #555 #fff" class="m-2" />
@@ -76,11 +94,20 @@
     </transition>
     <div class="shield modal-shield" v-if="modal" @click="closeModal()"></div>
     <div class="shield" v-if="sendMessageModal" @click="closeModal()"></div>
+    <AppConfirmationModal
+      :label="confirmation_text"
+      :confirmLabel="'Yes'"
+      :cancelLabel="'Cancel'"
+      :modal="confirmation_modal"
+      @confirm="confirm"
+      @cancel="confirmation_modal = false"
+    />
   </div>
 </template>
 <script>
 import AppAvatar from "~/components/Base/AppAvatar";
 import AppPagination from "@/components/Base/AppPagination";
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
 import AppLoading from "@/components/Base/AppLoading";
 import SessionDetailModalShowCandidate from "@/components/Sessions/SessionDetailModalShowCandidate";
 import SendMessageModal from "@/components/Messages/SendMessageModal";
@@ -88,6 +115,7 @@ export default {
   components: {
     AppAvatar,
     AppPagination,
+    AppConfirmationModal,
     AppLoading,
     SessionDetailModalShowCandidate,
     SendMessageModal
@@ -105,7 +133,10 @@ export default {
       },
       user: null,
       modal: false,
-      sendMessageModal: false
+      sendMessageModal: false,
+      confirmation_text: "",
+      confirmation_modal: false,
+      user_id: null
     };
   },
   computed: {
@@ -145,6 +176,55 @@ export default {
     }
   },
   methods: {
+    favorite(user) {
+      this.confirmation_text = "Add this Locum to MyBanks?";
+      this.confirmation_modal = true;
+      this.user = user;
+    },
+    unfavorite(user) {
+      this.confirmation_text = "Remove this Locum to MyBanks?";
+      this.confirmation_modal = true;
+      this.user = user;
+    },
+    confirm() {
+      if (!this.user.is_favorite) {
+        this.$axios
+          .$post(`/api/v1/practice/locums/${this.user.id}/favorite`)
+          .then(res => {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: ["Added to favourites"]
+            });
+            this.user.is_favorite = true;
+          })
+          .catch(err => {
+            console.log("err", err.response || err);
+            throw err;
+          })
+          .finally(() => {
+            this.confirmation_modal = false;
+          });
+      } else if (this.user.is_favorite) {
+        this.$axios
+          .$delete(`/api/v1/practice/locums/${this.user.id}/favorite`)
+          .then(res => {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: ["Remove to favourites"]
+            });
+            this.user.is_favorite = false;
+          })
+          .catch(err => {
+            console.log("err", err.response || err);
+            throw err;
+          })
+          .finally(() => {
+            this.confirmation_modal = false;
+          });
+      }
+    },
     getApplicants(params) {
       this.$axios
         .$get(`/api/v1/practice/jobs/${this.job.id}/applicants`, {
