@@ -1,5 +1,34 @@
 <template>
   <section class="relative">
+    <div
+      class="flex flex-row justify-start overflow-x-auto py-3 mb-3"
+      v-if="$route.query.status && ['available', 'public', 'bank'].includes($route.query.status.toLowerCase())"
+    >
+      <div class="relative">
+        <nuxt-link
+          :event="$store.state.jobs.loading_jobs ? '' : 'click'"
+          to="/jobs?status=Available"
+          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          :class="$route.query && $route.query.status && $route.query.status.toLowerCase() === 'available'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        >Available</nuxt-link>
+      </div>
+      <div class="relative">
+        <nuxt-link
+          :event="$store.state.jobs.loading_jobs ? '' : 'click'"
+          to="/jobs?status=Public"
+          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          :class="$route.query && $route.query.status && $route.query.status.toLowerCase() === 'public'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        >Public</nuxt-link>
+      </div>
+      <div class="relative">
+        <nuxt-link
+          :event="$store.state.jobs.loading_jobs ? '' : 'click'"
+          to="/jobs?status=Bank"
+          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          :class="$route.query && $route.query.status && $route.query.status.toLowerCase() === 'bank'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        >Bank</nuxt-link>
+      </div>
+    </div>
     <transition name="fade" mode="out-in">
       <div v-if="showTable">
         <AppButton
@@ -383,7 +412,10 @@ export default {
         "cancelled",
         "withdrawn",
         "completed",
-        "approved"
+        "approved",
+        "private",
+        "public",
+        "bank"
       ].includes(query.status.toLowerCase())
     ) {
       return error({ status: 404, message: "This Job Status is Invalid" });
@@ -454,7 +486,8 @@ export default {
       getLocumUnsuccessfulJobs: "jobs/getLocumUnsuccessfulJobs",
       getLocumDeclinedJobs: "jobs/getLocumDeclinedJobs",
       getLocumCancelledJobs: "jobs/getLocumCancelledJobs",
-      getLocumWithdrawnJobs: "jobs/getLocumWithdrawnJobs"
+      getLocumWithdrawnJobs: "jobs/getLocumWithdrawnJobs",
+      getLocumPrivateJobs: "jobs/getLocumPrivateJobs"
     }),
     isJobPart() {
       if (
@@ -502,6 +535,12 @@ export default {
             return this.$store.state.jobs.locum_cancelled_jobs_count;
           case "withdrawn":
             return this.$store.state.jobs.locum_withdrawn_jobs_count;
+          case "private":
+            return this.$store.state.jobs.locum_private_jobs_count;
+          case "bank":
+            return this.$store.state.jobs.locum_available_jobs_count;
+          case "public":
+            return this.$store.state.jobs.locum_matched_jobs_count;
           default:
             return this.$store.state.jobs.locum_allocated_jobs_count;
         }
@@ -537,6 +576,12 @@ export default {
             return this.getLocumCancelledJobs;
           case "withdrawn":
             return this.getLocumWithdrawnJobs;
+          case "private":
+            return this.getLocumPrivateJobs;
+          case "bank":
+            return this.getLocumAvailableJobs;
+          case "public":
+            return this.getLocumMatchedJobs;
         }
       }
       if (!this.$route.query.status) {
@@ -753,12 +798,25 @@ export default {
       if (!queryStatus) {
         locum_status = ["Allocated"];
       } else if (queryStatus && queryStatus === "Available") {
-        locum_status = ["Available", "Matched"];
-      } else if (queryStatus && queryStatus === "Completed") {
+        locum_status = ["Matched"];
+      } else if (queryStatus && queryStatus === "Public") {
+        locum_status = ["Available"];
+      } else if (queryStatus && queryStatus === "Bank") {
+        locum_status = ["Matched"];
+      }
+      // else if (queryStatus && queryStatus === 'Matched') {
+      //   locum_status = ['Available']
+      // }
+      // else if (queryStatus && queryStatus === "Available") {
+      //   locum_status = ["Available", "Matched"];
+      // }
+      else if (queryStatus && queryStatus === "Completed") {
         locum_status = ["Completed", "Terminated"];
+      } else if (queryStatus && queryStatus === "Private") {
+        locum_status = [];
       } else if (
         queryStatus &&
-        queryStatus !== "Available" &&
+        // queryStatus !== "Available" &&
         queryStatus !== "Completed"
       ) {
         locum_status = [`${queryStatus}`];
@@ -778,7 +836,8 @@ export default {
         order_by: [],
         job_number: "",
         title: "",
-        type: "",
+        type: queryStatus === "Private" ? "Private" : "Platform",
+        practice_is_favorite_of_locum: queryStatus === "Bank" ? true : "",
         practice_id: "",
         shift_id: "",
         rate: "",
@@ -797,7 +856,8 @@ export default {
           order_by: [],
           job_part_number: "",
           job_title: "",
-          job_type: "",
+          job_type: queryStatus === "Private" ? "Private" : "Platform",
+          practice_is_favorite_of_locum: queryStatus === "Bank" ? true : "",
           job_practice_id: "",
           job_shift_id: "",
           job_rate: "",
@@ -851,12 +911,33 @@ export default {
               queryStatus &&
               !["ongoing", "completed", "approved"].includes(
                 queryStatus.toLowerCase()
-              )
+              ) &&
+              queryStatus.toLowerCase() !== "bank" &&
+              queryStatus.toLowerCase() !== "public"
             ) {
               store.commit(
                 `jobs/SET_LOCUM_${queryStatus.toUpperCase()}_JOBS_COUNT`,
                 res.data.count
               );
+            } else if (
+              queryStatus &&
+              !["ongoing", "completed", "approved"].includes(
+                queryStatus.toLowerCase()
+              ) &&
+              queryStatus.toLowerCase() === "bank"
+            ) {
+              store.commit(
+                `jobs/SET_LOCUM_AVAILABLE_JOBS_COUNT`,
+                res.data.count
+              );
+            } else if (
+              queryStatus &&
+              !["ongoing", "completed", "approved"].includes(
+                queryStatus.toLowerCase()
+              ) &&
+              queryStatus.toLowerCase() === "public"
+            ) {
+              store.commit(`jobs/SET_LOCUM_MATCHED_JOBS_COUNT`, res.data.count);
             } else if (!queryStatus) {
               store.commit(
                 "jobs/SET_LOCUM_ALLOCATED_JOBS_COUNT",
@@ -888,12 +969,30 @@ export default {
               queryStatus &&
               !["ongoing", "completed", "approved"].includes(
                 queryStatus.toLowerCase()
-              )
+              ) &&
+              queryStatus.toLowerCase() !== "bank" &&
+              queryStatus.toLowerCase() !== "public"
             ) {
               store.commit(
                 `jobs/SET_LOCUM_${queryStatus.toUpperCase()}_JOBS`,
                 res.data.jobs
               );
+            } else if (
+              queryStatus &&
+              !["ongoing", "completed", "approved"].includes(
+                queryStatus.toLowerCase()
+              ) &&
+              queryStatus.toLowerCase() === "bank"
+            ) {
+              store.commit(`jobs/SET_LOCUM_AVAILABLE_JOBS`, res.data.jobs);
+            } else if (
+              queryStatus &&
+              !["ongoing", "completed", "approved"].includes(
+                queryStatus.toLowerCase()
+              ) &&
+              queryStatus.toLowerCase() === "public"
+            ) {
+              store.commit(`jobs/SET_LOCUM_MATCHED_JOBS`, res.data.jobs);
             } else if (!queryStatus) {
               store.commit("jobs/SET_LOCUM_ALLOCATED_JOBS", res.data.jobs);
             }
@@ -986,15 +1085,37 @@ export default {
         this.$route.query.status &&
         this.$route.query.status === "Available"
       ) {
-        locum_status = ["Available", "Matched"];
+        locum_status = ["Matched"];
       } else if (
+        this.$route.query.status &&
+        this.$route.query.status === "Public"
+      ) {
+        locum_status = ["Available"];
+      } else if (
+        this.$route.query.status &&
+        this.$route.query.status === "Bank"
+      ) {
+        locum_status = ["Matched"];
+      }
+      // else if (
+      //   this.$route.query.status &&
+      //   this.$route.query.status === "Available"
+      // ) {
+      //   locum_status = ["Available", "Matched"];
+      // }
+      else if (
         this.$route.query.status &&
         this.$route.query.status === "Completed"
       ) {
         locum_status = ["Completed", "Terminated"];
       } else if (
         this.$route.query.status &&
-        this.$route.query.status !== "Available" &&
+        this.$route.query.status === "Private"
+      ) {
+        locum_status = [];
+      } else if (
+        this.$route.query.status &&
+        // this.$route.query.status !== "Available" &&
         this.$route.query.status !== "Completed"
       ) {
         locum_status = [`${this.$route.query.status}`];
@@ -1006,7 +1127,11 @@ export default {
           {
             params: {
               locum_status,
-              ...(this.isJobPart ? this.jobPartParams : this.params)
+              ...(this.isJobPart ? this.jobPartParams : this.params),
+              type:
+                this.$route.query.status === "Private" ? "Private" : "Platform",
+              practice_is_favorite_of_locum:
+                this.$route.query.status === "Bank" ? true : ""
             }
           }
         ),
@@ -1015,7 +1140,11 @@ export default {
           {
             params: {
               locum_status,
-              ...(this.isJobPart ? this.jobPartParams : this.params)
+              ...(this.isJobPart ? this.jobPartParams : this.params),
+              type:
+                this.$route.query.status === "Private" ? "Private" : "Platform",
+              practice_is_favorite_of_locum:
+                this.$route.query.status === "Bank" ? true : ""
             }
           }
         )
@@ -1034,10 +1163,34 @@ export default {
           this.$route.query.status &&
           !["ongoing", "completed", "approved"].includes(
             this.$route.query.status.toLowerCase()
-          )
+          ) &&
+          this.$route.query.status.toLowerCase() !== "bank" &&
+          this.$route.query.status.toLowerCase() !== "public"
         ) {
           this.$store.commit(
             `jobs/SET_LOCUM_${this.$route.query.status.toUpperCase()}_JOBS_COUNT`,
+            responseCount.data.count
+          );
+        } else if (
+          this.$route.query.status &&
+          !["ongoing", "completed", "approved"].includes(
+            this.$route.query.status.toLowerCase()
+          ) &&
+          this.$route.query.status.toLowerCase() === "bank"
+        ) {
+          this.$store.commit(
+            `jobs/SET_LOCUM_AVAILABLE_JOBS_COUNT`,
+            responseCount.data.count
+          );
+        } else if (
+          this.$route.query.status &&
+          !["ongoing", "completed", "approved"].includes(
+            this.$route.query.status.toLowerCase()
+          ) &&
+          this.$route.query.status.toLowerCase() === "public"
+        ) {
+          this.$store.commit(
+            `jobs/SET_LOCUM_MATCHED_JOBS_COUNT`,
             responseCount.data.count
           );
         } else if (!this.$route.query.status) {
@@ -1061,10 +1214,34 @@ export default {
           this.$route.query.status &&
           !["ongoing", "completed", "approved"].includes(
             this.$route.query.status.toLowerCase()
-          )
+          ) &&
+          this.$route.query.status.toLowerCase() !== "bank" &&
+          this.$route.query.status.toLowerCase() !== "public"
         ) {
           this.$store.commit(
             `jobs/SET_LOCUM_${this.$route.query.status.toUpperCase()}_JOBS`,
+            responseJobs.data.jobs
+          );
+        } else if (
+          this.$route.query.status &&
+          !["ongoing", "completed", "approved"].includes(
+            this.$route.query.status.toLowerCase()
+          ) &&
+          this.$route.query.status.toLowerCase() === "bank"
+        ) {
+          this.$store.commit(
+            `jobs/SET_LOCUM_AVAILABLE_JOBS`,
+            responseJobs.data.jobs
+          );
+        } else if (
+          this.$route.query.status &&
+          !["ongoing", "completed", "approved"].includes(
+            this.$route.query.status.toLowerCase()
+          ) &&
+          this.$route.query.status.toLowerCase() === "public"
+        ) {
+          this.$store.commit(
+            `jobs/SET_LOCUM_MATCHED_JOBS`,
             responseJobs.data.jobs
           );
         } else if (!this.$route.query.status) {
@@ -1081,12 +1258,22 @@ export default {
       if (!queryStatus) {
         locum_status = ["Allocated"];
       } else if (queryStatus && queryStatus === "Available") {
-        locum_status = ["Available", "Matched"];
-      } else if (queryStatus && queryStatus === "Completed") {
+        locum_status = ["Matched"];
+      } else if (queryStatus && queryStatus === "Public") {
+        locum_status = ["Available"];
+      } else if (queryStatus && queryStatus === "Bank") {
+        locum_status = ["Matched"];
+      }
+      // else if (queryStatus && queryStatus === "Available") {
+      //   locum_status = ["Available", "Matched"];
+      // }
+      else if (queryStatus && queryStatus === "Completed") {
         locum_status = ["Completed", "Terminated"];
+      } else if (queryStatus && queryStatus === "Private") {
+        locum_status = [];
       } else if (
         queryStatus &&
-        queryStatus !== "Available" &&
+        // queryStatus !== "Available" &&
         queryStatus !== "Completed"
       ) {
         locum_status = [`${queryStatus}`];
@@ -1096,7 +1283,9 @@ export default {
         .$get(`/api/v1/locum/${this.isJobPart ? "job-parts" : "jobs"}/count`, {
           params: {
             locum_status,
-            ...params
+            ...params,
+            type: queryStatus === "Private" ? "Private" : "Platform",
+            practice_is_favorite_of_locum: queryStatus === "Bank" ? true : ""
           }
         })
         .then(res => {
@@ -1114,10 +1303,34 @@ export default {
             queryStatus &&
             !["ongoing", "completed", "approved"].includes(
               queryStatus.toLowerCase()
-            )
+            ) &&
+            queryStatus.toLowerCase() !== "bank" &&
+            queryStatus.toLowerCase() !== "public"
           ) {
             return this.$store.commit(
               `jobs/SET_LOCUM_${queryStatus.toUpperCase()}_JOBS_COUNT`,
+              res.data.count
+            );
+          } else if (
+            queryStatus &&
+            !["ongoing", "completed", "approved"].includes(
+              queryStatus.toLowerCase()
+            ) &&
+            queryStatus.toLowerCase() === "bank"
+          ) {
+            return this.$store.commit(
+              `jobs/SET_LOCUM_AVAILABLE_JOBS_COUNT`,
+              res.data.count
+            );
+          } else if (
+            queryStatus &&
+            !["ongoing", "completed", "approved"].includes(
+              queryStatus.toLowerCase()
+            ) &&
+            queryStatus.toLowerCase() === "public"
+          ) {
+            return this.$store.commit(
+              `jobs/SET_LOCUM_MATCHED_JOBS_COUNT`,
               res.data.count
             );
           } else if (!queryStatus) {
@@ -1144,12 +1357,22 @@ export default {
       if (!queryStatus) {
         locum_status = ["Allocated"];
       } else if (queryStatus && queryStatus === "Available") {
-        locum_status = ["Available", "Matched"];
-      } else if (queryStatus && queryStatus === "Completed") {
+        locum_status = ["Matched"];
+      } else if (queryStatus && queryStatus === "Public") {
+        locum_status = ["Available"];
+      } else if (queryStatus && queryStatus === "Bank") {
+        locum_status = ["Matched"];
+      }
+      // else if (queryStatus && queryStatus === "Available") {
+      //   locum_status = ["Available", "Matched"];
+      // }
+      else if (queryStatus && queryStatus === "Completed") {
         locum_status = ["Completed", "Terminated"];
+      } else if (queryStatus && queryStatus === "Private") {
+        locum_status = [];
       } else if (
         queryStatus &&
-        queryStatus !== "Available" &&
+        // queryStatus !== "Available" &&
         queryStatus !== "Completed"
       ) {
         locum_status = [`${queryStatus}`];
@@ -1159,7 +1382,9 @@ export default {
         .$get(`/api/v1/locum/${this.isJobPart ? "job-parts" : "jobs"}`, {
           params: {
             locum_status,
-            ...params
+            ...params,
+            type: queryStatus === "Private" ? "Private" : "Platform",
+            practice_is_favorite_of_locum: queryStatus === "Bank" ? true : ""
           }
         })
         .then(res => {
@@ -1177,10 +1402,34 @@ export default {
             queryStatus &&
             !["ongoing", "completed", "approved"].includes(
               queryStatus.toLowerCase()
-            )
+            ) &&
+            queryStatus.toLowerCase() !== "bank" &&
+            queryStatus.toLowerCase() !== "public"
           ) {
             return this.$store.commit(
               `jobs/SET_LOCUM_${queryStatus.toUpperCase()}_JOBS`,
+              res.data.jobs
+            );
+          } else if (
+            queryStatus &&
+            !["ongoing", "completed", "approved"].includes(
+              queryStatus.toLowerCase()
+            ) &&
+            queryStatus.toLowerCase() === "bank"
+          ) {
+            return this.$store.commit(
+              `jobs/SET_LOCUM_AVAILABLE_JOBS`,
+              res.data.jobs
+            );
+          } else if (
+            queryStatus &&
+            !["ongoing", "completed", "approved"].includes(
+              queryStatus.toLowerCase()
+            ) &&
+            queryStatus.toLowerCase() === "public"
+          ) {
+            return this.$store.commit(
+              `jobs/SET_LOCUM_MATCHED_JOBS`,
               res.data.jobs
             );
           } else if (!queryStatus) {
@@ -1391,12 +1640,9 @@ export default {
     },
     async appointmentUpdated() {
       this.loading = true;
-      // this.$store.commit("jobs/CLEAR_LOCUM_JOB_NOTIFICATION");
       await this.getJobsCount(
         this.isJobPart ? this.jobPartParams : this.params
       );
-      // console.log(this.current_page, this.total);
-      // return Math.ceil(this.total / this.perPage);
       await this.getJobs(this.isJobPart ? this.jobPartParams : this.params);
       this.loading = false;
     },
@@ -1486,11 +1732,25 @@ export default {
       this.loading = false;
     },
     async sorted(order_by) {
+      let orderBy = order_by.map(item => {
+        switch (item) {
+          case "date_time_start:asc":
+            return "date_start:asc";
+          case "date_time_start:desc":
+            return "date_start:desc";
+          case "date_time_end:asc":
+            return "date_end:asc";
+          case "date_time_end:desc":
+            return "date_end:desc";
+          default:
+            return item;
+        }
+      });
       this.current_page = 1;
       this.params.offset = 0;
-      this.params.order_by = order_by;
+      this.params.order_by = orderBy;
       this.jobPartParams.offset = 0;
-      this.jobPartParams.order_by = order_by;
+      this.jobPartParams.order_by = orderBy;
       this.loading = true;
       await this.getJobs(this.isJobPart ? this.jobPartParams : this.params);
       this.loading = false;

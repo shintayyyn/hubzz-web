@@ -22,16 +22,8 @@
           :event="$store.state.jobs.loading_jobs ? '' : 'click'"
           to="/jobs?status=Available"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.query && $route.query.status && $route.query.status.toLowerCase() === 'available'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          :class="$route.query && $route.query.status && ['available', 'public', 'bank'].includes($route.query.status.toLowerCase()) ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Available</nuxt-link>
-      </div>
-      <div class="relative">
-        <nuxt-link
-          :event="$store.state.jobs.loading_jobs ? '' : 'click'"
-          to="/jobs?status=Matched"
-          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.query && $route.query.status && $route.query.status.toLowerCase() === 'matched'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-        >Matched</nuxt-link>
       </div>
       <div class="relative">
         <nuxt-link
@@ -88,6 +80,14 @@
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
           :class="$route.query && $route.query.status && $route.query.status.toLowerCase() === 'approved'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Approved</nuxt-link>
+      </div>
+      <div class="relative">
+        <nuxt-link
+          :event="$store.state.jobs.loading_jobs ? '' : 'click'"
+          to="/jobs?status=Private"
+          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          :class="$route.query && $route.query.status && $route.query.status.toLowerCase() === 'private'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        >Private</nuxt-link>
       </div>
     </div>
     <div class="mt-5">

@@ -10,6 +10,24 @@
         class="mx-2 py-2 px-4 rounded font-semibold"
         :class="bgStatus(job.locum_status)"
       >{{ status(job.locum_status) }}</div>
+      <template v-if="job.practice_is_favorite_of_locum">
+        <svgicon
+          name="on-star"
+          height="25"
+          width="25"
+          class="cursor-pointer fill-current text-gray-700 hover:text-gray-800"
+          @click="unfavorite()"
+        />
+      </template>
+      <template v-else-if="!job.practice_is_favorite_of_locum">
+        <svgicon
+          name="off-star"
+          height="25"
+          width="25"
+          class="cursor-pointer fill-current text-gray-700 hover:text-gray-800"
+          @click="favorite()"
+        />
+      </template>
     </div>
 
     <div class="text-xs sm:text-sm py-3">Posted {{ $moment(job.date_created).format("DD/MM/YYYY") }}</div>
@@ -75,6 +93,15 @@
       @confirm="cancel"
       @cancel="cancel_application_modal = false"
     />
+
+    <AppConfirmationModal
+      :label="confirmation_text"
+      :confirmLabel="'Yes'"
+      :cancelLabel="'Cancel'"
+      :modal="confirmation_modal"
+      @confirm="confirm"
+      @cancel="confirmation_modal = false"
+    />
   </div>
 </template>
 <script>
@@ -137,7 +164,9 @@ export default {
         hours: 0,
         minutes: 0
       },
-      cancel_application_modal: false
+      cancel_application_modal: false,
+      confirmation_text: "",
+      confirmation_modal: false
     };
   },
   mounted() {
@@ -154,8 +183,62 @@ export default {
     this.deadline.minutes = data._data.minutes;
   },
   methods: {
+    favorite() {
+      this.confirmation_text = "Add this Practice to Favorites?";
+      this.confirmation_modal = true;
+    },
+    unfavorite() {
+      this.confirmation_text = "Remove this Practice to Favorites?";
+      this.confirmation_modal = true;
+    },
+    confirm() {
+      if (!this.job.practice_is_favorite_of_locum) {
+        this.$axios
+          .$post(`/api/v1/locum/practices/${this.job.practice_id}/favorite`)
+          .then(res => {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: ["Added to favourites"]
+            });
+            this.job.practice_is_favorite_of_locum = true;
+          })
+          .catch(err => {
+            console.log("err", err.response || err);
+            throw err;
+          })
+          .finally(() => {
+            this.confirmation_modal = false;
+          });
+      } else if (this.job.practice_is_favorite_of_locum) {
+        this.$axios
+          .$delete(`/api/v1/locum/practices/${this.job.practice_id}/favorite`)
+          .then(res => {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: ["Remove to favourites"]
+            });
+            this.job.practice_is_favorite_of_locum = false;
+          })
+          .catch(err => {
+            console.log("err", err.response || err);
+            throw err;
+          })
+          .finally(() => {
+            this.confirmation_modal = false;
+          });
+      }
+    },
     status(status) {
-      let jobStatus = status === "Declined" ? "Withdrawn" : status;
+      let jobStatus =
+        status === "Declined"
+          ? "Withdrawn"
+          : status === "Matched"
+          ? "Available"
+          : status === "Available"
+          ? "Public"
+          : status;
       return jobStatus.toUpperCase();
     },
     bgStatus(status) {
