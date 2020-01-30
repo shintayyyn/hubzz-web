@@ -207,6 +207,31 @@
                   :type="'text'"
                   :name="'vat_number'"
                   :label="'VAT Number'"
+                  :error="formError.find(item => item.field === 'vat_number')"
+                />
+              </template>
+              <AppInput
+                v-model="form.direct_debit"
+                :type="'single-checkbox'"
+                :name="'direct_debit'"
+                :label="'Are you a Direct Debit?'"
+              />
+              <template v-if="form.direct_debit">
+                <AppInput
+                  v-model="form.sage_ref"
+                  :type="'text'"
+                  :name="'sage_ref'"
+                  :label="'Sage reference'"
+                  :error="formError.find(item => item.field === 'sage_ref')"
+                />
+              </template>
+              <template v-if="form.direct_debit">
+                <AppInput
+                  v-model="form.nominal_code"
+                  :type="'text'"
+                  :name="'nominal_code'"
+                  :label="'Nominal Code'"
+                  :error="formError.find(item => item.field === 'nominal_code')"
                 />
               </template>
             </div>
@@ -285,7 +310,10 @@ export default {
         others_compliance_document_id: [],
         use_variation_terms: false,
         vat_registered: false,
-        vat_number: null
+        vat_number: null,
+        direct_debit: false,
+        sage_ref: null,
+        nominal_code: null
       },
       name: "",
       formError: []
@@ -462,6 +490,11 @@ export default {
       this.form.others_compliance_document_id.push(item.id);
     });
     this.form.use_variation_terms = this.practice.use_variation_terms;
+    this.form.vat_registered = this.practice.vat_registered;
+    this.form.vat_number = this.practice.vat_number;
+    this.form.direct_debit = this.practice.direct_debit;
+    this.form.sage_ref = this.practice.sage_ref;
+    this.form.nominal_code = this.practice.nominal_code;
   },
   methods: {
     async onFileInput(e) {
@@ -575,7 +608,8 @@ export default {
         "extra_information",
         "gp_compliance_document_id",
         "others_compliance_document_id",
-        "vat_registered"
+        "vat_registered",
+        "direct_debit"
       ];
 
       if (
@@ -596,6 +630,9 @@ export default {
       // }
       if (["false", false].includes(this.vat_registered)) {
         notRequired.push("vat_number");
+      }
+      if (["false", false].includes(this.direct_debit)) {
+        notRequired.push("sage_ref", "nominal_code");
       }
       this.Validate(this.form, notRequired);
       if (!this.formError.length) {
