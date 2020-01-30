@@ -7,7 +7,7 @@
         v-model="has_absences"
         :type="'select'"
         :name="'has_absences'"
-        :label="'Was the locum has any absences?'"
+        :label="'Was the locum having any absences?'"
         :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
       />
       <template v-if="has_absences === 'true' || has_absences === true">
