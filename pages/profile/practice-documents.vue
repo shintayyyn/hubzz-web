@@ -8,7 +8,11 @@
       :routerLink="'/profile/practice-documents'"
       :routerId="'fileId'"
       :customWidth="480"
-    ></AppTable>
+    >
+      <template v-slot:actions="slotProps">
+        <div>{{(slotProps.item.info.updated_at ? slotProps.item.info.updated_at : slotProps.item.info.created_at) | localDate}}</div>
+      </template>
+    </AppTable>
     <template v-if="terms.length > 0">
       <p class="mt-4">
         <strong>Variation to Standard Terms</strong>
@@ -73,10 +77,15 @@ export default {
           dataIndex: "info.file.size",
           class: "text-center fileSize*MB qweq"
         },
+        // {
+        //   name: "Last Upload Date",
+        //   dataIndex: "info.updated_at",
+        //   class: "text-center localDate"
+        // },
         {
           name: "Last Upload Date",
-          dataIndex: "info.created_at",
-          class: "text-center localDate"
+          dataIndex: "actions",
+          class: "text-center"
         }
       ]
     };
@@ -170,7 +179,7 @@ export default {
           if (variation_terms !== null) {
             terms.push(variation_terms);
           }
-          console.log(terms);
+          console.log(practice_compliance_documents);
           return {
             practice_compliance_documents,
             terms
