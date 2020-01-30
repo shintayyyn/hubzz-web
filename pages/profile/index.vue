@@ -293,8 +293,6 @@ export default {
   data() {
     return {
       surgery: null,
-      vat_registered: false,
-      vat_number: "",
       modal: false,
       loading: false,
       input_file_loading: false,
@@ -628,10 +626,10 @@ export default {
       //     message: "Your Variation Standard Terms file is required"
       //   });
       // }
-      if (["false", false].includes(this.vat_registered)) {
+      if (["false", false].includes(this.form.vat_registered)) {
         notRequired.push("vat_number");
       }
-      if (["false", false].includes(this.direct_debit)) {
+      if (["false", false].includes(this.form.direct_debit)) {
         notRequired.push("sage_ref", "nominal_code");
       }
       this.Validate(this.form, notRequired);
