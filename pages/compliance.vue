@@ -780,7 +780,6 @@ export default {
         "vnd.ms-word.template.macroEnabled.12"
       ];
       let file = e.target.files[0];
-      console.log(file);
       let fileType = file.type.split("/")[1];
       if (!types.includes(fileType)) {
         this.$store.commit("SET_NOTIFICATION", {
