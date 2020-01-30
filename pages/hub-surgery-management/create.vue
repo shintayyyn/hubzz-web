@@ -181,7 +181,6 @@ export default {
             `/api/v1/practice/practice-spokes?search=${this.search_text}&limit=10`
           )
           .then(res => {
-            console.log("practice", res.data.practices);
             if (res.data && res.data.practices) {
               res.data.practices.forEach(item => {
                 let checkSpoke = this.practiceSpokesResult.find(
@@ -209,7 +208,6 @@ export default {
               invited = this.practiceSpokeInvitations.find(
                 invitation => invitation.child_practice_id === spoke.id
               );
-              console.log("invited", invited);
               if (invited) {
                 this.filteredPracticeSpokes.push({
                   ...spoke,
@@ -222,7 +220,6 @@ export default {
                 });
               }
             });
-            console.log("filtered", this.filteredPracticeSpokes);
             this.showResult = true;
           })
           .catch(err => {
@@ -247,7 +244,6 @@ export default {
       const exists = practiceSpokes.findIndex(
         spoke => spoke.child_practice_id == item.id
       );
-      console.log("dsa", this.$auth.user.practice_detail.practice.id);
       if (exists <= -1 && !item.parent_practice_id) {
         this.selectedSpoke = item;
         this.toInvite = true;

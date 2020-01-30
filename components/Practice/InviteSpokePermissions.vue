@@ -156,31 +156,27 @@ export default {
       formError: []
     };
   },
-  created() {
-    console.log("spoke", this.spoke);
-  },
   computed: {
     surgeryCreateSessions: function() {
-      // console.log('helo',this.form.allow_surgery_create_sessions)
       return this.form.allow_surgery_create_sessions;
     }
   },
-  
+
   methods: {
     save() {
       this.modal = true;
     },
-    publish(){
+    publish() {
       this.formError = [];
       let notRequired = [
         "max_hourly_rate_limit",
         "max_halfday_rate_limit",
         "max_wholeday_rate_limit",
         "max_ooh_rate_limit",
-        "max_excess_hours",
+        "max_excess_hours"
       ];
       this.Validate(this.form, notRequired);
-      if(!this.formError.length) {
+      if (!this.formError.length) {
         this.invite();
       }
     },
@@ -188,7 +184,8 @@ export default {
       await this.$axios
         .post(`/api/v1/practice/me/practice-surgeries/invite`, {
           child_practice_id: this.form.child_practice_id,
-          allow_surgery_create_sessions: this.form.allow_surgery_create_sessions,
+          allow_surgery_create_sessions: this.form
+            .allow_surgery_create_sessions,
           max_hourly_rate_limit: this.form.max_hourly_rate_limit,
           max_halfday_rate_limit: this.form.max_halfday_rate_limit,
           max_wholeday_rate_limit: this.form.max_wholeday_rate_limit,
@@ -196,10 +193,10 @@ export default {
           max_excess_hours: this.form.max_excess_hours,
           allow_surgery_bill_locum: this.form.allow_surgery_bill_locum,
           allow_surgery_bill_hubzz: this.form.allow_surgery_bill_hubzz,
-          share_banks_to_other_surgeries: this.form.share_banks_to_other_surgeries
+          share_banks_to_other_surgeries: this.form
+            .share_banks_to_other_surgeries
         })
         .then(res => {
-          console.log("res", res);
           this.modal = false;
           this.$emit("close");
           // this.emit("addSurgery", res.data.practice_surgery)
@@ -208,8 +205,7 @@ export default {
             status: "success",
             text: [`${res.data.message}`]
           });
-          this.$router.push("/surgery-management/practice-spokes");
-          console.log("it worked", res);
+          this.$router.push("/hub-surgery-management");
         })
         .catch(err => {
           console.log("err", err.response.data.error_messages);
@@ -217,7 +213,7 @@ export default {
             enabled: true,
             status: "danger",
             text: [err.response.data.error_messages[0].message]
-          })
+          });
         });
     }
   }

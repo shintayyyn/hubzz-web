@@ -10,7 +10,9 @@
       :customWidth="480"
     >
       <template v-slot:actions="slotProps">
-        <div>{{(slotProps.item.info.updated_at ? slotProps.item.info.updated_at : slotProps.item.info.created_at) | localDate}}</div>
+        <div
+          v-if="slotProps.item.info"
+        >{{(slotProps.item.info.updated_at ? slotProps.item.info.updated_at : slotProps.item.info.created_at) | localDate}}</div>
       </template>
     </AppTable>
     <template v-if="terms.length > 0">
@@ -232,11 +234,11 @@ export default {
       let storeDocument = this.practice_compliance_documents.find(
         item => item.name === file.practice_document_type.name
       );
-
       if (updatedDocument) {
         updatedDocument.info = file;
       } else if (!updatedDocument && storeDocument) {
         storeDocument.info = file;
+        storeDocument.fileId = file.id;
       }
     },
     removeListener() {
