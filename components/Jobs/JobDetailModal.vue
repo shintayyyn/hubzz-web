@@ -9,7 +9,7 @@
       <div
         class="mx-2 py-2 px-4 rounded font-semibold"
         :class="bgStatus(job.locum_status)"
-      >{{ job.locum_status }}</div>
+      >{{ status(job.locum_status) }}</div>
     </div>
 
     <div class="text-xs sm:text-sm py-3">Posted {{ $moment(job.date_created).format("DD/MM/YYYY") }}</div>
@@ -154,6 +154,10 @@ export default {
     this.deadline.minutes = data._data.minutes;
   },
   methods: {
+    status(status) {
+      let jobStatus = status === "Declined" ? "Withdrawn" : status;
+      return jobStatus.toUpperCase();
+    },
     bgStatus(status) {
       switch (status) {
         case "Available":

@@ -493,7 +493,6 @@ export default {
       this.$axios
         .$post(`/api/v1/practice/me/practice/variation-terms`, formData)
         .then(res => {
-          console.log(res);
           this.practice.variation_terms_file = variation_terms_file;
           this.$store.commit("SET_NOTIFICATION", {
             enabled: true,

@@ -51,7 +51,7 @@
       </div>
       <div
         class="text-sm font-hairline italic"
-      >(Note: Only file types .pdf, .jpeg, .msword, .tiff are acccepted)</div>
+      >(Note: Only file types .pdf, .jpeg, .jfif, .doc, .docx, .tiff are acccepted)</div>
     </div>
     <div class="mt-4 overflow-x-auto">
       <template v-if="!mandatory.length">
@@ -780,6 +780,7 @@ export default {
         "vnd.ms-word.template.macroEnabled.12"
       ];
       let file = e.target.files[0];
+      console.log(file);
       let fileType = file.type.split("/")[1];
       if (!types.includes(fileType)) {
         this.$store.commit("SET_NOTIFICATION", {

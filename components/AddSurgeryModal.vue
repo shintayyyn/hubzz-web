@@ -17,7 +17,12 @@
         <div class="flex justify-start font-bold text-sm sm:text-xl mt-8">Add Practice</div>
         <div class="rounded-lg shadow-lg px-4 md:px-8 py-4 mt-4">
           <AppInput v-model="search_text" :type="'text'" :name="'search'" />
-          <AppButton :label="'Search'" @click="search" :inStyle="'padding:5px 14px;'" />
+          <AppButton :label="'Search Practice'" @click="search" :inStyle="'padding:5px 14px;'" />
+          <AppButton
+            :label="'Input manually'"
+            @click="input_details = true"
+            :inStyle="'padding:5px 14px;'"
+          />
         </div>
         <div v-if="showResult && surgeries.length === 0" class="mt-5">
           <div

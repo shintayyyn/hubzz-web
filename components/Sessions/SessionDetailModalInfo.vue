@@ -170,24 +170,26 @@
           >{{item.name}}</div>
         </div>
 
-        <div class="font-bold text-sm sm:text-md" v-if="job.variation_terms_file_id">Variation Terms</div>
-        <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
-          <div class="mt-1 cursor-pointer" @click="modal = true">View file</div>
-          <transition name="slide" mode="out-in">
-            <div v-if="modal" class="modal-container shadow-lg">
-              <div class="h-full w-full">
-                <div class="p-4 md:p-8 cursor-pointer">
-                  <svgicon name="left-arrow" height="32" @click="modal = false" />
+        <template v-if="job.variation_terms_file_id">
+          <div class="font-bold text-sm sm:text-md">Variation Terms</div>
+          <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
+            <div class="mt-1 cursor-pointer" @click="modal = true">View file</div>
+            <transition name="slide" mode="out-in">
+              <div v-if="modal" class="modal-container shadow-lg">
+                <div class="h-full w-full">
+                  <div class="p-4 md:p-8 cursor-pointer">
+                    <svgicon name="left-arrow" height="32" @click="modal = false" />
+                  </div>
+                  <embed
+                    class="object-contain object-top w-full"
+                    :class="job.variation_terms_file.type == 'image' ? 'image' : 'document h-full '"
+                    :src="job.variation_terms_file.subtype === 'tiff' || job.variation_terms_file.subtype === 'msword' ? convertDoc(job.variation_terms_file.url) : job.variation_terms_file.url"
+                  />
                 </div>
-                <embed
-                  class="object-contain object-top w-full"
-                  :class="job.variation_terms_file.type == 'image' ? 'image' : 'document h-full '"
-                  :src="job.variation_terms_file.subtype === 'tiff' || job.variation_terms_file.subtype === 'msword' ? convertDoc(job.variation_terms_file.url) : job.variation_terms_file.url"
-                />
               </div>
-            </div>
-          </transition>
-        </div>
+            </transition>
+          </div>
+        </template>
       </div>
     </div>
     <transition name="fade" mode="out-in">

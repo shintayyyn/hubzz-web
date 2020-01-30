@@ -41,7 +41,7 @@
                         v-if="!notification.billingStatus"
                         class="px-2 py-1 md:text-xs font-bold rounded-lg max-w-sm cursor-pointer uppercase"
                         :class="bgStatus(notification.status ? notification.status : notification.locum_status)"
-                      >{{notification.status ? notification.status : notification.locum_status}}</div>
+                      >{{status(notification.status ? notification.status : notification.locum_status)}}</div>
                       <div
                         v-if="notification.type === 'Jobs' && notification.billingStatus"
                         class="px-2 py-1 md:text-xs font-bold rounded-lg max-w-sm cursor-pointer uppercase mt-1"
@@ -165,6 +165,7 @@ export default {
       let status = notification.status
         ? notification.status
         : notification.locum_status;
+      // let status = jobStatus === "Withdrawn" ? "Declined" : jobStatus;
       let dateStart = notification.date_start;
       let dateEnd = notification.date_end;
       let notificationType = notification.type;
@@ -215,6 +216,8 @@ export default {
 
         if (status === "Terminated") {
           routeStatus = "Completed";
+        } else if (status === "Withdrawn") {
+          routeStatus = "Declined";
         } else if (status === "Updated") {
           routeStatus = null;
         } else if (!["Terminated", "Updated"].includes(status)) {
@@ -257,6 +260,10 @@ export default {
         this.$store.commit("billing/REMOVE_PRACTICE_BILLING_NOTIFICATION", id);
         this.$store.commit("billing/REMOVE_LOCUM_BILLING_NOTIFICATION", id);
       }
+    },
+    status(status) {
+      let jobStatus = status === "Declined" ? "Withdrawn" : status;
+      return jobStatus.toUpperCase();
     },
     bgStatus(status) {
       switch (status) {
