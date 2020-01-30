@@ -1486,11 +1486,25 @@ export default {
       this.loading = false;
     },
     async sorted(order_by) {
+      let orderBy = order_by.map(item => {
+        switch (item) {
+          case "date_time_start:asc":
+            return "date_start:asc";
+          case "date_time_start:desc":
+            return "date_start:desc";
+          case "date_time_end:asc":
+            return "date_end:asc";
+          case "date_time_end:desc":
+            return "date_end:desc";
+          default:
+            return item;
+        }
+      });
       this.current_page = 1;
       this.params.offset = 0;
-      this.params.order_by = order_by;
+      this.params.order_by = orderBy;
       this.jobPartParams.offset = 0;
-      this.jobPartParams.order_by = order_by;
+      this.jobPartParams.order_by = orderBy;
       this.loading = true;
       await this.getJobs(this.isJobPart ? this.jobPartParams : this.params);
       this.loading = false;
