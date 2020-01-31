@@ -46,7 +46,6 @@
                     :url="'/api/v1/qualifications'"
                     :professionCategoryId="selectedProfession.profession_category.id.toString()"
                     :error="formError.find(item => item.field === 'qualification_id')"
-                    @blur="CheckEmptyField(form.qualification_id,'qualification_id')"
                   />
 
                   <AppFilterSearch
@@ -57,7 +56,6 @@
                     :info="'Choose at least one IT system'"
                     :url="'/api/v1/clinical-systems'"
                     :error="formError.find(item => item.field === 'clinical_system_id')"
-                    @blur="CheckEmptyField(form.clinical_system_id,'clinical_system_id')"
                   />
 
                   <AppFilterSearch
