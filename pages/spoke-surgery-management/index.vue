@@ -95,6 +95,16 @@
             <div class="flex items-center py-1">
               <span class="mr-3 md:mx-2">
                 <svgicon
+                  :name="practiceSpoke.allow_surgery_create_permanent_jobs === true ? 'success-checkmark' : 'times-solid'"
+                  class="fill-current w-5 h-5"
+                  :class="practiceSpoke.allow_surgery_create_permanent_jobs ? 'text-green-500' : 'text-red-500 border-2 border-red-500 rounded-full p-1'"
+                />
+              </span>
+              <p class="font-semibold leading-tight">Permanent Job Creation</p>
+            </div>
+            <div class="flex items-center py-1">
+              <span class="mr-3 md:mx-2">
+                <svgicon
                   :name="practiceSpoke.allow_surgery_bill_locum === true ? 'success-checkmark' : 'times-solid'"
                   class="fill-current w-5 h-5"
                   :class="practiceSpoke.allow_surgery_bill_locum ? 'text-green-500' : 'text-red-500 border-2 border-red-500 rounded-full p-1'"
