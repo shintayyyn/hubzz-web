@@ -48,16 +48,6 @@
                 :label="'Job number'"
               />
             </div>
-            <!-- <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
-              <AppAutoComplete
-                class="px-1"
-                v-model="params.surgery_id"
-                :name="'surgery_id'"
-                :label="'Surgery'"
-                :url="'/api/v1/locum/surgeries'"
-                :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem'"
-              />
-            </div>-->
             <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
               <AppInput
                 class="px-1"
@@ -67,19 +57,6 @@
                 :label="'Job Title'"
               />
             </div>
-            <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
-              <AppInput
-                class="px-1"
-                v-model="params.shift_id"
-                :type="'select'"
-                :name="'shift_id'"
-                :label="'Shift'"
-                :items="shifts"
-              />
-            </div>
-          </div>
-
-          <div class="flex flex-col md:flex-row h-full w-full items-end">
             <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
               <AppInput
                 class="px-1"
@@ -100,26 +77,19 @@
                 :items="rates"
               />
             </div>
-            <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
-              <AppPostCode
-                class="px-1"
-                v-model="params.near_post_code"
-                :name="'near_post_code'"
-                :label="'Post code'"
-              />
-            </div>
-            <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
-              <AppInput
-                class="px-1"
-                v-model="params.miles"
-                :type="'text'"
-                :name="'miles'"
-                :label="'Miles'"
-              />
-            </div>
           </div>
 
           <div class="flex flex-col md:flex-row h-full w-full items-end">
+            <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
+              <AppInput
+                class="px-1"
+                v-model="params.shift_id"
+                :type="'select'"
+                :name="'shift_id'"
+                :label="'Shift'"
+                :items="shifts"
+              />
+            </div>
             <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
               <AppDate
                 v-model="params.calendar_date_start"
@@ -129,18 +99,12 @@
               />
             </div>
             <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
-              <AppTime v-model="params.time_start" :name="'time_start'" :label="'Start Time'" />
-            </div>
-            <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
               <AppDate
                 v-model="params.calendar_date_end"
                 :name="'calendar_date_end'"
                 :label="'To'"
                 :format="'YYYY-MM-DD'"
               />
-            </div>
-            <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
-              <AppTime v-model="params.time_end" :name="'time_end'" :label="'End Time'" />
             </div>
           </div>
 
@@ -179,16 +143,6 @@
                 :label="'Job part number'"
               />
             </div>
-            <!-- <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-              <AppAutoComplete
-                class="px-1"
-                v-model="jobPartParams.job_surgery_id"
-                :name="'job_surgery_id'"
-                :label="'Surgery'"
-                :url="'/api/v1/locum/surgeries'"
-                :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem'"
-              />
-            </div>-->
             <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
               <AppInput
                 class="px-1"
@@ -198,19 +152,6 @@
                 :label="'Job Title'"
               />
             </div>
-            <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-              <AppInput
-                class="px-1"
-                v-model="jobPartParams.job_shift_id"
-                :type="'select'"
-                :name="'job_shift_id'"
-                :label="'Shift'"
-                :items="shifts"
-              />
-            </div>
-          </div>
-
-          <div class="flex flex-col md:flex-row g-full items-end">
             <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
               <AppInput
                 class="px-1"
@@ -231,39 +172,25 @@
                 :items="rates"
               />
             </div>
-            <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-              <AppPostCode
-                class="px-1"
-                v-model="jobPartParams.near_post_code"
-                :name="'near_post_code'"
-                :label="'Post code'"
-              />
-            </div>
-            <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-              <AppInput
-                class="px-1"
-                v-model="jobPartParams.miles"
-                :type="'text'"
-                :name="'miles'"
-                :label="'Miles'"
-              />
-            </div>
           </div>
 
           <div class="flex flex-col md:flex-row g-full items-end">
+            <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+              <AppInput
+                class="px-1"
+                v-model="jobPartParams.job_shift_id"
+                :type="'select'"
+                :name="'job_shift_id'"
+                :label="'Shift'"
+                :items="shifts"
+              />
+            </div>
             <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
               <AppDate
                 v-model="jobPartParams.calendar_date_start"
                 :name="'calendar_date_start'"
                 :label="'From'"
                 :format="'YYYY-MM-DD'"
-              />
-            </div>
-            <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-              <AppTime
-                v-model="jobPartParams.time_start"
-                :name="'time_start'"
-                :label="'Start Time'"
               />
             </div>
             <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
@@ -274,12 +201,12 @@
                 :format="'YYYY-MM-DD'"
               />
             </div>
-            <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-              <AppTime v-model="jobPartParams.time_end" :name="'time_end'" :label="'End Time'" />
-            </div>
           </div>
 
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <div
+            class="md:px-1 w-full lg:w-1/4 md:w-1/3"
+            v-if="$route.query.status && $route.query.status !== 'Ongoing'"
+          >
             <AppInput
               class="px-1"
               v-model="jobPartParams.invoice_status"
