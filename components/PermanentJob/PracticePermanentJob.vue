@@ -137,7 +137,7 @@
 										:placeholder="'Select...'"
 										:error="formError.find(item => item.field === 'industry_type')"
 										:items="industry_types"
-										@blur="CheckEmptyField(job.practice_id, 'industry_type')"
+										@blur="CheckEmptyField(form.practice_id, 'industry_type')"
 									/>
 								</div>
 							</div>
@@ -189,10 +189,33 @@
 						</template>
 					</div>
 				</div>
-
+        
 				<div v-if="permanent_job" class="mx-2 w-full md:w-2/5 lg:w-1/3">
 					<PermanentJobDetailCandidates :permanent_job="permanent_job"/>
 					<PermanentJobMap :permanent_job="permanent_job" />
+
+          <AppButton 
+            class="ml-4" 
+            :label="'Force Close Job'" 
+            @click="toCloseJob = !toCloseJob" />
+
+          <div v-if="toCloseJob === true">
+            <AppInput
+              v-model="form.hired_through"
+              :type="'select'"
+              :name="'hired_through'"
+              :placeholder="'Select...'"
+              :error="formError.find(item => item.field === 'hired_through')"
+              :items="hired_through"
+              @blur="CheckEmptyField(form.hired_through, 'hired_through')"
+            />
+
+            <AppButton 
+              class="ml-4" 
+              :label="'Confirm'" 
+              @click="forceCloseJob()"/>
+          </div>
+          
 				</div>
 			</div>
 		</div>
@@ -216,7 +239,8 @@ export default {
 	},
 	data() {
 		return {
-			edit: false,
+      edit: false,
+      toCloseJob: false,
       modal: false,
       permanent_job: '',
 			form: {
@@ -234,25 +258,9 @@ export default {
 				practice_id: "",
 				profession_id: "",
 				practice_rate: 0,
-				approved_at: ""
+        approved_at: "",
+        hired_through: "",
 			},
-			// static content
-			job: {
-				practice: "",
-				location: "",
-        salary_amount: 0,
-				date_posted: "01/20/2020",
-				date_closing: "02/02/2020",
-				report_to: "",
-				role: "",
-				contract_type: "",
-				work_hours: "Part Time",
-				industry_type: "NHS",
-				description:
-					"<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Suspendisse interdum consectetur libero id faucibus nisl tincidunt eget nullam. Libero justo laoreet sit amet cursus sit. In vitae turpis massa sed elementum tempus egestas sed sed. Proin nibh nisl condimentum id venenatis a condimentum. Morbi tempus iaculis urna id volutpat. Et netus et malesuada fames ac turpis. Scelerisque purus semper eget duis. Libero justo laoreet sit amet. Tempor nec feugiat nisl pretium fusce id velit ut. Ac feugiat sed lectus vestibulum mattis ullamcorper velit sed ullamcorper. Mattis aliquam faucibus purus in massa tempor nec feugiat nisl. Vestibulum rhoncus est pellentesque elit ullamcorper. Duis at consectetur lorem donec. In egestas erat imperdiet sed euismod nisi. Semper feugiat nibh sed pulvinar proin.</p>",
-				update_remarks: "",
-				updated_accepted_until: ""
-      },
 			salary_range: false,
 			practice_lists: [],
 			work_hours_type: [],
@@ -260,7 +268,11 @@ export default {
 			salary_description_type_1: [],
 			salary_description_type_2: [],
 			professions: [],
-			professions_categories: [],
+      professions_categories: [],
+
+      hired_through: [],
+      put_hired_through: '',
+
 			formError: [],
 			// quill
 			editorOption: {
@@ -386,7 +398,17 @@ export default {
 				label: "Non-negotiable",
 				value: "Non-negotiable"
 			}
-		];
+    ];
+    this.hired_through = [
+      {
+        label: "Through HUBZZ",
+        value: "Through HUBZZ",
+      },
+      {
+        label: "Direct Hiring",
+        value: "Direct Hiring",
+      }
+    ]
 	},
 	methods: {
 		onEditorBlur(editor) {
@@ -405,6 +427,19 @@ export default {
           status: "success",
           text: ["Successfully Rejected Locum"]
         });
+      })
+    },
+    forceCloseJob(){
+      this.$axios.$put(`/api/v1/practice/permanent-jobs/${this.permanent_job.id}/force-close-job`, {
+        hired_through: this.form.hired_through,
+      }).then(res => {
+         this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "success",
+          text: ["Successfully Closed Job"]
+        });
+      }).finally(() => {
+        this.$router.go(-1)
       })
     }
 	}

@@ -81,6 +81,17 @@
               </div>
             </div>
           </div>
+          
+          <div class="flex items-center py-1">
+            <span class="mr-3 md:mx-2">
+              <svgicon
+                :name="practice_surgery.allow_surgery_create_permanent_jobs === true ? 'success-checkmark' : 'times-solid'"
+                class="fill-current w-5 h-5"
+                :class="practice_surgery.allow_surgery_create_permanent_jobs ? 'text-green-500' : 'text-red-500 border-2 border-red-500 rounded-full p-1'"
+              />
+            </span>
+            <p class="font-semibold">Is this Spoke allowed to create permanent jobs?</p>
+          </div>
 
           <div class="flex items-center py-1">
             <span class="mr-3 md:mx-2">
@@ -188,6 +199,16 @@
           <!-- SET MAX RATES END HERE -->
           <div class="w-full p-1">
             <AppInput
+              v-model="form.allow_surgery_create_permanent_jobs"
+              :type="'select'"
+              :name="'allow_surgery_create_permanent_jobs'"
+              :label="'Allow Spoke to Create Permanent Jobs?'"
+              :error="formError.find(item => item.field === 'allow_surgery_create_permanent_jobs')"
+              :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
+            />
+          </div>
+          <div class="w-full p-1">
+            <AppInput
               v-model="form.allow_surgery_bill_locum"
               :type="'select'"
               :name="'allow_surgery_bill_locum'"
@@ -255,7 +276,6 @@ export default {
         share_banks_to_other_surgeries: ""
       },
       formError: [],
-      practice_id: "",
       practice_surgery: []
     };
   },
@@ -291,6 +311,7 @@ export default {
     this.form.max_wholeday_rate_limit = this.practice_surgery.max_wholeday_rate_limit;
     this.form.max_ooh_rate_limit = this.practice_surgery.max_ooh_rate_limit;
     this.form.max_excess_hours = this.practice_surgery.max_excess_hours;
+    this.form.allow_surgery_create_permanent_jobs = this.practice_surgery.allow_surgery_create_permanent_jobs;
     this.form.allow_surgery_bill_locum = this.practice_surgery.allow_surgery_bill_locum;
     this.form.allow_surgery_bill_hubzz = this.practice_surgery.allow_surgery_bill_hubzz;
     this.form.share_banks_to_other_surgeries = this.practice_surgery.share_banks_to_other_surgeries;
@@ -322,6 +343,7 @@ export default {
         this.form.max_wholeday_rate_limit = this.practice_surgery.max_wholeday_rate_limit;
         this.form.max_ooh_rate_limit = this.practice_surgery.max_ooh_rate_limit;
         this.form.max_excess_hours = this.practice_surgery.max_excess_hours;
+        this.form.allow_surgery_create_permanent_jobs = this.practice_surgery.allow_surgery_create_permanent_jobs;
         this.form.allow_surgery_bill_locum = this.practice_surgery.allow_surgery_bill_locum;
         this.form.allow_surgery_bill_hubzz = this.practice_surgery.allow_surgery_bill_hubzz;
         this.form.share_banks_to_other_surgeries = this.practice_surgery.share_banks_to_other_surgeries;

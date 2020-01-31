@@ -88,6 +88,17 @@
         <!-- SET MAX RATES END HERE -->
         <div class="w-full p-1">
           <AppInput
+            v-model="form.allow_surgery_create_permanent_jobs"
+            :type="'select'"
+            :name="'allow_surgery_create_permanent_jobs'"
+            :label="'Allow Surgery to Create Permanent Jobs'"
+            :error="formError.find(item => item.field === 'allow_surgery_create_permanent_jobs')"
+            :placeholder="'Select...'"
+            :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
+          />
+        </div>
+        <div class="w-full p-1">
+          <AppInput
             v-model="form.allow_surgery_bill_locum"
             :type="'select'"
             :name="'allow_surgery_bill_locum'"
@@ -149,6 +160,7 @@ export default {
         max_wholeday_rate_limit: "",
         max_ooh_rate_limit: "",
         max_excess_hours: "",
+        allow_surgery_create_permanent_jobs: "",
         allow_surgery_bill_locum: "",
         allow_surgery_bill_hubzz: "",
         share_banks_to_other_surgeries: ""
@@ -184,17 +196,16 @@ export default {
       await this.$axios
         .post(`/api/v1/practice/me/practice-surgeries/invite`, {
           child_practice_id: this.form.child_practice_id,
-          allow_surgery_create_sessions: this.form
-            .allow_surgery_create_sessions,
+          allow_surgery_create_sessions: this.form.allow_surgery_create_sessions,
           max_hourly_rate_limit: this.form.max_hourly_rate_limit,
           max_halfday_rate_limit: this.form.max_halfday_rate_limit,
           max_wholeday_rate_limit: this.form.max_wholeday_rate_limit,
           max_ooh_rate_limit: this.form.max_ooh_rate_limit,
           max_excess_hours: this.form.max_excess_hours,
+          allow_surgery_create_permanent_jobs: this.form.allow_surgery_create_permanent_jobs,
           allow_surgery_bill_locum: this.form.allow_surgery_bill_locum,
           allow_surgery_bill_hubzz: this.form.allow_surgery_bill_hubzz,
-          share_banks_to_other_surgeries: this.form
-            .share_banks_to_other_surgeries
+          share_banks_to_other_surgeries: this.form.share_banks_to_other_surgeries
         })
         .then(res => {
           this.modal = false;
