@@ -42,7 +42,7 @@
             <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
               <AppInput
                 class="px-1"
-                v-model="params.job_number"
+                v-model="params.job_number_includes"
                 :type="'text'"
                 :name="'job_number'"
                 :label="'Job number'"
@@ -51,7 +51,7 @@
             <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
               <AppInput
                 class="px-1"
-                v-model="params.title"
+                v-model="params.title_includes"
                 :type="'text'"
                 :name="'title'"
                 :label="'Job Title'"
@@ -92,7 +92,7 @@
             </div>
             <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
               <AppDate
-                v-model="params.calendar_date_start"
+                v-model="params.date_start"
                 :name="'calendar_date_start'"
                 :label="'From'"
                 :format="'YYYY-MM-DD'"
@@ -100,7 +100,7 @@
             </div>
             <div class="md:px-1 h-full w-full lg:w-1/4 md:w-1/3">
               <AppDate
-                v-model="params.calendar_date_end"
+                v-model="params.date_end"
                 :name="'calendar_date_end'"
                 :label="'To'"
                 :format="'YYYY-MM-DD'"
@@ -137,7 +137,7 @@
             <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
               <AppInput
                 class="px-1"
-                v-model="jobPartParams.job_part_number"
+                v-model="jobPartParams.job_part_number_includes"
                 :type="'text'"
                 :name="'job_part_number'"
                 :label="'Job part number'"
@@ -146,7 +146,7 @@
             <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
               <AppInput
                 class="px-1"
-                v-model="jobPartParams.job_title"
+                v-model="jobPartParams.job_title_includes"
                 :type="'text'"
                 :name="'job_title'"
                 :label="'Job Title'"
@@ -187,7 +187,7 @@
             </div>
             <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
               <AppDate
-                v-model="jobPartParams.calendar_date_start"
+                v-model="jobPartParams.date_start"
                 :name="'calendar_date_start'"
                 :label="'From'"
                 :format="'YYYY-MM-DD'"
@@ -195,7 +195,7 @@
             </div>
             <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
               <AppDate
-                v-model="jobPartParams.calendar_date_end"
+                v-model="jobPartParams.date_end"
                 :name="'calendar_date_end'"
                 :label="'To'"
                 :format="'YYYY-MM-DD'"
@@ -251,7 +251,14 @@
           @limitchanged="limitchanged"
           @sorted="sorted"
         ></AppTable>
-        <div v-if="!jobs.length && !loading" class="flex justify-center py-4">{{noJobsToDisplay}}</div>
+        <div
+          v-if="!jobs.length && !loading && !filterText"
+          class="flex justify-center py-4"
+        >{{noJobsToDisplay}}</div>
+        <div
+          v-if="!jobs.length && !loading && filterText"
+          class="flex justify-center py-4"
+        >{{filterText}}</div>
         <transition name="fade" mode="out-in">
           <nuxt-link
             class="shield"
@@ -310,6 +317,7 @@ export default {
   },
   data() {
     return {
+      filterText: "",
       loading: false,
       current_page: 1,
       // app table params
@@ -330,7 +338,11 @@ export default {
         calendar_date_end: "",
         time_start: "",
         time_end: "",
-        viewing_locum_user_id: []
+        viewing_locum_user_id: [],
+        title_includes: "",
+        job_number_includes: "",
+        date_start: "",
+        date_end: ""
       },
       jobPartParams: {
         offset: 0,
@@ -349,7 +361,11 @@ export default {
         calendar_date_end: "",
         time_start: "",
         time_end: "",
-        invoice_status: ""
+        invoice_status: "",
+        job_title_includes: "",
+        job_part_number_includes: "",
+        date_start: "",
+        date_end: ""
       },
       filterModal: false,
       showTable: false,
@@ -640,6 +656,7 @@ export default {
         this.showTable = false;
         this.filterModal = false;
         this.showRefresh = false;
+        this.filterText = "";
         this.clearFilters();
         setTimeout(async () => {
           // if (newStatus === "Applied" && newBank === "true") {
@@ -1419,6 +1436,7 @@ export default {
       this.jobPartParams.offset = 0;
       this.loading = true;
       this.filterModal = false;
+      this.filterText = "No Jobs Found";
       await this.getJobsPromiseAll();
       this.loading = false;
     },
@@ -1472,9 +1490,9 @@ export default {
       this.params.offset = 0;
       this.params.limit = 10;
       this.params.type = "";
-      this.params.job_number = "";
+      this.params.job_number_includes = "";
       this.params.practice_id = "";
-      this.params.title = "";
+      this.params.title_includes = "";
       this.params.shift_id = "";
       this.params.rate = "";
       this.params.rate_type_id = "";
@@ -1483,17 +1501,17 @@ export default {
       this.jobPartParams.offset = 0;
       this.jobPartParams.limit = 10;
       this.jobPartParams.job_type = "";
-      this.jobPartParams.job_part_number = "";
+      this.jobPartParams.job_part_number_includes = "";
       this.jobPartParams.job_practice_id = "";
-      this.jobPartParams.job_title = "";
+      this.jobPartParams.job_title_includes = "";
       this.jobPartParams.job_shift_id = "";
       this.jobPartParams.job_rate = "";
       this.jobPartParams.job_rate_type_id = "";
       this.jobPartParams.invoice_status = "";
       this.jobPartParams.near_post_code = "";
       this.jobPartParams.miles = "";
-      this.jobPartParams.calendar_date_start = "";
-      this.jobPartParams.calendar_date_end = "";
+      this.jobPartParams.date_start = "";
+      this.jobPartParams.date_end = "";
       this.jobPartParams.time_start = "";
       this.jobPartParams.time_end = "";
       this.jobPartParams.order_by = [];
