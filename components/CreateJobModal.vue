@@ -602,19 +602,46 @@ export default {
     "form.date_end"(value) {
       let end = this.$moment(value, "YYYY-MM-DD");
       let days = [];
-      let day = this.$moment(this.form.date_start, "YYYY-MM-DD");
-      while (day <= end) {
-        days.push(day.day());
-        day = day.clone().add(1, "d");
+      let startDay = this.$moment(this.form.date_start, "YYYY-MM-DD");
+      while (startDay <= end) {
+        days.push(startDay.day());
+        startDay = startDay.clone().add(1, "d");
       }
-      this.show_saturday = false;
-      this.show_sunday = false;
-      if (days.includes(6)) {
-        this.show_saturday = true;
+      // this.show_saturday = false;
+      // this.form.include_saturday = false;
+      // this.show_sunday = false;
+      // this.form.include_sunday = false;
+      this.getListofDays(days);
+      // if (days.includes(6)) {
+      //   this.show_saturday = true;
+      //   this.form.include_saturday = true;
+      // }
+      // if (days.includes(0)) {
+      //   this.show_sunday = true;
+      //   this.form.include_sunday = true;
+      // }
+    },
+    "form.date_start"(value) {
+      let start = this.$moment(value, "YYYY-MM-DD");
+      let days = [];
+      let endDay = this.$moment(this.form.date_end, "YYYY-MM-DD");
+      while (endDay >= start) {
+        days.push(endDay.day());
+        endDay = endDay.clone().subtract(1, "d");
       }
-      if (days.includes(0)) {
-        this.show_sunday = true;
-      }
+      // this.show_saturday = false;
+      // this.form.include_saturday = false;
+      // this.show_sunday = false;
+      // this.form.include_sunday = false;
+      this.getListofDays(days);
+      // if (days.includes(6)) {
+      //   this.show_saturday = true;
+      //   this.form.include_saturday = true;
+      // }
+      // if (days.includes(0)) {
+      //   this.show_sunday = true;
+      //   this.form.include_sunday = true;
+      // }
     }
   },
   created() {
@@ -810,6 +837,22 @@ export default {
       });
   },
   methods: {
+    getListofDays(days) {
+      if (days.includes(6)) {
+        this.show_saturday = true;
+        this.form.include_saturday = true;
+      } else if (!days.includes(6)) {
+        this.show_saturday = false;
+        this.form.include_saturday = false;
+      }
+      if (days.includes(0)) {
+        this.show_sunday = true;
+        this.form.include_sunday = true;
+      } else if (!days.includes(0)) {
+        this.show_sunday = false;
+        this.form.include_sunday = false;
+      }
+    },
     close() {
       this.$store.commit("calendar/CREATE_JOB_MODAL", false);
       this.$store.commit("calendar/CLEAR_REPOST_JOB");
@@ -841,26 +884,6 @@ export default {
         "compliance_document_id",
         "auto_assign_at"
       ];
-
-      // let startDateTime = this.$moment(
-      //   `${this.form.date_start} ${this.form.time_start}`,
-      //   "YYYY-MM-DD HH:mm"
-      // ).format("YYYY-MM-DD HH:mm");
-      // let endDateTime = this.$moment(
-      //   `${this.form.date_end} ${this.form.time_end}`,
-      //   "YYYY-MM-DD HH:mm"
-      // ).format("YYYY-MM-DD HH:mm");
-
-      // if (this.$moment(startDateTime).isSameOrAfter(endDateTime)) {
-      //   this.formError.push({
-      //     field: "date_end",
-      //     message: "Invalid End Date"
-      //   });
-      //   this.formError.push({
-      //     field: "date_start",
-      //     message: "Invalid Start Date"
-      //   });
-      // }
 
       if (
         [15, "15", 30, "30", 60, "60", false, "false"].includes(
