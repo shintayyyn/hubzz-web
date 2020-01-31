@@ -26,38 +26,36 @@
               <h4 class="font-bold mt-4">Criteria</h4>
               <div class="bg-white rounded-lg shadow-lg px-4 md:px-8 py-4 mt-4">
                 <AppInput
-                  v-model="form.profession_id"
+                  v-model="form.role"
                   :type="'select'"
-                  :name="'profession_id'"
+                  :name="'role'"
                   :label="'Role'"
                   :placeholder="'Select...'"
                   :items="professions"
-                  :error="formError.find(item => item.field === 'profession_id')"
-                  @blur="CheckEmptyField(form.profession_id,'profession_id')"
+                  :error="formError.find(item => item.field === 'role')"
+                  @blur="CheckEmptyField(form.role,'role')"
                 />
 
-                <template v-if="form.profession_id">
+                <template v-if="form.role">
                   <AppFilterSearch
-                    v-model="form.qualification_id"
-                    :name="'qualification_id'"
+                    v-model="form.specialty"
+                    :name="'specialty'"
                     :label="'Specialty'"
                     :placeholder="'Select...'"
                     :info="'Choose at least one qualification'"
                     :url="'/api/v1/qualifications'"
                     :professionCategoryId="selectedProfession.profession_category.id.toString()"
-                    :error="formError.find(item => item.field === 'qualification_id')"
-                    @blur="CheckEmptyField(form.qualification_id,'qualification_id')"
+                    :error="formError.find(item => item.field === 'specialty')"
                   />
 
                   <AppFilterSearch
-                    v-model="form.clinical_system_id"
-                    :name="'clinical_system_id'"
+                    v-model="form.clinical_system"
+                    :name="'clinical_system'"
                     :label="'Clinical systems'"
                     :placeholder="'Select...'"
                     :info="'Choose at least one IT system'"
                     :url="'/api/v1/clinical-systems'"
-                    :error="formError.find(item => item.field === 'clinical_system_id')"
-                    @blur="CheckEmptyField(form.clinical_system_id,'clinical_system_id')"
+                    :error="formError.find(item => item.field === 'clinical_system')"
                   />
 
                   <AppFilterSearch
@@ -70,7 +68,7 @@
                     :defaultItem="'English'"
                   />
 
-                  <template v-if="form.profession_id">
+                  <template v-if="form.role">
                     <div class="relative flex flex-col pt-2">
                       <div class>Compliance documents</div>
                     </div>
@@ -174,14 +172,14 @@
                   @blur="CheckEmptyField(form.unpaid_breaks_in_minutes,'unpaid_breaks_in_minutes')"
                 />
                 <AppInput
-                  v-model="form.shift_id"
+                  v-model="form.shift"
                   :type="'select'"
-                  :name="'shift_id'"
+                  :name="'shift'"
                   :label="'Shifts'"
                   :placeholder="'Select...'"
                   :items="shifts"
-                  :error="formError.find(item => item.field === 'shift_id')"
-                  @blur="CheckEmptyField(form.shift_id, 'shift_id')"
+                  :error="formError.find(item => item.field === 'shift')"
+                  @blur="CheckEmptyField(form.shift, 'shift')"
                 />
 
                 <AppInput
@@ -548,9 +546,9 @@ export default {
         locum_detail_rate_type_id: 1,
         ir35: false,
         mandatory_training_id: [],
-        profession_id: "",
-        qualification_id: [],
-        clinical_system_id: [],
+        role: "",
+        specialty: [],
+        clinical_system: [],
         spoken_language_id: [],
         compliance_document_id: [],
         date_start: null,
@@ -560,7 +558,7 @@ export default {
         include_saturday: true,
         include_sunday: true,
         unpaid_breaks_in_minutes: "",
-        shift_id: "",
+        shift: "",
         auto_assign_at: null,
         selection_date: null,
         favorite_only_until: null
@@ -577,13 +575,10 @@ export default {
     }
   },
   watch: {
-    "$auth.user"(value) {
-      console.log("watch auth user");
-    },
-    "form.profession_id"(newValue, oldValue) {
-      this.CheckEmptyField(newValue, "profession_id");
+    "form.role"(newValue, oldValue) {
+      this.CheckEmptyField(newValue, "role");
       if (newValue && oldValue) {
-        this.form.qualification_id = [];
+        this.form.specialty = [];
       }
       if (newValue) {
         this.selectedProfession = this.professions_categories.find(
@@ -598,6 +593,12 @@ export default {
           return;
         }
       }
+    },
+    "form.specialty"(value) {
+      this.CheckEmptyField(value, "specialty");
+    },
+    "form.clinical_system"(value) {
+      this.CheckEmptyField(value, "clinical_system");
     },
     "form.date_end"(value) {
       let end = this.$moment(value, "YYYY-MM-DD");
@@ -739,11 +740,11 @@ export default {
             this.form.mandatory_training_id = this.repostJob.platform_job.mandatory_trainings.map(
               item => item.id
             );
-            this.form.profession_id = this.repostJob.platform_job.profession.id;
+            this.form.role = this.repostJob.platform_job.profession.id;
 
             this.repostJob.platform_job.qualifications.forEach(
               qualification => {
-                this.form.qualification_id.push({
+                this.form.specialty.push({
                   label: qualification.name,
                   value: qualification.id
                 });
@@ -751,7 +752,7 @@ export default {
             );
             this.repostJob.platform_job.clinical_systems.forEach(
               clinicalSystem => {
-                this.form.clinical_system_id.push({
+                this.form.clinical_system.push({
                   label: clinicalSystem.name,
                   value: clinicalSystem.id
                 });
@@ -790,7 +791,7 @@ export default {
               this.unpaid_breaks = this.repostJob.platform_job.unpaid_breaks_in_minutes;
             }
 
-            this.form.shift_id = this.repostJob.shift.id;
+            this.form.shift = this.repostJob.shift.id;
 
             this.form.auto_assign_at = this.repostJob.platform_job.auto_assign_at;
             if (this.form.auto_assign_at) {
@@ -924,14 +925,12 @@ export default {
       this.Validate(this.form, notRequired);
 
       if (!this.formError.length) {
-        this.selectedClinicalSystem = [...this.form.clinical_system_id];
-        this.form.clinical_system_id = this.form.clinical_system_id.map(
+        this.selectedClinicalSystem = [...this.form.clinical_system];
+        this.form.clinical_system = this.form.clinical_system.map(
           item => item.value
         );
-        this.selectedQualification = [...this.form.qualification_id];
-        this.form.qualification_id = this.form.qualification_id.map(
-          item => item.value
-        );
+        this.selectedQualification = [...this.form.specialty];
+        this.form.specialty = this.form.specialty.map(item => item.value);
         this.selectedSpokenLanguage = [...this.form.spoken_language_id];
         this.form.spoken_language_id = this.form.spoken_language_id.map(
           item => item.value
@@ -1015,8 +1014,8 @@ export default {
           .catch(err => {
             console.log("err", err.response || err);
             this.$refs.modalContainer.scrollTop = 0;
-            this.form.clinical_system_id = this.selectedClinicalSystem;
-            this.form.qualification_id = this.selectedQualification;
+            this.form.clinical_system = this.selectedClinicalSystem;
+            this.form.specialty = this.selectedQualification;
             this.form.spoken_language_id = this.selectedSpokenLanguage;
 
             this.form.session_requirements = this.form.session_requirements.split(
