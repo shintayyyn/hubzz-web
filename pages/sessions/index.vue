@@ -682,8 +682,7 @@ export default {
           {
             name: "Completed At",
             dataIndex: "completed_at",
-            class: "text-center localDate",
-            sortable: true
+            class: "text-center localDate"
           },
           {
             name: "Invoice status",
@@ -1177,7 +1176,6 @@ export default {
         });
     },
     getJobs(params) {
-      console.log(params);
       let queryStatus = this.$route.query.status;
       let bankStatus = this.$route.query.bank;
       let has_favorite_applicants = "";
@@ -1499,18 +1497,22 @@ export default {
     },
     async sorted(order_by) {
       let orderBy = order_by.map(item => {
-        switch (item) {
-          case "date_time_start:asc":
-            return "date_start:asc";
-          case "date_time_start:desc":
-            return "date_start:desc";
-          case "date_time_end:asc":
-            return "date_end:asc";
-          case "date_time_end:desc":
-            return "date_end:desc";
+        let order = item.split(":")[1];
+        let sorting = item.split(":")[0];
+        switch (sorting) {
+          case "date_time_start":
+            sorting = "date_start";
+            break;
+          case "date_time_end":
+            sorting = "date_end";
+            break;
+          case "rate_name":
+            sorting = "rate";
+            break;
           default:
-            return item;
+            sorting;
         }
+        return `${sorting}:${order}`;
       });
       this.current_page = 1;
       this.params.offset = 0;
