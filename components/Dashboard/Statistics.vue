@@ -39,9 +39,7 @@ export default {
   methods: {
     getLocumStats() {
       Promise.all([
-        this.$axios.$get(
-          `/api/v1/locum/jobs/count?locum_status=Available&locum_status=Matched`
-        ),
+        this.$axios.$get(`/api/v1/locum/jobs/count?locum_status=Matched`),
         this.$axios.$get(`/api/v1/locum/jobs/count?locum_status=Allocated`),
         this.$axios.$get(`/api/v1/locum/jobs/count?locum_status=Applied`),
         this.$axios.$get(`/api/v1/locum/job-parts/count?locum_status=Completed`)
@@ -95,12 +93,12 @@ export default {
               route: "/sessions?status=Applied"
             }),
             this.statistics.push({
-              label: "Assigned Jobs",
+              label: "Allocated Jobs",
               value: responses[2].data.count,
               route: "/sessions?status=Allocated"
             }),
             this.statistics.push({
-              label: "Available Jobs",
+              label: "Live Jobs",
               value: responses[3].data.count,
               route: "/sessions?status=Live"
             });
