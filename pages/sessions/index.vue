@@ -249,7 +249,7 @@
           :minHeight="'70vh'"
           @pagechanged="pagechanged"
           @limitchanged="limitchanged"
-          @sorted="sorted"
+          @sorted="sorted()"
         ></AppTable>
         <div
           v-if="!jobs.length && !loading && !filterText"
@@ -1444,6 +1444,7 @@ export default {
       let orderBy = order_by.map(item => {
         let order = item.split(":")[1];
         let sorting = item.split(":")[0];
+        console.log(item)
         switch (sorting) {
           case "date_time_start":
             sorting = "date_start";
@@ -1451,12 +1452,19 @@ export default {
           case "date_time_end":
             sorting = "date_end";
             break;
+          case "calendar_date_start":
+            sorting= "calendar_date_start"
+            break;
+          case "calendar_date_end":
+            sorting= "calendar_date_end"
+            break;
           case "rate_name":
             sorting = "rate";
             break;
           default:
             sorting;
         }
+        console.log("sort", `${sorting}:${order}`)
         return `${sorting}:${order}`;
       });
       this.current_page = 1;
@@ -1515,6 +1523,13 @@ export default {
       this.jobPartParams.time_start = "";
       this.jobPartParams.time_end = "";
       this.jobPartParams.order_by = [];
+
+      if (this.jobs.length) {
+        this.filterJob()
+      } else{
+        this.filterModal = false;
+      }
+
     }
   }
 };

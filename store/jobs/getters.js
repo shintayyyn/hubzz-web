@@ -43,7 +43,7 @@ export default {
                     message = 'This part of your job has been approved'
                     break;
                 case 'Practice Notification Job Disputed':
-                    message = 'This part of your job has been dispute'
+                    message = 'This part of your job has been disputed'
                     break;
                 case 'Practice Notification Job Cancelled':
                     message = 'This job has been cancelled.'
