@@ -1,7 +1,7 @@
 <template>
 	<section>
 		<div class="p-4 md:p-8 max-w-3xl">
-			<div class="flex items-center">
+			<div  class="flex items-center">
 				<svgicon
 					name="left-arrow"
 					height="32"
@@ -12,13 +12,16 @@
 				<button class="mx-4 focus:outline-none" @click.prevent.stop="message(user)">
 					<svgicon name="chat" height="32" width="32" color="#888 #555 #fff" />
 				</button>
-				<AppButton :label="'Accept'" class="mx-1" @click="accepted=!accepted" />
-				<AppButton
-					class="mx-1"
-					@click="rejectLocum()"
-					:label="'Reject'"
-					:customTheme="'bg-red-500 hover:bg-red-600 text-white'"
-				/>
+
+        <div v-if="permanent_job_application.application_status === 'Applied'">
+          <AppButton :label="'Accept'" class="mx-1" @click="accepted=!accepted" />
+          <AppButton
+            class="mx-1"
+            @click="rejectLocum()"
+            :label="'Reject'"
+            :customTheme="'bg-red-500 hover:bg-red-600 text-white'"
+          />
+        </div>
 			</div>
 			<div v-if="accepted">
 				<AppDate
@@ -30,11 +33,15 @@
 					@click="inviteLocum()"
 					class="mx-1"
 					:label="'Invite This Locum'"
-					:customTheme="'bg-green-500 hover:bg-red-600 text-white'"
 				/>
 			</div>
 			<div class="flex flex-row flex-no-wrap justify-start mt-4 md:mt-8">
 				<div class="font-bold text-md sm:text-lg">{{user.name}}</div>
+        <div 
+          class="rounded-full px-6 py-1 mx-2 font-semibold"
+          :class="statusStyle(permanent_job_application.application_status)">
+          {{permanent_job_application.application_status}}
+        </div>
 			</div>
 			<div class="flex flex-row flex-wrap justify-between mt-4">
 				<div class="w-full pr-0 lg:pr-2 lg:w-1/2">
@@ -150,11 +157,11 @@
 							<div class="text-xs sm:text-sm">(none)</div>
 						</div>
 					</div>
-					<!-- <AppButton
+					<AppButton
 						:label="'Appoint to this job'"
 						@click="confirmation_modal = true"
-						v-if="authPermissions.includes('Appoint Sessions Job')"
-					/>-->
+						v-if="permanent_job_application.invitation_schedule && permanent_job_application.application_status === 'For Interview'"
+					/>
 				</div>
 			</div>
 		</div>
@@ -211,14 +218,16 @@ export default {
 		console.log(this.user);
 		this.getProfessionCategory(
 			this.user.locum_detail.profession.profession_category.id
-		);
+    );
+    console.log('permanent job app', this.permanent_job_application)
 	},
 
 	methods: {
 		message(user) {
 			this.user = user;
 			this.sendMessageModal = true;
-		},
+    },
+    
 		getProfessionCategory(id) {
 			this.$axios.$get(`/api/v1/profession-categories/${id}`).then(res => {
 				this.mandatory = this.user.locum_detail.compliance_documents.filter(
@@ -240,7 +249,8 @@ export default {
 					}
 				);
 			});
-		},
+    },
+    
 		inviteLocum() {
 			this.$axios
 				.$put(
@@ -262,7 +272,8 @@ export default {
 						text: [`${err.response.data.message}`]
 					});
 				});
-		},
+    },
+    
 		rejectLocum() {
 			this.$axios
 				.$put(
@@ -283,23 +294,14 @@ export default {
 							});
 						});
 				});
-		},
+    },
+    
 		appoint() {
 			this.$axios
 				.$put(
-					`/api/v1/practice/jobs/${this.job.id}/applicants/${this.user.id}/appoint`
+					`/api/v1/practice/permanent-job-applications/${this.permanent_job_application.id}/appoint-locum-to-job/${this.user.id}`
 				)
 				.then(res => {
-					if (
-						this.$route.path.includes("/dashboard") ||
-						this.$route.path.includes("/sessions")
-					) {
-						this.$store.commit("jobs/REMOVE_PRACTICE_APPLIED_JOB", this.job.id);
-						this.$store.commit(
-							"jobs/REMOVE_PRACTICE_APPLIED_JOBS_REMINDER",
-							this.job.id
-						);
-					}
 					this.$store.commit("SET_NOTIFICATION", {
 						enabled: true,
 						status: "success",
@@ -317,7 +319,8 @@ export default {
 				.finally(() => {
 					this.confirmation_modal = false;
 				});
-		},
+    },
+    
 		downloadItem(fileUrl, fileName) {
 			const axios = require("axios");
 			axios({
@@ -332,7 +335,32 @@ export default {
 				document.body.appendChild(link);
 				link.click();
 			});
-		}
+    },
+    
+    statusStyle(jobStatus) {
+      switch (jobStatus) {
+        case "Available":
+          return "bg-green-500 text-white";
+          break;
+        case "Applied":
+          return "bg-yellow-600 text-white";
+          break;
+        case "For Interview":
+          return "bg-green-600 text-white";
+          break;
+        case "Accepted":
+          return "bg-green-700 text-white";
+          break;
+        case "Rejected":
+          return "bg-red-700 text-white";
+          break;
+        case "Closed":
+          return "bg-gray-700 text-white";
+          break;
+        default:
+          return "bg-yellow-400 text-black";
+      }
+    },
 	}
 };
 </script>

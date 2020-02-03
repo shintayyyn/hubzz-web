@@ -1,13 +1,5 @@
 <template>
-	<section class="flex flex-col items-start py-2 w-full">
-		<div class="flex w-full">
-			<AppButton
-				v-if="$auth.user.domain === 'Practice'"
-				:label="'Create'"
-				class="ml-auto"
-				@click="$router.push('/permanent-jobs/create')"
-			/>
-		</div>
+	<section class="flex flex-col items-start">
 		<AppTable
 			class="w-full"
 			v-if="permanent_job_count > 0 && $auth.user.domain ===  'Practice'"
@@ -22,7 +14,7 @@
 
 		<AppTable
 			class="w-full"
-			v-if="permanent_jobs_for_locum_count > 0 "
+			v-if="permanent_jobs_for_locum_count > 0 && $auth.user.domain === 'Locum'"
 			:total="total"
 			:items="permanent_jobs_for_locum"
 			:currentPage="current_page"
@@ -61,7 +53,7 @@ export default {
 	middleware({ query, redirect, error }) {
 		if (
 			query.status &&
-			!["live", "filled", "unfilled"].includes(query.status.toLowerCase())
+			!["available", "closed"].includes(query.status.toLowerCase())
 		) {
 			return error({
 				status: 404,
@@ -85,6 +77,10 @@ export default {
 				{
 					name: "Title",
 					dataIndex: "title"
+				},
+				{
+					name: "Surgery",
+					dataIndex: "practice.name"
 				},
 				{
 					name: "Salary",
@@ -122,6 +118,10 @@ export default {
 				{
 					name: "Title",
 					dataIndex: "title"
+				},
+				{
+					name: "Surgery",
+					dataIndex: "practice.name"
 				},
 				{
 					name: "Salary",
@@ -173,7 +173,34 @@ export default {
 		};
 	},
 
-	created() {},
+	watch: {
+		"$route.query.status"(newStatus, oldStatus) {
+			let params = {};
+			if (this.$auth.user.domain === "Locum") {
+				params = {
+					job_posting_status: newStatus ? newStatus : "Available",
+					profession_id: this.$auth.user.locum_detail.profession.id,
+					near_post_code: this.$auth.user.locum_postcode
+				};
+				setTimeout(async () => {
+					this.$nuxt.$loading.start();
+					await this.getPermanentJobsForLocum(params);
+					this.$nuxt.$loading.finish();
+				});
+			} else if (this.$auth.user.domain === "Practice") {
+				params = {
+					job_posting_status: newStatus ? newStatus : "Available",
+					practice_id: this.$auth.user.practice_id
+				};
+				setTimeout(async () => {
+					this.$nuxt.$loading.start();
+					await this.getPermanentJobsForPractice(params);
+					this.$nuxt.$loading.finish();
+				});
+			}
+		}
+	},
+
 	async asyncData({ app, route, store, auth }) {
 		try {
 			let permanent_job_count = "";
@@ -184,15 +211,26 @@ export default {
 			let permanent_job_applications = "";
 			let permanent_jobs_for_locum = "";
 			let permanent_jobs_for_locum_count = "";
-
+			let params = {};
 			if (app.$auth.user.domain === "Locum") {
+				params = {
+					job_posting_status: route.query.status
+						? route.query.status
+						: "Available",
+					profession_id: app.$auth.user.locum_detail.profession.id,
+					near_post_code: app.$auth.user.locum_postcode
+				};
+
 				let response = await app.$axios.$get(
-					`/api/v1/locum/permanent-jobs/count`
+					`/api/v1/locum/permanent-jobs/count`,
+					{ params }
 				);
 				permanent_job_count =
 					response.data && response.data.count ? response.data.count : null;
 
-				response = await app.$axios.$get(`/api/v1/locum/permanent-jobs`);
+				response = await app.$axios.$get(`/api/v1/locum/permanent-jobs`, {
+					params
+				});
 				permanent_jobs =
 					response.data && response.data.permanent_jobs
 						? response.data.permanent_jobs
@@ -236,8 +274,23 @@ export default {
 				);
 				permanent_job_count =
 					response.data && response.data.count ? response.data.count : null;
+			} else if (app.$auth.user.domain === "Practice") {
+				params = {
+					job_posting_status: route.query.status
+						? route.query.status
+						: "Available",
+					practice_id: app.$auth.user.practice_id
+				};
+				let response = await app.$axios.$get(
+					"/api/v1/practice/permanent-jobs/count",
+					{ params }
+				);
+				permanent_job_count =
+					response.data && response.data.count ? response.data.count : null;
 
-				response = await app.$axios.$get(`/api/v1/practice/permanent-jobs`);
+				response = await app.$axios.$get(`/api/v1/practice/permanent-jobs`, {
+					params
+				});
 				permanent_jobs =
 					response.data && response.data.permanent_jobs
 						? response.data.permanent_jobs
@@ -285,6 +338,80 @@ export default {
 				default:
 					return "bg-yellow-400 text-black";
 			}
+		},
+
+		async getPermanentJobsForLocum(params) {
+			console.log(this.permanent_jobs);
+			await this.$axios
+				.$get(`/api/v1/locum/permanent-jobs/count`, { params })
+				.then(res => {
+					this.permanent_job_count =
+						res.data && res.data.count ? res.data.count : null;
+				});
+
+			await this.$axios
+				.$get(`/api/v1/locum/permanent-jobs`, { params })
+				.then(res => {
+					this.permanent_jobs =
+						res.data && res.data.permanent_jobs
+							? res.data.permanent_jobs
+							: null;
+				});
+
+			await this.$axios
+				.$get(`/api/v1/locum/permanent-job-applications/count`)
+				.then(res => {
+					this.permanent_job_applications_count =
+						res.data && res.data.count ? res.data.count : null;
+				});
+
+			await this.$axios
+				.$get(`/api/v1/locum/permanent-job-applications`)
+				.then(res => {
+					this.permanent_job_applications =
+						res.data && res.data.permanent_job_applications
+							? res.data.permanent_job_applications
+							: null;
+				});
+
+			this.permanent_jobs_for_locum = this.permanent_jobs.map(permanent_job => {
+				const permanent_job_app_found = this.permanent_job_applications.find(
+					permanent_job_application =>
+						permanent_job_application.permanent_job_id === permanent_job.id
+				);
+
+				if (permanent_job_app_found) {
+					permanent_job.status = permanent_job_app_found.application_status;
+				} else {
+					if (permanent_job.date_closing < moment().format()) {
+						permanent_job.status = "Closed";
+					} else {
+						permanent_job.status = "Available";
+					}
+				}
+
+				return permanent_job;
+			});
+
+			this.permanent_jobs_for_locum_count = this.permanent_jobs_for_locum.length;
+		},
+
+		async getPermanentJobsForPractice(params) {
+			await this.$axios
+				.$get("/api/v1/practice/permanent-jobs/count", { params })
+				.then(res => {
+					this.permanent_job_count =
+						res.data && res.data.count ? res.data.count : null;
+				});
+
+			await this.$axios
+				.$get(`/api/v1/practice/permanent-jobs`, { params })
+				.then(res => {
+					this.permanent_jobs =
+						res.data && res.data.permanent_jobs
+							? res.data.permanent_jobs
+							: null;
+				});
 		}
 	}
 };

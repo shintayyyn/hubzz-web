@@ -221,7 +221,7 @@
 								:label="'Salary Description 1'"
 								:error="formError.find(item => item.field === 'salary_description_1')"
 								:items="salary_description_type_1"
-								@blur="CheckEmptyField(form.salary_description_2, 'salary_description_1')"
+								@blur="CheckEmptyField(form.salary_description_1, 'salary_description_1')"
 							/>
 							<AppInput
 								class="w-full md:w-1/2 pl-1"
@@ -381,6 +381,10 @@ export default {
 					responseMe
 				]) => {
 					this.practice_lists = [];
+					console.log(
+						"practice job practices",
+						responsePracticeLists.data.practices
+					);
 					responsePracticeLists.data.practices.forEach(item => {
 						this.practice_lists.push({
 							label: item.surgery.name,
@@ -403,7 +407,6 @@ export default {
 				}
 			)
 			.finally(() => {
-				console.log("practice lists", this.practice_lists);
 				this.loading = false;
 			});
 	},
