@@ -13,13 +13,13 @@
             <h4 class="font-bold">Practice</h4>
             <div class="bg-white rounded-lg shadow-lg px-4 md:px-8 py-4 mt-4">
               <AppInput
-                v-model="form.practice_id"
+                v-model="form.practice"
                 :type="'select'"
-                :name="'practice_id'"
+                :name="'practice'"
                 :placeholder="'Select...'"
-                :error="formError.find(item => item.field === 'practice_id')"
+                :error="formError.find(item => item.field === 'practice')"
                 :items="practice_lists"
-                @blur="CheckEmptyField(form.practice_id, 'practice_id')"
+                @blur="CheckEmptyField(form.practice, 'practice')"
               />
             </div>
             <div class="flex flex-col">
@@ -122,6 +122,7 @@
                       :label="'End Date'"
                       :error="formError.find(item => item.field === 'date_end')"
                       @blur="CheckEmptyField(form.date_end,'date_end')"
+                      :startDate="form.date_start"
                       isAfter
                     />
                   </div>
@@ -388,6 +389,7 @@
                   :type="'number'"
                   :name="'rate'"
                   :label="'Rate £'"
+                  :min="1"
                   :error="formError.find(item => item.field === 'rate')"
                   @blur="CheckEmptyField(form.rate,'rate')"
                   :inStyle="'text-align:right'"
@@ -528,7 +530,7 @@ export default {
       selectedClinicalSystem: [],
       selectedSpokenLanguage: [],
       form: {
-        practice_id: "",
+        practice: "",
         title: "",
         description: "",
         email: "",
@@ -646,6 +648,12 @@ export default {
       //   this.show_sunday = true;
       //   this.form.include_sunday = true;
       // }
+    },
+    "form.rate"(oldValue, value) {
+      this.validateNumber(this.form.rate, "rate")
+    },
+    "form.total_hours"(oldValue, value) {
+      this.validateNumber(this.form.total_hours, "total_hours")
     }
   },
   created() {
@@ -714,7 +722,7 @@ export default {
           );
 
           if (this.repostJob) {
-            this.form.practice_id = this.repostJob.platform_job.practice.id;
+            this.form.practice = this.repostJob.platform_job.practice.id;
             this.form.title = this.repostJob.title;
             this.form.description = this.repostJob.description;
             this.form.email = this.repostJob.platform_job.email;
@@ -871,6 +879,15 @@ export default {
       this.form.mandatory_training_id = this.form.mandatory_training_id.filter(
         id => id != value
       );
+    },
+    validateNumber(value, fieldName) {
+      let displayFieldName = fieldName.charAt(0).toUpperCase() + fieldName.slice(1).replace(/_/g, " ")
+      let index = this.formError.findIndex(item => item.field === fieldName)
+      if (parseInt(value) < 1 || value.includes('e') || value === '') {
+        this.formError.push({field: fieldName, message: `${displayFieldName} is invalid`})
+      }else {
+        this.formError.splice(index, 1)
+      }
     },
     publish() {
       this.formError = [];

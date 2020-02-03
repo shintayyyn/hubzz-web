@@ -53,7 +53,7 @@
 									:style="inStyle"
 									:checked="value"
 									:readonly="disabled"
-									:min="type === 'number' && 0"
+									:min="type === 'number' && 1"
 								/>
 								<transition name="drop-down">
 									<div

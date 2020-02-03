@@ -68,10 +68,6 @@ export default {
 		reset() {
 			this.formError = [];
 			this.Validate(this.form);
-			// this.ValidateSamePassword(
-			// 	this.form.password,
-			// 	this.form.password_confirmation
-			// );
 			if (!this.formError.length) {
 				this.$axios
 					.$post(
@@ -88,7 +84,7 @@ export default {
 					})
 					.catch(err => {
 						this.formError = err.response.data.error_messages;
-						console.log(err.response.data.error_messages);
+						console.log("???", err.response.data.error_messages);
 					});
 			}
 		}

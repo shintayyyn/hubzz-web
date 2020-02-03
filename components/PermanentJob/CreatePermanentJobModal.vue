@@ -99,7 +99,7 @@
 							:error="formError.find(item => item.field === 'parent_practice_id')"
 							:items="practice_lists"
 							@blur="CheckEmptyField(form.parent_practice_id, 'parent_practice_id')"
-						/> -->
+						/>-->
 						<!-- <AppInput
 							v-model="form.appointed_to_locum"
 							:type="'text'"
@@ -107,9 +107,15 @@
 							:label="'Appointed to Locum'"
 							:error="formError.find(item => item.field === 'appointed_to_locum')"
 							@blur="CheckEmptyField(form.appointed_to_locum, 'appointed_to_locum')"
-						/> -->
+						/>-->
 						<AppDate v-model="form.date_posted" :name="'date_posted'" :label="'Date Posted'" isAfter />
-						<AppDate v-model="form.date_closing" :name="'date_closing'" :label="'Date Closing'" isAfter />
+						<AppDate
+							v-model="form.date_closing"
+							:name="'date_closing'"
+							:label="'Date Closing'"
+							isAfter
+							:startDate="form.date_posted"
+						/>
 					</div>
 				</div>
 				<div class="md:w-1/2 px-2">
@@ -124,7 +130,7 @@
 							:error="formError.find(item => item.field === 'parent_practice_id')"
 							:items="practice_lists"
 							@blur="CheckEmptyField(form.parent_practice_id, 'parent_practice_id')"
-						/> -->
+						/>-->
 						<AppInput
 							v-model="form.title"
 							:type="'text'"
@@ -186,14 +192,14 @@
 								:name="'salary_amount'"
 								:label="'Range'"
 							/>
-						</div> -->
+						</div>-->
 						<div class="flex flex-wrap -mt-8">
 							<AppInput
 								:class="salary_range ? 'w-full md:w-1/2 pr-1' : 'w-full'"
 								v-model="form.salary_amount"
 								:type="'number'"
 								:name="'salary_amount'"
-                :label="'Salary Amount'"
+								:label="'Salary Amount'"
 								:error="formError.find(item => item.field === 'salary_amount')"
 							/>
 							<!-- <AppInput
@@ -203,7 +209,7 @@
 								:type="'number'"
 								:name="'salary_amount'"
 								:error="salary_range && formError.find(item => item.field === 'salary_amount')"
-							/> -->
+							/>-->
 						</div>
 						<div class="flex flex-wrap">
 							<AppInput
@@ -235,7 +241,7 @@
 							:name="'practice_rate'"
 							:label="'Practice Rate'"
 							:error="formError.find(item => item.field === 'practice_rate')"
-						/> -->
+						/>-->
 					</div>
 				</div>
 			</div>
@@ -259,10 +265,10 @@ export default {
 	},
 	data() {
 		return {
-      practice: '',
+			practice: "",
 			form: {
-        practice_id: "",
-        parent_practice_id: "",
+				practice_id: "",
+				parent_practice_id: "",
 				title: "",
 				description: "",
 				date_posted: "",
@@ -282,8 +288,8 @@ export default {
 				qualification_id: "",
 				clinical_system_id: "",
 				spoken_language_id: ""
-      },
-      
+			},
+
 			salary_range: false,
 			practice_lists: [],
 			professions: [],
@@ -363,43 +369,43 @@ export default {
 			this.$axios.$get("/api/v1/locum-detail-rate-types"),
 			this.$axios.$get("/api/v1/shifts"),
 			this.$axios.$get("/api/v1/professions"),
-      this.$axios.$get("/api/v1/me"),
-      this.practice = this.$auth.user.practice_detail.practice,
+			this.$axios.$get("/api/v1/me"),
+			(this.practice = this.$auth.user.practice_detail.practice)
 		])
-    .then(
-      ([
-        responsePracticeLists,
-        responseRateLists,
-        responseShifts,
-        responseProfessions,
-        responseMe
-      ]) => {
-        this.practice_lists = [];
-        responsePracticeLists.data.practices.forEach(item => {
-          this.practice_lists.push({
-            label: item.surgery.name,
-            value: item.id
-          });
-        });
-        this.rate_lists = [];
-        responseRateLists.data.locum_detail_rate_types.forEach(item => {
-          this.rate_lists.push({ label: item.name, value: item.id });
-        });
-        this.shifts = [];
-        responseShifts.data.shifts.forEach(item => {
-          this.shifts.push({ label: item.name, value: item.id });
-        });
-        this.professions = [];
-        responseProfessions.data.professions.forEach(item => {
-          this.professions.push({ label: item.name, value: item.id });
-          this.professions_categories.push(item);
-        });
-      }
-    )
-    .finally(() => {
-      console.log('practice lists', this.practice_lists)
-      this.loading = false;
-    });
+			.then(
+				([
+					responsePracticeLists,
+					responseRateLists,
+					responseShifts,
+					responseProfessions,
+					responseMe
+				]) => {
+					this.practice_lists = [];
+					responsePracticeLists.data.practices.forEach(item => {
+						this.practice_lists.push({
+							label: item.surgery.name,
+							value: item.id
+						});
+					});
+					this.rate_lists = [];
+					responseRateLists.data.locum_detail_rate_types.forEach(item => {
+						this.rate_lists.push({ label: item.name, value: item.id });
+					});
+					this.shifts = [];
+					responseShifts.data.shifts.forEach(item => {
+						this.shifts.push({ label: item.name, value: item.id });
+					});
+					this.professions = [];
+					responseProfessions.data.professions.forEach(item => {
+						this.professions.push({ label: item.name, value: item.id });
+						this.professions_categories.push(item);
+					});
+				}
+			)
+			.finally(() => {
+				console.log("practice lists", this.practice_lists);
+				this.loading = false;
+			});
 	},
 	watch: {
 		"form.profession_id"(newValue, oldValue) {
@@ -432,16 +438,18 @@ export default {
 		onEditorReady(editor) {
 			console.log("editor ready!", editor);
 		},
-    async createPermanentJob(){
-      console.log('form', this.form)
-      await this.$axios.post(`/api/v1/practice/permanent-jobs`,this.form).then(res => {
-        this.$store.commit("SET_NOTIFICATION", {
-          enabled: true,
-          status: "success",
-          text: ["Successfully Created Permanent Job"]
-        });
-      })
-    },
+		async createPermanentJob() {
+			console.log("form", this.form);
+			await this.$axios
+				.post(`/api/v1/practice/permanent-jobs`, this.form)
+				.then(res => {
+					this.$store.commit("SET_NOTIFICATION", {
+						enabled: true,
+						status: "success",
+						text: ["Successfully Created Permanent Job"]
+					});
+				});
+		}
 	}
 };
 </script>
