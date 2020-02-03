@@ -37,7 +37,7 @@
 									<p class="pl-2 pb-3">{{permanent_job ? permanent_job.report_to : ''}}</p>
 
 									<p class="font-bold">Role</p>
-									<p class="pl-2 pb-3">{{}}</p>
+									<p class="pl-2 pb-3">{{permanent_job ? permanent_job.professions.name : ''}}</p>
 
 									<p class="font-bold">Hours</p>
 									<p class="pl-2 pb-3">{{ permanent_job ? permanent_job.work_hours : ''}}</p>
@@ -196,7 +196,7 @@
 
           <AppButton 
             class="ml-4" 
-            :label="'Force Close Job'" 
+            :label="'Close Job'" 
             @click="toCloseJob = !toCloseJob" />
 
           <div v-if="toCloseJob === true">
@@ -205,9 +205,7 @@
               :type="'select'"
               :name="'hired_through'"
               :placeholder="'Select...'"
-              :error="formError.find(item => item.field === 'hired_through')"
               :items="hired_through"
-              @blur="CheckEmptyField(form.hired_through, 'hired_through')"
             />
 
             <AppButton 
@@ -233,7 +231,7 @@ export default {
 	components: {
 		AppInput,
 		AppButton,
-		AppDate,
+    AppDate,
 		PermanentJobDetailCandidates,
 		PermanentJobMap
 	},
@@ -273,6 +271,8 @@ export default {
       hired_through: [],
       put_hired_through: '',
 
+      postingProfession: '',
+
 			formError: [],
 			// quill
 			editorOption: {
@@ -307,7 +307,6 @@ export default {
     this.loading = true;
     this.$axios.$get(`/api/v1/practice/permanent-jobs/${this.$route.params.id}`).then(res => {
       this.permanent_job = res.data.permanent_job
-      console.log(this.permanent_job)
     })
 		Promise.all([
 			this.$axios.$get("/api/v1/practice/me/practice-practices"),

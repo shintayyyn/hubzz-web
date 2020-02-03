@@ -35,59 +35,6 @@
 							:items="professions"
 							@blur="CheckEmptyField(form.profession_id, 'profession_id')"
 						/>
-						<!-- <template v-if="form.profession_id">
-							<AppFilterSearch
-								v-model="form.qualification_id"
-								:name="'qualification_id'"
-								:label="'Specialty'"
-								:placeholder="'Select...'"
-								:error="formError.find(item => item.field === 'qualification_id')"
-								:info="'Choose at least one qualification'"
-								:url="'/api/v1/qualifications'"
-								:professionCategoryId="selectedProfession.profession_category.id.toString()"
-							/>
-
-							<AppFilterSearch
-								v-model="form.clinical_system_id"
-								:name="'clinical_system_id'"
-								:label="'Clinical systems'"
-								:placeholder="'Select...'"
-								:error="formError.find(item => item.field === 'clinical_system_id')"
-								:info="'Choose at least one IT system'"
-								:url="'/api/v1/clinical-systems'"
-							/>
-
-							<AppFilterSearch
-								v-model="form.spoken_language_id"
-								:name="'spoken_language_id'"
-								:label="'Spoken languages'"
-								:placeholder="'Select...'"
-								:info="'Choose other languages you can speak'"
-								:url="'/api/v1/spoken-languages'"
-								:defaultItem="'English'"
-							/>
-							
-						<template v-if="form.profession_id">
-							<div class="relative flex flex-col pt-2">
-								<div class>Compliance documents</div>
-							</div>
-							<AppInput
-								v-if="compliances.length > 0"
-								v-model="form.compliance_document_id"
-								:type="'multi-checkbox'"
-								:error="formError.find(item => item.field === 'compliance_document_id')"
-								@checked="form.compliance_document_id.push($event)"
-								@unchecked="form.compliance_document_id.splice(form.compliance_document_id.findIndex(item => item === $event), 1)"
-								:name="'compliance_document_id'"
-								:label="`${selectedProfession.profession_category.id === 1 ? 'For GPs:' : selectedProfession.profession_category.id === 2 ? 'For Nurses, et al:' : ''}`"
-								:placeholder="''"
-								:lists="compliances"
-							/>
-							<div class="mb-6 text-center md:text-left mt-2" v-if="compliances.length === 0">
-								<AppButton :label="'Go to Profile to add items here'" @click="goToProfile" />
-							</div>
-							</template>
-						</template>-->
 					</div>
 					<div class="bg-white rounded-lg shadow-lg px-4 py-4 mt-4">
 						<!-- <AppInput
@@ -178,32 +125,15 @@
 							:items="work_hours_type"
 							@blur="CheckEmptyField(form.practice_id, 'work_hours')"
 						/>
-						<!-- <div class="flex items-center z-50 relative justify-between">
-							<p class="text-sm py-2 mb-2">{{ salary_range ? 'Salary Range' : 'Salary' }}</p>
-							<AppInput
-								v-model="salary_range"
-								:type="'single-checkbox'"
-								:name="'salary_amount'"
-								:label="'Range'"
-							/>
-						</div> -->
 						<div class="flex flex-wrap -mt-8">
 							<AppInput
-								:class="salary_range ? 'w-full md:w-1/2 pr-1' : 'w-full'"
+								:class="'w-full md:w-1/2 pr-1'"
 								v-model="form.salary_amount"
 								:type="'number'"
 								:name="'salary_amount'"
                 :label="'Salary Amount'"
 								:error="formError.find(item => item.field === 'salary_amount')"
 							/>
-							<!-- <AppInput
-								v-if="salary_range"
-								class="w-full md:w-1/2 pl-1"
-								v-model="form.salary_amount"
-								:type="'number'"
-								:name="'salary_amount'"
-								:error="salary_range && formError.find(item => item.field === 'salary_amount')"
-							/> -->
 						</div>
 						<div class="flex flex-wrap">
 							<AppInput
@@ -262,29 +192,19 @@ export default {
       practice: '',
 			form: {
         practice_id: "",
-        parent_practice_id: "",
-				title: "",
-				description: "",
+        profession_id: "",
 				date_posted: "",
-				date_closing: "",
+        date_closing: "",
+        title: "",
+        description: "",
+        report_to: "",
 				email: "",
-				report_to: "",
-				industry_type: "",
-				salary_amount: 0,
+        industry_type: "",
+        work_hours: "",
+        salary_amount: 0,
 				salary_description_1: "",
 				salary_description_2: "",
-				work_hours: 0,
-				// appointed_to_locum: "",
-				profession_id: "",
-				// practice_rate: 0,
-				approved_at: "",
-
-				qualification_id: "",
-				clinical_system_id: "",
-				spoken_language_id: ""
       },
-      
-			salary_range: false,
 			practice_lists: [],
 			professions: [],
 			professions_categories: [],
@@ -433,14 +353,33 @@ export default {
 			console.log("editor ready!", editor);
 		},
     async createPermanentJob(){
+      this.formError = [];
+
+      let notRequired = [
+      ];
       console.log('form', this.form)
-      await this.$axios.post(`/api/v1/practice/permanent-jobs`,this.form).then(res => {
-        this.$store.commit("SET_NOTIFICATION", {
-          enabled: true,
-          status: "success",
-          text: ["Successfully Created Permanent Job"]
-        });
-      })
+      this.Validate(this.form, notRequired);
+      console.log('errors', this.formError.length)
+
+      if (!this.formError.length) {
+        await this.$axios.post(`/api/v1/practice/permanent-jobs`,this.form).then(res => {
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: ["Successfully Created Permanent Job"]
+          });
+        }).catch(err => {
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "danger",
+            text: [`${err.response.data.message}`]
+          });
+        })
+      } else {
+        // this.$nextTick(() => {
+        //   this.$refs.modalContainer.scrollTop = 0;
+        // });
+      }
     },
 	}
 };

@@ -106,6 +106,11 @@ export default {
 					name: "Work Hours",
 					dataIndex: "work_hours",
 					class: "text-center"
+        },
+        {
+					name: "Profession",
+					dataIndex: "professions.name",
+					class: "text-center"
 				},
 				{
 					name: "Industry",
@@ -146,6 +151,11 @@ export default {
 				{
 					name: "Work Hours",
 					dataIndex: "work_hours",
+					class: "text-center"
+        },
+        {
+					name: "Profession",
+					dataIndex: "professions.name",
 					class: "text-center"
 				},
 				{

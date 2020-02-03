@@ -68,6 +68,7 @@ import AppAvatar from "~/components/Base/AppAvatar";
 import AppPagination from "@/components/Base/AppPagination";
 import PermanentJobShowCandidates from "@/components/PermanentJob/PermanentJobShowCandidates";
 import SendMessageModal from "@/components/Messages/SendMessageModal";
+
 export default {
 	components: {
 		AppPagination,
