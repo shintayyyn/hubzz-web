@@ -925,12 +925,14 @@ export default {
       this.Validate(this.form, notRequired);
 
       if (!this.formError.length) {
+        this.form.profession_id = this.form.role
+        this.form.shift_id = this.form.shift
         this.selectedClinicalSystem = [...this.form.clinical_system];
-        this.form.clinical_system = this.form.clinical_system.map(
+        this.form.clinical_system_id = this.form.clinical_system.map(
           item => item.value
         );
         this.selectedQualification = [...this.form.specialty];
-        this.form.specialty = this.form.specialty.map(item => item.value);
+        this.form.qualification_id = this.form.specialty.map(item => item.value);
         this.selectedSpokenLanguage = [...this.form.spoken_language_id];
         this.form.spoken_language_id = this.form.spoken_language_id.map(
           item => item.value
@@ -1034,7 +1036,7 @@ export default {
                 text: [`${err.response.data.message}`]
               });
               return;
-            } else if (err.response.status === 400) {
+            } else if (err.response.status === 400 && err.response && err.response.data.error_messages.length === 0) {
               this.formError.push({
                 field: "date_start",
                 message: err.response.data.message
