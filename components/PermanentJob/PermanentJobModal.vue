@@ -9,8 +9,8 @@
 				class="cursor-pointer"
 			/>
 
-			<div class="flex justify-between items-center flex-wrap mb-4">
-				<h4 class="text-lg md:text-xl font-bold flex items-center">
+			<div class="flex justify-start items-center flex-wrap mb-4">
+        <h4 class="text-lg md:text-xl font-bold flex items-center">
           <span class="mx-2">
             {{ permanent_job.title }}
           </span>
@@ -19,19 +19,35 @@
             :class="statusStyle(permanent_job.status)">
             {{ permanent_job.status }}
           </span>
-					<span
-						v-if="job.applied"
-						class="text-sm bg-green-500 px-4 py-2 ml-4 rounded-lg text-white"
-					>Applied</span>
-				</h4>
-				<AppButton class="ml-2" :label="'Apply'" @click="apply()" v-if="permanent_job.status == 'Available'" />
+         
+        </h4>
+				
+				<AppButton 
+          class="ml-2" 
+          :label="'Apply'" 
+          @click="apply()" 
+          v-if="permanent_job.status == 'Available'" 
+        />
+        <AppButton 
+            class="ml-2" 
+            :label="'Cancel Application'" 
+            @click="cancelApplication()" 
+            v-if="permanent_job.status == 'Applied'" 
+          />
 			</div>
-      
+      <div v-if="permanent_job_application && permanent_job_application.invitation_schedule">
+        <span class="font-bold">
+          Congratulations!,
+        </span>
+          You have been invited for this job. Please attend on  {{ permanent_job_application.invitation_schedule }}
+      </div>
+
 			<div class="flex flex-col md:flex-row">
 				<div class="w-full md:w-3/5 lg:w-2/3 pr-2">
 					<div class="bg-white rounded-lg shadow-lg p-4">
 						<p class="w-1/3 font-bold">Practice</p>
 						<p>{{permanent_job ? permanent_job.practice.name : null}}</p>
+            <p class="w-1/3 font-bold">Description</p>
 						<div class="my-4">
 							<span v-html="permanent_job ? permanent_job.description : null"></span>
 						</div>
@@ -52,7 +68,7 @@
 						<p class="pl-2 pb-3">{{permanent_job ? permanent_job.report_to : null}}</p>
 
 						<p class="w-1/3 font-bold">Role</p>
-						<p class="pl-2 pb-3">Locum / Sessional GP, Salaried GP</p>
+						<p class="pl-2 pb-3">{{permanent_job ? permanent_job.professions.name : null}}</p>
 
 						<p class="w-1/3 font-bold">Hours</p>
 						<p class="pl-2 pb-3">{{permanent_job ? permanent_job.work_hours : null}}</p>
@@ -62,6 +78,7 @@
 					</div>
           
 					<PermanentJobMap v-if="permanent_job" :permanent_job="permanent_job" />
+          
 				</div>
 			</div>
 		</div>
@@ -87,40 +104,37 @@ export default {
 		};
 	},
 	async created() {
-      let permanent_job = ''
-      let permanent_job_applications = ''
-      let permanent_job_application = ''
+    let permanent_job = ''
+    let permanent_job_applications = ''
+    let permanent_job_application = ''
 
-      await this.$axios.$get(`/api/v1/locum/permanent-jobs/${this.$route.params.id}`).then(res => {
-        permanent_job = res.data.permanent_job
-      })
-      
-      await this.$axios.$get(`/api/v1/locum/permanent-job-applications`).then(res => {
-        permanent_job_applications = res.data.permanent_job_applications
-      })
-      
-      permanent_job_application = permanent_job_applications.find(item => 
-        item.permanent_job_id === permanent_job.id
-      )
-      this.permanent_job_application = permanent_job_application
-
-      if (this.permanent_job_application) {
-        console.log('app', this.permanent_job_application)
-        permanent_job.status = this.permanent_job_application.application_status
-        this.permanent_job = permanent_job
-      } else if (this.$moment(permanent_job.date_closing).format() <= this.$moment().format()) {
-        console.log('haha')
-        permanent_job.status = 'Closed'
-        this.permanent_job = permanent_job
-      } else {
-        console.log('hoho')
-        permanent_job.status = 'Available'
-        this.permanent_job = permanent_job
-      }
-      
+    await this.$axios.$get(`/api/v1/locum/permanent-jobs/${this.$route.params.id}`).then(res => {
+      permanent_job = res.data.permanent_job
+    })
     
-		this.job.description =
-			"<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Suspendisse interdum consectetur libero id faucibus nisl tincidunt eget nullam. Libero justo laoreet sit amet cursus sit. In vitae turpis massa sed elementum tempus egestas sed sed. Proin nibh nisl condimentum id venenatis a condimentum. Morbi tempus iaculis urna id volutpat. Et netus et malesuada fames ac turpis. Scelerisque purus semper eget duis. Libero justo laoreet sit amet. Tempor nec feugiat nisl pretium fusce id velit ut. Ac feugiat sed lectus vestibulum mattis ullamcorper velit sed ullamcorper. Mattis aliquam faucibus purus in massa tempor nec feugiat nisl. Vestibulum rhoncus est pellentesque elit ullamcorper. Duis at consectetur lorem donec. In egestas erat imperdiet sed euismod nisi. Semper feugiat nibh sed pulvinar proin.</p>";
+    await this.$axios.$get(`/api/v1/locum/permanent-job-applications`).then(res => {
+      permanent_job_applications = res.data.permanent_job_applications
+    })
+    
+    permanent_job_application = permanent_job_applications.find(item => 
+      item.permanent_job_id === permanent_job.id
+    )
+    this.permanent_job_application = permanent_job_application
+
+    console.log('permanent  job app', this.permanent_job_application)
+    if (this.permanent_job_application) {
+      console.log('app', this.permanent_job_application)
+      permanent_job.status = this.permanent_job_application.application_status
+      this.permanent_job = permanent_job
+    } else if (this.$moment(permanent_job.date_closing).format() <= this.$moment().format()) {
+      console.log('haha')
+      permanent_job.status = 'Closed'
+      this.permanent_job = permanent_job
+    } else {
+      console.log('hoho')
+      permanent_job.status = 'Available'
+      this.permanent_job = permanent_job
+    }
 	},
 	methods: {
 		apply() {
@@ -131,9 +145,19 @@ export default {
         this.$store.commit("SET_NOTIFICATION", {
           enabled: true,
           status: "success",
-          text: "Applied"
+          text: ["You have successfully Applied to this job"]
         });
       })
+    },
+    cancelApplication(){
+      this.$axios.$delete(`/api/v1/locum/permanent-job-applications/${this.permanent_job.id}/delete-application`,)
+        .then(res => {
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: ["Application is now successfully Cancelled"]
+          });
+        })
     },
     statusStyle(jobStatus) {
       switch (jobStatus) {

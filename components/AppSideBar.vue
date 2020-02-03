@@ -185,7 +185,7 @@ export default {
               route: "/spoke-surgery-management"
             });
           }
-          addedLists.push({ name: "Permanent Jobs", route: "/permanent-jobs?status=Available"});
+          addedLists.push({ name: "Permanent Jobs", route: "/permanent-jobs"});
           if (hubType !== "Type 2") {
             addedLists.push({ name: "My Banks", route: "/my-banks" });
             addedLists.push({

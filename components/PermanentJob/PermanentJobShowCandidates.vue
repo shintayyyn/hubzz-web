@@ -24,12 +24,29 @@
         </div>
 			</div>
 			<div v-if="accepted">
+        <!-- {{form.invitation_date+'T'+form.invitation_time}}
 				<AppDate
-					v-model="form.invitation_schedule"
-					:name="'invitation_schedule'"
-					:label="'Invitation Schedule'"
+					v-model="form.invitation_date"
+					:name="'invitation_date'"
+					:label="'Invitation Date'"
 				/>
+        <AppTime
+          v-model="form.invitation_time"
+					:name="'invitation_time'"
+					:label="'Invitation Time'"
+        />
 				<AppButton
+					@click="inviteLocum()"
+					class="mx-1"
+					:label="'Invite This Locum'"
+				/> -->
+        <input 
+          v-model="form.invitation_schedule"
+          type="datetime-local" 
+          id="meeting-time"
+          name="meeting-time">
+
+        <AppButton
 					@click="inviteLocum()"
 					class="mx-1"
 					:label="'Invite This Locum'"
@@ -187,6 +204,7 @@ import AppAvatar from "@/components/Base/AppAvatar";
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
 import SendMessageModal from "@/components/Messages/SendMessageModal";
 import AppDate from "@/components/Base/AppDate";
+import AppTime from "@/components/Base/AppTime"
 
 export default {
 	props: ["user", "job", "permanent_job_application"],
@@ -194,7 +212,8 @@ export default {
 		AppButton,
 		AppConfirmationModal,
 		SendMessageModal,
-		AppDate
+    // AppDate,
+    // AppTime,
 	},
 	data() {
 		return {
@@ -203,7 +222,7 @@ export default {
 			optional: [],
 			sendMessageModal: false,
 			form: {
-				invitation_schedule: ""
+        invitation_schedule: "",
 			},
 			accepted: false
 		};
@@ -254,8 +273,8 @@ export default {
 		inviteLocum() {
 			this.$axios
 				.$put(
-					`/api/v1/practice/permanent-job-applications/${this.permanent_job_application.id}/schedule-locum`,
-					this.form
+          `/api/v1/practice/permanent-job-applications/${this.permanent_job_application.id}/schedule-locum`,
+            this.form
 				)
 				.then(res => {
 					this.$store.commit("SET_NOTIFICATION", {
