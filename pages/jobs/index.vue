@@ -493,15 +493,19 @@ export default {
       if (
         !this.$route.query.status ||
         (this.$route.query.status &&
-          !["ongoing", "completed", "approved"].includes(
-            this.$route.query.status.toLowerCase()
-          ))
+          ![
+            "ongoing",
+            "completed",
+            "approved",
+            "cancelled",
+            "withdrawn"
+          ].includes(this.$route.query.status.toLowerCase()))
       ) {
         return false;
       }
       if (
         this.$route.query.status &&
-        ["ongoing", "completed", "approved"].includes(
+        ["ongoing", "completed", "approved", "cancelled", "withdrawn"].includes(
           this.$route.query.status.toLowerCase()
         )
       ) {
@@ -825,7 +829,9 @@ export default {
       let isJobPart = false;
       if (
         queryStatus &&
-        ["ongoing", "completed", "approved"].includes(queryStatus.toLowerCase())
+        ["ongoing", "completed", "approved", "cancelled", "withdrawn"].includes(
+          queryStatus.toLowerCase()
+        )
       ) {
         isJobPart = true;
       }
@@ -898,9 +904,13 @@ export default {
           .then(res => {
             if (
               queryStatus &&
-              ["ongoing", "completed", "approved"].includes(
-                queryStatus.toLowerCase()
-              )
+              [
+                "ongoing",
+                "completed",
+                "approved",
+                "cancelled",
+                "withdrawn"
+              ].includes(queryStatus.toLowerCase())
             ) {
               store.commit(
                 `jobs/SET_LOCUM_${queryStatus.toUpperCase()}_JOB_PARTS_COUNT`,
@@ -908,9 +918,13 @@ export default {
               );
             } else if (
               queryStatus &&
-              !["ongoing", "completed", "approved"].includes(
-                queryStatus.toLowerCase()
-              ) &&
+              ![
+                "ongoing",
+                "completed",
+                "approved",
+                "cancelled",
+                "withdrawn"
+              ].includes(queryStatus.toLowerCase()) &&
               queryStatus.toLowerCase() !== "bank" &&
               queryStatus.toLowerCase() !== "public"
             ) {
@@ -931,9 +945,13 @@ export default {
               );
             } else if (
               queryStatus &&
-              !["ongoing", "completed", "approved"].includes(
-                queryStatus.toLowerCase()
-              ) &&
+              ![
+                "ongoing",
+                "completed",
+                "approved",
+                "cancelled",
+                "withdrawn"
+              ].includes(queryStatus.toLowerCase()) &&
               queryStatus.toLowerCase() === "public"
             ) {
               store.commit(`jobs/SET_LOCUM_MATCHED_JOBS_COUNT`, res.data.count);
@@ -956,9 +974,13 @@ export default {
           .then(res => {
             if (
               queryStatus &&
-              ["ongoing", "completed", "approved"].includes(
-                queryStatus.toLowerCase()
-              )
+              [
+                "ongoing",
+                "completed",
+                "approved",
+                "cancelled",
+                "withdrawn"
+              ].includes(queryStatus.toLowerCase())
             ) {
               store.commit(
                 `jobs/SET_LOCUM_${queryStatus.toUpperCase()}_JOB_PARTS`,
@@ -966,9 +988,13 @@ export default {
               );
             } else if (
               queryStatus &&
-              !["ongoing", "completed", "approved"].includes(
-                queryStatus.toLowerCase()
-              ) &&
+              ![
+                "ongoing",
+                "completed",
+                "approved",
+                "cancelled",
+                "withdrawn"
+              ].includes(queryStatus.toLowerCase()) &&
               queryStatus.toLowerCase() !== "bank" &&
               queryStatus.toLowerCase() !== "public"
             ) {
@@ -978,17 +1004,25 @@ export default {
               );
             } else if (
               queryStatus &&
-              !["ongoing", "completed", "approved"].includes(
-                queryStatus.toLowerCase()
-              ) &&
+              ![
+                "ongoing",
+                "completed",
+                "approved",
+                "cancelled",
+                "withdrawn"
+              ].includes(queryStatus.toLowerCase()) &&
               queryStatus.toLowerCase() === "bank"
             ) {
               store.commit(`jobs/SET_LOCUM_AVAILABLE_JOBS`, res.data.jobs);
             } else if (
               queryStatus &&
-              !["ongoing", "completed", "approved"].includes(
-                queryStatus.toLowerCase()
-              ) &&
+              ![
+                "ongoing",
+                "completed",
+                "approved",
+                "cancelled",
+                "withdrawn"
+              ].includes(queryStatus.toLowerCase()) &&
               queryStatus.toLowerCase() === "public"
             ) {
               store.commit(`jobs/SET_LOCUM_MATCHED_JOBS`, res.data.jobs);
@@ -1150,7 +1184,7 @@ export default {
       ]).then(([responseCount, responseJobs]) => {
         if (
           this.$route.query.status &&
-          ["ongoing", "completed", "approved"].includes(
+          ["ongoing", "completed", "approved", "cancelled"].includes(
             this.$route.query.status.toLowerCase()
           )
         ) {

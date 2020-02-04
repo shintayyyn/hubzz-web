@@ -306,6 +306,7 @@ export default {
         "live",
         "applied",
         "unfilled",
+        "withdrawn",
         "declined",
         "cancelled",
         "completed",
@@ -367,6 +368,8 @@ export default {
         date_start: "",
         date_end: ""
       },
+      shifts: [],
+      rates: [],
       filterModal: false,
       showTable: false,
       showRefresh: false
@@ -378,30 +381,42 @@ export default {
       getPracticeOngoingJobs: "jobs/getPracticeOngoingJobs",
       getPracticeCompletedJobs: "jobs/getPracticeCompletedJobs",
       getPracticeApprovedJobs: "jobs/getPracticeApprovedJobs",
+      getPracticeCancelledJobs: "jobs/getPracticeCancelledJobs",
+      getPracticeWithdrawnJobs: "jobs/getPracticeWithdrawnJobs",
       // whole
       getPracticePendingJobs: "jobs/getPracticePendingJobs",
       getPracticeAllocatedJobs: "jobs/getPracticeAllocatedJobs",
       getPracticeAvailableJobs: "jobs/getPracticeAvailableJobs",
       getPracticeAppliedJobs: "jobs/getPracticeAppliedJobs",
       getPracticeUnfilledJobs: "jobs/getPracticeUnfilledJobs",
-      getPracticeDeclinedJobs: "jobs/getPracticeDeclinedJobs",
-      getPracticeCancelledJobs: "jobs/getPracticeCancelledJobs"
+      getPracticeDeclinedJobs: "jobs/getPracticeDeclinedJobs"
+      // getPracticeCancelledJobs: "jobs/getPracticeCancelledJobs"
     }),
     isJobPart() {
       if (
         !this.$route.query.status ||
         (this.$route.query.status &&
-          !["pending", "ongoing", "completed", "approved"].includes(
-            this.$route.query.status.toLowerCase()
-          ))
+          ![
+            "pending",
+            "ongoing",
+            "completed",
+            "approved",
+            "cancelled",
+            "withdrawn"
+          ].includes(this.$route.query.status.toLowerCase()))
       ) {
         return false;
       }
       if (
         this.$route.query.status &&
-        ["ongoing", "completed", "approved"].includes(
-          this.$route.query.status.toLowerCase()
-        )
+        [
+          "pending",
+          "ongoing",
+          "completed",
+          "approved",
+          "cancelled",
+          "withdrawn"
+        ].includes(this.$route.query.status.toLowerCase())
       ) {
         return true;
       }
@@ -416,6 +431,10 @@ export default {
             return this.$store.state.jobs.practice_completed_job_parts_count;
           case "approved":
             return this.$store.state.jobs.practice_approved_job_parts_count;
+          case "cancelled":
+            return this.$store.state.jobs.practice_cancelled_job_parts_count;
+          case "withdrawn":
+            return this.$store.state.jobs.practice_withdrawn_job_parts_count;
           // whole
           case "allocated":
             return this.$store.state.jobs.practice_allocated_jobs_count;
@@ -446,6 +465,10 @@ export default {
             return this.getPracticeCompletedJobs;
           case "approved":
             return this.getPracticeApprovedJobs;
+          case "cancelled":
+            return this.getPracticeCancelledJobs;
+          case "withdrawn":
+            return this.getPracticeWithdrawnJobs;
           // whole
           case "pending":
             return this.getPracticePendingJobs;
@@ -459,8 +482,6 @@ export default {
             return this.getPracticeUnfilledJobs;
           case "declined":
             return this.getPracticeDeclinedJobs;
-          case "cancelled":
-            return this.getPracticeCancelledJobs;
         }
       } else {
         return this.getPracticeAllocatedJobs;
@@ -494,7 +515,11 @@ export default {
       let queryStatus = this.$route.query.status
         ? this.$route.query.status.toLowerCase()
         : "allocated";
-      if (["ongoing", "completed", "approved"].includes(queryStatus)) {
+      if (
+        ["ongoing", "completed", "approved", "cancelled", "withdrawn"].includes(
+          queryStatus
+        )
+      ) {
         columns.push(
           {
             name: "Job Part Number",
@@ -532,7 +557,15 @@ export default {
             sortable: true
           }
         );
-      } else if (!["ongoing", "completed", "approved"].includes(queryStatus)) {
+      } else if (
+        ![
+          "ongoing",
+          "completed",
+          "approved",
+          "cancelled",
+          "withdrawn"
+        ].includes(queryStatus)
+      ) {
         columns.push(
           {
             name: "Job Number",
@@ -643,7 +676,7 @@ export default {
     }
   },
   watch: {
-    "$route.query"(newValue, oldValue) {
+    async "$route.query"(newValue, oldValue) {
       let newStatus = newValue.status;
       let oldStatus = oldValue.status;
       let newBank = newValue.bank;
@@ -658,44 +691,31 @@ export default {
         this.showRefresh = false;
         this.filterText = "";
         this.clearFilters();
-        setTimeout(async () => {
-          // if (newStatus === "Applied" && newBank === "true") {
-          //   const response = await this.getMyBanks();
-          //   if (
-          //     response.data &&
-          //     response.data.users &&
-          //     response.data.users.length > 0
-          //   ) {
-          //     this.params.viewing_locum_user_id = response.data.users.map(
-          //       users => users.id
-          //     );
-          //   }
-          // } else if (
-          //   newStatus !== "Applied" ||
-          //   !newBank ||
-          //   (newBank && newBank === "false")
-          // ) {
-          //   this.params.viewing_locum_user_id = [];
-          // }
-          this.$nuxt.$loading.start();
-          await this.getJobsPromiseAll();
-          this.$nuxt.$loading.finish();
-          this.showTable = true;
-        }, 250);
+        this.$nuxt.$loading.start();
+        // this.loading = true;
+        await this.getJobsPromiseAll();
+        // this.loading = false;
+        this.$nuxt.$loading.finish();
+        this.showTable = true;
       }
     }
   },
-  async asyncData({ app, params, query, store, error }) {
+  async asyncData({ app, params, query, store, auth, error }) {
     try {
       // status
       let queryStatus = query.status;
+      let bankStatus = query.bank;
+      let has_favorite_applicants = "";
       let status = [];
       if (!queryStatus) {
         status = ["Allocated"];
-      } else if (queryStatus && queryStatus === "Available") {
-        status = ["Available", "Matched"];
       } else if (queryStatus && queryStatus === "Completed") {
         status = ["Completed", "Terminated"];
+      } else if (queryStatus && queryStatus === "Applied") {
+        has_favorite_applicants = bankStatus === "true" ? true : null;
+        status = ["Applied"];
+      } else if (queryStatus && queryStatus === "Withdrawn") {
+        status = ["Declined"];
       } else if (
         queryStatus &&
         queryStatus !== "Available" &&
@@ -703,12 +723,13 @@ export default {
       ) {
         status = [`${queryStatus}`];
       }
-
       // job part
       let isJobPart = false;
       if (
         queryStatus &&
-        ["ongoing", "completed", "approved"].includes(queryStatus.toLowerCase())
+        ["ongoing", "completed", "approved", "cancelled", "withdrawn"].includes(
+          queryStatus.toLowerCase()
+        )
       ) {
         isJobPart = true;
       }
@@ -749,7 +770,7 @@ export default {
           invoice_status: ""
         };
       }
-
+      console.log(jobParams);
       const [shifts, rates] = await Promise.all([
         app.$axios.$get(`/api/v1/shifts`).then(res => {
           const shifts = [];
@@ -771,15 +792,26 @@ export default {
           .$get(`/api/v1/practice/${isJobPart ? "job-parts" : "jobs"}/count`, {
             params: {
               status,
-              ...jobParams
+              ...jobParams,
+              practice_id: isJobPart
+                ? ""
+                : app.$auth.user.practice_detail.practice.id,
+              job_practice_id: isJobPart
+                ? app.$auth.user.practice_detail.practice.id
+                : "",
+              has_favorite_applicants
             }
           })
           .then(res => {
             if (
               queryStatus &&
-              ["ongoing", "completed", "approved"].includes(
-                queryStatus.toLowerCase()
-              )
+              [
+                "ongoing",
+                "completed",
+                "approved",
+                "cancelled",
+                "withdrawn"
+              ].includes(queryStatus.toLowerCase())
             ) {
               store.commit(
                 `jobs/SET_PRACTICE_${queryStatus.toUpperCase()}_JOB_PARTS_COUNT`,
@@ -813,15 +845,26 @@ export default {
               status,
               ...jobParams,
               offset: 0,
-              limit: 5
+              limit: 5,
+              practice_id: isJobPart
+                ? ""
+                : app.$auth.user.practice_detail.practice.id,
+              job_practice_id: isJobPart
+                ? app.$auth.user.practice_detail.practice.id
+                : "",
+              has_favorite_applicants
             }
           })
           .then(res => {
             if (
               queryStatus &&
-              ["ongoing", "completed", "approved"].includes(
-                queryStatus.toLowerCase()
-              )
+              [
+                "ongoing",
+                "completed",
+                "approved",
+                "cancelled",
+                "withdrawn"
+              ].includes(queryStatus.toLowerCase())
             ) {
               store.commit(
                 `jobs/SET_PRACTICE_${queryStatus.toUpperCase()}_JOB_PARTS`,
@@ -831,9 +874,13 @@ export default {
               store.commit(`jobs/SET_PRACTICE_AVAILABLE_JOBS`, res.data.jobs);
             } else if (
               queryStatus &&
-              !["ongoing", "completed", "approved"].includes(
-                queryStatus.toLowerCase()
-              )
+              ![
+                "ongoing",
+                "completed",
+                "approved",
+                "cancelled",
+                "withdrawn"
+              ].includes(queryStatus.toLowerCase())
             ) {
               store.commit(
                 `jobs/SET_PRACTICE_${queryStatus.toUpperCase()}_JOBS`,
@@ -922,13 +969,13 @@ export default {
       let status = [];
       if (!queryStatus) {
         status = ["Allocated"];
-      } else if (queryStatus && queryStatus === "Available") {
-        status = ["Available", "Matched"];
       } else if (queryStatus && queryStatus === "Completed") {
         status = ["Completed", "Terminated"];
       } else if (queryStatus && queryStatus === "Applied") {
         has_favorite_applicants = bankStatus === "true" ? true : false;
         status = ["Applied"];
+      } else if (queryStatus && queryStatus === "Withdrawn") {
+        status = ["Declined"];
       } else if (
         queryStatus &&
         queryStatus !== "Available" &&
@@ -973,9 +1020,13 @@ export default {
       ]).then(([responseCount, responseJobs]) => {
         if (
           queryStatus &&
-          ["ongoing", "completed", "approved"].includes(
-            queryStatus.toLowerCase()
-          )
+          [
+            "ongoing",
+            "completed",
+            "approved",
+            "cancelled",
+            "withdrawn"
+          ].includes(queryStatus.toLowerCase())
         ) {
           this.$store.commit(
             `jobs/SET_PRACTICE_${queryStatus.toUpperCase()}_JOB_PARTS_COUNT`,
@@ -988,9 +1039,13 @@ export default {
           );
         } else if (
           queryStatus &&
-          !["ongoing", "completed", "approved"].includes(
-            queryStatus.toLowerCase()
-          )
+          ![
+            "ongoing",
+            "completed",
+            "approved",
+            "cancelled",
+            "withdrawn"
+          ].includes(queryStatus.toLowerCase())
         ) {
           this.$store.commit(
             `jobs/SET_PRACTICE_${queryStatus.toUpperCase()}_JOBS_COUNT`,
@@ -1005,9 +1060,13 @@ export default {
 
         if (
           queryStatus &&
-          ["ongoing", "completed", "approved"].includes(
-            queryStatus.toLowerCase()
-          )
+          [
+            "ongoing",
+            "completed",
+            "approved",
+            "cancelled",
+            "withdrawn"
+          ].includes(queryStatus.toLowerCase())
         ) {
           return this.$store.commit(
             `jobs/SET_PRACTICE_${queryStatus.toUpperCase()}_JOB_PARTS`,
@@ -1020,9 +1079,13 @@ export default {
           );
         } else if (
           queryStatus &&
-          !["ongoing", "completed", "approved"].includes(
-            queryStatus.toLowerCase()
-          )
+          ![
+            "ongoing",
+            "completed",
+            "approved",
+            "cancelled",
+            "withdrawn"
+          ].includes(queryStatus.toLowerCase())
         ) {
           return this.$store.commit(
             `jobs/SET_PRACTICE_${queryStatus.toUpperCase()}_JOBS`,
@@ -1077,9 +1140,13 @@ export default {
         .then(res => {
           if (
             queryStatus &&
-            ["ongoing", "completed", "approved"].includes(
-              queryStatus.toLowerCase()
-            )
+            [
+              "ongoing",
+              "completed",
+              "approved",
+              "cancelled",
+              "withdrawn"
+            ].includes(queryStatus.toLowerCase())
           ) {
             return this.$store.commit(
               `jobs/SET_PRACTICE_${queryStatus.toUpperCase()}_JOB_PARTS_COUNT`,
@@ -1092,9 +1159,13 @@ export default {
             );
           } else if (
             queryStatus &&
-            !["ongoing", "completed", "approved"].includes(
-              queryStatus.toLowerCase()
-            )
+            ![
+              "ongoing",
+              "completed",
+              "approved",
+              "cancelled",
+              "withdrawn"
+            ].includes(queryStatus.toLowerCase())
           ) {
             return this.$store.commit(
               `jobs/SET_PRACTICE_${queryStatus.toUpperCase()}_JOBS_COUNT`,
@@ -1444,7 +1515,6 @@ export default {
       let orderBy = order_by.map(item => {
         let order = item.split(":")[1];
         let sorting = item.split(":")[0];
-        console.log(item)
         switch (sorting) {
           case "date_time_start":
             sorting = "date_start";
@@ -1453,10 +1523,10 @@ export default {
             sorting = "date_end";
             break;
           case "calendar_date_start":
-            sorting= "calendar_date_start"
+            sorting = "calendar_date_start";
             break;
           case "calendar_date_end":
-            sorting= "calendar_date_end"
+            sorting = "calendar_date_end";
             break;
           case "rate_name":
             sorting = "rate";
@@ -1464,7 +1534,6 @@ export default {
           default:
             sorting;
         }
-        console.log("sort", `${sorting}:${order}`)
         return `${sorting}:${order}`;
       });
       this.current_page = 1;
@@ -1525,11 +1594,10 @@ export default {
       this.jobPartParams.order_by = [];
 
       if (this.jobs.length) {
-        this.filterJob()
-      } else{
+        this.filterJob();
+      } else {
         this.filterModal = false;
       }
-
     }
   }
 };
