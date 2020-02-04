@@ -50,7 +50,11 @@ Vue.mixin({
       return arr;
     },
     CheckEmptyField(inputField, fieldName) {
+      if (fieldName.includes('id')) {
+        console.log(fieldName)
+      }
       let displayFieldName = fieldName.charAt(0).toUpperCase() + fieldName.slice(1).replace(/_/g, " ")
+
       if (!this.formError) {
         return
       }
