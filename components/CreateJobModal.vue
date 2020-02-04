@@ -940,7 +940,7 @@ export default {
       }
 
       this.Validate(this.form, notRequired);
-
+      console.log("errs", this.formError)
       if (!this.formError.length) {
         this.form.profession_id = this.form.role
         this.form.shift_id = this.form.shift
