@@ -13,13 +13,13 @@
             <h4 class="font-bold">Practice</h4>
             <div class="bg-white rounded-lg shadow-lg px-4 md:px-8 py-4 mt-4">
               <AppInput
-                v-model="form.practice"
+                v-model="form.practice_id"
                 :type="'select'"
-                :name="'practice'"
+                :name="'practice_id'"
                 :placeholder="'Select...'"
-                :error="formError.find(item => item.field === 'practice')"
+                :error="formError.find(item => item.field === 'practice_id')"
                 :items="practice_lists"
-                @blur="CheckEmptyField(form.practice, 'practice')"
+                @blur="CheckEmptyField(form.practice_id, 'practice_id')"
               />
             </div>
             <div class="flex flex-col">
@@ -530,7 +530,7 @@ export default {
       selectedClinicalSystem: [],
       selectedSpokenLanguage: [],
       form: {
-        practice: "",
+        practice_id: "",
         title: "",
         description: "",
         email: "",
@@ -719,7 +719,7 @@ export default {
           );
 
           if (this.repostJob) {
-            this.form.practice = this.repostJob.platform_job.practice.id;
+            this.form.practice_id = this.repostJob.platform_job.practice.id;
             this.form.title = this.repostJob.title;
             this.form.description = this.repostJob.description;
             this.form.email = this.repostJob.platform_job.email;
@@ -881,8 +881,10 @@ export default {
       let displayFieldName = fieldName.charAt(0).toUpperCase() + fieldName.slice(1).replace(/_/g, " ")
       let index = this.formError.findIndex(item => item.field === fieldName)
       if (parseInt(value) < 1 || value.includes('e') || value === '') {
+        console.log("if", parseInt(value), index)
         this.formError.push({field: fieldName, message: `${displayFieldName} is invalid`})
       }else {
+        console.log("else", parseInt(value), index)
         this.formError.splice(index, 1)
       }
     },
