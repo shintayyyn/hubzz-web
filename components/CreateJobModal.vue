@@ -882,7 +882,11 @@ export default {
         fieldName.charAt(0).toUpperCase() +
         fieldName.slice(1).replace(/_/g, " ");
       let index = this.formError.findIndex(item => item.field === fieldName);
-      if (parseInt(value) < 1 || value.includes("e") || value === "") {
+      if (
+        parseInt(value) < 1 ||
+        value.toString().includes("e") ||
+        value === ""
+      ) {
         this.formError.push({
           field: fieldName,
           message: `${displayFieldName} is invalid`
