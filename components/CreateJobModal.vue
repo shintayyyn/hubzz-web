@@ -647,10 +647,10 @@ export default {
       // }
     },
     "form.rate"(oldValue, value) {
-      this.validateNumber(this.form.rate, "rate")
+      this.validateNumber(this.form.rate, "rate");
     },
     "form.total_hours"(oldValue, value) {
-      this.validateNumber(this.form.total_hours, "total_hours")
+      this.validateNumber(this.form.total_hours, "total_hours");
     }
   },
   created() {
@@ -878,12 +878,21 @@ export default {
       );
     },
     validateNumber(value, fieldName) {
-      let displayFieldName = fieldName.charAt(0).toUpperCase() + fieldName.slice(1).replace(/_/g, " ")
-      let index = this.formError.findIndex(item => item.field === fieldName)
-      if (parseInt(value) < 1 || value.includes('e') || value === '') {
-        this.formError.push({field: fieldName, message: `${displayFieldName} is invalid`})
-      }else {
-        this.formError.splice(index, 1)
+      let displayFieldName =
+        fieldName.charAt(0).toUpperCase() +
+        fieldName.slice(1).replace(/_/g, " ");
+      let index = this.formError.findIndex(item => item.field === fieldName);
+      if (
+        parseInt(value) < 1 ||
+        value.toString().includes("e") ||
+        value === ""
+      ) {
+        this.formError.push({
+          field: fieldName,
+          message: `${displayFieldName} is invalid`
+        });
+      } else {
+        this.formError.splice(index, 1);
       }
     },
     publish() {
@@ -942,14 +951,16 @@ export default {
       this.Validate(this.form, notRequired);
       console.log("errs", this.formError)
       if (!this.formError.length) {
-        this.form.profession_id = this.form.role
-        this.form.shift_id = this.form.shift
+        this.form.profession_id = this.form.role;
+        this.form.shift_id = this.form.shift;
         this.selectedClinicalSystem = [...this.form.clinical_system];
         this.form.clinical_system_id = this.form.clinical_system.map(
           item => item.value
         );
         this.selectedQualification = [...this.form.specialty];
-        this.form.qualification_id = this.form.specialty.map(item => item.value);
+        this.form.qualification_id = this.form.specialty.map(
+          item => item.value
+        );
         this.selectedSpokenLanguage = [...this.form.spoken_language_id];
         this.form.spoken_language_id = this.form.spoken_language_id.map(
           item => item.value
@@ -1053,7 +1064,11 @@ export default {
                 text: [`${err.response.data.message}`]
               });
               return;
-            } else if (err.response.status === 400 && err.response && err.response.data.error_messages.length === 0) {
+            } else if (
+              err.response.status === 400 &&
+              err.response &&
+              err.response.data.error_messages.length === 0
+            ) {
               this.formError.push({
                 field: "date_start",
                 message: err.response.data.message
