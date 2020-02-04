@@ -1,22 +1,22 @@
 <template>
   <div>
     <div v-if="$auth.user.domain === 'Locum'">
-      <PermanentJob/>
+      <LocumPermanentJobModal/>
     </div>
     <div v-else >
-      <PracticePermanentJob/>
+      <PracticePermanentJobModal/>
     </div>
   </div>
 </template>
 <script>
 import AppButton from "@/components/Base/AppButton";
-import PermanentJob from "@/components/PermanentJob/PermanentJobModal";
-import PracticePermanentJob from "@/components/PermanentJob/PracticePermanentJob";
+import LocumPermanentJobModal from "@/components/PermanentJob/LocumPermanentJobModal";
+import PracticePermanentJobModal from "@/components/PermanentJob/PracticePermanentJobModal";
 export default {
 	components: {
 		// AppButton,
-		PermanentJob,
-		PracticePermanentJob
+		LocumPermanentJobModal,
+		PracticePermanentJobModal
   },
   data (){
     return {

@@ -8,7 +8,6 @@
 				@click="$router.go(-1)"
 				class="cursor-pointer"
 			/>
-
 			<div class="flex justify-start items-center flex-wrap mb-4">
         <h4 class="text-lg md:text-xl font-bold flex items-center">
           <span class="mx-2">
@@ -37,9 +36,9 @@
 			</div>
       <div v-if="permanent_job_application && permanent_job_application.invitation_schedule">
         <span class="font-bold">
-          Congratulations!,
+          Congratulations! 
         </span>
-          You have been invited for this job. Please attend on  {{ permanent_job_application.invitation_schedule }}
+          You have been invited for interview. Please attend on  {{ $moment(permanent_job_application.invitation_schedule, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('DD/MM/YYYY, h:mm:ss a') }} GMT
       </div>
 
 			<div class="flex flex-col md:flex-row">
@@ -48,9 +47,14 @@
 						<p class="w-1/3 font-bold">Practice</p>
 						<p>{{permanent_job ? permanent_job.practice.name : null}}</p>
             <p class="w-1/3 font-bold">Description</p>
-						<div class="my-4">
+						<!-- <div class="my-4">
 							<span v-html="permanent_job ? permanent_job.description : null"></span>
-						</div>
+						</div> -->
+            <div>
+              <no-ssr>
+                <quill-editor class="border-none" :options="options" :content="permanent_job.description" disabled></quill-editor>
+              </no-ssr>
+            </div>
 					</div>
 				</div>
 				<div class="w-full md:w-2/5 lg:w-1/3 md:pl-2">
@@ -59,10 +63,10 @@
 						<p class="pl-2 pb-3">{{permanent_job ? permanent_job.salary_amount : null}}</p>
 
 						<p class="w-1/3 font-bold">Posted</p>
-						<p class="pl-2 pb-3">{{permanent_job ? $moment(permanent_job.date_posted).format('YYYY-MM-DD') : null}}</p>
+						<p class="pl-2 pb-3">{{permanent_job ? $moment(permanent_job.date_posted).format('DD/MM/YYYY') : null}}</p>
 
 						<p class="w-1/3 font-bold">Closes</p>
-						<p class="pl-2 pb-3">{{permanent_job ? $moment(permanent_job.date_closing).format('YYYY-MM-DD') : null}}</p>
+						<p class="pl-2 pb-3">{{permanent_job ? $moment(permanent_job.date_closing).format('DD/MM/YYYY') : null}}</p>
 
 						<p class="w-1/3 font-bold">Report to</p>
 						<p class="pl-2 pb-3">{{permanent_job ? permanent_job.report_to : null}}</p>
@@ -98,6 +102,11 @@ export default {
 				description: "",
 				applied: false
       },
+      options: {
+				modules: {
+					toolbar: null
+				}
+			},
       permanent_job: '',
       permanent_job_applications: '',
       permanent_job_application: '',

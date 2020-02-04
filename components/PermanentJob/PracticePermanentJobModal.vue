@@ -1,16 +1,28 @@
 <template>
 	<section class="modal-container">
 		<div class="p-4 md:p-8">
-			<svgicon
-				name="left-arrow"
-				height="32"
-				width="32"
-				@click="$router.go(-1)"
-				class="cursor-pointer"
-			/>
-			<div class="flex items-center flex-wrap">
-				<h4 class="text-lg md:text-xl font-bold">{{permanent_job.title}}</h4>
-				<AppButton class="ml-4" :label="edit ? 'Cancel Editing' : 'Edit Job'" @click="edit = !edit" />
+      <nuxt-link
+        :to="{path:`/permanent-jobs`,query:$route.query}"
+      >
+        <svgicon
+          name="left-arrow"
+          height="32"
+          width="32"
+          class="cursor-pointer"
+        />
+      </nuxt-link>
+			
+			<div class="flex justify-start items-center flex-wrap">
+				<h4 class="text-lg md:text-xl font-bold">
+          <span>{{permanent_job.title}}</span>
+          <span 
+            class="px-4 py-1 rounded-full w-32 text-center mx-auto"
+            :class="statusStyle(permanent_job.job_posting_status)">
+            {{ permanent_job.job_posting_status }}
+          </span>
+        </h4>
+        
+				<AppButton class="ml-4" :label="editJobLabel(edit)" @click="edit = !edit" />
 			</div>
 			<div class="flex flex-col md:flex-row">
 				<div class="mx-2 w-full md:w-3/5 lg:w-2/3">
@@ -26,10 +38,10 @@
 									<p class="pl-2 pb-3">{{permanent_job ? permanent_job.salary_amount : ''}}</p>
 
 									<p class="font-bold">Posted</p>
-									<p class="pl-2 pb-3">{{permanent_job ? $moment(permanent_job.date_posted).format('YYYY-MM-DD') : ''}}</p>
+									<p class="pl-2 pb-3">{{permanent_job ? $moment(permanent_job.date_posted).format('DD/MM/YYYY') : ''}}</p>
 
 									<p class="font-bold">Closes</p>
-									<p class="pl-2 pb-3">{{permanent_job ? $moment(permanent_job.date_closing).format('YYYY-MM-DD') : ''}}</p>
+									<p class="pl-2 pb-3">{{permanent_job ? $moment(permanent_job.date_closing).format('DD/MM/YYYY') : ''}}</p>
 								</div>
 
 								<div class="w-full md:flex-w-1/2">
@@ -48,7 +60,11 @@
 							</div>
 
 							<p class="font-bold">Description</p>
-							<span v-html="permanent_job ? permanent_job.description : ''"></span>
+							<div>
+                <no-ssr>
+                  <quill-editor class="border-none" :options="options" :content="permanent_job.description" disabled></quill-editor>
+                </no-ssr>
+              </div>
 						</template>
 						<template v-else>
 							<div class="w-full flex flex-col md:flex-row">
@@ -66,6 +82,15 @@
 
 									<p class="font-bold">Salary</p>
 									<div class="flex flex-wrap">
+                    <AppInput
+											class="w-full pr-1"
+											v-model="form.salary_amount"
+											:type="'number'"
+											:name="'salary_amount'"
+											:label="'Salary Amount'"
+											:error="formError.find(item => item.field === 'salary_amount')"
+											@blur="CheckEmptyField(form.salary_amount, 'salary_amount')"
+										/>
 										<AppInput
 											class="w-full md:w-1/2 pr-1"
 											v-model="form.salary_description_1"
@@ -75,7 +100,7 @@
 											:label="'Salary Description 1'"
 											:error="formError.find(item => item.field === 'salary_description_1')"
 											:items="salary_description_type_1"
-											@blur="CheckEmptyField(form.salary_description_2, 'salary_description_1')"
+											@blur="CheckEmptyField(form.salary_description_1, 'salary_description_1')"
 										/>
 										<AppInput
 											class="w-full md:w-1/2 pl-1"
@@ -98,6 +123,21 @@
 								</div>
 
 								<div class="w-full md:flex-w-1/2 pl-2">
+                	<p class="font-bold">Title</p>
+									<AppInput
+										v-model="form.title"
+										:type="'text'"
+										:name="'title'"
+										:error="formError.find(item => item.field === 'title')"
+									/>
+                  <p class="font-bold">E-Mail</p>
+									<AppInput
+										v-model="form.email"
+										:type="'text'"
+										:name="'email'"
+										:error="formError.find(item => item.field === 'email')"
+									/>
+
 									<p class="font-bold">Report to</p>
 									<AppInput
 										v-model="form.report_to"
@@ -126,7 +166,7 @@
 										:label="'Work Hours'"
 										:error="formError.find(item => item.field === 'work_hours')"
 										:items="work_hours_type"
-										@blur="CheckEmptyField(form.practice_id, 'work_hours')"
+										@blur="CheckEmptyField(form.work_hours, 'work_hours')"
 									/>
 
 									<p class="font-bold">Industry</p>
@@ -137,7 +177,7 @@
 										:placeholder="'Select...'"
 										:error="formError.find(item => item.field === 'industry_type')"
 										:items="industry_types"
-										@blur="CheckEmptyField(form.practice_id, 'industry_type')"
+										@blur="CheckEmptyField(form.industry_type, 'industry_type')"
 									/>
 								</div>
 							</div>
@@ -154,7 +194,7 @@
 									@ready="onEditorReady($event)"
 								></quill-editor>
 							</no-ssr>
-							<p class="font-bold">Update Remarks</p>
+							<!-- <p class="font-bold">Update Remarks</p>
 							<AppInput
 								v-model="form.update_remarks"
 								:type="'textarea'"
@@ -162,36 +202,14 @@
 								:error="formError.find(item => item.field === 'update_remarks')"
 								:resize="false"
 								:rows="4"
-							/>
-							<AppInput
-								v-model="form.update_accepted_until"
-								:type="'select'"
-								:name="'update_accepted_until'"
-								:label="'Set deadline for appointed Locum to accept these changes (per hour)'"
-								:error="formError.find(item => item.field === 'update_accepted_until')"
-								:items="[
-                  { label: '12', value: 12 * 60 },
-                  { label: '13', value: 13 * 60 },
-                  { label: '14', value: 14 * 60 },
-                  { label: '15', value: 15 * 60 },
-                  { label: '16', value: 16 * 60 },
-                  { label: '17', value: 17 * 60 },
-                  { label: '18', value: 18 * 60 },
-                  { label: '19', value: 19 * 60 },
-                  { label: '20', value: 20 * 60 },
-                  { label: '21', value: 21 * 60 },
-                  { label: '22', value: 22 * 60 },
-                  { label: '23', value: 23 * 60 },
-                  { label: '24', value: 24 * 60 },
-                ]"
-							/>
+							/> -->
 							<AppButton @click="editPermanentJob()" :label="'Save Changes'" />
 						</template>
 					</div>
 				</div>
         
 				<div v-if="permanent_job" class="mx-2 w-full md:w-2/5 lg:w-1/3">
-					<PermanentJobDetailCandidates :permanent_job="permanent_job"/>
+					<PermanentJobCandidates :permanent_job="permanent_job"/>
 					<PermanentJobMap :permanent_job="permanent_job" />
 
           <AppButton 
@@ -202,6 +220,7 @@
           <div v-if="toCloseJob === true">
             <AppInput
               v-model="form.hired_through"
+              :label="'Closing Job Due to External Reason? (Optional)'"
               :type="'select'"
               :name="'hired_through'"
               :placeholder="'Select...'"
@@ -224,19 +243,24 @@ import AppButton from "@/components/Base/AppButton";
 import AppInput from "@/components/Base/AppInput";
 import AppFilterSearch from "@/components/Base/AppFilterSearch";
 import AppDate from "@/components/Base/AppDate";
-import PermanentJobShowCandidates from "@/components/PermanentJob/PermanentJobShowCandidates";
-import PermanentJobDetailCandidates from "@/components/PermanentJob/PermanentJobDetailCandidates";
+import PermanentJobShowCandidate from "@/components/PermanentJob/PermanentJobShowCandidate";
+import PermanentJobCandidates from "@/components/PermanentJob/PermanentJobCandidates";
 import PermanentJobMap from "@/components/PermanentJob/PermanentJobMap";
 export default {
 	components: {
 		AppInput,
 		AppButton,
     AppDate,
-		PermanentJobDetailCandidates,
+		PermanentJobCandidates,
 		PermanentJobMap
 	},
 	data() {
 		return {
+      options: {
+				modules: {
+					toolbar: null
+				}
+			},
       edit: false,
       toCloseJob: false,
       modal: false,
@@ -255,8 +279,6 @@ export default {
 				work_hours: 0,
 				practice_id: "",
 				profession_id: "",
-				practice_rate: 0,
-        approved_at: "",
         hired_through: "",
 			},
 			salary_range: false,
@@ -273,7 +295,8 @@ export default {
 
       postingProfession: '',
 
-			formError: [],
+      formError: [],
+      
 			// quill
 			editorOption: {
 				placeholder: "Please type the description here",
@@ -307,6 +330,8 @@ export default {
     this.loading = true;
     this.$axios.$get(`/api/v1/practice/permanent-jobs/${this.$route.params.id}`).then(res => {
       this.permanent_job = res.data.permanent_job
+    }).finally(() => {
+      // console.log('permanent job', this.permanent_job)
     })
 		Promise.all([
 			this.$axios.$get("/api/v1/practice/me/practice-practices"),
@@ -347,16 +372,23 @@ export default {
 				}
 			)
 			.finally(() => {
+        this.form.title = this.permanent_job.title;
+        this.form.description = this.permanent_job.description;
+        this.form.date_posted = this.permanent_job.date_posted;
+        this.form.date_closing = this.permanent_job.date_closing;
+        this.form.email = this.permanent_job.email;
+        this.form.report_to = this.permanent_job.report_to;
+        this.form.industry_type = this.permanent_job.industry_type;
+        this.form.salary_amount = this.permanent_job.salary_amount;
+        this.form.salary_description_1 = this.permanent_job.salary_description_1;
+        this.form.salary_description_2 = this.permanent_job.salary_description_2;
+        this.form.work_hours = this.permanent_job.work_hours;
+        this.form.practice_id = this.permanent_job.practice_id;
+        this.form.profession_id = this.permanent_job.profession_id
         this.loading = false;
       });
       
-    this.form.date_posted = this.permanent_job.date_posted;
-    this.form.date_closing = this.permanent_job.date_closing;
-		this.form.practice_id = this.permanent_job.practice_id;
-		this.form.salary_description_1 = this.permanent_job.salary_description_1;
-		this.form.salary_description_2 = this.permanent_job.salary_description_2;
-    this.form.description = this.permanent_job.description;
-    this.form.report_to = this.permanent_job.report_to
+   
 
 		this.work_hours_type = [
 			{
@@ -419,14 +451,44 @@ export default {
 		onEditorReady(editor) {
 			console.log("editor ready!", editor);
     },
+    statusStyle(jobPostingStatus) {
+      switch (jobPostingStatus) {
+        case "Available":
+          return "bg-green-500 text-white";
+          break;
+        case "Closed":
+          return "bg-gray-700 text-white";
+          break;
+        default:
+          return "bg-yellow-400 text-black";
+      }
+    },
+    editJobLabel(edit) {
+      if (edit === false && this.permanent_job.job_posting_status == 'Available') {
+        return "Edit Job"
+      } else if (edit === false && this.permanent_job.job_posting_status == 'Closed') {
+        return "Re-post Job"
+      } else {
+        return "Cancel Editing"
+      }
+    },
     editPermanentJob(){
-      this.$axios.$put(`/api/v1/practice/permanent-job/${this.permanent_job.id}`, this.form).then(res => {
-         this.$store.commit("SET_NOTIFICATION", {
-          enabled: true,
-          status: "success",
-          text: ["Successfully Rejected Locum"]
-        });
-      })
+      this.formError= [];
+
+      let notRequired = [
+        "hired_through",
+      ];
+      this.Validate(this.form, notRequired);
+      if (!this.formError.length) {
+        this.$axios.$put(`/api/v1/practice/permanent-jobs/${this.permanent_job.id}`, this.form).then(res => {
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: ["Successfully Edited Job"]
+          });
+        })
+      }
+      
     },
     forceCloseJob(){
       this.$axios.$put(`/api/v1/practice/permanent-jobs/${this.permanent_job.id}/force-close-job`, {

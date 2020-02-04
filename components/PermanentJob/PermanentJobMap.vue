@@ -42,15 +42,6 @@ export default {
 		};
 	},
 	mounted() {
-		// this.loading = true;
-    //static
-    console.log('permanent job', this.permanent_job)
-		// this.coordinates = {
-		// 	coordinate_x: -1.3190309,
-		// 	coordinate_y: 54.5616352,
-		// 	id: 6398,
-		// 	post_code: "TS18 1HU"
-		// };
 		this.$axios
 			.$get(
 				`/api/v1/postcode-coordinates?postcode=${this.permanent_job.practice.postcode}`
