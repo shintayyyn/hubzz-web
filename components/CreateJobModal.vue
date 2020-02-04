@@ -38,24 +38,24 @@
 
                 <template v-if="form.role">
                   <AppFilterSearch
-                    v-model="form.qualification_id"
-                    :name="'qualification_id'"
+                    v-model="form.specialty"
+                    :name="'specialty'"
                     :label="'Specialty'"
                     :placeholder="'Select...'"
                     :info="'Choose at least one qualification'"
                     :url="'/api/v1/qualifications'"
                     :professionCategoryId="selectedProfession.profession_category.id.toString()"
-                    :error="formError.find(item => item.field === 'qualification_id')"
+                    :error="formError.find(item => item.field === 'specialty')"
                   />
 
                   <AppFilterSearch
                     v-model="form.clinical_system"
-                    :name="'clinical_system_id'"
+                    :name="'clinical_system'"
                     :label="'Clinical systems'"
                     :placeholder="'Select...'"
                     :info="'Choose at least one IT system'"
                     :url="'/api/v1/clinical-systems'"
-                    :error="formError.find(item => item.field === 'clinical_system_id')"
+                    :error="formError.find(item => item.field === 'clinical_system')"
                   />
 
                   <AppFilterSearch
@@ -549,8 +549,8 @@ export default {
         ir35: false,
         mandatory_training_id: [],
         role: "",
-        qualification_id: [],
-        clinical_system_id: [],
+        specialty: [],
+        clinical_system: [],
         spoken_language_id: [],
         compliance_document_id: [],
         date_start: null,
@@ -580,7 +580,7 @@ export default {
     "form.role"(newValue, oldValue) {
       this.CheckEmptyField(newValue, "role");
       if (newValue && oldValue) {
-        this.form.qualification_id = [];
+        this.form.specialty = [];
       }
       if (newValue) {
         this.selectedProfession = this.professions_categories.find(
@@ -596,8 +596,8 @@ export default {
         }
       }
     },
-    "form.qualification_id"(value) {
-      this.CheckEmptyField(value, "qualification_id");
+    "form.specialty"(value) {
+      this.CheckEmptyField(value, "specialty");
     },
     "form.clinical_system"(value) {
       this.CheckEmptyField(value, "clinical_system");
@@ -752,7 +752,7 @@ export default {
 
             this.repostJob.platform_job.qualifications.forEach(
               qualification => {
-                this.form.qualification_id.push({
+                this.form.specialty.push({
                   label: qualification.name,
                   value: qualification.id
                 });
@@ -760,7 +760,7 @@ export default {
             );
             this.repostJob.platform_job.clinical_systems.forEach(
               clinicalSystem => {
-                this.form.clinical_system_id.push({
+                this.form.clinical_system.push({
                   label: clinicalSystem.name,
                   value: clinicalSystem.id
                 });
@@ -881,10 +881,8 @@ export default {
       let displayFieldName = fieldName.charAt(0).toUpperCase() + fieldName.slice(1).replace(/_/g, " ")
       let index = this.formError.findIndex(item => item.field === fieldName)
       if (parseInt(value) < 1 || value.includes('e') || value === '') {
-        console.log("if", parseInt(value), index)
         this.formError.push({field: fieldName, message: `${displayFieldName} is invalid`})
       }else {
-        console.log("else", parseInt(value), index)
         this.formError.splice(index, 1)
       }
     },
@@ -946,12 +944,12 @@ export default {
       if (!this.formError.length) {
         this.form.profession_id = this.form.role
         this.form.shift_id = this.form.shift
-        this.selectedClinicalSystem = [...this.form.clinical_system_id];
-        this.form.clinical_system_id = this.form.clinical_system_id.map(
+        this.selectedClinicalSystem = [...this.form.clinical_system];
+        this.form.clinical_system_id = this.form.clinical_system.map(
           item => item.value
         );
-        this.selectedQualification = [...this.form.qualification_id];
-        this.form.qualification_id = this.form.qualification_id.map(item => item.value);
+        this.selectedQualification = [...this.form.specialty];
+        this.form.qualification_id = this.form.specialty.map(item => item.value);
         this.selectedSpokenLanguage = [...this.form.spoken_language_id];
         this.form.spoken_language_id = this.form.spoken_language_id.map(
           item => item.value
@@ -1035,8 +1033,8 @@ export default {
           .catch(err => {
             console.log("err", err.response || err);
             this.$refs.modalContainer.scrollTop = 0;
-            this.form.clinical_system_id = this.selectedClinicalSystem;
-            this.form.qualification_id = this.selectedQualification;
+            this.form.clinical_system = this.selectedClinicalSystem;
+            this.form.specialty = this.selectedQualification;
             this.form.spoken_language_id = this.selectedSpokenLanguage;
 
             this.form.session_requirements = this.form.session_requirements.split(
