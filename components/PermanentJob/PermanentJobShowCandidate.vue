@@ -24,7 +24,7 @@
         </div>
 			</div>
 			<div v-if="accepted">
-        <!-- {{form.invitation_date+'T'+form.invitation_time}}
+        {{form.invitation_date+'T'+form.invitation_time}}
 				<AppDate
 					v-model="form.invitation_date"
 					:name="'invitation_date'"
@@ -39,8 +39,8 @@
 					@click="inviteLocum()"
 					class="mx-1"
 					:label="'Invite This Locum'"
-				/> -->
-        <input 
+				/>
+        <!-- <input 
           v-model="form.invitation_schedule"
           type="datetime-local" 
           id="meeting-time"
@@ -50,8 +50,9 @@
 					@click="inviteLocum()"
 					class="mx-1"
 					:label="'Invite This Locum'"
-				/>
+				/> -->
 			</div>
+      
 			<div class="flex flex-row flex-no-wrap justify-start mt-4 md:mt-8">
 				<div class="font-bold text-md sm:text-lg">{{user.name}}</div>
         <div 
@@ -59,16 +60,21 @@
           :class="statusStyle(permanent_job_application.application_status)">
           {{permanent_job_application.application_status}}
         </div>
+        <div v-if="permanent_job_application && 
+          permanent_job_application.application_status &&
+          permanent_job_application.invitation_schedule">
+          You have invited this candidate {{ $moment(permanent_job_application.invitation_schedule, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('DD/MM/YYYY, h:mm:ss A') }} GMT for an Interview.
+        </div>
 			</div>
 			<div class="flex flex-row flex-wrap justify-between mt-4">
 				<div class="w-full pr-0 lg:pr-2 lg:w-1/2">
 					<div class="bg-white rounded-lg shadow-lg p-4 md:p-8">
 						<div class="float-right">
-							<!-- <AppAvatar
+							<AppAvatar
 								:height="'80px'"
 								:width="'80px'"
 								:src="user.avatar && user.avatar.file && user.avatar.file.url ? user.avatar.file.url : ''"
-							/>-->
+							/>
 						</div>
 						<div class="font-bold text-sm sm:text-md">Candidate</div>
 						<div class="text-xs sm:text-sm mb-4 md:mb-8">{{user.name}}</div>
@@ -211,9 +217,10 @@ export default {
 	components: {
 		AppButton,
 		AppConfirmationModal,
-		SendMessageModal,
-    // AppDate,
-    // AppTime,
+    SendMessageModal,
+    AppAvatar,
+    AppDate,
+    AppTime,
 	},
 	data() {
 		return {
@@ -222,7 +229,8 @@ export default {
 			optional: [],
 			sendMessageModal: false,
 			form: {
-        invitation_schedule: "",
+        invitation_date: "",
+        invitation_time: "",
 			},
 			accepted: false
 		};
@@ -273,8 +281,9 @@ export default {
 		inviteLocum() {
 			this.$axios
 				.$put(
-          `/api/v1/practice/permanent-job-applications/${this.permanent_job_application.id}/schedule-locum`,
-            this.form
+          `/api/v1/practice/permanent-job-applications/${this.permanent_job_application.id}/schedule-locum`,{
+            invitation_schedule: this.form.invitation_date + ' ' + this.form.invitation_time,
+            }
 				)
 				.then(res => {
 					this.$store.commit("SET_NOTIFICATION", {
