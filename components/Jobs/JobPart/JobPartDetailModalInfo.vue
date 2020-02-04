@@ -162,6 +162,28 @@
             :key="item.id"
           >{{item.name}}</div>
         </div>
+
+        <template v-if="['Completed', 'Approved'].includes(job_part.status)">
+          <div class="font-bold text-sm sm:text-md">Was the locum having any absences?</div>
+          <div class="text-xs sm:text-sm mb-8">{{job_part.absent_days > 0 ? 'Yes' : 'No'}}</div>
+          <template v-if="job_part.absent_days > 0">
+            <div class="font-bold text-sm sm:text-md">Days of Absent:</div>
+            <div class="text-xs sm:text-sm mb-8">{{job_part.absent_days}}</div>
+            <div class="font-bold text-sm sm:text-md">Reason of Absence:</div>
+            <div class="text-xs sm:text-sm mb-8">{{job_part.absent_days_reason}}</div>
+          </template>
+          <div class="font-bold text-sm sm:text-md">Was the Locum late for this session?</div>
+          <div class="text-xs sm:text-sm mb-8">{{job_part.late_hours > 0 ? 'Yes' : 'No'}}</div>
+          <template v-if="job_part.late_hours > 0">
+            <div class="font-bold text-sm sm:text-md">Hours of Late:</div>
+            <div class="text-xs sm:text-sm mb-8">{{job_part.late_hours}}</div>
+            <div class="font-bold text-sm sm:text-md">Reason of Late:</div>
+            <div class="text-xs sm:text-sm mb-8">{{job_part.late_hours_reason}}</div>
+          </template>
+          <div class="font-bold text-sm sm:text-md">Final Hours:</div>
+          <div class="text-xs sm:text-sm mb-8">{{job_part.final_hours}}</div>
+        </template>
+
         <template v-if="job_part.job.variation_terms_file_id">
           <div class="font-bold text-sm sm:text-md">Terms & Condition</div>
           <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
