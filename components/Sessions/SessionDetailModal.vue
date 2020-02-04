@@ -147,7 +147,7 @@ export default {
         this.$moment(
           `${this.job.date_start} ${this.job.time_start}`,
           "YYYY-MM-DD HH:mm"
-        ).diff(this.$moment(), "hours") >= 72
+        ).diff(this.$moment(), "hours") >= 12
       );
     },
     waitingForApproval() {
