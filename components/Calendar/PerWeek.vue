@@ -1325,8 +1325,14 @@ export default {
       }
     },
     hasLocumAppliedJobs(date, type) {
-      return this.getLocumAppliedJobs.find(job =>
-        this.getDateArray(job.date_start, job.date_end).includes(date)
+      return this.getLocumAppliedJobs.find(
+        job =>
+          this.getDateArray(job.date_start, job.date_end).includes(date) &&
+          job.shift.name === type &&
+          ((job.include_saturday === false && day !== 6) ||
+            job.include_saturday === true) &&
+          ((job.include_sunday === false && day !== 0) ||
+            job.include_sunday === true)
       );
     },
     // UNAVAILABILITIES
