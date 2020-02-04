@@ -5,7 +5,6 @@ export default {
 			let findMessage = state.messages.find(
 				item => item.id == message.latest_conversation_message.id
 			);
-			console.log("find!", findMessage)
 			let findConversation = state.conversations.find(
 				item => item.id == message.id
 			);
@@ -106,7 +105,6 @@ export default {
 					foundConversation.conversation_member_users[0].user.id;
 			}
 		} else {
-			console.log("Message Sent to Candidate!");
 			commit("MESSAGE_SENT_TIMEOUT", true);
 			setTimeout(() => {
 				commit("MESSAGE_SENT_TIMEOUT", false);

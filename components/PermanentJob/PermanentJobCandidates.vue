@@ -8,16 +8,23 @@
 		>
 			<div class="flex flex-row flex-no-wrap justify-between items-center hover:text-gray-600">
 				<div @click.prevent="show(application.id)" class="cursor-pointer">
-					<!-- <AppAvatar
+					<AppAvatar
 						:height="'40px'"
 						:width="'40px'"
-						:src="user.avatar && user.avatar.file && user.avatar.file.url ? user.avatar.file.url : ''"
-					/> -->
+						:src="application.locum_user.avatar && application.locum_user.avatar.file && application.locum_user.avatar.file.url ? application.locum_user.avatar.file.url : ''"
+					/>
 				</div>
+
 				<div
 					class="text-sm font-bold leading-loose w-full px-2 md:text-center cursor-pointer"
 					@click.prevent="show(application.id)"
 				>{{application.locum_user.first_name +' '+application.locum_user.last_name}}</div>
+
+        <div 
+          class="p-1 rounded-full w-full text-sm font-bold text-center mx-auto"
+          :class="statusStyle(application.application_status)">
+          {{application.application_status}}
+        </div>
 
 				<div class="flex items-center">
 					<button class="rounded-lg hover:bg-gray-300 focus:outline-none" @click.prevent="message(user)">
@@ -53,7 +60,7 @@
 		</transition>
 		<transition name="slide" mode="out-in">
 			<div class="modal-container shadow-lg" v-if="modal">
-				<PermanentJobShowCandidates 
+				<PermanentJobShowCandidate 
           @close="modal=false"
           :permanent_job_application="permanent_job_application"
           :user="user" />
@@ -66,13 +73,14 @@
 <script>
 import AppAvatar from "~/components/Base/AppAvatar";
 import AppPagination from "@/components/Base/AppPagination";
-import PermanentJobShowCandidates from "@/components/PermanentJob/PermanentJobShowCandidates";
+import PermanentJobShowCandidate from "@/components/PermanentJob/PermanentJobShowCandidate";
 import SendMessageModal from "@/components/Messages/SendMessageModal";
 
 export default {
 	components: {
+    AppAvatar,
 		AppPagination,
-		PermanentJobShowCandidates,
+		PermanentJobShowCandidate,
 		SendMessageModal
 	},
 	props: ["permanent_job"],
@@ -85,7 +93,9 @@ export default {
 			loading: false,
 			params: {
 				offset: 0,
-				limit: 5
+        limit: 5,
+        status: ['Applied', 'For Interview'],
+        permanent_job_id: this.permanent_job.id
 			},
 			user: null,
 			modal: false,
@@ -100,33 +110,19 @@ export default {
 	},
 	created() {
     this.getApplicantsCount();
-    console.log('permanent job canditates', this.permanent_job)
-		// this.applicants = [
-		// 	{
-		// 		id: 1,
-		// 		avatar: {
-		// 			file: {
-		// 				url: "https://via.placeholder.com/150"
-		// 			}
-		// 		},
-		// 		personal_detail: {
-		// 			name: "Jane Doe"
-		// 		}
-		// 	}
-    // ];
 	},
 	methods: {
-		getApplicantsCount() {
-      this.$axios.$get(`/api/v1/practice/permanent-job-applications/count?permanent_job_id=${this.permanent_job.id}`).then(res => {
+		async getApplicantsCount() {
+      await this.$axios.$get(`/api/v1/practice/permanent-job-applications/count`,{
+        params: this.params,
+      }).then(res => {
         this.total = res.data.count;
 		    this.getApplicants(this.params);
       })
 		},
-		getApplicants(params) {
-		  this.$axios
-        .$get(`/api/v1/practice/permanent-job-applications?permanent_job_id=${this.permanent_job.id}`,{
-          ...params,
-        })
+		async getApplicants(params) {
+		  await this.$axios
+        .$get(`/api/v1/practice/permanent-job-applications`,{ params })
 		    .then(res => {
           this.permanent_job_applications = res.data.permanent_job_applications;
         });
@@ -143,6 +139,30 @@ export default {
 			this.params.limit = limit;
 			this.getApplicants(this.params);
 		},
+    statusStyle(applicationStatus) {
+      switch (applicationStatus) {
+        case "Available":
+          return "bg-green-500 text-white";
+          break;
+        case "Applied":
+          return "bg-yellow-600 text-white";
+          break;
+        case "For Interview":
+          return "bg-green-600 text-white";
+          break;
+        case "Accepted":
+          return "bg-green-700 text-white";
+          break;
+        case "Rejected":
+          return "bg-red-700 text-white";
+          break;
+        case "Closed":
+          return "bg-gray-700 text-white";
+          break;
+        default:
+          return "bg-yellow-400 text-black";
+      }
+    },
 		async show(id) {
       
       await this.$axios.$get(`/api/v1/practice/permanent-job-applications/${id}`)
@@ -185,15 +205,16 @@ export default {
 };
 </script>
 <style scoped>
-/* .avatar {
+.avatar {
   max-width: 40px;
   max-height: 40px;
   min-width: 40px;
   min-height: 40px;
-} */
-/* img {
+}
+img {
   border-radius: 50%;
-} */
+}
+
 .modal-shield {
 	z-index: 511;
 }

@@ -651,6 +651,13 @@ export default {
     },
     "form.total_hours"(oldValue, value) {
       this.validateNumber(this.form.total_hours, "total_hours");
+    },
+    "form.time_end"(value) {
+      // console.log(this.form.date_start, this.form.date_end)
+      // if (this.form.date_start === this.form.date_end) {
+      // console.log(this.form.time_start, this.form.time_end)
+      // let fullDateStart = this.form.date_start
+      // }
     }
   },
   created() {
@@ -948,8 +955,10 @@ export default {
         notRequired.push("favorite_only_until");
       }
 
-      this.Validate(this.form, notRequired);
+      
 
+      this.Validate(this.form, notRequired);
+      console.log("errs", this.formError)
       if (!this.formError.length) {
         this.form.profession_id = this.form.role;
         this.form.shift_id = this.form.shift;
