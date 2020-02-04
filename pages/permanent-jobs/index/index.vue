@@ -47,7 +47,7 @@ import AppButton from "@/components/Base/AppButton";
 import AppTable from "@/components/Base/AppTable";
 export default {
 	components: {
-		AppButton,
+		// AppButton,
 		AppTable
   },
   middleware({ query, redirect, error }) {
