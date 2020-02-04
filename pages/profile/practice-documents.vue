@@ -15,10 +15,10 @@
 				>{{(slotProps.item.info.updated_at ? slotProps.item.info.updated_at : slotProps.item.info.created_at) | localDate}}</div>
 			</template>
 			<template v-slot:actions-button="slotProps">
-				<div
+				<AppButton
+					:label="'View'"
 					@click="$router.push({ path: `/profile/practice-documents/${slotProps.item.fileId}` })"
-					class="mx-1 p-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
-				>View</div>
+				/>
 			</template>
 		</AppTable>
 		<template v-if="terms.length > 0">
@@ -38,10 +38,10 @@
 					>{{(slotProps.item.info.updated_at ? slotProps.item.info.updated_at : slotProps.item.info.created_at) | localDate}}</div>
 				</template>
 				<template v-slot:actions-button>
-					<div
+					<AppButton
+						:label="'View'"
 						@click="$router.push({ path: `/profile/practice-documents/standard-terms` })"
-						class="mx-1 p-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
-					>View</div>
+					/>
 				</template>
 			</AppTable>
 		</template>
@@ -59,6 +59,7 @@
 <script>
 import PracticeDocumentDetailModal from "@/components/Profile/PracticeDocumentDetailModal";
 import AppTable from "@/components/Base/AppTable";
+import AppButton from "@/components/Base/AppButton";
 export default {
 	transition: {
 		name: "fade",
@@ -66,7 +67,8 @@ export default {
 	},
 	components: {
 		PracticeDocumentDetailModal,
-		AppTable
+		AppTable,
+		AppButton
 	},
 	data() {
 		return {

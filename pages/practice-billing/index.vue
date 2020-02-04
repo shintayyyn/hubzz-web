@@ -81,40 +81,42 @@
               :name="'paid_at'"
               :label="'Received payment on'"
               :error="formError.find(item => item.field === 'paid_at')"
-              isAfter
+              isBefore
             />
-            <AppInput
-              v-model="form.ni"
-              :type="'select'"
-              :name="'ni'"
-              :label="'Ni'"
-              :items="[{ label: 'false', value: false }, { label: 'true', value: true }]"
-            />
-            <AppInput
-              v-if="[true, 'true'].includes(form.ni)"
-              v-model="form.ni_amount"
-              :type="'number'"
-              :name="'ni_amount'"
-              :label="'Ni Amount'"
-              :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
-              :error="formError.find(item => item.field === 'ni_amount')"
-            />
-            <AppInput
-              v-model="form.paye"
-              :type="'select'"
-              :name="'paye'"
-              :label="'Paye'"
-              :items="[{ label: 'false', value: false }, { label: 'true', value: true }]"
-            />
-            <AppInput
-              v-if="[true, 'true'].includes(form.paye)"
-              v-model="form.paye_amount"
-              :type="'number'"
-              :name="'paye_amount'"
-              :label="'Paye Amount'"
-              :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
-              :error="formError.find(item => item.field === 'paye_amount')"
-            />
+            <template v-if="ir35">
+              <AppInput
+                v-model="form.ni"
+                :type="'select'"
+                :name="'ni'"
+                :label="'NI'"
+                :items="[{ label: 'No', value: false }, { label: 'Yes', value: true }]"
+              />
+              <AppInput
+                v-if="[true, 'true'].includes(form.ni)"
+                v-model="form.ni_amount"
+                :type="'number'"
+                :name="'ni_amount'"
+                :label="'NI Amount'"
+                :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
+                :error="formError.find(item => item.field === 'ni_amount')"
+              />
+              <AppInput
+                v-model="form.paye"
+                :type="'select'"
+                :name="'paye'"
+                :label="'PAYE'"
+                :items="[{ label: 'No', value: false }, { label: 'Yes', value: true }]"
+              />
+              <AppInput
+                v-if="[true, 'true'].includes(form.paye)"
+                v-model="form.paye_amount"
+                :type="'number'"
+                :name="'paye_amount'"
+                :label="'PAYE Amount'"
+                :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem;text-align:right'"
+                :error="formError.find(item => item.field === 'paye_amount')"
+              />
+            </template>
             <div class="flex flex-row flex-no-wrap justify-center">
               <AppButton
                 class="mx-1"
@@ -226,6 +228,16 @@ export default {
     };
   },
   computed: {
+    ir35() {
+      return true;
+      if (!this.invoice_id) {
+        return false;
+      }
+      let selectedInvoice = this.job_parts.find(
+        item => item.locum_invoice_id === this.invoice_id
+      );
+      return selectedInvoice.job_ir35 ? selectedInvoice.job_ir35 : false;
+    },
     authPermissions() {
       return this.$store.getters["permissions"];
     },
@@ -598,12 +610,22 @@ export default {
     },
     confirmPayment() {
       let notRequired = ["ni", "paye"];
-      if ([false, "false"].includes(this.form.ni)) {
+      if (this.ir35 === false) {
         notRequired.push("ni_amount");
-      }
-      if ([false, "false"].includes(this.form.paye)) {
         notRequired.push("paye_amount");
+        this.form.ni = false;
+        this.form.ni_amount = null;
+        this.form.paye = false;
+        this.form.paye_amount = null;
+      } else if (this.ir35 === true) {
+        if ([false, "false"].includes(this.form.ni)) {
+          notRequired.push("ni_amount");
+        }
+        if ([false, "false"].includes(this.form.paye)) {
+          notRequired.push("paye_amount");
+        }
       }
+
       this.formError = [];
       this.Validate(this.form, notRequired);
       if (!this.formError.length) {

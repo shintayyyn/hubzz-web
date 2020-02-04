@@ -50,6 +50,11 @@ Vue.mixin({
       return arr;
     },
     CheckEmptyField(inputField, fieldName) {
+      if (fieldName.includes('id')) {
+        console.log(fieldName)
+      }
+      let displayFieldName = fieldName.charAt(0).toUpperCase() + fieldName.slice(1).replace(/_/g, " ")
+
       if (!this.formError) {
         return
       }
@@ -63,19 +68,19 @@ Vue.mixin({
       if (!(inputField instanceof Array) && !inputField) {
         this.formError.push({
           field: fieldName,
-          message: "Required"
+          message: `${displayFieldName} is required `
         });
       }
       if (inputField instanceof Array && !inputField.length) {
         this.formError.push({
           field: fieldName,
-          message: "Required"
+          message: `${displayFieldName} is required `
         });
       }
       if (typeof inputField === "boolean" && inputField === false) {
         this.formError.push({
           field: fieldName,
-          message: "Required"
+          message: `${displayFieldName} is required `
         });
       }
       if (inputField) {
@@ -108,13 +113,13 @@ Vue.mixin({
             if (!lists) {
               this.formError.push({
                 field: key,
-                message: `${key} is Required`
+                message: `${key} is required`
               });
             }
             if (lists && !lists.includes(key)) {
               this.formError.push({
                 field: key,
-                message: `${key} is Required`
+                message: `${key} is required`
               });
             }
           }
@@ -123,7 +128,7 @@ Vue.mixin({
             if (!lists) {
               this.formError.push({
                 field: key,
-                message: `${key} is Required`
+                message: `${key} is required`
               });
             }
             if (lists && !lists.includes(key)) {

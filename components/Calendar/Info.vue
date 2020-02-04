@@ -232,6 +232,15 @@ export default {
     }
   },
   methods: {
+    includesWeekends(job, date) {
+      let day = new Date(date).getDay();
+      return (
+        ((job.include_saturday === false && day !== 6) ||
+          job.include_saturday === true) &&
+        ((job.include_sunday === false && day !== 0) ||
+          job.include_sunday === true)
+      );
+    },
     // PRACTICE
     findPerMonthPractice(date) {
       this.loading = true;
@@ -247,39 +256,53 @@ export default {
       let foundPracticeAvailableJobsReminder = [];
       // PARTS
       if (this.getPracticeOngoingJobs.length > 0) {
-        foundPracticeOngoingJobs = this.getPracticeOngoingJobs.filter(job =>
-          this.getDateArray(job.date_start, job.date_end).includes(date)
+        foundPracticeOngoingJobs = this.getPracticeOngoingJobs.filter(
+          job =>
+            this.getDateArray(job.date_start, job.date_end).includes(date) &&
+            this.includesWeekends(job.job, date)
         );
       }
       if (this.getPracticeCompletedJobs.length > 0) {
-        foundPracticeCompletedJobs = this.getPracticeCompletedJobs.filter(job =>
-          this.getDateArray(job.date_start, job.date_end).includes(date)
+        foundPracticeCompletedJobs = this.getPracticeCompletedJobs.filter(
+          job =>
+            this.getDateArray(job.date_start, job.date_end).includes(date) &&
+            this.includesWeekends(job.job, date)
         );
       }
       // WHOLE
       if (this.getPracticeAllocatedJobs.length > 0) {
-        foundPracticeAllocatedJobs = this.getPracticeAllocatedJobs.filter(job =>
-          this.getDateArray(job.date_start, job.date_end).includes(date)
+        foundPracticeAllocatedJobs = this.getPracticeAllocatedJobs.filter(
+          job =>
+            this.getDateArray(job.date_start, job.date_end).includes(date) &&
+            this.includesWeekends(job, date)
         );
       }
       if (this.getPracticeAppliedJobs.length > 0) {
-        foundPracticeAppliedJobs = this.getPracticeAppliedJobs.filter(job =>
-          this.getDateArray(job.date_start, job.date_end).includes(date)
+        foundPracticeAppliedJobs = this.getPracticeAppliedJobs.filter(
+          job =>
+            this.getDateArray(job.date_start, job.date_end).includes(date) &&
+            this.includesWeekends(job, date)
         );
       }
       if (this.getPracticeUnfilledJobs.length > 0) {
-        foundPracticeUnfilledJobs = this.getPracticeUnfilledJobs.filter(job =>
-          this.getDateArray(job.date_start, job.date_end).includes(date)
+        foundPracticeUnfilledJobs = this.getPracticeUnfilledJobs.filter(
+          job =>
+            this.getDateArray(job.date_start, job.date_end).includes(date) &&
+            this.includesWeekends(job, date)
         );
       }
       if (this.getPracticeDeclinedJobs.length > 0) {
-        foundPracticeDeclinedJobs = this.getPracticeDeclinedJobs.filter(job =>
-          this.getDateArray(job.date_start, job.date_end).includes(date)
+        foundPracticeDeclinedJobs = this.getPracticeDeclinedJobs.filter(
+          job =>
+            this.getDateArray(job.date_start, job.date_end).includes(date) &&
+            this.includesWeekends(job, date)
         );
       }
       if (this.getPracticeAvailableJobs.length > 0) {
-        foundPracticeAvailableJobs = this.getPracticeAvailableJobs.filter(job =>
-          this.getDateArray(job.date_start, job.date_end).includes(date)
+        foundPracticeAvailableJobs = this.getPracticeAvailableJobs.filter(
+          job =>
+            this.getDateArray(job.date_start, job.date_end).includes(date) &&
+            this.includesWeekends(job, date)
         );
       }
       // REMINDERS
@@ -349,7 +372,9 @@ export default {
           job_part =>
             this.getDateArray(job_part.date_start, job_part.date_end).includes(
               date
-            ) && job_part.job.shift.name === shift
+            ) &&
+            job_part.job.shift.name === shift &&
+            this.includesWeekends(job_part.job, date)
         );
       }
       if (this.getPracticeCompletedJobs.length > 0) {
@@ -357,7 +382,9 @@ export default {
           job_part =>
             this.getDateArray(job_part.date_start, job_part.date_end).includes(
               date
-            ) && job_part.job.shift.name === shift
+            ) &&
+            job_part.job.shift.name === shift &&
+            this.includesWeekends(job_part.job, date)
         );
       }
       // WHOLE
@@ -365,35 +392,40 @@ export default {
         foundPracticeAllocatedJobs = this.getPracticeAllocatedJobs.filter(
           job =>
             this.getDateArray(job.date_start, job.date_end).includes(date) &&
-            job.shift.name === shift
+            job.shift.name === shift &&
+            this.includesWeekends(job, date)
         );
       }
       if (this.getPracticeAppliedJobs.length > 0) {
         foundPracticeAppliedJobs = this.getPracticeAppliedJobs.filter(
           job =>
             this.getDateArray(job.date_start, job.date_end).includes(date) &&
-            job.shift.name === shift
+            job.shift.name === shift &&
+            this.includesWeekends(job, date)
         );
       }
       if (this.getPracticeUnfilledJobs.length > 0) {
         foundPracticeUnfilledJobs = this.getPracticeUnfilledJobs.filter(
           job =>
             this.getDateArray(job.date_start, job.date_end).includes(date) &&
-            job.shift.name === shift
+            job.shift.name === shift &&
+            this.includesWeekends(job, date)
         );
       }
       if (this.getPracticeDeclinedJobs.length > 0) {
         foundPracticeDeclinedJobs = this.getPracticeDeclinedJobs.filter(
           job =>
             this.getDateArray(job.date_start, job.date_end).includes(date) &&
-            job.shift.name === shift
+            job.shift.name === shift &&
+            this.includesWeekends(job, date)
         );
       }
       if (this.getPracticeAvailableJobs.length > 0) {
         foundPracticeAvailableJobs = this.getPracticeAvailableJobs.filter(
           job =>
             this.getDateArray(job.date_start, job.date_end).includes(date) &&
-            job.shift.name === shift
+            job.shift.name === shift &&
+            this.includesWeekends(job, date)
         );
       }
       // REMINDERS
@@ -458,38 +490,48 @@ export default {
       let foundLocumPrivateJobs = [];
       // PARTS
       if (this.getLocumOngoingJobs.length > 0) {
-        foundLocumOngoingJobs = this.getLocumOngoingJobs.filter(job_part =>
-          this.getDateArray(job_part.date_start, job_part.date_end).includes(
-            date
-          )
+        foundLocumOngoingJobs = this.getLocumOngoingJobs.filter(
+          job_part =>
+            this.getDateArray(job_part.date_start, job_part.date_end).includes(
+              date
+            ) && this.includesWeekends(job_part.job, date)
         );
       }
       if (this.getLocumCompletedJobs.length > 0) {
-        foundLocumCompletedJobs = this.getLocumCompletedJobs.filter(job_part =>
-          this.getDateArray(job_part.date_start, job_part.date_end).includes(
-            date
-          )
+        foundLocumCompletedJobs = this.getLocumCompletedJobs.filter(
+          job_part =>
+            this.getDateArray(job_part.date_start, job_part.date_end).includes(
+              date
+            ) && this.includesWeekends(job_part.job, date)
         );
       }
       // WHOLE
       if (this.getLocumAppliedJobs.length > 0) {
-        foundLocumAppliedJobs = this.getLocumAppliedJobs.filter(job =>
-          this.getDateArray(job.date_start, job.date_end).includes(date)
+        foundLocumAppliedJobs = this.getLocumAppliedJobs.filter(
+          job =>
+            this.getDateArray(job.date_start, job.date_end).includes(date) &&
+            this.includesWeekends(job, date)
         );
       }
       if (this.getLocumAvailableJobs.length > 0) {
-        foundLocumAvailableJobs = this.getLocumAvailableJobs.filter(job =>
-          this.getDateArray(job.date_start, job.date_end).includes(date)
+        foundLocumAvailableJobs = this.getLocumAvailableJobs.filter(
+          job =>
+            this.getDateArray(job.date_start, job.date_end).includes(date) &&
+            this.includesWeekends(job, date)
         );
       }
       if (this.getLocumAllocatedPlatformJobs.length > 0) {
         foundLocumAllocatedPlatformJobs = this.getLocumAllocatedPlatformJobs.filter(
-          job => this.getDateArray(job.date_start, job.date_end).includes(date)
+          job =>
+            this.getDateArray(job.date_start, job.date_end).includes(date) &&
+            this.includesWeekends(job, date)
         );
       }
       if (this.getLocumAllocatedPrivateJobs.length > 0) {
         foundLocumAllocatedPrivateJobs = this.getLocumAllocatedPrivateJobs.filter(
-          job => this.getDateArray(job.date_start, job.date_end).includes(date)
+          job =>
+            this.getDateArray(job.date_start, job.date_end).includes(date) &&
+            this.includesWeekends(job, date)
         );
       }
       // UNAVAILABILITIES
@@ -540,7 +582,9 @@ export default {
           job_part =>
             this.getDateArray(job_part.date_start, job_part.date_end).includes(
               date
-            ) && job_part.job.shift.name === shift
+            ) &&
+            job_part.job.shift.name === shift &&
+            this.includesWeekends(job_part.job, date)
         );
       }
       if (this.getLocumCompletedJobs.length > 0) {
@@ -548,7 +592,9 @@ export default {
           job_part =>
             this.getDateArray(job_part.date_start, job_part.date_end).includes(
               date
-            ) && job_part.job.shift.name === shift
+            ) &&
+            job_part.job.shift.name === shift &&
+            this.includesWeekends(job_part.job, date)
         );
       }
       // WHOLE
@@ -556,28 +602,32 @@ export default {
         foundLocumAppliedJobs = this.getLocumAppliedJobs.filter(
           job =>
             this.getDateArray(job.date_start, job.date_end).includes(date) &&
-            shift === "Available"
+            shift === "Available" &&
+            this.includesWeekends(job, date)
         );
       }
       if (this.getLocumAvailableJobs.length > 0) {
         foundLocumAvailableJobs = this.getLocumAvailableJobs.filter(
           job =>
             this.getDateArray(job.date_start, job.date_end).includes(date) &&
-            job.shift.name === shift
+            job.shift.name === shift &&
+            this.includesWeekends(job, date)
         );
       }
       if (this.getLocumAllocatedPlatformJobs.length > 0) {
         foundLocumAllocatedPlatformJobs = this.getLocumAllocatedPlatformJobs.filter(
           job =>
             this.getDateArray(job.date_start, job.date_end).includes(date) &&
-            job.shift.name === shift
+            job.shift.name === shift &&
+            this.includesWeekends(job, date)
         );
       }
       if (this.getLocumAllocatedPrivateJobs.length > 0) {
         foundLocumAllocatedPrivateJobs = this.getLocumAllocatedPrivateJobs.filter(
           job =>
             this.getDateArray(job.date_start, job.date_end).includes(date) &&
-            job.shift.name === shift
+            job.shift.name === shift &&
+            this.includesWeekends(job, date)
         );
       }
       // UNAVAILABILITIES
