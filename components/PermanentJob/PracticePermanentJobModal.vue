@@ -222,7 +222,13 @@
 				</div>
 
 				<div v-if="permanent_job" class="mx-2 w-full md:w-2/5 lg:w-1/3">
-					<PermanentJobCandidates :permanent_job="permanent_job" />
+					<PermanentJobCandidates
+						v-if="permanent_job.job_posting_status !== 'Closed'"
+						:permanent_job="permanent_job"
+					/>
+					<!-- <div v-if="permanent_job.appointed_to_locum_user_id">
+						<p>Locum</p>
+					</div>-->
 					<PermanentJobMap :permanent_job="permanent_job" />
 
 					<AppButton
@@ -502,7 +508,7 @@ export default {
 					this.permanent_job = res.data.permanent_job;
 				})
 				.finally(() => {
-					// console.log('permanent job', this.permanent_job)
+					console.log("permanent job", this.permanent_job);
 				});
 		},
 		editJobLabel(edit) {

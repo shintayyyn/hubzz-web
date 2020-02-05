@@ -20,10 +20,11 @@
 					@click.prevent="show(application.id)"
 				>{{application.locum_user.first_name +' '+application.locum_user.last_name}}</div>
 
-				<!-- <div
+				<div
+					v-if="application.application_status !== 'Applied'"
 					class="p-1 rounded-full w-full text-sm font-bold text-center mx-auto"
 					:class="statusStyle(application.application_status)"
-				>{{application.application_status}}</div>-->
+				>{{application.application_status}}</div>
 
 				<div class="flex items-center">
 					<button class="rounded-lg hover:bg-gray-300 focus:outline-none" @click.prevent="message(user)">

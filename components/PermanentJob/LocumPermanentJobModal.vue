@@ -8,26 +8,26 @@
 				@click="$router.go(-1)"
 				class="cursor-pointer"
 			/>
-			<div class="flex justify-start items-center flex-wrap mb-4">
+			<div class="flex flex-row flex-no-wrap justify-start items-center mt-4 md:mt-8">
 				<h4 class="text-lg md:text-xl font-bold flex items-center">
-					<span class="mx-2">{{ permanent_job.title }}</span>
-					<span
-						class="mx-2 py-2 px-4 rounded font-semibold"
-						:class="statusStyle(permanent_job.status)"
-					>{{ permanent_job.status }}</span>
+					<span>{{ permanent_job.title }}</span>
 				</h4>
+				<span
+					class="px-4 py-1 rounded-lg w-32 text-center mx-2"
+					:class="statusStyle(permanent_job.status)"
+				>{{ permanent_job.status }}</span>
 
 				<AppButton
-					class="ml-2"
+					v-if="permanent_job.status == 'Available'"
+					class="mx-2"
 					:label="'Apply'"
 					@click="apply()"
-					v-if="permanent_job.status == 'Available'"
 				/>
 				<AppButton
-					class="ml-2"
+					v-if="permanent_job.status == 'Applied'"
+					class="mx-2"
 					:label="'Cancel Application'"
 					@click="cancelApplication()"
-					v-if="permanent_job.status == 'Applied'"
 				/>
 			</div>
 			<div v-if="permanent_job_application && permanent_job_application.invitation_schedule">
@@ -111,47 +111,50 @@ export default {
 			permanent_job_application: ""
 		};
 	},
-	async created() {
-		let permanent_job = "";
-		let permanent_job_applications = "";
-		let permanent_job_application = "";
-
-		await this.$axios
-			.$get(`/api/v1/locum/permanent-jobs/${this.$route.params.id}`)
-			.then(res => {
-				permanent_job = res.data.permanent_job;
-			});
-
-		await this.$axios
-			.$get(`/api/v1/locum/permanent-job-applications`)
-			.then(res => {
-				permanent_job_applications = res.data.permanent_job_applications;
-			});
-
-		permanent_job_application = permanent_job_applications.find(
-			item => item.permanent_job_id === permanent_job.id
-		);
-		this.permanent_job_application = permanent_job_application;
-
-		console.log("permanent  job app", this.permanent_job_application);
-		if (this.permanent_job_application) {
-			console.log("app", this.permanent_job_application);
-			permanent_job.status = this.permanent_job_application.application_status;
-			this.permanent_job = permanent_job;
-		} else if (
-			this.$moment(permanent_job.date_closing).format() <=
-			this.$moment().format()
-		) {
-			console.log("haha");
-			permanent_job.status = "Closed";
-			this.permanent_job = permanent_job;
-		} else {
-			console.log("hoho");
-			permanent_job.status = "Available";
-			this.permanent_job = permanent_job;
-		}
+	created() {
+		this.getJob();
 	},
 	methods: {
+		async getJob() {
+			let permanent_job = "";
+			let permanent_job_applications = "";
+			let permanent_job_application = "";
+
+			await this.$axios
+				.$get(`/api/v1/locum/permanent-jobs/${this.$route.params.id}`)
+				.then(res => {
+					permanent_job = res.data.permanent_job;
+				});
+
+			await this.$axios
+				.$get(`/api/v1/locum/permanent-job-applications`)
+				.then(res => {
+					permanent_job_applications = res.data.permanent_job_applications;
+				});
+
+			permanent_job_application = permanent_job_applications.find(
+				item => item.permanent_job_id === permanent_job.id
+			);
+			this.permanent_job_application = permanent_job_application;
+
+			console.log("permanent  job app", this.permanent_job_application);
+			if (this.permanent_job_application) {
+				console.log("app", this.permanent_job_application);
+				permanent_job.status = this.permanent_job_application.application_status;
+				this.permanent_job = permanent_job;
+			} else if (
+				this.$moment(permanent_job.date_closing).format() <=
+				this.$moment().format()
+			) {
+				console.log("haha");
+				permanent_job.status = "Closed";
+				this.permanent_job = permanent_job;
+			} else {
+				console.log("hoho");
+				permanent_job.status = "Available";
+				this.permanent_job = permanent_job;
+			}
+		},
 		apply() {
 			this.$axios
 				.$put(
@@ -167,6 +170,7 @@ export default {
 						status: "success",
 						text: ["You have successfully Applied to this job"]
 					});
+					this.getJob();
 				});
 		},
 		cancelApplication() {
@@ -180,6 +184,7 @@ export default {
 						status: "success",
 						text: ["Application is now successfully Cancelled"]
 					});
+					this.getJob();
 				});
 		},
 		statusStyle(jobStatus) {
