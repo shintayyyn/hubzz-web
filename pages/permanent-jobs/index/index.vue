@@ -3,7 +3,7 @@
 		<AppTable
 			class="w-full"
 			v-if="permanent_job_count > 0 && $auth.user.domain ===  'Practice'"
-			:total="total"
+			:total="permanent_job_count"
 			:items="permanent_jobs"
 			:currentPage="current_page"
 			:perPage="params.limit"
@@ -15,7 +15,7 @@
 		<AppTable
 			class="w-full"
 			v-if="permanent_jobs_for_locum_count > 0 && $auth.user.domain === 'Locum'"
-			:total="total"
+			:total="permanent_jobs_for_locum_count"
 			:items="permanent_jobs_for_locum"
 			:currentPage="current_page"
 			:perPage="params.limit"
@@ -279,12 +279,6 @@ export default {
 
 				permanent_jobs_for_locum_count = permanent_jobs_for_locum.length;
 			} else if (app.$auth.user.domain === "Practice") {
-				let response = await app.$axios.$get(
-					"/api/v1/practice/permanent-jobs/count"
-				);
-				permanent_job_count =
-					response.data && response.data.count ? response.data.count : null;
-			} else if (app.$auth.user.domain === "Practice") {
 				params = {
 					job_posting_status: route.query.status
 						? route.query.status
@@ -292,15 +286,17 @@ export default {
 					practice_id: app.$auth.user.practice_id
 				};
 				let response = await app.$axios.$get(
-					"/api/v1/practice/permanent-jobs/count",
+					`/api/v1/practice/permanent-jobs/count`,
 					{ params }
 				);
 				permanent_job_count =
 					response.data && response.data.count ? response.data.count : null;
 
-				response = await app.$axios.$get(`/api/v1/practice/permanent-jobs`, {
-					params
-				});
+        response = await app.$axios.$get(
+          `/api/v1/practice/permanent-jobs`, 
+        { params }
+        );
+
 				permanent_jobs =
 					response.data && response.data.permanent_jobs
 						? response.data.permanent_jobs

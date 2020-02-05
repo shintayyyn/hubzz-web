@@ -60,6 +60,7 @@
               :name="'date_posted'"
               :label="'Date Posted'"
               isAfter
+              disabled
             />
             <AppDate
               v-model="form.date_closing"
@@ -204,7 +205,7 @@ export default {
       form: {
         practice_id: "",
         profession_id: "",
-        date_posted: "",
+        date_posted: this.$moment().format('YYYY-MM-DD'),
         date_closing: "",
         title: "",
         description: "",

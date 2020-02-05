@@ -326,9 +326,9 @@ export default {
 			// }
 		};
 	},
-	created() {
+	async created() {
     this.loading = true;
-    this.$axios.$get(`/api/v1/practice/permanent-jobs/${this.$route.params.id}`).then(res => {
+    await this.$axios.$get(`/api/v1/practice/permanent-jobs/${this.$route.params.id}`).then(res => {
       this.permanent_job = res.data.permanent_job
     }).finally(() => {
       // console.log('permanent job', this.permanent_job)
