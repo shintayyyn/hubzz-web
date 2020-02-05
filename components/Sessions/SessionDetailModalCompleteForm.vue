@@ -145,15 +145,15 @@ export default {
     },
     complete() {
       this.formError = [];
-      let notRequired = [];
+      let notRequired = ["reason_of_absence", "late_hours_reason"];
       this.confirmation_modal = false;
       if (this.has_absences === "false" || this.has_absences === false) {
         this.form.absent_days = 0;
-        notRequired.push("absent_days", "reason_of_absence");
+        notRequired.push("absent_days");
       }
       if (this.has_late === "false" || this.has_late === false) {
         this.form.late_hours = 0;
-        notRequired.push("late_hours", "late_hours_reason");
+        notRequired.push("late_hours");
       }
       this.Validate(this.form, notRequired);
       if (!this.formError.length) {

@@ -785,10 +785,26 @@ export default {
               item => item.id
             );
 
-            this.form.date_start = this.repostJob.date_start;
-            this.form.time_start = this.repostJob.time_start;
-            this.form.date_end = this.repostJob.date_end;
-            this.form.time_end = this.repostJob.time_end;
+            this.form.date_start = this.$moment().isBefore(
+              this.repostJob.date_start
+            )
+              ? this.repostJob.date_start
+              : null;
+            this.form.time_start = this.$moment().isBefore(
+              this.repostJob.date_start
+            )
+              ? this.repostJob.time_start
+              : null;
+            this.form.date_end = this.$moment().isBefore(
+              this.repostJob.date_end
+            )
+              ? this.repostJob.date_end
+              : null;
+            this.form.time_end = this.$moment().isBefore(
+              this.repostJob.date_end
+            )
+              ? this.repostJob.time_end
+              : null;
 
             this.form.include_saturday = this.repostJob.include_saturday;
             this.form.include_sunday = this.repostJob.include_sunday;
@@ -814,12 +830,20 @@ export default {
             }
 
             if (this.repostJob.platform_job.selection_date) {
-              this.selection_date.date = this.$moment(
+              this.selection_date.date = this.$moment().isBefore(
                 this.repostJob.platform_job.selection_date
-              ).format("YYYY-MM-DD");
-              this.selection_date.time = this.$moment(
+              )
+                ? this.$moment(
+                    this.repostJob.platform_job.selection_date
+                  ).format("YYYY-MM-DD")
+                : null;
+              this.selection_date.time = this.$moment().isBefore(
                 this.repostJob.platform_job.selection_date
-              ).format("HH:mm");
+              )
+                ? this.$moment(
+                    this.repostJob.platform_job.selection_date
+                  ).format("HH:mm")
+                : null;
             }
 
             if (
@@ -955,10 +979,8 @@ export default {
         notRequired.push("favorite_only_until");
       }
 
-      
-
       this.Validate(this.form, notRequired);
-      console.log("errs", this.formError)
+      console.log("errs", this.formError);
       if (!this.formError.length) {
         this.form.profession_id = this.form.role;
         this.form.shift_id = this.form.shift;
