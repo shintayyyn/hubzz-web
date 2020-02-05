@@ -309,7 +309,8 @@ export default {
 				permanent_job_applications_count,
 				permanent_job_applications,
 				permanent_jobs_for_locum_count,
-				permanent_jobs_for_locum
+        permanent_jobs_for_locum,
+        params
 			};
 		} catch (err) {
 			if (err.response && err.response.status === 401) {
