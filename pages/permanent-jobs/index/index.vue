@@ -1,38 +1,53 @@
 <template>
-	<section class="flex flex-col items-start">
-		<AppTable
-			class="w-full"
-			v-if="permanent_job_count > 0 && $auth.user.domain ===  'Practice'"
-			:total="permanent_job_count"
-			:items="permanent_jobs"
-			:currentPage="current_page"
-			:perPage="params.limit"
-			:columns="columns"
-			:loading="loading"
-			:routerLink="'/permanent-jobs'"
-		></AppTable>
+	<section class="flex flex-col items-start w-full">
+		<template v-if="$auth.user.domain ===  'Practice'">
+			<AppTable
+				class="w-full"
+				v-if="permanent_job_count > 0"
+				:total="permanent_job_count"
+				:items="permanent_jobs"
+				:currentPage="current_page"
+				:perPage="params.limit"
+				:columns="columns"
+				:loading="loading"
+				:routerLink="'/permanent-jobs'"
+				@pagechanged="pagechanged"
+				@limitchanged="limitchanged"
+			></AppTable>
+			<p
+				v-else
+				class="text-gray-600 px-3 py-2"
+			>No {{ $route.query.status === 'Closed' ? 'closed' : 'available'}} jobs yet.</p>
+		</template>
 
-		<AppTable
-			class="w-full"
-			v-if="permanent_jobs_for_locum_count > 0 && $auth.user.domain === 'Locum'"
-			:total="permanent_jobs_for_locum_count"
-			:items="permanent_jobs_for_locum"
-			:currentPage="current_page"
-			:perPage="params.limit"
-			:columns="locumColumns"
-			:loading="loading"
-			:routerLink="'/permanent-jobs'"
-		>
-			<template v-slot:status_slot="slotProps">
-				<div class="flex items-center justify-center">
-					<div
-						class="rounded-full px-6 py-1"
-						:class="statusStyle(slotProps.item.status)"
-					>{{ slotProps.item.status }}</div>
-				</div>
-			</template>
-		</AppTable>
-
+		<template v-if="$auth.user.domain ===  'Locum'">
+			<AppTable
+				class="w-full"
+				v-if="permanent_jobs_for_locum_count > 0"
+				:total="permanent_jobs_for_locum_count"
+				:items="permanent_jobs_for_locum"
+				:currentPage="current_page"
+				:perPage="params.limit"
+				:columns="locumColumns"
+				:loading="loading"
+				:routerLink="'/permanent-jobs'"
+				@pagechanged="pagechanged"
+				@limitchanged="limitchanged"
+			>
+				<template v-slot:status_slot="slotProps">
+					<div class="flex items-center justify-center">
+						<div
+							class="rounded-full px-6 py-1"
+							:class="statusStyle(slotProps.item.status)"
+						>{{ slotProps.item.status }}</div>
+					</div>
+				</template>
+			</AppTable>
+			<p
+				v-else
+				class="text-gray-600 px-3 py-2"
+			>No {{ $route.query.status === 'Closed' ? 'closed' : 'available'}} jobs yet.</p>
+		</template>
 		<div
 			class="shield"
 			v-if="['permanent-jobs-index-id','permanent-jobs-index-create'].includes($route.name)"
@@ -106,8 +121,8 @@ export default {
 					name: "Work Hours",
 					dataIndex: "work_hours",
 					class: "text-center"
-        },
-        {
+				},
+				{
 					name: "Profession",
 					dataIndex: "professions.name",
 					class: "text-center"
@@ -152,8 +167,8 @@ export default {
 					name: "Work Hours",
 					dataIndex: "work_hours",
 					class: "text-center"
-        },
-        {
+				},
+				{
 					name: "Profession",
 					dataIndex: "professions.name",
 					class: "text-center"
@@ -192,20 +207,26 @@ export default {
 					profession_id: this.$auth.user.locum_detail.profession.id,
 					near_post_code: this.$auth.user.locum_postcode
 				};
+				this.loading = true;
 				setTimeout(async () => {
-					this.$nuxt.$loading.start();
+					this.loading = true;
+					// this.$nuxt.$loading.start();
 					await this.getPermanentJobsForLocum(params);
-					this.$nuxt.$loading.finish();
+					// this.$nuxt.$loading.finish();
+					this.loading = false;
 				});
+				this.loading = false;
 			} else if (this.$auth.user.domain === "Practice") {
 				params = {
 					job_posting_status: newStatus ? newStatus : "Available",
 					practice_id: this.$auth.user.practice_id
 				};
 				setTimeout(async () => {
-					this.$nuxt.$loading.start();
+					this.loading = true;
+					// this.$nuxt.$loading.start();
 					await this.getPermanentJobsForPractice(params);
-					this.$nuxt.$loading.finish();
+					// this.$nuxt.$loading.finish();
+					this.loading = false;
 				});
 			}
 		}
@@ -292,25 +313,23 @@ export default {
 				permanent_job_count =
 					response.data && response.data.count ? response.data.count : null;
 
-        response = await app.$axios.$get(
-          `/api/v1/practice/permanent-jobs`, 
-        { params }
-        );
+				response = await app.$axios.$get(`/api/v1/practice/permanent-jobs`, {
+					params
+				});
 
 				permanent_jobs =
 					response.data && response.data.permanent_jobs
 						? response.data.permanent_jobs
 						: null;
 			}
-
 			return {
 				permanent_job_count,
 				permanent_jobs,
 				permanent_job_applications_count,
 				permanent_job_applications,
 				permanent_jobs_for_locum_count,
-        permanent_jobs_for_locum,
-        params
+				permanent_jobs_for_locum,
+				params
 			};
 		} catch (err) {
 			if (err.response && err.response.status === 401) {
@@ -347,8 +366,16 @@ export default {
 			}
 		},
 
+		getJobs(params) {
+			if (this.$auth.user.domain === "Locum") {
+				this.getPermanentJobsForLocum(params);
+			}
+			if (this.$auth.user.domain === "Practice") {
+				this.getPermanentJobsForPractice(params);
+			}
+		},
+
 		async getPermanentJobsForLocum(params) {
-			console.log(this.permanent_jobs);
 			await this.$axios
 				.$get(`/api/v1/locum/permanent-jobs/count`, { params })
 				.then(res => {
@@ -407,6 +434,7 @@ export default {
 			await this.$axios
 				.$get("/api/v1/practice/permanent-jobs/count", { params })
 				.then(res => {
+					console.log("permanent", res);
 					this.permanent_job_count =
 						res.data && res.data.count ? res.data.count : null;
 				});
@@ -419,6 +447,52 @@ export default {
 							? res.data.permanent_jobs
 							: null;
 				});
+		},
+		async sorted(order_by) {
+			let orderBy = order_by.map(item => {
+				let order = item.split(":")[1];
+				let sorting = item.split(":")[0];
+				switch (sorting) {
+					case "date_time_start":
+						sorting = "date_start";
+						break;
+					case "date_time_end":
+						sorting = "date_end";
+						break;
+					case "rate_name":
+						sorting = "rate";
+						break;
+					default:
+						sorting;
+				}
+				return `${sorting}:${order}`;
+			});
+			this.current_page = 1;
+			this.params.offset = 0;
+			this.params.order_by = orderBy;
+			this.jobPartParams.offset = 0;
+			this.jobPartParams.order_by = orderBy;
+			this.loading = true;
+			await this.getJobs(this.isJobPart ? this.jobPartParams : this.params);
+			this.loading = false;
+		},
+		async pagechanged(page) {
+			this.current_page = page;
+			this.params.offset = this.params.limit * (page - 1);
+			this.params.offset = this.params.limit * (page - 1);
+			this.loading = true;
+			this.getJobs(this.params);
+			this.loading = false;
+		},
+		async limitchanged(limit) {
+			this.current_page = 1;
+			this.params.offset = 0;
+			this.params.limit = limit;
+			this.params.offset = 0;
+			this.params.limit = limit;
+			this.loading = true;
+			this.getJobs(this.params);
+			this.loading = false;
 		}
 	}
 };

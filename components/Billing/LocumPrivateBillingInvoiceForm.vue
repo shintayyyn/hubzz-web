@@ -313,6 +313,7 @@ export default {
       this.form.final = false;
       this.form.ir35 = this.propInvoice.ir35;
     }
+    console.log("propInvoiceDetail", this.propInvoiceDetail)
   },
   methods: {
     save(final) {

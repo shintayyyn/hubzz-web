@@ -1534,6 +1534,7 @@ export default {
       this.time_start = "";
       this.time_end = "";
       this.invoice_status = "";
+      this.filterJob()
     }
   }
 };

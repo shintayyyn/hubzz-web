@@ -36,7 +36,6 @@
               v-model="form.date_start"
               :name="'date_start'"
               :label="'From'"
-              isAfter
               :error="this.formError.find(item => item.field === 'date_start')"
             />
           </div>
@@ -53,7 +52,7 @@
               v-model="form.date_end"
               :name="'date_end'"
               :label="'To'"
-              isAfter
+              :startDate="form.date_start"
               :error="this.formError.find(item => item.field === 'date_end')"
             />
           </div>

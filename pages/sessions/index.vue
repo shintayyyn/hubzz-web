@@ -1379,6 +1379,7 @@ export default {
       this.job_title_includes = "";
       this.job_number_includes = "";
       this.job_part_number_includes = "";
+      this.filterJob()
     }
   }
 };

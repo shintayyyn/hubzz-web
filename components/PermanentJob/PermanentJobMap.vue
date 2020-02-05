@@ -1,5 +1,5 @@
 <template>
-	<div class="bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4">
+	<div class="bg-white rounded-lg shadow-lg p-4 md:p-8">
 		<div class="relative flex w-full" v-if="!coordinates && loading" style="min-height:80px">
 			<AppLoading :loading="loading" spinner />
 		</div>
