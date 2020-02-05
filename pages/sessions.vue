@@ -53,9 +53,9 @@
       <div class="relative">
         <nuxt-link
           :event="$store.state.jobs.loading_jobs ? '' : 'click'"
-          to="/sessions?status=Declined"
+          to="/sessions?status=Withdrawn"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.query.status && $route.query.status.toLowerCase() === 'declined' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          :class="$route.query.status && $route.query.status.toLowerCase() === 'withdrawn' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Withdrawn</nuxt-link>
       </div>
       <div class="relative">

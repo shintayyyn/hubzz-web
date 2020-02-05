@@ -75,11 +75,11 @@ export default {
                     message = 'This job is unfilled.'
                     break;
             }
-            let id = notif.notificationType === 'Practice Notification Job Ongoing' ? notif.job_parts[0].id : notif.id
+            let id = ['Practice Notification Job Ongoing', 'Practice Notification Job Cancelled', 'Practice Notification Job Declined'].includes(notif.notificationType) ? notif.job_parts[0].id : notif.id
             notifObj = {
                 id,
                 title: notif.title ? notif.title : notif.job.title,
-                status: notif.status,
+                status: notif.status === 'Declined' ? 'Withdrawn' : notif.status === 'Cancelled' && notif.appointed_to_locum_user_id ? 'Terminated' : notif.status,
                 billingStatus: ['Practice Notification Job Approved', 'Practice Notification Job Disputed'].includes(notif.notificationType) ? notif.notificationType === 'Practice Notification Job Approved' ? 'Approved' : 'Disputed' : null,
                 date_start: notif.date_start,
                 date_end: notif.date_end,
@@ -204,6 +204,72 @@ export default {
         let jobs = []
         if (state.practice_allocated_job_parts) {
             state.practice_allocated_job_parts.forEach(jobPart => {
+                let job_surgery_name = ''
+                let date_time_start = ''
+                let date_time_end = ''
+                let job_rate = ''
+                let job_rate_type = ''
+                let job_title = ''
+                let job_shift = ''
+                job_surgery_name = jobPart.job.type === 'Platform' ? jobPart.job.platform_job.practice.name : jobPart.job.private_job.private_practice.name
+                date_time_start = jobPart.time_start ? `${jobPart.date_start} | ${jobPart.time_start}` : jobPart.date_start
+                date_time_end = jobPart.time_end ? `${jobPart.date_end} | ${jobPart.time_end}` : jobPart.date_end
+                job_rate = jobPart.job.rate
+                job_rate_type = jobPart.job.locum_detail_rate_type.name
+                job_title = jobPart.job.title
+                job_shift = jobPart.job.shift.name
+                jobs.push({
+                    ...jobPart,
+                    job_surgery_name,
+                    date_time_start,
+                    date_time_end,
+                    job_rate,
+                    job_rate_type,
+                    job_title,
+                    job_shift
+                })
+            })
+            return jobs
+        }
+        return []
+    },
+    getPracticeCancelledJobs(state) {
+        let jobs = []
+        if (state.practice_cancelled_job_parts) {
+            state.practice_cancelled_job_parts.forEach(jobPart => {
+                let job_surgery_name = ''
+                let date_time_start = ''
+                let date_time_end = ''
+                let job_rate = ''
+                let job_rate_type = ''
+                let job_title = ''
+                let job_shift = ''
+                job_surgery_name = jobPart.job.type === 'Platform' ? jobPart.job.platform_job.practice.name : jobPart.job.private_job.private_practice.name
+                date_time_start = jobPart.time_start ? `${jobPart.date_start} | ${jobPart.time_start}` : jobPart.date_start
+                date_time_end = jobPart.time_end ? `${jobPart.date_end} | ${jobPart.time_end}` : jobPart.date_end
+                job_rate = jobPart.job.rate
+                job_rate_type = jobPart.job.locum_detail_rate_type.name
+                job_title = jobPart.job.title
+                job_shift = jobPart.job.shift.name
+                jobs.push({
+                    ...jobPart,
+                    job_surgery_name,
+                    date_time_start,
+                    date_time_end,
+                    job_rate,
+                    job_rate_type,
+                    job_title,
+                    job_shift
+                })
+            })
+            return jobs
+        }
+        return []
+    },
+    getPracticeWithdrawnJobs(state) {
+        let jobs = []
+        if (state.practice_withdrawn_job_parts) {
+            state.practice_withdrawn_job_parts.forEach(jobPart => {
                 let job_surgery_name = ''
                 let date_time_start = ''
                 let date_time_end = ''
@@ -417,65 +483,65 @@ export default {
         }
         return []
     },
-    getPracticeCancelledJobs(state) {
-        let jobs = []
-        if (state.practice_cancelled_jobs) {
-            state.practice_cancelled_jobs.forEach(job => {
-                let surgery_name = ''
-                let date_time_start = ''
-                let date_time_end = ''
-                let rate_name = ''
-                let rate_type_name = ''
-                let shift_name = ''
-                surgery_name = job.type === 'Platform' ? job.platform_job.practice.name : job.private_job.private_practice.name
-                date_time_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
-                date_time_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
-                rate_name = job.rate
-                rate_type_name = job.locum_detail_rate_type.name
-                shift_name = job.shift.name
-                jobs.push({
-                    ...job,
-                    surgery_name,
-                    date_time_start,
-                    date_time_end,
-                    rate_name,
-                    rate_type_name,
-                    shift_name,
-                })
-            })
-            return jobs
-        }
-        return []
-    },
-    getPracticeWithdrawnJobs(state) {
-        let jobs = []
-        if (state.practice_withdrawn_jobs) {
-            state.practice_withdrawn_jobs.forEach(job => {
-                let surgery_name = ''
-                let date_time_start = ''
-                let date_time_end = ''
-                let rate_name = ''
-                let rate_type_name = ''
-                let shift_name = ''
-                surgery_name = job.type === 'Platform' ? job.platform_job.practice.name : job.private_job.private_practice.name
-                date_time_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
-                date_time_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
-                rate_name = job.rate
-                rate_type_name = job.locum_detail_rate_type.name
-                shift_name = job.shift.name
-                jobs.push({
-                    ...job,
-                    surgery_name,
-                    date_time_start,
-                    date_time_end,
-                    rate_name,
-                    rate_type_name,
-                })
-            })
-            return jobs
-        }
-        return []
-    },
+    // getPracticeCancelledJobs(state) {
+    //     let jobs = []
+    //     if (state.practice_cancelled_jobs) {
+    //         state.practice_cancelled_jobs.forEach(job => {
+    //             let surgery_name = ''
+    //             let date_time_start = ''
+    //             let date_time_end = ''
+    //             let rate_name = ''
+    //             let rate_type_name = ''
+    //             let shift_name = ''
+    //             surgery_name = job.type === 'Platform' ? job.platform_job.practice.name : job.private_job.private_practice.name
+    //             date_time_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
+    //             date_time_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
+    //             rate_name = job.rate
+    //             rate_type_name = job.locum_detail_rate_type.name
+    //             shift_name = job.shift.name
+    //             jobs.push({
+    //                 ...job,
+    //                 surgery_name,
+    //                 date_time_start,
+    //                 date_time_end,
+    //                 rate_name,
+    //                 rate_type_name,
+    //                 shift_name,
+    //             })
+    //         })
+    //         return jobs
+    //     }
+    //     return []
+    // },
+    // getPracticeWithdrawnJobs(state) {
+    //     let jobs = []
+    //     if (state.practice_withdrawn_jobs) {
+    //         state.practice_withdrawn_jobs.forEach(job => {
+    //             let surgery_name = ''
+    //             let date_time_start = ''
+    //             let date_time_end = ''
+    //             let rate_name = ''
+    //             let rate_type_name = ''
+    //             let shift_name = ''
+    //             surgery_name = job.type === 'Platform' ? job.platform_job.practice.name : job.private_job.private_practice.name
+    //             date_time_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
+    //             date_time_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
+    //             rate_name = job.rate
+    //             rate_type_name = job.locum_detail_rate_type.name
+    //             shift_name = job.shift.name
+    //             jobs.push({
+    //                 ...job,
+    //                 surgery_name,
+    //                 date_time_start,
+    //                 date_time_end,
+    //                 rate_name,
+    //                 rate_type_name,
+    //             })
+    //         })
+    //         return jobs
+    //     }
+    //     return []
+    // },
     // REMINDERS
     getPracticeAvailableJobsReminder(state) {
         return state.practice_available_jobs_reminder
@@ -544,9 +610,9 @@ export default {
                     break;
             }
             notifObj = {
-                id: notif.notificationType === 'Locum Notification Job Ongoing' && notif.job_parts.length > 0 ? notif.job_parts[0].id : notif.id,
+                id: ['Locum Notification Job Ongoing', 'Locum Notification Job Cancelled', 'Locum Notification Job Declined'].includes(notif.notificationType) && notif.job_parts.length > 0 ? notif.job_parts[0].id : notif.id,
                 title: notif.title ? notif.title : notif.job.title,
-                locum_status: notif.locum_status === 'Declined' ? 'Withdrawn' : notif.locum_status,
+                locum_status: notif.locum_status === 'Declined' ? 'Withdrawn' : notif.locum_status === 'Cancelled' && notif.appointed_to_locum_user_id ? 'Terminated' : notif.locum_status,
                 billingStatus: ['Locum Notification Job Approved', 'Locum Notification Job Disputed'].includes(notif.notificationType) ? notif.notificationType === 'Locum Notification Job Approved' ? 'Approved' : 'Disputed' : null,
                 date_start: notif.date_start,
                 date_end: notif.date_end,

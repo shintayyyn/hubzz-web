@@ -62,6 +62,7 @@
 							isAfter
 							:error="formError.find(item => item.field === 'date_posted')"
 							@blur="CheckEmptyField(form.date_posted, 'date_posted')"
+							disabled
 						/>
 						<AppDate
 							v-model="form.date_closing"
@@ -218,7 +219,7 @@ export default {
 			form: {
 				practice_id: "",
 				profession_id: "",
-				date_posted: "",
+				date_posted: this.$moment().format("YYYY-MM-DD"),
 				date_closing: "",
 				title: "",
 				description: "",
@@ -382,6 +383,11 @@ export default {
 		},
 		async createPermanentJob() {
 			this.formError = [];
+
+			// let notRequired = [];
+			// console.log("form", this.form);
+			// this.Validate(this.form, notRequired);
+			// console.log("errors", this.formError.length);
 
 			let notRequired = [];
 			console.log("form", this.form);

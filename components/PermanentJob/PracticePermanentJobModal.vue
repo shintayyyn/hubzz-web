@@ -8,19 +8,17 @@
 			<div class="flex justify-start items-center flex-wrap px-2">
 				<h4 class="text-lg md:text-xl font-bold">
 					<span>{{permanent_job.title}}</span>
-					<span
-						class="mx-2 py-2 px-4 rounded font-semibold"
-						:class="statusStyle(permanent_job.job_posting_status)"
-					>{{ permanent_job.job_posting_status }}</span>
 				</h4>
-
-				<AppButton class="ml-4" :label="editJobLabel(edit)" @click="edit = !edit" />
+				<span
+					class="mx-4 py-2 px-4 rounded font-semibold"
+					:class="statusStyle(permanent_job.job_posting_status)"
+				>{{ permanent_job.job_posting_status }}</span>
+				<AppButton :label="editJobLabel(edit)" @click="edit = !edit" />
 			</div>
-			<div class="flex flex-col md:flex-row my-2">
+			<div class="flex flex-col md:flex-row">
 				<div class="mx-2 w-full md:w-3/5 lg:w-2/3">
 					<div class="bg-white rounded-lg shadow-lg p-4 mb-4 flex flex-col items-start">
 						<template v-if="!edit">
-							<!-- <img src="https://via.placeholder.com/150" class="py-2" /> -->
 							<div class="w-full flex flex-col md:flex-row">
 								<div class="w-full md:flex-w-1/2">
 									<p class="font-bold">Practice</p>
@@ -28,11 +26,6 @@
 
 									<p class="font-bold">Salary</p>
 									<p class="pl-2 pb-3">{{permanent_job ? permanent_job.salary_amount : ''}}</p>
-
-									<p class="font-bold">Salary Description</p>
-									<p
-										class="pl-2 pb-3"
-									>{{permanent_job ? permanent_job.salary_description_1 : ''}}, {{permanent_job ? permanent_job.salary_description_2 : ''}}</p>
 
 									<p class="font-bold">Posted</p>
 									<p
@@ -46,6 +39,9 @@
 								</div>
 
 								<div class="w-full md:flex-w-1/2">
+									<p class="font-bold">Email</p>
+									<p class="pl-2 pb-3">{{permanent_job ? permanent_job.email : ''}}</p>
+
 									<p class="font-bold">Report to</p>
 									<p class="pl-2 pb-3">{{permanent_job ? permanent_job.report_to : ''}}</p>
 
@@ -59,6 +55,7 @@
 									<p class="pl-2 pb-3">{{ permanent_job ? permanent_job.industry_type : ''}}</p>
 								</div>
 							</div>
+
 							<p class="font-bold">Description</p>
 							<div>
 								<no-ssr>
@@ -74,6 +71,14 @@
 						<template v-else>
 							<div class="w-full flex flex-col md:flex-row">
 								<div class="w-full md:flex-w-1/2 pr-2">
+									<p class="font-bold">Title</p>
+									<AppInput
+										v-model="form.title"
+										:type="'text'"
+										:name="'title'"
+										:error="formError.find(item => item.field === 'title')"
+									/>
+
 									<p class="font-bold">Practice</p>
 									<AppInput
 										v-model="form.practice_id"
@@ -127,7 +132,6 @@
 										isAfter
 										:error="formError.find(item => item.field === 'date_posted')"
 									/>
-
 									<AppDate
 										v-model="form.date_closing"
 										:name="'date_closing'"
@@ -139,13 +143,6 @@
 								</div>
 
 								<div class="w-full md:flex-w-1/2 pl-2">
-									<p class="font-bold">Title</p>
-									<AppInput
-										v-model="form.title"
-										:type="'text'"
-										:name="'title'"
-										:error="formError.find(item => item.field === 'title')"
-									/>
 									<p class="font-bold">E-Mail</p>
 									<AppInput
 										v-model="form.email"
@@ -229,8 +226,9 @@
 					<PermanentJobMap :permanent_job="permanent_job" />
 
 					<AppButton
+						v-if="permanent_job.job_posting_status !== 'Closed'"
 						class="my-4"
-						:label="toCloseJob ? 'Cancel closing job' : 'Close Job'"
+						:label="'Close Job'"
 						@click="toCloseJob = !toCloseJob"
 					/>
 
@@ -341,49 +339,62 @@ export default {
 	},
 	created() {
 		this.loading = true;
-		this.$axios
-			.$get(`/api/v1/practice/permanent-jobs/${this.$route.params.id}`)
-			.then(res => {
-				this.permanent_job = res.data.permanent_job;
-			});
+		this.getPermanentJob();
 		Promise.all([
 			this.$axios.$get("/api/v1/practice/me/practice-practices"),
 			this.$axios.$get("/api/v1/locum-detail-rate-types"),
 			this.$axios.$get("/api/v1/shifts"),
-			this.$axios.$get("/api/v1/professions"),
-			this.$axios.$get("/api/v1/me")
-		]).then(
-			([
-				responsePracticeLists,
-				responseRateLists,
-				responseShifts,
-				responseProfessions,
-				responseMe
-			]) => {
-				this.practice_lists = [];
-				responsePracticeLists.data.practices.forEach(item => {
-					this.practice_lists.push({
-						label: item.surgery.name,
-						value: item.id
+			this.$axios.$get("/api/v1/professions")
+		])
+			.then(
+				([
+					responsePracticeLists,
+					responseRateLists,
+					responseShifts,
+					responseProfessions
+				]) => {
+					this.practice_lists = [];
+					responsePracticeLists.data.practices.forEach(item => {
+						this.practice_lists.push({
+							label: item.surgery.name,
+							value: item.id
+						});
 					});
-				});
-				this.rate_lists = [];
-				responseRateLists.data.locum_detail_rate_types.forEach(item => {
-					this.rate_lists.push({ label: item.name, value: item.id });
-				});
-				this.shifts = [];
-				responseShifts.data.shifts.forEach(item => {
-					this.shifts.push({ label: item.name, value: item.id });
-				});
-				this.professions = [];
-				responseProfessions.data.professions.forEach(item => {
-					this.professions.push({ label: item.name, value: item.id });
-					this.professions_categories.push(item);
-				});
-			}
-		);
-		// .finally(() => {});
-
+					this.rate_lists = [];
+					responseRateLists.data.locum_detail_rate_types.forEach(item => {
+						this.rate_lists.push({ label: item.name, value: item.id });
+					});
+					this.shifts = [];
+					responseShifts.data.shifts.forEach(item => {
+						this.shifts.push({ label: item.name, value: item.id });
+					});
+					this.professions = [];
+					responseProfessions.data.professions.forEach(item => {
+						this.professions.push({ label: item.name, value: item.id });
+						this.professions_categories.push(item);
+					});
+				}
+			)
+			.finally(() => {
+				this.form.title = this.permanent_job.title;
+				this.form.description = this.permanent_job.description;
+				this.form.date_posted = this.$moment(
+					this.permanent_job.date_posted
+				).format("YYYY-MM-DD");
+				this.form.date_closing = this.$moment(
+					this.permanent_job.date_closing
+				).format("YYYY-MM-DD");
+				this.form.email = this.permanent_job.email;
+				this.form.report_to = this.permanent_job.report_to;
+				this.form.industry_type = this.permanent_job.industry_type;
+				this.form.salary_amount = this.permanent_job.salary_amount;
+				this.form.salary_description_1 = this.permanent_job.salary_description_1;
+				this.form.salary_description_2 = this.permanent_job.salary_description_2;
+				this.form.work_hours = this.permanent_job.work_hours;
+				this.form.practice_id = this.permanent_job.practice_id;
+				this.form.profession_id = this.permanent_job.profession_id;
+				this.loading = false;
+			});
 		this.work_hours_type = [
 			{
 				label: "Part Time",
@@ -435,54 +446,66 @@ export default {
 			}
 		];
 	},
+	watch: {
+		edit(value) {
+			if (value === false) {
+				this.getPermanentJob();
+			} else {
+				this.form.title = this.permanent_job.title;
+				this.form.description = this.permanent_job.description;
+				this.form.date_posted = this.$moment(
+					this.permanent_job.date_posted
+				).format("YYYY-MM-DD");
+				this.form.date_closing = this.$moment(
+					this.permanent_job.date_closing
+				).format("YYYY-MM-DD");
+				this.form.email = this.permanent_job.email;
+				this.form.report_to = this.permanent_job.report_to;
+				this.form.industry_type = this.permanent_job.industry_type;
+				this.form.salary_amount = this.permanent_job.salary_amount;
+				this.form.salary_description_1 = this.permanent_job.salary_description_1;
+				this.form.salary_description_2 = this.permanent_job.salary_description_2;
+				this.form.work_hours = this.permanent_job.work_hours;
+				this.form.practice_id = this.permanent_job.practice_id;
+				this.form.profession_id = this.permanent_job.profession_id;
+				this.loading = false;
+			}
+		},
+		"form.date_posted"(value) {
+			if (this.$moment(value).isAfter(this.form.date_closing)) {
+				this.formError.push({
+					field: "date_closing",
+					message: "Date Closing is not valid"
+				});
+			}
+		},
+		"form.date_closing"(value) {
+			if (this.$moment(value).isBefore(this.form.date_posted)) {
+				this.formError.push({
+					field: "date_posted",
+					message: "Date Posted is not valid"
+				});
+			}
+			let index = this.formError.findIndex(
+				item => item.field === "date_closing"
+			);
+			if (this.$moment(value).isAfter(this.form.date_posted)) {
+				this.formError.splice(index, 1);
+			}
+		}
+	},
 	methods: {
 		getPermanentJob() {
 			this.$axios
 				.$get(`/api/v1/practice/permanent-jobs/${this.$route.params.id}`)
 				.then(res => {
 					this.permanent_job = res.data.permanent_job;
+				})
+				.finally(() => {
+					// console.log('permanent job', this.permanent_job)
 				});
 		},
-		onEditorBlur(editor) {
-			console.log("editor blur!", editor);
-		},
-		onEditorFocus(editor) {
-			console.log("editor focus!", editor);
-		},
-		onEditorReady(editor) {
-			console.log("editor ready!", editor);
-		},
-		statusStyle(jobPostingStatus) {
-			switch (jobPostingStatus) {
-				case "Available":
-					return "bg-green-500 text-white";
-					break;
-				case "Closed":
-					return "bg-gray-700 text-white";
-					break;
-				default:
-					return "bg-yellow-400 text-black";
-			}
-		},
 		editJobLabel(edit) {
-			this.form.title = this.permanent_job.title;
-			this.form.description = this.permanent_job.description;
-			this.form.date_posted = this.$moment(
-				this.permanent_job.date_posted
-			).format("YYYY-MM-DD");
-			this.form.date_closing = this.$moment(
-				this.permanent_job.date_closing
-			).format("YYYY-MM-DD");
-			this.form.email = this.permanent_job.email;
-			this.form.report_to = this.permanent_job.report_to;
-			this.form.industry_type = this.permanent_job.industry_type;
-			this.form.salary_amount = this.permanent_job.salary_amount;
-			this.form.salary_description_1 = this.permanent_job.salary_description_1;
-			this.form.salary_description_2 = this.permanent_job.salary_description_2;
-			this.form.work_hours = this.permanent_job.work_hours;
-			this.form.practice_id = this.permanent_job.practice_id;
-			this.form.profession_id = this.permanent_job.profession_id;
-			this.loading = false;
 			if (
 				edit === false &&
 				this.permanent_job.job_posting_status == "Available"
@@ -514,8 +537,10 @@ export default {
 							status: "success",
 							text: ["Successfully Edited Job"]
 						});
-						this.getPermanentJob();
 						this.edit = false;
+					})
+					.catch(err => {
+						this.formError = err.response.data.error_messages;
 					});
 			}
 		},
@@ -537,6 +562,27 @@ export default {
 				.finally(() => {
 					this.$router.go(-1);
 				});
+		},
+		onEditorBlur(editor) {
+			console.log("editor blur!", editor);
+		},
+		onEditorFocus(editor) {
+			console.log("editor focus!", editor);
+		},
+		onEditorReady(editor) {
+			console.log("editor ready!", editor);
+		},
+		statusStyle(jobPostingStatus) {
+			switch (jobPostingStatus) {
+				case "Available":
+					return "bg-green-500 text-white";
+					break;
+				case "Closed":
+					return "bg-gray-700 text-white";
+					break;
+				default:
+					return "bg-yellow-400 text-black";
+			}
 		}
 	}
 };

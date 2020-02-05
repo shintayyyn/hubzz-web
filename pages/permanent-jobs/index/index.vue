@@ -1,58 +1,53 @@
 <template>
 	<section class="flex flex-col items-start w-full">
 		<template v-if="$auth.user.domain ===  'Practice'">
-			<transition name="fade" mode="out-in">
-				<AppTable
-					class="w-full"
-					v-if="permanent_job_count > 0"
-					:total="permanent_job_count"
-					:items="permanent_jobs"
-					:currentPage="current_page"
-					:perPage="params.limit"
-					:columns="columns"
-					:loading="loading"
-					:routerLink="'/permanent-jobs'"
-					@pagechanged="pagechanged"
-					@limitchanged="limitchanged"
-				></AppTable>
-				<p
-					v-if="permanent_job_count === 0"
-					class="text-gray-600 px-3 py-2"
-				>No {{ $route.query.status === 'Closed' ? 'closed' : 'available'}} jobs yet.</p>
-			</transition>
+			<AppTable
+				class="w-full"
+				v-if="permanent_job_count > 0"
+				:total="permanent_job_count"
+				:items="permanent_jobs"
+				:currentPage="current_page"
+				:perPage="params.limit"
+				:columns="columns"
+				:loading="loading"
+				:routerLink="'/permanent-jobs'"
+				@pagechanged="pagechanged"
+				@limitchanged="limitchanged"
+			></AppTable>
+			<p
+				v-else
+				class="text-gray-600 px-3 py-2"
+			>No {{ $route.query.status === 'Closed' ? 'closed' : 'available'}} jobs yet.</p>
 		</template>
 
 		<template v-if="$auth.user.domain ===  'Locum'">
-			<transition name="fade" mode="out-in">
-				<AppTable
-					class="w-full"
-					v-if="permanent_jobs_for_locum_count > 0"
-					:total="permanent_jobs_for_locum_count"
-					:items="permanent_jobs_for_locum"
-					:currentPage="current_page"
-					:perPage="params.limit"
-					:columns="locumColumns"
-					:loading="loading"
-					:routerLink="'/permanent-jobs'"
-					@pagechanged="pagechanged"
-					@limitchanged="limitchanged"
-				>
-					<template v-slot:status_slot="slotProps">
-						<div class="flex items-center justify-center">
-							<div
-								class="rounded-full px-6 py-1"
-								:class="statusStyle(slotProps.item.status)"
-							>{{ slotProps.item.status }}</div>
-						</div>
-					</template>
-				</AppTable>
-				<p
-					v-else
-					class="text-gray-600 px-3 py-2"
-				>No {{ $route.query.status === 'Closed' ? 'closed' : 'available'}} jobs yet.</p>
-			</transition>
+			<AppTable
+				class="w-full"
+				v-if="permanent_jobs_for_locum_count > 0"
+				:total="permanent_jobs_for_locum_count"
+				:items="permanent_jobs_for_locum"
+				:currentPage="current_page"
+				:perPage="params.limit"
+				:columns="locumColumns"
+				:loading="loading"
+				:routerLink="'/permanent-jobs'"
+				@pagechanged="pagechanged"
+				@limitchanged="limitchanged"
+			>
+				<template v-slot:status_slot="slotProps">
+					<div class="flex items-center justify-center">
+						<div
+							class="rounded-full px-6 py-1"
+							:class="statusStyle(slotProps.item.status)"
+						>{{ slotProps.item.status }}</div>
+					</div>
+				</template>
+			</AppTable>
+			<p
+				v-else
+				class="text-gray-600 px-3 py-2"
+			>No {{ $route.query.status === 'Closed' ? 'closed' : 'available'}} jobs yet.</p>
 		</template>
-
 		<div
 			class="shield"
 			v-if="['permanent-jobs-index-id','permanent-jobs-index-create'].includes($route.name)"
@@ -212,133 +207,137 @@ export default {
 					profession_id: this.$auth.user.locum_detail.profession.id,
 					near_post_code: this.$auth.user.locum_postcode
 				};
+				this.loading = true;
 				setTimeout(async () => {
-					this.$nuxt.$loading.start();
+					this.loading = true;
+					// this.$nuxt.$loading.start();
 					await this.getPermanentJobsForLocum(params);
-					this.$nuxt.$loading.finish();
+					// this.$nuxt.$loading.finish();
+					this.loading = false;
 				});
+				this.loading = false;
 			} else if (this.$auth.user.domain === "Practice") {
 				params = {
 					job_posting_status: newStatus ? newStatus : "Available",
 					practice_id: this.$auth.user.practice_id
 				};
 				setTimeout(async () => {
-					this.$nuxt.$loading.start();
+					this.loading = true;
+					// this.$nuxt.$loading.start();
 					await this.getPermanentJobsForPractice(params);
-					this.$nuxt.$loading.finish();
+					// this.$nuxt.$loading.finish();
+					this.loading = false;
 				});
 			}
 		}
 	},
 
 	async asyncData({ app, route, store, auth }) {
-		// 	try {
-		// 		let permanent_job_count = "";
-		// 		let permanent_jobs = [];
-		// 		// FOR LOCUM ONLY
-		// 		let permanent_job_applications_count = "";
-		// 		let permanent_job_applications = [];
-		// 		let permanent_jobs_for_locum = [];
-		// 		let permanent_jobs_for_locum_count = "";
-		// 		let params = {};
-		// 		console.log("qwewqe", app.$auth.user.domain);
-		// 		if (app.$auth.user.domain === "Locum") {
-		// 			params = {
-		// 				job_posting_status: route.query.status
-		// 					? route.query.status
-		// 					: "Available",
-		// 				profession_id: app.$auth.user.locum_detail.profession.id,
-		// 				near_post_code: app.$auth.user.locum_postcode
-		// 			};
-		// 			console.log("qwewqe");
-		// 			let response = await app.$axios.$get(
-		// 				`/api/v1/locum/permanent-jobs/count`,
-		// 				{ params }
-		// 			);
-		// 			permanent_job_count =
-		// 				response.data && response.data.count ? response.data.count : null;
-		// 			response = await app.$axios.$get(`/api/v1/locum/permanent-jobs`, {
-		// 				params
-		// 			});
-		// 			permanent_jobs =
-		// 				response.data && response.data.permanent_jobs
-		// 					? response.data.permanent_jobs
-		// 					: null;
-		// 			response = await app.$axios.$get(
-		// 				`/api/v1/locum/permanent-job-applications/count`
-		// 			);
-		// 			permanent_job_applications_count =
-		// 				response.data && response.data.count ? response.data.count : null;
-		// 			response = await app.$axios.$get(
-		// 				`/api/v1/locum/permanent-job-applications`
-		// 			);
-		// 			permanent_job_applications =
-		// 				response.data && response.data.permanent_job_applications
-		// 					? response.data.permanent_job_applications
-		// 					: null;
-		// 			permanent_jobs_for_locum = permanent_jobs.map(permanent_job => {
-		// 				const permanent_job_app_found = permanent_job_applications.find(
-		// 					permanent_job_application =>
-		// 						permanent_job_application.permanent_job_id === permanent_job.id
-		// 				);
-		// 				if (permanent_job_app_found) {
-		// 					permanent_job.status = permanent_job_app_found.application_status;
-		// 				} else {
-		// 					if (permanent_job.date_closing < moment().format()) {
-		// 						permanent_job.status = "Closed";
-		// 					} else {
-		// 						permanent_job.status = "Available";
-		// 					}
-		// 				}
-		// 				return permanent_job;
-		// 			});
-		// 			permanent_jobs_for_locum_count = permanent_jobs_for_locum.length;
-		// 		} else if (app.$auth.user.domain === "Practice") {
-		// 			let response = await app.$axios.$get(
-		// 				"/api/v1/practice/permanent-jobs/count"
-		// 			);
-		// 			permanent_job_count =
-		// 				response.data && response.data.count ? response.data.count : null;
-		// 		} else if (app.$auth.user.domain === "Practice") {
-		// 			params = {
-		// 				job_posting_status: route.query.status
-		// 					? route.query.status
-		// 					: "Available",
-		// 				practice_id: app.$auth.user.practice_id
-		// 			};
-		// 			let response = await app.$axios.$get(
-		// 				"/api/v1/practice/permanent-jobs/count",
-		// 				{ params }
-		// 			);
-		// 			permanent_job_count =
-		// 				response.data && response.data.count ? response.data.count : null;
-		// 			response = await app.$axios.$get(`/api/v1/practice/permanent-jobs`, {
-		// 				params
-		// 			});
-		// 			permanent_jobs =
-		// 				response.data && response.data.permanent_jobs
-		// 					? response.data.permanent_jobs
-		// 					: null;
-		// 		}
-		// 		return {
-		// 			permanent_job_count,
-		// 			permanent_jobs,
-		// 			permanent_job_applications_count,
-		// 			permanent_job_applications,
-		// 			permanent_jobs_for_locum_count,
-		// 			permanent_jobs_for_locum
-		// 		};
-		// 	} catch (err) {
-		// 		if (err.response && err.response.status === 401) {
-		// 			error(err.response.data);
-		// 			return;
-		// 		}
-		// 		throw err;
-		// 	}
-	},
+		try {
+			let permanent_job_count = "";
+			let permanent_jobs = "";
 
-	created() {
-		this.getJobs(this.params);
+			// FOR LOCUM ONLY
+			let permanent_job_applications_count = "";
+			let permanent_job_applications = "";
+			let permanent_jobs_for_locum = "";
+			let permanent_jobs_for_locum_count = "";
+			let params = {};
+			if (app.$auth.user.domain === "Locum") {
+				params = {
+					job_posting_status: route.query.status
+						? route.query.status
+						: "Available",
+					profession_id: app.$auth.user.locum_detail.profession.id,
+					near_post_code: app.$auth.user.locum_postcode
+				};
+
+				let response = await app.$axios.$get(
+					`/api/v1/locum/permanent-jobs/count`,
+					{ params }
+				);
+				permanent_job_count =
+					response.data && response.data.count ? response.data.count : null;
+
+				response = await app.$axios.$get(`/api/v1/locum/permanent-jobs`, {
+					params
+				});
+				permanent_jobs =
+					response.data && response.data.permanent_jobs
+						? response.data.permanent_jobs
+						: null;
+
+				response = await app.$axios.$get(
+					`/api/v1/locum/permanent-job-applications/count`
+				);
+				permanent_job_applications_count =
+					response.data && response.data.count ? response.data.count : null;
+
+				response = await app.$axios.$get(
+					`/api/v1/locum/permanent-job-applications`
+				);
+				permanent_job_applications =
+					response.data && response.data.permanent_job_applications
+						? response.data.permanent_job_applications
+						: null;
+
+				permanent_jobs_for_locum = permanent_jobs.map(permanent_job => {
+					const permanent_job_app_found = permanent_job_applications.find(
+						permanent_job_application =>
+							permanent_job_application.permanent_job_id === permanent_job.id
+					);
+					if (permanent_job_app_found) {
+						permanent_job.status = permanent_job_app_found.application_status;
+					} else {
+						if (permanent_job.date_closing < moment().format()) {
+							permanent_job.status = "Closed";
+						} else {
+							permanent_job.status = "Available";
+						}
+					}
+					return permanent_job;
+				});
+
+				permanent_jobs_for_locum_count = permanent_jobs_for_locum.length;
+			} else if (app.$auth.user.domain === "Practice") {
+				params = {
+					job_posting_status: route.query.status
+						? route.query.status
+						: "Available",
+					practice_id: app.$auth.user.practice_id
+				};
+				let response = await app.$axios.$get(
+					`/api/v1/practice/permanent-jobs/count`,
+					{ params }
+				);
+				permanent_job_count =
+					response.data && response.data.count ? response.data.count : null;
+
+				response = await app.$axios.$get(`/api/v1/practice/permanent-jobs`, {
+					params
+				});
+
+				permanent_jobs =
+					response.data && response.data.permanent_jobs
+						? response.data.permanent_jobs
+						: null;
+			}
+			return {
+				permanent_job_count,
+				permanent_jobs,
+				permanent_job_applications_count,
+				permanent_job_applications,
+				permanent_jobs_for_locum_count,
+				permanent_jobs_for_locum,
+				params
+			};
+		} catch (err) {
+			if (err.response && err.response.status === 401) {
+				error(err.response.data);
+				return;
+			}
+			throw err;
+		}
 	},
 
 	methods: {
