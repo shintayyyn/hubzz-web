@@ -75,11 +75,11 @@ export default {
                     message = 'This job is unfilled.'
                     break;
             }
-            let id = notif.notificationType === 'Practice Notification Job Ongoing' ? notif.job_parts[0].id : notif.id
+            let id = ['Practice Notification Job Ongoing', 'Practice Notification Job Cancelled', 'Practice Notification Job Declined'].includes(notif.notificationType) ? notif.job_parts[0].id : notif.id
             notifObj = {
                 id,
                 title: notif.title ? notif.title : notif.job.title,
-                status: notif.status,
+                status: notif.status === 'Declined' ? 'Withdrawn' : notif.status === 'Cancelled' && notif.appointed_to_locum_user_id ? 'Terminated' : notif.status,
                 billingStatus: ['Practice Notification Job Approved', 'Practice Notification Job Disputed'].includes(notif.notificationType) ? notif.notificationType === 'Practice Notification Job Approved' ? 'Approved' : 'Disputed' : null,
                 date_start: notif.date_start,
                 date_end: notif.date_end,
@@ -610,9 +610,9 @@ export default {
                     break;
             }
             notifObj = {
-                id: notif.notificationType === 'Locum Notification Job Ongoing' && notif.job_parts.length > 0 ? notif.job_parts[0].id : notif.id,
+                id: ['Locum Notification Job Ongoing', 'Locum Notification Job Cancelled', 'Locum Notification Job Declined'].includes(notif.notificationType) && notif.job_parts.length > 0 ? notif.job_parts[0].id : notif.id,
                 title: notif.title ? notif.title : notif.job.title,
-                locum_status: notif.locum_status === 'Declined' ? 'Withdrawn' : notif.locum_status,
+                locum_status: notif.locum_status === 'Declined' ? 'Withdrawn' : notif.locum_status === 'Cancelled' && notif.appointed_to_locum_user_id ? 'Terminated' : notif.locum_status,
                 billingStatus: ['Locum Notification Job Approved', 'Locum Notification Job Disputed'].includes(notif.notificationType) ? notif.notificationType === 'Locum Notification Job Approved' ? 'Approved' : 'Disputed' : null,
                 date_start: notif.date_start,
                 date_end: notif.date_end,

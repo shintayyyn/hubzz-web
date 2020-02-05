@@ -207,21 +207,27 @@ export default {
 
       let path = `${url}/${id}`;
 
-      // return;
-
       if (type === "Jobs") {
         let routeStatus = "";
 
-        if (status === "Terminated") {
-          routeStatus = "Completed";
-        } else if (status === "Withdrawn") {
-          routeStatus = "Declined";
-        } else if (status === "Updated") {
-          routeStatus = null;
-        } else if (!["Terminated", "Updated"].includes(status)) {
-          routeStatus = status;
+        switch (status) {
+          case "Terminated":
+            routeStatus = "Completed";
+            break;
+          case "Declined":
+            routeStatus = "Withdrawn";
+            break;
+          case "Available":
+            routeStatus = "Public";
+            break;
+          case "Updated":
+            routeStatus = null;
+            break;
+          default:
+            routeStatus = status;
         }
-
+        // console.log(id, url, status, routeStatus);
+        // return;
         this.$router.push({
           path: `${url}`,
           query: { ...this.$route.query, status: routeStatus }
@@ -260,8 +266,7 @@ export default {
       }
     },
     status(status) {
-      let jobStatus = status === "Declined" ? "Withdrawn" : status;
-      return jobStatus.toUpperCase();
+      return status.toUpperCase();
     },
     bgStatus(status) {
       switch (status) {

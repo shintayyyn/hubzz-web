@@ -1,7 +1,12 @@
 <template>
   <div class="modal-container shadow-lg">
     <template v-if="job && !job_part">
-      <SessionDetailModal :job="job" @close="close" />
+      <SessionDetailModal
+        :job="job"
+        @close="close"
+        @appointed="$emit('appointed', $event)"
+        @cancelled="$emit('cancelled', $event)"
+      />
     </template>
     <template v-if="!job && job_part">
       <SessionPartDetailModal :job_part="job_part" @close="close" />
@@ -33,9 +38,14 @@ export default {
       if (
         query &&
         query.status &&
-        ["ongoing", "completed", "approved"].includes(
-          query.status.toLowerCase()
-        )
+        [
+          "pending",
+          "ongoing",
+          "completed",
+          "approved",
+          "cancelled",
+          "withdrawn"
+        ].includes(query.status.toLowerCase())
       ) {
         url = `/api/v1/practice/job-parts`;
       }
@@ -65,16 +75,6 @@ export default {
       throw err;
     }
   },
-  // watch: {
-  //   $route({ params }) {
-  //     if (params && params.id) {
-  //       this.removeNotification(parseInt(params.id));
-  //     }
-  //   }
-  // },
-  // mounted() {
-  //   this.removeNotification(parseInt(this.$route.params.id));
-  // },
   methods: {
     close() {
       this.$router.push({
@@ -82,14 +82,6 @@ export default {
         query: { ...this.$route.query }
       });
     }
-    // removeNotification(id) {
-    //   let index = this.$store.state.jobs.practice_job_notifications.findIndex(
-    //     job => job.id === id
-    //   );
-    //   if (index >= 0) {
-    //     this.$store.commit("jobs/REMOVE_PRACTICE_JOB_NOTIFICATION", id);
-    //   }
-    // }
   }
 };
 </script>

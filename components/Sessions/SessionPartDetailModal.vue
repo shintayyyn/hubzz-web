@@ -22,7 +22,9 @@
           :class="jobPartStatus === 'Completed' ? 'bg-green-500' : 'bg-gray-300'"
         >{{jobPartStatus}}</div>
       </template>
-      <template v-if="['Completed','Approved'].includes(job_part.status)">
+      <template
+        v-if="['Terminated','Completed','Approved', 'Cancelled', 'Withdrawn', 'Declined'].includes(job_part.status)"
+      >
         <AppButton :label="'Repost Job'" @click="repost" :inStyle="'font-size:1em'" />
       </template>
     </div>
@@ -95,10 +97,13 @@ export default {
   },
   methods: {
     status(status) {
-      if (status === "Available") {
-        return "LIVE";
-      }
-      return status.toUpperCase();
+      let jobStatus =
+        status === "Declined"
+          ? "Withdrawn"
+          : status === "Available"
+          ? "Live"
+          : status;
+      return jobStatus.toUpperCase();
     },
     bgStatus(status) {
       switch (status) {

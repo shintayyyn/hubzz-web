@@ -58,7 +58,7 @@ export default {
               status: "success",
               text: ["Declined"]
             });
-            this.$emit("unassign");
+            this.$emit("unassign", this.job.id);
           })
           .catch(err => {
             console.log("err", err.response || err);

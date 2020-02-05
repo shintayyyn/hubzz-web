@@ -9,7 +9,7 @@
       <div
         class="mx-2 py-2 px-4 rounded font-semibold"
         :class="bgStatus(job_part.locum_status)"
-      >{{ job_part.locum_status }}</div>
+      >{{ status(job_part.locum_status) }}</div>
       <div
         class="py-2 px-4 rounded font-semibold"
         :class="
@@ -80,6 +80,10 @@ export default {
   methods: {
     close() {
       this.$emit("close");
+    },
+    status(status) {
+      let jobStatus = status === "Declined" ? "Withdrawn" : status;
+      return jobStatus.toUpperCase();
     },
     bgStatus(status) {
       switch (status) {

@@ -7,7 +7,14 @@
         @close="close"
         @appointmentUpdated="$emit('appointmentUpdated')"
       />
-      <JobDetailModal :job="job" v-if="activeJobTypePlatform" @close="close" />
+      <JobDetailModal
+        :job="job"
+        v-if="activeJobTypePlatform"
+        @close="close"
+        @applied="$emit('applied', $event)"
+        @cancelled="$emit('cancelled', $event)"
+        @unassign="$emit('unassign', $event)"
+      />
     </template>
     <template v-if="!job && job_part">
       <JobDetailModalAppointment
@@ -60,7 +67,7 @@ export default {
       if (
         query &&
         query.status &&
-        ["ongoing", "completed", "approved"].includes(
+        ["ongoing", "completed", "approved", "cancelled", "withdrawn"].includes(
           query.status.toLowerCase()
         )
       ) {
@@ -89,16 +96,6 @@ export default {
       throw err;
     }
   },
-  // watch: {
-  //   $route({ params }) {
-  //     if (params && params.id) {
-  //       this.removeNotification(parseInt(params.id));
-  //     }
-  //   }
-  // },
-  // mounted() {
-  // this.removeNotification(parseInt(this.$route.params.id));
-  // },
   methods: {
     close() {
       this.$router.push({
@@ -106,14 +103,6 @@ export default {
         query: { ...this.$route.query }
       });
     }
-    // removeNotification(id) {
-    //   let index = this.$store.state.jobs.locum_job_notifications.findIndex(
-    //     job => job.id === id
-    //   );
-    //   if (index >= 0) {
-    //     this.$store.commit("jobs/REMOVE_LOCUM_JOB_NOTIFICATION", id);
-    //   }
-    // }
   }
 };
 </script>
