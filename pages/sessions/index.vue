@@ -537,7 +537,7 @@ export default {
       }
       if (queryStatus === "withdrawn") {
         columns.push({
-          name: "Rejected At",
+          name: "Withdrawn At",
           dataIndex: "job.platform_job.declined_at",
           class: "text-center localDate"
         });
