@@ -75,7 +75,7 @@ export default {
             status: "success",
             text: [`${res.message}`]
           });
-          this.$emit("applied");
+          this.$emit("applied", this.job.id);
         })
         .catch(err => {
           console.log("err", err.response || err);
