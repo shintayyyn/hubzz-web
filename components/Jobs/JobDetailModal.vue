@@ -61,17 +61,17 @@
             <JobDetailModalUnassignForm
               :ref="'unassignForm'"
               :job="job"
-              @unassign="$emit('close')"
+              @unassign="$emit('close'), $emit('unassign', $event)"
               v-if="job.locum_status === 'Allocated'"
             />
             <JobDetailModalApplyForm
               :job="job"
-              @applied="$emit('close')"
+              @applied="$emit('close'), $emit('applied', $event)"
               v-if="job.locum_status === 'Available' || job.locum_status === 'Matched'"
             />
             <JobDetailModalCancelForm
               :job="job"
-              @cancelled="$emit('close')"
+              @cancelled="$emit('close'), $emit('cancelled', $event)"
               v-if="job.locum_status === 'Applied'"
             />
           </div>
@@ -232,9 +232,7 @@ export default {
     },
     status(status) {
       let jobStatus =
-        status === "Declined"
-          ? "Withdrawn"
-          : status === "Matched"
+        status === "Matched"
           ? "Available"
           : status === "Available"
           ? "Public"

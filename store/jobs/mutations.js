@@ -9,6 +9,8 @@ export default {
             state.practice_ongoing_job_parts = [],
             state.practice_completed_job_parts = [],
             state.practice_approved_job_parts = [],
+            state.practice_cancelled_job_parts = [],
+            state.practice_withdrawn_job_parts = [],
             // whole
             state.practice_pending_jobs = [],
             state.practice_allocated_jobs = [],
@@ -130,6 +132,20 @@ export default {
         }
     },
 
+    SET_PRACTICE_CANCELLED_JOB_PARTS_COUNT(state, payload) {
+        state.practice_cancelled_job_parts_count = payload
+    },
+    SET_PRACTICE_CANCELLED_JOB_PARTS(state, payload) {
+        state.practice_cancelled_job_parts = payload
+    },
+
+    SET_PRACTICE_WITHDRAWN_JOB_PARTS_COUNT(state, payload) {
+        state.practice_withdrawn_job_parts_count = payload
+    },
+    SET_PRACTICE_WITHDRAWN_JOB_PARTS(state, payload) {
+        state.practice_withdrawn_job_parts = payload
+    },
+
     // WHOLE
     SET_PRACTICE_PENDING_JOBS(state, payload) {
         state.practice_pending_jobs = payload
@@ -247,12 +263,12 @@ export default {
         state.practice_unfilled_jobs_count = state.practice_unfilled_jobs_count - 1
     },
 
-    SET_PRACTICE_CANCELLED_JOBS(state, payload) {
-        state.practice_cancelled_jobs = payload
-    },
-    SET_PRACTICE_CANCELLED_JOBS_COUNT(state, payload) {
-        state.practice_cancelled_jobs_count = payload
-    },
+    // SET_PRACTICE_CANCELLED_JOBS(state, payload) {
+    //     state.practice_cancelled_jobs = payload
+    // },
+    // SET_PRACTICE_CANCELLED_JOBS_COUNT(state, payload) {
+    //     state.practice_cancelled_jobs_count = payload
+    // },
     ADD_PRACTICE_CANCELLED_JOB(state, payload) {
         state.practice_cancelled_jobs.push(payload)
         state.practice_cancelled_jobs_count = state.practice_cancelled_jobs_count + 1
@@ -285,15 +301,15 @@ export default {
     SET_PRACTICE_WITHDRAWN_JOBS_COUNT(state, payload) {
         state.practice_withdrawn_jobs_count = payload
     },
-    ADD_PRACTICE_WITHDRAWN_JOB(state, payload) {
-        state.practice_withdrawn_jobs.push(payload)
-    },
-    REMOVE_PRACTICE_WITHDRAWN_JOB(state, payload) {
-        if (state.practice_withdrawn_jobs.find(declinedJob => declinedJob.id === payload)) {
-            state.practice_withdrawn_jobs = state.practice_withdrawn_jobs.filter(job => job.id !== payload)
-            state.practice_withdrawn_jobs_count = state.practice_withdrawn_jobs_count - 1
-        }
-    },
+    // ADD_PRACTICE_WITHDRAWN_JOB(state, payload) {
+    //     state.practice_withdrawn_jobs.push(payload)
+    // },
+    // REMOVE_PRACTICE_WITHDRAWN_JOB(state, payload) {
+    //     if (state.practice_withdrawn_jobs.find(declinedJob => declinedJob.id === payload)) {
+    //         state.practice_withdrawn_jobs = state.practice_withdrawn_jobs.filter(job => job.id !== payload)
+    //         state.practice_withdrawn_jobs_count = state.practice_withdrawn_jobs_count - 1
+    //     }
+    // },
 
     // REMINDERS
     ADD_PRACTICE_AVAILABLE_JOBS_REMINDER(state, payload) {
@@ -402,6 +418,20 @@ export default {
     //         state.locum_approved_job_parts.splice(payloadIndex, 0, payload)
     //     }
     // },
+
+    SET_PRACTICE_CANCELLED_JOB_PARTS_COUNT(state, payload) {
+        state.practice_cancelled_job_parts_count = payload
+    },
+    SET_PRACTICE_CANCELLED_JOB_PARTS(state, payload) {
+        state.practice_cancelled_job_parts = payload
+    },
+
+    SET_PRACTICE_WITHDRAWN_JOB_PARTS_COUNT(state, payload) {
+        state.practice_withdrawn_job_parts_count = payload
+    },
+    SET_PRACTICE_WITHDRAWN_JOB_PARTS(state, payload) {
+        state.practice_withdrawn_job_parts = payload
+    },
 
     // WHOLE
     SET_LOCUM_ALLOCATED_JOBS(state, payload) {
