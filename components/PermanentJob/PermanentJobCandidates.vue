@@ -20,11 +20,10 @@
 					@click.prevent="show(application.id)"
 				>{{application.locum_user.first_name +' '+application.locum_user.last_name}}</div>
 
-        <div 
-          class="p-1 rounded-full w-full text-sm font-bold text-center mx-auto"
-          :class="statusStyle(application.application_status)">
-          {{application.application_status}}
-        </div>
+				<div
+					class="p-1 rounded-full w-full text-sm font-bold text-center mx-auto"
+					:class="statusStyle(application.application_status)"
+				>{{application.application_status}}</div>
 
 				<div class="flex items-center">
 					<button class="rounded-lg hover:bg-gray-300 focus:outline-none" @click.prevent="message(user)">
@@ -60,10 +59,11 @@
 		</transition>
 		<transition name="slide" mode="out-in">
 			<div class="modal-container shadow-lg" v-if="modal">
-				<PermanentJobShowCandidate 
-          @close="modal=false"
-          :permanent_job_application="permanent_job_application"
-          :user="user" />
+				<PermanentJobShowCandidate
+					@close="modal=false"
+					:permanent_job_application="permanent_job_application"
+					:user="user"
+				/>
 			</div>
 		</transition>
 		<div class="shield modal-shield" v-if="modal" @click="closeModal()"></div>
@@ -78,7 +78,7 @@ import SendMessageModal from "@/components/Messages/SendMessageModal";
 
 export default {
 	components: {
-    AppAvatar,
+		AppAvatar,
 		AppPagination,
 		PermanentJobShowCandidate,
 		SendMessageModal
@@ -87,20 +87,19 @@ export default {
 	data() {
 		return {
 			total: 0,
-      permanent_job_applications: [],
-      permanent_job_application: '',
+			permanent_job_applications: [],
+			permanent_job_application: "",
 			current_page: 1,
 			loading: false,
 			params: {
 				offset: 0,
-        limit: 5,
-        status: ['Applied', 'For Interview'],
-        permanent_job_id: this.permanent_job.id
+				limit: 5,
+				status: ["Applied", "For Interview"],
+				permanent_job_id: this.permanent_job.id
 			},
 			user: null,
 			modal: false,
-      sendMessageModal: false,
-      
+			sendMessageModal: false
 		};
 	},
 	computed: {
@@ -109,24 +108,30 @@ export default {
 		}
 	},
 	created() {
-    this.getApplicantsCount();
+		this.getApplicantsCount();
 	},
 	methods: {
 		async getApplicantsCount() {
-      await this.$axios.$get(`/api/v1/practice/permanent-job-applications/count`,{
-        params: this.params,
-      }).then(res => {
-        this.total = res.data.count;
-		    this.getApplicants(this.params);
-      })
+			await this.$axios
+				.$get(`/api/v1/practice/permanent-job-applications/count`, {
+					params: this.params
+				})
+				.then(res => {
+					this.total = res.data.count;
+					this.getApplicants(this.params);
+				});
 		},
 		async getApplicants(params) {
-		  await this.$axios
-        .$get(`/api/v1/practice/permanent-job-applications`,{ params })
-		    .then(res => {
-          this.permanent_job_applications = res.data.permanent_job_applications;
-        });
-    
+			await this.$axios
+				.$get(`/api/v1/practice/permanent-job-applications`, { params })
+				.then(res => {
+					console.log("res", res);
+					this.permanent_job_applications = res.data.permanent_job_applications;
+				});
+			console.log(
+				"permanent_job_applications",
+				this.permanent_job_applications
+			);
 		},
 		pagechanged(page) {
 			this.current_page = page;
@@ -139,51 +144,55 @@ export default {
 			this.params.limit = limit;
 			this.getApplicants(this.params);
 		},
-    statusStyle(applicationStatus) {
-      switch (applicationStatus) {
-        case "Available":
-          return "bg-green-500 text-white";
-          break;
-        case "Applied":
-          return "bg-yellow-600 text-white";
-          break;
-        case "For Interview":
-          return "bg-green-600 text-white";
-          break;
-        case "Accepted":
-          return "bg-green-700 text-white";
-          break;
-        case "Rejected":
-          return "bg-red-700 text-white";
-          break;
-        case "Closed":
-          return "bg-gray-700 text-white";
-          break;
-        default:
-          return "bg-yellow-400 text-black";
-      }
-    },
+		statusStyle(applicationStatus) {
+			switch (applicationStatus) {
+				case "Available":
+					return "bg-green-500 text-white";
+					break;
+				case "Applied":
+					return "bg-yellow-600 text-white";
+					break;
+				case "For Interview":
+					return "bg-green-600 text-white";
+					break;
+				case "Accepted":
+					return "bg-green-700 text-white";
+					break;
+				case "Rejected":
+					return "bg-red-700 text-white";
+					break;
+				case "Closed":
+					return "bg-gray-700 text-white";
+					break;
+				default:
+					return "bg-yellow-400 text-black";
+			}
+		},
 		async show(id) {
-      
-      await this.$axios.$get(`/api/v1/practice/permanent-job-applications/${id}`)
-        .then(res => {
-          this.permanent_job_application = res.data.permanent_job_application
-        })
+			await this.$axios
+				.$get(`/api/v1/practice/permanent-job-applications/${id}`)
+				.then(res => {
+					this.permanent_job_application = res.data.permanent_job_application;
+				});
 
-      await this.$axios.$get(`/api/v1/practice/locums/${this.permanent_job_application.locum_user.id}`).then(res => {
-        this.user = res.data.user
-        this.modal = true;
-      })
-      console.log('permanent job app', this.permanent_job_application)
+			await this.$axios
+				.$get(
+					`/api/v1/practice/locums/${this.permanent_job_application.locum_user.id}`
+				)
+				.then(res => {
+					this.user = res.data.user;
+					this.modal = true;
+				});
+			console.log("permanent job app", this.permanent_job_application);
 
-      // this.$axios.$put(`/api/v1/practice/permanent-job-applications/${id}/process-application`)
-      //   .then(res => {
-      //     this.$store.commit("SET_NOTIFICATION", {
-      //       enabled: true,
-      //       status: "success",
-      //       text: ["This application is now being processed"]
-      //     })
-      //   });
+			// this.$axios.$put(`/api/v1/practice/permanent-job-applications/${id}/process-application`)
+			//   .then(res => {
+			//     this.$store.commit("SET_NOTIFICATION", {
+			//       enabled: true,
+			//       status: "success",
+			//       text: ["This application is now being processed"]
+			//     })
+			//   });
 
 			// this.$axios.$get(`/api/v1/practice/locums/${id}`).then(res => {
 			// 	this.user = res.data.user;
@@ -206,13 +215,13 @@ export default {
 </script>
 <style scoped>
 .avatar {
-  max-width: 40px;
-  max-height: 40px;
-  min-width: 40px;
-  min-height: 40px;
+	max-width: 40px;
+	max-height: 40px;
+	min-width: 40px;
+	min-height: 40px;
 }
 img {
-  border-radius: 50%;
+	border-radius: 50%;
 }
 
 .modal-shield {
