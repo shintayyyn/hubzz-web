@@ -1,6 +1,6 @@
 <template>
 	<div class="flex flex-col w-full">
-		<div class="text-xs sm:text-sm font-bold">Candidates</div>
+		<div class="text-xs sm:text-sm font-bold">Applicants</div>
 		<div
 			class="bg-white rounded-lg shadow-lg m-0 my-4 py-3 px-5"
 			v-for="application in permanent_job_applications"
@@ -35,7 +35,11 @@
 				</div>
 			</div>
 		</div>
-		<div class="bottom-0 w-full">
+		<p
+			v-if="permanent_job_applications.length === 0"
+			class="text-gray-600 text-sm"
+		>There's no applicants for this job at the moment.</p>
+		<div class="bottom-0 w-full" v-if="total > 0">
 			<AppPagination
 				:total="total"
 				:totalPages="totalPages"

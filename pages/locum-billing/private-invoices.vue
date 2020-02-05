@@ -56,36 +56,36 @@
             @sorted="sorted"
           >
             <template v-slot:actions="slotProps">
-              <div class="flex flex-row flex-wrap">
+              <div class="flex flex-row flex-wrap justify-center">
                 <div
                   @click="$router.push({ path: `/locum-billing/private-invoices/${slotProps.item.id}/create`, query: {...$route.query }})"
                   v-if="!slotProps.item.locum_invoice_id"
-                  class="m-1 px-4 py-2 bg-green-700 text-white font-bold rounded-lg focus:outline-none"
+                  class="m-1 px-4 py-2 bg-green-700 hover:bg-green-600 text-white font-bold rounded-lg focus:outline-none cursor-pointer"
                 >Generate Invoice</div>
                 <div
                   @click="$router.push({ name: `locum-billing-private-invoices-id-edit`, params: { id: slotProps.item.locum_invoice_id }, query: {...$route.query }})"
                   v-if="slotProps.item.locum_invoice_id && !slotProps.item.locum_form_a_id"
-                  class="m-1 px-4 py-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
+                  class="m-1 px-4 py-2 bg-yellow-500 hover:bg-yellow-600 font-bold rounded-lg focus:outline-none cursor-pointer"
                 >Edit</div>
                 <button
                   @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id, 'deleteInvoice')"
                   v-if="slotProps.item.locum_invoice_id && !slotProps.item.locum_form_a_id"
-                  class="m-1 px-4 py-2 bg-red-700 text-white font-bold rounded-lg focus:outline-none"
+                  class="m-1 px-4 py-2 bg-red-700 hover:bg-red-600 text-white font-bold rounded-lg focus:outline-none cursor-pointer"
                 >Delete</button>
                 <div
                   v-if="slotProps.item.locum_invoice_id && slotProps.item.status === 'Completed' && !slotProps.item.locum_form_a_id"
                   @click="select_invoice(slotProps.item.locum_invoice_id, 'generateFormA')"
-                  class="m-1 px-4 py-2 bg-yellow-400 font-bold rounded-lg focus:outline-none"
+                  class="m-1 px-4 py-2 bg-yellow-400 hover:bg-yellow-500 font-bold rounded-lg focus:outline-none cursor-pointer"
                 >Generate Form A</div>
                 <div
                   @click="viewAsPdf(slotProps.item.locum_form_a_id, 'form-a')"
                   v-if="slotProps.item.locum_invoice_id && slotProps.item.status === 'Completed' && slotProps.item.locum_form_a_id"
-                  class="m-1 px-4 py-2 bg-yellow-400 font-bold rounded-lg focus:outline-none"
+                  class="m-1 px-4 py-2 bg-yellow-400 hover:bg-yellow-500  font-bold rounded-lg focus:outline-none cursor-pointer"
                 >View NHS Form A</div>
                 <button
                   @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id, 'markAsPaid')"
                   v-if="slotProps.item.status === 'Completed' && slotProps.item.locum_invoice_id && (slotProps.item.locum_invoice_item && !slotProps.item.locum_invoice_item.locum_invoice.paid_at)"
-                  class="m-1 px-4 py-2 bg-yellow-400 font-bold rounded-lg focus:outline-none w-full"
+                  class="m-1 px-4 py-2 bg-yellow-400 hover:bg-yellow-500 font-bold rounded-lg focus:outline-none cursor-pointer w-full"
                 >Mark as Paid</button>
               </div>
             </template>

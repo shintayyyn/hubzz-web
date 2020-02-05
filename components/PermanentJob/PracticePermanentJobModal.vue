@@ -5,18 +5,18 @@
 				<svgicon name="left-arrow" height="32" width="32" class="cursor-pointer" />
 			</nuxt-link>
 
-			<div class="flex justify-start items-center flex-wrap">
+			<div class="flex justify-start items-center flex-wrap px-2">
 				<h4 class="text-lg md:text-xl font-bold">
 					<span>{{permanent_job.title}}</span>
 					<span
-						class="px-4 py-1 rounded-lg w-32 text-center mx-auto"
+						class="mx-2 py-2 px-4 rounded font-semibold"
 						:class="statusStyle(permanent_job.job_posting_status)"
 					>{{ permanent_job.job_posting_status }}</span>
 				</h4>
 
 				<AppButton class="ml-4" :label="editJobLabel(edit)" @click="edit = !edit" />
 			</div>
-			<div class="flex flex-col md:flex-row">
+			<div class="flex flex-col md:flex-row my-2">
 				<div class="mx-2 w-full md:w-3/5 lg:w-2/3">
 					<div class="bg-white rounded-lg shadow-lg p-4 mb-4 flex flex-col items-start">
 						<template v-if="!edit">
