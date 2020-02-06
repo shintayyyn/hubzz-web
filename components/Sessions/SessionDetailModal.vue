@@ -131,7 +131,6 @@ export default {
     };
   },
   created() {
-    console.log("job", this.job);
     this.practice = this.$auth.user.practice_detail.practice;
   },
   mounted() {
@@ -148,7 +147,12 @@ export default {
         this.$moment(
           `${this.job.date_start} ${this.job.time_start}`,
           "YYYY-MM-DD HH:mm"
-        ).diff(this.$moment(), "hours") >= 12
+        ).diff(
+          this.$moment()
+            .utc()
+            .format("YYYY-MM-DD HH:mm"),
+          "hours"
+        ) >= 12
       );
     },
     waitingForApproval() {
