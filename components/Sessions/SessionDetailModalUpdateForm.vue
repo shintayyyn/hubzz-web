@@ -611,26 +611,29 @@ export default {
       }
     },
     "form.date_end"(value) {
-      let end = this.$moment(value);
+      let end = this.$moment(value, "YYYY-MM-DD");
       let days = [];
-      let day = this.$moment(this.form.date_start);
-      while (day <= end) {
-        days.push(day.day());
-        day = day.clone().add(1, "d");
+      let startDay = this.$moment(this.form.date_start, "YYYY-MM-DD");
+      while (startDay <= end) {
+        days.push(startDay.day());
+        startDay = startDay.clone().add(1, "d");
       }
-      this.show_saturday = false;
-      this.show_sunday = false;
-      if (days.includes(6)) {
-        this.show_saturday = true;
-      }
-      if (days.includes(0)) {
-        this.show_sunday = true;
-      }
+      this.getListofDays(days);
     },
     session_amendment(value) {
       if (value !== "other") {
         this.form.update_remarks = value;
       }
+    },
+    "form.date_start"(value) {
+      let start = this.$moment(value, "YYYY-MM-DD");
+      let days = [];
+      let endDay = this.$moment(this.form.date_end, "YYYY-MM-DD");
+      while (endDay >= start) {
+        days.push(endDay.day());
+        endDay = endDay.clone().subtract(1, "d");
+      }
+      this.getListofDays(days);
     }
   },
   computed: {
@@ -850,6 +853,28 @@ export default {
     }
   },
   methods: {
+    getListofDays(days) {
+      if (days.includes(6) && days.length > 1) {
+        this.show_saturday = true;
+        this.form.include_saturday = true;
+      } else if (days.includes(6) && days.length === 1) {
+        this.show_saturday = false;
+        this.form.include_saturday = true;
+      } else if (!days.includes(6)) {
+        this.show_saturday = false;
+        this.form.include_saturday = false;
+      }
+      if (days.includes(0) && days.length > 1) {
+        this.show_sunday = true;
+        this.form.include_sunday = true;
+      } else if (days.includes(0) && days.length === 1) {
+        this.show_sunday = false;
+        this.form.include_sunday = true;
+      } else if (!days.includes(0)) {
+        this.show_sunday = false;
+        this.form.include_sunday = false;
+      }
+    },
     uncheckMandatory(value) {
       this.form.mandatory_training_id = this.form.mandatory_training_id.filter(
         id => id != value
