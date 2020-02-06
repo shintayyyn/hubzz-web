@@ -198,6 +198,7 @@ export const getters = {
 				paid_at: notif.paid_at,
 				practice: notif.practice ? notif.practice.name : notif.private_practice.name,
 				notification_type: notif.notificationType,
+				notification_billing_type: notif.type,
 				type: "Billings",
 				message
 			};

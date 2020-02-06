@@ -73,14 +73,14 @@
                   class="m-1 px-4 py-2 bg-red-700 hover:bg-red-600 text-white font-bold rounded-lg focus:outline-none cursor-pointer"
                 >Delete</button>
                 <div
-                  v-if="slotProps.item.locum_invoice_id && slotProps.item.status === 'Completed' && !slotProps.item.locum_form_a_id"
+                  v-if="slotProps.item.locum_invoice_id && slotProps.item.status === 'Completed' && slotProps.item.locum_invoice_id && (slotProps.item.locum_invoice_item && slotProps.item.locum_invoice_item.locum_invoice.paid_at) && !slotProps.item.locum_form_a_id"
                   @click="select_invoice(slotProps.item.locum_invoice_id, 'generateFormA')"
                   class="m-1 px-4 py-2 bg-yellow-400 hover:bg-yellow-500 font-bold rounded-lg focus:outline-none cursor-pointer"
                 >Generate Form A</div>
                 <div
                   @click="viewAsPdf(slotProps.item.locum_form_a_id, 'form-a')"
                   v-if="slotProps.item.locum_invoice_id && slotProps.item.status === 'Completed' && slotProps.item.locum_form_a_id"
-                  class="m-1 px-4 py-2 bg-yellow-400 hover:bg-yellow-500  font-bold rounded-lg focus:outline-none cursor-pointer"
+                  class="m-1 px-4 py-2 bg-yellow-400 hover:bg-yellow-500 font-bold rounded-lg focus:outline-none cursor-pointer"
                 >View NHS Form A</div>
                 <button
                   @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id, 'markAsPaid')"
@@ -144,7 +144,7 @@
           :name="'paid_at'"
           :label="'Received payment on'"
           :error="formError.find(item => item.field === 'paid_at')"
-          isAfter
+          isBefore
         />
         <AppInput
           v-model="form.ni"
