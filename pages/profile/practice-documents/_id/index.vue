@@ -33,17 +33,15 @@
               class="mt-2 text-base"
             >{{practice_document.practice_document_type ? practice_document.practice_document_type.name: null}}</p>
             <p class="mt-5 mr-20 font-semibold">Practice</p>
-            <p
-              class="mt-2 text-base"
-            >{{practice_document.practice ? practice_document.practice.surgery.name: null}}</p>
+            <p class="mt-2 text-base">{{practice.name}}</p>
             <p class="mt-5 mr-20 font-semibold">File last uploaded</p>
             <p
               class="mt-2 text-base"
             >{{practice_document.file ? $moment(practice_document.file.created_at).format('MM/DD/YYYY HH:mm:ss') : null}}</p>
-            <p class="mt-5 mr-20 font-semibold">Uploaded By</p>
+            <!-- <p class="mt-5 mr-20 font-semibold">Uploaded By</p>
             <p
               class="mt-2 text-base"
-            >{{practice_document.created_by_user ? practice_document.created_by_user.personal_detail.name : ''}}</p>
+            >{{practice_document.created_by_user ? practice_document.created_by_user.personal_detail.name : ''}}</p>-->
           </div>
           <div class="w-full mt-5 lg:mt-0 lg:w-3/4">
             <embed
@@ -59,10 +57,7 @@
 </template>
 <script>
 export default {
-  transition: {
-    name: "slide",
-    mode: "out-in"
-  },
+  props: ["practice"],
   computed: {
     authPermissions() {
       return this.$store.getters["permissions"];

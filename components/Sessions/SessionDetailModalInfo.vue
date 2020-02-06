@@ -172,7 +172,7 @@
                     <embed
                       class="object-contain object-top w-full"
                       :class="job.variation_terms_file.type == 'image' ? 'image' : 'document h-full '"
-                      :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job.standard_terms_file.subtype) ? convertDoc(job.standard_terms_file.url) : job.standard_terms_file.url"
+                      :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job.variation_terms_file.subtype) ? convertDoc(job.variation_terms_file.url) : job.variation_terms_file.url"
                     />
                   </div>
                 </div>
@@ -238,7 +238,7 @@
                     <embed
                       class="object-contain object-top w-full"
                       :class="job.variation_terms_file.type == 'image' ? 'image' : 'document h-full '"
-                      :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job.standard_terms_file.subtype) ? convertDoc(job.standard_terms_file.url) : job.standard_terms_file.url"
+                      :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job.variation_terms_file.subtype) ? convertDoc(job.variation_terms_file.url) : job.variation_terms_file.url"
                     />
                   </div>
                 </div>
