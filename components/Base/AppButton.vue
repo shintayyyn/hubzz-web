@@ -2,8 +2,8 @@
 	<button
 		@click.prevent="$emit('click')"
 		:disabled="disabled"
-		class="rounded-lg p-2 md:px-4 font-bold md:text-lg focus:outline-none transition-hover"
-		:class="[disabled ? 'disabled-button' : '', (label.includes('Filter') || label.includes('Sort')) && 'flex items-center', inClass, customTheme ? customTheme : 'button']"
+		class="rounded-lg p-2 md:px-4 focus:outline-none transition-hover"
+		:class="[disabled ? 'disabled-button' : '', (label.includes('Filter') || label.includes('Sort')) && 'flex items-center', inClass, customTheme ? customTheme : 'button font-bold md:text-lg ']"
 		:style="inStyle"
 	>
 		{{label}}
