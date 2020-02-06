@@ -56,7 +56,7 @@
           <AppButton
             class="mx-2"
             :label="'Search'"
-            @click="filterJob"
+            @click="getJobPartsPromiseAll"
             :inStyle="'padding:5px 14px;margin-bottom:5px'"
           />
           <AppButton
@@ -582,11 +582,13 @@ export default {
             job_type: "Platform"
           };
       }
-
+      console.log(this.params);
       return Promise.all([
-        this.$axios.$get(`${url}/count`, { params }),
+        this.$axios.$get(`${url}/count`, {
+          params: { ...params, ...this.params }
+        }),
         this.$axios.$get(`${url}?offset=0&limit=5`, {
-          params
+          params: { ...params, ...this.params }
         })
       ])
         .then(([responseTotal, response]) => {
