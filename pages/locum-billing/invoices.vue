@@ -32,6 +32,42 @@
         :class="$route.name.includes('locum-billing-invoices') && ($route.query.status && $route.query.status.toLowerCase() === 'pension-form-b') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >NHS Pensions Form B</nuxt-link>
     </div>
+    <div class="flex flex-row justify-start overflox-x-auto pb-3">
+      <AppButton
+        :label="'Filter'"
+        @click="filterModal = !filterModal"
+        :inStyle="'padding:5px 14px;margin-bottom:5px;font-size:14px;'"
+      />
+      <div
+        class="flex-wrap justify-start items-end z-10 absolute w-full bg-white shadow-lg p-3 rounded-lg"
+        :class="filterModal ? 'flex' : 'hidden'"
+      >
+        <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <AppInput
+            class="px-1"
+            v-model="params.ir35"
+            :type="'select'"
+            :name="'type'"
+            :label="'Inside ir35'"
+            :items="[{ label: 'Yes', value: true },{ label: 'No', value: false}, { label: 'All', value: null} ]"
+          />
+        </div>
+        <div class="md:px-1 flex w-full">
+          <AppButton
+            class="mx-2"
+            :label="'Search'"
+            @click="filterJob"
+            :inStyle="'padding:5px 14px;margin-bottom:5px'"
+          />
+          <AppButton
+            class="mx-2"
+            :label="'Close'"
+            @click="filterModal = false"
+            :inStyle="'padding:5px 14px;margin-bottom:5px'"
+          />
+        </div>
+      </div>
+    </div>
     <div
       class="flex flex-row justify-start overflow-x-auto pb-3"
       v-if="$route.name.includes('locum-billing-invoices') && ($route.query.status && $route.query.status.toLowerCase() === 'pension-form-b')"
@@ -175,6 +211,7 @@ import AppDate from "@/components/Base/AppDate";
 import AppButton from "@/components/Base/AppButton";
 import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
 import AppTable from "@/components/Base/AppTable";
+import AppInput from "@/components/Base/AppInput";
 export default {
   transition: {
     name: "fade",
@@ -182,12 +219,14 @@ export default {
   },
   components: {
     AppDate,
+    AppInput,
     AppButton,
     AppConfirmationModal,
     AppTable
   },
   data() {
     return {
+      filterModal: false,
       showTable: false,
       total: 0,
       job_parts: [],
@@ -200,7 +239,8 @@ export default {
       params: {
         offset: 0,
         limit: 5,
-        order_by: []
+        order_by: [],
+        ir35: null
       },
 
       columns: [
@@ -588,6 +628,9 @@ export default {
           throw err;
         });
     },
+    filterJob() {
+      this.getJobParts();
+    },
     getJobParts() {
       let url = `/api/v1/locum/job-parts`;
       let params = null;
@@ -599,8 +642,9 @@ export default {
             locum_status: ["Completed", "Terminated"],
             invoice_status: ["To Be Invoice"],
             job_type: "Platform",
-            offset: this.params.offset,
-            limit: this.params.limit
+            // offset: this.params.offset,
+            // limit: this.params.limit,
+            ...this.params
           };
           break;
         case "disputed":
@@ -608,8 +652,9 @@ export default {
             locum_status: ["Completed", "Terminated"],
             invoice_status: ["Disputed"],
             job_type: "Platform",
-            offset: this.params.offset,
-            limit: this.params.limit
+            // offset: this.params.offset,
+            // limit: this.params.limit,
+            ...this.params
           };
           break;
         case "issued":
@@ -617,8 +662,9 @@ export default {
             locum_status: ["Completed", "Terminated"],
             invoice_status: ["Invoiced"],
             job_type: "Platform",
-            offset: this.params.offset,
-            limit: this.params.limit
+            // offset: this.params.offset,
+            // limit: this.params.limit,
+            ...this.params
           };
           break;
         case "approved":
@@ -626,8 +672,9 @@ export default {
             locum_status: ["Approved"],
             invoice_status: ["Invoiced"],
             job_type: "Platform",
-            offset: this.params.offset,
-            limit: this.params.limit
+            // offset: this.params.offset,
+            // limit: this.params.limit,
+            ...this.params
           };
           break;
         case "pension-form-a":
@@ -636,15 +683,17 @@ export default {
             invoice_status: ["Invoiced"],
             // can_generate_form_b: true,
             job_type: "Platform",
-            offset: this.params.offset,
-            limit: this.params.limit
+            // offset: this.params.offset,
+            // limit: this.params.limit,
+            ...this.params
           };
           break;
         case "pension-form-b":
           params = {
             type: "Platform",
-            offset: this.params.offset,
-            limit: this.params.limit
+            // offset: this.params.offset,
+            // limit: this.params.limit,
+            ...this.params
           };
           url = `/api/v1/locum/locum-invoices-form-b`;
           break;
