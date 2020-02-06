@@ -210,9 +210,7 @@ export default {
 				this.loading = true;
 				setTimeout(async () => {
 					this.loading = true;
-					// this.$nuxt.$loading.start();
 					await this.getPermanentJobsForLocum(params);
-					// this.$nuxt.$loading.finish();
 					this.loading = false;
 				});
 				this.loading = false;
@@ -223,9 +221,7 @@ export default {
 				};
 				setTimeout(async () => {
 					this.loading = true;
-					// this.$nuxt.$loading.start();
 					await this.getPermanentJobsForPractice(params);
-					// this.$nuxt.$loading.finish();
 					this.loading = false;
 				});
 			}

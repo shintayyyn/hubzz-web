@@ -14,8 +14,40 @@
         class="justify-center text-black text-sm font-semibold py-2 p-3 rounded-lg"
         :class="statusStyle(checkStatus(practice_surgery))"
       >{{checkStatus(practice_surgery)}}</div>
+
     </div>
-    <div class="flex flex-col">
+    <div class="flex flex-col mx-2">
+      <div class="flex flex-col mt-4 md:flex-row w-full leading-tight">
+        <p class="md:w-1/3 font-semibold">CCG</p>
+        <p class="md:w-2/3 mx-2 md:mx-0">{{ practice_surgery.child_practice.clinical_commissioning_group_name }}</p>
+      </div>
+      <div class="flex flex-col mt-4 md:flex-row w-full leading-tight">
+        <p class="md:w-1/3 font-semibold">Contact Number</p>
+        <p class="md:w-2/3 mx-2 md:mx-0">{{ practice_surgery.child_practice.phone_number }}</p>
+      </div>
+      <div class="flex flex-col mt-4 md:flex-row w-full leading-tight">
+        <div class="md:w-1/3 font-semibold">Address</div>
+        <div class="md:w-2/3">
+          <div class="md:mx-0">{{ practice_surgery.child_practice && practice_surgery.child_practice.address_line_1 ? practice_surgery.child_practice.address_line_1: null}}</div>
+          <div class="md:mx-0">{{ practice_surgery.child_practice && practice_surgery.child_practice.address_line_2 ? practice_surgery.child_practice.address_line_2: null}}</div>
+          <div class="md:mx-0">{{ practice_surgery.child_practice && practice_surgery.child_practice.address_line_3 ? practice_surgery.child_practice.address_line_3: null}}</div>
+          <div class="md:mx-0">{{ practice_surgery.child_practice && practice_surgery.child_practice.address_line_4 ? practice_surgery.child_practice.address_line_4: null}}</div>
+          <div class="md:mx-0">{{ practice_surgery.child_practice && practice_surgery.child_practice.address_line_5 ? practice_surgery.child_practice.address_line_5: null}}</div>
+        </div>
+      </div>
+
+      <div class="flex flex-col md:flex-row w-full mt-2 leading-tight">
+        <p class="md:w-1/3 font-semibold">Report To</p>
+        <p
+          class="md:w-2/3 mx-2 md:mx-0"
+        >{{practice_surgery.child_practice.report_to ? practice_surgery.child_practice.report_to : 'N/A'}}</p>
+      </div>
+      <div class="flex flex-col md:flex-row w-full mt-2 leading-tight">
+        <p class="md:w-1/3 font-semibold">Email Address</p>
+        <p class="md:w-2/3 mx-2 md:mx-0">{{practice_surgery.child_practice.email ? practice_surgery.child_practice.email : 'N/A'}}</p>
+      </div>
+    </div>
+    <div class="flex flex-col mt-4">
       <!--------------PAY FOR SURGERY-------------->
       <div class="flex items-center">
         <div class="text-lg text-black font-semibold mr-4">Permissions</div>

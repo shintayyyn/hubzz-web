@@ -4,6 +4,7 @@
       <div class="flex flex-col md:flex-row w-full pb-2 md:pb-0">
         <div class="md:w-1/2">
           <p class="text-lg font-semibold">Practice Hub</p>
+
           <div class="flex flex-col mx-2">
             <div class="flex flex-col mt-4 md:flex-row w-full leading-tight">
               <p class="md:w-1/3 font-semibold">Practice Name</p>
@@ -24,10 +25,11 @@
             <div class="flex flex-col mt-4 md:flex-row w-full leading-tight">
               <div class="md:w-1/3 font-semibold">Address</div>
               <div class="md:w-2/3">
-                <div class="md:mx-0">{{ practiceHub.address_line_1 }}</div>
-                <div class="md:mx-0">{{ practiceHub.address_line_2 }}</div>
-                <div class="md:mx-0">{{ practiceHub.address_line_3 }}</div>
-                <div class="md:mx-0">{{ practiceHub.address_line_4 }}</div>
+                <div class="md:mx-0">{{ practiceHub && practiceHub.address_line_1 ? practiceHub.address_line_1: null}}</div>
+                <div class="md:mx-0">{{ practiceHub && practiceHub.address_line_2 ? practiceHub.address_line_2: null}}</div>
+                <div class="md:mx-0">{{ practiceHub && practiceHub.address_line_3 ? practiceHub.address_line_3: null}}</div>
+                <div class="md:mx-0">{{ practiceHub && practiceHub.address_line_4 ? practiceHub.address_line_4: null}}</div>
+                <div class="md:mx-0">{{ practiceHub && practiceHub.address_line_5 ? practiceHub.address_line_5: null}}</div>
               </div>
             </div>
 
