@@ -5,18 +5,18 @@
 				<svgicon name="left-arrow" height="32" width="32" class="cursor-pointer" />
 			</nuxt-link>
 
-			<div class="flex justify-start items-center flex-wrap px-2">
-				<h4 class="text-lg md:text-xl font-bold">
+			<div class="flex justify-start items-center flex-wrap md:px-2">
+				<h4 class="text-lg md:text-xl font-bold mr-2">
 					<span>{{permanent_job.title}}</span>
 				</h4>
 				<span
-					class="mx-4 py-2 px-4 rounded font-semibold"
+					class="mr-2 py-2 px-4 rounded font-semibold"
 					:class="statusStyle(permanent_job.job_posting_status)"
 				>{{ permanent_job.job_posting_status }}</span>
-				<AppButton :label="editJobLabel(edit)" @click="edit = !edit" />
+				<AppButton :label="editJobLabel(edit)" @click="edit = !edit" class="my-2" />
 			</div>
 			<div class="flex flex-col md:flex-row">
-				<div class="mx-2 w-full md:w-3/5 lg:w-2/3">
+				<div class="md:mx-2 w-full md:w-3/5 lg:w-1/2">
 					<div class="bg-white rounded-lg shadow-lg p-4 mb-4 flex flex-col items-start">
 						<template v-if="!edit">
 							<div class="w-full flex flex-col md:flex-row">
@@ -219,17 +219,25 @@
 							<AppButton @click="editPermanentJob()" :label="'Save Changes'" />
 						</template>
 					</div>
+					<PermanentJobMap
+						v-if="permanent_job && permanent_job.job_posting_status === 'Closed' && permanent_job.appointed_to_locum_user_id"
+						:permanent_job="permanent_job"
+					/>
 				</div>
 
-				<div v-if="permanent_job" class="mx-2 w-full md:w-2/5 lg:w-1/3">
+				<div v-if="permanent_job" class="md:mx-2 w-full md:w-2/5 lg:w-1/2">
 					<PermanentJobCandidates
 						v-if="permanent_job.job_posting_status !== 'Closed'"
 						:permanent_job="permanent_job"
 					/>
-					<!-- <div v-if="permanent_job.appointed_to_locum_user_id">
-						<p>Locum</p>
-					</div>-->
-					<PermanentJobMap :permanent_job="permanent_job" />
+					<PermanentJobMap
+						v-if="permanent_job && permanent_job.job_posting_status !== 'Closed' || !permanent_job.appointed_to_locum_user_id"
+						:permanent_job="permanent_job"
+					/>
+
+					<template v-if="permanent_job.appointed_to_locum_user_id">
+						<PermanentJobLocum class="my-4 md:my-0" :user="assignedLocum" />
+					</template>
 
 					<AppButton
 						v-if="permanent_job.job_posting_status !== 'Closed'"
@@ -263,13 +271,15 @@ import AppDate from "@/components/Base/AppDate";
 import PermanentJobShowCandidate from "@/components/PermanentJob/PermanentJobShowCandidate";
 import PermanentJobCandidates from "@/components/PermanentJob/PermanentJobCandidates";
 import PermanentJobMap from "@/components/PermanentJob/PermanentJobMap";
+import PermanentJobLocum from "@/components/PermanentJob/PermanentJobLocum";
 export default {
 	components: {
 		AppInput,
 		AppButton,
 		AppDate,
 		PermanentJobCandidates,
-		PermanentJobMap
+		PermanentJobMap,
+		PermanentJobLocum
 	},
 	data() {
 		return {
@@ -311,6 +321,8 @@ export default {
 			put_hired_through: "",
 
 			postingProfession: "",
+
+			assignedLocum: null,
 
 			formError: [],
 
@@ -509,7 +521,19 @@ export default {
 				})
 				.finally(() => {
 					console.log("permanent job", this.permanent_job);
+
+					if (this.permanent_job.appointed_to_locum_user_id) {
+						this.getAssignedLocum(
+							this.permanent_job.appointed_to_locum_user_id
+						);
+					}
 				});
+		},
+		getAssignedLocum(userID) {
+			this.$axios.$get(`/api/v1/practice/locums/${userID}`).then(res => {
+				this.assignedLocum = res.data.user;
+				console.log("assignedLocum", this.assignedLocum);
+			});
 		},
 		editJobLabel(edit) {
 			if (
