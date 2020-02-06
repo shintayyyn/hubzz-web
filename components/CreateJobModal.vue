@@ -1040,7 +1040,7 @@ export default {
         if (["false", false].includes(this.unpaid_breaks)) {
           this.form.unpaid_breaks_in_minutes = "";
         }
-
+        this.loading = true;
         this.$axios
           .$post(`/api/v1/practice/jobs`, this.form)
           .then(res => {
@@ -1098,6 +1098,9 @@ export default {
               this.formError = err.response.data.error_messages;
             }
             throw err;
+          })
+          .finally(() => {
+            this.loading = false;
           });
       } else {
         this.$nextTick(() => {
