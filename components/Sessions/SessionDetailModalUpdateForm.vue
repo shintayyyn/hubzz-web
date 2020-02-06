@@ -874,6 +874,12 @@ export default {
         this.show_sunday = false;
         this.form.include_sunday = false;
       }
+      if (days.length === 2 && days.includes(0) && days.includes(6)) {
+        this.show_saturday = false;
+        this.show_sunday = false;
+        this.form.include_saturday = true;
+        this.form.include_sunday = true;
+      }
     },
     uncheckMandatory(value) {
       this.form.mandatory_training_id = this.form.mandatory_training_id.filter(

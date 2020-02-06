@@ -207,10 +207,14 @@ export default {
           url = this.$route.path;
         }
       } else if (type === "Billings") {
-        url =
-          this.$auth.user.domain === "Practice"
-            ? "/practice-billing"
-            : "/locum-billing/invoices";
+        if (notification.notification_billing_type === "Platform") {
+          url =
+            this.$auth.user.domain === "Practice"
+              ? "/practice-billing"
+              : "/locum-billing/invoices";
+        } else if (notification.notification_billing_type === "Private") {
+          url = "/locum-billing/private-invoices";
+        }
       }
 
       let path = `${url}/${id}`;
@@ -266,6 +270,10 @@ export default {
         switch (status) {
           case "Draft":
             routeStatus = "to-be-invoiced";
+            break;
+          case "Issued":
+          case "Paid":
+            routeStatus = "issued";
             break;
           default:
             routeStatus = status;
