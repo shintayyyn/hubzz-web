@@ -29,9 +29,8 @@
                 class="mx-1"
               >
                 <AppButton
-                  v-if="authPermissions.includes('Create Sessions Job') || !notAllowed"
+                  v-if="authPermissions.includes('Create Sessions Job') && !notAllowed"
                   :label="'Create Job'"
-                  :disabled="notAllowed"
                   @click="$store.commit('calendar/CREATE_JOB_MODAL', true)"
                   class="hidden md:block whitespace-no-wrap"
                   :inStyle="'padding-top: 0; padding-bottom: 0;'"
@@ -172,8 +171,11 @@ export default {
 </script>
 
 <style scoped>
+.shield {
+  z-index: 600;
+}
 .modal-container {
-  z-index: 510;
+  z-index: 601;
 }
 @media (min-width: 1200px) {
   .modal-container {
@@ -216,8 +218,5 @@ export default {
 a {
   text-decoration: none;
   color: black;
-}
-.shield {
-  z-index: 509;
 }
 </style>

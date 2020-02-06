@@ -167,7 +167,7 @@ export default {
             return this.$store.state.jobs.practice_pending_jobs_count;
           case "allocated":
             return this.$store.state.jobs.practice_allocated_jobs_count;
-          case "available":
+          case "live":
             return this.$store.state.jobs.practice_available_jobs_count;
           case "applied":
             return this.$store.state.jobs.practice_applied_jobs_count;

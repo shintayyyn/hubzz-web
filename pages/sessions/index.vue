@@ -368,7 +368,6 @@ export default {
         !this.$route.query.status ||
         (this.$route.query.status &&
           ![
-            "pending",
             "ongoing",
             "completed",
             "approved",
@@ -380,14 +379,9 @@ export default {
       }
       if (
         this.$route.query.status &&
-        [
-          "pending",
-          "ongoing",
-          "completed",
-          "approved",
-          "cancelled",
-          "withdrawn"
-        ].includes(this.$route.query.status.toLowerCase())
+        ["ongoing", "completed", "approved", "cancelled", "withdrawn"].includes(
+          this.$route.query.status.toLowerCase()
+        )
       ) {
         return true;
       }
@@ -420,14 +414,9 @@ export default {
         ? this.$route.query.status.toLowerCase()
         : "allocated";
       if (
-        [
-          "pending",
-          "ongoing",
-          "completed",
-          "approved",
-          "cancelled",
-          "withdrawn"
-        ].includes(queryStatus)
+        ["ongoing", "completed", "approved", "cancelled", "withdrawn"].includes(
+          queryStatus
+        )
       ) {
         columns.push(
           {
@@ -468,7 +457,6 @@ export default {
         );
       } else if (
         ![
-          "pending",
           "ongoing",
           "completed",
           "approved",
@@ -1379,7 +1367,7 @@ export default {
       this.job_title_includes = "";
       this.job_number_includes = "";
       this.job_part_number_includes = "";
-      this.filterJob()
+      this.filterJob();
     }
   }
 };

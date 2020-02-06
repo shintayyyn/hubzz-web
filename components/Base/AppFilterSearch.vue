@@ -151,7 +151,7 @@ export default {
     getListsCount(search) {
       this.items = [];
       let params = {};
-      if (this.name === "qualification_id") {
+      if (this.name === "qualification_id" || this.name === "specialty") {
         params = {
           ...params,
           profession_category_id: this.professionCategoryId
@@ -180,7 +180,7 @@ export default {
       this.hasMore = true;
 
       let params = {};
-      if (this.name === "qualification_id") {
+      if (this.name === "qualification_id" || this.name === "specialty") {
         params = {
           ...params,
           profession_category_id: this.professionCategoryId
