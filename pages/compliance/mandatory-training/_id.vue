@@ -72,7 +72,7 @@
 							<embed
 								class="object-contain object-top w-full"
 								:class="mandatory_training.file.type == 'image' ? 'image' : 'document h-full'"
-								:src="mandatory_training.file.type !== 'image' ? convertDoc(mandatory_training.file.url) : mandatory_training.file.url"
+								:src="mandatory_training.file.type !== 'image' || mandatory_training.file.subtype === 'tiff' ? convertDoc(mandatory_training.file.url) : mandatory_training.file.url"
 							/>
 						</div>
 					</div>

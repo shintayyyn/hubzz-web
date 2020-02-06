@@ -252,7 +252,7 @@
           :minHeight="'70vh'"
           @pagechanged="pagechanged"
           @limitchanged="limitchanged"
-          @sorted="sorted()"
+          @sorted="sorted"
         ></AppTable>
         <div
           v-if="!jobs.length && !loading && !isFiltered"
@@ -1001,7 +1001,7 @@ export default {
             offset: this.offset,
             limit: this.limit,
             status,
-            order_by: [],
+            order_by: this.order_by,
             job_number: !this.isJobPart ? this.job_number : "",
             job_part_number: this.isJobPart ? this.job_part_number : "",
             title: !this.isJobPart ? this.title : "",
