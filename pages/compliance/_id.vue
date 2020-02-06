@@ -55,7 +55,7 @@
 							<embed
 								class="object-contain object-top w-full"
 								:class="compliance_document.file.type == 'image' ? 'image' : 'document h-full'"
-								:src="compliance_document.file.type !== 'image' ? convertDoc(compliance_document.file.url) : compliance_document.file.url"
+								:src="compliance_document.file.type !== 'image' || compliance_document.file.subtype === 'tiff' ? convertDoc(compliance_document.file.url) : compliance_document.file.url"
 							/>
 						</div>
 					</div>
