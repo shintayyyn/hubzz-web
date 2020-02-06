@@ -7,7 +7,6 @@
         :class="$route.name === 'spoke-surgery-management-index' || ['spoke-surgery-management-index-hub-invitationId'].includes($route.name) ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >My Hub</nuxt-link>
       <nuxt-link
-        v-if="myPractice.share_banks_to_other_surgeries === true"
         :to="{ name: 'spoke-surgery-management-spoke-siblings'}"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
         :class="$route.name.includes('spoke-surgery-management-spoke-siblings') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"

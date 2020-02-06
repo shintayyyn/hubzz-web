@@ -17,7 +17,7 @@
           :class="$route.name === 'hub-surgery-management-id' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Surgery Profile</nuxt-link>
         <nuxt-link
-          v-if="relationshipIsActive == 'Active'"
+          v-if="relationshipIsActive == 'Active' "
           :to="{ path: `/hub-surgery-management/${$route.params.id}/surgery-sessions` }"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
           :class="$route.name === 'hub-surgery-management-id-surgery-sessions' || $route.name.includes('hub-surgery-management-id-surgery-sessions-index') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
@@ -74,13 +74,15 @@ export default {
   computed: {
     relationshipIsActive: function() {
       let result = "";
-      if (this.practice_surgery.invitation_accepted_at) {
+      if (
+        this.practice_surgery.invitation_accepted_at ||
+        this.practice_surgery.termination_requested_at
+      ) {
         result = "Active";
       }
 
       if (
         this.practice_surgery.invitation_rejected_at ||
-        this.practice_surgery.termination_requested_at ||
         this.practice_surgery.terminated_at
       ) {
         result = "Inactive";
@@ -91,13 +93,14 @@ export default {
   methods: {
     activeRelationship() {
       let result = "";
-      if (this.practice_surgery.invitation_accepted_at) {
+      if (this.practice_surgery.invitation_accepted_at ||
+       this.practice_surgery.termination_requested_at ) {
         result = "Active";
       }
 
       if (
         this.practice_surgery.invitation_rejected_at ||
-        this.practice_surgery.termination_requested_at ||
+       
         this.practice_surgery.terminated_at
       ) {
         result = "Inactive";
