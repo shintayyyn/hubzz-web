@@ -195,8 +195,16 @@ export default {
       if (type === "Jobs") {
         if (this.$route.name === "dashboard") {
           url = "/dashboard";
-        } else if (this.$route.name !== "dashboard") {
+        } else if (
+          this.$route.name !== "dashboard" &&
+          !this.$route.name.includes("surgery-management")
+        ) {
           url = this.$auth.user.domain === "Practice" ? "/sessions" : "/jobs";
+        } else if (
+          this.$route.name !== "dashboard" &&
+          this.$route.name.includes("surgery-management")
+        ) {
+          url = this.$route.path;
         }
       } else if (type === "Billings") {
         url =
@@ -228,27 +236,52 @@ export default {
         }
         // console.log(id, url, status, routeStatus);
         // return;
-        this.$router.push({
-          path: `${url}`,
-          query: { ...this.$route.query, status: routeStatus }
-        });
-        setTimeout(() => {
+        if (this.$route.name.includes("surgery-management")) {
           this.$router.push({
-            path: `${url}/${id}`,
+            path: `${url}`,
+            query: { ...this.$route.query, jobStatus: routeStatus }
+          });
+        } else if (!this.$route.name.includes("surgery-management")) {
+          this.$router.push({
+            path: `${url}`,
             query: { ...this.$route.query, status: routeStatus }
           });
+        }
+        setTimeout(() => {
+          if (this.$route.name.includes("surgery-management")) {
+            this.$router.push({
+              path: `${url}/${id}`,
+              query: { ...this.$route.query, jobStatus: routeStatus }
+            });
+          } else if (!this.$route.name.includes("surgery-management")) {
+            this.$router.push({
+              path: `${url}/${id}`,
+              query: { ...this.$route.query, status: routeStatus }
+            });
+          }
         }, 500);
       } else if (type === "Billings") {
+        let routeStatus = "";
+
+        switch (status) {
+          case "Draft":
+            routeStatus = "to-be-invoiced";
+            break;
+          default:
+            routeStatus = status;
+        }
+        // console.log(id, url, status, routeStatus);
+        // return;
         if (id !== this.$route.params.id) {
           this.$router.push({
             path: `${url}`,
-            query: { ...this.$route.query, status: notification.status }
+            query: { ...this.$route.query, status: routeStatus }
           });
         }
         setTimeout(() => {
           this.$router.push({
             path: `${url}/${id}/edit`,
-            query: { ...this.$route.query, status: notification.status }
+            query: { ...this.$route.query, status: routeStatus }
           });
         }, 500);
       }

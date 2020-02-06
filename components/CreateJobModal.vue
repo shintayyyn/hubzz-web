@@ -610,19 +610,7 @@ export default {
         days.push(startDay.day());
         startDay = startDay.clone().add(1, "d");
       }
-      // this.show_saturday = false;
-      // this.form.include_saturday = false;
-      // this.show_sunday = false;
-      // this.form.include_sunday = false;
       this.getListofDays(days);
-      // if (days.includes(6)) {
-      //   this.show_saturday = true;
-      //   this.form.include_saturday = true;
-      // }
-      // if (days.includes(0)) {
-      //   this.show_sunday = true;
-      //   this.form.include_sunday = true;
-      // }
     },
     "form.date_start"(value) {
       let start = this.$moment(value, "YYYY-MM-DD");
@@ -632,19 +620,7 @@ export default {
         days.push(endDay.day());
         endDay = endDay.clone().subtract(1, "d");
       }
-      // this.show_saturday = false;
-      // this.form.include_saturday = false;
-      // this.show_sunday = false;
-      // this.form.include_sunday = false;
       this.getListofDays(days);
-      // if (days.includes(6)) {
-      //   this.show_saturday = true;
-      //   this.form.include_saturday = true;
-      // }
-      // if (days.includes(0)) {
-      //   this.show_sunday = true;
-      //   this.form.include_sunday = true;
-      // }
     },
     "form.rate"(oldValue, value) {
       this.validateNumber(this.form.rate, "rate");
@@ -878,15 +854,21 @@ export default {
   },
   methods: {
     getListofDays(days) {
-      if (days.includes(6)) {
+      if (days.includes(6) && days.length > 1) {
         this.show_saturday = true;
+        this.form.include_saturday = true;
+      } else if (days.includes(6) && days.length === 1) {
+        this.show_saturday = false;
         this.form.include_saturday = true;
       } else if (!days.includes(6)) {
         this.show_saturday = false;
         this.form.include_saturday = false;
       }
-      if (days.includes(0)) {
+      if (days.includes(0) && days.length > 1) {
         this.show_sunday = true;
+        this.form.include_sunday = true;
+      } else if (days.includes(0) && days.length === 1) {
+        this.show_sunday = false;
         this.form.include_sunday = true;
       } else if (!days.includes(0)) {
         this.show_sunday = false;

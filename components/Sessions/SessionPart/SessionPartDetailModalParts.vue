@@ -81,9 +81,10 @@ export default {
         url = "/sessions";
       } else if (this.$route.path.includes("/dashboard")) {
         url = "/dashboard";
-      } else if (this.$route.path.includes("/surgery-management")) {
-        url = "/surgery-management/practice-spokes";
       }
+      // else if (this.$route.path.includes("/surgery-management")) {
+      //   url = "/surgery-management/practice-spokes";
+      // }
       return url;
     }
   },
@@ -110,7 +111,8 @@ export default {
               ),
               date_end: this.$moment(part.date_end, "YYYY-MM-DD").format(
                 "DD-MM-YYYY"
-              )
+              ),
+              status: part.status === "Declined" ? "Withdrawn" : part.status
             };
           });
           this.parts = parts;
