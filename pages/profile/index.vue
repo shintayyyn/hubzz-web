@@ -199,7 +199,7 @@
                 v-model="form.vat_registered"
                 :type="'single-checkbox'"
                 :name="'vat_registered'"
-                :label="'Are you a VAT registered?'"
+                :label="'Are you VAT registered?'"
               />
               <template v-if="form.vat_registered">
                 <AppInput
@@ -214,7 +214,7 @@
                 v-model="form.direct_debit"
                 :type="'single-checkbox'"
                 :name="'direct_debit'"
-                :label="'Are you a Direct Debit?'"
+                :label="'Direct Debit Account'"
               />
               <template v-if="form.direct_debit">
                 <AppInput

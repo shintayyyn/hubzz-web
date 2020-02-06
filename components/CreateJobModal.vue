@@ -456,7 +456,6 @@
           <AppButton
             class="ml-auto"
             :label="'Save and publish Job'"
-            :disabled="jobCreating"
             @click="publish"
             v-if="authPermissions.includes('Create Sessions Job')"
             :disabled="loading"
@@ -494,7 +493,6 @@ export default {
   data() {
     return {
       loading: false,
-      jobCreating: false,
 
       show_saturday: false,
       show_sunday: false,
@@ -1046,7 +1044,6 @@ export default {
         this.$axios
           .$post(`/api/v1/practice/jobs`, this.form)
           .then(res => {
-            this.jobCreating = true
             if (this.$route.name === "dashboard-create") {
               this.$router.push("/dashboard");
             } else if (this.$route.name !== "dashboard-create") {
@@ -1059,7 +1056,6 @@ export default {
               status: "success",
               text: ["Successfully created job"]
             });
-            this.jobCreating = false
           })
           .catch(err => {
             console.log("err", err.response || err);
