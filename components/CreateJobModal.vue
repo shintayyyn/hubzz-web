@@ -458,11 +458,12 @@
             :label="'Save and publish Job'"
             @click="publish"
             v-if="authPermissions.includes('Create Sessions Job')"
+            :disabled="loading"
           />
         </div>
       </div>
 
-      <AppLoading :loading="loading" spinner />
+      <!-- <AppLoading :loading="true" spinner /> -->
     </div>
   </transition>
 </template>
@@ -635,6 +636,9 @@ export default {
       // let fullDateStart = this.form.date_start
       // }
     }
+  },
+  destroyed() {
+    this.$store.commit("calendar/CLEAR_REPOST_JOB");
   },
   created() {
     this.loading = true;
@@ -962,7 +966,6 @@ export default {
       }
 
       this.Validate(this.form, notRequired);
-      console.log("errs", this.formError);
       if (!this.formError.length) {
         this.form.profession_id = this.form.role;
         this.form.shift_id = this.form.shift;
