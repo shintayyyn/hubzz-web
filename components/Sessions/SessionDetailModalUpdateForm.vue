@@ -438,7 +438,7 @@
           <div class="my-3" v-if="mandatory_training_lists.length === 0">
             <AppButton
               :label="'Go to Profile to add items here'"
-              @click="$router.push('/profile')"
+              @click="goToProfile"
               :inStyle="'padding:4px;'"
             />
           </div>
@@ -859,6 +859,9 @@ export default {
     }
   },
   methods: {
+    goToProfile() {
+      window.open("/profile", "_blank")
+    },
     getListofDays(days) {
       if (days.includes(6) && days.length > 1) {
         this.show_saturday = true;
