@@ -562,20 +562,23 @@ export default {
       switch (queryStatus && queryStatus.toLowerCase()) {
         case "to-be-invoiced":
           invoice_status.push("To Be Invoice");
+          locum_status = ["Completed", "Declined", "Cancelled"];
           locum_invoiceable = true;
           break;
         case "disputed":
           invoice_status.push("Disputed");
+          locum_status = ["Completed", "Declined", "Cancelled"];
           locum_invoiceable = true;
           break;
         case "issued":
           invoice_status.push("Invoiced");
+          locum_status = ["Completed", "Declined", "Cancelled"];
           locum_invoiceable = true;
           break;
         case "approved":
           invoice_status.push("Invoiced");
           locum_status.push("Approved");
-          locum_invoiceable = null;
+          locum_invoiceable = true;
           break;
         case "pension-form-a":
           invoice_status.push("Invoiced");
