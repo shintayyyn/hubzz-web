@@ -40,8 +40,8 @@
 						@click="$router.push({ path: `/hub-surgery-management/${slotProps.item.id}`})"
 					/>
 					<AppButton
-						v-if="getStatus(slotProps.item) === 'Invited'"
-						:label="'Cancel Invitation'"
+						v-if="getStatus(slotProps.item) === 'Invited' || getStatus(slotProps.item) === 'Rejected'"
+						:label="getStatus(slotProps.item) === 'Invited' ? 'Cancel Invitation' : 'Remove User'"
 						class="m-1"
 						:customTheme="'bg-red-600 hover:bg-red-700 text-white font-bold'"
 						@click="toCancelInvitation(slotProps.item.id)"
@@ -111,8 +111,8 @@ export default {
 				{
 					name: "Surgery",
 					dataIndex: "child_practice.surgery.name",
-					class: "text-left",
-					sortable: true
+					class: "text-left"
+					// sortable: true
 				},
 				{
 					name: "Practice Code",

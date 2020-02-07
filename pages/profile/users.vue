@@ -93,7 +93,7 @@
 			@limitchanged="limitchanged"
 			@sorted="sorted"
 		>
-			<template v-slot:actions="slotProps">
+			<!-- <template v-slot:actions="slotProps">
 				<div class="flex justify-center">
 					<AppButton
 						v-if="$auth.user.id !== slotProps.item.id"
@@ -101,10 +101,14 @@
 						:customTheme="'bg-red-600 hover:bg-red-700 text-white'"
 						@click="toggleRemoveConfirmationModal(slotProps.item.id)"
 					/>
-					<!-- <button
-						@click.stop.prevent="toggleRemoveConfirmationModal(slotProps.item.id)"
-						class="mx-1 px-4 py-2 bg-red-700 text-white font-bold rounded-lg focus:outline-none"
-					>Delete</button>-->
+				</div>
+			</template>-->
+			<template v-slot:status_slot="slotProps">
+				<div class="flex items-center justify-center">
+					<div
+						class="rounded-full px-6 py-1"
+						:class="statusStyle(slotProps.item.status)"
+					>{{ slotProps.item.status }}</div>
 				</div>
 			</template>
 		</AppTable>
@@ -215,10 +219,17 @@ export default {
 					sortable: true
 				},
 				{
-					name: "Actions",
-					dataIndex: "actions",
+					name: "Status",
+					slot: true,
+					slotName: "status_slot",
+					dataIndex: "",
 					class: "text-center"
 				}
+				// {
+				// 	name: "Actions",
+				// 	dataIndex: "actions",
+				// 	class: "text-center"
+				// }
 			]
 		};
 	},
@@ -290,6 +301,14 @@ export default {
 				redirect(`/profile/practice-documents`);
 			} else {
 				error({ statusCode: 401, message: "Your Practice is Not Authorized" });
+			}
+		}
+	},
+	watch: {
+		$route(to, from) {
+			if (from.name === "profile-users-id") {
+				this.getUsers(this.params);
+				console.log("users", this.users);
 			}
 		}
 	},
@@ -439,6 +458,18 @@ export default {
 			// ) {
 			//   this.$router.push(`/profile/users/${item.id}`);
 			// }
+		},
+		statusStyle(status) {
+			switch (status) {
+				case "Active":
+					return "bg-green-500 text-white";
+					break;
+				case "Disabled":
+					return "bg-gray-300 text-gray-600";
+					break;
+				default:
+					return;
+			}
 		}
 	}
 };

@@ -66,7 +66,23 @@
 				:disabled="loading"
 				v-if="authPermissions.includes('Update Profile Users')"
 			/>
+
+			<AppButton
+				:label="'Delete User'"
+				@click="modal = true"
+				:disabled="loading"
+				:customTheme="'bg-red-500 hover:bg-red-600 font-bold md:text-lg text-white'"
+				v-if="authPermissions.includes('Update Profile Users')"
+			/>
 		</div>
+		<AppConfirmationModal
+			:label="'Proceed to delete this user?'"
+			:confirmLabel="'Yes'"
+			:cancelLabel="'Cancel'"
+			:modal="modal"
+			@confirm="remove"
+			@cancel="modal = false"
+		/>
 	</div>
 </template>
 <script>
@@ -74,6 +90,7 @@ import AppFormError from "@/components/Base/AppFormError";
 import AppLoading from "@/components/Base/AppLoading";
 import AppInput from "@/components/Base/AppInput";
 import AppButton from "@/components/Base/AppButton";
+import AppConfirmationModal from "@/components/Base/AppConfirmationModal";
 const practice_roles = [
 	{ value: "Partner", label: "Partner" },
 	{ value: "Practice Manager", label: "Practice Manager" },
@@ -84,7 +101,8 @@ export default {
 		AppFormError,
 		AppLoading,
 		AppInput,
-		AppButton
+		AppButton,
+		AppConfirmationModal
 	},
 	transition: {
 		name: "fade",
@@ -106,6 +124,7 @@ export default {
 				status: ""
 			},
 			loading: false,
+			modal: false,
 			formError: []
 		};
 	},
@@ -202,6 +221,33 @@ export default {
 						this.loading = false;
 					});
 			}
+		},
+		remove() {
+			this.loading = true;
+			this.$axios
+				.$delete(`/api/v1/practice/practice-users/${this.user.id}`, this.form)
+				.then(res => {
+					this.loading = false;
+					this.$store.commit("SET_NOTIFICATION", {
+						enabled: true,
+						status: "success",
+						text: [`${res.message}`]
+					});
+					// let index = this.users.findIndex(
+					// 	item => item.id == this.this.user.id
+					// );
+					// if (index >= 0) {
+					// 	this.users.splice(index, 1);
+					// }
+					this.modal = false;
+					this.$router.push("/profile/users");
+				})
+				.catch(err => {
+					this.loading = false;
+					this.modal = false;
+					console.log("err", err);
+					this.formError = err.response.data.error_messages;
+				});
 		}
 	}
 };
