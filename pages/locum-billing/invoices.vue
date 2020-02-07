@@ -250,20 +250,12 @@ export default {
       locum_form_bs: [],
 
       showRefresh: false,
-      loading: false,
       current_page: 1,
 
       offset: 0,
       limit: 5,
       order_by: [],
       job_ir35: null,
-
-      // params: {
-      //   offset: 0,
-      //   limit: 5,
-      //   order_by: [],
-      //   job_ir35: null
-      // },
 
       columns: [
         {

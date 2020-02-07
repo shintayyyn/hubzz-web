@@ -23,7 +23,10 @@
       >Approved Invoices</nuxt-link>
     </div>
     <transition name="fade" mode="out-in">
-      <div v-if="showTable">
+      <div class="relative flex w-full" v-if="initialLoading" style="min-height:80px">
+        <AppLoading :loading="initialLoading" spinner />
+      </div>
+      <div v-if="!initialLoading">
         <AppButton
           v-if="showRefresh"
           :label="'Refresh'"
@@ -50,11 +53,6 @@
                 @click="$router.push({ path: `/practice-billing/${slotProps.item.locum_invoice_id}/edit`, query: {...$route.query} })"
                 class="my-1 p-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
               >Edit</div>
-              <!-- <div
-                v-if="slotProps.item.locum_invoice_id && slotProps.item.status === 'Approved'"
-                @click="$router.push({ path: `/practice-billing/${slotProps.item.locum_invoice_id}`, query: {...$route.query} })"
-                class="my-1 py-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
-              >View</div>-->
               <div
                 v-if="slotProps.item.status === 'Approved' && slotProps.item.locum_invoice_item"
                 @click="$router.push({ path: `/practice-billing/${slotProps.item.locum_invoice_id}`, query: {...$route.query} })"
@@ -72,7 +70,11 @@
             </div>
           </template>
         </AppTable>
-        <div v-else class="flex justify-center">{{noJobPartsToDisplay}}</div>
+        <div
+          v-if="!job_parts.length && !isFiltered"
+          class="flex justify-center"
+        >{{noJobPartsToDisplay}}</div>
+        <div v-if="!job_parts.length && isFiltered" class="flex justify-center py-4">No Jobs Found</div>
 
         <div v-if="payment_modal" class="p-2">
           <div class="rounded-lg shadow-md px-4 py-8 md:px-8 payment-modal border w-5/6 md:w-1/3">
@@ -151,6 +153,7 @@ import AppTable from "@/components/Base/AppTable";
 import AppDate from "@/components/Base/AppDate";
 import AppButton from "@/components/Base/AppButton";
 import AppInput from "@/components/Base/AppInput";
+import AppLoading from "@/components/Base/AppLoading";
 export default {
   transition: {
     name: "fade",
@@ -160,23 +163,26 @@ export default {
     AppTable,
     AppDate,
     AppButton,
+    AppLoading,
     AppInput
   },
   data() {
     return {
+      initialLoading: false,
+      loading: false,
+      filterModal: false,
+      isFiltered: false,
       showTable: false,
       total: 0,
       job_parts: [],
 
       showRefresh: false,
-      loading: false,
       current_page: 1,
 
-      params: {
-        offset: 0,
-        limit: 5,
-        order_by: []
-      },
+      offset: 0,
+      limit: 5,
+      order_by: [],
+      job_ir35: null,
 
       columns: [
         {
@@ -228,57 +234,61 @@ export default {
     };
   },
   computed: {
-    ir35() {
-      return true;
-      if (!this.invoice_id) {
-        return false;
-      }
-      let selectedInvoice = this.job_parts.find(
-        item => item.locum_invoice_id === this.invoice_id
-      );
-      return selectedInvoice.job_ir35 ? selectedInvoice.job_ir35 : false;
-    },
+    // ir35() {
+    //   return true;
+    //   if (!this.invoice_id) {
+    //     return false;
+    //   }
+    //   let selectedInvoice = this.job_parts.find(
+    //     item => item.locum_invoice_id === this.invoice_id
+    //   );
+    //   return selectedInvoice.job_ir35 ? selectedInvoice.job_ir35 : false;
+    // },
     authPermissions() {
       return this.$store.getters["permissions"];
     },
     noJobPartsToDisplay() {
       let str = "";
-      switch (
-        this.$route.query.status &&
-        this.$route.query.status.toLowerCase()
-      ) {
+      let queryStatus = this.$route.query.status;
+      switch (queryStatus && queryStatus.toLowerCase()) {
         case "to-be-invoiced":
-          str = "You do not have any completed job parts from Locums";
+          str = "You do not have any completed job parts.";
           break;
         case "disputed":
-          str = "You do not have any disputed job parts from Locums";
+          str = "You do not have any disputed invoices.";
           break;
-        case "invoiced":
-          str = "You do not have any invoiced job parts from Locums";
+        case "issued":
+          str = "You do not have any invoiced job parts.";
           break;
         case "approved":
-          str = "You do not have any approved job parts from Locums";
+          str = "You do not have any approved job parts.";
+          break;
+        case "pension-form-a":
+          str = "You do not have any nhs from a.";
+          break;
+        case "pension-form-b":
+          str = "You do not have any nhs from b.";
           break;
         default:
-          str = "You do not have any completed job parts from Locums";
+          str = "You do not have any completed job parts.";
       }
       return str;
     }
   },
   watch: {
-    "$route.query"(newValue, oldValue) {
+    async "$route.query"(newValue, oldValue) {
       let newStatus = newValue.status;
       let oldStatus = oldValue.status;
       if (newStatus && newStatus !== null && newStatus !== oldStatus) {
         this.current_page = 1;
-        this.showTable = false;
+        this.filterModal = false;
         this.showRefresh = false;
-        setTimeout(async () => {
-          this.$nuxt.$loading.start();
-          await this.getJobPartsPromiseAll();
-          this.$nuxt.$loading.finish();
-          this.showTable = true;
-        }, 200);
+        this.total = 0;
+        this.job_parts = [];
+        this.isFiltered = false;
+        this.initialLoading = true;
+        await this.getJobPartsPromiseAll();
+        this.initialLoading = false;
       }
     },
     "form.ni"(value) {

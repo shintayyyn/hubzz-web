@@ -53,7 +53,7 @@ export const state = () => ({
     max_rate_per_half_day_session: 0,
     min_rate_per_whole_day_session: 0,
     max_rate_per_whole_day_session: 0,
-    ir35: null,
+    ir35: false,
     practice_type_id: [],
     mandatory_training_id: [],
   },
