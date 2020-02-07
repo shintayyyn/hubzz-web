@@ -3,7 +3,6 @@
 		<nuxt-link :to="`/spoke-surgery-management`" class="mb-2 cursor-pointer">
 			<svgicon name="left-arrow" height="32" width="32" class="cursor-pointer" />
 		</nuxt-link>
-
 		<AppConfirmationModal
 			:label="'Are you sure you want to accept this invitation?'"
 			:confirmLabel="'Yes'"
@@ -134,7 +133,7 @@
 		</div>
 
 		<!-- Buttons -->
-		<div class="flex my-6">
+		<div v-if="!specificInvitation.invitation_accepted_at && !specificInvitation.invitation_rejected_at" class="flex my-6">
 			<AppButton
 				:label="'Accept'"
 				@click="confirmAccept = true"

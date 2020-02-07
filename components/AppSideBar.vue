@@ -62,8 +62,16 @@ export default {
     return {
       signout_modal: false,
       confirmation_modal: false,
-      lists: []
+      lists: [],
+      eligibleToSpoke: false,
     };
+  },
+  async created(){
+    await this.$axios.$get(`/api/v1/practice/me/parent-surgery/invitations-count`).then(res => {
+      if (res.data.count > 0) {
+        this.eligibleToSpoke = true
+      }
+    })
   },
   computed: {
     authPermissions() {
@@ -71,15 +79,22 @@ export default {
     }
   },
   mounted() {
-    this.getInit();
-    this.$socket.on(
-      "Practice Notification Update Profile",
-      this.updatePermissions
-    );
-    this.$socket.on(
-      "Practice Notification Delete Profile",
-      this.toggleConfirmationModal
-    );
+    this.$axios.$get(`/api/v1/practice/me/parent-surgery/invitations-count`).then(res => {
+      if (res.data.count > 0) {
+        this.eligibleToSpoke = true
+      }
+    }).finally(()=>{
+      this.getInit();
+      this.$socket.on(
+        "Practice Notification Update Profile",
+        this.updatePermissions
+      );
+      this.$socket.on(
+        "Practice Notification Delete Profile",
+        this.toggleConfirmationModal
+      );
+    })
+    
   },
   destroyed() {
     this.removeListener();
@@ -173,13 +188,23 @@ export default {
           practiceStatus === "Active"
         ) {
           if (this.$auth.user.practice_detail.practice.type === "Hub") {
+            console.log('hub')
             addedLists.push({
               name: "Surgery Management",
               route: "/hub-surgery-management"
             });
           } else if (
-            this.$auth.user.practice_detail.practice.type === "Spoke"
+            this.$auth.user.practice_detail.practice.type === "Spoke" 
           ) {
+            console.log('spoke')
+            addedLists.push({
+              name: "Surgery Management",
+              route: "/spoke-surgery-management"
+            });
+          } else if (
+            this.eligibleToSpoke === true
+          ) {
+            console.log('stand alone')
             addedLists.push({
               name: "Surgery Management",
               route: "/spoke-surgery-management"
