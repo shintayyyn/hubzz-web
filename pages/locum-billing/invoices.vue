@@ -283,7 +283,8 @@ export default {
         {
           name: "£ Amount",
           dataIndex: "total_amount",
-          class: "text-center"
+          class: "text-center",
+          sortable: true
         },
         {
           name: "Actions",
