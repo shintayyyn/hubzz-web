@@ -45,10 +45,10 @@
       </div>
       <div class="relative">
         <nuxt-link
-          :to="`/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Declined`"
+          :to="`/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Withdrawn`"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'declined' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-        >Declined</nuxt-link>
+          :class="$route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'withdrawn' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        >Withdrawn</nuxt-link>
       </div>
       <div class="relative">
         <nuxt-link
@@ -56,13 +56,6 @@
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
           :class="$route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'cancelled' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Cancelled</nuxt-link>
-      </div>
-      <div class="relative">
-        <nuxt-link
-          :to="`/hub-surgery-management/${$route.params.id}/surgery-sessions?jobStatus=Withdrawn`"
-          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'withdrawn' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-        >Withdrawn</nuxt-link>
       </div>
       <div class="relative">
         <nuxt-link
@@ -80,7 +73,7 @@
       </div>
     </div>
     <div class="mt-5">
-      <nuxt-child :shifts="shifts" :rates="rates" />
+      <nuxt-child :shifts="shifts" :rates="rates" :spokePracticeId="spokePracticeId" />
     </div>
   </section>
 </template>
@@ -93,17 +86,29 @@ export default {
   data() {
     return {
       shifts: [],
-      rates: []
+      rates: [],
+      spokePracticeId: null
     };
   },
   created() {
-    this.$axios.$get(`/api/v1/shifts`).then(res => {
-      this.shifts = [];
-      this.shifts.push({ label: "All", value: "" });
-      res.data.shifts.forEach(item => {
-        this.shifts.push({ label: item.name, value: item.id });
+    this.$axios
+      .$get(`/api/v1/practice/me/practice-surgeries/${this.$route.params.id}`)
+      .then(res => {
+        this.spokePracticeId =
+          res.data &&
+          res.data.data &&
+          res.data.data.practice_surgery &&
+          res.data.data.practice_surgery.child_practice_id
+            ? res.data.data.practice_surgery.child_practice_id
+            : null;
+      }),
+      this.$axios.$get(`/api/v1/shifts`).then(res => {
+        this.shifts = [];
+        this.shifts.push({ label: "All", value: "" });
+        res.data.shifts.forEach(item => {
+          this.shifts.push({ label: item.name, value: item.id });
+        });
       });
-    });
     this.$axios.$get(`/api/v1/locum-detail-rate-types`).then(res => {
       this.rates = [];
       this.rates.push({ label: "All", value: "" });

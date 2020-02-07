@@ -27,6 +27,10 @@
             class="text-sm font-bold leading-loose w-full px-2 md:text-center cursor-pointer"
             @click.prevent="show(user.id)"
           >{{user.personal_detail.name}}</div>
+          <!-- <div
+            v-if="!user.locum_job_applied_update_accepted"
+            class="focus:outline-none"
+          >not yet accepted</div>-->
 
           <div class="flex items-center">
             <template v-if="user.is_favorite">
@@ -53,7 +57,11 @@
             >
               <svgicon name="chat" height="24" width="24" color="#888 #555 #fff" class="m-2" />
             </button>
-            <button class="focus:outline-none" @click.prevent="show(user.id)">
+            <button
+              v-if="user.locum_job_user_appointable"
+              class="focus:outline-none"
+              @click.prevent="show(user.id)"
+            >
               <svgicon name="arrow-right" height="20" width="20" class="fill-current m-2" />
             </button>
           </div>

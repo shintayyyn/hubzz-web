@@ -427,14 +427,12 @@ export default {
           {
             name: "Practice",
             dataIndex: "practice_name",
-            class: "text-center",
-            sortable: true
+            class: "text-center"
           },
           {
             name: "Title",
             dataIndex: "job_title",
-            class: "text-center",
-            sortable: true
+            class: "text-center"
           },
           {
             name: "Shift",
@@ -451,8 +449,7 @@ export default {
           {
             name: "per",
             dataIndex: "job.locum_detail_rate_type.name",
-            class: "text-center",
-            sortable: true
+            class: "text-center"
           }
         );
       } else if (
@@ -473,14 +470,12 @@ export default {
           {
             name: "Practice",
             dataIndex: "practice_name",
-            class: "text-center",
-            sortable: true
+            class: "text-center"
           },
           {
             name: "Title",
             dataIndex: "title",
-            class: "text-center",
-            sortable: true
+            class: "text-center"
           },
           {
             name: "Shift",
@@ -497,8 +492,7 @@ export default {
           {
             name: "per",
             dataIndex: "rate_type_name",
-            class: "text-center",
-            sortable: true
+            class: "text-center"
           }
         );
       }
@@ -761,7 +755,15 @@ export default {
             let jobs = 0;
             jobs =
               res.data && res.data.jobs
-                ? res.data.jobs
+                ? res.data.jobs.map(item => {
+                    return {
+                      ...item,
+                      assigned_to: item.platform_job.appointed_to_locum.user
+                        ? item.platform_job.appointed_to_locum.user
+                            .personal_detail.name
+                        : null
+                    };
+                  })
                 : res.data.job_parts
                 ? res.data.job_parts
                 : [];
@@ -964,7 +966,16 @@ export default {
         .then(([responseCount, responseJobs]) => {
           this.jobs =
             responseJobs.data && responseJobs.data.jobs
-              ? responseJobs.data.jobs
+              ? responseJobs.data.jobs.map(item => {
+                  console.log(item);
+                  return {
+                    ...item,
+                    assigned_to: item.platform_job.appointed_to_locum.user
+                      ? item.platform_job.appointed_to_locum.user
+                          .personal_detail.name
+                      : null
+                  };
+                })
               : responseJobs.data.job_parts
               ? responseJobs.data.job_parts
               : [];
@@ -1041,9 +1052,19 @@ export default {
           }
         })
         .then(res => {
+          console.log(res.data.jobs);
           this.jobs =
             res.data && res.data.jobs
-              ? res.data.jobs
+              ? res.data.jobs.map(item => {
+                  console.log(item);
+                  return {
+                    ...item,
+                    assigned_to: item.platform_job.appointed_to_locum.user
+                      ? item.platform_job.appointed_to_locum.user
+                          .personal_detail.name
+                      : null
+                  };
+                })
               : res.data.job_parts
               ? res.data.job_parts
               : [];

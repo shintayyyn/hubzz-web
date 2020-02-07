@@ -240,6 +240,10 @@ export default {
         }
         // console.log(id, url, status, routeStatus);
         // return;
+        if (status === "Pending") {
+          this.close(id, notificationType);
+          return;
+        }
         if (this.$route.name.includes("surgery-management")) {
           this.$router.push({
             path: `${url}`,

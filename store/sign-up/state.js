@@ -93,7 +93,7 @@ export default () => ({
         employment_type: "Self-Employed",
         company_registration_number: "",
         utr_number: "",
-        paid_under_payroll: null,
+        paid_under_payroll: false,
         payroll_account_name: "",
         payroll_bank_name: "",
         payroll_sort_code: "",
@@ -102,7 +102,7 @@ export default () => ({
         bank_name: "",
         sort_code: "",
         account_number: "",
-        ir35: null
+        ir35: false
     },
     credential_details: {
         email: '',
