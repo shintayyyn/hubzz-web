@@ -240,6 +240,10 @@ export default {
         }
         // console.log(id, url, status, routeStatus);
         // return;
+        if (status === "Pending") {
+          this.close(id, notificationType);
+          return;
+        }
         if (this.$route.name.includes("surgery-management")) {
           this.$router.push({
             path: `${url}`,
@@ -278,8 +282,9 @@ export default {
           default:
             routeStatus = status;
         }
-        // console.log(id, url, status, routeStatus);
-        // return;
+        //
+        console.log(id, url, status, routeStatus);
+        return;
         if (id !== this.$route.params.id) {
           this.$router.push({
             path: `${url}`,
@@ -293,7 +298,6 @@ export default {
           });
         }, 500);
       }
-
       this.close(id, notificationType);
     },
     close(id, type) {

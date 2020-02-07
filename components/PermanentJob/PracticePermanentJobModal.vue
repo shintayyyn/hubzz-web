@@ -98,8 +98,10 @@
 											:type="'number'"
 											:name="'salary_amount'"
 											:label="'Salary Amount'"
+											:min="1"
 											:error="formError.find(item => item.field === 'salary_amount')"
 											@blur="CheckEmptyField(form.salary_amount, 'salary_amount')"
+											:inStyle="'text-align:right'"
 										/>
 										<AppInput
 											class="w-full md:w-1/2 pr-1"
@@ -300,10 +302,10 @@ export default {
 				email: "",
 				report_to: "",
 				industry_type: "",
-				salary_amount: 0,
+				salary_amount: null,
 				salary_description_1: "",
 				salary_description_2: "",
-				work_hours: 0,
+				work_hours: "",
 				practice_id: "",
 				profession_id: "",
 				hired_through: ""
@@ -510,9 +512,32 @@ export default {
 			if (this.$moment(value).isAfter(this.form.date_posted)) {
 				this.formError.splice(index, 1);
 			}
+		},
+		"form.salary_amount"(oldValue, value) {
+			if (value) {
+				this.validateNumber(this.form.salary_amount, "salary_amount");
+			}
 		}
 	},
 	methods: {
+		validateNumber(value, fieldName) {
+			let displayFieldName =
+				fieldName.charAt(0).toUpperCase() +
+				fieldName.slice(1).replace(/_/g, " ");
+			let index = this.formError.findIndex(item => item.field === fieldName);
+			if (
+				parseInt(value) < 1 ||
+				value.toString().includes("e") ||
+				value === ""
+			) {
+				this.formError.push({
+					field: fieldName,
+					message: `${displayFieldName} is invalid`
+				});
+			} else {
+				this.formError.splice(index, 1);
+			}
+		},
 		getPermanentJob() {
 			this.$axios
 				.$get(`/api/v1/practice/permanent-jobs/${this.$route.params.id}`)
@@ -554,6 +579,7 @@ export default {
 			this.formError = [];
 
 			let notRequired = ["hired_through"];
+			this.validateNumber(this.form.salary_amount, "salary_amount");
 			this.Validate(this.form, notRequired);
 			if (!this.formError.length) {
 				this.$axios

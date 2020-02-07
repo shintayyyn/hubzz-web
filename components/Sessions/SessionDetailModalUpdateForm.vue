@@ -438,7 +438,7 @@
           <div class="my-3" v-if="mandatory_training_lists.length === 0">
             <AppButton
               :label="'Go to Profile to add items here'"
-              @click="$router.push('/profile')"
+              @click="goToProfile"
               :inStyle="'padding:4px;'"
             />
           </div>
@@ -634,7 +634,13 @@ export default {
         endDay = endDay.clone().subtract(1, "d");
       }
       this.getListofDays(days);
-    }
+    },
+    "form.rate"(oldValue, value) {
+      this.validateNumber(this.form.rate, "rate");
+    },
+    "form.total_hours"(oldValue, value) {
+      this.validateNumber(this.form.total_hours, "total_hours");
+    },
   },
   computed: {
     authPermissions() {
@@ -853,6 +859,9 @@ export default {
     }
   },
   methods: {
+    goToProfile() {
+      window.open("/profile", "_blank")
+    },
     getListofDays(days) {
       if (days.includes(6) && days.length > 1) {
         this.show_saturday = true;
@@ -886,6 +895,24 @@ export default {
         id => id != value
       );
     },
+    validateNumber(value, fieldName) {
+			let displayFieldName =
+				fieldName.charAt(0).toUpperCase() +
+				fieldName.slice(1).replace(/_/g, " ");
+			let index = this.formError.findIndex(item => item.field === fieldName);
+			if (
+				parseInt(value) < 1 ||
+				value.toString().includes("e") ||
+				value === ""
+			) {
+				this.formError.push({
+					field: fieldName,
+					message: `${displayFieldName} is invalid`
+				});
+			} else {
+				this.formError.splice(index, 1);
+			}
+		},
     validateUpdate() {
       if (this.job.status === "Applied") {
         this.modal = true;
@@ -941,8 +968,8 @@ export default {
         ["15", 15, "30", 30, "60", 60, false, "false"].includes(
           this.unpaid_breaks
         )
-      ) {
-        notRequired.push("unpaid_breaks_in_minutes");
+        ) {
+          notRequired.push("unpaid_breaks_in_minutes");
       }
 
       if (["true", true].includes(this.auto_assign_job)) {
@@ -955,8 +982,8 @@ export default {
         ["true", true].includes(this.selection_notification) &&
         this.selection_date.date &&
         this.selection_date.time
-      ) {
-        notRequired.push("selection_date");
+        ) {
+          notRequired.push("selection_date");
       }
 
       if (["true", true].includes(this.bank_only)) {
@@ -973,6 +1000,8 @@ export default {
         notRequired.push("favorite_only_until");
       }
 
+      this.validateNumber(this.form.rate, "rate");
+      this.validateNumber(this.form.total_hours, "total_hours");
       this.Validate(this.form, notRequired);
       console.log(this.form);
       console.log(this.formError);

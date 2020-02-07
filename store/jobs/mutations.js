@@ -48,6 +48,7 @@ export default {
         }
     },
     REMOVE_PRACTICE_JOB_NOTIFICATION(state, payload) {
+        console.log(state.practice_job_notifications)
         state.practice_job_notifications = state.practice_job_notifications.filter(job => job.id !== payload)
     },
     CLEAR_PRACTICE_JOB_NOTIFICATION(state) {

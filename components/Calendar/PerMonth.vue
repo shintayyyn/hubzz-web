@@ -689,13 +689,13 @@ export default {
         .endOf("month")
         .format("YYYY-MM-DD");
 
-      this.$store.commit(
-        "calendar/SELECT_DATE",
-        this.$moment(this.$store.state.calendar.selected_date, "YYYY-MM-DD")
-          .set("month", this.selectedMonth)
-          .set("year", this.selectedYear)
-          .format("YYYY-MM-DD")
-      );
+      // this.$store.commit(
+      //   "calendar/SELECT_DATE",
+      //   this.$moment(this.$store.state.calendar.selected_date, "YYYY-MM-DD")
+      //     .set("month", this.selectedMonth)
+      //     .set("year", this.selectedYear)
+      //     .format("YYYY-MM-DD")
+      // );
       // this.getJobs();
     }
   }

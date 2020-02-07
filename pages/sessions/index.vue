@@ -761,7 +761,12 @@ export default {
             let jobs = 0;
             jobs =
               res.data && res.data.jobs
-                ? res.data.jobs
+                ? res.data.jobs.map(item => {
+                  return {
+                    ...item,
+                    assigned_to: item.platform_job.appointed_to_locum.user ? item.platform_job.appointed_to_locum.user.personal_detail.name : null
+                  }
+                })
                 : res.data.job_parts
                 ? res.data.job_parts
                 : [];
@@ -964,7 +969,13 @@ export default {
         .then(([responseCount, responseJobs]) => {
           this.jobs =
             responseJobs.data && responseJobs.data.jobs
-              ? responseJobs.data.jobs
+              ? responseJobs.data.jobs.map(item => {
+                console.log(item)
+                  return {
+                    ...item,
+                    assigned_to: item.platform_job.appointed_to_locum.user ? item.platform_job.appointed_to_locum.user.personal_detail.name : null
+                  }
+                })
               : responseJobs.data.job_parts
               ? responseJobs.data.job_parts
               : [];
@@ -1041,9 +1052,16 @@ export default {
           }
         })
         .then(res => {
+          console.log(res.data.jobs)
           this.jobs =
             res.data && res.data.jobs
-              ? res.data.jobs
+              ? res.data.jobs.map(item => {
+                console.log(item)
+                  return {
+                    ...item,
+                    assigned_to: item.platform_job.appointed_to_locum.user ? item.platform_job.appointed_to_locum.user.personal_detail.name : null
+                  }
+                })
               : res.data.job_parts
               ? res.data.job_parts
               : [];
