@@ -150,17 +150,16 @@
 							:items="work_hours_type"
 							@blur="CheckEmptyField(form.work_hours, 'work_hours')"
 						/>
-						<div class="flex flex-wrap -mt-8">
-							<AppInput
-								:class="'w-full md:w-1/2 pr-1'"
-								v-model="form.salary_amount"
-								:type="'number'"
-								:name="'salary_amount'"
-								:label="'Salary Amount'"
-								:error="formError.find(item => item.field === 'salary_amount')"
-								@blur="CheckEmptyField(form.salary_amount, 'salary_amount')"
-							/>
-						</div>
+						<AppInput
+							v-model="form.salary_amount"
+							:type="'number'"
+							:name="'salary_amount'"
+							:label="'Salary Amount'"
+							:min="1"
+							:error="formError.find(item => item.field === 'salary_amount')"
+							@blur="CheckEmptyField(form.salary_amount, 'salary_amount')"
+							:inStyle="'text-align:right'"
+						/>
 						<div class="flex flex-wrap">
 							<AppInput
 								class="w-full md:w-1/2 pr-1"
@@ -369,9 +368,30 @@ export default {
 			// 		return;
 			// 	}
 			// }
+		},
+		"form.salary_amount"(oldValue, value) {
+			this.validateNumber(this.form.salary_amount, "salary_amount");
 		}
 	},
 	methods: {
+		validateNumber(value, fieldName) {
+			let displayFieldName =
+				fieldName.charAt(0).toUpperCase() +
+				fieldName.slice(1).replace(/_/g, " ");
+			let index = this.formError.findIndex(item => item.field === fieldName);
+			if (
+				parseInt(value) < 1 ||
+				value.toString().includes("e") ||
+				value === ""
+			) {
+				this.formError.push({
+					field: fieldName,
+					message: `${displayFieldName} is invalid`
+				});
+			} else {
+				this.formError.splice(index, 1);
+			}
+		},
 		onEditorBlur(editor) {
 			console.log("editor blur!", editor);
 		},
@@ -390,7 +410,7 @@ export default {
 			// console.log("errors", this.formError.length);
 
 			let notRequired = [];
-			console.log("form", this.form);
+			this.validateNumber(this.form.salary_amount, "salary_amount");
 			this.Validate(this.form, notRequired);
 			if (!this.formError.length) {
 				await this.$axios
