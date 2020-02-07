@@ -887,7 +887,8 @@ export default {
     goToProfile() {
       this.$store.commit("calendar/CREATE_JOB_MODAL", false);
       this.$store.commit("calendar/CLEAR_REPOST_JOB");
-      this.$router.push("/profile");
+      // this.$router.push("/profile");
+      window.open("/profile", "_blank");    
     },
     uncheckMandatory(value) {
       this.form.mandatory_training_id = this.form.mandatory_training_id.filter(

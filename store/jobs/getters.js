@@ -621,7 +621,7 @@ export default {
                 locum_detail_rate_type: notif.locum_detail_rate_type ? notif.locum_detail_rate_type.name : notif.job.locum_detail_rate_type.name,
                 notification_type: notif.notificationType,
                 type: 'Jobs',
-                message
+                message: `${message}. ${notif.locum_status === 'Pending' ? 'This Job is no longer available.' : ''}`
             }
             notifications.push(notifObj)
         })

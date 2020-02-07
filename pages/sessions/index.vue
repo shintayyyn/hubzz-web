@@ -565,6 +565,7 @@ export default {
       let oldStatus = oldValue.status;
       let newBank = newValue.bank;
       let oldBank = oldValue.bank;
+              console.log("jobs", this.jobs)
       if (
         (newStatus && newStatus !== null && newStatus !== oldStatus) ||
         (newBank && newBank !== null && newBank !== oldBank)
@@ -761,7 +762,12 @@ export default {
             let jobs = 0;
             jobs =
               res.data && res.data.jobs
-                ? res.data.jobs
+                ? res.data.jobs.map(item => {
+                  return {
+                    ...item,
+                    assigned_to: item.platform_job.appointed_to_locum.user.personal_detail.name
+                  }
+                })
                 : res.data.job_parts
                 ? res.data.job_parts
                 : [];
@@ -964,7 +970,12 @@ export default {
         .then(([responseCount, responseJobs]) => {
           this.jobs =
             responseJobs.data && responseJobs.data.jobs
-              ? responseJobs.data.jobs
+              ? responseJobs.data.jobs.map(item => {
+                  return {
+                    ...item,
+                    assigned_to: item.platform_job.appointed_to_locum.user.personal_detail.name
+                  }
+                })
               : responseJobs.data.job_parts
               ? responseJobs.data.job_parts
               : [];
@@ -1043,7 +1054,12 @@ export default {
         .then(res => {
           this.jobs =
             res.data && res.data.jobs
-              ? res.data.jobs
+              ? res.data.jobs.map(item => {
+                  return {
+                    ...item,
+                    assigned_to: item.platform_job.appointed_to_locum.user.personal_detail.name
+                  }
+                })
               : res.data.job_parts
               ? res.data.job_parts
               : [];
