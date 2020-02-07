@@ -565,7 +565,6 @@ export default {
       let oldStatus = oldValue.status;
       let newBank = newValue.bank;
       let oldBank = oldValue.bank;
-              console.log("jobs", this.jobs)
       if (
         (newStatus && newStatus !== null && newStatus !== oldStatus) ||
         (newBank && newBank !== null && newBank !== oldBank)
@@ -765,7 +764,7 @@ export default {
                 ? res.data.jobs.map(item => {
                   return {
                     ...item,
-                    assigned_to: item.platform_job.appointed_to_locum.user.personal_detail.name
+                    assigned_to: item.platform_job.appointed_to_locum.user ? item.platform_job.appointed_to_locum.user.personal_detail.name : null
                   }
                 })
                 : res.data.job_parts
@@ -971,9 +970,10 @@ export default {
           this.jobs =
             responseJobs.data && responseJobs.data.jobs
               ? responseJobs.data.jobs.map(item => {
+                console.log(item)
                   return {
                     ...item,
-                    assigned_to: item.platform_job.appointed_to_locum.user.personal_detail.name
+                    assigned_to: item.platform_job.appointed_to_locum.user ? item.platform_job.appointed_to_locum.user.personal_detail.name : null
                   }
                 })
               : responseJobs.data.job_parts
@@ -1052,12 +1052,14 @@ export default {
           }
         })
         .then(res => {
+          console.log(res.data.jobs)
           this.jobs =
             res.data && res.data.jobs
               ? res.data.jobs.map(item => {
+                console.log(item)
                   return {
                     ...item,
-                    assigned_to: item.platform_job.appointed_to_locum.user.personal_detail.name
+                    assigned_to: item.platform_job.appointed_to_locum.user ? item.platform_job.appointed_to_locum.user.personal_detail.name : null
                   }
                 })
               : res.data.job_parts
