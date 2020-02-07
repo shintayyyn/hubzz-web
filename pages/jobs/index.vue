@@ -345,13 +345,13 @@
           @limitchanged="limitchanged"
           @sorted="sorted"
         ></AppTable>
-        <div
+        <!-- <div
           class="relative flex w-full"
           v-if="jobs.length === 0 && loading"
           style="min-height:80px"
         >
           <AppLoading :loading="loading" spinner />
-        </div>
+        </div>-->
         <div
           v-if="!jobs.length && !loading && !isFiltered"
           class="flex justify-center py-4"
@@ -1534,7 +1534,6 @@ export default {
       this.time_start = "";
       this.time_end = "";
       this.invoice_status = "";
-      this.filterJob()
     }
   }
 };
