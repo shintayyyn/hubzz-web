@@ -77,6 +77,8 @@ export default {
     update() {
       this.Validate(this.form);
       if (!this.formError.length) {
+        this.form.new_password = this.form.new_password.trim();
+        this.form.new_password_confirmation = this.form.new_password_confirmation.trim();
         this.loading = true;
         this.$axios
           .$put(
@@ -95,7 +97,16 @@ export default {
           })
           .catch(err => {
             if ((err.response.data, error_messages)) {
-              this.formError = err.response.data.error_messages;
+              err.response.data.error_messages.forEach(error => {
+                this.formError.push({
+                  field:
+                    error.field === "new_password"
+                      ? "new_password_confirmation"
+                      : error.field,
+                  message: error.message,
+                  validation: error.validation
+                });
+              });
             }
             if (err.response.data.message) {
               this.$store.commit("SET_NOTIFICATION", {
