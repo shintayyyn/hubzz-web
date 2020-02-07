@@ -933,7 +933,7 @@ export default {
         [15, "15", 30, "30", 60, "60", false, "false"].includes(
           this.unpaid_breaks
         )
-      ) {
+        ) {
         notRequired.push("unpaid_breaks_in_minutes");
       }
 
@@ -947,7 +947,7 @@ export default {
         ["true", true].includes(this.selection_notification) &&
         this.selection_date.date &&
         this.selection_date.time
-      ) {
+        ) {
         notRequired.push("selection_date");
       }
 
@@ -961,10 +961,11 @@ export default {
         ["true", true].includes(this.bank_first) &&
         this.favorite_only_until.date &&
         this.favorite_only_until.time
-      ) {
+        ) {
         notRequired.push("favorite_only_until");
       }
-
+      this.validateNumber(this.form.rate, "rate");
+      this.validateNumber(this.form.total_hours, "total_hours");
       this.Validate(this.form, notRequired);
       if (!this.formError.length) {
         this.form.profession_id = this.form.role;

@@ -4,6 +4,7 @@
       <!-- save buttons -->
       <div class="flex flex-wrap items-center">
         <AppButton
+          v-if="form.items.length > 0"
           class="m-1"
           :label="'Generate Form B'"
           @click="save()"
@@ -11,20 +12,6 @@
           :disabled="saveLoading"
         />
       </div>
-      <!-- invoice type -->
-      <!-- <div class="flex flex-row flex-wrap justify-start items-center my-2 md:my-4">
-        <label class="mx-1">Type:</label>
-        <div
-          class="text-xs sm:text-sm mx-1 py-2 px-3 border-2 rounded-lg font-bold flex items-center focus:outline-none"
-          :class="form.type === 'Platform' ? 'bg-yellow-500 border-yellow-500' : ''"
-          @click="form.type = 'Platform'"
-        >Platform</div>
-        <div
-          class="text-xs sm:text-sm mx-1 py-2 px-3 border-2 rounded-lg font-bold flex items-center focus:outline-none"
-          :class="form.type === 'Private' ? 'bg-yellow-500 border-yellow-500' : ''"
-          @click="form.type = 'Private'"
-        >Private</div>
-      </div>-->
       <div class="flex flex-row flex-wrap justify-start items-center my-2 md:my-4">
         <label class="mx-1">Type:</label>
         <div
@@ -42,8 +29,11 @@
           <section>
             <div class="relative flex flex-col py-2">
               <div class="relative flex flex-row flex-no-wrap justify-between">
-                <label class="text-base py-1">To: Accounts Department</label>
+                <label class="text-base py-1">Select Practice</label>
               </div>
+              <div
+                class="text-sm font-hairline italic"
+              >(Note: Only Practice with Form A's will be listed)</div>
               <div class="relative flex flex-col py-2 mb-3 md:mb-6" v-on-clickaway="toggledOff">
                 <div class="relative flex flex-row flex-wrap justify-start w-full">
                   <input
@@ -81,10 +71,6 @@
             </div>
           </section>
         </div>
-        <!-- <div v-for="invoice in invoices" :key="invoice.id">
-          <input type="checkbox" v-model="form.items" :valu="invoice.locum_form_a_id" />
-          <div class="p-4 text-sm">{{invoice.label}}</div>
-        </div>-->
         <AppInput
           v-if="practice.value"
           v-model="form.items"
@@ -140,27 +126,6 @@ export default {
       totalJobParts: 0,
       invoices: []
     };
-  },
-  watch: {
-    // "form.type"(newValue, oldValue) {
-    //   if (newValue && oldValue) {
-    //     this.practice.label = "";
-    //     this.practice.value = null;
-    //     this.form = {
-    //       locum_user_id: this.$auth.user.id,
-    //       type: newValue,
-    //       items: []
-    //     };
-    //     this.getLists(this.items.length);
-    //   }
-    // }
-  },
-  computed: {
-    // url() {
-    //   return this.form.type === "Platform"
-    //     ? "/api/v1/locum/practices"
-    //     : "/api/v1/locum/private-practices";
-    // }
   },
   mounted() {
     this.form.locum_user_id = this.$auth.user.id;
@@ -275,22 +240,6 @@ export default {
               }
             }
           }
-
-          // if (res.data.private_practices) {
-          //   if (res.data.private_practices.length === 0) {
-          //     this.hasMore = false;
-          //   } else {
-          //     res.data.private_practices.forEach(item => {
-          //       this.items.push({
-          //         label: item.name,
-          //         value: item.id
-          //       });
-          //     });
-          //     if (res.data.private_practices.length < 10) {
-          //       this.hasMore = false;
-          //     }
-          //   }
-          // }
         })
         .catch(err => {
           console.log("err", err.response || err);

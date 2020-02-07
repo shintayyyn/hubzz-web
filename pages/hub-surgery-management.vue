@@ -9,15 +9,6 @@
 			</div>
 		</div>
 
-		<AppConfirmationModal
-			:label="'Are you sure you want to cancel your invitation?'"
-			:confirmLabel="'Yes'"
-			:cancelLabel="'Cancel'"
-			:modal="modal"
-			@confirm="remove"
-			@cancel="modal = false"
-		/>
-
 		<AppTable
 			v-if="surgeries.length > 0"
 			:total="totalSurgeries"
@@ -45,18 +36,28 @@
 				<div class="flex flex-wrap justify-center">
 					<AppButton
 						:label="'View'"
-						class="mx-1"
+						class="m-1"
 						@click="$router.push({ path: `/hub-surgery-management/${slotProps.item.id}`})"
 					/>
-					<div
+					<AppButton
 						v-if="getStatus(slotProps.item) === 'Invited' || getStatus(slotProps.item) === 'Rejected'"
+						:label="getStatus(slotProps.item) === 'Invited' ? 'Cancel Invitation' : 'Remove User'"
+						class="m-1"
+						:customTheme="'bg-red-600 hover:bg-red-700 text-white font-bold'"
 						@click="toCancelInvitation(slotProps.item.id)"
-						class="mx-1 p-2 bg-red-600 text-white font-bold rounded-lg focus:outline-none"
-					>Cancel Invitation</div>
+					/>
 				</div>
 			</template>
 		</AppTable>
 		<div v-else class="flex justify-center py-4 text-gray-500">No Branches / Surgeries</div>
+		<AppConfirmationModal
+			:label="'Are you sure you want to cancel your invitation?'"
+			:confirmLabel="'Yes'"
+			:cancelLabel="'Cancel'"
+			:modal="modal"
+			@confirm="remove"
+			@cancel="modal = false"
+		/>
 		<transition name="fade" mode="out-in">
 			<nuxt-link
 				:to="`/hub-surgery-management`"
@@ -110,8 +111,8 @@ export default {
 				{
 					name: "Surgery",
 					dataIndex: "child_practice.surgery.name",
-					class: "text-left",
-					sortable: true
+					class: "text-left"
+					// sortable: true
 				},
 				{
 					name: "Practice Code",
@@ -269,6 +270,7 @@ export default {
 			if (!this.authPermissions.includes("Delete Profile Surgeries")) {
 				return;
 			}
+			console.log(this.selectedSurgeryId, this.practice.type);
 			if (this.practice.type === "Hub") {
 				await this.$axios.$delete(
 					`/api/v1/practice/me/practice-surgeries/${this.selectedSurgeryId}`
