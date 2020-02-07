@@ -270,7 +270,8 @@ export default {
         {
           name: "Issued",
           dataIndex: "issued_at",
-          class: "text-center localDate"
+          class: "text-center localDate",
+          sortable: true
         },
         {
           name: "Invoice Number",
@@ -561,20 +562,23 @@ export default {
       switch (queryStatus && queryStatus.toLowerCase()) {
         case "to-be-invoiced":
           invoice_status.push("To Be Invoice");
+          locum_status = ["Completed", "Declined", "Cancelled"];
           locum_invoiceable = true;
           break;
         case "disputed":
           invoice_status.push("Disputed");
+          locum_status = ["Completed", "Declined", "Cancelled"];
           locum_invoiceable = true;
           break;
         case "issued":
           invoice_status.push("Invoiced");
+          locum_status = ["Completed", "Declined", "Cancelled"];
           locum_invoiceable = true;
           break;
         case "approved":
           invoice_status.push("Invoiced");
           locum_status.push("Approved");
-          locum_invoiceable = null;
+          locum_invoiceable = true;
           break;
         case "pension-form-a":
           invoice_status.push("Invoiced");
@@ -714,7 +718,8 @@ export default {
             type: "Platform",
             offset: this.offset,
             limit: this.limit,
-            job_ir35: this.job_ir35
+            job_ir35: this.job_ir35,
+            order_by: this.order_by
           }
         })
         .then(res => {
@@ -900,9 +905,6 @@ export default {
         let order = item.split(":")[1];
         let sorting = item.split(":")[0];
         switch (sorting) {
-          case "total_amount":
-            sorting = "amount";
-            break;
           default:
             sorting;
         }

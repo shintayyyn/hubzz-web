@@ -208,14 +208,12 @@ export default {
           {
             name: "Practice",
             dataIndex: "practice_name",
-            class: "text-center",
-            sortable: true
+            class: "text-center"
           },
           {
             name: "Title",
             dataIndex: "job_title",
-            class: "text-center",
-            sortable: true
+            class: "text-center"
           },
           {
             name: "Shift",
@@ -232,8 +230,7 @@ export default {
           {
             name: "per",
             dataIndex: "job.locum_detail_rate_type.name",
-            class: "text-center",
-            sortable: true
+            class: "text-center"
           }
         );
       } else if (
@@ -254,14 +251,12 @@ export default {
           {
             name: "Practice",
             dataIndex: "practice_name",
-            class: "text-center",
-            sortable: true
+            class: "text-center"
           },
           {
             name: "Title",
             dataIndex: "title",
-            class: "text-center",
-            sortable: true
+            class: "text-center"
           },
           {
             name: "Shift",
@@ -278,8 +273,7 @@ export default {
           {
             name: "per",
             dataIndex: "rate_type_name",
-            class: "text-center",
-            sortable: true
+            class: "text-center"
           }
         );
       }

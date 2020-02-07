@@ -58,7 +58,7 @@
               <svgicon name="chat" height="24" width="24" color="#888 #555 #fff" class="m-2" />
             </button>
             <button
-              v-if="user.locum_job_applied_update_accepted"
+              v-if="user.locum_job_user_appointable"
               class="focus:outline-none"
               @click.prevent="show(user.id)"
             >
