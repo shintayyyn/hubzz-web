@@ -109,7 +109,11 @@ export default {
               ),
               date_end: this.$moment(part.date_end, "YYYY-MM-DD").format(
                 "DD-MM-YYYY"
-              )
+              ),
+              locum_status:
+                part.locum_status === "Declined"
+                  ? "Withdrawn"
+                  : part.locum_status
             };
           });
           this.parts = parts;

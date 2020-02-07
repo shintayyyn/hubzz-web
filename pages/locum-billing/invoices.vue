@@ -582,7 +582,6 @@ export default {
             job_type: "Platform"
           };
       }
-      console.log(this.params);
       return Promise.all([
         this.$axios.$get(`${url}/count`, {
           params: { ...params, ...this.params }
