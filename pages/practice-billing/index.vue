@@ -39,9 +39,9 @@
           :items="job_parts"
           :loading="loading"
           :currentPage="current_page"
-          :perPage="params.limit"
+          :perPage="limit"
           :columns="columns"
-          :orderBy="params.order_by"
+          :orderBy="order_by"
           @pagechanged="pagechanged"
           @limitchanged="limitchanged"
           @sorted="sorted"
@@ -197,12 +197,12 @@ export default {
         {
           name: "Issued",
           dataIndex: "issued_at",
-          class: "text-center localDate"
+          class: "text-center localDate",
+          sortable: true
         },
         {
           name: "Invoice Number",
-          dataIndex: "invoice_number",
-          sortable: true
+          dataIndex: "invoice_number"
         },
         {
           name: "Job Number",
@@ -433,17 +433,26 @@ export default {
           invoice_status = ["To Be Invoice"];
       }
 
-      const params = {
-        status,
-        invoice_status,
-        type: "Platform",
-        job_practice_id: [this.$auth.user.practice_id]
-      };
-
       return Promise.all([
-        this.$axios.$get(`/api/v1/practice/job-parts/count`, { params }),
-        this.$axios.$get(`/api/v1/practice/job-parts?offset=0&limit=5`, {
-          params
+        this.$axios.$get(`/api/v1/practice/job-parts/count`, {
+          params: {
+            job_practice_id: [this.$auth.user.practice_id],
+            invoice_status,
+            status,
+            type: "Platform",
+            order_by: this.order_by
+          }
+        }),
+        this.$axios.$get(`/api/v1/practice/job-parts`, {
+          params: {
+            job_practice_id: [this.$auth.user.practice_id],
+            invoice_status,
+            status,
+            type: "Platform",
+            offset: 0,
+            limit: 5,
+            order_by: this.order_by
+          }
         })
       ])
         .then(([responseTotal, responseJobParts]) => {
@@ -511,16 +520,18 @@ export default {
           invoice_status = ["To Be Invoice"];
       }
 
-      const params = {
-        status,
-        invoice_status,
-        type: "Platform",
-        job_practice_id: [this.$auth.user.practice_id],
-        ...this.params
-      };
-
       return this.$axios
-        .$get(`/api/v1/practice/job-parts`, { params })
+        .$get(`/api/v1/practice/job-parts`, {
+          params: {
+            job_practice_id: [this.$auth.user.practice_id],
+            invoice_status,
+            status,
+            type: "Platform",
+            offset: this.offset,
+            limit: this.limit,
+            order_by: this.order_by
+          }
+        })
         .then(res => {
           let job_parts = res.data.job_parts;
 
@@ -557,8 +568,8 @@ export default {
     async refreshInvoices() {
       this.loading = true;
       this.current_page = 1;
-      this.params.offset = 0;
-      this.params.limit = 5;
+      this.offset = 0;
+      this.limit = 5;
       await this.getJobPartsPromiseAll();
       this.loading = false;
       this.showRefresh = false;
@@ -686,24 +697,33 @@ export default {
       }
     },
     async sorted(order_by) {
+      let orderBy = order_by.map(item => {
+        let order = item.split(":")[1];
+        let sorting = item.split(":")[0];
+        switch (sorting) {
+          default:
+            sorting;
+        }
+        return `${sorting}:${order}`;
+      });
       this.current_page = 1;
-      this.params.offset = 0;
-      this.params.order_by = order_by;
+      this.offset = 0;
+      this.order_by = orderBy;
       this.loading = true;
       await this.getJobParts();
       this.loading = false;
     },
     async pagechanged(page) {
       this.current_page = page;
-      this.params.offset = this.params.limit * (page - 1);
+      this.offset = this.limit * (page - 1);
       this.loading = true;
       await this.getJobParts();
       this.loading = false;
     },
     async limitchanged(limit) {
       this.current_page = 1;
-      this.params.offset = 0;
-      this.params.limit = limit;
+      this.offset = 0;
+      this.limit = limit;
       this.loading = true;
       await this.getJobParts();
       this.loading = false;
