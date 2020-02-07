@@ -108,10 +108,7 @@
 				</div>
 			</template>
 		</AppTable>
-		<div
-			v-else
-			class="flex justify-center py-4 text-gray-600"
-		>You do not have any other User on this Practice</div>
+		<div v-else class="flex justify-center py-4 text-gray-600">No User Found</div>
 		<transition name="fade" mode="out-in">
 			<nuxt-link
 				class="shield"
