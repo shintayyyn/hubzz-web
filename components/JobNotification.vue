@@ -293,7 +293,6 @@ export default {
           });
         }, 500);
       }
-
       this.close(id, notificationType);
     },
     close(id, type) {
