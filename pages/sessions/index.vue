@@ -427,12 +427,14 @@ export default {
           {
             name: "Practice",
             dataIndex: "practice_name",
-            class: "text-center"
+            class: "text-center",
+            sortable: true
           },
           {
             name: "Title",
             dataIndex: "job_title",
-            class: "text-center"
+            class: "text-center",
+            sortable: true
           },
           {
             name: "Shift",
@@ -449,7 +451,8 @@ export default {
           {
             name: "per",
             dataIndex: "job.locum_detail_rate_type.name",
-            class: "text-center"
+            class: "text-center",
+            sortable: true
           }
         );
       } else if (
@@ -470,12 +473,14 @@ export default {
           {
             name: "Practice",
             dataIndex: "practice_name",
-            class: "text-center"
+            class: "text-center",
+            sortable: true
           },
           {
             name: "Title",
             dataIndex: "title",
-            class: "text-center"
+            class: "text-center",
+            sortable: true
           },
           {
             name: "Shift",
@@ -492,7 +497,8 @@ export default {
           {
             name: "per",
             dataIndex: "rate_type_name",
-            class: "text-center"
+            class: "text-center",
+            sortable: true
           }
         );
       }
@@ -1328,7 +1334,10 @@ export default {
             sorting = "calendar_date_end";
             break;
           case "job.rate":
-            sorting = "rate";
+            sorting = "job_rate";
+            break;
+          case "job.locum_detail_rate_type.name":
+            sorting = "job_rate_type_name";
             break;
           default:
             sorting;
@@ -1339,7 +1348,6 @@ export default {
       this.offset = 0;
       this.order_by = orderBy;
       this.loading = true;
-      console.log(orderBy);
       await this.getJobs();
       this.loading = false;
     },
@@ -1372,7 +1380,9 @@ export default {
       this.job_practice_id = "";
       this.shift_id = "";
       this.job_shift_id = "";
+      this.rate = "";
       this.job_rate = "";
+      this.rate_type_id = "";
       this.job_rate_type_id = "";
       this.near_post_code = "";
       this.miles = "";
@@ -1386,7 +1396,6 @@ export default {
       this.job_title_includes = "";
       this.job_number_includes = "";
       this.job_part_number_includes = "";
-      this.filterJob();
     }
   }
 };

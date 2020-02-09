@@ -96,10 +96,9 @@ export default {
       .then(res => {
         this.spokePracticeId =
           res.data &&
-          res.data.data &&
-          res.data.data.practice_surgery &&
-          res.data.data.practice_surgery.child_practice_id
-            ? res.data.data.practice_surgery.child_practice_id
+          res.data.practice_surgery &&
+          res.data.practice_surgery.child_practice_id
+            ? res.data.practice_surgery.child_practice_id
             : null;
       }),
       this.$axios.$get(`/api/v1/shifts`).then(res => {
