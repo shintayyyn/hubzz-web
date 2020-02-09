@@ -184,7 +184,6 @@ export default {
     }
   },
   mounted() {
-    console.log(this.payrollDetails.ir35);
     this.form.employment_type = this.payrollDetails.employment_type;
     this.form.company_registration_number = this.payrollDetails.company_registration_number;
     this.form.utr_number = this.payrollDetails.utr_number;

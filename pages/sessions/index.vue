@@ -967,7 +967,6 @@ export default {
           this.jobs =
             responseJobs.data && responseJobs.data.jobs
               ? responseJobs.data.jobs.map(item => {
-                  console.log(item);
                   return {
                     ...item,
                     assigned_to: item.platform_job.appointed_to_locum.user
@@ -1052,11 +1051,9 @@ export default {
           }
         })
         .then(res => {
-          console.log(res.data.jobs);
           this.jobs =
             res.data && res.data.jobs
               ? res.data.jobs.map(item => {
-                  console.log(item);
                   return {
                     ...item,
                     assigned_to: item.platform_job.appointed_to_locum.user
@@ -1330,7 +1327,7 @@ export default {
           case "calendar_date_end":
             sorting = "calendar_date_end";
             break;
-          case "rate_name":
+          case "job.rate":
             sorting = "rate";
             break;
           default:
@@ -1342,6 +1339,7 @@ export default {
       this.offset = 0;
       this.order_by = orderBy;
       this.loading = true;
+      console.log(orderBy);
       await this.getJobs();
       this.loading = false;
     },
