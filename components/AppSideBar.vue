@@ -83,6 +83,7 @@ export default {
     }
   },
   mounted() {
+    this.getInit();
     if (this.$auth.loggedIn && this.$auth.user.domain === "Pratice") {
       this.$axios
         .$get(`/api/v1/practice/me/parent-surgery/invitations-count`)
@@ -92,7 +93,6 @@ export default {
           }
         })
         .finally(() => {
-          this.getInit();
           this.$socket.on(
             "Practice Notification Update Profile",
             this.updatePermissions
