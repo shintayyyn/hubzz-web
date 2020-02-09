@@ -41,7 +41,7 @@
           />
           <AppButton
             v-if="getStatus(slotProps.item) === 'Invited' || getStatus(slotProps.item) === 'Rejected'"
-            :label="getStatus(slotProps.item) === 'Invited' ? 'Cancel Invitation' : 'Remove User'"
+            :label="getStatus(slotProps.item) === 'Invited' ? 'Cancel Invitation' : 'Remove'"
             class="m-1"
             :customTheme="'bg-red-600 hover:bg-red-700 text-white font-bold'"
             @click="toCancelInvitation(slotProps.item.id)"
@@ -274,18 +274,26 @@ export default {
       if (this.practice.type === "Hub") {
         await this.$axios.$delete(
           `/api/v1/practice/me/practice-surgeries/${this.selectedSurgeryId}`
-        );
+        ).then(res => {
+          this.loading = false;
+          this.surgeries = this.surgeries.filter(
+            surgery => surgery.id !== this.selectedSurgeryId
+          );
+          this.modal = false;
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "success",
+            text: ["Invitation Successfully Deleted"]
+          });
+        }).catch((err)=>{
+          this.$store.commit("SET_NOTIFICATION", {
+            enabled: true,
+            status: "danger",
+            text: [err.response.data.message]
+          });
+        });
       }
-      this.loading = false;
-      this.surgeries = this.surgeries.filter(
-        surgery => surgery.id !== this.selectedSurgeryId
-      );
-      this.modal = false;
-      this.$store.commit("SET_NOTIFICATION", {
-        enabled: true,
-        status: "success",
-        text: ["Invitation Successfully Deleted"]
-      });
+      
     },
     show(item) {
       if (this.authPermissions.includes("Show Profile Surgeries")) {
