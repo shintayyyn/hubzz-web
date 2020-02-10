@@ -475,7 +475,12 @@
         </div>
       </div>
       <div class="mb-8">
-        <AppButton :label="'Save changes'" :inStyle="'padding:8px'" @click="validateUpdate" />
+        <AppButton
+          :label="'Save changes'"
+          :inStyle="'padding:8px'"
+          @click="validateUpdate"
+          :disabled="loading"
+        />
       </div>
     </div>
     <AppConfirmationModal
@@ -539,6 +544,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       modal: false,
 
       professionCategoryId: "",
@@ -1033,8 +1039,6 @@ export default {
       this.validateNumber(this.form.rate, "rate");
       this.validateNumber(this.form.total_hours, "total_hours");
       this.Validate(this.form, notRequired);
-      console.log(this.form);
-      console.log(this.formError);
       if (!this.formError.length) {
         this.selectedClinicalSystem = [...this.form.clinical_system_id];
         this.form.clinical_system_id = this.form.clinical_system_id.map(
@@ -1108,7 +1112,7 @@ export default {
         if (["false", false].includes(this.unpaid_breaks)) {
           this.form.unpaid_breaks_in_minutes = "";
         }
-
+        this.loading = true;
         this.$axios
           .$put(`/api/v1/practice/jobs/${this.job.id}`, this.form)
           .then(res => {
@@ -1150,6 +1154,9 @@ export default {
               this.formError = err.response.data.error_messages;
             }
             throw err;
+          })
+          .finally(() => {
+            this.loading = false;
           });
       } else {
         this.$nextTick(() => {

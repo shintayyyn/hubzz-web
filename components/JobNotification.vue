@@ -221,6 +221,9 @@ export default {
           case "Available":
             routeStatus = "Public";
             break;
+          case "Matched":
+            routeStatus = "Available";
+            break;
           case "Updated":
             routeStatus = null;
             break;
