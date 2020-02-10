@@ -43,9 +43,7 @@
 							</div>
 							<div class="leading-tight pb-2">
 								<p class="font-bold text-sm sm:text-md">Date of Withdrawal</p>
-								<p
-									class="text-xs sm:text-sm"
-								>{{ $moment(job_part.job.platform_job.declined_at).format('YYYY-MM-DD | HH:MM')}}</p>
+								<p class="text-xs sm:text-sm">{{ job_part.job.platform_job.declined_at | localDate}}</p>
 							</div>
 						</div>
 						<SessionPartDetailModalInfo :job_part="job_part" />
