@@ -4,7 +4,7 @@
       <!-- save buttons -->
       <div class="flex flex-wrap items-center">
         <AppButton
-          v-if="propJobPart || (propInvoice && propInvoice.status !== 'Approved')"
+          v-if="propJobPart || (propInvoice && !['Approved','Paid'].includes(propInvoice.status))"
           class="m-1"
           :label="'Save changes'"
           @click="save(false)"

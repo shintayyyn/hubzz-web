@@ -589,6 +589,8 @@ export default {
           break;
         default:
           invoice_status.push("To Be Invoice");
+          locum_status = ["Completed", "Declined", "Cancelled"];
+          locum_invoiceable = true;
       }
       return Promise.all([
         this.$axios.$get(`${url}/count`, {
