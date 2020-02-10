@@ -321,10 +321,6 @@ export default {
       );
     });
 
-    console.log(this.form.qualification_id);
-    console.log(this.form.clinical_system_id);
-    console.log(this.form.spoken_language_id);
-
     this.form.min_rate_per_hour = this.professionalDetails.min_rate_per_hour;
     this.form.max_rate_per_hour = this.professionalDetails.max_rate_per_hour;
     this.form.min_rate_per_half_day_session = this.professionalDetails.min_rate_per_half_day_session;
