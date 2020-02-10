@@ -43,9 +43,7 @@
               </div>
               <div class="leading-tight pb-2">
                 <p class="font-bold text-sm sm:text-md">Date of Withdrawal</p>
-                <p
-                  class="text-xs sm:text-sm"
-                >{{ $moment(job_part.job.platform_job.declined_at).format('YYYY-MM-DD | HH:MM')}}</p>
+                <p class="text-xs sm:text-sm">{{ job_part.job.platform_job.declined_at | localDate}}</p>
               </div>
             </div>
             <SessionPartDetailModalInfo :job_part="job_part" />
@@ -57,7 +55,7 @@
             <SessionDetailModalCancelForm
               :job="job_part.job"
               @cancelled="$emit('close')"
-              v-if="['Allocated','Ongoing','Applied','Live'].includes(job_part.status) && authPermissions.includes('Cancel Sessions Job')"
+              v-if="(job_part.job.status === 'Allocated' || job_part.job.status === 'Ongoing' || job_part.job.status === 'Applied' || job_part.job.status === 'Live') && authPermissions.includes('Cancel Sessions Job')"
             />
           </div>
         </div>
