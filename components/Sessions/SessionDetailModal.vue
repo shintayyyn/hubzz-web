@@ -196,7 +196,7 @@ export default {
       this.$axios
         .$put(`/api/v1/practice/jobs/${this.job.id}/approve`)
         .then(res => {
-          console.log("it worked");
+          console.log(res);
         });
     },
     status(status) {
@@ -221,8 +221,13 @@ export default {
     repost() {
       this.$emit("close");
       setTimeout(() => {
-        this.$store.commit("calendar/SET_REPOST_JOB", this.job);
-        this.$store.commit("calendar/CREATE_JOB_MODAL", true);
+        if (this.$route.name.includes("hub-surgery-management")) {
+          this.$store.commit("calendar/SET_REPOST_JOB", this.job);
+          this.$store.commit("calendar/CREATE_JOB_SURGERY_MODAL", true);
+        } else if (this.$route.name.includes("sessions")) {
+          this.$store.commit("calendar/SET_REPOST_JOB", this.job);
+          this.$store.commit("calendar/CREATE_JOB_MODAL", true);
+        }
       }, 500);
     }
   }
