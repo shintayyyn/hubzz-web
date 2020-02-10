@@ -233,16 +233,15 @@ export default {
     };
   },
   computed: {
-    // ir35() {
-    //   return true;
-    //   if (!this.invoice_id) {
-    //     return false;
-    //   }
-    //   let selectedInvoice = this.job_parts.find(
-    //     item => item.locum_invoice_id === this.invoice_id
-    //   );
-    //   return selectedInvoice.job_ir35 ? selectedInvoice.job_ir35 : false;
-    // },
+    ir35() {
+      if (!this.invoice_id) {
+        return false;
+      }
+      let selectedInvoice = this.job_parts.find(
+        item => item.locum_invoice_id === this.invoice_id
+      );
+      return selectedInvoice.job_ir35 ? selectedInvoice.job_ir35 : false;
+    },
     authPermissions() {
       return this.$store.getters["permissions"];
     },
