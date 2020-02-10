@@ -165,10 +165,9 @@ export default {
       let status = notification.status
         ? notification.status
         : notification.locum_status;
-      // let status = jobStatus === "Withdrawn" ? "Declined" : jobStatus;
       let dateStart = notification.date_start;
       let dateEnd = notification.date_end;
-      let notificationType = notification.type;
+      let notificationType = notification.notification_type;
 
       if (this.$route.path.includes("/dashboard")) {
         let selectedMonth =
@@ -241,7 +240,7 @@ export default {
         // console.log(id, url, status, routeStatus);
         // return;
         if (status === "Pending") {
-          this.close(id, notificationType);
+          this.close(id, type);
           return;
         }
         if (this.$route.name.includes("surgery-management")) {
@@ -298,12 +297,55 @@ export default {
           });
         }, 500);
       }
-      this.close(id, notificationType);
+      this.close(id, type, notificationType);
     },
-    close(id, type) {
+    close(id, type, notificationType) {
       if (type === "Jobs") {
-        this.$store.commit("jobs/REMOVE_PRACTICE_JOB_NOTIFICATION", id);
-        this.$store.commit("jobs/REMOVE_LOCUM_JOB_NOTIFICATION", id);
+        if (
+          [
+            "Practice Notification Job Ongoing",
+            "Practice Notification Job Cancelled",
+            "Practice Notification Job Declined"
+          ].includes(notificationType)
+        ) {
+          switch (notificationType) {
+            case "Practice Notification Job Ongoing":
+              this.$store.commit(
+                "jobs/REMOVE_PRACTICE_JOB_NOTIFICATION",
+                this.$store.state.jobs.practice_job_notifications.find(notif =>
+                  notif.job_parts.find(jobPart => jobPart.status === "Ongoing")
+                ).id
+              );
+              break;
+            case "Practice Notification Job Cancelled":
+              this.$store.commit(
+                "jobs/REMOVE_PRACTICE_JOB_NOTIFICATION",
+                this.$store.state.jobs.practice_job_notifications.find(notif =>
+                  notif.job_parts.find(
+                    jobPart => jobPart.status === "Cancelled"
+                  )
+                ).id
+              );
+              break;
+            case "Practice Notification Job Declined":
+              this.$store.commit(
+                "jobs/REMOVE_PRACTICE_JOB_NOTIFICATION",
+                this.$store.state.jobs.practice_job_notifications.find(notif =>
+                  notif.job_parts.find(jobPart => jobPart.status === "Declined")
+                ).id
+              );
+              break;
+          }
+        } else if (
+          ![
+            "Practice Notification Job Ongoing",
+            "Practice Notification Job Cancelled",
+            "Practice Notification Job Declined"
+          ].includes(notificationType)
+        ) {
+          this.$store.commit("jobs/REMOVE_PRACTICE_JOB_NOTIFICATION", id);
+          this.$store.commit("jobs/REMOVE_LOCUM_JOB_NOTIFICATION", id);
+        }
       }
       if (type === "Billings") {
         this.$store.commit("billing/REMOVE_PRACTICE_BILLING_NOTIFICATION", id);

@@ -75,11 +75,25 @@ export default {
                     message = 'This job is unfilled.'
                     break;
             }
-            let id = ['Practice Notification Job Ongoing', 'Practice Notification Job Cancelled', 'Practice Notification Job Declined'].includes(notif.notificationType) ? notif.job_parts[0].id : notif.id
+
+            let id = null
+            switch (notif.notificationType) {
+                case 'Practice Notification Job Ongoing':
+                    id = notif.job_parts.find(item => item.status === 'Ongoing').id
+                    break;
+                case 'Practice Notification Job Cancelled':
+                    id = notif.job_parts.find(item => item.status === 'Cancelled').id
+                    break;
+                case 'Practice Notification Job Declined':
+                    id = notif.job_parts.find(item => item.status === 'Declined').id
+                    break;
+                default:
+                    id = notif.id
+            }
             notifObj = {
                 id,
                 title: notif.title ? notif.title : notif.job.title,
-                status: notif.status === 'Declined' ? 'Withdrawn' : notif.status === 'Cancelled' && notif.appointed_to_locum_user_id ? 'Terminated' : notif.status,
+                status: notif.status === 'Declined' ? 'Withdrawn' : notif.status,
                 billingStatus: ['Practice Notification Job Approved', 'Practice Notification Job Disputed'].includes(notif.notificationType) ? notif.notificationType === 'Practice Notification Job Approved' ? 'Approved' : 'Disputed' : null,
                 date_start: notif.date_start,
                 date_end: notif.date_end,
