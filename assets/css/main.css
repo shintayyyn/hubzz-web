@@ -332,8 +332,14 @@ input[type="checkbox"]:disabled + label {
 	cursor: not-allowed;
 }
 
-input[type="checkbox"]:disabled + label::before {
-	background: #ebebe4;
+input[type="checkbox"]:disabled:checked + label::before {
+	background: #e7bf2d;
+}
+
+input[type="checkbox"]:disabled + label:after {
+	background: white;
+	box-shadow: 2px 0 0 white, 4px 0 0 white, 4px -2px 0 white, 4px -4px 0 white,
+		4px -6px 0 white, 4px -8px 0 white;
 }
 
 /* Customized Select Dropdown */
