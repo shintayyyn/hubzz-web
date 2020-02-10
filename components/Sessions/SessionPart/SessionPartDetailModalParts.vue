@@ -96,7 +96,7 @@ export default {
         this.$axios.$get(`/api/v1/practice/job-parts/count`, {
           params: this.params
         }),
-        this.$axios.$get(`/api/v1/practice/job-parts?offset=0&limit=5`, {
+        this.$axios.$get(`/api/v1/practice/job-parts`, {
           params: this.params
         })
       ])
