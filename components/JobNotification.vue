@@ -139,16 +139,6 @@ export default {
     }
   },
   methods: {
-    removeStatus() {
-      return this.$router.push({
-        path: this.$route.path
-      });
-    },
-    removeParams() {
-      return this.$router.push({
-        path: this.$route.matched[0].path
-      });
-    },
     show(id) {
       return this.$router.push({
         path: `${this.url}/${id}`
