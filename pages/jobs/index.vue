@@ -497,10 +497,14 @@ export default {
         case "cancelled":
         case "withdrawn":
         case "approved":
+        case "private":
           return `You do not have any ${queryStatus} jobs`;
         case "available":
         case "matched":
           return `There are no ${queryStatus} jobs nearby and suited for you at this time`;
+        case "public":
+        case "bank":
+          return `There are no available jobs nearby and suited for you at this time`;
         case "applied":
         case "unsuccessful":
           return `You have not yet ${
@@ -508,6 +512,7 @@ export default {
           } for a job`;
         case "completed":
           return "You have not yet completed any job";
+        
         default:
           return "You do not have any allocated jobs";
       }

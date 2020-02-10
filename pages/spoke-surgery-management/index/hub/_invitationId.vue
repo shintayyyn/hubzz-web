@@ -133,7 +133,10 @@
 		</div>
 
 		<!-- Buttons -->
-		<div v-if="!specificInvitation.invitation_accepted_at && !specificInvitation.invitation_rejected_at" class="flex my-6">
+		<div
+			v-if="!specificInvitation.invitation_accepted_at && !specificInvitation.invitation_rejected_at"
+			class="flex my-6"
+		>
 			<AppButton
 				:label="'Accept'"
 				@click="confirmAccept = true"
