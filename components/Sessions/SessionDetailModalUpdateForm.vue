@@ -291,6 +291,8 @@
             :name="'auto_assign_job'"
             :label="'Use AUTO-MATCH on this Job?'"
             :items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
+            :inStyle="job.status === 'Allocated' ? 'background-color:lightgray' : ''"
+            :disabled="job.status === 'Allocated'"
           />
 
           <template v-if="['false', false].includes(auto_assign_job)">
@@ -300,6 +302,8 @@
               :name="'selection_notification'"
               :label="'Add a selection date?'"
               :items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
+              :inStyle="job.status === 'Allocated' ? 'background-color:lightgray' : ''"
+              :disabled="job.status === 'Allocated'"
             />
             <div
               class="flex flex-row flex-wrap justify-between"
@@ -307,7 +311,13 @@
             >
               <div>Selection will be made and you will receive a notification by this date</div>
               <div class="px-1 w-full md:w-1/2">
-                <AppDate v-model="selection_date.date" :name="'selection_date'" :label="'Date'" />
+                <AppDate
+                  v-model="selection_date.date"
+                  :name="'selection_date'"
+                  :label="'Date'"
+                  :inStyle="job.status === 'Allocated' ? 'background-color:lightgray' : ''"
+                  :disabled="job.status === 'Allocated'"
+                />
               </div>
               <div class="px-1 w-full md:w-1/2">
                 <AppTime
@@ -316,6 +326,8 @@
                   :name="'time_end'"
                   :label="'Time'"
                   :error="formError.find(item => item.field === 'selection_date')"
+                  :inStyle="job.status === 'Allocated' ? 'background-color:lightgray' : ''"
+                  :disabled="job.status === 'Allocated'"
                 />
               </div>
             </div>
@@ -327,6 +339,8 @@
             :name="'bank_only'"
             :label="'Make this Job available for Bank Only?'"
             :items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
+            :inStyle="job.status === 'Allocated' ? 'background-color:lightgray' : ''"
+            :disabled="job.status === 'Allocated'"
           />
 
           <template v-if="['false', false].includes(bank_only)">
@@ -336,6 +350,8 @@
               :name="'bank_first'"
               :label="'Make this Job available for Bank First?'"
               :items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
+              :inStyle="job.status === 'Allocated' ? 'background-color:lightgray' : ''"
+              :disabled="job.status === 'Allocated'"
             />
             <div
               class="flex flex-row flex-wrap justify-between"
@@ -347,6 +363,8 @@
                   v-model="favorite_only_until.date"
                   :name="'favorite_only_until'"
                   :label="'Date'"
+                  :inStyle="job.status === 'Allocated' ? 'background-color:lightgray' : ''"
+                  :disabled="job.status === 'Allocated'"
                 />
               </div>
               <div class="px-1 w-full md:w-1/2">
@@ -356,6 +374,8 @@
                   :name="'time_end'"
                   :label="'Time'"
                   :error="formError.find(item => item.field === 'favorite_only_until')"
+                  :inStyle="job.status === 'Allocated' ? 'background-color:lightgray' : ''"
+                  :disabled="job.status === 'Allocated'"
                 />
               </div>
             </div>
@@ -367,6 +387,8 @@
             :name="'ir35'"
             :label="'IR35 - role inside or outside of scope'"
             :items="[ {value: true, label: 'Inside of Scope'}, {value: false, label: 'Outside of Scope'} ]"
+            :inStyle="job.status === 'Allocated' ? 'background-color:lightgray' : ''"
+            :disabled="job.status === 'Allocated'"
           />
 
           <AppInput
@@ -375,6 +397,8 @@
             :name="'profession_id'"
             :label="'Role'"
             :items="professions"
+            :inStyle="job.status === 'Allocated' ? 'background-color:lightgray' : ''"
+            :disabled="job.status === 'Allocated'"
           />
 
           <AppFilterSearch
@@ -388,8 +412,9 @@
             @add="CheckEmptyField(form.qualification_id, 'qualification_id')"
             @remove="CheckEmptyField(form.qualification_id, 'qualification_id')"
             :professionCategoryId="selectedProfessionCategoryId"
+            :inStyle="job.status === 'Allocated' ? 'background-color:lightgray' : ''"
+            :disabled="job.status === 'Allocated'"
           />
-          <!-- :professionCategoryId="professionCategoryId.toString()" -->
 
           <AppFilterSearch
             v-model="form.clinical_system_id"
@@ -401,6 +426,8 @@
             :url="'/api/v1/clinical-systems'"
             @add="CheckEmptyField(form.clinical_system_id, 'clinical_system_id')"
             @remove="CheckEmptyField(form.clinical_system_id, 'clinical_system_id')"
+            :inStyle="job.status === 'Allocated' ? 'background-color:lightgray' : ''"
+            :disabled="job.status === 'Allocated'"
           />
           <AppFilterSearch
             v-model="form.spoken_language_id"
@@ -410,18 +437,21 @@
             :info="'Choose other languages you can speak'"
             :url="'/api/v1/spoken-languages'"
             :defaultItem="'English'"
+            :inStyle="job.status === 'Allocated' ? 'background-color:lightgray' : ''"
+            :disabled="job.status === 'Allocated'"
           />
 
           <div class="font-bold text-sm sm:text-md">Compliance requirements</div>
           <AppInput
             v-model="form.compliance_document_id"
             :type="'multi-checkbox'"
-            @checked="form.compliance_document_id.push($event)"
-            @unchecked="form.compliance_document_id.splice(form.compliance_document_id.findIndex(item => item === $event), 1)"
+            @checked="job.status === 'Allocated' ? '' : form.compliance_document_id.push($event)"
+            @unchecked="job.status === 'Allocated' ? '' : form.compliance_document_id.splice(form.compliance_document_id.findIndex(item => item === $event), 1)"
             :name="'compliance_document_id'"
             :label="`${selectedProfession.profession_category.id === 1 ? 'For GPs:' : selectedProfession.profession_category.id === 2 ? 'For Nurses, et al:' : ''}`"
             :placeholder="''"
             :lists="compliances"
+            :disabled="job.status === 'Allocated'"
           />
           <div class="font-bold text-sm sm:text-md">Mandatory trainings</div>
           <AppInput
@@ -445,7 +475,12 @@
         </div>
       </div>
       <div class="mb-8">
-        <AppButton :label="'Save changes'" :inStyle="'padding:8px'" @click="validateUpdate" />
+        <AppButton
+          :label="'Save changes'"
+          :inStyle="'padding:8px'"
+          @click="validateUpdate"
+          :disabled="loading"
+        />
       </div>
     </div>
     <AppConfirmationModal
@@ -509,6 +544,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       modal: false,
 
       professionCategoryId: "",
@@ -640,7 +676,7 @@ export default {
     },
     "form.total_hours"(oldValue, value) {
       this.validateNumber(this.form.total_hours, "total_hours");
-    },
+    }
   },
   computed: {
     authPermissions() {
@@ -860,7 +896,7 @@ export default {
   },
   methods: {
     goToProfile() {
-      window.open("/profile", "_blank")
+      window.open("/profile", "_blank");
     },
     getListofDays(days) {
       if (days.includes(6) && days.length > 1) {
@@ -896,23 +932,23 @@ export default {
       );
     },
     validateNumber(value, fieldName) {
-			let displayFieldName =
-				fieldName.charAt(0).toUpperCase() +
-				fieldName.slice(1).replace(/_/g, " ");
-			let index = this.formError.findIndex(item => item.field === fieldName);
-			if (
-				parseInt(value) < 1 ||
-				value.toString().includes("e") ||
-				value === ""
-			) {
-				this.formError.push({
-					field: fieldName,
-					message: `${displayFieldName} is invalid`
-				});
-			} else {
-				this.formError.splice(index, 1);
-			}
-		},
+      let displayFieldName =
+        fieldName.charAt(0).toUpperCase() +
+        fieldName.slice(1).replace(/_/g, " ");
+      let index = this.formError.findIndex(item => item.field === fieldName);
+      if (
+        parseInt(value) < 1 ||
+        value.toString().includes("e") ||
+        value === ""
+      ) {
+        this.formError.push({
+          field: fieldName,
+          message: `${displayFieldName} is invalid`
+        });
+      } else {
+        this.formError.splice(index, 1);
+      }
+    },
     validateUpdate() {
       if (this.job.status === "Applied") {
         this.modal = true;
@@ -968,8 +1004,8 @@ export default {
         ["15", 15, "30", 30, "60", 60, false, "false"].includes(
           this.unpaid_breaks
         )
-        ) {
-          notRequired.push("unpaid_breaks_in_minutes");
+      ) {
+        notRequired.push("unpaid_breaks_in_minutes");
       }
 
       if (["true", true].includes(this.auto_assign_job)) {
@@ -982,8 +1018,8 @@ export default {
         ["true", true].includes(this.selection_notification) &&
         this.selection_date.date &&
         this.selection_date.time
-        ) {
-          notRequired.push("selection_date");
+      ) {
+        notRequired.push("selection_date");
       }
 
       if (["true", true].includes(this.bank_only)) {
@@ -1003,8 +1039,6 @@ export default {
       this.validateNumber(this.form.rate, "rate");
       this.validateNumber(this.form.total_hours, "total_hours");
       this.Validate(this.form, notRequired);
-      console.log(this.form);
-      console.log(this.formError);
       if (!this.formError.length) {
         this.selectedClinicalSystem = [...this.form.clinical_system_id];
         this.form.clinical_system_id = this.form.clinical_system_id.map(
@@ -1078,7 +1112,7 @@ export default {
         if (["false", false].includes(this.unpaid_breaks)) {
           this.form.unpaid_breaks_in_minutes = "";
         }
-
+        this.loading = true;
         this.$axios
           .$put(`/api/v1/practice/jobs/${this.job.id}`, this.form)
           .then(res => {
@@ -1120,6 +1154,9 @@ export default {
               this.formError = err.response.data.error_messages;
             }
             throw err;
+          })
+          .finally(() => {
+            this.loading = false;
           });
       } else {
         this.$nextTick(() => {

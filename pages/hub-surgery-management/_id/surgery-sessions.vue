@@ -75,13 +75,27 @@
     <div class="mt-5">
       <nuxt-child :shifts="shifts" :rates="rates" :spokePracticeId="spokePracticeId" />
     </div>
+    <transition name="shield" mode="out-in">
+      <div class="shield" v-if="create_job_surgery_modal" @click="close"></div>
+    </transition>
+    <transition name="slide" mode="out-in">
+      <template v-if="create_job_surgery_modal">
+        <div class="modal-container shadow-lg">
+          <CreateJobModal :job="repost_job" />
+        </div>
+      </template>
+    </transition>
   </section>
 </template>
 <script>
+import CreateJobModal from "@/components/CreateJobModal";
 export default {
   transition: {
     name: "fade",
     mode: "out-in"
+  },
+  components: {
+    CreateJobModal
   },
   data() {
     return {
@@ -90,16 +104,23 @@ export default {
       spokePracticeId: null
     };
   },
+  computed: {
+    create_job_surgery_modal() {
+      return this.$store.state.calendar.create_job_surgery_modal;
+    },
+    repost_job() {
+      return this.$store.state.calendar.repost_job;
+    }
+  },
   created() {
     this.$axios
       .$get(`/api/v1/practice/me/practice-surgeries/${this.$route.params.id}`)
       .then(res => {
         this.spokePracticeId =
           res.data &&
-          res.data.data &&
-          res.data.data.practice_surgery &&
-          res.data.data.practice_surgery.child_practice_id
-            ? res.data.data.practice_surgery.child_practice_id
+          res.data.practice_surgery &&
+          res.data.practice_surgery.child_practice_id
+            ? res.data.practice_surgery.child_practice_id
             : null;
       }),
       this.$axios.$get(`/api/v1/shifts`).then(res => {
@@ -116,7 +137,25 @@ export default {
         this.rates.push({ label: item.name, value: item.id });
       });
     });
+  },
+  methods: {
+    close() {
+      this.$store.commit("calendar/CREATE_JOB_SURGERY_MODAL", false);
+    }
   }
 };
 </script>
+<style scoped>
+.shield {
+  z-index: 600;
+}
+.modal-container {
+  z-index: 601;
+}
+@media (min-width: 1200px) {
+  .modal-container {
+    width: 70%;
+  }
+}
+</style>
 

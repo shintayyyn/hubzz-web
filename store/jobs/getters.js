@@ -1,3 +1,5 @@
+import moment from 'moment'
+
 export default {
     // practice
     // NOTIF
@@ -6,19 +8,28 @@ export default {
         state.practice_job_notifications.forEach(notif => {
             let message = ''
             let notifObj = null
+            let days =
+                moment(`${notif.date_start} ${notif.time_start}`, 'YYYY-MM-DD HH:mm')
+                    .diff(moment().utc().format('YYYY-MM-DD HH:mm'), 'days')
+
+            let hours =
+                moment(`${notif.date_start} ${notif.time_start}`, 'YYYY-MM-DD HH:mm')
+                    .diff(moment().utc().format('YYYY-MM-DD HH:mm'), 'hours')
+
+            let minutes =
+                moment(`${notif.date_start} ${notif.time_start}`, 'YYYY-MM-DD HH:mm')
+                    .diff(moment().utc().format('YYYY-MM-DD HH:mm'), 'minutes')
+
             switch (notif.notificationType) {
                 case 'Practice Notification Job Reminder':
-                    if (notif.job_reminded_in_1_hours === true) {
-                        message = 'This Job will start in 1 hour.'
-                    }
-                    else if (notif.job_reminded_in_3_hours === true) {
-                        message = 'This Job will start in 3 hours.'
-                    }
-                    else if (notif.job_reminded_in_1_days === true) {
-                        message = 'This Job will start tomorrow.'
-                    }
-                    else if (notif.job_reminded_in_3_days === true) {
-                        message = 'This Job will start in 3 days.'
+                    if (days > 0) {
+                        message = `This Job will start in ${days} days.`
+                    } else if (days <= 0 && hours > 0) {
+                        message = `This Job will start in ${hours} hours.`
+                    } else if (hours <= 0 && minutes > 0) {
+                        message = `This Job will start in ${minutes} minute${minutes === 1 ? '' : 's'}.`
+                    } else {
+                        message = `This Job will start later.`
                     }
                     break;
                 case 'Practice Notification Job Available':
@@ -58,28 +69,39 @@ export default {
                     message = 'The locum accepted your changes on this job.'
                     break;
                 case 'Practice Notification Job Unfilled Warning':
-                    if (notif.job_unfilled_warned_in_1_hours === true) {
-                        message = 'This Job will be unfilled soon.'
-                    }
-                    else if (notif.job_unfilled_warned_in_3_hours === true) {
-                        message = 'This Job will be unfilled in 3 hours.'
-                    }
-                    else if (notif.job_unfilled_warned_in_1_days === true) {
-                        message = 'This Job will be unfilled tomorrow.'
-                    }
-                    else if (notif.job_unfilled_warned_in_3_days === true) {
-                        message = 'This Job will be unfilled in 3 days.'
+                    if (days > 0) {
+                        message = `This Job will start in ${days} days.`
+                    } else if (days <= 0 && hours > 0) {
+                        message = `This Job will start in ${hours} hours.`
+                    } else if (hours <= 0 && minutes > 0) {
+                        message = `This Job will start in ${minutes} minute${minutes === 1 ? '' : 's'}.`
+                    } else {
+                        message = `This Job will start later.`
                     }
                     break;
                 case 'Practice Notification Job Unfilled':
                     message = 'This job is unfilled.'
                     break;
             }
-            let id = ['Practice Notification Job Ongoing', 'Practice Notification Job Cancelled', 'Practice Notification Job Declined'].includes(notif.notificationType) ? notif.job_parts[0].id : notif.id
+
+            let id = null
+            switch (notif.notificationType) {
+                case 'Practice Notification Job Ongoing':
+                    id = notif.job_parts.find(item => item.status === 'Ongoing').id
+                    break;
+                case 'Practice Notification Job Cancelled':
+                    id = notif.job_parts.find(item => item.status === 'Cancelled').id
+                    break;
+                case 'Practice Notification Job Declined':
+                    id = notif.job_parts.find(item => item.status === 'Declined').id
+                    break;
+                default:
+                    id = notif.id
+            }
             notifObj = {
                 id,
                 title: notif.title ? notif.title : notif.job.title,
-                status: notif.status === 'Declined' ? 'Withdrawn' : notif.status === 'Cancelled' && notif.appointed_to_locum_user_id ? 'Terminated' : notif.status,
+                status: notif.status === 'Declined' ? 'Withdrawn' : notif.status,
                 billingStatus: ['Practice Notification Job Approved', 'Practice Notification Job Disputed'].includes(notif.notificationType) ? notif.notificationType === 'Practice Notification Job Approved' ? 'Approved' : 'Disputed' : null,
                 date_start: notif.date_start,
                 date_end: notif.date_end,
@@ -483,65 +505,6 @@ export default {
         }
         return []
     },
-    // getPracticeCancelledJobs(state) {
-    //     let jobs = []
-    //     if (state.practice_cancelled_jobs) {
-    //         state.practice_cancelled_jobs.forEach(job => {
-    //             let surgery_name = ''
-    //             let date_time_start = ''
-    //             let date_time_end = ''
-    //             let rate_name = ''
-    //             let rate_type_name = ''
-    //             let shift_name = ''
-    //             surgery_name = job.type === 'Platform' ? job.platform_job.practice.name : job.private_job.private_practice.name
-    //             date_time_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
-    //             date_time_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
-    //             rate_name = job.rate
-    //             rate_type_name = job.locum_detail_rate_type.name
-    //             shift_name = job.shift.name
-    //             jobs.push({
-    //                 ...job,
-    //                 surgery_name,
-    //                 date_time_start,
-    //                 date_time_end,
-    //                 rate_name,
-    //                 rate_type_name,
-    //                 shift_name,
-    //             })
-    //         })
-    //         return jobs
-    //     }
-    //     return []
-    // },
-    // getPracticeWithdrawnJobs(state) {
-    //     let jobs = []
-    //     if (state.practice_withdrawn_jobs) {
-    //         state.practice_withdrawn_jobs.forEach(job => {
-    //             let surgery_name = ''
-    //             let date_time_start = ''
-    //             let date_time_end = ''
-    //             let rate_name = ''
-    //             let rate_type_name = ''
-    //             let shift_name = ''
-    //             surgery_name = job.type === 'Platform' ? job.platform_job.practice.name : job.private_job.private_practice.name
-    //             date_time_start = job.time_start ? `${job.date_start} | ${job.time_start}` : job.date_start
-    //             date_time_end = job.time_end ? `${job.date_end} | ${job.time_end}` : job.date_end
-    //             rate_name = job.rate
-    //             rate_type_name = job.locum_detail_rate_type.name
-    //             shift_name = job.shift.name
-    //             jobs.push({
-    //                 ...job,
-    //                 surgery_name,
-    //                 date_time_start,
-    //                 date_time_end,
-    //                 rate_name,
-    //                 rate_type_name,
-    //             })
-    //         })
-    //         return jobs
-    //     }
-    //     return []
-    // },
     // REMINDERS
     getPracticeAvailableJobsReminder(state) {
         return state.practice_available_jobs_reminder
@@ -559,14 +522,26 @@ export default {
             let notifObj = null
             switch (notif.notificationType) {
                 case 'Locum Notification Job Reminder':
-                    if (notif.job_reminded_in_1_hours === true) {
-                        message = 'This Job will start in 1 hour.'
-                    } else if (notif.job_reminded_in_3_hours === true) {
-                        message = 'This Job will start in 3 hours.'
-                    } else if (notif.job_reminded_in_1_days === true) {
-                        message = 'This Job will start tomorrow.'
-                    } else if (notif.job_reminded_in_3_days === true) {
-                        message = 'This Job will start in 3 days.'
+                    let days =
+                        moment(`${notif.date_start} ${notif.time_start}`, 'YYYY-MM-DD HH:mm')
+                            .diff(moment().utc().format('YYYY-MM-DD HH:mm'), 'days')
+
+                    let hours =
+                        moment(`${notif.date_start} ${notif.time_start}`, 'YYYY-MM-DD HH:mm')
+                            .diff(moment().utc().format('YYYY-MM-DD HH:mm'), 'hours')
+
+                    let minutes =
+                        moment(`${notif.date_start} ${notif.time_start}`, 'YYYY-MM-DD HH:mm')
+                            .diff(moment().utc().format('YYYY-MM-DD HH:mm'), 'minutes')
+
+                    if (days > 0) {
+                        message = `This Job will start in ${days} days.`
+                    } else if (days <= 0 && hours > 0) {
+                        message = `This Job will start in ${hours} hours.`
+                    } else if (hours <= 0 && minutes > 0) {
+                        message = `This Job will start in ${minutes} minute${minutes === 1 ? '' : 's'}.`
+                    } else {
+                        message = `This Job will start later.`
                     }
                     break;
                 case 'Locum Notification Job Available':
@@ -616,6 +591,8 @@ export default {
                 billingStatus: ['Locum Notification Job Approved', 'Locum Notification Job Disputed'].includes(notif.notificationType) ? notif.notificationType === 'Locum Notification Job Approved' ? 'Approved' : 'Disputed' : null,
                 date_start: notif.date_start,
                 date_end: notif.date_end,
+                time_start: notif.time_start,
+                time_end: notif.time_end,
                 shift: notif.shift ? notif.shift.name : notif.job.shift.name,
                 rate: notif.rate ? notif.rate : notif.job.rate,
                 locum_detail_rate_type: notif.locum_detail_rate_type ? notif.locum_detail_rate_type.name : notif.job.locum_detail_rate_type.name,

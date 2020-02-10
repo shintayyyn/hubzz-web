@@ -22,11 +22,12 @@
         >
           {{item.label}}
           <span
+            v-if="!disabled"
             class="font-bold cursor-pointer text-base pl-3"
             @click="remove(index)"
           >x</span>
         </div>
-        <div>
+        <div v-if="!disabled">
           <input
             v-show="show"
             v-model="search"
@@ -94,6 +95,7 @@ export default {
       type: Boolean,
       default: false
     },
+    disabled: Boolean,
     // for qualification
     professionCategoryId: String,
     // for spoken-langauge
