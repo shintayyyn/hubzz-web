@@ -332,7 +332,6 @@ export default {
       this.$axios
         .get(`/api/v1/practice/me/practice-surgeries/${this.practice_id}`)
         .then(res => {
-          console.log("practice_surgery asdsd", res.data.data.practice_surgery);
           this.practice_surgery = res.data.data.practice_surgery;
         });
     },

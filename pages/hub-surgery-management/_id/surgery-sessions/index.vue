@@ -360,9 +360,6 @@ export default {
       }
     }
   },
-  mounted() {
-    console.log(this.spokePracticeId);
-  },
   async asyncData({ app, params, route, query, store, auth, error }) {
     try {
       let status = [];
@@ -432,10 +429,9 @@ export default {
         .then(res => {
           spokePracticeId =
             res.data &&
-            res.data.data &&
-            res.data.data.practice_surgery &&
-            res.data.data.practice_surgery.child_practice_id
-              ? res.data.data.practice_surgery.child_practice_id
+            res.data.practice_surgery &&
+            res.data.practice_surgery.child_practice_id
+              ? res.data.practice_surgery.child_practice_id
               : null;
         });
 

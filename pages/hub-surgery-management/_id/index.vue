@@ -14,12 +14,13 @@
         class="justify-center text-black text-sm font-semibold py-2 p-3 rounded-lg"
         :class="statusStyle(checkStatus(practice_surgery))"
       >{{checkStatus(practice_surgery)}}</div>
-
     </div>
     <div class="flex flex-col mx-2">
       <div class="flex flex-col mt-4 md:flex-row w-full leading-tight">
         <p class="md:w-1/3 font-semibold">CCG</p>
-        <p class="md:w-2/3 mx-2 md:mx-0">{{ practice_surgery.child_practice.clinical_commissioning_group_name }}</p>
+        <p
+          class="md:w-2/3 mx-2 md:mx-0"
+        >{{ practice_surgery.child_practice.clinical_commissioning_group_name }}</p>
       </div>
       <div class="flex flex-col mt-4 md:flex-row w-full leading-tight">
         <p class="md:w-1/3 font-semibold">Contact Number</p>
@@ -28,11 +29,21 @@
       <div class="flex flex-col mt-4 md:flex-row w-full leading-tight">
         <div class="md:w-1/3 font-semibold">Address</div>
         <div class="md:w-2/3">
-          <div class="md:mx-0">{{ practice_surgery.child_practice && practice_surgery.child_practice.address_line_1 ? practice_surgery.child_practice.address_line_1: null}}</div>
-          <div class="md:mx-0">{{ practice_surgery.child_practice && practice_surgery.child_practice.address_line_2 ? practice_surgery.child_practice.address_line_2: null}}</div>
-          <div class="md:mx-0">{{ practice_surgery.child_practice && practice_surgery.child_practice.address_line_3 ? practice_surgery.child_practice.address_line_3: null}}</div>
-          <div class="md:mx-0">{{ practice_surgery.child_practice && practice_surgery.child_practice.address_line_4 ? practice_surgery.child_practice.address_line_4: null}}</div>
-          <div class="md:mx-0">{{ practice_surgery.child_practice && practice_surgery.child_practice.address_line_5 ? practice_surgery.child_practice.address_line_5: null}}</div>
+          <div
+            class="md:mx-0"
+          >{{ practice_surgery.child_practice && practice_surgery.child_practice.address_line_1 ? practice_surgery.child_practice.address_line_1: null}}</div>
+          <div
+            class="md:mx-0"
+          >{{ practice_surgery.child_practice && practice_surgery.child_practice.address_line_2 ? practice_surgery.child_practice.address_line_2: null}}</div>
+          <div
+            class="md:mx-0"
+          >{{ practice_surgery.child_practice && practice_surgery.child_practice.address_line_3 ? practice_surgery.child_practice.address_line_3: null}}</div>
+          <div
+            class="md:mx-0"
+          >{{ practice_surgery.child_practice && practice_surgery.child_practice.address_line_4 ? practice_surgery.child_practice.address_line_4: null}}</div>
+          <div
+            class="md:mx-0"
+          >{{ practice_surgery.child_practice && practice_surgery.child_practice.address_line_5 ? practice_surgery.child_practice.address_line_5: null}}</div>
         </div>
       </div>
 
@@ -44,7 +55,9 @@
       </div>
       <div class="flex flex-col md:flex-row w-full mt-2 leading-tight">
         <p class="md:w-1/3 font-semibold">Email Address</p>
-        <p class="md:w-2/3 mx-2 md:mx-0">{{practice_surgery.child_practice.email ? practice_surgery.child_practice.email : 'N/A'}}</p>
+        <p
+          class="md:w-2/3 mx-2 md:mx-0"
+        >{{practice_surgery.child_practice.email ? practice_surgery.child_practice.email : 'N/A'}}</p>
       </div>
     </div>
     <div class="flex flex-col mt-4">
@@ -113,7 +126,7 @@
               </div>
             </div>
           </div>
-          
+
           <div class="flex items-center py-1">
             <span class="mr-3 md:mx-2">
               <svgicon
@@ -386,7 +399,6 @@ export default {
       this.$axios
         .get(`/api/v1/practice/me/practice-surgeries/${this.practice_id}`)
         .then(res => {
-          console.log("practice_surgery asdsd", res.data.data.practice_surgery);
           this.practice_surgery = res.data.data.practice_surgery;
         });
     },
