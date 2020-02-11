@@ -113,7 +113,6 @@ Vue.mixin({
       }
     },
     Validate(form, lists, preferredDisplayName) {
-      console.log("preferredDisplayName", preferredDisplayName)
       let items = Object.entries(form);
       for (const [key, value] of items) {
         let trimmedFieldName = key;
