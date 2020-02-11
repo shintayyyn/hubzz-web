@@ -49,7 +49,7 @@
             :label="'City / Town / District'"
             :error="formError.find(error => error.field === 'address_line_3')"
             :inStyle="'background-color:transparent;border-color:white'"
-            @blur="CheckEmptyField(form.address_line_3, 'address_line_3')"
+            @blur="CheckEmptyField(form.address_line_3, 'address_line_3', 'City / Town / District')"
             required
           />
         </form>

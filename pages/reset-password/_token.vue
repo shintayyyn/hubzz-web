@@ -46,10 +46,16 @@ export default {
 				forgot_password_token
 			};
 		} catch (err) {
-			if (err) {
-				return error({
-					message: err.response.data.message,
-					statusCode: err.response.data.status
+			if ((err.response.data, error_messages)) {
+				err.response.data.error_messages.forEach(error => {
+					this.formError.push({
+						field:
+							error.field === "new_password"
+								? "new_password_confirmation"
+								: error.field,
+						message: error.message,
+						validation: error.validation
+					});
 				});
 			}
 			throw err;
