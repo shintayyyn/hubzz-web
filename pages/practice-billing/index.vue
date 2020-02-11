@@ -564,6 +564,13 @@ export default {
           let job_parts = res.data.job_parts;
 
           this.job_parts = job_parts.map(jobPart => {
+            let total = jobPart.locum_invoice_id
+              ? jobPart.locum_invoice_item.total
+              : jobPart.job.locum_detail_rate_type.name === "Per Hour"
+              ? jobPart.job.rate * jobPart.final_hours
+              : (jobPart.job.rate / jobPart.job.total_hours) *
+                jobPart.final_hours;
+
             return {
               ...jobPart,
               practice_name:
@@ -576,12 +583,7 @@ export default {
               invoice_number: jobPart.locum_invoice_id
                 ? jobPart.locum_invoice_item.locum_invoice.invoice_number
                 : null,
-              total_amount: jobPart.locum_invoice_id
-                ? jobPart.locum_invoice_item.total
-                : jobPart.job.locum_detail_rate_type.name === "Per Hour"
-                ? jobPart.job.rate * jobPart.final_hours
-                : (jobPart.job.rate / jobPart.job.total_hours) *
-                  jobPart.final_hours
+              total_amount: total.toFixed(2)
             };
           });
         })
