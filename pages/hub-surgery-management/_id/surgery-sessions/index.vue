@@ -166,14 +166,15 @@ export default {
       }
     },
     noJobsToDisplay() {
-      let queryStatus = this.$route.query.status
-        ? this.$route.query.status.toLowerCase()
+      let queryStatus = this.$route.query.jobStatus
+        ? this.$route.query.jobStatus.toLowerCase()
         : "";
       switch (queryStatus) {
         case "pending":
         case "allocated":
         case "ongoing":
         case "declined":
+        case "withdrawn":
         case "approved":
         case "unfilled":
         case "live":
