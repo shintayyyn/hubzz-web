@@ -239,6 +239,15 @@ Vue.mixin({
         }
       }
       return submitForm
-    }
+    },
+    isNumber(e) {
+      e = e ? e : window.event;
+      let charCode = (e.which) ? e.which : e.keyCode;
+      if (charCode === 101 ) {
+        e.preventDefault();;
+      } else {
+        return true;
+      }
+    },
   }
 });
