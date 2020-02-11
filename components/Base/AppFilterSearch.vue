@@ -363,7 +363,7 @@ export default {
     filteredItems() {
       return this.items.filter(filterItem => {
         const index = this.value.findIndex(item => {
-          return item.value === filterItem.value;
+          return item.value && item.value === filterItem.value;
         });
         return index === -1 && filterItem.value;
       });
