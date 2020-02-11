@@ -71,9 +71,9 @@
           </div>
           <div
             class="md:px-1 w-full lg:w-1/4 md:w-1/3"
-            v-if="$route.query.status && $route.query.status.toLowerCase() !== 'private'"
+            v-if="!$route.query.status || ($route.query.status && $route.query.status.toLowerCase() !== 'private')"
           >
-            <AppAutoComplete
+            <!-- <AppAutoComplete
               class="px-1"
               v-model="search_practice"
               :name="'practice_id'"
@@ -82,21 +82,37 @@
               :data="'surgeries'"
               :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem'"
               @add="addPractice"
+            />-->
+            <AppInput
+              v-model="practice_id"
+              :type="'select'"
+              :name="'practice_id'"
+              :placeholder="'Select...'"
+              :label="'Surgery'"
+              :items="practiceLists"
             />
           </div>
           <div
             class="md:px-1 w-full lg:w-1/4 md:w-1/3"
             v-if="$route.query.status && $route.query.status.toLowerCase() === 'private'"
           >
-            <AppAutoComplete
+            <!-- <AppAutoComplete
               class="px-1"
               v-model="search_private_practice"
-              :name="'practice_id'"
+              :name="'job_private_practice_id'"
               :label="'Private Surgery'"
               :url="'/api/v1/locum/surgeries'"
               :data="'surgeries'"
               :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem'"
               @add="addPrivatePractice"
+            />-->
+            <AppInput
+              v-model="private_practice_id"
+              :type="'select'"
+              :name="'practice_id'"
+              :placeholder="'Select...'"
+              :label="'Surgery'"
+              :items="practiceLists"
             />
           </div>
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
@@ -215,7 +231,7 @@
               :label="'Job part number'"
             />
           </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <!-- <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppAutoComplete
               class="px-1"
               v-model="job_practice_id"
@@ -234,7 +250,54 @@
               :url="'/api/v1/locum/surgeries'"
               :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem'"
             />
+          </div>-->
+          <div
+            class="md:px-1 w-full lg:w-1/4 md:w-1/3"
+            v-if="!$route.query.status || ($route.query.status && $route.query.status.toLowerCase() !== 'private')"
+          >
+            <!-- <AppAutoComplete
+              class="px-1"
+              v-model="search_practice"
+              :name="'job_practice_id'"
+              :label="'Surgery'"
+              :url="'/api/v1/locum/surgeries'"
+              :data="'surgeries'"
+              :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem'"
+              @add="addPractice"
+            />-->
+            <AppInput
+              v-model="job_practice_id"
+              :type="'select'"
+              :name="'practice_id'"
+              :placeholder="'Select...'"
+              :label="'Surgery'"
+              :items="practiceLists"
+            />
           </div>
+          <div
+            class="md:px-1 w-full lg:w-1/4 md:w-1/3"
+            v-if="$route.query.status && $route.query.status.toLowerCase() === 'private'"
+          >
+            <!-- <AppAutoComplete
+              class="px-1"
+              v-model="search_private_practice"
+              :name="'job_private_practice_id'"
+              :label="'Private Surgery'"
+              :url="'/api/v1/locum/surgeries'"
+              :data="'surgeries'"
+              :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem'"
+              @add="addPrivatePractice"
+            />-->
+            <AppInput
+              v-model="job_private_practice_id"
+              :type="'select'"
+              :name="'practice_id'"
+              :placeholder="'Select...'"
+              :label="'Surgery'"
+              :items="practiceLists"
+            />
+          </div>
+
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
               class="px-1"
@@ -431,6 +494,7 @@ export default {
   },
   data() {
     return {
+      practiceLists: [],
       total: 0,
       jobs: [],
       initialLoading: false,
@@ -905,6 +969,22 @@ export default {
     }
   },
   mounted() {
+    this.$axios
+      .$get(`/api/v1/locum/practices`, {
+        params: {
+          status: "Active",
+          locum_practice_type: "Applied"
+        }
+      })
+      .then(res => {
+        this.practiceLists = res.data.practices.map(item => {
+          return {
+            label: item.name,
+            value: item.id
+          };
+        });
+        console.log(res);
+      });
     this.$socket.on(
       "Locum Notification Job Available",
       this.getAvailableJobsRealTime
@@ -972,7 +1052,9 @@ export default {
   },
   methods: {
     addPractice(payload) {
+      console.log("payload", payload);
       this.search_practice = payload.name;
+      console.log("search_practice", this.search_practice);
       this.practice_id = payload.id;
     },
     addPrivatePractice(payload) {
@@ -1011,6 +1093,7 @@ export default {
       } else if (!queryStatus) {
         locum_status = ["Allocated"];
       }
+      console.log(this.practice_id);
       return Promise.all([
         this.$axios.$get(
           `/api/v1/locum/${this.isJobPart ? "job-parts" : "jobs"}/count`,
