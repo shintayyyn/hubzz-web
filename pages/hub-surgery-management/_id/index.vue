@@ -44,7 +44,7 @@
 				<p class="font-semibold">Practice Types</p>
 				<div class="flex flex-wrap">
 					<template
-						v-if="practice_surgery && practice_surgery.child_practice && practice_surgery.child_practice.practice_types.length"
+						v-if="practice_surgery && practice_surgery.child_practice && practice_surgery.child_practice.practice_types && practice_surgery.child_practice.practice_types.length"
 					>
 						<p
 							class="m-1 rounded-lg text-sm text-black px-2 py-1 bg-yellow-500"
@@ -343,7 +343,6 @@ export default {
 	// },
 	created() {
 		this.practice_id = this.$route.params.id;
-		console.log("practice_id", this.practice_id);
 		this.getSurgery();
 		this.form.allow_surgery_create_sessions = this.practice_surgery.allow_surgery_create_sessions;
 		this.form.max_hourly_rate_limit = this.practice_surgery.max_hourly_rate_limit;
@@ -384,7 +383,6 @@ export default {
 				.get(`/api/v1/practice/me/practice-surgeries/${this.practice_id}`)
 				.then(res => {
 					this.practice_surgery = res.data.data.practice_surgery;
-					console.log("practice_surgery", this.practice_surgery);
 				});
 		},
 		save() {
