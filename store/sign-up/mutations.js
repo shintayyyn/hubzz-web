@@ -165,9 +165,9 @@ export default {
         state.professional_details.max_rate_per_half_day_session = payload.max_rate_per_half_day_session
         state.professional_details.min_rate_per_whole_day_session = payload.min_rate_per_whole_day_session
         state.professional_details.max_rate_per_whole_day_session = payload.max_rate_per_whole_day_session
+        // console.log(state.professional_details)
     },
     SET_PAYROLL_DETAILS(state, payload) {
-        console.log(payload.ir35)
         state.payroll_details.employment_type = payload.employment_type
         state.payroll_details.utr_number = payload.utr_number
         state.payroll_details.company_registration_number = payload.company_registration_number

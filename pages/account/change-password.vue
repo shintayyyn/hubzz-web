@@ -186,7 +186,8 @@ export default {
           err.response.data.error_messages.forEach(error => {
             this.formError.push({
               field:
-                error.field === "new_password"
+                error.field === "new_password" &&
+                error.message === "New Password Do Not Match"
                   ? "new_password_confirmation"
                   : error.field,
               message: error.message,
