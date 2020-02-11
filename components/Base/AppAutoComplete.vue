@@ -83,7 +83,7 @@ export default {
   },
   mixins: [clickaway],
   props: {
-    value: String,
+    value: [String, Object],
     name: String,
     label: String,
     placeholder: String,
@@ -108,7 +108,7 @@ export default {
   },
   watch: {
     value(value) {
-      // this.search = value;
+      this.search = value;
     },
     search(value) {
       if (value) {
@@ -128,7 +128,6 @@ export default {
       if (!selectedSurgery) {
         return;
       }
-      console.log(selectedSurgery);
       this.showLists = false;
       if (this.keyword === "practices") {
         this.$axios
@@ -157,8 +156,9 @@ export default {
             }
           });
       } else {
-        this.$emit("input", selectedSurgery.id.toString());
-        this.search = selectedSurgery.name;
+        // this.$emit("input", selectedSurgery.id.toString());
+        this.$emit("add", selectedSurgery);
+        // this.search = selectedSurgery.name;
       }
     },
     getSurgeries: debounce(function(input) {
