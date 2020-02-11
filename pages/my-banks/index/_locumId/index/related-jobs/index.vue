@@ -573,19 +573,20 @@ export default {
       let queryStatus = query.jobStatus;
       let bankStatus = query.bank;
 
-      switch (queryStatus) {
-        case "":
-          status = ["Allocated"];
-          break;
-        case "Completed":
-          status = ["Completed", "Terminated"];
-          break;
-        case "Withdrawn":
-          status = ["Declined"];
-          break;
-        default:
-          status = [`${queryStatus}`];
-          break;
+      if (!queryStatus) {
+        status = ["Allocated"];
+      } else if (queryStatus) {
+        switch (queryStatus) {
+          case "Completed":
+            status = ["Completed", "Terminated"];
+            break;
+          case "Withdrawn":
+            status = ["Declined"];
+            break;
+          default:
+            status = [`${queryStatus}`];
+            break;
+        }
       }
 
       let isJobPart = false;
@@ -839,20 +840,22 @@ export default {
       let queryStatus = this.$route.query.jobStatus;
       let bankStatus = this.$route.query.bank;
 
-      switch (queryStatus) {
-        case "":
-          status = ["Allocated"];
-          break;
-        case "Completed":
-          status = ["Completed", "Terminated"];
-          break;
-        case "Withdrawn":
-          status = ["Declined"];
-          break;
-        default:
-          status = [`${queryStatus}`];
-          break;
+      if (!queryStatus) {
+        status = ["Allocated"];
+      } else if (queryStatus) {
+        switch (queryStatus) {
+          case "Completed":
+            status = ["Completed", "Terminated"];
+            break;
+          case "Withdrawn":
+            status = ["Declined"];
+            break;
+          default:
+            status = [`${queryStatus}`];
+            break;
+        }
       }
+
       return Promise.all([
         this.$axios.$get(
           `/api/v1/practice/${this.isJobPart ? "job-parts" : "jobs"}/count`,
@@ -980,19 +983,20 @@ export default {
       let queryStatus = this.$route.query.jobStatus;
       let bankStatus = this.$route.query.bank;
 
-      switch (queryStatus) {
-        case "":
-          status = ["Allocated"];
-          break;
-        case "Completed":
-          status = ["Completed", "Terminated"];
-          break;
-        case "Withdrawn":
-          status = ["Declined"];
-          break;
-        default:
-          status = [`${queryStatus}`];
-          break;
+      if (!queryStatus) {
+        status = ["Allocated"];
+      } else if (queryStatus) {
+        switch (queryStatus) {
+          case "Completed":
+            status = ["Completed", "Terminated"];
+            break;
+          case "Withdrawn":
+            status = ["Declined"];
+            break;
+          default:
+            status = [`${queryStatus}`];
+            break;
+        }
       }
 
       return this.$axios

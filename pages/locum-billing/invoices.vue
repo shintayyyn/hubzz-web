@@ -381,6 +381,7 @@ export default {
       switch (queryStatus && queryStatus.toLowerCase()) {
         case "to-be-invoiced":
           invoice_status.push("To Be Invoice");
+          locum_status = ["Completed", "Declined", "Cancelled"];
           locum_invoiceable = true;
           break;
         case "disputed":
@@ -405,6 +406,8 @@ export default {
           break;
         default:
           invoice_status.push("To Be Invoice");
+          locum_status = ["Completed", "Declined", "Cancelled"];
+          locum_invoiceable = true;
       }
 
       let locum_form_bs = [];
