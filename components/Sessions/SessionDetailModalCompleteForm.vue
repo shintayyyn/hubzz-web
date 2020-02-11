@@ -178,12 +178,12 @@ export default {
               text: ["Job Part completed"]
             });
             this.$emit("completed");
-            setTimeout(() => {
-              this.$router.push({
-                path: `/sessions/${this.job_part.id}`,
-                query: { ...this.$route.query }
-              });
-            }, 500);
+            // setTimeout(() => {
+            //   this.$router.push({
+            //     path: `/sessions/${this.job_part.id}`,
+            //     query: { ...this.$route.query }
+            //   });
+            // }, 500);
           })
           .catch(err => {
             if (!err.response.data.error_messages) {
