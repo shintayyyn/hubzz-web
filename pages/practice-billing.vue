@@ -12,8 +12,8 @@
         :class="$route.name.includes('practice-billing-pension-forms-from-locums') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >Pension forms from Locums</nuxt-link>
       <nuxt-link
-        v-if="$auth.user.practice_detail.practice.type !== 'Spoke' || 
-          ($auth.user.practice_detail.practice.parent_practice_id && $auth.user.practice_detail.practice.allow_surgery_bill_hubzz == true)" 
+        v-if="($auth.loggedIn && $auth.user.practice_detail.practice.type !== 'Spoke') || 
+          ($auth.user.practice_detail && $auth.user.practice_detail.practice && $auth.user.practice_detail.practice.parent_practice_id && $auth.user.practice_detail.practice.allow_surgery_bill_hubzz == true)"
         :to="{ name: 'practice-billing-invoices-from-hubzz' }"
         class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
         :class="$route.name.includes('practice-billing-invoices-from-hubzz') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
@@ -27,9 +27,6 @@
 
 <script>
 export default {
-  middleware: "isVerified",
-  created (){
-    console.log('auth',this.$auth.user.practice_detail.practice )
-  }
+  middleware: "isVerified"
 };
 </script>
