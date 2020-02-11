@@ -232,10 +232,10 @@ export default {
           default:
             routeStatus = status;
         }
-        // console.log(id, url, status, routeStatus);
+        // console.log(id, url, status, routeStatus, notification);
         // return;
         if (status === "Pending") {
-          this.close(id, type);
+          this.close(id, type, notificationType);
           return;
         }
         if (this.$route.name.includes("surgery-management")) {
@@ -276,8 +276,8 @@ export default {
           default:
             routeStatus = status;
         }
-        // console.log(notification, id, url, status, routeStatus);
-        // return;
+        console.log(notification, id, url, status, routeStatus);
+        return;
         if (id !== this.$route.params.id) {
           this.$router.push({
             path: `${url}`,

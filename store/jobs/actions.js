@@ -231,6 +231,13 @@ export default {
                 commit('ADD_PRACTICE_JOB_NOTIFICATION', { ...response.data.job, notificationType: 'Practice Notification Job Unfilled' })
             }
         })
+
+        this.$socket.on('Practice Notification Job Pending', async (job) => {
+            const response = await this.$axios.$get(`/api/v1/practice/jobs/${job.id}`)
+            if (response.data && response.data.job) {
+                commit('ADD_PRACTICE_JOB_NOTIFICATION', { ...response.data.job, notificationType: 'Practice Notification Job Pending' })
+            }
+        })
     },
 
     // PRACTICE
