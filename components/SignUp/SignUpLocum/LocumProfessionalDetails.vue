@@ -246,7 +246,6 @@ export default {
         max_rate_per_half_day_session: 0,
         min_rate_per_whole_day_session: 0,
         max_rate_per_whole_day_session: 0,
-        // ir35: false,
         practice_type_id: [],
         mandatory_training_id: []
       },
@@ -282,25 +281,29 @@ export default {
       return this.$store.getters["sign-up/professionalFormError"];
     }
   },
-  async created() {
+  async mounted() {
     const response = await this.$axios.$get(`/api/v1/professions`);
-    response.data.professions.forEach(profession => {
-      this.professions_categories.push(profession);
-    });
-
+    this.professions_categories =
+      response.data &&
+      response.data.professions &&
+      response.data.professions.length > 0
+        ? response.data.professions
+        : [];
+    // console.log(this.professions_categories);
     this.pratice_types = this.practiceTypes;
+    // console.log(this.pratice_types);
     this.form.gmc_or_nmc_number = this.professionalDetails.gmc_or_nmc_number;
     this.form.mpl_or_npl_number = this.professionalDetails.mpl_or_npl_number;
     this.form.nhs_smart_card_id_number = this.professionalDetails.nhs_smart_card_id_number;
     this.form.profession_id = this.professionalDetails.profession_id;
 
-    if (this.form.profession_id == 1) {
+    if (this.form.profession_id === 1) {
       this.professionalDetails.qualification_id.forEach(qualification => {
         this.form.qualification_id.push(
           this.gpQualifications.find(item => item.value === qualification.value)
         );
       });
-    } else {
+    } else if (this.form.profession_id !== 1) {
       this.professionalDetails.qualification_id.forEach(qualification => {
         this.form.qualification_id.push(
           this.othersQualifications.find(
