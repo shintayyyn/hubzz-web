@@ -276,8 +276,8 @@ export default {
           default:
             routeStatus = status;
         }
-        console.log(notification, id, url, status, routeStatus);
-        return;
+        // console.log(notification, id, url, status, routeStatus);
+        // return;
         if (id !== this.$route.params.id) {
           this.$router.push({
             path: `${url}`,

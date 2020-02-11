@@ -128,7 +128,7 @@
                   v-model="form.items[0].absent_days"
                   name="absent_days"
                   class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
-                    @keypress="isNumber($event)"
+                  @keypress="isNumber($event)"
                 />
               </div>
               <div class="w-1/3 flex flex-col px-2">
@@ -139,7 +139,7 @@
                   v-model="form.items[0].late_hours"
                   name="late_hours"
                   class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
-                    @keypress="isNumber($event)"
+                  @keypress="isNumber($event)"
                 />
               </div>
               <div class="w-1/3 flex flex-col px-2">
@@ -150,7 +150,7 @@
                   v-model="form.items[0].final_hours"
                   name="final_hours"
                   class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
-                    @keypress="isNumber($event)"
+                  @keypress="isNumber($event)"
                 />
               </div>
             </div>
@@ -422,7 +422,7 @@ export default {
   methods: {
     save(final) {
       this.formError = [];
-      this.Validate(this.form);
+      this.Validate(this.form, ["total_amount"]);
       if (!this.formError.length) {
         this.form.items[0].description = this.description;
         this.form.items[0].total = this.total;

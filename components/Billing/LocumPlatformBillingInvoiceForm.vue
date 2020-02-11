@@ -122,7 +122,7 @@
               >{{form.items[0].total}}</div>
               <div
                 class="flex items-center align-middle sticky right-0 bg-white shadow-md"
-                v-if="(propJobPart || (propInvoice && propInvoice.status !== 'Approved'))"
+                v-if="(propJobPart || (propInvoice && !['Approved','Paid'].includes(propInvoice.status)))"
               >
                 <div class="px-2 flex-col">
                   <AppInput
@@ -159,7 +159,7 @@
                   v-model="form.items[0].absent_days"
                   name="absent_days"
                   class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
-                    @keypress="isNumber($event)"
+                  @keypress="isNumber($event)"
                 />
               </div>
               <div class="w-1/3 flex flex-col px-2">
@@ -170,7 +170,7 @@
                   v-model="form.items[0].late_hours"
                   name="late_hours"
                   class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
-                    @keypress="isNumber($event)"
+                  @keypress="isNumber($event)"
                 />
               </div>
               <div class="w-1/3 flex flex-col px-2">
@@ -181,7 +181,7 @@
                   v-model="form.items[0].final_hours"
                   name="final_hours"
                   class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
-                    @keypress="isNumber($event)"
+                  @keypress="isNumber($event)"
                 />
               </div>
             </div>
