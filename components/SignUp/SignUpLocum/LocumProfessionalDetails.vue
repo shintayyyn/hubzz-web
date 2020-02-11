@@ -246,7 +246,6 @@ export default {
         max_rate_per_half_day_session: 0,
         min_rate_per_whole_day_session: 0,
         max_rate_per_whole_day_session: 0,
-        // ir35: false,
         practice_type_id: [],
         mandatory_training_id: []
       },
@@ -284,40 +283,54 @@ export default {
   },
   async created() {
     const response = await this.$axios.$get(`/api/v1/professions`);
-    response.data.professions.forEach(profession => {
-      this.professions_categories.push(profession);
-    });
-
+    this.professions_categories =
+      response.data &&
+      response.data.professions &&
+      response.data.professions.length > 0
+        ? response.data.professions
+        : [];
+    // console.log(this.professions_categories);
     this.pratice_types = this.practiceTypes;
+    // console.log(this.pratice_types);
     this.form.gmc_or_nmc_number = this.professionalDetails.gmc_or_nmc_number;
     this.form.mpl_or_npl_number = this.professionalDetails.mpl_or_npl_number;
     this.form.nhs_smart_card_id_number = this.professionalDetails.nhs_smart_card_id_number;
     this.form.profession_id = this.professionalDetails.profession_id;
 
-    if (this.form.profession_id == 1) {
-      this.professionalDetails.qualification_id.forEach(id => {
-        this.form.qualification_id.push(
-          this.gpQualifications.find(item => item.value === id)
-        );
-      });
-    } else {
-      this.professionalDetails.qualification_id.forEach(id => {
-        this.form.qualification_id.push(
-          this.othersQualifications.find(item => item.value === id)
-        );
-      });
-    }
+    // if (this.form.profession_id == 1) {
+    //   this.professionalDetails.qualification_id.forEach(qualification => {
+    //     this.form.qualification_id.push(
+    //       this.gpQualifications.find(item => item.value === qualification.value)
+    //     );
+    //   });
+    // } else if (this.form.profession_id != 1) {
+    //   this.professionalDetails.qualification_id.forEach(qualification => {
+    //     this.form.qualification_id.push(
+    //       this.othersQualifications.find(
+    //         item => item.value === qualification.id
+    //       )
+    //     );
+    //   });
+    // }
+    this.form.qualification_id = [...this.professionalDetails.qualification_id];
 
-    this.professionalDetails.clinical_system_id.forEach(id => {
-      this.form.clinical_system_id.push(
-        this.clinicalSystems.find(item => item.value === id)
-      );
-    });
-    this.professionalDetails.spoken_language_id.forEach(id => {
-      this.form.spoken_language_id.push(
-        this.spokenLanguages.find(item => item.value === id)
-      );
-    });
+    // this.professionalDetails.clinical_system_id.forEach(clinical => {
+    //   this.form.clinical_system_id.push(
+    //     this.clinicalSystems.find(item => item.value === clinical.value)
+    //   );
+    // });
+    this.form.clinical_system_id = [
+      ...this.professionalDetails.clinical_system_id
+    ];
+
+    // this.professionalDetails.spoken_language_id.forEach(spoken => {
+    //   this.form.spoken_language_id.push(
+    //     this.spokenLanguages.find(item => item.value === spoken.value)
+    //   );
+    // });
+    this.form.spoken_language_id = [
+      ...this.professionalDetails.spoken_language_id
+    ];
 
     this.form.min_rate_per_hour = this.professionalDetails.min_rate_per_hour;
     this.form.max_rate_per_hour = this.professionalDetails.max_rate_per_hour;
@@ -367,15 +380,15 @@ export default {
         "mandatory_training_id"
       ]);
       if (!this.formError.length) {
-        this.form.qualification_id = this.form.qualification_id.length
-          ? this.form.qualification_id.map(item => item.value)
-          : [];
-        this.form.clinical_system_id = this.form.clinical_system_id
-          ? this.form.clinical_system_id.map(item => item.value)
-          : [];
-        this.form.spoken_language_id = this.form.spoken_language_id
-          ? this.form.spoken_language_id.map(item => item.value)
-          : [];
+        // this.form.qualification_id = this.form.qualification_id.length
+        //   ? this.form.qualification_id.map(item => item.value)
+        //   : [];
+        // this.form.clinical_system_id = this.form.clinical_system_id
+        //   ? this.form.clinical_system_id.map(item => item.value)
+        //   : [];
+        // this.form.spoken_language_id = this.form.spoken_language_id
+        //   ? this.form.spoken_language_id.map(item => item.value)
+        //   : [];
         this.$store.commit("sign-up/SET_PROFESSIONAL_DETAILS", this.form);
         this.$store.commit("sign-up/SET_PROFESSIONAL_DETAIL_FORM_ERROR", []);
 

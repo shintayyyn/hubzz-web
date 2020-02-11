@@ -49,7 +49,7 @@
             :label="'City / Town / District'"
             :error="formError.find(error => error.field === 'address_line_3')"
             :inStyle="'background-color:transparent;border-color:white'"
-            @blur="CheckEmptyField(form.address_line_3, 'address_line_3')"
+            @blur="CheckEmptyField(form.address_line_3, 'address_line_3', 'City / Town / District')"
             required
           />
         </form>
@@ -109,29 +109,20 @@ export default {
   },
   methods: {
     checkCoordinates(postcode) {
-      return (
-        this.$axios
-          .$post("/api/v1/postcode-to-coordinates", { postcode })
-          // .then(res => {
-          //   console.log("qwe", res);
-          //   if (res.data && res.data.postcode_coordinate) {
-          //     this.form.coordinate_x = res.data.postcode_coordinate.coordinate_x;
-          //     this.form.coordinate_y = res.data.postcode_coordinate.coordinate_y;
-          //   }
-          // })
-          .catch(err => {
-            console.log("err", err.response || err);
-            if (
-              err.response.data.status === 404 &&
-              err.response.data.message === "Postcode Coordinate Not Found"
-            ) {
-              this.formError.push({
-                field: "post_code",
-                message: "Invalid post code"
-              });
-            }
-          })
-      );
+      return this.$axios
+        .$post("/api/v1/postcode-to-coordinates", { postcode })
+        .catch(err => {
+          console.log("err", err.response || err);
+          if (
+            err.response.data.status === 404 &&
+            err.response.data.message === "Postcode Coordinate Not Found"
+          ) {
+            this.formError.push({
+              field: "post_code",
+              message: "Invalid post code"
+            });
+          }
+        });
     },
     async next() {
       this.formError = [];

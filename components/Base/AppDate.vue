@@ -322,9 +322,18 @@ export default {
       // if selected year === current year, get only the current month up to last month,
       // if not, get all the months
       if (this.selectedYear === this.$moment().format("YYYY")) {
-        return this.months.filter(
-          month => parseInt(month.value) >= parseInt(this.$moment().format("M"))
-        );
+        if (this.isAfter) {
+          return this.months.filter(
+            month =>
+              parseInt(month.value) >= parseInt(this.$moment().format("M"))
+          );
+        }
+        if (this.isBefore) {
+          return this.months.filter(
+            month =>
+              parseInt(month.value) <= parseInt(this.$moment().format("M"))
+          );
+        }
       }
       return this.months;
     }

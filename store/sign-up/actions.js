@@ -102,7 +102,10 @@ export default {
             ...state.address_details,
             ...state.credential_details,
             ...state.payroll_details,
-            ...state.professional_details
+            ...state.professional_details,
+            qualification_id: state.professional_details.qualification_id.map(item => item.value),
+            clinical_system_id: state.professional_details.clinical_system_id.map(item => item.value),
+            spoken_language_id: state.professional_details.spoken_language_id.map(item => item.value)
         }
         this.$axios
             .$post(`/api/v1/register/locum`, form)

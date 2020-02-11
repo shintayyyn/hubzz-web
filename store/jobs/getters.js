@@ -90,7 +90,7 @@ export default {
                     id = notif.job_parts.find(item => item.status === 'Ongoing').id
                     break;
                 case 'Practice Notification Job Cancelled':
-                    id = notif.job_parts.find(item => item.status === 'Cancelled').id
+                    id = notif.job_parts.find(item => ['Cancelled', 'Pending'].includes(item.status)).id
                     break;
                 case 'Practice Notification Job Declined':
                     id = notif.job_parts.find(item => item.status === 'Declined').id
@@ -99,6 +99,7 @@ export default {
                     id = notif.id
             }
             notifObj = {
+                ...notif,
                 id,
                 title: notif.title ? notif.title : notif.job.title,
                 status: notif.status === 'Declined' ? 'Withdrawn' : notif.status,

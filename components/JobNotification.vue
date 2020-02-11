@@ -196,13 +196,15 @@ export default {
           url = this.$route.path;
         }
       } else if (type === "Billings") {
-        if (notification.notification_billing_type === "Platform") {
-          url =
-            this.$auth.user.domain === "Practice"
-              ? "/practice-billing"
-              : "/locum-billing/invoices";
-        } else if (notification.notification_billing_type === "Private") {
-          url = "/locum-billing/private-invoices";
+        if (this.$auth.user.domain === "Practice") {
+          url = `/practice-billing`;
+        } else if (this.$auth.user.domain === "Locum") {
+          if (notification.notification_billing_type === "Platform") {
+            url = `/locum-billing/invoices`;
+          }
+          if (notification.notification_billing_type === "Private") {
+            url = `/locum-billing/private-invoices`;
+          }
         }
       }
 
@@ -230,10 +232,10 @@ export default {
           default:
             routeStatus = status;
         }
-        // console.log(id, url, status, routeStatus);
+        // console.log(id, url, status, routeStatus, notification);
         // return;
         if (status === "Pending") {
-          this.close(id, type);
+          this.close(id, type, notificationType);
           return;
         }
         if (this.$route.name.includes("surgery-management")) {
@@ -274,9 +276,8 @@ export default {
           default:
             routeStatus = status;
         }
-        //
-        // console.log(id, url, status, routeStatus);
-        // return;
+        console.log(notification, id, url, status, routeStatus);
+        return;
         if (id !== this.$route.params.id) {
           this.$router.push({
             path: `${url}`,

@@ -160,15 +160,15 @@
 				:customWidth="700"
 				@pagechanged="pagechanged"
 				@limitchanged="limitchanged"
-			> 
-        <template v-slot:status_slot="slotProps">
-          <div class="flex items-center justify-center">
-            <div
-              class="rounded-full px-6 py-1"
-              :class="statusStyle(slotProps.item)"
-            >{{ getStatus(slotProps.item) }}</div>
-          </div>
-        </template>
+			>
+				<template v-slot:status_slot="slotProps">
+					<div class="flex items-center justify-center">
+						<div
+							class="rounded-full px-6 py-1"
+							:class="statusStyle(slotProps.item)"
+						>{{ getStatus(slotProps.item) }}</div>
+					</div>
+				</template>
 				<template v-slot:actions="slotProps">
 					<div class="flex flex-wrap justify-center">
 						<AppButton
@@ -232,14 +232,14 @@ export default {
 					name: "Phone Number",
 					dataIndex: "practice.phone_number",
 					class: "text-left"
-        },
-        {
-          name: "Status",
-          slot: true,
-          slotName: "status_slot",
-          dataIndex: "",
-          class: "text-center"
-        },
+				},
+				{
+					name: "Status",
+					slot: true,
+					slotName: "status_slot",
+					dataIndex: "",
+					class: "text-center"
+				},
 				{
 					name: "Actions",
 					dataIndex: "actions",
@@ -255,15 +255,23 @@ export default {
 			);
 			const practiceSpoke = response.data.practice;
 			const practiceHub = response.data.practice.parent_practice;
-      console.log('practiceHub', practiceHub)
-			response = await app.$axios.$get(
-				`/api/v1/practice/me/parent-surgery/invitations-count`
-			);
-			const totalInvitations = response.data.count;
+			console.log("practiceHub", practiceHub);
+			// response = await app.$axios.$get(
+			// 	`/api/v1/practice/me/parent-surgery/invitations-count`
+			// );
+			// const totalInvitations = response.data.count;
 			response = await app.$axios.$get(
 				`/api/v1/practice/me/parent-surgery/invitations`
 			);
-			const hubInvitations = response.data.practice_surgeries;
+			const hubInvitations = [];
+			response.data.practice_surgeries.map(invitation => {
+				if (invitation.invitation_rejected_at === null) {
+					hubInvitations.push(invitation);
+				}
+			});
+
+			const totalInvitations = hubInvitations.length;
+
 			// let hubInvitations = []
 			// if (response.data && response.data.practice_surgeries) {
 			//   response.data.practice_surgeries.forEach(invitation => {
@@ -280,6 +288,13 @@ export default {
 			throw err;
 		}
 	},
+	watch: {
+		$route(to, from) {
+			if (!this.practiceHub) {
+				this.getHubInvitations(this.params);
+			}
+		}
+	},
 	methods: {
 		// async getHub(){
 		//   await this.$axios.$get(`/api/v1/practice/me/parent-surgery`).then(res => {
@@ -293,49 +308,54 @@ export default {
 				.then(res => {
 					(this.loading = false), (this.hubInvitations = []);
 					res.data.practice_surgeries.forEach(invitation => {
-						this.hubInvitations.push(invitation);
+						console.log(invitation.invitation_rejected_at);
+						if (invitation.invitation_rejected_at === null) {
+							this.hubInvitations.push(invitation);
+						}
+						this.totalInvitations = this.hubInvitations.length;
+						console.log(this.hubInvitations);
 					});
 				})
 				.catch(err => {
 					console.log(err);
 				});
-    },
-    getStatus(surgery) {
-      let status = "Invited";
-      if (surgery.terminated_at) {
-        status = "Terminated";
-      } else if (surgery.termination_requested_at) {
-        if (surgery.invitation_accepted_at) {
-          status = "Termination Requested";
-        } else {
-          status = "Cancellation Requested";
-        }
-      } else if (surgery.invitation_rejected_at) {
-        status = "Rejected";
-      } else if (surgery.invitation_accepted_at) {
-        status = "Active";
-      }
-      return status;
-    },
-    statusStyle(surgery) {
-      this.getStatus(surgery);
-      switch (this.getStatus(surgery)) {
-        case "Active":
-          return "bg-green-500 text-white";
-          break;
-        case "Rejected":
-          return "bg-red-600 text-white";
-          break;
-        case "Termination Requested":
-          return "bg-orange-500 text-white";
-          break;
-        case "Terminated":
-          return "bg-red-700 text-white";
-          break;
-        default:
-          return "bg-yellow-400 text-black";
-      }
-    },
+		},
+		getStatus(surgery) {
+			let status = "Invited";
+			if (surgery.terminated_at) {
+				status = "Terminated";
+			} else if (surgery.termination_requested_at) {
+				if (surgery.invitation_accepted_at) {
+					status = "Termination Requested";
+				} else {
+					status = "Cancellation Requested";
+				}
+			} else if (surgery.invitation_rejected_at) {
+				status = "Rejected";
+			} else if (surgery.invitation_accepted_at) {
+				status = "Active";
+			}
+			return status;
+		},
+		statusStyle(surgery) {
+			this.getStatus(surgery);
+			switch (this.getStatus(surgery)) {
+				case "Active":
+					return "bg-green-500 text-white";
+					break;
+				case "Rejected":
+					return "bg-red-600 text-white";
+					break;
+				case "Termination Requested":
+					return "bg-orange-500 text-white";
+					break;
+				case "Terminated":
+					return "bg-red-700 text-white";
+					break;
+				default:
+					return "bg-yellow-400 text-black";
+			}
+		},
 		limitchanged(limit) {
 			this.current_page = 1;
 			this.params.offset = 0;

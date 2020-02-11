@@ -49,12 +49,19 @@ Vue.mixin({
       }
       return arr;
     },
-    CheckEmptyField(inputField, fieldName) {
+    CheckEmptyField(inputField, fieldName, preferredDisplayName) {
       let trimmedFieldName = fieldName;
-      if (fieldName.includes('_id')) {
-        trimmedFieldName = fieldName.replace(/_id/g, "")
+      let displayFieldName = null;
+      if (!preferredDisplayName) {
+        if (fieldName.includes('_id')) {
+          trimmedFieldName = fieldName.replace(/_id/g, "")
+        }
+        if (fieldName.includes('_or_')) {
+          trimmedFieldName = fieldName.replace(/_or_/g, "/")
+        }
+        displayFieldName = trimmedFieldName.charAt(0).toUpperCase() + trimmedFieldName.slice(1).replace(/_/g, " ")
       }
-      let displayFieldName = trimmedFieldName.charAt(0).toUpperCase() + trimmedFieldName.slice(1).replace(/_/g, " ")
+
 
       if (!this.formError) {
         return
@@ -69,19 +76,19 @@ Vue.mixin({
       if (!(inputField instanceof Array) && !inputField) {
         this.formError.push({
           field: fieldName,
-          message: `${displayFieldName} is required `
+          message: `${preferredDisplayName ? preferredDisplayName : displayFieldName} is required `
         });
       }
       if (inputField instanceof Array && !inputField.length) {
         this.formError.push({
           field: fieldName,
-          message: `${displayFieldName} is required `
+          message: `${preferredDisplayName ? preferredDisplayName : displayFieldName} is required `
         });
       }
       if (typeof inputField === "boolean" && inputField === false) {
         this.formError.push({
           field: fieldName,
-          message: `${displayFieldName} is required `
+          message: `${preferredDisplayName ? preferredDisplayName : displayFieldName} is required `
         });
       }
       if (inputField) {
@@ -105,15 +112,26 @@ Vue.mixin({
         // }
       }
     },
-    Validate(form, lists) {
+    Validate(form, lists, preferredDisplayName) {
       let items = Object.entries(form);
       for (const [key, value] of items) {
         let trimmedFieldName = key;
+        let displayFieldName = null;
+
         if (key.includes('_id')) {
-          let removed_id = key.replace(/_id/g, "")
-          trimmedFieldName = removed_id.charAt(0).toUpperCase() + removed_id.slice(1).replace(/_/g, " ")
+          trimmedFieldName = key.replace(/_id/g, "")
         }
-        let displayFieldName = trimmedFieldName
+        if (key.includes('_or_')) {
+          trimmedFieldName = key.replace(/_or_/g, "/")
+        }
+        displayFieldName = trimmedFieldName.charAt(0).toUpperCase() + trimmedFieldName.slice(1).replace(/_/g, " ")
+
+        if (preferredDisplayName) {
+          let findField = preferredDisplayName.find(item => item.field === key)
+          if (findField) {
+            displayFieldName = findField.display
+          }
+        }
         // check if value is array
         if (Array.isArray(value)) {
           if (value.length === 0) {
@@ -221,6 +239,15 @@ Vue.mixin({
         }
       }
       return submitForm
-    }
+    },
+    isNumber(e) {
+      e = e ? e : window.event;
+      let charCode = (e.which) ? e.which : e.keyCode;
+      if (charCode === 101 ) {
+        e.preventDefault();;
+      } else {
+        return true;
+      }
+    },
   }
 });
