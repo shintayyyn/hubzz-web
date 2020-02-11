@@ -347,7 +347,7 @@ export default {
       }
     },
     status(status) {
-      return status.toUpperCase();
+      return status === "Matched" ? "AVAILABLE" : status.toUpperCase();
     },
     bgStatus(status) {
       switch (status) {

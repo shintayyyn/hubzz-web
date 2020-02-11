@@ -113,6 +113,8 @@ export default {
               locum_status:
                 part.locum_status === "Declined"
                   ? "Withdrawn"
+                  : part.locum_status === "Matched"
+                  ? "Available"
                   : part.locum_status
             };
           });

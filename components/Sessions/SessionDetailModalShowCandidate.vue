@@ -139,7 +139,12 @@
           <AppButton
             :label="'Appoint to this job'"
             @click="confirmation_modal = true"
-            v-if="authPermissions.includes('Appoint Sessions Job')"
+            v-if="authPermissions.includes('Appoint Sessions Job') && user.locum_job_user_appointable"
+          />
+          <AppButton
+            :label="'This user has not yet accepted your changes'"
+            disabled
+            v-if="!user.locum_job_user_appointable"
           />
         </div>
       </div>
@@ -243,11 +248,23 @@ export default {
         })
         .catch(err => {
           console.log("err", err.reponse | err);
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "danget",
-            text: [`${err.response.data.message}`]
-          });
+          if (
+            err.response &&
+            err.response.data &&
+            err.response.data.message === "Locum User Not Accept Update"
+          ) {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "danget",
+              text: ["Locum has not yet accepted the amendment."]
+            });
+          } else {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "danget",
+              text: [`${err.response.data.message}`]
+            });
+          }
         })
         .finally(() => {
           this.confirmation_modal = false;
