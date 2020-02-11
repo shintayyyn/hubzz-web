@@ -210,6 +210,14 @@ export default {
         : this.invoice.issued_at;
     }
   },
+  
+  methods: {
+    exportToPdf(){
+      window.open(
+        `${process.env.API_URL}/api/v1/practice-invoices/${this.invoice.id}/pdf?filename=${'hubzz_invoice_'+this.invoice.invoice_number}`
+      );
+    }
+  },
 
   mounted() {
     this.surgery_name = this.invoice.practice.name;

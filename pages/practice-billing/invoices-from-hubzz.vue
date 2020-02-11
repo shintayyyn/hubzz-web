@@ -49,11 +49,12 @@
         </div>
       </div>
     </div>
+    <!-- @click="paymentModal ? paymentModal = false : $route.path != '/practice-billing/invoices-from-hubzz' ? $router.push('/practice-billing/invoices-from-hubzz') : null" -->
     <transition name="fade" mode="out-in">
       <div
         class="shield"
         v-if="['practice-billing-invoices-from-hubzz-id'].includes($route.name) || paymentModal"
-        @click="paymentModal ? paymentModal = false : $route.path != '/practice-billing/invoices-from-hubzz' ? $router.push('/practice-billing/invoices-from-hubzz') : null"
+        
       ></div>
     </transition>
     <nuxt-child />
