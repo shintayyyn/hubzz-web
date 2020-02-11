@@ -331,7 +331,7 @@ export default {
               status,
               locum_invoiceable,
               type: "Platform",
-              job_practice_id: [app.$auth.user.practice_id]
+              job_practice_id: [childPracticeId]
             }
           })
           .then(res => {
@@ -345,7 +345,7 @@ export default {
               status,
               locum_invoiceable,
               type: "Platform",
-              job_practice_id: [app.$auth.user.practice_id],
+              job_practice_id: [childPracticeId],
               offset: 0,
               limit: 5
             }
@@ -459,7 +459,7 @@ export default {
             status,
             locum_invoiceable,
             type: "Platform",
-            job_practice_id: [this.$auth.user.practice_id]
+            job_practice_id: [this.childPracticeId]
           }
         }),
         this.$axios.$get(`/api/v1/practice/job-parts`, {
@@ -468,7 +468,7 @@ export default {
             status,
             locum_invoiceable,
             type: "Platform",
-            job_practice_id: [this.$auth.user.practice_id],
+            job_practice_id: [this.childPracticeId],
             offset: 0,
             limit: 5
           }
@@ -561,7 +561,7 @@ export default {
             status,
             locum_invoiceable,
             type: "Platform",
-            job_practice_id: [this.$auth.user.practice_id],
+            job_practice_id: [this.childPracticeId],
             offset: this.offset,
             limit: this.limit,
             order_by: this.order_by
