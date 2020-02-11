@@ -43,15 +43,16 @@
 				>{{practice_surgery.child_practice.email ? practice_surgery.child_practice.email : 'N/A'}}</p>
 				<p class="font-semibold">Practice Types</p>
 				<div class="flex flex-wrap">
-					<p
-						class="mx-2 leading-tight mb-2"
-						v-if="!practice_surgery.child_practice.practice_types.length"
-					>Not set</p>
-					<p
-						class="m-1 rounded-lg text-sm text-black px-2 py-1 bg-yellow-500"
-						v-for="practiceType in practice_surgery.child_practice.practice_types"
-						:key="practiceType.id + '-name'"
-					>{{practiceType ? practiceType.name: null}}</p>
+					<template
+						v-if="practice_surgery && practice_surgery.child_practice && practice_surgery.child_practice.practice_types.length"
+					>
+						<p
+							class="m-1 rounded-lg text-sm text-black px-2 py-1 bg-yellow-500"
+							v-for="practiceType in practice_surgery.child_practice.practice_types"
+							:key="practiceType.id + '-name'"
+						>{{practiceType ? practiceType.name: null}}</p>
+					</template>
+					<p v-else class="mx-2 leading-tight mb-2">Not set</p>
 				</div>
 			</div>
 			<div class="flex flex-col w-full md:w-1/2 shadow-lg p-4 md:p-8 my-2 md:my-0 md:mx-1 rounded-lg">
