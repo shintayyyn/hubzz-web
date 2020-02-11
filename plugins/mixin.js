@@ -113,7 +113,6 @@ Vue.mixin({
       }
     },
     Validate(form, lists, preferredDisplayName) {
-      console.log("preferredDisplayName", preferredDisplayName)
       let items = Object.entries(form);
       for (const [key, value] of items) {
         let trimmedFieldName = key;
@@ -240,6 +239,15 @@ Vue.mixin({
         }
       }
       return submitForm
-    }
+    },
+    isNumber(e) {
+      e = e ? e : window.event;
+      let charCode = (e.which) ? e.which : e.keyCode;
+      if (charCode === 101 ) {
+        e.preventDefault();;
+      } else {
+        return true;
+      }
+    },
   }
 });
