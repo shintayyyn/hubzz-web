@@ -39,8 +39,20 @@
 				>{{practice_surgery.child_practice.report_to ? practice_surgery.child_practice.report_to : 'N/A'}}</p>
 				<p class="font-semibold">Email Address</p>
 				<p
-					class="mx-2 leading-tight"
+					class="mx-2 leading-tight mb-2"
 				>{{practice_surgery.child_practice.email ? practice_surgery.child_practice.email : 'N/A'}}</p>
+				<p class="font-semibold">Practice Types</p>
+				<div class="flex flex-wrap">
+					<p
+						class="mx-2 leading-tight mb-2"
+						v-if="!practice_surgery.child_practice.practice_types.length"
+					>Not set</p>
+					<p
+						class="m-1 rounded-lg text-sm text-black px-2 py-1 bg-yellow-500"
+						v-for="practiceType in practice_surgery.child_practice.practice_types"
+						:key="practiceType.id + '-name'"
+					>{{practiceType ? practiceType.name: null}}</p>
+				</div>
 			</div>
 			<div class="flex flex-col w-full md:w-1/2 shadow-lg p-4 md:p-8 my-2 md:my-0 md:mx-1 rounded-lg">
 				<!--------------PAY FOR SURGERY-------------->
@@ -330,6 +342,7 @@ export default {
 	// },
 	created() {
 		this.practice_id = this.$route.params.id;
+		console.log("practice_id", this.practice_id);
 		this.getSurgery();
 		this.form.allow_surgery_create_sessions = this.practice_surgery.allow_surgery_create_sessions;
 		this.form.max_hourly_rate_limit = this.practice_surgery.max_hourly_rate_limit;
@@ -346,17 +359,6 @@ export default {
 	watch: {
 		"form.allow_surgery_create_sessions"(value) {
 			this.surgeryCreateSessions = value;
-			console.log(
-				"allow_surgery_create_sessions?",
-				this.surgeryCreateSessions,
-				value
-			);
-		},
-		editPayForSurgery(value) {
-			console.log(
-				"allow_surgery_create_sessions?",
-				this.practice_surgery.allow_surgery_create_sessions
-			);
 		}
 	},
 	methods: {
