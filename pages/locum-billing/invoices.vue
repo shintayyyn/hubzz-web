@@ -129,23 +129,27 @@
                     class="mx-1 p-2 bg-red-700 text-white font-bold rounded-lg focus:outline-none w-full"
                   >Delete</button>
                 </div>
+                <!-- v-if="slotProps.item.locum_invoice_id && slotProps.item.status === 'Approved'" -->
                 <div
-                  v-if="slotProps.item.locum_invoice_id && slotProps.item.status === 'Approved'"
+                  v-if="['approved'].includes($route.query.status)"
                   @click="$router.push({ path: `/locum-billing/invoices/${slotProps.item.locum_invoice_id}`, query: {...$route.query} })"
                   class="my-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none"
                 >View</div>
+                <!-- v-if="slotProps.item.locum_invoice_id && slotProps.item.status === 'Approved' && !slotProps.item.locum_form_a_id && !slotProps.item.locum_invoice_item.locum_invoice.paid_at" -->
                 <div
-                  v-if="slotProps.item.locum_invoice_id && slotProps.item.status === 'Approved' && !slotProps.item.locum_form_a_id && !slotProps.item.locum_invoice_item.locum_invoice.paid_at"
+                  v-if="$route.query.status && $route.query.status === 'approved' && !slotProps.item.locum_invoice_item.locum_invoice.paid_at"
                   class="my-1 p-2 font-bold"
                 >Waiting For Payment</div>
+                <!-- v-if="slotProps.item.locum_invoice_id && slotProps.item.status === 'Approved' && !slotProps.item.locum_form_a_id && slotProps.item.profession.name === 'GP' && slotProps.item.locum_invoice_item.locum_invoice.paid_at" -->
                 <div
-                  v-if="slotProps.item.locum_invoice_id && slotProps.item.status === 'Approved' && !slotProps.item.locum_form_a_id && slotProps.item.profession.name === 'GP' && slotProps.item.locum_invoice_item.locum_invoice.paid_at"
+                  v-if="$route.query.status && $route.query.status === 'pension-form-a' && slotProps.item.profession.name === 'GP' && !slotProps.item.locum_form_a_id && slotProps.item.locum_invoice_item.locum_invoice.paid_at"
                   @click="select_invoice(slotProps.item.locum_invoice_id, 'generateFormA')"
                   class="my-1 p-2 bg-green-500 hover:bg-green-600 text-white font-bold rounded-lg focus:outline-none w-full"
                 >Generate Form A</div>
+                <!-- v-if="slotProps.item.locum_invoice_id && slotProps.item.status === 'Approved' && slotProps.item.locum_form_a_id && slotProps.item.profession.name === 'GP' " -->
                 <div
+                  v-if="$route.query.status && $route.query.status === 'pension-form-a' && slotProps.item.profession.name === 'GP' && slotProps.item.locum_form_a_id"
                   @click="viewAsPdf(slotProps.item.locum_form_a_id, 'form-a')"
-                  v-if="slotProps.item.locum_invoice_id && slotProps.item.status === 'Approved' && slotProps.item.locum_form_a_id && slotProps.item.profession.name === 'GP' "
                   class="my-1 p-2 bg-yellow-400 hover:bg-yellow-500 font-bold rounded-lg focus:outline-none"
                 >View NHS Form A</div>
               </div>
@@ -687,31 +691,35 @@ export default {
       switch (queryStatus && queryStatus.toLowerCase()) {
         case "to-be-invoiced":
           invoice_status.push("To Be Invoice");
+          locum_status = ["Completed", "Declined", "Cancelled"];
           locum_invoiceable = true;
           break;
         case "disputed":
           invoice_status.push("Disputed");
+          locum_status = ["Completed", "Declined", "Cancelled"];
           locum_invoiceable = true;
           break;
         case "issued":
           invoice_status.push("Invoiced");
+          locum_status = ["Completed", "Declined", "Cancelled"];
           locum_invoiceable = true;
           break;
         case "approved":
           invoice_status.push("Invoiced");
           locum_status.push("Approved");
-          locum_invoiceable = null;
+          locum_invoiceable = true;
           break;
         case "pension-form-a":
           invoice_status.push("Invoiced");
           locum_status.push("Approved");
-          break;
           break;
         case "pension-form-b":
           url = `/api/v1/locum/locum-invoices-form-b`;
           break;
         default:
           invoice_status.push("To Be Invoice");
+          locum_status = ["Completed", "Declined", "Cancelled"];
+          locum_invoiceable = true;
       }
       return this.$axios
         .$get(`${url}`, {
