@@ -139,16 +139,6 @@ export default {
     }
   },
   methods: {
-    removeStatus() {
-      return this.$router.push({
-        path: this.$route.path
-      });
-    },
-    removeParams() {
-      return this.$router.push({
-        path: this.$route.matched[0].path
-      });
-    },
     show(id) {
       return this.$router.push({
         path: `${this.url}/${id}`
@@ -165,10 +155,9 @@ export default {
       let status = notification.status
         ? notification.status
         : notification.locum_status;
-      // let status = jobStatus === "Withdrawn" ? "Declined" : jobStatus;
       let dateStart = notification.date_start;
       let dateEnd = notification.date_end;
-      let notificationType = notification.type;
+      let notificationType = notification.notification_type;
 
       if (this.$route.path.includes("/dashboard")) {
         let selectedMonth =
@@ -207,13 +196,15 @@ export default {
           url = this.$route.path;
         }
       } else if (type === "Billings") {
-        if (notification.notification_billing_type === "Platform") {
-          url =
-            this.$auth.user.domain === "Practice"
-              ? "/practice-billing"
-              : "/locum-billing/invoices";
-        } else if (notification.notification_billing_type === "Private") {
-          url = "/locum-billing/private-invoices";
+        if (this.$auth.user.domain === "Practice") {
+          url = `/practice-billing`;
+        } else if (this.$auth.user.domain === "Locum") {
+          if (notification.notification_billing_type === "Platform") {
+            url = `/locum-billing/invoices`;
+          }
+          if (notification.notification_billing_type === "Private") {
+            url = `/locum-billing/private-invoices`;
+          }
         }
       }
 
@@ -232,6 +223,9 @@ export default {
           case "Available":
             routeStatus = "Public";
             break;
+          case "Matched":
+            routeStatus = "Available";
+            break;
           case "Updated":
             routeStatus = null;
             break;
@@ -241,7 +235,7 @@ export default {
         // console.log(id, url, status, routeStatus);
         // return;
         if (status === "Pending") {
-          this.close(id, notificationType);
+          this.close(id, type);
           return;
         }
         if (this.$route.name.includes("surgery-management")) {
@@ -282,8 +276,7 @@ export default {
           default:
             routeStatus = status;
         }
-        //
-        // console.log(id, url, status, routeStatus);
+        // console.log(notification, id, url, status, routeStatus);
         // return;
         if (id !== this.$route.params.id) {
           this.$router.push({
@@ -298,12 +291,55 @@ export default {
           });
         }, 500);
       }
-      this.close(id, notificationType);
+      this.close(id, type, notificationType);
     },
-    close(id, type) {
+    close(id, type, notificationType) {
       if (type === "Jobs") {
-        this.$store.commit("jobs/REMOVE_PRACTICE_JOB_NOTIFICATION", id);
-        this.$store.commit("jobs/REMOVE_LOCUM_JOB_NOTIFICATION", id);
+        if (
+          [
+            "Practice Notification Job Ongoing",
+            "Practice Notification Job Cancelled",
+            "Practice Notification Job Declined"
+          ].includes(notificationType)
+        ) {
+          switch (notificationType) {
+            case "Practice Notification Job Ongoing":
+              this.$store.commit(
+                "jobs/REMOVE_PRACTICE_JOB_NOTIFICATION",
+                this.$store.state.jobs.practice_job_notifications.find(notif =>
+                  notif.job_parts.find(jobPart => jobPart.status === "Ongoing")
+                ).id
+              );
+              break;
+            case "Practice Notification Job Cancelled":
+              this.$store.commit(
+                "jobs/REMOVE_PRACTICE_JOB_NOTIFICATION",
+                this.$store.state.jobs.practice_job_notifications.find(notif =>
+                  notif.job_parts.find(
+                    jobPart => jobPart.status === "Cancelled"
+                  )
+                ).id
+              );
+              break;
+            case "Practice Notification Job Declined":
+              this.$store.commit(
+                "jobs/REMOVE_PRACTICE_JOB_NOTIFICATION",
+                this.$store.state.jobs.practice_job_notifications.find(notif =>
+                  notif.job_parts.find(jobPart => jobPart.status === "Declined")
+                ).id
+              );
+              break;
+          }
+        } else if (
+          ![
+            "Practice Notification Job Ongoing",
+            "Practice Notification Job Cancelled",
+            "Practice Notification Job Declined"
+          ].includes(notificationType)
+        ) {
+          this.$store.commit("jobs/REMOVE_PRACTICE_JOB_NOTIFICATION", id);
+          this.$store.commit("jobs/REMOVE_LOCUM_JOB_NOTIFICATION", id);
+        }
       }
       if (type === "Billings") {
         this.$store.commit("billing/REMOVE_PRACTICE_BILLING_NOTIFICATION", id);

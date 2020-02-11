@@ -295,27 +295,29 @@ export default {
     this.form.profession_id = this.professionalDetails.profession_id;
 
     if (this.form.profession_id == 1) {
-      this.professionalDetails.qualification_id.forEach(id => {
+      this.professionalDetails.qualification_id.forEach(qualification => {
         this.form.qualification_id.push(
-          this.gpQualifications.find(item => item.value === id)
+          this.gpQualifications.find(item => item.value === qualification.value)
         );
       });
     } else {
-      this.professionalDetails.qualification_id.forEach(id => {
+      this.professionalDetails.qualification_id.forEach(qualification => {
         this.form.qualification_id.push(
-          this.othersQualifications.find(item => item.value === id)
+          this.othersQualifications.find(
+            item => item.value === qualification.id
+          )
         );
       });
     }
 
-    this.professionalDetails.clinical_system_id.forEach(id => {
+    this.professionalDetails.clinical_system_id.forEach(clinical => {
       this.form.clinical_system_id.push(
-        this.clinicalSystems.find(item => item.value === id)
+        this.clinicalSystems.find(item => item.value === clinical.value)
       );
     });
-    this.professionalDetails.spoken_language_id.forEach(id => {
+    this.professionalDetails.spoken_language_id.forEach(spoken => {
       this.form.spoken_language_id.push(
-        this.spokenLanguages.find(item => item.value === id)
+        this.spokenLanguages.find(item => item.value === spoken.value)
       );
     });
 
@@ -367,15 +369,15 @@ export default {
         "mandatory_training_id"
       ]);
       if (!this.formError.length) {
-        this.form.qualification_id = this.form.qualification_id.length
-          ? this.form.qualification_id.map(item => item.value)
-          : [];
-        this.form.clinical_system_id = this.form.clinical_system_id
-          ? this.form.clinical_system_id.map(item => item.value)
-          : [];
-        this.form.spoken_language_id = this.form.spoken_language_id
-          ? this.form.spoken_language_id.map(item => item.value)
-          : [];
+        // this.form.qualification_id = this.form.qualification_id.length
+        //   ? this.form.qualification_id.map(item => item.value)
+        //   : [];
+        // this.form.clinical_system_id = this.form.clinical_system_id
+        //   ? this.form.clinical_system_id.map(item => item.value)
+        //   : [];
+        // this.form.spoken_language_id = this.form.spoken_language_id
+        //   ? this.form.spoken_language_id.map(item => item.value)
+        //   : [];
         this.$store.commit("sign-up/SET_PROFESSIONAL_DETAILS", this.form);
         this.$store.commit("sign-up/SET_PROFESSIONAL_DETAIL_FORM_ERROR", []);
 

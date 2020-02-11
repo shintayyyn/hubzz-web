@@ -33,7 +33,7 @@ export default {
       if (
         query &&
         query.jobStatus &&
-        ["ongoing", "completed", "approved"].includes(
+        ["ongoing", "completed", "approved", "withdrawn", "cancelled"].includes(
           query.jobStatus.toLowerCase()
         )
       ) {

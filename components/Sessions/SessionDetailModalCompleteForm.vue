@@ -20,9 +20,9 @@
           :error="formError.find(item => item.field === 'absent_days')"
         />
         <AppInput
-          v-model="form.reason_of_absence"
+          v-model="form.absent_days_reason"
           :type="'textarea'"
-          :name="'reason_of_absence'"
+          :name="'absent_days_reason'"
           :label="'Reason of Absence'"
           :placeholder="'For e.g. No-show'"
           :resize="false"
@@ -101,7 +101,7 @@ export default {
       has_late: false,
       form: {
         absent_days: 0,
-        reason_of_absence: "",
+        absent_days_reason: "",
         late_hours: 0,
         late_hours_reason: "",
         final_hours: 0
@@ -145,7 +145,7 @@ export default {
     },
     complete() {
       this.formError = [];
-      let notRequired = ["reason_of_absence", "late_hours_reason"];
+      let notRequired = ["absent_days_reason", "late_hours_reason"];
       this.confirmation_modal = false;
       if (this.has_absences === "false" || this.has_absences === false) {
         this.form.absent_days = 0;

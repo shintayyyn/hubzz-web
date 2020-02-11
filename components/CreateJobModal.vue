@@ -881,14 +881,14 @@ export default {
     },
     close() {
       this.$store.commit("calendar/CREATE_JOB_MODAL", false);
+      this.$store.commit("calendar/CREATE_JOB_SURGERY_MODAL", false);
       this.$store.commit("calendar/CLEAR_REPOST_JOB");
       this.$emit("close");
     },
     goToProfile() {
       this.$store.commit("calendar/CREATE_JOB_MODAL", false);
       this.$store.commit("calendar/CLEAR_REPOST_JOB");
-      // this.$router.push("/profile");
-      window.open("/profile", "_blank");    
+      window.open("/profile", "_blank");
     },
     uncheckMandatory(value) {
       this.form.mandatory_training_id = this.form.mandatory_training_id.filter(
@@ -934,7 +934,7 @@ export default {
         [15, "15", 30, "30", 60, "60", false, "false"].includes(
           this.unpaid_breaks
         )
-        ) {
+      ) {
         notRequired.push("unpaid_breaks_in_minutes");
       }
 
@@ -948,7 +948,7 @@ export default {
         ["true", true].includes(this.selection_notification) &&
         this.selection_date.date &&
         this.selection_date.time
-        ) {
+      ) {
         notRequired.push("selection_date");
       }
 
@@ -962,7 +962,7 @@ export default {
         ["true", true].includes(this.bank_first) &&
         this.favorite_only_until.date &&
         this.favorite_only_until.time
-        ) {
+      ) {
         notRequired.push("favorite_only_until");
       }
       this.validateNumber(this.form.rate, "rate");

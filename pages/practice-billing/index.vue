@@ -172,7 +172,6 @@ export default {
       loading: false,
       filterModal: false,
       isFiltered: false,
-      showTable: false,
       total: 0,
       job_parts: [],
 
@@ -234,16 +233,15 @@ export default {
     };
   },
   computed: {
-    // ir35() {
-    //   return true;
-    //   if (!this.invoice_id) {
-    //     return false;
-    //   }
-    //   let selectedInvoice = this.job_parts.find(
-    //     item => item.locum_invoice_id === this.invoice_id
-    //   );
-    //   return selectedInvoice.job_ir35 ? selectedInvoice.job_ir35 : false;
-    // },
+    ir35() {
+      if (!this.invoice_id) {
+        return false;
+      }
+      let selectedInvoice = this.job_parts.find(
+        item => item.locum_invoice_id === this.invoice_id
+      );
+      return selectedInvoice.job_ir35 ? selectedInvoice.job_ir35 : false;
+    },
     authPermissions() {
       return this.$store.getters["permissions"];
     },
@@ -285,6 +283,7 @@ export default {
         this.showRefresh = false;
         this.total = 0;
         this.job_parts = [];
+        this.clearFilters();
         this.isFiltered = false;
         this.initialLoading = true;
         await this.getJobPartsPromiseAll();
@@ -306,45 +305,63 @@ export default {
     try {
       let status = [];
       let invoice_status = [];
+      let locum_invoiceable;
       let queryStatus = query.status;
+
       switch (queryStatus && queryStatus.toLowerCase()) {
         case "to-be-invoiced":
-          status = ["Completed", "Terminated"];
-          invoice_status = ["To Be Invoice"];
+          invoice_status.push("To Be Invoice");
+          status = ["Completed", "Declined", "Cancelled"];
+          locum_invoiceable = true;
           break;
         case "disputed":
-          status = ["Completed", "Terminated"];
-          invoice_status = ["Disputed"];
+          invoice_status.push("Disputed");
+          status = ["Completed", "Declined", "Cancelled"];
+          locum_invoiceable = true;
           break;
         case "issued":
-          status = ["Completed", "Terminated"];
-          invoice_status = ["Invoiced"];
+          invoice_status.push("Invoiced");
+          status = ["Completed", "Declined", "Cancelled"];
+          locum_invoiceable = true;
           break;
         case "approved":
-          status = ["Approved"];
-          invoice_status = ["Invoiced"];
+          invoice_status.push("Invoiced");
+          status.push("Approved");
+          locum_invoiceable = true;
           break;
         default:
-          status = ["Completed", "Terminated"];
-          invoice_status = ["To Be Invoice"];
+          invoice_status.push("To Be Invoice");
+          status = ["Completed", "Declined", "Cancelled"];
+          locum_invoiceable = true;
       }
-
-      const params = {
-        status,
-        invoice_status,
-        type: "Platform",
-        job_practice_id: [app.$auth.user.practice_id]
-      };
 
       let [total, job_parts] = await Promise.all([
         app.$axios
-          .$get(`/api/v1/practice/job-parts/count`, { params })
+          .$get(`/api/v1/practice/job-parts/count`, {
+            params: {
+              invoice_status,
+              status,
+              locum_invoiceable,
+              type: "Platform",
+              job_practice_id: [app.$auth.user.practice_id]
+            }
+          })
           .then(res => {
             const total = res.data.count;
             return total;
           }),
         app.$axios
-          .$get(`/api/v1/practice/job-parts?offset=0&limit=5`, { params })
+          .$get(`/api/v1/practice/job-parts`, {
+            params: {
+              invoice_status,
+              status,
+              locum_invoiceable,
+              type: "Platform",
+              job_practice_id: [app.$auth.user.practice_id],
+              offset: 0,
+              limit: 5
+            }
+          })
           .then(res => {
             const job_parts = res.data.job_parts;
             return job_parts;
@@ -374,12 +391,9 @@ export default {
         };
       });
 
-      const showTable = true;
-
       return {
         total,
-        job_parts,
-        showTable
+        job_parts
       };
     } catch (err) {
       console.log("err", err.response || err);
@@ -410,48 +424,55 @@ export default {
     getJobPartsPromiseAll() {
       let status = [];
       let invoice_status = [];
+      let locum_invoiceable;
       let queryStatus = this.$route.query.status;
+
       switch (queryStatus && queryStatus.toLowerCase()) {
         case "to-be-invoiced":
-          status = ["Completed", "Terminated"];
-          invoice_status = ["To Be Invoice"];
+          invoice_status.push("To Be Invoice");
+          status = ["Completed", "Declined", "Cancelled"];
+          locum_invoiceable = true;
           break;
         case "disputed":
-          status = ["Completed", "Terminated"];
-          invoice_status = ["Disputed"];
+          invoice_status.push("Disputed");
+          status = ["Completed", "Declined", "Cancelled"];
+          locum_invoiceable = true;
           break;
         case "issued":
-          status = ["Completed", "Terminated"];
-          invoice_status = ["Invoiced"];
+          invoice_status.push("Invoiced");
+          status = ["Completed", "Declined", "Cancelled"];
+          locum_invoiceable = true;
           break;
         case "approved":
-          status = ["Approved"];
-          invoice_status = ["Invoiced"];
+          invoice_status.push("Invoiced");
+          status.push("Approved");
+          locum_invoiceable = true;
           break;
         default:
-          status = ["Completed", "Terminated"];
-          invoice_status = ["To Be Invoice"];
+          invoice_status.push("To Be Invoice");
+          status = ["Completed", "Declined", "Cancelled"];
+          locum_invoiceable = true;
       }
 
       return Promise.all([
         this.$axios.$get(`/api/v1/practice/job-parts/count`, {
           params: {
-            job_practice_id: [this.$auth.user.practice_id],
             invoice_status,
             status,
+            locum_invoiceable,
             type: "Platform",
-            order_by: this.order_by
+            job_practice_id: [this.$auth.user.practice_id]
           }
         }),
         this.$axios.$get(`/api/v1/practice/job-parts`, {
           params: {
-            job_practice_id: [this.$auth.user.practice_id],
             invoice_status,
             status,
+            locum_invoiceable,
             type: "Platform",
+            job_practice_id: [this.$auth.user.practice_id],
             offset: 0,
-            limit: 5,
-            order_by: this.order_by
+            limit: 5
           }
         })
       ])
@@ -497,36 +518,43 @@ export default {
     getJobParts() {
       let status = [];
       let invoice_status = [];
+      let locum_invoiceable;
       let queryStatus = this.$route.query.status;
       switch (queryStatus && queryStatus.toLowerCase()) {
         case "to-be-invoiced":
-          status = ["Completed", "Terminated"];
-          invoice_status = ["To Be Invoice"];
+          invoice_status.push("To Be Invoice");
+          status = ["Completed", "Declined", "Cancelled"];
+          locum_invoiceable = true;
           break;
         case "disputed":
-          status = ["Completed", "Terminated"];
-          invoice_status = ["Disputed"];
+          invoice_status.push("Disputed");
+          status = ["Completed", "Declined", "Cancelled"];
+          locum_invoiceable = true;
           break;
         case "issued":
-          status = ["Completed", "Terminated"];
-          invoice_status = ["Invoiced"];
+          invoice_status.push("Invoiced");
+          status = ["Completed", "Declined", "Cancelled"];
+          locum_invoiceable = true;
           break;
         case "approved":
-          status = ["Approved"];
-          invoice_status = ["Invoiced"];
+          invoice_status.push("Invoiced");
+          status.push("Approved");
+          locum_invoiceable = true;
           break;
         default:
-          status = ["Completed", "Terminated"];
-          invoice_status = ["To Be Invoice"];
+          invoice_status.push("To Be Invoice");
+          status = ["Completed", "Declined", "Cancelled"];
+          locum_invoiceable = true;
       }
 
       return this.$axios
         .$get(`/api/v1/practice/job-parts`, {
           params: {
-            job_practice_id: [this.$auth.user.practice_id],
             invoice_status,
             status,
+            locum_invoiceable,
             type: "Platform",
+            job_practice_id: [this.$auth.user.practice_id],
             offset: this.offset,
             limit: this.limit,
             order_by: this.order_by
@@ -727,6 +755,11 @@ export default {
       this.loading = true;
       await this.getJobParts();
       this.loading = false;
+    },
+    clearFilters() {
+      this.offset = 0;
+      this.limit = 5;
+      this.order_by = [];
     }
   }
 };

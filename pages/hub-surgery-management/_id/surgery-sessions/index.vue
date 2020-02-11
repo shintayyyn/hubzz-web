@@ -104,8 +104,6 @@ export default {
       initialLoading: false,
       loading: false,
       current_page: 1,
-      // spokePracticeId: null,
-      // app table params
       // app table params
       offset: 0,
       limit: 5,
@@ -208,12 +206,14 @@ export default {
           {
             name: "Practice",
             dataIndex: "practice_name",
-            class: "text-center"
+            class: "text-center",
+            sortable: true
           },
           {
             name: "Title",
             dataIndex: "job_title",
-            class: "text-center"
+            class: "text-center",
+            sortable: true
           },
           {
             name: "Shift",
@@ -230,7 +230,8 @@ export default {
           {
             name: "per",
             dataIndex: "job.locum_detail_rate_type.name",
-            class: "text-center"
+            class: "text-center",
+            sortable: true
           }
         );
       } else if (
@@ -251,12 +252,14 @@ export default {
           {
             name: "Practice",
             dataIndex: "practice_name",
-            class: "text-center"
+            class: "text-center",
+            sortable: true
           },
           {
             name: "Title",
             dataIndex: "title",
-            class: "text-center"
+            class: "text-center",
+            sortable: true
           },
           {
             name: "Shift",
@@ -273,7 +276,8 @@ export default {
           {
             name: "per",
             dataIndex: "rate_type_name",
-            class: "text-center"
+            class: "text-center",
+            sortable: true
           }
         );
       }
@@ -425,10 +429,9 @@ export default {
         .then(res => {
           spokePracticeId =
             res.data &&
-            res.data.data &&
-            res.data.data.practice_surgery &&
-            res.data.data.practice_surgery.child_practice_id
-              ? res.data.data.practice_surgery.child_practice_id
+            res.data.practice_surgery &&
+            res.data.practice_surgery.child_practice_id
+              ? res.data.practice_surgery.child_practice_id
               : null;
         });
 
@@ -533,7 +536,6 @@ export default {
       ]);
 
       return {
-        // spokePracticeId,
         total,
         jobs
       };
@@ -541,16 +543,6 @@ export default {
       throw err;
     }
   },
-  // created() {
-  //   this.jobPartParams.job_practice_id = this.spokePracticeId;
-  //   this.params.practice_id = this.spokePracticeId;
-  //   this.getJobsCount(this.isJobPart ? this.jobPartParams : this.params);
-  //   setTimeout(() => {
-  //     this.clearJobsBadge(
-  //       this.$route.query.jobStatus ? this.$route.query.jobStatus : "Allocated"
-  //     );
-  //   }, 250);
-  // },
   methods: {
     getJobsPromiseAll() {
       let status = [];
@@ -777,8 +769,11 @@ export default {
           case "calendar_date_end":
             sorting = "calendar_date_end";
             break;
-          case "rate_name":
-            sorting = "rate";
+          case "job.rate":
+            sorting = "job_rate";
+            break;
+          case "job.locum_detail_rate_type.name":
+            sorting = "job_rate_type_name";
             break;
           default:
             sorting;
@@ -807,133 +802,6 @@ export default {
       await this.getJobs();
       this.loading = false;
     }
-    // clearJobsBadge(status) {
-    //   let jobStatus = status.toUpperCase();
-    //   // return this.$store.commit(`jobs/CLEAR_PRACTICE_${jobStatus}_BADGE`);
-    // },
-    // showFilter() {
-    //   return (this.filterToggle = !this.filterToggle);
-    // },
-    // filterJob() {
-    //   this.current_page = 1;
-    //   this.params.offset = 0;
-    //   this.jobPartParams.offset = 0;
-    //   this.$store.commit("jobs/TOGGLE_LOADING", true);
-    //   let jobStatus = this.$route.query.jobStatus
-    //     ? this.$route.query.jobStatus.toUpperCase()
-    //     : "ALLOCATED";
-    //   if (["ONGOING", "COMPLETED", "APPROVED"].includes(jobStatus)) {
-    //     this.$store.commit(`jobs/SET_PRACTICE_${jobStatus}_JOB_PARTS`, []);
-    //   }
-    //   if (!["ONGOING", "COMPLETED", "APPROVED"].includes(jobStatus)) {
-    //     this.$store.commit(`jobs/SET_PRACTICE_${jobStatus}_JOBS`, []);
-    //   }
-    //   this.getJobs(this.isJobPart ? this.jobPartParams : this.params);
-    //   this.filterToggle = false;
-    // },
-    // getJobsCount(params) {
-    //   this.$store.commit("jobs/TOGGLE_LOADING", true);
-    //   this.$store
-    //     .dispatch(`${this.dispatchUrl}`, {
-    //       status: [
-    //         `${
-    //           this.$route.query.jobStatus
-    //             ? this.$route.query.jobStatus
-    //             : "Allocated"
-    //         }`
-    //       ],
-    //       countOnly: true,
-    //       ...params
-    //     })
-    //     .finally(() => {
-    //       this.getJobs(params);
-    //     });
-    // },
-    // getJobs(params) {
-    //   this.$store.commit("jobs/CLEAR_JOBS");
-    //   this.$store
-    //     .dispatch(`${this.dispatchUrl}`, {
-    //       status: [
-    //         `${
-    //           this.$route.query.jobStatus
-    //             ? this.$route.query.jobStatus
-    //             : "Allocated"
-    //         }`
-    //       ],
-    //       ...params
-    //     })
-    //     .finally(() => {
-    //       this.$store.commit("jobs/TOGGLE_LOADING", false);
-    //       this.toggleTable = true;
-    //     });
-    // },
-    // sorted(order_by) {
-    //   this.current_page = 1;
-    //   this.params.offset = 0;
-    //   this.params.order_by = order_by;
-    //   this.jobPartParams.offset = 0;
-    //   this.jobPartParams.order_by = order_by;
-    //   this.$store.commit("jobs/TOGGLE_LOADING", true);
-    //   this.getJobs(this.isJobPart ? this.jobPartParams : this.params);
-    // },
-    // pagechanged(page) {
-    //   this.current_page = page;
-    //   this.params.offset = this.params.limit * (page - 1);
-    //   this.jobPartParams.offset = this.jobPartParams.limit * (page - 1);
-    //   this.$store.commit("jobs/TOGGLE_LOADING", true);
-    //   this.getJobs(this.isJobPart ? this.jobPartParams : this.params);
-    // },
-    // limitchanged(limit) {
-    //   this.current_page = 1;
-    //   this.params.offset = 0;
-    //   this.params.limit = limit;
-    //   this.jobPartParams.offset = 0;
-    //   this.jobPartParams.limit = limit;
-    //   this.$store.commit("jobs/TOGGLE_LOADING", true);
-    //   this.getJobs(this.isJobPart ? this.jobPartParams : this.params);
-    // },
-    // clearFilters() {
-    //   this.params.type = "";
-    //   this.params.job_number = "";
-    //   this.params.practice_id = "";
-    //   this.params.title = "";
-    //   this.params.shift_id = "";
-    //   this.params.rate = "";
-    //   this.params.rate_type_id = "";
-
-    //   this.jobPartParams.job_type = "";
-    //   this.jobPartParams.job_part_number = "";
-    //   this.jobPartParams.job_practice_id = "";
-    //   this.jobPartParams.job_title = "";
-    //   this.jobPartParams.job_shift_id = "";
-    //   this.jobPartParams.job_rate = "";
-    //   this.jobPartParams.job_rate_type_id = "";
-    //   this.jobPartParams.invoice_status = "";
-
-    //   this.jobPartParams.near_post_code = "";
-    //   this.jobPartParams.miles = "";
-    //   this.jobPartParams.calendar_date_start = "";
-    //   this.jobPartParams.calendar_date_end = "";
-    //   this.jobPartParams.time_start = "";
-    //   this.jobPartParams.time_end = "";
-    //   this.params.order_by = ["date_created:desc"];
-    //   this.jobPartParams.order_by = ["date_created:desc"];
-    // },
-    // onSelect(value) {
-    //   let address_components = value.details.result.address_components;
-    //   let postal_code = address_components.find(component =>
-    //     component.types.includes("postal_code")
-    //   );
-    //   if (!postal_code) {
-    //     this.params.near_post_code = "";
-    //     this.jobPartParams.near_post_code = "";
-
-    //     return;
-    //   }
-    //   this.params.near_post_code = postal_code.long_name;
-    //   this.jobPartParams.near_post_code = postal_code.long_name;
-    //   this.getJobsCount(this.isJobPart ? this.jobPartParams : this.params);
-    // }
   }
 };
 </script>
