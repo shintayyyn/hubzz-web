@@ -45,7 +45,7 @@
 				<div class="flex flex-wrap">
 					<p
 						class="mx-2 leading-tight mb-2"
-						v-if="!practice_surgery.child_practice.practice_types.length"
+						v-if="practice_surgery && practice_surgery.child_practice && practice_surgery.child_practice.practice_types"
 					>Not set</p>
 					<p
 						class="m-1 rounded-lg text-sm text-black px-2 py-1 bg-yellow-500"
