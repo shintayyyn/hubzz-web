@@ -124,6 +124,7 @@
                   v-model="form.items[0].total"
                   type="number"
                   class="border-b-2 focus:outline-none focus:border-yellow-400 w-full h-full text-right"
+                    @keypress="isNumber($event)"
                 />
               </div>
             </div>
