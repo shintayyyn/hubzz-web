@@ -281,7 +281,7 @@ export default {
       return this.$store.getters["sign-up/professionalFormError"];
     }
   },
-  async mounted() {
+  async created() {
     const response = await this.$axios.$get(`/api/v1/professions`);
     this.professions_categories =
       response.data &&
@@ -297,32 +297,40 @@ export default {
     this.form.nhs_smart_card_id_number = this.professionalDetails.nhs_smart_card_id_number;
     this.form.profession_id = this.professionalDetails.profession_id;
 
-    if (this.form.profession_id === 1) {
-      this.professionalDetails.qualification_id.forEach(qualification => {
-        this.form.qualification_id.push(
-          this.gpQualifications.find(item => item.value === qualification.value)
-        );
-      });
-    } else if (this.form.profession_id !== 1) {
-      this.professionalDetails.qualification_id.forEach(qualification => {
-        this.form.qualification_id.push(
-          this.othersQualifications.find(
-            item => item.value === qualification.id
-          )
-        );
-      });
-    }
+    // if (this.form.profession_id == 1) {
+    //   this.professionalDetails.qualification_id.forEach(qualification => {
+    //     this.form.qualification_id.push(
+    //       this.gpQualifications.find(item => item.value === qualification.value)
+    //     );
+    //   });
+    // } else if (this.form.profession_id != 1) {
+    //   this.professionalDetails.qualification_id.forEach(qualification => {
+    //     this.form.qualification_id.push(
+    //       this.othersQualifications.find(
+    //         item => item.value === qualification.id
+    //       )
+    //     );
+    //   });
+    // }
+    this.form.qualification_id = [...this.professionalDetails.qualification_id];
 
-    this.professionalDetails.clinical_system_id.forEach(clinical => {
-      this.form.clinical_system_id.push(
-        this.clinicalSystems.find(item => item.value === clinical.value)
-      );
-    });
-    this.professionalDetails.spoken_language_id.forEach(spoken => {
-      this.form.spoken_language_id.push(
-        this.spokenLanguages.find(item => item.value === spoken.value)
-      );
-    });
+    // this.professionalDetails.clinical_system_id.forEach(clinical => {
+    //   this.form.clinical_system_id.push(
+    //     this.clinicalSystems.find(item => item.value === clinical.value)
+    //   );
+    // });
+    this.form.clinical_system_id = [
+      ...this.professionalDetails.clinical_system_id
+    ];
+
+    // this.professionalDetails.spoken_language_id.forEach(spoken => {
+    //   this.form.spoken_language_id.push(
+    //     this.spokenLanguages.find(item => item.value === spoken.value)
+    //   );
+    // });
+    this.form.spoken_language_id = [
+      ...this.professionalDetails.spoken_language_id
+    ];
 
     this.form.min_rate_per_hour = this.professionalDetails.min_rate_per_hour;
     this.form.max_rate_per_hour = this.professionalDetails.max_rate_per_hour;
