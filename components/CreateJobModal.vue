@@ -419,6 +419,7 @@
                     @blur="CheckEmptyField(form.total_hours,'total_hours')"
                     style="text-align:right;'"
                     :error="formError.find(item => item.field === 'total_hours')"
+                    @keypress="isNumber($event)"
                   />
                   <div
                     class="text-red-500 p-1 text-xs"
