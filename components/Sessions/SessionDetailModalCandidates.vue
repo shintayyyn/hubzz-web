@@ -250,7 +250,7 @@ export default {
       this.getApplicants(this.params);
     },
     show(id) {
-      this.$axios.$get(`/api/v1/practice/locums/${id}`).then(res => {
+      this.$axios.$get(`/api/v1/practice/jobs/${this.job.id}/applicants/${id}`).then(res => {
         this.user = res.data.user;
         this.modal = true;
       });
