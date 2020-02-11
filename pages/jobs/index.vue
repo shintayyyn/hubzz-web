@@ -69,26 +69,34 @@
               :label="'Job number'"
             />
           </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <div
+            class="md:px-1 w-full lg:w-1/4 md:w-1/3"
+            v-if="$route.query.status && $route.query.status.toLowerCase() !== 'private'"
+          >
             <AppAutoComplete
               class="px-1"
-              v-model="practice_id"
+              v-model="search_practice"
               :name="'practice_id'"
               :label="'Surgery'"
               :url="'/api/v1/locum/surgeries'"
               :data="'surgeries'"
               :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem'"
+              @add="addPractice"
             />
           </div>
-          <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
+          <div
+            class="md:px-1 w-full lg:w-1/4 md:w-1/3"
+            v-if="$route.query.status && $route.query.status.toLowerCase() === 'private'"
+          >
             <AppAutoComplete
               class="px-1"
-              v-model="private_practice_id"
+              v-model="search_private_practice"
               :name="'practice_id'"
               :label="'Private Surgery'"
               :url="'/api/v1/locum/surgeries'"
               :data="'surgeries'"
               :inStyle="'padding-top:0.5rem;padding-bottom:0.5rem'"
+              @add="addPrivatePractice"
             />
           </div>
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
@@ -429,6 +437,8 @@ export default {
       loading: false,
       current_page: 1,
       // app table params
+      search_practice: null,
+      search_private_practice: null,
       offset: 0,
       limit: 5,
       order_by: [],
@@ -512,7 +522,7 @@ export default {
           } for a job`;
         case "completed":
           return "You have not yet completed any job";
-        
+
         default:
           return "You do not have any allocated jobs";
       }
@@ -705,29 +715,30 @@ export default {
       let locum_status = [];
       let queryStatus = query.status;
 
-      switch (queryStatus) {
-        case "":
-          locum_status = ["Allocated"];
-          break;
-        case "Available":
-        case "Bank":
-          locum_status = ["Matched"];
-          break;
-        case "Public":
-          locum_status = ["Available"];
-          break;
-        case "Completed":
-          locum_status = ["Completed", "Terminated"];
-          break;
-        case "Private":
-          locum_status = [];
-          break;
-        case "Withdrawn":
-          locum_status = ["Declined"];
-          break;
-        default:
-          locum_status = [`${queryStatus}`];
-          break;
+      if (!queryStatus) {
+        locum_status = ["Allocated"];
+      } else if (queryStatus) {
+        switch (queryStatus) {
+          case "Available":
+          case "Bank":
+            locum_status = ["Matched"];
+            break;
+          case "Public":
+            locum_status = ["Available"];
+            break;
+          case "Completed":
+            locum_status = ["Completed", "Terminated"];
+            break;
+          case "Private":
+            locum_status = [];
+            break;
+          case "Withdrawn":
+            locum_status = ["Declined"];
+            break;
+          default:
+            locum_status = [`${queryStatus}`];
+            break;
+        }
       }
 
       let isJobPart = false;
@@ -960,6 +971,14 @@ export default {
     this.showRefresh = false;
   },
   methods: {
+    addPractice(payload) {
+      this.search_practice = payload.name;
+      this.practice_id = payload.id;
+    },
+    addPrivatePractice(payload) {
+      this.search_private_practice = payload.name;
+      this.private_practice_id = payload.id;
+    },
     filterJobList(id) {
       this.jobs = this.jobs.filter(item => item.id !== id);
     },
@@ -967,31 +986,31 @@ export default {
       let locum_status = [];
       let queryStatus = this.$route.query.status;
 
-      switch (queryStatus) {
-        case "":
-          locum_status = ["Allocated"];
-          break;
-        case "Available":
-        case "Bank":
-          locum_status = ["Matched"];
-          break;
-        case "Public":
-          locum_status = ["Available"];
-          break;
-        case "Completed":
-          locum_status = ["Completed", "Terminated"];
-          break;
-        case "Private":
-          locum_status = [];
-          break;
-        case "Withdrawn":
-          locum_status = ["Declined"];
-          break;
-        default:
-          locum_status = [`${queryStatus}`];
-          break;
+      if (queryStatus) {
+        switch (queryStatus) {
+          case "Available":
+          case "Bank":
+            locum_status = ["Matched"];
+            break;
+          case "Public":
+            locum_status = ["Available"];
+            break;
+          case "Completed":
+            locum_status = ["Completed", "Terminated"];
+            break;
+          case "Private":
+            locum_status = [];
+            break;
+          case "Withdrawn":
+            locum_status = ["Declined"];
+            break;
+          default:
+            locum_status = [`${queryStatus}`];
+            break;
+        }
+      } else if (!queryStatus) {
+        locum_status = ["Allocated"];
       }
-
       return Promise.all([
         this.$axios.$get(
           `/api/v1/locum/${this.isJobPart ? "job-parts" : "jobs"}/count`,
@@ -1006,11 +1025,11 @@ export default {
               type: !this.isJobPart ? this.type : "",
               job_type: this.isJobPart ? this.job_type : "",
               practice_id:
-                !this.isJobPart && queryStatus === "Platform"
+                !this.isJobPart && (!queryStatus || queryStatus !== "Private")
                   ? this.practice_id
                   : "",
               job_practice_id:
-                this.isJobPart && queryStatus === "Platform"
+                this.isJobPart && (!queryStatus || queryStatus !== "Private")
                   ? this.job_practice_id
                   : "",
               private_practice_id:
@@ -1056,11 +1075,11 @@ export default {
               type: !this.isJobPart ? this.type : "",
               job_type: this.isJobPart ? this.job_type : "",
               practice_id:
-                !this.isJobPart && queryStatus === "Platform"
+                !this.isJobPart && (!queryStatus || queryStatus !== "Private")
                   ? this.practice_id
                   : "",
               job_practice_id:
-                this.isJobPart && queryStatus === "Platform"
+                this.isJobPart && (!queryStatus || queryStatus !== "Private")
                   ? this.job_practice_id
                   : "",
               private_practice_id:
@@ -1110,29 +1129,30 @@ export default {
       let locum_status = [];
       let queryStatus = this.$route.query.status;
 
-      switch (queryStatus) {
-        case "":
-          locum_status = ["Allocated"];
-          break;
-        case "Available":
-        case "Bank":
-          locum_status = ["Matched"];
-          break;
-        case "Public":
-          locum_status = ["Available"];
-          break;
-        case "Completed":
-          locum_status = ["Completed", "Terminated"];
-          break;
-        case "Withdrawn":
-          locum_status = ["Declined"];
-          break;
-        case "Private":
-          locum_status = [];
-          break;
-        default:
-          locum_status = [`${queryStatus}`];
-          break;
+      if (!queryStatus) {
+        locum_status = ["Allocated"];
+      } else if (queryStatus) {
+        switch (queryStatus) {
+          case "Available":
+          case "Bank":
+            locum_status = ["Matched"];
+            break;
+          case "Public":
+            locum_status = ["Available"];
+            break;
+          case "Completed":
+            locum_status = ["Completed", "Terminated"];
+            break;
+          case "Withdrawn":
+            locum_status = ["Declined"];
+            break;
+          case "Private":
+            locum_status = [];
+            break;
+          default:
+            locum_status = [`${queryStatus}`];
+            break;
+        }
       }
 
       return this.$axios
@@ -1513,6 +1533,8 @@ export default {
       this.loading = false;
     },
     clearFilters() {
+      this.search_practice = null;
+      this.search_private_practice = null;
       this.offset = 0;
       this.limit = 5;
       this.order_by = [];
