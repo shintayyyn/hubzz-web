@@ -469,7 +469,7 @@ export default {
       rates: [],
       filterModal: false,
       isFiltered: false,
-      showRefresh: false
+      showRefresh: false,
     };
   },
   computed: {
@@ -708,7 +708,7 @@ export default {
         await this.getJobsPromiseAll();
         this.initialLoading = false;
       }
-    }
+    },
   },
   async asyncData({ app, params, query, store, error }) {
     try {

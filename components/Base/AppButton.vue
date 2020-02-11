@@ -41,8 +41,12 @@ export default {
 .button {
 	background: linear-gradient(to top, #f2d024, #efde86);
 }
-.button:hover {
+.button:hover,
+.button:focus {
 	background: linear-gradient(to top, #e6c520, #f1d130);
+}
+.button:hover {
+	transform: translate(1px, 1px);
 }
 .button:active {
 	transform: translate(2px, 2px);

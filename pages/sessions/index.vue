@@ -395,6 +395,7 @@ export default {
         case "allocated":
         case "ongoing":
         case "declined":
+        case "withdrawn":
         case "approved":
         case "unfilled":
         case "live":
