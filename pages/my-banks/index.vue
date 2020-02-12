@@ -51,8 +51,11 @@
                   </div>
 
                   <div
-                    class="w-full font-bold text-sm sm:text-lg my-4 leading-tight"
+                    class="w-full font-bold text-sm sm:text-lg leading-tight"
                   >{{locum.personal_detail.name}}</div>
+                  <div
+                    class="w-full mb-4 font-bold text-gray-700 text-sm leading-tight"
+                  >{{locum.email}}</div>
                   <div
                     class="w-full mb-4 font-bold text-gray-700 text-sm leading-tight"
                   >{{locum.locum_detail.profession.name}}</div>

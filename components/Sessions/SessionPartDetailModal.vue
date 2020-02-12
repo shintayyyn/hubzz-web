@@ -35,7 +35,7 @@
           <div class="flex flex-col">
             <div
               class="bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4"
-              v-if="job_part.status === 'Declined'"
+              v-if="job_part.status === 'Declined' || job_part.status === 'Withdrawn'"
             >
               <div class="leading-tight pb-2">
                 <p class="font-bold text-sm sm:text-md">Reason for Withdrawal</p>

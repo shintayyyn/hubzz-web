@@ -42,7 +42,7 @@
           <div class="font-bold text-sm sm:text-md">Reason for cancellation</div>
           <div class="text-xs sm:text-sm mb-8">{{job_part.job.platform_job.cancelled_reason}}</div>
         </template>
-        <template v-if="job_part.status === 'Declined'">
+        <template v-if="job_part.status === 'Declined' || job_part.status === 'Withdrawn'">
           <div class="font-bold text-sm sm:text-md">Withdrawn At</div>
           <div class="text-xs sm:text-sm mb-8">{{job_part.job.platform_job.declined_at | localDate}}</div>
           <div class="font-bold text-sm sm:text-md">Reason for withdrawal</div>
