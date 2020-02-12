@@ -397,7 +397,7 @@ export default {
           return this.$moment(date).isAfter(this.startDate);
         }
         return this.$moment(date, "MM-DD-YYYY").isAfter(
-          this.$moment(newDate, "MM-DD-YYYY").add(1, "d")
+          this.$moment(newDate, "MM-DD-YYYY")
         );
       }
       if (this.isAfter) {

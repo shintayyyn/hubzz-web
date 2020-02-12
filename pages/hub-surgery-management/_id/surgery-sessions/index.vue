@@ -375,7 +375,7 @@ export default {
             status = ["Completed", "Terminated"];
             break;
           case "Withdrawn":
-            status = ["Declined"];
+            status = ["Declined", "Withdrawn"];
             break;
           default:
             status = [`${queryStatus}`];
@@ -559,7 +559,7 @@ export default {
             status = ["Completed", "Terminated"];
             break;
           case "Withdrawn":
-            status = ["Declined"];
+            status = ["Declined", "Withdrawn"];
             break;
           default:
             status = [`${queryStatus}`];
@@ -685,7 +685,7 @@ export default {
             status = ["Completed", "Terminated"];
             break;
           case "Withdrawn":
-            status = ["Declined"];
+            status = ["Declined", "Withdrawn"];
             break;
           default:
             status = [`${queryStatus}`];
