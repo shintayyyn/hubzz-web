@@ -188,9 +188,9 @@ export default {
     //   this.getPracticeInvoiceRealTime
     // );
   },
-  destroyed() {
-    this.removeListener();
-  },
+  // destroyed() {
+  //   this.removeListener();
+  // },
   methods: {
     getPracticeInvoiceRealTime({ id }) {
       if (!id) {
@@ -210,12 +210,12 @@ export default {
           });
       }
     },
-    removeListener() {
-      this.$socket.removeListener(
-        "Practice Notification Practice Invoice Paid",
-        this.getPracticeInvoiceRealTime
-      );
-    },
+    // removeListener() {
+    //   this.$socket.removeListener(
+    //     "Practice Notification Practice Invoice Paid",
+    //     this.getPracticeInvoiceRealTime
+    //   );
+    // },
     getInvoicesCount(params) {
       this.$axios
         .$get(`/api/v1/practice/practice-invoices/count`, { params })
