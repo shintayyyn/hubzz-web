@@ -89,7 +89,7 @@
             />
             <SessionDetailModalLocum
               :job="job"
-              v-if="(job.status === 'Allocated' || job.status === 'Ongoing' || job.status === 'Completed' || job.status === 'Declined')"
+              v-if="(job.status === 'Allocated' || job.status === 'Ongoing' || job.status === 'Completed' || job.status === 'Declined' || job.status === 'Withdrawn')"
             />
           </div>
         </div>
