@@ -5,7 +5,7 @@
         <!-- <div @click="$router.go(-1)" class="cursor-pointer">
           <svgicon name="left-arrow" height="32" width="32" />
         </div>-->
-        <nuxt-link :to="{ path: `/practice-billing`}">
+        <nuxt-link :to="{ path: `/practice-billing/invoices-from-hubzz`}">
           <svgicon name="left-arrow" height="32" width="32" />
         </nuxt-link>
       </div>
