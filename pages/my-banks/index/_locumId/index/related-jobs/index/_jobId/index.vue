@@ -32,9 +32,9 @@ export default {
 
       if (
         query &&
-        query.job_status &&
-        ["ongoing", "completed", "approved"].includes(
-          query.job_status.toLowerCase()
+        query.jobStatus &&
+        ["ongoing", "completed", "approved", "withdrawn", "cancelled"].includes(
+          query.jobStatus.toLowerCase()
         )
       ) {
         url = `/api/v1/practice/job-parts`;

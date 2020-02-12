@@ -411,7 +411,7 @@
           :columns="columns"
           :orderBy="order_by"
           :loading="loading"
-          :routerLink="'/jobs'"
+          :routerLink="`/my-practice/${$route.params.practiceId}/related-jobs`"
           @pagechanged="pagechanged"
           @limitchanged="limitchanged"
           @sorted="sorted"
@@ -434,8 +434,8 @@
         <transition name="fade" mode="out-in">
           <nuxt-link
             class="shield"
-            v-if="$route.name === 'jobs-index-id'"
-            :to="{ path: `/jobs?status=${$route.query.jobStatus ? $route.query.jobStatus : 'Allocated'}`, query: {...$route.query}}"
+            v-if="$route.name === 'my-practice-index-practiceId-index-related-jobs-index-jobId'"
+            :to="{ path: `/my-practice/${$route.params.practiceId}/related-jobs?status=${$route.query.jobStatus ? $route.query.jobStatus : 'Allocated'}`, query: {...$route.query}}"
           ></nuxt-link>
         </transition>
         <div>
