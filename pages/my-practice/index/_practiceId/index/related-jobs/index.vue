@@ -473,7 +473,7 @@ export default {
   },
   middleware({ query, redirect, error }) {
     if (
-      query.status &&
+      query.jobStatus &&
       ![
         "allocated",
         "ongoing",
@@ -487,7 +487,7 @@ export default {
         "completed",
         "approved",
         "private"
-      ].includes(query.status.toLowerCase())
+      ].includes(query.jobStatus.toLowerCase())
     ) {
       return error({ status: 404, message: "This Job Status is Invalid" });
     }

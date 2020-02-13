@@ -290,8 +290,8 @@ export default {
       this.selectedYear = this.$moment(this.value, this.format).format("YYYY");
     }
     // Defined selected year
-    if (this.startYear) {
-      this.selectedYear = this.startYear;
+    if (this.maxYearBefore) {
+      this.selectedYear = this.selectedYear - this.maxYearBefore;
     }
     // get month list
     this.getMonthLists();
@@ -351,6 +351,10 @@ export default {
           for (let i = 1; i <= this.limitYear; i++) {
             this.yearLists.push(
               this.$moment()
+                .subtract(
+                  this.maxYearBefore ? this.maxYearBefore - 1 : 0,
+                  "years"
+                )
                 .subtract(i, "years")
                 .format("YYYY")
             );
