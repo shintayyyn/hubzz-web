@@ -328,10 +328,23 @@
 
           <AppInput
             v-model="form.claim_nhs"
-            :type="'single-checkbox'"
+            :type="'select'"
             :name="'claim_nhs'"
             :label="'Are you willing to claim NHS Pension contributions?'"
+            :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
           />
+
+          <template v-if="form.claim_nhs == true || form.claim_nhs == 'true'">
+            <AppInput
+              v-model="form.nhs_number"
+              :type="'text'"
+              :name="'nhs_number'"
+              :label="'NHS number'"
+              :error="formError.find(item => item.field === 'nhs_number')"
+              required
+            />
+          </template>
+
           <AppPostCode
             :urlIndex="'/api/v1/postcode-coordinates'"
             v-model="form.post_code"
@@ -491,7 +504,8 @@ export default {
         sort_code: "",
         account_number: "",
         ir35: false,
-        claim_nhs: false
+        claim_nhs: false,
+        nhs_number: ""
       },
       profile: {
         avatar: null,
@@ -668,7 +682,8 @@ export default {
       this.form.company_registration_number = this.user.locum_detail.invoice_detail.company_registration_number;
       this.form.ir35 = this.user.locum_detail.invoice_detail.ir35;
       // claim nhs
-      this.form.claim_nhs = this.user.locum_detail.invoice_detail.claim_nhs;
+      this.form.claim_nhs = this.user.locum_detail.claim_nhs;
+      this.form.nhs_number = this.user.locum_detail.nhs_number;
       this.form.paid_under_payroll = this.user.locum_detail.invoice_detail.paid_under_payroll;
     }
     if (
@@ -709,11 +724,14 @@ export default {
         "ir35",
         "claim_nhs"
       ];
-
       if (this.form.employment_type === "Self-Employed") {
         notRequired.push("company_registration_number");
       } else if (this.form.employment_type === "Limited Company") {
         notRequired.push("utr_number");
+      }
+
+      if (["false", false].includes(this.form.claim_nhs)) {
+        notRequired.push("nhs_number");
       }
 
       if (["false", false].includes(this.form.paid_under_payroll)) {

@@ -380,6 +380,7 @@ export default {
       let invoice_status = [];
       let locum_status = [];
       let locum_invoiceable = null;
+      let nhs_claimable = null;
       let queryStatus = query.status;
 
       switch (queryStatus && queryStatus.toLowerCase()) {
@@ -405,6 +406,7 @@ export default {
           invoice_status.push("Invoiced");
           locum_status.push("Approved");
           locum_invoiceable = true;
+          nhs_claimable = true;
           break;
         case "pension-form-b":
           url = `/api/v1/locum/locum-invoices-form-b`;
@@ -423,6 +425,7 @@ export default {
               invoice_status,
               locum_status,
               locum_invoiceable,
+              nhs_claimable,
               job_type: "Platform",
               type: "Platform"
             }
@@ -437,6 +440,7 @@ export default {
               invoice_status,
               locum_status,
               locum_invoiceable,
+              nhs_claimable,
               job_type: "Platform",
               type: "Platform",
               offset: 0,
@@ -474,7 +478,9 @@ export default {
             invoice_number: jobPart.locum_invoice_id
               ? jobPart.locum_invoice_item.locum_invoice.invoice_number
               : null,
-            total_amount: total.toFixed(2)
+            total_amount: total
+              .toFixed(2)
+              .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
           };
         });
       } else if (url === `/api/v1/locum/locum-invoices-form-b`) {
@@ -565,6 +571,7 @@ export default {
       let invoice_status = [];
       let locum_status = [];
       let locum_invoiceable = null;
+      let nhs_claimable = null;
       let queryStatus = this.$route.query.status;
 
       switch (queryStatus && queryStatus.toLowerCase()) {
@@ -592,6 +599,7 @@ export default {
           invoice_status.push("Invoiced");
           locum_status.push("Approved");
           locum_invoiceable = true;
+          nhs_claimable = true;
           break;
         case "pension-form-b":
           url = `/api/v1/locum/locum-invoices-form-b`;
@@ -607,6 +615,7 @@ export default {
             invoice_status,
             locum_status,
             locum_invoiceable,
+            nhs_claimable,
             job_type: "Platform",
             type: "Platform",
             job_ir35: this.job_ir35
@@ -617,6 +626,7 @@ export default {
             invoice_status,
             locum_status,
             locum_invoiceable,
+            nhs_claimable,
             job_type: "Platform",
             type: "Platform",
             job_ir35: this.job_ir35,
@@ -649,7 +659,9 @@ export default {
                 invoice_number: jobPart.locum_invoice_id
                   ? jobPart.locum_invoice_item.locum_invoice.invoice_number
                   : null,
-                total_amount: total.toFixed(2)
+                total_amount: total
+                  .toFixed(2)
+                  .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
               };
             });
           } else if (response.data && response.data.locum_form_bs) {
@@ -688,6 +700,7 @@ export default {
       let invoice_status = [];
       let locum_status = [];
       let locum_invoiceable;
+      let nhs_claimable;
       let queryStatus = this.$route.query.status;
 
       switch (queryStatus && queryStatus.toLowerCase()) {
@@ -714,6 +727,7 @@ export default {
         case "pension-form-a":
           invoice_status.push("Invoiced");
           locum_status.push("Approved");
+          nhs_claimable = true;
           break;
         case "pension-form-b":
           url = `/api/v1/locum/locum-invoices-form-b`;
@@ -729,6 +743,7 @@ export default {
             invoice_status,
             locum_status,
             locum_invoiceable,
+            nhs_claimable,
             job_type: "Platform",
             type: "Platform",
             offset: this.offset,
@@ -760,7 +775,9 @@ export default {
                 invoice_number: jobPart.locum_invoice_id
                   ? jobPart.locum_invoice_item.locum_invoice.invoice_number
                   : null,
-                total_amount: total.toFixed(2)
+                total_amount: total
+                  .toFixed(2)
+                  .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
               };
             });
           } else if (res.data && res.data.locum_form_bs) {
