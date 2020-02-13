@@ -346,7 +346,7 @@ export default {
           } / ${
             this.propJobPart.job.shift.name
           } / Total hours of ${this.propJobPart.final_hours.toFixed(2)}`,
-          total: total.toFixed(2),
+          total: total.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"),
           dispute: this.propJobPart.disputed,
           absent_days: this.propJobPart.absent_days,
           final_hours: this.propJobPart.final_hours.toFixed(2),
@@ -355,7 +355,9 @@ export default {
         }
       ];
 
-      this.form.total_amount = total.toFixed(2);
+      this.form.total_amount = total
+        .toFixed(2)
+        .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
       this.form.final = false;
       this.form.ir35 = false;
     }
@@ -370,7 +372,9 @@ export default {
           type: "Job Part",
           job_part_id: this.propInvoice.items[0].job_part.id,
           description: this.propInvoice.items[0].description,
-          total: this.propInvoice.items[0].total.toFixed(2),
+          total: this.propInvoice.items[0].total
+            .toFixed(2)
+            .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"),
           dispute: this.propInvoice.items[0].disputed,
           absent_days: this.propInvoice.items[0].absent_days,
           final_hours: this.propInvoice.items[0].final_hours,
@@ -378,7 +382,9 @@ export default {
           remarks: this.propInvoice.items[0].remarks
         }
       ];
-      this.form.total_amount = this.propInvoice.total_amount.toFixed(2);
+      this.form.total_amount = this.propInvoice.total_amount
+        .toFixed(2)
+        .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
       this.form.final = false;
       this.form.ir35 = this.propInvoice.ir35;
     }

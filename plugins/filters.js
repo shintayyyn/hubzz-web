@@ -12,6 +12,8 @@ Vue.filter('localDate', function (date, dateOnly) {
 
 Vue.filter('currency', function (number) {
   if (number) {
+    // return number.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
+    // return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
     return parseInt(number).toFixed(2);
   }
   return '0.00'

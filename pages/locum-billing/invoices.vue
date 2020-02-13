@@ -474,7 +474,9 @@ export default {
             invoice_number: jobPart.locum_invoice_id
               ? jobPart.locum_invoice_item.locum_invoice.invoice_number
               : null,
-            total_amount: total.toFixed(2)
+            total_amount: total
+              .toFixed(2)
+              .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
           };
         });
       } else if (url === `/api/v1/locum/locum-invoices-form-b`) {
@@ -649,7 +651,9 @@ export default {
                 invoice_number: jobPart.locum_invoice_id
                   ? jobPart.locum_invoice_item.locum_invoice.invoice_number
                   : null,
-                total_amount: total.toFixed(2)
+                total_amount: total
+                  .toFixed(2)
+                  .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
               };
             });
           } else if (response.data && response.data.locum_form_bs) {
@@ -760,7 +764,9 @@ export default {
                 invoice_number: jobPart.locum_invoice_id
                   ? jobPart.locum_invoice_item.locum_invoice.invoice_number
                   : null,
-                total_amount: total.toFixed(2)
+                total_amount: total
+                  .toFixed(2)
+                  .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
               };
             });
           } else if (res.data && res.data.locum_form_bs) {
