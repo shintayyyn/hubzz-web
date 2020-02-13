@@ -226,7 +226,8 @@ export default {
 				email: "",
 				industry_type: "",
 				work_hours: "",
-				salary_amount: 0,
+        salary_amount: 0,
+        parent_practice_id: "",
 				salary_description_1: "",
 				salary_description_2: ""
 			},
@@ -309,7 +310,7 @@ export default {
 			this.$axios.$get("/api/v1/shifts"),
 			this.$axios.$get("/api/v1/professions"),
 			this.$axios.$get("/api/v1/me"),
-			(this.practice = this.$auth.user.practice_detail.practice)
+      (this.practice = this.$auth.user.practice_detail.practice)
 		])
 			.then(
 				([
@@ -323,7 +324,7 @@ export default {
 					console.log(
 						"practice job practices",
 						responsePracticeLists.data.practices
-					);
+          );
 					responsePracticeLists.data.practices.forEach(item => {
 						this.practice_lists.push({
 							label: item.surgery.name,
@@ -346,6 +347,7 @@ export default {
 				}
 			)
 			.finally(() => {
+        this.form.parent_practice_id = this.practice.parent_practice_id ? this.practice.parent_practice_id : null
 				this.loading = false;
 			});
 	},

@@ -17,7 +17,7 @@
 			<p
 				v-else
 				class="text-gray-600 px-3 py-2"
-			>No {{ $route.query.status === 'Closed' ? 'closed' : 'available'}} jobs yet.</p>
+			>No {{ $route.query.status ? $route.query.status : 'Available'}} jobs yet.</p>
 		</template>
 
 		<template v-if="$auth.user.domain ===  'Locum'">
@@ -46,7 +46,7 @@
 			<p
 				v-else
 				class="text-gray-600 px-3 py-2"
-			>No {{ $route.query.status === 'Closed' ? 'closed' : 'available'}} jobs yet.</p>
+			>No {{ $route.query.status ? $route.query.status : 'Available'}} jobs yet.</p>
 		</template>
 		<div
 			class="shield"
@@ -68,7 +68,7 @@ export default {
 	middleware({ query, redirect, error }) {
 		if (
 			query.status &&
-			!["available", "closed"].includes(query.status.toLowerCase())
+			!["available", "closed", "unfilled", "pending"].includes(query.status.toLowerCase())
 		) {
 			return error({
 				status: 404,
@@ -215,6 +215,7 @@ export default {
 				});
 				this.loading = false;
 			} else if (this.$auth.user.domain === "Practice") {
+        console.log('new status', newStatus)
 				params = {
 					job_posting_status: newStatus ? newStatus : "Available",
 					practice_id: this.$auth.user.practice_id
@@ -308,7 +309,7 @@ export default {
 				);
 				permanent_job_count =
 					response.data && response.data.count ? response.data.count : null;
-
+      
 				response = await app.$axios.$get(`/api/v1/practice/permanent-jobs`, {
 					params
 				});
