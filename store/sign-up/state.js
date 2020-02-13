@@ -102,7 +102,8 @@ export default () => ({
         bank_name: "",
         sort_code: "",
         account_number: "",
-        ir35: false
+        ir35: false,
+        claim_nhs: false,
     },
     credential_details: {
         email: '',
