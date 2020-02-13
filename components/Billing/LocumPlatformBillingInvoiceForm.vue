@@ -149,7 +149,7 @@
             <!-- dispute invoice attendance forms -->
             <div
               class="flex justify-start mt-2 px-2"
-              v-if="form.items[0].dispute || (propInvoice && propInvoice.items[0].approved === false && propInvoice.items[0].status === 'Approved')"
+              v-if="(propInvoice && propInvoice.items[0].disputed && !propInvoice.items[0].approved) || (propInvoice && propInvoice.items[0].approved === false && propInvoice.items[0].status === 'Approved')"
             >
               <div class="w-1/3 flex flex-col px-2">
                 <label for="absent_days">Days of absent</label>
@@ -188,7 +188,7 @@
             <!-- disputed invoice update form -->
             <div
               class="flex justify-start mt-2 px-2"
-              v-if="form.items[0].dispute || (propInvoice && propInvoice.items[0].approved === false && propInvoice.items[0].status === 'Approved')"
+              v-if="(propInvoice && propInvoice.items[0].disputed && !propInvoice.items[0].approved) || (propInvoice && propInvoice.items[0].approved === false && propInvoice.items[0].status === 'Approved')"
             >
               <div class="flex flex-col w-full px-2">
                 <label for="remarks">Update remarks</label>

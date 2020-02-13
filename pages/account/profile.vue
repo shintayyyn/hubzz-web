@@ -325,6 +325,13 @@
             :name="'ir35'"
             :label="'Are you willing to work for a role captured within IR35 rules, subject to deduction of Tax and N.I.?'"
           />
+
+          <AppInput
+            v-model="form.claim_nhs"
+            :type="'single-checkbox'"
+            :name="'claim_nhs'"
+            :label="'Are you willing to claim NHS Pension contributions?'"
+          />
           <AppPostCode
             :urlIndex="'/api/v1/postcode-coordinates'"
             v-model="form.post_code"
@@ -483,7 +490,8 @@ export default {
         bank_name: "",
         sort_code: "",
         account_number: "",
-        ir35: false
+        ir35: false,
+        claim_nhs: false
       },
       profile: {
         avatar: null,
@@ -659,6 +667,8 @@ export default {
       this.form.utr_number = this.user.locum_detail.invoice_detail.utr_number;
       this.form.company_registration_number = this.user.locum_detail.invoice_detail.company_registration_number;
       this.form.ir35 = this.user.locum_detail.invoice_detail.ir35;
+      // claim nhs
+      this.form.claim_nhs = this.user.locum_detail.invoice_detail.claim_nhs;
       this.form.paid_under_payroll = this.user.locum_detail.invoice_detail.paid_under_payroll;
     }
     if (
@@ -696,7 +706,8 @@ export default {
         "referee_2_email",
         "paid_under_payroll",
         "mandatory_training_id",
-        "ir35"
+        "ir35",
+        "claim_nhs"
       ];
 
       if (this.form.employment_type === "Self-Employed") {

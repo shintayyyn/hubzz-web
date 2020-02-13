@@ -180,7 +180,8 @@ export default {
                             errorMessage.field === 'bank_name' ||
                             errorMessage.field === 'sort_code' ||
                             errorMessage.field === 'account_number' ||
-                            errorMessage.field === 'ir35'
+                            errorMessage.field === 'ir35' ||
+                            errorMessage.field === 'claim_nhs'
                         )
                     })
                     commit('SET_PAYROLL_DETAIL_FORM_ERROR', payrollDetailError)

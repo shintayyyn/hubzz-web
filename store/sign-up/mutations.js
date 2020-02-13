@@ -180,6 +180,7 @@ export default {
         state.payroll_details.sort_code = payload.sort_code
         state.payroll_details.account_number = payload.account_number
         state.payroll_details.ir35 = payload.ir35
+        state.payroll_details.claim_nhs = payload.claim_nhs
     },
     SET_CREDENTIAL_DETAILS(state, payload) {
         state.credential_details.email = payload.email

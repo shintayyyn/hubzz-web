@@ -136,10 +136,10 @@
                   class="my-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none"
                 >View</div>
                 <!-- v-if="slotProps.item.locum_invoice_id && slotProps.item.status === 'Approved' && !slotProps.item.locum_form_a_id && !slotProps.item.locum_invoice_item.locum_invoice.paid_at" -->
-                <div
+                <!-- <div
                   v-if="$route.query.status && $route.query.status === 'approved' && !slotProps.item.locum_invoice_item.locum_invoice.paid_at"
                   class="my-1 p-2 font-bold"
-                >Waiting For Payment</div>
+                >Waiting For Payment</div>-->
                 <!-- v-if="slotProps.item.locum_invoice_id && slotProps.item.status === 'Approved' && !slotProps.item.locum_form_a_id && slotProps.item.profession.name === 'GP' && slotProps.item.locum_invoice_item.locum_invoice.paid_at" -->
                 <div
                   v-if="$route.query.status && $route.query.status === 'pension-form-a' && slotProps.item.profession.name === 'GP' && !slotProps.item.locum_form_a_id && slotProps.item.locum_invoice_item.locum_invoice.paid_at"
@@ -379,7 +379,7 @@ export default {
       let url = `/api/v1/locum/job-parts`;
       let invoice_status = [];
       let locum_status = [];
-      let locum_invoiceable;
+      let locum_invoiceable = null;
       let queryStatus = query.status;
 
       switch (queryStatus && queryStatus.toLowerCase()) {
@@ -399,11 +399,12 @@ export default {
         case "approved":
           invoice_status.push("Invoiced");
           locum_status.push("Approved");
-          locum_invoiceable = null;
+          locum_invoiceable = true;
           break;
         case "pension-form-a":
           invoice_status.push("Invoiced");
           locum_status.push("Approved");
+          locum_invoiceable = true;
           break;
         case "pension-form-b":
           url = `/api/v1/locum/locum-invoices-form-b`;
@@ -563,7 +564,7 @@ export default {
       let url = `/api/v1/locum/job-parts`;
       let invoice_status = [];
       let locum_status = [];
-      let locum_invoiceable;
+      let locum_invoiceable = null;
       let queryStatus = this.$route.query.status;
 
       switch (queryStatus && queryStatus.toLowerCase()) {
@@ -590,6 +591,7 @@ export default {
         case "pension-form-a":
           invoice_status.push("Invoiced");
           locum_status.push("Approved");
+          locum_invoiceable = true;
           break;
         case "pension-form-b":
           url = `/api/v1/locum/locum-invoices-form-b`;

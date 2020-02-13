@@ -126,6 +126,13 @@
             :label="'Are you willing to work for a role captured within IR35 rules, subject to deduction of Tax and N.I.?'"
             :error="formError.find(item => item.field === 'ir35')"
           />
+          <AppInput
+            v-model="form.claim_nhs"
+            :type="'single-checkbox'"
+            :name="'claim_nhs'"
+            :label="'Are you willing to claim NHS Pension contributions?'"
+            :error="formError.find(item => item.field === 'claim_nhs')"
+          />
         </form>
       </div>
     </div>
@@ -170,7 +177,8 @@ export default {
         bank_name: "",
         sort_code: "",
         account_number: "",
-        ir35: false
+        ir35: false,
+        claim_nhs: false
       },
       formError: []
     };
@@ -197,6 +205,7 @@ export default {
     this.form.sort_code = this.payrollDetails.sort_code;
     this.form.account_number = this.payrollDetails.account_number;
     this.form.ir35 = this.payrollDetails.ir35;
+    this.form.claim_nhs = this.payrollDetails.claim_nhs;
     if (this.payrollFormError.length > 0) {
       this.payrollFormError.forEach(item => {
         this.formError.push(item);
@@ -206,7 +215,12 @@ export default {
   methods: {
     next() {
       this.formError = [];
-      let notRequired = ["employment_type", "paid_under_payroll", "ir35"];
+      let notRequired = [
+        "employment_type",
+        "paid_under_payroll",
+        "ir35",
+        "claim_nhs"
+      ];
       if (this.form.employment_type === "Self-Employed") {
         this.form.company_registration_number = "";
         notRequired.push("company_registration_number");

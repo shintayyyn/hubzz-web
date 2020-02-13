@@ -721,19 +721,19 @@ export default {
         });
       }
       if (queryStatus === "cancelled") {
-        columns.push({
-          name: "Cancelled At",
-          dataIndex: "job.platform_job.cancelled_at",
-          class: "text-center localDate"
-        });
+        columns.push(
+          {
+            name: "Cancelled At",
+            dataIndex: "job.platform_job.cancelled_at",
+            class: "text-center localDate"
+          },
+          {
+            name: "Tag",
+            dataIndex: "tag_status",
+            class: "text-center"
+          }
+        );
       }
-      // if (queryStatus === "withdrawn") {
-      //   columns.push({
-      //     name: "Withdrawn At",
-      //     dataIndex: "platform_job.withdrawn_at",
-      //     class: "text-center localDate"
-      //   });
-      // }
       if (["completed", "approved"].includes(queryStatus)) {
         columns.push(
           {
@@ -744,11 +744,6 @@ export default {
           {
             name: "Invoice status",
             dataIndex: "invoice_status",
-            class: "text-center"
-          },
-          {
-            name: "Tag",
-            dataIndex: "locum_status",
             class: "text-center"
           }
         );
@@ -784,8 +779,11 @@ export default {
       } else if (queryStatus) {
         switch (queryStatus) {
           case "Available":
-          case "Bank":
+            // case "Bank":
             locum_status = ["Matched"];
+            break;
+          case "Bank":
+            locum_status = ["Available", "Matched"];
             break;
           case "Public":
             locum_status = ["Available"];
@@ -952,7 +950,14 @@ export default {
               res.data && res.data.jobs
                 ? res.data.jobs
                 : res.data.job_parts
-                ? res.data.job_parts
+                ? res.data.job_parts.map(item => {
+                    return {
+                      ...item,
+                      tag_status: item.terminated
+                        ? "Terminated"
+                        : item.locum_status
+                    };
+                  })
                 : [];
             return jobs;
           })
@@ -1052,17 +1057,18 @@ export default {
   },
   methods: {
     addPractice(payload) {
-      console.log("payload", payload);
       this.search_practice = payload.name;
-      console.log("search_practice", this.search_practice);
       this.practice_id = payload.id;
     },
     addPrivatePractice(payload) {
       this.search_private_practice = payload.name;
       this.private_practice_id = payload.id;
     },
-    filterJobList(id) {
-      this.jobs = this.jobs.filter(item => item.id !== id);
+    async filterJobList(id) {
+      // this.jobs = this.jobs.filter(item => item.id !== id);
+      this.loading = true;
+      await this.getJobs();
+      this.loading = false;
     },
     getJobsPromiseAll() {
       let locum_status = [];
@@ -1071,8 +1077,11 @@ export default {
       if (queryStatus) {
         switch (queryStatus) {
           case "Available":
-          case "Bank":
+            // case "Bank":
             locum_status = ["Matched"];
+            break;
+          case "Bank":
+            locum_status = ["Available", "Matched"];
             break;
           case "Public":
             locum_status = ["Available"];
@@ -1093,7 +1102,6 @@ export default {
       } else if (!queryStatus) {
         locum_status = ["Allocated"];
       }
-      console.log(this.practice_id);
       return Promise.all([
         this.$axios.$get(
           `/api/v1/locum/${this.isJobPart ? "job-parts" : "jobs"}/count`,
@@ -1199,7 +1207,14 @@ export default {
             responseJobs.data && responseJobs.data.jobs
               ? responseJobs.data.jobs
               : responseJobs.data.job_parts
-              ? responseJobs.data.job_parts
+              ? responseJobs.data.job_parts.map(item => {
+                  return {
+                    ...item,
+                    tag_status: item.terminated
+                      ? "Terminated"
+                      : item.locum_status
+                  };
+                })
               : [];
           this.total = responseCount.data.count;
         })
@@ -1217,8 +1232,11 @@ export default {
       } else if (queryStatus) {
         switch (queryStatus) {
           case "Available":
-          case "Bank":
+            // case "Bank":
             locum_status = ["Matched"];
+            break;
+          case "Bank":
+            locum_status = ["Available", "Matched"];
             break;
           case "Public":
             locum_status = ["Available"];
@@ -1289,7 +1307,14 @@ export default {
             res.data && res.data.jobs
               ? res.data.jobs
               : res.data.job_parts
-              ? res.data.job_parts
+              ? res.data.job_parts.map(item => {
+                  return {
+                    ...item,
+                    tag_status: item.terminated
+                      ? "Terminated"
+                      : item.locum_status
+                  };
+                })
               : [];
         })
         .catch(err => {

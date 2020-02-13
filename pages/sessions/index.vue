@@ -535,11 +535,18 @@ export default {
         });
       }
       if (queryStatus === "cancelled") {
-        columns.push({
-          name: "Cancelled At",
-          dataIndex: "job.platform_job.cancelled_at",
-          class: "text-center localDate"
-        });
+        columns.push(
+          {
+            name: "Cancelled At",
+            dataIndex: "job.platform_job.cancelled_at",
+            class: "text-center localDate"
+          },
+          {
+            name: "Tag",
+            dataIndex: "tag_status",
+            class: "text-center"
+          }
+        );
       }
       if (["completed", "approved"].includes(queryStatus)) {
         columns.push(
@@ -551,11 +558,6 @@ export default {
           {
             name: "Invoice status",
             dataIndex: "invoice_status",
-            class: "text-center"
-          },
-          {
-            name: "Tag",
-            dataIndex: "status",
             class: "text-center"
           }
         );
@@ -778,7 +780,12 @@ export default {
                     };
                   })
                 : res.data.job_parts
-                ? res.data.job_parts
+                ? res.data.job_parts.map(item => {
+                    return {
+                      ...item,
+                      tag_status: item.terminated ? "Terminated" : item.status
+                    };
+                  })
                 : [];
             return jobs;
           })
@@ -998,7 +1005,6 @@ export default {
             //   : null;
             // if same status, insert jobs
             if (currentQuery === jobStatus) {
-              console.log("insert jobs", currentQuery, jobStatus);
               this.total = responseCount.data.count;
               this.jobs =
                 responseJobs.data && responseJobs.data.jobs
@@ -1012,13 +1018,17 @@ export default {
                       };
                     })
                   : responseJobs.data.job_parts
-                  ? responseJobs.data.job_parts
+                  ? responseJobs.data.job_parts.map(item => {
+                      return {
+                        ...item,
+                        tag_status: item.terminated ? "Terminated" : item.status
+                      };
+                    })
                   : [];
             }
           } else if (jobs.length === 0) {
             this.jobs = [];
           }
-          console.log(this.jobs);
         })
         .catch(err => {
           console.log("err", err.response || err);
@@ -1107,7 +1117,12 @@ export default {
                   };
                 })
               : res.data.job_parts
-              ? res.data.job_parts
+              ? res.data.job_parts.map(item => {
+                  return {
+                    ...item,
+                    tag_status: item.terminated ? "Terminated" : item.status
+                  };
+                })
               : [];
         })
         .catch(err => {
