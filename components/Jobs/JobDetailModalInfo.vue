@@ -135,7 +135,10 @@
             <div class="font-bold text-sm sm:text-md">Terms & Condition</div>
             <div class="text-sm sm:text-md">Variation Terms</div>
             <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
-              <div class="mt-1 cursor-pointer" @click="modal = true">View</div>
+              <div
+                class="mt-1 cursor-pointer bg-yellow-400 hover:bg-yellow-500 rounded-lg px-4 py-1 transition-hover"
+                @click="modal = true"
+              >View</div>
               <transition name="slide" mode="out-in">
                 <div v-if="modal" class="modal-container shadow-lg">
                   <div class="h-full w-full">
@@ -145,7 +148,7 @@
                     <embed
                       class="object-contain object-top w-full"
                       :class="job.variation_terms_file.type == 'image' ? 'image' : 'document h-full '"
-                      :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job.standard_terms_file.subtype) ? convertDoc(job.standard_terms_file.url) : job.standard_terms_file.url"
+                      :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job.variation_terms_file.subtype) ? convertDoc(job.variation_terms_file.url) : job.variation_terms_file.url"
                     />
                   </div>
                 </div>
@@ -156,7 +159,10 @@
             <div class="font-bold text-sm sm:text-md">Terms & Condition</div>
             <div class="text-sm sm:text-md">Standard Terms</div>
             <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
-              <div class="mt-1 cursor-pointer" @click="modal = true">View</div>
+              <div
+                class="mt-1 cursor-pointer bg-yellow-400 hover:bg-yellow-500 rounded-lg px-4 py-1 transition-hover"
+                @click="modal = true"
+              >View</div>
               <transition name="slide" mode="out-in">
                 <div v-if="modal" class="modal-container shadow-lg">
                   <div class="h-full w-full">
@@ -180,7 +186,10 @@
             <div class="font-bold text-sm sm:text-md">Terms & Condition</div>
             <div class="text-sm sm:text-md">Standard Terms</div>
             <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
-              <div class="mt-1 cursor-pointer" @click="modal = true">View</div>
+              <div
+                class="mt-1 cursor-pointer bg-yellow-400 hover:bg-yellow-500 rounded-lg px-4 py-1 transition-hover"
+                @click="modal = true"
+              >View</div>
               <transition name="slide" mode="out-in">
                 <div v-if="modal" class="modal-container shadow-lg">
                   <div class="h-full w-full">
@@ -201,7 +210,10 @@
             <div class="font-bold text-sm sm:text-md">Terms & Condition</div>
             <div class="text-sm sm:text-md">Variation Terms</div>
             <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
-              <div class="mt-1 cursor-pointer" @click="modal = true">View</div>
+              <div
+                class="mt-1 cursor-pointer bg-yellow-400 hover:bg-yellow-500 rounded-lg px-4 py-1 transition-hover"
+                @click="modal = true"
+              >View</div>
               <transition name="slide" mode="out-in">
                 <div v-if="modal" class="modal-container shadow-lg">
                   <div class="h-full w-full">

@@ -319,12 +319,15 @@
               required
             />
           </template>
-          <AppInput
-            v-model="form.ir35"
-            :type="'single-checkbox'"
-            :name="'ir35'"
-            :label="'Are you willing to work for a role captured within IR35 rules, subject to deduction of Tax and N.I.?'"
-          />
+
+          <template v-if="professionCategoryId === 1">
+            <AppInput
+              v-model="form.ir35"
+              :type="'single-checkbox'"
+              :name="'ir35'"
+              :label="'Are you willing to work for a role captured within IR35 rules, subject to deduction of Tax and N.I.?'"
+            />
+          </template>
 
           <AppInput
             v-model="form.claim_nhs"
@@ -779,6 +782,8 @@ export default {
           ? this.form.spoken_language_id.map(item => item.value)
           : [];
         this.form.profession_id = this.form.profession_id.toString();
+        this.form.ir35 =
+          this.professionCategoryId === 1 ? this.form.ir35 : false;
 
         this.$axios
           .$put(`/api/v1/locum/me/profile`, this.form)

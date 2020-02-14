@@ -381,16 +381,17 @@
               </div>
             </div>
           </template>
-
-          <AppInput
-            v-model="form.ir35"
-            :type="'select'"
-            :name="'ir35'"
-            :label="'IR35 - role inside or outside of scope'"
-            :items="[ {value: true, label: 'Inside of Scope'}, {value: false, label: 'Outside of Scope'} ]"
-            :inStyle="job.status === 'Allocated' ? 'background-color:lightgray' : ''"
-            :disabled="job.status === 'Allocated'"
-          />
+          <template v-if="parseInt(selectedProfessionCategoryId) === 1">
+            <AppInput
+              v-model="form.ir35"
+              :type="'select'"
+              :name="'ir35'"
+              :label="'IR35 - role inside or outside of scope'"
+              :items="[ {value: true, label: 'Inside of Scope'}, {value: false, label: 'Outside of Scope'} ]"
+              :inStyle="job.status === 'Allocated' ? 'background-color:lightgray' : ''"
+              :disabled="job.status === 'Allocated'"
+            />
+          </template>
 
           <AppInput
             v-model="form.profession_id"
@@ -644,7 +645,7 @@ export default {
       }
       if (newValue && oldValue) {
         this.form.compliance_document_id = [];
-        console.log(this.form.compliance_document_id);
+        this.form.qualification_id = [];
       }
     },
     "form.date_end"(value) {
@@ -721,6 +722,10 @@ export default {
         this.professions.push({ label: item.name, value: item.id });
         this.professions_categories.push(item);
       });
+
+      this.selectedProfession = this.professions_categories.find(
+        item => item.id == this.job.platform_job.profession.id
+      );
     });
 
     this.$axios.$get(`/api/v1/me`).then(res => {
@@ -1113,6 +1118,10 @@ export default {
         if (["false", false].includes(this.unpaid_breaks)) {
           this.form.unpaid_breaks_in_minutes = "";
         }
+        this.form.ir35 =
+          this.selectedProfession.profession_category.id === 1
+            ? this.form.ir35
+            : false;
         this.loading = true;
         this.$axios
           .$put(`/api/v1/practice/jobs/${this.job.id}`, this.form)

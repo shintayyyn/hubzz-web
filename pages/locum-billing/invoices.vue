@@ -292,6 +292,11 @@ export default {
           sortable: true
         },
         {
+          name: "NHS Claimable",
+          dataIndex: "locum_nhs_claimable",
+          class: "text-center"
+        },
+        {
           name: "Actions",
           dataIndex: "actions",
           class: "text-center"
