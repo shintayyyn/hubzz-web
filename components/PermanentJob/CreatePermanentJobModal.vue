@@ -161,17 +161,7 @@
 							:inStyle="'text-align:right'"
 						/>
 						<div class="flex flex-wrap">
-							<AppInput
-								class="w-full md:w-1/2 pr-1"
-								v-model="form.salary_description_1"
-								:type="'select'"
-								:name="'salary_description_1'"
-								:placeholder="'Select...'"
-								:label="'Salary Description 1'"
-								:error="formError.find(item => item.field === 'salary_description_1')"
-								:items="salary_description_type_1"
-								@blur="CheckEmptyField(form.salary_description_1, 'salary_description_1')"
-							/>
+	
 							<AppInput
 								class="w-full md:w-1/2 pl-1"
 								v-model="form.salary_description_2"
@@ -228,7 +218,6 @@ export default {
 				work_hours: "",
         salary_amount: 0,
         parent_practice_id: "",
-				salary_description_1: "",
 				salary_description_2: ""
 			},
 			practice_lists: [],
@@ -411,9 +400,13 @@ export default {
 			// this.Validate(this.form, notRequired);
 			// console.log("errors", this.formError.length);
 
-			let notRequired = [];
-			this.validateNumber(this.form.salary_amount, "salary_amount");
-			this.Validate(this.form, notRequired);
+			let notRequired = ['parent_practice_id'];
+      this.validateNumber(this.form.salary_amount, "salary_amount");
+      
+      this.Validate(this.form, notRequired);
+
+      console.log(this.formError)
+
 			if (!this.formError.length) {
 				await this.$axios
 					.post(`/api/v1/practice/permanent-jobs`, this.form)
