@@ -59,7 +59,7 @@
             <SessionDetailModalCancelForm
               :job="job_part.job"
               @cancelled="$emit('close')"
-              v-if="(job_part.job.status === 'Allocated' || job_part.job.status === 'Ongoing' || job_part.job.status === 'Applied' || job_part.job.status === 'Live') && authPermissions.includes('Cancel Sessions Job')"
+              v-if="['Live','Allocated','Ongoing','Applied'].includes(job_part.status) && authPermissions.includes('Cancel Sessions Job')"
             />
           </div>
         </div>

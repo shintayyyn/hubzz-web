@@ -210,6 +210,7 @@
                 :name="'date_start'"
                 :label="'Start Date'"
                 :error="formError.find(item => item.field === 'date_start')"
+                isAfter
               />
             </div>
             <div class="px-1 w-full md:w-1/2">

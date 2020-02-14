@@ -387,7 +387,9 @@ export default {
           invoice_number: jobPart.locum_invoice_id
             ? jobPart.locum_invoice_item.locum_invoice.invoice_number
             : null,
-          total_amount: total.toFixed(2)
+          total_amount: total
+            .toFixed(2)
+            .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
         };
       });
 
@@ -500,7 +502,9 @@ export default {
               invoice_number: jobPart.locum_invoice_id
                 ? jobPart.locum_invoice_item.locum_invoice.invoice_number
                 : null,
-              total_amount: total.toFixed(2)
+              total_amount: total
+                .toFixed(2)
+                .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
             };
           });
         })
@@ -583,7 +587,9 @@ export default {
               invoice_number: jobPart.locum_invoice_id
                 ? jobPart.locum_invoice_item.locum_invoice.invoice_number
                 : null,
-              total_amount: total.toFixed(2)
+              total_amount: total
+                .toFixed(2)
+                .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
             };
           });
         })
