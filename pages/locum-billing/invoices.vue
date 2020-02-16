@@ -171,6 +171,7 @@
             :perPage="limit"
             :columns="form_bs_columns"
             :orderBy="order_by"
+            :loading="loading"
             @pagechanged="pagechanged"
             @limitchanged="limitchanged"
             @sorted="sorted"
@@ -248,7 +249,6 @@ export default {
       loading: false,
       filterModal: false,
       isFiltered: false,
-      showTable: false,
       total: 0,
       job_parts: [],
       locum_form_bs: [],
@@ -500,10 +500,7 @@ export default {
         });
       }
 
-      const showTable = true;
-
       return {
-        showTable,
         total,
         job_parts,
         locum_form_bs
