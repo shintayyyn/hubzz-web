@@ -5,9 +5,11 @@
         <!-- <div @click="$router.go(-1)" class="cursor-pointer">
           <svgicon name="left-arrow" height="32" width="32" />
         </div>-->
-        <nuxt-link :to="{ path: `/practice-billing`}">
+        <nuxt-link 
+          :to="{ name: 'practice-billing-invoices-from-hubzz' }">
           <svgicon name="left-arrow" height="32" width="32" />
         </nuxt-link>
+
       </div>
       <!-- billing -->
       <section>
@@ -154,7 +156,7 @@ export default {
     mode: "out-in"
   },
   components: {
-    PracticeBillingInvoiceForm,
+    // PracticeBillingInvoiceForm,
     AppDate
   },
   async asyncData({ app, error, params }) {

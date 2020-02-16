@@ -66,25 +66,26 @@ export default {
       eligibleToSpoke: false
     };
   },
-  async created() {
-    if (this.$auth.loggedIn && this.$auth.user.domain === "Pratice") {
-      await this.$axios
-        .$get(`/api/v1/practice/me/parent-surgery/invitations-count`)
-        .then(res => {
-          if (res.data.count > 0) {
-            this.eligibleToSpoke = true;
-          }
-        });
-    }
-  },
+  // async created() {
+  //   if (this.$auth.loggedIn && this.$auth.user.domain === "Practice") {
+  //     await this.$axios
+  //       .$get(`/api/v1/practice/me/parent-surgery/invitations-count`)
+  //       .then(res => {
+  //         if (res.data.count > 0) {
+  //           this.eligibleToSpoke = true;
+  //         }
+  //       }).finally(()=>{
+  //         console.log('eligible to spoke', this.eligibleToSpoke)
+  //       });
+  //   }
+  // },
   computed: {
     authPermissions() {
       return this.$store.getters["permissions"];
     }
   },
   mounted() {
-    this.getInit();
-    if (this.$auth.loggedIn && this.$auth.user.domain === "Pratice") {
+    if (this.$auth.loggedIn && this.$auth.user.domain === "Practice") {
       this.$axios
         .$get(`/api/v1/practice/me/parent-surgery/invitations-count`)
         .then(res => {
@@ -93,6 +94,8 @@ export default {
           }
         })
         .finally(() => {
+          this.getInit();
+
           this.$socket.on(
             "Practice Notification Update Profile",
             this.updatePermissions
@@ -102,6 +105,8 @@ export default {
             this.toggleConfirmationModal
           );
         });
+    }else{
+      this.getInit();
     }
   },
   destroyed() {
@@ -201,7 +206,8 @@ export default {
               name: "Surgery Management",
               route: "/hub-surgery-management"
             });
-          } else if (
+          }
+          if (
             this.$auth.user.practice_detail.practice.type === "Spoke"
           ) {
             console.log("spoke");
@@ -209,7 +215,9 @@ export default {
               name: "Surgery Management",
               route: "/spoke-surgery-management"
             });
-          } else if (this.eligibleToSpoke === true) {
+          } 
+          if (
+            this.eligibleToSpoke === true) {
             console.log("stand alone");
             addedLists.push({
               name: "Surgery Management",

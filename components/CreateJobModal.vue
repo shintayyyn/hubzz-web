@@ -1090,9 +1090,9 @@ export default {
               });
               return;
             } else if (
-              err.response.status === 400 &&
               err.response &&
-              err.response.data.error_messages.length === 0
+              err.response.status === 400 &&
+              !err.response.data.error_messages
             ) {
               this.formError.push({
                 field: "date_start",
