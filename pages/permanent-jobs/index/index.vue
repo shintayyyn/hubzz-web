@@ -357,6 +357,8 @@ export default {
 				case "Closed":
 					return "bg-gray-700 text-white";
 					break;
+				case "Unsuccessful":
+					return "bg-gray-400";
 				default:
 					return "bg-yellow-400 text-black";
 			}

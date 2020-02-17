@@ -1,5 +1,5 @@
 <template>
-	<section class="modal-container">
+	<section class="modal-container" ref="modalContainer">
 		<div class="p-4 md:p-8">
 			<svgicon
 				name="left-arrow"
@@ -425,6 +425,9 @@ export default {
 					})
 					.catch(err => {
 						this.formError = err.response.data.error_messages;
+						this.$nextTick(() => {
+							this.$refs.modalContainer.scrollTop = 0;
+						});
 						// this.$store.commit("SET_NOTIFICATION", {
 						// 	enabled: true,
 						// 	status: "danger",
@@ -432,9 +435,9 @@ export default {
 						// });
 					});
 			} else {
-				// this.$nextTick(() => {
-				//   this.$refs.modalContainer.scrollTop = 0;
-				// });
+				this.$nextTick(() => {
+					this.$refs.modalContainer.scrollTop = 0;
+				});
 			}
 		}
 	}
