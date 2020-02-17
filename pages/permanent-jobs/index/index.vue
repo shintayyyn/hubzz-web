@@ -239,14 +239,16 @@ export default {
 			let permanent_job_applications = "";
 			let permanent_jobs_for_locum = "";
 			let permanent_jobs_for_locum_count = "";
-			let params = {};
+      let params = {};
+      
 			if (app.$auth.user.domain === "Locum") {
 				params = {
 					job_posting_status: route.query.status
 						? route.query.status
 						: "Available",
 					profession_id: app.$auth.user.locum_detail.profession.id,
-					near_post_code: app.$auth.user.locum_postcode
+          near_post_code: app.$auth.user.locum_postcode,
+         limit: 5,
 				};
 
 				let response = await app.$axios.$get(
@@ -301,7 +303,8 @@ export default {
 					job_posting_status: route.query.status
 						? route.query.status
 						: "Available",
-					practice_id: app.$auth.user.practice_id
+          practice_id: app.$auth.user.practice_id,
+         limit: 5,
 				};
 				let response = await app.$axios.$get(
 					`/api/v1/practice/permanent-jobs/count`,
@@ -430,6 +433,7 @@ export default {
 		},
 
 		async getPermanentJobsForPractice(params) {
+      console.log('params', params)
 			await this.$axios
 				.$get("/api/v1/practice/permanent-jobs/count", { params })
 				.then(res => {
@@ -476,17 +480,16 @@ export default {
 			this.loading = false;
 		},
 		async pagechanged(page) {
-			this.current_page = page;
-			this.params.offset = this.params.limit * (page - 1);
-			this.params.offset = this.params.limit * (page - 1);
+      console.log('page', page)
+      this.current_page = page;
+      this.params.offset = this.params.limit * (page - 1);
+      console.log('params.offset', this.params.limit)
 			this.loading = true;
 			this.getJobs(this.params);
 			this.loading = false;
 		},
 		async limitchanged(limit) {
 			this.current_page = 1;
-			this.params.offset = 0;
-			this.params.limit = limit;
 			this.params.offset = 0;
 			this.params.limit = limit;
 			this.loading = true;
