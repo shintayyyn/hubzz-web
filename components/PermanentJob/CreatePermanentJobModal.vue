@@ -393,19 +393,20 @@ export default {
 			console.log("editor ready!", editor);
 		},
 		async createPermanentJob() {
+      if (this.form.practice_id !== this.$auth.user.practice_detail.practice.id &&
+        this.$auth.user.practice_detail.practice.type === 'Hub') {
+          this.form.parent_practice_id = await this.$auth.user.practice_detail.practice.id
+      }
+    
 			this.formError = [];
-
-			// let notRequired = [];
-			// console.log("form", this.form);
-			// this.Validate(this.form, notRequired);
-			// console.log("errors", this.formError.length);
 
 			let notRequired = ['parent_practice_id'];
       this.validateNumber(this.form.salary_amount, "salary_amount");
       
-      this.Validate(this.form, notRequired);
+      this.Validate(this.form, notRequired)
 
-      console.log(this.formError)
+      console.log("form",this.form)
+      console.log("errors: ",this.formError)
 
 			if (!this.formError.length) {
 				await this.$axios
@@ -420,16 +421,16 @@ export default {
 					})
 					.catch(err => {
 						this.formError = err.response.data.error_messages;
-						// this.$store.commit("SET_NOTIFICATION", {
-						// 	enabled: true,
-						// 	status: "danger",
-						// 	text: [`${err.response.data.message}`]
-						// });
+						this.$store.commit("SET_NOTIFICATION", {
+							enabled: true,
+							status: "danger",
+							text: [err.response.data.message]
+						});
 					});
 			} else {
-				// this.$nextTick(() => {
-				//   this.$refs.modalContainer.scrollTop = 0;
-				// });
+				this.$nextTick(() => {
+				  this.$refs.modalContainer.scrollTop = 0;
+				});
 			}
 		}
 	}

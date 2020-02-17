@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="modal-container">
     <div v-if="$auth.user.domain === 'Locum'">
       <LocumPermanentJobModal/>
     </div>

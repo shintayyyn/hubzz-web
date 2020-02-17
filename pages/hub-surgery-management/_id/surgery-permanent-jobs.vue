@@ -41,10 +41,9 @@
 				>Unfilled</nuxt-link>
 			</div>
 		</div>
-
-		<div
+    <div
 			class="shield"
-			v-if="['permanent-jobs-index-id','permanent-jobs-index-create'].includes($route.name)"
+			v-if="$route.name === 'hub-surgery-management-id-surgery-permanent-jobs-index-permJobId'"
 			@click="$router.go(-1)"
 		></div>
 		<nuxt-child />
@@ -61,6 +60,7 @@ export default {
     };
 	},
 	created() {
+    console.log('route name', this.$route.name)
   },
 
 	async asyncData({ app, route, store, auth }) {

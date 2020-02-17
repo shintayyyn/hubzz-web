@@ -1,5 +1,5 @@
 <template>
-	<section class="modal-container">
+	<section>
 		<div class="p-4 md:p-8">
 			<nuxt-link :to="{
         path: $route.name.includes('hub-surgery-management') ? 
@@ -73,7 +73,10 @@
 							</div>
 
               <div
-                v-if="$route.name.includes('hub-surgery-management')">
+                v-if="
+                  $route.name.includes('hub-surgery-management') && 
+                  $auth.user.practice_detail.practice.type === 'Hub' &&
+                  permanent_job.job_posting_status === 'Pending'">
                 <AppButton
                   class="font-semibold"
                   :label="'Approve'"
@@ -102,6 +105,7 @@
                   />
                 </div>
               </div>
+
 						</template>
 						<template v-if="edit === true">
 							<div class="w-full flex flex-col md:flex-row">
@@ -698,14 +702,19 @@ export default {
 </script>
 
 <style scoped>
-.modal-container {
+/* .modal-container {
 	z-index: 510;
 }
 @media screen and (min-width: 1200px) {
 	.modal-container {
 		width: 80%;
 	}
+} */
+
+.wrapper {
+	max-height: 500px;
 }
+
 .quill-editor .ql-container,
 .wrapper {
 	overflow-y: auto;
@@ -714,7 +723,5 @@ export default {
 	max-height: 300px;
 	padding: 8px 0;
 }
-.wrapper {
-	max-height: 500px;
-}
+
 </style>

@@ -19,11 +19,6 @@
 				class="text-gray-600 px-3 py-2"
 			>No {{ $route.query.status ? $route.query.status : 'Available'}} jobs yet.</p>
 		</template>
-    	<div
-			class="shield"
-			v-if="['hub-surgery-management-id-permanent-jobs-index-permJobId','hub-surgery-management-id-permanent-jobs-index-create'].includes($route.name)"
-			@click="$router.go(-1)"
-		></div>
   </div>
 </template>
 
