@@ -389,7 +389,10 @@ export default {
         // this.form.spoken_language_id = this.form.spoken_language_id
         //   ? this.form.spoken_language_id.map(item => item.value)
         //   : [];
-        this.$store.commit("sign-up/SET_PROFESSIONAL_DETAILS", this.form);
+        this.$store.commit("sign-up/SET_PROFESSIONAL_DETAILS", {
+          ...this.form,
+          profession_category_id: this.selectedProfession.profession_category.id
+        });
         this.$store.commit("sign-up/SET_PROFESSIONAL_DETAIL_FORM_ERROR", []);
 
         this.$store.commit(

@@ -429,13 +429,15 @@
                 <label for="total_hours" class="text-xs sm:text-sm mt-2">hours</label>
               </div>
             </div>
-            <AppInput
-              v-model="form.ir35"
-              :type="'select'"
-              :name="'ir35'"
-              :label="'IR35 - role inside or outside of scope'"
-              :items="[ {value: true, label: 'Inside of Scope'}, {value: false, label: 'Outside of Scope'} ]"
-            />
+            <template v-if="selectedProfession.profession_category.id === 1">
+              <AppInput
+                v-model="form.ir35"
+                :type="'select'"
+                :name="'ir35'"
+                :label="'IR35 - role inside or outside of scope'"
+                :items="[ {value: true, label: 'Inside of Scope'}, {value: false, label: 'Outside of Scope'} ]"
+              />
+            </template>
             <AppInput
               v-model="form.mandatory_training_id"
               :type="'multi-checkbox'"
@@ -1043,6 +1045,10 @@ export default {
         if (["false", false].includes(this.unpaid_breaks)) {
           this.form.unpaid_breaks_in_minutes = "";
         }
+        this.form.ir35 =
+          this.selectedProfession.profession_category.id === 1
+            ? this.form.ir35
+            : false;
         this.loading = true;
         this.$axios
           .$post(`/api/v1/practice/jobs`, this.form)
@@ -1084,9 +1090,9 @@ export default {
               });
               return;
             } else if (
-              err.response.status === 400 &&
               err.response &&
-              err.response.data.error_messages.length === 0
+              err.response.status === 400 &&
+              !err.response.data.error_messages
             ) {
               this.formError.push({
                 field: "date_start",

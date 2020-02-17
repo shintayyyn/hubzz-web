@@ -119,13 +119,15 @@
               required
             />
           </template>
-          <AppInput
-            v-model="form.ir35"
-            :type="'single-checkbox'"
-            :name="'ir35'"
-            :label="'Are you willing to work for a role captured within IR35 rules, subject to deduction of Tax and N.I.?'"
-            :error="formError.find(item => item.field === 'ir35')"
-          />
+          <template v-if="professionCategoryId === 1">
+            <AppInput
+              v-model="form.ir35"
+              :type="'single-checkbox'"
+              :name="'ir35'"
+              :label="'Are you willing to work for a role captured within IR35 rules, subject to deduction of Tax and N.I.?'"
+              :error="formError.find(item => item.field === 'ir35')"
+            />
+          </template>
           <AppInput
             v-model="form.claim_nhs"
             :type="'single-checkbox'"
@@ -133,6 +135,16 @@
             :label="'Are you willing to claim NHS Pension contributions?'"
             :error="formError.find(item => item.field === 'claim_nhs')"
           />
+          <template v-if="[true,'true'].includes(form.claim_nhs)">
+            <AppInput
+              v-model="form.nhs_number"
+              :type="'text'"
+              :name="'nhs_number'"
+              :label="'NHS number'"
+              :error="formError.find(item => item.field === 'nhs_number')"
+              required
+            />
+          </template>
         </form>
       </div>
     </div>
@@ -178,7 +190,8 @@ export default {
         sort_code: "",
         account_number: "",
         ir35: false,
-        claim_nhs: false
+        claim_nhs: false,
+        nhs_number: ""
       },
       formError: []
     };
@@ -189,6 +202,9 @@ export default {
     },
     payrollFormError() {
       return this.$store.getters["sign-up/payrollFormError"];
+    },
+    professionCategoryId() {
+      return this.$store.getters["sign-up/professionCategoryId"];
     }
   },
   mounted() {
@@ -206,6 +222,7 @@ export default {
     this.form.account_number = this.payrollDetails.account_number;
     this.form.ir35 = this.payrollDetails.ir35;
     this.form.claim_nhs = this.payrollDetails.claim_nhs;
+    this.form.nhs_number = this.payrollDetails.nhs_number;
     if (this.payrollFormError.length > 0) {
       this.payrollFormError.forEach(item => {
         this.formError.push(item);
@@ -228,6 +245,9 @@ export default {
       if (this.form.employment_type === "Limited Company") {
         this.form.utr_number = "";
         notRequired.push("utr_number");
+      }
+      if (["false", false].includes(this.form.claim_nhs)) {
+        notRequired.push("nhs_number");
       }
       if (["false", false].includes(this.form.paid_under_payroll)) {
         this.form.payroll_account_name = "";

@@ -214,6 +214,11 @@ export default {
           class: "text-center"
         },
         {
+          name: "NHS Claimable",
+          dataIndex: "locum_nhs_claimable",
+          class: "text-center"
+        },
+        {
           name: "Actions",
           dataIndex: "actions",
           class: "text-center"
@@ -262,10 +267,10 @@ export default {
           str = "You do not have any approved job parts.";
           break;
         case "pension-form-a":
-          str = "You do not have any nhs from a.";
+          str = "You do not have any nhs form a.";
           break;
         case "pension-form-b":
-          str = "You do not have any nhs from b.";
+          str = "You do not have any nhs form b.";
           break;
         default:
           str = "You do not have any completed job parts.";
