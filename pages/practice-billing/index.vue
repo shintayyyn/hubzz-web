@@ -63,10 +63,6 @@
                 @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id)"
                 class="my-1 p-2 font-bold rounded-lg focus:outline-none cursor-pointer bg-yellow-400 hover:bg-yellow-500"
               >Mark as Paid</button>
-              <div
-                v-if="slotProps.item.status === 'Approved' && slotProps.item.locum_invoice_item && slotProps.item.locum_invoice_item.locum_invoice.paid_at"
-                class="my-1 p-2 font-bold"
-              >Already Paid</div>
             </div>
           </template>
         </AppTable>
@@ -183,11 +179,26 @@ export default {
       order_by: [],
       job_ir35: null,
 
-      columns: [
-        {
-          name: "Type",
-          dataIndex: "job.type"
-        },
+      payment_modal: false,
+      invoice_id: null,
+      form: {
+        paid_at: null,
+        ni: false,
+        ni_amount: null,
+        paye: false,
+        paye_amount: null
+      },
+      formError: []
+    };
+  },
+  computed: {
+    columns() {
+      let columns = [];
+      let queryStatus = this.$route.query.status
+        ? this.$route.query.status.toLowerCase()
+        : "to-be-invoiced";
+
+      columns.push(
         {
           name: "Practice / Surgery",
           dataIndex: "practice_name",
@@ -210,34 +221,29 @@ export default {
         {
           name: "£ Amount",
           dataIndex: "total_amount",
-          sortable: true,
-          class: "text-center"
+          class: "text-center",
+          sortable: true
         },
         {
           name: "NHS Claimable",
-          dataIndex: "locum_nhs_claimable",
-          class: "text-center"
-        },
-        {
-          name: "Actions",
-          dataIndex: "actions",
+          dataIndex: "nhs_claimable",
           class: "text-center"
         }
-      ],
-
-      payment_modal: false,
-      invoice_id: null,
-      form: {
-        paid_at: null,
-        ni: false,
-        ni_amount: null,
-        paye: false,
-        paye_amount: null
-      },
-      formError: []
-    };
-  },
-  computed: {
+      );
+      if (["approved", "pension-form-a"].includes(queryStatus)) {
+        columns.push({
+          name: "Paid",
+          dataIndex: "paid",
+          class: "text-center"
+        });
+      }
+      columns.push({
+        name: "Actions",
+        dataIndex: "actions",
+        class: "text-center"
+      });
+      return columns;
+    },
     ir35() {
       if (!this.invoice_id) {
         return false;
@@ -308,8 +314,8 @@ export default {
   },
   async asyncData({ app, query, error }) {
     try {
-      let status = [];
       let invoice_status = [];
+      let status = [];
       let locum_invoiceable;
       let queryStatus = query.status;
 
@@ -394,7 +400,15 @@ export default {
             : null,
           total_amount: total
             .toFixed(2)
-            .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
+            .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"),
+          paid:
+            jobPart.status === "Approved" &&
+            jobPart.locum_invoice_item.locum_invoice.paid_at
+              ? "Yes"
+              : "No",
+          nhs_claimable: jobPart.locum_invoice_id
+            ? jobPart.locum_invoices_nhs_claimable
+            : jobPart.locum_details_nhs_claimable
         };
       });
 
@@ -486,7 +500,6 @@ export default {
         .then(([responseTotal, responseJobParts]) => {
           this.total = responseTotal.data.count;
           let job_parts = responseJobParts.data.job_parts;
-
           this.job_parts = job_parts.map(jobPart => {
             let total = jobPart.locum_invoice_id
               ? jobPart.locum_invoice_item.total
@@ -509,7 +522,15 @@ export default {
                 : null,
               total_amount: total
                 .toFixed(2)
-                .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
+                .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"),
+              paid:
+                jobPart.status === "Approved" &&
+                jobPart.locum_invoice_item.locum_invoice.paid_at
+                  ? "Yes"
+                  : "No",
+              nhs_claimable: jobPart.locum_invoice_id
+                ? jobPart.locum_invoices_nhs_claimable
+                : jobPart.locum_details_nhs_claimable
             };
           });
         })
@@ -594,7 +615,15 @@ export default {
                 : null,
               total_amount: total
                 .toFixed(2)
-                .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
+                .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"),
+              paid:
+                jobPart.status === "Approved" &&
+                jobPart.locum_invoice_item.locum_invoice.paid_at
+                  ? "Yes"
+                  : "No",
+              nhs_claimable: jobPart.locum_invoice_id
+                ? jobPart.locum_invoices_nhs_claimable
+                : jobPart.locum_details_nhs_claimable
             };
           });
         })
