@@ -319,12 +319,35 @@
               required
             />
           </template>
+
+          <template v-if="professionCategoryId === 1">
+            <AppInput
+              v-model="form.ir35"
+              :type="'single-checkbox'"
+              :name="'ir35'"
+              :label="'Are you willing to work for a role captured within IR35 rules, subject to deduction of Tax and N.I.?'"
+            />
+          </template>
+
           <AppInput
-            v-model="form.ir35"
-            :type="'single-checkbox'"
-            :name="'ir35'"
-            :label="'Are you willing to work for a role captured within IR35 rules, subject to deduction of Tax and N.I.?'"
+            v-model="form.claim_nhs"
+            :type="'select'"
+            :name="'claim_nhs'"
+            :label="'Are you willing to claim NHS Pension contributions?'"
+            :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
           />
+
+          <template v-if="form.claim_nhs == true || form.claim_nhs == 'true'">
+            <AppInput
+              v-model="form.nhs_number"
+              :type="'text'"
+              :name="'nhs_number'"
+              :label="'NHS number'"
+              :error="formError.find(item => item.field === 'nhs_number')"
+              required
+            />
+          </template>
+
           <AppPostCode
             :urlIndex="'/api/v1/postcode-coordinates'"
             v-model="form.post_code"
@@ -483,7 +506,9 @@ export default {
         bank_name: "",
         sort_code: "",
         account_number: "",
-        ir35: false
+        ir35: false,
+        claim_nhs: false,
+        nhs_number: ""
       },
       profile: {
         avatar: null,
@@ -659,6 +684,9 @@ export default {
       this.form.utr_number = this.user.locum_detail.invoice_detail.utr_number;
       this.form.company_registration_number = this.user.locum_detail.invoice_detail.company_registration_number;
       this.form.ir35 = this.user.locum_detail.invoice_detail.ir35;
+      // claim nhs
+      this.form.claim_nhs = this.user.locum_detail.claim_nhs;
+      this.form.nhs_number = this.user.locum_detail.nhs_number;
       this.form.paid_under_payroll = this.user.locum_detail.invoice_detail.paid_under_payroll;
     }
     if (
@@ -696,13 +724,18 @@ export default {
         "referee_2_email",
         "paid_under_payroll",
         "mandatory_training_id",
-        "ir35"
+        "ir35",
+        "claim_nhs"
       ];
-
       if (this.form.employment_type === "Self-Employed") {
         notRequired.push("company_registration_number");
       } else if (this.form.employment_type === "Limited Company") {
         notRequired.push("utr_number");
+      }
+
+      if (["false", false].includes(this.form.claim_nhs)) {
+        notRequired.push("nhs_number");
+        this.form.nhs_number = null;
       }
 
       if (["false", false].includes(this.form.paid_under_payroll)) {
@@ -750,6 +783,8 @@ export default {
           ? this.form.spoken_language_id.map(item => item.value)
           : [];
         this.form.profession_id = this.form.profession_id.toString();
+        this.form.ir35 =
+          this.professionCategoryId === 1 ? this.form.ir35 : false;
 
         this.$axios
           .$put(`/api/v1/locum/me/profile`, this.form)

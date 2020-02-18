@@ -128,7 +128,7 @@
                   v-model="form.items[0].absent_days"
                   name="absent_days"
                   class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
-                    @keypress="isNumber($event)"
+                  @keypress="isNumber($event)"
                 />
               </div>
               <div class="w-1/3 flex flex-col px-2">
@@ -139,7 +139,7 @@
                   v-model="form.items[0].late_hours"
                   name="late_hours"
                   class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
-                    @keypress="isNumber($event)"
+                  @keypress="isNumber($event)"
                 />
               </div>
               <div class="w-1/3 flex flex-col px-2">
@@ -150,7 +150,7 @@
                   v-model="form.items[0].final_hours"
                   name="final_hours"
                   class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
-                    @keypress="isNumber($event)"
+                  @keypress="isNumber($event)"
                 />
               </div>
             </div>
@@ -293,7 +293,7 @@ export default {
             hours;
           break;
       }
-      return total.toFixed(2);
+      return total.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
     },
     description() {
       return `Job number ${
@@ -328,7 +328,7 @@ export default {
             hours;
           break;
       }
-      return total.toFixed(2);
+      return total.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
     }
   },
   mounted() {
@@ -336,19 +336,21 @@ export default {
       this.form.date_start = this.propInvoice.date_start;
       this.form.date_end = this.propInvoice.date_end;
 
+      let total =
+        this.propInvoice.items[0].job_part.job.locum_detail_rate_type.name ===
+        "Per Hour"
+          ? this.propInvoice.items[0].job_part.job.rate *
+            this.propInvoice.items[0].job_part.final_hours
+          : (this.propInvoice.items[0].job_part.job.rate /
+              this.propInvoice.items[0].job_part.job.total_hours) *
+            this.propInvoice.items[0].job_part.final_hours;
+
       this.form.items = [
         {
           type: "Job Part",
           job_part_id: this.propInvoice.items[0].job_part.id,
           description: this.propInvoice.items[0].description,
-          total:
-            this.propInvoice.items[0].job_part.job.locum_detail_rate_type
-              .name === "Per Hour"
-              ? this.propInvoice.items[0].job_part.job.rate *
-                this.propInvoice.items[0].job_part.final_hours
-              : (this.propInvoice.items[0].job_part.job.rate /
-                  this.propInvoice.items[0].job_part.job.total_hours) *
-                this.propInvoice.items[0].job_part.final_hours,
+          total: total.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"),
           dispute: this.propInvoice.items[0].disputed,
           approve: this.propInvoice.items[0].approved,
           absent_days: this.propInvoice.items[0].absent_days,
@@ -358,14 +360,9 @@ export default {
         }
       ];
 
-      this.form.total_amount =
-        this.propInvoice.items[0].job_part.job.locum_detail_rate_type.name ===
-        "Per Hour"
-          ? this.propInvoice.items[0].job_part.job.rate *
-            this.propInvoice.items[0].job_part.final_hours
-          : (this.propInvoice.items[0].job_part.job.rate /
-              this.propInvoice.items[0].job_part.job.total_hours) *
-            this.propInvoice.items[0].job_part.final_hours;
+      this.form.total_amount = total
+        .toFixed(2)
+        .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
 
       this.isApproved = this.propInvoice.items[0].approved;
 
@@ -422,7 +419,7 @@ export default {
   methods: {
     save(final) {
       this.formError = [];
-      this.Validate(this.form);
+      this.Validate(this.form, ["total_amount"]);
       if (!this.formError.length) {
         this.form.items[0].description = this.description;
         this.form.items[0].total = this.total;

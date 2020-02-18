@@ -165,6 +165,7 @@ export default {
         state.professional_details.max_rate_per_half_day_session = payload.max_rate_per_half_day_session
         state.professional_details.min_rate_per_whole_day_session = payload.min_rate_per_whole_day_session
         state.professional_details.max_rate_per_whole_day_session = payload.max_rate_per_whole_day_session
+        state.professional_details.profession_category_id = payload.profession_category_id
     },
     SET_PAYROLL_DETAILS(state, payload) {
         state.payroll_details.employment_type = payload.employment_type
@@ -180,6 +181,8 @@ export default {
         state.payroll_details.sort_code = payload.sort_code
         state.payroll_details.account_number = payload.account_number
         state.payroll_details.ir35 = payload.ir35
+        state.payroll_details.claim_nhs = payload.claim_nhs
+        state.payroll_details.nhs_number = payload.nhs_number
     },
     SET_CREDENTIAL_DETAILS(state, payload) {
         state.credential_details.email = payload.email

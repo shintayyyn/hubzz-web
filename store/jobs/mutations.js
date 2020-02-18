@@ -335,6 +335,8 @@ export default {
         let index = state.locum_job_notifications.findIndex(jobNotif => jobNotif.id === payload.id)
         if (index < 0) {
             state.locum_job_notifications.unshift(payload)
+        } else if (index >= 0) {
+            state.locum_job_notifications.splice(index, 1, payload)
         }
     },
     REMOVE_LOCUM_JOB_NOTIFICATION(state, payload) {

@@ -33,15 +33,20 @@
                 >
                   <span
                     class="absolute top-0 right-0 cursor-pointer py-2 px-4 rounded-full text-lg font-bold hover:text-gray-700"
-                    @click.prevent.stop="close(notification.id, notification.type)"
+                    @click.prevent.stop="close(notification.id, notification.type, notification.notification_type)"
                   >x</span>
                   <div class="flex flex-wrap w-48 md:w-64">
                     <div class="flex flex-col items-start my-1 w-full">
-                      <div
-                        v-if="!notification.billingStatus"
-                        class="px-2 py-1 md:text-xs font-bold rounded-lg max-w-sm cursor-pointer uppercase"
-                        :class="bgStatus(notification.status ? notification.status : notification.locum_status)"
-                      >{{status(notification.status ? notification.status : notification.locum_status)}}</div>
+                      <div class="flex flex-wrap">
+                        <div
+                          v-if="!notification.billingStatus"
+                          class="px-2 py-1 md:text-xs font-bold rounded-lg max-w-sm cursor-pointer uppercase"
+                          :class="bgStatus(notification.status ? notification.status : notification.locum_status)"
+                        >{{status(notification.status ? notification.status : notification.locum_status)}}</div>
+                        <div
+                          class="px-2 py-1 md:text-xs font-bold rounded-lg max-w-sm cursor-pointer uppercase"
+                        >{{notification.status_tag}}</div>
+                      </div>
                       <div
                         v-if="notification.type === 'Jobs' && notification.billingStatus"
                         class="px-2 py-1 md:text-xs font-bold rounded-lg max-w-sm cursor-pointer uppercase mt-1"
@@ -276,8 +281,8 @@ export default {
           default:
             routeStatus = status;
         }
-        console.log(notification, id, url, status, routeStatus);
-        return;
+        // console.log(notification, id, url, status, routeStatus);
+        // return;
         if (id !== this.$route.params.id) {
           this.$router.push({
             path: `${url}`,
@@ -299,7 +304,10 @@ export default {
           [
             "Practice Notification Job Ongoing",
             "Practice Notification Job Cancelled",
-            "Practice Notification Job Declined"
+            "Practice Notification Job Declined",
+            "Locum Notification Job Ongoing",
+            "Locum Notification Job Cancelled",
+            "Locum Notification Job Declined"
           ].includes(notificationType)
         ) {
           switch (notificationType) {
@@ -329,12 +337,41 @@ export default {
                 ).id
               );
               break;
+            case "Locum Notification Job Ongoing":
+              this.$store.commit(
+                "jobs/REMOVE_LOCUM_JOB_NOTIFICATION",
+                this.$store.state.jobs.locum_job_notifications.find(notif =>
+                  notif.job_parts.find(jobPart => jobPart.status === "Ongoing")
+                ).id
+              );
+              break;
+            case "Locum Notification Job Cancelled":
+              this.$store.commit(
+                "jobs/REMOVE_LOCUM_JOB_NOTIFICATION",
+                this.$store.state.jobs.locum_job_notifications.find(notif =>
+                  notif.job_parts.find(
+                    jobPart => jobPart.status === "Cancelled"
+                  )
+                ).id
+              );
+              break;
+            case "Locum Notification Job Declined":
+              this.$store.commit(
+                "jobs/REMOVE_LOCUM_JOB_NOTIFICATION",
+                this.$store.state.jobs.locum_job_notifications.find(notif =>
+                  notif.job_parts.find(jobPart => jobPart.status === "Declined")
+                ).id
+              );
+              break;
           }
         } else if (
           ![
             "Practice Notification Job Ongoing",
             "Practice Notification Job Cancelled",
-            "Practice Notification Job Declined"
+            "Practice Notification Job Declined",
+            "Locum Notification Job Ongoing",
+            "Locum Notification Job Cancelled",
+            "Locum Notification Job Declined"
           ].includes(notificationType)
         ) {
           this.$store.commit("jobs/REMOVE_PRACTICE_JOB_NOTIFICATION", id);
@@ -370,6 +407,9 @@ export default {
           break;
         case "Ongoing":
           return "bg-green-500";
+          break;
+        case "Reminder":
+          return "bg-gray-500";
           break;
         default:
           return "bg-red-500 text-white";

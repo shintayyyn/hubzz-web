@@ -47,7 +47,7 @@
         <nuxt-link
           :to="`/surgery-management/practice-spokes/${$route.params.id}/surgery-sessions?jobStatus=Declined`"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'declined' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+          :class="$route.query.jobStatus && ($route.query.jobStatus.toLowerCase() === 'declined' || $route.query.jobStatus.toLowerCase() === 'withdrawn') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Declined</nuxt-link>
       </div>
       <div class="relative">

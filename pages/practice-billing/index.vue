@@ -63,10 +63,6 @@
                 @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id)"
                 class="my-1 p-2 font-bold rounded-lg focus:outline-none cursor-pointer bg-yellow-400 hover:bg-yellow-500"
               >Mark as Paid</button>
-              <div
-                v-if="slotProps.item.status === 'Approved' && slotProps.item.locum_invoice_item && slotProps.item.locum_invoice_item.locum_invoice.paid_at"
-                class="my-1 p-2 font-bold"
-              >Already Paid</div>
             </div>
           </template>
         </AppTable>
@@ -183,11 +179,26 @@ export default {
       order_by: [],
       job_ir35: null,
 
-      columns: [
-        {
-          name: "Type",
-          dataIndex: "job.type"
-        },
+      payment_modal: false,
+      invoice_id: null,
+      form: {
+        paid_at: null,
+        ni: false,
+        ni_amount: null,
+        paye: false,
+        paye_amount: null
+      },
+      formError: []
+    };
+  },
+  computed: {
+    columns() {
+      let columns = [];
+      let queryStatus = this.$route.query.status
+        ? this.$route.query.status.toLowerCase()
+        : "to-be-invoiced";
+
+      columns.push(
         {
           name: "Practice / Surgery",
           dataIndex: "practice_name",
@@ -210,29 +221,29 @@ export default {
         {
           name: "£ Amount",
           dataIndex: "total_amount",
-          sortable: true,
-          class: "text-center"
+          class: "text-center",
+          sortable: true
         },
         {
-          name: "Actions",
-          dataIndex: "actions",
+          name: "NHS Claimable",
+          dataIndex: "nhs_claimable",
           class: "text-center"
         }
-      ],
-
-      payment_modal: false,
-      invoice_id: null,
-      form: {
-        paid_at: null,
-        ni: false,
-        ni_amount: null,
-        paye: false,
-        paye_amount: null
-      },
-      formError: []
-    };
-  },
-  computed: {
+      );
+      if (["approved", "pension-form-a"].includes(queryStatus)) {
+        columns.push({
+          name: "Paid",
+          dataIndex: "paid",
+          class: "text-center"
+        });
+      }
+      columns.push({
+        name: "Actions",
+        dataIndex: "actions",
+        class: "text-center"
+      });
+      return columns;
+    },
     ir35() {
       if (!this.invoice_id) {
         return false;
@@ -262,10 +273,10 @@ export default {
           str = "You do not have any approved job parts.";
           break;
         case "pension-form-a":
-          str = "You do not have any nhs from a.";
+          str = "You do not have any nhs form a.";
           break;
         case "pension-form-b":
-          str = "You do not have any nhs from b.";
+          str = "You do not have any nhs form b.";
           break;
         default:
           str = "You do not have any completed job parts.";
@@ -303,8 +314,8 @@ export default {
   },
   async asyncData({ app, query, error }) {
     try {
-      let status = [];
       let invoice_status = [];
+      let status = [];
       let locum_invoiceable;
       let queryStatus = query.status;
 
@@ -387,7 +398,17 @@ export default {
           invoice_number: jobPart.locum_invoice_id
             ? jobPart.locum_invoice_item.locum_invoice.invoice_number
             : null,
-          total_amount: total.toFixed(2)
+          total_amount: total
+            .toFixed(2)
+            .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"),
+          paid:
+            jobPart.status === "Approved" &&
+            jobPart.locum_invoice_item.locum_invoice.paid_at
+              ? "Yes"
+              : "No",
+          nhs_claimable: jobPart.locum_invoice_id
+            ? jobPart.locum_invoices_nhs_claimable
+            : jobPart.locum_details_nhs_claimable
         };
       });
 
@@ -479,7 +500,6 @@ export default {
         .then(([responseTotal, responseJobParts]) => {
           this.total = responseTotal.data.count;
           let job_parts = responseJobParts.data.job_parts;
-
           this.job_parts = job_parts.map(jobPart => {
             let total = jobPart.locum_invoice_id
               ? jobPart.locum_invoice_item.total
@@ -500,7 +520,17 @@ export default {
               invoice_number: jobPart.locum_invoice_id
                 ? jobPart.locum_invoice_item.locum_invoice.invoice_number
                 : null,
-              total_amount: total.toFixed(2)
+              total_amount: total
+                .toFixed(2)
+                .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"),
+              paid:
+                jobPart.status === "Approved" &&
+                jobPart.locum_invoice_item.locum_invoice.paid_at
+                  ? "Yes"
+                  : "No",
+              nhs_claimable: jobPart.locum_invoice_id
+                ? jobPart.locum_invoices_nhs_claimable
+                : jobPart.locum_details_nhs_claimable
             };
           });
         })
@@ -564,6 +594,13 @@ export default {
           let job_parts = res.data.job_parts;
 
           this.job_parts = job_parts.map(jobPart => {
+            let total = jobPart.locum_invoice_id
+              ? jobPart.locum_invoice_item.total
+              : jobPart.job.locum_detail_rate_type.name === "Per Hour"
+              ? jobPart.job.rate * jobPart.final_hours
+              : (jobPart.job.rate / jobPart.job.total_hours) *
+                jobPart.final_hours;
+
             return {
               ...jobPart,
               practice_name:
@@ -576,12 +613,17 @@ export default {
               invoice_number: jobPart.locum_invoice_id
                 ? jobPart.locum_invoice_item.locum_invoice.invoice_number
                 : null,
-              total_amount: jobPart.locum_invoice_id
-                ? jobPart.locum_invoice_item.total
-                : jobPart.job.locum_detail_rate_type.name === "Per Hour"
-                ? jobPart.job.rate * jobPart.final_hours
-                : (jobPart.job.rate / jobPart.job.total_hours) *
-                  jobPart.final_hours
+              total_amount: total
+                .toFixed(2)
+                .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"),
+              paid:
+                jobPart.status === "Approved" &&
+                jobPart.locum_invoice_item.locum_invoice.paid_at
+                  ? "Yes"
+                  : "No",
+              nhs_claimable: jobPart.locum_invoice_id
+                ? jobPart.locum_invoices_nhs_claimable
+                : jobPart.locum_details_nhs_claimable
             };
           });
         })

@@ -18,10 +18,12 @@
       >My Bank</nuxt-link>
     </div>
     <transition name="fade" mode="out-in">
-      <div class="relative flex w-full" v-if="initialLoading" style="min-height:80px">
-        <AppLoading :loading="initialLoading" spinner />
+      <div class="relative flex w-full" v-if="loadings > 0" style="min-height:80px">
+        <!-- <AppLoading :loading="initialLoading" spinner /> -->
+        <AppLoading :loading="loadings > 0" spinner />
       </div>
-      <div v-if="!initialLoading">
+      <!-- v-if="!initialLoading" -->
+      <div v-if="loadings === 0">
         <div class="flex">
           <AppButton
             class="mr-2"
@@ -324,6 +326,7 @@ export default {
       jobs: [],
       initialLoading: false,
       loading: false,
+      loadings: 0,
       current_page: 1,
       // app table params
       offset: 0,
@@ -532,11 +535,18 @@ export default {
         });
       }
       if (queryStatus === "cancelled") {
-        columns.push({
-          name: "Cancelled At",
-          dataIndex: "job.platform_job.cancelled_at",
-          class: "text-center localDate"
-        });
+        columns.push(
+          {
+            name: "Cancelled At",
+            dataIndex: "job.platform_job.cancelled_at",
+            class: "text-center localDate"
+          },
+          {
+            name: "Tag",
+            dataIndex: "tag_status",
+            class: "text-center"
+          }
+        );
       }
       if (["completed", "approved"].includes(queryStatus)) {
         columns.push(
@@ -548,11 +558,6 @@ export default {
           {
             name: "Invoice status",
             dataIndex: "invoice_status",
-            class: "text-center"
-          },
-          {
-            name: "Tag",
-            dataIndex: "status",
             class: "text-center"
           }
         );
@@ -578,8 +583,10 @@ export default {
         this.clearFilters();
         this.isFiltered = false;
         this.initialLoading = true;
+        this.loadings = this.loadings + 1;
         await this.getJobsPromiseAll();
         this.initialLoading = false;
+        this.loadings = this.loadings - 1;
       }
     }
   },
@@ -597,7 +604,7 @@ export default {
             status = ["Completed", "Terminated"];
             break;
           case "Withdrawn":
-            status = ["Declined"];
+            status = ["Declined", "Withdrawn"];
             break;
           default:
             status = [`${queryStatus}`];
@@ -773,7 +780,12 @@ export default {
                     };
                   })
                 : res.data.job_parts
-                ? res.data.job_parts
+                ? res.data.job_parts.map(item => {
+                    return {
+                      ...item,
+                      tag_status: item.terminated ? "Terminated" : item.status
+                    };
+                  })
                 : [];
             return jobs;
           })
@@ -863,9 +875,9 @@ export default {
           case "Completed":
             status = ["Completed", "Terminated"];
             break;
-          case "Withdrawn":
-            status = ["Declined"];
-            break;
+          // case "Withdrawn":
+          //   status = ["Declined"];
+          //   break;
           default:
             status = [`${queryStatus}`];
             break;
@@ -973,25 +985,57 @@ export default {
         )
       ])
         .then(([responseCount, responseJobs]) => {
-          this.jobs =
+          let jobs =
             responseJobs.data && responseJobs.data.jobs
-              ? responseJobs.data.jobs.map(item => {
-                  return {
-                    ...item,
-                    assigned_to: item.platform_job.appointed_to_locum.user
-                      ? item.platform_job.appointed_to_locum.user
-                          .personal_detail.name
-                      : null
-                  };
-                })
+              ? responseJobs.data.jobs
               : responseJobs.data.job_parts
               ? responseJobs.data.job_parts
               : [];
-          this.total = responseCount.data.count;
+
+          if (jobs.length > 0) {
+            // get current query status
+            const currentQuery = this.$route.query.status;
+            // get response jobs status
+            let jobStatus = jobs[0].status;
+            // responseJobs.data.jobs && responseJobs.data.jobs.length > 0
+            //   ? responseJobs.data.jobs[0].status
+            //   : responseJobs.data.job_parts &&
+            //     responseJobs.data.job_parts.length > 0
+            //   ? responseJobs.data.job_parts[0].status
+            //   : null;
+            // if same status, insert jobs
+            if (currentQuery === jobStatus) {
+              this.total = responseCount.data.count;
+              this.jobs =
+                responseJobs.data && responseJobs.data.jobs
+                  ? responseJobs.data.jobs.map(item => {
+                      return {
+                        ...item,
+                        assigned_to: item.platform_job.appointed_to_locum.user
+                          ? item.platform_job.appointed_to_locum.user
+                              .personal_detail.name
+                          : null
+                      };
+                    })
+                  : responseJobs.data.job_parts
+                  ? responseJobs.data.job_parts.map(item => {
+                      return {
+                        ...item,
+                        tag_status: item.terminated ? "Terminated" : item.status
+                      };
+                    })
+                  : [];
+            }
+          } else if (jobs.length === 0) {
+            this.jobs = [];
+          }
         })
         .catch(err => {
           console.log("err", err.response || err);
           throw err;
+        })
+        .finally(() => {
+          return;
         });
     },
     getJobs() {
@@ -1006,9 +1050,9 @@ export default {
           case "Completed":
             status = ["Completed", "Terminated"];
             break;
-          case "Withdrawn":
-            status = ["Declined"];
-            break;
+          // case "Withdrawn":
+          //   status = ["Declined"];
+          //   break;
           default:
             status = [`${queryStatus}`];
             break;
@@ -1073,7 +1117,12 @@ export default {
                   };
                 })
               : res.data.job_parts
-              ? res.data.job_parts
+              ? res.data.job_parts.map(item => {
+                  return {
+                    ...item,
+                    tag_status: item.terminated ? "Terminated" : item.status
+                  };
+                })
               : [];
         })
         .catch(err => {
@@ -1252,8 +1301,10 @@ export default {
       this.offset = 0;
       this.limit = 5;
       this.initialLoading = true;
+      this.loadings = this.loadings + 1;
       await this.getJobsPromiseAll();
       this.initialLoading = false;
+      this.loadings = this.loadings - 1;
       this.showRefresh = false;
     },
     removeListener() {
@@ -1315,8 +1366,10 @@ export default {
       this.offset = 0;
       this.limit = 5;
       this.initialLoading = true;
+      this.loadings = this.loadings + 1;
       this.isFiltered = true;
       await this.getJobsPromiseAll();
+      this.loadings = this.loadings - 1;
       this.initialLoading = false;
       this.filterModal = false;
     },

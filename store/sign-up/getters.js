@@ -30,6 +30,9 @@ export default {
     payrollFormError(state) {
         return state.payroll_detail_form_error;
     },
+    professionCategoryId(state) {
+        return state.professional_details.profession_category_id
+    },
     // PRACTICE
     practiceDetails(state) {
         return state.practice_details

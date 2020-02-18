@@ -25,6 +25,12 @@ export default {
                 commit('ADD_LOCUM_JOB_NOTIFICATION', { ...response.data.job, notificationType: 'Locum Notification Job Unsuccessful' })
             }
         })
+        this.$socket.on('Locum Notification Job Applied', async (job) => {
+            const response = await this.$axios.$get(`/api/v1/locum/jobs/${job.id}`)
+            if (response.data && response.data.job) {
+                commit('ADD_LOCUM_JOB_NOTIFICATION', { ...response.data.job, notificationType: 'Locum Notification Job Applied' })
+            }
+        })
         this.$socket.on('Locum Notification Job Current', async (job) => {
             const response = await this.$axios.$get(`/api/v1/locum/jobs/${job.id}`)
             if (response.data && response.data.job) {
@@ -43,7 +49,6 @@ export default {
                 commit('ADD_LOCUM_JOB_NOTIFICATION', { ...response.data.job_part, notificationType: 'Locum Notification Job Part Completed' })
             }
         })
-
         this.$socket.on('Locum Notification Locum Invoice Updated', async (invoice) => {
             const invoiceResponse = await this.$axios.$get(`/api/v1/locum/locum-invoices/${invoice.id}`)
             if (invoiceResponse.data && invoiceResponse.data.locum_invoice) {

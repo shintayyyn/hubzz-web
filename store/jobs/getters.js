@@ -93,7 +93,7 @@ export default {
                     id = notif.job_parts.find(item => ['Cancelled', 'Pending'].includes(item.status)).id
                     break;
                 case 'Practice Notification Job Declined':
-                    id = notif.job_parts.find(item => item.status === 'Declined').id
+                    id = notif.job_parts.find(item => item.status === 'Declined' || item.status === 'Withdrawn').id
                     break;
                 default:
                     id = notif.id
@@ -103,6 +103,7 @@ export default {
                 id,
                 title: notif.title ? notif.title : notif.job.title,
                 status: notif.status === 'Declined' ? 'Withdrawn' : notif.status,
+                status_tag: notif.status === 'Cancelled' && notif.appointed_to_locum_user_id ? 'Terminated' : "",
                 billingStatus: ['Practice Notification Job Approved', 'Practice Notification Job Disputed'].includes(notif.notificationType) ? notif.notificationType === 'Practice Notification Job Approved' ? 'Approved' : 'Disputed' : null,
                 date_start: notif.date_start,
                 date_end: notif.date_end,
@@ -548,6 +549,9 @@ export default {
                 case 'Locum Notification Job Available':
                     message = 'There is a new available job for you.'
                     break;
+                case 'Locum Notification Job Applied':
+                    message = 'Successfully applied for this Job.'
+                    break;
                 case 'Locum Notification Job Matched':
                     message = 'There is a new job that matched your qualifications.'
                     break;
@@ -588,7 +592,8 @@ export default {
             notifObj = {
                 id: ['Locum Notification Job Ongoing', 'Locum Notification Job Cancelled', 'Locum Notification Job Declined'].includes(notif.notificationType) && notif.job_parts.length > 0 ? notif.job_parts[0].id : notif.id,
                 title: notif.title ? notif.title : notif.job.title,
-                locum_status: notif.locum_status === 'Declined' ? 'Withdrawn' : notif.locum_status === 'Cancelled' && notif.appointed_to_locum_user_id ? 'Terminated' : notif.locum_status,
+                locum_status: notif.locum_status === 'Declined' ? 'Withdrawn' : notif.locum_status,
+                status_tag: notif.locum_status === 'Cancelled' && notif.appointed_to_locum_user_id ? 'Terminated' : "",
                 billingStatus: ['Locum Notification Job Approved', 'Locum Notification Job Disputed'].includes(notif.notificationType) ? notif.notificationType === 'Locum Notification Job Approved' ? 'Approved' : 'Disputed' : null,
                 date_start: notif.date_start,
                 date_end: notif.date_end,

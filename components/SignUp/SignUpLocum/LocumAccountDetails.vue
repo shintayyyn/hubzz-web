@@ -72,9 +72,8 @@
             :error="formError.find(item => item.field === 'date_of_birth')"
             @blur="CheckEmptyField(form.date_of_birth, 'date_of_birth')"
             isBefore
-            :limitYear="50"
+            :limitYear="100"
             :maxYearBefore="10"
-            :startYear="$moment().subtract(10, 'years').format('YYYY')"
             required
           />
           <AppInput

@@ -42,7 +42,7 @@
           <div class="font-bold text-sm sm:text-md">Reason for cancellation</div>
           <div class="text-xs sm:text-sm mb-8">{{job_part.job.platform_job.cancelled_reason}}</div>
         </template>
-        <template v-if="job_part.status === 'Declined'">
+        <template v-if="job_part.status === 'Declined' || job_part.status === 'Withdrawn'">
           <div class="font-bold text-sm sm:text-md">Withdrawn At</div>
           <div class="text-xs sm:text-sm mb-8">{{job_part.job.platform_job.declined_at | localDate}}</div>
           <div class="font-bold text-sm sm:text-md">Reason for withdrawal</div>
@@ -198,7 +198,6 @@
           <div class="font-bold text-sm sm:text-md">Terms & Condition</div>
           <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
             <AppButton :inClass="'py-1'" :label="'View'" @click="modal = true" />
-            <!-- <div class="mt-1 cursor-pointer" @click="modal = true">View</div> -->
             <transition name="slide" mode="out-in">
               <div v-if="modal" class="modal-container shadow-lg">
                 <div class="h-full w-full">
@@ -208,7 +207,7 @@
                   <embed
                     class="object-contain object-top w-full"
                     :class="job_part.job.variation_terms_file.type == 'image' ? 'image' : 'document h-full '"
-                    :src="jjob_part.ob.variation_terms_file.subtype === 'tiff' || job_part.job.variation_terms_file.subtype === 'msword' ? convertDoc(job_part.job.variation_terms_file.url) : job_part.job.variation_terms_file.url"
+                    :src="job_part.ob.variation_terms_file.subtype === 'tiff' || job_part.job.variation_terms_file.subtype === 'msword' ? convertDoc(job_part.job.variation_terms_file.url) : job_part.job.variation_terms_file.url"
                   />
                 </div>
               </div>

@@ -114,7 +114,7 @@
                 <div
                   v-if="!slotProps.item.locum_invoice_id"
                   @click="$router.push({ path: `/locum-billing/invoices/${slotProps.item.id}/create`, query: {...$route.query} })"
-                  class="my-1 p-2 bg-green-700 text-white font-bold rounded-lg focus:outline-none"
+                  class="my-1 p-2 bg-green-700 hover:bg-green-600 text-white font-bold rounded-lg focus:outline-none cursor-pointer"
                 >Generate Invoice</div>
                 <div
                   class="flex justify-between my-1"
@@ -122,32 +122,23 @@
                 >
                   <div
                     @click="$router.push({ path: `/locum-billing/invoices/${slotProps.item.locum_invoice_id}/edit`, query: {...$route.query} })"
-                    class="mx-1 p-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
+                    class="mx-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
                   >Edit</div>
                   <button
                     @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id, 'deleteInvoice')"
-                    class="mx-1 p-2 bg-red-700 text-white font-bold rounded-lg focus:outline-none w-full"
+                    class="mx-1 p-2 bg-red-700 hover:bg-red-600 text-white font-bold rounded-lg focus:outline-none"
                   >Delete</button>
                 </div>
                 <div
-                  v-if="slotProps.item.locum_invoice_id && slotProps.item.status === 'Approved'"
+                  v-if="['approved'].includes($route.query.status)"
                   @click="$router.push({ path: `/locum-billing/invoices/${slotProps.item.locum_invoice_id}`, query: {...$route.query} })"
-                  class="my-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none"
+                  class="my-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
                 >View</div>
                 <div
-                  v-if="slotProps.item.locum_invoice_id && slotProps.item.status === 'Approved' && !slotProps.item.locum_form_a_id && !slotProps.item.locum_invoice_item.locum_invoice.paid_at"
-                  class="my-1 p-2 font-bold"
-                >Waiting For Payment</div>
-                <div
-                  v-if="slotProps.item.locum_invoice_id && slotProps.item.status === 'Approved' && !slotProps.item.locum_form_a_id && slotProps.item.profession.name === 'GP' && slotProps.item.locum_invoice_item.locum_invoice.paid_at"
-                  @click="select_invoice(slotProps.item.locum_invoice_id, 'generateFormA')"
-                  class="my-1 p-2 bg-green-500 hover:bg-green-600 text-white font-bold rounded-lg focus:outline-none w-full"
-                >Generate Form A</div>
-                <div
+                  v-if="$route.query.status && $route.query.status === 'pension-form-a' && slotProps.item.nhs_claimable && slotProps.item.locum_form_a_id"
                   @click="viewAsPdf(slotProps.item.locum_form_a_id, 'form-a')"
-                  v-if="slotProps.item.locum_invoice_id && slotProps.item.status === 'Approved' && slotProps.item.locum_form_a_id && slotProps.item.profession.name === 'GP' "
-                  class="my-1 p-2 bg-yellow-400 hover:bg-yellow-500 font-bold rounded-lg focus:outline-none"
-                >View NHS Form A</div>
+                  class="my-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
+                >View Form A</div>
               </div>
             </template>
           </AppTable>
@@ -167,6 +158,7 @@
             :perPage="limit"
             :columns="form_bs_columns"
             :orderBy="order_by"
+            :loading="loading"
             @pagechanged="pagechanged"
             @limitchanged="limitchanged"
             @sorted="sorted"
@@ -175,8 +167,8 @@
               <div class="flex justify-center">
                 <div
                   @click="viewAsPdf(slotProps.item.id, 'form-b')"
-                  class="mx-1 px-4 py-2 bg-yellow-400 font-bold rounded-lg focus:outline-none"
-                >View NHS Form B</div>
+                  class="my-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
+                >View Form B</div>
               </div>
             </template>
           </AppTable>
@@ -244,7 +236,6 @@ export default {
       loading: false,
       filterModal: false,
       isFiltered: false,
-      showTable: false,
       total: 0,
       job_parts: [],
       locum_form_bs: [],
@@ -256,43 +247,6 @@ export default {
       limit: 5,
       order_by: [],
       job_ir35: null,
-
-      columns: [
-        {
-          name: "Type",
-          dataIndex: "job.type"
-        },
-        {
-          name: "Practice / Surgery",
-          dataIndex: "practice_name",
-          class: "text-center"
-        },
-        {
-          name: "Issued",
-          dataIndex: "issued_at",
-          class: "text-center localDate",
-          sortable: true
-        },
-        {
-          name: "Invoice Number",
-          dataIndex: "invoice_number"
-        },
-        {
-          name: "Job Number",
-          dataIndex: "job_part_number"
-        },
-        {
-          name: "£ Amount",
-          dataIndex: "total_amount",
-          class: "text-center",
-          sortable: true
-        },
-        {
-          name: "Actions",
-          dataIndex: "actions",
-          class: "text-center"
-        }
-      ],
 
       form_bs_columns: [
         {
@@ -321,6 +275,58 @@ export default {
     };
   },
   computed: {
+    columns() {
+      let columns = [];
+      let queryStatus = this.$route.query.status
+        ? this.$route.query.status.toLowerCase()
+        : "to-be-invoiced";
+
+      columns.push(
+        {
+          name: "Practice / Surgery",
+          dataIndex: "practice_name",
+          class: "text-center"
+        },
+        {
+          name: "Issued",
+          dataIndex: "issued_at",
+          class: "text-center localDate",
+          sortable: true
+        },
+        {
+          name: "Invoice Number",
+          dataIndex: "invoice_number"
+        },
+        {
+          name: "Job Number",
+          dataIndex: "job_part_number"
+        },
+        {
+          name: "£ Amount",
+          dataIndex: "total_amount",
+          class: "text-center",
+          sortable: true
+        },
+        {
+          name: "NHS Claimable",
+          dataIndex: "nhs_claimable",
+          class: "text-center"
+        }
+      );
+      if (["approved", "pension-form-a"].includes(queryStatus)) {
+        columns.push({
+          name: "Paid",
+          dataIndex: "paid",
+          class: "text-center"
+        });
+      }
+      columns.push({
+        name: "Actions",
+        dataIndex: "actions",
+        class: "text-center"
+      });
+      return columns;
+    },
     authPermissions() {
       return this.$store.getters["permissions"];
     },
@@ -341,10 +347,10 @@ export default {
           str = "You do not have any approved job parts.";
           break;
         case "pension-form-a":
-          str = "You do not have any nhs from a.";
+          str = "You do not have any nhs form a.";
           break;
         case "pension-form-b":
-          str = "You do not have any nhs from b.";
+          str = "You do not have any nhs form b.";
           break;
         default:
           str = "You do not have any completed job parts.";
@@ -375,7 +381,8 @@ export default {
       let url = `/api/v1/locum/job-parts`;
       let invoice_status = [];
       let locum_status = [];
-      let locum_invoiceable;
+      let locum_invoiceable = null;
+      let nhs_claimable = null;
       let queryStatus = query.status;
 
       switch (queryStatus && queryStatus.toLowerCase()) {
@@ -395,11 +402,13 @@ export default {
         case "approved":
           invoice_status.push("Invoiced");
           locum_status.push("Approved");
-          locum_invoiceable = null;
+          locum_invoiceable = true;
           break;
         case "pension-form-a":
           invoice_status.push("Invoiced");
           locum_status.push("Approved");
+          locum_invoiceable = true;
+          nhs_claimable = true;
           break;
         case "pension-form-b":
           url = `/api/v1/locum/locum-invoices-form-b`;
@@ -418,6 +427,7 @@ export default {
               invoice_status,
               locum_status,
               locum_invoiceable,
+              nhs_claimable,
               job_type: "Platform",
               type: "Platform"
             }
@@ -432,6 +442,7 @@ export default {
               invoice_status,
               locum_status,
               locum_invoiceable,
+              nhs_claimable,
               job_type: "Platform",
               type: "Platform",
               offset: 0,
@@ -457,6 +468,15 @@ export default {
             ? jobPart.job.rate * jobPart.final_hours
             : (jobPart.job.rate / jobPart.job.total_hours) *
               jobPart.final_hours;
+
+          total =
+            jobPart.locum_invoice_item &&
+            jobPart.locum_invoice_item.locum_invoice &&
+            jobPart.locum_invoice_item.locum_invoice.paid_at
+              ? total -
+                jobPart.locum_invoice_item.locum_invoice.ni_amount -
+                jobPart.locum_invoice_item.locum_invoice.paye_amount
+              : total;
           return {
             ...jobPart,
             practice_name:
@@ -469,7 +489,17 @@ export default {
             invoice_number: jobPart.locum_invoice_id
               ? jobPart.locum_invoice_item.locum_invoice.invoice_number
               : null,
-            total_amount: total.toFixed(2)
+            total_amount: total
+              .toFixed(2)
+              .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"),
+            paid:
+              jobPart.locum_status === "Approved" &&
+              jobPart.locum_invoice_item.locum_invoice.paid_at
+                ? "Yes"
+                : "No",
+            nhs_claimable: jobPart.locum_invoice_id
+              ? jobPart.locum_invoices_nhs_claimable
+              : jobPart.locum_details_nhs_claimable
           };
         });
       } else if (url === `/api/v1/locum/locum-invoices-form-b`) {
@@ -484,10 +514,7 @@ export default {
         });
       }
 
-      const showTable = true;
-
       return {
-        showTable,
         total,
         job_parts,
         locum_form_bs
@@ -559,7 +586,8 @@ export default {
       let url = `/api/v1/locum/job-parts`;
       let invoice_status = [];
       let locum_status = [];
-      let locum_invoiceable;
+      let locum_invoiceable = null;
+      let nhs_claimable = null;
       let queryStatus = this.$route.query.status;
 
       switch (queryStatus && queryStatus.toLowerCase()) {
@@ -586,6 +614,8 @@ export default {
         case "pension-form-a":
           invoice_status.push("Invoiced");
           locum_status.push("Approved");
+          locum_invoiceable = true;
+          nhs_claimable = true;
           break;
         case "pension-form-b":
           url = `/api/v1/locum/locum-invoices-form-b`;
@@ -601,6 +631,7 @@ export default {
             invoice_status,
             locum_status,
             locum_invoiceable,
+            nhs_claimable,
             job_type: "Platform",
             type: "Platform",
             job_ir35: this.job_ir35
@@ -611,6 +642,7 @@ export default {
             invoice_status,
             locum_status,
             locum_invoiceable,
+            nhs_claimable,
             job_type: "Platform",
             type: "Platform",
             job_ir35: this.job_ir35,
@@ -631,6 +663,15 @@ export default {
                 ? jobPart.job.rate * jobPart.final_hours
                 : (jobPart.job.rate / jobPart.job.total_hours) *
                   jobPart.final_hours;
+
+              total =
+                jobPart.locum_invoice_item &&
+                jobPart.locum_invoice_item.locum_invoice &&
+                jobPart.locum_invoice_item.locum_invoice.paid_at
+                  ? total -
+                    jobPart.locum_invoice_item.locum_invoice.ni_amount -
+                    jobPart.locum_invoice_item.locum_invoice.paye_amount
+                  : total;
               return {
                 ...jobPart,
                 practice_name:
@@ -643,7 +684,17 @@ export default {
                 invoice_number: jobPart.locum_invoice_id
                   ? jobPart.locum_invoice_item.locum_invoice.invoice_number
                   : null,
-                total_amount: total.toFixed(2)
+                total_amount: total
+                  .toFixed(2)
+                  .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"),
+                paid:
+                  jobPart.locum_status === "Approved" &&
+                  jobPart.locum_invoice_item.locum_invoice.paid_at
+                    ? "Yes"
+                    : "No",
+                nhs_claimable: jobPart.locum_invoice_id
+                  ? jobPart.locum_invoices_nhs_claimable
+                  : jobPart.locum_details_nhs_claimable
               };
             });
           } else if (response.data && response.data.locum_form_bs) {
@@ -682,36 +733,42 @@ export default {
       let invoice_status = [];
       let locum_status = [];
       let locum_invoiceable;
+      let nhs_claimable;
       let queryStatus = this.$route.query.status;
 
       switch (queryStatus && queryStatus.toLowerCase()) {
         case "to-be-invoiced":
           invoice_status.push("To Be Invoice");
+          locum_status = ["Completed", "Declined", "Cancelled"];
           locum_invoiceable = true;
           break;
         case "disputed":
           invoice_status.push("Disputed");
+          locum_status = ["Completed", "Declined", "Cancelled"];
           locum_invoiceable = true;
           break;
         case "issued":
           invoice_status.push("Invoiced");
+          locum_status = ["Completed", "Declined", "Cancelled"];
           locum_invoiceable = true;
           break;
         case "approved":
           invoice_status.push("Invoiced");
           locum_status.push("Approved");
-          locum_invoiceable = null;
+          locum_invoiceable = true;
           break;
         case "pension-form-a":
           invoice_status.push("Invoiced");
           locum_status.push("Approved");
-          break;
+          nhs_claimable = true;
           break;
         case "pension-form-b":
           url = `/api/v1/locum/locum-invoices-form-b`;
           break;
         default:
           invoice_status.push("To Be Invoice");
+          locum_status = ["Completed", "Declined", "Cancelled"];
+          locum_invoiceable = true;
       }
       return this.$axios
         .$get(`${url}`, {
@@ -719,6 +776,7 @@ export default {
             invoice_status,
             locum_status,
             locum_invoiceable,
+            nhs_claimable,
             job_type: "Platform",
             type: "Platform",
             offset: this.offset,
@@ -738,6 +796,15 @@ export default {
                 ? jobPart.job.rate * jobPart.final_hours
                 : (jobPart.job.rate / jobPart.job.total_hours) *
                   jobPart.final_hours;
+
+              total =
+                jobPart.locum_invoice_item &&
+                jobPart.locum_invoice_item.locum_invoice &&
+                jobPart.locum_invoice_item.locum_invoice.paid_at
+                  ? total -
+                    jobPart.locum_invoice_item.locum_invoice.ni_amount -
+                    jobPart.locum_invoice_item.locum_invoice.paye_amount
+                  : total;
               return {
                 ...jobPart,
                 practice_name:
@@ -750,7 +817,17 @@ export default {
                 invoice_number: jobPart.locum_invoice_id
                   ? jobPart.locum_invoice_item.locum_invoice.invoice_number
                   : null,
-                total_amount: total.toFixed(2)
+                total_amount: total
+                  .toFixed(2)
+                  .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"),
+                paid:
+                  jobPart.locum_status === "Approved" &&
+                  jobPart.locum_invoice_item.locum_invoice.paid_at
+                    ? "Yes"
+                    : "No",
+                nhs_claimable: jobPart.locum_invoice_id
+                  ? jobPart.locum_invoices_nhs_claimable
+                  : jobPart.locum_details_nhs_claimable
               };
             });
           } else if (res.data && res.data.locum_form_bs) {
@@ -817,7 +894,7 @@ export default {
           let index = this.job_parts.findIndex(item => {
             return item.locum_invoice_id === this.invoice_id;
           });
-          let queryStatus = this.$route.query.status.toLowerCase();
+          let queryStatus = this.$route.query.status;
 
           if (
             !queryStatus ||

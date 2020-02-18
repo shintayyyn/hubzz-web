@@ -106,6 +106,10 @@ const invoiceStatusList = [
   }
 ];
 export default {
+  transition: {
+    name: "fade",
+    mode: "out-in"
+  },
   middleware: "isVerified",
   components: {
     AppConfirmationModal

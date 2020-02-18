@@ -13,15 +13,19 @@
     <div class="flex flex-row justify-start items-center mt-4">
       <div class="leading-tight font-bold text-md sm:text-lg">{{job_part.job.title}}</div>
       <div
-        class="ml-1 py-2 px-4 mx-1 rounded font-semibold"
+        class="py-2 px-4 mx-1 rounded font-semibold"
         :class="bgStatus(job_part.status)"
       >{{status(job_part.status)}}</div>
-      <template v-if="job_part.status === 'Completed'">
+      <div
+        class="py-2 px-4 mx-1 rounded font-semibold bg-gray-300"
+        v-if="['Completed','Cancelled'].includes(job_part.status) && tagStatus(job_part)"
+      >{{ tagStatus(job_part) }}</div>
+      <!-- <template v-if="job_part.status === 'Completed'">
         <div
           class="py-2 px-4 mx-1 mx-rounded font-semibold"
           :class="jobPartStatus === 'Completed' ? 'bg-green-500' : 'bg-gray-300'"
         >{{jobPartStatus}}</div>
-      </template>
+      </template>-->
       <template
         v-if="['Terminated','Completed','Approved', 'Cancelled', 'Withdrawn', 'Declined'].includes(job_part.status)"
       >
@@ -35,7 +39,7 @@
           <div class="flex flex-col">
             <div
               class="bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4"
-              v-if="job_part.status === 'Declined'"
+              v-if="job_part.status === 'Declined' || job_part.status === 'Withdrawn'"
             >
               <div class="leading-tight pb-2">
                 <p class="font-bold text-sm sm:text-md">Reason for Withdrawal</p>
@@ -55,7 +59,7 @@
             <SessionDetailModalCancelForm
               :job="job_part.job"
               @cancelled="$emit('close')"
-              v-if="(job_part.job.status === 'Allocated' || job_part.job.status === 'Ongoing' || job_part.job.status === 'Applied' || job_part.job.status === 'Live') && authPermissions.includes('Cancel Sessions Job')"
+              v-if="['Live','Allocated','Ongoing','Applied'].includes(job_part.status) && authPermissions.includes('Cancel Sessions Job')"
             />
           </div>
         </div>
@@ -97,18 +101,23 @@ export default {
   computed: {
     authPermissions() {
       return this.$store.getters["permissions"];
-    },
-    jobPartStatus() {
-      let status = "TO BE INVOICED";
-      if (this.job_part.disputed && this.job_part.issued) {
-        status = "DISPUTED";
-      } else if (this.job_part.invoiced && this.job_part.issued) {
-        status = "INVOICED";
-      }
-      return status;
     }
   },
   methods: {
+    tagStatus(job_part) {
+      let status = "";
+      if (job_part.status === "Completed") {
+        status = "TO BE INVOICED";
+        if (job_part.disputed && job_part.issued) {
+          status = "DISPUTED";
+        } else if (job_part.invoiced && job_part.issued) {
+          status = "INVOICED";
+        }
+        return status;
+      } else if (job_part.status === "Cancelled") {
+        return job_part.terminated ? "TERMINATED" : null;
+      }
+    },
     status(status) {
       let jobStatus =
         status === "Declined"

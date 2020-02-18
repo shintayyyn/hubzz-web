@@ -25,7 +25,9 @@
         <nuxt-link
           v-if="relationshipIsActive == 'Active' && 
             (practice_surgery.allow_surgery_bill_locum === false || 
-            practice_surgery.allow_surgery_bill_hubzz === false)"
+            practice_surgery.allow_surgery_bill_hubzz === false ||
+            practice_surgery.allow_surgery_bill_locum === 0 ||
+            practice_surgery.allow_surgery_bill_hubzz === 0)"
           :to="{path: `/hub-surgery-management/${$route.params.id}/surgery-billings/invoices-from-locums`, query: {...$route.query}}"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
           :class="$route.name === 'hub-surgery-management-id-surgery-billings' || $route.name.includes('hub-surgery-management-id-surgery-billings') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
@@ -93,14 +95,15 @@ export default {
   methods: {
     activeRelationship() {
       let result = "";
-      if (this.practice_surgery.invitation_accepted_at ||
-       this.practice_surgery.termination_requested_at ) {
+      if (
+        this.practice_surgery.invitation_accepted_at ||
+        this.practice_surgery.termination_requested_at
+      ) {
         result = "Active";
       }
 
       if (
         this.practice_surgery.invitation_rejected_at ||
-       
         this.practice_surgery.terminated_at
       ) {
         result = "Inactive";

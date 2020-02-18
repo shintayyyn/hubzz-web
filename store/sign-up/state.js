@@ -88,6 +88,7 @@ export default () => ({
         max_rate_per_whole_day_session: 0,
         practice_type_id: [],
         mandatory_training_id: [],
+        profession_category_id: ''
     },
     payroll_details: {
         employment_type: "Self-Employed",
@@ -102,7 +103,9 @@ export default () => ({
         bank_name: "",
         sort_code: "",
         account_number: "",
-        ir35: false
+        ir35: false,
+        claim_nhs: false,
+        nhs_number: "",
     },
     credential_details: {
         email: '',

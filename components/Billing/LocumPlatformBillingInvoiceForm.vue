@@ -122,7 +122,7 @@
               >{{form.items[0].total}}</div>
               <div
                 class="flex items-center align-middle sticky right-0 bg-white shadow-md"
-                v-if="(propJobPart || (propInvoice && propInvoice.status !== 'Approved'))"
+                v-if="(propJobPart || (propInvoice && !['Approved','Paid'].includes(propInvoice.status)))"
               >
                 <div class="px-2 flex-col">
                   <AppInput
@@ -159,7 +159,7 @@
                   v-model="form.items[0].absent_days"
                   name="absent_days"
                   class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
-                    @keypress="isNumber($event)"
+                  @keypress="isNumber($event)"
                 />
               </div>
               <div class="w-1/3 flex flex-col px-2">
@@ -170,7 +170,7 @@
                   v-model="form.items[0].late_hours"
                   name="late_hours"
                   class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
-                    @keypress="isNumber($event)"
+                  @keypress="isNumber($event)"
                 />
               </div>
               <div class="w-1/3 flex flex-col px-2">
@@ -181,7 +181,7 @@
                   v-model="form.items[0].final_hours"
                   name="final_hours"
                   class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
-                    @keypress="isNumber($event)"
+                  @keypress="isNumber($event)"
                 />
               </div>
             </div>
@@ -204,10 +204,49 @@
         </div>
       </div>
 
-      <!-- items total -->
-      <div :ref="'items-total'" class="flex justify-between md:m-2">
-        <span class="font-bold">Total</span>
-        <div class="relative">£ {{form.total_amount}}</div>
+      <!-- SUB TOTAL -->
+      <div class="flex flex-col">
+        <div
+          :ref="'items-sub-total'"
+          v-if="propInvoice"
+          class="flex justify-between md:m-2 text-lg px-3"
+        >
+          <span class="w-3/4 font-bold">Subtotal</span>
+          <div class="w-1/4 flex justify-between">
+            <div class="w-full text-right">£</div>
+            <div class="w-full text-right">{{subTotal | currency }}</div>
+          </div>
+        </div>
+        <div
+          :ref="'items-ni-total'"
+          v-if="propInvoice"
+          class="flex justify-between md:m-2 text-lg px-3"
+        >
+          <span class="w-3/4 pl-2 text-sm">NI amount</span>
+          <div class="w-1/4 flex justify-between">
+            <div class="w-full text-right">£</div>
+            <div class="w-full text-right">{{propInvoice.ni_amount | currency }}</div>
+          </div>
+        </div>
+        <div
+          :ref="'items-paye-total'"
+          v-if="propInvoice"
+          class="flex justify-between md:m-2 text-lg px-3"
+        >
+          <span class="w-3/4 pl-2 text-sm">PAYE amount</span>
+          <div class="w-1/4 flex justify-between">
+            <div class="w-full text-right">£</div>
+            <div class="w-full text-right">{{propInvoice.paye_amount | currency }}</div>
+          </div>
+        </div>
+        <!-- ITEMS TOTAL -->
+        <div :ref="'items-total'" class="flex justify-between md:m-2 text-lg px-3">
+          <span class="w-3/4 font-bold">Total</span>
+          <div class="w-1/4 flex justify-between">
+            <div class="w-full text-right">£</div>
+            <div class="w-full text-right">{{totalAmount | currency}}</div>
+          </div>
+        </div>
       </div>
 
       <!-- items days worked -->
@@ -305,6 +344,25 @@ export default {
       type: Object
     }
   },
+  computed: {
+    subTotal() {
+      return this.form.items && this.form.items.length > 0
+        ? this.form.items[0].total
+        : 0;
+    },
+    totalAmount() {
+      let total;
+      if (this.form.items && this.form.items.length > 0) {
+        total = this.form.items[0].total;
+        if (this.propInvoice) {
+          total =
+            total - this.propInvoice.ni_amount - this.propInvoice.paye_amount;
+        }
+        return total;
+      }
+      return 0;
+    }
+  },
   data() {
     return {
       exportLoading: false,
@@ -346,7 +404,7 @@ export default {
           } / ${
             this.propJobPart.job.shift.name
           } / Total hours of ${this.propJobPart.final_hours.toFixed(2)}`,
-          total: total.toFixed(2),
+          total: total.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"),
           dispute: this.propJobPart.disputed,
           absent_days: this.propJobPart.absent_days,
           final_hours: this.propJobPart.final_hours.toFixed(2),
@@ -355,7 +413,9 @@ export default {
         }
       ];
 
-      this.form.total_amount = total.toFixed(2);
+      this.form.total_amount = total
+        .toFixed(2)
+        .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
       this.form.final = false;
       this.form.ir35 = false;
     }
@@ -370,7 +430,9 @@ export default {
           type: "Job Part",
           job_part_id: this.propInvoice.items[0].job_part.id,
           description: this.propInvoice.items[0].description,
-          total: this.propInvoice.items[0].total.toFixed(2),
+          total: this.propInvoice.items[0].total
+            .toFixed(2)
+            .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"),
           dispute: this.propInvoice.items[0].disputed,
           absent_days: this.propInvoice.items[0].absent_days,
           final_hours: this.propInvoice.items[0].final_hours,
@@ -378,7 +440,9 @@ export default {
           remarks: this.propInvoice.items[0].remarks
         }
       ];
-      this.form.total_amount = this.propInvoice.total_amount.toFixed(2);
+      this.form.total_amount = this.propInvoice.total_amount
+        .toFixed(2)
+        .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
       this.form.final = false;
       this.form.ir35 = this.propInvoice.ir35;
     }
