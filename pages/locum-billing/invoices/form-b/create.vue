@@ -10,6 +10,7 @@
         </nuxt-link>
       </div>
       <LocumPlatformBillingInvoiceFormB
+        :type="'Platform'"
         @createFormB="$emit('createFormB', $event), $router.push({ name: 'locum-billing-invoices', query: {...$route.query} })"
       />
     </div>

@@ -1,6 +1,6 @@
 <template>
   <div class="modal-container shadow-lg">
-    <div class="p-4 md:p-8 max-w-5xl h-screen">
+    <div class="p-4 md:p-8 h-screen">
       <div class="flex flex-row flex-wrap justify-start pb-4">
         <nuxt-link
           :to="{ name: 'locum-billing-private-invoices', query: {...$route.query}}"
@@ -9,17 +9,24 @@
           <svgicon name="left-arrow" height="32" width="32" />
         </nuxt-link>
       </div>
-      <LocumPrivateBillingInvoiceFormB
+      <LocumPlatformBillingInvoiceFormB
+        :type="'Private'"
         @createFormB="$emit('createFormB', $event), $router.push({ name: 'locum-billing-private-invoices', query: {...$route.query} })"
       />
+      <!-- <LocumPrivateBillingInvoiceFormB
+        :type="'Private'"
+        @createFormB="$emit('createFormB', $event), $router.push({ name: 'locum-billing-private-invoices', query: {...$route.query} })"
+      />-->
     </div>
   </div>
 </template>
 <script>
 import LocumPrivateBillingInvoiceFormB from "@/components/Billing/LocumPrivateBillingInvoiceFormB";
+import LocumPlatformBillingInvoiceFormB from "@/components/Billing/LocumPlatformBillingInvoiceFormB";
 export default {
   components: {
-    LocumPrivateBillingInvoiceFormB
+    LocumPrivateBillingInvoiceFormB,
+    LocumPlatformBillingInvoiceFormB
   },
   async asyncData({ app, params, error }) {
     try {
