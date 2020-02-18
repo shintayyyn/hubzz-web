@@ -63,10 +63,6 @@
                 @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id)"
                 class="my-1 p-2 font-bold rounded-lg focus:outline-none cursor-pointer bg-yellow-400 hover:bg-yellow-500"
               >Mark as Paid</button>
-              <div
-                v-if="slotProps.item.status === 'Approved' && slotProps.item.locum_invoice_item && slotProps.item.locum_invoice_item.locum_invoice.paid_at"
-                class="my-1 p-2 font-bold"
-              >Already Paid</div>
             </div>
           </template>
         </AppTable>
@@ -406,7 +402,7 @@ export default {
             .toFixed(2)
             .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"),
           paid:
-            jobPart.locum_status === "Approved" &&
+            jobPart.status === "Approved" &&
             jobPart.locum_invoice_item.locum_invoice.paid_at
               ? "Yes"
               : "No",
@@ -504,7 +500,6 @@ export default {
         .then(([responseTotal, responseJobParts]) => {
           this.total = responseTotal.data.count;
           let job_parts = responseJobParts.data.job_parts;
-
           this.job_parts = job_parts.map(jobPart => {
             let total = jobPart.locum_invoice_id
               ? jobPart.locum_invoice_item.total
@@ -529,7 +524,7 @@ export default {
                 .toFixed(2)
                 .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"),
               paid:
-                jobPart.locum_status === "Approved" &&
+                jobPart.status === "Approved" &&
                 jobPart.locum_invoice_item.locum_invoice.paid_at
                   ? "Yes"
                   : "No",
@@ -622,7 +617,7 @@ export default {
                 .toFixed(2)
                 .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"),
               paid:
-                jobPart.locum_status === "Approved" &&
+                jobPart.status === "Approved" &&
                 jobPart.locum_invoice_item.locum_invoice.paid_at
                   ? "Yes"
                   : "No",
