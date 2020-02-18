@@ -1169,13 +1169,7 @@ export default {
             this.loading = false;
           });
       } else {
-        this.$nextTick(() => {
-          // this.$refs.formError.scrollIntoView({
-          //   behavior: "smooth",
-          //   block: "end"
-          // });
-          // this.$parent.$refs.modalContainer.scrollTop = 0;
-        });
+        this.$emit('scrollToTop')
       }
     }
   }

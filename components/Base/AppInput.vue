@@ -114,15 +114,35 @@
 									:placeholder="placeholder"
 									class="border-b-2 focus:border-yellow-400 focus:outline-none py-4 px-2 font-bold text-xs sm:text-sm w-full"
 									:class="[error ? 'border-red-500':'', resize ? '' : 'resize-none']"
+									:limit="limit"
 									@input="$emit('input', $event.target.value)"
 									@blur="$emit('blur', $event)"
 								></textarea>
-								<transition name="drop-down">
-									<div
-										v-if="error"
-										class="text-red-500 py-1 text-xs text-white"
-									>{{error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ")}}</div>
-								</transition>
+								<div class="flex items-center justify-between">
+									<transition name="drop-down">
+										<div
+											v-if="error"
+											class="text-red-500 py-1 text-xs text-white"
+										>{{error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ")}}</div>
+									</transition>
+									<p
+										v-if="limit"
+										class="flex items-center text-xs ml-auto py-1 text-gray-500 transition-hover"
+										:class="value.length > limit ? 'text-red-600' : ''"
+									>
+										<transition name="fade">
+											<svgicon
+												v-if="value.length > limit"
+												name="exclamation-mark"
+												width="12"
+												height="12"
+												class="mr-1"
+												color="red"
+											/>
+										</transition>
+										{{value.length}}/{{limit}}
+									</p>
+								</div>
 							</div>
 						</template>
 					</div>
@@ -235,6 +255,7 @@ export default {
 		error: Object,
 		info: String,
 		inStyle: String,
+		limit: Number,
 		required: {
 			type: Boolean,
 			default: false
