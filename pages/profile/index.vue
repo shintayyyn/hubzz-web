@@ -225,15 +225,6 @@
                   :error="formError.find(item => item.field === 'sage_ref')"
                 />
               </template>
-              <template v-if="form.direct_debit">
-                <AppInput
-                  v-model="form.nominal_code"
-                  :type="'text'"
-                  :name="'nominal_code'"
-                  :label="'Nominal Code'"
-                  :error="formError.find(item => item.field === 'nominal_code')"
-                />
-              </template>
             </div>
           </div>
           <div class="flex flex-row flex-wrap justify-between px-2">
@@ -310,8 +301,7 @@ export default {
         vat_registered: false,
         vat_number: null,
         direct_debit: false,
-        sage_ref: null,
-        nominal_code: null
+        sage_ref: null
       },
       name: "",
       formError: []
@@ -492,7 +482,6 @@ export default {
     this.form.vat_number = this.practice.vat_number;
     this.form.direct_debit = this.practice.direct_debit;
     this.form.sage_ref = this.practice.sage_ref;
-    this.form.nominal_code = this.practice.nominal_code;
   },
   methods: {
     async onFileInput(e) {
@@ -639,7 +628,7 @@ export default {
         notRequired.push("vat_number");
       }
       if (["false", false].includes(this.form.direct_debit)) {
-        notRequired.push("sage_ref", "nominal_code");
+        notRequired.push("sage_ref");
       }
       this.Validate(this.form, notRequired);
       if (!this.formError.length) {
