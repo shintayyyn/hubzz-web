@@ -249,8 +249,9 @@ export default {
 					profession_id: app.$auth.user.locum_detail.profession.id,
           near_post_code: app.$auth.user.locum_postcode,
          limit: 5,
-				};
-
+        };
+        console.log('user', app.$auth.user)
+        console.log('locum params', params)
 				let response = await app.$axios.$get(
 					`/api/v1/locum/permanent-jobs/count`,
 					{ params }
