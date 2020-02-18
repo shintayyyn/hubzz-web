@@ -66,26 +66,9 @@ export default {
       eligibleToSpoke: false
     };
   },
-  // async created() {
-  //   if (this.$auth.loggedIn && this.$auth.user.domain === "Practice") {
-  //     await this.$axios
-  //       .$get(`/api/v1/practice/me/parent-surgery/invitations-count`)
-  //       .then(res => {
-  //         if (res.data.count > 0) {
-  //           this.eligibleToSpoke = true;
-  //         }
-  //       }).finally(()=>{
-  //         console.log('eligible to spoke', this.eligibleToSpoke)
-  //       });
-  //   }
-  // },
-  computed: {
-    authPermissions() {
-      return this.$store.getters["permissions"];
-    }
-  },
-  mounted() {
+  async created() {
     if (this.$auth.loggedIn && this.$auth.user.domain === "Practice") {
+      console.log('practice', this.$auth.user.practice_detail.practice)
       this.$axios
         .$get(`/api/v1/practice/me/parent-surgery/invitations-count`)
         .then(res => {
@@ -94,6 +77,7 @@ export default {
           }
         })
         .finally(() => {
+          console.log('eligible', this.eligibleToSpoke)
           this.getInit();
 
           this.$socket.on(
@@ -108,6 +92,14 @@ export default {
     }else{
       this.getInit();
     }
+  },
+  computed: {
+    authPermissions() {
+      return this.$store.getters["permissions"];
+    }
+  },
+  mounted() {
+    
   },
   destroyed() {
     this.removeListener();
@@ -215,8 +207,8 @@ export default {
               name: "Surgery Management",
               route: "/spoke-surgery-management"
             });
-          } 
-          if (
+          } else if (
+            this.$auth.user.practice_detail.practice.type === "Stand Alone" &&
             this.eligibleToSpoke === true) {
             console.log("stand alone");
             addedLists.push({
@@ -224,7 +216,18 @@ export default {
               route: "/spoke-surgery-management"
             });
           }
+
+          // if (this.$auth.user.practice_detail.practice.type !== 'Spoke' ||
+          //     (this.$auth.user.practice_detail.practice.type === 'Spoke' && 
+          //       !this.$auth.user.practice_detail.practice.parent_practice_id) ||  
+          //     (this.$auth.user.practice_detail.practice.type === 'Spoke' &&
+          //       this.$auth.user.practice_detail.practice.parent_practice_id &&
+          //       this.$auth.user.practice_detail.practice.allow_surgery_create_permanent_jobs === true)) {
+          //   addedLists.push({ name: "Permanent Jobs", route: "/permanent-jobs" });
+          // }
+          
           addedLists.push({ name: "Permanent Jobs", route: "/permanent-jobs" });
+
           if (hubType !== "Type 2") {
             addedLists.push({ name: "My Banks", route: "/my-banks" });
             addedLists.push({

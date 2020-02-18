@@ -1,5 +1,5 @@
 <template>
-	<div class="modal-container shadow-lg">
+	<div class="modal-container shadow-lg" ref="modalContainer">
 		<div class="p-4 md:p-8 max-w-3xl">
 			<nuxt-link :to="'/availability'">
 				<svgicon name="left-arrow" height="32" width="32" class="cursor-pointer" />
@@ -49,20 +49,15 @@
 							class="rounded-lg bg-gray-300 px-2 py-1 text-sm sm:text-md flex items-center"
 						>Select all that apply.</div>
 					</div>
-					<div
-						class="flex flex-row flex-wrap justify-around md:justify-between mt-4"
-						:class="formError.find(item => item.field === 'shift_id') && 'error rounded-lg'"
-					>
+					<div class="flex flex-row flex-wrap justify-around md:justify-between mt-4">
 						<button
-							class="relative border border-solid rounded-lg p-5 my-2 md:m-1 text-center text-xs sm:text-sm focus:outline-none w-full sm:w-1/3 md:w-1/6"
-							:class="{
-                'bg-yellow-500': isSelected(item.id), 
-                'hover:bg-yellow-500': !isSelected(item.id) ,
-              }"
+							class="relative border border-solid rounded-lg p-5 my-2 md:m-1 text-center text-xs sm:text-sm focus:outline-none w-full sm:w-1/3 md:w-1/6 transition-hover"
+							:class="formError.find(item => item.field === 'shift_id') ? 'border-red-500 hover:bg-yellow-500 hover:border-yellow-500' : isSelected(item.id) ? 'bg-yellow-500' : 'hover:bg-yellow-500'"
 							style="box-sizing:content-box;"
 							v-for="item in shifts"
 							:key="item.id"
 							@click="select(item.id)"
+							@blur="CheckEmptyField(form.shift_id, 'shift_id')"
 						>{{item.name}}</button>
 					</div>
 				</div>
@@ -113,7 +108,9 @@ export default {
 		"form.shift_id"(value) {
 			if (value.length >= 1) {
 				let index = this.formError.findIndex(item => item.field === "shift_id");
-				this.formError.splice(index, 1);
+				if (index >= 0) {
+					this.formError.splice(index, 1);
+				}
 			}
 		}
 	},
@@ -161,6 +158,9 @@ export default {
 						this.loading = false;
 					});
 			} else {
+				this.$nextTick(() => {
+					this.$refs.modalContainer.scrollTop = 0;
+				});
 				// this.$store.commit("SET_NOTIFICATION", {
 				// 	enabled: true,
 				// 	status: "danger",
