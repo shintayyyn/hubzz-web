@@ -7,16 +7,13 @@
     <div class="flex flex-row justify-start mt-4">
       <div class="leading-loose font-bold text-md sm:text-lg">{{ job_part.job.title }}</div>
       <div
-        class="mx-2 py-2 px-4 rounded font-semibold"
+        class="py-2 px-4 mx-1 rounded font-semibold"
         :class="bgStatus(job_part.locum_status)"
-      >{{ job_part.locum_status }}</div>
+      >{{ status(job_part.locum_status) }}</div>
       <div
-        class="py-2 px-4 rounded font-semibold"
-        :class="
-						jobPartStatus === 'Completed' ? 'bg-green-500' : 'bg-gray-300'
-					"
-        v-if="job_part.locum_status === 'Completed'"
-      >{{ jobPartStatus }}</div>
+        class="py-2 px-4 mx-1 rounded font-semibold bg-gray-300"
+        v-if="['Completed','Cancelled'].includes(job_part.locum_status) && tagStatus(job_part)"
+      >{{ tagStatus(job_part) }}</div>
     </div>
 
     <div
@@ -66,20 +63,24 @@ export default {
     JobDetailModalApplyForm,
     JobDetailModalCancelForm
   },
-  computed: {
-    jobPartStatus() {
-      let status = "TO BE INVOICED";
-      if (this.job_part.disputed && this.job_part.issued) {
-        status = "DISPUTED";
-      } else if (this.job_part.invoiced && this.job_part.issued) {
-        status = "INVOICED";
-      }
-      return status;
-    }
-  },
   methods: {
-    close() {
-      this.$emit("close");
+    tagStatus(job_part) {
+      let status = "";
+      if (job_part.locum_status === "Completed") {
+        status = "TO BE INVOICED";
+        if (job_part.disputed && job_part.issued) {
+          status = "DISPUTED";
+        } else if (job_part.invoiced && job_part.issued) {
+          status = "INVOICED";
+        }
+        return status;
+      } else if (job_part.locum_status === "Cancelled") {
+        return job_part.terminated ? "TERMINATED" : null;
+      }
+    },
+    status(status) {
+      let jobStatus = status === "Declined" ? "Withdrawn" : status;
+      return jobStatus.toUpperCase();
     },
     bgStatus(status) {
       switch (status) {

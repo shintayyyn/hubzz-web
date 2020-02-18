@@ -53,10 +53,10 @@
       <div class="relative">
         <nuxt-link
           :event="$store.state.jobs.loading_jobs ? '' : 'click'"
-          to="/sessions?status=Declined"
+          to="/sessions?status=Withdrawn"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.query.status && $route.query.status.toLowerCase() === 'declined' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-        >Declined</nuxt-link>
+          :class="$route.query.status && $route.query.status.toLowerCase() === 'withdrawn' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        >Withdrawn</nuxt-link>
       </div>
       <div class="relative">
         <nuxt-link
@@ -123,16 +123,15 @@ export default {
     return {
       confirmation_modal: false,
       invoiceStatusList,
-      practice: ''
+      practice: ""
     };
   },
-  created(){
-    console.log(this.$auth.user)
-    this.practice = this.$auth.user.practice_detail.practice
+  created() {
+    this.practice = this.$auth.user.practice_detail.practice;
   },
   computed: {
     authPermissions() {
-      return this.$store.getters["auth/permissions"];
+      return this.$store.getters["permissions"];
     }
   },
   watch: {

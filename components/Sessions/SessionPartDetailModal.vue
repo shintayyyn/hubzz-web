@@ -13,16 +13,22 @@
     <div class="flex flex-row justify-start items-center mt-4">
       <div class="leading-tight font-bold text-md sm:text-lg">{{job_part.job.title}}</div>
       <div
-        class="ml-1 py-2 px-4 mx-1 rounded font-semibold"
+        class="py-2 px-4 mx-1 rounded font-semibold"
         :class="bgStatus(job_part.status)"
       >{{status(job_part.status)}}</div>
-      <template v-if="job_part.status === 'Completed'">
+      <div
+        class="py-2 px-4 mx-1 rounded font-semibold bg-gray-300"
+        v-if="['Completed','Cancelled'].includes(job_part.status) && tagStatus(job_part)"
+      >{{ tagStatus(job_part) }}</div>
+      <!-- <template v-if="job_part.status === 'Completed'">
         <div
           class="py-2 px-4 mx-1 mx-rounded font-semibold"
           :class="jobPartStatus === 'Completed' ? 'bg-green-500' : 'bg-gray-300'"
         >{{jobPartStatus}}</div>
-      </template>
-      <template v-if="['Completed','Approved'].includes(job_part.status)">
+      </template>-->
+      <template
+        v-if="['Terminated','Completed','Approved', 'Cancelled', 'Withdrawn', 'Declined'].includes(job_part.status)"
+      >
         <AppButton :label="'Repost Job'" @click="repost" :inStyle="'font-size:1em'" />
       </template>
     </div>
@@ -31,6 +37,19 @@
       <div class="flex flex-wrap justify-start">
         <div class="p-0 md:pr-4 w-full md:w-1/2">
           <div class="flex flex-col">
+            <div
+              class="bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4"
+              v-if="job_part.status === 'Declined' || job_part.status === 'Withdrawn'"
+            >
+              <div class="leading-tight pb-2">
+                <p class="font-bold text-sm sm:text-md">Reason for Withdrawal</p>
+                <p class="text-xs sm:text-sm">{{ job_part.job.platform_job.declined_reason}}</p>
+              </div>
+              <div class="leading-tight pb-2">
+                <p class="font-bold text-sm sm:text-md">Date of Withdrawal</p>
+                <p class="text-xs sm:text-sm">{{ job_part.job.platform_job.declined_at | localDate}}</p>
+              </div>
+            </div>
             <SessionPartDetailModalInfo :job_part="job_part" />
             <SessionDetailModalCompleteForm
               :job_part="job_part"
@@ -40,7 +59,7 @@
             <SessionDetailModalCancelForm
               :job="job_part.job"
               @cancelled="$emit('close')"
-              v-if="(job_part.job.status === 'Allocated' || job_part.job.status === 'Ongoing' || job_part.job.status === 'Applied' || job_part.job.status === 'Live') && authPermissions.includes('Cancel Sessions Job')"
+              v-if="['Live','Allocated','Ongoing','Applied'].includes(job_part.status) && authPermissions.includes('Cancel Sessions Job')"
             />
           </div>
         </div>
@@ -81,24 +100,32 @@ export default {
   },
   computed: {
     authPermissions() {
-      return this.$store.getters["auth/permissions"];
-    },
-    jobPartStatus() {
-      let status = "TO BE INVOICED";
-      if (this.job_part.disputed && this.job_part.issued) {
-        status = "DISPUTED";
-      } else if (this.job_part.invoiced && this.job_part.issued) {
-        status = "INVOICED";
-      }
-      return status;
+      return this.$store.getters["permissions"];
     }
   },
   methods: {
-    status(status) {
-      if (status === "Available") {
-        return "LIVE";
+    tagStatus(job_part) {
+      let status = "";
+      if (job_part.status === "Completed") {
+        status = "TO BE INVOICED";
+        if (job_part.disputed && job_part.issued) {
+          status = "DISPUTED";
+        } else if (job_part.invoiced && job_part.issued) {
+          status = "INVOICED";
+        }
+        return status;
+      } else if (job_part.status === "Cancelled") {
+        return job_part.terminated ? "TERMINATED" : null;
       }
-      return status.toUpperCase();
+    },
+    status(status) {
+      let jobStatus =
+        status === "Declined"
+          ? "Withdrawn"
+          : status === "Available"
+          ? "Live"
+          : status;
+      return jobStatus.toUpperCase();
     },
     bgStatus(status) {
       switch (status) {
@@ -114,8 +141,13 @@ export default {
     repost() {
       this.$emit("close");
       setTimeout(() => {
-        this.$store.commit("calendar/SET_REPOST_JOB", this.job_part.job);
-        this.$store.commit("calendar/CREATE_JOB_MODAL", true);
+        if (this.$route.name.includes("hub-surgery-management")) {
+          this.$store.commit("calendar/SET_REPOST_JOB", this.job_part.job);
+          this.$store.commit("calendar/CREATE_JOB_SURGERY_MODAL", true);
+        } else if (this.$route.name.includes("sessions")) {
+          this.$store.commit("calendar/SET_REPOST_JOB", this.job_part.job);
+          this.$store.commit("calendar/CREATE_JOB_MODAL", true);
+        }
       }, 500);
     }
   }

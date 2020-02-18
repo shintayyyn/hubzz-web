@@ -31,7 +31,7 @@ export default {
             status: "success",
             text: ["Cancelled"]
           });
-          this.$emit("cancelled");
+          this.$emit("cancelled", this.job.id);
         })
         .catch(err => {
           console.log("err", err.response || err);

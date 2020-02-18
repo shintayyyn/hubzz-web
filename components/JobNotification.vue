@@ -33,14 +33,20 @@
                 >
                   <span
                     class="absolute top-0 right-0 cursor-pointer py-2 px-4 rounded-full text-lg font-bold hover:text-gray-700"
-                    @click.prevent.stop="close(notification.id, notification.type)"
+                    @click.prevent.stop="close(notification.id, notification.type, notification.notification_type)"
                   >x</span>
                   <div class="flex flex-wrap w-48 md:w-64">
                     <div class="flex flex-col items-start my-1 w-full">
-                      <div
-                        class="px-2 py-1 md:text-xs font-bold rounded-lg max-w-sm cursor-pointer uppercase"
-                        :class="bgStatus(notification.status ? notification.status : notification.locum_status)"
-                      >{{notification.status ? notification.status : notification.locum_status}}</div>
+                      <div class="flex flex-wrap">
+                        <div
+                          v-if="!notification.billingStatus"
+                          class="px-2 py-1 md:text-xs font-bold rounded-lg max-w-sm cursor-pointer uppercase"
+                          :class="bgStatus(notification.status ? notification.status : notification.locum_status)"
+                        >{{status(notification.status ? notification.status : notification.locum_status)}}</div>
+                        <div
+                          class="px-2 py-1 md:text-xs font-bold rounded-lg max-w-sm cursor-pointer uppercase"
+                        >{{notification.status_tag}}</div>
+                      </div>
                       <div
                         v-if="notification.type === 'Jobs' && notification.billingStatus"
                         class="px-2 py-1 md:text-xs font-bold rounded-lg max-w-sm cursor-pointer uppercase mt-1"
@@ -53,7 +59,7 @@
                       >{{notification.invoice_number}}</div>
                       <div
                         v-else
-                        class="font-bold md:text-md leading-none mr-1 uppercase pt-4 truncate-title"
+                        class="font-bold md:text-md leading-tight mr-1 uppercase pt-4 truncate-title"
                         style="-webkit-box-orient: vertical;"
                       >{{notification.title}}</div>
                     </div>
@@ -138,16 +144,6 @@ export default {
     }
   },
   methods: {
-    removeStatus() {
-      return this.$router.push({
-        path: this.$route.path
-      });
-    },
-    removeParams() {
-      return this.$router.push({
-        path: this.$route.matched[0].path
-      });
-    },
     show(id) {
       return this.$router.push({
         path: `${this.url}/${id}`
@@ -159,7 +155,6 @@ export default {
       });
     },
     async goTo(notification) {
-      console.log(notification);
       let type = notification.type;
       let id = notification.id;
       let status = notification.status
@@ -167,7 +162,7 @@ export default {
         : notification.locum_status;
       let dateStart = notification.date_start;
       let dateEnd = notification.date_end;
-      let notificationType = notification.type;
+      let notificationType = notification.notification_type;
 
       if (this.$route.path.includes("/dashboard")) {
         let selectedMonth =
@@ -191,76 +186,205 @@ export default {
       this.$store.commit("calendar/CREATE_JOB_MODAL", false);
 
       let url = "";
-
       if (type === "Jobs") {
         if (this.$route.name === "dashboard") {
           url = "/dashboard";
-        } else if (this.$route.name !== "dashboard") {
+        } else if (
+          this.$route.name !== "dashboard" &&
+          !this.$route.name.includes("surgery-management")
+        ) {
           url = this.$auth.user.domain === "Practice" ? "/sessions" : "/jobs";
+        } else if (
+          this.$route.name !== "dashboard" &&
+          this.$route.name.includes("surgery-management")
+        ) {
+          url = this.$route.path;
         }
       } else if (type === "Billings") {
-        this.$route.query.status;
-        url =
-          this.$auth.user.domain === "Practice"
-            ? "/practice-billing"
-            : "/locum-billing";
+        if (this.$auth.user.domain === "Practice") {
+          url = `/practice-billing`;
+        } else if (this.$auth.user.domain === "Locum") {
+          if (notification.notification_billing_type === "Platform") {
+            url = `/locum-billing/invoices`;
+          }
+          if (notification.notification_billing_type === "Private") {
+            url = `/locum-billing/private-invoices`;
+          }
+        }
       }
 
       let path = `${url}/${id}`;
 
-      console.log(url, id);
-      // return;
-
       if (type === "Jobs") {
         let routeStatus = "";
 
-        if (status === "Terminated") {
-          routeStatus = "Completed";
-        } else if (status === "Updated") {
-          routeStatus = null;
-        } else if (!["Terminated", "Updated"].includes(status)) {
-          routeStatus = status;
+        switch (status) {
+          case "Terminated":
+            routeStatus = "Completed";
+            break;
+          case "Declined":
+            routeStatus = "Withdrawn";
+            break;
+          case "Available":
+            routeStatus = "Public";
+            break;
+          case "Matched":
+            routeStatus = "Available";
+            break;
+          case "Updated":
+            routeStatus = null;
+            break;
+          default:
+            routeStatus = status;
         }
-
-        this.$router.push({
-          path: `${url}`,
-          query: { ...this.$route.query, status: routeStatus }
-        });
-        setTimeout(() => {
+        // console.log(id, url, status, routeStatus, notification);
+        // return;
+        if (status === "Pending") {
+          this.close(id, type, notificationType);
+          return;
+        }
+        if (this.$route.name.includes("surgery-management")) {
           this.$router.push({
-            path: `${url}/${id}`,
+            path: `${url}`,
+            query: { ...this.$route.query, jobStatus: routeStatus }
+          });
+        } else if (!this.$route.name.includes("surgery-management")) {
+          this.$router.push({
+            path: `${url}`,
             query: { ...this.$route.query, status: routeStatus }
           });
+        }
+        setTimeout(() => {
+          if (this.$route.name.includes("surgery-management")) {
+            this.$router.push({
+              path: `${url}/${id}`,
+              query: { ...this.$route.query, jobStatus: routeStatus }
+            });
+          } else if (!this.$route.name.includes("surgery-management")) {
+            this.$router.push({
+              path: `${url}/${id}`,
+              query: { ...this.$route.query, status: routeStatus }
+            });
+          }
         }, 500);
       } else if (type === "Billings") {
+        let routeStatus = "";
+
+        switch (status) {
+          case "Draft":
+            routeStatus = "to-be-invoiced";
+            break;
+          case "Issued":
+          case "Paid":
+            routeStatus = "issued";
+            break;
+          default:
+            routeStatus = status;
+        }
+        // console.log(notification, id, url, status, routeStatus);
+        // return;
         if (id !== this.$route.params.id) {
           this.$router.push({
             path: `${url}`,
-            query: { ...this.$route.query, status: notification.status }
+            query: { ...this.$route.query, status: routeStatus }
           });
         }
         setTimeout(() => {
           this.$router.push({
-            path: `${url}/${
-              this.$auth.user.domain === "Practice" ? "" : "invoices/"
-            }${id}`,
-            query: { ...this.$route.query, status: notification.status }
+            path: `${url}/${id}/edit`,
+            query: { ...this.$route.query, status: routeStatus }
           });
         }, 500);
       }
-
-      this.close(id, notificationType);
+      this.close(id, type, notificationType);
     },
-    close(id, type) {
-      console.log(id, type);
+    close(id, type, notificationType) {
       if (type === "Jobs") {
-        this.$store.commit("jobs/REMOVE_PRACTICE_JOB_NOTIFICATION", id);
-        this.$store.commit("jobs/REMOVE_LOCUM_JOB_NOTIFICATION", id);
+        if (
+          [
+            "Practice Notification Job Ongoing",
+            "Practice Notification Job Cancelled",
+            "Practice Notification Job Declined",
+            "Locum Notification Job Ongoing",
+            "Locum Notification Job Cancelled",
+            "Locum Notification Job Declined"
+          ].includes(notificationType)
+        ) {
+          switch (notificationType) {
+            case "Practice Notification Job Ongoing":
+              this.$store.commit(
+                "jobs/REMOVE_PRACTICE_JOB_NOTIFICATION",
+                this.$store.state.jobs.practice_job_notifications.find(notif =>
+                  notif.job_parts.find(jobPart => jobPart.status === "Ongoing")
+                ).id
+              );
+              break;
+            case "Practice Notification Job Cancelled":
+              this.$store.commit(
+                "jobs/REMOVE_PRACTICE_JOB_NOTIFICATION",
+                this.$store.state.jobs.practice_job_notifications.find(notif =>
+                  notif.job_parts.find(
+                    jobPart => jobPart.status === "Cancelled"
+                  )
+                ).id
+              );
+              break;
+            case "Practice Notification Job Declined":
+              this.$store.commit(
+                "jobs/REMOVE_PRACTICE_JOB_NOTIFICATION",
+                this.$store.state.jobs.practice_job_notifications.find(notif =>
+                  notif.job_parts.find(jobPart => jobPart.status === "Declined")
+                ).id
+              );
+              break;
+            case "Locum Notification Job Ongoing":
+              this.$store.commit(
+                "jobs/REMOVE_LOCUM_JOB_NOTIFICATION",
+                this.$store.state.jobs.locum_job_notifications.find(notif =>
+                  notif.job_parts.find(jobPart => jobPart.status === "Ongoing")
+                ).id
+              );
+              break;
+            case "Locum Notification Job Cancelled":
+              this.$store.commit(
+                "jobs/REMOVE_LOCUM_JOB_NOTIFICATION",
+                this.$store.state.jobs.locum_job_notifications.find(notif =>
+                  notif.job_parts.find(
+                    jobPart => jobPart.status === "Cancelled"
+                  )
+                ).id
+              );
+              break;
+            case "Locum Notification Job Declined":
+              this.$store.commit(
+                "jobs/REMOVE_LOCUM_JOB_NOTIFICATION",
+                this.$store.state.jobs.locum_job_notifications.find(notif =>
+                  notif.job_parts.find(jobPart => jobPart.status === "Declined")
+                ).id
+              );
+              break;
+          }
+        } else if (
+          ![
+            "Practice Notification Job Ongoing",
+            "Practice Notification Job Cancelled",
+            "Practice Notification Job Declined",
+            "Locum Notification Job Ongoing",
+            "Locum Notification Job Cancelled",
+            "Locum Notification Job Declined"
+          ].includes(notificationType)
+        ) {
+          this.$store.commit("jobs/REMOVE_PRACTICE_JOB_NOTIFICATION", id);
+          this.$store.commit("jobs/REMOVE_LOCUM_JOB_NOTIFICATION", id);
+        }
       }
       if (type === "Billings") {
         this.$store.commit("billing/REMOVE_PRACTICE_BILLING_NOTIFICATION", id);
         this.$store.commit("billing/REMOVE_LOCUM_BILLING_NOTIFICATION", id);
       }
+    },
+    status(status) {
+      return status === "Matched" ? "AVAILABLE" : status.toUpperCase();
     },
     bgStatus(status) {
       switch (status) {
@@ -283,6 +407,9 @@ export default {
           break;
         case "Ongoing":
           return "bg-green-500";
+          break;
+        case "Reminder":
+          return "bg-gray-500";
           break;
         default:
           return "bg-red-500 text-white";

@@ -4,7 +4,7 @@
       <!-- save buttons -->
       <div class="flex flex-wrap items-center">
         <AppButton
-          v-if="propJobPart || (propInvoice && propInvoice.status !== 'Approved')"
+          v-if="propJobPart || (propInvoice && !['Approved','Paid'].includes(propInvoice.status))"
           class="m-1"
           :label="'Save changes'"
           @click="save(false)"
@@ -122,7 +122,7 @@
               >{{form.items[0].total}}</div>
               <div
                 class="flex items-center align-middle sticky right-0 bg-white shadow-md"
-                v-if="(propJobPart || (propInvoice && propInvoice.status !== 'Approved'))"
+                v-if="(propJobPart || (propInvoice && !['Approved','Paid'].includes(propInvoice.status)))"
               >
                 <div class="px-2 flex-col">
                   <AppInput
@@ -159,6 +159,7 @@
                   v-model="form.items[0].absent_days"
                   name="absent_days"
                   class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
+                  @keypress="isNumber($event)"
                 />
               </div>
               <div class="w-1/3 flex flex-col px-2">
@@ -169,6 +170,7 @@
                   v-model="form.items[0].late_hours"
                   name="late_hours"
                   class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
+                  @keypress="isNumber($event)"
                 />
               </div>
               <div class="w-1/3 flex flex-col px-2">
@@ -179,6 +181,7 @@
                   v-model="form.items[0].final_hours"
                   name="final_hours"
                   class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
+                  @keypress="isNumber($event)"
                 />
               </div>
             </div>
@@ -201,10 +204,49 @@
         </div>
       </div>
 
-      <!-- items total -->
-      <div :ref="'items-total'" class="flex justify-between md:m-2">
-        <span class="font-bold">Total</span>
-        <div class="relative">£ {{form.total_amount}}</div>
+      <!-- SUB TOTAL -->
+      <div class="flex flex-col">
+        <div
+          :ref="'items-sub-total'"
+          v-if="propInvoice"
+          class="flex justify-between md:m-2 text-lg px-3"
+        >
+          <span class="w-3/4 font-bold">Subtotal</span>
+          <div class="w-1/4 flex justify-between">
+            <div class="w-full text-right">£</div>
+            <div class="w-full text-right">{{subTotal | currency }}</div>
+          </div>
+        </div>
+        <div
+          :ref="'items-ni-total'"
+          v-if="propInvoice"
+          class="flex justify-between md:m-2 text-lg px-3"
+        >
+          <span class="w-3/4 pl-2 text-sm">NI amount</span>
+          <div class="w-1/4 flex justify-between">
+            <div class="w-full text-right">£</div>
+            <div class="w-full text-right">{{propInvoice.ni_amount | currency }}</div>
+          </div>
+        </div>
+        <div
+          :ref="'items-paye-total'"
+          v-if="propInvoice"
+          class="flex justify-between md:m-2 text-lg px-3"
+        >
+          <span class="w-3/4 pl-2 text-sm">PAYE amount</span>
+          <div class="w-1/4 flex justify-between">
+            <div class="w-full text-right">£</div>
+            <div class="w-full text-right">{{propInvoice.paye_amount | currency }}</div>
+          </div>
+        </div>
+        <!-- ITEMS TOTAL -->
+        <div :ref="'items-total'" class="flex justify-between md:m-2 text-lg px-3">
+          <span class="w-3/4 font-bold">Total</span>
+          <div class="w-1/4 flex justify-between">
+            <div class="w-full text-right">£</div>
+            <div class="w-full text-right">{{totalAmount | currency}}</div>
+          </div>
+        </div>
       </div>
 
       <!-- items days worked -->
@@ -237,7 +279,27 @@
       <div :ref="'pdf-footer'" class="rounded-lg border-2 border-gray-300 mt-4 p-4">
         <div
           class="flex flex-col text-xs sm:text-sm"
-          v-if="propInvoiceDetail.paid_under_payroll && propInvoiceDetail.payroll_detail"
+          v-if="propInvoice && propInvoice.paid_under_payroll"
+        >
+          <div>Payment by BACS: xxxxx</div>
+          <div>Account name: {{propInvoice.payroll_account_name ? propInvoice.payroll_account_name : 'xxxxx'}}</div>
+          <div>Bank: {{propInvoice.payroll_bank_name ? propInvoice.payroll_bank_name : 'xxxxx'}}</div>
+          <div>Sort code: {{propInvoice.payroll_sort_code ? propInvoice.payroll_sort_code : 'xxxxx'}}</div>
+          <div>Account number: {{propInvoice.payroll_account_number ? propInvoice.payroll_account_number : 'xxxxx*OR'}}</div>
+        </div>
+        <div
+          class="flex flex-col text-xs sm:text-sm"
+          v-if="propInvoice && !propInvoice.paid_under_payroll"
+        >
+          <div>Payment by BACS: xxxxx</div>
+          <div>Account name: {{propInvoice.account_name ? propInvoice.account_name : 'xxxxx'}}</div>
+          <div>Bank: {{propInvoice.bank_name ? propInvoice.bank_name : 'xxxxx'}}</div>
+          <div>Sort code: {{propInvoice.sort_code ? propInvoice.sort_code : 'xxxxx'}}</div>
+          <div>Account number: {{propInvoice.account_number ? propInvoice.account_number : 'xxxxx*OR'}}</div>
+        </div>
+        <div
+          class="flex flex-col text-xs sm:text-sm"
+          v-if="propJobPart && !propInvoice && propInvoiceDetail && propInvoiceDetail.paid_under_payroll"
         >
           <div>Payment by BACS: xxxxx</div>
           <div>Account name: {{propInvoiceDetail.payroll_detail.account_name ? propInvoiceDetail.payroll_detail.account_name : 'xxxxx'}}</div>
@@ -247,20 +309,13 @@
         </div>
         <div
           class="flex flex-col text-xs sm:text-sm"
-          v-if="!propInvoiceDetail.paid_under_payroll && propInvoiceDetail.bank_account"
+          v-if="propJobPart && !propInvoice && propInvoiceDetail && !propInvoiceDetail.paid_under_payroll"
         >
           <div>Payment by BACS: xxxxx</div>
           <div>Account name: {{propInvoiceDetail.bank_account.account_name ? propInvoiceDetail.bank_account.account_name : 'xxxxx'}}</div>
           <div>Bank: {{propInvoiceDetail.bank_account.bank_name ? propInvoiceDetail.bank_account.bank_name : 'xxxxx'}}</div>
           <div>Sort code: {{propInvoiceDetail.bank_account.sort_code ? propInvoiceDetail.bank_account.sort_code : 'xxxxx'}}</div>
           <div>Account number: {{propInvoiceDetail.bank_account.account_number ? propInvoiceDetail.bank_account.account_number : 'xxxxx*OR'}}</div>
-        </div>
-        <div class="flex flex-col text-xs sm:text-sm">
-          <div>Payment by BACS: xxxxx</div>
-          <div>Account name: xxxx</div>
-          <div>Bank: xxxx</div>
-          <div>Sort code: xxxx</div>
-          <div>Account number: xxx</div>
         </div>
       </div>
     </div>
@@ -287,6 +342,25 @@ export default {
     },
     propJobPart: {
       type: Object
+    }
+  },
+  computed: {
+    subTotal() {
+      return this.form.items && this.form.items.length > 0
+        ? this.form.items[0].total
+        : 0;
+    },
+    totalAmount() {
+      let total;
+      if (this.form.items && this.form.items.length > 0) {
+        total = this.form.items[0].total;
+        if (this.propInvoice) {
+          total =
+            total - this.propInvoice.ni_amount - this.propInvoice.paye_amount;
+        }
+        return total;
+      }
+      return 0;
     }
   },
   data() {
@@ -330,7 +404,7 @@ export default {
           } / ${
             this.propJobPart.job.shift.name
           } / Total hours of ${this.propJobPart.final_hours.toFixed(2)}`,
-          total: total.toFixed(2),
+          total: total.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"),
           dispute: this.propJobPart.disputed,
           absent_days: this.propJobPart.absent_days,
           final_hours: this.propJobPart.final_hours.toFixed(2),
@@ -339,7 +413,9 @@ export default {
         }
       ];
 
-      this.form.total_amount = total.toFixed(2);
+      this.form.total_amount = total
+        .toFixed(2)
+        .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
       this.form.final = false;
       this.form.ir35 = false;
     }
@@ -354,7 +430,9 @@ export default {
           type: "Job Part",
           job_part_id: this.propInvoice.items[0].job_part.id,
           description: this.propInvoice.items[0].description,
-          total: this.propInvoice.items[0].total.toFixed(2),
+          total: this.propInvoice.items[0].total
+            .toFixed(2)
+            .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"),
           dispute: this.propInvoice.items[0].disputed,
           absent_days: this.propInvoice.items[0].absent_days,
           final_hours: this.propInvoice.items[0].final_hours,
@@ -362,7 +440,9 @@ export default {
           remarks: this.propInvoice.items[0].remarks
         }
       ];
-      this.form.total_amount = this.propInvoice.total_amount.toFixed(2);
+      this.form.total_amount = this.propInvoice.total_amount
+        .toFixed(2)
+        .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
       this.form.final = false;
       this.form.ir35 = this.propInvoice.ir35;
     }
@@ -429,7 +509,6 @@ export default {
             this.form.items[0].remarks = "";
           }
           this.form.final = final;
-          console.log(this.form);
           // return;
           this.$axios
             .$put(
@@ -481,6 +560,9 @@ export default {
       window.open(
         `${process.env.API_URL}/api/v1/locum-invoices/${invoiceId}/pdf`
       );
+      // this.$axios
+      //   .$get(`/api/v1/locum-invoices/${invoiceId}/html`)
+      //   .then(res => console.log(res));
     },
     async exportToPdf() {
       console.log(this.propInvoice);

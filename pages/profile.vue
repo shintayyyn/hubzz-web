@@ -45,7 +45,7 @@ export default {
   },
   computed: {
     authPermissions() {
-      return this.$store.getters["auth/permissions"];
+      return this.$store.getters["permissions"];
     }
   },
   // async asyncData({ app, store, error }) {

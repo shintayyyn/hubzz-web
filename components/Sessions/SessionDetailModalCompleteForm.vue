@@ -7,7 +7,7 @@
         v-model="has_absences"
         :type="'select'"
         :name="'has_absences'"
-        :label="'Was the locum has any absences?'"
+        :label="'Was the locum having any absences?'"
         :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
       />
       <template v-if="has_absences === 'true' || has_absences === true">
@@ -23,7 +23,7 @@
           v-model="form.absent_days_reason"
           :type="'textarea'"
           :name="'absent_days_reason'"
-          :label="'Withdrawal Status'"
+          :label="'Reason of Absence'"
           :placeholder="'For e.g. No-show'"
           :resize="false"
         />
@@ -131,29 +131,29 @@ export default {
   methods: {
     checkIfCanComplete() {
       this.confirmation_modal = true;
-      // if (this.isPreviousJobPartComplete && this.isCurrentDatePastTheEndDate) {
-      //   this.confirmation_modal = true;
-      // } else if (!this.isPreviousJobPartComplete) {
-      //   this.ignore_modal = true;
-      //   this.ignore_modal_label =
-      //     "You need to complete the previous week first";
-      // } else if (!this.isCurrentDatePastTheEndDate) {
-      //   this.ignore_modal = true;
-      //   this.ignore_modal_label =
-      //     "You cannot complete a Job part that has not yet past the end date";
-      // }
+      //   if (this.isPreviousJobPartComplete && this.isCurrentDatePastTheEndDate) {
+      //     this.confirmation_modal = true;
+      //   } else if (!this.isPreviousJobPartComplete) {
+      //     this.ignore_modal = true;
+      //     this.ignore_modal_label =
+      //       "You need to complete the previous week first";
+      //   } else if (!this.isCurrentDatePastTheEndDate) {
+      //     this.ignore_modal = true;
+      //     this.ignore_modal_label =
+      //       "You cannot complete a Job part that has not yet past the end date";
+      //   }
     },
     complete() {
       this.formError = [];
-      let notRequired = [];
+      let notRequired = ["absent_days_reason", "late_hours_reason"];
       this.confirmation_modal = false;
       if (this.has_absences === "false" || this.has_absences === false) {
         this.form.absent_days = 0;
-        notRequired.push("absent_days", "absent_days_reason");
+        notRequired.push("absent_days");
       }
       if (this.has_late === "false" || this.has_late === false) {
         this.form.late_hours = 0;
-        notRequired.push("late_hours", "late_hours_reason");
+        notRequired.push("late_hours");
       }
       this.Validate(this.form, notRequired);
       if (!this.formError.length) {
@@ -178,12 +178,12 @@ export default {
               text: ["Job Part completed"]
             });
             this.$emit("completed");
-            setTimeout(() => {
-              this.$router.push({
-                path: `/sessions/${this.job_part.id}`,
-                query: { ...this.$route.query }
-              });
-            }, 500);
+            // setTimeout(() => {
+            //   this.$router.push({
+            //     path: `/sessions/${this.job_part.id}`,
+            //     query: { ...this.$route.query }
+            //   });
+            // }, 500);
           })
           .catch(err => {
             if (!err.response.data.error_messages) {

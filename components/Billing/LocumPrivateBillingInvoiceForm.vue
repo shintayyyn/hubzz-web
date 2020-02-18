@@ -2,18 +2,17 @@
   <section class="relative max-w-3xl">
     <div class="flex flex-col md:flex-row justify-between">
       <div class="flex flex-wrap items-center">
-        <AppButton
+        <!-- <AppButton
           v-if="propJobPart || (propInvoice && propInvoice.status !== 'Approved')"
           class="m-1"
           :label="'Save changes'"
           @click="save(false)"
           :inStyle="'padding:5px 14px;font-size:1em'"
           :disabled="saveLoading || exportLoading"
-        />
+        />-->
         <AppButton
-          v-if="propJobPart || (propInvoice && propInvoice.issued === false)"
           class="m-1"
-          :label="'Save and archive as final'"
+          :label="propJobPart ? 'Save and archive as final' : 'Save changes'"
           @click="save(true)"
           :inStyle="'padding:5px 14px;font-size:1em'"
           :disabled="saveLoading || exportLoading"
@@ -125,18 +124,56 @@
                   v-model="form.items[0].total"
                   type="number"
                   class="border-b-2 focus:outline-none focus:border-yellow-400 w-full h-full text-right"
+                  @keypress="isNumber($event)"
                 />
               </div>
             </div>
           </div>
         </div>
       </div>
-      <!-- ITEMS TOTAL -->
-      <div :ref="'items-total'" class="flex justify-between md:m-2">
-        <span class="font-bold">Total</span>
+      <!-- SUB TOTAL -->
+      <div class="flex flex-col">
         <div
-          class="relative"
-        >£ {{form.items && form.items.length > 0 ? form.items[0].total : 0 | currency }}</div>
+          :ref="'items-sub-total'"
+          v-if="propInvoice"
+          class="flex justify-between md:m-2 text-lg px-3"
+        >
+          <span class="w-3/4 font-bold">Subtotal</span>
+          <div class="w-1/4 flex justify-between">
+            <div class="w-full text-right">£</div>
+            <div class="w-full text-right">{{subTotal | currency }}</div>
+          </div>
+        </div>
+        <div
+          :ref="'items-ni-total'"
+          v-if="propInvoice"
+          class="flex justify-between md:m-2 text-lg px-3"
+        >
+          <span class="w-3/4 pl-2 text-sm">NI amount</span>
+          <div class="w-1/4 flex justify-between">
+            <div class="w-full text-right">£</div>
+            <div class="w-full text-right">{{propInvoice.ni_amount | currency }}</div>
+          </div>
+        </div>
+        <div
+          :ref="'items-paye-total'"
+          v-if="propInvoice"
+          class="flex justify-between md:m-2 text-lg px-3"
+        >
+          <span class="w-3/4 pl-2 text-sm">PAYE amount</span>
+          <div class="w-1/4 flex justify-between">
+            <div class="w-full text-right">£</div>
+            <div class="w-full text-right">{{propInvoice.paye_amount | currency }}</div>
+          </div>
+        </div>
+        <!-- ITEMS TOTAL -->
+        <div :ref="'items-total'" class="flex justify-between md:m-2 text-lg px-3">
+          <span class="w-3/4 font-bold">Total</span>
+          <div class="w-1/4 flex justify-between">
+            <div class="w-full text-right">£</div>
+            <div class="w-full text-right">{{totalAmount | currency}}</div>
+          </div>
+        </div>
       </div>
       <!-- ITEMS DAYS WORKED -->
       <div :ref="'days-worked'" class="flex flex-row flex-wrap justify-between px-2">
@@ -144,7 +181,6 @@
           <div class="w-full md:w-1/2 md:pr-1">
             <AppDate
               v-model="form.date_start"
-              :disabled="propInvoice && propInvoice.issued === true"
               :name="'date_start'"
               :label="'Days worked from'"
               :error="formError.find(item => item.field === 'date_start')"
@@ -154,7 +190,6 @@
           <div class="w-full md:w-1/2 md:pl-1">
             <AppDate
               v-model="form.date_end"
-              :disabled="propInvoice && propInvoice.issued === true"
               :name="'date_end'"
               :label="'To'"
               :error="formError.find(item => item.field === 'date_end')"
@@ -184,13 +219,6 @@
           <div>Bank: {{propInvoiceDetail.bank_account.bank_name ? propInvoiceDetail.bank_account.bank_name : 'xxxxx'}}</div>
           <div>Sort code: {{propInvoiceDetail.bank_account.sort_code ? propInvoiceDetail.bank_account.sort_code : 'xxxxx'}}</div>
           <div>Account number: {{propInvoiceDetail.bank_account.account_number ? propInvoiceDetail.bank_account.account_number : 'xxxxx*OR'}}</div>
-        </div>
-        <div class="flex flex-col text-xs sm:text-sm">
-          <div>Payment by BACS: xxxxx</div>
-          <div>Account name: xxxx</div>
-          <div>Bank: xxxx</div>
-          <div>Sort code: xxxx</div>
-          <div>Account number: xxx</div>
         </div>
       </div>
     </div>
@@ -249,6 +277,23 @@ export default {
           this.form.items.length > 0 ? this.form.items[0].final_hours : 0
         }`;
       }
+    },
+    subTotal() {
+      return this.form.items && this.form.items.length > 0
+        ? this.form.items[0].total
+        : 0;
+    },
+    totalAmount() {
+      let total;
+      if (this.form.items && this.form.items.length > 0) {
+        total = this.form.items[0].total;
+        if (this.propInvoice) {
+          total =
+            total - this.propInvoice.ni_amount - this.propInvoice.paye_amount;
+        }
+        return total;
+      }
+      return 0;
     }
   },
   mounted() {
@@ -309,7 +354,11 @@ export default {
           remarks: this.propInvoice.items[0].remarks
         }
       ];
-      this.form.total_amount = this.propInvoice.total_amount.toFixed(2);
+      this.form.total_amount =
+        this.propInvoice.total_amount -
+        this.propInvoice.ni_amount -
+        this.propInvoice.paye_amount;
+
       this.form.final = false;
       this.form.ir35 = this.propInvoice.ir35;
     }

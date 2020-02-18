@@ -15,10 +15,16 @@ export default () => ({
 
     practice_allocated_job_parts: [],
     practice_allocated_job_parts_count: 0,
+
+    practice_cancelled_job_parts: [],
+    practice_cancelled_job_parts_count: 0,
+
+    practice_withdrawn_job_parts: [],
+    practice_withdrawn_job_parts_count: 0,
     // WHOLE
     practice_pending_jobs: [],
     practice_pending_jobs_count: 0,
-    
+
     practice_allocated_jobs: [],
     practice_allocated_jobs_count: 0,
 
@@ -34,8 +40,8 @@ export default () => ({
     practice_declined_jobs: [],
     practice_declined_jobs_count: 0,
 
-    practice_cancelled_jobs: [],
-    practice_cancelled_jobs_count: 0,
+    // practice_cancelled_jobs: [],
+    // practice_cancelled_jobs_count: 0,
 
     practice_withdrawn_jobs: [],
     practice_withdrawn_jobs_count: 0,
@@ -59,6 +65,12 @@ export default () => ({
 
     locum_approved_job_parts: [],
     locum_approved_job_parts_count: 0,
+
+    locum_cancelled_job_parts: [],
+    locum_cancelled_job_parts_count: 0,
+
+    locum_withdrawn_job_parts: [],
+    locum_withdrawn_job_parts_count: 0,
     // WHOLE
     locum_allocated_jobs: [],
     locum_allocated_jobs_count: 0,

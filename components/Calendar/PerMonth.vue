@@ -184,7 +184,7 @@ export default {
   },
   computed: {
     authPermissions() {
-      return this.$store.getters["auth/permissions"];
+      return this.$store.getters["permissions"];
     },
     selectedDate() {
       return this.$store.state.calendar.selected_date;
@@ -282,7 +282,11 @@ export default {
         this.getJobsRealTime
       );
       this.$socket.on(
-        "Practice Notification Job Applied",
+        "Practice Notification Job Application",
+        this.getJobsRealTime
+      );
+      this.$socket.on(
+        "Practice Notification Job Application Cancelled",
         this.getJobsRealTime
       );
       this.$socket.on(
@@ -407,7 +411,11 @@ export default {
           this.getJobsRealTime
         );
         this.$socket.removeListener(
-          "Practice Notification Job Applied",
+          "Practice Notification Job Application",
+          this.getJobsRealTime
+        );
+        this.$socket.removeListener(
+          "Practice Notification Job Application Cancelled",
           this.getJobsRealTime
         );
         this.$socket.removeListener(
@@ -464,7 +472,7 @@ export default {
         Promise.all([
           this.$axios.$get("/api/v1/practice/jobs", {
             params: {
-              status: ["Allocated", "Applied", "Unfilled", "Declined"],
+              status: ["Allocated", "Applied", "Unfilled", "Declined", "Live"],
               calendar_date_start: `${this.startOfMonth}:gte`,
               calendar_date_end: `${this.endOfMonth}:lte`,
               limit: 100000000
@@ -472,7 +480,7 @@ export default {
           }),
           this.$axios.$get("/api/v1/practice/job-parts", {
             params: {
-              status: ["Ongoing"],
+              status: ["Ongoing", "Completed"],
               calendar_date_start: `${this.startOfMonth}:gte`,
               calendar_date_end: `${this.endOfMonth}:lte`,
               limit: 100000000
@@ -491,45 +499,55 @@ export default {
         ])
           .then(
             ([
-              responseAllocatedAndAppliedAndUnfilledAndDeclined,
-              responseOngoing,
+              responseAllocatedAndAppliedAndUnfilledAndDeclinedAndLive,
+              responseOngoingAndCompleted,
               responseReminders
             ]) => {
               this.$store.commit(
                 "jobs/SET_PRACTICE_ALLOCATED_JOBS",
-                responseAllocatedAndAppliedAndUnfilledAndDeclined.data.jobs.filter(
+                responseAllocatedAndAppliedAndUnfilledAndDeclinedAndLive.data.jobs.filter(
                   job => job.status === "Allocated"
                 )
               );
               this.$store.commit(
                 "jobs/SET_PRACTICE_APPLIED_JOBS",
-                responseAllocatedAndAppliedAndUnfilledAndDeclined.data.jobs.filter(
+                responseAllocatedAndAppliedAndUnfilledAndDeclinedAndLive.data.jobs.filter(
                   job => job.status === "Applied"
                 )
               );
               this.$store.commit(
                 "jobs/SET_PRACTICE_UNFILLED_JOBS",
-                responseAllocatedAndAppliedAndUnfilledAndDeclined.data.jobs.filter(
+                responseAllocatedAndAppliedAndUnfilledAndDeclinedAndLive.data.jobs.filter(
                   job => job.status === "Unfilled"
                 )
               );
               this.$store.commit(
                 "jobs/SET_PRACTICE_DECLINED_JOBS",
-                responseAllocatedAndAppliedAndUnfilledAndDeclined.data.jobs.filter(
+                responseAllocatedAndAppliedAndUnfilledAndDeclinedAndLive.data.jobs.filter(
                   job => job.status === "Declined"
                 )
               );
               this.$store.commit(
+                "jobs/SET_PRACTICE_AVAILABLE_JOBS",
+                responseAllocatedAndAppliedAndUnfilledAndDeclinedAndLive.data.jobs.filter(
+                  job => job.status === "Live"
+                )
+              );
+              this.$store.commit(
                 "jobs/SET_PRACTICE_ONGOING_JOB_PARTS",
-                responseOngoing.data.job_parts.filter(
+                responseOngoingAndCompleted.data.job_parts.filter(
                   jobPart => jobPart.status === "Ongoing"
                 )
               );
               this.$store.commit(
-                "jobs/SET_PRACTICE_AVAILABLE_JOBS_REMINDER",
-                responseReminders.data.jobs.filter(
-                  job => job.status === "Available"
+                "jobs/SET_PRACTICE_COMPLETED_JOB_PARTS",
+                responseOngoingAndCompleted.data.job_parts.filter(
+                  jobPart => jobPart.status === "Completed"
                 )
+              );
+              this.$store.commit(
+                "jobs/SET_PRACTICE_AVAILABLE_JOBS_REMINDER",
+                responseReminders.data.jobs.filter(job => job.status === "Live")
               );
               this.$store.commit(
                 "jobs/SET_PRACTICE_APPLIED_JOBS_REMINDER",
@@ -550,7 +568,7 @@ export default {
         Promise.all([
           this.$axios.$get("/api/v1/locum/jobs", {
             params: {
-              locum_status: ["Allocated", "Applied"],
+              locum_status: ["Allocated", "Applied", "Available"],
               calendar_date_start: `${this.startOfMonth}:gte`,
               calendar_date_end: `${this.endOfMonth}:lte`,
               limit: 100000000
@@ -558,7 +576,7 @@ export default {
           }),
           this.$axios.$get("/api/v1/locum/job-parts", {
             params: {
-              locum_status: ["Ongoing"],
+              locum_status: ["Ongoing", "Completed"],
               calendar_date_start: `${this.startOfMonth}:gte`,
               calendar_date_end: `${this.endOfMonth}:lte`,
               limit: 100000000
@@ -574,26 +592,38 @@ export default {
         ])
           .then(
             ([
-              responseAllocatedAndApplied,
-              responseOngoing,
+              responseAllocatedAndAppliedAndAvailable,
+              responseOngoingAndCompleted,
               responseUnavailabilities
             ]) => {
               this.$store.commit(
                 "jobs/SET_LOCUM_APPLIED_JOBS",
-                responseAllocatedAndApplied.data.jobs.filter(
+                responseAllocatedAndAppliedAndAvailable.data.jobs.filter(
                   job => job.locum_status === "Applied"
                 )
               );
               this.$store.commit(
                 "jobs/SET_LOCUM_ALLOCATED_JOBS",
-                responseAllocatedAndApplied.data.jobs.filter(
+                responseAllocatedAndAppliedAndAvailable.data.jobs.filter(
                   job => job.locum_status === "Allocated"
                 )
               );
               this.$store.commit(
+                "jobs/SET_LOCUM_AVAILABLE_JOBS",
+                responseAllocatedAndAppliedAndAvailable.data.jobs.filter(
+                  job => job.locum_status === "Available"
+                )
+              );
+              this.$store.commit(
                 "jobs/SET_LOCUM_ONGOING_JOB_PARTS",
-                responseOngoing.data.job_parts.filter(
+                responseOngoingAndCompleted.data.job_parts.filter(
                   jobPart => jobPart.locum_status === "Ongoing"
+                )
+              );
+              this.$store.commit(
+                "jobs/SET_LOCUM_COMPLETED_JOB_PARTS",
+                responseOngoingAndCompleted.data.job_parts.filter(
+                  jobPart => jobPart.locum_status === "Completed"
                 )
               );
               this.$store.commit(
@@ -659,13 +689,13 @@ export default {
         .endOf("month")
         .format("YYYY-MM-DD");
 
-      this.$store.commit(
-        "calendar/SELECT_DATE",
-        this.$moment(this.$store.state.calendar.selected_date, "YYYY-MM-DD")
-          .set("month", this.selectedMonth)
-          .set("year", this.selectedYear)
-          .format("YYYY-MM-DD")
-      );
+      // this.$store.commit(
+      //   "calendar/SELECT_DATE",
+      //   this.$moment(this.$store.state.calendar.selected_date, "YYYY-MM-DD")
+      //     .set("month", this.selectedMonth)
+      //     .set("year", this.selectedYear)
+      //     .format("YYYY-MM-DD")
+      // );
       // this.getJobs();
     }
   }

@@ -84,7 +84,7 @@ export default {
       modal: false,
 
       practiceSurgery: "",
-      
+
       // payment
       paymentModal: false,
       selectedInvoiceId: null,
@@ -140,18 +140,20 @@ export default {
   },
   async asyncData({ app, route, error }) {
     try {
-      let response = await app.$axios.$get(`/api/v1/practice/me/practice-surgeries/${route.params.id}`)
-      const practiceSurgery = response.data.practice_surgery
+      let response = await app.$axios.$get(
+        `/api/v1/practice/me/practice-surgeries/${route.params.id}`
+      );
+      const practiceSurgery = response.data.practice_surgery;
       const params = {
         offset: 0,
         limit: 5,
-        practice_id: practiceSurgery.child_practice_id,
+        practice_id: practiceSurgery.child_practice_id
       };
       console.log(practiceSurgery.child_practice_id)
       const responseCount = await app.$axios.get(
         "/api/v1/practice/practice-invoices/count"
       );
-      
+
       const totalInvoices =
         responseCount.data &&
         responseCount.data.data &&
@@ -159,22 +161,16 @@ export default {
           ? responseCount.data.data.count
           : 0;
 
-      response = await app.$axios.get(
-        "/api/v1/practice/practice-invoices",
-        {
-          params
-        }
-      );
+      response = await app.$axios.get("/api/v1/practice/practice-invoices", {
+        params
+      });
 
-      
       const invoices =
         response.data &&
         response.data.data &&
         response.data.data.practice_invoices
           ? response.data.data.practice_invoices
           : [];
-
-      console.log("invoices from hubzz", invoices);
 
       return {
         totalInvoices,

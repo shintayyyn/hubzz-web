@@ -66,6 +66,23 @@ export default {
     AppLoading,
     AppPagination
   },
+  middleware({ query, redirect, error }) {
+    if (!query.status) {
+      // api (Favorite only)
+      redirect(`/my-practice?status=Favorite`);
+    }
+    if (
+      query.status &&
+      !["favorite", "completed", "applied", "unsuccessful"].includes(
+        query.status.toLowerCase()
+      )
+    ) {
+      return error({
+        status: 404,
+        message: "This MyPractice Status is Invalid"
+      });
+    }
+  },
   data() {
     return {
       loading: false,

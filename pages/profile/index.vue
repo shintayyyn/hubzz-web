@@ -58,23 +58,7 @@
                 />
                 <label for="variation_terms_file">Use Variation to Standard Terms</label>
               </div>
-              <!-- <AppInput
-                v-model="form.use_standard_terms"
-                :type="'single-checkbox'"
-                :name="'use_standard_terms'"
-                :label="'Use Standard Terms with Locum?'"
-                :disabled="!authPermissions.includes('Update Profile Practice')"
-                :error="formError.find(item => item.field === 'use_standard_terms')"
-              />-->
               <div class="relative">
-                <!-- <AppInput
-                  v-model="form.use_variation_terms"
-                  :type="'single-checkbox'"
-                  :name="'use_variation_terms'"
-                  :label="'Use Variation to Standard Terms'"
-                  :disabled="!authPermissions.includes('Update Profile Practice')"
-                  :error="formError.find(item => item.field === 'use_variation_terms')"
-                />-->
                 <div class="relative" v-if="form.use_variation_terms">
                   <div class="flex flex-row flex-wrap justify-between items-center">
                     <div class="text-xs sm:text-sm">Your Practice's standard terms</div>
@@ -215,7 +199,7 @@
                 v-model="form.vat_registered"
                 :type="'single-checkbox'"
                 :name="'vat_registered'"
-                :label="'Are you a VAT registered?'"
+                :label="'Are you VAT registered?'"
               />
               <template v-if="form.vat_registered">
                 <AppInput
@@ -223,6 +207,31 @@
                   :type="'text'"
                   :name="'vat_number'"
                   :label="'VAT Number'"
+                  :error="formError.find(item => item.field === 'vat_number')"
+                />
+              </template>
+              <AppInput
+                v-model="form.direct_debit"
+                :type="'single-checkbox'"
+                :name="'direct_debit'"
+                :label="'Direct Debit Account'"
+              />
+              <template v-if="form.direct_debit">
+                <AppInput
+                  v-model="form.sage_ref"
+                  :type="'text'"
+                  :name="'sage_ref'"
+                  :label="'Sage reference'"
+                  :error="formError.find(item => item.field === 'sage_ref')"
+                />
+              </template>
+              <template v-if="form.direct_debit">
+                <AppInput
+                  v-model="form.nominal_code"
+                  :type="'text'"
+                  :name="'nominal_code'"
+                  :label="'Nominal Code'"
+                  :error="formError.find(item => item.field === 'nominal_code')"
                 />
               </template>
             </div>
@@ -278,14 +287,12 @@ export default {
   },
   computed: {
     authPermissions() {
-      return this.$store.getters["auth/permissions"];
+      return this.$store.getters["permissions"];
     }
   },
   data() {
     return {
       surgery: null,
-      vat_registered: false,
-      vat_number: "",
       modal: false,
       loading: false,
       input_file_loading: false,
@@ -301,7 +308,10 @@ export default {
         others_compliance_document_id: [],
         use_variation_terms: false,
         vat_registered: false,
-        vat_number: null
+        vat_number: null,
+        direct_debit: false,
+        sage_ref: null,
+        nominal_code: null
       },
       name: "",
       formError: []
@@ -340,7 +350,6 @@ export default {
                   responsePractice.data && responsePractice.data.practice
                     ? responsePractice.data.practice
                     : null;
-                console.log("practice", practice);
                 return [surgery, practice];
               }),
 
@@ -479,15 +488,28 @@ export default {
       this.form.others_compliance_document_id.push(item.id);
     });
     this.form.use_variation_terms = this.practice.use_variation_terms;
+    this.form.vat_registered = this.practice.vat_registered;
+    this.form.vat_number = this.practice.vat_number;
+    this.form.direct_debit = this.practice.direct_debit;
+    this.form.sage_ref = this.practice.sage_ref;
+    this.form.nominal_code = this.practice.nominal_code;
   },
   methods: {
-    onFileInput(e) {
+    async onFileInput(e) {
       if (!e.target.files.length) {
         return;
       }
-      console.log(e);
       this.formError = [];
-      let types = ["pdf", "jpeg", "msword", "tiff", "docx"];
+      let types = [
+        "pdf",
+        "jpeg",
+        "msword",
+        "tiff",
+        "vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "vnd.openxmlformats-officedocument.wordprocessingml.template",
+        "vnd.ms-word.document.macroEnabled.12",
+        "vnd.ms-word.template.macroEnabled.12"
+      ];
       let file = e.target.files[0];
       let fileType = file.type.split("/")[1];
       if (!types.includes(fileType)) {
@@ -507,6 +529,7 @@ export default {
       const formData = new FormData();
       formData.append("file", file);
       this.input_file_loading = true;
+      await this.save();
       this.$axios
         .$post(`/api/v1/practice/me/practice/variation-terms`, formData)
         .then(res => {
@@ -585,57 +608,74 @@ export default {
           this.input_file_loading = false;
         });
     },
-    async save() {
-      try {
-        this.formError = [];
-        let notRequired = [
-          "mandatory_training_id",
-          "extra_information",
-          "gp_compliance_document_id",
-          "others_compliance_document_id"
-        ];
-        if (
-          this.form.use_variation_terms === false ||
-          (this.form.use_variation_terms === true &&
-            this.practice.variation_terms_file !== null)
-        ) {
-          notRequired.push("use_variation_terms");
-        } else if (
-          this.form.use_variation_terms === true &&
-          this.practice.variation_terms_file === null
-        ) {
-          this.formError.push({
-            field: "use_variation_terms",
-            message: "use_variation_terms file is required"
-          });
-        }
-        this.Validate(this.form, notRequired);
-        if (!this.formError.length) {
-          this.loading = true;
+    save() {
+      this.formError = [];
+      let notRequired = [
+        "mandatory_training_id",
+        "extra_information",
+        "gp_compliance_document_id",
+        "others_compliance_document_id",
+        "vat_registered",
+        "direct_debit"
+      ];
 
-          const res = await this.$axios.$put(
-            `/api/v1/practice/me/practice`,
-            this.form
-          );
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "success",
-            text: [res.message]
+      if (
+        this.form.use_variation_terms === false ||
+        (this.form.use_variation_terms === true &&
+          this.practice.variation_terms_file !== null)
+      ) {
+        notRequired.push("use_variation_terms");
+      }
+      //  else if (
+      //   this.form.use_variation_terms === true &&
+      //   this.practice.variation_terms_file === null
+      // ) {
+      //   this.formError.push({
+      //     field: "use_variation_terms",
+      //     message: "Your Variation Standard Terms file is required"
+      //   });
+      // }
+      if (["false", false].includes(this.form.vat_registered)) {
+        notRequired.push("vat_number");
+      }
+      if (["false", false].includes(this.form.direct_debit)) {
+        notRequired.push("sage_ref", "nominal_code");
+      }
+      this.Validate(this.form, notRequired);
+      if (!this.formError.length) {
+        this.loading = true;
+
+        return this.$axios
+          .$put(`/api/v1/practice/me/practice`, this.form)
+          .then(res => {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: [res.message]
+            });
+          })
+          .catch(err => {
+            console.log("err", err.response || err);
+            if (
+              err.response &&
+              err.response.data &&
+              err.response.data.error_messages
+            ) {
+              this.formError = err.response.data.error_messages;
+            }
+            throw err;
+          })
+          .finally(() => {
+            this.scrollToTop();
+            this.loading = false;
           });
-          this.loading = false;
-          this.scrollToTop();
-        } else {
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "danger",
-            text: ["Please fill up all the forms"]
-          });
-          this.scrollToTop();
-        }
-      } catch (err) {
+      } else {
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "danger",
+          text: ["Please fill up all the forms"]
+        });
         this.scrollToTop();
-        this.loading = false;
-        this.formError = err.response.data.error_messages;
       }
     }
   }

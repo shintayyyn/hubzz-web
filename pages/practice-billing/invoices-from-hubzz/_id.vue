@@ -4,10 +4,12 @@
       <div class="flex flex-row flex-wrap justify-start">
         <!-- <div @click="$router.go(-1)" class="cursor-pointer">
           <svgicon name="left-arrow" height="32" width="32" />
-        </div> -->
-        <nuxt-link :to="{ path: `/practice-billing`}">
+        </div>-->
+        <nuxt-link 
+          :to="{ name: 'practice-billing-invoices-from-hubzz' }">
           <svgicon name="left-arrow" height="32" width="32" />
         </nuxt-link>
+
       </div>
       <!-- billing -->
       <section>
@@ -46,26 +48,7 @@ export default {
     mode: "out-in"
   },
   components: {
-    AppDate,
     HubzzBillingForm,
-  },
-  data() {
-    return {
-      form: {
-        date_start: null,
-        date_end: null
-      },
-      formError: [],
-      surgery_name: "",
-      invoice: null,
-
-      practiceInvoice: '',
-      practice: '',
-      invoiceItems: [],
-      disputedItems: [],
-      debitItems: [],
-      creditItems:[],
-    };
   },
   async asyncData({ app, auth, error, params }) {
     try {
@@ -152,13 +135,21 @@ export default {
         : this.practiceInvoice.issued_at;
     }
   },
-
-  mounted() {
-    this.surgery_name = this.practiceInvoice.practice.name;
-    this.form.date_start = this.practiceInvoice.date_start;
-    this.form.date_end = this.practiceInvoice.date_end;
-    document.body.style.overflow = "hidden";
+  
+  methods: {
+    exportToPdf(){
+      window.open(
+        `${process.env.API_URL}/api/v1/practice-invoices/${this.invoice.id}/pdf?filename=${'hubzz_invoice_'+this.invoice.invoice_number}`
+      );
+    }
   },
+
+  // mounted() {
+  //   this.surgery_name = this.practiceInvoice.practice.name;
+  //   this.form.date_start = this.practiceInvoice.date_start;
+  //   this.form.date_end = this.practiceInvoice.date_end;
+  //   document.body.style.overflow = "hidden";
+  // },
 
   destroyed() {
     document.body.style.overflow = "auto";

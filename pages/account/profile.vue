@@ -227,7 +227,7 @@
               :label="'Company Registration Number'"
               :error="formError.find(item => item.field === 'company_registration_number')"
               :placeholder="'The number of your company from Companies House'"
-            required
+              required
             />
           </template>
           <template v-if="form.employment_type === 'Self-Employed'">
@@ -238,7 +238,7 @@
               :label="'UTR number'"
               :error="formError.find(item => item.field === 'utr_number')"
               :placeholder="''"
-            required
+              required
             />
           </template>
           <AppInput
@@ -250,46 +250,106 @@
             required
           />
           <template v-if="form.paid_under_payroll == true || form.paid_under_payroll == 'true'">
+            <div class="font-bold text-sm my-4">Payroll Details</div>
             <AppInput
-              v-model="form.payroll_detail_account_name"
+              v-model="form.payroll_account_name"
               :type="'text'"
-              :name="'payroll_detail_account_name'"
+              :name="'payroll_account_name'"
               :label="'Account name'"
-              :error="formError.find(item => item.field === 'payroll_detail_account_name')"
+              :error="formError.find(item => item.field === 'payroll_account_name')"
               required
             />
             <AppInput
-              v-model="form.payroll_detail_bank_name"
+              v-model="form.payroll_bank_name"
               :type="'text'"
-              :name="'payroll_detail_bank_name'"
+              :name="'payroll_bank_name'"
               :label="'Bank name'"
-              :error="formError.find(item => item.field === 'payroll_detail_bank_name')"
+              :error="formError.find(item => item.field === 'payroll_bank_name')"
               required
             />
             <AppInput
-              v-model="form.payroll_detail_sort_code"
+              v-model="form.payroll_sort_code"
               :type="'text'"
-              :name="'payroll_detail_sort_code'"
+              :name="'payroll_sort_code'"
               :label="'Sort code'"
-              :error="formError.find(item => item.field === 'payroll_detail_sort_code')"
+              :error="formError.find(item => item.field === 'payroll_sort_code')"
               required
             />
             <AppInput
-              v-model="form.payroll_detail_account_number"
+              v-model="form.payroll_account_number"
               :type="'text'"
-              :name="'payroll_detail_account_number'"
+              :name="'payroll_account_number'"
               :label="'Account number'"
-              :error="formError.find(item => item.field === 'payroll_detail_account_number')"
+              :error="formError.find(item => item.field === 'payroll_account_number')"
               required
             />
           </template>
+          <template v-if="form.paid_under_payroll == false || form.paid_under_payroll == 'false'">
+            <div class="font-bold text-sm my-4">Bank Details</div>
+            <AppInput
+              v-model="form.account_name"
+              :type="'text'"
+              :name="'account_name'"
+              :label="'Account name'"
+              :error="formError.find(item => item.field === 'account_name')"
+              required
+            />
+            <AppInput
+              v-model="form.bank_name"
+              :type="'text'"
+              :name="'bank_name'"
+              :label="'Bank name'"
+              :error="formError.find(item => item.field === 'bank_name')"
+              required
+            />
+            <AppInput
+              v-model="form.sort_code"
+              :type="'text'"
+              :name="'sort_code'"
+              :label="'Sort code'"
+              :error="formError.find(item => item.field === 'sort_code')"
+              required
+            />
+            <AppInput
+              v-model="form.account_number"
+              :type="'text'"
+              :name="'account_number'"
+              :label="'Account number'"
+              :error="formError.find(item => item.field === 'account_number')"
+              required
+            />
+          </template>
+
+          <template v-if="professionCategoryId === 1">
+            <AppInput
+              v-model="form.ir35"
+              :type="'single-checkbox'"
+              :name="'ir35'"
+              :label="'Are you willing to work for a role captured within IR35 rules, subject to deduction of Tax and N.I.?'"
+            />
+          </template>
+
           <AppInput
-            v-model="form.ir35"
-            :type="'single-checkbox'"
-            :name="'ir35'"
-            :label="'Are you willing to work for a role captured within IR35 rules, subject to deduction of Tax and N.I.?'"
+            v-model="form.claim_nhs"
+            :type="'select'"
+            :name="'claim_nhs'"
+            :label="'Are you willing to claim NHS Pension contributions?'"
+            :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
           />
+
+          <template v-if="form.claim_nhs == true || form.claim_nhs == 'true'">
+            <AppInput
+              v-model="form.nhs_number"
+              :type="'text'"
+              :name="'nhs_number'"
+              :label="'NHS number'"
+              :error="formError.find(item => item.field === 'nhs_number')"
+              required
+            />
+          </template>
+
           <AppPostCode
+            :urlIndex="'/api/v1/postcode-coordinates'"
             v-model="form.post_code"
             :name="'post_code'"
             :label="'The post code where I will be available at'"
@@ -405,6 +465,9 @@ export default {
     return {
       employmentTypes,
       professionCategoryId: "",
+      selectedQualification: [],
+      selectedClinicalSystem: [],
+      selectedSpokenLanguage: [],
       form: {
         gmc_or_nmc_number: "",
         mpl_or_npl_number: "",
@@ -435,11 +498,17 @@ export default {
         company_registration_number: "",
         utr_number: "",
         paid_under_payroll: false,
-        payroll_detail_account_name: "",
-        payroll_detail_bank_name: "",
-        payroll_detail_sort_code: "",
-        payroll_detail_account_number: "",
-        ir35: false
+        payroll_account_name: "",
+        payroll_bank_name: "",
+        payroll_sort_code: "",
+        payroll_account_number: "",
+        account_name: "",
+        bank_name: "",
+        sort_code: "",
+        account_number: "",
+        ir35: false,
+        claim_nhs: false,
+        nhs_number: ""
       },
       profile: {
         avatar: null,
@@ -615,190 +684,158 @@ export default {
       this.form.utr_number = this.user.locum_detail.invoice_detail.utr_number;
       this.form.company_registration_number = this.user.locum_detail.invoice_detail.company_registration_number;
       this.form.ir35 = this.user.locum_detail.invoice_detail.ir35;
+      // claim nhs
+      this.form.claim_nhs = this.user.locum_detail.claim_nhs;
+      this.form.nhs_number = this.user.locum_detail.nhs_number;
       this.form.paid_under_payroll = this.user.locum_detail.invoice_detail.paid_under_payroll;
     }
     if (
       this.user.locum_detail.invoice_detail &&
       this.user.locum_detail.invoice_detail.payroll_detail
     ) {
-      this.form.payroll_detail_account_name = this.user.locum_detail.invoice_detail.payroll_detail.account_name;
-      this.form.payroll_detail_account_number = this.user.locum_detail.invoice_detail.payroll_detail.account_number;
-      this.form.payroll_detail_sort_code = this.user.locum_detail.invoice_detail.payroll_detail.sort_code;
-      this.form.payroll_detail_bank_name = this.user.locum_detail.invoice_detail.payroll_detail.bank_name;
+      this.form.payroll_account_name = this.user.locum_detail.invoice_detail.payroll_detail.account_name;
+      this.form.payroll_account_number = this.user.locum_detail.invoice_detail.payroll_detail.account_number;
+      this.form.payroll_sort_code = this.user.locum_detail.invoice_detail.payroll_detail.sort_code;
+      this.form.payroll_bank_name = this.user.locum_detail.invoice_detail.payroll_detail.bank_name;
+    }
+    if (
+      this.user.locum_detail.invoice_detail &&
+      this.user.locum_detail.invoice_detail.bank_account
+    ) {
+      this.form.account_name = this.user.locum_detail.invoice_detail.bank_account.account_name;
+      this.form.account_number = this.user.locum_detail.invoice_detail.bank_account.account_number;
+      this.form.sort_code = this.user.locum_detail.invoice_detail.bank_account.sort_code;
+      this.form.bank_name = this.user.locum_detail.invoice_detail.bank_account.bank_name;
     }
   },
   methods: {
-    async save() {
-      try {
-        this.formError = [];
-        let notRequired = [
-          "nhs_smart_card_id_number",
-          "headline",
-          "short_biography",
-          "special_requirements",
-          "spoken_language_id",
-          "referee_1_contact_name",
-          "referee_1_phone_number",
-          "referee_1_email",
-          "referee_2_contact_name",
-          "referee_2_phone_number",
-          "referee_2_email",
-          "paid_under_payroll",
-          "mandatory_training_id",
-          "ir35"
-        ];
+    save() {
+      let notRequired = [
+        "nhs_smart_card_id_number",
+        "headline",
+        "short_biography",
+        "special_requirements",
+        "spoken_language_id",
+        "referee_1_contact_name",
+        "referee_1_phone_number",
+        "referee_1_email",
+        "referee_2_contact_name",
+        "referee_2_phone_number",
+        "referee_2_email",
+        "paid_under_payroll",
+        "mandatory_training_id",
+        "ir35",
+        "claim_nhs"
+      ];
+      if (this.form.employment_type === "Self-Employed") {
+        notRequired.push("company_registration_number");
+      } else if (this.form.employment_type === "Limited Company") {
+        notRequired.push("utr_number");
+      }
 
-        if (this.form.employment_type === "Self-Employed") {
-          notRequired.push("company_registration_number");
-        } else if (this.form.employment_type === "Limited Company") {
-          notRequired.push("utr_number");
-        }
+      if (["false", false].includes(this.form.claim_nhs)) {
+        notRequired.push("nhs_number");
+        this.form.nhs_number = null;
+      }
 
-        if (
-          this.form.paid_under_payroll == false ||
-          this.form.paid_under_payroll == "false"
-        ) {
-          notRequired.push(
-            "payroll_detail_account_name",
-            "payroll_detail_bank_name",
-            "payroll_detail_sort_code",
-            "payroll_detail_account_number"
-          );
-        }
-
-        this.Validate(this.form, notRequired);
-
-        if (!this.formError.length) {
-          this.loading = true;
-          this.form.profession_id = this.form.profession_id.toString();
-          this.form.qualification_id = this.form.qualification_id.length
-            ? this.form.qualification_id.map(item => item.value)
-            : [];
-          this.form.clinical_system_id = this.form.clinical_system_id
-            ? this.form.clinical_system_id.map(item => item.value)
-            : [];
-          this.form.spoken_language_id = this.form.spoken_language_id
-            ? this.form.spoken_language_id.map(item => item.value)
-            : [];
-
-          const response = await this.$axios.$put(
-            `/api/v1/locum/me/profile`,
-            this.form
-          );
-          this.form.gmc_or_nmc_number =
-            response.data.user.locum_detail.gmc_or_nmc_number.number;
-          this.form.mpl_or_npl_number =
-            response.data.user.locum_detail.mpl_or_npl_number.number;
-          this.form.nhs_smart_card_id_number =
-            response.data.user.locum_detail.nhs_smart_card_id_number;
-          this.form.headline = response.data.user.locum_detail.headline;
-          this.form.short_biography =
-            response.data.user.locum_detail.short_biography;
-          this.form.special_requirements =
-            response.data.user.locum_detail.special_requirements;
-          this.form.profession_id =
-            response.data.user.locum_detail.profession.id;
-          this.form.qualification_id = response.data.user.locum_detail.qualifications.map(
-            qualification => {
-              return { label: qualification.name, value: qualification.id };
-            }
-          );
-          this.form.clinical_system_id = response.data.user.locum_detail.clinical_systems.map(
-            clinicalSystem => {
-              return { label: clinicalSystem.name, value: clinicalSystem.id };
-            }
-          );
-          this.form.spoken_language_id = response.data.user.locum_detail.spoken_languages.map(
-            spokenLanguage => {
-              return { label: spokenLanguage.name, value: spokenLanguage.id };
-            }
-          );
-          this.form.min_rate_per_hour = response.data.user.locum_detail.rates.find(
-            rate => rate.rate_type.id === 1
-          ).min;
-          this.form.max_rate_per_hour = response.data.user.locum_detail.rates.find(
-            rate => rate.rate_type.id === 1
-          ).max;
-          this.form.min_rate_per_half_day_session = response.data.user.locum_detail.rates.find(
-            rate => rate.rate_type.id === 2
-          ).min;
-          this.form.max_rate_per_half_day_session = response.data.user.locum_detail.rates.find(
-            rate => rate.rate_type.id === 2
-          ).max;
-          this.form.min_rate_per_whole_day_session = response.data.user.locum_detail.rates.find(
-            rate => rate.rate_type.id === 3
-          ).min;
-          this.form.max_rate_per_whole_day_session = response.data.user.locum_detail.rates.find(
-            rate => rate.rate_type.id === 3
-          ).max;
-          this.form.practice_type_id = response.data.user.locum_detail.practice_types.map(
-            practiceType => practiceType.id
-          );
-          this.form.mandatory_training_id = response.data.user.locum_detail.mandatory_trainings.map(
-            mandatoryTraining => mandatoryTraining.mandatory_training.id
-          );
-          this.form.post_code = response.data.user.locum_detail.post_code;
-          this.form.miles = response.data.user.locum_detail.miles;
-
-          response.data.user.locum_detail.referees.forEach((referee, index) => {
-            if (index == 0) {
-              this.form.referee_1_contact_name = referee.name;
-              this.form.referee_1_phone_number = referee.phone_number;
-              this.form.referee_1_email = referee.email;
-            }
-            if (index == 1) {
-              this.form.referee_2_contact_name = referee.name;
-              this.form.referee_2_phone_number = referee.phone_number;
-              this.form.referee_2_email = referee.email;
-            }
-          });
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "success",
-            text: ["Saved !"]
-          });
-          this.loading = false;
-          this.scrollToTop();
-        } else {
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "danger",
-            text: ["Please fill up all the forms"]
-          });
-          this.loading = false;
-          this.scrollToTop();
-        }
-      } catch (err) {
-        this.form.qualification_id = this.user.locum_detail.qualifications.map(
-          qualification => {
-            return { label: qualification.name, value: qualification.id };
-          }
+      if (["false", false].includes(this.form.paid_under_payroll)) {
+        this.form.payroll_account_name = "";
+        this.form.payroll_account_number = "";
+        this.form.payroll_sort_code = "";
+        this.form.payroll_bank_name = "";
+        notRequired.push(
+          "payroll_account_name",
+          "payroll_bank_name",
+          "payroll_sort_code",
+          "payroll_account_number"
         );
-        this.form.clinical_system_id = this.user.locum_detail.clinical_systems.map(
-          clinicalSystem => {
-            return { label: clinicalSystem.name, value: clinicalSystem.id };
-          }
+      }
+
+      if (["true", true].includes(this.form.paid_under_payroll)) {
+        this.form.account_name = "";
+        this.form.account_number = "";
+        this.form.sort_code = "";
+        this.form.bank_name = "";
+        notRequired.push(
+          "account_name",
+          "bank_name",
+          "sort_code",
+          "account_number"
         );
-        this.form.spoken_language_id = this.user.locum_detail.spoken_languages.map(
-          spokenLanguage => {
-            return { label: spokenLanguage.name, value: spokenLanguage.id };
-          }
-        );
-        console.log("err", err.response || err);
-        if (err.response.data.message) {
-          this.$store.commit("SET_NOTIFICATION", {
-            enabled: true,
-            status: "danger",
-            text: [`${err.response.data.message}`]
+      }
+
+      this.formError = [];
+
+      this.Validate(this.form, notRequired);
+
+      if (!this.formError.length) {
+        this.loading = true;
+        this.selectedClinicalSystem = [...this.form.clinical_system_id];
+        this.form.clinical_system_id = this.form.clinical_system_id.length
+          ? this.form.clinical_system_id.map(item => item.value)
+          : [];
+        this.selectedQualification = [...this.form.qualification_id];
+        this.form.qualification_id = this.form.qualification_id.length
+          ? this.form.qualification_id.map(item => item.value)
+          : [];
+        this.selectedSpokenLanguage = [...this.form.spoken_language_id];
+        this.form.spoken_language_id = this.form.spoken_language_id.length
+          ? this.form.spoken_language_id.map(item => item.value)
+          : [];
+        this.form.profession_id = this.form.profession_id.toString();
+        this.form.ir35 =
+          this.professionCategoryId === 1 ? this.form.ir35 : false;
+
+        this.$axios
+          .$put(`/api/v1/locum/me/profile`, this.form)
+          .then(res => {
+            this.form.clinical_system_id = this.selectedClinicalSystem;
+            this.form.qualification_id = this.selectedQualification;
+            this.form.spoken_language_id = this.selectedSpokenLanguage;
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: [`${res.message}`]
+            });
+          })
+          .catch(err => {
+            console.log("err", err.response || err);
+            this.form.clinical_system_id = this.selectedClinicalSystem;
+            this.form.qualification_id = this.selectedQualification;
+            this.form.spoken_language_id = this.selectedSpokenLanguage;
+            if (
+              err.response &&
+              err.response.data &&
+              err.response.data.message
+            ) {
+              this.$store.commit("SET_NOTIFICATION", {
+                enabled: true,
+                status: "danger",
+                text: [`${err.response.data.message}`]
+              });
+            }
+            if (
+              err.response &&
+              err.response.data &&
+              err.response.data.error_messages
+            ) {
+              err.response.data.error_messages.forEach(error => {
+                this.formError.push(error);
+              });
+            }
+            throw err;
+          })
+          .finally(() => {
+            this.loading = false;
+            this.scrollToTop();
           });
-        }
-        if (err.response.data.error_messages) {
-          err.response.data.error_messages.forEach(error => {
-            this.formError.push(error);
-          });
-        }
+      } else {
+        this.$store.commit("SET_NOTIFICATION", {
+          enabled: true,
+          status: "danger",
+          text: ["Please fill up all the forms"]
+        });
         this.scrollToTop();
-        this.loading = false;
       }
     }
   }

@@ -8,10 +8,6 @@
           <span v-if="required" class="text-red-500">*</span>
         </label>
         <div class="rounded-lg bg-gray-300 p-1 text-xs sm:text-sm" v-if="info">{{info}}</div>
-        <div
-          class="absolute rounded right-0 bg-red-500 p-1 text-xs sm:text-sm text-white"
-          v-if="error"
-        >{{error.message}}</div>
       </div>
       <!-- selected -->
       <div class="relative flex flex-row flex-wrap justify-start">
@@ -26,11 +22,12 @@
         >
           {{item.label}}
           <span
+            v-if="!disabled"
             class="font-bold cursor-pointer text-base pl-3"
             @click="remove(index)"
           >x</span>
         </div>
-        <div>
+        <div v-if="!disabled">
           <input
             v-show="show"
             v-model="search"
@@ -41,7 +38,14 @@
             :class="error ? 'border-red-500' : ''"
             @focus="toggled = true"
             @keydown="handleKeyDownEvent"
+            @change="$emit('change')"
           />
+          <transition name="drop-down">
+            <div
+              v-if="error"
+              class="text-red-500 py-1 text-xs text-white"
+            >{{error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ")}}</div>
+          </transition>
         </div>
       </div>
       <!-- option -->
@@ -91,6 +95,7 @@ export default {
       type: Boolean,
       default: false
     },
+    disabled: Boolean,
     // for qualification
     professionCategoryId: String,
     // for spoken-langauge
@@ -148,7 +153,7 @@ export default {
     getListsCount(search) {
       this.items = [];
       let params = {};
-      if (this.name === "qualification_id") {
+      if (this.name === "qualification_id" || this.name === "specialty") {
         params = {
           ...params,
           profession_category_id: this.professionCategoryId
@@ -177,7 +182,7 @@ export default {
       this.hasMore = true;
 
       let params = {};
-      if (this.name === "qualification_id") {
+      if (this.name === "qualification_id" || this.name === "specialty") {
         params = {
           ...params,
           profession_category_id: this.professionCategoryId
@@ -358,7 +363,7 @@ export default {
     filteredItems() {
       return this.items.filter(filterItem => {
         const index = this.value.findIndex(item => {
-          return item.value === filterItem.value;
+          return item.value && item.value === filterItem.value;
         });
         return index === -1 && filterItem.value;
       });

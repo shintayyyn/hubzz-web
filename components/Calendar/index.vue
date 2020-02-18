@@ -15,11 +15,7 @@
             :class="$auth.user.domain === 'Practice' ? 'm-2 md:m-5' : 'm-2 md:m-3'"
           >
             <nuxt-link
-              v-if="
-								$auth.user.domain === 'Locum' ||
-									($auth.user.domain === 'Practice' && authPermissions.includes('Create Sessions Job')) ||
-                  ($auth.user.domain === 'Practice' && ($auth.user.practice_detail.practice.type !== 'Spoke' || $auth.user.practice_detail.practice.allow_surgery_create_sessions))
-							"
+              v-if="$auth.user.domain === 'Locum' || ($auth.user.domain === 'Practice' && canCreateJob)"
               :to="{ path: '/dashboard/create' }"
               class="rounded-full h-10 w-10 sm:h-12 sm:w-12 md:h-16 md:w-16 text-2xl sm:text-3xl md:text-4xl flex items-center focus:outline-none justify-center bg-yellow-500 font-semibold cursor-pointer shadow-md hover:text-white"
             >+</nuxt-link>
@@ -54,7 +50,21 @@ export default {
       return this.$store.state.calendar.create_job_modal;
     },
     authPermissions() {
-      return this.$store.getters["auth/permissions"];
+      return this.$store.getters["permissions"];
+    },
+    canCreateJob() {
+      if (this.$auth.user.domain === "Locum") {
+        return false;
+      } else if (
+        !this.authPermissions.includes("Create Sessions Job") ||
+        (this.$auth.user.practice_detail.practice.type === "Spoke" &&
+          this.$auth.user.practice_detail.practice.parent_practice_id &&
+          !this.$auth.user.practice_detail.practice
+            .allow_surgery_create_sessions)
+      ) {
+        return false;
+      }
+      return true;
     }
   }
 };

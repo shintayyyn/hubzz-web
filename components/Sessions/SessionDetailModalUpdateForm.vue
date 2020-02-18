@@ -210,6 +210,7 @@
                 :name="'date_start'"
                 :label="'Start Date'"
                 :error="formError.find(item => item.field === 'date_start')"
+                isAfter
               />
             </div>
             <div class="px-1 w-full md:w-1/2">
@@ -227,6 +228,8 @@
                 :name="'date_end'"
                 :label="'End Date'"
                 :error="formError.find(item => item.field === 'date_end')"
+                :startDate="form.date_start"
+                isAfter
               />
             </div>
             <div class="px-1 w-full md:w-1/2">
@@ -289,82 +292,106 @@
             :name="'auto_assign_job'"
             :label="'Use AUTO-MATCH on this Job?'"
             :items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
+            :inStyle="job.status === 'Allocated' ? 'background-color:lightgray' : ''"
+            :disabled="job.status === 'Allocated'"
           />
 
-          <AppInput
-            :type="'select'"
-            v-model="selection_notification"
-            :name="'selection_notification'"
-            :label="'Add a selection date?'"
-            :items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
-          />
-          <div
-            class="flex flex-row flex-wrap justify-between"
-            v-if="selection_notification === true || selection_notification === 'true'"
-          >
-            <div>Selection will be made and you will receive a notification by this date</div>
-            <div class="px-1 w-full md:w-1/2">
-              <AppDate v-model="selection_date.date" :name="'selection_date'" :label="'Date'" />
+          <template v-if="['false', false].includes(auto_assign_job)">
+            <AppInput
+              :type="'select'"
+              v-model="selection_notification"
+              :name="'selection_notification'"
+              :label="'Add a selection date?'"
+              :items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
+              :inStyle="job.status === 'Allocated' ? 'background-color:lightgray' : ''"
+              :disabled="job.status === 'Allocated'"
+            />
+            <div
+              class="flex flex-row flex-wrap justify-between"
+              v-if="selection_notification === true || selection_notification === 'true'"
+            >
+              <div>Selection will be made and you will receive a notification by this date</div>
+              <div class="px-1 w-full md:w-1/2">
+                <AppDate
+                  v-model="selection_date.date"
+                  :name="'selection_date'"
+                  :label="'Date'"
+                  :inStyle="job.status === 'Allocated' ? 'background-color:lightgray' : ''"
+                  :disabled="job.status === 'Allocated'"
+                />
+              </div>
+              <div class="px-1 w-full md:w-1/2">
+                <AppTime
+                  v-model="selection_date.time"
+                  :type="'time'"
+                  :name="'time_end'"
+                  :label="'Time'"
+                  :error="formError.find(item => item.field === 'selection_date')"
+                  :inStyle="job.status === 'Allocated' ? 'background-color:lightgray' : ''"
+                  :disabled="job.status === 'Allocated'"
+                />
+              </div>
             </div>
-            <div class="px-1 w-full md:w-1/2">
-              <AppTime
-                v-model="selection_date.time"
-                :type="'time'"
-                :name="'time_end'"
-                :label="'Time'"
-                :error="formError.find(item => item.field === 'selection_date')"
-              />
-            </div>
-          </div>
+          </template>
 
           <AppInput
-            v-if="bank_only === false || bank_only === 'false'"
-            :type="'select'"
-            v-model="bank_first"
-            :name="'bank_first'"
-            :label="'Make this Job available for Bank First?'"
-            :items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
-          />
-
-          <div
-            class="flex flex-row flex-wrap justify-between"
-            v-if="bank_first === true || bank_first === 'true'"
-          >
-            <div>Only favorite locum will be notified until this date</div>
-            <div class="px-1 w-full md:w-1/2">
-              <AppDate
-                v-model="favorite_only_until.date"
-                :name="'favorite_only_until'"
-                :label="'Date'"
-              />
-            </div>
-            <div class="px-1 w-full md:w-1/2">
-              <AppTime
-                v-model="favorite_only_until.time"
-                :type="'time'"
-                :name="'time_end'"
-                :label="'Time'"
-                :error="formError.find(item => item.field === 'favorite_only_until')"
-              />
-            </div>
-          </div>
-
-          <AppInput
-            v-if="bank_first === false || bank_first === 'false'"
             :type="'select'"
             v-model="bank_only"
             :name="'bank_only'"
             :label="'Make this Job available for Bank Only?'"
             :items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
+            :inStyle="job.status === 'Allocated' ? 'background-color:lightgray' : ''"
+            :disabled="job.status === 'Allocated'"
           />
 
-          <AppInput
-            v-model="form.ir35"
-            :type="'select'"
-            :name="'ir35'"
-            :label="'IR35 - role inside or outside of scope'"
-            :items="[ {value: true, label: 'Inside of Scope'}, {value: false, label: 'Outside of Scope'} ]"
-          />
+          <template v-if="['false', false].includes(bank_only)">
+            <AppInput
+              :type="'select'"
+              v-model="bank_first"
+              :name="'bank_first'"
+              :label="'Make this Job available for Bank First?'"
+              :items="[ {value: false, label: 'No'}, {value: true, label: 'Yes'} ]"
+              :inStyle="job.status === 'Allocated' ? 'background-color:lightgray' : ''"
+              :disabled="job.status === 'Allocated'"
+            />
+            <div
+              class="flex flex-row flex-wrap justify-between"
+              v-if="bank_first === true || bank_first === 'true'"
+            >
+              <div>Only favorite locum will be notified until this date</div>
+              <div class="px-1 w-full md:w-1/2">
+                <AppDate
+                  v-model="favorite_only_until.date"
+                  :name="'favorite_only_until'"
+                  :label="'Date'"
+                  :inStyle="job.status === 'Allocated' ? 'background-color:lightgray' : ''"
+                  :disabled="job.status === 'Allocated'"
+                />
+              </div>
+              <div class="px-1 w-full md:w-1/2">
+                <AppTime
+                  v-model="favorite_only_until.time"
+                  :type="'time'"
+                  :name="'time_end'"
+                  :label="'Time'"
+                  :error="formError.find(item => item.field === 'favorite_only_until')"
+                  :inStyle="job.status === 'Allocated' ? 'background-color:lightgray' : ''"
+                  :disabled="job.status === 'Allocated'"
+                />
+              </div>
+            </div>
+          </template>
+          <template v-if="parseInt(selectedProfessionCategoryId) === 1">
+            <AppInput
+              v-model="form.ir35"
+              :type="'select'"
+              :name="'ir35'"
+              :label="'IR35 - role inside or outside of scope'"
+              :items="[ {value: true, label: 'Inside of Scope'}, {value: false, label: 'Outside of Scope'} ]"
+              :inStyle="job.status === 'Allocated' ? 'background-color:lightgray' : ''"
+              :disabled="job.status === 'Allocated'"
+            />
+          </template>
 
           <AppInput
             v-model="form.profession_id"
@@ -372,6 +399,8 @@
             :name="'profession_id'"
             :label="'Role'"
             :items="professions"
+            :inStyle="job.status === 'Allocated' ? 'background-color:lightgray' : ''"
+            :disabled="job.status === 'Allocated'"
           />
 
           <AppFilterSearch
@@ -385,8 +414,9 @@
             @add="CheckEmptyField(form.qualification_id, 'qualification_id')"
             @remove="CheckEmptyField(form.qualification_id, 'qualification_id')"
             :professionCategoryId="selectedProfessionCategoryId"
+            :inStyle="job.status === 'Allocated' ? 'background-color:lightgray' : ''"
+            :disabled="job.status === 'Allocated'"
           />
-          <!-- :professionCategoryId="professionCategoryId.toString()" -->
 
           <AppFilterSearch
             v-model="form.clinical_system_id"
@@ -398,6 +428,8 @@
             :url="'/api/v1/clinical-systems'"
             @add="CheckEmptyField(form.clinical_system_id, 'clinical_system_id')"
             @remove="CheckEmptyField(form.clinical_system_id, 'clinical_system_id')"
+            :inStyle="job.status === 'Allocated' ? 'background-color:lightgray' : ''"
+            :disabled="job.status === 'Allocated'"
           />
           <AppFilterSearch
             v-model="form.spoken_language_id"
@@ -407,18 +439,21 @@
             :info="'Choose other languages you can speak'"
             :url="'/api/v1/spoken-languages'"
             :defaultItem="'English'"
+            :inStyle="job.status === 'Allocated' ? 'background-color:lightgray' : ''"
+            :disabled="job.status === 'Allocated'"
           />
 
           <div class="font-bold text-sm sm:text-md">Compliance requirements</div>
           <AppInput
             v-model="form.compliance_document_id"
             :type="'multi-checkbox'"
-            @checked="form.compliance_document_id.push($event)"
-            @unchecked="form.compliance_document_id.splice(form.compliance_document_id.findIndex(item => item === $event), 1)"
+            @checked="job.status === 'Allocated' ? '' : form.compliance_document_id.push($event)"
+            @unchecked="job.status === 'Allocated' ? '' : form.compliance_document_id.splice(form.compliance_document_id.findIndex(item => item === $event), 1)"
             :name="'compliance_document_id'"
             :label="`${selectedProfession.profession_category.id === 1 ? 'For GPs:' : selectedProfession.profession_category.id === 2 ? 'For Nurses, et al:' : ''}`"
             :placeholder="''"
             :lists="compliances"
+            :disabled="job.status === 'Allocated'"
           />
           <div class="font-bold text-sm sm:text-md">Mandatory trainings</div>
           <AppInput
@@ -435,31 +470,19 @@
           <div class="my-3" v-if="mandatory_training_lists.length === 0">
             <AppButton
               :label="'Go to Profile to add items here'"
-              @click="$router.push('/profile')"
+              @click="goToProfile"
               :inStyle="'padding:4px;'"
             />
           </div>
         </div>
       </div>
       <div class="mb-8">
-        <AppButton :label="'Save changes'" :inStyle="'padding:8px'" @click="validateUpdate" />
-      </div>
-      <div class="flex flex-col">
-        <div class="font-bold text-xs sm:text-sm">Practice</div>
-        <div class="font-bold text-sm sm:text-md">{{job.platform_job.practice.surgery.name}}</div>
-        <div
-          class="text-sm sm:text-md"
-        >{{job.platform_job.practice.surgery.address.line_1}} {{job.platform_job.practice.surgery.address.line_2}} {{job.platform_job.practice.surgery.address.line_3}} {{job.platform_job.practice.surgery.address.post_code}}</div>
-        <div class="mt-4">
-          <GmapMap
-            :center="{lat:latLang.y, lng:latLang.x}"
-            :zoom="15"
-            map-type-id="terrain"
-            style="width: 100%; height:300px"
-          >
-            <GmapMarker :position="google && new google.maps.LatLng(latLang.y, latLang.x)" />
-          </GmapMap>
-        </div>
+        <AppButton
+          :label="'Save changes'"
+          :inStyle="'padding:8px'"
+          @click="validateUpdate"
+          :disabled="loading"
+        />
       </div>
     </div>
     <AppConfirmationModal
@@ -523,6 +546,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       modal: false,
 
       professionCategoryId: "",
@@ -583,7 +607,7 @@ export default {
         locum_detail_rate_type_id: 1,
         ir35: false,
         mandatory_training_id: [],
-        profession_id: "",
+        profession_id: null,
         qualification_id: [],
         clinical_system_id: [],
         spoken_language_id: [],
@@ -592,8 +616,8 @@ export default {
         time_start: null,
         date_end: null,
         time_end: null,
-        include_saturday: false,
-        include_sunday: false,
+        include_saturday: true,
+        include_sunday: true,
         unpaid_breaks_in_minutes: "",
         shift_id: "",
         auto_assign_at: null,
@@ -607,48 +631,58 @@ export default {
     };
   },
   watch: {
-    "form.profession_id"(value) {
-      if (value && this.professions_categories.length > 0) {
+    "form.profession_id"(newValue, oldValue) {
+      if (newValue && this.professions_categories.length > 0) {
         this.selectedProfession = this.professions_categories.find(
-          item => item.id == value
+          item => item.id == newValue
         );
 
         if (this.selectedProfession.profession_category.id == 1) {
           this.compliances = this.gp_compliance_documents_lists;
-          return;
-        }
-        if (this.selectedProfession.profession_category.id == 2) {
+        } else if (this.selectedProfession.profession_category.id == 2) {
           this.compliances = this.others_compliance_documents_lists;
-          return;
         }
+      }
+      if (newValue && oldValue) {
+        this.form.compliance_document_id = [];
+        this.form.qualification_id = [];
       }
     },
     "form.date_end"(value) {
-      let end = this.$moment(value);
+      let end = this.$moment(value, "YYYY-MM-DD");
       let days = [];
-      let day = this.$moment(this.form.date_start);
-      while (day <= end) {
-        days.push(day.day());
-        day = day.clone().add(1, "d");
+      let startDay = this.$moment(this.form.date_start, "YYYY-MM-DD");
+      while (startDay <= end) {
+        days.push(startDay.day());
+        startDay = startDay.clone().add(1, "d");
       }
-      this.show_saturday = false;
-      this.show_sunday = false;
-      if (days.includes(6)) {
-        this.show_saturday = true;
-      }
-      if (days.includes(0)) {
-        this.show_sunday = true;
-      }
+      this.getListofDays(days);
     },
     session_amendment(value) {
       if (value !== "other") {
         this.form.update_remarks = value;
       }
+    },
+    "form.date_start"(value) {
+      let start = this.$moment(value, "YYYY-MM-DD");
+      let days = [];
+      let endDay = this.$moment(this.form.date_end, "YYYY-MM-DD");
+      while (endDay >= start) {
+        days.push(endDay.day());
+        endDay = endDay.clone().subtract(1, "d");
+      }
+      this.getListofDays(days);
+    },
+    "form.rate"(oldValue, value) {
+      this.validateNumber(this.form.rate, "rate");
+    },
+    "form.total_hours"(oldValue, value) {
+      this.validateNumber(this.form.total_hours, "total_hours");
     }
   },
   computed: {
     authPermissions() {
-      return this.$store.getters["auth/permissions"];
+      return this.$store.getters["permissions"];
     },
     google: gmapApi,
     latLang() {
@@ -688,6 +722,10 @@ export default {
         this.professions.push({ label: item.name, value: item.id });
         this.professions_categories.push(item);
       });
+
+      this.selectedProfession = this.professions_categories.find(
+        item => item.id == this.job.platform_job.profession.id
+      );
     });
 
     this.$axios.$get(`/api/v1/me`).then(res => {
@@ -764,13 +802,16 @@ export default {
       this.auto_assign_job = true;
     }
 
-    if (this.job.platform_job.selection_date) {
+    if (this.job.selection_date) {
       this.selection_date.date = this.$moment(
-        this.job.platform_job.selection_date
+        this.job.selection_date,
+        "YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"
       ).format("YYYY-MM-DD");
       this.selection_date.time = this.$moment(
-        this.job.platform_job.selection_date
+        this.job.selection_date,
+        "YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"
       ).format("HH:mm");
+      this.selection_notification = true;
     }
 
     if (
@@ -782,11 +823,11 @@ export default {
       this.bank_first = true;
       this.favorite_only_until.date = this.$moment(
         this.job.platform_job.favorite_only_until,
-        "YYYY-MM-DDTHH:mm:ss:sssZ"
+        "YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"
       ).format("YYYY-MM-DD");
       this.favorite_only_until.time = this.$moment(
         this.job.platform_job.favorite_only_until,
-        "YYYY-MM-DDTHH:mm:ss:sssZ"
+        "YYYY-MM-DD[T]HH:mm:ss.SSS[Z]"
       ).format("HH:mm");
     } else if (
       this.$moment(this.job.date_start, "YYYY-MM-DD").diff(
@@ -842,12 +883,77 @@ export default {
     });
 
     this.form.profession_id = this.job.platform_job.profession.id;
+    if (this.job.type === "Platform") {
+      if (this.job.platform_job.profession.name === "GP") {
+        this.compliances = this.gp_compliance_documents_lists;
+      }
+      if (this.job.platform_job.profession.name !== "GP") {
+        this.compliances = this.others_compliance_documents_lists;
+      }
+    }
+    if (this.job.type === "Private") {
+      if (this.job.private_job.profession.name === "GP") {
+        this.compliances = this.gp_compliance_documents_lists;
+      }
+      if (this.job.private_job.profession.name !== "GP") {
+        this.compliances = this.others_compliance_documents_lists;
+      }
+    }
   },
   methods: {
+    goToProfile() {
+      window.open("/profile", "_blank");
+    },
+    getListofDays(days) {
+      if (days.includes(6) && days.length > 1) {
+        this.show_saturday = true;
+        this.form.include_saturday = true;
+      } else if (days.includes(6) && days.length === 1) {
+        this.show_saturday = false;
+        this.form.include_saturday = true;
+      } else if (!days.includes(6)) {
+        this.show_saturday = false;
+        this.form.include_saturday = false;
+      }
+      if (days.includes(0) && days.length > 1) {
+        this.show_sunday = true;
+        this.form.include_sunday = true;
+      } else if (days.includes(0) && days.length === 1) {
+        this.show_sunday = false;
+        this.form.include_sunday = true;
+      } else if (!days.includes(0)) {
+        this.show_sunday = false;
+        this.form.include_sunday = false;
+      }
+      if (days.length === 2 && days.includes(0) && days.includes(6)) {
+        this.show_saturday = false;
+        this.show_sunday = false;
+        this.form.include_saturday = true;
+        this.form.include_sunday = true;
+      }
+    },
     uncheckMandatory(value) {
       this.form.mandatory_training_id = this.form.mandatory_training_id.filter(
         id => id != value
       );
+    },
+    validateNumber(value, fieldName) {
+      let displayFieldName =
+        fieldName.charAt(0).toUpperCase() +
+        fieldName.slice(1).replace(/_/g, " ");
+      let index = this.formError.findIndex(item => item.field === fieldName);
+      if (
+        parseInt(value) < 1 ||
+        value.toString().includes("e") ||
+        value === ""
+      ) {
+        this.formError.push({
+          field: fieldName,
+          message: `${displayFieldName} is invalid`
+        });
+      } else {
+        this.formError.splice(index, 1);
+      }
     },
     validateUpdate() {
       if (this.job.status === "Applied") {
@@ -880,6 +986,26 @@ export default {
         notRequired.push("update_accepted_until");
       }
 
+      // let startDateTime = this.$moment(
+      //   `${this.form.date_start} ${this.form.time_start}`,
+      //   "YYYY-MM-DD HH:mm"
+      // ).format("YYYY-MM-DD HH:mm");
+      // let endDateTime = this.$moment(
+      //   `${this.form.date_end} ${this.form.time_end}`,
+      //   "YYYY-MM-DD HH:mm"
+      // ).format("YYYY-MM-DD HH:mm");
+
+      // if (this.$moment(this.startDateTime).isSameOrAfter(this.endDateTime)) {
+      //   this.formError.push({
+      //     field: "date_end",
+      //     message: "Invalid End Date"
+      //   });
+      //   this.formError.push({
+      //     field: "date_start",
+      //     message: "Invalid Start Date"
+      //   });
+      // }
+
       if (
         ["15", 15, "30", 30, "60", 60, false, "false"].includes(
           this.unpaid_breaks
@@ -888,74 +1014,93 @@ export default {
         notRequired.push("unpaid_breaks_in_minutes");
       }
 
-      if (
-        this.selection_notification == false ||
-        this.selection_notification == "false"
+      if (["true", true].includes(this.auto_assign_job)) {
+        this.selection_notification = false;
+      }
+
+      if (["false", false].includes(this.selection_notification)) {
+        notRequired.push("selection_date");
+      } else if (
+        ["true", true].includes(this.selection_notification) &&
+        this.selection_date.date &&
+        this.selection_date.time
       ) {
         notRequired.push("selection_date");
-      } else {
-        if (
-          this.selection_notification === true ||
-          this.selection_notification === "true"
-        ) {
-          if (this.selection_date.date && this.selection_date.time) {
-            notRequired.push("selection_date");
-          }
-        }
       }
 
-      if (this.bank_first == false || this.bank_first == "false") {
+      if (["true", true].includes(this.bank_only)) {
+        this.bank_first = false;
+      }
+
+      if (["false", false].includes(this.bank_first)) {
         notRequired.push("favorite_only_until");
-      } else {
-        if (this.bank_first === true || this.bank_first === "true") {
-          if (this.favorite_only_until.date && this.favorite_only_until.time) {
-            notRequired.push("favorite_only_until");
-          }
-        }
+      } else if (
+        ["true", true].includes(this.bank_first) &&
+        this.favorite_only_until.date &&
+        this.favorite_only_until.time
+      ) {
+        notRequired.push("favorite_only_until");
       }
 
+      this.validateNumber(this.form.rate, "rate");
+      this.validateNumber(this.form.total_hours, "total_hours");
       this.Validate(this.form, notRequired);
       if (!this.formError.length) {
+        this.selectedClinicalSystem = [...this.form.clinical_system_id];
         this.form.clinical_system_id = this.form.clinical_system_id.map(
           item => item.value
         );
+        this.selectedQualification = [...this.form.qualification_id];
         this.form.qualification_id = this.form.qualification_id.map(
           item => item.value
         );
+        this.selectedSpokenLanguage = [...this.form.spoken_language_id];
         this.form.spoken_language_id = this.form.spoken_language_id.map(
           item => item.value
         );
-        this.form.mandatory_training_id = this.form.mandatory_training_id.map(
-          item => item.value
-        );
-        this.form.date_start = this.$moment(this.form.date_start).format(
+
+        this.form.date_start = this.$moment(
+          this.form.date_start,
           "YYYY-MM-DD"
-        );
-        this.form.date_end = this.$moment(this.form.date_end).format(
+        ).format("YYYY-MM-DD");
+        this.form.date_end = this.$moment(
+          this.form.date_end,
           "YYYY-MM-DD"
-        );
+        ).format("YYYY-MM-DD");
 
-        this.form.auto_assign_at =
-          this.auto_assign_job === true || this.auto_assign_job === "true"
-            ? "1970-01-01 00:00"
-            : null;
+        if (Array.isArray(this.form.session_requirements)) {
+          if (this.form.session_requirements.length === 1) {
+            this.form.session_requirements = this.form.session_requirements[0];
+          } else if (this.form.session_requirements.length > 0) {
+            this.form.session_requirements = this.form.session_requirements.join();
+          } else if (this.form.session_requirements.length === 0) {
+            this.form.session_requirements = "";
+          }
+        }
 
-        this.form.selection_date =
-          this.selection_notification === true ||
-          this.selection_notification === "true"
-            ? `${this.$moment(this.selection_date.date).format("YYYY-MM-DD")} ${
-                this.selection_date.time
-              }`
-            : null;
+        this.form.auto_assign_at = null;
+        if (["true", true].includes(this.auto_assign_job)) {
+          this.form.auto_assign_at = "1970-01-01 00:00";
+        }
 
-        if (this.bank_first === true || this.bank_first === "true") {
+        this.form.selection_date = null;
+        if (["false", false].includes(this.auto_assign_job)) {
+          if (["true", true].includes(this.selection_notification)) {
+            this.form.selection_date = `${this.$moment(
+              this.selection_date.date,
+              "YYYY-MM-DD"
+            ).format("YYYY-MM-DD")} ${this.selection_date.time}`;
+          }
+        }
+
+        this.form.favorite_only_until = null;
+        if (["true", true].includes(this.bank_first)) {
           this.form.favorite_only_until = `${this.$moment(
             this.favorite_only_until.date,
             "YYYY-MM-DD"
           ).format("YYYY-MM-DD")} ${this.favorite_only_until.time}`;
         }
-
-        if (this.bank_only === true || this.bank_only === "true") {
+        if (["true", true].includes(this.bank_only)) {
           this.form.favorite_only_until = `${this.$moment(
             this.form.date_start,
             "YYYY-MM-DD"
@@ -963,15 +1108,6 @@ export default {
             .add(1, "days")
             .format("YYYY-MM-DD HH:mm")}`;
         }
-
-        // if (this.form.update_accepted_until) {
-        //   this.form.update_accepted_until =
-        //     this.form.update_accepted_until * 60;
-        // }
-
-        this.form.session_requirements.length > 0
-          ? (this.form.session_requirements = this.form.session_requirements.join())
-          : (this.form.session_requirements = "");
 
         if (["15", 15, "30", 30, "60", 60].includes(this.unpaid_breaks)) {
           this.form.unpaid_breaks_in_minutes = this.unpaid_breaks;
@@ -982,19 +1118,55 @@ export default {
         if (["false", false].includes(this.unpaid_breaks)) {
           this.form.unpaid_breaks_in_minutes = "";
         }
-
+        this.form.ir35 =
+          this.selectedProfession.profession_category.id === 1
+            ? this.form.ir35
+            : false;
+        this.loading = true;
         this.$axios
           .$put(`/api/v1/practice/jobs/${this.job.id}`, this.form)
           .then(res => {
             this.$store.commit("SET_NOTIFICATION", {
               enabled: true,
               status: "success",
-              text: [res.message]
+              text: ["Successfully updated job"]
             });
             this.$emit("updateJob", {
               newJob: res.data.new_job,
               oldJob: res.data.job
             });
+          })
+          .catch(err => {
+            console.log("err", err.response || err);
+            this.form.clinical_system_id = this.selectedClinicalSystem;
+            this.form.qualification_id = this.selectedQualification;
+            this.form.spoken_language_id = this.selectedSpokenLanguage;
+
+            this.form.session_requirements = this.form.session_requirements.split(
+              ","
+            );
+
+            if (err.response.status === 500) {
+              this.formError.push({
+                field: err.response.statusText,
+                message: "Please check your inputs"
+              });
+            } else if (err.response.status === 400) {
+              this.formError.push({
+                field: "date_start",
+                message: err.response.data.message
+              });
+              this.formError.push({
+                field: "date_end",
+                message: err.response.data.message
+              });
+            } else {
+              this.formError = err.response.data.error_messages;
+            }
+            throw err;
+          })
+          .finally(() => {
+            this.loading = false;
           });
       } else {
         this.$nextTick(() => {

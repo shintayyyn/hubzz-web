@@ -13,12 +13,16 @@ export const state = () => ({
 	user_verification: {
 		modal: false,
 		status: ''
-	}
+	},
+	user_deactivated_modal: false
 });
 
 export const mutations = {
 	SET_SOCKET(state, payload) {
 		state.socket_id = payload;
+	},
+	SET_PERMISSIONS(state, payload) {
+		state.auth.user.practice_detail.role.permissions = payload
 	},
 	SET_NOTIFICATION(state, payload) {
 		state.notification.enabled = payload.enabled;
@@ -41,6 +45,9 @@ export const mutations = {
 	},
 	SET_USER_VERIFICATION_MODAL(state, payload) {
 		state.user_verification = payload
+	},
+	SET_USER_DEACTIVATED(state, payload) {
+		state.user_deactivated_modal = payload
 	}
 };
 
@@ -71,5 +78,8 @@ export const getters = {
 				label: item.surgery.name
 			};
 		});
-	}
+	},
+	permissions(state) {
+		return state.auth.user && state.auth.user.practice_detail && state.auth.user.practice_detail.role ? state.auth.user.practice_detail.role.permissions.map(item => item.name) : []
+	},
 };

@@ -21,7 +21,7 @@
         v-model="has_absences"
         :type="'select'"
         :name="'has_absences'"
-        :label="'Was the locum has any absences?'"
+        :label="'Was the locum having any absences?'"
         :items="[{ label: 'Yes', value: true }, { label: 'No', value: false }]"
       />
 
@@ -35,10 +35,10 @@
           :error="formError.find(item => item.field === 'absent_days')"
         />
         <AppInput
-          v-model="form.absent_days_reason"
+          v-model="form.reason_of_absence"
           :type="'textarea'"
-          :name="'absent_days_reason'"
-          :label="'Withdrawal Status'"
+          :name="'reason_of_absence'"
+          :label="'Reason of Absence'"
           :placeholder="'For e.g. No-show'"
           :resize="false"
         />
@@ -144,7 +144,7 @@ export default {
       form: {
         cancelled_reason: "",
         absent_days: 0,
-        absent_days_reason: "",
+        reason_of_absence: "",
         late_hours: 0,
         late_hours_reason: "",
         final_hours: 0
@@ -155,19 +155,18 @@ export default {
   methods: {
     validateForm() {
       this.formError = [];
-      let notRequired = [];
+      let notRequired = ["final_hours"];
 
       if (this.job.status !== "Ongoing") {
         notRequired.push(
           "absent_days",
-          "absent_days_reason",
+          "reason_of_absence",
           "late_hours",
-          "late_hours_reason",
-          "final_hours"
+          "late_hours_reason"
         );
       } else if (this.job.status === "Ongoing") {
         if (this.has_absences === "false" || this.has_absences === false) {
-          notRequired.push("absent_days", "absent_days_reason");
+          notRequired.push("absent_days", "reason_of_absence");
         }
         if (this.has_late === "false" || this.has_late === false) {
           notRequired.push("late_hours", "late_hours_reason");
@@ -180,19 +179,18 @@ export default {
     },
     cancel() {
       this.formError = [];
-      let notRequired = [];
+      let notRequired = ["final_hours"];
 
       if (this.job.status !== "Ongoing") {
         notRequired.push(
           "absent_days",
-          "absent_days_reason",
+          "reason_of_absence",
           "late_hours",
-          "late_hours_reason",
-          "final_hours"
+          "late_hours_reason"
         );
       } else if (this.job.status === "Ongoing") {
         if (this.has_absences === "false" || this.has_absences === false) {
-          notRequired.push("absent_days", "absent_days_reason");
+          notRequired.push("absent_days", "reason_of_absence");
         }
         if (this.has_late === "false" || this.has_late === false) {
           notRequired.push("late_hours", "late_hours_reason");
@@ -203,7 +201,6 @@ export default {
         this.$axios
           .$put(`/api/v1/practice/jobs/${this.job.id}/cancel`, this.form)
           .then(res => {
-            console.log(res);
             this.$store.commit(
               "jobs/REMOVE_PRACTICE_ALLOCATED_JOB",
               res.data.job.id
@@ -230,7 +227,7 @@ export default {
                 }`
               ]
             });
-            this.$emit("cancelled");
+            this.$emit("cancelled", this.job.id);
           });
       }
       this.confirmation_modal = false;

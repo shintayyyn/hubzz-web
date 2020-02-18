@@ -4,22 +4,22 @@
       <nuxt-link
         :to="{ path: `/surgery-management/practice-spokes/${$route.params.id}/surgery-billings`, query: { ...$route.query, status: 'to-be-invoiced' } }"
         class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('surgery-management-practice-spokes-id-surgery-billings-index') && (!$route.query.status || $route.query.status.toLowerCase() === 'to-be-invoiced') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name.includes('surgery-management-practice-spokes-id-surgery-billings') && (!$route.query.status || $route.query.status.toLowerCase() === 'to-be-invoiced') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >To be Invoiced</nuxt-link>
       <nuxt-link
         :to="{ path: `/surgery-management/practice-spokes/${$route.params.id}/surgery-billings`, query: { ...$route.query, status: 'disputed' } }"
         class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('surgery-management-practice-spokes-id-surgery-billings-index') && $route.query.status && $route.query.status.toLowerCase() === 'disputed' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name.includes('surgery-management-practice-spokes-id-surgery-billings') && $route.query.status && $route.query.status.toLowerCase() === 'disputed' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >Disputed Invoices</nuxt-link>
       <nuxt-link
         :to="{ path: `/surgery-management/practice-spokes/${$route.params.id}/surgery-billings`, query: { ...$route.query, status: 'issued' } }"
         class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('surgery-management-practice-spokes-id-surgery-billings-index') && $route.query.status && $route.query.status.toLowerCase() === 'issued' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name.includes('surgery-management-practice-spokes-id-surgery-billings') && $route.query.status && $route.query.status.toLowerCase() === 'issued' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >Invoiced</nuxt-link>
       <nuxt-link
         :to="{ path: `/surgery-management/practice-spokes/${$route.params.id}/surgery-billings`, query: { ...$route.query, status: 'approved' } }"
         class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('surgery-management-practice-spokes-id-surgery-billings-index') && $route.query.status && $route.query.status.toLowerCase() === 'approved' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name.includes('surgery-management-practice-spokes-id-surgery-billings') && $route.query.status && $route.query.status.toLowerCase() === 'approved' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >Approved Invoices</nuxt-link>
     </div>
     <transition name="fade" mode="out-in">
@@ -39,31 +39,19 @@
           :perPage="params.limit"
           :columns="columns"
           :orderBy="params.order_by"
-          :routerLink="!$route.query.status || ($route.query.status && $route.query.status === 'to-be-invoiced') ? '' : '/practice-billing'"
-          :routerId="$route.query.status && $route.query.status !== 'to-be-invoiced' ? 'locum_invoice_id' : null"
           @pagechanged="pagechanged"
           @limitchanged="limitchanged"
           @sorted="sorted"
         >
-          <!-- <template v-slot:actions="slotProps">
-            <div class="flex justify-center">
-              <button
-                disabled
-                v-if="slotProps.item.paid"
-                class="px-4 py-2 font-bold rounded-lg focus:outline-none bg-green-600 text-white cursor-not-allowed"
-              >Already Paid</button>
-              <button
-                disabled
-                v-if="slotProps.item.items.filter(invoice => invoice.approved === false).length > 0 && slotProps.item.disputed_items_count === 0"
-                class="px-4 py-2 font-bold rounded-lg focus:outline-none bg-gray-500 text-white cursor-not-allowed"
-              >For Approval</button>
-              <button
-                @click.stop.prevent="onClick(slotProps.item)"
-                v-if="slotProps.item.items.filter(invoice => invoice.approved === false).length === 0"
-                class="px-4 py-2 font-bold rounded-lg focus:outline-none bg-yellow-400"
-              >Mark as Paid</button>
+          <template v-slot:actions="slotProps">
+            <div class="flex flex-wrap justify-center">
+              <div
+                v-if="slotProps.item.locum_invoice_id && slotProps.item.invoice_status !== 'To Be Invoice' && slotProps.item.status !== 'Approved'"
+                @click="$router.push({ name: `surgery-management-practice-spokes-id-surgery-billings-index-invoiceId`, query: {...$route.query}, params: { id: $route.params.id, invoiceId: slotProps.item.locum_invoice_id } })"
+                class="my-1 p-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
+              >View</div>
             </div>
-          </template>-->
+          </template>
         </AppTable>
         <div v-else class="flex justify-center">{{noJobPartsToDisplay}}</div>
 
@@ -94,12 +82,12 @@
         </div>
         <transition name="fade" mode="out-in">
           <nuxt-link
-            :to="{ path: '/practice-billing', query: {...$route.query}}"
-            v-if="['practice-billing-index-id'].includes($route.name) || paymentModal"
+            :to="{ name: 'surgery-management-practice-spokes-id-surgery-billings-index', query: {...$route.query}}"
+            v-if="['surgery-management-practice-spokes-id-surgery-billings-index-id'].includes($route.name) || paymentModal"
             class="shield"
           ></nuxt-link>
         </transition>
-        <nuxt-child @updateInvoice="updateInvoice" />
+        <nuxt-child />
       </div>
     </transition>
   </section>
@@ -110,6 +98,7 @@ import AppDate from "@/components/Base/AppDate";
 import AppButton from "@/components/Base/AppButton";
 import { mixin as clickaway } from "vue-clickaway";
 export default {
+  props: ["childPracticeId"],
   mixins: [clickaway],
   transition: {
     name: "fade",
@@ -221,12 +210,13 @@ export default {
   },
   computed: {
     authPermissions() {
-      return this.$store.getters["auth/permissions"];
+      return this.$store.getters["permissions"];
     },
     noJobPartsToDisplay() {
       let str = "";
       switch (
-        this.$route.query.status && this.$route.query.status.toLowerCase()
+        this.$route.query.status &&
+        this.$route.query.status.toLowerCase()
       ) {
         case "to-be-invoiced":
           str = "This spoke do not have any completed job parts from Locums";
@@ -263,8 +253,16 @@ export default {
       }
     }
   },
-  async asyncData({ app, query, error }) {
+  async asyncData({ app, query, route, error }) {
     try {
+      // get child practice id
+      let childPracticeId = null;
+      await app.$axios
+        .$get(`/api/v1/practice/me/practice-surgeries/${route.params.id}`)
+        .then(res => {
+          childPracticeId = res.data.practice_surgery.child_practice_id;
+        });
+
       let status = [];
       let invoice_status = [];
       switch (query.status) {
@@ -294,7 +292,8 @@ export default {
         // limit: 5,
         status,
         invoice_status,
-        type: "Platform"
+        type: "Platform",
+        job_practice_id: [childPracticeId]
       };
 
       const [total, job_parts] = await Promise.all([
@@ -349,7 +348,8 @@ export default {
       let status = [];
       let invoice_status = [];
       switch (
-        this.$route.query.status && this.$route.query.status.toLowerCase()
+        this.$route.query.status &&
+        this.$route.query.status.toLowerCase()
       ) {
         case "to-be-invoiced":
           status = ["Completed", "Terminated"];
@@ -377,7 +377,8 @@ export default {
         // limit: 5,
         status,
         invoice_status,
-        type: "Platform"
+        type: "Platform",
+        job_practice_id: [this.childPracticeId]
       };
 
       return Promise.all([
@@ -422,7 +423,8 @@ export default {
       let status = [];
       let invoice_status = [];
       switch (
-        this.$route.query.status && this.$route.query.status.toLowerCase()
+        this.$route.query.status &&
+        this.$route.query.status.toLowerCase()
       ) {
         case "to-be-invoiced":
           status = ["Completed", "Terminated"];
@@ -451,6 +453,7 @@ export default {
         status,
         invoice_status,
         type: "Platform",
+        job_practice_id: [this.childPracticeId],
         order_by: this.params.order_by
       };
 

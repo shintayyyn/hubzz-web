@@ -168,6 +168,7 @@
 			/>
 			<div class="rounded-lg bg-gray-400 p-4 md:p-8 my-2">
 				<AppPostCode
+					:urlIndex="'/api/v1/postcode-coordinates'"
 					v-model="locumForm.post_code"
 					:name="'post_code'"
 					:label="'Post code'"
@@ -203,7 +204,7 @@
 					:error="formError.find(item => item.field === 'address_line_3')"
 					:inStyle="'background-color:#dae1e7;border-color:white;padding:16px 8px;'"
 					@submit="save"
-					@blur="CheckEmptyField(locumForm.address_line_3, 'address_line_3')"
+					@blur="CheckEmptyField(locumForm.address_line_3, 'address_line_3', 'City / Town / District')"
 					required
 				/>
 			</div>
@@ -375,7 +376,11 @@ export default {
 		save(domain) {
 			if (domain === "practice") {
 				this.formError = [];
-				this.Validate(this.practiceForm, ["title", "suffix"]);
+				this.Validate(
+					this.practiceForm,
+					["title", "suffix"],
+					[{ field: "address_line_3", display: "City / Town / District" }]
+				);
 				if (!this.formError.length) {
 					this.loading = true;
 					this.$axios

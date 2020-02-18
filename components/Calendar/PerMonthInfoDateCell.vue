@@ -8,75 +8,100 @@
         v-if="getPracticeOngoingJobs.length > 0"
       >
         <span
-          v-if="hasPracticeOngoingJobs(item.fullDate, 'AM')"
+          v-if="hasPracticeOngoingJobs(item.fullDate, 'AM', item.day)"
           class="bg-green-500 text-green-500 w-full h-2 sm:h-3 lg:h-4 rounded-bl-lg"
-        >.</span>
+        ></span>
         <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
         <span
-          v-if="hasPracticeOngoingJobs(item.fullDate, 'PM')"
+          v-if="hasPracticeOngoingJobs(item.fullDate, 'PM', item.day)"
           class="bg-green-500 text-green-500 w-full h-2 sm:h-3 lg:h-4"
-        >.</span>
+        ></span>
         <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
         <span
-          v-if="hasPracticeOngoingJobs(item.fullDate, 'Whole Day')"
+          v-if="hasPracticeOngoingJobs(item.fullDate, 'Whole Day', item.day)"
           class="bg-green-500 text-green-500 w-full h-2 sm:h-3 lg:h-4"
-        >.</span>
+        ></span>
         <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
         <span
-          v-if="hasPracticeOngoingJobs(item.fullDate, 'OOH')"
+          v-if="hasPracticeOngoingJobs(item.fullDate, 'OOH', item.day)"
           class="bg-green-500 text-green-500 w-full h-2 sm:h-3 lg:h-4 rounded-br-lg"
-        >.</span>
+        ></span>
         <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
       </div>
       <div
         class="flex flex-row flex-no-wrap absolute bottom-0 left-0 justify-start w-full"
-        v-if="getPracticeAllocatedJobs.length > 0"
+        v-if="getPracticeCompletedJobs.length > 0"
       >
         <span
-          v-if="hasPracticeAllocatedJobs(item.fullDate, 'AM')"
-          class="bg-green-300 text-green-300 w-full h-2 sm:h-3 lg:h-4 rounded-bl-lg"
-        >.</span>
+          v-if="hasPracticeCompletedJobs(item.fullDate, 'AM', item.day)"
+          class="bg-green-600 text-green-600 w-full h-2 sm:h-3 lg:h-4 rounded-bl-lg"
+        ></span>
         <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
         <span
-          v-if="hasPracticeAllocatedJobs(item.fullDate, 'PM')"
-          class="bg-green-300 text-green-300 w-full h-2 sm:h-3 lg:h-4"
-        >.</span>
+          v-if="hasPracticeCompletedJobs(item.fullDate, 'PM', item.day)"
+          class="bg-green-600 text-green-600 w-full h-2 sm:h-3 lg:h-4"
+        ></span>
         <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
         <span
-          v-if="hasPracticeAllocatedJobs(item.fullDate, 'Whole Day')"
-          class="bg-green-300 text-green-300 w-full h-2 sm:h-3 lg:h-4"
-        >.</span>
+          v-if="hasPracticeCompletedJobs(item.fullDate, 'Whole Day', item.day)"
+          class="bg-green-600 text-green-600 w-full h-2 sm:h-3 lg:h-4"
+        ></span>
         <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
         <span
-          v-if="hasPracticeAllocatedJobs(item.fullDate, 'OOH')"
-          class="bg-green-300 text-green-300 w-full h-2 sm:h-3 lg:h-4 rounded-br-lg"
-        >.</span>
+          v-if="hasPracticeCompletedJobs(item.fullDate, 'OOH', item.day)"
+          class="bg-green-600 text-green-600 w-full h-2 sm:h-3 lg:h-4 rounded-br-lg"
+        ></span>
         <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
       </div>
       <!-- WHOLE -->
       <div
         class="flex flex-row flex-no-wrap absolute bottom-0 left-0 justify-start w-full"
+        v-if="getPracticeAllocatedJobs.length > 0"
+      >
+        <span
+          v-if="hasPracticeAllocatedJobs(item.fullDate, 'AM', item.day)"
+          class="bg-green-300 text-green-300 w-full h-2 sm:h-3 lg:h-4 rounded-bl-lg"
+        ></span>
+        <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
+        <span
+          v-if="hasPracticeAllocatedJobs(item.fullDate, 'PM', item.day)"
+          class="bg-green-300 text-green-300 w-full h-2 sm:h-3 lg:h-4"
+        ></span>
+        <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
+        <span
+          v-if="hasPracticeAllocatedJobs(item.fullDate, 'Whole Day', item.day)"
+          class="bg-green-300 text-green-300 w-full h-2 sm:h-3 lg:h-4"
+        ></span>
+        <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
+        <span
+          v-if="hasPracticeAllocatedJobs(item.fullDate, 'OOH', item.day)"
+          class="bg-green-300 text-green-300 w-full h-2 sm:h-3 lg:h-4 rounded-br-lg"
+        ></span>
+        <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
+      </div>
+      <div
+        class="flex flex-row flex-no-wrap absolute bottom-0 left-0 justify-start w-full"
         v-if="getPracticeAppliedJobs.length > 0"
       >
         <span
-          v-if="hasPracticeAppliedJobs(item.fullDate, 'AM')"
+          v-if="hasPracticeAppliedJobs(item.fullDate, 'AM', item.day)"
           class="bg-orange-200 text-orange-200 w-full h-2 sm:h-3 lg:h-4 rounded-bl-lg"
-        >.</span>
+        ></span>
         <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
         <span
-          v-if="hasPracticeAppliedJobs(item.fullDate, 'PM')"
+          v-if="hasPracticeAppliedJobs(item.fullDate, 'PM', item.day)"
           class="bg-orange-200 text-orange-200 w-full h-2 sm:h-3 lg:h-4"
-        >.</span>
+        ></span>
         <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
         <span
-          v-if="hasPracticeAppliedJobs(item.fullDate, 'Whole Day')"
+          v-if="hasPracticeAppliedJobs(item.fullDate, 'Whole Day', item.day)"
           class="bg-orange-200 text-orange-200 w-full h-2 sm:h-3 lg:h-4"
-        >.</span>
+        ></span>
         <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
         <span
-          v-if="hasPracticeAppliedJobs(item.fullDate, 'OOH')"
+          v-if="hasPracticeAppliedJobs(item.fullDate, 'OOH', item.day)"
           class="bg-orange-200 text-orange-200 w-full h-2 sm:h-3 lg:h-4 rounded-br-lg"
-        >.</span>
+        ></span>
         <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
       </div>
       <div
@@ -84,24 +109,24 @@
         v-if="getPracticeUnfilledJobs.length > 0"
       >
         <span
-          v-if="hasPracticeUnfilledJobs(item.fullDate, 'AM')"
+          v-if="hasPracticeUnfilledJobs(item.fullDate, 'AM', item.day)"
           class="bg-red-500 text-red-500 w-full h-2 sm:h-3 lg:h-4 rounded-bl-lg"
-        >.</span>
+        ></span>
         <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
         <span
-          v-if="hasPracticeUnfilledJobs(item.fullDate, 'PM')"
+          v-if="hasPracticeUnfilledJobs(item.fullDate, 'PM', item.day)"
           class="bg-red-500 text-red-500 w-full h-2 sm:h-3 lg:h-4"
-        >.</span>
+        ></span>
         <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
         <span
-          v-if="hasPracticeUnfilledJobs(item.fullDate, 'Whole Day')"
+          v-if="hasPracticeUnfilledJobs(item.fullDate, 'Whole Day', item.day)"
           class="bg-red-500 text-red-500 w-full h-2 sm:h-3 lg:h-4"
-        >.</span>
+        ></span>
         <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
         <span
-          v-if="hasPracticeUnfilledJobs(item.fullDate, 'OOH')"
+          v-if="hasPracticeUnfilledJobs(item.fullDate, 'OOH', item.day)"
           class="bg-red-500 text-red-500 w-full h-2 sm:h-3 lg:h-4 rounded-br-lg"
-        >.</span>
+        ></span>
         <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
       </div>
       <div
@@ -109,24 +134,49 @@
         v-if="getPracticeDeclinedJobs.length > 0"
       >
         <span
-          v-if="hasPracticeDeclinedJobs(item.fullDate, 'AM')"
+          v-if="hasPracticeDeclinedJobs(item.fullDate, 'AM', item.day)"
           class="bg-red-500 text-red-500 w-full h-2 sm:h-3 lg:h-4 rounded-bl-lg"
-        >.</span>
+        ></span>
         <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
         <span
-          v-if="hasPracticeDeclinedJobs(item.fullDate, 'PM')"
+          v-if="hasPracticeDeclinedJobs(item.fullDate, 'PM', item.day)"
           class="bg-red-500 text-red-500 w-full h-2 sm:h-3 lg:h-4"
-        >.</span>
+        ></span>
         <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
         <span
-          v-if="hasPracticeDeclinedJobs(item.fullDate, 'Whole Day')"
+          v-if="hasPracticeDeclinedJobs(item.fullDate, 'Whole Day', item.day)"
           class="bg-red-500 text-red-500 w-full h-2 sm:h-3 lg:h-4"
-        >.</span>
+        ></span>
         <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
         <span
-          v-if="hasPracticeDeclinedJobs(item.fullDate, 'OOH')"
+          v-if="hasPracticeDeclinedJobs(item.fullDate, 'OOH', item.day)"
           class="bg-red-500 text-red-500 w-full h-2 sm:h-3 lg:h-4 rounded-br-lg"
-        >.</span>
+        ></span>
+        <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
+      </div>
+      <div
+        class="flex flex-row flex-no-wrap absolute bottom-0 left-0 justify-start w-full"
+        v-if="getPracticeAvailableJobs.length > 0"
+      >
+        <span
+          v-if="hasPracticeAvailableJobs(item.fullDate, 'AM', item.day)"
+          class="bg-yellow-500 text-yellow-500 w-full h-2 sm:h-3 lg:h-4 rounded-bl-lg"
+        ></span>
+        <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
+        <span
+          v-if="hasPracticeAvailableJobs(item.fullDate, 'PM', item.day)"
+          class="bg-yellow-500 text-yellow-500 w-full h-2 sm:h-3 lg:h-4"
+        ></span>
+        <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
+        <span
+          v-if="hasPracticeAvailableJobs(item.fullDate, 'Whole Day', item.day)"
+          class="bg-yellow-500 text-yellow-500 w-full h-2 sm:h-3 lg:h-4"
+        ></span>
+        <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
+        <span
+          v-if="hasPracticeAvailableJobs(item.fullDate, 'OOH', item.day)"
+          class="bg-yellow-500 text-yellow-500 w-full h-2 sm:h-3 lg:h-4 rounded-br-lg"
+        ></span>
         <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
       </div>
       <!-- REMINDERS -->
@@ -137,7 +187,7 @@
         <span
           v-if="hasPracticeAppliedJobsReminder(item.fullDate, 'Reminder')"
           class="bg-gray-600 text-gray-600 w-1/4 h-2 sm:h-3 lg:h-4"
-        >.</span>
+        ></span>
         <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
       </div>
       <div
@@ -147,7 +197,7 @@
         <span
           v-if="hasPracticeAvailableJobsReminder(item.fullDate, 'Reminder')"
           class="bg-gray-600 text-gray-600 w-1/4 h-2 sm:h-3 lg:h-4"
-        >.</span>
+        ></span>
         <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
       </div>
     </template>
@@ -160,24 +210,49 @@
         v-if="getLocumOngoingJobs.length > 0"
       >
         <span
-          v-if="hasLocumOngoingJobs(item.fullDate, 'AM')"
+          v-if="hasLocumOngoingJobs(item.fullDate, 'AM', item.day)"
           class="bg-green-500 text-green-500 w-full h-2 sm:h-3 lg:h-4 rounded-bl-lg"
-        >.</span>
+        ></span>
         <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
         <span
-          v-if="hasLocumOngoingJobs(item.fullDate, 'PM')"
+          v-if="hasLocumOngoingJobs(item.fullDate, 'PM', item.day)"
           class="bg-green-500 text-green-500 w-full h-2 sm:h-3 lg:h-4"
-        >.</span>
+        ></span>
         <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
         <span
-          v-if="hasLocumOngoingJobs(item.fullDate, 'Whole Day')"
+          v-if="hasLocumOngoingJobs(item.fullDate, 'Whole Day', item.day)"
           class="bg-green-500 text-green-500 w-full h-2 sm:h-3 lg:h-4"
-        >.</span>
+        ></span>
         <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
         <span
-          v-if="hasLocumOngoingJobs(item.fullDate, 'OOH')"
+          v-if="hasLocumOngoingJobs(item.fullDate, 'OOH', item.day)"
           class="bg-green-500 text-green-500 w-full h-2 sm:h-3 lg:h-4 rounded-br-lg"
-        >.</span>
+        ></span>
+        <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
+      </div>
+      <div
+        class="flex flex-row flex-no-wrap absolute bottom-0 left-0 justify-start w-full"
+        v-if="getLocumCompletedJobs.length > 0"
+      >
+        <span
+          v-if="hasLocumCompletedJobs(item.fullDate, 'AM', item.day)"
+          class="bg-green-600 text-green-600 w-full h-2 sm:h-3 lg:h-4 rounded-bl-lg"
+        ></span>
+        <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
+        <span
+          v-if="hasLocumCompletedJobs(item.fullDate, 'PM', item.day)"
+          class="bg-green-600 text-green-600 w-full h-2 sm:h-3 lg:h-4"
+        ></span>
+        <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
+        <span
+          v-if="hasLocumCompletedJobs(item.fullDate, 'Whole Day', item.day)"
+          class="bg-green-600 text-green-600 w-full h-2 sm:h-3 lg:h-4"
+        ></span>
+        <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
+        <span
+          v-if="hasLocumCompletedJobs(item.fullDate, 'OOH', item.day)"
+          class="bg-green-600 text-green-600 w-full h-2 sm:h-3 lg:h-4 rounded-br-lg"
+        ></span>
         <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
       </div>
       <!-- WHOLE -->
@@ -186,99 +261,74 @@
         v-if="getLocumAllocatedJobs.length > 0"
       >
         <span
-          v-if="hasLocumAllocatedJobs(item.fullDate, 'AM')"
+          v-if="hasLocumAllocatedJobs(item.fullDate, 'AM', item.day)"
           class="bg-green-300 text-green-300 w-full h-2 sm:h-3 lg:h-4 rounded-bl-lg"
-        >.</span>
+        ></span>
         <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
         <span
-          v-if="hasLocumAllocatedJobs(item.fullDate, 'PM')"
+          v-if="hasLocumAllocatedJobs(item.fullDate, 'PM', item.day)"
           class="bg-green-300 text-green-300 w-full h-2 sm:h-3 lg:h-4"
-        >.</span>
+        ></span>
         <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
         <span
-          v-if="hasLocumAllocatedJobs(item.fullDate, 'Whole Day')"
+          v-if="hasLocumAllocatedJobs(item.fullDate, 'Whole Day', item.day)"
           class="bg-green-300 text-green-300 w-full h-2 sm:h-3 lg:h-4"
-        >.</span>
+        ></span>
         <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
         <span
-          v-if="hasLocumAllocatedJobs(item.fullDate, 'OOH')"
+          v-if="hasLocumAllocatedJobs(item.fullDate, 'OOH', item.day)"
           class="bg-green-300 text-green-300 w-full h-2 sm:h-3 lg:h-4 rounded-br-lg"
-        >.</span>
+        ></span>
         <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
       </div>
-      <!-- <div
-        class="flex flex-row flex-no-wrap absolute bottom-0 left-0 justify-start w-full"
-        v-if="getLocumAllocatedPrivateJobs.length > 0"
-      >
-        <span
-          v-if="hasLocumAllocatedPrivateJobs(item.fullDate, 'AM')"
-          class="bg-green-300 text-green-300 w-full h-2 sm:h-3 lg:h-4 rounded-bl-lg"
-        >.</span>
-        <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
-        <span
-          v-if="hasLocumAllocatedPrivateJobs(item.fullDate, 'PM')"
-          class="bg-green-300 text-green-300 w-full h-2 sm:h-3 lg:h-4"
-        >.</span>
-        <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
-        <span
-          v-if="hasLocumAllocatedPrivateJobs(item.fullDate, 'Whole Day')"
-          class="bg-green-300 text-green-300 w-full h-2 sm:h-3 lg:h-4"
-        >.</span>
-        <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
-        <span
-          v-if="hasLocumAllocatedPrivateJobs(item.fullDate, 'OOH')"
-          class="bg-green-300 text-green-300 w-full h-2 sm:h-3 lg:h-4 rounded-br-lg"
-        >.</span>
-        <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
-      </div>
-      <div
-        class="flex flex-row flex-no-wrap absolute bottom-0 left-0 justify-start w-full"
-        v-if="getLocumAllocatedPlatformJobs.length > 0"
-      >
-        <span
-          v-if="hasLocumAllocatedPlatformJobs(item.fullDate, 'AM')"
-          class="bg-green-300 text-green-300 w-full h-2 sm:h-3 lg:h-4 rounded-bl-lg"
-        >.</span>
-        <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
-        <span
-          v-if="hasLocumAllocatedPlatformJobs(item.fullDate, 'PM')"
-          class="bg-green-300 text-green-300 w-full h-2 sm:h-3 lg:h-4"
-        >.</span>
-        <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
-        <span
-          v-if="hasLocumAllocatedPlatformJobs(item.fullDate, 'Whole Day')"
-          class="bg-green-300 text-green-300 w-full h-2 sm:h-3 lg:h-4"
-        >.</span>
-        <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
-        <span
-          v-if="hasLocumAllocatedPlatformJobs(item.fullDate, 'OOH')"
-          class="bg-green-300 text-green-300 w-full h-2 sm:h-3 lg:h-4 rounded-br-lg"
-        >.</span>
-        <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
-      </div>-->
       <div
         class="flex flex-row flex-no-wrap absolute bottom-0 left-0 justify-start w-full"
         v-if="getLocumAppliedJobs.length > 0"
       >
         <span
-          v-if="hasLocumAppliedJobs(item.fullDate, 'AM')"
+          v-if="hasLocumAppliedJobs(item.fullDate, 'AM', item.day)"
           class="bg-orange-200 text-orange-200 w-full h-2 sm:h-3 lg:h-4 rounded-bl-lg"
-        >.</span>
+        ></span>
         <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
         <span
-          v-if="hasLocumAppliedJobs(item.fullDate, 'PM')"
+          v-if="hasLocumAppliedJobs(item.fullDate, 'PM', item.day)"
           class="bg-orange-200 text-orange-200 w-full h-2 sm:h-3 lg:h-4"
-        >.</span>
+        ></span>
         <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
         <span
-          v-if="hasLocumAppliedJobs(item.fullDate, 'Whole Day')"
+          v-if="hasLocumAppliedJobs(item.fullDate, 'Whole Day', item.day)"
           class="bg-orange-200 text-orange-200 w-full h-2 sm:h-3 lg:h-4"
-        >.</span>
+        ></span>
         <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
         <span
-          v-if="hasLocumAppliedJobs(item.fullDate, 'OOH')"
+          v-if="hasLocumAppliedJobs(item.fullDate, 'OOH', item.day)"
           class="bg-orange-200 text-orange-200 w-full h-2 sm:h-3 lg:h-4 rounded-br-lg"
-        >.</span>
+        ></span>
+        <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
+      </div>
+      <div
+        class="flex flex-row flex-no-wrap absolute bottom-0 left-0 justify-start w-full"
+        v-if="getLocumAvailableJobs.length > 0"
+      >
+        <span
+          v-if="hasLocumAvailableJobs(item.fullDate, 'AM', item.day)"
+          class="bg-yellow-500 text-yellow-500 w-full h-2 sm:h-3 lg:h-4 rounded-bl-lg"
+        ></span>
+        <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
+        <span
+          v-if="hasLocumAvailableJobs(item.fullDate, 'PM', item.day)"
+          class="bg-yellow-500 text-yellow-500 w-full h-2 sm:h-3 lg:h-4"
+        ></span>
+        <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
+        <span
+          v-if="hasLocumAvailableJobs(item.fullDate, 'Whole Day', item.day)"
+          class="bg-yellow-500 text-yellow-500 w-full h-2 sm:h-3 lg:h-4"
+        ></span>
+        <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
+        <span
+          v-if="hasLocumAvailableJobs(item.fullDate, 'OOH', item.day)"
+          class="bg-yellow-500 text-yellow-500 w-full h-2 sm:h-3 lg:h-4 rounded-br-lg"
+        ></span>
         <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
       </div>
       <!-- UNAVAILABILITIES -->
@@ -289,22 +339,22 @@
         <span
           v-if="hasLocumUnavailabilities(item.fullDate, 'AM')"
           class="bg-pink-500 text-pink-500 w-full h-2 sm:h-3 lg:h-4 rounded-tl-lg"
-        >.</span>
+        ></span>
         <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
         <span
           v-if="hasLocumUnavailabilities(item.fullDate, 'PM')"
           class="bg-pink-500 text-pink-500 w-full h-2 sm:h-3 lg:h-4"
-        >.</span>
+        ></span>
         <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
         <span
           v-if="hasLocumUnavailabilities(item.fullDate, 'Whole Day')"
           class="bg-pink-500 text-pink-500 w-full h-2 sm:h-3 lg:h-4"
-        >.</span>
+        ></span>
         <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
         <span
           v-if="hasLocumUnavailabilities(item.fullDate, 'OOH')"
           class="bg-pink-500 text-pink-500 w-full h-2 sm:h-3 lg:h-4 rounded-tr-lg"
-        >.</span>
+        ></span>
         <span v-else class="text-white w-full h-2 sm:h-3 lg:h-4"></span>
       </div>
     </template>
@@ -319,6 +369,9 @@ export default {
     getPracticeOngoingJobs() {
       return this.$store.getters["jobs/getPracticeOngoingJobs"];
     },
+    getPracticeCompletedJobs() {
+      return this.$store.getters["jobs/getPracticeCompletedJobs"];
+    },
     // WHOLE
     getPracticeAllocatedJobs() {
       return this.$store.getters["jobs/getPracticeAllocatedJobs"];
@@ -331,6 +384,9 @@ export default {
     },
     getPracticeDeclinedJobs() {
       return this.$store.getters["jobs/getPracticeDeclinedJobs"];
+    },
+    getPracticeAvailableJobs() {
+      return this.$store.getters["jobs/getPracticeAvailableJobs"];
     },
     // REMINDERS
     getPracticeAvailableJobsReminder() {
@@ -345,18 +401,18 @@ export default {
     getLocumOngoingJobs() {
       return this.$store.getters["jobs/getLocumOngoingJobs"];
     },
+    getLocumCompletedJobs() {
+      return this.$store.getters["jobs/getLocumCompletedJobs"];
+    },
     // WHOLE
     getLocumAllocatedJobs() {
       return this.$store.getters["jobs/getLocumAllocatedJobs"];
     },
-    // getLocumAllocatedPrivateJobs() {
-    //   return this.$store.getters["jobs/getLocumAllocatedPrivateJobs"];
-    // },
-    // getLocumAllocatedPlatformJobs() {
-    //   return this.$store.getters["jobs/getLocumAllocatedPlatformJobs"];
-    // },
     getLocumAppliedJobs() {
       return this.$store.getters["jobs/getLocumAppliedJobs"];
+    },
+    getLocumAvailableJobs() {
+      return this.$store.getters["jobs/getLocumAvailableJobs"];
     },
     // UNAVAILABILITIES
     getLocumUnavailabilities() {
@@ -366,41 +422,86 @@ export default {
   methods: {
     // PRACTICE
     // PARTS
-    hasPracticeOngoingJobs(date, type) {
+    hasPracticeOngoingJobs(date, type, day) {
       return this.getPracticeOngoingJobs.find(
         job_part =>
           this.getDateArray(job_part.date_start, job_part.date_end).includes(
             date
-          ) && job_part.job.shift.name === type
+          ) &&
+          job_part.job.shift.name === type &&
+          ((job_part.job.include_saturday === false && day !== 6) ||
+            job_part.job.include_saturday === true) &&
+          ((job_part.job.include_sunday === false && day !== 0) ||
+            job_part.job.include_sunday === true)
+      );
+    },
+    hasPracticeCompletedJobs(date, type, day) {
+      return this.getPracticeCompletedJobs.find(
+        job_part =>
+          this.getDateArray(job_part.date_start, job_part.date_end).includes(
+            date
+          ) &&
+          job_part.job.shift.name === type &&
+          ((job_part.job.include_saturday === false && day !== 6) ||
+            job_part.job.include_saturday === true) &&
+          ((job_part.job.include_sunday === false && day !== 0) ||
+            job_part.job.include_sunday === true)
       );
     },
     // WHOLE
-    hasPracticeAllocatedJobs(date, type) {
+    hasPracticeAllocatedJobs(date, type, day) {
       return this.getPracticeAllocatedJobs.find(
         job =>
           this.getDateArray(job.date_start, job.date_end).includes(date) &&
-          job.shift.name === type
+          job.shift.name === type &&
+          ((job.include_saturday === false && day !== 6) ||
+            job.include_saturday === true) &&
+          ((job.include_sunday === false && day !== 0) ||
+            job.include_sunday === true)
       );
     },
-    hasPracticeAppliedJobs(date, type) {
+    hasPracticeAppliedJobs(date, type, day) {
       return this.getPracticeAppliedJobs.find(
         job =>
           this.getDateArray(job.date_start, job.date_end).includes(date) &&
-          job.shift.name === type
+          job.shift.name === type &&
+          ((job.include_saturday === false && day !== 6) ||
+            job.include_saturday === true) &&
+          ((job.include_sunday === false && day !== 0) ||
+            job.include_sunday === true)
       );
     },
-    hasPracticeUnfilledJobs(date, type) {
+    hasPracticeUnfilledJobs(date, type, day) {
       return this.getPracticeUnfilledJobs.find(
         job =>
           this.getDateArray(job.date_start, job.date_end).includes(date) &&
-          job.shift.name === type
+          job.shift.name === type &&
+          ((job.include_saturday === false && day !== 6) ||
+            job.include_saturday === true) &&
+          ((job.include_sunday === false && day !== 0) ||
+            job.include_sunday === true)
       );
     },
-    hasPracticeDeclinedJobs(date, type) {
+    hasPracticeDeclinedJobs(date, type, day) {
       return this.getPracticeDeclinedJobs.find(
         job =>
           this.getDateArray(job.date_start, job.date_end).includes(date) &&
-          job.shift.name === type
+          job.shift.name === type &&
+          ((job.include_saturday === false && day !== 6) ||
+            job.include_saturday === true) &&
+          ((job.include_sunday === false && day !== 0) ||
+            job.include_sunday === true)
+      );
+    },
+    hasPracticeAvailableJobs(date, type, day) {
+      return this.getPracticeAvailableJobs.find(
+        job =>
+          this.getDateArray(job.date_start, job.date_end).includes(date) &&
+          job.shift.name === type &&
+          ((job.include_saturday === false && day !== 6) ||
+            job.include_saturday === true) &&
+          ((job.include_sunday === false && day !== 0) ||
+            job.include_sunday === true)
       );
     },
     // REMINDERS
@@ -417,41 +518,64 @@ export default {
 
     // LOCUM
     // PARTS
-    hasLocumOngoingJobs(date, type) {
+    hasLocumOngoingJobs(date, type, day) {
       return this.getLocumOngoingJobs.find(
         job_part =>
           this.getDateArray(job_part.date_start, job_part.date_end).includes(
             date
-          ) && job_part.job.shift.name === type
+          ) &&
+          job_part.job.shift.name === type &&
+          ((job_part.job.include_saturday === false && day !== 6) ||
+            job_part.job.include_saturday === true) &&
+          ((job_part.job.include_sunday === false && day !== 0) ||
+            job_part.job.include_sunday === true)
+      );
+    },
+    hasLocumCompletedJobs(date, type, day) {
+      return this.getLocumCompletedJobs.find(
+        job_part =>
+          this.getDateArray(job_part.date_start, job_part.date_end).includes(
+            date
+          ) &&
+          job_part.job.shift.name === type &&
+          ((job_part.job.include_saturday === false && day !== 6) ||
+            job_part.job.include_saturday === true) &&
+          ((job_part.job.include_sunday === false && day !== 0) ||
+            job_part.job.include_sunday === true)
       );
     },
     // WHOLE
-    hasLocumAllocatedJobs(date, type) {
+    hasLocumAllocatedJobs(date, type, day) {
       return this.getLocumAllocatedJobs.find(
         job =>
           this.getDateArray(job.date_start, job.date_end).includes(date) &&
-          job.shift.name === type
+          job.shift.name === type &&
+          ((job.include_saturday === false && day !== 6) ||
+            job.include_saturday === true) &&
+          ((job.include_sunday === false && day !== 0) ||
+            job.include_sunday === true)
       );
     },
-    // hasLocumAllocatedPrivateJobs(date, type) {
-    //   return this.getLocumAllocatedPrivateJobs.find(
-    //     job =>
-    //       this.getDateArray(job.date_start, job.date_end).includes(date) &&
-    //       job.shift.name === type
-    //   );
-    // },
-    // hasLocumAllocatedPlatformJobs(date, type) {
-    //   return this.getLocumAllocatedPlatformJobs.find(
-    //     job =>
-    //       this.getDateArray(job.date_start, job.date_end).includes(date) &&
-    //       job.shift.name === type
-    //   );
-    // },
-    hasLocumAppliedJobs(date, type) {
+    hasLocumAppliedJobs(date, type, day) {
       return this.getLocumAppliedJobs.find(
         job =>
           this.getDateArray(job.date_start, job.date_end).includes(date) &&
-          job.shift.name === type
+          job.shift.name === type &&
+          ((job.include_saturday === false && day !== 6) ||
+            job.include_saturday === true) &&
+          ((job.include_sunday === false && day !== 0) ||
+            job.include_sunday === true)
+      );
+    },
+    hasLocumAvailableJobs(date, type, day) {
+      return this.getLocumAvailableJobs.find(
+        job =>
+          this.getDateArray(job.date_start, job.date_end).includes(date) &&
+          job.shift.name === type &&
+          ((job.include_saturday === false && day !== 6) ||
+            job.include_saturday === true) &&
+          ((job.include_sunday === false && day !== 0) ||
+            job.include_sunday === true)
       );
     },
     // UNAVAILABILITIES

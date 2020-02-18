@@ -3,20 +3,13 @@
     <div class="flex flex-wrap justify-between pt-2">
       <div class="flex justify-start items-center">
         <AppButton
-          v-if="propInvoice.status !== 'Approved' && allowToBill"
+          v-if="propInvoice && !['Approved', 'Paid'].includes(propInvoice.status) && allowToBill"
           class="m-1"
           :label="'Save changes'"
           @click="save(false)"
           :inStyle="'padding:5px 14px;font-size:1em'"
-          :disabled="saveLoading || exportLoading"
+          :disabled="saveLoading"
         />
-        <!-- <AppButton
-          class="m-1"
-          :label="'Export to PDF'"
-          @click="exportToPdf()"
-          :inStyle="'padding:5px 14px;font-size:1em'"
-          :disabled="saveLoading || exportLoading"
-        />-->
         <AppButton
           v-if="propInvoice && propInvoice.status !== 'Draft'"
           class="m-1"
@@ -135,6 +128,7 @@
                   v-model="form.items[0].absent_days"
                   name="absent_days"
                   class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
+                  @keypress="isNumber($event)"
                 />
               </div>
               <div class="w-1/3 flex flex-col px-2">
@@ -145,6 +139,7 @@
                   v-model="form.items[0].late_hours"
                   name="late_hours"
                   class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
+                  @keypress="isNumber($event)"
                 />
               </div>
               <div class="w-1/3 flex flex-col px-2">
@@ -155,6 +150,7 @@
                   v-model="form.items[0].final_hours"
                   name="final_hours"
                   class="border-b-2 focus:outline-none h-full p-2 py-3 sm:text-sm text-right text-xs w-full focus:border-yellow-500"
+                  @keypress="isNumber($event)"
                 />
               </div>
             </div>
@@ -213,12 +209,25 @@
       </div>
 
       <div :ref="'pdf-footer'" class="rounded-lg border-2 border-gray-300 mt-4 p-4">
-        <div class="flex flex-col text-xs sm:text-sm">
-          <div>Payment by BACS:</div>
-          <div>Account name: Rick Sanchez</div>
-          <div>Bank: citadel of Ricks Mutiversal Bank</div>
-          <div>Sort code: 13</div>
-          <div>Account number: 7337#4*OR</div>
+        <div
+          class="flex flex-col text-xs sm:text-sm"
+          v-if="propInvoice && propInvoice.paid_under_payroll"
+        >
+          <div>Payment by BACS: xxxxx</div>
+          <div>Account name: {{propInvoice.payroll_account_name ? propInvoice.payroll_account_name : 'xxxxx'}}</div>
+          <div>Bank: {{propInvoice.payroll_bank_name ? propInvoice.payroll_bank_name : 'xxxxx'}}</div>
+          <div>Sort code: {{propInvoice.payroll_sort_code ? propInvoice.payroll_sort_code : 'xxxxx'}}</div>
+          <div>Account number: {{propInvoice.payroll_account_number ? propInvoice.payroll_account_number : 'xxxxx*OR'}}</div>
+        </div>
+        <div
+          class="flex flex-col text-xs sm:text-sm"
+          v-if="propInvoice && !propInvoice.paid_under_payroll"
+        >
+          <div>Payment by BACS: xxxxx</div>
+          <div>Account name: {{propInvoice.account_name ? propInvoice.account_name : 'xxxxx'}}</div>
+          <div>Bank: {{propInvoice.bank_name ? propInvoice.bank_name : 'xxxxx'}}</div>
+          <div>Sort code: {{propInvoice.sort_code ? propInvoice.sort_code : 'xxxxx'}}</div>
+          <div>Account number: {{propInvoice.account_number ? propInvoice.account_number : 'xxxxx*OR'}}</div>
         </div>
       </div>
     </div>
@@ -245,7 +254,8 @@ export default {
   props: {
     propInvoice: {
       type: Object
-    }
+    },
+    propId: null
   },
   data() {
     return {
@@ -283,7 +293,7 @@ export default {
             hours;
           break;
       }
-      return total.toFixed(2);
+      return total.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
     },
     description() {
       return `Job number ${
@@ -318,7 +328,7 @@ export default {
             hours;
           break;
       }
-      return total.toFixed(2);
+      return total.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
     }
   },
   mounted() {
@@ -326,19 +336,21 @@ export default {
       this.form.date_start = this.propInvoice.date_start;
       this.form.date_end = this.propInvoice.date_end;
 
+      let total =
+        this.propInvoice.items[0].job_part.job.locum_detail_rate_type.name ===
+        "Per Hour"
+          ? this.propInvoice.items[0].job_part.job.rate *
+            this.propInvoice.items[0].job_part.final_hours
+          : (this.propInvoice.items[0].job_part.job.rate /
+              this.propInvoice.items[0].job_part.job.total_hours) *
+            this.propInvoice.items[0].job_part.final_hours;
+
       this.form.items = [
         {
           type: "Job Part",
           job_part_id: this.propInvoice.items[0].job_part.id,
           description: this.propInvoice.items[0].description,
-          total:
-            this.propInvoice.items[0].job_part.job.locum_detail_rate_type
-              .name === "Per Hour"
-              ? this.propInvoice.items[0].job_part.job.rate *
-                this.propInvoice.items[0].job_part.final_hours
-              : (this.propInvoice.items[0].job_part.job.rate /
-                  this.propInvoice.items[0].job_part.job.total_hours) *
-                this.propInvoice.items[0].job_part.final_hours,
+          total: total.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"),
           dispute: this.propInvoice.items[0].disputed,
           approve: this.propInvoice.items[0].approved,
           absent_days: this.propInvoice.items[0].absent_days,
@@ -348,14 +360,9 @@ export default {
         }
       ];
 
-      this.form.total_amount =
-        this.propInvoice.items[0].job_part.job.locum_detail_rate_type.name ===
-        "Per Hour"
-          ? this.propInvoice.items[0].job_part.job.rate *
-            this.propInvoice.items[0].job_part.final_hours
-          : (this.propInvoice.items[0].job_part.job.rate /
-              this.propInvoice.items[0].job_part.job.total_hours) *
-            this.propInvoice.items[0].job_part.final_hours;
+      this.form.total_amount = total
+        .toFixed(2)
+        .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
 
       this.isApproved = this.propInvoice.items[0].approved;
 
@@ -412,17 +419,18 @@ export default {
   methods: {
     save(final) {
       this.formError = [];
-      this.Validate(this.form);
+      this.Validate(this.form, ["total_amount"]);
       if (!this.formError.length) {
         this.form.items[0].description = this.description;
         this.form.items[0].total = this.total;
         this.form.total_amount = this.total_amount;
-        console.log(this.form);
         // return;
         this.saveLoading = true;
         this.$axios
           .$put(
-            `/api/v1/practice/locum-invoices/${this.$route.params.id}`,
+            `/api/v1/practice/locum-invoices/${
+              this.propId ? this.propId : this.$route.params.id
+            }`,
             this.form
           )
           .then(res => {

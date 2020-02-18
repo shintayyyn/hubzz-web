@@ -158,6 +158,8 @@ export default {
 				this.formError = [];
 				this.Validate(this.form);
 				if (!this.formError.length) {
+					this.form.new_password = this.form.new_password.trim();
+					this.form.new_password_confirmation = this.form.new_password_confirmation.trim();
 					this.loading = true;
 					await this.$axios.$put(`/api/v1/me/change-password`, this.form);
 					this.$store.commit("SET_NOTIFICATION", {
@@ -180,16 +182,17 @@ export default {
 				}
 			} catch (err) {
 				console.log("err", err.response || err);
-				if (err.response.data.message) {
-					this.$store.commit("SET_NOTIFICATION", {
-						enabled: true,
-						status: "danger",
-						text: [`${err.response.data.message}`]
-					});
-				}
 				if (err.response.data.error_messages) {
 					err.response.data.error_messages.forEach(error => {
-						this.formError.push(error);
+						this.formError.push({
+							field:
+								error.field === "new_password" &&
+								error.validation === "confirmed"
+									? "new_password_confirmation"
+									: error.field,
+							message: error.message,
+							validation: error.validation
+						});
 					});
 				}
 				this.loading = false;

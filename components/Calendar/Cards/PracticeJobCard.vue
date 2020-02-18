@@ -51,6 +51,9 @@ export default {
     bgStatus() {
       let job = this.isJobPart ? this.propJob.job : this.propJob;
       switch (job.status) {
+        case "Live":
+          return "bg-yellow-500";
+          break;
         case "Applied":
           return "bg-orange-400";
           break;
@@ -58,6 +61,7 @@ export default {
           return "bg-green-300";
           break;
         case "Ongoing":
+        case "Completed":
           return "bg-green-500";
           break;
         case "Unfilled":

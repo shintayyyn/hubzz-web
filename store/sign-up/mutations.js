@@ -13,6 +13,8 @@ export default {
         state.practice_details.address_line_1 = payload.address_line_1
         state.practice_details.address_line_2 = payload.address_line_2
         state.practice_details.address_line_3 = payload.address_line_3
+        state.practice_details.address_line_4 = payload.address_line_4
+        state.practice_details.address_line_5 = payload.address_line_5
         state.practice_details.postcode = payload.postcode
         state.practice_details.coordinate_x = payload.coordinate_x
         state.practice_details.coordinate_y = payload.coordinate_y
@@ -25,6 +27,8 @@ export default {
         state.practice_surgery_details.address_line_1 = payload.address_line_1
         state.practice_surgery_details.address_line_2 = payload.address_line_2
         state.practice_surgery_details.address_line_3 = payload.address_line_3
+        state.practice_surgery_details.address_line_4 = payload.address_line_4
+        state.practice_surgery_details.address_line_5 = payload.address_line_5
         state.practice_surgery_details.postcode = payload.postcode
         state.practice_surgery_details.coordinate_x = payload.coordinate_x
         state.practice_surgery_details.coordinate_y = payload.coordinate_y
@@ -161,17 +165,24 @@ export default {
         state.professional_details.max_rate_per_half_day_session = payload.max_rate_per_half_day_session
         state.professional_details.min_rate_per_whole_day_session = payload.min_rate_per_whole_day_session
         state.professional_details.max_rate_per_whole_day_session = payload.max_rate_per_whole_day_session
+        state.professional_details.profession_category_id = payload.profession_category_id
     },
     SET_PAYROLL_DETAILS(state, payload) {
         state.payroll_details.employment_type = payload.employment_type
         state.payroll_details.utr_number = payload.utr_number
         state.payroll_details.company_registration_number = payload.company_registration_number
         state.payroll_details.paid_under_payroll = payload.paid_under_payroll
-        state.payroll_details.payroll_detail_account_name = payload.payroll_detail_account_name
-        state.payroll_details.payroll_detail_bank_name = payload.payroll_detail_bank_name
-        state.payroll_details.payroll_detail_sort_code = payload.payroll_detail_sort_code
-        state.payroll_details.payroll_detail_account_number = payload.payroll_detail_account_number
+        state.payroll_details.payroll_account_name = payload.payroll_account_name
+        state.payroll_details.payroll_bank_name = payload.payroll_bank_name
+        state.payroll_details.payroll_sort_code = payload.payroll_sort_code
+        state.payroll_details.payroll_account_number = payload.payroll_account_number
+        state.payroll_details.account_name = payload.account_name
+        state.payroll_details.bank_name = payload.bank_name
+        state.payroll_details.sort_code = payload.sort_code
+        state.payroll_details.account_number = payload.account_number
         state.payroll_details.ir35 = payload.ir35
+        state.payroll_details.claim_nhs = payload.claim_nhs
+        state.payroll_details.nhs_number = payload.nhs_number
     },
     SET_CREDENTIAL_DETAILS(state, payload) {
         state.credential_details.email = payload.email

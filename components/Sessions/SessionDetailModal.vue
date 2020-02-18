@@ -17,14 +17,13 @@
         :class="bgStatus(job.status)"
       >{{ status(job.status) }}</div>
       <template v-if="authPermissions.includes('Update Sessions Job')">
-        <button 
+        <button
           class="font-bold text-xs sm:text-sm no-underline px-2 py-2 rounded-lg bg-green-400 hover:bg-green-500 text-white ml-4 focus:outline-none"
           v-if="job.status === 'Pending' &&
             practice.type == 'Hub' &&
             toEdit === false"
-          @click="approveJob()">
-          Approve this Job
-        </button>
+          @click="approveJob()"
+        >Approve this Job</button>
         <button
           class="font-bold text-xs sm:text-sm no-underline px-2 py-2 rounded-lg bg-yellow-400 hover:bg-yellow-500 ml-4 focus:outline-none"
           v-if="
@@ -50,7 +49,7 @@
           @click.prevent="toEdit = false"
         >Cancel Editing</button>
       </template>
-      <template v-if="['Unfilled','Declined','Cancelled'].includes(job.status)">
+      <template v-if="['Unfilled','Withdrawn','Cancelled'].includes(job.status)">
         <AppButton :label="'Repost Job'" @click="repost" :inStyle="'font-size:1em'" />
       </template>
     </div>
@@ -72,29 +71,25 @@
               job.status === 'Live' && toEdit === true ||
               job.status === 'Pending' && toEdit === true"
             />
+            <SessionDetailModalMap :job="job" v-if="showMap" />
             <SessionDetailModalCancelForm
               :job="job"
-              @cancelled="$emit('close')"
-              v-if="(job.status === 'Allocated' ||
-              job.status === 'Ongoing' || 
-              job.status === 'Applied' || 
-              job.status === 'Live' ||
-              job.status === 'Pending') && authPermissions.includes('Cancel Sessions Job')"
+              @cancelled="$emit('close'), $emit('cancelled', $event)"
+              v-if="['Allocated','Ongoing','Applied','Live','Pending'].includes(job.status) && authPermissions.includes('Cancel Sessions Job')"
             />
           </div>
         </div>
-        <div class="p-0 md:pl-4 w-full md:w-1/2">
+        <div class="p-0 md:pl-4 w-full md:w-1/2 order-first md:order-none">
           <div class="flex flex-col">
             <SessionPartDetailModalParts :job_id="job.id" :disabledLink="true" />
             <SessionDetailModalCandidates
-              class="order-first lg:order-none"
               v-if="job.status === 'Applied'"
               :job="job"
-              @appointed="$emit('close')"
+              @appointed="$emit('close'), $emit('appointed', job.id)"
             />
             <SessionDetailModalLocum
               :job="job"
-              v-if="(job.status === 'Allocated' || job.status === 'Ongoing' || job.status === 'Completed' || job.status === 'Declined')"
+              v-if="(job.status === 'Allocated' || job.status === 'Ongoing' || job.status === 'Completed' || job.status === 'Declined' || job.status === 'Withdrawn')"
             />
           </div>
         </div>
@@ -109,6 +104,7 @@ import SessionDetailModalUpdateForm from "@/components/Sessions/SessionDetailMod
 import SessionDetailModalCandidates from "@/components/Sessions/SessionDetailModalCandidates";
 import SessionDetailModalLocum from "@/components/Sessions/SessionDetailModalLocum";
 import SessionDetailModalCancelForm from "@/components/Sessions/SessionDetailModalCancelForm";
+import SessionDetailModalMap from "@/components/Sessions/SessionDetailModalMap";
 import AppButton from "@/components/Base/AppButton";
 export default {
   props: ["job"],
@@ -119,28 +115,40 @@ export default {
     SessionDetailModalCandidates,
     SessionDetailModalLocum,
     SessionDetailModalCancelForm,
+    SessionDetailModalMap,
     AppButton
   },
   data() {
     return {
       user: null,
       toEdit: false,
-      practice: ''
+      practice: "",
+      showMap: false
     };
   },
-  created (){
-    this.practice = this.$auth.user.practice_detail.practice
+  created() {
+    this.practice = this.$auth.user.practice_detail.practice;
+  },
+  mounted() {
+    setTimeout(() => {
+      this.showMap = true;
+    }, 1);
   },
   computed: {
     authPermissions() {
-      return this.$store.getters["auth/permissions"];
+      return this.$store.getters["permissions"];
     },
     canEdit() {
       return (
         this.$moment(
           `${this.job.date_start} ${this.job.time_start}`,
           "YYYY-MM-DD HH:mm"
-        ).diff(this.$moment(), "hours") >= 72
+        ).diff(
+          this.$moment()
+            .utc()
+            .format("YYYY-MM-DD HH:mm"),
+          "hours"
+        ) >= 12
       );
     },
     waitingForApproval() {
@@ -156,7 +164,7 @@ export default {
     updateJob({ newJob, oldJob }) {
       this.$emit("close");
       setTimeout(() => {
-        this.$store.commit("jobs/UPDATE_PRACTICE_PENDING_JOB",{
+        this.$store.commit("jobs/UPDATE_PRACTICE_PENDING_JOB", {
           newJob,
           oldJob
         });
@@ -180,13 +188,16 @@ export default {
         }
       }, 500);
     },
-    approveJob(){
-      this.$axios.$put(`/api/v1/practice/jobs/${this.job.id}/approve`).then(res => {
-        console.log('it worked')
-      })  
+    approveJob() {
+      this.$axios
+        .$put(`/api/v1/practice/jobs/${this.job.id}/approve`)
+        .then(res => {
+          console.log(res);
+        });
     },
     status(status) {
-      return status.toUpperCase();
+      let jobStatus = status === "Declined" ? "Withdrawn" : status;
+      return jobStatus.toUpperCase();
     },
     bgStatus(status) {
       switch (status) {
@@ -206,8 +217,13 @@ export default {
     repost() {
       this.$emit("close");
       setTimeout(() => {
-        this.$store.commit("calendar/SET_REPOST_JOB", this.job);
-        this.$store.commit("calendar/CREATE_JOB_MODAL", true);
+        if (this.$route.name.includes("hub-surgery-management")) {
+          this.$store.commit("calendar/SET_REPOST_JOB", this.job);
+          this.$store.commit("calendar/CREATE_JOB_SURGERY_MODAL", true);
+        } else if (this.$route.name.includes("sessions")) {
+          this.$store.commit("calendar/SET_REPOST_JOB", this.job);
+          this.$store.commit("calendar/CREATE_JOB_MODAL", true);
+        }
       }, 500);
     }
   }

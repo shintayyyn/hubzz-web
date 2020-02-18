@@ -24,7 +24,7 @@
         </div>
       </template>
     </AppTable>
-    <div v-if="paymentModal" class="p-2" v-on-clickaway="closePaymentModal">
+    <!-- <div v-if="paymentModal" class="p-2" v-on-clickaway="closePaymentModal">
       <div class="rounded-lg shadow-md px-4 py-8 md:px-8 update-modal border w-5/6 md:w-1/3">
         <AppDate
           v-model="form.paid_at"
@@ -48,12 +48,13 @@
           />
         </div>
       </div>
-    </div>
+    </div> -->
+    <!-- @click="paymentModal ? paymentModal = false : $route.path != '/practice-billing/invoices-from-hubzz' ? $router.push('/practice-billing/invoices-from-hubzz') : null" -->
     <transition name="fade" mode="out-in">
       <div
         class="shield"
         v-if="['practice-billing-invoices-from-hubzz-id'].includes($route.name) || paymentModal"
-        @click="paymentModal ? paymentModal = false : $route.path != '/practice-billing/invoices-from-hubzz' ? $router.push('/practice-billing/invoices-from-hubzz') : null"
+        
       ></div>
     </transition>
     <nuxt-child />
@@ -72,8 +73,8 @@ export default {
   },
   components: {
     AppTable,
-    AppDate,
-    AppButton
+    // AppDate,
+    // AppButton
   },
   data() {
     return {
@@ -127,11 +128,11 @@ export default {
           dataIndex: "date_created",
           class: "text-center localDate"
         },
-        {
-          name: "Actions",
-          dataIndex: "actions",
-          class: "text-center"
-        }
+        // {
+        //   name: "Actions",
+        //   dataIndex: "actions",
+        //   class: "text-center"
+        // }
       ]
     };
   },
@@ -187,9 +188,9 @@ export default {
     //   this.getPracticeInvoiceRealTime
     // );
   },
-  destroyed() {
-    this.removeListener();
-  },
+  // destroyed() {
+  //   this.removeListener();
+  // },
   methods: {
     getPracticeInvoiceRealTime({ id }) {
       if (!id) {
@@ -209,12 +210,12 @@ export default {
           });
       }
     },
-    removeListener() {
-      this.$socket.removeListener(
-        "Practice Notification Practice Invoice Paid",
-        this.getPracticeInvoiceRealTime
-      );
-    },
+    // removeListener() {
+    //   this.$socket.removeListener(
+    //     "Practice Notification Practice Invoice Paid",
+    //     this.getPracticeInvoiceRealTime
+    //   );
+    // },
     getInvoicesCount(params) {
       this.$axios
         .$get(`/api/v1/practice/practice-invoices/count`, { params })

@@ -9,14 +9,31 @@
       <div
         class="mx-2 py-2 px-4 rounded font-semibold"
         :class="bgStatus(job.locum_status)"
-      >{{ job.locum_status }}</div>
+      >{{ status(job.locum_status) }}</div>
+      <template v-if="job.practice_is_favorite_of_locum">
+        <svgicon
+          name="on-star"
+          height="25"
+          width="25"
+          class="cursor-pointer fill-current text-gray-700 hover:text-gray-800"
+          @click="unfavorite()"
+        />
+      </template>
+      <template v-else-if="!job.practice_is_favorite_of_locum">
+        <svgicon
+          name="off-star"
+          height="25"
+          width="25"
+          class="cursor-pointer fill-current text-gray-700 hover:text-gray-800"
+          @click="favorite()"
+        />
+      </template>
     </div>
 
     <div class="text-xs sm:text-sm py-3">Posted {{ $moment(job.date_created).format("DD/MM/YYYY") }}</div>
 
     <template v-if="hasNewChanges">
       <div class="text-md">The Practice made changes on this Job, Accept these changes?</div>
-      <!-- <div class="text-sm">{{updateAcceptedUntil}}</div> -->
       <div class="text-sm" v-if="deadline.hours > 1">
         You need to confirm within {{ deadline.hours }} hour{{ deadline.hours > 1 ? 's' : ''}}
         <span
@@ -38,23 +55,23 @@
 
     <div class="flex flex-col mt-4">
       <div class="flex flex-wrap justify-start">
-        <div class="p-0 lg:pr-4 w-full lg:w-1/2">
+        <div class="p-0 md:pr-4 w-full md:w-1/2">
           <div class="flex flex-col">
             <JobDetailModalInfo :job="job" />
             <JobDetailModalUnassignForm
               :ref="'unassignForm'"
               :job="job"
-              @unassign="$emit('close')"
+              @unassign="$emit('close'), $emit('unassign', $event)"
               v-if="job.locum_status === 'Allocated'"
             />
             <JobDetailModalApplyForm
               :job="job"
-              @applied="$emit('close')"
+              @applied="$emit('close'), $emit('applied', $event)"
               v-if="job.locum_status === 'Available' || job.locum_status === 'Matched'"
             />
             <JobDetailModalCancelForm
               :job="job"
-              @cancelled="$emit('close')"
+              @cancelled="$emit('close'), $emit('cancelled', $event)"
               v-if="job.locum_status === 'Applied'"
             />
           </div>
@@ -75,6 +92,15 @@
       :modal="cancel_application_modal"
       @confirm="cancel"
       @cancel="cancel_application_modal = false"
+    />
+
+    <AppConfirmationModal
+      :label="confirmation_text"
+      :confirmLabel="'Yes'"
+      :cancelLabel="'Cancel'"
+      :modal="confirmation_modal"
+      @confirm="confirm"
+      @cancel="confirmation_modal = false"
     />
   </div>
 </template>
@@ -103,8 +129,10 @@ export default {
     hasNewChanges() {
       return (
         ["Allocated", "Applied"].includes(this.job.locum_status) &&
-        this.job.update_accepted === false &&
-        this.job.update_accepted_until
+        ((this.job.applied_update_accepted === false &&
+          this.job.applied_update_accepted_until) ||
+          (this.job.update_accepted === false &&
+            this.job.update_accepted_until))
       );
     },
     updateAcceptedUntil() {
@@ -123,7 +151,6 @@ export default {
       let hours = deadline._data.hours;
       let minutes = deadline._data.minutes;
 
-      console.log("deadline", deadline);
       if (minutes > 0) {
         return `You need to confirm within ${hours} hours and ${minutes} minutes`;
       }
@@ -137,7 +164,9 @@ export default {
         hours: 0,
         minutes: 0
       },
-      cancel_application_modal: false
+      cancel_application_modal: false,
+      confirmation_text: "",
+      confirmation_modal: false
     };
   },
   mounted() {
@@ -154,6 +183,62 @@ export default {
     this.deadline.minutes = data._data.minutes;
   },
   methods: {
+    favorite() {
+      this.confirmation_text = "Add this Practice to Favorites?";
+      this.confirmation_modal = true;
+    },
+    unfavorite() {
+      this.confirmation_text = "Remove this Practice to Favorites?";
+      this.confirmation_modal = true;
+    },
+    confirm() {
+      if (!this.job.practice_is_favorite_of_locum) {
+        this.$axios
+          .$post(`/api/v1/locum/practices/${this.job.practice_id}/favorite`)
+          .then(res => {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: ["Added to favourites"]
+            });
+            this.job.practice_is_favorite_of_locum = true;
+          })
+          .catch(err => {
+            console.log("err", err.response || err);
+            throw err;
+          })
+          .finally(() => {
+            this.confirmation_modal = false;
+          });
+      } else if (this.job.practice_is_favorite_of_locum) {
+        this.$axios
+          .$delete(`/api/v1/locum/practices/${this.job.practice_id}/favorite`)
+          .then(res => {
+            this.$store.commit("SET_NOTIFICATION", {
+              enabled: true,
+              status: "success",
+              text: ["Remove to favourites"]
+            });
+            this.job.practice_is_favorite_of_locum = false;
+          })
+          .catch(err => {
+            console.log("err", err.response || err);
+            throw err;
+          })
+          .finally(() => {
+            this.confirmation_modal = false;
+          });
+      }
+    },
+    status(status) {
+      let jobStatus =
+        status === "Matched"
+          ? "Available"
+          : status === "Available"
+          ? "Public"
+          : status;
+      return jobStatus.toUpperCase();
+    },
     bgStatus(status) {
       switch (status) {
         case "Available":

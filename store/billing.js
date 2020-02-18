@@ -196,8 +196,9 @@ export const getters = {
 				date_end: notif.date_end,
 				issued_at: notif.issued_at,
 				paid_at: notif.paid_at,
-				practice: notif.practice.name,
+				practice: notif.practice ? notif.practice.name : notif.private_practice.name,
 				notification_type: notif.notificationType,
+				notification_billing_type: notif.type,
 				type: "Billings",
 				message
 			};
