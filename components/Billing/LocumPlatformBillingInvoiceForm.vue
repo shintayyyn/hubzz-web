@@ -204,10 +204,49 @@
         </div>
       </div>
 
-      <!-- items total -->
-      <div :ref="'items-total'" class="flex justify-between md:m-2">
-        <span class="font-bold">Total</span>
-        <div class="relative">£ {{form.total_amount}}</div>
+      <!-- SUB TOTAL -->
+      <div class="flex flex-col">
+        <div
+          :ref="'items-sub-total'"
+          v-if="propInvoice"
+          class="flex justify-between md:m-2 text-lg px-3"
+        >
+          <span class="w-3/4 font-bold">Subtotal</span>
+          <div class="w-1/4 flex justify-between">
+            <div class="w-full text-right">£</div>
+            <div class="w-full text-right">{{subTotal | currency }}</div>
+          </div>
+        </div>
+        <div
+          :ref="'items-ni-total'"
+          v-if="propInvoice"
+          class="flex justify-between md:m-2 text-lg px-3"
+        >
+          <span class="w-3/4 pl-2 text-sm">NI amount</span>
+          <div class="w-1/4 flex justify-between">
+            <div class="w-full text-right">£</div>
+            <div class="w-full text-right">{{propInvoice.ni_amount | currency }}</div>
+          </div>
+        </div>
+        <div
+          :ref="'items-paye-total'"
+          v-if="propInvoice"
+          class="flex justify-between md:m-2 text-lg px-3"
+        >
+          <span class="w-3/4 pl-2 text-sm">PAYE amount</span>
+          <div class="w-1/4 flex justify-between">
+            <div class="w-full text-right">£</div>
+            <div class="w-full text-right">{{propInvoice.paye_amount | currency }}</div>
+          </div>
+        </div>
+        <!-- ITEMS TOTAL -->
+        <div :ref="'items-total'" class="flex justify-between md:m-2 text-lg px-3">
+          <span class="w-3/4 font-bold">Total</span>
+          <div class="w-1/4 flex justify-between">
+            <div class="w-full text-right">£</div>
+            <div class="w-full text-right">{{totalAmount | currency}}</div>
+          </div>
+        </div>
       </div>
 
       <!-- items days worked -->
@@ -303,6 +342,25 @@ export default {
     },
     propJobPart: {
       type: Object
+    }
+  },
+  computed: {
+    subTotal() {
+      return this.form.items && this.form.items.length > 0
+        ? this.form.items[0].total
+        : 0;
+    },
+    totalAmount() {
+      let total;
+      if (this.form.items && this.form.items.length > 0) {
+        total = this.form.items[0].total;
+        if (this.propInvoice) {
+          total =
+            total - this.propInvoice.ni_amount - this.propInvoice.paye_amount;
+        }
+        return total;
+      }
+      return 0;
     }
   },
   data() {
