@@ -500,7 +500,6 @@ export default {
         .then(([responseTotal, responseJobParts]) => {
           this.total = responseTotal.data.count;
           let job_parts = responseJobParts.data.job_parts;
-          console.log(job_parts);
           this.job_parts = job_parts.map(jobPart => {
             let total = jobPart.locum_invoice_id
               ? jobPart.locum_invoice_item.total
