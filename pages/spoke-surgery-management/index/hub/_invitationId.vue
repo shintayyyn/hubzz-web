@@ -15,7 +15,7 @@
 		<AppConfirmationModal
 			:label="'Are you sure you want to reject this invitation?'"
 			:confirmLabel="'Yes'"
-			:cancelLabel="'Cancel'"
+			:cancelLabel="'No'"
 			:modal="confirmReject"
 			@confirm="rejectInvitation()"
 			@cancel="confirmReject = false"
@@ -116,7 +116,7 @@
 								<p class="font-semibold">Maximum Excess Hours</p>
 								<p
 									class="text-sm mx-6"
-								>{{specificInvitation.max_ooh_rate_limit ?'£ '+ specificInvitation.max_ooh_rate_limit : 'N/A'}}</p>
+								>{{specificInvitation.max_excess_hours ? specificInvitation.max_excess_hours + ' hours' : 'N/A'}}</p>
 							</div>
 						</div>
 						<p class="font-semibold">Does Hub permit billing of Locums?</p>

@@ -25,9 +25,11 @@
 				<p class="font-semibold">CCG</p>
 				<p
 					class="mx-2 leading-tight mb-2"
-				>{{ practice_surgery.child_practice_clinical_commissioning_group_name }}</p>
+				>{{ practice_surgery.child_practice_clinical_commissioning_group_name ? practice_surgery.child_practice_clinical_commissioning_group_name : 'N/A' }}</p>
 				<p class="font-semibold">Contact Number</p>
-				<p class="mx-2 leading-tight mb-2">{{ practice_surgery.child_practice_phone_number }}</p>
+				<p
+					class="mx-2 leading-tight mb-2"
+				>{{ practice_surgery.child_practice_phone_number ? practice_surgery.child_practice_phone_number : 'N/A' }}</p>
 				<div class="font-semibold">Address</div>
 				<div class="mx-2 leading-tight mb-2">
 					<div>{{ practice_surgery.child_practice && practice_surgery.child_practice_address_line_1 ? practice_surgery.child_practice_address_line_1: null}}</div>
