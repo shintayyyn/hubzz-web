@@ -3,8 +3,7 @@
 		<div class="flex flex-wrap items-center justify-between w-full">
 			<div class="my-1 flex overflow-x-auto items-center">
         <nuxt-link
-          v-if="spokeIsNotAllowed && $auth.user.domain === 'Practice'"
-					to="/permanent-jobs?status=Pending"
+					:to="`/hub-surgery-management/${$route.params.id}/surgery-permanent-jobs?status=Pending`"
 					class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
 					:class="
 					($route.query.status && $route.query.status.toLowerCase() === 'pending')
@@ -13,7 +12,7 @@
 				"
 				>Pending</nuxt-link>
 				<nuxt-link
-					to="/permanent-jobs"
+					:to="`/hub-surgery-management/${$route.params.id}/surgery-permanent-jobs`"
 					class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
 					:class="
 					!$route.query.status || ($route.query.status && $route.query.status.toLowerCase() === 'available')
@@ -22,7 +21,7 @@
 				"
 				>Available</nuxt-link>
 				<nuxt-link
-					to="/permanent-jobs?status=Closed"
+					:to="`/hub-surgery-management/${$route.params.id}/surgery-permanent-jobs?status=Closed`"
 					class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
 					:class="
 					($route.query.status && $route.query.status.toLowerCase() === 'closed')
@@ -32,7 +31,7 @@
 				>Closed</nuxt-link>
         <nuxt-link
           v-if="$auth.user.domain === 'Practice'"
-					to="/permanent-jobs?status=Unfilled"
+					:to="`/hub-surgery-management/${$route.params.id}/surgery-permanent-jobs?status=Unfilled`"
 					class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
 					:class="
 					($route.query.status && $route.query.status.toLowerCase() === 'unfilled')
@@ -41,17 +40,10 @@
 					"
 				>Unfilled</nuxt-link>
 			</div>
-			<AppButton
-				v-if="$auth.user.domain === 'Practice'"
-				:label="'Create Permanent Job'"
-				@click="$router.push('/permanent-jobs/create')"
-				:class="'whitespace-no-wrap my-1'"
-			/>
 		</div>
-
-		<div
+    <div
 			class="shield"
-			v-if="['permanent-jobs-index-id','permanent-jobs-index-create'].includes($route.name)"
+			v-if="$route.name === 'hub-surgery-management-id-surgery-permanent-jobs-index-permJobId'"
 			@click="$router.go(-1)"
 		></div>
 		<nuxt-child />
@@ -61,7 +53,6 @@
 import AppButton from "@/components/Base/AppButton";
 export default {
 	components: {
-		AppButton
 	},
 	data() {
 		return {
@@ -69,13 +60,7 @@ export default {
     };
 	},
 	created() {
-    if(this.$auth.user.domain === 'Practice') {
-      if(this.$auth.user.practice_detail.practice.type == 'Spoke' &&
-        this.$auth.user.practice_detail.practice.allow_surgery_create_permanent_jobs === false) {
-        this.spokeIsNotAllowed = true
-      }
-    }
-    
+    console.log('route name', this.$route.name)
   },
 
 	async asyncData({ app, route, store, auth }) {

@@ -510,6 +510,13 @@ export default {
               this.$store.commit("jobs/REMOVE_LOCUM_ONGOING_JOB_PART", id);
             });
         }
+        if (this.job.locum_status === "Completed") {
+          this.job.job_parts
+            .map(jobPart => jobPart.id)
+            .forEach(id => {
+              this.$store.commit("jobs/REMOVE_LOCUM_COMPLETED_JOB_PART", id);
+            });
+        }
         this.$emit("close");
         this.$store.commit("SET_NOTIFICATION", {
           enabled: true,

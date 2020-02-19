@@ -13,9 +13,9 @@
     <div class="flex flex-row justify-start mt-1">
       <div class="flex flex-col w-full">
         <input
-          :value="value"
+          :value="placeholder"
           type="input"
-          :placeholder="format"
+          :placeholder="'DD/MM/YYYY'"
           class="border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full text-center"
           :class="{ inClass, 'border-red-500': error}"
           @click="modal = true"
@@ -336,6 +336,11 @@ export default {
         }
       }
       return this.months;
+    },
+    placeholder() {
+      return this.value
+        ? this.$moment(this.value, "YYYY-MM-DD").format("DD/MM/YYYY")
+        : null;
     }
   },
   methods: {
@@ -475,11 +480,12 @@ export default {
       // });
     },
     validateInput(e) {
-      if ((e.key >= 0 && e.key <= 9) || e.key === "/") {
-        return;
-      } else {
-        e.preventDefault();
-      }
+      e.preventDefault();
+      // if ((e.key >= 0 && e.key <= 9) || e.key === "/") {
+      //   return;
+      // } else {
+      //   e.preventDefault();
+      // }
     },
     select(date) {
       if (!this.isDisabled(date)) {

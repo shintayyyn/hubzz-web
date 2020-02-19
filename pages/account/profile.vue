@@ -735,6 +735,7 @@ export default {
 
       if (["false", false].includes(this.form.claim_nhs)) {
         notRequired.push("nhs_number");
+        this.form.nhs_number = null;
       }
 
       if (["false", false].includes(this.form.paid_under_payroll)) {

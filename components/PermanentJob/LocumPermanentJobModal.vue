@@ -20,8 +20,8 @@
 				<AppButton
 					v-if="permanent_job.status == 'Available'"
 					class="mx-2"
-					:label="'Apply'"
-					@click="apply()"
+					:label="toApply ? 'Cancel':'Apply'"
+					@click="toApply = !toApply"
 				/>
 				<AppButton
 					v-if="permanent_job.status == 'Applied'"
@@ -30,6 +30,31 @@
 					@click="cancelApplication()"
 				/>
 			</div>
+
+      <div 
+        v-if="toApply === true"
+        class="md:w-1/2 px-2 my-6"
+      >
+        <p class="text-sm">Please write a short pitch to apply for this Permanent Job (Optional)</p>
+        <div class="mb-3 md:mb-6">
+          <no-ssr placeholder="Loading..." class>
+            <quill-editor
+              class="bg-white text-black border-b-2"
+              ref="myTextEditor"
+              v-model="job_application.job_application_pitch"
+              :options="editorOption"
+              @focus="onEditorFocus($event)"
+              @ready="onEditorReady($event)"
+            ></quill-editor>
+          </no-ssr>
+        </div>
+        <AppButton
+					class="mx-2"
+					:label="'Send Application'"
+					@click="apply()"
+				/>
+      </div>
+
 			<div v-if="permanent_job_application && permanent_job_application.invitation_schedule">
 				<span class="font-bold">Congratulations!</span>
 				You have been invited for interview. Please attend on {{ $moment(permanent_job_application.invitation_schedule, 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]').format('DD/MM/YYYY, h:mm:ss a') }} GMT
@@ -85,6 +110,8 @@
 				</div>
 			</div>
 		</div>
+
+
 	</section>
 </template>
 <script>
@@ -97,6 +124,10 @@ export default {
 	},
 	data() {
 		return {
+      toApply: false,
+      job_application: {
+        job_application_pitch: "",
+      },
 			job: {
 				description: "",
 				applied: false
@@ -108,7 +139,30 @@ export default {
 			},
 			permanent_job: "",
 			permanent_job_applications: "",
-			permanent_job_application: ""
+			permanent_job_application: "",
+
+      // quill
+			editorOption: {
+				placeholder: "Please write your pitch here",
+				modules: {
+					toolbar: [
+						["bold", "italic", "underline", "strike"],
+						["blockquote", "code-block"],
+						[{ header: 1 }, { header: 2 }],
+						[{ list: "ordered" }, { list: "bullet" }],
+						[{ script: "sub" }, { script: "super" }],
+						[{ indent: "-1" }, { indent: "+1" }],
+						[{ direction: "rtl" }],
+						[{ size: ["small", false, "large", "huge"] }],
+						[{ header: [1, 2, 3, 4, 5, 6, false] }],
+						[{ font: [] }],
+						[{ color: [] }, { background: [] }],
+						[{ align: [] }],
+						["clean"],
+						["link"]
+					]
+				}
+			}
 		};
 	},
 	created() {
@@ -155,16 +209,31 @@ export default {
 				this.permanent_job = permanent_job;
 			}
 		},
+
+    onEditorBlur(editor) {
+			console.log("editor blur!", editor);
+		},
+
+		onEditorFocus(editor) {
+			console.log("editor focus!", editor);
+		},
+
+		onEditorReady(editor) {
+			console.log("editor ready!", editor);
+		},
+
 		apply() {
 			this.$axios
 				.$put(
 					`/api/v1/locum/permanent-job-applications/${this.permanent_job.id}/apply`,
 					{
-						locum_user_id: this.$auth.user.id
+						locum_user_id: this.$auth.user.id,
+            job_application_pitch: this.job_application.job_application_pitch
 					}
 				)
 				.then(res => {
 					this.job.applied = true;
+          this.toApply = false
 					this.$store.commit("SET_NOTIFICATION", {
 						enabled: true,
 						status: "success",
@@ -173,6 +242,7 @@ export default {
 					this.getJob();
 				});
 		},
+
 		cancelApplication() {
 			this.$axios
 				.$delete(
@@ -187,6 +257,7 @@ export default {
 					this.getJob();
 				});
 		},
+
 		statusStyle(jobStatus) {
 			switch (jobStatus) {
 				case "Available":

@@ -114,7 +114,7 @@
                 <div
                   v-if="!slotProps.item.locum_invoice_id"
                   @click="$router.push({ path: `/locum-billing/invoices/${slotProps.item.id}/create`, query: {...$route.query} })"
-                  class="my-1 p-2 bg-green-700 text-white font-bold rounded-lg focus:outline-none"
+                  class="my-1 p-2 bg-green-700 hover:bg-green-600 text-white font-bold rounded-lg focus:outline-none cursor-pointer"
                 >Generate Invoice</div>
                 <div
                   class="flex justify-between my-1"
@@ -122,36 +122,23 @@
                 >
                   <div
                     @click="$router.push({ path: `/locum-billing/invoices/${slotProps.item.locum_invoice_id}/edit`, query: {...$route.query} })"
-                    class="mx-1 p-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
+                    class="mx-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
                   >Edit</div>
                   <button
                     @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id, 'deleteInvoice')"
-                    class="mx-1 p-2 bg-red-700 text-white font-bold rounded-lg focus:outline-none w-full"
+                    class="mx-1 p-2 bg-red-700 hover:bg-red-600 text-white font-bold rounded-lg focus:outline-none"
                   >Delete</button>
                 </div>
-                <!-- v-if="slotProps.item.locum_invoice_id && slotProps.item.status === 'Approved'" -->
                 <div
                   v-if="['approved'].includes($route.query.status)"
                   @click="$router.push({ path: `/locum-billing/invoices/${slotProps.item.locum_invoice_id}`, query: {...$route.query} })"
-                  class="my-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none"
+                  class="my-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
                 >View</div>
-                <!-- v-if="slotProps.item.locum_invoice_id && slotProps.item.status === 'Approved' && !slotProps.item.locum_form_a_id && !slotProps.item.locum_invoice_item.locum_invoice.paid_at" -->
-                <!-- <div
-                  v-if="$route.query.status && $route.query.status === 'approved' && !slotProps.item.locum_invoice_item.locum_invoice.paid_at"
-                  class="my-1 p-2 font-bold"
-                >Waiting For Payment</div>-->
-                <!-- v-if="slotProps.item.locum_invoice_id && slotProps.item.status === 'Approved' && !slotProps.item.locum_form_a_id && slotProps.item.profession.name === 'GP' && slotProps.item.locum_invoice_item.locum_invoice.paid_at" -->
                 <div
-                  v-if="$route.query.status && $route.query.status === 'pension-form-a' && slotProps.item.profession.name === 'GP' && !slotProps.item.locum_form_a_id && slotProps.item.locum_invoice_item.locum_invoice.paid_at"
-                  @click="select_invoice(slotProps.item.locum_invoice_id, 'generateFormA')"
-                  class="my-1 p-2 bg-green-500 hover:bg-green-600 text-white font-bold rounded-lg focus:outline-none w-full"
-                >Generate Form A</div>
-                <!-- v-if="slotProps.item.locum_invoice_id && slotProps.item.status === 'Approved' && slotProps.item.locum_form_a_id && slotProps.item.profession.name === 'GP' " -->
-                <div
-                  v-if="$route.query.status && $route.query.status === 'pension-form-a' && slotProps.item.profession.name === 'GP' && slotProps.item.locum_form_a_id"
+                  v-if="$route.query.status && $route.query.status === 'pension-form-a' && slotProps.item.nhs_claimable && slotProps.item.locum_form_a_id"
                   @click="viewAsPdf(slotProps.item.locum_form_a_id, 'form-a')"
-                  class="my-1 p-2 bg-yellow-400 hover:bg-yellow-500 font-bold rounded-lg focus:outline-none"
-                >View NHS Form A</div>
+                  class="my-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
+                >View Form A</div>
               </div>
             </template>
           </AppTable>
@@ -180,8 +167,8 @@
               <div class="flex justify-center">
                 <div
                   @click="viewAsPdf(slotProps.item.id, 'form-b')"
-                  class="mx-1 px-4 py-2 bg-yellow-400 font-bold rounded-lg focus:outline-none"
-                >View NHS Form B</div>
+                  class="my-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
+                >View Form B</div>
               </div>
             </template>
           </AppTable>
@@ -261,48 +248,6 @@ export default {
       order_by: [],
       job_ir35: null,
 
-      columns: [
-        {
-          name: "Type",
-          dataIndex: "job.type"
-        },
-        {
-          name: "Practice / Surgery",
-          dataIndex: "practice_name",
-          class: "text-center"
-        },
-        {
-          name: "Issued",
-          dataIndex: "issued_at",
-          class: "text-center localDate",
-          sortable: true
-        },
-        {
-          name: "Invoice Number",
-          dataIndex: "invoice_number"
-        },
-        {
-          name: "Job Number",
-          dataIndex: "job_part_number"
-        },
-        {
-          name: "£ Amount",
-          dataIndex: "total_amount",
-          class: "text-center",
-          sortable: true
-        },
-        {
-          name: "NHS Claimable",
-          dataIndex: "locum_nhs_claimable",
-          class: "text-center"
-        },
-        {
-          name: "Actions",
-          dataIndex: "actions",
-          class: "text-center"
-        }
-      ],
-
       form_bs_columns: [
         {
           name: "Type",
@@ -330,6 +275,58 @@ export default {
     };
   },
   computed: {
+    columns() {
+      let columns = [];
+      let queryStatus = this.$route.query.status
+        ? this.$route.query.status.toLowerCase()
+        : "to-be-invoiced";
+
+      columns.push(
+        {
+          name: "Practice / Surgery",
+          dataIndex: "practice_name",
+          class: "text-center"
+        },
+        {
+          name: "Issued",
+          dataIndex: "issued_at",
+          class: "text-center localDate",
+          sortable: true
+        },
+        {
+          name: "Invoice Number",
+          dataIndex: "invoice_number"
+        },
+        {
+          name: "Job Number",
+          dataIndex: "job_part_number"
+        },
+        {
+          name: "£ Amount",
+          dataIndex: "total_amount",
+          class: "text-center",
+          sortable: true
+        },
+        {
+          name: "NHS Claimable",
+          dataIndex: "nhs_claimable",
+          class: "text-center"
+        }
+      );
+      if (["approved", "pension-form-a"].includes(queryStatus)) {
+        columns.push({
+          name: "Paid",
+          dataIndex: "paid",
+          class: "text-center"
+        });
+      }
+      columns.push({
+        name: "Actions",
+        dataIndex: "actions",
+        class: "text-center"
+      });
+      return columns;
+    },
     authPermissions() {
       return this.$store.getters["permissions"];
     },
@@ -471,6 +468,15 @@ export default {
             ? jobPart.job.rate * jobPart.final_hours
             : (jobPart.job.rate / jobPart.job.total_hours) *
               jobPart.final_hours;
+
+          total =
+            jobPart.locum_invoice_item &&
+            jobPart.locum_invoice_item.locum_invoice &&
+            jobPart.locum_invoice_item.locum_invoice.paid_at
+              ? total -
+                jobPart.locum_invoice_item.locum_invoice.ni_amount -
+                jobPart.locum_invoice_item.locum_invoice.paye_amount
+              : total;
           return {
             ...jobPart,
             practice_name:
@@ -485,7 +491,15 @@ export default {
               : null,
             total_amount: total
               .toFixed(2)
-              .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
+              .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"),
+            paid:
+              jobPart.locum_status === "Approved" &&
+              jobPart.locum_invoice_item.locum_invoice.paid_at
+                ? "Yes"
+                : "No",
+            nhs_claimable: jobPart.locum_invoice_id
+              ? jobPart.locum_invoices_nhs_claimable
+              : jobPart.locum_details_nhs_claimable
           };
         });
       } else if (url === `/api/v1/locum/locum-invoices-form-b`) {
@@ -649,6 +663,15 @@ export default {
                 ? jobPart.job.rate * jobPart.final_hours
                 : (jobPart.job.rate / jobPart.job.total_hours) *
                   jobPart.final_hours;
+
+              total =
+                jobPart.locum_invoice_item &&
+                jobPart.locum_invoice_item.locum_invoice &&
+                jobPart.locum_invoice_item.locum_invoice.paid_at
+                  ? total -
+                    jobPart.locum_invoice_item.locum_invoice.ni_amount -
+                    jobPart.locum_invoice_item.locum_invoice.paye_amount
+                  : total;
               return {
                 ...jobPart,
                 practice_name:
@@ -663,7 +686,15 @@ export default {
                   : null,
                 total_amount: total
                   .toFixed(2)
-                  .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
+                  .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"),
+                paid:
+                  jobPart.locum_status === "Approved" &&
+                  jobPart.locum_invoice_item.locum_invoice.paid_at
+                    ? "Yes"
+                    : "No",
+                nhs_claimable: jobPart.locum_invoice_id
+                  ? jobPart.locum_invoices_nhs_claimable
+                  : jobPart.locum_details_nhs_claimable
               };
             });
           } else if (response.data && response.data.locum_form_bs) {
@@ -765,6 +796,15 @@ export default {
                 ? jobPart.job.rate * jobPart.final_hours
                 : (jobPart.job.rate / jobPart.job.total_hours) *
                   jobPart.final_hours;
+
+              total =
+                jobPart.locum_invoice_item &&
+                jobPart.locum_invoice_item.locum_invoice &&
+                jobPart.locum_invoice_item.locum_invoice.paid_at
+                  ? total -
+                    jobPart.locum_invoice_item.locum_invoice.ni_amount -
+                    jobPart.locum_invoice_item.locum_invoice.paye_amount
+                  : total;
               return {
                 ...jobPart,
                 practice_name:
@@ -779,7 +819,15 @@ export default {
                   : null,
                 total_amount: total
                   .toFixed(2)
-                  .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
+                  .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"),
+                paid:
+                  jobPart.locum_status === "Approved" &&
+                  jobPart.locum_invoice_item.locum_invoice.paid_at
+                    ? "Yes"
+                    : "No",
+                nhs_claimable: jobPart.locum_invoice_id
+                  ? jobPart.locum_invoices_nhs_claimable
+                  : jobPart.locum_details_nhs_claimable
               };
             });
           } else if (res.data && res.data.locum_form_bs) {
@@ -846,7 +894,7 @@ export default {
           let index = this.job_parts.findIndex(item => {
             return item.locum_invoice_id === this.invoice_id;
           });
-          let queryStatus = this.$route.query.status.toLowerCase();
+          let queryStatus = this.$route.query.status;
 
           if (
             !queryStatus ||

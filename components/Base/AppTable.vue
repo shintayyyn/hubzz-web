@@ -70,7 +70,7 @@
                     ></slot>
                   </template>
                   <template v-if="column.dataIndex === 'actions'">
-                    <slot name="actions" v-bind:item="item"></slot>
+                    <slot name="actions" v-bind:item="item" @click="$emit('click', item)"></slot>
                   </template>
                   <template v-if="column.dataIndex === 'actions-button'">
                     <slot name="actions-button" v-bind:item="item"></slot>
@@ -217,7 +217,11 @@ export default {
       if (Array.isArray(item[dataIndexArr[0]])) {
         str = [];
         item[dataIndexArr[0]].forEach(item => {
-          str.push(item[dataIndexArr[1]][dataIndexArr[2]]);
+          if (item[dataIndexArr[2]]) {
+            str.push(item[dataIndexArr[1]][dataIndexArr[2]]);
+          } else {
+            str.push(item[dataIndexArr[1]]);
+          }
         });
       } else {
         str = "";

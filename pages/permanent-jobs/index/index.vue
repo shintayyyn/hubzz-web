@@ -17,7 +17,7 @@
 			<p
 				v-else
 				class="text-gray-600 px-3 py-2"
-			>No {{ $route.query.status === 'Closed' ? 'closed' : 'available'}} jobs yet.</p>
+			>No {{ $route.query.status ? $route.query.status : 'Available'}} jobs yet.</p>
 		</template>
 
 		<template v-if="$auth.user.domain ===  'Locum'">
@@ -46,7 +46,7 @@
 			<p
 				v-else
 				class="text-gray-600 px-3 py-2"
-			>No {{ $route.query.status === 'Closed' ? 'closed' : 'available'}} jobs yet.</p>
+			>No {{ $route.query.status ? $route.query.status : 'Available'}} jobs yet.</p>
 		</template>
 		<div
 			class="shield"
@@ -68,7 +68,7 @@ export default {
 	middleware({ query, redirect, error }) {
 		if (
 			query.status &&
-			!["available", "closed"].includes(query.status.toLowerCase())
+			!["available", "closed", "unfilled", "pending"].includes(query.status.toLowerCase())
 		) {
 			return error({
 				status: 404,
@@ -215,6 +215,7 @@ export default {
 				});
 				this.loading = false;
 			} else if (this.$auth.user.domain === "Practice") {
+        console.log('new status', newStatus)
 				params = {
 					job_posting_status: newStatus ? newStatus : "Available",
 					practice_id: this.$auth.user.practice_id
@@ -238,16 +239,19 @@ export default {
 			let permanent_job_applications = "";
 			let permanent_jobs_for_locum = "";
 			let permanent_jobs_for_locum_count = "";
-			let params = {};
+      let params = {};
+      
 			if (app.$auth.user.domain === "Locum") {
 				params = {
 					job_posting_status: route.query.status
 						? route.query.status
 						: "Available",
 					profession_id: app.$auth.user.locum_detail.profession.id,
-					near_post_code: app.$auth.user.locum_postcode
-				};
-
+          near_post_code: app.$auth.user.locum_postcode,
+         limit: 5,
+        };
+        console.log('user', app.$auth.user)
+        console.log('locum params', params)
 				let response = await app.$axios.$get(
 					`/api/v1/locum/permanent-jobs/count`,
 					{ params }
@@ -300,7 +304,8 @@ export default {
 					job_posting_status: route.query.status
 						? route.query.status
 						: "Available",
-					practice_id: app.$auth.user.practice_id
+          practice_id: app.$auth.user.practice_id,
+         limit: 5,
 				};
 				let response = await app.$axios.$get(
 					`/api/v1/practice/permanent-jobs/count`,
@@ -308,7 +313,7 @@ export default {
 				);
 				permanent_job_count =
 					response.data && response.data.count ? response.data.count : null;
-
+      
 				response = await app.$axios.$get(`/api/v1/practice/permanent-jobs`, {
 					params
 				});
@@ -429,6 +434,7 @@ export default {
 		},
 
 		async getPermanentJobsForPractice(params) {
+      console.log('params', params)
 			await this.$axios
 				.$get("/api/v1/practice/permanent-jobs/count", { params })
 				.then(res => {
@@ -475,17 +481,16 @@ export default {
 			this.loading = false;
 		},
 		async pagechanged(page) {
-			this.current_page = page;
-			this.params.offset = this.params.limit * (page - 1);
-			this.params.offset = this.params.limit * (page - 1);
+      console.log('page', page)
+      this.current_page = page;
+      this.params.offset = this.params.limit * (page - 1);
+      console.log('params.offset', this.params.limit)
 			this.loading = true;
 			this.getJobs(this.params);
 			this.loading = false;
 		},
 		async limitchanged(limit) {
 			this.current_page = 1;
-			this.params.offset = 0;
-			this.params.limit = limit;
 			this.params.offset = 0;
 			this.params.limit = limit;
 			this.loading = true;

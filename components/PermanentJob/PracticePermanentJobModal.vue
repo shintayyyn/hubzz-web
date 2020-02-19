@@ -1,7 +1,12 @@
 <template>
-	<section class="modal-container">
+	<section>
 		<div class="p-4 md:p-8">
-			<nuxt-link :to="{path:`/permanent-jobs`,query:$route.query}">
+			<nuxt-link :to="{
+        path: $route.name.includes('hub-surgery-management') ? 
+          `/hub-surgery-management/${$route.params.id}/surgery-permanent-jobs` : 
+          `/permanent-jobs` ,
+        query:$route.query
+        }">
 				<svgicon name="left-arrow" height="32" width="32" class="cursor-pointer" />
 			</nuxt-link>
 
@@ -18,7 +23,7 @@
 			<div class="flex flex-col md:flex-row">
 				<div class="md:mx-2 w-full md:w-3/5 lg:w-1/2">
 					<div class="bg-white rounded-lg shadow-lg p-4 mb-4 flex flex-col items-start">
-						<template v-if="!edit">
+						<template v-if="edit === false">
 							<div class="w-full flex flex-col md:flex-row">
 								<div class="w-full md:flex-w-1/2">
 									<p class="font-bold">Practice</p>
@@ -55,7 +60,6 @@
 									<p class="pl-2 pb-3">{{ permanent_job ? permanent_job.industry_type : ''}}</p>
 								</div>
 							</div>
-
 							<p class="font-bold">Description</p>
 							<div>
 								<no-ssr>
@@ -67,8 +71,43 @@
 									></quill-editor>
 								</no-ssr>
 							</div>
+
+              <div
+                v-if="
+                  $route.name.includes('hub-surgery-management') && 
+                  $auth.user.practice_detail.practice.type === 'Hub' &&
+                  permanent_job.job_posting_status === 'Pending'">
+                <AppButton
+                  class="font-semibold"
+                  :label="'Approve'"
+                  @click="acceptRejectSpokePermanentJob('Approved')"
+                  :customTheme="'bg-green-500 hover:bg-green-600 text-white'"
+                />
+                <AppButton
+                  class="font-semibold"
+                  :label="'Reject'"
+                  @click="showCancel = !showCancel"
+                  :customTheme="'bg-red-500 hover:bg-red-600 text-white'"
+                />
+                <div v-if="showCancel === true">
+                  <p class="font-bold">Reason for Rejection (optional)</p>
+                  <AppInput
+                    v-if="showCancel === true"
+                    v-model="approve_or_reject.cancelled_reason"
+                    :type="'text'"
+                    :name="'cancelled_reason'"
+                  />
+                  <AppButton
+                    class="font-semibold"
+                    :label="'Reject'"
+                    @click="acceptRejectSpokePermanentJob('Rejected')"
+                    :customTheme="'bg-red-500 hover:bg-red-600 text-white'"
+                  />
+                </div>
+              </div>
+
 						</template>
-						<template v-else>
+						<template v-if="edit === true">
 							<div class="w-full flex flex-col md:flex-row">
 								<div class="w-full md:flex-w-1/2 pr-2">
 									<p class="font-bold">Title</p>
@@ -102,17 +141,6 @@
 											:error="formError.find(item => item.field === 'salary_amount')"
 											@blur="CheckEmptyField(form.salary_amount, 'salary_amount')"
 											:inStyle="'text-align:right'"
-										/>
-										<AppInput
-											class="w-full md:w-1/2 pr-1"
-											v-model="form.salary_description_1"
-											:type="'select'"
-											:name="'salary_description_1'"
-											:placeholder="'Select...'"
-											:label="'Salary Description 1'"
-											:error="formError.find(item => item.field === 'salary_description_1')"
-											:items="salary_description_type_1"
-											@blur="CheckEmptyField(form.salary_description_1, 'salary_description_1')"
 										/>
 										<AppInput
 											class="w-full md:w-1/2 pl-1"
@@ -257,7 +285,6 @@
 							:placeholder="'Select...'"
 							:items="hired_through"
 						/>
-
 						<AppButton class="my-4" :label="'Confirm'" @click="forceCloseJob()" />
 					</div>
 				</div>
@@ -293,7 +320,14 @@ export default {
 			edit: false,
 			toCloseJob: false,
 			modal: false,
-			permanent_job: "",
+      permanent_job: "",
+
+      approve_or_reject: {
+        approved_or_rejected: "",
+        cancelled_reason: "",
+      },
+      showCancel: false,
+
 			form: {
 				title: "",
 				description: "",
@@ -303,12 +337,12 @@ export default {
 				report_to: "",
 				industry_type: "",
 				salary_amount: null,
-				salary_description_1: "",
 				salary_description_2: "",
 				work_hours: "",
 				practice_id: "",
 				profession_id: "",
-				hired_through: ""
+        hired_through: "",
+        update_remarks: "",
 			},
 			salary_range: false,
 			practice_lists: [],
@@ -408,7 +442,6 @@ export default {
 				this.form.report_to = this.permanent_job.report_to;
 				this.form.industry_type = this.permanent_job.industry_type;
 				this.form.salary_amount = this.permanent_job.salary_amount;
-				this.form.salary_description_1 = this.permanent_job.salary_description_1;
 				this.form.salary_description_2 = this.permanent_job.salary_description_2;
 				this.form.work_hours = this.permanent_job.work_hours;
 				this.form.practice_id = this.permanent_job.practice_id;
@@ -433,16 +466,6 @@ export default {
 			{
 				label: "Private",
 				value: "Private"
-			}
-		];
-		this.salary_description_type_1 = [
-			{
-				label: "Attractive",
-				value: "Attractive"
-			},
-			{
-				label: "Average",
-				value: "Average"
 			}
 		];
 		this.salary_description_type_2 = [
@@ -482,8 +505,7 @@ export default {
 				this.form.email = this.permanent_job.email;
 				this.form.report_to = this.permanent_job.report_to;
 				this.form.industry_type = this.permanent_job.industry_type;
-				this.form.salary_amount = this.permanent_job.salary_amount;
-				this.form.salary_description_1 = this.permanent_job.salary_description_1;
+				this.form.salary_amount = this.permanent_job.salary_amount ? this.permanent_job.salary_amount : 0;
 				this.form.salary_description_2 = this.permanent_job.salary_description_2;
 				this.form.work_hours = this.permanent_job.work_hours;
 				this.form.practice_id = this.permanent_job.practice_id;
@@ -538,9 +560,16 @@ export default {
 				this.formError.splice(index, 1);
 			}
 		},
-		getPermanentJob() {
+		async getPermanentJob() {
+      let permJobId = ''
+      if(this.$route.name.includes('hub-surgery-management')) {
+        permJobId = this.$route.params.permJobId
+      }else {
+        permJobId = this.$route.params.id
+      }
+
 			this.$axios
-				.$get(`/api/v1/practice/permanent-jobs/${this.$route.params.id}`)
+				.$get(`/api/v1/practice/permanent-jobs/${permJobId}`)
 				.then(res => {
 					this.permanent_job = res.data.permanent_job;
 				})
@@ -561,24 +590,32 @@ export default {
 			});
 		},
 		editJobLabel(edit) {
+      console.log('edit', edit)
 			if (
 				edit === false &&
-				this.permanent_job.job_posting_status == "Available"
+        this.permanent_job.job_posting_status == "Available"||
+        this.permanent_job.job_posting_status == "Pending"
 			) {
+        console.log('status',	this.permanent_job.job_posting_status )
 				return "Edit Job";
-			} else if (
+      } 
+      if (
 				edit === false &&
-				this.permanent_job.job_posting_status == "Closed"
+				this.permanent_job.job_posting_status == "Closed"||
+        this.permanent_job.job_posting_status == "Unfilled"
 			) {
+        console.log('status',	this.permanent_job.job_posting_status )
 				return "Re-post Job";
-			} else {
+      } 
+       if ( edit === true) {
+        console.log('status',	this.permanent_job.job_posting_status )
 				return "Cancel Editing";
 			}
 		},
 		editPermanentJob() {
 			this.formError = [];
 
-			let notRequired = ["hired_through"];
+			let notRequired = ["hired_through", "update_remarks"];
 			this.validateNumber(this.form.salary_amount, "salary_amount");
 			this.Validate(this.form, notRequired);
 			if (!this.formError.length) {
@@ -618,7 +655,24 @@ export default {
 				.finally(() => {
 					this.$router.go(-1);
 				});
-		},
+    },
+    
+    async acceptRejectSpokePermanentJob(approveReject) {
+      if (approveReject == 'Approved') {
+        this.approve_or_reject.approved_or_rejected = 'Approved'
+      } else if (approveReject == 'Rejected') {
+        this.approve_or_reject.approved_or_rejected = 'Rejected'
+      }
+
+      await this.$axios.$put(`/api/v1/practice/permanent-jobs/${this.permanent_job.id}/approve-or-reject`,
+        this.approve_or_reject).then(res => {
+          this.$store.commit("SET_NOTIFICATION", {
+							enabled: true,
+							status: "success",
+							text: ["Successfully Approved / Rejected Job"]
+						});
+        })
+    },
 		onEditorBlur(editor) {
 			console.log("editor blur!", editor);
 		},
@@ -634,6 +688,9 @@ export default {
 					return "bg-green-500 text-white";
 					break;
 				case "Closed":
+					return "bg-red-700 text-white";
+          break;
+        case "Unfilled":
 					return "bg-gray-700 text-white";
 					break;
 				default:
@@ -645,14 +702,19 @@ export default {
 </script>
 
 <style scoped>
-.modal-container {
+/* .modal-container {
 	z-index: 510;
 }
 @media screen and (min-width: 1200px) {
 	.modal-container {
 		width: 80%;
 	}
+} */
+
+.wrapper {
+	max-height: 500px;
 }
+
 .quill-editor .ql-container,
 .wrapper {
 	overflow-y: auto;
@@ -661,7 +723,5 @@ export default {
 	max-height: 300px;
 	padding: 8px 0;
 }
-.wrapper {
-	max-height: 500px;
-}
+
 </style>
