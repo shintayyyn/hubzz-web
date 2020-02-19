@@ -37,6 +37,7 @@
               :name="'date_start'"
               :label="'From'"
               :error="this.formError.find(item => item.field === 'date_start')"
+              isAfter
             />
           </div>
           <div class="px-1 w-full sm:w-1/2 md:w-1/4">
@@ -54,6 +55,7 @@
               :label="'To'"
               :startDate="form.date_start"
               :error="this.formError.find(item => item.field === 'date_end')"
+              isAfter
             />
           </div>
           <div class="px-1 w-full sm:w-1/2 md:w-1/4">
@@ -388,14 +390,19 @@ export default {
           });
           this.loading = false;
         } catch (err) {
+          this.$emit('scrollTop')
           console.log("err", err.response || err);
-          if (err.response.data.message) {
-            this.$store.commit("SET_NOTIFICATION", {
-              enabled: true,
-              status: "danger",
-              text: [`${err.response.data.message}`]
-            });
-          } else if (err.response.data.error_messages) {
+          if (err.response.data.message && err.response.data.message === 'Invalid Dates') {
+            this.formError.push({ field: 'date_end', message: 'Invalid End Date'})
+          }
+          // if (err.response.data.message) {
+          //   this.$store.commit("SET_NOTIFICATION", {
+          //     enabled: true,
+          //     status: "danger",
+          //     text: [`${err.response.data.message}`]
+          //   });
+          // } else
+          if (err.response.data.error_messages) {
             err.response.data.error_messages.forEach(error => {
               this.formError.push(error);
             });
@@ -403,6 +410,7 @@ export default {
           this.loading = false;
         }
       } else {
+        this.$emit('scrollTop')
         this.$store.commit("SET_NOTIFICATION", {
           enabled: true,
           status: "danger",
