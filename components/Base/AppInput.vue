@@ -2,7 +2,7 @@
 	<section>
 		<!-- text / email / password / time / select / textarea / multicheckbox / number -->
 		<template
-			v-if="['text','time','email','password', 'select', 'textarea', 'multi-checkbox', 'number'].includes(type)"
+			v-if="['text','time','email', 'password', 'select', 'textarea', 'multi-checkbox', 'number'].includes(type)"
 		>
 			<div class="flex flex-col py-2 mb-3 md:mb-6">
 				<div
@@ -40,7 +40,7 @@
 				</template>
 				<template v-else>
 					<div class="flex flex-row justify-start mt-1">
-						<template v-if="['text','time','email','password', 'number'].includes(type)">
+						<template v-if="['text','time','email', 'number'].includes(type)">
 							<div class="flex flex-col w-full mt-1">
 								<input
 									:value="value"
@@ -57,6 +57,44 @@
 									:readonly="disabled"
 									:min="type === 'number' && 1"
 								/>
+								<transition name="drop-down">
+									<div
+										v-if="error"
+										class="text-red-500 py-1 text-xs text-white"
+									>{{error.message.charAt(0).toUpperCase() + error.message.slice(1).replace(/_/g, " ")}}</div>
+								</transition>
+							</div>
+						</template>
+
+						<template v-if=" type === 'password' ">
+							<div class="relative w-full mb-4">
+								<div class="relative">
+									<input
+										class="border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full"
+										:value="value"
+										:type="togglePassword()"
+										:placeholder="placeholder"
+										:class="error ? 'border-red-500' : ''"
+										@input="$emit('input', $event.target.value)"
+										@keypress.enter="$emit('submit')"
+										@blur="$emit('blur')"
+										@focus="showPasswordFocus = true"
+										:style="inStyle"
+									/>
+									<span
+										@click="passwordToggle = !passwordToggle"
+										class="absolute top-0 right-0 h-full focus:outline-none cursor-pointer flex items-center"
+										tabindex="-1"
+									>
+										<svgicon
+											:name="togglePassword() === 'password' ? 'eye' : 'hide-eye'"
+											width="20"
+											height="20"
+											class="text-gray-500 hover:text-gray-600 fill-current"
+										/>
+									</span>
+								</div>
+
 								<transition name="drop-down">
 									<div
 										v-if="error"
@@ -255,6 +293,7 @@ export default {
 		error: Object,
 		info: String,
 		inStyle: String,
+		inClass: String,
 		limit: Number,
 		required: {
 			type: Boolean,
@@ -283,6 +322,13 @@ export default {
 			default: false
 		}
 	},
+	data() {
+		return {
+			passwordValue: "",
+			// show/hide password
+			passwordToggle: false
+		};
+	},
 	methods: {
 		// for multi checkbox
 		inputMultiCheck(e) {
@@ -290,6 +336,14 @@ export default {
 				this.$emit("checked", e.target.value);
 			} else {
 				this.$emit("unchecked", e.target.value);
+			}
+		},
+		// for password
+		togglePassword() {
+			if (this.passwordToggle) {
+				return "text";
+			} else {
+				return "password";
 			}
 		}
 	}
