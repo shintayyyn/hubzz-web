@@ -110,7 +110,7 @@
 										ref="inputSelect"
 										:value="value"
 										class="absolute bottom-0 border-b-2 focus:border-yellow-400 focus:outline-none py-2 font-bold text-xs sm:text-sm w-full"
-										:class="[(error && !disabled) && 'border-red-500', disabled ? 'border-gray-400' : 'cursor-pointer']"
+										:class="[(error && !disabled) && 'border-red-500', disabled ? 'border-gray-400 text-gray-500 cursor-not-allowed' : 'cursor-pointer']"
 										@input="$emit('input', $event.target.value)"
 										:style="inStyle"
 										@change="$emit('change', $event.target.value)"
@@ -125,7 +125,7 @@
 											:selected="value === item.value"
 										>{{item.label}}</option>
 									</select>
-									<span class="absolute right-0 h-full">
+									<span class="absolute right-0 h-full" :class="disabled ? 'text-gray-500' : ''">
 										<svgicon
 											name="arrow-up"
 											class="h-full w-10 p-2 mt-2 fill-current"
