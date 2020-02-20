@@ -569,19 +569,19 @@ export default {
   },
   async asyncData({ app, params, query, store, auth, error }) {
     try {
-      let status = [];
+      let locum_status = [];
       let queryStatus = query.jobStatus;
       let bankStatus = query.bank;
 
       if (!queryStatus) {
-        status = ["Allocated"];
+        locum_status = ["Allocated"];
       } else if (queryStatus) {
         switch (queryStatus) {
           case "Completed":
-            status = ["Completed", "Terminated"];
+            locum_status = ["Completed", "Terminated"];
             break;
           default:
-            status = [`${queryStatus}`];
+            locum_status = [`${queryStatus}`];
             break;
         }
       }
@@ -649,7 +649,7 @@ export default {
           .$get(`/api/v1/practice/${isJobPart ? "job-parts" : "jobs"}/count`, {
             params: {
               viewing_locum_user_id,
-              status,
+              locum_status,
               order_by: [],
               job_number: !isJobPart ? job_number : "",
               job_part_number: isJobPart ? job_part_number : "",
@@ -700,7 +700,7 @@ export default {
               viewing_locum_user_id,
               offset: 0,
               limit: 5,
-              status,
+              locum_status,
               order_by: [],
               job_number: !isJobPart ? job_number : "",
               job_part_number: isJobPart ? job_part_number : "",
@@ -833,19 +833,19 @@ export default {
       this.jobs = this.jobs.filter(item => item.id !== id);
     },
     getJobsPromiseAll() {
-      let status = [];
+      let locum_status = [];
       let queryStatus = this.$route.query.jobStatus;
       let bankStatus = this.$route.query.bank;
 
       if (!queryStatus) {
-        status = ["Allocated"];
+        locum_status = ["Allocated"];
       } else if (queryStatus) {
         switch (queryStatus) {
           case "Completed":
-            status = ["Completed", "Terminated"];
+            locum_status = ["Completed", "Terminated"];
             break;
           default:
-            status = [`${queryStatus}`];
+            locum_status = [`${queryStatus}`];
             break;
         }
       }
@@ -856,7 +856,7 @@ export default {
           {
             params: {
               viewing_locum_user_id: this.$route.params.locumId,
-              status,
+              locum_status,
               order_by: [],
               job_number: !this.isJobPart ? this.job_number : "",
               job_part_number: this.isJobPart ? this.job_part_number : "",
@@ -905,7 +905,7 @@ export default {
               viewing_locum_user_id: this.$route.params.locumId,
               offset: 0,
               limit: 5,
-              status,
+              locum_status,
               order_by: [],
               job_number: !this.isJobPart ? this.job_number : "",
               job_part_number: this.isJobPart ? this.job_part_number : "",
@@ -973,19 +973,19 @@ export default {
         });
     },
     getJobs() {
-      let status = [];
+      let locum_status = [];
       let queryStatus = this.$route.query.jobStatus;
       let bankStatus = this.$route.query.bank;
 
       if (!queryStatus) {
-        status = ["Allocated"];
+        locum_status = ["Allocated"];
       } else if (queryStatus) {
         switch (queryStatus) {
           case "Completed":
-            status = ["Completed", "Terminated"];
+            locum_status = ["Completed", "Terminated"];
             break;
           default:
-            status = [`${queryStatus}`];
+            locum_status = [`${queryStatus}`];
             break;
         }
       }
@@ -996,7 +996,7 @@ export default {
             viewing_locum_user_id: this.$route.params.locumId,
             offset: this.offset,
             limit: this.limit,
-            status,
+            locum_status,
             order_by: this.order_by,
             job_number: !this.isJobPart ? this.job_number : "",
             job_part_number: this.isJobPart ? this.job_part_number : "",
