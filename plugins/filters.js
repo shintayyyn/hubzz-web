@@ -14,7 +14,8 @@ Vue.filter('currency', function (number) {
   if (number) {
     // return number.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
     // return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-    return Number.parseFloat(number).toFixed(2);
+    return Number.parseFloat(number).toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
+    
   }
   return '0.00'
 })
