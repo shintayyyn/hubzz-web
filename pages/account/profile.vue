@@ -14,6 +14,7 @@
             :info="'For compliance; to be verified by the hubzz team'"
             @submit="save"
             @blur="CheckEmptyField(form.gmc_or_nmc_number, 'gmc_or_nmc_number')"
+            @keypress="inputNumberOnly($event)"
             required
           />
           <AppInput
@@ -25,6 +26,7 @@
             :info="'For compliance; to be verified by the hubzz team'"
             @submit="save"
             @blur="CheckEmptyField(form.mpl_or_npl_number, 'mpl_or_npl_number')"
+            @keypress="inputNumberOnly($event)"
             required
           />
           <AppInput
@@ -32,6 +34,7 @@
             :type="'text'"
             :name="'nhs_smart_card_id_number'"
             :label="'Your NHS Smart Card ID number'"
+            @keypress="inputNumberOnly($event)"
             @submit="save"
           />
           <AppInput
@@ -238,6 +241,7 @@
               :label="'UTR number'"
               :error="formError.find(item => item.field === 'utr_number')"
               :placeholder="''"
+              @keypress="inputNumberOnly($event)"
               required
             />
           </template>
@@ -345,6 +349,7 @@
               :label="'NHS number'"
               :error="formError.find(item => item.field === 'nhs_number')"
               required
+              @keypress="inputNumberOnly($event)"
             />
           </template>
 
@@ -359,7 +364,7 @@
           />
           <AppInput
             v-model="form.miles"
-            :type="'text'"
+            :type="'number'"
             :name="'miles'"
             :label="`I will travel up to ${form.miles ? form.miles : 'n'} miles from this postcode`"
             :error="formError.find(item => item.field === 'miles')"
@@ -382,6 +387,7 @@
               :name="'referee_1_phone_number'"
               :label="'Telephone number'"
               :inStyle="'background-color:#dae1e7;border-color:white'"
+              @keypress="inputTelephone($event)"
             />
             <AppInput
               v-model="form.referee_1_email"
@@ -405,6 +411,7 @@
               :name="'referee_2_phone_number'"
               :label="'Telephone number'"
               :inStyle="'background-color:#dae1e7;border-color:white'"
+              @keypress="inputTelephone($event)"
             />
             <AppInput
               v-model="form.referee_2_email"

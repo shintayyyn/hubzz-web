@@ -50,7 +50,7 @@
 									:class="error ? 'border-red-500' : ''"
 									@input="$emit('input', $event.target.value)"
 									@keypress.enter="$emit('submit')"
-									@keypress="type === 'number' && isNumber($event)"
+									@keypress="type === 'number' ? isNumber($event) : $emit('keypress')"
 									@blur="$emit('blur')"
 									:style="inStyle"
 									:checked="value"
