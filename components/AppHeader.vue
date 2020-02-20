@@ -137,17 +137,21 @@ export default {
 	},
 	watch: {
 		$route(to, from) {
-			if (from.name === "messages-slug") {
-				if (this.unreadMessages.length) {
-					this.unreadMessages.map(item => {
-						if (!this.unread.includes(item.conversation_id)) {
-							this.unread.push(item.conversation_id);
-						}
-					});
-				} else {
-					this.unread = [];
-				}
-			}
+			// if (from.name === "messages-slug") {
+			// 	console.log(this.unreadMessages);
+			// 	if (this.unreadMessages.length) {
+			// 		console.log("if");
+			// 		this.unreadMessages.map(item => {
+			// 			if (!this.unread.includes(item.conversation_id)) {
+			// 				this.unread.push(item.conversation_id);
+			// 			}
+			// 		});
+			// 	} else {
+			// 		console.log("else");
+			// 		this.unread = [];
+			// 	}
+			// }
+			// console.log("unread", this.unread);
 		},
 		create_job_modal(value) {
 			if (value) {

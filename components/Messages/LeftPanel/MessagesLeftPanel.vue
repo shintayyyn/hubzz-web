@@ -184,6 +184,7 @@ export default {
 				this.unreadMessages.find(item => item.conversation_id == id)
 			) {
 				this.$store.commit("chat/DELETE_UNREAD_MESSAGE", id);
+				console.log("on read", this.unreadMessages);
 			}
 			if (this.$route.params.slug != id) {
 				this.$router.push(`/messages/${id}`);
