@@ -48,13 +48,12 @@
           />
         </div>
       </div>
-    </div> -->
+    </div>-->
     <!-- @click="paymentModal ? paymentModal = false : $route.path != '/practice-billing/invoices-from-hubzz' ? $router.push('/practice-billing/invoices-from-hubzz') : null" -->
     <transition name="fade" mode="out-in">
       <div
         class="shield"
         v-if="['practice-billing-invoices-from-hubzz-id'].includes($route.name) || paymentModal"
-        
       ></div>
     </transition>
     <nuxt-child />
@@ -72,7 +71,7 @@ export default {
     mode: "out-in"
   },
   components: {
-    AppTable,
+    AppTable
     // AppDate,
     // AppButton
   },
@@ -116,18 +115,18 @@ export default {
         {
           name: "£ Amount",
           dataIndex: "total_amount",
-          class: "text-center"
+          class: "text-center currency"
         },
         {
           name: "Paid At",
           dataIndex: "paid_at",
-          class: "text-center"
+          class: "text-center localDate"
         },
         {
           name: "Created At",
           dataIndex: "date_created",
           class: "text-center localDate"
-        },
+        }
         // {
         //   name: "Actions",
         //   dataIndex: "actions",
@@ -167,8 +166,6 @@ export default {
         response.data.data.practice_invoices
           ? response.data.data.practice_invoices
           : [];
-
-      console.log("invoices from hubzz", invoices);
 
       return {
         totalInvoices,

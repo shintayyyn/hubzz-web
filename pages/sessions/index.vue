@@ -450,7 +450,7 @@ export default {
             name: "Rate",
             dataIndex: "job.rate",
             sortable: true,
-            class: "text-center"
+            class: "text-center currency"
           },
           {
             name: "per",
@@ -496,7 +496,7 @@ export default {
             name: "Rate",
             dataIndex: "rate",
             sortable: true,
-            class: "text-center"
+            class: "text-center currency"
           },
           {
             name: "per",
@@ -511,13 +511,13 @@ export default {
           name: "From",
           dataIndex: "date_start",
           sortable: true,
-          class: "text-center"
+          class: "text-center localDate"
         },
         {
           name: "To",
           dataIndex: "date_end",
           sortable: true,
-          class: "text-center"
+          class: "text-center localDate"
         }
       );
       if (queryStatus === "allocated") {
