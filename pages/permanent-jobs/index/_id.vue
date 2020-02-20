@@ -3,7 +3,7 @@
     <div v-if="$auth.user.domain === 'Locum'">
       <LocumPermanentJobModal/>
     </div>
-    <div v-else >
+    <div class="modal-container" v-else >
       <PracticePermanentJobModal/>
     </div>
   </div>

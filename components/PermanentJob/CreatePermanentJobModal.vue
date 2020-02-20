@@ -1,5 +1,5 @@
 <template>
-	<section class="modal-container">
+	<section class="modal-container" ref="modalContainer">
 		<div class="p-4 md:p-8">
 			<svgicon
 				name="left-arrow"
@@ -161,17 +161,7 @@
 							:inStyle="'text-align:right'"
 						/>
 						<div class="flex flex-wrap">
-							<AppInput
-								class="w-full md:w-1/2 pr-1"
-								v-model="form.salary_description_1"
-								:type="'select'"
-								:name="'salary_description_1'"
-								:placeholder="'Select...'"
-								:label="'Salary Description 1'"
-								:error="formError.find(item => item.field === 'salary_description_1')"
-								:items="salary_description_type_1"
-								@blur="CheckEmptyField(form.salary_description_1, 'salary_description_1')"
-							/>
+	
 							<AppInput
 								class="w-full md:w-1/2 pl-1"
 								v-model="form.salary_description_2"
@@ -226,8 +216,8 @@ export default {
 				email: "",
 				industry_type: "",
 				work_hours: "",
-				salary_amount: 0,
-				salary_description_1: "",
+        salary_amount: 0,
+        parent_practice_id: "",
 				salary_description_2: ""
 			},
 			practice_lists: [],
@@ -309,7 +299,7 @@ export default {
 			this.$axios.$get("/api/v1/shifts"),
 			this.$axios.$get("/api/v1/professions"),
 			this.$axios.$get("/api/v1/me"),
-			(this.practice = this.$auth.user.practice_detail.practice)
+      (this.practice = this.$auth.user.practice_detail.practice)
 		])
 			.then(
 				([
@@ -323,7 +313,7 @@ export default {
 					console.log(
 						"practice job practices",
 						responsePracticeLists.data.practices
-					);
+          );
 					responsePracticeLists.data.practices.forEach(item => {
 						this.practice_lists.push({
 							label: item.surgery.name,
@@ -346,6 +336,7 @@ export default {
 				}
 			)
 			.finally(() => {
+        this.form.parent_practice_id = this.practice.parent_practice_id ? this.practice.parent_practice_id : null
 				this.loading = false;
 			});
 	},
@@ -402,16 +393,21 @@ export default {
 			console.log("editor ready!", editor);
 		},
 		async createPermanentJob() {
+      if (this.form.practice_id !== this.$auth.user.practice_detail.practice.id &&
+        this.$auth.user.practice_detail.practice.type === 'Hub') {
+          this.form.parent_practice_id = await this.$auth.user.practice_detail.practice.id
+      }
+    
 			this.formError = [];
 
-			// let notRequired = [];
-			// console.log("form", this.form);
-			// this.Validate(this.form, notRequired);
-			// console.log("errors", this.formError.length);
+			let notRequired = ['parent_practice_id'];
+      this.validateNumber(this.form.salary_amount, "salary_amount");
+      
+      this.Validate(this.form, notRequired)
 
-			let notRequired = [];
-			this.validateNumber(this.form.salary_amount, "salary_amount");
-			this.Validate(this.form, notRequired);
+      console.log("form",this.form)
+      console.log("errors: ",this.formError)
+
 			if (!this.formError.length) {
 				await this.$axios
 					.post(`/api/v1/practice/permanent-jobs`, this.form)
@@ -425,16 +421,19 @@ export default {
 					})
 					.catch(err => {
 						this.formError = err.response.data.error_messages;
-						// this.$store.commit("SET_NOTIFICATION", {
-						// 	enabled: true,
-						// 	status: "danger",
-						// 	text: [`${err.response.data.message}`]
-						// });
+						this.$nextTick(() => {
+							this.$refs.modalContainer.scrollTop = 0;
+						});
+						this.$store.commit("SET_NOTIFICATION", {
+							enabled: true,
+							status: "danger",
+							text: [err.response.data.message]
+						});
 					});
 			} else {
-				// this.$nextTick(() => {
-				//   this.$refs.modalContainer.scrollTop = 0;
-				// });
+				this.$nextTick(() => {
+					this.$refs.modalContainer.scrollTop = 0;
+				});
 			}
 		}
 	}

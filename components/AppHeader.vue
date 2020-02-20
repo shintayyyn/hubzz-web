@@ -61,8 +61,8 @@
                 />
                 <span
                   class="-m-2 absolute bg-yellow-500 block border bottom-0 right-0 hidden md:flex h-6 w-6 font-bold text-xs p-1 items-center justify-center rounded-full"
-                  v-if="unreadMessages.length > 0"
-                >{{ unreadMessages.length }}</span>
+                  v-if="unread.length > 0"
+                >{{ unread.length }}</span>
               </div>
               <button
                 v-if="
@@ -75,11 +75,10 @@
                 <svgicon name="chat" color="#888 #555 #fff" width="21" height="21"></svgicon>
                 <span
                   class="-m-2 absolute bg-yellow-500 block border bottom-0 flex h-5 w-5 text-xs p-1 items-center justify-center right-0 rounded-full"
-                  v-if="unreadMessages.length > 0"
-                >{{ unreadMessages.length }}</span>
+                  v-if="unread.length > 0"
+                >{{ unread.length }}</span>
               </button>
             </div>
-
             <div class="relative" v-if="$auth.user.domain === 'Locum'">
               <AppButton
                 :label="'Expenses'"
@@ -94,7 +93,6 @@
                 <svgicon name="create-job" color="#444 #555" width="21" height="21"></svgicon>
               </button>
             </div>
-            <!-- {{ $auth.user.email }} -->
           </div>
         </div>
       </div>
@@ -131,7 +129,8 @@ export default {
   data() {
     return {
       notAllowed: false,
-      expense_modal: false
+      expense_modal: false,
+      unread: []
     };
   },
   async created() {
@@ -171,7 +170,15 @@ export default {
       }
     },
     unreadMessages(value) {
-      console.log("new message", value);
+      if (value.length) {
+        value.map(item => {
+          if (!this.unread.includes(item.conversation_id)) {
+            this.unread.push(item.conversation_id);
+          }
+        });
+      } else {
+        this.unread = [];
+      }
     }
   },
   methods: {

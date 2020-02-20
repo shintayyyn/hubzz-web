@@ -15,7 +15,7 @@
 		<AppConfirmationModal
 			:label="'Are you sure you want to reject this invitation?'"
 			:confirmLabel="'Yes'"
-			:cancelLabel="'Cancel'"
+			:cancelLabel="'No'"
 			:modal="confirmReject"
 			@confirm="rejectInvitation()"
 			@cancel="confirmReject = false"
@@ -91,6 +91,7 @@
 						<div
 							class="text-sm mx-6"
 						>{{specificInvitation.allow_surgery_create_sessions === true ? 'Yes' : 'No'}}</div>
+
 						<div
 							class="bg-gray-300 p-2 rounded-lg mt-1 mb-2"
 							v-if="specificInvitation.allow_surgery_create_sessions === true"
@@ -116,9 +117,13 @@
 								<p class="font-semibold">Maximum Excess Hours</p>
 								<p
 									class="text-sm mx-6"
-								>{{specificInvitation.max_ooh_rate_limit ?'£ '+ specificInvitation.max_ooh_rate_limit : 'N/A'}}</p>
+								>{{specificInvitation.max_excess_hours ? specificInvitation.max_excess_hours + ' hours' : 'N/A'}}</p>
 							</div>
 						</div>
+						<div class="font-semibold">Does Hub allow you to create permanent jobs?</div>
+						<div
+							class="text-sm mx-6"
+						>{{specificInvitation.allow_surgery_create_permanent_jobs === true ? 'Yes' : 'No'}}</div>
 						<p class="font-semibold">Does Hub permit billing of Locums?</p>
 						<p class="text-sm mx-6">{{specificInvitation.allow_surgery_bill_locum === true ? 'Yes':'No'}}</p>
 						<p class="font-semibold">Does Hub permit billing for Hubzz?</p>

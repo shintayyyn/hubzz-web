@@ -13,13 +13,6 @@
       </div>
       <!-- billing -->
       <section>
-        <div class="flex flex-wrap justify-start items-center">
-          <div
-            class="save-button text-xs sm:text-sm ml-4 mx-2 py-2 px-3 border-2 rounded-lg font-bold flex items-center"
-            @click="exportToPdf()"
-          >Export to PDF</div>
-        </div>
-
         <div class="flex flex-row flex-wrap justify-start items-center my-4">
           <label class="mx-1 py-2 px-3">Type:</label>
           <button
@@ -28,146 +21,44 @@
           >Platform</button>
         </div>
 
-        <div id="htmlpdf" class="max-w-3xl my-4 bg-white px-4 py-4 border shadow-md mb-32">
-          <div class="flex flex-col">
-            <div class="text-xs sm:text-sm sm:text-right leading-normal">
-              <!-- <div>{{locum_user.name}}</div>
-              <div>{{locum_user.email}}</div>-->
-            </div>
-            <div class="flex flex-wrap justify-between my-2">
-              <div
-                class="w-full sm:w-1/2 order-2 sm:order-1 text-xs sm:text-sm text-left rounded-lg border-2 border-gray-300 p-2 w-2/3"
-              >
-                <section>
-                  <div class="relative flex flex-col py-2 mb-3 md:mb-6">
-                    <div class="relative flex flex-row flex-no-wrap justify-between">
-                      <label class="text-xs sm:text-sm py-1">To: Accounts Department</label>
-                    </div>
-                    <div class="relative flex flex-row flex-wrap justify-start">
-                      <input
-                        v-model="surgery_name"
-                        type="text"
-                        placeholder="Select.."
-                        ref="input"
-                        class="border-b-2 w-full focus:border-yellow-400 focus:outline-none py-3 font-bold text-xs sm:text-sm"
-                        readonly
-                      />
-                    </div>
-                  </div>
-                </section>
-              </div>
-              <div class="w-full sm:w-1/2 order-1 sm:order-2 sm:text-right leading-normal">
-                <div class="font-bold text-sm sm:text-lg">{{invoice.paid ? 'PAID':'ISSUED'}}</div>
-                <div class="text-xs sm:text-sm">{{issuedOrPaid | localDate}}</div>
-              </div>
-            </div>
-          </div>
-          <div class="overflow-auto">
-            <div class="items-table">
-              <!-- thead -->
-              <div class="flex justify-start">
-                <div
-                  style="width:430px"
-                  class="bg-gray-900 text-white px-4 py-1 font-semibold border-r-2 border-white"
-                >Description</div>
-                <div
-                  style="width:200px"
-                  class="bg-gray-900 text-white px-4 py-1 font-semibold"
-                >Total</div>
-              </div>
-              <!-- tbody -->
-              <div v-if="invoice.practice_invoice_items.length > 0">
-                <div
-                  :id="`invoice-item-${index}`"
-                  class="flex flex-col"
-                  v-for="(item, index) in invoice.practice_invoice_items"
-                  :key="item.id"
-                >
-                  <div class="flex justify-start mt-2">
-                    <div
-                      style="width:430px;min-height:80px;"
-                      class="text-xs sm:text-sm border-b-2 border-gray-300 px-4 py-1"
-                    >{{item.description}}</div>
-                    <div
-                      style="width:200px;min-height:80px;"
-                      class="text-xs sm:text-sm border-b-2 border-gray-300 px-4 py-1 text-right"
-                    >{{item.total}}</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="flex flex-row flex-wrap justify-between px-2">
-            <div class="w-full md:w-1/2 pr-1">
-              <AppDate
-                v-model="form.date_start"
-                :name="'date_start'"
-                :label="'Days worked from'"
-                :error="formError.find(item => item.field === 'date_start')"
-                :disabled="true"
-              />
-            </div>
-            <div class="w-full md:w-1/2 pl-1">
-              <AppDate
-                v-model="form.date_end"
-                :name="'date_end'"
-                :label="'To'"
-                :error="formError.find(item => item.field === 'date_end')"
-                :disabled="true"
-              />
-            </div>
-          </div>
-
-          <div class="flex justify-between m-2">
-            <span class="font-bold">Total</span>
-            <div>
-              <div class="flex justify-end">
-                <div
-                  class="rounded-lg bg-red-500 p-1 text-xs sm:text-sm text-white"
-                  v-if="formError.find(item => item.field === 'total_amount')"
-                >{{formError.find(item => item.field === 'total_amount').message}}</div>
-              </div>
-              £ {{invoice.total_amount | currency}}
-            </div>
-          </div>
-
-          <div class="rounded-lg border-2 border-gray-300 mt-4 p-4">
-            <div class="flex flex-col text-xs sm:text-sm">
-              <div>Payment by BACS:</div>
-              <div>Account name: Rick Sanchez</div>
-              <div>Bank: citadel of Ricks Mutiversal Bank</div>
-              <div>Sort code: 13</div>
-              <div>Account number: 7337#4*OR</div>
-            </div>
-          </div>
+        <div class="m-4">
+          <HubzzBillingForm 
+            :forViewing="true"
+            :practice="practice"
+            :practiceInvoice="practiceInvoice" 
+            :invoiceItems="invoiceItems"
+            :disputedItems="disputedItems"
+            :debitItems="debitItems"
+            :creditItems="creditItems"
+            :dateStart="practiceInvoice.date_start"
+            :dateEnd="practiceInvoice.date_end"
+          />
         </div>
+
       </section>
     </div>
   </div>
 </template>
-
 <script>
-import PracticeBillingInvoiceForm from "@/components/Billing/PracticeBillingInvoiceForm";
 import AppDate from "@/components/Base/AppDate";
+import HubzzBillingForm from "@/components/Billing/HubzzBillingForm"
 export default {
   transition: {
     name: "slide",
     mode: "out-in"
   },
   components: {
-    // PracticeBillingInvoiceForm,
-    AppDate
+    HubzzBillingForm,
   },
-  async asyncData({ app, error, params }) {
+  async asyncData({ app, auth, error, params }) {
     try {
       if (process.client) {
         document.body.style.cursor = "wait";
       }
-      const response = await app.$axios.get(
+      let response = await app.$axios.get(
         `/api/v1/practice/practice-invoices/${params.id}`
       );
-      const invoice =
+      const practiceInvoice =
         response.data &&
         response.data.data &&
         response.data.data.practice_invoice
@@ -178,38 +69,70 @@ export default {
         document.body.style.cursor = "auto";
       }
 
-      console.log("invoice", invoice);
+      response = await app.$axios.$get(`/api/v1/me`)
 
+      const practice = response.data.user.practice_detail
+
+      const practiceInvoiceItems = practiceInvoice.practice_invoice_items;
+
+      let invoiceItems = []
+      let disputedItems = []
+      let debitItems = []
+      let creditItems = []
+
+			for (let i = 0; i < practiceInvoiceItems.length; i++) {
+				const newItem = {
+					job_part_id: practiceInvoiceItems[i].id,
+					description: practiceInvoiceItems[i].description,
+					total: practiceInvoiceItems[i].total.toFixed(2)
+        };
+        if(practiceInvoiceItems[i].type.includes('Job Part - Approved') 
+          || practiceInvoiceItems[i].type.includes('Job Part - Issued')
+          || practiceInvoiceItems[i].type.includes('Job Part - Invoiced')) {
+          console.log('normal invoice item has been pushed')
+          newItem.id = invoiceItems.length + 1;
+          invoiceItems.push(newItem);
+        }else if(practiceInvoiceItems[i].type.includes('Job Part - Disputed')){
+          console.log('disputed invoice item has been pushed')
+          newItem.id = disputedItems.length + 1;
+          disputedItems.push(newItem);
+        }else if(practiceInvoiceItems[i].type.includes('Debit')) {
+          console.log('debit invoice item has been pushed')
+          newItem.id = debitItems.length + 1;
+          debitItems.push(newItem);
+        }else if(practiceInvoiceItems[i].type.includes('Credit')) {
+          console.log('credit invoice item has been pushed')
+          newItem.id = creditItems.length + 1;
+          creditItems.push(newItem);
+        }else{
+          console.log('it didnt work lol')
+        }
+      }
       return {
-        invoice
+        practiceInvoice,
+        practice,
+        invoiceItems,
+        disputedItems,
+        debitItems,
+        creditItems
       };
     } catch (err) {
-      if (err && err.response.status === 404) {
-        return error({ status: 404, message: "This page could not be found" });
-      } else if (err & (err.response.status === 500)) {
-        return error({ status: 500, message: "Something went wrong!" });
-      }
+      // if (err && err.response.status === 404) {
+      //   return error({ status: 404, message: "This page could not be found" });
+      // } else if (err & (err.response.status === 500)) {
+      //   return error({ status: 500, message: "Something went wrong!" });
+      // }
       throw err;
     }
   },
 
-  data() {
-    return {
-      form: {
-        date_start: null,
-        date_end: null
-      },
-      formError: [],
-      surgery_name: "",
-      invoice: null
-    };
-  },
+
 
   computed: {
     issuedOrPaid() {
-      return this.invoice.paid_at
-        ? this.invoice.paid_at
-        : this.invoice.issued_at;
+      return this.practiceInvoice.paid_at
+        ? this.practiceInvoice.paid_at
+        : this.practiceInvoice.issued_at;
     }
   },
   
@@ -221,12 +144,12 @@ export default {
     }
   },
 
-  mounted() {
-    this.surgery_name = this.invoice.practice.name;
-    this.form.date_start = this.invoice.date_start;
-    this.form.date_end = this.invoice.date_end;
-    document.body.style.overflow = "hidden";
-  },
+  // mounted() {
+  //   this.surgery_name = this.practiceInvoice.practice.name;
+  //   this.form.date_start = this.practiceInvoice.date_start;
+  //   this.form.date_end = this.practiceInvoice.date_end;
+  //   document.body.style.overflow = "hidden";
+  // },
 
   destroyed() {
     document.body.style.overflow = "auto";

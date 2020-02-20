@@ -1,46 +1,54 @@
 <template>
 	<div class="w-full" v-if="practice_surgery && practice_surgery.child_practice">
-		<div class="flex items-center mt-2">
-			<div
-				class="font-bold leading-none text-md sm:text-lg mr-2"
-			>{{ practice_surgery.child_practice.surgery.name }}</div>
-			<div
-				class="text-sm sm:text-sm text-gray-700 font-bold md:mr-2"
-			>{{ practice_surgery.child_practice.surgery.code }}</div>
-			<div
-				class="justify-center text-black text-sm font-semibold py-2 p-3 mx-2 rounded-lg"
-				:class="typeStyle(practice_surgery.child_practice.type)"
-			>{{practice_surgery.child_practice.type}}</div>
-			<div
-				class="justify-center text-black text-sm font-semibold py-2 p-3 mx-2 rounded-lg"
-				:class="statusStyle(checkStatus(practice_surgery))"
-			>{{checkStatus(practice_surgery)}}</div>
+		<div class="flex flex-wrap items-center mt-2">
+			<div class="flex items-center">
+				<div
+					class="font-bold leading-none text-md sm:text-lg mr-2"
+				>{{ practice_surgery.child_practice_name }}</div>
+				<div
+					class="text-sm sm:text-sm text-gray-700 font-bold mr-2"
+				>{{ practice_surgery.child_practice_code }}</div>
+			</div>
+			<div class="flex items-center">
+				<div
+					class="justify-center text-black text-sm font-semibold py-2 p-3 mr-2 rounded-lg"
+					:class="typeStyle(practice_surgery.child_practice_type)"
+				>{{practice_surgery.child_practice_type}}</div>
+				<div
+					class="justify-center text-black text-sm font-semibold py-2 p-3 mr-2 rounded-lg"
+					:class="statusStyle(checkStatus(practice_surgery))"
+				>{{checkStatus(practice_surgery)}}</div>
+			</div>
 		</div>
 		<div class="flex flex-col md:flex-row justify-start items-start w-full">
 			<div class="flex flex-col w-full md:w-1/2 shadow-lg p-4 md:p-8 my-2 md:my-0 md:mx-1 rounded-lg">
 				<p class="font-semibold">CCG</p>
 				<p
 					class="mx-2 leading-tight mb-2"
-				>{{ practice_surgery.child_practice.clinical_commissioning_group_name }}</p>
+				>{{ practice_surgery && practice_surgery. child_practice_clinical_commissioning_group_name ? 
+            practice_surgery.child_practice_clinical_commissioning_group_name : 
+            'N/A' }}</p>
 				<p class="font-semibold">Contact Number</p>
-				<p class="mx-2 leading-tight mb-2">{{ practice_surgery.child_practice.phone_number }}</p>
+				<p class="mx-2 leading-tight mb-2">{{ practice_surgery && practice_surgery.child_practice_phone_number ? practice_surgery.child_practice_phone_number : 'N/A' }}</p>
 				<div class="font-semibold">Address</div>
 				<div class="mx-2 leading-tight mb-2">
-					<div>{{ practice_surgery.child_practice && practice_surgery.child_practice.address_line_1 ? practice_surgery.child_practice.address_line_1: null}}</div>
-					<div>{{ practice_surgery.child_practice && practice_surgery.child_practice.address_line_2 ? practice_surgery.child_practice.address_line_2: null}}</div>
-					<div>{{ practice_surgery.child_practice && practice_surgery.child_practice.address_line_3 ? practice_surgery.child_practice.address_line_3: null}}</div>
-					<div>{{ practice_surgery.child_practice && practice_surgery.child_practice.address_line_4 ? practice_surgery.child_practice.address_line_4: null}}</div>
-					<div>{{ practice_surgery.child_practice && practice_surgery.child_practice.address_line_5 ? practice_surgery.child_practice.address_line_5: null}}</div>
+					<div>{{ practice_surgery.child_practice && practice_surgery.child_practice_address_line_1 ? practice_surgery.child_practice_address_line_1: null}}</div>
+					<div>{{ practice_surgery.child_practice && practice_surgery.child_practice_address_line_2 ? practice_surgery.child_practice_address_line_2: null}}</div>
+					<div>{{ practice_surgery.child_practice && practice_surgery.child_practice_address_line_3 ? practice_surgery.child_practice_address_line_3: null}}</div>
+					<div>{{ practice_surgery.child_practice && practice_surgery.child_practice_address_line_4 ? practice_surgery.child_practice_address_line_4: null}}</div>
+					<div>{{ practice_surgery.child_practice && practice_surgery.child_practice_address_line_5 ? practice_surgery.child_practice_address_line_5: null}}</div>
 				</div>
 
 				<p class="font-semibold">Report To</p>
-				<p
-					class="mx-2 leading-tight mb-2"
-				>{{practice_surgery.child_practice.report_to ? practice_surgery.child_practice.report_to : 'N/A'}}</p>
+				<p class="mx-2 leading-tight mb-2">
+          {{practice_surgery.child_practice.report_to ? practice_surgery.child_practice.report_to : 'N/A'}}
+        </p>
+
 				<p class="font-semibold">Email Address</p>
-				<p
-					class="mx-2 leading-tight mb-2"
-				>{{practice_surgery.child_practice.email ? practice_surgery.child_practice.email : 'N/A'}}</p>
+				<p class="mx-2 leading-tight mb-2">
+          {{practice_surgery.child_practice.email ? practice_surgery.child_practice.email : 'N/A'}}
+        </p>
+
 				<p class="font-semibold">Practice Types</p>
 				<div class="flex flex-wrap">
 					<template
@@ -318,29 +326,6 @@ export default {
 			practice_surgery: []
 		};
 	},
-	computed: {
-		// surgeryCreateSessions: function() {
-		// 	return this.form.allow_surgery_create_sessions;
-		// }
-	},
-	// async asyncData({ app, route, store, params, error }) {
-	// 	try {
-	// 		const practice_id = params.id;
-	// 		const response = await app.$axios.$get(
-	// 			`/api/v1/practice/me/practice-surgeries/${params.id}`
-	// 		);
-	// 		const practice_surgery =
-	// 			response.data && response.data.practice_surgery
-	// 				? response.data.practice_surgery
-	// 				: null;
-	// 		return {
-	// 			practice_surgery,
-	// 			practice_id
-	// 		};
-	// 	} catch (err) {
-	// 		throw err;
-	// 	}
-	// },
 	created() {
 		this.practice_id = this.$route.params.id;
 		this.getSurgery();
@@ -383,6 +368,7 @@ export default {
 				.get(`/api/v1/practice/me/practice-surgeries/${this.practice_id}`)
 				.then(res => {
 					this.practice_surgery = res.data.data.practice_surgery;
+					console.log("practice_surgery", this.practice_surgery);
 				});
 		},
 		save() {

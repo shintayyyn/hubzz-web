@@ -112,6 +112,22 @@
 					</div>
 				</div>
 				<div class="w-full pl-0 lg:pl-2 mt-8 lg:mt-0 lg:w-1/2">
+          <div class="rounded-lg shadow-lg p-4 md:p-8 mb-4">
+            <div class="font-semibold">
+              Job Pitch
+            </div>
+            <div>
+              <no-ssr>
+								<quill-editor
+									class="border-none"
+									:options="options"
+									:content="permanent_job_application && permanent_job_application.job_application_pitch ? 
+                    permanent_job_application.job_application_pitch : 'N/A'"
+									disabled
+								></quill-editor>
+							</no-ssr>
+            </div>
+          </div>
 					<div class="rounded-lg shadow-lg p-4 md:p-8 mb-4">
 						<div class="font-bold text-sm sm:text-md">Compliance documents</div>
 						<div class="flex flex-col mb-4 md:mb-8">
@@ -239,7 +255,12 @@ export default {
 				invitation_date: "",
 				invitation_time: ""
 			},
-			accepted: false
+			accepted: false,
+      options: {
+				modules: {
+					toolbar: null
+				}
+			},
 		};
 	},
 	computed: {

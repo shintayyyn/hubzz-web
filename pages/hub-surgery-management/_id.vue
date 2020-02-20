@@ -40,6 +40,12 @@
         >Surgery Banks</nuxt-link>
         <nuxt-link
           v-if="relationshipIsActive == 'Active'"
+          :to="{path: `/hub-surgery-management/${$route.params.id}/surgery-permanent-jobs`, query: {...$route.query}}"
+          class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
+          :class="$route.name === 'hub-surgery-management-id-surgery-permanent-jobs-index' ? 'border rounded-lg border-yellow-500 bg-yellow-500'	: 'text-gray-600'"
+        >Surgery Permanent Jobs</nuxt-link>
+        <nuxt-link
+          v-if="relationshipIsActive == 'Active'"
           :to="{ path: `/hub-surgery-management/${$route.params.id}/request-for-termination`, query: {...$route.query}}"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer whitespace-no-wrap"
           :class="$route.name === 'hub-surgery-management-id-request-for-termination' ? 'border rounded-lg border-yellow-500 bg-yellow-500'	: 'text-gray-600'"
