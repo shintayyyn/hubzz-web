@@ -73,7 +73,7 @@ export default {
 		}
 	},
 	ADD_UNREAD_MESSAGE(state, payload) {
-		console.log("unread", payload)
+		console.log("unread zxcasd", payload)
 		state.unreadMessages.push({
 			user_id: this.$auth.user.id,
 			conversation_id: payload.id
@@ -83,10 +83,13 @@ export default {
 		state.messageSent = payload;
 	},
 	DELETE_UNREAD_MESSAGE(state, payload) {
-		let index = state.unreadMessages.findIndex(
-			item => item.conversation_id === payload
-		);
-		state.unreadMessages.splice(index, 1);
+		console.log("unreadMessages b", state.unreadMessages)
+		state.unreadMessages.map((item, index) => {
+			if (item.conversation_id == payload) {
+				state.unreadMessages.splice(index, 1);
+			}
+		})
+		console.log("unreadMessages", state.unreadMessages)
 	},
 	DELETE_USER_ONLINE(state, payload) {
 		// let index = state.usersOnline.findIndex(users => users == payload);
