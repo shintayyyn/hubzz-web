@@ -56,6 +56,7 @@
 									:checked="value"
 									:readonly="disabled"
 									:min="type === 'number' && 1"
+									step="any"
 								/>
 								<transition name="drop-down">
 									<div
