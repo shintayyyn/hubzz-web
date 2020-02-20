@@ -11,15 +11,13 @@
         <div class="font-bold text-sm sm:text-md">Total hours</div>
         <div class="text-xs sm:text-sm mb-4">{{job.total_hours}}</div>
         <div class="font-bold text-sm sm:text-md">Extra information</div>
-        <div
-          class="text-xs sm:text-sm mb-8"
-        >{{job.platform_job.extra_information?job.platform_job.extra_information:`(none)`}}</div>
+        <div class="text-xs sm:text-sm mb-8">
+          {{job.platform_job.extra_information?job.platform_job.extra_information:`(none)`}}</div>
         <div class="font-bold text-sm sm:text-md">Report to</div>
         <div class="text-xs sm:text-sm mb-8">{{job.platform_job.report_to}}</div>
         <div class="font-bold text-sm sm:text-md">Telephone number</div>
-        <div
-          class="text-xs sm:text-sm mb-8"
-        >{{job.platform_job.practice.phone_number?job.platform_job.practice.phone_number:`(none)`}}</div>
+        <div class="text-xs sm:text-sm mb-8">
+          {{job.platform_job.practice.phone_number?job.platform_job.practice.phone_number:`(none)`}}</div>
         <div class="font-bold text-sm sm:text-md">Email address</div>
         <div class="text-xs sm:text-sm mb-8">{{job.platform_job.email}}</div>
         <div class="font-bold text-sm sm:text-md">Is there another Dr on site?</div>
@@ -31,15 +29,9 @@
         <div class="font-bold text-sm sm:text-md">Duration of eact appointment?</div>
         <div class="text-xs sm:text-sm mb-8">{{job.platform_job.duration_for_each_appointment}}</div>
         <div class="font-bold text-sm sm:text-md">Opportunity for catch up slots?</div>
-        <div
-          class="text-xs sm:text-sm mb-8"
-        >{{job.platform_job.opportunity_for_catch_up_slots ? 'Yes' : 'No'}}</div>
+        <div class="text-xs sm:text-sm mb-8">{{job.platform_job.opportunity_for_catch_up_slots ? 'Yes' : 'No'}}</div>
         <div class="font-bold text-sm sm:text-md">Session requirements:</div>
-        <div
-          class="flex flex-col"
-          v-for="(item, index) in session_requirements"
-          :key="`${item}-${index}`"
-        >
+        <div class="flex flex-col" v-for="(item, index) in session_requirements" :key="`${item}-${index}`">
           <div class="text-xs sm:text-sm w-full">{{item}}</div>
         </div>
         <div class="text-xs sm:text-sm mb-8"></div>
@@ -71,9 +63,7 @@
 
         <div class="text-xs sm:text-sm mb-8">
           This job is
-          <span
-            class="font-bold text-sm sm:text-md"
-          >{{job.platform_job.ir35 ? 'INSIDE' : 'OUTSIDE'}}</span> of scope of
+          <span class="font-bold text-sm sm:text-md">{{job.platform_job.ir35 ? 'INSIDE' : 'OUTSIDE'}}</span> of scope of
           <span class="font-bold text-sm sm:text-md">IR35</span>
         </div>
 
@@ -82,52 +72,35 @@
 
         <div class="font-bold text-sm sm:text-md">Specialty</div>
         <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
-          <div
-            class="rounded-lg bg-yellow-500 p-1 m-1"
-            v-for="item in job.platform_job.qualifications"
-            :key="item.id"
-          >{{item.name}}</div>
+          <div class="rounded-lg bg-yellow-500 p-1 m-1" v-for="item in job.platform_job.qualifications" :key="item.id">
+            {{item.name}}</div>
         </div>
 
         <div class="font-bold text-sm sm:text-md">Clinical systems</div>
         <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
-          <div
-            class="rounded-lg bg-yellow-500 p-1 m-1"
-            v-for="item in job.platform_job.clinical_systems"
-            :key="item.id"
-          >{{item.name}}</div>
+          <div class="rounded-lg bg-yellow-500 p-1 m-1" v-for="item in job.platform_job.clinical_systems"
+            :key="item.id">{{item.name}}</div>
         </div>
 
         <div class="font-bold text-sm sm:text-md">Spoken languages</div>
         <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
           <div class="rounded-lg bg-yellow-500 p-1 m-1">English</div>
-          <div
-            class="rounded-lg bg-yellow-500 p-1 m-1"
-            v-for="item in job.platform_job.spoken_languages"
-            :key="item.id"
-          >{{item.name}}</div>
+          <div class="rounded-lg bg-yellow-500 p-1 m-1" v-for="item in job.platform_job.spoken_languages"
+            :key="item.id">{{item.name}}</div>
         </div>
 
         <div class="font-bold text-sm sm:text-md">Compliance requirements</div>
         <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
           <div class="mt-1" v-if="job.platform_job.compliance_documents.length === 0">(none)</div>
-          <div
-            v-else
-            class="rounded-lg bg-yellow-500 p-1 m-1"
-            v-for="item in job.platform_job.compliance_documents"
-            :key="item.id"
-          >{{item.name}}</div>
+          <div v-else class="rounded-lg bg-yellow-500 p-1 m-1" v-for="item in job.platform_job.compliance_documents"
+            :key="item.id">{{item.name}}</div>
         </div>
 
         <div class="font-bold text-sm sm:text-md">Mandatory training</div>
         <div class="text-xs sm:text-sm mb-8 flex flex-row flex-wrap">
           <div class="mt-1" v-if="job.platform_job.mandatory_trainings.length === 0">(none)</div>
-          <div
-            v-else
-            class="rounded-lg bg-yellow-500 p-1 m-1"
-            v-for="item in job.platform_job.mandatory_trainings"
-            :key="item.id"
-          >{{item.name}}</div>
+          <div v-else class="rounded-lg bg-yellow-500 p-1 m-1" v-for="item in job.platform_job.mandatory_trainings"
+            :key="item.id">{{item.name}}</div>
         </div>
 
         <template v-if="job.use_variation_terms">
@@ -135,21 +108,17 @@
             <div class="font-bold text-sm sm:text-md">Terms & Condition</div>
             <div class="text-sm sm:text-md">Variation Terms</div>
             <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
-              <div
-                class="mt-1 cursor-pointer bg-yellow-400 hover:bg-yellow-500 rounded-lg px-4 py-1 transition-hover"
-                @click="modal = true"
-              >View</div>
+              <div class="mt-1 cursor-pointer bg-yellow-400 hover:bg-yellow-500 rounded-lg px-4 py-1 transition-hover"
+                @click="modal = true">View</div>
               <transition name="slide" mode="out-in">
                 <div v-if="modal" class="modal-container shadow-lg">
                   <div class="h-full w-full">
                     <div class="p-4 md:p-8 cursor-pointer">
                       <svgicon name="left-arrow" height="32" @click="modal = false" />
                     </div>
-                    <embed
-                      class="object-contain object-top w-full"
+                    <embed class="object-contain object-top w-full"
                       :class="job.variation_terms_file.type == 'image' ? 'image' : 'document h-full '"
-                      :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job.variation_terms_file.subtype) ? convertDoc(job.variation_terms_file.url) : job.variation_terms_file.url"
-                    />
+                      :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job.variation_terms_file.subtype) ? convertDoc(job.variation_terms_file.url) : job.variation_terms_file.url" />
                   </div>
                 </div>
               </transition>
@@ -159,21 +128,17 @@
             <div class="font-bold text-sm sm:text-md">Terms & Condition</div>
             <div class="text-sm sm:text-md">Standard Terms</div>
             <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
-              <div
-                class="mt-1 cursor-pointer bg-yellow-400 hover:bg-yellow-500 rounded-lg px-4 py-1 transition-hover"
-                @click="modal = true"
-              >View</div>
+              <div class="mt-1 cursor-pointer bg-yellow-400 hover:bg-yellow-500 rounded-lg px-4 py-1 transition-hover"
+                @click="modal = true">View</div>
               <transition name="slide" mode="out-in">
                 <div v-if="modal" class="modal-container shadow-lg">
                   <div class="h-full w-full">
                     <div class="p-4 md:p-8 cursor-pointer">
                       <svgicon name="left-arrow" height="32" @click="modal = false" />
                     </div>
-                    <embed
-                      class="object-contain object-top w-full"
+                    <embed class="object-contain object-top w-full"
                       :class="job.standard_terms_file.type == 'image' ? 'image' : 'document h-full '"
-                      :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job.standard_terms_file.subtype) ? convertDoc(job.standard_terms_file.url) : job.standard_terms_file.url"
-                    />
+                      :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job.standard_terms_file.subtype) ? convertDoc(job.standard_terms_file.url) : job.standard_terms_file.url" />
                   </div>
                 </div>
               </transition>
@@ -186,21 +151,17 @@
             <div class="font-bold text-sm sm:text-md">Terms & Condition</div>
             <div class="text-sm sm:text-md">Standard Terms</div>
             <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
-              <div
-                class="mt-1 cursor-pointer bg-yellow-400 hover:bg-yellow-500 rounded-lg px-4 py-1 transition-hover"
-                @click="modal = true"
-              >View</div>
+              <div class="mt-1 cursor-pointer bg-yellow-400 hover:bg-yellow-500 rounded-lg px-4 py-1 transition-hover"
+                @click="modal = true">View</div>
               <transition name="slide" mode="out-in">
                 <div v-if="modal" class="modal-container shadow-lg">
                   <div class="h-full w-full">
                     <div class="p-4 md:p-8 cursor-pointer">
                       <svgicon name="left-arrow" height="32" @click="modal = false" />
                     </div>
-                    <embed
-                      class="object-contain object-top w-full"
+                    <embed class="object-contain object-top w-full"
                       :class="job.standard_terms_file.type == 'image' ? 'image' : 'document h-full '"
-                      :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job.standard_terms_file.subtype) ? convertDoc(job.standard_terms_file.url) : job.standard_terms_file.url"
-                    />
+                      :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job.standard_terms_file.subtype) ? convertDoc(job.standard_terms_file.url) : job.standard_terms_file.url" />
                   </div>
                 </div>
               </transition>
@@ -210,21 +171,17 @@
             <div class="font-bold text-sm sm:text-md">Terms & Condition</div>
             <div class="text-sm sm:text-md">Variation Terms</div>
             <div class="text-xs sm:text-sm mb-6 flex flex-row flex-wrap">
-              <div
-                class="mt-1 cursor-pointer bg-yellow-400 hover:bg-yellow-500 rounded-lg px-4 py-1 transition-hover"
-                @click="modal = true"
-              >View</div>
+              <div class="mt-1 cursor-pointer bg-yellow-400 hover:bg-yellow-500 rounded-lg px-4 py-1 transition-hover"
+                @click="modal = true">View</div>
               <transition name="slide" mode="out-in">
                 <div v-if="modal" class="modal-container shadow-lg">
                   <div class="h-full w-full">
                     <div class="p-4 md:p-8 cursor-pointer">
                       <svgicon name="left-arrow" height="32" @click="modal = false" />
                     </div>
-                    <embed
-                      class="object-contain object-top w-full"
+                    <embed class="object-contain object-top w-full"
                       :class="job.variation_terms_file.type == 'image' ? 'image' : 'document h-full '"
-                      :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job.standard_terms_file.subtype) ? convertDoc(job.standard_terms_file.url) : job.standard_terms_file.url"
-                    />
+                      :src="['msword', 'tiff', 'vnd.openxmlformats-officedocument.wordprocessingml.document', 'vnd.openxmlformats-officedocument.wordprocessingml.template', 'vnd.ms-word.document.macroEnabled.12', 'vnd.ms-word.template.macroEnabled.12'].includes(job.standard_terms_file.subtype) ? convertDoc(job.standard_terms_file.url) : job.standard_terms_file.url" />
                   </div>
                 </div>
               </transition>
@@ -239,33 +196,33 @@
   </div>
 </template>
 <script>
-export default {
-  props: ["job"],
-  data() {
-    return {
-      modal: false
-    };
-  },
-  computed: {
-    session_requirements() {
-      return this.job.platform_job.session_requirements.split(",");
+  export default {
+    props: ["job"],
+    data() {
+      return {
+        modal: false
+      };
+    },
+    computed: {
+      session_requirements() {
+        return this.job.platform_job.session_requirements ? this.job.platform_job.session_requirements.split(",") : [];
+      }
+    },
+    methods: {
+      convertDoc(document) {
+        return `https://docs.google.com/gview?url=${document}&embedded=true`;
+      }
     }
-  },
-  methods: {
-    convertDoc(document) {
-      return `https://docs.google.com/gview?url=${document}&embedded=true`;
-    }
-  }
-};
+  };
 </script>
 <style scoped>
-.modal-container {
-  z-index: 510;
-}
-
-@media screen and (min-width: 1200px) {
   .modal-container {
-    width: 70%;
+    z-index: 510;
   }
-}
+
+  @media screen and (min-width: 1200px) {
+    .modal-container {
+      width: 70%;
+    }
+  }
 </style>
