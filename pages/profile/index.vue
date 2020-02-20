@@ -209,22 +209,47 @@
                   :label="'VAT Number'"
                   :error="formError.find(item => item.field === 'vat_number')"
                 />
-              </template>
-              <AppInput
-                v-model="form.direct_debit"
-                :type="'single-checkbox'"
-                :name="'direct_debit'"
-                :label="'Direct Debit Account'"
-              />
-              <template v-if="form.direct_debit">
-                <AppInput
-                  v-model="form.sage_ref"
-                  :type="'text'"
-                  :name="'sage_ref'"
-                  :label="'Sage reference'"
-                  :error="formError.find(item => item.field === 'sage_ref')"
+                <AppDate
+                  v-model="form.tax_year_end_date"
+                  :name="'tax_year_end_date'"
+                  :label="'Tax Year End Date'"
+                  :error="formError.find(item => item.field === 'tax_year_end_date')"
+                  isBefore
                 />
               </template>
+              <div class="font-bold text-sm my-4">Bank Details</div>
+              <AppInput
+                v-model="form.account_name"
+                :type="'text'"
+                :name="'account_name'"
+                :label="'Account name'"
+                :error="formError.find(item => item.field === 'account_name')"
+                required
+              />
+              <AppInput
+                v-model="form.bank_name"
+                :type="'text'"
+                :name="'bank_name'"
+                :label="'Bank name'"
+                :error="formError.find(item => item.field === 'bank_name')"
+                required
+              />
+              <AppInput
+                v-model="form.sort_code"
+                :type="'text'"
+                :name="'sort_code'"
+                :label="'Sort code'"
+                :error="formError.find(item => item.field === 'sort_code')"
+                required
+              />
+              <AppInput
+                v-model="form.account_number"
+                :type="'text'"
+                :name="'account_number'"
+                :label="'Account number'"
+                :error="formError.find(item => item.field === 'account_number')"
+                required
+              />
             </div>
           </div>
           <div class="flex flex-row flex-wrap justify-between px-2">
@@ -260,6 +285,7 @@
 </template>
 <script>
 import AppInput from "@/components/Base/AppInput";
+import AppDate from "@/components/Base/AppDate";
 import AppButton from "@/components/Base/AppButton";
 import AppFormError from "@/components/Base/AppFormError";
 import AppLoading from "@/components/Base/AppLoading";
@@ -271,6 +297,7 @@ export default {
   },
   components: {
     AppInput,
+    AppDate,
     AppButton,
     AppFormError,
     AppLoading,
@@ -300,8 +327,11 @@ export default {
         use_variation_terms: false,
         vat_registered: false,
         vat_number: null,
-        direct_debit: false,
-        sage_ref: null
+        tax_year_end_date: null,
+        account_name: "",
+        bank_name: "",
+        sort_code: "",
+        account_number: ""
       },
       name: "",
       formError: []
@@ -480,8 +510,11 @@ export default {
     this.form.use_variation_terms = this.practice.use_variation_terms;
     this.form.vat_registered = this.practice.vat_registered;
     this.form.vat_number = this.practice.vat_number;
-    this.form.direct_debit = this.practice.direct_debit;
-    this.form.sage_ref = this.practice.sage_ref;
+    this.form.tax_year_end_date = this.practice.tax_year_end_date;
+    this.form.account_name = this.practice.account_name;
+    this.form.bank_name = this.practice.bank_name;
+    this.form.sort_code = this.practice.sort_code;
+    this.form.account_number = this.practice.account_number;
   },
   methods: {
     async onFileInput(e) {
@@ -604,8 +637,7 @@ export default {
         "extra_information",
         "gp_compliance_document_id",
         "others_compliance_document_id",
-        "vat_registered",
-        "direct_debit"
+        "vat_registered"
       ];
 
       if (
@@ -625,10 +657,7 @@ export default {
       //   });
       // }
       if (["false", false].includes(this.form.vat_registered)) {
-        notRequired.push("vat_number");
-      }
-      if (["false", false].includes(this.form.direct_debit)) {
-        notRequired.push("sage_ref");
+        notRequired.push("vat_number", "tax_year_end_date");
       }
       this.Validate(this.form, notRequired);
       if (!this.formError.length) {

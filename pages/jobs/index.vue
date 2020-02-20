@@ -794,9 +794,6 @@ export default {
           case "Private":
             locum_status = [];
             break;
-          case "Withdrawn":
-            locum_status = ["Declined"];
-            break;
           default:
             locum_status = [`${queryStatus}`];
             break;
@@ -1092,9 +1089,7 @@ export default {
           case "Private":
             locum_status = [];
             break;
-          case "Withdrawn":
-            locum_status = ["Declined"];
-            break;
+
           default:
             locum_status = [`${queryStatus}`];
             break;
@@ -1243,9 +1238,6 @@ export default {
             break;
           case "Completed":
             locum_status = ["Completed", "Terminated"];
-            break;
-          case "Withdrawn":
-            locum_status = ["Declined"];
             break;
           case "Private":
             locum_status = [];

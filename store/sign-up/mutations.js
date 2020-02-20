@@ -48,6 +48,13 @@ export default {
         state.practice_account_details.suffix = payload.suffix
         state.practice_account_details.practice_role = payload.practice_role
         state.practice_account_details.practice_type_id = payload.practice_type_id
+        state.practice_account_details.account_name = payload.account_name
+        state.practice_account_details.bank_name = payload.bank_name
+        state.practice_account_details.sort_code = payload.sort_code
+        state.practice_account_details.account_number = payload.account_number
+        state.practice_account_details.vat_registered = payload.vat_registered
+        state.practice_account_details.vat_number = payload.vat_number
+        state.practice_account_details.tax_year_end_date = payload.tax_year_end_date
     },
     CLEAR_REGISTER_PRACTICE_FORM(state) {
         state.search_results = []
@@ -83,6 +90,13 @@ export default {
         state.practice_account_details.email = ''
         state.practice_account_details.password = ''
         state.practice_account_details.password_confirmation = ''
+        state.practice_account_details.account_name = ''
+        state.practice_account_details.bank_name = ''
+        state.practice_account_details.sort_code = ''
+        state.practice_account_details.account_number = ''
+        state.practice_account_details.vat_registered = ''
+        state.practice_account_details.vat_number = ''
+        state.practice_account_details.tax_year_end_date = ''
     },
     SET_PRACTICE_DETAIL_FORM_ERROR(state, payload) {
         state.practice_detail_form_error = payload
