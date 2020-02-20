@@ -185,7 +185,13 @@
             />
           </div>
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppInput class="px-1" v-model="miles" :type="'number'" :name="'miles'" :label="'Miles'" />
+            <AppInput
+              class="px-1"
+              v-model="miles"
+              :type="'number'"
+              :name="'miles'"
+              :label="'Miles'"
+            />
           </div>
           <div class="md:px-1 flex w-full">
             <AppButton
@@ -370,7 +376,13 @@
             />
           </div>
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppInput class="px-1" v-model="miles" :type="'number'" :name="'miles'" :label="'Miles'" />
+            <AppInput
+              class="px-1"
+              v-model="miles"
+              :type="'number'"
+              :name="'miles'"
+              :label="'Miles'"
+            />
           </div>
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput
@@ -778,14 +790,7 @@ export default {
         locum_status = ["Allocated"];
       } else if (queryStatus) {
         switch (queryStatus) {
-          case "Available":
-            // case "Bank":
-            locum_status = ["Matched"];
-            break;
           case "Bank":
-            locum_status = ["Available", "Matched"];
-            break;
-          case "Public":
             locum_status = ["Available"];
             break;
           case "Completed":
@@ -1073,14 +1078,7 @@ export default {
 
       if (queryStatus) {
         switch (queryStatus) {
-          case "Available":
-            // case "Bank":
-            locum_status = ["Matched"];
-            break;
           case "Bank":
-            locum_status = ["Available", "Matched"];
-            break;
-          case "Public":
             locum_status = ["Available"];
             break;
           case "Completed":
@@ -1226,14 +1224,7 @@ export default {
         locum_status = ["Allocated"];
       } else if (queryStatus) {
         switch (queryStatus) {
-          case "Available":
-            // case "Bank":
-            locum_status = ["Matched"];
-            break;
           case "Bank":
-            locum_status = ["Available", "Matched"];
-            break;
-          case "Public":
             locum_status = ["Available"];
             break;
           case "Completed":

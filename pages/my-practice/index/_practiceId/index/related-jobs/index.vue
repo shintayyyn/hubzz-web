@@ -20,14 +20,6 @@
           :class="$route.query && $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'public'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
         >Public</nuxt-link>
       </div>
-      <div class="relative">
-        <nuxt-link
-          :event="$store.state.jobs.loading_jobs ? '' : 'click'"
-          :to="`/my-practice/${$route.params.practiceId}/related-jobs?status=${$route.query.status}&jobStatus=Bank`"
-          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.query && $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'bank'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-        >Bank</nuxt-link>
-      </div>
     </div>
     <transition name="fade" mode="out-in">
       <div class="relative flex w-full" v-if="initialLoading" style="min-height:80px">
@@ -543,6 +535,7 @@ export default {
       invoice_status: "",
       shifts: [],
       rates: [],
+      viewing_locum_user_id: "",
       filterModal: false,
       isFiltered: false,
       showRefresh: false
@@ -781,28 +774,21 @@ export default {
   },
   async asyncData({ app, params, query, store, error }) {
     try {
-      let status = [];
+      let locum_status = [];
       let queryStatus = query.jobStatus;
 
       if (!queryStatus) {
-        status = ["Allocated"];
+        locum_status = ["Allocated"];
       } else if (queryStatus) {
         switch (queryStatus) {
-          case "Available":
           case "Bank":
-            status = ["Matched"];
-            break;
-          case "Public":
-            status = ["Available"];
+            locum_status = ["Available"];
             break;
           case "Completed":
-            status = ["Completed", "Terminated"];
-            break;
-          case "Private":
-            status = [];
+            locum_status = ["Completed", "Terminated"];
             break;
           default:
-            status = [`${queryStatus}`];
+            locum_status = [`${queryStatus}`];
             break;
         }
       }
@@ -841,6 +827,7 @@ export default {
       let time_start = "";
       let time_end = "";
       let invoice_status = "";
+      let viewing_locum_user_id = "";
 
       const [shifts, rates, total, jobs] = await Promise.all([
         app.$axios.$get(`/api/v1/shifts`).then(res => {
@@ -862,7 +849,7 @@ export default {
         app.$axios
           .$get(`/api/v1/locum/${isJobPart ? "job-parts" : "jobs"}/count`, {
             params: {
-              status,
+              locum_status,
               order_by: [],
               job_number: !isJobPart ? job_number : "",
               job_part_number: isJobPart ? job_part_number : "",
@@ -886,7 +873,8 @@ export default {
               time_end: isJobPart ? time_end : "",
               invoice_status: isJobPart ? invoice_status : "",
               type: queryStatus === "Private" ? "Private" : "Platform",
-              practice_is_favorite_of_locum: queryStatus === "Bank" ? true : ""
+              practice_is_favorite_of_locum: queryStatus === "Bank" ? true : "",
+              viewing_locum_user_id: app.$auth.user.id
             }
           })
           .then(res => {
@@ -899,7 +887,7 @@ export default {
             params: {
               offset: 0,
               limit: 5,
-              status,
+              locum_status,
               order_by: [],
               job_number: !isJobPart ? job_number : "",
               job_part_number: isJobPart ? job_part_number : "",
@@ -923,7 +911,8 @@ export default {
               time_end: isJobPart ? time_end : "",
               invoice_status: isJobPart ? invoice_status : "",
               type: queryStatus === "Private" ? "Private" : "Platform",
-              practice_is_favorite_of_locum: queryStatus === "Bank" ? true : ""
+              practice_is_favorite_of_locum: queryStatus === "Bank" ? true : "",
+              viewing_locum_user_id: app.$auth.user.id
             }
           })
           .then(res => {
@@ -1043,38 +1032,30 @@ export default {
       this.jobs = this.jobs.filter(item => item.id !== id);
     },
     getJobsPromiseAll() {
-      let status = [];
+      let locum_status = [];
       let queryStatus = this.$route.query.jobStatus;
 
       if (queryStatus) {
         switch (queryStatus) {
-          case "Available":
           case "Bank":
-            status = ["Matched"];
-            break;
-          case "Public":
-            status = ["Available"];
+            locum_status = ["Available"];
             break;
           case "Completed":
-            status = ["Completed", "Terminated"];
-            break;
-          case "Private":
-            status = [];
+            locum_status = ["Completed", "Terminated"];
             break;
           default:
-            status = [`${queryStatus}`];
+            locum_status = [`${queryStatus}`];
             break;
         }
       } else if (!queryStatus) {
-        status = ["Allocated"];
+        locum_status = ["Allocated"];
       }
-      console.log(this.practice_id);
       return Promise.all([
         this.$axios.$get(
           `/api/v1/locum/${this.isJobPart ? "job-parts" : "jobs"}/count`,
           {
             params: {
-              status,
+              locum_status,
               order_by: [],
               job_number: !this.isJobPart ? this.job_number : "",
               job_part_number: this.isJobPart ? this.job_part_number : "",
@@ -1102,7 +1083,8 @@ export default {
               time_end: this.isJobPart ? this.time_end : "",
               invoice_status: this.isJobPart ? this.invoice_status : "",
               type: queryStatus === "Private" ? "Private" : "Platform",
-              practice_is_favorite_of_locum: queryStatus === "Bank" ? true : ""
+              practice_is_favorite_of_locum: queryStatus === "Bank" ? true : "",
+              viewing_locum_user_id: this.$auth.user.id
             }
           }
         ),
@@ -1112,7 +1094,7 @@ export default {
             params: {
               offset: 0,
               limit: 5,
-              status,
+              locum_status,
               order_by: [],
               job_number: !this.isJobPart ? this.job_number : "",
               job_part_number: this.isJobPart ? this.job_part_number : "",
@@ -1140,7 +1122,8 @@ export default {
               time_end: this.isJobPart ? this.time_end : "",
               invoice_status: this.isJobPart ? this.invoice_status : "",
               type: queryStatus === "Private" ? "Private" : "Platform",
-              practice_is_favorite_of_locum: queryStatus === "Bank" ? true : ""
+              practice_is_favorite_of_locum: queryStatus === "Bank" ? true : "",
+              viewing_locum_user_id: this.$auth.user.id
             }
           }
         )
@@ -1160,28 +1143,21 @@ export default {
         });
     },
     getJobs() {
-      let status = [];
+      let locum_status = [];
       let queryStatus = this.$route.query.jobStatus;
 
       if (!queryStatus) {
-        status = ["Allocated"];
+        locum_status = ["Allocated"];
       } else if (queryStatus) {
         switch (queryStatus) {
-          case "Available":
           case "Bank":
-            status = ["Matched"];
-            break;
-          case "Public":
-            status = ["Available"];
+            locum_status = ["Available"];
             break;
           case "Completed":
-            status = ["Completed", "Terminated"];
-            break;
-          case "Private":
-            status = [];
+            locum_status = ["Completed", "Terminated"];
             break;
           default:
-            status = [`${queryStatus}`];
+            locum_status = [`${queryStatus}`];
             break;
         }
       }
@@ -1191,7 +1167,7 @@ export default {
           params: {
             offset: this.offset,
             limit: this.limit,
-            status,
+            locum_status,
             order_by: this.order_by,
             job_number: !this.isJobPart ? this.job_number : "",
             job_part_number: this.isJobPart ? this.job_part_number : "",
@@ -1217,7 +1193,8 @@ export default {
             time_end: this.isJobPart ? this.time_end : "",
             invoice_status: this.isJobPart ? this.invoice_status : "",
             type: queryStatus === "Private" ? "Private" : "Platform",
-            practice_is_favorite_of_locum: queryStatus === "Bank" ? true : ""
+            practice_is_favorite_of_locum: queryStatus === "Bank" ? true : "",
+            viewing_locum_user_id: this.$auth.user.id
           }
         })
         .then(res => {
