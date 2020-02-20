@@ -185,7 +185,7 @@
             />
           </div>
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppInput class="px-1" v-model="miles" :type="'text'" :name="'miles'" :label="'Miles'" />
+            <AppInput class="px-1" v-model="miles" :type="'number'" :name="'miles'" :label="'Miles'" />
           </div>
           <div class="md:px-1 flex w-full">
             <AppButton
@@ -370,7 +370,7 @@
             />
           </div>
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
-            <AppInput class="px-1" v-model="miles" :type="'text'" :name="'miles'" :label="'Miles'" />
+            <AppInput class="px-1" v-model="miles" :type="'number'" :name="'miles'" :label="'Miles'" />
           </div>
           <div class="md:px-1 w-full lg:w-1/4 md:w-1/3">
             <AppInput

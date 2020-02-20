@@ -632,7 +632,8 @@ export default {
     "form.total_hours"(oldValue, value) {
       this.validateNumber(this.form.total_hours, "total_hours");
     },
-    "form.time_end"(value) {
+    "form.time_start"(value) {
+      console.log(value)
       // console.log(this.form.date_start, this.form.date_end)
       // if (this.form.date_start === this.form.date_end) {
       // console.log(this.form.time_start, this.form.time_end)
