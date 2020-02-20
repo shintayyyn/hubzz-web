@@ -94,6 +94,61 @@
             required
           />
           <AppInput
+            v-model="form.vat_registered"
+            :type="'single-checkbox'"
+            :name="'vat_registered'"
+            :label="'Are you VAT registered?'"
+          />
+          <template v-if="form.vat_registered">
+            <AppInput
+              v-model="form.vat_number"
+              :type="'text'"
+              :name="'vat_number'"
+              :label="'VAT Number'"
+              :error="formError.find(item => item.field === 'vat_number')"
+            />
+            <AppDate
+              v-model="form.tax_year_end_date"
+              :name="'tax_year_end_date'"
+              :label="'Tax Year End Date'"
+              isBefore
+              :error="formError.find(item => item.field === 'tax_year_end_date')"
+            />
+          </template>
+          <div class="font-bold text-sm my-4">Bank Details</div>
+          <AppInput
+            v-model="form.account_name"
+            :type="'text'"
+            :name="'account_name'"
+            :label="'Account name'"
+            :error="formError.find(item => item.field === 'account_name')"
+            required
+          />
+          <AppInput
+            v-model="form.bank_name"
+            :type="'text'"
+            :name="'bank_name'"
+            :label="'Bank name'"
+            :error="formError.find(item => item.field === 'bank_name')"
+            required
+          />
+          <AppInput
+            v-model="form.sort_code"
+            :type="'text'"
+            :name="'sort_code'"
+            :label="'Sort code'"
+            :error="formError.find(item => item.field === 'sort_code')"
+            required
+          />
+          <AppInput
+            v-model="form.account_number"
+            :type="'text'"
+            :name="'account_number'"
+            :label="'Account number'"
+            :error="formError.find(item => item.field === 'account_number')"
+            required
+          />
+          <AppInput
             v-model="form.email"
             :type="'email'"
             :name="'email'"
@@ -178,6 +233,7 @@
 </template>
 <script>
 import AppInput from "@/components/Base/AppInput";
+import AppDate from "@/components/Base/AppDate";
 import AppButton from "@/components/Base/AppButton";
 import AppFilterSearch from "@/components/Base/AppFilterSearch";
 import AppFormError from "@/components/Base/AppFormError";
@@ -200,6 +256,7 @@ const practice_roles = [
 export default {
   components: {
     AppInput,
+    AppDate,
     AppButton,
     AppFilterSearch,
     AppFormError,
@@ -222,7 +279,14 @@ export default {
         email: "",
         password: "",
         password_confirmation: "",
-        privacy_policy: false
+        privacy_policy: false,
+        vat_registered: false,
+        vat_number: "",
+        tax_year_end_date: "",
+        account_name: "",
+        bank_name: "",
+        sort_code: "",
+        account_number: ""
       },
       formError: [],
       modal: false
@@ -250,7 +314,6 @@ export default {
     practiceAccountFormError(value) {
       if (value.length > 0) {
         value.forEach(item => {
-          //   this.formError.push(item);
           this.formError.push({
             field:
               item.validation === "confirmed"
@@ -266,7 +329,6 @@ export default {
   mounted() {
     if (this.practiceAccountFormError.length > 0) {
       this.practiceAccountFormError.forEach(item => {
-        // this.formError.push(item);
         this.formError.push({
           field:
             item.validation === "confirmed"
@@ -281,9 +343,12 @@ export default {
   methods: {
     signUp() {
       this.formError = [];
-      let notRequired = ["title", "suffix"];
+      let notRequired = ["title", "suffix", "vat_registered"];
       if (["Spoke", "Stand Alone"].includes(this.form.type)) {
         notRequired.push("hub_type");
+      }
+      if (["false", false].includes(this.form.vat_registered)) {
+        notRequired.push("vat_number", "tax_year_end_date");
       }
       this.Validate(this.form, notRequired);
       if (!this.formError.length) {
