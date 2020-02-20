@@ -2,24 +2,24 @@
   <section class="relative">
     <div class="flex flex-row justify-start overflow-x-auto pb-3">
       <nuxt-link
-        :to="{ path: '/practice-billing', query: { ...$route.query, status: 'to-be-invoiced' } }"
+        :to="{ path: '/practice-billing/invoices-from-locums', query: { ...$route.query, status: 'to-be-invoiced' } }"
         class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('practice-billing-index') && (!$route.query.status || ($route.query.status  && $route.query.status.toLowerCase() === 'to-be-invoiced')) ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name.includes('practice-billing-invoices-from-locums') && (!$route.query.status || ($route.query.status  && $route.query.status.toLowerCase() === 'to-be-invoiced')) ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >To be Invoiced</nuxt-link>
       <nuxt-link
-        :to="{ path: '/practice-billing', query: { ...$route.query, status: 'disputed' } }"
+        :to="{ path: '/practice-billing/invoices-from-locums', query: { ...$route.query, status: 'disputed' } }"
         class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('practice-billing-index') && ($route.query.status && $route.query.status.toLowerCase() === 'disputed') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name.includes('practice-billing-invoices-from-locums') && ($route.query.status && $route.query.status.toLowerCase() === 'disputed') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >Disputed Invoices</nuxt-link>
       <nuxt-link
-        :to="{ path: '/practice-billing', query: { ...$route.query, status: 'issued' } }"
+        :to="{ path: '/practice-billing/invoices-from-locums', query: { ...$route.query, status: 'issued' } }"
         class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('practice-billing-index') && ($route.query.status && $route.query.status.toLowerCase() === 'issued') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name.includes('practice-billing-invoices-from-locums') && ($route.query.status && $route.query.status.toLowerCase() === 'issued') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >Invoiced</nuxt-link>
       <nuxt-link
-        :to="{ path: '/practice-billing', query: { ...$route.query, status: 'approved' } }"
+        :to="{ path: '/practice-billing/invoices-from-locums', query: { ...$route.query, status: 'approved' } }"
         class="md:mr-5 p-3 text-xs font-bold cursor-pointer whitespace-no-wrap"
-        :class="$route.name.includes('practice-billing-index') && ($route.query.status && $route.query.status.toLowerCase() === 'approved') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        :class="$route.name.includes('practice-billing-invoices-from-locums') && ($route.query.status && $route.query.status.toLowerCase() === 'approved') ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
       >Approved Invoices</nuxt-link>
     </div>
     <transition name="fade" mode="out-in">
