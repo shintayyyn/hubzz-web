@@ -7,28 +7,28 @@
             <div class="flex flex-row flex-wrap">
               <div class="flex flex-col w-full lg:w-1/2 xl:w-2/5 p-1">
                 <div class="text-xs sm:text-sm">Practice name</div>
-                <div class="text-xs font-bold py-2">{{surgery.name}}</div>
+                <div class="text-xs font-bold py-2">{{practice.name}}</div>
                 <div class="text-xs sm:text-sm mt-4">CCG</div>
-                <div class="text-xs font-bold py-2">{{surgery.clinical_commissioning_group.name}}</div>
+                <div class="text-xs font-bold py-2">{{practice.clinical_commissioning_group_name}}</div>
               </div>
               <div class="flex flex-col w-full lg:w-1/2 xl:w-1/5 p-1">
                 <div class="text-xs sm:text-sm" mt-4>Practice code</div>
-                <div class="text-xs font-bold py-2">{{surgery.code}}</div>
+                <div class="text-xs font-bold py-2">{{practice.code}}</div>
                 <div class="text-xs sm:text-sm mt-4">Phone number</div>
-                <div class="text-xs font-bold py-2">{{surgery.phone_number}}</div>
+                <div class="text-xs font-bold py-2">{{practice.phone_number}}</div>
               </div>
-              <div class="flex xl:flex-col w-full xl:w-2/5 p-1">
-                <div class="flex flex-col lg:w-1/2 xl:w-full">
+              <div class="flex flex-col lg:flex-row xl:flex-col w-full xl:w-2/5 p-1">
+                <div class="flex flex-col w-full lg:w-1/2 xl:w-full">
                   <div class="text-xs sm:text-sm">Type</div>
                   <div
                     class="text-xs font-bold py-2"
                   >{{ !practice.hub_type || practice.hub_type !== 'Type 2' ? practice.type : 'Hub - Health Board'}}</div>
                 </div>
-                <div class="flex flex-col lg:w-1/2 xl:w-full">
+                <div class="flex flex-col w-full lg:w-1/2 xl:w-full">
                   <div class="text-xs sm:text-sm">Address</div>
                   <div
                     class="text-xs font-bold py-2"
-                  >{{surgery.address.line_1}} {{surgery.address.line_2}} {{surgery.address.line_3}} {{surgery.address.post_code}}</div>
+                  >{{practice.address_line_1}} {{practice.address_line_2}} {{practice.address_line_3}} {{practice.address_line_4}} {{practice.address_line_5}} {{practice.postcode}}</div>
                 </div>
               </div>
             </div>
@@ -209,31 +209,46 @@
                   :label="'VAT Number'"
                   :error="formError.find(item => item.field === 'vat_number')"
                 />
+                <AppDate
+                  v-model="form.tax_year_end_date"
+                  :name="'tax_year_end_date'"
+                  :label="'Tax Year End Date'"
+                  :error="formError.find(item => item.field === 'tax_year_end_date')"
+                />
               </template>
+              <div class="font-bold text-sm my-4">Bank Details</div>
               <AppInput
-                v-model="form.direct_debit"
-                :type="'single-checkbox'"
-                :name="'direct_debit'"
-                :label="'Direct Debit Account'"
+                v-model="form.account_name"
+                :type="'text'"
+                :name="'account_name'"
+                :label="'Account name'"
+                :error="formError.find(item => item.field === 'account_name')"
+                required
               />
-              <template v-if="form.direct_debit">
-                <AppInput
-                  v-model="form.sage_ref"
-                  :type="'text'"
-                  :name="'sage_ref'"
-                  :label="'Sage reference'"
-                  :error="formError.find(item => item.field === 'sage_ref')"
-                />
-              </template>
-              <template v-if="form.direct_debit">
-                <AppInput
-                  v-model="form.nominal_code"
-                  :type="'text'"
-                  :name="'nominal_code'"
-                  :label="'Nominal Code'"
-                  :error="formError.find(item => item.field === 'nominal_code')"
-                />
-              </template>
+              <AppInput
+                v-model="form.bank_name"
+                :type="'text'"
+                :name="'bank_name'"
+                :label="'Bank name'"
+                :error="formError.find(item => item.field === 'bank_name')"
+                required
+              />
+              <AppInput
+                v-model="form.sort_code"
+                :type="'text'"
+                :name="'sort_code'"
+                :label="'Sort code'"
+                :error="formError.find(item => item.field === 'sort_code')"
+                required
+              />
+              <AppInput
+                v-model="form.account_number"
+                :type="'text'"
+                :name="'account_number'"
+                :label="'Account number'"
+                :error="formError.find(item => item.field === 'account_number')"
+                required
+              />
             </div>
           </div>
           <div class="flex flex-row flex-wrap justify-between px-2">
@@ -269,6 +284,7 @@
 </template>
 <script>
 import AppInput from "@/components/Base/AppInput";
+import AppDate from "@/components/Base/AppDate";
 import AppButton from "@/components/Base/AppButton";
 import AppFormError from "@/components/Base/AppFormError";
 import AppLoading from "@/components/Base/AppLoading";
@@ -280,6 +296,7 @@ export default {
   },
   components: {
     AppInput,
+    AppDate,
     AppButton,
     AppFormError,
     AppLoading,
@@ -292,7 +309,7 @@ export default {
   },
   data() {
     return {
-      surgery: null,
+      // surgery: null,
       modal: false,
       loading: false,
       input_file_loading: false,
@@ -309,9 +326,11 @@ export default {
         use_variation_terms: false,
         vat_registered: false,
         vat_number: null,
-        direct_debit: false,
-        sage_ref: null,
-        nominal_code: null
+        tax_year_end_date: null,
+        account_name: "",
+        bank_name: "",
+        sort_code: "",
+        account_number: ""
       },
       name: "",
       formError: []
@@ -332,7 +351,7 @@ export default {
       if (permissions.includes("View Profile Practice")) {
         try {
           const [
-            [surgery, practice],
+            [practice],
             practice_types,
             mandatory_trainings,
             [gp_documents, others_documents]
@@ -340,17 +359,17 @@ export default {
             app.$axios
               .$get("/api/v1/practice/me/practice")
               .then(responsePractice => {
-                const surgery =
-                  responsePractice.data &&
-                  responsePractice.data.practice &&
-                  responsePractice.data.practice.surgery
-                    ? responsePractice.data.practice.surgery
-                    : null;
+                // const surgery =
+                //   responsePractice.data &&
+                //   responsePractice.data.practice &&
+                //   responsePractice.data.practice.surgery
+                //     ? responsePractice.data.practice.surgery
+                //     : null;
                 const practice =
                   responsePractice.data && responsePractice.data.practice
                     ? responsePractice.data.practice
                     : null;
-                return [surgery, practice];
+                return [practice];
               }),
 
             app.$axios
@@ -443,7 +462,7 @@ export default {
           ]);
 
           return {
-            surgery,
+            // surgery,
             practice,
             practice_types,
             mandatory_trainings,
@@ -490,9 +509,11 @@ export default {
     this.form.use_variation_terms = this.practice.use_variation_terms;
     this.form.vat_registered = this.practice.vat_registered;
     this.form.vat_number = this.practice.vat_number;
-    this.form.direct_debit = this.practice.direct_debit;
-    this.form.sage_ref = this.practice.sage_ref;
-    this.form.nominal_code = this.practice.nominal_code;
+    this.form.tax_year_end_date = this.practice.tax_year_end_date;
+    this.form.account_name = this.practice.account_name;
+    this.form.bank_name = this.practice.bank_name;
+    this.form.sort_code = this.practice.sort_code;
+    this.form.account_number = this.practice.account_number;
   },
   methods: {
     async onFileInput(e) {
@@ -615,8 +636,7 @@ export default {
         "extra_information",
         "gp_compliance_document_id",
         "others_compliance_document_id",
-        "vat_registered",
-        "direct_debit"
+        "vat_registered"
       ];
 
       if (
@@ -636,10 +656,7 @@ export default {
       //   });
       // }
       if (["false", false].includes(this.form.vat_registered)) {
-        notRequired.push("vat_number");
-      }
-      if (["false", false].includes(this.form.direct_debit)) {
-        notRequired.push("sage_ref", "nominal_code");
+        notRequired.push("vat_number", "tax_year_end_date");
       }
       this.Validate(this.form, notRequired);
       if (!this.formError.length) {
@@ -663,7 +680,7 @@ export default {
             ) {
               this.formError = err.response.data.error_messages;
             }
-            throw err;
+            // throw err;
           })
           .finally(() => {
             this.scrollToTop();

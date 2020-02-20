@@ -1,5 +1,26 @@
 <template>
   <section class="relative">
+    <div
+      class="flex flex-row justify-start overflow-x-auto py-3 mb-3"
+      v-if="$route.query.jobStatus && ['available', 'public', 'bank'].includes($route.query.jobStatus.toLowerCase())"
+    >
+      <div class="relative">
+        <nuxt-link
+          :event="$store.state.jobs.loading_jobs ? '' : 'click'"
+          :to="`/my-banks/${$route.params.locumId}/related-jobs?status=${$route.query.status}&jobStatus=Available`"
+          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          :class="$route.query && $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'available'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        >Available</nuxt-link>
+      </div>
+      <div class="relative">
+        <nuxt-link
+          :event="$store.state.jobs.loading_jobs ? '' : 'click'"
+          :to="`/my-banks/${$route.params.locumId}/related-jobs?status=${$route.query.status}&jobStatus=Public`"
+          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          :class="$route.query && $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'public'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        >Public</nuxt-link>
+      </div>
+    </div>
     <transition name="fade" mode="out-in">
       <div class="relative flex w-full" v-if="initialLoading" style="min-height:80px">
         <AppLoading :loading="initialLoading" spinner />
@@ -286,12 +307,13 @@ export default {
     if (
       query.jobStatus &&
       ![
-        "pending",
         "allocated",
         "ongoing",
-        "live",
+        "available",
+        "public",
+        "bank",
         "applied",
-        "unfilled",
+        "unsuccessful",
         "withdrawn",
         "cancelled",
         "completed",
@@ -381,6 +403,7 @@ export default {
         case "approved":
         case "unfilled":
         case "live":
+        case "public":
           return `You do not have any ${queryStatus} jobs`;
         case "applied":
           return `There were no Locums who applied on your jobs yet`;
@@ -569,22 +592,19 @@ export default {
   },
   async asyncData({ app, params, query, store, auth, error }) {
     try {
-      let status = [];
+      let locum_status = [];
       let queryStatus = query.jobStatus;
       let bankStatus = query.bank;
 
       if (!queryStatus) {
-        status = ["Allocated"];
+        locum_status = ["Allocated"];
       } else if (queryStatus) {
         switch (queryStatus) {
           case "Completed":
-            status = ["Completed", "Terminated"];
-            break;
-          case "Withdrawn":
-            status = ["Declined", "Withdrawn"];
+            locum_status = ["Completed", "Terminated"];
             break;
           default:
-            status = [`${queryStatus}`];
+            locum_status = [`${queryStatus}`];
             break;
         }
       }
@@ -599,7 +619,7 @@ export default {
         isJobPart = true;
       }
 
-      let viewing_locum_user_id = query.locumId;
+      let viewing_locum_user_id = params.locumId;
       let offset = 0;
       let limit = 5;
       let order_by = [];
@@ -652,7 +672,7 @@ export default {
           .$get(`/api/v1/practice/${isJobPart ? "job-parts" : "jobs"}/count`, {
             params: {
               viewing_locum_user_id,
-              status,
+              locum_status,
               order_by: [],
               job_number: !isJobPart ? job_number : "",
               job_part_number: isJobPart ? job_part_number : "",
@@ -703,7 +723,7 @@ export default {
               viewing_locum_user_id,
               offset: 0,
               limit: 5,
-              status,
+              locum_status,
               order_by: [],
               job_number: !isJobPart ? job_number : "",
               job_part_number: isJobPart ? job_part_number : "",
@@ -836,22 +856,19 @@ export default {
       this.jobs = this.jobs.filter(item => item.id !== id);
     },
     getJobsPromiseAll() {
-      let status = [];
+      let locum_status = [];
       let queryStatus = this.$route.query.jobStatus;
       let bankStatus = this.$route.query.bank;
 
       if (!queryStatus) {
-        status = ["Allocated"];
+        locum_status = ["Allocated"];
       } else if (queryStatus) {
         switch (queryStatus) {
           case "Completed":
-            status = ["Completed", "Terminated"];
-            break;
-          case "Withdrawn":
-            status = ["Declined", "Withdrawn"];
+            locum_status = ["Completed", "Terminated"];
             break;
           default:
-            status = [`${queryStatus}`];
+            locum_status = [`${queryStatus}`];
             break;
         }
       }
@@ -862,7 +879,7 @@ export default {
           {
             params: {
               viewing_locum_user_id: this.$route.params.locumId,
-              status,
+              locum_status,
               order_by: [],
               job_number: !this.isJobPart ? this.job_number : "",
               job_part_number: this.isJobPart ? this.job_part_number : "",
@@ -911,7 +928,7 @@ export default {
               viewing_locum_user_id: this.$route.params.locumId,
               offset: 0,
               limit: 5,
-              status,
+              locum_status,
               order_by: [],
               job_number: !this.isJobPart ? this.job_number : "",
               job_part_number: this.isJobPart ? this.job_part_number : "",
@@ -979,22 +996,19 @@ export default {
         });
     },
     getJobs() {
-      let status = [];
+      let locum_status = [];
       let queryStatus = this.$route.query.jobStatus;
       let bankStatus = this.$route.query.bank;
 
       if (!queryStatus) {
-        status = ["Allocated"];
+        locum_status = ["Allocated"];
       } else if (queryStatus) {
         switch (queryStatus) {
           case "Completed":
-            status = ["Completed", "Terminated"];
-            break;
-          case "Withdrawn":
-            status = ["Declined", "Withdrawn"];
+            locum_status = ["Completed", "Terminated"];
             break;
           default:
-            status = [`${queryStatus}`];
+            locum_status = [`${queryStatus}`];
             break;
         }
       }
@@ -1005,7 +1019,7 @@ export default {
             viewing_locum_user_id: this.$route.params.locumId,
             offset: this.offset,
             limit: this.limit,
-            status,
+            locum_status,
             order_by: this.order_by,
             job_number: !this.isJobPart ? this.job_number : "",
             job_part_number: this.isJobPart ? this.job_part_number : "",

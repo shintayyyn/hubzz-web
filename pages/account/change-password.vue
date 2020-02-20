@@ -13,108 +13,36 @@
 		<form class="w-full">
 			<div class="relative">
 				<AppInput
-					v-if="toggleShowCurrentPass === false"
 					v-model="form.old_password"
 					:type="'password'"
 					:name="'old_password'"
 					:label="'Current password'"
 					:error="formError.find(item => item.field === 'old_password')"
-					@submit="update"
 					@blur="CheckEmptyField(form.old_password, 'old_password')"
 					required
 				/>
-				<AppInput
-					v-if="toggleShowCurrentPass"
-					v-model="form.old_password"
-					:type="'text'"
-					:name="'old_password'"
-					:label="'Current password'"
-					:error="formError.find(item => item.field === 'old_password')"
-					@submit="update"
-					@blur="CheckEmptyField(form.old_password, 'old_password')"
-					required
-				/>
-				<span
-					class="absolute top-0 right-0 h-full flex items-center"
-					:class="!formError.find(item => item.field === 'old_password') && 'mt-2'"
-				>
-					<svgicon
-						name="eye"
-						class="w-6 h-6 cursor-pointer fill-current"
-						:class="toggleShowCurrentPass ? 'text-gray-500' : 'text-gray-600'"
-						@click="toggleShowCurrentPass = !toggleShowCurrentPass"
-					/>
-				</span>
 			</div>
 			<div class="relative">
 				<AppInput
-					v-if="toggleShowNewPass === false"
 					v-model="form.new_password"
 					:type="'password'"
 					:name="'new_password'"
 					:label="'New password'"
 					:error="formError.find(item => item.field === 'new_password')"
-					@submit="update"
 					@blur="CheckEmptyField(form.new_password, 'new_password')"
 					required
 				/>
-				<AppInput
-					v-if="toggleShowNewPass"
-					v-model="form.new_password"
-					:type="'text'"
-					:name="'new_password'"
-					:label="'New password'"
-					:error="formError.find(item => item.field === 'new_password')"
-					@submit="update"
-					@blur="CheckEmptyField(form.new_password, 'new_password')"
-					required
-				/>
-				<span
-					class="absolute top-0 right-0 h-full flex items-center"
-					:class="!formError.find(item => item.field === 'new_password') && 'mt-2'"
-				>
-					<svgicon
-						name="eye"
-						class="w-6 h-6 cursor-pointer fill-current"
-						:class="toggleShowNewPass ? 'text-gray-500' : 'text-gray-600'"
-						@click="toggleShowNewPass = !toggleShowNewPass"
-					/>
-				</span>
 			</div>
 			<div class="relative">
 				<AppInput
-					v-if="toggleShowNewPass2 === false"
 					v-model="form.new_password_confirmation"
 					:type="'password'"
 					:name="'new_password_confirmation'"
 					:label="'Repeat password to confirm'"
 					:error="formError.find(item => item.field === 'new_password_confirmation')"
-					@submit="update"
 					@blur="CheckEmptyField(form.new_password_confirmation, 'new_password_confirmation')"
 					required
 				/>
-				<AppInput
-					v-if="toggleShowNewPass2"
-					v-model="form.new_password_confirmation"
-					:type="'text'"
-					:name="'new_password_confirmation'"
-					:label="'Repeat password to confirm'"
-					:error="formError.find(item => item.field === 'new_password_confirmation')"
-					@submit="update"
-					@blur="CheckEmptyField(form.new_password_confirmation, 'new_password_confirmation')"
-					required
-				/>
-				<span
-					class="absolute top-0 right-0 h-full flex items-center"
-					:class="!formError.find(item => item.field === 'new_password_confirmation') && 'mt-2'"
-				>
-					<svgicon
-						name="eye"
-						class="w-6 h-6 cursor-pointer fill-current"
-						:class="toggleShowNewPass2 ? 'text-gray-500' : 'text-gray-600'"
-						@click="toggleShowNewPass2 = !toggleShowNewPass2"
-					/>
-				</span>
 			</div>
 			<div class="text-left mt-5">
 				<AppButton :label="'Update'" @click="update" :disabled="loading" />
@@ -146,9 +74,6 @@ export default {
 				new_password: "",
 				new_password_confirmation: ""
 			},
-			toggleShowCurrentPass: false,
-			toggleShowNewPass: false,
-			toggleShowNewPass2: false,
 			formError: []
 		};
 	},

@@ -18,6 +18,7 @@
 						name="create-message"
 						class="fill-current text-gray-500 hover:text-gray-600 cursor-pointer"
 						width="28"
+						title="Create Message"
 						@click="createMessage"
 					/>
 				</span>
@@ -28,7 +29,7 @@
 						<transition-group name="slide" tag="p">
 							<div
 								class="relative flex w-full items-center px-2 py-4 cursor-pointer border-b"
-								:class="[parseInt($route.params.slug) === item.id ? 'bg-gray-300' : 'hover:bg-gray-200', unreadMessages.find(conversation => conversation.conversation_id == item.id && $auth.user.id == conversation.user_id) ? 'font-bold bg-gray-100' : '']"
+								:class="parseInt($route.params.slug) === item.id ? 'bg-gray-300' : unreadMessages.find(conversation => conversation.conversation_id == item.id && $auth.user.id == conversation.user_id) ? 'font-bold bg-gray-400' : 'hover:bg-gray-200'"
 								v-for="item in conversations"
 								:key="item.id"
 								@click.stop="goTo(item.id ? item.id : item.id)"
@@ -53,8 +54,8 @@
 										>{{ item.latest_conversation_message.deleted_by_receiver || item.latest_conversation_message.deleted_by_sender ? `${senderFullname(item)} deleted a message.` : `${senderFullname(item)}: ${item.latest_conversation_message.message}` }}</p>
 									</div>
 									<span
-										class="absolute w-10 h-full flex items-center right-0 text-right text-xs text-gray-600 leading-none mx-2"
-										:class="[parseInt($route.params.slug) === item.id ? 'bg-gray-300 hover:bg-gray-300' : 'hover:bg-gray-200', unreadMessages.find(conversation => conversation.conversation_id == item.id && $auth.user.id == conversation.user_id) && 'mr-5']"
+										class="absolute w-10 h-full right-0 flex items-center text-right text-xs text-gray-600 leading-none mx-2"
+										:class="parseInt($route.params.slug) === item.id ? 'bg-gray-300' : unreadMessages.find(conversation => conversation.conversation_id == item.id && $auth.user.id == conversation.user_id) ? 'font-bold bg-gray-400' : 'hover:bg-gray-200'"
 									>{{ $moment(item.latest_conversation_message.created_at).fromNow() }}</span>
 								</div>
 							</div>
@@ -65,7 +66,7 @@
 						<transition-group name="slide" tag="p">
 							<div
 								class="relative flex w-full items-center px-2 py-4 cursor-pointer border-b"
-								:class="[parseInt($route.params.slug) === item.id ? 'bg-gray-300' : 'hover:bg-gray-200', unreadMessages.find(conversation => conversation.conversation_id == item.id && $auth.user.id == conversation.user_id) ? 'font-bold bg-gray-100' : '']"
+								:class="parseInt($route.params.slug) === item.id ? 'bg-gray-300' : unreadMessages.find(conversation => conversation.conversation_id == item.id && $auth.user.id == conversation.user_id) ? 'font-bold bg-gray-400' : 'hover:bg-gray-200'"
 								v-for="item in messages"
 								:key="item.id"
 								@click.stop="goTo(item.id ? item.id : item.id)"
@@ -92,7 +93,7 @@
 									</div>
 									<span
 										class="absolute w-10 h-full flex items-center right-0 text-right text-xs text-gray-600 leading-none mx-2"
-										:class="[parseInt($route.params.slug) === item.id ? 'bg-gray-300 hover:bg-gray-300' : 'hover:bg-gray-200', unreadMessages.find(conversation => conversation.conversation_id == item.id && $auth.user.id == conversation.user_id) && 'mr-5']"
+										:class="parseInt($route.params.slug) === item.id ? 'bg-gray-300' : unreadMessages.find(conversation => conversation.conversation_id == item.id && $auth.user.id == conversation.user_id) ? 'font-bold bg-gray-400' : 'hover:bg-gray-200'"
 									>{{ $moment(item.latest_conversation_message.created_at).fromNow() }}</span>
 								</div>
 							</div>
@@ -154,11 +155,11 @@ export default {
 			}
 		},
 		conversations(newValue) {
-			let conversation = newValue.find((conversation, index) => index === 0);
-			let conversations = newValue.find(item => item.id === conversation.id);
-			if (this.activeConversationId != conversation.id.toString()) {
-				this.$store.commit("chat/ADD_UNREAD_MESSAGE", conversation);
-			}
+			// let conversation = newValue.find((conversation, index) => index === 0);
+			// let conversations = newValue.find(item => item.id === conversation.id);
+			// if (this.activeConversationId != conversation.id.toString()) {
+			// 	this.$store.commit("chat/ADD_UNREAD_MESSAGE", conversation);
+			// }
 		}
 	},
 	methods: {
@@ -167,14 +168,23 @@ export default {
 			this.search_text = "";
 			this.messages = [];
 			this.$store.dispatch("chat/setActiveConversation", id);
+			console.log(
+				"qweqweqweqweqw",
+				this.unreadMessages &&
+					this.unreadMessages.find(item => item.conversation_id == id)
+			);
 			if (!this.conversations.find(item => item.id == id)) {
 				this.loadMoreConversation();
 			}
 			if (window.innerWidth < 768) {
 				this.$store.commit("IS_MOBILE", false);
 			}
-			if (this.unreadMessages.find(item => item.conversation_id == id)) {
+			if (
+				this.unreadMessages &&
+				this.unreadMessages.find(item => item.conversation_id == id)
+			) {
 				this.$store.commit("chat/DELETE_UNREAD_MESSAGE", id);
+				console.log("on read", this.unreadMessages);
 			}
 			if (this.$route.params.slug != id) {
 				this.$router.push(`/messages/${id}`);

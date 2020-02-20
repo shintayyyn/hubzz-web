@@ -20,10 +20,10 @@
       <div class="relative">
         <nuxt-link
           :event="$store.state.jobs.loading_jobs ? '' : 'click'"
-          :to="`/my-banks/${$route.params.locumId}/related-jobs?status=${$route.query.status}&jobStatus=Live`"
+          :to="`/my-banks/${$route.params.locumId}/related-jobs?status=${$route.query.status}&jobStatus=Available`"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'live' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-        >Live</nuxt-link>
+          :class="$route.query.jobStatus && ['available', 'public', 'bank'].includes($route.query.jobStatus.toLowerCase()) ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        >Available</nuxt-link>
       </div>
       <div class="relative">
         <nuxt-link
@@ -36,10 +36,10 @@
       <div class="relative">
         <nuxt-link
           :event="$store.state.jobs.loading_jobs ? '' : 'click'"
-          :to="`/my-banks/${$route.params.locumId}/related-jobs?status=${$route.query.status}&jobStatus=Unfilled`"
+          :to="`/my-banks/${$route.params.locumId}/related-jobs?status=${$route.query.status}&jobStatus=Unsuccessful`"
           class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
-          :class="$route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'unfilled' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
-        >Unfilled</nuxt-link>
+          :class="$route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'unsuccessful' ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        >Unsuccessful</nuxt-link>
       </div>
       <div class="relative">
         <nuxt-link

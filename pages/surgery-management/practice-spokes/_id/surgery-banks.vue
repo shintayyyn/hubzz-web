@@ -77,7 +77,7 @@ export default {
     };
   },
   created() {
-    this.getLocumsCount();
+    // this.getLocumsCount();
   },
   computed: {
     offset() {

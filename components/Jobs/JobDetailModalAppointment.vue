@@ -37,6 +37,7 @@
               :name="'date_start'"
               :label="'From'"
               :error="this.formError.find(item => item.field === 'date_start')"
+              isAfter
             />
           </div>
           <div class="px-1 w-full sm:w-1/2 md:w-1/4">
@@ -54,6 +55,7 @@
               :label="'To'"
               :startDate="form.date_start"
               :error="this.formError.find(item => item.field === 'date_end')"
+              isAfter
             />
           </div>
           <div class="px-1 w-full sm:w-1/2 md:w-1/4">
@@ -226,8 +228,37 @@ export default {
       this.formError = this.formError.filter(
         error => error.field !== "date_end"
       );
+
+      let hour = this.form.time_start.split(":")[0]
+      let amShift = this.shifts.find(item => item.label === 'AM')
+      let pmShift = this.shifts.find(item => item.label === 'PM')
+      if (this.$moment(value).isSame(this.form.date_start)) {
+        if (parseInt(hour) > 11) {
+          amShift.disabled = true
+          pmShift.disabled = false
+        }else {
+          amShift.disabled = false
+          pmShift.disabled = true
+        }
+      }else {
+        amShift.disabled = false
+        pmShift.disabled = false
+      }
     },
     "form.time_start"(value) {
+      let hour = value.split(":")[0]
+      if ((this.form.date_start && this.form.date_end) && (this.$moment(this.form.date_start).isSame(this.form.date_end))) {
+        let amShift = this.shifts.find(item => item.label === 'AM')
+        let pmShift = this.shifts.find(item => item.label === 'PM')
+        if (parseInt(hour) > 11) {
+          amShift.disabled = true
+          pmShift.disabled = false
+        }else {
+          amShift.disabled = false
+          pmShift.disabled = true
+        }
+      }
+
       this.formError = this.formError.filter(
         error => error.field !== "time_start"
       );
@@ -271,7 +302,7 @@ export default {
 
         this.shifts = [];
         responseShifts.data.shifts.forEach(item => {
-          this.shifts.push({ label: item.name, value: item.id });
+          this.shifts.push({ label: item.name, value: item.id, disabled: false });
         });
 
         this.rate_types = [];
@@ -388,14 +419,19 @@ export default {
           });
           this.loading = false;
         } catch (err) {
+          this.$emit('scrollTop')
           console.log("err", err.response || err);
-          if (err.response.data.message) {
-            this.$store.commit("SET_NOTIFICATION", {
-              enabled: true,
-              status: "danger",
-              text: [`${err.response.data.message}`]
-            });
-          } else if (err.response.data.error_messages) {
+          if (err.response.data.message && err.response.data.message === 'Invalid Dates') {
+            this.formError.push({ field: 'date_end', message: 'Invalid End Date'})
+          }
+          // if (err.response.data.message) {
+          //   this.$store.commit("SET_NOTIFICATION", {
+          //     enabled: true,
+          //     status: "danger",
+          //     text: [`${err.response.data.message}`]
+          //   });
+          // } else
+          if (err.response.data.error_messages) {
             err.response.data.error_messages.forEach(error => {
               this.formError.push(error);
             });
@@ -403,6 +439,7 @@ export default {
           this.loading = false;
         }
       } else {
+        this.$emit('scrollTop')
         this.$store.commit("SET_NOTIFICATION", {
           enabled: true,
           status: "danger",

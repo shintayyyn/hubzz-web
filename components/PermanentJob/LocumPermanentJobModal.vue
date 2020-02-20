@@ -104,14 +104,27 @@
 						<p class="font-bold">Industry</p>
 						<p class="pl-2 pb-3">{{permanent_job ? permanent_job.industry_type : null}}</p>
 					</div>
+          <AppButton
+            class="mx-2"
+            :label="'Share'"
+            @click="toShowLink = !toShowLink"
+          />
+          <!-- ${process.env.API_URL} -->
+          <div class="rounded-lg p-4 shadow-lg" v-if="toShowLink">
+            <div class="font-semibold">
+              <div> Copy the link: </div>
+              <div class="mx-2">
+                {{`${site}/shared-permanent-job/${permanent_job && permanent_job.id ? permanent_job.id : null}`}}
+              </div>
+            </div>
+            
+          </div>
 				</div>
 				<div class="w-full md:w-2/5 lg:w-1/3 md:pl-2">
 					<PermanentJobMap v-if="permanent_job" :permanent_job="permanent_job" />
 				</div>
 			</div>
 		</div>
-
-
 	</section>
 </template>
 <script>
@@ -125,6 +138,8 @@ export default {
 	data() {
 		return {
       toApply: false,
+      toShowLink: false,
+      site:"",
       job_application: {
         job_application_pitch: "",
       },
@@ -165,7 +180,8 @@ export default {
 			}
 		};
 	},
-	created() {
+	async created() {
+    this.site = await process.env.WEB_URL
 		this.getJob();
 	},
 	methods: {

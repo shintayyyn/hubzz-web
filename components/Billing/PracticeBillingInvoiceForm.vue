@@ -88,7 +88,9 @@
               <!-- <div
                 class="text-xs sm:text-sm border-gray-300 px-4 py-1 text-right w-1/2"
               >{{form.items[0].total}}</div>-->
-              <div class="text-xs sm:text-sm border-gray-300 px-4 py-1 text-right w-1/2">{{total}}</div>
+              <div
+                class="text-xs sm:text-sm border-gray-300 px-4 py-1 text-right w-1/2"
+              >{{total | currency }}</div>
               <div
                 class="flex items-center align-middle sticky right-0 bg-white shadow-md"
                 v-if="(propInvoice && propInvoice.status !== 'Approved')"
@@ -204,7 +206,7 @@
             >{{formError.find(item => item.field === 'total_amount').message}}</div>
           </div>
           <!-- £ {{form.total_amount | currency}} -->
-          £ {{total_amount}}
+          £ {{total_amount | currency }}
         </div>
       </div>
 
@@ -293,7 +295,7 @@ export default {
             hours;
           break;
       }
-      return total.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+      return total;
     },
     description() {
       return `Job number ${
@@ -328,7 +330,7 @@ export default {
             hours;
           break;
       }
-      return total.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+      return total;
     }
   },
   mounted() {
