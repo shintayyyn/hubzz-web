@@ -144,7 +144,7 @@ import AppDate from "@/components/Base/AppDate";
 import AppButton from "@/components/Base/AppButton";
 import AppInput from "@/components/Base/AppInput";
 export default {
-  props: ["childPracticeId"],
+  props: ["childPracticeId", "practiceId"],
   transition: {
     name: "fade",
     mode: "out-in"
@@ -282,21 +282,6 @@ export default {
         this.initialLoading = false;
       }
     },
-    // "$route.query"(newValue, oldValue) {
-    //   let newStatus = newValue.status;
-    //   let oldStatus = oldValue.status;
-    //   if (newStatus && newStatus !== null && newStatus !== oldStatus) {
-    //     this.current_page = 1;
-    //     this.showTable = false;
-    //     this.showRefresh = false;
-    //     setTimeout(async () => {
-    //       this.$nuxt.$loading.start();
-    //       await this.getJobPartsPromiseAll();
-    //       this.$nuxt.$loading.finish();
-    //       this.showTable = true;
-    //     }, 200);
-    //   }
-    // },
     "form.ni"(value) {
       if ([false, "false"].includes(value)) {
         this.form.ni_amount = 0;
@@ -488,13 +473,6 @@ export default {
           locum_invoiceable = true;
       }
 
-      // const params = {
-      //   status,
-      //   invoice_status,
-      //   type: "Platform",
-      //   job_practice_id: [this.childPracticeId]
-      // };
-
       return Promise.all([
         this.$axios.$get(`/api/v1/practice/job-parts/count`, {
           params: {
@@ -502,7 +480,8 @@ export default {
             status,
             locum_invoiceable,
             type: "Platform",
-            job_practice_id: [this.childPracticeId]
+            job_practice_id: [this.childPracticeId],
+            viewing_practice_id: this.practiceId
           }
         }),
         this.$axios.$get(`/api/v1/practice/job-parts`, {
@@ -512,6 +491,7 @@ export default {
             locum_invoiceable,
             type: "Platform",
             job_practice_id: [this.childPracticeId],
+            viewing_practice_id: this.practiceId,
             offset: 0,
             limit: 5
           }
