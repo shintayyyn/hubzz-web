@@ -455,7 +455,7 @@
             </div>
           </div>
         </div>
-        <div class="mt-4 w-full flex">
+        <div class="pt-4 pb-8 w-full flex">
           <AppButton
             class="ml-auto"
             :label="'Save and publish Job'"
@@ -1126,7 +1126,7 @@ export default {
   position: relative;
   width: 100%;
   height: 100%;
-  overflow: auto;
+  overflow: hidden auto;
   transition: all 0.3s ease-in-out;
   scroll-behavior: smooth;
 }

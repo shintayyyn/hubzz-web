@@ -55,6 +55,7 @@
 			:label="'Status'"
 			:error="formError.find(item => item.field === 'status')"
 			:items="[{ label: 'Disabled', value: 'Disabled' }, { label: 'Active', value: 'Active' }]"
+			:disabled="user && user.status === 'Disabled'"
 		/>
 		<div
 			class="text-left mt-5"
@@ -148,6 +149,7 @@ export default {
 			: null;
 		this.form.status = this.user.status;
 		this.loading = false;
+		console.log(this.user.status);
 	},
 	methods: {
 		getUser() {

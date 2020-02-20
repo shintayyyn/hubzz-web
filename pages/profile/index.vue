@@ -652,7 +652,7 @@ export default {
             ) {
               this.formError = err.response.data.error_messages;
             }
-            throw err;
+            // throw err;
           })
           .finally(() => {
             this.scrollToTop();

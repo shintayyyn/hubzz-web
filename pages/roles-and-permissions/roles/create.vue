@@ -10,23 +10,28 @@
 					@click="$router.push('/roles-and-permissions/roles')"
 				/>
 			</div>
-			<div class="flex flex-col mt-4">
+			<div class="flex flex-col items-start mt-4">
 				<AppInput
 					v-model="form.name"
 					:type="'text'"
 					:name="'name'"
 					:label="'Role Name'"
 					:error="formError.find(item => item.field === 'name')"
+					class="w-full"
 				/>
-				<AppInput
-					v-model="form.description"
-					:type="'textarea'"
-					:name="'description'"
-					:label="'Description'"
-					:error="formError.find(item => item.field === 'description')"
-					:resize="false"
-					:rows="2"
-				/>
+				<div class="relative w-full">
+					<AppInput
+						v-model="form.description"
+						:type="'textarea'"
+						:name="'description'"
+						:label="'Description'"
+						:error="formError.find(item => item.field === 'description')"
+						:resize="false"
+						:rows="2"
+						:limit="255"
+						class="w-full"
+					/>
+				</div>
 				<div class="rounded-lg shadow-md p-2 md:p-4">
 					<div class="flex flex-wrap justify-start">
 						<div class="w-full md:w-1/2 p-2" v-for="(role, index) in permissions" :key="index">
@@ -101,6 +106,22 @@ export default {
 	mounted() {
 		this.getPermissions();
 	},
+	// watch: {
+	// 	"form.description"(value) {
+	// 		if (value.length > 255) {
+	// 			if (!this.formError.find(item => item.field === "description")) {
+	// 				this.formError.push({ field: "description", message: "Too much" });
+	// 			}
+	// 		} else {
+	// 			let index = this.formError.findIndex(
+	// 				item => item.field === "description"
+	// 			);
+	// 			if (index <= 0) {
+	// 				this.formError.splice(index, 1);
+	// 			}
+	// 		}
+	// 	}
+	// },
 	methods: {
 		getPermissions() {
 			this.$axios.$get(`/api/v1/practice/practice-permissions`).then(res => {
