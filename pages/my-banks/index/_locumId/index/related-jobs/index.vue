@@ -596,7 +596,7 @@ export default {
         isJobPart = true;
       }
 
-      let viewing_locum_user_id = query.locumId;
+      let viewing_locum_user_id = params.locumId;
       let offset = 0;
       let limit = 5;
       let order_by = [];
