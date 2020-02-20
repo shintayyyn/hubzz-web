@@ -83,7 +83,14 @@ export default {
                             errorMessage.field === 'practice_type_id' ||
                             errorMessage.field === 'email' ||
                             errorMessage.field === 'password' ||
-                            errorMessage.field === 'password_confirmation'
+                            errorMessage.field === 'password_confirmation' ||
+                            errorMessage.field === 'account_name' ||
+                            errorMessage.field === 'bank_name' ||
+                            errorMessage.field === 'sort_code' ||
+                            errorMessage.field === 'account_number' ||
+                            errorMessage.field === 'vat_registered' ||
+                            errorMessage.field === 'vat_number' ||
+                            errorMessage.field === 'tax_year_end_date'
                         )
                     })
                     commit('SET_PRACTICE_ACCOUNT_DETAIL_FORM_ERROR', practiceAccountDetailError)

@@ -603,9 +603,6 @@ export default {
           case "Completed":
             status = ["Completed", "Terminated"];
             break;
-          case "Withdrawn":
-            status = ["Declined", "Withdrawn"];
-            break;
           default:
             status = [`${queryStatus}`];
             break;
@@ -875,9 +872,6 @@ export default {
           case "Completed":
             status = ["Completed", "Terminated"];
             break;
-          // case "Withdrawn":
-          //   status = ["Declined"];
-          //   break;
           default:
             status = [`${queryStatus}`];
             break;
@@ -1050,9 +1044,6 @@ export default {
           case "Completed":
             status = ["Completed", "Terminated"];
             break;
-          // case "Withdrawn":
-          //   status = ["Declined"];
-          //   break;
           default:
             status = [`${queryStatus}`];
             break;
