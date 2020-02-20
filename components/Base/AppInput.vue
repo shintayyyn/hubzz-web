@@ -113,7 +113,6 @@
               <div class="flex flex-col w-full">
                 <textarea
                   :ref="'textarea'"
-                  id
                   :cols="cols"
                   :rows="rows"
                   :value="value"
