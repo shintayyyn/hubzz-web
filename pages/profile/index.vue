@@ -214,7 +214,6 @@
                   :name="'tax_year_end_date'"
                   :label="'Tax Year End Date'"
                   :error="formError.find(item => item.field === 'tax_year_end_date')"
-                  isBefore
                 />
               </template>
               <div class="font-bold text-sm my-4">Bank Details</div>
