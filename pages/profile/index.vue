@@ -7,28 +7,28 @@
             <div class="flex flex-row flex-wrap">
               <div class="flex flex-col w-full lg:w-1/2 xl:w-2/5 p-1">
                 <div class="text-xs sm:text-sm">Practice name</div>
-                <div class="text-xs font-bold py-2">{{surgery.name}}</div>
+                <div class="text-xs font-bold py-2">{{practice.name}}</div>
                 <div class="text-xs sm:text-sm mt-4">CCG</div>
-                <div class="text-xs font-bold py-2">{{surgery.clinical_commissioning_group.name}}</div>
+                <div class="text-xs font-bold py-2">{{practice.clinical_commissioning_group_name}}</div>
               </div>
               <div class="flex flex-col w-full lg:w-1/2 xl:w-1/5 p-1">
                 <div class="text-xs sm:text-sm" mt-4>Practice code</div>
-                <div class="text-xs font-bold py-2">{{surgery.code}}</div>
+                <div class="text-xs font-bold py-2">{{practice.code}}</div>
                 <div class="text-xs sm:text-sm mt-4">Phone number</div>
-                <div class="text-xs font-bold py-2">{{surgery.phone_number}}</div>
+                <div class="text-xs font-bold py-2">{{practice.phone_number}}</div>
               </div>
-              <div class="flex xl:flex-col w-full xl:w-2/5 p-1">
-                <div class="flex flex-col lg:w-1/2 xl:w-full">
+              <div class="flex flex-col lg:flex-row xl:flex-col w-full xl:w-2/5 p-1">
+                <div class="flex flex-col w-full lg:w-1/2 xl:w-full">
                   <div class="text-xs sm:text-sm">Type</div>
                   <div
                     class="text-xs font-bold py-2"
                   >{{ !practice.hub_type || practice.hub_type !== 'Type 2' ? practice.type : 'Hub - Health Board'}}</div>
                 </div>
-                <div class="flex flex-col lg:w-1/2 xl:w-full">
+                <div class="flex flex-col w-full lg:w-1/2 xl:w-full">
                   <div class="text-xs sm:text-sm">Address</div>
                   <div
                     class="text-xs font-bold py-2"
-                  >{{surgery.address.line_1}} {{surgery.address.line_2}} {{surgery.address.line_3}} {{surgery.address.post_code}}</div>
+                  >{{practice.address_line_1}} {{practice.address_line_2}} {{practice.address_line_3}} {{practice.address_line_4}} {{practice.address_line_5}} {{practice.postcode}}</div>
                 </div>
               </div>
             </div>
@@ -214,7 +214,6 @@
                   :name="'tax_year_end_date'"
                   :label="'Tax Year End Date'"
                   :error="formError.find(item => item.field === 'tax_year_end_date')"
-                  isBefore
                 />
               </template>
               <div class="font-bold text-sm my-4">Bank Details</div>
@@ -310,7 +309,7 @@ export default {
   },
   data() {
     return {
-      surgery: null,
+      // surgery: null,
       modal: false,
       loading: false,
       input_file_loading: false,
@@ -352,7 +351,7 @@ export default {
       if (permissions.includes("View Profile Practice")) {
         try {
           const [
-            [surgery, practice],
+            [practice],
             practice_types,
             mandatory_trainings,
             [gp_documents, others_documents]
@@ -360,17 +359,17 @@ export default {
             app.$axios
               .$get("/api/v1/practice/me/practice")
               .then(responsePractice => {
-                const surgery =
-                  responsePractice.data &&
-                  responsePractice.data.practice &&
-                  responsePractice.data.practice.surgery
-                    ? responsePractice.data.practice.surgery
-                    : null;
+                // const surgery =
+                //   responsePractice.data &&
+                //   responsePractice.data.practice &&
+                //   responsePractice.data.practice.surgery
+                //     ? responsePractice.data.practice.surgery
+                //     : null;
                 const practice =
                   responsePractice.data && responsePractice.data.practice
                     ? responsePractice.data.practice
                     : null;
-                return [surgery, practice];
+                return [practice];
               }),
 
             app.$axios
@@ -463,7 +462,7 @@ export default {
           ]);
 
           return {
-            surgery,
+            // surgery,
             practice,
             practice_types,
             mandatory_trainings,
