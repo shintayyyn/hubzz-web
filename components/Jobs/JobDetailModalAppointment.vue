@@ -228,8 +228,37 @@ export default {
       this.formError = this.formError.filter(
         error => error.field !== "date_end"
       );
+
+      let hour = this.form.time_start.split(":")[0]
+      let amShift = this.shifts.find(item => item.label === 'AM')
+      let pmShift = this.shifts.find(item => item.label === 'PM')
+      if (this.$moment(value).isSame(this.form.date_start)) {
+        if (parseInt(hour) > 11) {
+          amShift.disabled = true
+          pmShift.disabled = false
+        }else {
+          amShift.disabled = false
+          pmShift.disabled = true
+        }
+      }else {
+        amShift.disabled = false
+        pmShift.disabled = false
+      }
     },
     "form.time_start"(value) {
+      let hour = value.split(":")[0]
+      if ((this.form.date_start && this.form.date_end) && (this.$moment(this.form.date_start).isSame(this.form.date_end))) {
+        let amShift = this.shifts.find(item => item.label === 'AM')
+        let pmShift = this.shifts.find(item => item.label === 'PM')
+        if (parseInt(hour) > 11) {
+          amShift.disabled = true
+          pmShift.disabled = false
+        }else {
+          amShift.disabled = false
+          pmShift.disabled = true
+        }
+      }
+
       this.formError = this.formError.filter(
         error => error.field !== "time_start"
       );
@@ -273,7 +302,7 @@ export default {
 
         this.shifts = [];
         responseShifts.data.shifts.forEach(item => {
-          this.shifts.push({ label: item.name, value: item.id });
+          this.shifts.push({ label: item.name, value: item.id, disabled: false });
         });
 
         this.rate_types = [];

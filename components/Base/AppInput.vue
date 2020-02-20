@@ -123,6 +123,7 @@
 											:key="index"
 											:value="item.value"
 											:selected="value === item.value"
+											:disabled="item.disabled"
 										>{{item.label}}</option>
 									</select>
 									<span class="absolute right-0 h-full" :class="disabled ? 'text-gray-500' : ''">
