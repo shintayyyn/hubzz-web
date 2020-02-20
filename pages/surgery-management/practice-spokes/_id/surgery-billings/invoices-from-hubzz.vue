@@ -149,7 +149,7 @@ export default {
         limit: 5,
         practice_id: practiceSurgery.child_practice_id
       };
-
+      console.log(practiceSurgery.child_practice_id)
       const responseCount = await app.$axios.get(
         "/api/v1/practice/practice-invoices/count"
       );
