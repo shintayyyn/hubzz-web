@@ -168,13 +168,21 @@ export default {
 			this.search_text = "";
 			this.messages = [];
 			this.$store.dispatch("chat/setActiveConversation", id);
+			console.log(
+				"qweqweqweqweqw",
+				this.unreadMessages &&
+					this.unreadMessages.find(item => item.conversation_id == id)
+			);
 			if (!this.conversations.find(item => item.id == id)) {
 				this.loadMoreConversation();
 			}
 			if (window.innerWidth < 768) {
 				this.$store.commit("IS_MOBILE", false);
 			}
-			if (this.unreadMessages.find(item => item.conversation_id == id)) {
+			if (
+				this.unreadMessages &&
+				this.unreadMessages.find(item => item.conversation_id == id)
+			) {
 				this.$store.commit("chat/DELETE_UNREAD_MESSAGE", id);
 			}
 			if (this.$route.params.slug != id) {
