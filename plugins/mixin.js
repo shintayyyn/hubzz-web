@@ -241,13 +241,35 @@ Vue.mixin({
       return submitForm
     },
     isNumber(e) {
+      // for input type number to avoid entering 'e'
       e = e ? e : window.event;
       let charCode = (e.which) ? e.which : e.keyCode;
-      if (charCode === 101 ) {
+      console.log(charCode)
+      if (charCode === 101 || charCode === 43 || charCode === 45) {
         e.preventDefault();;
       } else {
         return true;
       }
     },
+    inputNumberOnly(e) {
+      // numbers only [0-9]
+      e = (e) ? e : window.event;
+      var charCode = (e.which) ? e.which : e.keyCode;
+      if ((charCode > 31 && (charCode < 48 || charCode > 57))) {
+        e.preventDefault();
+      } else {
+        return true;
+      }
+    },
+    inputTelephone(e) {
+      // [0-9,+,-,#]
+      e = (e) ? e : window.event;
+      var charCode = (e.which) ? e.which : e.keyCode;
+      if ((charCode > 31 && (charCode < 48 || charCode > 57)) && charCode !== 35 && charCode !== 43 && charCode !== 45) {
+        e.preventDefault();;
+      } else {
+        return true;
+      }
+    }
   }
 });
