@@ -111,7 +111,6 @@
               v-model="form.tax_year_end_date"
               :name="'tax_year_end_date'"
               :label="'Tax Year End Date'"
-              isBefore
               :error="formError.find(item => item.field === 'tax_year_end_date')"
             />
           </template>
