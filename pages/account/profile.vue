@@ -3,7 +3,7 @@
     <div class="w-full p-0 lg:w-2/3 lg:pr-4 order-2 lg:order-1">
       <div class="relative rounded-lg shadow-lg w-full p-4 md:p-8">
         <AppLoading :loading="loading" spinner />
-        <!-- <AppFormError :formError="formError" v-if="formError.length > 0" /> -->
+        <AppFormError :formError="formError" v-if="formError.length > 0" />
         <form class="w-full">
           <AppInput
             v-model="form.gmc_or_nmc_number"
@@ -197,7 +197,7 @@
             v-model="form.mandatory_training_id"
             :type="'multi-checkbox'"
             :name="'mandatory_training_id'"
-            :label="'What type of Training(s) would you like to work for?'"
+            :label="'Please select mandatory training courses completed.'"
             :error="formError.find(item => item.field === 'mandatory_training_id')"
             :lists="mandatoryTrainings"
             @checked="form.mandatory_training_id.push(parseInt($event)), CheckEmptyField(form.mandatory_training_id, 'mandatory_training_id')"
@@ -837,11 +837,12 @@ export default {
             this.scrollToTop();
           });
       } else {
-        this.$store.commit("SET_NOTIFICATION", {
-          enabled: true,
-          status: "danger",
-          text: ["Please fill up all the forms"]
-        });
+        // this.$store.commit("SET_NOTIFICATION", {
+        //   enabled: true,
+        //   status: "danger",
+        //   text: ["Please fill up all the forms"]
+        // });
+        this.form;
         this.scrollToTop();
       }
     }

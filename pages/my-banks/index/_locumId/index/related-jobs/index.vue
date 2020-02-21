@@ -1,5 +1,26 @@
 <template>
   <section class="relative">
+    <div
+      class="flex flex-row justify-start overflow-x-auto py-3 mb-3"
+      v-if="$route.query.jobStatus && ['available', 'public', 'bank'].includes($route.query.jobStatus.toLowerCase())"
+    >
+      <div class="relative">
+        <nuxt-link
+          :event="$store.state.jobs.loading_jobs ? '' : 'click'"
+          :to="`/my-banks/${$route.params.locumId}/related-jobs?status=${$route.query.status}&jobStatus=Available`"
+          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          :class="$route.query && $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'available'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        >Available</nuxt-link>
+      </div>
+      <div class="relative">
+        <nuxt-link
+          :event="$store.state.jobs.loading_jobs ? '' : 'click'"
+          :to="`/my-banks/${$route.params.locumId}/related-jobs?status=${$route.query.status}&jobStatus=Public`"
+          class="md:mr-5 p-3 text-sm font-bold cursor-pointer"
+          :class="$route.query && $route.query.jobStatus && $route.query.jobStatus.toLowerCase() === 'public'  ? 'border rounded-lg border-yellow-500 bg-yellow-500' : 'text-gray-600'"
+        >Public</nuxt-link>
+      </div>
+    </div>
     <transition name="fade" mode="out-in">
       <div class="relative flex w-full" v-if="initialLoading" style="min-height:80px">
         <AppLoading :loading="initialLoading" spinner />
@@ -286,12 +307,13 @@ export default {
     if (
       query.jobStatus &&
       ![
-        "pending",
         "allocated",
         "ongoing",
-        "live",
+        "available",
+        "public",
+        "bank",
         "applied",
-        "unfilled",
+        "unsuccessful",
         "withdrawn",
         "cancelled",
         "completed",
@@ -381,6 +403,7 @@ export default {
         case "approved":
         case "unfilled":
         case "live":
+        case "public":
           return `You do not have any ${queryStatus} jobs`;
         case "applied":
           return `There were no Locums who applied on your jobs yet`;

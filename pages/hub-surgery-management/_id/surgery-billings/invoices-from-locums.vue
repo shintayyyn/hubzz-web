@@ -282,21 +282,6 @@ export default {
         this.initialLoading = false;
       }
     },
-    // "$route.query"(newValue, oldValue) {
-    //   let newStatus = newValue.status;
-    //   let oldStatus = oldValue.status;
-    //   if (newStatus && newStatus !== null && newStatus !== oldStatus) {
-    //     this.current_page = 1;
-    //     this.showTable = false;
-    //     this.showRefresh = false;
-    //     setTimeout(async () => {
-    //       this.$nuxt.$loading.start();
-    //       await this.getJobPartsPromiseAll();
-    //       this.$nuxt.$loading.finish();
-    //       this.showTable = true;
-    //     }, 200);
-    //   }
-    // },
     "form.ni"(value) {
       if ([false, "false"].includes(value)) {
         this.form.ni_amount = 0;
@@ -348,13 +333,6 @@ export default {
           status = ["Completed", "Declined", "Cancelled"];
           locum_invoiceable = true;
       }
-
-      // const params = {
-      //   status,
-      //   invoice_status,
-      //   type: "Platform",
-      //   job_practice_id: [childPracticeId]
-      // };
 
       let [total, job_parts] = await Promise.all([
         app.$axios
@@ -487,13 +465,6 @@ export default {
           status = ["Completed", "Declined", "Cancelled"];
           locum_invoiceable = true;
       }
-
-      // const params = {
-      //   status,
-      //   invoice_status,
-      //   type: "Platform",
-      //   job_practice_id: [this.childPracticeId]
-      // };
 
       return Promise.all([
         this.$axios.$get(`/api/v1/practice/job-parts/count`, {

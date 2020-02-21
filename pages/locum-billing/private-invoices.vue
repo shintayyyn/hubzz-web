@@ -276,7 +276,7 @@ export default {
         {
           name: "Date Created",
           dataIndex: "date_created",
-          class: "text-center"
+          class: "text-center localDate"
         },
         {
           name: "Actions",
@@ -314,7 +314,7 @@ export default {
         {
           name: "£ Amount",
           dataIndex: "total_amount",
-          class: "text-center",
+          class: "text-center currency",
           sortable: true
         },
         {
@@ -482,9 +482,7 @@ export default {
             invoice_number: jobPart.locum_invoice_id
               ? jobPart.locum_invoice_item.locum_invoice.invoice_number
               : null,
-            total_amount: total
-              .toFixed(2)
-              .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"),
+            total_amount: total,
             paid:
               jobPart.locum_status === "Approved" &&
               jobPart.locum_invoice_item.locum_invoice.paid_at
@@ -629,9 +627,7 @@ export default {
                 invoice_number: jobPart.locum_invoice_id
                   ? jobPart.locum_invoice_item.locum_invoice.invoice_number
                   : null,
-                total_amount: total
-                  .toFixed(2)
-                  .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"),
+                total_amount: total,
                 paid:
                   jobPart.locum_status === "Approved" &&
                   jobPart.locum_invoice_item.locum_invoice.paid_at
@@ -735,9 +731,7 @@ export default {
                 invoice_number: jobPart.locum_invoice_id
                   ? jobPart.locum_invoice_item.locum_invoice.invoice_number
                   : null,
-                total_amount: total
-                  .toFixed(2)
-                  .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"),
+                total_amount: total,
                 paid:
                   jobPart.locum_status === "Approved" &&
                   jobPart.locum_invoice_item.locum_invoice.paid_at

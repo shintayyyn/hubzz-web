@@ -202,7 +202,7 @@ export default {
         }
       } else if (type === "Billings") {
         if (this.$auth.user.domain === "Practice") {
-          url = `/practice-billing`;
+          url = `/practice-billing/invoices-from-locums`;
         } else if (this.$auth.user.domain === "Locum") {
           if (notification.notification_billing_type === "Platform") {
             url = `/locum-billing/invoices`;

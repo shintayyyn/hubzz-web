@@ -260,7 +260,7 @@ export default {
         {
           name: "Date Created",
           dataIndex: "date_created",
-          class: "text-center"
+          class: "text-center localDate"
         },
         {
           name: "Actions",
@@ -304,7 +304,7 @@ export default {
         {
           name: "£ Amount",
           dataIndex: "total_amount",
-          class: "text-center",
+          class: "text-center currency",
           sortable: true
         },
         {
@@ -428,6 +428,7 @@ export default {
               locum_status,
               locum_invoiceable,
               nhs_claimable,
+              viewing_locum_user_id: app.$auth.user.id,
               job_type: "Platform",
               type: "Platform"
             }
@@ -443,6 +444,7 @@ export default {
               locum_status,
               locum_invoiceable,
               nhs_claimable,
+              viewing_locum_user_id: app.$auth.user.id,
               job_type: "Platform",
               type: "Platform",
               offset: 0,
@@ -489,9 +491,7 @@ export default {
             invoice_number: jobPart.locum_invoice_id
               ? jobPart.locum_invoice_item.locum_invoice.invoice_number
               : null,
-            total_amount: total
-              .toFixed(2)
-              .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"),
+            total_amount: total,
             paid:
               jobPart.locum_status === "Approved" &&
               jobPart.locum_invoice_item.locum_invoice.paid_at
@@ -634,7 +634,8 @@ export default {
             nhs_claimable,
             job_type: "Platform",
             type: "Platform",
-            job_ir35: this.job_ir35
+            job_ir35: this.job_ir35,
+            viewing_locum_user_id: this.$auth.user.id
           }
         }),
         this.$axios.$get(`${url}`, {
@@ -646,6 +647,7 @@ export default {
             job_type: "Platform",
             type: "Platform",
             job_ir35: this.job_ir35,
+            viewing_locum_user_id: this.$auth.user.id,
             offset: 0,
             limit: 5
           }
@@ -684,9 +686,7 @@ export default {
                 invoice_number: jobPart.locum_invoice_id
                   ? jobPart.locum_invoice_item.locum_invoice.invoice_number
                   : null,
-                total_amount: total
-                  .toFixed(2)
-                  .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"),
+                total_amount: total,
                 paid:
                   jobPart.locum_status === "Approved" &&
                   jobPart.locum_invoice_item.locum_invoice.paid_at
@@ -779,6 +779,7 @@ export default {
             nhs_claimable,
             job_type: "Platform",
             type: "Platform",
+            viewing_locum_user_id: this.$auth.user.id,
             offset: this.offset,
             limit: this.limit,
             job_ir35: this.job_ir35,
@@ -817,9 +818,7 @@ export default {
                 invoice_number: jobPart.locum_invoice_id
                   ? jobPart.locum_invoice_item.locum_invoice.invoice_number
                   : null,
-                total_amount: total
-                  .toFixed(2)
-                  .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"),
+                total_amount: total,
                 paid:
                   jobPart.locum_status === "Approved" &&
                   jobPart.locum_invoice_item.locum_invoice.paid_at

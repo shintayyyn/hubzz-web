@@ -6,7 +6,7 @@
         <AppButton
           v-if="propJobPart || (propInvoice && !['Approved','Paid'].includes(propInvoice.status))"
           class="m-1"
-          :label="'Save changes'"
+          :label="'Save as draft'"
           @click="save(false)"
           :inStyle="'padding:5px 14px;font-size:1em'"
           :disabled="saveLoading"
@@ -14,7 +14,7 @@
         <AppButton
           v-if="propJobPart || (propInvoice && propInvoice.issued === false)"
           class="m-1"
-          :label="'Save and archive as final'"
+          :label="'Save as final'"
           @click="save(true)"
           :inStyle="'padding:5px 14px;font-size:1em'"
           :disabled="saveLoading"
@@ -119,7 +119,7 @@
               >{{form.items[0].description}}</div>
               <div
                 class="text-xs sm:text-sm border-gray-300 px-4 py-1 text-right w-1/2"
-              >{{form.items[0].total}}</div>
+              >{{form.items[0].total | currency }}</div>
               <div
                 class="flex items-center align-middle sticky right-0 bg-white shadow-md"
                 v-if="(propJobPart || (propInvoice && !['Approved','Paid'].includes(propInvoice.status)))"
@@ -404,7 +404,7 @@ export default {
           } / ${
             this.propJobPart.job.shift.name
           } / Total hours of ${this.propJobPart.final_hours.toFixed(2)}`,
-          total: total.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"),
+          total: total,
           dispute: this.propJobPart.disputed,
           absent_days: this.propJobPart.absent_days,
           final_hours: this.propJobPart.final_hours.toFixed(2),
@@ -413,9 +413,7 @@ export default {
         }
       ];
 
-      this.form.total_amount = total
-        .toFixed(2)
-        .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+      this.form.total_amount = total;
       this.form.final = false;
       this.form.ir35 = false;
     }
@@ -430,9 +428,8 @@ export default {
           type: "Job Part",
           job_part_id: this.propInvoice.items[0].job_part.id,
           description: this.propInvoice.items[0].description,
-          total: this.propInvoice.items[0].total
-            .toFixed(2)
-            .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"),
+          total: this.propInvoice.items[0].total,
+
           dispute: this.propInvoice.items[0].disputed,
           absent_days: this.propInvoice.items[0].absent_days,
           final_hours: this.propInvoice.items[0].final_hours,
@@ -440,9 +437,7 @@ export default {
           remarks: this.propInvoice.items[0].remarks
         }
       ];
-      this.form.total_amount = this.propInvoice.total_amount
-        .toFixed(2)
-        .replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+      this.form.total_amount = this.propInvoice.total_amount;
       this.form.final = false;
       this.form.ir35 = this.propInvoice.ir35;
     }
