@@ -239,10 +239,18 @@ export default {
         }
         // console.log(id, url, status, routeStatus, notification);
         // return;
-        // if (status === "Pending") {
-        //   this.close(id, type, notificationType);
-        //   return;
-        // }
+        if (
+          status === "Pending" &&
+          notif.parent_practice_id === this.$auth.user.practice_id
+        ) {
+          this.close(id, type, notificationType);
+          return;
+        } else if (
+          status === "Pending" &&
+          notif.parent_practice_id !== this.$auth.user.practice_id
+        ) {
+          routeStatus = "Pending";
+        }
         if (this.$route.name.includes("surgery-management")) {
           this.$router.push({
             path: `${url}`,
