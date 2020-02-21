@@ -3,7 +3,7 @@
     <div class="w-full p-0 lg:w-2/3 lg:pr-4 order-2 lg:order-1">
       <div class="relative rounded-lg shadow-lg w-full p-4 md:p-8">
         <AppLoading :loading="loading" spinner />
-        <!-- <AppFormError :formError="formError" v-if="formError.length > 0" /> -->
+        <AppFormError :formError="formError" v-if="formError.length > 0" />
         <form class="w-full">
           <AppInput
             v-model="form.gmc_or_nmc_number"
@@ -837,11 +837,12 @@ export default {
             this.scrollToTop();
           });
       } else {
-        this.$store.commit("SET_NOTIFICATION", {
-          enabled: true,
-          status: "danger",
-          text: ["Please fill up all the forms"]
-        });
+        // this.$store.commit("SET_NOTIFICATION", {
+        //   enabled: true,
+        //   status: "danger",
+        //   text: ["Please fill up all the forms"]
+        // });
+        this.form;
         this.scrollToTop();
       }
     }
