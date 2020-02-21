@@ -222,15 +222,15 @@ export default {
           case "Terminated":
             routeStatus = "Completed";
             break;
-          case "Declined":
-            routeStatus = "Withdrawn";
-            break;
-          case "Available":
-            routeStatus = "Public";
-            break;
-          case "Matched":
-            routeStatus = "Available";
-            break;
+          // case "Declined":
+          //   routeStatus = "Withdrawn";
+          //   break;
+          // case "Available":
+          //   routeStatus = "Public";
+          //   break;
+          // case "Matched":
+          //   routeStatus = "Available";
+          //   break;
           case "Updated":
             routeStatus = null;
             break;
@@ -239,10 +239,10 @@ export default {
         }
         // console.log(id, url, status, routeStatus, notification);
         // return;
-        if (status === "Pending") {
-          this.close(id, type, notificationType);
-          return;
-        }
+        // if (status === "Pending") {
+        //   this.close(id, type, notificationType);
+        //   return;
+        // }
         if (this.$route.name.includes("surgery-management")) {
           this.$router.push({
             path: `${url}`,
