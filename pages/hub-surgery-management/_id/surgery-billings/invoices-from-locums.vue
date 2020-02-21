@@ -144,7 +144,7 @@ import AppDate from "@/components/Base/AppDate";
 import AppButton from "@/components/Base/AppButton";
 import AppInput from "@/components/Base/AppInput";
 export default {
-  props: ["childPracticeId", "practiceId"],
+  props: ["childPracticeId"],
   transition: {
     name: "fade",
     mode: "out-in"
@@ -334,13 +334,6 @@ export default {
           locum_invoiceable = true;
       }
 
-      // const params = {
-      //   status,
-      //   invoice_status,
-      //   type: "Platform",
-      //   job_practice_id: [childPracticeId]
-      // };
-
       let [total, job_parts] = await Promise.all([
         app.$axios
           .$get(`/api/v1/practice/job-parts/count`, {
@@ -480,8 +473,7 @@ export default {
             status,
             locum_invoiceable,
             type: "Platform",
-            job_practice_id: [this.childPracticeId],
-            viewing_practice_id: this.practiceId
+            job_practice_id: [this.childPracticeId]
           }
         }),
         this.$axios.$get(`/api/v1/practice/job-parts`, {
@@ -491,7 +483,6 @@ export default {
             locum_invoiceable,
             type: "Platform",
             job_practice_id: [this.childPracticeId],
-            viewing_practice_id: this.practiceId,
             offset: 0,
             limit: 5
           }

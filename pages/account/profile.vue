@@ -197,7 +197,7 @@
             v-model="form.mandatory_training_id"
             :type="'multi-checkbox'"
             :name="'mandatory_training_id'"
-            :label="'What type of Training(s) would you like to work for?'"
+            :label="'Please select mandatory training courses completed.'"
             :error="formError.find(item => item.field === 'mandatory_training_id')"
             :lists="mandatoryTrainings"
             @checked="form.mandatory_training_id.push(parseInt($event)), CheckEmptyField(form.mandatory_training_id, 'mandatory_training_id')"

@@ -15,10 +15,7 @@
       >Invoices from hubzz</nuxt-link>
     </div>
     <div>
-      <nuxt-child
-        :childPracticeId="practiceSurgery.child_practice_id"
-        :practiceId="practiceSurgery.practice_Id"
-      />
+      <nuxt-child :childPracticeId="practiceSurgery.child_practice_id" />
     </div>
   </section>
 </template>

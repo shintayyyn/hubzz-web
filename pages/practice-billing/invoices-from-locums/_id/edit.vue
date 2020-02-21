@@ -2,13 +2,15 @@
   <div class="modal-container shadow-lg">
     <div class="p-4 md:p-8 max-w-5xl h-screen">
       <div class="flex flex-row flex-wrap justify-start pb-4">
-        <nuxt-link :to="{ name: `practice-billing-index`, query: {...$route.query }}">
+        <nuxt-link
+          :to="{ name: `practice-billing-invoices-from-locums`, query: {...$route.query }}"
+        >
           <svgicon name="left-arrow" height="32" width="32" />
         </nuxt-link>
       </div>
       <PracticeBillingInvoiceForm
         :propInvoice="invoice"
-        @updateInvoice="$emit('updateInvoice', $event), $router.push({ name: 'practice-billing-index', query: {...$route.query} })"
+        @updateInvoice="$emit('updateInvoice', $event), $router.push({ name: 'practice-billing-invoices-from-locums', query: {...$route.query} })"
       />
     </div>
   </div>
