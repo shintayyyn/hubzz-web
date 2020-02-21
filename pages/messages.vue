@@ -11,10 +11,10 @@ export default {
   components: {
     MessagesLeftPanel
   },
-  data(){
-    return{
+  data() {
+    return {
       showLeftPanel: true
-    }
+    };
   },
   async asyncData({ app, store, route, params, redirect }) {
     const response = await chatApi.fetchConversations(app.$axios, 0, 10);
@@ -35,7 +35,7 @@ export default {
       return this.$store.getters["chat/getUnreadMessages"];
     },
     isMobile() {
-      return this.$store.state.mobile
+      return this.$store.state.mobile;
     }
   },
   watch: {
@@ -45,23 +45,22 @@ export default {
           this.$router.push(`/messages/new`);
         } else {
           this.$store.commit("IS_MOBILE", false);
-          this.showLeftPanel = true
-          if (to.path === "/messages"){
+          this.showLeftPanel = true;
+          if (to.path === "/messages") {
             this.goToFirstConversation();
           }
         }
       }
       if (to.name === "messages-slug") {
         if (to.path === "/messages") {
-          this.showLeftPanel = true
+          this.showLeftPanel = true;
           this.$store.commit("IS_MOBILE", true);
           if (this.$store.state.chat.activeConversationId) {
             this.$store.commit("chat/DELETE_ACTIVE_CONVERSATION");
           }
         } else {
-            this.showLeftPanel = true
-            this.$store.dispatch("chat/setActiveConversation", to.params.slug);
-            
+          this.showLeftPanel = true;
+          this.$store.dispatch("chat/setActiveConversation", to.params.slug);
         }
       }
       if (
@@ -87,10 +86,10 @@ export default {
     this.$store.commit("chat/DELETE_ACTIVE_CONVERSATION");
   },
   created() {
-    if (this.isMobile === true && this.$route.params.slug){
-      this.showLeftPanel = false
+    if (this.isMobile === true && this.$route.params.slug) {
+      this.showLeftPanel = false;
     }
-    this.$store.dispatch("chat/setActiveConversation", this.$route.params.slug);
+    // this.$store.dispatch("chat/setActiveConversation", this.$route.params.slug);
   },
   mounted() {
     if (this.socketId) {
@@ -107,8 +106,11 @@ export default {
         this.$router.push(`/messages/new`);
       } else {
         this.$store.commit("IS_MOBILE", false);
-        this.$store.commit("chat/DELETE_UNREAD_MESSAGE", this.$route.params.slug);
-        this.showLeftPanel = true
+        this.$store.commit(
+          "chat/DELETE_UNREAD_MESSAGE",
+          this.$route.params.slug
+        );
+        this.showLeftPanel = true;
       }
     } else {
       if (this.$route.path === "/messages") {

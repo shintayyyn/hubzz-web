@@ -222,15 +222,15 @@ export default {
           case "Terminated":
             routeStatus = "Completed";
             break;
-          case "Declined":
-            routeStatus = "Withdrawn";
-            break;
-          case "Available":
-            routeStatus = "Public";
-            break;
-          case "Matched":
-            routeStatus = "Available";
-            break;
+          // case "Declined":
+          //   routeStatus = "Withdrawn";
+          //   break;
+          // case "Available":
+          //   routeStatus = "Public";
+          //   break;
+          // case "Matched":
+          //   routeStatus = "Available";
+          //   break;
           case "Updated":
             routeStatus = null;
             break;
@@ -239,10 +239,20 @@ export default {
         }
         // console.log(id, url, status, routeStatus, notification);
         // return;
-        if (status === "Pending") {
+        if (
+          status === "Pending"
+          // &&
+          // notif.parent_practice_id === this.$auth.user.practice_id
+        ) {
           this.close(id, type, notificationType);
           return;
         }
+        // else if (
+        //   status === "Pending" &&
+        //   notif.parent_practice_id !== this.$auth.user.practice_id
+        // ) {
+        //   routeStatus = "Pending";
+        // }
         if (this.$route.name.includes("surgery-management")) {
           this.$router.push({
             path: `${url}`,
