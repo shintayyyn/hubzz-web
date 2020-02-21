@@ -50,12 +50,12 @@
             <div class="flex flex-wrap justify-center">
               <div
                 v-if="slotProps.item.locum_invoice_id && slotProps.item.invoice_status !== 'To Be Invoice' && slotProps.item.status !== 'Approved'"
-                @click="$router.push({ path: `/practice-billing/${slotProps.item.locum_invoice_id}/edit`, query: {...$route.query} })"
+                @click="$router.push({ path: `/practice-billing/invoices-from-locums/${slotProps.item.locum_invoice_id}/edit`, query: {...$route.query} })"
                 class="my-1 p-2 bg-yellow-500 font-bold rounded-lg focus:outline-none"
               >Edit</div>
               <div
                 v-if="slotProps.item.status === 'Approved' && slotProps.item.locum_invoice_item"
-                @click="$router.push({ path: `/practice-billing/${slotProps.item.locum_invoice_id}`, query: {...$route.query} })"
+                @click="$router.push({ path: `/practice-billing/invoices-from-locums/${slotProps.item.locum_invoice_id}`, query: {...$route.query} })"
                 class="mx-1 p-2 bg-yellow-500 hover:bg-yellow-400 font-bold rounded-lg focus:outline-none cursor-pointer"
               >View</div>
               <button
@@ -134,8 +134,8 @@
 
         <transition name="fade" mode="out-in">
           <nuxt-link
-            :to="{ name: 'practice-billing-index', query: {...$route.query}}"
-            v-if="['practice-billing-index-id', 'practice-billing-index-id-edit'].includes($route.name) || payment_modal"
+            :to="{ name: 'practice-billing-invoices-from-locums', query: {...$route.query}}"
+            v-if="['practice-billing-invoices-from-locums-id', 'practice-billing-invoices-from-locums-id-edit'].includes($route.name) || payment_modal"
             class="shield"
           ></nuxt-link>
         </transition>

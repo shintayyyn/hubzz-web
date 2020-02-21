@@ -428,6 +428,7 @@ export default {
               locum_status,
               locum_invoiceable,
               nhs_claimable,
+              viewing_locum_user_id: app.$auth.user.id,
               job_type: "Platform",
               type: "Platform"
             }
@@ -443,6 +444,7 @@ export default {
               locum_status,
               locum_invoiceable,
               nhs_claimable,
+              viewing_locum_user_id: app.$auth.user.id,
               job_type: "Platform",
               type: "Platform",
               offset: 0,
@@ -632,7 +634,8 @@ export default {
             nhs_claimable,
             job_type: "Platform",
             type: "Platform",
-            job_ir35: this.job_ir35
+            job_ir35: this.job_ir35,
+            viewing_locum_user_id: this.$auth.user.id
           }
         }),
         this.$axios.$get(`${url}`, {
@@ -644,6 +647,7 @@ export default {
             job_type: "Platform",
             type: "Platform",
             job_ir35: this.job_ir35,
+            viewing_locum_user_id: this.$auth.user.id,
             offset: 0,
             limit: 5
           }
@@ -775,6 +779,7 @@ export default {
             nhs_claimable,
             job_type: "Platform",
             type: "Platform",
+            viewing_locum_user_id: this.$auth.user.id,
             offset: this.offset,
             limit: this.limit,
             job_ir35: this.job_ir35,
