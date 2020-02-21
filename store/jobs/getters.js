@@ -111,6 +111,7 @@ export default {
                 rate: notif.rate ? notif.rate : notif.job.rate,
                 locum_detail_rate_type: notif.locum_detail_rate_type ? notif.locum_detail_rate_type.name : notif.job.locum_detail_rate_type.name,
                 notification_type: notif.notificationType,
+                parent_practice_id: notif.parent_practice_id,
                 type: 'Jobs',
                 message
             }
