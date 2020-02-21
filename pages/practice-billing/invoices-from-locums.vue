@@ -238,6 +238,11 @@ export default {
         });
       }
       columns.push({
+        name: "Under Parent Practice",
+        dataIndex: "under_parent_practice",
+        class: "text-center"
+      });
+      columns.push({
         name: "Actions",
         dataIndex: "actions",
         class: "text-center"
@@ -406,7 +411,12 @@ export default {
               : "No",
           nhs_claimable: jobPart.locum_invoice_id
             ? jobPart.locum_invoices_nhs_claimable
-            : jobPart.locum_details_nhs_claimable
+            : jobPart.locum_details_nhs_claimable,
+          under_parent_practice:
+            jobPart.locum_invoice_id &&
+            jobPart.locum_invoice_item.locum_invoice.parent_practice_id
+              ? "Yes"
+              : "No"
         };
       });
 
@@ -525,7 +535,12 @@ export default {
                   : "No",
               nhs_claimable: jobPart.locum_invoice_id
                 ? jobPart.locum_invoices_nhs_claimable
-                : jobPart.locum_details_nhs_claimable
+                : jobPart.locum_details_nhs_claimable,
+              under_parent_practice:
+                jobPart.locum_invoice_id &&
+                jobPart.locum_invoice_item.locum_invoice.parent_practice_id
+                  ? "Yes"
+                  : "No"
             };
           });
         })
@@ -616,7 +631,12 @@ export default {
                   : "No",
               nhs_claimable: jobPart.locum_invoice_id
                 ? jobPart.locum_invoices_nhs_claimable
-                : jobPart.locum_details_nhs_claimable
+                : jobPart.locum_details_nhs_claimable,
+              under_parent_practice:
+                jobPart.locum_invoice_id &&
+                jobPart.locum_invoice_item.locum_invoice.parent_practice_id
+                  ? "Yes"
+                  : "No"
             };
           });
         })
