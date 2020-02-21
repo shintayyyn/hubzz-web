@@ -2,17 +2,9 @@
   <section class="relative max-w-3xl">
     <div class="flex flex-col md:flex-row justify-between">
       <div class="flex flex-wrap items-center">
-        <!-- <AppButton
-          v-if="propJobPart || (propInvoice && propInvoice.status !== 'Approved')"
-          class="m-1"
-          :label="'Save changes'"
-          @click="save(false)"
-          :inStyle="'padding:5px 14px;font-size:1em'"
-          :disabled="saveLoading || exportLoading"
-        />-->
         <AppButton
           class="m-1"
-          :label="propJobPart ? 'Save and archive as final' : 'Save changes'"
+          :label="propJobPart ? 'Save as final' : 'Save as draft'"
           @click="save(true)"
           :inStyle="'padding:5px 14px;font-size:1em'"
           :disabled="saveLoading || exportLoading"
