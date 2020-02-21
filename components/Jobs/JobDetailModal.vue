@@ -231,12 +231,6 @@ export default {
       }
     },
     status(status) {
-      let jobStatus =
-        status === "Matched"
-          ? "Available"
-          : status === "Available"
-          ? "Public"
-          : status;
       return jobStatus.toUpperCase();
     },
     bgStatus(status) {
