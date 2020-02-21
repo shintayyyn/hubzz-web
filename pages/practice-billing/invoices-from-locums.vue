@@ -47,7 +47,11 @@
           @sorted="sorted"
         >
           <template v-slot:actions="slotProps">
-            <div class="flex flex-wrap justify-center">
+            <div
+              v-if="practice.type !== 'Spoke' || 
+              (practice.type === 'Spoke' && !practice.parent_practice_id) ||
+              (practice.type === 'Spoke' && practice.parent_practice_id && practice.allow_surgery_bill_locum === true)"
+              class="flex flex-wrap justify-center">
               <div
                 v-if="slotProps.item.locum_invoice_id && slotProps.item.invoice_status !== 'To Be Invoice' && slotProps.item.status !== 'Approved'"
                 @click="$router.push({ path: `/practice-billing/invoices-from-locums/${slotProps.item.locum_invoice_id}/edit`, query: {...$route.query} })"
@@ -63,6 +67,9 @@
                 @click.stop.prevent="select_invoice(slotProps.item.locum_invoice_id)"
                 class="my-1 p-2 font-bold rounded-lg focus:outline-none cursor-pointer bg-yellow-400 hover:bg-yellow-500"
               >Mark as Paid</button>
+            </div>
+            <div class="text-gray-600" v-else>
+              Disabled by Hub
             </div>
           </template>
         </AppTable>
@@ -164,6 +171,9 @@ export default {
   },
   data() {
     return {
+      user: '',
+      practice: '',
+
       initialLoading: false,
       loading: false,
       filterModal: false,
@@ -190,6 +200,10 @@ export default {
       },
       formError: []
     };
+  },
+  created(){
+    this.user = this.$auth.user
+    this.practice = this.$auth.user.practice_detail.practice
   },
   computed: {
     columns() {
