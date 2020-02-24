@@ -231,7 +231,7 @@ export default {
       }
     },
     status(status) {
-      return jobStatus.toUpperCase();
+      return status.toUpperCase();
     },
     bgStatus(status) {
       switch (status) {

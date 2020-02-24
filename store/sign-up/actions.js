@@ -210,6 +210,8 @@ export default {
                         commit('SET_ACTIVE_COMPONENT', 'LocumProfessionalDetails')
                     } else if (credentialDetailError.length > 0) {
                         commit('SET_ACTIVE_COMPONENT', 'LocumCredentialDetails')
+                    } else if (payrollDetailError.length > 0) {
+                        commit('SET_ACTIVE_COMPONENT', 'LocumPayrollDetails')
                     }
                 }
             })
