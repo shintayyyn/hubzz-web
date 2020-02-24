@@ -1,12 +1,14 @@
 <template>
 	<section>
 		<div class="p-4 md:p-8">
-			<nuxt-link :to="{
+			<nuxt-link
+				:to="{
         path: $route.name.includes('hub-surgery-management') ? 
           `/hub-surgery-management/${$route.params.id}/surgery-permanent-jobs` : 
           `/permanent-jobs` ,
         query:$route.query
-        }">
+        }"
+			>
 				<svgicon name="left-arrow" height="32" width="32" class="cursor-pointer" />
 			</nuxt-link>
 
@@ -72,40 +74,40 @@
 								</no-ssr>
 							</div>
 
-              <div
-                v-if="
+							<div
+								v-if="
                   $route.name.includes('hub-surgery-management') && 
                   $auth.user.practice_detail.practice.type === 'Hub' &&
-                  permanent_job.job_posting_status === 'Pending'">
-                <AppButton
-                  class="font-semibold"
-                  :label="'Approve'"
-                  @click="acceptRejectSpokePermanentJob('Approved')"
-                  :customTheme="'bg-green-500 hover:bg-green-600 text-white'"
-                />
-                <AppButton
-                  class="font-semibold"
-                  :label="'Reject'"
-                  @click="showCancel = !showCancel"
-                  :customTheme="'bg-red-500 hover:bg-red-600 text-white'"
-                />
-                <div v-if="showCancel === true">
-                  <p class="font-bold">Reason for Rejection (optional)</p>
-                  <AppInput
-                    v-if="showCancel === true"
-                    v-model="approve_or_reject.cancelled_reason"
-                    :type="'text'"
-                    :name="'cancelled_reason'"
-                  />
-                  <AppButton
-                    class="font-semibold"
-                    :label="'Reject'"
-                    @click="acceptRejectSpokePermanentJob('Rejected')"
-                    :customTheme="'bg-red-500 hover:bg-red-600 text-white'"
-                  />
-                </div>
-              </div>
-
+                  permanent_job.job_posting_status === 'Pending'"
+							>
+								<AppButton
+									class="font-semibold"
+									:label="'Approve'"
+									@click="acceptRejectSpokePermanentJob('Approved')"
+									:customTheme="'bg-green-500 hover:bg-green-600 text-white'"
+								/>
+								<AppButton
+									class="font-semibold"
+									:label="'Reject'"
+									@click="showCancel = !showCancel"
+									:customTheme="'bg-red-500 hover:bg-red-600 text-white'"
+								/>
+								<div v-if="showCancel === true">
+									<p class="font-bold">Reason for Rejection (optional)</p>
+									<AppInput
+										v-if="showCancel === true"
+										v-model="approve_or_reject.cancelled_reason"
+										:type="'text'"
+										:name="'cancelled_reason'"
+									/>
+									<AppButton
+										class="font-semibold"
+										:label="'Reject'"
+										@click="acceptRejectSpokePermanentJob('Rejected')"
+										:customTheme="'bg-red-500 hover:bg-red-600 text-white'"
+									/>
+								</div>
+							</div>
 						</template>
 						<template v-if="edit === true">
 							<div class="w-full flex flex-col md:flex-row">
@@ -266,7 +268,7 @@
 					/>
 
 					<template v-if="permanent_job.appointed_to_locum_user_id">
-						<PermanentJobLocum class="my-4 md:my-0" :user="assignedLocum" />
+						<PermanentJobLocum class="my-4" :user="assignedLocum" />
 					</template>
 
 					<AppButton
@@ -320,13 +322,13 @@ export default {
 			edit: false,
 			toCloseJob: false,
 			modal: false,
-      permanent_job: "",
+			permanent_job: "",
 
-      approve_or_reject: {
-        approved_or_rejected: "",
-        cancelled_reason: "",
-      },
-      showCancel: false,
+			approve_or_reject: {
+				approved_or_rejected: "",
+				cancelled_reason: ""
+			},
+			showCancel: false,
 
 			form: {
 				title: "",
@@ -341,8 +343,8 @@ export default {
 				work_hours: "",
 				practice_id: "",
 				profession_id: "",
-        hired_through: "",
-        update_remarks: "",
+				hired_through: "",
+				update_remarks: ""
 			},
 			salary_range: false,
 			practice_lists: [],
@@ -505,7 +507,9 @@ export default {
 				this.form.email = this.permanent_job.email;
 				this.form.report_to = this.permanent_job.report_to;
 				this.form.industry_type = this.permanent_job.industry_type;
-				this.form.salary_amount = this.permanent_job.salary_amount ? this.permanent_job.salary_amount : 0;
+				this.form.salary_amount = this.permanent_job.salary_amount
+					? this.permanent_job.salary_amount
+					: 0;
 				this.form.salary_description_2 = this.permanent_job.salary_description_2;
 				this.form.work_hours = this.permanent_job.work_hours;
 				this.form.practice_id = this.permanent_job.practice_id;
@@ -561,12 +565,12 @@ export default {
 			}
 		},
 		async getPermanentJob() {
-      let permJobId = ''
-      if(this.$route.name.includes('hub-surgery-management')) {
-        permJobId = this.$route.params.permJobId
-      }else {
-        permJobId = this.$route.params.id
-      }
+			let permJobId = "";
+			if (this.$route.name.includes("hub-surgery-management")) {
+				permJobId = this.$route.params.permJobId;
+			} else {
+				permJobId = this.$route.params.id;
+			}
 
 			this.$axios
 				.$get(`/api/v1/practice/permanent-jobs/${permJobId}`)
@@ -590,25 +594,24 @@ export default {
 			});
 		},
 		editJobLabel(edit) {
-      console.log('edit', edit)
+			console.log("edit", edit);
 			if (
-				edit === false &&
-        this.permanent_job.job_posting_status == "Available"||
-        this.permanent_job.job_posting_status == "Pending"
+				(edit === false &&
+					this.permanent_job.job_posting_status == "Available") ||
+				this.permanent_job.job_posting_status == "Pending"
 			) {
-        console.log('status',	this.permanent_job.job_posting_status )
+				console.log("status", this.permanent_job.job_posting_status);
 				return "Edit Job";
-      } 
-      if (
-				edit === false &&
-				this.permanent_job.job_posting_status == "Closed"||
-        this.permanent_job.job_posting_status == "Unfilled"
+			}
+			if (
+				(edit === false && this.permanent_job.job_posting_status == "Closed") ||
+				this.permanent_job.job_posting_status == "Unfilled"
 			) {
-        console.log('status',	this.permanent_job.job_posting_status )
+				console.log("status", this.permanent_job.job_posting_status);
 				return "Re-post Job";
-      } 
-       if ( edit === true) {
-        console.log('status',	this.permanent_job.job_posting_status )
+			}
+			if (edit === true) {
+				console.log("status", this.permanent_job.job_posting_status);
 				return "Cancel Editing";
 			}
 		},
@@ -655,24 +658,28 @@ export default {
 				.finally(() => {
 					this.$router.go(-1);
 				});
-    },
-    
-    async acceptRejectSpokePermanentJob(approveReject) {
-      if (approveReject == 'Approved') {
-        this.approve_or_reject.approved_or_rejected = 'Approved'
-      } else if (approveReject == 'Rejected') {
-        this.approve_or_reject.approved_or_rejected = 'Rejected'
-      }
+		},
 
-      await this.$axios.$put(`/api/v1/practice/permanent-jobs/${this.permanent_job.id}/approve-or-reject`,
-        this.approve_or_reject).then(res => {
-          this.$store.commit("SET_NOTIFICATION", {
-							enabled: true,
-							status: "success",
-							text: ["Successfully Approved / Rejected Job"]
-						});
-        })
-    },
+		async acceptRejectSpokePermanentJob(approveReject) {
+			if (approveReject == "Approved") {
+				this.approve_or_reject.approved_or_rejected = "Approved";
+			} else if (approveReject == "Rejected") {
+				this.approve_or_reject.approved_or_rejected = "Rejected";
+			}
+
+			await this.$axios
+				.$put(
+					`/api/v1/practice/permanent-jobs/${this.permanent_job.id}/approve-or-reject`,
+					this.approve_or_reject
+				)
+				.then(res => {
+					this.$store.commit("SET_NOTIFICATION", {
+						enabled: true,
+						status: "success",
+						text: ["Successfully Approved / Rejected Job"]
+					});
+				});
+		},
 		onEditorBlur(editor) {
 			console.log("editor blur!", editor);
 		},
@@ -689,8 +696,8 @@ export default {
 					break;
 				case "Closed":
 					return "bg-red-700 text-white";
-          break;
-        case "Unfilled":
+					break;
+				case "Unfilled":
 					return "bg-gray-700 text-white";
 					break;
 				default:
@@ -723,5 +730,4 @@ export default {
 	max-height: 300px;
 	padding: 8px 0;
 }
-
 </style>

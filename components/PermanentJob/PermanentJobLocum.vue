@@ -110,8 +110,17 @@
 							<div class="w-5 h-5">
 								<svgicon name="cloud-download" height="24" width="24" />
 							</div>
-							<div class="leading-loose mx-2 text-xs">{{item.compliance_document.name}}</div>
+							<a
+								@click.stop.prevent="downloadItem(item.file.url, item.file.filename)"
+								:href="item.file.url"
+								:download="item.file.filename"
+								class="whitespace-no-wrap leading-loose mx-2 text-xs"
+							>{{item.compliance_document.name}}</a>
+							<!-- <div class="leading-loose mx-2 text-xs">{{item.compliance_document.name}}</div> -->
 						</div>
+						<template v-if="optional && !optional.length">
+							<span class="text-sm">(none)</span>
+						</template>
 					</div>
 					<div class="font-bold text-sm sm:text-md">Other documents</div>
 					<div class="flex flex-col mb-8">
@@ -123,8 +132,17 @@
 							<div class="w-5 h-5">
 								<svgicon name="cloud-download" height="24" width="24" />
 							</div>
-							<div class="leading-loose mx-2 text-xs">{{item.compliance_document.name}}</div>
+							<a
+								@click.stop.prevent="downloadItem(item.file.url, item.file.filename)"
+								:href="item.file.url"
+								:download="item.file.filename"
+								class="whitespace-no-wrap leading-loose mx-2 text-xs"
+							>{{item.compliance_document.name}}</a>
+							<!-- <div class="leading-loose mx-2 text-xs">{{item.compliance_document.name}}</div> -->
 						</div>
+						<template v-if="optional && !optional.length">
+							<span class="text-sm">(none)</span>
+						</template>
 					</div>
 					<div class="font-bold text-sm sm:text-md">Referees</div>
 					<div v-if="user.locum_detail.referees.length > 0">
@@ -235,6 +253,22 @@ export default {
 				this.user.is_favorite = false;
 				this.confirmation_modal = false;
 			}
+		},
+		downloadItem(fileUrl, fileName) {
+			const axios = require("axios");
+			axios({
+				url: fileUrl,
+				method: "GET",
+				responseType: "blob" // important
+			}).then(response => {
+				const url = window.URL.createObjectURL(new Blob([response.data]));
+				const link = document.createElement("a");
+				link.href = url;
+				link.setAttribute("download", fileName);
+				document.body.appendChild(link);
+				link.click();
+				document.body.removeChild(link);
+			});
 		}
 	}
 };
