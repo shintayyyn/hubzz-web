@@ -79,8 +79,7 @@ export default {
       }
     },
     status(status) {
-      let jobStatus = status === "Declined" ? "Withdrawn" : status;
-      return jobStatus.toUpperCase();
+      return status.toUpperCase();
     },
     bgStatus(status) {
       switch (status) {

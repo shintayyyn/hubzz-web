@@ -119,12 +119,7 @@ export default {
       }
     },
     status(status) {
-      let jobStatus =
-        status === "Declined"
-          ? "Withdrawn"
-          : status === "Available"
-          ? "Live"
-          : status;
+      let jobStatus = status === "Available" ? "Live" : status;
       return jobStatus.toUpperCase();
     },
     bgStatus(status) {

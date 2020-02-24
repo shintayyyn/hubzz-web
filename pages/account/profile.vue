@@ -259,7 +259,7 @@
               v-model="form.payroll_account_name"
               :type="'text'"
               :name="'payroll_account_name'"
-              :label="'Account name'"
+              :label="'Payroll Company Name'"
               :error="formError.find(item => item.field === 'payroll_account_name')"
               required
             />
@@ -267,7 +267,7 @@
               v-model="form.payroll_bank_name"
               :type="'text'"
               :name="'payroll_bank_name'"
-              :label="'Bank name'"
+              :label="'Bank Name'"
               :error="formError.find(item => item.field === 'payroll_bank_name')"
               required
             />
@@ -275,7 +275,7 @@
               v-model="form.payroll_sort_code"
               :type="'text'"
               :name="'payroll_sort_code'"
-              :label="'Sort code'"
+              :label="'Sort Code'"
               :error="formError.find(item => item.field === 'payroll_sort_code')"
               required
             />
@@ -283,7 +283,7 @@
               v-model="form.payroll_account_number"
               :type="'text'"
               :name="'payroll_account_number'"
-              :label="'Account number'"
+              :label="'Account Number'"
               :error="formError.find(item => item.field === 'payroll_account_number')"
               required
             />
@@ -294,7 +294,7 @@
               v-model="form.account_name"
               :type="'text'"
               :name="'account_name'"
-              :label="'Account name'"
+              :label="'Account Name'"
               :error="formError.find(item => item.field === 'account_name')"
               required
             />
@@ -302,7 +302,7 @@
               v-model="form.bank_name"
               :type="'text'"
               :name="'bank_name'"
-              :label="'Bank name'"
+              :label="'Bank Name'"
               :error="formError.find(item => item.field === 'bank_name')"
               required
             />
@@ -310,7 +310,7 @@
               v-model="form.sort_code"
               :type="'text'"
               :name="'sort_code'"
-              :label="'Sort code'"
+              :label="'Sort Code'"
               :error="formError.find(item => item.field === 'sort_code')"
               required
             />
@@ -318,7 +318,7 @@
               v-model="form.account_number"
               :type="'text'"
               :name="'account_number'"
-              :label="'Account number'"
+              :label="'Account Number'"
               :error="formError.find(item => item.field === 'account_number')"
               required
             />
