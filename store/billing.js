@@ -156,6 +156,7 @@ export const getters = {
 					break;
 			}
 			notifObj = {
+				...notif,
 				id: notif.id,
 				invoice_number: notif.invoice_number,
 				status: notif.status,
@@ -189,6 +190,7 @@ export const getters = {
 					break;
 			}
 			notifObj = {
+				...notif,
 				id: notif.id,
 				invoice_number: notif.invoice_number,
 				status: notif.status,
