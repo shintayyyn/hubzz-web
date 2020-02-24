@@ -80,7 +80,7 @@
               v-model="form.payroll_account_number"
               :type="'text'"
               :name="'payroll_account_number'"
-              :label="'Account Number'"
+              :label="'Payroll Reference Number'"
               :error="formError.find(item => item.field === 'payroll_account_number')"
               required
             />
