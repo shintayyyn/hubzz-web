@@ -3,6 +3,7 @@ export default () => ({
 	conversations: [],
 	activeConversationId: null,
 	unreadMessages: [],
+	unreadTotal: 0,
 	messages: [],
 	newMessageUser: null,
 	messageSent: false
