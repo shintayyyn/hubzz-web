@@ -176,17 +176,19 @@ export default {
           : !this.$route.name.includes("dashboard") &&
             this.$auth.user.domain === "Practice" &&
             notification.practice_id !== this.$auth.user.practice_id
-          ? // pass practice surgery id here
-            // `/hub-surgery-management`
-            null
+          ? `/hub-surgery-management/${notification.practice_surgery_id}/surgery-sessions`
           : !this.$route.name.includes("dashboard") &&
             this.$auth.user.domain === "Locum"
           ? `/jobs`
           : null;
       } else if (type === "Billings") {
         url =
-          this.$auth.user.domain === "Practice"
+          this.$auth.user.domain === "Practice" &&
+          notification.practice_id === this.$auth.user.practice_id
             ? `/practice-billing/invoices-from-locums`
+            : this.$auth.user.domain === "Practice" &&
+              notification.practice_id !== this.$auth.user.practice_id
+            ? `/hub-surgery-management/${notification.practice_surgery_id}/surgery-billings/invoices-from-locums`
             : this.$auth.user.domain === "Locum" &&
               notification.notification_billing_type === "Platform"
             ? `/locum-billing/invoices`
@@ -230,7 +232,7 @@ export default {
           default:
             routeStatus = status;
         }
-        // console.log(url, status, routeStatus, notification);
+        // console.log(url, status, routeStatus, notification.practice_surgery_id);
         // return;
         if (url && url.includes("surgery-management")) {
           this.$router.push({
@@ -274,7 +276,7 @@ export default {
           default:
             routeStatus = status;
         }
-        // console.log(notification, id, url, status, routeStatus);
+        // console.log(url, status, routeStatus, notification);
         // return;
         if (id !== this.$route.params.id) {
           this.$router.push({

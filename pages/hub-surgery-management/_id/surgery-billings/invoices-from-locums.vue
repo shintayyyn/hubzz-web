@@ -140,6 +140,7 @@
 </template>
 <script>
 import AppTable from "@/components/Base/AppTable";
+import AppLoading from "@/components/Base/AppLoading";
 import AppDate from "@/components/Base/AppDate";
 import AppButton from "@/components/Base/AppButton";
 import AppInput from "@/components/Base/AppInput";
@@ -151,6 +152,7 @@ export default {
   },
   components: {
     AppTable,
+    AppLoading,
     AppDate,
     AppButton,
     AppInput
@@ -244,25 +246,25 @@ export default {
       let queryStatus = this.$route.query.status;
       switch (queryStatus && queryStatus.toLowerCase()) {
         case "to-be-invoiced":
-          str = "You do not have any completed job parts.";
+          str = "This spoke do not have any completed job parts.";
           break;
         case "disputed":
-          str = "You do not have any disputed invoices.";
+          str = "This spoke do not have any disputed invoices.";
           break;
         case "issued":
-          str = "You do not have any invoiced job parts.";
+          str = "This spoke do not have any invoiced job parts.";
           break;
         case "approved":
-          str = "You do not have any approved job parts.";
+          str = "This spoke do not have any approved job parts.";
           break;
         case "pension-form-a":
-          str = "You do not have any nhs form a.";
+          str = "This spoke do not have any nhs form a.";
           break;
         case "pension-form-b":
-          str = "You do not have any nhs form b.";
+          str = "This spoke do not have any nhs form b.";
           break;
         default:
-          str = "You do not have any completed job parts.";
+          str = "This spoke do not have any completed job parts.";
       }
       return str;
     }
