@@ -178,7 +178,7 @@ export default {
             notification.practice_id !== this.$auth.user.practice_id
           ? // pass practice surgery id here
             // `/hub-surgery-management`
-            `/dashboard`
+            null
           : !this.$route.name.includes("dashboard") &&
             this.$auth.user.domain === "Locum"
           ? `/jobs`
@@ -197,7 +197,7 @@ export default {
       }
 
       // for dashboard viewing, moves the date according to the job
-      if (url.includes("/dashboard")) {
+      if (url && url.includes("/dashboard")) {
         let selectedMonth =
           this.$moment()
             .month(dateStart)
@@ -232,12 +232,12 @@ export default {
         }
         // console.log(url, status, routeStatus, notification);
         // return;
-        if (url.includes("surgery-management")) {
+        if (url && url.includes("surgery-management")) {
           this.$router.push({
             path: `${url}`,
             query: { ...this.$route.query, jobStatus: routeStatus }
           });
-        } else if (!url.includes("surgery-management")) {
+        } else if (url && !url.includes("surgery-management")) {
           this.$router.push({
             path: `${url}`,
             query: { ...this.$route.query, status: routeStatus }
@@ -246,12 +246,12 @@ export default {
           this.close(id, type, notification.notification_type);
         }
         setTimeout(() => {
-          if (url.includes("surgery-management")) {
+          if (url && url.includes("surgery-management")) {
             this.$router.push({
               path: `${url}/${id}`,
               query: { ...this.$route.query, jobStatus: routeStatus }
             });
-          } else if (!url.includes("surgery-management")) {
+          } else if (url && !url.includes("surgery-management")) {
             this.$router.push({
               path: `${url}/${id}`,
               query: { ...this.$route.query, status: routeStatus }
