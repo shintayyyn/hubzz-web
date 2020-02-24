@@ -67,7 +67,7 @@
                       <div class="leading-tight pt-1">{{notification.message}}</div>
                       <div
                         class="leading-tight text-xs pt-2 text-right text-gray-600"
-                      >{{notification.updated_at}}</div>
+                      >{{$moment(notification.updated_at).format('MM-DD-YYYY, hh:mm A')}}</div>
                     </div>
                   </div>
                 </div>
