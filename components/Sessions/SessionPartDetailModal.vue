@@ -37,9 +37,6 @@
 			<div class="flex flex-wrap justify-start">
 				<div class="p-0 md:pr-4 w-full md:w-1/2">
 					<div class="flex flex-col">
-						{{'hregrge '+practice.parent_practice_id}}
-						{{'ewq ' + practice.allow_surgery_bill_locum}}
-						{{'dsadsa ' + practice.type }}
 						<div
 							class="bg-white rounded-lg shadow-lg p-4 md:p-8 mt-4"
 							v-if="job_part.status === 'Declined' || job_part.status === 'Withdrawn'"
