@@ -161,10 +161,43 @@ export default {
         ? notification.status
         : notification.locum_status;
       let dateStart = notification.date_start;
-      let dateEnd = notification.date_end;
-      let notificationType = notification.notification_type;
 
-      if (this.$route.path.includes("/dashboard")) {
+      this.$store.commit("calendar/CREATE_JOB_MODAL", false);
+
+      // path url
+      let url = "";
+      if (type === "Jobs") {
+        url = this.$route.name.includes("dashboard")
+          ? this.$route.path
+          : !this.$route.name.includes("dashboard") &&
+            this.$auth.user.domain === "Practice" &&
+            notification.practice_id === this.$auth.user.practice_id
+          ? `/sessions`
+          : !this.$route.name.includes("dashboard") &&
+            this.$auth.user.domain === "Practice" &&
+            notification.practice_id !== this.$auth.user.practice_id
+          ? // pass practice surgery id here
+            // `/hub-surgery-management`
+            null
+          : !this.$route.name.includes("dashboard") &&
+            this.$auth.user.domain === "Locum"
+          ? `/jobs`
+          : null;
+      } else if (type === "Billings") {
+        url =
+          this.$auth.user.domain === "Practice"
+            ? `/practice-billing/invoices-from-locums`
+            : this.$auth.user.domain === "Locum" &&
+              notification.notification_billing_type === "Platform"
+            ? `/locum-billing/invoices`
+            : this.auth.user.domain === "Locum" &&
+              notification.notification_billing_type === "Private"
+            ? `/locum-billing/private-invoices`
+            : null;
+      }
+
+      // for dashboard viewing, moves the date according to the job
+      if (url && url.includes("/dashboard")) {
         let selectedMonth =
           this.$moment()
             .month(dateStart)
@@ -183,38 +216,7 @@ export default {
         );
       }
 
-      this.$store.commit("calendar/CREATE_JOB_MODAL", false);
-
-      let url = "";
-      if (type === "Jobs") {
-        if (this.$route.name === "dashboard") {
-          url = "/dashboard";
-        } else if (
-          this.$route.name !== "dashboard" &&
-          !this.$route.name.includes("surgery-management")
-        ) {
-          url = this.$auth.user.domain === "Practice" ? "/sessions" : "/jobs";
-        } else if (
-          this.$route.name !== "dashboard" &&
-          this.$route.name.includes("surgery-management")
-        ) {
-          url = this.$route.path;
-        }
-      } else if (type === "Billings") {
-        if (this.$auth.user.domain === "Practice") {
-          url = `/practice-billing/invoices-from-locums`;
-        } else if (this.$auth.user.domain === "Locum") {
-          if (notification.notification_billing_type === "Platform") {
-            url = `/locum-billing/invoices`;
-          }
-          if (notification.notification_billing_type === "Private") {
-            url = `/locum-billing/private-invoices`;
-          }
-        }
-      }
-
-      let path = `${url}/${id}`;
-
+      // query
       if (type === "Jobs") {
         let routeStatus = "";
 
@@ -222,59 +224,40 @@ export default {
           case "Terminated":
             routeStatus = "Completed";
             break;
-          // case "Declined":
-          //   routeStatus = "Withdrawn";
-          //   break;
-          // case "Available":
-          //   routeStatus = "Public";
-          //   break;
-          // case "Matched":
-          //   routeStatus = "Available";
-          //   break;
           case "Updated":
             routeStatus = null;
             break;
           default:
             routeStatus = status;
         }
-        // console.log(id, url, status, routeStatus, notification);
+        // console.log(url, status, routeStatus, notification);
         // return;
-        if (
-          status === "Pending"
-          // &&
-          // notif.parent_practice_id === this.$auth.user.practice_id
-        ) {
-          this.close(id, type, notificationType);
-          return;
-        }
-        // else if (
-        //   status === "Pending" &&
-        //   notif.parent_practice_id !== this.$auth.user.practice_id
-        // ) {
-        //   routeStatus = "Pending";
-        // }
-        if (this.$route.name.includes("surgery-management")) {
+        if (url && url.includes("surgery-management")) {
           this.$router.push({
             path: `${url}`,
             query: { ...this.$route.query, jobStatus: routeStatus }
           });
-        } else if (!this.$route.name.includes("surgery-management")) {
+        } else if (url && !url.includes("surgery-management")) {
           this.$router.push({
             path: `${url}`,
             query: { ...this.$route.query, status: routeStatus }
           });
+        } else if (url === null) {
+          this.close(id, type, notification.notification_type);
         }
         setTimeout(() => {
-          if (this.$route.name.includes("surgery-management")) {
+          if (url && url.includes("surgery-management")) {
             this.$router.push({
               path: `${url}/${id}`,
               query: { ...this.$route.query, jobStatus: routeStatus }
             });
-          } else if (!this.$route.name.includes("surgery-management")) {
+          } else if (url && !url.includes("surgery-management")) {
             this.$router.push({
               path: `${url}/${id}`,
               query: { ...this.$route.query, status: routeStatus }
             });
+          } else if (url === null) {
+            this.close(id, type, notification.notification_type);
           }
         }, 500);
       } else if (type === "Billings") {
@@ -306,7 +289,7 @@ export default {
           });
         }, 500);
       }
-      this.close(id, type, notificationType);
+      this.close(id, type, notification.notification_type);
     },
     close(id, type, notificationType) {
       if (type === "Jobs") {

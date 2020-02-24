@@ -95,6 +95,9 @@ export default {
                 case 'Practice Notification Job Declined':
                     id = notif.job_parts.find(item => item.status === 'Declined' || item.status === 'Withdrawn').id
                     break;
+                case 'Practice Notification Job Withdrawn':
+                    id = notif.job_parts.find(item => item.status === 'Declined' || item.status === 'Withdrawn').id
+                    break;
                 default:
                     id = notif.id
             }
@@ -112,6 +115,8 @@ export default {
                 locum_detail_rate_type: notif.locum_detail_rate_type ? notif.locum_detail_rate_type.name : notif.job.locum_detail_rate_type.name,
                 notification_type: notif.notificationType,
                 parent_practice_id: notif.parent_practice_id,
+                // for surgery-management
+                practice_surgery_id: notif.practice_surgery_id,
                 type: 'Jobs',
                 message
             }
