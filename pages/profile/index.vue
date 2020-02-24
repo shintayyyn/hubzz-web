@@ -192,6 +192,7 @@
                 :name="'mandatory_training_id'"
                 :label="'Mandatory training required from Locums:'"
                 :lists="mandatory_trainings"
+                @uncheckAll="form.mandatory_training_id = []"
               />
             </div>
             <div class="flex flex-col w-full md:w-1/2 px-2">

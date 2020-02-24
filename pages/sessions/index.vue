@@ -795,7 +795,8 @@ export default {
         jobs
       };
     } catch (err) {
-      throw err;
+      return error({ status: 404 });
+      // throw err;
     }
   },
   mounted() {
