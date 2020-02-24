@@ -14,6 +14,19 @@ export default {
 	SET_USERS_ONLINE(state, payload) {
 		state.usersOnline = payload;
 	},
+	SET_MESSAGE_SEEN(state, payload) {
+		let findMessage = state.conversations.find(item => item.id == payload.id)
+		findMessage.latest_conversation_message.seen_by_receiver = this.$moment().format()
+	},
+	GET_TOTAL_UNREAD_MESSAGES(state, payload) {
+		state.unreadTotal = payload
+	},
+	REMOVE_TOTAL_UNREAD_MESSAGES(state, payload) {
+		state.unreadTotal -= 1
+	},
+	ADD_TOTAL_UNREAD_MESSAGES(state, payload) {
+		state.unreadTotal += 1
+	},
 	GET_CONVERSATIONS(state, payload) {
 		payload.forEach(item => {
 			state.conversations.push(item);

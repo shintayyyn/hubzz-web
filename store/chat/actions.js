@@ -16,12 +16,13 @@ export default {
 					this.$router.push(`/messages/${message.id}`);
 					commit("SET_ACTIVE_CONVERSATION", message.id);
 				}
-				commit("ADD_UNREAD_MESSAGE", message);
+				commit("ADD_TOTAL_UNREAD_MESSAGES");
+				// commit("ADD_UNREAD_MESSAGE", message);
 			} else {
 				if (!user) {
 					if (!findMessage) {
-						if (state.activeConversationId != message.id.toString()) {
-							commit("ADD_UNREAD_MESSAGE", message);
+						if (findConversation.latest_conversation_message.seen_by_receiver) {
+							commit("ADD_TOTAL_UNREAD_MESSAGES");
 						}
 						commit("ADD_MESSAGE", message);
 					}
@@ -39,6 +40,11 @@ export default {
 		this.$socket.on("presence-out", users => {
 			commit("DELETE_USER_ONLINE", users.user.id);
 		});
+	},
+
+	async fetchTotalUnreadMessages({ state, commit }, payload) {
+		const response = await chatApi.getUnreadMessages(this.$axios);
+		commit("GET_TOTAL_UNREAD_MESSAGES", response.data.total);
 	},
 	async setConversation({ commit }) {
 		const response = await chatApi.fetchConversations(this.$axios, 0, 0);
