@@ -72,6 +72,7 @@ export default {
         practice_surgery
       };
     } catch (err) {
+      return error({ status: 404, message: "Page Not Found" });
       throw err;
     }
   },

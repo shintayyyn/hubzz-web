@@ -29,10 +29,10 @@
 						<transition-group name="slide" tag="p">
 							<div
 								class="relative flex w-full items-center px-2 py-4 cursor-pointer border-b"
-								:class="parseInt($route.params.slug) === item.id ? 'bg-gray-300' : unreadMessages.find(conversation => conversation.conversation_id == item.id && $auth.user.id == conversation.user_id) ? 'font-bold bg-gray-400' : 'hover:bg-gray-200'"
+								:class="parseInt($route.params.slug) === item.id ? 'bg-gray-300' : !item.latest_conversation_message.seen_by_receiver && item.latest_conversation_message.user_id !== $auth.user.id ? 'font-bold bg-gray-400' : 'hover:bg-gray-200'"
 								v-for="item in conversations"
 								:key="item.id"
-								@click.stop="goTo(item.id ? item.id : item.id)"
+								@click.stop="goTo(item)"
 							>
 								<div>
 									<AppAvatar
@@ -55,7 +55,7 @@
 									</div>
 									<span
 										class="absolute w-10 h-full right-0 flex items-center text-right text-xs text-gray-600 leading-none mx-2"
-										:class="parseInt($route.params.slug) === item.id ? 'bg-gray-300' : unreadMessages.find(conversation => conversation.conversation_id == item.id && $auth.user.id == conversation.user_id) ? 'font-bold bg-gray-400' : 'hover:bg-gray-200'"
+										:class="parseInt($route.params.slug) === item.id ? 'bg-gray-300' : !item.latest_conversation_message.seen_by_receiver && item.latest_conversation_message.user_id !== $auth.user.id ? 'font-bold bg-gray-400' : 'hover:bg-gray-200'"
 									>{{ $moment(item.latest_conversation_message.created_at).fromNow() }}</span>
 								</div>
 							</div>
@@ -66,10 +66,10 @@
 						<transition-group name="slide" tag="p">
 							<div
 								class="relative flex w-full items-center px-2 py-4 cursor-pointer border-b"
-								:class="parseInt($route.params.slug) === item.id ? 'bg-gray-300' : unreadMessages.find(conversation => conversation.conversation_id == item.id && $auth.user.id == conversation.user_id) ? 'font-bold bg-gray-400' : 'hover:bg-gray-200'"
+								:class="parseInt($route.params.slug) === item.id ? 'bg-gray-300' : !item.latest_conversation_message.sen_by_receiver && item.latest_conversation_message.user_id !== $auth.user.id ? 'font-bold bg-gray-400' : 'hover:bg-gray-200'"
 								v-for="item in messages"
 								:key="item.id"
-								@click.stop="goTo(item.id ? item.id : item.id)"
+								@click.stop="goTo(item)"
 							>
 								<div>
 									<AppAvatar
@@ -93,7 +93,7 @@
 									</div>
 									<span
 										class="absolute w-10 h-full flex items-center right-0 text-right text-xs text-gray-600 leading-none mx-2"
-										:class="parseInt($route.params.slug) === item.id ? 'bg-gray-300' : unreadMessages.find(conversation => conversation.conversation_id == item.id && $auth.user.id == conversation.user_id) ? 'font-bold bg-gray-400' : 'hover:bg-gray-200'"
+										:class="parseInt($route.params.slug) === item.id ? 'bg-gray-300' : !item.latest_conversation_message.sen_by_receiver && item.latest_conversation_message.user_id !== $auth.user.id ? 'font-bold bg-gray-400' : 'hover:bg-gray-200'"
 									>{{ $moment(item.latest_conversation_message.created_at).fromNow() }}</span>
 								</div>
 							</div>
@@ -155,40 +155,35 @@ export default {
 			}
 		},
 		conversations(newValue) {
-			// let conversation = newValue.find((conversation, index) => index === 0);
-			// let conversations = newValue.find(item => item.id === conversation.id);
-			// if (this.activeConversationId != conversation.id.toString()) {
-			// 	this.$store.commit("chat/ADD_UNREAD_MESSAGE", conversation);
-			// }
+			console.log("qwe");
 		}
 	},
 	methods: {
-		goTo(id) {
+		goTo(message) {
 			this.showResult = false;
 			this.search_text = "";
 			this.messages = [];
-			this.$store.dispatch("chat/setActiveConversation", id);
-			console.log(
-				"qweqweqweqweqw",
-				this.unreadMessages &&
-					this.unreadMessages.find(item => item.conversation_id == id)
-			);
-			if (!this.conversations.find(item => item.id == id)) {
+			this.$store.dispatch("chat/setActiveConversation", message.id);
+			if (!this.conversations.find(item => item.id == message.id)) {
 				this.loadMoreConversation();
 			}
 			if (window.innerWidth < 768) {
 				this.$store.commit("IS_MOBILE", false);
 			}
+			if (this.$route.params.slug != message.id) {
+				this.$router.push(`/messages/${message.id}`);
+			}
+
 			if (
-				this.unreadMessages &&
-				this.unreadMessages.find(item => item.conversation_id == id)
+				!message.latest_conversation_message.seen_by_receiver &&
+				message.latest_conversation_message.user_id !== this.$auth.user.id
 			) {
-				this.$store.commit("chat/DELETE_UNREAD_MESSAGE", id);
-				console.log("on read", this.unreadMessages);
+				// message.latest_conversation_message.seen_by_receiver = this.$moment().format();
+				this.$store.commit("chat/SET_MESSAGE_SEEN", message);
+				this.$store.commit("chat/REMOVE_TOTAL_UNREAD_MESSAGES");
 			}
-			if (this.$route.params.slug != id) {
-				this.$router.push(`/messages/${id}`);
-			}
+
+			console.log("conversations", this.conversations);
 		},
 		getResults(value) {
 			this.$axios.$get(`/api/v1/conversations?search=${value}`).then(res => {

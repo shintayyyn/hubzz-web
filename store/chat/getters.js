@@ -11,4 +11,7 @@ export default {
   getUnreadMessages(state) {
     return state.unreadMessages
   },
+  getUnreadMessagesTotal(state) {
+    return state.unreadTotal
+  },
 }
